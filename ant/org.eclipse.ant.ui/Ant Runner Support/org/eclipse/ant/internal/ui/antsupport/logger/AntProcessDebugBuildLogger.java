@@ -12,13 +12,18 @@ package org.eclipse.ant.internal.ui.antsupport.logger;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.Vector;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.internal.ui.debug.IAntDebugController;
 import org.eclipse.ant.internal.ui.debug.model.AntDebugTarget;
@@ -50,8 +55,12 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	//properties set before execution
     private Map fInitialProperties= null;
 	private Map fProperties= null;
+    
+    private Map fTargetToBuildSequence= null;
+    private Target fTargetToExecute= null;
+    private Target fTargetExecuting= null;
 	
-	private AntDebugTarget fTarget;
+	private AntDebugTarget fAntDebugTarget;
 	
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
@@ -60,10 +69,27 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 		super.buildStarted(event);
 		IProcess process= getAntProcess(event.getProject().getUserProperty(AntProcess.ATTR_ANT_PROCESS_ID));
 		ILaunch launch= process.getLaunch();
-		fTarget= new AntDebugTarget(launch, process, this);
-		launch.addDebugTarget(fTarget);
-		fTarget.buildStarted();
+		fAntDebugTarget= new AntDebugTarget(launch, process, this);
+		launch.addDebugTarget(fAntDebugTarget);
+        
+        fAntDebugTarget.buildStarted();
 	}
+
+    private void initializeBuildSequenceInformation(BuildEvent event) {
+        Project antProject= event.getProject();
+        Vector targets= (Vector) antProject.getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
+        fTargetToBuildSequence= new HashMap(targets.size());
+        Iterator itr= targets.iterator();
+        Hashtable allTargets= antProject.getTargets();
+        String targetName;
+        Vector sortedTargets;
+        while (itr.hasNext()) {
+            targetName= (String) itr.next();
+            sortedTargets= antProject.topoSort(targetName, allTargets);
+            fTargetToBuildSequence.put(allTargets.get(targetName), sortedTargets);
+        }
+        fTargetToExecute= (Target) allTargets.get(targets.remove(0));
+    }
 	
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
@@ -80,6 +106,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	 */
 	public void taskStarted(BuildEvent event) {
         if (fInitialProperties == null) {//implicit or top level target does not fire targetStarted()
+            initializeBuildSequenceInformation(event);
             fInitialProperties= event.getProject().getProperties();
         }
 		super.taskStarted(event);
@@ -95,7 +122,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	        IBreakpoint breakpoint= breakpointAtLineNumber(fCurrentTask.getLocation());
 	        if (breakpoint != null) {
                 detail= -2;
-	            fTarget.breakpointHit(breakpoint);
+	            fAntDebugTarget.breakpointHit(breakpoint);
 	        } else if (fStepIntoSuspend) {
 	            detail= DebugEvent.STEP_END;
 	            fStepIntoSuspend= false;               
@@ -115,7 +142,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	        }
 	        if (shouldSuspend) {
                 if (detail != -2) { //not already notified of hitting breakpoint
-                    fTarget.suspended(detail);
+                    fAntDebugTarget.suspended(detail);
                 }
 	            try {
 	                wait();
@@ -190,7 +217,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 		      currentProperties= ((Task)fTasks.peek()).getProject().getProperties();
 		      if (fProperties != null && currentProperties.size() == fProperties.size()) {
 		  		//no new properties
-		  		((AntThread) fTarget.getThreads()[0]).newProperties("no"); //$NON-NLS-1$
+		  		((AntThread) fAntDebugTarget.getThreads()[0]).newProperties("no"); //$NON-NLS-1$
 		  		return;
 		  	}
 		  	
@@ -227,7 +254,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
         }
 		  propertiesRepresentation.deleteCharAt(propertiesRepresentation.length() - 1);
 		  fProperties= currentProperties;
-		  ((AntThread) fTarget.getThreads()[0]).newProperties(propertiesRepresentation.toString());
+		  ((AntThread) fAntDebugTarget.getThreads()[0]).newProperties(propertiesRepresentation.toString());
 	}
 
 	/* (non-Javadoc)
@@ -238,6 +265,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 		stackRepresentation.append(DebugMessageIds.STACK);
 		stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
 		
+        //task stack
 		for (int i = fTasks.size() - 1; i >= 0 ; i--) {
 			Task task = (Task) fTasks.get(i);
 			stackRepresentation.append(task.getOwningTarget().getName());
@@ -251,8 +279,33 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 			stackRepresentation.append(getLineNumber(location));
 			stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
 		}	
-		 
-		 ((AntThread) fTarget.getThreads()[0]).buildStack(stackRepresentation.toString());
+        
+        //target dependancy stack 
+		 if (fTargetToExecute != null) {
+		     Vector buildSequence= (Vector) fTargetToBuildSequence.get(fTargetToExecute);
+             int startIndex= buildSequence.indexOf(fTargetExecuting) + 1;
+             int dependancyStackDepth= buildSequence.indexOf(fTargetToExecute);
+           
+             Target stackTarget;
+             Location location;
+             for (int i = startIndex; i <= dependancyStackDepth; i++) {
+                stackTarget= (Target) buildSequence.get(i);
+                
+                stackRepresentation.append(stackTarget.getName());
+                stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+                stackRepresentation.append(""); //$NON-NLS-1$
+                stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+                
+                location= stackTarget.getLocation();
+                stackRepresentation.append(getFileName(location));
+                stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+                //TODO until targets have locations set properly 
+                //stackRepresentation.append(getLineNumber(location));
+                stackRepresentation.append(-1);
+                stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+            }
+         }
+		 ((AntThread) fAntDebugTarget.getThreads()[0]).buildStack(stackRepresentation.toString());
 	}
     
     private IBreakpoint breakpointAtLineNumber(Location location) {
@@ -331,8 +384,18 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
      */
     public void targetStarted(BuildEvent event) {
         if (fInitialProperties == null) {
+            initializeBuildSequenceInformation(event);
             fInitialProperties= event.getProject().getProperties();
         }
         super.targetStarted(event);
+        fTargetExecuting= event.getTarget();
+        if (event.getTarget().getName().equals(fTargetToExecute)) {
+            //the dependancies of the target to execute have been met
+            //prepare for the next target
+            Vector targets= (Vector) event.getProject().getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
+            if (!targets.isEmpty()) {
+                fTargetToExecute= (Target) event.getProject().getTargets().get(targets.remove(0));
+            }
+        }
     }
 }

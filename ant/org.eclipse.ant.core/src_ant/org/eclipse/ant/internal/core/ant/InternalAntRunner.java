@@ -648,6 +648,7 @@ public class InternalAntRunner {
             if (targets.isEmpty() && getCurrentProject().getDefaultTarget() != null) {
                 targets.add(getCurrentProject().getDefaultTarget());
             }
+            getCurrentProject().addReference("eclipse.ant.targetVector", targets); //$NON-NLS-1$
 			getCurrentProject().executeTargets(targets);
 		} catch (OperationCanceledException e) {
 			scriptExecuted= false;

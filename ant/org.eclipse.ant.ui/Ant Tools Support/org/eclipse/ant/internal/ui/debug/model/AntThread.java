@@ -295,19 +295,25 @@ public class AntThread extends AntDebugElement implements IThread {
 		if (fOldFrames != null && (strings.length - 1)/ 4 != fOldFrames.size()) {
 			fOldFrames= null; //stack size changed..do not preserve
 		}
-		String name;
+		StringBuffer name;
 		String filePath;
 		int lineNumber;
 		int stackFrameId= 0;
+        String taskName;
 		for (int i = 1; i < strings.length; i++) {
 			if (strings[i].length() > 0) {
-				name= strings[i] + ": " + strings[++i]; //$NON-NLS-1$
+                name= new StringBuffer(strings[i]);
+                taskName= strings[++i];
+                if (taskName.length() > 0) {
+                     name.append(": "); //$NON-NLS-1$
+                     name.append(taskName);
+                }
 			} else {
-				name= strings[++i];
+				name= new StringBuffer(strings[++i]);
 			}
 			filePath= strings[++i];
 			lineNumber= Integer.parseInt(strings[++i]);
-			addFrame(stackFrameId++, name, filePath, lineNumber);
+			addFrame(stackFrameId++, name.toString(), filePath, lineNumber);
 		}
 		//wake up the call from getStackFrames
 		notifyAll();
