@@ -44,8 +44,6 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 
 	private static String buildType = IExternalToolConstants.BUILD_TYPE_NONE;
 	
-	private boolean firstBuild= true;
-
 	/* (non-Javadoc)
 	 * Method declared on IncrementalProjectBuilder.
 	 */
@@ -65,16 +63,11 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 		if (!runTool) {
 			return null;
 		}
+		
+		IResource[] resources= ExternalToolsUtil.getResourcesForBuildScope(config, monitor);
 		boolean buildForChange= true;
-		//cannot check for resource changes on the first build as there is no 
-		//delta state to base the changes on
-		if (!firstBuild)  {	
-			IResource[] resources= ExternalToolsUtil.getResourcesForBuildScope(config, monitor);
-			if (resources != null && resources.length > 0) {
-				buildForChange= buildScopeIndicatesBuild(resources);
-			}
-		} else  {
-			firstBuild= false;
+		if (resources != null && resources.length > 0) {
+			buildForChange= buildScopeIndicatesBuild(resources);
 		}
 		
 		if (buildForChange) {
