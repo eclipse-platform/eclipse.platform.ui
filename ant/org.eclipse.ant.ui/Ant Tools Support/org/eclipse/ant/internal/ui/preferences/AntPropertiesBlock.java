@@ -26,8 +26,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.core.variables.ILaunchVariableManager;
-import org.eclipse.debug.core.variables.LaunchVariableUtil;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -139,7 +138,7 @@ public class AntPropertiesBlock {
 			Object[] elements= dialog.getResult();
 			for (int i = 0; i < elements.length; i++) {
 				IFile file = (IFile)elements[i];
-				String varExpression= LaunchVariableUtil.newVariableExpression(ILaunchVariableManager.VAR_WORKSPACE_LOC, file.getFullPath().toString());
+				String varExpression= DebugPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", file.getFullPath().toString()); //$NON-NLS-1$
 				((AntContentProvider)fileTableViewer.getContentProvider()).add(varExpression);
 			}
 			container.update();

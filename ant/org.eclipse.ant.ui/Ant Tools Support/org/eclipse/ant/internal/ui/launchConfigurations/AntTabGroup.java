@@ -15,15 +15,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.variables.ExpandVariableContext;
-import org.eclipse.debug.core.variables.ILaunchVariableManager;
-import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.debug.ui.launchVariables.LaunchVariableContextManager;
-import org.eclipse.debug.ui.launchVariables.RefreshTab;
+import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 
@@ -51,9 +48,7 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		super.setDefaults(configuration);
 		// set default name for script
-		LaunchVariableContextManager manager = LaunchVariableContextManager.getDefault();
-		ExpandVariableContext context = manager.getVariableContext();
-		IResource resource = context.getSelectedResource();
+		IResource resource = DebugUITools.getSelectedResource();
 		if (resource != null && resource instanceof IFile) {
 			IFile file = (IFile)resource;
 			String extension = file.getFileExtension();
@@ -65,7 +60,7 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 				name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
 				configuration.rename(name);
 				configuration.setAttribute(IExternalToolConstants.ATTR_LOCATION,
-					LaunchVariableUtil.newVariableExpression(ILaunchVariableManager.VAR_WORKSPACE_LOC, file.getFullPath().toString()));
+					DebugPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", file.getFullPath().toString())); //$NON-NLS-1$
 			}		
 		}
 	}	

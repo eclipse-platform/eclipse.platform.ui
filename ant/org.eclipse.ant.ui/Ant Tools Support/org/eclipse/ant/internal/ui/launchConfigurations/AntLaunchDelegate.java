@@ -40,7 +40,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.CommonTab;
-import org.eclipse.debug.ui.launchVariables.RefreshTab;
+import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.SocketUtil;

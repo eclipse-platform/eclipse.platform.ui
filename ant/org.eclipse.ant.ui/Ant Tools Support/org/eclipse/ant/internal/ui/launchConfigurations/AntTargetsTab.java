@@ -29,12 +29,10 @@ import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.debug.ui.launchVariables.LaunchVariableContextManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -60,6 +58,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -294,13 +293,18 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			fAllTargets= null;
 			setDirty(false);
 			setErrorMessage(null);
-			MultiStatus status = new MultiStatus(IAntUIConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
-			final String expandedLocation = LaunchVariableUtil.expandVariables(fLocation, status, LaunchVariableContextManager.getDefault().getVariableContext());
-			if (expandedLocation != null && status.isOK()) {
+			
+			String location = null;
+			try {
+				location = DebugPlugin.getDefault().getStringVariableManager().performStringSubstitution(fLocation);
+			} catch (CoreException e1) {
+				setErrorMessage(e1.getMessage());
+			}
+			final String expandedLocation = location;
+			if (expandedLocation != null) {
 				final CoreException[] exceptions= new CoreException[1];
 				try {
-					final String[] arguments = LaunchVariableUtil.parseStringIntoList(fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null));
-
+					final String[] arguments = ExternalToolsUtil.getArguments(fLaunchConfiguration);
 					IRunnableWithProgress operation= new IRunnableWithProgress() {
 						/* (non-Javadoc)
 						 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)

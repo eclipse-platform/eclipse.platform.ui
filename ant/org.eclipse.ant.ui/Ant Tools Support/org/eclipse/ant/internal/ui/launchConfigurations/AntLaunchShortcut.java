@@ -32,8 +32,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.variables.ILaunchVariableManager;
-import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchShortcut;
@@ -218,7 +216,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		try {
 			ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, name);
 			workingCopy.setAttribute(IExternalToolConstants.ATTR_LOCATION,
-				LaunchVariableUtil.newVariableExpression(ILaunchVariableManager.VAR_WORKSPACE_LOC, file.getFullPath().toString()));
+				DebugPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", file.getFullPath().toString())); //$NON-NLS-1$
 			
 			// set default for common settings
 			CommonTab tab = new CommonTab();

@@ -15,10 +15,9 @@ import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.variables.ILaunchVariableManager;
-import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -110,7 +109,7 @@ public class AntMainTab extends ExternalToolsMainTab {
 		if (file == null) {
 			return;
 		}
-		locationField.setText(LaunchVariableUtil.newVariableExpression(ILaunchVariableManager.VAR_WORKSPACE_LOC, file.getFullPath().toString()));
+		locationField.setText(DebugPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", file.getFullPath().toString())); //$NON-NLS-1$
 	}
 
 	/**

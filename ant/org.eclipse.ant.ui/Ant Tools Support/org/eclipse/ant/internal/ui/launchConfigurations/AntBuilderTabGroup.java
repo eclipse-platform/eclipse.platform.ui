@@ -13,7 +13,7 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.debug.ui.launchVariables.RefreshTab;
+import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsBuilderTab;
 
 public class AntBuilderTabGroup extends AbstractLaunchConfigurationTabGroup {

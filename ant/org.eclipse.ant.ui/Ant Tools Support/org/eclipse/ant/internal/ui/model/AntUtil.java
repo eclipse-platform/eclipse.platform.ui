@@ -32,11 +32,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -288,17 +287,12 @@ public final class AntUtil {
 	}
 
 	private static String expandVariableString(String variableString, String statusMessage, String invalidMessage) throws CoreException {
-		MultiStatus status = new MultiStatus(IAntUIConstants.PLUGIN_ID, 0, statusMessage, null);
-		String expandedString = LaunchVariableUtil.expandVariables(variableString, status, null);
-		if (status.isOK()) {
-			if (expandedString == null || expandedString.length() == 0) {
-				String msg = MessageFormat.format(invalidMessage, new String[] { variableString});
-				throw new CoreException(new Status(IStatus.ERROR, IAntUIConstants.PLUGIN_ID, 0, msg, null));
-			} else {
-				variableString= expandedString;
-			}
+		String expandedString = DebugPlugin.getDefault().getStringVariableManager().performStringSubstitution(variableString);
+		if (expandedString == null || expandedString.length() == 0) {
+			String msg = MessageFormat.format(invalidMessage, new String[] { variableString});
+			throw new CoreException(new Status(IStatus.ERROR, IAntUIConstants.PLUGIN_ID, 0, msg, null));
 		} else {
-			throw new CoreException(status);
+			variableString= expandedString;
 		}
 		return variableString;
 	}
