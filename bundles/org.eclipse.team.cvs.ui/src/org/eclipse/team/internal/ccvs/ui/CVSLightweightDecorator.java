@@ -398,7 +398,8 @@ public class CVSLightweightDecorator
 				// check if the folder is local diectory with no remote
 				ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resource);
 				try {
-					if (cvsFolder.getFolderSyncInfo().getRepository().equals(FolderSyncInfo.VIRTUAL_DIRECTORY)) {
+					FolderSyncInfo folderSyncInfo = cvsFolder.getFolderSyncInfo();
+					if (folderSyncInfo != null && folderSyncInfo.getRepository().equals(FolderSyncInfo.VIRTUAL_DIRECTORY)) {
 						return noRemoteDir;
 					}
 				} catch (CVSException e) {
