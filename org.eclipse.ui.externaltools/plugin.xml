@@ -12,7 +12,6 @@
       </library>
    </runtime>
    <requires>
-      <import plugin="org.apache.ant"/>
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.ant.core"/>
       <import plugin="org.eclipse.core.resources"/>
