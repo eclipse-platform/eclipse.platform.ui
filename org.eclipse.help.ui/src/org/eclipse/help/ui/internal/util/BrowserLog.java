@@ -9,6 +9,7 @@ import java.text.*;
 import java.util.Date;
 
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.ui.internal.WorkbenchHelpPlugin;
 
 /**
  * Log for messages output by external browser processes.
@@ -18,6 +19,7 @@ public class BrowserLog {
 	private String logFileName;
 	private boolean newSession;
 	DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy kk:mm:ss.SS");
+	String LN=System.getProperty("line.separator");
 	/**
 	 * Constructor
 	 */
@@ -25,7 +27,7 @@ public class BrowserLog {
 		try {
 			newSession = true;
 			logFileName =
-				HelpPlugin
+				WorkbenchHelpPlugin
 					.getDefault()
 					.getStateLocation()
 					.append("browser.log")
@@ -63,10 +65,10 @@ public class BrowserLog {
 			if (newSession) {
 				newSession = false;
 				outWriter.write(
-					"\n" + formatter.format(new Date()) + " NEW SESSION\n");
+					LN + formatter.format(new Date()) + " NEW SESSION"+LN);
 			}
 			outWriter.write(
-				formatter.format(new Date()) + " " + message + "\n");
+				formatter.format(new Date()) + " " + message + LN);
 			outWriter.flush();
 			outWriter.close();
 		} catch (Exception e) {
