@@ -362,21 +362,25 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 						}
 					}
 				};
-					Runnable runnable= new Runnable() {
-						public void run() {
-							try {
-								workspace.run(wRunnable, null);
-							} catch (CoreException ce) {
-								logError(ce);
-							}
-						}
-					};
-					new Thread(runnable).start();
+				fork(wRunnable);
 			} else {
 				// do nothing - we do not add until explicitly added
 			}
 		}
 
+		protected void fork(final IWorkspaceRunnable wRunnable) {
+			Runnable runnable= new Runnable() {
+				public void run() {
+					try {
+						getWorkspace().run(wRunnable, null);
+					} catch (CoreException ce) {
+						logError(ce);
+					}
+				}
+			};
+			new Thread(runnable).start();
+		}
+		
 		/**
 		 * Wrapper for handling removes
 		 */
@@ -395,7 +399,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 * Wrapper for handling changes
 		 */
 		protected void handleChangeBreakpoint(IMarker marker, IMarkerDelta delta) {
-			IBreakpoint breakpoint= getBreakpoint(marker);
+			final IBreakpoint breakpoint= getBreakpoint(marker);
 			if (isRegistered(breakpoint)) {
 				fireUpdate(breakpoint, delta, CHANGED);
 			}
