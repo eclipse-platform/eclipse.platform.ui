@@ -31,6 +31,7 @@ public class DetailsForm extends PropertyWebForm {
 private static final String KEY_PROVIDER = "FeaturePage.provider";
 private static final String KEY_VERSION = "FeaturePage.version";
 private static final String KEY_IVERSION = "FeaturePage.installedVersion";
+private static final String KEY_PENDING_VERSION = "FeaturePage.pendingVersion";
 private static final String KEY_SIZE = "FeaturePage.size";
 private static final String KEY_OS = "FeaturePage.os";
 private static final String KEY_WS = "FeaturePage.ws";
@@ -42,7 +43,8 @@ private static final String KEY_LICENSE_LINK = "FeaturePage.licenseLink";
 private static final String KEY_COPYRIGHT_LINK = "FeaturePage.copyrightLink";
 private static final String KEY_NOT_INSTALLED = "FeaturePage.notInstalled";
 private static final String KEY_SIZE_VALUE = "FeaturePage.sizeValue";
-private static final String KEY_DO_UNINSTALL="FeaturePage.doButton.uninstall";
+private static final String KEY_DO_UNCONFIGURE="FeaturePage.doButton.unconfigure";
+private static final String KEY_DO_CONFIGURE="FeaturePage.doButton.configure";
 private static final String KEY_DO_UPDATE="FeaturePage.doButton.update";
 private static final String KEY_DO_INSTALL="FeaturePage.doButton.install";
 private static final String KEY_OS_WIN32="FeaturePage.os.win32";
@@ -73,6 +75,7 @@ private ReflowGroup supportedPlatformsGroup;
 private Image providerImage;
 private Button doButton;
 private IFeature currentFeature;
+private IFeatureAdapter currentAdapter;
 private ModelListener modelListener;
 private Hashtable imageCache = new Hashtable();
 private HyperlinkHandler sectionHandler;
@@ -86,7 +89,7 @@ class ModelListener implements IUpdateModelChangedListener {
 		if (child instanceof PendingChange) {
 			PendingChange job = (PendingChange)child;
 			if (job.getFeature().equals(currentFeature)) {
-				doButton.setEnabled(false);
+				refresh();
 			}
 		}
 	}
@@ -291,18 +294,25 @@ public void expandTo(final Object obj) {
 	BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 		public void run() {
 			if (obj instanceof IFeature) {
-				inputChanged((IFeature)obj);
+				currentAdapter = null;
+				currentFeature = (IFeature)obj;
+				refresh();
 			}
-			else if (obj instanceof CategorizedFeature) {
+			else if (obj instanceof IFeatureAdapter) {
 				try {
-					IFeature feature = ((CategorizedFeature)obj).getFeature();
-					inputChanged(feature);
+					currentFeature = ((IFeatureAdapter)obj).getFeature();
+					currentAdapter = (IFeatureAdapter)obj;
+					refresh();
 				}
 				catch (CoreException e) {
 					UpdateUIPlugin.logException(e);
 				}
 			}
-			else inputChanged(null);
+			else {
+				currentFeature = null;
+				currentAdapter = null;
+				refresh();
+			}
 		}
 	});
 }
@@ -313,23 +323,34 @@ private String getInstalledVersion(IFeature feature) {
 		ILocalSite localSite = SiteManager.getLocalSite();
 	   	IInstallConfiguration config = localSite.getCurrentConfiguration();
 	   	IConfigurationSite [] isites = config.getConfigurationSites();
-	   	String id = feature.getVersionIdentifier().getIdentifier();
+	   	VersionedIdentifier vid = feature.getVersionIdentifier();
+	   	String id = vid.getIdentifier();
+	   	Version version = vid.getVersion();
+
 	   	StringBuffer buf = new StringBuffer();
 	   	for (int i=0; i<isites.length; i++) {
 			ISite isite = isites[i].getSite();
 			IFeature[] result = UpdateUIPlugin.searchSite(id, isite);
 			for (int j=0; j<result.length; j++) {
 				IFeature installedFeature = result[j];
+				VersionedIdentifier ivid = installedFeature.getVersionIdentifier();
 				if (buf.length()>0) 
 			   		buf.append(", ");
-				buf.append(result[j].getVersionIdentifier().getVersion().toString());
-				if (installedFeature.equals(feature)) {
+				buf.append(ivid.getVersion().toString());
+				if (ivid.equals(vid)) {
 					alreadyInstalled=true;
 				}
 			}
 		}
-		if (buf.length()>0)
-	   		return buf.toString();
+		if (buf.length()>0) {
+			String versionText = buf.toString();
+			UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+			PendingChange change = model.findPendingChange(feature);
+			if (change!=null) {
+				return UpdateUIPlugin.getFormattedMessage(KEY_PENDING_VERSION, versionText);
+			}
+			else return versionText;
+		}
 		else
 	   		return null;
 	}
@@ -338,10 +359,10 @@ private String getInstalledVersion(IFeature feature) {
 	}
 }
 
-private void inputChanged(IFeature feature) {
+private void refresh() {
 	boolean newerVersion=false;
+	IFeature feature = currentFeature;
 
-	if (feature==null) feature = currentFeature;
 	if (feature==null) return;
 	
 	setHeadingText(feature.getLabel());
@@ -365,26 +386,34 @@ private void inputChanged(IFeature feature) {
 	imageLabel.setImage(logoImage);
 	infoLinkURL = feature.getDescription().getURL();
 	infoLinkLabel.setVisible(infoLinkURL!=null);
-	updateButtonText(feature, newerVersion);
+
 	setOS(feature.getOS());
 	setWS(feature.getWS());
 	setNL(feature.getNL());
 	
 	licenseLink.setInfo(feature.getLicense());
 	copyrightLink.setInfo(feature.getCopyright());
-	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-	doButton.setEnabled(!model.checklistContains(feature));
-	
+	doButton.setVisible(getDoButtonVisibility());
+	if (doButton.isVisible()) 
+		updateButtonText(feature, newerVersion);	
 	reflow();
 	updateSize();
 	((Composite)getControl()).redraw();
+}
 
-	currentFeature = feature;
+private boolean getDoButtonVisibility() {
+	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+	if (model.isPending(currentFeature)) return false;
+	if (alreadyInstalled) {
+		if (!(currentFeature instanceof IConfigurationSiteContext))
+			return false;
+	}
+	return true;
 }
 
 private void updateButtonText(IFeature feature, boolean update) {
 	if (alreadyInstalled) {
-		doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_UNINSTALL));
+		doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_UNCONFIGURE));
 	}
 	else if (update) {
 		doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_UPDATE));

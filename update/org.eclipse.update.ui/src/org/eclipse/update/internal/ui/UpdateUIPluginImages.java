@@ -12,7 +12,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import java.net.URL;
 import org.eclipse.swt.widgets.Display;
-
+import org.eclipse.update.internal.ui.model.IFeatureAdapter;
 /**
  * Bundle of all images used by the PDE plugin.
  */
@@ -67,6 +67,7 @@ public class UpdateUIPluginImages {
 	public static final ImageDescriptor DESC_ECLIPSE_OBJ = create(PATH_OBJ, "eclipse2_obj.gif");
 	public static final ImageDescriptor DESC_COMPUTER_OBJ = create(PATH_OBJ, "computer_obj.gif");
 	public static final ImageDescriptor DESC_FEATURE_OBJ = create(PATH_OBJ, "feature_obj.gif");
+	public static final ImageDescriptor DESC_UNCONF_FEATURE_OBJ = create(PATH_OBJ, "unconf_feature_obj.gif");
 	public static final ImageDescriptor DESC_UNINSTALL_OBJ = create(PATH_OBJ, "uninstall_obj.gif");
 	public static final ImageDescriptor DESC_UPDATES_OBJ = create(PATH_OBJ, "updates_obj.gif");
 	public static final ImageDescriptor DESC_SITE_OBJ = create(PATH_OBJ, "site_obj.gif");
@@ -187,10 +188,10 @@ private static URL makeImageURL(String prefix, String name) {
 	}
 	return url;
 }
-
-public static Image manage(String key, ImageDescriptor desc) {
+public static Image manage(String key, ImageDescriptor desc) {
 	Image image = desc.createImage();
 	PLUGIN_REGISTRY.put(key, image);
 	return image;
 }
+
 }

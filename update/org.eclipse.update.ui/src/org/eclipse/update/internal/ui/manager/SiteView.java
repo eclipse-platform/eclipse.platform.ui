@@ -128,9 +128,9 @@ public class SiteView
 				IFeature feature = (IFeature) obj;
 				return feature.getLabel();
 			}
-			if (obj instanceof CategorizedFeature) {
+			if (obj instanceof FeatureReferenceAdapter) {
 				try {
-					IFeature feature = ((CategorizedFeature) obj).getFeature();
+					IFeature feature = ((FeatureReferenceAdapter) obj).getFeature();
 					String version = feature.getVersionIdentifier().getVersion().toString();
 					return feature.getLabel() + " " + version;
 				} catch (CoreException e) {
@@ -162,7 +162,7 @@ public class SiteView
 				return PlatformUI.getWorkbench().getSharedImages().getImage(
 					ISharedImages.IMG_OBJ_FOLDER);
 			}
-			if (obj instanceof IFeature || obj instanceof CategorizedFeature) {
+			if (obj instanceof IFeature || obj instanceof FeatureReferenceAdapter) {
 				return featureImage;
 			}
 			return super.getImage(obj);
@@ -260,8 +260,7 @@ public class SiteView
 		refreshAction.setEnabled(selection.size() == 1);
 	}
 
-	public void fillActionBars() {
-		IActionBars bars = getViewSite().getActionBars();
+	public void fillActionBars(IActionBars bars) {
 		IMenuManager menuManager = bars.getMenuManager();
 		menuManager.add(fileFilterAction);
 		menuManager.add(new Separator());

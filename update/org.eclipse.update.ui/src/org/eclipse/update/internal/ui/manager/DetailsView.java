@@ -161,8 +161,7 @@ public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 		IStructuredSelection ssel = (IStructuredSelection)sel;
 		if (ssel.size()==1) {
 			el = ssel.getFirstElement();
-			if (el instanceof IFeature || el instanceof PendingChange ||
-								el instanceof CategorizedFeature) {
+			if (el instanceof IFeatureAdapter) {
 				showPageWithInput(DETAILS_PAGE, el);
 				return;
 			}
@@ -183,7 +182,7 @@ public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 				showPageWithInput(INSTALL_CONFIGURATION_PAGE, el);
 				return;
 			}
-			if (el instanceof IConfigurationSite) {
+			if (el instanceof IConfigurationSiteAdapter) {
 				showPageWithInput(INSTALL_SITE_PAGE, el);
 				return;
 			}

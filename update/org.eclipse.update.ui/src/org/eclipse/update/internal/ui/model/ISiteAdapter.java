@@ -3,7 +3,7 @@ package org.eclipse.update.internal.ui.model;
 import org.eclipse.update.core.ISite;
 import java.net.URL;
 
-public interface ISiteWrapper {
+public interface ISiteAdapter {
 	
 	public String getLabel();
 	public URL getURL();

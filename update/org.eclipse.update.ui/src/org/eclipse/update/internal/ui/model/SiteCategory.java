@@ -86,8 +86,8 @@ private static final String KEY_OTHER_DESCRIPTION= "SiteCategory.other.descripti
 	public void touchFeatures() throws CoreException {
 		for (int i=0; i<children.size(); i++) {
 			Object child = children.get(i);
-			if (child instanceof CategorizedFeature) {
-				CategorizedFeature cf = (CategorizedFeature)child;
+			if (child instanceof FeatureReferenceAdapter) {
+				FeatureReferenceAdapter cf = (FeatureReferenceAdapter)child;
 				cf.getFeature();
 			}
 			else if (child instanceof SiteCategory) {
@@ -99,12 +99,26 @@ private static final String KEY_OTHER_DESCRIPTION= "SiteCategory.other.descripti
 	public void addFeaturesTo(Vector flatList) {
 		for (int i=0; i<children.size(); i++) {
 			Object child = children.get(i);
-			if (child instanceof CategorizedFeature) {
-				flatList.add(child);
+			if (child instanceof FeatureReferenceAdapter) {
+				FeatureReferenceAdapter cfeature = (FeatureReferenceAdapter)child;
+				// Don't add duplicates - there may be the same
+				// feature present in several categories
+				if (findFeature(flatList, cfeature.getFeatureReference())==null) {
+					flatList.add(child);
+				}
 			}
 			else if (child instanceof SiteCategory) {
 				((SiteCategory)child).addFeaturesTo(flatList);
 			}
 		}
+	}
+	
+	private FeatureReferenceAdapter findFeature(Vector flatList, IFeatureReference featureRef) {
+		for (int i=0; i<flatList.size(); i++) {
+			FeatureReferenceAdapter cfeature = (FeatureReferenceAdapter)flatList.get(i);
+			if (cfeature.getFeatureReference().equals(featureRef))
+			   return cfeature;
+		}
+		return null;
 	}
 }

@@ -14,7 +14,7 @@ import java.util.*;
 
 public class UpdateSearchSite extends ModelObject 
 							implements IWorkbenchAdapter,
-										ISiteWrapper {
+										ISiteAdapter {
 	private ISite site;
 	private Vector candidates;
 	private String label;
@@ -75,11 +75,11 @@ public class UpdateSearchSite extends ModelObject
 		return null;
 	}
 	
-	public void addCandidate(IFeature candidate) {
+	public void addCandidate(IFeatureAdapter candidate) {
 		candidates.add(candidate);
 	}
 	/**
-	 * @see ISiteWrapper#getURL()
+	 * @see ISiteAdapter#getURL()
 	 */
 	public URL getURL() {
 		return site.getURL();

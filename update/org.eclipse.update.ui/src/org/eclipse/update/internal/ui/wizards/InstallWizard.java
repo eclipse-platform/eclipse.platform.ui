@@ -124,7 +124,7 @@ public class InstallWizard extends Wizard {
 	 */
 	private void performInstall(IConfigurationSite targetSite, IProgressMonitor monitor) throws CoreException {
 		IFeature feature = job.getFeature();		
-		if (job.getJobType()==PendingChange.UNINSTALL){
+		if (job.getJobType()==PendingChange.UNINSTALL) {
 			
 			//find the  config site of this feature
 			ILocalSite localSite = SiteManager.getLocalSite();
@@ -136,11 +136,12 @@ public class InstallWizard extends Wizard {
 					break;
 				}
 			}
-			
 		}
-		if (job.getJobType()==PendingChange.INSTALL){
+		if (job.getJobType()==PendingChange.INSTALL) {
 			targetSite.install(feature,monitor);
 		}
+		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		model.addPendingChange(job);
 	}
 }
 

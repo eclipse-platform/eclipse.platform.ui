@@ -129,8 +129,12 @@ public class SearchResultSection {
 			UpdateSearchSite site = (UpdateSearchSite) sites[i];
 			Object[] features = site.getChildren(null);
 			for (int j = 0; j < features.length; j++) {
-				IFeature feature = (IFeature) features[j];
-				addFeature(feature);
+				IFeatureAdapter adapter = (IFeatureAdapter) features[j];
+				try {
+					addFeature(adapter.getFeature());
+				}
+				catch (CoreException e) {
+				}
 			}
 		}
 		if (counter > 0) {
@@ -231,7 +235,8 @@ public class SearchResultSection {
 
 	private void openFeature(IFeature feature) {
 		DetailsView view = (DetailsView) page.getView();
-		view.showPageWithInput(DetailsView.DETAILS_PAGE, feature);
+		SimpleFeatureAdapter sfeature = new SimpleFeatureAdapter(feature);
+		view.showPageWithInput(DetailsView.DETAILS_PAGE, sfeature);
 	}
 
 	private void openSite(ISite site) {

@@ -7,10 +7,10 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-public class CategorizedFeature extends ModelObject {
+public class FeatureReferenceAdapter extends FeatureAdapter {
 	private IFeatureReference featureRef;
 
-	public CategorizedFeature(IFeatureReference featureRef) {
+	public FeatureReferenceAdapter(IFeatureReference featureRef) {
 		this.featureRef = featureRef;
 	}
 	
@@ -18,13 +18,7 @@ public class CategorizedFeature extends ModelObject {
 		return featureRef.getFeature();
 	}
 	
-	public String toString() {
-		try {
-			IFeature feature = getFeature();
-			return feature.getLabel();
-		}
-		catch (CoreException e) {
-			return "<failure>";
-		}
+	public IFeatureReference getFeatureReference() {
+		return featureRef;
 	}
 }

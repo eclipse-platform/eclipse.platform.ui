@@ -37,6 +37,7 @@ public class HistoryView
 	implements ILocalSiteChangedListener {
 	private Image configImage;
 	private Image featureImage;
+	private Image unconfFeatureImage;
 	private Image siteImage;
 	private Image currentConfigImage;
 	private Action revertAction;
@@ -102,28 +103,43 @@ public class HistoryView
 				parent = ((PreservedConfiguration) parent).getConfiguration();
 			}
 			if (parent instanceof IInstallConfiguration) {
-				return ((IInstallConfiguration) parent).getConfigurationSites();
+				return getConfigurationSites((IInstallConfiguration)parent);
 			}
-			if (parent instanceof IConfigurationSite) {
-				IConfigurationSite csite = (IConfigurationSite) parent;
+			if (parent instanceof IConfigurationSiteAdapter) {
+				IConfigurationSiteAdapter csite = (IConfigurationSiteAdapter) parent;
 				return getConfiguredFeatures(csite);
 			}
 			return new Object[0];
 		}
-
-		private Object[] getConfiguredFeatures(IConfigurationSite csite) {
-			IFeatureReference[] refs = csite.getConfiguredFeatures();
+		
+		private Object[] getConfigurationSites(IInstallConfiguration config) {
+			IConfigurationSite [] sites = config.getConfigurationSites();
+			Object [] adapters = new Object [sites.length];
+			for (int i=0; i<sites.length; i++) {
+				adapters[i] = new ConfigurationSiteAdapter(config, sites[i]);
+			}
+			return adapters;
+		}
+		
+		private Object[] getConfiguredFeatures(IConfigurationSiteAdapter adapter) {
+			IConfigurationSite csite = adapter.getConfigurationSite();
+			IFeatureReference[] crefs = csite.getConfiguredFeatures();
 			ISite site = csite.getSite();
-			Object[] result = new Object[refs.length];
-			for (int i = 0; i < refs.length; i++) {
+			Object[] result = new Object[crefs.length];
+			
+			for (int i = 0; i < crefs.length; i++) {
+				IFeature feature;
 				try {
-					result[i] = refs[i].getFeature();
+					feature = crefs[i].getFeature();
 				} catch (CoreException e) {
-					result[i] = new MissingFeature(site, refs[i].getURL());
+					feature = new MissingFeature(site, crefs[i].getURL());
 				}
+				result [i] = new ConfiguredFeatureAdapter(adapter, feature, true);
 			}
 			return result;
 		}
+		
+
 
 		/**
 		 * @see ITreeContentProvider#getParent(Object)
@@ -162,24 +178,30 @@ public class HistoryView
 				IInstallConfiguration config = (IInstallConfiguration) obj;
 				return config.getLabel();
 			}
-			if (obj instanceof IConfigurationSite) {
-				IConfigurationSite csite = (IConfigurationSite) obj;
+			if (obj instanceof IConfigurationSiteAdapter) {
+				IConfigurationSiteAdapter ad = (IConfigurationSiteAdapter)obj;
+				IConfigurationSite csite = ad.getConfigurationSite();
 				ISite site = csite.getSite();
 				return site.getURL().toString();
 			}
-			if (obj instanceof IFeature) {
-				IFeature feature = (IFeature) obj;
+			if (obj instanceof IFeatureAdapter) {
+				try {
+				IFeature feature = ((IFeatureAdapter) obj).getFeature();
 				String version = feature.getVersionIdentifier().getVersion().toString();
 				return feature.getLabel() + " " + version;
+				}
+				catch (CoreException e) {
+					return "error";
+				}
 			}
 			return super.getText(obj);
 		}
 		public Image getImage(Object obj) {
 			if (obj instanceof SavedFolder)
 				return ((SavedFolder) obj).getImage();
-			if (obj instanceof IFeature)
-				return featureImage;
-			if (obj instanceof IConfigurationSite)
+			if (obj instanceof IFeatureAdapter)
+				return getFeatureImage((IFeatureAdapter)obj);
+			if (obj instanceof IConfigurationSiteAdapter)
 				return siteImage;
 			if (obj instanceof PreservedConfiguration) {
 				obj = ((PreservedConfiguration) obj).getConfiguration();
@@ -192,10 +214,18 @@ public class HistoryView
 			}
 			return null;
 		}
+		private Image getFeatureImage(IFeatureAdapter adapter) {
+			boolean configured = true;
+			if (adapter instanceof IConfiguredFeatureAdapter) {
+				configured = ((IConfiguredFeatureAdapter)adapter).isConfigured();
+			}
+			return (configured ? featureImage : unconfFeatureImage);
+		}
 	}
 
 	public HistoryView() {
 		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
+		unconfFeatureImage = UpdateUIPluginImages.DESC_UNCONF_FEATURE_OBJ.createImage();
 		siteImage = UpdateUIPluginImages.DESC_SITE_OBJ.createImage();
 		configImage = UpdateUIPluginImages.DESC_CONFIG_OBJ.createImage();
 		ImageDescriptor cdesc =
@@ -237,6 +267,7 @@ public class HistoryView
 
 	public void dispose() {
 		featureImage.dispose();
+		unconfFeatureImage.dispose();
 		siteImage.dispose();
 		configImage.dispose();
 		currentConfigImage.dispose();
@@ -363,6 +394,7 @@ public class HistoryView
 	}
 
 	public void installConfigurationRemoved(IInstallConfiguration configuration) {
+		viewer.refresh();
 	}
 
 }

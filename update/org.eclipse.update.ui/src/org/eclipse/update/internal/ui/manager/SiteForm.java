@@ -22,7 +22,7 @@ public class SiteForm extends UpdateWebForm {
 	private static final String KEY_DESC = "SitePage.desc";
 	private static final String KEY_LINK = "SitePage.link";
 	private Label url;
-	private ISiteWrapper currentSite;
+	private ISiteAdapter currentSite;
 	private Image updateSitesImage;
 	private static final String KEY_UPDATE_SITES_IMAGE = "updateSites";
 	
@@ -104,12 +104,12 @@ protected void createContents(Composite parent) {
 }
 
 public void expandTo(Object obj) {
-	if (obj instanceof ISiteWrapper) {
-		inputChanged((ISiteWrapper)obj);
+	if (obj instanceof ISiteAdapter) {
+		inputChanged((ISiteAdapter)obj);
 	}
 }
 
-private void inputChanged(ISiteWrapper site) {
+private void inputChanged(ISiteAdapter site) {
 	setHeadingText(site.getLabel());
 	url.setText(site.getURL().toString());
 	url.getParent().layout();

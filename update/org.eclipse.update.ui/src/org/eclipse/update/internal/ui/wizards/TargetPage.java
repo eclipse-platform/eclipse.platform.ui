@@ -153,6 +153,12 @@ public class TargetPage extends WizardPage {
 		table.setLayout(layout);
 		tableViewer.setContentProvider(new TableContentProvider());
 		tableViewer.setLabelProvider(new TableLabelProvider());
+		tableViewer.addFilter(new ViewerFilter() {
+			public boolean select(Viewer v, Object parent, Object obj) {
+				IConfigurationSite site = (IConfigurationSite)obj;
+				return site.isInstallSite();
+			}
+		});
 		tableViewer.setInput(tableViewer);
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener () {
 			public void selectionChanged(SelectionChangedEvent event) {

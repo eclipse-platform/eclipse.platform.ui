@@ -62,8 +62,8 @@ protected void createContents(Composite parent) {
 }
 
 public void expandTo(Object obj) {
-	if (obj instanceof IConfigurationSite) {
-		inputChanged((IConfigurationSite)obj);
+	if (obj instanceof IConfigurationSiteAdapter) {
+		inputChanged(((IConfigurationSiteAdapter)obj).getConfigurationSite());
 	}
 }
 

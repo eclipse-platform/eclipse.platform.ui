@@ -15,7 +15,7 @@ import org.eclipse.update.internal.ui.*;
 
 public class SiteBookmark extends ModelObject 
 						implements IWorkbenchAdapter,
-									ISiteWrapper {
+									ISiteAdapter {
 	public static final int USER = 0;
 	public static final int LOCAL = 1;
 	public static final int LOCAL_BOOKMARK = 2;
@@ -198,12 +198,12 @@ public class SiteBookmark extends ModelObject
 			IPath path = new Path(name);
 			SiteCategory parentCategory = findCategory(path, catalog.toArray());
 			if (parentCategory!=null) {
-		   		parentCategory.add(new CategorizedFeature(feature));
+		   		parentCategory.add(new FeatureReferenceAdapter(feature));
 		   		orphan = false;
 			}
 		}
 		if (orphan)
-			otherCategory.add(new CategorizedFeature(feature));
+			otherCategory.add(new FeatureReferenceAdapter(feature));
 	}
 	
 	private SiteCategory findCategory(IPath path, Object [] children) {
@@ -223,7 +223,7 @@ public class SiteBookmark extends ModelObject
 		return null;
 	}
 	/**
-	 * @see ISiteWrapper#getLabel()
+	 * @see ISiteAdapter#getLabel()
 	 */
 	public String getLabel() {
 		return getName();

@@ -90,7 +90,7 @@ public class UpdateModel {
 	}
 			
 	
-	public boolean checklistContains(IFeature feature) {
+	public boolean isPending(IFeature feature) {
 		return findPendingChange(feature)!=null;
 	}
 	
