@@ -59,7 +59,7 @@ public class PresentableViewPart implements IPresentablePart {
         return getViewReference().getTitleImage();
     }
 
-    public String getTitleToolTip() {
+    public String getTitleToolTipText() {
         return getViewReference().getTitleToolTip();
     }
 

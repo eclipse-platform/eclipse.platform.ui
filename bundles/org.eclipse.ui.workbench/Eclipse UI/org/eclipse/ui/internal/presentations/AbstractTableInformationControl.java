@@ -8,8 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal;
+package org.eclipse.ui.internal.presentations;
 
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusListener;
@@ -39,14 +45,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-
 import org.eclipse.ui.internal.misc.StringMatcher;
 
 /**
@@ -217,7 +215,7 @@ public abstract class AbstractTableInformationControl {
 
 		table.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				// do nothing
+			    // do nothing;
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {
 				gotoSelectedElement();
@@ -262,7 +260,6 @@ public abstract class AbstractTableInformationControl {
 
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
-
 				if (table.getSelectionCount() < 1)
 					return;
 

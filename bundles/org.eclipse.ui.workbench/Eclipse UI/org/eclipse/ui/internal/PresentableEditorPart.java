@@ -63,7 +63,7 @@ public class PresentableEditorPart implements IPresentablePart {
         return getEditorReference().getTitleImage();
     }
 
-    public String getTitleToolTip() {
+    public String getTitleToolTipText() {
         return getEditorReference().getTitleToolTip();
     }
 

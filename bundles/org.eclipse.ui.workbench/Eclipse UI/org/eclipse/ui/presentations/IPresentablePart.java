@@ -111,7 +111,7 @@ public interface IPresentablePart {
 	 *
 	 * @return the workbench part title tool tip
 	 */
-	public String getTitleToolTip();
+	public String getTitleToolTipText();
 	
 	/**
 	 * Returns true iff the contents of this part have changed recently. For
