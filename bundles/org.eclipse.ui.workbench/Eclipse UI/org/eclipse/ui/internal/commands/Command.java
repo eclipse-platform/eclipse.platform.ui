@@ -213,8 +213,10 @@ final class Command implements ICommand {
 
     public void removeCommandListener(ICommandListener commandListener) {
         if (commandListener == null) throw new NullPointerException();
-        if (commandListeners != null) commandListeners.remove(commandListener);
-        if (commandListeners.isEmpty()) commandsWithListeners.remove(this);
+        if (commandListeners != null) {
+            commandListeners.remove(commandListener);
+            if (commandListeners.isEmpty()) commandsWithListeners.remove(this);
+        }
     }
 
     boolean setCategoryId(String categoryId) {
