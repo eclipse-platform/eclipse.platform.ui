@@ -38,6 +38,13 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
  * If there is not enough room beside the tabs, the toolbars are aligned with the status text. This
  * is the same tab folder that is used to arrange views and editors in Eclipse. 
  * <p>
+ * This is closely related to BasicStackPresentation, but they have different responsibilities. This
+ * is essentially a CTabFolder that can manage a toolbar. It should not depend on 
+ * data structures from the workbench, and its public interface should only use SWT objects or
+ * listeners. BasicStackPresentation uses a PaneFolder to arrange views or editors. Knowledge
+ * of higher-level data structures should go there. 
+ * </p>
+ * <p>
  * Although it is not actually a control, the public interface is much like 
  * an SWT control. Implementation-wise, this is actually a combination of a CTabFolder and 
  * a ViewForm. It encapsulates the details of moving the toolbar between the CTabFolder and
