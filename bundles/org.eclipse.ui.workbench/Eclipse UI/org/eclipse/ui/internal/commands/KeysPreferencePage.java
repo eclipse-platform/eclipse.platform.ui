@@ -81,6 +81,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchServices;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.IPreferenceConstants;
@@ -297,6 +298,12 @@ public final class KeysPreferencePage extends PreferencePage implements
 		SORTED_COLUMN_NAMES[VIEW_CONTEXT_COLUMN_INDEX] = Util.translateString(
 				RESOURCE_BUNDLE, "tableColumnContextSorted"); //$NON-NLS-1$
 	}
+
+	/**
+	 * The workbench's activity manager. This activity manager is used to see if
+	 * certain commands should be filtered from the user interface.
+	 */
+	private IActivityManager activityManager;
 
 	/**
 	 * The workbench's binding service. This binding service is used to access
@@ -1230,12 +1237,28 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 *            <code>null</code>.
 	 */
 	public final void init(final IWorkbench workbench) {
+		activityManager = workbench.getActivitySupport().getActivityManager();
 		bindingService = (IBindingService) workbench
 				.getService(IWorkbenchServices.BINDING);
 		commandService = (ICommandService) workbench
 				.getService(IWorkbenchServices.COMMAND);
 		contextService = (IContextService) workbench
 				.getService(IWorkbenchServices.CONTEXT);
+	}
+
+	/**
+	 * Checks whether the activity manager knows anything about this command
+	 * identifier. If the activity manager is currently filtering this command,
+	 * then it does not appear in the user interface.
+	 * 
+	 * @param command
+	 *            The command which should be checked against the activities;
+	 *            must not be <code>null</code>.
+	 * @return <code>true</code> if the command identifier is not filtered;
+	 *         <code>false</code> if it is
+	 */
+	private final boolean isActive(final Command command) {
+		return activityManager.getIdentifier(command.getId()).isEnabled();
 	}
 
 	/**
@@ -1623,6 +1646,9 @@ public final class KeysPreferencePage extends PreferencePage implements
 					.iterator(); iterator.hasNext();) {
 				Command command = commandService.getCommand((String) iterator
 						.next());
+				if (!isActive(command)) {
+					continue;
+				}
 
 				try {
 					String name = command.getName();
@@ -1771,8 +1797,11 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 			for (Iterator iterator = commandService.getDefinedCommandIds()
 					.iterator(); iterator.hasNext();) {
-				Command command = commandService.getCommand((String) iterator
-						.next());
+				final Command command = commandService
+						.getCommand((String) iterator.next());
+				if (!isActive(command)) {
+					continue;
+				}
 
 				try {
 					String categoryId = command.getCategory().getId();
