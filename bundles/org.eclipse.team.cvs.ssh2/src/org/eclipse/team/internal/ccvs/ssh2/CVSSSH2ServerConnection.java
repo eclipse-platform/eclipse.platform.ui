@@ -148,7 +148,12 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 					8192 /*buffersize*/, 1000 /*writeTimeout*/, 1000 /*closeTimeout*/), timeout > 0 ? timeout : 1, monitor);
 		} catch (JSchException e) {
 			if (e.toString().indexOf("invalid server's version string") == -1) { //$NON-NLS-1$
-				throw new CVSAuthenticationException(e.toString(), CVSAuthenticationException.NO_RETRY);
+			    String message = e.getMessage();
+			    if (message.equals("Auth fail")) { //$NON-NLS-1$
+			        message = "An undetermined authentication failure has occurred";
+			        // Could possibly retry below but wont just in case
+			    }
+				throw new CVSAuthenticationException(message, CVSAuthenticationException.NO_RETRY);
 			}
 			ssh1 = new SSHServerConnection(location, password);
 			if (ssh1 == null) {

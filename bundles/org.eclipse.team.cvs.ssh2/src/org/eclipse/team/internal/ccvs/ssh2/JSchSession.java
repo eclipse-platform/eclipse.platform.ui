@@ -10,36 +10,18 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ssh2;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Enumeration;
-import java.util.Map;
+import java.util.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.IUserAuthenticator;
-import org.eclipse.team.internal.ccvs.core.IUserInfo;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Proxy;
-import com.jcraft.jsch.ProxyHTTP;
-import com.jcraft.jsch.ProxySOCKS5;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SocketFactory;
-import com.jcraft.jsch.UIKeyboardInteractive;
-import com.jcraft.jsch.UserInfo;
+import com.jcraft.jsch.*;
 
 class JSchSession {
 	private static final int SSH_DEFAULT_PORT = 22;
@@ -95,10 +77,13 @@ class JSchSession {
 		private String passphrase;
 		private ICVSRepositoryLocation location;
 		private IUserAuthenticator authenticator;
+        private int attemptCount;
+        private boolean passwordChanged;
 		
-		MyUserInfo(String username, ICVSRepositoryLocation location) {
+		MyUserInfo(String username, String password, ICVSRepositoryLocation location) {
 			this.location = location;
 			this.username = username;
+			this.password = password;
 			ICVSRepositoryLocation _location=location;
 			if(_location==null){
 				String dummy=":extssh:dummy@dummy:/"; //$NON-NLS-1$
@@ -192,15 +177,29 @@ class JSchSession {
 				String name,   
 				String instruction,   
 				String[] prompt,   
-				boolean[] echo){   
+				boolean[] echo){
+		    if (prompt.length == 0) {
+		        // No need to prompt, just return an empty String array
+		        return new String[0];
+		    }
 			try{
+			    if (attemptCount == 0 && password != null && prompt.length == 1 && prompt[0].trim().equalsIgnoreCase("password:")) { //$NON-NLS-1$
+			        // Return the provided password the first time but always prompt on subsequent tries
+			        attemptCount++;
+			        return new String[] { password };
+			    }
 				String[] result=
 					authenticator.promptForKeyboradInteractive(location,
 																destination,   
 																name,   	
 																instruction,
 																prompt,   
-																echo);   
+																echo);
+			    if (result.length == 1 && prompt.length == 1 && prompt[0].trim().equalsIgnoreCase("password:")) { //$NON-NLS-1$
+			        password = result[0];
+			        passwordChanged = true;
+			    }
+			    attemptCount++;
 				return result;
 			}
 			catch(OperationCanceledException e){
@@ -209,7 +208,26 @@ class JSchSession {
 			catch(CVSException e){
 				return null;
 			}
-		} 		
+		}
+		
+        /**
+         * Callback to indicate that a connection is about to be attempted
+         */
+        public void aboutToConnect() {
+            attemptCount = 0;
+            passwordChanged = false;
+        }
+        
+        /**
+         * Callback to indicate that a connection was made
+         */
+        public void connectionMade() {
+            attemptCount = 0;
+            if (passwordChanged && password != null) {
+                // We were prompted for and returned a password so record it with the location
+                location.setPassword(password);
+            }
+        } 		
 	}
 	
 	static Session getSession(ICVSRepositoryLocation location, String username, String password, String hostname, int port, SocketFactory socketFactory) throws JSchException {
@@ -291,11 +309,13 @@ class JSchSession {
 
 				session.setPassword(password);
 
-				UserInfo ui = new MyUserInfo(username, location);
+				MyUserInfo ui = new MyUserInfo(username, password, location);
 				session.setUserInfo(ui);
 				session.setSocketFactory(socketFactory);
 
+				ui.aboutToConnect();
 				session.connect();
+				ui.connectionMade();
 				pool.put(key, session);
 			}
 			return session;
