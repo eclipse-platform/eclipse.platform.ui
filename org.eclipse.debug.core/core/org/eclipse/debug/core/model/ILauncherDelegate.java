@@ -106,7 +106,7 @@ public interface ILauncherDelegate {
 	boolean launch(Object[] elements, String mode, ILauncher launcher);
 	
 	/**
-	 * Returns a memento for an object that this delegate has lanuched, such
+	 * Returns a memento for an object that this delegate has launched, such
 	 * that launched elements can be persisted across workspace invocations.
 	 * The memento is used to re-create the launched element.
 	 * 
