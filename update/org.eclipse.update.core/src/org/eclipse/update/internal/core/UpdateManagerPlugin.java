@@ -4,8 +4,11 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.IAppServer;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.help.AppServer;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -25,7 +28,6 @@ public class UpdateManagerPlugin extends Plugin {
 	private static UpdateManagerPlugin plugin;
 
 	// web install
-	private static IAppServer appServer = null;
 	private static String appServerHost =null;
 	private static int appServerPort = 0;
 
@@ -79,47 +81,18 @@ public class UpdateManagerPlugin extends Plugin {
 	}
 
 	private void startupWebInstallHandler() throws CoreException {
-		// get handle for the web app server
-		IAppServer localAppServer = getWebAppServer();
-		if (localAppServer == null) {
-			if (DEBUG_SHOW_WEB)
-				debug("Unable to obtain web app server");
-			return;
-		}
 		
 		// configure web install handler
-		if (!localAppServer.add("install", "org.eclipse.update.webapp", "")) {
+		if (!AppServer.add("org.eclipse.update", "org.eclipse.update.webapp", "")) {
 			if (DEBUG_SHOW_WEB)
 				debug("Unable to configure web install handler");
 			return;
 		}
 
-		appServerHost = localAppServer.getHost();
-		appServerPort = localAppServer.getPort();
+		appServerHost = AppServer.getHost();
+		appServerPort = AppServer.getPort();
 		if (DEBUG_SHOW_WEB)
 			debug("Web install handler configured on " + appServerHost + ":" + appServerPort);
-	}
-
-	public static IAppServer getWebAppServer() throws CoreException {
-		// FIXME: this code needs to be exposed as an API on some core class
-		if (appServer == null) {
-			// get the app server extension from the system plugin registry	
-			IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-			IExtensionPoint point = pluginRegistry.getExtensionPoint("org.eclipse.help.app-server");
-			if (point == null)
-				return null;
-			IExtension[] extensions = point.getExtensions();
-			if (extensions.length == 0)
-				return null;
-			// There should only be one extension/config element so we just take the first
-			IConfigurationElement[] elements = extensions[0].getConfigurationElements();
-			if (elements.length == 0)
-				return null;
-			// Instantiate the app server
-			appServer = (IAppServer) elements[0].createExecutableExtension("class");
-		}
-		
-		return appServer;
 	}
 
 	private boolean getBooleanDebugOption(String flag, boolean dflt) {

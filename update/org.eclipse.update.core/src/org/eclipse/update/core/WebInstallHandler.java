@@ -1,22 +1,18 @@
 package org.eclipse.update.core;
+
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 /*
  * (c) Copyright 2001 MyCorporation.
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
-
 /**
- * This is a base class for singleton handler of web-based install
- * requests. This class <b>must</b> be subclassed. A constructed instance
- * of handler is set by calling the setWebInstallHandler method.
+ * This is a utility class used find information about the update
+ * web application (handling web-triggered requests)
  * 
  * @since 2.0
  */
 public abstract class WebInstallHandler {
-	
-	private static WebInstallHandler handler = null;
 	
 	/**
 	 * Returns the host identifier for the web application server
@@ -73,35 +69,6 @@ public abstract class WebInstallHandler {
 			return "http://" + host + ":" + port + "/install"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 		
-	/**
-	 * Sets the install handler for web requests. Once set, it cannot
-	 * be reset.
-	 * 
-	 * @param handler handler instance. Must be a subclass of this class.
-	 * @since 2.0
-	 */
-	public static void setWebInstallHandler(WebInstallHandler handler) {
-		if (WebInstallHandler.handler == null)
-			WebInstallHandler.handler = handler;
+			
+			
 	}
-		
-	/**
-	 * Returns the web install handler instance
-	 * 
-	 * @return web install handler
-	 * @since 2.0
-	 */
-	public static WebInstallHandler getWebInstallHandler() {
-		return WebInstallHandler.handler;
-	}
-		
-	/**
-	 * Abstract method called to perform the installation request.
-	 * Subclasses provide an implementation.
-	 * 
-	 * @param sourceFeature feature to install
-	 * @param targetSite target installation site
-	 * @since 2.0
-	 */
-	protected abstract void performInstall(IFeature sourceFeature, ISite targetSite) throws CoreException;
-}

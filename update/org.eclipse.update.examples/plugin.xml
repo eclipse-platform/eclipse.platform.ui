@@ -34,4 +34,12 @@
 	</site-factory>
 </extension>
 
+<extension 	
+	id="site.freeform" 
+	point="org.eclipse.update.core.siteTypes">
+	<site-factory 
+		class="org.eclipse.update.examples.freeform.FreeFormSiteFactory">
+	</site-factory>
+</extension>
+
 </plugin>
