@@ -1095,8 +1095,8 @@ public class PerspectivePresentation {
 			Window window = e.dragSource.getWindow();
 			if (window instanceof DetachedWindow) {
 				if (e.dragSource instanceof PartTabFolder) {
-					// there is only one tab folder in a detach window
-					e.relativePosition = PartDragDrop.INVALID;
+					//If we are dragging the folder around just move the window
+					e.relativePosition = PartDragDrop.OFFSCREEN;
 					return;
 				}
 				ILayoutContainer container = e.dragSource.getContainer();
