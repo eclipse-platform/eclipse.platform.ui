@@ -2564,7 +2564,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				newArgs[2] = CMD_FIRSTUSE;
 			System.arraycopy(args,0,newArgs,newArgCnt,args.length);
 			if (DEBUG)
-				debug("triggering reconciliation ...");
+				debug("triggering reconciliation ..."); //$NON-NLS-1$
 			return newArgs;
 		}
 	}
