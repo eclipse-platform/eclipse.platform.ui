@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.internal.util.ImageSupport;
 import org.eclipse.ui.part.ViewPart;
 /**
  * The ProgressView is the class that shows the details of the current
@@ -180,10 +181,12 @@ public class JobView extends ViewPart implements IViewPart {
 				viewer.clearAll();
 			}
 		};
-		clearAllAction.setToolTipText(ProgressMessages.getString("NewProgressView.RemoveAllJobsToolTip")); //$NON-NLS-1$	
-		ImageDescriptor id = ImageDescriptor.createFromFile(JobView.class, "newprogress_clearall.gif"); //$NON-NLS-1$
+		clearAllAction.setToolTipText(ProgressMessages.getString("NewProgressView.RemoveAllJobsToolTip")); //$NON-NLS-1$
+		ImageDescriptor id = ImageSupport.getImageDescriptor("icons/full/elcl16/progress_remall.gif"); //$NON-NLS-1$
 		if (id != null)
 			clearAllAction.setImageDescriptor(id);
-		
+		id = ImageSupport.getImageDescriptor("icons/full/dlcl16/progress_remall.gif"); //$NON-NLS-1$
+		if (id != null)
+			clearAllAction.setDisabledImageDescriptor(id);
 	}
 }

@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.internal.util.ImageSupport;
 import org.eclipse.ui.progress.IProgressConstants;
 
 /**
@@ -189,10 +190,10 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	protected Control createAnimationItem(Composite parent) {
 	    	    
 	    if (okImage == null) {
-	        Display display= parent.getDisplay();
-	        noneImage= ImageDescriptor.createFromFile(getClass(), "newprogress_none.gif").createImage(display); //$NON-NLS-1$
-	        okImage= ImageDescriptor.createFromFile(getClass(), "newprogress_ok.gif").createImage(display); //$NON-NLS-1$
-	        errorImage= ImageDescriptor.createFromFile(getClass(), "newprogress_error.gif").createImage(display); //$NON-NLS-1$
+	        Display display= parent.getDisplay();	        
+	        noneImage= ImageSupport.getImageDescriptor("icons/full/progress/progress_none.gif").createImage(display); //$NON-NLS-1$
+	        okImage= ImageSupport.getImageDescriptor("icons/full/progress/progress_ok.gif").createImage(display); //$NON-NLS-1$
+	        errorImage= ImageSupport.getImageDescriptor("icons/full/progress/progress_error.gif").createImage(display); //$NON-NLS-1$
 	    }
 		
 		top = new Composite(parent, SWT.NULL);
