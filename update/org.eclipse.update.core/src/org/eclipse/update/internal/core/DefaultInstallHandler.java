@@ -34,7 +34,7 @@ public class DefaultInstallHandler extends BaseInstallHandler {
 		// verify non-plugin archives. The DefaultInstallHandler assumes
 		// the verifier associated with the feature is able to verify the
 		// data archives.
-		if (nonPluginData == null || listener == null || nonPluginData.length == 0)
+		if (nonPluginData == null || nonPluginData.length == 0)
 			return;
 
 		this.nonPluginEntries = nonPluginData;
