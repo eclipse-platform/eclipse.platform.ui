@@ -888,8 +888,17 @@ protected boolean sourceConflictsWithDestination(IPath sourcePath){
 	IContainer container = getSpecifiedContainer();
 	if(container == null)
 		return false;
-	else
-		return getSpecifiedContainer().getLocation().isPrefixOf(sourcePath);
+	else {
+		IPath destinationLocation = getSpecifiedContainer().getLocation();
+		if (destinationLocation != null) { 
+			return destinationLocation.isPrefixOf(sourcePath);
+		}
+		else {
+			// null destination location is handled in 
+			// WizardResourceImportPage 
+			return false;
+		}
+	}
 }
 
 

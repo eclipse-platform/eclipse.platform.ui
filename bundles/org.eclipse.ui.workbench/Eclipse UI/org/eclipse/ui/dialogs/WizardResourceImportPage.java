@@ -452,6 +452,15 @@ protected final boolean validateDestinationGroup() {
 			setErrorMessage(INACCESSABLE_FOLDER_MESSAGE);
 			return false;
 		}
+		if (container.getLocation() == null) {
+			if (container.isLinked()) {
+				setErrorMessage(WorkbenchMessages.getString("WizardImportPage.undefinedPathVariable")); //$NON-NLS-1$	
+			}
+			else {
+				setErrorMessage(WorkbenchMessages.getString("WizardImportPage.containerNotExist")); //$NON-NLS-1$
+			}
+			return false;
+		}
 	}
 	
 	if(sourceConflictsWithDestination(containerPath)){
