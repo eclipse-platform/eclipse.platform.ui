@@ -26,7 +26,6 @@ public class ActivitiesData extends RequestData {
 	public ActivitiesData(ServletContext context, HttpServletRequest request,
 			HttpServletResponse response) {
 		super(context, request, response);
-			//System.out.println();
 			String changeShowAll = request.getParameter("showAll");
 			if (changeShowAll != null) {
 				if ("off".equalsIgnoreCase(changeShowAll)) {
@@ -40,6 +39,10 @@ public class ActivitiesData extends RequestData {
 				}
 			} else {
 				// no change to afilter
+			}
+			String confirmShowAll= request.getParameter("showconfirm");
+			if("false".equalsIgnoreCase(confirmShowAll)){
+				preferences.setDontConfirmShowAll(true);
 			}
 	}
 	/**

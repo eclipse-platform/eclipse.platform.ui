@@ -98,7 +98,12 @@ public class WebappPreferences {
 	}
 	public boolean isWindowTitlePrefix() {
 		return "true".equalsIgnoreCase(prefs.getString("windowTitlePrefix"));
-
+	}
+	public boolean isDontConfirmShowAll() {
+		return prefs.getBoolean("dontConfirmShowAll");
+	}
+	public void setDontConfirmShowAll(boolean dontconfirm) {
+		prefs.setValue("dontConfirmShowAll", dontconfirm);
 	}
 
 }

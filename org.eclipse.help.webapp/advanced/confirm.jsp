@@ -87,6 +87,11 @@ function sizeButtons() {
 }
 
 function confirmed(){
+<% if ("true".equalsIgnoreCase(request.getParameter("dontaskagain")) ){ %>
+	if(document.getElementById("dontask").checked){
+		window.opener.<%=request.getParameter("dontaskagainCallback")%>;
+	}
+<% } %>
 	window.opener.<%=request.getParameter("confirmCallback")%>;
  	window.close();
 	return false;

@@ -88,16 +88,30 @@ function showView(view)
 }
 
 var activityFiltering = <%=(new ActivitiesData(application, request, response)).isActivityFiltering()?"true":"false"%>;
+var displayShowAllConfirmation = <%=prefs.isDontConfirmShowAll()?"false":"true"%>;
 var regExp=/&(showAll|synch)=(on|off|yes|no)/gi;
 function toggleShowAll(){
 	if(activityFiltering){
-		confirmShowAll();
+		if( displayShowAllConfirmation ){
+			confirmShowAll();
+		}else{
+			showAll();
+		}
 	} else {
 		dontShowAll();
 	}
 }
 
+function dontAskAgain(){
+	displayShowAllConfirmation = false;
+}
 function showAll(){
+	var displayConfirmParam;
+	if(displayShowAllConfirmation){
+		displayConfirmParam="";
+	}else{
+		displayConfirmParam="&showconfirm=false";
+	}
 	activityFiltering=false;
 	try{
 		window.frames.toc.tocToolbarFrame.setButtonState("show_all", true);
@@ -106,7 +120,7 @@ function showAll(){
 		window.frames.search.searchToolbarFrame.setButtonState("show_all", true);
 	}catch(ex) {}
 	try{
-		window.frames.toc.tocViewFrame.location.replace(window.frames.toc.tocViewFrame.location.href.replace(regExp, "")+"&showAll=on");
+		window.frames.toc.tocViewFrame.location.replace(window.frames.toc.tocViewFrame.location.href.replace(regExp, "")+"&showAll=on"+displayConfirmParam);
 	}catch(ex) {}
 	try{
 		window.frames.search.searchViewFrame.location.replace(window.frames.search.searchViewFrame.location.href.replace(regExp, "")+"&showAll=on");
