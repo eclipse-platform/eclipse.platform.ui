@@ -5,8 +5,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 //
-// PlantySaxDefaultHandler.java
-//
 // Copyright:
 // GEBIT Gesellschaft fuer EDV-Beratung
 // und Informatik-Technologien mbH, 
@@ -15,6 +13,9 @@ http://www.eclipse.org/legal/cpl-v10.html
 //
 package org.eclipse.ui.externaltools.internal.ant.editor;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.text.MessageFormat;
 import java.util.Stack;
 
@@ -22,10 +23,17 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.util.FileUtils;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -97,6 +105,11 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
      * The name of the document root element or null if none seen.
      */
 	public String rootElementName;
+	
+	/**
+	 * Used as a helper for resolving external relative entries.
+	 */
+	private File mainFileContainer;
 
 
     /**
@@ -107,7 +120,7 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
      * @param aColumnOfCursorPosition the startingColumn where the cursor is located in
      * the document. The first startingColumn is refered to with an index of '0'.
      */
-    public PlantySaxDefaultHandler(int aRowOfCursorPosition, int aColumnOfCursorPosition) throws ParserConfigurationException {
+    public PlantySaxDefaultHandler(File mainFileContainer, int aRowOfCursorPosition, int aColumnOfCursorPosition) throws ParserConfigurationException {
         super();
 		if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
 			ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler(" +aRowOfCursorPosition+ ", "+aColumnOfCursorPosition+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -117,6 +130,7 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
         }
         rowOfCursorPosition = aRowOfCursorPosition;
         columnOfCursorPosition = aColumnOfCursorPosition;
+        this.mainFileContainer= mainFileContainer;
         initialize();
     }
 
@@ -308,5 +322,38 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
           //  super.fatalError(anException);
         }
     }
+    
+	/**
+	 * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String, java.lang.String)
+	 */
+	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
+		int index= systemId.indexOf(':');
+		if (index > 0) {
+			//remove file:
+			systemId= systemId.substring(index+1, systemId.length());
+		}
+		File relativeFile= null;
+		IPath filePath= new Path(systemId);
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
+		if (file == null) {
+			//relative path
+			try {
+				//this call is ok if mainFileContainer is null
+				relativeFile= FileUtils.newFileUtils().resolveFile(mainFileContainer, systemId);
+			} catch (BuildException be) {
+				return null;
+			}
+		}
 
+		if (relativeFile.exists()) {
+			try {
+				return new InputSource(new FileReader(relativeFile));
+			} catch (FileNotFoundException e) {
+				return null;
+			}
+		
+		}
+			
+		return super.resolveEntity(publicId, systemId);
+	}
 }

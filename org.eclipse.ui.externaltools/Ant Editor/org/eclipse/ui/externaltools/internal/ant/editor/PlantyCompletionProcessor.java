@@ -1,5 +1,10 @@
-//
-// PlantyCompletionProcessor.java
+package org.eclipse.ui.externaltools.internal.ant.editor;
+
+/**********************************************************************
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 //
 // Copyright:
 // GEBIT Gesellschaft fuer EDV-Beratung
@@ -7,8 +12,6 @@
 // Berlin, Duesseldorf, Frankfurt (Germany) 2002
 // All rights reserved.
 //
-package org.eclipse.ui.externaltools.internal.ant.editor;
-
 
 import java.io.File;
 import java.io.IOException;
@@ -87,11 +90,11 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
      * <code>ICompletionProposal</code> instances by their display string.
      */
     public class CompletionComparator implements Comparator {
-                public int compare(Object o1, Object o2) {
-                    String tempString1 = ((ICompletionProposal)o1).getDisplayString();
-                    String tempString2 = ((ICompletionProposal)o2).getDisplayString();
-                    return tempString1.compareTo(tempString2);
-                }
+        public int compare(Object o1, Object o2) {
+            String tempString1 = ((ICompletionProposal)o1).getDisplayString();
+            String tempString2 = ((ICompletionProposal)o2).getDisplayString();
+            return tempString1.compareTo(tempString2);
+        }
     }        
  
     /**
@@ -262,8 +265,6 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
         return parser.parseDTD(tempReader, "project"); //$NON-NLS-1$
     }
     
-    
-
 	/**
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
@@ -1036,14 +1037,23 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
         
         // Set the handler
         PlantySaxDefaultHandler tempHandler = null;
+        File editedFile= getEditedFile();
         try {
-            tempHandler = new PlantySaxDefaultHandler(aLineNumber, aColumnNumber);
+			File parent = null;
+			if(editedFile != null) {
+				parent = editedFile.getParentFile();
+			}
+        	tempHandler = new PlantySaxDefaultHandler(parent, aLineNumber, aColumnNumber);
         } catch (ParserConfigurationException e) {
 			ExternalToolsPlugin.getDefault().log(e);
         }
         
         // Parse!
         InputSource tempInputSource = new InputSource(new StringReader(aWholeDocumentString));
+		if (editedFile != null) {
+			//needed for resolving relative external entities
+			tempInputSource.setSystemId(editedFile.getAbsolutePath());
+		}
         try {
             tempParser.parse(tempInputSource, tempHandler);
         } catch(SAXParseException e) {
@@ -1237,18 +1247,26 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
         
         // Set the handler
         EnclosingTargetSearchingHandler tempHandler = null;
+		File editedFile= getEditedFile();
         try {
-            tempHandler = new EnclosingTargetSearchingHandler(aLineNumber, aColumnNumber);
+		   File parent = null;
+		   if(editedFile != null) {
+			   parent = editedFile.getParentFile();
+		   }
+            tempHandler = new EnclosingTargetSearchingHandler(parent, aLineNumber, aColumnNumber);
         } catch (ParserConfigurationException e) {
             ExternalToolsPlugin.getDefault().log(e);
         }
         
         // Parse!
         InputSource tempInputSource = new InputSource(new StringReader(aWholeDocumentString));
+		if (editedFile != null) {
+			//needed for resolving relative external entities
+			tempInputSource.setSystemId(editedFile.getAbsolutePath());
+		}
         try {
             tempParser.parse(tempInputSource, tempHandler);
         } catch(SAXParseException e) {
-         //   ExternalToolsPlugin.getDefault().log(e);
             // Ignore since that happens always if the edited file is not valid. We try to handle that.
         } catch (SAXException e) {
             ExternalToolsPlugin.getDefault().log(e);
