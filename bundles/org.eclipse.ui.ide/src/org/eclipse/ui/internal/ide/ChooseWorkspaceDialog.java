@@ -68,6 +68,11 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
     public void prompt(boolean force) {
         if (force || launchData.getShowDialog()) {
             open();
+
+            // 70576: make sure dialog gets dismissed on ESC too
+            if (getReturnCode() == CANCEL)
+                launchData.workspaceSelected(null);
+
             return;
         }
 

@@ -330,8 +330,16 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
             force = true;
 
             // 70576: don't accept empty input
-            if (instancePath.length() <= 0)
+            if (instancePath.length() <= 0) {
+                MessageDialog
+                .openError(
+                        shell,
+                        IDEWorkbenchMessages
+                                .getString("IDEApplication.workspaceEmptyTitle"), //$NON-NLS-1$
+                        IDEWorkbenchMessages
+                                .getString("IDEApplication.workspaceEmptyMessage")); //$NON-NLS-1$
                 continue;
+            }
 
             // create the workspace if it does not already exist
             File workspace = new File(instancePath);
