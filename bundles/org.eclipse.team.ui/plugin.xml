@@ -88,62 +88,6 @@
 			<separator name="projectGroup"/>
 		</menu>
 	</objectContribution>
-	
-	<objectContribution
-       	   id="org.eclipse.team.ui.FileContributions"
-           objectClass="org.eclipse.core.resources.IFile" adaptable="true">
-		<menu
-			id="team.main"
-			path="additions"
-			label="%TeamGroupMenu.label">
-			<separator name="checkinGroup"/>
-			<separator name="manageGroup"/>
-			<separator name="advancedGroup"/>
-			<separator name="projectGroup"/>
-		</menu>	
-		<action 
-			id="org.eclipse.team.ui.Delete"
-			label="%Delete.label"
-			tooltip="%Delete.tooltip"
-			menubarPath="team.main/advancedGroup"
-			class="org.eclipse.team.ui.actions.DeleteAction">
-		</action>
-		<action 
-			id="org.eclipse.team.ui.Move"
-			label="%Move.label"
-			tooltip="%Move.tooltip"
-			menubarPath="team.main/advancedGroup"
-			class="org.eclipse.team.ui.actions.MoveAction">
-		</action>			
-	</objectContribution>
-	
-	<objectContribution
-       	   id="org.eclipse.team.ui.FolderContributions"
-           objectClass="org.eclipse.core.resources.IFolder" adaptable="true">
-		<menu
-			id="team.main"
-			path="additions"
-			label="%TeamGroupMenu.label">
-			<separator name="checkinGroup"/>
-			<separator name="manageGroup"/>
-			<separator name="advancedGroup"/>
-			<separator name="projectGroup"/>
-		</menu>
-		<action 
-			id="org.eclipse.team.ui.Delete"
-			label="%Delete.label"
-			tooltip="%Delete.tooltip"
-			menubarPath="team.main/advancedGroup"
-			class="org.eclipse.team.ui.actions.DeleteAction">
-		</action>
-		<action 
-			id="org.eclipse.team.ui.Move"
-			label="%Move.label"
-			tooltip="%Move.tooltip"
-			menubarPath="team.main/advancedGroup"
-			class="org.eclipse.team.ui.actions.MoveAction">
-		</action>				
-	</objectContribution>
 </extension>
 
 	<!-- ************** Views ********************** -->

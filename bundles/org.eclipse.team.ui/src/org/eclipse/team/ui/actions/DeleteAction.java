@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
@@ -33,21 +34,31 @@ public class DeleteAction extends TeamAction {
 	public void run(IAction action) {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
-				try {
-					Hashtable table = getProviderMapping();
-					Set keySet = table.keySet();
-					monitor.beginTask("", keySet.size() * 1000);
-					monitor.setTaskName(Policy.bind("DeleteAction.deleting"));
-					Iterator iterator = keySet.iterator();
-					while (iterator.hasNext()) {
-						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
-						ITeamProvider provider = (ITeamProvider)iterator.next();
-						List list = (List)table.get(provider);
-						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						provider.delete(providerResources, subMonitor);
-						for (int i = 0; i < providerResources.length; i++) {
-							providerResources[i].delete(true, monitor);
-						}							
+				try {		
+					
+					final boolean[] okToContinue = {false};
+					getShell().getDisplay().syncExec(new Runnable() {
+						public void run() {
+							okToContinue[0] = MessageDialog.openConfirm(getShell(), Policy.bind("DeleteAction.promptTitle"), Policy.bind("DeleteAction.promptMessage"));
+						}
+					});
+								
+					if(okToContinue[0]) {
+						Hashtable table = getProviderMapping();
+						Set keySet = table.keySet();
+						monitor.beginTask("", keySet.size() * 1000);
+						monitor.setTaskName(Policy.bind("DeleteAction.deleting"));
+						Iterator iterator = keySet.iterator();
+						while (iterator.hasNext()) {
+							IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
+							ITeamProvider provider = (ITeamProvider)iterator.next();
+							List list = (List)table.get(provider);
+							IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
+							provider.delete(providerResources, subMonitor);
+							for (int i = 0; i < providerResources.length; i++) {
+								providerResources[i].delete(true, monitor);
+							}							
+						}
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
@@ -55,7 +66,7 @@ public class DeleteAction extends TeamAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("DeleteAction.delete"), this.PROGRESS_DIALOG);
+		}, Policy.bind("DeleteAction.delete"), this.PROGRESS_BUSYCURSOR);
 	}
 	/**
 	 * @see TeamAction#isEnabled()
