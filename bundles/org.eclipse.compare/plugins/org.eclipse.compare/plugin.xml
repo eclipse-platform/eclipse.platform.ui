@@ -28,25 +28,25 @@
 	<extension-point
 		id="structureCreators"
 		name="%structureCreators"
-		schema="schema/structureCreators.mxsd"
+		schema="schema/structureCreators.exsd"
 	/>
 		
 	<extension-point
 		id="structureMergeViewers"
 		name="%structureMergeViewers"
-		schema="schema/structureMergeViewers.mxsd"
+		schema="schema/structureMergeViewers.exsd"
 	/>
 		
 	<extension-point
 		id="contentMergeViewers"
 		name="%contentMergeViewers"
-		schema="schema/contentMergeViewers.mxsd"
+		schema="schema/contentMergeViewers.exsd"
 	/>
 		
 	<extension-point
 		id="contentViewers"
 		name="%contentViewers"
-		schema="schema/contentViewers.mxsd"
+		schema="schema/contentViewers.exsd"
 	/>
 
 <!-- Extensions -->
