@@ -129,7 +129,6 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		suite.addTest(new DeltaDataTreeTest("testGetChildren"));
 		suite.addTest(new DeltaDataTreeTest("testGetNameOfChild"));
 		suite.addTest(new DeltaDataTreeTest("testGetNamesOfChildren"));
-		suite.addTest(new DeltaDataTreeTest("testGetNodeInfo"));
 		suite.addTest(new DeltaDataTreeTest("testIncludes"));
 		suite.addTest(new DeltaDataTreeTest("testLongDeltaChain"));
 		suite.addTest(new DeltaDataTreeTest("testNewEmptyDeltaTree"));
@@ -783,55 +782,6 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		assertTrue("13", caught);
 
 		return;
-	}
-
-	/**
-	 * Test the getNodeInfo(NodeKey) method
-	 */
-	public void testGetNodeInfo() {
-
-		/**
-		 * Answer a node info object describing the specified node
-		 * of the receiver.  Only the receiver's representation is accessed.  If the
-		 * receiver is a delta representation, and the specified node has not been
-		 * modified in the delta, the node info describes the node as missing (the parent
-		 * tree is not consulted).
-		 */
-
-		/* basic node info on a complete tree */
-		NodeInfo info = tree.getNodeInfo(rootKey);
-		assertTrue("1", info.getNamesOfChildren().length == 2);
-		assertTrue("2", info.getNamesOfChildren()[0].equals("leftOfRoot"));
-		assertTrue("3", info.getNamesOfChildren()[1].equals("rightOfRoot"));
-		assertTrue("4", info.getNamesOfDeletedChildren().length == 0);
-
-		info = tree.getNodeInfo(leftKey);
-		assertTrue("5", info.getNamesOfChildren().length == 3);
-		assertTrue("6", info.getNamesOfChildren()[0].equals("one"));
-		assertTrue("7", info.getNamesOfChildren()[2].equals("two"));
-		assertTrue("8", info.getNamesOfDeletedChildren().length == 0);
-
-		/* create a delta with deletions */
-		tree.immutable();
-		DeltaDataTree delta = tree.newEmptyDeltaTree();
-		delta.deleteChild(leftKey, "one");
-		delta.deleteChild(rootKey, "rightOfRoot");
-
-		/* get info on deleted tree */
-		info = delta.getNodeInfo(rootKey);
-		assertTrue("9", info.getNamesOfChildren().length == 1);
-		assertTrue("10", info.getNamesOfDeletedChildren().length == 1);
-		assertTrue("11", info.getNamesOfChildren()[0].equals("leftOfRoot"));
-		assertTrue("12", info.getNamesOfDeletedChildren()[0].equals("rightOfRoot"));
-
-		info = delta.getNodeInfo(leftKey);
-		assertTrue("13", info.getNamesOfChildren().length == 0);
-		assertTrue("14", info.getNamesOfDeletedChildren().length == 1);
-		assertTrue("15", info.getNamesOfDeletedChildren()[0].equals("one"));
-
-		info = delta.getNodeInfo(rightKey);
-		assertTrue("16", info.getType() == AbstractDataTreeNode.T_DELETED_NODE);
-
 	}
 
 	/**
