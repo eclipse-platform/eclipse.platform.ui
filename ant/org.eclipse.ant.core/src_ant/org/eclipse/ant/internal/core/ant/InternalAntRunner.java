@@ -7,7 +7,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0.
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     IBM Corporation - derived implementation
  *     Blake Meike (blakem@world.std.com)- patch for bug 31691 and bug 34488
  *******************************************************************************/
 
