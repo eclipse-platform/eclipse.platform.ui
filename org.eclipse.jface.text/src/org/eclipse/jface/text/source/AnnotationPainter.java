@@ -40,41 +40,76 @@ import org.eclipse.jface.text.Region;
 
 
 /**
- * Highlights annotations.
+ * Paints annotations provided by an annotation model as squigglies onto an 
+ * associated source viewer. Clients usually instantiate and configure objects
+ * of this class.
+ * 
+ * @since 2.1
  */
 public class AnnotationPainter implements IPainter, PaintListener, IAnnotationModelListener {	
 	
+	/** 
+	 * The presentation information (decoration) for an annotation.  Each such
+	 * object represents one squiggly.
+	 */
 	private static class Decoration {
+		/** The position of this decoration */
 		Position fPosition;
+		/** The color of this decoration */
 		Color fColor;
+		/** Indicates whether this decoration might span multiple lines */
 		boolean fMultiLine;
 	};
 	
+	/** Indicates whether this painter is active */
 	private boolean fIsActive= false;
+	/** Indicates whether this painter is managing decorations */
 	private boolean fIsPainting= false;
+	/** Indicates whether this painter is setting its annotation model */
 	private boolean fIsSettingModel= false;
-	
+	/** The associated source viewer */
 	private ISourceViewer fSourceViewer;
+	/** The cached widget of the source viewer */
 	private StyledText fTextWidget;
+	/** The annotation model providing the annotations to be drawn */
 	private IAnnotationModel fModel;
+	/** The annotation access */
 	private IAnnotationAccess fAnnotationAccess;
+	/** The list of decorations */
 	private List fDecorations= new ArrayList();
-	
+	/** The internal color table */
 	private Map fColorTable= new HashMap();
+	/** The list of types of annotations that are painted by this painter */
 	private Set fAnnotationTypes= new HashSet();
 
 	
-	
+	/**
+	 * Creates a new annotation painter for the given source viewer and with the given
+	 * annotation access. The painter is uninitialized, i.e.  no annotation types are configured
+	 * to be painted.
+	 * 
+	 * @param sourceViewer the source viewer for this painter
+	 * @param access the annotation access for this painter
+	 */
 	public AnnotationPainter(ISourceViewer sourceViewer, IAnnotationAccess access) {
 		fSourceViewer= sourceViewer;
 		fAnnotationAccess= access;
 		fTextWidget= sourceViewer.getTextWidget();
 	}
 	
+	/** 
+	 * Returns whether this painter has to draw any suiggly.
+	 * 
+	 * @return <code>true</code> if there are squigglies to be drawn, <code>false</code> otherwise
+	 */
 	private boolean hasDecorations() {
 		return !fDecorations.isEmpty();
 	}	
 	
+	/**
+	 * Enables painting. This painter registers a paint listener with the
+	 * source viewer's widget.
+	 */
 	private void enablePainting() {
 		if (!fIsPainting && hasDecorations()) {
 			fIsPainting= true;
@@ -83,6 +118,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 	}
 	
+	/**
+	 * Disables painting, if is has previously been enabled. Removes
+	 * any paint listeners registered with the source viewer's widget.
+	 * 
+	 * @param redraw <code>true</code> if the widget should be redrawn after disabling
+	 */
 	private void disablePainting(boolean redraw) {
 		if (fIsPainting) {
 			fIsPainting= false;
@@ -92,6 +133,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 	}
 	
+	/**
+	 * Sets the annotation model for this painter. Registers this painter
+	 * as listener of the give model, if the model is not <code>null</code>.
+	 * 
+	 * @param model the annotation model
+	 */
 	private void setModel(IAnnotationModel model) {
 		if (fModel != model) {
 			if (fModel != null)
@@ -108,6 +155,10 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 	}
 	
+	/**
+	 * Updates the set of decorations based on the current state of
+	 * the painter's annotation model.
+	 */
 	private void catchupWithModel() {	
 		if (fDecorations != null) {
 			fDecorations.clear();
@@ -137,6 +188,9 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 	}
 	
+	/**
+	 * Recomputes the squigglies to be drawn and redraws them.
+	 */
 	private void updatePainting() {
 		disablePainting(true);
 		catchupWithModel();							
@@ -165,6 +219,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 	}
 	
+	/**
+	 * Sets the color in which the squiggly for the given annotation type should be drawn.
+	 * 
+	 * @param annotationType the annotation type
+	 * @param color the color
+	 */
 	public void setAnnotationTypeColor(Object annotationType, Color color) {
 		if (color != null)
 			fColorTable.put(annotationType, color);
@@ -172,18 +232,42 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			fColorTable.remove(annotationType);
 	}
 	
+	/**
+	 * Adds the given annotation type to the list of annotation types whose
+	 * annotations should be painted by this painter. If the annotation  type
+	 * is already in this list, this method is without effect.
+	 * 
+	 * @param annotationType the annotation type
+	 */
 	public void addAnnotationType(Object annotationType) {
 		fAnnotationTypes.add(annotationType);
 	}
 	
+	/**
+	 * Removes the given annotation type from the list of annotation types whose
+	 * annotations are painted by this painter. If the annotation type is not
+	 * in this list, this method is wihtout effect.
+	 * 
+	 * @param annotationType the annotation type
+	 */
 	public void removeAnnotationType(Object annotationType) {
 		fAnnotationTypes.remove(annotationType);
 	}
 	
+	/**
+	 * Clears the list of annotation types whose annotations are
+	 * painted by this painter.
+	 */
 	public void removeAllAnnotationTypes() {
 		fAnnotationTypes.clear();
 	}
 	
+	/**
+	 * Returns whether the list of annotation types whose annotations are painted
+	 * by this painter contains at least on element.
+	 * 
+	 * @return <code>true</code> if there is an annotation type whose annotations are painted
+	 */
 	public boolean isPaintingAnnotations() {
 		return !fAnnotationTypes.isEmpty();
 	}
@@ -208,9 +292,11 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		fDecorations= null;
 	}
 
-	/*
-	 * Returns the document offset of the upper left corner of the widgets viewport,
+	/**
+	 * Returns the document offset of the upper left corner of the source viewer's viewport,
 	 * possibly including partially visible lines.
+	 * 
+	 * @return the document offset if the upper left corner of the viewport
 	 */
 	private int getInclusiveTopIndexStartOffset() {
 		
@@ -236,6 +322,11 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			handleDrawRequest(event.gc);
 	}
 	
+	/**
+	 * Handles the request to draw the annotations using the given gaphical context.
+	 * 
+	 * @param gc the graphical context
+	 */
 	private void handleDrawRequest(GC gc) {
 		
 		if (fTextWidget == null) {
@@ -286,6 +377,13 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 	}
 	
+	/**
+	 * Returns the widget region that corresponds to the given region in the
+	 * viewer's document.
+	 * 
+	 * @param p the region in the viewer's document
+	 * @return the corresponding widget region
+	 */
 	private IRegion getWidgetRange(Position p) {
 		if (fSourceViewer instanceof ITextViewerExtension3) {
 			
@@ -308,6 +406,15 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		return null;
 	}
 	
+	/**
+	 * Computes an array of alternating x and y values which are the corners of the squiggly line of the
+	 * given height between the given end points.
+	 *  
+	 * @param left the left end point
+	 * @param right the right end point
+	 * @param height the height of the squiggly line
+	 * @return the array of alternating x and y values which are the corners of the squiggly line
+	 */
 	private int[] computePolyline(Point left, Point right, int height) {
 		
 		final int WIDTH= 4; // must be even
@@ -350,6 +457,15 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		return coordinates;
 	}
 	
+	/**
+	 * Draws a squiggly line of the given length start at the given offset in the
+	 * given color.
+	 * 
+	 * @param gc the grahical context
+	 * @param offset the offset of the line
+	 * @param length the length of the line
+	 * @param color the color of the line
+	 */
 	private void draw(GC gc, int offset, int length, Color color) {
 		if (gc != null) {
 			
@@ -397,7 +513,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			updatePainting();
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IPainter#setPositionManager(org.eclipse.jface.text.IPaintPositionManager)
 	 */
 	public void setPositionManager(IPaintPositionManager manager) {

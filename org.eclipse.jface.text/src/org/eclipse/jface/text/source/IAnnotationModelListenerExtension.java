@@ -13,7 +13,7 @@ package org.eclipse.jface.text.source;
  
 /**
  * Extension interface for <code>IAnnotationModelListener</code>. Introduces a
- * notification mechanism that notifies the userby means of <code>AnnotationModelEvent</code>s.
+ * notification mechanism that notifies the user by means of <code>AnnotationModelEvent</code>s.
  * Thus, more detailed information can be sent to the listener. Will replace the original notification
  * mechanism of <code>IAnnotationModelListener</code>.
  * 

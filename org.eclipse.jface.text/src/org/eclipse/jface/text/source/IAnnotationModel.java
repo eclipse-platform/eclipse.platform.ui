@@ -19,15 +19,14 @@ import org.eclipse.jface.text.Position;
 
 
 /**
- * This interface defines the model component for a vertical ruler.
- * It maintains a set of annotations and notifies registered annotation 
+ * This interface defines the model for managing annotations attached to a document.
+ * The model maintains a set of annotations for a given document and notifies registered annotation 
  * model listeners about annotation model changes. It also provides methods
  * for inquerying the current offset and length of an annotation managed
  * by this model.<p>
  * Clients may implement this interface or use the default implementation provided
  * by <code>AnnotationModel</code>.
  *
- * @see IVerticalRuler
  * @see Annotation
  * @see IAnnotationModelListener
  */

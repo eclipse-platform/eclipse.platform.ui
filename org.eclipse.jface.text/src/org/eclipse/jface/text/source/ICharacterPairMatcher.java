@@ -14,11 +14,24 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * ICharacterPairMatcher.java
+ * A character pair matcher finds to a character at a certain document offset the matching peer character.
+ * It is the matchers responsibility to define the concepts of "matching" and "peer". The matching process 
+ * starts at a given offset. Starting of this offset, the matcher chooses a character close to this offset. The
+ * anchor defines whether the chosen character is left or right of the initial offset. The matcher then searches
+ * for the matching peer character of the chosen character and if it finds one, delivers the minimal region of
+ * the document that contains both characters.
+ * 
+ * @since 2.1
  */
 public interface ICharacterPairMatcher {
 
+	/**
+	 * Indicates the anchor value "right".
+	 */
 	int RIGHT= 0;
+	/**
+	 * Indicates the anchor value "left".
+	 */
 	int LEFT= 1;
 
 
@@ -35,16 +48,23 @@ public interface ICharacterPairMatcher {
 	void clear();
 
 	/**
-	 * Method match.
-	 * @param iDocument
-	 * @param i
-	 * @return IRegion
+	 * Starting at the given offset, the matcher chooses a character close to this offset. 
+	 * The matcher then searches for the matching peer character of the chosen character
+	 * and if it finds one, returns the minimal region of the document that contains both characters.
+	 * It returns <code>null</code> if there is no peer character.
+	 * 
+	 * @param iDocument the document to work on
+	 * @param i the start offset
+	 * @return the minimal region containg the peer characters
 	 */
 	IRegion match(IDocument iDocument, int i);
 
 	/**
-	 * Method getAnchor.
-	 * @return int
+	 * Returns the anchor for the region of the matching peer characters. The anchor
+	 * says whether the character that has been chosen to search for its peer character
+	 * has been left or right of the initial offset.
+	 * 
+	 * @return <code>RIGHT</code> or <code>LEFT</code>
 	 */
 	int getAnchor();
 }

@@ -54,7 +54,7 @@ import org.eclipse.jface.text.ITextViewerExtension3;
  * Standard implementation of <code>IVerticalRuler</code>. This ruler does not have a 
  * a visual representation of its own.  The presentation comes from the configurable list 
  * of decorators. Decorators must implement the <code>IVerticalRulerColumn</code>
- * interface.
+ * interface.<p>
  * Clients may instantiate and configure this class.
  *
  * @see IVerticalRulerColumn
@@ -287,7 +287,8 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 		 * 
 		 * @param clazz the listener type
 		 * @param listener the listener object
-		 */		private void removeListener(Class clazz, SWTEventListener listener) {
+		 */
+		private void removeListener(Class clazz, SWTEventListener listener) {
 			int length= fCachedListeners.size();
 			for (int i= 0; i < length; i++) {
 				ListenerInfo info= (ListenerInfo) fCachedListeners.get(i);
@@ -522,6 +523,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 	
 	/**
 	 * Constructs a new composite ruler with the given gap between its columns.
+	 * 
 	 * @param gap
 	 */
 	public CompositeRuler(int gap) {
@@ -700,6 +702,15 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 		return widgetLine2ModelLine(fTextViewer, line);
 	}
 		
+	/**
+	 * Returns the line in the given viewer's document that correspond to the given
+	 * line of the viewer's widget.
+	 * 
+	 * @param viewer the viewer
+	 * @param widgetLine the widget line
+	 * @return the corresponding line the viewer's document
+	 * @since 2.1
+	 */
 	protected final static int widgetLine2ModelLine(ITextViewer viewer, int widgetLine) {
 
 		if (viewer instanceof ITextViewerExtension3) {

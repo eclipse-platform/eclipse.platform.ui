@@ -57,7 +57,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	class InternalListener implements IViewportListener, IAnnotationModelListener, ITextListener {
 		
 		/*
-		 * @see IViewportListener#viewportChanged
+		 * @see IViewportListener#viewportChanged(int)
 		 */
 		public void viewportChanged(int verticalPosition) {
 			if (verticalPosition != fScrollPos)
@@ -65,14 +65,14 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 		}
 		
 		/*
-		 * @see IAnnotationModelListener#modelChanged
+		 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
 		 */
 		public void modelChanged(IAnnotationModel model) {
 			postRedraw();
 		}
 		
 		/*
-		 * @see ITextListener#textChanged
+		 * @see ITextListener#textChanged(TextEvent)
 		 */
 		public void textChanged(TextEvent e) {
 			if (e.getViewerRedrawState())
@@ -186,6 +186,11 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 		return fCanvas;
 	}
 	
+	/**
+	 * Hook method for a mouse double click event on the given ruler line.
+	 * 
+	 * @param rulerLine the ruler line
+	 */
 	protected void mouseDoubleClicked(int rulerLine) {
 	}
 	
@@ -247,7 +252,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	}
 
 	/**
-	 * Returns the document offset of the upper left corner of the widgets
+	 * Returns the document offset of the upper left corner of the source viewer's
 	 * viewport, possibly including partially visible lines.
 	 * 
 	 * @return document offset of the upper left corner including partially visible lines
@@ -355,6 +360,12 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 		}
 	}
 	
+	/**
+	 * Draws the vertical ruler w/o drawing the Canvas background. Implementation based
+	 * on <code>ITextViewerExtension3</code>. Will replace <code>doPaint(GC)</code>.
+	 * 
+	 * @param gc the gc to draw into
+	 */
 	protected void doPaint1(GC gc) {
 
 		if (fModel == null || fCachedTextViewer == null)
@@ -414,7 +425,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 
 	
 	/**
-	 * Post a redraw request for thid column into the UI thread.
+	 * Post a redraw request for this column into the UI thread.
 	 */
 	private void postRedraw() {
 		if (fCanvas != null && !fCanvas.isDisposed()) {
@@ -464,10 +475,20 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	public void setFont(Font font) {
 	}
 	
+	/**
+	 * Returns the cached text viewer.
+	 * 
+	 * @return the cached text viewer
+	 */
 	protected ITextViewer getCachedTextViewer() {
 		return fCachedTextViewer;
 	}
 	
+	/**
+	 * Returns this column's annotation model.
+	 * 
+	 * @return this column's annotation model
+	 */
 	protected IAnnotationModel getModel() {
 		return fModel;
 	}

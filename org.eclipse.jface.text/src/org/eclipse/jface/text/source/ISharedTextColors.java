@@ -18,6 +18,8 @@ import org.eclipse.swt.graphics.RGB;
  * Manages SWT color objects. Until the <code>dispose</code> method is called,
  * the same color object is returned for equal <code>RGB</code> values.
  * <p> This interface may be implemented by clients. </p>
+ * 
+ * @since 2.1
  */
 public interface ISharedTextColors {
 		
@@ -31,7 +33,7 @@ public interface ISharedTextColors {
 	Color getColor(RGB rgb);	
 	
 	/**
-	 * Tells this color manager that the managed colors can be disposed.
+	 * Tells this object to dispose all its managed colors.
 	 */
 	void dispose();
 }
