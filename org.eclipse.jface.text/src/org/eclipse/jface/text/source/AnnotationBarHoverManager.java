@@ -33,11 +33,12 @@ import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.Region;
 
 
 /**
@@ -64,7 +65,6 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		private boolean fIsActive= false;
 		/** The information control. */
 		private IInformationControl fInformationControl;
-		boolean fIsInformationListener;
 		
 		/**
 		 * Creates a new information control closer.
@@ -219,6 +219,10 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	private IVerticalRulerInfo fVerticalRulerInfo;
 	/** The annotation hover the manager uses to retrieve the information to display */
 	private IAnnotationHover fAnnotationHover;
+	/** 
+	 * Indicates whether the mouse cursor is allowed to leave the subject area without closing the hover.
+	 * @since 3.0
+	 */
 	protected boolean fAllowMouseExit= false;
 
 	/**
@@ -270,22 +274,139 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	
 		int line= getHoverLine(event);
 		
-		if (hover instanceof IAnnotationHoverExtension2) {
-			IAnnotationHoverExtension2 expandHover= (IAnnotationHoverExtension2) hover;
-			setCustomInformationControlCreator(expandHover.getInformationControlCreator());
-			setInformation(expandHover.getHoverInfo2(fSourceViewer, line), computeArea(line));
-		} else if (hover instanceof IAnnotationHoverExtension) {
+		if (hover instanceof IAnnotationHoverExtension) {
 			IAnnotationHoverExtension extension= (IAnnotationHoverExtension) hover;
 			setCustomInformationControlCreator(extension.getInformationControlCreator());
+			ILineRange range= extension.getHoverLineRange(fSourceViewer, line);
+			range= adaptLineRange(range, line);
+			if (range != null)
+				setInformation(extension.getHoverInfo(fSourceViewer, range, computeNumberOfVisibleLines()), computeArea(range));
+			else
+				setInformation(null, null);
 			
-			int startLine= fSourceViewer.getTopIndex();
-			int endLine= fSourceViewer.getBottomIndex();
-			setInformation(extension.getHoverInfo(fSourceViewer, line, startLine, endLine - startLine), computeArea(line));
 		} else {
 			setCustomInformationControlCreator(null);
 			setInformation(hover.getHoverInfo(fSourceViewer, line), computeArea(line));
 		}
 			
+	}
+	
+	private ILineRange adaptLineRange(ILineRange lineRange, int line) {
+		if (lineRange != null) {
+			lineRange= adaptLineRangeToFolding(lineRange, line);
+			if (lineRange != null)
+				return adaptLineRangeToViewport(lineRange);
+		}
+		return null;
+	}
+	
+	private ILineRange adaptLineRangeToFolding(ILineRange lineRange, int line) {
+				
+		if (fSourceViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
+			
+			try {
+				IRegion region= convertToRegion(lineRange);
+				IRegion[] coverage= extension.getCoveredModelRanges(region);
+				if (coverage != null && coverage.length > 0) {
+					IRegion container= findRegionContainingLine(coverage, line);
+					if (container != null)
+						return convertToLineRange(container);
+				}
+				
+			} catch (BadLocationException x) {
+			}
+			
+			return null;
+		}
+		
+		return lineRange;	
+	}
+	
+	private ILineRange adaptLineRangeToViewport(ILineRange lineRange) {
+		
+		try {
+			StyledText text= fSourceViewer.getTextWidget();
+			
+			int topLine= text.getTopIndex();
+			int rangeTopLine= getWidgetLineNumber(lineRange.getStartLine());
+			int topDelta= Math.max(topLine - rangeTopLine, 0);
+			
+			int lineHeight= text.getLineHeight();
+			Rectangle size= text.getClientArea();
+			Rectangle trim= text.computeTrim(0, 0, 0, 0);
+			int height= size.height - trim.height;
+			
+			int bottomLine= topLine + (height / lineHeight);
+			int rangeBottomLine= getWidgetLineNumber(lineRange.getStartLine() + lineRange.getNumberOfLines() - 1);
+			int bottomDelta= Math.max(rangeBottomLine - bottomLine, 0);
+			
+			return new LineRange(lineRange.getStartLine() + topDelta, lineRange.getNumberOfLines() - bottomDelta);
+		
+		} catch (BadLocationException x) {
+		}
+		
+		return null;
+	}
+	
+	private IRegion convertToRegion(ILineRange lineRange) throws BadLocationException {
+		IDocument document= fSourceViewer.getDocument();
+		int startOffset= document.getLineOffset(lineRange.getStartLine());
+		int endLine= lineRange.getStartLine() + Math.max(0, lineRange.getNumberOfLines() - 1);
+		IRegion lineInfo= document.getLineInformation(endLine);
+		int endOffset= lineInfo.getOffset() + lineInfo.getLength();
+		return new Region(startOffset, endOffset - startOffset);
+	}
+	
+	private IRegion findRegionContainingLine(IRegion[] regions, int line) throws BadLocationException {
+		IDocument document= fSourceViewer.getDocument();
+		IRegion lineInfo= document.getLineInformation(line);
+		for (int i= 0; i < regions.length; i++) {
+			if (overlaps(regions[i], lineInfo))
+				return regions[i];
+		}
+		return null;
+	}
+	
+	private boolean overlaps(IRegion left, IRegion right) {
+		int rightEnd= right.getOffset() + right.getLength();
+		int leftEnd= left.getOffset()+ left.getLength();
+		
+		if (right.getLength() > 0) {
+			if (left.getLength() > 0)
+				return left.getOffset() < rightEnd && right.getOffset() < leftEnd;
+			return  right.getOffset() <= left.getOffset() && left.getOffset() < rightEnd;
+		}
+		
+		if (left.getLength() > 0)
+			return left.getOffset() <= right.getOffset() && right.getOffset() < leftEnd;
+		
+		return left.getOffset() == right.getOffset();
+	}
+
+	private ILineRange convertToLineRange(IRegion region) throws BadLocationException {
+		IDocument document= fSourceViewer.getDocument();
+		int startLine= document.getLineOfOffset(region.getOffset());
+		int endLine= document.getLineOfOffset(region.getOffset() + Math.max(0, region.getLength() - 1));
+		return new LineRange(startLine, endLine - startLine + 1);
+	}
+	
+	private Rectangle computeArea(ILineRange lineRange) {
+		try {
+			StyledText text= fSourceViewer.getTextWidget();
+			int lineHeight= text.getLineHeight();
+			int y= getWidgetLineNumber(lineRange.getStartLine()) * lineHeight - text.getTopPixel();
+			Point size= fVerticalRulerInfo.getControl().getSize();
+			return new Rectangle(0, y, size.x, lineHeight * lineRange.getNumberOfLines());
+		} catch (BadLocationException x) {
+		}
+		return null;
+	}
+	
+	private int computeNumberOfVisibleLines() {
+		StyledText text= fSourceViewer.getTextWidget();
+		Point size= fVerticalRulerInfo.getControl().getSize();
+		return size.y / text.getLineHeight();
 	}
 	
 	/**
@@ -316,7 +437,6 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		}
 		return fAnnotationHover;
 	}
-
 
 	/**
 	 * Returns the line of interest deduced from the mouse hover event.
@@ -396,39 +516,26 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeSizeConstraints(org.eclipse.swt.widgets.Control, org.eclipse.jface.text.IInformationControl)
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeSizeConstraints(org.eclipse.swt.widgets.Control, org.eclipse.swt.graphics.Rectangle, org.eclipse.jface.text.IInformationControl)
 	 * @since 3.0
 	 */
-	protected Point computeSizeConstraints(Control subjectControl, IInformationControl informationControl) {
-		/* limit the hover to the size of the styled text's client area. */
-		StyledText styledText= fSourceViewer.getTextWidget();
-		if (styledText == null) 
-			return super.computeSizeConstraints(subjectControl, informationControl); 
+	protected Point computeSizeConstraints(Control subjectControl, Rectangle subjectArea, IInformationControl informationControl) {
 		
-		Rectangle r= styledText.getClientArea();
-		if (r == null)
-			return super.computeSizeConstraints(subjectControl, informationControl);
-		return new Point(r.width, r.height);
-	}
-	
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeInformationControlLocation(org.eclipse.swt.graphics.Rectangle, org.eclipse.swt.graphics.Point)
-	 * @since 3.0
-	 */
-	protected Point computeInformationControlLocation(Rectangle subjectArea, Point controlSize) {
-		MouseEvent event= getHoverEvent();
-		IAnnotationHover hover= getHover(event);
-
-		if (hover instanceof IAnnotationHoverExtension)  {
-			int startLine= fSourceViewer.getTopIndex();
-			int endLine= fSourceViewer.getBottomIndex();
-			ITextSelection lineRange= ((IAnnotationHoverExtension) hover).getLineRange(fSourceViewer, getHoverLine(event), startLine, endLine - startLine);
-			if (lineRange != null && !lineRange.isEmpty())
-				return computeViewerRange(lineRange);
+		Point constraints= super.computeSizeConstraints(subjectControl, subjectArea, informationControl);
+		
+		StyledText styledText= fSourceViewer.getTextWidget();
+		if (styledText != null) {
+			Rectangle r= styledText.getClientArea();
+			if (r != null)
+				constraints.x= r.width;
 		}
-		return super.computeInformationControlLocation(subjectArea, controlSize);
+		
+		Point size= fVerticalRulerInfo.getControl().getSize();
+		constraints.y= size.y - subjectArea.y;
+		
+		return constraints;
 	}
-	
+		
 	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeLocation(org.eclipse.swt.graphics.Rectangle, org.eclipse.swt.graphics.Point, org.eclipse.jface.text.AbstractInformationControlManager.Anchor)
 	 */
@@ -436,7 +543,13 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		MouseEvent event= getHoverEvent();
 		IAnnotationHover hover= getHover(event);
 		
-		if (hover instanceof IAnnotationHoverExtension2) {
+		boolean allowMouseExit= false;
+		if (hover instanceof IAnnotationHoverExtension) {
+			IAnnotationHoverExtension extension= (IAnnotationHoverExtension) hover;
+			allowMouseExit= extension.canHandleMouseCursor();
+		}
+		
+		if (allowMouseExit) {
 			fAllowMouseExit= true;
 			
 			Control subjectControl= getSubjectControl();
@@ -449,28 +562,6 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		
 		fAllowMouseExit= false;
 		return super.computeLocation(subjectArea, controlSize, anchor);
-	}
-
-	/**
-	 * Computes the hover location for the given line range.
-	 * 
-	 * @param lineRange the first and last line covered by the hover, encoded as the <code>x</code> and <code>y</code> fields of a <code>Point</code>
-	 * @return a <code>Point</code>containing the display coordinates of the hover location
-	 * @since 3.0
-	 */
-	private Point computeViewerRange(ITextSelection lineRange) {
-		final int topLine= fSourceViewer.getTopIndex();
-		// compute pixel offset taking in account partially visible lines.
-		int lineDelta= lineRange.getStartLine() - topLine;
-		StyledText textWidget= fSourceViewer.getTextWidget();
-		int lineHeight= textWidget.getLineHeight();
-		// note that this works independently of the widget2model mapping, since we just get the 
-		// pixels of the first partially visible line, if there is one.
-		int partial= (lineHeight - (textWidget.getTopPixel() % lineHeight)) % lineHeight;
-		int y= lineDelta * lineHeight + partial;
-		int x= 1; // avoids line overlay of the hover and the editor border.
-		
-		return textWidget.toDisplay(x, y);
 	}
 }
 

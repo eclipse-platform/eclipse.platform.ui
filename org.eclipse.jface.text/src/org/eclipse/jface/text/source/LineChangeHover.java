@@ -16,12 +16,8 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.Point;
 
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.TextSelection;
 
 
 /**
@@ -31,45 +27,12 @@ import org.eclipse.jface.text.TextSelection;
  * @since 3.0
  */
 public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtension {
-
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int, int, int)
-	 */
-	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber, int first, int number) {
-		int last= first + number - 1;
-		String content= computeContent(sourceViewer, lineNumber, first, last);
-		return formatSource(content);
-	}
 	
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int)
 	 */
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
-		return getHoverInfo(sourceViewer, lineNumber, 0, Integer.MAX_VALUE);
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getLineRange(org.eclipse.jface.text.source.ISourceViewer, int, int, int)
-	 */
-	public ITextSelection getLineRange(ISourceViewer viewer, int line, int first, int number) {
-		int last= first + number - 1;
-		Point lineRange= computeLineRange(viewer, line, first, last);
-		if (viewer != null && lineRange != null && lineRange.x != -1 && lineRange.y != -1) {
-			try {
-				IDocument document= viewer.getDocument();
-				if (document != null) {
-					int offset= document.getLineOffset(lineRange.x);
-					// make sure that content shifts due to deleted lines are shifted one down
-					IRegion endLine= document.getLineInformation(Math.max(lineRange.x, lineRange.y));
-					int endOffset= endLine.getOffset() + endLine.getLength();
-					// consider add one to comprise last line
-					int length= endOffset - offset + 1;
-					return new TextSelection(document, offset, length); 
-				}
-			} catch (BadLocationException e) {
-			}
-		}
-		return new TextSelection(0, 0);
+		return null;
 	}
 
 	/**
@@ -99,6 +62,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	 * displayed source.
 	 */
 	protected String getTabReplacement() {
+		// TODO implement
 		return "    "; //$NON-NLS-1$
 	}
 
@@ -113,25 +77,19 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	 * @return The hover content corresponding to the parameters 
 	 * @see #getHoverInfo()
 	 */
-	private String computeContent(ISourceViewer viewer, int line, int first, int last) {
-		Point contentRange= computeContentRange(viewer, line, first, last);
-		if (contentRange == null)
-			return null;
+	private String computeContent(ISourceViewer viewer, int first, int last, int maxLines) {
 		ILineDiffer differ= getDiffer(viewer);
 		if (differ == null)
 			return null;
-		// sanity test line argument
-		if (line > contentRange.y + 1 || line < contentRange.x - 1)
-			return null;
 
 		final List lines= new LinkedList();
-		for (int l= contentRange.x; l <= contentRange.y; l++) {
+		for (int l= first; l <= last; l++) {
 			ILineDiffInfo info= differ.getLineInfo(l);
 			if (info != null)
 				lines.add(info);
 		}
-		final int max= viewer.getBottomIndex();
-		return decorateText(lines, max - contentRange.x + 1);
+
+		return decorateText(lines, maxLines);
 	}
 
 	/**
@@ -159,7 +117,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 			int type= info.getChangeType();
 			int i= 0;
 			if (type == ILineDiffInfo.ADDED)
-				added++; //$NON-NLS-1$
+				added++;
 			else if (type == ILineDiffInfo.CHANGED) {
 				text += "> " + (original.length > 0 ? original[i++] : ""); //$NON-NLS-1$ //$NON-NLS-2$
 				maxLines--;
@@ -203,11 +161,11 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	 * @return a line differ for the document displayed in viewer, or <code>null</code>.
 	 */
 	private ILineDiffer getDiffer(ISourceViewer viewer) {
-		// return the upper left corner of the first hover line
 		IAnnotationModel model= viewer.getAnnotationModel();
 
 		if (model == null)
 			return null;
+		
 		if (model instanceof IAnnotationModelExtension) {
 			IAnnotationModel diffModel= ((IAnnotationModelExtension)model).getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
 			if (diffModel != null)
@@ -224,7 +182,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	 * one line at the start (due to <code>ILineDiffInfo</code> implementation).
 	 * 
 	 * @param viewer the connected viewer
-	 * @param line the achor line
+	 * @param line the anchor line
 	 * @param first the first line in <code>viewer</code>'s document to consider
 	 * @param last the last line in <code>viewer</code>'s document to consider
 	 * @return the computed content range
@@ -234,17 +192,13 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		if (differ == null)
 			return null;
 
-		Point lineRange= computeLineRange(viewer, line, first, last);
-		if (lineRange == null)
-			return null;
-
 		// here comes the hack: since we only get deleted lines *after* a line, we decrease one further if conditions met
-		int l= lineRange.x - 1;
+		int l= first - 1;
 		ILineDiffInfo info= differ.getLineInfo(l);
 		if (l >= first - 1 && info != null && info.getChangeType() == ILineDiffInfo.UNCHANGED && info.getRemovedLinesBelow() > 0)
-			return new Point(l, lineRange.y);
+			return new Point(l, last);
 		else
-			return lineRange;
+			return new Point(first, last);
 	}
 
 	/**
@@ -317,5 +271,34 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	 */
 	public IInformationControlCreator getInformationControlCreator() {
 		return null;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, org.eclipse.jface.text.source.ILineRange, int)
+	 */
+	public Object getHoverInfo(ISourceViewer sourceViewer, ILineRange lineRange, int visibleLines) {
+		int last= lineRange.getStartLine() + lineRange.getNumberOfLines() - 1;
+		String content= computeContent(sourceViewer, lineRange.getStartLine(), last, visibleLines);
+		return formatSource(content);	
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverLineRange(org.eclipse.jface.text.source.ISourceViewer, int)
+	 */
+	public ILineRange getHoverLineRange(ISourceViewer viewer, int lineNumber) {
+		IDocument document= viewer.getDocument();
+		if (document != null) {
+			Point range= computeLineRange(viewer, lineNumber, 0, document.getNumberOfLines());
+			if (range.x != -1 && range.y != -1)
+				return new LineRange(range.x, range.y - range.x + 1);
+		}
+		return null;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#canHandleMouseCursor()
+	 */
+	public boolean canHandleMouseCursor() {
+		return false;
 	}
 }

@@ -21,14 +21,15 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.IAnnotationHoverExtension;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
+import org.eclipse.jface.text.source.ILineRange;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension2;
+import org.eclipse.jface.text.source.LineRange;
 
 /**
  * Annotation hover for projection annotations.
@@ -46,32 +47,7 @@ public class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationH
 		// this is a no-op as semantics is defined by the implementation of the annotation hover extension
 		return null;
 	}
-	
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getLineRange(org.eclipse.jface.text.source.ISourceViewer, int, int, int)
-	 */
-	public ITextSelection getLineRange(ISourceViewer viewer, int line, int first, int number) {
-		return null; // go for the default behavior
-	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getInformationControlCreator()
-	 */
-	public IInformationControlCreator getInformationControlCreator() {
-		return new IInformationControlCreator() {
-			public IInformationControl createInformationControl(Shell parent) {
-				return new SourceViewerInformationControl(parent, JFaceResources.TEXT_FONT);
-			}
-		};
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int, int, int)
-	 */
-	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber, int first, int number) {
-		return getProjectionTextAtLine(sourceViewer, lineNumber, number);
-	}
-	
 	private int compareRulerLine(Position position, IDocument document, int line) {
 		if (position.getOffset() > -1 && position.getLength() > -1) {
 			try {
@@ -123,9 +99,47 @@ public class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationH
 	}
 
 	private String getText(IDocument document, int offset, int length, int numberOfLines) throws BadLocationException {
-		int endLine= document.getLineOfOffset(offset) + Math.max(0, numberOfLines -1);
-		IRegion lineInfo= document.getLineInformation(endLine);
-		int endOffset= Math.min(offset + length, lineInfo.getOffset() + lineInfo.getLength());
+		int endOffset= offset + length;
+		
+		try {
+			int endLine= document.getLineOfOffset(offset) + Math.max(0, numberOfLines -1);
+			IRegion lineInfo= document.getLineInformation(endLine);
+			endOffset= Math.min(endOffset, lineInfo.getOffset() + lineInfo.getLength());
+		} catch (BadLocationException x) {
+		}
+		
 		return document.get(offset, endOffset - offset);
-	}	
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, org.eclipse.jface.text.source.ILineRange, int)
+	 */
+	public Object getHoverInfo(ISourceViewer sourceViewer, ILineRange lineRange, int visibleLines) {
+		return getProjectionTextAtLine(sourceViewer, lineRange.getStartLine(), visibleLines);	
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverLineRange(org.eclipse.jface.text.source.ISourceViewer, int)
+	 */
+	public ILineRange getHoverLineRange(ISourceViewer viewer, int lineNumber) {
+		return new LineRange(lineNumber, 1);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#canHandleMouseCursor()
+	 */
+	public boolean canHandleMouseCursor() {
+		return false;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getInformationControlCreator()
+	 */
+	public IInformationControlCreator getInformationControlCreator() {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				return new SourceViewerInformationControl(parent, JFaceResources.TEXT_FONT);
+			}
+		};
+	}
 }

@@ -1,31 +1,31 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
+ * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- *
+ * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
-import org.eclipse.jface.text.IInformationControlCreator;
-
 /**
- * 
- * 
  * @since 3.0
  */
-public interface IAnnotationHoverExtension2 {
-	
-	Object getHoverInfo2(ISourceViewer viewer, int line);
+public interface ILineRange {
+
 	/**
-	 * Returns the information control creator of this annotation hover.
+	 * Returns the start line of this line range.
 	 * 
-	 * @return the information control creator
+	 * @return the start line of this line range or <code>-1</code> if this line range is invalid.
 	 */
-	IInformationControlCreator getInformationControlCreator();
-	
-	
+	int getStartLine();
+
+	/**
+	 * Returns the number of lines of this line range.
+	 * 
+	 * @return the number of lines in this line range or <code>-1</code> if this line range is invalid.
+	 */
+	int getNumberOfLines();
 }

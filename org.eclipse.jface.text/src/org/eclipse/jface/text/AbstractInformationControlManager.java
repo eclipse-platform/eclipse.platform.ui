@@ -491,6 +491,19 @@ abstract public class AbstractInformationControlManager {
 		
 		return fSizeConstraints;
 	}
+
+	/**
+	 * Computes the size constraints of the information control in points.
+	 * 
+	 * @param subjectControl the subject control
+	 * @param subjectArea the subject area
+	 * @param informationControl the information control whose size constraints are computed
+	 * @return the computed size constraints in points
+	 * @since 3.0
+	 */
+	protected Point computeSizeConstraints(Control subjectControl, Rectangle subjectArea, IInformationControl informationControl) {
+		return computeSizeConstraints(subjectControl, informationControl);
+	}
 	
 	/**
 	 * Handles the disposal of the information control. By default, the information
@@ -764,7 +777,7 @@ abstract public class AbstractInformationControlManager {
 		IInformationControl informationControl= getInformationControl();
 		if (informationControl != null) {
 
-			Point sizeConstraints= computeSizeConstraints(fSubjectControl, informationControl);
+			Point sizeConstraints= computeSizeConstraints(fSubjectControl, fSubjectArea, informationControl);
 			informationControl.setSizeConstraints(sizeConstraints.x, sizeConstraints.y);
 
 			if (informationControl instanceof IInformationControlExtension2)

@@ -30,29 +30,30 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IInformationControlCreatorExtension;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationAccess;
+import org.eclipse.jface.text.source.IAnnotationAccessExtension;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.IAnnotationHoverExtension;
-import org.eclipse.jface.text.source.IAnnotationHoverExtension2;
 import org.eclipse.jface.text.source.IAnnotationListener;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.ILineRange;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRulerExtension;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.jface.text.source.LineRange;
 
 import org.eclipse.ui.internal.texteditor.AnnotationExpansionControl.AnnotationHoverInput;
 
 /**
- * 
- * 
  * @since 3.0
  */
-public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHoverExtension, IAnnotationHoverExtension2 {
+public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHoverExtension {
+	
+	
 	private class InformationControlCreator implements IInformationControlCreator, IInformationControlCreatorExtension {
 
 		/*
@@ -79,8 +80,7 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 	
 	private final IInformationControlCreator fgCreator= new InformationControlCreator();
 	protected IVerticalRulerInfo fVerticalRulerInfo;
-	protected IAnnotationListener fAnnotationListener; 
-
+	protected IAnnotationListener fAnnotationListener;
 	protected IDoubleClickListener fDblClickListener;
 	protected IAnnotationAccess fAnnotationAccess;
 	
@@ -99,10 +99,6 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 		fAnnotationAccess= access;
 	}
 
-	/**
-	 * @param ruler
-	 * @param access
-	 */
 	public AnnotationExpandHover(IVerticalRulerInfo ruler, IAnnotationAccess access) {
 		this(ruler, null, null, access);
 	}
@@ -115,10 +111,7 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 		return null;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension2#getHoverInfo2(org.eclipse.jface.text.source.ISourceViewer, int)
-	 */
-	public Object getHoverInfo2(ISourceViewer viewer, int line) {
+	protected Object getHoverInfoForLine(ISourceViewer viewer, int line) {
 		IAnnotationModel model= viewer.getAnnotationModel();
 		IDocument document= viewer.getDocument();
 		
@@ -190,8 +183,11 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 	}
 	
 	protected int getOrder(Annotation annotation) {
-		// standard implementation: check for marker annotation level
-		return annotation.getLayer();
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
+			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
+			return extension.getLayer(annotation);
+		}
+		return IAnnotationAccessExtension.DEFAULT_LAYER;
 	}
 
 	protected boolean isDuplicateMessage(Map messagesAtPosition, Position position, String message) {
@@ -263,19 +259,23 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int, int, int)
+	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, org.eclipse.jface.text.source.ILineRange, int)
 	 */
-	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber, int first, int number) {
-		// use default implementation
-		return getHoverInfo(sourceViewer, lineNumber);
+	public Object getHoverInfo(ISourceViewer sourceViewer, ILineRange lineRange, int visibleLines) {
+		return getHoverInfoForLine(sourceViewer, lineRange.getStartLine());
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getLineRange(org.eclipse.jface.text.source.ISourceViewer, int, int, int)
+	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverLineRange(org.eclipse.jface.text.source.ISourceViewer, int)
 	 */
-	public ITextSelection getLineRange(ISourceViewer viewer, int line, int first, int number) {
-		// use default implementation
-		return null;
+	public ILineRange getHoverLineRange(ISourceViewer viewer, int lineNumber) {
+		return new LineRange(lineNumber, 1);
 	}
 
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#canHandleMouseCursor()
+	 */
+	public boolean canHandleMouseCursor() {
+		return true;
+	}
 }

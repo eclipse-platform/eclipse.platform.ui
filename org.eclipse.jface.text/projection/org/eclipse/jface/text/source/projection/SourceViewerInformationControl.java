@@ -64,6 +64,10 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	private Label fSeparator; 
 	/** The font of the optional status text label.*/
 	private Font fStatusTextFont;
+	/** The maximal widget width. */
+	private int fMaxWidth;
+	/** The maximal widget height. */
+	private int fMaxHeight;
 	
 	
 	/**
@@ -254,14 +258,18 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 * @see IInformationControl#setSizeConstraints(int, int)
 	 */
 	public void setSizeConstraints(int maxWidth, int maxHeight) {
-		maxWidth= maxHeight;
+		fMaxWidth= maxWidth;
+		fMaxHeight= maxHeight;
 	}
 	
 	/*
 	 * @see IInformationControl#computeSizeHint()
 	 */
 	public Point computeSizeHint() {
-		return fShell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Point size= fShell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		size.x= Math.min(size.x, fMaxWidth);
+		size.y= Math.min(size.y, fMaxHeight);
+		return size;
 	}
 	
 	/*

@@ -11,13 +11,13 @@
 package org.eclipse.jface.text.source;
 
 import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.ITextSelection;
 
 /**
  * Extension to <code>IAnnotationHover</code> for
  * <ul>
  * <li>providing its own information control creator</li>
- * <li>providing the range of lines for which the hover for a given line is valid
+ * <li>providing the range of lines for which the hover for a given line is valid</li>
+ * <li>providing whether the information control can interact with the mouse cursor</li>
  * </ul>
  * 
  * @see org.eclipse.jface.text.IInformationControlCreator
@@ -25,7 +25,7 @@ import org.eclipse.jface.text.ITextSelection;
  * @since 3.0
  */
 public interface IAnnotationHoverExtension {
-
+	
 	/**
 	 * Returns the information control creator of this annotation hover.
 	 * 
@@ -34,28 +34,32 @@ public interface IAnnotationHoverExtension {
 	IInformationControlCreator getInformationControlCreator();
 	
 	/**
-	 * Returns the text which should be presented in the a
-	 * hover popup window. This information is requested based on
-	 * the specified line number.
+	 * Returns whether the provided information control can interact with the mouse cursor. I.e. the
+	 * hover must implement custom information control management.
+	 * 
+	 * @return <code>true</code> if the mouse cursor can be handled
+	 */
+	boolean canHandleMouseCursor();
+	
+	/**
+	 * Returns the object which should be presented in the a
+	 * hover popup window. The information is requested based on
+	 * the specified line range.
 	 *
 	 * @param sourceViewer the source viewer this hover is registered with
-	 * @param lineNumber the line number for which information is requested
-	 * @param first the first line in <code>viewer</code>'s document to consider
-	 * @param number the number of lines in <code>viewer</code>'s document to consider
+	 * @param lineRange the line range for which information is requested
+	 * @param visibleNumberOfLines the number of visible lines
 	 * @return the requested information or <code>null</code> if no such information exists
 	 */
-	String getHoverInfo(ISourceViewer sourceViewer, int lineNumber, int first, int number);
+	Object getHoverInfo(ISourceViewer sourceViewer, ILineRange lineRange, int visibleNumberOfLines);
 
 	/**
-	 * Returns the range of lines that are covered by this hover for the given
-	 * <code>ISourceViewer</code> at model line <code>line</code>.
+	 * Returns the range of lines that include the given line number for which
+	 * the same hover information is valid.
 	 * 
 	 * @param viewer the viewer which the hover is queried for
 	 * @param line the line which a hover is displayed for
-	 * @param first the first line in <code>viewer</code>'s document to consider
-	 * @param number the number of lines in <code>viewer</code>'s document to consider
-	 * @return the selection in the document displayed in <code>viewer</code> containing <code>line</code> 
-	 * that is covered by the hover information returned by the receiver.
+	 * @return the computed line range
 	 */
-	ITextSelection getLineRange(ISourceViewer viewer, int line, int first, int number);
+	ILineRange getHoverLineRange(ISourceViewer viewer, int lineNumber);
 }
