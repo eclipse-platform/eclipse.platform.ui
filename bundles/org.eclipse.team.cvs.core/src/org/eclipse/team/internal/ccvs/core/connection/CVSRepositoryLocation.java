@@ -262,7 +262,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * @see ICVSRepositoryLocation#getUserInfo()
 	 */
 	public IUserInfo getUserInfo(boolean makeUsernameMutable) {
-		return new UserInfo(user, password, makeUsernameMutable ? true : isUsernameMutable());
+		return new UserInfo(getUsername(), password, makeUsernameMutable ? true : isUsernameMutable());
 	}
 	
 	/*
