@@ -39,9 +39,10 @@ public class InstallWizard
 	private int installCount = 0;
 	private SearchRunner searchRunner;
 	private UpdateSearchRequest searchRequest;
+	private ArrayList jobs;
 
 	public InstallWizard() {
-		this(null);
+		this((UpdateSearchRequest)null);
 	}
 	
 	public InstallWizard(UpdateSearchRequest searchRequest) {
@@ -52,7 +53,12 @@ public class InstallWizard
 		setNeedsProgressMonitor(true);
 		setWindowTitle(UpdateUI.getString("InstallWizard.wtitle")); //$NON-NLS-1$
 	}
-
+	
+	public InstallWizard(UpdateSearchRequest searchRequest, ArrayList jobs) {
+		this(searchRequest);
+		this.jobs = jobs;
+	}
+	
 	public boolean isSuccessfulInstall() {
 		return installCount > 0; // or == selectedJobs.length
 	}
@@ -146,7 +152,8 @@ public class InstallWizard
 
 	public void addPages() {
 		searchRunner = new SearchRunner(getShell(), getContainer());
-		if (searchRequest==null) {
+
+		if (searchRequest==null || jobs==null) {
 			modePage = new ModeSelectionPage(searchRunner);
 			addPage(modePage);
 			sitePage = new SitePage(searchRunner);
@@ -154,8 +161,9 @@ public class InstallWizard
 		}
 		else {
 			searchRunner.setSearchProvider(this);
+			if (jobs!=null) searchRunner.setNewSearchNeeded(false);
 		}
-		reviewPage = new ReviewPage(searchRunner);
+		reviewPage = new ReviewPage(searchRunner, jobs);
 		searchRunner.setResultCollector(reviewPage);
 		addPage(reviewPage);
 

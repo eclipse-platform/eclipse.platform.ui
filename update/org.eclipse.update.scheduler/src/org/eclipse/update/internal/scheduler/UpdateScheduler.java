@@ -33,7 +33,6 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 	private static UpdateScheduler plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
-
 	/**
 	 * The constructor.
 	 */
@@ -169,23 +168,26 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 		if (pref.getBoolean(P_ENABLED)==false) return;
 
 		String schedule = pref.getString(P_SCHEDULE);
+		long delay = -1L;
 		if (schedule.equals(VALUE_ON_STARTUP))
-			startSearch();
-		else {
-			long delay = computeDelay(pref);
-			if (delay == -1) return;
-			startSearch(delay);
-		}
+			delay = 0L;
+		else
+			delay = computeDelay(pref);
+		if (delay == -1L) return;
+		startSearch(delay);
 	}
 	
+	/*
+	 * Computes the number of milliseconds from this moment
+	 * to the next scheduled search. If that moment has
+	 * already passed, returns 0L (start immediately).
+	 */
 	private long computeDelay(Preferences pref) {
-		return -1;
+		return -1L;
 	}
 	
-	private void startSearch() {
-		startSearch(0);
-	}
-
 	private void startSearch(long delay) {
+		AutomaticUpdatesJob job = new AutomaticUpdatesJob();
+		job.schedule(delay);
 	}
 }
