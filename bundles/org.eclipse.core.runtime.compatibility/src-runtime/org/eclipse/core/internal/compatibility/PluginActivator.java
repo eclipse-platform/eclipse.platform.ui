@@ -45,8 +45,15 @@ public class PluginActivator implements BundleActivator {
 		this.context = context;
 		PluginDescriptor pd = (PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor(context.getBundle().getSymbolicName());
 		plugin = pd.getPlugin();
-		plugin.start(context);
-		plugin.startup();
+		try {
+			plugin.start(context);
+			plugin.startup();
+		} catch(Exception e) {
+			plugin.shutdown();
+			plugin.stop(context);
+			pd.markAsDeactivated();
+			throw e;
+		}
 	}
 
 	private void ensureNormalStartup(BundleContext context) throws BundleException {
