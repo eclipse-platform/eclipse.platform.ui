@@ -11,6 +11,12 @@
 
 package org.eclipse.jface.bindings;
 
+import java.util.Collection;
+import java.util.Map;
+
+import org.eclipse.core.commands.common.AbstractBitSetEvent;
+import org.eclipse.jface.util.Util;
+
 /**
  * An instance of this class describes changes to an instance of
  * <code>BindingManager</code>.
@@ -26,27 +32,32 @@ package org.eclipse.jface.bindings;
  * @since 3.1
  * @see IBindingManagerListener#bindingManagerChanged(BindingManagerEvent)
  */
-public final class BindingManagerEvent {
+public final class BindingManagerEvent extends AbstractBitSetEvent {
 
 	/**
-	 * Whether the active bindings have changed.
+	 * The bit used to represent whether the map of active bindings has changed.
 	 */
-	private final boolean activeBindingsChanged;
+	private static final int CHANGED_ACTIVE_BINDINGS = 1;
 
 	/**
-	 * Whether the active scheme has changed.
+	 * The bit used to represent whether the active scheme has changed.
 	 */
-	private final boolean activeSchemeChanged;
+	private static final int CHANGED_ACTIVE_SCHEME = 1 << 1;
 
 	/**
-	 * Whether the locale has changed.
+	 * The bit used to represent whether the active locale has changed.
 	 */
-	private final boolean localeChanged;
+	private static final int CHANGED_LOCALE = 1 << 2;
 
 	/**
-	 * Whether the platform has changed.
+	 * The bit used to represent whether the active platform has changed.
 	 */
-	private final boolean platformChanged;
+	private static final int CHANGED_PLATFORM = 1 << 3;
+
+	/**
+	 * The bit used to represent whether the scheme's defined state has changed.
+	 */
+	private static final int CHANGED_SCHEME_DEFINED = 1 << 4;
 
 	/**
 	 * The binding manager that has changed; this value is never
@@ -55,20 +66,18 @@ public final class BindingManagerEvent {
 	private final BindingManager manager;
 
 	/**
+	 * The map of triggers (<code>Collection</code> of
+	 * <code>TriggerSequence</code>) by command id (<code>String</code>)
+	 * before the change occurred. This map may be empty and it may be
+	 * <code>null</code>.
+	 */
+	private final Map previousTriggersByCommandId;
+
+	/**
 	 * The scheme that became defined or undefined. This value may be
 	 * <code>null</code> if no scheme changed its defined state.
 	 */
 	private final Scheme scheme;
-
-	/**
-	 * Whether the given scheme became defined.
-	 */
-	private final boolean schemeDefined;
-
-	/**
-	 * Whether the given scheme became undefined.
-	 */
-	private final boolean schemeUndefined;
 
 	/**
 	 * Creates a new instance of this class.
@@ -78,6 +87,10 @@ public final class BindingManagerEvent {
 	 *            <code>null</code>.
 	 * @param activeBindingsChanged
 	 *            Whether the active bindings have changed.
+	 * @param previousTriggersByCommandId
+	 *            The map of triggers (<code>TriggerSequence</code>) by
+	 *            command id (<code>String</code>) before the change
+	 *            occured. This map may be <code>null</code> or empty.
 	 * @param activeSchemeChanged
 	 *            true, iff the active scheme changed.
 	 * @param scheme
@@ -86,9 +99,6 @@ public final class BindingManagerEvent {
 	 * @param schemeDefined
 	 *            <code>true</code> if the given scheme became defined;
 	 *            <code>false</code> otherwise.
-	 * @param schemeUndefined
-	 *            <code>true</code> if the given scheme became undefined;
-	 *            <code>false</code> otherwise.
 	 * @param localeChanged
 	 *            <code>true</code> iff the active locale changed
 	 * @param platformChanged
@@ -96,31 +106,38 @@ public final class BindingManagerEvent {
 	 */
 	public BindingManagerEvent(final BindingManager manager,
 			final boolean activeBindingsChanged,
+			final Map previousTriggersByCommandId,
 			final boolean activeSchemeChanged, final Scheme scheme,
-			final boolean schemeDefined, final boolean schemeUndefined,
-			final boolean localeChanged, final boolean platformChanged) {
+			final boolean schemeDefined, final boolean localeChanged,
+			final boolean platformChanged) {
 		if (manager == null)
 			throw new NullPointerException(
 					"A binding manager event needs a binding manager"); //$NON-NLS-1$
-
-		if (schemeDefined || schemeUndefined) {
-			if (scheme == null) {
-				throw new NullPointerException(
-						"If a scheme changed defined state, then there should be a scheme identifier"); //$NON-NLS-1$
-			}
-		} else if (scheme != null) {
-			throw new IllegalArgumentException(
-					"The scheme has not changed defined state"); //$NON-NLS-1$
-		}
-
 		this.manager = manager;
-		this.activeBindingsChanged = activeBindingsChanged;
-		this.activeSchemeChanged = activeSchemeChanged;
+
+		if (schemeDefined && (scheme == null)) {
+			throw new NullPointerException(
+					"If a scheme changed defined state, then there should be a scheme identifier"); //$NON-NLS-1$
+		}
 		this.scheme = scheme;
-		this.schemeDefined = schemeDefined;
-		this.schemeUndefined = schemeUndefined;
-		this.localeChanged = localeChanged;
-		this.platformChanged = platformChanged;
+
+		this.previousTriggersByCommandId = previousTriggersByCommandId;
+
+		if (activeBindingsChanged) {
+			changedValues |= CHANGED_ACTIVE_BINDINGS;
+		}
+		if (activeSchemeChanged) {
+			changedValues |= CHANGED_ACTIVE_SCHEME;
+		}
+		if (localeChanged) {
+			changedValues |= CHANGED_LOCALE;
+		}
+		if (platformChanged) {
+			changedValues |= CHANGED_PLATFORM;
+		}
+		if (schemeDefined) {
+			changedValues |= CHANGED_SCHEME_DEFINED;
+		}
 	}
 
 	/**
@@ -143,12 +160,53 @@ public final class BindingManagerEvent {
 	}
 
 	/**
+	 * Returns whether the active bindings have changed.
+	 * 
+	 * @return <code>true</code> if the active bindings have changed;
+	 *         <code>false</code> otherwise.
+	 */
+	public final boolean isActiveBindingsChanged() {
+		return ((changedValues & CHANGED_ACTIVE_BINDINGS) != 0);
+	}
+
+	/**
+	 * Computes whether the active bindings have changed for a given command
+	 * identifier.
+	 * 
+	 * @param commandId
+	 *            The identifier for the command whose bindings might have
+	 *            changed; must not be <code>null</code>.
+	 * @return <code>true</code> if the active bindings have changed for the
+	 *         given command identifier; <code>false</code> otherwise.
+	 */
+	public final boolean isActiveBindingsChangedFor(final String commandId) {
+		final TriggerSequence[] currentBindings = manager
+				.getActiveBindingsFor(commandId);
+		final TriggerSequence[] previousBindings;
+		if (previousTriggersByCommandId != null) {
+			final Collection previousBindingCollection = (Collection) previousTriggersByCommandId
+					.get(commandId);
+			if (previousBindingCollection == null) {
+				previousBindings = null;
+			} else {
+				previousBindings = (TriggerSequence[]) previousBindingCollection
+						.toArray(new TriggerSequence[previousBindingCollection
+								.size()]);
+			}
+		} else {
+			previousBindings = null;
+		}
+
+		return !Util.equals(currentBindings, previousBindings);
+	}
+
+	/**
 	 * Returns whether or not the active scheme changed.
 	 * 
 	 * @return true, iff the active scheme property changed.
 	 */
-	public final boolean hasActiveSchemeChanged() {
-		return activeSchemeChanged;
+	public final boolean isActiveSchemeChanged() {
+		return ((changedValues & CHANGED_ACTIVE_SCHEME) != 0);
 	}
 
 	/**
@@ -157,8 +215,8 @@ public final class BindingManagerEvent {
 	 * @return <code>true</code> if the locale changed; <code>false</code>
 	 *         otherwise.
 	 */
-	public boolean hasLocaleChanged() {
-		return localeChanged;
+	public boolean isLocaleChanged() {
+		return ((changedValues & CHANGED_LOCALE) != 0);
 	}
 
 	/**
@@ -167,18 +225,18 @@ public final class BindingManagerEvent {
 	 * @return <code>true</code> if the platform changed; <code>false</code>
 	 *         otherwise.
 	 */
-	public boolean hasPlatformChanged() {
-		return platformChanged;
+	public boolean isPlatformChanged() {
+		return ((changedValues & CHANGED_PLATFORM) != 0);
 	}
 
 	/**
-	 * Returns whether the active bindings have changed.
+	 * Returns whether the list of defined scheme identifiers has changed.
 	 * 
-	 * @return <code>true</code> if the active bindings have changed;
-	 *         <code>false</code> otherwise.
+	 * @return <code>true</code> if the list of scheme identifiers has
+	 *         changed; <code>false</code> otherwise.
 	 */
-	public final boolean haveActiveBindingsChanged() {
-		return activeBindingsChanged;
+	public final boolean isSchemeChanged() {
+		return (scheme != null);
 	}
 
 	/**
@@ -187,15 +245,6 @@ public final class BindingManagerEvent {
 	 * @return <code>true</code> if the scheme became defined.
 	 */
 	public final boolean isSchemeDefined() {
-		return schemeDefined;
-	}
-
-	/**
-	 * Returns whether or not the scheme became undefined
-	 * 
-	 * @return <code>true</code> if the scheme became undefined.
-	 */
-	public final boolean isSchemeUndefined() {
-		return schemeUndefined;
+		return (((changedValues & CHANGED_SCHEME_DEFINED) != 0) && (scheme != null));
 	}
 }

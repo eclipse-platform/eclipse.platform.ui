@@ -11,6 +11,8 @@
 
 package org.eclipse.jface.bindings;
 
+import org.eclipse.core.commands.common.AbstractNamedHandleEvent;
+
 /**
  * An instance of this class describes changes to an instance of
  * <code>IScheme</code>.
@@ -26,105 +28,64 @@ package org.eclipse.jface.bindings;
  * @since 3.1
  * @see ISchemeListener#schemeChanged(SchemeEvent)
  */
-public final class SchemeEvent {
-    /**
-     * Whether the scheme has become defined or undefined.
-     */
-    private final boolean definedChanged;
+public final class SchemeEvent extends AbstractNamedHandleEvent {
 
-    /**
-     * Whether the description of the scheme has changed.
-     */
-    private final boolean descriptionChanged;
+	/**
+	 * The bit used to represent whether the scheme has changed its parent.
+	 */
+	private static final int CHANGED_PARENT_ID = LAST_USED_BIT << 1;
 
-    /**
-     * Whether the name of the scheme has changed.
-     */
-    private final boolean nameChanged;
+	/**
+	 * The scheme that has changed; this value is never <code>null</code>.
+	 */
+	private final Scheme scheme;
 
-    /**
-     * Whether the parent identifier has changed.
-     */
-    private final boolean parentIdChanged;
+	/**
+	 * Creates a new instance of this class.
+	 * 
+	 * @param scheme
+	 *            the instance of the interface that changed; must not be
+	 *            <code>null</code>.
+	 * @param definedChanged
+	 *            true, iff the defined property changed.
+	 * @param nameChanged
+	 *            true, iff the name property changed.
+	 * @param descriptionChanged
+	 *            <code>true</code> if the description property changed;
+	 *            <code>false</code> otherwise.
+	 * @param parentIdChanged
+	 *            true, iff the parentId property changed.
+	 */
+	public SchemeEvent(Scheme scheme, boolean definedChanged,
+			boolean nameChanged, boolean descriptionChanged,
+			boolean parentIdChanged) {
+		super(definedChanged, descriptionChanged, nameChanged);
 
-    /**
-     * The scheme that has changed; this value is never <code>null</code>.
-     */
-    private final Scheme scheme;
+		if (scheme == null)
+			throw new NullPointerException();
+		this.scheme = scheme;
 
-    /**
-     * Creates a new instance of this class.
-     * 
-     * @param scheme
-     *            the instance of the interface that changed; must not be
-     *            <code>null</code>.
-     * @param definedChanged
-     *            true, iff the defined property changed.
-     * @param nameChanged
-     *            true, iff the name property changed.
-     * @param descriptionChanged
-     *            <code>true</code> if the description property changed;
-     *            <code>false</code> otherwise.
-     * @param parentIdChanged
-     *            true, iff the parentId property changed.
-     */
-    public SchemeEvent(Scheme scheme, boolean definedChanged,
-            boolean nameChanged, boolean descriptionChanged,
-            boolean parentIdChanged) {
-        if (scheme == null)
-            throw new NullPointerException();
+		if (parentIdChanged) {
+			changedValues |= CHANGED_PARENT_ID;
+		}
+	}
 
-        this.scheme = scheme;
-        this.definedChanged = definedChanged;
-        this.descriptionChanged = descriptionChanged;
-        this.nameChanged = nameChanged;
-        this.parentIdChanged = parentIdChanged;
-    }
+	/**
+	 * Returns the instance of the interface that changed.
+	 * 
+	 * @return the instance of the interface that changed. Guaranteed not to be
+	 *         <code>null</code>.
+	 */
+	public final Scheme getScheme() {
+		return scheme;
+	}
 
-    /**
-     * Returns the instance of the interface that changed.
-     * 
-     * @return the instance of the interface that changed. Guaranteed not to be
-     *         <code>null</code>.
-     */
-    public final Scheme getScheme() {
-        return scheme;
-    }
-
-    /**
-     * Returns whether or not the defined property changed.
-     * 
-     * @return true, iff the defined property changed.
-     */
-    public final boolean hasDefinedChanged() {
-        return definedChanged;
-    }
-
-    /**
-     * Returns whether or not the description property has changed.
-     * 
-     * @return <code>true</code> if the description property changed;
-     *         <code>false</code> otherwise.
-     */
-    public final boolean hasDescriptionChanged() {
-        return descriptionChanged;
-    }
-
-    /**
-     * Returns whether or not the name property changed.
-     * 
-     * @return true, iff the name property changed.
-     */
-    public final boolean hasNameChanged() {
-        return nameChanged;
-    }
-
-    /**
-     * Returns whether or not the parentId property changed.
-     * 
-     * @return true, iff the parentId property changed.
-     */
-    public final boolean hasParentIdChanged() {
-        return parentIdChanged;
-    }
+	/**
+	 * Returns whether or not the parentId property changed.
+	 * 
+	 * @return true, iff the parentId property changed.
+	 */
+	public final boolean isParentIdChanged() {
+		return ((changedValues & CHANGED_PARENT_ID) != 0);
+	}
 }

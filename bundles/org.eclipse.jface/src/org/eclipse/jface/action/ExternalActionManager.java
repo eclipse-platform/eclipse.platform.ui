@@ -193,18 +193,18 @@ public final class ExternalActionManager {
 		 * @see org.eclipse.jface.bindings.IBindingManagerListener#bindingManagerChanged(org.eclipse.jface.bindings.BindingManagerEvent)
 		 */
 		public final void bindingManagerChanged(final BindingManagerEvent event) {
-			/*
-			 * TODO Performance: This should filter based on the registered
-			 * command identifier.
-			 */
-			if (event.haveActiveBindingsChanged()) {
-				final Iterator listenerItr = registeredListeners.values()
+			if (event.isActiveBindingsChanged()) {
+				final Iterator listenerItr = registeredListeners.entrySet()
 						.iterator();
 				while (listenerItr.hasNext()) {
-					final IPropertyChangeListener listener = (IPropertyChangeListener) listenerItr
-							.next();
-					listener.propertyChange(new PropertyChangeEvent(event
-							.getManager(), IAction.TEXT, null, null));
+					final Map.Entry entry = (Map.Entry) listenerItr.next();
+					final String commandId = (String) entry.getKey();
+					if (event.isActiveBindingsChangedFor(commandId)) {
+						final IPropertyChangeListener listener = (IPropertyChangeListener) entry
+								.getValue();
+						listener.propertyChange(new PropertyChangeEvent(event
+								.getManager(), IAction.TEXT, null, null));
+					}
 				}
 			}
 		}
@@ -218,7 +218,7 @@ public final class ExternalActionManager {
 			final int activeBindingsCount = activeBindings.length;
 			Integer accelerator = null;
 			for (int i = 0; i < activeBindingsCount; i++) {
-				final TriggerSequence triggerSequence = (TriggerSequence) activeBindings[i];
+				final TriggerSequence triggerSequence = activeBindings[i];
 				final Trigger[] triggers = triggerSequence.getTriggers();
 
 				if (triggers.length == 1) {

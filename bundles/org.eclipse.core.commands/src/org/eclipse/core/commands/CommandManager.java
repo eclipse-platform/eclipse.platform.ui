@@ -96,7 +96,7 @@ public final class CommandManager implements ICategoryListener,
 	 * @see org.eclipse.core.commands.ICategoryListener#categoryChanged(org.eclipse.core.commands.CategoryEvent)
 	 */
 	public final void categoryChanged(CategoryEvent categoryEvent) {
-		if (categoryEvent.hasDefinedChanged()) {
+		if (categoryEvent.isDefinedChanged()) {
 			final Category category = categoryEvent.getCategory();
 			final String categoryId = category.getId();
 			final boolean categoryIdAdded = category.isDefined();
@@ -116,7 +116,7 @@ public final class CommandManager implements ICategoryListener,
 	 * @see org.eclipse.commands.ICommandListener#commandChanged(org.eclipse.commands.CommandEvent)
 	 */
 	public final void commandChanged(final CommandEvent commandEvent) {
-		if (commandEvent.hasDefinedChanged()) {
+		if (commandEvent.isDefinedChanged()) {
 			final Command command = commandEvent.getCommand();
 			final String commandId = command.getId();
 			final boolean commandIdAdded = command.isDefined();

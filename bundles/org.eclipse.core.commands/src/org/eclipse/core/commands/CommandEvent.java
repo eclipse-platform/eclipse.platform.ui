@@ -7,9 +7,10 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 package org.eclipse.core.commands;
 
+import org.eclipse.core.commands.common.AbstractNamedHandleEvent;
 
 /**
  * An instance of this class describes changes to an instance of
@@ -26,37 +27,22 @@ package org.eclipse.core.commands;
  * @since 3.1
  * @see ICommandListener#commandChanged(CommandEvent)
  */
-public class CommandEvent {
+public class CommandEvent extends AbstractNamedHandleEvent {
 
 	/**
-	 * Whether the category of the command has changed.
+	 * The bit used to represent whether the command has changed its category.
 	 */
-	private final boolean categoryChanged;
+	private static final int CHANGED_CATEGORY = LAST_USED_BIT << 1;
+
+	/**
+	 * The bit used to represent whether the command has changed its handler.
+	 */
+	private static final int CHANGED_HANDLED = LAST_USED_BIT << 2;
 
 	/**
 	 * The command that has changed; this value is never <code>null</code>.
 	 */
 	private final Command command;
-
-	/**
-	 * Whether the defined state of the command has changed.
-	 */
-	private final boolean definedChanged;
-
-	/**
-	 * Whether the description of the command has changed.
-	 */
-	private final boolean descriptionChanged;
-
-	/**
-	 * Whether the command has either gained or lost a handler.
-	 */
-	private final boolean handledChanged;
-
-	/**
-	 * Whether the name of the command has changed.
-	 */
-	private final boolean nameChanged;
 
 	/**
 	 * Creates a new instance of this class.
@@ -77,15 +63,18 @@ public class CommandEvent {
 	public CommandEvent(final Command command, final boolean categoryChanged,
 			final boolean definedChanged, final boolean descriptionChanged,
 			final boolean handledChanged, final boolean nameChanged) {
+		super(definedChanged, descriptionChanged, nameChanged);
+
 		if (command == null)
 			throw new NullPointerException();
-
 		this.command = command;
-		this.categoryChanged = categoryChanged;
-		this.definedChanged = definedChanged;
-		this.descriptionChanged = descriptionChanged;
-		this.handledChanged = handledChanged;
-		this.nameChanged = nameChanged;
+
+		if (categoryChanged) {
+			changedValues |= CHANGED_CATEGORY;
+		}
+		if (handledChanged) {
+			changedValues |= CHANGED_HANDLED;
+		}
 	}
 
 	/**
@@ -103,26 +92,8 @@ public class CommandEvent {
 	 * 
 	 * @return true, iff the category property changed.
 	 */
-	public final boolean hasCategoryChanged() {
-		return categoryChanged;
-	}
-
-	/**
-	 * Returns whether or not the defined property changed.
-	 * 
-	 * @return true, iff the defined property changed.
-	 */
-	public final boolean hasDefinedChanged() {
-		return definedChanged;
-	}
-
-	/**
-	 * Returns whether or not the description property changed.
-	 * 
-	 * @return true, iff the description property changed.
-	 */
-	public final boolean hasDescriptionChanged() {
-		return descriptionChanged;
+	public final boolean isCategoryChanged() {
+		return ((changedValues & CHANGED_CATEGORY) != 0);
 	}
 
 	/**
@@ -130,16 +101,7 @@ public class CommandEvent {
 	 * 
 	 * @return true, iff the handled property changed.
 	 */
-	public final boolean hasHandledChanged() {
-		return handledChanged;
-	}
-
-	/**
-	 * Returns whether or not the name property changed.
-	 * 
-	 * @return true, iff the name property changed.
-	 */
-	public final boolean hasNameChanged() {
-		return nameChanged;
+	public final boolean isHandledChanged() {
+		return ((changedValues & CHANGED_HANDLED) != 0);
 	}
 }

@@ -82,9 +82,9 @@ final class SchemeListenerWrapper implements ISchemeListener {
     public final void schemeChanged(final SchemeEvent schemeEvent) {
         final IKeyConfiguration keyConfiguration = new SchemeWrapper(
                 schemeEvent.getScheme(), bindingManager);
-        final boolean definedChanged = schemeEvent.hasDefinedChanged();
-        final boolean nameChanged = schemeEvent.hasNameChanged();
-        final boolean parentIdChanged = schemeEvent.hasParentIdChanged();
+        final boolean definedChanged = schemeEvent.isDefinedChanged();
+        final boolean nameChanged = schemeEvent.isNameChanged();
+        final boolean parentIdChanged = schemeEvent.isParentIdChanged();
 
         listener.keyConfigurationChanged(new KeyConfigurationEvent(
                 keyConfiguration, false, definedChanged, nameChanged,

@@ -12,6 +12,8 @@ package org.eclipse.core.commands.contexts;
 
 import java.util.Set;
 
+import org.eclipse.core.commands.common.AbstractBitSetEvent;
+
 /**
  * <p>
  * An event indicating that the set of defined context identifiers has changed.
@@ -25,17 +27,18 @@ import java.util.Set;
  * @since 3.1
  * @see IContextManagerListener#contextManagerChanged(ContextManagerEvent)
  */
-public final class ContextManagerEvent {
+public final class ContextManagerEvent extends AbstractBitSetEvent {
 
 	/**
-	 * Whether the list of active context identifiers has changed.
+	 * The bit used to represent whether the set of defined contexts has
+	 * changed.
 	 */
-	private final boolean activeContextsChanged;
+	private static final int CHANGED_CONTEXT_DEFINED = 1 << 1;
 
 	/**
-	 * The context manager that has changed.
+	 * The bit used to represent whether the set of active contexts has changed.
 	 */
-	private final ContextManager contextManager;
+	private static final int CHANGED_CONTEXTS_ACTIVE = 1;
 
 	/**
 	 * The context identifier that was added or removed from the list of defined
@@ -44,10 +47,9 @@ public final class ContextManagerEvent {
 	private final String contextId;
 
 	/**
-	 * Whether a context identifier was added to the list of defined command
-	 * identifier. Otherwise, a command identifier was removed.
+	 * The context manager that has changed.
 	 */
-	private final boolean contextIdAdded;
+	private final ContextManager contextManager;
 
 	/**
 	 * The set of context identifiers (strings) that were active before the
@@ -88,19 +90,14 @@ public final class ContextManagerEvent {
 
 		this.contextManager = contextManager;
 		this.contextId = contextId;
-		this.contextIdAdded = contextIdAdded;
-		this.activeContextsChanged = activeContextsChanged;
 		this.previouslyActiveContextIds = previouslyActiveContextIds;
-	}
 
-	/**
-	 * Returns the instance of the interface that changed.
-	 * 
-	 * @return the instance of the interface that changed. Guaranteed not to be
-	 *         <code>null</code>.
-	 */
-	public final ContextManager getContextManager() {
-		return contextManager;
+		if (contextIdAdded) {
+			changedValues |= CHANGED_CONTEXT_DEFINED;
+		}
+		if (activeContextsChanged) {
+			changedValues |= CHANGED_CONTEXTS_ACTIVE;
+		}
 	}
 
 	/**
@@ -112,6 +109,16 @@ public final class ContextManagerEvent {
 	 */
 	public final String getContextId() {
 		return contextId;
+	}
+
+	/**
+	 * Returns the instance of the interface that changed.
+	 * 
+	 * @return the instance of the interface that changed. Guaranteed not to be
+	 *         <code>null</code>.
+	 */
+	public final ContextManager getContextManager() {
+		return contextManager;
 	}
 
 	/**
@@ -135,8 +142,18 @@ public final class ContextManagerEvent {
 	 * @return <code>true</code> if the collection of active contexts changed;
 	 *         <code>false</code> otherwise.
 	 */
-	public final boolean haveActiveContextsChanged() {
-		return activeContextsChanged;
+	public final boolean isActiveContextsChanged() {
+		return ((changedValues & CHANGED_CONTEXTS_ACTIVE) != 0);
+	}
+
+	/**
+	 * Returns whether the list of defined context identifiers has changed.
+	 * 
+	 * @return <code>true</code> if the list of context identifiers has
+	 *         changed; <code>false</code> otherwise.
+	 */
+	public final boolean isContextChanged() {
+		return (contextId != null);
 	}
 
 	/**
@@ -146,7 +163,7 @@ public final class ContextManagerEvent {
 	 * @return <code>true</code> if the context identifier became defined;
 	 *         <code>false</code> if the context identifier became undefined.
 	 */
-	public final boolean isContextIdAdded() {
-		return contextIdAdded;
+	public final boolean isContextDefined() {
+		return (((changedValues & CHANGED_CONTEXT_DEFINED) != 0) && (contextId != null));
 	}
 }

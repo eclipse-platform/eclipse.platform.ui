@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.contexts;
 
+import java.util.Set;
+
 import org.eclipse.core.commands.contexts.ContextEvent;
 import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.core.commands.contexts.ContextManagerEvent;
 import org.eclipse.core.commands.contexts.IContextListener;
+import org.eclipse.core.commands.contexts.IContextManagerListener;
+import org.eclipse.ui.contexts.IContext;
 
 /**
  * <p>
@@ -22,7 +27,14 @@ import org.eclipse.core.commands.contexts.IContextListener;
  * 
  * @since 3.1
  */
-public class ContextListenerWrapper implements IContextListener {
+public class ContextListenerWrapper implements IContextListener,
+		IContextManagerListener {
+
+	/**
+	 * The legacy context that this listener would previously have been attached
+	 * to. This value is never <code>null</code>.
+	 */
+	private final IContext context;
 
 	/**
 	 * The context manager used for constructing the context wrapper when an
@@ -43,10 +55,13 @@ public class ContextListenerWrapper implements IContextListener {
 	 * @param contextManager
 	 *            The context manager used for constructing the context wrapper
 	 *            when an event occurs; must not be <code>null</code>.
+	 * @param context
+	 *            The legacy context this listener will be listening to; must
+	 *            not be <code>null</code>.
 	 */
 	public ContextListenerWrapper(
 			final org.eclipse.ui.contexts.IContextListener listener,
-			final ContextManager contextManager) {
+			final ContextManager contextManager, final IContext context) {
 		if (listener == null) {
 			throw new NullPointerException(
 					"Cannot create a listener wrapper on a null listener"); //$NON-NLS-1$
@@ -57,8 +72,14 @@ public class ContextListenerWrapper implements IContextListener {
 					"Cannot create a listener wrapper with a null context manager"); //$NON-NLS-1$
 		}
 
+		if (context == null) {
+			throw new NullPointerException(
+					"Cannot create a listener wrapper with a null context"); //$NON-NLS-1$
+		}
+
 		wrappedListener = listener;
 		this.contextManager = contextManager;
+		this.context = context;
 	}
 
 	/*
@@ -66,15 +87,42 @@ public class ContextListenerWrapper implements IContextListener {
 	 * 
 	 * @see org.eclipse.core.commands.contexts.IContextListener#contextChanged(org.eclipse.core.commands.contexts.ContextEvent)
 	 */
-	public void contextChanged(ContextEvent contextEvent) {
+	public final void contextChanged(final ContextEvent contextEvent) {
 		wrappedListener
 				.contextChanged(new org.eclipse.ui.contexts.ContextEvent(
 						new ContextWrapper(contextEvent.getContext(),
 								contextManager), contextEvent
-								.hasDefinedChanged(), contextEvent
-								.hasEnabledChanged(), contextEvent
-								.hasNameChanged(), contextEvent
-								.hasParentIdChanged()));
+								.isDefinedChanged(), false, contextEvent
+								.isNameChanged(), contextEvent
+								.isParentIdChanged()));
+	}
+
+	public final void contextManagerChanged(final ContextManagerEvent event) {
+		final String contextId = context.getId();
+		final boolean enabledChanged;
+		if (event.isActiveContextsChanged()) {
+			final Set previousContexts = event.getPreviouslyActiveContextIds();
+			final Set currentContexts = contextManager.getActiveContextIds();
+			if ((previousContexts != null)
+					&& (previousContexts.contains(contextId))
+					&& ((currentContexts == null) || (currentContexts
+							.contains(contextId)))) {
+				enabledChanged = true;
+			} else if ((currentContexts != null)
+					&& (currentContexts.contains(contextId))
+					&& ((previousContexts == null) || (previousContexts
+							.contains(contextId)))) {
+				enabledChanged = true;
+			} else {
+				enabledChanged = false;
+			}
+		} else {
+			enabledChanged = false;
+		}
+
+		wrappedListener
+				.contextChanged(new org.eclipse.ui.contexts.ContextEvent(
+						context, false, enabledChanged, false, false));
 	}
 
 	public final boolean equals(final Object object) {

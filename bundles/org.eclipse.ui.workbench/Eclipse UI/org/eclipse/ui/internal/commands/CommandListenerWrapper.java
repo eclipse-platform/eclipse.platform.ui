@@ -65,10 +65,10 @@ final class CommandListenerWrapper implements ICommandListener {
 	public final void commandChanged(final CommandEvent commandEvent) {
 		final ICommand command = new CommandWrapper(commandEvent.getCommand(),
 				bindingManager);
-		final boolean definedChanged = commandEvent.hasDefinedChanged();
-		final boolean descriptionChanged = commandEvent.hasDescriptionChanged();
-		final boolean handledChanged = commandEvent.hasHandledChanged();
-		final boolean nameChanged = commandEvent.hasNameChanged();
+		final boolean definedChanged = commandEvent.isDefinedChanged();
+		final boolean descriptionChanged = commandEvent.isDescriptionChanged();
+		final boolean handledChanged = commandEvent.isHandledChanged();
+		final boolean nameChanged = commandEvent.isNameChanged();
 
 		listener.commandChanged(new org.eclipse.ui.commands.CommandEvent(
 				command, false, false, definedChanged, descriptionChanged,

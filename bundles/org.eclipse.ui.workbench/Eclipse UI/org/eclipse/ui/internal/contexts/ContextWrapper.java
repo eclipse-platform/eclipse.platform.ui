@@ -15,6 +15,7 @@ import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IContextListener;
 import org.eclipse.ui.contexts.NotDefinedException;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * This implements the old <code>IContext</code> interface based on the new
@@ -30,7 +31,7 @@ public class ContextWrapper implements IContext {
 	 * be <code>null</code>.
 	 */
 	private final ContextManager contextManager;
-	
+
 	/**
 	 * The wrapped instance of context. This value will never be
 	 * <code>null</code>.
@@ -52,7 +53,7 @@ public class ContextWrapper implements IContext {
 			throw new NullPointerException(
 					"A wrapper cannot be created on a null context"); //$NON-NLS-1$
 		}
-		
+
 		if (contextManager == null) {
 			throw new NullPointerException(
 					"A wrapper cannot be created with a null manager"); //$NON-NLS-1$
@@ -68,8 +69,15 @@ public class ContextWrapper implements IContext {
 	 * @see org.eclipse.ui.contexts.IContext#addContextListener(org.eclipse.ui.contexts.IContextListener)
 	 */
 	public void addContextListener(IContextListener contextListener) {
-        wrappedContext.addContextListener(new ContextListenerWrapper(
-                contextListener, contextManager));
+		final ContextListenerWrapper wrapper = new ContextListenerWrapper(
+				contextListener, contextManager, this);
+		wrappedContext.addContextListener(wrapper);
+
+		/*
+		 * We need to add the listener to the context manager as well, as only
+		 * the manager advertises changes to the enabled state.
+		 */
+		contextManager.addContextManagerListener(wrapper);
 	}
 
 	/*
@@ -78,8 +86,8 @@ public class ContextWrapper implements IContext {
 	 * @see java.lang.Comparable#compareTo(T)
 	 */
 	public int compareTo(Object o) {
-		// TODO Auto-generated method stub
-		return 0;
+		return Util
+				.compare(wrappedContext, ((ContextWrapper) o).wrappedContext);
 	}
 
 	/*
@@ -142,8 +150,10 @@ public class ContextWrapper implements IContext {
 	 * @see org.eclipse.ui.contexts.IContext#removeContextListener(org.eclipse.ui.contexts.IContextListener)
 	 */
 	public void removeContextListener(IContextListener contextListener) {
-        wrappedContext.removeContextListener(new ContextListenerWrapper(
-                contextListener, contextManager));
+		final ContextListenerWrapper wrapper = new ContextListenerWrapper(
+				contextListener, contextManager, this);
+		wrappedContext.removeContextListener(wrapper);
+		contextManager.removeContextManagerListener(wrapper);
 	}
 
 }

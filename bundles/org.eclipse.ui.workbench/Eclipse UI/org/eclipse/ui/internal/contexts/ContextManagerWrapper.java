@@ -233,7 +233,7 @@ public final class ContextManagerWrapper implements
 			previouslyDefinedContextIds = new HashSet();
 			previouslyDefinedContextIds.addAll(contextManager
 					.getDefinedContextIds());
-			if (contextManagerEvent.isContextIdAdded()) {
+			if (contextManagerEvent.isContextDefined()) {
 				previouslyDefinedContextIds.remove(contextId);
 			} else {
 				previouslyDefinedContextIds.add(contextId);
@@ -242,7 +242,7 @@ public final class ContextManagerWrapper implements
 
 		fireContextManagerChanged(new ContextManagerEvent(this,
 				definedContextsChanged, contextManagerEvent
-						.haveActiveContextsChanged(),
+						.isActiveContextsChanged(),
 				previouslyDefinedContextIds, contextManagerEvent
 						.getPreviouslyActiveContextIds()));
 

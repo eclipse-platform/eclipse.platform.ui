@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.commands;
+
+import org.eclipse.core.commands.common.AbstractBitSetEvent;
 
 /**
  * An instance of this class describes changes to an instance of
@@ -25,22 +27,24 @@ package org.eclipse.core.commands;
  * @since 3.1
  * @see IHandlerListener#handlerChanged(HandlerEvent)
  */
-public class HandlerEvent {
+public class HandlerEvent extends AbstractBitSetEvent {
 
 	/**
-	 * Whether the enabled state of the handler has changed.
+	 * The bit used to represent whether the handler has changed its enabled
+	 * state.
 	 */
-	private final boolean enabledChanged;
+	private static final int CHANGED_ENABLED = 1;
+
+	/**
+	 * The bit used to represent whether the handler has changed its handled
+	 * state.
+	 */
+	private static final int CHANGED_HANDLED = 1 << 1;
 
 	/**
 	 * The handler that changed; this value is never <code>null</code>.
 	 */
 	private final IHandler handler;
-
-	/**
-	 * Whether the handled state of the handler has changed.
-	 */
-	private final boolean handledChanged;
 
 	/**
 	 * Creates a new instance of this class.
@@ -56,10 +60,14 @@ public class HandlerEvent {
 			final boolean handledChanged) {
 		if (handler == null)
 			throw new NullPointerException();
-
 		this.handler = handler;
-		this.enabledChanged = enabledChanged;
-		this.handledChanged = handledChanged;
+
+		if (enabledChanged) {
+			changedValues |= CHANGED_ENABLED;
+		}
+		if (handledChanged) {
+			changedValues |= CHANGED_HANDLED;
+		}
 	}
 
 	/**
@@ -73,12 +81,12 @@ public class HandlerEvent {
 	}
 
 	/**
-	 * Returns whether or not the handled property changed.
+	 * Returns whether or not the enabled property changed.
 	 * 
-	 * @return <code>true</code>, iff the handled property changed.
+	 * @return <code>true</code>, iff the enabled property changed.
 	 */
 	public boolean isEnabledChanged() {
-		return enabledChanged;
+		return ((changedValues & CHANGED_ENABLED) != 0);
 	}
 
 	/**
@@ -87,6 +95,6 @@ public class HandlerEvent {
 	 * @return <code>true</code>, iff the handled property changed.
 	 */
 	public boolean isHandledChanged() {
-		return handledChanged;
+		return ((changedValues & CHANGED_HANDLED) != 0);
 	}
 }

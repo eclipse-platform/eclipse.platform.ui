@@ -264,17 +264,23 @@ public final class Util {
 	 * <code>null</code>.
 	 * 
 	 * @param leftArray
-	 *            The left array to compare; must not be <code>null</code>,
-	 *            but may be empty and may contain <code>null</code> elements.
+	 *            The left array to compare; may be <code>null</code>, and
+	 *            may be empty and may contain <code>null</code> elements.
 	 * @param rightArray
-	 *            The right array to compare; must not be <code>null</code>,
-	 *            but may be empty and may contain <code>null</code> elements.
+	 *            The right array to compare; may be <code>null</code>, and
+	 *            may be empty and may contain <code>null</code> elements.
 	 * @return <code>true</code> if the arrays are equal length and the
 	 *         elements at the same position are equal; <code>false</code>
 	 *         otherwise.
 	 */
 	public static final boolean equals(final Object[] leftArray,
 			final Object[] rightArray) {
+		if (leftArray == null) {
+			return (rightArray == null);
+		} else if (rightArray == null) {
+			return false;
+		}
+
 		if (leftArray.length != rightArray.length) {
 			return false;
 		}

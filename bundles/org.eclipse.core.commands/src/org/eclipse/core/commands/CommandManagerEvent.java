@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,9 +26,20 @@ package org.eclipse.core.commands;
 public final class CommandManagerEvent {
 
 	/**
-	 * The command manager that has changed.
+	 * The bit used to represent whether the given category has become defined.
+	 * If this bit is not set and there is no category id, then no category has
+	 * become defined nor undefined. If this bit is not set and there is a
+	 * category id, then the category has become undefined.
 	 */
-	private final CommandManager commandManager;
+	private static final int CHANGED_CATEGORY_DEFINED = 1;
+
+	/**
+	 * The bit used to represent whether the given command has become defined.If
+	 * this bit is not set and there is no command id, then no command has
+	 * become defined nor undefined. If this bit is not set and there is a
+	 * command id, then the command has become undefined.
+	 */
+	private static final int CHANGED_COMMAND_DEFINED = 1 << 1;
 
 	/**
 	 * The category identifier that was added or removed from the list of
@@ -38,15 +49,11 @@ public final class CommandManagerEvent {
 	private final String categoryId;
 
 	/**
-	 * Whether a category identifier was added to the list of defined category
-	 * identifiers. Otherwise, a category identifier was removed.
+	 * A collection of bits representing whether certain values have changed. A
+	 * bit is set (i.e., <code>1</code>) if the corresponding property has
+	 * changed.
 	 */
-	private final boolean categoryIdAdded;
-
-	/**
-	 * Whether the list of defined category identifiers has changed.
-	 */
-	private final boolean categoryIdChanged;
+	private final int changedValues;
 
 	/**
 	 * The command identifier that was added or removed from the list of defined
@@ -56,15 +63,9 @@ public final class CommandManagerEvent {
 	private final String commandId;
 
 	/**
-	 * Whether a command identifier was added to the list of defined command
-	 * identifiers. Otherwise, a command identifier was removed.
+	 * The command manager that has changed.
 	 */
-	private final boolean commandIdAdded;
-
-	/**
-	 * Whether the list of defined command identifiers has changed.
-	 */
-	private final boolean commandIdChanged;
+	private final CommandManager commandManager;
 
 	/**
 	 * Creates a new instance of this class.
@@ -110,21 +111,16 @@ public final class CommandManagerEvent {
 
 		this.commandManager = commandManager;
 		this.commandId = commandId;
-		this.commandIdAdded = commandIdAdded;
-		this.commandIdChanged = commandIdChanged;
 		this.categoryId = categoryId;
-		this.categoryIdAdded = categoryIdAdded;
-		this.categoryIdChanged = categoryIdChanged;
-	}
 
-	/**
-	 * Returns the instance of the interface that changed.
-	 * 
-	 * @return the instance of the interface that changed. Guaranteed not to be
-	 *         <code>null</code>.
-	 */
-	public final CommandManager getCommandManager() {
-		return commandManager;
+		int changedValues = 0;
+		if (categoryIdChanged && categoryIdAdded) {
+			changedValues |= CHANGED_CATEGORY_DEFINED;
+		}
+		if (commandIdChanged && commandIdAdded) {
+			changedValues |= CHANGED_COMMAND_DEFINED;
+		}
+		this.changedValues = changedValues;
 	}
 
 	/**
@@ -138,27 +134,6 @@ public final class CommandManagerEvent {
 	}
 
 	/**
-	 * Returns whether the category identifier became defined. Otherwise, the
-	 * category identifier became undefined.
-	 * 
-	 * @return <code>true</code> if the category identifier became defined;
-	 *         <code>false</code> if the category identifier became undefined.
-	 */
-	public final boolean isCategoryIdAdded() {
-		return categoryIdAdded;
-	}
-
-	/**
-	 * Returns whether the list of defined category identifiers has changed.
-	 * 
-	 * @return <code>true</code> if the list of category identifiers has
-	 *         changed; <code>false</code> otherwise.
-	 */
-	public final boolean isCategoryIdChanged() {
-		return categoryIdChanged;
-	}
-
-	/**
 	 * Returns the command identifier that was added or removed.
 	 * 
 	 * @return The command identifier that was added or removed; never
@@ -169,14 +144,34 @@ public final class CommandManagerEvent {
 	}
 
 	/**
-	 * Returns whether the command identifier became defined. Otherwise, the
-	 * command identifier became undefined.
+	 * Returns the instance of the interface that changed.
 	 * 
-	 * @return <code>true</code> if the command identifier became defined;
-	 *         <code>false</code> if the command identifier became undefined.
+	 * @return the instance of the interface that changed. Guaranteed not to be
+	 *         <code>null</code>.
 	 */
-	public final boolean isCommandIdAdded() {
-		return commandIdAdded;
+	public final CommandManager getCommandManager() {
+		return commandManager;
+	}
+
+	/**
+	 * Returns whether the list of defined category identifiers has changed.
+	 * 
+	 * @return <code>true</code> if the list of category identifiers has
+	 *         changed; <code>false</code> otherwise.
+	 */
+	public final boolean isCategoryChanged() {
+		return (categoryId != null);
+	}
+
+	/**
+	 * Returns whether the category identifier became defined. Otherwise, the
+	 * category identifier became undefined.
+	 * 
+	 * @return <code>true</code> if the category identifier became defined;
+	 *         <code>false</code> if the category identifier became undefined.
+	 */
+	public final boolean isCategoryDefined() {
+		return (((changedValues & CHANGED_CATEGORY_DEFINED) != 0) && (categoryId != null));
 	}
 
 	/**
@@ -185,7 +180,18 @@ public final class CommandManagerEvent {
 	 * @return <code>true</code> if the list of command identifiers has
 	 *         changed; <code>false</code> otherwise.
 	 */
-	public final boolean isCommandIdChanged() {
-		return commandIdChanged;
+	public final boolean isCommandChanged() {
+		return (commandId != null);
+	}
+
+	/**
+	 * Returns whether the command identifier became defined. Otherwise, the
+	 * command identifier became undefined.
+	 * 
+	 * @return <code>true</code> if the command identifier became defined;
+	 *         <code>false</code> if the command identifier became undefined.
+	 */
+	public final boolean isCommandDefined() {
+		return (((changedValues & CHANGED_COMMAND_DEFINED) != 0) && (commandId != null));
 	}
 }

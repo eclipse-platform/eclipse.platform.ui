@@ -100,7 +100,7 @@ public final class ContextManager implements IContextListener {
 	 * @see org.eclipse.commands.contexts.IContextListener#contextChanged(org.eclipse.commands.contexts.ContextEvent)
 	 */
 	public final void contextChanged(final ContextEvent contextEvent) {
-		if (contextEvent.hasDefinedChanged()) {
+		if (contextEvent.isDefinedChanged()) {
 			final Context context = contextEvent.getContext();
 			final String contextId = context.getId();
 			final boolean contextIdAdded = context.isDefined();

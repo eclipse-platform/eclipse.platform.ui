@@ -610,7 +610,7 @@ public final class BindingManager implements IContextManagerListener,
 	 */
 	public final void contextManagerChanged(
 			final ContextManagerEvent contextManagerEvent) {
-		if (contextManagerEvent.haveActiveContextsChanged()) {
+		if (contextManagerEvent.isActiveContextsChanged()) {
 			clearSolution();
 		}
 	}
@@ -1715,7 +1715,7 @@ public final class BindingManager implements IContextManagerListener,
 	 * </p>
 	 */
 	public final void schemeChanged(final SchemeEvent schemeEvent) {
-		if (schemeEvent.hasDefinedChanged()) {
+		if (schemeEvent.isDefinedChanged()) {
 			final Scheme scheme = schemeEvent.getScheme();
 
 			final boolean schemeIdAdded = scheme.isDefined();
@@ -1774,9 +1774,8 @@ public final class BindingManager implements IContextManagerListener,
 				}
 			}
 
-			fireBindingManagerChanged(new BindingManagerEvent(this, false,
-					activeSchemeChanged, scheme, schemeIdAdded,
-					!schemeIdAdded, false, false));
+			fireBindingManagerChanged(new BindingManagerEvent(this, false, null,
+					activeSchemeChanged, scheme, schemeIdAdded, false, false));
 		}
 	}
 
@@ -1806,11 +1805,12 @@ public final class BindingManager implements IContextManagerListener,
 	private final void setActiveBindings(final Map activeBindings,
 			final Map activeBindingsByCommandId, final Map prefixTable) {
 		this.activeBindings = activeBindings;
+		final Map previousBindingsByCommandId = this.activeBindingsByCommandId;
 		this.activeBindingsByCommandId = activeBindingsByCommandId;
 		this.prefixTable = prefixTable;
 
-		fireBindingManagerChanged(new BindingManagerEvent(this, true, false,
-				null, false, false, false, false));
+		fireBindingManagerChanged(new BindingManagerEvent(this, true, previousBindingsByCommandId, false,
+				null, false, false, false));
 	}
 
 	/**
@@ -1845,8 +1845,8 @@ public final class BindingManager implements IContextManagerListener,
 		activeScheme = scheme;
 		activeSchemeIds = getSchemeIds(activeScheme.getId());
 		clearSolution();
-		fireBindingManagerChanged(new BindingManagerEvent(this, false, true,
-				null, false, false, false, false));
+		fireBindingManagerChanged(new BindingManagerEvent(this, false, null, true,
+				null, false, false, false));
 	}
 
 	/**
@@ -1908,8 +1908,8 @@ public final class BindingManager implements IContextManagerListener,
 			this.locale = locale;
 			this.locales = expand(locale, LOCALE_SEPARATOR);
 			clearSolution();
-			fireBindingManagerChanged(new BindingManagerEvent(this, false,
-					false, null, false, false, true, false));
+			fireBindingManagerChanged(new BindingManagerEvent(this, false, null,
+					false, null, false, true, false));
 		}
 	}
 
@@ -1938,8 +1938,8 @@ public final class BindingManager implements IContextManagerListener,
 			this.platform = platform;
 			this.platforms = expand(platform, Util.ZERO_LENGTH_STRING);
 			clearSolution();
-			fireBindingManagerChanged(new BindingManagerEvent(this, false,
-					false, null, false, false, false, true));
+			fireBindingManagerChanged(new BindingManagerEvent(this, false, null,
+					false, null, false, false, true));
 		}
 	}
 }

@@ -46,6 +46,7 @@ import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeySequenceText;
 import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -1584,7 +1585,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		String contextName = (String) contextUniqueNamesById.get(contextId);
 		if (contextName == null) {
 			contextName = (String) contextUniqueNamesById
-					.get(KeySequenceBinding.DEFAULT_CONTEXT_ID);
+					.get(IContextIds.CONTEXT_ID_WINDOW);
 		}
 		if (contextName == null) {
 			contextName = Util.ZERO_LENGTH_STRING;

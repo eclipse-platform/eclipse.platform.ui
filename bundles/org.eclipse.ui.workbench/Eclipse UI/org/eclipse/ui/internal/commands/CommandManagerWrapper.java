@@ -73,21 +73,6 @@ public final class CommandManagerWrapper implements ICommandManager,
 	 */
 	public static String DEBUG_HANDLERS_COMMAND_ID = null;
 
-	static boolean isKeyConfigurationDefinitionChildOf(String ancestor,
-			String id, Map keyConfigurationDefinitionsById) {
-		Collection visited = new HashSet();
-		while (id != null && !visited.contains(id)) {
-			KeyConfigurationDefinition keyConfigurationDefinition = (KeyConfigurationDefinition) keyConfigurationDefinitionsById
-					.get(id);
-			visited.add(id);
-			if (keyConfigurationDefinition != null
-					&& Util.equals(id = keyConfigurationDefinition
-							.getParentId(), ancestor))
-				return true;
-		}
-		return false;
-	}
-
 	static boolean validateKeySequence(KeySequence keySequence) {
 		if (keySequence == null)
 			return false;
@@ -96,22 +81,6 @@ public final class CommandManagerWrapper implements ICommandManager,
 		if (size == 0 || size > 4 || !keySequence.isComplete())
 			return false;
 		return true;
-	}
-
-	static void validateKeySequenceBindingDefinitions(
-			Collection keySequenceBindingDefinitions) {
-		Iterator iterator = keySequenceBindingDefinitions.iterator();
-		while (iterator.hasNext()) {
-			KeySequenceBindingDefinition keySequenceBindingDefinition = (KeySequenceBindingDefinition) iterator
-					.next();
-			String keyConfigurationId = keySequenceBindingDefinition
-					.getKeyConfigurationId();
-			KeySequence keySequence = keySequenceBindingDefinition
-					.getKeySequence();
-			if (keyConfigurationId == null || keySequence == null
-					|| !validateKeySequence(keySequence))
-				iterator.remove();
-		}
 	}
 
 	/**
@@ -260,8 +229,7 @@ public final class CommandManagerWrapper implements ICommandManager,
 	 * @see org.eclipse.jface.bindings.IBindingManagerListener#bindingManagerChanged(org.eclipse.jface.bindings.BindingManagerEvent)
 	 */
 	public final void bindingManagerChanged(final BindingManagerEvent event) {
-		final boolean schemeDefinitionsChanged = event.isSchemeDefined()
-				|| event.isSchemeUndefined();
+		final boolean schemeDefinitionsChanged = event.getScheme() != null;
 		final Set previousSchemes;
 		if (schemeDefinitionsChanged) {
 			previousSchemes = new HashSet();
@@ -284,9 +252,9 @@ public final class CommandManagerWrapper implements ICommandManager,
 		}
 
 		fireCommandManagerChanged(new CommandManagerEvent(this, false, event
-				.hasActiveSchemeChanged(), event.hasLocaleChanged(), event
-				.hasPlatformChanged(), false, false, event.isSchemeDefined()
-				|| event.isSchemeUndefined(), null, null, previousSchemes));
+				.isActiveSchemeChanged(), event.isLocaleChanged(), event
+				.isPlatformChanged(), false, false, schemeDefinitionsChanged,
+				null, null, previousSchemes));
 	}
 
 	/*
@@ -297,13 +265,13 @@ public final class CommandManagerWrapper implements ICommandManager,
 	public final void commandManagerChanged(
 			final org.eclipse.core.commands.CommandManagerEvent event) {
 		// Figure out the set of previous category identifiers.
-		final boolean categoryIdsChanged = event.isCategoryIdChanged();
+		final boolean categoryIdsChanged = event.isCategoryChanged();
 		final Set previousCategoryIds;
 		if (categoryIdsChanged) {
 			previousCategoryIds = new HashSet(commandManager
 					.getDefinedCategoryIds());
 			final String categoryId = event.getCategoryId();
-			if (event.isCategoryIdAdded()) {
+			if (event.isCategoryDefined()) {
 				previousCategoryIds.remove(categoryId);
 			} else {
 				previousCategoryIds.add(categoryId);
@@ -313,13 +281,13 @@ public final class CommandManagerWrapper implements ICommandManager,
 		}
 
 		// Figure out the set of previous command identifiers.
-		final boolean commandIdsChanged = event.isCommandIdChanged();
+		final boolean commandIdsChanged = event.isCommandChanged();
 		final Set previousCommandIds;
 		if (commandIdsChanged) {
 			previousCommandIds = new HashSet(commandManager
 					.getDefinedCommandIds());
 			final String commandId = event.getCommandId();
-			if (event.isCommandIdAdded()) {
+			if (event.isCommandDefined()) {
 				previousCommandIds.remove(commandId);
 			} else {
 				previousCommandIds.add(commandId);
@@ -327,7 +295,7 @@ public final class CommandManagerWrapper implements ICommandManager,
 		} else {
 			previousCommandIds = null;
 		}
-		
+
 		fireCommandManagerChanged(new CommandManagerEvent(this, false, false,
 				false, false, categoryIdsChanged, commandIdsChanged, false,
 				previousCategoryIds, previousCommandIds, null));
@@ -335,8 +303,8 @@ public final class CommandManagerWrapper implements ICommandManager,
 
 	public final void contextManagerChanged(final ContextManagerEvent event) {
 		fireCommandManagerChanged(new CommandManagerEvent(this, event
-				.haveActiveContextsChanged(), false, false, false, false,
-				false, false, null, null, null));
+				.isActiveContextsChanged(), false, false, false, false, false,
+				false, null, null, null));
 	}
 
 	private void fireCommandManagerChanged(
@@ -548,7 +516,7 @@ public final class CommandManagerWrapper implements ICommandManager,
 		if (commandManagerListener == null) {
 			throw new NullPointerException("Cannot remove a null listener"); //$NON-NLS-1$
 		}
-		
+
 		if (commandManagerListeners != null) {
 			commandManagerListeners.remove(commandManagerListener);
 			if (commandManagerListeners.isEmpty()) {
