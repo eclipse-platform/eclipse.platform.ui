@@ -14,8 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
@@ -87,4 +89,11 @@ public class CommitOperation extends SingleCommandOperation {
 	protected boolean isServerModificationOperation() {
 		return true;
 	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getResourceMappingContext()
+     */
+    protected ResourceMappingContext getResourceMappingContext() {
+        return SubscriberResourceMappingContext.getCheckInContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
+    }
 }

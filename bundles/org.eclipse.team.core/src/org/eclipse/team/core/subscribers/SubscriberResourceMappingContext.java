@@ -58,8 +58,28 @@ public class SubscriberResourceMappingContext extends ResourceMappingContext {
             public boolean select(SyncInfo info, IProgressMonitor monitor) {
                 if (info != null) {
                     int direction = info.getKind() & SyncInfo.DIRECTION_MASK;
-                    // When updating, only outgoing and conflicting changes are needed
+                    // When updating, only incoming and conflicting changes are needed
                     return direction == SyncInfo.INCOMING || direction == SyncInfo.CONFLICTING ;
+                }
+                return false;
+            }
+        
+        });
+    }
+    
+    /**
+     * Return a resource mapping context suitable for a check-in (or commit) operations.
+     * That is, operations that uploads the latest local changes to the 
+     * server from the local workspace resources, typically creating a new version of the resource.
+     * @return a resource mapping context suitable for a check-in operations
+     */
+    public static ResourceMappingContext getCheckInContext(Subscriber subscriber) {
+        return new SubscriberResourceMappingContext(subscriber, new SyncInfoFilter() {
+            public boolean select(SyncInfo info, IProgressMonitor monitor) {
+                if (info != null) {
+                    int direction = info.getKind() & SyncInfo.DIRECTION_MASK;
+                    // When committing, only outgoing and conflicting changes are needed
+                    return direction == SyncInfo.OUTGOING || direction == SyncInfo.CONFLICTING ;
                 }
                 return false;
             }

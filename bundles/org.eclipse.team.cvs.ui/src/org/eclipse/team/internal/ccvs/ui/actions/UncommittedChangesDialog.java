@@ -100,12 +100,7 @@ public abstract class UncommittedChangesDialog extends MappingSelectionDialog {
 
     boolean matchesFilter(ResourceMapping mapping) {
         try {
-            mapping.accept(new SubscriberResourceMappingContext(subscriber, new SyncInfoFilter() {
-                public boolean select(SyncInfo info, IProgressMonitor monitor) {
-                    return info != null && info.getKind() != SyncInfo.IN_SYNC;
-                }
-            
-            }), new IResourceVisitor() {
+            mapping.accept(null, new IResourceVisitor() {
                 public boolean visit(IResource resource) throws CoreException {
                     SyncInfo info = subscriber.getSyncInfo(resource);
                     if (info != null && resourceFilter.select(info)) {

@@ -144,6 +144,9 @@ public class UpdateOperation extends SingleCommandOperation {
 		return Policy.bind("UpdateAction.update"); //$NON-NLS-1$
 	}
     
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getResourceMappingContext()
+     */
     protected ResourceMappingContext getResourceMappingContext() {
         if (Update.IGNORE_LOCAL_CHANGES.isElementOf(getLocalOptions(false))) {
             return SubscriberResourceMappingContext.getReplaceContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
