@@ -57,7 +57,6 @@ public class InspectorView extends AbstractDebugView  implements IDoubleClickLis
 		
 		getViewer().addDoubleClickListener(this);
 
-		setTitleToolTip(DebugUIMessages.getString("InspectorView.Evaluated_Expression_1")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(
 			parent,
 			new ViewContextComputer(this, IDebugHelpContextIds.INSPECTOR_VIEW ));

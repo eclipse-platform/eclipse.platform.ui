@@ -114,7 +114,6 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 	}
 
 	protected void configureView(Composite parent) {
-		setTitleToolTip(DebugUIMessages.getString("LaunchesView.System_Processes_1")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(
 			parent,
 			new ViewContextComputer(this, IDebugHelpContextIds.PROCESS_VIEW ));

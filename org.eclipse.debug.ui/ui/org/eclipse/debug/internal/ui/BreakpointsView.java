@@ -68,7 +68,6 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 			}
 		});
 		
-		setTitleToolTip(DebugUIMessages.getString("BreakpointsView.toolTipText")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(
 			parent,
 			new ViewContextComputer(this, IDebugHelpContextIds.BREAKPOINT_VIEW));

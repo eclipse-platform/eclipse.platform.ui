@@ -79,7 +79,6 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 		fConsoleViewer.addTextInputListener(getTextInputListener());
 		getSite().setSelectionProvider(fConsoleViewer.getSelectionProvider());
 		setViewerInput(DebugUIPlugin.getDefault().getCurrentProcess());
-		setTitleToolTip(DebugUIMessages.getString("ConsoleView.Program_Output_2")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(
 			parent,
 			new ViewContextComputer(this, IDebugHelpContextIds.CONSOLE_VIEW));

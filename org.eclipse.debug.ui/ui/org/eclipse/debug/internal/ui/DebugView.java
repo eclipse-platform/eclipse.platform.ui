@@ -97,7 +97,6 @@ public class DebugView extends LaunchesView implements IPartListener {
 	}
 	
 	protected void configureView(Composite parent) {
-		setTitleToolTip(DebugUIMessages.getString("DebugView.Debug_Sessions_and_Associated_Program_Stacks_2")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(
 			parent,
 			new ViewContextComputer(this, IDebugHelpContextIds.DEBUG_VIEW ));
