@@ -502,7 +502,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		try {
 			
 			// run operation in separate thread and make it canceable
-			new ProgressMonitorDialog(shell).run(true, true, input);
+			PlatformUI.getWorkbench().getProgressService().run(true, true, input);
 			
 			String message= input.getMessage();
 			if (message != null) {
