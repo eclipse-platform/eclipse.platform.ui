@@ -28,4 +28,7 @@ public interface IQueryListener {
 	 * @param query The query that has been removed
 	 */
 	void queryRemoved(ISearchQuery query);
+	
+	void queryStarting(ISearchQuery query);
+	void queryFinished(ISearchQuery query);
 }

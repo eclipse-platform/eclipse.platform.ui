@@ -60,6 +60,7 @@ class QueryManager {
 			fListeners.remove(l);
 		}
 	}
+	
 	void fireAdded(ISearchQuery query) {
 		Set copiedListeners= new HashSet();
 		synchronized (fListeners) {
@@ -83,6 +84,30 @@ class QueryManager {
 			l.queryRemoved(query);
 		}
 	}
+	
+	void fireStarting(ISearchQuery query) {
+		Set copiedListeners= new HashSet();
+		synchronized (fListeners) {
+			copiedListeners.addAll(fListeners);
+		}
+		Iterator listeners= copiedListeners.iterator();
+		while (listeners.hasNext()) {
+			IQueryListener l= (IQueryListener) listeners.next();
+			l.queryStarting(query);
+		}
+	}
+
+	void fireFinished(ISearchQuery query) {
+		Set copiedListeners= new HashSet();
+		synchronized (fListeners) {
+			copiedListeners.addAll(fListeners);
+		}
+		Iterator listeners= copiedListeners.iterator();
+		while (listeners.hasNext()) {
+			IQueryListener l= (IQueryListener) listeners.next();
+			l.queryFinished(query);
+		}
+	}
 
 	void removeAll() {
 		Set copiedSearches= new HashSet();
@@ -95,6 +120,14 @@ class QueryManager {
 				fireRemoved(element);
 			}
 		}
+	}
+
+	void queryFinished(ISearchQuery query) {
+		fireFinished(query);
+	}
+
+	void queryStarting(ISearchQuery query) {
+		fireStarting(query);
 	}
 
 }

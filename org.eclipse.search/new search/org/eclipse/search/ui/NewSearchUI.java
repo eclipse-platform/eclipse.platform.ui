@@ -85,4 +85,8 @@ public class NewSearchUI {
 	public static ISearchQuery[] getQueries() {
 		return InternalSearchUI.getInstance().getQueries();
 	}
+	
+	public static boolean isQueryRunning(ISearchQuery query) {
+		return InternalSearchUI.getInstance().isQueryRunning(query);
+	}
 }

@@ -2,7 +2,6 @@ package org.eclipse.search2.internal.ui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -38,7 +37,6 @@ public class InternalSearchUI {
 	
 	private QueryManager fSearchResultsManager;
 	private PositionTracker fPositionTracker;
-	private HashSet fJobListeners;
 
 	public static final String SEARCH_VIEW_ID= "org.eclipse.search.ui.views.SearchView"; //$NON-NLS-1$
 
@@ -80,29 +78,14 @@ public class InternalSearchUI {
 
 	private void searchJobStarted(SearchJobRecord record) {
 		record.fIsRunning= true;
-		HashSet clonedSet= (HashSet) fJobListeners.clone();
-		for (Iterator listeners= clonedSet.iterator(); listeners.hasNext();) {
-			ISearchQueryListener listener= (ISearchQueryListener) listeners.next();
-			listener.searchQueryStarted(record.fQuery);
-		}
+		getSearchManager().queryStarting(record.fQuery);
 	}
 	
 	private void searchJobFinished(SearchJobRecord record) {
 		record.fIsRunning= false;
-		HashSet clonedSet= (HashSet) fJobListeners.clone();
-		for (Iterator listeners= clonedSet.iterator(); listeners.hasNext();) {
-			ISearchQueryListener listener= (ISearchQueryListener) listeners.next();
-			listener.searchQueryFinished(record.fQuery);
-		}
+		getSearchManager().queryFinished(record.fQuery);
 	}
 	
-	void addSearchQueryListener(ISearchQueryListener l) {
-		fJobListeners.add(l);
-	}
-	
-	void removeSearchQueryListener(ISearchQueryListener l) {
-		fJobListeners.remove(l);
-	}
 	/**
 	 * The constructor.
 	 */
@@ -111,7 +94,6 @@ public class InternalSearchUI {
 		fSearchJobs= new HashMap();
 		fSearchResultsManager= new QueryManager();
 		fPositionTracker= new PositionTracker();
-		fJobListeners= new HashSet();
 	}
 
 	/**

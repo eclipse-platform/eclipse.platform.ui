@@ -308,4 +308,18 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 		// not interesting for us.
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.IQueryListener#queryStarting(org.eclipse.search.ui.ISearchQuery)
+	 */
+	public void queryStarting(ISearchQuery query) {
+		// not interested here
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.IQueryListener#queryFinished(org.eclipse.search.ui.ISearchQuery)
+	 */
+	public void queryFinished(ISearchQuery query) {
+		// not interested
+	}
+
 }

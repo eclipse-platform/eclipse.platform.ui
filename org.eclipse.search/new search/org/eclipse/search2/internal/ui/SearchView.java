@@ -55,7 +55,7 @@ import org.eclipse.search.internal.ui.SearchPluginImages;
  * @author Thomas Mäder
  *
  */
-public class SearchView extends PageBookView implements ISearchResultViewPart, IQueryListener, ISearchResultListener, ISearchQueryListener {
+public class SearchView extends PageBookView implements ISearchResultViewPart, IQueryListener, ISearchResultListener {
 	private static final String MEMENTO_TYPE= "view"; //$NON-NLS-1$
 	private HashMap fPartsToPages;
 	private HashMap fPagesToParts;
@@ -181,7 +181,6 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		setTitleImage(SearchPluginImages.get(SearchPluginImages.T_VIEW));
 		fSearchViewPageService= new SearchPageRegistry("org.eclipse.search.searchResultViewPages", "targetClass", "id"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		fSearchViewStates= new HashMap();
-		InternalSearchUI.getInstance().addSearchQueryListener(this);
 	}
 
 	protected IPage createDefaultPage(PageBook book) {
@@ -318,7 +317,6 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		InternalSearchUI.getInstance().getSearchManager().removeQueryListener(this);
 		if (fCurrentSearch != null)
 			fCurrentSearch.removeListener(this);
-		InternalSearchUI.getInstance().removeSearchQueryListener(this);
 		super.dispose();
 	}
 
@@ -353,11 +351,11 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		menuManager.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fSearchAgainAction);
 	}
 
-	public void searchQueryStarted(ISearchQuery query) {
+	public void queryStarting(ISearchQuery query) {
 		updateTitle();
 	}
 
-	public void searchQueryFinished(ISearchQuery query) {
+	public void queryFinished(ISearchQuery query) {
 		updateTitle();
 	}
 	

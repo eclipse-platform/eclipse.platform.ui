@@ -61,6 +61,12 @@ public class QueryManagerTest extends TestCase {
 			public void queryRemoved(ISearchQuery query) {
 				wasRemoved[0]= true;
 			}
+			public void queryStarting(ISearchQuery query) {
+				// not interested
+			}
+			public void queryFinished(ISearchQuery query) {
+				// not interested
+			}
 		} ;
 		NewSearchUI.addQueryListener(l);
 		ISearchQuery query= new NullQuery();

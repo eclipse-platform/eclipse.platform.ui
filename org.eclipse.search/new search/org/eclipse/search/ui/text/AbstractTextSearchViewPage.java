@@ -13,6 +13,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
@@ -43,12 +45,16 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
+import org.eclipse.ui.part.PageBook;
 
 import org.eclipse.search.ui.IContextMenuConstants;
+import org.eclipse.search.ui.IQueryListener;
+import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.SearchResultEvent;
 
 import org.eclipse.search.internal.ui.CopyToClipboardAction;
@@ -72,9 +78,15 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	
 	private StructuredViewer fViewer;
 	private Composite fViewerContainer;
+	private Control fBusyLabel;
+	private PageBook fPagebook;
+	private boolean fIsBusyShown;
+	
 	private ISearchResultViewPart fViewPart;
 	private Set fBatchedUpdates;
 	private ISearchResultListener fListener;
+	
+	private IQueryListener fQueryListener;
 	
 	private MenuManager fMenu;
 	
@@ -218,6 +230,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * {@inheritDoc}
 	 */
 	public void createControl(Composite parent) {
+		fQueryListener= createQueryListener();
 		fMenu= new MenuManager("#PopUp"); //$NON-NLS-1$
 
 		fMenu.setRemoveAllWhenShown(true);
@@ -230,14 +243,66 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			}
 
 		});
-			
-		fViewerContainer= new Composite(parent, SWT.NULL);
-		fViewerContainer.setSize(100, 100);
+		
+		fPagebook= new PageBook(parent, SWT.NULL);
+		fPagebook.setLayoutData(new GridData(GridData.FILL_BOTH));
+					
+		fBusyLabel= createBusyControl();
+
+		fViewerContainer= new Composite(fPagebook, SWT.NULL);
 		fViewerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fViewerContainer.setSize(100, 100);
 		fViewerContainer.setLayout(new FillLayout());
 		createViewer(fViewerContainer, fIsInitiallyFlat);
+		
+		updateBusyLabel();
+		NewSearchUI.addQueryListener(fQueryListener);
 	}
 	
+	private Control createBusyControl() {
+		Table busyLabel= new Table(fPagebook, SWT.NULL);
+		TableItem item= new TableItem(busyLabel, SWT.NULL);
+		item.setText(SearchMessages.getString("AbstractTextSearchViewPage.searching.label")); //$NON-NLS-1$
+		busyLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		return busyLabel;
+	}
+
+	private IQueryListener createQueryListener() {
+		final Runnable runnable= new Runnable() {
+			public void run() {
+				updateBusyLabel();
+			}
+
+		};
+		return new IQueryListener() {
+			public void queryAdded(ISearchQuery query) {
+				// ignore
+			}
+			public void queryRemoved(ISearchQuery query) {
+				// ignore
+			}
+
+			public void queryStarting(ISearchQuery query) {
+				asyncExec(runnable);
+			}
+
+			public void queryFinished(ISearchQuery query) {
+				asyncExec(runnable);
+			}
+		};
+	}
+
+	private void updateBusyLabel() {
+		AbstractTextSearchResult result= getInput();
+		boolean shouldShowBusy= result != null && NewSearchUI.isQueryRunning(result.getQuery()) && result.getMatchCount() == 0;
+		if (shouldShowBusy == fIsBusyShown)
+			return;
+		if (shouldShowBusy)
+			fPagebook.showPage(fBusyLabel);
+		else
+			fPagebook.showPage(fViewerContainer);
+		fIsBusyShown= shouldShowBusy;
+	}
 	/**
 	 * Toggles the page between tree mode and flat (table) layout.
 	 */
@@ -331,7 +396,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * {@inheritDoc}
 	 */
 	public Control getControl() {
-		return fViewerContainer;
+		return fPagebook;
 	}
 
 	/** 
@@ -350,6 +415,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			else
 				gotoNextMatch();		
 		}
+		updateBusyLabel();
 	}
 	
 	/** 
@@ -485,6 +551,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	public void dispose() {
 		//disconnectViewer();
 		super.dispose();
+		NewSearchUI.removeQueryListener(fQueryListener);
 	}
 
 	/**
@@ -560,6 +627,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		synchronized(this) {
 			elementsChanged(fBatchedUpdates.toArray());
 			fBatchedUpdates.clear();
+			updateBusyLabel();
 		}
 	}
 
@@ -574,6 +642,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private void runClear() {
 		synchronized(this) {
 			fBatchedUpdates.clear();
+			updateBusyLabel();
 		}
 		clear();
 	}
