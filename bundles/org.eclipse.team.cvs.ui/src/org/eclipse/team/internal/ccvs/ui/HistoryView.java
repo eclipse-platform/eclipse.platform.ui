@@ -214,21 +214,26 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 			}
 		});
 		
-		getRevisionAction = getContextMenuAction(Policy.bind("HistoryView.getRevisionAction"), new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				ICVSRemoteFile remoteFile = currentSelection.getRemoteFile();
-				try {
-					if(confirmOverwrite()) {
-						CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(file.getProject());
-						CVSTag revisionTag = new CVSTag(remoteFile.getRevision(), CVSTag.VERSION);
-						provider.update(new IResource[] {file}, new Command.LocalOption[] {Command.UPDATE.IGNORE_LOCAL_CHANGES}, 
-												   revisionTag, true /*create backups*/, monitor);
-					}
-				} catch (TeamException e) {
-					throw new CoreException(e.getStatus());
-				}
-			}
-		});
+
+// 		This code will add an action that allows getting a sticky revision of a file.
+//		It has been left removed until we can support removing the stickiness of
+//		the file.
+//		getRevisionAction = getContextMenuAction(Policy.bind("HistoryView.getRevisionAction"), new IWorkspaceRunnable() {
+//			public void run(IProgressMonitor monitor) throws CoreException {
+//				ICVSRemoteFile remoteFile = currentSelection.getRemoteFile();
+//				try {
+//					if(confirmOverwrite()) {
+//						CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(file.getProject());
+//						CVSTag revisionTag = new CVSTag(remoteFile.getRevision(), CVSTag.VERSION);
+//						provider.update(new IResource[] {file}, new Command.LocalOption[] {Command.UPDATE.IGNORE_LOCAL_CHANGES}, 
+//												   revisionTag, true /*create backups*/, monitor);
+//					}
+//				} catch (TeamException e) {
+//					throw new CoreException(e.getStatus());
+//				}
+//			}
+//		});
+		
 
 
 		// Toggle text visible action
@@ -578,7 +583,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 			if (!sel.isEmpty()) {
 				if (sel instanceof IStructuredSelection) {
 					if (((IStructuredSelection)sel).size() == 1) {
-						manager.add(getRevisionAction);
+						//manager.add(getRevisionAction);
 						manager.add(getContentsAction);
 					}
 				}

@@ -98,17 +98,24 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 			super(label);
 		}
 		public void run() {
-			if (selection.isEmpty()) return;
+			if (selection.isEmpty()) {
+				return;
+			}
 			HistoryView view = HistoryView.openInActivePerspective();
-			if (view == null) return;
+			if (view == null) {
+				return;
+			}
 			ITeamNode node = (ITeamNode)selection.getFirstElement();
 			IRemoteSyncElement remoteSyncElement = ((TeamFile)node).getMergeResource().getSyncElement();
-			IResource resource = remoteSyncElement.getLocal();
-			if (resource.exists()) {
-				view.showHistory(resource);
-			} else {
-				ICVSRemoteFile remoteFile = (ICVSRemoteFile)remoteSyncElement.getRemote();
+			ICVSRemoteFile remoteFile = (ICVSRemoteFile)remoteSyncElement.getRemote();
+			IResource local = remoteSyncElement.getLocal();
+			ICVSRemoteFile baseFile = (ICVSRemoteFile)remoteSyncElement.getBase();
+			
+			// can only show history if remote exists or local has a base.
+			if(remoteFile!=null) {
 				view.showHistory(remoteFile);
+			} else if(baseFile!=null) {
+				view.showHistory(baseFile);
 			}
 		}
 		public void selectionChanged(SelectionChangedEvent event) {
@@ -124,8 +131,14 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 			}
 			ITeamNode first = (ITeamNode)ss.getFirstElement();
 			if (first instanceof TeamFile) {
+				// can only show history on elements that have a remote file
 				this.selection = ss;
-				setEnabled(true);
+				IRemoteSyncElement remoteSyncElement = ((TeamFile)first).getMergeResource().getSyncElement();
+				if(remoteSyncElement.getRemote() != null || remoteSyncElement.getBase() != null) {
+					setEnabled(true);
+				} else {
+					setEnabled(false);
+				}
 			} else {
 				this.selection = null;
 				setEnabled(false);
