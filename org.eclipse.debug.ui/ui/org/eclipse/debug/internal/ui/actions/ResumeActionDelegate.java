@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 public class ResumeActionDelegate extends ControlActionDelegate {
 
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object object) throws DebugException {
 		IDebugElement element= (IDebugElement)object;
@@ -31,14 +31,14 @@ public class ResumeActionDelegate extends ControlActionDelegate {
 	}
 
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
 	public boolean isEnabledFor(Object element) {
 		return element instanceof ISuspendResume && ((ISuspendResume) element).canResume();
 	}
 
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#getEnableStateForSelection(IStructuredSelection)
 	 */
 	public boolean getEnableStateForSelection(IStructuredSelection selection) {	 		
 		if (selection.size() == 1) {
@@ -53,42 +53,42 @@ public class ResumeActionDelegate extends ControlActionDelegate {
 	}
 
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#setActionImages(IAction)
 	 */
 	protected void setActionImages(IAction action) {	
 		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_RESUME));
 		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_RESUME));
 		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RESUME));
 	}	
-	/*
+	/**
 	 * @see ControlActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
 		return ActionMessages.getString("ResumeActionDelegate.Resume_failed._1"); //$NON-NLS-1$
 	}
 
-	/*
+	/**
 	 * @see ControlActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
 		return ActionMessages.getString("ResumeActionDelegate.Exceptions_occurred_attempting_to_resume._2"); //$NON-NLS-1$
 	}
 
-	/*
+	/**
 	 * @see ControlActionDelegate#getErrorDialogTitle()
 	 */
 	protected String getErrorDialogTitle() {
 		return getToolTipText();
 	}
 
-	/*
+	/**
 	 * @see ControlActionDelegate#getToolTipText()
 	 */
 	protected String getToolTipText() {
 		return ActionMessages.getString("ResumeActionDelegate.Resume_3"); //$NON-NLS-1$
 	}
 
-	/*
+	/**
 	 * @see ControlActionDelegate#getText()
 	 */
 	protected String getText() {
