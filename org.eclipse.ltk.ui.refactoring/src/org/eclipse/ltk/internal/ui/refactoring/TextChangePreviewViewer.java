@@ -157,7 +157,6 @@ public class TextChangePreviewViewer implements IChangePreviewViewer {
 		result.range= range;
 		return result;
 	}
-	
 
 	public void createControl(Composite parent) {
 		fViewer= new ComparePreviewer(parent);
