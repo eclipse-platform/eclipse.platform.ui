@@ -167,7 +167,7 @@ public abstract class AbstractAntTest extends TestCase {
 	}
 	
 	protected String getPropertyFileName() {
-		return getProject().getFolder("support").getFile("test.properties").getLocation().toFile().getAbsolutePath();
+		return getProject().getFolder("resources").getFile("test.properties").getLocation().toFile().getAbsolutePath();
 	}
 	
 	protected void restorePreferenceDefaults() {

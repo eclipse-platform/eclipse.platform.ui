@@ -33,9 +33,6 @@
 </extension>
 
 <extension point="org.eclipse.ant.core.extraClasspathEntries">
-	<extraClasspathEntry
-		library="lib/anttestloggers.jar">
-	</extraClasspathEntry>
 		<extraClasspathEntry
 		library="lib/antTestsSupport.jar">
 	</extraClasspathEntry>

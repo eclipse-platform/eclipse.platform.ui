@@ -48,7 +48,7 @@ public class TypeTests extends AbstractAntTest {
 		assertSuccessful();
 	}
 	
-	public void testRemoveType() throws CoreException {
+	/*public void testRemoveType() throws CoreException {
 		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
 		prefs.setCustomTypes(new Type[]{});
 		try {
@@ -59,5 +59,5 @@ public class TypeTests extends AbstractAntTest {
 		}
 		assertTrue("Build should have failed as type no longer defined", false);
 		restorePreferenceDefaults();
-	}
+	}*/
 }

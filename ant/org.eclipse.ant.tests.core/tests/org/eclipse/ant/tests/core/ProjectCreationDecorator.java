@@ -35,8 +35,8 @@ public class ProjectCreationDecorator extends AbstractAntTest {
 		File root = AntTestPlugin.getDefault().getFileInPlugin(ProjectHelper.TEST_SCRIPTS_DIR);
 		ProjectHelper.importFilesFromDirectory(root, folder.getFullPath(), null);
 		
-		folder = ProjectHelper.addFolder(project, "support");
-		root = AntTestPlugin.getDefault().getFileInPlugin(ProjectHelper.TEST_SUPPORT_DIR);
+		folder = ProjectHelper.addFolder(project, "resources");
+		root = AntTestPlugin.getDefault().getFileInPlugin(ProjectHelper.TEST_RESOURCES_DIR);
 		ProjectHelper.importFilesFromDirectory(root, folder.getFullPath(), null);
 	}
 }
