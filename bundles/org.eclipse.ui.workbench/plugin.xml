@@ -17,7 +17,7 @@
       <library name="compatibility.jar">
          <export name="*"/>
       </library>
-      <library name="workbench.jar">
+      <library name=".">
          <export name="*"/>
       </library>
    </runtime>
