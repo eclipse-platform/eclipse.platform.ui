@@ -64,21 +64,30 @@ public class ActionContributionItem extends ContributionItem {
 	private Widget parentWidget = null;
 	
 	/**
-	 * Nested class handles notification from SWT widget and from Action,
-	 * to avoid polluting ActionContributionItem with public listener methods.
+	 * Listener for action property change notifications.
 	 */
-	private class ActionListener implements Listener, IPropertyChangeListener {
-		public void handleEvent(Event event) {
-			ActionContributionItem.this.handleWidgetEvent(event);
-		}
+	private final IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
-			ActionContributionItem.this.actionPropertyChange(event);
+			actionPropertyChange(event);
 		}
-	}
+	};
 
-	private ActionListener listener = new ActionListener();
-
-	private class ImageCache {
+	/**
+	 * Listener for SWT button widget events.
+	 */
+	private Listener buttonListener;
+	
+	/**
+	 * Listener for SWT tool item widget events.
+	 */
+	private Listener toolItemListener;
+	
+	/**
+	 * Listener for SWT menu item widget events.
+	 */
+	private Listener menuItemListener;
+	
+	private static class ImageCache {
 		/** Map from ImageDescriptor to Entry */
 		private Map entries = new HashMap(11);
 		private Image missingImage;
@@ -241,9 +250,9 @@ public void fill(Composite parent) {
 		
 		Button b = new Button(parent, flags);
 		b.setData(this);
-		b.addListener(SWT.Dispose, listener);
+		b.addListener(SWT.Dispose, getButtonListener());
 		// Don't hook a dispose listener on the parent
-		b.addListener(SWT.Selection, listener);
+		b.addListener(SWT.Selection, getButtonListener());
 		if (action.getHelpListener() != null)
 			b.addHelpListener(action.getHelpListener());
 		widget = b;
@@ -251,7 +260,7 @@ public void fill(Composite parent) {
 		
 		update(null);
 		
-		action.addPropertyChangeListener(listener);
+		action.addPropertyChangeListener(propertyListener);
 	}
 }
 /**
@@ -290,9 +299,8 @@ public void fill(Menu parent, int index) {
 		parentWidget = parent;
 
 		mi.setData(this);
-		mi.addListener(SWT.Arm, listener);
-		mi.addListener(SWT.Dispose, listener);
-		mi.addListener(SWT.Selection, listener);
+		mi.addListener(SWT.Dispose, getMenuItemListener());
+		mi.addListener(SWT.Selection, getMenuItemListener());
 		if (action.getHelpListener() != null)
 			mi.addHelpListener(action.getHelpListener());
 		
@@ -301,7 +309,7 @@ public void fill(Menu parent, int index) {
 					
 		update(null);
 		
-		action.addPropertyChangeListener(listener);
+		action.addPropertyChangeListener(propertyListener);
 	}
 }
 /**
@@ -331,15 +339,15 @@ public void fill(ToolBar parent, int index) {
 		else
 			ti = new ToolItem(parent, flags);
 		ti.setData(this);
-		ti.addListener(SWT.Selection, listener);
-		ti.addListener(SWT.Dispose, listener);
+		ti.addListener(SWT.Selection, getToolItemListener());
+		ti.addListener(SWT.Dispose, getToolItemListener());
 
 		widget = ti;
 		parentWidget = parent;
 		
 		update(null);
 		
-		action.addPropertyChangeListener(listener);
+		action.addPropertyChangeListener(propertyListener);
 	}
 }
 /**
@@ -376,6 +384,81 @@ private ImageCache getImageCache() {
 	return cache;
 }
 /**
+ * Returns the listener for SWT button widget events.
+ * 
+ * @return a listener for button events
+ */
+private Listener getButtonListener() {
+	if (buttonListener == null) {
+		buttonListener = new Listener() {
+			public void handleEvent(Event event) {
+				switch (event.type) {
+					case SWT.Dispose:
+						handleWidgetDispose(event);
+						break;
+					case SWT.Selection:
+						Widget ew = event.widget;
+						if (ew != null) {
+							handleWidgetSelection(event, ((Button)ew).getSelection());
+						}
+						break;
+				}
+			}
+		};
+	}
+	return buttonListener;
+}
+/**
+ * Returns the listener for SWT tool item widget events.
+ * 
+ * @return a listener for tool item events
+ */
+private Listener getToolItemListener() {
+	if (toolItemListener == null) {
+		toolItemListener = new Listener() {
+			public void handleEvent(Event event) {
+				switch (event.type) {
+					case SWT.Dispose:
+						handleWidgetDispose(event);
+						break;
+					case SWT.Selection:
+						Widget ew = event.widget;
+						if (ew != null) {
+							handleWidgetSelection(event, ((ToolItem)ew).getSelection());
+						}
+						break;
+				}
+			}
+		};
+	}
+	return toolItemListener;
+}
+/**
+ * Returns the listener for SWT menu item widget events.
+ * 
+ * @return a listener for menu item events
+ */
+private Listener getMenuItemListener() {
+	if (menuItemListener == null) {
+		menuItemListener = new Listener() {
+			public void handleEvent(Event event) {
+				switch (event.type) {
+					case SWT.Dispose:
+						handleWidgetDispose(event);
+						break;
+					case SWT.Selection:
+						Widget ew = event.widget;
+						if (ew != null) {
+							handleWidgetSelection(event, ((MenuItem)ew).getSelection());
+						}
+						break;
+				}
+			}
+		};
+	}
+	return menuItemListener;
+}
+/**
  * Handles a widget dispose event for the widget corresponding to this item.
  */
 private void handleWidgetDispose(Event e) {
@@ -387,38 +470,25 @@ private void handleWidgetDispose(Event e) {
 				mc.dispose(); 
 			}
 		}
-		action.removePropertyChangeListener(listener);
+		action.removePropertyChangeListener(propertyListener);
 		widget = null;
-	}
-}
-/**
- * Handles an event from the widget (forwarded from nested listener).
- */
-private void handleWidgetEvent(Event e) {
-	switch (e.type) {
-		case SWT.Dispose:
-			handleWidgetDispose(e);
-			break;
-		case SWT.Selection:
-			handleWidgetSelection(e);
-			break;
 	}
 }
 /**
  * Handles a widget selection event.
  */
-private void handleWidgetSelection(Event e) {
+private void handleWidgetSelection(Event e, boolean selection) {
 	Widget item= e.widget;
 	if (item != null) {
 		int style = item.getStyle();
 					
 		if ((style & (SWT.TOGGLE | SWT.CHECK)) != 0) {
 			if (action.getStyle() == IAction.AS_CHECK_BOX) {
-				action.setChecked(!action.isChecked());
+				action.setChecked(selection);
 			}
 		} else if ((style & SWT.RADIO) != 0) {
 			if (action.getStyle() == IAction.AS_RADIO_BUTTON) {
-				action.setChecked(!action.isChecked());
+				action.setChecked(selection);
 			}
 		} else if ((style & SWT.DROP_DOWN) != 0) {
 			if (e.detail == 4) {	// on drop-down button
