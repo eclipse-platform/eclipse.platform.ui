@@ -27,7 +27,6 @@ import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
