@@ -201,5 +201,5 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			oldRegion.dispose();
 		return result;
 	}
-
+	
 }

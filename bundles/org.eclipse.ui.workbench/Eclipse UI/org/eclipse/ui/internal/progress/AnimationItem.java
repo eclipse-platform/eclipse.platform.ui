@@ -206,7 +206,10 @@ public class AnimationItem {
 	 * @param event
 	 */
 	void openFloatingWindow() {
-
+		//Do we already have one?
+		if(floatingWindow != null)
+			return;
+		
 		floatingWindow =
 			new ProgressFloatingWindow(window.getShell(), imageCanvas);
 
