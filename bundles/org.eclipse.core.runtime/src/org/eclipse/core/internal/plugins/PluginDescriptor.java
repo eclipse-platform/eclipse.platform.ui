@@ -66,16 +66,20 @@ private static String[] buildOSVariants() {
 	return (String[])result.toArray(new String[result.size()]);
 }
 private static String[] buildNLVariants() {
+	String nl = BootLoader.getNL();	
 	ArrayList result = new ArrayList();
-	String nl = BootLoader.getNL();
-	nl = nl.replace('_', '/');
-	while (nl.length() > 0) {
-		result.add("nl/" + nl); //$NON-NLS-1$
-		int i = nl.lastIndexOf('/');
-		nl = (i < 0) ? "" : nl.substring(0, i); //$NON-NLS-1$
+	IPath base = new Path("nl"); //$NON-NLS-1$
+	
+	IPath path = new Path(nl.replace('_', '/'));
+	while (path.segmentCount() > 0) {
+		result.add(base.append(path).toString());
+		// for backwards compatibility only, don't replace the slashes
+		if (path.segmentCount() > 1)
+			result.add(base.append(path.toString().replace('/', '_')).toString());
+		path = path.removeLastSegments(1);
 	}
-	result.add(""); //$NON-NLS-1$
-	return (String[])result.toArray(new String[result.size()]);
+
+	return (String[]) result.toArray(new String[result.size()]);
 }
 private static String[] buildVanillaVariants() {
 	return new String[] {""}; //$NON-NLS-1$
@@ -918,19 +922,16 @@ private URL findNL(URL install, IPath path, Map override) {
 		nl = BootLoader.getNL();
 	if (nl.length() == 0)
 		return null;
-	nl = nl.replace('_', '/');
+
 	URL result = null;
-	
-	IPath base = new Path("nl").append(nl); //$NON-NLS-1$
-	while (base.segmentCount() != 1) {		
-		IPath filePath = base.append(path);
+	for (int i=0; i<NL_JAR_VARIANTS.length; i++) {
+		IPath filePath = new Path(NL_JAR_VARIANTS[i]).append(path);
 		result = findInPlugin(install, filePath);
 		if (result != null)
 			return result;
 		result = findInFragments(filePath);
 		if (result != null)
 			return result;
-		base = base.removeLastSegments(1);
 	}
 	// If we get to this point, we haven't found it yet.
 	// Look in the plugin and fragment root directories

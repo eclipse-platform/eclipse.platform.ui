@@ -183,6 +183,35 @@ private String buildNLTestFile(String pluginId, String fragmentId, int chopSegme
 	}
 	return null;
 }
+/**
+ * Build a test file in the OLD nl/en_US form instead of replacing
+ * the under-scores with slashes.
+ */
+private String buildOldNLTestFile(String pluginId, String fragmentId, int chopSegment) {
+	// Build up nl related directories and test files
+	String nl = BootLoader.getNL();
+	// Chop off the number of segments stated
+	int i = chopSegment;
+	while (nl.length() > 0 && i > 0) {
+		i--;
+		int idx = nl.lastIndexOf('_');
+		if (idx != -1)
+			nl = nl.substring(0, idx);
+		else 
+			nl = "";
+	}
+	if ((nl.length() == 0) && (i > 0))
+		// We couldn't get rid of all the segments we wanted to
+		return null;
+	if (fragmentId == null) {
+		if (buildPluginTestFile(pluginId, "nl/" + nl))
+			return nl;
+	} else {
+		if (buildFragmentTestFile(pluginId, fragmentId, "nl/" + nl))
+			return nl;
+	}
+	return null;
+}
 
 private String buildOSTestFile(String pluginId, String fragmentId, int chopSegment) {
 	// Build up os related directories and test files
@@ -499,6 +528,127 @@ public void testNLFind() {
 	// Do a find for something in the fragment nl directory
 	try {
 		String subDirectory = buildNLTestFile("nlPluginFindTest", "nlFragmentFindTest", localeSegments);
+		if (subDirectory != null)
+			findFailsHelper("nlPluginFindTest", "nlFragmentFindTest", "8", "$nl$");
+		else
+			// We don't expect this one to fail
+			fail ("0.6 Could not build first nl test data for nlPluginFindTest");
+	} finally {
+		cleanupTestDirectory("nlPluginFindTest", "nlFragmentFindTest", "nl");
+	}
+
+	// Do a find for something in the fragment root directory
+	try {
+		if (buildFragmentTestFile("nlPluginFindTest", "nlFragmentFindTest", null))
+			findHelper("nlPluginFindTest", "nlFragmentFindTest", "9", "$nl$", null);
+	} finally {
+		cleanupTestDirectory("nlPluginFindTest", "nlFragmentFindTest", "nlFragmentFindTest.txt");
+	}
+
+	// Do a find for something in the fragment ja/CA directory which is a nonsense locale
+	try {
+		if (buildFragmentTestFile("nlPluginFindTest", "nlFragmentFindTest", "nl/ja/CA"))
+			findFailsHelper("nlPluginFindTest", "nlFragmentFindTest", "10", "$nl$");
+	} finally {
+		cleanupTestDirectory("nlPluginFindTest", "nlFragmentFindTest", "nl");
+	}
+}
+/**
+ * Test the #find method with the old en_US directory structure. (the new one replaces
+ * the under-scores wtih slashes)
+ */
+public void _testOldNLFind() {
+	// How many segments in the default locale?
+	String nl = BootLoader.getNL();
+	// there is at least one segment
+	int localeSegments = 1;
+	int i = nl.indexOf('_');
+	while (i != -1) {
+		localeSegments++;
+		nl = nl.substring(i+1);
+		i = nl.indexOf('_');
+	}
+	// Build up nl related directories and test files
+	try {
+		String subDirectory = buildOldNLTestFile("nlPluginFindTest", null, 0);
+		if (subDirectory != null)
+			findHelper("nlPluginFindTest", null, "1", "$nl$", "nl/" + subDirectory);
+		else
+			// We don't expect this one to fail
+			fail ("0.1 Could not build first nl test data for nlPluginFindTest");
+	} finally {
+		cleanupTestDirectory("nlPluginFindTest", null, "nl");
+	}
+	
+	if (localeSegments > 1) {
+		try {
+			String subDirectory = buildOldNLTestFile("nlPluginFindTest", null, 1);
+			if (subDirectory != null)
+				findHelper("nlPluginFindTest", null, "2", "$nl$", "nl/" + subDirectory);
+			else
+				// We don't expect this one to fail
+				fail ("0.2 Could not build first nl test data for nlPluginFindTest");
+		} finally {
+			cleanupTestDirectory("nlPluginFindTest", null, "nl");
+		}
+	}
+
+	// Do a find for something in the plugin nl directory
+	try {
+		String subDirectory = buildOldNLTestFile("nlPluginFindTest", null, localeSegments);
+		if (subDirectory != null)
+			findFailsHelper("nlPluginFindTest", null, "3", "$nl$");
+		else
+			// We don't expect this one to fail
+			fail ("0.3 Could not build first nl test data for nlPluginFindTest");
+	} finally {
+		cleanupTestDirectory("nlPluginFindTest", null, "nl");
+	}
+	
+	// Do a find for something in the plugin root directory
+	try {
+		if (buildPluginTestFile("nlPluginFindTest", null))
+			findHelper("nlPluginFindTest", null, "4", "$nl$", null);
+	} finally {
+		cleanupTestDirectory("nlPluginFindTest", null, "nlPluginFindTest.txt");
+	}
+		
+	// Do a find for something in the plugin ja/CA directory which is a nonsense locale
+	try {
+		if (buildPluginTestFile("nlPluginFindTest", "nl/ja/CA"))
+			findFailsHelper("nlPluginFindTest", null, "5", "$nl$");
+	} finally {
+		cleanupTestDirectory("nlPluginFindTest", null, "nl");
+	}
+
+	// Do a find for something in the fragment directory
+	try {
+		String subDirectory = buildOldNLTestFile("nlPluginFindTest", "nlFragmentFindTest", 0);
+		if (subDirectory != null)
+			findHelper("nlPluginFindTest", "nlFragmentFindTest", "6", "$nl$", "nl/" + subDirectory);
+		else
+			// We don't expect this one to fail
+			fail ("0.4 Could not build first nl test data for nlPluginFindTest");
+	} finally {
+		cleanupTestDirectory("nlPluginFindTest", "nlFragmentFindTest", "nl");
+	}
+
+	if (localeSegments > 1) {
+		try {
+			String subDirectory = buildOldNLTestFile("nlPluginFindTest", "nlFragmentFindTest", 1);
+			if (subDirectory != null)
+				findHelper("nlPluginFindTest", "nlFragmentFindTest", "7", "$nl$", "nl/" + subDirectory);
+			else
+				// We don't expect this one to fail
+				fail ("0.5 Could not build first nl test data for nlPluginFindTest");
+		} finally {
+			cleanupTestDirectory("nlPluginFindTest", "nlFragmentFindTest", "nl");
+		}
+	}
+
+	// Do a find for something in the fragment nl directory
+	try {
+		String subDirectory = buildOldNLTestFile("nlPluginFindTest", "nlFragmentFindTest", localeSegments);
 		if (subDirectory != null)
 			findFailsHelper("nlPluginFindTest", "nlFragmentFindTest", "8", "$nl$");
 		else
