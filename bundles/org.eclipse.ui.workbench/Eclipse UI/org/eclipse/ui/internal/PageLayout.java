@@ -19,40 +19,45 @@ import java.util.Map;
 
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPlaceholderFolderLayout;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
+
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.registry.IViewDescriptor;
 
 /**
  * This factory is used to define the initial layout of a part sash container.
  * <p>
- * Design notes: The design of <code>IPageLayout</code> is a reflection of
+ * Design notes: The design of <code>IPageLayout</code> is a reflection of 
  * three requirements:
  * <ol>
- * <li>A mechanism is required to define the initial layout for a page.</li>
- * <li>The views and editors within a page will be persisted between sessions.
- * </li>
- * <li>The view and editor lifecycle for (1) and (2) should be identical.
- * </li>
+ *   <li>A mechanism is required to define the initial layout for a page. </li>
+ *   <li>The views and editors within a page will be persisted between 
+ *     sessions.</li>
+ *   <li>The view and editor lifecycle for (1) and (2) should be identical.</li>
  * </ol>
  * </p>
  * <p>
- * In reflection of these requirements, the following strategy has been
+ * In reflection of these requirements, the following strategy has been 
  * implemented for layout definition.
  * <ol>
- * <li>A view extension is added to the workbench registry for the view. This
- * extension defines the extension id and extension class.</li>
- * <li>A view is added to a page by invoking one of the add methods in <code>IPageLayout</code>.
- * The type of view is passed as an extension id, rather than a handle. The
- * page layout will map the extension id to a view class, create an instance of
- * the class, and then add the view to the page.</li>
+ *   <li>A view extension is added to the workbench registry for the view. 
+ *     This extension defines the extension id and extension class.  </li>
+ *   <li>A view is added to a page by invoking one of the add methods
+ *     in <code>IPageLayout</code>. The type of view is passed as an 
+ *     extension id, rather than a handle. The page layout will map 
+ *     the extension id to a view class, create an instance of the class, 
+ *     and then add the view to the page.</li>
  * </ol>
  * </p>
  */
 public class PageLayout implements IPageLayout {
 	private ArrayList actionSets = new ArrayList(3);
+	private IPerspectiveDescriptor descriptor;
 	private LayoutPart editorFolder;
 	private boolean editorVisible = true;
 	private ArrayList fastViews = new ArrayList(3);
@@ -70,6 +75,7 @@ public class PageLayout implements IPageLayout {
 	 * Constructs a new PageLayout for other purposes.
 	 */
 	public PageLayout() {
+		//no-op
 	}
 
 	/**
@@ -79,24 +85,28 @@ public class PageLayout implements IPageLayout {
 	public PageLayout(
 		RootLayoutContainer container,
 		ViewFactory viewFactory,
-		LayoutPart editorFolder) {
+		LayoutPart editorFolder,
+		IPerspectiveDescriptor descriptor) {
 		super();
 		this.viewFactory = viewFactory;
 		this.rootLayoutContainer = container;
 		this.editorFolder = editorFolder;
+		this.descriptor = descriptor;
 		prefill();
 	}
 
 	/**
-	 * Adds the initial part to a layout.
-	 * 
-	 * @param newID the initial ID.
+	 * Adds the editor to a layout.
 	 */
-	private void add(String newID) {
+	private void addEditorArea() {
 		try {
 			// Create the part.
-			LayoutPart newPart = createView(newID);
-			setRefPart(newID, newPart);
+			LayoutPart newPart = createView(ID_EDITOR_AREA);
+			if (newPart == null)
+				// this should never happen as long as newID is the editor ID.
+				return;
+
+			setRefPart(ID_EDITOR_AREA, newPart);
 
 			// Add it to the layout.
 			rootLayoutContainer.add(newPart);
@@ -104,7 +114,7 @@ public class PageLayout implements IPageLayout {
 			WorkbenchPlugin.log(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Adds an action set to the page.
 	 * 
@@ -116,7 +126,7 @@ public class PageLayout implements IPageLayout {
 			actionSets.add(actionSetID);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageLayout#addFastView(java.lang.String)
 	 */
@@ -142,12 +152,12 @@ public class PageLayout implements IPageLayout {
 			}
 		}
 	}
-	
+
 	/**
-	 * Adds a creation wizard to the File New menu. The id must name a new
-	 * wizard extension contributed to the workbench's extension point (named
-	 * <code>"org.eclipse.ui.newWizards"</code>).
-	 * 
+	 * Adds a creation wizard to the File New menu.
+	 * The id must name a new wizard extension contributed to the 
+	 * workbench's extension point (named <code>"org.eclipse.ui.newWizards"</code>).
+	 *
 	 * @param id the wizard id
 	 */
 	public void addNewWizardShortcut(String id) {
@@ -155,7 +165,7 @@ public class PageLayout implements IPageLayout {
 			newWizardActionIds.add(id);
 		}
 	}
-	
+
 	/**
 	 * Add the layout part to the page's layout
 	 */
@@ -186,19 +196,19 @@ public class PageLayout implements IPageLayout {
 			rootLayoutContainer.add(newPart);
 		}
 	}
-	
+
 	/**
-	 * Adds a perspective shortcut to the Perspective menu. The id must name a
-	 * perspective extension contributed to the workbench's extension point
-	 * (named <code>"org.eclipse.ui.perspectives"</code>).
-	 * 
+	 * Adds a perspective shortcut to the Perspective menu.
+	 * The id must name a perspective extension contributed to the 
+	 * workbench's extension point (named <code>"org.eclipse.ui.perspectives"</code>).
+	 *
 	 * @param id the perspective id
 	 */
 	public void addPerspectiveShortcut(String id) {
 		if (!perspectiveActionIds.contains(id)) {
 			perspectiveActionIds.add(id);
 		}
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageLayout#addPlaceholder(java.lang.String, int, float, java.lang.String)
@@ -224,7 +234,7 @@ public class PageLayout implements IPageLayout {
 			showInPartIds.add(id);
 		}
 	}
-	
+
 	/**
 	 * Adds a view to the Show View menu. The id must name a view extension
 	 * contributed to the workbench's extension point (named <code>"org.eclipse.ui.views"</code>).
@@ -249,19 +259,24 @@ public class PageLayout implements IPageLayout {
 			return;
 
 		try {
+
 			// Create the part.
 			LayoutPart newPart = createView(viewId);
-			addPart(newPart, viewId, relationship, ratio, refId);
+			if (newPart == null) {
+				addPlaceholder(viewId, relationship, ratio, refId);
+				LayoutHelper.addViewActivator(this, viewId);
+			} else
+				addPart(newPart, viewId, relationship, ratio, refId);
 		} catch (PartInitException e) {
 			WorkbenchPlugin.log(e.getMessage());
 		}
 	}
-	
+
 	/**
-	 * Verify that the part is already present in the layout and cannot be
-	 * added again. Log a warning message.
+	 * Verify that the part is already present in the layout
+	 * and cannot be added again. Log a warning message.
 	 */
-	/* package */
+	/*package*/
 	boolean checkPartInLayout(String partId) {
 		if (getRefPart(partId) != null) {
 			WorkbenchPlugin.log(WorkbenchMessages.format("PageLayout.duplicateRefPart", new Object[] { partId })); //$NON-NLS-1$
@@ -326,27 +341,23 @@ public class PageLayout implements IPageLayout {
 	 * Create a new <code>LayoutPart</code>.
 	 * 
 	 * @param partID the id of the part to create.
-	 * @return the new <code>LayoutPart</code>.
+	 * @return the <code>LayoutPart</code>, or <code>null</code> if it should not be
+	 * created because of activity filtering.
 	 * @throws PartInitException thrown if there is a problem creating the part.
 	 */
-	private LayoutPart createView(String partID) throws PartInitException {
+	private LayoutPart createView(String partID)
+		throws PartInitException {
 		if (partID.equals(ID_EDITOR_AREA)) {
 			return editorFolder;
 		} else {
-			WorkbenchPartReference ref =
-				(WorkbenchPartReference) viewFactory.createView(partID);
-			ViewPane newPart = (ViewPane) ref.getPane();
-			if (newPart == null) {
-				newPart =
-					new ViewPane(
-						(IViewReference) ref,
-						(WorkbenchPage) ref.getPage());
-				ref.setPane(newPart);
-			}
-			return newPart;
+			IViewDescriptor viewDescriptor =
+				viewFactory.getViewRegistry().find(partID);
+			if (WorkbenchActivityHelper.filterItem(viewDescriptor))
+				return null;
+			return LayoutHelper.createView(getViewFactory(), partID);
 		}
 	}
-	
+
 	/**
 	 * @return the action set list for the page. This is <code>List</code> of 
 	 * <code>String</code>s.
@@ -354,7 +365,15 @@ public class PageLayout implements IPageLayout {
 	public ArrayList getActionSets() {
 		return actionSets;
 	}
-	
+
+	/**
+	 * @return Returns the <code>IPerspectiveDescriptor</code> that is driving 
+	 * the creation of this <code>PageLayout</code>.
+	 */
+	public IPerspectiveDescriptor getDescriptor() {
+		return descriptor;
+	}
+
 	/**
 	 * @return an identifier for the editor area. The editor area is
 	 * automatically added to each layout before any other part. It should be
@@ -363,7 +382,7 @@ public class PageLayout implements IPageLayout {
 	public String getEditorArea() {
 		return ID_EDITOR_AREA;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageLayout#getEditorReuseThreshold()
 	 */
@@ -377,14 +396,15 @@ public class PageLayout implements IPageLayout {
 	public ArrayList getFastViews() {
 		return fastViews;
 	}
-	
+
 	/**
-	 * Returns a map of fast view ids to width ratios.
+	 * @return a map of fast view ids to width ratios.
 	 */
-	/* package */Map getFastViewToWidthRatioMap() {
+	/*package*/
+	Map getFastViewToWidthRatioMap() {
 		return mapFastViewToWidthRatio;
 	}
-	
+
 	/**
 	 * @return the folder part containing the given view ID or <code>null</code>
 	 * if none (i.e. part of the page layout instead of a folder layout).
@@ -392,7 +412,7 @@ public class PageLayout implements IPageLayout {
 	private PartTabFolder getFolderPart(String viewId) {
 		return (PartTabFolder) mapIDtoFolder.get(viewId);
 	}
-	
+
 	/**
 	 * @return the new wizard actions the page. This is <code>List</code> of 
 	 * <code>String</code>s.
@@ -400,14 +420,14 @@ public class PageLayout implements IPageLayout {
 	public ArrayList getNewWizardActionIds() {
 		return newWizardActionIds;
 	}
-	
+
 	/**
 	 * @return the part sash container const for a layout value.
 	 */
 	private int getPartSashConst(int nRelationship) {
 		return nRelationship;
 	}
-	
+
 	/**
 	 * @return the perspective actions. This is <code>List</code> of 
 	 * <code>String</code>s.
@@ -415,21 +435,22 @@ public class PageLayout implements IPageLayout {
 	public ArrayList getPerspectiveActionIds() {
 		return perspectiveActionIds;
 	}
-	
+
 	/**
 	 * @return the part for a given ID.
 	 */
-	/* package */ LayoutPart getRefPart(String partID) {
+	/*package*/
+	LayoutPart getRefPart(String partID) {
 		return (LayoutPart) mapIDtoPart.get(partID);
 	}
-	
+
 	/**
-	 * @return the top level layout container
+	 * @return the top level layout container.
 	 */
 	public RootLayoutContainer getRootLayoutContainer() {
 		return rootLayoutContainer;
 	}
-	
+
 	/**
 	 * @return the ids of the parts to list in the Show In... prompter. This is
 	 * a <code>List</code> of <code>String</code>s.
@@ -437,7 +458,7 @@ public class PageLayout implements IPageLayout {
 	public ArrayList getShowInPartIds() {
 		return showInPartIds;
 	}
-	
+
 	/**
 	 * @return the ids of the views to list in the Show View shortcuts. This is
 	 * a <code>List</code> of <code>String</code>s.
@@ -445,14 +466,23 @@ public class PageLayout implements IPageLayout {
 	public ArrayList getShowViewActionIds() {
 		return showViewActionIds;
 	}
-	
+
+	/**
+	 * @return the <code>ViewFactory</code> for this <code>PageLayout</code>.
+	 * @since 3.0
+	 */
+	/* package */
+	ViewFactory getViewFactory() {
+		return viewFactory;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageLayout#isEditorAreaVisible()
 	 */
 	public boolean isEditorAreaVisible() {
 		return editorVisible;
 	}
-	
+
 	/**
 	 * Trim the ratio so that direct manipulation of parts is easy.
 	 * 
@@ -466,13 +496,12 @@ public class PageLayout implements IPageLayout {
 			in = RATIO_MAX;
 		return in;
 	}
-	
+
 	/**
 	 * Prefill the layout with required parts.
 	 */
 	private void prefill() {
-		// Editors are king.
-		add(ID_EDITOR_AREA);
+		addEditorArea();
 
 		// Add default action sets.
 		ActionSetRegistry reg =
@@ -485,7 +514,7 @@ public class PageLayout implements IPageLayout {
 				addActionSet(desc.getId());
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageLayout#setEditorAreaVisible(boolean)
 	 */
@@ -497,41 +526,44 @@ public class PageLayout implements IPageLayout {
 	 * @see org.eclipse.ui.IPageLayout#setEditorReuseThreshold(int)
 	 */
 	public void setEditorReuseThreshold(int openEditors) {
+		//no-op
 	}
-	
+
 	/**
 	 * Map the folder part containing the given view ID.
 	 * 
 	 * @param viewId the part ID.
 	 * @param container the <code>ContainerPlaceholder</code>.
 	 */
-	/* package */ void setFolderPart(String viewId, ContainerPlaceholder container) {
+	/*package*/
+	void setFolderPart(String viewId, ContainerPlaceholder container) {
 		LayoutPart tabFolder = container.getRealContainer();
 		mapIDtoFolder.put(viewId, tabFolder);
 	}
-	
+
 	/**
 	 * Map the folder part containing the given view ID.
 	 * 
 	 * @param viewId the part ID.
 	 * @param folder the <code>PartTabFolder</code>.
 	 */
-	/* package */ void setFolderPart(String viewId, PartTabFolder folder) {
+	/*package*/
+	void setFolderPart(String viewId, PartTabFolder folder) {
 		mapIDtoFolder.put(viewId, folder);
 	}
-	
+
 	/**
 	 * Map an ID to a part.
 	 * 
 	 * @param partId the part ID.
 	 * @param part the <code>LayoutPart</code>.
 	 */
-	/* package */ void setRefPart(String partID, LayoutPart part) {
+	/*package*/
+	void setRefPart(String partID, LayoutPart part) {
 		mapIDtoPart.put(partID, part);
 	}
-	
-	// stackPart(Layoutpart, String, String) added by
-	// dan_rubel@instantiations.com
+
+	// stackPart(Layoutpart, String, String) added by dan_rubel@instantiations.com
 	/**
 	 * Stack a part on top of another.
 	 * 
@@ -568,7 +600,7 @@ public class PageLayout implements IPageLayout {
 		WorkbenchPlugin.log(WorkbenchMessages.format("PageLayout.missingRefPart", new Object[] { refId })); //$NON-NLS-1$
 		rootLayoutContainer.add(newPart);
 	}
-	
+
 	// stackPlaceholder(String, String) added by dan_rubel@instantiations.com
 	/**
 	 * Stack a placeholder on top of another.
@@ -584,7 +616,7 @@ public class PageLayout implements IPageLayout {
 		PartPlaceholder newPart = new PartPlaceholder(viewId);
 		stackPart(newPart, viewId, refId);
 	}
-	
+
 	// stackView(String, String) modified by dan_rubel@instantiations.com
 	/**
 	 * Stack one view on top of another.
@@ -599,6 +631,10 @@ public class PageLayout implements IPageLayout {
 		// Create the new part.
 		try {
 			LayoutPart newPart = createView(viewId);
+			if (newPart == null) {
+				stackPlaceholder(viewId, refId);
+				LayoutHelper.addViewActivator(this, viewId);
+			}
 			stackPart(newPart, viewId, refId);
 		} catch (PartInitException e) {
 			WorkbenchPlugin.log(e.getMessage());

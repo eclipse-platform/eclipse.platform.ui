@@ -663,7 +663,7 @@ private void loadPredefinedPersp(
 
 	// Create layout factory.
 	RootLayoutContainer container = new RootLayoutContainer(page);
-	PageLayout layout = new PageLayout(container, getViewFactory(), editorArea);
+	PageLayout layout = new PageLayout(container, getViewFactory(), editorArea, descriptor);
 
 	// Run layout engine.
 	factory.createInitialLayout(layout);

@@ -43,7 +43,7 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
  * It implements a reference counting strategy so that one view can be shared
  * by more than one client.
  */
-public class ViewFactory {
+/*package*/ class ViewFactory {
 
 	private class ViewReference extends WorkbenchPartReference implements IViewReference {
 
@@ -107,7 +107,7 @@ public class ViewFactory {
 			if (part != null)
 				return part.getSite().getRegisteredName();
 
-			IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
+			IViewRegistry reg = viewReg;
 			IViewDescriptor desc = reg.find(getId());
 			if (desc != null)
 				return desc.getLabel();
@@ -120,7 +120,6 @@ public class ViewFactory {
 		public IViewPart getView(boolean restore) {
 			return (IViewPart) getPart(restore);
 		}
-
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.IViewReference#isFastView()
@@ -284,6 +283,14 @@ public class ViewFactory {
 		IViewDescriptor desc = viewReg.find(id);
 		return (IViewReference) counter.get(desc);
 	}
+
+	/**
+	 * @return the <code>IViewRegistry</code> used by this factory.
+	 * @since 3.0
+	 */
+	public IViewRegistry getViewRegistry() {
+		return viewReg;
+	}
 	
 	/**
 	 * Returns a list of views which are open.
@@ -295,6 +302,14 @@ public class ViewFactory {
 			array[i] = (IViewReference) list.get(i);
 		}
 		return array;
+	}
+	
+	/**
+	 * @return the <code>WorkbenchPage</code> used by this factory.
+	 * @since 3.0
+	 */
+	public WorkbenchPage getWorkbenchPage() {
+		return page;
 	}
 	
 	/**
@@ -394,5 +409,4 @@ public class ViewFactory {
 		}
 		return result;
 	}
-
 }

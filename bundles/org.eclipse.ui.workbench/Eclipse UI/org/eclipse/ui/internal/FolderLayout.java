@@ -11,18 +11,19 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.ui.IFolderLayout;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
+
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 
 /**
- * This layout is used to define the initial set of views and placeholders in a
- * folder.
+ * This layout is used to define the initial set of views and placeholders
+ * in a folder.
  * <p>
- * Views are added to the folder by ID. This id is used to identify a view
- * descriptor in the view registry, and this descriptor is used to instantiate
- * the IViewPart.
+ * Views are added to the folder by ID. This id is used to identify 
+ * a view descriptor in the view registry, and this descriptor is used to 
+ * instantiate the <code>IViewPart</code>.
  * </p>
  */
 public class FolderLayout implements IFolderLayout {
@@ -31,7 +32,8 @@ public class FolderLayout implements IFolderLayout {
 	private ViewFactory viewFactory;
 
 	/**
-	 * Create an instance of a FolderLayout belonging to an PageLayout.
+	 * Create an instance of a <code>FolderLayout</code> belonging to a 
+	 * <code>PageLayout</code>.
 	 */
 	public FolderLayout(
 		PageLayout pageLayout,
@@ -76,28 +78,29 @@ public class FolderLayout implements IFolderLayout {
 			return;
 
 		try {
-			// Create the part.
-			WorkbenchPartReference ref =
-				(WorkbenchPartReference) viewFactory.createView(viewId);
-			ViewPane newPart = (ViewPane) ref.getPane();
-			if (newPart == null) {
-				newPart =
-					new ViewPane(
-						(IViewReference) ref,
-						(WorkbenchPage) ref.getPage());
-				ref.setPane(newPart);
+			IViewDescriptor descriptor =
+				viewFactory.getViewRegistry().find(viewId);
+			if (WorkbenchActivityHelper.filterItem(descriptor)) {
+				//create a placeholder instead.
+				addPlaceholder(viewId);
+				LayoutHelper.addViewActivator(pageLayout, viewId);
+			} else {
+
+				ViewPane newPart = LayoutHelper.createView(
+						pageLayout.getViewFactory(),
+						viewId);
+				linkPartToPageLayout(viewId, newPart);
+				folder.add(newPart);
 			}
-			linkPartToPageLayout(viewId, newPart);
-			folder.add(newPart);
 		} catch (PartInitException e) {
 			// cannot safely open the dialog so log the problem
 			WorkbenchPlugin.log(e.getMessage());
 		}
 	}
-	
+
 	/**
-	 * Inform the page layout of the new part created and the folder the part
-	 * belongs to.
+	 * Inform the page layout of the new part created
+	 * and the folder the part belongs to.
 	 */
 	private void linkPartToPageLayout(String viewId, LayoutPart newPart) {
 		pageLayout.setRefPart(viewId, newPart);
