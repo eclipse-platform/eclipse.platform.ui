@@ -144,7 +144,7 @@ public class TagetLocationSelectionDialog extends SelectionDialog {
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {
 				newProjectName = projectNameField.getText();
-				setLocationForSelection();
+				setLocationForSelection(false);
 				applyValidationResult(checkValid());
 			}
 		};
@@ -155,7 +155,7 @@ public class TagetLocationSelectionDialog extends SelectionDialog {
 	/**
 	 * Set the location to the default location if we are set to useDefaults.
 	 */
-	private void setLocationForSelection() {
+	private void setLocationForSelection(boolean changed) {
 		if (useDefaults) {
 			IPath defaultPath = null;
 			if (isSingleCheckout()) {
@@ -172,7 +172,7 @@ public class TagetLocationSelectionDialog extends SelectionDialog {
 			}
 			locationPathField.setText(defaultPath.toOSString());
 			targetLocation = null;
-		} else {
+		} else if (changed) {
 			IPath location = null;
 			try {
 				location = this.targetProjects[0].getDescription().getLocation();
@@ -223,7 +223,7 @@ public class TagetLocationSelectionDialog extends SelectionDialog {
 				browseButton.setEnabled(!useDefaults);
 				locationPathField.setEnabled(!useDefaults);
 				locationLabel.setEnabled(!useDefaults);
-				setLocationForSelection();
+				setLocationForSelection(true);
 			}
 		};
 		useDefaultsButton.addSelectionListener(listener);
@@ -267,7 +267,7 @@ public class TagetLocationSelectionDialog extends SelectionDialog {
 
 		// Set the initial value first before listener
 		// to avoid handling an event during the creation.
-		setLocationForSelection();
+		setLocationForSelection(true);
 		createLocationListener();
 		return projectGroup;
 
