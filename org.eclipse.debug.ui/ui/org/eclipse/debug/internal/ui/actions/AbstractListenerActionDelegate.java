@@ -132,9 +132,9 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 				}
 				break;
 			case DebugEvent.SUSPEND :
-				if (!event.isEvaluation() || !((event.getDetail() & DebugEvent.EVALUATION_IMPLICIT) != 0)) {
-					update(getAction(), getSelection());
-				}
+				// Update on suspend events (even for evaluations), in case the user changed
+				// the selection during an implicit evaluation.
+				update(getAction(), getSelection());
 				break;
 		}
 	}		
