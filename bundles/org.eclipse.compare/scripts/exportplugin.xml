@@ -25,7 +25,7 @@
 			<fileset dir="icons" />
 		</copy>
 		<zip zipfile="${dest}/comparesrc.zip">
-		    <fileset dir="Eclipse Compare" />
+		    <fileset dir="compare" />
   		</zip>				
 	</target>
 </project>
