@@ -112,7 +112,7 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 				if (lineNumber == document.getNumberOfLines() - 1)
 					fCurrentLine.length= document.getLength() - fCurrentLine.offset;
 				else
-					fCurrentLine.length=	document.getLineOffset(lineNumber + 1) - fCurrentLine.offset;
+					fCurrentLine.length= document.getLineOffset(lineNumber + 1) - fCurrentLine.offset;
 				
 				fLastLineNumber= lineNumber;
 				return true;
@@ -195,6 +195,8 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 				fPositionManager.unmanagePosition(fCurrentLine);
 				
 			fLastLineNumber= -1;
+			fCurrentLine.offset= 0;
+			fCurrentLine.length= 0;
 		}
 	}
 
