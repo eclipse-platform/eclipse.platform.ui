@@ -15,6 +15,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.update.internal.ui.*;
 import java.util.*;
 import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.views.*;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.jface.action.*;
 

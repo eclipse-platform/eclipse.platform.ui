@@ -2,10 +2,9 @@
  * (c) Copyright 2001 MyCorporation.
  * All Rights Reserved.
  */
-package org.eclipse.update.internal.ui.model;
+package org.eclipse.update.internal.ui.search;
 
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.model.DriveSearchSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import java.util.StringTokenizer;
 import java.io.File;
@@ -19,6 +18,11 @@ public class MyComputerSearchSettings {
 	private static final String DRIVES = "drives";
 	private IDialogSettings settings;
 	private Vector drives = new Vector();
+	private boolean masterSettings=false;
+	
+	public boolean isMyComputerSearched() {
+		return false;
+	}
 
 	public MyComputerSearchSettings() {
 		IDialogSettings master = UpdateUIPlugin.getDefault().getDialogSettings();

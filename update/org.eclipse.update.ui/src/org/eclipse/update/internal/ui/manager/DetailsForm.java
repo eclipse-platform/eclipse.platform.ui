@@ -20,6 +20,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
+import org.eclipse.update.internal.ui.views.*;
 import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.jface.wizard.*;
 

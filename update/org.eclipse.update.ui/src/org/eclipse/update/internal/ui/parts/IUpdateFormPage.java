@@ -4,6 +4,7 @@ package org.eclipse.update.internal.ui.parts;
  * All Rights Reserved.
  */
 import org.eclipse.jface.action.*;
+import org.eclipse.update.internal.ui.views.*;
 import org.eclipse.update.ui.forms.internal.IFormPage;
 
 public interface IUpdateFormPage extends IFormPage {

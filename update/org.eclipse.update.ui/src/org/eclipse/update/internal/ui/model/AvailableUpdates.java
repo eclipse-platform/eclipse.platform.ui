@@ -16,6 +16,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 
 public class AvailableUpdates

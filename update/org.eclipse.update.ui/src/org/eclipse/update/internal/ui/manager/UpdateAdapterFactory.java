@@ -6,6 +6,7 @@ package org.eclipse.update.internal.ui.manager;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.properties.*;
 
 public class UpdateAdapterFactory implements IAdapterFactory {
 

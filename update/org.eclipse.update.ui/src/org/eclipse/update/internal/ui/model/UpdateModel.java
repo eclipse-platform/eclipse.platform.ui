@@ -121,7 +121,7 @@ public class UpdateModel {
 			listeners.remove(listener);
 	}
 	
-	void fireObjectsAdded(Object parent, Object [] children) {
+	public void fireObjectsAdded(Object parent, Object [] children) {
 		for (Iterator iter=listeners.iterator();
 				iter.hasNext();) {
 			IUpdateModelChangedListener listener = (IUpdateModelChangedListener)iter.next();
@@ -130,7 +130,7 @@ public class UpdateModel {
 	}
 
 
-	void fireObjectsRemoved(Object parent, Object [] children) {
+	public void fireObjectsRemoved(Object parent, Object [] children) {
 		for (Iterator iter=listeners.iterator();
 				iter.hasNext();) {
 			IUpdateModelChangedListener listener = (IUpdateModelChangedListener)iter.next();

@@ -4,6 +4,7 @@ package org.eclipse.update.internal.ui.manager;
  * All Rights Reserved.
  */
 import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.internal.ui.views.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;

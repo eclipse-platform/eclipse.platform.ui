@@ -10,6 +10,7 @@ import org.eclipse.swt.layout.*;
 import java.net.URL;
 import org.eclipse.swt.SWT;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.views.*;
 
 public class InfoLink extends HyperlinkAdapter {
 	private IURLEntry info;

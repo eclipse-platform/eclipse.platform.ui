@@ -2,7 +2,7 @@
  * (c) Copyright 2001 MyCorporation.
  * All Rights Reserved.
  */
-package org.eclipse.update.internal.ui.model;
+package org.eclipse.update.internal.ui.search;
 
 /**
  * @version 	1.0

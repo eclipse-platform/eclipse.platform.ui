@@ -3,6 +3,8 @@ package org.eclipse.update.internal.ui.manager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.internal.ui.search.*;
+import org.eclipse.update.internal.ui.views.*;
 import org.eclipse.update.core.*;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.resource.JFaceResources;

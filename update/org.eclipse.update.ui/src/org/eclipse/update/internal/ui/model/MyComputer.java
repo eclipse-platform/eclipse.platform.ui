@@ -12,6 +12,8 @@ import org.eclipse.ui.views.properties.*;
 import org.eclipse.ui.model.*;
 import java.util.*;
 import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.search.*;
+
 import java.io.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.swt.custom.BusyIndicator;

@@ -11,6 +11,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
+import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.*;
