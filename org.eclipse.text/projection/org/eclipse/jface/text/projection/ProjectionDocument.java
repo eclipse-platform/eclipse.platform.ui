@@ -417,13 +417,16 @@ public class ProjectionDocument extends AbstractDocument {
 	}
 	
 	/**
-	 * Returns the sequence of all master document regions with are contained in the given master document
-	 * range and which are not yet part of this projection document.
+	 * Returns the sequence of all master document regions which are contained
+	 * in the given master document range and which are not yet part of this
+	 * projection document.
 	 * 
 	 * @param offsetInMaster the range offset in the master document
 	 * @param lengthInMaster the range length in the master document
-	 * @return the sequence of regions which are not yet part of the projection document
-	 * @throws BadLocationException in case the given range is invalid in the master document
+	 * @return the sequence of regions which are not yet part of the projection
+	 *         document
+	 * @throws BadLocationException in case the given range is invalid in the
+	 *         master document
 	 */
 	public final IRegion[] computeUnprojectedMasterRegions(int offsetInMaster, int lengthInMaster) throws BadLocationException {
 		
@@ -461,6 +464,48 @@ public class ProjectionDocument extends AbstractDocument {
 	}
 	
 	/**
+	 * Returns the first master document region which is contained in the given
+	 * master document range and which is not yet part of this projection
+	 * document.
+	 * 
+	 * @param offsetInMaster the range offset in the master document
+	 * @param lengthInMaster the range length in the master document
+	 * @return the first region that is not yet part of the projection document
+	 * @throws BadLocationException in case the given range is invalid in the
+	 *         master document
+	 */
+	private IRegion computeFirstUnprojectedMasterRegion(int offsetInMaster, int lengthInMaster) throws BadLocationException {
+		
+		IRegion[] fragments= null;
+		IRegion imageRegion= fMapping.toImageRegion(new Region(offsetInMaster, lengthInMaster));
+		if (imageRegion != null)
+			fragments= fMapping.toExactOriginRegions(imageRegion);
+		
+		if (fragments == null || fragments.length == 0)
+			return new Region(offsetInMaster, lengthInMaster);
+		
+		IRegion region= fragments[0];
+		if (offsetInMaster < region.getOffset())
+			return new Region(offsetInMaster, region.getOffset() - offsetInMaster);
+		
+		for (int i= 0; i < fragments.length - 1; i++) {
+			IRegion left= fragments[i];
+			IRegion right= fragments[i + 1];
+			int leftEnd= left.getOffset() + left.getLength();
+			if (leftEnd < right.getOffset())
+				return new Region(leftEnd, right.getOffset() - leftEnd);
+		}
+		
+		region= fragments[fragments.length - 1];
+		int leftEnd= region.getOffset() + region.getLength();
+		int rightEnd= offsetInMaster + lengthInMaster;
+		if (leftEnd < rightEnd)
+			return new Region(leftEnd, rightEnd - leftEnd);
+		
+		return null;
+	}
+	
+	/**
 	 * Ensures that the given range of the master document is part of this
 	 * projection document.
 	 * 
@@ -483,13 +528,17 @@ public class ProjectionDocument extends AbstractDocument {
 	 * @throws BadLocationException in case the master event is not valid
 	 */
 	private void addMasterDocumentRange(int offsetInMaster, int lengthInMaster, DocumentEvent masterDocumentEvent) throws BadLocationException {
-		
-		IRegion[] gaps= computeUnprojectedMasterRegions(offsetInMaster, lengthInMaster);
-		if (gaps == null)
-			return;
-		
-		for (int i= 0; i < gaps.length; i++) {
-			IRegion gap= gaps[i];
+		/*
+		 * Calling internalAddMasterDocumentRange may cause other master ranges
+		 * to become unfolded, resulting in re-entrant calls to this method. In
+		 * order to not add a region twice, we have to compute the next region
+		 * to add in every iteration.
+		 */
+		while (true) {
+			IRegion gap= computeFirstUnprojectedMasterRegion(offsetInMaster, lengthInMaster);
+			if (gap == null)
+				return;
+			
 			internalAddMasterDocumentRange(gap.getOffset(), gap.getLength(), masterDocumentEvent);
 		}
 	}
