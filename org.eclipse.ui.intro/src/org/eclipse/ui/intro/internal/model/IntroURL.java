@@ -11,10 +11,12 @@
 
 package org.eclipse.ui.intro.internal.model;
 
+import java.net.URLDecoder;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.intro.*;
@@ -48,6 +50,7 @@ public class IntroURL {
     public static final String OPEN_BROWSER = "openBrowser";
     public static final String RUN_ACTION = "runAction";
     public static final String SHOW_PAGE = "showPage";
+    public static final String SHOW_MESSAGE = "showMessage";
 
     /**
      * Constants that represent valid action keys.
@@ -58,6 +61,7 @@ public class IntroURL {
     public static final String KEY_STANDBY = "standby";
     public static final String KEY_PART_ID = "partId";
     public static final String KEY_INPUT = "input";
+    public static final String KEY_MESSAGE = "message";
 
     private String action = null;
     private Properties parameters = null;
@@ -112,6 +116,8 @@ public class IntroURL {
         else if (action.equals(SHOW_PAGE))
             // display an Intro Page.
             showPage(getParameter(KEY_ID));
+        else if (action.equals(SHOW_MESSAGE))
+        	showMessage(getParameter(KEY_MESSAGE));
     }
 
     private void closeIntro() {
@@ -255,6 +261,13 @@ public class IntroURL {
      */
     private void showHelp() {
         WorkbenchHelp.displayHelp();
+    }
+    
+    private void showMessage(String message) {
+    	if (message==null) message = "";
+    	else
+    		message = URLDecoder.decode(message);
+    	MessageDialog.openInformation(null, "Introduction", message);
     }
 
     /**
