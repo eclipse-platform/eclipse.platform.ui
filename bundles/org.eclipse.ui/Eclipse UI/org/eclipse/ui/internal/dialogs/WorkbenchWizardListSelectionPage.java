@@ -66,13 +66,6 @@ public void createControl(Composite parent) {
 	data.heightHint = SIZING_LISTS_HEIGHT;
 	table.setLayoutData(data);
 
-	// Add a table column.
-	TableLayout tableLayout = new TableLayout();
-	tableLayout.addColumnData(new ColumnWeightData(100, 200));
-	TableColumn tc = new TableColumn(table, SWT.NONE, 0);
-	tc.setResizable(false);
-	table.setLayout(tableLayout);
-
 	// the list viewer		
 	wizardSelectionViewer = new TableViewer(table);
 	wizardSelectionViewer.setContentProvider(new WorkbenchContentProvider());
