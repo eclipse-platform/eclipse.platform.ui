@@ -144,7 +144,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 			}
 			if (PartTabFolder.this.current != null) {
 				PartTabFolder.this.current.setFocus();
-				//tabFolder.setBorderVisible(true);
 			}
 		}
 	};
@@ -1276,7 +1275,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 			tabFolder.setSelectionBackground(bgColors[0]);
 		else
 			tabFolder.setSelectionBackground(bgColors, bgPercents, true);
-		tabFolder.update();		
+		//tabFolder.update();		
 	}
 	
 	
