@@ -140,14 +140,14 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 		mFolder.setSyncInfo(new ResourceSyncInfo(mFolder.getName()));
 	}
 	
-	public interface IManageFolderPrompter {
+	public static interface IManageFolderPrompter {
 		public boolean promptToManageFolder(ICVSFolder mFolder);
 	}
 	
-	private IManageFolderPrompter manageFolderPrompter;
+	private static IManageFolderPrompter manageFolderPrompter;
 	
-	public void setManageFolderPrompter(IManageFolderPrompter manageFolderPrompter) {
-		this.manageFolderPrompter = manageFolderPrompter;
+	public static void setManageFolderPrompter(IManageFolderPrompter prompter) {
+		manageFolderPrompter = prompter;
 	}
 
 	/**
