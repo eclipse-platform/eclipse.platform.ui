@@ -880,9 +880,9 @@ public class ResourceNavigator
 	}
 
 	/**
-		 * Sets the values of the filter preference to be the 
-		 * strings in preference values
-		 */
+	 * Saves the filters defined as strings in <code>patterns</code> 
+	 * in the preference store.
+	 */
 	public void setFiltersPreference(String[] patterns) {
 
 		StringBuffer sb = new StringBuffer();

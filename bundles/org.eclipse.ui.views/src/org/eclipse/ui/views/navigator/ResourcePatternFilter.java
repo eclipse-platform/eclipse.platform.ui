@@ -63,7 +63,7 @@ public String[] getPatterns() {
 
 }
 /**
- * Initialize the settings from the workbench preferences.
+ * Initializes the filters from the preference store.
  */
 private void initializeFromPreferences() {
 	AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
