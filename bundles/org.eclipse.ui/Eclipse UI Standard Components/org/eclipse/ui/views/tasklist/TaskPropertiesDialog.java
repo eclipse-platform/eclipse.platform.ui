@@ -5,11 +5,11 @@ package org.eclipse.ui.views.tasklist;
  * All Rights Reserved.
  */
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -26,14 +26,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
 /**
  * Shows the properties of a new or existing task, or a problem.
  */
-/* package */
-class TaskPropertiesDialog extends Dialog {
-	
-	/**
-	 * The TaskList view.
-	 */
-	private TaskList taskList;
-	
+public class TaskPropertiesDialog extends Dialog {
+		
 	/**
 	 * The task or problem being shown, or <code>null</code> for a new task.
 	 */
@@ -91,36 +85,30 @@ class TaskPropertiesDialog extends Dialog {
 	private boolean dirty;
 
 /**
- * Creates a properties dialog for a new task.
+ * Creates the dialog.  By default this dialog creates a new task.
+ * To set the resource and initial attributes for the new task, 
+ * use <code>setResource</code> and <code>setInitialAttributes</code>.
+ * To show or modify an existing task, use <code>setMarker</code>.
  * 
- * @param taskList the task list view
+ * @param shell the parent shell
  */
-public TaskPropertiesDialog(TaskList taskList) {
-	super(taskList.getSite().getShell());
-	this.taskList = taskList;
+public TaskPropertiesDialog(Shell parentShell) {
+	super(parentShell);
 }
 
 /**
- * Creates a properties dialog for an existing task or problem.
+ * Sets the marker to show or modify.
  * 
- * @param taskList the task list view
- * @param marker the marker to edit, or <code>null</code> to create a new task
+ * @param marker the marker, or <code>null</code> to create a new marker
  */
-public TaskPropertiesDialog(TaskList taskList, IMarker marker) {
-	super(taskList.getSite().getShell());
-	this.taskList = taskList;
+public void setMarker(IMarker marker) {
 	this.marker = marker;
 }
 
 /**
- * Returns the task list view.
- */
-public TaskList getTaskList() {
-	return taskList;
-}
-
-/**
  * Returns the marker being created or modified.
+ * For a new marker, this returns <code>null</code> until
+ * the dialog returns, but is non-null after.
  */
 public IMarker getMarker() {
 	return marker;
@@ -206,7 +194,7 @@ protected void createButtonsForButtonBar(Composite parent) {
 }
 
 /**
- * Creates the area.for the Description field.
+ * Creates the area for the Description field.
  */
 private void createDescriptionArea(Composite parent) {
 	Composite composite = new Composite(parent, SWT.NONE);
@@ -226,7 +214,7 @@ private void createDescriptionArea(Composite parent) {
 }
 
 /**
- * Creates the area.for the Priority and Status fields.
+ * Creates the area for the Priority and Status fields.
  */
 private void createPriorityAndStatusArea(Composite parent) {
 	Composite composite = new Composite(parent, SWT.NONE);
@@ -242,6 +230,14 @@ private void createPriorityAndStatusArea(Composite parent) {
 		TaskListMessages.getString("TaskList.normal"), //$NON-NLS-1$
 		TaskListMessages.getString("TaskList.low") //$NON-NLS-1$
 	});
+	// Prevent Esc and Return from closing the dialog when the combo is active.
+	priorityCombo.addTraverseListener(new TraverseListener() {
+		public void keyTraversed(TraverseEvent e) {
+			if (e.detail == SWT.TRAVERSE_ESCAPE || e.detail == SWT.TRAVERSE_RETURN) {
+				e.doit = false;
+			}
+		}
+	});
 	
 	completedCheckbox = new Button(composite, SWT.CHECK);
 	completedCheckbox.setText(TaskListMessages.getString("TaskProp.completed")); //$NON-NLS-1$
@@ -251,7 +247,7 @@ private void createPriorityAndStatusArea(Composite parent) {
 }
 
 /**
- * Creates the area.for the Severity fields.
+ * Creates the area for the Severity field.
  */
 private void createSeverityArea(Composite parent) {
 	Composite composite = new Composite(parent, SWT.NONE);
@@ -275,7 +271,7 @@ private void createSeverityArea(Composite parent) {
 }
 
 /**
- * Creates the area.for the Resource field.
+ * Creates the area for the Resource field.
  */
 private void createResourceArea(Composite parent) {
 	Composite composite = new Composite(parent, SWT.NONE);
@@ -350,6 +346,15 @@ private void updateDialogFromMarker() {
 private void updateDialogForNewMarker() {
 	Map attrs = getInitialAttributes();
 
+	String desc = "";
+	if (attrs != null) {
+		Object o = attrs.get(IMarker.MESSAGE);
+		if (o instanceof String) {
+			desc = (String) o;
+		}
+	}
+	descriptionText.setText(desc);
+	
 	int pri = IMarker.PRIORITY_NORMAL;
 	if (attrs != null) {
 		Object o = attrs.get(IMarker.PRIORITY);
@@ -433,16 +438,9 @@ private void saveChanges() {
 		return;
 	}
 	try {
-		getTaskList().getWorkspace().run(new IWorkspaceRunnable() {
+		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				if (marker == null) {
-					IResource resource = getResource();
-					if (resource == null) {
-						resource = getTaskList().getWorkspace().getRoot();
-					}
-					marker = resource.createMarker(IMarker.TASK);
-				}
-				marker.setAttributes(getMarkerAttributesFromDialog());
+				createOrUpdateMarker();
 			}
 		}, null);
 	} catch (CoreException e) {
@@ -452,6 +450,33 @@ private void saveChanges() {
 			null,
 			e.getStatus());
 		return;
+	}
+}
+
+/**
+ * Creates or updates the marker.  Must be called within a workspace runnable.
+ */
+private void createOrUpdateMarker() throws CoreException {
+	if (marker == null) {
+		IResource resource = getResource();
+		if (resource == null) {
+			resource = ResourcesPlugin.getWorkspace().getRoot();
+		}
+		marker = resource.createMarker(IMarker.TASK);
+		Map initialAttrs = getInitialAttributes();
+		if (initialAttrs != null) {
+			marker.setAttributes(initialAttrs);
+		}
+	}
+	
+	// Set the marker attributes from the current dialog field values.
+	// Do not use setAttributes(Map) as that overwrites any attributes
+	// not covered by the dialog.
+	Map attrs = getMarkerAttributesFromDialog();
+	for (Iterator i = attrs.keySet().iterator(); i.hasNext();) {
+		String key = (String) i.next();
+		Object val = attrs.get(key);
+		marker.setAttribute(key, val);
 	}
 }
 

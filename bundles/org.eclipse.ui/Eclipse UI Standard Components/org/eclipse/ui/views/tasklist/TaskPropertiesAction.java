@@ -29,8 +29,8 @@ public void run() {
 	IStructuredSelection sel = (IStructuredSelection) getTaskList().getSelection();
 	Object o = sel.getFirstElement();
 	if (o instanceof IMarker) {
-		IMarker marker = (IMarker) o;
-		TaskPropertiesDialog dialog = new TaskPropertiesDialog(getTaskList(), marker);
+		TaskPropertiesDialog dialog = new TaskPropertiesDialog(getShell());
+		dialog.setMarker((IMarker) o);
 		dialog.open();
 	}
 }

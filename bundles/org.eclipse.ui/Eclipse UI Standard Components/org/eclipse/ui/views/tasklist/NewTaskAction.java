@@ -4,13 +4,15 @@ package org.eclipse.ui.views.tasklist;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.help.*;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
+
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This action creates a new task. If a resource is currently
@@ -42,9 +44,8 @@ public NewTaskAction(TaskList tasklist, String id) {
  * The new task is created on the currently selected resource.
  */
 public void run() {
-	TaskList taskList = getTaskList();
-	TaskPropertiesDialog dialog = new TaskPropertiesDialog(taskList);
-	dialog.setResource(taskList.getResource());
+	TaskPropertiesDialog dialog = new TaskPropertiesDialog(getShell());
+	dialog.setResource(getTaskList().getResource());
 	int result = dialog.open();
 	if (result == dialog.OK) {
 		showMarker(dialog.getMarker());
