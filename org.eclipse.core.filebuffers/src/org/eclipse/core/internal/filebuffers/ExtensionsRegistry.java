@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.Status;
 
 
 /**
- * This registry manages shareable document factories. Document factories are specified 
+ * This registry manages sharable document factories. Document factories are specified 
  * in <code>plugin.xml</code> per file name extension.
  */
 public class ExtensionsRegistry {
@@ -53,12 +53,14 @@ public class ExtensionsRegistry {
 	
 	
 	/**
-	 * Creates a new document factory registry and intializes it with the information
-	 * found in the plugin registry.
+	 * Creates a new document factory registry and initializes it with the information
+	 * found in the plug-in registry.
 	 */
 	public ExtensionsRegistry() {
+		initialize("documentCreation", "fileNames", fFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
 		initialize("documentCreation", "extensions",  fFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
-		initialize("documentSetup", "extensions", fSetupParticipantDescriptors);   //$NON-NLS-1$ //$NON-NLS-2$
+		initialize("documentSetup", "fileNames", fSetupParticipantDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
+		initialize("documentSetup", "extensions", fSetupParticipantDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -83,7 +85,7 @@ public class ExtensionsRegistry {
 	}
 	
 	/**
-	 * Adds an entry to the log of this plugin for the given status
+	 * Adds an entry to the log of this plug-in for the given status
 	 * @param status the status to log
 	 */
 	private void log(IStatus status) {
@@ -155,10 +157,10 @@ public class ExtensionsRegistry {
 	}
 	
 	/**
-	 * Returns a shareable document factory for the given file name extension.
+	 * Returns a sharable document factory for the given file name extension.
 	 *
 	 * @param extension the name extension to be used for lookup
-	 * @return the shareable document factory or <code>null</code>
+	 * @return the sharable document factory or <code>null</code>
 	 */
 	private IDocumentFactory getDocumentFactory(String extension) {
 		
@@ -174,7 +176,7 @@ public class ExtensionsRegistry {
 	 * Returns the set of setup participants for the given file name.
 	 * 
 	 * @param extension the name extension to be used for lookup
-	 * @return the shareable set of document setup participants
+	 * @return the sharable set of document setup participants
 	 */
 	private List getDocumentSetupParticipants(String extension) {
 		
@@ -195,28 +197,34 @@ public class ExtensionsRegistry {
 	}
 	
 	/**
-	 * Returns the shareable document factory for the given location.
+	 * Returns the sharable document factory for the given location.
 	 *
 	 * @param location the location for which to looked up the factory
-	 * @return the shareable document factory
+	 * @return the sharable document factory
 	 */
 	public IDocumentFactory getDocumentFactory(IPath location) {
-		IDocumentFactory factory= getDocumentFactory(location.getFileExtension());
+		IDocumentFactory factory= getDocumentFactory(location.lastSegment());
+		if (factory == null)
+			factory= getDocumentFactory(location.getFileExtension());
 		if (factory == null)
 			factory= getDocumentFactory(WILDCARD);
 		return factory;
 	}
 	
 	/**
-	 * Returns the shareable set of document setup participants for the given location.
+	 * Returns the sharable set of document setup participants for the given location.
 	 * 
 	 * @param location the location for which to look up the setup participants
-	 * @return the shareable set of document setup participants
+	 * @return the sharable set of document setup participants
 	 */
 	public IDocumentSetupParticipant[] getDocumentSetupParticipants(IPath location) {
 		List participants= new ArrayList();
 		
-		List p= getDocumentSetupParticipants(location.getFileExtension());
+		List p= getDocumentSetupParticipants(location.lastSegment());
+		if (p != null)
+			participants.addAll(p);
+		
+		p= getDocumentSetupParticipants(location.getFileExtension());
 		if (p != null)
 			participants.addAll(p);
 			

@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.core.filebuffers" id="documentCreation" name="Document Creation"/>
       </appInfo>
       <documentation>
-         This extension point is interesting for your if you want the file buffer manager to instantiate a specific document implementation for certain file extensions.
+         This extension point is interesting for your if you want the file buffer manager to instantiate a specific document implementation for certain file extensions or file names.
       </documentation>
    </annotation>
 
@@ -47,11 +47,18 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.filebuffers.IDocumentFactory"/>
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="extensions" type="string" use="required">
+         <attribute name="extensions" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="fileNames" type="string">
             <annotation>
                <documentation>
                   
