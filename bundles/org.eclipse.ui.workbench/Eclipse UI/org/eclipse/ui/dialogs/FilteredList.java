@@ -1,6 +1,7 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * (c) Copyright IBM Corp. 2000, 2002. All Rights Reserved.
+ * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ * font should be activated and used by other components.
  */
 package org.eclipse.ui.dialogs;
 
@@ -167,6 +168,7 @@ public class FilteredList extends Composite {
 		
 		fList= new Table(this, style);
 		fList.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fList.setFont(parent.getFont());
 		fList.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				fRenderer.dispose();

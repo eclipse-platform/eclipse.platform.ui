@@ -3,6 +3,9 @@
  * This file is made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ * font should be activated and used by other components.
  */
 package org.eclipse.ui.dialogs;
 
@@ -16,6 +19,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -187,12 +191,15 @@ protected Control createDialogArea(Composite parent) {
  * @param parent the parent composite
  */
 private void createLinkLocationGroup(Composite parent) {
+	Font font = parent.getFont();
+	
 	Composite folderGroup = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 3;
 	folderGroup.setLayout(layout);
 	folderGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
+	folderGroup.setFont(font);
+	
 	final Button createLinkButton =
 		new Button(folderGroup, SWT.CHECK | SWT.RIGHT);
 	createLinkButton.setText(WorkbenchMessages.getString("NewFolderDialog.createLinkButton")); //$NON-NLS-1$
@@ -200,6 +207,7 @@ private void createLinkLocationGroup(Composite parent) {
 	GridData data = new GridData();
 	data.horizontalSpan = 3;
 	createLinkButton.setLayoutData(data);
+	createLinkButton.setFont(font);
 	createLinkButton.setEnabled(container instanceof IProject);
 	
 	createUserSpecifiedLinkLocationGroup(folderGroup, createLink);
@@ -224,6 +232,7 @@ private void createLinkLocationGroup(Composite parent) {
  * @param parent the parent composite
  */
 private void createFolderNameGroup(Composite parent) {
+	Font font = parent.getFont();
 	// project specification group
 	Composite folderGroup = new Composite(parent,SWT.NONE);
 	GridLayout layout = new GridLayout();
@@ -233,6 +242,7 @@ private void createFolderNameGroup(Composite parent) {
 
 	// new project label
 	Label folderLabel = new Label(folderGroup,SWT.NONE);
+	folderLabel.setFont(font);
 	folderLabel.setText(WorkbenchMessages.getString("NewFolderDialog.nameLabel"));	//$NON-NLS-1$
 
 	// new project name entry field
@@ -240,6 +250,7 @@ private void createFolderNameGroup(Composite parent) {
 	GridData data = new GridData(GridData.FILL_HORIZONTAL);
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 	folderNameField.setLayoutData(data);
+	folderNameField.setFont(font);
 }
 /**
  * Creates a new folder with the given name and optionally linking to
@@ -304,6 +315,7 @@ private IFolder createNewFolder(String folderName, final String linkTargetName) 
  * @param enabled sets the initial enabled state of the widgets
  */
 private void createUserSpecifiedLinkLocationGroup(Composite folderGroup, boolean enabled) {
+	Font font = folderGroup.getFont();
 	Label fill = new Label(folderGroup, SWT.NONE);
 	GridData data = new GridData();
 	Button button = new Button(folderGroup, SWT.CHECK);
@@ -316,11 +328,13 @@ private void createUserSpecifiedLinkLocationGroup(Composite folderGroup, boolean
 	data = new GridData();
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;	
 	linkTargetField.setLayoutData(data);
+	linkTargetField.setFont(font);
 	linkTargetField.setEnabled(enabled);
 
 	// browse button
 	browseButton = new Button(folderGroup, SWT.PUSH);
 	setButtonLayoutData(browseButton);
+	browseButton.setFont(font);
 	browseButton.setText(WorkbenchMessages.getString("NewFolderDialog.browseButton")); //$NON-NLS-1$
 	browseButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent event) {
@@ -337,6 +351,7 @@ private void createUserSpecifiedLinkLocationGroup(Composite folderGroup, boolean
 	// variables button
 	variablesButton = new Button(folderGroup, SWT.PUSH);
 	setButtonLayoutData(variablesButton);
+	variablesButton.setFont(font);
 	variablesButton.setText(WorkbenchMessages.getString("NewFolderDialog.variablesButton")); //$NON-NLS-1$
 	variablesButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent event) {

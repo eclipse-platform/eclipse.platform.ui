@@ -3,6 +3,8 @@
  * This file is made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
+ * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ * font should be activated and used by other components.
  */
 package org.eclipse.ui.dialogs;
 
@@ -14,6 +16,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -57,6 +60,7 @@ public WizardNewLinkPage(String pageName, int type) {
  * Method declared on IDialogPage.
  */
 public void createControl(Composite parent) {
+	Font font = parent.getFont();
 	initializeDialogUnits(parent);
 	// top level group
 	Composite topLevel = new Composite(parent,SWT.NONE);
@@ -65,7 +69,7 @@ public void createControl(Composite parent) {
 	topLevel.setLayout(layout);
 	topLevel.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-	topLevel.setFont(parent.getFont());
+	topLevel.setFont(font);
 	WorkbenchHelp.setHelp(topLevel, IHelpContextIds.NEW_LINK_WIZARD_PAGE);
 
 	final Button createLinkButton = new Button(topLevel, SWT.CHECK);
@@ -77,6 +81,7 @@ public void createControl(Composite parent) {
 	GridData data = new GridData();
 	data.horizontalSpan = 3;
 	createLinkButton.setLayoutData(data);
+	createLinkButton.setFont(font);
 	SelectionListener listener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			createLink = createLinkButton.getSelection();
@@ -102,6 +107,7 @@ public void createControl(Composite parent) {
  * @param enabled sets the initial enabled state of the widgets
  */
 private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
+	Font font = locationGroup.getFont();
 	Label fill = new Label(locationGroup, SWT.NONE);
 	GridData data = new GridData();
 	Button button = new Button(locationGroup, SWT.CHECK);
@@ -113,6 +119,7 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 	linkTargetField = new Text(locationGroup, SWT.BORDER);
 	data = new GridData(GridData.FILL_HORIZONTAL);
 	linkTargetField.setLayoutData(data);
+	linkTargetField.setFont(font);
 	linkTargetField.setEnabled(enabled);
 	linkTargetField.addModifyListener(new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
@@ -126,6 +133,7 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 	// browse button
 	browseButton = new Button(locationGroup, SWT.PUSH);
 	setButtonLayoutData(browseButton);
+	browseButton.setFont(font);
 	browseButton.setText(WorkbenchMessages.getString("WizardNewLinkPage.browseButton")); //$NON-NLS-1$
 	browseButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent event) {
@@ -142,6 +150,7 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 	// variables button
 	variablesButton = new Button(locationGroup, SWT.PUSH);
 	setButtonLayoutData(variablesButton);
+	variablesButton.setFont(font);
 	variablesButton.setText(WorkbenchMessages.getString("WizardNewLinkPage.variablesButton")); //$NON-NLS-1$
 	variablesButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent event) {

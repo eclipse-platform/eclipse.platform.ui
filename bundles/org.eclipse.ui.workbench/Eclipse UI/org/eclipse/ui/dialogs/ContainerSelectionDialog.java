@@ -1,8 +1,9 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * (c) Copyright IBM Corp. 2000, 2002. All Rights Reserved.
+ * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ * font should be activated and used by other components.
  */
 import java.util.ArrayList;
 import java.util.List;
@@ -118,7 +119,8 @@ protected Control createDialogArea(Composite parent) {
 
 	statusMessage = new Label(parent, SWT.NONE);
 	statusMessage.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
+	statusMessage.setFont(parent.getFont());
+	
 	return dialogArea;
 }
 /**

@@ -7,8 +7,9 @@ are made available under the terms of the Common Public License v0.5
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
  
-Contributors:
-**********************************************************************/
+Contributors:Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+font should be activated and used by other components.
+*********************************************************************/
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -88,6 +89,7 @@ public class MarkerResolutionSelectionDialog extends SelectionDialog {
 		data.heightHint = convertHeightInCharsToPixels(LIST_HEIGHT);
 		data.widthHint = convertWidthInCharsToPixels(LIST_WIDTH);
 		listViewer.getList().setLayoutData(data);
+		listViewer.getList().setFont(parent.getFont());
 		// Set the label provider		
 		listViewer.setLabelProvider(new LabelProvider() {
 			public String getText(Object element) {

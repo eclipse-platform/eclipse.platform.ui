@@ -1,8 +1,10 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * (c) Copyright IBM Corp. 2000, 2002. All Rights Reserved. 
+ * Contributors:
+ * Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+ * activated and used by other components.
  */
 import java.util.*;
 
@@ -10,6 +12,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -78,11 +81,11 @@ public TypeFilteringDialog(Shell parentShell, Collection preselections, String f
  * @param composite org.eclipse.swt.widgets.Composite
  */
 private void addSelectionButtons(Composite composite) {
-
 	Composite buttonComposite = new Composite(composite, SWT.RIGHT);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
 	buttonComposite.setLayout(layout);
+	buttonComposite.setFont(composite.getFont());
 	GridData data =
 		new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
 	data.grabExcessHorizontalSpace = true;
@@ -194,6 +197,7 @@ protected Control createDialogArea(Composite parent) {
 	data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
 	data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
 	listViewer.getTable().setLayoutData(data);
+	listViewer.getTable().setFont(parent.getFont());
 
 	listViewer.setLabelProvider(FileEditorMappingLabelProvider.INSTANCE);
 	listViewer.setContentProvider(FileEditorMappingContentProvider.INSTANCE);
@@ -215,7 +219,7 @@ protected Control createDialogArea(Composite parent) {
  * @param parent the parent this is being created in.
  */
 private void createUserEntryGroup(Composite parent) {
-
+	Font font = parent.getFont();
 	// destination specification group
 	Composite userDefinedGroup = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
@@ -223,11 +227,14 @@ private void createUserEntryGroup(Composite parent) {
 	userDefinedGroup.setLayout(layout);
 	userDefinedGroup.setLayoutData(
 		new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
-
-	new Label(userDefinedGroup, SWT.NONE).setText(filterTitle); //$NON-NLS-1$
+	
+	Label fTitle = new Label(userDefinedGroup, SWT.NONE);
+	fTitle.setFont(font);
+	fTitle.setText(filterTitle); //$NON-NLS-1$
 
 	// user defined entry field
 	userDefinedText = new Text(userDefinedGroup, SWT.SINGLE | SWT.BORDER);
+	userDefinedText.setFont(font);
 	GridData data =
 		new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	userDefinedText.setLayoutData(data);

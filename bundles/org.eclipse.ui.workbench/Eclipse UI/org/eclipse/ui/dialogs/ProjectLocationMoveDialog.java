@@ -3,12 +3,15 @@ package org.eclipse.ui.dialogs;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
+ * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ * font should be activated and used by other components.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -155,6 +158,7 @@ protected Control createDialogArea(Composite parent) {
 	//Add in a label for status messages if required
 	statusMessageLabel = new Label(composite, SWT.WRAP);
 	statusMessageLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
+	statusMessageLabel.setFont(parent.getFont());
 	//Make it two lines.
 	statusMessageLabel.setText(" \n ");
 
@@ -179,16 +183,18 @@ private void createLocationListener() {
  * @param parent the parent composite
  */
 private final void createProjectLocationGroup(Composite parent) {
-
+	Font font = parent.getFont();
 	// project specification group
 	Composite projectGroup = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 3;
 	projectGroup.setLayout(layout);
 	projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
+	projectGroup.setFont(font);
+	
 	final Button useDefaultsButton =
 		new Button(projectGroup, SWT.CHECK | SWT.RIGHT);
+	useDefaultsButton.setFont(font);
 	useDefaultsButton.setText(WorkbenchMessages.getString("ProjectLocationSelectionDialog.useDefaultLabel")); //$NON-NLS-1$
 	useDefaultsButton.setSelection(this.useDefaults);
 	GridData buttonData = new GridData();
@@ -222,9 +228,10 @@ private final void createProjectLocationGroup(Composite parent) {
  * @param enabled - sets the initial enabled state of the widgets
  */
 private Composite createUserSpecifiedProjectLocationGroup(Composite projectGroup, boolean enabled) {
-
+	Font font = projectGroup.getFont();
 	// location label
 	locationLabel = new Label(projectGroup, SWT.NONE);
+	locationLabel.setFont(font);
 	locationLabel.setText(LOCATION_LABEL);
 	locationLabel.setEnabled(enabled);
 
@@ -233,10 +240,12 @@ private Composite createUserSpecifiedProjectLocationGroup(Composite projectGroup
 	GridData data = new GridData(GridData.FILL_HORIZONTAL);
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 	locationPathField.setLayoutData(data);
+	locationPathField.setFont(font);
 	locationPathField.setEnabled(enabled);
 
 	// browse button
 	this.browseButton = new Button(projectGroup, SWT.PUSH);
+	this.browseButton.setFont(font);
 	this.browseButton.setText(BROWSE_LABEL);
 	this.browseButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent event) {
@@ -244,6 +253,7 @@ private Composite createUserSpecifiedProjectLocationGroup(Composite projectGroup
 		}
 	});
 	this.browseButton.setEnabled(enabled);
+	setButtonLayoutData(this.browseButton);
 
 	// Set the initial value first before listener
 	// to avoid handling an event during the creation.

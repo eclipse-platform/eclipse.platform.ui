@@ -1,6 +1,7 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * (c) Copyright IBM Corp. 2000, 2002. All Rights Reserved.
+ * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ * font should be activated and used by other components.
  */
 package org.eclipse.ui.dialogs;
 
@@ -229,6 +230,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 		
 		Tree treeWidget= treeViewer.getTree();
 		treeWidget.setLayoutData(data);
+		treeWidget.setFont(parent.getFont());
 		
 		if (fIsEmpty) {
 			messageLabel.setEnabled(false);

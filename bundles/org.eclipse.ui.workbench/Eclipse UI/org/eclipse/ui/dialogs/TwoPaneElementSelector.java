@@ -1,6 +1,8 @@
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
+ * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ * font should be activated and used by other components.
  */
 package org.eclipse.ui.dialogs;
 
@@ -120,6 +122,7 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 			
 		Label label= new Label(parent, SWT.NONE);
 		label.setText(name);
+		label.setFont(parent.getFont());
 		
 		return label;
 	}
@@ -159,6 +162,7 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 		data.horizontalAlignment= GridData.FILL;
 		data.verticalAlignment= GridData.FILL;
 		list.setLayoutData(data);
+		list.setFont(parent.getFont());
 		
 		fLowerList= list;
 		

@@ -1,8 +1,9 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * (c) Copyright IBM Corp. 2000, 2002. All Rights Reserved.
+ * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ * font should be activated and used by other components.
  */
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.internal.*;
@@ -11,6 +12,7 @@ import org.eclipse.ui.model.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -33,6 +35,7 @@ import java.util.Iterator;
  *	return dialog.getResult();
  * </pre>
  * </p>
+ * @deprecated. Use org.eclipse.swt.widgets.FileDialog,
  */
 public class FileSelectionDialog extends SelectionDialog {
 	// the root file representative to populate the viewer with
@@ -69,6 +72,7 @@ public FileSelectionDialog(Shell parentShell, FileSystemElement fileSystemElemen
  * @param composite org.eclipse.swt.widgets.Composite
  */
 private void addSelectionButtons(Composite composite) {
+	Font font = composite.getFont();
 	
 	Composite buttonComposite = new Composite(composite,SWT.RIGHT);
 	GridLayout layout = new GridLayout();
@@ -78,6 +82,7 @@ private void addSelectionButtons(Composite composite) {
 	composite.setData(data);
 
 	Button selectButton = new Button(buttonComposite,SWT.PUSH);
+	selectButton.setFont(font);
 	selectButton.setText(SELECT_ALL_TITLE);
 	SelectionListener listener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -87,6 +92,7 @@ private void addSelectionButtons(Composite composite) {
 	selectButton.addSelectionListener(listener);
 
 	Button deselectButton = new Button(buttonComposite,SWT.PUSH);
+	deselectButton.setFont(font);
 	deselectButton.setText(DESELECT_ALL_TITLE);
 	listener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {

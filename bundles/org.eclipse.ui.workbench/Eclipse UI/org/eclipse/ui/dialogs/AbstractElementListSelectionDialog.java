@@ -1,6 +1,8 @@
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
+ * Contributors: Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ * font should be activated and used by other components.
  */
 package org.eclipse.ui.dialogs;
 
@@ -318,7 +320,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 		data.horizontalAlignment= GridData.FILL;
 		data.verticalAlignment= GridData.FILL;
 		list.setLayoutData(data);
-		
+		list.setFont(parent.getFont());
 		list.setFilter((fFilter == null ? "" : fFilter)); //$NON-NLS-1$		
 
 		list.addSelectionListener(new SelectionListener() {
@@ -362,6 +364,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 		data.horizontalAlignment= GridData.FILL;
 		data.verticalAlignment= GridData.BEGINNING;
 		text.setLayoutData(data);
+		text.setFont(parent.getFont());
 
 		text.setText((fFilter == null ? "" : fFilter)); //$NON-NLS-1$
 		

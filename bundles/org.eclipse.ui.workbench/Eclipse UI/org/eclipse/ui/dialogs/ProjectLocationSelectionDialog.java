@@ -3,6 +3,8 @@ package org.eclipse.ui.dialogs;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
+ * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ * font should be activated and used by other components.
  */
 import java.io.File;
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -200,13 +203,15 @@ private void createNameListener() {
  * @param parent the parent composite
  */
 private final void createProjectLocationGroup(Composite parent) {
-
+	Font font = parent.getFont();
+	
 	// project specification group
 	Composite projectGroup = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 3;
 	projectGroup.setLayout(layout);
 	projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	projectGroup.setFont(font);
 
 	final Button useDefaultsButton =
 		new Button(projectGroup, SWT.CHECK | SWT.RIGHT);
@@ -215,6 +220,7 @@ private final void createProjectLocationGroup(Composite parent) {
 	GridData buttonData = new GridData();
 	buttonData.horizontalSpan = 3;
 	useDefaultsButton.setLayoutData(buttonData);
+	useDefaultsButton.setFont(font);
 
 	createUserSpecifiedProjectLocationGroup(projectGroup, !this.useDefaults);
 
@@ -237,6 +243,7 @@ private final void createProjectLocationGroup(Composite parent) {
  * @param parent the parent composite
  */
 private void createProjectNameGroup(Composite parent) {
+	Font font = parent.getFont();
 	// project specification group
 	Composite projectGroup = new Composite(parent,SWT.NONE);
 	GridLayout layout = new GridLayout();
@@ -246,6 +253,7 @@ private void createProjectNameGroup(Composite parent) {
 
 	// new project label
 	Label projectLabel = new Label(projectGroup,SWT.NONE);
+	projectLabel.setFont(font);
 	projectLabel.setText(PROJECT_NAME_LABEL);
 
 	// new project name entry field
@@ -253,6 +261,7 @@ private void createProjectNameGroup(Composite parent) {
 	GridData data = new GridData(GridData.FILL_HORIZONTAL);
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 	projectNameField.setLayoutData(data);
+	projectNameField.setFont(font);
 	
 	// Set the initial value first before listener
 	// to avoid handling an event during the creation.
@@ -272,9 +281,12 @@ private void createProjectNameGroup(Composite parent) {
 private Composite createUserSpecifiedProjectLocationGroup(
 	Composite projectGroup,
 	boolean enabled) {
-
+	
+	Font font = projectGroup.getFont();
+	
 	// location label
 	locationLabel = new Label(projectGroup, SWT.NONE);
+	locationLabel.setFont(font);
 	locationLabel.setText(LOCATION_LABEL);
 	locationLabel.setEnabled(enabled);
 
@@ -283,10 +295,12 @@ private Composite createUserSpecifiedProjectLocationGroup(
 	GridData data = new GridData(GridData.FILL_HORIZONTAL);
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 	locationPathField.setLayoutData(data);
+	locationPathField.setFont(font);
 	locationPathField.setEnabled(enabled);
 
 	// browse button
 	this.browseButton = new Button(projectGroup, SWT.PUSH);
+	this.browseButton.setFont(font);	
 	this.browseButton.setText(BROWSE_LABEL);
 	this.browseButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent event) {
@@ -294,6 +308,7 @@ private Composite createUserSpecifiedProjectLocationGroup(
 		}
 	});
 	this.browseButton.setEnabled(enabled);
+	setButtonLayoutData(this.browseButton);
 
 	// Set the initial value first before listener
 	// to avoid handling an event during the creation.

@@ -1,12 +1,15 @@
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
+ * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ * font should be activated and used by other components.
  */
 package org.eclipse.ui.dialogs;
 
 import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -140,6 +143,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	 * @see Dialog#createButtonBar(Composite)
 	 */
 	protected Control createButtonBar(Composite parent) {
+		Font font = parent.getFont();
 		Composite composite= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		if (fStatusLineAboveButtons) {
@@ -150,11 +154,13 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 		layout.marginHeight= 0; layout.marginWidth= 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+		composite.setFont(font);
+				
 		fStatusLine= new MessageLine(composite);
 		fStatusLine.setAlignment(SWT.LEFT);
 		fStatusLine.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fStatusLine.setErrorStatus(null); //$NON-NLS-1$
+		fStatusLine.setFont(font);
 		
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent= convertWidthInCharsToPixels(1);
