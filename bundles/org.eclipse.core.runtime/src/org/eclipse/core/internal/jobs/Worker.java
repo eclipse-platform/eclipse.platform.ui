@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
-import org.eclipse.core.internal.plugins.PluginClassLoader;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
