@@ -41,7 +41,7 @@ import org.eclipse.ui.IMarkerResolution;
 public class CVSRemoveResolutionGenerator extends CVSAbstractResolutionGenerator {
 	IMarkerResolution commitDeletion =new IMarkerResolution() {
 		public String getLabel() {
-			return "Commit Deletion to CVS";
+			return Policy.bind("CVSRemoveResloutionGenerator.Commit_Deletion_to_CVS_1"); //$NON-NLS-1$
 		}
 		public void run(IMarker marker) {
 			try {
@@ -88,7 +88,7 @@ public class CVSRemoveResolutionGenerator extends CVSAbstractResolutionGenerator
 
 	IMarkerResolution undoDeletionLocal = new IMarkerResolution() {
 		public String getLabel() {
-			return "Undo Deletion from Local History";
+			return Policy.bind("CVSRemoveResloutionGenerator.Undo_Deletion_from_Local_History_2"); //$NON-NLS-1$
 		}
 		public void run(IMarker marker) {
 			try {
@@ -120,7 +120,7 @@ public class CVSRemoveResolutionGenerator extends CVSAbstractResolutionGenerator
 					}
 					marker.delete();
 				} else {
-					throw new CVSException("No local history available. Try undoing from the server.");
+					throw new CVSException(Policy.bind("CVSRemoveResloutionGenerator.No_local_history_available._Try_undoing_from_the_server_3")); //$NON-NLS-1$
 				}
 			} catch (TeamException e) {
 				handle(e, null, null);
@@ -132,7 +132,7 @@ public class CVSRemoveResolutionGenerator extends CVSAbstractResolutionGenerator
 		
 	IMarkerResolution undoDeletion = new IMarkerResolution() {
 		public String getLabel() {
-			return "Undo Deletion from CVS Server";
+			return Policy.bind("CVSRemoveResloutionGenerator.Undo_Deletion_from_CVS_Server_4"); //$NON-NLS-1$
 		}
 		public void run(IMarker marker) {
 			try {

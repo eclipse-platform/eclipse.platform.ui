@@ -91,7 +91,7 @@ public abstract class CVSAbstractResolutionGenerator implements IMarkerResolutio
 		} else if (exception instanceof InterruptedException) {
 			return;
 		} else {
-			status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("TeamAction.internal"), exception);
+			status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("TeamAction.internal"), exception); //$NON-NLS-1$
 			log = true;
 			dialog = true;
 		}

@@ -120,10 +120,6 @@ public class CVSMoveDeleteHook implements IMoveDeleteHook {
 				if (resource.isTeamPrivateMember()) {
 					return false;
 				}
-				// XXX Compensate for above not working
-				if (resource.getName().equals("CVS")) {
-					return false;
-				}
 				if (resource.getType() == IResource.FOLDER) {
 					if (destination != null) {
 						IFolder destFolder = destination.getFolder(resource.getFullPath().removeFirstSegments(source.getFullPath().segmentCount()));
@@ -146,11 +142,11 @@ public class CVSMoveDeleteHook implements IMoveDeleteHook {
 		return fileFound[0];
 	}
 	
-	private boolean checkForTeamPrivate(IResource resource) {
+	private boolean checkForTeamPrivate(final IResource resource) {
 		if (resource.isTeamPrivateMember()) {
 			showDialog(new IRunnableWithShell() {
 				public void run(Shell shell) {
-					ErrorDialog.openError(shell, "Team Private Resource", "Deletion of team private resources is not permitted", null);
+					ErrorDialog.openError(shell, Policy.bind("CVSMoveDeleteHook.Team_Private_Resource_1"), Policy.bind("CVSMoveDeleteHook.Deletion_of_team_private_resources_is_not_permitted_2", resource.getFullPath().toString()), null); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			});
 			return true;
@@ -212,10 +208,7 @@ public class CVSMoveDeleteHook implements IMoveDeleteHook {
 				}
 			}
 			return true;
-		} else // XXX Until team-private resources are hiddent
-			if (source.getParent().getName().equals("CVS")) {
-				return true;
-			}
+		}
 		return false;
 	}
 	
@@ -290,10 +283,7 @@ public class CVSMoveDeleteHook implements IMoveDeleteHook {
 				}
 			}
 			return true;
-		} else // XXX Until team-private resources are hidden
-			if (source.getName().equals("CVS")) {
-				return true;
-			}
+		}
 		return false;
 	}
 	

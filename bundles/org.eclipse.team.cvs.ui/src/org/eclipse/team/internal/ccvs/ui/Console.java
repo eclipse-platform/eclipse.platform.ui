@@ -64,7 +64,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
  */
 public class Console extends ViewPart {
 	public static final String CONSOLE_ID = "org.eclipse.team.ccvs.ui.console"; //$NON-NLS-1$
-	private static final DateFormat TIME_FORMAT = new SimpleDateFormat(Policy.bind("Console.resultTimeFormat"));
+	private static final DateFormat TIME_FORMAT = new SimpleDateFormat(Policy.bind("Console.resultTimeFormat")); //$NON-NLS-1$
 	private static ConsoleDocument document;
 	private static List /* of Console */ instances;
 	

@@ -52,7 +52,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 		}
 			
 		if (result[0] == null) {
-			throw new OperationCanceledException(Policy.bind("WorkbenchUserAuthenticator.cancelled"));
+			throw new OperationCanceledException(Policy.bind("WorkbenchUserAuthenticator.cancelled")); //$NON-NLS-1$
 		}
 		
 		if (userinfo.isUsernameMutable())
@@ -75,7 +75,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 	private void promptForPassword(final ICVSRepositoryLocation location, final String username, final String message, final boolean userMutable, final String[] result) {
 		Display display = Display.getCurrent();
 		Shell shell = new Shell(display);
-		UserValidationDialog dialog = new UserValidationDialog(shell, location.getLocation(), (username==null)?"":username, message);
+		UserValidationDialog dialog = new UserValidationDialog(shell, location.getLocation(), (username==null)?"":username, message);//$NON-NLS-1$
 		dialog.setUsernameMutable(userMutable);
 		dialog.open();
 		shell.dispose();

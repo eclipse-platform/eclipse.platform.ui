@@ -121,9 +121,9 @@ public class CVSPreferencesPage
 		// set F1 help
 //		WorkbenchHelp.setHelp(composite, new DialogPageContextComputer(this, ICVSHelpContextIds.CVS_PREFERENCE_PAGE));
 
-		pruneEmptyDirectoriesField = createCheckBox(composite, Policy.bind("CVSPreferencePage.pruneEmptyDirectories"));
+		pruneEmptyDirectoriesField = createCheckBox(composite, Policy.bind("CVSPreferencePage.pruneEmptyDirectories")); //$NON-NLS-1$
 
-		createLabel(composite, Policy.bind("CVSPreferencePage.timeoutValue"));
+		createLabel(composite, Policy.bind("CVSPreferencePage.timeoutValue")); //$NON-NLS-1$
 		timeoutValue = createTextField(composite);
 		timeoutValue.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -137,29 +137,29 @@ public class CVSPreferencesPage
 			}
 		});
 		
-		createLabel(composite, Policy.bind("CVSPreferencePage.quietness"));
+		createLabel(composite, Policy.bind("CVSPreferencePage.quietness")); //$NON-NLS-1$
 		quietnessCombo = createCombo(composite);
 		
-		historyTracksSelectionButton = createCheckBox(composite, Policy.bind("CVSPreferencePage.historyTracksSelection"));
+		historyTracksSelectionButton = createCheckBox(composite, Policy.bind("CVSPreferencePage.historyTracksSelection")); //$NON-NLS-1$
 		
-		considerContentsInCompare = createCheckBox(composite, Policy.bind("CVSPreferencePage.considerContentsInCompare"));
-		considerContentsInCompare.setToolTipText(Policy.bind("CVSPreferencePage.considerContentsInCompareTooltip"));
+		considerContentsInCompare = createCheckBox(composite, Policy.bind("CVSPreferencePage.considerContentsInCompare")); //$NON-NLS-1$
+		considerContentsInCompare.setToolTipText(Policy.bind("CVSPreferencePage.considerContentsInCompareTooltip")); //$NON-NLS-1$
 		
-		promptOnFileDelete = createCheckBox(composite, Policy.bind("CVSPreferencePage.promptOnFileDelete"));
-		promptOnFileDelete.setToolTipText(Policy.bind("CVSPreferencePage.promptOnFileDeleteTooltip"));
+		promptOnFileDelete = createCheckBox(composite, Policy.bind("CVSPreferencePage.promptOnFileDelete")); //$NON-NLS-1$
+		promptOnFileDelete.setToolTipText(Policy.bind("CVSPreferencePage.promptOnFileDeleteTooltip")); //$NON-NLS-1$
 
-		promptOnFolderDelete = createCheckBox(composite, Policy.bind("CVSPreferencePage.promptOnFolderDelete"));
-		promptOnFolderDelete.setToolTipText(Policy.bind("CVSPreferencePage.promptOnFolderDeleteTooltip"));
+		promptOnFolderDelete = createCheckBox(composite, Policy.bind("CVSPreferencePage.promptOnFolderDelete")); //$NON-NLS-1$
+		promptOnFolderDelete.setToolTipText(Policy.bind("CVSPreferencePage.promptOnFolderDeleteTooltip")); //$NON-NLS-1$
 
-		showMarkers = createCheckBox(composite, Policy.bind("CVSPreferencePage.showAddRemoveMarkers"));
-		showMarkers.setToolTipText(Policy.bind("CVSPreferencePage.showAddRemoveMarkersTooltip"));
+		showMarkers = createCheckBox(composite, Policy.bind("CVSPreferencePage.showAddRemoveMarkers")); //$NON-NLS-1$
+		showMarkers.setToolTipText(Policy.bind("CVSPreferencePage.showAddRemoveMarkersTooltip")); //$NON-NLS-1$
 		
 		initializeValues();
 		
 		quietnessCombo.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				if (getQuietnessOptionFor(quietnessCombo.getSelectionIndex()).equals(Command.SILENT)) {
-					MessageDialog.openWarning(getShell(), Policy.bind("CVSPreferencePage.silentWarningTitle"), Policy.bind("CVSPreferencePage.silentWarningMessage"));
+					MessageDialog.openWarning(getShell(), Policy.bind("CVSPreferencePage.silentWarningTitle"), Policy.bind("CVSPreferencePage.silentWarningMessage")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -205,9 +205,9 @@ public class CVSPreferencesPage
 		IPreferenceStore store = getPreferenceStore();
 		pruneEmptyDirectoriesField.setSelection(store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
 		timeoutValue.setText(new Integer(store.getInt(ICVSUIConstants.PREF_TIMEOUT)).toString());
-		quietnessCombo.add(Policy.bind("CVSPreferencePage.notquiet"));
-		quietnessCombo.add(Policy.bind("CVSPreferencePage.somewhatquiet"));
-		quietnessCombo.add(Policy.bind("CVSPreferencePage.reallyquiet"));
+		quietnessCombo.add(Policy.bind("CVSPreferencePage.notquiet")); //$NON-NLS-1$
+		quietnessCombo.add(Policy.bind("CVSPreferencePage.somewhatquiet")); //$NON-NLS-1$
+		quietnessCombo.add(Policy.bind("CVSPreferencePage.reallyquiet")); //$NON-NLS-1$
 		quietnessCombo.select(store.getInt(ICVSUIConstants.PREF_QUIETNESS));
 		historyTracksSelectionButton.setSelection(store.getBoolean(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION));
 		considerContentsInCompare.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS));
