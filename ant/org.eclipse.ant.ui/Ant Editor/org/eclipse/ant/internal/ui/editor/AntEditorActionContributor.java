@@ -20,6 +20,7 @@ import java.util.ResourceBundle;
 import org.eclipse.ant.internal.ui.editor.actions.FoldingActionGroup;
 import org.eclipse.ant.internal.ui.editor.actions.OpenDeclarationAction;
 import org.eclipse.ant.internal.ui.editor.actions.OpenExternalDocAction;
+import org.eclipse.ant.internal.ui.editor.actions.ToggleMarkOccurrencesAction;
 import org.eclipse.ant.internal.ui.editor.actions.TogglePresentationAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -38,18 +39,22 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
  */
 public class AntEditorActionContributor extends TextEditorActionContributor {
 
+	private final static String TOGGLE_MARK_OCCURRENCES_ID= "org.eclipse.ant.ui.toggleMarkOccurrences"; //$NON-NLS-1$
 	protected RetargetTextEditorAction fContentAssistProposal;
 	protected RetargetTextEditorAction fContentFormat;
 	private OpenDeclarationAction fOpenDeclarationAction;
 	private TogglePresentationAction fTogglePresentation;
 	private OpenExternalDocAction fOpenExternalDocAction;
+	private ToggleMarkOccurrencesAction fToggleMarkOccurrencesAction;
 
 	public AntEditorActionContributor() {
 		super();
-		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ant.internal.ui.editor.AntEditorMessages"); //$NON-NLS-1$
+		ResourceBundle bundle = AntEditorMessages.getResourceBundle();
 		fContentAssistProposal = new RetargetTextEditorAction(bundle, "ContentAssistProposal."); //$NON-NLS-1$
 		fContentFormat = new RetargetTextEditorAction(bundle, "ContentFormat."); //$NON-NLS-1$
 		fTogglePresentation= new TogglePresentationAction();
+		fToggleMarkOccurrencesAction= new ToggleMarkOccurrencesAction();
+		
 	}
 	
 	protected void initializeActions(AntEditor editor) {	 
@@ -89,6 +94,9 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 		
 		if (fTogglePresentation != null) {
 		    fTogglePresentation.setEditor(editor);
+		}
+		if (fToggleMarkOccurrencesAction != null) {
+			fToggleMarkOccurrencesAction.setEditor(editor);
 		}
 	}
 	
@@ -145,5 +153,6 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
     public void init(IActionBars bars, IWorkbenchPage page) {
         super.init(bars, page);
         bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
+		bars.setGlobalActionHandler(TOGGLE_MARK_OCCURRENCES_ID, fToggleMarkOccurrencesAction);
     }
 }

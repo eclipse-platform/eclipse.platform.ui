@@ -16,6 +16,10 @@
 package org.eclipse.ant.internal.ui.editor;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
@@ -42,6 +46,10 @@ import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.ui.actions.IRunToLineTarget;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.jdt.ui.JavaUI;
@@ -52,14 +60,24 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.DocumentCommand;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ISelectionValidator;
 import org.eclipse.jface.text.ISynchronizable;
+import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.link.LinkedModeModel;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -75,6 +93,8 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -154,15 +174,13 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		 */
 		public void selectionChanged(SelectionChangedEvent event) {
 			AntModel model= getAntModel();
-			if (model == null) { //external file
-				return;
-			}
 			ISelection selection= event.getSelection();
 			AntElementNode node= null;
 			if (selection instanceof ITextSelection) {
 				ITextSelection textSelection= (ITextSelection)selection;
 				int offset= textSelection.getOffset();
 				node= model.getNode(offset, false);
+				updateOccurrenceAnnotations(textSelection, model);
 			}
 		
 			if (AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.OUTLINE_LINK_WITH_EDITOR)) {
@@ -305,6 +323,210 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			fIgnoreTextConverters= false;
 		}
 	}
+	
+	/**
+	 * Finds and marks occurrence annotations.
+	 * 
+	 * @since 3.1
+	 */
+	class OccurrencesFinderJob extends Job {
+		
+		private IDocument fDocument;
+		private ISelection fSelection;
+		private ISelectionValidator fPostSelectionValidator;
+		private boolean fCanceled= false;
+		private IProgressMonitor fProgressMonitor;
+		private List fPositions;
+		
+		public OccurrencesFinderJob(IDocument document, List positions, ISelection selection) {
+			super("Occurrences Marker"); //$NON-NLS-1$
+			fDocument= document;
+			fSelection= selection;
+			fPositions= positions;
+			
+			if (getSelectionProvider() instanceof ISelectionValidator)
+				fPostSelectionValidator= (ISelectionValidator)getSelectionProvider(); 
+		}
+		
+		// cannot use cancel() because it is declared final
+		void doCancel() {
+			fCanceled= true;
+			cancel();
+		}
+		
+		private boolean isCanceled() {
+			return fCanceled || fProgressMonitor.isCanceled()
+				||  fPostSelectionValidator != null && !(fPostSelectionValidator.isValid(fSelection) || fForcedMarkOccurrencesSelection == fSelection)
+				|| LinkedModeModel.hasInstalledModel(fDocument);
+		}
+		
+		/*
+		 * @see Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		public IStatus run(IProgressMonitor progressMonitor) {
+			
+			fProgressMonitor= progressMonitor;
+			
+			if (isCanceled())
+				return Status.CANCEL_STATUS;
+			
+			ITextViewer textViewer= getViewer(); 
+			if (textViewer == null)
+				return Status.CANCEL_STATUS;
+			
+			IDocument document= textViewer.getDocument();
+			if (document == null)
+				return Status.CANCEL_STATUS;
+			
+			IDocumentProvider documentProvider= getDocumentProvider();
+			if (documentProvider == null)
+				return Status.CANCEL_STATUS;
+		
+			IAnnotationModel annotationModel= documentProvider.getAnnotationModel(getEditorInput());
+			if (annotationModel == null)
+				return Status.CANCEL_STATUS;
+			
+			// Add occurrence annotations
+			int length= fPositions.size();
+			Map annotationMap= new HashMap(length);
+			for (int i= 0; i < length; i++) {
+				
+				if (isCanceled())
+					return Status.CANCEL_STATUS; 
+				
+				String message;
+				Position position= (Position) fPositions.get(i);
+				
+				// Create & add annotation
+				try {
+					message= document.get(position.offset, position.length);
+				} catch (BadLocationException ex) {
+					// Skip this match
+					continue;
+				}
+				annotationMap.put(
+						new Annotation("org.eclipse.jdt.ui.occurrences", false, message), //$NON-NLS-1$
+						position);
+			}
+			
+			if (isCanceled())
+				return Status.CANCEL_STATUS;
+			
+			synchronized (((ISynchronizable)document).getLockObject()) {
+				if (annotationModel instanceof IAnnotationModelExtension) {
+					((IAnnotationModelExtension)annotationModel).replaceAnnotations(fOccurrenceAnnotations, annotationMap);
+				} else {
+					removeOccurrenceAnnotations();
+					Iterator iter= annotationMap.entrySet().iterator();
+					while (iter.hasNext()) {
+						Map.Entry mapEntry= (Map.Entry)iter.next(); 
+						annotationModel.addAnnotation((Annotation)mapEntry.getKey(), (Position)mapEntry.getValue());
+					}
+				}
+				fOccurrenceAnnotations= (Annotation[])annotationMap.keySet().toArray(new Annotation[annotationMap.keySet().size()]);
+			}
+
+			return Status.OK_STATUS;
+		}
+	}	
+	
+	/**
+	 * Cancels the occurrences finder job upon document changes.
+	 * 
+	 * @since 3.1
+	 */
+	class OccurrencesFinderJobCanceler implements IDocumentListener, ITextInputListener {
+
+		public void install() {
+			ISourceViewer sourceViewer= getSourceViewer();
+			if (sourceViewer == null)
+				return;
+				
+			StyledText text= sourceViewer.getTextWidget();			
+			if (text == null || text.isDisposed())
+				return;
+
+			sourceViewer.addTextInputListener(this);
+			
+			IDocument document= sourceViewer.getDocument();
+			if (document != null)
+				document.addDocumentListener(this);			
+		}
+		
+		public void uninstall() {
+			ISourceViewer sourceViewer= getSourceViewer();
+			if (sourceViewer != null)
+				sourceViewer.removeTextInputListener(this);
+
+			IDocumentProvider documentProvider= getDocumentProvider();
+			if (documentProvider != null) {
+				IDocument document= documentProvider.getDocument(getEditorInput());
+				if (document != null)
+					document.removeDocumentListener(this);
+			}
+		}
+				
+
+		/*
+		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
+		 */
+		public void documentAboutToBeChanged(DocumentEvent event) {
+			if (fOccurrencesFinderJob != null)
+				fOccurrencesFinderJob.doCancel();
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
+		 */
+		public void documentChanged(DocumentEvent event) {
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
+		 */
+		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
+			if (oldInput == null)
+				return;
+
+			oldInput.removeDocumentListener(this);
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
+		 */
+		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
+			if (newInput == null)
+				return;
+			newInput.addDocumentListener(this);
+		}
+	}
+	
+	/**
+	 * Internal activation listener.
+	 * @since 3.1
+	 */
+	private class ActivationListener extends ShellAdapter {
+		/*
+		 * @see org.eclipse.swt.events.ShellAdapter#shellActivated(org.eclipse.swt.events.ShellEvent)
+		 */
+		public void shellActivated(ShellEvent e) {
+			if (fMarkOccurrenceAnnotations && isActivePart()) {
+				ISelection selection= getSelectionProvider().getSelection();
+				if (selection instanceof ITextSelection) {
+					fForcedMarkOccurrencesSelection= (ITextSelection) selection;
+					updateOccurrenceAnnotations(fForcedMarkOccurrencesSelection, getAntModel());
+				}
+			}
+		}
+		
+		/*
+		 * @see org.eclipse.swt.events.ShellAdapter#shellDeactivated(org.eclipse.swt.events.ShellEvent)
+		 */
+		public void shellDeactivated(ShellEvent e) {
+			if (fMarkOccurrenceAnnotations && isActivePart())
+				removeOccurrenceAnnotations();
+		}
+	}
 
 	/**
 	 * Selection changed listener for the outline view.
@@ -358,6 +580,25 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	private boolean fSelectionSetFromOutline= false;
 
     private FoldingActionGroup fFoldingGroup;
+	
+	/**
+	 * Holds the current occurrence annotations.
+	 * @since 3.1
+	 */
+	private Annotation[] fOccurrenceAnnotations= null;
+
+	private OccurrencesFinderJob fOccurrencesFinderJob;
+	private OccurrencesFinderJobCanceler fOccurrencesFinderJobCanceler;
+	
+	private ITextSelection fForcedMarkOccurrencesSelection;
+	/**
+	 * The internal shell activation listener for updating occurrences.
+	 * @since 3.1
+	 */
+	private ActivationListener fActivationListener= new ActivationListener();
+	
+	private boolean fMarkOccurrenceAnnotations;
+	private boolean fStickyOccurrenceAnnotations;
   
     public AntEditor() {
         super();
@@ -411,6 +652,8 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		setHelpContextId(IAntUIHelpContextIds.ANT_EDITOR);	
 		setRulerContextMenuId("org.eclipse.ant.internal.ui.editor.AntEditor.RulerContext"); //$NON-NLS-1$
         setEditorContextMenuId("org.eclipse.ant.internal.ui.editor.AntEditor"); //$NON-NLS-1$
+		fMarkOccurrenceAnnotations= getPreferenceStore().getBoolean(AntEditorPreferenceConstants.EDITOR_MARK_OCCURRENCES);
+		fStickyOccurrenceAnnotations= getPreferenceStore().getBoolean(AntEditorPreferenceConstants.EDITOR_STICKY_OCCURRENCES);
     }
    
 	/* (non-Javadoc)
@@ -567,6 +810,24 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			} else {
 				stopTabConversion();
 			}
+			return;
+		}
+		
+		if (AntEditorPreferenceConstants.EDITOR_MARK_OCCURRENCES.equals(property)) {
+			boolean newBooleanValue= Boolean.valueOf(event.getNewValue().toString()).booleanValue();
+			if (newBooleanValue != fMarkOccurrenceAnnotations) {
+				fMarkOccurrenceAnnotations= newBooleanValue;
+				if (fMarkOccurrenceAnnotations) {
+					installOccurrencesFinder();
+				} else {
+					uninstallOccurrencesFinder();	
+				}
+			}
+			return;
+		}
+		if (AntEditorPreferenceConstants.EDITOR_STICKY_OCCURRENCES.equals(property)) {
+			boolean newBooleanValue= Boolean.valueOf(event.getNewValue().toString()).booleanValue();
+			fStickyOccurrenceAnnotations= newBooleanValue;
 			return;
 		}
 
@@ -759,6 +1020,12 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
     	    menu.appendToGroup(ITextEditorActionConstants.GROUP_UNDO, new Separator(openGroup)); 
 			menu.appendToGroup(openGroup, action);
 		}
+		//action= getAction("renameInFile"); //$NON-NLS-1$
+		//if (action != null) {
+		//	String editGroup = "group.edit"; //$NON-NLS-1$
+    	 //   menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, new Separator(editGroup)); 
+		//	menu.appendToGroup(editGroup, action);
+	//	}
 	}
 	
 	private void startTabConversion() {
@@ -804,6 +1071,11 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			startTabConversion();
 		}
 		
+		if (fMarkOccurrenceAnnotations) {
+			installOccurrencesFinder();
+		}
+		getEditorSite().getShell().addShellListener(fActivationListener);
+		
 		fEditorSelectionChangedListener= new EditorSelectionChangedListener();
 		fEditorSelectionChangedListener.install(getSelectionProvider());
 	}
@@ -843,6 +1115,16 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		if (fProjectionSupport != null) {
 			fProjectionSupport.dispose();
 			fProjectionSupport= null;
+		}
+		
+		uninstallOccurrencesFinder();
+		
+		if (fActivationListener != null) {
+			Shell shell= getEditorSite().getShell();
+			if (shell != null && !shell.isDisposed()) {
+				shell.removeShellListener(fActivationListener);
+			}
+			fActivationListener= null;
 		}
 		
 		AntModelCore.getDefault().removeAntModelListener(fAntModelListener);
@@ -1062,5 +1344,110 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		more[5]= "org.eclipse.ant.ui.AntRuntimePreferencePage"; //$NON-NLS-1$
 		System.arraycopy(ids, 0, more, 6, ids.length);
 		return more;
+	}
+	
+	/**
+	 * Updates the occurrences annotations based
+	 * on the current selection.
+	 * 
+	 * @param selection the text selection
+	 * @param astRoot the compilation unit AST
+	 * @since 3.0
+	 */
+	protected void updateOccurrenceAnnotations(ITextSelection selection, AntModel antModel) {
+
+		if (fOccurrencesFinderJob != null)
+			fOccurrencesFinderJob.cancel();
+
+		if (!fMarkOccurrenceAnnotations) {
+			return;
+		}
+		
+		if (selection == null) {
+			return;
+		}
+		
+		IDocument document= getSourceViewer().getDocument();
+		if (document == null) {
+			return;
+		}
+		
+		List positions= null;
+		
+		OccurrencesFinder finder= new OccurrencesFinder(this, antModel, document, selection.getOffset());
+		positions= finder.perform();
+		
+		if (positions == null || positions.size() == 0) {
+			if (!fStickyOccurrenceAnnotations) {
+				removeOccurrenceAnnotations();
+			}
+			return;
+		}
+			
+		fOccurrencesFinderJob= new OccurrencesFinderJob(document, positions, selection);
+		//fOccurrencesFinderJob.setPriority(Job.DECORATE);
+		//fOccurrencesFinderJob.setSystem(true);
+		//fOccurrencesFinderJob.schedule();
+		fOccurrencesFinderJob.run(new NullProgressMonitor());
+	}
+	
+	private void removeOccurrenceAnnotations() {
+		IDocumentProvider documentProvider= getDocumentProvider();
+		if (documentProvider == null) {
+			return;
+		}
+		
+		IAnnotationModel annotationModel= documentProvider.getAnnotationModel(getEditorInput());
+		if (annotationModel == null || fOccurrenceAnnotations == null) {
+			return;
+		}
+
+		IDocument document= documentProvider.getDocument(getEditorInput());
+		synchronized (((ISynchronizable)document).getLockObject()) {
+			if (annotationModel instanceof IAnnotationModelExtension) {
+				((IAnnotationModelExtension)annotationModel).replaceAnnotations(fOccurrenceAnnotations, null);
+			} else {
+				for (int i= 0, length= fOccurrenceAnnotations.length; i < length; i++) {
+					annotationModel.removeAnnotation(fOccurrenceAnnotations[i]);
+				}
+			}
+			fOccurrenceAnnotations= null;
+		}
+	}
+
+	protected void installOccurrencesFinder() {
+		fMarkOccurrenceAnnotations= true;
+		
+		if (getSelectionProvider() != null) {
+			ISelection selection= getSelectionProvider().getSelection();
+			if (selection instanceof ITextSelection) {
+				fForcedMarkOccurrencesSelection= (ITextSelection) selection;
+				updateOccurrenceAnnotations(fForcedMarkOccurrencesSelection, getAntModel());
+			}
+		}
+		if (fOccurrencesFinderJobCanceler == null) {
+			fOccurrencesFinderJobCanceler= new OccurrencesFinderJobCanceler();
+			fOccurrencesFinderJobCanceler.install();
+		}
+	}
+	
+	protected void uninstallOccurrencesFinder() {
+		fMarkOccurrenceAnnotations= false;
+		
+		if (fOccurrencesFinderJob != null) {
+			fOccurrencesFinderJob.cancel();
+			fOccurrencesFinderJob= null;
+		}
+
+		if (fOccurrencesFinderJobCanceler != null) {
+			fOccurrencesFinderJobCanceler.uninstall();
+			fOccurrencesFinderJobCanceler= null;
+		}
+		
+		removeOccurrenceAnnotations();
+	}
+	
+	public boolean isMarkingOccurrences() {
+		return fMarkOccurrenceAnnotations;
 	}
 }
