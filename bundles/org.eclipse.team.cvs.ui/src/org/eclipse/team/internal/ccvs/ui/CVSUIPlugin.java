@@ -558,8 +558,8 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		Preferences corePrefs = CVSProviderPlugin.getPlugin().getPluginPreferences();
 		
 		// work in progress START
-		store.setDefault(ICVSUIConstants.BACKGROUND_REPOVIEW, false);
-		store.setDefault(ICVSUIConstants.BACKGROUND_OPERATIONS, true);
+		store.setDefault(ICVSUIConstants.BACKGROUND_REPOVIEW, true);
+		store.setDefault(ICVSUIConstants.BACKGROUND_OPERATIONS, false);
 		store.setDefault(ICVSUIConstants.USE_NEW_SYNCVIEW, false);
 		// work in progress END
 		
