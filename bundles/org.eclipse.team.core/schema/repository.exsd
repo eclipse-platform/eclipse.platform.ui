@@ -66,7 +66,7 @@ Repositories that extend this extension point can provide implementations for co
 &lt;extension point=&quot;org.eclipse.team.core.repository&quot;&gt;
   &lt;repository
     class=&quot;org.eclipse.myprovider.MyRepositoryProvider&quot;
-    id=&quot;org.eclipse.myprovider.myProviderID&quot;
+    id=&quot;org.eclipse.myprovider.myProviderID&quot;&gt;
   &lt;/repository&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
