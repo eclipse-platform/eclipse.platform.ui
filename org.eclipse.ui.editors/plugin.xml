@@ -507,6 +507,8 @@
             textPreferenceValue="false"
             textPreferenceKey="changeIndication"
             overviewRulerPreferenceKey="changeIndicationInOverviewRuler"
+            verticalRulerPreferenceKey="changeIndicationInVerticalRuler"
+            verticalRulerPreferenceValue="false"
             includeOnPreferencePage="false">
       </specification>
       <specification
@@ -526,6 +528,8 @@
             textPreferenceValue="false"
             textPreferenceKey="additionIndication"
             overviewRulerPreferenceKey="additionIndicationInOverviewRuler"
+            verticalRulerPreferenceKey="additionIndicationInVerticalRuler"
+            verticalRulerPreferenceValue="false"
             includeOnPreferencePage="false">
       </specification>
       <specification
@@ -545,6 +549,8 @@
             textPreferenceValue="false"
             textPreferenceKey="deletionIndication"
             overviewRulerPreferenceKey="deletionIndicationInOverviewRuler"
+            verticalRulerPreferenceKey="deletionIndicationInVerticalRuler"
+            verticalRulerPreferenceValue="false"
             includeOnPreferencePage="false">
       </specification>
       <specification
