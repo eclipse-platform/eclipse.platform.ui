@@ -105,8 +105,12 @@ public abstract class PreferencePage extends DialogPage implements
 			messageImageLabel = new Label(messageComposite, SWT.NONE);
 
 			GridData imageData = new GridData(GridData.VERTICAL_ALIGN_CENTER);
-			Rectangle imageBounds = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR)
-					.getBounds();
+			Image sizingImage = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR);
+			Rectangle imageBounds;
+			if(sizingImage == null)
+				imageBounds = new Rectangle(0,0,IDialogConstants.VERTICAL_MARGIN * 2,IDialogConstants.VERTICAL_MARGIN * 2);
+			else
+				imageBounds = sizingImage.getBounds();
 			imageData.heightHint = imageBounds.height + IDialogConstants.VERTICAL_SPACING;
 			imageData.widthHint = imageBounds.width + IDialogConstants.HORIZONTAL_SPACING;
 			messageImageLabel.setLayoutData(imageData);
