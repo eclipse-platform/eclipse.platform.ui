@@ -10,33 +10,37 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.application.IWorkbenchPreferences;
 
 /**
  * The PerspectiveBarManager is the tool bar manager used for the perspective
  * bar.
  */
 public class PerspectiveBarManager extends ToolBarManager {
-
 	
 	/**
 	 * The symbolic font name for the small font (value <code>"org.eclipse.jface.smallfont"</code>).
 	 */
 
 	public static final String SMALL_FONT = "org.eclipse.ui.smallFont"; //$NON-NLS-1$
-	
-	
+		
 	/**
 	 * Create a new instance of the receiver.
 	 * 
 	 * @param style
 	 */
 	public PerspectiveBarManager(int style) {
-		super(style);
+		super(style);	
 	}
 
 	/* (non-Javadoc)
@@ -56,6 +60,28 @@ public class PerspectiveBarManager extends ToolBarManager {
 	public PerspectiveBarManager(ToolBar toolbar) {
 		super(toolbar);
 		toolbar.setFont(getFont());
+	}
+	
+	private static class PerspectiveBarActionContributionItem extends ActionContributionItem {
+				
+		private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();	
+		
+		private IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+				if (IWorkbenchPreferences.SHOW_TEXT_ON_PERSPECTIVE_BAR.equals(propertyChangeEvent.getProperty()))
+					setMode(preferenceStore.getBoolean(IWorkbenchPreferences.SHOW_TEXT_ON_PERSPECTIVE_BAR) ? ActionContributionItem.MODE_FORCE_TEXT : 0);
+			}
+		};
+		
+		private PerspectiveBarActionContributionItem(IAction action) {
+			super(action);
+			preferenceStore.addPropertyChangeListener(propertyChangeListener);
+			setMode(preferenceStore.getBoolean(IWorkbenchPreferences.SHOW_TEXT_ON_PERSPECTIVE_BAR) ? ActionContributionItem.MODE_FORCE_TEXT : 0);
+		}		
+	};
+	
+	public void add(IAction action) {
+		add(new PerspectiveBarActionContributionItem(action));
 	}
 	
 	/**

@@ -11,13 +11,9 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -25,8 +21,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * page.
  */
 public class SetPagePerspectiveAction extends Action {
-	
-	private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();	
 	
 	private WorkbenchPage page;
 	private IPerspectiveDescriptor persp;
@@ -114,15 +108,7 @@ public class SetPagePerspectiveAction extends Action {
 		}
 		setText(persp.getLabel());
 	}
-	
-	/**
-	 * Return whether or not this actions shows text in the toolbar.
-	 * @return
-	 */
-	public boolean showTextInToolBar(){
-		return preferenceStore.getBoolean(IWorkbenchPreferences.SHOW_TEXT_ON_PERSPECTIVE_BAR);
-	}
-	
+		
 	/**
 	 * Get the supplied image adjusted for the perspective bar.
 	 * @param start
