@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.actions;
 
-import java.util.Iterator;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
@@ -26,13 +24,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.PartEventAction;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.dialogs.PropertyDialog;
-import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
-import org.eclipse.ui.internal.dialogs.PropertyPageManager;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * Implementation for the action Property on the Project menu.
@@ -61,52 +56,17 @@ public ProjectPropertyDialogAction(IWorkbenchWindow window) {
 	setActionDefinitionId("org.eclipse.ui.project.properties"); //$NON-NLS-1$
 }
 /**
- * Returns the label for the specified adaptable.
- */
-private String getName(IAdaptable element) {
-	IWorkbenchAdapter adapter = (IWorkbenchAdapter)element.getAdapter(IWorkbenchAdapter.class);
-	if (adapter != null) {
-		return adapter.getLabel(element);
-	} else {
-		return "";//$NON-NLS-1$
-	}
-}
-/**
  * Opens the project properties dialog.
  */
 public void run() {
 	IProject project = getProject();
-	if(project == null)
+	if (project == null)
 		return;
-		
-	// @issue ref to internal generic workbench class
-	PropertyPageManager pageManager = new PropertyPageManager();
-	String title = "";//$NON-NLS-1$
 
-	// load pages for the selection
-	// fill the manager with contributions from the matching contributors
-	// @issue ref to internal generic workbench class
-	PropertyPageContributorManager.getManager().contribute(pageManager, project);
-	
-	// testing if there are pages in the manager
-	Iterator pages = pageManager.getElements(PreferenceManager.PRE_ORDER).iterator();
-	String name = getName(project);
-	if (!pages.hasNext()) {
-		MessageDialog.openInformation(
-			workbenchWindow.getShell(),
-			IDEWorkbenchMessages.getString("PropertyDialog.messageTitle"), //$NON-NLS-1$
-			IDEWorkbenchMessages.format("PropertyDialog.noPropertyMessage", new Object[] {name})); //$NON-NLS-1$
-		return;
-	} else
-		title = IDEWorkbenchMessages.format("PropertyDialog.propertyMessage", new Object[] {name}); //$NON-NLS-1$
-
-	// @issue should use PropertyDialogAction instead
-	// @issue ref to internal generic workbench class
-	PropertyDialog propertyDialog = new PropertyDialog(workbenchWindow.getShell(), pageManager, new StructuredSelection(project)); 
-	propertyDialog.create();
-	propertyDialog.getShell().setText(title);
-	WorkbenchHelp.setHelp(propertyDialog.getShell(), IHelpContextIds.PROPERTY_DIALOG);
-	propertyDialog.open();
+	SelProvider selProvider = new SelProvider();
+	selProvider.projectSelection = new StructuredSelection(project);
+	PropertyDialogAction propAction = new PropertyDialogAction(workbenchWindow.getShell(), selProvider);
+	propAction.run();
 }
 /**
  * Update the enablement state when a the selection changes.
@@ -157,4 +117,27 @@ public void dispose() {
 	workbenchWindow = null;
 }
 
+
+/*
+ * Helper class to simulate a selection provider
+ */
+private static final class SelProvider implements ISelectionProvider {
+	protected IStructuredSelection projectSelection = StructuredSelection.EMPTY;
+	
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		// do nothing
+	}
+
+	public ISelection getSelection() {
+		return projectSelection;
+	}
+
+	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+		// do nothing
+	}
+
+	public void setSelection(ISelection selection) {
+		// do nothing
+	}
+}
 }
