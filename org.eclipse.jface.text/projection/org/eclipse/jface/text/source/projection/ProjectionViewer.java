@@ -17,6 +17,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -562,6 +565,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
 			if (annotation.isCollapsed()) {
 				Position position= fProjectionAnnotationModel.getPosition(annotation);
+				if (position == null) {
+					// annotation might already be deleted, we will be informed later on about this deletion
+					continue;
+				}
 				if (includes(expanded, position))
 					positions.add(position);
 			}
@@ -633,6 +640,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		for (int i= 0; i < annotations.length; i++) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) annotations[i];
 			Position position= fProjectionAnnotationModel.getPosition(annotation);
+			
+			if (position == null) {
+				// we are potentially processing in a different thread, i.e. the annotation might already be 
+				// deleted which will be indicated with one of the subsequent events
+				continue;
+			}
+			
 			if (annotation.isCollapsed()) {
 				IRegion region= computeCollapsedRegion(position);
 				if (region != null)
@@ -768,5 +782,122 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 		
 		return null;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.ITextOperationTarget#doOperation(int)
+	 */
+	public void doOperation(int operation) {
+		
+		if (!isProjectionMode()) {
+			super.doOperation(operation);
+			return;
+		}
+		
+		StyledText textWidget= getTextWidget();
+		if (textWidget == null || !redraws())
+			return;
+
+		Point selection= null;
+		switch (operation) {
+
+			case CUT:
+				
+				selection= getSelectedRange();
+				if (selection.y == 0)
+					copyMarkedRegion(true);
+				else
+					copyToClipboard(selection.x, selection.y, true, textWidget);
+				
+				selection= textWidget.getSelectionRange();
+				fireSelectionChanged(selection.x, selection.y);
+				break;
+				
+			case COPY:
+				
+				selection= getSelectedRange();
+				if (selection.y == 0)
+					copyMarkedRegion(false);
+				else
+					copyToClipboard(selection.x, selection.y, false, textWidget);
+				break;
+			
+			default:
+				super.doOperation(operation);
+		}
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.TextViewer#copyMarkedRegion(boolean)
+	 */
+	protected void copyMarkedRegion(boolean delete) {
+		
+		StyledText textWidget= getTextWidget();
+		
+		if (textWidget == null)
+			return;
+		
+		if (fMarkPosition == null || fMarkPosition.isDeleted())
+			return;
+		
+		int start= fMarkPosition.getOffset();
+		int end= getSelectedRange().x;
+		
+		if (start > end) {
+			start= start + end;
+			end= start - end;
+			start= start - end;
+		}
+		
+		copyToClipboard(start, end - start, delete, textWidget);		
+	}
+	
+	private void copyToClipboard(int offset, int length, boolean delete, StyledText textWidget) {
+		
+		IDocument document= getDocument();
+		Clipboard clipboard= new Clipboard(textWidget.getDisplay());
+		
+		try {
+			
+			Transfer[] dataTypes= new Transfer[] { TextTransfer.getInstance() };
+			Object[] data= new Object[] { document.get(offset, length) };
+			clipboard.setContents(data, dataTypes);
+				
+			if (delete) {
+				int widgetCaret= modelOffset2WidgetOffset(offset);
+				textWidget.setSelection(widgetCaret);
+				document.replace(offset, length, null);	
+			}
+			
+		} catch (BadLocationException x) {
+		} finally {
+			clipboard.dispose();			
+		}
+	}
+	
+	/**
+	 * Adapts the behavior to line based folding.
+	 */
+	protected Point widgetSelection2ModelSelection(Point widgetSelection) {
+		
+		if (!isProjectionMode())
+			return super.widgetSelection2ModelSelection(widgetSelection);
+		
+		IRegion modelSelection= widgetRange2ModelRange(new Region(widgetSelection.x, widgetSelection.y));
+		if (modelSelection == null)
+			return null;
+		
+		int modelOffset= modelSelection.getOffset();
+		int modelLength= modelSelection.getLength();
+		int widgetSelectionExclusiveEnd= widgetSelection.x + widgetSelection.y;
+		int modelExclusiveEnd= widgetOffset2ModelOffset(widgetSelectionExclusiveEnd);
+		
+		if (modelOffset + modelLength < modelExclusiveEnd)
+			return new Point(modelOffset, modelExclusiveEnd - modelOffset);
+		
+		if (widgetSelectionExclusiveEnd == getVisibleDocument().getLength())
+			return new Point(modelOffset, getDocument().getLength() - modelOffset);
+		
+		return new Point(modelOffset, modelLength);
 	}
 }

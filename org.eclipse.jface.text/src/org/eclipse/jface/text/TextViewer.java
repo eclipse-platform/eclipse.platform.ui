@@ -1199,7 +1199,7 @@ public class TextViewer extends Viewer implements
 	 * The mark position.
 	 * @since 2.0
 	 */
-	private Position fMarkPosition;
+	protected Position fMarkPosition;
 	/** 
 	 * The mark position category.
 	 * @since 2.0
@@ -3472,7 +3472,7 @@ public class TextViewer extends Viewer implements
 	 * @param delete <code>true</code> if the region should be deleted rather than copied.
 	 * @since 2.0
 	 */
-	private void copyMarkedRegion(boolean delete) {
+	protected void copyMarkedRegion(boolean delete) {
 		
 		if (fTextWidget == null)
 			return;
