@@ -141,7 +141,11 @@ import java.util.HashMap;
 
 		LabelComboTextGroup(Composite parent, String labelText, String[] comboStrings, String initialText, int widthHint) {
 			Composite group = new Composite(parent, SWT.NONE);
-			group.setLayout(new FillLayout());
+			GridLayout layout = new GridLayout();
+			layout.numColumns = 3;
+			//Set the margin width to 0 in order to line up with other items
+			layout.marginWidth = 0;
+			group.setLayout(layout);
 			label = new Label(group, SWT.NONE);
 			label.setText(labelText);
 			combo = createCombo(group, comboStrings, 0);
