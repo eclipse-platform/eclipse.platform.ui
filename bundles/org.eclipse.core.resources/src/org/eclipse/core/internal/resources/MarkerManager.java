@@ -46,9 +46,7 @@ public MarkerManager(Workspace workspace) {
  * Adds the given markers to the given resource.
  * @see IResource#addMarkers 
  */
-public void add(IResource resource, MarkerInfo[] newMarkers) throws CoreException {
-	if (newMarkers.length == 0)
-		return;
+public void add(IResource resource, MarkerInfo newMarker) throws CoreException {
 	Resource target = (Resource) resource;
 	ResourceInfo info = workspace.getResourceInfo(target.getFullPath(), false, false);
 	target.checkExists(target.getFlags(info), false);
@@ -58,12 +56,12 @@ public void add(IResource resource, MarkerInfo[] newMarkers) throws CoreExceptio
 		return;
 	// set the M_MARKERS_SNAP_DIRTY flag to indicate that this
 	// resource's markers have changed since the last snapshot
-	if (isPersistent(newMarkers))
+	if (isPersistent(newMarker))
 		info.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 	MarkerSet markers = info.getMarkers();
 	if (markers == null)
-		markers = new MarkerSet(newMarkers.length);
-	basicAdd(resource, markers, newMarkers);
+		markers = new MarkerSet(1);
+	basicAdd(resource, markers, newMarker);
 	if (!markers.isEmpty())
 		info.setMarkers(markers);
 }
@@ -72,19 +70,16 @@ public void add(IResource resource, MarkerInfo[] newMarkers) throws CoreExceptio
  * are associated with the specified resource.IMarkerDeltas for Added markers 
  * are generated.
  */
-private void basicAdd(IResource resource, MarkerSet markers, MarkerInfo[] newMarkers) throws CoreException {
-	IMarkerSetElement[] changes = new IMarkerSetElement[newMarkers.length];
-	for (int i = 0; i < newMarkers.length; i++) {
-		MarkerInfo newMarker = newMarkers[i];
-		// should always be a new marker.
-		if (newMarker.getId() != MarkerInfo.UNDEFINED_ID) {
-			String message = Policy.bind("resources.changeInAdd"); //$NON-NLS-1$
-			throw new ResourceException(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, resource.getFullPath(), message));
-		}
-		newMarker.setId(workspace.nextMarkerId());
-		changes[i] = new MarkerDelta(IResourceDelta.ADDED, resource, newMarker);
-		markers.add(newMarker);
+private void basicAdd(IResource resource, MarkerSet markers, MarkerInfo newMarker) throws CoreException {
+	// should always be a new marker.
+	if (newMarker.getId() != MarkerInfo.UNDEFINED_ID) {
+		String message = Policy.bind("resources.changeInAdd"); //$NON-NLS-1$
+		throw new ResourceException(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, resource.getFullPath(), message));
 	}
+	newMarker.setId(workspace.nextMarkerId());
+	markers.add(newMarker);
+	IMarkerSetElement[] changes = new IMarkerSetElement[1];
+	changes[0] = new MarkerDelta(IResourceDelta.ADDED, resource, newMarker);
 	changedMarkers(resource, changes);
 }
 /**

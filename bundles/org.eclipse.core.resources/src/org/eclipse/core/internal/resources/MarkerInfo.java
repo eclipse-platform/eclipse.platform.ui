@@ -31,6 +31,8 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable {
 	/** The creation time for this marker. */
 	protected long creationTime=0;
 	
+public MarkerInfo() {
+}
 public Object getAttribute(String attributeName) {
 	return attributes == null ? null : attributes.get(attributeName);
 }

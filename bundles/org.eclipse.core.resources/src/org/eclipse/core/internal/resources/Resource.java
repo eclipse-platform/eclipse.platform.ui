@@ -592,14 +592,12 @@ public IMarker createMarker(String type) throws CoreException {
 	Assert.isNotNull(type);
 	try {
 		workspace.prepareOperation(this, null);
-		ResourceInfo resourceInfo = getResourceInfo(false, false);
-		checkAccessible(getFlags(resourceInfo));
-
+		checkAccessible(getFlags(getResourceInfo(false, false)));
 		workspace.beginOperation(true);
 		MarkerInfo info = new MarkerInfo();
 		info.setType(type);
 		info.setCreationTime(System.currentTimeMillis());
-		workspace.getMarkerManager().add(this, new MarkerInfo[] { info });
+		workspace.getMarkerManager().add(this, info);
 		return new Marker(this, info.getId());
 	} finally {
 		workspace.endOperation(this, false, null);
