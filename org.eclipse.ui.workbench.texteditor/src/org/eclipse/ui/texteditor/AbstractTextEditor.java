@@ -3208,7 +3208,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (actions.size() != 0) {
 				IConfigurationElement element= (IConfigurationElement) actions.get(0);
 				String defId = element.getAttribute(ActionDescriptor.ATT_DEFINITION_ID);
-				return new EditorPluginAction(element, "class", this,defId); //$NON-NLS-1$			
+				return new EditorPluginAction(element, "class", this, defId, IAction.AS_UNSPECIFIED); //$NON-NLS-1$			
 			}
 		}
 		
