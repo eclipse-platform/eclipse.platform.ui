@@ -112,27 +112,27 @@ public class Setup implements Cloneable {
 		}
 
 		if (configuration != null) {
-			params.append(" -configuration \"");
+			params.append(" -configuration ");
 			params.append(configuration);
-			params.append('"');
+			//params.append('"');
 		}
 
 		if (devOption != null) {
-			params.append(" -dev \"");
+			params.append(" -dev ");
 			params.append(devOption);
-			params.append('"');
+			//params.append('"');
 		}
 
 		if (debugOption != null) {
-			params.append(" -debug \"");
+			params.append(" -debug ");
 			params.append(debugOption);
-			params.append('"');
+			//params.append('"');
 		}
 
 		if (instanceLocation != null) {
-			params.append(" -data \"");
+			params.append(" -data ");
 			params.append(instanceLocation);
-			params.append('"');
+			//params.append('"');
 		}
 
 		// always enable -consolelog TODO should make this configurable 
@@ -196,8 +196,7 @@ public class Setup implements Cloneable {
 		appendClassPath(command);
 		appendVMArgs(command);
 		appendSystemProperties(command);
-		command.append(' ');
-		command.append("org.eclipse.core.launcher.Main");
+		command.append(" org.eclipse.core.launcher.Main");
 		appendEclipseArgs(command);
 		return command.toString();
 	}
