@@ -210,8 +210,6 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		fTextViewer= viewer;
 		fStatusLine= manager;
 		fTarget= viewer.getFindReplaceTarget();
-		fStatusField= (IStatusField)fStatusLine.find(ITextEditorActionConstants.STATUS_CATEGORY_FIND_FIELD);
-		fIsStatusFieldExtension= fStatusField instanceof IStatusFieldExtension;
 	}
 
 	/*
@@ -758,5 +756,16 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		}
 		if (!fSearching && !ignore)
 			leave();
+	}
+
+	/**
+	 * Sets the find status field for this incremental find target.
+	 * 
+	 * @param field
+	 * @since 3.0
+	 */
+	void setStatusField(IStatusField statusField) {
+		fStatusField= statusField;
+		fIsStatusFieldExtension= fStatusField instanceof IStatusFieldExtension;
 	}
 }
