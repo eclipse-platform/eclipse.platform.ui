@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids - bug 57208 
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
@@ -160,18 +161,6 @@ public class CommitCommentArea extends DialogArea {
 		firePropertyChangeChange(OK_REQUESTED, null, null);
 	}
 
-	/**
-	 * Method clearCommitText.
-	 */
-	private void clearCommitText() {
-		try {
-			text.setText(getCommitTemplate());
-			previousCommentsCombo.deselectAll();
-		} catch (CVSException e) {
-			CVSUIPlugin.openError(getShell(), null, null, e, CVSUIPlugin.PERFORM_SYNC_EXEC);
-		}
-	}
-
 	private String getCommitTemplate() throws CVSException {
 		CVSTeamProvider provider = getProvider();
 		if (provider == null) return ""; //$NON-NLS-1$
@@ -183,31 +172,9 @@ public class CommitCommentArea extends DialogArea {
 	/**
 	 * Method getProvider.
 	 */
-	private CVSTeamProvider getProvider() throws CVSException {
+	private CVSTeamProvider getProvider() {
 		if (mainProject == null) return null;
 		return (CVSTeamProvider) RepositoryProvider.getProvider(mainProject, CVSProviderPlugin.getTypeId());
-	}
-	
-	/**
-	 * Method getSelectedComment.
-	 * @return String
-	 */
-	private String getSelectedComment() {
-		if (comments.length == 0) {
-			// There are no previous comments so use the template
-			try {
-				return getCommitTemplate();
-			} catch (CVSException e) {
-				// log the exception for now. 
-				// The user can surface the problem by trying to reset the comment
-				CVSUIPlugin.log(e);
-			}
-		} else {
-			int index = previousCommentsCombo.getSelectionIndex();
-			if (index != -1)
-				return comments[index];
-		}
-		return ""; //$NON-NLS-1$
 	}
 	
 	/**
@@ -237,11 +204,9 @@ public class CommitCommentArea extends DialogArea {
 	}
 	
 	private void finished() {
-		// if the comment is the same as the template, ignore it
+		// strip template from the comment entered
 		try {
-			if (comment.equals(getCommitTemplate())) {
-				comment = ""; //$NON-NLS-1$
-			}
+			comment = comment.replaceAll(getCommitTemplate(), ""); //$NON-NLS-1$
 		} catch (CVSException e) {
 			// we couldn't get the commit template. Log the error and continue
 			CVSUIPlugin.log(e);
