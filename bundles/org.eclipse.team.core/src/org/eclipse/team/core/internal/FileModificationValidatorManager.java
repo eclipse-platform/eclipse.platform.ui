@@ -48,6 +48,8 @@ public class FileModificationValidatorManager implements IFileModificationValida
 		
 		Iterator providersIterator = providersToFiles.keySet().iterator();
 		
+		boolean allOK = true;
+		
 		//for each provider, validate its files
 		while(providersIterator.hasNext()) {
 			RepositoryProvider provider = (RepositoryProvider)providersIterator.next();
@@ -61,16 +63,24 @@ public class FileModificationValidatorManager implements IFileModificationValida
 				if (v != null) validator = v;
 			}
 			
-			returnStati.add(validator.validateEdit(filesArray, context));
+			IStatus status = validator.validateEdit(filesArray, context);
+			if(!status.isOK())
+				allOK = false;
+
+			returnStati.add(status);
 		}				
 
 		if (returnStati.size() == 1) {
 			return (IStatus)returnStati.get(0);
 		} 
+		
 		return new MultiStatus(TeamPlugin.ID,
 			0, 
 			(IStatus[])returnStati.toArray(new IStatus[returnStati.size()]),
-			Policy.bind("FileModificationValidator.validateEdit"),
+			Policy.bind(
+				allOK
+					? "FileModificationValidator.ok"
+					: "FileModificationValidator.editFailed"),
 			null); //$NON-NLS-1$
 	}
 
