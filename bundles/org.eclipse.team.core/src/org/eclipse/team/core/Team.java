@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.internal.Policy;
 import org.eclipse.team.core.internal.StringMatcher;
@@ -217,8 +218,7 @@ public final class Team {
 			description.setNatureIds((String[])newNatures.toArray(new String[newNatures.size()]));
 			proj.setDescription(description, monitor);
 		} catch(CoreException e) {
-				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("manager.errorRemovingNature",  //$NON-NLS-1$
-														 proj.getName(), natureId), e));
+			throw wrapException(Policy.bind("manager.errorRemovingNature", proj.getName(), natureId), e); //$NON-NLS-1$
 		}
 	}
 	
@@ -242,8 +242,7 @@ public final class Team {
 			description.setNatureIds(newNatures);
 			proj.setDescription(description, monitor);
 		} catch(CoreException e) {
-				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("manager.errorSettingNature",  //$NON-NLS-1$
-														 proj.getName(), natureId), e));
+			throw wrapException(Policy.bind("manager.errorSettingNature", proj.getName(), natureId), e); //$NON-NLS-1$
 		}
 	}
 	
@@ -500,5 +499,11 @@ public final class Team {
 		} catch (TeamException ex) {
 			TeamPlugin.log(IStatus.WARNING, Policy.bind("TeamPlugin_setting_global_ignore_7"), ex); //$NON-NLS-1$
 		}
+	}
+	
+	private static TeamException wrapException(String message, CoreException e) {
+		MultiStatus status = new MultiStatus(TeamPlugin.ID, 0, message, e);
+		status.merge(e.getStatus());
+		return new TeamException(status);
 	}
 }
