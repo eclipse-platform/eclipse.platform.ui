@@ -23,6 +23,7 @@ import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -41,6 +42,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
@@ -52,6 +54,11 @@ import org.eclipse.ui.internal.ide.IHelpContextIds;
  * The IDE workbench main preference page.
  */
 public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+	private final String PROJECT_SWITCH_PERSP_MODE_TITLE = IDEWorkbenchMessages.getString("ProjectSwitchPerspectiveMode.optionsTitle"); //$NON-NLS-1$
+	private final String PSPM_ALWAYS_TEXT = IDEWorkbenchMessages.getString("ProjectSwitchPerspectiveMode.always"); //$NON-NLS-1$
+	private final String PSPM_NEVER_TEXT = IDEWorkbenchMessages.getString("ProjectSwitchPerspectiveMode.never"); //$NON-NLS-1$
+	private final String PSPM_PROMPT_TEXT = IDEWorkbenchMessages.getString("ProjectSwitchPerspectiveMode.prompt"); //$NON-NLS-1$
+
 	private Button autoBuildButton;
 	private Button autoSaveAllButton;
 	private Button refreshButton;
@@ -64,6 +71,8 @@ public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkb
 	private Button defaultEncodingButton;
 	private Button otherEncodingButton;
 	private Combo encodingCombo;
+
+	private RadioGroupFieldEditor projectSwitchField;
 
 	/**
 	 *	Create this page's visual contents
@@ -110,6 +119,9 @@ public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkb
 		
 		createSpace(composite);
 		createEncodingGroup(composite);
+
+		createSpace(composite);
+		createProjectPerspectiveGroup(composite);
 
 		// set initial values
 		IPreferenceStore store = getPreferenceStore();
@@ -268,6 +280,33 @@ public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkb
 		encodingCombo.setEnabled(!useDefault);
 		updateValidState();
 	}		
+	
+	/**
+	 * Create a composite that contains buttons for selecting the 
+	 * preference opening new project selections. 
+	 */
+	private void createProjectPerspectiveGroup(Composite composite) {
+		
+		Composite projectComposite = new Composite(composite, SWT.NONE);
+		projectComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		projectComposite.setFont(composite.getFont()); 
+		
+		String[][] namesAndValues = {
+			{PSPM_ALWAYS_TEXT, IDEInternalPreferences.PSPM_ALWAYS},
+			{PSPM_NEVER_TEXT, IDEInternalPreferences.PSPM_NEVER},
+			{PSPM_PROMPT_TEXT, IDEInternalPreferences.PSPM_PROMPT}
+		};
+		projectSwitchField =	new RadioGroupFieldEditor(
+			IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE,
+			PROJECT_SWITCH_PERSP_MODE_TITLE,
+			namesAndValues.length,
+			namesAndValues,
+			projectComposite,
+			true);
+		projectSwitchField.setPreferenceStore(getPreferenceStore());
+		projectSwitchField.setPreferencePage(this);
+		projectSwitchField.load();
+	}
 
 	/**
 	 * Utility method that creates a radio button instance
@@ -366,6 +405,8 @@ public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkb
 		exitPromptButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
 		showTasks.setSelection(store.getBoolean(IDEInternalPreferences.SHOW_TASKS_ON_BUILD));
 		saveInterval.loadDefault();
+
+		projectSwitchField.loadDefault();
 		
 		super.performDefaults();
 	}
@@ -423,6 +464,9 @@ public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkb
 				IDEWorkbenchPlugin.log("Error changing save interval preference", e.getStatus()); //$NON-NLS-1$
 			}
 		}
+
+		// store the open new project perspective settings
+		projectSwitchField.store();
 
 		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
 		return true;
