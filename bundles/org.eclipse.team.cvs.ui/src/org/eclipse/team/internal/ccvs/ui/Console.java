@@ -93,9 +93,9 @@ public class Console extends ViewPart {
 		}
 	}
 	
-	private static Vector pendingConsoleData = new Vector();
-	private static Runnable aSyncRunnable;
 	private static final int MAX_BUFFER_SIZE = 200; //maximum size of buffer if console not open
+	private static Vector pendingConsoleData = new Vector(200 * 2);	//allows room for adding to end/removing from front
+	private static Runnable aSyncRunnable;
 	
 	/*
 	 * Called on UI plugin startup.
@@ -382,7 +382,13 @@ public class Console extends ViewPart {
 		flushConsoleBuffer();
 	}
 	
-	private static void flushConsoleBuffer() {			
+	/*
+	 * Flush the buffered console data to the console.
+	 * Safe to call even if console isn't open (does nothing).
+	 */
+	private static void flushConsoleBuffer() {		
+		if(document == null) return;
+	
 		Display display = Display.getCurrent();
 		if (display == null) {
 			display = Display.getDefault();
