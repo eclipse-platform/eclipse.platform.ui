@@ -9,9 +9,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.debug.internal.ui.DebugActionGroupsManager;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
-import org.eclipse.debug.internal.ui.DebugActionGroupsManager;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -49,7 +49,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Common functionality for views in the debug UI:<ul>
- * <li>Debug view adpater implementation - <code>IDebugViewAdapter</code></li>
+ * <li>Debug view adpater implementation - <code>IDebugView</code></li>
  * <li>Action registry - actions can be stored in this view
  * 		with a key. Actions that implement <code>IUpdate</code>
  *      are updated when <code>updateActions()</code> is
