@@ -368,6 +368,24 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 	public void testDeepMoveLink() {
 	}
 	public void testDeleteLink() {
+		//test deletion of a link that overlaps a project location
+		IFolder linkOnProject = pLinked.getFolder("LinkOnProject");
+		try {
+			linkOnProject.createLink(pOverlap.getLocation(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		
+		try {
+			linkOnProject.delete(IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+		
+		//deletion of a link should not delete the project that it overlaps
+		assertTrue("2.1", !linkOnProject.exists());
+		assertTrue("2.2", pOverlap.exists());
+		assertTrue("2.3", fOverlap.exists());
 	}
 	public void testDeleteProject() {
 	}
