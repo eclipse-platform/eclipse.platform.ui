@@ -13,6 +13,7 @@
       <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.junit"/>
+      <import plugin="org.eclipse.test.performance"/>
    </requires>
 
    <extension

@@ -16,14 +16,11 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
-import org.eclipse.ui.application.WorkbenchAdvisor;
 
 /**
  * This utility class is used to record the order in which the hooks are called.
@@ -36,14 +33,11 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
  * junit error will identify the exact error, not just the existence of an
  * error.
  */
-public class WorkbenchAdvisorObserver extends WorkbenchAdvisor {
+public class WorkbenchAdvisorObserver extends RCPTestWorkbenchAdvisor {
 
     private List operations = new LinkedList();
 
     private Iterator iterator;
-
-    /** Default value of -1 causes the option to be ignored. */
-    private int idleBeforeExit = -1;
 
     public final static String INITIALIZE = "initialize"; //$NON-NLS-1$
 
@@ -70,12 +64,11 @@ public class WorkbenchAdvisorObserver extends WorkbenchAdvisor {
     public IWorkbenchConfigurer workbenchConfig;
 
     public WorkbenchAdvisorObserver() {
-        // ignore the option for default instance
-        this.idleBeforeExit = -1;
+        super();
     }
 
     public WorkbenchAdvisorObserver(int idleBeforeExit) {
-        this.idleBeforeExit = idleBeforeExit;
+        super(idleBeforeExit);
     }
 
     public void resetOperationIterator() {
@@ -94,10 +87,6 @@ public class WorkbenchAdvisorObserver extends WorkbenchAdvisor {
 
     private void addOperation(String operation) {
         operations.add(operation);
-    }
-
-    public String getInitialWindowPerspectiveId() {
-        return EmptyPerspective.PERSP_ID;
     }
 
     public void initialize(IWorkbenchConfigurer configurer) {
@@ -159,15 +148,5 @@ public class WorkbenchAdvisorObserver extends WorkbenchAdvisor {
     public void eventLoopException(Throwable exception) {
         super.eventLoopException(exception);
         addOperation(EVENT_LOOP_EXCEPTION);
-    }
-
-    public void eventLoopIdle(Display display) {
-        super.eventLoopIdle(display);
-
-        if (idleBeforeExit == -1)
-            return;
-
-        if (--idleBeforeExit <= 0)
-            PlatformUI.getWorkbench().close();
     }
 }
