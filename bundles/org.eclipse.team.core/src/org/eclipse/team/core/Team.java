@@ -71,10 +71,10 @@ public final class Team {
 	private final static String GLOBALIGNORE_FILE = ".globalIgnores"; //$NON-NLS-1$
 
 	// Keys: file extensions. Values: Integers
-	private static Hashtable table;
+	private static Hashtable fileTypes;
 
 	// The ignore list that is read at startup from the persisted file
-	private static Map globalIgnore = new HashMap(11);
+	private static Map globalIgnore;
 
 	private static class FileTypeInfo implements IFileTypeInfo {
 		private String extension;
@@ -122,6 +122,7 @@ public final class Team {
 	public static int getType(IStorage storage) {
 		String extension = getFileExtension(storage.getName());
 		if (extension == null) return UNKNOWN;
+		Hashtable table = getFileTypeTable();
 		Integer integer = (Integer)table.get(extension);
 		if (integer == null) return UNKNOWN;
 		return integer.intValue();
@@ -174,6 +175,7 @@ public final class Team {
 	 */
 	public static IFileTypeInfo[] getAllTypes() {
 		List result = new ArrayList();
+		Hashtable table = getFileTypeTable();
 		Enumeration e = table.keys();
 		while (e.hasMoreElements()) {
 			String string = (String)e.nextElement();
@@ -187,6 +189,16 @@ public final class Team {
 	 * Returns the list of global ignores.
 	 */
 	public static IIgnoreInfo[] getAllIgnores() {
+		if (globalIgnore == null) {
+			try {
+				readIgnoreState();
+			} catch (TeamException e) {
+				if (globalIgnore == null) 
+					globalIgnore = new HashMap();
+				TeamPlugin.log(IStatus.ERROR, "Error loading ignore state from disk", e);
+			}
+			initializePluginIgnores();
+		}
 		IIgnoreInfo[] result = new IIgnoreInfo[globalIgnore.size()];
 		Iterator e = globalIgnore.keySet().iterator();
 		int i = 0;
@@ -207,6 +219,11 @@ public final class Team {
 		return result;
 	}
 
+	private static Hashtable getFileTypeTable() {
+		if (fileTypes == null) loadTextState();
+		return fileTypes;
+	}
+	
 	/**
 	 * Set the file type for the give extension to the given type.
 	 *
@@ -219,9 +236,9 @@ public final class Team {
 	 * @param type  the file type
 	 */
 	public static void setAllTypes(String[] extensions, int[] types) {
-		table = new Hashtable(11);
+		fileTypes = new Hashtable(11);
 		for (int i = 0; i < extensions.length; i++) {
-			table.put(extensions[i], new Integer(types[i]));
+			fileTypes.put(extensions[i], new Integer(types[i]));
 		}
 	}
 	
@@ -298,11 +315,11 @@ public final class Team {
 						if (ext != null) {
 							String type = configElements[j].getAttribute("type"); //$NON-NLS-1$
 							// If the extension doesn't already exist, add it.
-							if (!table.containsKey(ext)) {
+							if (!fileTypes.containsKey(ext)) {
 								if (type.equals("text")) { //$NON-NLS-1$
-									table.put(ext, new Integer(TEXT));
+									fileTypes.put(ext, new Integer(TEXT));
 								} else if (type.equals("binary")) { //$NON-NLS-1$
-									table.put(ext, new Integer(BINARY));
+									fileTypes.put(ext, new Integer(BINARY));
 								}
 							}
 						}
@@ -321,7 +338,6 @@ public final class Team {
 	 * @throws IOException if an I/O problem occurs
 	 */
 	private static void readTextState(DataInputStream dis) throws IOException {
-		table = new Hashtable(11);
 		int extensionCount = 0;
 		try {
 			extensionCount = dis.readInt();
@@ -333,7 +349,7 @@ public final class Team {
 		for (int i = 0; i < extensionCount; i++) {
 			String extension = dis.readUTF();
 			int type = dis.readInt();
-			table.put(extension, new Integer(type));
+			fileTypes.put(extension, new Integer(type));
 		}
 	}
 	
@@ -346,6 +362,7 @@ public final class Team {
 	 * @throws IOException if an I/O problem occurs
 	 */
 	private static void writeTextState(DataOutputStream dos) throws IOException {
+		Hashtable table = getFileTypeTable();
 		dos.writeInt(table.size());
 		Iterator it = table.keySet().iterator();
 		while (it.hasNext()) {
@@ -363,6 +380,7 @@ public final class Team {
 	 * contents, as well as discovering any values contributed by plug-ins.
 	 */
 	private static void loadTextState() {
+		fileTypes = new Hashtable(11);
 		IPath pluginStateLocation = TeamPlugin.getPlugin().getStateLocation().append(STATE_FILE);
 		File f = pluginStateLocation.toFile();
 		if (f.exists()) {
@@ -473,6 +491,7 @@ public final class Team {
 	 */
 	private static void writeIgnoreState(DataOutputStream dos) throws IOException {
 		// write the global ignore list
+		if (globalIgnore == null) getAllIgnores();
 		int ignoreLength = globalIgnore.size();
 		dos.writeInt(ignoreLength);
 		Iterator e = globalIgnore.keySet().iterator();
@@ -528,34 +547,26 @@ public final class Team {
 	 * This method is called by the plug-in upon startup, clients should not call this method
 	 */
 	public static void startup() throws CoreException {
-		try {
-			table = new Hashtable(11);
-			loadTextState();
-			readIgnoreState();
-			initializePluginIgnores();
-			// Register a delta listener that will tell the provider about a project move
-			ResourcesPlugin.getWorkspace().addResourceChangeListener(new IResourceChangeListener() {
-				public void resourceChanged(IResourceChangeEvent event) {
-					IResourceDelta[] projectDeltas = event.getDelta().getAffectedChildren();
-					for (int i = 0; i < projectDeltas.length; i++) {							
-						IResourceDelta delta = projectDeltas[i];
-						IResource resource = delta.getResource();
-						RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
-						// Only consider projects that have a provider
-						if (provider == null) continue;
-						// Only consider project additions that are moves
-						if (delta.getKind() != IResourceDelta.ADDED) continue;
-						if ((delta.getFlags() & IResourceDelta.MOVED_FROM) == 0) continue;
-						// Only consider providers whose project is not mapped properly already
-						if (provider.getProject().equals(resource.getProject())) continue;
-						// Tell the provider about it's new project
-						provider.setProject(resource.getProject());
-					}
+		// Register a delta listener that will tell the provider about a project move
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(new IResourceChangeListener() {
+			public void resourceChanged(IResourceChangeEvent event) {
+				IResourceDelta[] projectDeltas = event.getDelta().getAffectedChildren();
+				for (int i = 0; i < projectDeltas.length; i++) {							
+					IResourceDelta delta = projectDeltas[i];
+					IResource resource = delta.getResource();
+					RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
+					// Only consider projects that have a provider
+					if (provider == null) continue;
+					// Only consider project additions that are moves
+					if (delta.getKind() != IResourceDelta.ADDED) continue;
+					if ((delta.getFlags() & IResourceDelta.MOVED_FROM) == 0) continue;
+					// Only consider providers whose project is not mapped properly already
+					if (provider.getProject().equals(resource.getProject())) continue;
+					// Tell the provider about it's new project
+					provider.setProject(resource.getProject());
 				}
-			}, IResourceChangeEvent.PRE_AUTO_BUILD);
-		} catch (TeamException e) {
-			throw new CoreException(e.getStatus());
-		}
+			}
+		}, IResourceChangeEvent.PRE_AUTO_BUILD);
 	}
 	
 	/**
