@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.jobs.OrderedLock;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.IJobManager;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.*;
+
 /**
  * Used to track operation state for each thread that is involved in an operation.
  * This includes prepared and running operation depth, auto-build strategy and
@@ -42,7 +41,7 @@ class WorkManager implements IManager {
 	 */
 	private boolean hasBuildChanges = false;
 	private IJobManager jobManager;
-	private final OrderedLock lock;
+	private final ILock lock;
 	private int nestedOperations = 0;
 	private NotifyRule notifyRule = new NotifyRule();
 	private boolean operationCanceled = false;
@@ -50,7 +49,7 @@ class WorkManager implements IManager {
 
 	public WorkManager(Workspace workspace) {
 		this.jobManager = Platform.getJobManager();
-		this.lock = (OrderedLock) jobManager.newLock();
+		this.lock = jobManager.newLock();
 	}
 	/**
 	 * Begins a resource change notification.
@@ -153,13 +152,6 @@ class WorkManager implements IManager {
 	 */
 	boolean isBalanced() {
 		return nestedOperations == preparedOperations;
-	}
-	/**
-	 * This method is synchronized with checkIn() and checkOut() that use blocks
-	 * like synchronized (this) { ... }.
-	 */
-	public synchronized boolean isCurrentOperation() {
-		return lock.getCurrentOperationThread() == Thread.currentThread();
 	}
 	/**
 	 * This method can only be safelly called from inside a workspace

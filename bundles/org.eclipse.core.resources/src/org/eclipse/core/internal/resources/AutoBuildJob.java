@@ -22,6 +22,7 @@ class AutoBuildJob extends Job {
 	private boolean avoidBuild = false;
 	private boolean buildNeeded = false;
 	private boolean forceBuild = false;
+	private long lastBuild = 0L;
 	private Workspace workspace;
 
 	AutoBuildJob(Workspace workspace) {
@@ -72,8 +73,10 @@ class AutoBuildJob extends Job {
    }
 	public synchronized void endTopLevel(boolean needsBuild) {
 		buildNeeded |= needsBuild;
-		if (Policy.BACKGROUND_BUILD)
-			schedule(Policy.AUTO_BUILD_DELAY);
+		if (Policy.BACKGROUND_BUILD) {
+			long delay = Math.max(Policy.MIN_BUILD_DELAY, Policy.MAX_BUILD_DELAY + lastBuild - System.currentTimeMillis());
+			schedule(delay);
+		}
 	}
 	/**
 	 * Forces a build to occur at the end of the next top level operation.  This is
@@ -91,6 +94,7 @@ class AutoBuildJob extends Job {
 		}
 		try {
 			doBuild(monitor);
+			lastBuild = System.currentTimeMillis();
 			return Status.OK_STATUS;
 		} catch (OperationCanceledException e) {
 			buildNeeded = true;

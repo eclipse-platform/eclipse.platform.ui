@@ -1260,7 +1260,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 			message = Policy.bind("resources.saveWarnings"); //$NON-NLS-1$
 			MultiStatus warnings = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.WARNING, message, null);
 			try {
-				workspace.prepareOperation(project != null ? (IResource)project : workspace.getRoot());
+				workspace.prepareOperation(project != null ? (IResource) project : workspace.getRoot());
 				workspace.beginOperation(false);
 				Map contexts = computeSaveContexts(getSaveParticipantPlugins(), kind, project);
 				broadcastLifecycle(PREPARE_TO_SAVE, contexts, warnings, Policy.subMonitorFor(monitor, 1));
@@ -1268,6 +1268,11 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 					broadcastLifecycle(SAVING, contexts, warnings, Policy.subMonitorFor(monitor, 1));
 					switch (kind) {
 						case ISaveContext.FULL_SAVE :
+							//according to spec it is illegal to start a full save inside another operation
+							if (workspace.getWorkManager().getPreparedOperationDepth() > 1) {
+								message = Policy.bind("resources.saveOp"); //$NON-NLS-1$
+								throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, null);
+							}
 							// save the complete tree and remember all of the required saved states
 							saveTree(contexts, Policy.subMonitorFor(monitor, 1));
 							// reset the snapshot state.

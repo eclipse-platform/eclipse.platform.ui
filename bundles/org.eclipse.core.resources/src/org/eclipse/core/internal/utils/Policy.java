@@ -16,7 +16,8 @@ import java.text.MessageFormat;
 import java.util.*;
 
 public class Policy {
-	public static final long AUTO_BUILD_DELAY = 500;
+	public static final long MAX_BUILD_DELAY = 1000;
+	public static final long MIN_BUILD_DELAY = 100;
 	private static String bundleName = "org.eclipse.core.internal.utils.messages";//$NON-NLS-1$
 	private static ResourceBundle bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault());
 	
