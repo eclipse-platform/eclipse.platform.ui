@@ -18,11 +18,11 @@ public class UpdateManagerPlugin extends Plugin {
 	
 	// debug options
 	public static boolean DEBUG = false;
-	public static boolean DEBUG_SHOW_INSTALL = true;
-	public static boolean DEBUG_SHOW_PARSING = true;
-	public static boolean DEBUG_SHOW_WARNINGS = true;
-	public static boolean DEBUG_SHOW_CONFIGURATION = true;	
-	public static boolean DEBUG_SHOW_TYPE = true;
+	public static boolean DEBUG_SHOW_INSTALL = false;
+	public static boolean DEBUG_SHOW_PARSING = false;
+	public static boolean DEBUG_SHOW_WARNINGS = false;
+	public static boolean DEBUG_SHOW_CONFIGURATION = false;	
+	public static boolean DEBUG_SHOW_TYPE = false;
 
 	
 	//The shared instance.

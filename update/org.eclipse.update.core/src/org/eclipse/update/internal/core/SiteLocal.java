@@ -148,34 +148,32 @@ public class SiteLocal implements ILocalSite, IWritable {
 
 	}
 	private void createDefaultConfiguration() throws CoreException {
-		// FIXME: VK: in the first pass, we always return as the only install
-		// site the install tree we are executing from. Once install 
-		// configuration is fully supported, we will return whatever
-		// install sites are part of the local configuration. As default
-		// behavior, if we are executing out of read/write install tree accessible
-		// through the "file:" protocol we will assume it is (one of) the
-		// install sites (ie. does not need to be explicitly configured).
+
 		try {
-			URL execURL = BootLoader.getInstallURL();
-			ISite site = SiteManager.getSite(execURL);
-			IInstallConfiguration newDefaultConfiguration = cloneCurrentConfiguration(new URL(location, DEFAULT_CONFIG_FILE), DEFAULT_CONFIG_LABEL);
-			addConfiguration(newDefaultConfiguration);
-
-			// notify listeners
-			Object[] localSiteListeners = listeners.getListeners();
-			for (int i = 0; i < localSiteListeners.length; i++) {
-				((ILocalSiteChangedListener) localSiteListeners[i]).currentInstallConfigurationChanged(currentConfiguration);
+			IPlatformConfiguration.ISiteEntry[] siteEntries = BootLoader.getCurrentPlatformConfiguration().getConfiguredSites();
+			for (int siteIndex = 0; siteIndex < siteEntries.length; siteIndex++) {
+	
+				ISite site = SiteManager.getSite(siteEntries[siteIndex].getURL());
+				IInstallConfiguration newDefaultConfiguration = cloneCurrentConfiguration(new URL(location, DEFAULT_CONFIG_FILE), DEFAULT_CONFIG_LABEL);
+				addConfiguration(newDefaultConfiguration);
+	
+				// notify listeners
+				Object[] localSiteListeners = listeners.getListeners();
+				for (int i = 0; i < localSiteListeners.length; i++) {
+					((ILocalSiteChangedListener) localSiteListeners[i]).currentInstallConfigurationChanged(currentConfiguration);
+				}
+	
+				//FIXME: the plugin site may not be read-write
+				//the default is USER_EXCLUDE 
+				ConfigurationSite configSite = (ConfigurationSite) SiteManager.createConfigurationSite(site, IPlatformConfiguration.ISitePolicy.USER_EXCLUDE);
+				configSite.setInstallSite(true);
+				currentConfiguration.addConfigurationSite(configSite);
+				
 			}
-
-			//FIXME: the plugin site may not be read-write
-			//the default is USER_EXCLUDE 
-			ConfigurationSite configSite = (ConfigurationSite) SiteManager.createConfigurationSite(site, IPlatformConfiguration.ISitePolicy.USER_EXCLUDE);
-			configSite.setInstallSite(true);
-			currentConfiguration.addConfigurationSite(configSite);
 
 		} catch (Exception e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create the Local Site Object", e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create the Local Site: "+e.getMessage(), e);
 			throw new CoreException(status);
 		}
 	}

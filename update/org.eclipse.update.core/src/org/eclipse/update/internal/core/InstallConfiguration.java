@@ -266,7 +266,14 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 			ConfigurationPolicy configurationPolicy = (ConfigurationPolicy) element.getConfigurationPolicy();
 			String[] pluginPath = configurationPolicy.getPluginPath(element.getSite());
 			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
-			runtimeConfiguration.findConfiguredSite(element.getSite().getURL()).setSitePolicy(sitePolicy);
+			IPlatformConfiguration.ISiteEntry siteEntry = runtimeConfiguration.findConfiguredSite(element.getSite().getURL());
+			if (siteEntry!=null){
+				siteEntry.setSitePolicy(sitePolicy);
+			} else {
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Platform configuration not found :"+element.getSite().getURL().toExternalForm(), null);
+				throw new CoreException(status);				
+			}
 			try {
 				runtimeConfiguration.save();
 			} catch (IOException e) {
