@@ -172,8 +172,8 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#createCompareSubscriber(org.eclipse.core.resources.IProject, org.eclipse.team.internal.ccvs.core.CVSTag)
 	 */
-	public CVSCompareSubscriber createCompareSubscriber(IProject project, CVSTag tag) {
-		CVSCompareSubscriber s = super.createCompareSubscriber(project, tag);
+	public CVSCompareSubscriber createCompareSubscriber(IResource resource, CVSTag tag) {
+		CVSCompareSubscriber s = super.createCompareSubscriber(resource, tag);
 		ISynchronizeManager synchronizeManager = TeamUI.getSynchronizeManager();
 		SubscriberParticipant participant = new CompareParticipant(s);
 		synchronizeManager.addSynchronizeParticipants(

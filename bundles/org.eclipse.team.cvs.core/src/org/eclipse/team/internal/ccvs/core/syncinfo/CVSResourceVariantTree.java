@@ -10,37 +10,17 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.syncinfo;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.core.variants.PersistantResourceVariantByteStore;
-import org.eclipse.team.core.variants.ResourceVariantByteStore;
-import org.eclipse.team.core.variants.ResourceVariantTree;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
+import org.eclipse.team.core.variants.*;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.resources.*;
 
 /**
  * CVS Specific refresh operation
@@ -109,6 +89,30 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 		return super.collectChanges(local, remote, depth, monitor);
 	}
 
+	public IResource[] members(IResource resource) throws TeamException {
+		if (resource.getType() == IResource.FILE) {
+			return new IResource[0];
+		}
+		// Must ensure that any shared folders are included
+		Set members = new HashSet();
+		members.addAll(Arrays.asList(super.members(resource)));
+		try {
+			IResource[]  localMembers = ((IContainer)resource).members(true);
+			for (int i = 0; i < localMembers.length; i++) {
+				IResource local = localMembers[i];
+				if (local.getType() != IResource.FILE) {
+					ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)local);
+					if (folder.isCVSFolder()) {
+						members.add(local);
+					}
+				}
+			}
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+		return (IResource[]) members.toArray(new IResource[members.size()]);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.core.subscribers.caches.IResourceVariantTree#roots()
 	 */

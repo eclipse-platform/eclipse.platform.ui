@@ -40,8 +40,8 @@ public class SyncInfoSource {
 		return subscriber;
 	}
 	
-	public CVSCompareSubscriber createCompareSubscriber(IProject project, CVSTag tag) {
-		CVSCompareSubscriber subscriber = new CVSCompareSubscriber(new IResource[] { project }, tag);
+	public CVSCompareSubscriber createCompareSubscriber(IResource resource, CVSTag tag) {
+		CVSCompareSubscriber subscriber = new CVSCompareSubscriber(new IResource[] { resource }, tag);
 		compareSubscribers.add(subscriber);
 		return subscriber;
 	}

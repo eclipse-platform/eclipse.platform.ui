@@ -18,6 +18,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
@@ -101,5 +102,20 @@ public class CVSCompareSubscriberTest extends CVSSyncSubscriberTest {
 	protected void tearDown() throws Exception {
 		getSyncInfoSource().tearDown();
 		super.tearDown();
+	}
+	
+	public void testInvalidTag() throws TeamException, CoreException {
+		IProject project = createProject(new String[]{"file1.txt", "file2.txt", "folder1/", "folder1/a.txt", "folder1/b.txt", "folder2/", "folder2/deleted.txt"});
+		// Create and compare with a non-existant tag
+		CVSTag tag = new CVSTag("nonexistant", CVSTag.VERSION);
+		CVSCompareSubscriber subscriber = getSyncInfoSource().createCompareSubscriber(project.getFolder("folder1"), tag);
+		// All files should be additions
+		assertSyncEquals("testInvalidTag", subscriber, project.getFolder("folder1"), 
+				new String[]{
+				"a.txt",
+				"b.txt"}, true, 
+				new int[]{
+				SyncInfo.DELETION, 
+				SyncInfo.DELETION});
 	}
 }

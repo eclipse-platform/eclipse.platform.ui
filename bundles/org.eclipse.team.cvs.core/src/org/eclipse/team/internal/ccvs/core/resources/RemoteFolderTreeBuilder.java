@@ -11,36 +11,14 @@
 package org.eclipse.team.internal.ccvs.core.resources;
 
  
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.client.Update;
-import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
-import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
-import org.eclipse.team.internal.ccvs.core.client.listeners.IStatusListener;
-import org.eclipse.team.internal.ccvs.core.client.listeners.IUpdateMessageListener;
-import org.eclipse.team.internal.ccvs.core.client.listeners.StatusListener;
-import org.eclipse.team.internal.ccvs.core.client.listeners.UpdateListener;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.*;
+import org.eclipse.team.internal.ccvs.core.client.Command.*;
+import org.eclipse.team.internal.ccvs.core.client.listeners.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -74,7 +52,7 @@ public class RemoteFolderTreeBuilder {
 	
 	private LocalOption[] updateLocalOptions;
 	
-	private boolean projectDoesNotExist = false;
+	private boolean rootDoesNotExist = false;
 	
 	private static String UNKNOWN = ""; //$NON-NLS-1$
 	private static String DELETED = "DELETED"; //$NON-NLS-1$
@@ -220,7 +198,7 @@ public class RemoteFolderTreeBuilder {
 		try {
 			Policy.checkCanceled(monitor);
 			fetchDelta(session, (String[]) arguments.toArray(new String[arguments.size()]), Policy.subMonitorFor(monitor, 90));
-			if (projectDoesNotExist) {
+			if (rootDoesNotExist) {
 				// We cannot handle the case where a project (i.e. the top-most CVS folder)
 				// has been deleted directly on the sever (i.e. deleted using rm -rf)
 				if (root.isCVSFolder() && ! root.isManaged()) {
@@ -302,7 +280,7 @@ public class RemoteFolderTreeBuilder {
 			try {
 				Policy.checkCanceled(monitor);
 				fetchDelta(session, new String[] { file.getName() }, Policy.subMonitorFor(monitor, 50));
-				if (projectDoesNotExist) {
+				if (rootDoesNotExist) {
 					return null;
 				}
 			} finally {
@@ -585,7 +563,7 @@ public class RemoteFolderTreeBuilder {
 			public void directoryDoesNotExist(ICVSFolder root, String path) {
 				// Record removed directory with parent so it can be removed when building the parent
 				if (path.length() == 0) {
-					projectDoesNotExist = true;
+					rootDoesNotExist = true;
 				} else {
 					recordDelta(path, DELETED, Update.STATE_NONE);
 					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", Util.toTruncatedPath(path, 3))); //$NON-NLS-1$
@@ -630,6 +608,17 @@ public class RemoteFolderTreeBuilder {
 			arguments,
 			new UpdateListener(listener),
 			monitor);
+		if (status.getCode() == CVSStatus.SERVER_ERROR) {
+			CVSServerException e = new CVSServerException(status);
+			if (e.isNoTagException()) {
+				// This error indicates that the complete subtree 
+				// being fetched does not have any files for the tag being queried
+				rootDoesNotExist = true;
+			} else if (e.containsErrors()) {
+				// Log the error
+				CVSProviderPlugin.log(e);
+			}
+		}
 		return changedFiles;
 	}
 	/*
@@ -669,7 +658,6 @@ public class RemoteFolderTreeBuilder {
 			new UpdateListener(listener),
 			Policy.subMonitorFor(monitor, 1)); 
 		if (status.getCode() == CVSStatus.SERVER_ERROR) {
-			// FIXME: This should be refactored (maybe static methods on CVSException?)
 			CVSServerException e = new CVSServerException(status);
 			if ( ! e.isNoTagException() && e.containsErrors())
 				throw e;
