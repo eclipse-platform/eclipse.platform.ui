@@ -37,6 +37,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -68,6 +69,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -216,7 +218,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Constant specifying how wide this dialog is allowed to get (as a percentage of
 	 * total available screen width) as a result of tab labels in the edit area.
 	 */
-	private static final float MAX_DIALOG_WIDTH_PERCENT = 0.75f;
+	protected static final float MAX_DIALOG_WIDTH_PERCENT = 0.75f;
 
 	/**
 	 * Empty array
@@ -335,38 +337,46 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
-		initializeBounds();
-		initializeSashForm();
-		ensureSelectionAreaWidth();
-		initializeWorkingSet();
-		doInitialTreeSelection();
+		initializeContent();
 		return contents;
 	}
+
+	protected void initializeContent() {
+		initializeWorkingSet();
+		doInitialTreeSelection();
+	}
+	
 
 	/**
 	 * Initialize the relative weights (widths) of the 2 sides of the sash.
 	 */
 	private void initializeSashForm() {
-		int[] sashWeights = DEFAULT_SASH_WEIGHTS;
-		String sashWeightString = getPreferenceStore().getString(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_SASH_WEIGHTS);
-		if (sashWeightString.length() > 0) {
-			Point sashWeightPoint = parseCoordinates(sashWeightString);
-			if (sashWeightPoint != null) {
-				sashWeights[0] = sashWeightPoint.x;
-				sashWeights[1] = sashWeightPoint.y;
+		if (getSashForm() != null) {
+			IDialogSettings settings = getDialogSettings();
+			int[] sashWeights;
+			try {
+				int w1, w2;
+				w1 = settings.getInt(IDebugPreferenceConstants.DIALOG_SASH_WEIGHTS_1);
+				w2 = settings.getInt(IDebugPreferenceConstants.DIALOG_SASH_WEIGHTS_2);
+				sashWeights = new int[] {w1, w2};
+			} catch (NumberFormatException e) {
+				sashWeights = DEFAULT_SASH_WEIGHTS;
 			}
+			getSashForm().setWeights(sashWeights);
 		}
-		getSashForm().setWeights(sashWeights);
 	}
 	
 	/**
 	 * Retrieve the last working set in use and apply it to the tree.
 	 */
 	private void initializeWorkingSet() {
-		String workingSetName = getPreferenceStore().getString(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_WORKING_SET_NAME);
-		IWorkingSet workingSet = getWorkingSetManager().getWorkingSet(workingSetName);
-		if (workingSet != null) {
-			getWorkingSetActionManager().setWorkingSet(workingSet, true);
+		IDialogSettings settings = getDialogSettings();
+		String workingSetName = settings.get(IDebugPreferenceConstants.DIALOG_WORKING_SET);
+		if (workingSetName != null) {
+			IWorkingSet workingSet = getWorkingSetManager().getWorkingSet(workingSetName);
+			if (workingSet != null) {
+				getWorkingSetActionManager().setWorkingSet(workingSet, true);
+			}
 		}
 	}
 
@@ -377,22 +387,24 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * are shown cleanly.
 	 */
 	private void ensureSelectionAreaWidth() {
-		Button newButton = getButtonActionNew().getButton();
-		Button deleteButton = getButtonActionDelete().getButton();		
-		int requiredWidth = newButton.getBounds().width + deleteButton.getBounds().width;
-		int marginWidth = ((GridLayout)getSelectionArea().getLayout()).marginWidth;
-		int horizontalSpacing = ((GridLayout)getSelectionArea().getLayout()).horizontalSpacing;
-		requiredWidth += (2 * marginWidth) + horizontalSpacing;
-		int currentWidth = getSelectionArea().getBounds().width;
-
-		if (requiredWidth > currentWidth) {
-			int[] newSashWeights = new int[2];
-			newSashWeights[0] = requiredWidth;
-			newSashWeights[1] = getEditArea().getBounds().width;
-			Shell shell= getShell();
-			Point shellSize= shell.getSize();
-			setShellSize(shellSize.x + (requiredWidth - currentWidth), shellSize.y);
-			getSashForm().setWeights(newSashWeights);			
+		if (fLaunchConfigurationView != null) {
+			Button newButton = getButtonActionNew().getButton();
+			Button deleteButton = getButtonActionDelete().getButton();		
+			int requiredWidth = newButton.getBounds().width + deleteButton.getBounds().width;
+			int marginWidth = ((GridLayout)getSelectionArea().getLayout()).marginWidth;
+			int horizontalSpacing = ((GridLayout)getSelectionArea().getLayout()).horizontalSpacing;
+			requiredWidth += (2 * marginWidth) + horizontalSpacing;
+			int currentWidth = getSelectionArea().getBounds().width;
+	
+			if (requiredWidth > currentWidth) {
+				int[] newSashWeights = new int[2];
+				newSashWeights[0] = requiredWidth;
+				newSashWeights[1] = getEditArea().getBounds().width;
+				Shell shell= getShell();
+				Point shellSize= shell.getSize();
+				setShellSize(shellSize.x + (requiredWidth - currentWidth), shellSize.y);
+				getSashForm().setWeights(newSashWeights);			
+			}
 		}
 	}
 	
@@ -406,27 +418,38 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Write out this dialog's Shell size, location & sash weights to the preference store.
 	 */
-	private void persistShellGeometry() {
+	protected void persistShellGeometry() {
 		Point shellLocation = getShell().getLocation();
 		Point shellSize = getShell().getSize();
-		int[] sashWeights = getSashForm().getWeights();
-		String locationString = serializeCoords(shellLocation);
-		String sizeString = serializeCoords(shellSize);
-		String sashWeightString = serializeCoords(new Point(sashWeights[0], sashWeights[1]));
-		getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_LOCATION, locationString);
-		getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_SIZE, sizeString);
-		getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_SASH_WEIGHTS, sashWeightString);
+		IDialogSettings settings = getDialogSettings();
+		settings.put(IDebugPreferenceConstants.DIALOG_ORIGIN_X, shellLocation.x);
+		settings.put(IDebugPreferenceConstants.DIALOG_ORIGIN_Y, shellLocation.y);
+		settings.put(IDebugPreferenceConstants.DIALOG_WIDTH, shellSize.x);
+		settings.put(IDebugPreferenceConstants.DIALOG_HEIGHT, shellSize.y);
+	}
+	
+	protected void persistSashWeights() {
+		IDialogSettings settings = getDialogSettings();
+		SashForm sashForm = getSashForm();
+		if (sashForm != null) {
+			int[] sashWeights = getSashForm().getWeights();
+			settings.put(IDebugPreferenceConstants.DIALOG_SASH_WEIGHTS_1, sashWeights[0]);
+			settings.put(IDebugPreferenceConstants.DIALOG_SASH_WEIGHTS_2, sashWeights[1]);
+		}
 	}
 	
 	/**
 	 * Store the current working set.
 	 */
 	private void persistWorkingSet() {
-		IWorkingSet workingSet = getWorkingSetActionManager().getWorkingSet();
-		if (workingSet != null) {
-			getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_WORKING_SET_NAME, workingSet.getName());
-		} else {
-			getPreferenceStore().setToDefault(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_WORKING_SET_NAME);			
+		if (getWorkingSetActionManager() != null) {
+			IDialogSettings settings = getDialogSettings();
+			IWorkingSet workingSet = getWorkingSetActionManager().getWorkingSet();
+			String name = "";
+			if (workingSet != null) {
+				name = workingSet.getName();
+			}
+			settings.put(IDebugPreferenceConstants.DIALOG_WORKING_SET, name);
 		}		
 	}
 	
@@ -435,11 +458,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public boolean close() {
 		persistShellGeometry();
+		persistSashWeights();
 		persistWorkingSet();
 		setCurrentlyVisibleLaunchConfigurationDialog(null);
 		getBannerImage().dispose();
-		fTabViewer.dispose();
-		fLaunchConfigurationView.dispose();
+		getTabViewer().dispose();
+		if (fLaunchConfigurationView != null) {
+			fLaunchConfigurationView.dispose();
+		}
 		return super.close();
 	}
 	
@@ -519,8 +545,18 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		GridData gd;
 		Composite dialogComp = (Composite)super.createDialogArea(parent);
+		addContent(dialogComp);
+		return dialogComp;
+	}
+
+	/**
+	 * Adds content to the dialog area
+	 * 
+	 * @param dialogComp
+	 */
+	protected void addContent(Composite dialogComp) {
+		GridData gd;
 		Composite topComp = new Composite(dialogComp, SWT.NONE);
 		gd = new GridData(GridData.FILL_BOTH);
 		topComp.setLayoutData(gd);
@@ -529,12 +565,12 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		topLayout.marginHeight = 5;
 		topLayout.marginWidth = 0;
 		topComp.setLayout(topLayout);
-	
+		
 		// Set the things that TitleAreaDialog takes care of 
 		setTitle(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Create,_manage,_and_run_launch_configurations_8")); //$NON-NLS-1$
 		setMessage(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ready_to_launch_2")); //$NON-NLS-1$
 		setModeLabelState();
-	
+		
 		// Create the SashForm that contains the selection area on the left,
 		// and the edit area on the right
 		setSashForm(new SashForm(topComp, SWT.NONE));
@@ -547,7 +583,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		Control launchConfigSelectionArea = createLaunchConfigurationSelectionArea(getSashForm());
 		gd = new GridData(GridData.FILL_VERTICAL);
 		launchConfigSelectionArea.setLayoutData(gd);
-	
+		
 		// Build the launch configuration edit area and put it into the composite.
 		Composite editAreaComp = createLaunchConfigurationEditArea(getSashForm());
 		setEditArea(editAreaComp);
@@ -561,8 +597,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		separator.setLayoutData(gd);
 		
 		dialogComp.layout(true);
-		
-		return dialogComp;
 	}
 	
 	/**
@@ -580,7 +614,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		updateButtons();
 	}
 			
-	private Display getDisplay() {
+	protected Display getDisplay() {
 		Shell shell = getShell();
 		if (shell != null) {
 			return shell.getDisplay();
@@ -597,7 +631,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * 
 	 * @return the composite used for launch configuration selection area
 	 */ 
-	private Control createLaunchConfigurationSelectionArea(Composite parent) {
+	protected Control createLaunchConfigurationSelectionArea(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setSelectionArea(comp);
 		GridLayout layout = new GridLayout();
@@ -668,9 +702,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * 
 	 * @return the composite used for launch configuration editing
 	 */ 
-	private Composite createLaunchConfigurationEditArea(Composite parent) {
-		fTabViewer = new LaunchConfigurationTabGroupViewer(parent, this);
-		fTabViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+	protected Composite createLaunchConfigurationEditArea(Composite parent) {
+		setTabViewer(new LaunchConfigurationTabGroupViewer(parent, this));
+		getTabViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 			/**
 			 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 			 */
@@ -678,7 +712,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				handleTabSelectionChanged(event);
 			}
 		});
-		return (Composite)fTabViewer.getControl();
+		return (Composite)getTabViewer().getControl();
 	}	
 	
 	/**
@@ -716,26 +750,35 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
+		shell.setText(getShellTitle());
+		WorkbenchHelp.setHelp(
+			shell,
+			getHelpContextId());
+	}
+	
+	protected String getHelpContextId() {
+		return IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG;
+	}
+	
+	protected String getShellTitle() {
 		String title = getLaunchGroup().getLabel();
 		if (title == null) {
 			title = LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configurations_18"); //$NON-NLS-1$
 		}
-		shell.setText(title);
-		WorkbenchHelp.setHelp(
-			shell,
-			IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG);
+		return title;		
 	}
 	
 	/**
 	 * @see Window#getInitialLocation(Point)
 	 */
-	protected Point getInitialLocation(Point initialSize) {	
-		String locationString = getPreferenceStore().getString(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_LOCATION);
-		if (locationString.length() > 0) {
-			Point locationPoint = parseCoordinates(locationString);
-			if (locationPoint != null) {
-				return locationPoint;
-			}
+	protected Point getInitialLocation(Point initialSize) {
+		IDialogSettings settings = getDialogSettings();
+		try {
+			int x, y;
+			x = settings.getInt(IDebugPreferenceConstants.DIALOG_ORIGIN_X);
+			y = settings.getInt(IDebugPreferenceConstants.DIALOG_ORIGIN_Y);
+			return new Point(x,y);
+		} catch (NumberFormatException e) {
 		}
 		return super.getInitialLocation(initialSize);
 	}
@@ -743,48 +786,18 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * @see Window#getInitialSize()
 	 */
-	protected Point getInitialSize() {
-		String sizeString = getPreferenceStore().getString(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_SIZE);
-		if (sizeString.length() > 0) {
-			Point sizePoint = parseCoordinates(sizeString);
-			if (sizePoint != null) {
-				return sizePoint;
-			}
+	protected Point getInitialSize() {		
+		IDialogSettings settings = getDialogSettings();
+		try {
+			int x, y;
+			x = settings.getInt(IDebugPreferenceConstants.DIALOG_WIDTH);
+			y = settings.getInt(IDebugPreferenceConstants.DIALOG_HEIGHT);
+			return new Point(x, y);
+		} catch (NumberFormatException e) {
 		}
 		return DEFAULT_INITIAL_DIALOG_SIZE;
 	}
-	
-	/**
-	 * Given a coordinate String of the form "123x456" return a Point object whose
-	 * X value is 123 and Y value is 456.  Return <code>null</code> if the String
-	 * is not in the specified form.
-	 */
-	private Point parseCoordinates(String coordString) {
-		int byIndex = coordString.indexOf('x');
-		if (byIndex < 0) {
-			return null;
-		}
 		
-		try {
-			int x = Integer.parseInt(coordString.substring(0, byIndex));
-			int y = Integer.parseInt(coordString.substring(byIndex + 1));			
-			return new Point(x, y);
-		} catch (NumberFormatException nfe) {
-			return null;
-		}
-	}
-	
-	/**
-	 * Given a Point object, return a String of the form "XCoordxYCoord".
-	 */
-	private String serializeCoords(Point coords) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(coords.x);
-		buffer.append('x');
-		buffer.append(coords.y);
-		return buffer.toString();
-	}
-	
 	private void setSashForm(SashForm sashForm) {
 		fSashForm = sashForm;
 	}
@@ -824,7 +837,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
  	protected void handleLaunchConfigurationSelectionChanged(SelectionChangedEvent event) {
  		
- 		Object input = fTabViewer.getInput();
+ 		Object input = getTabViewer().getInput();
  		Object newInput = null;
  		ISelection selection = event.getSelection();
  		if (!selection.isEmpty()) {
@@ -835,7 +848,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  				}
  			}
  		}
- 		ILaunchConfiguration original = fTabViewer.getOriginal();
+ 		ILaunchConfiguration original = getTabViewer().getOriginal();
  		if (original != null && newInput == null && getLaunchManager().getMovedTo(original) != null) {
 			// the current config is about to be deleted ignore this change
 			return;
@@ -851,23 +864,23 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  					ILaunchConfiguration lc = (ILaunchConfiguration)newInput;
  					renamed = getLaunchManager().getMovedFrom(lc) != null;
  				}
-	 			if (fTabViewer.isDirty() && !deleted && !renamed) {
+	 			if (getTabViewer().isDirty() && !deleted && !renamed) {
 	 				boolean canReplace = showSaveChangesDialog();
 	 				if (!canReplace) {
 	 					// restore the original selection
-	 					IStructuredSelection sel = new StructuredSelection(fTabViewer.getOriginal());
+	 					IStructuredSelection sel = new StructuredSelection(getTabViewer().getOriginal());
 	 					fLaunchConfigurationView.getViewer().setSelection(sel);
 	 					return;
 	 				}
 	 			}
  			}
  			setInitializingTabs(true);
- 			fTabViewer.setInput(newInput);
+ 			getTabViewer().setInput(newInput);
  			setInitializingTabs(false);
  			refreshStatus();
  			// bug 14758 - if the newly selected config is dirty, save its changes
- 			if (fTabViewer.isDirty()) {
- 				fTabViewer.handleApplyPressed();
+ 			if (getTabViewer().isDirty()) {
+ 				getTabViewer().handleApplyPressed();
  			} 
  			// bug 14758			
  			ILaunchConfigurationTabGroup newGroup = getTabGroup();
@@ -889,80 +902,80 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
   	
   	
   	protected void resize() {
-  		// determine the maximum tab dimensions
-  		PixelConverter pixelConverter = new PixelConverter(getEditArea());
-  		int runningTabWidth = 0;
-  		ILaunchConfigurationTabGroup group = getTabGroup();
-  		if (group == null) {
-  			return;
-  		}
-  		ILaunchConfigurationTab[] tabs = group.getTabs();
-  		Point contentSize = new Point(0, 0);
-  		for (int i = 0; i < tabs.length; i++) {
-  			String name = tabs[i].getName();
-  			Image image = tabs[i].getImage();
-  			runningTabWidth += pixelConverter.convertWidthInCharsToPixels(name.length() + 5);
-  			if (image != null) {
-  				runningTabWidth += image.getBounds().width;
-  			}
-  			Control control = tabs[i].getControl();
-  			if (control != null) {
-  				Point size = control.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-  				if (size.x > contentSize.x) {
-  					contentSize.x = size.x;
-  				}
-  				if (size.y > contentSize.y) {
-  					contentSize.y = size.y;
-  				}
-  			}
-  		}
-
-  		// Determine if more space is needed to show all tab labels across the top of the
-  		// tab folder.  If so, only increase size of dialog to some percent of the available
-  		// screen real estate.
-  		if (runningTabWidth > contentSize.x) {
-  			int maxAllowedWidth = (int) (getDisplay().getBounds().width * MAX_DIALOG_WIDTH_PERCENT);
-  			int otherWidth = getSashForm().SASH_WIDTH + getSelectionArea().getBounds().width;
-  			int totalWidth = runningTabWidth + otherWidth;
-  			if (totalWidth > maxAllowedWidth) {
-  				contentSize.x = maxAllowedWidth - otherWidth;
-  			} else {
-  				contentSize.x = runningTabWidth;
-  			}
-  		}
-
-  		// Adjust the maximum tab dimensions to account for the extra space required for the tab labels
-  		Rectangle tabFolderBoundingBox = getEditArea().computeTrim(0, 0, contentSize.x, contentSize.y);
-  		contentSize.x = tabFolderBoundingBox.width;
-  		contentSize.y = tabFolderBoundingBox.height;
-
-  		// Force recalculation of sizes
-  		getEditArea().layout(true);
-
-  		// Calculate difference between required space for tab folder and current size,
-  		// then increase size of this dialog's Shell by that amount
-  		Rectangle rect = getEditArea().getClientArea();
-  		Point containerSize= new Point(rect.width, rect.height);
-  		int hdiff= contentSize.x - containerSize.x;
-  		int vdiff= contentSize.y - containerSize.y;
-  		// Only increase size of dialog, never shrink it
-  		if (hdiff > 0 || vdiff > 0) {
-  			int[] newSashWeights = null;
-  			if (hdiff > 0) {
-  				newSashWeights = calculateNewSashWeights(hdiff);
-  			}
-  			hdiff= Math.max(0, hdiff);
-  			vdiff= Math.max(0, vdiff);
-  			Shell shell= getShell();
-  			Point shellSize= shell.getSize();
-  			setShellSize(shellSize.x + hdiff, shellSize.y + vdiff);
-  			// Adjust the sash weights so that all of the increase in width
-  			// is given to the tab area
-  			if (newSashWeights != null) {
-  				getSashForm().setWeights(newSashWeights);
-  			}
-  		}  		
-  	}
+		// determine the maximum tab dimensions
+		PixelConverter pixelConverter = new PixelConverter(getEditArea());
+		int runningTabWidth = 0;
+		ILaunchConfigurationTabGroup group = getTabGroup();
+		if (group == null) {
+			return;
+		}
+		ILaunchConfigurationTab[] tabs = group.getTabs();
+		Point contentSize = new Point(0, 0);
+		for (int i = 0; i < tabs.length; i++) {
+			String name = tabs[i].getName();
+			Image image = tabs[i].getImage();
+			runningTabWidth += pixelConverter.convertWidthInCharsToPixels(name.length() + 5);
+			if (image != null) {
+				runningTabWidth += image.getBounds().width;
+			}
+			Control control = tabs[i].getControl();
+			if (control != null) {
+				Point size = control.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+				if (size.x > contentSize.x) {
+					contentSize.x = size.x;
+				}
+				if (size.y > contentSize.y) {
+					contentSize.y = size.y;
+				}
+			}
+		}
+	
+		// Determine if more space is needed to show all tab labels across the top of the
+		// tab folder.  If so, only increase size of dialog to some percent of the available
+		// screen real estate.
+		if (runningTabWidth > contentSize.x) {
+			int maxAllowedWidth = (int) (getDisplay().getBounds().width * MAX_DIALOG_WIDTH_PERCENT);
+			int otherWidth = getSashForm().SASH_WIDTH + getSelectionArea().getBounds().width;
+			int totalWidth = runningTabWidth + otherWidth;
+			if (totalWidth > maxAllowedWidth) {
+				contentSize.x = maxAllowedWidth - otherWidth;
+			} else {
+				contentSize.x = runningTabWidth;
+			}
+		}
+	
+		// Adjust the maximum tab dimensions to account for the extra space required for the tab labels
+		Rectangle tabFolderBoundingBox = getEditArea().computeTrim(0, 0, contentSize.x, contentSize.y);
+		contentSize.x = tabFolderBoundingBox.width;
+		contentSize.y = tabFolderBoundingBox.height;
+	
+		// Force recalculation of sizes
+		getEditArea().layout(true);
+	
+		// Calculate difference between required space for tab folder and current size,
+		// then increase size of this dialog's Shell by that amount
+		Rectangle rect = getEditArea().getClientArea();
+		Point containerSize= new Point(rect.width, rect.height);
+		int hdiff= contentSize.x - containerSize.x;
+		int vdiff= contentSize.y - containerSize.y;
+		// Only increase size of dialog, never shrink it
+		if (hdiff > 0 || vdiff > 0) {
+			int[] newSashWeights = null;
+			if (hdiff > 0) {
+				newSashWeights = calculateNewSashWeights(hdiff);
+			}
+			hdiff= Math.max(0, hdiff);
+			vdiff= Math.max(0, vdiff);
+			Shell shell= getShell();
+			Point shellSize= shell.getSize();
+			setShellSize(shellSize.x + hdiff, shellSize.y + vdiff);
+			// Adjust the sash weights so that all of the increase in width
+			// is given to the tab area
+			if (newSashWeights != null) {
+				getSashForm().setWeights(newSashWeights);
+			}
+		}  		
+	}
   	
 	/**
 	 * Notification that tab selection has changed.
@@ -977,7 +990,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  		fInitializingTabs = init;
  	}
  	
- 	private boolean isInitializingTabs() {
+ 	protected boolean isInitializingTabs() {
  		return fInitializingTabs;
  	}
  	
@@ -1016,7 +1029,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  	 * Increase the size of this dialog's <code>Shell</code> by the specified amounts.
  	 * Do not increase the size of the Shell beyond the bounds of the Display.
  	 */
-	private void setShellSize(int width, int height) {
+	protected void setShellSize(int width, int height) {
 		Rectangle bounds = getShell().getDisplay().getBounds();
 		getShell().setSize(Math.min(width, bounds.width), Math.min(height, bounds.height));
 	}
@@ -1034,7 +1047,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  	 * @return the current tab group, or <code>null</code> if none
  	 */
  	public ILaunchConfigurationTabGroup getTabGroup() {
- 		return fTabViewer.getTabGroup();
+ 		return getTabViewer().getTabGroup();
  	}
  	
  	/**
@@ -1053,7 +1066,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * if it is dirty, and if it is, asking the user what to do.
 	 */
 	private boolean canDiscardCurrentConfig() {				
-		if (fTabViewer.isDirty()) {
+		if (getTabViewer().isDirty()) {
 			return showUnsavedChangesDialog();
 		} else {
 			return true;
@@ -1067,7 +1080,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * otherwise.
 	 */
 	private boolean showUnsavedChangesDialog() {
-		if (fTabViewer.canSave()) {
+		if (getTabViewer().canSave()) {
 			return showSaveChangesDialog();
 		} else {
 			return showDiscardChangesDialog();
@@ -1081,7 +1094,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	private boolean showSaveChangesDialog() {
 		StringBuffer buffer = new StringBuffer(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.The_configuration___29")); //$NON-NLS-1$
-		buffer.append(fTabViewer.getWorkingCopy().getName());
+		buffer.append(getTabViewer().getWorkingCopy().getName());
 		buffer.append(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.__has_unsaved_changes.__Do_you_wish_to_save_them__30")); //$NON-NLS-1$
 		MessageDialog dialog = new MessageDialog(getShell(), 
 												 LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Save_changes__31"), //$NON-NLS-1$
@@ -1098,10 +1111,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		
 		// If they hit 'Yes', save the working copy 
 		if (selectedButton == 0) {
-			fTabViewer.handleApplyPressed();
+			getTabViewer().handleApplyPressed();
 		} else {
 			// this will discard the changes
-			fTabViewer.inputChanged(fTabViewer.getInput());
+			getTabViewer().inputChanged(getTabViewer().getInput());
 		}
 		
 		return true;
@@ -1114,9 +1127,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	private boolean showDiscardChangesDialog() {
 		StringBuffer buffer = new StringBuffer(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.The_configuration___35")); //$NON-NLS-1$
-		buffer.append(fTabViewer.getWorkingCopy().getName());
+		buffer.append(getTabViewer().getWorkingCopy().getName());
 		buffer.append(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.__has_unsaved_changes_that_CANNOT_be_saved_because_of_the_following_error_36")); //$NON-NLS-1$
-		buffer.append(fTabViewer.getErrorMesssage());
+		buffer.append(getTabViewer().getErrorMesssage());
 		buffer.append(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Do_you_wish_to_discard_changes_37")); //$NON-NLS-1$
 		MessageDialog dialog = new MessageDialog(getShell(), 
 												 LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Discard_changes__38"), //$NON-NLS-1$
@@ -1138,7 +1151,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected void handleClosePressed() {
 		if (canDiscardCurrentConfig()) {
-			fTabViewer.dispose();
+			getTabViewer().dispose();
 			cancelPressed();
 		}
 	}
@@ -1149,10 +1162,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected void handleLaunchPressed() {
 		int result = CANCEL;
-		ILaunchConfiguration config = fTabViewer.getOriginal(); 
+		ILaunchConfiguration config = getTabViewer().getOriginal(); 
 		try {
-			if (fTabViewer.isDirty()) {
-				fTabViewer.handleApplyPressed();
+			if (getTabViewer().isDirty()) {
+				getTabViewer().handleApplyPressed();
 			}
 			result = doLaunch(config);
 		} catch (CoreException e) {
@@ -1449,8 +1462,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		getButtonActionDelete().setEnabled(getDeleteAction().isEnabled());
 
 		// Launch button
-		fTabViewer.refresh();
-		getButton(ID_LAUNCH_BUTTON).setEnabled(fTabViewer.canLaunch());
+		getTabViewer().refresh();
+		getButton(ID_LAUNCH_BUTTON).setEnabled(getTabViewer().canLaunch());
 		
 	}
 	
@@ -1458,7 +1471,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see ILaunchConfigurationDialog#getActiveTab()
 	 */
 	public ILaunchConfigurationTab getActiveTab() {
-		return fTabViewer.getActiveTab();
+		return getTabViewer().getActiveTab();
 	}
 
 	/**
@@ -1468,8 +1481,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		if (isInitializingTabs()) {
 			return;
 		}
-		setErrorMessage(fTabViewer.getErrorMesssage());
-		setMessage(fTabViewer.getMesssage());				
+		setErrorMessage(getTabViewer().getErrorMesssage());
+		setMessage(getTabViewer().getMesssage());				
 	}
 	
 	/**
@@ -1501,7 +1514,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Returns the working set action manager
 	 */
 	private LaunchConfigurationWorkingSetActionManager getWorkingSetActionManager() {
-		return fLaunchConfigurationView.getWorkingSetActionManager();
+		if (fLaunchConfigurationView != null) {
+			return fLaunchConfigurationView.getWorkingSetActionManager();
+		}
+		return null;
 	}
 	
 	/**
@@ -1527,7 +1543,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * 
 	 * @return control
 	 */
-	private Composite getEditArea() {
+	protected Composite getEditArea() {
 		return fEditArea;
 	}
 
@@ -1536,7 +1552,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * 
 	 * @param editArea control
 	 */
-	private void setEditArea(Composite editArea) {
+	protected void setEditArea(Composite editArea) {
 		fEditArea = editArea;
 	}
 	
@@ -1544,7 +1560,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see ILaunchConfigurationDialog#setName(String)
 	 */
 	public void setName(String name) {
-		fTabViewer.setName(name);
+		getTabViewer().setName(name);
 	}
 	
 	/**
@@ -1756,5 +1772,56 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected AbstractLaunchConfigurationAction getDuplicateAction() {
 		return (AbstractLaunchConfigurationAction)fLaunchConfigurationView.getAction(DuplicateLaunchConfigurationAction.ID_DUPLICATE_ACTION);
 	}		
+
+	/**
+	 * Returns the dialog settings for this dialog. Subclasses should override
+	 * <code>getDialogSettingsKey()</code>.
+	 * 
+	 * @return IDialogSettings
+	 */
+	protected IDialogSettings getDialogSettings() {
+		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
+		if (section == null) {
+			section = settings.addNewSection(getDialogSettingsSectionName());
+		} 
+		return section;
+	}
+	
+	/**
+	 * Returns the name of the section that this dialog stores its settings in
+	 * 
+	 * @return String
+	 */
+	protected String getDialogSettingsSectionName() {
+		return IDebugUIConstants.PLUGIN_ID + ".LAUNCH_CONFIGURATIONS_DIALOG_SECTION";
+	}
+	
+	/**
+	 * Sets the viewer used to display the tabs for a launch configuration.
+	 * 
+	 * @param viewer
+	 */
+	protected void setTabViewer(LaunchConfigurationTabGroupViewer viewer) {
+		fTabViewer = viewer;
+	}
+	
+	/**
+	 * Returns the viewer used to display the tabs for a launch configuration.
+	 * 
+	 * @return LaunchConfigurationTabGroupViewer
+	 */
+	protected LaunchConfigurationTabGroupViewer getTabViewer() {
+		return fTabViewer;
+	}
+	/**
+	 * @see org.eclipse.jface.window.Window#initializeBounds()
+	 */
+	protected void initializeBounds() {
+		super.initializeBounds();
+		initializeSashForm();
+		ensureSelectionAreaWidth();
+		resize();		
+	}
 
 }

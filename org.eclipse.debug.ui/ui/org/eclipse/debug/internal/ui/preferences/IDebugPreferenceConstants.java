@@ -82,21 +82,32 @@ public interface IDebugPreferenceConstants {
 	
 	/**
 	 * Serialized X,Y coordinates of the last location of the launch configuration dialog.
+	 * 
+	 * @deprecated use dialog settings <code>DIALOG_ORIGIN_X</code>,
+	 * <code>DIALOG_ORIGIN_Y</code>.
 	 */
 	public static final String PREF_LAUNCH_CONFIGURATION_DIALOG_LOCATION = IDebugUIConstants.PLUGIN_ID + "launchConfigurationDialogLocation"; //$NON-NLS-1$
 	
 	/**
 	 * Serialized width,height values of the launch configuration dialog.
+	 * 
+	 * @deprecated use dialog settings <code>DIALOG_WIDTH</code>,
+	 * <code>DIALOG_HEIGHT</code>.
 	 */
 	public static final String PREF_LAUNCH_CONFIGURATION_DIALOG_SIZE = IDebugUIConstants.PLUGIN_ID + "launchConfigurationDialogSize"; //$NON-NLS-1$
 	
 	/**
 	 * Serialized relative weights of the sashed elements of the launch configuration dialog.
+	 * 
+	 * @deprecated use dialog settings <code>SASH_WEIGHTS_1</code>,
+	 * <code>SASH_WEIGHTS_2</code>.
 	 */
 	public static final String PREF_LAUNCH_CONFIGURATION_DIALOG_SASH_WEIGHTS = IDebugUIConstants.PLUGIN_ID + "launchConfigurationDialogSashWeights"; //$NON-NLS-1$
 	
 	/**
 	 * The name of the working set applied to the tree viewer in the launch configuration dialog.
+	 * 
+	 * @deprecated use dialog settings <code>DIALOG_WORKING_SET</code>
 	 */
 	public static final String PREF_LAUNCH_CONFIGURATION_DIALOG_WORKING_SET_NAME = IDebugUIConstants.PLUGIN_ID + "launchConfigurationDialogWorkingSetName"; //$NON-NLS-1$
 	
@@ -104,6 +115,18 @@ public interface IDebugPreferenceConstants {
 	 * The maximum size of the launch history list
 	 */
 	public static int MAX_LAUNCH_HISTORY_SIZE= 20;
+	
+	/**
+	 * Common dialog settings
+	 */
+	public static final String DIALOG_ORIGIN_X = IDebugUIConstants.PLUGIN_ID + ".DIALOG_ORIGIN_X";
+	public static final String DIALOG_ORIGIN_Y = IDebugUIConstants.PLUGIN_ID + ".DIALOG_ORIGIN_Y";
+	public static final String DIALOG_WIDTH = IDebugUIConstants.PLUGIN_ID + ".DIALOG_WIDTH";
+	public static final String DIALOG_HEIGHT = IDebugUIConstants.PLUGIN_ID + ".DIALOG_HEIGHT";
+	public static final String DIALOG_SASH_WEIGHTS_1 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_1";
+	public static final String DIALOG_SASH_WEIGHTS_2 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_2";
+	public static final String DIALOG_WORKING_SET = IDebugUIConstants.PLUGIN_ID + ".DIALOG_WORKING_SET";
+	
 }
 
 
