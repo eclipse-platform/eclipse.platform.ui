@@ -50,7 +50,9 @@ protected boolean visit(IResourceDelta change) throws CoreException {
 protected void visitingProcess(IResourceDelta change) throws CoreException {
 	if (!visit(change))
 		return;
-	IResourceDelta[] children = change.getAffectedChildren();
+	int kind = IResourceDelta.ADDED | IResourceDelta.REMOVED | IResourceDelta.CHANGED;
+	int memberFlags = IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_PHANTOMS;
+	IResourceDelta[] children = change.getAffectedChildren(kind, memberFlags);
 	for (int i = 0; i < children.length; i++)
 		visitingProcess(children[i]);
 }
