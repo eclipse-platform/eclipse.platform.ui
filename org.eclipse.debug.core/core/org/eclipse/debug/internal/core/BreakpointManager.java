@@ -39,6 +39,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
@@ -198,7 +199,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					ResourcesPlugin.getWorkspace().deleteMarkers((IMarker[])delete.toArray(new IMarker[delete.size()]));
 				}
 			};
-			fork(null, wr);
+			new BreakpointManagerJob(wr).schedule();
 		}
 		return (IMarker[])persisted.toArray(new IMarker[persisted.size()]);
 	}
@@ -706,19 +707,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		fBreakpoints = breakpoints;
 	}
 	
-	protected void fork(final ISchedulingRule rule, final IWorkspaceRunnable wRunnable) {
-		Runnable runnable= new Runnable() {
-			public void run() {
-				try {
-					getWorkspace().run(wRunnable, rule, 0, null);
-				} catch (CoreException ce) {
-					DebugPlugin.log(ce);
-				}
-			}
-		};
-		new Thread(runnable).start();
-	}		
-
 	/**
 	 * @see IBreakpointManager#hasBreakpoints()
 	 */
@@ -934,6 +922,29 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				Platform.run(this);
 			}
 			fListener = null;
+		}
+	}
+	
+	class BreakpointManagerJob extends Job {
+		
+		private final IWorkspaceRunnable fRunnable;
+
+		public BreakpointManagerJob (IWorkspaceRunnable wRunnable) {
+			super("breakpoint manager job");
+			fRunnable= wRunnable;
+			setSystem(true);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		protected IStatus run(IProgressMonitor monitor) {
+			try {
+				getWorkspace().run(fRunnable, null, 0, null);
+			} catch (CoreException ce) {
+				DebugPlugin.log(ce);
+			}
+			return new Status(IStatus.OK, DebugPlugin.getUniqueIdentifier(), IStatus.OK, "", null); //$NON-NLS-1$
 		}
 	}
 }
