@@ -82,6 +82,7 @@ public class AntModel {
 	private final Object fDirtyLock= new Object();
 	private boolean fIsDirty= true;
 	private IDocumentListener fListener;
+	private File fEditedFile= null;
 	
 	//TODO Bug 50302
 	private boolean fValidateFully= false; //AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.VALIDATE_BUILDFILES);
@@ -313,10 +314,10 @@ public class AntModel {
 	}
 
 	protected File getEditedFile() {
-		if (fLocationProvider != null) {
-        	return fLocationProvider.getLocation().toFile();
+		if (fLocationProvider != null && fEditedFile == null) {
+        	fEditedFile= fLocationProvider.getLocation().toFile();
 		}
-		return null;
+		return fEditedFile;
     }
 
 	private void generateExceptionOutline(AntElementNode openElement) {
@@ -348,9 +349,9 @@ public class AntModel {
 	}
 
 	public void addTask(Task newTask, Task parentTask, Attributes attributes, int line, int column) {
-		AntTaskNode taskNode= newTaskNode(newTask, attributes);
-		fTaskToNode.put(newTask, taskNode);
+		AntTaskNode taskNode= null;
 		if (parentTask == null) {
+			taskNode= newTaskNode(newTask, attributes);
 			if (fCurrentTargetNode == null) {
 				fProjectNode.addChildNode(taskNode);
 			} else {
@@ -361,8 +362,10 @@ public class AntModel {
 				}
 			}
 		} else {
+			taskNode= createNotWellKnownTask(newTask, attributes);
 			((AntTaskNode)fTaskToNode.get(parentTask)).addChildNode(taskNode);
 		}
+		fTaskToNode.put(newTask, taskNode);
 		fStillOpenElements.push(taskNode);
 		computeOffset(taskNode, line, column);
 		if (fNodeBeingResolved instanceof AntImportNode) {
@@ -379,7 +382,6 @@ public class AntModel {
 
 	private AntTaskNode newTaskNode(Task newTask, Attributes attributes) {
 		AntTaskNode newNode= null;
-		String id= attributes.getValue("id"); //$NON-NLS-1$
 		String taskName= newTask.getTaskName();
 		if (taskName.equalsIgnoreCase("property")) { //$NON-NLS-1$
 			newNode= new AntPropertyNode(newTask, attributes);
@@ -441,18 +443,28 @@ public class AntModel {
         } else if(taskName.equalsIgnoreCase("import")) { //$NON-NLS-1$
         	newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntModelConstants.ATTR_FILE)); //$NON-NLS-1$
         } else {   
-        	newNode= new AntTaskNode(newTask);
-        	if (id != null) {
-        		newNode.setId(id);
-        	}
+        	newNode = createNotWellKnownTask(newTask, attributes);
         }
-		
 		String taskFileName= newTask.getLocation().getFileName();
-		String fileName= fLocationProvider.getLocation().toOSString();
-		boolean external= !fileName.equals(taskFileName);
+		boolean external= isTaskExternal(taskFileName);
 		newNode.setExternal(external);
 		if (external) {
 			newNode.setFilePath(taskFileName);
+		}
+		return newNode;
+	}
+	
+	private boolean isTaskExternal(String taskFileName) {
+		File taskFile= new File(taskFileName);
+		return !taskFile.equals(getEditedFile());
+	}
+
+	private AntTaskNode createNotWellKnownTask(Task newTask, Attributes attributes) {
+		AntTaskNode newNode;
+		newNode= new AntTaskNode(newTask);
+		String id= attributes.getValue("id"); //$NON-NLS-1$
+		if (id != null) {
+			newNode.setId(id);
 		}
 		return newNode;
 	}
