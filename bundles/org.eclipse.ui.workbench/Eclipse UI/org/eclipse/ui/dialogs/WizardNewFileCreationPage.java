@@ -179,10 +179,16 @@ protected IFile createFileHandle(IPath filePath) {
 protected void createLinkTarget() {
 	if (linkedResourceGroup != null) {
 		String linkTarget = linkedResourceGroup.getLinkTarget();
-		linkTargetPath = new Path(linkTarget);
+		if (linkTarget != null) {
+			linkTargetPath = new Path(linkTarget);
+		}
+		else {
+			linkTargetPath = null;
+		}
 	}
-	else
+	else {
 		linkTargetPath = null;
+	}		
 }
 /**
  * Creates a new file resource in the selected container and with the selected
