@@ -28,7 +28,9 @@ import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -87,6 +89,11 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
      * The parsed document
      */
     private IDocument document;
+    
+    /**
+     * The find replace adapter for the document
+     */
+    private FindReplaceDocumentAdapter findReplaceAdapter;
     
     /**
      * Whether the current element is the root of the external entity tree
@@ -582,36 +589,32 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 		
 		try {
 			int offset;
- 			
 			if (isTopLevelRootExternal) {
-				String source= "&" + element.getName() + ";";  //$NON-NLS-1$ //$NON-NLS-2$
-				offset= document.search(lastExternalEntityOffset + 1, source, true, true, false);
+				StringBuffer source= new StringBuffer();
+				source.append('&');
+				source.append(element.getName());
+				source.append(';');
+				IRegion result= findReplaceAdapter.search(lastExternalEntityOffset + 1, source.toString(), true, true, false, false);
+				offset= result.getOffset();
 				lastExternalEntityOffset= offset;
 			} else {
 				int locatorLine= locator.getLineNumber();
 				int locatorColumn= locator.getColumnNumber();
 				String prefix= "<"; //$NON-NLS-1$
-
 				if (locatorColumn <= 0) {
 					offset= getOffset(locatorLine, getLastCharColumn(locatorLine));
-					offset= document.search(offset, prefix + element.getName(), false, false, false);
-					
+					IRegion result= findReplaceAdapter.search(offset, prefix + element.getName(), false, false, false, false);
+					offset= result.getOffset();
 					lastExternalEntityOffset= offset;
 				} else {
 					offset= getOffset(locatorLine, locatorColumn);
-					
-					lastExternalEntityOffset= offset - 1;
-					
-					offset= document.search(offset - 1, prefix, false, true, false); 
+					lastExternalEntityOffset= offset - 1; 
+					IRegion result= findReplaceAdapter.search(offset - 1, prefix, false, true, false, false);
+					offset= result.getOffset();
 				}
 			}
  			
-			int line= getLine(offset);
-			int column= getColumn(offset, line);
-			
 			element.setOffset(offset);
-			element.setStartingRow(line);
-			element.setStartingColumn(column);
 		} catch (BadLocationException e) {
 			//ignore as the parser may be out of sync with the document during reconciliation
 		}
@@ -623,32 +626,26 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 		}
 		
 		try {
-			int length, line, column;
-
+			int length;
 			if (isTopLevelRootExternal) {
 				length= element.getName().length() + 2;
-				line= element.getStartingRow();
-				column= element.getStartingColumn() + length;
 			} else {
-				line= locator.getLineNumber();
-				column= locator.getColumnNumber();
 				
+				int line= locator.getLineNumber();
+				int column= locator.getColumnNumber();
 				int offset;
- 			
 				if (column <= 0) {
 					int lineOffset= getOffset(line, 1);
-					offset= document.search(lineOffset, element.getName(), true, false, false);
-					if (offset < 0 || getLine(offset) != line) {
-						offset= lineOffset;
+					IRegion result= findReplaceAdapter.search(lineOffset, ">", true, true, false, false); //$NON-NLS-1$
+					if (result == null) {
+						offset= -1;
+					} else {
+						offset= result.getOffset();
 					}
-					String endDelimiter= ">"; //$NON-NLS-1$
-					offset= document.search(lineOffset, endDelimiter, true, true, false); //$NON-NLS-1$
 					if (offset < 0 || getLine(offset) != line) {
 						offset= lineOffset;
-						column= 1;
 					} else {
 						offset++;
-						column= getColumn(offset, line);
 					}
 				} else {
 					offset= getOffset(line, column);
@@ -660,8 +657,6 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 			}
  			
 			element.setLength(length);
-			element.setEndingRow(line);
-			element.setEndingColumn(column);
 		} catch (BadLocationException e) {
 			//ignore as the parser may be out of sync with the document during reconciliation
 		}
@@ -702,13 +697,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 			}
 			
 			int offset= getOffset(line, startColumn);
-
-			element.setStartingRow(line);
-			element.setStartingColumn(startColumn);
 			element.setOffset(offset);
-			
-			element.setEndingRow(line);
-			element.setEndingColumn(endColumn);
 			element.setLength(endColumn - startColumn);
 		} catch (BadLocationException e) {
 			//ignore as the parser may be out of sync with the document during reconciliation
@@ -733,22 +722,18 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 		}
 		
 		try {
-			int offset, line, column;
+			int offset;
 			
 			if (recoverFromExternal) {
 				XmlElement element= (XmlElement) stillOpenElements.peek();
 				int length= element.getName().length() + 2;
 				offset= element.getOffset() + length;
-				line= element.getStartingRow();
-				column= element.getStartingColumn() + length;
 			} else if (e == null) {
 				XmlElement element= (XmlElement) stillOpenElements.peek();			
 				offset= element.getOffset();
-				line= element.getStartingRow();
-				column= element.getStartingColumn();
 			} else {
-				line= e.getLineNumber();
-				column= e.getColumnNumber();
+				int line= e.getLineNumber();
+				int column= e.getColumnNumber();
 				
 				if (line <= 0) {
 					line= 1;
@@ -764,8 +749,6 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 			while (!stillOpenElements.empty()) {
 				XmlElement element= (XmlElement) stillOpenElements.pop();			
 				element.setLength(offset - element.getOffset());
-				element.setEndingRow(line);
-				element.setEndingColumn(column);
 			}
 		} catch (BadLocationException ble) {
 			//ignore as the parser may be out of sync with the document during reconciliation
@@ -800,10 +783,6 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 		return document.getLineOfOffset(offset) + 1;
 	}
 
-	private int getColumn(int offset, int line) throws BadLocationException {
-		return offset - document.getLineOffset(line - 1) + 1;
-	}
-
 	public void begin() {
 		if (errorHandler != null) {
 			errorHandler.beginReporting();
@@ -818,6 +797,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 
 	public void setDocument(IDocument document) {
 		this.document= document;
+		findReplaceAdapter= new FindReplaceDocumentAdapter(document);
 	}
 
 	public void setProblemRequestor(IProblemRequestor requestor) {
