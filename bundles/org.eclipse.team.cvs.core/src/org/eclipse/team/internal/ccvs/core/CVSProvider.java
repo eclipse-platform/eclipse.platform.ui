@@ -224,21 +224,28 @@ public class CVSProvider implements ICVSProvider {
 		// Check the cache for an equivalent instance and if there is one, throw an exception
 		CVSRepositoryLocation existingLocation = (CVSRepositoryLocation)repositories.get(location.getLocation());
 		if (existingLocation != null) {
-			throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSProvider.alreadyExists")));
+			throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSProvider.alreadyExists"))); //$NON-NLS-1$
 		}
-		
-		// Set or cache the password
-		String password = configuration.getProperty("password"); //$NON-NLS-1$
-		if (password != null) {
-			location.storePassword(password);
-		}
-		
-		addToCache(location);
-		repositoryAdded(location);
 
 		return location;
 	}
 
+	/**
+	 * @see ICVSProvider#addRepository(ICVSRepositoryLocation)
+	 */
+	public void addRepository(ICVSRepositoryLocation repository) throws CVSException {
+		// Check the cache for an equivalent instance and if there is one, just update the cache
+		CVSRepositoryLocation existingLocation = (CVSRepositoryLocation)repositories.get(repository.getLocation());
+		if (existingLocation != null) {
+			((CVSRepositoryLocation)repository).updateCache();
+		} else {
+			// Cache the password and register the repository location
+			addToCache(repository);
+			((CVSRepositoryLocation)repository).updateCache();
+			repositoryAdded(repository);
+		}
+	}
+	
 	/**
 	 * @see ICVSProvider#disposeRepository(ICVSRepositoryLocation)
 	 */
@@ -247,6 +254,9 @@ public class CVSProvider implements ICVSProvider {
 		removeFromCache(repository);
 	}
 
+	public boolean isKnownRepository(String location) {
+		return repositories.get(location) != null;
+	}
 	/*
 	 * Returns all patterns in the given project that should be treated as binary
 	 */
@@ -336,11 +346,13 @@ public class CVSProvider implements ICVSProvider {
 	 * @see ICVSProvider#createModule()
 	 */
 	public void createModule(ICVSRepositoryLocation location, IProject project, String moduleName, IProgressMonitor monitor) throws TeamException {
+		
+		// Determine if the repository is known
 		boolean alreadyExists = isCached(location);
-		addToCache(location);
+			
 		try {
 			// Get the import properties
-			String message = Policy.bind("CVSProvider.initialImport");
+			String message = Policy.bind("CVSProvider.initialImport"); //$NON-NLS-1$
 			String vendor = location.getUsername();
 			String tag = "start"; //$NON-NLS-1$
 			String projectName = project.getName();
@@ -386,11 +398,9 @@ public class CVSProvider implements ICVSProvider {
 		} finally {
 			CVSProviderPlugin.getSynchronizer().save(project.getLocation().toFile(), Policy.subMonitorFor(monitor, 5));
 		}
-		// We succeeded so we should cache the password ...
-		((CVSRepositoryLocation)location).updateCache();
-		// and notify listeners if the location wasn't cached before
-		if (! alreadyExists)
-			repositoryAdded(location);
+		// Add the repository if it didn't exist already
+		if ( ! alreadyExists)
+			addRepository(location);
 	}
 		
 	private CVSTag getTagFromProperties(Properties configuration) {
@@ -417,11 +427,12 @@ public class CVSProvider implements ICVSProvider {
 	}
 	
 	private void removeFromCache(ICVSRepositoryLocation repository) {
-		repositories.remove(repository.getLocation());
-		Iterator it = listeners.iterator();
-		while (it.hasNext()) {
-			ICVSListener listener = (ICVSListener)it.next();
-			listener.repositoryRemoved(repository);
+		if (repositories.remove(repository.getLocation()) != null) {
+			Iterator it = listeners.iterator();
+			while (it.hasNext()) {
+				ICVSListener listener = (ICVSListener)it.next();
+				listener.repositoryRemoved(repository);
+			}
 		}
 	}
 	
@@ -460,19 +471,9 @@ public class CVSProvider implements ICVSProvider {
 		}
 	}
 	
-	private IStatus statusFor(CoreException e) {
-		return new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSException.UNABLE, getMessageFor(e), e);
-	}
-	
 	private CVSException wrapException(CoreException e) {
-		return new CVSException(statusFor(e));
-	}
-	
-	private String getMessageFor(Exception e) {
-		String message = Policy.bind(e.getClass().getName(), new Object[] {e.getMessage()});
-		if (message.equals(e.getClass().getName()))
-			message = Policy.bind("CVSProvider.exception", new Object[] {e.toString()}); 
-		return message;
+		CVSProviderPlugin.log(e.getStatus());
+		return new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSException.UNABLE, Policy.bind("CVSProvider.exception"), e)); //$NON-NLS-1$
 	}
 
 	public static void startup() {
@@ -503,7 +504,7 @@ public class CVSProvider implements ICVSProvider {
 				readState(dis);
 				dis.close();
 			} catch (IOException e) {
-				throw new TeamException(new Status(Status.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSProvider.ioException"), e));
+				throw new TeamException(new Status(Status.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSProvider.ioException"), e));  //$NON-NLS-1$
 			}
 		}  else {
 			// If the file did not exist, then prime the list of repositories with
@@ -539,10 +540,10 @@ public class CVSProvider implements ICVSProvider {
 			}
 			boolean renamed = tempFile.renameTo(stateFile);
 			if (!renamed) {
-				throw new TeamException(new Status(Status.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.rename", tempFile.getAbsolutePath()), null));
+				throw new TeamException(new Status(Status.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSProvider.rename", tempFile.getAbsolutePath()), null)); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
-			throw new TeamException(new Status(Status.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.save",stateFile.getAbsolutePath()), e));
+			throw new TeamException(new Status(Status.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSProvider.save",stateFile.getAbsolutePath()), e)); //$NON-NLS-1$
 		}
 	}
 	private void readState(DataInputStream dis) throws IOException, CVSException {

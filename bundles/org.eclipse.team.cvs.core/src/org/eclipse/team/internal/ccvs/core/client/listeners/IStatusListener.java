@@ -9,7 +9,7 @@ import org.eclipse.core.runtime.IPath;
 
 public interface IStatusListener {
 	
-	public static final String FOLDER_REVISION = "";
+	public static final String FOLDER_REVISION = ""; //$NON-NLS-1$
 	
 	/**
 	 * Provides access to the revision of a file through the use of the Status command.

@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.ccvs.core.*;
 import org.eclipse.team.ccvs.core.*;
 
@@ -79,12 +80,15 @@ public class PServerConnection implements IServerConnection {
 	/**
 	 * @see Connection#doOpen()
 	 */
-	public void open() throws IOException, CVSAuthenticationException {
+	public void open(IProgressMonitor monitor) throws IOException, CVSAuthenticationException {
 		
 		// XXX see sleepIfPropertyIsSet() for comments.
 		// This should be removed once we have corrected the
 		// CVS plugin's bad behavior with connections.
 		sleepIfPropertyIsSet();
+		
+		monitor.subTask("Authenticating over pserver");
+		monitor.worked(1);
 		
 		fSocket = createSocket();
 		try {

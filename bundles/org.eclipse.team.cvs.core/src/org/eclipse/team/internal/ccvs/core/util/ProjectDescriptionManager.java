@@ -43,7 +43,7 @@ import org.xml.sax.SAXException;
  */
 public class ProjectDescriptionManager {
 
-	public final static IPath PROJECT_DESCRIPTION_PATH = new Path(".vcm_meta");
+	public final static IPath PROJECT_DESCRIPTION_PATH = new Path(".vcm_meta"); //$NON-NLS-1$
 	public final static boolean UPDATE_PROJECT_DESCRIPTION_ON_LOAD = true;
 
 	/*
@@ -55,7 +55,7 @@ public class ProjectDescriptionManager {
 		try {
 			parser.parse(new InputSource(stream));
 		} catch (SAXException ex) {
-			throw new CVSException(IStatus.ERROR, IStatus.ERROR, Policy.bind("ProjectDescriptionManager.unableToReadDescription"), ex);
+			throw new CVSException(IStatus.ERROR, IStatus.ERROR, Policy.bind("ProjectDescriptionManager.unableToReadDescription"), ex); //$NON-NLS-1$
 		}
 	}
 
@@ -68,11 +68,11 @@ public class ProjectDescriptionManager {
 			IProjectDescription desc = project.getDescription();
 			ProjectDescriptionWriter.writeProjectDescription(desc, byteOutputStream);
 			byteOutputStream.close();
-			newContents = byteOutputStream.toString("UTF8");
+			newContents = byteOutputStream.toString("UTF8"); //$NON-NLS-1$
 		} catch (IOException ex) {
-			throw CVSException.wrapException(project, Policy.bind("ProjectDescriptionManager.ioDescription"), ex);
+			throw CVSException.wrapException(project, Policy.bind("ProjectDescriptionManager.ioDescription"), ex); //$NON-NLS-1$
 		} catch (CoreException ex) {
-			throw CVSException.wrapException(project, Policy.bind("ProjectDescriptionManager.coreDescription"), ex);
+			throw CVSException.wrapException(project, Policy.bind("ProjectDescriptionManager.coreDescription"), ex); //$NON-NLS-1$
 		}
 
 		IFile descResource = project.getFile(PROJECT_DESCRIPTION_PATH);
@@ -85,15 +85,15 @@ public class ProjectDescriptionManager {
 				byte[] buf = new byte[512];
 				int result = is.read(buf);
 				while (result != -1) {
-					stringBuffer.append(new String(buf, 0, result, "UTF8"));
+					stringBuffer.append(new String(buf, 0, result, "UTF8")); //$NON-NLS-1$
 					result = is.read(buf);
 				}
 				oldContents = stringBuffer.toString();
 				is.close();
 			} catch (IOException ex) {
-				throw CVSException.wrapException(project, Policy.bind("ProjectDescriptionManager.ioDescription"), ex);
+				throw CVSException.wrapException(project, Policy.bind("ProjectDescriptionManager.ioDescription"), ex); //$NON-NLS-1$
 			} catch (CoreException ex) {
-				throw CVSException.wrapException(project, Policy.bind("ProjectDescriptionManager.coreDescription"), ex);
+				throw CVSException.wrapException(project, Policy.bind("ProjectDescriptionManager.coreDescription"), ex); //$NON-NLS-1$
 			}
 
 			if (oldContents.equals(newContents)) {
@@ -107,7 +107,7 @@ public class ProjectDescriptionManager {
 					false,
 					progress);
 			} catch (CoreException ex) {
-				throw CVSException.wrapException(project, Policy.bind("ProjectDescriptionManager.coreDescription"), ex);
+				throw CVSException.wrapException(project, Policy.bind("ProjectDescriptionManager.coreDescription"), ex); //$NON-NLS-1$
 			}
 		} else {
 			try {
@@ -116,7 +116,7 @@ public class ProjectDescriptionManager {
 					false,
 					progress);
 			} catch (CoreException ex) {
-				throw CVSException.wrapException(descResource, Policy.bind("ProjectDescriptionManager.coreDescription"), ex);
+				throw CVSException.wrapException(descResource, Policy.bind("ProjectDescriptionManager.coreDescription"), ex); //$NON-NLS-1$
 			}
 
 		}
@@ -144,7 +144,7 @@ public class ProjectDescriptionManager {
 				} catch (CoreException ex) {
 					// Failing to set the description is probably due to a missing nature
 					// Other natures are still set
-					Util.logError(Policy.bind("ProjectDescriptionManager.unableToSetDescription"), ex);
+					Util.logError(Policy.bind("ProjectDescriptionManager.unableToSetDescription"), ex); //$NON-NLS-1$
 				}
 				// Make sure we have the cvs nature (the above read may have removed it)
 				if (!project.getDescription().hasNature(CVSProviderPlugin.NATURE_ID)) {
@@ -153,15 +153,15 @@ public class ProjectDescriptionManager {
 					}  catch (TeamException ex) {
 						// Failing to set the provider is probably due to a missing nature.
 						// Other natures are still set
-						Util.logError(Policy.bind("ProjectDescriptionManager.unableToSetDescription"), ex);
+						Util.logError(Policy.bind("ProjectDescriptionManager.unableToSetDescription"), ex); //$NON-NLS-1$
 					}
 				}
 			} catch(TeamException ex) {
-				Util.logError(Policy.bind("ProjectDescriptionManager.unableToReadDescription"), ex);
+				Util.logError(Policy.bind("ProjectDescriptionManager.unableToReadDescription"), ex); //$NON-NLS-1$
 				// something went wrong, delete the project description file
 				descResource.delete(true, progress);
 			} catch (IOException ex) {
-				Util.logError(Policy.bind("ProjectDescriptionManager.unableToReadDescription"), ex);
+				Util.logError(Policy.bind("ProjectDescriptionManager.unableToReadDescription"), ex); //$NON-NLS-1$
 				// something went wrong, delete the project description file
 				descResource.delete(true, progress);
 			}
@@ -225,9 +225,9 @@ public class ProjectDescriptionManager {
 						}
 					}
 				} catch (CVSException ex) {
-					Util.logError("Cannot update project description", ex);
+					Util.logError("Cannot update project description", ex); //$NON-NLS-1$
 				} catch (CoreException ex) {
-					Util.logError("Cannot update project description", ex);
+					Util.logError("Cannot update project description", ex); //$NON-NLS-1$
 				} 
 			}
 		};

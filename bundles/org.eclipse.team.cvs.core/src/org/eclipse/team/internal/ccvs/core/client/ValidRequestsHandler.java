@@ -25,7 +25,7 @@ import org.eclipse.team.internal.ccvs.core.client.Session;
  */
 class ValidRequestsHandler extends ResponseHandler {
 	public String getResponseID() {
-		return "Valid-requests";
+		return "Valid-requests"; //$NON-NLS-1$
 	}
 
 	public void handle(Session session, String validRequests,

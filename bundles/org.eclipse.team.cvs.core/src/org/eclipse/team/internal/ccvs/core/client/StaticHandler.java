@@ -37,9 +37,9 @@ class StaticHandler extends ResponseHandler {
 
 	public String getResponseID() {
 		if (setStaticDirectory) {
-			return "Set-static-directory";
+			return "Set-static-directory"; //$NON-NLS-1$
 		} else {
-			return "Clear-static-directory";
+			return "Clear-static-directory"; //$NON-NLS-1$
 		}
 	}
 
@@ -49,7 +49,7 @@ class StaticHandler extends ResponseHandler {
 		String repositoryDir = session.readLine();
 
 		// create the directory then set or clear the static flag
-		Assert.isTrue(repositoryDir.endsWith("/"));
+		Assert.isTrue(repositoryDir.endsWith("/")); //$NON-NLS-1$
 		repositoryDir = repositoryDir.substring(0, repositoryDir.length() - 1);
 		ICVSFolder folder = createFolder(session, localDir, repositoryDir);
 		FolderSyncInfo syncInfo = folder.getFolderSyncInfo();

@@ -144,7 +144,8 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 								return;
 							}
 							
-							// Get the repository location
+							// Get the repository location (the get will add the locatin to the provider)
+							boolean isPreviouslyKnown = CVSProviderPlugin.getProvider().isKnownRepository(info.getRoot());
 							ICVSRepositoryLocation location = CVSProviderPlugin.getProvider().getRepository(info.getRoot());
 	
 							// Validate the connection if the user wants to
@@ -161,7 +162,8 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 									if (!keep) {
 										// Remove the root
 										try {
-											CVSProviderPlugin.getProvider().disposeRepository(location);
+											if (! isPreviouslyKnown)
+												CVSProviderPlugin.getProvider().disposeRepository(location);
 										} catch (TeamException e1) {
 											ErrorDialog.openError(getContainer().getShell(), Policy.bind("exception"), null, e1.getStatus());
 										}
@@ -173,15 +175,17 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							}
 							
 							// Set the sharing
-							CVSProvider.getInstance().setSharing(project, info, new SubProgressMonitor(monitor, 50));
+							CVSProviderPlugin.getProvider().setSharing(project, info, new SubProgressMonitor(monitor, 50));
 						} else {
 							// Import
 							doSync[0] = true;
 							// Make sure the directory does not already exist on the server.
 							// If it does, return false.
-							ICVSRepositoryLocation location = getLocation();
-							
+							ICVSRepositoryLocation location;
+							boolean isKnown;
 							try {
+								location = getLocation();
+								isKnown = CVSProviderPlugin.getProvider().isKnownRepository(location.getLocation());
 								location.validateConnection(monitor);
 								String moduleName = getModuleName();
 								ICVSRemoteFolder folder = location.getRemoteFolder(moduleName, null);
@@ -192,6 +196,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 										// We didn't get an exception, so the folder must already exist.
 										MessageDialog.openInformation(getShell(), Policy.bind("SharingWizard.couldNotImport"), Policy.bind("SharingWizard.couldNotImportLong"));
 										result[0] = false;
+										doSync[0] = false;
 										return;
 									}
 								} catch (TeamException e) {
@@ -203,6 +208,9 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 								doSync[0] = false;
 								return;
 							}
+							// Add the location to the provider if it is new
+							if (! isKnown)
+								CVSProviderPlugin.getProvider().addRepository(location);
 							// Create the remote module for the project
 							CVSProviderPlugin.getProvider().createModule(location, project, getModuleName(), new SubProgressMonitor(monitor, 50));
 						}
@@ -249,7 +257,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 	/**
 	 * Return an ICVSRepositoryLocation
 	 */
-	private ICVSRepositoryLocation getLocation() {
+	private ICVSRepositoryLocation getLocation() throws TeamException {
 		// If the import page has a location, use it.
 		if (locationPage != null) {
 			ICVSRepositoryLocation location = locationPage.getLocation();
@@ -262,12 +270,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 			}
 		});
 		Properties properties = createLocationPage.getProperties();
-		try {
-			return CVSRepositoryLocation.fromProperties(properties);
-		} catch (TeamException e) {
-			// To do: log
-			return null;
-		}
+		return CVSProviderPlugin.getProvider().createRepository(properties);
 	}
 	/**
 	 * Return the module name.

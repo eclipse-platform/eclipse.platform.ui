@@ -20,7 +20,7 @@ import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 public class ModuleDefinitionsListener implements ICommandOutputListener {
 
 	// the last line read from the context (used to accumulate multi-line definitions)
-	private String lastLine = "";
+	private String lastLine = ""; //$NON-NLS-1$
 	
 	private Map moduleMap;
 	
@@ -45,7 +45,7 @@ public class ModuleDefinitionsListener implements ICommandOutputListener {
 			lastLine = line;
 		
 		// Use the module name as the key so that multi-line modules will be recorded properly
-		int firstSpace = line.indexOf(" ");
+		int firstSpace = line.indexOf(" "); //$NON-NLS-1$
 		if (firstSpace > -1) {
 			String module = line.substring(firstSpace);;
 			moduleMap.put(module, line);

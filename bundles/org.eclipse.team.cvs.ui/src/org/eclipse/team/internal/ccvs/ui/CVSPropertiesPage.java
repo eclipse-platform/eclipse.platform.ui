@@ -5,18 +5,25 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -198,18 +205,41 @@ public class CVSPropertiesPage extends PropertyPage {
 		if (passwordChanged) {
 			info.setPassword(passwordText.getText());
 		}
+		final String type = methodType.getText();
 		try {
-			provider.setConnectionInfo(project, methodType.getText(), info, new NullProgressMonitor());
-		} catch (TeamException e) {
-			handle(e);
+			new ProgressMonitorDialog(getShell()).run(true, false, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						provider.setConnectionInfo(project, type, info, monitor);
+					} catch (TeamException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			});
+		} catch (InvocationTargetException e) {
+			Throwable t = e.getTargetException();
+			if (t instanceof TeamException) {
+				handle((TeamException)t);
+			} else if (t instanceof CoreException) {
+				handle(((CoreException)t).getStatus());
+			} else {
+				IStatus status = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, "Internal error occured", t);
+				handle(status);
+				CVSUIPlugin.log(status);
+			}
+		} catch (InterruptedException e) {
 		}
+					
 		return true;
 	}
 	/**
 	 * Shows the given errors to the user.
 	 */
 	protected void handle(TeamException e) {
-		IStatus status = e.getStatus();
+		handle(e.getStatus());
+	}
+	
+	protected void handle(IStatus status) {
 		if (!status.isOK()) {
 			IStatus toShow = status;
 			if (status.isMultiStatus()) {

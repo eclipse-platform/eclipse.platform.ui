@@ -22,20 +22,20 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 public class Checkout extends Command {
 	/*** Local options: specific to checkout ***/
-	public static final LocalOption FETCH_MODULE_ALIASES = new LocalOption("-c");
+	public static final LocalOption FETCH_MODULE_ALIASES = new LocalOption("-c"); //$NON-NLS-1$
 	public static LocalOption makeDirectoryNameOption(String moduleName) {
-		return new LocalOption("-d", moduleName);
+		return new LocalOption("-d", moduleName); //$NON-NLS-1$
 	}
 
 	/** Command options found in the CVSROOT/modules file */
-	public static LocalOption ALIAS = new LocalOption("-a");
+	public static LocalOption ALIAS = new LocalOption("-a"); //$NON-NLS-1$
 	public static LocalOption makeStatusOption(String status) {
-		return new LocalOption("-s", status);
+		return new LocalOption("-s", status); //$NON-NLS-1$
 	}
 	
 	protected Checkout() { }	
 	protected String getCommandId() {
-		return "co";
+		return "co"; //$NON-NLS-1$
 	}
 	
 	protected ICVSResource[] computeWorkResources(Session session, LocalOption[] localOptions,
@@ -79,10 +79,10 @@ public class Checkout extends Command {
 
 		// If we are pruning (-P) or getting a sticky copy (-D or -r), then prune empty directories
 		if (PRUNE_EMPTY_DIRECTORIES.isElementOf(localOptions) ||
-			(findOption(localOptions, "-D") != null) ||
-			(findOption(localOptions, "-r") != null)) {				
+			(findOption(localOptions, "-D") != null) || //$NON-NLS-1$
+			(findOption(localOptions, "-r") != null)) { //$NON-NLS-1$			
 			// Get the name of the resulting directory
-			Option dOption = findOption(localOptions, "-d");
+			Option dOption = findOption(localOptions, "-d");  //$NON-NLS-1$
 			if (dOption != null) resources = new ICVSResource[] {
 				session.getLocalRoot().getFolder(dOption.argument) };
 

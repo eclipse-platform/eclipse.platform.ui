@@ -22,8 +22,8 @@ public class FileNameMatcher {
 	
 	private List matchers = new ArrayList();
 	private List results = new ArrayList();
-	private static final String TRUE = "true";
-	private static final String IGNORE_FILE = ".cvsignore";
+	private static final String TRUE = "true"; //$NON-NLS-1$
+	private static final String IGNORE_FILE = ".cvsignore"; //$NON-NLS-1$
 	
 	
 	public FileNameMatcher() {
@@ -37,7 +37,7 @@ public class FileNameMatcher {
 		for (int i = 0; i < patterns.length; i++) {
 			register(patterns[i],TRUE);
 		}
-		register("CVS", TRUE);
+		register("CVS", TRUE); //$NON-NLS-1$
 	}
 	
 	public void register(String pattern, String result) {

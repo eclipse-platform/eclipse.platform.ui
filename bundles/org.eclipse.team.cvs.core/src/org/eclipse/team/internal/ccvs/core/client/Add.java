@@ -21,7 +21,7 @@ public class Add extends Command {
 
 	protected Add() { }
 	protected String getCommandId() {
-		return "add";
+		return "add";  //$NON-NLS-1$
 	}
 	
 	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,
@@ -66,7 +66,7 @@ public class Add extends Command {
 			if (resources[i].isFolder()) {
 				mFolder = (ICVSFolder) resources[i];
 				FolderSyncInfo info = mFolder.getParent().getFolderSyncInfo();
-				String repository = info.getRepository() + "/" + mFolder.getName();		
+				String repository = info.getRepository() + "/" + mFolder.getName();	 //$NON-NLS-1$	
 				mFolder.setFolderSyncInfo(new FolderSyncInfo(repository, info.getRoot(), info.getTag(), info.getIsStatic()));
 			}
 		}

@@ -19,13 +19,13 @@ import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
  */
 public class Diff extends Command {
 	/*** Local options: specific to diff ***/
-	public static final LocalOption UNIFIED_FORMAT = new LocalOption("-u");
-	public static final LocalOption CONTEXT_FORMAT = new LocalOption("-c");
-	public static final LocalOption INCLUDE_NEWFILES = new LocalOption("-N");
+	public static final LocalOption UNIFIED_FORMAT = new LocalOption("-u"); //$NON-NLS-1$
+	public static final LocalOption CONTEXT_FORMAT = new LocalOption("-c"); //$NON-NLS-1$
+	public static final LocalOption INCLUDE_NEWFILES = new LocalOption("-N"); //$NON-NLS-1$
 
 	protected Diff() { }
 	protected String getCommandId() {
-		return "diff";
+		return "diff"; //$NON-NLS-1$
 	}
 	
 	/**

@@ -16,7 +16,7 @@ public class Remove extends Command {
 
 	protected Remove() { }	
 	protected String getCommandId() {
-		return "remove";
+		return "remove"; //$NON-NLS-1$
 	}
 
 	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,

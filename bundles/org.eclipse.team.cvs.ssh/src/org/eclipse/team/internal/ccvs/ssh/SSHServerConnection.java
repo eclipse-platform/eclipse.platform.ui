@@ -8,9 +8,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IServerConnection;
+import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException;
 
 public class SSHServerConnection implements IServerConnection {
 	
@@ -62,7 +63,9 @@ public class SSHServerConnection implements IServerConnection {
 	 *
 	 * @see Connection.open()
 	 */
-	public void open() throws IOException, CVSAuthenticationException {
+	public void open(IProgressMonitor monitor) throws IOException, CVSAuthenticationException {
+		monitor.subTask("Authenticating over extssh");
+		monitor.worked(1);
 		String hostname = location.getHost();
 		String username = location.getUsername();
 		int port = location.getPort();
@@ -70,7 +73,7 @@ public class SSHServerConnection implements IServerConnection {
 			port = DEFAULT_PORT;
 		// create the connection using host, username, and password
 		client = new Client(hostname, port, username, password, INVOKE_SVR_CMD, location.getTimeout());	
-		client.connect();
+		client.connect(monitor);
 		inputStream = client.getInputStream();
 		outputStream = client.getOutputStream();
 	}

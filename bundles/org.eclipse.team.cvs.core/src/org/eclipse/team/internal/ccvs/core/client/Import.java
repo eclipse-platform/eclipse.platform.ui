@@ -15,12 +15,12 @@ import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
 public class Import extends Command {
 	/*** Local options: specific to import ***/
 	public static LocalOption makeBinaryWrapperOption(String pattern) {
-		return new LocalOption("-W", pattern + " -k 'b'");
+		return new LocalOption("-W", pattern + " -k 'b'"); //$NON-NLS-1$  //$NON-NLS-2$
 	}
 
 	protected Import() { }
 	protected String getCommandId() {
-		return "import";
+		return "import"; //$NON-NLS-1$
 	}
 
 	protected ICVSResource[] computeWorkResources(Session session, LocalOption[] localOptions,
@@ -35,13 +35,13 @@ public class Import extends Command {
 					
 	 	// If the branch option is not provided, a default value of 1.1.1 is used.
 	 	// This is done to maintain reference cliet compatibility
-	 	if (findOption(localOptions, "-b") == null) {
-	 		session.sendArgument("-b");
-	 		session.sendArgument("1.1.1");
+	 	if (findOption(localOptions, "-b") == null) { //$NON-NLS-1$
+	 		session.sendArgument("-b"); //$NON-NLS-1$
+	 		session.sendArgument("1.1.1"); //$NON-NLS-1$
 	 	}
 	
 		ICVSResourceVisitor visitor = new ImportStructureVisitor(session,
-			collectOptionArguments(localOptions, "-W"), monitor);		
+			collectOptionArguments(localOptions, "-W"), monitor);		 //$NON-NLS-1$
 		session.getLocalRoot().accept(visitor);
 	}
 

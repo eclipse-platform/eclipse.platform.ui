@@ -10,7 +10,7 @@ public class Log extends AbstractMessageCommand {
 
 	protected Log() { }
 	protected String getCommandId() {
-		return "log";
+		return "log"; //$NON-NLS-1$
 	}
 }
 

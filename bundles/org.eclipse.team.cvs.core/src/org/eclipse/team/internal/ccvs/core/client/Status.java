@@ -10,6 +10,6 @@ public class Status extends AbstractMessageCommand {
 
 	protected Status() { }
 	protected String getCommandId() {
-		return "status";
+		return "status"; //$NON-NLS-1$
 	}
 }

@@ -30,7 +30,7 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
  */
 class CopyHandler extends ResponseHandler {
 	public String getResponseID() {
-		return "Copy-file";
+		return "Copy-file"; //$NON-NLS-1$
 	}
 
 	public void handle(Session session, String localDir,
@@ -41,7 +41,7 @@ class CopyHandler extends ResponseHandler {
 		if (session.isNoLocalChanges()) return;
 
 		// Get the local file		
-		String fileName = repositoryFile.substring(repositoryFile.lastIndexOf("/") + 1);
+		String fileName = repositoryFile.substring(repositoryFile.lastIndexOf("/") + 1); //$NON-NLS-1$
 		ICVSFolder mParent = session.getLocalRoot().getFolder(localDir);
 		ICVSFile mFile = mParent.getFile(fileName);
 

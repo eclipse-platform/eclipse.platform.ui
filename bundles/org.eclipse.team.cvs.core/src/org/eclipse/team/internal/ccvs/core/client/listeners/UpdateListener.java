@@ -16,8 +16,8 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
 public class UpdateListener implements ICommandOutputListener {
-	static final String SERVER_PREFIX = "cvs server: ";
-	static final String SERVER_ABORTED_PREFIX = "cvs [server aborted]: ";
+	static final String SERVER_PREFIX = "cvs server: "; //$NON-NLS-1$
+	static final String SERVER_ABORTED_PREFIX = "cvs [server aborted]: "; //$NON-NLS-1$
 
 	IUpdateMessageListener updateMessageListener;
 	boolean merging = false;
@@ -40,7 +40,7 @@ public class UpdateListener implements ICommandOutputListener {
 				merging = false;
 			}
 			updateMessageListener.fileInformation(changeType, path);
-		} else if (line.startsWith("Merging")) {
+		} else if (line.startsWith("Merging")) { //$NON-NLS-1$
 			// We are merging two files
 			merging = true;	
 		}
@@ -83,27 +83,27 @@ public class UpdateListener implements ICommandOutputListener {
 		if (line.startsWith(SERVER_PREFIX)) {
 			// Strip the prefix from the line
 			String message = line.substring(SERVER_PREFIX.length());
-			if (message.startsWith("Updating")) {
+			if (message.startsWith("Updating")) { //$NON-NLS-1$
 				if (updateMessageListener != null) {
 					IPath path = new Path(message.substring(8));
 					updateMessageListener.directoryInformation(path, false);
 				}
-			} else if (message.startsWith("skipping directory")) {
+			} else if (message.startsWith("skipping directory")) { //$NON-NLS-1$
 				if (updateMessageListener != null) {
 					IPath path = new Path(message.substring(18).trim());
 					updateMessageListener.directoryDoesNotExist(path);
 				}
-			} else if (message.startsWith("New directory")) {
+			} else if (message.startsWith("New directory")) { //$NON-NLS-1$
 				if (updateMessageListener != null) {
 					IPath path = new Path(message.substring(15, message.indexOf('\'', 15)));
 					updateMessageListener.directoryInformation(path, true);
 				}
-			} else if (message.endsWith("is no longer in the repository")) {
+			} else if (message.endsWith("is no longer in the repository")) { //$NON-NLS-1$
 				if (updateMessageListener != null) {
 					String filename = message.substring(0, message.indexOf(' '));
 					updateMessageListener.fileDoesNotExist(filename);
 				}
-			} else if (message.startsWith("conflict:")) {
+			} else if (message.startsWith("conflict:")) { //$NON-NLS-1$
 				/*
 				 * We can get the following conflict warnings
 				 *    cvs server: conflict: folder/file.ext created independently by second party 
@@ -113,37 +113,37 @@ public class UpdateListener implements ICommandOutputListener {
 				 * We still get "C foler/file.ext" so we don't need to do anything else (except in the remotely deleted case)
 				 */
 				if (updateMessageListener != null) {
-					if (message.endsWith("is modified but no longer in the repository")) {
+					if (message.endsWith("is modified but no longer in the repository")) { //$NON-NLS-1$
 						// The "C foler/file.ext" will come after this so if whould be ignored!
 						String filename = message.substring(10, message.indexOf(' ', 10));
 						updateMessageListener.fileDoesNotExist(filename);
 					}
 				}
 				return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, line);
-			} else if (message.startsWith("warning:")) {
+			} else if (message.startsWith("warning:")) { //$NON-NLS-1$
 				/*
 				 * We can get the following conflict warnings
 				 *    cvs server: warning: folder1/file.ext is not (any longer) pertinent
 				 * If we get the above line, we have local changes to a remotely deleted file.
 				 */
 				if (updateMessageListener != null) {
-					if (message.endsWith("is not (any longer) pertinent")) {
+					if (message.endsWith("is not (any longer) pertinent")) { //$NON-NLS-1$
 						String filename = message.substring(9, message.indexOf(' ', 9));
 						updateMessageListener.fileDoesNotExist(filename);
 					}
 				}
 				return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, line);
-			} else if (message.startsWith("conflicts")) {
+			} else if (message.startsWith("conflicts")) { //$NON-NLS-1$
 				// This line is info only. The server doesn't report an error.
 				return new CVSStatus(IStatus.INFO, CVSStatus.CONFLICT, line);
-			} else if (!message.startsWith("cannot open directory")
-					&& !message.startsWith("nothing known about")) {
+			} else if (!message.startsWith("cannot open directory") //$NON-NLS-1$
+					&& !message.startsWith("nothing known about")) { //$NON-NLS-1$
 				return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, line);
 			}
 		} else if (line.startsWith(SERVER_ABORTED_PREFIX)) {
 			// Strip the prefix from the line
 			String message = line.substring(SERVER_ABORTED_PREFIX.length());
-			if (message.startsWith("no such tag")) {
+			if (message.startsWith("no such tag")) { //$NON-NLS-1$
 				// This is reported from CVS when a tag is used on the update there are no files in the directory
 				// To get the folders, the update request should be re-issued for HEAD
 				return new CVSStatus(CVSStatus.WARNING, CVSStatus.NO_SUCH_TAG, line);

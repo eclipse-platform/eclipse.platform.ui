@@ -24,8 +24,8 @@ public class StatusListener implements ICommandOutputListener {
 		IProgressMonitor monitor) {
 		
 		// We're only concerned about file revisions.
-		if (line.startsWith("   Repository revision:")) {
-			if (!line.startsWith("   Repository revision:	No revision control file")) {
+		if (line.startsWith("   Repository revision:")) { //$NON-NLS-1$
+			if (!line.startsWith("   Repository revision:	No revision control file")) { //$NON-NLS-1$
 				int separatingTabIndex = line.indexOf('\t', 24);
 				String remoteRevision = line.substring(24, separatingTabIndex);
 
@@ -40,7 +40,7 @@ public class StatusListener implements ICommandOutputListener {
 				// the main trunk (HEAD) are added to the Attic but cvs does magic on update
 				// to put them in the correct location.
 				// (e.g. /project/Attic/file.txt -> /project/file.txt)
-				if ((fullPath.segmentCount() >= 2) && (fullPath.segment(fullPath.segmentCount() - 2).equals("Attic"))) {
+				if ((fullPath.segmentCount() >= 2) && (fullPath.segment(fullPath.segmentCount() - 2).equals("Attic"))) { //$NON-NLS-1$
 					String filename = fullPath.lastSegment();
 					fullPath = fullPath.removeLastSegments(2);
 					fullPath = fullPath.append(filename);

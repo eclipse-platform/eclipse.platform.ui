@@ -17,9 +17,9 @@ import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
 
 public class Update extends Command {
 	/*** Local options: specific to update ***/
-	public static final LocalOption CLEAR_STICKY = new LocalOption("-A");
-	public static final LocalOption IGNORE_LOCAL_CHANGES = new LocalOption("-C");
-	public static final LocalOption RETRIEVE_ABSENT_DIRECTORIES = new LocalOption("-d");
+	public static final LocalOption CLEAR_STICKY = new LocalOption("-A"); //$NON-NLS-1$
+	public static final LocalOption IGNORE_LOCAL_CHANGES = new LocalOption("-C"); //$NON-NLS-1$
+	public static final LocalOption RETRIEVE_ABSENT_DIRECTORIES = new LocalOption("-d"); //$NON-NLS-1$
 	
 	/*** Default command output listener ***/
 	private static final ICommandOutputListener DEFAULT_OUTPUT_LISTENER = new UpdateListener(null);
@@ -40,7 +40,7 @@ public class Update extends Command {
 	
 	protected Update() { }
 	protected String getCommandId() {
-		return "update";
+		return "update"; //$NON-NLS-1$
 	}
 	
 	protected ICommandOutputListener getDefaultCommandOutputListener() {
@@ -67,7 +67,7 @@ public class Update extends Command {
 
 		// If we are pruning (-P) or getting a sticky copy using -D, then prune empty directories
 		if (PRUNE_EMPTY_DIRECTORIES.isElementOf(localOptions) ||
-			findOption(localOptions, "-D") != null) {
+			findOption(localOptions, "-D") != null) { //$NON-NLS-1$
 			// Delete empty directories
 			ICVSResourceVisitor visitor = new PruneFolderVisitor(session);
 			for (int i = 0; i < resources.length; i++) {

@@ -46,7 +46,7 @@ public class ModuleExpansion {
 	public String getModuleExpansionString() {
 		String result = expansions[0];
 		for (int i=1;i<expansions.length; i++)
-			result = result + ", " + expansions[i];
+			result = result + ", " + expansions[i]; //$NON-NLS-1$
 		return result;
 	}
 	

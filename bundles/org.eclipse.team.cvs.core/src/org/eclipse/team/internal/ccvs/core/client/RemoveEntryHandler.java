@@ -32,7 +32,7 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
  */
 class RemoveEntryHandler extends ResponseHandler {
 	public String getResponseID() {
-		return "Remove-entry";
+		return "Remove-entry"; //$NON-NLS-1$
 	}
 
 	public void handle(Session session, String localDir,
@@ -41,7 +41,7 @@ class RemoveEntryHandler extends ResponseHandler {
 		String repositoryFile = session.readLine();
 
 		// Get the local file		
-		String fileName = repositoryFile.substring(repositoryFile.lastIndexOf("/") + 1);
+		String fileName = repositoryFile.substring(repositoryFile.lastIndexOf("/") + 1); //$NON-NLS-1$
 		ICVSFolder mParent = session.getLocalRoot().getFolder(localDir);
 		ICVSFile mFile = mParent.getFile(fileName);
 

@@ -55,31 +55,31 @@ public abstract class Command {
 	// Empty global option array
 	public static final GlobalOption[] NO_GLOBAL_OPTIONS = new GlobalOption[0];
 	// Do not change file contents
-	public static final GlobalOption DO_NOT_CHANGE = new GlobalOption("-n");
+	public static final GlobalOption DO_NOT_CHANGE = new GlobalOption("-n");  //$NON-NLS-1$
 	// Do not record this operation into CVS command history
-	public static final GlobalOption DO_NOT_LOG = new GlobalOption("-l");
+	public static final GlobalOption DO_NOT_LOG = new GlobalOption("-l");  //$NON-NLS-1$
 	// Make new working files read-only
-	public static final GlobalOption MAKE_READ_ONLY = new GlobalOption("-r");
+	public static final GlobalOption MAKE_READ_ONLY = new GlobalOption("-r"); //$NON-NLS-1$
 	// Trace command execution
-	public static final GlobalOption TRACE_EXECUTION = new GlobalOption("-t");
+	public static final GlobalOption TRACE_EXECUTION = new GlobalOption("-t"); //$NON-NLS-1$
 
 	/*** Global options: quietness ***/
 	// Don't be quiet (normal verbosity)
-	public static final QuietOption VERBOSE = new QuietOption("");
+	public static final QuietOption VERBOSE = new QuietOption(""); //$NON-NLS-1$
 	// Be somewhat quiet (suppress informational messages)
-	public static final QuietOption PARTLY_QUIET = new QuietOption("-q");
+	public static final QuietOption PARTLY_QUIET = new QuietOption("-q"); //$NON-NLS-1$
 	// Be really quiet (silent but for serious problems)
-	public static final QuietOption SILENT = new QuietOption("-Q");
+	public static final QuietOption SILENT = new QuietOption("-Q"); //$NON-NLS-1$
 
 	/*** Local options: common to many commands ***/
 	// Empty local option array
 	public static final LocalOption[] NO_LOCAL_OPTIONS = new LocalOption[0];
 	// valid for: annotate checkout commit diff export log rdiff remove rtag status tag update  
-	public static final LocalOption DO_NOT_RECURSE = new LocalOption("-l");		
+	public static final LocalOption DO_NOT_RECURSE = new LocalOption("-l"); //$NON-NLS-1$	
 	// valid for: add checkout export import update
-	public static final LocalOption KSUBST_BINARY = new LocalOption("-kb");
+	public static final LocalOption KSUBST_BINARY = new LocalOption("-kb"); //$NON-NLS-1$
 	// valid for: checkout export update
-	public static final LocalOption PRUNE_EMPTY_DIRECTORIES = new LocalOption("-P");
+	public static final LocalOption PRUNE_EMPTY_DIRECTORIES = new LocalOption("-P"); //$NON-NLS-1$
 
 	/*** Response handler map ***/
 	private static final Hashtable responseHandlers = new Hashtable();
@@ -354,7 +354,7 @@ public abstract class Command {
 		ICVSResource[] resources = null;
 		/*** setup progress monitor ***/
 		monitor = Policy.monitorFor(monitor);
-		monitor.beginTask(Policy.bind("Command.server"), 100);
+		monitor.beginTask(Policy.bind("Command.server"), 100); //$NON-NLS-1$
 		Policy.checkCanceled(monitor);
 		try {
 			/*** prepare for command ***/
@@ -423,7 +423,7 @@ public abstract class Command {
 		// give a false sense of speed) and smaller projects (it actually does
 		// move some rather than remaining still and then jumping to 100).
 		final int TOTAL_WORK = 300;
-		monitor.beginTask(Policy.bind("Command.receivingResponses"), TOTAL_WORK);
+		monitor.beginTask(Policy.bind("Command.receivingResponses"), TOTAL_WORK); //$NON-NLS-1$
 		int halfWay = TOTAL_WORK / 2;
 		int currentIncrement = 4;
 		int nextProgress = currentIncrement;
@@ -457,23 +457,23 @@ public abstract class Command {
 			if (spacePos != -1) {
 				argument = response.substring(spacePos + 1);
 				response = response.substring(0, spacePos);
-			} else argument = "";
+			} else argument = "";  //$NON-NLS-1$
 
 			// handle completion responses
-			if (response.equals("ok")) {
+			if (response.equals("ok")) {  //$NON-NLS-1$
 				break;
-			} else if (response.equals("error")) {
+			} else if (response.equals("error")) {  //$NON-NLS-1$
 				if (argument.length() == 0)
-					argument = Policy.bind("Command.serverError", Policy.bind("Command." + getCommandId()));
+					argument = Policy.bind("Command.serverError", Policy.bind("Command." + getCommandId()));  //$NON-NLS-1$  //$NON-NLS-2$
 				return new MultiStatus(CVSProviderPlugin.ID, CVSStatus.SERVER_ERROR, 
 					(IStatus[]) accumulatedStatus.toArray(new IStatus[accumulatedStatus.size()]),
 					argument, null);
 			// handle message responses
-			} else if (response.equals("M")) {
+			} else if (response.equals("M")) {  //$NON-NLS-1$
 				IStatus status = listener.messageLine(argument, session.getLocalRoot(), monitor);
 				if (status != ICommandOutputListener.OK) accumulatedStatus.add(status);
 				if (consoleListener != null && session.isOutputToConsole()) consoleListener.messageLine(argument, null, null);
-			} else if (response.equals("E")) {
+			} else if (response.equals("E")) { //$NON-NLS-1$
 				IStatus status = listener.errorLine(argument, session.getLocalRoot(), monitor);
 				if (status != ICommandOutputListener.OK) accumulatedStatus.add(status);
 				if (consoleListener != null && session.isOutputToConsole()) consoleListener.errorLine(argument, null, null);
@@ -485,7 +485,7 @@ public abstract class Command {
 				} else {
 					throw new CVSException(new org.eclipse.core.runtime.Status(IStatus.ERROR,
 						CVSProviderPlugin.ID, CVSException.IO_FAILED,
-						Policy.bind("Command.unsupportedResponse", response), null));
+						Policy.bind("Command.unsupportedResponse", response), null)); //$NON-NLS-1$
 				}
 			}
 		}
@@ -494,7 +494,7 @@ public abstract class Command {
 		} else {
 			return new MultiStatus(CVSProviderPlugin.ID, CVSStatus.INFO,
 				(IStatus[]) accumulatedStatus.toArray(new IStatus[accumulatedStatus.size()]),
-				Policy.bind("Command.warnings", Policy.bind("Command." + getCommandId())), null);
+				Policy.bind("Command.warnings", Policy.bind("Command." + getCommandId())), null);  //$NON-NLS-1$  //$NON-NLS-2$
 		}
 	}
 	
@@ -503,7 +503,7 @@ public abstract class Command {
 	 * @return a space-delimited list of all valid response strings
 	 */
 	static String makeResponseList() {
-		StringBuffer result = new StringBuffer("ok error M E");		
+		StringBuffer result = new StringBuffer("ok error M E");  //$NON-NLS-1$
 		Iterator elements = responseHandlers.keySet().iterator();
 		while (elements.hasNext()) {
 			result.append(' ');
@@ -579,7 +579,7 @@ public abstract class Command {
 	 * Valid for: add commit import
 	 */
 	public static LocalOption makeMessageOption(String message) {
-		return new LocalOption("-m", message);
+		return new LocalOption("-m", message);  //$NON-NLS-1$
 	}
 	
 	/**
@@ -591,9 +591,9 @@ public abstract class Command {
 		switch (type) {
 			case CVSTag.BRANCH:
 			case CVSTag.VERSION:
-				return new LocalOption("-r", tag.getName());
+				return new LocalOption("-r", tag.getName()); //$NON-NLS-1$
 			case CVSTag.DATE:
-				return new LocalOption("-D", tag.getName());
+				return new LocalOption("-D", tag.getName()); //$NON-NLS-1$
 			default:
 				// tag must not be HEAD
 				throw new IllegalArgumentException("Sticky tag not " +

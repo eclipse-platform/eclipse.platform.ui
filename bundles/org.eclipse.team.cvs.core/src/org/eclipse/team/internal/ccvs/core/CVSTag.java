@@ -25,7 +25,7 @@ public class CVSTag {
 	protected int type;
 	
 	public CVSTag() {
-		this("HEAD", HEAD);
+		this("HEAD", HEAD); //$NON-NLS-1$
 	}
 
 	public CVSTag(String name, int type) {
@@ -61,17 +61,17 @@ public class CVSTag {
 	
 	public static IStatus validateTagName(String tagName) {
 		if (tagName == null)
-			return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTag.nullName"));
-		if (tagName.equals(""))
-			return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTag.emptyName"));
+			return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTag.nullName")); //$NON-NLS-1$
+		if (tagName.equals(""))  //$NON-NLS-1$
+			return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTag.emptyName")); //$NON-NLS-1$
 		if (!Character. isLetter(tagName.charAt(0)))
-			return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTag.beginName"));
+			return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTag.beginName")); //$NON-NLS-1$
 		
 		for (int i = 0; i < tagName.length(); i++) {
 			char c = tagName.charAt(i);
 			if ( Character.isSpaceChar(c) || c == '$' || c == ',' || c == '.' || c == ':' || c == ';' || c == '@' || c == '|')
-				return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTag.badCharName"));
+				return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTag.badCharName")); //$NON-NLS-1$
 		}
-		return new CVSStatus(CVSStatus.OK, "ok");
+		return new CVSStatus(CVSStatus.OK, Policy.bind("ok")); //$NON-NLS-1$
 	}
 }

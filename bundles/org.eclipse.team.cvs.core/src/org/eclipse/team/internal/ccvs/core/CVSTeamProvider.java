@@ -96,14 +96,8 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	// Instance variables
 	private ICVSFolder managedProject;
 	private IProject project;
-	private String comment = "";
-	
-	private static PrintStream printStream;
-	
-	private static String[] DEFAULT_GLOBAL_OPTIONS = new String[] {"-q"};
-	
-	private static final CoreException CORE_EXCEPTION = new CoreException(new Status(IStatus.OK, CVSProviderPlugin.ID, TeamException.UNABLE, "", null));
-	
+	private String comment = "";  //$NON-NLS-1$
+		
 	/**
 	 * No-arg Constructor for IProjectNature conformance
 	 */
@@ -149,7 +143,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	public ITeamProvider getProvider() throws TeamException {
 		if (managedProject == null) {
 			// An error must have occured when we were configured
-			throw new TeamException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.initializationFailed", new Object[]{project.getName()}), null));
+			throw new TeamException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.initializationFailed", new Object[]{project.getName()}), null)); //$NON-NLS-1$
 		}
 		return this;
 	}
@@ -223,7 +217,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 								String name = resource.getFullPath().removeFirstSegments(1).toString();
 								if (resource.getType() == IResource.FILE) {
 									String extension = resource.getFileExtension();
-									if ((extension != null) && ("true".equals(registry.getValue(extension, "isAscii"))))
+									if ((extension != null) && ("true".equals(registry.getValue(extension, "isAscii"))))   //$NON-NLS-1$ //$NON-NLS-2$
 										textfiles.add(name);
 									else
 										binaryfiles.add(name);
@@ -240,7 +234,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 					}
 				}, depth, false);
 			} catch (CoreException e) {
-				throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.visitError", new Object[] {resources[i].getFullPath()}), e));
+				throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.visitError", new Object[] {resources[i].getFullPath()}), e)); //$NON-NLS-1$
 			}
 		}
 		// If an exception occured during the visit, throw it here
@@ -344,7 +338,10 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 */
 	 private void checkIsChild(IResource resource) throws CVSException {
 	 	if (!isChildResource(resource))
-	 		throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.invalidResource", new Object[] {resource.getFullPath().toString(), project.getName()}), null));
+	 		throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, 
+	 			Policy.bind("CVSTeamProvider.invalidResource", //$NON-NLS-1$
+	 				new Object[] {resource.getFullPath().toString(), project.getName()}), 
+	 			null));
 	 }
 	
 	/**
@@ -640,10 +637,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		checkIsChild(resource);
 		// Get the repository location for the receiver
 		CVSRepositoryLocation location = (CVSRepositoryLocation)getRemoteRoot();
-		// Make a copy which is mutable
-		location = CVSRepositoryLocation.fromString(location.getLocation());
-		location.setUserMuteable(true);
-		return location;
+		return location.getUserInfo(true);
 	}
 	
 	/*
@@ -685,7 +679,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 				cvsResource = new LocalFile(resource.getLocation().toFile());
 				ResourceSyncInfo info = cvsResource.getSyncInfo();
 				if(info!=null) {
-					return !info.getRevision().equals("0");
+					return !info.getRevision().equals(ResourceSyncInfo.ADDED_REVISION);
 				} else {
 					return false;
 				}
@@ -781,45 +775,72 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * no corresponding registered connection method), false is returned.
 	 */
 	public boolean setConnectionInfo(IResource resource, String methodName, IUserInfo userInfo, IProgressMonitor monitor) throws TeamException {
-		
 		checkIsChild(resource);
-		if (!CVSRepositoryLocation.validateConnectionMethod(methodName))
-			return false;
-		CVSRepositoryLocation location;
 		try {
-			location = ((CVSRepositoryLocation)userInfo);
-		} catch (ClassCastException e) {
-			throw new TeamException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.invalidUserInfo"), null));
+			monitor.beginTask("Setting Connection Info", 100);
+			
+			if (!CVSRepositoryLocation.validateConnectionMethod(methodName))
+				return false;
+			
+			// Get the original location
+			ICVSRepositoryLocation location = getRemoteRoot();
+			
+			// Make a copy to work on
+			CVSRepositoryLocation newLocation = CVSRepositoryLocation.fromString(location.getLocation());
+			newLocation.setMethod(methodName);
+			newLocation.setUserInfo(userInfo);
+	
+			// Validate that a connection can be made with the new location
+			try {
+				newLocation.validateConnection(Policy.subMonitorFor(monitor, 20));
+			} catch (CVSException e) {
+				// XXX We should really only do this if it didn't exist previously
+				CVSProviderPlugin.getProvider().disposeRepository(newLocation);
+				throw e;
+			}
+			
+			// Add the location to the provider
+			CVSProvider.getInstance().addRepository(newLocation);
+			
+			// Set the project to use the new Locations
+			setRemoteRoot(newLocation, Policy.infiniteSubMonitorFor(monitor, 80));
+			return true;
+		} finally {
+			monitor.done();
 		}
-		location.setUserMuteable(false);
-		location.setMethod(methodName);
-		location.updateCache();
-		setRemoteRoot(location, monitor);
-		return true;
 	}
 	
-	private void setRemoteRoot(ICVSRepositoryLocation location, IProgressMonitor monitor) throws TeamException {
+	/*
+	 * This method expects to be passed an InfiniteSubProgressMonitor
+	 */
+	private void setRemoteRoot(ICVSRepositoryLocation location, final IProgressMonitor monitor) throws TeamException {
 
-		// XXX We need to do the proper progress monitoring
-		
 		// Check if there is a differnece between the new and old roots	
 		final String root = location.getLocation();
 		if (root.equals(getRemoteRoot().getLocation())) 
 			return;
-		
-		// Visit all the children folders in order to set the root in the folder sync info
-		managedProject.accept(new ICVSResourceVisitor() {
-			public void visitFile(ICVSFile file) throws CVSException {};
-			public void visitFolder(ICVSFolder folder) throws CVSException {
-				FolderSyncInfo info = folder.getFolderSyncInfo();
-				if (info != null) {
-					folder.setFolderSyncInfo(new FolderSyncInfo(info.getRepository(), root, info.getTag(), info.getIsStatic()));
-					folder.acceptChildren(this);
-				}
-			};
-		});
-		CVSProviderPlugin.getSynchronizer().save(project.getLocation().toFile(), new NullProgressMonitor());
-		return;
+				
+		try {
+			// 256 ticks gives us a maximum of 1024 which seems reasonable for folders is a project
+			monitor.beginTask("Updating folder sync info", 256);
+			
+			// Visit all the children folders in order to set the root in the folder sync info
+			managedProject.accept(new ICVSResourceVisitor() {
+				public void visitFile(ICVSFile file) throws CVSException {};
+				public void visitFolder(ICVSFolder folder) throws CVSException {
+					monitor.worked(1);
+					FolderSyncInfo info = folder.getFolderSyncInfo();
+					if (info != null) {
+						monitor.subTask("Updating " + info.getRepository());
+						folder.setFolderSyncInfo(new FolderSyncInfo(info.getRepository(), root, info.getTag(), info.getIsStatic()));
+						folder.acceptChildren(this);
+					}
+				};
+			});
+			CVSProviderPlugin.getSynchronizer().save(project.getLocation().toFile(), monitor);
+		} finally {
+			monitor.done();
+		}
 	}
 	
 	/** 
@@ -954,7 +975,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	public static String getMessageFor(Exception e) {
 		String message = Policy.bind(e.getClass().getName(), new Object[] {e.getMessage()});
 		if (message.equals(e.getClass().getName()))
-			message = Policy.bind("CVSTeamProvider.exception", new Object[] {e.toString()}); 
+			message = Policy.bind("CVSTeamProvider.exception", new Object[] {e.toString()}); //$NON-NLS-1$
 		return message;
 	}
 	
@@ -962,14 +983,14 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * @see ITeamProvider#validateEdit(IFile[], Object)
 	 */
 	public IStatus validateEdit(IFile[] files, Object context) {
-		return new CVSStatus(CVSStatus.OK, "OK");
+		return new CVSStatus(CVSStatus.OK, Policy.bind("ok")); //$NON-NLS-1$
 	}
 
 	/*
 	 * @see ITeamProvider#validateSave(IFile)
 	 */
 	public IStatus validateSave(IFile file) {
-		return new CVSStatus(CVSStatus.OK, "OK");
+		return new CVSStatus(CVSStatus.OK, Policy.bind("ok")); //$NON-NLS-1$
 	}
 	
 	/*

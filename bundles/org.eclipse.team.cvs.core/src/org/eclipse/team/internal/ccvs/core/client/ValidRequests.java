@@ -14,7 +14,7 @@ import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 class ValidRequests extends Command {
 	protected ValidRequests() { }
 	protected String getCommandId() {
-		return "valid-requests";
+		return "valid-requests"; //$NON-NLS-1$
 	}
 	
 	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,

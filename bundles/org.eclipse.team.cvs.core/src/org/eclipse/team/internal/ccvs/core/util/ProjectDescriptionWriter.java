@@ -24,7 +24,7 @@ public class ProjectDescriptionWriter {
 			if ((c >= ' ' && c <= 0x7E) || c == '\n' || c == '\r' || c == '\t') {
 				buffer.append(c);
 			} else {
-				buffer.append("&#");
+				buffer.append("&#"); //$NON-NLS-1$
 				buffer.append(Integer.toString(c));
 				buffer.append(';');
 			}
@@ -41,15 +41,15 @@ public class ProjectDescriptionWriter {
 		// These five are defined by default for all XML documents.
 		switch (c) {
 			case '<' :
-				return "lt";
+				return "lt"; //$NON-NLS-1$
 			case '>' :
-				return "gt";
+				return "gt"; //$NON-NLS-1$
 			case '"' :
-				return "quot";
+				return "quot"; //$NON-NLS-1$
 			case '\'' :
-				return "apos";
+				return "apos"; //$NON-NLS-1$
 			case '&' :
-				return "amp";
+				return "amp"; //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -57,48 +57,48 @@ public class ProjectDescriptionWriter {
 		IProjectDescription desc,
 		OutputStream os)
 		throws IOException {
-		PrintWriter writer = new PrintWriter(new OutputStreamWriter(os, "UTF8"));
-		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		writer.println("<project-description>");
+		PrintWriter writer = new PrintWriter(new OutputStreamWriter(os, "UTF8")); //$NON-NLS-1$
+		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
+		writer.println("<project-description>"); //$NON-NLS-1$
 
 		String comment = desc.getComment();
 		if (comment != null) {
-			writer.print("\t<comment>");
+			writer.print("\t<comment>"); //$NON-NLS-1$
 			writer.print(getEscaped(desc.getComment()));
-			writer.println("</comment>");
+			writer.println("</comment>"); //$NON-NLS-1$
 		}
 
 		String[] natures = desc.getNatureIds();
 		for (int i = 0; i < natures.length; i++) {
 			if ( ! natures[i].equals(CVSProviderPlugin.NATURE_ID))
-				writer.println("\t<nature id=\"" + getEscaped(natures[i]) + "\"/>");
+				writer.println("\t<nature id=\"" + getEscaped(natures[i]) + "\"/>"); //$NON-NLS-1$  //$NON-NLS-2$
 		}
 
 		IProject[] references = desc.getReferencedProjects();
 		for (int i = 0; i < references.length; i++) {
 			writer.println(
-				"\t<reference project-name=\"" + getEscaped(references[i].getName()) + "\"/>");
+				"\t<reference project-name=\"" + getEscaped(references[i].getName()) + "\"/>"); //$NON-NLS-1$  //$NON-NLS-2$
 		}
 
 		ICommand[] commands = desc.getBuildSpec();
 		for (int i = 0; i < commands.length; i++) {
 			writer.println(
-				"\t<builder name=\"" + getEscaped(commands[i].getBuilderName()) + "\">");
+				"\t<builder name=\"" + getEscaped(commands[i].getBuilderName()) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 			Map args = commands[i].getArguments();
 			for (Iterator it = args.keySet().iterator(); it.hasNext();) {
 				String argName = (String) it.next();
 				String argValue = (String) args.get(argName);
 				writer.println(
-					"\t\t<arg name=\""
+					"\t\t<arg name=\"" //$NON-NLS-1$
 						+ getEscaped(argName)
-						+ "\" value=\""
+						+ "\" value=\"" //$NON-NLS-1$
 						+ getEscaped(argValue)
-						+ "\"/>");
+						+ "\"/>"); //$NON-NLS-1$
 			}
-			writer.println("\t</builder>");
+			writer.println("\t</builder>"); //$NON-NLS-1$
 		}
 
-		writer.println("</project-description>");
+		writer.println("</project-description>"); //$NON-NLS-1$
 		writer.flush();
 	}
 }

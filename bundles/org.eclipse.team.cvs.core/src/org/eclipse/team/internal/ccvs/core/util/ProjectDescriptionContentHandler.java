@@ -59,23 +59,23 @@ public class ProjectDescriptionContentHandler implements ContentHandler {
 	 */
 	public void endElement(String namespaceURI, String localName, String qName)
 		throws SAXException {
-		if (localName.equals("project-description") && inProjectDescription) {
+		if (localName.equals("project-description") && inProjectDescription) { //$NON-NLS-1$
 			inProjectDescription = false;
 			desc.setBuildSpec((ICommand[]) builders.toArray(new ICommand[builders.size()]));
 			desc.setNatureIds((String[]) natures.toArray(new String[natures.size()]));
 			desc.setReferencedProjects(
 				(IProject[]) references.toArray(new IProject[references.size()]));
-		} else if (localName.equals("comment") && inProjectDescription && inComment) {
+		} else if (localName.equals("comment") && inProjectDescription && inComment) { //$NON-NLS-1$
 			inComment = false;
 			desc.setComment(buffer.toString());
-		} else if (localName.equals("builder") && inProjectDescription && inBuilder) {
+		} else if (localName.equals("builder") && inProjectDescription && inBuilder) { //$NON-NLS-1$
 			inBuilder = false;
 			currentBuilder.setArguments(args);
 			if (currentBuilder.getBuilderName() != null)
 				builders.add(currentBuilder);
 		}
 		if (!localName.equals(tagStack.peek())) {
-			throw new RuntimeException(Policy.bind("ProjectDescriptionContentHandler.xml"));
+			throw new RuntimeException(Policy.bind("ProjectDescriptionContentHandler.xml")); //$NON-NLS-1$
 		}
 		tagStack.pop();
 	}
@@ -120,30 +120,30 @@ public class ProjectDescriptionContentHandler implements ContentHandler {
 		String qName,
 		Attributes atts)
 		throws SAXException {
-		if (localName.equals("project-description") && !inProjectDescription) {
+		if (localName.equals("project-description") && !inProjectDescription) { //$NON-NLS-1$
 			inProjectDescription = true;
-		} else if (localName.equals("comment") && inProjectDescription && !inComment) {
+		} else if (localName.equals("comment") && inProjectDescription && !inComment) { //$NON-NLS-1$
 			inComment = true;
-		} else if (localName.equals("builder") && inProjectDescription && !inBuilder) {
-			String builderName = atts.getValue("name");
+		} else if (localName.equals("builder") && inProjectDescription && !inBuilder) { //$NON-NLS-1$
+			String builderName = atts.getValue("name"); //$NON-NLS-1$
 			if (builderName != null) {
 				inBuilder = true;
 				currentBuilder = desc.newCommand();
 				currentBuilder.setBuilderName(builderName);
 				args = new HashMap(11);
 			}
-		} else if (localName.equals("arg") && inProjectDescription && inBuilder) {
-			String argName = atts.getValue("name");
-			String argValue = atts.getValue("value");
+		} else if (localName.equals("arg") && inProjectDescription && inBuilder) { //$NON-NLS-1$
+			String argName = atts.getValue("name"); //$NON-NLS-1$
+			String argValue = atts.getValue("value"); //$NON-NLS-1$
 			if (argName != null && argValue != null)
 				args.put(argName, argValue);
-		} else if (localName.equals("nature") && inProjectDescription && !inBuilder) {
-			String natureId = atts.getValue("id");
+		} else if (localName.equals("nature") && inProjectDescription && !inBuilder) { //$NON-NLS-1$
+			String natureId = atts.getValue("id"); //$NON-NLS-1$
 			if (natureId != null)
 				natures.add(natureId);
 		} else if (
-			localName.equals("reference") && inProjectDescription && !inBuilder) {
-			String projectName = atts.getValue("project-name");
+			localName.equals("reference") && inProjectDescription && !inBuilder) { //$NON-NLS-1$
+			String projectName = atts.getValue("project-name"); //$NON-NLS-1$
 			if (projectName != null)
 				references.add(
 					ResourcesPlugin.getWorkspace().getRoot().getProject(projectName));

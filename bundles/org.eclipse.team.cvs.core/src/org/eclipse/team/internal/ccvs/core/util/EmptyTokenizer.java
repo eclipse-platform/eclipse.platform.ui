@@ -96,7 +96,7 @@ public class EmptyTokenizer {
 		
 		if (giveLast && lastWasDelim && cacheToken == null) {
 			lastWasDelim = false;			
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		
 		token = cachedNextToken();
@@ -107,7 +107,7 @@ public class EmptyTokenizer {
 		}
 		
 		if (lastWasDelim) {
-			return "";
+			return ""; //$NON-NLS-1$
 		} else {
 			lastWasDelim = true;
 			return nextToken();

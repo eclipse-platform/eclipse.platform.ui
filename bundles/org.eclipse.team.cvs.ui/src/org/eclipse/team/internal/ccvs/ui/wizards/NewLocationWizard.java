@@ -61,6 +61,7 @@ public class NewLocationWizard extends Wizard {
 			if (mainPage.getValidate()) {
 				root.validateConnection(new NullProgressMonitor());
 			}
+			provider.addRepository(root);
 		} catch (TeamException e) {
 			IStatus error = e.getStatus();
 			if (root == null) {
@@ -72,14 +73,15 @@ public class NewLocationWizard extends Wizard {
 				boolean keep = MessageDialog.openQuestion(getContainer().getShell(),
 					Policy.bind("NewLocationWizard.validationFailedTitle"),
 					Policy.bind("NewLocationWizard.validationFailedText", new Object[] {e.getStatus().getMessage()}));
-				if (!keep) {
-					// Remove the root
-					try {
+				try {
+					if (keep) {
+						provider.addRepository(root);
+					} else {
 						provider.disposeRepository(root);
-					} catch (TeamException e1) {
-						ErrorDialog.openError(getContainer().getShell(), Policy.bind("exception"), null, e1.getStatus());
-						return false;
 					}
+				} catch (TeamException e1) {
+					ErrorDialog.openError(getContainer().getShell(), Policy.bind("exception"), null, e1.getStatus());
+					return false;
 				}
 				return keep;
 			}

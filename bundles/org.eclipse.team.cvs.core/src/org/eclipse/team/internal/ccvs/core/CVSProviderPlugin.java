@@ -50,9 +50,9 @@ public class CVSProviderPlugin extends Plugin {
 
 	private QuietOption quietness;
 	
-	public static final String ID = "org.eclipse.team.cvs.core";
-	public static final String PT_AUTHENTICATOR = "authenticator";
-	public static final String PT_CONNECTIONMETHODS = "connectionmethods";
+	public static final String ID = "org.eclipse.team.cvs.core"; //$NON-NLS-1$
+	public static final String PT_AUTHENTICATOR = "authenticator"; //$NON-NLS-1$
+	public static final String PT_CONNECTIONMETHODS = "connectionmethods"; //$NON-NLS-1$
 	
 	/**
 	 * The identifier for the CVS nature
@@ -62,7 +62,7 @@ public class CVSProviderPlugin extends Plugin {
 	 *
 	 * @see org.eclipse.core.resources.IProject#hasNature
 	 */
-	public static final String NATURE_ID = ID + ".cvsnature" ;
+	public static final String NATURE_ID = ID + ".cvsnature"; //$NON-NLS-1$
 
 	/**
 	 * Constructor for CVSProviderPlugin.
@@ -150,7 +150,7 @@ public class CVSProviderPlugin extends Plugin {
 	 */
 	public void startup() throws CoreException {
 		super.startup();
-		Policy.localize("org.eclipse.team.internal.ccvs.core.messages");
+		Policy.localize("org.eclipse.team.internal.ccvs.core.messages"); //$NON-NLS-1$
 
 		synchronizer = new FileSystemSynchronizer();
 
@@ -211,7 +211,7 @@ public class CVSProviderPlugin extends Plugin {
 						}
 					}
 				} catch (CVSException ex) {
-					Util.logError(Policy.bind("CVSProviderPlugin.cannotUpdateDescription"), ex);
+					Util.logError(Policy.bind("CVSProviderPlugin.cannotUpdateDescription"), ex);  //$NON-NLS-1$
 				}
 			}
 		};

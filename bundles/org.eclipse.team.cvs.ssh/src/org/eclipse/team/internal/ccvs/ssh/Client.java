@@ -17,6 +17,7 @@ import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException;
 
 public class Client {
@@ -310,7 +311,7 @@ private void cleanup() throws IOException {
  * Connect to the remote server. If an exception is thrown, the caller
  * can asssume that all streams and sockets are closed.
  */
-public void connect() throws IOException, CVSAuthenticationException {
+public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticationException {
 	// If we're already connected, just ignore the invokation
 	if (connected)
 		return;

@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.team.internal.ccvs.core.util.InfiniteSubProgressMonitor;
 
 public class Policy {
 	protected static ResourceBundle bundle = null;
@@ -50,7 +51,7 @@ public class Policy {
 		} catch (MissingResourceException e) {
 			return key;
 		} catch (NullPointerException e) {
-			return "!" + key + "!";
+			return "!" + key + "!"; //$NON-NLS-1$  //$NON-NLS-2$
 		}
 	}
 	
@@ -64,7 +65,7 @@ public class Policy {
 		} catch (MissingResourceException e) {
 			return key;
 		} catch (NullPointerException e) {
-			return "!" + key + "!";
+			return "!" + key + "!";  //$NON-NLS-1$  //$NON-NLS-2$
 		}
 	}
 	
@@ -94,5 +95,13 @@ public class Policy {
 		if (monitor instanceof NullProgressMonitor)
 			return monitor;
 		return new SubProgressMonitor(monitor, ticks, style);
+	}
+	
+	public static IProgressMonitor infiniteSubMonitorFor(IProgressMonitor monitor, int ticks) {
+		if (monitor == null)
+			return new NullProgressMonitor();
+		if (monitor instanceof NullProgressMonitor)
+			return monitor;
+		return new InfiniteSubProgressMonitor(monitor, ticks);
 	}
 }

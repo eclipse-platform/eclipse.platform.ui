@@ -32,7 +32,7 @@ public final class Assert {
 	 * @exception IllegalArgumentException if the legality test failed
 	 */
 	public static boolean isLegal(boolean expression) {
-		return isLegal(expression, "");
+		return isLegal(expression, ""); //$NON-NLS-1$
 	}
 	/** Asserts that an argument is legal. If the given boolean is
 	 * not <code>true</code>, an <code>IllegalArgumentException</code>
@@ -57,7 +57,7 @@ public final class Assert {
 	 * @exception IllegalArgumentException if the object is <code>null</code>
 	 */
 	public static void isNotNull(Object object) {
-		isNotNull(object, "");
+		isNotNull(object, ""); //$NON-NLS-1$
 	}
 	/** Asserts that the given object is not <code>null</code>. If this
 	 * is not the case, some kind of unchecked exception is thrown.
@@ -69,7 +69,7 @@ public final class Assert {
 	 */
 	public static void isNotNull(Object object, String message) {
 		if (object == null)
-			throw new AssertionFailedException("null argument:" + message);
+			throw new AssertionFailedException("null argument:" + message); //$NON-NLS-1$
 	}
 	/** Asserts that the given boolean is <code>true</code>. If this
 	 * is not the case, some kind of unchecked exception is thrown.
@@ -79,7 +79,7 @@ public final class Assert {
 	 *    if the check fails)
 	 */
 	public static boolean isTrue(boolean expression) {
-		return isTrue(expression, "");
+		return isTrue(expression, ""); //$NON-NLS-1$
 	}
 	/** Asserts that the given boolean is <code>true</code>. If this
 	 * is not the case, some kind of unchecked exception is thrown.
@@ -92,7 +92,7 @@ public final class Assert {
 	 */
 	public static boolean isTrue(boolean expression, String message) {
 		if (!expression)
-			throw new AssertionFailedException("assertion failed: " + message);
+			throw new AssertionFailedException("assertion failed: " + message); //$NON-NLS-1$
 		return expression;
 	}
 }

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IServerConnection;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -121,11 +122,11 @@ public class Connection {
 	/**
 	 * Opens the connection.
 	 */	
-	public void open() throws CVSException {
+	public void open(IProgressMonitor monitor) throws CVSException {
 		if (isEstablished())
 			return;
 		try {
-			serverConnection.open();
+			serverConnection.open(monitor);
 		} catch (IOException e) {
 			throw new CVSCommunicationException(e);
 		}

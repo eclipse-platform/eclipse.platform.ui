@@ -17,7 +17,7 @@ public class Commit extends Command {
 
 	protected Commit() { }
 	protected String getCommandId() {
-		return "ci";
+		return "ci"; //$NON-NLS-1$
 	}
 
 	/**

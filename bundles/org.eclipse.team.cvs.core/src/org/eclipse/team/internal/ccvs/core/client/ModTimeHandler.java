@@ -30,7 +30,7 @@ import org.eclipse.team.internal.ccvs.core.util.ServerDateFormat;
 class ModTimeHandler extends ResponseHandler {
 	private static final ServerDateFormat dateFormatter = new ServerDateFormat();
 	public String getResponseID() {
-		return "Mod-time";
+		return "Mod-time"; //$NON-NLS-1$
 	}
 
 	public void handle(Session session, String timeStamp,
@@ -38,7 +38,7 @@ class ModTimeHandler extends ResponseHandler {
 		try {
 			session.setModTime(dateFormatter.toDate(timeStamp));
 		} catch (ParseException e) {
-			throw new CVSException(Policy.bind("ModTimeHandler.invalidFormat", timeStamp), e);
+			throw new CVSException(Policy.bind("ModTimeHandler.invalidFormat", timeStamp), e); //$NON-NLS-1$
 		}
 	}
 }

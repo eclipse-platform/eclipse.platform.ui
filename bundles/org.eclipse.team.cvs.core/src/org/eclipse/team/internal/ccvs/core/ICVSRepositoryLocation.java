@@ -78,14 +78,6 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	public int getTimeout();
 	
 	/**
-	 * Return the information about the user as an IUserInfo.
-	 * 
-	 * This allows the querying of the user name and the setting
-	 * of the username and password.
-	 */
-	public IUserInfo getUserInfo();
-	
-	/**
 	 * Return the username 
 	 */
 	public String getUsername();

@@ -17,11 +17,11 @@ import java.util.TimeZone;
  */
 public class EntryFileDateFormat extends SimpleDateFormat {
 	
-	public static final String FORMAT = "E MMM dd HH:mm:ss yyyy";
+	public static final String FORMAT = "E MMM dd HH:mm:ss yyyy"; //$NON-NLS-1$
 	
 	public EntryFileDateFormat() {
 		super(FORMAT, Locale.US);
-		setTimeZone(TimeZone.getTimeZone("GMT"));
+		setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
 	}
 	
 	/**

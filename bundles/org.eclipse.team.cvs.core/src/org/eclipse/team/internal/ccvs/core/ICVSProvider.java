@@ -70,9 +70,9 @@ public interface ICVSProvider {
 	 *   port The port to connect to (optional)
 	 *   root The server directory where the repository is located
 	 * 
-	 * The created instance will be cached with the provider as a result of the
-	 * invokation of this method. When the client is done with the instance, disposeRepository
-	 * should be called.
+	 * The created instance is not known by the provider and it's user information is not cached.
+	 * The purpose of the created location is to allow connection validation before adding the
+	 * location to the provider.
 	 * 
 	 * This method will throw a CVSException if the location for the given configuration already
 	 * exists.
@@ -80,11 +80,23 @@ public interface ICVSProvider {
 	public ICVSRepositoryLocation createRepository(Properties configuration) throws CVSException;
 	
 	/**
+	 * Add the repository to the receiver's list of known repositories. Doing this will enable
+	 * password caching accross platform invokations.
+	 */
+	public void addRepository(ICVSRepositoryLocation repository) throws CVSException;
+	
+	/**
 	 * Dispose of the repository location
 	 * 
 	 * Removes any cached information about the repository such as a remembered password.
 	 */
 	public void disposeRepository(ICVSRepositoryLocation repository) throws CVSException;
+	
+	/**
+	 * Answer whether the provided repository location is known by the provider or not.
+	 * The location string corresponds to the Strin returned by ICVSRepositoryLocation#getLocation()
+	 */
+	public boolean isKnownRepository(String location);
 	
 	/** 
 	 * Return a list of the know repository locations

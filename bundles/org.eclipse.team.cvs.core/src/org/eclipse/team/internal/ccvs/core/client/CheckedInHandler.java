@@ -27,7 +27,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  */
 class CheckedInHandler extends ResponseHandler {
 	public String getResponseID() {
-		return "Checked-in";
+		return "Checked-in"; //$NON-NLS-1$
 	}
 
 	public void handle(Session session, String localDir,
@@ -40,7 +40,7 @@ class CheckedInHandler extends ResponseHandler {
 		session.setModTime(null);
 		
 		// Get the local file		
-		String fileName = repositoryFile.substring(repositoryFile.lastIndexOf("/") + 1);
+		String fileName = repositoryFile.substring(repositoryFile.lastIndexOf("/") + 1); //$NON-NLS-1$
 		ICVSFolder mParent = session.getLocalRoot().getFolder(localDir);
 		ICVSFile mFile = mParent.getFile(fileName);
 		

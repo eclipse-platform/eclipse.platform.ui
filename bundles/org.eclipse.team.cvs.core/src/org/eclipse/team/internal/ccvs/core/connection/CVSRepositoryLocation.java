@@ -5,8 +5,11 @@ package org.eclipse.team.internal.ccvs.core.connection;
  * All Rights Reserved.
  */
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.CoreException;
@@ -75,6 +78,21 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public static final char PORT_SEPARATOR = '#';
 	public static final boolean STANDALONE_MODE = (System.getProperty("eclipse.cvs.standalone")==null)?false:(new Boolean(System.getProperty("eclipse.cvs.standalone")).booleanValue());
 	
+	// fields needed for caching the password
+	public static final String INFO_PASSWORD = "org.eclipse.team.cvs.core.password";
+	public static final String INFO_USERNAME = "org.eclipse.team.cvs.core.username";
+	public static final String AUTH_SCHEME = "";
+	public static final URL FAKE_URL;
+	
+	static {
+		URL temp = null;
+		try {
+			temp = new URL("http://org.eclipse.team.cvs.core");
+		} catch (MalformedURLException e) {
+		}
+		FAKE_URL = temp;
+	} 
+	
 	/*
 	 * Create a CVSRepositoryLocation from its composite parts.
 	 */
@@ -91,19 +109,6 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		// The password can only be fixed if the username is and a password is provided
 		if (userFixed && passwordFixed && (password != null))
 			this.passwordFixed = true;
-
-		// Retrieve a password if one was previosuly cached or set it to blank
-		if (!passwordFixed && password == null) {
-			IUserAuthenticator authenticator = getAuthenticator();
-			if (authenticator != null) {
-				try {
-					if (!authenticator.retrievePassword(this, this))
-						password = "";
-				} catch (CVSException e) {
-					password = "";
-				}
-			}
-		}
 	}
 	
 	/*
@@ -111,11 +116,12 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * If anything fails, an exception will be thrown and must
 	 * be handled by the caller.
 	 */
-	private Connection createConnection() throws CVSException {
-		// Should the open() of Connection be done in the constructor?
+	private Connection createConnection(String password, IProgressMonitor monitor) throws CVSException {
+		// FIXME Should the open() of Connection be done in the constructor?
 		// The only reason it should is if connections can be reused (they aren't reused now).
+		// FIXME! monitor is unused
 		Connection connection = new Connection(this, method.createConnection(this, password));
-		connection.open();
+		connection.open(monitor);
 		return connection;
 	}
 	
@@ -125,9 +131,19 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * down or a connection is being validated.
 	 */
 	public void dispose() throws CVSException {
-		IUserAuthenticator authenticator = getAuthenticator();
-		if (authenticator != null) {
-			authenticator.dispose(this);
+		flushCache();
+	}
+	
+	/*
+	 * Flush the keyring entry associated with the receiver
+	 */
+	private void flushCache() throws CVSException {
+		try {
+			Platform.flushAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME);
+		} catch (CoreException e) {
+			// We should probably wrap the CoreException here!
+			CVSProviderPlugin.log(e.getStatus());
+			throw new CVSException(IStatus.ERROR, IStatus.ERROR, Policy.bind("CVSRepositoryLocation.errorFlushing", getLocation()), e);
 		}
 	}
 	
@@ -178,7 +194,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	}
 	
 	/*
-	 * @see ICVSRepositoryLocation#getRemoteFolder(IPath, String)
+	 * @see ICVSRepositoryLocation#members(CVSTag, boolean, IProgressMonitor)
 	 */
 	public ICVSRemoteResource[] members(CVSTag tag, boolean modules, IProgressMonitor progress) throws CVSException {		
 		try {
@@ -191,6 +207,13 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		} catch(TeamException e) {
 			throw new CVSException(e.getStatus());
 		}
+	}
+	
+	/*
+	 * @see ICVSRepositoryLocation#getRemoteFolder(String, CVSTag)
+	 */
+	public ICVSRemoteFolder getRemoteFolder(String remotePath, CVSTag tag) {
+		return new RemoteFolder(null, this, new Path(remotePath), tag);		
 	}
 	
 	/*
@@ -207,14 +230,14 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * associated with the CVSPlugin singleton.
 	 */
 	public int getTimeout() {
-		return 60;
+		return CVSProviderPlugin.getPlugin().getTimeout();
 	}
 	
 	/*
 	 * @see ICVSRepositoryLocation#getUserInfo()
 	 */
-	public IUserInfo getUserInfo() {
-		return this;
+	public IUserInfo getUserInfo(boolean makeUsernameMutable) {
+		return new UserInfo(user, password, makeUsernameMutable ? true : isUsernameMutable());
 	}
 	
 	/*
@@ -240,50 +263,47 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * supplied username and password are invalid.
 	 */
 	public Connection openConnection(IProgressMonitor monitor) throws CVSException {
-		// FIXME! monitor is unused
-		String message = null;
 		
-		// If we have a username and password, don't authenticate unless we fail.
-		// We would have a username and password if we previously authenticated
-		// or one was stored using storePassword()
-		if ((user != null) && (password != null))
-			try {
-				return createConnection();
-			} catch (CVSAuthenticationException ex) {
-				if (userFixed && passwordFixed)
-					throw ex;
-				message = ex.getMessage();
+		try {
+			// Allow two ticks in case of a retry
+			monitor.beginTask("Opening connection to " + getLocation(), 2);
+			
+			// If we have a username and password, use them to attempt a connection
+			if ((user != null) && (password != null)) {
+				return createConnection(password, monitor);
 			}
-		
-		// If we failed above or we didn't have a username or password, authenticate
-		IUserAuthenticator authenticator = getAuthenticator();
-		if (authenticator == null) {
-			throw new CVSAuthenticationException(this.getLocation(), Policy.bind("Client.noAuthenticator"));
-		}
-		
-		// Get the repository in order to ensure that the location is known by CVS.
-		// (The get will record the location if it's not already recorded.
-		// XXX Perhaps a custom method that accepts an ICVSRepositoryLocation would be better
-		CVSProvider.getInstance().getRepository(getLocation());
-		
-		// If we tried above and failed, this is a retry.
-		boolean retry = (message != null);
-		while (true) {
-			try {
-				if (!authenticator.authenticateUser(this, this, retry, message))
-					throw new CVSAuthenticationException(new CVSStatus(CVSStatus.ERROR, Policy.bind("error")));
-			} catch (CVSException e) {
-				throw e;
-			} catch (OperationCanceledException e) {
-				throw new CVSAuthenticationException(new CVSStatus(CVSStatus.ERROR, message == null ? Policy.bind("CVSRepositoryLocation.authenticationCanceled") : message));
+			
+			// Get the repository in order to ensure that the location is known by CVS.
+			// (The get will record the location if it's not already recorded.
+			CVSProvider.getInstance().getRepository(getLocation());
+			
+			while (true) {
+				try {
+					// The following will throw an exception if authentication fails
+					String password = retrievePassword();
+					if (user == null) {
+						// This is possible if the cache was cleared somehow for a location with a mutable username
+						throw new CVSAuthenticationException(new CVSStatus(CVSStatus.ERROR, "Username required for connection")); 
+					}
+					if (password == null)
+						password = "";
+					return createConnection(password, monitor);
+				} catch (CVSAuthenticationException ex) {
+					String message = ex.getMessage();
+					try {
+						IUserAuthenticator authenticator = getAuthenticator();
+						if (authenticator == null) {
+							throw new CVSAuthenticationException(getLocation(), Policy.bind("Client.noAuthenticator"));
+						}
+						authenticator.promptForUserInfo(this, this, message);
+						updateCache();
+					} catch (OperationCanceledException e) {
+						throw new CVSAuthenticationException(new CVSStatus(CVSStatus.ERROR, message));
+					}
+				}
 			}
-			try {
-				// The following will throw an exception if authentication fails
-				return createConnection();
-			} catch (CVSAuthenticationException ex) {
-				retry = true;
-				message = ex.getMessage();
-			}
+		} finally {
+			monitor.done();
 		}
 	}
 	
@@ -303,14 +323,36 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	}
 	
 	/*
+	 * Return the cached password from the keyring. 
+	 * Also, set the username of the receiver if the username is mutable
+	 */
+	private String retrievePassword() throws CVSException {
+		Map map = Platform.getAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME);
+		if (map != null) {
+			String username = (String) map.get(INFO_USERNAME);
+			if (username != null && isUsernameMutable())
+				setUsername(username);
+			String password = (String) map.get(INFO_PASSWORD);
+			if (password != null) {
+				return password;
+			}
+		}
+		return null;
+	}
+	/*
 	 * @see IUserInfo#setPassword(String)
 	 */
 	public void setPassword(String password) {
 		if (passwordFixed)
 			throw new UnsupportedOperationException();
 		this.password = password;
+		// XXX The cache needs to get the new password somehow but not before we are validated!
 	}
 	
+	public void setUserInfo(IUserInfo userinfo) {
+		user = userinfo.getUsername();
+		password = ((UserInfo)userinfo).getPassword();
+	}
 	/*
 	 * @see IUserInfo#setUsername(String)
 	 */
@@ -318,25 +360,42 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		if (userFixed)
 			throw new UnsupportedOperationException();
 		this.user = user;
+		// XXX The cache needs to get the new username somehow but not before we are validated!
 	}
 	
 	public void setUserMuteable(boolean muteable) {
 		userFixed = !muteable;
 	}
 	
-	public void storePassword(String password) throws CVSException {
-		IUserAuthenticator authenticator = getAuthenticator();
-		if (authenticator != null) {
-			authenticator.cachePassword(this, this, password);
-		}
-	}
-	
 	public void updateCache() throws CVSException {
 		if (passwordFixed)
 			return;
-		IUserAuthenticator authenticator = getAuthenticator();
-		if (authenticator != null) {
-			authenticator.cachePassword(this, this, password);
+		updateCache(user, password, true);
+		password = null;
+		// Ensure that the receiver is known by the CVS provider
+		CVSProvider.getInstance().getRepository(getLocation());
+	}
+	
+	/*
+	 * Cache the user info in the keyring
+	 */
+	private void updateCache(String username, String password, boolean createIfAbsent) throws CVSException {
+		// put the password into the Platform map
+		Map map = Platform.getAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME);
+		if (map == null) {
+			if ( ! createIfAbsent) return;
+			map = new java.util.HashMap(10);
+		}
+		if (username != null)
+			map.put(INFO_USERNAME, username);
+		if (password != null)
+			map.put(INFO_PASSWORD, password);
+		try {
+			Platform.addAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME, map);
+		} catch (CoreException e) {
+			// We should probably wrap the CoreException here!
+			CVSProviderPlugin.log(e.getStatus());
+			throw new CVSException(IStatus.ERROR, IStatus.ERROR, Policy.bind("CVSRepositoryLocation.errorCaching", getLocation()), e);
 		}
 	}
 	
@@ -649,12 +708,5 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		// Looks ok (we'll actually never get here because above 
 		// fromString(String, boolean) will always throw an exception).
 		return new CVSStatus(IStatus.OK, Policy.bind("ok"));
-	}
-
-	/*
-	 * @see ICVSRepositoryLocation#getRemoteFolder(String, CVSTag)
-	 */
-	public ICVSRemoteFolder getRemoteFolder(String remotePath, CVSTag tag) {
-		return new RemoteFolder(null, this, new Path(remotePath), tag);		
 	}
 }

@@ -41,15 +41,15 @@ public class LogListener implements ICommandOutputListener {
 		// keys = String (tag name), values = String (tag revision number) */
 		switch (state) {
 			case BEGIN:
-				if (line.startsWith("symbolic names:")) {
+				if (line.startsWith("symbolic names:")) { //$NON-NLS-1$
 					state = SYMBOLIC_NAMES;
-				} else if (line.startsWith("revision ")) {
+				} else if (line.startsWith("revision ")) { //$NON-NLS-1$
 					revision = line.substring(9);
 					state = REVISION;
 				}
 				break;
 			case SYMBOLIC_NAMES:
-				if (line.startsWith("keyword substitution:")) {
+				if (line.startsWith("keyword substitution:")) { //$NON-NLS-1$
 					state = BEGIN;
 				} else {
 					int firstColon = line.indexOf(':');
@@ -63,7 +63,7 @@ public class LogListener implements ICommandOutputListener {
 				// date: 2000/06/19 04:56:21;  author: somebody;  state: Exp;  lines: +114 -45
 				// get the creation date
 				int endOfDateIndex = line.indexOf(';', 6);
-				creationDate = line.substring(6, endOfDateIndex) + " GMT";
+				creationDate = line.substring(6, endOfDateIndex) + " GMT"; //$NON-NLS-1$
 	
 				// get the author name
 				int endOfAuthorIndex = line.indexOf(';', endOfDateIndex + 1);
@@ -76,9 +76,9 @@ public class LogListener implements ICommandOutputListener {
 				break;
 			case COMMENT:
 				// skip next line (info about branches) if it exists, if not then it is a comment line.
-				if (line.startsWith("branches:")) break;
-				if (line.equals("=============================================================================")
-					|| line.equals("----------------------------")) {
+				if (line.startsWith("branches:")) break; //$NON-NLS-1$
+				if (line.equals("=============================================================================") //$NON-NLS-1$
+					|| line.equals("----------------------------")) { //$NON-NLS-1$
 					state = DONE;
 					break;
 				}

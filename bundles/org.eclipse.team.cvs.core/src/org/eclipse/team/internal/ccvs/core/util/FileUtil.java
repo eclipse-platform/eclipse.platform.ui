@@ -1,5 +1,10 @@
 package org.eclipse.team.internal.ccvs.core.util;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2002.
+ * All Rights Reserved.
+ */
+ 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;

@@ -13,11 +13,11 @@ import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 
 public class Tag extends Command {
 	/*** Local options: specific to tag ***/
-	public static final LocalOption CREATE_BRANCH = new LocalOption("-b", null);		
+	public static final LocalOption CREATE_BRANCH = new LocalOption("-b", null);	 //$NON-NLS-1$	
 
 	protected Tag() { }
 	protected String getCommandId() {
-		return "tag";
+		return "tag"; //$NON-NLS-1$
 	}
 
 	protected ICVSResource[] computeWorkResources(Session session, LocalOption[] localOptions,

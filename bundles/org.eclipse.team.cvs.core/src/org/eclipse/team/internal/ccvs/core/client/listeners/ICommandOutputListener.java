@@ -14,7 +14,7 @@ import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 public interface ICommandOutputListener {
 	
 	/*** Status to be returned when no error or warning occured ***/
-	public static final IStatus OK = new CVSStatus(CVSStatus.OK,Policy.bind("ok"));
+	public static final IStatus OK = new CVSStatus(CVSStatus.OK,Policy.bind("ok")); //$NON-NLS-1$
 	
 	/**
 	 * Invoked when a message line is received from the server.

@@ -38,9 +38,9 @@ class StickyHandler extends ResponseHandler {
 
 	public String getResponseID() {
 		if (setSticky) {
-			return "Set-sticky";
+			return "Set-sticky"; //$NON-NLS-1$
 		} else {
-			return "Clear-sticky";
+			return "Clear-sticky"; //$NON-NLS-1$
 		}
 	}
 
@@ -55,7 +55,7 @@ class StickyHandler extends ResponseHandler {
 		}
 
 		// create the directory then set or clear the sticky tag
-		Assert.isTrue(repositoryDir.endsWith("/"));
+		Assert.isTrue(repositoryDir.endsWith("/")); //$NON-NLS-1$
 		repositoryDir = repositoryDir.substring(0, repositoryDir.length() - 1);		
 		ICVSFolder folder = createFolder(session, localDir, repositoryDir);
 		FolderSyncInfo syncInfo = folder.getFolderSyncInfo();

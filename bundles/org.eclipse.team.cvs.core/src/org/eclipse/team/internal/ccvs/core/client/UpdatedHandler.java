@@ -41,7 +41,7 @@ import org.eclipse.team.internal.ccvs.core.util.EntryFileDateFormat;
  */
 class UpdatedHandler extends ResponseHandler {
 	private static final EntryFileDateFormat dateFormatter = new EntryFileDateFormat();
-	private static final String READ_ONLY_FLAG = "u=rw";
+	private static final String READ_ONLY_FLAG = "u=rw"; //$NON-NLS-1$
 	private final boolean updateResponse;
 	
 	public UpdatedHandler(boolean updateResponse) {
@@ -50,9 +50,9 @@ class UpdatedHandler extends ResponseHandler {
 	
 	public String getResponseID() {
 		if (updateResponse) {
-			return "Updated";
+			return "Updated"; //$NON-NLS-1$
 		} else {
-			return "Merged";
+			return "Merged"; //$NON-NLS-1$
 		}
 	}
 
@@ -69,12 +69,12 @@ class UpdatedHandler extends ResponseHandler {
 		
 		// Get the local file
 		String fileName =
-			repositoryFile.substring(repositoryFile.lastIndexOf("/") + 1);
+			repositoryFile.substring(repositoryFile.lastIndexOf("/") + 1); //$NON-NLS-1$
 		ICVSFolder mParent = session.getLocalRoot().getFolder(localDir);
 		Assert.isTrue(mParent.exists());
 		ICVSFile mFile = mParent.getFile(fileName);
 		
-		boolean binary = entryLine.indexOf("/" + ResourceSyncInfo.BINARY_TAG) != -1;
+		boolean binary = entryLine.indexOf("/" + ResourceSyncInfo.BINARY_TAG) != -1; //$NON-NLS-1$
 		boolean readOnly = permissionsLine.indexOf(READ_ONLY_FLAG) == -1;
 		
 		session.receiveFile(mFile, binary, monitor);

@@ -110,6 +110,7 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 				ErrorDialog.openError(getContainer().getShell(), Policy.bind("ConfigurationWizardAutoconnectPage.noSyncInfo"), Policy.bind("ConfigurationWizardAutoconnectPage.noCVSDirectory"), null);
 				return;
 			}
+			// XXX This makes the repository known!!!
 			location = CVSProviderPlugin.getProvider().getRepository(info.getRoot());
 		} catch (TeamException e) {
 			Shell shell = new Shell(Display.getDefault());

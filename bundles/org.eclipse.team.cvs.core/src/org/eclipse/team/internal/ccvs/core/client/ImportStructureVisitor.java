@@ -24,8 +24,8 @@ import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
  */
 class ImportStructureVisitor extends AbstractStructureVisitor {
 	
-	private static final String KEYWORD_OPTION = "-k";
-	private static final String QUOTE = "'";
+	private static final String KEYWORD_OPTION = "-k"; //$NON-NLS-1$
+	private static final String QUOTE = "'"; //$NON-NLS-1$
 	
 	private String[] wrappers;
 	
@@ -102,7 +102,7 @@ class ImportStructureVisitor extends AbstractStructureVisitor {
 		if (wrapMatcher != null) {
 			mode = wrapMatcher.getMatch(mFile.getName());
 		} else {
-			mode = "";
+			mode = ""; //$NON-NLS-1$
 		}
 		boolean binary = mode != null && mode.indexOf(ResourceSyncInfo.BINARY_TAG) != -1;
 		session.sendModified(mFile, binary, monitor);
