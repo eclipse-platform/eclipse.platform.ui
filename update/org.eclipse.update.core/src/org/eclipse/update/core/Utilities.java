@@ -171,18 +171,16 @@ public class Utilities {
 			status = new MultiStatus( id, IStatus.ERROR, s, e);
 			((MultiStatus)status).addAll(((CoreException)e).getStatus());		
 		} else {
-			StringBuffer completeString = new StringBuffer(s);
+			StringBuffer completeString = new StringBuffer();
+			if (s!=null)
+				completeString.append(s);
 			if (e!=null){
 				completeString.append("\r\n[");
 				completeString.append(e.toString());
 				completeString.append("]\r\n");
 			}
 			status = new Status(IStatus.ERROR, id, 0, completeString.toString(), e);	
-		}
-
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS)
-			if (e!=null) UpdateManagerPlugin.getPlugin().getLog().log(status);
-		
+		}	
 		return new CoreException(status); //$NON-NLS-1$
 	}
 
@@ -211,7 +209,9 @@ public class Utilities {
 		if (e1 instanceof CoreException){
 			multi.addAll(((CoreException)e1).getStatus());
 		} else {
-			StringBuffer completeString = new StringBuffer(s);
+			StringBuffer completeString = new StringBuffer();
+			if (s!=null)
+				completeString.append(s);
 			if (e1!=null){
 				completeString.append("\r\n[");
 				completeString.append(e1.toString());
@@ -234,22 +234,6 @@ public class Utilities {
 		}
 		return new CoreException(multi); //$NON-NLS-1$
 	}
-
-	/**
-	 * Logs an exception
-	 * 
-	 * @param s log string
-	 * @param e exception to be logged
-	 * @since 2.0
-	 */
-	public static void logException(String s, Throwable e) {
-		//FIXME refactor, find duplicate in code
-		String id =
-			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		IStatus status = new Status(IStatus.ERROR, id, 0, s, e);
-		UpdateManagerPlugin.getPlugin().getLog().log(status);
-	}
-
 
 	/**
 	 * Formats a Date based on the default Locale 

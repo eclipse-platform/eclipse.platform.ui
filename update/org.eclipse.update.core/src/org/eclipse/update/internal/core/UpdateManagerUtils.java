@@ -107,21 +107,14 @@ public class UpdateManagerUtils {
 					}
 
 					if (relativePath == null) {
-						//DEBUG
-						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-							UpdateManagerPlugin.getPlugin().debug("Cannot calculate relative path");
-						}
+						UpdateManagerPlugin.warn("Cannot calculate relative path");
 						return url.toString();
 					} else {
 						String relativeRootString = relativePath.getParentFile().getAbsolutePath();
 						String fullString = urlFile.getAbsolutePath();
 						if (!fullString.startsWith(relativeRootString)) {
-							//DEBUG
-							if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-								UpdateManagerPlugin.getPlugin().debug(
+								UpdateManagerPlugin.warn(
 									"Full path:" + fullString + " does not start with " + relativeRootString);
-							}
-
 							return url.toString();
 						} else {
 							String returnString = fullString.substring(relativeRootString.length() + 1);
@@ -237,17 +230,10 @@ public class UpdateManagerUtils {
 					removeFromFileSystem(new File(file, files[i]));
 		}
 		if (!file.delete()) {
-			String id =
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status =
-				new Status(
-					IStatus.WARNING,
-					id,
-					IStatus.OK,
-					Policy.bind("UpdateManagerUtils.UnableToRemoveFile", file.getAbsolutePath()),
-					new Exception());
+			String msg = 
+					Policy.bind("UpdateManagerUtils.UnableToRemoveFile", file.getAbsolutePath());
 			//$NON-NLS-1$ //$NON-NLS-2$
-			UpdateManagerPlugin.getPlugin().getLog().log(status);
+			UpdateManagerPlugin.log(msg,new Exception());
 		}
 	}
 

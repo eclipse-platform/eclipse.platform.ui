@@ -138,7 +138,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 		if (!configuredFeatureReferences.contains(feature)){
 			//DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION){
-				UpdateManagerPlugin.getPlugin().debug("Configuring "+feature.getURLString());
+				UpdateManagerPlugin.debug("Configuring "+feature.getURLString());
 			}
 			this.add(feature, configuredFeatureReferences);
 		}	
@@ -148,7 +148,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 		// because the user doesn't know...
 		if (unconfiguredFeatureReferences != null) {
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION){
-				UpdateManagerPlugin.getPlugin().debug("Removed from unconfigured: "+feature.getURLString());
+				UpdateManagerPlugin.debug("Removed from unconfigured: "+feature.getURLString());
 			}
 			remove(feature, unconfiguredFeatureReferences);
 		}
@@ -164,8 +164,8 @@ public class ConfigurationPolicyModel extends ModelObject {
 		if (unconfiguredFeatureReferences == null)
 			this.unconfiguredFeatureReferences = new ArrayList();
 		if (!unconfiguredFeatureReferences.contains(feature)){
-						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION){
-				UpdateManagerPlugin.getPlugin().debug("Unconfiguring "+feature.getURLString());
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION){
+				UpdateManagerPlugin.debug("Unconfiguring "+feature.getURLString());
 			}
 			
 			this.add(feature, unconfiguredFeatureReferences);
@@ -175,7 +175,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 		// unless it was parsed right ?
 		if (configuredFeatureReferences != null) {
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION){
-				UpdateManagerPlugin.getPlugin().debug("Removed from configured: "+feature.getURLString());
+				UpdateManagerPlugin.debug("Removed from configured: "+feature.getURLString());
 			}
 			remove(feature, configuredFeatureReferences);
 		}

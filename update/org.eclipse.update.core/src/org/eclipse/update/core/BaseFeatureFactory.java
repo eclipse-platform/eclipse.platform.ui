@@ -72,17 +72,9 @@ public abstract class BaseFeatureFactory
 			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
 			bundle = ResourceBundle.getBundle(Feature.FEATURE_FILE, Locale.getDefault(), l);
 		} catch (MissingResourceException e) {
-			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(
-					e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
-			}
+			UpdateManagerPlugin.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
-			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(
-					e.getLocalizedMessage()); //$NON-NLS-1$
-			}
+			UpdateManagerPlugin.warn(e.getLocalizedMessage()); //$NON-NLS-1$
 		}
 		return bundle;
 	}

@@ -51,7 +51,7 @@ public class InstallChangeParser extends DefaultHandler {
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG
 			&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-			UpdateManagerPlugin.getPlugin().debug(
+			UpdateManagerPlugin.debug(
 				"Start parsing Install Change:");
 			//$NON-NLS-1$
 		}
@@ -80,7 +80,7 @@ public class InstallChangeParser extends DefaultHandler {
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG
 			&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-			UpdateManagerPlugin.getPlugin().debug(
+			UpdateManagerPlugin.debug(
 				"Start Element: uri:"
 					+ uri
 					+ " local Name:"
@@ -154,27 +154,17 @@ public class InstallChangeParser extends DefaultHandler {
 			// DEBUG:		
 			if (UpdateManagerPlugin.DEBUG
 				&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-				UpdateManagerPlugin.getPlugin().debug(
+				UpdateManagerPlugin.debug(
 					"End Processing Feature Reference: url:"
 						+ featureURL.toExternalForm());
 				//$NON-NLS-1$
 			}
 		} else {
-			String id =
-				UpdateManagerPlugin
-					.getPlugin()
-					.getDescriptor()
-					.getUniqueIdentifier();
-			IStatus status =
-				new Status(
-					IStatus.WARNING,
-					id,
-					IStatus.OK,
+			String msg=
 					Policy.bind(
-						"InstallConfigurationParser.FeatureReferenceNoURL"),
-					null);
+						"InstallConfigurationParser.FeatureReferenceNoURL");
 			//$NON-NLS-1$
-			UpdateManagerPlugin.getPlugin().getLog().log(status);
+			UpdateManagerPlugin.log(msg,new Exception());
 		}
 	}
 
@@ -186,7 +176,7 @@ public class InstallChangeParser extends DefaultHandler {
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG
 			&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-			UpdateManagerPlugin.getPlugin().debug(
+			UpdateManagerPlugin.debug(
 				"End Processing New Features:");
 			//$NON-NLS-1$
 		}
@@ -209,7 +199,7 @@ public class InstallChangeParser extends DefaultHandler {
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG
 			&& UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug(
+			UpdateManagerPlugin.debug(
 				"End Processing Change: date:" + date);
 			//$NON-NLS-1$
 		}

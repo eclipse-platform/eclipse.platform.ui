@@ -110,7 +110,7 @@ public class JarContentReference extends ContentReference {
 	protected JarFile asJarFile() throws IOException {
 		if (this.jarFile == null){
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
-				UpdateManagerPlugin.getPlugin().debug("asJarFile :"+asFile());			
+				UpdateManagerPlugin.debug("asJarFile :"+asFile());			
 			this.jarFile = new JarFile(asFile());
 		}
 		return jarFile;

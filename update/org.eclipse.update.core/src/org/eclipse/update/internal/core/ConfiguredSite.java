@@ -204,7 +204,7 @@ public class ConfiguredSite
 
 			if (UpdateManagerPlugin.DEBUG
 				&& UpdateManagerPlugin.DEBUG_SHOW_INSTALL) {
-				UpdateManagerPlugin.getPlugin().debug(
+				UpdateManagerPlugin.debug(
 					"Sucessfully installed: "
 						+ installedFeatureRef.getURL().toExternalForm());
 			}
@@ -212,6 +212,7 @@ public class ConfiguredSite
 			try {
 				installedFeature = installedFeatureRef.getFeature();
 			} catch (CoreException e) {
+				UpdateManagerPlugin.warn(null,e);
 			}
 
 			// everything done ok
@@ -346,11 +347,9 @@ public class ConfiguredSite
 		throws CoreException {
 
 		if (feature == null) {
-			if (UpdateManagerPlugin.DEBUG
-				&& UpdateManagerPlugin.DEBUG_SHOW_WARNINGS)
-				UpdateManagerPlugin.getPlugin().debug(
-					"Attempting to configure a null feature in site:"
-						+ getSite().getURL().toExternalForm());
+			UpdateManagerPlugin.warn(
+				"Attempting to configure a null feature in site:"
+				+ getSite().getURL().toExternalForm());
 			return;
 		}
 
@@ -411,8 +410,10 @@ public class ConfiguredSite
 							.featureUnconfigured(
 					feature);
 			}
+System.err.println("yyy sucess");			
 			return true;
 		} else {
+System.err.println("yyy !sucess");			
 			return false;
 		}
 	}
@@ -506,8 +507,7 @@ public class ConfiguredSite
 				// feature does not exist ?
 				featureToUnconfigure.remove(element);
 				// log no feature to unconfigure
-				if (UpdateManagerPlugin.DEBUG
-					&& UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+
 					String url = element.getURL().toString();
 					ISite site = element.getSite();
 					String siteString =
@@ -515,13 +515,12 @@ public class ConfiguredSite
 							? site.getURL().toExternalForm()
 							: Policy.bind("ConfiguredSite.NoSite");
 					//$NON-NLS-1$
-					UpdateManagerPlugin.getPlugin().debug(
+					UpdateManagerPlugin.warn(
 						Policy.bind(
 							"ConfiguredSite.CannotFindFeatureToUnconfigure",
 							url,
-							siteString));
-					//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				}
+							siteString),e);
+					//$NON-NLS-1$ 
 			}
 		}
 		//} // end USER_EXCLUDE
@@ -544,7 +543,7 @@ public class ConfiguredSite
 					feature = configuredFeatures[i].getFeature();
 				} catch (CoreException e) {
 					// notify we cannot find the feature
-					UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+					UpdateManagerPlugin.warn(null,e);
 					String featureString =
 						configuredFeatures[i].getURL().toExternalForm();
 					if (!handler.reportProblem(Policy.bind("ConfiguredSite.CannotFindFeatureToConfigure", featureString))) { //$NON-NLS-1$
@@ -583,24 +582,14 @@ public class ConfiguredSite
 								sitePluginIdentifiers)) {
 								// the plugin defined by the feature
 								// doesn't seem to exist on the site
-								String id =
-									UpdateManagerPlugin
-										.getPlugin()
-										.getDescriptor()
-										.getUniqueIdentifier();
-								IStatus status =
-									new Status(
-										IStatus.ERROR,
-										id,
-										IStatus.OK,
+								String msg = 
 										"Error verifying existence of plugin:"
 											+ currentFeaturePluginEntry
 												.getVersionedIdentifier()
-												.toString(),
-										null);
+												.toString();
 								//$NON-NLS-1$
-								UpdateManagerPlugin.getPlugin().getLog().log(
-									status);
+								UpdateManagerPlugin.log(msg,new Exception());
+
 								String siteString =
 									(site != null)
 										? site.getURL().toExternalForm()
@@ -776,11 +765,6 @@ public class ConfiguredSite
 						+ missing[k].getVersionedIdentifier().toString();
 				//$NON-NLS-1$
 			}
-			String id =
-				UpdateManagerPlugin
-					.getPlugin()
-					.getDescriptor()
-					.getUniqueIdentifier();
 			String featureString =
 				(feature == null) ? null : feature.getURL().toExternalForm();
 			String siteString =
@@ -792,17 +776,12 @@ public class ConfiguredSite
 					featureString,
 					siteString,
 					listOfMissingPlugins };
-			IStatus status =
-				new Status(
-					IStatus.ERROR,
-					id,
-					IStatus.OK,
+			String msg =
 					Policy.bind(
 						"ConfiguredSite.MissingPluginsBrokenFeature",
-						values),
-					null);
+						values);
 			//$NON-NLS-1$
-			UpdateManagerPlugin.getPlugin().getLog().log(status);
+			UpdateManagerPlugin.log(msg,new Exception());
 			return true;
 		}
 		return false;

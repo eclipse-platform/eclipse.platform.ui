@@ -58,6 +58,8 @@ public class InternalSiteManager {
 	private static ILocalSite internalGetLocalSite(boolean isOptimistic)
 		throws CoreException {
 
+		// if an exception occured while retrieving the Site
+		// rethrow it
 		if (exceptionOccured != null)
 			throw exceptionOccured;
 
@@ -127,7 +129,7 @@ public class InternalSiteManager {
 			//DEBUG:
 			if (UpdateManagerPlugin.DEBUG
 				&& UpdateManagerPlugin.DEBUG_SHOW_TYPE) {
-				UpdateManagerPlugin.getPlugin().debug(
+				UpdateManagerPlugin.debug(
 					"The Site :"
 						+ siteURL.toExternalForm()
 						+ " is a different type than the guessed type based on the protocol. new Type:"
@@ -360,7 +362,7 @@ public class InternalSiteManager {
 					// TRACE
 					if (UpdateManagerPlugin.DEBUG
 						&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-						UpdateManagerPlugin.getPlugin().debug(
+						UpdateManagerPlugin.debug(
 							"Found delta change:" + allFiles[i]);
 					}
 					parser = new InstallChangeParser(allFiles[i]);
@@ -371,12 +373,7 @@ public class InternalSiteManager {
 				} catch (Exception e) {
 					if (UpdateManagerPlugin.DEBUG
 						&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-						CoreException exc =
-							Utilities.newCoreException(
-								"Unable to parse install change:" + allFiles[i],
-								e);
-						UpdateManagerPlugin.getPlugin().getLog().log(
-							exc.getStatus());
+						UpdateManagerPlugin.log("Unable to parse install change:" + allFiles[i],e);
 					}
 				}
 			}

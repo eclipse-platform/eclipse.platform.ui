@@ -179,16 +179,20 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		// get the feature
 		((SiteFile) getSite()).addFeatureReferenceModel(
 			(FeatureReferenceModel) localFeatureReference);
+		IFeature localFeature=null;			
 		try {
-			IFeature feature = localFeatureReference.getFeature();
+			localFeature = localFeatureReference.getFeature();
 		} catch (CoreException e) {
+			UpdateManagerPlugin.warn(null,e);
 			return;
 		}
+
+		if (localFeature==null) return;
 
 		// add the installed plugins directories as archives entry
 		SiteFileFactory archiveFactory = new SiteFileFactory();
 		ArchiveReferenceModel archive = null;
-		IPluginEntry[] pluginEntries = feature.getPluginEntries();
+		IPluginEntry[] pluginEntries = localFeature.getPluginEntries();
 		for (int i = 0; i < pluginEntries.length; i++) {
 			String versionId =
 				pluginEntries[i].getVersionedIdentifier().toString();

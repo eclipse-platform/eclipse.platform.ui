@@ -640,7 +640,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	 * 
 	 */
 	private void debug(String s) {
-		UpdateManagerPlugin.getPlugin().debug("DefaultSiteParser"+s);
+		UpdateManagerPlugin.debug("DefaultSiteParser"+s);
 	}
 
 	/*
@@ -690,7 +690,7 @@ public class DefaultSiteParser extends DefaultHandler {
 
 		status.add(error);
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
-			UpdateManagerPlugin.getPlugin().debug(error.toString());
+			UpdateManagerPlugin.log(error);
 	}
 
 	/*

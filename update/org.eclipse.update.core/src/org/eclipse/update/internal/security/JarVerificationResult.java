@@ -10,6 +10,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.Policy;
@@ -235,10 +236,7 @@ public class JarVerificationResult implements IVerificationResult {
 				return new String(buf);
 			}
 		} catch (Exception e) {
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
-				IStatus status = Utilities.newCoreException("Error parsing X500 Certificate",e).getStatus();
-				UpdateManagerPlugin.getPlugin().getLog().log(status);
-			}
+			UpdateManagerPlugin.warn("Error parsing X500 Certificate",e);
 		}
 		return principal.toString();
 	}

@@ -80,14 +80,12 @@ public class SiteLocal
 			// check if we have to reconcile, if the timestamp has changed
 			long bootStamp = currentPlatformConfiguration.getChangeStamp();
 			if (localSite.getStamp() != bootStamp) {
-				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-					UpdateManagerPlugin.getPlugin().debug(
-						"Reconcile platform stamp:"
-							+ bootStamp
-							+ " is different from LocalSite stamp:"
-							+ localSite.getStamp());
+				UpdateManagerPlugin.warn(
+					"Reconcile platform stamp:"
+						+ bootStamp
+						+ " is different from LocalSite stamp:"
+						+ localSite.getStamp());
 					//$NON-NLS-1$ //$NON-NLS-2$
-				}
 				newFeaturesFound = localSite.reconcile(isOptimistic);
 
 			} else {
@@ -123,32 +121,25 @@ public class SiteLocal
 		} catch (FileNotFoundException exception) {
 			// file SITE_LOCAL_FILE doesn't exist, ok, log it 
 			// and reconcile with platform configuration
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(
-					localSite.getLocationURLString()
-						+ " does not exist, there is no previous state or install history we can recover from, we shall use default from platform configuration.");
+			UpdateManagerPlugin.warn(
+				localSite.getLocationURLString()
+				+ " does not exist, there is no previous state or install history we can recover from, we shall use default from platform configuration.",exception);
 				//$NON-NLS-1$
-			}
-			newFeaturesFound = localSite.reconcile(isOptimistic);
 			
+			newFeaturesFound = localSite.reconcile(isOptimistic);
 		} catch (SAXException exception) {
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				Utilities.logException(
-					Policy.bind(
-						"SiteLocal.ErrorParsingSavedState",
-						localSite.getLocationURLString()),
-					exception);
+			UpdateManagerPlugin.warn(
+				Policy.bind(
+				"SiteLocal.ErrorParsingSavedState",
+				localSite.getLocationURLString()),
+				exception);
 				//$NON-NLS-1$
-			}
 			recoverSiteLocal(resolvedURL, localSite);
-
 		} catch (IOException exception) {
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				Utilities.logException(
-					Policy.bind("SiteLocal.UnableToAccessFile", configXML.toExternalForm()),
-					exception);
-				//$NON-NLS-1$
-			}
+			UpdateManagerPlugin.warn(
+				Policy.bind("SiteLocal.UnableToAccessFile", configXML.toExternalForm()),
+				exception);
+			//$NON-NLS-1$
 			recoverSiteLocal(resolvedURL, localSite);
 		}
 	}
@@ -176,7 +167,7 @@ public class SiteLocal
 					// DEBUG:
 					if (UpdateManagerPlugin.DEBUG
 						&& UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION) {
-						UpdateManagerPlugin.getPlugin().debug(
+						UpdateManagerPlugin.debug(
 							"Removed configuration :" + removedConfig.getLabel());
 						//$NON-NLS-1$
 					}
@@ -342,11 +333,7 @@ public class SiteLocal
 		// end
 		w.println(gap + "</" + SiteLocalParser.SITE + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-			UpdateManagerPlugin.getPlugin().debug("Saved change stamp:" + changeStamp);
-			//$NON-NLS-1$
-		}
-
+		UpdateManagerPlugin.warn("Saved change stamp:" + changeStamp);//$NON-NLS-1$
 	}
 
 	/**
@@ -765,7 +752,7 @@ public class SiteLocal
 				config.setLabel(Utilities.format(config.getCreationDate()));
 				site.addConfigurationModel(config);
 			} catch (CoreException e) {
-				UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+				UpdateManagerPlugin.warn(null,e);
 			}
 
 		}
@@ -782,7 +769,7 @@ public class SiteLocal
 				config.setLabel(Utilities.format(config.getCreationDate()));
 				site.addPreservedInstallConfigurationModel(config);
 			} catch (CoreException e) {
-				UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+				UpdateManagerPlugin.warn(null,e);
 			}
 		}
 	}
@@ -801,21 +788,11 @@ public class SiteLocal
 					Locale.getDefault(),
 					l);
 		} catch (MissingResourceException e) {
-			//ok, there is no bundle, keep it as null
-			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(
-					e.getLocalizedMessage() + ":" + url.toExternalForm());
+			UpdateManagerPlugin.warn(e.getLocalizedMessage() + ":" + url.toExternalForm());
 				//$NON-NLS-1$
-			}
 		} catch (MalformedURLException e) {
-			//ok, there is no bundle, keep it as null
-			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(
-					e.getLocalizedMessage());
+			UpdateManagerPlugin.warn(e.getLocalizedMessage());
 				//$NON-NLS-1$
-			}
 		}
 		return bundle;
 	}
@@ -839,6 +816,7 @@ public class SiteLocal
 			feature1 = featureRef1.getFeature();
 			feature2 = featureRef2.getFeature();
 		} catch (CoreException e){
+			UpdateManagerPlugin.warn(null,e);			
 			return 0;
 		}
 
@@ -886,7 +864,7 @@ public class SiteLocal
 		ISite featureSite = feature.getSite();
 		if (featureSite == null) {
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
-				UpdateManagerPlugin.getPlugin().debug(
+				UpdateManagerPlugin.debug(
 					"Cannot determine status of feature:" + feature.getLabel() + ". Site is NULL.");
 			return IFeature.STATUS_AMBIGUOUS;
 		}
@@ -895,7 +873,7 @@ public class SiteLocal
 			if (featureSite.equals(configuredSites[i].getSite())) {
 				if (configuredSites[i].isBroken(feature)) {
 					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
-						UpdateManagerPlugin.getPlugin().debug(
+						UpdateManagerPlugin.debug(
 							"Feature broken:"
 								+ feature.getLabel()
 								+ ".Site:"
@@ -930,9 +908,7 @@ public class SiteLocal
 						feature = configuredFeaturesRef[j].getFeature();
 						allConfiguredPlugins.addAll(Arrays.asList(feature.getPluginEntries()));
 					} catch (CoreException e) {
-						// eat the exception and log it
-						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS)
-							UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+						UpdateManagerPlugin.warn(null,e);
 					}
 				}
 			}
@@ -964,12 +940,11 @@ public class SiteLocal
 				if (featureID.getIdentifier().equals(compareID.getIdentifier())) {
 					if (!featureID.getVersion().equals(compareID.getVersion())) {
 						// there is a plugin with a different version on the path
-						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS)
-							UpdateManagerPlugin.getPlugin().debug(
-								"Found 2 versions of the same plugin on the path:"
-									+ featureID.toString()
-									+ " & "
-									+ compareID.toString());
+						UpdateManagerPlugin.warn(
+							"Found 2 versions of the same plugin on the path:"
+							+ featureID.toString()
+							+ " & "
+							+ compareID.toString());
 						return IFeature.STATUS_AMBIGUOUS;
 					}
 				}

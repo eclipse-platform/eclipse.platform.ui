@@ -113,7 +113,7 @@ public class JarVerifier extends Verifier {
 			try {
 				jarFile = jarReference.asFile();
 				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
-					UpdateManagerPlugin.getPlugin().debug("Attempting to read JAR file:"+jarFile);
+					UpdateManagerPlugin.debug("Attempting to read JAR file:"+jarFile);
 			
 				// # of entries
 				if (!jarFile.exists()) throw new IOException();
@@ -347,13 +347,7 @@ public class JarVerifier extends Verifier {
 				Exception e = new Exception(Policy.bind("JarVerifier.InvalidFile", file)); //$NON-NLS-1$
 				result.setResultException(e);
 				result.setVerificationCode(IVerificationResult.TYPE_ENTRY_NOT_SIGNED);
-
-				// DEBUG
-				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-					IStatus status = Utilities.newCoreException(e.getMessage(), e).getStatus();
-					UpdateManagerPlugin.getPlugin().getLog().log(status);
-				}
-
+				UpdateManagerPlugin.warn(null,e);
 			}
 		} catch (SecurityException e) {
 			// Jar file is signed

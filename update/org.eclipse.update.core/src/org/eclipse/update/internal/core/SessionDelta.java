@@ -85,7 +85,7 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 								try {
 									featureToConfigure = ref.getFeature();
 								} catch (CoreException e){
-									// eat teh exception									
+									UpdateManagerPlugin.warn(null,e);								
 								}
 								if (featureToConfigure!=null)
 									configSites[i].configure(featureToConfigure);									

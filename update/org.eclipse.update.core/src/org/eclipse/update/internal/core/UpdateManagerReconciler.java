@@ -137,9 +137,9 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 			if (DEBUG) 
 				debug(changes ? "changes detected" :"no changes detected"); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (CoreException e){
-			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
-		} catch (Throwable e) {
-			UpdateManagerPlugin.getPlugin().getLog().log(Utilities.newCoreException("",e).getStatus());
+			UpdateManagerPlugin.warn(null,e);
+		} catch (Exception e) {
+			UpdateManagerPlugin.warn(null,e);
 		}
 		cfg.refresh(); // recompute stamps and plugin path
 		
@@ -266,6 +266,6 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 	}
 	
 	private void debug(String s) {
-		UpdateManagerPlugin.getPlugin().debug(this.getClass().getName()+": "+s); //$NON-NLS-1$
+		UpdateManagerPlugin.debug(this.getClass().getName()+": "+s); //$NON-NLS-1$
 	}
 }

@@ -70,15 +70,9 @@ public class SiteLocalParser extends DefaultHandler {
 			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
 			bundle = ResourceBundle.getBundle(SiteLocalModel.SITE_LOCAL_FILE, Locale.getDefault(), l);
 		} catch (MissingResourceException e) {
-			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
-			}
+			UpdateManagerPlugin.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
-			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage()); //$NON-NLS-1$
-			}
+			UpdateManagerPlugin.warn(e.getLocalizedMessage()); //$NON-NLS-1$
 		}
 		return bundle;
 	}
@@ -90,7 +84,7 @@ public class SiteLocalParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			UpdateManagerPlugin.debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		try {
 
@@ -146,7 +140,7 @@ public class SiteLocalParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("End process Site label:" + info); //$NON-NLS-1$
+			UpdateManagerPlugin.debug("End process Site label:" + info); //$NON-NLS-1$
 		}
 
 	}
@@ -172,7 +166,7 @@ public class SiteLocalParser extends DefaultHandler {
 		}
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("End Processing Config Tag: url:" + url.toExternalForm()); //$NON-NLS-1$
+			UpdateManagerPlugin.debug("End Processing Config Tag: url:" + url.toExternalForm()); //$NON-NLS-1$
 		}
 	}
 
@@ -182,7 +176,7 @@ public class SiteLocalParser extends DefaultHandler {
 	public void endElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("End Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			UpdateManagerPlugin.debug("End Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 		String tag = localName.trim();

@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.runtime.IStatus;
 
+import org.eclipse.update.core.Utilities;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 /**
  * Class to manage the different KeyStores we should
@@ -201,10 +202,6 @@ public class KeyStores {
 	}	
 	
 	private void log(Exception e){
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
-		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		IStatus status = new Status(IStatus.WARNING,id,IStatus.OK,"Cannot retrieve a KeyStore",e);
-		UpdateManagerPlugin.getPlugin().getLog().log(status);
-		}
+		UpdateManagerPlugin.warn("Cannot retrieve a KeyStore",e);
 	}
 }

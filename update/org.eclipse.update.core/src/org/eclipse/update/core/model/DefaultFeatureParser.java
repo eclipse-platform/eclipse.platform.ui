@@ -1250,7 +1250,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	}
 
 	private void debug(String s) {
-		UpdateManagerPlugin.getPlugin().debug("DefaultFeatureParser: " + s); //$NON-NLS-1$
+		UpdateManagerPlugin.debug("DefaultFeatureParser: " + s); //$NON-NLS-1$
 	}
 
 	private void logStatus(SAXParseException ex) {
@@ -1297,9 +1297,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 		}
 		
 		status.add(error);
-		UpdateManagerPlugin.getPlugin().getLog().log(error);
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
-			UpdateManagerPlugin.getPlugin().debug(error.toString());
+			UpdateManagerPlugin.log(error);
 	}
 
 	private void internalErrorUnknownTag(String msg) {

@@ -330,6 +330,7 @@ public class InstallConfiguration
 				try {
 					feature = configuredFeaturesRef[j].getFeature();
 				} catch (CoreException e) {
+					UpdateManagerPlugin.warn(null,e);					
 				}
 
 				if (feature != null) {
@@ -548,6 +549,7 @@ public class InstallConfiguration
 							featureToUnconfigure =
 								featuresToUnconfigure[j].getFeature();
 						} catch (CoreException e) {
+							UpdateManagerPlugin.warn(null,e);							
 						}
 						if (featureToUnconfigure != null)
 							nowConfigSites[i].unconfigure(featureToUnconfigure);
@@ -677,13 +679,13 @@ public class InstallConfiguration
 			} else {
 				if (UpdateManagerPlugin.DEBUG
 					&& UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
-					UpdateManagerPlugin.getPlugin().debug(
+					UpdateManagerPlugin.debug(
 						"Product marker doesn't exist:" + productFile);
 			}
 		} else {
 			if (UpdateManagerPlugin.DEBUG
 				&& UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
-				UpdateManagerPlugin.getPlugin().debug(
+				UpdateManagerPlugin.debug(
 					"Cannot retrieve install URL from BootLoader");
 		}
 		return false;
@@ -701,7 +703,7 @@ public class InstallConfiguration
 		} catch (IOException e) {
 			if (UpdateManagerPlugin.DEBUG
 				&& UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
-				UpdateManagerPlugin.getPlugin().debug(
+				UpdateManagerPlugin.debug(
 					"Exception reading 'id' from property file:"
 						+ propertyFile);
 		}
@@ -770,7 +772,7 @@ public class InstallConfiguration
 			// DEBUG:
 			if (UpdateManagerPlugin.DEBUG
 				&& UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
-				UpdateManagerPlugin.getPlugin().debug(
+				UpdateManagerPlugin.debug(
 					"getRuntimeCOnfiguration Full URL:"
 						+ fullURL
 						+ " Relative:"

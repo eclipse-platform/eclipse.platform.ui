@@ -238,7 +238,7 @@ public class SiteFile extends Site {
 			/* non plugin entry []*/
 			null);
 		} catch (CoreException e) {
-			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+			UpdateManagerPlugin.warn(null,e);
 			result = ContentEntryModel.UNKNOWN_SIZE;
 		}
 		return result;
@@ -268,7 +268,7 @@ public class SiteFile extends Site {
 			/* non plugin entry []*/
 			null);
 		} catch (CoreException e) {
-			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+			UpdateManagerPlugin.warn(null,e);
 			result = ContentEntryModel.UNKNOWN_SIZE;
 		}
 

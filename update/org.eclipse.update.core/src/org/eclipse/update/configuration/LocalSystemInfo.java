@@ -7,6 +7,7 @@ package org.eclipse.update.configuration;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.eclipse.update.core.Utilities;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.eclipse.update.internal.core.Volume;
  
@@ -136,10 +137,7 @@ public class LocalSystemInfo {
 			System.loadLibrary("update"); //$NON-NLS-1$
 			hasNatives = true;
 		} catch (UnsatisfiedLinkError e) {
-			//DEBUG
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
-				UpdateManagerPlugin.getPlugin().debug("Unable to load native library 'update'."); //$NON-NLS-1$
-			}
+			UpdateManagerPlugin.warn("Unable to load native library 'update'."); //$NON-NLS-1$
 			hasNatives = false;
 		}
 	}

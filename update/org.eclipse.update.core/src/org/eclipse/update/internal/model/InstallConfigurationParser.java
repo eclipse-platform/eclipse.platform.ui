@@ -55,7 +55,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("Start parsing Configuration:" + (config).getURL().toExternalForm()); //$NON-NLS-1$
+			UpdateManagerPlugin.debug("Start parsing Configuration:" + (config).getURL().toExternalForm()); //$NON-NLS-1$
 		}
 
 		bundle = getResourceBundle();
@@ -78,15 +78,9 @@ public class InstallConfigurationParser extends DefaultHandler {
 					Locale.getDefault(),
 					l);
 		} catch (MissingResourceException e) {
-			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
-			}
+			UpdateManagerPlugin.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
-			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage()); //$NON-NLS-1$
-			}
+			UpdateManagerPlugin.warn(e.getLocalizedMessage()); //$NON-NLS-1$
 		}
 		return bundle;
 	}
@@ -103,7 +97,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			UpdateManagerPlugin.debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		try {
 
@@ -172,7 +166,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("End process config site url:" + urlString + " policy:" + policyString + " install:" + installString); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			UpdateManagerPlugin.debug("End process config site url:" + urlString + " policy:" + policyString + " install:" + installString); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 	}
@@ -211,14 +205,11 @@ public class InstallConfigurationParser extends DefaultHandler {
 
 			// DEBUG:		
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-				UpdateManagerPlugin.getPlugin().debug("End Processing DefaultFeature Tag: url:" + url.toExternalForm()); //$NON-NLS-1$
+				UpdateManagerPlugin.debug("End Processing DefaultFeature Tag: url:" + url.toExternalForm()); //$NON-NLS-1$
 			}
 
 		} else {
-			String id =
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, Policy.bind("InstallConfigurationParser.FeatureReferenceNoURL"), null); //$NON-NLS-1$
-			UpdateManagerPlugin.getPlugin().getLog().log(status);
+			UpdateManagerPlugin.log( Policy.bind("InstallConfigurationParser.FeatureReferenceNoURL"), new Exception());
 		}
 
 	}
@@ -256,7 +247,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("End Processing Activity: action:" + actionString + " label: " + label + " date:" + dateString + " status" + statusString); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			UpdateManagerPlugin.debug("End Processing Activity: action:" + actionString + " label: " + label + " date:" + dateString + " status" + statusString); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 
 	}
@@ -272,7 +263,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("End Processing Config Tag: date:" + date); //$NON-NLS-1$
+			UpdateManagerPlugin.debug("End Processing Config Tag: date:" + date); //$NON-NLS-1$
 		}
 
 	}

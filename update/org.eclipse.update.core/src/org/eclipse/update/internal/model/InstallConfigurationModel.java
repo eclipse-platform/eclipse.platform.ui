@@ -29,11 +29,7 @@ public class InstallConfigurationModel extends ModelObject {
 			URL resolvedURL = URLEncoder.encode(getURL());
 			new InstallConfigurationParser(resolvedURL.openStream(), this);
 		} catch (FileNotFoundException exception) {
-			// file doesn't exist, ok, log it and continue 
-			// log no config
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(getLocationURLString() + " does not exist, The local site is not in synch with the file system and is pointing to a file that doesn't exist."); //$NON-NLS-1$
-			}
+			UpdateManagerPlugin.warn(getLocationURLString() + " does not exist, The local site is not in synch with the file system and is pointing to a file that doesn't exist.",exception); //$NON-NLS-1$
 			this.setLabel(Policy.bind("InstallConfiguration.DeletedConfiguration")); //$NON-NLS-1$
 		} catch (SAXException exception) {
 			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.ParsingErrorDuringCreation", getLocationURLString(),"\r\n"+exception.toString()), exception); //$NON-NLS-1$ //$NON-NLS-2$

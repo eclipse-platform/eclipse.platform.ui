@@ -57,7 +57,7 @@ public class SiteURLContentProvider extends SiteContentProvider {
 		if (siteArchives.length > 0) {
 			for (int i = 0; i < siteArchives.length && !found; i++) {
 				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
-					UpdateManagerPlugin.getPlugin().debug("GetArchiveURL for:"+archiveId+" compare to "+siteArchives[i].getPath());
+					UpdateManagerPlugin.debug("GetArchiveURL for:"+archiveId+" compare to "+siteArchives[i].getPath());
 				if (archiveId.trim().equalsIgnoreCase(siteArchives[i].getPath())) {
 					result = siteArchives[i].getURL();
 					found = true;

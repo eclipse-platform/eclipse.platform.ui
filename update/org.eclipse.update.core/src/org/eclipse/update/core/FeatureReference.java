@@ -81,13 +81,10 @@ public class FeatureReference
 				if (siteCat != null)
 					categories.add(siteCat);
 				else {
-					//DEBUG
-					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-						String siteURL =
+					String siteURL =
 							getSite().getURL() != null ? getSite().getURL().toExternalForm() : null;
-						UpdateManagerPlugin.getPlugin().debug(
+					UpdateManagerPlugin.warn(
 							"Category " + categoriesAsString[i] + " not found in Site:" + siteURL);
-					}
 				}
 			}
 		}

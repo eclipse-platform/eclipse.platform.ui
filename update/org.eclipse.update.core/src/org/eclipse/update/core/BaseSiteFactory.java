@@ -54,13 +54,9 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
 			bundle = ResourceBundle.getBundle(Site.SITE_FILE, Locale.getDefault(), l);
 		} catch (MissingResourceException e) {
-			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS)
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
+			UpdateManagerPlugin.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
-			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS)
-				UpdateManagerPlugin.getPlugin().debug(Policy.bind("BaseSiteFactory.CannotRetriveParentDirectory", url.toExternalForm()));  //$NON-NLS-1$
+			UpdateManagerPlugin.warn(Policy.bind("BaseSiteFactory.CannotRetriveParentDirectory", url.toExternalForm()));  //$NON-NLS-1$
 		}
 
 		return bundle;

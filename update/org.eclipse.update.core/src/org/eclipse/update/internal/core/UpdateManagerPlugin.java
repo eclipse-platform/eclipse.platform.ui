@@ -6,9 +6,11 @@ package org.eclipse.update.internal.core;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.help.AppServer;
+import org.eclipse.update.core.Utilities;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -111,7 +113,55 @@ public class UpdateManagerPlugin extends Plugin {
 	/**
 	 * dumps a String in the trace
 	 */
-	public void debug(String s) {
-		System.out.println(toString() + "^" + Integer.toHexString(Thread.currentThread().hashCode()) + " " + s); //$NON-NLS-1$ //$NON-NLS-2$
+	public static void debug(String s) {
+		String msg = getPlugin().toString() + "^" + Integer.toHexString(Thread.currentThread().hashCode()) + " " + s; //$NON-NLS-1$ //$NON-NLS-2$
+		System.out.println(msg);
 	}
+	
+	/**
+	 * dumps a String in the trace if WARNING is set to true
+	 */
+	public static void warn(String s) {
+		if (DEBUG && DEBUG_SHOW_WARNINGS)
+			debug(s); 
+	}
+
+	/**
+	 * Dumps an exception if WARNING is set to true
+	 * 
+	 * @param s log string
+	 * @param e exception to be logged
+	 * @since 2.0
+	 */
+	public static void warn(String s, Throwable e) {
+		if (DEBUG && DEBUG_SHOW_WARNINGS)
+			log(s,e);
+	} 
+			
+	/**
+	 * Logs a status
+	 */
+	public static void log(IStatus status){
+		UpdateManagerPlugin.getPlugin().getLog().log(status);		
+	}
+	
+	/**
+	 * Logs an error
+	 */
+	public static void log(Throwable e){		
+		log("",e);
+	}	
+	
+	/**
+	 * Logs a string and an  error
+	 */
+	public static void log(String msg, Throwable e){
+		IStatus status = null;
+		if (e instanceof CoreException) 
+			status = ((CoreException)e).getStatus();
+		else 
+			status = Utilities.newCoreException(msg,e).getStatus();		
+		if (status!=null)
+			log(status);
+	}		
 }

@@ -74,7 +74,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		if (UpdateManagerPlugin.DEBUG
 			&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
 			for (int i = 0; i < oldConfiguredSites.length; i++) {
-				UpdateManagerPlugin.getPlugin().debug(
+				UpdateManagerPlugin.debug(
 					"Old Site :" + oldConfiguredSites[i].getSite().getURL());
 			}
 		}
@@ -95,10 +95,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 			// TRACE
 			if (UpdateManagerPlugin.DEBUG
 				&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-
-				UpdateManagerPlugin.getPlugin().debug(
+				UpdateManagerPlugin.debug(
 					"New Site?:" + resolvedURL);
-
 			}
 
 			// check if SiteEntry has been possibly modified
@@ -126,7 +124,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				// TRACE
 				if (UpdateManagerPlugin.DEBUG
 					&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-					UpdateManagerPlugin.getPlugin().debug(
+					UpdateManagerPlugin.debug(
 						"Configured Site to create:" + resolvedURL);
 				}
 
@@ -164,7 +162,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 							isOptimistic
 								? "enable (optimistic)"
 								: "disable (pessimistic)";
-						UpdateManagerPlugin.getPlugin().debug(
+						UpdateManagerPlugin.debug(
 							"New Site:New Feature: "
 								+ newFeatureRefModel.getURLString()
 								+ " as "
@@ -257,7 +255,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		// TRACE
 		if (UpdateManagerPlugin.DEBUG
 			&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-			UpdateManagerPlugin.getPlugin().debug(
+			UpdateManagerPlugin.debug(
 				"Configured Site to reconfigure:"
 					+ oldConfiguredSite.getSite().getURL());
 		}
@@ -281,7 +279,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		if (UpdateManagerPlugin.DEBUG
 			&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
 			for (int i = 0; i < oldConfiguredFeaturesRef.length; i++) {
-				UpdateManagerPlugin.getPlugin().debug(
+				UpdateManagerPlugin.debug(
 					"Old feature :" + oldConfiguredFeaturesRef[i].getURL());
 			}
 		}
@@ -294,7 +292,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 			// TRACE
 			if (UpdateManagerPlugin.DEBUG
 				&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-				UpdateManagerPlugin.getPlugin().debug(
+				UpdateManagerPlugin.debug(
 					"New feature? :" + currentFeatureRefModel.getURL());
 			}
 
@@ -317,7 +315,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 						isOptimistic
 							? "enable (optimistic)"
 							: "disable (pessimistic)";
-					UpdateManagerPlugin.getPlugin().debug(
+					UpdateManagerPlugin.debug(
 						"New Feature: "
 							+ currentFeatureRefModel.getURLString()
 							+ " as "
@@ -490,6 +488,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 			feature1 = featureRef1.getFeature();
 			feature2 = featureRef2.getFeature();
 		} catch (CoreException e) {
+			UpdateManagerPlugin.warn(null,e);			
 			return 0;
 		}
 

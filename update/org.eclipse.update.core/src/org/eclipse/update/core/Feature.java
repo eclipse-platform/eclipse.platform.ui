@@ -97,8 +97,7 @@ public class Feature extends FeatureModel implements IFeature {
 		try {
 			contentProvider = getFeatureContentProvider();
 		} catch (CoreException e) {
-			// no content provider: always log status
-			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+			UpdateManagerPlugin.warn("No content Provider",e);
 		}
 		return (contentProvider != null) ? contentProvider.getURL() : null;
 	}
@@ -213,7 +212,7 @@ public class Feature extends FeatureModel implements IFeature {
 		//DEBUG
 		if (UpdateManagerPlugin.DEBUG
 			&& UpdateManagerPlugin.DEBUG_SHOW_INSTALL) {
-			UpdateManagerPlugin.getPlugin().debug(
+			UpdateManagerPlugin.debug(
 				"Installing...:" + getURL().toExternalForm());
 		}
 		// make sure we have an InstallMonitor		
@@ -355,6 +354,7 @@ public class Feature extends FeatureModel implements IFeature {
 				try {
 					childFeature = children[i].getFeature();
 				} catch (CoreException e) {
+					UpdateManagerPlugin.warn(null,e);					
 				}
 				if (childFeature != null)
 					 ((Site) targetSite).install(// need to cast
@@ -559,7 +559,7 @@ public class Feature extends FeatureModel implements IFeature {
 				totalNonPlugins);
 
 		} catch (CoreException e) {
-			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+			UpdateManagerPlugin.warn(null,e);
 			return ContentEntryModel.UNKNOWN_SIZE;
 		}
 	}
@@ -604,7 +604,7 @@ public class Feature extends FeatureModel implements IFeature {
 				totalNonPlugins);
 
 		} catch (CoreException e) {
-			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+			UpdateManagerPlugin.warn(null,e);
 			return ContentEntryModel.UNKNOWN_SIZE;
 		}
 	}
@@ -754,6 +754,7 @@ public class Feature extends FeatureModel implements IFeature {
 						feature =
 							(refs[ref] == null) ? null : refs[ref].getFeature();
 					} catch (CoreException e) {
+						UpdateManagerPlugin.warn(null,e);						
 					};
 
 					if (feature != null) {
@@ -823,17 +824,9 @@ public class Feature extends FeatureModel implements IFeature {
 					Locale.getDefault(),
 					l);
 		} catch (MissingResourceException e) {
-			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG
-				&& UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
-			}
+			UpdateManagerPlugin.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
-			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG
-				&& UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage()); //$NON-NLS-1$
-			}
+			UpdateManagerPlugin.warn(e.getLocalizedMessage()); //$NON-NLS-1$
 		}
 		return bundle;
 	}

@@ -111,7 +111,7 @@ public class Site extends SiteModel implements ISite {
 		try {
 			url = getSiteContentProvider().getURL();
 		} catch (CoreException e) {
-			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+			UpdateManagerPlugin.warn(null,e);
 		}
 		return url;
 	}
@@ -160,14 +160,12 @@ public class Site extends SiteModel implements ISite {
 		}
 
 		//DEBUG:
-		if (UpdateManagerPlugin.DEBUG
-			&& UpdateManagerPlugin.DEBUG_SHOW_WARNINGS
-			&& !found) {
-			UpdateManagerPlugin.getPlugin().debug(
+		if (!found) {
+			UpdateManagerPlugin.warn(
 				Policy.bind("Site.CannotFindCategory", key, this.getURL().toExternalForm()));
 			//$NON-NLS-1$ //$NON-NLS-2$
 			if (getCategoryModels().length <= 0)
-				UpdateManagerPlugin.getPlugin().debug(Policy.bind("Site.NoCategories"));
+				UpdateManagerPlugin.warn(Policy.bind("Site.NoCategories"));
 			//$NON-NLS-1$
 		}
 
@@ -197,11 +195,7 @@ public class Site extends SiteModel implements ISite {
 	public IFeatureReference getFeatureReference(IFeature feature) {
 
 		if (feature == null) {
-			// DEBUG
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(
-					"Site:getFeatureReference: The feature is null");
-			}
+			UpdateManagerPlugin.warn("Site:getFeatureReference: The feature is null");
 			return null;
 		}
 
@@ -213,12 +207,8 @@ public class Site extends SiteModel implements ISite {
 			try {
 				if (feature.equals(currentReference.getFeature()))
 					return currentReference;
-
 			} catch (CoreException e) {
-				// DEBUG
-				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-					UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
-				}
+				UpdateManagerPlugin.warn(null,e);
 			}
 		}
 		return null;
@@ -313,7 +303,7 @@ public class Site extends SiteModel implements ISite {
 					try {
 						features[indexFeatures].getFeature();
 					} catch (CoreException e){
-						// eat the exception
+						UpdateManagerPlugin.warn(null,e);
 					}
 					if (!feature.equals(featureToCompare)) {
 						IPluginEntry[] pluginEntries =
