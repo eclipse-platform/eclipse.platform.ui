@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
