@@ -363,4 +363,23 @@ public class JobProgressManager
 			remove(info);
 		}
 	}
+	
+	/**
+	 * Clear all of the errors from the list.
+	 */
+	void clearAllErrors(){
+		Collection jobsToDelete = new ArrayList();
+		Iterator keySet = jobs.keySet().iterator();
+		while(keySet.hasNext()){
+			Object job = keySet.next();
+			JobInfo info = (JobInfo) jobs.get(job);
+			if(info.getErrorStatus() != null)
+				jobsToDelete.add(job);
+		}
+		Iterator deleteSet = jobsToDelete.iterator();
+		while(deleteSet.hasNext()){
+			jobs.remove(deleteSet.next());
+		}
+		refreshAll();
+	}
 }

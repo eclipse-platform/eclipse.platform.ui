@@ -18,6 +18,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 	Action cancelAction;
 	Action deleteAction;
 	Action showErrorAction;
+	Action clearErrorsAction;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -72,9 +73,11 @@ public class ProgressView extends ViewPart implements IViewPart {
 		createCancelAction();
 		createDeleteAction();
 		createShowErrorAction();
+		createClearErrorsAction();
 		menuMgr.add(cancelAction);
 		menuMgr.add(deleteAction);
 		menuMgr.add(showErrorAction);
+		menuMgr.add(clearErrorsAction);
 
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
@@ -196,12 +199,27 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 */
 	private void createDeleteAction() {
 			deleteAction = new Action(ProgressMessages.getString("ProgressView.DeleteAction")) {//$NON-NLS-1$
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+			public void run() {
+				JobInfo element = getSelectedInfo();
+				JobProgressManager.getInstance().clearJob(element.getJob());
+			}
+		};
+	}
+
+	/**
+	 * Create the clear all errors action for the receiver.
+	 * @return Action
+	 */
+	private void createClearErrorsAction() {
+		clearErrorsAction = new Action(ProgressMessages.getString("ProgressView.ClearAllAction")) {//$NON-NLS-1$
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
 			public void run() {
-				JobInfo element = getSelectedInfo();
-				JobProgressManager.getInstance().clearJob(element.getJob());
+				JobProgressManager.getInstance().clearAllErrors();
 			}
 		};
 	}
@@ -212,17 +230,17 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 */
 	private void createShowErrorAction() {
 			showErrorAction = new Action(ProgressMessages.getString("ProgressView.ShowErrorAction")) {//$NON-NLS-1$
-				/* (non-Javadoc)
-				 * @see org.eclipse.jface.action.Action#run()
-				 */
-				public void run() {
-					JobInfo element = getSelectedInfo();
-					ErrorDialog.openError(
-						viewer.getControl().getShell(),
-						element.getDisplayString(),
-						element.getErrorStatus().getMessage(),
-						element.getErrorStatus());
-				}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+			public void run() {
+				JobInfo element = getSelectedInfo();
+				ErrorDialog.openError(
+					viewer.getControl().getShell(),
+					element.getDisplayString(),
+					element.getErrorStatus().getMessage(),
+					element.getErrorStatus());
+			}
 
 		};
 	}
