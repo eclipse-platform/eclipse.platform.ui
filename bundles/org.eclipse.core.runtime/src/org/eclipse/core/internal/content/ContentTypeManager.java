@@ -95,7 +95,7 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 		for (int i = 0; i < subset.length; i++) {
 			IContentDescriber describer = ((ContentType) subset[i]).getDescriber();
 			if (describer != null)
-				if (describe(describer, buffer, null, 0))
+				if (describe(describer, buffer, null, 0) == IContentDescriber.VALID)
 					appropriate.add(subset[i]);
 		}
 		return mostAppropriate(appropriate);
@@ -135,7 +135,7 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 		List appropriate = new ArrayList();
 		for (int i = 0; i < subset.length; i++) {
 			IContentDescriber describer = ((ContentType) subset[i]).getDescriber();
-			if (describer != null && describe(describer, buffer, null, 0))
+			if (describer != null && describe(describer, buffer, null, 0) == IContentDescriber.VALID)
 				appropriate.add(subset[i]);
 		}
 		return (IContentType[]) appropriate.toArray(new IContentType[appropriate.size()]);
@@ -201,7 +201,7 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 		description.markAsImmutable();
 		return description;
 	}
-	private boolean describe(final IContentDescriber selectedDescriber, ByteArrayInputStream contents, ContentDescription description, int optionsMask) throws IOException {
+	private int describe(final IContentDescriber selectedDescriber, ByteArrayInputStream contents, ContentDescription description, int optionsMask) throws IOException {
 		try {
 			return selectedDescriber.describe(contents, description, optionsMask);
 		} finally {

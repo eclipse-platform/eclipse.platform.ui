@@ -29,6 +29,28 @@ import java.io.InputStream;
  */
 public interface IContentDescriber {
 	/**
+	 * Description result constant, indicating the contents are valid for 
+	 * the intended content type.
+	 * 
+	 * @see #describe
+	 */
+	public final static int VALID = 0;
+	/**
+	 * Description result constant, indicating the contents are invalid for 
+	 * the intended content type.
+	 * 
+	 * @see #describe
+	 */	
+	public final static int INVALID = 1;
+	/**
+	 * Description result constant, indicating that it was not possible 
+	 * to determinate whether the contents were valid for 
+	 * the intented content type.
+	 * 
+	 * @see #describe
+	 */	
+	public final static int INDETERMINATE = -1;	
+	/**
 	 * Tries to fill a description for the given contents. Returns 
 	 * a boolean indicating whether the given stream of 
 	 * bytes represents a valid sample for its corresponding content type.
@@ -51,7 +73,7 @@ public interface IContentDescriber {
 	 * @see IContentDescription#BYTE_ORDER_MARK
 	 * @see IContentDescription#CUSTOM_PROPERTIES
 	 */
-	public boolean describe(InputStream contents, IContentDescription description, int optionsMask) throws IOException;
+	public int describe(InputStream contents, IContentDescription description, int optionsMask) throws IOException;
 	/**
 	 * Returns the options supported by this describer as a bit mask. 
 	 *   

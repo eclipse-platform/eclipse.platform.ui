@@ -22,20 +22,20 @@ import org.eclipse.core.runtime.content.IContentDescriber;
 public class XMLContentDescriber implements IContentDescriber {
 	private static final String XML_PREFIX = "<?xml "; //$NON-NLS-1$
 	private static final String ENCODING = "encoding=\""; //$NON-NLS-1$
-	public boolean describe(InputStream input, IContentDescription description, int flags) throws IOException {
+	public int describe(InputStream input, IContentDescription description, int flags) throws IOException {
 		//TODO: support BOM
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8")); //$NON-NLS-1$
 		String line = reader.readLine();
 		// end of stream
 		if (line == null)
-			return false;
+			return INVALID;
 		// XMLDecl should be the first string (no blanks allowed)
 		if (!line.startsWith(XML_PREFIX))
-			return false;
+			return INDETERMINATE;
 		// if only the content type should be checked
 		if ((flags & IContentDescription.CHARSET) != 0)
 			description.setCharset(getCharset(line));
-		return true;
+		return VALID;
 	}
 	public int getSupportedOptions() {
 		return IContentDescription.CHARSET;
