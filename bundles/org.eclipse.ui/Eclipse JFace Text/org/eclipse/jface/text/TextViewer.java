@@ -49,10 +49,8 @@ import org.eclipse.swt.printing.Printer;
 import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
 
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -2447,6 +2445,10 @@ public class TextViewer extends Viewer implements
 			try {
 				fVerifyListener.forward(false);
 				getDocument().replace(fDocumentCommand.offset, fDocumentCommand.length, fDocumentCommand.text);
+				if (fTextWidget != null) {
+					int caretOffset= fDocumentCommand.offset + (fDocumentCommand.text == null ? 0 : fDocumentCommand.text.length()) - offset;
+					fTextWidget.setCaretOffset(caretOffset);
+				}
 			} catch (BadLocationException x) {
 				if (TRACE_ERRORS)
 					System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.verifyText")); //$NON-NLS-1$
