@@ -73,7 +73,7 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 			}
 			marker = resource.createMarker(ADDITION_MARKER);
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-			marker.setAttribute(IMarker.MESSAGE, resource.getName() + " is a local addition not under CVS control");
+			marker.setAttribute(IMarker.MESSAGE, "Local addition not under CVS control");
 			return marker;
 		} catch (CoreException e) {
 			Util.logError("Error creating addition marker", e);
