@@ -22,12 +22,18 @@ import org.eclipse.core.runtime.content.IContentDescription;
 public class XMLContentDescriber implements IContentDescriber {
 	private static final String ENCODING = "encoding=\""; //$NON-NLS-1$
 	private static final String XML_PREFIX = "<?xml "; //$NON-NLS-1$
+	private static final byte[] XML_PREFIX_BYTES = new byte[] {'<', '?', 'x', 'm', 'l', ' '}; //$NON-NLS-1$
 
 	public int describe(InputStream input, IContentDescription description, int flags) throws IOException {
 		//TODO: support BOM
 		byte[] prefix = new byte[XML_PREFIX.length()];
 		if (input.read(prefix) < prefix.length)
+			// there is not enough info to say anything
 			return INDETERMINATE;
+		for (int i = 0; i < prefix.length; i++)
+			if (prefix[i] != XML_PREFIX_BYTES[i])
+				// we don't have a XMLDecl... there is not enough info to say anything
+				return INDETERMINATE;
 		// describe charset if requested
 		if ((flags & IContentDescription.CHARSET) != 0) {
 			String fullXMLDecl = readFullXMLDecl(input);
