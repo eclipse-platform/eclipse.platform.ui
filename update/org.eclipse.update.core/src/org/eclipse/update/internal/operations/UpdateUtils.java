@@ -11,19 +11,19 @@
 package org.eclipse.update.internal.operations;
 
 
-import java.io.File;
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
+import java.io.*;
+import java.lang.reflect.*;
 import java.net.*;
-import java.text.MessageFormat;
+import java.text.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.UpdateCore;
-import org.eclipse.update.internal.model.InstallChangeParser;
-import org.eclipse.update.internal.search.UpdatesSearchCategory;
+import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.model.*;
+import org.eclipse.update.internal.search.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
 
@@ -625,4 +625,93 @@ public class UpdateUtils {
 		return (Object[]) Array.newInstance(l.get(0).getClass(), 0);
 	}
 
+	public static void downloadFeatureContent(
+		IFeature feature,
+		final IProgressMonitor progress)
+		throws InstallAbortedException, CoreException {
+
+		// only downloads our known feature types
+		if (!(feature instanceof Feature))
+			return;
+			
+		//DEBUG
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_INSTALL) {
+			UpdateCore.debug(
+				"Downloading...:" + feature.getURL().toExternalForm());
+		}
+
+		IProgressMonitor pm = new NullProgressMonitor() {
+			public boolean isCanceled() {
+				return progress.isCanceled();
+			}
+		};
+
+		// make sure we have an InstallMonitor		
+		InstallMonitor monitor = new InstallMonitor(pm);
+
+		// Get source feature provider and verifier.
+		// Initialize target variables.
+		final IFeatureContentProvider provider =
+			feature.getFeatureContentProvider();
+		IPluginEntry[] targetSitePluginEntries = null;
+
+		// determine list of plugins to install
+		// find the intersection between the plugin entries already contained
+		// on the target site, and plugin entries packaged in source feature
+		IPluginEntry[] sourceFeaturePluginEntries = feature.getPluginEntries();
+
+		IConfiguredSite targetSite =
+			getSiteWithFeature(
+				SiteManager.getLocalSite().getCurrentConfiguration(),
+				((Feature)feature).getFeatureIdentifier());
+		if (targetSite == null) {
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_INSTALL) {
+				UpdateCore.debug("The site to install in is null");
+			}
+
+			targetSitePluginEntries = new IPluginEntry[0];
+		} else {
+			targetSitePluginEntries = targetSite.getSite().getPluginEntries();
+		}
+		IPluginEntry[] pluginsToInstall =
+			UpdateManagerUtils.diff(
+				sourceFeaturePluginEntries,
+				targetSitePluginEntries);
+		INonPluginEntry[] nonPluginsToInstall = feature.getNonPluginEntries();
+
+		// Download feature archive(s)
+		ContentReference[] references =
+			provider.getFeatureEntryArchiveReferences(monitor);
+		// Download plugin archives
+		for (int i = 0; i < pluginsToInstall.length; i++) {
+			ContentReference[] plugin_references =
+				provider.getPluginEntryArchiveReferences(
+					pluginsToInstall[i],
+					monitor);
+		}
+
+		// Download non-plugin archives. Verification handled by optional install handler
+		for (int i = 0; i < nonPluginsToInstall.length; i++) {
+			references =
+				provider.getNonPluginEntryArchiveReferences(
+					nonPluginsToInstall[i],
+					monitor);
+		}
+
+		// Download child features
+		IFeatureReference[] children = feature.getIncludedFeatureReferences();
+
+		// TODO: check if they are optional, and if they should be installed [2.0.1]
+		for (int i = 0; i < children.length; i++) {
+			IFeature childFeature = null;
+			try {
+				childFeature = children[i].getFeature(null);
+			} catch (CoreException e) {
+				UpdateCore.warn(null, e);
+			}
+			if (childFeature != null) {
+				downloadFeatureContent(childFeature, monitor);
+			}
+		}
+	}
 }
