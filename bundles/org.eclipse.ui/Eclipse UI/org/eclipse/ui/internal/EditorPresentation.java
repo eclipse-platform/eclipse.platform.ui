@@ -6,6 +6,8 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.part.MultiEditor;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.swt.SWT;
@@ -54,7 +56,8 @@ public void closeAllEditors() {
 public void closeEditor(IEditorPart part) {
 	EditorPane pane = (EditorPane)((PartSite)part.getEditorSite()).getPane();
 	if (pane != null) {
-		editorArea.removeEditor(pane);
+		if (!(pane instanceof MultiEditorInnerPane))
+			editorArea.removeEditor(pane);
 		pane.dispose();
 	}
 	editorTable.remove(pane);
@@ -69,7 +72,6 @@ private void derefPart(LayoutPart part) {
 	
 	// Reparent the part back to the main window
 	part.reparent(editorArea.getParent());
-
 	// Update container.
 	if (oldContainer == null) 
 		return;
@@ -131,10 +133,13 @@ public LayoutPart getLayoutPart() {
 public IEditorPart getVisibleEditor() {
 	EditorWorkbook activeWorkbook = editorArea.getActiveWorkbook();
 	EditorPane pane = activeWorkbook.getVisibleEditor();
-	if (pane != null)
-		return pane.getEditorPart();
-	else
-		return null;
+	if (pane != null) {
+		IEditorPart result = pane.getEditorPart();
+		if(result instanceof MultiEditor)
+			result = ((MultiEditor)result).getActiveEditor();
+		return result;
+	}
+	return null;
 }
 public void moveEditor(IEditorPart part,int position) {
 	editorArea.getActiveWorkbook().reorderTab(
@@ -152,7 +157,6 @@ private void movePart(LayoutPart part, int position, EditorWorkbook relativePart
 		
 	// Remove the part from the current container.
 	derefPart(part);
-
 	// Add the part.
 	int relativePosition = IPageLayout.LEFT;
 	if (position == PartDragDrop.RIGHT)
@@ -161,7 +165,6 @@ private void movePart(LayoutPart part, int position, EditorWorkbook relativePart
 		relativePosition = IPageLayout.TOP;
 	else if (position == PartDragDrop.BOTTOM)
 		relativePosition = IPageLayout.BOTTOM;
-
 	if (part instanceof EditorWorkbook) {
 		sashContainer.add(part, relativePosition, (float) 0.5, relativePart);
 		((EditorWorkbook)part).becomeActiveWorkbook(true);
@@ -193,13 +196,11 @@ private void onPartDragOver(PartDropEvent e) {
 		e.relativePosition = PartDragDrop.INVALID;
 		return;
 	}
-
 	// can't drop unless over an editor workbook
 	if (!(e.dropTarget instanceof EditorWorkbook)) {
 		e.relativePosition = PartDragDrop.INVALID;
 		return;
 	}
-
 	// handle drag of an editor
 	if (e.dragSource instanceof EditorPane) {
 		EditorWorkbook sourceWorkbook = ((EditorPane)e.dragSource).getWorkbook();
@@ -218,11 +219,9 @@ private void onPartDragOver(PartDropEvent e) {
 			e.relativePosition = PartDragDrop.INVALID;
 			return;
 		}
-
 		// all seems well
 		return;
 	}
-
 	// handle drag of an editor workbook
 	if (e.dragSource instanceof EditorWorkbook) {
 		// can't attach nor stack in same workbook
@@ -241,7 +240,6 @@ private void onPartDragOver(PartDropEvent e) {
 		// all seems well
 		return;
 	}
-
 	// invalid case - do not allow a drop to happen
 	e.relativePosition = PartDragDrop.INVALID;
 }
@@ -281,20 +279,39 @@ private void onPartDrop(PartDropEvent e) {
  * </p>
  * @param part the editor
  */
+public void openEditor(IEditorPart part,IEditorPart[] innerEditors, boolean setVisible) {
+	EditorPane pane = new MultiEditorOuterPane(part, page, editorArea.getActiveWorkbook());
+	initPane(pane,part);
+	for (int i = 0; i < innerEditors.length; i++) {
+		EditorPane innerPane = new MultiEditorInnerPane(pane,innerEditors[i], page, editorArea.getActiveWorkbook());
+		initPane(innerPane,innerEditors[i]);
+	}
+	// Show the editor.
+	editorArea.addEditor(pane);
+	if(setVisible)
+		setVisibleEditor(part, true);
+}
+/**
+ * Opens an editor within the presentation.  
+ * </p>
+ * @param part the editor
+ */
 public void openEditor(IEditorPart part,boolean setVisible) {
 	
-	// Create an pane for the new editor.
 	EditorPane pane = new EditorPane(part, page, editorArea.getActiveWorkbook());
-	PartSite site = (PartSite)part.getSite();
-	site.setPane(pane);
-
-	// Record the new editor.
-	editorTable.add(pane);
+	initPane(pane,part);
 	
 	// Show the editor.
 	editorArea.addEditor(pane);
 	if(setVisible)
 		setVisibleEditor(part, true);
+}
+private EditorPane initPane(EditorPane pane, IEditorPart part) {
+	PartSite site = (PartSite)part.getSite();
+	site.setPane(pane);
+	// Record the new editor.
+	editorTable.add(pane);
+	return pane;
 }
 /**
  * @see IPersistablePart
@@ -328,7 +345,17 @@ public boolean setVisibleEditor(IEditorPart part, boolean setFocus) {
 	if (part != visibleEditor) {
 		EditorPane pane = (EditorPane)((PartSite)part.getEditorSite()).getPane();
 		if (pane != null) {
-			pane.getWorkbook().setVisibleEditor(pane);
+			if(pane instanceof MultiEditorInnerPane) {
+				EditorPane parentPane = ((MultiEditorInnerPane)pane).getParentPane();
+				EditorWorkbook activeWorkbook = parentPane.getWorkbook();
+				EditorPane activePane = activeWorkbook.getVisibleEditor();
+				if(activePane != parentPane)
+					parentPane.getWorkbook().setVisibleEditor(parentPane);
+				else
+					return false;
+			} else {
+				pane.getWorkbook().setVisibleEditor(pane);
+			}
 			if (setFocus)
 				part.setFocus();
 			return true;
@@ -360,7 +387,6 @@ private void stack(LayoutPart newPart, EditorWorkbook refPart) {
 private void stackEditor(EditorPane newPart, EditorWorkbook refPart) {
 	// Remove the part from old container.
 	derefPart(newPart);
-
 	// Reparent part and add it to the workbook
 	newPart.reparent(refPart.getParent());
 	refPart.add(newPart);

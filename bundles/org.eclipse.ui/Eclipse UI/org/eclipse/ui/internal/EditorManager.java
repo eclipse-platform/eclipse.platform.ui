@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import org.eclipse.ui.*;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
@@ -25,6 +26,8 @@ import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.part.MultiEditor;
+import org.eclipse.ui.part.MultiEditorInput;
 
 /**
  * Manage a group of element editors.  Prevent the creation of two editors on
@@ -81,6 +84,22 @@ public class EditorManager {
 	 */
 	public void closeEditor(IEditorPart part) {
 		// Close the pane, action bars, pane, etc.
+		if(part instanceof MultiEditor) {
+			IEditorPart innerEditors[] = ((MultiEditor)part).getInnerEditors();
+			for (int i = 0; i < innerEditors.length; i++) {
+				EditorSite site = (EditorSite) innerEditors[i].getEditorSite();
+				editorPresentation.closeEditor(innerEditors[i]);
+				disposeEditorActionBars((EditorActionBars) site.getActionBars());
+				site.dispose();				
+			}
+		} else {
+			EditorSite site = (EditorSite) part.getEditorSite();
+			if(site.getPane() instanceof MultiEditorInnerPane) {
+				MultiEditorInnerPane pane = (MultiEditorInnerPane)site.getPane();
+				closeEditor((IEditorPart)pane.getParentPane().getPart());
+				return;
+			}
+		}
 		EditorSite site = (EditorSite) part.getEditorSite();
 		editorPresentation.closeEditor(part);
 		disposeEditorActionBars((EditorActionBars) site.getActionBars());
@@ -324,7 +343,7 @@ public class EditorManager {
 			pmd.open();
 			dirtyEditor.doSave(pmd.getProgressMonitor());
 			pmd.close();
-		} else if (result == 2) {
+		} else if ((result == 2) || (result == -1)){
 			return null;
 		}
 		return dirtyEditor;
@@ -400,30 +419,52 @@ public class EditorManager {
 		}
 	}
 	/*
+	 * Create the site and action bars for each inner editor.
+	 */
+	private void openMultiEditor(final MultiEditor part, final EditorDescriptor desc, final MultiEditorInput input, final boolean setVisible)
+		throws PartInitException {
+		
+		createSite(part,desc,input);
+		String[] editorArray = input.getEditors();
+		IEditorInput[] inputArray = input.getInput();
+		
+		//find all descriptors
+		EditorDescriptor[] descArray = new EditorDescriptor[editorArray.length];
+		IEditorPart partArray[] = new IEditorPart[editorArray.length];
+
+		IEditorRegistry reg = getEditorRegistry();		
+		for (int i = 0; i < editorArray.length; i++) {
+			EditorDescriptor innerDesc = (EditorDescriptor) reg.findEditor(editorArray[i]);
+			if (innerDesc == null)
+				throw new PartInitException(WorkbenchMessages.format("EditorManager.unknownEditorIDMessage", new Object[] { editorArray[i] })); //$NON-NLS-1$
+			descArray[i] = innerDesc;
+			partArray[i] = createPart(descArray[i]);
+			createSite(partArray[i],descArray[i],inputArray[i]);				
+		}
+		part.setChildren(partArray);
+		editorPresentation.openEditor(part,partArray,setVisible);
+	}
+	/*
 	 * Opens an editor part.
 	 */
 	private void openInternalEditor(final IEditorPart part, final EditorDescriptor desc, final IEditorInput input, final boolean setVisible)
 		throws PartInitException {
 		//Must catch PartInitException inside the runnable because
-		//the Runnable.run() does not throw exceptions.
+		//the Runnable.run() does not throw exceptions. 
+
 		final PartInitException ex[] = new PartInitException[1];
 
 		// Start busy indicator.
 		BusyIndicator.showWhile(getDisplay(), new Runnable() {
 			public void run() {
 				try {
-					// Create the site, action bars, pane, etc.
-					EditorSite site = new EditorSite(part, page, desc);
-					part.init(site, input);
-					if (part.getSite() != site)
-						throw new PartInitException(WorkbenchMessages.format("EditorManager.siteIncorrect", new Object[] { desc.getId()})); //$NON-NLS-1$
-
-					// Create the pane, action bars, etc.
-					if (desc != null)
-						site.setActionBars(createEditorActionBars(desc));
-					else
-						site.setActionBars(createEmptyEditorActionBars());
-					editorPresentation.openEditor(part, setVisible);
+					if (part instanceof MultiEditor) {
+						openMultiEditor((MultiEditor) part, desc, (MultiEditorInput)input, setVisible);
+					} else {
+						// Create the site, action bars, pane, etc.
+						createSite(part, desc, input);
+						editorPresentation.openEditor(part, setVisible);
+					}
 				} catch (PartInitException e) {
 					ex[0] = e;
 				}
@@ -435,27 +476,40 @@ public class EditorManager {
 			throw ex[0];
 	}
 	/*
+	 * Create the site and initialize it with its action bars.
+	 */
+	private void createSite(final IEditorPart part, final EditorDescriptor desc, final IEditorInput input) throws PartInitException {
+		EditorSite site = new EditorSite(part, page, desc);
+		part.init(site, input);
+		if (part.getSite() != site)
+			throw new PartInitException(WorkbenchMessages.format("EditorManager.siteIncorrect", new Object[] { desc.getId()})); //$NON-NLS-1$
+
+		if (desc != null)
+			site.setActionBars(createEditorActionBars(desc));
+		else
+			site.setActionBars(createEmptyEditorActionBars());
+	}
+	/*
 	 * See IWorkbenchPage.
 	 */
 	private IEditorPart reuseInternalEditor(EditorDescriptor desc, IEditorInput input) throws PartInitException {
 		IEditorPart reusableEditor = findReusableEditor(desc);
-		if(reusableEditor != null) {
-			EditorSite site = (EditorSite)reusableEditor.getEditorSite();
-			IEditorInput editorInput = reusableEditor.getEditorInput(); 
+		if (reusableEditor != null) {
+			EditorSite site = (EditorSite) reusableEditor.getEditorSite();
+			IEditorInput editorInput = reusableEditor.getEditorInput();
 			EditorDescriptor oldDesc = site.getEditorDescriptor();
-			if(oldDesc == null)
-				oldDesc = (EditorDescriptor)getEditorRegistry().getDefaultEditor();
-			if((desc.getId().equals(oldDesc.getId())) &&
-				(reusableEditor instanceof IReusableEditor)) {
-					Workbench wb = (Workbench)window.getWorkbench();
-					editorPresentation.moveEditor(reusableEditor,-1);
-					wb.getEditorHistory().add(reusableEditor.getEditorInput(),site.getEditorDescriptor());
-					((IReusableEditor)reusableEditor).setInput(input);
-					return reusableEditor;
+			if (oldDesc == null)
+				oldDesc = (EditorDescriptor) getEditorRegistry().getDefaultEditor();
+			if ((desc.getId().equals(oldDesc.getId())) && (reusableEditor instanceof IReusableEditor)) {
+				Workbench wb = (Workbench) window.getWorkbench();
+				editorPresentation.moveEditor(reusableEditor, -1);
+				wb.getEditorHistory().add(reusableEditor.getEditorInput(), site.getEditorDescriptor());
+				((IReusableEditor) reusableEditor).setInput(input);
+				return reusableEditor;
 			} else {
 				//findReusableEditor(...) makes sure its neither pinned nor dirty
 				IEditorPart result = openInternalEditor(desc, input, true);
-				reusableEditor.getEditorSite().getPage().closeEditor(reusableEditor,true);				
+				reusableEditor.getEditorSite().getPage().closeEditor(reusableEditor, true);
 				return result;
 			}
 		}
@@ -467,6 +521,14 @@ public class EditorManager {
 	 */
 	private IEditorPart openInternalEditor(final EditorDescriptor desc, IEditorInput input, boolean setVisible) throws PartInitException {
 		// Create an editor instance.
+		final IEditorPart editor = createPart(desc);
+
+		// Open the instance.
+		openInternalEditor(editor, desc, input, setVisible);
+		return editor;
+	}
+	
+	private IEditorPart createPart(final EditorDescriptor desc) throws PartInitException {
 		final IEditorPart editor[] = new IEditorPart[1];
 		final Throwable ex[] = new Throwable[1];
 		Platform.run(new SafeRunnableAdapter() {
@@ -477,12 +539,9 @@ public class EditorManager {
 				ex[0] = e;
 			}
 		});
-
+		
 		if (ex[0] != null)
 			throw new PartInitException(WorkbenchMessages.format("EditorManager.unableToInstantiate", new Object[] { desc.getId(), ex[0] })); //$NON-NLS-1$
-
-		// Open the instance.
-		openInternalEditor(editor[0], desc, input, setVisible);
 		return editor[0];
 	}
 	/**
@@ -765,6 +824,10 @@ public class EditorManager {
 		final int errors[] = new int[1];
 		for (int x = 0; x < editors.length; x++) {
 			final IEditorPart editor = editors[x];
+			EditorSite site = (EditorSite)editor.getEditorSite();
+			if(site.getPane() instanceof MultiEditorInnerPane)
+				continue;
+				
 			Platform.run(new SafeRunnableAdapter() {
 				public void run() {
 					// Get the input.
