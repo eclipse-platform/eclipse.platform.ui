@@ -115,12 +115,11 @@ public class Property {
 				String expanded = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
 				return expanded;
 			} catch (CoreException e) {
-				AntCorePlugin.log(e);
 			}
 		} else {
 			return value;
 		}
-		return null;
+		return value;
 	}
 
 	/**
