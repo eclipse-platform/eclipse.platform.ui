@@ -253,31 +253,15 @@ function scrollIntoView(node)
 	window.scrollBy(0, scroll);
 }
 
-function adjustMargins()
-{
-	// little change for mozilla margins
-	if (isMozilla)
-	{
-		var ul = document.body.childNodes;
-		for (var i=0; i<ul.length; i++)
-			if (ul[i].tagName == "UL")
-				ul[i].style.marginLeft = -18;
-	}
-}
 	
 /**
  * Handles the onload event
  */
 function onloadHandler(toc, title)
 {
-	//parent.parent.MainFrame.location="home.jsp?toc="+toc;
-
-	// little change for mozilla margins
-	if (isMozilla)
-		adjustMargins();
- 		
 	parent.parent.setToolbarTitle(title);
 }
+
 
 // listen for clicks
 if (isMozilla) {
