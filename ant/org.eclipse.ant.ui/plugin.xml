@@ -109,11 +109,7 @@
    
    <extension
          point="org.eclipse.ui.commands">
-	  <category
-            name="%antCategory.name"
-            description="%antCategory.description"
-            id="org.eclipse.ant.ui.category.source">
-      </category>
+	 
       <command
             name="%ViewCommand.antView.name"
             description="%ViewCommand.antView.description"
@@ -129,7 +125,7 @@
       <command
             name="%ActionDefinition.format.name"
             description="%ActionDefinition.format.description"
-            category="org.eclipse.ant.ui.category.source"
+            category="org.eclipse.jdt.ui.category.source"
             id="org.eclipse.ant.ui.format">
       </command>
       <keyBinding
@@ -141,7 +137,7 @@
       <command
             name="%ActionDefinition.showTooltip.name"
             description="%ActionDefinition.showTooltip.description"
-            category="org.eclipse.ant.ui.category.source"
+            category="org.eclipse.jdt.ui.category.source"
             id="org.eclipse.ant.ui.showTooltip">
       </command>
       <keyBinding
@@ -153,7 +149,7 @@
       <command
             name="%ActionDefinition.openExternalDoc.name"
             description="%ActionDefinition.openExternalDoc.description"
-            category="org.eclipse.ant.ui.category.source"
+            category="org.eclipse.jdt.ui.category.source"
             id="org.eclipse.ant.ui.openExternalDoc">
       </command>
       <keyBinding
