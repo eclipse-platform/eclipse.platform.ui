@@ -240,11 +240,16 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 				Iterator patternIterator= patternBindings.iterator();
 				while (patternIterator.hasNext()) {
 					IActivityPatternBinding patternBinding= (IActivityPatternBinding) patternIterator.next();
-					String pattern = patternBinding.getPattern().toString();
+					String pattern = patternBinding.getPattern().pattern();
 					int index = pattern.lastIndexOf(DEBUG_MODEL_ACTIVITY_SUFFIX);
 					if (index > 0) {
-						String debugModel= pattern.substring(0, index);
-						modelsToActivities.put(debugModel, activityId);
+						String debugModel= pattern.substring(0, index - 1);
+						List ids = (List)modelsToActivities.get(debugModel);
+						if (ids == null) {
+							ids = new ArrayList();
+							modelsToActivities.put(debugModel, ids);
+						}
+						ids.add(activityId);
 					}
 				}
 			}
