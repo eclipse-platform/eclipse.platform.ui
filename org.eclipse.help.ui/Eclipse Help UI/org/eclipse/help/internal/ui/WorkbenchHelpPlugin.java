@@ -82,7 +82,8 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	 * Called by Platform after loading the plugin
 	 */
 	public void startup() {
-		initializeFromStore();
+		if(getWorkbench()!=null)
+			initializeFromStore();
 		HelpSystem.startup();
 	}
 }

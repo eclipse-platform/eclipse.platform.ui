@@ -164,7 +164,9 @@ public class DefaultHelp implements IHelp {
 		// returning null in this method is the cleanest way to handle error.
 		// what we do is log the error, then die cleanly.
 
-		IWorkbench workbench = WorkbenchHelpPlugin.getDefault().getWorkbench();
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		if (workbench == null)
+			return null;
 		IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
 		helpPage = null;
 
@@ -202,7 +204,9 @@ public class DefaultHelp implements IHelp {
 		// returning null in this method is the cleanest way to handle error.
 		// what we do is log the error, then die cleanly.
 
-		IWorkbench workbench = WorkbenchHelpPlugin.getDefault().getWorkbench();
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		if (workbench == null)
+			return null;
 		IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
 		helpPage = null;
 

@@ -63,7 +63,8 @@ public class EmbeddedHelpView extends ViewPart {
 	 */
 	private void addContributions() {
 		makeActions();
-		fillToolbar();
+		if(getViewSite()!=null)//Embedded Help View
+			fillToolbar(getViewSite().getActionBars().getToolBarManager());
 		fillContextMenu();
 		fillMenu();
 	}
@@ -247,9 +248,7 @@ public class EmbeddedHelpView extends ViewPart {
 	/**
 	 * Fill the local tool bar with actions.
 	 */
-	private void fillToolbar() {
-
-		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
+	public void fillToolbar(IToolBarManager tbm) {
 		tbm.removeAll();
 
 		tbm.add(showHideAction);
@@ -267,7 +266,7 @@ public class EmbeddedHelpView extends ViewPart {
 		// but manager does not update it automatically once it has been created
 		tbm.update(true);
 	}
-	NavigationViewer getNavigationViewer() {
+		NavigationViewer getNavigationViewer() {
 		return navigationViewer;
 	}
 	public Composite getViewComposite() {
