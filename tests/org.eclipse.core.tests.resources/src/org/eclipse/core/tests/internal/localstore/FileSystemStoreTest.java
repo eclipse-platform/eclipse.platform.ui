@@ -138,6 +138,13 @@ public void testCopyFile() throws Throwable {
 	assertTrue("2.1", compareContent(getContents(content), store.read(copyOfTarget)));
 	copyOfTarget.delete();
 
+	/* make source read-only and try the copy temp\target -> temp\copy of target */
+	copyOfTarget = new File(temp, "copy of target");
+	CoreFileSystemLibrary.setReadOnly(target.getAbsolutePath(), true);
+	store.copy(target, copyOfTarget, IResource.DEPTH_INFINITE, null);
+	assertTrue("3.1", compareContent(getContents(content), store.read(copyOfTarget)));
+	copyOfTarget.delete();
+
 	/* copy a big file to test progress monitor */
 	StringBuffer sb = new StringBuffer();
 	for (int i = 0; i < 1000; i++)
