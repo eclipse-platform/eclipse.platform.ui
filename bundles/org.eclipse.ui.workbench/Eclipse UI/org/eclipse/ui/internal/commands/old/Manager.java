@@ -25,8 +25,6 @@ import org.eclipse.ui.internal.commands.registry.old.ActiveConfiguration;
 import org.eclipse.ui.internal.commands.registry.old.Configuration;
 import org.eclipse.ui.internal.commands.registry.old.Context;
 import org.eclipse.ui.internal.commands.registry.old.CoreRegistry;
-import org.eclipse.ui.internal.commands.registry.old.IMutableRegistry;
-import org.eclipse.ui.internal.commands.registry.old.IRegistry;
 import org.eclipse.ui.internal.commands.registry.old.LocalRegistry;
 import org.eclipse.ui.internal.commands.registry.old.PreferenceRegistry;
 import org.eclipse.ui.internal.commands.registry.old.SequenceBinding;
@@ -60,18 +58,6 @@ public class Manager {
 		gestureMachine = SequenceMachine.create();
 		keyMachine = SequenceMachine.create();
 		reset();		
-	}
-
-	public IRegistry getCoreRegistry() {
-		return coreRegistry;
-	}
-
-	public IMutableRegistry getLocalRegistry() {
-		return localRegistry;
-	}
-
-	public IMutableRegistry getPreferenceRegistry() {
-		return preferenceRegistry;
 	}
 
 	public SequenceMachine getGestureMachine() {

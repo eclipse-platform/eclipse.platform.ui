@@ -329,23 +329,25 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		}
 		
 		if (activeWorkbenchPageCommandHandlerService != this.activeWorkbenchPageCommandHandlerService) {
-			if (this.activeWorkbenchPage != null)
-				((WorkbenchPage) this.activeWorkbenchPage).getCommandHandlerService().removeCommandHandlerServiceListener(commandHandlerServiceListener);
+			if (this.activeWorkbenchPageCommandHandlerService != null)
+				this.activeWorkbenchPageCommandHandlerService.removeCommandHandlerServiceListener(commandHandlerServiceListener);
 					
 			this.activeWorkbenchPage = activeWorkbenchPage;
+			this.activeWorkbenchPageCommandHandlerService = activeWorkbenchPageCommandHandlerService;
 
-			if (this.activeWorkbenchPage != null)
-				((WorkbenchPage) this.activeWorkbenchPage).getCommandHandlerService().addCommandHandlerServiceListener(commandHandlerServiceListener);
+			if (this.activeWorkbenchPageCommandHandlerService != null)
+				this.activeWorkbenchPageCommandHandlerService.addCommandHandlerServiceListener(commandHandlerServiceListener);
 		}
 
 		if (activeWorkbenchPartCommandHandlerService != this.activeWorkbenchPartCommandHandlerService) {
-			if (this.activeWorkbenchPart != null)
-				((PartSite) this.activeWorkbenchPart.getSite()).getCommandHandlerService().removeCommandHandlerServiceListener(commandHandlerServiceListener);
+			if (this.activeWorkbenchPartCommandHandlerService != null)
+				this.activeWorkbenchPartCommandHandlerService.removeCommandHandlerServiceListener(commandHandlerServiceListener);
 					
 			this.activeWorkbenchPart = activeWorkbenchPart;
+			this.activeWorkbenchPartCommandHandlerService = activeWorkbenchPartCommandHandlerService;
 
-			if (this.activeWorkbenchPart != null)
-				((PartSite) this.activeWorkbenchPart.getSite()).getCommandHandlerService().addCommandHandlerServiceListener(commandHandlerServiceListener);
+			if (this.activeWorkbenchPartCommandHandlerService != null)
+				this.activeWorkbenchPartCommandHandlerService.addCommandHandlerServiceListener(commandHandlerServiceListener);		
 		}
 		
 		SortedMap commandHandlersById = new TreeMap();
@@ -360,33 +362,35 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		((CommandManager) getCommandManager()).setCommandHandlersById(commandHandlersById);
 
 		if (activeWorkbenchPageContextActivationService != this.activeWorkbenchPageContextActivationService) {
-			if (this.activeWorkbenchPage != null)
-				((WorkbenchPage) this.activeWorkbenchPage).getContextActivationService().removeContextActivationServiceListener(contextActivationServiceListener);
+			if (this.activeWorkbenchPageContextActivationService != null)
+				this.activeWorkbenchPageContextActivationService.removeContextActivationServiceListener(contextActivationServiceListener);
 					
 			this.activeWorkbenchPage = activeWorkbenchPage;
+			this.activeWorkbenchPageContextActivationService = activeWorkbenchPageContextActivationService;
 
-			if (this.activeWorkbenchPage != null)
-				((WorkbenchPage) this.activeWorkbenchPage).getContextActivationService().addContextActivationServiceListener(contextActivationServiceListener);
+			if (this.activeWorkbenchPageContextActivationService != null)
+				this.activeWorkbenchPageContextActivationService.addContextActivationServiceListener(contextActivationServiceListener);
 		}
 
 		if (activeWorkbenchPartContextActivationService != this.activeWorkbenchPartContextActivationService) {
-			if (this.activeWorkbenchPart != null)
-				((PartSite) this.activeWorkbenchPart.getSite()).getContextActivationService().removeContextActivationServiceListener(contextActivationServiceListener);
+			if (this.activeWorkbenchPartContextActivationService != null)
+				this.activeWorkbenchPartContextActivationService.removeContextActivationServiceListener(contextActivationServiceListener);
 					
 			this.activeWorkbenchPart = activeWorkbenchPart;
+			this.activeWorkbenchPartContextActivationService = activeWorkbenchPartContextActivationService;
 
-			if (this.activeWorkbenchPart != null)
-				((PartSite) this.activeWorkbenchPart.getSite()).getContextActivationService().addContextActivationServiceListener(contextActivationServiceListener);
+			if (this.activeWorkbenchPartContextActivationService != null)
+				this.activeWorkbenchPartContextActivationService.addContextActivationServiceListener(contextActivationServiceListener);
 		}
 		
 		SortedSet activeContextIds = new TreeSet();
 		activeContextIds.addAll(getContextActivationService().getActiveContextIds());
 		
 		if (activeWorkbenchPageContextActivationService != null)
-			activeContextIds.addAll(activeWorkbenchPageContextActivationService.getActiveContextIds());
+			activeContextIds.addAll(this.activeWorkbenchPageContextActivationService.getActiveContextIds());
 
 		if (activeWorkbenchPartContextActivationService != null)
-			activeContextIds.addAll(activeWorkbenchPartContextActivationService.getActiveContextIds());
+			activeContextIds.addAll(this.activeWorkbenchPartContextActivationService.getActiveContextIds());
 			
 		((ContextManager) getContextManager()).setActiveContextIds(activeContextIds);
 	}
