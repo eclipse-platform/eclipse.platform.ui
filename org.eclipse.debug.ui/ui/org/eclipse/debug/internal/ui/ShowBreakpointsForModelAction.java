@@ -26,6 +26,7 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * An view filter action that filters showing breakpoints based on the model identifier
@@ -88,10 +89,16 @@ public class ShowBreakpointsForModelAction extends ToggleFilterAction implements
 	}
 
 	public ShowBreakpointsForModelAction(StructuredViewer viewer) {
+		super();
+		setText(DebugUIMessages.getString("ShowBreakpointsForModelAction.Show_For_Selected"));
 		setViewerFilter(new BreakpointFilter());
 		setViewer(viewer);
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET));
 		setChecked(false);
+		setId(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".ShowBreakpointsForModelAction"); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(
+			this,
+			new Object[] { IDebugHelpContextIds.SHOW_BREAKPOINTS_FOR_MODEL_ACTION });
 	}
 	
 	public void run() {
@@ -133,13 +140,13 @@ public class ShowBreakpointsForModelAction extends ToggleFilterAction implements
 	 * @see ToggleFilterAction#getShowText()
 	 */
 	protected String getShowText() {
-		return "Show All Breakpoints";
+		return DebugUIMessages.getString("ShowBreakpointsForModelAction.Show_All_Breakpoints_2"); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see ToggleFilterAction#getHideText()
 	 */
 	protected String getHideText() {
-		return "Only Show Breakpoints Applicable to Selected Debug Element";
+		return DebugUIMessages.getString("ShowBreakpointsForModelAction.Only_Show_Breakpoints_Applicable_to_Selected_Debug_Element_3"); //$NON-NLS-1$
 	}
 }

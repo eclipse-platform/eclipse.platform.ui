@@ -46,6 +46,7 @@ public interface IDebugHelpContextIds {
 	public static final String TERMINATE_ALL_ACTION = PREFIX + "terminate_all_action_context"; //$NON-NLS-1$
 	public static final String TERMINATE_AND_REMOVE_ACTION = PREFIX + "terminate_and_remove_action_context"; //$NON-NLS-1$
 	public static final String SHOW_DETAIL_PANE_ACTION = PREFIX + "show_detail_pane_action_context"; //$NON-NLS-1$
+	public static final String SHOW_BREAKPOINTS_FOR_MODEL_ACTION = PREFIX + "show_breakpoints_for_model_action_context"; //$NON-NLS-1$
 		
 	// Views
 	public static final String DEBUG_VIEW = PREFIX + "debug_view_context"; //$NON-NLS-1$

@@ -83,8 +83,8 @@ public class BreakpointsView extends AbstractDebugView {
 			if (!modelId1.equals(modelId2)) {
 				return modelId1.compareTo(modelId2);
 			}
-			String type1= "";
-			String type2= "";
+			String type1= ""; //$NON-NLS-1$
+			String type2= ""; //$NON-NLS-1$
 			try {
 				type1= b1.getMarker().getType();
 			} catch (CoreException ce) {
@@ -173,7 +173,7 @@ public class BreakpointsView extends AbstractDebugView {
 	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		((ShowBreakpointsForModelAction)getAction("ShowBreakpointsForModel")).dispose();
+		((ShowBreakpointsForModelAction)getAction("ShowBreakpointsForModel")).dispose(); //$NON-NLS-1$
 		super.dispose();
 		if (getEventHandler() != null) {
 			getEventHandler().dispose();
@@ -190,23 +190,23 @@ public class BreakpointsView extends AbstractDebugView {
 			
 		action = new RemoveAllBreakpointsAction();
 		action.setEnabled(DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length == 0 ? false : true);
-		setAction("RemoveAll", action);
+		setAction("RemoveAll", action); //$NON-NLS-1$
 		
 		action = new ShowQualifiedAction(getViewer());
 		action.setChecked(true);
-		setAction("ShowQualifiedNames", action);
+		setAction("ShowQualifiedNames", action); //$NON-NLS-1$
 		
 		action = new OpenBreakpointMarkerAction(getViewer());
-		setAction("GotoMarker", action);
+		setAction("GotoMarker", action); //$NON-NLS-1$
 		setAction(DOUBLE_CLICK_ACTION, action);
 		
-		setAction("EnableDisableBreakpoint", new EnableDisableBreakpointAction(getViewer()));
+		setAction("EnableDisableBreakpoint", new EnableDisableBreakpointAction(getViewer())); //$NON-NLS-1$
 		
-		setAction("ShowBreakpointsForModel", new ShowBreakpointsForModelAction(getViewer()));
+		setAction("ShowBreakpointsForModel", new ShowBreakpointsForModelAction(getViewer())); //$NON-NLS-1$
 	}
 
 	/**
-	 * Adds items to the context menu
+	 * Adds items to the context menu.
 	 * 
 	 * @param menu The menu to contribute to
 	 */
@@ -214,21 +214,22 @@ public class BreakpointsView extends AbstractDebugView {
 		updateActions();
 		menu.add(new Separator(IDebugUIConstants.EMPTY_NAVIGATION_GROUP));
 		menu.add(new Separator(IDebugUIConstants.NAVIGATION_GROUP));
-		menu.add(getAction("GotoMarker"));
+		menu.add(getAction("GotoMarker")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_BREAKPOINT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
-		menu.add(getAction("EnableDisableBreakpoint"));
+		menu.add(getAction("EnableDisableBreakpoint")); //$NON-NLS-1$
 		menu.add(getAction(REMOVE_ACTION));
-		menu.add(getAction("RemoveAll"));
+		menu.add(getAction("RemoveAll")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-		menu.add(getAction("ShowQualifiedNames"));
+		menu.add(getAction("ShowQualifiedNames")); //$NON-NLS-1$
+		menu.add(getAction("ShowBreakpointsForModel")); //$NON-NLS-1$
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
 	/**
 	 * Returns an editor part that is open on this breakpoint's
-	 * resource
+	 * resource.
 	 * 
 	 * @param marker The marker to use to find the correct editor
 	 * @param page The page to check for the current editors
@@ -256,11 +257,11 @@ public class BreakpointsView extends AbstractDebugView {
 	}
 	
 	protected void configureToolBar(IToolBarManager tbm) {
-		tbm.add(getAction("ShowBreakpointsForModel"));
+		tbm.add(getAction("ShowBreakpointsForModel")); //$NON-NLS-1$
 		tbm.add(getAction(REMOVE_ACTION));
-		tbm.add(getAction("RemoveAll"));
-		tbm.add(getAction("GotoMarker"));
-		tbm.add(getAction("ShowQualifiedNames"));
+		tbm.add(getAction("RemoveAll")); //$NON-NLS-1$
+		tbm.add(getAction("GotoMarker")); //$NON-NLS-1$
+		tbm.add(getAction("ShowQualifiedNames")); //$NON-NLS-1$
 	}
 
 	/**
