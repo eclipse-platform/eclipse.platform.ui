@@ -39,7 +39,7 @@ public class TextPresentation {
 	 * Applies the given presentation to the given text widget. Helper method.
 	 *
 	 * @param presentation the style information
-	 * @param the widget to which to apply the style information
+	 * @param text the widget to which to apply the style information
 	 * @since 2.0
 	 */
 	public static void applyTextPresentation(TextPresentation presentation, StyledText text) {
@@ -173,6 +173,7 @@ public class TextPresentation {
 	 * Creates a new empty text presentation with the given extent.
 	 * <code>sizeHint</code>  tells the expected size of this presentation.
 	 * 
+	 * @param extent the extent of the created <code>TextPresentation</code>
 	 * @param sizeHint the expected size of this presentation
 	 * @since 3.0
 	 */
