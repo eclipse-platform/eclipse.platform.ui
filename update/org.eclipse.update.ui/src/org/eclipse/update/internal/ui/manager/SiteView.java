@@ -138,7 +138,8 @@ public class SiteView
 					VersionedIdentifier versionedIdentifier=(feature!=null)?feature.getVersionedIdentifier():null;
 					String version = "";
 					if (versionedIdentifier!=null) version = versionedIdentifier.getVersion().toString();
-					return feature.getLabel() + " " + version;
+					String label = (feature!=null)?feature.getLabel():"";
+					return label + " " + version;
 				} catch (CoreException e) {
 					UpdateUIPlugin.logException(e);
 				}

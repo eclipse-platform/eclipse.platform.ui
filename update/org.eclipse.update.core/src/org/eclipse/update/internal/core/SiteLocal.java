@@ -559,7 +559,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		// if a feature has been found in new and old state
 		// use old state
 		Iterator featureIter = toCheck.iterator();
-		ConfiguredSite oldConfiguredSite = (ConfiguredSite) oldConfiguredSiteToReconcile.getSite();
+		ConfiguredSite oldConfiguredSite = (ConfiguredSite) oldConfiguredSiteToReconcile;
 		ConfigurationPolicy oldConfigurationPolicy = oldConfiguredSite.getConfigurationPolicy();
 		while (featureIter.hasNext()) {
 			IFeatureReference element = (IFeatureReference) featureIter.next();

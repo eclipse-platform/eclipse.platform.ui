@@ -29,7 +29,6 @@ public class JarVerificationDialog extends Dialog {
 	private Button _buttonInstall;
 	private Button _buttonCancel;
 	private Button _buttonTrustCertificate;
-	private CertificatePair trustedCertificate = null;
 	private boolean okToInstall = false;
 	/**
 	 *
@@ -41,7 +40,6 @@ public class JarVerificationDialog extends Dialog {
 		_strId = verificationResult.getFeature().getVersionedIdentifier().toString();
 		_strComponentName =verificationResult.getFeature().getLabel();
 		_strProviderName = verificationResult.getFeature().getProvider();
-		trustedCertificate = null;
 		okToInstall = false;
 	}
 	public boolean close() {

@@ -31,6 +31,8 @@ public class ConfigurationPolicyModel extends ModelObject {
 	 */
 	public ConfigurationPolicyModel() {
 		super();
+		configuredFeatureReferences = new ArrayList();
+		unconfiguredFeatureReferences = new ArrayList();		
 	}
 
 	/**
@@ -39,9 +41,9 @@ public class ConfigurationPolicyModel extends ModelObject {
 	public ConfigurationPolicyModel(ConfigurationPolicyModel configPolicy) {
 		super();
 		this.policy = configPolicy.getPolicy();
-		configuredFeatureReferences = new ArrayList(0);
+		configuredFeatureReferences = new ArrayList();
 		configuredFeatureReferences.addAll(Arrays.asList(configPolicy.getConfiguredFeaturesModel()));
-		unconfiguredFeatureReferences = new ArrayList(0);
+		unconfiguredFeatureReferences = new ArrayList();
 		unconfiguredFeatureReferences.addAll(Arrays.asList(configPolicy.getUnconfiguredFeaturesModel()));
 	}
 

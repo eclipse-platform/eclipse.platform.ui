@@ -9,16 +9,18 @@ import java.io.File;import java.io.InputStream;
 import java.net.MalformedURLException;import java.net.URL;import java.security.KeyStore;
 import java.security.Security;
 import java.util.ArrayList;import java.util.Iterator;import java.util.List;
+
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 /**
  * Class to manage the different KeyStores we should
  * check for certificates of Signed JAR
  */
 public class KeyStores {
 
-	/**
-	 * true if check default and user keystore at each startup
-	 */
-	private  static boolean ALWAYS_INITIALIZE = true;
 
 	/**
 	 * java.policy files properties of the java.security file
@@ -45,16 +47,7 @@ public class KeyStores {
 	 */
 	public KeyStores() {
 		super();
-		// If the user always wnat to initialize.
-		// this may take some time if some keystore
-		// are remote or if the connection to the keystore
-		// is down. 
-		if (ALWAYS_INITIALIZE) {
-			initializeDefaultKeyStores();
-		}
-		else {
-			readKeystoresFromPersistent();
-		}
+		initializeDefaultKeyStores();
 	}
 	/**
 	 * 
@@ -118,14 +111,6 @@ public class KeyStores {
 	public KeystoreHandle next() {
 		return (KeystoreHandle) getIterator().next();
 	}
-	/**
-	 * populate the list of Keystores from the previously saved list
-	 * if there is no list, initialize with default...
-	 * [future]
-	 */
-	private void readKeystoresFromPersistent() {
-		// not implemented
-	}
 	
 	/**
 	 * retrieve the keystore from java.policy file
@@ -167,13 +152,11 @@ public class KeyStores {
 				}
 			}
 		} catch (MalformedURLException e){
-			// FIXME log
-			e.printStackTrace();
+			log(e);
 		} catch (IOException e){
 			// url.openStream, reader.read (x2)
-			// log
-			// the keystore may not exist
-			e.printStackTrace();			
+			// only log, the keystore may not exist
+			log(e);	
 		} finally {
 			try { in.close();} catch (Exception e){}
 		}
@@ -202,13 +185,12 @@ public class KeyStores {
 		try {
 			url = new URL(content.substring(indexOfSpace,secondSpace));
 		} catch (MalformedURLException e){
-			//FIXME log
+			log(e);
 			// the url maybe relative
 			try {
 			url = new URL(rootURL,content.substring(indexOfSpace,secondSpace));				
 			} catch (MalformedURLException e1){
-				// FIXME log
-				e1.printStackTrace();				
+				log(e1);			
 			}
 		}
 
@@ -217,4 +199,12 @@ public class KeyStores {
 			
 		return handle;
 	}	
+	
+	private void log(Exception e){
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
+		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+		IStatus status = new Status(IStatus.WARNING,id,IStatus.OK,"Cannot retrieve a KeyStore",e);
+		UpdateManagerPlugin.getPlugin().getLog().log(status);
+		}
+	}
 }

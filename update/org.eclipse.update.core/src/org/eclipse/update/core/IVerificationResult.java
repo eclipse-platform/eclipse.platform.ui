@@ -15,7 +15,7 @@ public interface IVerificationResult {
 	static final int TYPE_ENTRY_NOT_SIGNED = 1;
 	static final int TYPE_ENTRY_CORRUPTED = 2;
 	static final int TYPE_ENTRY_SIGNED_RECOGNIZED = 3;
-	static final int TYPE_ENTRY_SIGNED_RECOGNIZED_DO_NOT_PROMPT = 4;	
+	static final int TYPE_ENTRY_ALREADY_ACCEPTED = 4;	
 	static final int TYPE_ENTRY_SIGNED_UNRECOGNIZED = 5;
 	static final int UNKNOWN_ERROR = 6;
 	static final int VERIFICATION_CANCELLED = 7;

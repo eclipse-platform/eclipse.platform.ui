@@ -88,7 +88,7 @@ public class JarVerificationService implements IVerificationListener {
 					break;
 				}
 
-			case IVerificationResult.TYPE_ENTRY_SIGNED_RECOGNIZED_DO_NOT_PROMPT : {
+			case IVerificationResult.TYPE_ENTRY_ALREADY_ACCEPTED : {
 				break;
 			}
 			

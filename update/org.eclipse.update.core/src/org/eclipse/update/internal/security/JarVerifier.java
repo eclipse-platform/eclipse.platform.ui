@@ -32,7 +32,8 @@ public class JarVerifier implements IVerifier {
 
 	private JarVerificationResult result;
 	private List /*of CertificatePair*/
-	trustedCertificates = null;		
+	trustedCertificates = null;	
+	private boolean acceptUnsignedFiles;	
 
 	/**
 	 * List of initialized keystores
@@ -123,6 +124,7 @@ public class JarVerifier implements IVerifier {
 		result.setResultException(null);
 		result.setFeature(feature);
 		result.setContentReference(contentRef);
+		acceptUnsignedFiles = false;
 		
 		// # of entries
 		JarFile jar = new JarFile(jarFile);
@@ -159,21 +161,24 @@ public class JarVerifier implements IVerifier {
 	/**
 	 * Throws exception or set the resultcode to UNKNOWN_ERROR
 	 */
-	private List readJarFile(final JarInputStream jis) throws IOException, InterruptedException, InvocationTargetException {
-		final List list = new ArrayList(0);
-
+	private List readJarFile(JarFile jarFile) throws IOException, InterruptedException {
+		List list = new ArrayList();
 		byte[] buffer = new byte[4096];
-		JarEntry ent;
+		Enumeration entries = jarFile.entries();
+		JarEntry currentEntry = null;
+		InputStream in = null;
 		if (monitor != null)
-			monitor.beginTask(Policy.bind("JarVerifier.Verify", jarFileName), entries); //$NON-NLS-1$ //$NON-NLS-2$
+			monitor.beginTask(Policy.bind("JarVerifier.Verify", jarFile.getName()), jarFile.size()); //$NON-NLS-1$ 
+		
 		try {
-			while ((ent = jis.getNextJarEntry()) != null) {
-				list.add(ent);
-				if (monitor != null)
-					monitor.worked(1);
-				while ((jis.read(buffer, 0, buffer.length)) != -1) {
+			while (entries.hasMoreElements()) {
+				currentEntry = (JarEntry) entries.nextElement();
+				list.add(currentEntry);
+				in = jarFile.getInputStream(currentEntry);
+				while ((in.read(buffer, 0, buffer.length)) != -1) {
 					// Security error thrown if tempered
 				}
+				in.close();
 			}
 		} catch (IOException e) {
 			result.setVerificationCode(IVerificationResult.UNKNOWN_ERROR);
@@ -206,7 +211,7 @@ public class JarVerifier implements IVerifier {
 				try {
 					File jarFile = jarReference.asFile(); 
 					initializeVariables(jarFile, feature, references[i]);
-					return verify(jarFile);
+					return verify(jarFile.getAbsolutePath());
 				} catch (IOException e){
 					throw Utilities.newCoreException("Unable to access JAR file:"+jarReference.toString(),e);
 				}
@@ -216,8 +221,7 @@ public class JarVerifier implements IVerifier {
 	}
 
 	/**
-	* Verifies integrity and the validity of a valid
-	* URL representing a JAR file
+	* Verifies integrity and the validity of a valid JAR File
 	* the possible results are:
 	*
 	* result == NOT_SIGNED	 				if the jar file is not signed.
@@ -235,19 +239,32 @@ public class JarVerifier implements IVerifier {
 	*										not install.
 	* @return int
 	*/
-	private JarVerificationResult verify(File jarFile) {
+	private JarVerificationResult verify(String file) {
 
 		try {
 
 			// verify integrity
-			verifyIntegrity(jarFile);
+			verifyIntegrity(file);
 
 			// do not close input stream
 			// as verifyIntegrity already did it
 
+			//if user already said yes
+			if (alreadyValidated()) {
+				result.setVerificationCode(IVerificationResult.TYPE_ENTRY_ALREADY_ACCEPTED);			
+				return result;
+			}
+
 			// verify source certificate
-			if (result.getVerificationCode() == IVerificationResult.TYPE_ENTRY_SIGNED_UNRECOGNIZED)
+			if (result.getVerificationCode() == IVerificationResult.TYPE_ENTRY_SIGNED_UNRECOGNIZED){
 				verifyAuthentication();
+			} 
+				
+			// save the fact the file is not signed, so the user will not be prompted again 
+			if (result.getVerificationCode() == IVerificationResult.TYPE_ENTRY_NOT_SIGNED){
+				acceptUnsignedFiles = true;
+			}
+		
 
 		} catch (Exception e) {
 			result.setVerificationCode(IVerificationResult.UNKNOWN_ERROR);
@@ -268,10 +285,6 @@ public class JarVerifier implements IVerifier {
 		CertificatePair[] entries = result.getRootCertificates();
 		boolean certificateFound = false;
 
-		if (alreadyValidated()) {
-			result.setVerificationCode(IVerificationResult.TYPE_ENTRY_SIGNED_RECOGNIZED_DO_NOT_PROMPT);			
-		}
-
 		// If all the certificate of an entry are
 		// not found in the list of known certifcate
 		// the certificate is not trusted by any keystore.
@@ -282,29 +295,28 @@ public class JarVerifier implements IVerifier {
 				result.setFoundCertificate(entries[i]);
 				return;
 			}
-
 		}
-
 	}
+	
 	/**
 	 * Verifies the integrity of the JAR
 	 */
-	private void verifyIntegrity(File jarFile) {
+	private void verifyIntegrity(String file) {
 
-		JarInputStream jis = null;
+		JarFile jarFile = null;
 		Collection certificateEntries; // of Certificate[] 
 
 		try {
 			// If the JAR is signed and not valid
 			// a security exception will be thrown
 			// while reading it
-			FileInputStream fis = new FileInputStream(jarFile);
-			jis = new JarInputStream(fis, true);
-			List filesInJar = readJarFile(jis);
+			jarFile = new JarFile(file, true);
+			List filesInJar = readJarFile(jarFile);
+			jarFile.close();
 
 			// you have to read all the files once
 			// before getting the certificates 
-			if (validJAR(jis)) {
+			if (jarFile.getManifest()!=null) {
 				Iterator iter = filesInJar.iterator();
 				boolean certificateFound = false;
 				while (iter.hasNext()) {
@@ -320,7 +332,7 @@ public class JarVerifier implements IVerifier {
 				else
 					result.setVerificationCode(IVerificationResult.TYPE_ENTRY_NOT_SIGNED);
 			} else {
-				result.setResultException(new Exception("The File is not a valid JAR file. The file does not contain a Manifest." + jarFile.getAbsolutePath()));
+				result.setResultException(new Exception("The File is not a valid JAR file. The file does not contain a Manifest." + file));
 			}
 		} catch (SecurityException e) {
 			// Jar file is signed
@@ -331,42 +343,32 @@ public class JarVerifier implements IVerifier {
 		} catch (Exception e) {
 			result.setVerificationCode(IVerificationResult.UNKNOWN_ERROR);
 			result.setResultException(e);
-		} finally {
-			if (jis != null) {
-				try {
-					jis.close();
-				} catch (IOException e) {
-				} // nothing
-			}
-		}
+		} 
 
 	}
-
-	private boolean validJAR(JarInputStream jis) {
-		Manifest result = null;
-		result = jis.getManifest();
-		if (result != null)
-			return true;
-
-		// parse the stream to find the Meta-Inf
-		return false;
-	}
-
 
 	private boolean alreadyValidated() {
 
+		if (result.getVerificationCode()==IVerificationResult.TYPE_ENTRY_NOT_SIGNED)
+			return (acceptUnsignedFiles);		
+
 		if (trustedCertificates != null) {
 			// check if this is not a user accepted certificate for this feature
-			Iterator iter = trustedCertificates.iterator();
+			Iterator iter = getTrustedCertificates().iterator();
+			CertificatePair currentPair = null;
 			while (iter.hasNext()) {
 				CertificatePair trustedCertificate = (CertificatePair) iter.next();
 				CertificatePair[] pairs = result.getRootCertificates();
 				for (int i = 0; i < pairs.length; i++) {
-					if (trustedCertificate.equals(pairs[i])) {
+					currentPair = pairs[i];
+					if (trustedCertificate.equals(currentPair)) {
 						return true;
 					}
 				}
 			}
+			
+			// if certificate pair not found in trusted add it for next time
+			addTrustedCertificate(currentPair);
 		}
 
 		return false;
@@ -384,7 +386,6 @@ public class JarVerifier implements IVerifier {
 			trustedCertificates = new ArrayList();
 		return trustedCertificates;
 	}
-
 
 	
 }
