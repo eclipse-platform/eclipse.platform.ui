@@ -48,6 +48,11 @@ public class LocalResourceTypedElement extends ResourceNode {
 			super.setContent(contents);
 		}	
 
+		public void update(IResource resource) {
+			this.discardBuffer();
+			fireContentChanged();
+		}
+		
 		/**
 		 * Commits buffered contents to resource.
 		 */

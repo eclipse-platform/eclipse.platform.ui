@@ -70,8 +70,18 @@ public class SyncInfoModelElement extends SynchronizeModelElement {
 	public void update(SyncInfo info) {
 		this.info = info;
 		// update state
-		setKind(info.getKind());		
+		setKind(info.getKind());	
+		
 		// never have to update the local, it's always the workspace resource
+		//	Local
+		LocalResourceTypedElement localEl = (LocalResourceTypedElement)getLeft(); 
+		IResource local = info.getLocal();
+		if(local != null) {
+			setLeft(createLocalTypeElement(info));
+		} else {
+			setLeft(null);
+		}
+		
 		// Remote
 		RemoteResourceTypedElement rightEl = (RemoteResourceTypedElement)getRight(); 
 		IResourceVariant remote = info.getRemote();
@@ -85,7 +95,7 @@ public class SyncInfoModelElement extends SynchronizeModelElement {
 			}
 		}
 		// Base
-		RemoteResourceTypedElement ancestorEl = (RemoteResourceTypedElement)getRight(); 
+		RemoteResourceTypedElement ancestorEl = (RemoteResourceTypedElement)getAncestor(); 
 		IResourceVariant base = info.getBase();
 		if(ancestorEl == null && base != null) {
 			setAncestor(createBaseTypeElement(info));

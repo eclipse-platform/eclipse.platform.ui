@@ -69,15 +69,14 @@ public class OpenInCompareAction extends Action {
 			
 			if(editor != null) {
 				IEditorInput otherInput = editor.getEditorInput();
-				if(otherInput instanceof SyncInfoCompareInput && otherInput.equals(input)) {
+				if(otherInput.equals(input)) {
 					// simply provide focus to editor
 					wpage.activate(editor);
 				} else {
 					// if editor is currently not open on that input either re-use existing
-					if(editor != null && editor instanceof IReusableEditor) {
-						CompareUI.reuseCompareEditor(input, (IReusableEditor)editor);
-						wpage.activate(editor);
-					}
+					input.dispose();
+					CompareUI.reuseCompareEditor(input, (IReusableEditor)editor);
+					wpage.activate(editor);
 				}
 			} else {
 				CompareUI.openCompareEditor(input);
@@ -107,11 +106,10 @@ public class OpenInCompareAction extends Action {
 	 * has un-saved changes cannot be re-used.
 	 */
 	public static IEditorPart findReusableCompareEditor(IWorkbenchPage page) {
-		IEditorReference[] editorRefs = page.getEditorReferences();
-		
+		IEditorReference[] editorRefs = page.getEditorReferences();	
 		for (int i = 0; i < editorRefs.length; i++) {
 			IEditorPart part = editorRefs[i].getEditor(true);
-			if(part != null && part.getEditorInput() instanceof SyncInfoCompareInput) {
+			if(part != null && part.getEditorInput() instanceof SyncInfoCompareInput && part instanceof IReusableEditor) {
 				if(! part.isDirty()) {	
 					return part;	
 				}
