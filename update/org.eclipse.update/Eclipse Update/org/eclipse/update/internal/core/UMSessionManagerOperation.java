@@ -367,6 +367,7 @@ public boolean doCopy(IProgressMonitor progressMonitor) {
 public boolean doUnzip(IProgressMonitor progressMonitor) {
 
 	String strErrorMessage = null;
+	boolean allInstalled = false;
 
 	// Input URL
 	//----------
@@ -464,11 +465,6 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 			entry = (JarEntry) enum.nextElement();
 			String entryName = entry.getName();
 			
-			if (entryName.startsWith(IManifestAttributes.MANIFEST_DIR))  {
-				if (progressMonitor != null) progressMonitor.worked(1);
-				continue;
-			}
-			
 			if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_PLUGINS ) {
 				// Unzip plugins and fragments.  Skip entries not under plugins/  or fragments/ trees
 				//-----------------------------------------------------------------------------------
@@ -482,8 +478,14 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 				int second_slash = entryName.indexOf("/", (entryName.indexOf("/")+1));
 				if (second_slash > 0) 
 					prefix = entryName.substring(0,second_slash);
-				if (!dirNames.contains(prefix)) 
+				int match = dirNames.indexOf(prefix);
+				if (match < 0) 
 					continue;
+				// got an entry with matching directory 
+				// we're happy if we get plugin.xml for all plugins
+				if (entryName.equals((String)dirNames.elementAt(match)+"/"+IManifestAttributes.PLUGIN_MANIFEST) ||
+					entryName.equals((String)dirNames.elementAt(match)+"/"+IManifestAttributes.PLUGIN_MANIFEST_OFF))
+					allInstalled = true;
 			} else if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_INSTALL) {
 				// Skip over entries that don't start with the right dir naming convention (id_version)
 				//-------------------------------------------------------------------------------------
@@ -491,6 +493,9 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 					if (progressMonitor != null) progressMonitor.worked(1);
 					continue;
 				}
+				// got an entry - as long as we have install.xml we're happy
+				if (entryName.equals((String)dirNames.firstElement()+"/"+IManifestAttributes.INSTALL_MANIFEST))
+					allInstalled = true;
 			} else if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_BINDIR) {
 				// Unzip the bin directory, if it exists
 				//--------------------------------------
@@ -498,6 +503,8 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 					if (progressMonitor != null) progressMonitor.worked(1);
 					continue;
 				}
+				// got bin dir
+				allInstalled = true;
 			}
 			try {
 				streamInputEntry = jarFile.getInputStream(entry);
@@ -585,7 +592,8 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 		lock.remove();
 	}	// if jarFile is not null
 
-	
+	if (!allInstalled) 
+		strErrorMessage = UpdateManagerStrings.getString("S_File_is_not_a_valid_JAR_file");
 
 	if (progressMonitor != null) progressMonitor.done();
 
