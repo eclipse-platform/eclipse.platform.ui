@@ -14,7 +14,6 @@ import org.eclipse.help.internal.server.PluginURL;
  */
 public class ContextResources extends DocResources{
 
-	static HashMap resourceBundleTable = new HashMap();
 	static ArrayList pluginsWithoutResources = new ArrayList();
 	static HashMap propertiesTable = new HashMap();
 
