@@ -73,7 +73,7 @@ public final class InternalPlatform implements IPlatform {
 	private static String[] frameworkArgs = new String[0];
 
 	private static boolean splashDown = false;
-	private static String pluginCustomizationFile = null;
+	public static String pluginCustomizationFile = null;
 
 	private ArrayList groupProviders = new ArrayList(3);
 	private IProduct product;

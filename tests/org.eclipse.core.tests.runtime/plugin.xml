@@ -23,10 +23,9 @@
          id="test-preferences"
          name="test-preferences"
          point="org.eclipse.core.runtime.preferences">
-      <preferences
-            scope="test"
-            class="org.eclipse.core.tests.internal.preferences.TestScope">
-      </preferences>
+      <scope
+            name="test"
+            class="org.eclipse.core.tests.internal.preferences.TestScope"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.urlHandlers">

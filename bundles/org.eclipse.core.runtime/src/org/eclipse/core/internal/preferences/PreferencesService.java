@@ -33,8 +33,9 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	private static final char EXPORT_ROOT_PREFIX = '!';
 	private static final float EXPORT_VERSION = 3;
 	private static final String VERSION_KEY = "file_export_version"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_SCOPE = "scope"; //$NON-NLS-1$
-	private static final String ELEMENT_PREFERENCES = "preferences"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
+	private static final String ELEMENT_SCOPE = "scope"; //$NON-NLS-1$
 
 	private static IPreferencesService instance;
 	static final RootPreferences root = new RootPreferences();
@@ -66,7 +67,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			for (int j = 0; j < elements.length; j++)
-				if (ELEMENT_PREFERENCES.equalsIgnoreCase(elements[j].getName()))
+				if (ELEMENT_SCOPE.equalsIgnoreCase(elements[j].getName()))
 					scopeAdded(elements[j]);
 		}
 		Platform.getExtensionRegistry().addRegistryChangeListener(this, Platform.PI_RUNTIME);
@@ -80,7 +81,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * Abstracted into a separate method to prepare for dynamic awareness.
 	 */
 	static void scopeAdded(IConfigurationElement element) {
-		String key = element.getAttribute(ATTRIBUTE_SCOPE);
+		String key = element.getAttribute(ATTRIBUTE_NAME);
 		if (key == null) {
 			String message = Policy.bind("preferences.missingScopeAttribute", element.getDeclaringExtension().getUniqueIdentifier()); //$NON-NLS-1$
 			log(createStatusWarning(message, null));
@@ -114,7 +115,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		if (InternalPlatform.DEBUG_PREFERENCES)
 			Policy.debug("Applying exported preferences: " + ((ExportedPreferences) preferences).toDeepDebugString()); //$NON-NLS-1$
 
-		final MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, "Problems applying preference changes.", null);
+		final MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, Policy.bind("preferences.applyProblems"), null); //$NON-NLS-1$
 
 		// create a visitor to apply the given set of preferences
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
@@ -167,7 +168,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			// start by visiting the root
 			preferences.accept(visitor);
 		} catch (BackingStoreException e) {
-			String message = "Problems applying preferences.";
+			String message = Policy.bind("preferences.applyProblems"); //$NON-NLS-1$
 			throw new CoreException(createStatusError(message, e));
 		}
 
@@ -175,7 +176,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		try {
 			getRootNode().node(preferences.absolutePath()).flush();
 		} catch (BackingStoreException e) {
-			String message = "Problems saving preferences.";
+			String message = Policy.bind("preferences.saveProblems"); //$NON-NLS-1$
 			throw new CoreException(createStatusError(message, e));
 		}
 
@@ -283,7 +284,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		Object value = scopeRegistry.get(name);
 		if (value instanceof IConfigurationElement) {
 			try {
-				scope = (IScope) ((IConfigurationElement) value).createExecutableExtension("class"); //$NON-NLS-1$
+				scope = (IScope) ((IConfigurationElement) value).createExecutableExtension(ATTRIBUTE_CLASS);
 				scopeRegistry.put(name, scope);
 			} catch (ClassCastException e) {
 				String message = Policy.bind("preferences.classCast"); //$NON-NLS-1$
@@ -553,7 +554,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 						scopeAdded(elements[j]);
 						break;
 					case IExtensionDelta.REMOVED :
-						String scope = elements[j].getAttribute(ATTRIBUTE_SCOPE);
+						String scope = elements[j].getAttribute(ATTRIBUTE_NAME);
 						if (scope != null)
 							scopeRemoved(scope);
 						break;

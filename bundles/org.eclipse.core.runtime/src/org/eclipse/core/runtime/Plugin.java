@@ -308,26 +308,13 @@ public abstract class Plugin implements BundleActivator {
 	public final Preferences getPluginPreferences() {
 		if (preferences != null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
-				Policy.debug("Plugin preferences already loaded for " + bundle.getSymbolicName()); //$NON-NLS-1$
-			// N.B. preferences instance field set means already created
-			// and initialized (or in process of being initialized)
+				Policy.debug("Plugin preferences already loaded for: " + bundle.getSymbolicName()); //$NON-NLS-1$
 			return preferences;
 		}
 
 		if (InternalPlatform.DEBUG_PREFERENCES)
-			Policy.debug("Loading preferences for plugin " + bundle.getSymbolicName()); //$NON-NLS-1$
-		// lazily create preference store
-		// important: set preferences instance field to prevent re-entry
+			Policy.debug("Loading preferences for plugin: " + bundle.getSymbolicName()); //$NON-NLS-1$
 		preferences = new PreferenceForwarder(bundle.getSymbolicName());
-
-		// 1. fill in defaults supplied by this plug-in
-		initializeDefaultPluginPreferences();
-		// 2. override with defaults stored with plug-in
-		applyInternalPluginDefaultOverrides();
-		// 3. override with defaults from primary feature or command line
-		applyExternalPluginDefaultOverrides();
-		if (InternalPlatform.DEBUG_PREFERENCES)
-			Policy.debug("Completed loading preferences for plugin " + bundle.getSymbolicName()); //$NON-NLS-1$
 		return preferences;
 	}
 
@@ -379,92 +366,8 @@ public abstract class Plugin implements BundleActivator {
 		// default implementation of this method - spec'd to do nothing
 	}
 
-	/**
-	 * Applies external overrides to default preferences for this plug-in. By the
-	 * time this method is called, the default settings for the plug-in itself will
-	 * have already have been filled in.
-	 * 
-	 * @since 2.0
-	 */
-	private void applyExternalPluginDefaultOverrides() {
-		// 1. InternalPlatform is central authority for platform configuration questions
-		InternalPlatform.getDefault().applyPrimaryFeaturePluginDefaultOverrides(bundle.getSymbolicName(), preferences);
-		// 2. command line overrides take precedence over feature-specified overrides
-		InternalPlatform.getDefault().applyCommandLinePluginDefaultOverrides(bundle.getSymbolicName(), preferences);
-	}
-
-	/**
-	 * Applies overrides to the default preferences for this plug-in. Looks
-	 * for a file in the (read-only) plug-in directory. The default settings will
-	 * have already have been applied.
-	 * 
-	 * @since 2.0
-	 */
-	private void applyInternalPluginDefaultOverrides() {
-		// use URLs so we can find the file in fragments too
-		URL baseURL = FindSupport.find(bundle, new Path(PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME));
-
-		if (baseURL == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
-				Policy.debug("Plugin preference file " + PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME + " not found."); //$NON-NLS-1$ //$NON-NLS-2$
-			return;
-		}
-
-		if (InternalPlatform.DEBUG_PREFERENCES)
-			Policy.debug("Loading preferences from " + baseURL); //$NON-NLS-1$
-		Properties overrides = new Properties();
-		BufferedInputStream in = null;
-		try {
-			in = new BufferedInputStream(baseURL.openStream());
-			overrides.load(in);
-		} catch (IOException e) {
-			// cannot read ini file - fail silently
-			if (InternalPlatform.DEBUG_PREFERENCES) {
-				Policy.debug("IOException encountered loading preference file " + baseURL); //$NON-NLS-1$
-				e.printStackTrace();
-			}
-			return;
-		} finally {
-			try {
-				if (in != null) {
-					in.close();
-				}
-			} catch (IOException e) {
-				// ignore problems closing file
-				if (InternalPlatform.DEBUG_PREFERENCES) {
-					Policy.debug("IOException encountered closing preference file " + baseURL); //$NON-NLS-1$
-					e.printStackTrace();
-				}
-			}
-		}
-
-		// Now get the translation file for these preferences (if one
-		// exists).
-		Properties props = null;
-		if (!overrides.isEmpty()) {
-			props = InternalPlatform.getDefault().getPreferenceTranslator(bundle.getSymbolicName(), PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME);
-		}
-
-		for (Iterator it = overrides.entrySet().iterator(); it.hasNext();) {
-			Map.Entry entry = (Map.Entry) it.next();
-			String key = (String) entry.getKey();
-			String value = (String) entry.getValue();
-			value = InternalPlatform.getDefault().translatePreference(value, props);
-			preferences.setDefault(key, value);
-		}
-		if (InternalPlatform.DEBUG_PREFERENCES) {
-			Policy.debug("Preferences now set as follows:"); //$NON-NLS-1$
-			String[] prefNames = preferences.propertyNames();
-			for (int i = 0; i < prefNames.length; i++) {
-				String value = preferences.getString(prefNames[i]);
-				Policy.debug("\t" + prefNames[i] + " = " + value); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			prefNames = preferences.defaultPropertyNames();
-			for (int i = 0; i < prefNames.length; i++) {
-				String value = preferences.getDefaultString(prefNames[i]);
-				Policy.debug("\tDefault values: " + prefNames[i] + " = " + value); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
+	public void legacyInitializeDefaultPluginPreferences() {
+		initializeDefaultPluginPreferences();
 	}
 
 	/**

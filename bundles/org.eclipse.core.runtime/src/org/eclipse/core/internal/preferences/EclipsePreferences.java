@@ -45,7 +45,6 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	private String cachedPath;
 	protected Map children;
 	protected boolean dirty = false;
-	protected boolean isLoading = false;
 	protected boolean loading = false;
 	protected final String name;
 	protected ListenerList nodeListeners;
@@ -183,6 +182,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 					IPath child = childPath.removeLastSegments(1);
 					//use internal methods to avoid notifying listeners
 					EclipsePreferences childNode = (EclipsePreferences) internalNode(child, false);
+					if (InternalPlatform.DEBUG_PREFERENCES)
+						Policy.debug("Setting preference: " + childNode.absolutePath() + '/' + key + '=' + value); //$NON-NLS-1$
 					childNode.internalPut(key, value);
 					childNode.makeDirty();
 				} else {
@@ -224,6 +225,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 */
 	public IEclipsePreferences create(IEclipsePreferences nodeParent, String nodeName) {
 		EclipsePreferences result = internalCreate(nodeParent, nodeName);
+		((EclipsePreferences) nodeParent).addChild(nodeName, result);
 		IEclipsePreferences loadLevel = result.getLoadLevel();
 
 		// if this node or a parent node is not the load level then return
@@ -242,11 +244,12 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		try {
 			loading = true;
 			result.loadLegacy();
-			result.load(result.getLocation());
+			result.load();
 			result.loaded();
 			result.flush();
 		} catch (BackingStoreException e) {
-			String message = "Exception loading preferences";
+			IPath location = result.getLocation();
+			String message = Policy.bind("preferences.loadException", location == null ? "" : location.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
 			InternalPlatform.getDefault().log(status);
 		} finally {
@@ -454,7 +457,6 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			child = getChild(key);
 			if (child == null) {
 				child = create(this, key);
-				addChild(key, child);
 				added = true;
 			}
 		}
@@ -475,6 +477,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		if (properties == null)
 			properties = new Properties();
 		String oldValue = properties.getProperty(key);
+		if (InternalPlatform.DEBUG_PREFERENCES)
+			Policy.debug("Setting preference: " + absolutePath() + '/' + key + '=' + newValue); //$NON-NLS-1$
 		properties.setProperty(key, newValue);
 		return oldValue;
 	}
@@ -500,13 +504,6 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 */
 	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
 		return true;
-	}
-
-	protected boolean isLoading() {
-		if (parent instanceof EclipsePreferences)
-			return isLoading || ((EclipsePreferences) parent).isLoading();
-		else
-			return isLoading;
 	}
 
 	/*
@@ -536,6 +533,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 						child = child.removeFirstSegments(fullPath.segmentCount());
 						//use internal methods to avoid notifying listeners
 						EclipsePreferences childNode = (EclipsePreferences) internalNode(child, false);
+						if (InternalPlatform.DEBUG_PREFERENCES)
+							Policy.debug("Setting preference: " + childNode.absolutePath() + '/' + key + '=' + value); //$NON-NLS-1$
 						childNode.internalPut(key, value);
 						childNode.makeDirty();
 					} else {
@@ -545,6 +544,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				}
 			}
 		}
+	}
+
+	protected void load() throws BackingStoreException {
+		load(getLocation());
 	}
 
 	protected void load(IPath location) throws BackingStoreException {

@@ -25,9 +25,9 @@
    <extension-point id="contentTypes" name="%contentTypesName"/>
 
 	<extension id="platform-preferences" point="org.eclipse.core.runtime.preferences" name="platform-preferences">
-		<preferences scope="configuration" class="org.eclipse.core.internal.preferences.ConfigurationPreferences"/>
-		<preferences scope="instance" class="org.eclipse.core.internal.preferences.InstancePreferences"/>
-		<preferences scope="default" class="org.eclipse.core.internal.preferences.EclipsePreferences"/>
+		<scope name="configuration" class="org.eclipse.core.internal.preferences.ConfigurationPreferences"/>
+		<scope name="instance" class="org.eclipse.core.internal.preferences.InstancePreferences"/>
+		<scope name="default" class="org.eclipse.core.internal.preferences.DefaultPreferences"/>
 	</extension>
 
 	<extension point="org.eclipse.core.runtime.contentTypes">

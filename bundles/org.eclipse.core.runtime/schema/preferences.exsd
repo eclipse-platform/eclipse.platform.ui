@@ -10,9 +10,9 @@
       </documentation>
    </annotation>
 
-   <element name="preferences">
+   <element name="scope">
       <complexType>
-         <attribute name="scope" type="string" use="required">
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
                   
@@ -20,6 +20,25 @@
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="customization">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="qualifier" type="string" use="required">
             <annotation>
                <documentation>
                   
@@ -47,7 +66,8 @@
 &lt;p&gt;
    &lt;pre&gt;
       &lt;extension point=&quot;org.eclipse.core.runtime.preferences&quot;&gt;
-         &lt;preferences scope=&quot;foo&quot; class=&quot;com.example.FooPrefs&quot;/&gt;
+         &lt;scope name=&quot;foo&quot; class=&quot;com.example.FooPrefs&quot;/&gt;
+         &lt;customizer class=&quot;com.example.FooCustomizer&quot;/&gt;
       &lt;/extension&gt;
    &lt;/pre&gt;
 &lt;/p&gt;
