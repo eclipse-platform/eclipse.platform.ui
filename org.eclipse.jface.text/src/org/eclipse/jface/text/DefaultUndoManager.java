@@ -56,6 +56,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
  * Since 3.1 this undo manager is a facade to the global operation history.
  * </p>
  * <p>
+ * The usage of {@link org.eclipse.core.runtime.IAdaptable} in the JFace
+ * layer has been approved by Platform UI, see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=87669#c9
+ * </p>
+ * <p>
  * This class is not intended to be subclassed.
  * </p>
  * 
