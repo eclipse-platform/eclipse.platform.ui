@@ -121,7 +121,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	private int fCurrentTabIndex = -1;
 	
 	/**
-	 * Apply & Rever buttons
+	 * Apply & Revert buttons
 	 */
 	private Button fApplyButton;
 	private Button fRevertButton;
