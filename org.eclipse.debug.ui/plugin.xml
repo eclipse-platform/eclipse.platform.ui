@@ -119,7 +119,13 @@
          category="org.eclipse.debug.ui.DebugPreferencePage"
          class="org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistoryPreferencePage"
          id="org.eclipse.debug.ui.LaunchHistoryPreferencePage">
-   </page>   
+   </page>
+    <page
+         name="%DebugActionGroupsPreferencePage.name"
+         category="org.eclipse.debug.ui.DebugPreferencePage"
+         class="org.eclipse.debug.internal.ui.DebugActionGroupsPreferencePage"
+         id="org.eclipse.debug.ui.DebugActionGroupsPreferencePage">
+   </page>     
 </extension>
 <extension
       point="org.eclipse.ui.actionSets">
