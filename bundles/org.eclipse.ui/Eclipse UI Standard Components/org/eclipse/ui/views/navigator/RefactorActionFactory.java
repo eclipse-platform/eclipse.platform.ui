@@ -23,6 +23,7 @@ import org.eclipse.ui.actions.*;
  * action.
  * 
  * @since 2.0
+ * @deprecated use RefactorActionGroup
  */
 public class RefactorActionFactory
 	extends ActionFactory {
@@ -47,6 +48,7 @@ public class RefactorActionFactory
 	 * 
 	 * @param viewer the tree viewer
 	 * @param site the view site
+	 * @deprecated
 	 */
 	public RefactorActionFactory(TreeViewer viewer, IViewSite site, Clipboard clipboard) {
 		treeViewer = viewer;

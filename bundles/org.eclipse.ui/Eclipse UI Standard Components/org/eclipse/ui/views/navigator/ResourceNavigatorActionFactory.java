@@ -17,8 +17,9 @@ import org.eclipse.ui.views.internal.framelist.FrameList;
  * Factory to create actions for the resource navigator
  * 
  * @since 2.0
+ * 
+ * @deprecated use ResourceNavigatorActionGroup
  */
-
 public class ResourceNavigatorActionFactory extends ActionFactory {
 
 	//The action factories
@@ -33,8 +34,9 @@ public class ResourceNavigatorActionFactory extends ActionFactory {
 	/**
 	 * Create a new instance of the receiver with the required 
 	 * parameters.
+	 * 
+	 * @deprecated
 	 */
-
 	public ResourceNavigatorActionFactory(
 		FrameList frameList,
 		Shell shell,

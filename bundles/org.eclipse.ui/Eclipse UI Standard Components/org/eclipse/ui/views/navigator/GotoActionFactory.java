@@ -14,8 +14,9 @@ import org.eclipse.ui.views.navigator.*;
 /**
  * The GotoActionFactory is the class
  * that adds the goto actions for a menu.
+ * 
+ * @deprecated use GotoActionGroup
  */
-
 public class GotoActionFactory extends ActionFactory {
 
 	protected FrameList frameList;
@@ -26,6 +27,9 @@ public class GotoActionFactory extends ActionFactory {
 	protected UpAction upAction;
 	protected GotoResourceAction gotoResourceAction;
 
+	/**
+	 * @deprecated
+	 */
 	public GotoActionFactory(
 		FrameList list,
 		IResourceNavigatorPart navigator) {

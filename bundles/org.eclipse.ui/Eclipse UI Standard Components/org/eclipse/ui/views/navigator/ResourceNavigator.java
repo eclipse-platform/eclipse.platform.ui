@@ -20,6 +20,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.actions.NewWizardAction;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
@@ -40,18 +41,19 @@ public class ResourceNavigator
 	private IDialogSettings settings;
 	private IMemento memento;
 	private NavigatorFrameSource frameSource;
-	//@since 2.0
+	
+	/**
+	 * @since 2.0
+	 */
 	protected FrameList frameList;
 
-	protected PropertyDialogAction propertyDialogAction;
-	protected NewWizardAction newWizardAction;
-	
-	protected ResourceNavigatorActionFactory actionFactory;
+	/**
+	 * @since 2.0
+	 */
+	protected ResourceNavigatorActionGroup actionGroup;
 	
 	//The filter the resources are cleared up on
 	private ResourcePatternFilter patternFilter = new ResourcePatternFilter();
-	
-	private Clipboard clipboard;
 
 	/** Property store constant for sort order. */
 	private static final String STORE_SORT_TYPE = "ResourceViewer.STORE_SORT_TYPE";
@@ -142,7 +144,6 @@ public class ResourceNavigator
 	 * Method declared on IWorkbenchPart.
 	 */
 	public void createPartControl(Composite parent) {
-		clipboard = new Clipboard(parent.getDisplay());
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		//	initDrillDownAdapter(viewer);
 		viewer.setUseHashlookup(true);
@@ -173,10 +174,10 @@ public class ResourceNavigator
 		makeActions();
 		initResourceSorter();
 
-		// Update the global action enable state to match
-		// the current selection.
-		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-		actionFactory.updateGlobalActions(selection);
+		// Fill the action bars and update the global action handlers'
+		// enabled state to match the current selection.
+		actionGroup.fillActionBars(getViewSite().getActionBars());
+		updateActionBars((IStructuredSelection) viewer.getSelection());
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -197,8 +198,6 @@ public class ResourceNavigator
 			}
 		});
 
-		actionFactory.fillActionBars(selection);
-
 		getSite().setSelectionProvider(viewer);
 
 		getSite().getPage().addPartListener(partListener);
@@ -216,8 +215,9 @@ public class ResourceNavigator
 	 */
 	public void dispose() {
 		getSite().getPage().removePartListener(partListener);
-		if (clipboard != null)
-			clipboard.dispose();
+		if (actionGroup != null) {
+			actionGroup.dispose();
+		}
 		super.dispose();
 	}
 	/**
@@ -246,27 +246,17 @@ public class ResourceNavigator
 	void fillContextMenu(IMenuManager menu) {
 		IStructuredSelection selection =
 			(IStructuredSelection) getResourceViewer().getSelection();
-
-		propertyDialogAction.selectionChanged(selection);
-		actionFactory.updateGlobalActions(selection);
-
-		MenuManager newMenu =
-			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.new"));
-		//$NON-NLS-1$
-		menu.add(newMenu);
-		new NewWizardMenu(newMenu, getSite().getWorkbenchWindow(), false);
-		
-		actionFactory.fillPopUpMenu(menu,selection);
-		
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end"));
-		//$NON-NLS-1$
-		menu.add(new Separator());
-
-		if (propertyDialogAction.isApplicableForSelection())
-			menu.add(propertyDialogAction);
+		actionGroup.setContext(new ActionContext(selection));
+		actionGroup.fillContextMenu(menu);
 	}
 
+	/**
+	 * @see IResourceNavigatorPart
+	 */
+	public FrameList getFrameList() {
+		return frameList;
+	}
+	
 	/** 
 	 * Returns the initial input for the viewer.
 	 * Tries to convert the input to a resource, either directly or via IAdaptable.
@@ -341,18 +331,6 @@ public class ResourceNavigator
 		return getViewSite().getShell();
 	}
 	/**
-	 * Returns a clipboard for cut/copy/paste actions.
-	 * <p>
-	 * May only be called after this part's viewer has been created.
-	 * The clipboard is disposed when this part is disposed.
-	 * </p>
-	 * @return a clipboard
-	 * @since 2.0
-	 */
-	/*package*/ Clipboard getClipboard() {
-		return clipboard;
-	} 
-	/**
 	 * Returns the message to show in the status line.
 	 *
 	 * @param selection the current selection
@@ -394,15 +372,15 @@ public class ResourceNavigator
 		}
 	}
 	/**
-	 * Handles double clicks in viewer.
-	 * Opens editor if file double-clicked.
+	 * Handles double clicks in the viewer.
+	 * Opens the editor if file double-clicked.
 	 * @since 2.0
 	 */
 	protected void handleDoubleClick(DoubleClickEvent event) {
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 		Object element = selection.getFirstElement();
 		
-		actionFactory.handleDoubleClick(selection);
+		actionGroup.runDefaultAction(selection);
 
 		// 1GBZIA0: ITPUI:WIN2000 - Double-clicking in navigator should expand/collapse containers
 		if (viewer.isExpandable(element)) {
@@ -419,24 +397,22 @@ public class ResourceNavigator
 	protected void handleSelectionChanged(SelectionChangedEvent event) {
 		IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 		updateStatusLine(sel);
-		actionFactory.updateGlobalActions(sel);
-		actionFactory.selectionChanged(sel);
+		updateActionBars(sel);
 		linkToEditor(sel);
 	}
 	
 	/**
-	 * Handles a key press in viewer. By default do nothing.
+	 * Handles a key press in viewer.
+	 * By default, delegate to the action group.
 	 */
 	protected void handleKeyPressed(KeyEvent event) {
-		
+		actionGroup.handleKeyPressed(event);		
 	}
 	
 	/**
-	 * Handles a key release in viewer.
+	 * Handles a key release in viewer.  By default do nothing.
 	 */
 	protected void handleKeyReleased(KeyEvent event) {
-		actionFactory.handleKeyReleased(event);
-		
 	}
 	
 	/* (non-Javadoc)
@@ -538,25 +514,12 @@ public class ResourceNavigator
 		}
 	}
 	/**
-	 *	Create self's action objects
+	 * Creates the action group for 
 	 */
 	protected void makeActions() {
-		Shell shell = getShell();
-
-		newWizardAction = new NewWizardAction();
-		
-		actionFactory = 
-			new ResourceNavigatorActionFactory(
-				frameList,
-				shell,
-				getClipboard(),
-				this);
-				
-		actionFactory.makeActions();
-		propertyDialogAction =
-			new PropertyDialogAction(getShell(), getResourceViewer());
-	
+		actionGroup = new ResourceNavigatorActionGroup(this);
 	}
+	
 	public void restoreFilters() {
 		IMemento filtersMem = memento.getChild(TAG_FILTERS);
 		if (filtersMem != null) {
@@ -715,9 +678,20 @@ public class ResourceNavigator
 		viewer.setSorter(sorter);
 		viewer.getControl().setRedraw(true);
 		settings.put(STORE_SORT_TYPE, sorter.getCriteria());
-		actionFactory.updateSortActions();
+		
+		// update the sort actions' checked state
+		updateActionBars((IStructuredSelection) viewer.getSelection());
 	}
-	
+
+	/**
+	 * Updates the action bar actions for the given selection.
+	 * 
+	 * @since 2.0
+	 */	
+	protected void updateActionBars(IStructuredSelection selection) {
+		actionGroup.setContext(new ActionContext(selection));
+		actionGroup.updateActionBars();
+	}
 	
 	/**
 	 * Updates the message shown in the status line.

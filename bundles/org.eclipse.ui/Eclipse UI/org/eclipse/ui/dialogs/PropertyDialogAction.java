@@ -88,30 +88,39 @@ private boolean hasPropertyPagesFor(Object object) {
 /**
  * Returns whether this action is actually applicable to the current selection.
  * If this action is disabled, it will return <code>false</code> without further
- * calculation. Iif it is enabled, it will check with the workbench's property
+ * calculation. If it is enabled, it will check with the workbench's property
  * page manager to see if there are any property pages registered for the
  * selected element's type.
  * <p>
  * This method is generally too expensive to use when updating the enabled state
- * of the action.
+ * of the action on each selection change.
  * </p>
  *
- * @return <code>true</code> if there are property pages for the currently
- *   selected element, and <code>false</code> if more than one element is
- *   selected or there are no property pages for it
+ * @return <code>true</code> if the selection is of size 1 and there are 
+ *   property pages for the selected element, and <code>false</code> otherwise
  */
 public boolean isApplicableForSelection() {
-	if (isEnabled()==false) return false;
-	Iterator selection = getStructuredSelection().iterator();
-	if (!selection.hasNext()) {
-		return false;
-	}
-	Object object = selection.next();
-	if (selection.hasNext()) {
-		return false;
-	}
-	return hasPropertyPagesFor(object);
+	if (!isEnabled()) return false;
+	return isApplicableForSelection(getStructuredSelection());
 }
+
+/**
+ * Returns whether this action is applicable to the current selection.
+ * This checks that the selection is of size 1, and checks with the workbench's property
+ * page manager to see if there are any property pages registered for the
+ * selected element's type.
+ * <p>
+ * This method is generally too expensive to use when updating the enabled state
+ * of the action on each selection change.
+ * </p>
+ *
+ * @return <code>true</code> if the selection is of size 1 and there are 
+ *   property pages for the selected element, and <code>false</code> otherwise
+ */
+public boolean isApplicableForSelection(IStructuredSelection selection) {
+	return selection.size() == 1 && hasPropertyPagesFor(selection.getFirstElement());
+}
+
 /**
  * The <code>PropertyDialogAction</code> implementation of this 
  * <code>IAction</code> method performs the action by opening the Property Page
@@ -155,15 +164,6 @@ public void run() {
  * given selection contains exactly one element.
  */
 public void selectionChanged(IStructuredSelection selection) {
-	if (selection.isEmpty()) {
-		setEnabled(false);
-		return;
-	}
-	Iterator resourcesEnum = selection.iterator();
-	Object resource = null;
-	if (resourcesEnum.hasNext())
-		resource = resourcesEnum.next();
-
-	setEnabled(resource != null && !resourcesEnum.hasNext());
+	setEnabled(selection.size() == 1 && selection.getFirstElement() !=  null);
 }
 }

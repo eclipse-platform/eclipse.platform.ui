@@ -135,12 +135,17 @@ protected boolean updateSelection(IStructuredSelection s) {
 public void handleKeyReleased(KeyEvent event) {
 
 	if (event.keyCode == SWT.F5) {
-		IStructuredSelection currentSelection = getStructuredSelection();
-		selectionChanged(StructuredSelection.EMPTY);
-		run();
-		selectionChanged(currentSelection);
+		refreshAll();
 	}
 }
 
-
+/**
+ * Refreshes the entire workspace.
+ */
+public void refreshAll() {
+	IStructuredSelection currentSelection = getStructuredSelection();
+	selectionChanged(StructuredSelection.EMPTY);
+	run();
+	selectionChanged(currentSelection);
+}
 }

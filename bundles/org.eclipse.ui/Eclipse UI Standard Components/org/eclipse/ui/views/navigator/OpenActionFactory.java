@@ -16,6 +16,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.internal.OpenNewWindowAction;
 
+/**
+ * @since 2.0
+ * @deprecated use OpenActionGroup
+ */
 public class OpenActionFactory extends ActionFactory {
 
 	protected OpenFileAction openFileAction;
@@ -24,6 +28,9 @@ public class OpenActionFactory extends ActionFactory {
 	protected Shell shell;
 	public static final String ID = PlatformUI.PLUGIN_ID + ".OpenWithSubMenu";//$NON-NLS-1$
 
+	/**
+	 * @deprecated
+	 */
 	public OpenActionFactory(
 		IWorkbenchPartSite partSite,
 		Shell shell) {

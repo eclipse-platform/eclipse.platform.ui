@@ -18,8 +18,9 @@ import org.eclipse.ui.views.navigator.SortViewAction;
  * SortAndFilterActionFactory is the factory for the
  * actions that are in the drop down menu of the action 
  * bar
+ * 
+ * @deprecated use SortAndFilterActionGroup
  */
-
 public class SortAndFilterActionFactory
 	extends ActionFactory {
 
@@ -28,6 +29,9 @@ public class SortAndFilterActionFactory
 	protected FilterSelectionAction filterAction;
 	protected IResourceNavigatorPart navigatorPart;
 
+	/**
+	 * @deprecated
+	 */
 	public SortAndFilterActionFactory(IResourceNavigatorPart part) {
 		navigatorPart = part;
 	}

@@ -15,8 +15,9 @@ import org.eclipse.ui.views.navigator.*;
 /**
  * The ActionFactory is a class that 
  * contributes actions to a menu or action bar.
+ * 
+ * @deprecated use ActionGroup instead
  */
-
 public abstract class ActionFactory {
 
 	/**

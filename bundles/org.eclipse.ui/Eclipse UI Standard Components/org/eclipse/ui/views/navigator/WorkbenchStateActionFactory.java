@@ -18,8 +18,9 @@ import org.eclipse.ui.views.navigator.ResourceSelectionUtil;
  * The WorkbenchStateActionFactory is the 
  * factory oject that handles actions that open, close and 
  * build projects or the workspace and refresh options.
+ * 
+ * @deprecated use WorkspaceActionGroup
  */
-
 public class WorkbenchStateActionFactory
 	extends ActionFactory {
 
@@ -31,6 +32,9 @@ public class WorkbenchStateActionFactory
 
 	protected Control control;
 
+	/**
+	 * @deprecated
+	 */
 	public WorkbenchStateActionFactory(Control parentControl) {
 		this.control = parentControl;
 	}
