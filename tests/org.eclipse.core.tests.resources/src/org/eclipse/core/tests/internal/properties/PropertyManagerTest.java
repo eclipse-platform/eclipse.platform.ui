@@ -31,6 +31,88 @@ public static Test suite() {
 	//return suite;
 	return new TestSuite(PropertyManagerTest.class);
 }
+/**
+ * This test currently skipped because the property store is not
+ * thread safe.
+ */
+public void skiptestConcurrentAccess() {
+
+	// create common objects
+	final IFile target = projects[0].getFile("target");
+	try {
+		target.create(getRandomContents(), true, getMonitor());
+	} catch (CoreException e) {
+		fail("0.0", e);
+	}
+
+	// prepare keys and values
+	final int N = 10;
+	final QualifiedName[] names = new QualifiedName[N];
+	final String[] values = new String[N];
+	for (int i = 0; i < N; i++) {
+		names[i] = new QualifiedName("org.eclipse.core.tests", "prop" + i);
+		values[i] = "property value" + i;
+	}
+
+	// create properties
+	for (int i = 0; i < N; i++) {
+		try {
+			target.setPersistentProperty(names[i], values[i]);
+		} catch (CoreException e) {
+			fail("1." + i, e);
+		}
+	}
+	final int THREAD_COUNT = 3;
+	final CoreException[] errorPointer = new CoreException[1];
+	Thread[] threads = new Thread[THREAD_COUNT];
+	for (int i = 0; i < THREAD_COUNT; i++) {
+		final String id = "GetSetProperty" + i;
+		threads[i] = new Thread(new Runnable() {
+			public void run() {
+				try {
+					doGetSetProperties(target, id, names, values);
+				} catch (CoreException e) {
+					errorPointer[0] = e;
+					return;
+				}
+			}
+		}, id);
+		threads[i].start();
+	}
+	for (int i = 0; i < threads.length; i++) {
+		try {
+			threads[i].join();
+		} catch (InterruptedException e) {
+		}
+	}
+	if (errorPointer[0] != null)
+		fail("2.0", errorPointer[0]);
+
+
+	// remove trash
+	try {
+		target.delete(true, getMonitor());
+	} catch (CoreException e) {
+		fail("20.0", e);
+	}
+}
+protected void doGetSetProperties(IFile target, String threadID, QualifiedName[] names, String[] values) throws CoreException {
+	final int N = names.length;
+	for (int j = 0; j < 100; j++) {
+		for (int i = 0; i < N; i++) {
+			target.getPersistentProperty(names[i]);
+		}
+		// change properties
+		for (int i = 0; i < N; i++) {
+			values[i] = values[i] + " - changed (" + threadID + ")";
+			target.setPersistentProperty(names[i], values[i]);
+		}
+		// verify
+		for (int i = 0; i < N; i++) {
+			target.getPersistentProperty(names[i]);
+		}
+	}
+}
 public void testCopy() throws Throwable {
 	PropertyManager manager = new PropertyManager((Workspace) getWorkspace());
 	IProject source = projects[0];
