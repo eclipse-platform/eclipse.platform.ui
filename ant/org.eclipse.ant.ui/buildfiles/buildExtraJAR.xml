@@ -5,6 +5,7 @@
 
 	<target name="init" depends="properties">
 		<property name="version.suffix" value="_3.0.0"/>
+		<property name="ant_version.suffix" value="_1.6.1"/>
 		<property name="bootclasspath" value=""/>
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="build.result.folder" value="${basedir}"/>
@@ -34,6 +35,7 @@
 			 		${basedir}/../org.eclipse.core.resources/bin;
 			 		${eclipse.home}/plugins/org.eclipse.core.resources${version.suffix}/resources.jar;
 			 		${basedir}/../org.apache.ant/lib/ant.jar;
+			 		${eclipse.home}/plugins/org.apache.ant${ant_version.suffix}/lib/ant.jar;
 			 		${basedir}/bin;
 					${basedir}/../org.eclipse.swt${version.suffix}/bin;
 			 		${swt.jar};
