@@ -169,6 +169,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
         
         fViewer.getSelectionProvider().removeSelectionChangedListener(selectionChangedListener);
         fViewer.removeTextListener(textListener);
+        fViewer = null;
     }
 
 
@@ -190,7 +191,9 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
      * @see org.eclipse.ui.part.IPage#setFocus()
      */
     public void setFocus() {
-        fViewer.getTextWidget().setFocus();
+        if (fViewer != null) {
+            fViewer.getTextWidget().setFocus();
+        }
     }
 
 	/*
@@ -198,31 +201,33 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
     public void propertyChange(PropertyChangeEvent event) {
-		Object source = event.getSource();
-		String property = event.getProperty();
-		
-		if (source.equals(fConsole) && IConsoleConstants.P_FONT.equals(property)) {
-			fViewer.setFont(fConsole.getFont());	
-		} else if (IConsoleConstants.P_FONT_STYLE.equals(property)) {
-		    fViewer.getTextWidget().redraw();
-		} else if (property.equals(IConsoleConstants.P_STREAM_COLOR)) {
-		    fViewer.getTextWidget().redraw();
-		} else if (source.equals(fConsole) && property.equals(IConsoleConstants.P_TAB_SIZE)) {
-		    Integer tabSize = (Integer)event.getNewValue();
-		    fViewer.setTabWidth(tabSize.intValue());
-		} else if (source.equals(fConsole) && property.equals(IConsoleConstants.P_CONSOLE_WIDTH)) {
-		    fViewer.setConsoleWidth(fConsole.getConsoleWidth()); 
-		} else if (property.equals(IConsoleConstants.P_CONSOLE_HYPERLINK_ADDED)) {
-		    if (fViewer != null) {
-		        ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-		            public void run() {
-		                if(fViewer != null) {
-		                    fViewer.getTextWidget().redraw();
-		                }
-		            }
-		        }); 
-		    }
-		}
+        if (fViewer != null) {
+			Object source = event.getSource();
+			String property = event.getProperty();
+			
+			if (source.equals(fConsole) && IConsoleConstants.P_FONT.equals(property)) {
+				fViewer.setFont(fConsole.getFont());	
+			} else if (IConsoleConstants.P_FONT_STYLE.equals(property)) {
+			    fViewer.getTextWidget().redraw();
+			} else if (property.equals(IConsoleConstants.P_STREAM_COLOR)) {
+			    fViewer.getTextWidget().redraw();
+			} else if (source.equals(fConsole) && property.equals(IConsoleConstants.P_TAB_SIZE)) {
+			    Integer tabSize = (Integer)event.getNewValue();
+			    fViewer.setTabWidth(tabSize.intValue());
+			} else if (source.equals(fConsole) && property.equals(IConsoleConstants.P_CONSOLE_WIDTH)) {
+			    fViewer.setConsoleWidth(fConsole.getConsoleWidth()); 
+			} else if (property.equals(IConsoleConstants.P_CONSOLE_HYPERLINK_ADDED)) {
+			    if (fViewer != null) {
+			        ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
+			            public void run() {
+			                if(fViewer != null) {
+			                    fViewer.getTextWidget().redraw();
+			                }
+			            }
+			        }); 
+			    }
+			}
+        }
 	}
 
     protected void createActions() {
