@@ -93,6 +93,11 @@ import org.eclipse.ui.commands.CommandManagerFactory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.KeySupport;
+import org.eclipse.ui.progress.IProgressService;
+
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
@@ -101,10 +106,6 @@ import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.KeySupport;
-import org.eclipse.ui.progress.IProgressService;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
@@ -198,7 +199,6 @@ public final class Workbench implements IWorkbench {
 		this.advisor = advisor;
 		this.display = display;
 		Workbench.instance = this;
-		keyboard = new WorkbenchKeyboard(this);
 	}
 
 	/**
@@ -298,7 +298,7 @@ public final class Workbench implements IWorkbench {
 	// TODO reduce visibility
 	public WorkbenchActivitiesCommandsAndRoles workbenchActivitiesCommandsAndRoles =
 		new WorkbenchActivitiesCommandsAndRoles(this);
-	private final WorkbenchKeyboard keyboard;
+	private WorkbenchKeyboard keyboard;
 	private WorkbenchActivityHelper activityHelper;
 
 	public IActivityManager getActivityManager() {
@@ -832,6 +832,7 @@ public final class Workbench implements IWorkbench {
 		});
 
 		workbenchActivitiesCommandsAndRoles.updateActiveActivityIds();
+		keyboard = new WorkbenchKeyboard(this);
 		Listener keyFilter = keyboard.getKeyDownFilter();
 		display.addFilter(SWT.Traverse, keyFilter);
 		display.addFilter(SWT.KeyDown, keyFilter);
