@@ -191,8 +191,8 @@ public class UIMessageDialogs extends TestCase {
 			MessageDialog.QUESTION,
 			new String[] {
 				IDialogConstants.YES_LABEL,
-				IDialogConstants.NO_LABEL,
 				IDialogConstants.YES_TO_ALL_LABEL,
+				IDialogConstants.NO_LABEL,
 				IDialogConstants.CANCEL_LABEL},
 			0);
 		DialogCheck.assertDialog(dialog, this);
@@ -395,8 +395,8 @@ public class UIMessageDialogs extends TestCase {
 			MessageDialog.QUESTION, 
 			new String[] {
 				IDialogConstants.YES_LABEL, 
-				IDialogConstants.NO_LABEL, 
 				IDialogConstants.YES_TO_ALL_LABEL, 
+				IDialogConstants.NO_LABEL, 
 				IDialogConstants.CANCEL_LABEL}, 
 			0);
 		DialogCheck.assertDialog(dialog, this);
