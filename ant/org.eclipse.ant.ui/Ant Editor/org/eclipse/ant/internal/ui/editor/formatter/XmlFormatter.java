@@ -187,7 +187,7 @@ public class XmlFormatter {
 		return doc;
 	}
     
-    private static String trimBegin(String toBeTrimmed) {
+    public static String trimBegin(String toBeTrimmed) {
 		
 		int i= 0;
 		while ((i != toBeTrimmed.length()) && Character.isWhitespace(toBeTrimmed.charAt(i))) {
