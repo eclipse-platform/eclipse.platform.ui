@@ -224,15 +224,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		return true;
 	}
 	
-	/**
-	 * Debug ui thread safe access to a display
-	 */
-	public Display getDisplay() {
-		//we can rely on not creating a display as we 
-		//prereq the base eclipse ui plugin.
-		return Display.getDefault();
-	}
-	
 	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
@@ -387,7 +378,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		manager.registerAdapters(new DebugUIPropertiesAdapterFactory(), IDebugElement.class);
 		manager.registerAdapters(new DebugUIPropertiesAdapterFactory(), IProcess.class);
 		
-		getStandardDisplay().getDefault().asyncExec(
+		getStandardDisplay().asyncExec(
 			new Runnable() {
 				public void run() {
 					createImageRegistry();
@@ -466,7 +457,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 			return;
 		}
 		
-		getDisplay().asyncExec(new Runnable() {
+		getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
 				IWorkbenchWindow window = getActiveWorkbenchWindow();
 				if (window != null) {
@@ -514,7 +505,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
 	public void launchRemoved(final ILaunch launch) {
-		getDisplay().syncExec(new Runnable () {
+		getStandardDisplay().syncExec(new Runnable () {
 			public void run() {
 				IProcess[] processes= launch.getProcesses();
 				for (int i= 0; i < processes.length; i++) {
@@ -545,7 +536,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	public void launchAdded(final ILaunch launch) {
 		updateHistories(launch);
 		
-		getDisplay().syncExec(new Runnable () {
+		getStandardDisplay().syncExec(new Runnable () {
 			public void run() {
 				IProcess[] processes= launch.getProcesses();
 				if (processes != null) {
@@ -935,7 +926,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 				fEventFilters.remove(filter);
 			}
 		};
-		getDisplay().asyncExec(runnable);
+		getStandardDisplay().asyncExec(runnable);
 	}
 	
 	/**

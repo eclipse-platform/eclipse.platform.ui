@@ -410,7 +410,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		if (fConsoleViewer != null && fConsoleViewer.getControl() != null && !fConsoleViewer.getControl().isDisposed()) {
 			fConsoleViewer.getControl().getDisplay().asyncExec(runnable);
 		} else {
-			Display display= DebugUIPlugin.getDefault().getDisplay();
+			Display display= DebugUIPlugin.getDefault().getStandardDisplay();
 			if (display != null && !display.isDisposed()) {
 				display.asyncExec(runnable);
 			}

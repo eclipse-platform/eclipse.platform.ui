@@ -154,7 +154,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 	 * Utility method to submit an asnychronous runnable to the UI
 	 */
 	protected void async(Runnable r) {
-		Display d = DebugUIPlugin.getDefault().getDisplay();
+		Display d = DebugUIPlugin.getDefault().getStandardDisplay();
 		if (d != null) {
 			d.asyncExec(r);
 		}
@@ -164,7 +164,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 	 * Utility method to submit a synchronous runnable to the UI
 	 */
 	protected void sync(Runnable r) {
-		Display d = DebugUIPlugin.getDefault().getDisplay();
+		Display d = DebugUIPlugin.getDefault().getStandardDisplay();
 		if (d != null) {
 			d.syncExec(r);
 		}
