@@ -199,8 +199,8 @@ class ImplicitJobs {
 			manager.getLockManager().addLockWaitThread(Thread.currentThread(), getRule());
 			if (!(monitor instanceof IProgressMonitorWithBlocking))
 				return;
-			String jobName = (blockingJob == null || blockingJob instanceof ThreadJob) ? "" : " \"" + blockingJob.getName() + "\""; //$NON-NLS-1 //$NON-NLS-2$$ //$NON-NLS-3$ //$NON-NLS-1$
-			String msg = Policy.bind("jobs.blocked", jobName); //$NON-NLS-1$
+			String msg = (blockingJob == null || blockingJob instanceof ThreadJob) ? Policy.bind("jobs.blocked0") //$NON-NLS-1$
+					: Policy.bind("jobs.blocked1", blockingJob.getName()); //$NON-NLS-1$
 			IStatus reason = new Status(IStatus.INFO, IPlatform.PI_RUNTIME, 1, msg, null);
 			((IProgressMonitorWithBlocking) monitor).setBlocked(reason);
 		}
