@@ -78,19 +78,20 @@ public class SearchResults implements ISearchHitCollector {
 				score = score * scoreScale + 0.01f;
 			}
 
-			// Set document href
-			href = href + "?resultof=" + urlEncodedWords;
 			// Set the document label
 			String label = doc.get("raw_title");
 			if ("".equals(label) && toc != null) {
-				if (scope != null) 
+				if (scope != null) {
 					label = scope.getTopic(href).getLabel();
+				}
 				else
 					label = toc.getTopic(href).getLabel();
 			}
 			if (label == null || "".equals(label))
 				label = href;
 
+			// Set document href
+			href = href + "?resultof=" + urlEncodedWords;
 			searchHitList.add(new SearchHit(href, label, score, toc));
 		}
 		searchHits =
