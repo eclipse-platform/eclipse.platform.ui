@@ -529,9 +529,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	
 		// Build the launch configuration edit area
 		// and put it into the composite.
-		Composite launchConfigEditArea = createLaunchConfigurationEditArea(topComp);
+		Composite editAreaComp = createLaunchConfigurationEditArea(topComp);
 		gd = new GridData(GridData.FILL_BOTH);
-		launchConfigEditArea.setLayoutData(gd);
+		editAreaComp.setLayoutData(gd);
 			
 		// Build the separator line
 		Label separator = new Label(topComp, SWT.HORIZONTAL | SWT.SEPARATOR);
@@ -1972,7 +1972,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		if (isVisible()) {
 			// The operation can only be canceled if it is executed in a separate thread.
 			// Otherwise the UI is blocked anyway.
-			Object state = aboutToStart(fork && cancelable);
+			Object state = aboutToStart();
 			fActiveRunningOperations++;
 			try {
 				ModalContext.run(runnable, fork, fProgressMonitorPart, getShell().getDisplay());
@@ -1991,11 +1991,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * the dialog. Shows the progress monitor and disables the dialog's
 	 * buttons and controls.
 	 *
-	 * @param enableCancelButton <code>true</code> if the Cancel button should
-	 *   be enabled, and <code>false</code> if it should be disabled
 	 * @return the saved UI state
 	 */
-	private Object aboutToStart(boolean enableCancelButton) {
+	private Object aboutToStart() {
 		Map savedState = null;
 		if (getShell() != null) {
 			// Save focus control
@@ -2013,7 +2011,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			getProgressMonitorCancelButton().setCursor(arrowCursor);
 	
 			// Deactivate shell
-			savedState = saveUIState(enableCancelButton);
+			savedState = saveUIState();
 			if (focusControl != null)
 				savedState.put(FOCUS_CONTROL, focusControl);
 				
@@ -2021,6 +2019,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			getProgressMonitorCancelButton().setEnabled(true);
 			getProgressMonitorPart().attachToCancelComponent(getProgressMonitorCancelButton());
 			getProgressMonitorPart().setVisible(true);
+			getProgressMonitorCancelButton().setFocus();
 		}
 		return savedState;
 	}
@@ -2058,13 +2057,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * these controls are disabled in the process, with the possible excepton of
 	 * the Cancel button.
 	 *
-	 * @param keepCancelEnabled <code>true</code> if the Cancel button should
-	 *   remain enabled, and <code>false</code> if it should be disabled
 	 * @return a map containing the saved state suitable for restoring later
 	 *   with <code>restoreUIState</code>
 	 * @see #restoreUIState
 	 */
-	private Map saveUIState(boolean keepCancelEnabled) {
+	private Map saveUIState() {
 		Map savedState= new HashMap(10);
 		saveEnableStateAndSet(getNewCopyButton(), savedState, "new", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getDeleteButton(), savedState, "delete", false);//$NON-NLS-1$
@@ -2072,8 +2069,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		saveEnableStateAndSet(getRevertButton(), savedState, "revert", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getButton(ID_LAUNCH_BUTTON), savedState, "launch", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getButton(ID_CLOSE_BUTTON), savedState, "close", false);//$NON-NLS-1$
-		TabItem selectedTab = getTabFolder().getItem(getTabFolder().getSelectionIndex());
-		savedState.put("tab", ControlEnableState.disable(selectedTab.getControl()));//$NON-NLS-1$
+		savedState.put("editarea", ControlEnableState.disable(getEditArea()));//$NON-NLS-1$
+		savedState.put("tree", ControlEnableState.disable(getTreeViewer().getControl()));//$NON-NLS-1$
 		return savedState;
 	}
 
@@ -2111,8 +2108,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		restoreEnableState(getRevertButton(), state, "revert");//$NON-NLS-1$
 		restoreEnableState(getButton(ID_LAUNCH_BUTTON), state, "launch");//$NON-NLS-1$
 		restoreEnableState(getButton(ID_CLOSE_BUTTON), state, "close");//$NON-NLS-1$
-		ControlEnableState tabState = (ControlEnableState) state.get("tab");//$NON-NLS-1$
+		ControlEnableState tabState = (ControlEnableState) state.get("editarea");//$NON-NLS-1$
 		tabState.restore();
+		ControlEnableState treeState = (ControlEnableState) state.get("tree");//$NON-NLS-1$
+		treeState.restore();		
 	}
 
 	/**
