@@ -275,6 +275,11 @@ public class ProjectHelper extends ProjectHelper2 {
 			} catch (BuildException be) {
 				getAntModel().error(be);
 			}
+            if (context.getCurrentTarget() == null) {
+                //exception occurred creating the project
+                context.getProject().addTarget("", context.getImplicitTarget()); //$NON-NLS-1$
+                context.setCurrentTarget(context.getImplicitTarget());
+            }
 			if (currentImportStackSize == 1) {
 				Locator locator= context.getLocator();
 				getAntModel().addProject(context.getProject(), locator.getLineNumber(), locator.getColumnNumber());
