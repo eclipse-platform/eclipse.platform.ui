@@ -751,6 +751,9 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 		Properties result = new Properties();
 		result.load(in);
 		convertFromProperties(result);
+		// We loaded the prefs from a non-default location so now
+		// store them to disk. This also clears the dirty flag
+		// and therefore sets the #needsSaving() state correctly.
 		try {
 			flush();
 		} catch (BackingStoreException e) {
@@ -764,6 +767,14 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	public void store(OutputStream out, String header) throws IOException {
 		Properties result = convertToProperties();
 		result.store(out, header);
+		// We stored the prefs to a non-default location but the spec
+		// says that the dirty state is cleared so we want to store
+		// them to disk at the default location as well.
+		try {
+			flush();
+		} catch (BackingStoreException e) {
+			throw new IOException(e.getMessage());
+		}
 	}
 
 	private void convertFromProperties(Properties props) {
