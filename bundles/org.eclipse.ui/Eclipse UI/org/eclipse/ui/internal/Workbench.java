@@ -940,12 +940,12 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (win != null) {
 			WorkbenchPage page = win.getActiveWorkbenchPage();
 			if (page != null) {
-				Iterator enum = page.getOpenedPerspectives();
-				while (enum.hasNext()) {
-					Perspective persp = (Perspective) enum.next();
-					if (perspectiveId.equals(persp.getDesc().getId())) {
+				IPerspectiveDescriptor perspectives[] = page.getOpenedPerspectives();
+				for (int i = 0; i < perspectives.length; i++) {
+					IPerspectiveDescriptor persp = perspectives[i];
+					if (perspectiveId.equals(persp.getId())) {
 						win.getShell().open();
-						page.setPerspective(persp.getDesc());
+						page.setPerspective(persp);
 						return page;
 					}
 				}
@@ -1019,12 +1019,12 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 					inputSame = input.equals(page.getInput());
 				if (inputSame) {
 					inputSameAsWindow = true;
-					Iterator enum = page.getOpenedPerspectives();
-					while (enum.hasNext()) {
-						Perspective persp = (Perspective) enum.next();
-						if (perspectiveId.equals(persp.getDesc().getId())) {
+					IPerspectiveDescriptor perspectives[] = page.getOpenedPerspectives();
+					for (int i = 0; i < perspectives.length; i++) {
+						IPerspectiveDescriptor persp = perspectives[i];
+						if (perspectiveId.equals(persp.getId())) {
 							win.getShell().open();
-							page.setPerspective(persp.getDesc());
+							page.setPerspective(persp);
 							return page;
 						}
 					}

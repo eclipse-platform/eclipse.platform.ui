@@ -39,13 +39,13 @@ public class OpenedPerspectivesMenu extends ContributionItem {
 	 * Returns the text for a perspective. This may be truncated to fit
 	 * within the MAX_TEXT_LENGTH.
 	 */
-	private String calcText(int number, Perspective persp) {
+	private String calcText(int number, IPerspectiveDescriptor persp) {
 		StringBuffer sb = new StringBuffer();
 		if (number < 10)
 			sb.append('&');
 		sb.append(number);
 		sb.append(' ');
-		String suffix = persp.getDesc().getLabel();
+		String suffix = persp.getLabel();
 		if (suffix.length() <= MAX_TEXT_LENGTH) {
 			sb.append(suffix);
 		} else {
@@ -71,15 +71,14 @@ public class OpenedPerspectivesMenu extends ContributionItem {
 		}
 
 		// Add one item for each opened perspective.
-		Perspective activePersp = page.getActivePerspective();
-		Iterator enum = page.getOpenedPerspectives();
+		IPerspectiveDescriptor activePersp = page.getPerspective();
+		IPerspectiveDescriptor descriptors[] = page.getOpenedPerspectives();
 		int count = 1;
-		while (enum.hasNext()) {
-			Perspective persp = (Perspective) enum.next();
+		for (int i = 0; i < descriptors.length; i++) {
+			final IPerspectiveDescriptor desc = (IPerspectiveDescriptor)descriptors[i];
 			MenuItem mi = new MenuItem(menu, SWT.RADIO, index);
-			mi.setSelection(persp == activePersp);
-			mi.setText(calcText(count, persp));
-			final IPerspectiveDescriptor desc = persp.getDesc();
+			mi.setSelection(desc == activePersp);
+			mi.setText(calcText(count, desc));
 			// avoid hanging onto page or perspective directly in menu
 			mi.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {

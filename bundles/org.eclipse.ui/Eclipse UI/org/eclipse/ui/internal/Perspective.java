@@ -40,6 +40,7 @@ public class Perspective
 	private ArrayList fastViews;
 	private IViewPart activeFastView;
 	private IViewPart previousActiveFastView;
+	private IMemento memento;
 	protected PerspectivePresentation presentation;
 	final static private String VERSION_STRING = "0.016";//$NON-NLS-1$
 	
@@ -235,6 +236,9 @@ private void createPresentation(PerspectiveDescriptor persp)
  */
 public void dispose() {
 	// Get rid of presentation.
+	if(presentation == null)
+		return;
+		
 	presentation.deactivate();
 	presentation.disposeSashes();
 	
@@ -391,6 +395,9 @@ public void openTracker(ViewPane pane) {
  */
 public IViewPart [] getViews() {
 	// Get normal views.
+	if(presentation == null)
+		return new IViewPart[0];
+	
 	List resVector = new ArrayList(5);
 	presentation.collectViewPanes(resVector);
 
@@ -517,6 +524,7 @@ private void loadCustomPersp(PerspectiveDescriptor persp)
 		// Restore the layout state.
 		IMemento memento = XMLMemento.createReadRoot(reader);
 		restoreState(memento);
+		restoreState();
 		reader.close();
 	} catch (IOException e) {
 		persp.deleteCustomFile();
@@ -669,6 +677,19 @@ public void restoreState(IMemento memento) {
 		.getDefault().getPerspectiveRegistry().findPerspectiveWithId(descriptor.getId());
 	if (desc != null)
 		descriptor = desc;
+	this.memento = memento;
+}
+
+/**
+ * Fills a presentation with layout data.
+ * Note: This method should not modify the current state of the perspective.
+ */
+public void restoreState() {
+	if(this.memento == null)
+		return;
+		
+	IMemento memento = this.memento;
+	this.memento = null;
 	
 	IMemento boundsMem = memento.getChild(IWorkbenchConstants.TAG_WINDOW);
 	if(boundsMem != null) {
@@ -890,6 +911,11 @@ public void saveState(IMemento memento)
 private void saveState(IMemento memento, PerspectiveDescriptor p,
 	boolean saveInnerViewState)
 {
+	if(this.memento != null) {
+		memento.putMemento(this.memento);
+		return;
+	}
+		
 	// Save the version number.
 	memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING);
 	p.saveState(memento);
