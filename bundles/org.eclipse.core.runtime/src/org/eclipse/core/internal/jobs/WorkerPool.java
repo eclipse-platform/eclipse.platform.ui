@@ -15,9 +15,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
- * Maintains a pool of worker threads.  Threads are constructed lazily as required,
- * and are eventually discarded if not in use for awhile.  This class maintains the
- * thread creation/destruction policies for the job manager.
+ * Maintains a pool of worker threads. Threads are constructed lazily as
+ * required, and are eventually discarded if not in use for awhile. This class
+ * maintains the thread creation/destruction policies for the job manager.
+ * 
+ * Implementation note: all the data structures of this class are protected
+ * by the instance's object monitor.  To avoid deadlock with third party code,
+ * this lock is never held when calling methods outside this class that may in
+ * turn use locks.
  */
 class WorkerPool {
 	private static final int MIN_THREADS = 1;
@@ -25,7 +30,7 @@ class WorkerPool {
 	private boolean running = false;
 	private ArrayList threads = new ArrayList();
 	/**
-	 * The number of threads that are currently sleeping
+	 * The number of threads that are currently sleeping 
 	 */
 	private int sleepingThreads = 0;
 	/**
@@ -34,7 +39,7 @@ class WorkerPool {
 	 */
 	private int busyThreads = 0;
 	/**
-	 * Threads not used by their best before timestamp are destroyed.
+	 * Threads not used by their best before timestamp are destroyed. 
 	 */
 	private static final int BEST_BEFORE = 60000;
 
@@ -44,9 +49,8 @@ class WorkerPool {
 		this.manager = manager;
 		running = true;
 	}
-
-	protected synchronized void endJob(Job job, IStatus result) {
-		busyThreads--;
+	protected void endJob(Job job, IStatus result) {
+		setBusyThreads(busyThreads-1);
 		manager.endJob(job, result, true);
 		//remove any locks this thread may be owning
 		manager.getLockManager().removeAllLocks(Thread.currentThread());
@@ -57,8 +61,8 @@ class WorkerPool {
 			JobManager.debug("worker removed from pool: " + worker); //$NON-NLS-1$
 	}
 	/**
-	 * Notfication that a job has been added to the queue.  Wake a worker,
-	 * creating a new worker if necessary.  The provided job may be null.
+	 * Notfication that a job has been added to the queue. Wake a worker,
+	 * creating a new worker if necessary. The provided job may be null.
 	 */
 	protected synchronized void jobQueued(InternalJob job) {
 		//if there is a sleeping thread, wake it up
@@ -80,17 +84,20 @@ class WorkerPool {
 			return;
 		}
 	}
+	private synchronized void setBusyThreads(int value) {
+		this.busyThreads=value;
+	}
 	protected synchronized void shutdown() {
 		running = false;
 		notifyAll();
 	}
 	/**
-	 * Sleep for the given duration or until woken.
+	 * Sleep for the given duration or until woken. 
 	 */
 	private synchronized void sleep(long duration) {
 		sleepingThreads++;
 		if (JobManager.DEBUG)
-			JobManager.debug("worker sleeping for: " + duration + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			JobManager.debug("worker sleeping for: " + duration + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			wait(duration);
 		} catch (InterruptedException e) {
@@ -101,12 +108,14 @@ class WorkerPool {
 		}
 	}
 	/**
-	 * Returns a new job to run.  Returns null if the thread should die.
+	 * Returns a new job to run. Returns null if the thread should die. 
 	 */
-	protected synchronized Job startJob() {
+	protected Job startJob() {
 		//if we're above capacity, kill the thread
-		if (!running || threads.size() > MAX_THREADS)
-			return null;
+		synchronized (this) {
+			if (!running || threads.size() > MAX_THREADS)
+				return null;
+		}
 		Job job = manager.startJob();
 		//spin until a job is found or until we have been idle for too long
 		long idleStart = System.currentTimeMillis();
@@ -115,12 +124,15 @@ class WorkerPool {
 			if (hint > 0)
 				sleep(Math.min(hint, BEST_BEFORE));
 			job = manager.startJob();
-			//if we were already idle, and there are still no new jobs, then the thread can expire
-			if (job == null && (System.currentTimeMillis() - idleStart > BEST_BEFORE) && (threads.size()-busyThreads) > MIN_THREADS)
-				break;
+			//if we were already idle, and there are still no new jobs, then
+			// the thread can expire
+			synchronized (this) {
+				if (job == null && (System.currentTimeMillis() - idleStart > BEST_BEFORE) && (threads.size() - busyThreads) > MIN_THREADS)
+					break;
+			}
 		}
 		if (job != null) {
-			busyThreads++;
+			setBusyThreads(busyThreads+1);
 			//if this job has a rule, then we are essentially acquiring a lock
 			if (job.getRule() != null)
 				manager.getLockManager().addLockThread(Thread.currentThread());
