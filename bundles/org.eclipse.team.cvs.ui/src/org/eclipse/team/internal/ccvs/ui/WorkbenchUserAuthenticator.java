@@ -88,15 +88,20 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 	 * @param userMutable  whether the user can be changed in the dialog
 	 * @param result  a String array of length two in which to put the result
 	 */
-	private void promptForPassword(ICVSRepositoryLocation location, String username, String message, boolean userMutable, String[] result) {
-		Shell shell = new Shell();
-		UserValidationDialog dialog = new UserValidationDialog(shell, location.getLocation(), (username==null)?"":username, message);
-		dialog.setUsernameMutable(userMutable);
-		dialog.open();
+	private void promptForPassword(final ICVSRepositoryLocation location, final String username, final String message, final boolean userMutable, final String[] result) {
+		final Display display = Display.getDefault();
+		display.syncExec(new Runnable() {
+			public void run() {
+				Shell shell = new Shell(display);
+				UserValidationDialog dialog = new UserValidationDialog(shell, location.getLocation(), (username==null)?"":username, message);
+				dialog.setUsernameMutable(userMutable);
+				dialog.open();
 	
-		shell.dispose();
-		result[0] = dialog.getUsername();
-		result[1] = dialog.getPassword();
+				shell.dispose();
+				result[0] = dialog.getUsername();
+				result[1] = dialog.getPassword();
+			}
+		});
 	}
 	/**
 	 * @see IUserAuthenticator#cachePassword
