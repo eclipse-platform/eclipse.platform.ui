@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser.embedded;
 import java.net.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
@@ -215,30 +216,42 @@ public class EmbeddedBrowser {
 		}
 	}
 	/**
-	 * Create shell image
+	 * Create shell images
 	 */
 	private static Image[] createImages() {
 		String[] productImageURLs = getProductImageURLs();
 		if (productImageURLs != null) {
-			Image[] shellImgs = new Image[productImageURLs.length];
+			ArrayList shellImgs = new ArrayList();
 			for (int i = 0; i < productImageURLs.length; i++) {
+				if ("".equals(productImageURLs[i])) { //$NON-NLS-1$
+					continue;
+				}
+				URL imageURL = null;
 				try {
-					shellImgs[i] = ImageDescriptor.createFromURL(
-							new URL(productImageURLs[i])).createImage();
+					imageURL = new URL(productImageURLs[i]);
 				} catch (MalformedURLException mue) {
-					if (!"".equals(productImageURLs[i])) { //$NON-NLS-1$
-						//System.out.println("Invalid URL of product image.");
-					}
+					// must be a path relative to a bundle
+					imageURL = Platform
+							.find(Platform.getProduct().getDefiningBundle(),
+									new Path(productImageURLs[i]));
+				}
+				Image image = null;
+				if (imageURL != null) {
+					image = ImageDescriptor.createFromURL(imageURL)
+							.createImage();
+				}
+				if (image != null) {
+					shellImgs.add(image);
 				}
 			}
-			return shellImgs;
+			return (Image[]) shellImgs.toArray(new Image[shellImgs.size()]);
 		}
 		return new Image[0];
 	}
 	/**
-	 * Obtains URL to product image
+	 * Obtains URLs to product image
 	 * 
-	 * @return URL as String or null
+	 * @return String[] with URLs as Strings or null
 	 */
 	private static String[] getProductImageURLs() {
 		IProduct product = Platform.getProduct();
