@@ -127,7 +127,13 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	 * @see org.eclipse.core.buffer.text.IBufferedTextFile#setEncoding(java.lang.String)
 	 */
 	public void setEncoding(String encoding) {
-		fEncoding= encoding;
+		fExplicitEncoding= encoding;
+		if (encoding == null || encoding.equals(fEncoding))
+			cacheEncodingState(null);
+		else {
+			fEncoding= encoding;
+			fHasBOM= false;
+		}
 	}
 	
 	/*
@@ -199,6 +205,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		
 		try {
 			original= fManager.createEmptyDocument(getLocation());
+			cacheEncodingState(monitor);
 			InputStream stream= getFileContents(monitor);
 			if (stream != null)
 				setDocumentContent(original, stream, fEncoding);
@@ -255,35 +262,38 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	protected void initializeFileBufferContent(IProgressMonitor monitor) throws CoreException {		
 		try {
 			fDocument= fManager.createEmptyDocument(getLocation());
-			fEncoding= null;
-			fHasBOM= false;
-			
-			InputStream stream= getFileContents(monitor);
-			if (stream != null) {
-				try {
-					QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
-					IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), options);
-					if (description != null) {
-						fEncoding= description.getCharset();
-						fHasBOM= description.getProperty(IContentDescription.BYTE_ORDER_MARK) != null;
-					}
-				} catch (IOException e) {
-					// do nothing
-				} finally {
-					try {
-						stream.close();
-					} catch (IOException ex) {
-						FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("JavaTextFileBuffer.error.closeStream"), ex)); //$NON-NLS-1$
-					}
-				}
-				
-				setDocumentContent(fDocument, getFileContents(monitor), fEncoding);
-			}
+			cacheEncodingState(monitor);
+			setDocumentContent(fDocument, getFileContents(monitor), fEncoding);
 		} catch (CoreException x) {
 			fDocument= fManager.createEmptyDocument(getLocation());
 			fStatus= x.getStatus();
 		}
 	}
+
+	protected void cacheEncodingState(IProgressMonitor monitor) {
+		fEncoding= null;
+		fHasBOM= false;
+		
+		InputStream stream= getFileContents(monitor);
+		if (stream != null) {
+			try {
+				QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
+				IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), options);
+				if (description != null) {
+					fEncoding= description.getCharset();
+					fHasBOM= description.getProperty(IContentDescription.BYTE_ORDER_MARK) != null;
+				}
+			} catch (IOException e) {
+				// do nothing
+			} finally {
+				try {
+					stream.close();
+				} catch (IOException ex) {
+					FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("JavaTextFileBuffer.error.closeStream"), ex)); //$NON-NLS-1$
+				}
+			}
+		}
+	}		
 	
 	/*
 	 * @see org.eclipse.core.internal.filebuffers.FileBuffer#commitFileBufferContent(org.eclipse.core.runtime.IProgressMonitor, boolean)
@@ -403,6 +413,9 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	 * @exception CoreException if the given stream can not be read
 	 */
 	private void setDocumentContent(IDocument document, InputStream contentStream, String encoding) throws CoreException {
+		if (contentStream == null)
+			return;
+		
 		Reader in= null;
 		try {
 			
