@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class AntFileRunner extends ExternalToolsRunner {
 	private static final String LOGGER_CLASS = "org.eclipse.ui.externaltools.internal.ui.ant.AntBuildLogger"; //$NON-NLS-1$
+	private static final String BASE_DIR_PREFIX = "-Dbasedir="; //$NON-NLS-1$
 
 	/**
 	 * Creates an empty ant file runner
@@ -30,17 +31,24 @@ public class AntFileRunner extends ExternalToolsRunner {
 	/* (non-Javadoc)
 	 * Method declared in ExternalToolsRunner.
 	 */
-	public void execute(IProgressMonitor monitor, IRunnerContext scriptContext) throws CoreException {
+	public void execute(IProgressMonitor monitor, IRunnerContext runnerContext) throws CoreException {
 		try {
-			String[] targets = scriptContext.getAntTargets();
-			startMonitor(monitor, scriptContext, targets.length);
+			String[] targets = runnerContext.getAntTargets();
+			startMonitor(monitor, runnerContext, targets.length);
 			AntUtil.setCurrentProgressMonitor(monitor);
 			AntRunner runner = new AntRunner();
-			runner.setArguments(scriptContext.getExpandedArguments());
-			runner.setBuildFileLocation(scriptContext.getExpandedLocation());
+			String args = runnerContext.getExpandedArguments();
+			String baseDir = runnerContext.getExpandedWorkingDirectory();
+			if (baseDir.length() > 0) {
+				String baseDirArg = BASE_DIR_PREFIX + baseDir;
+				runner.setArguments(args + " " + baseDirArg); //$NON-NLS-1$
+			} else {
+				runner.setArguments(args);	
+			}
+			runner.setBuildFileLocation(runnerContext.getExpandedLocation());
 			if (targets.length > 0)
 				runner.setExecutionTargets(targets);
-			if (scriptContext.getShowLog())
+			if (runnerContext.getShowLog())
 				runner.addBuildLogger(LOGGER_CLASS);
 			runner.run();
 		} catch (Exception e) {

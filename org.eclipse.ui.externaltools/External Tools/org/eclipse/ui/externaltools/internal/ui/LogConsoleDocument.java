@@ -40,9 +40,9 @@ public class LogConsoleDocument {
 	static Color DEBUG_COLOR;
 	static Font ANT_FONT;
 	
-	private static LogConsoleDocument instance = null;
+	private static final LogConsoleDocument instance = new LogConsoleDocument();
 	
-	private LogPropertyChangeListener changeListener = new LogPropertyChangeListener();
+	private LogPropertyChangeListener changeListener;
 
 	/*package*/ ArrayList views = new ArrayList();
 	private Document document;
@@ -53,9 +53,10 @@ public class LogConsoleDocument {
 	private OutputStructureElement currentElement = null;
 
 	private LogConsoleDocument() {
+		changeListener = new LogPropertyChangeListener();
 		document = new Document();
 		styleRanges = new ArrayList(5);
-		initializeOutputStructure();	
+		initializeOutputStructure();		
 	}
 
 	public void append(String message, int priority) {
@@ -164,8 +165,6 @@ public class LogConsoleDocument {
 	}
 	
 	public static LogConsoleDocument getInstance() {
-		if (instance == null)
-			instance = new LogConsoleDocument();
 		return instance;	
 	}
 	
