@@ -23,12 +23,7 @@
 
      UL { 
      	border-width:0; 
-	    margin-left:20px;     
-      }
-	  
-     xLI {
-     	border-width:0;    
-        left:-10px;   
+	    margin-left:20px; 
       }
 
      .leaf { 
@@ -40,11 +35,11 @@
 
       .collapsed {
         list-style-image: url("images/plus.gif");
-        display: none;
+        display: none;  
       }
       .expanded {
          list-style-image: url("images/minus.gif");
-         display:block;
+         display:block; 
       }
 	  .selected {
 	  	list-style-image: url("images/topicfolder.gif");

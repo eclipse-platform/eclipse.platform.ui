@@ -14,66 +14,117 @@ import javax.servlet.http.*;
 /**
  * Performs transfer of data from eclipse to a jsp/servlet
  */
-public class EclipseConnector {
+public class EclipseConnector
+{
 	private ServletContext context;
+	private IFilter[] nullFilter = new IFilter[0];
 
 	/**
 	 * Constructor.
 	 */
-	public EclipseConnector(ServletContext context) {
+	public EclipseConnector(ServletContext context)
+	{
 		this.context = context;
 	}
 
-	public InputStream openStream(String url) {
-		try {
+	public InputStream openStream(String url)
+	{
+		try
+		{
 			URLConnection con = openConnection(url);
 			return con.getInputStream();
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			return null;
 		}
 	}
 
 	public void transfer(HttpServletRequest req, HttpServletResponse resp)
-		throws IOException {
+		throws IOException
+	{
 
-		try {
+		try
+		{
 			String url = getURL(req);
+			if (url == null)
+				return;
 			URLConnection con = openConnection(url);
 			resp.setContentType(con.getContentType());
 			resp.setHeader(
 				"Cache-Control",
 				"max-age=" + (con.getExpiration() - System.currentTimeMillis()));
 			InputStream is = con.getInputStream();
-			if (is != null) {
-				OutputStream os = resp.getOutputStream();
-				byte buf[] = new byte[4096];
-				int n = is.read(buf);
-				while (n > -1) {
-					if (n > 0)
-						os.write(buf, 0, n);
-					n = is.read(buf);
+			if (is == null)
+				return;
+			OutputStream os = resp.getOutputStream();
+			
+			IFilter[] filters = getFilters(req);
+			if (filters.length == 0)
+				transferContent(is, os);
+			else
+			{
+				ByteArrayOutputStream tempOut = new ByteArrayOutputStream(4096);
+				transferContent(is, tempOut);
+				byte[] tempBuffer = tempOut.toByteArray();
+				for (int i = 0; i < filters.length; i++)
+				{
+					tempBuffer = filters[i].filter(tempBuffer);
 				}
-				os.flush();
-				is.close();
+				ByteArrayInputStream tempIn = new ByteArrayInputStream(tempBuffer);
+				transferContent(tempIn, os);
 			}
-		} catch (Exception e) {
+			os.flush();
+			is.close();
+
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
+		}
+	}
+
+
+	/**
+	 * Write the body to the response
+	 */
+	private void transferContent(InputStream inputStream, OutputStream out)
+		throws IOException
+	{
+
+		// Prepare the input stream for reading
+		BufferedInputStream dataStream = new BufferedInputStream(inputStream);
+
+		// Create a fixed sized buffer for reading.
+		// We could create one with the size of availabe data...
+		byte[] buffer = new byte[4096];
+		int len = 0;
+		while (true)
+		{
+			len = dataStream.read(buffer); // Read file into the byte array
+			if (len == -1)
+				break;
+			out.write(buffer, 0, len);
 		}
 	}
 
 	/**
 	 * Gets content from the named url (this could be and eclipse defined url)
 	 */
-	private URLConnection openConnection(String url) throws Exception {
+	private URLConnection openConnection(String url) throws Exception
+	{
 		//System.out.println("help content for: " + url);
 
 		Eclipse eclipse =
 			(Eclipse) context.getAttribute("org.eclipse.help.servlet.eclipse");
 
 		URLConnection con = null;
-		if (eclipse != null) {
+		if (eclipse != null)
+		{
 			con = eclipse.openConnection(url);
-		} else {
+		}
+		else
+		{
 			URL helpURL = new URL(url);
 			con = helpURL.openConnection();
 		}
@@ -87,19 +138,24 @@ public class EclipseConnector {
 	/**
 	 * Extracts the url from a request
 	 */
-	private String getURL(HttpServletRequest req) {
+	private String getURL(HttpServletRequest req)
+	{
 		String query = "";
 		boolean firstParam = true;
-		for (Enumeration params = req.getParameterNames(); params.hasMoreElements();) {
+		for (Enumeration params = req.getParameterNames(); params.hasMoreElements();)
+		{
 			String param = (String) params.nextElement();
 			String[] values = req.getParameterValues(param);
 			if (values == null)
 				continue;
-			for (int i = 0; i < values.length; i++) {
-				if (firstParam) {
+			for (int i = 0; i < values.length; i++)
+			{
+				if (firstParam)
+				{
 					query += "?" + param + "=" + values[i];
 					firstParam = false;
-				} else
+				}
+				else
 					query += "&" + param + "=" + values[i];
 			}
 		}
@@ -109,5 +165,18 @@ public class EclipseConnector {
 		if (url.startsWith("/"))
 			url = url.substring(1);
 		return url;
+	}
+
+	/**
+	 * Returns the filters for this url, if any
+	 * @return array of IFilter
+	 */
+	private IFilter[] getFilters(HttpServletRequest req)
+	{
+		// search result
+		if (req.getParameter("resultof") != null)
+			return new IFilter[] { new HighlightFilter(req.getParameter("resultof"))};
+		else
+			return nullFilter;
 	}
 }

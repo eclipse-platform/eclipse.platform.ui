@@ -28,14 +28,6 @@ function parseQueryString (str)
 
 
 
-/**
- * Returns true when the element is tree node image
- */
-function isImage(element) {
-  return (element.className == "collapsed" ||
-      element.className == "expanded"  ||
-      element.className == "leaf");
-}
 
 /**
  * Returns the node with specified tag
@@ -106,6 +98,7 @@ function getAnchorNode(node) {
  * Collapses a tree rooted at the specified element
  */
 function collapse(node) {
+  alert(node.parentElement);
   node.className = "collapsed";
 }
 

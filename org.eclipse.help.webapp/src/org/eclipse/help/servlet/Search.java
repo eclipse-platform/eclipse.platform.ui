@@ -4,10 +4,12 @@
  */
 package org.eclipse.help.servlet;
 import java.io.*;
-import java.net.URL;
+
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.xerces.parsers.DOMParser;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.search.SearchManager;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 /**
@@ -17,6 +19,8 @@ public class Search {
 
 	private ServletContext context;
 	private EclipseConnector connector;
+	private ProgressMonitor pm;
+	private boolean isIndexing = false;
 
 	/**
 	 * Constructor
@@ -24,6 +28,7 @@ public class Search {
 	public Search(ServletContext context) {
 		this.context = context;
 		this.connector = new EclipseConnector(context);
+		this.pm = new ProgressMonitor();
 	}
 
 	/**
@@ -31,10 +36,16 @@ public class Search {
 	 */
 	public void generateResults(String query, Writer out) {
 		try {
-			if(query == null || query.trim().length() == 0)
+			if (query == null || query.trim().length() == 0)
 				return;
+
+			if (isIndexing()) {
+				displayProgressMonitor(out);
+				return;
+			}
+
 			//System.out.println("search:"+query);
-			String urlString = "search:/?"+query;
+			String urlString = "search:/?" + query;
 			InputSource xmlSource = new InputSource(connector.openStream(urlString));
 			DOMParser parser = new DOMParser();
 			parser.parse(xmlSource);
@@ -44,8 +55,14 @@ public class Search {
 		}
 	}
 	private void genToc(Element toc, Writer out) throws IOException {
-		out.write("<ul class='expanded'>");
+
 		NodeList topics = toc.getChildNodes();
+		if (topics.getLength() == 0)
+		{
+			out.write("Nothing found");
+			return;
+		}
+		out.write("<ul class='expanded'>");
 		for (int i = 0; i < topics.getLength(); i++) {
 			Node n = topics.item(i);
 			if (n.getNodeType() == Node.ELEMENT_NODE)
@@ -79,5 +96,93 @@ public class Search {
 			out.write("</ul>");
 		}
 		out.write("</li>");
+	}
+
+
+	public ProgressMonitor getProgressMonitor()
+	{
+		return pm;
+	}
+
+	public synchronized boolean isIndexing() {
+		// First check if we need to index...
+		if (!isIndexing) {
+			index();
+		}
+		return isIndexing;
+	}
+	
+	private synchronized void index() {
+		final SearchManager sm = HelpSystem.getSearchManager();
+		if (sm.isIndexingNeeded("en_US")) {
+			isIndexing = true;
+			Thread indexer = new Thread(new Runnable() {
+				public void run() {
+					try {
+						sm.updateIndex(pm, "en_US");
+					} catch (Exception e) {
+						e.printStackTrace();
+					} finally {
+						isIndexing = false;
+					}
+				}
+			});
+			indexer.start();
+		}
+	}
+
+	private void displayProgressMonitor(Writer out) throws IOException {
+		out.write("<script>window.open('progress.jsp', null, 'height=200,width=400,status=no,toolbar=no,menubar=no,location=no'); </script>");
+	}
+
+	/**
+	 * Internal progress monitor implementation.
+	 */
+	public class ProgressMonitor implements IProgressMonitor {
+		private boolean isCancelled;
+		private int totalWork;
+		private int currWork;
+
+		public ProgressMonitor() {
+		}
+		public void beginTask(String name, int totalWork) {
+			this.totalWork = totalWork;;
+		}
+
+		public void done() {
+		}
+
+		public void setTaskName(String name) {
+		}
+
+		public boolean isCanceled() {
+			return isCancelled;
+		}
+
+		public void setCanceled(boolean b) {
+			isCancelled = b;
+		}
+
+		public void subTask(String name) {
+		}
+
+		public void worked(int work) {
+			currWork += work;
+			if (currWork > totalWork)
+				currWork = totalWork;
+			else if (currWork < 0)
+				currWork = 0;
+
+			internalWorked(work);
+		}
+
+		public void internalWorked(double work) {
+		}
+
+		public int getPercentage() {
+			if(currWork==totalWork || totalWork<=0)
+				return 100;			
+			return (int)(100*currWork/totalWork);
+		}
 	}
 }

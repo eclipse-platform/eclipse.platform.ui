@@ -3,7 +3,7 @@ package org.eclipse.help.servlet;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
 import java.util.ResourceBundle;
 
@@ -84,11 +84,25 @@ public class InitServlet extends HttpServlet {
 	 * Returns true if running in infocentre mode
 	 */
 	private boolean isInfocentre() {
+		ServletContext context = getServletContext();
+		String base = context.getRealPath("/");
+		String catalina_home = System.getProperty("catalina.home");
+		// if this variable was not set, we are not running inside eclipse
+		if (catalina_home == null) 
+			return true;
+		
+		// Check if both paths have the same parent
+		File f1 = new File(base);
+		File f2 = new File(catalina_home);
+		String p1 = f1.getParent();
+		String p2 = f2.getParent();
+		return !p1.equals(p2);
+		
+		/*
 		// check if running in standalone mode
-		//String mode = getInitParameter("mode");
 		String mode = getServletContext().getInitParameter("mode");
-		//System.out.println("mode="+mode);
 		return "infocentre".equals(mode);
+		*/
 	}
 
 }

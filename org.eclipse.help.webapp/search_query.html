@@ -1,0 +1,53 @@
+
+<html>
+<head>
+	<title>Search</title>
+	<base target="MainFrame">
+      <link rel="stylesheet" TYPE="text/css" HREF="search.css" TITLE="sea">
+      <link rel="stylesheet" TYPE="text/css" HREF="toc.css" TITLE="nav">
+
+<script language="JavaScript">
+function mouseover(img)
+{
+	img.className="hover";
+	window.event.cancelBubble = true;
+}
+function mouseout(img)
+{
+	img.className="normal";
+	window.event.cancelBubble = true;
+}
+</script>
+
+
+</head>
+
+
+<body style="background-color: ActiveBorder;overflow:hidden;" >
+    <form action="search_results.jsp" method="get" name="searchForm" target="ResultsFrame" style="position:fixed;">
+  
+      <div id="query" style="width:100%;padding:3px;background-color:ActiveBorder;">
+            <input type="text" class="txtInput" name="keyword" 
+                   onblur="if (value == '') {value = 'search'}" 
+                   onfocus="if (value == 'search') {value =''}" 
+                   maxlength=256>
+                         
+            <input align="center" type="image" alt="Go" src="images/go.gif" class="normal" onmouseover="mouseover(this)" onmouseout="mouseout(this)">
+    
+           <!--
+            <input type="checkbox" name="fieldSearch" <%= request.getParameter("fieldSearch")!=null?"checked='true'":""%>>Search headings only
+   			-->
+            <input type="hidden" name="field" value="h1" >
+            <input type="hidden" name="field" value="h2" >
+            <input type="hidden" name="field" value="h3" >
+            <input type="hidden" name="field" value="role" >
+            <input type="hidden" name="field" value="solution" >
+            <input type="hidden" name="field" value="technology" >
+            <input type="hidden" name="maxHits" value="500" >
+            <input type="hidden" name="lang" value="en_US" >
+      </div>
+    </form>
+
+</body>
+</html>
+
