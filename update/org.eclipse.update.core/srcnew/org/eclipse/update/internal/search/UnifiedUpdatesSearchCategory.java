@@ -405,11 +405,12 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 
 	public IUpdateSearchQuery[] getQueries() {
 		initialize();
+		ArrayList allCandidates = getAllCandidates();
 
 		IUpdateSearchQuery[] queries =
-			new IUpdateSearchQuery[candidates.size()];
+			new IUpdateSearchQuery[allCandidates.size()];
 		for (int i = 0; i < queries.length; i++) {
-			Candidate candidate = (Candidate) candidates.get(i);
+			Candidate candidate = (Candidate) allCandidates.get(i);
 			IFeature feature = candidate.getFeature(null);
 			int match = candidate.getMatch();
 			IURLEntry updateEntry = candidate.getUpdateEntry();
@@ -492,5 +493,19 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 	private String getUpdateVersionsMode() {
 		Preferences store = UpdateCore.getPlugin().getPluginPreferences();
 		return store.getString(UpdateCore.P_UPDATE_VERSIONS);
+	}
+/*
+ * This method recursively walks the list of candidates
+ * building the flat that starts with the roots but
+ * also includes all the children that are updatable
+ * (use 'include' clause with a match that is not 'perfect').
+ */
+	private ArrayList getAllCandidates() {
+		ArrayList selected = new ArrayList();
+		for (int i=0; i<candidates.size(); i++) {
+			Candidate c = (Candidate)candidates.get(i);
+			c.addToFlatList(selected, true);
+		}
+		return selected;
 	}
 }
