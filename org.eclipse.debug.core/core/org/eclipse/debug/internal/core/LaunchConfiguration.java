@@ -1,9 +1,11 @@
 package org.eclipse.debug.internal.core;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import java.io.IOException;
 import java.io.StringReader;
@@ -13,6 +15,7 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -22,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
@@ -98,7 +102,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			if (local) {
 				location = LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH.append(path);
 			} else {
-				location = ResourcesPlugin.getWorkspace().getRoot().getLocation().append(path);
+				location = new Path(path);
 			}
 			setLocation(location);
 			return;
@@ -216,12 +220,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see ILaunchConfiguration#exists()
 	 */
 	public boolean exists() {
-		IFile file = getFile();
-		if (file == null) {
-			return getLocation().toFile().exists();
-		} else {
-			return file.exists();
-		}
+		return getLocation().toFile().exists();
 	}
 
 	/**
@@ -365,10 +364,10 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			IPath rootPath = LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH;
 			IPath configPath = getLocation();
 			relativePath = configPath.removeFirstSegments(rootPath.segmentCount());
+			relativePath = relativePath.setDevice(null);
 		} else {
-			relativePath = getFile().getFullPath();
+			relativePath = getLocation();
 		}
-		relativePath = relativePath.setDevice(null);
 		
 		Document doc = new DocumentImpl();
 		Element node = doc.createElement("launchConfiguration"); //$NON-NLS-1$
@@ -388,7 +387,11 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see ILaunchConfiguration#getFile()
 	 */	
 	public IFile getFile() {
-		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(getLocation());
+		IContainer container= ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(getLocation().removeLastSegments(1));
+		if (container != null) {
+			return container.getFile(new Path(getLocation().lastSegment()));
+		}
+		return null;
 	}
 
 	/**
