@@ -393,13 +393,14 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 			HelpPlugin.logError(msg, pce);
 			return false;
 		}catch (TransformerException e){
-			// TODO
+			String message = Resources.getString("WorkingSetManager.transformer");
+			HelpPlugin.logError(message, null);
 			return false;
 		} catch (IOException e) {
 			if(stateFile!=null){
 				stateFile.delete();
 			}
-			String message = Resources.getString("E40");
+			String message = Resources.getString("E040");
 			HelpPlugin.logError(message, null);
 			return false;
 		}
