@@ -209,7 +209,22 @@ public class InternalAntRunner {
 	private void setProperties(Project project) {
 		project.setUserProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
 		project.setUserProperty("ant.version", Main.getAntVersion()); //$NON-NLS-1$
-		
+		if (userProperties != null) {
+			int count= 0;
+			for (Iterator iterator = userProperties.entrySet().iterator(); iterator.hasNext();) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				project.setUserProperty((String) entry.getKey(), (String) entry.getValue());
+				count++;
+			}
+			if (count == 1) {
+				setGlobalProperties(project);
+			}
+		} else {
+			setGlobalProperties(project);
+		}
+	}
+
+	private void setGlobalProperties(Project project) {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		List properties= prefs.getProperties();
 		if (properties != null) {
@@ -220,13 +235,6 @@ public class InternalAntRunner {
 					project.setUserProperty(property.getName(), value);
 				}
 			}
-		}
-		if (userProperties == null) {
-			return;
-		}
-		for (Iterator iterator = userProperties.entrySet().iterator(); iterator.hasNext();) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			project.setUserProperty((String) entry.getKey(), (String) entry.getValue());
 		}
 	}
 
@@ -331,9 +339,9 @@ public class InternalAntRunner {
 			}
 			info.add(target.getDescription());
 			List dependencies= new ArrayList();
-			Enumeration enum= target.getDependencies();
-			while (enum.hasMoreElements()) {
-				dependencies.add(enum.nextElement());
+			Enumeration enumeration= target.getDependencies();
+			while (enumeration.hasMoreElements()) {
+				dependencies.add(enumeration.nextElement());
 			}
 			String[] dependencyArray= new String[dependencies.size()];
 			dependencies.toArray(dependencyArray);

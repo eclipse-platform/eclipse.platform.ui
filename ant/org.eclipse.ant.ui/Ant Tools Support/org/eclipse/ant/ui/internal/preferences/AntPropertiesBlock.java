@@ -14,8 +14,11 @@ package org.eclipse.ant.ui.internal.preferences;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
@@ -76,6 +79,8 @@ public class AntPropertiesBlock {
 	
 	private boolean showExternal= false;
 	
+	private boolean tablesEnabled= true;
+	
 	/**
 	 * Button listener that delegates for widget selection events.
 	 */
@@ -102,10 +107,12 @@ public class AntPropertiesBlock {
 	 */
 	private ISelectionChangedListener tableListener= new ISelectionChangedListener() {
 		public void selectionChanged(SelectionChangedEvent event) {
-			if (event.getSource() == propertyTableViewer) {
-				propertyTableSelectionChanged((IStructuredSelection) event.getSelection());
-			} else if (event.getSource() == fileTableViewer) {
-				fileTableSelectionChanged((IStructuredSelection) event.getSelection());
+			if (tablesEnabled) {
+				if (event.getSource() == propertyTableViewer) {
+					propertyTableSelectionChanged((IStructuredSelection) event.getSelection());
+				} else if (event.getSource() == fileTableViewer) {
+					fileTableSelectionChanged((IStructuredSelection) event.getSelection());
+				}
 			}
 		}
 	};
@@ -147,8 +154,6 @@ public class AntPropertiesBlock {
 	public void createControl(Composite top, String propertyLabel, String propertyFileLabel) {
 		Font font= top.getFont();
 		dialogSettings= AntUIPlugin.getDefault().getDialogSettings();
-		
-		createVerticalSpacer(top, 2);
 
 		Label label = new Label(top, SWT.NONE);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
@@ -176,16 +181,6 @@ public class AntPropertiesBlock {
 		fileTableViewer= createTableViewer(top);
 		createButtonGroup(top);
 	}
-	
-	/**
-	 * Create some empty space.
-	 */
-	private void createVerticalSpacer(Composite comp, int colSpan) {
-		Label label = new Label(comp, SWT.NONE);
-		GridData gd = new GridData();
-		gd.horizontalSpan = colSpan;
-		label.setLayoutData(gd);
-	}	
 	
 	/**
 	 * Creates the group which will contain the buttons.
@@ -429,5 +424,30 @@ public class AntPropertiesBlock {
 	
 	public Object[] getPropertyFiles() {
 		return ((ExternalToolsContentProvider)fileTableViewer.getContentProvider()).getElements(null);
+	}
+	
+	public void setEnabled(boolean enable) {
+		setTablesEnabled(enable);
+		addButton.setEnabled(enable);
+		addExternalFileButton.setEnabled(enable);
+		addFileButton.setEnabled(enable);
+		editButton.setEnabled(enable);
+		removeButton.setEnabled(enable);
+		removeFileButton.setEnabled(enable);
+		
+		if (enable) {
+			propertyTableViewer.setSelection(propertyTableViewer.getSelection());
+			fileTableViewer.setSelection(fileTableViewer.getSelection());
+		} else {
+			
+			AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
+			List properties= prefs.getProperties();
+			propertyTableViewer.setInput(properties);
+			fileTableViewer.setInput(prefs.getCustomPropertyFiles());
+		}
+	}
+	
+	public void setTablesEnabled(boolean tablesEnabled) {
+		this.tablesEnabled= tablesEnabled;
 	}
 }

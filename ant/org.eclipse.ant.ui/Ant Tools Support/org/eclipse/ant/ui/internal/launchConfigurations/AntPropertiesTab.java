@@ -26,6 +26,9 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -40,6 +43,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements IAntBlockContainer {
 	
+	private Button useDefaultButton;
 	private AntPropertiesBlock antPropertiesBlock= new AntPropertiesBlock(this, true);
 	
 	public void createControl(Composite parent) {
@@ -53,7 +57,35 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		top.setLayout(layout);
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		top.setLayoutData(gridData);
+		
+		createChangeProperties(top);
 		antPropertiesBlock.createControl(top, AntLaunchConfigurationMessages.getString("AntPropertiesTab.&Properties__6"), AntLaunchConfigurationMessages.getString("AntPropertiesTab.Property_f&iles__7")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	private void createChangeProperties(Composite top) {
+		Font font= top.getFont();
+		Composite changeProperties= new Composite(top, SWT.NONE);
+		changeProperties.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+		GridLayout layout= new GridLayout();
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		changeProperties.setLayout(layout);
+		changeProperties.setFont(font);
+		
+		useDefaultButton= new Button(changeProperties, SWT.CHECK);
+		useDefaultButton.setFont(font);
+		useDefaultButton.setText("Use &global properties as specified in the Ant runtime preferences");
+		useDefaultButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				toggleUseDefaultProperties();
+				updateLaunchConfigurationDialog();
+			}
+		});
+	}		
+		
+	private void toggleUseDefaultProperties() {
+		boolean enable= !useDefaultButton.getSelection();
+		antPropertiesBlock.setEnabled(enable);
 	}
 	
 	/**
@@ -90,12 +122,18 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 			AntUIPlugin.log(AntLaunchConfigurationMessages.getString("AntPropertiesTab.Error_reading_configuration_9"), ce); //$NON-NLS-1$
 		}
 		
-		antPropertiesBlock.populatePropertyViewer(properties);
+		if (properties == null && propertyFiles == null) {
+			antPropertiesBlock.setTablesEnabled(false);
+			useDefaultButton.setSelection(true);
+		} else {
+			useDefaultButton.setSelection(false);
+			antPropertiesBlock.populatePropertyViewer(properties);
 		
-		String[] files= AntUtil.parseString(propertyFiles, ","); //$NON-NLS-1$
-		antPropertiesBlock.setPropertyFilesInput(files);
+			String[] files= AntUtil.parseString(propertyFiles, ","); //$NON-NLS-1$
+			antPropertiesBlock.setPropertyFilesInput(files);
+		}
 		
-		antPropertiesBlock.update();
+		toggleUseDefaultProperties();
 	}
 	
 	
@@ -103,7 +141,12 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		
+		if (useDefaultButton.getSelection()) {
+			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, (Map)null);
+			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTY_FILES, (String)null);
+			return;
+		}
+				
 		Object[] items= antPropertiesBlock.getProperties();
 		Map properties= null;
 		if (items.length > 0) {
