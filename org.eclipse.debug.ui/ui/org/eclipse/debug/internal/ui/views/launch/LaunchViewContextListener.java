@@ -386,9 +386,15 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 		}
 	}
 	
+	/**
+	 * Restore the persisted collections of views to not close and
+	 * views to not open
+	 * 
+	 * @param memento the memento containing the persisted view IDs
+	 */
 	public void init(IMemento memento) {
-		initViewCollection(memento, ATTR_VIEWS_TO_NOT_CLOSE);
-		initViewCollection(memento, ATTR_VIEWS_TO_NOT_OPEN);
+		initViewCollection(memento, ATTR_VIEWS_TO_NOT_CLOSE, viewIdsToNotClose);
+		initViewCollection(memento, ATTR_VIEWS_TO_NOT_OPEN, viewIdsToNotOpen);
 	}
 	
 	/**
@@ -396,8 +402,9 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 	 * the given attribute, and stores them in the given collection
 	 * @param memento the memento
 	 * @param attribute the attribute of the view ids
+	 * @param collection the collection to store the view ids into.
 	 */
-	private void initViewCollection(IMemento memento, String attribute) {
+	private void initViewCollection(IMemento memento, String attribute, Set collection) {
 		String views = memento.getString(attribute);
 		if (views == null) {
 			return;
@@ -410,7 +417,7 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 		while (startIndex < views.length() - 1) {
 			String viewId= views.substring(startIndex, endIndex);
 			if (viewId.length() > 0) {
-				viewIdsToNotOpen.add(viewId);
+				collection.add(viewId);
 			}
 			startIndex= endIndex + 1;
 			endIndex= views.indexOf(',', startIndex);
