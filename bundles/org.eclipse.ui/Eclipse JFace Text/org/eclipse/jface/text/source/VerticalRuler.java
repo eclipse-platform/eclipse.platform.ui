@@ -386,13 +386,15 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerInfo {
 	 * @see IVerticalRulerInfo#addMouseListener
 	 */
 	public void addMouseListener(MouseListener listener) {
-		fCanvas.addMouseListener(listener);
+		if (fCanvas != null && !fCanvas.isDisposed())
+			fCanvas.addMouseListener(listener);
 	}
 	
 	/*
 	 * @see IVerticalRulerInfo#addMouseListener
 	 */
 	public void removeMouseListener(MouseListener listener) {
-		fCanvas.removeMouseListener(listener);
+		if (fCanvas != null && !fCanvas.isDisposed())
+			fCanvas.removeMouseListener(listener);
 	}
 }
