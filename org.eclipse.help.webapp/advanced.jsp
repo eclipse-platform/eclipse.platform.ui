@@ -147,7 +147,7 @@ function doAdvancedSearch()
   
 <div style="width:100%; height:15px; margin-left:12px; margin-top:10px;"><%=WebappResources.getString("SearchExpression", request)%></div>
 
-<div style="width:420px; height:16px;margin-left:7px"><input type="text" id="searchWord" name="searchWord" value='<%= request.getParameter("searchWord")!=null?request.getParameter("searchWord"):""%>' maxlength=256 alt='<%=WebappResources.getString("SearchExpression", request)%>'>
+<div style="width:420px; height:16px;margin-left:7px"><input type="text" id="searchWord" name="searchWord" value='<%=UrlUtil.getRequestParameter(request, "searchWord")!=null?UrlUtil.getRequestParameter(request, "searchWord"):""%>' maxlength=256 alt='<%=WebappResources.getString("SearchExpression", request)%>'>
           	  			<input type="hidden" name="maxHits" value="500" >
 </div>
 
