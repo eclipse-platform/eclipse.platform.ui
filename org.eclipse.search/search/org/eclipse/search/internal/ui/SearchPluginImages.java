@@ -52,7 +52,6 @@ public class SearchPluginImages {
 	// Define image names
 	public static final String IMG_TOOL_SEARCH= NAME_PREFIX + "search.gif"; //$NON-NLS-1$
 
-	public static final String IMG_LCL_SEARCH_STOP= NAME_PREFIX + "search_stop.gif"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_REM= NAME_PREFIX + "search_rem.gif"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_REM_ALL= NAME_PREFIX + "search_remall.gif"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_NEXT= NAME_PREFIX + "search_next.gif"; //$NON-NLS-1$
