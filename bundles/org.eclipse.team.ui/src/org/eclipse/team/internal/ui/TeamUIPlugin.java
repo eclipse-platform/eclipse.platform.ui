@@ -32,6 +32,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.internal.ui.jobs.RefreshSubscriberInputJob;
 import org.eclipse.team.internal.ui.jobs.RefreshSubscriberJob;
+import org.eclipse.team.internal.ui.sync.views.SyncViewerTableSorter;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -146,6 +147,8 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 		store.setDefault(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC, false);
 		store.setDefault(IPreferenceIds.SYNCVIEW_DELAY, 60 /* minutes */);
 		store.setDefault(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS, false);
+		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_TABLESORT, SyncViewerTableSorter.COL_NAME);
+		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_TABLESORT_REVERSED, false);
 	}
 	
 	/**

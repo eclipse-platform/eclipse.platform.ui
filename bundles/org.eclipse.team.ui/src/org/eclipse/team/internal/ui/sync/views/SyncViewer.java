@@ -96,13 +96,16 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 
 public class SyncViewer extends ViewPart implements ITeamResourceChangeListener, ISyncSetChangedListener, ISyncViewer {
 	
+	/**
+	 * The property id for <code>getCurrentViewType</code>.
+	 */
 	public static int PROP_VIEWTYPE = 0x10;
 
-	/*
+	/**
 	 * This view's id. The same value as in the plugin.xml.
 	 */
 	 public static final String VIEW_ID = "org.eclipse.team.sync.views.SyncViewer";  //$NON-NLS-1$
-	
+				
 	/*
 	 * The viewer thst is shown in the view. Currently this can be
 	 * either a table or tree viewer.
@@ -152,12 +155,12 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	};
 	
 	public SyncViewer() {
-		IPreferenceStore store = TeamUIPlugin.getPlugin().getPreferenceStore();
+		IPreferenceStore store = getStore();
 		store.addPropertyChangeListener(propertyListener);
 		currentViewType = store.getInt(IPreferenceIds.SYNCVIEW_VIEW_TYPE);
 		if (currentViewType != TREE_VIEW) {
 			currentViewType = TABLE_VIEW;
-		}
+		}		
 	}
 
 	public Image getTitleImage() {
@@ -216,7 +219,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 			ISelection s = viewer.getSelection();
 			if (composite == null || composite.isDisposed()) return;
 			currentViewType = viewerType;
-			TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCVIEW_VIEW_TYPE, currentViewType);
+			getStore().setValue(IPreferenceIds.SYNCVIEW_VIEW_TYPE, currentViewType);
 			disposeChildren(composite);
 			createViewer(composite);
 			composite.layout();
@@ -256,11 +259,15 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	}
 	
 	private void setTreeViewerContentProvider() {
-		if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS)) {
+		if (getStore().getBoolean(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS)) {
 			viewer.setContentProvider(new CompressedFolderContentProvider());
 		} else {
 			viewer.setContentProvider(new SyncSetTreeContentProvider());
 		}
+	}
+
+	private IPreferenceStore getStore() {
+		return TeamUIPlugin.getPlugin().getPreferenceStore();
 	}
 
 	private void createTableViewerPartControl(Composite parent) {
@@ -285,7 +292,8 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		viewer = tableViewer;
 		viewer.setContentProvider(new SyncSetTableContentProvider());
 		viewer.setLabelProvider(new SyncViewerLabelProvider());
-		viewer.setSorter(new SyncViewerTableSorter(SyncViewerTableSorter.COL_NAME));
+			
+		viewer.setSorter(new SyncViewerTableSorter());
 	}
 	
 	/**
@@ -549,7 +557,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 			input.dispose();
 		}
 		
-		TeamUIPlugin.getPlugin().getPreferenceStore().removePropertyChangeListener(propertyListener);
+		getStore().removePropertyChangeListener(propertyListener);
 	}
 
 	public void run(IRunnableWithProgress runnable) {
@@ -582,7 +590,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		this.memento = memento;
 		
 		RefreshSubscriberInputJob refreshJob = TeamUIPlugin.getPlugin().getRefreshJob();
-		if(TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC) && refreshJob.getState() == Job.NONE) {
+		if(getStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC) && refreshJob.getState() == Job.NONE) {
 			refreshJob.setReschedule(true);
 			// start once the UI has started and stabilized
 			refreshJob.schedule(20000 /* 20 seconds */);

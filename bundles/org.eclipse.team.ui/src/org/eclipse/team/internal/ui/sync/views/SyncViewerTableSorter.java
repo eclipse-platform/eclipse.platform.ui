@@ -11,12 +11,15 @@
 package org.eclipse.team.internal.ui.sync.views;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.team.internal.ui.IPreferenceIds;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
@@ -24,7 +27,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
  */
 public class SyncViewerTableSorter extends SyncViewerSorter {
 
-	private boolean reversed = false;
+	private boolean reversed;
 	private int columnNumber;
 	
 	//column constants
@@ -63,22 +66,24 @@ public class SyncViewerTableSorter extends SyncViewerSorter {
 				// column selected - need to sort
 				int column = tableViewer.getTable().indexOf((TableColumn) e.widget);
 				SyncViewerTableSorter oldSorter = (SyncViewerTableSorter)tableViewer.getSorter();
-				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
-					oldSorter.setReversed(!oldSorter.isReversed());
+				if (oldSorter != null && column == oldSorter.getColumnNumber()) {					
+					SyncViewerTableSorter.getStore().setValue(IPreferenceIds.SYNCVIEW_VIEW_TABLESORT_REVERSED, !oldSorter.isReversed());
+					oldSorter.setReversed(!oldSorter.isReversed());					
 					tableViewer.refresh();
 				} else {
-					tableViewer.setSorter(new SyncViewerTableSorter(column));
+					SyncViewerTableSorter.getStore().setValue(IPreferenceIds.SYNCVIEW_VIEW_TABLESORT, column);
+					SyncViewerTableSorter.getStore().setValue(IPreferenceIds.SYNCVIEW_VIEW_TABLESORT_REVERSED, false);
+					tableViewer.setSorter(new SyncViewerTableSorter());
 				}
 			}
 		};
 	}	
 	
-	/**
-	 * 
-	 */
-	public SyncViewerTableSorter(int columnNumber) {
+	public SyncViewerTableSorter() {
 		super(ResourceSorter.NAME);
-		this.columnNumber = columnNumber;
+		
+		this.columnNumber = getStore().getInt(IPreferenceIds.SYNCVIEW_VIEW_TABLESORT);
+		this.reversed = getStore().getBoolean(IPreferenceIds.SYNCVIEW_VIEW_TABLESORT_REVERSED);
 	}
 
 	/* (non-Javadoc)
@@ -145,5 +150,9 @@ public class SyncViewerTableSorter extends SyncViewerSorter {
 	 */
 	public void setReversed(boolean newReversed) {
 		reversed = newReversed;
+	}
+	
+	private static IPreferenceStore getStore() {
+		return TeamUIPlugin.getPlugin().getPreferenceStore();
 	}
 }
