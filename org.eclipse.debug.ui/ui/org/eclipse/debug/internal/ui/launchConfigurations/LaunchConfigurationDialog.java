@@ -1647,11 +1647,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * the tab being entered.
 	 */
 	protected void handleTabSelected() {
-		if (fCurrentTabIndex == getTabFolder().getSelectionIndex()) {
+		ILaunchConfigurationTab[] tabs = getTabs();
+		if (fCurrentTabIndex == getTabFolder().getSelectionIndex() || tabs == null || tabs.length == 0 || fCurrentTabIndex > (tabs.length - 1)) {
 			return;
 		}
 		if (fCurrentTabIndex != -1) {
-			ILaunchConfigurationTab tab = getTabs()[fCurrentTabIndex];
+			ILaunchConfigurationTab tab = tabs[fCurrentTabIndex];
 			if (tab.okToLeave()) {
 				ILaunchConfigurationWorkingCopy wc = getLaunchConfiguration();
 				if (wc != null) {
