@@ -187,7 +187,9 @@ public final class DefaultRunnerContext implements IRunnerContext {
 		if (tool.VAR_RESOURCE_LOC.equals(varDef.name)) {
 			String location = null;
 			if (varDef.argument != null && varDef.argument.length() > 0) {
-				location = ResourcesPlugin.getWorkspace().getRoot().getLocation() + varDef.argument;
+				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
+				if (member != null)
+					location = member.getLocation().toString();
 			} else {
 				if (selectedResource != null)
 					location = selectedResource.getLocation().toString();
