@@ -589,7 +589,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
 			coverage= extension.getModelCoverage();
 		} else if (fCachedTextViewer instanceof TextViewer) {
-			// TODO remove once TextViewer implements ITextViewerExtension5
+			// catch all for all TextViewers
 			TextViewer extension= (TextViewer) fCachedTextViewer;
 			coverage= extension.getModelCoverage();
 		}
