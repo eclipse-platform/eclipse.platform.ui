@@ -9,6 +9,7 @@ import java.util.*;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.*;
 import org.eclipse.help.internal.ui.WorkbenchHelpPlugin;
 import org.eclipse.help.internal.ui.util.*;
 import org.eclipse.help.internal.util.Logger;
@@ -52,9 +53,9 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 		}
 		String libraryPath =
 			getPath(PLUGIN_ID_SWT) + System.getProperty("java.library.path");
-		libraryPath=TString.change(libraryPath, "\"", "");
-		if(libraryPath.charAt(libraryPath.length()-1)!=';'){
-			libraryPath+=";";
+		libraryPath = TString.change(libraryPath, "\"", "");
+		if (libraryPath.charAt(libraryPath.length() - 1) != ';') {
+			libraryPath += ";";
 		}
 		String classPath = getClassPath(PLUGIN_ID_HELPUI);
 		String stateLocation =
@@ -68,11 +69,11 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 				"-cp",
 				classPath,
 				IE_CLASS };
-		cmd=cmdarray[0];
-		for(int i=1; i<cmdarray.length;i++)
-				cmd+=" " + cmdarray[i];
-		if(Logger.LOG_DEBUG==Logger.getDebugLevel()){
-			Logger.logInfo("IEBrowserAdapter launch command is: "+cmd);
+		cmd = cmdarray[0];
+		for (int i = 1; i < cmdarray.length; i++)
+			cmd += " " + cmdarray[i];
+		if (Logger.LOG_DEBUG == Logger.getDebugLevel()) {
+			Logger.logInfo("IEBrowserAdapter launch command is: " + cmd);
 		}
 
 	}
@@ -127,15 +128,15 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 		try {
 			pr = Runtime.getRuntime().exec(cmdarray);
 		} catch (IOException e) {
-			Logger.logError(WorkbenchResources.getString("WE024",cmd), e);
+			Logger.logError(WorkbenchResources.getString("WE024", cmd), e);
 			pr = null;
 			launched = true;
 			return;
 		}
-		Thread ieOutConsumer=new StreamConsumer(pr.getInputStream());
+		Thread ieOutConsumer = new StreamConsumer(pr.getInputStream());
 		ieOutConsumer.setName("Internet Explorer adapter output reader");
 		ieOutConsumer.start();
-		Thread ieErrConsumer=new StreamConsumer(pr.getErrorStream());
+		Thread ieErrConsumer = new StreamConsumer(pr.getErrorStream());
 		ieErrConsumer.setName("Internet Explorer adapter error reader");
 		ieErrConsumer.start();
 		commandWriter = new PrintWriter(pr.getOutputStream(), true);
@@ -174,7 +175,7 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 		}
 		try {
 			commandWriter.println(command);
-			Logger.logInfo("Sending the following command to the IE browser: "+command);
+			Logger.logInfo("Sending the following command to the IE browser: " + command);
 		} catch (Exception e) {
 			Logger.logWarning(WorkbenchResources.getString("WW003"));
 		}
@@ -222,18 +223,39 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 	 * Calculates library path for a specified plugin
 	 */
 	private String getPath(String pluginID) {
-		URL installURL = Platform.getPlugin(pluginID).getDescriptor().getInstallURL();
-		try {
-			installURL = Platform.resolve(installURL);
-		} catch (IOException ioe) {
-			return "";
-		}
-		File installFile = new File(installURL.getFile());
-		String[] variants = buildLibraryVariants();
 		String path = "";
-		for (int v = 0; v < variants.length; v++) {
-			path += new File(installFile, variants[v]).getAbsolutePath()
-				+ File.pathSeparator;
+		Collection installURLs = new ArrayList();
+		// get Install URL of plugin
+		IPluginDescriptor pluginDescriptor =
+			Platform.getPlugin(pluginID).getDescriptor();
+		URL pluginInstallURL = pluginDescriptor.getInstallURL();
+		installURLs.add(pluginInstallURL);
+		// get Install URL of fragments
+		if (pluginDescriptor instanceof PluginDescriptorModel) {
+			PluginFragmentModel[] fragmentModels =
+				((PluginDescriptorModel) pluginDescriptor).getFragments();
+			for (int f = 0; f < fragmentModels.length; f++) {
+				String location = fragmentModels[f].getLocation();
+				try {
+					URL fragInstallURL = new URL(location);
+					installURLs.add(fragInstallURL);
+				} catch (MalformedURLException mue) {
+				}
+			}
+		}
+		for (Iterator it = installURLs.iterator(); it.hasNext();) {
+			URL installURL = (URL) it.next();
+			try {
+				installURL = Platform.resolve(installURL);
+			} catch (IOException ioe) {
+				continue;
+			}
+			File installFile = new File(installURL.getFile());
+			String[] variants = buildLibraryVariants();
+			for (int v = 0; v < variants.length; v++) {
+				path += new File(installFile, variants[v]).getAbsolutePath()
+					+ File.pathSeparator;
+			}
 		}
 		return path;
 	}
