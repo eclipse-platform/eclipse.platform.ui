@@ -214,7 +214,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 		
 		int start= -1;
 		int end= -1;
-		
+	    IRegion region= null;
 		try {	
 			int pos= offset;
 			char c;
@@ -244,15 +244,25 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 		}
 		
 		if (start > -1 && end > -1) {
-			if (start == offset && end == offset)
+			if (start == offset && end == offset) {
 				return new Region(offset, 0);
-			else if (start == offset)
+			} else if (start == offset) {
 				return new Region(start, end - start);
-			else
-				return new Region(start + 1, end - start - 1);
-		}
-		
-		return null;
+			} else {
+                try { //correct for spaces at beginning or end
+                    while(document.getChar(start + 1) == ' ') {
+                        start++;
+                    }
+                    while(document.getChar(end - 1) == ' ') {
+                        end--;
+                    }
+                } catch (BadLocationException e) {
+                }
+                region= new Region(start + 1, end - start - 1);
+            }
+        }
+            
+		return region;
 	}
 	
 	/* (non-Javadoc)
