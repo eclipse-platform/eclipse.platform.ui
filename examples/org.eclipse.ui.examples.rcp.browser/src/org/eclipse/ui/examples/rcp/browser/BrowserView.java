@@ -12,32 +12,40 @@
 package org.eclipse.ui.examples.rcp.browser;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.CloseWindowListener;
 import org.eclipse.swt.browser.LocationAdapter;
 import org.eclipse.swt.browser.LocationEvent;
+import org.eclipse.swt.browser.OpenWindowListener;
 import org.eclipse.swt.browser.ProgressAdapter;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.StatusTextEvent;
 import org.eclipse.swt.browser.StatusTextListener;
 import org.eclipse.swt.browser.TitleEvent;
 import org.eclipse.swt.browser.TitleListener;
+import org.eclipse.swt.browser.WindowEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IStatusLineManager;
-
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.part.ViewPart;
 
 
@@ -101,6 +109,27 @@ public class BrowserView extends ViewPart {
 	    }
 	};
 	
+    /**
+     * Finds the first browser view in the given window.
+     * 
+     * @param window the window
+     * @return the first found browser view, or <code>null</code> if none found
+     */
+    private static BrowserView findBrowser(IWorkbenchWindow window) {
+        IWorkbenchPage page = window.getActivePage();
+        IViewPart view = page.findView(IBrowserConstants.BROWSER_VIEW_ID);
+        if (view != null) {
+            return (BrowserView) view;
+        }
+        IViewReference[] refs = page.getViewReferences();
+        for (int i = 0; i < refs.length; i++) {
+            if (IBrowserConstants.BROWSER_VIEW_ID.equals(refs[i].getId())) {
+                return (BrowserView) refs[i].getPart(true);
+            }
+        }
+        return null;
+    }
+    
 	/**
 	 * Constructs a new <code>BrowserView</code>.
 	 */
@@ -204,6 +233,16 @@ public class BrowserView extends ViewPart {
                 setPartName(event.title);
             }
         });
+        browser.addOpenWindowListener(new OpenWindowListener() {
+            public void open(WindowEvent event) {
+                BrowserView.this.openWindow(event);
+            }
+        });
+        browser.addCloseWindowListener(new CloseWindowListener() {
+            public void close(WindowEvent event) {
+                BrowserView.this.close();
+            }
+        });
 		location.addSelectionListener(new SelectionAdapter() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				browser.setUrl(location.getText());
@@ -226,5 +265,34 @@ public class BrowserView extends ViewPart {
 		getViewSite().getKeyBindingService().registerAction(easterEggAction);
 		return browser;
 	}
+
+    /**
+     * Opens a new browser window.
+     * 
+     * @param event the open window event
+     */
+    private void openWindow(WindowEvent event) {
+        try {
+            IWorkbench workbench = getSite().getWorkbenchWindow().getWorkbench();
+            IWorkbenchWindow window = workbench.openWorkbenchWindow(IBrowserConstants.BROWSER_PERSPECTIVE_ID, null);
+            Shell shell = window.getShell();
+            if (event.location != null)
+                shell.setLocation(event.location);
+            if (event.size != null)
+                shell.setLocation(event.size);
+            BrowserView view = findBrowser(window);
+            Assert.isNotNull(view);
+            event.browser = view.browser;
+        } catch (WorkbenchException e) {
+            BrowserPlugin.getDefault().log(e);
+        }
+    }
+    
+    /**
+     * Closes this browser view.
+     */
+    private void close() {
+        getSite().getPage().hideView(this);
+    }
 
 }
