@@ -18,7 +18,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
- * Operation which checks for the existance of the .project file (or .vcm_meta file) 
+ * Operation which checks for the existance of the .project file
  * in a remote folder. The operation can be run using the <code>hasMetaFile</code>
  * static method of by executing the operation and then checking <code>metaFileExists</code>
  */
@@ -40,7 +40,7 @@ public class HasProjectMetaFileOperation extends CVSOperation {
 	
 	/*
 	 * Return true if the provided remote folder contains a valid meta-file 
-	 * (i.e. .project or the older .vcm_meta file).
+	 * (i.e. .project file).
 	 */
 	private boolean hasMetaFile(ICVSRemoteFolder folder, IProgressMonitor monitor) throws CVSException {
 		
@@ -56,13 +56,6 @@ public class HasProjectMetaFileOperation extends CVSOperation {
 		// Check for the existance of the .project file
 		try {
 			folder.getFile(".project"); //$NON-NLS-1$
-			return true;
-		} catch (TeamException e) {
-			// We couldn't retrieve the meta file so assume it doesn't exist
-		}
-		// If the above failed, look for the old .vcm_meta file
-		try {
-			folder.getFile(".vcm_meta"); //$NON-NLS-1$
 			return true;
 		} catch (TeamException e) {
 			// We couldn't retrieve the meta file so assume it doesn't exist

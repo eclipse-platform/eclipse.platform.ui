@@ -54,7 +54,6 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.FileModificationManager;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.BuildCleanupListener;
-import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -112,7 +111,6 @@ public class CVSProviderPlugin extends Plugin {
 	// CVS specific resource delta listeners
 	private BuildCleanupListener addDeleteMoveListener;
 	private FileModificationManager fileModificationManager;
-	private ProjectDescriptionManager projectDescriptionListener;
 	private SyncFileChangeListener metaFileSyncListener;
 
 	private static final String REPOSITORIES_STATE_FILE = ".cvsProviderState"; //$NON-NLS-1$
@@ -320,9 +318,7 @@ public class CVSProviderPlugin extends Plugin {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		addDeleteMoveListener = new BuildCleanupListener();
 		fileModificationManager = new FileModificationManager();
-		projectDescriptionListener = new ProjectDescriptionManager();
 		metaFileSyncListener = new SyncFileChangeListener();
-		workspace.addResourceChangeListener(projectDescriptionListener, IResourceChangeEvent.PRE_AUTO_BUILD);
 		workspace.addResourceChangeListener(addDeleteMoveListener, IResourceChangeEvent.POST_AUTO_BUILD);
 		workspace.addResourceChangeListener(metaFileSyncListener, IResourceChangeEvent.POST_CHANGE);
 		workspace.addResourceChangeListener(fileModificationManager, IResourceChangeEvent.POST_CHANGE);
@@ -346,7 +342,6 @@ public class CVSProviderPlugin extends Plugin {
 		// remove listeners
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.removeResourceChangeListener(metaFileSyncListener);
-		workspace.removeResourceChangeListener(projectDescriptionListener);
 		workspace.removeResourceChangeListener(fileModificationManager);
 		workspace.removeResourceChangeListener(addDeleteMoveListener);
 		
@@ -737,7 +732,7 @@ public class CVSProviderPlugin extends Plugin {
 						ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(projects[i]);
 						FolderSyncInfo info = folder.getFolderSyncInfo();
 						if (info != null) {
-							ICVSRepositoryLocation result = getRepository(info.getRoot());
+							getRepository(info.getRoot());
 						}
 					}
 				}
@@ -781,8 +776,10 @@ public class CVSProviderPlugin extends Plugin {
 		} else if (count == REPOSITORIES_STATE_FILE_VERSION_2) {
 			count = dis.readInt();
 			for (int i = 0; i < count; i++) {
-				ICVSRepositoryLocation root = getRepository(dis.readUTF());
-				String programName = dis.readUTF();
+				// Perform a get on the repository so it is added to the plugin
+				getRepository(dis.readUTF());
+				// Read the next field which is no longer used
+				dis.readUTF();
 			}
 		} else {
 			Util.logError(Policy.bind("CVSProviderPlugin.unknownStateFileVersion", new Integer(count).toString()), null); //$NON-NLS-1$
@@ -799,7 +796,7 @@ public class CVSProviderPlugin extends Plugin {
 		while (it.hasNext()) {
 			CVSRepositoryLocation root = (CVSRepositoryLocation)it.next();
 			dos.writeUTF(root.getLocation());
-			dos.writeUTF("unused"); // place holder for an additional configuration parameter
+			dos.writeUTF("unused"); // place holder for an additional configuration parameter //$NON-NLS-1$
 		}
 	}
 		

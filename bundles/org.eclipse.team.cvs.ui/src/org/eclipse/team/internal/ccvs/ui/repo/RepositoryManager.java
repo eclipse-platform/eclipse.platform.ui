@@ -242,7 +242,7 @@ public class RepositoryManager {
 	}
 		
 	/*
-	 * Fetches tags from .project and .vcm_meta if they exist. Then fetches tags from the user defined auto-refresh file
+	 * Fetches tags from auto-refresh files if they exist. Then fetches tags from the user defined auto-refresh file
 	 * list. The fetched tags are cached in the CVS ui plugin's tag cache.
 	 */
 	public void refreshDefinedTags(ICVSFolder project, boolean replace, boolean notify, IProgressMonitor monitor) throws TeamException {
@@ -569,7 +569,7 @@ public class RepositoryManager {
 	private String getCurrentComment() {
 		if (previousComments.length == 0)
 			return ""; //$NON-NLS-1$
-		return (String)previousComments[0];
+		return previousComments[0];
 	}
 
 	/**

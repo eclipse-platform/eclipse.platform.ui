@@ -43,7 +43,7 @@ import org.eclipse.team.internal.ccvs.ui.XMLWriter;
 
 public class RepositoryRoot extends PlatformObject {
 
-	public static final String[] DEFAULT_AUTO_REFRESH_FILES = { ".project", ".vcm_meta" }; //$NON-NLS-1$ //$NON-NLS-2$
+	public static final String[] DEFAULT_AUTO_REFRESH_FILES = { ".project" }; //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String DEFINED_MODULE_PREFIX = "module:"; //$NON-NLS-1$
 	
 	ICVSRepositoryLocation root;

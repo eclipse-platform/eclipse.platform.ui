@@ -140,9 +140,8 @@ public class LogListener extends CommandOutputListener {
 		String serverMessage = getServerMessage(line, location);
 		if (serverMessage != null) {
 			// look for the following condition
-			// E cvs server: nothing known about .vcm_meta
+			// E cvs server: nothing known about fileName
 			if (serverMessage.startsWith(NOTHING_KNOWN_ABOUT)) {
-				String filename = serverMessage.substring(NOTHING_KNOWN_ABOUT.length());
 				return new CVSStatus(IStatus.ERROR, CVSStatus.DOES_NOT_EXIST, commandRoot, line);
 			}
 		}
