@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -24,12 +25,11 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.internal.RectangleAnimation;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.progress.WorkbenchJob;
 /**
  * The ProgressMonitorFocusJobDialog is a dialog that shows progress for a
  * particular job in a modal dialog so as to give a user accustomed to a modal
@@ -125,6 +125,9 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
+				if(!PlatformUI.isWorkbenchRunning())
+					return;
+				
 				WorkbenchJob closeJob = new WorkbenchJob(
 						ProgressMessages
 								.getString("ProgressMonitorFocusJobDialog.CLoseDialogJob")) { //$NON-NLS-1$
