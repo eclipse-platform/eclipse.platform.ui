@@ -7,7 +7,11 @@ package org.eclipse.core.tests.resources.usecase;
 
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 
-public abstract class SnapshotTest extends WorkspaceSessionTest {
+/**
+ * Runs all the snapshot usecase tests as a single session test.
+ * Each test method will run a different snapshot test.
+ */
+public class SnapshotTest extends WorkspaceSessionTest {
 
 	/** project names */
 	static final String PROJECT_1 = "MyProject";
@@ -20,5 +24,34 @@ public SnapshotTest() {
 }
 public SnapshotTest(String name) {
 	super(name);
+}
+public void test1() {
+	Snapshot1Test test = new Snapshot1Test();
+	test.testCreateMyProject();
+	test.testCreateProject2();
+	test.testSnapshotWorkspace();
+}
+public void test2() {
+	Snapshot2Test test = new Snapshot2Test();
+	test.testVerifyPreviousSession();
+	test.testChangeMyProject();
+	test.testChangeProject2();
+	test.testSnapshotWorkspace();
+}
+public void test3() {
+	Snapshot3Test test = new Snapshot3Test();
+	test.testVerifyPreviousSession();
+	test.testSaveWorkspace();
+}
+public void test4() {
+	Snapshot4Test test = new Snapshot4Test();
+	test.testVerifyPreviousSession();
+	test.testChangeMyProject();
+	test.testChangeProject2();
+}
+public void test5() {
+	Snapshot5Test test = new Snapshot5Test();
+	test.testVerifyPreviousSession();
+	test.cleanUp();
 }
 }

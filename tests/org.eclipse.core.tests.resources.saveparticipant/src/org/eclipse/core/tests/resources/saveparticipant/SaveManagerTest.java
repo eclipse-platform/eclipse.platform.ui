@@ -1,10 +1,12 @@
 package org.eclipse.core.tests.resources.saveparticipant;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 
-public abstract class SaveManagerTest extends WorkspaceSessionTest {
+/**
+ * Runs all the SaveManager tests as a single session test.
+ */
+public class SaveManagerTest extends WorkspaceSessionTest {
 
 	/** project names */
 	static final String PROJECT_1 = "MyProject";
@@ -54,6 +56,13 @@ protected String[] defineHierarchy2() {
 		"/folder111/file121"
 	};
 }
+public void saveWorkspace() {
+	try {
+		getWorkspace().save(true, null);
+	} catch (CoreException e) {
+		fail("2.0", e);
+	}
+}
 /**
  * Sets the workspace autobuilding to the desired value.
  */
@@ -64,6 +73,31 @@ protected void setAutoBuilding(boolean value) throws CoreException {
 	IWorkspaceDescription desc = workspace.getDescription();
 	desc.setAutoBuilding(value);
 	workspace.setDescription(desc);
+}
+public void test1() {
+	SaveManager1Test test = new SaveManager1Test();
+	test.saveWorkspace();
+	test.testCreateMyProject();
+	test.testCreateProject2();
+	test.testAddSaveParticipant();
+	test.testBuilder();
+	test.saveWorkspace();
+	test.testPostSave();
+	
+}
+public void test2() {
+	SaveManager2Test test = new SaveManager2Test();
+	test.testVerifyRestoredWorkspace();
+	test.testBuilder();
+	test.testSaveParticipant();
+	test.testVerifyProject2();
+	test.saveWorkspace();
+}
+public void test3() {
+	SaveManager3Test test = new SaveManager3Test();
+	test.testSaveParticipant();
+	test.testBuilder();
+	test.cleanUp();
 }
 protected void touch(IProject project) throws CoreException {
 	project.accept(new IResourceVisitor() {

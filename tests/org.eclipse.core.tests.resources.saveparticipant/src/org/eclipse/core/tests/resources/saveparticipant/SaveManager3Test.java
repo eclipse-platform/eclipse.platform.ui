@@ -1,9 +1,9 @@
 package org.eclipse.core.tests.resources.saveparticipant;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.internal.builders.DeltaVerifierBuilder;
 import org.eclipse.core.tests.resources.saveparticipant1.SaveParticipant1Plugin;
 import org.eclipse.core.tests.resources.saveparticipant2.SaveParticipant2Plugin;
@@ -142,8 +142,12 @@ public void testSaveParticipant() {
 		fail("7.3", e);
 	}
 }
-public void cleanUp() throws CoreException {
-	ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
-	getWorkspace().save(true, null);
+public void cleanUp() {
+	try {
+		ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
+		getWorkspace().save(true, null);
+	} catch(CoreException e) {
+		fail("1.0", e);
+	}
 }
 }

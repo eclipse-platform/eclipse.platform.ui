@@ -18,13 +18,6 @@ public Snapshot5Test() {
 public Snapshot5Test(String name) {
 	super(name);
 }
-public static Test suite() {
-	// we do not add the whole class because the order is important
-	TestSuite suite = new TestSuite();
-	suite.addTest(new Snapshot5Test("testVerifyPreviousSession"));
-	suite.addTest(new Snapshot5Test("cleanUp"));
-	return suite;
-}
 public void testVerifyPreviousSession() {
 	// MyProject
 	IProject project = getWorkspace().getRoot().getProject(PROJECT_1);
@@ -49,8 +42,12 @@ public void testVerifyPreviousSession() {
 	project = getWorkspace().getRoot().getProject(PROJECT_2);
 	assertTrue("3.0", !project.exists());
 }
-public void cleanUp() throws CoreException {
-	ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
-	getWorkspace().save(true, null);
+public void cleanUp() {
+	try {
+		ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
+		getWorkspace().save(true, null);
+	} catch(CoreException e) {
+		fail("1.0", e);
+	}
 }
 }

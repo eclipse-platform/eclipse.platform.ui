@@ -35,14 +35,6 @@ protected static String[] defineHierarchy1() {
 protected static String[] defineHierarchy2() {
 	return new String[0];
 }
-public static Test suite() {
-	// we do not add the whole class because the order is important
-	TestSuite suite = new TestSuite();
-	suite.addTest(new Snapshot4Test("testVerifyPreviousSession"));
-	suite.addTest(new Snapshot4Test("testChangeMyProject"));
-	suite.addTest(new Snapshot4Test("testChangeProject2"));
-	return suite;
-}
 public void testChangeMyProject() {
 	// MyProject
 	IProject project = getWorkspace().getRoot().getProject(PROJECT_1);

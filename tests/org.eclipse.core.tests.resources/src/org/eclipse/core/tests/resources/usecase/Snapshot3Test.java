@@ -26,13 +26,6 @@ protected static String[] defineHierarchy1() {
 protected static String[] defineHierarchy2() {
 	return Snapshot2Test.defineHierarchy2();
 }
-public static Test suite() {
-	// we do not add the whole class because the order is important
-	TestSuite suite = new TestSuite();
-	suite.addTest(new Snapshot3Test("testVerifyPreviousSession"));
-	suite.addTest(new Snapshot3Test("testSaveWorkspace"));
-	return suite;
-}
 public void testSaveWorkspace() {
 	try {
 		getWorkspace().save(true, null);

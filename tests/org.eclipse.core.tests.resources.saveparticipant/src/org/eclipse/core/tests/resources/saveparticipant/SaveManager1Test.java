@@ -1,12 +1,10 @@
 package org.eclipse.core.tests.resources.saveparticipant;
-
-import java.io.InputStream;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.internal.builders.DeltaVerifierBuilder;
+import org.eclipse.core.tests.resources.regression.SimpleBuilder;
 import org.eclipse.core.tests.resources.saveparticipant1.SaveParticipant1Plugin;
 import org.eclipse.core.tests.resources.saveparticipant2.SaveParticipant2Plugin;
 import org.eclipse.core.tests.resources.saveparticipant3.SaveParticipant3Plugin;
@@ -330,20 +328,6 @@ public void testPostSave() {
 	if (!status.isOK()) {
 		System.out.println(status.getMessage());
 		assertTrue("1.0", false);
-	}
-}
-public void testSaveEmptyWorkspace() {
-	try {
-		getWorkspace().save(true, null);
-	} catch (CoreException e) {
-		fail("5.0", e);
-	}
-}
-public void testSaveWorkspace() {
-	try {
-		getWorkspace().save(true, null);
-	} catch (CoreException e) {
-		fail("2.0", e);
 	}
 }
 }

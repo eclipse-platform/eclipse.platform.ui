@@ -43,15 +43,6 @@ protected static String[] defineHierarchy2() {
 		"/a folder/"
 	};
 }
-public static Test suite() {
-	// we do not add the whole class because the order is important
-	TestSuite suite = new TestSuite();
-	suite.addTest(new Snapshot2Test("testVerifyPreviousSession"));
-	suite.addTest(new Snapshot2Test("testChangeMyProject"));
-	suite.addTest(new Snapshot2Test("testChangeProject2"));
-	suite.addTest(new Snapshot2Test("testSnapshotWorkspace"));
-	return suite;
-}
 public void testChangeMyProject() {
 	// MyProject
 	IProject project = getWorkspace().getRoot().getProject(PROJECT_1);

@@ -48,41 +48,6 @@ protected static String[] defineHierarchy2() {
 	};
 }
 // copy and paste in the scrapbook to run
-public static void doIt() throws Exception {
-	String[] testIds = { 
-	"usecase.Snapshot1Test", 
-	"usecase.Snapshot2Test", 
-	"usecase.Snapshot3Test", 
-	"usecase.Snapshot4Test", 
-	"usecase.Snapshot5Test", 
-	};
-	for (int i = 0; i < testIds.length; i++) {
-		Process p = Runtime.getRuntime().exec(new String[] {
-		"java", "org.eclipse.core.tests.harness.launcher.Main", 
-		"-test", testIds[i],
-		"-platform", "c:/temp/fixed_folder",
-		(i < (testIds.length-1) ? "-nocleanup" : "") });
-		p.waitFor();
-		java.io.InputStream input = p.getInputStream();
-		int c;
-		while ((c = input.read()) != -1)
-			System.out.print((char) c);
-		input.close();
-		input = p.getErrorStream();
-		while ((c = input.read()) != -1)
-			System.out.print((char) c);
-		input.close();
-	}
-	System.exit(-1);
-}
-public static Test suite() {
-	// we do not add the whole class because the order is important
-	TestSuite suite = new TestSuite();
-	suite.addTest(new Snapshot1Test("testCreateMyProject"));
-	suite.addTest(new Snapshot1Test("testCreateProject2"));
-	suite.addTest(new Snapshot1Test("testSnapshotWorkspace"));
-	return suite;
-}
 public void testCreateMyProject() {
 	IProject project = getWorkspace().getRoot().getProject(PROJECT_1);
 	try {
