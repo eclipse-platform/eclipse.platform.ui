@@ -273,10 +273,13 @@ protected boolean validatePage() {
                 break;
             }
         }
-    } else {
+    }
+   
+   //If the name status was not set validate using the name
+   	if(nameStatus == null)
         nameStatus =
             workspace.validateName(folderName, IResource.FOLDER);
-    }
+            
     if (!nameStatus.isOK()) {
         setErrorMessage(nameStatus.getMessage());
         return false;
