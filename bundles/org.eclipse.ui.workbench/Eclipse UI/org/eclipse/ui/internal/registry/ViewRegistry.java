@@ -108,6 +108,23 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
         public String getPluginId() {
             return rawCategory.getPluginId();
         }
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		public boolean equals(Object o) {
+			if (o instanceof IViewCategory) {
+				return getId().equals(((IViewCategory)o).getId());
+			}
+			return false;
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#hashCode()
+		 */
+		public int hashCode() {
+			return getId().hashCode();
+		}
     }
     
 	private static String EXTENSIONPOINT_UNIQUE_ID = WorkbenchPlugin.PI_WORKBENCH + "." + IWorkbenchConstants.PL_VIEWS; //$NON-NLS-1$
