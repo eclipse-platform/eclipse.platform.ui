@@ -114,10 +114,12 @@ public abstract class UIJob extends Job {
 			return display;
 		IWorkbenchWindow windows[] =
 			WorkbenchPlugin.getDefault().getWorkbench().getWorkbenchWindows();
-		if (windows.length == 0)
+		if (windows.length ==  0 || windows[0].getShell().isDisposed())
 			return Display.getDefault();
 		else
 			return windows[0].getShell().getDisplay();
+			
+		
 
 	}
 
