@@ -29,8 +29,8 @@ import org.eclipse.debug.core.model.IPersistableSourceLocator;
  * A launch configuration may be shared in a repository via
  * standard VCM mechanisms, or may be stored locally, essentially
  * making the launch configuration private for a single user.
- * Thus, a launch configuration may stored as a file as a resource in the
- * workspace (shared), or as a file the debug plug-in's state
+ * Thus, a launch configuration may stored as a file in the
+ * workspace (shared), or as a file in the debug plug-in's state
  * location.
  * </p>
  * A launch configuration is a handle to its underlying storage.
@@ -66,8 +66,8 @@ public interface ILaunchConfiguration extends IAdaptable {
 	/**
 	 * Launch configuration attribute storing an identifier of
 	 * a persistable source locator extension. When this attribute is
-	 * specified, a new source locator will automatically be created and
-	 * associted with the launch for this configuration.
+	 * specified, a new source locator will be created automatically and
+	 * associated with the launch for this configuration.
 	 * 
 	 * @see IPersistableSourceLocator
 	 */
@@ -76,10 +76,10 @@ public interface ILaunchConfiguration extends IAdaptable {
 	/**
 	 * Launch configuration attribute storing a memento of a 
 	 * source locator. When this attribute is specified in
-	 * conjunction with a source locator id, the soure locator
+	 * conjunction with a source locator id, the source locator
 	 * created for a launch will be initialized with this memento.
 	 * When not specified, but a source locator id is specified,
-	 * the source locator will be intialized to default values.
+	 * the source locator will be initialized to default values.
 	 * 
 	 * @see IPersistableSourceLocator 
 	 */
@@ -271,7 +271,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * Returns a working copy of this launch configuration.
 	 * Changes to the working copy will be applied to this
 	 * launch configuration when saved. The working copy will
-	 * refer to this launch cofiguration as its original
+	 * refer to this launch configuration as its original
 	 * launch configuration.
 	 * 
 	 * @return a working copy of this launch configuration
@@ -335,7 +335,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * 
 	 * @return a memento for this configuration
 	 * @see ILaunchManager#getLaunchConfiguration(String)
-	 * @exception CoreException if an exception occurrs generating this
+	 * @exception CoreException if an exception occurs generating this
 	 *  launch configuration's memento 
 	 */
 	public String getMemento() throws CoreException;
