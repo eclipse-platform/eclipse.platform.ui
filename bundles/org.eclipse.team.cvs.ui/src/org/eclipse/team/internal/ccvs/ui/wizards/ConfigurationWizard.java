@@ -13,9 +13,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -73,6 +76,8 @@ public class ConfigurationWizard extends ConnectionWizard implements IConfigurat
 						properties.setProperty("module", project.getName());
 					}
 					CVSProviderPlugin.getProvider().importAndCheckout(project, properties, monitor);
+					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(project);
+					CVSUIPlugin.getPlugin().getRepositoryManager().addRoot(provider.getRemoteResource(project).getRepository());
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}		
