@@ -53,8 +53,10 @@ import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -381,7 +383,11 @@ public class AntModel implements IAntModel {
         if (fProperties != null) {
 			for (Iterator iter = fProperties.keySet().iterator(); iter.hasNext();) {
 				String name = (String) iter.next();
-				String value= (String) fProperties.get(name);
+				String value= (String) fProperties.get(name);	
+				try {
+					value= VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
+				} catch (CoreException e) {
+				}
 				if (value != null) {
 					project.setUserProperty(name, value);
 				}
@@ -452,7 +458,7 @@ public class AntModel implements IAntModel {
 		if (properties != null) {
 			for (Iterator iter = properties.iterator(); iter.hasNext();) {
 				Property property = (Property) iter.next();
-				String value= property.getValue(false);
+				String value= property.getValue(true);
 				if (value != null) {
 					project.setUserProperty(property.getName(), value);
 				}
