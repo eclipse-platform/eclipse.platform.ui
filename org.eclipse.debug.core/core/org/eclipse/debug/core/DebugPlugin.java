@@ -182,7 +182,7 @@ public class DebugPlugin extends Plugin {
 	 * available if Eclipse is run on a 1.3 runtime or higher.
 	 * <p>
 	 * A status handler may be registered for this error condition,
-	 * and should return a Boolean indicating whether the program
+	 * and should return a <code>Boolean</code> indicating whether the program
 	 * should be relaunched with the default working directory.
 	 * </p>
 	 */
