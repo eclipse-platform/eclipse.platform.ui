@@ -300,39 +300,58 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		}
 		String value= dialog.getValue(VALUE_LABEL);
 		EnvironmentVariable newVariable = new EnvironmentVariable(name, value);
-		String newName= newVariable.getName();
+		addVariable(newVariable);
+	}
+	
+	/**
+	 * Attempts to add the given variable. Returns whether the variable
+	 * was added or not (as when the user answers not to overwrite an
+	 * existing variable).
+	 * @param variable the variable to add
+	 * @return whether the variable was added
+	 */
+	protected boolean addVariable(EnvironmentVariable variable) {
+		String name= variable.getName();
 		TableItem[] items = environmentTable.getTable().getItems();
 		for (int i = 0; i < items.length; i++) {
-			EnvironmentVariable variable = (EnvironmentVariable) items[i].getData();
-			if (variable.getName().equals(newName)) {
+			EnvironmentVariable existingVariable = (EnvironmentVariable) items[i].getData();
+			if (existingVariable.getName().equals(name)) {
 				boolean overWrite= MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.getString("EnvironmentTab.12"), MessageFormat.format(LaunchConfigurationsMessages.getString("EnvironmentTab.13"), new String[] {name})); //$NON-NLS-1$ //$NON-NLS-2$
 				if (!overWrite) {
-					return;
+					return false;
 				}
-				environmentTable.remove(variable);
+				environmentTable.remove(existingVariable);
 				break;
 			}
 		}
-		environmentTable.add(newVariable);
+		environmentTable.add(variable);
 		updateLaunchConfigurationDialog();
+		return true;
 	}
 
 	/**
 	 * Creates an editor for the value of the selected environment variable.
 	 */
 	private void handleEnvEditButtonSelected() {
-		IStructuredSelection sel =
-			(IStructuredSelection) environmentTable.getSelection();
-		EnvironmentVariable var =
-			(EnvironmentVariable) sel.getFirstElement();
+		IStructuredSelection sel= (IStructuredSelection) environmentTable.getSelection();
+		EnvironmentVariable var= (EnvironmentVariable) sel.getFirstElement();
+		String originalName= var.getName();
 		String value= var.getValue();
-		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), MessageFormat.format(LaunchConfigurationsMessages.getString("EnvironmentTab.11"), new String[] {var.getName()}), new String[] {VALUE_LABEL}, new String[] {value}); //$NON-NLS-1$
+		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.getString("EnvironmentTab.11"), new String[] {NAME_LABEL, VALUE_LABEL}, new String[] {originalName, value}); //$NON-NLS-1$
 		if (dialog.open() != Dialog.OK) {
 			return;
 		}
-		var.setValue(dialog.getValue(VALUE_LABEL));
-		environmentTable.update(var, null);
-		updateLaunchConfigurationDialog();
+		String name= dialog.getValue(NAME_LABEL);
+		value= dialog.getValue(VALUE_LABEL);
+		if (!originalName.equals(name)) {
+			if (addVariable(new EnvironmentVariable(name, value))) {
+				environmentTable.remove(var);
+			}
+		} else {
+			var.setValue(value);
+			environmentTable.update(var, null);
+			updateLaunchConfigurationDialog();
+		}
 	}
 
 	/**

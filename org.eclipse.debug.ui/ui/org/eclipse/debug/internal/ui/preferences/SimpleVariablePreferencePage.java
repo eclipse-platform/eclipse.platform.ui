@@ -238,23 +238,36 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 			String value= dialog.getValue(VALUE_LABEL);
 			String description= dialog.getValue(DESCRIPTION_LABEL);
 			ISimpleLaunchVariable variable= DebugPlugin.getDefault().getLaunchVariableManager().newSimpleVariable(name, value, description);
-			List editedVariables= variableContentProvider.getEditedVariables();
-			Iterator iter= editedVariables.iterator();
-			while (iter.hasNext()) {
-				ISimpleLaunchVariable currentVariable = (ISimpleLaunchVariable) iter.next();
-				String variableName = currentVariable.getName();
-				if (variableName.equals(name)) {
-					boolean overWrite= MessageDialog.openQuestion(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.15"), MessageFormat.format(DebugPreferencesMessages.getString("SimpleVariablePreferencePage.16"), new String[] {name}));  //$NON-NLS-1$ //$NON-NLS-2$
-					if (!overWrite) {
-						return;
-					}
-					variableContentProvider.removeVariable(currentVariable);
-					break;
-				}
-			}
-			variableContentProvider.addVariable(variable);
-			variableTable.refresh();
+			addVariable(variable);
 		}
+	}
+	
+	/**
+	 * Attempts to add the given variable. Returns whether the variable
+	 * was added or not (as when the user answers not to overwrite an
+	 * existing variable).
+	 * @param variable the variable to add
+	 * @return whether the variable was added
+	 */
+	public boolean addVariable(ISimpleLaunchVariable variable) {
+		String name= variable.getName();
+		List editedVariables= variableContentProvider.getEditedVariables();
+		Iterator iter= editedVariables.iterator();
+		while (iter.hasNext()) {
+			ISimpleLaunchVariable currentVariable = (ISimpleLaunchVariable) iter.next();
+			String variableName = currentVariable.getName();
+			if (variableName.equals(name)) {
+				boolean overWrite= MessageDialog.openQuestion(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.15"), MessageFormat.format(DebugPreferencesMessages.getString("SimpleVariablePreferencePage.16"), new String[] {name}));  //$NON-NLS-1$ //$NON-NLS-2$
+				if (!overWrite) {
+					return false;
+				}
+				variableContentProvider.removeVariable(currentVariable);
+				break;
+			}
+		}
+		variableContentProvider.addVariable(variable);
+		variableTable.refresh();
+		return true;
 	}
 	
 	private void handleEditButtonPressed() {
@@ -271,17 +284,26 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		if (description == null) {
 			description= ""; //$NON-NLS-1$
 		}
-		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), MessageFormat.format(DebugPreferencesMessages.getString("SimpleVariablePreferencePage.14"), new String[] {variable.getName()}), new String[] {VALUE_LABEL, DESCRIPTION_LABEL}, new String[] {value, description}); //$NON-NLS-1$
+		String originalName= variable.getName();
+		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.14"), new String[] {NAME_LABEL, VALUE_LABEL, DESCRIPTION_LABEL}, new String[] {originalName, value, description}); //$NON-NLS-1$
 		if (dialog.open() == Dialog.OK) {
+			String name= dialog.getValue(NAME_LABEL);
 			value= dialog.getValue(VALUE_LABEL);
-			if (value != null) {
-				variable.setValue(value);
-			}
 			description= dialog.getValue(DESCRIPTION_LABEL);
-			if (description != null) {
-				variable.setDescription(description);
+			if (!name.equals(originalName)) {
+				if (addVariable(DebugPlugin.getDefault().getLaunchVariableManager().newSimpleVariable(name, value, description))) {
+					variableContentProvider.removeVariable(variable);
+					variableTable.refresh();
+				}
+			} else {
+				if (value != null) {
+					variable.setValue(value);
+				}
+				if (description != null) {
+					variable.setDescription(description);
+				}
+				variableTable.update(variable, null);
 			}
-			variableTable.update(variable, null);
 		}
 	}
 	
