@@ -17,6 +17,7 @@ import org.apache.tools.ant.types.Path;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * An Ant task which allows to switch from a file system path to a resource path, 
@@ -72,9 +73,14 @@ public class ConvertPath extends Task {
 	}
 
 	protected void convertFileSystemPathToResourcePath(IPath path) {
-		IResource resource = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(path);
-		if (resource == null)
-			throw new BuildException(Policy.bind("exception.noProjectMatchThePath", fileSystemPath.toOSString())); //$NON-NLS-1$
+		IResource resource;
+		if (Platform.getLocation().equals(path)) {
+			resource = ResourcesPlugin.getWorkspace().getRoot();
+		} else {
+			resource = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(path);
+			if (resource == null)
+				throw new BuildException(Policy.bind("exception.noProjectMatchThePath", fileSystemPath.toOSString())); //$NON-NLS-1$
+		}
 		if (property != null)
 			project.setUserProperty(property, resource.getFullPath().toString());
 		if (pathID != null) {
@@ -85,10 +91,16 @@ public class ConvertPath extends Task {
 
 	protected void convertResourcePathToFileSystemPath(IPath path) {
 		IResource resource = null;
-		if (path.segmentCount() == 1)
-			resource = ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment());
-		else
-			resource = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		switch (path.segmentCount()) {
+			case 0 :
+				resource = ResourcesPlugin.getWorkspace().getRoot();
+				break;
+			case 1 :
+				resource = ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment());
+				break;
+			default :
+				resource = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		}
 
 		if (resource.getLocation() == null)
 			// can occur if the first segment is not a project
