@@ -19,15 +19,16 @@ import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
+import org.eclipse.team.ui.sync.MergeResource;
 import org.eclipse.team.ui.sync.SyncView;
+import org.eclipse.team.ui.sync.TeamFile;
 
 public class MergeEditorInput extends CVSSyncCompareInput {
 	CVSTag start;
@@ -115,6 +116,24 @@ public class MergeEditorInput extends CVSSyncCompareInput {
 		}
 			
 		return result[0];
+	}
+	
+	/*
+	 * Override collectResourceChanges to only determine the true sync state for incomming changes
+	 */
+	protected IDiffElement collectResourceChanges(IDiffContainer parent, IRemoteSyncElement tree, IProgressMonitor pm) {
+		if ( ! tree.isContainer()) {
+			CVSRemoteSyncElement cvsTree = (CVSRemoteSyncElement)tree;
+			RemoteFile base = (RemoteFile)cvsTree.getBase();
+			RemoteFile remote = (RemoteFile)cvsTree.getRemote();
+			if (base != null && remote != null && base.getRevision().equals(remote.getRevision())) {
+				// If the base and remote are the same, we don't have an incomming change
+				MergeResource mergeResource = new MergeResource(tree);
+				TeamFile file = new TeamFile(parent, mergeResource, IRemoteSyncElement.IN_SYNC, getShell());
+				return file;
+			}
+		}
+		return super.collectResourceChanges(parent, tree, pm);
 	}
 
 }

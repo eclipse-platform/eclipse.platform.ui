@@ -24,6 +24,7 @@ import org.eclipse.team.core.sync.RemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
@@ -101,10 +102,23 @@ public class UpdateMergeAction extends UpdateSyncAction {
 	
 	private void makeRemoteLocal(CVSRemoteSyncElement element, IProgressMonitor monitor) throws CVSException {
 		IRemoteResource remote = element.getRemote();
-		IResource local = element.getLocal();
+		final IResource local = element.getLocal();
 		try {
 			if(remote==null) {
-				local.delete(false, monitor);
+				// Need a runnable so that move/delete hook is disabled
+				final CoreException[] exception = new CoreException[] { null };
+				CVSWorkspaceRoot.getCVSFolderFor(local.getParent()).run(new ICVSRunnable() {
+					public void run(IProgressMonitor monitor) throws CVSException {
+						try {
+							local.delete(false, monitor);
+						} catch(CoreException e) {
+							exception[0] = e;
+						}
+					}
+				}, monitor);
+				if (exception[0] != null) {
+					throw exception[0];
+				}
 			} else {
 				if(remote.isContainer()) {
 					if(!local.exists()) {

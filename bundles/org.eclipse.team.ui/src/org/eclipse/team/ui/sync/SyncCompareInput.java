@@ -254,7 +254,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 	 * and has enough ticks to allow 1 unit of work per resource in the tree and an additional
 	 * unit for each folder.
 	 */
-	IDiffElement collectResourceChanges(IDiffContainer parent, IRemoteSyncElement tree, IProgressMonitor pm) {
+	protected IDiffElement collectResourceChanges(IDiffContainer parent, IRemoteSyncElement tree, IProgressMonitor pm) {
 		int type = tree.getSyncKind(getSyncGranularity(), Policy.subMonitorFor(pm, 1));
 		MergeResource mergeResource = new MergeResource(tree);
 	
