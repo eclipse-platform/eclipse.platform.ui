@@ -44,7 +44,7 @@ class DiffStructureVisitor extends FileStructureVisitor {
 			} else {
 				ksubst = Command.KSUBST_BINARY;
 			}
-			MutableResourceSyncInfo newInfo = new MutableResourceSyncInfo(mFile.getName(), ResourceSyncInfo.ADDED_REVISION);	
+			MutableResourceSyncInfo newInfo = new MutableResourceSyncInfo(mFile.getName(), null);	
 			newInfo.setKeywordMode(ksubst);
 			info = newInfo;
 		} else {

@@ -161,8 +161,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			if (local.exists()) {
 				// We could have an incoming change or deletion
 				if (remote == null) {
-					info.setRevision(ResourceSyncInfo.ADDED_REVISION);
-					info.setTimeStamp(ResourceSyncInfo.DUMMY_DATE);
+					info.setAdded();
 				} else {
 					// Otherwise change the revision to the remote revision
 					info.setRevision(remote.getSyncInfo().getRevision());
@@ -170,7 +169,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			} else {
 				// We have an incoming add, turn it around as an outgoing delete
 				info = remote.getSyncInfo().cloneMutable();
-				info.setRevision(ResourceSyncInfo.DELETED_PREFIX + info.getRevision());
+				info.setDeleted(true);
 			}
 		} else if (local.exists()) {
 			// We have a conflict and a local resource!
@@ -186,7 +185,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 				}
 			} else if (hasBase()) {
 				// We have a remote deletion. Make the local an addition
-				info.setRevision(ResourceSyncInfo.ADDED_REVISION);
+				info.setAdded();
 			} else {
 				// There's a local, no base and no remote. We can't possible have a conflict!
 				Assert.isTrue(false);
@@ -195,7 +194,8 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			// We have a conflict and there is no local!
 			if (hasRemote()) {
 				// We have a local deletion that conflicts with remote changes.
-				info.setRevision(ResourceSyncInfo.DELETED_PREFIX + remote.getSyncInfo().getRevision());
+				info.setRevision(remote.getSyncInfo().getRevision());
+				info.setDeleted(true);
 			} else {
 				// We have conflicting deletions. Clear the sync info
 				info = null;

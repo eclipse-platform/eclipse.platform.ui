@@ -39,20 +39,19 @@ import org.eclipse.team.internal.ccvs.core.util.EmptyTokenizer;
  */
 public class ResourceSyncInfo {
 		
-	public static final Date DUMMY_DATE = new Date(0);
-	
+	// [Note: permissions aren't honoured in this current implementation]
 	// safe default permissions. Permissions are saved separatly so that the correct permissions
 	// can be sent back to the server on systems that don't save execute bits (e.g. windows).
-	public static final String DEFAULT_PERMISSIONS = "u=rw,g=rw,o=r"; //$NON-NLS-1$
+	private static final String DEFAULT_PERMISSIONS = "u=rw,g=rw,o=r"; //$NON-NLS-1$
+	
 	// file sync information can be associated with a local resource that has been deleted. This is
 	// noted by prefixing the revision with this character.
-	// XXX Should this be private
-	public static final String DELETED_PREFIX = "-"; //$NON-NLS-1$
+	private static final String DELETED_PREFIX = "-"; //$NON-NLS-1$
 	
 	// a sync element with a revision of '0' is considered a new file that has
 	// not been comitted to the repo. Is visible so that clients can create sync infos
 	// for new files.
-	public static final String ADDED_REVISION = "0"; //$NON-NLS-1$
+	protected static final String ADDED_REVISION = "0"; //$NON-NLS-1$
 	
 	// Timestamp constants used to identify special cases
 	protected static final int TYPE_REGULAR = 1;
@@ -86,6 +85,7 @@ public class ResourceSyncInfo {
 	protected int syncType = TYPE_REGULAR;
 	protected ResourceSyncInfo() {
 	}
+	
 	/**
 	 * Constructor to create a sync object from entry line formats. The entry lines are parsed by this class.
 	 * The constructor can handle parsing entry lines from the server or from an entry file.
@@ -240,7 +240,8 @@ public class ResourceSyncInfo {
 	}
 	
 	/**
-	 * Gets the permissions or <code>null</code> if permissions are not available.
+	 * Gets the permissions. Returns <code>null</code> for directories and
+	 * a non-null permission for files.
 	 * 
 	 * @return a string of the format "u=rw,g=rw,o=r"
 	 */
@@ -356,7 +357,8 @@ public class ResourceSyncInfo {
 			isDeleted = true;
 		} else {
 			if(revision.equals(ADDED_REVISION)) {
-				this.timeStamp = DUMMY_DATE;
+				timeStamp = null;
+				syncType = TYPE_REGULAR;
 			}
 			this.revision = revision;
 			isDeleted = false;
@@ -431,7 +433,7 @@ public class ResourceSyncInfo {
 			} catch(ParseException e) {
 				// something we don't understand, just make this sync have no timestamp and
 				// never be in sync with the server.
-				timeStamp = DUMMY_DATE;
+				timeStamp = null;
 			}
 		}
 		keywordMode = KSubstOption.fromMode(tokenizer.nextToken());
@@ -467,7 +469,7 @@ public class ResourceSyncInfo {
 				} else {					
 					switch(syncType) {
 						case TYPE_REGULAR:
-							if(timeStamp==DUMMY_DATE || timeStamp==null) {
+							if(timeStamp==null) {
 								entryLineTimestamp = TIMESTAMP_DUMMY;
 							} else {
 								entryLineTimestamp = CVSDateFormatter.dateToEntryLine(timeStamp);

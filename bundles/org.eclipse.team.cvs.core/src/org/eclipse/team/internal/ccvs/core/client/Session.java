@@ -521,10 +521,8 @@ public class Session {
 		
 		connection.writeLine("Modified " + file.getName()); //$NON-NLS-1$
 		ResourceSyncInfo info = file.getSyncInfo();
-		if (info != null && info.getPermissions() != null) {
+		if (info != null) {
 			connection.writeLine(info.getPermissions());
-		} else {
-			connection.writeLine(ResourceSyncInfo.DEFAULT_PERMISSIONS);
 		}
 		sendFile(file, isBinary, monitor);
 	}

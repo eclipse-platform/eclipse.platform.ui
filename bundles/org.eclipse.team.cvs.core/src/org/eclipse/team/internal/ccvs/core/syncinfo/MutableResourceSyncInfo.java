@@ -50,8 +50,11 @@ public class MutableResourceSyncInfo extends ResourceSyncInfo {
 		}
 	}
 	
+	/**
+	 * Creates a default sync info, if revision is <code>null</code> then
+	 * the sync info will be considered in the newly added state.
+	 */ 
 	public MutableResourceSyncInfo(String name, String revision) {
-		Assert.isNotNull(name);
 		Assert.isNotNull(name);
 		this.name = name;
 		setRevision(revision);
@@ -107,6 +110,13 @@ public class MutableResourceSyncInfo extends ResourceSyncInfo {
 	 */
 	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
+	}
+	
+	/**
+	 * Sets to the added state. The timestamp and other are cleared.
+	 */
+	public void setAdded() {
+		setRevision(ADDED_REVISION);
 	}
 	
 	/**
