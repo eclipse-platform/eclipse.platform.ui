@@ -1,40 +1,19 @@
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-**********************************************************************/
-
 package org.eclipse.ui.examples.javaeditor;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
-import org.eclipse.swt.graphics.RGB;
-
-import org.eclipse.jface.text.DefaultAutoIndentStrategy;
-import org.eclipse.jface.text.IAutoIndentStrategy;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextDoubleClickStrategy;
-import org.eclipse.jface.text.ITextHover;
-import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
-import org.eclipse.jface.text.rules.BufferedRuleBasedScanner;
-import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
-import org.eclipse.jface.text.rules.Token;
-import org.eclipse.jface.text.source.IAnnotationHover;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
-
-import org.eclipse.ui.examples.javaeditor.java.JavaAutoIndentStrategy;
-import org.eclipse.ui.examples.javaeditor.java.JavaCompletionProcessor;
-import org.eclipse.ui.examples.javaeditor.java.JavaDoubleClickSelector;
-import org.eclipse.ui.examples.javaeditor.java.JavaPartitionScanner;
+import org.eclipse.jface.text.rules.*;
+import org.eclipse.jface.text.source.*;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.examples.javaeditor.java.*;
 import org.eclipse.ui.examples.javaeditor.javadoc.JavaDocCompletionProcessor;
 import org.eclipse.ui.examples.javaeditor.util.JavaColorProvider;
 

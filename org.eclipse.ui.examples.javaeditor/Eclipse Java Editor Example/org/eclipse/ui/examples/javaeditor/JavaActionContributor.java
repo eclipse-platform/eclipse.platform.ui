@@ -1,28 +1,14 @@
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-**********************************************************************/
-
 package org.eclipse.ui.examples.javaeditor;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.Separator;
-
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.jface.action.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.TextEditorActionContributor;
-import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.ui.texteditor.RetargetTextEditorAction;
-import org.eclipse.ui.texteditor.TextEditorAction;
+import org.eclipse.ui.texteditor.*;
 
 /**
  * Contributes interesting Java actions to the desktop's Edit menu and the toolbar.
@@ -39,7 +25,9 @@ public class JavaActionContributor extends TextEditorActionContributor {
 	public JavaActionContributor() {
 		super();
 		fContentAssistProposal= new RetargetTextEditorAction(JavaEditorMessages.getResourceBundle(), "ContentAssistProposal."); //$NON-NLS-1$
+		fContentAssistProposal.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS); 
 		fContentAssistTip= new RetargetTextEditorAction(JavaEditorMessages.getResourceBundle(), "ContentAssistTip."); //$NON-NLS-1$
+		fContentAssistTip.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
 		fTogglePresentation= new PresentationAction();
 	}
 	

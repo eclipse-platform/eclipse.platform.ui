@@ -1,33 +1,27 @@
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-**********************************************************************/
-
 package org.eclipse.ui.examples.javaeditor;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.text.source.ISourceViewer;
-
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.editors.text.ProjectionTextEditor;
+import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
  * Java specific text editor.
  */
-public class JavaEditor extends ProjectionTextEditor {
+public class JavaEditor extends TextEditor {
 
 	/** The outline page */
 	private JavaContentOutlinePage fOutlinePage;
@@ -45,8 +39,14 @@ public class JavaEditor extends ProjectionTextEditor {
 	 */
 	protected void createActions() {
 		super.createActions();
-		setAction("ContentAssistProposal", new TextOperationAction(JavaEditorMessages.getResourceBundle(), "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS)); //$NON-NLS-1$ //$NON-NLS-2$
-		setAction("ContentAssistTip", new TextOperationAction(JavaEditorMessages.getResourceBundle(), "ContentAssistTip.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION)); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		IAction a= new TextOperationAction(JavaEditorMessages.getResourceBundle(), "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
+		a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		setAction("ContentAssistProposal", a); //$NON-NLS-1$
+		
+		a= new TextOperationAction(JavaEditorMessages.getResourceBundle(), "ContentAssistTip.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION);  //$NON-NLS-1$
+		a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
+		setAction("ContentAssistTip", a); //$NON-NLS-1$
 	}
 	
 	/** The <code>JavaEditor</code> implementation of this 
