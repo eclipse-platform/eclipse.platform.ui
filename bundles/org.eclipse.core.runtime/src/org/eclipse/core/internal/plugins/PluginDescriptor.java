@@ -756,7 +756,7 @@ private void internalDoPluginActivation() throws CoreException {
  * activated, and false otherwse.
  */
 public boolean isActivationInProgress() {
-	return activePending;
+	return activePending || active;
 }
 /**
  * @see IPluginDescriptor
@@ -770,7 +770,7 @@ public synchronized boolean isPluginActivated() {
 	//plugin being activated during shutdown would never be shut down.
 	return active;
 }
-public synchronized boolean isPluginDeactivated() {
+public boolean isPluginDeactivated() {
 	return deactivated;
 }
 private void logError(IStatus status) {

@@ -114,11 +114,8 @@ protected void activatePlugin(String name) {
 	} finally {
 		if (DEBUG && DEBUG_SHOW_ACTIVATE && debugLoader())
 			debug("Exit activation for " + descriptor.getUniqueIdentifier()); //$NON-NLS-1$
-		clearPluginActivationInProgress();
+		pluginActivationInProgress = false;
 	}
-}
-private void clearPluginActivationInProgress()  {
-	pluginActivationInProgress = false;
 }
 public String debugId() {
 	return descriptor.toString();
@@ -161,7 +158,7 @@ protected Class internalFindClassParentsSelf(final String name, boolean resolve,
 		// more work.  Note that the order of the tests is important, since 
 		//descriptor.isPluginActivated() blocks while activation in progress,
 		//thus creating a potential deadlock situation.
-		if (isPluginActivationInProgress() || descriptor.isActivationInProgress() || descriptor.isPluginActivated()) {
+		if (pluginActivationInProgress || descriptor.isActivationInProgress()) {
 			try {
 				result = super.findClass(name);
 			} catch (ClassNotFoundException e) {
@@ -175,7 +172,7 @@ protected Class internalFindClassParentsSelf(final String name, boolean resolve,
 			return null;
 		// leave a dropping to discourage others from trying to do activation.
 		// This flag will be cleared once activation is complete.
-		setPluginActivationInProgress();
+		pluginActivationInProgress = true;
 	}
 
 	// If we will find the class and the plugin is not yet activated, go ahead and do it now.
@@ -203,16 +200,6 @@ protected Class internalFindClassParentsSelf(final String name, boolean resolve,
 			return null;
 		}
 	}
-}
-private synchronized boolean isPluginActivationInProgress() {
-	return pluginActivationInProgress;
-}
-/**
- * Refactored into synchronized method to defeat Sun VM or JIT optimization bug
- * that cause deadlock in test suites.
- */
-private synchronized void setPluginActivationInProgress()  {
-	pluginActivationInProgress = true;
 }
 public PluginDescriptor getPluginDescriptor() {
 	return descriptor;
