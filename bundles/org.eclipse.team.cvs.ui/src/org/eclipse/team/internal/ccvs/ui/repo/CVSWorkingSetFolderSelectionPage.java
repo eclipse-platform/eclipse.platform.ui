@@ -332,9 +332,13 @@ public class CVSWorkingSetFolderSelectionPage extends CVSWizardPage {
 	private boolean isValidName(String workingSetName) {
 		if (workingSetName.length() == 0)
 			return false;
+		if (workingSetName.startsWith(" "))
+			return false;
+		if (workingSetName.endsWith(" "))
+			return false;
 		for (int i = 0; i < workingSetName.length(); i++) {
 			char c = workingSetName.charAt(i);
-			if (! Character.isLetterOrDigit(c))
+			if (! Character.isLetterOrDigit(c) && ! Character.isSpaceChar(c))
 				return false;
 		}
 		return true;
