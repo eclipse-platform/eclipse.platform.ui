@@ -861,7 +861,7 @@ public class WorkbenchWindow
 					int accelerator = actionContributionItem.getAction().getAccelerator();
 
 					if (accelerator != 0) {
-						KeyStroke keyStroke = KeySupport.convertFromSWT(accelerator);
+						KeyStroke keyStroke = KeySupport.convertAcceleratorToKeyStroke(accelerator);
 						KeySequence keySequence = KeySequence.getInstance(keyStroke);
 						Map matchesByKeySequenceForMode = commandManager.getMatchesByKeySequenceForMode();
 
@@ -881,7 +881,7 @@ public class WorkbenchWindow
 
 							if (keyStrokes.size() == 1) {
 								KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
-								return new Integer(KeySupport.convertToSWT(keyStroke));
+								return new Integer(KeySupport.convertKeyStrokeToAccelerator(keyStroke));
 							}
 						}
 					}
@@ -901,7 +901,7 @@ public class WorkbenchWindow
 					int accelerator = actionContributionItem.getAction().getAccelerator();
 
 					if (accelerator != 0) {
-						KeyStroke keyStroke = KeySupport.convertFromSWT(accelerator);
+						KeyStroke keyStroke = KeySupport.convertAcceleratorToKeyStroke(accelerator);
 						KeySequence keySequence = KeySequence.getInstance(keyStroke);
 						Map matchesByKeySequenceForMode = commandManager.getMatchesByKeySequenceForMode();
 
@@ -954,7 +954,7 @@ public class WorkbenchWindow
 				char altChar = Character.toUpperCase(text.charAt(index + 1));
 				KeySequence mode = commandManager.getMode();
 				List keyStrokes = new ArrayList(mode.getKeyStrokes());
-				keyStrokes.add(KeySupport.convertFromSWT(SWT.ALT | altChar));
+				keyStrokes.add(KeySupport.convertAcceleratorToKeyStroke(SWT.ALT | altChar));
 				KeySequence childMode = KeySequence.getInstance(keyStrokes);
 				Map matchesByKeySequenceForMode = commandManager.getMatchesByKeySequenceForMode();
 				Match match = (Match) matchesByKeySequenceForMode.get(childMode);

@@ -307,20 +307,24 @@ public final class Util {
 	}	
 
 	public static String translateString(ResourceBundle resourceBundle, String key) {
-		if (resourceBundle == null || key == null)
-			throw new NullPointerException();
-
-		String value = key;
-
-		try {
-			value = resourceBundle.getString(key);
-		} catch (MissingResourceException eMissingResource) {
-			System.err.println(eMissingResource);
-		}
-		
-		return value != null ? value.trim() : null;
+		return Util.translateString(resourceBundle, key, key, true);
 	}
-	
+
+	public static String translateString(ResourceBundle resourceBundle, String key, String string, boolean signal) {
+		if (resourceBundle != null && key != null)
+			try {
+				final String translatedString = resourceBundle.getString(key);
+				
+				if (translatedString != null)
+					return translatedString.trim();
+			} catch (MissingResourceException eMissingResource) {
+				if (signal)
+					System.err.println(eMissingResource);
+			}
+
+		return string;
+	}
+
 	private Util() {
 	}
 }

@@ -23,19 +23,9 @@ import org.eclipse.ui.keys.ModifierKey;
 import org.eclipse.ui.keys.NaturalKey;
 import org.eclipse.ui.keys.SpecialKey;
 
-/**
- * <p>
- * JAVADOC
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
- * 
- * @since 3.0
- */
 public final class KeySupport {
 
-	public static int convertFromEvent(Event event) {
+	public static int convertEventToAccelerator(Event event) {
 		int key = event.character;
 
 		if (key == 0)
@@ -54,13 +44,7 @@ public final class KeySupport {
 		return modifiers + key;
 	}
 
-    /**
-     * JAVADOC
-     * 
-     * @param key
-     * @return
-     */
-    public static KeyStroke convertFromSWT(int key) {
+    public static KeyStroke convertAcceleratorToKeyStroke(int key) {
         final SortedSet modifierKeys = new TreeSet();
         NaturalKey naturalKey = null;
 
@@ -149,16 +133,7 @@ public final class KeySupport {
         return KeyStroke.getInstance(modifierKeys, naturalKey);
     }
 
-    /**
-     * Converts a KeyStroke object (used by the Platform-UI) to an integer value
-     * that will be recognized by SWT as the matching SWT key stroke.  This is a
-     * utility method to convert between the two formats.
-     * 
-     * @param keyStroke The key stroke to be converted; must not be 
-     * <code>null</code>.
-     * @return The matching SWT key stroke integer.
-     */
-    public static final int convertToSWT(final KeyStroke keyStroke) {
+    public static final int convertKeyStrokeToAccelerator(final KeyStroke keyStroke) {
     	if (keyStroke == null)
     		throw new NullPointerException();
     	

@@ -292,7 +292,7 @@ public class CyclePartAction extends PageEventAction {
 				int stateMask = e.stateMask;
 				char character = e.character;
 				int accelerator = stateMask | (keyCode != 0 ? keyCode : convertCharacter(character));
-				KeySequence keySequence = KeySequence.getInstance(KeySupport.convertFromSWT(accelerator));
+				KeySequence keySequence = KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
 
 				//System.out.println("\nPRESSED");
 				//printKeyEvent(e);

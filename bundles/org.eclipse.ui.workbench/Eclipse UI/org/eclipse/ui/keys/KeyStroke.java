@@ -22,7 +22,6 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.eclipse.ui.internal.keys.*;
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -302,8 +301,8 @@ public final class KeyStroke implements Comparable {
 	
 		while (iterator.hasNext()) {
 			string = iterator.next().toString();
-			stringBuffer.append(KeySupport.translateString(RESOURCE_BUNDLE, localize ? string : null, string));
-			stringBuffer.append(KeySupport.translateString(RESOURCE_BUNDLE, localize ? KEY_DELIMITER_KEY : null, KEY_DELIMITER));
+			stringBuffer.append(Util.translateString(RESOURCE_BUNDLE, localize ? string : null, string, false));
+			stringBuffer.append(Util.translateString(RESOURCE_BUNDLE, localize ? KEY_DELIMITER_KEY : null, KEY_DELIMITER, false));
 		}
 
 		String name = naturalKey.toString();
@@ -329,7 +328,7 @@ public final class KeyStroke implements Comparable {
 		else
 			string = name;
 		
-		stringBuffer.append(KeySupport.translateString(RESOURCE_BUNDLE, localize ? string : null, string));		
+		stringBuffer.append(Util.translateString(RESOURCE_BUNDLE, localize ? string : null, string, false));		
 		return stringBuffer.toString();
 	}
 }

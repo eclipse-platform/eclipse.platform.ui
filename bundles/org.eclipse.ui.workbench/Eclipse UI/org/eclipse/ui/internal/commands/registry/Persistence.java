@@ -582,7 +582,7 @@ final class Persistence {
 	}
 
 	private static KeyStroke deprecatedStrokeToKeyStroke(int stroke) {
-		return KeySupport.convertFromSWT(stroke);
+		return KeySupport.convertAcceleratorToKeyStroke(stroke);
 	}
 
 	public static int[] parseDeprecatedSequence(String string) {

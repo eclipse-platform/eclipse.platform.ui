@@ -176,7 +176,7 @@ public final class ContextAndHandlerManager implements IContextResolver, Listene
 		}
 		
 		final int modifiers = event.stateMask & SWT.MODIFIER_MASK;
-		return KeySupport.convertFromSWT(modifiers + key);
+		return KeySupport.convertAcceleratorToKeyStroke(modifiers + key);
 	}
 
 	/**

@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
-import org.eclipse.ui.internal.keys.*;
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -184,7 +183,7 @@ public final class KeySequence implements Comparable {
 			
 		while (iterator.hasNext()) {
 			if (i != 0)			
-				stringBuffer.append(KeySupport.translateString(RESOURCE_BUNDLE, localize ? KEY_STROKE_DELIMITER_KEY : null, KEY_STROKE_DELIMITER));
+				stringBuffer.append(Util.translateString(RESOURCE_BUNDLE, localize ? KEY_STROKE_DELIMITER_KEY : null, KEY_STROKE_DELIMITER, false));
 	
 			stringBuffer.append(((KeyStroke) iterator.next()).format(localize));
 			i++;
