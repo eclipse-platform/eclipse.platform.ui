@@ -290,6 +290,7 @@ protected Point doComputeSize() {
 		Point size = body.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		GridData gd = (GridData) descriptionLabel.getLayoutData();
 		gd.widthHint = size.x;
+		descriptionLabel.getParent().layout(true);
 	}
 	return getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 }
