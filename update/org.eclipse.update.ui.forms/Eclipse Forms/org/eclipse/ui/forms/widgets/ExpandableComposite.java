@@ -196,7 +196,7 @@ public class ExpandableComposite extends Composite {
 			return new Point(width, height);
 		}
 		public int computeMinimumWidth(Composite parent, boolean changed) {
-			int width = 0, height = 0;
+			int width = 0;
 			Point size = textLabel.computeSize(5, SWT.DEFAULT, changed);
 			width = size.x;
 
