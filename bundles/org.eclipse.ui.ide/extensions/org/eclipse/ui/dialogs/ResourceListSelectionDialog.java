@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.KeyAdapter;
@@ -33,6 +34,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -80,6 +82,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
     int descriptorsSize;
 
     WorkbenchLabelProvider labelProvider = new WorkbenchLabelProvider();
+    
+    boolean okEnabled = false;
 
     static class ResourceDescriptor implements Comparable {
         String label;
@@ -210,6 +214,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                     // If no resources, remove remaining folder entries
                     if (resourceNames.getItemCount() == 0) {
                         folderNames.removeAll();
+                        updateOKState(false);
                     }
                 }
             });
@@ -316,6 +321,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                     // If no resources, remove remaining folder entries
                     if (resourceNames.getItemCount() == 0) {
                         folderNames.removeAll();
+                        updateOKState(false);
                     }
                 }
             });
@@ -392,6 +398,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
     public void create() {
         super.create();
         pattern.setFocus();
+        getButton(IDialogConstants.OK_ID).setEnabled(okEnabled);
     }
 
     /**
@@ -855,5 +862,19 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                 updateFolders(desc);
             }
         }
+        updateOKState(true);
+    }
+    
+    /**
+     * Update the enabled state of the OK button.  To be called when
+     * the resource list is updated.
+     * @param state the new enabled state of the button
+     */
+    protected void updateOKState(boolean state) {
+    	Button okButton = getButton(IDialogConstants.OK_ID);
+    	if(okButton != null && !okButton.isDisposed() && state != okEnabled) {
+    		okButton.setEnabled(state);
+    		okEnabled = state;
+    	}
     }
 }
