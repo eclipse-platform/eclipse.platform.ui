@@ -62,6 +62,7 @@ public final class SearchUI {
 	 * </p>
 	 *
 	 * @see org.eclipse.core.resources.IMarker#getAttribute
+	 * @since 2.0
 	 */
 	public static final String POTENTIAL_MATCH= "potentialMatch"; //$NON-NLS-1$
 
@@ -97,6 +98,7 @@ public final class SearchUI {
 	 *
 	 * @param pageId	the page to select or <code>null</code>
 	 * 					if the best fitting page should be selected
+	 * @since 2.0
 	 */
 	public static void openSearchDialog(IWorkbenchWindow window, String pageId) {
 		new OpenSearchDialogAction(window, pageId).run();
