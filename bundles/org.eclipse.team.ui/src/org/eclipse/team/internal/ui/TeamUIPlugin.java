@@ -32,6 +32,8 @@ import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 /**
  * TeamUIPlugin is the plugin for generic, non-provider specific,
@@ -55,11 +57,9 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	
 	/**
 	 * Creates a new TeamUIPlugin.
-	 * 
-	 * @param descriptor  the plugin descriptor
 	 */
-	public TeamUIPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public TeamUIPlugin() {
+		super();
 		initializeImages(this);
 		initializePreferences();
 		instance = this;
@@ -77,8 +77,8 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	public static Object createExtension(final IConfigurationElement element, final String classAttribute) throws CoreException {
 		// If plugin has been loaded create extension.
 		// Otherwise, show busy cursor then create extension.
-		IPluginDescriptor plugin = element.getDeclaringExtension().getDeclaringPluginDescriptor();
-		if (plugin.isPluginActivated()) {
+		Bundle bundle = Platform.getBundle(element.getDeclaringExtension().getNamespace());
+		if (bundle.getState() == org.osgi.framework.Bundle.ACTIVE) {
 			return element.createExecutableExtension(classAttribute);
 		} else {
 			final Object [] ret = new Object[1];
@@ -160,9 +160,10 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * @see Plugin#startup()
+	 * @see Plugin#start(BundleContext)
 	 */
-	public void startup() throws CoreException {
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 		Policy.localize("org.eclipse.team.internal.ui.messages"); //$NON-NLS-1$
 		initializePreferences();		
 		IAdapterFactory factory = new TeamAdapterFactory();
@@ -171,11 +172,14 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#shutdown()
+	 * @see Plugin#stop(BundleContext)
 	 */
-	public void shutdown() throws CoreException {
-		super.shutdown();
-		((SynchronizeManager)TeamUI.getSynchronizeManager()).dispose();
+	public void stop(BundleContext context) throws Exception {
+		try {
+			((SynchronizeManager)TeamUI.getSynchronizeManager()).dispose();
+		} finally {
+			super.stop(context);
+		}
 	}
 
 	/**
@@ -235,7 +239,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	}
 	private ImageDescriptor privateGetImageDescriptor(String id) {
 		if(! imageDescriptors.containsKey(id)) {
-			URL baseURL = TeamUIPlugin.getPlugin().getDescriptor().getInstallURL();
+			URL baseURL = Platform.getBundle(PLUGIN_ID).getEntry("/"); //$NON-NLS-1$
 			createImageDescriptor(getPlugin(), id, baseURL);
 		}
 		return (ImageDescriptor)imageDescriptors.get(id);
@@ -249,8 +253,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 * @return the image
 	 */
 	public static ImageDescriptor getImageDescriptorFromExtension(IExtension extension, String subdirectoryAndFilename) {
-		IPluginDescriptor pluginDescriptor = extension.getDeclaringPluginDescriptor();
-		URL path = pluginDescriptor.getInstallURL();
+		URL path = Platform.getBundle(extension.getNamespace()).getEntry("/"); //$NON-NLS-1$
 		URL fullPathString = null;
 		try {
 			fullPathString = new URL(path,subdirectoryAndFilename);
@@ -266,7 +269,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 * for a description of why this is required. 
 	 */
 	private void initializeImages(TeamUIPlugin plugin) {
-		URL baseURL = plugin.getDescriptor().getInstallURL();
+		URL baseURL = Platform.getBundle(PLUGIN_ID).getEntry("/"); //$NON-NLS-1$
 
 		// Overlays
 		createImageDescriptor(plugin, ISharedImages.IMG_DIRTY_OVR, baseURL);

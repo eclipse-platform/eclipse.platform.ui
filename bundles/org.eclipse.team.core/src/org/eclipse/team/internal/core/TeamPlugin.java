@@ -11,12 +11,12 @@
 package org.eclipse.team.internal.core;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
+import org.osgi.framework.BundleContext;
 
 /**
  * <code>TeamPlugin</code> is the plug-in runtime class for the Team 
@@ -51,27 +51,32 @@ final public class TeamPlugin extends Plugin {
 	private static TeamPlugin plugin;	
 
 	/** 
-	 * Constructs a plug-in runtime class for the given plug-in descriptor.
+	 * Constructs a plug-in runtime class.
 	 */
-	public TeamPlugin(IPluginDescriptor pluginDescriptor) {
-		super(pluginDescriptor);
+	public TeamPlugin() {
+		super();
 		plugin = this;
 	}
 	
 	/**
-	 * @see Plugin#startup()
+	 * @see Plugin#start(BundleContext)
 	 */
-	public void startup() throws CoreException {
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 		Policy.localize("org.eclipse.team.internal.core.messages"); //$NON-NLS-1$
 		Team.startup();
 	}
 	
 	/**
-	 * @see Plugin#shutdown()
+	 * @see Plugin#stop(BundleContext)
 	 */
-	public void shutdown() {
-		Team.shutdown();
-		ResourceVariantCache.shutdown();
+	public void stop(BundleContext context) throws Exception {
+		try {
+			Team.shutdown();
+			ResourceVariantCache.shutdown();
+		} finally {
+			super.stop(context);
+		}
 	}
 	
 	/**
