@@ -4,22 +4,21 @@ package org.eclipse.ui.wizards.datatransfer;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.dialogs.*;
-import java.io.*;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
 import java.util.List;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.dialogs.WizardExportResourcesPage;
+import org.eclipse.ui.help.DialogPageContextComputer;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  *	Page 1 of the base resource export-to-file-system Wizard
@@ -351,7 +350,46 @@ protected boolean validateDestinationGroup() {
 	if (destinationValue.length() == 0) {
 		setMessage(DESTINATION_EMPTY_MESSAGE);
 		return false;
-	} else
-		return true;
+	} 
+	
+	String conflictingContainer = getContainerNameFor(destinationValue);
+	if(conflictingContainer == null)
+		setErrorMessage("");
+	else {
+		setErrorMessage(
+			DataTransferMessages.format(
+				"FileExport.conflictingContainer", 
+				new Object[] {conflictingContainer})); //$NON-NLS-1$
+		giveFocusToDestination();
+		return false;
+	}
+	
+	return true;
 }
+
+/**
+ * Get the name of container that has a location that encompasses targetDirectory.
+ * Return null if there isn't one.
+ * @return IWorkspaceRoot, IProject or null
+ * @param String. The path of the directory.
+ */
+protected String getContainerNameFor(String testString){
+	
+	IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+	IPath testPath = new Path(testString);
+	
+	if(root.getLocation().isPrefixOf(testPath))
+		return DataTransferMessages.getString("FileExport.rootName");
+	
+	IProject[] projects = root.getProjects();
+	
+	for(int i = 0; i < projects.length; i++){
+		if(projects[i].getLocation().isPrefixOf(testPath))
+			return projects[i].getName();
+	}
+	
+	return null;
+	
+}
+
 }
