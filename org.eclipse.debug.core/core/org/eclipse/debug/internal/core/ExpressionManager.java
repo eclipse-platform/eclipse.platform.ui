@@ -132,6 +132,7 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 			IExpression expression = expressions[i];
 			if (fExpressions.remove(expression)) {
 				removed.add(expression);
+				expression.dispose();
 			}				
 		}
 		if (fExpressions.isEmpty()) {
