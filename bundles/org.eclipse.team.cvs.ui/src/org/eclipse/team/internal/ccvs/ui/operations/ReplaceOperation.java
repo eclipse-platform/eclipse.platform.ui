@@ -62,7 +62,7 @@ public class ReplaceOperation extends UpdateOperation {
 				new PrepareForReplaceVisitor().visitResources(
 					provider.getProject(), 
 					resources, 
-					"CVSTeamProvider.scrubbingResource", // TODO: This is a key in CVS core! //$NON-NLS-1$
+					Policy.bind("ReplaceOperation.1"), //$NON-NLS-1$
 					recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE, 
 					Policy.subMonitorFor(monitor, 30)); //$NON-NLS-1$
 				
