@@ -6,6 +6,7 @@
 
 <% 
 	LayoutData data = new LayoutData(application,request);
+	WebappPreferences prefs = data.getPrefs();
 %>
 
 <html>
@@ -20,7 +21,7 @@ if (data.isMozilla()) {
 %>
 HTML {
 	padding:0px 3px 3px 3px;
-	background:ButtonFace;
+	background:<%=prefs.getToolbarBackground()%>;
 	margin-right:-1px;
 }
 

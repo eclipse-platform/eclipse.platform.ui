@@ -69,7 +69,7 @@ if (data.isMozilla()) {
 	display:block; 
 	width:20px;
 	height:20px;
-	border:1px solid ButtonFace;
+	border:1px solid <%=prefs.getToolbarBackground()%>;
 }
 
 .button a:hover { 

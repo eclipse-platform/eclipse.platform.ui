@@ -6,6 +6,7 @@
 
 <% 
 	LayoutData data = new LayoutData(application,request);
+	WebappPreferences prefs = data.getPrefs();
 %>
 
 <html>
@@ -23,7 +24,7 @@ HTML {
 	border-top:2px groove Window;
 	border-left:2px groove Window;
 
-	background:ButtonFace;
+	background:<%=prefs.getToolbarBackground()%>;
 }
 <% 
 } else {

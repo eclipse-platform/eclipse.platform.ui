@@ -23,7 +23,7 @@ HTML {
 	border-top:2px groove Window;
 	border-left:2px groove Window;
 
-	background:ButtonFace;
+	background:<%=prefs.getToolbarBackground()%>;
 }
 <% 
 } else {
