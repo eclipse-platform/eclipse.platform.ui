@@ -12,6 +12,10 @@ package org.eclipse.ui.forms;
 
 import org.eclipse.swt.graphics.*;
 
+/**
+ * Manages color and underline mode settings for a group of hyperlinks.
+ */
+
 public class HyperlinkSettings {
 	public static final int UNDERLINE_NEVER = 1;
 	public static final int UNDERLINE_ROLLOVER = 2;

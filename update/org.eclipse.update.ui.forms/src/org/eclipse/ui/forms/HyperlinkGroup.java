@@ -132,18 +132,6 @@ public class HyperlinkGroup extends HyperlinkSettings {
 		}
 	}
 
-	public void setActiveBackground(Color color) {
-		super.setActiveBackground(color);
-		if (lastActivated != null)
-			lastActivated.setBackground(color);
-	}
-
-	public void setActiveForeground(Color color) {
-		super.setActiveForeground(color);
-		if (lastActivated != null)
-			lastActivated.setForeground(color);
-	}
-
 	public void setHyperlinkUnderlineMode(int newHyperlinkUnderlineMode) {
 		super.setHyperlinkUnderlineMode(newHyperlinkUnderlineMode);
 		for (int i = 0; i < links.size(); i++) {
@@ -165,6 +153,7 @@ public class HyperlinkGroup extends HyperlinkSettings {
 			lastActivated = null;
 		if (lastEntered == link)
 			lastEntered = null;
+		links.remove(link);
 	}
 
 	private void onMouseDown(Event e) {
