@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ui.synchronize;
 import java.io.InputStream;
 
 import org.eclipse.compare.*;
+import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.graphics.Image;
@@ -23,7 +24,7 @@ import org.eclipse.team.internal.core.Assert;
 /**
  * RemoteResourceTypedElement
  */
-public class RemoteResourceTypedElement extends BufferedContent implements ITypedElement, IEditableContent {
+public class RemoteResourceTypedElement extends BufferedContent implements ITypedElement, IEditableContent, IEncodedStreamContentAccessor {
 
 	private IResourceVariant remote;
 	private IStorage bufferedContents;
@@ -124,5 +125,18 @@ public class RemoteResourceTypedElement extends BufferedContent implements IType
 		discardBuffer();
 		remote = variant;
 		fireContentChanged();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.IEncodedStreamContentAccessor#getCharset()
+	 */
+	public String getCharset() throws CoreException {
+		if(bufferedContents == null) {
+			cacheContents(new NullProgressMonitor());
+		}
+		if (bufferedContents instanceof IEncodedStorage) {
+			return ((IEncodedStorage)bufferedContents).getCharset();
+		}
+		return null;
 	}
 }

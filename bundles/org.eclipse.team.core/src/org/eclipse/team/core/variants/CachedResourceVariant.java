@@ -10,13 +10,26 @@
  *******************************************************************************/
 package org.eclipse.team.core.variants;
 
+import java.io.IOException;
 import java.io.InputStream;
-
+import org.eclipse.core.resources.IEncodedStorage;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.*;
-import org.eclipse.team.internal.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentTypeManager;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.Policy;
+import org.eclipse.team.internal.core.ResourceVariantCache;
+import org.eclipse.team.internal.core.ResourceVariantCacheEntry;
+import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
  * A resource variant is a partial implementation of a remote resource
@@ -49,7 +62,7 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 	 * Internal class which provides access to the cached contents
 	 * of this resource variant
 	 */
-	class ResourceVariantStorage implements IStorage {
+	class ResourceVariantStorage implements IEncodedStorage {
 		public InputStream getContents() throws CoreException {
 			if (!isContentsCached()) {
 				// The cache may have been cleared if someone held
@@ -69,6 +82,28 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 		}
 		public Object getAdapter(Class adapter) {
 			return CachedResourceVariant.this.getAdapter(adapter);
+		}
+		public String getCharset() throws CoreException {
+			IContentDescription description = getContentDescription();
+			return (description == null || description.getProperty(IContentDescription.CHARSET) == null) ? null : (String) description.getProperty(IContentDescription.CHARSET);
+		}
+		public IContentDescription getContentDescription() throws CoreException {
+			// tries to obtain a description for this file contents
+			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+			InputStream contents = null;
+			try {
+				contents = getContents();
+				return contentTypeManager.getDescriptionFor(contents, getName(), IContentDescription.ALL);
+			} catch (IOException e) {
+				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.FAILED_DESCRIBING_CONTENTS, "As error occurred computing the content type of resource variant {0}" + getFullPath(), e));
+			} finally {
+				if (contents != null)
+					try {
+						contents.close();
+					} catch (IOException e) {
+						// Ignore exceptions on close
+					}
+			}
 		}
 	}
 	

@@ -30,6 +30,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -61,7 +62,7 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 
 	private static final int WIZARD_WIDTH = 550;
 	
-	class HistoryInput implements ITypedElement, IStreamContentAccessor, IModificationDate {
+	class HistoryInput implements ITypedElement, IEncodedStreamContentAccessor, IModificationDate {
 		IFile file;
 		ILogEntry logEntry;
 		
@@ -70,7 +71,9 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 			this.logEntry = logEntry;
 		}
 		public InputStream getContents() throws CoreException {
-			return getContentsFromLogEntry(logEntry);
+			IStorage s = getStorageFromLogEntry(logEntry);
+			if (s == null) return null;
+			return new BufferedInputStream(s.getContents());
 		}
 		public String getName() {
 			return file.getName();
@@ -83,6 +86,13 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 		}
 		public long getModificationDate() {
 			return logEntry.getDate().getTime();
+		}
+		public String getCharset() throws CoreException {
+			IStorage s = getStorageFromLogEntry(logEntry);
+			if (s instanceof IEncodedStorage) {
+				return ((IEncodedStorage)s).getCharset();
+			}
+			return null;
 		}
 	}
 	
@@ -129,7 +139,7 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 		
 		// Top right: Revision selection pane
 		revisionSelectionPane = new CompareViewerPane(hsplitter, SWT.BORDER | SWT.FLAT);
-		data = new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);;
+		data = new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 		revisionSelectionPane.setLayoutData(data);
 		historyTableProvider = new HistoryTableProvider();
 		revisionsTable = createRevisionSelectionTable(revisionSelectionPane, historyTableProvider);
@@ -426,19 +436,14 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 		return (ILogEntry[])entriesCache.get(selectedFile);
 	}
 	
-	/**
-	 * Method getContents.
-	 * @param logEntry
-	 * @return InputStream
-	 */
-	private InputStream getContentsFromLogEntry(final ILogEntry logEntry) {
-		final InputStream[] is = new InputStream[] { null };
+	private IStorage getStorageFromLogEntry(final ILogEntry logEntry) {
+		final IStorage[] s = new IStorage[] { null };
 		try {
 			getContainer().run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						ICVSRemoteFile remoteFile = logEntry.getRemoteFile();
-						is[0] = remoteFile.getContents(monitor);
+						s[0] = ((IResourceVariant)remoteFile).getStorage(monitor);
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
 					}
@@ -452,7 +457,7 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 		} catch (InterruptedException e) {
 			return null;
 		}
-		return new BufferedInputStream(is[0]);
+		return s[0];
 	}
 
 	private void handleRevisionChecked(CheckStateChangedEvent event) {

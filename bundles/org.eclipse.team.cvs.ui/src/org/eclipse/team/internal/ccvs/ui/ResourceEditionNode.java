@@ -14,9 +14,15 @@ package org.eclipse.team.internal.ccvs.ui;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.compare.*;
+import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.IEncodedStreamContentAccessor;
+import org.eclipse.compare.IStreamContentAccessor;
+import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
+import org.eclipse.core.internal.dtree.IComparator;
+import org.eclipse.core.resources.IEncodedStorage;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -29,7 +35,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 /**
  * A class for comparing ICVSRemoteResource objects
  */
-public class ResourceEditionNode implements IStructureComparator, ITypedElement, IStreamContentAccessor {
+public class ResourceEditionNode implements IStructureComparator, ITypedElement, IEncodedStreamContentAccessor {
 	private ICVSRemoteResource resource;
 	private ResourceEditionNode[] children;
 	
@@ -91,34 +97,9 @@ public class ResourceEditionNode implements IStructureComparator, ITypedElement,
 	 * @see IStreamContentAccessor#getContents()
 	 */
 	public InputStream getContents() throws CoreException {
-		if (resource == null) {
-			return null;
-		}
-		try {
-			final InputStream[] holder = new InputStream[1];
-			CVSUIPlugin.runWithProgress(null, true /*cancelable*/, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						IStorage storage = ((IResourceVariant)resource).getStorage(monitor);
-						if (storage != null) {
-							holder[0] = storage.getContents();
-						}
-					} catch (TeamException e) {
-						throw new InvocationTargetException(e);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
-				}
-			});
-			return holder[0];
-		} catch (InterruptedException e) {
-			// operation canceled
-		} catch (InvocationTargetException e) {
-			Throwable t = e.getTargetException();
-			if (t instanceof TeamException) {
-				throw new CoreException(((TeamException) t).getStatus());
-			}
-			// should not get here
+		IStorage storage = getStorage();
+		if (storage != null) {
+			return storage.getContents();
 		}
 		return new ByteArrayInputStream(new byte[0]);
 	}
@@ -158,5 +139,48 @@ public class ResourceEditionNode implements IStructureComparator, ITypedElement,
 	 */
 	public int hashCode() {
 		return getName().hashCode();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.IEncodedStreamContentAccessor#getCharset()
+	 */
+	public String getCharset() throws CoreException {
+		// Use the local file encoding if there is one
+		IResource local = resource.getIResource();
+		if (local != null && local.getType() == IResource.FILE) {
+			return ((IFile)local).getCharset();
+		}
+		// See if the remote file has an encoding
+		IStorage storage = getStorage();
+		if (storage instanceof IEncodedStorage) {
+			String charset = ((IEncodedStorage)storage).getCharset();
+			if (charset != null) {
+				return charset;
+			}
+		}
+		return null;
+	}
+	
+	private IStorage getStorage() throws TeamException {
+		if (resource == null) {
+			return null;
+		}
+		final IStorage[] holder = new IStorage[1];
+		try {
+			CVSUIPlugin.runWithProgress(null, true /*cancelable*/, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						holder[0] = ((IResourceVariant)resource).getStorage(monitor);
+					} catch (TeamException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			});
+		} catch (InvocationTargetException e) {
+			throw TeamException.asTeamException(e);
+		} catch (InterruptedException e) {
+			// Shouldn't happen. Ignore
+		}
+		return holder[0];
 	}
 }
