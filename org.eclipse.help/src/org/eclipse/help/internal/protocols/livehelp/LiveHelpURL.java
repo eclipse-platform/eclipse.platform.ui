@@ -40,31 +40,31 @@ public class LiveHelpURL extends HelpURL {
 	public InputStream openStream() {
 		if (arguments == null)
 			return getErrorStream(Resources.getString("E030"));
-		;
 		String pluginID = (String) arguments.get("pluginID");
 		if (pluginID == null)
 			return getErrorStream(Resources.getString("E030"));
-		;
 		String className = (String) arguments.get("class");
 		if (className == null)
 			return getErrorStream(Resources.getString("E031"));
-		;
 		String arg = (String) arguments.get("arg");
 		Plugin plugin = Platform.getPlugin(pluginID);
 		if (plugin == null)
 			return getErrorStream(Resources.getString("E032"));
-		;
 		ClassLoader loader = plugin.getDescriptor().getPluginClassLoader();
 		try {
-			Class c = Class.forName(className, true, loader);
+			Class c = loader.loadClass(className);
 			Object o = c.newInstance();
 			if (o instanceof LiveHelpExtension) {
 				LiveHelpExtension helpExt = (LiveHelpExtension) o;
 				if (arg != null)
 					helpExt.setInitializationString(arg);
-				new Thread(helpExt).start();
+				Thread runnableLiveHelp = new Thread(helpExt);
+				runnableLiveHelp.setDaemon(true);
+				runnableLiveHelp.start();
 			}
 			return new ByteArrayInputStream("Done it".getBytes());
+		} catch (ThreadDeath td) {
+			throw td;
 		} catch (Exception e) {
 			return getErrorStream(e.toString());
 		}
