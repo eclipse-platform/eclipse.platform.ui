@@ -79,20 +79,18 @@ public class KeyBindingService implements IKeyBindingService {
 		
 		if(site instanceof EditorSite) {
 			EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor)((EditorSite)site).getExtensionActionBarContributor();
-			if(contributor == null)
-				actionDescriptors = new ActionDescriptor[0];
-			else
-				actionDescriptors = contributor.getExtendedActions();
-		} else {
-			actionDescriptors = ((ViewPane)site.getPane()).getExtendedActions();
+			if(contributor != null)
+				registerExtendedActions(contributor.getExtendedActions());
 		}
-		
+	}
+	
+	public void registerExtendedActions(ActionDescriptor[] actionDescriptors) {
 		for (int i = 0; i < actionDescriptors.length; i++) {
 			IAction action = actionDescriptors[i].getAction();
 			
 			if (action.getActionDefinitionId() != null)
 				registerAction(action);
-		}
+		}		
 	}
 
 	/*

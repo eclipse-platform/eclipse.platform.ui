@@ -260,7 +260,7 @@ public class WWinKeyBindingService {
    		if (activeService != null)
    			newScopeIds = activeService.getScopeIds();
 
-    	if (force || Util.compare(oldScopeIds, newScopeIds) == 0) {
+    	if (force || Util.compare(oldScopeIds, newScopeIds) != 0) {
 	    	Scope[] scopes = new Scope[newScopeIds.length];
 	    	
 	    	for (int i = 0; i < newScopeIds.length; i++)

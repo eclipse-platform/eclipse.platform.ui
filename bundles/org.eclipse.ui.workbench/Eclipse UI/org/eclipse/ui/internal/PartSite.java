@@ -212,7 +212,7 @@ public IKeyBindingService getKeyBindingService() {
 	return keyBindingService;
 }
 protected String getInitialScopeId() {
-	return "org.eclipse.ui.globalScope";
+	return IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID;
 }
 
 }
