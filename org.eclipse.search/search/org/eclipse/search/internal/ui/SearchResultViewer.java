@@ -96,6 +96,7 @@ public class SearchResultViewer extends TableViewer {
 	private IAction fGotoMarkerAction;
 	
 	private ResourceToItemsMapper fResourceToItemsMapper;
+	private String fCurrentPageId= null;
 	
 	public SearchResultViewer(SearchResultView outerPart, Composite parent) {
 		super(new Table(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION));
@@ -386,6 +387,10 @@ public class SearchResultViewer extends TableViewer {
 	}
 
 	void setPageId(String pageId) {
+		if (fCurrentPageId != null && fCurrentPageId.equals(pageId))
+			return;
+
+		fCurrentPageId= pageId;		
 		ILabelProvider labelProvider= fOuterPart.getLabelProvider(pageId);
 		if (labelProvider != null)
 			internalSetLabelProvider(labelProvider);
