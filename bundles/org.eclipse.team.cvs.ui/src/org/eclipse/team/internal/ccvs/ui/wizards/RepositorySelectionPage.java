@@ -62,6 +62,7 @@ public class RepositorySelectionPage extends CVSWizardPage {
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
 		GridData data = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL);
 		data.horizontalSpan = span;
+		data.widthHint = 200;
 		table.setLayoutData(data);
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(100, true));
