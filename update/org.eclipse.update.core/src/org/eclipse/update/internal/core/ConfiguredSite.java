@@ -198,14 +198,19 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 				}
 			}
 			
-			// FIXME didn;t we say we had to first unconfigure then remove ?
-			// the UI should check it is unconfigured b4 then ?
+			// UI will check. For non-UI application, throw error is feature s configured
 			if (referenceToUnconfigure!=null){
-			//	unconfigure(referenceToUnconfigure);
+				if (getConfigurationPolicy().isConfigured(referenceToUnconfigure)){
+					IFeature featureToUnconfigure = referenceToUnconfigure.getFeature();
+					String featureLabel = (featureToUnconfigure==null)?null:featureToUnconfigure.getLabel();
+					throw Utilities.newCoreException("Unable to remove a configured feature: {0} You must unconfigure the feature first"+featureLabel,null);
+				}
 			} else {
-				//FIXME warn, no reference found for this feature
+					throw Utilities.newCoreException("Unable to Find the feature {0} on this site."+feature.getURL(),null);				
+
 			}
-			((ISite)getSite()).remove(feature, monitor);
+			
+			getSite().remove(feature, monitor);
 
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);

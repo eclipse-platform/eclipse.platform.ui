@@ -114,7 +114,7 @@ public void expandTo(Object obj) {
 private void inputChanged(IInstallConfiguration configuration) {
 	setHeadingText(configuration.getLabel());
 	Date date = configuration.getCreationDate();
-	dateLabel.setText(date.toString());
+	dateLabel.setText((date==null)?"":date.toString());
 	String isCurrent = configuration.isCurrent()?
 		UpdateUIPlugin.getResourceString(KEY_YES): 
 		UpdateUIPlugin.getResourceString(KEY_NO);

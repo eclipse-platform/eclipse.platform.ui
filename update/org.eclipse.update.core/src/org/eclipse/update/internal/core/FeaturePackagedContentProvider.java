@@ -43,10 +43,10 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	
 	/**
 	 * return the archive ID for a plugin
+	 *  plugins/pluginId_pluginVer.jar
 	 */
 	private String getPluginEntryArchiveID(IPluginEntry entry) {
-		String type = (entry.isFragment()) ? Site.DEFAULT_FRAGMENT_PATH : Site.DEFAULT_PLUGIN_PATH;
-		return type + entry.getVersionedIdentifier().toString() + JAR_EXTENSION;
+		return Site.DEFAULT_PLUGIN_PATH + entry.getVersionedIdentifier().toString() + JAR_EXTENSION;
 	}
 
 	/**

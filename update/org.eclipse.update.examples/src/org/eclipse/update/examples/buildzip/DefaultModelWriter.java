@@ -70,7 +70,6 @@ public class DefaultModelWriter {
 		writePrereqs(w, level+1, feature);
 		writePluginEntries(w, level+1, feature);
 		writeNonPluginEntries(w, level+1, feature);
-		writeGroups(w, level+1, feature);
          
         w.println("");
         w.println(in+"</feature>");
@@ -219,10 +218,6 @@ public class DefaultModelWriter {
 		}
 	}
 	
-	private void writeGroups(PrintWriter w, int level, FeatureModel feature) {
-		String in = getIndent(level);
-		// FIXME
-	}
 	
 	private String getIndent(int level) {
 		String indent = "";

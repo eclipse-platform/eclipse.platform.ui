@@ -89,6 +89,7 @@ public class JarVerificationService implements IVerificationListener {
 				}
 
 			case IVerificationResult.TYPE_ENTRY_ALREADY_ACCEPTED : {
+				result.setResultCode(CHOICE_INSTALL_TRUST_ALWAYS);				
 				break;
 			}
 			

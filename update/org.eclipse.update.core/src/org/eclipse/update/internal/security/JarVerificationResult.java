@@ -9,9 +9,10 @@ import java.security.cert.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.IVerificationResult;
 import org.eclipse.update.internal.core.Policy;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import sun.security.x509.X500Name;
 
 /**
@@ -221,7 +222,10 @@ public class JarVerificationResult implements IVerificationResult {
 				return issuerString;
 			}
 		} catch (Exception e) {
-			// FIXME should log
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
+				IStatus status = Utilities.newCoreException("Error parsing X500 Certificate",e).getStatus();
+				UpdateManagerPlugin.getPlugin().getLog().log(status);
+			}
 		}
 		return principal.toString();
 	}

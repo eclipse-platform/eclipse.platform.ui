@@ -255,7 +255,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		for (int i = 0; i < IWritable.INDENT; i++)
 			increment += " "; //$NON-NLS-1$
 		w.print(gap + "<" + InstallConfigurationParser.CONFIGURATION + " "); //$NON-NLS-1$ //$NON-NLS-2$
-		w.print("date=\"" + getCreationDate().getTime() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+		long time = (getCreationDate()!=null)?getCreationDate().getTime():0L;
+		w.print("date=\"" + time + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		w.println(">"); //$NON-NLS-1$
 		w.println(""); //$NON-NLS-1$
 		// site configurations

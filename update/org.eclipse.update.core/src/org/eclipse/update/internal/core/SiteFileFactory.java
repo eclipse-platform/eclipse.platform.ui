@@ -136,23 +136,17 @@ public class SiteFileFactory extends BaseSiteFactory {
 			throw new ParsingException(new Exception(Policy.bind("SiteFileFactory.FileDoesNotExist", directory.getAbsolutePath()))); //$NON-NLS-1$
 
 		File pluginPath = new File(directory, Site.DEFAULT_PLUGIN_PATH);
-		File fragmentPath = new File(directory, Site.DEFAULT_FRAGMENT_PATH);
 
 		try {
-			// FIXME: fragments
 			//PACKAGED
 			parsePackagedFeature(directory); // in case it contains JAR files
 
 			parsePackagedPlugins(pluginPath);
 
-			parsePackagedPlugins(fragmentPath);
-
 			// INSTALLED	
 			parseInstalledFeature(directory);
 
 			parseInstalledPlugin(pluginPath);
-
-			parseInstalledPlugin(fragmentPath);
 
 		} catch (CoreException e) {
 			throw new ParsingException(e.getStatus().getException());

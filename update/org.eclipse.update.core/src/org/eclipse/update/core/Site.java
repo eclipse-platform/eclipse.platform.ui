@@ -34,11 +34,7 @@ public class Site extends SiteModel implements ISite{
 	 * default path under the site where plugins will be installed
 	 */
 	public static final String DEFAULT_PLUGIN_PATH = "plugins/"; //$NON-NLS-1$
-	/**
-	 * default path under the site where plugins will be installed
-	 */
-	//FIXME: fragment
-	public static final String DEFAULT_FRAGMENT_PATH = "fragments/"; //$NON-NLS-1$
+
 
 	/**
 	 * default path, under site, where featuresConfigured will be installed

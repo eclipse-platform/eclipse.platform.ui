@@ -159,7 +159,7 @@ public class Utilities {
 		path.deleteOnExit();			
 	}
 
-	public static CoreException newCoreException(String s, Throwable e) throws CoreException {
+	public static CoreException newCoreException(String s, Throwable e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();		
 		return new CoreException(new Status(IStatus.ERROR,id,0,s,e)); //$NON-NLS-1$
 	}

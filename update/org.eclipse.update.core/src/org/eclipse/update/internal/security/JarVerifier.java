@@ -33,7 +33,7 @@ public class JarVerifier implements IVerifier {
 	private JarVerificationResult result;
 	private List /*of CertificatePair*/
 	trustedCertificates = null;	
-	private boolean acceptUnsignedFiles;	
+	private boolean acceptUnsignedFiles = false;	
 
 	/**
 	 * List of initialized keystores
@@ -124,7 +124,6 @@ public class JarVerifier implements IVerifier {
 		result.setResultException(null);
 		result.setFeature(feature);
 		result.setContentReference(contentRef);
-		acceptUnsignedFiles = false;
 		
 		// # of entries
 		JarFile jar = new JarFile(jarFile);

@@ -17,9 +17,6 @@
       <import plugin="org.eclipse.update.core"/>
       <import plugin="org.eclipse.update.ui.forms"/>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.junit"/>
-      <import plugin="org.eclipse.help"/>
-      <import plugin="org.eclipse.webdav"/>
    </requires>
 
 

@@ -27,6 +27,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 	private static IPluginEntry[] allRunningPluginEntry;
 	private ListenersList listeners = new ListenersList();
+	private boolean isTransient = false;
 	
 	private static final String UPDATE_STATE_SUFFIX = ".metadata";
 
@@ -80,11 +81,11 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			site.save();
 
 		} catch (SAXException exception) {
-			throw Utilities.newCoreException(Policy.bind("SiteLocal.ErrorParsingSavedState") + site.getLocationURLString(), exception); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("SiteLocal.ErrorParsingSavedState",site.getLocationURLString()), exception); //$NON-NLS-1$
 		} catch (MalformedURLException exception) {
-			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + site.getLocationURLString() + " & " + SITE_LOCAL_FILE, exception); //$NON-NLS-1$ //$NON-NLS-2$
+			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor", site.getLocationURLString() + " & " + SITE_LOCAL_FILE), exception); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException exception) {
-			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToAccessFile") + configXML, exception); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToAccessFile", configXML.toExternalForm()), exception); //$NON-NLS-1$
 		}
 
 		return site;
@@ -736,5 +737,21 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		}
 		return updateLocation;
 	 }
+
+	/**
+	 * Gets the isTransient.
+	 * @return Returns a boolean
+	 */
+	public boolean isTransient() {
+		return isTransient;
+	}
+
+	/**
+	 * Sets the isTransient.
+	 * @param isTransient The isTransient to set
+	 */
+	private void isTransient(boolean isTransient) {
+		this.isTransient = isTransient;
+	}
 
 }

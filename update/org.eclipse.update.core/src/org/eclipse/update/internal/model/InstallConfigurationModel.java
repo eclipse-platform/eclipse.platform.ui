@@ -33,6 +33,7 @@ public class InstallConfigurationModel extends ModelObject {
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
 				UpdateManagerPlugin.getPlugin().debug(getLocationURLString() + " does not exist, The local site is not in synch with the file system and is pointing to a file that doesn't exist."); //$NON-NLS-1$
 			}
+			this.setLabel("* Deleted Configuration *");
 		} catch (SAXException exception) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("InstallConfiguration.ParsingErrorDuringCreation", getLocationURLString(),"\r\n"+exception.toString()), exception); //$NON-NLS-1$ //$NON-NLS-2$

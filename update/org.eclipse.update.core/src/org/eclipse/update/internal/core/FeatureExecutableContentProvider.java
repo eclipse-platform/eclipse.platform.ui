@@ -93,20 +93,16 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	/**
 	 * return the archive ID for a plugin
 	 * The id is based on the feature
-	 * the default ID is plugins/pluginId_pluginVer or
-	 * the default ID is fragments/pluginId_pluginVer or
+	 * the default ID is plugins/pluginId_pluginVer 
 		*/
 	private String getArchiveID(IPluginEntry entry) {
-		//FIXME: fragments
-		String type = (entry.isFragment()) ? Site.DEFAULT_FRAGMENT_PATH : Site.DEFAULT_PLUGIN_PATH;
-		return type + entry.getVersionedIdentifier().toString();
+		return Site.DEFAULT_PLUGIN_PATH + entry.getVersionedIdentifier().toString();
 	}
 
 	/**
 	 * return the archive ID for a plugin
 	 * The id is based on the feature
-	 * the default ID is plugins/pluginId_pluginVer or
-	 * the default ID is fragments/pluginId_pluginVer or
+	 * the default ID is features/pluginId_pluginVer/
 		*/
 	private String getArchiveID(INonPluginEntry entry) {
 		String nonPluginBaseID = Site.DEFAULT_FEATURE_PATH + feature.getVersionedIdentifier().toString()+"/"; //$NON-NLS-1$
