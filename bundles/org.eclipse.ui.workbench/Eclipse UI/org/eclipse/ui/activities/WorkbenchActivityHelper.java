@@ -51,16 +51,15 @@ public final class WorkbenchActivityHelper {
 			IPluginContribution contribution = (IPluginContribution) object;
 			if (contribution.getPluginId() != null) {
 				IWorkbenchActivitySupport workbenchActivitySupport =
-					PlatformUI.getWorkbench().getActivitySupport();
-				if (workbenchActivitySupport != null) {
-					IIdentifier identifier =
-						workbenchActivitySupport
-							.getActivityManager()
-							.getIdentifier(
-							createUnifiedId(contribution));
-					if (!identifier.isEnabled())
-						return true;
-				}
+				PlatformUI.getWorkbench().getActivitySupport();
+				IIdentifier identifier =
+					workbenchActivitySupport
+						.getActivityManager()
+						.getIdentifier(
+						createUnifiedId(contribution));
+				if (!identifier.isEnabled())
+					return true;
+
 			}
 		}
 		return false;
@@ -71,12 +70,7 @@ public final class WorkbenchActivityHelper {
 	 *         activity categories).
 	 */
 	public static final boolean isFiltering() {
-		IWorkbenchActivitySupport support =
-			PlatformUI.getWorkbench().getActivitySupport();
-		if (support == null)
-			return false;
-
-		return !support.getActivityManager().getDefinedCategoryIds().isEmpty();
+		return !PlatformUI.getWorkbench().getActivitySupport().getActivityManager().getDefinedCategoryIds().isEmpty();
 	}
 
 	/**
