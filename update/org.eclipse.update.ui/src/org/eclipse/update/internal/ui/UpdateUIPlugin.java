@@ -71,7 +71,9 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	}
 
 	private IWorkbenchPage internalGetActivePage() {
-		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
+		if (window!=null) return window.getActivePage();
+		return null;
 	}
 
 	public static Shell getActiveWorkbenchShell() {

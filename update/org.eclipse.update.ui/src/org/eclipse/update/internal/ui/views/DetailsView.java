@@ -169,7 +169,10 @@ public class DetailsView extends MultiPageView {
 		backAction.update();
 		forwardAction.update();
 		IWorkbenchPage page = UpdateUIPlugin.getActivePage();
-		String pid = page.getPerspective().getId();
+		if (page==null) return;
+		IPerspectiveDescriptor desc = page.getPerspective();
+		if (desc==null) return;
+		String pid = desc.getId();
 		if (pid.equals("org.eclipse.update.ui.UpdatePerspective")) {
 			IViewPart view = page.findView(UpdatePerspective.ID_DETAILS);
 			if (view != null) {
