@@ -148,6 +148,53 @@ public final class MutableActivityManager
 		return Collections.unmodifiableSet(enabledCategoryIds);
 	}
 
+	public Set getMatchingActivityIds(String string, Set activityIds) {
+		Set matchingActivityIds = new HashSet();
+		activityIds = Util.safeCopy(activityIds, String.class);
+
+		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {
+			String activityId = (String) iterator.next();
+			IActivity activity = getActivity(activityId);
+
+			if (activity.isMatch(string))
+				matchingActivityIds.add(activityId);
+		}
+
+		return Collections.unmodifiableSet(matchingActivityIds);
+	}
+
+	public Set getRequiredActivityIds(Set activityIds) {
+		activityIds = Util.safeCopy(activityIds, String.class);
+		Set requiredActivityIds = new HashSet();
+		getRequiredActivityIdsImpl(activityIds, requiredActivityIds);
+		return Collections.unmodifiableSet(requiredActivityIds);
+	}
+
+	private void getRequiredActivityIdsImpl(
+		Set activityIds,
+		Set requiredActivityIds) {
+		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {
+			String activityId = (String) iterator.next();
+			IActivity activity = getActivity(activityId);
+			Set childActivityIds = new HashSet();
+			Set activityActivityBindings =
+				activity.getActivityActivityBindings();
+
+			for (Iterator iterator2 = activityActivityBindings.iterator();
+				iterator2.hasNext();
+				) {
+				IActivityActivityBinding activityActivityBinding =
+					(IActivityActivityBinding) iterator2.next();
+				childActivityIds.add(
+					activityActivityBinding.getChildActivityId());
+			}
+
+			childActivityIds.removeAll(requiredActivityIds);
+			requiredActivityIds.addAll(childActivityIds);
+			getRequiredActivityIdsImpl(childActivityIds, requiredActivityIds);
+		}
+	}
+
 	public boolean isMatch(String string, Set activityIds) {
 		activityIds = Util.safeCopy(activityIds, String.class);
 
@@ -162,25 +209,10 @@ public final class MutableActivityManager
 		return false;
 	}
 
-	public Set getMatches(String string, Set activityIds) {
-		Set matches = new HashSet();
-		activityIds = Util.safeCopy(activityIds, String.class);
-
-		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {
-			String activityId = (String) iterator.next();
-			IActivity activity = getActivity(activityId);
-
-			if (activity.isMatch(string))
-				matches.add(activityId);
-		}
-
-		return Collections.unmodifiableSet(matches);
-	}
-
 	public boolean match(String string, Set activityIds) {
 		return isMatch(string, activityIds);
 	}
-	
+
 	private void notifyActivities(Map activityEventsByActivityId) {
 		for (Iterator iterator =
 			activityEventsByActivityId.entrySet().iterator();
@@ -524,12 +556,13 @@ public final class MutableActivityManager
 
 	private ActivityEvent updateActivity(Activity activity) {
 		Set activityActivityBindings =
-		(Set) activityActivityBindingsByParentActivityId.get(activity.getId());
+			(Set) activityActivityBindingsByParentActivityId.get(
+				activity.getId());
 		boolean activityActivityBindingsChanged =
-		activity.setActivityActivityBindings(
+			activity.setActivityActivityBindings(
 				activityActivityBindings != null
-				? activityActivityBindings
-				: Collections.EMPTY_SET);
+					? activityActivityBindings
+					: Collections.EMPTY_SET);
 		Set activityPatternBindings =
 			(Set) activityPatternBindingsByActivityId.get(activity.getId());
 		boolean activityPatternBindingsChanged =

@@ -47,24 +47,32 @@ public final class ProxyActivityManager extends AbstractActivityManager {
 		return activityManager.getActivity(activityId);
 	}
 
-	public Set getDefinedActivityIds() {
-		return activityManager.getDefinedActivityIds();
-	}
-
-	public Set getEnabledActivityIds() {
-		return activityManager.getEnabledActivityIds();
-	}
-
 	public ICategory getCategory(String categoryId) {
 		return activityManager.getCategory(categoryId);
+	}
+
+	public Set getDefinedActivityIds() {
+		return activityManager.getDefinedActivityIds();
 	}
 
 	public Set getDefinedCategoryIds() {
 		return activityManager.getDefinedCategoryIds();
 	}
 
+	public Set getEnabledActivityIds() {
+		return activityManager.getEnabledActivityIds();
+	}
+
 	public Set getEnabledCategoryIds() {
 		return activityManager.getEnabledCategoryIds();
+	}	
+	
+	public Set getMatchingActivityIds(String string, Set activityIds) {
+		return activityManager.getMatchingActivityIds(string, activityIds);
+	}
+
+	public Set getRequiredActivityIds(Set activityIds) {
+		return activityManager.getRequiredActivityIds(activityIds);
 	}	
 	
 	public boolean isMatch(String string, Set activityIds) {
@@ -74,8 +82,4 @@ public final class ProxyActivityManager extends AbstractActivityManager {
 	public boolean match(String string, Set activityIds) {
 		return isMatch(string, activityIds);
 	}	
-	
-	public Set getMatches(String string, Set activityIds) {
-		return activityManager.getMatches(string, activityIds);
-	}
 }

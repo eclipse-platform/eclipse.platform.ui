@@ -133,8 +133,13 @@ public interface IActivityManager {
 	/**
 	 * TODO javadoc
 	 */
-	Set getMatches(String string, Set activityIds);
+	Set getMatchingActivityIds(String string, Set activityIds);
 
+	/**
+	 * TODO javadoc
+	 */
+	Set getRequiredActivityIds(Set activityIds);	
+	
 	/**
 	 * TODO javadoc
 	 */
@@ -142,10 +147,11 @@ public interface IActivityManager {
 
 	/**
 	 * TODO javadoc
+	 * 
 	 * @deprecated use isMatch(String, Set);
 	 */
 	boolean match(String string, Set activityIds);
-	
+
 	/**
 	 * Unregisters an instance of <code>IActivityManagerListener</code>
 	 * listening for changes to attributes of this instance.
