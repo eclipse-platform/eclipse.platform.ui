@@ -61,7 +61,7 @@ public class ShowTypesAction extends Action {
 				}
 			});
 		}
-		setToolTipText(on ? ActionMessages.getString("ShowTypesAction.Hide_&Type_Names_3") : ActionMessages.getString("ShowTypesAction.Show_&Type_Names_1")); //$NON-NLS-2$ //$NON-NLS-1$
+		setToolTipText(on ? ActionMessages.getString("ShowTypesAction.Hide_Type_Names") : ActionMessages.getString("ShowTypesAction.Show_Type_Names")); //$NON-NLS-2$ //$NON-NLS-1$
 	}
 
 	/**
