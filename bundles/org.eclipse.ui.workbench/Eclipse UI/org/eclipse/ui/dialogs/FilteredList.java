@@ -115,8 +115,11 @@ public class FilteredList extends Composite {
 		public boolean equals(Label label) {
 			if (label == null)
 				return false;
-
-			return string.equals(label.string) && image.equals(label.image);
+			if (!string.equals(label.string))
+				return false;
+			if (image == null)
+				return label.image == null;
+			return image.equals(label.image);
 		}
 	}
 
