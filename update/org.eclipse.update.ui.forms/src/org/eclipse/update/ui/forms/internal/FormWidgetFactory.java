@@ -19,6 +19,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.update.ui.forms.internal.engine.FormEngine;
+import org.eclipse.update.ui.forms.richtext.RichText;
 
 public class FormWidgetFactory {
 	public static final String KEY_DRAW_BORDER = "FormWidgetFactory.drawBorder";
@@ -259,6 +260,19 @@ public class FormWidgetFactory {
 	
 	public FormEngine createFormEngine(Composite parent, boolean trackFocus) {
 		FormEngine engine = new FormEngine(parent, SWT.WRAP);
+		engine.setBackground(backgroundColor);
+		engine.setForeground(foregroundColor);
+		engine.marginWidth = 1;
+		engine.marginHeight = 0;
+		engine.setHyperlinkSettings(getHyperlinkHandler());
+		if (trackFocus) engine.addFocusListener(visibilityHandler);
+		engine.addKeyListener(keyboardHandler);
+		engine.setMenu(parent.getMenu());
+		return engine;
+	}
+	
+	public RichText createRichText(Composite parent, boolean trackFocus) {
+		RichText engine = new RichText(parent, SWT.WRAP);
 		engine.setBackground(backgroundColor);
 		engine.setForeground(foregroundColor);
 		engine.marginWidth = 1;
