@@ -81,6 +81,9 @@ import org.eclipse.ui.texteditor.IUpdate;
  * 		this view's viewer. A message page is also created
  * 		and shown when <code>showMessage(String)</code> is
  * 		called.</li>
+ * <li>Notification when this view becomes visible and becomes
+ * 		hidden via <code>becomesVisible()</code> and <code>becomesHidden()</code>.</li>
+ * <li>Linking of a help context id via <code>getHelpContextId().</code></li>
  * </ul>
  * <p>
  * This class may be subclassed.
