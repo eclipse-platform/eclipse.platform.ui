@@ -69,4 +69,13 @@ public void setComponents(ComponentModel[] value) {
 	components = value;
 }
 
+private String location;
+public String getLocation() {
+	return location;
+}
+public void setLocation(String value) {
+	assertIsWriteable();
+	location = value;
+}
+
 }

@@ -113,5 +113,13 @@ public void setFragments(PluginFragmentModel[] value) {
 	assertIsWriteable();
 	fragments = value;
 }
+private String location;
+public String getLocation() {
+	return location;
+}
+public void setLocation(String value) {
+	assertIsWriteable();
+	location = value;
+}
 
 }
