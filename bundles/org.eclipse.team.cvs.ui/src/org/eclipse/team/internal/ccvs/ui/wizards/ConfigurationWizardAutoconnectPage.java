@@ -14,16 +14,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
@@ -68,7 +69,7 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.port"));
 		String port = properties.getProperty("port");
 		if (port == null) {
-			createLabel(composite, "ConfigurationWizardAutoconnectPage.default");
+			createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.default"));
 		} else {
 			createLabel(composite, port);
 		}
@@ -129,7 +130,9 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 				properties.setProperty("tag", tag.getName());
 			}
 		} catch (TeamException e) {
-			ErrorDialog.openError(getContainer().getShell(), null, null, e.getStatus());
+			Shell shell = new Shell(Display.getDefault());
+			ErrorDialog.openError(shell, null, null, e.getStatus());
+			shell.dispose();
 		}
 	}
 }
