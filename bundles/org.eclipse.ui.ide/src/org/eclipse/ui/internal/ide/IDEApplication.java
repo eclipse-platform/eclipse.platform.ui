@@ -451,14 +451,12 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 
 		try {
 			// make sure the directory exists
-			URL metaUrl = new URL(workspaceUrl, METADATA_FOLDER);
-			File metaDir = new File(metaUrl.getFile());
+			File metaDir = new File(workspaceUrl.getPath(), METADATA_FOLDER);
 			if (!metaDir.exists() && (!create || !metaDir.mkdir()))
 				return null;
 
 			// make sure the file exists
-			URL versionUrl = new URL(metaDir.toURL(), VERSION_FILENAME);
-			File versionFile = new File(versionUrl.getFile());
+			File versionFile = new File(metaDir, VERSION_FILENAME);
 			if (!versionFile.exists()
 					&& (!create || !versionFile.createNewFile()))
 				return null;
