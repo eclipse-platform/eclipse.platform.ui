@@ -339,7 +339,6 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	
 	public TextFileDocumentProvider(IDocumentProvider parentProvider) {
 		IFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		manager.addFileBufferListener(fFileBufferListener);
 		manager.setSynchronizationContext(new UISynchronizationContext());
 		if (parentProvider != null)
 			setParentDocumentProvider(parentProvider);
@@ -782,8 +781,13 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 */
 	public void addElementStateListener(IElementStateListener listener) {
 		Assert.isNotNull(listener);
-		if (!fElementStateListeners.contains(listener))
+		if (!fElementStateListeners.contains(listener)) {
 			fElementStateListeners.add(listener);
+			if (fElementStateListeners.size() == 1) {
+				IFileBufferManager manager= FileBuffers.getTextFileBufferManager();
+				manager.addFileBufferListener(fFileBufferListener);
+			}
+		}
 		getParentProvider().addElementStateListener(listener);
 	}
 
@@ -793,6 +797,10 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	public void removeElementStateListener(IElementStateListener listener) {
 		Assert.isNotNull(listener);
 		fElementStateListeners.remove(listener);
+		if (fElementStateListeners.size() == 0) {
+			IFileBufferManager manager= FileBuffers.getTextFileBufferManager();
+			manager.removeFileBufferListener(fFileBufferListener);
+		}
 		getParentProvider().removeElementStateListener(listener);
 	}
 
