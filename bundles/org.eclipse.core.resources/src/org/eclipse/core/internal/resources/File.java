@@ -179,9 +179,6 @@ public void setContents(InputStream content, boolean force, boolean keepHistory,
  * @see IFile#setContents
  */
 public void setContents(IFileState source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
-	if (exists())
-		setContents(source.getContents(), force, keepHistory, monitor);
-	else
-		create(source.getContents(), force, monitor);
+	setContents(source.getContents(), force, keepHistory, monitor);
 }
 }
