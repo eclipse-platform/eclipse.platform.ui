@@ -6,7 +6,9 @@
  */
 package org.eclipse.ui.forms;
 import java.util.*;
+
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.ScrolledPageBook;
@@ -29,7 +31,7 @@ public class DetailsPart implements IFormPart, IPartSelectionListener {
 		initialize(mform);
 	}
 	public DetailsPart(ManagedForm mform, Composite parent, int style) {
-		this(mform, mform.getToolkit().createPageBook(parent));
+		this(mform, mform.getToolkit().createPageBook(parent, SWT.V_SCROLL|SWT.H_SCROLL));
 	}
 	public void registerPage(Object objectClass, IDetailsPage page) {
 		pages.put(objectClass, page);

@@ -516,14 +516,17 @@ public class FormToolkit {
 	 *            the form parent
 	 * @return the form widget
 	 */
-	public Form createForm(Composite parent) {
-		Form form = new Form(parent);
+	public Form createForm(Composite parent, int style) {
+		Form form = new Form(parent, style);
 		form.setExpandHorizontal(true);
 		form.setExpandVertical(true);
 		form.setBackground(colors.getBackground());
 		form.setForeground(colors.getColor(FormColors.TITLE));
 		form.setFont(JFaceResources.getHeaderFont());
 		return form;
+	}
+	public Form createForm(Composite parent) {
+		return createForm(parent, SWT.H_SCROLL|SWT.V_SCROLL);
 	}
 	
 	/**
@@ -538,8 +541,8 @@ public class FormToolkit {
 	 * @return the rich text widget
 	 */
 
-	public ScrolledPageBook createPageBook(Composite parent) {
-		ScrolledPageBook book = new ScrolledPageBook(parent, SWT.NULL);
+	public ScrolledPageBook createPageBook(Composite parent, int style) {
+		ScrolledPageBook book = new ScrolledPageBook(parent, style);
 		adapt(book, true, true);
 		book.setMenu(parent.getMenu());
 		return book;

@@ -135,14 +135,17 @@ public class Form extends SharedScrolledComposite {
 			body.setBounds(0, height, carea.width, carea.height - height);
 		}
 	}
+	public Form(Composite parent) {
+		this(parent, SWT.V_SCROLL | SWT.H_SCROLL);
+	}
 	/**
 	 * Creates the form control as a child of the provided parent.
 	 * 
 	 * @param parent
 	 *            the parent widget
 	 */
-	public Form(Composite parent) {
-		super(parent, SWT.NULL);
+	public Form(Composite parent, int style) {
+		super(parent, style);
 		final Composite content = new ContentComposite(this, SWT.NULL);
 		content.addListener(SWT.Paint, new Listener() {
 			public void handleEvent(Event e) {

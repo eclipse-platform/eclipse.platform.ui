@@ -27,7 +27,7 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	 * 
 	 */
 	public SharedScrolledComposite(Composite parent, int style) {
-		super(parent, SWT.V_SCROLL | SWT.H_SCROLL | style);
+		super(parent, style);
 		addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event e) {
 				reflow(true);

@@ -28,6 +28,9 @@ public class ScrolledPageBook extends SharedScrolledComposite {
  * @param parent
  * @param style
  */
+	public ScrolledPageBook(Composite parent) {
+		this(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+	}
 	public ScrolledPageBook(Composite parent, int style) {
 		super(parent, style);
 		pageBook = new PageBook(this, SWT.NULL);
