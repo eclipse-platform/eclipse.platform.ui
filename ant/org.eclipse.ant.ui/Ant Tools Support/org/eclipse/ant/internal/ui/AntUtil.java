@@ -38,7 +38,6 @@ import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.ant.internal.ui.model.LocationProvider;
-import org.eclipse.ant.internal.ui.views.actions.AntViewActionMessages;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -55,9 +54,13 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -599,7 +602,7 @@ public final class AntUtil {
     			editorPart= page.openEditor(new FileEditorInput(fileResource), editorDescriptor.getId());
     		}
     	} catch (PartInitException e) {
-    		AntUIPlugin.log(MessageFormat.format(AntViewActionMessages.getString("AntViewOpenWithMenu.Editor_failed"), new String[]{fileResource.getLocation().toOSString()}), e); //$NON-NLS-1$
+    		AntUIPlugin.log(MessageFormat.format(AntUIModelMessages.getString("AntUtil.0"), new String[]{fileResource.getLocation().toOSString()}), e); //$NON-NLS-1$
     	}
     	
     	if (editorPart instanceof AntEditor) {
@@ -634,4 +637,33 @@ public final class AntUtil {
         }
         openInEditor(page, editorDesc, node);
     }
+    
+    /**
+     * Opens an external browser on the provided <code>urlString</code>
+     * @param urlString The url to open
+     * @param shell the shell
+     * @param dialogTitle the title of any error dialog
+     */
+    public static void openBrowser(final String  urlString, final Shell shell, final String dialogTitle) {
+    	shell.getDisplay().syncExec(new Runnable() {
+    		public void run() {
+    			String platform= SWT.getPlatform();
+    			boolean succeeded= true;
+    			if ("motif".equals(platform) || "gtk".equals(platform)) { //$NON-NLS-1$ //$NON-NLS-2$
+    				Program program= Program.findProgram("html"); //$NON-NLS-1$
+    				if (program == null) {
+    					program= Program.findProgram("htm"); //$NON-NLS-1$
+    				}
+    				if (program != null) {
+    					succeeded= program.execute(urlString.toString());
+    				}
+    			} else {
+    				succeeded= Program.launch(urlString.toString());
+    			}
+    			if (!succeeded) {
+    				MessageDialog.openInformation(shell, dialogTitle, AntUIModelMessages.getString("AntUtil.1")); //$NON-NLS-1$
+    			}
+    		}
+    	});
+	}
 }

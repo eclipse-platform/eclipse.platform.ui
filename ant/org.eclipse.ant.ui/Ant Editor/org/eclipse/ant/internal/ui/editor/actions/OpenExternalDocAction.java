@@ -12,15 +12,14 @@ package org.eclipse.ant.internal.ui.editor.actions;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
-import org.eclipse.jdt.internal.ui.actions.ActionMessages;
+import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -34,31 +33,26 @@ import org.eclipse.ui.IEditorPart;
 public class OpenExternalDocAction implements IEditorActionDelegate {
 		
 	private AntEditor fEditor;
-		
-	/**
-     * @return
-     */
+	
     private Shell getShell() {
        return fEditor.getEditorSite().getShell();
     }
     
 	private void doAction(AntElementNode node) {
-		if (node == null) {
-			return;
-		}
 		Shell shell= getShell();
 		try {
 			URL baseURL= new URL("http://ant.apache.org/manual/"); //$NON-NLS-1$
-			
+			//TODO compose the URL from the node selected
 			URL url= baseURL;
 			if (url != null) {
-				OpenBrowserUtil.open(url.toString(), shell, getTitle());
+				AntUtil.openBrowser(url.toString(), shell, getTitle());
 			} 		
 		} catch (MalformedURLException e) {
            AntUIPlugin.log(e);
         }
 	}
 	
+	//TODO this will be used once we are attempting to correctly resolve a URL based on the selection
 	private static void showMessage(final Shell shell, final String message, final boolean isError) {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
@@ -72,16 +66,8 @@ public class OpenExternalDocAction implements IEditorActionDelegate {
 	}
 	
 	private static String getTitle() {
-		return ActionMessages.getString("OpenExternalJavadocAction.dialog.title"); //$NON-NLS-1$
+		return AntEditorActionMessages.getString("OpenExternalDocAction.0"); //$NON-NLS-1$
 	}
-	
-	/**
-	 * Note: this method is for internal use only. Clients should not call this method.
-	 */
-	protected String getDialogTitle() {
-		return getTitle();
-	}
-
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
@@ -96,18 +82,18 @@ public class OpenExternalDocAction implements IEditorActionDelegate {
      */
     public void run(IAction action) {
         ISelection selection= fEditor.getSelectionProvider().getSelection();
-		String errorMessage= null;
 		AntElementNode node= null;
 		if (selection instanceof ITextSelection) {
 			ITextSelection textSelection= (ITextSelection)selection;
-			ISourceViewer viewer= fEditor.getViewer();
 			int textOffset= textSelection.getOffset();
-			//IRegion region= XMLTextHover.getRegion(viewer, textOffset);
-			node= fEditor.getAntModel().getNode(textOffset, false);
+			AntModel model= fEditor.getAntModel();
+			if (model != null) {
+				node= model.getNode(textOffset, false);
+			}
+			if (node != null) {
+				doAction(node);
+			}
 		}
-			
-		doAction(node);
-        
     }
 
 
