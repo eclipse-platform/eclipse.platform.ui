@@ -5,6 +5,13 @@ package org.eclipse.debug.internal.core;
  * All Rights Reserved.
  */
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,13 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -38,6 +38,8 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -166,7 +168,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			fLaunchConfigurationIndex = new ArrayList(20);
 			List configs = findLocalLaunchConfigurations();
 			verifyConfigurations(configs, fLaunchConfigurationIndex);
-			configs = findLaunchConfigurations(ResourcesPlugin.getWorkspace().getRoot());
+			configs = findLaunchConfigurations(getWorkspaceRoot());
 			verifyConfigurations(configs, fLaunchConfigurationIndex);
 		}
 		return fLaunchConfigurationIndex;
@@ -347,7 +349,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		
 		clearAllLaunchConfigurations();
 
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		getWorkspace().removeResourceChangeListener(this);
 	}
 	
 	/**
@@ -357,7 +359,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 *  the extensions
 	 */
 	public void startup() throws CoreException {
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+		getWorkspace().addResourceChangeListener(this);
 	}
 							
 	/**
@@ -914,6 +916,12 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				IFile file = (IFile)resource;
 				if (ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.equals(file.getFileExtension())) {
 					IPath configPath = file.getLocation();
+					// If the file has already been deleted, reconstruct the full
+					// filesystem path
+					if (configPath == null) {
+						IPath workspaceRelativePath = delta.getFullPath();
+						configPath = getWorkspaceRoot().getLocation().append(workspaceRelativePath);
+					}
 					ILaunchConfiguration handle = new LaunchConfiguration(configPath);
 					try {
 						switch (delta.getKind()) {						
@@ -1041,6 +1049,14 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			initializeComparators();
 		}
 		return fComparators;
+	}
+	
+	private IWorkspace getWorkspace() {
+		return ResourcesPlugin.getWorkspace();
+	}
+	
+	private IWorkspaceRoot getWorkspaceRoot() {
+		return getWorkspace().getRoot();
 	}
 	
 }
