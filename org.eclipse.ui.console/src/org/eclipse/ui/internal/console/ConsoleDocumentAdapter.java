@@ -21,6 +21,7 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentAdapter;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.Region;
 import org.eclipse.swt.custom.TextChangeListener;
 import org.eclipse.swt.custom.TextChangedEvent;
 import org.eclipse.swt.custom.TextChangingEvent;
@@ -39,10 +40,8 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
     private int consoleWidth = -1;
     private ArrayList textChangeListeners;
     private IDocument document;
-    /*
-     * A list of Strings, every line in the Text Widget represents one String in this list.
-     */
-    private ArrayList lines;
+
+    private ArrayList regions;
     private Pattern pattern = Pattern.compile("^.*", Pattern.MULTILINE); //$NON-NLS-1$
     
     public ConsoleDocumentAdapter(IDocument doc, int width) {
@@ -50,7 +49,7 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
         consoleWidth = width;
         document = doc;
         document.addDocumentListener(this);
-        lines = new ArrayList();
+        regions = new ArrayList();
         repairLines(0);
     }
     
@@ -64,8 +63,8 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
             int docLineStart = document.getLineOffset(docLine);
             int textLine = getLineAtOffset(docLineStart);
             
-            for (int i=lines.size()-1; i>=textLine; i--) {
-                lines.remove(i);
+            for (int i=regions.size()-1; i>=textLine; i--) {
+                regions.remove(i);
             }
             
             int numLinesInDoc = document.getNumberOfLines();
@@ -75,27 +74,25 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
                 int length = document.getLineLength(i);
                 
                 if (length == 0) {
-                    line = ""; //$NON-NLS-1$
-                    lines.add(line);
+                    regions.add(new Region(offset, 0));
                 } else {
                     while (length > 0) {
                         int wrappedLength = consoleWidth > 0 ? Math.min(consoleWidth, length) : length;
-                        line = document.get(offset, wrappedLength);
-                        lines.add(line);
+                        regions.add(new Region(offset, wrappedLength));
                         offset += wrappedLength;
                         length -= wrappedLength;
                     }
                 }
             }
             if (line != null && lineEndsWithDelimeter(line)) {
-                lines.add(""); //$NON-NLS-1$
+                regions.add(new Region(document.getLength(), 0));
             }
             
         } catch (BadLocationException e) {
         }
         
-        if (lines.size() == 0) {
-            lines.add(""); //$NON-NLS-1$
+        if (regions.size() == 0) {
+            regions.add(new Region(document.getLength(), 0));
         }
     }
     
@@ -154,45 +151,77 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
      * @see org.eclipse.swt.custom.StyledTextContent#getLine(int)
      */
     public String getLine(int lineIndex) {
-        StringBuffer line = new StringBuffer((String) lines.get(lineIndex));
-        int index = line.length() - 1;
-        while(index > -1 && (line.charAt(index)=='\n' || line.charAt(index)=='\r')) {
-            index--;
+        Region region = (Region) regions.get(lineIndex);
+        try {
+            StringBuffer line = new StringBuffer(document.get(region.getOffset(), region.getLength()));
+            int index = line.length() - 1;
+            while(index > -1 && (line.charAt(index)=='\n' || line.charAt(index)=='\r')) {
+                index--;
+            }
+            return line.substring(0, index+1);
+        } catch (BadLocationException e) {
         }
-        return line.substring(0, index + 1);
+        return ""; //$NON-NLS-1$    
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.swt.custom.StyledTextContent#getLineAtOffset(int)
      */
     public int getLineAtOffset(int offset) {
-        if (offset == 0) {
+        if (offset == 0 || regions.size() <= 1) {
             return 0;
         }
-        //offset can be greater than length when user is deleting.
-        if (offset >= document.getLength()) {
-            int size = lines.size();
-            return size > 0 ? size-1 : 0;
-        }
         
-        int len = 0;
-        int line = 0;
-        for (Iterator i = lines.iterator(); i.hasNext(); ) {
-            String s = (String)i.next();
-            len += s.length();
-            if (len > offset) {
-                return line;
-            }
-            line++;
-        }
-        return lines.size() - 1;
+		int left= 0;
+		int right= regions.size() -1;
+		int midIndex = 0;
+		Region mid = null;
+		
+		while (left <= right) {
+		    midIndex= (left + right) / 2;
+		    
+		    mid = (Region) regions.get(midIndex);
+		    if (offset < mid.getOffset()) {
+		        right = midIndex;
+		    } else if (offset >= mid.getOffset() + mid.getLength()) {
+		        left = midIndex + 1;
+		    } else {
+		        return midIndex;
+		    }
+		}
+		
+		return midIndex;
     }
+    
+        
+        
+        
+        
+
+//        //offset can be greater than length when user is deleting.
+//        if (offset >= document.getLength()) {
+//            int size = lines.size();
+//            return size > 0 ? size-1 : 0;
+//        }
+//        
+//        int len = 0;
+//        int line = 0;
+//        for (Iterator i = lines.iterator(); i.hasNext(); ) {
+//            String s = (String)i.next();
+//            len += s.length();
+//            if (len > offset) {
+//                return line;
+//            }
+//            line++;
+//        }
+//        return lines.size() - 1;
+//    }
 
     /* (non-Javadoc)
      * @see org.eclipse.swt.custom.StyledTextContent#getLineCount()
      */
     public int getLineCount() {
-        return lines.size();
+        return regions.size();
     }
 
     /* (non-Javadoc)
@@ -206,12 +235,7 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
      * @see org.eclipse.swt.custom.StyledTextContent#getOffsetAtLine(int)
      */
     public int getOffsetAtLine(int lineIndex) {
-        int offset = 0;
-        for (int i = 0; i< lineIndex; i++) {
-            String s = (String) lines.get(i);
-            offset += s.length();
-        }
-        return offset;
+        return ((Region) regions.get(lineIndex)).getOffset();
     }
 
     /* (non-Javadoc)
@@ -264,8 +288,8 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
         int last = getLineAtOffset(event.fOffset + event.fLength);
         changeEvent.replaceLineCount= last - first;
         
-        int numLines = lines.size();
-        String lastLine = (String)lines.get(numLines-1);
+        int numLines = regions.size();
+        String lastLine = getLine(numLines-1);
         changeEvent.newLineCount = countLines(lastLine + event.fText);
         
         for (Iterator iter = textChangeListeners.iterator(); iter.hasNext();) {
@@ -333,6 +357,7 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
             document.removeDocumentListener(this);
         }
         document = null;
-        lines = null;
+        regions = null;
     }
+    
 }
