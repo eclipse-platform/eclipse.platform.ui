@@ -35,7 +35,6 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.model.PluginFragmentModel;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
