@@ -215,8 +215,14 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 								.getString("ChooseWorkspaceDialog.directoryBrowserMessage")); //$NON-NLS-1$
 				dialog.setFilterPath(currentSelection);
 				String dir = dialog.open();
-				if (dir != null)
+				if (dir != null) {
 					text.setText(dir);
+
+					// bug#56145: workaround for bug on mac (bug#43396) where modify
+					//            events are not sent for combo boxes
+					if("carbon".equalsIgnoreCase(SWT.getPlatform())) //$NON-NLS-1$ //$NON-NLS-2$
+						currentSelection = dir;
+				}
 			}
 		});
 	}
