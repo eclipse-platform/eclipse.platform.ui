@@ -383,12 +383,14 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
                 final IPresentablePart draggedControl = getPresentablePartAtIndex(dropResult
                         .getDropIndex());
 
+                if (draggedControl == pane.getPresentablePart()) { return null; };
+                
                 return new IDropTarget() {
 
                     public void drop() {
                     	
                         // If we're dragging a pane over itself do nothing
-                    	if (draggedControl == pane.getPresentablePart()) { return; };
+                    	//if (draggedControl == pane.getPresentablePart()) { return; };
                     	
                         // Don't worry about reparenting the view if we're
                         // simply

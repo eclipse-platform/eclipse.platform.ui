@@ -25,7 +25,7 @@ import org.eclipse.ui.internal.dnd.DragUtil;
  */
 public class PresentationUtil {
 	private static Point anchor;
-	private final static int HYSTERESIS = 10;
+	private final static int HYSTERESIS = 20;
 	private final static String LISTENER_ID = PresentationUtil.class.getName() + ".dragListener"; //$NON-NLS-1$
 	private static Event dragEvent;
 	private static Listener currentListener = null;
