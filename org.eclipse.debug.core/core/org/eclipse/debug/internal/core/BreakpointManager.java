@@ -376,6 +376,14 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		}
 		IResourceDelta delta= event.getDelta();
 		if (delta != null) {
+			IResourceDelta[] projectDelta= delta.getAffectedChildren(IResourceDelta.CHANGED);
+			if (projectDelta.length > 0 && 0 != (projectDelta[0].getFlags() & IResourceDelta.OPEN)) {
+				handleProjectResourceOpenStateChange(projectDelta[0].getResource());
+				return;
+			}
+			if (event.findMarkerDeltas(IBreakpoint.BREAKPOINT_MARKER, true).length == 0) {
+				return;
+			}
 			try {
 				if (fgVisitor == null) {
 					fgVisitor= new BreakpointManagerVisitor();
@@ -445,10 +453,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			if (delta == null) {
 				return false;
 			}
-			if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
-				handleProjectResourceOpenStateChange(delta.getResource());
-				return false;
-			}
+
 			IMarkerDelta[] markerDeltas= delta.getMarkerDeltas();
 			for (int i= 0; i < markerDeltas.length; i++) {
 				IMarkerDelta markerDelta= markerDeltas[i];
@@ -570,4 +575,3 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		new Thread(runnable).start();
 	}		
 }
-
