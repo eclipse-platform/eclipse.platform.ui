@@ -134,7 +134,7 @@ the menu entry will only contain a label.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         
+         The contributed class must implement &lt;code&gt;org.eclipse.jface.viewers.ViewerSorter&lt;/code&gt;
       </documentation>
    </annotation>
 
@@ -156,7 +156,7 @@ the matches by the resource name.
          &lt;p&gt;
 &lt;a href=&quot;hglegal.htm&quot;&gt;
  &lt;img SRC=&quot;ngibmcpy.gif&quot;
-   ALT=&quot;Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved.&quot;
+   ALT=&quot;Copyright (c) 2000, 2004 IBM Corporation and others. All Rights Reserved.&quot;
    BORDER=0 height=14 width=324&gt;&lt;/a&gt;
 &lt;/p&gt;
       </documentation>
