@@ -1343,6 +1343,9 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		}
 		//Workaround for 1GEZ9UR and 1GF07HN
 		display.setWarnings(false);
+		
+		//Set the priority higher than normal so as to be higher 
+		//than the JobManager.
 		Thread.currentThread().setPriority(Math.min(Thread.MAX_PRIORITY,Thread.NORM_PRIORITY + 1));
 		display.addListener(SWT.Close, new Listener() {
 			public void handleEvent(Event event) {
