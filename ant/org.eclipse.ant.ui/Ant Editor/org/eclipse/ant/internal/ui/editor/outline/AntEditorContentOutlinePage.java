@@ -212,7 +212,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 */
 		public Image getImage(Object anElement) {
 			XmlElement tempElement = (XmlElement)anElement;
-			if("target".equals(tempElement.getName())) { //$NON-NLS-1$
+			if("target".equalsIgnoreCase(tempElement.getName())) { //$NON-NLS-1$
 				ImageDescriptor base = null;
 				int flags = 0;
 				
@@ -229,18 +229,19 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 				}
 				return AntUIImages.getImage(new AntImageDescriptor(base, flags));				
 			}
-			if("project".equals(tempElement.getName())) { //$NON-NLS-1$
+			if("project".equalsIgnoreCase(tempElement.getName())) { //$NON-NLS-1$
 				return getProjectImage(tempElement);
 			}
-			if("macrodef".equals(tempElement.getName())) { //$NON-NLS-1$
+			if("macrodef".equalsIgnoreCase(tempElement.getName()) //$NON-NLS-1$
+				|| "presetdef".equalsIgnoreCase(tempElement.getName())) {  //$NON-NLS-1$
 			    return AntUIImages.getImage(IAntUIConstants.IMG_ANT_MACRODEF);
 			}
 			
-			if("property".equals(tempElement.getName())) { //$NON-NLS-1$
+			if("property".equalsIgnoreCase(tempElement.getName())) { //$NON-NLS-1$
 				return AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY);
 			}
             
-            if("import".equals(tempElement.getName())) { //$NON-NLS-1$
+            if("import".equalsIgnoreCase(tempElement.getName())) { //$NON-NLS-1$
                 return AntUIImages.getImage(IAntUIConstants.IMG_ANT_IMPORT);
             }
 			
