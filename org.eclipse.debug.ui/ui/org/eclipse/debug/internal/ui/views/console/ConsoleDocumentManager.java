@@ -285,9 +285,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	
 	/**
 	 * Returns the document provider applicable for the given process.
-	 * 	 * @param process	 * @return document provider
-	 * 
-	 * TODO: allow for custom document providers	 */
+	 * 	 * @param process	 * @return document provider	 */
 	protected IDocumentProvider getDocumentProvider(IProcess process) {
 		return fDefaultDocumentProvider;
 	}

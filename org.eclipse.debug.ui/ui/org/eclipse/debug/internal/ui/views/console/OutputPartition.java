@@ -8,12 +8,11 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.swt.graphics.Color;
 
 /**
  * A partition in a console document that contains output from a process.
  */
-public class OutputPartition extends ColorPartition {
+public class OutputPartition extends StreamPartition {
 
 	/**
 	 * Partition type
@@ -21,14 +20,14 @@ public class OutputPartition extends ColorPartition {
 	public static final String OUTPUT_PARTITION_TYPE = DebugUIPlugin.getUniqueIdentifier() + ".OUTPUT_PARTITION_TYPE";
 	
 	
-	public OutputPartition(Color color, int offset, int length) {
-		super(color, offset, length, OUTPUT_PARTITION_TYPE);
+	public OutputPartition(String streamIdentifier, int offset, int length) {
+		super(streamIdentifier, offset, length, OUTPUT_PARTITION_TYPE);
 	}
 	
 	/**
-	 * @see org.eclipse.debug.internal.ui.views.console.ColorPartition#createNewPartition(org.eclipse.swt.graphics.Color, int, int)
+	 * @see org.eclipse.debug.internal.ui.views.console.StreamPartition#createNewPartition(String, int, int)
 	 */
-	public ColorPartition createNewPartition(Color color, int offset, int length) {
-		return new OutputPartition(color, offset, length);
+	public StreamPartition createNewPartition(String streamIdetifier, int offset, int length) {
+		return new OutputPartition(streamIdetifier, offset, length);
 	}	
 }

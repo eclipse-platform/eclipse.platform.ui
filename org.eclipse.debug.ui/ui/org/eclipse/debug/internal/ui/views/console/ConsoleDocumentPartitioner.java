@@ -14,9 +14,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamMonitor;
@@ -34,19 +31,19 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
 /**
  * Default console document paritioner. Partitions a document into
  * color regions for standard in, out, err.
  */
-public class DefaultConsoleDocumentPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension, IDebugEventSetListener, IPropertyChangeListener {
+public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension, IPropertyChangeListener, IConsoleDocument {
 
 	private boolean fClosed= false;
 	private boolean fKilled= false;
 
 	protected IProcess fProcess;
+	protected IConsoleDocumentContentProvider fContentProvider;
 	private IStreamsProxy fProxy;
 	protected boolean fNeedsToStartReading= true;
 	
@@ -99,11 +96,6 @@ public class DefaultConsoleDocumentPartitioner implements IDocumentPartitioner, 
 	 * Whether an append is still in  progress or to be run
 	 */
 	private boolean fAppending = false;
-	
-	/**
-	 * Whether associated process has terminated
-	 */
-	private boolean fTerminated = false;
 	
 	/**
 	 * Whether to keep polling
@@ -169,25 +161,22 @@ public class DefaultConsoleDocumentPartitioner implements IDocumentPartitioner, 
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#connect(org.eclipse.jface.text.IDocument)
 	 */
 	public void connect(IDocument document) {
+		fDocument = document;
 		document.setDocumentPartitioner(this);
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 		fWrap = store.getBoolean(IDebugPreferenceConstants.CONSOLE_WRAP);
 		fMaxLineLength = store.getInt(IDebugPreferenceConstants.CONSOLE_WIDTH);
-		store.addPropertyChangeListener(this);
-		fProxy= fProcess.getStreamsProxy();			
-		fTerminated = fProcess.isTerminated();
-		fDocument = document;
-		DebugPlugin.getDefault().addDebugEventListener(this);
-		startReading();
+		store.addPropertyChangeListener(this);		
+		fContentProvider.connect(fProcess, this);
 	}
 
 	/**
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#disconnect()
 	 */
 	public void disconnect() {
-		fDocument.setDocumentPartitioner(null);
-		DebugPlugin.getDefault().removeDebugEventListener(this);
 		kill();
+		fContentProvider.disconnect();
+		fDocument.setDocumentPartitioner(null);
 	}
 
 	/**
@@ -207,7 +196,7 @@ public class DefaultConsoleDocumentPartitioner implements IDocumentPartitioner, 
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#getLegalContentTypes()
 	 */
 	public String[] getLegalContentTypes() {
-		return new String[] {InputPartition.INPUT_PARTITION_TYPE, OutputPartition.OUTPUT_PARTITION_TYPE};
+		return new String[] {InputPartition.INPUT_PARTITION_TYPE, OutputPartition.OUTPUT_PARTITION_TYPE, BreakPartition.BREAK_PARTITION_TYPE};
 	}
 
 	/**
@@ -265,8 +254,8 @@ public class DefaultConsoleDocumentPartitioner implements IDocumentPartitioner, 
 		String text = event.getText();
 		if (isAppendInProgress()) {
 			// stream input
-			Color color = (fPartitionType == OUT) ? DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB) : DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB);
-			addPartition(new OutputPartition(color, event.getOffset(), text.length()));
+			String streamIdentifier= (fPartitionType == OUT) ? IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB : IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB;
+			addPartition(new OutputPartition(streamIdentifier, event.getOffset(), text.length()));
 		} else {
 			// console keyboard input
 			int amountDeleted = event.getLength() - text.length();
@@ -288,7 +277,7 @@ public class DefaultConsoleDocumentPartitioner implements IDocumentPartitioner, 
 				InputPartition partition = null;
 				if (fInputBuffer.length() > 0) { 
 					// replace the last partition
-					partition = new InputPartition(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB), bufferStartOffset, fInputBuffer.length());
+					partition = new InputPartition(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB, bufferStartOffset, fInputBuffer.length());
 					fPartitions.set(fPartitions.size() - 1, partition);
 				} else {
 					// remove last partition - it is now empty
@@ -316,9 +305,9 @@ public class DefaultConsoleDocumentPartitioner implements IDocumentPartitioner, 
 						remaining = remaining.substring(split);
 						String buffer = fInputBuffer.toString();
 						fInputBuffer.setLength(0);
-						addPartition(new InputPartition(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB), partitionOffset, split));
+						addPartition(new InputPartition(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB, partitionOffset, split));
 						partitionOffset += split;
-						addPartition(new BreakPartition(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB), partitionOffset, 0));
+						addPartition(new InputPartition(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB, partitionOffset, 0));
 						try {
 							fProxy.write(buffer);
 						} catch (IOException ioe) {
@@ -332,7 +321,7 @@ public class DefaultConsoleDocumentPartitioner implements IDocumentPartitioner, 
 				}	
 				if (remaining.length() > 0) {
 					fInputBuffer.append(remaining);
-					addPartition(new InputPartition(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB), partitionOffset, remaining.length()));
+					addPartition(new InputPartition(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB, partitionOffset, remaining.length()));
 				}
 			}
 		}
@@ -355,12 +344,12 @@ public class DefaultConsoleDocumentPartitioner implements IDocumentPartitioner, 
 	 * Adds a new colored input partition, combining with the previous partition if
 	 * possible.
 	 */
-	protected void addPartition(ColorPartition partition) {
+	protected void addPartition(StreamPartition partition) {
 		if (fPartitions.isEmpty()) {
 			fPartitions.add(partition);
 		} else {
 			int index = fPartitions.size() - 1;
-			ColorPartition last = (ColorPartition)fPartitions.get(index);
+			StreamPartition last = (StreamPartition)fPartitions.get(index);
 			if (last.canBeCombinedWith(partition)) {
 				// replace with a single partition
 				partition = last.combineWith(partition);
@@ -372,15 +361,15 @@ public class DefaultConsoleDocumentPartitioner implements IDocumentPartitioner, 
 		}
 	}	
 	
-	public DefaultConsoleDocumentPartitioner(IProcess process) {
+	public ConsoleDocumentPartitioner(IProcess process, IConsoleDocumentContentProvider contentProvider) {
 		fProcess= process;
+		fContentProvider = contentProvider;
 	}
 
 	public void close() {
 		if (!fClosed) {
 			fClosed= true;
 			stopReading();
-			DebugPlugin.getDefault().removeDebugEventListener(this);
 			DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 			fDocument.set(""); //$NON-NLS-1$
 		}
@@ -441,7 +430,7 @@ public class DefaultConsoleDocumentPartitioner implements IDocumentPartitioner, 
 	 * process terminates
 	 */
 	protected void pollAndSleep() {
-		while (!fKilled && fPoll && (!fTerminated || !fQueue.isEmpty())) {
+		while (!fKilled && fPoll && (!isTerminated() || !fQueue.isEmpty())) {
 			poll();
 			try {
 				Thread.sleep(BASE_DELAY);
@@ -603,25 +592,6 @@ public class DefaultConsoleDocumentPartitioner implements IDocumentPartitioner, 
 	protected void systemOutAppended(String text) {
 		streamAppended(text, OUT);
 	}
-			
-	
-	/**
-	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
-	 */
-	public void handleDebugEvents(DebugEvent[] events) {
-		if (fProcess == null) {
-			return;
-		}
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
-			if (event.getKind() == DebugEvent.TERMINATE) {
-				Object element= event.getSource();
-				if (element != null && element.equals(fProcess)) {
-					fTerminated = true;
-				}					
-			}
-		}
-	}
 		
 	/**
 	 * Sets whether a runnable has been submitted to update the console
@@ -677,4 +647,27 @@ public class DefaultConsoleDocumentPartitioner implements IDocumentPartitioner, 
 		return fSortedLineDelimiters;
 	}
 
+	/**
+	 * TODO: only the standard streams are currently implemented.
+	 * 
+	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleDocumentPartitioner#connect(org.eclipse.debug.core.model.IStreamMonitor, java.lang.String)
+	 */
+	public void connect(IStreamMonitor streamMonitor, String streamIdentifer) {
+	}
+
+	/**
+	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleDocumentPartitioner#connect(org.eclipse.debug.core.model.IStreamsProxy)
+	 */
+	public void connect(IStreamsProxy streamsProxy) {
+		fProxy = streamsProxy;
+		startReading();
+	}
+	
+	protected boolean isTerminated() {
+		return fContentProvider.isTerminated();
+	}
+
+	protected IConsoleDocumentContentProvider getContentProvider() {
+		return fContentProvider;
+	}
 }

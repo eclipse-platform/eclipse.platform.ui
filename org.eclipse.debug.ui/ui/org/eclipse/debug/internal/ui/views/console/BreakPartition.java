@@ -8,13 +8,12 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.swt.graphics.Color;
 
 /**
  * A partition in a console document that represents a break after an input
  * partition. This represents a hard break that the user cannot backsapce/delete.
  */
-public class BreakPartition extends ColorPartition {
+public class BreakPartition extends StreamPartition {
 
 	/**
 	 * Partition type
@@ -22,15 +21,15 @@ public class BreakPartition extends ColorPartition {
 	public static final String BREAK_PARTITION_TYPE = DebugUIPlugin.getUniqueIdentifier() + ".BREAK_PARTITION_TYPE";
 	
 	
-	public BreakPartition(Color color, int offset, int length) {
-		super(color, offset, length, BREAK_PARTITION_TYPE);
+	public BreakPartition(String streamIdentifier, int offset, int length) {
+		super(streamIdentifier, offset, length, BREAK_PARTITION_TYPE);
 	}
 	
 	/**
-	 * @see org.eclipse.debug.internal.ui.views.console.ColorPartition#createNewPartition(org.eclipse.swt.graphics.Color, int, int)
+	 * @see org.eclipse.debug.internal.ui.views.console.StreamPartition#createNewPartition(String, int, int)
 	 */
-	public ColorPartition createNewPartition(Color color, int offset, int length) {
-		return new BreakPartition(color, offset, length);
+	public StreamPartition createNewPartition(String streamIdentifier, int offset, int length) {
+		return new BreakPartition(streamIdentifier, offset, length);
 	}
 
 }

@@ -7,45 +7,32 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.DefaultLineTracker;
+import org.eclipse.jface.text.ITextStore;
 
 public class ConsoleDocument extends AbstractDocument {
 	
-	private IProcess fProcess = null;
+	private IConsoleDocumentContentProvider fContentProvider = null;
 	
-	public ConsoleDocument(IProcess process) {
-		fProcess= process;
-		setTextStore(new ConsoleOutputTextStore(2500));	
+	public ConsoleDocument(IConsoleDocumentContentProvider contentProvider) {
+		fContentProvider = contentProvider;
+		setTextStore(newTextStore());	
 		setLineTracker(new DefaultLineTracker());
 		completeInitialization();
 	}
-
-	protected boolean isClosed() {
-		return fProcess.isTerminated();
+    	
+	/**
+	 * Returns whether this document is read-only.
+	 */
+	public boolean isReadOnly() {
+		return fContentProvider.isReadOnly();
 	}
 	
 	/**
-	 * @see Object#equals(Object)
-	 */
-	public boolean equals(Object obj) {
-		return obj instanceof ConsoleDocument && fProcess.equals(((ConsoleDocument)obj).fProcess);
-    }
-    
-	/**
-	 * @see Object#hashCode()
-	 */
-    public int hashCode() {
-    	return fProcess.hashCode();
-    }
-    	
-	/**
-	 * Returns whether the document's underlying process is
-	 * terminated.
-	 */
-	protected boolean isReadOnly() {
-		return fProcess.isTerminated();
+	 * Creates a new text store for this document.	 */
+	protected ITextStore newTextStore() {
+		return new ConsoleOutputTextStore(2500);
 	}
 	
 }

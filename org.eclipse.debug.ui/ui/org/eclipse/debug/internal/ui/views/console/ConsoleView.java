@@ -29,13 +29,12 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.text.AbstractDocument;
-import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextInputListener;
+import org.eclipse.jface.text.ITextStore;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -72,12 +71,14 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	/**
 	 * An empty document.
 	 */
-	class NullConsoleDocument extends AbstractDocument {
+	class EmptyConsoleDocument extends ConsoleDocument {
 		
-		public NullConsoleDocument() {
-			setTextStore(new ConsoleOutputTextStore(0));
-			setLineTracker(new DefaultLineTracker());
-			completeInitialization();
+		public EmptyConsoleDocument() {
+			super(new DefaultConsoleDocumentContentProvider());
+		}
+		
+		protected ITextStore newTextStore() {
+			return new ConsoleOutputTextStore(0);
 		}
 	}
 
@@ -130,7 +131,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 			// being viewed. If this is the first input, set
 			// the console to an empty document
 			if (getConsoleViewer().getDocument() == null) {
-				getConsoleViewer().setDocument(new NullConsoleDocument());
+				getConsoleViewer().setDocument(new EmptyConsoleDocument());
 				getConsoleViewer().setEditable(false);
 				updateObjects();
 			}			
@@ -149,7 +150,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 					doc = DebugUIPlugin.getConsoleDocumentManager().getConsoleDocument(getProcess());
 				}
 				if (doc == null) {
-					doc = new NullConsoleDocument();
+					doc = new EmptyConsoleDocument();
 				}
 				getConsoleViewer().setDocument(doc);
 				getConsoleViewer().setEditable(getProcess() != null && !getProcess().isTerminated());
@@ -249,19 +250,19 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 * Adds the text manipulation actions to the <code>ConsoleViewer</code>
 	 */
 	protected void fillContextMenu(IMenuManager menu) {
-		IDocument doc= getConsoleViewer().getDocument();
+		ConsoleDocument doc= (ConsoleDocument)getConsoleViewer().getDocument();
 		if (doc == null) {
 			return;
 		}
-		if (getConsoleViewer().isEditable()) {
+		if (doc.isReadOnly()) {
+			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.COPY));
+			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));						
+		} else {
 			updateAction(ITextEditorActionConstants.PASTE);
 			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.CUT));
 			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.COPY));
 			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.PASTE));
 			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
-		} else {
-			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.COPY));
-			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));			
 		}
 
 		menu.add(new Separator("FIND")); //$NON-NLS-1$

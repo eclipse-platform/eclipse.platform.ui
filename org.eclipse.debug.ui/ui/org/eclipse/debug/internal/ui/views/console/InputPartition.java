@@ -8,12 +8,11 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.swt.graphics.Color;
 
 /**
  * A partition in a console document that contains input from the keyboard.
  */
-public class InputPartition extends ColorPartition {
+public class InputPartition extends StreamPartition {
 
 	/**
 	 * Partition type
@@ -21,14 +20,14 @@ public class InputPartition extends ColorPartition {
 	public static final String INPUT_PARTITION_TYPE = DebugUIPlugin.getUniqueIdentifier() + ".INPUT_PARTITION_TYPE";
 	
 	
-	public InputPartition(Color color, int offset, int length) {
-		super(color, offset, length, INPUT_PARTITION_TYPE);
+	public InputPartition(String streamIdentifier, int offset, int length) {
+		super(streamIdentifier, offset, length, INPUT_PARTITION_TYPE);
 	}
 	
 	/**
-	 * @see org.eclipse.debug.internal.ui.views.console.ColorPartition#createNewPartition(org.eclipse.swt.graphics.Color, int, int)
+	 * @see org.eclipse.debug.internal.ui.views.console.StreamPartition#createNewPartition(String, int, int)
 	 */
-	public ColorPartition createNewPartition(Color color, int offset, int length) {
-		return new InputPartition(color, offset, length);
+	public StreamPartition createNewPartition(String streamIdentifier, int offset, int length) {
+		return new InputPartition(streamIdentifier, offset, length);
 	}	
 }

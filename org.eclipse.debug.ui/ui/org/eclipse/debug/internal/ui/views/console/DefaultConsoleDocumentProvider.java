@@ -22,13 +22,16 @@ import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 public class DefaultConsoleDocumentProvider extends AbstractDocumentProvider {
 
 	/**
+	 * TODO: allow for custom content providers.
+	 * 
 	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#createDocument(java.lang.Object)
 	 */
 	protected IDocument createDocument(Object element) throws CoreException {
 		if (element instanceof IProcess) {
 			IProcess process = (IProcess)element;
-			ConsoleDocument doc= new ConsoleDocument(process);
-			IDocumentPartitioner partitioner = new DefaultConsoleDocumentPartitioner(process);
+			IConsoleDocumentContentProvider contentProvider = new DefaultConsoleDocumentContentProvider();
+			ConsoleDocument doc= new ConsoleDocument(contentProvider);
+			IDocumentPartitioner partitioner = new ConsoleDocumentPartitioner(process, contentProvider);
 			partitioner.connect(doc);
 			return doc;
 		}

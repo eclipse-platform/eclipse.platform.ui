@@ -8,20 +8,19 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.jface.text.TypedRegion;
-import org.eclipse.swt.graphics.Color;
 
 /**
- * A colored partition
+ * A partition from an input/output stream connected to the console. 
  */
-public abstract class ColorPartition extends TypedRegion {
+public abstract class StreamPartition extends TypedRegion {
 	
 	/**
-	 * Partition color	 */
-	private Color fColor;
+	 * Stream identifier	 */
+	private String fStreamIdentifier;
 	
-	public ColorPartition(Color color, int offset, int length, String type) {
+	public StreamPartition(String streamIdentifier, int offset, int length, String type) {
 		super(offset, length, type);
-		fColor = color;
+		fStreamIdentifier = streamIdentifier;
 	}
 	
 	
@@ -30,7 +29,7 @@ public abstract class ColorPartition extends TypedRegion {
 	 */
 	public boolean equals(Object partition) {
 		if (super.equals(partition)) {
-			fColor.equals(((ColorPartition)partition).getColor());
+			fStreamIdentifier.equals(((StreamPartition)partition).getStreamIdentifier());
 		}
 		return false;
 	}
@@ -39,29 +38,29 @@ public abstract class ColorPartition extends TypedRegion {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return super.hashCode() + fColor.hashCode();
+		return super.hashCode() + fStreamIdentifier.hashCode();
 	}
 
 	/**
-	 * Returns this partition's color
+	 * Returns this partition's stream identifier
 	 * 
-	 * @return this partition's color
+	 * @return this partition's stream identifier
  	 */
-	public Color getColor() {
-		return fColor;
+	public String getStreamIdentifier() {
+		return fStreamIdentifier;
 	}
 	
 	/**
 	 * Returns whether this partition is allowed to be combined with the
 	 * given partition.
 	 * 	 * @param partition	 * @return boolean	 */
-	public boolean canBeCombinedWith(ColorPartition partition) {
+	public boolean canBeCombinedWith(StreamPartition partition) {
 		int start = getOffset();
 		int end = start + getLength();
 		int otherStart = partition.getOffset();
 		int otherEnd = otherStart + partition.getLength();
 		boolean overlap = (otherStart >= start && otherStart <= end) || (start >= otherStart && start <= otherEnd);
-		return overlap && getType().equals(partition.getType()) && getColor().equals(partition.getColor());
+		return overlap && getType().equals(partition.getType()) && getStreamIdentifier().equals(partition.getStreamIdentifier());
 	}
 	
 	/**
@@ -71,19 +70,19 @@ public abstract class ColorPartition extends TypedRegion {
 	 * @param partition
 	 * @return partition
  	 */
-	public ColorPartition combineWith(ColorPartition partition) {
+	public StreamPartition combineWith(StreamPartition partition) {
 		int start = getOffset();
 		int end = start + getLength();
 		int otherStart = partition.getOffset();
 		int otherEnd = otherStart + partition.getLength();
 		int theStart = Math.min(start, otherStart);
 		int theEnd = Math.max(end, otherEnd);
-		return createNewPartition(getColor(), theStart, theEnd - theStart);
+		return createNewPartition(getStreamIdentifier(), theStart, theEnd - theStart);
 	}
 	
 	/**
 	 * Creates a new patition of this type with the given color, offset, 
 	 * and length.
-	 * 	 * @param color	 * @param offset	 * @param length	 * @return ColorPartition	 */
-	public abstract ColorPartition createNewPartition(Color color, int offset, int length);
+	 * 	 * @param streamIdentifer	 * @param offset	 * @param length	 * @return ColorPartition	 */
+	public abstract StreamPartition createNewPartition(String streamIdentifier, int offset, int length);
 }
