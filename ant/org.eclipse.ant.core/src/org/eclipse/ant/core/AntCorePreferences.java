@@ -594,9 +594,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				return null;
 			}
 		}
-			AntClasspathEntry toolsEntry= new AntClasspathEntry(tools.getAbsolutePath());
-            toolsEntry.setEclipseRuntimeRequired(false);
-            return toolsEntry;
+        
+		return new AntClasspathEntry(tools.getAbsolutePath());    
 	}
 
 	/**
