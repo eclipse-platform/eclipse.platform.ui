@@ -73,7 +73,7 @@ protected Control createContents(Composite parent) {
 protected void performDefaults() {
 	super.performDefaults();
 	AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
-	jarsPage.setInput(Arrays.asList(prefs.getCustomURLs()));
+	jarsPage.setInput(Arrays.asList(prefs.getDefaultCustomURLs()));
 	tasksPage.setInput(Arrays.asList(prefs.getCustomTasks()));
 	typesPage.setInput(Arrays.asList(prefs.getCustomTypes()));
 }
