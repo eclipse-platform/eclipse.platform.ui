@@ -51,6 +51,7 @@ public interface IWorkbench {
  * @return the new workbench page
  * @exception WorkbenchException if a new page could not be opened
  * @since 2.0
+ * @deprecated This experimental API will be removed.
  */
 public IWorkbenchPage clonePage(IWorkbenchPage page) 
 	throws WorkbenchException;
@@ -120,6 +121,7 @@ public IWorkbenchWindow[] getWorkbenchWindows();
  * @return the workbench page which was opened or activated
  * @exception WorkbenchException if a new page could not be opened
  * @since 2.0
+ * @deprecated This experimental API will be removed.
  */
 public IWorkbenchPage openPage(IAdaptable input) 
 	throws WorkbenchException;
@@ -167,6 +169,7 @@ public IWorkbenchPage openPage(IAdaptable input)
  * @exception WorkbenchException if a new page could not be opened
  * @see #getPerspectiveRegistry
  * @since 2.0
+ * @deprecated This experimental API will be removed.
  */
 public IWorkbenchPage openPage(String perspId, IAdaptable input, int keyState) 
 	throws WorkbenchException;
@@ -175,6 +178,11 @@ public IWorkbenchPage openPage(String perspId, IAdaptable input, int keyState)
  * the new page is defined by the specified perspective ID.  The new window and new 
  * page become active.
  * <p>
+ * <b>Note:</b> The caller is responsible to ensure the action using this method
+ * will explicitly inform the user a new window will be opened. Otherwise, callers
+ * are strongly recommended to use the <code>openPerspective</code> APIs to
+ * programmatically show a perspective to avoid confusing the user.
+ * </p><p>
  * In most cases where this method is used the caller is tightly coupled to
  * a particular perspective.  They define it in the registry and contribute some
  * user interface action to open or activate it.  In situations like this a
@@ -182,7 +190,7 @@ public IWorkbenchPage openPage(String perspId, IAdaptable input, int keyState)
  * </p><p>
  * The workbench also defines a number of menu items to activate or open each
  * registered perspective. A complete list of these perspectives is available 
- * from the perspective registry found on IWorkbenchPlugin.
+ * from the perspective registry found on <code>IWorkbench</code>.
  * </p>
  * 
  * @param perspectiveId the perspective id for the window's initial page
@@ -191,24 +199,110 @@ public IWorkbenchPage openPage(String perspId, IAdaptable input, int keyState)
  * @return the new workbench window
  * @exception WorkbenchException if a new window and page could not be opened
  * 
- * @deprecated As of 2.0, the explicit creation of workbench windows is discouraged
- * @see IWorkbench#openPage(String, IAdaptable, int)
+ * @see IWorkbench#showPerspective
  */
 public IWorkbenchWindow openWorkbenchWindow(String perspID, IAdaptable input)
 	throws WorkbenchException;
 /**
- * Creates and opens a new workbench window. The default perspective is used
- * as a template for creating the new window's first page. The new window and new 
+ * Creates and opens a new workbench window with one page.  The perspective of
+ * the new page is defined by the default perspective ID.  The new window and new 
  * page become active.
+ * <p>
+ * <b>Note:</b> The caller is responsible to ensure the action using this method
+ * will explicitly inform the user a new window will be opened. Otherwise, callers
+ * are strongly recommended to use the <code>openPerspective</code> APIs to
+ * programmatically show a perspective to avoid confusing the user.
+ * </p><p>
+ * The workbench also defines a number of menu items to activate or open each
+ * registered perspective. A complete list of these perspectives is available 
+ * from the perspective registry found on <code>IWorkbench</code>.
+ * </p>
  *
  * @param input the page input, or <code>null</code> if there is no current input.
  *		This is used to seed the input for the new page's views.
  * @return the new workbench window
  * @exception WorkbenchException if a new window and page could not be opened
  * 
- * @deprecated As of 2.0, the explicit creation of workbench windows is discouraged
- * @see IWorkbench#openPage(IAdaptable)
+ * @see IWorkbench#showPerspective
  */
 public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
+	throws WorkbenchException;
+/**
+ * Shows the specified perspective to the user. The caller should use this method
+ * when the perspective to be shown is not dependent on the page's input. That is,
+ * the perspective can open in any page depending on user preferences.
+ * <p>
+ * The perspective may be shown in the specified window, in another existing window,
+ * or in a new window depending on user preferences. The exact policy is controlled
+ * by the workbench to ensure consistency to the user. The policy is subject to
+ * change. The current policy is as follows:
+ * <ul>
+ * <li>
+ * If the specified window has the requested perspective open, then the window
+ * is given focus and the perspective is shown. Page's input is ignored.
+ * </li>
+ * <li>
+ * If another window that has the workspace root as input and the requested
+ * perpective open and active, then the window is given focus.
+ * </li>
+ * <li>
+ * Otherwise the requested perspective is opened and shown in the specified
+ * window, and the window is given focus.
+ * </li>
+ * </ul>
+ * </p><p>
+ * The workbench also defines a number of menu items to activate or open each
+ * registered perspective. A complete list of these perspectives is available 
+ * from the perspective registry found on <code>IWorkbench</code>.
+ * </p>
+ * 
+ * @param perspectiveId the perspective ID to show
+ * @param window the workbench window of the action calling this method.
+ * @return the workbench page that the perspective was shown
+ * @exception WorkbenchException if the perspective could not be shown
+ * 
+ * @since 2.0
+ */
+public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window) 
+	throws WorkbenchException;
+/**
+ * Shows the specified perspective to the user. The caller should use this method
+ * when the perspective to be shown is dependent on the page's input. That is,
+ * the perspective can only open in any page with the specified input.
+ * <p>
+ * The perspective may be shown in the specified window, in another existing window,
+ * or in a new window depending on user preferences. The exact policy is controlled
+ * by the workbench to ensure consistency to the user. The policy is subject to
+ * change. The current policy is as follows:
+ * <ul>
+ * <li>
+ * If the specified window has the requested perspective open and the same requested
+ * input, then the window is given focus and the perspective is shown.
+ * </li>
+ * <li>
+ * If another window that has the requested input and the requested
+ * perpective open and active, then the window is given focus.
+ * </li>
+ * <li>
+ * Otherwise the requested perspective is opened and shown in a new window, and the
+ * window is given focus.
+ * </li>
+ * </ul>
+ * </p><p>
+ * The workbench also defines a number of menu items to activate or open each
+ * registered perspective. A complete list of these perspectives is available 
+ * from the perspective registry found on <code>IWorkbench</code>.
+ * </p>
+ * 
+ * @param perspectiveId the perspective ID to show
+ * @param window the workbench window of the action calling this method.
+ * @param input the page input, or <code>null</code> if there is no current input.
+ *		This is used to seed the input for the page's views
+ * @return the workbench page that the perspective was shown
+ * @exception WorkbenchException if the perspective could not be shown
+ * 
+ * @since 2.0
+ */
+public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window, IAdaptable input) 
 	throws WorkbenchException;
 }

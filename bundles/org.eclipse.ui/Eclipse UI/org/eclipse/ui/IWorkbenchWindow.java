@@ -98,39 +98,40 @@ public boolean isApplicationMenu(String menuId);
  * Creates and opens a new workbench page.  The perspective of the new page 
  * is defined by the specified perspective ID.  The new page become active.
  * <p>
- * In most cases where this method is used the caller is tightly coupled to
- * a particular perspective.  They define it in the registry and contribute some
- * user interface action to open or activate it.  In situations like this a
- * static variable is often used to identify the perspective Id.
- * </p><p>
- * The workbench also defines a number of menu items to activate or open each
- * registered perspective. A complete list of these perspectives is available 
- * from the perspective registry found on IWorkbenchPlugin.
+ * <b>Note:</b> Since release 2.0, a window is limited to contain at most
+ * one page. If a page exist in the window when this method is used, then
+ * another window is created for the new page.  Callers are strongly
+ * recommended to use the <code>IWorkbench.openPerspective</code> APIs to
+ * programmatically show a perspective.
  * </p>
+ * 
  * @param perspectiveId the perspective id for the window's initial page
  * @param input the page input, or <code>null</code> if there is no current input.
  *		This is used to seed the input for the new page's views.
  * @return the new workbench page
- * @exception WorkbenchException if a new window and page could not be opened
+ * @exception WorkbenchException if a page could not be opened
  * 
- * @deprecated As of 2.0, the explicit creation of workbench pages in a 
- * 		window is discouraged
- * @see IWorkbench#openPage(String, IAdaptable)
+ * @see IWorkbench#openPerspective
  */
 public IWorkbenchPage openPage(String perspectiveId, IAdaptable input)
 	throws WorkbenchException;
 /**
  * Creates and opens a new workbench page. The default perspective is used
- * as a template for creating the page. The page become active.
- *
+ * as a template for creating the page. The page becomes active.
+ * <p>
+ * <b>Note:</b> Since release 2.0, a window is limited to contain at most
+ * one page. If a page exist in the window when this method is used, then
+ * another window is created for the new page.  Callers are strongly
+ * recommended to use the <code>IWorkbench.openPerspective</code> APIs to
+ * programmatically show a perspective.
+ * </p>
+ * 
  * @param input the page input, or <code>null</code> if there is no current input.
  *		This is used to seed the input for the new page's views.
  * @return the new workbench window
- * @exception WorkbenchException if a new window and page could not be opened
+ * @exception WorkbenchException if a page could not be opened
  * 
- * @deprecated As of 2.0, the explicit creation of workbench pages in a 
- * 		window is discouraged
- * @see IWorkbench#openPage(String)
+ * @see IWorkbench#openPerspective
  */
 public IWorkbenchPage openPage(IAdaptable input)
 	throws WorkbenchException;

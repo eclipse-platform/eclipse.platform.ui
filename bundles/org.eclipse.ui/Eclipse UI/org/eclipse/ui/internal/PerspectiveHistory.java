@@ -1,35 +1,28 @@
 package org.eclipse.ui.internal;
 
-import java.text.Collator;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import java.util.*;
 
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.ui.*;
 
 /**
- * This is used to store the MRU list of perspectives.
+ * This is used to store the most recently used (MRU) list
+ * of perspectives for the entire workbench.
  */
 public class PerspectiveHistory {
-
-	final static private int DEFAULT_DEPTH = 7;
+	
+	private static final int DEFAULT_DEPTH = 50;
+	
 	private ArrayList shortcuts;
-	private ArrayList sortedShortcuts;
 	private IPerspectiveRegistry reg; 
 	private ListenerList listeners = new ListenerList();
 
-	private Comparator comparator = new Comparator() {
-		private Collator collator = Collator.getInstance();
-		
-		public int compare(Object ob1, Object ob2) {
-			IPerspectiveDescriptor d1 = (IPerspectiveDescriptor)ob1;
-			IPerspectiveDescriptor d2 = (IPerspectiveDescriptor)ob2;
-			return collator.compare(d1.getLabel(), d2.getLabel());
-		}
-	};
-	
 	public PerspectiveHistory(IPerspectiveRegistry reg) {
-		shortcuts = new ArrayList(DEFAULT_DEPTH);
-		sortedShortcuts = new ArrayList(DEFAULT_DEPTH);
+		this.shortcuts = new ArrayList(DEFAULT_DEPTH);
 		this.reg = reg;
 	}
 
@@ -41,8 +34,8 @@ public class PerspectiveHistory {
 		listeners.remove(l);
 	}	
 	
-	public void fireChange() {
-		Object [] array = listeners.getListeners();
+	private void fireChange() {
+		Object[] array = listeners.getListeners();
 		for (int i = 0; i < array.length; i++) {
 			IPropertyListener element = (IPropertyListener)array[i];
 			element.propertyChanged(this, 0);
@@ -50,23 +43,16 @@ public class PerspectiveHistory {
 	}
 	
 	public void restoreState(IMemento memento) {
-		// Read the shortcuts.
 		IMemento [] children = memento.getChildren("desc");
-		for (int x = 0; x < children.length; x ++) {
-			IMemento childMem = children[x];
-			String id = childMem.getID();
-			IPerspectiveDescriptor desc = reg.findPerspectiveWithId(id);
+		for (int i = 0; i < children.length && i < DEFAULT_DEPTH; i++) {
+			IPerspectiveDescriptor desc =
+				reg.findPerspectiveWithId(children[i].getID());
 			if (desc != null) 
 				shortcuts.add(desc);
 		}
-		
-		// Create sorted shortcuts.
-		sortedShortcuts = (ArrayList)shortcuts.clone();
-		Collections.sort(sortedShortcuts, comparator);
 	}
 	
 	public void saveState(IMemento memento) {
-		// Save the shortcuts.
 		Iterator iter = shortcuts.iterator();
 		while (iter.hasNext()) {
 			IPerspectiveDescriptor desc = (IPerspectiveDescriptor)iter.next();
@@ -81,27 +67,26 @@ public class PerspectiveHistory {
 	}
 	
 	public void add(IPerspectiveDescriptor desc) {
-		// If the new desc is already in the shortcut list, just return.
-		if (sortedShortcuts.contains(desc))
+		// Avoid duplicates
+		if (shortcuts.contains(desc))
 			return;
-			
-		// Add desc to shortcut lists.
-		shortcuts.add(0, desc); // insert at top as most recent
 
-		// If the shortcut list is too long then remove the oldest ones.
+		// If the shortcut list will be too long, remove oldest ones			
 		int size = shortcuts.size();
 		int preferredSize = DEFAULT_DEPTH;
-		while (size > preferredSize) {
-			shortcuts.remove(size - 1);
-			-- size;
+		while (size >= preferredSize) {
+			size--;
+			shortcuts.remove(size);
 		}
-
-		updateSortedShortcuts();
+		
+		// Insert at top as most recent
+		shortcuts.add(0, desc);
 		fireChange();
 	}
 	
 	public void refreshFromRegistry() {
 		boolean change = false;
+		
 		Iterator iter = shortcuts.iterator();
 		while (iter.hasNext()) {
 			IPerspectiveDescriptor desc = (IPerspectiveDescriptor)iter.next();
@@ -110,22 +95,29 @@ public class PerspectiveHistory {
 				change = true;
 			}
 		}
-		if (change) {
-			updateSortedShortcuts();
+		
+		if (change)
 			fireChange();
-		}
 	}
 
-	private void updateSortedShortcuts() {
-		sortedShortcuts = (ArrayList)shortcuts.clone();
-		Collections.sort(sortedShortcuts, comparator);
-	}
-			
 	/**
-	 * Returns an array list of IPerspectiveDescriptor objects.
+	 * Copy the requested number of items from the history into
+	 * the destination list at the given index.
+	 * 
+	 * @param dest destination list to contain the items
+	 * @param destStart index in destination list to start copying items at
+	 * @param count number of items to copy from history
+	 * @return the number of items actually copied
 	 */
-	public ArrayList getItems() {
-		return sortedShortcuts;
-	}
+	public int copyItems(List dest, int destStart, int count) {
+		int itemCount = count;
+		if (itemCount > shortcuts.size())
+			itemCount = shortcuts.size();
+			
+		for (int i = 0; i < itemCount; i++)
+			dest.add(destStart + i, shortcuts.get(i));
+			
+		return itemCount;
+	} 
 }
 

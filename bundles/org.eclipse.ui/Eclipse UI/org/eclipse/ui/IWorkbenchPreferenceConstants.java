@@ -10,7 +10,7 @@ package org.eclipse.ui;
  */
 public interface IWorkbenchPreferenceConstants {
 	
-	/*
+	/**
 	 * A named preference for whether to show an editor when its
 	 * input file is selected in the Navigator (and vice versa).
 	 * <p>
@@ -27,6 +27,8 @@ public interface IWorkbenchPreferenceConstants {
 	 * by <code>OPEN_PERSPECTIVE_WINDOW, OPEN_PERSPECTIVE_PAGE and 
 	 * OPEN_PERSPECTIVE_REPLACE</code>.
 	 * </p>
+	 * 
+	 * @deprecated How a perspective is opened is dependent on user's current context instead of one global preference
 	 */
 	public static final String OPEN_NEW_PERSPECTIVE = "OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
 	
@@ -39,6 +41,7 @@ public interface IWorkbenchPreferenceConstants {
 	 * by <code>OPEN_PERSPECTIVE_WINDOW, OPEN_PERSPECTIVE_PAGE and 
 	 * OPEN_PERSPECTIVE_REPLACE</code>.
 	 * </p>
+	 * @deprecated Workbench no longer supports alternate key modifier to open a new perspective.
 	 */
 	public static final String ALTERNATE_OPEN_NEW_PERSPECTIVE =
 		"ALTERNATE_OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
@@ -51,6 +54,7 @@ public interface IWorkbenchPreferenceConstants {
 	 * by <code>OPEN_PERSPECTIVE_WINDOW, OPEN_PERSPECTIVE_PAGE and 
 	 * OPEN_PERSPECTIVE_REPLACE</code>.
 	 * </p>
+	 * @deprecated Workbench no longer supports shift key modifier to open a new perspective.
 	 */
 	public static final String SHIFT_OPEN_NEW_PERSPECTIVE =
 		"SHIFT_OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
@@ -70,18 +74,24 @@ public interface IWorkbenchPreferenceConstants {
 	/**
 	 * A preference value indicating that an action should open a new 
 	 * perspective in a new window.
+	 * 
+	 * @deprecated How a perspective is opened is dependent on user's current context instead of one global preference
 	 */
 	public static final String OPEN_PERSPECTIVE_WINDOW = "OPEN_PERSPECTIVE_WINDOW"; //$NON-NLS-1$
 	
 	/**
 	 * A preference value indicating that an action should open a new 
 	 * perspective in a new page.
+	 * 
+	 * @deprecated How a perspective is opened is dependent on user's current context instead of one global preference
 	 */
 	public static final String OPEN_PERSPECTIVE_PAGE = "OPEN_PERSPECTIVE_PAGE"; //$NON-NLS-1$
 	
 	/**
 	 * A preference value indicating that an action should open a new 
 	 * perspective by replacing the current perspective.
+	 * 
+	 * @deprecated How a perspective is opened is dependent on user's current context instead of one global preference
 	 */
 	public static final String OPEN_PERSPECTIVE_REPLACE =
 		"OPEN_PERSPECTIVE_REPLACE"; //$NON-NLS-1$
