@@ -208,6 +208,7 @@ public class CVSDecorationRunnable implements Runnable {
 			}			
 			return new CVSDecoration(format, bindings, null);
 		} catch (CVSException e) {
+			CVSUIPlugin.log(e.getStatus());
 			return new CVSDecoration();
 		}
 	}
