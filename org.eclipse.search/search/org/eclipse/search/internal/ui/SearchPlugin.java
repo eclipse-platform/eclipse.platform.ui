@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -52,6 +53,9 @@ public class SearchPlugin extends AbstractUIPlugin {
 	
 	public static final String SEARCH_PAGE_EXTENSION_POINT= "searchPages"; //$NON-NLS-1$
 	public static final String SORTER_EXTENSION_POINT= "searchResultSorters"; //$NON-NLS-1$
+
+	/** Status code describing an internal error */
+	public static final int INTERNAL_ERROR= 1;
 	
 	private static SearchPlugin fgSearchPlugin;
 			
@@ -298,6 +302,10 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 */	
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
+	}
+
+	public static void log(Throwable e) {
+		log(new Status(IStatus.ERROR, SearchUI.PLUGIN_ID, INTERNAL_ERROR, SearchMessages.getString("SearchPlugin.internal_error"), e)); //$NON-NLS-1$
 	}
 
 	/**
