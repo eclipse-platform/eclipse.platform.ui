@@ -105,6 +105,7 @@ public interface IWorkbenchConstants {
 	public static final String TAG_RELATIONSHIP = "relationship"; //$NON-NLS-1$
 	public static final String TAG_RATIO = "ratio"; //$NON-NLS-1$
 	public static final String TAG_ACTIVE_PAGE_ID = "activePageID"; //$NON-NLS-1$
+	public static final String TAG_EXPANDED = "expanded"; //$NON-NLS-1$
 	public static final String TAG_PAGE = "page"; //$NON-NLS-1$
 	public static final String TAG_LABEL = "label"; //$NON-NLS-1$
 	public static final String TAG_CONTENT = "content"; //$NON-NLS-1$
@@ -176,7 +177,14 @@ public interface IWorkbenchConstants {
 	public static final String TAG_HISTORY_LABEL = "historyLabel";//$NON-NLS-1$
 	public static final String TAG_LOCKED = "locked";//$NON-NLS-1$
 	public static final String TAG_OPEN_MODE = "openMode"; //$NON-NLS-1$
-	public static final String TAG_STARTUP = "startup";//$NON-NLS-1$
+	public static final String TAG_STARTUP = "startup"; //$NON-NLS-1$
+	public static final String TAG_FAST_VIEW_SIDE = "fastViewLocation"; //$NON-NLS-1$
+	
+	//Progress indicator
+	public static final String SHOW_PROGRESS_INDICATOR = "showProgressIndicator";	 //$NON-NLS-1$
+	
+	//Fonts
+	public static final String SMALL_FONT = "org.eclipse.ui.smallFont"; //$NON-NLS-1$
 	public static final String TAG_THEME = "theme";//$NON-NLS-1$	
 	public static final String TAG_FIXED = "fixed";//$NON-NLS-1$	
 }

@@ -158,12 +158,7 @@ void setRatio(float newRatio) {
 	if (newRatio < 0.0 || newRatio > 1.0) return;
 	ratio = newRatio;
 }
-/**
- * @see IPartDropTarget::targetPartFor
- */
-public LayoutPart targetPartFor(LayoutPart dragSource) {
-	return null;
-}
+
 private void widgetSelected(int x, int y, int width, int height) {
 	LayoutTree root = rootContainer.getLayoutTree();
 	LayoutTreeNode node = root.findSash(this);

@@ -9,9 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.preference;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
@@ -105,6 +107,11 @@ protected void doLoadDefault() {
 protected void doStore() {
 	PreferenceConverter.setValue(getPreferenceStore(), getPreferenceName(), colorSelector.getColorValue());
 }
+
+public ColorSelector getColorSelector() {
+	return colorSelector;
+}
+
 /**
  * Returns the change button for this field editor.
  *
@@ -113,6 +120,12 @@ protected void doStore() {
 protected Button getChangeControl(Composite parent) {
 	if (colorSelector == null) {
 		colorSelector = new ColorSelector(parent);
+		colorSelector.addListener(new IPropertyChangeListener() {
+			// forward the property change of the color selector
+			public void propertyChange(PropertyChangeEvent event) {
+				ColorFieldEditor.this.fireValueChanged(event.getProperty(), event.getOldValue(), event.getNewValue());
+			}
+		});
 	} else {
 		checkParent(colorSelector.getButton(), parent);
 	}	

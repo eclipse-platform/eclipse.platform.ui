@@ -294,20 +294,52 @@ protected void configureShell(Shell shell) {
 		shell.setMenuBar(menuBarManager.createMenuBar((Decorations)shell));
 	}
 
-	// we need a special layout
-	shell.setLayout(new ApplicationWindowLayout());
-
-	if (! "carbon".equals(SWT.getPlatform())) //$NON-NLS-1$
+	shell.setLayout(getLayout());
+	if (showTopSeperator()) //$NON-NLS-1$
 		 seperator1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 
-	// will create either a cool bar or a tool bar
+	createTrimWidgets(shell);
+}
+
+/**
+ * Create the widgets around the work area.
+ * @param parent
+ */
+protected void createTrimWidgets(Shell parent){
+// will create either a cool bar or a tool bar
 	if (toolBarManager != null) {
-		createToolBarControl(shell);
+		createToolBarControl(parent);
 	}
 	if (coolBarManager != null) {
-		createCoolBarControl(shell);
+		createCoolBarControl(parent);
 	}
 	
+	if (statusLineManager != null) {
+		statusLineManager.createControl(parent);
+	}
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.jface.window.Window#getLayout()
+ */
+protected Layout getLayout() {
+	return new ApplicationWindowLayout();
+}
+
+
+/**
+ * Return whether or not the top seperator is being shown.
+ * @return boolean
+ */
+protected boolean showTopSeperator() {
+	return ! "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
+}
+
+/**
+ * Create the status line if required.
+ * @param shell
+ */
+protected void createStatusLine(Shell shell) {
 	if (statusLineManager != null) {
 		statusLineManager.createControl(shell);
 	}
@@ -362,9 +394,9 @@ protected CoolBarManager createCoolBarManager(int style) {
  * </p>
  * @return a Control
  */
-protected Control createToolBarControl(Shell shell) {
+protected Control createToolBarControl(Composite parent) {
 	if (toolBarManager instanceof ToolBarManager) {
-		return ((ToolBarManager)toolBarManager).createControl(shell);
+		return ((ToolBarManager)toolBarManager).createControl(parent);
 	} 
 	return null;
 }
@@ -378,9 +410,9 @@ protected Control createToolBarControl(Shell shell) {
  * @return an instance of <code>CoolBar</code>
  * @since 3.0
  */
-protected Control createCoolBarControl(Shell shell) {
+protected Control createCoolBarControl(Composite composite) {
 	if (coolBarManager instanceof CoolBarManager) {
-		return ((CoolBarManager)coolBarManager).createControl(shell);
+		return ((CoolBarManager)coolBarManager).createControl(composite);
 	}
 	return null;
 }

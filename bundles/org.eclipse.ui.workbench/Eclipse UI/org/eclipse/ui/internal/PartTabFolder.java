@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
  *      - Fix for bug 10025 - Resizing views should not use height ratios
 **********************************************************************/
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -20,15 +21,27 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.ColorSchemeService;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2;
+import org.eclipse.swt.custom.CTabFolderCloseAdapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabFolderListener;
-import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.CTabFolderMinMaxAdapter;
+import org.eclipse.swt.custom.CTabItem2;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -37,17 +50,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.window.Window;
-
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.UIJob;
-
+import org.eclipse.ui.internal.dnd.AbstractDragSource;
+import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.dnd.IDragOverListener;
+import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
@@ -55,15 +66,23 @@ import org.eclipse.ui.internal.themes.ITabThemeDescriptor;
 import org.eclipse.ui.internal.themes.IThemeDescriptor;
 import org.eclipse.ui.internal.themes.TabThemeDescriptor;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
+import org.eclipse.ui.progress.UIJob;
 
-public class PartTabFolder extends LayoutPart implements ILayoutContainer, IPropertyListener {
+public class PartTabFolder extends LayoutPart implements ILayoutContainer, IPropertyListener, IWorkbenchDragSource {
+	
+	private static final int STATE_MINIMIZED = 0;
+	private static final int STATE_RESTORED = 1;
+	private static final int STATE_MAXIMIZED = 2;
+	
 	private static int tabLocation = -1; // Initialized in constructor.
 
-	private CTabFolder tabFolder;
+	private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
+
+	private CTabFolder2 tabFolder;
 	private Map mapTabToPart = new HashMap();
 	private LayoutPart current;
-	private Map mapPartToDragMonitor = new HashMap();
 	private boolean assignFocusOnSelection = true;
+	private int viewState = STATE_RESTORED;
 	private WorkbenchPage page;
 
 	// inactiveCurrent is only used when restoring the persisted state of
@@ -72,20 +91,68 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	private Composite parent;
 	private boolean active = false;
 
+	/**
+	 * Makes changes in the minimize state be exposed in the tab folder 
+	 */
+	IChangeListener stateListener = new IChangeListener() {
+		public void update(boolean changed) {
+		}
+	};
+	
+	/**
+	 * Sets the minimized state based on the state of the tab folder
+	 */
+	CTabFolderMinMaxAdapter expandListener = new CTabFolderMinMaxAdapter() {
+		
+		public void minimize(CTabFolderEvent event) {
+			setState(STATE_MINIMIZED);	
+		}
+		
+		public void restore(CTabFolderEvent event) {
+			setState(STATE_RESTORED);
+		}
+		
+		public void maximize(CTabFolderEvent event) {
+			setState(STATE_MAXIMIZED);
+		}
+	};
+	
 	// listen for mouse down on tab to set focus.
 	private MouseListener mouseListener = new MouseAdapter() {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseDoubleClick(MouseEvent e) {
+//
+//			if (current instanceof PartPane) {
+//				WorkbenchPage page = ((PartPane) current).getPage();
+//				if (current instanceof ViewPane) {
+//					if (page.isZoomed()) {
+//						setState(STATE_RESTORED);
+//					} else {
+//						setState(STATE_MAXIMIZED);
+//					}
+//				}
+//			}
+
+		}
+
 		public void mouseDown(MouseEvent e) {
-				// PR#1GDEZ25 - If selection will change in mouse up ignore mouse down.
-		// Else, set focus.
-	CTabItem newItem = tabFolder.getItem(new Point(e.x, e.y));
+			// PR#1GDEZ25 - If selection will change in mouse up ignore mouse down.
+			// Else, set focus.
+			CTabItem2 newItem = tabFolder.getItem(new Point(e.x, e.y));
 			if (newItem != null) {
-				CTabItem oldItem = tabFolder.getSelection();
+				CTabItem2 oldItem = tabFolder.getSelection();
 				if (newItem != oldItem)
 					return;
 			}
-			if (PartTabFolder.this.current != null)
+			if (PartTabFolder.this.current != null) {
 				PartTabFolder.this.current.setFocus();
+				//tabFolder.setBorderVisible(true);
+			}
 		}
+
 	};
 
 	private class TabInfo {
@@ -123,13 +190,12 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 					IPreferenceConstants.VIEW_TAB_POSITION);
 
 	}
-	
 	/**
 	 * Add a part at an index.
 	 */
-	public void add(String name, int index, LayoutPart part) {
+	public void add(String name, int index, LayoutPart part) {		
 		if (active && !(part instanceof PartPlaceholder)) {
-			CTabItem tab = createPartTab(part, name, null, index);
+			CTabItem2 tab = createPartTab(part, name, null, index);
 			index = tabFolder.indexOf(tab);
 			setSelection(index);
 		} else {
@@ -146,13 +212,12 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 				part.setContainer(this);
 		}
 	}
-
 	/**
 	 * Add a part at an index. Also use Image
 	 */
 	public void add(String name, int index, LayoutPart part, Image partImage) {
 		if (active && !(part instanceof PartPlaceholder)) {
-			CTabItem tab = createPartTab(part, name, partImage, index);
+			CTabItem2 tab = createPartTab(part, name, partImage, index);
 			index = tabFolder.indexOf(tab);
 			setSelection(index);
 		} else {
@@ -199,9 +264,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		//   from existing attributes?
 		// @issue this says to show the border only if there are no items, but 
 		//   in this case the folder should not be visible anyway
-		if (tabThemeDescriptor != null)
-			return (mapTabToPart.size() < 1);
-		return mapTabToPart.size() <= 1;
+//		if (tabThemeDescriptor != null)
+//			return (mapTabToPart.size() < 1);
+//		return mapTabToPart.size() <= 1;
+		return false;
 	}
 	private TabInfo[] arrayAdd(TabInfo[] array, TabInfo item, int index) {
 
@@ -251,7 +317,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	/**
 	 * Set the default bounds of a page in a CTabFolder.
 	 */
-	protected static Rectangle calculatePageBounds(CTabFolder folder) {
+	protected static Rectangle calculatePageBounds(CTabFolder2 folder) {
 		if (folder == null)
 			return new Rectangle(0, 0, 0, 0);
 		Rectangle bounds = folder.getBounds();
@@ -262,6 +328,17 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		bounds.height = offset.height;
 		return bounds;
 	}
+	
+	private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+			if (IPreferenceConstants.VIEW_TAB_POSITION.equals(propertyChangeEvent.getProperty()) && tabFolder != null) {
+				int tabLocation = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION); 
+				int style = SWT.CLOSE | SWT.BORDER | tabLocation;
+				tabFolder.setStyle(style);
+			}
+		}
+	};	
+	
 	public void createControl(Composite parent) {
 
 		if (tabFolder != null)
@@ -269,16 +346,25 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 
 		// Create control.	
 		this.parent = parent;
-
+		
+		preferenceStore.addPropertyChangeListener(propertyChangeListener);
+		int tabLocation = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION); 
+		
+		// TODO probably won't work, given the code above..
 		if (tabPosition == -1) {
 			if (tabThemeDescriptor != null)
 				tabPosition = tabThemeDescriptor.getTabPosition();
 			else
 				tabPosition = tabLocation;
 		}
-
-		tabFolder = new CTabFolder(parent, tabPosition | SWT.BORDER);
-
+		
+		tabFolder = new CTabFolder2(parent, tabLocation | SWT.BORDER | SWT.CLOSE);
+		//tabFolder.setBorderVisible(true);
+		// set basic colors
+		ColorSchemeService.setTabColors(tabFolder);
+		// draw a gradient for the selected tab
+		drawGradient(false);
+		
 		if (tabThemeDescriptor != null) {
 			useThemeInfo();
 		}
@@ -306,8 +392,103 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		// listen for mouse down on tab to set focus.
 		tabFolder.addMouseListener(this.mouseListener);
 
+		tabFolder.addListener(SWT.MenuDetect, new Listener() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+			 */
+			public void handleEvent(Event event) {
+				LayoutPart part = PartTabFolder.this.current;
+				if (part instanceof PartPane) {
+					((PartPane) part).showPaneMenu(tabFolder, new Point(event.x, event.y));
+				}
+
+			}
+		});
+
+		tabFolder.addCTabFolderCloseListener(new CTabFolderCloseAdapter() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.custom.CTabFolderCloseAdapter#itemClosed(org.eclipse.swt.custom.CTabFolderEvent)
+			 */
+			public void itemClosed(CTabFolderEvent event) {
+				LayoutPart item = (LayoutPart) mapTabToPart.get(event.item);
+				if (item instanceof ViewPane)
+					 ((ViewPane) item).doHide();
+				//remove(item);
+			}
+		});
+				
+		DragUtil.addDragSource(tabFolder, new AbstractDragSource() {
+
+			public Object getDraggedItem(Point position) {
+				Point localPos = tabFolder.toControl(position);
+				CTabItem2 tabUnderPointer = tabFolder.getItem(localPos);
+				
+				if (tabUnderPointer == null) {
+					return null;
+				}
+				
+				return mapTabToPart.get(tabUnderPointer);
+			}
+
+			public Rectangle getDragRectangle(Object draggedItem) {
+				return DragUtil.getDisplayBounds(tabFolder);
+			}
+			
+		});
+		
+		DragUtil.addDragTarget(tabFolder, new IDragOverListener() {
+
+			public IDropTarget drag(Control currentControl, final Object draggedObject, 
+					Point position, Rectangle dragRectangle) {
+				
+				if (!(draggedObject instanceof ViewPane)) {
+					return null;
+				}
+				
+				final ViewPane pane = (ViewPane)draggedObject;
+				
+				Point localPos = tabFolder.toControl(position);
+				final CTabItem2 tabUnderPointer = tabFolder.getItem(localPos);
+				
+				if (tabUnderPointer == null || mapTabToPart.get(tabUnderPointer) == draggedObject) {
+					return null;
+				}
+				
+				return new IDropTarget() {
+
+					public void drop() {
+						if (pane.getContainer() != PartTabFolder.this) { 
+							page.removeFastView(pane.getViewReference());
+							page.getActivePerspective().getPresentation().derefPart(pane);
+							pane.reparent(getParent());
+							add(pane);
+							setSelection(pane);	
+							pane.setFocus();
+						}
+						
+						reorderTab(pane, getTab(pane), tabFolder.indexOf(tabUnderPointer));
+
+						getParent().setRedraw(true);
+					}
+
+					public Cursor getCursor() {
+						return DragCursors.getCursor(DragCursors.CENTER);
+					}
+
+					public Rectangle getSnapRectangle() {
+						if (tabUnderPointer == null) {
+							return Geometry.toDisplay(tabFolder.getParent(), tabFolder.getBounds());
+						}
+						
+						return Geometry.toDisplay(tabFolder, tabUnderPointer.getBounds());
+					}
+				};
+			}
+			
+		});
+		
 		// enable for drag & drop target
-		tabFolder.setData((IPartDropTarget) this);
+		tabFolder.setData(this);
 
 		// Create pages.
 		if (invisibleChildren != null) {
@@ -349,15 +530,20 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 				newPage = indexOf(current);
 			setSelection(newPage);
 		}
+		
+		tabFolder.addCTabFolderMinMaxListener(expandListener);
+		showMinMaxButtons(getContainer() != null);		
+		updateControlState();
 	}
-	private CTabItem createPartTab(LayoutPart part, String tabName, Image tabImage, int tabIndex) {
-		CTabItem tabItem;
+		
+	private CTabItem2 createPartTab(LayoutPart part, String tabName, Image tabImage, int tabIndex) {
+		CTabItem2 tabItem;
 
 		if (tabIndex < 0)
-			tabItem = new CTabItem(this.tabFolder, SWT.NONE);
+			tabItem = new CTabItem2(this.tabFolder, SWT.NONE);
 		else
-			tabItem = new CTabItem(this.tabFolder, SWT.NONE, tabIndex);
-
+			tabItem = new CTabItem2(this.tabFolder, SWT.NONE, tabIndex);
+		
 		if (tabThemeDescriptor != null) {
 			int showInTab = tabThemeDescriptor.getShowInTab();
 
@@ -378,12 +564,16 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		} else {
 			tabItem.setText(tabName);
 		}
+		
+		if (part instanceof PartPane) {
+			tabItem.setImage(((PartPane) part).getPartReference().getTitleImage());
+		}
 
 		mapTabToPart.put(tabItem, part);
-
+		
 		part.createControl(this.parent);
 		part.setContainer(this);
-
+		
 		// Because the container's allow border api
 		// is dependent on the number of tabs it has,
 		// reset the container so the parts can update.
@@ -392,36 +582,17 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 			((LayoutPart) parts.next()).setContainer(this);
 			((LayoutPart) parts.next()).setContainer(this);
 		}
-
+				
 		if (part instanceof PartPane) {
 			WorkbenchPartReference ref =
 				(WorkbenchPartReference) ((PartPane) part).getPartReference();
 			ref.addPropertyListener(this);
 		}
 
+		updateControlBounds();
 		return tabItem;
 	}
-	/**
-	 * Remove the ability to d&d using the tab
-	 *
-	 * See PerspectivePresentation
-	 */
-	public void disableDrag(LayoutPart part) {
-		PartDragDrop partDragDrop = (PartDragDrop) mapPartToDragMonitor.get(part);
-		if (partDragDrop != null) {
-			partDragDrop.dispose();
-			mapPartToDragMonitor.remove(part);
-		}
 
-		// remove d&d on folder when no tabs left
-		if (mapPartToDragMonitor.size() == 1) {
-			partDragDrop = (PartDragDrop) mapPartToDragMonitor.get(this);
-			if (partDragDrop != null) {
-				partDragDrop.dispose();
-				mapPartToDragMonitor.remove(this);
-			}
-		}
-	}
 	/**
 	 * See LayoutPart#dispose
 	 */
@@ -447,13 +618,12 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 
 		Iterator keys = mapTabToPart.keySet().iterator();
 		while (keys.hasNext()) {
-			CTabItem item = (CTabItem) keys.next();
+			CTabItem2 item = (CTabItem2) keys.next();
 			LayoutPart part = (LayoutPart) mapTabToPart.get(item);
 			TabInfo info = new TabInfo();
 			info.tabText = item.getText();
 			info.part = part;
 			newInvisibleChildren[tabFolder.indexOf(item)] = info;
-			disableDrag(part);
 		}
 
 		invisibleChildren = newInvisibleChildren;
@@ -466,50 +636,35 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 
 		mapTabToPart.clear();
 
-		if (tabFolder != null)
+		if (tabFolder != null) {
+			tabFolder.removeCTabFolderMinMaxListener(expandListener);
+			
 			tabFolder.dispose();
+		}
+
 		tabFolder = null;
 
 		active = false;
 	}
-	/**
-	 * Enable the view pane to be d&d via its tab
-	 *
-	 * See PerspectivePresentation::enableDrag
-	 */
-	public void enableDrag(ViewPane pane, IPartDropListener listener) {
-		// make sure its not already registered
-		if (mapPartToDragMonitor.containsKey(pane))
-			return;
 
-		CTabItem tab = getTab(pane);
-		if (tab == null || page.isFixedLayout() || !pane.isMoveable())
-			return;
-
-		CTabPartDragDrop dragSource = new CTabPartDragDrop(pane, this.tabFolder, tab);
-		mapPartToDragMonitor.put(pane, dragSource);
-		dragSource.addDropListener(listener);
-
-		// register d&d on empty tab area the first time thru
-		if (!page.isFixedLayout() && mapPartToDragMonitor.size() == 1) {
-			dragSource = new CTabPartDragDrop(this, this.tabFolder, null);
-			mapPartToDragMonitor.put(this, dragSource);
-			dragSource.addDropListener(listener);
-		}
-	}
 	/**
 	 * Open the tracker to allow the user to move
 	 * the specified part using keyboard.
 	 */
 	public void openTracker(LayoutPart part) {
-		CTabPartDragDrop dnd = (CTabPartDragDrop) mapPartToDragMonitor.get(part);
-		dnd.openTracker();
+		DragUtil.performDrag(part, DragUtil.getDisplayBounds(part.getControl()));
 	}
 	/**
 	 * Gets the presentation bounds.
 	 */
 	public Rectangle getBounds() {
-		return tabFolder.getBounds();
+		if (tabFolder == null) {
+			return new Rectangle(0,0,0,0);
+		}
+		
+		Rectangle result = tabFolder.getBounds();
+				
+		return result;
 	}
 
 	// getMinimumHeight() added by cagatayk@acm.org 
@@ -517,14 +672,35 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	 * @see LayoutPart#getMinimumHeight()
 	 */
 	public int getMinimumHeight() {
+		//return 20;
+		
 		if (current == null || tabFolder == null || tabFolder.isDisposed())
 			return super.getMinimumHeight();
-
-		if (getItemCount() > 1) {
-			Rectangle trim = tabFolder.computeTrim(0, 0, 0, current.getMinimumHeight());
+		
+		if (getItemCount() > 0) {
+			int clientHeight = isMinimized() ? 0 : current.getMinimumHeight();
+			
+			Rectangle trim = tabFolder.computeTrim(0, 0, 0, clientHeight);
 			return trim.height;
 		} else
 			return current.getMinimumHeight();
+	}
+	
+	/**
+	 * Sanity-checks this object, to verify that it is in a valid state.
+	 */
+	private void checkPart() {
+		if (tabFolder != null && !tabFolder.isDisposed()) {
+			Assert.isTrue(tabFolder.getMaximized() == (viewState == STATE_MAXIMIZED));
+			Assert.isTrue(tabFolder.getMinimized() == isMinimized());
+			if (isMinimized()) {
+				Assert.isTrue(getBounds().height == getMinimumHeight());
+			}
+		}
+		
+		if (current != null) {
+			//Assert.isTrue(isMinimized() == current.isVisible());
+		}
 	}
 
 	/**
@@ -547,7 +723,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 			System.arraycopy(children, 0, newChildren, 0, children.length);
 			children = newChildren;
 			for (int nX = 0; nX < count; nX++) {
-				CTabItem tabItem = tabFolder.getItem(nX);
+				CTabItem2 tabItem = tabFolder.getItem(nX);
 				children[index] = (LayoutPart) mapTabToPart.get(tabItem);
 				index++;
 			}
@@ -584,10 +760,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	/**
 	 * Returns the tab for a part.
 	 */
-	private CTabItem getTab(LayoutPart child) {
+	private CTabItem2 getTab(LayoutPart child) {
 		Iterator tabs = mapTabToPart.keySet().iterator();
 		while (tabs.hasNext()) {
-			CTabItem tab = (CTabItem) tabs.next();
+			CTabItem2 tab = (CTabItem2) tabs.next();
 			if (mapTabToPart.get(tab) == child)
 				return tab;
 		}
@@ -606,7 +782,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 
 		Iterator keys = mapTabToPart.keySet().iterator();
 		while (keys.hasNext()) {
-			CTabItem tab = (CTabItem) keys.next();
+			CTabItem2 tab = (CTabItem2) keys.next();
 			LayoutPart part = (LayoutPart) mapTabToPart.get(tab);
 			if (part.equals(item))
 				return tabFolder.indexOf(tab);
@@ -617,13 +793,12 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	/**
 	 * See IVisualContainer#remove
 	 */
-	public void remove(LayoutPart child) {
-
+	public void remove(LayoutPart child) {		
 		if (active && !(child instanceof PartPlaceholder)) {
 
 			Iterator keys = mapTabToPart.keySet().iterator();
 			while (keys.hasNext()) {
-				CTabItem key = (CTabItem) keys.next();
+				CTabItem2 key = (CTabItem2) keys.next();
 				if (mapTabToPart.get(key).equals(child)) {
 					removeTab(key);
 					break;
@@ -638,17 +813,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 			child.setContainer(null);
 		}
 	}
-	private void removeTab(CTabItem tab) {
-		// disable any d&d based on this tab
-		LayoutPart part = (LayoutPart) mapTabToPart.get(tab);
-		if (part != null) {
-			disableDrag(part);
-			if (part instanceof PartPane) {
-				WorkbenchPartReference ref =
-					(WorkbenchPartReference) ((PartPane) part).getPartReference();
-				ref.removePropertyListener(this);
-			}
-		}
+	private void removeTab(CTabItem2 tab) {
 
 		// remove the tab now
 		// Note, that disposing of the tab causes the
@@ -675,7 +840,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	 * as the last tab.
 	 */
 	public void reorderTab(ViewPane pane, int x, int y) {
-		CTabItem sourceTab = getTab(pane);
+		CTabItem2 sourceTab = getTab(pane);
 		if (sourceTab == null)
 			return;
 
@@ -689,7 +854,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 			location.x = x;
 
 		// find the tab under the adjusted location.
-		CTabItem targetTab = tabFolder.getItem(location);
+		CTabItem2 targetTab = tabFolder.getItem(location);
 
 		// no tab under location so move view's tab to end
 		if (targetTab == null) {
@@ -715,33 +880,36 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	/**
 	 * Reorder the tab representing the specified pane.
 	 */
-	private void reorderTab(ViewPane pane, CTabItem sourceTab, int newIndex) {
+	private void reorderTab(ViewPane pane, CTabItem2 sourceTab, int newIndex) {
+		
 		// remember if the source tab was the visible one
 		boolean wasVisible = (tabFolder.getSelection() == sourceTab);
 
 		// create the new tab at the specified index
-		CTabItem newTab;
-		if (newIndex < 0)
-			newTab = new CTabItem(tabFolder, SWT.NONE);
-		else
-			newTab = new CTabItem(tabFolder, SWT.NONE, newIndex);
+		CTabItem2 newTab;
+		if (newIndex < 0) {
+			newTab = new CTabItem2(tabFolder, SWT.NONE);
+		} else {
+			int sourceIdx = indexOf(pane);
+			if (sourceIdx < newIndex) {
+				newIndex += 1;
+			}
+			newTab = new CTabItem2(tabFolder, SWT.NONE, newIndex);
+		}
 
 		// map it now before events start coming in...	
 		mapTabToPart.put(newTab, pane);
 
-		// update the drag & drop
-		CTabPartDragDrop partDragDrop = (CTabPartDragDrop) mapPartToDragMonitor.get(pane);
-		partDragDrop.setTab(newTab);
-
 		// dispose of the old tab and remove it
 		String sourceLabel = sourceTab.getText();
 		Image partImage = sourceTab.getImage();
+		newTab.setImage(partImage);
 
 		mapTabToPart.remove(sourceTab);
 		assignFocusOnSelection = false;
 		sourceTab.dispose();
 		assignFocusOnSelection = true;
-
+		
 		// update the new tab's title and visibility
 		if (tabThemeDescriptor != null) {
 			int showInTab = tabThemeDescriptor.getShowInTab();
@@ -753,6 +921,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		} else {
 			newTab.setText(sourceLabel);
 		}
+		
 		if (wasVisible) {
 			tabFolder.setSelection(newTab);
 			setSelection(pane);
@@ -799,7 +968,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		if (active) {
 			Iterator keys = mapTabToPart.keySet().iterator();
 			while (keys.hasNext()) {
-				CTabItem key = (CTabItem) keys.next();
+				CTabItem2 key = (CTabItem2) keys.next();
 				LayoutPart part = (LayoutPart) mapTabToPart.get(key);
 				if (part == oldChild) {
 					boolean partIsActive = (current == oldChild);
@@ -845,11 +1014,12 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 							(WorkbenchPartReference) ((PartPane) newChild).getPartReference();
 						info.tabText = ref.getRegisteredName();
 					}
-					CTabItem oldItem = tabFolder.getSelection();
-					CTabItem item = createPartTab(newChild, info.tabText, info.partImage, -1);
+					CTabItem2 oldItem = tabFolder.getSelection();
+					CTabItem2 item = createPartTab(newChild, info.tabText, info.partImage, -1);
 					if (oldItem == null) 
 						oldItem = item;
 					int index = tabFolder.indexOf(oldItem);
+					
 					setSelection(index);
 				} else {
 					invisibleChildren[i].part = newChild;
@@ -871,7 +1041,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	public IStatus restoreState(IMemento memento) {
 		// Read the active tab.
 		String activeTabID = memento.getString(IWorkbenchConstants.TAG_ACTIVE_PAGE_ID);
-
+		
 		// Read the page elements.
 		IMemento[] children = memento.getChildren(IWorkbenchConstants.TAG_PAGE);
 		if (children != null) {
@@ -882,9 +1052,9 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 				String partID = childMem.getString(IWorkbenchConstants.TAG_CONTENT);
 				String tabText = childMem.getString(IWorkbenchConstants.TAG_LABEL);
 
-				IViewDescriptor descriptor =
-					WorkbenchPlugin.getDefault().getViewRegistry().find(partID);
-
+				IViewDescriptor descriptor = (IViewDescriptor)WorkbenchPlugin.getDefault().
+					getViewRegistry().find(partID);
+			
 				if (descriptor != null) {
 					if (descriptor.getId().equals(IIntroConstants.INTRO_VIEW_ID))
 						continue; // ignore the intro view
@@ -902,6 +1072,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 				}
 			}
 		}
+		
+		Integer expanded = memento.getInteger(IWorkbenchConstants.TAG_EXPANDED);
+		setState((expanded == null || expanded.intValue() != STATE_MINIMIZED) ? STATE_RESTORED : STATE_MINIMIZED);
+		
 		return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 	}
 	/**
@@ -929,7 +1103,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 			}
 		} else {
 			LayoutPart[] children = getChildren();
-			CTabItem keys[] = new CTabItem[mapTabToPart.size()];
+			CTabItem2 keys[] = new CTabItem2[mapTabToPart.size()];
 			mapTabToPart.keySet().toArray(keys);
 			if (children != null) {
 				for (int i = 0; i < children.length; i++) {
@@ -960,6 +1134,9 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 				}
 			}
 		}
+		
+		memento.putInteger(IWorkbenchConstants.TAG_EXPANDED, (viewState == STATE_MINIMIZED) ? STATE_MINIMIZED : STATE_RESTORED);
+		
 		return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 	}
 	/**
@@ -978,15 +1155,19 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 			return;
 		Rectangle bounds;
 		// @issue as above, the mere presence of a theme should not change the behaviour
-		if ((mapTabToPart.size() > 1)
-			|| ((tabThemeDescriptor != null) && (mapTabToPart.size() >= 1)))
-			bounds = calculatePageBounds(tabFolder);
-		else
-			bounds = tabFolder.getBounds();
-		current.setBounds(bounds);
+//		if ((mapTabToPart.size() > 1)
+//			|| ((tabThemeDescriptor != null) && (mapTabToPart.size() >= 1)))
+//			bounds = calculatePageBounds(tabFolder);
+//		else
+//			bounds = tabFolder.getBounds();
+		current.setBounds(calculatePageBounds(tabFolder));
 		current.moveAbove(tabFolder);
 	}
 
+	public boolean isMinimized() {
+		return viewState == STATE_MINIMIZED;
+	}
+	
 	public void setSelection(int index) {
 		if (!active)
 			return;
@@ -1003,7 +1184,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 			index = mapTabToPart.size() - 1;
 		tabFolder.setSelection(index);
 
-		CTabItem item = tabFolder.getItem(index);
+		CTabItem2 item = tabFolder.getItem(index);
 		LayoutPart part = (LayoutPart) mapTabToPart.get(item);
 		setSelection(part);
 	}
@@ -1021,26 +1202,86 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		current = part;
 		if (current != null) {
 			setControlSize();
-			current.setVisible(true);
+			current.setVisible(!isMinimized());
 		}
 
-		// set the title of the detached window to reflact the active tab
+		// set the title of the detached window to reflect the active tab
 		Window window = getWindow();
 		if (window instanceof DetachedWindow) {
 			if (current == null || !(current instanceof PartPane))
-				window.getShell().setText("");
-			//$NON-NLS-1$
+				window.getShell().setText("");//$NON-NLS-1$
 			else
 				window.getShell().setText(((PartPane) current).getPartReference().getTitle());
 		}
 	}
-	/**
-	 * @see IPartDropTarget::targetPartFor
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWorkbenchDropTarget#addDropTargets(java.util.Collection)
 	 */
-	public LayoutPart targetPartFor(LayoutPart dragSource) {
+	public void addDropTargets(Collection result) {
+		addDropTargets(result, this);
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWorkbenchDragSource#getType()
+	 */
+	public int getType() {
+		return VIEW;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWorkbenchDragSource#isDragAllowed(org.eclipse.swt.graphics.Point)
+	 */
+	public boolean isDragAllowed(Point point) {
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWorkbenchDropTarget#targetPartFor(org.eclipse.ui.internal.IWorkbenchDragSource)
+	 */
+	public LayoutPart targetPartFor(IWorkbenchDragSource dragSource) {
 		return this;
 	}
 
+	/**
+	 * Set the active appearence on the tab folder.
+	 * @param active
+	 */
+	public void setActive(boolean activeState) {
+		drawGradient(activeState);
+	}
+	
+	void drawGradient(boolean activeState) {
+		Color fgColor;
+		Color[] bgColors;
+		int[] bgPercents;
+
+		if (activeState){
+			fgColor = WorkbenchColors.getActiveViewForeground();
+			bgColors = WorkbenchColors.getActiveViewGradient();
+			bgPercents = WorkbenchColors.getActiveViewGradientPercents();
+		} else {
+			fgColor = WorkbenchColors.getActiveViewForeground();
+			bgColors = WorkbenchColors.getActiveNoFocusViewGradient();
+			bgPercents = WorkbenchColors.getActiveNoFocusViewGradientPercents();
+		}		
+		
+		drawGradient(fgColor, bgColors, bgPercents, activeState);	
+	}
+	
+	protected void drawGradient(Color fgColor, Color[] bgColors, int[] bgPercents, boolean active) {
+		tabFolder.setSelectionForeground(fgColor);
+		//tabFolder.setBorderVisible(active);
+		if (bgPercents == null)
+			tabFolder.setSelectionBackground(bgColors[0]);
+		else
+			tabFolder.setSelectionBackground(bgColors, bgPercents, true);
+		tabFolder.update();		
+	}
+	
+	
+	
 	private void useThemeInfo() {
 
 		//	if (tabThemeDescriptor.getSelectedImageDesc() != null)
@@ -1145,7 +1386,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 			if (source instanceof IViewPart) {
 				IViewPart part = (IViewPart) source;
 				PartPane pane = ((ViewSite) part.getSite()).getPane();
-				CTabItem sourceTab = getTab(pane);
+				CTabItem2 sourceTab = getTab(pane);
 				String title = part.getTitle();
 				Image newImage = part.getTitleImage();
 
@@ -1193,7 +1434,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	 * @param image Image
 	 */
 	private void updateImage(final PartPane part, final Image image){
-		final CTabItem item = getTab(part);
+		final CTabItem2 item = getTab(part);
 		if(item != null){
 			UIJob updateJob = new UIJob("Tab Update"){ //$NON-NLS-1$
 				/* (non-Javadoc)
@@ -1209,22 +1450,150 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		}
 	}
 	
+	
+	
 	/**
 	 * Indicate busy state in the supplied partPane.
 	 * @param partPane PartPane.
 	 */
 	public void showBusy(PartPane partPane) {
-		updateImage(
-				partPane,
-				JFaceResources.getImage(ProgressManager.BUSY_OVERLAY_KEY));
+		updateTab(
+			partPane,
+			JFaceResources.getImage(ProgressManager.BUSY_OVERLAY_KEY));
 	}
-
+	
 	/**
 	 * Restore the part to the default.
 	 * @param partPane PartPane
 	 */
 	public void clearBusy(PartPane partPane) {
-		updateImage(partPane,partPane.getPartReference().getTitleImage());
+		updateTab(partPane,partPane.getPartReference().getTitleImage());
+	}
+	
+	/**
+	 * Replace the image on the tab with the supplied image.
+	 * @param part PartPane
+	 * @param image Image
+	 */
+	private void updateTab(PartPane part, final Image image){
+		final CTabItem2 item = getTab(part);
+		if(item != null){
+			UIJob updateJob = new UIJob("Tab Update"){ //$NON-NLS-1$
+				/* (non-Javadoc)
+				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+				 */
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					item.setImage(image);
+					return Status.OK_STATUS;
+				}
+			};
+			updateJob.setSystem(true);
+			updateJob.schedule();
+		}
+			
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.LayoutPart#setContainer(org.eclipse.ui.internal.ILayoutContainer)
+	 */
+	public void setContainer(ILayoutContainer container) {
+		
+		super.setContainer(container);
+
+		if (tabFolder != null) {			
+			showMinMaxButtons(container != null);
+			
+			if (current != null && viewState == STATE_MAXIMIZED) {
+				WorkbenchPage page = ((PartPane) current).getPage();
+				if (!page.isZoomed()) {
+					setState(STATE_RESTORED);
+				}
+			}
+		}
+	}
+	/**
+	 * @param b
+	 */
+	private void showMinMaxButtons(boolean b) {
+		tabFolder.setMinimizeVisible(b);
+		tabFolder.setMaximizeVisible(b);
 	}
 
+	private void setState(int newState) {
+		if (newState == viewState) {
+			return;
+		}
+		
+		int oldState = viewState;
+		
+		viewState = newState;
+		updateControlState();
+		
+		if (current != null) {
+			if (viewState == STATE_MAXIMIZED) {
+				((PartPane) current).doZoom();
+			} else {
+				WorkbenchPage page = ((PartPane) current).getPage();
+				if (page.isZoomed()) {
+					page.zoomOut();
+				}
+			
+				updateControlBounds();
+				
+				if (oldState == STATE_MINIMIZED) {
+					forceLayout();
+				}
+			}
+		}
+	}
+	
+	private void updateControlBounds() {
+		Rectangle bounds = tabFolder.getBounds();
+		int minimumHeight = getMinimumHeight();
+		
+		if (viewState == STATE_MINIMIZED && bounds.height != minimumHeight) {
+			tabFolder.setSize(getMinimumWidth(), minimumHeight);	
+			
+			forceLayout();
+		}
+	}
+	
+	/**
+	 * Forces the layout to be recomputed for all parts
+	 */
+	private void forceLayout() {
+		PartSashContainer cont = (PartSashContainer) getContainer();
+		if (cont != null) {
+			cont.getLayoutTree().setBounds(PartTabFolder.this.parent.getClientArea());
+		}
+	}
+	
+	/**
+	 * Updates this tab folder's widgetry to make it reflect its current minimized/maximized/restored state. 
+	 * This should be called when the controls are first created, and every time the state changes.
+	 *
+	 */
+	private void updateControlState() {
+		if (tabFolder != null && !tabFolder.isDisposed()) {
+			boolean minimized = (viewState == STATE_MINIMIZED);
+			boolean maximized = (viewState == STATE_MAXIMIZED);
+			
+			tabFolder.setMinimized(minimized);
+			tabFolder.setMaximized(maximized);
+			
+			if (current != null) {
+				current.setVisible(!minimized);
+			}
+			
+			updateControlBounds();
+		}
+	}
+
+	public void findSashes(LayoutPart part, ViewPane.Sashes sashes) {
+		ILayoutContainer container = getContainer();
+		
+		if (container != null) {
+			container.findSashes(this, sashes);
+		}
+	}	
 }
+

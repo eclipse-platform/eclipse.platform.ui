@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
-
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
@@ -38,6 +37,7 @@ public class EditorsDropDownAction extends Action {
 	 * Method declared on IAction.
 	 */
 	public void run() {
+		/*
 		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
 		if (page != null) {
 			EditorArea editorArea = (EditorArea) page.getEditorPresentation().getLayoutPart();
@@ -46,5 +46,6 @@ public class EditorsDropDownAction extends Action {
 				((DropDownEditorWorkbook2) workbook).dropDown();
 			}
 		}
+		*/
 	}
 }

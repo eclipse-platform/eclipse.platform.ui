@@ -48,6 +48,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 
 	private Composite editorReuseGroup;
 	private Button reuseEditors;
+	private Button showMultipleEditorTabs;
 	private Button closeEditorsOnExit;
 	private Composite editorReuseIndentGroup;
 	private Composite editorReuseThresholdGroup;
@@ -71,6 +72,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		createEditorHistoryGroup(composite);
 		
 		createSpace(composite);
+		createShowMultipleEditorTabsPref(composite);
 		createCloseEditorsOnExitPref(composite);
 		createEditorReuseGroup(composite);
 		
@@ -84,6 +86,14 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	
 	protected void createSpace(Composite parent) {
 		WorkbenchPreferencePage.createSpace(parent);
+	}
+	
+	protected void createShowMultipleEditorTabsPref(Composite composite) {
+		showMultipleEditorTabs = new Button(composite, SWT.CHECK);
+		showMultipleEditorTabs.setText(WorkbenchMessages.getString("WorkbenchPreference.showMultipleEditorTabsButton")); //$NON-NLS-1$
+		showMultipleEditorTabs.setFont(composite.getFont());
+		showMultipleEditorTabs.setSelection(getPreferenceStore().getBoolean(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS));
+		setButtonLayoutData(showMultipleEditorTabs);
 	}
 	
 	protected void createCloseEditorsOnExitPref(Composite composite) {
@@ -110,6 +120,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	
 	protected void performDefaults() {
 		IPreferenceStore store = getPreferenceStore();
+		showMultipleEditorTabs.setSelection(store.getDefaultBoolean(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS));
 		closeEditorsOnExit.setSelection(store.getDefaultBoolean(IWorkbenchPreferences.SHOULD_CLOSE_EDITORS_ON_EXIT));
 		reuseEditors.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 		dirtyEditorReuseGroup.setEnabled(reuseEditors.getSelection());
@@ -125,6 +136,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();	
+		store.setValue(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS, showMultipleEditorTabs.getSelection());
 		store.setValue(IWorkbenchPreferences.SHOULD_CLOSE_EDITORS_ON_EXIT, closeEditorsOnExit.getSelection());
 
 		// store the reuse editors setting

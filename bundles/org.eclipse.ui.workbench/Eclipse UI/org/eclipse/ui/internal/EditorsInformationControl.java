@@ -11,14 +11,14 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 
 public class EditorsInformationControl
 	extends AbstractTableInformationControl {
@@ -28,6 +28,7 @@ public class EditorsInformationControl
 		int shellStyle,
 		int treeStyle) {
 		super(parent, shellStyle, treeStyle);
+		setBackgroundColor(new Color(parent.getDisplay(), 255, 255, 255));
 	}
 
 	protected TableViewer createTableViewer(Composite parent, int style) {
@@ -61,6 +62,6 @@ public class EditorsInformationControl
 			workbook.setVisibleEditor(editor);
 			editor.setFocus();
 		}
-		dispose();
+		//dispose();
 	}
 }

@@ -246,6 +246,8 @@ private final static void declareImages() {
 	declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_STACK_MASK, PATH_DND+"stack_mask.bmp", true); //$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_OFFSCREEN_SOURCE, PATH_DND+"offscreen_source.bmp", true); //$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_OFFSCREEN_MASK, PATH_DND+"offscreen_mask.bmp", true); //$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOFASTVIEW_SOURCE, PATH_DND+"tofastview_source.bmp", true); //$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOFASTVIEW_MASK, PATH_DND+"tofastview_mask.bmp", true); //$NON-NLS-1$
 }
 
 /**

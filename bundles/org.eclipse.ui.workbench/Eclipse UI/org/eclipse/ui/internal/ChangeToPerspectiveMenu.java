@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -46,6 +44,7 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 	 * 
 	 * @return an <code>ArrayList<code> of perspective items <code>IPerspectiveDescriptor</code>
 	 */
+	/*
 	protected ArrayList getPerspectiveItems() {
 		ArrayList list = super.getPerspectiveItems();
 		IWorkbenchWindow window = getWindow();
@@ -60,6 +59,7 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 		}
 		return list;
 	}
+	*/
 	
 	/* (non-Javadoc)
 	 * @see PerspectiveMenu#run(IPerspectiveDescriptor)

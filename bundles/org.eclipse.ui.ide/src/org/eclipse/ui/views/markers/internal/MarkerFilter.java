@@ -288,6 +288,10 @@ public class MarkerFilter {
 	}
 	
 	IResource[] getResourcesInWorkingSet() {
+		if (workingSet == null) {
+			return new IResource[0];
+		}
+		
 		IAdaptable[] elements = workingSet.getElements();
 		List result = new ArrayList(elements.length);
 		
@@ -409,9 +413,17 @@ public class MarkerFilter {
 		} else if (onResource == ON_ANY_RESOURCE_OF_SAME_PROJECT) {
 			IProject project = resource.getProject();
 			
+			if (project == null) {
+				return false;
+			}
+			
 			for (int i = 0; i < focusResource.length; i++) {
 				IProject selectedProject = focusResource[i].getProject();
-			
+				
+				if (selectedProject == null) {
+					continue;
+				}
+				
 				if (project.equals(selectedProject))
 					return true;
 			}
@@ -438,9 +450,9 @@ public class MarkerFilter {
 
 	/**
 	 * Returns if the given resource is enclosed by a working set element.
-	 * The IContainmentAdapter of each working set element is used for the
-	 * containment test. If there is no IContainmentAdapter for a working 
-	 * set element, a simple resource based test is used. 
+	 * Previous versions of this method used IContainmentAdapter for 
+	 * containment tests. For performance reasons, this is no longer possible.
+	 * Code that relies on this behavior should be updated appropriately.
 	 * 
 	 * @param element resource to test for enclosure by a working set
 	 * 	element 
@@ -449,7 +461,7 @@ public class MarkerFilter {
 	 */
 	private boolean isEnclosed(IResource element) {
 		if (workingSet == null) {
-			return true;
+			return false;
 		}
 		Set workingSetPaths = getWorkingSetAsSetOfPaths();
 		

@@ -41,6 +41,15 @@ public LayoutTree(LayoutPart part) {
 public LayoutPart computeRelation(ArrayList relations) {
 	return part;
 }
+
+public boolean fixedHeight() {
+	if (this.part instanceof PartTabFolder) {
+		return ((PartTabFolder)this.part).isMinimized();
+	}
+	
+	return false;
+}
+
 /**
  * Dispose all Sashs in this tree
  */

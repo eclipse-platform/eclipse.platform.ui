@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
@@ -30,6 +31,85 @@ public class JFaceColors {
 	//Keep a list of the Colors we have allocated seperately
 	//as system colors do not need to be disposed.
 	private static ArrayList allocatedColors = new ArrayList();
+
+	public static int STATUS_PERCENT = 100;
+
+	// declaration of constants use to key various color tables
+	public static String SCHEME_BACKGROUND = "SCHEME_BACKGROUND"; //$NON-NLS-1$
+	public static String SCHEME_FOREGROUND = "SCHEME_FOREGROUND";	 //$NON-NLS-1$
+	public static String SCHEME_TAB_BACKGROUND = "SCHEME_TAB_BACKGROUND"; //$NON-NLS-1$
+	public static String SCHEME_TAB_FOREGROUND = "SCHEME_TAB_FOREGROUND"; //$NON-NLS-1$
+	public static String SCHEME_TAB_INACTIVE_SELECTION_BACKGROUND = "SCHEME_TAB_INACTIVE_SELECTION_BACKGROUND"; //$NON-NLS-1$
+	public static String SCHEME_TAB_SELECTION_FOREGROUND = "SCHEME_TAB_SELECTION_FOREGROUND"; //$NON-NLS-1$
+	public static String SCHEME_TAB_SELECTION_BACKGROUND = "SCHEME_TAB_SELECTION_BACKGROUND"; //$NON-NLS-1$
+	
+	private static Hashtable JFaceDefaultColorMap;
+	private static Hashtable UserColorMap;
+	
+
+	// Define the default Color Scheme mapping
+	// The Color Scheme by default is a mapping of specific OS colors to their use in the IDE
+	private static void initColors(Display d) {
+		int origSize = 7;
+		JFaceDefaultColorMap = new Hashtable(origSize);
+		JFaceDefaultColorMap.put(SCHEME_BACKGROUND, d.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		JFaceDefaultColorMap.put(SCHEME_FOREGROUND, d.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
+		JFaceDefaultColorMap.put(SCHEME_TAB_BACKGROUND, d.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		JFaceDefaultColorMap.put(SCHEME_TAB_FOREGROUND, d.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
+
+		Color inactive_bg;
+		if (SWT.getPlatform() == "win32")
+			inactive_bg = d.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+		else 
+			inactive_bg = d.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND);
+		JFaceDefaultColorMap.put(SCHEME_TAB_INACTIVE_SELECTION_BACKGROUND, inactive_bg);
+		
+		
+		Color bg = d.getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
+		JFaceDefaultColorMap.put(SCHEME_TAB_SELECTION_BACKGROUND, bg);
+		
+		Color fg = d.getSystemColor(SWT.COLOR_BLACK);
+		// currently just using Black as a foreground, so ensure that the background is not also black
+		if (bg.getRed() == 0 && bg.getGreen() == 0 && bg.getBlue() == 0)
+			fg = d.getSystemColor(SWT.COLOR_WHITE);
+		JFaceDefaultColorMap.put(SCHEME_TAB_SELECTION_FOREGROUND, fg);
+		
+		UserColorMap = new Hashtable();
+		// If the user is not using the system settings, fill in a color map for all assignable
+		// user colors.  (See ViewsPreferencePage), for ones which have not been set this color 
+		// map returns null and the code should fall through to the default color map
+		if (!getUseDefaultTheme()) {
+			Color temp;
+			if ((temp = getUserColor(d, SCHEME_TAB_BACKGROUND)) != null)
+				UserColorMap.put(SCHEME_TAB_BACKGROUND, temp);
+			if ((temp = getUserColor(d, SCHEME_TAB_FOREGROUND)) != null)
+				UserColorMap.put(SCHEME_TAB_FOREGROUND, temp);
+			if ((temp = getUserColor(d, SCHEME_TAB_SELECTION_BACKGROUND)) != null)
+				UserColorMap.put(SCHEME_TAB_SELECTION_BACKGROUND, temp);
+			if ((temp = getUserColor(d, SCHEME_TAB_SELECTION_FOREGROUND)) != null)
+				UserColorMap.put(SCHEME_TAB_SELECTION_FOREGROUND, temp);
+			
+		}
+	}
+	
+	/**
+	 * Answer the color saved in the preferences, or <code>null</code> if it was not set.
+	 * 
+	 * @param preferenceName
+	 * @param display
+	 * @return Color   the user color setting
+	 */
+	private static Color getUserColor(Display display, String preferenceName) {
+		IPreferenceStore store = JFacePreferences.getPreferenceStore();
+		if (store == null){
+			return null;
+		} else {
+			RGB rgb = PreferenceConverter.getColor(store, preferenceName);
+			if (rgb != PreferenceConverter.getDefaultColor(store, preferenceName))
+				return new Color(display, rgb);
+		}
+		return null;
+	}
 
 	/**
 	 * Get the Color used for banner backgrounds
@@ -84,9 +164,122 @@ public class JFaceColors {
 	/**
 	 * Get the default color to use for displaying active hyperlinks.
 	 */
+	
 	public static Color getActiveHyperlinkText(Display display) {
-
 		return getColorSetting(display,JFacePreferences.ACTIVE_HYPERLINK_COLOR);
+	}
+	
+	private static Hashtable getColorMap () {
+		if (getUseDefaultTheme()) {
+			return JFaceDefaultColorMap;
+		} else { 
+			return UserColorMap;
+		}
+	} 
+	
+	/**
+	 * 
+	 * Get the Color used for Color Scheme Background.   
+	 * 
+	 * @param display
+	 * @return Color   the color value mapped to the provided color key
+	 */
+	public static Color getSchemeBackground(Display display) {
+		return getColor(display, SCHEME_BACKGROUND);
+	}
+	
+	/**
+	 * Get a Color which maps to the key provided.
+	 *    
+	 * @param display  display to use to create a color if necessary
+	 * @param colorKey key constant for color look-up
+	 * @return Color   the color value mapped to the provided color key
+	 */
+	private static Color getColor(Display display, String colorKey) {
+		if (JFaceDefaultColorMap == null)
+			initColors(display);
+		Color color = (Color)getColorMap().get(colorKey);
+		if (color != null)
+			return color;
+		return getDefaultColor(colorKey);
+		
+	}
+
+	/**
+	 * Get a default Color which maps to the key, as opposed to a user over-ridden color
+	 * 
+	 * @param colorKey
+	 * @return Color   the color value mapped to the provided color key
+	 */
+	public static Color getDefaultColor(String colorKey) {
+		return (Color)JFaceDefaultColorMap.get(colorKey);
+	}
+
+	/**
+	 * 
+	 * Get the Color used for Color Scheme Tab Folder Background.   
+	 * 
+	 * @param display
+	 * @return Color   the color value mapped to the provided color key
+	 */
+	public static Color getTabFolderBackground(Display display) {
+		return getColor(display, SCHEME_TAB_BACKGROUND);
+	}
+	
+	/**
+	 * 
+	 * Get the Color used for Color Scheme Selected Inactive Tab Folder Background.   
+	 * 
+	 * @param display
+	 * @return Color   the color value mapped to the provided color key
+	 */
+	public static Color getTabFolderInactiveSelectionBackground(Display display) {
+		return getColor(display, SCHEME_TAB_INACTIVE_SELECTION_BACKGROUND);
+	}
+
+	/**
+	 * 
+	 * Get the Color used for Color Scheme Selected Tab Folder Background.   
+	 * 
+	 * @param display
+	 * @return Color   the color value mapped to the provided color key
+	 */
+	public static Color getTabFolderSelectionBackground(Display display) {
+		return getColor(display, SCHEME_TAB_SELECTION_BACKGROUND);
+	}
+	
+	/**
+	 * 
+	 * Get the Color used for Color Scheme Selected Tab Folder Foreground.   
+	 * 
+	 * @param display
+	 * @return Color   the color value mapped to the provided color key
+	 */
+	public static Color getTabFolderSelectionForeground(Display display) {
+		return getColor(display, SCHEME_TAB_SELECTION_FOREGROUND);
+	}
+	
+
+	/**
+	 * 
+	 * Get the Color used for Color Scheme Tab Folder Foreground.   
+	 * 
+	 * @param display
+	 * @return Color   the color value mapped to the provided color key
+	 */
+	public static Color getTabFolderForeground(Display display) {
+		return getColor(display, SCHEME_TAB_FOREGROUND);
+	}
+	
+	/**
+	 * 
+	 * Get the Color used for Color Scheme Foreground.   
+	 * 
+	 * @param display
+	 * @return Color   the color value mapped to the provided color key
+	 */
+	public static Color getSchemeForeground(Display display) {
+		return getColorSetting(display,JFacePreferences.SCHEME_FOREGROUND_COLOR);
 	}
 	
 	/**
@@ -122,6 +315,18 @@ public class JFaceColors {
 			allocatedColors.add(color);
 			colorTable.put(preferenceName,color);
 			return color;
+		}
+	}
+	
+	/**
+	 * Get the color setting for the name.
+	 */
+	public static boolean getUseDefaultTheme() {
+		IPreferenceStore store = JFacePreferences.getPreferenceStore();
+		if (store == null){
+			return true;
+		} else {
+			return store.getBoolean(JFacePreferences.USE_DEFAULT_THEME);
 		}
 	}
 	
@@ -167,5 +372,5 @@ public class JFaceColors {
 		if(background != null)
 			control.setBackground(background);
 	}
-		
+	
 }

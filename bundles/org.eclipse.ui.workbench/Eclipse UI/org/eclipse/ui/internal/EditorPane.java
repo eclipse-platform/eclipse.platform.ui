@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
@@ -86,6 +88,25 @@ protected void createTitleBar() {
 public void doHide() {
 	getPage().closeEditor(getEditorReference(), true);
 }
+
+/**
+ * User has requested to close all but the current pane.
+ * Take appropriate action depending on type.
+ */
+public void doHideOthers() {
+	IEditorReference editor = getEditorReference();
+	IEditorReference[] allEditors = getPage().getEditorReferences();
+	IEditorReference[] otherEditors = new IEditorReference[allEditors.length - 1];
+	int j = 0;
+	for (int i = 0; i < allEditors.length; i++) {
+		IEditorReference reference = allEditors[i];
+		if (!reference.equals(editor) && j < otherEditors.length) {
+			otherEditors[j++] = reference;
+		}
+	}
+	getPage().closeEditors(otherEditors, true);
+}
+
 /**
  * Answer the editor part child.
  */
@@ -161,6 +182,21 @@ public void showFocus(boolean inFocus) {
 	else
 		this.workbook.tabFocusHide();
 }
+
+/**
+ * Adds the Close Others menu item.
+ */
+protected void addCloseOthersItem (Menu menu) {
+	MenuItem item = new MenuItem(menu, SWT.NONE);
+	item.setText(WorkbenchMessages.getString("PartPane.closeOthers")); //$NON-NLS-1$
+	item.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			doHideOthers();
+		}
+	});	
+	item.setEnabled(getPage().getEditors().length > 1);
+}
+
 /**
  * Add the Editor and Tab Group items to the Move menu.
  */
@@ -253,4 +289,16 @@ public void showPaneMenu() {
 public void showViewMenu(){
 	//Do nothing. Editors do not have menus
 }
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.LayoutPart#targetPartFor(org.eclipse.ui.internal.IWorkbenchDragSource)
+ */
+public LayoutPart targetPartFor(IWorkbenchDragSource dragSource) {
+	return this;
+}
+
+public int getType() {
+	return EDITOR;
+}
+
 }

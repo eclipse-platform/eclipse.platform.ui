@@ -114,6 +114,16 @@ public void add(LayoutPart child, int relationship, float ratio, LayoutPart rela
 }
 private void addChild(RelationshipInfo info) {
 	LayoutPart child = info.part;
+	
+	// Nasty hack: ensure that all views end up inside a tab folder.
+	// Since the view title is provided by the tab folder, this ensures
+	// that views don't get created without a title tab.
+	if (child instanceof ViewPane) {
+		PartTabFolder folder = new PartTabFolder(page);
+		folder.add(child);
+		child = folder;
+	}
+	
 	children.add(child);
 	
 	if(root == null) {
@@ -407,6 +417,15 @@ public void replace(LayoutPart oldChild, LayoutPart newChild) {
 
 	if (!isChild(oldChild))return;
 		
+	// Nasty hack: ensure that all views end up inside a tab folder.
+	// Since the view title is provided by the tab folder, this ensures
+	// that views don't get created without a title tab.
+	if (newChild instanceof ViewPane) {
+		PartTabFolder folder = new PartTabFolder(page);
+		folder.add(newChild);
+		newChild = folder;
+	}
+	
 	children.remove(oldChild);
 	children.add(newChild);
 

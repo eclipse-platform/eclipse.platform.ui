@@ -205,8 +205,13 @@ import org.eclipse.swt.widgets.*;
 
 		setLayout(new StatusLineLayout());
 
-		fMessageLabel= new CLabel(this, SWT.SHADOW_IN);
-
+		fMessageLabel= new CLabel(this, SWT.NONE);//SWT.SHADOW_IN);
+//		Color[] colors = new Color[2];
+//		colors[0] = parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+//		colors[1] = fMessageLabel.getBackground();
+//		int[] gradient = new int[] {JFaceColors.STATUS_PERCENT};
+//		fMessageLabel.setBackground(colors, gradient);
+		
 		fProgressIsVisible= false;
 		fCancelEnabled= false;
 

@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -24,21 +25,32 @@ public class WorkbenchColors {
 	static private boolean init = false;
 	static private HashMap colorMap;
 	static private HashMap systemColorMap;
+	
+	// colors created for gradients to be disposed on shutdown
+	static private Color activeGradientBlend;
+	static private Color inactiveGradientBlend;
+	
 	static private Color workbenchColors[];
+	static private Color activeEditorForeground;
 	static private Color [] activeViewGradient;
 	static private Color [] deactivatedViewGradient;
 	static private Color [] activeEditorGradient;
 	static private Color [] activeNoFocusEditorGradient;
+	static private Color [] activeNoFocusViewGradient;
 	static private Color [] deactivatedEditorGradient;
+	static private Color activeViewForeground;
 	static private int [] activeViewPercentages;
 	static private int [] deactivatedViewPercentages;
 	static private int [] activeEditorPercentages;
 	static private int [] activeNoFocusEditorPercentages;
+	static private int [] activeNoFocusViewPercentages;
 	static private int [] deactivatedEditorPercentages;
 	static private final String CLR_VIEW_GRAD_START = "clrViewGradStart";//$NON-NLS-1$
 	static private final String CLR_VIEW_GRAD_END = "clrViewGradEnd";//$NON-NLS-1$
 	static private final String CLR_EDITOR_GRAD_START = "clrEditorGradStart";//$NON-NLS-1$
 	static private final String CLR_EDITOR_GRAD_END = "clrEditorGradEnd";//$NON-NLS-1$
+	static private final String CLR_NOFOCUS_EDITOR_GRAD_END = "clrNoFocusEditorGradEnd";//$NON-NLS-1$
+
 /**
  * Dispose all color pre-allocated by the workbench.
  */
@@ -47,6 +59,21 @@ private static void disposeWorkbenchColors() {
 		workbenchColors[i].dispose();
 	}
 }
+
+/**
+ * Returns the active editor foreground.
+ */
+static public Color getActiveEditorForeground() {
+	return activeEditorForeground;
+}
+
+/**
+ * Returns the active view foreground.
+ */
+static public Color getActiveViewForeground() {
+	return activeViewForeground;
+}
+
 /**
  * Returns the active editor gradient.
  */
@@ -61,6 +88,16 @@ static public Color getActiveEditorGradientEnd() {
 	Assert.isNotNull(clr);
 	return clr;
 }
+
+/**
+ * Returns the active no focus editor gradient end color.
+ */
+static public Color getActiveNoFocusEditorGradientEnd() {
+	Color clr = (Color)systemColorMap.get(CLR_NOFOCUS_EDITOR_GRAD_END);
+	Assert.isNotNull(clr);
+	return clr;
+}
+
 /**
  * Returns the active editor gradient percents.
  */
@@ -86,6 +123,18 @@ static public Color [] getActiveNoFocusEditorGradient() {
  */
 static public int [] getActiveNoFocusEditorGradientPercents() {
 	return activeNoFocusEditorPercentages;
+}
+/**
+ * Returns the active no focus editor gradient.
+ */
+static public Color [] getActiveNoFocusViewGradient() {
+	return activeNoFocusViewGradient;
+}
+/**
+ * Returns the active no focus editor gradient percents.
+ */
+static public int [] getActiveNoFocusViewGradientPercents() {
+	return activeNoFocusViewPercentages;
 }
 /**
  * Returns the active gradient for views.
@@ -248,7 +297,14 @@ static public void shutdown() {
 			clr.dispose();
 		}
 	}
-	
+	if (activeGradientBlend != null) {
+		activeGradientBlend.dispose();
+		activeGradientBlend = null;
+	}
+	if (inactiveGradientBlend != null) {
+		inactiveGradientBlend.dispose();
+		inactiveGradientBlend = null;
+	}
 	colorMap.clear();
 	systemColorMap.clear();
 	init = false;
@@ -265,39 +321,74 @@ static public void startup() {
 	colorMap = new HashMap(10);
 	systemColorMap = new HashMap(10);
 
-	initWorkbenchColors(Display.getDefault());
+	Display display = Display.getDefault();
+	initWorkbenchColors(display);
 	// Define active view gradient using same OS title gradient colors.
-	Color clr1 = getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
-	Color clr2 = getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
-	Color clr3 = getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-	systemColorMap.put(CLR_VIEW_GRAD_START, clr1);
-	systemColorMap.put(CLR_VIEW_GRAD_END, clr3);
-	activeViewGradient = new Color[] {clr1, clr2, clr3};
-	activeViewPercentages = new int[] {50, 100};
+	// Color 1 is halfway between the base color (white) and Color 2
+	Color base = getSystemColor(SWT.COLOR_WHITE);
+	Color clr2 = JFaceColors.getTabFolderSelectionBackground(display);
+	Color clr3 = JFaceColors.getTabFolderInactiveSelectionBackground(display);
+	int red, green, blue;
+
+	red = blend(base.getRed(), clr2.getRed());
+	green = blend(base.getGreen(), clr2.getGreen());
+	blue = blend(base.getBlue(), clr2.getBlue());
+	activeGradientBlend = new Color(display, red, green, blue);
+	
+	red = blend(base.getRed(), clr3.getRed());
+	green = blend(base.getGreen(), clr3.getGreen());
+	blue = blend(base.getBlue(), clr3.getBlue());
+	inactiveGradientBlend = new Color(display, red, green, blue);
+		
+	systemColorMap.put(CLR_VIEW_GRAD_START, activeGradientBlend);
+	systemColorMap.put(CLR_VIEW_GRAD_END, clr2);
 
 	// Define active editor gradient using same OS title gradient colors.
-	systemColorMap.put(CLR_EDITOR_GRAD_START, clr1);
-	systemColorMap.put(CLR_EDITOR_GRAD_END, null);	// use widget default background
-	activeEditorGradient = new Color[] {clr1, clr2, null, null};
-	activeEditorPercentages = new int[] {50, 90, 100};
+	systemColorMap.put(CLR_EDITOR_GRAD_START, activeGradientBlend);
+	systemColorMap.put(CLR_EDITOR_GRAD_END, clr2);
+
+	systemColorMap.put(CLR_NOFOCUS_EDITOR_GRAD_END, clr3);
+
+	activeEditorGradient = new Color[] {activeGradientBlend, activeGradientBlend, clr2, clr2};
+	activeEditorPercentages = new int[] {33, 66, 100};
+
+	// Define active editor foreground color
+	activeEditorForeground = JFaceColors.getTabFolderSelectionForeground(Display.getDefault());
 	
 	// Define active no focus editor gradient
-	activeNoFocusEditorGradient = new Color[] {getSystemColor(SWT.COLOR_LIST_BACKGROUND)};
-	activeNoFocusEditorPercentages = new int[0];
+	activeNoFocusEditorGradient = new Color[] {inactiveGradientBlend, inactiveGradientBlend, clr3, clr3};
+	activeNoFocusEditorPercentages = activeEditorPercentages;
+	
+	// Define editor gradient for deactivated window using same OS title gradient colors.
+	deactivatedEditorGradient = new Color[] {inactiveGradientBlend, clr2, null, null};
+	deactivatedEditorPercentages = new int[] {33, 66, 100};
 	
 	// Define view gradient for deactivated window using same OS title gradient colors.
-	clr1 = getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND);
-	clr2 = getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT);
-	clr3 = getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-	deactivatedViewGradient = new Color[] {clr1, clr2, clr3};
-	deactivatedViewPercentages = new int[] {70, 100};
+	activeViewGradient = activeEditorGradient;
+	activeViewPercentages = activeEditorPercentages;
 
-	// Define editor gradient for deactivated window using same OS title gradient colors.
-	deactivatedEditorGradient = new Color[] {clr1, clr2, null, null};
-	deactivatedEditorPercentages = new int[] {70, 95, 100};
+	// Define active no focus view gradient
+	activeNoFocusViewGradient = activeNoFocusEditorGradient;
+	activeNoFocusViewPercentages = activeNoFocusEditorPercentages;
+
+	deactivatedViewGradient = deactivatedEditorGradient;
+	deactivatedViewPercentages = deactivatedEditorPercentages;
+
+	// Define active view foreground color
+	activeViewForeground = activeEditorForeground;
 	
 	// Preload.
 	getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
 	getSystemColor(SWT.COLOR_BLACK);
+}
+
+/**
+ * Blend the two color values returning a value that is halfway between them
+ * @param temp1
+ * @param temp2
+ * @return int   the blended value
+ */
+private static int blend(int temp1, int temp2) {
+	return (Math.abs(temp1 - temp2) / 2) + Math.min(temp1,temp2);
 }
 }

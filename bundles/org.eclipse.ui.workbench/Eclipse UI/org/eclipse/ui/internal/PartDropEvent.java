@@ -17,6 +17,6 @@ public class PartDropEvent {
 	public int cursorX;
 	public int cursorY;
 	public int relativePosition;
-	public LayoutPart dragSource;
-	public LayoutPart dropTarget;
+	public IWorkbenchDragSource dragSource;
+	public IWorkbenchDropTarget dropTarget;
 }

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Sash;
+
 import org.eclipse.ui.IPageLayout;
 
 /**
@@ -28,13 +29,19 @@ public class LayoutTreeNode extends LayoutTree {
 	/* The node children witch may be another node or a leaf */
 	private LayoutTree children[] = new LayoutTree[2];
 	/* The sash's width when vertical and hight on horizontal */
-	private final static int SASH_WIDTH = 3;
+	private final static int SASH_WIDTH = 5;
 /**
  * Initialize this tree with its sash.
  */
 public LayoutTreeNode(LayoutPartSash sash) {
 	super(sash);
 }
+
+public boolean fixedHeight() {
+	return (!children[0].isVisible() || children[0].fixedHeight())
+		&& (!children[1].isVisible() || children[1].fixedHeight());
+}
+
 /**
  * Add the relation ship between the children in the list
  * and returns the left children.
@@ -161,8 +168,10 @@ public Rectangle getBounds() {
 	Rectangle result = new Rectangle(leftBounds.x,leftBounds.y,leftBounds.width,leftBounds.height);
 	if(getSash().isVertical()) {
 		result.width = rightBounds.width + leftBounds.width + sashBounds.width;
+		result.height = Math.max(leftBounds.height, rightBounds.height);
 	} else {
 		result.height = rightBounds.height + leftBounds.height + sashBounds.height;
+		result.width = Math.max(leftBounds.width, rightBounds.width);
 	}
 	return result;
 }
@@ -270,21 +279,49 @@ public void setBounds(Rectangle bounds) {
 	Rectangle leftBounds = new Rectangle(bounds.x,bounds.y,bounds.width,bounds.height);
 	Rectangle rightBounds = new Rectangle(bounds.x,bounds.y,bounds.width,bounds.height);
 	Rectangle sashBounds = new Rectangle(bounds.x,bounds.y,bounds.width,bounds.height);
+	
+	float ratio = getSash().getRatio();
+	
 	if(getSash().isVertical()) {
+		
 		//Work on x and width
-		leftBounds.width = (int)(getSash().getRatio() * bounds.width);
+		leftBounds.width = (int)(ratio * bounds.width);
 		sashBounds.x = leftBounds.x + leftBounds.width;
 		sashBounds.width = SASH_WIDTH;
+		
+		if (children[0].fixedHeight()) {
+			leftBounds.height = children[0].getBounds().height;
+		}
+		
 		rightBounds.x = sashBounds.x + sashBounds.width;
 		rightBounds.width = bounds.width - leftBounds.width - sashBounds.width;
+		
+		if (children[1].fixedHeight()) {
+			rightBounds.height = children[1].getBounds().height;
+		}
+		
 		adjustWidths(bounds, leftBounds, rightBounds, sashBounds);
 	} else {
 		//Work on y and height
-		leftBounds.height = (int)(getSash().getRatio() * bounds.height);
+		if (children[0].fixedHeight()) {
+			leftBounds.height = children[0].getBounds().height;
+		} else {
+			
+			if (children[1].fixedHeight()) {
+				leftBounds.height = bounds.height - children[1].getBounds().height - SASH_WIDTH;
+			} else {
+				leftBounds.height = (int)(ratio * bounds.height);
+			}
+		}
 		sashBounds.y = leftBounds.y + leftBounds.height;
 		sashBounds.height = SASH_WIDTH;
 		rightBounds.y = sashBounds.y + sashBounds.height;
-		rightBounds.height = bounds.height - leftBounds.height - sashBounds.height;
+		
+		if (children[1].fixedHeight()) {
+			rightBounds.height = children[1].getBounds().height;
+		} else {
+			rightBounds.height = bounds.height - leftBounds.height - sashBounds.height;
+		}
 		adjustHeights(bounds, leftBounds, rightBounds, sashBounds);
 	}
 	getSash().setBounds(sashBounds);

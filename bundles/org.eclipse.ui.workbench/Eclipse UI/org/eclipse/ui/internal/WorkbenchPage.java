@@ -26,17 +26,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -50,7 +39,14 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -79,15 +75,14 @@ import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.commands.IWorkbenchPageCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchPageContextSupport;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.part.MultiEditor;
-
 import org.eclipse.ui.internal.commands.ws.WorkbenchPageCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchPageContextSupport;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.part.MultiEditor;
 
 /**
  * A collection of views and editors in a workbench.
@@ -498,7 +493,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		}
 
 		// Notify listeners.
-		window.getShortcutBar().update(true);
+		window.getFastViewBar().update(true);
 		window.firePerspectiveChanged(
 			this,
 			getPerspective(),
@@ -648,10 +643,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		// Update the perspective list and shortcut
 		perspList.swap(oldPersp, newPersp);
 
-		SetPagePerspectiveAction action =
-			(SetPagePerspectiveAction) ((ActionContributionItem) item)
-				.getAction();
-		action.setPerspective(newPersp.getDesc());
+		((PerspectiveBarContributionItem) item).setPerspective(newPersp.getDesc());
 
 		// Install new persp.
 		setPerspective(newPersp);
@@ -733,7 +725,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 				getPerspective(),
 				CHANGE_VIEW_SHOW);
 			// Just in case view was fast.
-			window.getShortcutBar().update(true);
+			window.getFastViewBar().update(true);
 		}
 		return view;
 	}
@@ -771,77 +763,86 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	 * See IWorkbenchPage
 	 */
 	public boolean closeAllSavedEditors() {
-		// If part is added / removed always unzoom.
-		if (isZoomed())
-			zoomOut();
-
-		boolean deactivated = false;
-
-		// Close all editors.
+		// get the Saved editors
 		IEditorReference editors[] = getEditorReferences();
+		IEditorReference savedEditors[] = new IEditorReference[editors.length]; 
+		int j = 0;
 		for (int i = 0; i < editors.length; i++) {
 			IEditorReference editor = editors[i];
-			IWorkbenchPart part = editor.getPart(false);
 			if (!editor.isDirty()) {
-				if (part == activePart) {
-					deactivated = true;
-					setActivePart(null);
-				} else if (lastActiveEditor == part) {
-					lastActiveEditor = null;
-					actionSwitcher.updateTopEditor(null);
-				}
-				getEditorManager().closeEditor(editor);
-				activationList.remove(editor);
-				firePartClosed(editor);
-				disposePart(editor);
+				savedEditors[j++] = editor;
 			}
 		}
-		if (deactivated)
-			activate(activationList.getActive());
-
-		// Notify interested listeners
-		window.firePerspectiveChanged(
-			this,
-			getPerspective(),
-			CHANGE_EDITOR_CLOSE);
-
-		//if it was the last part, close the perspective
-		lastPartClosePerspective();
-
-		// Return true on success.
-		return true;
+		//there are no unsaved editors
+		if (j == 0)
+			return true;
+		IEditorReference[] newSaved = new IEditorReference[j];
+		System.arraycopy(savedEditors, 0, newSaved, 0, j);
+		return closeEditors(newSaved, false);
 	}
+	
 	/**
 	 * See IWorkbenchPage
 	 */
 	public boolean closeAllEditors(boolean save) {
-		// If part is added / removed always unzoom.
+		return closeEditors(getEditorReferences(), save);
+	}
+	
+	boolean closeEditors(IEditorReference[] editorRefs, boolean save) {
+		if (save) {
+			// Intersect the dirty editors with the editors that are closing
+			IEditorPart[] dirty = getDirtyEditors();
+			List intersect = new ArrayList();
+			for (int i = 0; i < editorRefs.length; i++) {
+				IEditorReference reference = editorRefs[i];
+				IEditorPart refPart = reference.getEditor(false);
+				if (refPart != null) {
+					for (int j = 0; j < dirty.length; j++) {
+						if (refPart.equals(dirty[j])) {
+							intersect.add(refPart);
+							break;
+						}
+					}
+				}
+			}
+			// Save parts, exit the method if cancel is pressed.
+			if (intersect.size() > 0) {
+				if (!EditorManager.saveAll(intersect, true, getWorkbenchWindow()))
+					return false;
+			}
+		}
+		
+		// If the user has not cancelled a possible save request 
+		// and if part is added or removed always unzoom.
 		if (isZoomed())
 			zoomOut();
 
-		// Save part.
-		if (save && !getEditorManager().saveAll(true, true))
-			return false;
 
-		// Deactivate part.
-		boolean deactivate = activePart instanceof IEditorPart;
-		if (deactivate)
-			setActivePart(null);
-		lastActiveEditor = null;
-		actionSwitcher.updateTopEditor(null);
-
+		// Deactivate part if the active part is being closed.
+		boolean deactivated = false;
+		for (int i=0 ; i < editorRefs.length ; i++) {
+			IWorkbenchPart part = editorRefs[i].getPart(false);
+			if (part == activePart) {
+				deactivated = true;
+				setActivePart(null);
+			} else if (lastActiveEditor == part) {
+				lastActiveEditor = null;
+				actionSwitcher.updateTopEditor(null);
+			}
+		}
+		
 		// Close all editors.
-		IEditorReference[] editors = getEditorManager().getEditors();
-		getEditorManager().closeAll();
-		for (int i = 0; i < editors.length; i++) {
-			IEditorReference editor = editors[i];
-			activationList.remove(editor);
-			firePartClosed(editor);
-			disposePart(editor);
+		for (int i = 0; i < editorRefs.length; i++) {
+			IEditorReference ref = editorRefs[i];
+			getEditorManager().closeEditor(ref);
+			activationList.remove(ref);
+			firePartClosed(ref);
+			disposePart(ref);
 		}
 
-		if (!window.isClosing() && deactivate)
+		if (!window.isClosing() && deactivated) {
 			activate(activationList.getActive());
+		}
 
 		// Notify interested listeners
 		window.firePerspectiveChanged(
@@ -855,6 +856,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		// Return true on success.
 		return true;
 	}
+	
 	/**
 	 * See IWorkbenchPage#closeEditor
 	 */
@@ -1755,7 +1757,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_HIDE);
 
 		// Just in case view was fast.
-		window.getShortcutBar().update(true);
+		window.getFastViewBar().update(true);
 
 		//if it was the last part, close the perspective
 		lastPartClosePerspective();
@@ -2182,7 +2184,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		persp.removeFastView(ref);
 
 		// Notify listeners.
-		window.getShortcutBar().update(true);
+		window.getFastViewBar().update(true);
 		window.firePerspectiveChanged(
 			this,
 			getPerspective(),
@@ -2657,7 +2659,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 
 		// Update the window
 		window.updateActionSets();
-		window.getShortcutBar().update(true);
+		window.getFastViewBar().update(true);
 
 		updateVisibility(oldPersp, newPersp);
 
@@ -2952,7 +2954,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		if (isFastView(ref)) {
 			// Would be more efficient to just update label of single tool item
 			// but we don't have access to it from here.
-			window.getShortcutBar().update(true);
+			window.getFastViewBar().update(true);
 		}
 	}
 	/**

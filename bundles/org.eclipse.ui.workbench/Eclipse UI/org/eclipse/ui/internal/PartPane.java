@@ -15,10 +15,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.custom.CTabItem2;
+import org.eclipse.swt.custom.ViewForm2;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -37,20 +41,12 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
-
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.util.SafeRunnable;
-
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.WorkbenchPart;
-
 import org.eclipse.ui.internal.misc.UIStats;
+import org.eclipse.ui.part.WorkbenchPart;
 
 
 /**
@@ -58,14 +54,14 @@ import org.eclipse.ui.internal.misc.UIStats;
  * and editor panes.
  */
 public abstract class PartPane extends LayoutPart
-	implements Listener
+	implements Listener, IWorkbenchDragSource
 {
 	public static final String PROP_ZOOMED = "zoomed"; //$NON-NLS-1$
 	private boolean isZoomed = false;
 	private MenuManager paneMenuManager;
 	protected IWorkbenchPartReference partReference;
 	protected WorkbenchPage page;
-	protected ViewForm control;
+	protected ViewForm2 control;
 	
 	public static class Sashes {
 		public Sash left;
@@ -87,6 +83,7 @@ public abstract class PartPane extends LayoutPart
 			addMaximizeMenuItem(menu);		
 			addPinEditorItem(menu);						
 			addCloseMenuItem(menu);	
+			addCloseOthersItem(menu);			
 		}
 	}
 	
@@ -148,6 +145,7 @@ protected void createChildControl() {
 	page.firePartOpened(part[0]);	
 }
 
+
 protected void addRestoreMenuItem (Menu menu) {
 	// add restore item
 	MenuItem item = new MenuItem(menu, SWT.NONE);
@@ -205,6 +203,10 @@ protected void addCloseMenuItem (Menu menu) {
 	});		
 }
 
+protected void addCloseOthersItem (Menu menu) {
+	// do nothing
+}
+
 /**
  * 
  */
@@ -213,7 +215,7 @@ public void createControl(Composite parent) {
 		return;
 
 	// Create view form.	
-	control = new ViewForm(parent, getStyle());
+	control = new ViewForm2(parent, getStyle());
 	control.marginWidth = 0;
 	control.marginHeight = 0;
 
@@ -253,6 +255,7 @@ public void dispose() {
  * Take appropriate action depending on type.
  */
 abstract public void doHide();
+
 /**
  * Zooms in on the part contained in this pane.
  */
@@ -307,20 +310,13 @@ public int getMinimumHeight() {
 	// account for the borders
 	topHeight = control.computeTrim(0, 0, 0, topHeight).height;
 	
-	/* add +1 for highlight line. ViewForm adds this *inside* client area
-	 * even though it's arguably an inset; see ViewForm.layout for details.
-	 */
-	if (top) {
-		topHeight += 1;
-	}
-	
 	return topHeight;
 }
 
 /**
  * Returns the top level SWT Canvas of this Pane. 
  */
-protected ViewForm getPane() {
+protected ViewForm2 getPane() {
 	return control;
 }
 /**
@@ -341,7 +337,7 @@ int getStyle() {
 /**
  * Get the view form.
  */
-protected ViewForm getViewForm() {
+protected ViewForm2 getViewForm() {
 	return control;
 }
 /**
@@ -587,14 +583,13 @@ public IJobChangeListener getJobChangeListener(){
 	};
 	
 }
-	
 	/**
 	 * Set the image to image. item is used for future work where 
 	 * the tab item may be updated.
 	 * @param item
 	 * @param image
 	 */
-	void setImage(CTabItem item, Image image){
+	void setImage(CTabItem2 item, Image image){
 		//Do nothing by default
 	}
 }

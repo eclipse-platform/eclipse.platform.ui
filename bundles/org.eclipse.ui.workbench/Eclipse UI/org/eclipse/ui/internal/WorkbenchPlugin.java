@@ -434,7 +434,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.SELECT_ON_HOVER, false);
 		store.setDefault(IPreferenceConstants.OPEN_AFTER_DELAY, false);
 		store.setDefault(IPreferenceConstants.RECENT_FILES, 4);
-		store.setDefault(IPreferenceConstants.VIEW_TAB_POSITION, SWT.BOTTOM);
+		store.setDefault(IPreferenceConstants.VIEW_TAB_POSITION, SWT.TOP);
 		store.setDefault(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
 		store.setDefault(IPreferenceConstants.EDITOR_TAB_WIDTH, 3); // high
 		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_EMBED);

@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -50,7 +51,9 @@ public class ActionContributionItem extends ContributionItem {
 	 * no image present.
 	 */
 	public static int MODE_FORCE_TEXT = 1;
-	
+
+	/** a string inserted in the middle of text that has been shortened */
+	private static final String ellipsis = "..."; //$NON-NLS-1$
 	private static class ImageCache {
 
 		private class Entry {
@@ -150,7 +153,7 @@ public class ActionContributionItem extends ContributionItem {
 	 * The presentation mode.
 	 */
 	private int mode = 0;
-	
+
 	/**
 	 * The action.
 	 */
@@ -426,7 +429,6 @@ public class ActionContributionItem extends ContributionItem {
 		}
 		return menuItemListener;
 	}
-	
 	/**
 	 * Returns the presentation mode, which is the bitwise-or of the 
 	 * <code>MODE_*</code> constants.  The default mode setting is 0, meaning
@@ -913,5 +915,38 @@ public class ActionContributionItem extends ContributionItem {
 			return image != null;
 		}
 		return false;
+	}
+
+	/**
+	 * Shorten the given text <code>t</code> so that its length doesn't
+	 * exceed the given width. The default implementation replaces characters
+	 * in the center of the original string with an ellipsis ("..."). Override
+	 * if you need a different strategy.
+	 */
+	protected String shortenText(String textValue , ToolItem item) {
+		if (textValue == null)
+			return null;
+
+		GC gc = new GC(item.getDisplay());
+
+		int maxWidth = item.getImage().getBounds().width * 4;
+		
+		if(gc.textExtent(textValue).x < maxWidth) {
+			gc.dispose();
+			return textValue ;
+		}
+		
+		for (int i = textValue.length(); i > 0; i--) {
+			String test = textValue .substring(0, i);
+			test = test + ellipsis;
+			if(gc.textExtent(test).x < maxWidth) {
+				gc.dispose();
+				return test ;
+			}
+				
+		}	
+		gc.dispose();
+		//If for some reason we fall through abort
+		return textValue ;
 	}
 }

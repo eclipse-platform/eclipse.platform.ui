@@ -166,7 +166,11 @@ public void findSashes(LayoutPart pane,PartPane.Sashes sashes) {
 	//Find the sashes around the current editor and
 	//then the sashes around the editor area.
 	super.findSashes(pane,sashes);
-	getRootContainer().findSashes(this,sashes);
+	
+	ILayoutContainer container = getContainer();
+	if (container != null) {
+		container.findSashes(this,sashes);
+	}
 }
 /**
  * Remove all the editors
@@ -346,5 +350,12 @@ public void updateTabList() {
 
 	/* package */ DropTarget getDropTarget() {
 		return dropTarget;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWorkbenchDropTarget#getType()
+	 */ 
+	public int getType() {
+		return EDITOR;
 	}
 }

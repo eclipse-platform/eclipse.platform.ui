@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,20 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
- 
 /**
- * Specifies the target layout part that accepts
- * the source part during drag and drop.
- *
- * @see PartDragDrop
+ * Interface that can receive change notifiecations
+ * from a Model object
  */
-public interface IPartDropTarget {
-/**
- * Return the layout part that would accept
- * the drag source part, or null if not applicable.
- *
- * @return org.eclipse.ui.internal.LayoutPart
- * @param dragSource org.eclipse.ui.internal.LayoutPart
- */
-LayoutPart targetPartFor(LayoutPart dragSource);
+public interface IChangeListener {
+    /**
+     * Called with false when the listener is first
+     * attached to the model, and called with true
+     * every time the model's state changes.
+     */
+	void update(boolean changed);
 }

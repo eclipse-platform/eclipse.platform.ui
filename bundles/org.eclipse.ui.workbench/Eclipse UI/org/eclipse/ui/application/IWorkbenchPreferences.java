@@ -78,6 +78,18 @@ public interface IWorkbenchPreferences {
 	public static String SHOULD_SHOW_STATUS_LINE = "wb.show.status.line"; //$NON-NLS-1$
 
 	/**
+	 * Workbench preference id for whether the workbench should show multiple 
+	 * editor tabs. 
+	 * 
+	 * Boolean-valued: <code>true</code> if editors should show mulitple editor tabs, and 
+	 * <code>false</code> if editors should show a single editor tab (3.0 style)
+	 * <p>
+	 * The default value for this preference is: <code>false</code> (show single editor tab)
+	 * </p>
+	 */
+	public static String SHOW_MULTIPLE_EDITOR_TABS = "wb.show.multiple.editor.tabs"; //$NON-NLS-1$	
+
+	/**
 	 * Workbench preference id for whether workbench windows should have a progress 
 	 * indicator by default. Boolean-valued: <code>true</code> if workbench windows 
 	 * should have a menu bar by default, and <code>false</code> if they
@@ -88,6 +100,18 @@ public interface IWorkbenchPreferences {
 	 */
 	public static String SHOULD_SHOW_PROGRESS_INDICATOR = "wb.show.progress.indicator"; //$NON-NLS-1$
 
+	/**
+	 * Workbench preference id for whether the workbench should show text 
+	 * on the perspective bar. 
+	 * 
+	 * Boolean-valued: <code>true</code>, if editors should show text on the perspective bar,
+	 * <code>false</code> otherwise.
+	 * <p>
+	 * The default value for this preference is: <code>true</code> (show text on the perspective bar)
+	 * </p>
+	 */
+	public static String SHOW_TEXT_ON_PERSPECTIVE_BAR = "wb.show.text.on.perspective.bar"; //$NON-NLS-1$	
+	
 	/**
 	 * Workbench preference id for whether the workbench should attempt to close
 	 * all open editors when the workbench closes. 
