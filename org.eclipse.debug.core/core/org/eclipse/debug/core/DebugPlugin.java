@@ -271,7 +271,7 @@ public class DebugPlugin extends Plugin {
 	 * <b>Clients must never explicitly instantiate a plug-in runtime class.</b>
 	 * </p>
 	 * 
-	 * @param pluginDescriptor the plug-in descriptor for the
+	 * @param descriptor the plug-in descriptor for the
 	 *   debug plug-in
 	 */
 	public DebugPlugin(IPluginDescriptor descriptor) {
@@ -473,7 +473,7 @@ public class DebugPlugin extends Plugin {
 	 * @param launch the launch the process is contained in
 	 * @param process the system process to wrap
 	 * @param label the label assigned to the process
-	 * @param initial values for the attribute map
+	 * @param attributes initial values for the attribute map
 	 * @return the process <code>null</code> can be returned if errors occur dealing with the process factory
 	 * designated to create the process.
 	 * @see IProcess

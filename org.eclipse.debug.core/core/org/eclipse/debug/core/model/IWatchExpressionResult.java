@@ -40,7 +40,7 @@ public interface IWatchExpressionResult {
 	 * evaluation.
 	 *
 	 * @return whether there were any problems.
-	 * @see #getErrors()
+	 * @see #getErrorMessages()
 	 * @see #getException()
 	 */
 	public boolean hasErrors();

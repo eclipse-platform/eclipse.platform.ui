@@ -290,8 +290,8 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		return (String)fAttributes.get(key);
 	}
 	
-	/**
-	 * @see IAdaptable#getAdapter(Class)
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IProcess.class)) {

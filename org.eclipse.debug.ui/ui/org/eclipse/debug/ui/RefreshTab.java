@@ -413,7 +413,6 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 * Refreshes the resources as specified by the given launch configuration.
 	 * 
 	 * @param configuration launch configuration
-	 * @param context context used to expand variables
 	 * @param monitor progress monitor which may be <code>null</code>
 	 * @throws CoreException if an exception occurs while refreshing resources
 	 */

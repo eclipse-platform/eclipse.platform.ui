@@ -210,7 +210,7 @@ public interface IBreakpoint extends IAdaptable {
 	 * persisted. Sets the underlying <code>TRANSIENT</code> attribute on this
 	 * breakpoint's marker to <code>true</code>.
 	 * 
-	 * @param persist whether this breakpoint is to be persisted across
+	 * @param registered whether this breakpoint is to be persisted across
 	 * workspace invocations
 	 * @exception CoreException if unable to set the associated attribute on
 	 *  this breakpoint's underlying marker.

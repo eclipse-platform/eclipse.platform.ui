@@ -105,7 +105,7 @@ public class LaunchConfigurationInfo {
 	 * 
 	 * @return attribute specified by given key or the defaultValue
 	 *  if undefined
-	 * @exception if the attribute with the given key exists
+	 * @throws CoreException if the attribute with the given key exists
 	 *  but is not a <code>String</code>
 	 */
 	protected String getStringAttribute(String key, String defaultValue) throws CoreException {
@@ -131,7 +131,7 @@ public class LaunchConfigurationInfo {
 	 * 
 	 * @return attribute specified by given key or the defaultValue
 	 *  if undefined
-	 * @exception if the attribute with the given key exists
+	 * @throws CoreException if the attribute with the given key exists
 	 *  but is not an <code>int</code>
 	 */
 	protected int getIntAttribute(String key, int defaultValue) throws CoreException {
@@ -157,7 +157,7 @@ public class LaunchConfigurationInfo {
 	 * 
 	 * @return attribute specified by given key or the defaultValue
 	 *  if undefined
-	 * @exception if the attribute with the given key exists
+	 * @throws CoreException if the attribute with the given key exists
 	 *  but is not a <code>boolean</code>
 	 */
 	protected boolean getBooleanAttribute(String key, boolean defaultValue) throws CoreException {
@@ -183,7 +183,7 @@ public class LaunchConfigurationInfo {
 	 * 
 	 * @return attribute specified by given key or the defaultValue
 	 *  if undefined
-	 * @exception if the attribute with the given key exists
+	 * @throws CoreException if the attribute with the given key exists
 	 *  but is not a <code>java.util.List</code>
 	 */
 	protected List getListAttribute(String key, List defaultValue) throws CoreException {
@@ -209,7 +209,7 @@ public class LaunchConfigurationInfo {
 	 * 
 	 * @return attribute specified by given key or the defaultValue
 	 *  if undefined
-	 * @exception if the attribute with the given key exists
+	 * @throws CoreException if the attribute with the given key exists
 	 *  but is not a <code>java.util.Map</code>
 	 */
 	protected Map getMapAttribute(String key, Map defaultValue) throws CoreException {

@@ -71,8 +71,8 @@ public class WatchExpression implements IWatchExpression {
 		fDebugTarget= context.getDebugTarget();
 			
 		IWatchExpressionListener listener= new IWatchExpressionListener() {
-			/**
-			 * @see org.eclipse.debug.core.model.IWatchExpressionListener#watchEvaluationFinished(org.eclipse.debug.core.model.IValue)
+			/* (non-Javadoc)
+			 * @see org.eclipse.debug.core.model.IWatchExpressionListener#watchEvaluationFinished(org.eclipse.debug.core.model.IWatchExpressionResult)
 			 */
 			public void watchEvaluationFinished(IWatchExpressionResult result) {
 				setPending(false);
@@ -84,8 +84,8 @@ public class WatchExpression implements IWatchExpression {
 		delegate.evaluateExpression(getExpressionText(), context, listener);
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.model.IWatchExpression#setExpressionContext(java.lang.Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IWatchExpression#setExpressionContext(org.eclipse.debug.core.model.IDebugElement)
 	 */
 	public void setExpressionContext(IDebugElement context) {
 		fCurrentContext= context;
