@@ -42,6 +42,12 @@
 
 <!-- Extensions -->
 
+	<extension point="org.eclipse.core.resources.markers"
+		id="rejectedPatchMarker" name="RejectedPatchMarker">
+		<super type="org.eclipse.core.resources.taskmarker"/>
+		<persistent value="true"/>
+	</extension>
+
 	<extension point="org.eclipse.ui.editors">
     	<editor id="org.eclipse.compare.CompareEditor"
       		name="%defaultCompareEditor.name"

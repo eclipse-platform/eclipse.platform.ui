@@ -25,7 +25,7 @@ public class Patcher {
 	
 	private static final String DEV_NULL= "/dev/null"; //$NON-NLS-1$
 	
-	//private static final String MARKER_TYPE= "rejectedPatchMarker";
+	private static final String MARKER_TYPE= "org.eclipse.compare.rejectedPatchMarker";
 
 	// diff formats
 	private static final int CONTEXT= 0;
@@ -793,11 +793,12 @@ public class Patcher {
 					file= createPath(container, pp);
 					if (file != null) {
 						updateFile(getRejected(failed), file, pm);
-//						try {
-//							IMarker marker= file.createMarker(MARKER_TYPE);
-//							marker.setAttribute(marker.MESSAGE, "rejected patch");
-//						} catch (CoreException ex) {
-//						}
+						try {
+							IMarker marker= file.createMarker(MARKER_TYPE);
+							marker.setAttribute(marker.MESSAGE, PatchMessages.getString("Patcher.Marker.message"));	//$NON-NLS-1$
+							marker.setAttribute(marker.PRIORITY, IMarker.PRIORITY_HIGH);
+						} catch (CoreException ex) {
+						}
 					}
 				}
 			}
