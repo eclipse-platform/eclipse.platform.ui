@@ -20,9 +20,9 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -72,7 +72,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 /**
  * Allows configuration of the CVS tags that are shown within the workbench.
  */
-public class TagConfigurationDialog extends TitleAreaDialog {
+public class TagConfigurationDialog extends Dialog {
 	
 	// show the resource contained within the roots
 	private TreeViewer cvsResourceTree;
@@ -95,6 +95,12 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 	
 	// enable selecting auto-refresh files
 	private boolean allowSettingAutoRefreshFiles = true;
+	
+	// sizing default hints
+	private final int ALLOWREFRESH_WIDTH = 500;
+	private final int ALLOWREFRESH_HEIGHT = 625;
+	private final int NOREFRESH_WIDTH = 500;
+	private final int NOREFRESH_HEIGHT = 550;
 	
 	// preference keys
 	private final String ALLOWREFRESH_WIDTH_KEY = "AllowRefreshWidth"; //$NON-NLS-1$
@@ -154,8 +160,8 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 	 * @see Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		setTitle(Policy.bind("TagConfigurationDialog.4")); //$NON-NLS-1$
-		setTitleImage(null);
+//		setTitle(Policy.bind("TagConfigurationDialog.4")); //$NON-NLS-1$
+//		setTitleImage(null);
 		Composite shell = new Composite(parent, SWT.NONE);
 		GridData data = new GridData (GridData.FILL_BOTH);		
 		shell.setLayoutData(data);
@@ -183,6 +189,7 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 		cvsResourceTree.setContentProvider(new RemoteContentProvider());
 		cvsResourceTree.setLabelProvider(new WorkbenchLabelProvider());
 		data = new GridData (GridData.FILL_BOTH);
+		data.heightHint = 150;
 		data.horizontalSpan = 1;
 		cvsResourceTree.getTree().setLayoutData(data);
 		if(roots.length==1) {
@@ -215,6 +222,7 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 		
 		final Table table = new Table(comp, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.CHECK);
 		data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = 150;
 		data.horizontalSpan = 1;
 		table.setLayoutData(data);
 		TableLayout layout = new TableLayout();
@@ -293,6 +301,7 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 		cvsDefinedTagsTree.setContentProvider(new WorkbenchContentProvider());
 		cvsDefinedTagsTree.setLabelProvider(new WorkbenchLabelProvider());
 		data = new GridData (GridData.FILL_BOTH);
+		data.heightHint = 100;
 		data.horizontalAlignment = GridData.FILL;
 		data.grabExcessHorizontalSpace = true;
 		cvsDefinedTagsTree.getTree().setLayoutData(data);
@@ -354,6 +363,7 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 			explanation.setText(Policy.bind("TagConfigurationDialog.11")); //$NON-NLS-1$
 			data = new GridData ();
 			data.horizontalSpan = 2;
+			//data.widthHint = 300;
 			explanation.setLayoutData(data);
 			
 			autoRefreshFileList = new org.eclipse.swt.widgets.List(rememberedTags, SWT.BORDER | SWT.MULTI);	 
@@ -415,7 +425,7 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 		}
 			
 		Label seperator = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
-		data = new GridData (GridData.FILL_HORIZONTAL);		
+		data = new GridData (GridData.FILL_BOTH);		
 		data.horizontalSpan = 2;
 		seperator.setLayoutData(data);
 
@@ -736,18 +746,16 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 				height = settings.getInt(ALLOWREFRESH_HEIGHT_KEY);
 				width = settings.getInt(ALLOWREFRESH_WIDTH_KEY);
 			} catch(NumberFormatException e) {
-				Point is = super.getInitialSize();
-				height = is.x;
-				width = is.y;
+				height = ALLOWREFRESH_HEIGHT;
+				width = ALLOWREFRESH_WIDTH;
 			}
 		} else {
 			try {
 				height = settings.getInt(NOREFRESH_HEIGHT_KEY);
 				width = settings.getInt(NOREFRESH_WIDTH_KEY);
 			} catch(NumberFormatException e) {
-				Point is = super.getInitialSize();
-				height = is.x;
-				width = is.y;
+				height = NOREFRESH_HEIGHT;
+				width = NOREFRESH_WIDTH;
 			}
 		}
 		return new Point(width, height);
