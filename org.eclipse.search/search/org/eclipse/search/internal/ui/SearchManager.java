@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.ui;
@@ -52,6 +52,7 @@ public class SearchManager implements IResourceChangeListener {
 	private HashSet fListeners= new HashSet();
 	private LinkedList fPreviousSearches= new LinkedList();
 	private boolean fIsNewSearch= false;
+	private boolean fIsRemoveAll= false;
 	
 	public static SearchManager getDefault() {
 		return fgDefault;
@@ -270,6 +271,16 @@ public class SearchManager implements IResourceChangeListener {
 			return 0;
 	}
 
+	void removeAllResults() {
+		fIsRemoveAll= true;
+		try {
+			SearchPlugin.getWorkspace().getRoot().deleteMarkers(SearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
+		} catch (CoreException ex) {
+			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.deleteMarkers.title"), SearchMessages.getString("Search.Error.deleteMarkers.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			fRemoveAll= false;
+		}
+	}
+
 	void addNewSearch(Search newSearch) {
 		// Clear the viewers
 		Iterator iter= fListeners.iterator();
@@ -342,6 +353,12 @@ public class SearchManager implements IResourceChangeListener {
 			handleNewSearchResult();
 			return;
 		}
+		if (fIsRemoveAll) {
+			handleRemoveAll();
+			fIsRemoveAll= false;
+			return;
+		}
+
 		Iterator iter= fListeners.iterator();
 		while (iter.hasNext())
 			((SearchResultViewer)iter.next()).getControl().setRedraw(false);
