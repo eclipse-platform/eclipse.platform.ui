@@ -7,8 +7,8 @@ package org.eclipse.ui.views.tasklist;
  
 /* package */ class SortDirectionAction extends TaskAction {
 
-	/* direction = true		-> ascending
-	 * direction = false	-> descending */
+	/* direction = true		-> descending
+	 * direction = false	-> ascending */
 	 
 	private boolean direction;
 	/**

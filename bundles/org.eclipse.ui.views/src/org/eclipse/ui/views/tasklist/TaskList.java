@@ -854,11 +854,11 @@ void makeActions() {
 	sortByCreationTimeAction.setText(TaskListMessages.getString("SortByCreationTime.text")); //$NON-NLS-1$
 	sortByCreationTimeAction.setToolTipText(TaskListMessages.getString("SortByCreationTime.tooltip")); //$NON-NLS-1$
 	
-	sortAscendingAction = new SortDirectionAction(this, "sortAscending", true);
+	sortAscendingAction = new SortDirectionAction(this, "sortAscending", false);
 	sortAscendingAction.setText(TaskListMessages.getString("SortAscending.text"));
 	sortAscendingAction.setToolTipText(TaskListMessages.getString("SortAscending.tooltip"));
 
-	sortDescendingAction = new SortDirectionAction(this, "sortDescending", false);
+	sortDescendingAction = new SortDirectionAction(this, "sortDescending", true);
 	sortDescendingAction.setText(TaskListMessages.getString("SortDescending.text"));
 	sortDescendingAction.setToolTipText(TaskListMessages.getString("SortDescending.tooltip"));
 
@@ -1381,8 +1381,8 @@ static void writeMarker(StringBuffer buf, IMarker marker) {
 	sortByResourceAction.setChecked(curColumn == ((SortByAction)sortByResourceAction).getColumnNumber());
 	
 	boolean curDirection = ((TaskSorter)viewer.getSorter()).isReversed();
-	sortAscendingAction.setChecked(curDirection);
-	sortDescendingAction.setChecked(!curDirection);
+	sortAscendingAction.setChecked(!curDirection);
+	sortDescendingAction.setChecked(curDirection);
 	
 }
 }
