@@ -246,4 +246,12 @@ public class Paragraph {
 		}
 		return null;
 	}
+	public void clearCache(String fontId) {
+		if (segments != null) {
+			for (int i = 0; i < segments.size(); i++) {
+				ParagraphSegment segment = (ParagraphSegment) segments.get(i);
+				segment.clearCache(fontId);
+			}
+		}
+	}
 }

@@ -80,4 +80,10 @@ public abstract class ParagraphSegment {
 	public String getTooltipText() {
 		return null;
 	}
+	/**
+	 * @param fontId TODO
+	 * 
+	 */
+	public void clearCache(String fontId) {
+	}
 }

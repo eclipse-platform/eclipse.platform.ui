@@ -544,6 +544,13 @@ public class FormTextModel {
 		}
 		return null;
 	}
+	
+	public void clearCache(String fontId) {
+		for (int i = 0; i < paragraphs.size(); i++) {
+			Paragraph p = (Paragraph) paragraphs.get(i);
+			p.clearCache(fontId);
+		}
+	}
 
 	public IHyperlinkSegment getSelectedLink() {
 		if (selectedLinkIndex == -1)

@@ -135,4 +135,10 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements IHype
 			segment.computeSelection(gc, resourceTable, selData);
 		}	
 	}
+	public void clearCache(String fontId) {
+		for (int i=0; i<segments.size(); i++) {
+			ParagraphSegment segment = (ParagraphSegment)segments.get(i);
+			segment.clearCache(fontId);
+		}
+	}
 }

@@ -683,4 +683,11 @@ public class TextSegment extends ParagraphSegment {
 		textFragments = (TextFragment[]) list.toArray(new TextFragment[list
 				.size()]);
 	}
+	
+	public void clearCache(String fontId) {
+		if (fontId==null && this.fontId==null)
+			textFragments = null;
+		else if (fontId!=null && this.fontId!=null && fontId.equals(this.fontId))
+			textFragments = null;
+	}
 }

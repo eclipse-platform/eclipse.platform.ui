@@ -510,6 +510,7 @@ public final class FormText extends Canvas {
 	 */
 	public void setFont(String key, Font font) {
 		resourceTable.put("f." + key, font);
+		model.clearCache(key);
 	}
 
 	/**
@@ -522,6 +523,7 @@ public final class FormText extends Canvas {
 	 */
 	public void setFont(Font font) {
 		super.setFont(font);
+		model.clearCache(null);
 		Font boldFont = (Font) resourceTable.get(FormTextModel.BOLD_FONT_ID);
 		if (boldFont != null) {
 			boldFont.dispose();
