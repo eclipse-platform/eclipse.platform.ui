@@ -17,6 +17,7 @@ import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.PropertyManager;
 import org.eclipse.core.internal.refresh.RefreshManager;
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.watson.*;
@@ -1610,7 +1611,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			}
 		}
 		//finally register a string pool participant
-		Platform.addStringPoolParticipant(saveManager, getRoot());
+		InternalPlatform.getDefault().addStringPoolParticipant(saveManager, getRoot());
 		return Status.OK_STATUS;
 	}
 
