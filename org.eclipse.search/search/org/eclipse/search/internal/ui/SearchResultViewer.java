@@ -53,8 +53,8 @@ import org.eclipse.jface.viewers.TableViewer;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -171,8 +171,8 @@ public class SearchResultViewer extends TableViewer {
 		
 		IActionBars actionBars= fOuterPart.getViewSite().getActionBars();
 		if (actionBars != null) {
-			actionBars.setGlobalActionHandler(IWorkbenchActionConstants.NEXT, fShowNextResultAction);
-			actionBars.setGlobalActionHandler(IWorkbenchActionConstants.PREVIOUS, fShowPreviousResultAction);
+			actionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(), fShowNextResultAction);
+			actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fShowPreviousResultAction);
 		}
 
 		fOuterPart.getSite().setSelectionProvider(this);

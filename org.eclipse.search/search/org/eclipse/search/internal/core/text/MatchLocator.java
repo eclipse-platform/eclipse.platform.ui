@@ -34,12 +34,16 @@ public class MatchLocator {
 	protected int fPushbackChar;
 	protected boolean fPushback;
 	private String fPattern;
+	private boolean fIsRegEx;
 	
 	public MatchLocator(String pattern, String options) {
 		fPattern= pattern;
 		Pattern regExPattern;
-		if (options.indexOf('r') == -1)
+		
+		fIsRegEx= options.indexOf('r') != -1;
+		if (!isRegExSearch())
 			pattern= asRegEx(pattern);
+		
 		if (options.indexOf('i') != -1)
 			regExPattern= Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
 		else
@@ -176,6 +180,10 @@ public class MatchLocator {
 			ch= reader.read();
 		}
 		return -1;
+	}
+
+	public boolean isRegExSearch() {
+		return fIsRegEx;
 	}
 	
 }

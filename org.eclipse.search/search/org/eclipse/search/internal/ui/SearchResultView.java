@@ -35,8 +35,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.ViewPart;
@@ -156,7 +156,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		actionBars.updateActionBars();
 		
 		// Add selectAll action handlers.
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.SELECT_ALL, fSelectAllAction);
+		actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), fSelectAllAction);
 	}
 
 	private void fillToolBar(IToolBarManager tbm) {

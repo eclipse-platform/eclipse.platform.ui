@@ -96,4 +96,8 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 	String getPattern() {
 		return fMatchLocator.getPattern();
 	}
+	
+	boolean isRegexSearch() {
+		return fMatchLocator.isRegExSearch();
+	}
 }

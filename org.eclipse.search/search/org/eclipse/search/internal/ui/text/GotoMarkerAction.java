@@ -22,6 +22,7 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -69,7 +70,7 @@ class GotoMarkerAction extends Action {
 		String editorId= null;
 		IEditorDescriptor desc= IDE.getDefaultEditor((IFile)resource);
 		if (desc == null)
-			editorId= SearchPlugin.getDefault().getWorkbench().getEditorRegistry().getDefaultEditor().getId();
+			editorId= SearchPlugin.getDefault().getWorkbench().getEditorRegistry().findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID).getId();
 		else
 			editorId= desc.getId();
 

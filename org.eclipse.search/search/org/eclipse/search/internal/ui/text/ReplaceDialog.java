@@ -209,7 +209,7 @@ class ReplaceDialog extends ExtendedDialogWindow {
 		Composite result= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		result.setLayout(layout);
-		layout.numColumns= 2;
+		layout.numColumns= 3;
 		
 		initializeDialogUnits(result);
 		
@@ -223,6 +223,12 @@ class ReplaceDialog extends ExtendedDialogWindow {
 		clabel.setLayoutData(gd);
 		
 	
+		Button replaceWithRegex= new Button(result, SWT.CHECK);
+		replaceWithRegex.setText(SearchMessages.getString("ReplaceDialog.isRegex.label")); //$NON-NLS-1$
+		replaceWithRegex.setEnabled(false);
+		replaceWithRegex.setSelection(fOperation.isRegexSearch());
+		
+		
 		label= new Label(result, SWT.NONE);
 		label.setText(SearchMessages.getString("ReplaceDialog.with_label")); //$NON-NLS-1$
 		fTextField= new Text(result, SWT.BORDER);
@@ -231,10 +237,9 @@ class ReplaceDialog extends ExtendedDialogWindow {
 		fTextField.setLayoutData(gd);
 		fTextField.setFocus();
 		
-		label= new Label(result, SWT.NONE); // filler
 		
-		Button replaceWithRegex= new Button(result, SWT.CHECK);
-		replaceWithRegex.setText("Regular Expression");
+		replaceWithRegex= new Button(result, SWT.CHECK);
+		replaceWithRegex.setText(SearchMessages.getString("ReplaceDialog.isRegex.label")); //$NON-NLS-1$
 		replaceWithRegex.setEnabled(false);
 		replaceWithRegex.setSelection(false);
 		
