@@ -548,11 +548,8 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 		// through a child sequence. This works for the Ant
 		// 1.5 DTD but not in general. I kept the assumption. bf
         LinkedList tempProposals = new LinkedList();
-        Image tempImage = null;
-        if(ExternalToolsPlugin.getDefault() != null) { //not running test suite
-	        ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TASK);
-        }
-
+        Image tempImage = ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TASK);
+        
         if (aParentTaskElement == null) {
         	// DTDs do not designate a root element.
         	// The previous code must have looked for an element that
@@ -731,7 +728,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 		
 		IDocument doc = viewer.getDocument();
 
-        return getPrefixFromDocument(doc.get(), selection.getOffset());
+        return getPrefixFromDocument(doc.get(), selection.getOffset()).toLowerCase();
 	}
 
 
