@@ -29,10 +29,6 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
-/**
- * Test to close the workbench, since debug tests do not run in the UI
- * thread.
- */
 public class ProjectCreationDecorator extends AbstractAntUITest {
 	
 	public ProjectCreationDecorator(String name) {

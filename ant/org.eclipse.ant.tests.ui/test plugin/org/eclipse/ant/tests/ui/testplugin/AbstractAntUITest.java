@@ -69,8 +69,12 @@ public abstract class AbstractAntUITest extends TestCase {
 		super(name);
 	}
 		
+	protected IFile getIFile(String buildFileName) {
+		return getProject().getFolder("buildfiles").getFile(buildFileName);	
+	}
+	
 	protected File getBuildFile(String buildFileName) {
-		IFile file = getProject().getFolder("buildfiles").getFile(buildFileName);
+		IFile file = getIFile(buildFileName);
 		assertTrue("Could not find build file named: " + buildFileName, file.exists());
 		return file.getLocation().toFile();
 	}
