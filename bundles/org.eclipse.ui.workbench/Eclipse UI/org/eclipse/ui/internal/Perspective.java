@@ -60,6 +60,8 @@ import org.eclipse.ui.commands.CommandHandlerServiceFactory;
 import org.eclipse.ui.commands.ICompoundCommandHandlerService;
 import org.eclipse.ui.contexts.ContextActivationServiceFactory;
 import org.eclipse.ui.contexts.ICompoundContextActivationService;
+
+import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
@@ -666,6 +668,8 @@ private void loadPredefinedPersp(
 	PageLayout layout = new PageLayout(container, getViewFactory(), editorArea, descriptor);
 	layout.setTheme(getDesc().getTheme());
 
+	// add the placeholder for the intro view
+	layout.addPlaceholder(IIntroConstants.INTRO_VIEW_ID, IPageLayout.RIGHT, .75f, IPageLayout.ID_EDITOR_AREA);
 	// Run layout engine.
 	factory.createInitialLayout(layout);
 	PerspectiveExtensionReader extender = new PerspectiveExtensionReader();
