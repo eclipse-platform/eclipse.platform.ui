@@ -74,7 +74,6 @@ function onloadHandler()
 	// set title on the content toolbar
 	parent.parent.parent.setContentToolbarTitle(tocTitle);
 		
-	var topicSelected=false;
 	// select specified topic, or else the book
 	var topic = '<%=data.getSelectedTopic()%>';
 	if (topic != "about:blank" && topic != tocTopic) {
@@ -92,27 +91,16 @@ function onloadHandler()
 				}
 			}			
 		}
-		topicSelected = selectTopic(topic);
+		selectTopic(topic);
 	} else {
-		topicSelected = selectTopicById(tocId);
+		selectTopicById(tocId);
 	}
-	// if topic failed to be selected, but we know it exist in some book,
-	// offer to turn on "show all"
-<%
-	if (null==request.getParameter("showAll")) {
-%>
-	if(!topicSelected){
-		window.parent.parent.confirmShowAll();
-	}
-<%
-	}
-%>
+
 <%
 	} else if ("yes".equals(request.getParameter("synch"))) {
 %>
 	var message='<%=UrlUtil.JavaScriptEncode(ServletResources.getString("CannotSync", request))%>';
 	// when we don't find the specified toc, we just restore navigation
-	alert("restoring");
 	parent.parent.parent.restoreNavigation(message);
 <%
 	}
@@ -137,7 +125,6 @@ if (data.isIE()){
 <body dir="<%=direction%>" onload="onloadHandler()" onunload="onunloadHandler()">
 	<ul class='expanded' id='root'>
 <%
-	System.out.println(" "+request.getRequestURL()+" "+request.getQueryString());
 	for (int toc=0; toc<data.getTocCount(); toc++) {
 		boolean isSelected =data.getSelectedToc() != -1 &&
 					   data.getTocHref(data.getSelectedToc()).equals(data.getTocHref(toc));
@@ -150,7 +137,6 @@ if (data.isIE()){
 		<li>
 		<img src="<%=prefs.getImagesDirectory()%>/toc_open.gif" alt="<%=ServletResources.getString("bookOpen", request)%>"><a id="b<%=toc%>" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick=''><%=data.getTocLabel(toc)%></a>
 <%
-			System.out.println("label="+data.getTocLabel(toc));
 			// Only generate the selected toc
 			data.generateToc(toc, out);
 			// keep track of the selected toc id
@@ -162,7 +148,6 @@ if (data.isIE()){
 		<li>
 		<img src="<%=prefs.getImagesDirectory()%>/toc_closed.gif" alt="<%=ServletResources.getString("bookClosed", request)%>"><a id="b<%=toc%>" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick='loadTOC("<%=data.getTocHref(toc)%>")'><%=data.getTocLabel(toc)%></a>
 <%
-			System.out.println("label="+data.getTocLabel(toc));
 		}
 %>
 		</li>	
