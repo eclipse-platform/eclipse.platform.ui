@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.RegistryReader;
+import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
  * The DecoratorRegistryReader is the class that reads the
@@ -92,8 +93,8 @@ class DecoratorRegistryReader extends RegistryReader {
 		else
 			enablementExpression = new ActionExpression(enablement[0]);
 			
-		//Lightweight or Full?
-		if(P_TRUE.equals(element.getAttribute(ATT_LIGHTWEIGHT))){
+		//Lightweight or Full? It is lightweight if it is declared lightweight or if there is no class
+		if(P_TRUE.equals(element.getAttribute(ATT_LIGHTWEIGHT)) || (element.getAttribute(WizardsRegistryReader.ATT_CLASS) == null)){
 			String iconPath = element.getAttribute(ATT_ICON);
 			int quadrant = getQuadrantConstant(element.getAttribute(ATT_QUADRANT));
 			values.add(
