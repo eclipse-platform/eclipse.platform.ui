@@ -26,19 +26,17 @@
 <style type="text/css">
 
 /* need this one for Mozilla */
-HTML { 
+HTML, BODY {
 	width:100%;
 	height:100%;
 	margin:0px;
 	padding:0px;
 	border:0px;
- }
+}
  
 BODY {
 	font: <%=prefs.getViewFont()%>;
 	background:<%=prefs.getToolbarBackground()%>;
-	padding:0px;
-	margin:0px;
 }
 
 TABLE {

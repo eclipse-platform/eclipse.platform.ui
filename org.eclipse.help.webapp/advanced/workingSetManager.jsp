@@ -30,6 +30,14 @@
 </style>
 
 <style type="text/css">
+HTML, BODY {
+	width:100%;
+	height:100%;
+	margin:0px;
+	padding:0px;
+	border:0px;
+}
+
 BODY {
 	background-color: <%=prefs.getToolbarBackground()%>;
 }
