@@ -212,7 +212,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		deleteButton.setLayoutData(gd);
 		deleteButton.addSelectionListener(new SelectionAdapter() {
-			public void selectionChanged(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e) {
 				handleDelete();
 			}
 		});
@@ -224,7 +224,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		errorsButton.setLayoutData(gd);
 		errorsButton.addSelectionListener(new SelectionAdapter() {
-			public void selectionChanged(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e) {
 				handleShowErrors();
 			}
 		});
@@ -238,15 +238,23 @@ public class InstallDeltaWizardPage extends WizardPage {
 	}
 
 	private void updateButtons(IStructuredSelection selection) {
+		boolean enableShowErrors = false;
 		boolean enableDelete = true;
+		
+		if (selection.size()==1) {
+			Object obj = selection.getFirstElement();
+			if (obj instanceof ISessionDelta) {
+				IStatus status = (IStatus)statusTable.get(obj);
+				enableShowErrors = status!=null;
+			}
+		}
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
 			if (!(obj instanceof ISessionDelta)) {
-				enableDelete = false;
+				enableDelete=false;
+				break;
 			}
 		}
-
-		boolean enableShowErrors = enableDelete && selection.size()==1;
 		deleteButton.setEnabled(enableDelete);
 		errorsButton.setEnabled(enableShowErrors);
 	}
