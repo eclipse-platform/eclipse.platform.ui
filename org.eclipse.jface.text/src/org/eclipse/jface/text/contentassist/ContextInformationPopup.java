@@ -465,7 +465,7 @@ class ContextInformationPopup implements IContentAssistListener {
 			return;
 		
 		Control control= fContentAssistSubjectAdapter.getControl();
-		fContextSelectorShell= new Shell(control.getShell(), SWT.NO_TRIM | SWT.ON_TOP);
+		fContextSelectorShell= new Shell(control.getShell(), SWT.ON_TOP | SWT.RESIZE);
 		fContextSelectorTable= new Table(fContextSelectorShell, SWT.H_SCROLL | SWT.V_SCROLL);
 
 		int height= fContextSelectorTable.getItemHeight() * 10;
