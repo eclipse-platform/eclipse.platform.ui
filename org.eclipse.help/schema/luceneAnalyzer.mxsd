@@ -2,11 +2,11 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.help">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.help" id="luceneAnalyzer" name="Lucene Analyzer"/>
-   </appInfo>
-   <documentation>
-      This extension oint is used to register text analyzers for use by help when indexng and searching documentation.
+      <appInfo>
+         <meta.schema plugin="org.eclipse.help" id="luceneAnalyzer" name="Lucene Analyzer"/>
+      </appInfo>
+      <documentation>
+         This extension oint is used to register text analyzers for use by help when indexng and searching documentation.
 &lt;p&gt;
 Help exploits capabilities of the Lucene search engine, that allows indexing of token streams (streams of words).
 Analyzers create tokens from the character stream.  They examine text content and provide tokens for use with the index.
@@ -17,8 +17,8 @@ perform language and grammar aware tokenization and normalization of indexed tex
 For some languages, the quality of search increases significantly if stop word removal and stemming is performed
 on the indexed text.
 This extension point allows configuring analyzers for the languages that default help system does not provide language-aware analyzers.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -83,8 +83,8 @@ available to all locales of that language.
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension id="com.xyx.XYZ" point="org.eclipse.help.luceneAnalyzer"&gt;
-  &lt;analyzer locale="ll_CC" class="com.xyz.ll_CCAnalyzer"/&gt;
+ &lt;extension id=&quot;com.xyx.XYZ&quot; point=&quot;org.eclipse.help.luceneAnalyzer&quot;&gt;
+  &lt;analyzer locale=&quot;ll_CC&quot; class=&quot;com.xyz.ll_CCAnalyzer&quot;/&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -123,7 +123,10 @@ configured, help uses a simple analyzer that performs lowercase filtering and En
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2000, 2003 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Common Public License v1.0 which accompanies 
+this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 

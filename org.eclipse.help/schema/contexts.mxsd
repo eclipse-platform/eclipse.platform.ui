@@ -2,14 +2,14 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.help">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.help" id="contexts" name="Contexts"/>
-   </appInfo>
-   <documentation>
-      For defining context-sensitive help for an 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.help" id="contexts" name="Contexts"/>
+      </appInfo>
+      <documentation>
+         For defining context-sensitive help for an 
 individual plug-in.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -86,21 +86,21 @@ extension point:
 (in file &lt;tt&gt;plugin.xml&lt;/tt&gt;)
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.help.contexts"&gt; 
-      &lt;contexts file="xyzContexts.xml"/&gt; 
+   &lt;extension point=&quot;org.eclipse.help.contexts&quot;&gt; 
+      &lt;contexts file=&quot;xyzContexts.xml&quot;/&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
 
 &lt;p&gt;(in file &lt;tt&gt;xyzContexts.xml&lt;/tt&gt;)
 &lt;p&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;contexts&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;context&amp;nbsp; id="generalContextId"&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;context&amp;nbsp; id=&quot;generalContextId&quot;&gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;description&gt; This
 is a sample F1 help string.&amp;lt;/description&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;topic href="contexts/RelatedContext1.html"&amp;nbsp;
-label="Help Related Topic 1"/&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;topic href="contexts/RelatedContext2.html"&amp;nbsp;
-label="Help Related Topic 2"/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;topic href=&quot;contexts/RelatedContext1.html&quot;&amp;nbsp;
+label=&quot;Help Related Topic 1&quot;/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;topic href=&quot;contexts/RelatedContext2.html&quot;&amp;nbsp;
+label=&quot;Help Related Topic 2&quot;/&gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;/context&gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;/contexts&gt;&lt;/tt&gt;
 &lt;br&gt;&amp;nbsp;
@@ -152,7 +152,10 @@ fully supports the &lt;samp&gt;contexts&lt;/samp&gt; extension point.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2000, 2003 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Common Public License v1.0 which accompanies 
+this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 

@@ -2,11 +2,11 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.help">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.help" id="toc" name="Table of Contents (TOC)"/>
-   </appInfo>
-   <documentation>
-      For registering an online help contribution for an individual plug-in.
+      <appInfo>
+         <meta.schema plugin="org.eclipse.help" id="toc" name="Table of Contents (TOC)"/>
+      </appInfo>
+      <documentation>
+         For registering an online help contribution for an individual plug-in.
 
 &lt;p&gt;Each plug-in that contributes help files should in general do the following:
 &lt;ul&gt;
@@ -24,8 +24,8 @@ the plugin.xml file should extend the &lt;tt&gt;org.eclipse.help.toc&lt;/tt&gt; 
 point and specify TOC file(s).&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/ul&gt;
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -61,7 +61,7 @@ point and specify TOC file(s).&lt;/li&gt;
          <attribute name="file" type="string" use="required">
             <annotation>
                <documentation>
-                  the name of the TOC file which contains the table of contents or section for this plug-in's online help.
+                  the name of the TOC file which contains the table of contents or section for this plug-in&apos;s online help.
 &lt;p&gt;
 &lt;i&gt;&lt;b&gt;Configuration Markup for toc file:&lt;/b&gt;&lt;/i&gt;
 &lt;p&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT toc (topic | anchor | link)* &gt;&lt;/tt&gt;
@@ -90,20 +90,20 @@ file.
 or another.
 &lt;p&gt;&lt;b&gt;&lt;i&gt;1.&amp;nbsp; Topics as links&lt;/i&gt;&lt;/b&gt;
 &lt;br&gt;The simplest use of a topic is as a link to a documentation file.
-&lt;p&gt;&lt;tt&gt;&amp;lt;topic label="Some concept file" href="concepts/some_file.html"
+&lt;p&gt;&lt;tt&gt;&amp;lt;topic label=&quot;Some concept file&quot; href=&quot;concepts/some_file.html&quot;
 /&gt;&lt;/tt&gt;
 &lt;p&gt;The href attribute is relative to the plug-in that the manifest file
 belongs to.&amp;nbsp; If you need to access a file in another plug-in, you
 can use the syntax
-&lt;p&gt;&lt;tt&gt;&amp;lt;topic label="topic in another plug-in" href="../other.plugin.id/concepts/some_other_file.html"
+&lt;p&gt;&lt;tt&gt;&amp;lt;topic label=&quot;topic in another plug-in&quot; href=&quot;../other.plugin.id/concepts/some_other_file.html&quot;
 /&gt;&lt;/tt&gt;
 &lt;p&gt;&lt;b&gt;&lt;i&gt;2.&amp;nbsp; Topics as containers&lt;/i&gt;&lt;/b&gt;
 &lt;br&gt;The next most common use of a topic is to use it as a container for
 other toc.&amp;nbsp; The container topic itself can always refer to a particular
 file as well.
-&lt;p&gt;&lt;tt&gt;&amp;lt;topic label="Integrated Development Environment" href="concepts/ciover.htm"
+&lt;p&gt;&lt;tt&gt;&amp;lt;topic label=&quot;Integrated Development Environment&quot; href=&quot;concepts/ciover.htm&quot;
 &gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Starting the IDE" href="concepts/blah.htm"
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label=&quot;Starting the IDE&quot; href=&quot;concepts/blah.htm&quot;
 /&gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp; ...&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;lt;/topic&gt;&lt;/tt&gt;
@@ -113,20 +113,20 @@ toc file.&amp;nbsp; All the topics from the toc file specified in the toc attrib
 will appear in the table of contents as if they were defined directly in
 place of the link element.&amp;nbsp; To include toc from api.xml file you could
 write
-&lt;p&gt;&lt;tt&gt;&amp;lt;topic label="References" &gt;&lt;/tt&gt;
+&lt;p&gt;&lt;tt&gt;&amp;lt;topic label=&quot;References&quot; &gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp; ...&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;link toc="api.xml" /&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;link toc=&quot;api.xml&quot; /&gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp; ...&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;lt;/topic&gt;&lt;/tt&gt;
 &lt;p&gt;&lt;b&gt;The anchor element&lt;/b&gt;
 &lt;p&gt;The anchor element defines a point that will allow linking other toc
 files to this navigation, and extending it, without using the link element
 and referencing other toc files from here.&amp;nbsp; To allow inserting Table
-of Contents with more topics after the "ZZZ" document you would define
+of Contents with more topics after the &quot;ZZZ&quot; document you would define
 an anchor as follows:
 &lt;p&gt;&lt;tt&gt;...&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;lt;topic label="zzz" href="zzz.html" /&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;lt;anchor id="moreapi" /&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;lt;topic label=&quot;zzz&quot; href=&quot;zzz.html&quot; /&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;lt;anchor id=&quot;moreapi&quot; /&gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;...&lt;/tt&gt;
 &lt;p&gt;&lt;b&gt;The toc element&lt;/b&gt;
 &lt;p&gt;The toc element is a Table of Contents that groups topics and other
@@ -137,8 +137,8 @@ file being higher in the navigation hierarchy.&amp;nbsp; The value of the link_t
 attribute must specify an anchor in another toc file. To link toc from
 myapi.xml to a api.xml file, specified in another plugin you would use
 the syntax
-&lt;p&gt;&lt;tt&gt;&amp;lt;toc link_to="../anotherPlugin/api.xml#moreapi" label="My Tool
-API"/&gt;&lt;/tt&gt;
+&lt;p&gt;&lt;tt&gt;&amp;lt;toc link_to=&quot;../anotherPlugin/api.xml#moreapi&quot; label=&quot;My Tool
+API&quot;/&gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;...&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;lt;toc /&gt;&lt;/tt&gt;
 &lt;p&gt;where # character separates toc file name from the anchor identifier.
@@ -179,61 +179,61 @@ the documentation search, even if &lt;samp&gt;topic&lt;/samp&gt; elements in the
 
 &lt;p&gt;(in file &lt;tt&gt;plugin.xml&lt;/tt&gt;)
 &lt;pre&gt;
- &lt;extension point="org.eclipse.help.toc"&gt;
-  &lt;toc file="maindocs.html" primary="true"/&gt;
-  &lt;toc file="task.xml"/&gt;
-  &lt;toc file="sample.xml" extradir="samples"/&gt;
+ &lt;extension point=&quot;org.eclipse.help.toc&quot;&gt;
+  &lt;toc file=&quot;maindocs.html&quot; primary=&quot;true&quot;/&gt;
+  &lt;toc file=&quot;task.xml&quot;/&gt;
+  &lt;toc file=&quot;sample.xml&quot; extradir=&quot;samples&quot;/&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 
 &lt;p&gt;(in file &lt;tt&gt;maindocs.xml&lt;/tt&gt;)
-&lt;blockquote&gt;&lt;tt&gt;&amp;lt;toc label="Help System Example"&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;topic label="Introduction" href="intro.html"/&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;topic label="Tasks"&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Creating a Project" href="tasks/task1.html"&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp; &amp;lt;topic label="Creating a Web Project" href="tasks/task11.html"/&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp; &amp;lt;topic label="Creating a Java Project" href="tasks/task12.html"/&gt;&lt;/tt&gt;
+&lt;blockquote&gt;&lt;tt&gt;&amp;lt;toc label=&quot;Help System Example&quot;&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;topic label=&quot;Introduction&quot; href=&quot;intro.html&quot;/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;topic label=&quot;Tasks&quot;&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label=&quot;Creating a Project&quot; href=&quot;tasks/task1.html&quot;&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp; &amp;lt;topic label=&quot;Creating a Web Project&quot; href=&quot;tasks/task11.html&quot;/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp; &amp;lt;topic label=&quot;Creating a Java Project&quot; href=&quot;tasks/task12.html&quot;/&gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;/topic&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;link toc="task.xml" /&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Testing a Project" href="tasks/taskn.html"/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;link toc=&quot;task.xml&quot; /&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label=&quot;Testing a Project&quot; href=&quot;tasks/taskn.html&quot;/&gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;/topic&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;topic label="Samples"&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Creating Java Project" href="samples/sample1.html"&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp; &amp;lt;topic label="Launch a Wizard" href="samples/sample11.html"/&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp; &amp;lt;topic label="Set Options" href="samples/sample12.html"/&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp; &amp;lt;topic label="Finish Creating Project" href="samples/sample13.html"/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;topic label=&quot;Samples&quot;&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label=&quot;Creating Java Project&quot; href=&quot;samples/sample1.html&quot;&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp; &amp;lt;topic label=&quot;Launch a Wizard&quot; href=&quot;samples/sample11.html&quot;/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp; &amp;lt;topic label=&quot;Set Options&quot; href=&quot;samples/sample12.html&quot;/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp; &amp;lt;topic label=&quot;Finish Creating Project&quot; href=&quot;samples/sample13.html&quot;/&gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;/topic&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;anchor id="samples" /&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;anchor id=&quot;samples&quot; /&gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;/topic&gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;lt;/toc&gt;&lt;/tt&gt;&lt;/blockquote&gt;
 
 &lt;p&gt;&lt;br&gt;(in file &lt;tt&gt;tasks.xml&lt;/tt&gt;)
-&lt;blockquote&gt;&lt;tt&gt;&amp;lt;toc label="Building a Project"&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;topic label="Building a Project" href="build/building.html"&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Building a Web Project" href="build/web.html"/&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Building a Java Project" href="build/java.html"/&gt;&lt;/tt&gt;
+&lt;blockquote&gt;&lt;tt&gt;&amp;lt;toc label=&quot;Building a Project&quot;&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;topic label=&quot;Building a Project&quot; href=&quot;build/building.html&quot;&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label=&quot;Building a Web Project&quot; href=&quot;build/web.html&quot;/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label=&quot;Building a Java Project&quot; href=&quot;build/java.html&quot;/&gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;/topic&gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;lt;/toc&gt;&lt;/tt&gt;&lt;/blockquote&gt;
 
 &lt;p&gt;&lt;br&gt;(in file &lt;tt&gt;samples.xml&lt;/tt&gt;)
-&lt;blockquote&gt;&lt;tt&gt;&amp;lt;toc link_to="maindocs.xml#samples" label="Using The
-Compile Tool"&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;topic label="The Compile Tool Sample" href="compilesample/example.html"&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Step 1" href="compilesample/step1.html"/&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Step 2" href="compilesample/step2.html"/&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Step 3" href="compilesample/step3.html"/&gt;&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Step 4" href="compilesample/step4.html"/&gt;&lt;/tt&gt;
+&lt;blockquote&gt;&lt;tt&gt;&amp;lt;toc link_to=&quot;maindocs.xml#samples&quot; label=&quot;Using The
+Compile Tool&quot;&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;topic label=&quot;The Compile Tool Sample&quot; href=&quot;compilesample/example.html&quot;&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label=&quot;Step 1&quot; href=&quot;compilesample/step1.html&quot;/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label=&quot;Step 2&quot; href=&quot;compilesample/step2.html&quot;/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label=&quot;Step 3&quot; href=&quot;compilesample/step3.html&quot;/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label=&quot;Step 4&quot; href=&quot;compilesample/step4.html&quot;/&gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;/topic&gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;lt;/toc&gt;&lt;/tt&gt;&lt;/blockquote&gt;
 
 
-&lt;p&gt;Assuming more documents exists with the path starting with "samples",
+&lt;p&gt;Assuming more documents exists with the path starting with &quot;samples&quot;,
 they will not be displayed in the navigation tree, but be accessible using
-search.&amp;nbsp; It is due to the presence of "extradir" attribute in the
-element &lt;tt&gt;&amp;lt;toc file="sample.xml" extradir="samples" /&gt; &lt;/tt&gt;inside&lt;tt&gt;
-plugin.xml &lt;/tt&gt;file. For example searching for "Creating Java Project"
-could return a document "Other Ways of Creating Java Project", which path
+search.&amp;nbsp; It is due to the presence of &quot;extradir&quot; attribute in the
+element &lt;tt&gt;&amp;lt;toc file=&quot;sample.xml&quot; extradir=&quot;samples&quot; /&gt; &lt;/tt&gt;inside&lt;tt&gt;
+plugin.xml &lt;/tt&gt;file. For example searching for &quot;Creating Java Project&quot;
+could return a document &quot;Other Ways of Creating Java Project&quot;, which path
 is &lt;tt&gt;samples/sample2.html.&lt;/tt&gt;
 
 &lt;p&gt;
@@ -282,7 +282,10 @@ files mentioned in the plugin.xml file.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2000, 2003 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Common Public License v1.0 which accompanies 
+this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 

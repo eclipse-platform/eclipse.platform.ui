@@ -2,13 +2,13 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.help">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.help" id="support" name="Support"/>
-   </appInfo>
-   <documentation>
-      Support for configuring a help system UI. The platform should be configured with no more than one help system UI.
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.help" id="support" name="Support"/>
+      </appInfo>
+      <documentation>
+         Support for configuring a help system UI. The platform should be configured with no more than one help system UI.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -65,8 +65,8 @@ interface.
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point="org.eclipse.help.support"&gt;
-  &lt;config class="com.example.XYZHelpUI"/&gt;
+ &lt;extension point=&quot;org.eclipse.help.support&quot;&gt;
+  &lt;config class=&quot;com.example.XYZHelpUI&quot;/&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -101,7 +101,10 @@ omitted from the platform configuration.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2000, 2003 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Common Public License v1.0 which accompanies 
+this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 
