@@ -451,11 +451,13 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 		checkValidPath(path, FOLDER);
 		try {
 			workspace.prepareOperation();
-			assertLinkRequirements(localLocation, updateFlags);
+			// resolve any variables used in the location path
+			IPath resolvedLocation = workspace.getPathVariableManager().resolvePath(localLocation);
+			assertLinkRequirements(resolvedLocation, updateFlags);
 			workspace.beginOperation(true);
 			ResourceInfo info = workspace.createResource(this, false);
 			info.set(M_LINK);
-			getLocalManager().link(this, localLocation);
+			getLocalManager().link(this, resolvedLocation);
 			monitor.worked(Policy.opWork * 5 / 100);
 			//save the location in the project description
 			Project project = (Project)getProject();
