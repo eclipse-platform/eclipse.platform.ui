@@ -142,12 +142,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		});
 	}
 	
-	/**
-	 * @param comp
-	 */
 	private void createFilterInternalTargets(Composite parent) {
 		fFilterInternalTargets= new Button(parent, SWT.CHECK);
 		fFilterInternalTargets.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.12")); //$NON-NLS-1$
+		fFilterInternalTargets.setFont(parent.getFont());
 		fFilterInternalTargets.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleFilterTargetsSelected();
