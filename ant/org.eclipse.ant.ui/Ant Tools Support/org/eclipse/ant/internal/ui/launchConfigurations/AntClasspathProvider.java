@@ -35,8 +35,6 @@ public class AntClasspathProvider extends StandardClasspathProvider {
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#computeUnresolvedClasspath(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(ILaunchConfiguration configuration) throws CoreException {
-		//no need to add Eclipse extension point URLs if going to build
-		//in separate VM..except for the remoteAnt.jar
 		boolean separateVM= (null != configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null));
 		URL[] antURLs= AntUtil.getCustomClasspath(configuration);
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
