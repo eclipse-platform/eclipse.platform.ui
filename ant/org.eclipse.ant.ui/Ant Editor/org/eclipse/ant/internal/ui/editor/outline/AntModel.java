@@ -13,13 +13,17 @@
 package org.eclipse.ant.internal.ui.editor.outline;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 
@@ -35,6 +39,7 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.TaskAdapter;
 import org.apache.tools.ant.UnknownElement;
 import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.core.Property;
 import org.eclipse.ant.core.Type;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.editor.model.AntCommentNode;
@@ -53,6 +58,7 @@ import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -145,6 +151,7 @@ public class AntModel {
 
 	private void reconcileForPropertyChange(boolean classpathChanged) {
 		if (classpathChanged) {
+			fProjectNode= null; //need to reset tasks, types and properties
 			fgClassLoader= null;
 			AntDefiningTaskNode.setJavaClassPath();
 		}
@@ -446,6 +453,7 @@ public class AntModel {
 
 	private void initializeProject(Project project, ClassLoader loader) {
 		project.init();
+		setProperties(project);
 		setTasks(project, loader);
 		setTypes(project, loader);
 	}
@@ -473,6 +481,85 @@ public class AntModel {
              def.setClassName(type.getClassName());
              def.setClassLoader(loader);
              ComponentHelper.getComponentHelper(project).addDataTypeDefinition(def);
+		}
+	}
+	
+	private void setProperties(Project project) {
+		setBuiltInProperties(project);
+		setGlobalProperties(project);
+		loadPropertyFiles(project);
+	}
+	
+	/**
+	 * Load all properties from the files 
+	 */
+	private void loadPropertyFiles(Project project) {
+		String[] fileNames= AntCorePlugin.getPlugin().getPreferences().getCustomPropertyFiles();
+		for (int i = 0; i < fileNames.length; i++) {
+			String filename = fileNames[i];
+           	File file= getFileRelativeToBaseDir(project, filename);
+            Properties props = new Properties();
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(file);
+                props.load(fis);
+            } catch (IOException e) {
+            	AntUIPlugin.log(e);
+            } finally {
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException e){
+                    }
+                }
+            }
+          
+            Enumeration propertyNames = props.propertyNames();
+            while (propertyNames.hasMoreElements()) {
+                String name = (String) propertyNames.nextElement();
+                project.setUserProperty(name, props.getProperty(name));
+            }
+        }
+	}
+	
+	private File getFileRelativeToBaseDir(Project project, String fileName) {
+		IPath path= new Path(fileName);
+		if (!path.isAbsolute()) {
+			String base= project.getUserProperty("basedir"); //$NON-NLS-1$
+			if (base != null) {
+				File baseDir= new File(base);
+				if (baseDir != null) {
+					//relative to the base dir
+					path= new Path(baseDir.getAbsolutePath());
+				} 
+			} else {
+				//relative to the build file location
+				path= new Path(getEditedFile().getAbsolutePath());
+				path= path.removeLastSegments(1);
+			}
+			path= path.addTrailingSeparator();
+			path= path.append(fileName);
+		}
+		
+		return path.toFile();
+	}
+
+	private void setBuiltInProperties(Project project) {
+		//note also see processAntHome for system properties that are set
+		project.setUserProperty("ant.file", getEditedFile().getAbsolutePath()); //$NON-NLS-1$
+		project.setUserProperty("ant.version", Main.getAntVersion()); //$NON-NLS-1$
+	}
+	
+	private void setGlobalProperties(Project project) {
+		List properties= AntCorePlugin.getPlugin().getPreferences().getProperties();
+		if (properties != null) {
+			for (Iterator iter = properties.iterator(); iter.hasNext();) {
+				Property property = (Property) iter.next();
+				String value= property.getValue();
+				if (value != null) {
+					project.setUserProperty(property.getName(), value);
+				}
+			}
 		}
 	}
 
