@@ -15,9 +15,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -25,8 +26,6 @@ import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
@@ -94,7 +93,6 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		fCellEditorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
 		fSelectAllAction= new SelectAllAction(fViewer);
 		fCellEditorActionHandler.setSelectAllAction(fSelectAllAction);
-		getViewSite().getSelectionProvider().addSelectionChangedListener(fSelectAllAction);
 		
 		fPropertyChangeListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -134,10 +132,6 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 			fCellEditorActionHandler.dispose();
 			fCellEditorActionHandler= null;
 		}
-		ISelectionProvider selectionProvider= getViewSite().getSelectionProvider();
-		if (selectionProvider != null && fSelectAllAction != null)
-			selectionProvider.removeSelectionChangedListener(fSelectAllAction);
-
 		super.dispose();
 	}
 	
