@@ -64,14 +64,9 @@ public abstract class PluginAction extends Action
 		if (configElement.getAttribute(PluginActionBuilder.ATT_ENABLES_FOR) != null)
 			this.enabler = new SelectionEnabler(configElement);
 		else {
-			IConfigurationElement [] kids = configElement.getChildren(PluginActionBuilder.TAG_SELECTION);
+			IConfigurationElement [] kids = configElement.getChildren(PluginActionBuilder.TAG_ENABLEMENT);
 			if (kids.length > 0)
 				this.enabler = new SelectionEnabler(configElement);
-			else {
-				kids = configElement.getChildren(PluginActionBuilder.TAG_ENABLEMENT);
-				if (kids.length > 0)
-					this.enabler = new SelectionEnabler(configElement);
-			}
 		}
 
 		// Give enabler or delegate a chance to adjust enable state
