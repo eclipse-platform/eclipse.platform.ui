@@ -286,10 +286,11 @@ public abstract class PopupInformationControl implements IInformationControl, II
 	 * @see org.eclipse.jface.text.IInformationControl#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
+		shell.setVisible(visible);
 		if (!visible) {
 			deregister();
+			shell.dispose();
 		}
-		shell.setVisible(visible);
 	}
 			
 	/**
