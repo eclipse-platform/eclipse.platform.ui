@@ -17,6 +17,10 @@ import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
+import org.eclipse.ant.internal.ui.model.AntProjectNode;
+import org.eclipse.ant.internal.ui.model.AntTargetNode;
+import org.eclipse.ant.internal.ui.model.AntTaskNode;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.ITextSelection;
@@ -41,9 +45,7 @@ public class OpenExternalDocAction implements IEditorActionDelegate {
 	private void doAction(AntElementNode node) {
 		Shell shell= getShell();
 		try {
-			URL baseURL= new URL("http://ant.apache.org/manual/"); //$NON-NLS-1$
-			//TODO compose the URL from the node selected
-			URL url= baseURL;
+			URL url= getExternalLocation(node);
 			if (url != null) {
 				AntUtil.openBrowser(url.toString(), shell, getTitle());
 			} 		
@@ -52,6 +54,52 @@ public class OpenExternalDocAction implements IEditorActionDelegate {
         }
 	}
 	
+	public URL getExternalLocation(AntElementNode node) throws MalformedURLException {
+		URL baseLocation= getBaseLocation(node);
+		if (baseLocation == null) {
+			return null;
+		}
+
+		String urlString= baseLocation.toExternalForm();
+
+		StringBuffer pathBuffer= new StringBuffer(urlString);
+		if (!urlString.endsWith("/")) { //$NON-NLS-1$
+			pathBuffer.append('/');
+		}
+
+		if (node instanceof AntProjectNode) {
+			pathBuffer.append("using.html#projects"); //$NON-NLS-1$
+		} else if (node instanceof AntTargetNode) {
+			pathBuffer.append("using.html#targets"); //$NON-NLS-1$
+		} else if (node instanceof AntTaskNode) {
+			appendCoreTaskPath((AntTaskNode) node, pathBuffer);
+		} 
+
+		try {
+			return new URL(pathBuffer.toString());
+		} catch (MalformedURLException e) {
+			JavaPlugin.log(e);
+		}
+		return null;
+	}
+	
+	private void appendCoreTaskPath(AntTaskNode node, StringBuffer buffer) {
+		buffer.append("CoreTasks"); //$NON-NLS-1$
+		buffer.append('/');
+		String typePath= node.getTask().getTaskName();
+		buffer.append(typePath);
+		buffer.append(".html"); //$NON-NLS-1$	
+	}
+
+	/**
+	 * @param node
+	 * @return
+	 */
+	private static URL getBaseLocation(AntElementNode node) throws MalformedURLException {
+		// TODO allow user to set location
+		return new URL("http://ant.apache.org/manual/"); //$NON-NLS-1$
+	}
+
 	//TODO this will be used once we are attempting to correctly resolve a URL based on the selection
 	private static void showMessage(final Shell shell, final String message, final boolean isError) {
 		Display.getDefault().asyncExec(new Runnable() {
