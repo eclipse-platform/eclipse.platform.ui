@@ -14,10 +14,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -33,11 +31,9 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.contentassist.SubjectControlContentAssistant;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -361,8 +357,6 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	private void run(ReplaceOperation operation, IResource resource) throws InvocationTargetException, InterruptedException {
 		IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
 		ISchedulingRule rule= ruleFactory.modifyRule(resource);
-		ISchedulingRule validateRule= ruleFactory.validateEditRule(new IResource[] { resource });
-		rule= MultiRule.combine(rule, validateRule);
 		
 		PlatformUI.getWorkbench().getProgressService().runInUI(this, operation, rule);	
 	}
@@ -386,10 +380,6 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	
 	private void replaceAll(IProgressMonitor pm, String replacementText) throws BadLocationException, CoreException {
 		int resourceCount= countResources();
-		IStatus status= ResourcesPlugin.getWorkspace().validateEdit(getAllFiles(), getShell());
-		if (!status.isOK()) {
-			throw new CoreException(status);
-		}
 		pm.beginTask(SearchMessages.getString("ReplaceDialog.task.replace.replaceAll"), resourceCount); //$NON-NLS-1$
 		while (fMarkers.size() > 0) {
 			replaceInFile(new SubProgressMonitor(pm, 1, 0), replacementText);
@@ -397,16 +387,6 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		pm.done();
 	}
 	
-	private IFile[] getAllFiles() {
-		Set files= new HashSet();
-		for (int i= 0; i < fMarkers.size(); i++) {
-			Match marker= (Match)fMarkers.get(i);
-			files.add(marker.getElement());
-		}
-		IFile[] fileArray= new IFile[files.size()];
-		return (IFile[])files.toArray(fileArray);
-	}
-
 	private void replaceInFile(final IProgressMonitor pm, final IFile file, final String replacementText, final Match[] markers) throws BadLocationException, CoreException {
 		if (pm.isCanceled())
 			throw new OperationCanceledException();
@@ -419,12 +399,6 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 			pattern= createReplacePattern();
 		}
 		try {
-			if (file.isReadOnly()) {
-				IStatus status= file.getWorkspace().validateEdit(new IFile[]{file}, getShell());
-				if (!status.isOK()) {
-					throw new CoreException(status);
-				}
-			}
 			if (file.isReadOnly()) {
 				if (fSkipReadonly) {
 					skipFile();

@@ -18,22 +18,24 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.swt.widgets.Item;
-
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
-
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.util.Assert;
@@ -42,16 +44,14 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
-
-import org.eclipse.ui.IWorkbenchSite;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
-import org.eclipse.search.ui.text.Match;
-
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.Match;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /* package */ class ReplaceAction2 extends Action {
 	
@@ -124,13 +124,19 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 	
 	private IFile[] collectFiles(Iterator resources) {
 		final Set files= new HashSet();
+		final AbstractTextSearchResult result= fPage.getInput();
+		if (result == null)
+			return new IFile[0];
 		while (resources.hasNext()) {
 			IResource resource= (IResource) resources.next();
 			try {
 				resource.accept(new IResourceProxyVisitor() {
 					public boolean visit(IResourceProxy proxy) throws CoreException {
 						if (proxy.getType() == IResource.FILE) {
-							files.add(proxy.requestResource());
+							IResource file= proxy.requestResource();
+							if (result.getMatchCount(file) > 0) {
+								files.add(file);
+							}
 							return false;
 						}
 						return true;
@@ -147,13 +153,30 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 
 	public void run() {
-		if (validateResources((FileSearchQuery) fPage.getInput().getQuery())) {
-			ReplaceDialog2 dialog= new ReplaceDialog2(fSite.getShell(), fElements, fPage);
-			dialog.open();
+		IWorkspace workspace= ResourcesPlugin.getWorkspace();
+		ISchedulingRule rule= workspace.getRuleFactory().modifyRule(workspace.getRoot());
+		try { 
+			Platform.getJobManager().beginRule(rule, null);
+			if (validateResources((FileSearchQuery) fPage.getInput().getQuery())) {
+				ReplaceDialog2 dialog= new ReplaceDialog2(fSite.getShell(), fElements, fPage);
+				dialog.open();
+			}
+		} catch (OperationCanceledException e) {
+		} finally {
+			Platform.getJobManager().endRule(rule);
 		}
 	}
 	
 	private boolean validateResources(final FileSearchQuery operation) {
+		IFile[] readOnlyFiles= getReadOnlyFiles();
+		IStatus status= ResourcesPlugin.getWorkspace().validateEdit(readOnlyFiles, fSite.getShell());
+		if (!status.isOK()) {
+			if (status.getSeverity() != IStatus.CANCEL) {
+				ErrorDialog.openError(fSite.getShell(), SearchMessages.getString("ReplaceAction2.error_validate.title"), SearchMessages.getString("ReplaceAction2.error_validate.message"), status); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			return false;
+		}
+
 		final List outOfDateEntries= new ArrayList();
 		for (int j= 0; j < fElements.length; j++) {
 			IFile entry = fElements[j];
@@ -193,6 +216,16 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 			return false;
 		}
 		return true;
+	}
+
+	private IFile[] getReadOnlyFiles() {
+		Set readOnly= new HashSet();
+		for (int i = 0; i < fElements.length; i++) {
+			if (fElements[i].isReadOnly())
+				readOnly.add(fElements[i]);
+		}
+		IFile[] readOnlyArray= new IFile[readOnly.size()];
+		return (IFile[]) readOnly.toArray(readOnlyArray);
 	}
 
 	private void research(IProgressMonitor monitor, List outOfDateEntries, FileSearchQuery operation) throws CoreException {
