@@ -16,8 +16,6 @@ public class LogEntryProperty implements ILogEntryProperty {
 	protected ILogEntry _entryParent = null;
 /**
  * 
- * @param name java.lang.String
- * @param value java.lang.String
  */
 public LogEntryProperty( ILogEntry entryParent, String name, String value) {
 
@@ -27,13 +25,11 @@ public LogEntryProperty( ILogEntry entryParent, String name, String value) {
 }
 /**
  * 
- * @return java.lang.String
  */
 public String getName() {
 	return _strName == null ? _strEmpty : _strName;
 }
 /**
- * @return org.eclipse.update.log.ILogEntry
  */
 public ILogEntry getParentEntry() {
 	return _entryParent;
@@ -82,8 +78,6 @@ public void printProperty( int iIndentation )
 //	Trace.functionExit( this, "printAttribute" );
 }
 /**
- * 
- * @param strb java.lang.StringBuffer
  */
 public void printPropertyString(StringBuffer strb) {
 
@@ -103,15 +97,11 @@ public void printPropertyString(StringBuffer strb) {
 	strb.append("\"");
 }
 /**
- * 
- * @param strName java.lang.String
  */
 public void setName(String name) {
 	_strName = name;
 }
 /**
- * 
- * @param strValue java.lang.String
  */
 public void setValue(String value) {
 	_strValue = value;

@@ -37,8 +37,6 @@ public class LogStore {
 public LogStore() {
 }
 /**
- * @return java.io.File
- * @param url java.net.URL
  */
 public File createFile(URL url) throws LogStoreException {
 
@@ -68,7 +66,7 @@ public File createFile(URL url) throws LogStoreException {
 			return file;
 		}
 		catch (IOException ex) {
-			throw new LogStoreException("Unable to open file", strFilespec, null, -1, -1);
+			throw new LogStoreException(BootUpdateManagerStrings.getString("S_Unable_to_open_file"), strFilespec, null, -1, -1);
 		}
 	}
 	
@@ -105,7 +103,7 @@ protected void handleAttribute() throws LogStoreException
 		
 		else if( character == '\n' || character == '\r' )
 		{
-			throw new LogStoreException( "Unexpected end of line", _url.toString(), _strLine, _iLine, _iColumn );
+			throw new LogStoreException( BootUpdateManagerStrings.getString("S_Unexpected_end_of_line"), _url.toString(), _strLine, _iLine, _iColumn );
 		}
 		
 		else
@@ -262,7 +260,7 @@ protected void handleElementEnd() throws LogStoreException
 
 		if( strElementName.equals( _parserElementCurrent.getName() ) == false )
 		{
-			throw new LogStoreException( "Expecting end element: </" + _parserElementCurrent._strName + ">", _url.toString(), _strLine, _iLine, _iColumn );
+			throw new LogStoreException( BootUpdateManagerStrings.getString("S_Expecting_end_element") + ": </" + _parserElementCurrent._strName + ">", _url.toString(), _strLine, _iLine, _iColumn );
 		}
 			
 		_iColumn = iIndex + 1;
@@ -280,7 +278,7 @@ protected void handleElementEnd() throws LogStoreException
 
 	else
 	{
-		throw new LogStoreException( "Expecting \">\"", _url.toString(), _strLine, _iLine, _iColumn );
+		throw new LogStoreException( BootUpdateManagerStrings.getString("S_Expecting") +" \">\"", _url.toString(), _strLine, _iLine, _iColumn );
 	}
 }
 /**
@@ -332,7 +330,7 @@ protected void handleElementStart() throws LogStoreException
 
 			else if( character == '\r' || character == '\n' )
 			{
-				throw new LogStoreException( "Expecting '>'", _url.toString(), _strLine, _iLine, _iColumn );
+				throw new LogStoreException( BootUpdateManagerStrings.getString("S_Expecting") + " '>'", _url.toString(), _strLine, _iLine, _iColumn );
 			}
 			
 			else if( _strLine.indexOf( "/>", _iColumn ) == _iColumn )
@@ -472,8 +470,6 @@ protected void handleUnknown()
 //	Trace.functionExit( this, "handleUnknown" );
 }
 /**
- * 
- * @param strLog java.lang.String
  */
 public boolean load(Log log, URL url) throws LogStoreException {
 
@@ -521,7 +517,7 @@ public boolean load(Log log, URL url) throws LogStoreException {
 		while (_strLine != null);
 
 		if (_parserElementCurrent != null && _parserElementCurrent.getName().equals("root") == false) {
-			throw new LogStoreException("Expecting end element: </" + _parserElementCurrent.getName() + ">", _url.toString(), _strLine, _iLine, _iColumn);
+			throw new LogStoreException(BootUpdateManagerStrings.getString("S_Expecting_end_element") + ": </" + _parserElementCurrent.getName() + ">", _url.toString(), _strLine, _iLine, _iColumn);
 		}
 		try{inputStream.close();} catch(Exception x) {}
 		return true;
@@ -543,7 +539,7 @@ public boolean load(Log log, URL url) throws LogStoreException {
 		while (_strLine != null);
 
 		if (_parserElementCurrent != null) {
-			throw new LogStoreException("Expecting end element: </" + _parserElementCurrent.getName() + ">", _url.toString(), _strLine, _iLine, _iColumn);
+			throw new LogStoreException(BootUpdateManagerStrings.getString("S_Expecting_end_element") + "< :/" + _parserElementCurrent.getName() + ">", _url.toString(), _strLine, _iLine, _iColumn);
 		}
 
 		return true;
@@ -552,7 +548,6 @@ public boolean load(Log log, URL url) throws LogStoreException {
 	return false;
 }
 /**
- * @param strLine java.lang.String
  */
 protected void processLine() throws LogStoreException
 {
@@ -583,7 +578,6 @@ protected void processLine() throws LogStoreException
  * Attempts to write to the url connection's output stream.  If this fails,
  * then attempts to write to a file.   Fails when protocol is file: or valoader:
  * thus our local writes are all file I/O currently
- * @return boolean
  */
 public void save(Log log, URL url) throws LogStoreException {
 
@@ -595,7 +589,7 @@ public void save(Log log, URL url) throws LogStoreException {
 		connection = url.openConnection();
 	}
 	catch (IOException ex) {
-		throw new LogStoreException(ex.getMessage(), url.toString(), null, -1, -1);
+		throw new LogStoreException(ex.getLocalizedMessage(), url.toString(), null, -1, -1);
 	}
 
 	// Attempt to obtain an output stream
@@ -621,7 +615,7 @@ public void save(Log log, URL url) throws LogStoreException {
 			outputStream.write(log.getPersistentString().getBytes());
 		}
 		catch (IOException ex) {
-			throw new LogStoreException(ex.getMessage(), url.toString(), null, -1, -1);
+			throw new LogStoreException(ex.getLocalizedMessage(), url.toString(), null, -1, -1);
 		}
 	}
 
@@ -635,8 +629,6 @@ public void save(Log log, URL url) throws LogStoreException {
 	return;
 }
 /**
- * @param log org.eclipse.update.internal.core#Log
- * @param url java.net.URL
  */
 public void saveAsFile(Log log, URL url) throws LogStoreException {
 
@@ -655,7 +647,7 @@ public void saveAsFile(Log log, URL url) throws LogStoreException {
 		writer.close();
 	}
 	catch (IOException ex) {
-		throw new LogStoreException("Unable to write to file", url.getFile(), null, -1, -1);
+		throw new LogStoreException(BootUpdateManagerStrings.getString("S_Unable_to_write_to_file"), url.getFile(), null, -1, -1);
 	}
 
 	return;

@@ -81,13 +81,11 @@ public VersionIdentifier(int major, int minor, int service) {
  */
 public VersionIdentifier(String versionId) {
 
-	try {
-		Assert.isNotNull(versionId);
+	try{
+		if( versionId == null )
+			versionId = "0.0.0";
+			
 		String s = versionId.trim();
-		Assert.isTrue(!s.equals(""));
-		Assert.isTrue(!s.startsWith(SEPARATOR));
-		Assert.isTrue(!s.endsWith(SEPARATOR));
-		Assert.isTrue(s.indexOf(SEPARATOR+SEPARATOR)==-1);
 	
 		StringTokenizer st = new StringTokenizer(s, SEPARATOR);
 		Integer token;
@@ -95,18 +93,17 @@ public VersionIdentifier(String versionId) {
 
 		while(st.hasMoreTokens()) {
 			token = new Integer((String)st.nextToken());
-			Assert.isTrue(token.intValue() >= 0);
 			elements.addElement(token);
 		}
-
-		Assert.isTrue(elements.size()>0);
-		Assert.isTrue(elements.size()<=3);
 
 		if (elements.size()>=1) this.major = ((Integer)elements.elementAt(0)).intValue();
 		if (elements.size()>=2) this.minor = ((Integer)elements.elementAt(1)).intValue();
 		if (elements.size()>=3) this.service = ((Integer)elements.elementAt(2)).intValue();
 		
-	} catch (AssertionFailedException e) { // will use default version 0.0.0
+	} catch (Exception e) { // will use default version 0.0.0
+		this.major   = 0;
+		this.minor   = 0;
+		this.service = 0;
 	}
 
 }

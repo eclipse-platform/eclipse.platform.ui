@@ -63,7 +63,7 @@ public File createFile(URL url) throws XmlLiteException {
 			return file;
 		}
 		catch (IOException ex) {
-			throw new XmlLiteException("Unable to open file", strFilespec, null, -1, -1);
+			throw new XmlLiteException(BootUpdateManagerStrings.getString("S_Unable_to_open_file"), strFilespec, null, -1, -1);
 		}
 	}
 	
@@ -100,7 +100,7 @@ protected void handleAttribute() throws XmlLiteException
 		
 		else if( character == '\n' || character == '\r' )
 		{
-			throw new XmlLiteException( "Unexpected end of line", _url.toString(), _strLine, _iLine, _iColumn );
+			throw new XmlLiteException( BootUpdateManagerStrings.getString("S_Unexpected_end_of_line"), _url.toString(), _strLine, _iLine, _iColumn );
 		}
 		
 		else
@@ -375,7 +375,7 @@ protected void handleElementEnd() throws XmlLiteException
 
 		if( strElementName.equals( _parserElementCurrent.getName() ) == false )
 		{
-			throw new XmlLiteException( "Expecting end element: </" + _parserElementCurrent._strName + ">", _url.toString(), _strLine, _iLine, _iColumn );
+			throw new XmlLiteException( BootUpdateManagerStrings.getString("S_Expecting end element") + ": /<" + _parserElementCurrent._strName + ">", _url.toString(), _strLine, _iLine, _iColumn );
 		}
 			
 		_iColumn = iIndex + 1;
@@ -393,7 +393,7 @@ protected void handleElementEnd() throws XmlLiteException
 
 	else
 	{
-		throw new XmlLiteException( "Expecting \">\"", _url.toString(), _strLine, _iLine, _iColumn );
+		throw new XmlLiteException( BootUpdateManagerStrings.getString("S_Expecting") + " \">\"", _url.toString(), _strLine, _iLine, _iColumn );
 	}
 }
 /**
@@ -460,7 +460,7 @@ protected void handleElementStart() throws XmlLiteException
 
 			else if( character == '\r' || character == '\n' )
 			{
-				throw new XmlLiteException( "Expecting '>'", _url.toString(), _strLine, _iLine, _iColumn );
+				throw new XmlLiteException( BootUpdateManagerStrings.getString("S_Expecting") + " '>'", _url.toString(), _strLine, _iLine, _iColumn );
 			}
 			
 			else if( _strLine.indexOf( "/>", _iColumn ) == _iColumn )
@@ -705,7 +705,7 @@ public boolean load(XmlLite lite, URL url) throws XmlLiteException {
 		while (_strLine != null);
 
 		if (_parserElementCurrent != null && _parserElementCurrent.getName().equals("root") == false) {
-			throw new XmlLiteException("Expecting end element: </" + _parserElementCurrent.getName() + ">", _url.toString(), _strLine, _iLine, _iColumn);
+			throw new XmlLiteException(BootUpdateManagerStrings.getString("S_Expecting_end_element") + ": </" + _parserElementCurrent.getName() + ">", _url.toString(), _strLine, _iLine, _iColumn);
 		}
 		try{inputStream.close();} catch(Exception x) {}
 		return true;
@@ -727,7 +727,7 @@ public boolean load(XmlLite lite, URL url) throws XmlLiteException {
 		while (_strLine != null);
 
 		if (_parserElementCurrent != null) {
-			throw new XmlLiteException("Expecting end element: </" + _parserElementCurrent.getName() + ">", _url.toString(), _strLine, _iLine, _iColumn);
+			throw new XmlLiteException(BootUpdateManagerStrings.getString("S_Expecting_end_element") + ": /< " + _parserElementCurrent.getName() + ">", _url.toString(), _strLine, _iLine, _iColumn);
 		}
 
 		return true;
@@ -781,7 +781,7 @@ public void save(XmlLite lite, URL url) throws XmlLiteException {
 		connection = url.openConnection();
 	}
 	catch (IOException ex) {
-		throw new XmlLiteException(ex.getMessage(), url.toString(), null, -1, -1);
+		throw new XmlLiteException(ex.getLocalizedMessage(), url.toString(), null, -1, -1);
 	}
 
 	// Attempt to obtain an output stream
@@ -807,7 +807,7 @@ public void save(XmlLite lite, URL url) throws XmlLiteException {
 			outputStream.write(lite.getPersistentString().getBytes());
 		}
 		catch (IOException ex) {
-			throw new XmlLiteException(ex.getMessage(), url.toString(), null, -1, -1);
+			throw new XmlLiteException(ex.getLocalizedMessage(), url.toString(), null, -1, -1);
 		}
 	}
 
@@ -841,7 +841,7 @@ public void saveAsFile(XmlLite lite, URL url) throws XmlLiteException {
 		writer.close();
 	}
 	catch (IOException ex) {
-		throw new XmlLiteException("Unable to write to file", url.getFile(), null, -1, -1);
+		throw new XmlLiteException(BootUpdateManagerStrings.getString("S_Unable_to_write_to_file"), url.getFile(), null, -1, -1);
 	}
 
 	return;

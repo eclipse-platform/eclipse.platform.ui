@@ -41,7 +41,7 @@ public java.util.ResourceBundle getResourceBundle(Locale locale) throws MissingR
 	// check if we already tried and failed
 	if (notFound) 
 		throw new MissingResourceException(
-			"resourceNotFound" + fName + "_" + locale, 
+			BootUpdateManagerStrings.getString("S_Resource_not_found") + ": " + fName + "_" + locale, 
 			fName + "_" + locale, 
 			"");
 

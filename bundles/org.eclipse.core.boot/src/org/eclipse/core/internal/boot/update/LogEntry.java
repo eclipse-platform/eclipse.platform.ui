@@ -296,8 +296,6 @@ public void printPersistentEntryString(StringBuffer strb, int iIndentation) {
 	}
 }
 /**
- * @param strb java.lang.StringBuffer
- * @param iIndentation int
  */
 protected void printPersistentEntryStringIndentation(StringBuffer strb, int iIndentation) {
 	for (int i = 0; i < iIndentation; ++i) {
@@ -306,7 +304,6 @@ protected void printPersistentEntryStringIndentation(StringBuffer strb, int iInd
 }
 /**
  * 
- * @param strb java.lang.StringBuffer
  */
 public void printPersistentEntryStringName(StringBuffer strb ) {
 
@@ -329,8 +326,6 @@ public void removeAllProperties() {
 	}
 }
 /**
- * @return boolean
- * @param entry org.eclipse.update.internal.core#ILogEntry
  */
 public boolean removeChildEntry(ILogEntry entry) {
 
@@ -342,8 +337,6 @@ public boolean removeChildEntry(ILogEntry entry) {
 }
 /**
  * 
- * @return boolean
- * @param name java.lang.String
  */
 public boolean removeProperty(String name) {
 

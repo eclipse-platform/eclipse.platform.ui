@@ -16,8 +16,8 @@ private static String createErrorString(IManifestDescriptor manifest, IManifestD
 	strbMessage.append(manifest.getUniqueIdentifier());
 	strbMessage.append(" ");
 	strbMessage.append(manifest.getVersionIdentifier());
-	strbMessage.append(": ");
-	strbMessage.append("Cannot be installed because of one or more conflicts");
+	strbMessage.append("\n");
+	strbMessage.append(BootUpdateManagerStrings.getString("S_This_component_cannot_be_installed_because_of_conflicts"));
 	strbMessage.append("\n");
 	
 	for (int j = 0; j < manifestsConflicting.length; ++j) {
