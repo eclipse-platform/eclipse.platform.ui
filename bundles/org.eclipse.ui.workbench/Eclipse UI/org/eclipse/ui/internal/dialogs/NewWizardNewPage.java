@@ -242,10 +242,11 @@ class NewWizardNewPage
 			
 			// flipping tabs updates the selected node
 			showAllCheck.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {				    
+					private Object [] expandedElements = new Object[0];
+
+                    public void widgetSelected(SelectionEvent e) {				    
 					    boolean showAll = showAllCheck.getSelection();
-					    Object [] expandedElements = null;
-	                    if (!showAll)
+                        if (!showAll)
 					        expandedElements = viewer.getExpandedElements();
 	                    
 	                    if (showAll) {
