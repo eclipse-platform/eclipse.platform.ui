@@ -9,7 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.search.ui;
+
 import org.eclipse.jface.resource.ImageDescriptor;
+
 /**
  * Implementors of this interface represent the result of a search. How the
  * results of a search are structured is up to the implementor of this
@@ -37,14 +39,14 @@ public interface ISearchResult {
 	 * 
 	 * @param l the listener to be added
 	 */
-	public void addListener(ISearchResultListener l);
+	void addListener(ISearchResultListener l);
 	/**
 	 * Removes a <code>ISearchResultChangedListener</code>. Has no effect
 	 * when the listener hasn't previously been added.
 	 * 
 	 * @param l the listener to be removed
 	 */
-	public void removeListener(ISearchResultListener l);
+	void removeListener(ISearchResultListener l);
 	/**
 	 * Returns a user readable label for this search result.
 	 * 
@@ -56,7 +58,7 @@ public interface ISearchResult {
 	 * 
 	 * @return a user readable String
 	 */
-	public String getTooltip();
+	String getTooltip();
 	/**
 	 * Returns an image descriptor for the given ISearchResult.
 	 * 
