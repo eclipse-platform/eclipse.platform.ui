@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.components;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.components.ComponentMessages;
 import org.eclipse.ui.internal.components.ComponentUtil;
-import org.eclipse.ui.internal.components.Messages;
 
 /**
  * Exception thrown when unable to construct a component.
@@ -50,7 +49,7 @@ public class ComponentException extends Exception {
      * attempting to create, a string describing the error, and the Throwable that 
      * caused the error.
      * 
-     * @param componentName the fully-qualified name of the component class
+     * @param componentKey the fully-qualified name of the component class
      * @param message explanation of the error
      * @param reason exception that caused the error
      */
@@ -116,12 +115,12 @@ public class ComponentException extends Exception {
 	        }
         }
         
-        return MessageFormat.format(Messages.getString("ComponentException.unable_to_instantiate"), new String[] {dep}); //$NON-NLS-1$
+        return NLS.bind(ComponentMessages.ComponentException_unable_to_instantiate,dep); 
     }
     
     private static String getMessageString(String componentName, ComponentException e) {
-        return MessageFormat.format(Messages.getString("ComponentException.recursive_requires_string"),  //$NON-NLS-1$
-                new String[] {
+        return NLS.bind(ComponentMessages.ComponentException_recursive_requires_string, 
+                new Object[] {
                 componentName, 
                 e.getComponentName(),
                 ComponentUtil.getMessage(e)});

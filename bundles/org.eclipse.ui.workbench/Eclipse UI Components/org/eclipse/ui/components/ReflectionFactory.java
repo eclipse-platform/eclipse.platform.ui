@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.ui.internal.components.ComponentUtil;
-import org.eclipse.ui.internal.components.Messages;
+import org.eclipse.ui.internal.components.ComponentMessages;
 
 /**
  * Factory that uses reflection to create instances by constructor injection. The factory
@@ -184,7 +184,7 @@ public class ReflectionFactory extends ComponentFactory implements IExecutableEx
         }
         
         if (targetConstructor == null) {
-            throw new ComponentException(targetClass, Messages.getString("ReflectionFactory.no_constructors"), null); //$NON-NLS-1$
+            throw new ComponentException(targetClass, ComponentMessages.ReflectionFactory_no_constructors, null);
         }
 
         Class[] paramKeys = targetConstructor.getParameterTypes();

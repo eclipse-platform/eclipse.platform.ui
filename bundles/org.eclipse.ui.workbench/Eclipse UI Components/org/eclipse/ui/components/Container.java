@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.components;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.components.Assert;
-import org.eclipse.ui.internal.components.Messages;
+import org.eclipse.ui.internal.components.ComponentMessages;
 
 /**
  * A dependency injection container for one or more components. Containers are an implementation of
@@ -123,11 +123,11 @@ public final class Container implements IDisposable, IServiceProvider {
         /**
          * Creates a ComponentInfo given an interface type and an optional existing instance and factory.
          * 
-         * @param instance existing component instance. May be null if no instance is available. Must be 
+         * @param key existing component instance. May be null if no instance is available. Must be 
          *                 assignable to interfaceType unless null.
-         * @param factory factory for the given type. May be null if no factory is available. Must create
+         * @param component factory for the given type. May be null if no factory is available. Must create
          *                instances that are assignable to interfaceType unless null. 
-         * @param interfaceType component type
+         * @param disposable component type
          */
         public ComponentInfo(Object key, Object component, IDisposable disposable) {
             this.key = key;
@@ -172,7 +172,7 @@ public final class Container implements IDisposable, IServiceProvider {
         Assert.isNotNull(context);
         Collection deps = context.getMissingDependencies();
         if (deps.size() != 0) {
-            Assert.isTrue(false, Messages.getString("Container.missing_dependency") + deps.toArray()[0].toString()); //$NON-NLS-1$
+            Assert.isTrue(false, ComponentMessages.Container_missing_dependency + deps.toArray()[0].toString()); 
         }
         
         this.defaultContext = context;
@@ -235,9 +235,9 @@ public final class Container implements IDisposable, IServiceProvider {
                 Object next = iter.next();
                 
                 if (next.equals(key)) {
-                    throw new ComponentException(key, MessageFormat.format(
-                            Messages.getString("Container.cycle_detected"), //$NON-NLS-1$
-                            new String[] {key.toString()}), null);
+                    throw new ComponentException(key, NLS.bind(
+                            ComponentMessages.Container_cycle_detected, 
+                          key.toString()), null);
                 }
             }
         } else {

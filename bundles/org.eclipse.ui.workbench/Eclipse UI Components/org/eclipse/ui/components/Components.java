@@ -11,13 +11,12 @@
 package org.eclipse.ui.components;
 
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.components.util.ServiceMap;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.components.Assert;
-import org.eclipse.ui.internal.components.Messages;
+import org.eclipse.ui.internal.components.ComponentMessages;
 
 /**
  * Contains static helper methods for managing components. 
@@ -98,15 +97,13 @@ public final class Components {
         Object result = toQuery.getAdapter(interf);
         
         if (result == null) {
-            throw new ComponentException(MessageFormat.format(Messages.getString("Components.missing_required"), //$NON-NLS-1$
-                    new String[] {interf.toString()}), null);
+            throw new ComponentException(NLS.bind(ComponentMessages.Components_missing_required, 
+                   interf.toString()), null);
         }
         
         if (!interf.isInstance(result)) {
             throw new ComponentException(interf, 
-                    MessageFormat.format(Messages.getString("Components.wrong_type"), //$NON-NLS-1$
-                            new String[] {interf.getName(), 
-                            result.getClass().getName()}),
+                    NLS.bind(ComponentMessages.Components_wrong_type,interf.getName(), result.getClass().getName()),
                     null);
         }
         
@@ -140,17 +137,16 @@ public final class Components {
         }
         
         if (result == null) {
-        	throw new ComponentException(key, MessageFormat.format(Messages.getString("Components.missing_required"), //$NON-NLS-1$
-        			new String[] {key.toString()}), null);
+        	throw new ComponentException(key, NLS.bind(ComponentMessages.Components_missing_required,
+        			key.toString()), null);
         }
         
         if (key instanceof Class) {
         	Class c = (Class)key;
 	        if (!c.isInstance(result)) {
 	            throw new ComponentException(key, 
-	                    MessageFormat.format(Messages.getString("Components.wrong_type"), //$NON-NLS-1$
-	                            new String[] {c.getName(), 
-	                            result.getClass().getName()}),
+	                   NLS.bind(ComponentMessages.Components_wrong_type, 
+	                            c.getName(),  result.getClass().getName()),
 	                    null);
 	        }
         }

@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.components;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.components.ClassIdentifier;
 import org.eclipse.ui.components.ComponentException;
@@ -105,18 +104,16 @@ public class ComponentUtil {
 	        return result;
 	    } catch (ClassNotFoundException e) {
 	        throw new ComponentException(type.getTypeName(),
-	                MessageFormat.format(Messages.getString("ComponentUtil.class_not_found"), new String[] { //$NON-NLS-1$
-	                        type.getNamespace(), type.getTypeName()}), null);
+	               NLS.bind(ComponentMessages.ComponentUtil_class_not_found,
+	                        type.getNamespace(), type.getTypeName()), null);
 	    }
     }
     
     public static final ClassIdentifier getClassFromInitializationData(IConfigurationElement config, Object data) throws CoreException {
         
         if (!(data instanceof String)) {
-            String msg = MessageFormat.format(
-                    Messages.getString("ReflectionFactory.missing_data"),  //$NON-NLS-1$
-                    new String[] {
-                        config.toString()}); 
+            String msg = NLS.bind(
+                    ComponentMessages.ReflectionFactory_missing_data,  config.toString()); 
             
             throw new CoreException(new Status(IStatus.ERROR, config.getNamespace(), Status.OK, 
                     msg, null));
@@ -168,8 +165,8 @@ public class ComponentUtil {
         String result = element.getAttribute(attributeId);
         if (result == null) {
             throw new CoreException(new Status(IStatus.ERROR, element.getDeclaringExtension().getNamespace(),
-                    IStatus.OK, MessageFormat.format(Messages.getString("ComponentUtil.missing_attribute"),  //$NON-NLS-1$
-                            new String[] {element.getName(), attributeId, 
+                    IStatus.OK, NLS.bind(ComponentMessages.ComponentUtil_missing_attribute, 
+                            new Object[] {element.getName(), attributeId, 
                             element.getDeclaringExtension().getExtensionPointUniqueIdentifier()}), null
                             ));
         }
