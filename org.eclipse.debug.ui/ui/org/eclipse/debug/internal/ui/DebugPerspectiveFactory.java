@@ -40,8 +40,6 @@ public class DebugPerspectiveFactory implements IPerspectiveFactory {
 		layout.addActionSet(IDebugUIConstants.DEBUG_ACTION_SET);
 		
 		setContentsOfShowViewMenu(layout);
-		
-		layout.setEditorReuseThreshold(1);
 	}
 	
 	/** 
