@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -205,6 +206,32 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
 	 */
 	public void update() {
+		updateTargetsTab();
 		updateLaunchConfigurationDialog();
+	}
+	
+	private void updateTargetsTab() {
+		//the properties have changed...set the targets tab to 
+		//need to be recomputed
+		ILaunchConfigurationTab[] tabs=  getLaunchConfigurationDialog().getTabs();
+		for (int i = 0; i < tabs.length; i++) {
+			ILaunchConfigurationTab tab = tabs[i];
+			if (tab instanceof AntTargetsTab) {
+				((AntTargetsTab)tab).setDirty(true);
+				break;
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 	}
 }

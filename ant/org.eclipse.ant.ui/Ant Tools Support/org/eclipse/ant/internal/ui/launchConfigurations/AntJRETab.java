@@ -229,18 +229,22 @@ public class AntJRETab extends JavaJRETab {
 		classpath.append(model.serializeClasspath(true));
 		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, classpath.toString());
 		previousJRE= vm;
-		updateTargetsTab();
+		updateOtherTabs();
+		updateLaunchConfigurationDialog();
 	}
 	
-	private void updateTargetsTab() {
-		//the classpath has changed...set the targets tab to 
+	private void updateOtherTabs() {
+		//the classpath has changed...set the targets and classpath tabs to 
 		//need to be recomputed
 		ILaunchConfigurationTab[] tabs=  getLaunchConfigurationDialog().getTabs();
 		for (int i = 0; i < tabs.length; i++) {
 			ILaunchConfigurationTab tab = tabs[i];
 			if (tab instanceof AntTargetsTab) {
 				((AntTargetsTab)tab).setDirty(true);
-				break;
+				continue;
+			} else if (tab instanceof AntClasspathTab) {
+				((AntClasspathTab)tab).setDirty(true);
+				continue;
 			}
 		}
 	}
@@ -411,7 +415,6 @@ public class AntJRETab extends JavaJRETab {
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		setLaunchConfigurationWorkingCopy(workingCopy);
 		warningShown= false;
-		super.activated(workingCopy);
 	}
 
 	/* (non-Javadoc)
@@ -434,5 +437,10 @@ public class AntJRETab extends JavaJRETab {
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
 			applySeparateVMAttributes(config);
 		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 	}
 }

@@ -215,4 +215,18 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 	protected ClasspathModel getClasspathModel() {
 		return model;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#setDirty(boolean)
+	 */
+	protected void setDirty(boolean dirty) {
+		//provide package visibility
+		super.setDirty(dirty);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
+	}
 }

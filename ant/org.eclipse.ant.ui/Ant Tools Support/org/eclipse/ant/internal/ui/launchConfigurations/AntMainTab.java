@@ -55,6 +55,7 @@ public class AntMainTab extends ExternalToolsMainTab {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		super.performApply(configuration);
 		try {
+			//has the location changed
 			String newLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
 			if (newLocation != null) {
 				if (!newLocation.equals(currentLocation)) {

@@ -72,8 +72,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	private TargetInfo[] fAllTargets= null;
 	private List fOrderedTargets = null;
 	
-	private String fLocation= null;
-	
 	private CheckboxTableViewer fTableViewer = null;
 	private Label fSelectionCountLabel = null;
 	private Text fTargetOrderText = null;
@@ -84,6 +82,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	private ILaunchConfiguration fLaunchConfiguration;
 	private AntTargetContentProvider fTargetContentProvider;
 	private int fSortDirection= 0;
+	private boolean fInitializing= false;
 	
 	/**
 	 * Sort direction constants.
@@ -282,7 +281,9 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	private void setSort(int column) {
 		fSortDirection= column;
 		fTableViewer.refresh();
-		updateLaunchConfigurationDialog();
+		if (!fInitializing) {
+			updateLaunchConfigurationDialog();
+		}
 	}
 
 	/**
@@ -440,13 +441,15 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			setDirty(false);
 			setErrorMessage(null);
 			
-			String location = null;
+			final String expandedLocation;
 			try {
-				location = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fLocation);
+				String location= fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
+				expandedLocation = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(location);
 			} catch (CoreException e1) {
 				setErrorMessage(e1.getMessage());
+				return fAllTargets;
 			}
-			final String expandedLocation = location;
+			
 			if (expandedLocation != null) {
 				final CoreException[] exceptions= new CoreException[1];
 				try {
@@ -505,6 +508,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		fInitializing= true;
 		fLaunchConfiguration= configuration;
 		setErrorMessage(null);
 		setMessage(null);
@@ -536,21 +540,13 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		
 		if (newLocation == null) {
 			fAllTargets= null;
-			fLocation= newLocation;
-			setExecuteInput(new TargetInfo[0]);
-			fTableViewer.setInput(new TargetInfo[0]);
+			initializeForNoTargets();
 			return; 
-		}
-		
-		if (!newLocation.equals(fLocation)) {
-			fAllTargets= null;
-			fLocation= newLocation;
 		}
 		
 		TargetInfo[] allInfos= getTargets();
 		if (allInfos == null) {
-			setExecuteInput(new TargetInfo[0]);
-			fTableViewer.setInput(new TargetInfo[0]);
+			initializeForNoTargets();
 			return; 
 		}
 		
@@ -561,8 +557,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			setExecuteInput(allInfos);
 			if (fDefaultTarget != null) {
 				fTableViewer.setChecked(fDefaultTarget, true);
+				updateSelectionCount();
+				updateLaunchConfigurationDialog();
 			}
-			updateSelectionCount();
+			fInitializing= false;
 			return;
 		}
 		
@@ -577,8 +575,15 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			}
 		}
 		updateSelectionCount();
+		fInitializing= false;
 	}
 	
+	private void initializeForNoTargets() {
+		setExecuteInput(new TargetInfo[0]);
+		fTableViewer.setInput(new TargetInfo[0]);
+		fInitializing= false;
+	}
+
 	/**
 	 * Sets the execute table's input to the given input.
 	 */
@@ -648,9 +653,18 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration launchConfig) {
-		if (fAllTargets == null && getErrorMessage() != null) {
-			//error in parsing;
-			return false;
+		if (fAllTargets == null || isDirty()) {
+			if (getErrorMessage() != null) {
+				//error in parsing;
+				return false;
+			} else {
+				//targets not up to date and no error message...we have not parsed recently
+				getTargets();
+				if (getErrorMessage() != null) {
+					//error in parsing;
+					return false;
+				}
+			}
 		}
 		setErrorMessage(null);
 		setMessage(null);
@@ -668,5 +682,24 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	protected void setDirty(boolean dirty) {
 		//provide package visibility
 		super.setDirty(dirty);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+		if (isDirty()) {
+			super.activated(workingCopy);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
+		if (fOrderedTargets.size() == 0) {
+			//set the dirty flag so that the state will be reinitialized on activation
+			setDirty(true);
+		}
 	}
 }
