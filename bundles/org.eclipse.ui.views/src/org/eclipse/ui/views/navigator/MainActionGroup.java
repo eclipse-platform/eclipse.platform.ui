@@ -80,12 +80,12 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		propertyDialogAction =
 			new PropertyDialogAction(shell, navigator.getViewer());
 		
-		importAction = new ImportResourcesAction(workbench);
+		importAction = new ImportResourcesAction(navigator.getSite().getWorkbenchWindow());
 		importAction.setDisabledImageDescriptor(getImageDescriptor("dtool16/import_wiz.gif")); //$NON-NLS-1$
 		importAction.setImageDescriptor(getImageDescriptor("etool16/import_wiz.gif")); //$NON-NLS-1$		
 		importAction.setHoverImageDescriptor(getImageDescriptor("ctool16/import_wiz.gif")); //$NON-NLS-1$
 
-		exportAction = new ExportResourcesAction(workbench);
+		exportAction = new ExportResourcesAction(navigator.getSite().getWorkbenchWindow());
 		exportAction.setDisabledImageDescriptor(getImageDescriptor("dtool16/export_wiz.gif")); //$NON-NLS-1$
 		exportAction.setImageDescriptor(getImageDescriptor("etool16/export_wiz.gif")); //$NON-NLS-1$
 		exportAction.setHoverImageDescriptor(getImageDescriptor("ctool16/export_wiz.gif")); //$NON-NLS-1$

@@ -660,7 +660,7 @@ public class WorkbenchActionBuilder {
 		newWizardDropDownAction.setDisabledImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
 
-		importResourcesAction = new ImportResourcesAction(workbench);
+		importResourcesAction = new ImportResourcesAction(getWindow());
 		importResourcesAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ));
@@ -671,7 +671,7 @@ public class WorkbenchActionBuilder {
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ_DISABLED));
 
-		exportResourcesAction = new ExportResourcesAction(workbench, WorkbenchMessages.getString("ExportResourcesAction.fileMenuText")); //$NON-NLS-1$
+		exportResourcesAction = new ExportResourcesAction(getWindow(), WorkbenchMessages.getString("ExportResourcesAction.fileMenuText")); //$NON-NLS-1$
 		exportResourcesAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ));
