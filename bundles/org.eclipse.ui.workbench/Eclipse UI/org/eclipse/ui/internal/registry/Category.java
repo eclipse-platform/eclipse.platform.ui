@@ -183,6 +183,14 @@ public class Category implements IWorkbenchAdapter, IPluginContribution {
 		return elements;
 	}
 	
+	public boolean hasElement(Object o) {
+		if (elements == null)
+			return false;
+		if (elements.isEmpty())
+			return false;
+		return elements.contains(o);
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on ICategory.
 	 */

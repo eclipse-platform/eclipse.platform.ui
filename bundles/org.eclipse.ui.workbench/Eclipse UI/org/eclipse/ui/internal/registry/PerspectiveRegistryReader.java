@@ -28,16 +28,11 @@ public class PerspectiveRegistryReader extends RegistryReader {
 public PerspectiveRegistryReader() {
 	super();
 }
-//for dynamic UI
-public PerspectiveRegistryReader(PerspectiveRegistry registry) {
-	super();
-	this.registry = registry;
-}
 /**
  * readElement method comment.
  */
 // for dynamic UI - change access from protected to public
-public boolean readElement(IConfigurationElement element) {
+protected boolean readElement(IConfigurationElement element) {
 	if (element.getName().equals(TAG_LAYOUT)) {
 		try {
 			String descText = getDescription(element);

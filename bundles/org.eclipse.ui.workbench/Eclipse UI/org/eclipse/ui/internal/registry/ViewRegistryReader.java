@@ -80,28 +80,4 @@ public void readViews(IPluginRegistry in, ViewRegistry out)
 	readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_VIEWS);
 	out.mapViewsToCategories();
 }
-//for dynamic UI
-public void readElement(ViewRegistry vReg, IConfigurationElement element) {
-	viewRegistry = vReg;
-	readElement(element);
-	if (element.getName().equals(TAG_VIEW)) {
-		String id = element.getAttribute(IWorkbenchConstants.TAG_ID);
-		Category cat = null;
-		IViewDescriptor desc = vReg.find(id);
-		if (desc == null)
-			return;
-		String [] catPath = desc.getCategoryPath();
-		if (catPath != null) {
-			String rootCat = catPath[0];
-			cat = (Category)vReg.findCategory(rootCat);
-		}	
-		if (cat == null)
-			cat = (Category)vReg.getMiscCategory();
-		if (cat == null) {
-			cat = new Category();
-			vReg.setMiscCategory(cat);
-		}
-		cat.addElement(desc);
-	}
-}
 }

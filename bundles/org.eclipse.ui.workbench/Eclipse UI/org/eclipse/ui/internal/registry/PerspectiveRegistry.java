@@ -21,9 +21,14 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Iterator;
 
+import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -42,6 +47,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -50,12 +56,13 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 /**
  * Perspective registry.
  */
-public class PerspectiveRegistry implements IPerspectiveRegistry {
-	private ArrayList children = new ArrayList(10);
+public class PerspectiveRegistry extends RegistryManager implements IPerspectiveRegistry, IRegistryChangeListener {
 	private String defaultPerspID;
 	private static final String EXT = "_persp.xml"; //$NON-NLS-1$
 	private static final String ID_DEF_PERSP = "PerspectiveRegistry.DEFAULT_PERSP"; //$NON-NLS-1$
 	private static final String PERSP = "_persp"; //$NON-NLS-1$
+	private static final String TAG_LAYOUT = "perspective";//$NON-NLS-1$
+	protected static final String TAG_DESCRIPTION = "description";	//$NON-NLS-1$
 	private static final char SPACE_DELIMITER = ' '; //$NON-NLS-1$
 	//keep track of the perspectives the user has selected to remove or revert
 	private ArrayList perspToRemove = new ArrayList(5);
@@ -66,7 +73,8 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	 * @param rootFolder is the root folder for perspective files.
 	 */
 	public PerspectiveRegistry() {
-		super();
+		super(WorkbenchPlugin.PI_WORKBENCH, IWorkbenchConstants.PL_PERSPECTIVES);
+		InternalPlatform.getDefault().getRegistry().addRegistryChangeListener(this);
 
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		store.addPropertyChangeListener(new IPropertyChangeListener() {
@@ -116,7 +124,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 						try {
 							XMLMemento memento = XMLMemento.createReadRoot(reader);
 							desc.restoreState(memento);
-							children.add(desc);
+							add(desc, desc.getPluginId());
 						} catch (WorkbenchException e) {
 							unableToLoadPerspective(e.getStatus());
 						}
@@ -148,7 +156,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	 * Adds a perspective.  This is typically used by the reader.
 	 */
 	public void addPerspective(PerspectiveDescriptor desc) {
-		children.add(desc);
+		if (desc == null)
+			return;
+		add(desc, desc.getPluginId());
 	}
 	/**
 	 * Create a new perspective.
@@ -167,7 +177,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 
 		// Create descriptor.
 		PerspectiveDescriptor desc = new PerspectiveDescriptor(id, label, originalDescriptor);
-		children.add(desc);
+		add(desc, desc.getPluginId());
 		return desc;
 	}
 	/**
@@ -196,15 +206,11 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	 */
 	public void deletePerspective(IPerspectiveDescriptor in) {
 		PerspectiveDescriptor desc = (PerspectiveDescriptor) in;
-		//for dynamic UI: allow the deletion of all perspectives
-		if (true) {
-			//if (!desc.isPredefined()) {
-			//indicate that the user is removing these perspectives
-			perspToRemove.add(desc.getId());
-			children.remove(desc);
-			desc.deleteCustomDefinition();
-			verifyDefaultPerspective();
-		}
+		perspToRemove.add(desc.getId());
+		remove(desc.getPluginId());
+		desc.deleteCustomDefinition();
+		verifyDefaultPerspective();
+		cleanRegistry();
 	}
 	/**
 	 * Removes the custom definition of a perspective from the preference sotre
@@ -234,12 +240,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	 * @see IPerspectiveRegistry
 	 */
 	public IPerspectiveDescriptor findPerspectiveWithId(String id) {
-		
-		//Do not filter if looking up by id as the user 
-		//must have worken up state to have got this far
-		Iterator enum = children.iterator();
-		while (enum.hasNext()) {
-			IPerspectiveDescriptor desc = (IPerspectiveDescriptor) enum.next();
+		Object[] allDescriptors = getRegistryObjects();
+		for (int i = 0; i < allDescriptors.length; i++) {
+			IPerspectiveDescriptor desc = (IPerspectiveDescriptor)allDescriptors[i];
 			if (desc.getId().equals(id))
 				return desc;
 		}
@@ -250,9 +253,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	 * @see IPerspectiveRegistry
 	 */
 	public IPerspectiveDescriptor findPerspectiveWithLabel(String label) {
-		Iterator enum = children.iterator();
-		while (enum.hasNext()) {
-			IPerspectiveDescriptor desc = (IPerspectiveDescriptor) enum.next();
+		Object[] allDescriptors = getRegistryObjects();
+		for (int i = 0; i < allDescriptors.length; i++) {
+			IPerspectiveDescriptor desc = (IPerspectiveDescriptor)allDescriptors[i];
 			if (desc.getLabel().equals(label))
 				return desc;
 		}
@@ -271,10 +274,12 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	 * @see IPerspectiveRegistry
 	 */
 	public IPerspectiveDescriptor[] getPerspectives() {
-		int nSize = children.size();
-		IPerspectiveDescriptor[] retArray = new IPerspectiveDescriptor[nSize];
-		for (int nX = 0; nX < nSize; nX++) {
-			retArray[nX] = (IPerspectiveDescriptor) children.get(nX);
+		Object[] midArray = getRegistryObjects();
+		if (midArray == null || midArray.length == 0)
+			return null;
+		IPerspectiveDescriptor[] retArray = new IPerspectiveDescriptor[midArray.length];
+		for (int i = 0; i < midArray.length; i++) {
+			retArray[i] = (IPerspectiveDescriptor)midArray[i];
 		}
 		return retArray;
 	}
@@ -327,7 +332,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 				String id = newPersp.getId();
 				IPerspectiveDescriptor oldPersp = findPerspectiveWithId(id);
 				if (oldPersp == null)
-					children.add(newPersp);
+					add(newPersp, newPersp.getPluginId());
 				reader.close();
 			} catch (IOException e) {
 				unableToLoadPerspective(null);
@@ -359,7 +364,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 						newPersp.restoreState(memento);
 						IPerspectiveDescriptor oldPersp = findPerspectiveWithId(newPersp.getId());
 						if (oldPersp == null)
-							children.add(newPersp);
+							add(newPersp, newPersp.getPluginId());
 
 						//save to the preference store
 						saveCustomPersp(newPersp, memento);
@@ -398,6 +403,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 
 		// Save it to the preference store.
 		Writer writer = new StringWriter();
+		;
 
 		memento.save(writer);
 		writer.close();
@@ -500,7 +506,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 		// Create descriptor.
 		desc = new PerspectiveDescriptor(id, label, 
 				(PerspectiveDescriptor)originalDescriptor);
-		children.add(desc);
+		add(desc, ((PerspectiveDescriptor)desc).getPluginId());
 		return desc;
 	}
 	/* (non-Javadoc)
@@ -510,5 +516,39 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 		PerspectiveDescriptor desc = (PerspectiveDescriptor)perspToRevert;
 		perspToRemove.add(desc.getId());
 		desc.revertToPredefined();
+	}
+	public Object buildNewCacheObject(IExtensionDelta delta) {
+		IExtension extension = delta.getExtension();
+		if (extension == null)
+			return null;
+		IConfigurationElement[] elements = extension.getConfigurationElements();
+		IPerspectiveDescriptor desc = null;
+		for (int i = 0; i < elements.length; i++) {
+			String id = elements[i].getAttribute(IWorkbenchConstants.TAG_ID);
+			if (id == null)
+				continue;
+			desc = findPerspectiveWithId(id);
+			if (desc == null) {
+				if (elements[i].getName().equals(TAG_LAYOUT)) {
+					try {
+						String descText;
+						IConfigurationElement[] children = elements[i].getChildren(TAG_DESCRIPTION);
+						if (children.length >= 1) {
+							descText = children[0].getValue();
+						} else {
+							descText = ""; //$NON-NLS-1$
+						}
+						desc = new PerspectiveDescriptor(elements[i], descText);
+					} catch (CoreException e) {
+						// log an error since its not safe to open a dialog here
+						WorkbenchPlugin.log("Unable to create layout descriptor.", e.getStatus());//$NON-NLS-1$
+					}
+				}
+				
+			}
+		}
+		return desc;
+	}
+	public void postChangeProcessing() {
 	}
 }

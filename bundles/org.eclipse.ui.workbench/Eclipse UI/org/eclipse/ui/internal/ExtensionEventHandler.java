@@ -415,30 +415,30 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 	}
 	
 	private void loadView(IExtension ext) {
-		MultiStatus result = new MultiStatus(
-			PlatformUI.PLUGIN_ID,IStatus.OK,
-			WorkbenchMessages.getString("Workbench.problemsRestoring"),null); //$NON-NLS-1$
-		IViewRegistry vReg = WorkbenchPlugin.getDefault().getViewRegistry();
-		ViewRegistryReader vReader = new ViewRegistryReader();
-		IConfigurationElement[] elements = ext.getConfigurationElements();
-		for(int i=0; i<elements.length; i++) {
-			String id = elements[i].getAttribute(IWorkbenchConstants.TAG_ID);
-			if (elements[i].getName().equals(IWorkbenchConstants.TAG_VIEW) && vReg.find(id)!=null)
-				continue;
-			if (elements[i].getName().equals(TAG_CATEGORY) && ((ViewRegistry)vReg).findCategory(id)!=null)
-				continue;
-			vReader.readElement((ViewRegistry)vReg, elements[i]);
-			//restoreViewState(result, id);
-			if (result.getSeverity() == IStatus.ERROR) 
-				break;
-		}
-		if (result.getSeverity() == IStatus.ERROR) {
-			ErrorDialog.openError(
-				null,
-				WorkbenchMessages.getString("Workspace.problemsTitle"), //$NON-NLS-1$
-				WorkbenchMessages.getString("Workbench.problemsRestoringMsg"), //$NON-NLS-1$
-				result);
-		}
+//		MultiStatus result = new MultiStatus(
+//			PlatformUI.PLUGIN_ID,IStatus.OK,
+//			WorkbenchMessages.getString("Workbench.problemsRestoring"),null); //$NON-NLS-1$
+//		IViewRegistry vReg = WorkbenchPlugin.getDefault().getViewRegistry();
+//		ViewRegistryReader vReader = new ViewRegistryReader();
+//		IConfigurationElement[] elements = ext.getConfigurationElements();
+//		for(int i=0; i<elements.length; i++) {
+//			String id = elements[i].getAttribute(IWorkbenchConstants.TAG_ID);
+//			if (elements[i].getName().equals(IWorkbenchConstants.TAG_VIEW) && vReg.find(id)!=null)
+//				continue;
+//			if (elements[i].getName().equals(TAG_CATEGORY) && ((ViewRegistry)vReg).findCategory(id)!=null)
+//				continue;
+//			vReader.readElement((ViewRegistry)vReg, elements[i]);
+//			//restoreViewState(result, id);
+//			if (result.getSeverity() == IStatus.ERROR) 
+//				break;
+//		}
+//		if (result.getSeverity() == IStatus.ERROR) {
+//			ErrorDialog.openError(
+//				null,
+//				WorkbenchMessages.getString("Workspace.problemsTitle"), //$NON-NLS-1$
+//				WorkbenchMessages.getString("Workbench.problemsRestoringMsg"), //$NON-NLS-1$
+//				result);
+//		}
 	}
 
 	private void restoreViewState(MultiStatus result, String id){
@@ -751,30 +751,30 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 	}
 
 	private void loadPerspective(IExtension ext) {
-		MultiStatus result = new MultiStatus(
-			PlatformUI.PLUGIN_ID,IStatus.OK,
-			WorkbenchMessages.getString("Workbench.problemsRestoring"),null); //$NON-NLS-1$
-		IPerspectiveRegistry pReg = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
-		PerspectiveRegistryReader pReader = new PerspectiveRegistryReader((PerspectiveRegistry)pReg);
-		IConfigurationElement[] elements = ext.getConfigurationElements();
-		for(int i=0; i<elements.length; i++) {
-			String id = elements[i].getAttribute(IWorkbenchConstants.TAG_ID);
-			if (id == null)
-				continue;
-			IPerspectiveDescriptor desc = pReg.findPerspectiveWithId(id);
-			if (desc == null)
-				pReader.readElement(elements[i]);
-			//restorePerspectiveState(result, id);
-			if (result.getSeverity() == IStatus.ERROR)
-				break;
-		}
-		if (result.getSeverity() == IStatus.ERROR) {
-			ErrorDialog.openError(
-				null,
-				WorkbenchMessages.getString("Workspace.problemsTitle"), //$NON-NLS-1$
-				WorkbenchMessages.getString("Workbench.problemsRestoringMsg"), //$NON-NLS-1$
-				result);
-		}
+//		MultiStatus result = new MultiStatus(
+//			PlatformUI.PLUGIN_ID,IStatus.OK,
+//			WorkbenchMessages.getString("Workbench.problemsRestoring"),null); //$NON-NLS-1$
+//		IPerspectiveRegistry pReg = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
+//		PerspectiveRegistryReader pReader = new PerspectiveRegistryReader((PerspectiveRegistry)pReg);
+//		IConfigurationElement[] elements = ext.getConfigurationElements();
+//		for(int i=0; i<elements.length; i++) {
+//			String id = elements[i].getAttribute(IWorkbenchConstants.TAG_ID);
+//			if (id == null)
+//				continue;
+//			IPerspectiveDescriptor desc = pReg.findPerspectiveWithId(id);
+//			if (desc == null)
+//				pReader.readElement(elements[i]);
+//			//restorePerspectiveState(result, id);
+//			if (result.getSeverity() == IStatus.ERROR)
+//				break;
+//		}
+//		if (result.getSeverity() == IStatus.ERROR) {
+//			ErrorDialog.openError(
+//				null,
+//				WorkbenchMessages.getString("Workspace.problemsTitle"), //$NON-NLS-1$
+//				WorkbenchMessages.getString("Workbench.problemsRestoringMsg"), //$NON-NLS-1$
+//				result);
+//		}
 	}
 
 	private void loadPerspectiveExtensions(IExtension ext) {
