@@ -22,6 +22,7 @@ package org.eclipse.core.runtime.jobs;
  * 
  * @see Job#getRule()
  * @see Job#setRule(ISchedulingRule)
+ * @see Job#schedule(long)
  * @see IJobManager#beginRule(ISchedulingRule, org.eclipse.core.runtime.IProgressMonitor)
  * @see IJobManager#endRule(ISchedulingRule)
  * @since 3.0

@@ -394,6 +394,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * This is a convenience method, fully equivalent to 
 	 * <code>schedule(0L)</code>.
 	 * </p>
+	 * @see #schedule(long)
 	 */
 	public final void schedule() {
 		super.schedule(0L);
@@ -402,7 +403,10 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	/**
 	 * Schedules this job to be run after a specified delay.  After the specified delay,
 	 * the job is added to a queue of waiting jobs, and will be run when it arrives at the 
-	 * beginning of the queue.	
+	 * beginning of the queue.	Jobs with conflicting scheduling rules are guaranteed
+	 * to run in the order they are scheduled. No guarantees are made about the 
+	 * relative execution order of jobs with unrelated or <code>null</code>
+	 * scheduling rules.
 	 * <p>
 	 * If this job is currently running, it will be rescheduled with the specified
 	 * delay as soon as it finishes.  If this method is called multiple times
@@ -413,6 +417,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * </p>
 	 * 
 	 * @param delay a time delay in milliseconds before the job should run
+	 * @see ISchedulingRule
 	 */
 	public final void schedule(long delay) {
 		super.schedule(delay);
