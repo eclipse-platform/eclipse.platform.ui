@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
+import org.eclipse.jface.action.*;
+
 public interface IPreviewTask {
 	String getName();
 	String getDescription();
 	void run();
 	boolean isEnabled();
+	void setDescription(String desc);
+	IAction getAction();
 }

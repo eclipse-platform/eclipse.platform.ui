@@ -322,7 +322,9 @@ public class ConfigurationView
 			this.desc = desc;
 			this.action = action;
 		}
-
+		public IAction getAction() {
+			return action;
+		}
 		public String getName() {
 			if (name != null)
 				return name;
@@ -330,6 +332,9 @@ public class ConfigurationView
 		}
 		public String getDescription() {
 			return desc;
+		}
+		public void setDescription(String desc) {
+			this.desc = desc;
 		}
 		public void run() {
 			action.run();
@@ -951,9 +956,9 @@ public class ConfigurationView
 				uninstallFeatureAction.setFeature(adapter);
 				uninstallFeatureAction.setEnabled(enable && uninstallFeatureAction.canUninstall());
 				if (adapter.isConfigured())
-					uninstallFeatureAction.setDescription(UpdateUI.getString("ConfigurationView.uninstallDesc2"));
+					setDescriptionOnTask(uninstallFeatureAction, adapter,UpdateUI.getString("ConfigurationView.uninstallDesc2"));
 				else
-					uninstallFeatureAction.setDescription(UpdateUI.getString("ConfigurationView.uninstallDesc"));	
+					setDescriptionOnTask(uninstallFeatureAction, adapter,UpdateUI.getString("ConfigurationView.uninstallDesc"));
 
 				if (enable && adapter.isConfigured()) {
 					IFeature[] features = UpdateUtils.getInstalledFeatures(feature, false);
@@ -999,6 +1004,15 @@ public class ConfigurationView
 		handleSelectionChanged(((IStructuredSelection) e.getSelection()));
 	}
 
+	private void setDescriptionOnTask(IAction action, ConfiguredFeatureAdapter adapter, String desc) {
+		IPreviewTask[] tasks = getPreviewTasks(adapter);
+		if (tasks == null)
+			return;
+		for (int i=0; i<tasks.length; i++)
+			if (tasks[i].getAction() == action)
+				tasks[i].setDescription(desc);
+	}
+	
 	private void makePreviewTasks() {
 		previewTasks = new Hashtable();
 		Class key;
