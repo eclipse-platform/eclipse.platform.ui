@@ -105,8 +105,9 @@ public class SearchResultViewer extends TableViewer {
 		ILabelProvider labelProvider= new SearchResultLabelProvider(new FileLabelProvider(FileLabelProvider.SHOW_LABEL));
 		setLabelProvider(labelProvider);
 		
-		boolean hasSearch= SearchManager.getDefault().getCurrentSearch() != null;
-
+		Search currentSearch= SearchManager.getDefault().getCurrentSearch();
+		boolean hasSearch= currentSearch != null;
+		boolean hasSearchOperation= hasSearch && currentSearch.getOperation() != null;
 
 		fShowNextResultAction= new ShowNextResultAction(this);
 		fShowNextResultAction.setEnabled(false);
@@ -119,7 +120,7 @@ public class SearchResultViewer extends TableViewer {
 		fRemoveAllResultsAction= new RemoveAllResultsAction();
 		fRemoveAllResultsAction.setEnabled(false);
 		fSearchAgainAction= new SearchAgainAction();
-		fSearchAgainAction.setEnabled(hasSearch);
+		fSearchAgainAction.setEnabled(hasSearchOperation);
 		fSortDropDownAction = new SortDropDownAction(this);
 		fSortDropDownAction.setEnabled(getItemCount() > 0);
 		fSearchDropDownAction= new SearchDropDownAction(this);
@@ -234,11 +235,13 @@ public class SearchResultViewer extends TableViewer {
 		if (state != fRemoveAllResultsAction.isEnabled())
 			fRemoveAllResultsAction.setEnabled(state);
 
-		state= SearchManager.getDefault().getCurrentSearch() != null;
+		Search currentSearch= SearchManager.getDefault().getCurrentSearch();
+		state= currentSearch != null;
+		boolean operationState= state && currentSearch.getOperation() != null;
 		if (state != fSearchDropDownAction.isEnabled())
 			fSearchDropDownAction.setEnabled(state);
-		if (state != fSearchAgainAction.isEnabled())
-			fSearchAgainAction.setEnabled(state);
+		if (operationState != fSearchAgainAction.isEnabled())
+			fSearchAgainAction.setEnabled(operationState);
 
 		state= !getSelection().isEmpty();
 		if (state != fGotoMarkerActionProxy.isEnabled())
