@@ -13,9 +13,13 @@ package org.eclipse.jface.text.templates;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
 
 /**
- * A typical text based document template context.
+ * Instances of this class describe the context of a template as a region of
+ * a document. That region may be either specified by its offset and length, or
+ * by a <code>Position</code> which may or may not be registered with the 
+ * document. 
  * <p>
  * Clients may instantiate and extend this class.
  * </p>
@@ -26,30 +30,57 @@ public class DocumentTemplateContext extends TemplateContext {
 
 	/** The text of the document. */
 	private final IDocument fDocument;
-	/** The completion offset. */
-	private int fCompletionOffset;
-	/** The completion length. */
-	private int fCompletionLength;
+	/**
+	 * The region of the document described by this context. We store a 
+	 * position since clients may specify the document region as (updateable)
+	 * Positions.
+	 */
+	private final Position fPosition;
+	/**
+	 * The original offset of this context. Will only be updated by the setter 
+	 * method.
+	 */
+	private int fOriginalOffset;
+	/**
+	 * The original length of this context. Will only be updated by the setter 
+	 * method.
+	 */
+	private int fOriginalLength;
 
 	/**
 	 * Creates a document template context.
 	 * 
 	 * @param type the context type
 	 * @param document the document this context applies to
-	 * @param completionOffset the completion offset (for usage in content
-	 *        assist)
-	 * @param completionLength the completion length
+	 * @param offset the offset of the document region
+	 * @param length the length of the document region
 	 */
-	public DocumentTemplateContext(TemplateContextType type, IDocument document, int completionOffset, int completionLength) {
+	public DocumentTemplateContext(TemplateContextType type, IDocument document, int offset, int length) {
+		this(type, document, new Position(offset, length));
+	}
+	
+	/**
+	 * Creates a document template context. The supplied <code>Position</code>
+	 * will be queried to compute the <code>getStart</code> and 
+	 * <code>getEnd</code> methods, which will therefore answer updated 
+	 * position data if it is registered with the document.
+	 * 
+	 * @param type the context type
+	 * @param document the document this context applies to
+	 * @param position the position describing the area of the document which
+	 *        forms the template context
+	 */
+	public DocumentTemplateContext(TemplateContextType type, IDocument document, Position position) {
 		super(type);
 
 		Assert.isNotNull(document);
-		Assert.isTrue(completionOffset >= 0 && completionOffset <= document.getLength());
-		Assert.isTrue(completionLength >= 0);
+		Assert.isNotNull(position);
+		Assert.isTrue(position.getOffset() <= document.getLength());
 
 		fDocument= document;
-		fCompletionOffset= completionOffset;
-		fCompletionLength= completionLength;
+		fPosition= position;
+		fOriginalOffset= fPosition.getOffset();
+		fOriginalLength= fPosition.getLength();
 	}
 	
 	/**
@@ -67,7 +98,7 @@ public class DocumentTemplateContext extends TemplateContext {
 	 * @return the completion offset within the string of the context
 	 */
 	public int getCompletionOffset() {
-		return fCompletionOffset;	
+		return fOriginalOffset;	
 	}
 	
 	/**
@@ -76,7 +107,7 @@ public class DocumentTemplateContext extends TemplateContext {
 	 * @param newOffset the new completion offset
 	 */
 	protected void setCompletionOffset(int newOffset) {
-		fCompletionOffset= newOffset;
+		fOriginalOffset= newOffset;
 	}
 	
 	/**
@@ -85,7 +116,7 @@ public class DocumentTemplateContext extends TemplateContext {
 	 * @return the completion length within the string of the context
 	 */
 	public int getCompletionLength() {
-		return fCompletionLength;
+		return fOriginalLength;
 	}
 	
 	/**
@@ -94,7 +125,7 @@ public class DocumentTemplateContext extends TemplateContext {
 	 * @param newLength the new completion length
 	 */
 	protected void setCompletionLength(int newLength) {
-		fCompletionLength= newLength;
+		fOriginalLength= newLength;
 	}
 	
 	/**
@@ -118,7 +149,7 @@ public class DocumentTemplateContext extends TemplateContext {
 	 * @return the beginning offset of the keyword
 	 */
 	public int getStart() {
-		return fCompletionOffset;		
+		return fPosition.getOffset();		
 	}
 	
 	/**
@@ -127,7 +158,7 @@ public class DocumentTemplateContext extends TemplateContext {
 	 * @return the end offset of the keyword
 	 */
 	public int getEnd() {
-		return fCompletionOffset + fCompletionLength;
+		return fPosition.getOffset() + fPosition.getLength();
 	}
 	
 	/*
