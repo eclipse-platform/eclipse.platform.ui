@@ -41,4 +41,19 @@ public class FileBuffersForExternalFiles extends FileBufferFunctions {
 		FileTool.copy(sourceFile, externalFile);
 		return new Path(externalFile.getAbsolutePath());
 	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
+	 */
+	protected void markReadOnly() throws Exception {
+		File file= FileBuffers.getSystemFileAtLocation(getPath());
+		file.setReadOnly();
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#isStateValidationSupported()
+	 */
+	protected boolean isStateValidationSupported() {
+		return false;
+	}
 }

@@ -15,6 +15,8 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+
 /**
  * FileBuffersForWorkspaceFiles
  */
@@ -24,5 +26,20 @@ public class FileBuffersForWorkspaceFiles extends FileBufferFunctions {
 		IFolder folder= ResourceHelper.createFolder("project/folderA/folderB/");
 		IFile file= ResourceHelper.createFile(folder, "WorkspaceFile", "content");
 		return file.getFullPath();
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
+	 */
+	protected void markReadOnly() throws Exception {
+		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
+		file.setReadOnly(true);
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#isStateValidationSupported()
+	 */
+	protected boolean isStateValidationSupported() {
+		return true;
 	}
 }

@@ -36,6 +36,10 @@ public abstract class FileBufferFunctions extends TestCase {
 	
 	protected abstract IPath createPath(IProject project) throws Exception;
 	
+	protected abstract void markReadOnly() throws Exception;
+	
+	protected abstract boolean isStateValidationSupported();
+	
 
 	protected void setUp() throws Exception {
 		fManager= FileBuffers.getTextFileBufferManager();
@@ -213,4 +217,75 @@ public abstract class FileBufferFunctions extends TestCase {
 			fManager.disconnect(fPath, null);
 		}
 	}
+	
+	/*
+	 * Test validateState.
+	 */
+	public void test8_1() throws Exception {
+		fManager.connect(fPath, null);
+		try {
+			
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			fileBuffer.validateState(null, null);
+			assertTrue(fileBuffer.isStateValidated());
+			
+		} finally {
+			fManager.disconnect(fPath, null);
+		}
+	}
+	
+	/*
+	 * Test validateState.
+	 */
+	public void test8_2() throws Exception {
+		fManager.connect(fPath, null);
+		try {
+			
+			markReadOnly();
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			fileBuffer.validateState(null, null);
+			assertTrue(fileBuffer.isStateValidated());
+			
+		} finally {
+			fManager.disconnect(fPath, null);
+		}
+	}
+	
+	/*
+	 * Test resetStateValidation.
+	 */
+	public void test9_1() throws Exception {
+		fManager.connect(fPath, null);
+		try {
+			
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			fileBuffer.validateState(null, null);
+			fileBuffer.resetStateValidation();
+			if (isStateValidationSupported())
+				assertFalse(fileBuffer.isStateValidated());
+			
+		} finally {
+			fManager.disconnect(fPath, null);
+		}
+	}
+	
+	/*
+	 * Test resetStateValidation.
+	 */
+	public void test9_2() throws Exception {
+		fManager.connect(fPath, null);
+		try {
+			
+			markReadOnly();
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			fileBuffer.validateState(null, null);
+			fileBuffer.resetStateValidation();
+			if (isStateValidationSupported())
+				assertFalse(fileBuffer.isStateValidated());
+			
+		} finally {
+			fManager.disconnect(fPath, null);
+		}
+	}
+	
 }

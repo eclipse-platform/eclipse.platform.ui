@@ -233,14 +233,16 @@ public class FileTool {
 	}
 	
 	public static void delete(File file) throws CoreException {
-		for (int i= 0; i < MAX_RETRY; i++) {
-			if (file.delete())
-				i= MAX_RETRY;
-			else {
-				try {
-					Thread.sleep(1000); // sleep a second
-				} catch (InterruptedException e) {
-				} 
+		if (file.exists()) {
+			for (int i= 0; i < MAX_RETRY; i++) {
+				if (file.delete())
+					i= MAX_RETRY;
+				else {
+					try {
+						Thread.sleep(1000); // sleep a second
+					} catch (InterruptedException e) {
+					} 
+				}
 			}
 		}
 	}
