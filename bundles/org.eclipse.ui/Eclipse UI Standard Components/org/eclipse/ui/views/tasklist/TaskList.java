@@ -444,7 +444,9 @@ void filterChanged() {
 	// Filter has already been updated by dialog; just refresh.
 	// Don't need to update labels for existing elements 
 	// since changes to filter settings don't affect them.
-	getTableViewer().refresh(false);
+	viewer.getControl().setRedraw(false);
+	viewer.refresh(false);
+	viewer.getControl().setRedraw(true);
 	// update after refresh since the content provider caches summary info
 	updateStatusMessage();
 	updateTitle();
@@ -1004,7 +1006,9 @@ void updateFocusResource(ISelection selection) {
 		focusResource = resource;
 		
 		if (updateNeeded) {
+			viewer.getControl().setRedraw(false);
 			viewer.refresh();
+			viewer.getControl().setRedraw(true);
 			updateStatusMessage();
 			updateTitle();
 		}
