@@ -343,6 +343,8 @@ public class AntJRETab extends JavaJRETab {
 		super.initializeFrom(configuration);
 		fVMArgumentsBlock.initializeFrom(configuration);
 		fWorkingDirectoryBlock.initializeFrom(configuration);
+		fWorkingDirectoryBlock.setEnabled(!fJREBlock.isDefaultJRE());
+		fVMArgumentsBlock.setEnabled(!fJREBlock.isDefaultJRE());
 	}
 	
 	/* (non-Javadoc)
