@@ -1,3 +1,4 @@
 org.eclipse.core.resources/debug=true
 org.eclipse.core.resources/debug/build=true
+org.eclipse.core.resources/debug/build/needbuild=true
 
