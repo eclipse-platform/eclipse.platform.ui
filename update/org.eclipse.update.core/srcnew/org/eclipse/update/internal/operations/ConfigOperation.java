@@ -26,14 +26,8 @@ public class ConfigOperation extends SingleOperation implements IConfigOperation
 	}
 	
 	public boolean execute(IProgressMonitor pm) throws CoreException {
-		PendingOperation op =
-			new PendingOperation(
-				getInstallConfiguration(),
-				getTargetSite(),
-				getFeature(),
-				PendingOperation.CONFIGURE);
 
-		IStatus status = UpdateManager.getValidator().validatePendingChange(op);
+		IStatus status = UpdateManager.getValidator().validatePendingConfig(feature);
 		if (status != null) {
 			throw new CoreException(status);
 		}

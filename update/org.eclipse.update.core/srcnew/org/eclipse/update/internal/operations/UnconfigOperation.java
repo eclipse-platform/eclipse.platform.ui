@@ -26,13 +26,8 @@ public class UnconfigOperation extends SingleOperation implements IUnconfigOpera
 	}
 	
 	public boolean execute(IProgressMonitor pm) throws CoreException {
-		PendingOperation op =
-			new PendingOperation(
-				getInstallConfiguration(),
-				getTargetSite(),
-				getFeature(),
-				PendingOperation.UNCONFIGURE);
-		IStatus status = UpdateManager.getValidator().validatePendingChange(op);
+
+		IStatus status = UpdateManager.getValidator().validatePendingUnconfig(feature);
 		if (status != null) {
 			throw new CoreException(status);
 		}

@@ -67,33 +67,49 @@ public class OperationValidator implements IOperationValidator{
 	/*
 	 * Called by UI before performing operation
 	 */
-	public IStatus validatePendingChange(PendingOperation job) {
+	public IStatus validatePendingInstall(IFeature oldFeature, IFeature newFeature) {
 		// check initial state
 		ArrayList beforeStatus = new ArrayList();
 		validateInitialState(beforeStatus);
 
 		// check proposed change
 		ArrayList status = new ArrayList();
-		switch (job.getJobType()) {
-			case PendingOperation.UNCONFIGURE :
-				validateUnconfigure(job.getFeature(), status);
-				break;
-			case PendingOperation.CONFIGURE :
-				validateConfigure(job.getFeature(), status);
-				break;
-			case PendingOperation.INSTALL :
-				validateInstall(job.getOldFeature(), job.getFeature(), status);
-				break;
-		}
+		validateInstall(oldFeature, newFeature, status);
 
 		// report status
-		if (status.size() > 0) {
-			if (beforeStatus.size() > 0)
-				return createMultiStatus(KEY_ROOT_MESSAGE_INIT, beforeStatus);
-			else
-				return createMultiStatus(KEY_ROOT_MESSAGE, status);
-		}
-		return null;
+		return createReportStatus(beforeStatus, status);
+	}
+	
+	/*
+	 * Called by UI before performing operation
+	 */
+	public IStatus validatePendingUnconfig(IFeature feature) {
+		// check initial state
+		ArrayList beforeStatus = new ArrayList();
+		validateInitialState(beforeStatus);
+
+		// check proposed change
+		ArrayList status = new ArrayList();
+		validateUnconfigure(feature, status);
+
+		// report status
+		return createReportStatus(beforeStatus, status);
+	}
+	
+	/*
+	 * Called by UI before performing operation
+	 */
+	public IStatus validatePendingConfig(IFeature feature) {
+		// check initial state
+		ArrayList beforeStatus = new ArrayList();
+		validateInitialState(beforeStatus);
+
+		// check proposed change
+		ArrayList status = new ArrayList();
+		validateConfigure(feature, status);
+
+		// report status
+		return createReportStatus(beforeStatus, status);
 	}
 
 	/*
@@ -115,13 +131,7 @@ public class OperationValidator implements IOperationValidator{
 		}
 
 		// report status
-		if (status.size() > 0) {
-			if (beforeStatus.size() > 0)
-				return createMultiStatus(KEY_ROOT_MESSAGE_INIT, beforeStatus);
-			else
-				return createMultiStatus(KEY_ROOT_MESSAGE, status);
-		}
-		return null;
+		return createReportStatus(beforeStatus, status);
 	}
 
 	/*
@@ -137,13 +147,7 @@ public class OperationValidator implements IOperationValidator{
 		validateRevert(config, status);
 
 		// report status
-		if (status.size() > 0) {
-			if (beforeStatus.size() > 0)
-				return createMultiStatus(KEY_ROOT_MESSAGE_INIT, beforeStatus);
-			else
-				return createMultiStatus(KEY_ROOT_MESSAGE, status);
-		}
-		return null;
+		return createReportStatus(beforeStatus, status);
 	}
 
 	/*
@@ -159,6 +163,10 @@ public class OperationValidator implements IOperationValidator{
 		ArrayList status = new ArrayList();
 		validatePendingChanges(jobs, status);
 
+		// report status
+		return createReportStatus(beforeStatus, status);
+	}
+	private IStatus createReportStatus(ArrayList beforeStatus, ArrayList status) {
 		// report status
 		if (status.size() > 0) {
 			if (beforeStatus.size() > 0)

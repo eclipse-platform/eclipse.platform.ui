@@ -180,7 +180,7 @@ public class InstallOptionalFeatureAction extends Action {
 		final PendingOperation job,
 		final boolean needLicensePage) {
 		
-		IStatus validationStatus = UpdateManager.getValidator().validatePendingChange(job);
+		IStatus validationStatus = UpdateManager.getValidator().validatePendingInstall(job.getOldFeature(), job.getFeature());
 		if (validationStatus != null) {
 			ErrorDialog.openError(
 				UpdateUI.getActiveWorkbenchShell(),

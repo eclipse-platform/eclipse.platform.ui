@@ -20,11 +20,23 @@ import org.eclipse.update.core.*;
 public interface IOperationValidator {
 
 	/**
+	 * Called before performing install.
+	 * Returns null when status cannot be reported.
+	 */
+	public IStatus validatePendingInstall(IFeature oldFeature, IFeature newFeature);
+
+	/**
 	 * Called before performing operation.
 	 * Returns null when status cannot be reported.
 	 */
-	public IStatus validatePendingChange(PendingOperation job);
-
+	public IStatus validatePendingConfig(IFeature feature);
+	
+	/**
+	 * Called before performing operation.
+	 * Returns null when status cannot be reported.
+	 */
+	public IStatus validatePendingUnconfig(IFeature feature);
+	
 	/**
 	 * Called before processing a delta.
 	 * Returns null when status cannot be reported.

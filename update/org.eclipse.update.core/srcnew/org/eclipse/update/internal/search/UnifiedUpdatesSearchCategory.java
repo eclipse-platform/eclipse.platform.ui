@@ -311,7 +311,7 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 			// do not accept updates without a license
 			if (!UpdateManager.hasLicense(job))
 				continue;
-			IStatus status = UpdateManager.getValidator().validatePendingChange(job);
+			IStatus status = UpdateManager.getValidator().validatePendingInstall(job.getOldFeature(), job.getFeature());
 			if (status == null) {
 				if (hit.isPatch()) {
 					IFeature patch = job.getFeature();
