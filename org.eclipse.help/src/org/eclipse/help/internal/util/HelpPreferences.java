@@ -28,10 +28,10 @@ public class HelpPreferences extends HelpProperties {
 	 * @param name name of the table;
 	 */
 	public HelpPreferences() {
-		super("pref_store");
+		super("pref_store.ini");
 		URL installUrl = HelpPlugin.getDefault().getDescriptor().getInstallURL();
 		try {
-			defaultsUrl = new URL(installUrl, "preferences.properties");
+			defaultsUrl = new URL(installUrl, "preferences.ini");
 		} catch (MalformedURLException mue) {
 		}
 		defaults=new Properties();

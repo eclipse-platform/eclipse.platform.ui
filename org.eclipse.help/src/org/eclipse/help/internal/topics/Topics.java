@@ -8,7 +8,6 @@ import java.util.*;
 import org.eclipse.help.internal.util.Resources;
 import org.eclipse.help.internal.util.TString;
 import org.xml.sax.*;
-import sun.java2d.pipe.NullPixelPipe;
 import org.eclipse.help.*;
 /** 
  * Root of navigation TopicsFile

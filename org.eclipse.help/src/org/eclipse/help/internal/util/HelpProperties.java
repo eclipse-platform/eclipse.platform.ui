@@ -26,7 +26,7 @@ public class HelpProperties extends Properties {
 	
 	/**
 	 * Creates empty Properties for the specified plugin
-	 * @param name name of the table;
+	 * @param name name of the file;
 	 * @param plugin the plugin
 	 */
 	public HelpProperties(String name, Plugin plugin) {
@@ -35,7 +35,7 @@ public class HelpProperties extends Properties {
 		file =
 			new File(
 				plugin.getStateLocation().toFile().getPath(),
-				name + ".properties");
+				name);
 	}
 	
 	/**

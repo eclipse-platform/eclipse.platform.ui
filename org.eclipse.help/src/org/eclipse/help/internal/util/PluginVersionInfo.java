@@ -3,13 +3,9 @@ package org.eclipse.help.internal.util;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-
-import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.HelpPlugin;
-
 /**
  * Table of plugins. Records all plugins and their version.
  */
@@ -17,19 +13,8 @@ public class PluginVersionInfo extends HelpProperties {
 	Plugin basePlugin = HelpPlugin.getDefault();
 	boolean doComparison = true;
 	boolean hasChanged = false;
-
 	Collection added = new ArrayList();
 	Collection removed = new ArrayList();
-
-	/**
-	 * Creates table of current contributing plugins and their version.
- 	 * @param name the name of the file to serialize the data to
-	 * @param list list of current contributions (IConfigurationElement type)
-	 */
-	public PluginVersionInfo(String name, List list) {
-		this(name, list.iterator());
-	}
-	
 	/**
 	 * Creates table of current contributing plugins and their version.
 	 * @param it iterator of current contributions (IConfigurationElement type)
@@ -37,17 +22,6 @@ public class PluginVersionInfo extends HelpProperties {
 	public PluginVersionInfo(String name, Iterator it) {
 		this(name, it, HelpPlugin.getDefault());
 	}
-
-	/**
-	 * Creates table of current contributing plugins and their version.
-	 * @param name the name of the file to serialize the data to
-	 * @param list list of current contributions (IConfigurationElement type)
- 	 * @param basePlugin use this plugin's state location to store the data
-	 */
-	public PluginVersionInfo(String name, List list, Plugin basePlugin) {
-		this(name, list.iterator(), basePlugin);
-	}
-	
 	/**
 	 * Creates table of current contributing plugins and their version.
 	 * @param name the name of the file to serialize the data to
@@ -67,7 +41,6 @@ public class PluginVersionInfo extends HelpProperties {
 				plugin.getVersionIdentifier().toString());
 		}
 	}
-
 	/**
 	 * Detects changes in contributions or their version
 	 * since last time the contribution table was saved.
@@ -76,7 +49,6 @@ public class PluginVersionInfo extends HelpProperties {
 	public boolean detectChange() {
 		if (!doComparison)
 			return hasChanged;
-
 		// Create table of contributions present before last save()
 		HelpProperties oldContrs = new HelpProperties(this.name, basePlugin);
 		oldContrs.restore();
@@ -87,22 +59,18 @@ public class PluginVersionInfo extends HelpProperties {
 			String oneContr = (String) keysEnum.nextElement();
 			if (!oldContrs.containsKey(oneContr)) {
 				added.add(oneContr);
-			} else
-				if (!this.get(oneContr).equals(oldContrs.get(oneContr))) {
-					added.add(oneContr);
-				}
+			} else if (!this.get(oneContr).equals(oldContrs.get(oneContr))) {
+				added.add(oneContr);
+			}
 		}
-
 		for (Enumeration keysEnum = oldContrs.keys(); keysEnum.hasMoreElements();) {
 			String oneContr = (String) keysEnum.nextElement();
 			if (!this.containsKey(oneContr)) {
 				removed.add(oneContr);
-			} else
-				if (!oldContrs.get(oneContr).equals(this.get(oneContr))) {
-					removed.add(oneContr);
-				}
+			} else if (!oldContrs.get(oneContr).equals(this.get(oneContr))) {
+				removed.add(oneContr);
+			}
 		}
-
 		hasChanged = added.size() > 0 || removed.size() > 0;
 		doComparison = false;
 		return hasChanged;
