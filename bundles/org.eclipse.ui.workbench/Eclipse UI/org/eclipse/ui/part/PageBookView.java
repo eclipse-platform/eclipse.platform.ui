@@ -694,11 +694,13 @@ private void removePage(PageRec rec) {
  * Method declared on IWorkbenchPart.
  */
 public void setFocus() {
-	if (activeRec == null) {
-	    if (book != null)
-	        book.setFocus();
-	}
-	else {
+    // first set focus on the page book, in case the page 
+    // doesn't properly handle setFocus
+    if (book != null) {
+        book.setFocus();
+    }
+    // then set focus on the page, if any
+	if (activeRec != null) {
 		activeRec.page.setFocus();
 	}
 }
