@@ -215,6 +215,8 @@ public class HelpContextManager implements ContextManager {
 	}
 	// NL enables a description string. 
 	private String getNLdescription(String pluginID, String description) {
+		if(description==null)
+			return description;
 		// if description starts with %, need to translate.
 		if (description.indexOf('%') == 0) {
 			// strip off the leading %
@@ -235,10 +237,16 @@ public class HelpContextManager implements ContextManager {
 			return null;
 
 		// Scan the list and return the related topics from the first context containing data
-		for (int i = 0; i < contexts.length; i++) {
+		/*for (int i = 0; i < contexts.length; i++) {
 			IHelpTopic[] topics = getRelatedTopics(contexts[i]);
 			if (topics != null)
 				return topics;
+		}*/
+
+		// return the related topics from the first context
+		if(contexts.length>=1){
+			IHelpTopic[] topics = getRelatedTopics(contexts[0]);
+			return topics;
 		}
 
 		// worst case scenario. Could not find related Topics in any context object. 

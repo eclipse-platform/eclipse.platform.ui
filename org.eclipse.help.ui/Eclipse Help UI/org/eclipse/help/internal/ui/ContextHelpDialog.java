@@ -237,6 +237,7 @@ public class ContextHelpDialog implements Runnable {
 		// create the dialog area and button bar
 		createInfoArea(contents);
 		createLinksArea(contents);
+		createMoreButton(contents);
 
 		// if any errors or parsing errors have occurred, display them in a pop-up
 		Util.displayStatus();
@@ -338,7 +339,7 @@ public class ContextHelpDialog implements Runnable {
 		relatedTopics = cmgr.getRelatedTopics(contexts);
 
 		if (relatedTopics == null)
-			// non of the contexts have Topics
+			// none of the contexts have Topics
 			return null;
 
 		// Create control
@@ -379,8 +380,12 @@ public class ContextHelpDialog implements Runnable {
 			createLink(composite, relatedTopics[i]);
 		}
 
+		return composite;
+	}
+
+	protected void createMoreButton(Composite parent) {
 		// Create Show More button
-		CLabel showMoreButton = new CLabel(composite, SWT.NONE);
+		CLabel showMoreButton = new CLabel(parent, SWT.NONE);
 		showMoreButton.setBackground(backgroundColour);
 		//showMoreButton.setText(WorkbenchResources.getString("Show_More_Related"));
 		//showMoreButton.setFont(italicFont);
@@ -391,7 +396,6 @@ public class ContextHelpDialog implements Runnable {
 
 		// Before returning start thread obtaining more related links in the bacground
 		getMoreRelatedTopicsInBackground();
-		return composite;
 	}
 	protected void getMoreRelatedTopicsInBackground() {
 		getMoreRelatedTopicsThread = new Thread(this);
