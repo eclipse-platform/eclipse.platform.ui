@@ -365,18 +365,34 @@ protected void addToolBar(int style) {
  * Assumes that busy cursor is active.
  */
 private boolean busyClose() {
-	// Only do the check if it is OK to close if we are not closing via the
-	// workbench as the workbench will call this itself
+	// Whether the window was actually closed or not
+	boolean windowClosed = false;
+	
+	// Setup internal flags to indicate window is in
+	// progress of closing and no update should be done.
 	closing = true;
 	updateDisabled = true;
-	int count = workbench.getWorkbenchWindowCount();
-	if (count <= 1 && !workbench.isClosing())
-		return workbench.close();
-	else {
-		if (!okToClose())
-			return false;
-		return hardClose();
+	
+	try {
+		// Only do the check if it is OK to close if we are not closing
+		// via the workbench as the workbench will check this itself.
+		int count = workbench.getWorkbenchWindowCount();
+		if (count <= 1 && !workbench.isClosing()) {
+			windowClosed = workbench.close();
+		} else {
+			if (okToClose()) {
+				windowClosed = hardClose();
+			}
+		}
+	} finally {
+		if (!windowClosed) {
+			// Reset the internal flags if window was not closed.
+			closing = false;
+			updateDisabled = false;
+		}
 	}
+	
+	return windowClosed;
 }
 /**
  * Opens a new page. Assumes that busy cursor is active.
@@ -1095,13 +1111,13 @@ public IWorkbench getWorkbench() {
 	return workbench;
 }
 /**
- * Unconditionally close this window.
+ * Unconditionally close this window. Assumes the proper
+ * flags have been set correctly (e.i. closing and updateDisabled)
  */
 private boolean hardClose() {
 	try {
-		closing = true;
-		updateDisabled = true;
-		actionPresentation.clearActionSets(); // fix for bug 27416
+		// Clear the action sets, fix for bug 27416.
+		actionPresentation.clearActionSets();
 		closeAllPages();
 		actionBuilder.dispose();
 		workbench.fireWindowClosed(this);
