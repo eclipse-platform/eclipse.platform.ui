@@ -66,12 +66,12 @@ public class IOConsolePartition implements ITypedRegion {
     }
       
     /**
-     * deletes data from this partition.
-     * @param offset
-     * @param length
+     * Deletes data from this partition.
+     * @param delOffset
+     * @param delLength
      */
-    public void delete(int offset, int delLength) {
-        buffer.delete(offset, offset+delLength);
+    public void delete(int delOffset, int delLength) {
+        buffer.delete(delOffset, delOffset+delLength);
         length -= delLength;
     }
     
