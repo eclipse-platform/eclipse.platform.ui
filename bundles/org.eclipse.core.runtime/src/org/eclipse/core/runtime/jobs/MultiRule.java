@@ -93,4 +93,10 @@ public class MultiRule implements ISchedulingRule {
 		}
 		return false;
 	}
+	/*
+	 * For debugging purposes only.
+	 */
+	public String toString() {
+		return "MultiRule" + rules; //$NON-NLS-1$
+	}
 }
