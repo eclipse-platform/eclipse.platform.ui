@@ -79,6 +79,7 @@ import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
+import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -938,8 +939,23 @@ public class EditorManager {
 				try {
 					String workbookID = ref.getMemento().getString(IWorkbenchConstants.TAG_WORKBOOK);
 					editorPresentation.setActiveEditorWorkbookFromID(workbookID);
-					openInternalEditor(ref, desc, editorInput, false);
-					ref.getPane().createChildControl();
+					if (desc.isInternal()) {
+					    openInternalEditor(ref, desc, editorInput, false);
+						ref.getPane().createChildControl();
+					}
+					else if (desc.getId().equals(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID)) {
+						if (openSystemInPlaceEditor(ref, desc, editorInput) != null) {
+						    ref.getPane().createChildControl();
+						}
+						else {
+							WorkbenchPlugin.log("Unable to restore in-place editor.  In-place support is missing."); //$NON-NLS-1$
+							result[0] = unableToCreateEditor(ref, null);
+						}
+					}
+					else {
+						WorkbenchPlugin.log("Unable to restore editor - invalid editor descriptor for id: " + editorID); //$NON-NLS-1$
+						result[0] = unableToCreateEditor(ref, null);
+					}
 					// TODO commented during presentation refactor ((EditorPane)ref.getPane()).getWorkbook().updateEditorTab(ref);
 				} catch (PartInitException e) {
 					WorkbenchPlugin.log("Exception creating editor: " + e.getMessage()); //$NON-NLS-1$
@@ -1490,13 +1506,14 @@ public class EditorManager {
 	 * it calculates its hash code based on its Image.
 	 */
 	private class ImageWrapper extends ImageDescriptor {
-		private Image image = null;
+		private final Image image;
 		
 		/**
 		 * Constructor
 		 * @param img the Image to hold on to
 		 */
 		public ImageWrapper(Image img) {
+		    Assert.isNotNull(img);
 			image = img;
 		}
 		/* (non-Javadoc)
@@ -1506,15 +1523,21 @@ public class EditorManager {
 			return image == null ? null : image.getImageData();
 		}
 		
-		/**
-		 * @see java.lang.Object#hashCode()
-		 * @return if the image if not null, return its hash code,
-		 * else, call the hashCode method in the hierarchy
+		/* (non-Javadoc)
+		 * @see Object#hashCode
 		 */
 		public int hashCode() {
-			if (image != null)
-				return image.hashCode();
-			return hashCode();
+		    return Util.hashCode(image);
+		}
+		
+		/* (non-Javadoc)
+		 * @see Object#equals
+		 */
+		public boolean equals(Object obj) {
+			if (!(obj instanceof ImageWrapper))
+				return false;
+			ImageWrapper imgWrap = (ImageWrapper) obj;
+			return Util.equals(this.image, imgWrap.image);
 		}
 	}
 	

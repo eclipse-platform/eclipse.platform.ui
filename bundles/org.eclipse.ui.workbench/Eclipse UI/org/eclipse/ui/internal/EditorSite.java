@@ -41,6 +41,11 @@ public EditorSite(IEditorReference ref, IEditorPart editor, WorkbenchPage page,
 		if (desc.getConfigurationElement() != null) {
 			setConfigurationElement(desc.getConfigurationElement());
 		}
+		else {
+		    // system external and in-place editors do not have a corresponding configuration element
+		    setId(desc.getId());
+		    setRegisteredName(desc.getLabel());
+		}
 	}
 }
 

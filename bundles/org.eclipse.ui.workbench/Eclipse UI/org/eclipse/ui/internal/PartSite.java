@@ -237,6 +237,16 @@ public class PartSite implements IWorkbenchPartSite {
 		if (name != null)
 			extensionName = name;
 	}
+	
+	/**
+	 * Sets the part registry extension ID.
+	 * 
+	 * @param id the registry extension ID
+	 */
+	protected void setId(String id) {
+	    extensionID = id;
+	}
+	
 	/**
 	 * Sets the part pane.
 	 */
@@ -249,6 +259,16 @@ public class PartSite implements IWorkbenchPartSite {
 	public void setPart(IWorkbenchPart newPart) {
 		part = newPart;
 	}
+
+	/**
+	 * Sets the registered name for this part.
+	 * 
+	 * @param name the registered name
+	 */
+	protected void setRegisteredName(String name) {
+		extensionName = name;
+	}
+	
 	/**
 	 * Set the selection provider for a part.
 	 */
