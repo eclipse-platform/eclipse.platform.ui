@@ -3,6 +3,7 @@ package org.eclipse.ant.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
@@ -126,6 +127,9 @@ public void run() throws CoreException {
 		// run
 		Method run = classInternalAntRunner.getMethod("run", null);
 		run.invoke(runner, null);
+	} catch (InvocationTargetException e) {
+		Throwable realException = e.getTargetException();
+		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, realException.getMessage(), realException));
 	} catch (Exception e) {
 		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, e.getMessage(), e));
 	}

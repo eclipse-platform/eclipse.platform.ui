@@ -200,7 +200,7 @@ protected void setTasks(Project project) {
 			Class taskClass = Class.forName(task.getClassName());
 			project.addTaskDefinition(task.getTaskName(), taskClass);
 		}
-	} catch (Exception e) {
+	} catch (ClassNotFoundException e) {
 		throw new BuildException(e);
 	}
 }
