@@ -156,7 +156,7 @@ public class DebugPlugin extends Plugin {
 	public static final String EXTENSION_POINT_LOGICAL_STRUCTURE_TYPES = "logicalStructureTypes"; //$NON-NLS-1$
 	
 	/**
-	 * Simple identifier constant (value <code>"logicalStructureTypeProviders"</code>) for the
+	 * Simple identifier constant (value <code>"logicalStructureProviders"</code>) for the
 	 * logical structure types extension point.
 	 * 
 	 * @since 3.1

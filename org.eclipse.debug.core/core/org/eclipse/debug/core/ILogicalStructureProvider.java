@@ -13,9 +13,8 @@ package org.eclipse.debug.core;
 import org.eclipse.debug.core.model.IValue;
 
 /**
- * A type that provides the logical structure types applicable to a raw
- * implementation value from a debug model. Associated with a logical structure
- * provider extension.
+ * Provides logical structure types applicable to a raw implementation value from
+ * a debug model. Associated with a logical structure provider extension.
  * <p>
  * Clients contributing logical structure providers should implement this
  * interface.
@@ -26,10 +25,10 @@ import org.eclipse.debug.core.model.IValue;
 public interface ILogicalStructureProvider {
 	
 	/**
-	 * Returns the logical structure types which are applicable to the given type.
+	 * Returns the logical structure types which are applicable to the given value.
 	 * 
 	 * @param value value for which logical structure types are being requested
-	 * @return the logical structure types appli
+	 * @return the logical structure types which are applicable to the given value
 	 */
 	public ILogicalStructureType[] getLogicalStructureTypes(IValue value);
 
