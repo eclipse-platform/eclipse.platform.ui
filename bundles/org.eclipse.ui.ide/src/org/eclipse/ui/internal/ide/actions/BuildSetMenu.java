@@ -134,7 +134,8 @@ public class BuildSetMenu extends ContributionItem {
             new ActionContributionItem(action).fill(menu, -1);
         }
         //add the action to select a different working set
-        new Separator().fill(menu, -1);
+        if (sets.length > 0)
+        	new Separator().fill(menu, -1);
         selectBuildWorkingSetAction.setEnabled(!isAutoBuilding);
         new ActionContributionItem(selectBuildWorkingSetAction).fill(menu, -1);
     }
