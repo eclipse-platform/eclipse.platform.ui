@@ -54,7 +54,7 @@ public abstract class ExecutionAction extends Action implements IActionDelegateW
 	 * @see IActionDelegateWithEvent#runWithEvent(IAction, Event)
 	 */
 	public void runWithEvent(IAction action, Event event) {
-		boolean controlHeld = (event.stateMask & SWT.CONTROL) != 0;
+		boolean controlHeld = (event.stateMask & SWT.ALT) != 0;
 		if (controlHeld) {
 			runLaunchConfiguration();
 		} else {
