@@ -62,6 +62,12 @@ protected Class findClassParentsSelf(final String name, boolean resolve, Delegat
 		}
 		try {
 			result = super.findClass(name);
+			// If the class is loaded in this classloader register it with
+			// the hot swap support.  Need to do this regardless of visibility
+			// because the class was actually loaded.
+			if (result == null)
+				return null;
+			enableJ9HotSwap(this, result);
 			return checkClassVisibility(result, requestor, false);
 		} catch (ClassNotFoundException e) {
 			return null;

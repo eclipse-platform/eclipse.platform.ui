@@ -11,6 +11,7 @@ import java.io.*;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import org.eclipse.core.boot.BootLoader;
+import com.ibm.oti.vm.VM;
 
 public abstract class DelegatingURLClassLoader extends URLClassLoader {
 
@@ -49,6 +50,8 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 	public static String[] DEBUG_FILTER_LOADER = new String[0];
 	public static String[] DEBUG_FILTER_RESOURCE = new String[0];
 	public static String[] DEBUG_FILTER_NATIVE = new String[0];
+	
+	private static boolean isHotSwapEnabled = InternalBootLoader.inDevelopmentMode();
 
 	// DelegateLoader. Represents a single class loader this loader delegates to.
 	protected static class DelegateLoader {
@@ -137,6 +140,7 @@ public DelegatingURLClassLoader(URL[] codePath, URLContentFilter[] codeFilters, 
 	if (codePath != null) {
 		if (codeFilters == null || codeFilters.length != codePath.length)
 			throw new DelegatingLoaderException();
+		setJ9HotSwapPath(this, codePath);
 		for (int i = 0; i < codePath.length; i++) {
 			if (codeFilters[i] != null)
 				filterTable.put(codePath[i], codeFilters[i]);
@@ -275,7 +279,7 @@ protected Class findClassParents(String name, boolean resolve) {
  * @param checkParents whether the parent of this loader should be consulted
  * @return the resulting class
  */
-protected abstract Class findClassParentsSelf(final String name, boolean resolve, DelegatingURLClassLoader requestor, boolean checkParents);
+protected abstract Class findClassParentsSelf(String name, boolean resolve, DelegatingURLClassLoader requestor, boolean checkParents);
 /**
  * Finds and loads the class with the specified name from the URL search
  * path. Any URLs referring to JAR files are loaded and opened as needed
@@ -623,6 +627,12 @@ protected Class loadClass(String name, boolean resolve) throws ClassNotFoundExce
 	}
 	return result;
 }
+protected void enableJ9HotSwap(ClassLoader cl, Class clazz) {
+	if (isHotSwapEnabled)
+		VM.enableClassHotSwap(clazz);
+}
+
+
 /**
  * Delegated load call.  This method is not synchronized.  Implementations of
  * findClassParentsSelf, and perhaps others, should synchronize themselves as
@@ -651,6 +661,46 @@ private Class loadClass(String name, boolean resolve, DelegatingURLClassLoader r
 
 	return result;
 }
+
+private void setJ9HotSwapPath(ClassLoader cl, URL[] urls) {
+	if (!isHotSwapEnabled)
+		return;
+	StringBuffer path = new StringBuffer();
+	for(int i = 0; i < urls.length; i++) {
+		String file = getFileFromURL (urls[i]);
+		if (file != null) {
+			if (file.charAt(0) == '/')
+				file = file.substring(1, file.length());
+			if (file.charAt(file.length() - 1) == '/')
+				file = file.substring(0, file.length() - 1);
+			if (path.length() > 0)
+				path.append(";");
+			path.append(file);
+		}
+	}
+	if (path.length() > 0)
+		VM.setClassPathImpl(cl, path.toString());
+}
+
+protected String getFileFromURL(URL target) {
+	String protocol = target.getProtocol();
+	if (protocol.equals(PlatformURLHandler.FILE))
+		return target.getFile();
+//	if (protocol.equals(PlatformURLHandler.VA))
+//		return target.getFile();
+	if (protocol.equals(PlatformURLHandler.JAR)) {
+		// strip off the jar separator at the end of the url then do a recursive call
+		// to interpret the sub URL.
+		String file = target.getFile();
+		file = file.substring(0, file.length() - PlatformURLHandler.JAR_SEPARATOR.length());
+		try {
+			return getFileFromURL(new URL(file));
+		} catch (MalformedURLException e) {
+		}
+	}
+	return null;
+}
+
 protected void setImportedLoaders(DelegateLoader[] loaders) {
 	
 	imports = loaders;

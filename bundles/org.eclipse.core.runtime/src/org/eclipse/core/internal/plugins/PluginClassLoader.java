@@ -103,6 +103,11 @@ protected Class findClassParentsSelf(final String name, boolean resolve, Delegat
 			} catch (ClassNotFoundException e) {
 				return null;
 			}
+			// If the class is loaded in this classloader register it with
+			// the hot swap support.  Need to do this regardless of visibility
+			// because the class was actually loaded.
+			enableJ9HotSwap(this, result);
+
 			return checkClassVisibility(result, requestor, false);
 		}
 		// Check to see if we would find the class if we looked.  If so,
@@ -130,6 +135,12 @@ protected Class findClassParentsSelf(final String name, boolean resolve, Delegat
 		// do search/load in this class loader
 		try {
 			result = super.findClass(name);
+			// If the class is loaded in this classloader register it with
+			// the hot swap support.  Need to do this regardless of visibility
+			// because the class was actually loaded.
+			if (result == null)
+				return null;
+			enableJ9HotSwap(this, result);
 			return checkClassVisibility(result, requestor, false);
 		} catch (ClassNotFoundException e) {
 			return null;
