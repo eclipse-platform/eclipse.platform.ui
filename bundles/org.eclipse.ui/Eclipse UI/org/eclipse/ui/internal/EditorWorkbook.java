@@ -777,6 +777,8 @@ public void setVisibleEditor(EditorPane comp) {
 			visibleEditor.getControl().setVisible(true);
 
 		becomeActiveWorkbook(activeState == ACTIVE_FOCUS);
+		//Make sure the EditorPart is created.
+		visibleEditor.getPartReference().getPart(true);
 	}
 }
 public void tabFocusHide() {
