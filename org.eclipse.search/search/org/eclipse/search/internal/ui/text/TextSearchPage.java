@@ -166,12 +166,12 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	 * An existing entry will be updated.
 	 */
 	private SearchPatternData getPatternData() {
-		Set fileTypes= fFileTypeEditor.getFileTypes();
 		SearchPatternData match= null;
-		int i= fgPreviousSearchPatterns.size() -1;
+		String textPattern= fPattern.getText();
+		int i= fgPreviousSearchPatterns.size() - 1;
 		while (i >= 0) {
 			match= (SearchPatternData)fgPreviousSearchPatterns.get(i);
-			if (fileTypes.equals(match.fileNamePatterns))
+			if (textPattern.equals(match.textPattern))
 				break;
 			i--;
 		};
@@ -266,7 +266,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		result.setLayout(new GridLayout());
 		result.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		// Search Expression group
 		layout= new GridLayout();
 		layout.numColumns= 3;
 		Composite group= new Composite(result, SWT.NONE);
@@ -276,8 +275,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		layouter= new RowLayouter(3, true);
 		layouter.setDefaultSpan();
 
-		createFileNamePatternComposite(layouter, group);
+		createTextSearchComposite(layouter, group);
 
+		// Filler
 		Label filler= new Label(group, SWT.NONE);
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		gd.heightHint= convertHeightInCharsToPixels(1) / 3;
@@ -285,7 +285,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		filler.setLayoutData(gd);
 		layouter.perform(new Control[] { filler }, 3);
 
-		createTextSearchComposite(layouter, group);
+		createFileNamePatternComposite(layouter, group);
 
 		setControl(result);
 		
@@ -305,6 +305,11 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		fPattern.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getContainer().setPerformActionEnabled(getContainer().hasValidScope());
+			}
+		});
+		fPattern.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleWidgetSelected();
 			}
 		});
 		gd= new GridData();//GridData.FILL_HORIZONTAL
@@ -333,11 +338,11 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	}
 
 	private void handleWidgetSelected() {
-		if (fExtensions.getSelectionIndex() < 0)
+		if (fPattern.getSelectionIndex() < 0)
 			return;
-		int index= fgPreviousSearchPatterns.size() - 1 - fExtensions.getSelectionIndex();
+		int index= fgPreviousSearchPatterns.size() - 1 - fPattern.getSelectionIndex();
 		SearchPatternData patternData= (SearchPatternData) fgPreviousSearchPatterns.get(index);
-		if (patternData == null  || !fFileTypeEditor.getFileTypes().equals(patternData.fileNamePatterns))
+		if (patternData == null  || !fPattern.getText().equals(patternData.textPattern))
 			return;
 		fIgnoreCase.setSelection(patternData.ignoreCase);
 		fPattern.setText(patternData.textPattern);
@@ -454,11 +459,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		GridData gd= new GridData();
 		gd.widthHint= convertWidthInCharsToPixels(40);
 		fExtensions.setLayoutData(gd);
-		fExtensions.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleWidgetSelected();
-			}
-		});
 		fExtensions.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getContainer().setPerformActionEnabled(getContainer().hasValidScope());
