@@ -343,7 +343,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 	}
 	
 	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, String idStamp, int port, StringBuffer commandLine) throws CoreException {
-		RemoteAntBuildListener client= new RemoteAntBuildListener();
+		RemoteAntBuildListener client= new RemoteAntBuildListener(launch);
 		
 		if (port != -1) {
 			client.startListening(port);

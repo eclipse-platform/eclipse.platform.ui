@@ -15,7 +15,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -29,6 +28,8 @@ import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jface.text.Region;
@@ -38,7 +39,7 @@ import org.eclipse.jface.text.Region;
  * The client side of the RemoteAntBuildLogger. Handles the
  * marshalling of the different messages.
  */
-public class RemoteAntBuildListener {
+public class RemoteAntBuildListener implements ILaunchesListener{
 	public abstract class ListenerSafeRunnable implements ISafeRunnable {
 		public void handleException(Throwable exception) {
 			AntUIPlugin.log(exception);
@@ -51,13 +52,13 @@ public class RemoteAntBuildListener {
 	private ServerSocket fServerSocket;
 	private Socket fSocket;
 	private int fPort= -1;
-	private PrintWriter fWriter;
 	private BufferedReader fBufferedReader;
 	private boolean fDebug= false;
 	private IProcess fProcess;
 	private String fProcessId;
 	private File fBuildFileParent= null;
 	private List fMessageQueue;
+	private ILaunch fLaunch;
 	
 	/**
 	 * Reads the message stream from the RemoteAntBuildLogger
@@ -81,7 +82,6 @@ public class RemoteAntBuildListener {
 					System.out.println("Connection"); //$NON-NLS-1$
 				}	
 				fBufferedReader= new BufferedReader(new InputStreamReader(fSocket.getInputStream()));
-				fWriter= new PrintWriter(fSocket.getOutputStream(), true);
 				String message;
 				while(fBufferedReader != null && (message= fBufferedReader.readLine()) != null) {
 					receiveMessage(message);
@@ -93,9 +93,15 @@ public class RemoteAntBuildListener {
 			shutDown();
 		}
 	}
+	
+	public RemoteAntBuildListener(ILaunch launch) {
+		super();
+		fLaunch= launch;
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+	}
 
 	/**
-	 * Start listening to a test run. Start a server connection that
+	 * Start listening to an Ant build. Start a server connection that
 	 * the RemoteAntBuildLogger can connect to.
 	 */
 	public synchronized void startListening(int port) {
@@ -103,25 +109,13 @@ public class RemoteAntBuildListener {
 		ServerConnection connection = new ServerConnection(port);
 		connection.start();
 	}
-	
-	/**
-	 * Requests to stop the remote Ant build.
-	 */
-	public synchronized void cancelBuild() {
-		if (isRunning()) {
-			fWriter.println(MessageIds.BUILD_CANCELLED);
-			fWriter.flush();
-		}
-	}
 
 	private synchronized void shutDown() {
 		if (fDebug) {
 			System.out.println("shutdown " + fPort); //$NON-NLS-1$
 		}
-		if (fWriter != null) {
-			fWriter.close();
-			fWriter= null;
-		}
+		fLaunch= null;
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		try {
 			if (fBufferedReader != null) {
 				fBufferedReader.close();
@@ -271,5 +265,31 @@ public class RemoteAntBuildListener {
 			fMessageQueue= null;
 		}
 		monitor.append(message);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
+	 */
+	public void launchesAdded(ILaunch[] launches) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
+	 */
+	public void launchesChanged(ILaunch[] launches) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
+	 */
+	public void launchesRemoved(ILaunch[] launches) {
+		for (int i = 0; i < launches.length; i++) {
+			ILaunch launch = launches[i];
+			if (launch.equals(fLaunch)) {
+				shutDown();
+				return;
+			}
+			
+		}
 	}
 }
