@@ -76,8 +76,8 @@ public class SyncInfoStatistics {
 			long count = 0;
 			while (it.hasNext()) {
 				Integer key = (Integer) it.next();
-				if((key.intValue() & mask) != 0) {
-					count += ((Integer)stats.get(key)).intValue();
+				if((key.intValue() & mask) == kind) {
+					count += ((Long)stats.get(key)).intValue();
 				}
 			}
 			return count;

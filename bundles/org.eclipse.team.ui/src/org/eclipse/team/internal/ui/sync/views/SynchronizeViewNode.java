@@ -45,6 +45,10 @@ public class SynchronizeViewNode implements IAdaptable, IActionFilter, ISynchron
 		return input.getFilteredSyncSet();
 	}
 	
+	public SubscriberInput getSubscriberInput() {
+		return input;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.ISynchronizeViewNode#getTeamSubscriber()
 	 */

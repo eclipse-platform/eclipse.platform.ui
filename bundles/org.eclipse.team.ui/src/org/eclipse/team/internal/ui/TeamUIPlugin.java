@@ -296,6 +296,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 
 		// View decoration overlays
 		createImageDescriptor(ISharedImages.IMG_DIRTY_OVR, baseURL);
+		createImageDescriptor(ISharedImages.IMG_CONFLICT_OVR, baseURL);
 		createImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR, baseURL);
 		createImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR, baseURL);
 		createImageDescriptor(ISharedImages.IMG_SYNC_VIEW, baseURL);

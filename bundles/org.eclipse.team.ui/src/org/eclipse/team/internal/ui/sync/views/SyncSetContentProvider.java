@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.sync.views;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
@@ -129,8 +131,10 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 	protected void handleResourceChanges(SyncSetChangedEvent event) {
 		// Refresh the viewer for each changed resource
 		SyncInfo[] infos = event.getChangedResources();
-		for (int i = 0; i < infos.length; i++) {			
-			((StructuredViewer) viewer).refresh(getModelObject(infos[i].getLocal()), true);
+		for (int i = 0; i < infos.length; i++) {
+			IResource local = infos[i].getLocal();
+			((StructuredViewer) viewer).refresh(getModelObject(local), true);
+			updateParentLabels(local);
 		}
 	}
 
@@ -146,6 +150,7 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 		for (int i = 0; i < removed.length; i++) {
 			IResource resource = removed[i];
 			((StructuredViewer) viewer).refresh(getModelObject(resource));
+			updateParentLabels(resource);
 		}
 	}
 
@@ -161,12 +166,7 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 		for (int i = 0; i < added.length; i++) {
 			IResource resource = added[i];
 			((StructuredViewer) viewer).refresh(getModelObject(resource.getParent()));
-		}
-		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
-		if(selection.size() == 0) {
-			if(viewer instanceof INavigableControl) {
-				((INavigableControl)viewer).gotoDifference(INavigableControl.NEXT);
-			}
+			updateParentLabels(resource);
 		}
 	}
 
@@ -267,5 +267,23 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 			result[i] = getModelObject(resources[i]);
 		}
 		return result;
+	}
+	
+	/**
+	 * Forces the viewer to update the labels for parents of this element. This
+	 * can be useful when parents labels include information about their children
+	 * that needs updating when a child changes.
+	 */
+	protected void updateParentLabels(IResource resource) {
+		List parents = new ArrayList(3);
+		IResource parent = resource.getParent();
+		while(parent.getType() != IResource.ROOT) {
+			parents.add(getModelObject(parent));
+			parent = parent.getParent();
+		}
+		getViewer().update(
+			(SynchronizeViewNode[])parents.toArray(new SynchronizeViewNode[parents.size()]),
+			null 
+		);		
 	}
 }

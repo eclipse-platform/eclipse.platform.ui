@@ -20,9 +20,11 @@ class ViewStatusInformation {
 	private long numShowing = 0;
 	private long numInWorkingSet = 0;
 	private long numInWorkspace = 0;
+	private SubscriberInput input;
 	
 	ViewStatusInformation(SubscriberInput input) {
 		this.subscriberName = input.getSubscriber().getName();
+		this.input = input;
 		IWorkingSet set = input.getWorkingSet();
 		if(set != null) {
 			this.workingSetName = set.getName();
@@ -52,6 +54,10 @@ class ViewStatusInformation {
 
 	public String getWorkingSetName() {
 		return workingSetName;
+	}
+	
+	public SubscriberInput getSubscriberInput() {
+		return input;
 	}
 	
 	public boolean equals(Object other) {

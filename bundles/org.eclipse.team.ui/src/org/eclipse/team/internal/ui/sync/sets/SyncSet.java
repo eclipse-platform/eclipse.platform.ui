@@ -106,7 +106,11 @@ public class SyncSet {
 	private void internalAddSyncInfo(SyncInfo info) {
 		IResource local = info.getLocal();
 		IPath path = local.getFullPath();
-		if(resources.put(path, info) == null) {
+		SyncInfo oldSyncInfo = (SyncInfo)resources.put(path, info); 
+		if(oldSyncInfo == null) {
+			statistics.add(info);
+		} else {
+			statistics.remove(oldSyncInfo);
 			statistics.add(info);
 		}
 	}
