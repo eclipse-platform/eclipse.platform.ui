@@ -14,6 +14,8 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.osgi.framework.*;
+import org.osgi.service.packageadmin.*;
 
 /**
  * This class manages the configurations.
@@ -213,9 +215,7 @@ public class SiteStatusAnalyzer {
 	 * compute the status based on getStatus() rules 
 	 */
 	private IStatus status(IPluginEntry[] featurePlugins) {
-		VersionedIdentifier featureID;
-		VersionedIdentifier compareID;
-		String pluginName;
+		VersionedIdentifier featurePluginID;
 
 		String happyMSG = Policy.bind("SiteLocal.FeatureHappy");
 		String ambiguousMSG = Policy.bind("SiteLocal.FeatureAmbiguous");
@@ -224,40 +224,42 @@ public class SiteStatusAnalyzer {
 
 		PluginIdentifier[] ids = getAllRunningPlugins();
 
+		PackageAdmin pkgAdmin = UpdateCore.getPlugin().getPackageAdmin();
+		
 		// is Ambigous if we find a plugin from the feature
 		// with a different version and not the one we are looking
 		for (int i = 0; i < featurePlugins.length; i++) {
 			MultiStatus tempmulti = new MultiStatus(featureStatus.getPlugin(), IFeature.STATUS_AMBIGUOUS, ambiguousMSG, null);
-			featureID = featurePlugins[i].getVersionedIdentifier();
+			featurePluginID = featurePlugins[i].getVersionedIdentifier();
 			boolean found = false;
-			for (int k = 0; k < ids.length && !found; k++) {
-				compareID = ids[k].getVersionedIdentifier();
-				pluginName = null;
-				if (featureID.getIdentifier().equals(compareID.getIdentifier())) {
-					pluginName = ids[k].getLabel();
-					if (featureID.getVersion().isPerfect(compareID.getVersion())) {
-						found = true;
-					} else {
-						// there is a plugin with a different version on the path
-						// log it
-						IFeature feature = getFeatureForId(compareID);
-
-						String msg = null;
-						if (feature == null) {
-							Object[] values = new Object[] { pluginName, featureID.getVersion(), compareID.getVersion()};
-							msg = Policy.bind("SiteLocal.TwoVersionSamePlugin1", values);
-						} else {
-							String label = feature.getLabel();
-							String version = feature.getVersionedIdentifier().getVersion().toString();
-							Object[] values = new Object[] { pluginName, featureID.getVersion(), compareID.getVersion(), label, version };
-							msg = Policy.bind("SiteLocal.TwoVersionSamePlugin2", values);
-						}
-
-						UpdateCore.warn("Found another version of the same plugin on the path:" + compareID.toString());
-						tempmulti.add(createStatus(IStatus.ERROR, IFeature.STATUS_AMBIGUOUS, msg, null));
-					}
-				}
+			
+			Bundle[] bundles = pkgAdmin.getBundles(featurePluginID.getIdentifier(), featurePluginID.getVersion().toString(), Constants.VERSION_MATCH_QUALIFIER);
+			if (bundles != null && bundles.length == 1) {
+				found = true;
+				continue;
 			}
+			
+			// Check if there is another feature with this plugin (but different version)
+			// log it
+			bundles = pkgAdmin.getBundles(featurePluginID.getIdentifier(), null, null);
+			for (int j=0; bundles != null && j<bundles.length; j++ ) {
+				String bundleVersion = (String)bundles[j].getHeaders().get(Constants.BUNDLE_VERSION);
+				IFeature feature = getFeatureForId(new VersionedIdentifier(bundles[j].getSymbolicName(), bundleVersion ));
+				String msg = null;
+				if (feature == null) {
+					Object[] values = new Object[] {bundles[j].getSymbolicName(), featurePluginID.getVersion(), bundleVersion};
+					msg = Policy.bind("SiteLocal.TwoVersionSamePlugin1", values);
+				} else {
+					String label = feature.getLabel();
+					String featureVersion = feature.getVersionedIdentifier().getVersion().toString();
+					Object[] values = new Object[] { bundles[j].getSymbolicName(), featurePluginID.getVersion(), bundleVersion, label, featureVersion };
+					msg = Policy.bind("SiteLocal.TwoVersionSamePlugin2", values);
+				}
+
+				UpdateCore.warn("Found another version of the same plugin on the path:" + bundles[j].getSymbolicName() + " " + bundleVersion);
+				tempmulti.add(createStatus(IStatus.ERROR, IFeature.STATUS_AMBIGUOUS, msg, null));
+			}
+	
 
 			// if we haven't found the exact plugin, add the children
 			// of tempMulti (i,e the other we found) 
@@ -272,7 +274,7 @@ public class SiteStatusAnalyzer {
 						newMulti.addAll(multi);
 						multi = newMulti;
 					}
-					String msg = Policy.bind("SiteLocal.NoPluginVersion", featureID.getIdentifier());
+					String msg = Policy.bind("SiteLocal.NoPluginVersion", featurePluginID.getIdentifier());
 					multi.add(createStatus(IStatus.ERROR, IFeature.STATUS_UNHAPPY, msg, null));
 				}
 			}
