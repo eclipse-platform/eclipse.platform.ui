@@ -281,7 +281,21 @@ protected void fillEditorTable() {
 			IEditorDescriptor editor = array[i];
 			TableItem item = new TableItem(editorTable, SWT.NULL);
 			item.setData(editor);
-			item.setText(editor.getLabel());
+			// Check if it is the default editor
+			String defaultString = null;
+			FileEditorMapping ext = getSelectedResourceType();
+			if (ext != null){
+				IEditorDescriptor preferredEditor = ext.getDefaultEditor();
+				if (preferredEditor == editor)
+					defaultString = WorkbenchMessages.getString("FileEditorPreference.defaultLabel"); //$NON-NLS-1$
+			}
+
+			if (defaultString != null) {
+				item.setText(editor.getLabel() + " " + defaultString); //$NON-NLS-1$
+			}
+			else {
+				item.setText(editor.getLabel());
+			}
 			item.setImage(getImage(editor));
 		}
 	}
@@ -334,8 +348,20 @@ protected FileEditorMapping getSelectedResourceType() {
 		return null;
 	}
 }
+protected IEditorDescriptor[] getAssociatedEditors(){
+	if (getSelectedResourceType() == null)
+		return null;
+	if (editorTable.getItemCount() > 0) {
+		ArrayList editorList = new ArrayList();
+		for (int i = 0; i < editorTable.getItemCount(); i++)
+			editorList.add(editorTable.getItem(i).getData());
+
+		return (IEditorDescriptor[])editorList.toArray(new IEditorDescriptor[editorList.size()]);
+	}
+	else
+		return null;
+}
 public void handleEvent(Event event) {
-	boolean valid = true;
 	if (event.widget == addResourceTypeButton) {
 		promptForResourceType();
 	} else if (event.widget == removeResourceTypeButton) {
@@ -352,15 +378,6 @@ public void handleEvent(Event event) {
 
 	updateEnabledState();   
 		
-}
-protected boolean hasEditor(FileEditorMapping resourceType, EditorDescriptor editor) {
-	IEditorDescriptor[] editors = resourceType.getEditors();
-	for (int i = 0; i < editors.length; i++) {
-		if (editors[i].getLabel().equals(editor.getLabel())) {
-			return true;
-		}
-	}
-	return false;
 }
 /**
  * @see IWorkbenchPreferencePage
@@ -406,14 +423,19 @@ public boolean performOk() {
 }
 public void promptForEditor() {
 	EditorSelectionDialog dialog = new EditorSelectionDialog(getControl().getShell());
+	dialog.setEditorsToFilter(getAssociatedEditors());
 	dialog.setMessage(WorkbenchMessages.format("Choose_the_editor_for_file", new Object[] {getSelectedResourceType().getLabel()})); //$NON-NLS-1$
 	if (dialog.open() == dialog.OK) {
 		EditorDescriptor editor = (EditorDescriptor)dialog.getSelectedEditor();
-		if (editor != null && !hasEditor(getSelectedResourceType(), editor)) {
+		if (editor != null) {
 			int i = editorTable.getItemCount();
+			boolean isEmpty = i < 1;
 			TableItem item = new TableItem(editorTable, SWT.NULL, i);
 			item.setData(editor);
-			item.setText(editor.getLabel());
+			if (isEmpty)
+				item.setText(editor.getLabel() + " " + 	WorkbenchMessages.getString("FileEditorPreference.defaultLabel")); //$NON-NLS-2$ //$NON-NLS-1$
+			else
+				item.setText(editor.getLabel());
 			item.setImage(getImage(editor));
 			editorTable.setSelection(i);
 			editorTable.setFocus();
@@ -437,10 +459,17 @@ public void promptForResourceType() {
  */
 public void removeSelectedEditor() {
 	TableItem[] items = editorTable.getSelection();
+	boolean defaultEditor = editorTable.getSelectionIndex() == 0;		
 	if (items.length > 0) {
 		getSelectedResourceType().removeEditor((EditorDescriptor)items[0].getData());
 		items[0].dispose();  //Table is single selection
 	}
+	if (defaultEditor && editorTable.getItemCount() > 0){
+		TableItem item = editorTable.getItem(0);
+		if (item != null)
+			item.setText(((EditorDescriptor)(item.getData())).getLabel() + " " + 	WorkbenchMessages.getString("FileEditorPreference.defaultLabel"));  //$NON-NLS-2$ //$NON-NLS-1$
+	}
+
 }
 /**
  * Remove the type from the table
@@ -456,12 +485,16 @@ public void removeSelectedResourceType() {
 public void setSelectedEditorAsDefault() {
 	TableItem[] items = editorTable.getSelection();
 	if (items.length > 0) {
+		// First change the label of the old default
+		TableItem oldDefaultItem = editorTable.getItem(0);
+		oldDefaultItem.setText(((EditorDescriptor)oldDefaultItem.getData()).getLabel());
+		// Now set the new default
 		EditorDescriptor editor = (EditorDescriptor)items[0].getData();
 		getSelectedResourceType().setDefaultEditor(editor);
 		items[0].dispose();  //Table is single selection
 		TableItem item = new TableItem(editorTable, SWT.NULL, 0);
 		item.setData(editor);
-		item.setText(editor.getLabel());
+		item.setText(editor.getLabel() + " " + 	WorkbenchMessages.getString("FileEditorPreference.defaultLabel")); //$NON-NLS-2$ //$NON-NLS-1$
 		item.setImage(getImage(editor));
 		editorTable.setSelection(new TableItem[] {item});
 	}

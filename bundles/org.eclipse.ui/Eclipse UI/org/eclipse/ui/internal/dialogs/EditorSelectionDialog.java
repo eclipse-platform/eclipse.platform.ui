@@ -45,6 +45,7 @@ public class EditorSelectionDialog extends Dialog implements Listener {
 	private IEditorDescriptor[] internalEditors;
 	private Image[] externalEditorImages;
 	private Image[] internalEditorImages;
+	private IEditorDescriptor[] editorsToFilter;
 	private static final String Executable_Filter;
 	private static final int TABLE_WIDTH = 200;
 	static {
@@ -214,6 +215,7 @@ protected IEditorDescriptor[] getExternalEditors() {
 		// Get the external editors available
 		EditorRegistry reg = (EditorRegistry)WorkbenchPlugin.getDefault().getEditorRegistry();
 		externalEditors = reg.getSortedEditorsFromOS();
+		externalEditors = filterEditors(externalEditors);
 		externalEditorImages = getImages(externalEditors);
 		// Clean up
 		shell.setCursor(null);
@@ -221,6 +223,35 @@ protected IEditorDescriptor[] getExternalEditors() {
 	}
 	return externalEditors;
 }
+/**
+ * Returns an array of editors which have been filtered according to 
+ * the array of editors in the editorsToFilter instance variable.
+ * 
+ * @param editorsToFilter an array of editors to filter 
+ * @return a filtered array of editors
+ */
+protected IEditorDescriptor[] filterEditors(IEditorDescriptor[] editors){
+	if ((editors == null) || (editors.length < 1))
+		return editors;
+
+	if ((editorsToFilter == null) || (editorsToFilter.length < 1))
+		return editors;
+	
+	ArrayList filteredList = new ArrayList();
+	for (int i = 0; i < editors.length; i++) {
+		boolean add = true;
+		for (int j = 0; j < editorsToFilter.length; j++) {
+			if (editors[i].getId().equals(editorsToFilter[j].getId())) {
+				add = false;
+			}
+		}
+		if (add) 
+			filteredList.add(editors[i]);
+	}
+
+	return (IEditorDescriptor[]) filteredList.toArray(new IEditorDescriptor[filteredList.size()]);
+}
+
 /**
  * Returns an array of images for the given array of editors
  */
@@ -238,6 +269,7 @@ protected IEditorDescriptor[] getInternalEditors() {
 	if (internalEditors == null) {
 		EditorRegistry reg = (EditorRegistry)WorkbenchPlugin.getDefault().getEditorRegistry();
 		internalEditors = reg.getSortedEditorsFromPlugins();
+		internalEditors = filterEditors(internalEditors);
 		internalEditorImages = getImages(internalEditors);
 	}
 	return internalEditors;
@@ -338,6 +370,15 @@ protected void saveWidgetValues() {
 public void setMessage(String aMessage) {
 	message = aMessage;
 }
+/**
+ * Set the editors which will not appear in the dialog.
+ * 
+ * @param editors an array of editors
+ */
+public void setEditorsToFilter(IEditorDescriptor[] editors) {
+	editorsToFilter = editors;
+}
+
 public void updateEnableState() {
 	boolean enableExternal = externalButton.getSelection();
 	browseExternalEditorsButton.setEnabled(enableExternal);
