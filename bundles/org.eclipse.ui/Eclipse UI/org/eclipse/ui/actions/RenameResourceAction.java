@@ -261,9 +261,6 @@ protected String queryNewResourceName(final IResource resource) {
  *	@param context IVisualPart
  */
 private void queryNewResourceNameInline(final IResource resource) {
-	
-
-
 	// Create text editor parent.  This draws a nice bounding rect.
 	textEditorParent = createParent();
 	textEditorParent.setVisible(false);
@@ -302,11 +299,19 @@ private void queryNewResourceNameInline(final IResource resource) {
 			}
 		}
 	});
+	// handle case where mouse click occurs on same line as edited item, 
+	// but outside textEditor bounds
+	textEditorParent.addListener(SWT.MouseDown, new Listener() {
+		public void handleEvent (Event e) {
+			saveChangesAndDispose(resource);
+		}
+	});
 	textEditor.addFocusListener(new FocusAdapter() {
 		public void focusLost(FocusEvent fe) {
 			saveChangesAndDispose(resource);
 		}
 	});
+
 	if (textActionHandler != null)
 		textActionHandler.addText(textEditor);
 	textEditor.setText(resource.getName());
@@ -374,7 +379,6 @@ protected void runWithNewPath(IPath path, IResource resource) {
  * @param resource - the resource to move.
  */
 private void saveChangesAndDispose(IResource resource) {
-	
 	//Cache the resource to avoid selection loss after disposal
 	inlinedResource = resource;
 
@@ -401,7 +405,6 @@ private void saveChangesAndDispose(IResource resource) {
  * not local.
  */
 protected boolean updateSelection(IStructuredSelection selection) {
-
 	disposeTextWidget();
 
 	if (selection.size() > 1)
