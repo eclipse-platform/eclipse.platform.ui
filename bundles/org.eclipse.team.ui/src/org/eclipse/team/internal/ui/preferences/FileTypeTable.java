@@ -185,6 +185,8 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
         
         final IStructuredSelection selection = (IStructuredSelection)fTableViewer.getSelection();
         final Item item= (Item)selection.getFirstElement();
+        if (item == null)
+            return;
 
         final int comboIndex = ((Integer)value).intValue();
         
