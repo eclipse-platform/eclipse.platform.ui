@@ -114,7 +114,9 @@ public final class AntDebugUtil {
          	Target stackTarget;
          	for (int i = startIndex; i <= dependancyStackDepth; i++) {
          		stackTarget= (Target) buildSequence.get(i);
-         		appendToStack(stackRepresentation, stackTarget.getName(), "", getLocation(stackTarget)); //$NON-NLS-1$
+                if (stackTarget.dependsOn(targetExecuting.getName())) {
+         		    appendToStack(stackRepresentation, stackTarget.getName(), "", getLocation(stackTarget)); //$NON-NLS-1$
+                }
          	}
          }
     }
