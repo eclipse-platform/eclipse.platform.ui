@@ -71,7 +71,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		//  check if we have a handler entry specified in the feature.xml
 		if (entry == null) {
 			if (DEBUG)
-				System.out.println("InstallHandler: not specified");
+				debug("not specified");
 			return; // no handler entry
 		}
 
@@ -79,12 +79,12 @@ public class InstallHandlerProxy implements IInstallHandler {
 		String handlerName = entry.getHandlerName();
 		if (handlerName == null || handlerName.trim().equals("")) {
 			if (DEBUG)
-				System.out.println("InstallHandler: not specified");
+				debug("not specified");
 			return; // no handler class spacified in entry
 		}
 		if (DEBUG) {
-			System.out.println("InstallHandler: handler=" + handlerName);
-			System.out.println("                path=   " + library);
+			debug("handler=" + handlerName);
+			debug("path=   " + library);
 		}
 
 		// get handler instance
@@ -126,7 +126,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					System.out.println("InstallHandler: calling installInitiated()");
+					debug("calling installInitiated()");
 				handler.installInitiated();
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -143,7 +143,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					System.out.println("InstallHandler: calling pluginsDownloaded()");
+					debug("calling pluginsDownloaded()");
 				handler.pluginsDownloaded(plugins);
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -161,7 +161,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					System.out.println("InstallHandler: calling completeInstall()");
+					debug("calling completeInstall()");
 				handler.completeInstall(consumer);
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -181,7 +181,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					System.out.println("InstallHandler: calling nonPluginDataDownloaded()");
+					debug("calling nonPluginDataDownloaded()");
 				handler.nonPluginDataDownloaded(nonPluginData, listener);
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -198,7 +198,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					System.out.println("InstallHandler: calling installCompleted()");
+					debug("calling installCompleted()");
 				handler.installCompleted(success);
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -215,7 +215,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					System.out.println("InstallHandler: calling configureInitiated()");
+					debug("calling configureInitiated()");
 				handler.configureInitiated();
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -232,7 +232,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					System.out.println("InstallHandler: calling completeConfigure()");
+					debug("calling completeConfigure()");
 				handler.completeConfigure();
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -249,7 +249,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					System.out.println("InstallHandler: calling configureCompleted()");
+					debug("calling configureCompleted()");
 				handler.configureCompleted(success);
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -266,7 +266,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					System.out.println("InstallHandler: calling unconfigureInitiated()");
+					debug("calling unconfigureInitiated()");
 				handler.unconfigureInitiated();
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -283,7 +283,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					System.out.println("InstallHandler: calling completeUnconfigure()");
+					debug("calling completeUnconfigure()");
 				handler.completeUnconfigure();
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -303,7 +303,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		} else {
 			try {
 				if (DEBUG)
-					System.out.println("InstallHandler: calling unconfigureInitiated()");
+					debug("calling unconfigureCompleted()");
 				handler.unconfigureCompleted(success);
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -322,7 +322,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					System.out.println("InstallHandler: calling unconfigureInitiated()");
+					debug("calling uninstallInitiated()");
 				handler.uninstallInitiated();
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -339,7 +339,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					System.out.println("InstallHandler: calling completeUninstall()");
+					debug("calling completeUninstall()");
 				handler.completeUninstall();
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -359,7 +359,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		} else {
 			try {
 				if (DEBUG)
-					System.out.println("InstallHandler: calling uninstallCompleted()");
+					debug("calling uninstallCompleted()");
 				handler.uninstallCompleted(success);
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -511,5 +511,10 @@ public class InstallHandlerProxy implements IInstallHandler {
 		//$NON-NLS-1$	
 
 		return (IInstallHandler) handlerExtension[0].createExecutableExtension("class");
+	}
+	
+	private void debug(String s) {
+		String pfx = (feature==null) ? "" : feature.getVersionedIdentifier().toString();
+		System.out.println("InstallHandler["+pfx+"]: " + s);
 	}
 }

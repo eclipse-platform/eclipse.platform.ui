@@ -218,7 +218,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		} finally {
 			Throwable newException = null;
 			try {
-				handler.configureCompleted(success);
+				handler.unconfigureCompleted(success);
 			} catch (Throwable t) {
 				newException = t;
 			}
