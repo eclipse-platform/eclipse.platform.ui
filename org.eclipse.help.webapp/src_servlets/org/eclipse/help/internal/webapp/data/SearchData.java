@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2002.
+ * (c) Copyright IBM Corp. 2000, 2003.
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.webapp.data;
@@ -221,10 +221,11 @@ public class SearchData extends RequestData {
 				workingSet);
 			HelpPlugin.getDefault().savePluginPreferences();
 		}
-	} /**
-				* Call the search engine, and get results or the percentage of 
-				* indexed documents.
-				*/
+	}
+	/**
+	 * Call the search engine, and get results or the percentage of 
+	 * indexed documents.
+	 */
 	private void loadSearchResults() {
 		try {
 			SearchProgressMonitor pm =
@@ -276,6 +277,12 @@ public class SearchData extends RequestData {
 				for (int i = 0; i < scopes.length; i++) {
 					scopeCol.add(scopes[i]);
 				}
+			}
+		} else {
+			// it is possible that filtering is used, but all books are deselected
+			// set scopeCol to empty Collection in this case
+			if (request.getParameterValues("scopedSearch") != null) {
+				scopeCol = new ArrayList(0);
 			}
 		}
 

@@ -1,5 +1,5 @@
 <%--
- (c) Copyright IBM Corp. 2000, 2002.
+ (c) Copyright IBM Corp. 2000, 2003.
  All Rights Reserved.
 --%>
 <%@ include file="header.jsp"%>
@@ -126,7 +126,7 @@ function doAdvancedSearch()
 		window.opener.saveSelectedBooks(getSelectedBooks());
 		
 		window.opener.document.forms["searchForm"].searchWord.value = searchWord;
-		var query = "searchWord="+escape(searchWord)+"&maxHits="+maxHits + scope;
+		var query = "searchWord="+escape(searchWord)+"&scopedSearch=true&maxHits="+maxHits + scope;
 		window.opener.doSearch(query);
 		window.opener.focus();
 		window.close();

@@ -1,5 +1,5 @@
 <%--
- (c) Copyright IBM Corp. 2000, 2002.
+ (c) Copyright IBM Corp. 2000, 2003.
  All Rights Reserved.
 --%>
 <form action="searchView.jsp" method="get" accept-charset="UTF-8" target="_self">
@@ -9,6 +9,7 @@
 			<td nowrap>
 				<input type="text" name="searchWord" value='<%=data.getSearchWord()%>' maxlength=256 alt='<%=ServletResources.getString("SearchExpression", request)%>'>
           	  	<input type="hidden" name="maxHits" value="500" >
+          	  	<input type="hidden" name="scopedSearch" value="true" >
 				<input type="submit" value='<%=ServletResources.getString("GO", request)%>' alt='<%=ServletResources.getString("GO", request)%>'>
         	</td>
         </tr>
