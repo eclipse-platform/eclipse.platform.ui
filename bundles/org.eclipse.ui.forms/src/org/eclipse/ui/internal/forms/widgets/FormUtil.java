@@ -394,79 +394,26 @@ public class FormUtil {
 		return null;
 	}
 
-	public static Image createColorMashImage(Device device, Image srcImage,
-			Color srcColor) {
-		Rectangle r = srcImage.getBounds();
+	public static Image createAlphaMashImage(Device device, Image srcImage) {
+		Rectangle bounds = srcImage.getBounds();
+		int alpha=0;
+		int calpha=0;
 		ImageData data = srcImage.getImageData();
-		PaletteData palette = data.palette;
-		ImageData newData = data;
-		RGB blendRGB = srcColor.getRGB();
-		if (!palette.isDirect) {
-			/* Convert the palette entries to gray. */
-			RGB[] rgbs = palette.getRGBs();
-			for (int i = 0; i < rgbs.length; i++) {
-				if (data.transparentPixel != i) {
-					RGB color = rgbs[i];
-					int red = color.red;
-					int green = color.green;
-					int blue = color.blue;
-					int intensity = (red + red + green + green + green + green
-							+ green + blue) >> 3;
-					color.red = color.green = color.blue = intensity;
-				}
+		// Create a new image with alpha values alternating
+		// between fully transparent (0) and fully opaque (255).
+		// This image will show the background through the
+		// transparent pixels.
+		for (int i=0; i<bounds.height; i++) {
+			// scan line
+			alpha = calpha;
+			for (int j=0; j<bounds.width; j++) {
+				// column
+				data.setAlpha(j, i, alpha);
+				alpha = alpha==255?0:255;
 			}
-			newData.palette = new PaletteData(rgbs);
-		} else {
-			/* Create a 8 bit depth image data with a gray palette. */
-			RGB[] rgbs = new RGB[256];
-			for (int i = 0; i < rgbs.length; i++) {
-				rgbs[i] = new RGB(i, i, i);
-			}
-			newData = new ImageData(r.width, r.height, 8, new PaletteData(rgbs));
-			newData.maskData = data.maskData;
-			newData.maskPad = data.maskPad;
-
-			/* Convert the pixels. */
-			int[] scanline = new int[r.width];
-			int redMask = palette.redMask;
-			int greenMask = palette.greenMask;
-			int blueMask = palette.blueMask;
-			int redShift = palette.redShift;
-			int greenShift = palette.greenShift;
-			int blueShift = palette.blueShift;
-			boolean blend = false;
-			for (int y = 0; y < r.height; y++) {
-				int offset = y * newData.bytesPerLine;
-				data.getPixels(0, y, r.width, scanline, 0);
-				for (int x = 0; x < r.width; x++) {
-					int red, green, blue;
-					int newPixel;
-					//blend = !blend;
-					blend = true;
-					if (blend) {
-						red = blendRGB.red;
-						green = blendRGB.green;
-						blue = blendRGB.blue;
-						newPixel = (byte) ((red + red + green + green
-								+ green + green + green + blue) >> 3);
-					} else {
-						int pixel = scanline[x];
-						red = pixel & redMask;
-						red = (redShift < 0) ? red >>> -redShift
-								: red << redShift;
-						green = pixel & greenMask;
-						green = (greenShift < 0) ? green >>> -greenShift
-								: green << greenShift;
-						blue = pixel & blueMask;
-						blue = (blueShift < 0) ? blue >>> -blueShift
-								: blue << blueShift;
-					}
-					newData.data[offset++] = (byte) ((red + red + green + green
-							+ green + green + green + blue) >> 3);
-				}
-			}
+			calpha = calpha==255?0:255;
 		}
-		return new Image(device, newData);
+		return new Image(device, data);
 	}
 
 	public static Font createBoldFont(Display display, Font regularFont) {

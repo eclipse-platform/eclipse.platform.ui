@@ -57,6 +57,17 @@ public class ImageSegment extends ParagraphSegment {
 		return null;
 	}
 
+	private Image getSelectedImage(Hashtable objectTable, SelectionData selData) {
+		String key = SEL_IMAGE_PREFIX + getObjectId();
+		Image image = getImage(key, objectTable);
+		if (image==null) {
+			image = FormUtil.createAlphaMashImage(selData.display, getImage(objectTable));
+			if (image!=null)
+				objectTable.put(key, image);
+		}
+		return image;
+	}
+
 	public String getObjectId() {
 		return imageId;
 	}
@@ -136,9 +147,8 @@ public class ImageSegment extends ParagraphSegment {
 					Color savedBg = gc.getBackground();
 					gc.setBackground(selData.bg);
 					gc.fillRectangle(ix, iy, iwidth, iheight);
-					gc.setXORMode(true);
-					gc.drawImage(image, ix, iy);
-					gc.setXORMode(false);
+					Image selImage = getSelectedImage(resourceTable, selData);
+					gc.drawImage(selImage, ix, iy);
 					gc.setBackground(savedBg);
 				}
 			}

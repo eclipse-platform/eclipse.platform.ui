@@ -1189,16 +1189,22 @@ public final class FormText extends Canvas {
 				resourceTable.remove(FormTextModel.BOLD_FONT_ID);
 			}
 		}
+		ArrayList imagesToRemove = new ArrayList();
 		for (Enumeration enm = resourceTable.keys(); enm.hasMoreElements();) {
 			String key = (String) enm.nextElement();
 			if (key.startsWith(ImageSegment.SEL_IMAGE_PREFIX)) {
 				Object obj = resourceTable.get(key);
 				if (obj instanceof Image) {
 					Image image = (Image)obj;
-					if (!image.isDisposed())
+					if (!image.isDisposed()) {
 						image.dispose();
+						imagesToRemove.add(key);
+					}
 				}
 			}
+		}
+		for (int i=0; i<imagesToRemove.size(); i++) {
+			resourceTable.remove(imagesToRemove.get(i));
 		}
 	}
 }
