@@ -137,6 +137,7 @@ import org.eclipse.jface.util.Assert;
 		} finally {
 			if (lines.size() > 0)
 				diff.add(new Hunk(oldRange, newRange, lines));
+			diff.finish();
 		}
 	}
 	
@@ -226,6 +227,7 @@ import org.eclipse.jface.util.Assert;
 			// flush last hunk
 			if (oldLines.size() > 0 || newLines.size() > 0)
 				diff.add(new Hunk(oldRange, newRange, unifyLines(oldLines, newLines)));
+			diff.finish();
 		}
 	}
 	

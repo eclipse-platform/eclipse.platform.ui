@@ -32,30 +32,13 @@ import org.eclipse.compare.internal.*;
 	/**
 	 * Creates an compare editor input for the given selection.
 	 */
-	/* package */ PatchCompareInput(CompareConfiguration config) {
+	/* package */ PatchCompareInput(CompareConfiguration config, ISelection s, Diff[] diffs, String patchName) {
 		super(config);
-	}
-	
-	/* package */ void setPatchName(String name) {
-		fPatchName= name;
-	}
-	
-	/**
-	 * Returns true if a patch compare can be executed for the given selection.
-	 */
-	/* package */ boolean setSelection(ISelection s) {
-
 		IResource[] selection= Utilities.getResources(s);
-		if (selection.length != 1)
-			return false;
-		
-		fResource= selection[0];
-					
-		return true;
-	}
-	
-	/* package */ void setDiffs(Diff[] diffs) {
+		if (selection.length == 1)
+			fResource= selection[0];		
 		fDiffs= diffs;
+		fPatchName= patchName;
 	}
 	
 	/**
@@ -66,12 +49,12 @@ import org.eclipse.compare.internal.*;
 		CompareConfiguration cc= (CompareConfiguration) getCompareConfiguration();
 		
 		try {				
-			pm.beginTask(Utilities.getString("ResourceCompare.taskName"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+			pm.beginTask(Utilities.getString("ResourceCompare.taskName"), fDiffs.length); //$NON-NLS-1$
 		
 			fRoot= new DiffNode(0);
-			IFolder rootFolder= null;
-			if (fResource instanceof IFolder)
-				rootFolder= (IFolder) fResource;
+			IContainer rootFolder= null;
+			if (fResource instanceof IContainer)
+				rootFolder= (IContainer) fResource;
 			
 			// process diffs
 			for (int i= 0; i < fDiffs.length; i++) {
@@ -84,6 +67,7 @@ import org.eclipse.compare.internal.*;
 					path= path.substring(pos+1);
 				
 				createPath(fRoot, rootFolder, path, diff);
+				pm.worked(1);
 			}			
 			
 			fResource.refreshLocal(IResource.DEPTH_INFINITE, pm);
@@ -109,11 +93,11 @@ import org.eclipse.compare.internal.*;
 		}
 	}
 	
-	/* package */ void createPath(DiffContainer root, IFolder folder, String path, Diff diff) {
+	/* package */ void createPath(DiffContainer root, IContainer folder, String path, Diff diff) {
 		int pos= path.indexOf('/');
 		if (pos >= 0) {
 			String dir= path.substring(0, pos);
-			IFolder f= folder.getFolder(dir);
+			IFolder f= folder.getFolder(new Path(dir));
 			IDiffElement child= root.findChild(dir);
 			if (child == null) {
 				ResourceNode rn= new ResourceNode(f);
@@ -123,7 +107,7 @@ import org.eclipse.compare.internal.*;
 				createPath((DiffContainer)child, f, path.substring(pos+1), diff);
 		} else {
 			// leaf
-			IFile file= folder.getFile(path);
+			IFile file= folder.getFile(new Path(path));
 			BufferedResourceNode rn= new BufferedResourceNode(file);			
 			
 			new DiffNode(root, diff.getType(), null, rn, new PatchedResource(rn, diff, path));

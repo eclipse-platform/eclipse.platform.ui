@@ -343,17 +343,17 @@ import org.eclipse.compare.internal.Utilities;
 
 			// set filenames history
 			String[] sourceNames= settings.getArray(STORE_PATCH_FILES_ID);
-			if (sourceNames != null) {
+			if (sourceNames != null)
 				for (int i= 0; i < sourceNames.length; i++)
 					if (sourceNames[i] != null && sourceNames[i].length() > 0)
 						fPatchFileNameField.add(sourceNames[i]);
-			}
 			
 			// set patch file path
 			String patchFilePath= settings.get(STORE_PATCH_FILES_ID);
 			if (patchFilePath != null)
 				setSourceName(patchFilePath);	
-		}
+		} else
+			System.out.println("restoreWidgetValues: no dialog settings");
 	}
 	
 	/**
@@ -418,36 +418,24 @@ import org.eclipse.compare.internal.Utilities;
 
 	/**
 	 * Adds an entry to a history, while taking care of duplicate history items
-	 * and excessively long histories.  The assumption is made that all histories
-	 * should be of length <code>WizardDataTransferPage.COMBO_HISTORY_LENGTH</code>.
+	 * and excessively long histories. The assumption is made that all histories
+	 * should be of length <code>COMBO_HISTORY_LENGTH</code>.
 	 *
 	 * @param history the current history
 	 * @param newEntry the entry to add to the history
 	 */
 	protected static String[] addToHistory(String[] history, String newEntry) {
 		java.util.ArrayList l= new java.util.ArrayList(java.util.Arrays.asList(history));
-		addToHistory(l, newEntry);
-		String[] r = new String[l.size()];
-		l.toArray(r);
-		return r;
-	}
-	
-	/**
-	 * Adds an entry to a history, while taking care of duplicate history items
-	 * and excessively long histories.  The assumption is made that all histories
-	 * should be of length <code>WizardDataTransferPage.COMBO_HISTORY_LENGTH</code>.
-	 *
-	 * @param history the current history
-	 * @param newEntry the entry to add to the history
-	 */
-	protected static void addToHistory(java.util.List history, String newEntry) {
-		history.remove(newEntry);
-		history.add(0,newEntry);
+
+		l.remove(newEntry);
+		l.add(0,newEntry);
 	
 		// since only one new item was added, we can be over the limit
 		// by at most one item
-		if (history.size() > COMBO_HISTORY_LENGTH)
-			history.remove(COMBO_HISTORY_LENGTH);
+		if (l.size() > COMBO_HISTORY_LENGTH)
+			l.remove(COMBO_HISTORY_LENGTH);
+		
+		return (String[]) l.toArray(new String[l.size()]);
 	}
 }
 

@@ -14,7 +14,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 	private static final String DEV_NULL= "/dev/null";
 	
 	String fOldName, fNewName;
-	//String fOldRevision, fNewRevision;
+	String fOldRevision= "", fNewRevision= "";
 	long fOldDate, fNewDate;	// if 0: no file
 	List fHunks= new ArrayList();
 	
@@ -23,14 +23,14 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 		
 		int pos= oldName.lastIndexOf(':');
 		if (pos >= 0) {
-			oldName= oldName.substring(0, pos);
 			//fOldRevision= oldName.substring(pos+1);
+			oldName= oldName.substring(0, pos);
 		}
 		
 		pos= newName.lastIndexOf(':');
 		if (pos >= 0) {
-			newName= newName.substring(0, pos);
 			//fNewRevision= newName.substring(pos+1);
+			newName= newName.substring(0, pos);
 		}
 		
 		if (DEV_NULL.equals(oldName)) {
@@ -48,6 +48,16 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 		fNewDate= newDate;	
 	}
 	
+	void finish() {
+		if (fHunks.size() == 1) {
+			Hunk h= (Hunk) fHunks.get(0);
+			if (h.fNewLength == 0) {
+				fNewDate= 0;
+				fNewName= fOldName;
+			}
+		}
+	}
+	
 	/* package */ void add(Hunk hunk) {
 		fHunks.add(hunk);
 	}
@@ -62,14 +72,33 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 	
 	/* package */ String getDescription() {
 		if (fOldDate == 0)
-			return "added: " + fNewName;
+			return "+ " + fNewName;
 		if (fNewDate == 0)
-			return "deleted: " + fOldName;
-		return "changed: " + fOldName;
+			return "- " + fOldName;
+		return "! " + fOldName;
 	}
 	
+//	/* package */ int tryPatch(BufferedReader reader) {
+//		List lines= new LineReader(reader).readLines();
+//		if (lines == null)
+//			lines= new ArrayList();
+//
+//		int shift= 0;
+//		Iterator iter= fHunks.iterator();
+//		while (iter.hasNext()) {
+//			Hunk hunk= (Hunk) iter.next();
+//			shift= hunk.tryPatch(lines, shift);
+//		}
+//		
+//		return 0;
+//	}
+		
 	/* package */ InputStream patch(InputStream is) {
-		List lines= new LineReader(new BufferedReader(new InputStreamReader(is))).readLines();
+		return patch(new BufferedReader(new InputStreamReader(is)));
+	}
+	
+	/* package */ InputStream patch(BufferedReader reader) {
+		List lines= new LineReader(reader).readLines();
 		if (lines == null)
 			lines= new ArrayList();
 

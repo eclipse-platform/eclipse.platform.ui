@@ -68,17 +68,10 @@ import org.eclipse.compare.internal.*;
 		
 		CompareConfiguration cc= new CompareConfiguration();
 		cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, new Boolean(false));
-		PatchCompareInput input= new PatchCompareInput(cc);
-		input.setSelection(fSelection);
-		input.setDiffs(fDiffs);
-		input.setPatchName(fPatchWizardPage.getPatchName());
-		CompareUI.openCompareEditor(input);
-		
-		
-//
-//		if (!executeExportOperation(new JarFileExportOperation(fJarPackage, getShell())))
-//			return false;
-//		
+
+		CompareUI.openCompareEditor(
+			new PatchCompareInput(cc, fSelection, fDiffs, fPatchWizardPage.getPatchName()));
+
 		// Save the dialog settings
 		if (fHasNewDialogSettings) {
 			IDialogSettings workbenchSettings= CompareUIPlugin.getDefault().getDialogSettings();

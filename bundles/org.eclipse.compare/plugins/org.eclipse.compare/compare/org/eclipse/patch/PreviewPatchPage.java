@@ -15,7 +15,11 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.jface.wizard.IWizard;
 
-
+/**
+ * Shows the parsed patch file and any mismatches
+ * between files, hunks and the currently selected
+ * resources.
+ */
 /* package */ class PreviewPatchPage extends WizardPage {
 	
 	private Tree fTree;
@@ -75,7 +79,7 @@ import org.eclipse.jface.wizard.IWizard;
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		setControl(composite);
 		
-		fTree= new Tree(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		fTree= new Tree(composite, SWT.CHECK | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		
 		GridData data= new GridData();
 		data.verticalAlignment= GridData.FILL;

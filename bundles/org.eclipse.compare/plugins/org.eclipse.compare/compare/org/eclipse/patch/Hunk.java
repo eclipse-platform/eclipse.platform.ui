@@ -29,6 +29,18 @@ import org.eclipse.jface.util.Assert;
 		fLines= (String[]) lines.toArray(new String[lines.size()]);
 	}
 	
+	/**
+	 * Returns the contents of this hunk.
+	 * Each line starts with a control character. Their meaning is a s follows:
+	 * <ul>
+	 * <li>
+	 * '+': add the line
+	 * <li>
+	 * '-': delete the line
+	 * <li>
+	 * ' ': no change, context line
+	 * </ul>
+	 */
 	String getContent() {
 		StringBuffer sb= new StringBuffer();
 		for (int i= 0; i < fLines.length; i++)
@@ -36,6 +48,10 @@ import org.eclipse.jface.util.Assert;
 		return sb.toString();
 	}
 	
+	/**
+	 * Returns a descriptive String for this hunk.
+	 * It is in the form old_start,old_length -> new_start,new_length.
+	 */
 	String getDescription() {
 		StringBuffer sb= new StringBuffer();
 		sb.append(Integer.toString(fOldStart));
@@ -61,7 +77,7 @@ import org.eclipse.jface.util.Assert;
 			l1--;
 			
 		int l2= line2.length();
-		if (l2 > 0 && line1.charAt(l2-1) == '\n')
+		if (l2 > 0 && line2.charAt(l2-1) == '\n')
 			l2--;
 		if (l2 > 1 && line2.charAt(l2-2) == '\r')
 			l2--;
@@ -74,7 +90,6 @@ import org.eclipse.jface.util.Assert;
 	/* package */ int patch(List lines, int shift) {
 		if (tryPatch(lines, shift)) {
 			shift+= doPatch(lines, shift);
-			System.out.println("patched hunk");
 		} else {
 			boolean found= false;
 			int oldShift= shift;
@@ -98,7 +113,7 @@ import org.eclipse.jface.util.Assert;
 			}
 			
 			if (found) {
-				System.out.println("patched hunk at offset: " + (shift-oldShift));
+				//System.out.println("patched hunk at offset: " + (shift-oldShift));
 				shift+= doPatch(lines, shift);
 			} else {
 				System.out.println("hunk ignored");
@@ -160,11 +175,6 @@ import org.eclipse.jface.util.Assert;
 			char type= s.charAt(0);
 			switch (type) {
 			case ' ':	// context lines
-//				Assert.isTrue(pos < lines.size(), "1");
-//				Assert.isTrue(equals(line, (String) lines.get(pos)), "2");
-//				pos++;
-//				break;
-				
 				while (true) {
 					Assert.isTrue(pos < lines.size(), "3");
 					if (equals(line, (String) lines.get(pos))) {
