@@ -39,7 +39,8 @@ public interface IMarkerDelta {
 public Object getAttribute(String attributeName);
 /**
  * Returns the integer-valued attribute with the given name.  
- * Returns the given default value if the attribute is undefined.
+ * Returns the given default value if the attribute is undefined
+ * or is not an integer value.
  * <p>
  * If kind is <code>IResourceDelta.ADDED</code>, then the information is 
  * from the new marker, otherwise it is from the old marker.
@@ -52,7 +53,8 @@ public Object getAttribute(String attributeName);
 public int getAttribute(String attributeName, int defaultValue);
 /**
  * Returns the string-valued attribute with the given name.  
- * Returns the given default value if the attribute is undefined.
+ * Returns the given default value if the attribute is undefined or
+ * is not a string value.
  * <p>
  * If kind is <code>IResourceDelta.ADDED</code>, then the information is 
  * from the new marker, otherwise it is from the old marker.
@@ -65,7 +67,8 @@ public int getAttribute(String attributeName, int defaultValue);
 public String getAttribute(String attributeName, String defaultValue);
 /**
  * Returns the boolean-valued attribute with the given name.  
- * Returns the given default value if the attribute is undefined.
+ * Returns the given default value if the attribute is undefined
+ * or is not a boolean value.
  * <p>
  * If kind is <code>IResourceDelta.ADDED</code>, then the information is 
  * from the new marker, otherwise it is from the old marker.

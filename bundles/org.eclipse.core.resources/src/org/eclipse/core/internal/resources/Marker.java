@@ -98,7 +98,7 @@ public int getAttribute(String attributeName, int defaultValue) {
 	if (info == null)
 		return defaultValue;
 	Object value = info.getAttribute(attributeName);
-	if (value != null && value instanceof Integer)
+	if (value instanceof Integer)
 		return ((Integer) value).intValue();
 	return defaultValue;
 }
@@ -111,7 +111,7 @@ public String getAttribute(String attributeName, String defaultValue) {
 	if (info == null)
 		return defaultValue;
 	Object value = info.getAttribute(attributeName);
-	if (value != null && value instanceof String)
+	if (value instanceof String)
 		return (String) value;
 	return defaultValue;
 }
@@ -124,7 +124,7 @@ public boolean getAttribute(String attributeName, boolean defaultValue) {
 	if (info == null)
 		return defaultValue;
 	Object value = info.getAttribute(attributeName);
-	if (value != null && value instanceof Boolean)
+	if (value instanceof Boolean)
 		return ((Boolean) value).booleanValue();
 	return defaultValue;
 }

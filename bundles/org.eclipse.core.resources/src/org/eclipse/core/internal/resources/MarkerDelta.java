@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.internal.utils.Assert;
 import java.util.Map;
+
+import org.eclipse.core.resources.*;
 /**
  * @see IMarkerDelta
  */
@@ -39,39 +39,27 @@ public Object getAttribute(String attributeName) {
  */
 public int getAttribute(String attributeName, int defaultValue) {
 	Object value = info.getAttribute(attributeName);
-	if (value == null)
-		return defaultValue;
 	if (value instanceof Integer)
 		return ((Integer) value).intValue();
-	Assert.isTrue(false);
-	// avoid compiler error
-	return -1;
+	return defaultValue;
 }
 /**
  * @see IMarkerDelta#getAttribute
  */
 public String getAttribute(String attributeName, String defaultValue) {
 	Object value = info.getAttribute(attributeName);
-	if (value == null)
-		return defaultValue;
 	if (value instanceof String)
 		return (String) value;
-	Assert.isTrue(false);
-	// avoid compiler error
-	return null;
+	return defaultValue;
 }
 /**
  * @see IMarkerDelta#getAttribute
  */
 public boolean getAttribute(String attributeName, boolean defaultValue) {
 	Object value = info.getAttribute(attributeName);
-	if (value == null)
-		return defaultValue;
 	if (value instanceof Boolean)
 		return ((Boolean) value).booleanValue();
-	Assert.isTrue(false);
-	// avoid compiler error
-	return false;
+	return defaultValue;
 }
 /**
  * @see IMarkerDelta#getAttributes
