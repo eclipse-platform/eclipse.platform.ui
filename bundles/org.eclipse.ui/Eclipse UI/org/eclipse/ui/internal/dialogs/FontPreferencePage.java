@@ -146,12 +146,21 @@ public class FontPreferencePage
 	/**
 	 * Create the list of possible fonts.
 	 */
-	private void createFontList(Composite parent) {
-
+	private void createFontList(Composite firstColumn) {
+		Composite parent = new Composite(firstColumn, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		parent.setLayout(layout);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.grabExcessHorizontalSpace = true;
+		parent.setLayoutData(data);
+		
+		Label label = new Label(parent, SWT.LEFT);
+		label.setText(WorkbenchMessages.getString("FontsPreference.fonts")); //$NON-NLS-1$
+		
 		fontList = new List(parent, SWT.BORDER);
-
-		GridData data =
-			new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
+		data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
 		data.grabExcessHorizontalSpace = true;
 		fontList.setLayoutData(data);
 
@@ -266,6 +275,9 @@ public class FontPreferencePage
 	 * Creates the preview control for this field editor.
 	 */
 	private void createPreviewControl(Composite parent) {
+		Label label = new Label(parent, SWT.LEFT);
+		label.setText(WorkbenchMessages.getString("FontsPreference.preview")); //$NON-NLS-1$
+
 		previewer = new DefaultPreviewer(parent);
 		Control control = previewer.getControl();
 		GridData gd = new GridData();
