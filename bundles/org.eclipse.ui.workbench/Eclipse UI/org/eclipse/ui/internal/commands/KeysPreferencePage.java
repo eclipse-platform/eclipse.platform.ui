@@ -48,7 +48,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -168,8 +167,6 @@ public class KeysPreferencePage extends
     private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle
             .getBundle(KeysPreferencePage.class.getName());
 
-    private final static RGB RGB_MINUS = new RGB(160, 160, 160);
-
     private Map assignmentsByContextIdByKeySequence;
 
     private Button buttonAdd;
@@ -239,6 +236,8 @@ public class KeysPreferencePage extends
     private Label labelKeySequence;
 
     private Menu menuButtonAddKey;
+
+    private Color minusColour;
 
     private Table tableAssignmentsForCommand;
 
@@ -361,9 +360,9 @@ public class KeysPreferencePage extends
 
             tableItem.setText(2, commandString);
 
-            if (difference == DIFFERENCE_MINUS)
-                    tableItem.setForeground(new Color(getShell().getDisplay(),
-                            RGB_MINUS));
+            if (difference == DIFFERENCE_MINUS) {
+                tableItem.setForeground(minusColour);
+            }
         }
     }
 
@@ -474,9 +473,9 @@ public class KeysPreferencePage extends
 
             tableItem.setText(2, commandString);
 
-            if (difference == DIFFERENCE_MINUS)
-                    tableItem.setForeground(new Color(getShell().getDisplay(),
-                            RGB_MINUS));
+            if (difference == DIFFERENCE_MINUS) {
+                tableItem.setForeground(minusColour);
+            }
         }
     }
 
@@ -575,7 +574,7 @@ public class KeysPreferencePage extends
         gridLayout = new GridLayout();
         gridLayout.numColumns = 3;
         groupCommand.setLayout(gridLayout);
-        gridData = new GridData(GridData.FILL_HORIZONTAL);
+        gridData = new GridData(GridData.FILL_BOTH);
         groupCommand.setLayoutData(gridData);
         groupCommand.setText(Util.translateString(RESOURCE_BUNDLE,
                 "groupCommand")); //$NON-NLS-1$	
@@ -617,6 +616,7 @@ public class KeysPreferencePage extends
 
         labelAssignmentsForCommand = new Label(groupCommand, SWT.LEFT);
         gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+        gridData.verticalAlignment = GridData.FILL_VERTICAL;
         labelAssignmentsForCommand.setLayoutData(gridData);
         labelAssignmentsForCommand.setText(Util.translateString(
                 RESOURCE_BUNDLE, "labelAssignmentsForCommand")); //$NON-NLS-1$
@@ -666,7 +666,7 @@ public class KeysPreferencePage extends
         gridLayout = new GridLayout();
         gridLayout.numColumns = 4;
         groupKeySequence.setLayout(gridLayout);
-        gridData = new GridData(GridData.FILL_HORIZONTAL);
+        gridData = new GridData(GridData.FILL_BOTH);
         groupKeySequence.setLayoutData(gridData);
         groupKeySequence.setText(Util.translateString(RESOURCE_BUNDLE,
                 "groupKeySequence")); //$NON-NLS-1$	
@@ -771,6 +771,7 @@ public class KeysPreferencePage extends
 
         labelAssignmentsForKeySequence = new Label(groupKeySequence, SWT.LEFT);
         gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+        gridData.verticalAlignment = GridData.FILL_VERTICAL;
         labelAssignmentsForKeySequence.setLayoutData(gridData);
         labelAssignmentsForKeySequence.setText(Util.translateString(
                 RESOURCE_BUNDLE, "labelAssignmentsForKeySequence")); //$NON-NLS-1$
@@ -905,6 +906,9 @@ public class KeysPreferencePage extends
     }
 
     protected Control createContents(Composite parent) {
+        // Initialize the minus colour.
+        minusColour = getShell().getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
+        
         final TabFolder tabFolder = new TabFolder(parent, SWT.NULL);
 
         // Basic tab
