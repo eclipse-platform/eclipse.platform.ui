@@ -25,13 +25,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
 import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.subscribers.TeamProvider;
+import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.core.sync.RemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ui.sync.views.SyncResource;
-import org.eclipse.team.internal.ui.sync.views.SyncSet;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
 /**
@@ -206,18 +204,11 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 		return listener;
 	}
 	
-	/**
-	 * @param resources
-	 */
-	protected SyncResource[] createSyncResources(TeamSubscriber subscriber, IResource[] resources) throws TeamException {
-		// TODO: SyncResources needs a SyncSet which contains the SyncInfo
-		// but SyncSet is not API
-		SyncSet syncSet = new SyncSet();
-		SyncResource[] result = new SyncResource[resources.length];
+	protected SyncInfo[] createSyncInfos(TeamSubscriber subscriber, IResource[] resources) throws TeamException {
+		SyncInfo[] result = new SyncInfo[resources.length];
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			syncSet.add(subscriber.getSyncInfo(resource, DEFAULT_MONITOR));
-			result[i] = new SyncResource(syncSet, resource);
+			result[i] = subscriber.getSyncInfo(resource, DEFAULT_MONITOR);
 		}
 		return result;
 	}

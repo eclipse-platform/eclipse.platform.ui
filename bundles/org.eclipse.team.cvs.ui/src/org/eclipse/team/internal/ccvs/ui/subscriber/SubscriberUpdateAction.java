@@ -30,8 +30,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
-import org.eclipse.team.internal.ui.sync.views.SyncResource;
-import org.eclipse.team.ui.sync.SyncResourceSet;
+import org.eclipse.team.ui.sync.SyncInfoSet;
 
 /**
  * This action performs an update for any CVSSyncTreeSubscriber.
@@ -44,10 +43,10 @@ import org.eclipse.team.ui.sync.SyncResourceSet;
 public abstract class SubscriberUpdateAction extends CVSSubscriberAction {
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#getFilteredSyncResourceSet(org.eclipse.team.internal.ui.sync.views.SyncResource[])
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#getFilteredSyncInfoSet(org.eclipse.team.internal.ui.sync.views.SyncInfo[])
 	 */
-	protected SyncResourceSet getFilteredSyncResourceSet(SyncResource[] selectedResources) {
-		SyncResourceSet syncSet = super.getFilteredSyncResourceSet(selectedResources);
+	protected SyncInfoSet getFilteredSyncInfoSet(SyncInfo[] selectedResources) {
+		SyncInfoSet syncSet = super.getFilteredSyncInfoSet(selectedResources);
 		if (!performPrompting(syncSet)) return null;
 		return syncSet;
 	}
@@ -61,16 +60,16 @@ public abstract class SubscriberUpdateAction extends CVSSubscriberAction {
 	 * @param syncSet
 	 * @return
 	 */
-	protected boolean performPrompting(SyncResourceSet syncSet) {
+	protected boolean performPrompting(SyncInfoSet syncSet) {
 		return true;
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#run(org.eclipse.team.ui.sync.SyncResourceSet, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#run(org.eclipse.team.ui.sync.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void run(SyncResourceSet syncSet, IProgressMonitor monitor) throws CVSException {
+	public void run(SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException {
 	
-		SyncResource[] changed = syncSet.getSyncResources();
+		SyncInfo[] changed = syncSet.getSyncInfos();
 		if (changed.length == 0) return;
 		
 		// The list of sync resources to be updated using "cvs update"
@@ -87,17 +86,17 @@ public abstract class SubscriberUpdateAction extends CVSSubscriberAction {
 		List deletions = new ArrayList();
 	
 		for (int i = 0; i < changed.length; i++) {
-			SyncResource changedNode = changed[i];
+			SyncInfo changedNode = changed[i];
 			
 			// Make sure that parent folders exist
-			SyncResource parent = changedNode.getParent();
+			SyncInfo parent = getParent(changedNode);
 			if (parent != null && isOutOfSync(parent)) {
 				// We need to ensure that parents that are either incoming folder additions
 				// or previously pruned folders are recreated.
 				parentCreationElements.add(parent);
 			}
 			
-			IResource resource = changedNode.getResource();
+			IResource resource = changedNode.getLocal();
 			int kind = changedNode.getKind();
 			if (resource.getType() == IResource.FILE) {
 				// add the file to the list of files to be updated
@@ -173,16 +172,16 @@ public abstract class SubscriberUpdateAction extends CVSSubscriberAction {
 			// a backup file in case the update fails. The backups could be purged after
 			// the update succeeds.
 			if (parentCreationElements.size() > 0) {
-				makeInSync((SyncResource[]) parentCreationElements.toArray(new SyncResource[parentCreationElements.size()]));				
+				makeInSync((SyncInfo[]) parentCreationElements.toArray(new SyncInfo[parentCreationElements.size()]));				
 			}
 			if (deletions.size() > 0) {
-				runLocalDeletions((SyncResource[])deletions.toArray(new SyncResource[deletions.size()]), manager, Policy.subMonitorFor(monitor, deletions.size() * 100));
+				runLocalDeletions((SyncInfo[])deletions.toArray(new SyncInfo[deletions.size()]), manager, Policy.subMonitorFor(monitor, deletions.size() * 100));
 			}
 			if (updateDeletions.size() > 0) {
-				runUpdateDeletions((SyncResource[])updateDeletions.toArray(new SyncResource[updateDeletions.size()]), manager, Policy.subMonitorFor(monitor, updateDeletions.size() * 100));
+				runUpdateDeletions((SyncInfo[])updateDeletions.toArray(new SyncInfo[updateDeletions.size()]), manager, Policy.subMonitorFor(monitor, updateDeletions.size() * 100));
 			}			
 			if (updateShallow.size() > 0) {
-				runUpdateShallow((SyncResource[])updateShallow.toArray(new SyncResource[updateShallow.size()]), manager, Policy.subMonitorFor(monitor, updateShallow.size() * 100));
+				runUpdateShallow((SyncInfo[])updateShallow.toArray(new SyncInfo[updateShallow.size()]), manager, Policy.subMonitorFor(monitor, updateShallow.size() * 100));
 			}
 		} catch (final TeamException e) {
 			throw CVSException.wrapException(e);
@@ -199,15 +198,15 @@ public abstract class SubscriberUpdateAction extends CVSSubscriberAction {
 	 * @param changedNode
 	 * @return
 	 */
-	protected boolean supportsShallowUpdateFor(SyncResource changedNode) {
+	protected boolean supportsShallowUpdateFor(SyncInfo changedNode) {
 		return false;
 	}
 
 	/**
 	 * @param element
 	 */
-	protected void unmanage(SyncResource element, IProgressMonitor monitor) throws CVSException {
-		CVSWorkspaceRoot.getCVSResourceFor(element.getResource()).unmanage(monitor);
+	protected void unmanage(SyncInfo element, IProgressMonitor monitor) throws CVSException {
+		CVSWorkspaceRoot.getCVSResourceFor(element.getLocal()).unmanage(monitor);
 		
 	}
 
@@ -228,31 +227,31 @@ public abstract class SubscriberUpdateAction extends CVSSubscriberAction {
 		}
 	}
 	
-	protected void runLocalDeletions(SyncResource[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
+	protected void runLocalDeletions(SyncInfo[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
 		monitor.beginTask(null, nodes.length * 100);
 		for (int i = 0; i < nodes.length; i++) {
-			SyncResource node = nodes[i];
+			SyncInfo node = nodes[i];
 			unmanage(node, Policy.subMonitorFor(monitor, 50));
-			deleteAndKeepHistory(node.getResource(), Policy.subMonitorFor(monitor, 50));
+			deleteAndKeepHistory(node.getLocal(), Policy.subMonitorFor(monitor, 50));
 		}
 		pruneEmptyParents(nodes);
 		monitor.done();
 	}
 
-	protected void runUpdateDeletions(SyncResource[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
+	protected void runUpdateDeletions(SyncInfo[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
 		// As an optimization, perform the deletions locally
 		runLocalDeletions(nodes, manager, monitor);
 	}
 
-	protected void runUpdateShallow(SyncResource[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
+	protected void runUpdateShallow(SyncInfo[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
 		// TODO: Should use custom update which skips non-automergable conflicts
 		manager.update(getIResourcesFrom(nodes), new Command.LocalOption[] { Command.DO_NOT_RECURSE }, false, monitor);
 	}
 	
-	protected IResource[] getIResourcesFrom(SyncResource[] nodes) {
+	protected IResource[] getIResourcesFrom(SyncInfo[] nodes) {
 		List resources = new ArrayList(nodes.length);
 		for (int i = 0; i < nodes.length; i++) {
-			resources.add(nodes[i].getResource());
+			resources.add(nodes[i].getLocal());
 		}
 		return (IResource[]) resources.toArray(new IResource[resources.size()]);
 	}

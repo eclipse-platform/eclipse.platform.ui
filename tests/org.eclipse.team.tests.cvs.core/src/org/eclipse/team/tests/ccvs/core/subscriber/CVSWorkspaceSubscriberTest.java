@@ -39,9 +39,8 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberCommitAction;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceUpdateAction;
-import org.eclipse.team.internal.ui.sync.views.SyncResource;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
-import org.eclipse.team.ui.sync.SyncResourceSet;
+import org.eclipse.team.ui.sync.SyncInfoSet;
 
 /**
  * This class tests the CVSWorkspaceSubscriber
@@ -215,7 +214,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	 */
 	public IResource[] updateResources(IContainer container, String[] hierarchy, boolean ignoreLocalChanges) throws CoreException, TeamException {
 		IResource[] resources = getResources(container, hierarchy);
-		SyncResource[] syncResources = createSyncResources(resources);
+		SyncInfo[] syncResources = createSyncInfos(resources);
 		updateResources(syncResources);
 		return resources;
 	}
@@ -224,8 +223,8 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	 * @param resources
 	 * @return
 	 */
-	private SyncResource[] createSyncResources(IResource[] resources) throws TeamException {
-		return createSyncResources(getSubscriber(), resources);
+	private SyncInfo[] createSyncInfos(IResource[] resources) throws TeamException {
+		return createSyncInfos(getSubscriber(), resources);
 	}
 
 	/**
@@ -235,7 +234,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	 */
 	public IResource[] commitResources(IContainer container, String[] hierarchy) throws CoreException, TeamException {
 		IResource[] resources = getResources(container, hierarchy);
-		SyncResource[] syncResources = createSyncResources(resources);
+		SyncInfo[] syncResources = createSyncInfos(resources);
 		commitResources(syncResources);
 		return resources;
 	}
@@ -243,15 +242,15 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	/**
 	 * @param syncResources
 	 */
-	private void updateResources(SyncResource[] syncResources) throws CVSException {
-		new WorkspaceUpdateAction().run(new SyncResourceSet(syncResources), DEFAULT_MONITOR);	
+	private void updateResources(SyncInfo[] syncResources) throws TeamException {
+		new WorkspaceUpdateAction().run(new SyncInfoSet(syncResources), DEFAULT_MONITOR);	
 	}
 
 	/**
 	 * @param syncResources
 	 */
-	private void commitResources(SyncResource[] syncResources) throws CVSException {
-		new SubscriberCommitAction().run(new SyncResourceSet(syncResources), DEFAULT_MONITOR);	
+	private void commitResources(SyncInfo[] syncResources) throws TeamException {
+		new SubscriberCommitAction().run(new SyncInfoSet(syncResources), DEFAULT_MONITOR);	
 	}
 	
 	/*

@@ -29,29 +29,29 @@ import org.eclipse.team.internal.ccvs.ui.AdaptableResourceList;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 import org.eclipse.team.ui.sync.SyncInfoFilter;
-import org.eclipse.team.ui.sync.SyncResourceSet;
+import org.eclipse.team.ui.sync.SyncInfoSet;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
- * DetailsDialog that has a details area which shows the SyncResources
- * in a SyncResourceSet.
+ * DetailsDialog that has a details area which shows the SyncInfos
+ * in a SyncInfoSet.
  */
-public abstract class SyncResourceSetDetailsDialog extends DetailsDialog {
+public abstract class SyncInfoSetDetailsDialog extends DetailsDialog {
 
 	private static final int WIDTH_HINT = 350;
 	private final static int SELECTION_HEIGHT_HINT = 100;
 	
 	private CheckboxTableViewer listViewer;
 	
-	private SyncResourceSet syncSet;
+	private SyncInfoSet syncSet;
 	private Object[] selectedResources;
 
 	/**
 	 * @param parentShell
 	 * @param dialogTitle
 	 */
-	public SyncResourceSetDetailsDialog(Shell parentShell, String dialogTitle, SyncResourceSet syncSet) {
+	public SyncInfoSetDetailsDialog(Shell parentShell, String dialogTitle, SyncInfoSet syncSet) {
 		super(parentShell, dialogTitle);
 		this.syncSet = syncSet;
 	}
@@ -170,7 +170,7 @@ public abstract class SyncResourceSetDetailsDialog extends DetailsDialog {
 	/**
 	 * @return
 	 */
-	public SyncResourceSet getSyncSet() {
+	public SyncInfoSet getSyncSet() {
 		return syncSet;
 	}
 

@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -28,36 +29,34 @@ import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ui.sync.views.SyncResource;
 import org.eclipse.team.ui.sync.SubscriberAction;
-import org.eclipse.team.ui.sync.SyncResourceSet;
+import org.eclipse.team.ui.sync.SyncInfoSet;
 import org.eclipse.ui.PlatformUI;
 
 public abstract class CVSSubscriberAction extends SubscriberAction {
 	
-	protected boolean isOutOfSync(SyncResource resource) {
+	protected boolean isOutOfSync(SyncInfo resource) {
 		if (resource == null) return false;
-		return (!(resource.getKind() == 0) || ! resource.getLocalResource().exists());
+		return (!(resource.getKind() == 0) || ! resource.getLocal().exists());
 	}
 	
-	protected void makeInSync(SyncResource[] folders) throws TeamException {
+	protected void makeInSync(SyncInfo[] folders) throws TeamException {
 		// If a node has a parent that is an incoming folder creation, we have to 
 		// create that folder locally and set its sync info before we can get the
 		// node itself. We must do this for all incoming folder creations (recursively)
 		// in the case where there are multiple levels of incoming folder creations.
 		for (int i = 0; i < folders.length; i++) {
-			SyncResource resource = folders[i];
+			SyncInfo resource = folders[i];
 			makeInSync(resource);
 		}
 	}
 	
-	protected void makeInSync(SyncResource element) throws TeamException {
-		if (isOutOfSync(element)) {
-			SyncResource parent = element.getParent();
+	protected void makeInSync(SyncInfo info) throws TeamException {
+		if (isOutOfSync(info)) {
+			SyncInfo parent = getParent(info);
 			if (parent != null) {
 				makeInSync(parent);
 			}
-			SyncInfo info = element.getSyncInfo();
 			if (info == null) return;
 			if (info instanceof CVSSyncInfo) {
 				CVSSyncInfo cvsInfo= (CVSSyncInfo) info;
@@ -66,21 +65,20 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 		}
 	}
 	
-	protected void makeOutgoing(SyncResource[] folders, IProgressMonitor monitor) throws TeamException {
+	protected void makeOutgoing(SyncInfo[] folders, IProgressMonitor monitor) throws TeamException {
 		// If a node has a parent that is an incoming folder creation, we have to 
 		// create that folder locally and set its sync info before we can get the
 		// node itself. We must do this for all incoming folder creations (recursively)
 		// in the case where there are multiple levels of incoming folder creations.
 		monitor.beginTask(null, 100 * folders.length);
 		for (int i = 0; i < folders.length; i++) {
-			SyncResource resource = folders[i];
-			makeOutgoing(resource, Policy.subMonitorFor(monitor, 100));
+			SyncInfo info = folders[i];
+			makeOutgoing(info, Policy.subMonitorFor(monitor, 100));
 		}
 		monitor.done();
 	}
 	
-	private void makeOutgoing(SyncResource resource, IProgressMonitor monitor) throws TeamException {
-		SyncInfo info = resource.getSyncInfo();
+	private void makeOutgoing(SyncInfo info, IProgressMonitor monitor) throws TeamException {
 		if (info == null) return;
 		if (info instanceof CVSSyncInfo) {
 			CVSSyncInfo cvsInfo= (CVSSyncInfo) info;
@@ -113,7 +111,7 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 //			 boolean result = saveIfNecessary();
 //			 if (!result) return null;
 
-		SyncResourceSet syncSet = getFilteredSyncResourceSet(getFilteredSyncResources());
+		SyncInfoSet syncSet = getFilteredSyncInfoSet(getFilteredSyncInfos());
 		if (syncSet == null || syncSet.isEmpty()) return;
 		try {
 			getRunnableContext().run(true /* fork */, true /* cancelable */, getRunnable(syncSet));
@@ -128,28 +126,32 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 	 * Return an IRunnableWithProgress that will operate on the given sync set.
 	 * This method is invoked by <code>run(IAction)</code> when the action is
 	 * executed from a menu. The default implementation invokes the method
-	 * <code>run(SyncResourceSet, IProgressMonitor)</code>.
+	 * <code>run(SyncInfoSet, IProgressMonitor)</code>.
 	 * @param syncSet
 	 * @return
 	 */
-	protected IRunnableWithProgress getRunnable(final SyncResourceSet syncSet) {
+	protected IRunnableWithProgress getRunnable(final SyncInfoSet syncSet) {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
 					CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()).run(
 						new ICVSRunnable() {
 							public void run(IProgressMonitor monitor) throws CVSException {
-								CVSSubscriberAction.this.run(syncSet, monitor);
+								try {
+									CVSSubscriberAction.this.run(syncSet, monitor);
+								} catch (TeamException e) {
+									throw CVSException.wrapException(e);
+								}
 							}
 						}, monitor);
-				} catch (CVSException e) {
+				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
 			}
 		};
 	}
 
-	protected abstract void run(SyncResourceSet syncSet, IProgressMonitor monitor) throws CVSException;
+	protected abstract void run(SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException;
 
 	protected IRunnableContext getRunnableContext() {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -158,29 +160,32 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 	/**
 	 * Filter the sync resource set using action specific criteria or input from the user.
 	 */
-	protected SyncResourceSet getFilteredSyncResourceSet(SyncResource[] selectedResources) {
+	protected SyncInfoSet getFilteredSyncInfoSet(SyncInfo[] selectedResources) {
 		// If there are conflicts or outgoing changes in the syncSet, we need to warn the user.
-		return new SyncResourceSet(selectedResources);
+		return new SyncInfoSet(selectedResources);
 	}
 	
-	protected void pruneEmptyParents(SyncResource[] nodes) throws CVSException {
+	protected void pruneEmptyParents(SyncInfo[] nodes) throws CVSException {
 		// TODO: A more explicit tie in to the pruning mechanism would be prefereable.
 		// i.e. I don't like referencing the option and visitor directly
 		if (!CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) return;
 		ICVSResource[] cvsResources = new ICVSResource[nodes.length];
 		for (int i = 0; i < cvsResources.length; i++) {
-			cvsResources[i] = CVSWorkspaceRoot.getCVSResourceFor(nodes[i].getLocalResource());
+			cvsResources[i] = CVSWorkspaceRoot.getCVSResourceFor(nodes[i].getLocal());
 		}
 		new PruneFolderVisitor().visit(
 			CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()),
 			cvsResources);
 	}
 	
-	public CVSSyncInfo getCVSSyncInfo(SyncResource syncResource) {
-		SyncInfo info = syncResource.getSyncInfo();
+	public CVSSyncInfo getCVSSyncInfo(SyncInfo info) {
 		if (info instanceof CVSSyncInfo) {
 			return (CVSSyncInfo)info;
 		}
 		return null;
+	}
+	
+	protected SyncInfo getParent(SyncInfo info) throws TeamException {
+		return getSubscriber().getSyncInfo(info.getLocal().getParent(), new NullProgressMonitor());
 	}
 }

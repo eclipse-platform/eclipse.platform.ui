@@ -30,8 +30,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.sync.ToolTipMessageDialog;
-import org.eclipse.team.internal.ui.sync.views.SyncResource;
-import org.eclipse.team.ui.sync.SyncResourceSet;
+import org.eclipse.team.ui.sync.SyncInfoSet;
 
 /**
  * @author Administrator
@@ -44,10 +43,10 @@ public class SubscriberCommitAction extends CVSSubscriberAction {
 	private String comment;
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#getFilteredSyncResourceSet(org.eclipse.team.internal.ui.sync.views.SyncResource[])
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#getFilteredSyncInfoSet(org.eclipse.team.internal.ui.sync.views.SyncInfo[])
 	 */
-	protected SyncResourceSet getFilteredSyncResourceSet(SyncResource[] selectedResources) {
-		SyncResourceSet syncSet = super.getFilteredSyncResourceSet(selectedResources);
+	protected SyncInfoSet getFilteredSyncInfoSet(SyncInfo[] selectedResources) {
+		SyncInfoSet syncSet = super.getFilteredSyncInfoSet(selectedResources);
 		if (!promptForConflictHandling(syncSet)) return null;
 		try {
 			if (!promptForUnaddedHandling(syncSet)) return null;
@@ -63,7 +62,7 @@ public class SubscriberCommitAction extends CVSSubscriberAction {
 	 * @param syncSet
 	 * @return
 	 */
-	private boolean promptForConflictHandling(SyncResourceSet syncSet) {
+	private boolean promptForConflictHandling(SyncInfoSet syncSet) {
 		// If there is a conflict in the syncSet, we need to prompt the user before proceeding.
 		if (syncSet.hasConflicts() || syncSet.hasIncomingChanges()) {
 			switch (promptForConflicts(syncSet)) {
@@ -84,7 +83,7 @@ public class SubscriberCommitAction extends CVSSubscriberAction {
 		return true;
 	}
 
-	private boolean promptForUnaddedHandling(SyncResourceSet syncSet) throws CVSException {
+	private boolean promptForUnaddedHandling(SyncInfoSet syncSet) throws CVSException {
 		if (syncSet.isEmpty()) return false;
 		
 		// accumulate any resources that are not under version control
@@ -122,7 +121,7 @@ public class SubscriberCommitAction extends CVSSubscriberAction {
 	 * @param syncSet
 	 * @return
 	 */
-	private IResource[] getUnaddedResources(SyncResourceSet syncSet) throws CVSException {
+	private IResource[] getUnaddedResources(SyncInfoSet syncSet) throws CVSException {
 		// TODO: should only get outgoing additions (since conflicting additions 
 		// could be considered to be under version control already)
 		IResource[] resources = syncSet.getResources();
@@ -156,11 +155,11 @@ public class SubscriberCommitAction extends CVSSubscriberAction {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#run(org.eclipse.team.ui.sync.SyncResourceSet, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#run(org.eclipse.team.ui.sync.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void run(SyncResourceSet syncSet, IProgressMonitor monitor) throws CVSException {
+	public void run(SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException {
 		
-		final SyncResource[] changed = syncSet.getSyncResources();
+		final SyncInfo[] changed = syncSet.getSyncInfos();
 		if (changed.length == 0) return;
 		
 		// A list of files to be committed
@@ -170,18 +169,18 @@ public class SubscriberCommitAction extends CVSSubscriberAction {
 		// Deleted resources that need a "cvs remove"
 		final List deletions = new ArrayList(); // of IResource
 		// A list of incoming or conflicting file changes to be made outgoing changes
-		final List makeOutgoing = new ArrayList(); // of SyncResource
+		final List makeOutgoing = new ArrayList(); // of SyncInfo
 		// A list of out-of-sync folders that must be made in-sync
-		final List makeInSync = new ArrayList(); // of SyncResource
+		final List makeInSync = new ArrayList(); // of SyncInfo
 		
 		for (int i = 0; i < changed.length; i++) {
-			SyncResource changedNode = changed[i];
+			SyncInfo changedNode = changed[i];
 			int kind = changedNode.getKind();
-			IResource resource = changedNode.getResource();
+			IResource resource = changedNode.getLocal();
 			
 			// Any parent folders should be made in-sync.
 			// Steps will be taken after the commit to prune any empty folders
-			SyncResource parent = changedNode.getParent();
+			SyncInfo parent = getParent(changedNode);
 			if (parent != null) {
 				if (isOutOfSync(parent)) {
 					makeInSync.add(parent);
@@ -224,7 +223,7 @@ public class SubscriberCommitAction extends CVSSubscriberAction {
 				if (((kind & SyncInfo.DIRECTION_MASK) == SyncInfo.OUTGOING)
 					&& ((kind & SyncInfo.CHANGE_MASK) == SyncInfo.ADDITION)) {
 						// Outgoing folder additions must be added
-						additions.add(changedNode.getResource());
+						additions.add(changedNode.getLocal());
 				} else if (isOutOfSync(changedNode)) {
 					// otherwise, make any out-of-sync folders in-sync using the remote info
 					makeInSync.add(changedNode);
@@ -237,11 +236,11 @@ public class SubscriberCommitAction extends CVSSubscriberAction {
 			monitor.beginTask(null, work);
 			
 			if (makeInSync.size() > 0) {
-				makeInSync((SyncResource[]) makeInSync.toArray(new SyncResource[makeInSync.size()]));			
+				makeInSync((SyncInfo[]) makeInSync.toArray(new SyncInfo[makeInSync.size()]));			
 			}
 
 			if (makeOutgoing.size() > 0) {
-				makeOutgoing((SyncResource[]) makeOutgoing.toArray(new SyncResource[makeInSync.size()]), Policy.subMonitorFor(monitor, makeOutgoing.size() * 100));			
+				makeOutgoing((SyncInfo[]) makeOutgoing.toArray(new SyncInfo[makeInSync.size()]), Policy.subMonitorFor(monitor, makeOutgoing.size() * 100));			
 			}
 			
 			// TODO: There was special handling for undoing incoming deletions
@@ -267,7 +266,7 @@ public class SubscriberCommitAction extends CVSSubscriberAction {
 	 * Note: This method is designed to be overridden by test cases.
 	 * @return 0 to sync conflicts, 1 to sync all non-conflicts, 2 to cancel
 	 */
-	protected int promptForConflicts(SyncResourceSet syncSet) {
+	protected int promptForConflicts(SyncInfoSet syncSet) {
 		String[] buttons = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL};
 		String question = Policy.bind("CommitSyncAction.questionRelease"); //$NON-NLS-1$
 		String title = Policy.bind("CommitSyncAction.titleRelease"); //$NON-NLS-1$

@@ -26,9 +26,8 @@ import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.ui.subscriber.MergeUpdateAction;
-import org.eclipse.team.internal.ui.sync.views.SyncResource;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
-import org.eclipse.team.ui.sync.SyncResourceSet;
+import org.eclipse.team.ui.sync.SyncInfoSet;
 
 
 /**
@@ -71,22 +70,22 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 	 */
 	private void mergeResources(CVSMergeSubscriber subscriber, IProject project, String[] resourcePaths) throws CoreException, TeamException {
 		IResource[] resources = getResources(project, resourcePaths);
-		SyncResource[] syncResources = createSyncResources(subscriber, resources);
-		mergeResources(subscriber, syncResources);
+		SyncInfo[] infos = createSyncInfos(subscriber, resources);
+		mergeResources(subscriber, infos);
 	}
 	
 	/**
 	 * @param syncResources
 	 */
-	private void mergeResources(TeamSubscriber subscriber, SyncResource[] syncResources) throws CVSException {
+	private void mergeResources(TeamSubscriber subscriber, SyncInfo[] infos) throws TeamException {
 		MergeUpdateAction action = new MergeUpdateAction() {
-			protected boolean promptForOverwrite(SyncResourceSet syncSet) {
+			protected boolean promptForOverwrite(SyncInfoSet syncSet) {
 				// Agree to overwrite any conflicting resources
 				return true;
 			}
 		};
 		action.setSubscriber(subscriber);
-		action.run(new SyncResourceSet(syncResources), DEFAULT_MONITOR);
+		action.run(new SyncInfoSet(infos), DEFAULT_MONITOR);
 	}
 
 	/**

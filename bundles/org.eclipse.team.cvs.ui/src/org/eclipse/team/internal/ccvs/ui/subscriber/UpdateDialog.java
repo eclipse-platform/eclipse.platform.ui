@@ -24,21 +24,20 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ui.sync.views.SyncResource;
 import org.eclipse.team.ui.sync.AndSyncInfoFilter;
 import org.eclipse.team.ui.sync.AutomergableFilter;
 import org.eclipse.team.ui.sync.OrSyncInfoFilter;
 import org.eclipse.team.ui.sync.SyncInfoChangeTypeFilter;
 import org.eclipse.team.ui.sync.SyncInfoDirectionFilter;
 import org.eclipse.team.ui.sync.SyncInfoFilter;
-import org.eclipse.team.ui.sync.SyncResourceSet;
+import org.eclipse.team.ui.sync.SyncInfoSet;
 
 /**
  * This dialog prompts for the type of update which should take place
  * (i.e. update of auto-mergable files or update of all ignore local
  * changes.
  */
-public class UpdateDialog extends SyncResourceSetDetailsDialog {
+public class UpdateDialog extends SyncInfoSetDetailsDialog {
 
 	private Button radio1;
 	private Button radio2;
@@ -55,7 +54,7 @@ public class UpdateDialog extends SyncResourceSetDetailsDialog {
 	 * @param dialogButtonLabels
 	 * @param defaultIndex
 	 */
-	public UpdateDialog(Shell parentShell, SyncResourceSet syncSet) {
+	public UpdateDialog(Shell parentShell, SyncInfoSet syncSet) {
 		super(parentShell, "Overwrite Local Changes?", syncSet);
 		this.autoMerge = hasAutomergableResources();
 	}
@@ -109,20 +108,20 @@ public class UpdateDialog extends SyncResourceSetDetailsDialog {
 	}
 
 	/**
-	 * TODO: Could be a method on SyncResourceSet
+	 * TODO: Could be a method on SyncInfoSet
 	 * @param resources2
 	 */
 	protected IResource[] getAllResources() {
-		SyncResource[] resources;
+		SyncInfo[] resources;
 		if (autoMerge) {
 			resources = getSyncSet().getNodes(getAutomergableFilter());
 		} else {
-			resources = getSyncSet().getSyncResources();
+			resources = getSyncSet().getSyncInfos();
 		}
 		List result = new ArrayList();
 		for (int i = 0; i < resources.length; i++) {
-			SyncResource resource = resources[i];
-			result.add(resource.getLocalResource());
+			SyncInfo info = resources[i];
+			result.add(info.getLocal());
 		}
 		return (IResource[]) result.toArray(new IResource[result.size()]);
 		
@@ -164,7 +163,7 @@ public class UpdateDialog extends SyncResourceSetDetailsDialog {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SyncResourceSetDetailsDialog#keepSelectedResources()
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SyncInfoSetDetailsDialog#keepSelectedResources()
 	 */
 	protected void filterSyncSet() {
 		if (autoMerge) {

@@ -13,8 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.internal.ui.sync.views.SyncResource;
-import org.eclipse.team.ui.sync.SyncResourceSet;
+import org.eclipse.team.ui.sync.SyncInfoSet;
 
 /**
  * This action performs an update for the CVSWorkspaceSubscriber.
@@ -26,9 +25,9 @@ public class WorkspaceUpdateAction extends SubscriberUpdateAction {
 
 	/*
 	 * (non-Javadoc) 
-	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberUpdateAction#performPrompting(org.eclipse.team.ui.sync.SyncResourceSet)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberUpdateAction#performPrompting(org.eclipse.team.ui.sync.SyncInfoSet)
 	 */
-	protected boolean performPrompting(SyncResourceSet syncSet) {
+	protected boolean performPrompting(SyncInfoSet syncSet) {
 		// If there are conflicts or outgoing changes in the syncSet, we need to warn the user.
 		onlyUpdateAutomergeable = false;
 		if (syncSet.hasConflicts() || syncSet.hasOutgoingChanges()) {
@@ -43,7 +42,7 @@ public class WorkspaceUpdateAction extends SubscriberUpdateAction {
 	 * 
 	 * @return 0 to cancel, 1 to only update mergeable conflicts, 2 to overwrite if unmergeable
 	 */
-	protected boolean promptForMergeableConflicts(final SyncResourceSet syncSet) {
+	protected boolean promptForMergeableConflicts(final SyncInfoSet syncSet) {
 		final int[] result = new int[] {Dialog.CANCEL};
 		final Shell shell = getShell();
 		shell.getDisplay().syncExec(new Runnable() {
@@ -63,10 +62,10 @@ public class WorkspaceUpdateAction extends SubscriberUpdateAction {
 	 * Return true for conflicting changes that are automergable if the user has chosen the 
 	 * appropriate operation.
 	 * 
-	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberUpdateAction#supportsShallowUpdateFor(org.eclipse.team.internal.ui.sync.views.SyncResource)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberUpdateAction#supportsShallowUpdateFor(SyncInfo)
 	 */
-	protected boolean supportsShallowUpdateFor(SyncResource changedNode) {
-		return (changedNode.getChangeDirection() == SyncInfo.CONFLICTING
+	protected boolean supportsShallowUpdateFor(SyncInfo changedNode) {
+		return ((changedNode.getKind() & SyncInfo.DIRECTION_MASK)  == SyncInfo.CONFLICTING
 			&& ((changedNode.getKind() & SyncInfo.CHANGE_MASK) == SyncInfo.CHANGE)
 			&& onlyUpdateAutomergeable 
 			&& (changedNode.getKind() & SyncInfo.AUTOMERGE_CONFLICT) != 0);

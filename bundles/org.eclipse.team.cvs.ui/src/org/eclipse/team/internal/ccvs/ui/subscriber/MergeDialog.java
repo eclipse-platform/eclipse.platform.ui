@@ -15,13 +15,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.ui.sync.SyncResourceSet;
+import org.eclipse.team.ui.sync.SyncInfoSet;
 
 /**
  * This dialog is presented to the user when non-mergable conflicts 
  * existed in a merge update.
  */
-public class MergeDialog extends SyncResourceSetDetailsDialog {
+public class MergeDialog extends SyncInfoSetDetailsDialog {
 
 	public static final int YES = IDialogConstants.YES_ID;
 	
@@ -30,7 +30,7 @@ public class MergeDialog extends SyncResourceSetDetailsDialog {
 	 * @param dialogTitle
 	 * @param syncSet
 	 */
-	public MergeDialog(Shell parentShell, SyncResourceSet syncSet) {
+	public MergeDialog(Shell parentShell, SyncInfoSet syncSet) {
 		super(parentShell, "Overwrite Unmergable Resources?", syncSet);
 	}
 

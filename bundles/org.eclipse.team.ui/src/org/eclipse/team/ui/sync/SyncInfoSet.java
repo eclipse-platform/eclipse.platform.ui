@@ -21,11 +21,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ui.sync.views.SyncResource;
 
-public class SyncResourceSet {
+public class SyncInfoSet {
 
 	Set set = new HashSet();
 	
-	public SyncResourceSet(SyncResource[] resources) {
+	public SyncInfoSet(SyncInfo[] resources) {
 		set.addAll(Arrays.asList(resources));
 	}
 	/**
@@ -56,13 +56,7 @@ public class SyncResourceSet {
 	 * Returns true if this sync set has auto-mergeable conflicts.
 	 */
 	public boolean hasAutoMergeableConflicts() {
-		for (Iterator it = set.iterator(); it.hasNext();) {
-			SyncResource node = (SyncResource)it.next();
-			if ((node.getKind() & SyncInfo.AUTOMERGE_CONFLICT) != 0) {
-				return true;
-			}
-		}
-		return false;
+		return hasNodes(new AutomergableFilter());
 	}
 	
 	/**
@@ -89,10 +83,10 @@ public class SyncResourceSet {
 	 */
 	public void removeNonMergeableNodes() {
 		for (Iterator it = set.iterator(); it.hasNext();) {
-			SyncResource node = (SyncResource)it.next();
+			SyncInfo node = (SyncInfo)it.next();
 			if ((node.getKind() & SyncInfo.MANUAL_CONFLICT) != 0) {
 				it.remove();
-			} else if (node.getChangeDirection() != SyncInfo.CONFLICTING) {
+			} else if ((node.getKind() & SyncInfo.DIRECTION_MASK) != SyncInfo.CONFLICTING) {
 				it.remove();
 			}
 		}
@@ -103,8 +97,7 @@ public class SyncResourceSet {
 	 */
 	public boolean hasNodes(SyncInfoFilter filter) {
 		for (Iterator it = set.iterator(); it.hasNext();) {
-			SyncResource node = (SyncResource)it.next();
-			SyncInfo info = node.getSyncInfo();
+			SyncInfo info = (SyncInfo)it.next();
 			if (info != null && filter.select(info)) {
 				return true;
 			}
@@ -130,8 +123,7 @@ public class SyncResourceSet {
 	 */
 	public void rejectNodes(SyncInfoFilter filter) {
 		for (Iterator it = set.iterator(); it.hasNext();) {
-			SyncResource node = (SyncResource)it.next();
-			SyncInfo info = node.getSyncInfo();
+			SyncInfo info = (SyncInfo)it.next();
 			if (info != null && filter.select(info)) {
 				it.remove();
 			}
@@ -141,30 +133,29 @@ public class SyncResourceSet {
 	/**
 	 * Return all nodes in this set that match the given filter
 	 */
-	public SyncResource[] getNodes(SyncInfoFilter filter) {
+	public SyncInfo[] getNodes(SyncInfoFilter filter) {
 		List result = new ArrayList();
 		for (Iterator it = set.iterator(); it.hasNext();) {
-			SyncResource node = (SyncResource)it.next();
-			SyncInfo info = node.getSyncInfo();
+			SyncInfo info = (SyncInfo)it.next();
 			if (info != null && filter.select(info)) {
-				result.add(node);
+				result.add(info);
 			}
 		}
-		return (SyncResource[]) result.toArray(new SyncResource[result.size()]);
+		return (SyncInfo[]) result.toArray(new SyncInfo[result.size()]);
 	}
 	
-	public SyncResource[] getSyncResources() {
-		return (SyncResource[]) set.toArray(new SyncResource[set.size()]);
+	public SyncInfo[] getSyncInfos() {
+		return (SyncInfo[]) set.toArray(new SyncInfo[set.size()]);
 	}
 	
 	/**
 	 * Returns the resources from all the nodes in this set.
 	 */
 	public IResource[] getResources() {
-		SyncResource[] changed = getSyncResources();
+		SyncInfo[] changed = getSyncInfos();
 		IResource[] resources = new IResource[changed.length];
 		for (int i = 0; i < changed.length; i++) {
-			resources[i] = changed[i].getResource();
+			resources[i] = changed[i].getLocal();
 		}
 		return resources;
 	}
@@ -182,8 +173,8 @@ public class SyncResourceSet {
 
 	private void removeResource(IResource resource) {
 		for (Iterator it = set.iterator(); it.hasNext();) {
-			SyncResource node = (SyncResource)it.next();
-			if (node.getResource().equals(resource)) {
+			SyncInfo node = (SyncInfo)it.next();
+			if (node.getLocal().equals(resource)) {
 				it.remove();
 				// short-circuit the operation once a match is found
 				return;
@@ -195,20 +186,20 @@ public class SyncResourceSet {
 		return set.size();
 	}
 
-	public SyncResource getNodeFor(IResource resource) {
+	public SyncInfo getNodeFor(IResource resource) {
 		for (Iterator it = set.iterator(); it.hasNext();) {
-			SyncResource node = (SyncResource)it.next();
-			if (node.getResource().equals(resource)) {
+			SyncInfo node = (SyncInfo)it.next();
+			if (node.getLocal().equals(resource)) {
 				return node;
 			}
 		}
 		return null;
 	}
 	
-	public void addAll(SyncResourceSet set) {
-		SyncResource[] resources = set.getSyncResources();
+	public void addAll(SyncInfoSet set) {
+		SyncInfo[] resources = set.getSyncInfos();
 		for (int i = 0; i < resources.length; i++) {
-			SyncResource resource = resources[i];
+			SyncInfo resource = resources[i];
 			this.set.add(resource);
 		}
 		

@@ -19,10 +19,9 @@ import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ui.sync.views.SyncResource;
 import org.eclipse.team.ui.sync.SyncInfoDirectionFilter;
 import org.eclipse.team.ui.sync.SyncInfoFilter;
-import org.eclipse.team.ui.sync.SyncResourceSet;
+import org.eclipse.team.ui.sync.SyncInfoSet;
 
 /**
  * This action marks the local resource as merged by updating the base
@@ -38,15 +37,15 @@ public class SubscriberConfirmMergedAction extends CVSSubscriberAction {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#run(org.eclipse.team.ui.sync.SyncResourceSet, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#run(org.eclipse.team.ui.sync.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void run(SyncResourceSet syncSet, IProgressMonitor monitor) throws CVSException {
-		SyncResource[] syncResources = syncSet.getSyncResources();
+	protected void run(SyncInfoSet syncSet, IProgressMonitor monitor) throws CVSException {
+		SyncInfo[] syncResources = syncSet.getSyncInfos();
 		List needsMerge = new ArrayList();
 		monitor.beginTask(null, 100 * syncResources.length);
 		try {
 			for (int i = 0; i < syncResources.length; i++) {
-				SyncResource resource = syncResources[i];
+				SyncInfo resource = syncResources[i];
 				
 					CVSSyncInfo cvsInfo = getCVSSyncInfo(resource);
 					if (cvsInfo != null) {

@@ -17,7 +17,6 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.ui.actions.TeamAction;
-import org.eclipse.team.internal.ui.sync.views.SyncResource;
 
 /**
  * This is the abstract superclass for actions associated with a subscriber. 
@@ -35,9 +34,9 @@ public abstract class SubscriberAction extends TeamAction {
 	 * 
 	 * @return the selected resources
 	 */
-	protected SyncResource[] getSyncResources() {
-		SyncResource[] syncResources = (SyncResource[])getSelectedResources(SyncResource.class);
-		return syncResources;
+	protected SyncInfo[] getSyncInfos() {
+		SyncInfo[] syncInfos= (SyncInfo[])getSelectedResources(SyncInfo.class);
+		return syncInfos;
 	}
 
 	/**
@@ -48,7 +47,7 @@ public abstract class SubscriberAction extends TeamAction {
 	 * @see org.eclipse.team.internal.ui.actions.TeamAction#isEnabled()
 	 */
 	protected boolean isEnabled() throws TeamException {
-		return (getFilteredSyncResources().length > 0);
+		return (getFilteredSyncInfos().length > 0);
 	}
 
 	/**
@@ -59,8 +58,7 @@ public abstract class SubscriberAction extends TeamAction {
 	 * @param info
 	 * @return
 	 */
-	protected boolean select(SyncResource resource) {
-		SyncInfo info = resource.getSyncInfo();
+	protected boolean select(SyncInfo info) {
 		return info != null && getSyncInfoFilter().select(info);
 	}
 
@@ -75,15 +73,15 @@ public abstract class SubscriberAction extends TeamAction {
 	 * Return the selected SyncInfo for which this action is enabled.
 	 * @return
 	 */
-	protected SyncResource[] getFilteredSyncResources() {
-		SyncResource[] resources = getSyncResources();
+	protected SyncInfo[] getFilteredSyncInfos() {
+		SyncInfo[] infos = getSyncInfos();
 		List filtered = new ArrayList();
-		for (int i = 0; i < resources.length; i++) {
-			SyncResource resource = resources[i];
-			if (select(resource))
-				filtered.add(resource);
+		for (int i = 0; i < infos.length; i++) {
+			SyncInfo info = infos[i];
+			if (select(info))
+				filtered.add(info);
 		}
-		return (SyncResource[]) filtered.toArray(new SyncResource[filtered.size()]);
+		return (SyncInfo[]) filtered.toArray(new SyncInfo[filtered.size()]);
 	}
 
 	/**
