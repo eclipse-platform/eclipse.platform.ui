@@ -315,9 +315,17 @@
             pattern="org\.eclipse\.jdt\..*/.*">
       </activityPatternBinding>
       <activityPatternBinding
+            activityId="org.eclipse.javaDevelopment"
+            pattern="org\.eclipse\.jdt\.core/javanature">
+      </activityPatternBinding>            
+      <activityPatternBinding
             activityId="org.eclipse.plugInDevelopment"
             pattern="org\.eclipse\.pde\..*/.*">
       </activityPatternBinding>
+      <activityPatternBinding
+            activityId="org.eclipse.plugInDevelopment"
+            pattern="org\.eclipse\.pde/PluginNature">
+      </activityPatternBinding>      
       <category
             name="%activity.cat.java"
             description=""
