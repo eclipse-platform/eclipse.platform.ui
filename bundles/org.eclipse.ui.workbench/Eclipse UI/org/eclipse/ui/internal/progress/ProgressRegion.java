@@ -12,7 +12,6 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -20,8 +19,6 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 /**
  * The ProgressRegion is class for the region of the workbench where the
@@ -92,32 +89,6 @@ public class ProgressRegion {
 				processDoubleClick();
 			}
 		});
-		viewerControl.addMouseTrackListener(new MouseTrackListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
-			 */
-			public void mouseEnter(MouseEvent e) {
-				//Do nothing
-			}
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
-			 */
-			public void mouseExit(MouseEvent e) {
-				//Do nothing
-			}
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
-			 */
-			public void mouseHover(MouseEvent e) {
-				item.openFloatingWindow();
-			}
-		});
 		IContentProvider provider = new ProgressViewerContentProvider(viewer);
 		viewer.setContentProvider(provider);
 		viewer.setInput(provider);
@@ -145,20 +116,6 @@ public class ProgressRegion {
 	 * Process the double click event.
 	 */
 	public void processDoubleClick() {
-		boolean userMode = WorkbenchPlugin.getDefault().getPreferenceStore()
-				.getBoolean(IPreferenceConstants.SHOW_USER_JOBS_IN_DIALOG);
-		if (userMode) {
-			Object[] items = viewer.displayedItems;
-			if (items.length > 0 && items[0] instanceof JobInfo) {
-				JobInfo info = (JobInfo) items[0];
-				if (info.getJob().isUser()) {
-					workbenchWindow.getWorkbench().getProgressService()
-							.showInDialog(workbenchWindow.getShell(),
-									info.getJob(), true);
-					return;
-				}
-			}
-		}
 		ProgressManagerUtil.openProgressView(workbenchWindow);
 	}
 }
