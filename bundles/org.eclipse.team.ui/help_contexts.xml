@@ -11,4 +11,71 @@
       <!-- Old reference fom 1.0 -->
       <topic label="More info" href="reference/ref20.html"/>
    	</context>
+   	
+   	<!-- ********************************** -->
+ 	<!-- TargetMenuActions 					-->
+ 	<!-- ********************************** -->
+	
+	<context id="target_get_action_context">
+   		<description>Downloads the file(s) from the remote server
+		</description>
+   	</context>
+
+ 	<context id="target_put_action_context">
+   		<description>Uploads the file(s) to the remote server
+		</description>
+   	</context>
+   	
+   	<context id="target_synchronize_action_context">
+   		<description>Gets the remote &amp; local projects in sync with each other
+		</description>
+   	</context>
+   	
+   	<context id="target_getas_action_context">
+   		<description>Save the file with a different name
+		</description>
+   	</context>
+   	
+   	<context id="target_getasproject_action_context">
+   		<description>Save the project under a different name
+		</description>
+   	</context>
+   	
+   	<context id="target_disconnect_action_context">
+   		<description>Remove the Target provider
+		</description>
+   	</context>
+   	
+   	<!-- ********************************** -->
+ 	<!-- TargetCatchupReleaseViewer			-->
+ 	<!-- ********************************** -->
+	
+	<context id="catchup_release_viewer_context">
+   		<description>Bring the local project up-to-date with the remote one
+		</description>
+   	</context>
+   	
+   	<!-- ********************************** -->
+ 	<!-- TargetActions			-->
+ 	<!-- ********************************** -->
+   	
+   	<context id="sync_get_action">
+   		<description>Sync the local project to the remote one
+		</description>
+   	</context>
+   	
+   	<context id="sync_put_action">
+   		<description>Sync the remote project to the local one
+		</description>
+   	</context>
+   	
+   	<!-- ********************************** -->
+ 	<!-- Views					            -->
+ 	<!-- ********************************** -->
+ 	
+ 	<context  id="site_explorer_view">
+      <description>This view allows you to manipulate the files on the remote server.
+      </description>
+   	</context>
+   	
 </contexts>

@@ -98,6 +98,7 @@
          <action      
             menubarPath="replaceWithMenu/replaceWithGroup"
             class="org.eclipse.team.internal.ui.target.GetAction"
+            helpContextId="org.eclipse.team.ui.target_get_action_context"
             id="org.eclipse.team.target.getAction"
             label="%Deployment.getAction">
       </action>
@@ -105,11 +106,13 @@
             menubarPath="team.main/targetGroup"
             class="org.eclipse.team.internal.ui.target.UploadAction"
             id="org.eclipse.team.target.uploadAction"
+            helpContextId="org.eclipse.team.ui.target_put_action_context"
             label="%Deployment.uploadAction">
       </action>
       <action      
             menubarPath="team.main/targetGroup"
             class="org.eclipse.team.internal.ui.target.SyncAction"
+            helpContextId="org.eclipse.team.ui.target_synchronize_action_context"
             id="org.eclipse.team.target.SyncAction"
             label="%Deployment.synchronize">
       </action>
@@ -135,12 +138,14 @@
                label="%SiteExplorerGetAs.label"
                tooltip="%SiteExplorerGetAs.tooltip"
                class="org.eclipse.team.internal.ui.target.GetAsAction"
+               helpContextId="org.eclipse.team.ui.target_getas_action_context"
                id="org.eclipse.team.internal.ui.target.GetAsAction">
          </action>
          <action
                label="%SiteExplorerGetAsProject.label"
                tooltip="%SiteExplorerGetAsProject.tooltip"
                class="org.eclipse.team.internal.ui.target.GetAsProjectAction"
+               helpContextId="org.eclipse.team.ui.target_getasproject_action_context"
                id="org.eclipse.team.internal.ui.target.GetAsProjectAction">
          </action>
    </objectContribution>
@@ -152,6 +157,7 @@
                label="%SiteExplorerDiscardSite.label"
                tooltip="%SiteExplorerDiscardSite.tooltip"
                class="org.eclipse.team.internal.ui.target.DiscardSiteAction"
+               helpContextId="org.eclipse.team.ui.target_disconnect_action_context"
                id="org.eclipse.team.internal.ui.target.DiscardSiteAction">
          </action>
    </objectContribution>

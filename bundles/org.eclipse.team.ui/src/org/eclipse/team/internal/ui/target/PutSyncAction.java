@@ -18,23 +18,25 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.target.TargetProvider;
-import org.eclipse.team.internal.core.*;
+import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
+import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncSet;
 import org.eclipse.team.internal.ui.sync.SyncView;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class PutSyncAction extends TargetSyncAction {
 
 	public PutSyncAction(TargetSyncCompareInput model, ISelectionProvider sp, String label, Shell shell) {
 		super(model, sp, label, shell);
+		WorkbenchHelp.setHelp(this, IHelpContextIds.SYNC_PUT_ACTION);
 	}
 
 	/**

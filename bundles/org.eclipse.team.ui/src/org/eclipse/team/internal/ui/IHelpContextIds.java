@@ -23,4 +23,14 @@ public interface IHelpContextIds {
 	public static final String IMPORT_PROJECT_SET_PAGE = PREFIX + "import_project_set_page_context"; //$NON-NLS-1$
 	public static final String EXPORT_PROJECT_SET_PAGE = PREFIX + "export_project_set_page_context"; //$NON-NLS-1$
 	
+	// Catchup Release Viewers
+	public static final String CATCHUP_RELEASE_VIEWER = PREFIX + "catchup_release_viewer_context"; //$NON-NLS-1$
+	
+	// Target Actions
+	public static final String SYNC_GET_ACTION = PREFIX + "sync_get_action"; //$NON-NLS-1$
+	public static final String SYNC_PUT_ACTION = PREFIX + "sync_put_action"; //$NON-NLS-1$
+
+	// Views
+	public static final String SITE_EXPLORER_VIEW = PREFIX + "site_explorer_view"; //$NON-NLS-1$
+	
 }
