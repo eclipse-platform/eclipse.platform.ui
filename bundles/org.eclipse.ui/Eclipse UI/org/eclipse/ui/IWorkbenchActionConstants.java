@@ -16,7 +16,7 @@ package org.eclipse.ui;
  * <ul>
  *   <li>File menu (<code>M_FILE</code>)</li>
  *   <li>Edit menu (<code>M_EDIT</code>)</li>
- *   <li>Workspace menu (<code>M_WORKBENCH</code>)</li>
+ *   <li>Workbench menu (<code>M_WORKBENCH</code>)</li>
  *   <li>View menu (<code>M_VIEW</code>)</li>
  *   <li>Window menu (<code>M_WINDOW</code>)</li>
  *   <li>Help menu (<code>M_HELP</code>)</li>
@@ -132,7 +132,7 @@ public interface IWorkbenchActionConstants {
 	public static final String M_EDIT = MENU_PREFIX+"edit"; //$NON-NLS-1$
 
 	/**
-	 * Name of standard Workspace menu (value <code>"workbench"</code>).
+	 * Name of standard Workbench menu (value <code>"workbench"</code>).
 	 */
 	public static final String M_WORKBENCH = MENU_PREFIX+"workbench"; //$NON-NLS-1$
 
@@ -325,33 +325,33 @@ public interface IWorkbenchActionConstants {
 	 */
 	public static final String BOOKMARK = "bookmark"; 		// Global action. //$NON-NLS-1$
 
-// Standard workspace actions:
+// Standard workbench actions:
 	/**
-	 * Workspace menu: name of group for start of menu
+	 * Workbench menu: name of group for start of menu
 	 * (value <code>"wbstart"</code>).
 	 */
 	public static final String WB_START = "wbStart";		// Group. //$NON-NLS-1$
 	
 	/**
-	 * Workspace menu: name of group for end of menu
+	 * Workbench menu: name of group for end of menu
 	 * (value <code>"wbEnd"</code>).
 	 */
 	public static final String WB_END = "wbEnd";			// Group. //$NON-NLS-1$
 	
 	/**
-	 * Workspace menu: name of group for extra Build-like actions
+	 * Workbench menu: name of group for extra Build-like actions
 	 * (value <code>"build.ext"</code>).
 	 */
 	public static final String BUILD_EXT = "build.ext";		// Group. //$NON-NLS-1$
 	
 	/**
-	 * Workspace menu: name of standard Build action 
+	 * Workbench menu: name of standard Build action 
 	 * (value <code>"build"</code>).
 	 */
 	public static final String BUILD = "build"; //$NON-NLS-1$
 	
 	/**
-	 * Workspace menu: name of standard Rebuild All action 
+	 * Workbench menu: name of standard Rebuild All action 
 	 * (value <code>"rebuildAll"</code>).
 	 */
 	public static final String REBUILD_ALL = "rebuildAll"; //$NON-NLS-1$
