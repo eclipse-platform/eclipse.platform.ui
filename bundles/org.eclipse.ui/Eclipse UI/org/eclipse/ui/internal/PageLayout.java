@@ -45,7 +45,7 @@ import org.eclipse.ui.part.ViewPart;
  * </p>
  */
 public class PageLayout implements IPageLayout {
-	private static final String MISSING_REF_PART = "Referenced part does not exist yet: ";
+	private static final String MISSING_REF_PART = "Referenced part does not exist yet: "; //$NON-NLS-1$
 	
 	private ViewFactory viewFactory;
 	private LayoutPart editorFolder;
