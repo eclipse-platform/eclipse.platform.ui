@@ -241,6 +241,7 @@
                helpContextId="quickdiff.toggle"
                class="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction"
                menubarPath="quickdiff"
+               definitionId="org.eclipse.quickdiff.toggle"
                id="quickdiff.toggle">
          </action>
       </viewerContribution>
@@ -268,6 +269,7 @@
                style="push"
                helpContextId="quickdiff.toggle"
                class="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction"
+               definitionId="org.eclipse.quickdiff.toggle"
                menubarPath="quickdiff"
                id="quickdiff.toggle">
          </action>
