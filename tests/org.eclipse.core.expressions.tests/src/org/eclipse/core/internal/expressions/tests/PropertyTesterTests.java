@@ -15,9 +15,12 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.internal.expressions.Property;
 import org.eclipse.core.internal.expressions.TypeExtensionManager;
+
+import org.osgi.framework.Bundle;
 
 public class PropertyTesterTests extends TestCase {
 	
@@ -105,19 +108,34 @@ public class PropertyTesterTests extends TestCase {
 		assertTrue(false);		
 	}
 	
+	public void testDynamicPlugin() throws Exception {
+		if (true)
+			return;
+		A receiver= new A();
+		Property p= fgManager.getProperty(receiver, "org.eclipse.core.expressions.tests.dynamic", "testing");
+		assertTrue(!p.isInstantiated());
+		Bundle bundle= Platform.getBundle("org.eclipse.core.expressions.tests.dynamic");
+		bundle.start();
+		p= fgManager.getProperty(receiver, "org.eclipse.core.expressions.tests.dynamic", "testing");
+		assertTrue(p.isInstantiated());
+		bundle.stop();
+		p= fgManager.getProperty(receiver, "org.eclipse.core.expressions.tests.dynamic", "testing");
+		assertTrue(!p.isInstantiated());
+	}
+	
 	public void testDifferentNameSpace() throws Exception {
 		assertTrue(test("org.eclipse.core.internal.expressions.tests2", a, "differentNamespace", null, "A3"));		
 	}
 	
 	private boolean test(Object receiver, String property, Object[] args, Object expectedValue) throws CoreException {
 		Property p= fgManager.getProperty(receiver, "org.eclipse.core.internal.expressions.tests", property);
-		assertTrue(p.isLoaded());
+		assertTrue(p.isInstantiated());
 		return p.test(receiver, args, expectedValue);
 	}
 	
 	private boolean test(String namespace, Object receiver, String property, Object[] args, Object expectedValue) throws CoreException {
 		Property p= fgManager.getProperty(receiver, namespace, property);
-		assertTrue(p.isLoaded());
+		assertTrue(p.isInstantiated());
 		return p.test(receiver, args, expectedValue);
 	}	
 }

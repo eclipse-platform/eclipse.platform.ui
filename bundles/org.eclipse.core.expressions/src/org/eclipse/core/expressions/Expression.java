@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
  * Abstract base class for all expressions provided by the common
  * expression language.
  * <p>
- * An expression is evaluated by calling {@link #evaluate(IVariablePool)}.
+ * An expression is evaluated by calling {@link #evaluate(IEvaluationContext)}.
  * </p>
  * <p>
  * This class may be subclassed to provide specific expressions.

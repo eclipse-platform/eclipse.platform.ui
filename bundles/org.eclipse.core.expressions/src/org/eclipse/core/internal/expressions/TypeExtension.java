@@ -24,13 +24,13 @@ public class TypeExtension {
 		public boolean handles(String namespace, String method) {
 			return false;
 		}
-		public boolean isLoaded() {
+		public boolean isInstantiated() {
 			return true;
 		}
-		public boolean canLoad() {
+		public boolean isDeclaringPluginActive() {
 			return true;
 		}
-		public IPropertyTester load() {
+		public IPropertyTester instantiate() {
 			return this;
 		}
 		public boolean test(Object receiver, String method, Object[] args, Object expectedValue) {
@@ -65,39 +65,37 @@ public class TypeExtension {
 	}
 	
 	/* package */ IPropertyTester findTypeExtender(TypeExtensionManager manager, String namespace, String method, boolean staticMethod) throws CoreException {
-		synchronized (this) {
-			if (fExtenders == null) {
-				fExtenders= manager.loadTesters(fType);
-			}
+		if (fExtenders == null) {
+			fExtenders= manager.loadTesters(fType);
 		}
 		IPropertyTester result;
 		
-		// handle extenders associated with this interface
+		// handle extenders associated with this type extender
 		for (int i= 0; i < fExtenders.length; i++) {
 			IPropertyTester extender= fExtenders[i];
 			if (extender == null || !extender.handles(namespace, method))
 				continue;
-			if (extender.isLoaded()) {
-				return extender;
+			if (extender.isInstantiated()) {
+				if (extender.isDeclaringPluginActive()) {
+					return extender;
+				} else {
+					PropertyTester tester= (PropertyTester)extender;
+					fExtenders[i]= extender= tester.internalCreateDescriptor();
+					return extender;
+				}
 			} else {
-				if (extender.canLoad()) {
+				if (extender.isDeclaringPluginActive()) {
 					try {
 						PropertyTesterDescriptor descriptor= (PropertyTesterDescriptor)extender;
-						IPropertyTester inst= descriptor.load();
-						((PropertyTester)inst).initialize(descriptor.getNamespace(), descriptor.getProperties());
-						synchronized (fExtenders) {
-							fExtenders[i]= extender= inst;
-						}
+						IPropertyTester inst= descriptor.instantiate();
+						((PropertyTester)inst).internalInitialize(descriptor);
+						fExtenders[i]= extender= inst;
 						return extender;
 					} catch (CoreException e) {
-						synchronized (fExtenders) {
-							fExtenders[i]= null;
-						}
+						fExtenders[i]= null;
 						throw e;
 					} catch (ClassCastException e) {
-						synchronized (fExtenders) {
-							fExtenders[i]= null;
-						}
+						fExtenders[i]= null;
 						throw new CoreException(new ExpressionStatus(
 							ExpressionStatus.TYPE_EXTENDER_INCORRECT_TYPE,
 							ExpressionMessages.getString("TypeExtender.incorrectType"),  //$NON-NLS-1$
@@ -114,14 +112,12 @@ public class TypeExtension {
 			return CONTINUE;
 		
 		// handle extends chain
-		synchronized (this) {
-			if (fExtends == null) {
-				Class superClass= fType.getSuperclass();
-				if (superClass != null) {
-					fExtends= manager.get(superClass);
-				} else {
-					fExtends= END_POINT;
-				}
+		if (fExtends == null) {
+			Class superClass= fType.getSuperclass();
+			if (superClass != null) {
+				fExtends= manager.get(superClass);
+			} else {
+				fExtends= END_POINT;
 			}
 		}
 		result= fExtends.findTypeExtender(manager, namespace, method, staticMethod);
@@ -129,17 +125,15 @@ public class TypeExtension {
 			return result;
 		
 		// handle implements chain
-		synchronized (this) {
-			if (fImplements == null) {
-				Class[] interfaces= fType.getInterfaces();
-				if (interfaces.length == 0) {
-					fImplements= EMPTY_TYPE_EXTENSION_ARRAY;
-				} else {
-					fImplements= new TypeExtension[interfaces.length];
-					for (int i= 0; i < interfaces.length; i++) {
-						fImplements[i]= manager.get(interfaces[i]);
-					}				
-				}
+		if (fImplements == null) {
+			Class[] interfaces= fType.getInterfaces();
+			if (interfaces.length == 0) {
+				fImplements= EMPTY_TYPE_EXTENSION_ARRAY;
+			} else {
+				fImplements= new TypeExtension[interfaces.length];
+				for (int i= 0; i < interfaces.length; i++) {
+					fImplements[i]= manager.get(interfaces[i]);
+				}				
 			}
 		}
 		for (int i= 0; i < fImplements.length; i++) {

@@ -17,12 +17,15 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.expressions.IPropertyTester;
 
-public class TypeExtensionManager {
+public class TypeExtensionManager implements IRegistryChangeListener {
 	
 	private String fExtensionPoint; 
 	
@@ -31,25 +34,29 @@ public class TypeExtensionManager {
 	private static final IPropertyTester[] EMPTY_PROPERTY_TESTER_ARRAY= new IPropertyTester[0];
 	
 	/*
-	 * Map containing all already created type extension object. Key is
-	 * of type <code>Class</code>, value is of type <code>TypeExtension</code>. 
+	 * Map containing all already created type extension object. 
 	 */
-	private final Map/*<Class, TypeExtension>*/ fTypeExtensionMap= new HashMap();
+	private Map/*<Class, TypeExtension>*/ fTypeExtensionMap;
 	
-	private Map/*<String, List<IConfigurationElement>>*/ fConfigurationElementMap= null;
+	/*
+	 * Table containing mapping of class name to configuration element 
+	 */
+	private Map/*<String, List<IConfigurationElement>>*/ fConfigurationElementMap;
 	
 	/*
 	 * A cache to give fast access to the last 1000 method invocations.
 	 */
-	private final PropertyCache fPropertyCache= new PropertyCache(1000);
+	private PropertyCache fPropertyCache;
 	
 	
 	public TypeExtensionManager(String extensionPoint) {
 		Assert.isNotNull(extensionPoint);
 		fExtensionPoint= extensionPoint;
+		Platform.getExtensionRegistry().addRegistryChangeListener(this);
+		initializeCaches();
 	}
 
-	public Property getProperty(Object receiver, String namespace, String method) throws CoreException  {
+	public synchronized Property getProperty(Object receiver, String namespace, String method) throws CoreException  {
 		long start= 0;
 		if (Expressions.TRACING)
 			start= System.currentTimeMillis();
@@ -59,7 +66,7 @@ public class TypeExtensionManager {
 		Property result= new Property(clazz, namespace, method);
 		Property cached= fPropertyCache.get(result);
 		if (cached != null) {
-			if (cached.isLoaded() || !cached.canLoad()) {
+			if (cached.isValidCacheEntry()) {
 				if (Expressions.TRACING) {
 					System.out.println("[Type Extension] - method " + //$NON-NLS-1$
 						clazz.getName() + "#" + method + //$NON-NLS-1$
@@ -93,80 +100,66 @@ public class TypeExtensionManager {
 		return result;
 	}
 	
+	/*
+	 * This method doesn't need to be synchronized since it is called
+	 * from withing the getProperty method which is synchronized
+	 */
 	/* package */ TypeExtension get(Class clazz) {
-		synchronized(fTypeExtensionMap) {
-			TypeExtension result= (TypeExtension)fTypeExtensionMap.get(clazz);
-			if (result == null) {
-				result= new TypeExtension(clazz);
-				fTypeExtensionMap.put(clazz, result);
+		TypeExtension result= (TypeExtension)fTypeExtensionMap.get(clazz);
+		if (result == null) {
+			result= new TypeExtension(clazz);
+			fTypeExtensionMap.put(clazz, result);
+		}
+		return result;
+	}
+	
+	/*
+	 * This method doesn't need to be synchronized since it is called
+	 * from withing the getProperty method which is synchronized
+	 */
+	/* package */ IPropertyTester[] loadTesters(Class type) {
+		if (fConfigurationElementMap == null) {
+			fConfigurationElementMap= new HashMap();
+			IExtensionRegistry registry= Platform.getExtensionRegistry();
+			IConfigurationElement[] ces= registry.getConfigurationElementsFor(
+				ExpressionPlugin.getPluginId(), 
+				fExtensionPoint); 
+			for (int i= 0; i < ces.length; i++) {
+				IConfigurationElement config= ces[i];
+				String typeAttr= config.getAttribute(TYPE);
+				List typeConfigs= (List)fConfigurationElementMap.get(typeAttr);
+				if (typeConfigs == null) {
+					typeConfigs= new ArrayList();
+					fConfigurationElementMap.put(typeAttr, typeConfigs);
+				}
+				typeConfigs.add(config);
 			}
+		}
+		String typeName= type.getName();
+		List typeConfigs= (List)fConfigurationElementMap.get(typeName);
+		if (typeConfigs == null)
+			return EMPTY_PROPERTY_TESTER_ARRAY;
+		else {
+			IPropertyTester[] result= new IPropertyTester[typeConfigs.size()];
+			for (int i= 0; i < result.length; i++) {
+				IConfigurationElement config= (IConfigurationElement)typeConfigs.get(i);
+				result[i]= new PropertyTesterDescriptor(config);
+			}
+			fConfigurationElementMap.remove(typeName);
 			return result;
 		}
 	}
 	
-	/* package */ IPropertyTester[] loadTesters(Class type) {
-		synchronized(this) {
-			if (fConfigurationElementMap == null) {
-				fConfigurationElementMap= new HashMap();
-				IExtensionRegistry registry= Platform.getExtensionRegistry();
-				IConfigurationElement[] ces= registry.getConfigurationElementsFor(
-					ExpressionPlugin.getPluginId(), 
-					fExtensionPoint); 
-				for (int i= 0; i < ces.length; i++) {
-					IConfigurationElement config= ces[i];
-					String typeAttr= config.getAttribute(TYPE);
-					List typeConfigs= (List)fConfigurationElementMap.get(typeAttr);
-					if (typeConfigs == null) {
-						typeConfigs= new ArrayList();
-						fConfigurationElementMap.put(typeAttr, typeConfigs);
-					}
-					typeConfigs.add(config);
-				}
-			}
-		}
-		synchronized(fConfigurationElementMap) {
-			String typeName= type.getName();
-			List typeConfigs= (List)fConfigurationElementMap.get(typeName);
-			if (typeConfigs == null)
-				return EMPTY_PROPERTY_TESTER_ARRAY;
-			else {
-				IPropertyTester[] result= new IPropertyTester[typeConfigs.size()];
-				for (int i= 0; i < result.length; i++) {
-					IConfigurationElement config= (IConfigurationElement)typeConfigs.get(i);
-					result[i]= new PropertyTesterDescriptor(config);
-				}
-				fConfigurationElementMap.remove(typeName);
-				return result;
-			}
+	public void registryChanged(IRegistryChangeEvent event) {
+		IExtensionDelta[] deltas= event.getExtensionDeltas(ExpressionPlugin.getPluginId(), fExtensionPoint);
+		if (deltas.length > 0) {
+			initializeCaches();
 		}
 	}
 	
-	/*
-	private void addRegistryListener() {
-		Platform.getExtensionRegistry().addRegistryChangeListener(new IRegistryChangeListener() {
-			public void registryChanged(IRegistryChangeEvent aEvent) {
-				processRegistryDelta(aEvent.getExtensionDeltas());
-			}
-		});
+	private synchronized void initializeCaches() {
+		fTypeExtensionMap= new HashMap();
+		fConfigurationElementMap= null;
+		fPropertyCache= new PropertyCache(1000);
 	}
-
-	private void processRegistryDelta(IExtensionDelta[] deltas) {
-	    for (int i= 0; i < deltas.length; i++) {
-	        IExtensionDelta delta= deltas[i];
-	        int kind = delta.getKind();
-	        if (delta.getExtensionPoint().getUniqueIdentifier().equals(OP_EXT_ID)) {
-	            IConfigurationElement[] elements= delta.getExtension().getConfigurationElements();
-	            if (kind == IExtensionDelta.ADDED) {
-	                for (int j= 0; j < elements.length; j++) {
-	                }
-	            }
-	            if (kind == IExtensionDelta.REMOVED) {
-	                for (int j= 0; j < elements.length; j++) {
-	                    final IConfigurationElement element= elements[j];
-	                }
-	            }
-	        }
-	    }
-	}
-	*/
 }

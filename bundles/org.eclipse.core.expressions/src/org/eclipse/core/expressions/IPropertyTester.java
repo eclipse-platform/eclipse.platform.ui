@@ -42,16 +42,16 @@ public interface IPropertyTester {
 	 * @return <code>true</code>if the implementation class is loaded; 
 	 *  <code>false</code> otherwise
 	 */
-	public boolean isLoaded();
+	public boolean isInstantiated();
 	
 	/**
 	 * Returns <code>true</code> if the implementation class of this property
 	 * tester can be loaded. This is the case if the plug-in providing
-	 * the implementation class is loaded. Returns <code>false</code> otherwise.
+	 * the implementation class is active. Returns <code>false</code> otherwise.
 	 * 
 	 * @return whether the implementation class can be loaded or not
 	 */
-	public boolean canLoad();
+	public boolean isDeclaringPluginActive();
 	
 	/**
 	 * Loads the implementation class for this property tester and returns an
@@ -61,7 +61,7 @@ public interface IPropertyTester {
 	 * 
 	 * @throws CoreException if the implementation class cannot be loaded
 	 */
-	public IPropertyTester load() throws CoreException;
+	public IPropertyTester instantiate() throws CoreException;
 	
 	/**
 	 * Executes the property test determined by the parameter <code>property</code>. 

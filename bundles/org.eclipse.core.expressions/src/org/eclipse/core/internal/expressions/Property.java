@@ -35,12 +35,17 @@ public class Property {
 		fTester= tester;
 	}
 	
-	public boolean isLoaded() {
-		return fTester.isLoaded();
+	public boolean isInstantiated() {
+		return fTester.isInstantiated();
 	}
 	
-	public boolean canLoad() {
-		return fTester.canLoad();
+	public boolean isDeclaringPluginActive() {
+		return fTester.isDeclaringPluginActive();
+	}
+	
+	public boolean isValidCacheEntry() {
+		return 	(isInstantiated() && isDeclaringPluginActive()) ||
+				(!isInstantiated() && !isDeclaringPluginActive());
 	}
  	
 	public boolean test(Object receiver, Object[] args, Object expectedValue) {

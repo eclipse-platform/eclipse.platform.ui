@@ -27,20 +27,14 @@ import java.util.Map.Entry;
 	}
 	
 	public Property get(Property key) {
-		synchronized (fCache) {
-			return (Property)fCache.get(key);
-		}
+		return (Property)fCache.get(key);
 	}
 	
 	public void put(Property method) {
-		synchronized (fCache) {
-			fCache.put(method, method);
-		}
+		fCache.put(method, method);
 	}
 	
 	public void remove(Property method) {
-		synchronized(fCache) {
-			fCache.remove(method);
-		}
+		fCache.remove(method);
 	}
 }

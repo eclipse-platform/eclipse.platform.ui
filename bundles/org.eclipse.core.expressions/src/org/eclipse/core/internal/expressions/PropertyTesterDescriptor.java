@@ -18,11 +18,11 @@ import org.eclipse.core.expressions.IPropertyTester;
 
 import org.osgi.framework.Bundle;
 
-/* package */ class PropertyTesterDescriptor implements IPropertyTester {
+public class PropertyTesterDescriptor implements IPropertyTester {
 	
-	private String fProperties;
-	private String fNamespace;
 	private IConfigurationElement fConfigElement;
+	private String fNamespace;
+	private String fProperties;
 	
 	private static final String PROPERTIES= "properties"; //$NON-NLS-1$
 	private static final String NAMESPACE= "namespace"; //$NON-NLS-1$
@@ -30,6 +30,7 @@ import org.osgi.framework.Bundle;
 	
 	public PropertyTesterDescriptor(IConfigurationElement element) {
 		fConfigElement= element;
+		fNamespace= fConfigElement.getAttribute(NAMESPACE);
 		StringBuffer buffer= new StringBuffer(","); //$NON-NLS-1$
 		String properties= element.getAttribute(PROPERTIES);
 		for (int i= 0; i < properties.length(); i++) {
@@ -39,7 +40,12 @@ import org.osgi.framework.Bundle;
 		}
 		buffer.append(',');
 		fProperties= buffer.toString();
-		fNamespace= fConfigElement.getAttribute(NAMESPACE);
+	}
+	
+	public PropertyTesterDescriptor(IConfigurationElement element, String namespace, String properties) {
+		fConfigElement= element;
+		fNamespace= namespace;
+		fProperties= properties;
 	}
 	
 	public String getProperties() {
@@ -50,20 +56,24 @@ import org.osgi.framework.Bundle;
 		return fNamespace;
 	}
 	
+	public IConfigurationElement getConfigurationElement() {
+		return fConfigElement;
+	}
+	
 	public boolean handles(String namespace, String property) {
 		return fNamespace.equals(namespace) && fProperties.indexOf("," + property + ",") != -1;  //$NON-NLS-1$//$NON-NLS-2$
 	}
 	
-	public boolean isLoaded() {
+	public boolean isInstantiated() {
 		return false;
 	}
 	
-	public boolean canLoad() {
+	public boolean isDeclaringPluginActive() {
 		Bundle fBundle= Platform.getBundle(fConfigElement.getDeclaringExtension().getNamespace());
 		return fBundle.getState() == Bundle.ACTIVE;		
 	}
 	
-	public IPropertyTester load() throws CoreException {
+	public IPropertyTester instantiate() throws CoreException {
 		return (IPropertyTester)fConfigElement.createExecutableExtension(CLASS);
 	}
 	

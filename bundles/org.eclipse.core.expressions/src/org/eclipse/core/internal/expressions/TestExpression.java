@@ -52,7 +52,7 @@ public class TestExpression extends Expression {
 			return EvaluationResult.valueOf(str.equals(fArgs[0]));
 		}
 		Property property= fgTypeExtensionManager.getProperty(element, fNamespace, fProperty);
-		if (!property.isLoaded())
+		if (!property.isInstantiated())
 			return EvaluationResult.NOT_LOADED;
 		return EvaluationResult.valueOf(property.test(element, fArgs, fExpectedValue));
 	}

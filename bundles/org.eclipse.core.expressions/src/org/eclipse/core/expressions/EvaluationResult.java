@@ -150,8 +150,8 @@ public class EvaluationResult {
 	 * 
 	 * @return <code>this &amp;&amp; other</code> as defined by the evaluation result
 	 */
-	public EvaluationResult and(EvaluationResult op) {
-		return AND[fValue][op.fValue];
+	public EvaluationResult and(EvaluationResult other) {
+		return AND[fValue][other.fValue];
 	}
 	
 	/**
@@ -161,8 +161,8 @@ public class EvaluationResult {
 	 * 
 	 * @return <code>this || other</code> as defined by the evaluation result
 	 */
-	public EvaluationResult or(EvaluationResult op) {
-		return OR[fValue][op.fValue];
+	public EvaluationResult or(EvaluationResult other) {
+		return OR[fValue][other.fValue];
 	}
 	
 	/**
@@ -206,8 +206,11 @@ public class EvaluationResult {
 		return b.booleanValue() ? TRUE : FALSE;
 	}
 	
-	/*
+	/**
 	 * For debugging purpose only
+	 * 
+	 * @return a string representing this object. The result is not
+	 *  human readable
 	 */
 	public String toString() {
 		switch (fValue) {

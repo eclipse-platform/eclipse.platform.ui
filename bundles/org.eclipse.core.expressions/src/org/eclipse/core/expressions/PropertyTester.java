@@ -10,7 +10,12 @@
  ******************************************************************************/
 package org.eclipse.core.expressions;
 
-import org.eclipse.core.internal.expressions.Assert;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.core.internal.expressions.PropertyTesterDescriptor;
+
+import org.osgi.framework.Bundle;
 
 /**
  * Abstract superclass of all property testers. Implementation classes of
@@ -51,46 +56,60 @@ import org.eclipse.core.internal.expressions.Assert;
  */
 public abstract class PropertyTester implements IPropertyTester {
 	
-	private String fProperties;
+	private IConfigurationElement fConfigElement;
 	private String fNamespace;
+	private String fProperties;
 	
 	/**
 	 * Initialize the property tester with the given name space and property.
 	 * <p>
-	 * Note: this method is for internal use only. Clients should not call 
+	 * Note: this method is for internal use only. Clients msut not call 
 	 * this method.
 	 * </p>
-	 * @param namespace the name space this tester belongs to
-	 * @param property the properties this tester supports
+	 * @param descriptor the descriptor object for this tester
 	 */
-	public final void initialize(String namespace, String properties) {
-		Assert.isNotNull(properties);
-		Assert.isNotNull(namespace);
-		fProperties= properties;
-		fNamespace= namespace;
+	public final void internalInitialize(PropertyTesterDescriptor descriptor) { 
+		fProperties= descriptor.getProperties();
+		fNamespace= descriptor.getNamespace();
+		fConfigElement= descriptor.getConfigurationElement();
 	}
 	
-	/* (non-Javadoc)
+	/**
+	 * Note: this method is for internal use only. Clients must not call 
+	 * this method.
+	 * 
+	 * @return the property tester descriptor
+	 */
+	public final PropertyTesterDescriptor internalCreateDescriptor() {
+		return new PropertyTesterDescriptor(fConfigElement, fNamespace, fProperties);
+	}
+
+	/**
+	 * {@inheritDoc}
 	 */
 	public final boolean handles(String namespace, String property) {
 		return fNamespace.equals(namespace) && fProperties.indexOf("," + property + ",") != -1;  //$NON-NLS-1$//$NON-NLS-2$
 	}
 	
-	/* (non-Javadoc)
+	/**
+	 * {@inheritDoc}
 	 */
-	public final boolean isLoaded() {
+	public final boolean isInstantiated() {
 		return true;
 	}
 	
-	/* (non-Javadoc)
+	/**
+	 * {@inheritDoc}
 	 */
-	public final boolean canLoad() {
-		return true;
+	public boolean isDeclaringPluginActive() {
+		Bundle fBundle= Platform.getBundle(fConfigElement.getDeclaringExtension().getNamespace());
+		return fBundle.getState() == Bundle.ACTIVE;		
 	}
 	
-	/* (non-Javadoc)
+	/**
+	 * {@inheritDoc}
 	 */
-	public IPropertyTester load() {
+	public final IPropertyTester instantiate() {
 		return this;
 	}
 }
