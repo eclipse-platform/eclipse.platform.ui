@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.net.Socket;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -651,8 +652,14 @@ private void send_SSH_CMSG_SESSION_KEY(byte[] anti_spoofing_cookie, byte[] serve
 	System.arraycopy(session_key, 0, session_key_xored, 0, session_key.length);
 	Misc.xor(session_key_xored, 0, session_id, 0, session_key_xored, 0, session_id.length);
 
-	byte[] result = Misc.encryptRSAPkcs1(session_key_xored, server_key_public_exponent, server_key_public_modulus);
-	result = Misc.encryptRSAPkcs1(result, host_key_public_exponent, host_key_public_modulus);
+	byte[] result;
+	if (new BigInteger(1,server_key_public_modulus).compareTo(new BigInteger(1,host_key_public_modulus)) == -1) {
+		result = Misc.encryptRSAPkcs1(session_key_xored, server_key_public_exponent, server_key_public_modulus);
+		result = Misc.encryptRSAPkcs1(result, host_key_public_exponent, host_key_public_modulus);
+	} else {
+		result = Misc.encryptRSAPkcs1(session_key_xored, host_key_public_exponent, host_key_public_modulus);
+		result = Misc.encryptRSAPkcs1(result, server_key_public_exponent, server_key_public_modulus);	 
+	}
 
 	session_key_encrypted = new byte[result.length + 2];
 	session_key_encrypted[1] = (byte) ((8 * result.length) & 0xff);
