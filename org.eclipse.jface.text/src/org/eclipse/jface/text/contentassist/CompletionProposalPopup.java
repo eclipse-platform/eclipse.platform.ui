@@ -462,24 +462,23 @@ class CompletionProposalPopup implements IContentAssistListener {
 		} else {
 			
 			switch (key) {
-				case 0x1B : // Esc
+				case 0x1B: // Esc
 					e.doit= false;
 					hide();
 					break;
 					
-				case 0x0D : // Enter
+				case '\n': // Ctrl-Enter on w2k
+				case '\r': // Enter
 					e.doit= false;
 					selectProposalWithMask(e.stateMask);
 					break;
+				
+				case '\t':
+					e.doit= false;
+					fProposalShell.setFocus();
+					return false;
 					
-				default:
-				
-					if ('\t' == key) {
-						e.doit= false;
-						fProposalShell.setFocus();
-						return false;
-					}
-				
+				default:			
 					ICompletionProposal p= getSelectedProposal();
 					if (p instanceof ICompletionProposalExtension) {
 						ICompletionProposalExtension t= (ICompletionProposalExtension) p;
