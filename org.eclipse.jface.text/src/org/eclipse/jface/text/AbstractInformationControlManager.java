@@ -90,7 +90,7 @@ abstract public class AbstractInformationControlManager {
 	};
 	
 	/** Internal anchor list. */
-	private final static Anchor[] ANCHORS= { new Anchor(), new Anchor(), new Anchor(), new Anchor(), new Anchor() };
+	private final static Anchor[] ANCHORS= { new Anchor(), new Anchor(), new Anchor(), new Anchor() };
 	
 	/** Anchor representing the top of the information area */
 	public final static Anchor ANCHOR_TOP=  ANCHORS[0];
@@ -101,7 +101,7 @@ abstract public class AbstractInformationControlManager {
 	/** Anchor representing the right side of the information area */
 	public final static Anchor ANCHOR_RIGHT= ANCHORS[3];
 	/** Anchor representing the middle of the subject control */
-	public final static Anchor ANCHOR_GLOBAL= ANCHORS[4];
+	public final static Anchor ANCHOR_GLOBAL= new Anchor();
 	
 	
 	/** The subject control of the information control */
