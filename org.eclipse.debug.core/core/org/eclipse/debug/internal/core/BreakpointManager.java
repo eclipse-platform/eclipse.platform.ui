@@ -122,7 +122,13 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		for (int i = 0; i < markers.length; i++) {
 			IMarker marker= markers[i];
 			try {
-				if (marker.getAttribute(IBreakpoint.PERSISTED, true)) {
+				// ensure the marker has a valid model identifier attribute
+				// and delete the breakpoint if not
+				String modelId = marker.getAttribute(IBreakpoint.ID, null);
+				if (modelId == null) {
+					// marker with old/invalid format - delete
+					delete.add(marker);
+				} else if (marker.getAttribute(IBreakpoint.PERSISTED, true)) {
 					createBreakpoint(marker);
 				} else {
 					// the breakpoint is marked as not to be persisted,

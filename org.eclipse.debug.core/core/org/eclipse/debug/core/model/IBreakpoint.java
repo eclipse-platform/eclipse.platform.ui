@@ -76,40 +76,40 @@ public interface IBreakpoint extends IAdaptable {
 	public static final String LINE_BREAKPOINT_MARKER = DebugPlugin.PLUGIN_ID + ".lineBreakpointMarker"; //$NON-NLS-1$
 			
 	/**
-	 * Enabled breakpoint marker attribute (value <code>"enabled"</code>).
+	 * Enabled breakpoint marker attribute (value <code>"org.eclipse.debug.core.enabled"</code>).
 	 * The attribute is a <code>boolean</code> corresponding to the
 	 * enabled state of a breakpoint.
 	 *
 	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
 	 */
-	public static final String ENABLED= "enabled"; //$NON-NLS-1$
+	public static final String ENABLED= "org.eclipse.debug.core.enabled"; //$NON-NLS-1$
 	
 	/**
-	 * Breakpoint marker attribute (value <code>"id"</code>).
+	 * Breakpoint marker attribute (value <code>"org.eclipse.debug.core.id"</code>).
 	 * The attribute is a <code>String</code> corresponding to the
 	 * identifier of the debug model a breakpoint is
 	 * associated with.
 	 */
-	public static final String ID= "id"; //$NON-NLS-1$
+	public static final String ID= "org.eclipse.debug.core.id"; //$NON-NLS-1$
 	
 	/**
-	 * Registered breakpoint marker attribute (value <code>"registered"</code>).
+	 * Registered breakpoint marker attribute (value <code>"org.eclipse.debug.core.registered"</code>).
 	 * The attribute is a <code>boolean</code> corresponding to
 	 * whether a breakpoint has been added to the breakpoint manager.
 	 *
 	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
 	 */
-	public static final String REGISTERED= "registered"; //$NON-NLS-1$	
+	public static final String REGISTERED= "org.eclipse.debug.core.registered"; //$NON-NLS-1$	
 	
 	/**
-	 * Persisted breakpoint marker attribute (value <code>"persisted"</code>).
+	 * Persisted breakpoint marker attribute (value <code>"org.eclipse.debug.core.persisted"</code>).
 	 * The attribute is a <code>boolean</code> corresponding to
 	 * whether a breakpoint is to be persisted accross workspace
 	 * invocations.
 	 *
 	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
 	 */
-	public static final String PERSISTED= "persisted"; //$NON-NLS-1$		
+	public static final String PERSISTED= "org.eclipse.debug.core.persisted"; //$NON-NLS-1$		
 	
 	/**
 	 * Attribute name for the <code>"markerType"</code> attribute of
