@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -137,7 +138,7 @@ public class AntClasspathPage extends AntPage {
 	private void addJars(ExternalToolsContentProvider contentProvider) {
 		String lastUsedPath= fDialogSettings.get(IExternalToolsUIConstants.DIALOGSTORE_LASTEXTJAR);
 		if (lastUsedPath == null) {
-			lastUsedPath= ""; //$NON-NLS-1$
+			lastUsedPath= ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 		}
 		FileDialog dialog = new FileDialog(getShell(), SWT.MULTI);
 		dialog.setFilterExtensions(new String[] { "*.jar" }); //$NON-NLS-1$;
