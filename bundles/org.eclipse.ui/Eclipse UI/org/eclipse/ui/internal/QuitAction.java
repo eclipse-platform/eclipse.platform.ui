@@ -18,7 +18,6 @@ public class QuitAction extends Action {
  * initialized from the <code>JFaceResources</code> bundle.
  */
 public QuitAction(IWorkbench workbench) {
-	super("Exit"); //$NON-NLS-1$
 	setText(WorkbenchMessages.getString("Exit.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("Exit.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.QUIT);
