@@ -71,15 +71,13 @@ public class TextEditor extends ExtendedTextEditor {
 	 */
 	public TextEditor() {
 		super();
-		initializeKeyBindingScopes();
-		setSourceViewerConfiguration(new TextSourceViewerConfiguration(getNewPreferenceStore()));
-		initializeEditor();
 	}
 	
 	/**
 	 * Initializes this editor.
 	 */
 	protected void initializeEditor() {
+		setSourceViewerConfiguration(new TextSourceViewerConfiguration(getNewPreferenceStore()));
 		setEditorContextMenuId("#TextEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#TextRulerContext"); //$NON-NLS-1$
 		setHelpContextId(ITextEditorHelpContextIds.TEXT_EDITOR);
