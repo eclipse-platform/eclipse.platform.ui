@@ -141,7 +141,11 @@ public class Preferences {
 
 		/**
 		 * The name of the changed property.
-		 */
+		 * <p>
+		 * Warning: there is no guarantee that the property name returned
+		 * is a constant string.  Callers must compare property names using
+		 * <code>equals</code>, not ==.
+ 		 */
 		private String propertyName;
 
 		/**
