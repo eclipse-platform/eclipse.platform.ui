@@ -3,18 +3,33 @@ package org.eclipse.team.tests.ccvs.core.provider;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSFile;
+import org.eclipse.team.core.IFileTypeRegistry;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
@@ -217,6 +232,140 @@ public class CVSProviderTest extends EclipseTest {
 		// get the remote conetns
 		getProvider(copy).get(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 		assertEquals(project, copy);
+	}
+	
+	public void testCleanLineDelimiters() throws TeamException, CoreException, IOException {
+		// Create a project
+		IProject project = getUniqueTestProject("testCleanLineDelimiters");
+		IFile file = project.getFile("testfile");
+		IProgressMonitor monitor = new NullProgressMonitor();
+
+		// empty file
+		setFileContents(file, "");
+		CVSTeamProvider.cleanLineDelimiters(file, false, monitor);
+		assertEqualsFileContents(file, "");
+		CVSTeamProvider.cleanLineDelimiters(file, true, monitor);
+		assertEqualsFileContents(file, "");
+		
+		// one byte
+		setFileContents(file, "a");
+		CVSTeamProvider.cleanLineDelimiters(file, false, monitor);
+		assertEqualsFileContents(file, "a");
+		CVSTeamProvider.cleanLineDelimiters(file, true, monitor);
+		assertEqualsFileContents(file, "a");
+		
+		// single orphan carriage return (should be preserved)
+		setFileContents(file, "\r");
+		CVSTeamProvider.cleanLineDelimiters(file, false, monitor);
+		assertEqualsFileContents(file, "\r");
+		CVSTeamProvider.cleanLineDelimiters(file, true, monitor);
+		assertEqualsFileContents(file, "\r");
+
+		// single line feed
+		setFileContents(file, "\n");
+		CVSTeamProvider.cleanLineDelimiters(file, false, monitor);
+		assertEqualsFileContents(file, "\n");
+		CVSTeamProvider.cleanLineDelimiters(file, true, monitor);
+		assertEqualsFileContents(file, "\r\n");
+		
+		// single carriage return line feed
+		setFileContents(file, "\r\n");
+		CVSTeamProvider.cleanLineDelimiters(file, true, monitor);
+		assertEqualsFileContents(file, "\r\n");
+		CVSTeamProvider.cleanLineDelimiters(file, false, monitor);
+		assertEqualsFileContents(file, "\n");
+		
+		// mixed text with orphaned CR's
+		setFileContents(file, "The \r\n quick brown \n fox \r\r\r\n jumped \n\n over \r\n the \n lazy dog.\r\n");
+		CVSTeamProvider.cleanLineDelimiters(file, false, monitor);
+		assertEqualsFileContents(file, "The \n quick brown \n fox \r\r\n jumped \n\n over \n the \n lazy dog.\n");
+		setFileContents(file, "The \r\n quick brown \n fox \r\r\r\n jumped \n\n over \r\n the \n lazy dog.\r\n");
+		CVSTeamProvider.cleanLineDelimiters(file, true, monitor);
+		assertEqualsFileContents(file, "The \r\n quick brown \r\n fox \r\r\r\n jumped \r\n\r\n over \r\n the \r\n lazy dog.\r\n");
+	}
+	
+	public void testKeywordSubstitution() throws TeamException, CoreException, IOException {
+		testKeywordSubstitution(Command.KSUBST_BINARY); // -kb
+		testKeywordSubstitution(Command.KSUBST_TEXT); // -ko
+		testKeywordSubstitution(Command.KSUBST_TEXT_EXPAND); // -kkv
+	}
+
+	private void testKeywordSubstitution(KSubstOption ksubst) throws TeamException, CoreException, IOException {
+		// setup some known file types
+		TeamPlugin.getFileTypeRegistry().setValue("xbin", IFileTypeRegistry.BINARY);
+		TeamPlugin.getFileTypeRegistry().setValue("xtxt", IFileTypeRegistry.TEXT);
+		
+		// create a test project
+		IProject project = createProject("testKeywordSubstitution", new String[] { "dummy" });
+		addResources(project, new String[] { "binary.xbin", "text.xtxt", "folder1/", "folder1/a.xtxt" }, true);
+		addResources(project, new String[] { "added.xbin", "added.xtxt" }, false);
+		assertHasKSubstOption(project, "binary.xbin", Command.KSUBST_BINARY);
+		assertHasKSubstOption(project, "added.xbin", Command.KSUBST_BINARY);
+		// XXX should these be KSUBST_TEXT instead?
+		assertHasKSubstOption(project, "text.xtxt", Command.KSUBST_TEXT_EXPAND);
+		assertHasKSubstOption(project, "folder1/a.xtxt", Command.KSUBST_TEXT_EXPAND);
+		assertHasKSubstOption(project, "added.xtxt", Command.KSUBST_TEXT_EXPAND);
+		
+		// change keyword substitution
+		IStatus status = getProvider(project).setKeywordSubstitution(new IResource[] { project },
+			IResource.DEPTH_INFINITE, ksubst, null);
+		assertTrue("Status should be ok, was: " + status.toString(), status.isOK());
+		assertHasKSubstOption(project, "binary.xbin", ksubst);
+		assertHasKSubstOption(project, "text.xtxt", ksubst);
+		assertHasKSubstOption(project, "folder1/a.xtxt", ksubst);
+		assertHasKSubstOption(project, "added.xtxt", ksubst);
+		assertHasKSubstOption(project, "added.xbin", ksubst);
+
+		// verify that substitution mode changed remotely and "added.xtxt", "added.xbin" don't exist
+		IProject copy = checkoutCopy(project, "-copy");
+		assertHasKSubstOption(copy, "binary.xbin", ksubst);
+		assertHasKSubstOption(copy, "text.xtxt", ksubst);
+		assertHasKSubstOption(copy, "folder1/a.xtxt", ksubst);
+		assertDoesNotExistInWorkspace(copy.getFile("added.xtxt"));
+		assertDoesNotExistInWorkspace(copy.getFile("added.xbin"));
+		
+		// commit added files then checkout the copy again
+		commitResources(project, new String[] { "added.xbin", "added.xtxt" });
+		IProject copy2 = checkoutCopy(project, "-copy2");
+		assertHasKSubstOption(copy2, "added.xtxt", ksubst);
+		assertHasKSubstOption(copy2, "added.xbin", ksubst);
+		
+		// verify that local contents are up to date
+		assertEquals(project, copy2);
+	}
+	
+	public static void setFileContents(IFile file, String string) throws CoreException {
+		InputStream is = new ByteArrayInputStream(string.getBytes());
+		if (file.exists()) {
+			file.setContents(is, false /*force*/, true /*keepHistory*/, null);
+		} else {
+			file.create(is, false /*force*/, null);
+		}
+	}
+	public static String getFileContents(IFile file) throws CoreException, IOException {
+		StringBuffer buf = new StringBuffer();
+		InputStream is = new BufferedInputStream(file.getContents());
+		try {
+			int c;
+			while ((c = is.read()) != -1) buf.append((char)c);
+		} finally {
+			is.close();
+		}
+		return buf.toString();
+	}
+	
+	public static void assertEqualsFileContents(IFile file, String string) throws CoreException, IOException {
+		String other = getFileContents(file);
+		assertEquals(string, other);
+	}
+	
+	public static void assertHasKSubstOption(IContainer container, String filename, KSubstOption ksubst)
+		throws TeamException {
+		IFile file = container.getFile(new Path(filename));
+		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
+		ResourceSyncInfo info = cvsFile.getSyncInfo();
+		KSubstOption other = KSubstOption.fromMode(info.getKeywordMode());
+		assertEquals(ksubst, other);
 	}
 }
 
