@@ -65,8 +65,6 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gridData);

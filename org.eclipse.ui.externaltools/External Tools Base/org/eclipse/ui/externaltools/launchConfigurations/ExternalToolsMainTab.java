@@ -64,16 +64,12 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
 		layout.numColumns = 2;
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gridData);
-		
 		createLocationComponent(mainComposite);
 		createWorkDirectoryComponent(mainComposite);
-		createSpacer(parent);
 		createDescriptionComponent(mainComposite);
 	}
 	
@@ -92,6 +88,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		
 		descriptionField = new Text(parent, SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		descriptionField.setLayoutData(data);
 	}
@@ -103,25 +100,43 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createLocationComponent(Composite parent) {
-		Label label = new Label(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.numColumns = 1;
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		composite.setLayout(layout);
+		composite.setLayoutData(gridData);
+		
+		Label label = new Label(composite, SWT.NONE);
 		label.setText("Location: ");
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		data.horizontalSpan = 2;
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(data);
 		
-		locationField = new Text(parent, SWT.BORDER);
+		locationField = new Text(composite, SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-		data.verticalSpan= 2;
 		locationField.setLayoutData(data);
 		
-		workspaceLocationButton= createPushButton(parent, "Browse Workspace...", null);
+		Composite buttonComposite = new Composite(parent, SWT.NONE);
+		layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.numColumns = 1;
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		buttonComposite.setLayout(layout);
+		buttonComposite.setLayoutData(gridData);
+		
+		createVerticalSpacer(buttonComposite, 1);
+		
+		workspaceLocationButton= createPushButton(buttonComposite, "Browse Workspace...", null);
 		workspaceLocationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleWorkspaceLocationButtonSelected();
 			}
 		});
-		fileLocationButton= createPushButton(parent, "Browse File System...", null);
+		fileLocationButton= createPushButton(buttonComposite, "Browse File System...", null);
 		fileLocationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleLocationButtonSelected();
@@ -136,43 +151,49 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createWorkDirectoryComponent(Composite parent) {
-		Label label = new Label(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.numColumns = 1;
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		composite.setLayout(layout);
+		composite.setLayoutData(gridData);
+		
+		Label label = new Label(composite, SWT.NONE);
 		label.setText("Working Directory:");
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		data.horizontalSpan = 2;
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(data);
 		
-		workDirectoryField = new Text(parent, SWT.BORDER);
+		workDirectoryField = new Text(composite, SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-		data.verticalSpan= 2;
 		workDirectoryField.setLayoutData(data);
 		
-		workspaceWorkingDirectoryButton= createPushButton(parent, "Browse Workspace...", null);
+		Composite buttonComposite = new Composite(parent, SWT.NONE);
+		layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.numColumns = 1;
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		buttonComposite.setLayout(layout);
+		buttonComposite.setLayoutData(gridData);
+		
+		createVerticalSpacer(buttonComposite, 1);
+		workspaceWorkingDirectoryButton= createPushButton(buttonComposite, "Browse Workspace...", null);
 		workspaceWorkingDirectoryButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleWorkspaceWorkingDirectoryButtonSelected();
 			}
 		});
-		fileWorkingDirectoryButton= createPushButton(parent, "Browse File System...", null);
+		fileWorkingDirectoryButton= createPushButton(buttonComposite, "Browse File System...", null);
 		fileWorkingDirectoryButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleFileWorkingDirectoryButtonSelected();
 			}
 		});
-		createSpacer(parent);
 	}
 	
-	/**
-	 * Creates a vertical space between controls.
-	 */
-	protected void createSpacer(Composite parent) {
-		Label label = new Label(parent, SWT.NONE);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		data.horizontalSpan = 2;
-		label.setLayoutData(data);
-	}
-
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */

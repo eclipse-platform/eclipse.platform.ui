@@ -43,8 +43,6 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 		setControl(mainComposite);
 		
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
 		layout.numColumns = 1;
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		mainComposite.setLayout(layout);
