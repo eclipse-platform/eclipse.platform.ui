@@ -52,7 +52,7 @@ public class CompareWithTagAction extends WorkspaceAction {
 	}
 	
 	protected CVSTag promptForTag(IResource[] resources) {
-		CVSTag tag = TagSelectionDialog.getTagToCompareWith(getShell(), TagSource.create(resources));
+		CVSTag tag = TagSelectionDialog.getTagToCompareWith(getShell(), TagSource.create(resources), TagSelectionDialog.INCLUDE_ALL_TAGS);
 		return tag;
 	}
 

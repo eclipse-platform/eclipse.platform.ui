@@ -21,8 +21,6 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.ccvs.ui.tags.*;
-import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter;
-import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.NewProjectAction;
@@ -92,7 +90,12 @@ public class CheckoutAsWizard extends Wizard {
 		locationSelectionPage = new CheckoutAsLocationSelectionPage(substImage, remoteFolders);
 		addPage(locationSelectionPage);
 		
-		tagSelectionPage = new TagSelectionWizardPage("tagPage", Policy.bind("CheckoutAsWizard.3"), substImage, Policy.bind("CheckoutAsWizard.4"), TagSource.create(remoteFolders), TagSourceWorkbenchAdapter.INCLUDE_ALL_TAGS); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		tagSelectionPage = new TagSelectionWizardPage("tagPage", Policy.bind("CheckoutAsWizard.3"), substImage, Policy.bind("CheckoutAsWizard.4"), TagSource.create(remoteFolders), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+		        TagSelectionArea.INCLUDE_HEAD_TAG |
+		        TagSelectionArea.INCLUDE_BRANCHES |
+		        TagSelectionArea.INCLUDE_VERSIONS |
+		        TagSelectionArea.INCLUDE_DATES
+		        );
 		if (remoteFolders.length > 0) {
 			try {
 				CVSTag selectedTag = remoteFolders[0].getFolderSyncInfo().getTag();

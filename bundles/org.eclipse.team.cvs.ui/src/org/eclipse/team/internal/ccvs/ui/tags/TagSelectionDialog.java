@@ -61,11 +61,11 @@ public class TagSelectionDialog extends Dialog implements IPropertyChangeListene
 
     private boolean showRecurse;
 		
-	public static CVSTag getTagToCompareWith(Shell shell, TagSource tagSource) {
+	public static CVSTag getTagToCompareWith(Shell shell, TagSource tagSource, int includeFlags) {
 		TagSelectionDialog dialog = new TagSelectionDialog(shell, tagSource, 
 			Policy.bind("CompareWithTagAction.message"),  //$NON-NLS-1$
 			Policy.bind("TagSelectionDialog.Select_a_Tag_1"), //$NON-NLS-1$
-			TagSelectionDialog.INCLUDE_ALL_TAGS, 
+			includeFlags, 
 			false, /* show recurse*/
 			IHelpContextIds.COMPARE_TAG_SELECTION_DIALOG);
 		dialog.setBlockOnOpen(true);

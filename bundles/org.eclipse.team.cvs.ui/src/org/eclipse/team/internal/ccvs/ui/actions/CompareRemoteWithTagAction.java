@@ -38,7 +38,11 @@ public class CompareRemoteWithTagAction extends CVSAction {
 		final CVSTag[] tag = new CVSTag[] { null};
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				tag[0] = TagSelectionDialog.getTagToCompareWith(getShell(), TagSource.create(resources));
+				tag[0] = TagSelectionDialog.getTagToCompareWith(getShell(), TagSource.create(resources),
+				        TagSelectionDialog.INCLUDE_BRANCHES | 
+				        TagSelectionDialog.INCLUDE_VERSIONS |
+				        TagSelectionDialog.INCLUDE_DATES |
+				        TagSelectionDialog.INCLUDE_HEAD_TAG);
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 		if (tag[0] == null) return;
