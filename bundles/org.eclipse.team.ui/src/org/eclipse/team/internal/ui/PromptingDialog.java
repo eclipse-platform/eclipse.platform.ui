@@ -30,7 +30,7 @@ public class PromptingDialog {
 	private boolean confirmOverwrite = true;
 	private IPromptCondition condition;
 	private String title;
-	private boolean hasMultipeResources;
+	private boolean hasMultipleResources;
 
 	/**
 	 * Prompt for the given resources using the specific condition. The prompt dialog will
@@ -41,8 +41,8 @@ public class PromptingDialog {
 		this.resources = resources;
 		this.title = title;
 		this.shell = shell;
-		this.hasMultipeResources = resources.length > 1;
-		if (hasMultipeResources) {
+		this.hasMultipleResources = resources.length > 1;
+		if (hasMultipleResources) {
 			buttons = new String[] {
 				IDialogConstants.YES_LABEL, 
 				IDialogConstants.YES_TO_ALL_LABEL, 
@@ -91,7 +91,7 @@ public class PromptingDialog {
 					dialog.open();
 				}
 			});
-		if (hasMultipeResources) {
+		if (hasMultipleResources) {
 			switch (dialog.getReturnCode()) {
 				case 0://Yes
 					return true;
