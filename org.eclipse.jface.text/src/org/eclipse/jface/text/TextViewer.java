@@ -1056,7 +1056,7 @@ public class TextViewer extends Viewer implements
 		 * @see KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
 		 */
 		public void keyReleased(KeyEvent e) {
-			if ((e.keyCode & (SWT.CTRL | SWT.ALT | SWT.COMMAND | SWT.SHIFT)) != 0)
+			if (e.keyCode == SWT.MOD1 || e.keyCode == SWT.MOD2 || e.keyCode == SWT.MOD3 || e.keyCode == SWT.MOD4)
 				return;
 			if (fTextWidget.getSelectionCount() == 0)
 				sendEmptySelectionChangedEvent();
