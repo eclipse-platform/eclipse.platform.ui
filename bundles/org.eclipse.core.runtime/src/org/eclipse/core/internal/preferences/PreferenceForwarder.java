@@ -14,14 +14,13 @@ import java.io.*;
 import java.util.Iterator;
 import java.util.Properties;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.ListenerList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * This class represents the backwards compatibility story between the Eclipse 3.0
+ * This class represents a convenience layer between the Eclipse 3.0
  * preferences and pre-3.0 preferences. It acts as a bridge between the 
  * org.eclipse.core.runtime.Preferences object associated with a particular plug-in
  * object, and its corresponding preference node in the 3.0 preference node
@@ -37,17 +36,9 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	private DefaultPreferences defaultsRoot = (DefaultPreferences) Platform.getPreferencesService().getRootNode().node(DefaultScope.SCOPE);
 	private String pluginID;
 	private Plugin plugin;
-
-	/**
-	 * Class to wrap property change events. Have to use a subclass since we
-	 * don't want to increase the visibility of the property change event constructor
-	 * to be public.
-	 */
-	class PropertyChangeEventWrapper extends Preferences.PropertyChangeEvent {
-		PropertyChangeEventWrapper(Object source, String property, Object oldValue, Object newValue) {
-			super(source, property, oldValue, newValue);
-		}
-	}
+	// boolean to check to see if we should re-wrap and forward change
+	// events coming from the new runtime APIs.
+	private boolean notify = true;
 
 	/*
 	 * Used for test suites only.
@@ -90,8 +81,6 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @param listener a property change listener
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		if (listeners == null)
-			listeners = new ListenerList();
 		listeners.add(listener);
 	}
 
@@ -99,7 +88,8 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 	 */
 	public void preferenceChange(IEclipsePreferences.PreferenceChangeEvent event) {
-		if (listeners == null)
+		// if we are the ones making this change, the don't broadcast
+		if (!notify)
 			return;
 		Object oldValue = event.getOldValue();
 		Object newValue = event.getNewValue();
@@ -108,10 +98,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 			newValue = getDefault(key, oldValue);
 		else if (oldValue == null)
 			oldValue = getDefault(key, newValue);
-		PropertyChangeEvent propertyChangeEvent = new PropertyChangeEventWrapper(this, key, oldValue, newValue);
-		Object[] clients = listeners.getListeners();
-		for (int i = 0; i < clients.length; i++)
-			((IPropertyChangeListener) clients[i]).propertyChange(propertyChangeEvent);
+		firePropertyChangeEvent(key, oldValue, newValue);
 	}
 
 	private EclipsePreferences getPluginPreferences() {
@@ -133,12 +120,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @param listener a property change listener
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-		if (listeners == null)
-			return;
 		listeners.remove(listener);
-		if (listeners.size() == 0) {
-			listeners = null;
-		}
 	}
 
 	/**
@@ -219,10 +201,19 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @param value the new current value of the property
 	 */
 	public void setValue(String name, boolean value) {
-		if (getDefaultBoolean(name) == value)
-			getPluginPreferences().removeBoolean(name);
-		else
-			getPluginPreferences().putBoolean(name, value);
+		Boolean oldValue = getBoolean(name) ? Boolean.TRUE : Boolean.FALSE;
+		Boolean newValue = value ? Boolean.TRUE : Boolean.FALSE;
+		try {
+			notify = false;
+			if (getDefaultBoolean(name) == value)
+				getPluginPreferences().remove(name);
+			else
+				getPluginPreferences().putBoolean(name, value);
+			if (!newValue.equals(oldValue))
+				firePropertyChangeEvent(name, oldValue, newValue);
+		} finally {
+			notify = true;
+		}
 	}
 
 	/**
@@ -295,10 +286,19 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	public void setValue(String name, double value) {
 		if (Double.isNaN(value))
 			throw new IllegalArgumentException();
-		if (getDefaultDouble(name) == value)
-			getPluginPreferences().removeDouble(name);
-		else
-			getPluginPreferences().putDouble(name, value);
+		Double oldValue = new Double(getDouble(name));
+		Double newValue = new Double(value);
+		try {
+			notify = false;
+			if (getDefaultDouble(name) == value)
+				getPluginPreferences().remove(name);
+			else
+				getPluginPreferences().putDouble(name, value);
+			if (!newValue.equals(oldValue))
+				firePropertyChangeEvent(name, oldValue, newValue);
+		} finally {
+			notify = true;
+		}
 	}
 
 	/**
@@ -374,10 +374,19 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	public void setValue(String name, float value) {
 		if (Float.isNaN(value))
 			throw new IllegalArgumentException();
-		if (getDefaultFloat(name) == value)
-			getPluginPreferences().removeFloat(name);
-		else
-			getPluginPreferences().putFloat(name, value);
+		Float oldValue = new Float(getFloat(name));
+		Float newValue = new Float(value);
+		try {
+			notify = false;
+			if (getDefaultFloat(name) == value)
+				getPluginPreferences().remove(name);
+			else
+				getPluginPreferences().putFloat(name, value);
+			if (!newValue.equals(oldValue))
+				firePropertyChangeEvent(name, oldValue, newValue);
+		} finally {
+			notify = true;
+		}
 	}
 
 	/**
@@ -450,10 +459,19 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @param value the new current value of the property
 	 */
 	public void setValue(String name, int value) {
-		if (getDefaultInt(name) == value)
-			getPluginPreferences().removeInt(name);
-		else
-			getPluginPreferences().putInt(name, value);
+		Integer oldValue = new Integer(getInt(name));
+		Integer newValue = new Integer(value);
+		try {
+			notify = false;
+			if (getDefaultInt(name) == value)
+				getPluginPreferences().remove(name);
+			else
+				getPluginPreferences().putInt(name, value);
+			if (!newValue.equals(oldValue))
+				firePropertyChangeEvent(name, oldValue, newValue);
+		} finally {
+			notify = true;
+		}
 	}
 
 	/**
@@ -523,10 +541,19 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @param value the new current value of the property
 	 */
 	public void setValue(String name, long value) {
-		if (getDefaultLong(name) == value)
-			getPluginPreferences().removeLong(name);
-		else
-			getPluginPreferences().putLong(name, value);
+		Long oldValue = new Long(getLong(name));
+		Long newValue = new Long(value);
+		try {
+			notify = false;
+			if (getDefaultLong(name) == value)
+				getPluginPreferences().remove(name);
+			else
+				getPluginPreferences().putLong(name, value);
+			if (!newValue.equals(oldValue))
+				firePropertyChangeEvent(name, oldValue, newValue);
+		} finally {
+			notify = true;
+		}
 	}
 
 	/**
@@ -597,10 +624,18 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	public void setValue(String name, String value) {
 		if (value == null)
 			throw new IllegalArgumentException();
-		if (getDefaultString(name).equals(value))
-			getPluginPreferences().remove(name);
-		else
-			getPluginPreferences().put(name, value);
+		String oldValue = getString(name);
+		try {
+			notify = false;
+			if (getDefaultString(name).equals(value))
+				getPluginPreferences().remove(name);
+			else
+				getPluginPreferences().put(name, value);
+			if (!value.equals(oldValue))
+				firePropertyChangeEvent(name, oldValue, value);
+		} finally {
+			notify = true;
+		}
 	}
 
 	/**

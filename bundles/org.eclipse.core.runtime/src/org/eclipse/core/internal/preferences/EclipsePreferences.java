@@ -544,7 +544,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		return oldValue;
 	}
 
-	private void internalRemove(String key, Object oldValue) {
+	private void internalRemove(String key, String oldValue) {
 		boolean wasRemoved = false;
 		//Thread safety: synchronize when modifying the properties field
 		synchronized (this) {
@@ -751,6 +751,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#put(java.lang.String, java.lang.String)
 	 */
 	public void put(String key, String newValue) {
+		if (key == null || newValue == null)
+			throw new NullPointerException();
 		String oldValue = internalPut(key, newValue);
 		if (!newValue.equals(oldValue)) {
 			makeDirty();
@@ -762,11 +764,13 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#putBoolean(java.lang.String, boolean)
 	 */
 	public void putBoolean(String key, boolean value) {
+		if (key == null)
+			throw new NullPointerException();
 		String newValue = value ? TRUE : FALSE;
 		String oldValue = internalPut(key, newValue);
 		if (!newValue.equals(oldValue)) {
 			makeDirty();
-			preferenceChanged(key, oldValue == null ? null : new Boolean(oldValue), value ? Boolean.TRUE : Boolean.FALSE);
+			preferenceChanged(key, oldValue, newValue);
 		}
 	}
 
@@ -774,11 +778,13 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#putByteArray(java.lang.String, byte[])
 	 */
 	public void putByteArray(String key, byte[] value) {
+		if (key == null || value == null)
+			throw new NullPointerException();
 		String newValue = new String(Base64.encode(value));
 		String oldValue = internalPut(key, newValue);
 		if (!newValue.equals(oldValue)) {
 			makeDirty();
-			preferenceChanged(key, oldValue == null ? null : Base64.decode(oldValue.getBytes()), value);
+			preferenceChanged(key, oldValue, newValue);
 		}
 	}
 
@@ -786,17 +792,13 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#putDouble(java.lang.String, double)
 	 */
 	public void putDouble(String key, double value) {
+		if (key == null)
+			throw new NullPointerException();
 		String newValue = Double.toString(value);
-		Object oldValue = internalPut(key, newValue);
+		String oldValue = internalPut(key, newValue);
 		if (!newValue.equals(oldValue)) {
 			makeDirty();
-			if (oldValue != null)
-				try {
-					oldValue = new Double((String) oldValue);
-				} catch (NumberFormatException e) {
-					// ignore and let oldValue be a String
-				}
-			preferenceChanged(key, oldValue, new Double(value));
+			preferenceChanged(key, oldValue, newValue);
 		}
 	}
 
@@ -804,17 +806,13 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#putFloat(java.lang.String, float)
 	 */
 	public void putFloat(String key, float value) {
+		if (key == null)
+			throw new NullPointerException();
 		String newValue = Float.toString(value);
-		Object oldValue = internalPut(key, newValue);
+		String oldValue = internalPut(key, newValue);
 		if (!newValue.equals(oldValue)) {
 			makeDirty();
-			if (oldValue != null)
-				try {
-					oldValue = new Float((String) oldValue);
-				} catch (NumberFormatException e) {
-					// ignore and let oldValue be a String
-				}
-			preferenceChanged(key, oldValue, new Float(value));
+			preferenceChanged(key, oldValue, newValue);
 		}
 	}
 
@@ -822,17 +820,13 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#putInt(java.lang.String, int)
 	 */
 	public void putInt(String key, int value) {
+		if (key == null)
+			throw new NullPointerException();
 		String newValue = Integer.toString(value);
-		Object oldValue = internalPut(key, newValue);
+		String oldValue = internalPut(key, newValue);
 		if (!newValue.equals(oldValue)) {
 			makeDirty();
-			if (oldValue != null)
-				try {
-					oldValue = new Integer((String) oldValue);
-				} catch (NumberFormatException e) {
-					// ignore and let oldValue be a String
-				}
-			preferenceChanged(key, oldValue, new Integer(value));
+			preferenceChanged(key, oldValue, newValue);
 		}
 	}
 
@@ -840,17 +834,13 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#putLong(java.lang.String, long)
 	 */
 	public void putLong(String key, long value) {
+		if (key == null)
+			throw new NullPointerException();
 		String newValue = Long.toString(value);
-		Object oldValue = internalPut(key, newValue);
+		String oldValue = internalPut(key, newValue);
 		if (!newValue.equals(oldValue)) {
 			makeDirty();
-			if (oldValue != null)
-				try {
-					oldValue = new Long((String) oldValue);
-				} catch (NumberFormatException e) {
-					// ignore and let oldValue be a String
-				}
-			preferenceChanged(key, oldValue, new Long(value));
+			preferenceChanged(key, oldValue, newValue);
 		}
 	}
 
@@ -861,80 +851,6 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		String oldValue = internalGet(key);
 		if (oldValue != null)
 			internalRemove(key, oldValue);
-	}
-
-	/*
-	 * Added so the backwards compatibility layer (PreferenceForwarder)
-	 * gets preference change events of the correct types.
-	 */
-	void removeBoolean(String key) {
-		String oldValue = internalGet(key);
-		if (oldValue != null)
-			internalRemove(key, Boolean.valueOf(oldValue));
-	}
-
-	/*
-	 * Added so the backwards compatibility layer (PreferenceForwarder)
-	 * gets preference change events of the correct types.
-	 */
-	void removeDouble(String key) {
-		Object oldValue = internalGet(key);
-		if (oldValue != null) {
-			try {
-				oldValue = Double.valueOf((String) oldValue);
-			} catch (NumberFormatException e) {
-				// ignore - oldValue will be null
-			}
-			internalRemove(key, oldValue);
-		}
-	}
-
-	/*
-	 * Added so the backwards compatibility layer (PreferenceForwarder)
-	 * gets preference change events of the correct types.
-	 */
-	void removeFloat(String key) {
-		Object oldValue = internalGet(key);
-		if (oldValue != null) {
-			try {
-				oldValue = Float.valueOf((String) oldValue);
-			} catch (NumberFormatException e) {
-				// ignore - oldValue will be null
-			}
-			internalRemove(key, oldValue);
-		}
-	}
-
-	/*
-	 * Added so the backwards compatibility layer (PreferenceForwarder)
-	 * gets preference change events of the correct types.
-	 */
-	void removeInt(String key) {
-		Object oldValue = internalGet(key);
-		if (oldValue != null) {
-			try {
-				oldValue = Integer.valueOf((String) oldValue);
-			} catch (NumberFormatException e) {
-				// ignore - oldValue will be null
-			}
-			internalRemove(key, oldValue);
-		}
-	}
-
-	/*
-	 * Added so the backwards compatibility layer (PreferenceForwarder)
-	 * gets preference change events of the correct types.
-	 */
-	void removeLong(String key) {
-		Object oldValue = internalGet(key);
-		if (oldValue != null) {
-			try {
-				oldValue = Long.valueOf((String) oldValue);
-			} catch (NumberFormatException e) {
-				// ignore - oldValue will be null
-			}
-			internalRemove(key, oldValue);
-		}
 	}
 
 	/*

@@ -902,12 +902,18 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		assertEquals("2.1", "quux", string);
 		assertEquals("2.2", "[foo:Sbar->Squux]", tracer.log.toString());
 
-		// change its type
+		// change its type - should have no effect (events are strings)
 		tracer.log.setLength(0);
 		node.putInt(key, 123);
 		int i = node.getInt(key, 0);
 		assertEquals("3.0", 123, i);
-		assertEquals("3.1", "[foo:Squux->I123]", tracer.log.toString());
+		assertEquals("3.1", "[foo:Squux->S123]", tracer.log.toString());
+
+		node.put(key, "aaa");
+		tracer.log.setLength(0);
+		node.remove(key);
+		assertNull("4.0", node.get(key, null));
+		assertEquals("4.1", "[foo:Saaa->null]", tracer.log.toString());
 
 		// TODO finish these
 	}
