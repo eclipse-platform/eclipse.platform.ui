@@ -443,49 +443,6 @@ public class IntroHTMLGenerator {
 		return null;
 	}
 	/**
-	 * Reads the content of the file referred to by the <code>src</code>
-	 * parameter and returns the content in the form of a StringBuffer
-	 * 
-	 * @param src -
-	 *            the file that contains the target conent
-	 * @return a StringBuffer containing the content in the file, or null
-	 */
-	private StringBuffer readFromFile(String src) {
-		if (src == null)
-			return null;
-		InputStream stream = null;
-		StringBuffer content = new StringBuffer();
-		BufferedReader reader = null;
-		try {
-			URL url = new URL(src);
-			stream = url.openStream();
-			//TODO: Do we need to worry about the encoding here? e.g.:
-			//reader = new BufferedReader(new InputStreamReader(stream,
-			// ResourcesPlugin.getEncoding()));
-			reader = new BufferedReader(new InputStreamReader(stream));
-			while (true) {
-				String line = reader.readLine();
-				if (line == null) // EOF
-					break; // done reading file
-				content.append(line);
-				content.append(IIntroHTMLConstants.NEW_LINE);
-			}
-		} catch (Exception exception) {
-			Log.error("Error reading from file", exception); //$NON-NLS-1$
-		} finally {
-			try {
-				if (reader != null)
-					reader.close();
-				if (stream != null)
-					stream.close();
-			} catch (IOException e) {
-				Log.error("Error closing input stream", e); //$NON-NLS-1$
-				return null;
-			}
-		}
-		return content;
-	}
-	/**
 	 * Generate "embedded" content from an IntroHTML. An OBJECT html element is
 	 * created whose <code>data</code> attribute is equal to the IntroHTML's
 	 * <code>src</code> value.
@@ -827,4 +784,265 @@ public class IntroHTMLGenerator {
         else
             return false;
     }
+    
+	
+	/**
+	 * Reads the content of the file referred to by the <code>src</code>
+	 * parameter and returns the content in the form of a StringBuffer.
+	 * If the file read contains substitution segments of the form
+	 * $plugin:plugin_id$ then this method will make the proper 
+	 * substitution (the segment will be replaced with the absolute 
+	 * path to the plugin with id plugin_id).
+	 * 
+	 * @param src -
+	 *            the file that contains the target conent
+	 * @return a StringBuffer containing the content in the file, or null
+	 */
+	private StringBuffer readFromFile(String src) {
+		if (src == null)
+			return null;
+		InputStream stream = null;
+		StringBuffer content = new StringBuffer();
+		BufferedReader reader = null;
+		try {
+			URL url = new URL(src);
+			stream = url.openStream();
+			//TODO: Do we need to worry about the encoding here? e.g.:
+			//reader = new BufferedReader(new InputStreamReader(stream,
+			// ResourcesPlugin.getEncoding()));
+			reader = new BufferedReader(new InputStreamReader(stream));
+			while (true) {	
+				int character = reader.read();
+				if (character == -1) // EOF
+					break; // done reading file
+				
+				else if(character == PluginIdParser.SUBSTITUTION_BEGIN) { // possible substitution
+					PluginIdParser parser = new PluginIdParser(character, reader);
+					// If a valid plugin id was found in the proper format, text 
+					// will be the absolute path to that plugin. Otherwise, text
+					// will simply be all characters read up to (but not including)
+					// the next dollar sign that follows the one just found.
+					String text = parser.parsePluginId();
+					if(text != null)
+						content.append(text);		
+				}
+				else {
+					// make sure character is in char range before making cast
+					if(character > 0x00 && character < 0xffff) 
+						content.append((char)character);
+					else content.append(character);
+				}
+			}
+		} catch (Exception exception) {
+			Log.error("Error reading from file", exception); //$NON-NLS-1$
+		} finally {
+			try {
+				if (reader != null)
+					reader.close();
+				if (stream != null)
+					stream.close();
+			} catch (IOException e) {
+				Log.error("Error closing input stream", e); //$NON-NLS-1$
+				return null;
+			}
+		}
+		return content;
+	}
+	
+	/**
+	 * A helper class to help identify substitution strings in a content file.
+	 * A properly formatted substitution string is of the form:
+	 *   <code>$plugin:plugin_id$</code>
+	 * where plugin_id is the valid id of an installed plugin. The substitution
+	 * string will be replaced with the absolute path to the plugin.  
+	 * 
+	 * An example usage of the string substution:
+	 * The html file <code>inline.html</code> is included in your intro via 
+	 * the html inline mechanism .  This file needs to reference a resource that 
+	 * is located in another plugin.  The following might be found in inline.html: 
+	 * <code>
+	 *    <a href="$plugin:test.plugin$html/test.html">link to file</a>
+	 * </code>
+	 * When this file is read in, the relevant section will be replaced as follows:
+	 * <code>
+	 *   <a href="file:/install_path/plugins/test.plugin/html/test.html">link to file</a>
+	 * </code>
+	 * 
+	 */
+	private static class PluginIdParser {
+		private BufferedReader reader;
+		private static final char SUBSTITUTION_BEGIN = '$';
+		private static final char SUBSTITUTION_END = '$';
+		// tokenContent will contain all characters read by the parser, starting 
+		// with and including the initial $ token.   
+		private StringBuffer tokenContent;
+		// pluginId will contain the content between the "$plugin:" segment
+		// and the closing "$" token
+		private StringBuffer pluginId;
+		
+		protected PluginIdParser(char tokenBegin, BufferedReader bufferedreader){
+			reader = bufferedreader;
+			tokenContent = new StringBuffer(tokenBegin);
+			pluginId = new StringBuffer();
+		}
+		
+		protected PluginIdParser(int tokenBegin, BufferedReader bufferedreader){
+			reader = bufferedreader;
+			tokenContent = new StringBuffer();
+			pluginId = new StringBuffer();
+			// make sure tokenBegin is in char range before making cast
+			if(tokenBegin > 0x00 && tokenBegin < 0xffff) 
+				tokenContent.append((char)tokenBegin);
+		}
+			
+		/**
+		 * This method should be called after the initial substitution identifier
+		 * has been read in (the substition string begins and ends with the "$"
+		 * character).  
+		 * A properly formatted substitution string is of the form:
+		 *   </code>"$plugin:plugin_id$</code>
+		 * - the initial "$" is immediately followed by the "plugin:" segment
+		 * - the <code>plugin_id</code> refers to a valid, installed plugin
+		 * - the substitution string is terminated by a closing "$"
+		 * If the above conditions are not met, no substitution occurs.
+		 * If the above conditions are met, the content between (and including)
+		 * the opening and closing "$" characters will be replaced by the
+		 * absolute path to the plugin
+		 * @return
+		 */
+		protected String parsePluginId() {
+			if(reader == null || tokenContent == null || pluginId == null)
+				return null;
+			
+			try {
+				// Mark the current position of the reader so we can roll
+				// back to this point if the proper "plugin:" segment is not found.
+				// Use 1024 as our readAheadLimit
+				reader.mark(0x400);
+				if(findValidPluginSegment()){
+					String pluginPath = getPluginPath();
+					if(pluginPath == null){
+						// Didn't find a valid plugin id.
+						// return tokenContent, which contains all characters
+						// read up to (not including) the last $. (if the
+						// last $ is part of a subsequent "$plugin:" segment 
+						// it can still be processed properly)
+						return tokenContent.toString();
+					}
+					else {
+						return pluginPath;
+					}
+				} 
+				else {
+					// The "plugin:" segment was not found.  Reset the reader 
+					// so we can continue reading character by character.
+					reader.reset();
+					return tokenContent.toString();
+				}
+				
+			} catch (IOException exception){
+				Log.error("Error reading from file", exception); //$NON-NLS-1$
+				return tokenContent.toString();
+			}
+		}
+		
+		/**
+		 * This method should be called after an initial substitution character
+		 * has been found (that is, after a $).  It looks at the subsequent  
+		 * characters in the input stream to determine if they match the 
+		 * expected <code>plugin:</code> segment of the substitution string.
+		 * If the expected characters are found, they will be appended to the
+		 * tokenContent StringBuffer and the method will return true.  If they
+		 * are not found, false is returned and the caller should reset the
+		 * BufferedReader to the position it was in before this method was called.
+		 * 
+		 * Resetting the reader ensures that the characters read in this method
+		 * can be re-examined in case one of them happens to be the beginning of
+		 * a valid substitution segment.
+		 * 
+		 * @return true if the next characters match <code>plugin:</code>, and 
+		 * false otherwise.
+		 */
+		private boolean findValidPluginSegment(){
+			final char[] PLUGIN_SEGMENT = {'p', 'l', 'u', 'g', 'i', 'n', ':' };
+			char[] streamContent = new char[PLUGIN_SEGMENT.length];
+			try {
+				int peek = reader.read(streamContent, 0, PLUGIN_SEGMENT.length);
+				if ((peek == PLUGIN_SEGMENT.length) 
+						&& (HTMLUtil.equalCharArrayContent(streamContent, PLUGIN_SEGMENT))){
+					// we have found the "$plugin:" segment
+					tokenContent.append(streamContent);
+					return true;
+				}
+				// The "plugin:" segment did not immediately follow the initial $.
+				return false;
+			} catch (IOException exception){
+				Log.error("Error reading from file", exception); //$NON-NLS-1$
+				return false;
+			}
+		}
+		/**
+		 * This method continues to read from the input stream until
+		 * either the end of the file is reached, or until a character
+		 * is found that indicates the end of the substitution.  If the
+		 * SUBSTITUTION_END character is found, the method looks up the
+		 * plugin id that has been built up to see if it is a valid
+		 * id.  If so, return the absolute path to that plugin.  If not,
+		 * return null.
+		 * 
+		 * This method assumes that the reader is positioned just 
+		 * after a valid <code>plugin:</code> segment in a substitution
+		 * string.
+		 * 
+		 * @return absolute path of the plugin id, if valid.  null otherwise
+		 */
+		private String getPluginPath(){
+			try {
+				while(true) {
+					int nextChar = reader.read();
+	
+					if(nextChar == -1) { 
+						// reached EOF while looking for closing $
+						return null;
+					}
+					else if(nextChar == SUBSTITUTION_END) { // end of plugin id
+						// look up the plugin id.  If it is a valid id 
+						// return the absolute path to this plugin.
+						// otherwise return null.
+						String path = HTMLUtil.getResolvedBundleLocation(
+								pluginId.toString());
+						
+						// If the plugin id was not valid, reset reader to the 
+						// previous mark.  The mark should be at the character 
+						// just before the last dollar sign.  
+						if(path == null)
+							reader.reset();
+						
+						return path;
+					}
+					else {  // we have a regular character
+						// mark the most recent non-dollar char in case we don't 
+						// find a valid plugin id and have to roll back
+						// Use 1024 as our readAheadLimit
+						reader.mark(0x400);
+						// Add this character to the pluginId and tokenContent String.
+						// make sure we have a valid character before performing cast
+						if(nextChar > 0x00 && nextChar < 0xffff) {
+							tokenContent.append((char)nextChar);
+							// only include non-whitespace characters in plugin id
+							if(!Character.isWhitespace((char)nextChar))
+									pluginId.append((char)nextChar);
+						}
+						else {
+							tokenContent.append(nextChar);
+							pluginId.append(nextChar);
+						}
+					}
+				}
+			}  catch (IOException exception){
+				Log.error("Error reading from file", exception); //$NON-NLS-1$
+				return null;
+			}
+		}
+	}
 }

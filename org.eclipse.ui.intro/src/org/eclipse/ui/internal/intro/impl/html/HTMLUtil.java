@@ -175,4 +175,33 @@ public final class HTMLUtil {
 			return null;
 		}
 	}
+	
+	/**
+	 * Get the absolute path of the bundle with id <code>bundleId</code>.
+	 * If no such bundle is found, return null.
+	 * @param bundleId
+	 * @return
+	 */
+	public static String getResolvedBundleLocation(String bundleId){
+		Bundle bundle = Platform.getBundle(bundleId);
+		if (bundle == null) 
+			return null;
+		return HTMLUtil.getResolvedBundleLocation(bundle);
+	}
+	
+	/**
+	 * Determine if the contents of two character arrays are equal
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public static boolean equalCharArrayContent(char[] a, char[] b) {
+		if (a.length != b.length)
+			return false;
+		for(int i = 0; i < a.length; i++) {
+			if(a[i]!= b[i])
+				return false;
+		}
+		return true;
+	}
 }
