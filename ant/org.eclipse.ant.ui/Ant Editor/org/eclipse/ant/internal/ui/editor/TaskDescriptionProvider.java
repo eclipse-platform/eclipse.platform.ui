@@ -70,7 +70,6 @@ public class TaskDescriptionProvider {
 
     protected Map taskNodes = new HashMap();
     
-
     /**
      * Meant to be a singleton
      */
