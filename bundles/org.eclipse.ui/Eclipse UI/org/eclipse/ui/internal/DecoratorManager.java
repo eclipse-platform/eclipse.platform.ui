@@ -5,6 +5,8 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import java.util.*;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.*;
@@ -355,8 +357,47 @@ public class DecoratorManager
 	 */
 	public void reset() {
 		cachedDecorators = new HashMap();
-		fireListeners(new LabelProviderChangedEvent(this));
+		refresh();
 		writeDecoratorsPreference();
+	}
+
+	/**
+	 * Refresh the current decorator state as a decorator
+	 * has changed. Do not clear the cache as the enablement
+	 * state is the same
+	 */
+	public void refresh() {
+		fireListeners(new LabelProviderChangedEvent(this));
+	}
+
+	/**
+	 * Return whether or not the decorator with decoratorId
+	 * id enabled currently. Return false if the decorator
+	 * is not found.
+	 * @return boolean
+	 */
+	public boolean isEnabled(String decoratorId) {
+		for (int i = 0; i < definitions.length; i++) {
+			if (definitions[i].getId().equals(decoratorId))
+				return definitions[i].isEnabled();
+		}
+		return false;
+	}
+
+	/**
+	 * Return the decorator with id decoratorId. Return
+	 * null if it is not found.
+	 * @return ILabelDecorator
+	 * @param String
+	 * @throws CoreException if an instance of the decorator type
+	 * 	cannot be instanitated
+	 */
+	public ILabelDecorator getDecorator(String decoratorId) throws CoreException {
+		for (int i = 0; i < definitions.length; i++) {
+			if (definitions[i].getId().equals(decoratorId))
+				return definitions[i].getDecorator();
+		}
+		return null;
 	}
 
 	/**
@@ -432,7 +473,7 @@ public class DecoratorManager
 		}
 
 	}
-	
+
 	/**
 	 * Shutdown the decorator manager by disabling all
 	 * of the decorators so that dispose() will be called
