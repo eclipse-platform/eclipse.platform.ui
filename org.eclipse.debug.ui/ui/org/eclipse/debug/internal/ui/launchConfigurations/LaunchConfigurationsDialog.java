@@ -556,6 +556,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		buttonComposite.setLayout(layout);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		buttonComposite.setLayoutData(gd);
+		buttonComposite.setFont(comp.getFont());
 		
 		final Button newButton = SWTUtil.createPushButton(buttonComposite, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ne&w_13"), null); //$NON-NLS-1$
 		setButtonActionNew(new ButtonActionNew(newButton.getText(), newButton));
