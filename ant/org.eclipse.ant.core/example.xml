@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<project name="Example script" default="main" basedir=".">
+  <target name="init">
+  </target>
+
+  <target name="main" depends="init">
+    <incremental project="Test" kind="full"/>
+  </target>
+
+</project>
+

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+  name="Eclipse Core Ant Support"
+  id="org.eclipse.ant.core"
+  version="1.0"
+  class="org.eclipse.ant.core.AntPlugin"
+  vendor-name="IBM">
+
+  <runtime>
+    <library name="ant.jar">
+      <export name="*"/>
+    </library>
+    <library name="antsupport.jar">
+      <export name="*"/>
+    </library>
+  </runtime>
+
+  <requires>
+    <import plugin="org.eclipse.core.resources"/>
+    <import plugin="org.apache.xerces"/>
+  </requires>
+
+  <extension id="antRunner" point="org.eclipse.core.runtime.applications">
+    <application> 
+      <run class="org.eclipse.ant.core.AntRunner">
+      </run>
+    </application>
+  </extension>
+
+  <extension-point name="Ant Object Definitions" id="antObjects"/>
+  <extension-point name="Ant Task Definitions" id="antTasks"/>
+  <extension-point name="Ant Type Definitions" id="antTypes"/>
+
+  <extension point="org.eclipse.ant.core.antTypes">
+    <anttype name="commapatternset" class="org.eclipse.ant.core.CommaPatternSet"/>
+  </extension>
+
+  <extension point="org.eclipse.ant.core.antTasks">
+    <anttask name="incremental" class="org.eclipse.ant.core.IncrementalBuild"/>
+    <anttask name="javac" class="org.eclipse.ant.core.EclipseJavac"/>
+    <anttask name="refreshLocal" class="org.eclipse.ant.core.RefreshLocal"/>
+  </extension>
+
+</plugin>

@@ -1,0 +1,8 @@
+
+
+"example of how to run the AntRunner from the command line.  In code, 
+simply call AntRunner.run() with the command line as you would calling
+Ant.main()."
+
+org.eclipse.core.launcher.Main.main ("-application org.eclipse.ant.core.antrunner -f example.xml ")
+

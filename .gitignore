@@ -1,0 +1,10 @@
+/*/*/bin/
+*~
+*.rej
+*.bak
+*.patch
+javacore.*
+heapdump.*
+core.*
+Snap.*
+
