@@ -104,7 +104,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 */
 	public void replaceAnnotations(Annotation[] annotationsToRemove, Map annotationsToAdd) {
 		try {
-			replaceAnnotations(annotationsToRemove, annotationsToAdd, false);
+			replaceAnnotations(annotationsToRemove, annotationsToAdd, true);
 		} catch (BadLocationException x) {
 		}
 	}
@@ -125,7 +125,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		
 		if (annotationsToRemove != null) {
 			for (int i= 0, length= annotationsToRemove.length; i < length; i++)
-				removeAnnotation(annotationsToRemove[i]);
+				removeAnnotation(annotationsToRemove[i], false);
 		}
 		
 		if (annotationsToAdd != null) {
