@@ -112,7 +112,6 @@ class IndexingOperation {
 		} catch (OperationCanceledException oce) {
 			// Need to perform rollback on the index
 			pm.subTask(HelpBaseResources.getString("Undoing_document_adds"));
-			pm.worked(workTotal);
 			//			if (!index.abortUpdate())
 			//				throw new Exception();
 			throw oce;
@@ -144,7 +143,6 @@ class IndexingOperation {
 			} catch (OperationCanceledException oce) {
 				// Need to perform rollback on the index
 				pm.subTask(HelpBaseResources.getString("Undoing_document_deletions"));
-				pm.worked(workTotal);
 				//			if (!index.abortUpdate())
 				//				throw new Exception();
 				throw oce;
