@@ -440,9 +440,9 @@ public class DebugPlugin extends Plugin {
 		if (fEventListeners != null) {
 			fEventListeners.removeAll();
 		}
+		SourceLookupUtils.shutdown();
 		setDefault(null);
 		ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
-		SourceLookupUtils.shutdown();
 	}
 	
 	/**
