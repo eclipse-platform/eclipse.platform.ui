@@ -59,7 +59,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -497,21 +496,26 @@ public class DebugUITools {
 	 */
 	public static void launch(final ILaunchConfiguration configuration, final String mode) {
 		if (DebugUIPlugin.preLaunchSave()) {
-			UIJob job= new UIJob(MessageFormat.format(DebugUIMessages.getString("DebugUITools.3"), new String[] { configuration.getName() })) { //$NON-NLS-1$
-				public IStatus runInUIThread(IProgressMonitor monitor) {
+			Job job= new Job(MessageFormat.format(DebugUIMessages.getString("DebugUITools.3"), new String[] { configuration.getName() })) { //$NON-NLS-1$
+				public IStatus run(IProgressMonitor monitor) {
 					try {
 						buildAndLaunch(configuration, mode, monitor);
 					} catch (CoreException e) {
-						IStatus status= e.getStatus();
+						final IStatus status= e.getStatus();
 						IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
-						if (handler != null) {
-							LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
-							if (group != null) {
-								openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), status);
-								return Status.OK_STATUS;
-							}
+						if (handler == null) {
+							return status;
 						}
-						return status;
+						final LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
+						if (group == null) {
+							return status;
+						}
+						Runnable r = new Runnable() {
+							public void run() {
+								openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), status);
+							}
+						};
+						DebugUIPlugin.getStandardDisplay().asyncExec(r);
 					}
 					return Status.OK_STATUS;
 				}
