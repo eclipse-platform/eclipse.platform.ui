@@ -42,7 +42,6 @@ public class UpdateManagerAction implements IWorkbenchWindowActionDelegate {
 				: currentWindow;
 
 		try {
-			//IAdaptable input = UpdateUI.getWorkspace();
 			IWorkbenchPage updatePage =
 				window.getWorkbench().showPerspective(
 					UpdatePerspective.PERSPECTIVE_ID,
@@ -55,9 +54,9 @@ public class UpdateManagerAction implements IWorkbenchWindowActionDelegate {
 
 	private void ensureCriticalViewsVisible(IWorkbenchPage page) {
 		ensureViewVisible(page, UpdatePerspective.ID_ITEMS, false);
-		ensureViewVisible(page, UpdatePerspective.ID_CONFIGURATION, true);
 		ensureViewVisible(page, UpdatePerspective.ID_UPDATES, false);
-		ensureViewVisible(page, UpdatePerspective.ID_DETAILS, false);
+		ensureViewVisible(page, UpdatePerspective.ID_DETAILS, true);
+		ensureViewVisible(page, UpdatePerspective.ID_CONFIGURATION, true);
 	}
 
 	private void ensureViewVisible(IWorkbenchPage page, String viewId, boolean top) {
