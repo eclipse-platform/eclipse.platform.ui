@@ -862,7 +862,7 @@ private void updateTimestamps(IResource root) {
 		}
 	};
 	try {
-		root.accept(visitor);
+		root.accept(visitor, IResource.DEPTH_INFINITE, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 	} catch(CoreException e) {
 		// No exception should be thrown.
 	}
