@@ -58,16 +58,34 @@ public class PageStyleManager extends SharedStyleManager {
         root = (IntroModelRoot) page.getParentPage().getParent();
     }
 
-    // Override parent method to include alt styles.
+
+    // Override parent method to include alt-styles. Use implicit keys as well.
     public String getProperty(String key) {
+        return getProperty(key, true);
+    }
+
+    // Override parent method to include alt-styles. If useImplicit is true, we
+    // try to resolve a key without its pageId.
+    private String getProperty(String key, boolean useImplicitKey) {
         Properties aProperties = findPropertyOwner(key);
-        return super.doGetProperty(aProperties, key);
+        String value = super.doGetProperty(aProperties, key);
+        if (useImplicitKey) {
+            if (value == null && page.getId() != null
+                    && key.startsWith(page.getId())) {
+                // did not find the key as-is. Trim pageId and try again.
+                String relativeKey = key.substring(page.getId().length());
+                return getProperty(relativeKey);
+            }
+        }
+        return value;
     }
 
 
     /**
      * Finds a Properties that represents an inherited shared style, or this
-     * current pages style.
+     * current pages style. If the given key is not found, the pageId is trimmed
+     * from the begining of the key, and the key is looked up again. If key does
+     * not start with a pageId, lookup only the key as is.
      * 
      * @param key
      * @return
@@ -309,7 +327,7 @@ public class PageStyleManager extends SharedStyleManager {
         String key = page.getId() + ".show-link-description"; //$NON-NLS-1$
         String value = getProperty(key);
         if (value == null) {
-            key = "show-link-description";
+            key = ".show-link-description";
             value = getProperty(key);
         }
         if (value == null)
@@ -321,7 +339,7 @@ public class PageStyleManager extends SharedStyleManager {
         String key = page.getId() + ".show-home-page-navigation"; //$NON-NLS-1$
         String value = getProperty(key);
         if (value == null) {
-            key = "show-home-page-navigation";
+            key = ".show-home-page-navigation";
             value = getProperty(key);
         }
         if (value == null)
@@ -375,7 +393,17 @@ public class PageStyleManager extends SharedStyleManager {
      */
     public Image getImage(IntroLink link, String qualifier, String defaultKey) {
         String key = createImageKey(page, link, qualifier);
+        // special case where we have to handle this because extended code does
+        // not go through getProperty() in this method.
+        String value = getProperty(key, false);
+        if (value == null && page.getId() != null
+                && key.startsWith(page.getId()))
+            // did not use the key as-is. Trim pageId and try again.
+            key = key.substring(page.getId().length());
+
+        // pageKey can not become an implicit key.
         String pageKey = createImageKey(page, null, qualifier);
+
         return getImage(key, pageKey, defaultKey);
     }
 

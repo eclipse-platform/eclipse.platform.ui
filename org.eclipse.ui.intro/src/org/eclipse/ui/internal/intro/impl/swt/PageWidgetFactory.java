@@ -194,6 +194,7 @@ public class PageWidgetFactory {
         boolean showLinkDescription = styleManager.getShowLinkDescription();
         Image linkImage = styleManager.getImage(link, "link-icon", //$NON-NLS-1$
                 ImageUtil.DEFAULT_LINK);
+
         if (showLinkDescription && link.getText() != null) {
             Composite container = toolkit.createComposite(parent);
             TableWrapLayout layout = new TableWrapLayout();
@@ -227,6 +228,8 @@ public class PageWidgetFactory {
             ImageHyperlink imageLink = toolkit.createImageHyperlink(parent,
                     SWT.WRAP | SWT.CENTER);
             imageLink.setImage(linkImage);
+            imageLink.setHoverImage(styleManager.getImage(link, "hover-icon",
+                    null));
             TableWrapData td = new TableWrapData();
             td.grabHorizontal = true;
             imageLink.setLayoutData(td);
@@ -262,7 +265,6 @@ public class PageWidgetFactory {
                     fg);
         else
             return createText(parent, text.getText(), fg);
-
     }
 
     private Control createFormText(Composite parent, String text, Color fg) {
