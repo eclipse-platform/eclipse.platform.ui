@@ -950,7 +950,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
     private String getPerspectiveId(IPerspectiveDescriptor perspective) {
         if (perspective == null) {
-            return "null";
+            return "null"; //$NON-NLS-1$
         }
         
         return perspective.getId();
