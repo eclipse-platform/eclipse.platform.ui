@@ -547,8 +547,9 @@ public class PreferenceConverter {
 	 * 
 	 * @param fontData the array of FontData objects
 	 * @return the stored representation of the FontData objects
+	 * @since 3.0
 	 */
-	private static String getStoredRepresentation(FontData[] fontData) {
+	public static String getStoredRepresentation(FontData[] fontData) {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < fontData.length; i++) {
 			if (fontData[i] != null) {
