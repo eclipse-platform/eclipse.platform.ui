@@ -28,7 +28,7 @@ the <tt>IDiffContainer</tt> interface and leafs the <tt>IDiffElement</tt>
 interface.
 <p>The typical steps to compare hierarchically structured data and to display
 the differences would be to:
-<blockquote>
+<ul>
 <li>
 map the input data into a tree of <tt>IStructureComparator</tt> and <tt>IStreamContentAccessor</tt>s,</li>
 
@@ -37,7 +37,8 @@ perform the compare operation by means of the <tt>Differencer</tt>, and</li>
 
 <li>
 feed the differencing result into the <tt>DiffTreeViewer</tt>.</li>
-</blockquote>
+
+</ul>
 The <tt>StructureDiffViewer</tt> is a specialized <tt>DiffTreeViewer</tt>
 that automates the three steps from above. It takes a single input object
 of type <tt>ICompareInput</tt> from which it retrieves the two or three
