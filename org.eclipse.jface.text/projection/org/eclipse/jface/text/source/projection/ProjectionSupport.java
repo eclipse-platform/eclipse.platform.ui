@@ -23,6 +23,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter;
 import org.eclipse.jface.text.source.IAnnotationAccess;
@@ -125,7 +126,7 @@ public class ProjectionSupport {
 	private IAnnotationAccess fAnnotationAccess;
 	private ISharedTextColors fSharedTextColors;
 	private List fSummarizableTypes;
-	private IAnnotationHover fAnnotationHover;
+	private IInformationControlCreator fInformationControlCreator;
 	private ProjectionListener fProjectionListener;
 	private ProjectionAnnotationsPainter fPainter;
 	private ProjectionRulerColumn fColumn;
@@ -152,8 +153,8 @@ public class ProjectionSupport {
 			fSummarizableTypes= null;
 	}
 	
-	public void setProjectionAnnotationHover(IAnnotationHover hover) {
-		fAnnotationHover= hover;
+	public void setHoverControlCreator(IInformationControlCreator creator) {
+		fInformationControlCreator= creator;
 	}
 		
 	public void install() {
@@ -184,7 +185,7 @@ public class ProjectionSupport {
 		if (fColumn == null) {
 			fColumn= new ProjectionRulerColumn(fViewer.getProjectionAnnotationModel(), 9, fAnnotationAccess);
 			fColumn.addAnnotationType(ProjectionAnnotation.TYPE);
-			fColumn.setHover(getProjectionAnnotationHover());
+			fColumn.setHover(createProjectionAnnotationHover());
 		}
 		fViewer.addVerticalRulerColumn(fColumn);
 	}
@@ -212,10 +213,10 @@ public class ProjectionSupport {
 		return summary;
 	}
 	
-	private IAnnotationHover getProjectionAnnotationHover() {
-		if (fAnnotationHover == null)
-			return new ProjectionAnnotationHover();
-		return fAnnotationHover;
+	private IAnnotationHover createProjectionAnnotationHover() {
+		ProjectionAnnotationHover hover= new ProjectionAnnotationHover();
+		hover.setInformationControlCreator(fInformationControlCreator);
+		return hover;
 	}
 
 	/**
