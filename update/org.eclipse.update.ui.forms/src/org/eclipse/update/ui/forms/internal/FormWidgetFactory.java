@@ -38,7 +38,7 @@ public class FormWidgetFactory {
 			Control[] children = composite.getChildren();
 			for (int i = 0; i < children.length; i++) {
 				Control c = children[i];
-				if (c.isEnabled() == false && !(c instanceof CCombo))
+				if (c.getEnabled() == false && !(c instanceof CCombo))
 					continue;
 				if (c instanceof SelectableFormLabel)
 					continue;
