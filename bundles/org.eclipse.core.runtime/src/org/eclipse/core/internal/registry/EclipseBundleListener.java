@@ -104,6 +104,9 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 		// bail out if system bundle
 		if (bundle.getBundleId() == 0)
 			return null;
+		// bail out if the bundle does not have a symbolic name
+		if (bundle.getSymbolicName() == null)
+			return null;
 		InputStream is = null;
 		String manifestType = null;
 		boolean isFragment = InternalPlatform.getDefault().isFragment(bundle);

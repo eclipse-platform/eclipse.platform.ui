@@ -20,9 +20,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class RegistryCacheTest extends EclipseWorkspaceTest {
-	private static final String BUNDLE_B_WITH_EXTENSION = "<plugin id=\"bundleB\"><extension point=\"bundleA.xp1\"><cfg1 property=\"value\"><cfg11/></cfg1><cfg2/></extension></plugin>";
-	private static final String BUNDLE_A_WITH_EXTENSION_POINT = "<plugin id=\"bundleA\"><extension-point id=\"xp1\"/></plugin>";
-	private static final String BUNDLE_A_WITH_EXTENSION_AND_EXTENSION_POINT = "<plugin id=\"bundleA\"><extension-point id=\"xp1\"/><extension point=\"bundleA.xp1\"><cfg1 property=\"value\"><cfg11/></cfg1><cfg2/></extension></plugin>";
+	private static final String BUNDLE_B_WITH_EXTENSION = "<plugin><extension point=\"bundleA.xp1\"><cfg1 property=\"value\"><cfg11/></cfg1><cfg2/></extension></plugin>";
+	private static final String BUNDLE_A_WITH_EXTENSION_POINT = "<plugin><extension-point id=\"xp1\"/></plugin>";
+	private static final String BUNDLE_A_WITH_EXTENSION_AND_EXTENSION_POINT = "<plugin><extension-point id=\"xp1\"/><extension point=\"bundleA.xp1\"><cfg1 property=\"value\"><cfg11/></cfg1><cfg2/></extension></plugin>";
 	protected ExtensionRegistry registry;
 
 	public RegistryCacheTest(String name) {
@@ -38,7 +38,7 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 	 */
 	public void testSingleBundle() throws Exception {
 		String manifest = BUNDLE_A_WITH_EXTENSION_AND_EXTENSION_POINT;
-		BundleModel bundle = parseManifest(manifest);
+		BundleModel bundle = parseManifest("bundleA", manifest);
 		registry.add(bundle);
 		File cacheFile = getRandomLocation().toFile();
 		try {
@@ -61,8 +61,8 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 	public void testTwoBundles() throws Exception {
 		String bundle1Manifest = BUNDLE_A_WITH_EXTENSION_POINT;
 		String bundle2Manifest = BUNDLE_B_WITH_EXTENSION;
-		BundleModel bundle1 = parseManifest(bundle1Manifest);
-		BundleModel bundle2 = parseManifest(bundle2Manifest);
+		BundleModel bundle1 = parseManifest("bundleA", bundle1Manifest);
+		BundleModel bundle2 = parseManifest("bundleB", bundle2Manifest);
 		registry.add(bundle1);
 		registry.add(bundle2);
 		File cacheFile = getRandomLocation().toFile();
@@ -76,13 +76,15 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 		}
 	}
 
-	private BundleModel parseManifest(Reader input) throws IOException, SAXException {
+	private BundleModel parseManifest(String symbolicName, Reader input) throws IOException, SAXException {
 		ExtensionsParser parser = new ExtensionsParser(new Factory(new MultiStatus(IPlatform.PI_RUNTIME, 0, "", null)));
-		return parser.parseManifest(new InputSource(input), ExtensionsParser.PLUGIN);
+		BundleModel result = parser.parseManifest(new InputSource(input), ExtensionsParser.PLUGIN);
+		result.setUniqueIdentifier(symbolicName);
+		return result;
 	}
 
-	private BundleModel parseManifest(String manifest) throws IOException, SAXException {
-		return parseManifest(new StringReader(manifest));
+	private BundleModel parseManifest(String symbolicName, String manifest) throws IOException, SAXException {
+		return parseManifest(symbolicName, new StringReader(manifest));
 	}
 
 	private void assertEquals(ExtensionRegistry reg1, ExtensionRegistry reg2) {
