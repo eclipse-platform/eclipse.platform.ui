@@ -12,6 +12,8 @@ package org.eclipse.help.ui.internal.views;
 
 import java.util.*;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.appserver.WebappManager;
 import org.eclipse.help.internal.base.BaseHelpSystem;
@@ -463,9 +465,14 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	}
 
 	private void ensureHelpIndexed() {
-		// make sure we have the index
-		IndexerJob indexerJob = new IndexerJob();
-		indexerJob.schedule();
+		// make sure we have the index but
+		// don't schedule the indexer job if one is
+		// already running
+		Job[] jobs = Platform.getJobManager().find(IndexerJob.FAMILY);
+		if (jobs.length==0) {
+			IndexerJob indexerJob = new IndexerJob();
+			indexerJob.schedule();
+		}
 	}
 
 	private void definePages() {
