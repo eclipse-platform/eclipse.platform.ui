@@ -12,7 +12,9 @@ package org.eclipse.ui.internal;
 
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ViewForm;
@@ -56,9 +58,7 @@ import org.eclipse.ui.internal.misc.UIStats;
 public abstract class PartPane extends LayoutPart
 	implements Listener
 {
-	
 	public static final String PROP_ZOOMED = "zoomed"; //$NON-NLS-1$
-
 	private boolean isZoomed = false;
 	private MenuManager paneMenuManager;
 	protected IWorkbenchPartReference partReference;
@@ -405,7 +405,6 @@ public void setZoomed(boolean isZoomed) {
 			((IPropertyChangeListener)listeners[i]).propertyChange(event);
 	}
 }
-
 /**
  * Informs the pane that it's window shell has
  * been activated.
@@ -537,6 +536,38 @@ protected void doDock() {
  * @return IJobChangeListener or <code>null</code>.
  */
 public IJobChangeListener getJobChangeListener(){
-	return null;
+	return new JobChangeAdapter(){
+		
+		/**
+		 * Get the tab folder for the receiver if it is contained
+		 * in one. Otherwise return null.
+		 * @return PartTabFolder or null.
+		 */
+		private PartTabFolder getFolder(){
+			ILayoutContainer container = getContainer();
+			if(container instanceof PartTabFolder)
+				return (PartTabFolder) container;
+			else
+				return null;
+			
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+		 */
+		public void done(IJobChangeEvent event) {
+			PartTabFolder folder = getFolder();
+			if(folder != null)
+				folder.clearBusy(PartPane.this);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#running(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+		 */
+		public void running(IJobChangeEvent event) {
+			PartTabFolder folder = getFolder();
+			if(folder != null)
+				folder.showBusy(PartPane.this);
+		}
+	};
 }
 }

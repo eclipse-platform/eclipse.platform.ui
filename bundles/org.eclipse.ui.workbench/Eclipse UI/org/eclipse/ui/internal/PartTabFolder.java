@@ -13,22 +13,37 @@ package org.eclipse.ui.internal;
  *      - Fix for bug 10025 - Resizing views should not use height ratios
 **********************************************************************/
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.window.Window;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 import org.eclipse.ui.internal.intro.IIntroConstants;
+import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 
 public class PartTabFolder extends LayoutPart
@@ -869,4 +884,45 @@ private void setSelection(LayoutPart part) {
 public LayoutPart targetPartFor(LayoutPart dragSource) {
 	return this;
 }
+
+/**
+ * Replace the image on the tab with the supplied image.
+ * @param part PartPane
+ * @param image Image
+ */
+private void updateTab(PartPane part, final Image image){
+	final CTabItem item = getTab(part);
+	if(item != null){
+		UIJob updateJob = new UIJob("Tab Update"){ //$NON-NLS-1$
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				item.setImage(image);
+				return Status.OK_STATUS;
+			}
+		};
+		updateJob.setSystem(true);
+		updateJob.schedule();
+	}
+}
+	
+/**
+ * Indicate busy state in the supplied partPane.
+ * @param partPane PartPane.
+ */
+public void showBusy(PartPane partPane) {
+	updateTab(
+			partPane,
+			JFaceResources.getImage(ProgressManager.BUSY_OVERLAY_KEY));
+}
+
+/**
+ * Restore the part to the default.
+ * @param partPane PartPane
+ */
+public void clearBusy(PartPane partPane) {
+	updateTab(partPane,partPane.getPartReference().getTitleImage());
+}
+
 }
