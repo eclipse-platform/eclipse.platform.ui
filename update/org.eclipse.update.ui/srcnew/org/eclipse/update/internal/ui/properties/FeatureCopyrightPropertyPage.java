@@ -5,23 +5,16 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchPropertyPage;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IURLEntry;
+import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.model.IFeatureAdapter;
 import org.eclipse.update.internal.ui.parts.SWTUtil;
+import org.eclipse.update.internal.ui.views.DetailsView;
 
 /**
  * @see PropertyPage
@@ -67,7 +60,8 @@ public class FeatureCopyrightPropertyPage extends PropertyPage implements IWorkb
 					SWTUtil.setButtonDimensionHint(button);
 					button.addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
-							Program.launch(url.getProtocol() + ":" + url.getFile());
+							String urlName = url.getProtocol() + ":" + url.getFile();
+							DetailsView.showURL(urlName, false);
 						}
 					});
 				}

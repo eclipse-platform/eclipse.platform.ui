@@ -9,31 +9,30 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
-import java.net.*;
-import java.util.*;
+import java.net.URL;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.program.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.operations.*;
+import org.eclipse.update.internal.operations.UpdateManager;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.model.SimpleFeatureAdapter;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.views.*;
 import org.eclipse.update.operations.*;
-import org.eclipse.update.search.*;
+import org.eclipse.update.search.IUpdateSearchResultCollector;
 
 public class UnifiedReviewPage
 	extends UnifiedBannerPage
@@ -556,7 +555,8 @@ public class UnifiedReviewPage
 		BusyIndicator
 			.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
-				Program.launch(getMoreInfoURL(selectedJob));
+				String urlName = getMoreInfoURL(selectedJob);
+				DetailsView.showURL(urlName, false);
 			}
 		});
 	}
