@@ -41,13 +41,6 @@
             class="org.eclipse.ui.forms.examples.internal.rcp.SimpleFormEditor"
             id="org.eclipse.ui.forms.examples.base-editor">
       </editor>
-      <editor
-            name="Wizard editor"
-            default="true"
-            icon="icons/file_obj.gif"
-            class="org.eclipse.ui.forms.examples.wizards.WizardFormEditorWithOutline"
-            id="org.eclipse.ui.forms.examples.wizard-editor">
-      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -66,30 +59,6 @@
                class="org.eclipse.ui.forms.examples.internal.rcp.OpenSimpleFormEditorAction"
                menubarPath="org.eclipse.ui.forms.examples.menu/group"
                id="org.eclipse.ui.forms.examples.simple">
-         </action>
-         <action
-               label="Form Editor Wizard"
-               class="org.eclipse.ui.forms.examples.wizards.OpenEditorWizardAction"
-               menubarPath="org.eclipse.ui.forms.examples.menu/group"
-               id="org.eclipse.ui.forms.examples.editor-wizard">
-         </action>
-         <action
-               label="Assisted Wizard"
-               class="org.eclipse.ui.forms.examples.wizards.OpenAssistedWizardAction"
-               menubarPath="org.eclipse.ui.forms.examples.menu/group"
-               id="org.eclipse.ui.forms.examples.assisted-wizard">
-         </action>
-         <action
-               label="Sample Assisted Wizard"
-               class="org.eclipse.ui.forms.examples.wizards.OpenSampleAssistedWizardAction"
-               menubarPath="org.eclipse.ui.forms.examples.menu/group"
-               id="org.eclipse.ui.forms.examples.sample-assisted-wizard">
-         </action>
-        <action
-               label="Existing Wizard"
-               class="org.eclipse.ui.forms.examples.wizards.OpenExistingEditorWizardAction"
-               menubarPath="org.eclipse.ui.forms.examples.menu/group"
-               id="org.eclipse.ui.forms.examples.existing-editor-wizard">
          </action>
       </actionSet>
    </extension>
@@ -118,25 +87,5 @@
                id="org.eclipse.ui.forms.examples.views.FormView">
          </view>
       </perspectiveExtension>
-   </extension>
-   <extension
-         point="org.eclipse.core.runtime.adapters">
-      <factory
-            class="org.eclipse.help.ui.internal.views.MarkerViewAdapterFactory"
-            adaptableType="org.eclipse.ui.views.markers.internal.MarkerView">
-         <adapter type="org.eclipse.help.IContextProvider"/>
-      </factory>
-     <!--
-      <factory
-            class="org.eclipse.help.ui.internal.views.JavaEditorAdapterFactory"
-            adaptableType="org.eclipse.jdt.internal.ui.javaeditor.JavaEditor">
-         <adapter type="org.eclipse.help.IContextProvider"/>
-      </factory>
-      <factory
-            class="org.eclipse.help.ui.internal.views.JavaViewAdapterFactory:package_view_context"
-            adaptableType="org.eclipse.jdt.internal.ui.packageview.PackageExplorerPart">
-         <adapter type="org.eclipse.help.IContextProvider"/>
-      </factory>
-      -->
    </extension>
 </plugin>
