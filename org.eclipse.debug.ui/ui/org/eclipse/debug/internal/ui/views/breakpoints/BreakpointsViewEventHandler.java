@@ -168,9 +168,9 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 									boolean enabled= breakpoint.isEnabled();
 									if (viewer.getChecked(breakpoint) != enabled) {
 										viewer.setChecked(breakpoint, breakpoint.isEnabled());
-										viewer.update(breakpoint, null);	
+										fView.updateParents(breakpoint, enabled);
 									}
-									fView.updateParents(breakpoint, enabled);
+									viewer.update(breakpoint, null);
 								} catch (CoreException e) {
 									DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIViewsMessages.getString("BreakpointsViewEventHandler.1"), DebugUIViewsMessages.getString("BreakpointsViewEventHandler.2"), e); //$NON-NLS-1$ //$NON-NLS-2$
 									DebugUIPlugin.log(e);
