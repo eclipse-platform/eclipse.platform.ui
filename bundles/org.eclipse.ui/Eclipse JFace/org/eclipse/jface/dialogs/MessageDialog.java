@@ -192,6 +192,7 @@ protected Control createDialogArea(Composite parent) {
 	layout.marginWidth = 0;
 	composite.setLayout(layout);
 	composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+	composite.setFont(parent.getFont());
 	
 	// create message area
 	createMessageArea(composite);
@@ -245,6 +246,7 @@ private Control createMessageArea(Composite parent) {
 			GridData.VERTICAL_ALIGN_CENTER);
 		data.widthHint = getMinimumMessageWidth();
 		label.setLayoutData(data);
+		label.setFont(parent.getFont());
 	}
 	return composite;
 }

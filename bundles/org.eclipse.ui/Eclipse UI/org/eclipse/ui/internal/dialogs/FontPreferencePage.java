@@ -282,10 +282,6 @@ public class FontPreferencePage
 			JFaceResources.BANNER_FONT);
 
 		namesToIds.put(
-			WorkbenchMessages.getString("FontsPreference.DialogFont"),
-			JFaceResources.DIALOG_FONT);
-
-		namesToIds.put(
 			WorkbenchMessages.getString("FontsPreference.TextFont"),
 			JFaceResources.TEXT_FONT);
 
@@ -299,10 +295,6 @@ public class FontPreferencePage
 		idsToFontData.put(
 			JFaceResources.BANNER_FONT,
 			(JFaceResources.getBannerFont().getFontData())[0]);
-
-		idsToFontData.put(
-			JFaceResources.DIALOG_FONT,
-			(JFaceResources.getDialogFont().getFontData())[0]);
 
 		idsToFontData.put(
 			JFaceResources.TEXT_FONT,

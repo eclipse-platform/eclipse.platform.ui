@@ -157,6 +157,7 @@ protected Control createDialogArea(Composite parent) {
 	//Add in a label for status messages if required
 	statusMessageLabel = new Label(composite, SWT.NONE);
 	statusMessageLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
+	statusMessageLabel.setFont(parent.getFont());
 
 	return composite;
 }

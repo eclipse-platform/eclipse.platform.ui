@@ -112,6 +112,7 @@ protected Control createDialogArea(Composite parent) {
 	// description
 	Label descLabel = new Label(composite, SWT.WRAP);
 	descLabel.setText(WorkbenchMessages.format("ActionSetSelection.selectLabel", new Object[] {perspective.getDesc().getLabel()})); //$NON-NLS-1$
+	descLabel.setFont(parent.getFont());
 	data = new GridData(GridData.FILL_HORIZONTAL);
 	data.horizontalSpan = 2;
 	descLabel.setLayoutData(data);
@@ -129,6 +130,7 @@ protected Control createDialogArea(Composite parent) {
 	// ...second the label
 	Label selectionLabel = new Label(actionSetGroup,SWT.NONE);
 	selectionLabel.setText(WorkbenchMessages.getString("ActionSetSelection.available")); //$NON-NLS-1$
+	selectionLabel.setFont(parent.getFont());
 
 	// ...third the checkbox list
 	actionSetViewer = new CheckboxTreeViewer(actionSetGroup, SWT.BORDER);

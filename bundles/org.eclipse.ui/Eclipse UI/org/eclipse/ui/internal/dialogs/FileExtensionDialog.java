@@ -58,12 +58,14 @@ protected Control createDialogArea(Composite parent) {
 	GridData data = new GridData();
 	data.horizontalSpan = 2;
 	textLabel.setLayoutData(data);
+	textLabel.setFont(parent.getFont());
 
 	Label label = new Label(contents, SWT.LEFT);
 	label.setText(WorkbenchMessages.getString("FileExtension.fileTypeLabel")); //$NON-NLS-1$
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	label.setLayoutData(data);
+	label.setFont(parent.getFont());
 	
 	filenameField = new Text(contents, SWT.SINGLE | SWT.BORDER);
 	filenameField.addListener(SWT.Modify, this);

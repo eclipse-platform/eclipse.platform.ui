@@ -138,6 +138,7 @@ protected Button createButton(Composite parent, int id, String label, boolean de
 		}
 		button.setFocus();
 	}
+	button.setFont(parent.getFont());
 	return button;
 }
 /**

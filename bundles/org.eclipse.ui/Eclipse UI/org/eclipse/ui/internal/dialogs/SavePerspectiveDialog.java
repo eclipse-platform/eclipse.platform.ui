@@ -77,7 +77,8 @@ protected Control createDialogArea(Composite parent) {
 	// description
 	Label descLabel = new Label(composite, SWT.WRAP);
 	descLabel.setText(WorkbenchMessages.getString("SavePerspectiveDialog.description")); //$NON-NLS-1$
-
+	descLabel.setFont(parent.getFont());
+	
 	// Spacer.
 	Label label = new Label(composite, SWT.NONE);
 	GridData data = new GridData();
@@ -96,6 +97,7 @@ protected Control createDialogArea(Composite parent) {
 	label = new Label(nameGroup, SWT.NONE);
 	label.setText(WorkbenchMessages.getString("SavePerspective.name")); //$NON-NLS-1$
 	label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+	label.setFont(parent.getFont());
 
 	// Add text field.
 	text = new Text(nameGroup, SWT.BORDER);
@@ -114,6 +116,7 @@ protected Control createDialogArea(Composite parent) {
 	// Another label.
 	label = new Label(composite, SWT.NONE);
 	label.setText(WorkbenchMessages.getString("SavePerspective.existing")); //$NON-NLS-1$
+	label.setFont(parent.getFont());
 
 	// Add perspective list.
 	list = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);

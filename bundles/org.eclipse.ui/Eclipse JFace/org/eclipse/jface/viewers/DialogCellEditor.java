@@ -118,6 +118,7 @@ protected Button createButton(Composite parent) {
  */
 protected Control createContents(Composite cell) {
 	defaultLabel = new Label(cell, SWT.LEFT);
+	defaultLabel.setFont(cell.getFont());
 	defaultLabel.setBackground(cell.getBackground());
 	return defaultLabel;
 }
@@ -126,9 +127,11 @@ protected Control createContents(Composite cell) {
  */
 protected Control createControl(Composite parent) {
 
+	Font font = parent.getFont();
 	Color bg = parent.getBackground();
 
 	editor = new Composite(parent, SWT.NONE);
+	editor.setFont(font);
 	editor.setBackground(bg);
 	editor.setLayout(new DialogCellLayout());
 
@@ -136,6 +139,7 @@ protected Control createControl(Composite parent) {
 	updateContents(value);
 	
 	button = createButton(editor);
+	button.setFont(font);
 
 	button.addKeyListener(new KeyAdapter() {
 		public void keyReleased(KeyEvent e) {

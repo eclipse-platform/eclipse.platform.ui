@@ -71,6 +71,7 @@ public ContainerSelectionGroup (Composite parent, Listener listener, boolean all
 	super (parent, SWT.NONE);
 	this.listener = listener;
 	this.allowNewContainerName = allowNewContainerName;
+	this.setFont(parent.getFont());
 	if (message != null)
 		createContents(message);
 	else if (allowNewContainerName)
@@ -112,6 +113,7 @@ public void createContents(String message) {
 
 	Label label = new Label(this,SWT.WRAP);
 	label.setText(message);
+	label.setFont(this.getFont());
 
 	if (allowNewContainerName) {
 		containerNameField = new Text(this, SWT.SINGLE | SWT.BORDER);

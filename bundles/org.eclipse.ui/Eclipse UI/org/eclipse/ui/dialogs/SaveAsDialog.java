@@ -89,6 +89,7 @@ protected Control createDialogArea(Composite parent) {
 	layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 	composite.setLayout(layout);
 	composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+	composite.setFont(parentComposite.getFont());
 
 	Listener listener = new Listener() {
 		public void handleEvent(Event event) {

@@ -104,6 +104,7 @@ protected Control createDialogArea(Composite parent) {
 	data.verticalAlignment = GridData.BEGINNING;
 	label.setText(productText());
 	label.setLayoutData(data);
+	label.setFont(parent.getFont());
 
 	Label spacer = new Label(topContainer, SWT.LEFT);
 	data = new GridData();
