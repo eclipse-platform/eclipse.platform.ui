@@ -18,27 +18,24 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.tests.harness.PerformanceTestRunner;
-import org.eclipse.core.tests.resources.OldCorePerformanceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
  * Basic performance calculations for standard workspace operations.
  */
-public class WorkspacePerformanceTest extends OldCorePerformanceTest {
+public class WorkspacePerformanceTest extends ResourceTest {
 	private static final String chars = "abcdefghijklmnopqrstuvwxyz";
-	private static final String COPYING_TIMER = "COPYING_TIMER";
-	private static final String CREATING_TIMER = "CREATING_TIMER";
-	private static final String DELETING_TIMER = "DELETING_TIMER";
-	private static final String MOVING_TIMER = "MOVING_TIMER";
-
-	private static final String OVERALL_TIMER = "OVERALL_TIMER";
+	static final int REPEATS = 5;
 	private static final int TOTAL_RESOURCES = 10000;
 	private static final int TREE_WIDTH = 10;
+
+	private final Random random = new Random();
+	IFolder testFolder;
+	IProject testProject;
 
 	public static Test suite() {
 		return new TestSuite(WorkspacePerformanceTest.class);
 	}
-
-	private final Random random = new Random();
 
 	public WorkspacePerformanceTest() {
 		super();
@@ -48,10 +45,31 @@ public class WorkspacePerformanceTest extends OldCorePerformanceTest {
 		super(name);
 	}
 
-	private IFolder copyFolder(IFolder source) throws CoreException {
-		IFolder destination = source.getProject().getFolder("CopyDestination");
-		source.copy(destination.getFullPath(), IResource.NONE, getMonitor());
+	IFolder copyFolder() {
+		IFolder destination = testProject.getFolder("CopyDestination");
+		try {
+			testFolder.copy(destination.getFullPath(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("Failed to copy project in performance test", e);
+		}
 		return destination;
+	}
+
+	/**
+	 * Creates a project and fills it with contents
+	 */
+	void createAndPopulateProject() {
+		try {
+			getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					testProject.create(getMonitor());
+					testProject.open(getMonitor());
+					createFolder(testFolder);
+				}
+			}, getMonitor());
+		} catch (CoreException e) {
+			fail("Failed to create project in performance test", e);
+		}
 	}
 
 	private byte[] createBytes(int length) {
@@ -65,7 +83,6 @@ public class WorkspacePerformanceTest extends OldCorePerformanceTest {
 	 */
 	IFolder createFolder(IFolder topFolder) throws CoreException {
 		topFolder.create(IResource.NONE, true, getMonitor());
-
 		//tree depth is log of total resource count with the width as the log base
 		int depth = (int) (Math.log(TOTAL_RESOURCES) / Math.log(TREE_WIDTH));
 		recursiveCreateChildren(topFolder, depth - 1);
@@ -81,58 +98,13 @@ public class WorkspacePerformanceTest extends OldCorePerformanceTest {
 		return buf.toString();
 	}
 
-	/**
-	 * Obsolete
-	 */
-	public void doTestWorkspaceOperations() throws CoreException {
-		startTimer(OVERALL_TIMER);
-		final IProject project = getWorkspace().getRoot().getProject("Project");
-		project.create(getMonitor());
-		project.open(getMonitor());
-		final IFolder topFolder = project.getFolder("TopFolder");
-
-		//create the project contents
-		getWorkspace().run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				startTimer(CREATING_TIMER);
-				createFolder(topFolder);
-				stopTimer(CREATING_TIMER);
-			}
-		}, getMonitor());
-
-		//copy the project contents		
-		getWorkspace().run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				startTimer(COPYING_TIMER);
-				copyFolder(topFolder);
-				stopTimer(COPYING_TIMER);
-			}
-		}, getMonitor());
-
-		//move the project contents
-		getWorkspace().run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				startTimer(MOVING_TIMER);
-				moveFolder(topFolder);
-				stopTimer(MOVING_TIMER);
-			}
-		}, getMonitor());
-
-		//delete the project contents
-		getWorkspace().run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				startTimer(DELETING_TIMER);
-				project.delete(IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
-				stopTimer(DELETING_TIMER);
-			}
-		}, getMonitor());
-
-		stopTimer(OVERALL_TIMER);
-	}
-
-	private IFolder moveFolder(IFolder source) throws CoreException {
-		IFolder destination = source.getProject().getFolder("MoveDestination");
-		source.move(destination.getFullPath(), IResource.NONE, getMonitor());
+	IFolder moveFolder() {
+		IFolder destination = testFolder.getProject().getFolder("MoveDestination");
+		try {
+			testFolder.move(destination.getFullPath(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("Failed to move folder during performance test", e);
+		}
 		return destination;
 	}
 
@@ -155,28 +127,90 @@ public class WorkspacePerformanceTest extends OldCorePerformanceTest {
 		}
 	}
 
-	public void testCreateWorkspace() {
-		final IProject project = getWorkspace().getRoot().getProject("Project");
-		final IFolder topFolder = project.getFolder("TopFolder");
-		//create the project contents
+	protected void setUp() throws Exception {
+		testProject = getWorkspace().getRoot().getProject("Project");
+		testFolder = testProject.getFolder("TopFolder");
+	}
+
+	/**
+	 * Benchmark test of creating a project and populating it with folders and files.
+	 */
+	public void testCreateResources() {
 		new PerformanceTestRunner() {
-			protected void test() {
-				try {
-					getWorkspace().run(new IWorkspaceRunnable() {
-						public void run(IProgressMonitor monitor) throws CoreException {
-							project.create(getMonitor());
-							project.open(getMonitor());
-							createFolder(topFolder);
-						}
-					}, getMonitor());
-				} catch (CoreException e) {
-					fail("4.99", e);
-				}
+			protected void setUp() {
+				waitForBackgroundActivity();
 			}
 
 			protected void tearDown() throws CoreException {
-				project.delete(IResource.FORCE, null);
+				testProject.delete(IResource.FORCE, null);
 			}
-		}.run(this, 10, 1);
+
+			protected void test() {
+				createAndPopulateProject();
+			}
+		}.run(this, REPEATS, 1);
+	}
+
+	public void testDeleteProject() {
+		//create the project contents
+		new PerformanceTestRunner() {
+			protected void setUp() {
+				createAndPopulateProject();
+				waitForBackgroundActivity();
+			}
+
+			protected void test() {
+				try {
+					testProject.delete(IResource.NONE, null);
+				} catch (CoreException e) {
+					fail("Failed to delete project during performance test", e);
+				}
+			}
+		}.run(this, REPEATS, 1);
+	}
+
+	public void testFolderCopy() {
+		//create the project contents
+		new PerformanceTestRunner() {
+			protected void setUp() {
+				createAndPopulateProject();
+				waitForBackgroundActivity();
+			}
+
+			protected void tearDown() throws CoreException {
+				testProject.delete(IResource.FORCE, null);
+			}
+
+			protected void test() {
+				copyFolder();
+			}
+		}.run(this, REPEATS, 1);
+	}
+
+	public void testFolderMove() {
+		//create the project contents
+		new PerformanceTestRunner() {
+			protected void setUp() {
+				createAndPopulateProject();
+				waitForBackgroundActivity();
+			}
+
+			protected void tearDown() throws CoreException {
+				testProject.delete(IResource.FORCE, null);
+			}
+
+			protected void test() {
+				moveFolder();
+			}
+		}.run(this, REPEATS, 1);
+	}
+
+	/**
+	 * Waits until background activity settles down before running a performance test.
+	 *
+	 */
+	public void waitForBackgroundActivity() {
+		waitForRefresh();
+		waitForBuild();
 	}
 }
