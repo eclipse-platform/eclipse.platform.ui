@@ -27,7 +27,7 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
-class Search extends Object {
+public class Search extends Object {
 	private String fPageId;
 	private String fSingularLabel;
 	private String fPluralLabelPattern;
@@ -154,7 +154,7 @@ class Search extends Object {
 		return fGroupByKeyComputer;
 	}
 
-	IRunnableWithProgress getOperation() {
+	public IRunnableWithProgress getOperation() {
 		return fOperation;
 	}
 

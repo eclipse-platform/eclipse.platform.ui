@@ -18,7 +18,7 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 /**
  * Represents an entry in the search result view
  */
-class SearchResultViewEntry implements ISearchResultViewEntry {
+public class SearchResultViewEntry implements ISearchResultViewEntry {
 
 	private Object fGroupByKey= null;
 	private IResource fResource= null;
@@ -31,6 +31,8 @@ class SearchResultViewEntry implements ISearchResultViewEntry {
 	public SearchResultViewEntry(Object groupByKey, IResource resource) {
 		fGroupByKey= groupByKey;
 		fResource= resource;
+		if (fResource != null)
+			fModificationStamp= fResource.getModificationStamp();
 	}
 	
 	//---- Accessors ------------------------------------------------
@@ -60,7 +62,7 @@ class SearchResultViewEntry implements ISearchResultViewEntry {
 		return fAttributes;
 	}
 	
-	long getModificationStamp() {
+	public long getModificationStamp() {
 		return fModificationStamp;
 	}
 	
@@ -97,7 +99,7 @@ class SearchResultViewEntry implements ISearchResultViewEntry {
 		return fMarker;
 	}
 	
-	List getMarkers() {
+	public List getMarkers() {
 		if (fMarkers == null && fMarker == null)
 			return new ArrayList(0);
 		else if (fMarkers == null && fMarker != null) {

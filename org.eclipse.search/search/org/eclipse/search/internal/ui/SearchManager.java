@@ -74,7 +74,7 @@ public class SearchManager implements IResourceChangeListener {
 			return (ArrayList)fCurrentSearch.getResults();
 	}
 
-	Search getCurrentSearch() {
+	public Search getCurrentSearch() {
 		return fCurrentSearch;
 	}
 

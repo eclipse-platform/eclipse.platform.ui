@@ -76,4 +76,8 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 	IStatus getStatus() {
 		return fStatus;
 	}
+	
+	String getPattern() {
+		return fPattern;
+	}
 }

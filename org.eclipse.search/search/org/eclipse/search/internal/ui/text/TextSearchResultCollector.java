@@ -6,6 +6,12 @@ package org.eclipse.search.internal.ui.text;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.List;
+
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.IInputSelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -15,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.FileLabelProvider;
+import org.eclipse.search.ui.IContextMenuContributor;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.internal.ui.SearchMessages;
@@ -30,6 +37,22 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 	private TextSearchOperation fOperation;
 	private int fMatchCount= 0;
 	private Integer[] fMessageFormatArgs= new Integer[1];
+		
+	private class ContextMenuContributor implements IContextMenuContributor {
+		public void fill(IMenuManager menu, IInputSelectionProvider inputProvider) {
+			// view must exist if we create a context menu for it.
+			ISearchResultView view= SearchUI.getSearchResultView();
+			IStructuredSelection selection= inputProvider.getSelection() instanceof IStructuredSelection 
+				?  (IStructuredSelection)inputProvider.getSelection() 
+				: StructuredSelection.EMPTY;
+			ReplaceAction replace= new ReplaceAction(view.getSite(), selection);
+			if (replace.isEnabled())
+				menu.add(replace);
+			ReplaceAction replaceAll= new ReplaceAction(view.getSite(), (List)inputProvider.getInput());
+			if (replaceAll.isEnabled())
+				menu.add(replaceAll);
+		}
+	}	
 			
 	/**
 	 * Returns the progress monitor used to setup and report progress.
@@ -54,7 +77,7 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 				fOperation.getSingularLabel(),
 				fOperation.getPluralLabelPattern(),
 				fOperation.getImageDescriptor(),
-				null,
+				new ContextMenuContributor(),
 				new FileLabelProvider(FileLabelProvider.SHOW_LABEL_PATH),
 				new GotoMarkerAction(),
 				new GroupByKeyComputer(),

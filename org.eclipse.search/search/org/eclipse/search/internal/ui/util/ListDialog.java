@@ -10,9 +10,11 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -26,10 +28,14 @@ import org.eclipse.ui.dialogs.SelectionDialog;
  * Dialog that shows a list of items with icon and label.
  */
 public class ListDialog extends SelectionDialog {
+	
+	private static final int WIDTH_IN_CHARACTERS= 55;
+	
 	private IStructuredContentProvider fContentProvider;
 	private ILabelProvider fLabelProvider;
 	private Object fInput;
 	private TableViewer fViewer;
+	private boolean fCreateCancelButton= true;
 	
 	public ListDialog(Shell parent, Object input, String title, String message, IStructuredContentProvider sp, ILabelProvider lp) {
 		super(parent);
@@ -39,6 +45,23 @@ public class ListDialog extends SelectionDialog {
 		fContentProvider= sp;
 		fLabelProvider= lp;
 	}
+	
+	public void setCreateCancelButton(boolean value) {
+		fCreateCancelButton= value;
+	}
+	
+	/*
+	 * Overrides method from Dialog
+	 */
+	protected Label createMessageArea(Composite composite) {
+		Label label = new Label(composite,SWT.WRAP);
+		label.setText(getMessage()); 
+		GridData gd= new GridData(GridData.FILL_BOTH);
+		gd.widthHint= convertWidthInCharsToPixels(WIDTH_IN_CHARACTERS);
+		label.setLayoutData(gd);
+		return label;
+	}
+	
 	/*
 	 * Overrides method from Dialog
 	 */
@@ -51,7 +74,8 @@ public class ListDialog extends SelectionDialog {
 		final Table table= fViewer.getTable();
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent e) {
-				okPressed();
+				if (fCreateCancelButton)
+					okPressed();
 			}
 		});
 		fViewer.setLabelProvider(fLabelProvider);
@@ -60,10 +84,21 @@ public class ListDialog extends SelectionDialog {
 			fViewer.setSelection(new StructuredSelection(getInitialSelections()));
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		gd.heightHint= convertHeightInCharsToPixels(15);
-		gd.widthHint= convertWidthInCharsToPixels(50);
+		gd.widthHint= convertWidthInCharsToPixels(WIDTH_IN_CHARACTERS);
 		table.setLayoutData(gd);
 		return table;
 	}
+	
+	/*
+	 * Overrides method from Dialog
+	 */
+	protected void createButtonsForButtonBar(Composite parent) {
+		if (! fCreateCancelButton)
+			createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		else
+			super.createButtonsForButtonBar(parent);	
+	}	
+	
 	/*
 	 * Overrides method from Dialog
 	 */

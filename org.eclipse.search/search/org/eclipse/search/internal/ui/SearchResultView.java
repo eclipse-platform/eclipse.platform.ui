@@ -85,7 +85,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	/**
 	 * Returns the search result viewer.
 	 */
-	SearchResultViewer getViewer() {
+	public SearchResultViewer getViewer() {
 		return fViewer;
 	}
 	
