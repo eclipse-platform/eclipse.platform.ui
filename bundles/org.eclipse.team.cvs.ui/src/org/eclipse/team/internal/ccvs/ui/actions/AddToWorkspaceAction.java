@@ -14,6 +14,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
@@ -72,6 +73,13 @@ public class AddToWorkspaceAction extends TeamAction {
 						IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 						if (project.exists()) {
 							// Make sure the user understands they will overwrite the project.
+							final boolean[] confirm = new boolean[] { false };
+							shell.getDisplay().syncExec(new Runnable() {
+								public void run() {
+									confirm[0] = MessageDialog.openConfirm(shell, Policy.bind("confirmOverwriteTitle"), Policy.bind("confirmOverwrite"));
+								}
+							});
+							if (!confirm[0]) return;
 						}
 						projects[i] = project;
 					}

@@ -73,7 +73,7 @@ public class CheckoutAsAction extends TeamAction {
 					String name = folders[0].getName();
 					// Prompt for name
 					final int[] result = new int[] { InputDialog.OK };
-					final InputDialog dialog = new InputDialog(shell, "Enter Project Name", "Enter the name of the project to checkout as:", name, null);
+					final InputDialog dialog = new InputDialog(shell, Policy.bind("CheckoutAsAction.enterProjectTitle"), Policy.bind("CheckoutAsAction.enterProject"), name, null);
 					shell.getDisplay().syncExec(new Runnable() {
 						public void run() {
 							result[0] = dialog.open();
@@ -89,7 +89,7 @@ public class CheckoutAsAction extends TeamAction {
 						final boolean[] confirm = new boolean[] { false };
 						shell.getDisplay().syncExec(new Runnable() {
 							public void run() {
-								confirm[0] = MessageDialog.openConfirm(shell, "Confirm Overwrite Project", "The project already exists in the workspace. Its contents will be overwritten.");
+								confirm[0] = MessageDialog.openConfirm(shell, Policy.bind("confirmOverwriteTitle"), Policy.bind("confirmOverwrite"));
 							}
 						});
 						if (!confirm[0]) return;
