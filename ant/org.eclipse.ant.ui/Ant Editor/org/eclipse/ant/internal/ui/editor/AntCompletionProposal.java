@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,7 +107,7 @@ public class AntCompletionProposal implements ICompletionProposal, ICompletionPr
 				enteredText= enteredText.substring(1);
 			}	
 		}
-		boolean valid= fDisplayString.startsWith(enteredText);
+		boolean valid= fDisplayString.toLowerCase().startsWith(enteredText.toLowerCase());
 		if (valid) {
 			fReplacementLength++;
 		}
