@@ -49,6 +49,7 @@ import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -92,6 +93,15 @@ public class AntModel {
 	private IDocumentListener fListener;
 	private File fEditedFile= null;	
 	private AntEditorMarkerUpdater fMarkerUpdater= null;
+	private Preferences.IPropertyChangeListener fPropertyChangeListener= new Preferences.IPropertyChangeListener() {
+		public void propertyChange(Preferences.PropertyChangeEvent event) {
+			AntDefiningTaskNode.setJavaClassPath();
+			beginReporting();
+			resolveBuildfile();
+			endReporting();
+			updateMarkers();
+		}
+	};
 
 	public AntModel(XMLCore core, IDocument document, IProblemRequestor problemRequestor, LocationProvider locationProvider) {
 		fCore= core;
@@ -103,6 +113,8 @@ public class AntModel {
 		fMarkerUpdater= new AntEditorMarkerUpdater();
 		fMarkerUpdater.setModel(this);
 		fLocationProvider= locationProvider;
+		AntCorePlugin.getPlugin().getPluginPreferences().addPropertyChangeListener(fPropertyChangeListener);
+		AntDefiningTaskNode.setJavaClassPath();
 	}
 
 	public void install() {
@@ -128,6 +140,8 @@ public class AntModel {
 			fCore= null;
 			ProjectHelper.setAntModel(null);
 		}
+		
+		AntCorePlugin.getPlugin().getPluginPreferences().removePropertyChangeListener(fPropertyChangeListener);
 	}
 	
 	public void reconcile(DirtyRegion region) {
