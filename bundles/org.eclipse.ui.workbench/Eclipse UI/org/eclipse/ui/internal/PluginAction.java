@@ -174,7 +174,7 @@ public abstract class PluginAction extends Action
 	protected boolean isOkToCreateDelegate() {
 		// test if the plugin has loaded
 		String bundleId = configElement.getDeclaringExtension().getNamespace();
-		return BundleUtility.isActivated(bundleId);
+		return BundleUtility.isActive(bundleId);
 	}
 	
 	/**
