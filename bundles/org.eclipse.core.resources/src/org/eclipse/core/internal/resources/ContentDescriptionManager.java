@@ -213,26 +213,24 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	}
 
 	public IContentDescription getDescriptionFor(File file, ResourceInfo info) throws CoreException {
-		int cacheState = getCacheState();
-		if (cacheState == INVALID_CACHE) {
-			// the cache is not good, flush it
-			flushJob.schedule(1000);
-			// will have to just read the file for now
-			return readDescription(file);
+		switch (getCacheState()) {
+			case INVALID_CACHE:
+				// the cache is not good, flush it
+				flushJob.schedule(1000);
+				//fall through and just read the file
+			case FLUSHING_CACHE:
+				// the cache is being flushed, but is still not good, just read the file
+				return readDescription(file);
 		}
-		if (cacheState == FLUSHING_CACHE)
-			// the cache is being flushed, but is still not good, just read the file
-			return readDescription(file);
 		// first look for the flags in the resource info to avoid looking in the cache
 		// don't need to copy the info because the modified bits are not in the deltas
 		if (info == null)
 			return null;
-		int flags = info.getFlags();
-		if ((flags & ICoreConstants.M_NO_CONTENT_DESCRIPTION) != 0)
+		if (info.isSet(ICoreConstants.M_NO_CONTENT_DESCRIPTION))
 			// afawr, this file has no known content type
 			return null;
-		if ((flags & ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION) != 0) {
-			// this file supposedly has a default content description for an "obvious"  content type			
+		if (info.isSet(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION)) {
+			// this file supposedly has a default content description for an "obvious" content type			
 			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 			// try to find the obvious content type matching its name
 			IContentType type = contentTypeManager.findContentTypeFor(file.getName());
@@ -280,7 +278,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		}
 	}
 
-	private long getPlatformTimestamp() {
+	private long getPlatformTimeStamp() {
 		return Platform.getPlatformAdmin().getState(false).getTimeStamp();
 	}
 
@@ -326,21 +324,21 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		invalidateCache(true);
 	}
 
-	private synchronized void setCacheState(byte newCacheState) throws CoreException {
+	synchronized void setCacheState(byte newCacheState) throws CoreException {
 		if (cacheState == newCacheState)
 			return;
 		workspace.getRoot().setPersistentProperty(CACHE_STATE, Byte.toString(newCacheState));
 		cacheState = newCacheState;
 	}
 
-	private void setCacheTimestamp(long timeStamp) throws CoreException {
+	private void setCacheTimeStamp(long timeStamp) throws CoreException {
 		workspace.getRoot().setPersistentProperty(CACHE_TIMESTAMP, Long.toString(timeStamp));
 	}
 
 	public void shutdown(IProgressMonitor monitor) throws CoreException {
 		if (getCacheState() != INVALID_CACHE)
 			// remember the platform timestamp for which we have a valid cache 
-			setCacheTimestamp(getPlatformTimestamp());
+			setCacheTimeStamp(getPlatformTimeStamp());
 		Platform.getContentTypeManager().removeContentTypeChangeListener(this);
 		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
 		cache.dispose();
@@ -357,7 +355,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			// in case we died before completing the last flushing 
 			setCacheState(INVALID_CACHE);
 		flushJob = new FlushJob();
-		if (getCacheTimestamp() != getPlatformTimestamp())
+		if (getCacheTimestamp() != getPlatformTimeStamp())
 			invalidateCache(false);
 		// register a content type change listener
 		Platform.getContentTypeManager().addContentTypeChangeListener(this);
