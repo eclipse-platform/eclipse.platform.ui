@@ -8,7 +8,11 @@
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.ui.internal.progress;
-
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -20,29 +24,18 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
-
 /**
  * The ProgressMonitorJobsDialog is the progress monitor dialog used by the
  * progress service to allow locks to show the current jobs.
  */
 public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
-
 	private ProgressTreeViewer viewer;
-
 	/**
 	 * The height of the viewer. Set when the details button is selected.
 	 */
 	private int viewerHeight = -1;
-
 	Composite viewerComposite;
-
 	private Button detailsButton;
-
 	/**
 	 * Create a new instance of the receiver.
 	 * 
@@ -51,50 +44,25 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 	public ProgressMonitorJobsDialog(Shell parent) {
 		super(parent);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-
 		Composite top = (Composite) super.createDialogArea(parent);
-
-		detailsButton = new Button(top, SWT.PUSH);
-		detailsButton.setText(ProgressMessages.getString("ProgressMonitorJobsDialog.DetailsTitle")); //$NON-NLS-1$
-		detailsButton.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			public void widgetSelected(SelectionEvent e) {
-				handleDetailsButtonSelect();
-			}
-		});
-		
-		setButtonLayoutData(detailsButton);
-
-		//Create a dummy label as a spacer.
-		new Label(parent, SWT.NONE);
-
 		viewerComposite = new Composite(parent, SWT.NONE);
-		
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		viewerComposite.setLayout(layout);
-		
-		GridData viewerData =
-			new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
+		GridData viewerData = new GridData(GridData.GRAB_HORIZONTAL
+				| GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
 		viewerData.horizontalSpan = 2;
 		viewerData.heightHint = 0;
 		viewerComposite.setLayoutData(viewerData);
-
 		return top;
 	}
-
 	/**
 	 * The details button has been selected. Open or close the progress viewer
 	 * as appropriate.
@@ -104,15 +72,16 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 		Shell shell = getShell();
 		Point shellSize = shell.getSize();
 		Composite composite = (Composite) getDialogArea();
-
 		if (viewer != null) {
 			viewer.getControl().dispose();
 			viewer = null;
 			composite.layout();
 			shell.setSize(shellSize.x, shellSize.y - viewerHeight);
-			detailsButton.setText(ProgressMessages.getString("ProgressMonitorJobsDialog.DetailsTitle")); //$NON-NLS-1$
+			detailsButton.setText(ProgressMessages
+					.getString("ProgressMonitorJobsDialog.DetailsTitle")); //$NON-NLS-1$
 		} else {
-			viewer = new ProgressTreeViewer(viewerComposite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+			viewer = new ProgressTreeViewer(viewerComposite, SWT.MULTI
+					| SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 			viewer.setUseHashlookup(true);
 			viewer.setSorter(new ViewerSorter() {
 				/*
@@ -125,41 +94,82 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 					return ((Comparable) e1).compareTo(e2);
 				}
 			});
-
 			IContentProvider provider = new ProgressTreeContentProvider(viewer);
 			viewer.setContentProvider(provider);
 			viewer.setInput(provider);
 			viewer.setLabelProvider(new ProgressLabelProvider());
-
-			GridData viewerData =
-				new GridData(
-					GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
+			GridData viewerData = new GridData(GridData.GRAB_HORIZONTAL
+					| GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
 			int heightHint = convertHeightInCharsToPixels(10);
 			viewerData.heightHint = heightHint;
 			viewer.getControl().setLayoutData(viewerData);
-
-			Point size = viewer.getControl().computeSize(viewerComposite.getBounds().width,heightHint);
+			Point size = viewer.getControl().computeSize(
+					viewerComposite.getBounds().width, heightHint);
 			viewer.getControl().setSize(size);
 			viewerComposite.layout();
 			viewer.getControl().setVisible(true);
-			
 			viewerHeight = viewer.getControl().getBounds().height;
-			
-			detailsButton.setText(ProgressMessages.getString("ProgressMonitorJobsDialog.HideTitle")); //$NON-NLS-1$
+			detailsButton.setText(ProgressMessages
+					.getString("ProgressMonitorJobsDialog.HideTitle")); //$NON-NLS-1$
 			shell.setSize(shellSize.x, shellSize.y + viewerHeight);
-
 		}
 	}
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		super.createButtonsForButtonBar(parent);
+		detailsButton = createButton(parent, IDialogConstants.DETAILS_ID,
+				ProgressMessages
+						.getString("ProgressMonitorJobsDialog.DetailsTitle"),
+				false);
+		detailsButton.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				handleDetailsButtonSelect();
+			}
+		});
 		detailsButton.setCursor(arrowCursor);
+		//Make a label to force the spacing
+		Label spacer = new Label(parent, SWT.NONE);
+		spacer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
+				| GridData.GRAB_HORIZONTAL));
+		super.createButtonsForButtonBar(parent);
 	}
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.IconAndMessageDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createButtonBar(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		// create a layout with spacing and margins appropriate for the font
+		// size.
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1; // this is incremented by createButton
+		layout.makeColumnsEqualWidth = false;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		composite.setLayout(layout);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		data.grabExcessHorizontalSpace = true;
+		composite.setLayoutData(data);
+		composite.setFont(parent.getFont());
+		// Add the buttons to the button bar.
+		createButtonsForButtonBar(composite);
+		return composite;
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#clearCursors()
 	 */
 	protected void clearCursors() {
@@ -168,13 +178,4 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 		}
 		super.clearCursors();
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#setOperationCancelButtonEnabled(boolean)
-	 */
-	protected void setOperationCancelButtonEnabled(boolean b) {
-		super.setOperationCancelButtonEnabled(b);
-		detailsButton.setEnabled(b);
-	}
-
 }
