@@ -2250,6 +2250,13 @@
             class="org.eclipse.ui.views.markers.ProblemView"
             id="org.eclipse.ui.views.ProblemView">
       </view>
+       <view
+            name="%Views.Progress"
+            icon="icons/full/progress/pview.gif"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.views.progress.ProgressView"
+            id="org.eclipse.ui.views.ProgressView">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.markerImageProviders">
