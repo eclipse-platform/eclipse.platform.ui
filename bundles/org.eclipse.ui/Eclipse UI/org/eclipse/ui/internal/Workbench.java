@@ -812,13 +812,13 @@ public Object run(Object arg) {
 	String[] commandLineArgs = new String[0];
 	if (arg != null && arg instanceof String[])
 		commandLineArgs = (String[]) arg;
-	Display display = new Display();
-	//Workaround for 1GEZ9UR and 1GF07HN
-	display.setWarnings(false);
 	if (!readPlatformAndProductInfo())
 		return null;
 	if (getProductInfo().getAppName() != null)
 		Display.setAppName(getProductInfo().getAppName());
+	Display display = new Display();
+	//Workaround for 1GEZ9UR and 1GF07HN
+	display.setWarnings(false);
 	try {
 		boolean initOK = init(commandLineArgs);
 		Platform.endSplash();
