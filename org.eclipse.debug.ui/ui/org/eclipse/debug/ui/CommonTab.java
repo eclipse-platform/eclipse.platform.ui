@@ -842,7 +842,17 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 		 */
 		public String getColumnText(Object element, int columnIndex) {
-			return ((LaunchGroupExtension)element).getLabel();
+			String label = ((LaunchGroupExtension)element).getLabel();
+			// strip out any '&' (accelerators)
+			int index = label.indexOf('&');
+			if (index == 0) {
+				label = label.substring(1);
+			} else if (index > 0 && index < (label.length() - 1)){
+				String first = label.substring(0, index);
+				String last = label.substring(index + 1);
+				label = first + last;
+			}
+			return label;
 		}
 
 		/**
