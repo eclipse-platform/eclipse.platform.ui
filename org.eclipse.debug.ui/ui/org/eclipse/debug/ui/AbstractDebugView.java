@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager;
@@ -23,6 +24,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -39,11 +41,9 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.MessagePage;
@@ -342,6 +342,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
+		saveAllCheckedActionStates();
 		deregisterPartListener();
 		if (getViewer() instanceof StructuredViewer) {
 			((StructuredViewer)getViewer()).removeDoubleClickListener(this);
@@ -350,6 +351,67 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		fActionMap.clear();
 		DebugActionGroupsManager.getDefault().deregisterView(this);
 		super.dispose();
+	}
+	
+	/**
+	 * Saves the checked state for all actions contributed to the toolbar
+	 * manager that function as a toggleable action.  The states are saved in
+	 * the Debug UI plugin's preference store.
+	 * 
+	 * @since 2.1
+	 */
+	protected void saveAllCheckedActionStates() {
+		IToolBarManager tbm= getViewSite().getActionBars().getToolBarManager();
+		IContributionItem[] items= tbm.getItems();
+		for (int i = 0; i < items.length; i++) {
+			IContributionItem iContributionItem = items[i];
+			if (iContributionItem instanceof ActionContributionItem) {
+				ActionContributionItem item= (ActionContributionItem)iContributionItem;
+				IAction action= item.getAction();
+				if (action.getStyle() == IAction.AS_CHECK_BOX && action.isEnabled()) {
+					saveCheckedActionState(action);					
+				}
+			}		
+		}		
+	}
+	
+	/**
+	 * Save the checked state of the specified action in the Debug UI plugin's
+	 * preference store.  The specified action is expected to be enabled and
+	 * support the style <code>IAction.AS_CHECK_BOX</code>.
+	 * 
+	 * @param action the enabled, toggleable action whose checked state will be
+	 * saved in preferences
+	 * @since 2.1
+	 */
+	protected void saveCheckedActionState(IAction action) {
+		String prefKey = generatePreferenceKey(action);
+		IPreferenceStore prefStore = getPreferenceStore();
+		prefStore.setValue(prefKey, action.isChecked());
+	}
+	
+	/**
+	 * Generate a String that can be used as a key into a preference store based
+	 * on the specified action.  The resulting String will be unique across
+	 * views.
+	 * 
+	 * @return a String suitable for use as a preference store key for the given
+	 * action
+	 * @since 2.1
+	 */
+	protected String generatePreferenceKey(IAction action) {
+		return getViewSite().getId() + '+' + action.getId();		
+	}
+	
+	/**
+	 * Convenience method to return the preference store for the Debug UI
+	 * plugin.
+	 * 
+	 * @return the preference store for the Debug UI plugin
+	 * @since 2.1
+	 */
+	protected IPreferenceStore getPreferenceStore() {
+		return DebugUIPlugin.getDefault().getPreferenceStore();
 	}
 	
 	/**
@@ -465,7 +527,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * @param menu the context menu
 	 */
 	protected abstract void fillContextMenu(IMenuManager menu);	
-
+	
 	/**
 	 * Configures this view's toolbar. Subclasses implement
 	 * <code>#configureToolBar(IToolBarManager)</code> to
@@ -473,45 +535,59 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * <p>
 	 * To properly initialize toggle actions that are contributed
 	 * to this view, state is restored for toggle actions that have
-	 * a persisted state in the view's memento.  As well, any toggle
-	 * actions that have an initial state of 'checked' are invoked.
-	 * The actions' states are restored and the actions are invoked 
-	 * in a runnable, after the view is created.
+	 * a persisted state in the Debug UI plugin's preferences.  As well, any
+	 * toggle actions that have an initial state of 'checked' are invoked. The
+	 * actions' states are restored and the actions are invoked in a runnable,
+	 * after the view is created.
 	 * </p>
 	 */
 	protected void initializeToolBar() {
 		final IToolBarManager tbm= getViewSite().getActionBars().getToolBarManager();
 		configureToolBar(tbm);
 		getViewSite().getActionBars().updateActionBars();
-		// this is in a runnable to be run after this view's pane
+		
+		// This is done in a runnable to be run after this view's pane
 		// is created
-		if (getMemento() != null) {
-			Runnable r = new Runnable() {
-				public void run() {
-					if (!isAvailable()) {
-						return;
-					}
-					IContributionItem[] items = tbm.getItems();
-					if (items != null) {
-						for (int i = 0; i < items.length; i++) {
-							if (items[i] instanceof ActionContributionItem) {
-								IAction action = ((ActionContributionItem)items[i]).getAction();
-								if (action.getStyle() == IAction.AS_CHECK_BOX) {
-									initActionState(getMemento(), action);	
-									if (action.isChecked()) {
-										action.run();
-									}
+		Runnable r = new Runnable() {
+			public void run() {
+				if (!isAvailable()) {
+					return;
+				}
+				IContributionItem[] items = tbm.getItems();
+				if (items != null) {
+					for (int i = 0; i < items.length; i++) {
+						if (items[i] instanceof ActionContributionItem) {
+							IAction action = ((ActionContributionItem)items[i]).getAction();
+							if (action.getStyle() == IAction.AS_CHECK_BOX) {
+								initActionState(action);	
+								if (action.isChecked()) {
+									action.run();
 								}
 							}
 						}
 					}
-					setMemento(null);
 				}
-			};
-			asyncExec(r);
-		}
+			}
+		};
+		asyncExec(r);
 	}
 	
+	/**
+	 * Restires the persisted checked state of the specified action that was
+	 * stored in preferences.
+	 * 
+	 * @param action the action whose checked state will be restored
+	 * @since 2.1
+	 */
+	protected void initActionState(IAction action) {
+		String id = action.getId();
+		if (id != null) {
+			String prefKey = generatePreferenceKey(action);
+			boolean checked = getPreferenceStore().getBoolean(prefKey);
+			action.setChecked(checked);
+		}
+	}
+
 	/**
 	 * Sets the viewer for this view.
 	 * 
@@ -632,15 +708,6 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	}	
 	
 	/**
-	 * @see IViewPart#init(IViewSite, IMemento)
-	 */
-	public void init(IViewSite site, IMemento memento) throws PartInitException {
-		super.init(site, memento);
-		//store the memento to be used when this view is created.
-		setMemento(memento);
-	}
-	
-	/**
 	 * Returns the memento that contains the persisted state of
 	 * the view.  May be <code>null</code>.
 	 */
@@ -654,68 +721,6 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 */
 	protected void setMemento(IMemento memento) {
 		fMemento = memento;
-	}
-	
-	/**
-	 * Persists the state of the enabled check box actions contributed
-	 * to this view.
-	 * 
-	 * @see IViewPart#saveState(IMemento)
-	 */
-	public void saveState(IMemento memento) {
-		if (getMemento() != null) {
-			//this view was never fully created
-			//persist the old values.
-			memento.putMemento(getMemento());
-			return;
-		}
-		IToolBarManager tbm= getViewSite().getActionBars().getToolBarManager();
-		IContributionItem[] items= tbm.getItems();
-		for (int i = 0; i < items.length; i++) {
-			IContributionItem iContributionItem = items[i];
-			if (iContributionItem instanceof ActionContributionItem) {
-				ActionContributionItem item= (ActionContributionItem)iContributionItem;
-				IAction action= item.getAction();
-				if (action.getStyle() == IAction.AS_CHECK_BOX && action.isEnabled()) {
-					saveActionState(memento, action);			
-				}
-			}		
-		}
-	}
-	
-	/**
-	 * Persists the checked state of the action in the memento.
-	 * The state is persisted as an <code>Integer</code>: <code>1</code>
-	 * meaning the action is checked; <code>0</code> representing unchecked.
-	 */
-	protected void saveActionState(IMemento memento, IAction action) {
-		String id= action.getId();
-		if (id != null) {
-			int state= action.isChecked() ? 1 : 0;
-			memento.putInteger(id, state);
-		}
-	}
-	
-	/**
-	 * Restores the persisted checked state of the action as stored
-	 * in the memento.
-	 * <p>
-	 * The state was persisted as an <code>Integer</code>: <code>1</code>
-	 * meaning the action is checked; <code>0</code> representing unchecked.
-	 * 
-	 * @param memento the memento used to persist the actions state
-	 * @param action the action that needs its state restored.
-	 */
-	protected void initActionState(IMemento memento, IAction action) {
-		String id= action.getId();
-		if (id != null) {
-			Integer state= memento.getInteger(id);
-			if (state != null) {
-				if (action.isEnabled()) {
-					action.setChecked(state.intValue() == 1);
-				}
-			}
-		}
 	}
 	
 	/**
