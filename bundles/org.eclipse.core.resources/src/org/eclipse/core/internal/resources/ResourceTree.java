@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.*;
  * @since 2.0
  */
 class ResourceTree implements IResourceTree {
-
+	
 	private MultiStatus status;
 	private int updateFlags;
 	private boolean isValid = true;
@@ -43,7 +43,7 @@ public ResourceTree(MultiStatus status, int updateFlags) {
  */
 void makeInvalid() {
 	this.isValid = false;
-}
+}	
 /**
  * @see IResourceTree#addToLocalHistory(IFile)
  */
@@ -64,7 +64,7 @@ public void addToLocalHistory(IFile file) {
  * and the local history of any IFile under source will be copied to the
  * associated IFile under destination.
  */
-private void copyLocalHistory(IResource source, IResource destination) {
+private void copyLocalHistory (IResource source, IResource destination) {
 	((Resource) destination).getLocalManager().getHistoryStore().copyHistory(source.getFullPath(), destination.getFullPath());
 }
 
@@ -95,7 +95,7 @@ public void movedFile(IFile source, IFile destination) {
 		// log the status but don't return until we try and move the rest of the resource information.
 		failed(status);
 	}
-
+	
 	// Move the node in the workspace tree.
 	Workspace workspace = (Workspace) source.getWorkspace();
 	try {
@@ -131,7 +131,7 @@ public void movedFolderSubtree(IFolder source, IFolder destination) {
 	// If the destination already exists then we have an error.
 	if (destination.exists()) {
 		String message = Policy.bind("resources.mustNotExist", destination.getFullPath().toString()); //$NON-NLS-1$
-		IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
+		IStatus status= new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
 		failed(status);
 		return;
 	}
@@ -159,7 +159,7 @@ public void movedFolderSubtree(IFolder source, IFolder destination) {
 		// log the status but don't return until we try and move the rest of the resource info
 		failed(status);
 	}
-
+	
 	// Generate the marker deltas.
 	try {
 		workspace.getMarkerManager().moved(source, destination, depth);
@@ -168,7 +168,7 @@ public void movedFolderSubtree(IFolder source, IFolder destination) {
 		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 		failed(status);
 	}
-
+	
 	// Copy the local history for this folder
 	copyLocalHistory(source, destination);
 }
@@ -187,7 +187,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 	IProjectDescription srcDescription = source.internalGetDescription();
 	Workspace workspace = (Workspace) source.getWorkspace();
 	int depth = IResource.DEPTH_INFINITE;
-
+	
 	// If the name of the source and destination projects are not the same then 
 	// rename the meta area and make changes in the tree.
 	if (isNameChange(source, destDescription)) {
@@ -209,7 +209,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 		}
 		java.io.File oldMetaArea = workspace.getMetaArea().locationFor(source).toFile();
 		java.io.File newMetaArea = workspace.getMetaArea().locationFor(destination).toFile();
-		try {
+		try{
 			source.getLocalManager().getStore().move(oldMetaArea, newMetaArea, false, new NullProgressMonitor());
 		} catch (CoreException e) {
 			String message = Policy.bind("resources.moveMeta", oldMetaArea.toString(), newMetaArea.toString()); //$NON-NLS-1$
@@ -217,7 +217,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 			// log the status but don't return until we try and move the rest of the resource info
 			failed(status);
 		}
-
+	
 		// Move the workspace tree.
 		try {
 			workspace.move(source, destination.getFullPath(), depth, updateFlags, true);
@@ -227,7 +227,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 			// log the status but don't return until we try and move the rest of the resource info
 			failed(status);
 		}
-
+		
 		// Clear the natures and builders on the destination project.
 		ProjectInfo info = (ProjectInfo) destination.getResourceInfo(false, true);
 		info.clearNatures();
@@ -245,11 +245,11 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 		// Copy the local history
 		copyLocalHistory(source, destination);
 	}
-
+	
 	// Write the new project description on the destination project.
 	try {
 		//moving linked resources may have modified the description in memory
-		 ((ProjectDescription) destDescription).setLinkDescriptions(destination.internalGetDescription().getLinks());
+		((ProjectDescription)destDescription).setLinkDescriptions(destination.internalGetDescription().getLinks());
 		destination.internalSetDescription(destDescription, true);
 		destination.writeDescription(IResource.FORCE);
 	} catch (CoreException e) {
@@ -283,6 +283,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 	return true;
 }
 
+
 /**
  * Returns the status object held onto by this resource tree.
  */
@@ -309,7 +310,7 @@ public void deletedFile(IFile file) {
 		return;
 	try {
 		// Delete properties, generate marker deltas, and remove the node from the workspace tree.
-		 ((Resource) file).deleteResource(true, null);
+		((Resource) file).deleteResource(true, null);
 	} catch (CoreException e) {
 		String message = Policy.bind("resources.errorDeleting", file.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IStatus.ERROR, file.getFullPath(), message, e);
@@ -326,7 +327,7 @@ public void deletedFolder(IFolder folder) {
 		return;
 	try {
 		// Delete properties, generate marker deltas, and remove the node from the workspace tree.
-		 ((Resource) folder).deleteResource(true, null);
+		((Resource) folder).deleteResource(true, null);
 	} catch (CoreException e) {
 		String message = Policy.bind("resources.errorDeleting", folder.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IStatus.ERROR, folder.getFullPath(), message, e);
@@ -406,7 +407,7 @@ private boolean isCaseChange(IProject project, IProjectDescription description) 
  * @see IResourceTree#isSynchronized
  */
 public boolean isSynchronized(IResource resource, int depth) {
-	return ((Resource) resource).getLocalManager().isSynchronized(resource, depth);
+	return ((Resource)resource).getLocalManager().isSynchronized(resource, depth);
 }
 /**
  * @see IResourceTree#computeTimestamp
@@ -457,15 +458,15 @@ private boolean internalDeleteFile(IFile file, int updateFlags, IProgressMonitor
 			// Indicate that the delete was successful.
 			return true;
 		}
-
+		
 		boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
 		boolean force = (updateFlags & IResource.FORCE) != 0;
-
+	
 		// Add the file to the local history if requested by the user.
 		if (keepHistory)
 			addToLocalHistory(file);
-		monitor.worked(Policy.totalWork / 4);
-
+		monitor.worked(Policy.totalWork/4);
+	
 		// We want to fail if force is false and the file is not synchronized with the 
 		// local file system.
 		if (!force) {
@@ -479,12 +480,12 @@ private boolean internalDeleteFile(IFile file, int updateFlags, IProgressMonitor
 				return false;
 			}
 		}
-		monitor.worked(Policy.totalWork / 4);
-
+		monitor.worked(Policy.totalWork/4);
+	
 		// Try to delete the file from the file system.
 		boolean success = fileOnDisk.delete();
-		monitor.worked(Policy.totalWork / 4);
-
+		monitor.worked(Policy.totalWork/4);
+	
 		// If the file was successfully deleted from the file system the
 		// workspace tree should be updated accordingly. Otherwise
 		// we need to signal that a problem occurred.
@@ -515,7 +516,7 @@ public void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonit
 		// Do nothing if the folder doesn't exist in the workspace.
 		if (!folder.exists())
 			return;
-
+			
 		// Don't delete contents if this is a linked resource
 		if (folder.isLinked()) {
 			deletedFolder(folder);
@@ -538,7 +539,7 @@ public void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonit
 			// we are not in sync and force is false so delete via best effort
 			internalDeleteFolder(folder, updateFlags, monitor);
 			return;
-		}
+		} 
 
 		// Add the contents of the files to the local history if so requested by the user.
 		boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
@@ -549,7 +550,7 @@ public void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonit
 		try {
 			FileSystemResourceManager localManager = ((Folder) folder).getLocalManager();
 			localManager.delete(folder, force, true, false, monitor);
-			java.io.File folderLocation = folder.getLocation().toFile();
+			java.io.File folderLocation = folder.getLocation().toFile();			
 			success = Workspace.clear(folderLocation);
 		} catch (CoreException ce) {
 			message = Policy.bind("localstore.couldnotDelete", folder.getFullPath().toString()); //$NON-NLS-1$					
@@ -612,14 +613,14 @@ private boolean internalDeleteFolder(IFolder folder, int updateFlags, IProgressM
 		return false;
 	}
 	boolean deletedChildren = true;
-	for (int i = 0; i < members.length; i++) {
+	for (int i=0; i<members.length; i++) {
 		IResource child = members[i];
 		switch (child.getType()) {
-			case IResource.FILE :
-				deletedChildren &= internalDeleteFile((IFile) child, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork / members.length));
+			case IResource.FILE:
+				deletedChildren &= internalDeleteFile((IFile) child, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork/members.length));
 				break;
-			case IResource.FOLDER :
-				deletedChildren &= internalDeleteFolder((IFolder) child, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork / members.length));
+			case IResource.FOLDER:
+				deletedChildren &= internalDeleteFolder((IFolder) child, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork/members.length));
 				break;
 		}
 	}
@@ -630,7 +631,7 @@ private boolean internalDeleteFolder(IFolder folder, int updateFlags, IProgressM
 		// Indicate that the delete was unsuccessful.
 		return false;
 	}
-
+	
 	// Try to delete the folder from the local file system. This will fail
 	// if the folder is not empty. No need to check the force flag since this is
 	// an internal method and force is always false when we are here.
@@ -768,7 +769,7 @@ private void moveProjectContent(IProject source, IProjectDescription destDescrip
 				return;
 		}
 		monitor.worked(9);
-
+		
 		//if this is a deep move, move the contents of any linked resources
 		if ((updateFlags & IResource.SHALLOW) == 0) {
 			IResource[] children = source.members();
@@ -779,7 +780,7 @@ private void moveProjectContent(IProject source, IProjectDescription destDescrip
 					java.io.File sourceFile = children[i].getLocation().toFile();
 					java.io.File destFile = destLocation.append(children[i].getName()).toFile();
 					try {
-						moveInFileSystem(sourceFile, destFile, updateFlags, Policy.monitorFor(null));
+					moveInFileSystem(sourceFile, destFile, updateFlags, Policy.monitorFor(null));
 					} catch (CoreException ce) {
 						// did the fail occur after copying to the destination?						
 						boolean failedDeletingSource = ce instanceof ResourceException && status.getCode() == IResourceStatus.FAILED_DELETE_LOCAL && destFile.exists();						
@@ -788,9 +789,9 @@ private void moveProjectContent(IProject source, IProjectDescription destDescrip
 						// if so, we should proceed
 						if (!failedDeletingSource)
 							return;
-					}
 				}
 			}
+		}
 		}
 		monitor.worked(1);
 	} finally {
@@ -809,34 +810,26 @@ public void standardMoveFile(IFile source, IFile destination, int updateFlags, I
 		// These pre-conditions should all be ok but just in case...
 		if (!source.exists() || destination.exists() || !destination.getParent().isAccessible())
 			throw new IllegalArgumentException();
-
+	
 		boolean force = (updateFlags & IResource.FORCE) != 0;
 		boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
 		boolean isDeep = (updateFlags & IResource.SHALLOW) == 0;
-
+	
 		// If the file is not in sync with the local file system and force is false,
 		// then signal that we have an error.
-		if (force && !source.getLocation().toFile().exists()) {
+		if (!force && !isSynchronized(source, IResource.DEPTH_INFINITE)) {
 			message = Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, source.getFullPath(), message);
 			failed(status);
 			return;
-		} else {
-			boolean inSync = isSynchronized(source, IResource.DEPTH_ZERO);
-			if (!inSync) {
-				message = Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString()); //$NON-NLS-1$
-				IStatus status = new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, source.getFullPath(), message);
-				failed(status);
-				return;
-			}
 		}
-		monitor.worked(Policy.totalWork / 4);
-
+		monitor.worked(Policy.totalWork/4);
+	
 		// Add the file contents to the local history if requested by the user.	
 		if (keepHistory)
 			addToLocalHistory(source);
-		monitor.worked(Policy.totalWork / 4);
-
+		monitor.worked(Policy.totalWork/4);
+		
 		//for shallow move of linked resources, nothing needs to be moved in the file system
 		if (!isDeep && source.isLinked()) {
 			movedFile(source, destination);
@@ -857,11 +850,11 @@ public void standardMoveFile(IFile source, IFile destination, int updateFlags, I
 			failed(status);
 			// if so, we should proceed
 			if (!failedDeletingSource)
-				return;
+			return;
 		}
 		movedFile(source, destination);
 		updateMovedFileTimestamp(destination, computeTimestamp(destination));
-		monitor.worked(Policy.totalWork / 4);
+		monitor.worked(Policy.totalWork/4);
 		return;
 	} finally {
 		monitor.done();
@@ -875,7 +868,7 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 	try {
 		String message = Policy.bind("resources.moving", source.getFullPath().toString()); //$NON-NLS-1$
 		monitor.subTask(message);
-
+			
 		// These pre-conditions should all be ok but just in case...
 		if (!source.exists() || destination.exists() || !destination.getParent().isAccessible())
 			throw new IllegalArgumentException();
@@ -885,7 +878,7 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 		// try and move all resources, doing it in a best-effort manner.
 		boolean force = (updateFlags & IResource.FORCE) != 0;
 		if (!force && !isSynchronized(source, IResource.DEPTH_INFINITE)) {
-			message = Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString()); //$NON-NLS-1$
+			message = Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString());//$NON-NLS-1$
 			IStatus status = new ResourceStatus(IResourceStatus.ERROR, source.getFullPath(), message);
 			failed(status);
 			return;
@@ -893,9 +886,9 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 
 		// keep history
 		boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
-		if (keepHistory)
+		if (keepHistory) 
 			addToLocalHistory(source, IResource.DEPTH_INFINITE);
-
+			
 		//for linked resources, nothing needs to be moved in the file system
 		boolean isDeep = (updateFlags & IResource.SHALLOW) == 0;
 		if (!isDeep && source.isLinked()) {
@@ -917,7 +910,7 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 			failed(status);
 			// if so, we should proceed
 			if (!failedDeletingSource)
-				return;
+			return;
 		}
 		boolean success = destinationFile.exists();
 		if (success) {
@@ -979,18 +972,18 @@ private boolean internalDeleteProject(IProject project, int updateFlags, IProgre
 		return false;
 	}
 	boolean deletedChildren = true;
-	for (int i = 0; i < members.length; i++) {
+	for (int i=0; i<members.length; i++) {
 		IResource child = members[i];
 		switch (child.getType()) {
-			case IResource.FILE :
+			case IResource.FILE:
 				if (child.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
 					// ignore the .project file for now and delete it last
 				} else {
-					deletedChildren &= internalDeleteFile((IFile) child, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork / members.length));
+					deletedChildren &= internalDeleteFile((IFile) child, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork/members.length));
 				}
 				break;
-			case IResource.FOLDER :
-				deletedChildren &= internalDeleteFolder((IFolder) child, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork / members.length));
+			case IResource.FOLDER:
+				deletedChildren &= internalDeleteFolder((IFolder) child, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork/members.length));
 				break;
 		}
 	}
@@ -1026,7 +1019,7 @@ private boolean internalDeleteProject(IProject project, int updateFlags, IProgre
 		// Indicate that the delete was unsuccessful.
 		return false;
 	}
-
+	
 	// If the content area is in the default location then delete the directory and all its
 	// children. If it is specified by the user then leave the directory itself but delete the children.
 	// No need to check the force flag since this is an internal method and by the time we
@@ -1090,7 +1083,7 @@ public void standardMoveProject(IProject source, IProjectDescription description
 
 		// Move the project content in the local file system.
 		try {
-			moveProjectContent(source, description, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork * 3 / 4));
+			moveProjectContent(source, description, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork*3/4));
 		} catch (CoreException e) {
 			message = Policy.bind("localstore.couldNotMove", source.getFullPath().toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
@@ -1101,11 +1094,10 @@ public void standardMoveProject(IProject source, IProjectDescription description
 		// If we got this far the project content has been moved on disk (if necessary)
 		// and we need to update the workspace tree.
 		movedProjectSubtree(source, description);
-		monitor.worked(Policy.totalWork * 1 / 8);
+		monitor.worked(Policy.totalWork*1/8);
 		boolean isDeep = (updateFlags & IResource.SHALLOW) == 0;
 		updateTimestamps(source.getWorkspace().getRoot().getProject(description.getName()), isDeep);
-
-		monitor.worked(Policy.totalWork * 1 / 8);
+		monitor.worked(Policy.totalWork*1/8);
 	} finally {
 		monitor.done();
 	}
@@ -1114,6 +1106,7 @@ public void standardMoveProject(IProject source, IProjectDescription description
  * Moves any children of this project to their new location in the file system.
  */
 private void moveLinkedChildren(IProject source, IProjectDescription description, int updateFlags, IProgressMonitor monitor) {
+	
 
 }
 /**
@@ -1139,7 +1132,7 @@ public void updateMovedFileTimestamp(IFile file, long timestamp) {
 	// Update the timestamp in the tree.
 	ResourceInfo info = ((Resource) file).getResourceInfo(false, true);
 	// The info should never be null since we just checked that the resource exists in the tree.
-	 ((Resource) file).getLocalManager().updateLocalSync(info, timestamp);
+	((Resource) file).getLocalManager().updateLocalSync(info, timestamp);
 	//remove the linked bit since this resource has been moved in the file system
 	info.clear(ICoreConstants.M_LINK);
 }
