@@ -156,6 +156,7 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 		
 		int lastStart= region.getOffset();
 		int length= 0;
+		boolean firstToken= true;
 		IToken lastToken= Token.UNDEFINED;
 		TextAttribute lastAttribute= getTokenTextAttribute(lastToken);
 		
@@ -165,12 +166,15 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 			IToken token= fScanner.nextToken();			
 			if (token.isEOF())
 				break;
-		
-			TextAttribute attribute= getTokenTextAttribute(token);
+			
+			TextAttribute attribute= getTokenTextAttribute(token);			
 			if (lastAttribute != null && lastAttribute.equals(attribute)) {
 				length += fScanner.getTokenLength();
+				firstToken= false;
 			} else {
-				addRange(presentation, lastStart, length, lastAttribute);
+				if (!firstToken)
+					addRange(presentation, lastStart, length, lastAttribute);
+				firstToken= false;
 				lastToken= token;
 				lastAttribute= attribute;
 				lastStart= fScanner.getTokenOffset();
