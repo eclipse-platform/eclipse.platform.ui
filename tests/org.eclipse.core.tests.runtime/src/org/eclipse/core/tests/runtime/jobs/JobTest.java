@@ -130,7 +130,9 @@ public class JobTest extends TestCase {
 		assertTrue("1.2", !shortJob.isSystem());
 	}
 
-	//see bug #43458
+	/*
+	 * see bug #43458
+	 */
 	public void testSetPriority() {
 		int [] wrongPriority = {1000, -Job.DECORATE, 25, 0, 5, Job.INTERACTIVE - Job.BUILD};
 		
@@ -145,8 +147,10 @@ public class JobTest extends TestCase {
 		}
 	}
 
-	//see bug #43459
-	public void _testSetRule() {
+	/*
+	 * see bug #43459
+	 */
+	public void testSetRule() {
 		//setting a scheduling rule for a job after it was already scheduled should throw an exception
 		shortJob.setRule(new IdentityRule());
 		assertTrue("1.0", shortJob.getRule() instanceof IdentityRule);

@@ -140,8 +140,14 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	/*
 	 * Must be called from JobManager#setPriority
 	 */
-	void internalSetPriority(int newPriority) {
+	final void internalSetPriority(int newPriority) {
 		this.priority = newPriority;
+	}
+	/*
+	 * Must be called from JobManager#setRule
+	 */
+	final void internalSetRule(ISchedulingRule rule) {
+		this.schedulingRule = rule;
 	}
 	/*
 	 * Must be called from JobManager#changeState
@@ -152,7 +158,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	/**
 	 * Returns true if this job conflicts with the given job, and false otherwise.
 	 */
-	boolean isConflicting(InternalJob otherJob) {
+	final boolean isConflicting(InternalJob otherJob) {
 		ISchedulingRule otherRule = otherJob.getRule();
 		if (schedulingRule == null || otherRule == null)
 			return false;
@@ -230,7 +236,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		this.result = result;
 	}
 	protected void setRule(ISchedulingRule rule) {
-		schedulingRule = rule;
+		manager.setRule(this, rule);
 	}
 	final void setStartTime(long time) {
 		startTime = time;

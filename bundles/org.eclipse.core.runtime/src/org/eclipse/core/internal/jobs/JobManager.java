@@ -589,6 +589,16 @@ public class JobManager implements IJobManager {
 	public void setProgressProvider(IProgressProvider provider) {
 		progressProvider = provider;
 	}
+	/* (non-Javadoc)
+	 * @see Job#setRule
+	 */
+	public void setRule(InternalJob job, ISchedulingRule rule) {
+		synchronized (lock) {
+			//cannot change the rule of a job that is already running
+			Assert.isLegal(job.getState() == Job.NONE);
+			job.internalSetRule(rule);
+		}
+	}
 	/**
 	 * Puts a job to sleep. Returns true if the job was successfully put to sleep.
 	 */
@@ -691,6 +701,4 @@ public class JobManager implements IJobManager {
 			wakeUp((InternalJob) it.next());
 		}
 	}
-
-
 }
