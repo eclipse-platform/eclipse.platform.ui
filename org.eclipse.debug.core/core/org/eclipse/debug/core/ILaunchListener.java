@@ -8,7 +8,7 @@ package org.eclipse.debug.core;
 /**
  * A launch listener is notified of launches as they
  * are added and removed from the launch manager. Also,
- * when a process or debug target is added to a launch]
+ * when a process or debug target is added to a launch,
  * listeners are notified of a change.
  * <p>
  * Clients may implement this interface.

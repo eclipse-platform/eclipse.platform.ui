@@ -150,7 +150,7 @@ public class DebugPlugin extends Plugin {
 	}
 
 	/**
-	 * Notifies all registered debug event listeners of the given even.
+	 * Notifies all registered debug event listeners of the given event.
 	 * Has no effect if the event is filtered by a registered
 	 * debug event filter.
 	 *
