@@ -41,7 +41,7 @@ import org.eclipse.jface.util.Assert;
  */
 public class PresentationReconciler implements IPresentationReconciler {
 		
-	protected final static String TRACKED_PARTITION= "__reconciler_tracked_partition";
+	protected final static String TRACKED_PARTITION= "__reconciler_tracked_partition"; //$NON-NLS-1$
 	
 	
 	/**

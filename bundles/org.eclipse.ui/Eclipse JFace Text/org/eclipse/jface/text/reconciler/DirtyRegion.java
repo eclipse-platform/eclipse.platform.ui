@@ -13,8 +13,8 @@ import org.eclipse.jface.text.ITypedRegion;
 public class DirtyRegion implements ITypedRegion {
 	
 	/** Definitions of edit types */
-	final static public String INSERT= "__insert";
-	final static public String REMOVE= "__remove";
+	final static public String INSERT= "__insert"; //$NON-NLS-1$
+	final static public String REMOVE= "__remove"; //$NON-NLS-1$
 	
 	/** The region's offset */
 	private int fOffset;

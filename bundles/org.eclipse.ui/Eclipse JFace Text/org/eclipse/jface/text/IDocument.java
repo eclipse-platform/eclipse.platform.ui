@@ -75,12 +75,12 @@ public interface IDocument {
 	/**
 	 * The identifier of the default position category.
 	 */
-	final static String DEFAULT_CATEGORY= "__dflt_position_category";
+	final static String DEFAULT_CATEGORY= "__dflt_position_category"; //$NON-NLS-1$
 	
 	/**
 	 * The identifier of the default partition content type.
 	 */
-	final static String DEFAULT_CONTENT_TYPE= "__dftl_partition_content_type";
+	final static String DEFAULT_CONTENT_TYPE= "__dftl_partition_content_type"; //$NON-NLS-1$
 	
 	
 	

@@ -18,7 +18,7 @@ import org.eclipse.swt.SWT;
 public class DefaultLineTracker extends AbstractLineTracker {
 	
 	/** The predefined delimiters of this tracker */
-	public final static String[] DELIMITERS= { "\r", "\n", "\r\n" };
+	public final static String[] DELIMITERS= { "\r", "\n", "\r\n" }; //$NON-NLS-3$ //$NON-NLS-1$ //$NON-NLS-2$
 	/** A predefined delimiter info which is always reused as return value */
 	private DelimiterInfo fDelimiterInfo= new DelimiterInfo();
 	

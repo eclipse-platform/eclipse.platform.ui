@@ -55,7 +55,7 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener {
 					if (fEvent.fOffset != 0 || fEvent.fLength != document.getLength()) {
 						try {
 							fReplacedLines= document.getNumberOfLines(fEvent.fOffset, fEvent.fLength) - 1;
-							fReplacedText= (fEvent.fLength > 0 ? document.get(fEvent.fOffset, fEvent.fLength) : "");
+							fReplacedText= (fEvent.fLength > 0 ? document.get(fEvent.fOffset, fEvent.fLength) : ""); //$NON-NLS-1$
 							fInsertedLines= (fEvent.fText == null ? 0 : document.computeNumberOfLines(fEvent.fText));
 							return;
 						} catch (BadLocationException x) {
@@ -230,7 +230,7 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener {
 				 * Follow up fix for: 1GF5UU0: ITPJUI:WIN2000 - "Organize Imports" in java editor inserts lines in wrong format
 				 * The line delimiter must always be a legal document line delimiter.
 				 */
-				String sysLineDelimiter= System.getProperty("line.separator");
+				String sysLineDelimiter= System.getProperty("line.separator"); //$NON-NLS-1$
 				String[] delimiters= fDocument.getLegalLineDelimiters();
 				Assert.isTrue(delimiters.length > 0);
 				for (int i= 0; i < delimiters.length; i++) {

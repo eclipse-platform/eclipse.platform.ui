@@ -156,7 +156,7 @@ public class ContentAssistant implements IContentAssistant {
 
 		protected void start(int showStyle) {
 			fShowStyle= showStyle;
-			fThread= new Thread(this, "AutoAssist Delay");
+			fThread= new Thread(this, "AutoAssist Delay"); //$NON-NLS-1$
 			fThread.start();
 		}
 

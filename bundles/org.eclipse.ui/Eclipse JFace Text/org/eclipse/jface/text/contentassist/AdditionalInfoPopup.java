@@ -98,7 +98,7 @@ class AdditionalInfoPopup implements SelectionListener, DisposeListener, Runnabl
 		fProposalShell.addDisposeListener(this);
 		
 		if (fThread == null) {
-			fThread= new Thread(this, "AdditionalInfo Delay");
+			fThread= new Thread(this, "AdditionalInfo Delay"); //$NON-NLS-1$
 			fThread.start();
 		}
 	}

@@ -212,7 +212,7 @@ public class ContentFormatter implements IContentFormatter {
 	
 	
 	/** Internal position category used for the formatter partitioning */
-	private final static String PARTITIONING= "__formatter_partitioning";
+	private final static String PARTITIONING= "__formatter_partitioning"; //$NON-NLS-1$
 	
 	/** The map of <code>IFormattingStrategy</code> objects */
 	private Map fStrategies;
@@ -450,7 +450,7 @@ public class ContentFormatter implements IContentFormatter {
 		} catch (BadLocationException x) {
 		}
 		
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	/**
 	 * Returns the partitioning of the given region of the specified document.

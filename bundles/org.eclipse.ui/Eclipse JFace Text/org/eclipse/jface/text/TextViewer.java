@@ -38,11 +38,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
-
 
 
 /**
@@ -88,7 +88,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				} catch (BadLocationException x) {
 					preservedText= null;
 					if (TRACE_ERRORS)
-						System.out.println("TextViewer.WidgetCommand.setEvent: BadLocationException");
+						System.out.println("TextViewer.WidgetCommand.setEvent: BadLocationException"); //$NON-NLS-1$
 				}
 			} else
 				preservedText= null;
@@ -252,7 +252,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			if (e.getDocument() == getVisibleDocument()) {
 				fWidgetCommand.setEvent(e);
 				if (fTextHoveringController != null && (fThread == null || !fThread.isAlive())) {
-					fThread= new Thread(this, "hover reset timer");
+					fThread= new Thread(this, "hover reset timer"); //$NON-NLS-1$
 					fThread.start();
 				}
 			}
@@ -400,7 +400,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	protected static final int INTERNAL=	6;
 		
 	/** Internal name of the position category used selection preservation during shift */
-	protected static final String SHIFTING= "__TextViewer_shifting";
+	protected static final String SHIFTING= "__TextViewer_shifting"; //$NON-NLS-1$
 
 	/** The viewer's text widget */
 	private StyledText fTextWidget;
@@ -731,7 +731,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 					} else
 						p.y= 1;
 						
-					fTextWidget.replaceTextRange(p.x, p.y, "");
+					fTextWidget.replaceTextRange(p.x, p.y, ""); //$NON-NLS-1$
 					
 				} catch (BadLocationException x) {
 					// ignore
@@ -739,7 +739,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			}
 			
 		} else if (p.x >= 0)
-			fTextWidget.replaceTextRange(p.x, p.y, "");	
+			fTextWidget.replaceTextRange(p.x, p.y, "");	 //$NON-NLS-1$
 	}
 	/*
 	 * @see ITextViewer#doOperation
@@ -814,7 +814,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			return pos;
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
-				System.out.println("TextViewer.findAndSelect: BadLocationException");
+				System.out.println("TextViewer.findAndSelect: BadLocationException"); //$NON-NLS-1$
 		}
 		
 		return -1;
@@ -873,7 +873,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
-				System.out.println("TextViewer.getBottomIndex: BadLocationException");
+				System.out.println("TextViewer.getBottomIndex: BadLocationException"); //$NON-NLS-1$
 		}
 		
 		return -1;
@@ -887,7 +887,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			return line.getOffset() + line.getLength() - 1;
 		} catch (BadLocationException ex) {
 			if (TRACE_ERRORS)
-				System.out.println("TextViewer.getBottomIndexEndOffset: BadLocationException");
+				System.out.println("TextViewer.getBottomIndexEndOffset: BadLocationException"); //$NON-NLS-1$
 			return getDocument().getLength() - 1;
 		}
 	}
@@ -957,7 +957,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
-				System.out.println("TextViewer.getFirstCompleteLineOfRegion: BadLocationException");
+				System.out.println("TextViewer.getFirstCompleteLineOfRegion: BadLocationException"); //$NON-NLS-1$
 		}
 		
 		return -1;
@@ -1042,7 +1042,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 					top += getDocument().getLineOfOffset(offset);
 				} catch (BadLocationException x) {
 					if (TRACE_ERRORS)
-						System.out.println("TextViewer.getTopIndex: BadLocationException");
+						System.out.println("TextViewer.getTopIndex: BadLocationException"); //$NON-NLS-1$
 					return -1;
 				}
 			}
@@ -1064,7 +1064,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				return top + getVisibleRegionOffset();
 			} catch (BadLocationException ex) {
 				if (TRACE_ERRORS)
-					System.out.println("TextViewer.getTopIndexStartOffset: BadLocationException");
+					System.out.println("TextViewer.getTopIndexStartOffset: BadLocationException"); //$NON-NLS-1$
 			}
 		}
 		
@@ -1218,7 +1218,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				getDocument().replace(fDocumentCommand.offset, fDocumentCommand.length, fDocumentCommand.text);
 			} catch (BadLocationException x) {
 				if (TRACE_ERRORS)
-					System.out.println("TextViewer.verifyText: BadLocationException");
+					System.out.println("TextViewer.verifyText: BadLocationException"); //$NON-NLS-1$
 			} finally {
 				fTextWidget.addVerifyListener(fVerifyListener);
 			}
@@ -1337,7 +1337,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				
 			}
 		} catch (BadLocationException e) {
-			throw new IllegalArgumentException("Invalid range argument");
+			throw new IllegalArgumentException(JFaceResources.getString("TextViewer.invalidRangeArg")); //$NON-NLS-1$
 		}
 	}
 	/**
@@ -1515,7 +1515,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			return selectContentTypePlugin(getDocument().getContentType(offset), plugins);
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
-				System.out.println("TextViewer.selectContentTypePlugin: BadLocationException");
+				System.out.println("TextViewer.selectContentTypePlugin: BadLocationException"); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -1600,7 +1600,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			int length= (visibleRegionOffset - offset) + visibleRegionLength;
 			setVisibleDocument(getChildDocumentManager().createChildDocument(fDocument, offset, length));
 		} catch (BadLocationException x) {
-			throw new IllegalArgumentException("Invalid visible region argument");
+			throw new IllegalArgumentException(JFaceResources.getString("TextViewer.invalidVisibleRegionArg")); //$NON-NLS-1$
 		}
 		
 		inputChanged(fDocument, oldDocument);
@@ -1764,7 +1764,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 					index -= getDocument().getLineOfOffset(offset);
 				} catch (BadLocationException x) {
 					if (TRACE_ERRORS)
-						System.out.println("TextViewer.setTopIndex: BadLocationException");
+						System.out.println("TextViewer.setTopIndex: BadLocationException"); //$NON-NLS-1$
 					return;
 				}
 			}
@@ -1780,7 +1780,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 							index= last;
 					} catch (BadLocationException x) {
 						if (TRACE_ERRORS)
-							System.out.println("TextViewer.setTopIndex: BadLocationException");
+							System.out.println("TextViewer.setTopIndex: BadLocationException"); //$NON-NLS-1$
 					}
 					
 					fTextWidget.setTopIndex(index);
@@ -1850,7 +1850,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			setVisibleDocument(child);
 							
 		} catch (BadLocationException x) {
-			throw new IllegalArgumentException("Invalid visible region argument");
+			throw new IllegalArgumentException(JFaceResources.getString("TextViewer.invalidVisibleRegionArg")); //$NON-NLS-1$
 		}
 	}
 	/**
@@ -1914,7 +1914,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
-				System.out.println("TextViewer.shift: BadLocationException");
+				System.out.println("TextViewer.shift: BadLocationException"); //$NON-NLS-1$
 		}
 	}
 	/**
@@ -1978,7 +1978,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
-				System.out.println("TextViewer.shift: BadLocationException");
+				System.out.println("TextViewer.shift: BadLocationException"); //$NON-NLS-1$
 		} finally {
 			if (fUndoManager != null)
 				fUndoManager.endCompoundChange();

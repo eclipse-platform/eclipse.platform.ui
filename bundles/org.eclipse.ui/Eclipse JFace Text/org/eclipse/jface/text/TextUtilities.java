@@ -12,7 +12,7 @@ package org.eclipse.jface.text;
 class TextUtilities {
 	
 	
-	public final static String[] fgDelimiters= new String[] { "\n", "\r", "\r\n" };
+	public final static String[] fgDelimiters= new String[] { "\n", "\r", "\r\n" }; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 	
 	
 	/**

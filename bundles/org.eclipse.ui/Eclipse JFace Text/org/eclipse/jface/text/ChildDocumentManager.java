@@ -28,7 +28,7 @@ public final class ChildDocumentManager implements IDocumentListener {
 	 * Name of the position categories used to keep track of the child
 	 * documents offset ranges into the parent document.
 	 */
-	public final static String CHILDDOCUMENTS= "__childdocuments";
+	public final static String CHILDDOCUMENTS= "__childdocuments"; //$NON-NLS-1$
 	
 	
 	/**

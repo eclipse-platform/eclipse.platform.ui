@@ -490,10 +490,10 @@ public class DefaultUndoManager implements IUndoManager {
 		
 		
 		if (newText == null)
-			newText= "";
+			newText= ""; //$NON-NLS-1$
 			
 		if (oldText == null)
-			oldText= "";
+			oldText= ""; //$NON-NLS-1$
 		
 		int length= newText.length();
 		int diff= end - start;

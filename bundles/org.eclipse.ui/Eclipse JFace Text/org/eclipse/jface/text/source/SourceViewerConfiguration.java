@@ -134,7 +134,7 @@ public class SourceViewerConfiguration {
 	 * @return a prefix or <code>null</code> if the prefix operation should not be supported
 	 */
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
-		return new String[] { "\t", "    ", "" };
+		return new String[] { "\t", "    ", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	/**
 	 * Returns the presentation reconciler ready to be used with the given source viewer. 

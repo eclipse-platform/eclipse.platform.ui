@@ -80,7 +80,7 @@ public class GapTextStore implements ITextStore {
 		int end= offset + length;
 
 		if (fContent == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		
 		if (end < fGapStart)
 			return new String(fContent, offset, length);
@@ -195,7 +195,7 @@ public class GapTextStore implements ITextStore {
 	public void replace(int offset, int length, String text) {
 		
 		if (text == null)
-			text= "";
+			text= ""; //$NON-NLS-1$
 
 		// move gap
 		adjustGap(offset + length, text.length() - length);
@@ -224,7 +224,7 @@ public class GapTextStore implements ITextStore {
 	public void set(String text) {
 		
 		if (text == null)
-			text= "";
+			text= ""; //$NON-NLS-1$
 
 		fContent= text.toCharArray();
 

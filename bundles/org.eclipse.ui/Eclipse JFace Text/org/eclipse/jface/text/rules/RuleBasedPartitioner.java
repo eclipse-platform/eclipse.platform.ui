@@ -36,7 +36,7 @@ import org.eclipse.jface.util.Assert;
 public class RuleBasedPartitioner implements IDocumentPartitioner {
 	
 	/** The position category this partitioner uses to store the document's partitioning information */
-	public final static String CONTENT_TYPES_CATEGORY= "__content_types_category";
+	public final static String CONTENT_TYPES_CATEGORY= "__content_types_category"; //$NON-NLS-1$
 
 	
 	/** The partitioner's scanner */
