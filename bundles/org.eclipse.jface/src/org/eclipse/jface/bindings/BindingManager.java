@@ -262,7 +262,7 @@ public final class BindingManager implements IContextManagerListener,
 	 *            <code>String</code>). This value must not be
 	 *            <code>null</code> and must be empty.
 	 */
-	private final void computeBindings(final Map activeContextTree,
+private final void computeBindings(final Map activeContextTree,
 			final Map commandIdsByTrigger) {
 		/*
 		 * FIRST PASS: Remove all of the bindings that are marking deletions.
@@ -270,7 +270,7 @@ public final class BindingManager implements IContextManagerListener,
 		final Set trimmedBindings = removeDeletions(bindings);
 
 		/*
-		 * FIRST PASS: Just throw in bindings that match the current state. If
+		 * SECOND PASS: Just throw in bindings that match the current state. If
 		 * there is more than one match for a binding, then create a list.
 		 */
 		final Map possibleBindings = new HashMap();
@@ -329,7 +329,7 @@ public final class BindingManager implements IContextManagerListener,
 		}
 
 		/*
-		 * SECOND PASS: In this pass, we move any non-conflicting bindings
+		 * THIRD PASS: In this pass, we move any non-conflicting bindings
 		 * directly into the map. In the case of conflicts, we apply some
 		 * further logic to try to resolve them. If the conflict can't be
 		 * resolved, then we log the problem.
@@ -366,9 +366,11 @@ public final class BindingManager implements IContextManagerListener,
 				} else if (match instanceof Collection) {
 					final Binding winner = resolveConflicts((Collection) match,
 							activeContextTree);
-					if ((winner == null) && (DEBUG)) {
-						System.out
+					if (winner == null) {
+						if (DEBUG) {
+							System.out
 								.println("A conflict occurred for " + trigger); //$NON-NLS-1$
+						}
 					} else {
 						commandIdsByTrigger.put(trigger, winner.getCommandId());
 					}
@@ -535,7 +537,11 @@ public final class BindingManager implements IContextManagerListener,
 	 *         and it may be empty.
 	 */
 	public final Map getActiveBindings() {
-		return activeBindings;
+		if (activeBindings == null) {
+			return null;
+		}
+
+		return Collections.unmodifiableMap(activeBindings);
 	}
 
 	/**
@@ -569,14 +575,14 @@ public final class BindingManager implements IContextManagerListener,
 		}
 		Map commandIdsByTrigger = existingCache.getCommandIdsByTrigger();
 		if (commandIdsByTrigger != null) {
-			return commandIdsByTrigger;
+			return Collections.unmodifiableMap(commandIdsByTrigger);
 		}
 
 		// Compute the active bindings.
 		commandIdsByTrigger = new HashMap();
 		computeBindings(null, commandIdsByTrigger);
 		existingCache.setCommandIdsByTrigger(commandIdsByTrigger);
-		return commandIdsByTrigger;
+		return Collections.unmodifiableMap(commandIdsByTrigger);
 	}
 
 	/**
@@ -602,6 +608,32 @@ public final class BindingManager implements IContextManagerListener,
 		}
 
 		return mergedBindings;
+	}
+
+	/**
+	 * Returns the active bindings for a particular command identifier.  This
+	 * method operates in O(n) time over the number of bindings.
+	 * 
+	 * @return The collection of active triggers (<code>TriggerSequence</code>)
+	 * for a particular command identifier.  This value is guaranteed to never
+	 * be <code>null</code>, but it may be empty.
+	 */
+	public final Collection getActiveBindingsFor(final String commandId) {
+		if (activeBindings == null) {
+			return Collections.EMPTY_LIST;
+		}
+		
+		final Iterator entryItr = activeBindings.entrySet().iterator();
+		final Collection bindings = new ArrayList();
+		while (entryItr.hasNext()) {
+			final Map.Entry entry = (Map.Entry) entryItr.next();
+			final String entryCommandId = (String) entry.getValue();
+			if (entryCommandId.equals(commandId)) {
+				bindings.add(entry.getKey());
+			}
+		}
+		
+		return bindings;
 	}
 
 	/**

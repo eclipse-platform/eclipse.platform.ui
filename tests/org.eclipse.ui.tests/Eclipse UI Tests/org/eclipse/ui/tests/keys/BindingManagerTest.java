@@ -216,6 +216,10 @@ public final class BindingManagerTest extends UITestCase {
 		assertTrue("The active bindings should start empty", activeBindings
 				.isEmpty());
 	}
+	
+	public final void testGetActiveBindingsFor() {
+		// TODO Implement this test case.
+	}
 
 	/**
 	 * Tests that the active scheme starts off <code>null</code>. The rest of
@@ -245,38 +249,80 @@ public final class BindingManagerTest extends UITestCase {
 		assertEquals("There should be one binding", 1, bindings.size());
 		assertSame("The binding should be the same", binding, bindings
 				.iterator().next());
+		try {
+			bindings.clear();
+			fail("The API should not expose internal collections");
+		} catch (final UnsupportedOperationException e) {
+			// Success
+		}
 	}
 
+	/**
+	 * Tests that the list of defined schemes stays up-to-date
+	 */
 	public final void testGetDefinedSchemeIds() {
+		// Starting condition.
+		assertTrue("The set of defined scheme ids should start empty",
+				bindingManager.getDefinedSchemeIds().isEmpty());
 
+		// Retrieving a scheme shouldn't change anything.
+		final String schemeId = "schemeId";
+		final Scheme scheme = bindingManager.getScheme(schemeId);
+		assertTrue(
+				"The set of defined scheme ids should still be empty after a get",
+				bindingManager.getDefinedSchemeIds().isEmpty());
+
+		// Defining the scheme should change things.
+		scheme.define("name", "description", null);
+		final Set definedSchemes = bindingManager.getDefinedSchemeIds();
+		assertEquals("There should be one defined scheme id", 1, definedSchemes
+				.size());
+		assertSame("The defined scheme id should match", schemeId,
+				definedSchemes.iterator().next());
+		try {
+			definedSchemes.clear();
+			fail("The API should not expose internal collections");
+		} catch (final UnsupportedOperationException e) {
+			// Success
+		}
+
+		// Undefining the scheme should also change things.
+		scheme.undefine();
+		assertTrue(
+				"The set of define scheme ids should be empty after an undefine",
+				bindingManager.getDefinedSchemeIds().isEmpty());
 	}
 
+	/**
+	 * Tests that the active locale is never <code>null</code>.
+	 */
 	public final void testGetLocale() {
-
+		assertNotNull("The locale should never be null", bindingManager
+				.getLocale());
 	}
 
 	public final void testGetPartialMatches() {
-
+		// TODO Implement this test case.
 	}
 
 	public final void testGetPerfectMatch() {
-
+		// TODO Implement this test case.
 	}
 
 	public final void testGetPlatform() {
-
+		// TODO Implement this test case.
 	}
 
 	public final void testGetScheme() {
-
+		// TODO Implement this test case.
 	}
 
 	public final void testIsPartialMatch() {
-
+		// TODO Implement this test case.
 	}
 
 	public final void testIsPerfectMatch() {
-
+		// TODO Implement this test case.
 	}
 
 	public final void testRemoveBindings() {

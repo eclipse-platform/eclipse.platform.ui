@@ -11,9 +11,11 @@
 package org.eclipse.ui.keys;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.bindings.Scheme;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.ui.IService;
 
 /**
@@ -21,6 +23,11 @@ import org.eclipse.ui.IService;
  */
 public interface IBindingService extends IService {
 
+	/**
+	 * Gets the active bindings for a given command identifier.
+	 */
+	public Collection getActiveBindingsFor(String commandId);
+	
 	/**
 	 * Returns the currently active scheme.
 	 * 
@@ -54,6 +61,29 @@ public interface IBindingService extends IService {
 	public String getLocale();
 
 	/**
+	 * Returns all of the possible bindings that start with the given trigger
+	 * (but are not equal to the given trigger).
+	 * 
+	 * @param trigger
+	 *            The prefix to look for; must not be <code>null</code>.
+	 * @return A map of triggers (<code>TriggerSequence</code>) to command
+	 *         identifier (<code>String</code>). This map may be empty, but
+	 *         it is never <code>null</code>.
+	 */
+	public Map getPartialMatches(TriggerSequence trigger);
+
+	/**
+	 * Returns the command identifier for the active binding matching this
+	 * trigger, if any.
+	 * 
+	 * @param trigger
+	 *            The trigger to match; may be <code>null</code>.
+	 * @return The command identifier that matches, if any; <code>null</code>
+	 *         otherwise.
+	 */
+	public String getPerfectMatch(TriggerSequence trigger);
+
+	/**
 	 * Returns the currently active platform.
 	 * 
 	 * @return The current platform.
@@ -70,4 +100,27 @@ public interface IBindingService extends IService {
 	 */
 	public Scheme getScheme(String schemeId);
 
+	/**
+	 * Returns whether the given trigger sequence is a partial match for the
+	 * given sequence.
+	 * 
+	 * @param trigger
+	 *            The sequence which should be the prefix for some binding;
+	 *            should not be <code>null</code>.
+	 * @return <code>true</code> if the trigger can be found in the active
+	 *         bindings; <code>false</code> otherwise.
+	 */
+	public boolean isPartialMatch(TriggerSequence trigger);
+
+	/**
+	 * Returns whether the given trigger sequence is a perfect match for the
+	 * given sequence.
+	 * 
+	 * @param trigger
+	 *            The sequence which should match exactly; should not be
+	 *            <code>null</code>.
+	 * @return <code>true</code> if the trigger can be found in the active
+	 *         bindings; <code>false</code> otherwise.
+	 */
+	public boolean isPerfectMatch(TriggerSequence trigger);
 }

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.commands;
 
-import java.util.Map;
-
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
@@ -81,10 +79,21 @@ public final class LegacyHandlerWrapper implements IHandler {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.commands.IHandler#getAttributeValuesByName()
+	 * @see org.eclipse.core.commands.IHandler#isEnabled()
 	 */
-	public Map getAttributeValuesByName() {
-		return handler.getAttributeValuesByName();
+	public boolean isEnabled() {
+		return ((Boolean) handler.getAttributeValuesByName().get(
+				ILegacyAttributeNames.ENABLED)).booleanValue();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.IHandler#isHandled()
+	 */
+	public boolean isHandled() {
+		return ((Boolean) handler.getAttributeValuesByName().get(
+				ILegacyAttributeNames.HANDLED)).booleanValue();
 	}
 
 	/*

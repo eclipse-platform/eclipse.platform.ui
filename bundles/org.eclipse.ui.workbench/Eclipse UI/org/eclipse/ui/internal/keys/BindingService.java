@@ -11,10 +11,12 @@
 package org.eclipse.ui.internal.keys;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
@@ -43,11 +45,10 @@ public class BindingService implements IBindingService {
 		this.bindingManager = bindingManager;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.keys.IBindingService#getActiveScheme()
-	 */
+	public final Collection getActiveBindingsFor(final String commandId) {
+		return bindingManager.getActiveBindingsFor(commandId);
+	}
+
 	public Scheme getActiveScheme() {
 		return bindingManager.getActiveScheme();
 	}
@@ -56,17 +57,20 @@ public class BindingService implements IBindingService {
 		return bindingManager.getBindings();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.contexts.IBindingService#getDefinedSchemeIds()
-	 */
 	public Collection getDefinedSchemeIds() {
 		return bindingManager.getDefinedSchemeIds();
 	}
 
 	public String getLocale() {
 		return bindingManager.getLocale();
+	}
+
+	public Map getPartialMatches(final TriggerSequence trigger) {
+		return bindingManager.getPartialMatches(trigger);
+	}
+
+	public String getPerfectMatch(final TriggerSequence trigger) {
+		return bindingManager.getPerfectMatch(trigger);
 	}
 
 	public String getPlatform() {
@@ -79,5 +83,13 @@ public class BindingService implements IBindingService {
 		 * changed.
 		 */
 		return bindingManager.getScheme(schemeId);
+	}
+
+	public final boolean isPartialMatch(final TriggerSequence sequence) {
+		return bindingManager.isPartialMatch(sequence);
+	}
+
+	public final boolean isPerfectMatch(final TriggerSequence sequence) {
+		return bindingManager.isPerfectMatch(sequence);
 	}
 }

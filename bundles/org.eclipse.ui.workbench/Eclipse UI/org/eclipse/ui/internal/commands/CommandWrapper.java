@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,193 +36,194 @@ import org.eclipse.ui.keys.ParseException;
  */
 final class CommandWrapper implements ICommand {
 
-    /**
-     * The supporting binding manager; never <code>null</code>.
-     */
-    private final BindingManager bindingManager;
+	/**
+	 * The supporting binding manager; never <code>null</code>.
+	 */
+	private final BindingManager bindingManager;
 
-    /**
-     * The wrapped command; never <code>null</code>.
-     */
-    private final Command command;
+	/**
+	 * The wrapped command; never <code>null</code>.
+	 */
+	private final Command command;
 
-    /**
-     * Constructs a new <code>CommandWrapper</code>
-     * 
-     * @param command
-     *            The command to be wrapped; must not be <code>null</code>.
-     * @param bindingManager
-     *            The binding manager to support this wrapper; must not be
-     *            <code>null</code>.
-     */
-    CommandWrapper(final Command command, final BindingManager bindingManager) {
-        if (command == null) {
-            throw new NullPointerException(
-                    "The wrapped command cannot be <code>null</code>."); //$NON-NLS-1$
-        }
+	/**
+	 * Constructs a new <code>CommandWrapper</code>
+	 * 
+	 * @param command
+	 *            The command to be wrapped; must not be <code>null</code>.
+	 * @param bindingManager
+	 *            The binding manager to support this wrapper; must not be
+	 *            <code>null</code>.
+	 */
+	CommandWrapper(final Command command, final BindingManager bindingManager) {
+		if (command == null) {
+			throw new NullPointerException(
+					"The wrapped command cannot be <code>null</code>."); //$NON-NLS-1$
+		}
 
-        if (bindingManager == null) {
-            throw new NullPointerException(
-                    "A binding manager is required to wrap a command"); //$NON-NLS-1$
-        }
+		if (bindingManager == null) {
+			throw new NullPointerException(
+					"A binding manager is required to wrap a command"); //$NON-NLS-1$
+		}
 
-        this.command = command;
-        this.bindingManager = bindingManager;
-    }
+		this.command = command;
+		this.bindingManager = bindingManager;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.ICommand#addCommandListener(org.eclipse.ui.commands.ICommandListener)
-     */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommand#addCommandListener(org.eclipse.ui.commands.ICommandListener)
+	 */
 
-    public final void addCommandListener(final ICommandListener commandListener) {
-        command.addCommandListener(new CommandListenerWrapper(commandListener,
-                bindingManager));
-    }
+	public final void addCommandListener(final ICommandListener commandListener) {
+		command.addCommandListener(new CommandListenerWrapper(commandListener,
+				bindingManager));
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.ICommand#execute(java.util.Map)
-     */
-    public final Object execute(Map parameterValuesByName)
-            throws ExecutionException, NotHandledException {
-        try {
-            return command.execute(new ExecutionEvent(
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommand#execute(java.util.Map)
+	 */
+	public final Object execute(Map parameterValuesByName)
+			throws ExecutionException, NotHandledException {
+		try {
+			return command.execute(new ExecutionEvent(
 					(parameterValuesByName == null) ? Collections.EMPTY_MAP
 							: parameterValuesByName, null, null));
-        } catch (final org.eclipse.core.commands.ExecutionException e) {
-            throw new ExecutionException(e);
-        } catch (final org.eclipse.core.commands.NotHandledException e) {
-            throw new NotHandledException(e);
-        }
-    }
+		} catch (final org.eclipse.core.commands.ExecutionException e) {
+			throw new ExecutionException(e);
+		} catch (final org.eclipse.core.commands.NotHandledException e) {
+			throw new NotHandledException(e);
+		}
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.ICommand#getAttributeValuesByName()
-     */
-    public final Map getAttributeValuesByName() throws NotHandledException {
-        try {
-            return command.getAttributeValuesByName();
-        } catch (final org.eclipse.core.commands.NotHandledException e) {
-            throw new NotHandledException(e);
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommand#getAttributeValuesByName()
+	 */
+	public final Map getAttributeValuesByName() {
+		final Map attributeValues = new HashMap();
+		attributeValues.put(ILegacyAttributeNames.ENABLED, Boolean
+				.valueOf(command.isEnabled())); //$NON-NLS-1$
+		attributeValues.put(ILegacyAttributeNames.HANDLED, Boolean
+				.valueOf(command.isHandled())); //$NON-NLS-1$
+		return attributeValues;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.ICommand#getCategoryId()
-     */
-    public final String getCategoryId() {
-        // TODO Does this break anybody?
-        return null;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommand#getCategoryId()
+	 */
+	public final String getCategoryId() {
+		// TODO Does this break anybody?
+		return null;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.ICommand#getDescription()
-     */
-    public final String getDescription() throws NotDefinedException {
-        try {
-            return command.getDescription();
-        } catch (final org.eclipse.core.commands.common.NotDefinedException e) {
-            throw new NotDefinedException(e);
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommand#getDescription()
+	 */
+	public final String getDescription() throws NotDefinedException {
+		try {
+			return command.getDescription();
+		} catch (final org.eclipse.core.commands.common.NotDefinedException e) {
+			throw new NotDefinedException(e);
+		}
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.ICommand#getId()
-     */
-    public final String getId() {
-        return command.getId();
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommand#getId()
+	 */
+	public final String getId() {
+		return command.getId();
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.ICommand#getKeySequenceBindings()
-     */
-    public final List getKeySequenceBindings() {
-        // TODO Make this go faster.
-        final List bindings = new ArrayList();
-        final Map allBindings = bindingManager.getActiveBindings();
-        if (allBindings == null) {
-            return bindings;
-        }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommand#getKeySequenceBindings()
+	 */
+	public final List getKeySequenceBindings() {
+		// TODO Make this go faster.
+		final List bindings = new ArrayList();
+		final Map allBindings = bindingManager.getActiveBindings();
+		if (allBindings == null) {
+			return bindings;
+		}
 
-        final Iterator allBindingItr = allBindings.entrySet().iterator();
-        while (allBindingItr.hasNext()) {
-            final Map.Entry entry = (Map.Entry) allBindingItr.next();
-            final String commandId = (String) entry.getValue();
-            if (getId().equals(commandId)) {
-                try {
-                    bindings.add(new KeySequenceBinding(KeySequence
-                            .getInstance(entry.getKey().toString()), 0));
-                } catch (final ParseException e) {
-                    // Oh, well....
-                }
-            }
-        }
+		final Iterator allBindingItr = allBindings.entrySet().iterator();
+		while (allBindingItr.hasNext()) {
+			final Map.Entry entry = (Map.Entry) allBindingItr.next();
+			final String commandId = (String) entry.getValue();
+			if (getId().equals(commandId)) {
+				try {
+					bindings.add(new KeySequenceBinding(KeySequence
+							.getInstance(entry.getKey().toString()), 0));
+				} catch (final ParseException e) {
+					// Oh, well....
+				}
+			}
+		}
 
-        return bindings;
-    }
+		return bindings;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.ICommand#getName()
-     */
-    public final String getName() throws NotDefinedException {
-        try {
-            return command.getName();
-        } catch (final org.eclipse.core.commands.common.NotDefinedException e) {
-            throw new NotDefinedException(e);
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommand#getName()
+	 */
+	public final String getName() throws NotDefinedException {
+		try {
+			return command.getName();
+		} catch (final org.eclipse.core.commands.common.NotDefinedException e) {
+			throw new NotDefinedException(e);
+		}
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.ICommand#isDefined()
-     */
-    public final boolean isDefined() {
-        return command.isDefined();
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommand#isDefined()
+	 */
+	public final boolean isDefined() {
+		return command.isDefined();
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.ICommand#isHandled()
-     */
-    public final boolean isHandled() {
-        return command.isHandled();
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommand#isHandled()
+	 */
+	public final boolean isHandled() {
+		return command.isHandled();
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.ICommand#removeCommandListener(org.eclipse.ui.commands.ICommandListener)
-     */
-    public final void removeCommandListener(
-            final ICommandListener commandListener) {
-        command.removeCommandListener(new CommandListenerWrapper(
-                commandListener, bindingManager));
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommand#removeCommandListener(org.eclipse.ui.commands.ICommandListener)
+	 */
+	public final void removeCommandListener(
+			final ICommandListener commandListener) {
+		command.removeCommandListener(new CommandListenerWrapper(
+				commandListener, bindingManager));
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    public final int compareTo(final Object o) {
-        return command.compareTo(o);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	public final int compareTo(final Object o) {
+		return command.compareTo(o);
+	}
 
 }

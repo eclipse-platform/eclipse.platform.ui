@@ -290,6 +290,9 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         commandManagerWrapper = CommandManagerFactory.getCommandManagerWrapper(
                 bindingManager, commandManager, contextManager);
         KeyFormatterFactory.setDefault(SWTKeySupport.getKeyFormatterForPlatform());
+        org.eclipse.ui.keys.KeyFormatterFactory
+				.setDefault(org.eclipse.ui.keys.SWTKeySupport
+						.getKeyFormatterForPlatform());
 
         // Attach a hook to latch on to the first workbench window to open.
         workbenchToSupport.getDisplay().addFilter(SWT.Activate,
