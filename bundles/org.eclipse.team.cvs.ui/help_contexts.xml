@@ -397,15 +397,6 @@
       <description>Load the contents of the file into the workspace. The base revision of the local file will not change and the file will become dirty. Perform this action if you wich to revert to the contents of an older revision of the file.
       </description>
    	</context>
-   
-    <!-- ********************************** -->
- 	<!-- Team Actions					    -->
- 	<!-- ********************************** -->
- 	
-   	<context  id="team_commit_action_context" >
-      <description>Commit outgoing changes to the respository
-      </description>
-   	</context>
    		
    	<!-- ********************************** -->
  	<!-- Sync Actions					    -->
