@@ -26,6 +26,8 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -42,6 +44,8 @@ import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IIDEActionConstants;
 import org.eclipse.ui.internal.AboutInfo;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.actions.BuildSetMenu;
 import org.eclipse.ui.internal.ide.actions.QuickMenuAction;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
@@ -146,6 +150,9 @@ public final class WorkbenchActionBuilder {
 	private StatusLineContributionItem statusLineItem;
 	
 	private Preferences.IPropertyChangeListener prefListener;
+	// listener for the "close editors automatically"
+	// preference change
+	private IPropertyChangeListener propPrefListener;
 
 	private IWorkbenchAction introAction;
 
@@ -213,6 +220,30 @@ public final class WorkbenchActionBuilder {
 		};
 		ResourcesPlugin.getPlugin().getPluginPreferences().addPropertyChangeListener(prefListener);
 		
+		// listener for the "close editors automatically"
+		// preference change
+		propPrefListener = new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
+					if (window.getShell() != null && !window.getShell().isDisposed()) {
+						// this property change notification could be from a non-ui thread
+						window.getShell().getDisplay().syncExec(new Runnable() {
+							public void run() {
+								updatePinActionToolbar();
+							}
+						});
+					}
+				}
+			}
+		};
+		/*
+		 * In order to ensure that the pin action toolbar sets its size 
+		 * correctly, the pin action should set its visiblity before we call updatePinActionToolbar().
+		 * 
+		 * In other words we always want the PinActionContributionItem to be notified before the 
+		 * WorkbenchActionBuilder.
+		 */
+		WorkbenchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(propPrefListener);
 	}
 
 	/**
@@ -849,6 +880,9 @@ public final class WorkbenchActionBuilder {
 			ResourcesPlugin.getPlugin().getPluginPreferences().removePropertyChangeListener(
 				prefListener);
 		}
+		if (propPrefListener != null) {
+			WorkbenchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(propPrefListener);
+		}
 		closeAction.dispose();
 		closeAllAction.dispose();
 		closeAllSavedAction.dispose();
@@ -1256,5 +1290,29 @@ public final class WorkbenchActionBuilder {
 			toolBarManager.update(false);
 			toolBarItem.update(ICoolBarManager.SIZE);
 		}
+	}
+	
+	/**
+	 * Update the pin action's tool bar
+	 */
+	void updatePinActionToolbar() {
+		
+		ICoolBarManager coolBarManager = actionBarConfigurer.getCoolBarManager();
+		IContributionItem cbItem = coolBarManager.find(IWorkbenchActionConstants.TOOLBAR_NAVIGATE);
+		if (!(cbItem instanceof ToolBarContributionItem)) {
+			// This should not happen
+			IDEWorkbenchPlugin.log("Navigation toolbar contribution item is missing"); //$NON-NLS-1$
+			return;
+		}
+		ToolBarContributionItem toolBarItem = (ToolBarContributionItem)cbItem;
+		IToolBarManager toolBarManager = toolBarItem.getToolBarManager();
+		if (toolBarManager == null) {
+			// error if this happens, navigation toolbar assumed to always exist
+			IDEWorkbenchPlugin.log("Navigate toolbar is missing"); //$NON-NLS-1$
+			return;
+		}
+
+		toolBarManager.update(false);
+		toolBarItem.update(ICoolBarManager.SIZE);
 	}
 }
