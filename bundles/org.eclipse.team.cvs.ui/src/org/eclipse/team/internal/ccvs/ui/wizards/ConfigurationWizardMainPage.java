@@ -268,6 +268,8 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		}
 		
 		connectionMethodCombo.select(0);
+		useDefaultPort.setSelection(true);
+		
 		if(properties != null) {
 			String method = (String)properties.getProperty("connection"); //$NON-NLS-1$
 			if (method == null) {
@@ -292,9 +294,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			}
 	
 			String port = (String)properties.getProperty("port"); //$NON-NLS-1$
-			if (port == null) {
-				useDefaultPort.setSelection(true);
-			} else {
+			if (port != null) {
 				useCustomPort.setSelection(true);
 				portText.setText(port);
 			}
