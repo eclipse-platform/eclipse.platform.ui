@@ -71,8 +71,7 @@ public class NewExtensionLocationAction extends Action {
 			IConfiguredSite csite = config.createLinkedConfiguredSite(dir);
 			config.addConfiguredSite(csite);
 			boolean restartNeeded = SiteManager.getLocalSite().save();
-			if (restartNeeded)
-				UpdateUI.requestRestart();
+			UpdateUI.requestRestart(restartNeeded);
 			return true;
 		} catch (CoreException e) {
 			String title = UpdateUI.getString("InstallWizard.TargetPage.location.error.title"); //$NON-NLS-1$

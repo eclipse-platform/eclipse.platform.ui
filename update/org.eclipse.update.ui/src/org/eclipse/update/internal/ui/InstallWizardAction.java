@@ -11,6 +11,7 @@
 package org.eclipse.update.internal.ui;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.custom.*;
@@ -54,9 +55,8 @@ public class InstallWizardAction implements IWorkbenchWindowActionDelegate {
 		dialog.create();
 		dialog.getShell().setText(UpdateUI.getString("InstallWizardAction.title")); //$NON-NLS-1$
 		dialog.getShell().setSize(600, 500);
-		dialog.open();
-		if (wizard.isRestartNeeded())
-			UpdateUI.requestRestart();
+		if (dialog.open() == IDialogConstants.OK_ID)
+			UpdateUI.requestRestart(wizard.isRestartNeeded());
 	}
 
 	/**

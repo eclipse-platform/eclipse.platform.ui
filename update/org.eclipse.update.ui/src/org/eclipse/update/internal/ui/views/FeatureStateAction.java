@@ -68,8 +68,7 @@ public class FeatureStateAction extends Action {
 						adapter.getFeature(null));
 
 			boolean restartNeeded = toggleOperation.execute(null, null);
-			if (restartNeeded)
-				UpdateUI.requestRestart();
+			UpdateUI.requestRestart(restartNeeded);
 
 		} catch (CoreException e) {
 			ErrorDialog.openError(

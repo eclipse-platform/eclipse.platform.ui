@@ -150,7 +150,7 @@ public class InstallDeltaWizard
 				dialog.getShell().setSize(500, 500);
 				dialog.open();
 				if (processed > 0)
-					UpdateUI.requestRestart();
+					UpdateUI.requestRestart(true);
 			}
 		});
 	}

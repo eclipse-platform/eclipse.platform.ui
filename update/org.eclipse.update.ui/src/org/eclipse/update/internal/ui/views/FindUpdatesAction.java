@@ -56,9 +56,8 @@ public class FindUpdatesAction extends Action {
 				dialog.create();
 				dialog.getShell().setText(UpdateUI.getString("FindUpdatesAction.updates")); //$NON-NLS-1$
 				dialog.getShell().setSize(600, 500);
-				dialog.open();
-				if (wizard.isRestartNeeded())
-					UpdateUI.requestRestart();				
+				if (dialog.open() == IDialogConstants.OK_ID)
+					UpdateUI.requestRestart(wizard.isRestartNeeded());				
 			}
 		});
 	}

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -181,8 +182,7 @@ public class AutomaticUpdatesJob
 		dialog.create();
 		dialog.getShell().setText("Updates");
 		dialog.getShell().setSize(600, 500);
-		dialog.open();
-		if (wizard.isRestartNeeded())
-			UpdateUI.requestRestart();
+		if (dialog.open() == IDialogConstants.OK_ID)
+			UpdateUI.requestRestart(wizard.isRestartNeeded());
 	}
 }

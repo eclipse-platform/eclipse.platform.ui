@@ -377,7 +377,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			if ("file".equalsIgnoreCase(getURL().getProtocol()))
 				UpdateCore.log(this);
 			resetActivities();
-			return applyChanges(runtimeConfiguration);
+			return isRestartNeeded(runtimeConfiguration);
 		} catch (IOException e) {
 			CoreException exc = Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToSavePlatformConfiguration", runtimeConfiguration.getConfigurationLocation().toExternalForm()), e);
 			//$NON-NLS-1$
@@ -792,7 +792,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	/**
 	 * @return true if restart is needed
 	 */
-	private boolean applyChanges(IPlatformConfiguration runtimeConfig) {
+	private boolean isRestartNeeded(IPlatformConfiguration runtimeConfig) {
 		URL[] newBundlePaths = runtimeConfig.getPluginPath();
 		HashMap newMap = new HashMap();
 		for (int i=0; i<newBundlePaths.length; i++) 
@@ -815,9 +815,15 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				return true;
 			}
 		}
-			
+		return false;
+	}
+	
+	/**
+	 * To be called when committing the update changes to current configuration
+	 *
+	 */
+	public static void applyChanges() {
 		ConfigurationActivator configurator = ConfigurationActivator.getConfigurator();
 		configurator.installBundles();
-		return false;
 	}
 }

@@ -344,14 +344,16 @@ public class UpdateUI extends AbstractUIPlugin {
 		}
 	}
 	
-	public static void requestRestart() {
-		String title = UpdateUI.getString("RestartTitle"); //$NON-NLS-1$
-		String message = UpdateUI.getString("RestartMessage"); //$NON-NLS-1$
+	/**
+	 * Prompts the user to restart
+	 * @param restartIsReallyNeeded true when a restart is needed, false if the user feels lucky (tm) and wants the changes
+	 * applied to the current config
+	 */
+	public static void requestRestart(boolean restartIsReallyNeeded) {
 		boolean restart =
-			MessageDialog.openQuestion(
+			RestartDialog.openQuestion(
 				getActiveWorkbenchShell(),
-				title,
-				message);
+				restartIsReallyNeeded);
 		if (restart)
 			PlatformUI.getWorkbench().restart();
 	}

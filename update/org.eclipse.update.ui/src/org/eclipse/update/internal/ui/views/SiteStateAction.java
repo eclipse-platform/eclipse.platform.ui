@@ -51,8 +51,7 @@ public class SiteStateAction extends Action {
 			IOperation toggleSiteOperation = OperationsManager.getOperationFactory().createToggleSiteOperation(site);
 			boolean restartNeeded = toggleSiteOperation.execute(null, null);
 					
-			if (restartNeeded)
-				UpdateUI.requestRestart();
+			UpdateUI.requestRestart(restartNeeded);
 
 		} catch (CoreException e) {
 			ErrorDialog.openError(

@@ -140,8 +140,7 @@ public class ReplaceFeatureVersionWizardPage extends WizardPage {
 						.createReplaceFeatureVersionOperation(currentFeature, anotherFeature);
 				try {
 					boolean restartNeeded = revertOperation.execute(monitor, null);
-					if (restartNeeded)
-						UpdateUI.requestRestart();
+					UpdateUI.requestRestart(restartNeeded);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
