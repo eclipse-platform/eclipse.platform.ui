@@ -10,16 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.registry;
 
-import java.lang.reflect.Constructor;
 import java.text.Collator;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.model.AdaptableList;
-import org.osgi.framework.Bundle;
 
 /**
  *  Instances access the registry that is provided at creation time
@@ -86,7 +83,7 @@ public class CheatSheetRegistryReader extends RegistryReader {
 	private ArrayList deferCheatSheets = null;
 	private final String pluginPoint = "cheatSheetContent"; //$NON-NLS-1$
 	private final String csItemExtension = "cheatSheetItemExtension"; //$NON-NLS-1$
-	private final Class[] stringArray = { String.class };
+//	private final Class[] stringArray = { String.class };
 
 	/**
 	 *	Create an instance of this class.
@@ -435,11 +432,13 @@ public class CheatSheetRegistryReader extends RegistryReader {
 	}
 
 	public ArrayList readItemExtensions() {
-		cheatsheetItemExtensions = new ArrayList();
+		if (cheatsheetItemExtensions == null) {
+			cheatsheetItemExtensions = new ArrayList();
 
-		IExtensionRegistry xregistry = Platform.getExtensionRegistry();
-		//Now read the cheat sheet extensions.
-		readRegistry(xregistry, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, csItemExtension);
+			IExtensionRegistry xregistry = Platform.getExtensionRegistry();
+			//Now read the cheat sheet extensions.
+			readRegistry(xregistry, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, csItemExtension);
+		}
 
 		return cheatsheetItemExtensions;
 	}
@@ -447,34 +446,50 @@ public class CheatSheetRegistryReader extends RegistryReader {
 	private void createItemExtensionElement(IConfigurationElement element) {
 		String className = element.getAttribute(ATT_CLASS);
 		String itemAttribute = element.getAttribute(ATT_ITEM_ATTRIBUTE);
-		if (className == null || itemAttribute == null)
+
+		// ensure that a class was specified
+		if (className == null) {
+			logMissingAttribute(element, ATT_CLASS);
 			return;
+		}
+		// ensure that a itemAttribute was specified
+		if (itemAttribute == null) {
+			logMissingAttribute(element, ATT_ITEM_ATTRIBUTE);
+			return;
+		}
 
-		Class extClass = null;
-		AbstractItemExtensionElement extElement = null;
-		String pluginId = element.getDeclaringExtension().getNamespace();
+		CheatSheetItemExtensionElement itemExtensionElement = new CheatSheetItemExtensionElement();
+		itemExtensionElement.setClassName(className);
+		itemExtensionElement.setItemAttribute(itemAttribute);
+		itemExtensionElement.setConfigurationElement(element);
 
-		try {
-			Bundle bundle = Platform.getBundle(pluginId);
-			extClass = bundle.loadClass(className);
-		} catch (Exception e) {
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), e);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
-		}
-		try {
-			if (extClass != null) {
-				Constructor c = extClass.getConstructor(stringArray);
-				Object[] parameters = { itemAttribute };
-				extElement = (AbstractItemExtensionElement) c.newInstance(parameters);
-			}
-		} catch (Exception e) {
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), e);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
-		}
-		
-		if (extElement != null){
-			cheatsheetItemExtensions.add(extElement);
-		}
+		cheatsheetItemExtensions.add(itemExtensionElement);
+
+//		Class extClass = null;
+//		AbstractItemExtensionElement extElement = null;
+//		String pluginId = element.getDeclaringExtension().getNamespace();
+//
+//		try {
+//			Bundle bundle = Platform.getBundle(pluginId);
+//			extClass = bundle.loadClass(className);
+//		} catch (Exception e) {
+//			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), e);
+//			CheatSheetPlugin.getPlugin().getLog().log(status);
+//		}
+//		try {
+//			if (extClass != null) {
+//				Constructor c = extClass.getConstructor(stringArray);
+//				Object[] parameters = { itemAttribute };
+//				extElement = (AbstractItemExtensionElement) c.newInstance(parameters);
+//			}
+//		} catch (Exception e) {
+//			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), e);
+//			CheatSheetPlugin.getPlugin().getLog().log(status);
+//		}
+//		
+//		if (extElement != null){
+//			cheatsheetItemExtensions.add(extElement);
+//		}
 		
 	}
 
