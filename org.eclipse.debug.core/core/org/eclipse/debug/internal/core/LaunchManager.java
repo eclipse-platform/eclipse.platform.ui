@@ -1484,7 +1484,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	/**
 	 * Load comparator extensions.
 	 * 
-	 * @exception CoreException if an exception occurrs reading
+	 * @exception CoreException if an exception occurs reading
 	 *  the extensions
 	 */
 	private void initializeLaunchModes() {
@@ -1501,7 +1501,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				fLaunchModes[i]= mode;
 				fLaunchModeLabels.put(mode, label);
 			} else {
-				// invalid lauch mode
+				// invalid launch mode
 				if (mode == null) {
 					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
 					MessageFormat.format(DebugCoreMessages.getString("LaunchManager.27"), new String[] {configurationElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier()}), null); //$NON-NLS-1$
