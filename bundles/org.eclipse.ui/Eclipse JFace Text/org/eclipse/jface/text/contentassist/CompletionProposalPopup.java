@@ -18,6 +18,8 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
@@ -44,6 +46,8 @@ import org.eclipse.jface.text.ITextViewer;
  */
 class CompletionProposalPopup implements IContentAssistListener {
 	
+	private static Point fgProposalShellSize;
+	
 	private ITextViewer fViewer;
 	private ContentAssistant fContentAssistant;
 	private AdditionalInfoController fAdditionalInfoController;
@@ -59,7 +63,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private int fInvocationOffset;
 	private int fFilterOffset;
 	
-	private String fLineDelimiter= null;
+	private String fLineDelimiter;
 
 	
 	/**
@@ -149,13 +153,31 @@ class CompletionProposalPopup implements IContentAssistListener {
 			return;
 			
 		Control control= fViewer.getTextWidget();
-		fProposalShell= new Shell(control.getShell(), SWT.NO_TRIM | SWT.ON_TOP);
+		fProposalShell= new Shell(control.getShell(), SWT.ON_TOP | SWT.RESIZE );
 		fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL);
 		
-		int height= fProposalTable.getItemHeight() * 10;
-		fProposalShell.setSize(302, height + 2);
-		fProposalTable.setSize(300, height);
-		fProposalTable.setLocation(1, 1);
+		fProposalTable.setLocation(0, 0);
+		fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
+		
+		if (fgProposalShellSize == null) {
+			int height= fProposalTable.getItemHeight() * 10;
+			fgProposalShellSize= new Point(306, height + 6);
+		}
+		fProposalShell.setSize(fgProposalShellSize.x, fgProposalShellSize.y);
+		fProposalTable.setSize(fgProposalShellSize.x - 6, fgProposalShellSize.y - 6);
+		
+		fProposalShell.addControlListener(new ControlListener() {
+			
+			public void controlMoved(ControlEvent e) {}
+			
+			public void controlResized(ControlEvent e) {
+				fgProposalShellSize= fProposalShell.getSize();
+				fProposalTable.setSize(fgProposalShellSize.x - 6, fgProposalShellSize.y - 6);
+				// resets the cached resize constraints
+				fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
+			}
+		});
+
 		
 		fProposalShell.setBackground(control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		

@@ -16,6 +16,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
@@ -77,7 +78,6 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 		fDelay= delay;
 		setAnchor(ANCHOR_RIGHT);
 		setFallbackAnchors(new Anchor[] { ANCHOR_LEFT, ANCHOR_BOTTOM, ANCHOR_RIGHT });
-		setSizeConstraints(50, 10, true, false);
 	}
 	
 	/*
@@ -213,6 +213,19 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 			// set information & subject area
 			setInformation(information, area);
 		}
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeSizeConstraints(Control, IInformationControl)
+	 */
+	protected Point computeSizeConstraints(Control subjectControl, IInformationControl informationControl) {
+		Point sizeConstraint= super.computeSizeConstraints(subjectControl, informationControl);
+		Point size= subjectControl.getSize();
+		if (sizeConstraint.x < size.x)
+			sizeConstraint.x= size.x;
+		if (sizeConstraint.y < size.y)
+			sizeConstraint.y= size.y;
+		return sizeConstraint;
 	}
 }
 
