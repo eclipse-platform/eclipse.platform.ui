@@ -52,9 +52,9 @@ public class DeepSize {
 		}
 	}
 
-	public static final int HEADER_SIZE = 12;
+	public static final int HEADER_SIZE = 8;
 	public static final int OBJECT_HEADER_SIZE = HEADER_SIZE;
-	public static final int ARRAY_HEADER_SIZE = 16;
+	public static final int ARRAY_HEADER_SIZE = 12;
 	public static final int POINTER_SIZE = 4;
 
 	Set ignoreTypeNames = null;
