@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.core.TeamException;
@@ -124,15 +125,19 @@ public class SubscriberInput implements IPropertyChangeListener, ITeamResourceCh
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(TeamUI.GLOBAL_IGNORES_CHANGED)) {
-			//try {
-				// the reset will simply clear the set since a subscriber sync set doesn't
-				// implement fetchInput().
-				//subscriberSyncSet.reset(new NullProgressMonitor());
-				//eventHandler.initialize();
-			//} catch (TeamException e) {
-			//	TeamUIPlugin.log(e);
-			//}
+			try {
+				reset();
+			} catch (TeamException e) {
+				TeamUIPlugin.log(e);
+			}
 		}
+	}
+
+	public void reset() throws TeamException {
+		subscriberSyncSet.reset(new NullProgressMonitor());		
+		workingRootsSet.reset(new NullProgressMonitor());
+		filteredSyncSet.reset(new NullProgressMonitor());		
+		eventHandler.initialize();
 	}
 
 	/**

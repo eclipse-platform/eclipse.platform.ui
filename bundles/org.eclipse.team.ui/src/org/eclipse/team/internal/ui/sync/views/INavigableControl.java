@@ -21,5 +21,19 @@ public interface INavigableControl {
 	/**
 	 * Returns true if at end or beginning.
 	 */
-	boolean gotoDifference(int direction);	
+	boolean gotoDifference(int direction);
+	
+	/**
+	 * Preserve the selection for the given direction
+	 * filter.
+	 * @param the direction to preserve
+	 */
+	void preserveState(int direction);
+	
+	/**
+	 * Restore the selection and expansion for the 
+	 * given direction.
+	 * @param direction the direction to restore
+	 */
+	void restoreState(int direction);
 }

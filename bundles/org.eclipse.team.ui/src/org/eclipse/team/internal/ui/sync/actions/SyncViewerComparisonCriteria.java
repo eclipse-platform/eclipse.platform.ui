@@ -83,7 +83,7 @@ public class SyncViewerComparisonCriteria extends SyncViewerActionGroup {
 					// the new input.
 					SubscriberInput input = getSubscriberContext();
 					input.getSubscriber().setCurrentComparisonCriteria(activatedAction.getComparisonCriteria().getId());
-					//input.prepareInput(monitor);
+					input.reset();
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}

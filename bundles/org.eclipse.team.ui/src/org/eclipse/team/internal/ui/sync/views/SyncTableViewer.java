@@ -36,4 +36,16 @@ public class SyncTableViewer extends TableViewer implements INavigableControl {
 		table.setSelection(next);
 		return false;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.sync.views.INavigableControl#preserveSelection(int)
+	 */
+	public void preserveState(int direction) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.sync.views.INavigableControl#restoreSelection(int)
+	 */
+	public void restoreState(int direction) {
+	}
 }

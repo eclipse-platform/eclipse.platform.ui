@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.subscribers.TeamProvider;
@@ -53,7 +54,7 @@ import org.eclipse.team.internal.core.SaveContext;
  * TODO: Do certain operations (e.g. replace with) invalidate a merge subscriber?
  * TODO: How to ensure that sync info is flushed when merge roots are deleted?
  */
-public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResourceChangeListener {
+public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResourceChangeListener, ITeamResourceChangeListener {
 
 	public static final String UNIQUE_ID_PREFIX = "merge-";
 	
@@ -116,6 +117,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 //		}
 		
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+		CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().addListener(this);
 	}
 
 	protected SyncInfo getSyncInfo(IResource local, IRemoteResource base, IRemoteResource remote, IProgressMonitor monitor) throws TeamException {
@@ -300,5 +302,25 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 
 	public boolean isMerged(IResource resource) throws CVSException {
 		return mergedSynchronizer.getSyncBytes(resource) != null;
+	}
+
+	/* 
+	 * Currently only the workspace subscriber knows when a project has been deconfigured. We will listen for these events
+	 * and remove the root then forward to merge subscriber listeners.
+	 * (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.ITeamResourceChangeListener#teamResourceChanged(org.eclipse.team.core.subscribers.TeamDelta[])
+	 */
+	public void teamResourceChanged(TeamDelta[] deltas) {		
+		for (int i = 0; i < deltas.length; i++) {
+			TeamDelta delta = deltas[i];
+			switch(delta.getFlags()) {
+				case TeamDelta.PROVIDER_DECONFIGURED:
+					IResource resource = delta.getResource();
+					if(roots.remove(resource))	{
+						fireTeamResourceChange(new TeamDelta[] {delta});
+					}						
+					break;
+			}
+		}
 	}		
 }

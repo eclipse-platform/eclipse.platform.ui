@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -56,6 +57,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamDelta;
@@ -76,7 +78,12 @@ import org.eclipse.team.internal.ui.sync.sets.ISyncSetChangedListener;
 import org.eclipse.team.internal.ui.sync.sets.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.sets.SyncSetChangedEvent;
 import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.sync.AndSyncInfoFilter;
 import org.eclipse.team.ui.sync.ISynchronizeView;
+import org.eclipse.team.ui.sync.PseudoConflictFilter;
+import org.eclipse.team.ui.sync.SyncInfoChangeTypeFilter;
+import org.eclipse.team.ui.sync.SyncInfoDirectionFilter;
+import org.eclipse.team.ui.sync.SyncInfoFilter;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
@@ -836,5 +843,29 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 	public void workingSetChanged(IWorkingSet set) {
 		input.setWorkingSet(set);
 		updateTitle();
+	}
+	/**
+	 * Updates the filter applied to the active subscriber input and ensures that selection and expansions 
+	 * is preserved when the filtered contents are shown. 
+	 * @param filter
+	 */
+	public void updateInputFilter(int[] directions, int[] changeTypes) {			
+		try {
+			if(viewer instanceof INavigableControl) {
+				((INavigableControl)viewer).preserveState(1);
+			}
+			input.setFilter(
+							new AndSyncInfoFilter(
+								new SyncInfoFilter[] {
+									new SyncInfoDirectionFilter(directions), 
+									new SyncInfoChangeTypeFilter(changeTypes),
+									new PseudoConflictFilter()
+								}), new NullProgressMonitor());
+			if(viewer instanceof INavigableControl) {
+				((INavigableControl)viewer).restoreState(1);
+			}
+		} catch (TeamException e) {
+			Utils.handleError(getSite().getShell(), e, Policy.bind("SynchronizeView.16"), e.getMessage()); //$NON-NLS-1$
+		}
 	}
 }

@@ -19,6 +19,7 @@ import java.util.Set;
 import junit.framework.AssertionFailedError;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
@@ -216,5 +217,11 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 			result[i] = getSyncInfo(subscriber, resource);
 		}
 		return result;
+	}
+
+	protected void assertProjectRemoved(TeamSubscriber subscriber, IProject project) throws TeamException, InterruptedException {
+		// wait for events to flow
+		Thread.sleep(1000);
+		getSyncInfoSource().assertProjectRemoved(subscriber, project);
 	}
 }

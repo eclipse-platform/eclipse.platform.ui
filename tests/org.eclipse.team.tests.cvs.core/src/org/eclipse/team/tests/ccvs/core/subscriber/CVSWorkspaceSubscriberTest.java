@@ -30,12 +30,14 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -965,7 +967,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		assertSyncEquals("sync should be in sync", project, resourceNames, true, inSync);
 	}
 	
-	public void testDeleteProject() throws TeamException, CoreException, IOException {
+	public void testDeleteProject() throws CoreException, IOException, TeamException, InterruptedException {
 		String[] resourceNames = new String[] { "deleted.txt", "file1.txt", "folder1/", "folder1/a.txt" };
 		int[] inSync = new int[] {SyncInfo.IN_SYNC, SyncInfo.IN_SYNC, SyncInfo.IN_SYNC, SyncInfo.IN_SYNC};
 		IProject project = createProject("testDeleteProject", resourceNames);
@@ -990,13 +992,9 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				
 		project.delete(true, false, DEFAULT_MONITOR);
 		
-		assertProjectRemoved(project);
+		assertProjectRemoved(getWorkspaceSubscriber(), project);
 	}
 	
-	protected void assertProjectRemoved(IProject project) throws TeamException {
-		getSyncInfoSource().assertProjectRemoved(getWorkspaceSubscriber(), project);
-	}
-
 	public void testFolderDeletion() throws TeamException, CoreException {
 		
 		IProject project = createProject("testFolderDeletion", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/folder2/file.txt"});
@@ -1119,14 +1117,13 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		assertTrue("Folder should still exist", project.getFolder("folder2").exists());
 	}
 	
-	public void testDisconnectingProject() throws CoreException, TeamException {
+	public void testDisconnectingProject() throws CoreException, TeamException, InterruptedException {
 		// Create a test project (which commits it as well)
-		// comment out until we can fix it :)
-//		IProject project = createProject("testDisconnect", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
-//		ICVSFolder cvsProject = CVSWorkspaceRoot.getCVSFolderFor(project);
-//		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(project);
-//		provider.deconfigure();		
-//		assertProjectRemoved(project);
+		IProject project = createProject("testDisconnect", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		ICVSFolder cvsProject = CVSWorkspaceRoot.getCVSFolderFor(project);
+		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(project);
+		provider.deconfigure();		
+		assertProjectRemoved(getWorkspaceSubscriber(), project);
 	}
 	
 	/*

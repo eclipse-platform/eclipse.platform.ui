@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.sync.sets;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,8 +22,10 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.subscribers.SyncInfo;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 
 /**
  * This class keeps track of a set of resources that are associated with 
@@ -228,13 +232,17 @@ public class SyncSet {
 		IPath path = container.getFullPath();
 		Set children = (Set)parents.get(path);
 		if (children == null) return new SyncInfo[0];
-		SyncInfo[] infos = new SyncInfo[children.size()];
-		int i = 0;
+		List infos = new ArrayList();
 		for (Iterator iter = children.iterator(); iter.hasNext();) {
 			IResource child = (IResource) iter.next();
-			infos[i++] = getSyncInfo(child);
+			SyncInfo info = getSyncInfo(child);
+			if(info != null) {
+				infos.add(info);
+			} else {
+				TeamUIPlugin.log(IStatus.INFO, "missing sync info: " + child.getFullPath(), null);
+			}
 		}
-		return infos;
+		return (SyncInfo[]) infos.toArray(new SyncInfo[infos.size()]);
 	}
 
 	private IResource[] getRoots(IContainer root) {

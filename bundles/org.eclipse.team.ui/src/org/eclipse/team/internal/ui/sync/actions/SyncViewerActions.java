@@ -205,16 +205,7 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	public void refreshFilters() {
 		final SubscriberInput input = getSubscriberContext();
 		if(input != null) {
-			try {
-				input.setFilter(new AndSyncInfoFilter(
-				new SyncInfoFilter[] {
-					new SyncInfoDirectionFilter(directionsFilters.getDirectionFilter()), 
-					new SyncInfoChangeTypeFilter(changeFilters.getChangeFilters()),
-					new PseudoConflictFilter()
-				}), new NullProgressMonitor() /* TODO: should be a job ? */);
-			} catch (TeamException e) {
-				// TODO: bad stuff here
-			}
+			getSyncView().updateInputFilter(directionsFilters.getDirectionFilter(), changeFilters.getChangeFilters());
 		}
 	}
 	

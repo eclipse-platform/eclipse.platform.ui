@@ -257,5 +257,16 @@ public class SyncTreeViewer extends TreeViewer implements INavigableControl {
 			}
 		}
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.sync.views.INavigableControl#preserveState(int)
+	 */
+	public void preserveState(int direction) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.sync.views.INavigableControl#restoreState(int)
+	 */
+	public void restoreState(int direction) {
+	}
 }

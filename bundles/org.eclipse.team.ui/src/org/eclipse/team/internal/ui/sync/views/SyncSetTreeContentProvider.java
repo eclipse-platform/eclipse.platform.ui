@@ -83,8 +83,7 @@ public class SyncSetTreeContentProvider extends SyncSetContentProvider implement
 					parent = getModelParent(resource);				
 				}
 				Object element = getModelObject(resource);				
-				tree.add(parent, element);
-				tree.expandToLevel(element, AbstractTreeViewer.ALL_LEVELS);				
+				tree.add(parent, element);		
 			}
 		} else {
 			super.handleResourceAdditions(event);

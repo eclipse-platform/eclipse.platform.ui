@@ -36,7 +36,7 @@ public class SyncInfoFromSyncSet extends SyncInfoSource {
 	public SyncInfo getSyncInfo(TeamSubscriber subscriber, IResource resource) throws TeamException {
 		TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.TESTING_SYNCVIEW, true);
 		SubscriberInput input = getInput(subscriber);
-		SyncSet set = input.getFilteredSyncSet();
+		SyncSet set = input.getWorkingSetSyncSet();
 		SyncInfo info = set.getSyncInfo(resource);
 		if (info == null) {
 			info = subscriber.getSyncInfo(resource, DEFAULT_MONITOR);
