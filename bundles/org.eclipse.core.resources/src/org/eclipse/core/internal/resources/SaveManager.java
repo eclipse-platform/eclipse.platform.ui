@@ -915,7 +915,9 @@ public void snapshotIfNeeded(boolean hasTreeChanges) throws CoreException {
 		}
 		try {
 			EventStats.startSnapshot();
-			save(ISaveContext.SNAPSHOT, null, Policy.monitorFor(null));
+			IStatus result = save(ISaveContext.SNAPSHOT, null, Policy.monitorFor(null));
+			if (!result.isOK())
+				ResourcesPlugin.getPlugin().getLog().log(result);
 		} finally {
 			operationCount = 0;
 			snapshotRequested = false;
