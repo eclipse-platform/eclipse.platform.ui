@@ -82,6 +82,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 
 			// try to get the password info from the in-memory database first
 			Map map = Platform.getAuthorizationInfo(resourceUrl, requestingPrompt, requestingScheme);
+// TODO promot for password
 //			if (map == null) {
 //				map = retrievePasswordAuthentication(resourceUrl, requestingPrompt, requestingScheme);
 //			}
