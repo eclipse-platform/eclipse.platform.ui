@@ -124,6 +124,15 @@ public class CoreItem extends ViewItem {
 		if(item.isDynamic()) {
 			handleDynamicButtons();
 			return;
+		} else if( item.getSubItems() != null && item.getSubItems().size() > 0) {
+			try{
+				handleSubButtons();
+			}catch(Exception e){
+				//Need to log exception here. 
+				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.LESS_THAN_2_SUBITEMS), e);
+				CheatSheetPlugin.getPlugin().getLog().log(status);
+				org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.LESS_THAN_2_SUBITEMS), null, status);
+			}
 		}
 
 		if (buttonsHandled)
@@ -139,15 +148,6 @@ public class CoreItem extends ViewItem {
 			handlePerformWhenButtons();
 		} else if( item.getConditionalSubItems() != null && item.getConditionalSubItems().size() > 0) {
 			
-		} else if( item.getSubItems() != null && item.getSubItems().size() > 0) {
-			try{
-				handleSubButtons();
-			}catch(Exception e){
-				//Need to log exception here. 
-				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.LESS_THAN_2_SUBITEMS), e);
-				CheatSheetPlugin.getPlugin().getLog().log(status);
-				org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.LESS_THAN_2_SUBITEMS), null, status);
-			}
 		}
 	}
 
@@ -247,7 +247,7 @@ public class CoreItem extends ViewItem {
 					}
 				});
 			}
-			if (sub.getAction() != null && sub.getAction().isConfirm()) {
+			if (sub.getAction() == null || sub.getAction().isConfirm()) {
 				added++;
 				completeButton = createButton(buttonComposite, completeImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
 				toolkit.adapt(completeButton, true, true);
