@@ -10,18 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.model;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IResourceActionFilter;
 import org.eclipse.ui.actions.SimpleWildcardTester;
@@ -140,8 +138,8 @@ public boolean testAttribute(Object target, String name, String value) {
  * design) for this method to load plug-ins.
  * 
  * @param resource
- *            The resource for which the content type should be determined; must
- *            not be <code>null</code>.
+ *            The resource for which the content type should be determined;
+ *            must not be <code>null</code>.
  * @param contentTypeId
  *            The expected content type; must not be <code>null</code>.
  * @return <code>true</code> iff the best matching content type has an
@@ -152,55 +150,29 @@ private final boolean testContentTypeProperty(final IResource resource,
         final String contentTypeId) {
     final String expectedValue = contentTypeId.trim();
 
-    if (resource == null) { return false; }
-    final IPath location = resource.getLocation();
+    if (!(resource instanceof IFile)) { return false; }
+
+    final IFile file = (IFile) resource;
     String actualValue = null;
 
-    if (location != null) {
-        final File file = location.toFile();
-        InputStream inputStream = null;
-        try {
-            final IContentTypeManager contentTypeManager = Platform
-                        .getContentTypeManager();
-            inputStream = new BufferedInputStream(new FileInputStream(file));
-            IContentType contentType = contentTypeManager
-                    .findContentTypeFor(inputStream, resource.getName());
-            actualValue = contentType.getId();
-            if (actualValue == null) return false;
+    try {
+        final IContentDescription contentDescription = file
+                .getContentDescription();
 
-        } catch (final FileNotFoundException e) {
-            IDEWorkbenchPlugin
-                    .log(
-                            "File not found when trying to evaluate object contributions", //$NON-NLS-1$
-                            new Status(
-                                    IStatus.ERROR,
-                                    IDEWorkbenchPlugin.IDE_WORKBENCH,
-                                    IStatus.ERROR,
-                                    "File not found when trying to evaluate object contributions", //$NON-NLS-1$
-                                    e));
-        } catch (final IOException e) {
-            IDEWorkbenchPlugin
-                    .log(
-                            "File input error when trying to evaluate object contributions", //$NON-NLS-1$
-                            new Status(
-                                    IStatus.ERROR,
-                                    IDEWorkbenchPlugin.IDE_WORKBENCH,
-                                    IStatus.ERROR,
-                                    "File input error when trying to evaluate object contributions", //$NON-NLS-1$
-                                    e));
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (final IOException e) {
-                    // At least I tried.
-                }
-            }
+        if (contentDescription != null) {
+            final IContentType contentType = contentDescription
+                    .getContentType();
+            actualValue = contentType.getId();
         }
+    } catch (final CoreException e) {
+        // Log the error.
+        final String message = "Core exception while retrieving the content description"; //$NON-NLS-1$
+        IDEWorkbenchPlugin.log(message,
+                new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
+                        IStatus.ERROR, message, e));
     }
 
     return expectedValue == null || expectedValue.equals(actualValue);
-
 }
 
 /**
