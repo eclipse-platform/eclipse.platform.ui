@@ -12,7 +12,6 @@ package org.eclipse.core.internal.filebuffers;
 
 
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,8 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.filebuffers.IDocumentFactory;
-import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -32,6 +29,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
+
+import org.eclipse.core.filebuffers.IDocumentFactory;
+import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 
 
 /**
@@ -50,6 +52,8 @@ public class ExtensionsRegistry {
 	private Map fSetupParticipantDescriptors= new HashMap();
 	/** The mapping between configuration elements for setup participants and instantiated setup participants. */
 	private Map fSetupParticipants= new HashMap();
+
+	private IContentTypeManager fContentTypeManager= Platform.getContentTypeManager();
 	
 	
 	/**
@@ -57,15 +61,21 @@ public class ExtensionsRegistry {
 	 * found in the plug-in registry.
 	 */
 	public ExtensionsRegistry() {
-		initialize("documentCreation", "fileNames", fFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
+		initialize("documentCreation", "contentTypeId", true,  fFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
+		initialize("xdocumentCreation", "fileNames", fFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
 		initialize("documentCreation", "extensions",  fFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
+		initialize("documentSetup", "contentTypeId", fSetupParticipantDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
 		initialize("documentSetup", "fileNames", fSetupParticipantDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
 		initialize("documentSetup", "extensions", fSetupParticipantDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
-	 * Reads the comma-separated value of the given configuration element for the given attribute name and remembers the configuration element
-	 * in the given map under the individual tokens of the attribute value.
+	 * Reads the comma-separated value from the given configuration element for the given attribute name and remembers
+	 * the configuration element in the given map under the individual tokens of the attribute value.
+	 * 
+	 * @param attributeName the name of the attribute
+	 * @param element the configuration element
+	 * @param map the map which remembers the configuration element 
 	 */
 	private void read(String attributeName, IConfigurationElement element, Map map) {
 		String value= element.getAttribute(attributeName);
@@ -85,6 +95,27 @@ public class ExtensionsRegistry {
 	}
 	
 	/**
+	 * Reads the value from the given configuration element for the given attribute name and remembers
+	 * the configuration element in the given map under the individual content type of the attribute value.
+	 * 
+	 * @param attributeName the name of the attribute
+	 * @param element the configuration element
+	 * @param map the map which remembers the configuration element 
+	 */
+	private void readContentType(String attributeName, IConfigurationElement element, Map map) {
+		String value= element.getAttribute(attributeName);
+		if (value != null) {
+			IContentType contentType= fContentTypeManager.getContentType(value);
+			Set s= (Set) map.get(contentType);
+			if (s == null) {
+				s= new HashSet();
+				map.put(contentType, s);
+			}
+			s.add(element);
+		}
+	}
+	
+	/**
 	 * Adds an entry to the log of this plug-in for the given status
 	 * @param status the status to log
 	 */
@@ -92,7 +123,7 @@ public class ExtensionsRegistry {
 		ILog log=  Platform.getPlugin(FileBuffersPlugin.PLUGIN_ID).getLog();
 		log.log(status);
 	}
-	
+
 	/**
 	 * Initializes this registry. It retrieves all implementers of the given
 	 * extension point and remembers those implementers based on the
@@ -103,16 +134,34 @@ public class ExtensionsRegistry {
 	 * @param descriptors the map to be filled 
 	 */
 	private void initialize(String extensionPointName, String childElementName, Map descriptors) {
+		initialize(extensionPointName, childElementName, false, descriptors);
+	}
+	
+	/**
+	 * Initializes this registry. It retrieves all implementers of the given
+	 * extension point and remembers those implementers based on the
+	 * file name extensions in the given map.
+	 * 
+	 * @param extensionPointName the name of the extension point
+	 * @param childElementName the name of the child elements
+	 * @param isContentTypeId the child element is a content type id
+	 * @param descriptors the map to be filled 
+	 */
+	private void initialize(String extensionPointName, String childElementName, boolean isContentTypeId, Map descriptors) {
 		
-		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(FileBuffersPlugin.PLUGIN_ID, extensionPointName);
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(FileBuffersPlugin.PLUGIN_ID, extensionPointName);
 		if (extensionPoint == null) {
-			log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, 0, MessageFormat.format("Extension point \"{0}\" not found.", new Object[] { extensionPointName}), null));
+			log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, 0, FileBuffersMessages.getFormattedString("ExtensionsRegistry.error.extensionPointNotFound", new Object[] { extensionPointName}), null)); //$NON-NLS-1$
 			return;
 		}
 		
 		IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
-		for (int i= 0; i < elements.length; i++)
-			read(childElementName, elements[i], descriptors);
+		for (int i= 0; i < elements.length; i++) {
+			if (isContentTypeId)
+				readContentType(childElementName, elements[i], descriptors);
+			else
+				read(childElementName, elements[i], descriptors);
+		}
 	}
 	
 	/**
@@ -123,6 +172,7 @@ public class ExtensionsRegistry {
 	 * @param entry the configuration element
 	 * @param extensions the map of instantiated extensions
 	 * @param extensionType the requested result type
+	 * @return the executable extension for the given configuration element.
 	 */
 	private Object getExtension(IConfigurationElement entry, Map extensions, Class extensionType) {
 		Object extension= extensions.get(entry);
@@ -147,6 +197,7 @@ public class ExtensionsRegistry {
 	 * Returns the first enumerated element of the given set.
 	 * 
 	 * @param set the set from which to choose
+	 * @return the selected configuration element
 	 */
 	private IConfigurationElement selectConfigurationElement(Set set) {
 		if (set != null && !set.isEmpty()) {
@@ -155,16 +206,28 @@ public class ExtensionsRegistry {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a sharable document factory for the given file name extension.
 	 *
 	 * @param extension the name extension to be used for lookup
+	 * @param isFileExtension <code>true</code> if the name extension is a file extension
 	 * @return the sharable document factory or <code>null</code>
 	 */
-	private IDocumentFactory getDocumentFactory(String extension) {
+	private IDocumentFactory getDocumentFactory(String extension, boolean isFileExtension) {
+		Set set= null;
 		
-		Set set= (Set) fFactoryDescriptors.get(extension);
+		if (!isFileExtension) {
+			IContentType[] contentTypes= fContentTypeManager.findContentTypesFor(extension);
+			int i= 0;
+			while (i < contentTypes.length && set == null) {
+				set= (Set) fFactoryDescriptors.get(contentTypes[i++]);
+			}
+		}
+
+		if (set == null)
+			set= (Set) fFactoryDescriptors.get(extension);
+		
 		if (set != null) {
 			IConfigurationElement entry= selectConfigurationElement(set);
 			return (IDocumentFactory) getExtension(entry, fFactories, IDocumentFactory.class);
@@ -176,16 +239,28 @@ public class ExtensionsRegistry {
 	 * Returns the set of setup participants for the given file name.
 	 * 
 	 * @param extension the name extension to be used for lookup
+	 * @param isFileExtension <code>true</code> if the name extension is a file extension
 	 * @return the sharable set of document setup participants
 	 */
-	private List getDocumentSetupParticipants(String extension) {
+	private List getDocumentSetupParticipants(String extension, boolean isFileExtension) {
+		Set resultSet= new HashSet();
+		
+		if (!isFileExtension) {
+			IContentType[] contentTypes= fContentTypeManager.findContentTypesFor(extension);
+			int i= 0;
+			while (i < contentTypes.length) {
+				Set set= (Set) fFactoryDescriptors.get(contentTypes[i++]);
+				if (set != null)
+					resultSet.addAll(set);
+			}
+		}
 		
 		Set set= (Set) fSetupParticipantDescriptors.get(extension);
-		if (set == null)
-			return null;
+		if (set != null)
+			resultSet.addAll(set);
 		
 		List participants= new ArrayList();
-		Iterator e= set.iterator();
+		Iterator e= resultSet.iterator();
 		while (e.hasNext()) {
 			IConfigurationElement entry= (IConfigurationElement) e.next();
 			Object participant= getExtension(entry, fSetupParticipants, IDocumentSetupParticipant.class);
@@ -203,11 +278,11 @@ public class ExtensionsRegistry {
 	 * @return the sharable document factory
 	 */
 	public IDocumentFactory getDocumentFactory(IPath location) {
-		IDocumentFactory factory= getDocumentFactory(location.lastSegment());
+		IDocumentFactory factory= getDocumentFactory(location.lastSegment(), false);
 		if (factory == null)
-			factory= getDocumentFactory(location.getFileExtension());
+			factory= getDocumentFactory(location.getFileExtension(), true);
 		if (factory == null)
-			factory= getDocumentFactory(WILDCARD);
+			factory= getDocumentFactory(WILDCARD, true);
 		return factory;
 	}
 	
@@ -220,15 +295,15 @@ public class ExtensionsRegistry {
 	public IDocumentSetupParticipant[] getDocumentSetupParticipants(IPath location) {
 		List participants= new ArrayList();
 		
-		List p= getDocumentSetupParticipants(location.lastSegment());
+		List p= getDocumentSetupParticipants(location.lastSegment(), false);
 		if (p != null)
 			participants.addAll(p);
 		
-		p= getDocumentSetupParticipants(location.getFileExtension());
+		p= getDocumentSetupParticipants(location.getFileExtension(), true);
 		if (p != null)
 			participants.addAll(p);
 			
-		p= getDocumentSetupParticipants(WILDCARD);
+		p= getDocumentSetupParticipants(WILDCARD, true);
 		if (p != null)
 			participants.addAll(p);
 			
