@@ -221,48 +221,60 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @since 2.0
 		 */
 		private Validator fValidator;
+		/**
+		 * The display used for posting runnable into the UI thread.
+		 * @since 3.0
+		 */
+		private Display fDisplay;
 		
 		/*
 		 * @see IElementStateListenerExtension#elementStateValidationChanged(Object, boolean)
 		 * @since 2.0
 		 */
-		public void elementStateValidationChanged(Object element, boolean isStateValidated) {
-
+		public void elementStateValidationChanged(final Object element, final boolean isStateValidated) {
 			if (element != null && element.equals(getEditorInput())) {
-				
-				enableSanityChecking(true);
-
-				if (isStateValidated && fValidator != null) {
-					ISourceViewer viewer= getSourceViewer();
-					if (viewer != null) {
-						StyledText textWidget= viewer.getTextWidget();
-						if (textWidget != null && !textWidget.isDisposed())
-							textWidget.removeVerifyListener(fValidator);
-						fValidator= null;
-						enableStateValidation(false);
-					}
-				} else if (!isStateValidated && fValidator == null) {
-					ISourceViewer viewer= getSourceViewer();
-					if (viewer != null) {
-						StyledText textWidget= viewer.getTextWidget();
-						if (textWidget != null && !textWidget.isDisposed()) {
-							fValidator= new Validator();
-							enableStateValidation(true);
-							textWidget.addVerifyListener(fValidator);
+				Runnable r= new Runnable() {
+					public void run() {
+						enableSanityChecking(true);
+						if (isStateValidated && fValidator != null) {
+							ISourceViewer viewer= getSourceViewer();
+							if (viewer != null) {
+								StyledText textWidget= viewer.getTextWidget();
+								if (textWidget != null && !textWidget.isDisposed())
+									textWidget.removeVerifyListener(fValidator);
+								fValidator= null;
+								enableStateValidation(false);
+							}
+						} else if (!isStateValidated && fValidator == null) {
+							ISourceViewer viewer= getSourceViewer();
+							if (viewer != null) {
+								StyledText textWidget= viewer.getTextWidget();
+								if (textWidget != null && !textWidget.isDisposed()) {
+									fValidator= new Validator();
+									enableStateValidation(true);
+									textWidget.addVerifyListener(fValidator);
+								}
+							}
 						}
 					}
-				}
-				
+				};
+				execute(r);
 			}
 		}
+
 		
 		/*
 		 * @see IElementStateListener#elementDirtyStateChanged(Object, boolean)
 		 */
 		public void elementDirtyStateChanged(Object element, boolean isDirty) {
 			if (element != null && element.equals(getEditorInput())) {
-				enableSanityChecking(true);
-				firePropertyChange(PROP_DIRTY);
+				Runnable r= new Runnable() {
+					public void run() {
+						enableSanityChecking(true);
+						firePropertyChange(PROP_DIRTY);
+					}
+				};
+				execute(r);
 			}
 		}
 		
@@ -271,9 +283,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public void elementContentAboutToBeReplaced(Object element) {
 			if (element != null && element.equals(getEditorInput())) {
-				enableSanityChecking(true);
-				rememberSelection();
-				resetHighlightRange();
+				Runnable r= new Runnable() {
+					public void run() {
+						enableSanityChecking(true);
+						rememberSelection();
+						resetHighlightRange();
+					}
+				};
+				execute(r);
 			}
 		}
 		
@@ -282,9 +299,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public void elementContentReplaced(Object element) {
 			if (element != null && element.equals(getEditorInput())) {
-				enableSanityChecking(true);
-				firePropertyChange(PROP_DIRTY);
-				restoreSelection();
+				Runnable r= new Runnable() {
+					public void run() {
+						enableSanityChecking(true);
+						firePropertyChange(PROP_DIRTY);
+						restoreSelection();
+					}
+				};
+				execute(r);
 			}
 		}
 		
@@ -293,43 +315,51 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public void elementDeleted(Object deletedElement) {
 			if (deletedElement != null && deletedElement.equals(getEditorInput())) {
-				enableSanityChecking(true);
-				close(false);
+				Runnable r= new Runnable() {
+					public void run() {
+						enableSanityChecking(true);
+						close(false);
+					}
+				};
+				execute(r);
 			}
 		}
 		
 		/*
 		 * @see IElementStateListener#elementMoved(Object, Object)
 		 */
-		public void elementMoved(Object originalElement, Object movedElement) {
-						
+		public void elementMoved(final Object originalElement, final Object movedElement) {
 			if (originalElement != null && originalElement.equals(getEditorInput())) {
-				
-				enableSanityChecking(true);
-				
-				if (!canHandleMove((IEditorInput) originalElement, (IEditorInput) movedElement)) {
-					close(true);
-					return;
-				}
-			
-				if (movedElement == null || movedElement instanceof IEditorInput) {	
-					rememberSelection();
-										
-					IDocumentProvider d= getDocumentProvider();
-					IDocument changed= null;
-					if (isDirty())
-						changed= d.getDocument(getEditorInput());
+				Runnable r= new Runnable() {
+					public void run() {
+						enableSanityChecking(true);
 						
-					setInput((IEditorInput) movedElement);
+						if (!canHandleMove((IEditorInput) originalElement, (IEditorInput) movedElement)) {
+							close(true);
+							return;
+						}
 					
-					if (changed != null) {
-						d.getDocument(getEditorInput()).set(changed.get());
-						validateState(getEditorInput());
-						updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
-					}					
-						
-					restoreSelection();
-				}
+						if (movedElement == null || movedElement instanceof IEditorInput) {	
+							rememberSelection();
+												
+							IDocumentProvider d= getDocumentProvider();
+							IDocument changed= null;
+							if (isDirty())
+								changed= d.getDocument(getEditorInput());
+								
+							setInput((IEditorInput) movedElement);
+							
+							if (changed != null) {
+								d.getDocument(getEditorInput()).set(changed.get());
+								validateState(getEditorInput());
+								updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
+							}					
+								
+							restoreSelection();
+						}
+					}
+				};
+				execute(r);
 			}
 		}
 		
@@ -349,6 +379,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		public void elementStateChangeFailed(Object element) {
 			if (element != null && element.equals(getEditorInput()))
 				enableSanityChecking(true);
+		}
+		
+		/**
+		 * Executes the given runnable in the UI thread.
+		 * 
+		 * @param runnable runnable to be executed
+		 * @since 3.0
+		 */
+		private void execute(Runnable runnable) {
+			if (Display.getCurrent() != null)
+				runnable.run();
+			else {
+				if (fDisplay == null)
+					fDisplay= getSite().getShell().getDisplay();
+				fDisplay.asyncExec(runnable);
+			}
 		}
 	}
 	
