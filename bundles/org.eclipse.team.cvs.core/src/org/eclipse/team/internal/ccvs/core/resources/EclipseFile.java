@@ -208,7 +208,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 					break;
 			}
 		} catch(CoreException e) {
-			throw CVSException.wrapException(resource, Policy.bind("EclipseFile_Problem_writing_resource", e.getMessage(), e.getStatus().getMessage()), e); //$NON-NLS-1$
+			throw CVSException.wrapException(resource, Policy.bind("EclipseFile_Problem_writing_resource", resource.getFullPath().toString(), e.getMessage()), e); //$NON-NLS-1$
 		}
 	}
 			

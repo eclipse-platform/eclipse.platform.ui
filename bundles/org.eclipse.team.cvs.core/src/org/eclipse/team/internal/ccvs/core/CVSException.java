@@ -85,7 +85,7 @@ public class CVSException extends TeamException {
 	public static CVSException wrapException(CoreException e) {
 		IStatus status = e.getStatus();
 		// If the exception is not a multi-status, wrap the exception to keep the original stack trace.
-		// If the exception is a maulit-status, the interesting stack traces should eb in the childen already
+		// If the exception is a multi-status, the interesting stack traces should be in the childen already
 		if ( ! status.isMultiStatus()) {
 			status = new CVSStatus(status.getSeverity(), status.getCode(), status.getMessage(), e);
 		}
