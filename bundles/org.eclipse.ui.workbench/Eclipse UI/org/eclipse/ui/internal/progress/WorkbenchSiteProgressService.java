@@ -222,4 +222,11 @@ public class WorkbenchSiteProgressService
 		}
 		return listener;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#useHalfBusyCursor(org.eclipse.core.runtime.jobs.Job)
+	 */
+	public void useHalfBusyCursor(Job job) {
+		//Do nothing as this is deprecated
+	}
 }
