@@ -29,11 +29,7 @@ build Java applications that can compete with native applications on any
 platform. This tutorial is designed to get you started building RCP applications
 quickly.</p>
 <p><b>By Ed Burnette, SAS Institute Inc.</b><br>
-<font size="-1">June 14, 2004 - Added note on using CVS to get the example source,
-updates for 3.0RC2</font></p>
-<p><i>Note that Eclipse 3 is undergoing constant change so the steps you need to
-take, the APIs, and the results may vary slightly (or not so slightly) from this
-description.</i></p>
+<font size="-1">June 23, 2004</font></p>
 <hr width="100%">
 <h2>Introduction</h2>
 <p>Try this experiment: Show Eclipse to some friends or co-workers who haven't
@@ -50,10 +46,15 @@ was because the &quot;IDE-ness&quot; of Eclipse was hard-wired into it. Version
 3 introduces the Rich Client Platform, which is basically a refactoring of the
 fundamental parts of Eclipse's UI, allowing it to be used for non-IDE
 applications.</p>
-<p>If you want to cut to the chase and look at the code for this part at the
-<a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.ui.tutorials.rcp.part1">Eclipse project here</a>.
+<p>If you want to cut to the chase and look at the code for this part
+you can use Eclipse's built-in 
+<a href="http://dev.eclipse.org/cvshowto.html">CVS client</a>
+to download the 
+<a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.ui.tutorials.rcp.part1">source code</a>
+to your workspace.
 Otherwise, let's take a look at how to construct
 an RCP application.</p>
+
 <h2><a name="section_1"></a> Getting started</h2>
 <p>RCP applications are based on the familiar Eclipse plug-in architecture, (if
 it's not familiar to you, see the references section). Therefore, you'll need to
@@ -72,14 +73,24 @@ example just remove it altogether to save a little space.
 To do this, turn off the option that says
 Generate the Java class that controls the plug-ins life cycle.
 Then Click on Finish to
-generate the template.</p>
+generate the template.
+If you get a dialog asking if Eclipse can switch to the Plug-in Development
+Perspective click Yes (this is optional).</p>
 
 <h2>Plug-in manifest</h2>
 <p>The plug-in manifest, plugin.xml, ties all the code and resources together.
+When you first create a plug-in, Eclipse will edit the manifest for you
+automatically.
 You need to define the class name of the main program
 with the <code>org.eclipse.core.runtime.applications</code> extension
 and the perspective with <code>org.eclipse.ui.perspectives</code>.
-When you're done you should have something that looks like listing 1.
+To add these extensions use the Add button on the Extensions tab,
+or just type in the XML in the plugin.xml tab.
+Also, you need to tell Eclipse that the plug-in will depend on two other Eclipse plugins,
+<code>org.eclipse.core.runtime.compatibility</code> and
+<code>org.eclipse.ui</code>, so those need to be added to the
+Dependencies tab or in the XML.
+When you're done your plugin.xml should look something like listing 1.
 The classes refered to here will be defined in the next section.
 </p>
 
@@ -127,50 +138,30 @@ The classes refered to here will be defined in the next section.
 
 <p>
 <img src="images/note.gif" alt="Note: " width="62" height="13">
-What about MANIFEST.MF?
-Eclipse 3.0 has a new OSGi based run-time system that introduces
-a new manifest file, MANIFEST.MF.
-In this simple example we're using Eclipse's run-time compatibility
-layer and don't need MANIFEST.MF.
-After you are comfortable with writing plug-ins and
-RCP applications, see the Eclipse 3.0 Runtime Adoption Guide
-(in the references section)
-to learn more about the new run-time
-and how to run without the compatibility layer.
+Although it's not an absolute requirement,
+I recommend keeping your id's and your class names the same.
+For example, <code>org.eclipse.ui.tutorials.rcp.part1.RcpApplication</code>
+is both the fully qualified id for the application and the class name of the
+main program.
+For historical reasons, Eclipse prepends the plug-in's id to your
+top level plug-in elements (like <code>extension</code>) so even though
+plugin.xml says <code>id="RcpApplication"</code> the fully qualified id
+for that extension is <code>org.eclipse.ui.tutorials.rcp.part1.RcpApplication</code>.
+Ditto for the perspective,
+<code>org.eclipse.ui.tutorials.rcp.part1.RcpPerspective</code>.
 </p>
-
-<h2>Workbench Advisor</h2>
-<p>
-The Workbench Advisor class helps customize the workbench to add and subtract
-toolbars, perspectives, and so forth.
-This will covered in more detail in part 2 of the tutorial.
-For now, the absolute minimum you have to do here
-is define which perspective is the default one.
-See listing 2 for the code.
-</p>
-
-<p><b>Listing 2. RcpWorkbenchAdvisor class
-</b></p>
-<pre>
-package org.eclipse.ui.tutorials.rcp.part1;
-import org.eclipse.ui.application.WorkbenchAdvisor;
-
-public class RcpWorkbenchAdvisor extends WorkbenchAdvisor {
-
-    public String getInitialWindowPerspectiveId() {
-        return &quot;org.eclipse.ui.tutorials.rcp.part1.RcpPerspective&quot;;
-    }
-}
-</pre>
 
 <h2>The main program</h2>
 <p>
-The main program for an application implements <code>IPlatformRunnable</code>,
-which just has a method called
-<code>run()</code>.
-Listing 3 shows a simple implementation with the minimum you have to do.
+The <code>org.eclipse.core.runtime.applications</code> extension tells
+the Eclipse runtime the name of your main program.
+Create a new Java class with that name,
+make it implement <code>IPlatformRunnable</code>,
+and put your program code in the <code>run()</code> method.
+Listing 2 shows a simple implementation with the minimum you have to do.
+The <code>RcpWorkbenchAdvisor</code> class will be defined shortly.
 </p>
-<p><b>Listing 3. RcpApplication class
+<p><b>Listing 2. RcpApplication class
 </b></p>
 <pre>
 package org.eclipse.ui.tutorials.rcp.part1;
@@ -199,10 +190,13 @@ public class RcpApplication implements IPlatformRunnable {
     }
 }
 </pre>
+
 <h2>Creating a default perspective</h2>
 <p>
 Next, you must define at least one perspective and make it the default.
-Perspectives are created by implementing <code>IPerspectiveFactory</code> (see listing 4).
+Perspectives are created by implementing <code>IPerspectiveFactory</code>
+using the class name referred to by the <code>org.eclipse.ui.perspectives</code> extension
+(see listing 3).
 The important part
 of this interface is the <code>createInitialLayout()</code> method where you position and
 open any views and/or editors you'd like the user to start with.
@@ -210,7 +204,7 @@ In this example
 we're not going to create any views so it will be a pretty boring perspective.
 </p>
 
-<p><b>Listing 4. RcpPerspective class
+<p><b>Listing 3. RcpPerspective class
 </b></p>
 <pre>
 package org.eclipse.ui.tutorials.rcp.part1;
@@ -228,6 +222,33 @@ public class RcpPerspective implements IPerspectiveFactory {
 }
 
 </pre>
+
+<h2>Workbench Advisor</h2>
+<p>
+The Workbench Advisor class,
+which you referred to in the main program,
+helps customize the workbench to add and subtract
+toolbars, perspectives, and so forth.
+This will covered in more detail in part 2 of the tutorial.
+For now, the absolute minimum you have to do here
+is define which perspective is the default one.
+See listing 4 for the code.
+</p>
+
+<p><b>Listing 4. RcpWorkbenchAdvisor class
+</b></p>
+<pre>
+package org.eclipse.ui.tutorials.rcp.part1;
+import org.eclipse.ui.application.WorkbenchAdvisor;
+
+public class RcpWorkbenchAdvisor extends WorkbenchAdvisor {
+
+    public String getInitialWindowPerspectiveId() {
+        return &quot;org.eclipse.ui.tutorials.rcp.part1.RcpPerspective&quot;;
+    }
+}
+</pre>
+
 
 <h2>Miscellaneous</h2>
 <p>The build.properties file (see listing 5)
@@ -406,7 +427,7 @@ directory.</p>
 <p>
 <img src="images/tip.gif" alt="Tip: " width="62" height="13">
 For fully branding a program with a splash screen, custom icons, and so forth
-you'll need to define a primary feature, some configuration files, and use
+you'll need to set up some configuration files and use
 the eclipse.exe launcher.
 See the online help under Platform Plug-in Developer Guide >
 Programmer's Guide > Packaging and delivering Eclipse based products
@@ -468,11 +489,7 @@ Note that you can't run OSGi commands if the program has already terminated.
 <dd>
 This can be caused if you have incompletely adopted your plug-in
 to the 3.0 OSGi manifest files.
-For this simple example you don't need to create a MANIFEST.MF file
-and you do need to include org.eclipse.core.runtime.compatibility
-in your list of required plug-ins.
-See the 3.0 Runtime Adoption Guide for more information about
-running without the compatibility layer.
+See the section on the compatibility layer for more information.
 
 
 <dt>
@@ -494,6 +511,33 @@ Adjust the compliance levels as follows:<br>
 
 </dl>
 
+
+<h2>The compatibility layer</h2>
+<p>
+Astute readers will notice that this example uses the compatibility layer
+(<code>org.eclipse.core.runtime.compatibility</code>)
+and may wonder exactly what that means.
+Eclipse 3.0 introduced a new OSGi based run-time system,
+a new plug-in manifest file named MANIFEST.MF,
+and many API changes that broke compatibility with 2.1 plug-ins.
+The compatibility layer preserves the API and converts plugin.xml on the fly
+so it's possible to have a plug-in that works without modification in both
+2.1 and 3.0.
+</p>
+<p>
+As of this writing, most people are not familiar with the new system and the
+PDE support is not fully tested (for example you have to take an
+extra step to create MANIFEST.MF and there were some bugs late in the 3.0 cycle
+editing it).
+Also most plug-in documentation and articles were written before
+the new run-time was in place.
+The compatibility layer is completely adequate for this simple example, but
+after you are comfortable with writing plug-ins and
+RCP applications, you can look in the Eclipse 3.0 Runtime Adoption Guide
+(in the references section)
+to learn more about the new run-time
+and how to run without the compatibility layer.
+</p>
 
 <h2>Conclusion</h2>
 <p>In part 1 of this tutorial, we looked at what is necessary to create a
