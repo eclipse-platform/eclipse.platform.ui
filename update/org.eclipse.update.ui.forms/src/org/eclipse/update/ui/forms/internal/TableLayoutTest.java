@@ -19,7 +19,7 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.engine.*;
+import org.eclipse.update.ui.forms.richtext.*;
 
 public class TableLayoutTest {
 
@@ -188,10 +188,28 @@ public static void main (String [] args) {
 
 public static void addFormEngine(Composite c, FormWidgetFactory factory, IStatusLineManager manager) {
      new Label(c, SWT.NULL);
+/*
      FormEngine html = new FormEngine(c, SWT.WRAP);
      html.setHyperlinkSettings(factory.getHyperlinkHandler());
      HTTPAction action = new HTTPAction();
      action.setStatusLineManager(manager);
+     URL i1URL = TableLayoutTest.class.getResource("image1.gif");
+     ImageDescriptor id1 = ImageDescriptor.createFromURL(i1URL);
+     html.registerTextObject("urlHandler", action);
+     html.registerTextObject("image1", id1.createImage());
+     //html.setBackground(factory.getBackgroundColor());
+     html.setForeground(factory.getForegroundColor());
+     InputStream is = TableLayoutTest.class.getResourceAsStream("index.xml");
+     //html.setParagraphsSeparated(false);
+     html.load(is, true);
+     TableData td = new TableData();
+     td.colspan = 1;
+     td.align = TableData.FILL;
+     html.setLayoutData(td);
+*/
+     RichText html = new RichText(c, SWT.WRAP);
+     html.setHyperlinkSettings(factory.getHyperlinkHandler());
+     HTTPAction action = new HTTPAction(manager);
      URL i1URL = TableLayoutTest.class.getResource("image1.gif");
      ImageDescriptor id1 = ImageDescriptor.createFromURL(i1URL);
      html.registerTextObject("urlHandler", action);
