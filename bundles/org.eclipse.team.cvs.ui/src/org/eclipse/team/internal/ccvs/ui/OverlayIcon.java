@@ -1,144 +1,70 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
- 
+import java.util.Arrays;
+
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.team.internal.ui.*;
 
 /**
  * An OverlayIcon consists of a main icon and several adornments.
  */
-public class OverlayIcon extends CompositeImageDescriptor {
-	// Constants for default size
-	static final int DEFAULT_WIDTH = 22;
-	static final int DEFAULT_HEIGHT = 16;
-	
-	// The size of this icon
-	private Point size = null;
-		
-	// The base image
-	private ImageData base;
-	// All overlay images
-	private ImageDescriptor overlays[][];
+public abstract class OverlayIcon extends CompositeImageDescriptor {
+	// the base image
+	private Image base;
+	// the overlay images
+	private ImageDescriptor[] overlays;
+	// the size
+	private Point size;
 
 	/**
-	 * OverlayIcon constructor
+	 * OverlayIcon constructor.
 	 * 
-	 * @param base  the base image
-	 * @param overlays  the overlay images
-	 * @param size  the size of the icon
+	 * @param base the base image
+	 * @param overlays the overlay images
+	 * @param size the size
 	 */
-	public OverlayIcon(ImageData base, ImageDescriptor[][] overlays, Point size) {
+	public OverlayIcon(Image base, ImageDescriptor[] overlays, Point size) {
 		this.base = base;
 		this.overlays = overlays;
 		this.size = size;
 	}
 	/**
-	 * Draws the overlays in the bottom left
-	 * 
-	 * @param overlays  the overlay images
+	 * Superclasses override to draw the overlays.
 	 */
-	protected void drawBottomLeft(ImageDescriptor[] overlays) {
-		if (overlays == null) return;
-		int length = overlays.length;
-		int x = 0;
-		for (int i= 0; i < 3; i++) {
-			if (i < length && overlays[i] != null) {
-				ImageData id = overlays[i].getImageData();
-				drawImage(id, x, getSize().y - id.height);
-				//x += id.width;
-			}
-		}
+	protected abstract void drawOverlays(ImageDescriptor[] overlays);
+
+	public boolean equals(Object o) {
+		if (! (o instanceof OverlayIcon)) return false;
+		OverlayIcon other = (OverlayIcon) o;
+		return base.equals(other.base) && Arrays.equals(overlays, other.overlays);
 	}
-	/**
-	 * Draws the overlays in the bottom right
-	 * 
-	 * @param overlays  the overlay images
-	 */
-	protected void drawBottomRight(ImageDescriptor[] overlays) {
-		if (overlays == null) return;
-		int length = overlays.length;
-		int x = getSize().x;
-		for (int i= 2; i >= 0; i--) {
-			if (i < length && overlays[i] != null) {
-				ImageData id = overlays[i].getImageData();
-				//x -= id.width;
-				drawImage(id, x, getSize().y - id.height);
-			}
+
+	public int hashCode() {
+		int code = base.hashCode();
+		for (int i = 0; i < overlays.length; i++) {
+			code ^= overlays[i].hashCode();
 		}
+		return code;
 	}
-	/*
-	 * @see CompositeImage#fill
-	 */
+
+
 	protected void drawCompositeImage(int width, int height) {
-		ImageData bg = base;
-		if (bg == null) {
-			bg = DEFAULT_IMAGE_DATA;
-		}
-		drawImage(bg, 0, 0);
-		
-		if (overlays != null) {
-			if (overlays.length > 0) {
-				drawTopRight(overlays[0]);
-			}
-				
-			if (overlays.length > 1) {
-				drawBottomRight(overlays[1]);
-			}
-				
-			if (overlays.length > 2) {
-				drawBottomLeft(overlays[2]);
-			}
-				
-			if (overlays.length > 3) {
-				drawTopLeft(overlays[3]);
-			}
-		}	
+		drawImage(base.getImageData(), 0, 0);
+		drawOverlays(overlays);
 	}
-	/**
-	 * Draws the overlays in the top left
-	 * 
-	 * @param overlays  the overlay images
-	 */
-	protected void drawTopLeft(ImageDescriptor[] overlays) {
-		if (overlays == null) return;
-		int length = overlays.length;
-		int x = 0;
-		for (int i= 0; i < 3; i++) {
-			if (i < length && overlays[i] != null) {
-				ImageData id = overlays[i].getImageData();
-				drawImage(id, x, 0);
-				//x += id.width;
-			}
-		}
-	}
-	/**
-	 * Draws the overlays in the top right
-	 * 
-	 * @param overlays  the overlay images
-	 */
-	protected void drawTopRight(ImageDescriptor[] overlays) {
-		if (overlays == null) return;
-		int length = overlays.length;
-		//int x = getSize().x;
-		int x = 0;
-		for (int i = 8; i >= 0; i--) {
-			if (i < length && overlays[i] != null) {
-				ImageData id = overlays[i].getImageData();
-				//x -= id.width;
-				drawImage(id, x, 0);
-			}
-		}
-	}
-	/*
-	 * @see CompositeImage#getSize
-	 */
+
 	protected Point getSize() {
 		return size;
 	}

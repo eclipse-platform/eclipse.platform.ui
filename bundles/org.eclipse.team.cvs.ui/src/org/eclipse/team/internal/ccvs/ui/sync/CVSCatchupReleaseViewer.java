@@ -14,7 +14,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -42,6 +41,8 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.HistoryView;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.OverlayIcon;
+import org.eclipse.team.internal.ccvs.ui.OverlayIconCache;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.merge.OverrideUpdateMergeAction;
 import org.eclipse.team.internal.ccvs.ui.merge.UpdateMergeAction;
@@ -64,35 +65,20 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	private HistoryAction showInHistory;
 	private OverrideUpdateMergeAction forceUpdateMergeAction;
 	
-	class DiffImage extends CompositeImageDescriptor {
-		private static final int HEIGHT= 16;
-		private static final int WIDTH= 22;
-		
-		Image baseImage;
-		ImageDescriptor overlay;
-		
-		public DiffImage(Image baseImage, ImageDescriptor overlay) {
-			this.baseImage = baseImage;
-			this.overlay = overlay;
+	private static class DiffOverlayIcon extends OverlayIcon {
+		private static final int HEIGHT = 16;
+		private static final int WIDTH = 22;
+		public DiffOverlayIcon(Image baseImage, ImageDescriptor overlay) {
+			super(baseImage, new ImageDescriptor[] { overlay }, new Point(WIDTH, HEIGHT));
 		}
-		
-		/*
-		 * @see CompositeImageDescriptor#drawCompositeImage(int, int)
-		 */
-		protected void drawCompositeImage(int width, int height) {
-			drawImage(baseImage.getImageData(), 0, 0);
+		protected void drawOverlays(ImageDescriptor[] overlays) {
+			ImageDescriptor overlay = overlays[0];
 			ImageData overlayData = overlay.getImageData();
 			drawImage(overlayData, WIDTH - overlayData.width, (HEIGHT - overlayData.height) / 2);
 		}
-
-		/*
-		 * @see CompositeImageDescriptor#getSize()
-		 */
-		protected Point getSize() {
-			return new Point(WIDTH, HEIGHT);
-		}
 	}
-	class HistoryAction extends Action implements ISelectionChangedListener {
+	
+	private static class HistoryAction extends Action implements ISelectionChangedListener {
 		IStructuredSelection selection;
 		public HistoryAction(String label) {
 			super(label);
@@ -157,14 +143,19 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		final ImageDescriptor questionableDescriptor = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_QUESTIONABLE);
 		final LabelProvider oldProvider = (LabelProvider)getLabelProvider();
 		setLabelProvider(new LabelProvider() {
+			private OverlayIconCache iconCache = new OverlayIconCache();
+			
+			public void dispose() {
+				iconCache.disposeAll();
+				oldProvider.dispose();
+			}
 			public Image getImage(Object element) {
 				Image image = oldProvider.getImage(element);
 				if (element instanceof ITeamNode) {
 					ITeamNode node = (ITeamNode)element;
 					int kind = node.getKind();
 					if ((kind & IRemoteSyncElement.AUTOMERGE_CONFLICT) != 0) {
-						DiffImage diffImage = new DiffImage(image, conflictDescriptor);
-						return diffImage.createImage();
+						return iconCache.getImageFor(new DiffOverlayIcon(image, conflictDescriptor));
 					}
 					if (kind == (IRemoteSyncElement.OUTGOING | IRemoteSyncElement.ADDITION)) {
 						IResource resource = node.getResource();
@@ -172,8 +163,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 							try {
 								ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile) resource);
 								if (cvsFile.getSyncInfo() == null) {
-									DiffImage diffImage = new DiffImage(image, questionableDescriptor);
-									return diffImage.createImage();
+									return iconCache.getImageFor(new DiffOverlayIcon(image, questionableDescriptor));
 								}
 							} catch (TeamException e) {
 								ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
