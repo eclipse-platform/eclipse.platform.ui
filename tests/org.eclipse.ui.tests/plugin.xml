@@ -800,6 +800,27 @@
             	A lightweight test decorator
           </description> 
       </decorator>
+      <decorator
+      		lightweight="true"
+            objectClass="org.eclipse.core.resources.IResource"
+            label="Bug 41545 Lightweight"
+            class="org.eclipse.ui.tests.navigator.NullImageDecorator"
+            id="org.eclipse.ui.tests.lightNullImageDecorator">
+      </decorator>
+      <decorator
+            lightweight="false"
+            objectClass="org.eclipse.core.resources.IResource"
+            label="Bug 41545 Heavy Image"
+            class="org.eclipse.ui.tests.navigator.HeavyNullImageDecorator"
+            id="org.eclipse.ui.tests.heavyNullImageDecorator">
+      </decorator>
+       <decorator
+            lightweight="false"
+            objectClass="org.eclipse.core.resources.IResource"
+            label="Bug 41545 Heavy Text"
+            class="org.eclipse.ui.tests.navigator.HeavyNullTextDecorator"
+            id="org.eclipse.ui.tests.heavyNullTextDecorator">
+      </decorator>
    </extension>
 <!-- Working set tests -->
    <extension
