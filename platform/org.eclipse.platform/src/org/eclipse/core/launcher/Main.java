@@ -725,22 +725,6 @@ public class Main {
 	*/	
 	public int run(String[] args) {
 		arguments = args;
-		// TODO remove this code before M8.  It is left here until the UI guys implement 
-		// their versions of these tests.
-		if (System.getProperty("eclipse.ui.testing") == null) {
-			// Check to see if we are running with a compatible VM.
-			// If not, then return exit code "14" which will be recognized
-			// by the executable and an appropriate message will be displayed
-			// to the user.
-			if (!isCompatible())
-				return 14;
-			// Check to see if there is already a platform running in
-			// this workspace. If there is, then return an exit code of "15" which
-			// will be recognized by the executable and an appropriate message
-			// will be displayed to the user.
-			if (isAlreadyRunning())
-				return 15;
-		}
 		try {
 			basicRun(args);
 		} catch (Throwable e) {
