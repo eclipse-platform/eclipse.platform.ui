@@ -330,6 +330,7 @@ public class RepositoryManager {
 			}
 		} else {
 			IPath oldPluginStateLocation = CVSUIPlugin.getPlugin().getStateLocation().append(STATE_FILE);
+			file = oldPluginStateLocation.toFile();
 			if (file.exists()) {
 				try {
 					DataInputStream dis = new DataInputStream(new FileInputStream(file));
