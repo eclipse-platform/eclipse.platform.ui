@@ -137,10 +137,12 @@ public class MultipleInputDialog extends Dialog {
 			Label label= new Label(fieldComposite, SWT.NONE);
 			label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 			label.setText(fieldLabel);
+			label.setFont(mainComposite.getFont());
 			final Text text= new Text(fieldComposite, SWT.SINGLE | SWT.BORDER);
 			gridData= new GridData(GridData.FILL_HORIZONTAL);
 			gridData.widthHint= 200;
 			text.setLayoutData(gridData);
+			text.setFont(mainComposite.getFont());
 			if (initialValues != null && initialValues.length >= i) {
 				text.setText(initialValues[i]);
 			}

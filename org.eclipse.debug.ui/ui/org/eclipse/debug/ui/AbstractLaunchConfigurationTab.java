@@ -230,6 +230,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 		GridData gd = new GridData();
 		gd.horizontalSpan = colSpan;
 		label.setLayoutData(gd);
+		label.setFont(comp.getFont());
 	}	
 	
 	/**

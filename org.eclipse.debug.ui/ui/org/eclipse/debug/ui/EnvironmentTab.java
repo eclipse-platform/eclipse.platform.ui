@@ -237,7 +237,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * @param event the selection change event
 	 */
 	protected void handleTableSelectionChanged(SelectionChangedEvent event) {
-		int size = ((IStructuredSelection)environmentTable.getSelection()).size();
+		int size = ((IStructuredSelection)event.getSelection()).size();
 		envEditButton.setEnabled(size == 1);
 		envRemoveButton.setEnabled(size > 0);
 	}
