@@ -64,6 +64,15 @@ public final class ImageCache {
 		}
 
 		/**
+		 * Image cache value default constructor.
+		 *  
+		 */
+		ImageCacheValue() {
+			this.image = null;
+			this.imageDescriptor = null;
+		}
+
+		/**
 		 * Get the image.
 		 * 
 		 * @return the image.
@@ -333,9 +342,11 @@ public final class ImageCache {
 	 * @param descriptor
 	 *            The image descriptor for which a disabled image should be
 	 *            created; may be <code>null</code>.
-	 * @return The disabled image, either newly created or from the cache. This
-	 *         value is <code>null</code> if the descriptor parameter passed
-	 *         in is <code>null</code>.
+	 * @return An image cache value composed of the disabled image, either newly
+	 *         created or from the cache, as well as its associated image
+	 *         descriptor. The image and image descriptor values are both
+	 *         <code>null</code> if the descriptor parameter passed in is
+	 *         <code>null</code>.
 	 */
 	public final ImageCacheValue getDisabledImage(
 			final ImageDescriptor descriptor) {
@@ -355,14 +366,16 @@ public final class ImageCache {
 	 *            created; may be <code>null</code>.
 	 * @param device
 	 *            The device on which to create the image.
-	 * @return The disabled image, either newly created or from the cache. This
-	 *         value is <code>null</code> if the descriptor parameter passed
-	 *         in is <code>null</code>.
+	 * @return An image cache value composed of the disabled image, either newly
+	 *         created or from the cache, as well as its associated image
+	 *         descriptor. The image and image descriptor values are both
+	 *         <code>null</code> if the descriptor parameter passed in is
+	 *         <code>null</code>.
 	 */
 	public final ImageCacheValue getDisabledImage(
 			final ImageDescriptor descriptor, final Device device) {
 		if (descriptor == null) {
-			return null;
+			return new ImageCacheValue();
 		}
 
 		// Retrieve the images if present
@@ -394,7 +407,7 @@ public final class ImageCache {
 		}
 
 		// All attempts have failed.
-		return null;
+		return new ImageCacheValue();
 	}
 
 	/**
@@ -412,7 +425,7 @@ public final class ImageCache {
 	}
 
 	/**
-	 * Returns an image cache value, composed of the gray image and its
+	 * Returns an image cache value, composed of the greyed image and its
 	 * associated image descriptor. This caches the result so that future
 	 * attempts to get the image for the same descriptor will only access the
 	 * cache. Note that when the last reference to the returned image descriptor
@@ -422,16 +435,18 @@ public final class ImageCache {
 	 * @param descriptor
 	 *            The image descriptor for which a greyed image should be
 	 *            created; may be <code>null</code>.
-	 * @return The greyed image, either newly created or from the cache. This
-	 *         value is <code>null</code> if the descriptor parameter passed
-	 *         in is <code>null</code>.
+	 * @return An image cache value composed of the greyed image, either newly
+	 *         created or from the cache, as well as its associated image
+	 *         descriptor. The image and image descriptor values are both
+	 *         <code>null</code> if the descriptor parameter passed in is
+	 *         <code>null</code>.
 	 */
 	public final ImageCacheValue getGrayImage(final ImageDescriptor descriptor) {
 		return getGrayImage(descriptor, getDisplay());
 	}
 
 	/**
-	 * Returns an image cache value, composed of the gray image and its
+	 * Returns an image cache value, composed of the greyed image and its
 	 * associated image descriptor. This caches the result so that future
 	 * attempts to get the image for the same descriptor will only access the
 	 * cache. Note that when the last reference to the returned image descriptor
@@ -443,14 +458,16 @@ public final class ImageCache {
 	 *            created; may be <code>null</code>.
 	 * @param device
 	 *            The device on which to create the image.
-	 * @return The greyed image, either newly created or from the cache. This
-	 *         value is <code>null</code> if the descriptor parameter passed
-	 *         in is <code>null</code>.
+	 * @return An image cache value composed of the greyed image, either newly
+	 *         created or from the cache, as well as its associated image
+	 *         descriptor. The image and image descriptor values are both
+	 *         <code>null</code> if the descriptor parameter passed in is
+	 *         <code>null</code>.
 	 */
 	public final ImageCacheValue getGrayImage(final ImageDescriptor descriptor,
 			final Device device) {
 		if (descriptor == null) {
-			return null;
+			return new ImageCacheValue();
 		}
 
 		// Retrieve the images if present
@@ -483,7 +500,7 @@ public final class ImageCache {
 		}
 
 		// All attempts have failed.
-		return null;
+		return new ImageCacheValue();
 	}
 
 	/**
@@ -497,7 +514,9 @@ public final class ImageCache {
 	 * @param descriptor
 	 *            The image descriptor for which an image should be created; may
 	 *            be <code>null</code>.
-	 * @return The image, either newly created or from the cache. This value is
+	 * @return An image cache value composed of the regular image, either newly
+	 *         created or from the cache, as well as its associated image
+	 *         descriptor. The image and image descriptor values are both
 	 *         <code>null</code> if the descriptor parameter passed in is
 	 *         <code>null</code>.
 	 */
@@ -518,7 +537,9 @@ public final class ImageCache {
 	 *            be <code>null</code>.
 	 * @param returnMissingImageOnError
 	 *            Flag that determines if a default image is returned on error.
-	 * @return The image, either newly created or from the cache. This value is
+	 * @return An image cache value composed of the regular image, either newly
+	 *         created or from the cache, as well as its associated image
+	 *         descriptor. The image and image descriptor values are both
 	 *         <code>null</code> if the descriptor parameter passed in is
 	 *         <code>null</code>.
 	 */
@@ -542,14 +563,16 @@ public final class ImageCache {
 	 *            Flag that determines if a default image is returned on error.
 	 * @param device
 	 *            The device on which to create the image.
-	 * @return The image, either newly created or from the cache. This value is
+	 * @return An image cache value composed of the regular image, either newly
+	 *         created or from the cache, as well as its associated image
+	 *         descriptor. The image and image descriptor values are both
 	 *         <code>null</code> if the descriptor parameter passed in is
 	 *         <code>null</code>.
 	 */
 	public final ImageCacheValue getImage(final ImageDescriptor descriptor,
 			final boolean returnMissingImageOnError, final Device device) {
 		if (descriptor == null) {
-			return null;
+			return new ImageCacheValue();
 		}
 
 		// Retrieve the images if present
@@ -595,7 +618,9 @@ public final class ImageCache {
 	 *            be <code>null</code>.
 	 * @param device
 	 *            The device on which to create the image.
-	 * @return The image, either newly created or from the cache. This value is
+	 * @return An image cache value composed of the regular image, either newly
+	 *         created or from the cache, as well as its associated image
+	 *         descriptor. The image and image descriptor values are both
 	 *         <code>null</code> if the descriptor parameter passed in is
 	 *         <code>null</code>.
 	 */
