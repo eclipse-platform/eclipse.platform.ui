@@ -115,9 +115,4 @@ public void updateScrolledComposite() {
 	sc.setMinSize(newSize);
 }
 
-public void ensureVisible(Control c) {
-	if (container instanceof ScrolledComposite) {
-		ensureVisible((ScrolledComposite)container, c);
-	}
-}
 }
