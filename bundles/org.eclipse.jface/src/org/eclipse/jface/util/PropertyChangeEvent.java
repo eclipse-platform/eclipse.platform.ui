@@ -69,7 +69,7 @@ public class PropertyChangeEvent extends EventObject {
      * Returns the new value of the property.
      *
      * @return the new value, or <code>null</code> if not known
-     *  or not relevant
+     *  or not relevant (for instance if the property was removed).
      */
     public Object getNewValue() {
         return newValue;
@@ -79,7 +79,8 @@ public class PropertyChangeEvent extends EventObject {
      * Returns the old value of the property.
      *
      * @return the old value, or <code>null</code> if not known
-     *  or not relevant
+     *  or not relevant (for instance if the property was just
+     *  added and there was no old value).
      */
     public Object getOldValue() {
         return oldValue;
