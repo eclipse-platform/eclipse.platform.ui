@@ -9,7 +9,6 @@
    
    <requires>
       <import plugin="org.eclipse.ui.ide" optional="true"/>
-      <import plugin="org.eclipse.ui.views" optional="true"/>
       <import plugin="org.eclipse.jface.text" optional="true"/>
       <import plugin="org.eclipse.ui.workbench.texteditor" optional="true"/>
       <import plugin="org.eclipse.ui.editors" optional="true"/>
@@ -22,8 +21,6 @@
       <import plugin="org.eclipse.ant.core"/>
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.debug.ui"/>
-      <import plugin="org.eclipse.jdt.debug"/>
-      <import plugin="org.eclipse.update.core"/>
       <import plugin="org.eclipse.ui.externaltools"/>
       <import plugin="org.eclipse.ant.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
