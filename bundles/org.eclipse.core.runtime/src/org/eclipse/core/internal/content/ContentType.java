@@ -183,15 +183,9 @@ public final class ContentType implements IContentType {
 		}
 	}
 
-	int describe(IContentDescriber selectedDescriber, InputStream contents, ContentDescription description) {
+	int describe(IContentDescriber selectedDescriber, InputStream contents, ContentDescription description) throws IOException {
 		try {
 			return selectedDescriber.describe(contents, description);
-		} catch (IOException ioe) {
-			if (ContentTypeManager.DEBUGGING) {
-				String message = Policy.bind("content.errorReadingContents", getId()); //$NON-NLS-1$ 
-				log(message, ioe);
-			}
-			return IContentDescriber.INVALID;
 		} catch (RuntimeException re) {
 			// describer seems to be buggy. just disable it (logging the reason)
 			invalidateDescriber(re);
@@ -205,15 +199,9 @@ public final class ContentType implements IContentType {
 		}
 	}
 
-	int describe(ITextContentDescriber selectedDescriber, Reader contents, ContentDescription description) {
+	int describe(ITextContentDescriber selectedDescriber, Reader contents, ContentDescription description) throws IOException {
 		try {
 			return selectedDescriber.describe(contents, description);
-		} catch (IOException ioe) {
-			if (ContentTypeManager.DEBUGGING) {
-				String message = Policy.bind("content.errorReadingContents", getId()); //$NON-NLS-1$
-				log(message, ioe);
-			}
-			return IContentDescriber.INVALID;
 		} catch (RuntimeException re) {
 			// describer seems to be buggy. just disable it (logging the reason)
 			invalidateDescriber(re);
@@ -397,7 +385,7 @@ public final class ContentType implements IContentType {
 		return defaultCharset;
 	}
 
-	IContentDescription internalGetDescriptionFor(InputStream buffer, QualifiedName[] options) {
+	IContentDescription internalGetDescriptionFor(InputStream buffer, QualifiedName[] options) throws IOException {
 		if (aliasTarget != null)
 			return getTarget().internalGetDescriptionFor(buffer, options);
 		if (buffer == null)
@@ -419,7 +407,7 @@ public final class ContentType implements IContentType {
 		return description;
 	}
 
-	IContentDescription internalGetDescriptionFor(Reader buffer, QualifiedName[] options) {
+	IContentDescription internalGetDescriptionFor(Reader buffer, QualifiedName[] options) throws IOException {
 		if (aliasTarget != null)
 			return getTarget().internalGetDescriptionFor(buffer, options);
 		if (buffer == null)
@@ -518,7 +506,7 @@ public final class ContentType implements IContentType {
 		return validation == STATUS_VALID;
 	}
 
-	private void log(String message, Throwable reason) {
+	public static void log(String message, Throwable reason) {
 		// don't log CoreExceptions again
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, reason instanceof CoreException ? null : reason);
 		InternalPlatform.getDefault().log(status);

@@ -11,7 +11,8 @@
 package org.eclipse.core.tests.runtime.content;
 
 import java.io.*;
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.internal.content.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
@@ -43,6 +44,7 @@ public class IContentTypeManagerTest extends EclipseWorkspaceTest {
 	private final static String XML_UTF_16BE = "<?xml version=\"1.0\" encoding=\"UTF-16BE\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_UTF_16LE = "<?xml version=\"1.0\" encoding=\"UTF-16LE\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_UTF_8 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><org.eclipse.core.runtime.tests.root/>";
+	private final static String XML_US_ASCII_INVALID = "<?xml version='1.0' encoding='us-ascii'?><!-- αινσϊ --><org.eclipse.core.runtime.tests.root/>";
 
 	public static Test suite() {
 		//		return new IContentTypeManagerTest("testRootElementAndDTDDescriber");
@@ -598,13 +600,13 @@ public class IContentTypeManagerTest extends EclipseWorkspaceTest {
 		IContentType text = manager.getContentType(IContentTypeManager.CT_TEXT);
 		Preferences textPrefs = new InstanceScope().getNode(ContentTypeManager.CONTENT_TYPE_PREF_NODE).node(text.getId());
 		assertNotNull("0.1", text);
-		
+
 		// ensure the "default charset" preference is being properly used
-		assertNull("1.0", text.getDefaultCharset());		
+		assertNull("1.0", text.getDefaultCharset());
 		assertNull("1.1", textPrefs.get(ContentType.PREF_DEFAULT_CHARSET, null));
-		text.setDefaultCharset("UTF-8");		
+		text.setDefaultCharset("UTF-8");
 		assertEquals("1.2", "UTF-8", textPrefs.get(ContentType.PREF_DEFAULT_CHARSET, null));
-		text.setDefaultCharset(null);		
+		text.setDefaultCharset(null);
 		assertNull("1.3", textPrefs.get(ContentType.PREF_DEFAULT_CHARSET, null));
 
 		// ensure the file spec preferences are being properly used
@@ -612,7 +614,7 @@ public class IContentTypeManagerTest extends EclipseWorkspaceTest {
 		assertFalse("2.01", text.isAssociatedWith("xyz.foo"));
 		assertFalse("2.01", text.isAssociatedWith("xyz.bar"));
 		assertFalse("2.03", text.isAssociatedWith("foo.ext"));
-		assertFalse("2.04", text.isAssociatedWith("bar.ext"));		
+		assertFalse("2.04", text.isAssociatedWith("bar.ext"));
 		// play with file name associations first...
 		assertNull("2.0a", textPrefs.get(ContentType.PREF_FILE_NAMES, null));
 		assertNull("2.0b", textPrefs.get(ContentType.PREF_FILE_EXTENSIONS, null));
@@ -648,6 +650,53 @@ public class IContentTypeManagerTest extends EclipseWorkspaceTest {
 		} finally {
 			// clean-up
 			text.removeFileSpec("foo.bar", IContentType.FILE_NAME_SPEC);
+		}
+	}
+
+	/**
+	 * Bugs 67841e 62443 
+	 */
+	public void testIOException() {
+		ContentTypeManager manager = ContentTypeManager.getInstance();
+		IContentType xml = manager.getContentType(Platform.PI_RUNTIME + ".xml");
+		IContentType rootElement = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".root-element");
+		IContentType[] selected = null;
+		try {
+			selected = manager.findContentTypesFor(getInputStream(XML_US_ASCII_INVALID, "ISO-8859-1"), "test.xml");
+		} catch (IOException ioe) {
+			// a SAXException is usually caught (and silently ignored) in XMLRootElementDescriber in these cases
+			fail("1.0", ioe);
+		}
+		assertTrue("1.1", contains(selected, xml));
+		assertTrue("1.2", !contains(selected, rootElement));
+
+		// induce regular IOExceptions... these should be thrown to clients
+		class FakeIOException extends IOException {
+			public String getMessage() {
+				return "This exception was thrown for testing purposes";
+			}
+		}
+		try {
+			selected = manager.findContentTypesFor(new InputStream() {
+				public int read() throws IOException {
+					throw new FakeIOException();
+				}
+
+				public int read(byte[] b, int off, int len) throws IOException {
+					throw new FakeIOException();
+				}
+
+				public int available() throws IOException {
+					return Integer.MAX_VALUE;
+				}
+			}, "test.xml");
+			// an exception will happen when reading the stream... should be thrown to the caller
+			fail("2.0");
+		} catch (FakeIOException fioe) {
+			// sucess
+		} catch (IOException ioe) {
+			// this should never happen, but just in case...
+			fail("2.1");
 		}
 	}
 }

@@ -22,7 +22,7 @@ public class ContentTypeManager implements IContentTypeManager {
 
 	public final static String CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_CONTENT_TYPES = Platform.PI_RUNTIME + "/contenttypes/debug"; //$NON-NLS-1$;	
-	static final boolean DEBUGGING = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_CONTENT_TYPES));
+	public static final boolean DEBUGGING = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_CONTENT_TYPES));
 	private static ContentTypeManager instance;
 	public static final int MARK_LIMIT = 0x400;
 
@@ -265,7 +265,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		return new InstanceScope().getNode(CONTENT_TYPE_PREF_NODE);
 	}
 
-	protected IContentType[] internalFindContentTypesFor(InputStream buffer, IContentType[] subset) {
+	protected IContentType[] internalFindContentTypesFor(InputStream buffer, IContentType[] subset) throws IOException {
 		if (buffer == null) {
 			Arrays.sort(subset, depthComparator);
 			return subset;
@@ -294,7 +294,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		return result;
 	}
 
-	private IContentType[] internalFindContentTypesFor(Reader buffer, IContentType[] subset) {
+	private IContentType[] internalFindContentTypesFor(Reader buffer, IContentType[] subset) throws IOException {
 		if (buffer == null) {
 			Arrays.sort(subset, depthComparator);
 			return subset;
