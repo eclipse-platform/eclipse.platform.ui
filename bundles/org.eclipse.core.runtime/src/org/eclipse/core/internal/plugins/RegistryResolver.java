@@ -423,6 +423,7 @@ private void addAll(Collection c) {
 		add((PluginDescriptorModel) list.next());
 }
 private void addExtension(ExtensionModel extension, PluginDescriptorModel plugin) {
+	extension.setParentPluginDescriptor (plugin);
 	ExtensionModel[] list = plugin.getDeclaredExtensions();
 	ExtensionModel[] result = null;
 	if (list == null)
@@ -436,6 +437,7 @@ private void addExtension(ExtensionModel extension, PluginDescriptorModel plugin
 	extension.setParent(plugin);
 }
 private void addExtensionPoint(ExtensionPointModel extensionPoint, PluginDescriptorModel plugin) {
+	extensionPoint.setParentPluginDescriptor (plugin);
 	ExtensionPointModel[] list = plugin.getDeclaredExtensionPoints();
 	ExtensionPointModel[] result = null;
 	if (list == null)
