@@ -51,13 +51,9 @@ public class MyComputerFile extends ModelObject implements IWorkbenchAdapter {
 	 * @see IWorkbenchAdapter#getImageDescriptor(Object)
 	 */
 	public ImageDescriptor getImageDescriptor(Object obj) {
-		return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
+		return PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(getName());
 	}
 	
-	public Image getImage(Object obj) {
-		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
-	}
-
 	/**
 	 * @see IWorkbenchAdapter#getLabel(Object)
 	 */

@@ -20,6 +20,7 @@ import java.util.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Insert the type's description here.
@@ -29,14 +30,27 @@ public class SiteView extends BaseTreeView implements IUpdateModelChangedListene
 	private static final String KEY_NEW_SITE = "SiteView.Popup.newSite";
 	private static final String KEY_DELETE = "SiteView.Popup.delete";
 	private static final String KEY_REFRESH = "SiteView.Popup.refresh";
+	private static final String KEY_FILTER_FILES = "SiteView.menu.showFiles";
 	private Action propertiesAction;
 	private Action newAction;
 	private Action deleteAction;
+	private Action fileFilterAction;
 	private Image siteImage;
 	private Image featureImage;
 	private Image computerImage;
 	private Action refreshAction;
 	private SelectionChangedListener selectionListener;
+	private Hashtable fileImages = new Hashtable();
+	private FileFilter fileFilter = new FileFilter();
+	
+class FileFilter extends ViewerFilter {
+	public boolean select(Viewer viewer, Object parent, Object child) {
+		if (child instanceof MyComputerFile) {
+			return false;
+		}
+		return true;
+	}
+}
 	
 class SelectionChangedListener implements ISelectionChangedListener {
 	public void selectionChanged(SelectionChangedEvent event) {
@@ -129,7 +143,13 @@ class SiteLabelProvider extends LabelProvider {
 			return ((MyComputerDirectory)obj).getImage(obj);
 		}
 		if (obj instanceof MyComputerFile) {
-			return ((MyComputerFile)obj).getImage(obj);
+			ImageDescriptor desc = ((MyComputerFile)obj).getImageDescriptor(obj);
+			Image image = (Image)fileImages.get(desc);
+			if (image==null) {
+				image = desc.createImage();
+				fileImages.put(desc, image);
+			}
+			return image;
 		}
 		if (obj instanceof SiteCategory) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
@@ -159,6 +179,9 @@ public void dispose() {
 	siteImage.dispose();
 	featureImage.dispose();
 	computerImage.dispose();
+	for (Enumeration enum=fileImages.elements(); enum.hasMoreElements();) {
+		((Image)enum.nextElement()).dispose();
+	}
 	super.dispose();
 }
 
@@ -190,6 +213,20 @@ public void makeActions() {
 		}
 	};
 	refreshAction.setText(UpdateUIPlugin.getResourceString(KEY_REFRESH));
+	
+	fileFilterAction = new Action() {
+		public void run() {
+			if (fileFilterAction.isChecked()) {
+				viewer.removeFilter(fileFilter);
+			}
+			else 
+				viewer.addFilter(fileFilter);
+		}
+	};
+	fileFilterAction.setText(UpdateUIPlugin.getResourceString(KEY_FILTER_FILES));
+	fileFilterAction.setChecked(false);
+	viewer.addFilter(fileFilter);
+
 	viewer.addSelectionChangedListener(selectionListener);
 }
 
@@ -199,14 +236,17 @@ private void updateForSelection(IStructuredSelection selection) {
 
 public void fillActionBars() {
 	IActionBars bars = getViewSite().getActionBars();
+	bars.getMenuManager().add(fileFilterAction);
 }
 
 public void fillContextMenu(IMenuManager manager) {
 	IStructuredSelection sel = (IStructuredSelection)viewer.getSelection();
 	Object obj = sel.getFirstElement();
+
+	manager.add(refreshAction);
+	manager.add(new Separator());
 	manager.add(newAction);
 	if (obj instanceof SiteBookmark) {
-		manager.add(refreshAction);
 		manager.add(deleteAction);
 	}
 	manager.add(new Separator());
@@ -243,18 +283,18 @@ private void performDelete() {
 
 private void performRefresh() {
 	IStructuredSelection sel = (IStructuredSelection)viewer.getSelection();
-	Object obj = sel.getFirstElement();
-	if (obj!=null && obj instanceof SiteBookmark) {
-		final SiteBookmark bookmark = (SiteBookmark)obj;
+	final Object obj = sel.getFirstElement();
+	
+	if (obj!=null) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
 				try {
-					bookmark.connect();
-					viewer.refresh(bookmark);
+					if (obj instanceof SiteBookmark)
+					   ((SiteBookmark)obj).connect();
+					viewer.refresh(obj);
 				}
 				catch (CoreException e) {
-					// FIXME
-					System.out.println(e);
+					UpdateUIPlugin.logException(e);
 				}
 			}
 		});
