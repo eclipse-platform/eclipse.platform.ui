@@ -694,23 +694,24 @@ public class ExtensionRegistry implements IExtensionRegistry {
 		InternalPlatform.getDefault().getBundleContext().removeBundleListener(this.pluginBundleListener);
 		if (!registryObjects.isDirty())
 			return;
-		FileManager manager = InternalPlatform.getDefault().getRuntimeFileManager();
+		if (currentFileManager == null)
+			return;
 		File tableFile = null;
 		File mainFile = null;
 		File extraFile = null;
 		File contributionsFile = null;
 		File orphansFile = null;
 		try {
-			manager.lookup(TableReader.TABLE, true);
-			manager.lookup(TableReader.MAIN, true);
-			manager.lookup(TableReader.EXTRA, true);
-			manager.lookup(TableReader.CONTRIBUTIONS, true);
-			manager.lookup(TableReader.ORPHANS, true);
-			tableFile = File.createTempFile(TableReader.TABLE, ".new", manager.getBase()); //$NON-NLS-1$
-			mainFile = File.createTempFile(TableReader.MAIN, ".new", manager.getBase()); //$NON-NLS-1$
-			extraFile = File.createTempFile(TableReader.EXTRA, ".new", manager.getBase()); //$NON-NLS-1$
-			contributionsFile = File.createTempFile(TableReader.CONTRIBUTIONS, ".new", manager.getBase()); //$NON-NLS-1$
-			orphansFile = File.createTempFile(TableReader.ORPHANS, ".new", manager.getBase()); //$NON-NLS-1$
+			currentFileManager.lookup(TableReader.TABLE, true);
+			currentFileManager.lookup(TableReader.MAIN, true);
+			currentFileManager.lookup(TableReader.EXTRA, true);
+			currentFileManager.lookup(TableReader.CONTRIBUTIONS, true);
+			currentFileManager.lookup(TableReader.ORPHANS, true);
+			tableFile = File.createTempFile(TableReader.TABLE, ".new", currentFileManager.getBase()); //$NON-NLS-1$
+			mainFile = File.createTempFile(TableReader.MAIN, ".new", currentFileManager.getBase()); //$NON-NLS-1$
+			extraFile = File.createTempFile(TableReader.EXTRA, ".new", currentFileManager.getBase()); //$NON-NLS-1$
+			contributionsFile = File.createTempFile(TableReader.CONTRIBUTIONS, ".new", currentFileManager.getBase()); //$NON-NLS-1$
+			orphansFile = File.createTempFile(TableReader.ORPHANS, ".new", currentFileManager.getBase()); //$NON-NLS-1$
 			TableWriter.setTableFile(tableFile);
 			TableWriter.setExtraDataFile(extraFile);
 			TableWriter.setMainDataFile(mainFile);
@@ -721,7 +722,7 @@ public class ExtensionRegistry implements IExtensionRegistry {
 		}
 		try {
 			if (new TableWriter().saveCache(registryObjects, computeRegistryStamp()))
-				manager.update(new String[] {TableReader.TABLE, TableReader.MAIN, TableReader.EXTRA, TableReader.CONTRIBUTIONS, TableReader.ORPHANS}, new String[] {tableFile.getName(), mainFile.getName(), extraFile.getName(), contributionsFile.getName(), orphansFile.getName()});
+				currentFileManager.update(new String[] {TableReader.TABLE, TableReader.MAIN, TableReader.EXTRA, TableReader.CONTRIBUTIONS, TableReader.ORPHANS}, new String[] {tableFile.getName(), mainFile.getName(), extraFile.getName(), contributionsFile.getName(), orphansFile.getName()});
 		} catch (IOException e) {
 			//Ignore the exception since we can recompute the cache
 		}
