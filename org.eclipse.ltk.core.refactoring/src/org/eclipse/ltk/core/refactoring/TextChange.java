@@ -332,7 +332,14 @@ public abstract class TextChange extends Change {
 			TextEditProcessor processor= createTextEditProcessor(document, TextEdit.CREATE_UNDO, false);
 			UndoEdit undo= processor.performEdits();
 			commit(document, new SubProgressMonitor(pm, 1));
-			return createUndoChange(undo);
+			try {
+				return createUndoChange(undo);
+			} catch (CoreException e) {
+				// if we can't create an undo change then we discard
+				// the whole undo. But at least the execution doesn't
+				// fail.
+				return null;
+			}
 		} catch (BadLocationException e) {
 			throw Changes.asCoreException(e);
 		} finally {

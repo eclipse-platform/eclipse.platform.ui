@@ -20,6 +20,9 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
 /**
  * This class is a wrapper around a {@link TextEditGroup TextEditGroup}
  * adding support for marking a group as active and inactive.
+ * <p> 
+ * Note: this class is not intended to be extended by clients.
+ * </p>
  * 
  * @see TextEditGroup
  * 

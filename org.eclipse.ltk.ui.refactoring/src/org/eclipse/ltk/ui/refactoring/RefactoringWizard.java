@@ -59,6 +59,9 @@ import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
  * <p>
  * A refactoring wizard is best opened using the {@link RefactoringWizardOpenOperation}.
  * </p>
+ * <p>
+ * Clients may extend this classs.
+ * </p>
  * 
  * @see org.eclipse.ltk.core.refactoring.Refactoring
  * 

@@ -12,6 +12,9 @@ package org.eclipse.ltk.ui.refactoring;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.IJobManager;
+
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.swt.widgets.Shell;
@@ -35,9 +38,8 @@ import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
  * A helper class to open a refactoring wizard dialog. The class first checks
  * the initial conditions of the refactoring and depending on its outcome
  * the wizard dialog or an error dialog is shown.
- * 
  * <p> 
- * Note: this class is not intended to be subclassed by clients.
+ * Note: this class is not intended to be extended by clients.
  * </p>
  * 
  * @since 3.0 
@@ -98,6 +100,13 @@ public class RefactoringWizardOpenOperation {
 	public int run(Shell parent, String dialogTitle) throws InterruptedException {
 		Assert.isNotNull(dialogTitle);
 		Refactoring refactoring= fWizard.getRefactoring();
+		
+		IJobManager manager= Platform.getJobManager();
+		try {
+			manager.beginRule(ResourcesPlugin.getWorkspace().getRoot(), null);
+		} finally {
+			manager.endRule(ResourcesPlugin.getWorkspace().getRoot());
+		}
 		
 		fInitialConditions= checkInitialConditions(refactoring, parent, dialogTitle);
 		if (fInitialConditions.hasFatalError()) {

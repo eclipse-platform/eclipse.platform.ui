@@ -20,12 +20,8 @@ package org.eclipse.ltk.ui.refactoring;
  * 
  * @since 3.0
  */
-public abstract class IRefactoringUIStatusCodes {
+public interface IRefactoringUIStatusCodes {
 
-	private IRefactoringUIStatusCodes() {
-		// no instance 
-	}
-	
 	/**
 	 * Status code (value 10000) indicating an internal error.
 	 */

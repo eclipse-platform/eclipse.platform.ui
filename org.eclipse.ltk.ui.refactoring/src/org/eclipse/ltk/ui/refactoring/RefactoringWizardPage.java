@@ -25,6 +25,10 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
  * {@link org.eclipse.ltk.ui.refactoring.RefactoringWizard RefactoringWizard}.
  * Adding them to a normal {@linkplain org.eclipse.jface.wizard.Wizard wizard}
  * result in an exception.
+ * <p> 
+ * Note: this class is not intended to be extended by clients. Clients should
+ * extend {@link org.eclipse.ltk.ui.refactoring.UserInputWizardPage}.
+ * </p>
  * 
  * @see RefactoringWizard
  * @see org.eclipse.ltk.core.refactoring.Refactoring

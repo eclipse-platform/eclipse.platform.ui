@@ -31,7 +31,7 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * </p>
  * <p>
  * If an undo manager has been set via the method {@link #setUndoManager(IUndoManager, String)}
- * then the undo object, if any has been provided, will be pushed onto the managers
+ * then the undo object, if any has been provided, will be pushed onto the manager's
  * undo stack.
  * </p> 
  * <p>
@@ -39,7 +39,7 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * <code>IWorkspace</code> to achieve proper delta batching.
  * </p>
  * <p> 
- * Note: this class is not intended to be subclassed outside of the refactoring framework.
+ * Note: this class is not intended to be extended outside of the refactoring framework.
  * </p>
  * 
  * @since 3.0 

@@ -61,7 +61,7 @@ public class TextChanges {
 					));
 			if (lastModificationStamp != file.getModificationStamp())
 				return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getFormattedString(
-					"TextChanges.error.conent_changed", //$NON-NLS-1$
+					"TextChanges.error.content_changed", //$NON-NLS-1$
 					file.getFullPath().toString()
 					)); 
 			if (file.isReadOnly())

@@ -19,9 +19,8 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * generic data pointer. The context object is used to provide context information for
  * the problem itself. An example context is a tuple consisting of the resource that contains
  * the problem and a corresponding line number.
- * 
  * <p> 
- * Note: this class is not intented to be subclassed by clients.
+ * Note: this class is not intended to be extended by clients.
  * </p>
  * 
  * @since 3.0

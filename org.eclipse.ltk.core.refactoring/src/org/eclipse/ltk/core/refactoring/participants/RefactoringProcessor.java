@@ -42,6 +42,8 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  * any methods are called on it. Therefore a processor must be able to deal with
  * unsaved resources.
  * </p>
+ * 
+ * @since 3.0
  */
 public abstract class RefactoringProcessor extends PlatformObject {
 
@@ -151,6 +153,24 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	 */
 	public abstract Change createChange(IProgressMonitor pm) throws CoreException;
 
+	/**
+	 * Additional hook allowing processor's to add changes to the set of workspace
+	 * modifications after all participant changes have been created.
+	 * 
+	 * @param participantChanges an array containing the changes created by the
+	 *  participants
+	 * @param pm a progress monitor to report progress
+	 * 
+	 * @return change representing additional workspace modifications
+	 * 
+	 * @throws CoreException if an error occurred while creating the post change
+	 * 
+	 * @see #createChange(IProgressMonitor)
+	 */
+	public Change postCreateChange(Change[] participantChanges, IProgressMonitor pm) throws CoreException {
+		return null;
+	}
+	
 	/**
 	 * Returns the array of participants. It is up to the implementor of a
 	 * concrete processor to define which participants are loaded. In general,

@@ -26,7 +26,7 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  *   <li>after a single change or a tree of changes has been created, the
  *       method <code>initializeValidationState</code> has to be called.</li>
  *   <li>the method <code>isValid</code> can be used to determine if a change
- *       can still be applied to the work space. If the method returns a {@link 
+ *       can still be applied to the workspace. If the method returns a {@link 
  *       RefactoringStatus} with a severity of FATAL then the change has to be 
  *       treated as invalid. Performing an invalid change isn't allowed and 
  *       results in an unspecified result. This method can be called multiple
@@ -67,7 +67,7 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * </pre>
  * </p>
  * <p>
- * It is important that implementors of this abstract class provide an adequat 
+ * It is important that implementors of this abstract class provide an adequate 
  * implementation of <code>isValid</code> and that they provide an undo change
  * via the return value of the method <code>perform</code>. If no undo can be
  * provided then the perform method is allowed to return <code>null</code>. But

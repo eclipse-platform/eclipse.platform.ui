@@ -86,7 +86,7 @@ public abstract class RefactoringParticipant extends PlatformObject {
 	/**
 	 * Initialize the participant with the element to be refactored.
 	 * If this method returns <code>false</code> then the framework
-	 * will consider the participant as not initialized and the 
+	 * will consider the participant as not being initialized and the 
 	 * participant will be dropped by the framework.
 	 * 
 	 * @param element the element to be refactored

@@ -30,7 +30,7 @@ public abstract class RenameParticipant extends RefactoringParticipant {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void initialize(RefactoringArguments arguments) {
+	protected final void initialize(RefactoringArguments arguments) {
 		fArguments= (RenameArguments)arguments;
 	}
 	

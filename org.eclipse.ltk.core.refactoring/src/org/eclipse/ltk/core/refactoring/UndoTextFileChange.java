@@ -29,6 +29,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.BufferValidationState;
 import org.eclipse.ltk.internal.core.refactoring.Changes;
+import org.eclipse.ltk.internal.core.refactoring.ContentStamps;
 
 /**
  * A change to perform the reverse change of a {@link TextFileChange}.
@@ -44,6 +45,7 @@ public class UndoTextFileChange extends Change {
 	private String fName;
 	private UndoEdit fUndo;
 	private IFile fFile;
+	private ContentStamp fContentStampToRestore;
 	private int fSaveMode;
 	
 	private boolean fDirty;
@@ -54,6 +56,7 @@ public class UndoTextFileChange extends Change {
 	 * 
 	 * @param name the human readable name of the change 
 	 * @param file the file the change is working on
+	 * @param stamp the content stamp to restore when the undo is executed
 	 * @param undo the edit representing the undo modifications 
 	 * @param saveMode the save mode as specified by {@link TextFileChange}
 	 * 
@@ -61,12 +64,14 @@ public class UndoTextFileChange extends Change {
 	 * @see TextFileChange#FORCE_SAVE
 	 * @see TextFileChange#LEAVE_DIRTY
 	 */
-	protected UndoTextFileChange(String name, IFile file, UndoEdit undo, int saveMode) {
+	protected UndoTextFileChange(String name, IFile file, UndoEdit undo, ContentStamp stamp, int saveMode) {
 		Assert.isNotNull(name);
+		Assert.isNotNull(file);
 		Assert.isNotNull(undo);
 		fName= name;
 		fFile= file;
 		fUndo= undo;
+		fContentStampToRestore= stamp;
 		fSaveMode= saveMode;
 	}
 	
@@ -97,15 +102,15 @@ public class UndoTextFileChange extends Change {
 	 * <p>
 	 * Subclasses may override it to create a different undo change.
 	 * </p>
-	 * 
 	 * @param edit the {@link UndoEdit undo edit} to create a undo change for
+	 * @param stampToRestore TODO
 	 * 
 	 * @return the undo change
 	 * 
 	 * @throws CoreException if an undo change can't be created
 	 */
-	protected Change createUndoChange(UndoEdit edit) throws CoreException {
-		return new UndoTextFileChange(getName(), fFile, edit, fSaveMode);
+	protected Change createUndoChange(UndoEdit edit, ContentStamp stampToRestore) throws CoreException {
+		return new UndoTextFileChange(getName(), fFile, edit, stampToRestore, fSaveMode);
 	}
 	
 	/**
@@ -148,9 +153,11 @@ public class UndoTextFileChange extends Change {
 			buffer= manager.getTextFileBuffer(fFile.getFullPath());
 			IDocument document= buffer.getDocument();
 			UndoEdit redo= fUndo.apply(document, TextEdit.CREATE_UNDO);
+			ContentStamp currentStamp= ContentStamps.get(fFile, true);
 			if (needsSaving())
 				buffer.commit(pm, false);
-			return createUndoChange(redo);
+			ContentStamps.set(fFile, fContentStampToRestore);
+			return createUndoChange(redo, currentStamp);
 		} catch (BadLocationException e) {
 			throw Changes.asCoreException(e);
 		} finally {

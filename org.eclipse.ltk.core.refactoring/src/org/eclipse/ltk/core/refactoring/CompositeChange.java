@@ -97,7 +97,8 @@ public class CompositeChange extends Change {
 	}
 	
 	/**
-	 * Adds the given change to the list of children.
+	 * Adds the given change to the list of children. The change to be added
+	 * can be <code>null</code>. Adding a "null" change does nothing.
 	 * 
 	 * @param change the change to add
 	 */

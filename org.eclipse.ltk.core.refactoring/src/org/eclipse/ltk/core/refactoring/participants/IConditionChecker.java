@@ -32,8 +32,7 @@ public interface IConditionChecker {
 	 * @return the outcome of the condition check
 	 * 
 	 * @throws CoreException if an error occurred during condition
-	 *  checking
+	 *  checking. The check is interpreted as failed if this happens
 	 */
 	public RefactoringStatus check(IProgressMonitor monitor) throws CoreException;
-	
 }

@@ -24,9 +24,8 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * The operation should be executed via the run method offered by
  * <code>IWorkspace</code> to achieve proper delta batching.
  * </p>
- * 
  * <p> 
- * Note: this class is not intented to be subclassed by clients.
+ * Note: this class is not intended to be extended by clients.
  * </p>
  * 
  * @see org.eclipse.ltk.core.refactoring.Refactoring#checkInitialConditions(IProgressMonitor)

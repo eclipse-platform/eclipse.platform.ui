@@ -25,6 +25,7 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 
+import org.eclipse.ltk.core.refactoring.ContentStamp;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 
@@ -98,7 +99,7 @@ class DirtyBufferValidationState extends BufferValidationState {
 	private IDocumentListener fDocumentListener;
 	private FileBufferListener fFileBufferListener;
 	private boolean fChanged;
-	private long fModificationStamp= IResource.NULL_STAMP;
+	private ContentStamp fContentStamp= null;
 	
 	class DocumentChangedListener implements IDocumentListener {
 		public void documentAboutToBeChanged(DocumentEvent event) {
@@ -120,7 +121,7 @@ class DirtyBufferValidationState extends BufferValidationState {
 			if (fDocumentListener != null && buffer.equals(getBuffer(fFile))) {
 				getDocument().removeDocumentListener(fDocumentListener);
 				fDocumentListener= null;
-				fModificationStamp= fFile.getModificationStamp();
+				fContentStamp= ContentStamps.get(fFile, true);
 			}
 		}
 		public void bufferContentAboutToBeReplaced(IFileBuffer buffer) {
@@ -141,7 +142,6 @@ class DirtyBufferValidationState extends BufferValidationState {
 		}
 	}
 	
-	
 	public DirtyBufferValidationState(IFile file) {
 		super(file);
 		fFileBufferListener= new FileBufferListener();
@@ -154,9 +154,9 @@ class DirtyBufferValidationState extends BufferValidationState {
 		RefactoringStatus result= super.isValid();
 		if (result.hasFatalError())
 			return result;
-		if (fChanged || (fModificationStamp != IResource.NULL_STAMP && fModificationStamp != fFile.getModificationStamp())) {
+		if (fChanged || (fContentStamp != null && !fContentStamp.equals(ContentStamps.get(fFile)))) {
 			result.addFatalError(RefactoringCoreMessages.getFormattedString(
-				"TextChanges.error.conent_changed", //$NON-NLS-1$
+				"TextChanges.error.content_changed", //$NON-NLS-1$
 				fFile.getFullPath().toString()
 				)); 
 		}
@@ -182,20 +182,25 @@ class DirtyBufferValidationState extends BufferValidationState {
 }
 
 class SavedBufferValidationState extends BufferValidationState {
-	private long fModificationStamp;
+	private ContentStamp fContentStamp;
 	
 	public SavedBufferValidationState(IFile file) {
 		super(file);
-		fModificationStamp= file.getModificationStamp();
+		fContentStamp= ContentStamps.get(file, true);
 	}
 
 	public RefactoringStatus isValid() {
 		RefactoringStatus result= super.isValid();
 		if (result.hasFatalError())
 			return result;
-		if (fModificationStamp != fFile.getModificationStamp()) {
+		if (fContentStamp == null) {
 			result.addFatalError(RefactoringCoreMessages.getFormattedString(
-				"TextChanges.error.conent_changed", //$NON-NLS-1$
+				"TextChanges.error.missing_stamp", //$NON-NLS-1$
+				fFile.getFullPath().toString()
+				)); 
+		} if (!fContentStamp.equals(ContentStamps.get(fFile))) {
+			result.addFatalError(RefactoringCoreMessages.getFormattedString(
+				"TextChanges.error.content_changed", //$NON-NLS-1$
 				fFile.getFullPath().toString()
 				)); 
 		} else if (fFile.isReadOnly()) {

@@ -31,7 +31,9 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringPreferences;
  * User input pages are shown at the beginning of a wizard. As soon as the last input
  * page is left the refactoring's condition checking is performed. Depending on the 
  * outcome an error page or the preview page is shown. 
- * 
+ * <p>
+ * Clients may extend this class.
+ * </p>
  * @since 3.0
  */
 public abstract class UserInputWizardPage extends RefactoringWizardPage {

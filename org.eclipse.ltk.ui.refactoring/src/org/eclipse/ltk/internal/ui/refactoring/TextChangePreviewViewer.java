@@ -23,14 +23,20 @@ import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.viewers.Viewer;
+
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.TextChange;
@@ -56,6 +62,9 @@ public class TextChangePreviewViewer implements IChangePreviewViewer {
 	
 	private static class ComparePreviewer extends CompareViewerSwitchingPane {
 		private CompareConfiguration fCompareConfiguration;
+		private String fLabel;
+		private ImageDescriptor fDescriptor;
+		private Image fImage;
 		public ComparePreviewer(Composite parent) {
 			super(parent, SWT.BORDER | SWT.FLAT, true);
 			fCompareConfiguration= new CompareConfiguration();
@@ -63,28 +72,46 @@ public class TextChangePreviewViewer implements IChangePreviewViewer {
 			fCompareConfiguration.setLeftLabel(RefactoringUIMessages.getString("ComparePreviewer.original_source")); //$NON-NLS-1$
 			fCompareConfiguration.setRightEditable(false);
 			fCompareConfiguration.setRightLabel(RefactoringUIMessages.getString("ComparePreviewer.refactored_source")); //$NON-NLS-1$
+			addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					if (fImage != null && !fImage.isDisposed())
+						fImage.dispose();
+				}
+			});
+		}
+		public void setLabel(String label) {
+			fLabel= label;
+		}
+		public void setImageDescriptor(ImageDescriptor imageDescriptor) {
+			fDescriptor= imageDescriptor;
 		}
 		protected Viewer getViewer(Viewer oldViewer, Object input) {
 			return CompareUI.findContentViewer(oldViewer, (ICompareInput)input, this, fCompareConfiguration);
 		}
 		public void setText(String text) {
-			/*
-			Object input= getInput();
-			if (input instanceof CompareInput) {
-				CompareInput cInput= (CompareInput)input;
-				setImage(fLabelProvider.getImage(cInput.getChangeElement()));
-				super.setText(fLabelProvider.getText(cInput.getChangeElement()));
+			if (fLabel != null) {
+				super.setText(fLabel);
 			} else {
 				super.setText(text);
-				setImage(null);
 			}
-			*/
-			super.setText(text);
+			Image current= null;
+			if (fDescriptor != null) {
+				current= fImage;
+				fImage= fDescriptor.createImage();
+			} else {
+				current= fImage;
+				fImage= null;
+			}
+			setImage(fImage);
+			if (current != null) {
+				current.dispose();
+			}
 		}
 	}
 	
 	private static class CompareElement implements ITypedElement, IEncodedStreamContentAccessor {
-		private static final String ENCODING= "UTF-8";	//$NON-NLS-1$ // we use an encoding that preserves Unicode across the stream
+		// we use an encoding that preserves Unicode across the stream
+		private static final String ENCODING= "UTF-8";	//$NON-NLS-1$ 
 		private String fContent;
 		private String fType;
 		public CompareElement(String content, String type) {
@@ -156,20 +183,20 @@ public class TextChangePreviewViewer implements IChangePreviewViewer {
 				if (edi.group != null && edi.surroundingLines >= 0) {
 					TextEditChangeGroup editChange= edi.group;
 					TextChange textChange= editChange.getTextChange();
-					setInput(textChange.getCurrentContent(editChange.getRegion(), true, 2),
+					setInput(textChange, textChange.getCurrentContent(editChange.getRegion(), true, 2),
 						textChange.getPreviewContent(new TextEditChangeGroup[] { editChange }, editChange.getRegion(), true, 2),
 						textChange.getTextType());
 					return;
 				} else if (edi.groups != null && edi.groups.length > 0 && edi.range != null) {
 					TextChange textChange= edi.groups[0].getTextChange();
-					setInput(textChange.getCurrentContent(edi.range, true, 0),
+					setInput(textChange, textChange.getCurrentContent(edi.range, true, 0),
 						textChange.getPreviewContent(edi.groups, edi.range, true, 0),
 						textChange.getTextType());
 					return;
 				}
 			} else if (change instanceof TextChange) {
 				TextChange textChange= (TextChange)change;
-				setInput(textChange.getCurrentContent(), textChange.getPreviewContent(), textChange.getTextType());
+				setInput(textChange, textChange.getCurrentContent(), textChange.getPreviewContent(), textChange.getTextType());
 				return;
 			} else {
 				fViewer.setInput(null);
@@ -187,7 +214,21 @@ public class TextChangePreviewViewer implements IChangePreviewViewer {
 		fViewer.getViewer().refresh();
 	}
 	
-	private void setInput(String left, String right, String type) {
+	private void setInput(TextChange change, String left, String right, String type) {
+		Object element= change.getModifiedElement();
+		if (element instanceof IAdaptable) {
+			IWorkbenchAdapter adapter= (IWorkbenchAdapter)((IAdaptable)element).getAdapter(IWorkbenchAdapter.class);
+			if (adapter != null) {
+				fViewer.setLabel(adapter.getLabel(element));
+				fViewer.setImageDescriptor(adapter.getImageDescriptor(element));
+			} else {
+				fViewer.setLabel(null);
+				fViewer.setImageDescriptor(null);
+			}
+		} else {
+			fViewer.setLabel(null);
+			fViewer.setImageDescriptor(null);
+		}
 		fViewer.setInput(new DiffNode( 
 			new CompareElement(left, type), 
 			new CompareElement(right, type)));

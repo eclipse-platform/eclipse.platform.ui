@@ -18,9 +18,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * to add change objects to the undo stack and <code>performUndo</code> and <code>
  * performRedo</code> to undo or redo changes.
  * <p>
- * This interface is not intended to be implemented or extended. Use the method <code>
- * RefactoringCore#createUndoManager</code> to create a new undo manager or the method
- * <code>RefactoringCore#getUndoManager()</code> to access the refactoring undo manager.
+ * This interface is not intended to be implemented. Clients should use the  method 
+ * {@link RefactoringCore#getUndoManager()} to access the refactoring undo manager.
  * </p>
  * 
  * @since 3.0
@@ -28,14 +27,16 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface IUndoManager {
 
 	/**
-	 * Adds a listener to the undo manager.
+	 * Adds a listener to the undo manager. Does nothing if the listener
+	 * is already present.
 	 * 
 	 * @param listener the listener to be added to the undo manager
 	 */
 	public void addListener(IUndoManagerListener listener);
 	
 	/**
-	 * Removes the given listener from this undo manager.
+	 * Removes the given listener from this undo manager. Does nothing if
+	 * the listener isn't registered with this undo manager
 	 * 
 	 * @param listener the listener to be removed
 	 */

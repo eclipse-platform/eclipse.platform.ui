@@ -13,10 +13,17 @@ package org.eclipse.ltk.core.refactoring.participants;
 /**
  * Facade to access the rename, move, delete, create and copy participant
  * extension point provided by the org.eclipse.ltk.core.refactoring plug-in.
+ * <p> 
+ * Note: this class is not intended to be extended by clients.
+ * </p>
  * 
  * @since 3.0
  */
 public class ParticipantManager {
+	
+	private ParticipantManager() {
+		// no instance 
+	}
 	
 	//---- Rename participants ----------------------------------------------------------------
 	

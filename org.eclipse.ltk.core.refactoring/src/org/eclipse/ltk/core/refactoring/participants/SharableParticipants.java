@@ -22,6 +22,9 @@ import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
  * only pass the list to the corresponding method defined in 
  * {@link org.eclipse.ltk.core.refactoring.participants.ParticipantManager}
  * </p>
+ * <p> 
+ * Note: this class is not intended to be extended by clients.
+ * </p>
  * 
  * @see ISharableParticipant
  * @see org.eclipse.ltk.core.refactoring.participants.ProcessorBasedRefactoring

@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -26,7 +27,12 @@ import org.eclipse.ltk.internal.core.refactoring.Resources;
 
 /**
  * A validate edit checker is a shared checker to collect files
- * to be validated all at once.
+ * to be validated all at once. A validate edit checker checks
+ * if the files are in sync with the underlying files system and
+ * if the can be edited if the are marked as read-only.
+ * <p> 
+ * Note: this class is not intended to be extended by clients.
+ * </p>
  * 
  * @see org.eclipse.core.resources.IWorkspace#validateEdit(org.eclipse.core.resources.IFile[], java.lang.Object)
  * 
@@ -70,8 +76,14 @@ public class ValidateEditChecker implements IConditionChecker {
 	 * {@inheritDoc}
 	 */
 	public RefactoringStatus check(IProgressMonitor monitor) throws CoreException {
-		return RefactoringStatus.create( 
-			Resources.makeCommittable(
-				(IResource[]) fFiles.toArray(new IResource[fFiles.size()]), fContext));
+		IResource[] resources= (IResource[])fFiles.toArray(new IResource[fFiles.size()]);
+		RefactoringStatus result= new RefactoringStatus();
+		IStatus status= Resources.checkInSync(resources);
+		if (!status.isOK())
+			result.merge(RefactoringStatus.create(status));
+		status= Resources.makeCommittable(resources, fContext);
+		if (!status.isOK())
+			result.merge(RefactoringStatus.create(status));
+		return result;
 	}
 }

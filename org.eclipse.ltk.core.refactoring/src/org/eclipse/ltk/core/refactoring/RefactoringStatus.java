@@ -33,7 +33,7 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * is <code>OK</code>.
  * </p>
  * <p> 
- * Note: this class is not intented to be subclassed by clients.
+ * Note: this class is not intended to be extended by clients.
  * </p>
  * 
  * @see RefactoringStatusEntry

@@ -27,7 +27,7 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * <code>IWorkspace</code> to achieve proper delta batching.
  * </p>
  * <p> 
- * Note: this class is not intended to be subclassed by clients.
+ * Note: this class is not intended to be extended by clients.
  * </p>
  * 
  * @see org.eclipse.core.resources.IWorkspace

@@ -26,6 +26,9 @@ import org.eclipse.ltk.internal.ui.refactoring.UIPerformChangeOperation;
 /**
  * Central access point to access resources managed by the refactoring
  * ui plug-in.
+ * <p> 
+ * Note: this class is not intended to be extended by clients.
+ * </p>
  * 
  * @since 3.0
  */
@@ -34,6 +37,14 @@ public class RefactoringUI {
 	private RefactoringUI() {
 		// no instance
 	}
+	
+	/**
+	 * The id of the refactoring action set containing the undo and redo
+	 * action (value <code>"_org.eclipse.ltk.ui.refactoring.actionSet.refactoring"</code>).
+	 */
+	// the underscore in front of the name is on purpose to ensure correct 
+	// ordering of the action sets in the shared menu. 
+	public static final String REFACTORING_ACTION_SET= "_org.eclipse.ltk.ui.refactoring.actionSet.refactoring"; //$NON-NLS-1$
 	
 	/**
 	 * When condition checking is performed for a refactoring then the

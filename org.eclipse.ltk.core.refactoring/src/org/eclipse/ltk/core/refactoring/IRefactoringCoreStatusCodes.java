@@ -20,12 +20,8 @@ package org.eclipse.ltk.core.refactoring;
  * 
  * @since 3.0
  */
-public abstract class IRefactoringCoreStatusCodes {
+public interface IRefactoringCoreStatusCodes {
 
-	private IRefactoringCoreStatusCodes() {
-		// no instance 
-	}
-	
 	/**
 	 * Status code (value 10000) indicating an internal error.
 	 */

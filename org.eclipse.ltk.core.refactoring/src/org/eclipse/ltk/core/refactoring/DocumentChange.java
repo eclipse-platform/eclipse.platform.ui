@@ -25,7 +25,7 @@ import org.eclipse.ltk.internal.core.refactoring.UndoDocumentChange;
  * A text change that operates directly on instances of {@link IDocument}.
  * 
  * <p> 
- * Note: this class is not intented to be subclassed by clients.
+ * Note: this class is not intended to be extended by clients.
  * </p>
  * 
  * @since 3.0
@@ -98,7 +98,7 @@ public class DocumentChange extends TextChange {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected Change createUndoChange(UndoEdit edit) throws CoreException {
+	protected Change createUndoChange(UndoEdit edit) {
 		return new UndoDocumentChange(getName(), fDocument, edit);
 	}	
 }

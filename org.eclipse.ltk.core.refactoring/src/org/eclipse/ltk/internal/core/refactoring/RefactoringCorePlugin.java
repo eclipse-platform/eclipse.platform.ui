@@ -69,4 +69,20 @@ public class RefactoringCorePlugin extends Plugin {
 			e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void startup() throws CoreException {
+		super.startup();
+		SaveListener.getInstance().startup();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void shutdown() throws CoreException {
+		SaveListener.getInstance().shutdown();
+		super.shutdown();
+	}
 }

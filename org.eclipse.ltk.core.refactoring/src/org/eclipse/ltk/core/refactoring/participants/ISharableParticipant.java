@@ -28,6 +28,7 @@ package org.eclipse.ltk.core.refactoring.participants;
  * example the arguments are of type <code>MoveArguments</code> if this
  * interface is mixed into a move participant.
  * </p>
+ * 
  * @since 3.0 
  */
 public interface ISharableParticipant {

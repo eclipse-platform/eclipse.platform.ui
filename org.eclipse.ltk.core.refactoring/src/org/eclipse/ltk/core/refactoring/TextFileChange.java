@@ -27,20 +27,30 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.BufferValidationState;
 import org.eclipse.ltk.internal.core.refactoring.Changes;
+import org.eclipse.ltk.internal.core.refactoring.ContentStamps;
 
 /**
- * A special {@link TextChange} that operates on <code>IFile</code>s.
+ * A special {@link TextChange} that operates on a <code>IFile</code>.
  * 
  * @since 3.0 
  */
 public class TextFileChange extends TextChange {
 	
-	/** Flag indicating that the file's save state has to be kept. This means an unsaved file is still
-	 *  unsaved after performing the change and a saved one will be saved. */
+	/** 
+	 * Flag indicating that the file's save state has to be kept. This means an 
+	 * unsaved file is still unsaved after performing the change and a saved one 
+	 * will be saved. 
+	 */
 	public static final int KEEP_SAVE_STATE= 1 << 0;
-	/** Flag indicating that the file is to be saved after the change has been applied. */
+	
+	/**
+	 * Flag indicating that the file is to be saved after the change has been applied.
+	 */
 	public static final int FORCE_SAVE= 1 << 1;
-	/** Flag indicating that the file will not be saved after the change has been applied. */
+	
+	/**
+	 * Flag indicating that the file will not be saved after the change has been applied.
+	 */
 	public static final int LEAVE_DIRTY= 1 << 2;
 	
 	
@@ -54,6 +64,7 @@ public class TextFileChange extends TextChange {
 	
 	private boolean fDirty;
 	private BufferValidationState fValidationState;
+	private ContentStamp fContentStamp;
 	
 	/**
 	 * Creates a new <code>TextFileChange</code> for the given file.
@@ -96,7 +107,24 @@ public class TextFileChange extends TextChange {
 	public IFile getFile() {
 		return fFile;
 	}
-
+	
+	/**
+	 * Hook to create an undo change for the given undo edit and content stamp. 
+	 * This hook gets called while performing the change to construct the 
+	 * corresponding undo change object.
+	 * 
+	 * @param edit the {@link UndoEdit} to create an undo change for
+	 * @param stampToRestore the content stamp to restore when the undo
+	 *  edit is executed.
+	 * 
+	 * @return the undo change
+	 * 
+	 * @throws CoreException if an undo change can't be created
+	 */
+	protected Change createUndoChange(UndoEdit edit, ContentStamp stampToRestore) throws CoreException {
+		return new UndoTextFileChange(getName(), fFile, edit, stampToRestore, fSaveMode);
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -147,6 +175,7 @@ public class TextFileChange extends TextChange {
 		manager.connect(path, pm);
 		fAquireCount++;
 		fBuffer= manager.getTextFileBuffer(path);
+		fContentStamp= ContentStamps.get(fFile, true);
 		return fBuffer.getDocument();
 	}
 	
@@ -156,6 +185,7 @@ public class TextFileChange extends TextChange {
 	protected void commit(IDocument document, IProgressMonitor pm) throws CoreException {
 		if (needsSaving()) {
 			fBuffer.commit(pm, false);
+			ContentStamps.increment(fFile);
 		}
 	}
 	
@@ -174,8 +204,8 @@ public class TextFileChange extends TextChange {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected Change createUndoChange(UndoEdit edit) throws CoreException {
-		return new UndoTextFileChange(getName(), fFile, edit, fSaveMode);
+	protected final Change createUndoChange(UndoEdit edit) throws CoreException {
+		return createUndoChange(edit, fContentStamp);
 	}
 	
 	private boolean needsSaving() {

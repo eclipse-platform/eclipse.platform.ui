@@ -38,6 +38,9 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  * should only be called once for all files modified by the processor and all
  * participants.
  * </p>
+ * <p> 
+ * Note: this class is not intended to be extended by clients.
+ * </p>
  * 
  * @since 3.0
  */
