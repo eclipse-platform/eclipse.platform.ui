@@ -554,7 +554,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				Annotation a= (Annotation) e.next();
 				Position p= (Position) fAnnotations.get(a);
 				removePosition(fDocument, p);
-				p.delete();
+//				p.delete();
 				getAnnotationModelEvent().annotationRemoved(a, p);
 			}
 		}
