@@ -596,7 +596,12 @@ public abstract class TextChange extends Change {
 		Assert.isTrue(region.getOffset() <= currentRegion.getOffset() && 
 			currentRegion.getOffset() + currentRegion.getLength() <= region.getOffset() + region.getLength());
 		PreviewAndRegion result= getPreviewDocument(changeGroups, pm);
-		int delta= result.region.getLength() - currentRegion.getLength();
+		int delta;
+		if (result.region == null) {	// all edits were delete edits so no new region
+			delta= -currentRegion.getLength();
+		} else {
+			delta= result.region.getLength() - currentRegion.getLength();
+		}
 		return getContent(result.document, new Region(region.getOffset(), region.getLength() + delta), expandRegionToFullLine, surroundingLines);
 		
 	}
