@@ -1,4 +1,4 @@
-package org.eclipse.ui.externaltools.internal.ui;
+package org.eclipse.ui.externaltools.internal.ant.launchConfigurations;
 
 /**********************************************************************
 Copyright (c) 2002 IBM Corp. and others.
@@ -18,7 +18,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionDelegate;
-import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntLaunchShortcut;
 
 /**
  * Action delegate to launch Ant on a build file.

@@ -107,7 +107,7 @@
 				label="%RunAntWith.label"
 				menubarPath="additions"
 				enablesFor="1"
-				class="org.eclipse.ui.externaltools.internal.ui.AntRunWithActionDelegate">
+				class="org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntRunWithActionDelegate">
 			</action>
 			<action
 				id="org.eclipse.ui.externaltools.RunAntAction"
@@ -115,7 +115,7 @@
 				tooltip="%PopupMenu.runAntTip"
 				menubarPath="additions"
 				enablesFor="1"
-				class="org.eclipse.ui.externaltools.internal.ui.AntRunActionDelegate">
+				class="org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntRunActionDelegate">
 			</action>
 		</objectContribution>			
 	</extension>
