@@ -483,6 +483,11 @@ public boolean isOpen();
  * cases the directories and files on disk are left untouched.
  * </p>
  * <p>
+ * If the name in the given description is the same as this project's name and
+ * the location is different, then the project contents will be moved to the new
+ * location and this project's description will be set to be the given description. 
+ * </p>
+ * <p>
  * This method synchronizes this resource with the local file system.
  * </p>
  * <p>

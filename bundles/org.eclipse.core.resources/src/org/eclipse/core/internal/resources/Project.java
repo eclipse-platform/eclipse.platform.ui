@@ -739,6 +739,48 @@ protected void internalMove(IProjectDescription destDesc, boolean force, IProgre
 		monitor.done();
 	}
 }
+protected void internalMoveContent(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
+	monitor = Policy.monitorFor(monitor);
+	try {
+		monitor.beginTask("Moving project content.", Policy.totalWork);
+		try {
+			workspace.prepareOperation();
+			IPath source = getLocation();
+			ResourceInfo info = getResourceInfo(false, false);
+			checkAccessible(getFlags(info));
+			checkDescription(this, destDesc);
+			IProjectDescription sourceDesc = internalGetDescription();
+			workspace.beginOperation(true);
+			int rollbackLevel = 0;
+			try {
+				// set the location in the description so we can calculate the location for the resources
+				sourceDesc.setLocation(destDesc.getLocation());
+				monitor.worked(Policy.opWork * 10 / 100);
+				IPath destination = getLocation();
+				rollbackLevel++;
+				// actually move the resources
+				getLocalManager().getStore().move(source.toFile(), destination.toFile(), force, Policy.subMonitorFor(monitor, Policy.opWork * 70 / 100));
+				rollbackLevel++;
+				// now set the description so we get all the other changes too
+//				setDescription(destDesc, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
+			} catch (CoreException e) {
+				switch (rollbackLevel) {
+					case 2 :
+					case 1 : 
+						// we set the location in the description but we had a problem moving the resources.
+						sourceDesc.setLocation(source);
+						break;
+				}
+				// rethrow the exception that got us here
+				throw e;
+			}
+		} finally {
+			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+		}
+	} finally {
+		monitor.done();
+	}
+}
 protected void internalMoveToFolder(IPath destPath, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
@@ -859,7 +901,22 @@ public boolean isOpen(int flags) {
  */
 public void move(IProjectDescription destination, boolean force, IProgressMonitor monitor) throws CoreException {
 	Assert.isNotNull(destination);
-	internalMove(destination, force, monitor);
+	// if we have the same name but a different location, then move
+	// the project content
+	IProjectDescription source = getDescription();
+	if (source.getName().equals(destination.getName()) && !locationsEqual(source, destination))
+		internalMoveContent(destination, force, monitor);
+	else
+		internalMove(destination, force, monitor);
+}
+protected boolean locationsEqual(IProjectDescription desc1, IProjectDescription desc2) {
+	IPath loc1 = desc1.getLocation();
+	IPath loc2 = desc2.getLocation();
+	if (loc1 == null && loc2 == null)
+		return true;
+	if (loc1 == null || loc2 == null)
+		return false;
+	return loc1.equals(loc2);
 }
 /**
  * @see IResource#move
