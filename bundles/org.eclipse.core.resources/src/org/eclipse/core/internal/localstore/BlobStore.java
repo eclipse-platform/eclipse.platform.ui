@@ -80,6 +80,7 @@ private String bytesToHexString(byte[] b) {
  * deleted. If the file does not exist, do nothing.
  */
 protected boolean delete(File blobFile) {
+	CoreFileSystemLibrary.setReadOnly(blobFile.getAbsolutePath(), false);
 	boolean deleted = blobFile.delete();
 	deleteEmptyDir(new File(blobFile.getParent()));
 	return deleted;
