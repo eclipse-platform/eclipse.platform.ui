@@ -21,61 +21,63 @@ import org.eclipse.ui.intro.internal.util.*;
  */
 public abstract class AbstractTextElement extends IntroElement {
 
-	private IntroText introText;
+    private IntroText introText;
 
-	AbstractTextElement(IConfigurationElement element) {
-		super(element);
-		// description will be null if there is no description element.
-		introText = getTextElement(element);
-	}
+    AbstractTextElement(IConfigurationElement element) {
+        super(element);
+        // description will be null if there is no description element.
+        introText = getTextElement(element);
+    }
 
-	/**
-	 * Retruns the intro text element embedded in this element.
-	 */
-	private IntroText getTextElement(IConfigurationElement element) {
-		try {
-			// There should only be one text element.
-			// Since elements where obtained by name, no point validating name.
-			IConfigurationElement[] textElements =
-				element.getChildren(IntroText.TEXT_ELEMENT);
-			if (textElements.length == 0)
-				// no contributions. done.
-				return null;
-			return new IntroText(textElements[0]);
-		} catch (Exception e) {
-			Util.handleException(e.getMessage(), e);
-			return null;
-		}
-	}
+    /**
+     * Retruns the intro text element embedded in this element.
+     */
+    private IntroText getTextElement(IConfigurationElement element) {
+        try {
+            // There should only be one text element.
+            // Since elements where obtained by name, no point validating name.
+            IConfigurationElement[] textElements = element
+                    .getChildren(IntroText.TEXT_ELEMENT);
+            if (textElements.length == 0)
+                // no contributions. done.
+                return null;
+            IntroText text = new IntroText(textElements[0]);
+            text.setParent(this);
+            return text;
+        } catch (Exception e) {
+            Util.handleException(e.getMessage(), e);
+            return null;
+        }
+    }
 
-	/**
-	 * @return Returns the text of the child text of this element.
-	 */
-	public String getText() {
-		// intro text may be null if there is not child Text element.
-		if (introText != null)
-			return introText.getText();
-		else
-			return null;
-	}
+    /**
+     * @return Returns the text of the child text of this element.
+     */
+    public String getText() {
+        // intro text may be null if there is not child Text element.
+        if (introText != null)
+            return introText.getText();
+        else
+            return null;
+    }
 
-	/**
-	 * Returns the intro text representing the child text of this element. May
-	 * return null if there is no text child.
-	 * 
-	 * @return Returns the introText.
-	 */
-	public IntroText getIntroText() {
-		return introText;
-	}
+    /**
+     * Returns the intro text representing the child text of this element. May
+     * return null if there is no text child.
+     * 
+     * @return Returns the introText.
+     */
+    public IntroText getIntroText() {
+        return introText;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
-	 */
-	public int getType() {
-		return IntroElement.ABSTRACT_TEXT;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
+     */
+    public int getType() {
+        return IntroElement.ABSTRACT_TEXT;
+    }
 
 }

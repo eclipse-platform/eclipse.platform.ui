@@ -92,6 +92,9 @@
 
    <element name="implementation">
       <complexType>
+         <sequence>
+            <element ref="head" minOccurs="0" maxOccurs="1"/>
+         </sequence>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
@@ -133,9 +136,11 @@ Note: do we really wanna expose this implementation detail?
             <element ref="div"/>
             <element ref="link"/>
             <element ref="text"/>
-            <element ref="html"/>
+            <element ref="head"/>
             <element ref="img"/>
             <element ref="include"/>
+            <element ref="head"/>
+            <element ref="html"/>
          </choice>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -231,9 +236,9 @@ Note: do we really wanna expose this implementation detail?
             <element ref="text"/>
             <element ref="div"/>
             <element ref="link"/>
-            <element ref="html"/>
             <element ref="img"/>
             <element ref="include"/>
+            <element ref="html"/>
          </choice>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -291,6 +296,23 @@ Note: do we really wanna expose this implementation detail?
                   </enumeration>
                </restriction>
             </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="head">
+      <annotation>
+         <documentation>
+            direct HTML to include in a page&apos;s HEAD content area. This markup is only to be used with an SWT Based intro part implementation. It is simply ignored in the case of a UI Forms implementation. A page can have more than one head element. An implementation can have one and only one head element (since it is a shared head content, it makes sense to just define it in one file).
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="src" type="string" use="required">
+            <annotation>
+               <documentation>
+                  relative or absolute URL to a file containing HTML
+               </documentation>
+            </annotation>
          </attribute>
       </complexType>
    </element>

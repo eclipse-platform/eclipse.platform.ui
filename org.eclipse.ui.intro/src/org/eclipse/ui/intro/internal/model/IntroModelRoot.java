@@ -46,474 +46,462 @@ import org.eclipse.ui.intro.internal.util.*;
  */
 public class IntroModelRoot extends AbstractIntroContainer {
 
-	/**
-	 * Model constants that fire property change event when they are changed in
-	 * the model.
-	 */
-	public static final int CURRENT_PAGE_PROPERTY_ID = 1;
+    /**
+     * Model constants that fire property change event when they are changed in
+     * the model.
+     */
+    public static final int CURRENT_PAGE_PROPERTY_ID = 1;
 
-	// True if the model has been loaded.
-	//private boolean loaded = false;
+    // True if the model has been loaded.
+    //private boolean loaded = false;
 
-	// False if there is no valid contribution to the
-	// org.eclipse.ui.into.config extension point. Start off with true, and set
-	// to false whenever something bad happens.
-	private boolean hasValidConfig = true;
+    // False if there is no valid contribution to the
+    // org.eclipse.ui.into.config extension point. Start off with true, and set
+    // to false whenever something bad happens.
+    private boolean hasValidConfig = true;
 
-	private IntroPartPresentation introPartPresentation;
-	private IntroHomePage homePage;
-	private String currentPageId;
-	// the config extensions for this model.
-	private IConfigurationElement[] configExtensionElements;
+    private IntroPartPresentation introPartPresentation;
 
-	// maintain listener list for model changes.
-	private ListenerList propChangeListeners = new ListenerList(2);
+    private IntroHomePage homePage;
 
-	/**
-	 * Model root. Takes a configElement that represents <config>in the
-	 * plugin.xml markup AND all the extension contributed to this model
-	 * through the configExtension point.
-	 */
-	public IntroModelRoot(
-		IConfigurationElement configElement,
-		IConfigurationElement[] configExtensionElements) {
-		// the config element that represents the correct model root.
-		super(configElement);
-		this.configExtensionElements = configExtensionElements;
-	}
+    private String currentPageId;
 
-	public void loadModel() {
-		getChildren();
-	}
+    // the config extensions for this model.
+    private IConfigurationElement[] configExtensionElements;
 
-	/**
-	 * loads the full model. The children of a model root are the presentation,
-	 * followed by all pages, and all shared divs. Then if the model has
-	 * extension, its the unresolved container extensions, followed by all
-	 * extension pages and divs.
-	 *  
-	 */
-	protected void loadChildren() {
-		children = new Vector();
+    // maintain listener list for model changes.
+    private ListenerList propChangeListeners = new ListenerList(2);
 
-		Logger.logInfo("Loading Intro plugin model....");
+    /**
+     * Model root. Takes a configElement that represents <config>in the
+     * plugin.xml markup AND all the extension contributed to this model
+     * through the configExtension point.
+     */
+    public IntroModelRoot(IConfigurationElement configElement,
+            IConfigurationElement[] configExtensionElements) {
+        // the config element that represents the correct model root.
+        super(configElement);
+        this.configExtensionElements = configExtensionElements;
+    }
 
-		// load presentation first and create the model class for it. If there
-		// is more than one presentation, load first one, and log rest.
-		IConfigurationElement presentationElement = loadPresentation();
-		if (presentationElement == null) {
-			// no presentations at all, exit.
-			setModelState(true, false);
-			Logger.logWarning(
-				"Could not find presentation element in intro config.");
-			return;
-		}
+    public void loadModel() {
+        getChildren();
+    }
 
-		introPartPresentation = new IntroPartPresentation(presentationElement);
-		children.add(introPartPresentation);
-		if (introPartPresentation.getImplementationElement() == null) {
-			// Presentation does not have a valid implementation, exit.
-			setModelState(true, false);
-			Logger.logWarning(
-				"Could not find valid implementation element in intro config.");
-			return;
-		} else
-			// valid presentation element, set parent.
-			introPartPresentation.setParent(this);
+    /**
+     * loads the full model. The children of a model root are the presentation,
+     * followed by all pages, and all shared divs. Then if the model has
+     * extension, its the unresolved container extensions, followed by all
+     * extension pages and divs.
+     *  
+     */
+    protected void loadChildren() {
+        children = new Vector();
 
-		// now load all children of the config. There should only be pages and
-		// divs here. And order is not important.
-		loadPages();
-		loadSharedDivs();
+        Logger.logInfo("Loading Intro plugin model....");
 
-		setModelState(true, true);
-	}
+        // load presentation first and create the model class for it. If there
+        // is more than one presentation, load first one, and log rest.
+        IConfigurationElement presentationElement = loadPresentation();
+        if (presentationElement == null) {
+            // no presentations at all, exit.
+            setModelState(true, false);
+            Logger
+                    .logWarning("Could not find presentation element in intro config.");
+            return;
+        }
 
-	/**
-	 * Resolve each include in this container's children.
-	 */
-	protected void resolveChildren() {
-		// now handle config extension.
-		resolveConfigExtensions();
-		resolved = true;
-	}
+        introPartPresentation = new IntroPartPresentation(presentationElement);
+        children.add(introPartPresentation);
+        if (introPartPresentation.getImplementationElement() == null) {
+            // Presentation does not have a valid implementation, exit.
+            setModelState(true, false);
+            Logger
+                    .logWarning("Could not find valid implementation element in intro config.");
+            return;
+        } else
+            // valid presentation element, set parent.
+            introPartPresentation.setParent(this);
 
-	private IConfigurationElement loadPresentation() {
-		// If there is more than one presentation, load first one, and log
-		// rest.
-		IConfigurationElement[] presentationElements =
-			getConfigurationElement().getChildren(
-				IntroPartPresentation.PRESENTATION_ELEMENT);
+        // now load all children of the config. There should only be pages and
+        // divs here. And order is not important.
+        loadPages();
+        loadSharedDivs();
 
-		IConfigurationElement presentationElement =
-			ExtensionPointManager.validateSingleContribution(
-				presentationElements);
-		return presentationElement;
-	}
+        setModelState(true, true);
+    }
 
-	/**
-	 * Loads all pages defined in this config.
-	 */
-	private void loadPages() {
-		String homePageId = getPresentation().getHomePageId();
-		IConfigurationElement[] pages =
-			getConfigurationElement().getChildren(IntroPage.PAGE_ELEMENT);
-		for (int i = 0; i < pages.length; i++) {
-			if (pages[i]
-				.getAttribute(IntroPage.ID_ATTRIBUTE)
-				.equalsIgnoreCase(homePageId)) {
-				// Create the model class for the Root Page.
-				homePage = new IntroHomePage(pages[i]);
-				homePage.setParent(this);
-				currentPageId = homePage.getId();
-				children.add(homePage);
-			} else {
-				// Create the model class for an intro Page.
-				IntroPage page = new IntroPage(pages[i]);
-				page.setParent(this);
-				children.add(page);
-			}
-		}
-	}
+    /**
+     * Resolve each include in this container's children.
+     */
+    protected void resolveChildren() {
+        // now handle config extension.
+        resolveConfigExtensions();
+        resolved = true;
+    }
 
-	/**
-	 * Loads all shared divs defined in this config. .
-	 */
-	private void loadSharedDivs() {
-		loadSharedDivs(getConfigurationElement());
-	}
+    private IConfigurationElement loadPresentation() {
+        // If there is more than one presentation, load first one, and log
+        // rest.
+        IConfigurationElement[] presentationElements = getConfigurationElement()
+                .getChildren(IntroPartPresentation.PRESENTATION_ELEMENT);
 
-	/**
-	 * Load all divs defined as children of the passed element into this model
-	 * as shared divs.
-	 * 
-	 * @param element
-	 */
-	private void loadSharedDivs(IConfigurationElement element) {
-		IConfigurationElement[] divs =
-			element.getChildren(IntroDiv.DIV_ELEMENT);
-		for (int i = 0; i < divs.length; i++) {
-			IntroDiv div = new IntroDiv(divs[i]);
-			div.setParent(this);
-			children.add(div);
-		}
-	}
+        IConfigurationElement presentationElement = ExtensionPointManager
+                .validateSingleContribution(presentationElements);
+        return presentationElement;
+    }
 
-	/**
-	 * Handles all the configExtensions to this current model.
-	 *  
-	 */
-	private void resolveConfigExtensions() {
-		for (int i = 0; i < configExtensionElements.length; i++) {
-			// Find the targer of this container extension, and add all its
-			// children to target.
-			boolean success =
-				loadContainerExtension(configExtensionElements[i]);
-			if (!success) {
-				// add the extension as a child of this model is we failed to
-				// resolve it.
-				children.add(
-					new IntroContainerExtension(configExtensionElements[i]));
-				continue;
-			}
-			// load all pages from this config extension only if we resolved
-			// this extension. No point adding pages that will never be
-			// referenced.
-			IConfigurationElement[] pages =
-				configExtensionElements[i].getChildren(IntroPage.PAGE_ELEMENT);
-			for (int j = 0; j < pages.length; j++) {
-				// Create the model class for an intro Page.
-				IntroPage page = new IntroPage(pages[j]);
-				page.setParent(this);
-				children.add(page);
-			}
+    /**
+     * Loads all pages defined in this config.
+     */
+    private void loadPages() {
+        String homePageId = getPresentation().getHomePageId();
+        IConfigurationElement[] pages = getConfigurationElement().getChildren(
+                IntroPage.PAGE_ELEMENT);
+        for (int i = 0; i < pages.length; i++) {
+            if (pages[i].getAttribute(IntroPage.ID_ATTRIBUTE).equalsIgnoreCase(
+                    homePageId)) {
+                // Create the model class for the Root Page.
+                homePage = new IntroHomePage(pages[i]);
+                homePage.setParent(this);
+                currentPageId = homePage.getId();
+                children.add(homePage);
+            } else {
+                // Create the model class for an intro Page.
+                IntroPage page = new IntroPage(pages[i]);
+                page.setParent(this);
+                children.add(page);
+            }
+        }
+    }
 
-			// load all shared divs from all configExtensions to this model.
-			loadSharedDivs(configExtensionElements[i]);
-		}
-	}
+    /**
+     * Loads all shared divs defined in this config. .
+     */
+    private void loadSharedDivs() {
+        loadSharedDivs(getConfigurationElement());
+    }
 
-	private boolean loadContainerExtension(IConfigurationElement configExtension) {
-		// load this container extensions into model classes, and insert them
-		// at target. A config extension can have only ONE container extension.
-		// This is because if the extension fails, we need to be able to not
-		// include the page and div contributions as part of the model.
-		IConfigurationElement[] containerExtensions =
-			configExtension.getChildren(
-				IntroContainerExtension.CONTAINER_EXTENSION_ELEMENT);
-		// There should only be one container extension.
-		IConfigurationElement extension =
-			ExtensionPointManager.validateSingleContribution(
-				containerExtensions);
-		if (extension == null)
-			return false;
-		// Create the model class.
-		IntroContainerExtension extensionModel =
-			new IntroContainerExtension(extension);
-		// now resolve this extension.
-		String path = extensionModel.getPath();
-		IntroElement target = findTarget(this, path);
-		if (target == null)
-			// target could not be found. Signal failure.
-			return false;
+    /**
+     * Load all divs defined as children of the passed element into this model
+     * as shared divs.
+     * 
+     * @param element
+     */
+    private void loadSharedDivs(IConfigurationElement element) {
+        IConfigurationElement[] divs = element
+                .getChildren(IntroDiv.DIV_ELEMENT);
+        for (int i = 0; i < divs.length; i++) {
+            IntroDiv div = new IntroDiv(divs[i]);
+            div.setParent(this);
+            children.add(div);
+        }
+    }
 
-		if (target.isOfType(IntroElement.ABSTRACT_CONTAINER)) {
-			// extenions are only for container (ie: divs and pages)
-			AbstractIntroContainer targetContainer =
-				(AbstractIntroContainer) target;
-			// make sure you load the children of the target container
-			// because we want the children vector to be initialized and
-			// loaded with children for ordering.
-			if (!targetContainer.isLoaded())
-				targetContainer.loadChildren();
-			targetContainer.addChildren(extension.getChildren());
-			handleExtensionStyleInheritence(extensionModel, targetContainer);
-		}
-		return true;
-	}
+    /**
+     * Handles all the configExtensions to this current model.
+     *  
+     */
+    private void resolveConfigExtensions() {
+        for (int i = 0; i < configExtensionElements.length; i++) {
+            // Find the targer of this container extension, and add all its
+            // children to target.
+            boolean success = loadContainerExtension(configExtensionElements[i]);
+            if (!success) {
+                // add the extension as a child of this model is we failed to
+                // resolve it.
+                children.add(new IntroContainerExtension(
+                        configExtensionElements[i]));
+                continue;
+            }
+            // load all pages from this config extension only if we resolved
+            // this extension. No point adding pages that will never be
+            // referenced.
+            IConfigurationElement[] pages = configExtensionElements[i]
+                    .getChildren(IntroPage.PAGE_ELEMENT);
+            for (int j = 0; j < pages.length; j++) {
+                // Create the model class for an intro Page.
+                IntroPage page = new IntroPage(pages[j]);
+                page.setParent(this);
+                children.add(page);
+            }
 
-	/**
-	 * Updates the inherited styles based on the merge-style attribute. If we
-	 * are including a shared div, or if we are including an element from the
-	 * same page, do nothing.
-	 * 
-	 * @param include
-	 * @param target
-	 */
-	private void handleExtensionStyleInheritence(
-		IntroContainerExtension extension,
-		IntroElement targetContainer) {
+            // load all shared divs from all configExtensions to this model.
+            loadSharedDivs(configExtensionElements[i]);
+        }
+    }
 
-		if (targetContainer.getType() == IntroElement.DIV
-			&& targetContainer.getParent().getType() == IntroElement.MODEL_ROOT)
-			// if we are extending a shared div, defined under a config, we can
-			// not include styles.
-			return;
+    private boolean loadContainerExtension(IConfigurationElement configExtension) {
+        // load this container extensions into model classes, and insert them
+        // at target. A config extension can have only ONE container extension.
+        // This is because if the extension fails, we need to be able to not
+        // include the page and div contributions as part of the model.
+        IConfigurationElement[] containerExtensions = configExtension
+                .getChildren(IntroContainerExtension.CONTAINER_EXTENSION_ELEMENT);
+        // There should only be one container extension.
+        IConfigurationElement extension = ExtensionPointManager
+                .validateSingleContribution(containerExtensions);
+        if (extension == null)
+            return false;
+        // Create the model class.
+        IntroContainerExtension extensionModel = new IntroContainerExtension(
+                extension);
+        // now resolve this extension.
+        String path = extensionModel.getPath();
+        IntroElement target = findTarget(this, path);
+        if (target == null)
+            // target could not be found. Signal failure.
+            return false;
 
-		// Update the parent page styles. skip style if it is null;
-		String style = extension.getStyle();
-		if (style != null)
-			targetContainer.getParentPage().addStyle(style);
+        if (target.isOfType(IntroElement.ABSTRACT_CONTAINER)) {
+            // extenions are only for container (ie: divs and pages)
+            AbstractIntroContainer targetContainer = (AbstractIntroContainer) target;
+            // make sure you load the children of the target container
+            // because we want the children vector to be initialized and
+            // loaded with children for ordering.
+            if (!targetContainer.isLoaded())
+                targetContainer.loadChildren();
+            targetContainer.addChildren(extension.getChildren());
+            handleExtensionStyleInheritence(extensionModel, targetContainer);
+        }
+        return true;
+    }
 
-		style = extension.getAltStyle();
-		if (style != null)
-			targetContainer.getParentPage().addAltStyle(style);
-	}
+    /**
+     * Updates the inherited styles based on the merge-style attribute. If we
+     * are including a shared div, or if we are including an element from the
+     * same page, do nothing.
+     * 
+     * @param include
+     * @param target
+     */
+    private void handleExtensionStyleInheritence(
+            IntroContainerExtension extension, IntroElement targetContainer) {
 
-	/**
-	 * Sets the model state based on all the model classes.
-	 */
-	private void setModelState(boolean loaded, boolean hasValidConfig) {
-		this.loaded = loaded;
-		this.hasValidConfig = hasValidConfig;
-	}
+        if (targetContainer.getType() == IntroElement.DIV
+                && targetContainer.getParent().getType() == IntroElement.MODEL_ROOT)
+            // if we are extending a shared div, defined under a config, we can
+            // not include styles.
+            return;
 
-	/**
-	 * Returns true if there is a valid contribution to
-	 * org.eclipse.ui.intro.config extension point, with a valid Presentation,
-	 * and pages.
-	 * 
-	 * @return Returns the hasValidConfig.
-	 */
-	public boolean hasValidConfig() {
-		return hasValidConfig;
-	}
+        // Update the parent page styles. skip style if it is null;
+        String style = extension.getStyle();
+        if (style != null)
+            targetContainer.getParentPage().addStyle(style);
 
-	/**
-	 * @return Returns the introPartPresentation.
-	 */
-	public IntroPartPresentation getPresentation() {
-		return introPartPresentation;
-	}
+        style = extension.getAltStyle();
+        if (style != null)
+            targetContainer.getParentPage().addAltStyle(style);
+    }
 
-	/**
-	 * @return Returns the rootPage.
-	 */
-	public IntroHomePage getHomePage() {
-		return homePage;
-	}
+    /**
+     * Sets the model state based on all the model classes.
+     */
+    private void setModelState(boolean loaded, boolean hasValidConfig) {
+        this.loaded = loaded;
+        this.hasValidConfig = hasValidConfig;
+    }
 
-	/**
-	 * @return all pages *excluding* the Home Page. If all pages are needed,
-	 *         call (AbstractIntroPage[])
-	 *         getChildrenOfType(IntroElement.ABSTRACT_PAGE);
-	 */
-	public IntroPage[] getPages() {
-		return (IntroPage[]) getChildrenOfType(IntroElement.PAGE);
-	}
+    /**
+     * Returns true if there is a valid contribution to
+     * org.eclipse.ui.intro.config extension point, with a valid Presentation,
+     * and pages.
+     * 
+     * @return Returns the hasValidConfig.
+     */
+    public boolean hasValidConfig() {
+        return hasValidConfig;
+    }
 
-	/**
-	 * @return Returns the isLoaded.
-	 */
-	public boolean isLoaded() {
-		return loaded;
-	}
+    /**
+     * @return Returns the introPartPresentation.
+     */
+    public IntroPartPresentation getPresentation() {
+        return introPartPresentation;
+    }
 
-	/**
-	 * @return Returns the currentPageId.
-	 */
-	public String getCurrentPageId() {
-		return currentPageId;
-	}
+    /**
+     * @return Returns the rootPage.
+     */
+    public IntroHomePage getHomePage() {
+        return homePage;
+    }
 
-	/**
-	 * @param currentPageId
-	 *            The currentPageId to set.
-	 */
-	public void setCurrentPageId(String currentPageId) {
-		this.currentPageId = currentPageId;
-		firePropertyChange(CURRENT_PAGE_PROPERTY_ID);
-	}
+    /**
+     * @return all pages *excluding* the Home Page. If all pages are needed,
+     *         call <code>(AbstractIntroPage[])
+     *         getChildrenOfType(IntroElement.ABSTRACT_PAGE);</code>
+     */
+    public IntroPage[] getPages() {
+        return (IntroPage[]) getChildrenOfType(IntroElement.PAGE);
+    }
 
-	public void addPropertyListener(IPropertyListener l) {
-		propChangeListeners.add(l);
-	}
+    /**
+     * @return Returns the isLoaded.
+     */
+    public boolean isLoaded() {
+        return loaded;
+    }
 
-	/**
-	 * Fires a property changed event.
-	 * 
-	 * @param propertyId
-	 *            the id of the property that changed
-	 */
-	protected void firePropertyChange(final int propertyId) {
-		Object[] array = propChangeListeners.getListeners();
-		for (int nX = 0; nX < array.length; nX++) {
-			final IPropertyListener l = (IPropertyListener) array[nX];
-			Platform.run(new SafeRunnable() {
-				public void run() {
-					l.propertyChanged(this, propertyId);
-				}
-				public void handleException(Throwable e) {
-					super.handleException(e);
-					//If an unexpected exception happens, remove it
-					//to make sure the workbench keeps running.
-					propChangeListeners.remove(l);
-				}
-			});
-		}
-	}
+    /**
+     * @return Returns the currentPageId.
+     */
+    public String getCurrentPageId() {
+        return currentPageId;
+    }
 
-	public void removePropertyListener(IPropertyListener l) {
-		propChangeListeners.remove(l);
-	}
+    /**
+     * @param currentPageId
+     *            The currentPageId to set.
+     */
+    public void setCurrentPageId(String currentPageId) {
+        this.currentPageId = currentPageId;
+        firePropertyChange(CURRENT_PAGE_PROPERTY_ID);
+    }
 
-	/**
-	 * @return Returns the currentPage. return null if page is not found, or if
-	 *         we are not in a dynamic intro mode.
-	 */
-	public AbstractIntroPage getCurrentPage() {
-		if (!homePage.isDynamic())
-			return null;
+    public void addPropertyListener(IPropertyListener l) {
+        propChangeListeners.add(l);
+    }
 
-		AbstractIntroPage page = null;
-		IntroPage[] pages = getPages();
-		for (int i = 0; i < pages.length; i++) {
-			if (pages[i].getId() != null
-				&& pages[i].getId().equals(currentPageId))
-				page = pages[i];
-		}
-		if (page != null)
-			return page;
-		// not a page. Test for root page.
-		if (homePage.getId().equals(currentPageId))
-			return homePage;
-		// return null if page is not found.
-		return null;
-	}
+    /**
+     * Fires a property changed event.
+     * 
+     * @param propertyId
+     *            the id of the property that changed
+     */
+    protected void firePropertyChange(final int propertyId) {
+        Object[] array = propChangeListeners.getListeners();
+        for (int nX = 0; nX < array.length; nX++) {
+            final IPropertyListener l = (IPropertyListener) array[nX];
+            Platform.run(new SafeRunnable() {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
-	 */
-	public int getType() {
-		return IntroElement.MODEL_ROOT;
-	}
+                public void run() {
+                    l.propertyChanged(this, propertyId);
+                }
 
-	/*
-	 * ======================= Util Methods for Model. =======================
-	 */
+                public void handleException(Throwable e) {
+                    super.handleException(e);
+                    //If an unexpected exception happens, remove it
+                    //to make sure the workbench keeps running.
+                    propChangeListeners.remove(l);
+                }
+            });
+        }
+    }
 
-	/**
-	 * Checks to see if the passed string is a valid URL (has a protocol), if
-	 * yes, returns it as is. If no, treats it as a resource relative to the
-	 * declaring plugin. Return the plugin relative location, fully qualified.
-	 * Retruns null if the passed trsing itself is null.
-	 * 
-	 * @param resource
-	 * @param pluginDesc
-	 * @return returns the URL as is if it had a protocol.
-	 */
-	protected static String resolveURL(
-		String url,
-		IConfigurationElement element) {
-		// quick exit
-		if (url == null)
-			return null;
-		IntroURLParser parser = new IntroURLParser(url);
-		if (parser.hasProtocol())
-			return url;
-		else
-			// make plugin relative url
-			return getPluginLocation(url, element);
-	}
+    public void removePropertyListener(IPropertyListener l) {
+        propChangeListeners.remove(l);
+    }
 
-	/**
-	 * Returns the fully qualified location of the passed resource string from
-	 * the declaring plugin. If the file could not be loaded from the plugin,
-	 * the resource is returned as is.
-	 * 
-	 * @param resource
-	 * @return
-	 */
-	public static String getPluginLocation(
-		String resource,
-		IConfigurationElement element) {
-		IPluginDescriptor pluginDesc =
-			element.getDeclaringExtension().getDeclaringPluginDescriptor();
-		return getPluginLocation(resource, pluginDesc);
-	}
+    /**
+     * @return Returns the currentPage. return null if page is not found, or if
+     *         we are not in a dynamic intro mode.
+     */
+    public AbstractIntroPage getCurrentPage() {
+        if (!homePage.isDynamic())
+            return null;
 
-	private static String getPluginLocation(
-		String resource,
-		IPluginDescriptor pluginDesc) {
+        AbstractIntroPage page = null;
+        IntroPage[] pages = getPages();
+        for (int i = 0; i < pages.length; i++) {
+            if (pages[i].getId() != null
+                    && pages[i].getId().equals(currentPageId))
+                page = pages[i];
+        }
+        if (page != null)
+            return page;
+        // not a page. Test for root page.
+        if (homePage.getId().equals(currentPageId))
+            return homePage;
+        // return null if page is not found.
+        return null;
+    }
 
-		if (resource == null)
-			return null;
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
+     */
+    public int getType() {
+        return IntroElement.MODEL_ROOT;
+    }
 
-		URL localLocation = null;
-		try {
-			// we need to perform a 'resolve' on this URL.
-			localLocation = pluginDesc.find(new Path(resource));
-			if (localLocation == null)
-				// localLocation can be null if the passed resource could not
-				// be found relative to the plugin. return resource, as is;
-				return resource;
-			localLocation = Platform.asLocalURL(localLocation);
-			return localLocation.toExternalForm();
-		} catch (Exception e) {
-			Logger.logError(
-				"Failed to load resource: "
-					+ resource
-					+ " from "
-					+ pluginDesc.getLabel(),
-				e);
-			return resource;
-		}
-	}
+    /*
+     * ======================= Util Methods for Model. =======================
+     */
 
-	/**
-	 * Returns the fully qualified location of the passed resource string from
-	 * the passed plugin id. If the file could not be loaded from the plugin,
-	 * the resource is returned as is.
-	 * 
-	 * @param resource
-	 * @return
-	 */
-	public static String getPluginLocation(String resource, String pluginId) {
-		IPluginDescriptor pluginDesc =
-			Platform.getPlugin(pluginId).getDescriptor();
-		return getPluginLocation(resource, pluginDesc);
-	}
+    /**
+     * Checks to see if the passed string is a valid URL (has a protocol), if
+     * yes, returns it as is. If no, treats it as a resource relative to the
+     * declaring plugin. Return the plugin relative location, fully qualified.
+     * Retruns null if the passed trsing itself is null.
+     * 
+     * @param resource
+     * @param pluginDesc
+     * @return returns the URL as is if it had a protocol.
+     */
+    protected static String resolveURL(String url, IConfigurationElement element) {
+        // quick exit
+        if (url == null)
+            return null;
+        IntroURLParser parser = new IntroURLParser(url);
+        if (parser.hasProtocol())
+            return url;
+        else
+            // make plugin relative url
+            return getPluginLocation(url, element);
+    }
+
+    /**
+     * Returns the fully qualified location of the passed resource string from
+     * the declaring plugin. If the file could not be loaded from the plugin,
+     * the resource is returned as is.
+     * 
+     * @param resource
+     * @return
+     */
+    public static String getPluginLocation(String resource,
+            IConfigurationElement element) {
+        IPluginDescriptor pluginDesc = element.getDeclaringExtension()
+                .getDeclaringPluginDescriptor();
+        return getPluginLocation(resource, pluginDesc);
+    }
+
+    private static String getPluginLocation(String resource,
+            IPluginDescriptor pluginDesc) {
+
+        if (resource == null)
+            return null;
+
+        URL localLocation = null;
+        try {
+            // we need to perform a 'resolve' on this URL.
+            localLocation = pluginDesc.find(new Path(resource));
+            if (localLocation == null)
+                // localLocation can be null if the passed resource could not
+                // be found relative to the plugin. return resource, as is;
+                return resource;
+            localLocation = Platform.asLocalURL(localLocation);
+            return localLocation.toExternalForm();
+        } catch (Exception e) {
+            Logger.logError("Failed to load resource: " + resource + " from "
+                    + pluginDesc.getLabel(), e);
+            return resource;
+        }
+    }
+
+    /**
+     * Returns the fully qualified location of the passed resource string from
+     * the passed plugin id. If the file could not be loaded from the plugin,
+     * the resource is returned as is.
+     * 
+     * @param resource
+     * @return
+     */
+    public static String getPluginLocation(String resource, String pluginId) {
+        IPluginDescriptor pluginDesc = Platform.getPlugin(pluginId)
+                .getDescriptor();
+        return getPluginLocation(resource, pluginDesc);
+    }
 
 }

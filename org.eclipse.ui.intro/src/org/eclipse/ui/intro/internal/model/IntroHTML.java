@@ -22,90 +22,90 @@ import org.eclipse.ui.intro.internal.util.*;
  */
 public class IntroHTML extends AbstractTextElement {
 
-	protected static final String HTML_ELEMENT = "html";
+    protected static final String HTML_ELEMENT = "html";
 
-	private static final String SRC_ATTRIBUTE = "src";
-	/**
-	 * type must be "inline" or "embed".
-	 */
-	private static final String TYPE_ATTRIBUTE = "type";
+    private static final String SRC_ATTRIBUTE = "src";
+    /**
+     * type must be "inline" or "embed".
+     */
+    private static final String TYPE_ATTRIBUTE = "type";
 
-	private String src;
-	private String html_type;
-	private IntroImage introImage;
+    private String src;
+    private String html_type;
+    private IntroImage introImage;
 
-	IntroHTML(IConfigurationElement element) {
-		super(element);
-		src = element.getAttribute(SRC_ATTRIBUTE);
-		html_type = element.getAttribute(TYPE_ATTRIBUTE);
-		if (html_type != null
-			&& !html_type.equalsIgnoreCase("inline")
-			&& !html_type.equalsIgnoreCase("embed"))
-			// if type is not correct, null it.
-			html_type = null;
+    IntroHTML(IConfigurationElement element) {
+        super(element);
+        src = element.getAttribute(SRC_ATTRIBUTE);
+        html_type = element.getAttribute(TYPE_ATTRIBUTE);
+        if (html_type != null && !html_type.equalsIgnoreCase("inline")
+                && !html_type.equalsIgnoreCase("embed"))
+            // if type is not correct, null it.
+            html_type = null;
 
-		// description will be null if there is no description element.
-		introImage = getIntroImage(element);
+        // description will be null if there is no description element.
+        introImage = getIntroImage(element);
 
-		// Resolve.
-		src = IntroModelRoot.getPluginLocation(src, element);
-	}
+        // Resolve.
+        src = IntroModelRoot.getPluginLocation(src, element);
+    }
 
-	/**
-	 * Retruns the implementation element of the CustomizableIntroPart.
-	 */
-	private IntroImage getIntroImage(IConfigurationElement element) {
-		try {
-			// There should only be one text element.
-			// Since elements where obtained by name, no point validating name.
-			IConfigurationElement[] imageElements =
-				element.getChildren(IntroImage.IMAGE_ELEMENT);
-			if (imageElements.length == 0)
-				// no contributions. done.
-				return null;
-			return new IntroImage(imageElements[0]);
-		} catch (Exception e) {
-			Util.handleException(e.getMessage(), e);
-			return null;
-		}
-	}
+    /**
+     * Retruns the implementation element of the CustomizableIntroPart.
+     */
+    private IntroImage getIntroImage(IConfigurationElement element) {
+        try {
+            // There should only be one text element. Since elements where
+            // obtained by name, no point validating name.
+            IConfigurationElement[] imageElements = element
+                    .getChildren(IntroImage.IMAGE_ELEMENT);
+            if (imageElements.length == 0)
+                // no contributions. done.
+                return null;
+            IntroImage image = new IntroImage(imageElements[0]);
+            image.setParent(this);
+            return image;
+        } catch (Exception e) {
+            Util.handleException(e.getMessage(), e);
+            return null;
+        }
+    }
 
-	/**
-	 * Returns the html type. Will be either "inline" or "embed". If not, null
-	 * will be returned as if the attibute was nto defined.
-	 * 
-	 * @return Returns the html type value.
-	 */
-	public boolean isInlined() {
-		return (html_type != null && html_type.equalsIgnoreCase("inline"))
-			? true
-			: false;
-	}
+    /**
+     * Returns the html type. Will be either "inline" or "embed". If not, null
+     * will be returned as if the attibute was nto defined.
+     * 
+     * @return Returns the html type value.
+     */
+    public boolean isInlined() {
+        return (html_type != null && html_type.equalsIgnoreCase("inline")) ? true
+                : false;
+    }
 
-	/**
-	 * @return Returns the src.
-	 */
-	public String getSrc() {
-		return src;
-	}
+    /**
+     * @return Returns the src.
+     */
+    public String getSrc() {
+        return src;
+    }
 
-	/**
-	 * Returns the intro image used as a replacement if this HTML elemet fails.
-	 * May return null if there is no image child.
-	 * 
-	 * @return Returns the introImage.
-	 */
-	public IntroImage getIntroImage() {
-		return introImage;
-	}
+    /**
+     * Returns the intro image used as a replacement if this HTML elemet fails.
+     * May return null if there is no image child.
+     * 
+     * @return Returns the introImage.
+     */
+    public IntroImage getIntroImage() {
+        return introImage;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
-	 */
-	public int getType() {
-		return IntroElement.HTML;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
+     */
+    public int getType() {
+        return IntroElement.HTML;
+    }
 
 }

@@ -62,6 +62,11 @@
    </element>
 
    <element name="extensionContent">
+      <annotation>
+         <documentation>
+            The content to be added to the target page or div. Only one extensionContent is allowed in a given configExtension because if this extension could not be resolved (if the config could not be found, or the target element could not be found, for example) then the pages and/or divs in the extension need to be ingnored.
+         </documentation>
+      </annotation>
       <complexType>
          <choice>
             <element ref="text"/>
