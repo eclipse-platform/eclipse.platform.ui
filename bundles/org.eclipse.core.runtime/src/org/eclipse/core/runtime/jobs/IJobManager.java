@@ -166,14 +166,11 @@ public interface IJobManager {
 	 * monitor.
 	 * 
 	 * <p>
-	 * If the calling thread owns any locks, the locks may be released during the
-	 * join if necessary to prevent deadlock.  On return from the join, the calling
-	 * thread will once again have exclusive control of any locks that were owned
-	 * upon entering the join.
-	 * </p>
-	 * <p>
-	 * Warning: this method can result in starvation of the current thread if
-	 * another thread continues to add jobs of the given family.
+	 * Note that there is a deadlock risk when using join.  If the calling thread owns
+	 * a lock or object monitor that the joined thread is waiting for, deadlock 
+	 * will occur. This method can also result in starvation of the current thread if
+	 * another thread continues to add jobs of the given family, or if a
+	 * job in the given family reschedules itself in an infinite loop.
 	 * </p>
 	 * 
 	 * @param family the job family to join, or <code>null</code> to join all jobs.

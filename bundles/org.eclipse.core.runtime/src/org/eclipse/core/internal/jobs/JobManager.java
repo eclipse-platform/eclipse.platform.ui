@@ -480,17 +480,23 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see IJobManager#join(String, IProgressMonitor)
 	 */
-	public void join(Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
+	public void join(final Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
 		monitor = monitorFor(monitor);
 		IJobChangeListener listener = null;
 		final List jobs;
-		final int jobCount;
+		int jobCount;
 		synchronized (lock) {
 			jobs = Collections.synchronizedList(select(family, Job.WAITING | Job.RUNNING | Job.SLEEPING));
 			jobCount = jobs.size();
 			if (jobCount == 0)
 				return;
 			listener = new JobChangeAdapter() {
+				//update the list of jobs if new ones are added during the join
+				public void scheduled(IJobChangeEvent event) {
+					Job job = event.getJob();
+					if (job.belongsTo(family))
+						jobs.add(job);
+				}
 				public void done(IJobChangeEvent event) {
 					jobs.remove(event.getJob());
 				}
@@ -504,7 +510,9 @@ public class JobManager implements IJobManager {
 			int jobsLeft;
 			int reportedWorkDone = 0;
 			while ((jobsLeft = jobs.size()) > 0) {
-				int actualWorkDone = jobCount - jobsLeft;
+				//don't let there be negative work done if new jobs have
+				//been added since the join began
+				int actualWorkDone = Math.max(0, jobCount - jobsLeft);
 				if (reportedWorkDone < actualWorkDone) {
 					monitor.worked(actualWorkDone - reportedWorkDone);
 					reportedWorkDone = actualWorkDone;

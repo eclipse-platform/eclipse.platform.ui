@@ -749,6 +749,25 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 						
 	}
 		
+	/**
+	 * Tests joining a job that repeats in a loop
+	 */
+	public void testJobFamilyJoinRepeating() {
+		Object family = new Object();
+		int count = 25;
+		RepeatingJob job = new RepeatingJob("testJobFamilyJoinRepeating", count);
+		job.setFamily(family);
+		job.schedule();
+		try {
+			Platform.getJobManager().join(family, null);
+		} catch (OperationCanceledException e) {
+			fail("1.0", e);
+		} catch (InterruptedException e) {
+			fail("1.1", e);
+		}
+		//ensure the job has run the expected number of times
+		assertEquals("1.2", count, job.getRunCount());
+	}
 	public void testJobFamilyJoin() {
 		//test the join method on a family of jobs
 		final int[] status = new int[1];

@@ -271,7 +271,12 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * Waits until this job is finished.  This method will block the calling thread until the 
 	 * job has finished executing, or until this thread has been interrupted.  If the job 
 	 * has not been scheduled, this method returns immediately.
-	 * 
+	 * <p>
+	 * If this method is called on a job that reschedules itself from within the 
+	 * <tt>run</tt> method, the join will return at the end of the first execution.
+	 * In other words, join will return the first time this job exits the
+	 * <tt>RUNNING</tt> state, or as soon as this job enters the <tt>NONE</tt> state.
+	 * </p>
 	 * <p>
 	 * Note that there is a deadlock risk when using join.  If the calling thread owns
 	 * a lock or object monitor that the joined thread is waiting for, deadlock 
