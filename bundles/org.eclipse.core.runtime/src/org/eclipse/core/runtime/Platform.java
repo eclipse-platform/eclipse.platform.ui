@@ -17,7 +17,6 @@ import java.util.*;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.IJobManager;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
@@ -449,27 +448,6 @@ public final class Platform {
 	}
 	
 	/**
-	 * Adds a platform string pool participant.  The platform periodically builds
-	 * a string pool and asks all registered participants to share their strings in
-	 * the pool.  Once all participants have added their strings to the pool, the
-	 * pool is discarded to avoid additional memory overhead.
-	 * 
-	 * Adding a participant that is equal to a participant already registered will
-	 * replace the scheduling rule associated with the participant, but will otherwise
-	 * be ignored.
-	 * 
-	 * @param participant The participant to add
-	 * @param rule The scheduling rule that must be owned at the time the
-	 * participant is called.  This allows a participant to protect their data structures
-	 * against access at unsafe times.
-	 * 
-	 * @see #removeStringPoolParticipant(IStringPoolParticipant)
-	 * @since 3.1
-	 */
-	public static void addStringPoolParticipant(IStringPoolParticipant participant, ISchedulingRule rule) {
-		InternalPlatform.getDefault().addStringPoolParticipant(participant, rule);
-	}
-	/**
 	 * Returns a URL which is the local equivalent of the
 	 * supplied URL. This method is expected to be used with the
 	 * plug-in-relative URLs returned by IPluginDescriptor, Bundle.getEntry()
@@ -732,18 +710,6 @@ public final class Platform {
 		InternalPlatform.getDefault().removeLogListener(listener);
 	}
 	
-	/** 
-	 * Removes the indicated log listener from the set of registered string
-	 * pool participants.  If no such participant is registered, no action is taken.
-	 *
-	 * @param participant the participant to deregister
-	 * @see #addStringPoolParticipant(IStringPoolParticipant, ISchedulingRule)
-	 * @since 3.1
-	 */
-	public static void removeStringPoolParticipant(IStringPoolParticipant participant) {
-		InternalPlatform.getDefault().removeStringPoolParticipant(participant);
-	}
-
 	/**
 	 * Returns a URL which is the resolved equivalent of the
 	 * supplied URL. This method is expected to be used with the

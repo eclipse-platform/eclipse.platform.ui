@@ -18,6 +18,9 @@ org.eclipse.core.runtime/jobs/locks=false
 # Throws an IllegalStateException when deadlock occurs
 org.eclipse.core.runtime/jobs/errorondeadlock=false
 
+# Prints debug information (elapsed time, estimated savings) from string compaction
+org.eclipse.core.runtime/strings=false
+
 # Prints time taken by Plugin constructors and startup() methods.
 org.eclipse.core.runtime/timing/startup=false
 

@@ -192,6 +192,24 @@ public final class InternalPlatform {
 		AuthorizationHandler.addProtectionSpace(resourceUrl, realm);
 	}
 
+	/**
+	 * Adds a platform string pool participant.  The platform periodically builds
+	 * a string pool and asks all registered participants to share their strings in
+	 * the pool.  Once all participants have added their strings to the pool, the
+	 * pool is discarded to avoid additional memory overhead.
+	 * 
+	 * Adding a participant that is equal to a participant already registered will
+	 * replace the scheduling rule associated with the participant, but will otherwise
+	 * be ignored.
+	 * 
+	 * @param participant The participant to add
+	 * @param rule The scheduling rule that must be owned at the time the
+	 * participant is called.  This allows a participant to protect their data structures
+	 * against access at unsafe times.
+	 * 
+	 * @see #removeStringPoolParticipant(IStringPoolParticipant)
+	 * @since 3.1
+	 */
 	public void addStringPoolParticipant(IStringPoolParticipant participant, ISchedulingRule rule) {
 		if (stringPoolJob == null)
 			stringPoolJob = new StringPoolJob();
@@ -991,6 +1009,14 @@ public final class InternalPlatform {
 		}
 	}
 
+	/** 
+	 * Removes the indicated log listener from the set of registered string
+	 * pool participants.  If no such participant is registered, no action is taken.
+	 *
+	 * @param participant the participant to deregister
+	 * @see #addStringPoolParticipant(IStringPoolParticipant, ISchedulingRule)
+	 * @since 3.1
+	 */
 	public void removeStringPoolParticipant(IStringPoolParticipant participant) {
 		if (stringPoolJob != null)
 			stringPoolJob.removeStringPoolParticipant(participant);
