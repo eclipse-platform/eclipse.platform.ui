@@ -293,10 +293,6 @@ public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow win
  * </p>
  * 
  * @return the decorator manager
- * <p>
- * NOTE: This is experimental API, which may be changed or removed at any point in time.
- * This API should not be called, overridden or otherwise used in production code.
- * </p>
  */
 public IDecoratorManager getDecoratorManager();
 /**
