@@ -640,5 +640,7 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
     protected void updateTextListeners(WidgetCommand cmd) {
         super.updateTextListeners(cmd);
         cmd.preservedText = null;
+        cmd.event = null;
+        cmd.text = null;
     }
 }
