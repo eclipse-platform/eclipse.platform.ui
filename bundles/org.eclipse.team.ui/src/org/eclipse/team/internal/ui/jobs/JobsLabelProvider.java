@@ -27,14 +27,14 @@ public class JobsLabelProvider extends LabelProvider implements IColorProvider {
 
 	public String getText(Object element) {
 		if(element instanceof Job) {
-			return ((Job)element).toString();
+			return ((Job)element).getName();
 		}
 		if(element instanceof JobStateCategory) {
 			return ((JobStateCategory)element).name;
 		}
 		if(element instanceof JobDoneElement) {
 			JobDoneElement done = (JobDoneElement)element;
-			return done.job.toString() + " (" + done.status.toString() + ")";
+			return done.job.getName() + " (" + done.status.toString() + ")";
 		}
 		if(element instanceof String) {
 			return (String)element;
