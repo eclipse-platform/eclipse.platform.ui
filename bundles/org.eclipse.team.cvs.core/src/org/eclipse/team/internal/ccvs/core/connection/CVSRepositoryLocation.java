@@ -386,8 +386,9 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public void setPassword(String password) {
 		if (passwordFixed)
 			throw new UnsupportedOperationException();
+		// We set the password here but it will be cleared 
+		// if the user info is cached using updateCache()
 		this.password = password;
-		// XXX The cache needs to get the new password somehow but not before we are validated!
 	}
 	
 	public void setUserInfo(IUserInfo userinfo) {
@@ -401,7 +402,6 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		if (userFixed)
 			throw new UnsupportedOperationException();
 		this.user = user;
-		// XXX The cache needs to get the new username somehow but not before we are validated!
 	}
 	
 	public void setUserMuteable(boolean muteable) {

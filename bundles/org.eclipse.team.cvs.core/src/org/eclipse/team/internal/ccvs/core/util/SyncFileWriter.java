@@ -120,8 +120,6 @@ public class SyncFileWriter {
 			}
 		}
 		
-		// XXX no longer processes CVS/Permissions (was never written) -- should we?
-		
 		return (ResourceSyncInfo[])infos.values().toArray(new ResourceSyncInfo[infos.size()]);
 	}
 	
@@ -419,7 +417,7 @@ public class SyncFileWriter {
 		try {
 			try {
 				for (int i = 0; i < contents.length; i++) {
-					os.write(contents[i].getBytes()); // XXX should we specify a character encoding?
+					os.write(contents[i].getBytes());
 					os.write(0x0A); // newline byte
 				}
 			} finally {

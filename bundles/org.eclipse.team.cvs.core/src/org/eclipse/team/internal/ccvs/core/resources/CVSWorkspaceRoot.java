@@ -40,7 +40,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
-import org.eclipse.team.internal.ccvs.core.IConnectionMethod;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Checkout;
 import org.eclipse.team.internal.ccvs.core.client.Command;
@@ -52,6 +51,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
  * This class provides static methods for checking out projects from a repository
@@ -353,9 +353,8 @@ public class CVSWorkspaceRoot {
 					if(!project.isOpen()) {
 						project.open(Policy.subMonitorFor(monitor, 10));
 					}
-					// XXX: temporary code to support creating a java project for sources in CVS
-					// should be removed once nature support is added to the UI.
-					// delete children, keep project 
+					// We do not want to delete the project to avoid a project deletion delta
+					// We do not want to delete the .project to avoid core exceptions
 					monitor.subTask(Policy.bind("CVSProvider.Scrubbing_local_project_1")); //$NON-NLS-1$
 					EclipseSynchronizer.getInstance().prepareForDeletion(project);
 					IResource[] children = project.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
@@ -461,7 +460,6 @@ public class CVSWorkspaceRoot {
 			throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTeamProvider.unmanagedParent", resource.getFullPath().toString()), null)); //$NON-NLS-1$
 		}
 		ICVSRepositoryLocation location = CVSProviderPlugin.getPlugin().getRepository(parent.getFolderSyncInfo().getRoot());
-		// XXX We build and fetch the whole tree from the parent. We could restrict the search to just the desired child
 		RemoteFolder remoteParent = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, parent, tag, progress);
 		ICVSRemoteResource remote = null;
 		if (remoteParent != null) {
@@ -561,6 +559,29 @@ public class CVSWorkspaceRoot {
 		return remote;
 	}
 
+	public static boolean hasRemote(IResource resource) {
+		try {
+			ICVSResource cvsResource = getCVSResourceFor(resource);
+			int type = resource.getType();
+			if(type!=IResource.FILE) {
+				if(type==IResource.PROJECT) {
+					return ((ICVSFolder)cvsResource).isCVSFolder();
+				} else {
+					return cvsResource.isManaged();
+				}
+			} else {
+				ResourceSyncInfo info = cvsResource.getSyncInfo();
+				if(info!=null) {
+					return !info.isAdded();
+				} else {
+					return false;
+				}
+			}					
+		} catch(CVSException e) {
+			return false;
+		}
+	}
+	
 	public ICVSRepositoryLocation getRemoteLocation() throws CVSException {
 		FolderSyncInfo info = localRoot.getFolderSyncInfo();
 		if (info == null) {

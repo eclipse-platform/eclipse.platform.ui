@@ -83,8 +83,6 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 
 	/*
 	 * Local helper to indicate if the corresponding local resource has a base
-	 * 
-	 * XXX Should this be part of the interface?
 	 */
 	public boolean hasBase() {
 		return getBase() != null;

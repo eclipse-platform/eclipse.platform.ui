@@ -234,7 +234,7 @@ public abstract class Command extends Request {
 				// and sent to the server.
 				if(resource==null) {
 					if(localRoot.getName().length()==0) {
-						// XXX returning a folder because it is the safest choice when
+						// Return a folder because it is the safest choice when
 						// localRoot is a handle to the IWorkspaceRoot!
 						resource = localRoot.getFolder(arguments[i]);
 					} else {

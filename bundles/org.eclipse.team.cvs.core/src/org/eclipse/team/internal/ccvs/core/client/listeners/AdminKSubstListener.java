@@ -49,7 +49,7 @@ public class AdminKSubstListener implements ICommandOutputListener {
 				FolderSyncInfo info = commandRoot.getFolderSyncInfo();
 				remoteRootLocation = info.getRemoteLocation();
 			} catch (CVSException e) {
-				// XXX bad eating of exception
+				return e.getStatus();
 			}
 			if (remoteRootLocation == null) {
 				return new CVSStatus(CVSStatus.ERROR,

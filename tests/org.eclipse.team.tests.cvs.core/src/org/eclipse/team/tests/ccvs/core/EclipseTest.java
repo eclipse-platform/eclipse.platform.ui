@@ -402,7 +402,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	}
 	
 	protected void assertHasNoRemote(String prefix, IResource resource) throws TeamException {
-		assertTrue(prefix + " resource should not have a remote", !getProvider(resource).hasRemote(resource));
+		assertTrue(prefix + " resource should not have a remote", !CVSWorkspaceRoot.hasRemote(resource));
 	}
 	
 	protected void assertHasRemote(String prefix, IResource[] resources) throws TeamException {
@@ -411,7 +411,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	}
 	
 	protected void assertHasRemote(String prefix, IResource resource) throws TeamException {
-		assertTrue(prefix + " resource should have a remote", getProvider(resource).hasRemote(resource));
+		assertTrue(prefix + " resource should have a remote", CVSWorkspaceRoot.hasRemote(resource));
 	}
 	
 	protected void assertIsModified(String prefix, IResource[] resources) throws TeamException {

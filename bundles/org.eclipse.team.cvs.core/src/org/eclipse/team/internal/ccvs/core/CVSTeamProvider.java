@@ -509,33 +509,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 		}
 	}
 	
-	/**
-	 * @see ITeamProvider#hasRemote(IResource)
-	 * XXX to be removed when sync methods are removed from ITeamProvider
-	 */
-	public boolean hasRemote(IResource resource) {
-		try {
-			ICVSResource cvsResource = workspaceRoot.getCVSResourceFor(resource);
-			int type = resource.getType();
-			if(type!=IResource.FILE) {
-				if(type==IResource.PROJECT) {
-					return ((ICVSFolder)cvsResource).isCVSFolder();
-				} else {
-					return cvsResource.isManaged();
-				}
-			} else {
-				ResourceSyncInfo info = cvsResource.getSyncInfo();
-				if(info!=null) {
-					return !info.isAdded();
-				} else {
-					return false;
-				}
-			}					
-		} catch(CVSException e) {
-			return false;
-		}
-	}
-	
 	/*
 	 * Use specialiazed tagging to move all local changes (including additions and
 	 * deletions) to the specified branch.
@@ -808,14 +781,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 */
 	public void refreshState(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
 		Assert.isTrue(false);
-	}
-	/*
-	 * @see ITeamProvider#isOutOfDate(IResource)
-	 * XXX to be removed when sync methods are removed from ITeamProvider
-	 */
-	public boolean isOutOfDate(IResource resource) {
-		Assert.isTrue(false);
-		return false;
 	}
 	
 	/*

@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.Status;
 public class CVSStatus extends Status {
 
 	/*** Status codes ***/
-	public static final int SERVER_ERROR = -10; // XXX What should this number be?
+	public static final int SERVER_ERROR = -10;
 	public static final int NO_SUCH_TAG = -11;
 	public static final int CONFLICT = -12;
 	public static final int ERROR_LINE = -14; // generic uninterpreted E line from the server

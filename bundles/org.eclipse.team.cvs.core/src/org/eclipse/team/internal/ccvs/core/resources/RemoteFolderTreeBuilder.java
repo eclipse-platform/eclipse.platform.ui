@@ -443,7 +443,6 @@ public class RemoteFolderTreeBuilder {
 			DeltaNode d = (DeltaNode)deltas.get(name);
 			String revision = d.getRevision();
 			if (revision == FOLDER) {
-				// XXX should getRemotePath() return an IPath instead of a String?
 				children.put(name, new RemoteFolderTree(remote, repository, 
 					new Path(remote.getRepositoryRelativePath()).append(name), 
 					tagForRemoteFolder(remote, tag)));

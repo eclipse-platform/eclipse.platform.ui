@@ -72,7 +72,7 @@ public class ReplaceWithRemoteAction extends WorkspaceAction {
 		for (int i = 0; i < resources.length; i++) {
 			CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resources[i].getProject(), CVSProviderPlugin.getTypeId());
 			if (provider == null) return false;
-			if (!provider.hasRemote(resources[i])) return false;
+			if (!CVSWorkspaceRoot.hasRemote(resources[i])) return false;
 			// Don't enable if there are sticky file revisions in the lineup
 			if (resources[i].getType() == IResource.FILE) {
 				ICVSFile file = CVSWorkspaceRoot.getCVSFileFor((IFile)resources[i]);

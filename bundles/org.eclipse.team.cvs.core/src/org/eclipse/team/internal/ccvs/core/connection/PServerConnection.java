@@ -25,9 +25,6 @@ import org.eclipse.team.internal.core.streams.TimeoutOutputStream;
  * A connection used to talk to an cvs pserver.
  */
 public class PServerConnection implements IServerConnection {
-
-	protected static final String SLEEP_PROPERTY = "cvs.pserver.wait";//$NON-NLS-1$
-	protected static final String milliseconds = System.getProperty(SLEEP_PROPERTY);
 	
 	public static final char NEWLINE= 0xA;
 	
@@ -97,11 +94,6 @@ public class PServerConnection implements IServerConnection {
 	 * @see Connection#doOpen()
 	 */
 	public void open(IProgressMonitor monitor) throws IOException, CVSAuthenticationException {
-		
-		// XXX see sleepIfPropertyIsSet() for comments.
-		// This should be removed once we have corrected the
-		// CVS plugin's bad behavior with connections.
-		sleepIfPropertyIsSet();
 		
 		monitor.subTask(Policy.bind("PServerConnection.authenticating"));//$NON-NLS-1$
 		monitor.worked(1);
@@ -248,27 +240,5 @@ public class PServerConnection implements IServerConnection {
 	private void throwInValidCharacter() throws CVSAuthenticationException {
 		throw new CVSAuthenticationException(cvsroot.getLocation(), 
 			Policy.bind("PServerConnection.invalidChars"));//$NON-NLS-1$
-	}
-
-	/**
-	 * XXX This is provided to allow slowing down of pserver connections in cases
-	 * where the inetd connections per second setting is not set high enough. The 
-	 * CVS plugin has a known problem of creating too many unnecessary connections.
-	 */	
-	private void sleepIfPropertyIsSet()
-	{
-		try {
-			if( milliseconds == null )
-				return;
-			
-			long sleepMilli = new Long(milliseconds).longValue();
-
-			if( sleepMilli > 0 )
-				Thread.currentThread().sleep(sleepMilli);
-		} catch( InterruptedException e ) {
-			// keep going
-		} catch( NumberFormatException e ) {
-			// don't sleep if number format is wrong
-		}
 	}
 }

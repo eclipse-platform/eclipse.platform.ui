@@ -516,12 +516,6 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	/**
 	 * @see ICVSFolder#getChild(String)
 	 * 
-	 * XXX: shouldn't this consider the case where children is null. Maybe
-	 * by running the update + status with only one member?
-	 * 
-	 * XXX: The only problem with the above is that this is not supposed to be a long 
-	 * running method. Also, path could be a file or folder  and can be more than one level.
-	 * 
 	 * This getChild is geared to work with the Command hierarchy. Therefore it only returns 
 	 * children that were previously fetched by a call to getMembers(). If the request child
 	 * does not exist, an exception is thrown.
@@ -642,7 +636,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 */
 	public void setFolderSyncInfo(FolderSyncInfo folderInfo) throws CVSException {
 		this.folderInfo = folderInfo;
-		// XXX temporary to see if this ever occurs
+		// Currently not supported
 		throw new CVSException(Policy.bind("RemoteResource.invalidOperation"));//$NON-NLS-1$
 	}
 	

@@ -70,7 +70,7 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	 * @see ICVSResource#delete()
 	 */
 	public void delete() {
-		// XXX we should know how to delete a remote?
+		// For now, do nothing but we could provide this in the future.
 	}
 
 	/*

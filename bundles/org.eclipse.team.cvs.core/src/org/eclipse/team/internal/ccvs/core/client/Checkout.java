@@ -61,7 +61,7 @@ public class Checkout extends Command {
 		// We can determine the local directories using either the -d option or the module expansions
 		Option dOption = findOption(localOptions, "-d");  //$NON-NLS-1$
 		if (dOption != null) {
-			// XXX Should we append the expansions to the -d argument?
+			// Should we append the expansions to the -d argument?
 			return new ICVSResource[] {session.getLocalRoot().getFolder(dOption.argument)};
 		}
 		String[] modules = session.getModuleExpansions();
@@ -171,7 +171,6 @@ public class Checkout extends Command {
 			moduleDefinitionListener, monitor);
 			
 		if (status.getCode() == CVSStatus.SERVER_ERROR) {
-			// XXX diff errors??
 			throw new CVSServerException(status);
 		}
 		

@@ -8,7 +8,9 @@ package org.eclipse.team.internal.ccvs.core.client;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.Team;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
@@ -105,8 +107,7 @@ class ImportStructureVisitor implements ICVSResourceVisitor {
 			return;
 		}
 		
-		// XXX should we default to text or to binary?
-		boolean binary = false;
+		boolean binary = Team.getType((IFile)mFile.getIResource()) == Team.BINARY;
 		if (wrapMatcher != null) {
 			String mode = wrapMatcher.getMatch(mFile.getName());
 			if (mode != null) binary = KSubstOption.fromMode(mode).isBinary();

@@ -323,7 +323,7 @@ public class CVSDecorationRunnable implements Runnable {
 		if (showDirty && isDirty) {
 			overlays.add(dirty);
 			locations.add(new Integer(dirtyLocation));
-		} else if (showHasRemote && provider.hasRemote(resource)) {
+		} else if (showHasRemote && CVSWorkspaceRoot.hasRemote(resource)) {
 			overlays.add(checkedIn);
 			locations.add(new Integer(checkedInLocation));
 		}

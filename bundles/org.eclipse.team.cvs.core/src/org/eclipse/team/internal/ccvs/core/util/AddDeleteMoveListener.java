@@ -158,7 +158,8 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 						CVSProviderPlugin.log(e.getStatus());
 					}
 				} else if (info.isDirectory()) {
-					// XXX This is a gender change against the server! We should prevent this creation.
+					// This is a gender change against the server! 
+					// We will allow it but the user will get an error if they try to commit
 					mFile.unmanage(null);
 				}
 			}
@@ -174,7 +175,8 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 			if (mFolder.isManaged()) {
 				ResourceSyncInfo info = mFolder.getSyncInfo();
 				if ( ! info.isDirectory()) {
-					// XXX This is a gender change against the server! We should prevent this creation.
+					// This is a gender change against the server!
+					// Operation failure will notify the user of this situation
 					mFolder.unmanage(null);
 				}
 			}
