@@ -69,12 +69,12 @@ public class GetAsProjectAction extends TargetAction {
 			TeamUIPlugin.runWithProgressDialog(getShell(), true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
-						monitor.beginTask(getTaskName(remoteFolders), IProgressMonitor.UNKNOWN);
+						monitor.beginTask(getTaskName(remoteFolders), remoteFolders.length * 100);
 						monitor.setTaskName(getTaskName(remoteFolders));						
 						for (int i = 0; i < remoteFolders.length; i++) {
 							IProject project = (IProject)projects[i];
 							IRemoteTargetResource remote = remoteFolders[i];
-							IProgressMonitor subMonitor = Policy.subMonitorFor(monitor, 100);
+							IProgressMonitor subMonitor = Policy.subInfiniteMonitorFor(monitor, 100);
 							get(project, remote, subMonitor);
 						}
 					} catch (TeamException e) {

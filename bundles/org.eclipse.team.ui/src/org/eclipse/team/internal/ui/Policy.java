@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.team.internal.ui.target.InfiniteSubProgressMonitor;
 
 /**
  * Policy implements NLS convenience methods for the plugin and
@@ -121,5 +122,12 @@ public class Policy {
 		if (monitor instanceof NullProgressMonitor)
 			return monitor;
 		return new SubProgressMonitor(monitor, ticks);
+	}
+	public static IProgressMonitor subInfiniteMonitorFor(IProgressMonitor monitor, int ticks) {
+		if (monitor == null)
+			return new NullProgressMonitor();
+		if (monitor instanceof NullProgressMonitor)
+			return monitor;
+		return new InfiniteSubProgressMonitor(monitor, ticks);
 	}
 }

@@ -129,7 +129,7 @@ public class GetAsAction extends GetAsProjectAction {
 						monitor.setTaskName(Policy.bind("GetAs.taskname", remoteFolder.getName(), createdProject.getName())); //$NON-NLS-1$
 					}
 
-					get(project, remoteFolder, Policy.subMonitorFor(monitor, 95));
+					get(project, remoteFolder, Policy.subInfiniteMonitorFor(monitor, 95));
 
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);

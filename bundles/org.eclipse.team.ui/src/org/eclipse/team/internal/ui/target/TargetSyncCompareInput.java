@@ -21,6 +21,7 @@ import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.core.target.ITargetRunnable;
 import org.eclipse.team.core.target.TargetManager;
 import org.eclipse.team.core.target.TargetProvider;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.sync.CatchupReleaseViewer;
 import org.eclipse.team.internal.ui.sync.SyncCompareInput;
@@ -38,13 +39,20 @@ public class TargetSyncCompareInput extends SyncCompareInput {
 	 * @see SyncCompareInput#createSyncElements(IProgressMonitor)
 	 */
 	protected IRemoteSyncElement[] createSyncElements(IProgressMonitor monitor) throws TeamException {
-		RemoteTargetSyncElement[] elements = new RemoteTargetSyncElement[resources.length];
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			TargetProvider provider = TargetManager.getProvider(resource.getProject());
-			elements[i] = new RemoteTargetSyncElement(resources[i], provider.getRemoteResourceFor(resource));
+		monitor = Policy.monitorFor(monitor);
+		try {
+			monitor.beginTask(null, resources.length);
+			RemoteTargetSyncElement[] elements = new RemoteTargetSyncElement[resources.length];
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				TargetProvider provider = TargetManager.getProvider(resource.getProject());
+				elements[i] = new RemoteTargetSyncElement(resources[i], provider.getRemoteResourceFor(resource));				
+				monitor.worked(1);
+			}
+			return elements;
+		} finally {
+			monitor.done();
 		}
-		return elements;
 	}
 
 	/**

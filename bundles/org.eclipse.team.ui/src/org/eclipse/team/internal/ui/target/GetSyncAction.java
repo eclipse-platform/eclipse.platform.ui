@@ -88,17 +88,22 @@ public class GetSyncAction extends TargetSyncAction {
 	 * @param monitor  the progress monitor
 	 */
 	public void get(IResource[] resources, IProgressMonitor monitor) throws TeamException {
-		Hashtable table = getTargetProviderMapping(resources);
-		Set keySet = table.keySet();
-		monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
-		monitor.setTaskName(Policy.bind("GetSyncAction.Getting..._1")); //$NON-NLS-1$
-		Iterator iterator = keySet.iterator();
-		while (iterator.hasNext()) {
-			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
-			TargetProvider provider = (TargetProvider)iterator.next();
-			List list = (List)table.get(provider);
-			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-			provider.get(providerResources, subMonitor);
+		monitor = Policy.monitorFor(monitor);
+		try {
+			Hashtable table = getTargetProviderMapping(resources);
+			Set keySet = table.keySet();
+			monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
+			Iterator iterator = keySet.iterator();
+			while (iterator.hasNext()) {
+				IProgressMonitor subMonitor = new InfiniteSubProgressMonitor(monitor, 1000);
+				TargetProvider provider = (TargetProvider)iterator.next();
+				monitor.setTaskName(Policy.bind("GetAction.working", provider.getURL().toExternalForm()));  //$NON-NLS-1$
+				List list = (List)table.get(provider);
+				IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
+				provider.get(providerResources, subMonitor);
+			}
+		} finally {
+			monitor.done();
 		}
 	}
 }
