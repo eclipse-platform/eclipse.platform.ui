@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="newPerspectiveExtension1"
+   name="newPerspectiveExtension1 Plug-in"
+   version="1.0.0">
+
+   <runtime>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.tests"/>
+   </requires>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+         <actionSet id="org.eclipse.ui.tests.actionSet1"/>
+         <perspectiveShortcut id="org.eclipse.ui.resourcePerspective"/>
+         <newWizardShortcut id="some.new.wizard"/>
+         <view
+               visible="true"
+               ratio=".25"
+               relative="org.eclipse.ui.editorss"
+               relationship="left"
+               id="org.eclipse.ui.tests.api.MockViewPart"/>
+         <showInPart id="org.eclipse.ui.tests.api.MockViewPart"/>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            icon="anything.gif"
+            class="org.eclipse.ui.tests.NewWizard1"
+            name="Some New Wizard"
+            id="some.new.wizard"/>
+   </extension>
+ 
+
+</plugin>
