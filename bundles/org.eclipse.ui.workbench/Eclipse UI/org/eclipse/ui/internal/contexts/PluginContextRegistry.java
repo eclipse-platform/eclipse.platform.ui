@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.contexts.api.IContextDefinition;
 import org.eclipse.ui.internal.registry.RegistryReader;
-import org.eclipse.ui.internal.util.ConfigurationElementMemento;
+import org.eclipse.ui.internal.util.OldConfigurationElementMemento;
 
 final class PluginContextRegistry extends AbstractContextRegistry {
 
@@ -92,7 +92,7 @@ final class PluginContextRegistry extends AbstractContextRegistry {
 	}
 
 	private boolean readContextDefinition(IConfigurationElement element) {
-		IContextDefinition contextDefinition = Persistence.readContextDefinition(new ConfigurationElementMemento(element), getPluginId(element));
+		IContextDefinition contextDefinition = Persistence.readContextDefinition(new OldConfigurationElementMemento(element), getPluginId(element));
 	
 		if (contextDefinition != null)
 			contextDefinitions.add(contextDefinition);	

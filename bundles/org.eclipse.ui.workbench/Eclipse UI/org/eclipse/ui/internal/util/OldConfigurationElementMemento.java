@@ -11,14 +11,14 @@
 
 package org.eclipse.ui.internal.util;
 
-import org.eclipse.core.runtime.registry.IConfigurationElement;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IMemento;
 
-public final class ConfigurationElementMemento implements IMemento {
+public final class OldConfigurationElementMemento implements IMemento {
 
 	private IConfigurationElement configurationElement;
 
-	public ConfigurationElementMemento(IConfigurationElement configurationElement) {
+	public OldConfigurationElementMemento(IConfigurationElement configurationElement) {
 		if (configurationElement == null)
 			throw new NullPointerException();
 		
@@ -37,7 +37,7 @@ public final class ConfigurationElementMemento implements IMemento {
 		IConfigurationElement[] configurationElements = configurationElement.getChildren(type);
 		
 		if (configurationElements != null && configurationElements.length >= 1)
-			return new ConfigurationElementMemento(configurationElements[0]);
+			return new OldConfigurationElementMemento(configurationElements[0]);
 		
 		return null;
 	}
@@ -46,10 +46,10 @@ public final class ConfigurationElementMemento implements IMemento {
 		IConfigurationElement[] configurationElements = configurationElement.getChildren(type);
 		
 		if (configurationElements != null && configurationElements.length >= 1) {
-			IMemento mementos[] = new ConfigurationElementMemento[configurationElements.length];
+			IMemento mementos[] = new OldConfigurationElementMemento[configurationElements.length];
 			
 			for (int i = 0; i < configurationElements.length; i++)
-				mementos[i] = new ConfigurationElementMemento(configurationElements[i]);
+				mementos[i] = new OldConfigurationElementMemento(configurationElements[i]);
 				
 			return mementos;			
 		}

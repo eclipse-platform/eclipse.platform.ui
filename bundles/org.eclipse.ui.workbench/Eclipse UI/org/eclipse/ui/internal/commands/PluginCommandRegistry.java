@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.commands.api.IImageBindingDefinition;
 import org.eclipse.ui.internal.commands.api.IKeyBindingDefinition;
 import org.eclipse.ui.internal.commands.api.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.registry.RegistryReader;
-import org.eclipse.ui.internal.util.ConfigurationElementMemento;
+import org.eclipse.ui.internal.util.OldConfigurationElementMemento;
 
 final class PluginCommandRegistry extends AbstractCommandRegistry {
 
@@ -182,7 +182,7 @@ final class PluginCommandRegistry extends AbstractCommandRegistry {
 	}
 
 	private boolean readActiveKeyConfigurationDefinition(IConfigurationElement element) {
-		IActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = Persistence.readActiveKeyConfigurationDefinition(new ConfigurationElementMemento(element), getPluginId(element));
+		IActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = Persistence.readActiveKeyConfigurationDefinition(new OldConfigurationElementMemento(element), getPluginId(element));
 	
 		if (activeKeyConfigurationDefinition != null)
 			activeKeyConfigurationDefinitions.add(activeKeyConfigurationDefinition);	
@@ -191,7 +191,7 @@ final class PluginCommandRegistry extends AbstractCommandRegistry {
 	}
 
 	private boolean readCategoryDefinition(IConfigurationElement element) {
-		ICategoryDefinition categoryDefinition = Persistence.readCategoryDefinition(new ConfigurationElementMemento(element), getPluginId(element));
+		ICategoryDefinition categoryDefinition = Persistence.readCategoryDefinition(new OldConfigurationElementMemento(element), getPluginId(element));
 	
 		if (categoryDefinition != null)
 			categoryDefinitions.add(categoryDefinition);	
@@ -200,7 +200,7 @@ final class PluginCommandRegistry extends AbstractCommandRegistry {
 	}
 	
 	private boolean readCommandDefinition(IConfigurationElement element) {
-		ICommandDefinition commandDefinition = Persistence.readCommandDefinition(new ConfigurationElementMemento(element), getPluginId(element));
+		ICommandDefinition commandDefinition = Persistence.readCommandDefinition(new OldConfigurationElementMemento(element), getPluginId(element));
 	
 		if (commandDefinition != null)
 			commandDefinitions.add(commandDefinition);	
@@ -209,7 +209,7 @@ final class PluginCommandRegistry extends AbstractCommandRegistry {
 	}
 
 	private boolean readContextBindingDefinition(IConfigurationElement element) {
-		IContextBindingDefinition contextBindingDefinition = Persistence.readContextBindingDefinition(new ConfigurationElementMemento(element), getPluginId(element));
+		IContextBindingDefinition contextBindingDefinition = Persistence.readContextBindingDefinition(new OldConfigurationElementMemento(element), getPluginId(element));
 	
 		if (contextBindingDefinition != null)
 			contextBindingDefinitions.add(contextBindingDefinition);	
@@ -218,7 +218,7 @@ final class PluginCommandRegistry extends AbstractCommandRegistry {
 	}
 
 	private boolean readImageBindingDefinition(IConfigurationElement element) {
-		IImageBindingDefinition imageBinding = Persistence.readImageBindingDefinition(new ConfigurationElementMemento(element), getPluginId(element));
+		IImageBindingDefinition imageBinding = Persistence.readImageBindingDefinition(new OldConfigurationElementMemento(element), getPluginId(element));
 	
 		if (imageBinding != null)
 			imageBindingDefinitions.add(imageBinding);	
@@ -227,7 +227,7 @@ final class PluginCommandRegistry extends AbstractCommandRegistry {
 	}
 
 	private boolean readKeyBindingDefinition(IConfigurationElement element) {
-		IKeyBindingDefinition keyBindingDefinition = Persistence.readKeyBindingDefinition(new ConfigurationElementMemento(element), getPluginId(element));
+		IKeyBindingDefinition keyBindingDefinition = Persistence.readKeyBindingDefinition(new OldConfigurationElementMemento(element), getPluginId(element));
 	
 		if (keyBindingDefinition != null)
 			keyBindingDefinitions.add(keyBindingDefinition);	
@@ -236,7 +236,7 @@ final class PluginCommandRegistry extends AbstractCommandRegistry {
 	}
 	
 	private boolean readKeyConfigurationDefinition(IConfigurationElement element) {
-		IKeyConfigurationDefinition keyConfigurationDefinition = Persistence.readKeyConfigurationDefinition(new ConfigurationElementMemento(element), getPluginId(element));
+		IKeyConfigurationDefinition keyConfigurationDefinition = Persistence.readKeyConfigurationDefinition(new OldConfigurationElementMemento(element), getPluginId(element));
 	
 		if (keyConfigurationDefinition != null)
 			keyConfigurationDefinitions.add(keyConfigurationDefinition);	

@@ -53,17 +53,17 @@ public final class ActivityManager implements IActivityManager {
 	private Map activitiesById = new HashMap();
 	private Set definedActivityIds = new HashSet();
 	private Set enabledActivityIds = new HashSet();	
+	private ExtensionActivityRegistry extensionActivityRegistry;
 	private Map patternBindingDefinitionsByActivityId = new HashMap();
 	private Map patternBindingsByActivityId = new HashMap();	
-	private PluginActivityRegistry pluginActivityRegistry;
 
 	public ActivityManager() {
-		if (pluginActivityRegistry == null)
-			pluginActivityRegistry = new PluginActivityRegistry(Platform.getPluginRegistry());
+		if (extensionActivityRegistry == null)
+			extensionActivityRegistry = new ExtensionActivityRegistry(Platform.getExtensionRegistry());
 			
-		loadPluginActivityRegistry();		
+		loadExtensionActivityRegistry();		
 
-		pluginActivityRegistry.addActivityRegistryListener(new IActivityRegistryListener() {
+		extensionActivityRegistry.addActivityRegistryListener(new IActivityRegistryListener() {
 			public void activityRegistryChanged(IActivityRegistryEvent activityRegistryEvent) {
 				readRegistry();
 			}
@@ -164,9 +164,9 @@ public final class ActivityManager implements IActivityManager {
 			}				
 	}
 
-	private void loadPluginActivityRegistry() {
+	private void loadExtensionActivityRegistry() {
 		try {
-			pluginActivityRegistry.load();
+			extensionActivityRegistry.load();
 		} catch (IOException eIO) {
 			eIO.printStackTrace();
 		}
@@ -184,7 +184,7 @@ public final class ActivityManager implements IActivityManager {
 
 	private void readRegistry() {
 		Collection activityDefinitions = new ArrayList();
-		activityDefinitions.addAll(pluginActivityRegistry.getActivityDefinitions());				
+		activityDefinitions.addAll(extensionActivityRegistry.getActivityDefinitions());				
 		Map activityDefinitionsById = new HashMap(ActivityDefinition.activityDefinitionsById(activityDefinitions, false));
 
 		for (Iterator iterator = activityDefinitionsById.values().iterator(); iterator.hasNext();) {
@@ -200,7 +200,7 @@ public final class ActivityManager implements IActivityManager {
 				iterator.remove();
 
 		Collection patternBindingDefinitions = new ArrayList();
-		patternBindingDefinitions.addAll(pluginActivityRegistry.getPatternBindingDefinitions());
+		patternBindingDefinitions.addAll(extensionActivityRegistry.getPatternBindingDefinitions());
 		Map patternBindingDefinitionsByActivityId = new HashMap(PatternBindingDefinition.patternBindingDefinitionsByActivityId(patternBindingDefinitions, false));
 
 		for (Iterator iterator = patternBindingDefinitionsByActivityId.values().iterator(); iterator.hasNext();) {

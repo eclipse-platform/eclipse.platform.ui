@@ -34,19 +34,19 @@ public final class RoleManager implements IRoleManager {
 	private Map activityBindingDefinitionsByRoleId = new HashMap();
 	private Map activityBindingsByRoleId = new HashMap();	
 	private Set definedRoleIds = new HashSet();
-	private PluginRoleRegistry pluginRoleRegistry;
+	private ExtensionRoleRegistry extensionRoleRegistry;
 	private Map roleDefinitionsById = new HashMap();
 	private IRoleManagerEvent roleManagerEvent;
 	private List roleManagerListeners;	
 	private Map rolesById = new HashMap();	
 
 	public RoleManager() {
-		if (pluginRoleRegistry == null)
-			pluginRoleRegistry = new PluginRoleRegistry(Platform.getPluginRegistry());
+		if (extensionRoleRegistry == null)
+			extensionRoleRegistry = new ExtensionRoleRegistry(Platform.getExtensionRegistry());
 			
-		loadPluginRoleRegistry();		
+		loadExtensionRoleRegistry();		
 
-		pluginRoleRegistry.addRoleRegistryListener(new IRoleRegistryListener() {
+		extensionRoleRegistry.addRoleRegistryListener(new IRoleRegistryListener() {
 			public void roleRegistryChanged(IRoleRegistryEvent roleRegistryEvent) {
 				readRegistry();
 			}
@@ -103,9 +103,9 @@ public final class RoleManager implements IRoleManager {
 			}				
 	}
 
-	private void loadPluginRoleRegistry() {
+	private void loadExtensionRoleRegistry() {
 		try {
-			pluginRoleRegistry.load();
+			extensionRoleRegistry.load();
 		} catch (IOException eIO) {
 			eIO.printStackTrace();
 		}
@@ -123,7 +123,7 @@ public final class RoleManager implements IRoleManager {
 
 	private void readRegistry() {
 		Collection roleDefinitions = new ArrayList();
-		roleDefinitions.addAll(pluginRoleRegistry.getRoleDefinitions());				
+		roleDefinitions.addAll(extensionRoleRegistry.getRoleDefinitions());				
 		Map roleDefinitionsById = new HashMap(RoleDefinition.roleDefinitionsById(roleDefinitions, false));
 
 		for (Iterator iterator = roleDefinitionsById.values().iterator(); iterator.hasNext();) {
@@ -135,7 +135,7 @@ public final class RoleManager implements IRoleManager {
 		}
 
 		Collection activityBindingDefinitions = new ArrayList();
-		activityBindingDefinitions.addAll(pluginRoleRegistry.getActivityBindingDefinitions());
+		activityBindingDefinitions.addAll(extensionRoleRegistry.getActivityBindingDefinitions());
 		Map activityBindingDefinitionsByRoleId = new HashMap(ActivityBindingDefinition.activityBindingDefinitionsByRoleId(activityBindingDefinitions, false));
 
 		for (Iterator iterator = activityBindingDefinitionsByRoleId.values().iterator(); iterator.hasNext();) {
