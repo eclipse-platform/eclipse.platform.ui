@@ -6,6 +6,9 @@ package org.eclipse.ui.internal.registry;
  */
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+
 /**
  * Category provides for hierarchical grouping of elements
  * registered in the registry. One extension normally defines
@@ -19,7 +22,7 @@ import java.util.ArrayList;
  * In the long term its use should be re-evaluated.]
  * </p>
  */
-public interface ICategory {
+public interface ICategory extends IWorkbenchAdapter, IAdaptable {
 	/**
 	 * Name of the miscellaneous category
 	 */
@@ -64,4 +67,9 @@ public interface ICategory {
 	 * top-level category, <code>null</code> is returned.
 	 */
 	public String getRootPath();
+	
+	/**
+	 * Returns whether the category contains any elements.
+	 */
+	public boolean hasElements();
 }

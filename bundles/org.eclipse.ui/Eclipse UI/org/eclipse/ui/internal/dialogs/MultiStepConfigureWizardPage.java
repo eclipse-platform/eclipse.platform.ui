@@ -118,7 +118,7 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 	 */
 	public void setPreviousPage(IWizardPage page) {
 		// Do not allow to go back
-		super.setPreviousPage(this);
+		super.setPreviousPage(null);
 	}
 
 	/**
@@ -308,6 +308,7 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 			// Ensure the dialog is large enough for the wizard
 			//updateSizeForWizard(wizard);
 			//pageContainer.layout(true);
+			pageSite.layout(true);
 				
 			wizard.setContainer(this);
 			showPage(wizard.getStartingPage(), false);
@@ -331,8 +332,9 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 			if (page.getControl() == null) {
 				page.createControl(pageSite);
 				// ensure the dialog is large enough for this page
-				//updateSizeForPage(page);
-				//pageContainerLayout.layoutPage(page.getControl());
+				pageSite.layout(true);
+				//wizardDialog.updateSizeForPage(page);
+				//wizardDialog.pageContainerLayout.layoutPage(page.getControl());
 			}
 		
 			// make the new page visible

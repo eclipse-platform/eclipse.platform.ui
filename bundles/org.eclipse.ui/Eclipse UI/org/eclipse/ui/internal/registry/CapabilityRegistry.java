@@ -130,9 +130,24 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	}
 	
 	/**
+	 * Returns the list of categories in the registry
+	 * which contain at least one capability.
+	 */
+	public ArrayList getUsedCategories() {
+		ArrayList results = new ArrayList(categories.size());
+		Iterator enum = categories.iterator();
+		while (enum.hasNext()) {
+			ICategory cat = (ICategory) enum.next();
+			if (cat.hasElements())
+				results.add(cat);
+		}
+		return results;
+	}
+
+	/**
 	 * Returns the list of capabilities in the registry
 	 */
-	public List getCapabilities() {
+	public ArrayList getCapabilities() {
 		return capabilities;
 	}
 
@@ -140,6 +155,7 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	 * Method declared on IWorkbenchAdapter.
 	 */
 	public Object[] getChildren(Object o) {
+		//return getUsedCategories().toArray();
 		return capabilities.toArray();
 	}
 	

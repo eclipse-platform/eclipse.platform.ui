@@ -8,13 +8,15 @@ import org.eclipse.ui.*;
 import org.eclipse.core.runtime.*;
 import java.util.*;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.model.WorkbenchAdapter;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * The default implementation of the interface <code>ICategory</code>.
  * 
  * @see ICategory
  */
-public class Category implements ICategory {
+public class Category extends WorkbenchAdapter implements ICategory {
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 	private static final String ATT_PARENT = "parentCategory"; //$NON-NLS-1$
 	private static final String ATT_NAME = "name"; //$NON-NLS-1$
@@ -73,6 +75,23 @@ public class Category implements ICategory {
 	}
 	
 	/* (non-Javadoc)
+	 * Method declared on IAdaptable.
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == IWorkbenchAdapter.class) 
+			return this;
+		else
+			return null;
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on IWorkbenchAdapter.
+	 */
+	public String getLabel(Object o) {
+		return getLabel();
+	}
+	
+	/* (non-Javadoc)
 	 * Method declared on ICategory.
 	 */
 	public String getId() {
@@ -118,5 +137,15 @@ public class Category implements ICategory {
 	 */
 	public ArrayList getElements() {
 		return elements;
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on ICategory.
+	 */
+	public boolean hasElements() {
+		if (elements != null)
+			return !elements.isEmpty();
+		else
+			return false;
 	}
 }
