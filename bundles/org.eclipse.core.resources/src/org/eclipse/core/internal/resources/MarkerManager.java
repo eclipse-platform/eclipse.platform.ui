@@ -48,9 +48,11 @@ public void add(IResource resource, MarkerInfo[] newMarkers) throws CoreExceptio
 		return;
 	Resource target = (Resource) resource;
 	ResourceInfo info = workspace.getResourceInfo(target.getFullPath(), false, false);
-	int flags = target.getFlags(info);
-	target.checkExists(flags, false);
+	target.checkExists(target.getFlags(info), false);
 	info = workspace.getResourceInfo(resource.getFullPath(), false, true);
+	//resource may have been deleted concurrently -- just bail out if this happens
+	if (info == null) 
+		return;
 	// set the M_MARKERS_SNAP_DIRTY flag to indicate that this
 	// resource's markers have changed since the last snapshot
 	if (isPersistent(newMarkers))
