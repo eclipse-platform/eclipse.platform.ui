@@ -32,7 +32,6 @@ public interface IRoleActivationService {
 	 * JAVADOC
 	 *
 	 * @param roleId
-	 * @throws NullPointerException
 	 */	
 	void activateRole(String roleId);
 
@@ -40,7 +39,6 @@ public interface IRoleActivationService {
 	 * Registers an IRoleActivationServiceListener instance with this role activation service.
 	 *
 	 * @param roleActivationServiceListener the IRoleActivationServiceListener instance to register.
-	 * @throws NullPointerException
 	 */	
 	void addRoleActivationServiceListener(IRoleActivationServiceListener roleActivationServiceListener);
 
@@ -48,7 +46,6 @@ public interface IRoleActivationService {
 	 * JAVADOC
 	 *
 	 * @param roleId
-	 * @throws NullPointerException
 	 */	
 	void deactivateRole(String roleId);
 		
@@ -63,7 +60,6 @@ public interface IRoleActivationService {
 	 * Unregisters an IRoleActivationServiceListener instance with this role activation services.
 	 *
 	 * @param roleActivationServiceListener the IRoleActivationServiceListener instance to unregister.
-	 * @throws NullPointerException
 	 */
 	void removeRoleActivationServiceListener(IRoleActivationServiceListener roleActivationServiceListener);
 }

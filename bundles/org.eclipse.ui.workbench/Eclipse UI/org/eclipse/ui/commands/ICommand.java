@@ -34,7 +34,6 @@ public interface ICommand extends Comparable {
 	 * Registers an ICommandListener instance with this command.
 	 *
 	 * @param commandListener the ICommandListener instance to register.
-	 * @throws NullPointerException
 	 */	
 	void addCommandListener(ICommandListener commandListener);
 
@@ -119,7 +118,6 @@ public interface ICommand extends Comparable {
 	 * Unregisters an ICommandListener instance with this command.
 	 *
 	 * @param commandListener the ICommandListener instance to unregister.
-	 * @throws NullPointerException
 	 */
 	void removeCommandListener(ICommandListener commandListener);
 }

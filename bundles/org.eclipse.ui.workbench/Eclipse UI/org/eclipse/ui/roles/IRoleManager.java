@@ -33,7 +33,6 @@ public interface IRoleManager {
 	 * Registers an IRoleManagerListener instance with this role manager.
 	 *
 	 * @param roleManagerListener the IRoleManagerListener instance to register.
-	 * @throws NullPointerException
 	 */	
 	void addRoleManagerListener(IRoleManagerListener roleManagerListener);
 
@@ -49,7 +48,6 @@ public interface IRoleManager {
 	 *
 	 * @param roleId
 	 * @return
-	 * @throws NullPointerException
 	 */	
 	IRole getRole(String roleId);
 
@@ -64,7 +62,6 @@ public interface IRoleManager {
 	 * Unregisters an IRoleManagerListener instance with this role manager.
 	 *
 	 * @param roleManagerListener the IRoleManagerListener instance to unregister.
-	 * @throws NullPointerException
 	 */
 	void removeRoleManagerListener(IRoleManagerListener roleManagerListener);
 }

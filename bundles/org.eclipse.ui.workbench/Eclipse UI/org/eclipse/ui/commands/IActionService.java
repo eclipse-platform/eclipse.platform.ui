@@ -33,7 +33,6 @@ public interface IActionService {
 	 *
 	 * @param commandId
 	 * @param action
-	 * @throws NullPointerException
 	 */	
 	void addAction(String commandId, IAction action);
 
@@ -41,7 +40,6 @@ public interface IActionService {
 	 * Registers an IActionServiceListener instance with this action service.
 	 *
 	 * @param actionServiceListener the IActionServiceListener instance to register.
-	 * @throws NullPointerException
 	 */	
 	void addActionServiceListener(IActionServiceListener actionServiceListener);
 		
@@ -56,7 +54,6 @@ public interface IActionService {
 	 * JAVADOC
 	 *
 	 * @param commandId
-	 * @throws NullPointerException
 	 */	
 	void removeAction(String commandId);
 	
@@ -64,7 +61,6 @@ public interface IActionService {
 	 * Unregisters an IActionServiceListener instance with this action service.
 	 *
 	 * @param actionServiceListener the IActionServiceListener instance to unregister.
-	 * @throws NullPointerException
 	 */
 	void removeActionServiceListener(IActionServiceListener actionServiceListener);
 }

@@ -30,7 +30,6 @@ public interface IContext extends Comparable {
 	 * Registers an IContextListener instance with this context.
 	 *
 	 * @param contextListener the IContextListener instance to register.
-	 * @throws NullPointerException
 	 */	
 	void addContextListener(IContextListener contextListener);
 
@@ -83,7 +82,6 @@ public interface IContext extends Comparable {
 	 * Unregisters an IContextListener instance with this context.
 	 *
 	 * @param contextListener the IContextListener instance to unregister.
-	 * @throws NullPointerException
 	 */
 	void removeContextListener(IContextListener contextListener);
 }

@@ -33,7 +33,6 @@ public interface ICommandManager {
 	 * Registers an ICommandManagerListener instance with this command manager.
 	 *
 	 * @param commandManagerListener the ICommandManagerListener instance to register.
-	 * @throws NullPointerException
 	 */	
 	void addCommandManagerListener(ICommandManagerListener commandManagerListener);
 
@@ -70,7 +69,6 @@ public interface ICommandManager {
 	 *
 	 * @param categoryId
 	 * @return
-	 * @throws NullPointerException
 	 */	
 	ICategory getCategory(String categoryId);
 
@@ -79,7 +77,6 @@ public interface ICommandManager {
 	 *
 	 * @param commandId
 	 * @return
-	 * @throws NullPointerException
 	 */	
 	ICommand getCommand(String commandId);
 
@@ -109,7 +106,6 @@ public interface ICommandManager {
 	 *
 	 * @param keyConfigurationId
 	 * @return
-	 * @throws NullPointerException
 	 */	
 	IKeyConfiguration getKeyConfiguration(String keyConfigurationId);
 
@@ -117,7 +113,6 @@ public interface ICommandManager {
 	 * Unregisters an ICommandManagerListener instance with this command manager.
 	 *
 	 * @param commandManagerListener the ICommandManagerListener instance to unregister.
-	 * @throws NullPointerException
 	 */
 	void removeCommandManagerListener(ICommandManagerListener commandManagerListener);
 }

@@ -32,7 +32,6 @@ public interface IContextRegistry {
 	 * Registers an IContextRegistryListener instance with this context registry.
 	 *
 	 * @param contextRegistryListener the IContextRegistryListener instance to register.
-	 * @throws NullPointerException
 	 */
 	void addContextRegistryListener(IContextRegistryListener contextRegistryListener);
 
@@ -47,7 +46,6 @@ public interface IContextRegistry {
 	 * Unregisters an IContextRegistryListener instance with this context registry.
 	 *
 	 * @param contextRegistryListener the IContextRegistryListener instance to unregister.
-	 * @throws NullPointerException
 	 */
 	void removeContextRegistryListener(IContextRegistryListener contextRegistryListener);
 }

@@ -33,7 +33,6 @@ public interface IContextManager {
 	 * Registers an IContextManagerListener instance with this context manager.
 	 *
 	 * @param contextManagerListener the IContextManagerListener instance to register.
-	 * @throws NullPointerException
 	 */	
 	void addContextManagerListener(IContextManagerListener contextManagerListener);
 
@@ -49,7 +48,6 @@ public interface IContextManager {
 	 *
 	 * @param contextId
 	 * @return
-	 * @throws NullPointerException
 	 */	
 	IContext getContext(String contextId);
 
@@ -64,7 +62,6 @@ public interface IContextManager {
 	 * Unregisters an IContextManagerListener instance with this context manager.
 	 *
 	 * @param contextManagerListener the IContextManagerListener instance to unregister.
-	 * @throws NullPointerException
 	 */
 	void removeContextManagerListener(IContextManagerListener contextManagerListener);
 }

@@ -30,7 +30,6 @@ public interface IRole extends Comparable {
 	 * Registers an IRoleListener instance with this role.
 	 *
 	 * @param roleListener the IRoleListener instance to register.
-	 * @throws NullPointerException
 	 */	
 	void addRoleListener(IRoleListener roleListener);
 
@@ -83,7 +82,6 @@ public interface IRole extends Comparable {
 	 * Unregisters an IRoleListener instance with this role.
 	 *
 	 * @param roleListener the IRoleListener instance to unregister.
-	 * @throws NullPointerException
 	 */
 	void removeRoleListener(IRoleListener roleListener);
 }

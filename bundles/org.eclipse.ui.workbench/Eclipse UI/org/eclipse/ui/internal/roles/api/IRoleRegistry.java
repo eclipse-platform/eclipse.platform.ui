@@ -32,7 +32,6 @@ public interface IRoleRegistry {
 	 * Registers an IRoleRegistryListener instance with this role registry.
 	 *
 	 * @param roleRegistryListener the IRoleRegistryListener instance to register.
-	 * @throws NullPointerException
 	 */
 	void addRoleRegistryListener(IRoleRegistryListener roleRegistryListener);
 
@@ -47,7 +46,6 @@ public interface IRoleRegistry {
 	 * Unregisters an IRoleRegistryListener instance with this role registry.
 	 *
 	 * @param roleRegistryListener the IRoleRegistryListener instance to unregister.
-	 * @throws NullPointerException
 	 */
 	void removeRoleRegistryListener(IRoleRegistryListener roleRegistryListener);
 }
