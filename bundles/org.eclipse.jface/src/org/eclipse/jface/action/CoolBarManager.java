@@ -17,17 +17,13 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.core.runtime.Platform;
-
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
-
-import org.eclipse.jface.util.Assert;
 
 /**
  * A cool bar manager is a contribution manager which realizes itself and its
@@ -244,12 +240,6 @@ public class CoolBarManager extends ContributionManager implements
             coolBar = new CoolBar(parent, itemStyle);
             coolBar.setMenu(getContextMenuControl());
             coolBar.setLocked(false);
-            coolBar.addListener(SWT.Resize, new Listener() {
-
-                public void handleEvent(Event event) {
-                    coolBar.getParent().layout();
-                }
-            });
             update(false);
         }
         return coolBar;
