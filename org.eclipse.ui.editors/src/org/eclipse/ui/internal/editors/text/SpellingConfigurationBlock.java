@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -47,8 +48,8 @@ import org.eclipse.jface.text.Assert;
 
 import org.eclipse.ui.editors.text.EditorsUI;
 
-import org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock;
 import org.eclipse.ui.texteditor.spelling.IPreferenceStatusMonitor;
+import org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock;
 import org.eclipse.ui.texteditor.spelling.SpellingEngineDescriptor;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
 
@@ -131,6 +132,45 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		}
 	}
 
+	/**
+	 * Forwarding status monitor for accessing the current status.
+	 */
+	private static class ForwardingStatusMonitor implements IPreferenceStatusMonitor {
+
+		/** Status monitor to which status changes are forwarded */
+		private IPreferenceStatusMonitor fForwardedMonitor;
+		
+		/** Latest reported status */
+		private IStatus fStatus;
+
+		/**
+		 * Initializes with the given status monitor to which status
+		 * changes are forwarded.
+		 * 
+		 * @param forwardedMonitor
+		 */
+		public ForwardingStatusMonitor(IPreferenceStatusMonitor forwardedMonitor) {
+			fForwardedMonitor= forwardedMonitor;
+		}
+
+		/*
+		 * @see org.eclipse.ui.texteditor.spelling.IPreferenceStatusMonitor#statusChanged(org.eclipse.core.runtime.IStatus)
+		 */
+		public void statusChanged(IStatus status) {
+			fStatus= status;
+			fForwardedMonitor.statusChanged(status);
+		}
+		
+		/**
+		 * Returns the latest reported status.
+		 * 
+		 * @return the latest reported status, can be <code>null</code>
+		 */
+		public IStatus getStatus() {
+			return fStatus;
+		}
+	}
+
 	/** The overlay preference store. */
 	private final OverlayPreferenceStore fStore;
 	
@@ -147,14 +187,14 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 	private final Map fProviderPreferences;
 	private final Map fProviderControls;
 
-	private IPreferenceStatusMonitor fStatusMonitor;
+	private ForwardingStatusMonitor fStatusMonitor;
 	
 
 	public SpellingConfigurationBlock(OverlayPreferenceStore store, IPreferenceStatusMonitor statusMonitor) {
 		Assert.isNotNull(store);
 		fStore= store;
 		fStore.addKeys(createOverlayStoreKeys());
-		fStatusMonitor= statusMonitor;
+		fStatusMonitor= new ForwardingStatusMonitor(statusMonitor);
 		fProviderDescriptors= createListModel();
 		fProviderPreferences= new HashMap();
 		fProviderControls= new HashMap();
@@ -263,7 +303,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	private ComboViewer createProviderViewer() {
 		/* list viewer */
-		ComboViewer viewer= new ComboViewer(fProviderCombo);
+		final ComboViewer viewer= new ComboViewer(fProviderCombo);
 		viewer.setContentProvider(new IStructuredContentProvider() {
 
 			/*
@@ -304,9 +344,25 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection sel= (IStructuredSelection) event.getSelection();
-				if (!sel.isEmpty()) {
-					fStore.setValue(SpellingService.PREFERENCE_SPELLING_ENGINE, ((SpellingEngineDescriptor) sel.getFirstElement()).getId());
-					updateListDependencies();
+				if (sel.isEmpty())
+					return;
+				if (fStatusMonitor.getStatus() != null && fStatusMonitor.getStatus().matches(IStatus.ERROR)) {
+					MessageDialog.openError(fEnablementCheckbox.getShell(), TextEditorMessages.getString("SpellingConfigurationBlock.error.title"), TextEditorMessages.getString("SpellingConfigurationBlock.error.message")); //$NON-NLS-1$ //$NON-NLS-2$
+					revertSelection();
+					return;
+				}
+				fStore.setValue(SpellingService.PREFERENCE_SPELLING_ENGINE, ((SpellingEngineDescriptor) sel.getFirstElement()).getId());
+				updateListDependencies();
+			}
+
+			private void revertSelection() {
+				try {
+					viewer.removeSelectionChangedListener(this);
+					SpellingEngineDescriptor desc= EditorsUI.getSpellingService().getActiveSpellingEngineDescriptor(fStore);
+					if (desc != null)
+						viewer.setSelection(new StructuredSelection(desc), true);
+				} finally {
+					viewer.addSelectionChangedListener(this);
 				}
 			}
 		});
