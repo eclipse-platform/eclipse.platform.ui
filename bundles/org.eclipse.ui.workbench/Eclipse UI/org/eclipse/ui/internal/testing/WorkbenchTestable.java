@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.testing;
 
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.ui.IWorkbench;
@@ -31,6 +32,7 @@ public class WorkbenchTestable extends TestableObject {
 	 * Constructs a new workbench testable object.
 	 */
 	public WorkbenchTestable() {
+	    // do nothing
 	}
 
 	/**
@@ -61,6 +63,7 @@ public class WorkbenchTestable extends TestableObject {
 	 */
 	public void testingStarting() {
 		Assert.isNotNull(workbench);
+		ErrorDialog.AUTOMATED_MODE = true;
 	}
 	
 	/**
@@ -86,5 +89,6 @@ public class WorkbenchTestable extends TestableObject {
 				Assert.isTrue(workbench.close());
 			}
 		});
+		ErrorDialog.AUTOMATED_MODE = false;
 	}
 }

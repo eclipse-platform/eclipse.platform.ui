@@ -300,13 +300,11 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 */
 	public int open() {
 		
-		if(AUTOMATED_MODE)
-			setBlockOnOpen(false);			
-			
-		if (shouldDisplay(status, displayMask)) {
+		if (!AUTOMATED_MODE && shouldDisplay(status, displayMask)) {
 			return super.open();
 		}
-		return 0;
+		setReturnCode(OK);
+		return OK;
 	}
 	/**
 	 * Opens an error dialog to display the given error.  Use this method if the
