@@ -442,12 +442,17 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 				if (fComposite == null)
 						return;
 				Control[] children= fComposite.getChildren();
+				Rectangle bounds= null;
 				for (int i= 0; i < children.length; i++) {
-					if (children[i].getBounds().contains(e.x, e.y))
+					if (bounds == null)
+						bounds= children[i].getBounds();
+					else
+						bounds.add(children[i].getBounds());
+					if (bounds.contains(e.x, e.y))
 						return;
 				}
 				
-				// if none of the children contains the event, we left the popup
+				// if none of the children contains the event, we leave the popup
 				dispose();
 			}
 
