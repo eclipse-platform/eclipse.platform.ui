@@ -653,7 +653,7 @@ public class ActionContributionItem extends ContributionItem {
 	 */
 	public void update(String propertyName) {
 		if (widget != null) {
-			// determine what to do			
+			// determine what to do
 			boolean textChanged = propertyName == null || propertyName.equals(IAction.TEXT);
 			boolean imageChanged = propertyName == null || propertyName.equals(IAction.IMAGE);
 			boolean tooltipTextChanged =
@@ -709,10 +709,10 @@ public class ActionContributionItem extends ContributionItem {
 					}
 
 					if (textChanged) {
-						if (action instanceof Action
-							&& (((Action) action).showTextInToolBar())){
-								ti.setText(shortenText(action.getText(),ti));
-						}
+						if ((getMode() & MODE_FORCE_TEXT) != 0)
+							ti.setText(shortenText(action.getText(),ti));
+						else 
+							ti.setText(""); //$NON-NLS-1$
 					}
 				}
 						
