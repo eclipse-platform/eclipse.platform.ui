@@ -73,16 +73,26 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 * parsed
 	 */
 	private Button includeErrorResultButton;
+	/**
+	 * The dialog settings used to persist this dialog's settings.
+	 */
 	private static IDialogSettings settings= ExternalToolsPlugin.getDefault().getDialogSettings();
+	
+	/**
+	 * Initialize any dialog settings that haven't been set.
+	 */
 	static {
 		if (settings.get(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING) == null) {
-			settings.put(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING, "");
+			settings.put(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING, "build.xml"); // $NON-NLS-1$
 		}
 		if (settings.get(IPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE) == null) {
 			settings.put(IPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE, "");
 		} 
 	}
 
+	/**
+	 * Creates a new dialog to search for build files.
+	 */
 	public SearchForBuildFilesDialog() {
 		super(Display.getCurrent().getActiveShell(), "Search for Build Files", "Input a build file name (* = any string, ? = any character):",
 				settings.get(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING), new IInputValidator() {
