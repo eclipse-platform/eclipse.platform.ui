@@ -52,7 +52,7 @@ public abstract class ResourceState {
 	 * base timestamp and remote base identifier.
 	 */
 	protected static final long EMPTY_LOCALBASETS = -1L;
-	protected static final String EMPTY_REMOTEBASEID = "Undefined:";
+	protected static final String EMPTY_REMOTEBASEID = "Undefined:"; //$NON-NLS-1$
 
 	/*
 	 * The base state of the resource.  The 'base' is the state of the resource
@@ -70,7 +70,7 @@ public abstract class ResourceState {
 	 */
 	protected IResource localResource;
 	
-	protected QualifiedName stateKey = new QualifiedName("org.eclipse.team.target", "state_info");
+	protected QualifiedName stateKey = new QualifiedName("org.eclipse.team.target", "state_info"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	protected URL rootUrl;
 

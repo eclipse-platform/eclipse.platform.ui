@@ -12,7 +12,7 @@ public final class Assert {
 		public AssertionFailedException() {
 		}
 		public AssertionFailedException(String detail) {
-			super("Assertion failed: " + detail);
+			super(Policy.bind("Assert.assertionFailed", detail)); //$NON-NLS-1$
 		}
 	}
 /* This class is not intended to be instantiated. */

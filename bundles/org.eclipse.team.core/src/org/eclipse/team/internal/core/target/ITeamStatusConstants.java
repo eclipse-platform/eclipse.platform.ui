@@ -19,14 +19,14 @@ import org.eclipse.team.internal.core.TeamPlugin;
 public interface ITeamStatusConstants {
 
 	public static final IStatus OK_STATUS =
-		new Status(IStatus.OK, TeamPlugin.ID, TeamException.OK, "OK", null);
+		new Status(IStatus.OK, TeamPlugin.ID, TeamException.OK, Policy.bind("OK_1"), null); //$NON-NLS-1$
 
 	public static final IStatus NOT_CHECKED_OUT_STATUS =
 		new Status(
 			IStatus.ERROR,
 			TeamPlugin.ID,
 			TeamException.NOT_CHECKED_OUT,
-			Policy.bind("teamStatus.notCheckedOut"),
+			Policy.bind("teamStatus.notCheckedOut"), //$NON-NLS-1$
 			null);
 
 	public static final IStatus NOT_CHECKED_IN_STATUS =
@@ -34,7 +34,7 @@ public interface ITeamStatusConstants {
 			IStatus.ERROR,
 			TeamPlugin.ID,
 			TeamException.NOT_CHECKED_IN,
-			Policy.bind("teamStatus.notCheckedIn"),
+			Policy.bind("teamStatus.notCheckedIn"), //$NON-NLS-1$
 			null);
 
 	public static final IStatus NO_REMOTE_RESOURCE_STATUS =
@@ -42,7 +42,7 @@ public interface ITeamStatusConstants {
 			IStatus.ERROR,
 			TeamPlugin.ID,
 			TeamException.NO_REMOTE_RESOURCE,
-			Policy.bind("teamStatus.noRemoteResource"),
+			Policy.bind("teamStatus.noRemoteResource"), //$NON-NLS-1$
 			null);
 
 	public static final IStatus IO_FAILED_STATUS =
@@ -50,7 +50,7 @@ public interface ITeamStatusConstants {
 			IStatus.ERROR,
 			TeamPlugin.ID,
 			TeamException.IO_FAILED,
-			Policy.bind("teamStatus.ioFailed"),
+			Policy.bind("teamStatus.ioFailed"), //$NON-NLS-1$
 			null);
 
 	public static final IStatus CONFLICT_STATUS =
@@ -58,7 +58,7 @@ public interface ITeamStatusConstants {
 			IStatus.ERROR,
 			TeamPlugin.ID,
 			TeamException.CONFLICT,
-			Policy.bind("teamStatus.conflict"),
+			Policy.bind("teamStatus.conflict"), //$NON-NLS-1$
 			null);
 
 	public static final IStatus REQUIRED_CONFIGURATION_MISSING =
@@ -66,7 +66,7 @@ public interface ITeamStatusConstants {
 			IStatus.ERROR,
 			TeamPlugin.ID,
 			-100,
-			Policy.bind("provider.configuration.missing"),
+			Policy.bind("provider.configuration.missing"), //$NON-NLS-1$
 			null);
 			
 	public static final IStatus INVALID_CONFIGURATION =
@@ -74,6 +74,6 @@ public interface ITeamStatusConstants {
 			IStatus.ERROR,
 			TeamPlugin.ID,
 			-101,
-			Policy.bind("provider.configuration.invalid"),
+			Policy.bind("provider.configuration.invalid"), //$NON-NLS-1$
 			null);
 }

@@ -201,7 +201,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 					TeamPlugin.ID,
 					IStatus.ERROR,
 					statuses,
-					Policy.bind("multiStatus.errorsOccurred"),
+					Policy.bind("multiStatus.errorsOccurred"), //$NON-NLS-1$
 					null));
 
 		// Cause all the resource changes to be broadcast to listeners.

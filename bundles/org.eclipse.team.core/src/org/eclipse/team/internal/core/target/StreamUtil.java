@@ -49,7 +49,7 @@ public class StreamUtil {
 					bytesCopied = bytesCopied + read;
 					progress.subTask(
 						Policy.bind(
-							"filetransfer.monitor",
+							"filetransfer.monitor", //$NON-NLS-1$
 							new Object[] { title, new Long(bytesCopied / 1024), kilobytesEstimate }));
 				}
 

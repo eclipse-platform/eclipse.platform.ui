@@ -42,10 +42,10 @@ import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.target.LocationMapping;
 
 public class TargetManager {
-	private static final String TARGET_SITES_FILE = ".targetSites";
+	private static final String TARGET_SITES_FILE = ".targetSites"; //$NON-NLS-1$
 
 	private static QualifiedName TARGET_MAPPINGS =
-		new QualifiedName("org.eclipse.team.core.target", "mappings");
+		new QualifiedName("org.eclipse.team.core.target", "mappings"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static Map factories = new Hashtable();
 	private static List sites = new ArrayList();
@@ -78,7 +78,7 @@ public class TargetManager {
 			ISynchronizer s = ResourcesPlugin.getWorkspace().getSynchronizer();
 			byte[] mappingBytes = s.getSyncInfo(TARGET_MAPPINGS, project);
 			if (mappingBytes != null) {
-				throw new TeamException("Problems mapping project. Project is already mapped.");
+				throw new TeamException(Policy.bind("TargetManager.Problems_mapping_project._Project_is_already_mapped._4")); //$NON-NLS-1$
 			}
 			LocationMapping mapping = new LocationMapping(site, path);
 			s.setSyncInfo(
@@ -86,9 +86,9 @@ public class TargetManager {
 				project,
 				mapping.encode());
 		} catch (CoreException e) {
-			throw new TeamException("Problems mapping project" + project.getName(), e);
+			throw new TeamException(Policy.bind("TargetManager.Problems_mapping_project", project.getName()), e); //$NON-NLS-1$
 		} catch (IOException e) {
-			throw new TeamException("Problems mapping project" + project.getName(), e);
+			throw new TeamException(Policy.bind("TargetManager.Problems_mapping_project", project.getName()), e); //$NON-NLS-1$
 		}
 	}
 
@@ -100,14 +100,14 @@ public class TargetManager {
 			ISynchronizer s = ResourcesPlugin.getWorkspace().getSynchronizer();
 			byte[] mappingBytes = s.getSyncInfo(TARGET_MAPPINGS, project);
 			if (mappingBytes == null) {
-				throw new TeamException("Unable to unmap project. It wasn't mapped to the location." + project.getName(), null);
+				throw new TeamException(Policy.bind("TargetManager.unableToUnmap", project.getName()), null); //$NON-NLS-1$
 			} else {
 				TargetProvider provider = getProvider(project);
 				provider.deregister(project);
 				s.flushSyncInfo(TARGET_MAPPINGS, project, IResource.DEPTH_ZERO);
 			}
 		} catch (CoreException e) {
-			throw new TeamException("Problems unmapping project" + project.getName(), e);
+			throw new TeamException(Policy.bind("TargetManager.problemsUnmapping", project.getName()), e); //$NON-NLS-1$
 		}
 	}
 
@@ -127,9 +127,9 @@ public class TargetManager {
 			}
 			return null;
 		} catch (CoreException e) {
-			throw new TeamException("Problems getting default target provider" + project.getName(), e);
+			throw new TeamException(Policy.bind("TargetManager.problemsGettingProvider", project.getName()), e); //$NON-NLS-1$
 		} catch (IOException e) {
-			throw new TeamException("Problems getting default target provider" + project.getName(), e);
+			throw new TeamException(Policy.bind("TargetManager.problemsGettingProvider", project.getName()), e); //$NON-NLS-1$
 		}
 	}
 
