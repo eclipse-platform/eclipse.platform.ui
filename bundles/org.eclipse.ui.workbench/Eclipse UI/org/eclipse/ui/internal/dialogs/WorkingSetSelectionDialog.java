@@ -275,6 +275,9 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		if (dialog.open() == Window.OK) {		
 			editWorkingSet = (IWorkingSet) wizard.getSelection();
 			listViewer.update(editWorkingSet, null);
+			// make sure ok button is enabled when the selected working set 
+			// is edited. Fixes bug 33386.
+			updateButtonAvailability();
 		}
 		editedWorkingSets.put(editWorkingSet, originalWorkingSet);
 	}
