@@ -30,17 +30,26 @@ public class StatusLineManager extends ContributionManager implements
         IStatusLineManager {
 
     /**
-     * Global group marker used to control positioning of contributions
+     * Identifier of group marker used to position contributions at the beginning
+     * of the status line.
+     * 
+     * @since 3.0
      */
     public static final String BEGIN_GROUP = "BEGIN_GROUP"; //$NON-NLS-1$
 
     /**
-     * Global group marker used to control positioning of contributions
+     * Identifier of group marker used to position contributions in the middle
+     * of the status line.
+     * 
+     * @since 3.0
      */
     public static final String MIDDLE_GROUP = "MIDDLE_GROUP"; //$NON-NLS-1$
 
     /**
-     * Global group marker used to control positioning of contributions
+     * Identifier of group marker used to position contributions at the end
+     * of the status line.
+     * 
+     * @since 3.0
      */
     public static final String END_GROUP = "END_GROUP"; //$NON-NLS-1$
 
@@ -56,7 +65,9 @@ public class StatusLineManager extends ContributionManager implements
      * status line control.
      */
     public StatusLineManager() {
-        // do nothing
+    	add(new GroupMarker(BEGIN_GROUP));
+        add(new GroupMarker(MIDDLE_GROUP));
+        add(new GroupMarker(END_GROUP));
     }
 
     /**
@@ -86,9 +97,6 @@ public class StatusLineManager extends ContributionManager implements
     public Control createControl(Composite parent, int style) {
         if (!statusLineExist() && parent != null) {
             statusLine = new StatusLine(parent, style);
-            add(new GroupMarker(BEGIN_GROUP));
-            add(new GroupMarker(MIDDLE_GROUP));
-            add(new GroupMarker(END_GROUP));
             update(false);
         }
         return statusLine;
