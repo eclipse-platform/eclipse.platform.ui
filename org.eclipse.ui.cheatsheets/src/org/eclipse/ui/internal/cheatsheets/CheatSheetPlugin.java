@@ -24,7 +24,7 @@ import org.osgi.framework.BundleContext;
  * The main plugin class for cheat sheets.
  */
 
-public class CheatSheetPlugin extends AbstractUIPlugin implements ICheatSheetResource {
+public class CheatSheetPlugin extends AbstractUIPlugin {
 
 	//The shared instance of this plugin.
 	private static CheatSheetPlugin plugin;
@@ -231,6 +231,8 @@ public class CheatSheetPlugin extends AbstractUIPlugin implements ICheatSheetRes
 		if (history != null) {
 			saveCheatSheetHistory();
 		}
+		
+		CheatSheetRegistryReader.getInstance().stop();
 	}
 
 }

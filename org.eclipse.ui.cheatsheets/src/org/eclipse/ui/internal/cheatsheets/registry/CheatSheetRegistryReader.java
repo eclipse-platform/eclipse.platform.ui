@@ -22,7 +22,7 @@ import org.eclipse.ui.model.AdaptableList;
  *  Instances access the registry that is provided at creation time
  *  in order to determine the contained CheatSheet Contents
  */
-public class CheatSheetRegistryReader extends RegistryReader {
+public class CheatSheetRegistryReader extends RegistryReader implements IRegistryChangeListener {
 
 	private class CategoryNode {
 		private Category category;
@@ -71,8 +71,11 @@ public class CheatSheetRegistryReader extends RegistryReader {
 	 * requires non-trivial work.  
 	 */
 	public static CheatSheetRegistryReader getInstance() {
-		if (instance == null)
+		if (instance == null) {
 			instance = new CheatSheetRegistryReader();
+			IExtensionRegistry xregistry = Platform.getExtensionRegistry();
+			xregistry.addRegistryChangeListener(instance, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID);
+		}
 
 		return instance;
 	}
@@ -83,7 +86,6 @@ public class CheatSheetRegistryReader extends RegistryReader {
 	private ArrayList deferCheatSheets = null;
 	private final String pluginPoint = "cheatSheetContent"; //$NON-NLS-1$
 	private final String csItemExtension = "cheatSheetItemExtension"; //$NON-NLS-1$
-//	private final Class[] stringArray = { String.class };
 
 	/**
 	 *	Create an instance of this class.
@@ -180,9 +182,9 @@ public class CheatSheetRegistryReader extends RegistryReader {
 	 *  with a given id.
 	 */
 	public CheatSheetElement findCheatSheet(String id) {
-		Object[] cheatsheets = getCheatSheets().getChildren();
-		for (int nX = 0; nX < cheatsheets.length; nX++) {
-			CheatSheetCollectionElement collection = (CheatSheetCollectionElement) cheatsheets[nX];
+		Object[] cheatsheetsList = getCheatSheets().getChildren();
+		for (int nX = 0; nX < cheatsheetsList.length; nX++) {
+			CheatSheetCollectionElement collection = (CheatSheetCollectionElement) cheatsheetsList[nX];
 			CheatSheetElement element = collection.findCheatSheet(id, true);
 			if (element != null)
 				return element;
@@ -483,5 +485,29 @@ public class CheatSheetRegistryReader extends RegistryReader {
 				addNewElementToResult(cheatsheet, element, cheatsheets);
 			return true;
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
+	 */
+	public void registryChanged(IRegistryChangeEvent event) {
+		IExtensionDelta[] cheatSheetDeltas = event.getExtensionDeltas(ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, pluginPoint);
+		if (cheatSheetDeltas.length > 0) {
+			// reset the list of cheat sheets, it will be build on demand
+			cheatsheets = null;
+		}
+
+		IExtensionDelta[] itemExtensionDeltas = event.getExtensionDeltas(ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, csItemExtension);
+		if (itemExtensionDeltas.length > 0) {
+			// reset the list of cheat sheets item extensions, it will be build on demand
+			cheatsheetItemExtensions = null;
+		}
+	}
+	
+	public void stop() {
+		IExtensionRegistry xregistry = Platform.getExtensionRegistry();
+		xregistry.removeRegistryChangeListener(instance);
+
+		instance = null;
 	}
 }
