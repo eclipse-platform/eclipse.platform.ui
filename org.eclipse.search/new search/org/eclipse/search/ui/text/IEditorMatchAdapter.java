@@ -43,6 +43,6 @@ public interface IEditorMatchAdapter {
 	 * @return All matches that are contained in the element that is shown in
 	 *         the given editor.
 	 */
-	public abstract Match[] findContainedMatches(AbstractTextSearchResult result, IEditorPart editor);
+	public abstract Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor);
 	
 }

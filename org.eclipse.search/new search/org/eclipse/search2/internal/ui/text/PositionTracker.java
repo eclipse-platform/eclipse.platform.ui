@@ -196,7 +196,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 				AbstractTextSearchResult textResult = (AbstractTextSearchResult) result;
 				IFileMatchAdapter adapter = textResult.getFileMatchAdapter();
 				if (adapter != null) {
-					Match[] matches = adapter.findContainedMatches(textResult, file);
+					Match[] matches = adapter.computeContainedMatches(textResult, file);
 					for (int j = 0; j < matches.length; j++) {
 						trackCount[0]++;
 						trackPosition((AbstractTextSearchResult) result, (ITextFileBuffer) buffer, matches[j]);

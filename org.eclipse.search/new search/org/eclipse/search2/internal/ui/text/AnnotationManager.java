@@ -132,7 +132,7 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 		IEditorMatchAdapter matchAdapter= fResult.getEditorMatchAdapter();
 		if (matchAdapter == null)
 			return;
-		Match[] matches= matchAdapter.findContainedMatches(fResult, fEditor);
+		Match[] matches= matchAdapter.computeContainedMatches(fResult, fEditor);
 		if (matches == null)
 			return;
 		addAnnotations(fEditor, matches);

@@ -50,7 +50,7 @@ public class FileSearchResult extends AbstractTextSearchResult implements IEdito
 		return getLabel();
 	}
 
-	public Match[] findContainedMatches(AbstractTextSearchResult result, IFile file) {
+	public Match[] computeContainedMatches(AbstractTextSearchResult result, IFile file) {
 		return getMatches(file);
 	}
 
@@ -69,7 +69,7 @@ public class FileSearchResult extends AbstractTextSearchResult implements IEdito
 		return false;
 	}
 	
-	public Match[] findContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
+	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
 		IEditorInput ei= editor.getEditorInput();
 		if (ei instanceof IFileEditorInput) {
 			FileEditorInput fi= (FileEditorInput) ei;

@@ -34,7 +34,7 @@ public interface IFileMatchAdapter {
 	 *            The file to find matches in.
 	 * @return An array of matches (possibly empty).
 	 */
-	public abstract Match[] findContainedMatches(AbstractTextSearchResult result, IFile file);
+	public abstract Match[] computeContainedMatches(AbstractTextSearchResult result, IFile file);
 	/**
 	 * Returns the file associated with the given element (usually the file the
 	 * element is contained in). If the element is not associated with a file,
