@@ -66,8 +66,8 @@ final class WorkbenchWindowActivityService extends AbstractActivityService {
 		public void perspectiveChanged(IWorkbenchPage workbenchPage, IPerspectiveDescriptor perspectiveDescriptor, String changeId) {
 			update();
 		}
-	};	
-	
+	};
+
 	private ICompoundActivityService compoundActivityService = ActivityServiceFactory.getCompoundActivityService();
 	private boolean started;
 	private IWorkbench workbench;
