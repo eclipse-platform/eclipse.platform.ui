@@ -60,6 +60,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 	
 	public RemoteAntDebugBuildListener(ILaunch launch) {
 		super(launch);
+		fDebug= true;
 	}
 	
 	protected void receiveMessage(String message) {
@@ -105,6 +106,13 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 			try {
 				AntStackFrame frame= (AntStackFrame) fTarget.getThreads()[0].getTopStackFrame();
 				frame.init(message);
+			} catch (DebugException de) {
+				
+			}
+		} else if (message.startsWith(DebugMessageIds.PROPERTIES)){
+			try {
+				AntStackFrame frame= (AntStackFrame) fTarget.getThreads()[0].getTopStackFrame();
+				frame.newProperties(message);
 			} catch (DebugException de) {
 				
 			}

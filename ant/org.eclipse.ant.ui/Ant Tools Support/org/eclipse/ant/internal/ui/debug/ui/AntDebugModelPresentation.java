@@ -12,6 +12,8 @@
 package org.eclipse.ant.internal.ui.debug.ui;
 
 import java.text.MessageFormat;
+
+import org.eclipse.ant.internal.ui.debug.model.AntProperty;
 import org.eclipse.ant.internal.ui.debug.model.AntStackFrame;
 import org.eclipse.ant.internal.ui.debug.model.AntThread;
 import org.eclipse.core.resources.IFile;
@@ -80,6 +82,11 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 				
 				return text.toString();
 			}
+		} else if (element instanceof AntProperty) {
+//		    AntProperty property= (AntProperty) element;
+//		    StringBuffer text= new StringBuffer(property.getName());
+//		    text.append("= ");
+//		    text.append(property.getValue().getValueString());
 		}
 		return null;
 	}

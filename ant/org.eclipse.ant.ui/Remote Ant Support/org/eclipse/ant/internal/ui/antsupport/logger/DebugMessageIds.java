@@ -37,4 +37,7 @@ public class DebugMessageIds extends MessageIds {
 	
 	public final static String CLIENT_REQUEST= "client"; //$NON-NLS-1$
 	public final static String BREAKPOINT= "breakpoint"; //$NON-NLS-1$
+	
+	public final static String PROPERTIES= "prop"; //$NON-NLS-1$
+	public final static String PROPERTY_VALUE= "value"; //$NON-NLS-1$
 }

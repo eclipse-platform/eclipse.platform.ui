@@ -15,74 +15,83 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
 /**
- * A variable in a PDA stack frame
+ * A property in an Ant build
  */
 public class AntProperty extends AntDebugElement implements IVariable {
-	
-	// name & stack frmae
+
 	private String fName;
 	private AntStackFrame fFrame;
+	private IValue fValue;
 	
 	/**
 	 * Constructs a variable contained in the given stack frame
-	 * with the given name.
+	 * with the given name and value.
 	 * 
 	 * @param frame owning stack frame
-	 * @param name variable name
+	 * @param name property name
+	 * @param value property value
 	 */
-	public AntProperty(AntStackFrame frame, String name) {
+	public AntProperty(AntStackFrame frame, String name, String value) {
 		super((AntDebugTarget) frame.getDebugTarget());
 		fFrame = frame;
 		fName = name;
+		fValue= new AntValue((AntDebugTarget)getDebugTarget(), value);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
 	public IValue getValue() throws DebugException {
-		return ((AntDebugTarget)getDebugTarget()).getVariableValue(this);
+		return fValue;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getName()
 	 */
 	public String getName() throws DebugException {
 		return fName;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getReferenceTypeName()
 	 */
 	public String getReferenceTypeName() throws DebugException {
-		// TODO Auto-generated method stub
-		return "Thing";
+		return ""; //$NON-NLS-1$
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
 	 */
 	public boolean hasValueChanged() throws DebugException {
-		// TODO Auto-generated method stub
 		return false;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String)
 	 */
 	public void setValue(String expression) throws DebugException {
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(org.eclipse.debug.core.model.IValue)
 	 */
 	public void setValue(IValue value) throws DebugException {
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#supportsValueModification()
 	 */
 	public boolean supportsValueModification() {
 		return false;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(java.lang.String)
 	 */
 	public boolean verifyValue(String expression) throws DebugException {
 		return false;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(org.eclipse.debug.core.model.IValue)
 	 */
@@ -98,5 +107,4 @@ public class AntProperty extends AntDebugElement implements IVariable {
 	protected AntStackFrame getStackFrame() {
 		return fFrame;
 	}
-
 }

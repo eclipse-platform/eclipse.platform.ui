@@ -28,7 +28,6 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.core.model.IValue;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
@@ -362,24 +361,12 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	}
 	
 	/**
-	 * Returns the current value of the given variable.
-	 * 
-	 * @param variable
-	 * @return variable value
-	 * @throws DebugException if the request fails
-	 */
-	protected IValue getVariableValue(AntProperty variable) throws DebugException {
-
-		return null;
-	}
-	
-	/**
-	 * Sends a request to the Ant Build and waits for an OK.
+	 * Sends a request to the Ant Build
 	 * 
 	 * @param request debug command
 	 * @throws DebugException if the request fails
 	 */
-	private void sendRequest(String request) throws DebugException {
+	protected void sendRequest(String request) throws DebugException {
 		fBuildListener.sendRequest(request);
 	}
 	

@@ -17,6 +17,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
@@ -43,7 +46,9 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	private Task fCurrentTask;
 	private Target fCurrentTarget;
 	
-	private int[] breakpoints= null;
+	private int[] fBreakpoints= null;
+	
+	private Map fProperties= null;
 	
 	/**
 	 * Request port to connect to.
@@ -94,6 +99,8 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 							addBreakpoint(message);
 						} else if (message.startsWith(DebugMessageIds.REMOVE_BREAKPOINT)) {
 							removeBreakpoint(message);
+						}  else if (message.startsWith(DebugMessageIds.PROPERTIES)) {
+							marshallProperties();
 						}
 					}
 				} 
@@ -260,11 +267,11 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	}
 
 	private boolean breakpointAtLineNumber(int lineNumber) {
-		if (breakpoints == null) {
+		if (fBreakpoints == null) {
 			return false;
 		}
-		for (int i = 0; i < breakpoints.length; i++) {
-			int breakpointLineNumber = breakpoints[i];
+		for (int i = 0; i < fBreakpoints.length; i++) {
+			int breakpointLineNumber = fBreakpoints[i];
 			if (lineNumber == breakpointLineNumber) {
 				return true;
 			}
@@ -299,35 +306,74 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		}
 	}
 	
+	protected void marshallProperties() {
+		
+	    StringBuffer propertiesRepresentation= new StringBuffer();
+	    propertiesRepresentation.append(DebugMessageIds.PROPERTIES);
+	    propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+	    if (fCurrentTarget != null) {
+	        Map currentProperties= fCurrentTarget.getProject().getProperties();
+	        
+	        if (fProperties != null && currentProperties.size() == fProperties.size()) {
+	            //no new properties
+	            sendRequestResponse(propertiesRepresentation.toString());
+	            return;
+	        }
+	        
+	        Iterator iter= currentProperties.keySet().iterator();
+	        String propertyName;
+	        String propertyValue;
+	        while (iter.hasNext()) {
+	            propertyName = (String) iter.next();
+	            if (fProperties == null || fProperties.get(propertyName) == null) { //new property
+	                propertiesRepresentation.append(propertyName.length());
+	                propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+	                propertiesRepresentation.append(propertyName);
+	                propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+	                propertyValue= (String) currentProperties.get(propertyName);
+	                propertiesRepresentation.append(propertyValue.length());
+	                propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+	                propertiesRepresentation.append(propertyValue);
+	                propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+	            }
+	        }
+	    }
+	    sendRequestResponse(propertiesRepresentation.toString());
+	}
+	
 	protected void addBreakpoint(String message) {
 		int index= message.indexOf(' ');
 		String lineNumber= message.substring(index + 1);
-		if (breakpoints == null) {
-			breakpoints= new int[]{Integer.parseInt(lineNumber)};
+		if (fBreakpoints == null) {
+			fBreakpoints= new int[]{Integer.parseInt(lineNumber)};
 		} else {
-			int[] temp= new int[breakpoints.length + 1];
-			System.arraycopy(breakpoints, 0, temp, 0, breakpoints.length);
-			temp[breakpoints.length]= Integer.parseInt(lineNumber);
-			breakpoints= temp;
+			int[] temp= new int[fBreakpoints.length + 1];
+			System.arraycopy(fBreakpoints, 0, temp, 0, fBreakpoints.length);
+			temp[fBreakpoints.length]= Integer.parseInt(lineNumber);
+			fBreakpoints= temp;
 		}
 	}
 	
 	protected void removeBreakpoint(String message) {
-		if (breakpoints == null) {
+		if (fBreakpoints == null) {
 			return;
 		} 
 		int index= message.indexOf(' ');
 		String lineNumberString= message.substring(index + 1);
 		int lineNumber= Integer.parseInt(lineNumberString);
 		int i;
-		for (i=0; i < breakpoints.length; i++) {
-			if (breakpoints[i] == lineNumber) {
+		for (i=0; i < fBreakpoints.length; i++) {
+			if (fBreakpoints[i] == lineNumber) {
 				break;
 			}
 		}
-		int[] temp= new int[breakpoints.length - 1];
-		System.arraycopy(breakpoints, 0, temp, 0, i);
-		System.arraycopy(breakpoints, i + 1, temp, i, breakpoints.length - i + 1);
-		breakpoints= temp;
+		if (fBreakpoints.length - 1 == 0) {
+		   fBreakpoints= null;
+		   return;
+		}
+		int[] temp= new int[fBreakpoints.length - 1];
+		System.arraycopy(fBreakpoints, 0, temp, 0, i);
+		System.arraycopy(fBreakpoints, i + 1, temp, i, fBreakpoints.length - 1);
+		fBreakpoints= temp;
 	}
 }

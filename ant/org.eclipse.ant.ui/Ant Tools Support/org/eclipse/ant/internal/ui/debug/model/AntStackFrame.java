@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.debug.model;
 
-import org.eclipse.ant.internal.ui.antsupport.logger.DebugMessageIds;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -30,7 +32,7 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 	private String fFileName;
 	private String fFilePath;
 	private int fId;
-	private IVariable[] fVariables;
+	private List fProperties;
 	
 	/**
 	 * Constructs a stack frame in the given thread with the given id.
@@ -76,11 +78,21 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getVariables()
 	 */
-	public IVariable[] getVariables() {
-		return fVariables;
+	public IVariable[] getVariables() throws DebugException {
+	   List properties= getVariables0();
+	   return (IVariable[])properties.toArray(new IVariable[properties.size()]);
 	}
-	
-	/* (non-Javadoc)
+
+	private synchronized List getVariables0() throws DebugException {
+       sendRequest(DebugMessageIds.PROPERTIES);
+      try {
+           wait();
+      } catch (InterruptedException ie) {
+      }
+      return fProperties;
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#hasVariables()
 	 */
 	public boolean hasVariables() {
@@ -279,5 +291,46 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 	 */
 	protected int getIdentifier() {
 		return fId;
+	}
+
+	protected synchronized void newProperties(String data) {
+	    try {
+	        synchronized (this) {
+	            String[] datum= data.split(DebugMessageIds.MESSAGE_DELIMITER);
+	            if (fProperties == null) {
+	                fProperties= new ArrayList(datum.length);
+	            }
+	            //0 PROPERTIES message
+	            //1 propertyName length
+	            //2 propertyName
+	            //3 propertyValue length
+	            //3 propertyValue
+	            //4 ...
+	            if (datum.length != 1) { //new properties
+	                String propertyName;
+	                String propertyValue;
+	                AntProperty property;
+	                int propertyNameLength;
+	                int propertyValueLength;
+	                for (int i = 1; i < datum.length; i++) {
+	                    propertyNameLength= Integer.parseInt(datum[i]);
+	                    propertyName = datum[++i];
+	                    while (propertyName.length() != propertyNameLength) {
+	                        propertyName+=DebugMessageIds.MESSAGE_DELIMITER + datum[++i];
+	                    }
+	                    propertyValueLength= Integer.parseInt(datum[++i]);
+	                    propertyValue= datum[++i];
+	                    while (propertyValue.length() != propertyValueLength) {
+	                        propertyValue+=DebugMessageIds.MESSAGE_DELIMITER + datum[++i];
+	                    }
+	                    
+	                    property= new AntProperty(this, propertyName, propertyValue);
+	                    fProperties.add(property);
+	                }
+	            }
+	        } 
+	    } finally {
+			notifyAll();
+	    }
 	}
 }
