@@ -139,6 +139,7 @@ public interface IResourceStatus extends IStatus {
 	/** Status code constant (value 277) indicating that the parent
 	 * file in the file system is marked as read-only.
  	 * Severity: error. Category: workspace.
+ 	 * @since 2.1
  	 */
 	public static final int PARENT_READ_ONLY = 277;
 
