@@ -1475,8 +1475,21 @@ public abstract class StructuredViewer extends ContentViewer implements
      * be deleted. 
      */
     void dumpMap(){
-    	Enumeration keys = elementMap.keys();
+    	
     	ILog log = Platform.getPlugin(Platform.PI_RUNTIME).getLog();
+    	if(elementMap == null){
+    		log.log(new Status(
+					IStatus.ERROR,
+					Platform.PI_RUNTIME,
+					IStatus.ERROR,
+					"No element map yet",//$NON-NLS-1$
+					new Throwable()
+					));
+    		return;
+    	}
+    	
+    	Enumeration keys = elementMap.keys();
+    	
     	while(keys.hasMoreElements()){
     		Object key = keys.nextElement();
     		Widget widget = (Widget) elementMap.get(key);
