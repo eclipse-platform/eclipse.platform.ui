@@ -15,6 +15,8 @@ import java.io.File;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.internal.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -32,7 +34,10 @@ public class SourceElementWorkbenchAdapter implements IWorkbenchAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
 	 */
-	public ImageDescriptor getImageDescriptor(Object object) {
+	public ImageDescriptor getImageDescriptor(Object o) {
+		if (o instanceof LocalFileStorage) {
+			return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
+		}
 		return null;
 	}
 	/* (non-Javadoc)
