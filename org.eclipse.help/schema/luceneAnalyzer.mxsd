@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.help">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.help" id="luceneAnalyzer" name="Lucene Analyzer"/>
+   </appInfo>
+   <documentation>
+      This extension oint is used to register text analyzers for use by help when indexng and searching documentation.
+&lt;p&gt;
+Help exploits capabilities of the Lucene search engine, that allows indexing of token streams (streams of words).
+Analyzers create tokens from the character stream.  They examine text content and provide tokens for use with the index.
+The text stream can be tokenized in many unique ways.  A trivial analyzer can tokenize streams at white space,
+a different one can perform filtering of tokens, based on the application needs.
+Since the documentation is mostly human-readable text, it is desired that analyzers used by the help system
+perform language and grammar aware tokenization and normalization of indexed text.
+For some languages, the quality of search increases significantly if stop word removal and stemming is performed
+on the indexed text.
+This extensionpoint allows configuring analyzers for the languages that default help system does not provide language-aware analyzers.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="analyzer" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="analyzer">
+      <complexType>
+         <attribute name="locale" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a string identifying locale for which the supplied analyzer is
+to bue sued.
+If two letters, language is provided, and the analyzer will be
+available to all locales of that language.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of the Java class extending &lt;samp&gt;org.apache.lucene.analysis.Analyzer&lt;/samp&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.apache.lucene.analysis.Analyzer"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         Following is an example of Lucene Analyzer configuration:
+
+&lt;p&gt;
+&lt;pre&gt;
+ &lt;extension id="com.xyx.XYZ" point="org.eclipse.help.luceneAnalyzer"&gt;
+  &lt;analyzer locale="ll_CC" class="com.xyz.ll_CCAnalyzer"/&gt;
+ &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The value of the &lt;samp&gt;locale&lt;/samp&gt; attribute must represent either a five- or two-charcter locale string.
+If the analyzer is configured for a language by specifying two-letter language designation, the analyzer is
+going to be used for all locales of this language.  If the analyzer is configured that matchs a five-character
+locale, it is going to be used instead.
+&lt;p&gt;
+The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must represent a class that extends &lt;samp&gt;org.apache.lucene.analysis.Analyzer&lt;/samp&gt;.
+It is recommended that this analyzer performs lowercase filtering for languages where it is possible to increase
+number of search hits by making search case-sensitive.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         Help system comes with English and German analyzers, that are configured to be used for en and de locales respectively.
+These analyzers perform stop word filtering, lowercase filtering, and stemming.  For languages that no analyzers are 
+configured, help uses a simple analyzer that performs lowercase filtering and English stop word filtering.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

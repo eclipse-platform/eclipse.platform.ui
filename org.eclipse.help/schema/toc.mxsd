@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.help">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.help" id="toc" name="Table of Contents (TOC)"/>
+   </appInfo>
+   <documentation>
+      For registering an online help contribution for an individual plug-in.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="toc" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="toc">
+      <complexType>
+         <attribute name="file" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of the TOC file which contains the table of contents or section for this plug-in's online help.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="primary" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  specifies whether the TOC file is a primary table of contents and is meant to be the master table of contents,
+or not primary and intended to be integrated into another table of contents.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="extradir" type="string">
+            <annotation>
+               <documentation>
+                  specifies relative directory name of containing additional documents that are associated with the table of contents.
+All help documents in this directory, and all subdirectories, will be indexed, and accessible through
+the documentation search, even if &lt;samp&gt;topic&lt;/samp&gt; elements in the TOC file do not refer to these documents.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of using the &lt;samp&gt;toc&lt;/samp&gt; extension point.
+
+&lt;p&gt;
+&lt;pre&gt;
+	&lt;extension point="org.eclipse.help.toc"&gt;
+		&lt;toc file="maindocs.html" primary="true"/&gt;
+		&lt;toc file="task.xml"/&gt;
+		&lt;toc file="sample.xml" extradir="samples"/&gt;
+	&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         No code is required to use this extension point.  All that is needed is to supply the appropriate manifest 
+files mentioned in the plugin.xml file.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The default implementation of the help system UI supplied with the Eclipse platform fully supports the &lt;samp&gt;toc&lt;/samp&gt; extension point.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>
