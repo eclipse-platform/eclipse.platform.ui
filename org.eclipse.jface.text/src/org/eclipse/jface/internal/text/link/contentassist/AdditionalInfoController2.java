@@ -66,7 +66,7 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 	private final Object fMutex= new Object();
 	/** Thread access lock. */
 	private final Object fThreadAccess= new Object();
-	/** Object to synchronize initial display of additonal info */
+	/** Object to synchronize initial display of additional info */
 	private Object fStartSignal;
 	/** The table selection listener */
 	private SelectionListener fSelectionListener= new TableSelectionListener();
