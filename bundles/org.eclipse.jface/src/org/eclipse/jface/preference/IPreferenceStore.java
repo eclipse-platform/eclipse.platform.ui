@@ -374,7 +374,7 @@ public void setDefault(String name, long value);
  * </p>
  *
  * @param name the name of the preference
- * @param value the new default value for the preference
+ * @param defaultObject the new default value for the preference
  */
 public void setDefault(String name, String defaultObject);
 /**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,14 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * A field editor for a color type preference.
@@ -55,6 +58,9 @@ protected void adjustForNumColumns(int numColumns) {
  * <p>
  * This is an internal method and should not be called by clients.
  * </p>
+ * @param window the window to create a GC on for calculation.
+ * @return Point The image size
+ * 
  */
 protected Point computeImageSize(Control window) {
 	// Make the image height as high as a corresponding character. This
@@ -108,6 +114,10 @@ protected void doStore() {
 	PreferenceConverter.setValue(getPreferenceStore(), getPreferenceName(), colorSelector.getColorValue());
 }
 
+/**
+ * Get the color selector used by the receiver.
+ * @return ColorSelector/
+ */
 public ColorSelector getColorSelector() {
 	return colorSelector;
 }
@@ -115,6 +125,7 @@ public ColorSelector getColorSelector() {
 /**
  * Returns the change button for this field editor.
  *
+ * @param parent. The control to create the button in if required.
  * @return the change button
  */
 protected Button getChangeControl(Composite parent) {
@@ -139,7 +150,8 @@ public int getNumberOfControls() {
 }
 
 /*
- * @see FieldEditor.setEnabled
+ *  (non-Javadoc)
+ * @see org.eclipse.jface.preference.FieldEditor#setEnabled(boolean, org.eclipse.swt.widgets.Composite)
  */
 public void setEnabled(boolean enabled, Composite parent){
 	super.setEnabled(enabled,parent);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,9 +138,8 @@ protected void adjustGridLayout() {
 		}
 	}
 }
-/* (non-Javadoc)
- * Method declared on DialogPage.
- * Forwards the call to the field editors managed by this page.
+/**
+ * Applys the font to the field editors managed by this page.
  */
 protected void applyFont() {
 	if (fields != null) {

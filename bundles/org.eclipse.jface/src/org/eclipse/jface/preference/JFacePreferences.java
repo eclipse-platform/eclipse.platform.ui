@@ -18,13 +18,19 @@ package org.eclipse.jface.preference;
  */
 public final class JFacePreferences {
 	
-	//Identifier for the Error Colour
+	/**
+	 * Identifier for the Error Color
+	 */
 	public static final String ERROR_COLOR = "ERROR_COLOR"; //$NON-NLS-1$
-	//Identifier for the Hyperlink Colour
+	/**
+	 * Identifier for the Hyperlink Color
+	 */
 	public static final String HYPERLINK_COLOR = "HYPERLINK_COLOR"; //$NON-NLS-1$
-	//Identifier for the Active Hyperlink Colour
+	/**
+	 * Identifier for the Active Hyperlink Colour
+	 */
 	public static final String ACTIVE_HYPERLINK_COLOR = "ACTIVE_HYPERLINK_COLOR"; //$NON-NLS-1$
-	//Do we use the System theme?
+
 		
 	private static IPreferenceStore preferenceStore;
 	/**

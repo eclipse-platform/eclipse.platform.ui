@@ -402,13 +402,13 @@ public IPreferenceStore getPreferenceStore() {
  * Initialize the field editor with the given preference name and label.
  * 
  * @param name the name of the preference this field editor works on
- * @param labelText the label text of the field editor
+ * @param text the label text of the field editor
  */
-protected void init(String name, String labelText) {
+protected void init(String name, String text) {
 	Assert.isNotNull(name);
-	Assert.isNotNull(labelText);
+	Assert.isNotNull(text);
 	preferenceName = name;
-	this.labelText = labelText;
+	this.labelText = text;
 }
 /**
  * Returns whether this field editor contains a valid value.
@@ -535,11 +535,11 @@ public void setPreferenceStore(IPreferenceStore store) {
 /**
  * Sets whether this field editor is presenting the default value.
  *
- * @return <code>true</code> if the default value is being presented,
+ * @param booleanValue <code>true</code> if the default value is being presented,
  *  and <code>false</code> otherwise
  */
-protected void setPresentsDefaultValue(boolean b) {
-	isDefaultPresented = b;
+protected void setPresentsDefaultValue(boolean booleanValue) {
+	isDefaultPresented = booleanValue;
 }
 /**
  * Sets or removes the property change listener for this field editor.
@@ -590,7 +590,7 @@ public void store() {
 /**
  * Set the GridData on button to be one that is spaced for the
  * current font.
- * @param Button
+ * @param button the button the data is being set on.
  */
 
 protected void setButtonLayoutData(Button button) {
@@ -612,7 +612,7 @@ protected void setButtonLayoutData(Button button) {
 /**
  * Set whether or not the controls in the field editor
  * are enabled.
- * @param boolean. The enabled state.
+ * @param enabled. The enabled state.
  * @param parent. The parent of the controls in the group.
  *  Used to create the controls if required.
  */

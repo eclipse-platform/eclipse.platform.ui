@@ -117,6 +117,9 @@ protected boolean checkState() {
 }
 /**
  * Helper to open the file chooser dialog.
+ * @param startingDirectory the directory to open the dialog on.
+ * @return File The File the user selected or <code>null</code> if they
+ * do not.
  */
 private File getFile(File startingDirectory) {
 
@@ -137,7 +140,7 @@ private File getFile(File startingDirectory) {
 /**
  * Sets this file field editor's file extension filter.
  *
- * @param extension a list of file extension, or <code>null</code> 
+ * @param extensions a list of file extension, or <code>null</code> 
  * to set the filter to the system's default value
  */
 public void setFileExtensions(String[] extensions) {

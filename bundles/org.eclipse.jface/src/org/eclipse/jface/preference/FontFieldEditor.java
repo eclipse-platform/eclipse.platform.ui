@@ -66,6 +66,12 @@ public class FontFieldEditor extends FieldEditor {
 		private Text text;
 		private String string;
 		private Font font;
+		
+		/**
+		 * Constructor for the previewer.
+		 * @param s
+		 * @param parent
+		 */
 		public DefaultPreviewer(String s, Composite parent) {
 			string = s;
 			text = new Text(parent, SWT.READ_ONLY | SWT.BORDER);
@@ -79,16 +85,27 @@ public class FontFieldEditor extends FieldEditor {
 				text.setText(string);
 		}
 
+		/**
+		 * @return the control the previewer is using
+		 */
 		public Control getControl() {
 			return text;
 		}
 
+		/**
+		 * Set the font to display with
+		 * @param fontData
+		 */
 		public void setFont(FontData[] fontData) {
 			if (font != null)
 				font.dispose();
 			font = new Font(text.getDisplay(), fontData);
 			text.setFont(font);
 		}
+		
+		/**
+		 * @return the preferred size of the previewer.
+		 */
 		public int getPreferredExtent() {
 			return 40;
 		}
@@ -221,6 +238,7 @@ public class FontFieldEditor extends FieldEditor {
 	/**
 	 * Returns the change button for this field editor.
 	 *
+	 * @param parent. The Composite to create the button in if required.
 	 * @return the change button
 	 */
 	protected Button getChangeControl(Composite parent) {
@@ -294,7 +312,7 @@ public class FontFieldEditor extends FieldEditor {
 	/**
 	 * Returns the value control for this field editor. The value control
 	 * displays the currently selected font name.
-	 *
+	 * @param parent The Composite to create the viewer in if required
 	 * @return the value control
 	 */
 	protected Label getValueControl(Composite parent) {
@@ -325,6 +343,7 @@ public class FontFieldEditor extends FieldEditor {
 	/**
 	 * Updates the change font button and the previewer to reflect the
 	 * newly selected font.
+	 * @param font The FontData[] to update with.
 	 */
 	private void updateFont(FontData font[]) {
 		FontData[] bestFont =
@@ -363,6 +382,7 @@ public class FontFieldEditor extends FieldEditor {
 
 	/**
 	 * Get the system default font data.
+	 * @return FontData[]
 	 */
 	private FontData[] getDefaultFontData() {
 		return valueControl.getDisplay().getSystemFont().getFontData();

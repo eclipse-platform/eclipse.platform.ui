@@ -64,9 +64,13 @@ public class PreferenceConverter {
 	private static final String ENTRY_SEPARATOR = ";"; //$NON-NLS-1$
 
 	/**
-	 * The default-default value for <code>FontData</code> preferences.
+	 * The default-default value for <code>FontData[]</code> preferences.
 	 */
 	public static final FontData[] FONTDATA_ARRAY_DEFAULT_DEFAULT;
+	
+	/**
+	 * The default-default value for <code>FontData</code> preferences.
+	 */
 	public static final FontData FONTDATA_DEFAULT_DEFAULT;
 	static {
 		Shell shell = new Shell();
@@ -89,6 +93,8 @@ public class PreferenceConverter {
 	}
 	/**
 	 * Helper method to construct a color from the given string.
+	 * @param value the indentifier for the color
+	 * @return RGB
 	 */
 	private static RGB basicGetColor(String value) {
 
@@ -104,6 +110,8 @@ public class PreferenceConverter {
 	 * Helper method to construct a <code>FontData</code> from the given string.
 	 * String is in the form FontData;FontData; in order that
 	 * multiple FontDatas can be defined.
+	 * @param value the identifier for the font
+	 * @return FontData[]
 	 * 
 	 * @since 3.0
 	 */
@@ -141,6 +149,8 @@ public class PreferenceConverter {
 	}
 	/**
 	 * Helper method to construct a point from the given string.
+	 * @param value
+	 * @return Point
 	 */
 	private static Point basicGetPoint(String value) {
 		Point dp = new Point(POINT_DEFAULT_DEFAULT.x, POINT_DEFAULT_DEFAULT.y);
@@ -149,7 +159,9 @@ public class PreferenceConverter {
 		return StringConverter.asPoint(value, dp);
 	}
 	/**
-	 * Helper method to construct a rectangle from the given string.
+	 *  Helper method to construct a rectangle from the given string.
+	 * @param value
+	 * @return Rectangle
 	 */
 	private static Rectangle basicGetRectangle(String value) {
 		// We can't just return RECTANGLE_DEFAULT_DEFAULT because

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003,2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,27 +56,27 @@ public class PreferenceContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
-	/**
-	 * @param parentElement must be an instance of <code>IPreferenceNode</code>.
+	/*
+	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
-	public Object[] getChildren(Object parentElement) {
+	public Object[] getChildren(Object parentElement) {//must be an instance of <code>IPreferenceNode</code>.
 		return ((IPreferenceNode) parentElement).getSubNodes();
 	}
 
-	/** 
-	 * @param inputElement must be an instance of <code>PreferenceManager</code>.
+	/*
+	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
-	public Object[] getElements(Object inputElement) {
+	public Object[] getElements(Object inputElement) {// must be an instance of <code>PreferenceManager</code>.
 		return getChildren(((PreferenceManager) inputElement).getRoot());
 	}
 
-	/**
-	 * @param element must be an instance of <code>IPreferenceNode</code>.
+	/*
+	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
-	public Object getParent(Object element) {
+	public Object getParent(Object element) {//must be an instance of <code>IPreferenceNode</code>.
 		IPreferenceNode targetNode = (IPreferenceNode) element;
 		IPreferenceNode root = manager.getRoot();
 		return findParent(root, targetNode);

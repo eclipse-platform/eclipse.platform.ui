@@ -282,7 +282,6 @@ public String getStringValue() {
 /**
  * Returns this field editor's text control.
  *
- * @param parent the parent
  * @return the text control, or <code>null</code> if no
  * text field is created yet
  */

@@ -139,6 +139,7 @@ protected void adjustForNumColumns(int numColumns) {
 /**
  * Checks whether given <code>String[][]</code> is of "type" 
  * <code>String[][2]</code>.
+ * @param table
  *
  * @return <code>true</code> if it is ok, and <code>false</code> otherwise
  */
@@ -205,7 +206,7 @@ public int getNumberOfControls() {
 }
 /**
  * Returns this field editor's radio group control.
- *
+ * @param parent The parent to create the radioBox in
  * @return the radio group control
  */
 public Composite getRadioBoxControl(Composite parent) {

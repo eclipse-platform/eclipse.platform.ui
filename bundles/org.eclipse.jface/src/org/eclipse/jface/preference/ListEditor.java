@@ -111,13 +111,13 @@ protected void adjustForNumColumns(int numColumns) {
 /**
  * Creates the Add, Remove, Up, and Down button in the given button box.
  *
- * @param buttonBox the box for the buttons
+ * @param box the box for the buttons
  */
-private void createButtons(Composite buttonBox) {
-	addButton = createPushButton(buttonBox, "ListEditor.add");//$NON-NLS-1$
-	removeButton = createPushButton(buttonBox, "ListEditor.remove");//$NON-NLS-1$
-	upButton = createPushButton(buttonBox, "ListEditor.up");//$NON-NLS-1$
-	downButton = createPushButton(buttonBox, "ListEditor.down");//$NON-NLS-1$
+private void createButtons(Composite box) {
+	addButton = createPushButton(box, "ListEditor.add");//$NON-NLS-1$
+	removeButton = createPushButton(box, "ListEditor.remove");//$NON-NLS-1$
+	upButton = createPushButton(box, "ListEditor.up");//$NON-NLS-1$
+	downButton = createPushButton(box, "ListEditor.down");//$NON-NLS-1$
 }
 /**
  * Combines the given list of items into a single string.
@@ -136,6 +136,7 @@ protected abstract String createList(String[] items);
  * 
  * @param parent the parent control
  * @param key the resource name used to supply the button's label text
+ * @return Button
  */
 private Button createPushButton(Composite parent, String key) {
 	Button button = new Button(parent, SWT.PUSH);

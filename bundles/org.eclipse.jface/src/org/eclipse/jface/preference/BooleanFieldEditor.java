@@ -74,7 +74,7 @@ public BooleanFieldEditor(String name, String labelText, int style, Composite pa
  * Creates a boolean field editor in the default style.
  * 
  * @param name the name of the preference this field editor works on
- * @param labelText the label text of the field editor
+ * @param label the label text of the field editor
  * @param parent the parent of the field editor's control
  */
 public BooleanFieldEditor(String name, String label, Composite parent) {
@@ -147,6 +147,7 @@ public boolean getBooleanValue() {
 }
 /**
  * Returns the change button for this field editor.
+ * @param parent The Composite to create the receiver in.
  *
  * @return the change button
  */

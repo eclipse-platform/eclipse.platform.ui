@@ -98,8 +98,10 @@ public abstract class StringButtonFieldEditor extends StringFieldEditor {
 				changeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		changeButton.setLayoutData(gd);
 	}
-	/* (non-Javadoc)
-	 * Method declared on FieldEditor.
+	/**
+	 * Get the change control. Create it in parent if required.
+	 * @param parent
+	 * @return Button
 	 */
 	protected Button getChangeControl(Composite parent) {
 		if (changeButton == null) {
