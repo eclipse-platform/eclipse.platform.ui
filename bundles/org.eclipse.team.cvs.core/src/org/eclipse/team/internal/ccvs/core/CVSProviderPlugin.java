@@ -23,8 +23,8 @@ import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
-import org.eclipse.team.internal.ccvs.core.util.OrphanedFolderListener;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
+import org.eclipse.team.internal.ccvs.core.util.ResourceDeltaSyncHandler;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 public class CVSProviderPlugin extends Plugin {
@@ -156,7 +156,7 @@ public class CVSProviderPlugin extends Plugin {
 		EclipseSynchronizer.startup();
 		CVSProvider.startup();
 		ProjectDescriptionManager.initializeChangeListener();
-		new OrphanedFolderListener().register();
+		ResourceDeltaSyncHandler.startup();
 	}
 	
 	/**
@@ -166,6 +166,7 @@ public class CVSProviderPlugin extends Plugin {
 		super.shutdown();
 		CVSProvider.shutdown();
 		EclipseSynchronizer.shutdown();
+		ResourceDeltaSyncHandler.shutdown();
 	}
 	
 		
