@@ -19,12 +19,12 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IConnectionMethod;
 import org.eclipse.team.ccvs.core.IUserAuthenticator;
 import org.eclipse.team.ccvs.core.IUserInfo;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -178,9 +178,10 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	/*
 	 * @see ICVSRepositoryLocation#getRemoteFolder(IPath, String)
 	 */
-	public IRemoteResource[] members(String tag, IProgressMonitor progress) throws CVSException {		
+	public ICVSRemoteResource[] members(String tag, IProgressMonitor progress) throws CVSException {		
 		try {
-			return new RemoteFolder(this, Path.EMPTY, tag).members(progress);
+			RemoteFolder root = new RemoteFolder(this, Path.EMPTY, tag);
+			return (ICVSRemoteResource[])root.members(progress);
 		} catch(TeamException e) {
 			throw new CVSException(e.getStatus());
 		}

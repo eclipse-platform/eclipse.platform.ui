@@ -25,7 +25,7 @@ public class RemoteContentProvider extends WorkbenchContentProvider {
 		// the + box will always appear, but then disappear
 		// if not needed after you first click on it.
 		if (element instanceof ICVSRemoteResource) {
-			return ((ICVSRemoteResource)element).getType() != ICVSRemoteResource.FILE;
+			return ((ICVSRemoteResource)element).isContainer();
 		}
 		return true;
 	}

@@ -19,7 +19,7 @@ public class RemoteFolderElement extends RemoteResourceElement {
 	public Object[] getChildren(Object o) {
 		if (!(o instanceof ICVSRemoteFolder)) return null;
 		try {
-			return ((ICVSRemoteFolder)o).getMembers(new NullProgressMonitor());
+			return ((ICVSRemoteFolder)o).members(new NullProgressMonitor());
 		} catch (TeamException e) {
 			return null;
 		}

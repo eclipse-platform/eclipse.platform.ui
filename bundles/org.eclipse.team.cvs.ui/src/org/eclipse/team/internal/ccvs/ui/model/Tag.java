@@ -51,8 +51,7 @@ public class Tag extends CVSModelElement implements IAdaptable {
 		if (!(o instanceof Tag)) return null;
 		// Return the remote elements for the tag
 		try {
-			ICVSRemoteFolder folder = root.getRemoteFolder(Path.EMPTY, tag);
-			return folder.getMembers(new NullProgressMonitor());
+			return root.members(tag, new NullProgressMonitor());
 		} catch (TeamException e) {
 			return null;
 		}

@@ -51,7 +51,7 @@ public class ProjectVersion extends CVSModelElement implements IAdaptable {
 	 */
 	public Object[] getChildren(Object o) {
 		try {
-			return resource.getMembers(new NullProgressMonitor());
+			return resource.members(new NullProgressMonitor());
 		} catch (TeamException e) {
 			CVSUIPlugin.log(e.getStatus());
 			return null;

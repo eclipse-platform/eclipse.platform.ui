@@ -48,7 +48,9 @@ public class RemoteProject extends CVSModelElement implements IAdaptable {
 		Tag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownVersionTags(resource.getRepository());
 		ProjectVersion[] result = new ProjectVersion[tags.length];
 		for (int i = 0; i < result.length; i++) {
-			result[i] = new ProjectVersion(resource.forTag(tags[i].getTag()), tags[i].getTag(), this);
+			String tag = tags[i].getTag();
+			resource.setTag(tag);
+			result[i] = new ProjectVersion(resource, tag, this);
 		}
 		return result;
 	}
