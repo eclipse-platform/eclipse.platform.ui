@@ -449,15 +449,10 @@
 
 <extension point = "org.eclipse.debug.ui.launchConfigurationTabs">
 	<launchConfigurationTab
-		id="org.eclipse.debug.ui.launchConfigurationTab.team"
-		class="org.eclipse.debug.internal.ui.launchConfigurations.TeamTab"
-		name="Team">
+		id="org.eclipse.debug.ui.launchConfigurationTab.common"
+		class="org.eclipse.debug.internal.ui.launchConfigurations.CommonTab"
+		name="Common">
 	</launchConfigurationTab>
-	<launchConfigurationTab
-		id="org.eclipse.debug.ui.launchConfigurationTab.perspective"
-		class="org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveTab"
-		name="Perspective">
-	</launchConfigurationTab>	
 </extension>
 
 </plugin>

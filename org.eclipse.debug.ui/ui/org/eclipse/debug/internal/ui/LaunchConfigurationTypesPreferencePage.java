@@ -268,7 +268,7 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 		setDefaultButton(new Button(topComp, SWT.PUSH));
 		getDefaultButton().setText("Set as default");
 		getDefaultButton().addSelectionListener(new SelectionAdapter() {
-			public void widgetSelection(SelectionEvent evt) {
+			public void widgetSelected(SelectionEvent evt) {
 				handleDefaultButtonSelected();
 			}
 		});

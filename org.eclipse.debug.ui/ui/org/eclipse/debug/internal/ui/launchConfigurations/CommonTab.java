@@ -9,9 +9,11 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.swt.SWT;
@@ -22,12 +24,16 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
 /**
@@ -35,7 +41,7 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
  * types.  It collects information that governs where the configuration is stored,
  * and whether or not it is shared via standard VCM mechanisms.
  */
-public class TeamTab implements ILaunchConfigurationTab {
+public class CommonTab implements ILaunchConfigurationTab {
 
 	// Flag that when true, prevents the owning dialog's status area from getting updated.
 	// Used when multiple config attributes are getting updated at once.
@@ -50,6 +56,31 @@ public class TeamTab implements ILaunchConfigurationTab {
 	private Label fSharedLocationLabel;
 	private Text fSharedLocationText;
 	private Button fSharedLocationButton;
+	
+	/**
+	 * The combo box specifying the run perspective
+	 */
+	private Combo fRunPerspectiveCombo;
+	
+	/**
+	 * The combo box specifying the debug perspective
+	 */
+	private Combo fDebugPerspectiveCombo;
+	
+	/**
+	 * The check box specifying whether to use the run perspective
+	 */
+	private Button fRunPerspectiveButton;
+	
+	/**
+	 * The check box specifying whether to use the debug perspective
+	 */
+	private Button fDebugPerspectiveButton;	
+	
+	/**
+	 * The label that acts as header for the 'switch to perspective' widgets
+	 */
+	private Label fSwitchToLabel;
 	
 	// The launch configuration dialog that owns this tab
 	private ILaunchConfigurationDialog fLaunchConfigurationDialog;
@@ -142,6 +173,65 @@ public class TeamTab implements ILaunchConfigurationTab {
 		getLocalRadioButton().setSelection(true);
 		setSharedEnabled(false);
 
+		createVerticalSpacer(comp);
+		createVerticalSpacer(comp);
+		
+		setSwitchToLabel(new Label(comp, SWT.HORIZONTAL | SWT.LEFT));
+		getSwitchToLabel().setText("Switch to/Open perspective when launched:");
+		gd = new GridData();
+		gd.horizontalAlignment = GridData.BEGINNING;
+		gd.horizontalSpan = 3;
+		getSwitchToLabel().setLayoutData(gd);
+		
+		Composite perspComp = new Composite(comp, SWT.NONE);
+		GridLayout perspLayout = new GridLayout();
+		perspLayout.numColumns = 2;
+		perspComp.setLayout(perspLayout);
+		
+		setRunPerspectiveButton(new Button(perspComp, SWT.CHECK));
+		getRunPerspectiveButton().setText("Run Mode:");
+		getRunPerspectiveButton().addSelectionListener(
+			new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					updateConfigFromRunPerspective();
+				}
+			}
+		);
+				
+		setRunPerspectiveCombo(new Combo(perspComp, SWT.DROP_DOWN | SWT.READ_ONLY));
+		gd = new GridData(GridData.GRAB_HORIZONTAL);
+		getRunPerspectiveCombo().setLayoutData(gd);
+		getRunPerspectiveCombo().addSelectionListener(
+			new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					updateConfigFromRunPerspective();
+				}
+			}
+		);
+		fillWithPerspectives(getRunPerspectiveCombo());
+		
+		setDebugPerspectiveButton(new Button(perspComp, SWT.CHECK));
+		getDebugPerspectiveButton().setText("Debug Mode:");
+		getDebugPerspectiveButton().addSelectionListener(
+			new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					updateConfigFromDebugPerspective();
+				}
+			}
+		);
+		
+		setDebugPerspectiveCombo(new Combo(perspComp, SWT.DROP_DOWN |SWT.READ_ONLY));
+		gd = new GridData(GridData.GRAB_HORIZONTAL);
+		getDebugPerspectiveCombo().setLayoutData(gd);
+		getDebugPerspectiveCombo().addSelectionListener(
+			new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					updateConfigFromDebugPerspective();
+				}
+			}
+		);		
+		fillWithPerspectives(getDebugPerspectiveCombo());				
+				
 		return comp;
 	}
 
@@ -208,6 +298,94 @@ public class TeamTab implements ILaunchConfigurationTab {
  		return fSharedRadioButton;
  	} 	
  	
+	/**
+	 * Returns the perspective combo assoicated with the
+	 * debug perspective button.
+	 * 
+	 * @return a combo box
+	 */
+	protected Combo getDebugPerspectiveCombo() {
+		return fDebugPerspectiveCombo;
+	}
+
+	/**
+	 * Sets the perspective combo assoicated with the
+	 * debug perspective button.
+	 * 
+	 * @param combo a combo box
+	 */
+	private void setDebugPerspectiveCombo(Combo combo) {
+		fDebugPerspectiveCombo = combo;
+	}
+
+	/**
+	 * Returns the check box indicating whether the perspective should
+	 * be changed when the configuration is launched in debug mode.
+	 * 
+	 * @return a check box button
+	 */
+	protected Button getDebugPerspectiveButton() {
+		return fDebugPerspectiveButton;
+	}
+
+	/**
+	 * Sets the check box indicating whether the perspective should
+	 * be changed when the configuration is launched in debug mode.
+	 * 
+	 * @param button a check box button
+	 */
+	private void setDebugPerspectiveButton(Button button) {
+		fDebugPerspectiveButton = button;
+	}
+
+	/**
+	 * Returns the perspective combo assoicated with the
+	 * run perspective button.
+	 * 
+	 * @return a combo box
+	 */
+	protected Combo getRunPerspectiveCombo() {
+		return fRunPerspectiveCombo;
+	}
+
+	/**
+	 * Sets the perspective combo assoicated with the
+	 * run perspective button.
+	 * 
+	 * @param combo a combo box
+	 */
+	private void setRunPerspectiveCombo(Combo combo) {
+		fRunPerspectiveCombo = combo;
+	}
+
+	/**
+	 * Returns the check box indicating whether the perspective should
+	 * be changed when the configuration is launched in run mode.
+	 * 
+	 * @return a check box button
+	 */
+	protected Button getRunPerspectiveButton() {
+		return fRunPerspectiveButton;
+	}
+
+	/**
+	 * Sets the check box indicating whether the perspective should
+	 * be changed when the configuration is launched in run mode.
+	 * 
+	 * @param button a check box button
+	 */
+	private void setRunPerspectiveButton(Button button) {
+		fRunPerspectiveButton = button;
+	}
+
+	private void setSwitchToLabel(Label switchToLabel) {
+		fSwitchToLabel = switchToLabel;
+	}
+
+	private Label getSwitchToLabel() {
+		return fSwitchToLabel;
+	}
+
 	protected void handleSharedRadioButtonSelected() {
 		setSharedEnabled(isShared());
 		updateConfigFromLocalShared();
@@ -248,6 +426,42 @@ public class TeamTab implements ILaunchConfigurationTab {
 	}
 	
 	/**
+	 * Returns the perspective with the given label, or
+	 * <code>null</code> if none is found.
+	 * 
+	 * @param label perspective label
+	 * @return perspective descriptor
+	 */
+	protected IPerspectiveDescriptor getPerspectiveWithLabel(String label) {		
+		return PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithLabel(label);
+	}
+	
+	/**
+	 * Returns the perspective with the given id, or
+	 * <code>null</code> if none is found.
+	 * 
+	 * @param id perspective identifier
+	 * @return perspective descriptor
+	 */
+	protected IPerspectiveDescriptor getPerspectiveWithId(String id) {		
+		return PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(id);
+	}	
+
+	/**
+	 * Fills the given combo box with the labels of all existing
+	 * perspectives.
+	 * 
+	 * @param combo combo box
+	 */
+	protected void fillWithPerspectives(Combo combo) {
+		IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
+		IPerspectiveDescriptor[] persps = reg.getPerspectives();
+		for (int i = 0; i < persps.length; i++) {
+			combo.add(persps[i].getLabel());
+		}
+	}
+	
+	/**
 	 * @see ILaunchConfigurationTab#setLaunchConfiguration(ILaunchConfigurationWorkingCopy)
 	 */
 	public void setLaunchConfiguration(ILaunchConfigurationWorkingCopy launchConfiguration) {
@@ -269,6 +483,8 @@ public class TeamTab implements ILaunchConfigurationTab {
 	protected void updateWidgetsFromConfig(ILaunchConfiguration config) {
 		updateLocalSharedFromConfig(config);
 		updateSharedLocationFromConfig(config);
+		updateRunPerspectiveFromConfig(config);
+		updateDebugPerspectiveFromConfig(config);
 	}
 	
 	protected void updateLocalSharedFromConfig(ILaunchConfiguration config) {
@@ -287,6 +503,52 @@ public class TeamTab implements ILaunchConfigurationTab {
 		}
 	}
 	
+	protected void updateRunPerspectiveFromConfig(ILaunchConfiguration config) {
+		String runPerspID = null;
+		try {
+			runPerspID = config.getAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, null);
+		} catch (CoreException ce) {
+		}
+		updateButtonAndCombo(getRunPerspectiveButton(), getRunPerspectiveCombo(), runPerspID);
+	}
+	
+	protected void updateDebugPerspectiveFromConfig(ILaunchConfiguration config) {
+		String debugPerspID = null;
+		try {
+			debugPerspID = config.getAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, null);
+		} catch (CoreException ce) {
+		}
+		updateButtonAndCombo(getDebugPerspectiveButton(), getDebugPerspectiveCombo(), debugPerspID);
+	}
+	
+	/**
+	 * Based on the given perspective identifier, update the settings
+	 * of the button and associated combo box. The check box is selected
+	 * when there is a valid perspective, and the combo box is set to
+	 * display the label of the associated perspective. The check box is
+	 * deselected, and the combo box is set to the default value (debug
+	 * perspective) when the identfier is <code>null</code>.
+	 * 
+	 * @param button check box button
+	 * @param combo combo box with perspective labels
+	 * @param id perspective identifier or <code>null</code>
+	 */
+	protected void updateButtonAndCombo(Button button, Combo combo, String id) {
+		if (id == null) {
+			button.setSelection(false);
+			combo.setText(getPerspectiveWithId(IDebugUIConstants.ID_DEBUG_PERSPECTIVE).getLabel());
+		} else {
+			button.setSelection(true);
+			IPerspectiveDescriptor pd = getPerspectiveWithId(id);
+			if (pd == null) {
+				// perpective does not exist - reset
+				updateButtonAndCombo(button, combo, null);
+			} else {
+				combo.setText(pd.getLabel());
+			}
+		}
+	}
+
 	protected void updateConfigFromLocalShared() {
 		if (getWorkingCopy() != null) {
 			if (isShared()) {
@@ -295,6 +557,41 @@ public class TeamTab implements ILaunchConfigurationTab {
 			} else {
 				getWorkingCopy().setContainer(null);
 			}
+			refreshStatus();
+		}
+	}
+	
+	/**
+	 * Update the run perspective attribute based on current
+	 * UI settings.
+	 */
+	protected void updateConfigFromRunPerspective() {
+		if (getRunPerspectiveButton().getSelection()) {
+			getWorkingCopy().setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE,
+				getPerspectiveWithLabel(getRunPerspectiveCombo().getText()).getId());
+		} else {
+			getWorkingCopy().setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, null);
+		}	
+		refreshStatus();	
+	}
+	
+	/**
+	 * Update the debug perspective attribute based on current
+	 * UI settings.
+	 */
+	protected void updateConfigFromDebugPerspective() {
+		if (getDebugPerspectiveButton().getSelection()) {
+			getWorkingCopy().setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE,
+				getPerspectiveWithLabel(getDebugPerspectiveCombo().getText()).getId());
+		} else {
+			getWorkingCopy().setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, null);
+		}		
+		refreshStatus();	
+	}	
+
+	protected void refreshStatus() {
+		if (!isBatchUpdate()) {
+			getLaunchDialog().refreshStatus();
 		}
 	}
 	
