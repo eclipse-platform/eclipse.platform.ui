@@ -492,6 +492,8 @@ protected abstract void internalRefresh(Object element);
  * @param updateLabels <code>true</code> to update labels for existing elements,
  * <code>false</code> to only update labels as needed, assuming that labels
  * for existing elements are unchanged.
+ * 
+ * @since 2.0
  */
 protected void internalRefresh(Object element, boolean updateLabels) {
 	internalRefresh(element);
@@ -604,6 +606,8 @@ public void refresh() {
  * @param updateLabels <code>true</code> to update labels for existing elements,
  * <code>false</code> to only update labels as needed, assuming that labels
  * for existing elements are unchanged.
+ * 
+ * @since 2.0
  */
 public void refresh(boolean updateLabels) {
 	refresh(getRoot(), updateLabels);
@@ -631,6 +635,8 @@ public void refresh(final Object element) {
  * @param updateLabels <code>true</code> to update labels for existing elements,
  * <code>false</code> to only update labels as needed, assuming that labels
  * for existing elements are unchanged.
+ * 
+ * @since 2.0
  */
 public void refresh(final Object element, final boolean updateLabels) {
 	preservingSelection(new Runnable() {
