@@ -146,10 +146,27 @@ public class TextEditor extends StatusTextEditor {
 	}
 
 	/**
+	 * Installs the encoding support on the given text editor.
+	 * <p> 
+ 	 * Subclasses may override to install their own encoding
+ 	 * support or to disable the default encoding support.
+ 	 * </p>
+	 */
+	protected void installEncodingSupport() {
+		fEncodingSupport= new DefaultEncodingSupport();
+		fEncodingSupport.initialize(this);
+	}
+
+	/**
 	 * Asks the user if it is ok to store in non-workbench encoding.
-	 * @return <true> if the user wants to continue
+	 * 
+	 * @return <true> if the user wants to continue or if no encoding support has been installed
 	 */
 	private boolean askIfNonWorkbenchEncodingIsOk() {
+		
+		if (fEncodingSupport == null)
+			return true;
+		
 		IDocumentProvider provider= getDocumentProvider();
 		if (provider instanceof IStorageDocumentProvider) {
 			IEditorInput input= getEditorInput();
@@ -305,9 +322,8 @@ public class TextEditor extends StatusTextEditor {
 		markAsStateDependentAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_WINDOWS, true);
 		markAsStateDependentAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_UNIX, true);
 		markAsStateDependentAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_MAC, true);
-		
-		fEncodingSupport= new DefaultEncodingSupport();
-		fEncodingSupport.initialize(this);
+
+		installEncodingSupport();
 	}
 	
 	/*
@@ -471,7 +487,7 @@ public class TextEditor extends StatusTextEditor {
 		
 		return sourceViewer;
 	}
-	
+
 	/**
 	 * Creates the annotation access for this editor.
 	 * @return the created annotation access
