@@ -11,13 +11,14 @@
 package org.eclipse.ant.tests.core.tests;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.core.Task;
+import org.eclipse.ant.internal.core.AntClasspathEntry;
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
 import org.eclipse.core.runtime.CoreException;
@@ -60,19 +61,19 @@ public class TaskTests extends AbstractAntTest {
 		assertTrue("Build should have failed as task no longer defined", false);
 	}
 	
-	public void testAddTaskFromFolder() throws MalformedURLException, CoreException {
+	public void testAddTaskFromFolder() throws CoreException {
 		try {
 			AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
 			Task newTask= new Task();
 			String path= getProject().getFolder("lib").getFile("taskFolder").getLocation().toFile().getAbsolutePath();
-			URL url= new URL("file:" + path + File.separatorChar);
-			URL urls[] = prefs.getCustomURLs();
-			URL newUrls[] = new URL[urls.length + 1];
-			System.arraycopy(urls, 0, newUrls, 0, urls.length);
-			newUrls[urls.length] = url;
-			prefs.setCustomURLs(newUrls);
+			IAntClasspathEntry entry= new AntClasspathEntry(path + File.separatorChar);
+			IAntClasspathEntry entries[] = prefs.getAdditionalClasspathEntries();
+			IAntClasspathEntry newEntries[] = new IAntClasspathEntry[entries.length + 1];
+			System.arraycopy(entries, 0, newEntries, 0, entries.length);
+			newEntries[entries.length] = entry;
+			prefs.setAdditionalClasspathEntries(newEntries);
 		
-			newTask.setLibrary(url);
+			newTask.setLibrary(entry.getEntryURL());
 			newTask.setTaskName("AntTestTask");
 			newTask.setClassName("org.eclipse.ant.tests.core.support.tasks.AntTestTask2");
 			prefs.setCustomTasks(new Task[]{newTask});

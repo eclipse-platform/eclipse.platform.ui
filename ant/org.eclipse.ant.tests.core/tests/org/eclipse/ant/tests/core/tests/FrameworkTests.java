@@ -16,7 +16,9 @@ import java.net.URL;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.core.Property;
+import org.eclipse.ant.internal.core.AntClasspathEntry;
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
 import org.eclipse.core.resources.IFile;
@@ -28,7 +30,13 @@ public class FrameworkTests extends AbstractAntTest {
 		super(name);
 	}
 	
-	public void testClasspathOrdering() throws MalformedURLException, CoreException {
+	/**
+	 * Ensures that the deprecated means of setting the classpath still works correctly
+	 * Do not fix deprecations unless the methods are being removed.
+	 * @throws MalformedURLException
+	 * @throws CoreException
+	 */
+	public void testClasspathOrderingDeprecated() throws MalformedURLException, CoreException {
 		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
 		
 		String path= getProject().getFolder("lib").getFile("classpathOrdering1.jar").getLocation().toFile().getAbsolutePath();
@@ -66,6 +74,48 @@ public class FrameworkTests extends AbstractAntTest {
 		msg= (String)AntTestChecker.getDefault().getMessages().get(1);
 		assertTrue("Message incorrect: " + msg, msg.equals("classpathOrdering2"));
 		assertSuccessful();
+		restorePreferenceDefaults();
+	}
+	
+	public void testClasspathOrdering() throws CoreException {
+		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
+		
+		String path= getProject().getFolder("lib").getFile("classpathOrdering1.jar").getLocation().toFile().getAbsolutePath();
+		IAntClasspathEntry entry= new AntClasspathEntry(path);
+		
+		path= getProject().getFolder("lib").getFile("classpathOrdering2.jar").getLocation().toFile().getAbsolutePath();
+		IAntClasspathEntry entry2= new AntClasspathEntry(path);
+		
+		IAntClasspathEntry entries[] = prefs.getAdditionalClasspathEntries();
+		IAntClasspathEntry newEntries[] = new IAntClasspathEntry[entries.length + 2];
+		System.arraycopy(entries, 0, newEntries, 0, entries.length);
+		newEntries[entries.length] = entry;
+		newEntries[entries.length + 1] = entry2;
+		prefs.setAdditionalClasspathEntries(newEntries);
+		
+		prefs.updatePluginPreferences();
+		
+		run("ClasspathOrdering.xml");
+		String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
+		assertTrue("Message incorrect: " + msg, msg.equals("classpathOrdering1"));
+		assertSuccessful();
+		
+		restorePreferenceDefaults();
+		
+		entries = prefs.getAdditionalClasspathEntries();
+		newEntries = new IAntClasspathEntry[entries.length + 2];
+		System.arraycopy(entries, 0, newEntries, 0, entries.length);
+		newEntries[entries.length] = entry2;
+		newEntries[entries.length + 1] = entry;
+		prefs.setAdditionalClasspathEntries(newEntries);
+		
+		prefs.updatePluginPreferences();
+		
+		run("ClasspathOrdering.xml");
+		msg= (String)AntTestChecker.getDefault().getMessages().get(1);
+		assertTrue("Message incorrect: " + msg, msg.equals("classpathOrdering2"));
+		assertSuccessful();
+		restorePreferenceDefaults();
 	}
 	
 	public void testNoDefaultTarget() {
@@ -85,8 +135,8 @@ public class FrameworkTests extends AbstractAntTest {
 	 * This test will just return if the tests are conducted on a JRE (no tools.jar).
 	 */
 	public void testIncludeAntRuntime() throws CoreException {
-		URL toolsURL= AntCorePlugin.getPlugin().getPreferences().getToolsJarURL();
-		if (toolsURL == null) {
+		IAntClasspathEntry toolsEntry= AntCorePlugin.getPlugin().getPreferences().getToolsJarEntry();
+		if (toolsEntry == null) {
 			//running on a JRE where tools.jar could not be found
 			return;
 		}

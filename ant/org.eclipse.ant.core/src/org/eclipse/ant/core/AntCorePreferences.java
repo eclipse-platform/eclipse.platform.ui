@@ -152,7 +152,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	private void restoreAntHomeEntries(Preferences prefs) {
-		String entries = prefs.getString("ant_urls"); //old constant
+		String entries = prefs.getString("ant_urls"); //old constant //$NON-NLS-1$
 		if (entries.equals("")) {//$NON-NLS-1$
 			prefs.getString(IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES);
 		}
@@ -164,7 +164,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	private void restoreAdditionalEntries(Preferences prefs) {
-		String entries = prefs.getString("urls"); //old constant
+		String entries = prefs.getString("urls"); //old constant //$NON-NLS-1$
 		if (entries.equals("")) {//$NON-NLS-1$
 			entries = prefs.getString(IAntCoreConstants.PREFERENCE_ADDITIONAL_ENTRIES);
 		}
@@ -944,7 +944,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		additionalEntries= new IAntClasspathEntry[urls.length];
 		for (int i = 0; i < urls.length; i++) {
 			URL url = urls[i];
-			IAntClasspathEntry entry= new AntClasspathEntry(url.toExternalForm());
+			IAntClasspathEntry entry= new AntClasspathEntry(url.getFile());
 			additionalEntries[i]= entry;
 		}
 	}
@@ -960,7 +960,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		antHomeEntries= new IAntClasspathEntry[urls.length];
 		for (int i = 0; i < urls.length; i++) {
 			URL url = urls[i];
-			IAntClasspathEntry entry= new AntClasspathEntry(url.toExternalForm());
+			IAntClasspathEntry entry= new AntClasspathEntry(url.getFile());
 			antHomeEntries[i]= entry;
 		}
 	}

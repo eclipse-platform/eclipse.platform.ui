@@ -11,15 +11,25 @@
 package org.eclipse.ant.tests.core;
 
 
-import java.net.URL;
 import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eclipse.ant.core.*;
+import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.AntRunner;
+import org.eclipse.ant.core.IAntClasspathEntry;
+import org.eclipse.ant.core.Property;
+import org.eclipse.ant.core.TargetInfo;
+import org.eclipse.ant.core.Task;
+import org.eclipse.ant.core.Type;
 import org.eclipse.ant.tests.core.testplugin.AntFileRunner;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -193,7 +203,8 @@ public abstract class AbstractAntTest extends TestCase {
 	
 	protected void restorePreferenceDefaults() {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		prefs.setCustomURLs(prefs.getDefaultAntURLs());
+		prefs.setAdditionalClasspathEntries(new IAntClasspathEntry[] {prefs.getToolsJarEntry()});
+		prefs.setAntHomeClasspathEntries(prefs.getDefaultAntHomeEntries());
 		prefs.setCustomTasks(new Task[]{});
 		prefs.setCustomTypes(new Type[]{});
 		prefs.setCustomPropertyFiles(new String[]{});
@@ -203,9 +214,9 @@ public abstract class AbstractAntTest extends TestCase {
 	
 	protected String getAntHome() {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		URL[] urls= prefs.getDefaultAntURLs();
-		URL antjar= urls[0];
-		IPath antHomePath= new Path(antjar.getFile());
+		IAntClasspathEntry[] entries= prefs.getAntHomeClasspathEntries();
+		IAntClasspathEntry antjar= entries[0];
+		IPath antHomePath= new Path(antjar.getEntryURL().getFile());
 		antHomePath= antHomePath.removeLastSegments(1);
 		return antHomePath.toFile().getAbsolutePath();
 	}
