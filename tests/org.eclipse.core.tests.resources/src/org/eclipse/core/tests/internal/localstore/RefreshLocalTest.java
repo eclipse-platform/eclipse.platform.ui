@@ -29,6 +29,41 @@ public RefreshLocalTest(String name) {
 public static Test suite() {
 	return new TestSuite(RefreshLocalTest.class);
 }
+/**
+ * Tests discovering a file via refresh local when neither the file
+ * nor its parent exists in the workspace.
+ */
+public void testFileDiscovery() throws Throwable {
+	/* initialize common objects */
+	IProject project = projects[0];
+
+	IFolder folder = project.getFolder("Folder");
+	IFile file = folder.getFile("File");
+	IResource[] both = new IResource[] {folder, file};
+	
+	ensureExistsInFileSystem(both);
+	ensureDoesNotExistInWorkspace(both);
+	
+	assertTrue("1.0", !file.exists());
+	assertTrue("1.1", !folder.exists());
+	file.refreshLocal(IResource.DEPTH_ZERO, getMonitor());
+	assertTrue("1.2", file.exists());
+	assertTrue("1.3", folder.exists());
+	
+	//try again with deleted project
+	project.delete(IResource.FORCE, getMonitor());
+
+	ensureExistsInFileSystem(both);
+	ensureDoesNotExistInWorkspace(both);
+	
+	assertTrue("2.0", !file.exists());
+	assertTrue("2.1", !folder.exists());
+	file.refreshLocal(IResource.DEPTH_ZERO, getMonitor());
+	assertTrue("2.2", !file.exists());
+	assertTrue("2.3", !folder.exists());
+	
+
+}
 public void testFileToFolder() throws Throwable {
 	/* initialize common objects */
 	IProject project = projects[0];
