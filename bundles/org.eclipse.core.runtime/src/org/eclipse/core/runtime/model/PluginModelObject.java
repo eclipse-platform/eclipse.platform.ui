@@ -31,9 +31,9 @@ public abstract class PluginModelObject {
 	// IMPORTANT: One bit in the "flags" integer is used to store the 
 	// read-only flag and the other bits are used to store an integer value
 	// which can be from -1 to (2**31) - 1. To help with the bit masking, the integer
-	// value stored in this variable is (value + 1). This means that a "flags" value
+	// value stored in "flags" is (value + 1). This means that a "flags" value
 	// of 0 will NOT be marked as read-only and will return -1 for the start line value.
-	static final int M_READ_ONLY = 0xF0000000;
+	static final int M_READ_ONLY = 0x80000000;
 
 /**
  * Checks that this model object is writeable.  A runtime exception
