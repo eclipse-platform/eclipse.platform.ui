@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.examples.wizards;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.examples.internal.OpenFormEditorAction;
@@ -17,17 +18,17 @@ import org.eclipse.ui.internal.forms.WizardEditorInput;
 /**
  * @see IWorkbenchWindowActionDelegate
  */
-public class OpenEditorWizardAction
+public class OpenExistingEditorWizardAction
 		extends OpenFormEditorAction {
 	private static final String EDITOR_ID = "org.eclipse.ui.forms.examples.wizard-editor";
 
-	public OpenEditorWizardAction() {
+	public OpenExistingEditorWizardAction() {
 	}
 	
 	public void run(IAction action) {
 		FormColors colors = new FormColors(getWindow().getShell().getDisplay());
-		SampleEditorFormWizard wizard = new SampleEditorFormWizard();
-		WizardEditorInput input = new WizardEditorInput(wizard, true);
+		NewPluginProjectWizard wizard = new NewPluginProjectWizard();
+		WizardEditorInput input = new WizardEditorInput(wizard, false);
 		openEditor(input, EDITOR_ID);
 	}
 }

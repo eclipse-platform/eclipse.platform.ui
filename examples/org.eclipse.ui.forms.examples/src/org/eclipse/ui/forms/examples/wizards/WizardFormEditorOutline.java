@@ -1,9 +1,3 @@
-/*
- * Created on Oct 21, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 package org.eclipse.ui.forms.examples.wizards;
 
 import java.io.UnsupportedEncodingException;
@@ -27,13 +21,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.forms.WizardFormEditor;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-
-/**
- * @author dejan
- * 
- * TODO To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Style - Code Templates
- */
 public class WizardFormEditorOutline implements IContentOutlinePage {
 	private ScrolledForm form;
 
@@ -61,15 +48,33 @@ public class WizardFormEditorOutline implements IContentOutlinePage {
 		form.getBody().setLayout(layout);
 		//Util.highlight(form.getBody(), SWT.COLOR_YELLOW);
 		// help container. Has three colums (search, text, go)
+		title = toolkit.createLabel(form.getBody(), null, SWT.WRAP);
+		title.setText("Context Help");
+		title.setFont(JFaceResources.getHeaderFont());
+		title.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		text = toolkit.createFormText(form.getBody(), true);
+		text.setImage(ExamplesPlugin.IMG_HELP_TOPIC, 
+				ExamplesPlugin.getDefault().getImage(ExamplesPlugin.IMG_HELP_TOPIC));
+		text.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				openLink(e.getHref());
+			}
+		});
+		text.setLayoutData(new TableWrapData(TableWrapData.FILL,
+				TableWrapData.FILL));
+		text.setText(defaultText, false, false);
+
 		Composite helpContainer = toolkit.createComposite(form.getBody());
 		GridLayout glayout = new GridLayout();
-		glayout.numColumns = 3;
+		glayout.numColumns = 2;
 		glayout.marginWidth = glayout.marginHeight = 1;
 		helpContainer.setLayout(glayout);
 		helpContainer.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		toolkit.paintBordersFor(helpContainer);
-		Label label = toolkit.createLabel(helpContainer, "Search");
-		label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
+		Label label = toolkit.createLabel(helpContainer, "Search for help:");
+		GridData gd = new GridData(GridData.VERTICAL_ALIGN_CENTER);
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
 		phraseText = toolkit.createText(helpContainer, ""); //$NON-NLS-1$
 		phraseText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		final Button button = toolkit.createButton(helpContainer,
@@ -97,22 +102,8 @@ public class WizardFormEditorOutline implements IContentOutlinePage {
 				}
 			}
 		});
-		title = toolkit.createLabel(form.getBody(), null, SWT.WRAP);
-		title.setText("Context Help");
-		title.setFont(JFaceResources.getHeaderFont());
-		title.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
-		text = toolkit.createFormText(form.getBody(), true);
-		text.setImage(ExamplesPlugin.IMG_HELP_TOPIC, 
-				ExamplesPlugin.getDefault().getImage(ExamplesPlugin.IMG_HELP_TOPIC));
-		text.addHyperlinkListener(new HyperlinkAdapter() {
-			public void linkActivated(HyperlinkEvent e) {
-				openLink(e.getHref());
-			}
-		});
-		text.setLayoutData(new TableWrapData(TableWrapData.FILL,
-				TableWrapData.FILL));
-		text.setText(defaultText, false, false);
 		toolkit.paintBordersFor(form.getBody());
+		update();
 	}
 
 	public Control getControl() {
@@ -175,12 +166,13 @@ public class WizardFormEditorOutline implements IContentOutlinePage {
 		sbuf.append(decodeContextBoldTags(context));
 		sbuf.append("</p>"); //$NON-NLS-1$
 		IHelpResource[] links = context.getRelatedTopics();
-		if (links.length > 0) {
+		if (links != null && links.length > 0) {
+			sbuf.append("<p>See also:</p>");
 			for (int i = 0; i < links.length; i++) {
 				IHelpResource link = links[i];
 				sbuf.append("<li style=\"text\" indent=\"2\">"); //$NON-NLS-1$
 				sbuf.append("<img href=\""); //$NON-NLS-1$
-				sbuf.append(ExamplesPlugin.getDefault().getImage(ExamplesPlugin.IMG_HELP_TOPIC));
+				sbuf.append(ExamplesPlugin.IMG_HELP_TOPIC);
 				sbuf.append("\"/> "); //$NON-NLS-1$
 				sbuf.append("<a href=\""); //$NON-NLS-1$
 				sbuf.append(link.getHref());

@@ -11,51 +11,25 @@
 package org.eclipse.ui.internal.forms;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.dialogs.ControlEnableState;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.IWizardContainer2;
-import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ILayoutExtension;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.internal.forms.widgets.SWTUtil;
-import org.eclipse.ui.internal.forms.widgets.WrappedPageBook;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.internal.forms.widgets.*;
 import org.eclipse.ui.part.EditorPart;
 
 /**
@@ -437,6 +411,8 @@ public class WizardFormEditor extends EditorPart implements IWizardContainer2 {
 		// Allow the wizard pages to precreate their page controls
 		// This allows the wizard to open to the correct size
 		wizard.createPageControls(pageContainer);
+		if (!isFormWizard())
+			adaptPages(wizard);
 		// Ensure that all of the created pages are initially not visible
 		IWizardPage[] pages = wizard.getPages();
 		for (int i = 0; i < pages.length; i++) {
@@ -801,7 +777,7 @@ public class WizardFormEditor extends EditorPart implements IWizardContainer2 {
 		// ensure that page control has been created
 		// (this allows lazy page control creation)
 		if (page.getControl() == null) {
-			page.createControl(pageContainer);
+			createPageControl(page);
 			// the page is responsible for ensuring the created control is
 			// accessable
 			// via getControl.
@@ -816,6 +792,40 @@ public class WizardFormEditor extends EditorPart implements IWizardContainer2 {
 		putPageOnTop(currentPage);
 		// update the dialog controls
 		update();
+	}
+	
+	private void createPageControl(IWizardPage page) {
+		page.createControl(pageContainer);
+		if (!isFormWizard())
+				adaptPage(page);
+	}
+
+	private void adaptPages(IWizard wizard) {
+		IWizardPage [] pages = wizard.getPages();
+		for (int i=0; i<pages.length; i++) {
+			adaptPage(pages[i]);
+		}
+	}
+	
+	private void adaptPage(IWizardPage page) {
+		Control control = page.getControl();
+		if (control==null || !(control instanceof Composite)) return;
+		adaptControl(control);		
+	}
+	
+	private void adaptControl(Control c) {
+		if (c instanceof Composite) {
+			Composite parent = (Composite)c;
+			Control [] children = parent.getChildren();
+			for (int i=0; i<children.length; i++) {
+				Control child = children[i];
+				adaptControl(child);
+			}
+			toolkit.adapt((Composite)c);
+		}
+		else {
+			toolkit.adapt(c, true, true);
+		}
 	}
 	
 	private void putPageOnTop(IWizardPage page) {
@@ -833,7 +843,7 @@ public class WizardFormEditor extends EditorPart implements IWizardContainer2 {
 		}
 		// ensure the page control has been created
 		if (currentPage.getControl() == null) {
-			currentPage.createControl(pageContainer);
+			createPageControl(currentPage);
 			// the page is responsible for ensuring the created control is
 			// accessable
 			// via getControl.
@@ -1076,5 +1086,10 @@ public class WizardFormEditor extends EditorPart implements IWizardContainer2 {
 	 */
 	public FormToolkit getToolkit() {
 		return toolkit;
+	}
+	
+	public boolean isFormWizard() {
+		IWizardEditorInput input = (IWizardEditorInput)getEditorInput();
+		return input.isFormWizard();
 	}
 }

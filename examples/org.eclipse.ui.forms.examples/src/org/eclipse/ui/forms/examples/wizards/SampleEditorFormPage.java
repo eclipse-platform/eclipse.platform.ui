@@ -1,9 +1,3 @@
-/*
- * Created on Oct 20, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 package org.eclipse.ui.forms.examples.wizards;
 
 import org.eclipse.jface.wizard.WizardPage;
@@ -15,12 +9,6 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.forms.WizardFormEditor;
 
-/**
- * @author dejan
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 public class SampleEditorFormPage extends WizardPage {
 	private Label dirLabel;
 	private Text projectText;

@@ -19,6 +19,7 @@
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.pde.ui"/>
    </requires>
 
 
@@ -62,6 +63,12 @@
                class="org.eclipse.ui.forms.examples.wizards.OpenEditorWizardAction"
                menubarPath="org.eclipse.ui.forms.examples.menu/group"
                id="org.eclipse.ui.forms.examples.editor-wizard">
+         </action>
+        <action
+               label="Existing Wizard"
+               class="org.eclipse.ui.forms.examples.wizards.OpenExistingEditorWizardAction"
+               menubarPath="org.eclipse.ui.forms.examples.menu/group"
+               id="org.eclipse.ui.forms.examples.existing-editor-wizard">
          </action>
       </actionSet>
    </extension>
