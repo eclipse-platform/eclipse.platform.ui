@@ -40,18 +40,19 @@ public interface IConsoleConstants {
 	public static final String CONSOLE_FONT= "org.eclipse.ui.console.ConsoleFont"; //$NON-NLS-1$
 	
 	/**
-	 * Identifier for a launch group in a menu (value <code>"launchGroup"</code>).
+	 * Menu group identifier for the console view context menu and toolbar, for actions pertaining to
+	 * launching (value <code>"launchGroup"</code>).
 	 */
 	public static final String LAUNCH_GROUP = "launchGroup"; //$NON-NLS-1$
 
 	/**
-	 * Identifier for an output group in a menu (value
-	 * <code>"outputGroup"</code>).
+	 * Menu group identifier for the console view context menu and toolbar, for actions pertaining to
+	 * console output. (value<code>"outputGroup"</code>).
 	 */
 	public static final String OUTPUT_GROUP = "outputGroup"; //$NON-NLS-1$	
 		
 	/** 
-	 * Console view image identifier
+	 * Console view image identifier.
 	 */
 	public static final String IMG_VIEW_CONSOLE= "IMG_VIEW_CONSOLE"; //$NON-NLS-1$
 	
@@ -66,7 +67,7 @@ public interface IConsoleConstants {
 	public static final int INTERNAL_ERROR = 120;
 
 	/**
-	 * Console Pattern Match Listener extension point identifier
+	 * Console pattern match listeners extension point identifier
 	 * (value <code>"consolePatternMatchListeners"</code>).
 	 * 
 	 * @since 3.1 
@@ -74,7 +75,7 @@ public interface IConsoleConstants {
     public static final String EXTENSION_POINT_CONSOLE_PATTERN_MATCH_LISTENERS = "consolePatternMatchListeners"; //$NON-NLS-1$
 
     /**
-     * Console Page Participant extension point identifier
+     * Console page participants extension point identifier
      * (value <code>"consolePageParticipants"</code>).
      * 
      * @since 3.1
