@@ -111,12 +111,8 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 	public ITypedElement getAncestor() {
 		if (mergeResource.hasBaseRevision()) {
 			return commonByteContents;
-		} else {
-			// XXX return local byte contents if there is no ancestor
-			// will allow the compare view to show 2-way diff instead
-			// of a conflict window.
-			return localByteContents;
 		}
+		return null;
 	}
 	
 	/*
