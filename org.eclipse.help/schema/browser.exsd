@@ -94,14 +94,14 @@
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  name of a parameter passed to the implementation class
                </documentation>
             </annotation>
          </attribute>
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  value of a parameter passed to the implementation class
                </documentation>
             </annotation>
          </attribute>
