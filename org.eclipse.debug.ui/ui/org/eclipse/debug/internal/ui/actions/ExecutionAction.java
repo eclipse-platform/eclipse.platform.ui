@@ -49,7 +49,6 @@ public abstract class ExecutionAction implements IActionDelegate2 {
 			return;
 		}
 		LaunchConfigurationsDialog dialog = new LaunchConfigurationsDialog(DebugUIPlugin.getShell(), getLaunchConfigurationManager().getLaunchGroup(fLaunchGroupIdentifier));		
-		dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_LAUNCH_LAST);
 		dialog.open();
 	}
 	

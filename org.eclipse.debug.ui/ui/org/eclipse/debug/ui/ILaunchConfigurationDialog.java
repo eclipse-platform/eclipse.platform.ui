@@ -32,6 +32,9 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	 * launch configuration dialog when a launch completed
 	 * successfully with a single click (without opening a
 	 * launch configuration dialog).
+	 * 
+	 * @deprecated the launch dialog no longer supports launching without
+	 * 	opening - this constant will never be returned by the dialog
 	 */
 	public static final int LAUNCHED_BEFORE_OPENING = 2;
 			

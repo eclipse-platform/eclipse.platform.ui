@@ -211,13 +211,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Size of this dialog if there is no preference specifying a size.
 	 */
 	protected static final Point DEFAULT_INITIAL_DIALOG_SIZE = new Point(620, 560);
-
-	/**
-	 * Constant specifying that the launch configuration dialog should not actually open,
-	 * but instead should attempt to re-launch the last configuration that was sucessfully
-	 * launched in the workspace.  If there is no last launched configuration, just open the dialog.
-	 */
-	public static final int LAUNCH_CONFIGURATION_DIALOG_LAUNCH_LAST = 0;
 		
 	/**
 	 * Constant specifying that this dialog should be opened with the last configuration launched
@@ -241,7 +234,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Specifies how this dialog behaves when opened.  Value is one of the 
 	 * 'LAUNCH_CONFIGURATION_DIALOG' constants defined in this class.
 	 */
-	private int fOpenMode = LAUNCH_CONFIGURATION_DIALOG_LAUNCH_LAST;
+	private int fOpenMode = LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED;
 	
 	/**
 	 * Constructs a new launch configuration dialog on the given
@@ -428,58 +421,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see Window#open()
 	 */
 	public int open() {		
-		int mode = getOpenMode();	
-		if (mode == LAUNCH_CONFIGURATION_DIALOG_LAUNCH_LAST) {
-			return doLastLaunchedConfig(true);
-		} else if (mode == LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED) {
-			return doLastLaunchedConfig(false);
-		} else if (mode == LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION) {
-			return openDialogOnSelection();
-		}		
-		return super.open();
-	}
-	
-	/**
-	 * Retrieve the last launched configuration in the workspace.  If <code>launch</code>
-	 * is <code>true</code>, launch this configuration without showing the dialog, otherwise 
-	 * just set the initial selection in the dialog to the last launched configuration.
-	 */
-	protected int doLastLaunchedConfig(boolean launch) {
-		ILaunchConfiguration lastLaunchedConfig = getLastLaunchedWorkbenchConfiguration();
-		if (launch) {
-			try {
-				if (lastLaunchedConfig != null) {
-					if (lastLaunchedConfig.supportsMode(getMode())) {
-						DebugUITools.launch(lastLaunchedConfig, getMode());
-					} else {
-						// If we're trying to launch, but the last launched config doesn't 
-						// support the current mode of the dialog, show an error dialog
-						String configName = lastLaunchedConfig.getName();
-						String title = LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cannot_relaunch_1"); //$NON-NLS-1$
-						String message = MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cannot_relaunch_[{1}]_because_it_does_not_support_{2}_mode_2"), new String[] {configName, getMode()}); //$NON-NLS-1$
-						MessageDialog.openError(getShell(), title, message);										
-					}
-					return ILaunchConfigurationDialog.LAUNCHED_BEFORE_OPENING;
-				}
-			} catch(CoreException e) {
-				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configuration_Error_6"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_processing_launch_configuration._See_log_for_more_information_7"), e); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
-		setCurrentlyVisibleLaunchConfigurationDialog(this);
-		if (lastLaunchedConfig != null) {
-			setInitialSelection(new StructuredSelection(lastLaunchedConfig));
-		}			
-		return super.open();
-	}
-
-	/**
-	 * Open this dialog with the selection set to the value specified by 
-	 * <code>setInitialSelection()</code>.
-	 */
-	protected int openDialogOnSelection() {
-		// Nothing special is required, the dialog will open and whatever was specified
-		// via setInitialSelection() will be selected in the tree
-		setCurrentlyVisibleLaunchConfigurationDialog(this);
+		int mode = getOpenMode();
+		setCurrentlyVisibleLaunchConfigurationDialog(this);	
+		if (mode == LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED) {
+			ILaunchConfiguration lastLaunchedConfig = getLastLaunchedWorkbenchConfiguration();
+			if (lastLaunchedConfig != null) {
+				setInitialSelection(new StructuredSelection(lastLaunchedConfig));
+			}			
+		}	
 		return super.open();
 	}
 	
