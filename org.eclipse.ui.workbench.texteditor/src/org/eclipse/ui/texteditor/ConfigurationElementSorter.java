@@ -22,10 +22,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginPrerequisite;
-
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.Assert;
+import org.eclipse.osgi.util.ManifestElement;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 
 /**
  * Allows to sort an array based on their elements' configuration elements
@@ -63,7 +66,6 @@ public abstract class ConfigurationElementSorter {
 	private class ConfigurationElementComparator implements Comparator {
 		
 		private Map fDescriptorMapping;
-		private Set fDescriptorSet;
 		private Map fPrereqsMapping;
 		
 		public ConfigurationElementComparator(Object[] elements) {
@@ -99,16 +101,16 @@ public abstract class ConfigurationElementSorter {
 			if (element0 == null || element1 == null)
 				return false;
 
-			IPluginDescriptor pluginDesc0= (IPluginDescriptor)fDescriptorMapping.get(element0);
-			IPluginDescriptor pluginDesc1= (IPluginDescriptor)fDescriptorMapping.get(element1);
+			String pluginDesc0= (String)fDescriptorMapping.get(element0);
+			String pluginDesc1= (String)fDescriptorMapping.get(element1);
 			
 			// performance tuning - code below would give same result
-			if (pluginDesc0.getUniqueIdentifier().equals(pluginDesc1.getUniqueIdentifier()))
+			if (pluginDesc0.equals(pluginDesc1))
 				return false;
 			
 			Set prereqUIds0= (Set)fPrereqsMapping.get(pluginDesc0);
 			
-			return prereqUIds0.contains(pluginDesc1.getUniqueIdentifier());
+			return prereqUIds0.contains(pluginDesc1);
 		}
 		
 		/**
@@ -120,31 +122,39 @@ public abstract class ConfigurationElementSorter {
 			int length= elements.length;
 			fDescriptorMapping= new HashMap(length);
 			fPrereqsMapping= new HashMap(length);
-			fDescriptorSet= new HashSet(length);
+			Set fBundleSet= new HashSet(length);
 			
 			for (int i= 0; i < length; i++) {
-				IPluginDescriptor descriptor= getConfigurationElement(elements[i]).getDeclaringExtension().getDeclaringPluginDescriptor();
-				fDescriptorMapping.put(elements[i], descriptor);
-				fDescriptorSet.add(descriptor);
+			    IExtension extension = getConfigurationElement(elements[i]).getDeclaringExtension();
+				Bundle bundle = Platform.getBundle(extension.getNamespace());
+				fDescriptorMapping.put(elements[i], bundle.getSymbolicName());
+				fBundleSet.add(bundle);
 			}
 			
-			Iterator iter= fDescriptorSet.iterator();
+			Iterator iter= fBundleSet.iterator();
 			while (iter.hasNext()) {
-				IPluginDescriptor descriptor= (IPluginDescriptor)iter.next();
-				List toTest= new ArrayList(fDescriptorSet);
-				toTest.remove(descriptor);
+				Bundle bundle= (Bundle)iter.next();
+				List toTest= new ArrayList(fBundleSet);
+				toTest.remove(bundle);
 				Set prereqUIds= new HashSet(Math.max(0, toTest.size() - 1));
-				fPrereqsMapping.put(descriptor, prereqUIds);
+				fPrereqsMapping.put(bundle.getSymbolicName(), prereqUIds);
 				
-				IPluginPrerequisite[] prereqs= descriptor.getPluginPrerequisites();
+				String requires = (String)bundle.getHeaders().get(Constants.REQUIRE_BUNDLE);
+				ManifestElement[] manifestElements;
+                try {
+                    manifestElements = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, requires);
+                } catch (BundleException e) {
+                    continue;
+                }
+                
 				int i= 0;
-				while (i < prereqs.length && !toTest.isEmpty()) {
-					String prereqUId= prereqs[i].getUniqueIdentifier();
+				while (i < manifestElements.length && !toTest.isEmpty()) {
+					String prereqUId= manifestElements[i].getValue();
 					for (int j= 0; j < toTest.size();) {
-						IPluginDescriptor toTest_j= (IPluginDescriptor)toTest.get(j);
-						if (toTest_j.getUniqueIdentifier().equals(prereqUId)) {
+						Bundle toTest_j= (Bundle)toTest.get(j);
+						if (toTest_j.getSymbolicName().equals(prereqUId)) {
 							toTest.remove(toTest_j);
-							prereqUIds.add(toTest_j.getUniqueIdentifier());
+							prereqUIds.add(toTest_j.getSymbolicName());
 						} else
 							j++;
 					}
