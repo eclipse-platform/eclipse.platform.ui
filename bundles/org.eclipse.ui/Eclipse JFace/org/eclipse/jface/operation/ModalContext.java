@@ -258,11 +258,12 @@ public static void run(IRunnableWithProgress operation, boolean fork, IProgressM
 				t.block();
 				Throwable throwable= t.throwable;
 				if (throwable != null) {
-					if (debug && !(throwable instanceof InterruptedException)
-					&& !(throwable instanceof OperationCanceledException)) {
-						System.err.println("Exception in modal context operation:");//$NON-NLS-1$
+					if (debug
+						&& !(throwable instanceof InterruptedException)
+						&& !(throwable instanceof OperationCanceledException)) {
+						System.err.println("Exception in modal context operation:"); //$NON-NLS-1$
 						throwable.printStackTrace();
-						System.err.println("Called from:");//$NON-NLS-1$
+						System.err.println("Called from:"); //$NON-NLS-1$
 						// Don't create the InvocationTargetException on the throwable,
 						// otherwise it will print its stack trace (from the other thread).
 						new InvocationTargetException(null).printStackTrace();
@@ -271,7 +272,8 @@ public static void run(IRunnableWithProgress operation, boolean fork, IProgressM
 						throw (InvocationTargetException) throwable;
 					} else if (throwable instanceof InterruptedException) {
 						throw (InterruptedException) throwable;
-					} else if (throwable instanceof OperationCanceledException) {
+					} else if (
+						throwable instanceof OperationCanceledException) {
 						// See 1GAN3L5: ITPUI:WIN2000 - ModalContext converts OperationCancelException into InvocationTargetException
 						throw new InterruptedException(throwable.getMessage());
 					} else {
