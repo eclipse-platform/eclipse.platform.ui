@@ -22,7 +22,10 @@ org.eclipse.ui/trace/workbench.restore=false
 org.eclipse.ui/trace/workbench.start=false
 
 # Reports the time to activate parts.
-org.eclipse.ui/trace/part.activate
+org.eclipse.ui/trace/part.activate=false
 
 # Reports the time to noticy part listeners.
-org.eclipse.ui/trace/part.listeners
+org.eclipse.ui/trace/part.listeners=false
+
+# Reports the time to run an action
+org.eclipse.jface/trace/actions=false

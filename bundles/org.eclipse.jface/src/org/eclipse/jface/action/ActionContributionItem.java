@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -442,7 +443,13 @@ private void handleWidgetSelection(Event e) {
 		// Ensure action is enabled first.
 		// See 1GAN3M6: ITPUI:WINNT - Any IAction in the workbench can be executed while disabled.
 		if (action.isEnabled()) {
+			boolean trace = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface/trace/actions"));
+			long ms = System.currentTimeMillis();
+			if(trace)
+				System.out.println("Running action: " + action.getText());
 			action.runWithEvent(e);
+			if(trace)
+				System.out.println((System.currentTimeMillis() - ms) + " ms to run action: "  + action.getText());
 		}
 	}
 }
