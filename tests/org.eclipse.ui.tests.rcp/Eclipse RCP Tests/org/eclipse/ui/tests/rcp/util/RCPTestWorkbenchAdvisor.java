@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.rcp.util;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.WorkbenchAdvisor;
@@ -52,5 +53,21 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 
         if (--idleBeforeExit <= 0)
             PlatformUI.getWorkbench().close();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.WorkbenchAdvisor#postShutdown()
+     */
+    public void postShutdown() {
+        super.postShutdown();
+
+        if ("carbon".equals(SWT.getPlatform())) {
+            final Display display = PlatformUI.getWorkbench().getDisplay();
+            display.asyncExec(new Runnable() {
+                public void run() {
+                    eventLoopIdle(display);
+                }
+            });
+        }
     }
 }
