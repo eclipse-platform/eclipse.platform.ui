@@ -523,14 +523,11 @@ private IViewPart busyShowView(String viewID, boolean activate)
 			bringToTop(view);
 		return view;
 	}
-
-	// If part is added / removed always unzoom.
-	if (isZoomed())
-		zoomOut();
 		
 	// Show the view.  
 	view = persp.showView(viewID);
 	if (view != null) {
+		zoomOutIfNecessary(view);
 		if (activate)
 			activate(view);
 		else
@@ -607,19 +604,6 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	// Sanity check.	
 	if (!certifyPart(editor))
 		return false;
-
-	// Unzoom if necessary...
-	if (isZoomed()) {
-		PartSite site = (PartSite) editor.getSite();
-		EditorPane pane = (EditorPane) site.getPane();
-		if (!pane.isZoomed()) {
-			// Editor not the zoom part
-			zoomOut();
-		} else if (pane.getWorkbook().getItemCount() == 1) {
-			// Editor is zoomed and only editor left in workbook
-			zoomOut();
-		}
-	}
 	
 	// Save part.
 	if (save && !getEditorManager().saveEditor(editor, true))
@@ -648,6 +632,7 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	// Activate new part.
 	if (partWasActive) {
 		IWorkbenchPart top = activationList.getTopEditor();
+		zoomOutIfNecessary(top);
 		if (top == null)
 			top = activationList.getActive();
 		if (top != null)
@@ -656,6 +641,7 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 			setActivePart(null);
 	} else if(partWasVisible) {
 		IWorkbenchPart top = activationList.getTopEditor();
+		zoomOutIfNecessary(top);
 		if (top != null)
 			bringToTop(top);
 	}
@@ -1384,20 +1370,33 @@ public boolean isZoomed() {
 }
 /**
  * Returns <code>true</code> if the window needs to unzoom for the given
- * IEditorPart to be seen by the user. Returns false otherwise.
+ * IWorkbenchPart to be seen by the user. Returns false otherwise.
  * 
+ * @param part the part whose visibility is to be determined
  * @return <code>true</code> if the window needs to unzoom for the given
- * 		IEditorPart to be seen by the user, <code>false</code> otherwise.
+ * 		IWorkbenchPart to be seen by the user, <code>false</code> otherwise.
  */
-private boolean needToZoomOut(IEditorPart part) {
-	if(getActivePart() instanceof IViewPart) {
-		if(!isFastView((IViewPart)getActivePart()))
+private boolean needToZoomOut(IWorkbenchPart part) {
+	// part is an editor
+	if (part instanceof IEditorPart) {
+		if(getActivePart() instanceof IViewPart) {
+			if(!isFastView((IViewPart)getActivePart()))
+				return true;
+		}
+		EditorSite site = (EditorSite)part.getSite();
+		EditorPane pane = (EditorPane)site.getPane();
+		EditorWorkbook book = pane.getWorkbook();
+		return !book.equals(book.getEditorArea().getActiveWorkbook());
+	}
+	// part is a view
+	if(part instanceof IViewPart) {
+		if(isFastView((IViewPart)part) || part.equals(getActivePart()))
+			return false;
+		else
 			return true;
 	}
-	EditorSite site = (EditorSite)part.getEditorSite();
-	EditorPane pane = (EditorPane)site.getPane();
-	EditorWorkbook book = pane.getWorkbook();
-	return !book.equals(book.getEditorArea().getActiveWorkbook());
+
+	return true;
 }
 /**
  * This method is called when the page is activated.  
@@ -2180,10 +2179,12 @@ private void zoomOut() {
 }
 /**
  * Zooms out a zoomed in part if it is necessary to do so for the user
- * to view the IEditorPart that is the argument. Otherwise, does nothing.
+ * to view the IWorkbenchPart that is the argument. Otherwise, does nothing.
+ * 
+ * @param part the part to be made viewable
  */
-private void zoomOutIfNecessary(IEditorPart editor) {
-	if (isZoomed() && needToZoomOut(editor))
+private void zoomOutIfNecessary(IWorkbenchPart part) {
+	if (isZoomed() && needToZoomOut(part))
 		zoomOut();	
 }
 /**
