@@ -21,94 +21,94 @@ import java.util.*;
 /**
  * The framework to run.  This is used if the bootLocation (-boot) is not specified.
  * The value can be specified on the command line as -framework.
-* Startup class for Eclipse. Creates a class loader using
-* supplied URL of platform installation, loads and calls
-* the Eclipse Boot Loader.  The startup arguments are as follows:
-* <dl>
-* <dd>
-*    -application &lt;id&gt;: the identifier of the application to run
-* </dd>
-* <dd>
-*    -arch &lt;architecture&gt;: sets the processor architecture value
-* </dd>
-* <dd>
-*    -boot &lt;location&gt;: the location, expressed as a URL, of the platform's boot.jar.
-* <i>Deprecated: replaced by -configuration</i>
-* </dd>
-* <dd>
-*    -classloaderproperties [properties file]: activates platform class loader enhancements using 
-* the class loader properties file at the given location, if specified. The (optional) file argument 
-* can be either a file path or an absolute URL.
-* </dd>
-* <dd>
-*    -configuration &lt;location&gt;: the location, expressed as a URL, for the Eclipse platform 
-* configuration file. The configuration file determines the location of the Eclipse platform, the set 
-* of available plug-ins, and the primary feature.
-* </dd>
-* <dd>
-*    -consolelog : enables log to the console. Handy when combined with -debug
-* </dd>
-* <dd>
-*    -data &lt;location&gt;: sets the workspace location and the default location for projects
-* </dd>
-* <dd>
-*    -debug [options file]: turns on debug mode for the platform and optionally specifies a location
-* for the .options file. This file indicates what debug points are available for a
-* plug-in and whether or not they are enabled. If a location is not specified, the platform searches
-* for the .options file under the install directory.
-* </dd>
-* <dd>
-*    -dev [entries]: turns on dev mode and optionally specifies comma-separated class path entries
-* which are added to the class path of each plug-in
-* </dd>
-* <dd>
-*    -feature &lt;id&gt;: the identifier of the primary feature. The primary feature gives the launched 
-* instance of Eclipse its product personality, and determines the product customization 
-* information.
-* </dd>
-* <dd>
-*    -keyring &lt;location&gt;: the location of the authorization database on disk. This argument
-* has to be used together with the -password argument.
-* </dd>
-* <dd>
-*    -nl &lt;locale&gt;: sets the name of the locale on which Eclipse platform will run
-* </dd>
-* <dd>
-*    -nolazyregistrycacheloading : deactivates platform plug-in registry cache loading optimization. 
-* By default, extensions' configuration elements will be loaded from the registry cache (when 
-* available) only on demand, reducing memory footprint. This option will force the registry cache 
-* to be fully loaded at startup.
-* </dd>
-*  <dd>
-*    -nopackageprefixes: deactivates classloader package prefixes optimization
-* </dd> 
-*  <dd>
-*    -noregistrycache: bypasses the reading and writing of an internal plug-in registry cache file
-* </dd>
-* <dd>
-*    -os &lt;operating system&gt;: sets the operating system value
-* </dd>
-* <dd>
-*    -password &lt;passwd&gt;: the password for the authorization database
-* </dd>
-* <dd>
-*    -plugins &lt;location&gt;: the arg is a URL pointing to a file which specs the plugin 
-* path for the platform.  The file is in property file format where the keys are user-defined 
-* names and the values are comma separated lists of either explicit paths to plugin.xml 
-* files or directories containing plugins (e.g., .../eclipse/plugins). 
-* <i>Deprecated: replaced by -configuration</i>
-* </dd>
-* <dd>
-*    -plugincustomization &lt;properties file&gt;: the location of a properties file containing default 
-* settings for plug-in preferences. These default settings override default settings specified in the 
-* primary feature. Relative paths are interpreted relative to the directory that eclipse was started 
-* from.
-* </dd> 
-* <dd>
-*    -ws &lt;window system&gt;: sets the window system value
-* </dd>
-* </dl>
-*/
+ * Startup class for Eclipse. Creates a class loader using
+ * supplied URL of platform installation, loads and calls
+ * the Eclipse Boot Loader.  The startup arguments are as follows:
+ * <dl>
+ * <dd>
+ *    -application &lt;id&gt;: the identifier of the application to run
+ * </dd>
+ * <dd>
+ *    -arch &lt;architecture&gt;: sets the processor architecture value
+ * </dd>
+ * <dd>
+ *    -boot &lt;location&gt;: the location, expressed as a URL, of the platform's boot.jar.
+ * <i>Deprecated: replaced by -configuration</i>
+ * </dd>
+ * <dd>
+ *    -classloaderproperties [properties file]: activates platform class loader enhancements using 
+ * the class loader properties file at the given location, if specified. The (optional) file argument 
+ * can be either a file path or an absolute URL.
+ * </dd>
+ * <dd>
+ *    -configuration &lt;location&gt;: the location, expressed as a URL, for the Eclipse platform 
+ * configuration file. The configuration file determines the location of the Eclipse platform, the set 
+ * of available plug-ins, and the primary feature.
+ * </dd>
+ * <dd>
+ *    -consolelog : enables log to the console. Handy when combined with -debug
+ * </dd>
+ * <dd>
+ *    -data &lt;location&gt;: sets the workspace location and the default location for projects
+ * </dd>
+ * <dd>
+ *    -debug [options file]: turns on debug mode for the platform and optionally specifies a location
+ * for the .options file. This file indicates what debug points are available for a
+ * plug-in and whether or not they are enabled. If a location is not specified, the platform searches
+ * for the .options file under the install directory.
+ * </dd>
+ * <dd>
+ *    -dev [entries]: turns on dev mode and optionally specifies comma-separated class path entries
+ * which are added to the class path of each plug-in
+ * </dd>
+ * <dd>
+ *    -feature &lt;id&gt;: the identifier of the primary feature. The primary feature gives the launched 
+ * instance of Eclipse its product personality, and determines the product customization 
+ * information.
+ * </dd>
+ * <dd>
+ *    -keyring &lt;location&gt;: the location of the authorization database on disk. This argument
+ * has to be used together with the -password argument.
+ * </dd>
+ * <dd>
+ *    -nl &lt;locale&gt;: sets the name of the locale on which Eclipse platform will run
+ * </dd>
+ * <dd>
+ *    -nolazyregistrycacheloading : deactivates platform plug-in registry cache loading optimization. 
+ * By default, extensions' configuration elements will be loaded from the registry cache (when 
+ * available) only on demand, reducing memory footprint. This option will force the registry cache 
+ * to be fully loaded at startup.
+ * </dd>
+ *  <dd>
+ *    -nopackageprefixes: deactivates classloader package prefixes optimization
+ * </dd> 
+ *  <dd>
+ *    -noregistrycache: bypasses the reading and writing of an internal plug-in registry cache file
+ * </dd>
+ * <dd>
+ *    -os &lt;operating system&gt;: sets the operating system value
+ * </dd>
+ * <dd>
+ *    -password &lt;passwd&gt;: the password for the authorization database
+ * </dd>
+ * <dd>
+ *    -plugins &lt;location&gt;: the arg is a URL pointing to a file which specs the plugin 
+ * path for the platform.  The file is in property file format where the keys are user-defined 
+ * names and the values are comma separated lists of either explicit paths to plugin.xml 
+ * files or directories containing plugins (e.g., .../eclipse/plugins). 
+ * <i>Deprecated: replaced by -configuration</i>
+ * </dd>
+ * <dd>
+ *    -plugincustomization &lt;properties file&gt;: the location of a properties file containing default 
+ * settings for plug-in preferences. These default settings override default settings specified in the 
+ * primary feature. Relative paths are interpreted relative to the directory that eclipse was started 
+ * from.
+ * </dd> 
+ * <dd>
+ *    -ws &lt;window system&gt;: sets the window system value
+ * </dd>
+ * </dl>
+ */
 public class Main {
 	/**
 	 * Indicates whether this instance is running in debug mode.
@@ -154,7 +154,7 @@ public class Main {
 	private String vm = null;
 	private String[] vmargs = null;
 	private String[] commands = null;
-	
+
 	// splash handling
 	private String showSplash = null;
 	private String endSplash = null;
@@ -210,7 +210,7 @@ public class Main {
 	private static final String PROP_CLASSPATH = "osgi.frameworkClassPath"; //$NON-NLS-1$
 	private static final String PROP_LOGFILE = "osgi.logfile"; //$NON-NLS-1$
 	private static final String PROP_EOF = "eof"; //$NON-NLS-1$
-	
+
 	private static final String PROP_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
 	private static final String PROP_EXITDATA = "eclipse.exitdata"; //$NON-NLS-1$
 	private static final String PROP_VM = "eclipse.vm"; //$NON-NLS-1$
@@ -262,18 +262,20 @@ public class Main {
 		// load the BootLoader and startup the platform
 		URLClassLoader loader = new URLClassLoader(bootPath, null);
 		Class clazz = loader.loadClass(STARTER);
-		Method method = clazz.getDeclaredMethod("run", new Class[] { String[].class, Runnable.class }); //$NON-NLS-1$
+		Method method = clazz.getDeclaredMethod("run", new Class[] {String[].class, Runnable.class}); //$NON-NLS-1$
 		try {
-			return method.invoke(clazz, new Object[] { passThruArgs, endSplashHandler });
+			return method.invoke(clazz, new Object[] {passThruArgs, endSplashHandler});
 		} catch (InvocationTargetException e) {
 			if (e.getTargetException() instanceof Error)
 				throw (Error) e.getTargetException();
 			else if (e.getTargetException() instanceof Exception)
 				throw (Exception) e.getTargetException();
-			else //could be a subclass of Throwable!
+			else
+				//could be a subclass of Throwable!
 				throw e;
 		}
 	}
+
 	/**
 	 * Returns a string representation of the given URL String.  This converts
 	 * escaped sequences (%..) in the URL into the appropriate characters.
@@ -284,7 +286,7 @@ public class Main {
 		//try to use Java 1.4 method if available
 		try {
 			Class clazz = URLDecoder.class;
-			Method method = clazz.getDeclaredMethod("decode", new Class[] { String.class, String.class }); //$NON-NLS-1$
+			Method method = clazz.getDeclaredMethod("decode", new Class[] {String.class, String.class}); //$NON-NLS-1$
 			//first encode '+' characters, because URLDecoder incorrectly converts 
 			//them to spaces on certain class library implementations.
 			if (urlString.indexOf('+') >= 0) {
@@ -300,7 +302,7 @@ public class Main {
 				}
 				urlString = buf.toString();
 			}
-			Object result = method.invoke(null, new Object[] { urlString, "UTF-8" }); //$NON-NLS-1$
+			Object result = method.invoke(null, new Object[] {urlString, "UTF-8"}); //$NON-NLS-1$
 			if (result != null)
 				return (String) result;
 		} catch (Exception e) {
@@ -331,6 +333,7 @@ public class Main {
 			return new String(decodedBytes, 0, decodedLength);
 		}
 	}
+
 	/**
 	 * Returns the result of converting a list of comma-separated tokens into an array
 	 * 
@@ -349,6 +352,7 @@ public class Main {
 		}
 		return list.isEmpty() ? new String[0] : (String[]) list.toArray(new String[list.size()]);
 	}
+
 	/**
 	 * Returns the <code>URL</code>-based class path describing where the boot classes
 	 * are located when running in development mode.
@@ -392,6 +396,7 @@ public class Main {
 		if (new File(url.getFile()).exists())
 			result.add(url);
 	}
+
 	private void addDevEntries(String devBase, List result) throws MalformedURLException {
 		String[] locations = getArrayFromList(devClassPath);
 		for (int i = 0; i < locations.length; i++) {
@@ -405,6 +410,7 @@ public class Main {
 			addEntry(url, result);
 		}
 	}
+
 	/**
 	 * Returns the <code>URL</code>-based class path describing where the boot classes are located.
 	 * 
@@ -428,7 +434,7 @@ public class Main {
 		}
 		if (System.getProperty(PROP_FRAMEWORK) == null)
 			System.getProperties().put(PROP_FRAMEWORK, url.toExternalForm());
-		if (debug) 
+		if (debug)
 			System.out.println("Framework located:\n    " + url.toExternalForm());
 		URL[] result = getDevPath(url);
 		if (debug) {
@@ -479,13 +485,14 @@ public class Main {
 			return null;
 		return result.replace(File.separatorChar, '/') + "/"; //$NON-NLS-1$
 	}
+
 	/**
-	* Compares version strings. 
-	* @return result of comparison, as integer;
-	* <code><0</code> if left < right;
-	* <code>0</code> if left == right;
-	* <code>>0</code> if left > right;
-	*/
+	 * Compares version strings. 
+	 * @return result of comparison, as integer;
+	 * <code><0</code> if left < right;
+	 * <code>0</code> if left == right;
+	 * <code>>0</code> if left > right;
+	 */
 	private int compareVersion(Object[] left, Object[] right) {
 
 		int result = ((Integer) left[0]).compareTo((Integer) right[0]); // compare major
@@ -512,7 +519,7 @@ public class Main {
 	 * qualifier). Note, that returning anything else will cause exceptions in the caller.
 	 */
 	private Object[] getVersionElements(String version) {
-		Object[] result = { new Integer(0), new Integer(0), new Integer(0), "" }; //$NON-NLS-1$
+		Object[] result = {new Integer(0), new Integer(0), new Integer(0), ""}; //$NON-NLS-1$
 		StringTokenizer t = new StringTokenizer(version, "."); //$NON-NLS-1$
 		String token;
 		int i = 0;
@@ -541,7 +548,7 @@ public class Main {
 		// and make it absolute.  
 		if (spec.startsWith("file:")) {
 			File file = new File(spec.substring(5));
-			if (!file.isAbsolute()) 
+			if (!file.isAbsolute())
 				spec = "file:" + file.getAbsolutePath();
 		}
 		try {
@@ -561,19 +568,19 @@ public class Main {
 		// if the instance location is not set, predict where the workspace will be and 
 		// put the instance area inside the workspace meta area.
 		try {
-			if (location == null) 
+			if (location == null)
 				result = defaultLocation;
 			else if (location.equalsIgnoreCase(NONE))
 				return null;
 			else if (location.equalsIgnoreCase(NO_DEFAULT))
 				result = buildURL(location, true);
 			else {
-				if (location.equalsIgnoreCase(USER_HOME)) 
+				if (location.equalsIgnoreCase(USER_HOME))
 					location = computeDefaultUserAreaLocation(userDefaultAppendage);
-				if (location.equalsIgnoreCase(USER_DIR)) 
+				if (location.equalsIgnoreCase(USER_DIR))
 					location = new File(System.getProperty(PROP_USER_DIR), userDefaultAppendage).getAbsolutePath();
 				result = buildURL(location, true);
-			} 
+			}
 		} finally {
 			if (result != null)
 				System.getProperties().put(property, result.toExternalForm());
@@ -600,7 +607,7 @@ public class Main {
 		// TODO a little dangerous here.  Basically we have to assume that it is a file URL.
 		if (install.startsWith("file:")) {
 			File installDir = new File(install.substring(5));
-			if (installDir.canWrite()) 
+			if (installDir.canWrite())
 				return installDir.getAbsolutePath() + File.separator + CONFIG_DIR;
 		}
 		// We can't write in the eclipse install dir so try for some place in the user's home dir
@@ -624,7 +631,7 @@ public class Main {
 			return null;
 		File installDir = new File(installURL.getPath());
 		String appName = "." + ECLIPSE; //$NON-NLS-1$
-		File eclipseProduct = new File(installDir, PRODUCT_SITE_MARKER );
+		File eclipseProduct = new File(installDir, PRODUCT_SITE_MARKER);
 		if (eclipseProduct.exists()) {
 			Properties props = new Properties();
 			try {
@@ -644,6 +651,7 @@ public class Main {
 		String userHome = System.getProperty(PROP_USER_HOME);
 		return new File(userHome, appName + "/" + pathAppendage).getAbsolutePath(); //$NON-NLS-1$
 	}
+
 	/**
 	 * Runs this launcher with the arguments specified in the given string.
 	 * 
@@ -652,47 +660,48 @@ public class Main {
 	 */
 	public static void main(String argString) {
 		Vector list = new Vector(5);
-		for (StringTokenizer tokens = new StringTokenizer(argString, " "); tokens.hasMoreElements();) //$NON-NLS-1$
+		for (StringTokenizer tokens = new StringTokenizer(argString, " "); tokens.hasMoreElements();)
+			//$NON-NLS-1$
 			list.addElement(tokens.nextElement());
 		main((String[]) list.toArray(new String[list.size()]));
 	}
 
 	/**
-	* Runs the platform with the given arguments.  The arguments must identify
-	* an application to run (e.g., <code>-application com.example.application</code>).
-	* After running the application <code>System.exit(N)</code> is executed.
-	* The value of N is derived from the value returned from running the application.
-	* If the application's return value is an <code>Integer</code>, N is this value.
-	* In all other cases, N = 0.
-	* <p>
-	* Clients wishing to run the platform without a following <code>System.exit</code>
-	* call should use <code>run()</code>.
-	* </p>
-	* 
-	* @param args the command line arguments
-	* @see #run
-	*/
+	 * Runs the platform with the given arguments.  The arguments must identify
+	 * an application to run (e.g., <code>-application com.example.application</code>).
+	 * After running the application <code>System.exit(N)</code> is executed.
+	 * The value of N is derived from the value returned from running the application.
+	 * If the application's return value is an <code>Integer</code>, N is this value.
+	 * In all other cases, N = 0.
+	 * <p>
+	 * Clients wishing to run the platform without a following <code>System.exit</code>
+	 * call should use <code>run()</code>.
+	 * </p>
+	 * 
+	 * @param args the command line arguments
+	 * @see #run
+	 */
 	public static void main(String[] args) {
 		int result = new Main().run(args);
 		System.exit(result);
 	}
-	
+
 	/**
-	* Runs the platform with the given arguments.  The arguments must identify
-	* an application to run (e.g., <code>-application com.example.application</code>).
-	* Returns the value returned from running the application.
-	* If the application's return value is an <code>Integer</code>, N is this value.
-	* In all other cases, N = 0.
-	*
-	* @param args the command line arguments
-	*/	
+	 * Runs the platform with the given arguments.  The arguments must identify
+	 * an application to run (e.g., <code>-application com.example.application</code>).
+	 * Returns the value returned from running the application.
+	 * If the application's return value is an <code>Integer</code>, N is this value.
+	 * In all other cases, N = 0.
+	 *
+	 * @param args the command line arguments
+	 */
 	public int run(String[] args) {
 		int result = 0;
 		try {
 			basicRun(args);
 			String exitCode = System.getProperty(PROP_EXITCODE);
 			try {
-				result = exitCode == null ? 0: Integer.parseInt(exitCode);
+				result = exitCode == null ? 0 : Integer.parseInt(exitCode);
 			} catch (NumberFormatException e) {
 				result = 17;
 			}
@@ -704,11 +713,11 @@ public class Main {
 			if (!"13".equals(System.getProperty(PROP_EXITCODE))) {
 				log("Exception launching the Eclipse Platform:"); //$NON-NLS-1$
 				log(e);
-				String message = "An error has occurred";	//$NON-NLS-1$
+				String message = "An error has occurred"; //$NON-NLS-1$
 				if (logFile == null)
-					message += " and could not be logged: \n" + e.getMessage();	//$NON-NLS-1$
+					message += " and could not be logged: \n" + e.getMessage(); //$NON-NLS-1$
 				else
-					message += ".  See the log file\n" + logFile.getAbsolutePath();	//$NON-NLS-1$
+					message += ".  See the log file\n" + logFile.getAbsolutePath(); //$NON-NLS-1$
 				System.getProperties().put(PROP_EXITDATA, message);
 			}
 			// Return "unlucky" 13 as the exit code. The executable will recognize
@@ -728,7 +737,7 @@ public class Main {
 			return;
 		runCommand(exitData, data, " " + EXITDATA);
 	}
-	
+
 	/**
 	 * Processes the command line arguments.  The general principle is to NOT
 	 * consume the arguments and leave them to be processed by Eclipse proper.
@@ -806,7 +815,7 @@ public class Main {
 				}
 				continue;
 			}
-			
+
 			// check for args with parameters. If we are at the last argument or if the next one
 			// has a '-' as the first character, then we can't have an arg with a parm so continue.
 			if (i == arguments.length - 1 || arguments[i + 1].startsWith("-")) //$NON-NLS-1$
@@ -830,7 +839,7 @@ public class Main {
 			// Consume the arg here to ensure that the launcher and Eclipse get the 
 			// same value as each other.  
 			if (arguments[i - 1].equalsIgnoreCase(INSTALL)) {
-				System.getProperties().put(PROP_INSTALL_AREA, arg); 
+				System.getProperties().put(PROP_INSTALL_AREA, arg);
 				found = true;
 			}
 
@@ -881,13 +890,12 @@ public class Main {
 		for (int i = 0; i < arguments.length; i++) {
 			if (i == configArgs[configArgIndex])
 				configArgIndex++;
-			else
-				if (arguments[i] != null)
-					passThruArgs[j++] = arguments[i];
+			else if (arguments[i] != null)
+				passThruArgs[j++] = arguments[i];
 		}
 		return passThruArgs;
 	}
-	
+
 	private String processDevArg(String arg) {
 		if (arg == null)
 			return null;
@@ -950,7 +958,7 @@ public class Main {
 				// This helps in selfhosting cases where you cannot easily compute the install location
 				// from the code base.
 				location = baseConfiguration.getProperty(PROP_INSTALL_AREA);
-				if (location != null  && System.getProperty(PROP_INSTALL_AREA) == null)
+				if (location != null && System.getProperty(PROP_INSTALL_AREA) == null)
 					System.getProperties().put(PROP_INSTALL_AREA, location);
 			}
 		}
@@ -966,23 +974,23 @@ public class Main {
 		if (configuration == null || !getConfigurationLocation().equals(baseConfigurationLocation.toExternalForm()))
 			configuration = loadConfiguration(getConfigurationLocation());
 		mergeProperties(System.getProperties(), configuration);
-		if ("false".equalsIgnoreCase(System.getProperty(PROP_CONFIG_CASCADED))) 
+		if ("false".equalsIgnoreCase(System.getProperty(PROP_CONFIG_CASCADED)))
 			// if we are not cascaded then remvoe the parent property even if it was set.
 			System.getProperties().remove(PROP_SHARED_CONFIG_AREA);
 		else {
 			URL sharedConfigURL = buildLocation(PROP_SHARED_CONFIG_AREA, null, CONFIG_DIR);
-			if (sharedConfigURL == null) 
+			if (sharedConfigURL == null)
 				// here we access the install location but this is very early.  This case will only happen if
 				// the config is cascaded and the parent config area is not set (or is bogus).
 				// In this case we compute based on the install location.  Note that we should not 
 				// precompute this value and use it as the default in the call to buildLocation as it will
 				// unnecessarily bind the install location.
-				sharedConfigURL= buildURL(getInstallLocation() + CONFIG_DIR, true);
+				sharedConfigURL = buildURL(getInstallLocation() + CONFIG_DIR, true);
 
 			// if the parent location is different from the config location, read it too.
 			if (sharedConfigURL != null) {
 				String location = sharedConfigURL.toExternalForm();
-				if (location.equals(getConfigurationLocation())) 
+				if (location.equals(getConfigurationLocation()))
 					// remove the property to show that we do not have a parent.
 					System.getProperties().remove(PROP_SHARED_CONFIG_AREA);
 				else {
@@ -1021,7 +1029,7 @@ public class Main {
 			if (location == null)
 				throw new IllegalStateException("Install location is invalid: " + installLocation);
 			installLocation = location.toExternalForm();
-			System.getProperties().put(PROP_INSTALL_AREA, installLocation); 
+			System.getProperties().put(PROP_INSTALL_AREA, installLocation);
 			if (debug)
 				System.out.println("Install location:\n    " + installLocation);
 			return installLocation;
@@ -1042,7 +1050,7 @@ public class Main {
 			path = path.substring(0, path.lastIndexOf("/") + 1); //$NON-NLS-1$
 		try {
 			installLocation = new URL(result.getProtocol(), result.getHost(), result.getPort(), path).toExternalForm();
-			System.getProperties().put(PROP_INSTALL_AREA, installLocation); 
+			System.getProperties().put(PROP_INSTALL_AREA, installLocation);
 		} catch (MalformedURLException e) {
 			// TODO Very unlikely case.  log here.  
 		}
@@ -1169,9 +1177,9 @@ public class Main {
 			System.out.println("Splash location:\n    " + location); //$NON-NLS-1$
 		if (location == null)
 			return;
-		showProcess = runCommand(showSplash, location, " " + SHOWSPLASH);	//$NON-NLS-1$
+		showProcess = runCommand(showSplash, location, " " + SHOWSPLASH); //$NON-NLS-1$
 	}
-	
+
 	private Process runCommand(String command, String data, String separator) {
 		// Parse the showsplash command into its separate arguments.
 		// The command format is: 
@@ -1193,7 +1201,7 @@ public class Main {
 		if (eIndex == -1)
 			return null; // invalid command
 		args[1] = command.substring(sIndex, eIndex);
-		
+
 		// get the magic arg part
 		args[2] = command.substring(eIndex + 1);
 
@@ -1251,7 +1259,7 @@ public class Main {
 			ArrayList path = new ArrayList(entries.length);
 			for (int i = 0; i < entries.length; i++) {
 				String entry = resolve(entries[i]);
-				if (entry == null || entry.startsWith("file:")) {	 
+				if (entry == null || entry.startsWith("file:")) {
 					File entryFile = new File(entry.substring(5).replace('/', File.separatorChar));
 					entry = searchFor(entryFile.getName(), entryFile.getParent());
 					if (entry != null)
@@ -1275,8 +1283,8 @@ public class Main {
 			int pix = temp.indexOf(File.separator, ix + 8);
 			if (pix != -1) {
 				temp = temp.substring(0, pix);
-				result = searchForSplash(new String[] { temp });
-				if (result != null) 
+				result = searchForSplash(new String[] {temp});
+				if (result != null)
 					System.getProperties().put(PROP_SPLASHLOCATION, result);
 			}
 		}
@@ -1330,6 +1338,7 @@ public class Main {
 		// sorry, could not find splash image
 		return null;
 	}
+
 	/*
 	 * resolve platform:/base/ URLs
 	 */
@@ -1391,6 +1400,7 @@ public class Main {
 			log = null;
 		}
 	}
+
 	/*
 	 * This should only be called from #log()
 	 */
@@ -1424,10 +1434,11 @@ public class Main {
 		}
 		log.newLine();
 	}
+
 	private void computeLogFileLocation() {
 		String logFileProp = System.getProperty(PROP_LOGFILE);
 		if (logFileProp != null) {
-			if (logFile == null || !logFileProp.equals(logFile.getAbsolutePath())){
+			if (logFile == null || !logFileProp.equals(logFile.getAbsolutePath())) {
 				logFile = new File(logFileProp);
 				logFile.getParentFile().mkdirs();
 			}
@@ -1438,11 +1449,11 @@ public class Main {
 		URL base = buildURL(System.getProperty(PROP_CONFIG_AREA), false);
 		if (base == null)
 			return;
-		logFile = new File(base.getPath(),Long.toString(System.currentTimeMillis()) + ".log"); //$NON-NLS-1$
+		logFile = new File(base.getPath(), Long.toString(System.currentTimeMillis()) + ".log"); //$NON-NLS-1$
 		logFile.getParentFile().mkdirs();
 		System.setProperty(PROP_LOGFILE, logFile.getAbsolutePath());
 	}
-	
+
 	/**
 	 * Converts an ASCII character representing a hexadecimal
 	 * value into its integer equivalent.
@@ -1501,6 +1512,7 @@ public class Main {
 			throw e;
 		}
 	}
+
 	private BufferedWriter logForStream(OutputStream output) {
 		try {
 			return new BufferedWriter(new OutputStreamWriter(output, "UTF-8")); //$NON-NLS-1$
@@ -1508,6 +1520,7 @@ public class Main {
 			return new BufferedWriter(new OutputStreamWriter(output));
 		}
 	}
+
 	private void closeLogFile() throws IOException {
 		try {
 			if (log != null) {
@@ -1518,7 +1531,7 @@ public class Main {
 			log = null;
 		}
 	}
-	
+
 	private void mergeProperties(Properties destination, Properties source) {
 		if (destination == null || source == null)
 			return;
@@ -1531,7 +1544,7 @@ public class Main {
 			}
 		}
 	}
-	
+
 	public void setupVMProperties() {
 		if (vm != null)
 			System.getProperties().put(PROP_VM, vm);
@@ -1547,7 +1560,7 @@ public class Main {
 				result.append('\n');
 			}
 			System.getProperties().put(property, result.toString());
-		}	
+		}
 	}
 
 	private String adjustTrailingSlash(String value, boolean slash) {
