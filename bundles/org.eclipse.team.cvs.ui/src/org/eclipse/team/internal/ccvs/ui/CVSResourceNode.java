@@ -13,10 +13,10 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.team.ccvs.core.ICVSFile;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 
 /**
  * This class is a wrapper for a CVSResource. We use it instead of the standard
@@ -36,7 +36,8 @@ public class CVSResourceNode extends ResourceNode {
 			IResource resource = getResource();
 			if (resource instanceof IContainer) {
 				try {
-					ICVSFile[] files = new LocalFolder(resource.getLocation().toFile()).getFiles();
+					ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer) resource);
+					ICVSFile[] files = cvsFolder.getFiles();
 					for (int i= 0; i < files.length; i++) {
 						IResource child = getFile((IContainer)resource, files[i].getName());
 						if (child.exists()) {
@@ -46,7 +47,7 @@ public class CVSResourceNode extends ResourceNode {
 							}
 						}
 					}
-					ICVSFolder[] folders = new LocalFolder(resource.getLocation().toFile()).getFolders();
+					ICVSFolder[] folders = cvsFolder.getFolders();
 					for (int i= 0; i < folders.length; i++) {
 						IResource child = getFolder((IContainer)resource, folders[i].getName());
 						if (child.exists()) {

@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.ccvs.core.ICVSResource;
+
 public class FileUtil {
 		
 	public static void deepDelete(File resource) {
@@ -21,7 +24,7 @@ public class FileUtil {
 		}
 		resource.delete();
 	}
-	
+
 	public static void transfer(InputStream in, OutputStream out) throws IOException {
 		final byte[] BUFFER = new byte[4096];
 		int read = 0;

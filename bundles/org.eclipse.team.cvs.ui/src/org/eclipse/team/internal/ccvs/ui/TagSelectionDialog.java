@@ -7,26 +7,15 @@ package org.eclipse.team.internal.ccvs.ui;
  
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -38,24 +27,18 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
 import org.eclipse.team.internal.ccvs.ui.merge.TagElement;
-import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
  * Dialog to prompt the user to choose a tag for a selected resource
@@ -208,7 +191,7 @@ public class TagSelectionDialog extends Dialog {
 		// initialize the table contents
 		try {
 			CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource);
-			tagTree.setInput(new ProjectElement((ICVSRemoteFolder)provider.getRemoteResource(resource.getProject()), getShell()));
+			tagTree.setInput(new ProjectElement((ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(resource.getProject()), getShell()));
 		} catch (TeamException e) {
 			// To do: error dialog
 		}

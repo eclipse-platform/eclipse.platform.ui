@@ -10,10 +10,10 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.ccvs.core.*;
 import org.eclipse.team.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
-import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
 
 public class LogListener implements ICommandOutputListener {
 	private List entries;

@@ -17,6 +17,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.ccvs.core.*;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
@@ -42,7 +43,7 @@ public class RemoteModule extends RemoteFolder {
 	public static RemoteModule[] getRemoteModules(ICVSRepositoryLocation repository, CVSTag tag, IProgressMonitor monitor) throws TeamException {
 		
 		RemoteModule[] modules;
-		Session s = new Session(repository, (ICVSFolder)Session.getManagedResource(ResourcesPlugin.getWorkspace().getRoot()), false);
+		Session s = new Session(repository, (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(ResourcesPlugin.getWorkspace().getRoot()), false);
 		s.open(monitor);
 		try {
 			modules = Command.CHECKOUT.getRemoteModules(s, tag, monitor);

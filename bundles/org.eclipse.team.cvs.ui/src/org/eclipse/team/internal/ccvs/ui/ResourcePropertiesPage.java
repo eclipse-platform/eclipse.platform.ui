@@ -13,9 +13,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
@@ -40,14 +42,20 @@ public class ResourcePropertiesPage extends PropertyPage {
 		try {
 			IResource resource = getSelectedElement();
 			if (resource != null) {
-				CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource.getProject());;
-				if (!provider.isManaged(resource)) {
+				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+				if (!cvsResource.isManaged()) {
 					createPair(composite, Policy.bind("ResourcePropertiesPage.status"), Policy.bind("ResourcePropertiesPage.notManaged"));
 				} else {
-					createPair(composite, Policy.bind("ResourcePropertiesPage.status"), provider.hasRemote(resource) ? Policy.bind("ResourcePropertiesPage.versioned") : Policy.bind("ResourcePropertiesPage.notVersioned"));
-					createPair(composite, Policy.bind("ResourcePropertiesPage.state"), provider.isCheckedOut(resource) ? Policy.bind("ResourcePropertiesPage.checkedOut") : Policy.bind("ResourcePropertiesPage.checkedIn"));
-
-					//createPair(composite, Policy.bind("ResourcePropertiesPage.baseRevision"), common != null ? common.getVersionName() : Policy.bind("ResourcePropertiesPage.none"));
+					boolean hasRemote = false;
+					if(cvsResource.isFolder()) {
+						hasRemote = ((ICVSFolder)cvsResource).isCVSFolder();
+					} else {
+						ResourceSyncInfo info = cvsResource.getSyncInfo();
+						if(info!=null && !info.isAdded()) {
+							hasRemote = true;
+						}
+					}
+					createPair(composite, Policy.bind("ResourcePropertiesPage.status"), hasRemote ? Policy.bind("ResourcePropertiesPage.versioned") : Policy.bind("ResourcePropertiesPage.notVersioned"));
 				}
 			}
 		} catch (TeamException e) {

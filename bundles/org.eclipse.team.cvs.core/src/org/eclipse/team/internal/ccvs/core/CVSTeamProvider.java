@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -24,7 +25,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.IFileTypeRegistry;
 import org.eclipse.team.core.ITeamNature;
@@ -46,19 +46,13 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.DiffListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
-import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTreeBuilder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.core.util.RemoteFolderTreeBuilder;
 
 /**
  * This class acts as both the ITeamNature and the ITeamProvider instances
@@ -91,8 +85,7 @@ import org.eclipse.team.internal.ccvs.core.util.RemoteFolderTreeBuilder;
  */
 public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 
-	// Instance variables
-	private ICVSFolder managedProject;
+	private CVSWorkspaceRoot workspaceRoot;
 	private IProject project;
 	private String comment = "";  //$NON-NLS-1$
 		
@@ -106,7 +99,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * @see IProjectNature#configure()
 	 */
 	public void configure() throws CoreException {
-		// Do nothing
 	}
 
 	/**
@@ -121,6 +113,12 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	public IProject getProject() {
 		return project;
 	}
+	
+	/**
+	 * @see ITeamNature#configureProvider(Properties)
+	 */
+	public void configureProvider(Properties configuration) throws TeamException {
+	}
 
 	/**
 	 * @see IProjectNature#setProject(IProject)
@@ -128,9 +126,9 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	public void setProject(IProject project) {
 		this.project = project;
 		try {
-			this.managedProject = Session.getManagedFolder(project.getLocation().toFile());
+			this.workspaceRoot = new CVSWorkspaceRoot(project);
 			// Ensure that the project has CVS info
-			if (managedProject.getFolderSyncInfo() == null) {
+			if (workspaceRoot.getLocalRoot().getFolderSyncInfo() == null) {
 				throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTeamProvider.noFolderInfo", project.getName()))); //$NON-NLS-1$
 			}
 		} catch (CVSException e) {
@@ -143,20 +141,12 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * @see ITeamNature#getProvider()
 	 */
 	public ITeamProvider getProvider() throws TeamException {
-		if (managedProject == null) {
-			// An error must have occured when we were configured
+		if (workspaceRoot == null) {
 			throw new TeamException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.initializationFailed", new Object[]{project.getName()}), null)); //$NON-NLS-1$
 		}
 		return this;
 	}
 
-	/**
-	 * @see ITeamNature#configureProvider(Properties)
-	 */
-	public void configureProvider(Properties configuration) throws TeamException {
-		// Do nothing
-	}
-	
 	/**
 	 * Add the given resources to the project. 
 	 * <p>
@@ -202,35 +192,28 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			try {		
 				// Auto-add parents if they are not already managed
 				IContainer parent = currentResource.getParent();
-				// XXX Need to consider workspace root
-				
-				while (parent.getType() != IResource.ROOT && ! isManaged(parent)) {
-					folders.add(parent.getFullPath().removeFirstSegments(1).toString());
+				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(currentResource);
+				while (parent.getType() != IResource.ROOT && parent.getType() != IResource.PROJECT && ! cvsResource.isManaged()) {
+					folders.add(parent.getProjectRelativePath().toString());
 					parent = parent.getParent();
 				}
 					
 				// Auto-add children
 				currentResource.accept(new IResourceVisitor() {
 					public boolean visit(IResource resource) {
-						try {
-							ICVSResource mResource = (ICVSResource)Session.getManagedResource(resource);
-							// Add the resource is its not already managed and it was either
-							// added explicitly (is equal currentResource) or is not ignored
-							if (! isManaged(resource) && (currentResource.equals(resource) || ! mResource.isIgnored())) {
-								String name = resource.getFullPath().removeFirstSegments(1).toString();
-								if (resource.getType() == IResource.FILE) {
-									String extension = resource.getFileExtension();
-									if ((extension != null) && ("true".equals(registry.getValue(extension, "isText"))))   //$NON-NLS-1$ //$NON-NLS-2$
-										textfiles.add(name);
-									else
-										binaryfiles.add(name);
-								} else
-									folders.add(name);
-							}
-						} catch (TeamException e) {
-							// Record the exception to be thrown again later
-							eHolder[0] = e;
-							return false;
+						ICVSResource mResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+						// Add the resource is its not already managed and it was either
+						// added explicitly (is equal currentResource) or is not ignored
+						if (! mResource.isManaged() && (currentResource.equals(resource) || ! mResource.isIgnored())) {
+							String name = resource.getProjectRelativePath().toString();
+							if (resource.getType() == IResource.FILE) {
+								String extension = resource.getFileExtension();
+								if ((extension != null) && ("true".equals(registry.getValue(extension, "isText"))))   //$NON-NLS-1$ //$NON-NLS-2$
+									textfiles.add(name);
+								else
+									binaryfiles.add(name);
+							} else
+								folders.add(name);
 						}
 						// Always return true and let the depth determine if children are visited
 						return true;
@@ -248,7 +231,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		
 		// Add the folders, followed by files!
 		IStatus status;
-		Session s = new Session(getRemoteRoot(), managedProject);
+		Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
 		progress.beginTask(null, 100);
 		try {
 			// Opening the session takes 10% of the time
@@ -314,7 +297,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 					
 		// Commit the resources
 		IStatus status;
-		Session s = new Session(getRemoteRoot(), managedProject);
+		Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
 		progress.beginTask(null, 100);
 		try {
 			// Opening the session takes 20% of the time
@@ -342,18 +325,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 */
 	public void checkout(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
 	}
-
-	/*
-	 * Generate an exception if the resource is not a child of the project
-	 */
-	 private void checkIsChild(IResource resource) throws CVSException {
-	 	if (!isChildResource(resource))
-	 		throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, 
-	 			Policy.bind("CVSTeamProvider.invalidResource", //$NON-NLS-1$
-	 				new Object[] {resource.getFullPath().toString(), project.getName()}), 
-	 			null));
-	 }
-	
+		
 	/**
 	 * @see ITeamProvider#delete(IResource[], int, IProgressMonitor)
 	 */
@@ -368,23 +340,21 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			final List files = new ArrayList(resources.length);
 			final TeamException[] eHolder = new TeamException[1];
 			for (int i=0;i<resources.length;i++) {
-				checkIsChild(resources[i]);
+				IResource resource = resources[i];
+				checkIsChild(resource);
 				try {
-					if (resources[i].exists()) {
-						resources[i].accept(new IResourceVisitor() {
+					if (resource.exists()) {
+						resource.accept(new IResourceVisitor() {
 							public boolean visit(IResource resource) {
 								try {
-									if (isManaged(resource)) {
-										String name = resource.getFullPath().removeFirstSegments(1).toString();
+									ICVSResource cvsResource = workspaceRoot.getCVSResourceFor(resource);
+									if (cvsResource.isManaged()) {
+										String name = resource.getProjectRelativePath().toString();
 										if (resource.getType() == IResource.FILE) {
 											files.add(name);
 											((IFile)resource).delete(false, true, subProgress);
 										}
 									}
-								} catch (TeamException e) {
-									eHolder[0] = e;
-									// If there was a problem, don't visit the children
-									return false;
 								} catch (CoreException e) {
 									eHolder[0] = wrapException(e);
 									// If there was a problem, don't visit the children
@@ -394,9 +364,9 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 								return true;
 							}
 						}, IResource.DEPTH_INFINITE, false);
-					} else if (resources[i].getType() == IResource.FILE) {
+					} else if (resource.getType() == IResource.FILE) {
 						// If the resource doesn't exist but is a file, queue it for removal
-						files.add(resources[i].getFullPath().removeFirstSegments(1).toString());
+						files.add(resource.getProjectRelativePath().toString());
 					}
 				} catch (CoreException e) {
 					throw wrapException(e);
@@ -409,7 +379,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			
 			// Remove the files remotely
 			IStatus status;
-			Session s = new Session(getRemoteRoot(), managedProject);
+			Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
 			s.open(progress);
 			try {
 				status = Command.REMOVE.execute(s,
@@ -423,7 +393,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			}
 			if (status.getCode() == CVSStatus.SERVER_ERROR) {
 				throw new CVSServerException(status);
-			}
+			}	
 		} finally {
 			progress.done();
 		}
@@ -441,7 +411,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		String[] arguments = getValidArguments(resources, options);
 
 		IStatus status;
-		Session s = new Session(getRemoteRoot(), managedProject);
+		Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
 		progress.beginTask(null, 100);
 		try {
 			s.open(Policy.subMonitorFor(progress, 20));
@@ -504,8 +474,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			for (int i = 0; i < resources.length; i++) {
 				subProgress.subTask(Policy.bind("CVSTeamProvider.scrubbingResource", resources[i].getFullPath().toString()));
 				IResource resource = resources[i];
-				getChild(resource).accept(visitor);
-				CVSProviderPlugin.getSynchronizer().save(resource.getLocation().toFile(), progress);
+				workspaceRoot.getLocalRoot().getChild(resource.getProjectRelativePath().toString()).accept(visitor);
 			}
 			subProgress.done();
 					
@@ -522,198 +491,24 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		}
 	}
 	
-	/*
-	 * Get the corresponding managed child for the given resource.
-	 */
-	private ICVSResource getChild(IResource resource) throws CVSException {
-		if (resource.equals(project))
-			return managedProject;
-		return managedProject.getChild(resource.getFullPath().removeFirstSegments(1).toString());
-	}
-	
-	/**
-	 * Answer the name of the connection method for the given resource's
-	 * project.
-	 */
-	public String getConnectionMethod(IResource resource) throws TeamException {
-		checkIsChild(resource);
-		return getRemoteRoot().getMethod().getName();
-	}
-	
-	/**
-	 * Get the print stream to which information from CVS commands
-	 * is sent.
-	 */
-	private PrintStream getPrintStream() {
-		return CVSProviderPlugin.getProvider().getPrintStream();
-	}
-	
-	/** 
-	 * Get the remote resource corresponding to the base of the local resource.
-	 * This method returns null if the corresponding local resource does not have a base.
-	 * 
-	 * Use getRemoteSyncTree() to get the current remote state of HEAD or a branch.
-	 */
-	public ICVSRemoteResource getRemoteResource(IResource resource) throws TeamException {
-		checkIsChild(resource);
-		ICVSResource managed = getChild(resource);
-		if (managed.isFolder()) {
-			ICVSFolder folder = (ICVSFolder)managed;
-			if (folder.isCVSFolder()) {
-				FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
-				return new RemoteFolder(null, CVSProvider.getInstance().getRepository(syncInfo.getRoot()), new Path(syncInfo.getRepository()), syncInfo.getTag());
-			}
-		} else {
-			if (managed.isManaged())
-				return RemoteFile.getBase((RemoteFolder)getRemoteResource(resource.getParent()), (ICVSFile)managed);
-		}
-		return null;
-	}
-	
-	/** 
-	 * Return the repository location to which the provider is connected
-	 */
-	public ICVSRepositoryLocation getRemoteRoot() throws CVSException {
-		return CVSProvider.getInstance().getRepository(managedProject.getFolderSyncInfo().getRoot());
-	}
-	
-	/*
-	 * Helper method that uses the parent of a local resource that has no base to ensure that the resource
-	 * wasn't added remotely by a third party
-	 */
-	private ICVSRemoteResource getRemoteTreeFromParent(IResource resource, ICVSResource managed, CVSTag tag, IProgressMonitor progress) throws TeamException {
-
-		// If the parent isn't mapped to CVS, there's nothing we can do
-		ICVSFolder parent = managed.getParent();
-		if (!parent.isCVSFolder()) {
-			// Check to make sure the project still has the CVS information
-			if (managedProject.getFolderSyncInfo() == null) {
-				// This is a catastrophic error. The project should have CVS information
-				TeamPlugin.getManager().removeProvider(project, progress);
-				throw new CVSException(new CVSStatus(CVSStatus.ERROR, project.getFullPath(), Policy.bind("CVSTeamProvider.invalidProjectState", managedProject.getName()), null)); //$NON-NLS-1$
-			} else {
-				throw new CVSException(new CVSStatus(CVSStatus.ERROR, resource.getFullPath(), Policy.bind("CVSTeamProvider.unmanagedParent", resource.getFullPath().toString()), null)); //$NON-NLS-1$
-			}
-		}
-		
-		// Fetch the parent tree.
-		// The progress monitor is only passed to one method so no wrapping is needed
-		ICVSRepositoryLocation location = CVSProvider.getInstance().getRepository(parent.getFolderSyncInfo().getRoot());
-		// XXX We build and fetch the whole tree from the parent. We could restrict the search to just the desired child
-		RemoteFolder remoteParent = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, parent, tag, progress);
-		ICVSRemoteResource remote = null;
-		if (remoteParent != null) {
-			try {
-				remote = (ICVSRemoteResource)remoteParent.getChild(resource.getName());
-			} catch (CVSException e) {
-				remote = null;
-			}
-			// The types need to match or we're in trouble
-			if (remote != null && !(remote.isContainer() == managed.isFolder()))
-				throw new CVSException(new CVSStatus(CVSStatus.ERROR, resource.getFullPath(), Policy.bind("CVSTeamProvider.typesDiffer", resource.getFullPath().toString()), null)); //$NON-NLS-1$
-		}
-		return remote;
-	}
-	
-	public IRemoteSyncElement getRemoteSyncTree(IResource resource, CVSTag tag, IProgressMonitor progress) throws TeamException {
-		checkIsChild(resource);
-		ICVSResource managed = getChild(resource);
-		ICVSRemoteResource remote = getRemoteResource(resource);
-		ICVSRemoteResource baseTree = null;
-		
-		// The resource doesn't have a remote base. 
-		// However, we still need to check to see if its been created remotely by a third party.
-		if (remote == null) {
-			// The progress monitor is only passed to one method so no wrapping is needed
-			remote = getRemoteTreeFromParent(resource, managed, tag, progress);
-		} else if(resource.getType() == IResource.FILE) {
-			// The progress monitor is only passed to one method so no wrapping is needed
-			baseTree = remote;
-			remote = RemoteFile.getLatest((RemoteFolder)getRemoteResource(resource.getParent()), (ICVSFile)managed, tag, progress);
-		} else {
-			try {
-				progress.beginTask(null, 100);
-				ICVSRepositoryLocation location = remote.getRepository();
-				baseTree = RemoteFolderTreeBuilder.buildBaseTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, Policy.subMonitorFor(progress, 20));
-				remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, Policy.subMonitorFor(progress, 80));
-			} finally {
-				progress.done();
-			}
-		}
-		return new CVSRemoteSyncElement(false, resource, baseTree, remote);
-	}
-	
-	public ICVSRemoteResource getRemoteTree(IResource resource, CVSTag tag, IProgressMonitor progress) throws TeamException {
-		checkIsChild(resource);
-		ICVSResource managed = getChild(resource);
-		ICVSRemoteResource remote = getRemoteResource(resource);
-		if (remote == null) {
-			// The progress monitor is only passed to one method so no wrapping is needed
-			remote = getRemoteTreeFromParent(resource, managed, tag, progress);
-		} else if(resource.getType() == IResource.FILE) {
-			// The progress monitor is only passed to one method so no wrapping is needed
-			remote = RemoteFile.getLatest((RemoteFolder)getRemoteResource(resource.getParent()), (ICVSFile)managed, tag, progress);
-		} else {
-			// The progress monitor is only passed to one method so no wrapping is needed
-			ICVSRepositoryLocation location = remote.getRepository();
-			remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);		
-		}
-		return remote;
-	}
-	
-	/**
-	 * Returns an IUserInfo instance that can be used to access and set the
-	 * user name and set the password. To have changes take place, the user must
-	 * invoke the setUserInfo() method.
-	 */ 
-	public IUserInfo getUserInfo(IResource resource) throws TeamException {
-		checkIsChild(resource);
-		// Get the repository location for the receiver
-		CVSRepositoryLocation location = (CVSRepositoryLocation)getRemoteRoot();
-		return location.getUserInfo(true);
-	}
-	
-	/*
-	 * Get the arguments to be passed to a commit or update
-	 */
-	private String[] getValidArguments(IResource[] resources, LocalOption[] options) throws CVSException {
-		int depth = Command.DO_NOT_RECURSE.isElementOf(options) ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
-		List arguments = new ArrayList(resources.length);
-		for (int i=0;i<resources.length;i++) {
-			checkIsChild(resources[i]);
-			// A depth of zero is only valid for files
-			if ((depth != IResource.DEPTH_ZERO) || (resources[i].getType() == IResource.FILE)) {
-				IPath cvsPath = resources[i].getFullPath().removeFirstSegments(1);
-				if (cvsPath.segmentCount() == 0) {
-					arguments.add(Session.CURRENT_LOCAL_FOLDER);
-				}
-				else
-					arguments.add(cvsPath.toString());
-			}
-		}
-		return (String[])arguments.toArray(new String[arguments.size()]);
-	}
-	
 	/**
 	 * @see ITeamProvider#hasRemote(IResource)
 	 * XXX to be removed when sync methods are removed from ITeamProvider
 	 */
 	public boolean hasRemote(IResource resource) {
 		try {
-			LocalResource cvsResource;
+			ICVSResource cvsResource = workspaceRoot.getCVSResourceFor(resource);
 			int type = resource.getType();
 			if(type!=IResource.FILE) {
-				cvsResource = new LocalFolder(resource.getLocation().toFile());
 				if(type==IResource.PROJECT) {
 					return ((ICVSFolder)cvsResource).isCVSFolder();
 				} else {
 					return cvsResource.isManaged();
 				}
 			} else {
-				cvsResource = new LocalFile(resource.getLocation().toFile());
 				ResourceSyncInfo info = cvsResource.getSyncInfo();
 				if(info!=null) {
-					return !info.getRevision().equals(ResourceSyncInfo.ADDED_REVISION);
+					return !info.isAdded();
 				} else {
 					return false;
 				}
@@ -728,42 +523,8 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
  	 * XXX to be removed when sync methods are removed from ITeamProvider
 	 */
 	public boolean isCheckedOut(IResource resource) {
-		// check to see if the resource exists and has an entry
-		try {
-			return isManaged(resource);
-		} catch (TeamException e) {
-			// Something went wrong. Log it and say the file is not checked out
-			CVSProviderPlugin.log(e);
-			return false;
-		}
-	}
-	
-	/*
-	 * Helper to indicate if the resource is a child of the receiver's project
-	 */
-	private boolean isChildResource(IResource resource) {
-		return resource.getProject().getName().equals(managedProject.getName());
-	}
-			
-	/**
-	 * Return whether the given resource is managed. 
-	 * 
-	 * From a CVS standpoint, this means that we have a CVS entry
-	 * for the resource and that uodates and commits may effect the
-	 * resource or its children.
-	 */
-	public boolean isManaged(IResource resource) throws TeamException {
-		
-		if (resource.equals(project))
-			return true;
-			
-		// Ensure that the resource is a child of our project
-		if (!isChildResource(resource))
-			// Is returning false enough or should we throw an exception
-			return false;
-			
-		// Get the ICVSResource corresponding to the resource and check if its managed
-		return getChild(resource).isManaged();
+		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+		return cvsResource.isManaged();
 	}
 	
 	/**
@@ -782,18 +543,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	/**
 	 * @see ITeamProvider#move(IResource, IPath, IProgressMonitor)
 	 */
-	public void moved(IPath source, IResource resource, IProgressMonitor progress)
-		throws TeamException {
-			
-		// this translates to a delete and an add
-		
-		// How is this managed? Do we do the move or is that done after?
-		// It becomes complicated if the local and remote operations
-		// are independant as this is not the way CVS works!
-		
-		// Could implement a CVSProvider.MOVE!!!
-		
-		// XXX ????
+	public void moved(IPath source, IResource resource, IProgressMonitor progress) throws TeamException {
 	}
 
 	/**
@@ -815,9 +565,9 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			
 			if (!CVSRepositoryLocation.validateConnectionMethod(methodName))
 				return false;
-			
+				
 			// Get the original location
-			ICVSRepositoryLocation location = getRemoteRoot();
+			ICVSRepositoryLocation location = workspaceRoot.getRemoteLocation();
 			
 			// Make a copy to work on
 			CVSRepositoryLocation newLocation = CVSRepositoryLocation.fromString(location.getLocation());
@@ -839,39 +589,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			// Set the project to use the new Locations
 			setRemoteRoot(newLocation, Policy.infiniteSubMonitorFor(monitor, 80));
 			return true;
-		} finally {
-			monitor.done();
-		}
-	}
-	
-	/*
-	 * This method expects to be passed an InfiniteSubProgressMonitor
-	 */
-	private void setRemoteRoot(ICVSRepositoryLocation location, final IProgressMonitor monitor) throws TeamException {
-
-		// Check if there is a differnece between the new and old roots	
-		final String root = location.getLocation();
-		if (root.equals(getRemoteRoot().getLocation())) 
-			return;
-				
-		try {
-			// 256 ticks gives us a maximum of 1024 which seems reasonable for folders is a project
-			monitor.beginTask(Policy.bind("CVSTeamProvider.folderInfo", project.getName()), 256);  //$NON-NLS-1$
-			
-			// Visit all the children folders in order to set the root in the folder sync info
-			managedProject.accept(new ICVSResourceVisitor() {
-				public void visitFile(ICVSFile file) throws CVSException {};
-				public void visitFolder(ICVSFolder folder) throws CVSException {
-					monitor.worked(1);
-					FolderSyncInfo info = folder.getFolderSyncInfo();
-					if (info != null) {
-						monitor.subTask(Policy.bind("CVSTeamProvider.updatingFolder", info.getRepository())); //$NON-NLS-1$
-						folder.setFolderSyncInfo(new FolderSyncInfo(info.getRepository(), root, info.getTag(), info.getIsStatic()));
-						folder.acceptChildren(this);
-					}
-				};
-			});
-			CVSProviderPlugin.getSynchronizer().save(project.getLocation().toFile(), monitor);
 		} finally {
 			monitor.done();
 		}
@@ -907,7 +624,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		arguments = (String[])args.toArray(new String[args.size()]);
 
 		IStatus status;
-		Session s = new Session(getRemoteRoot(), managedProject);
+		Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
 		progress.beginTask(null, 100);
 		try {
 			// Opening the session takes 20% of the time
@@ -968,7 +685,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		String[] arguments = getValidArguments(resources, commandOptions);
 
 		IStatus status;
-		Session s = new Session(getRemoteRoot(), managedProject);
+		Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
 		progress.beginTask(null, 100);
 		try {
 			// Opening the session takes 20% of the time
@@ -991,22 +708,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			throw new CVSServerException(status);
 		}
 	}
-
-	private static TeamException wrapException(CoreException e) {
-		return new TeamException(statusFor(e));
-	}
-	
-	public static TeamException wrapException(CVSException e, List errors) {
-		// NOTE: Need to find out how to pass MultiStatus. Is it up to me to subclass?
-		return e;
-	}
-	
-	private static IStatus statusFor(CoreException e) {
-		// We should be taking out any status from the CVSException
-		// and creating an array of IStatus!
-		return new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, getMessageFor(e), e);
-	}
-	
+		
 	public static String getMessageFor(Exception e) {
 		String message = Policy.bind(e.getClass().getName(), new Object[] {e.getMessage()});
 		if (message.equals(e.getClass().getName()))
@@ -1046,11 +748,97 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		Assert.isTrue(false);
 		return false;
 	}
+	
 	/*
 	 * @see ITeamProvider#isDirty(IResource)
 	 */
 	public boolean isDirty(IResource resource) {
 		Assert.isTrue(false);
 		return false;
+	}
+	
+	public CVSWorkspaceRoot getCVSWorkspaceRoot() {
+		return workspaceRoot;
+	}
+	
+	/*
+	 * Generate an exception if the resource is not a child of the project
+	 */
+	 private void checkIsChild(IResource resource) throws CVSException {
+	 	if (!isChildResource(resource))
+	 		throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, 
+	 			Policy.bind("CVSTeamProvider.invalidResource", //$NON-NLS-1$
+	 				new Object[] {resource.getFullPath().toString(), project.getName()}), 
+	 			null));
+	 }
+	 
+	/*
+	 * Get the arguments to be passed to a commit or update
+	 */
+	private String[] getValidArguments(IResource[] resources, LocalOption[] options) throws CVSException {
+		int depth = Command.DO_NOT_RECURSE.isElementOf(options) ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
+		List arguments = new ArrayList(resources.length);
+		for (int i=0;i<resources.length;i++) {
+			checkIsChild(resources[i]);
+			// A depth of zero is only valid for files
+			if ((depth != IResource.DEPTH_ZERO) || (resources[i].getType() == IResource.FILE)) {
+				IPath cvsPath = resources[i].getFullPath().removeFirstSegments(1);
+				if (cvsPath.segmentCount() == 0) {
+					arguments.add(Session.CURRENT_LOCAL_FOLDER);
+				}
+				else
+					arguments.add(cvsPath.toString());
+			}
+		}
+		return (String[])arguments.toArray(new String[arguments.size()]);
+	}
+	
+	/*
+	 * This method expects to be passed an InfiniteSubProgressMonitor
+	 */
+	private void setRemoteRoot(ICVSRepositoryLocation location, final IProgressMonitor monitor) throws TeamException {
+
+		// Check if there is a differnece between the new and old roots	
+		final String root = location.getLocation();
+		if (root.equals(workspaceRoot.getRemoteLocation())) 
+			return;
+				
+		try {
+			// 256 ticks gives us a maximum of 1024 which seems reasonable for folders is a project
+			monitor.beginTask(Policy.bind("CVSTeamProvider.folderInfo", project.getName()), 256);  //$NON-NLS-1$
+			
+			// Visit all the children folders in order to set the root in the folder sync info
+			workspaceRoot.getLocalRoot().accept(new ICVSResourceVisitor() {
+				public void visitFile(ICVSFile file) throws CVSException {};
+				public void visitFolder(ICVSFolder folder) throws CVSException {
+					monitor.worked(1);
+					FolderSyncInfo info = folder.getFolderSyncInfo();
+					if (info != null) {
+						monitor.subTask(Policy.bind("CVSTeamProvider.updatingFolder", info.getRepository())); //$NON-NLS-1$
+						folder.setFolderSyncInfo(new FolderSyncInfo(info.getRepository(), root, info.getTag(), info.getIsStatic()));
+						folder.acceptChildren(this);
+					}
+				};
+			});
+		} finally {
+			monitor.done();
+		}
+	}
+	
+	/*
+	 * Helper to indicate if the resource is a child of the receiver's project
+	 */
+	private boolean isChildResource(IResource resource) {
+		return resource.getProject().getName().equals(project.getName());
+	}
+	
+	private static TeamException wrapException(CoreException e) {
+		return new TeamException(statusFor(e));
+	}
+	
+	private static IStatus statusFor(CoreException e) {
+		// We should be taking out any status from the CVSException
+		// and creating an array of IStatus!
+		return new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, getMessageFor(e), e);
 	}
 }

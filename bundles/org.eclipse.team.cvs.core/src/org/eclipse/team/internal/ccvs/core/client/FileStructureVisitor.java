@@ -9,9 +9,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.ccvs.core.ICVSFile;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
 /**
  * This visitor send the fileStructure to the requestSender.

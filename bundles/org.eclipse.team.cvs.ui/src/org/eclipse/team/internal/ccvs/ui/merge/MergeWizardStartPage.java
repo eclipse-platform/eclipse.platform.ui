@@ -24,11 +24,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.ccvs.core.CVSTag;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.CVSWizardPage;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -110,10 +108,8 @@ public class MergeWizardStartPage extends CVSWizardPage {
 		setPageComplete(false);
 	}
 	private void initialize() {
-		ITeamProvider provider = TeamPlugin.getManager().getProvider(project);
-		if (!(provider instanceof CVSTeamProvider)) return;
 		try {
-			ICVSRemoteFolder remoteResource = (ICVSRemoteFolder)((CVSTeamProvider)provider).getRemoteResource(project);
+			ICVSRemoteFolder remoteResource = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project);
 			table.setInput(new VersionsElement(remoteResource, getShell()));
 		} catch (TeamException e) {
 			// To do. This could only happen if the resource was not a child of the provider.

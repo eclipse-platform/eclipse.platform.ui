@@ -18,14 +18,11 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
-import org.eclipse.team.core.sync.ISyncProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSSynchronizer;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
-import org.eclipse.team.internal.ccvs.core.syncinfo.FileSystemSynchronizer;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.util.OrphanedFolderListener;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 import org.eclipse.team.internal.ccvs.core.util.Util;
@@ -56,7 +53,6 @@ public class CVSProviderPlugin extends Plugin {
 	private String cvsServer = DEFAULT_CVS_SERVER;
 	
 	private static CVSProviderPlugin instance;
-	private static ICVSSynchronizer synchronizer;
 	
 	/**
 	 * The identifier for the CVS nature
@@ -156,9 +152,8 @@ public class CVSProviderPlugin extends Plugin {
 		super.startup();
 		Policy.localize("org.eclipse.team.internal.ccvs.core.messages"); //$NON-NLS-1$
 
-		synchronizer = new FileSystemSynchronizer();
-
 		CVSProvider.startup();
+		EclipseSynchronizer.startup();
 		ProjectDescriptionManager.initializeChangeListener();
 		new OrphanedFolderListener().register();
 	}
@@ -169,15 +164,10 @@ public class CVSProviderPlugin extends Plugin {
 	public void shutdown() throws CoreException {
 		super.shutdown();
 		CVSProvider.shutdown();
-	}
-
-	/**
-	 * Returns the synchronizer reponsible for managing the CVS meta information.
-	 */
-	public static ICVSSynchronizer getSynchronizer() {
-		return synchronizer;
+		EclipseSynchronizer.shutdown();
 	}
 	
+		
 	/*
 	 * Add a resource change listener to the workspace in order to respond to 
 	 * resource deletions and moves and to ensure or project desription file is up to date.

@@ -8,9 +8,9 @@ package org.eclipse.team.internal.ccvs.core.client;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.ccvs.core.ICVSFile;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.EntryFileDateFormat;
@@ -78,7 +78,7 @@ class UpdatedHandler extends ResponseHandler {
 		boolean readOnly = permissionsLine.indexOf(READ_ONLY_FLAG) == -1;
 		
 		session.receiveFile(mFile, binary, monitor);
-		if (readOnly) mFile.setReadOnly();
+		if (readOnly) mFile.setReadOnly(true);
 		
 		// Set the timestamp in the file, set the result in the fileInfo
 		String timestamp = null;

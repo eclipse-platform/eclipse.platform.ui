@@ -7,8 +7,11 @@ package org.eclipse.team.internal.ccvs.core.client;
  
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.ccvs.core.*;
 import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSResource;
+import org.eclipse.team.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
@@ -17,8 +20,6 @@ import org.eclipse.team.internal.ccvs.core.client.Command.Option;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ModuleDefinitionsListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteModule;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
@@ -109,7 +110,7 @@ public class Checkout extends Command {
 	/**
 	 * Override execute to perform a expand-modules before the checkout
 	 */
-	public IStatus execute(Session session, GlobalOption[] globalOptions,
+	protected IStatus doExecute(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, String[] arguments, ICommandOutputListener listener,
 		IProgressMonitor monitor) throws CVSException {
 		monitor.beginTask(null, 100);
@@ -129,14 +130,7 @@ public class Checkout extends Command {
 			}
 		}
 		
-		// Execute the checkout command
-		status = super.execute(session, globalOptions, localOptions, arguments, listener,  Policy.subMonitorFor(monitor, 90));
-		if (status.getCode() == CVSStatus.SERVER_ERROR)
-			return status;
-		
-		// Make the checked out resources known to the workbench
-		
-		return status;
+		return super.doExecute(session, globalOptions, localOptions, arguments, listener, Policy.subMonitorFor(monitor, 90));
 	}
 	
 	/**

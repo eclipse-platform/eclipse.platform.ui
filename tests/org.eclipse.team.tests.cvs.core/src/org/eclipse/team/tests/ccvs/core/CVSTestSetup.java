@@ -19,11 +19,10 @@ import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 
 public class CVSTestSetup extends TestSetup {
-	public static String REPOSITORY_LOCATION;
-	public static boolean INITIALIZE_REPO;
+	public static final String REPOSITORY_LOCATION;
+	public static final boolean INITIALIZE_REPO;
 	public static final boolean DEBUG;
 	public static final String RSH;
-
 	
 	public static CVSRepositoryLocation repository;
 	
@@ -88,8 +87,6 @@ public class CVSTestSetup extends TestSetup {
 	public void setUp() throws CVSException {
 		if (repository == null)
 			repository = setupRepository(REPOSITORY_LOCATION);
-		if (!DEBUG)
-			CVSProviderPlugin.getProvider().setPrintStream(new PrintStream(new NullOutputStream()));
 	}
 
 	protected CVSRepositoryLocation setupRepository(String location) throws CVSException {

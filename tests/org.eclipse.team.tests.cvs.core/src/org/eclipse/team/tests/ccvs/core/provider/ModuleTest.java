@@ -3,27 +3,35 @@ package org.eclipse.team.tests.ccvs.core.provider;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteModule;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
@@ -85,19 +93,27 @@ public class ModuleTest extends EclipseTest {
 		isSetUp = true;
 	}
 	
-	protected void uploadProject(String projectName) throws TeamException, IOException {
-		// upload the modules definitions file
-		PluginDescriptor testPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.team.tests.cvs.core");
-		String filePath = testPlugin.getLocation().concat(RESOURCE_PATH + projectName);
-		URL url = null;
-		try {
-			url = new URL (filePath);
-		} catch (java.net.MalformedURLException e) {
-			assertTrue("Bad URL for " + filePath, true);
-		}
+	protected void uploadProject(String projectName) throws TeamException, IOException, CoreException {
+		// locate the test case contents in the plugin resources
+		IPluginRegistry registry = Platform.getPluginRegistry();
+		IPluginDescriptor descriptor = registry.getPluginDescriptor("org.eclipse.team.tests.cvs.core");
+		URL baseURL = descriptor.getInstallURL();
+		URL url = new URL(baseURL, RESOURCE_PATH + projectName);
+		url = Platform.resolve(url);
+		Assert.assertTrue(url.getProtocol().equals("file"));
+		IPath path = new Path(url.getPath());
 		
-		// Import the project into CVS
-		Session s = new Session(getRepository(), Session.getManagedFolder(new File(url.getPath())));
+		// create a project rooted there
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot workspaceRoot = workspace.getRoot();
+		IProject project = workspaceRoot.getProject(projectName);
+		IProjectDescription projectDescription = workspace.newProjectDescription(projectName);
+		projectDescription.setLocation(path);
+		project.create(projectDescription, null);
+		project.open(null);
+
+		// import the project into CVS
+		Session s = new Session(getRepository(), CVSWorkspaceRoot.getCVSFolderFor(project));
 		s.open(DEFAULT_MONITOR);
 		try {
 			Command.IMPORT.execute(s, Command.NO_GLOBAL_OPTIONS, 
@@ -108,13 +124,16 @@ public class ModuleTest extends EclipseTest {
 		} finally {
 			s.close();
 		}
+
+		// delete the project locally
+		project.delete(false /*deleteContent*/, false /*force*/, null);
 	}
 	
 	// XXX Temporary method of checkout (i.e. with vcm_meta
 	protected IProject checkoutProject(String projectName, CVSTag tag) throws TeamException {
 		IProject project = super.checkoutProject(getWorkspace().getRoot().getProject(projectName), null, tag);
-		ICVSFolder parent = (ICVSFolder)Session.getManagedResource(project);
-		ICVSResource vcmmeta = Session.getManagedResource(project.getFile(".vcm_meta"));
+		ICVSFolder parent = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(project);
+		ICVSResource vcmmeta = CVSWorkspaceRoot.getCVSResourceFor(project.getFile(".vcm_meta"));
 		if ( ! vcmmeta.isManaged() && ! parent.getFolderSyncInfo().getIsStatic()) {
 			getProvider(project).add(new IResource[] {project.getFile(".vcm_meta")}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 			waitMsec(1000);
@@ -143,8 +162,8 @@ public class ModuleTest extends EclipseTest {
 	public void testSelfReferencingModule() throws TeamException, CoreException, IOException {
 		uploadProject("project1");
 		IProject project1 = checkoutProject("project1", null);
-		IRemoteSyncElement tree = getProvider(project1).getRemoteSyncTree(project1, CVSTag.DEFAULT, DEFAULT_MONITOR);
-		assertEquals(Path.EMPTY, Session.getManagedResource(project1), (ICVSResource)tree.getRemote(), false, false);
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project1, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		assertEquals(Path.EMPTY, CVSWorkspaceRoot.getCVSResourceFor(project1), (ICVSResource)tree.getRemote(), false, false);
 		RemoteModule module = getRemoteModule("project1");
 		assertEquals(Path.EMPTY, (RemoteFolder)tree.getRemote(), module, false);
 	}
@@ -159,14 +178,14 @@ public class ModuleTest extends EclipseTest {
 	public void testFlattenedStructure() throws TeamException, CoreException, IOException {
 		
 		IProject docs = checkoutProject("docs", null);
-		IRemoteSyncElement tree = getProvider(docs).getRemoteSyncTree(docs, CVSTag.DEFAULT, DEFAULT_MONITOR);
-		assertEquals(Path.EMPTY, Session.getManagedResource(docs), (ICVSResource)tree.getRemote(), false, false);
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(docs, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		assertEquals(Path.EMPTY, CVSWorkspaceRoot.getCVSResourceFor(docs), (ICVSResource)tree.getRemote(), false, false);
 		RemoteModule module = getRemoteModule("docs");
 		assertEquals(Path.EMPTY, (RemoteFolder)tree.getRemote(), module, false);
 		
 		IProject macros = checkoutProject("macros", null);
-		tree = getProvider(macros).getRemoteSyncTree(macros, CVSTag.DEFAULT, DEFAULT_MONITOR);
-		assertEquals(Path.EMPTY, Session.getManagedResource(macros), (ICVSResource)tree.getRemote(), false, false);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(macros, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		assertEquals(Path.EMPTY, CVSWorkspaceRoot.getCVSResourceFor(macros), (ICVSResource)tree.getRemote(), false, false);
 		module = getRemoteModule("macros");
 		assertEquals(Path.EMPTY, (RemoteFolder)tree.getRemote(), module, false);
 
@@ -183,15 +202,15 @@ public class ModuleTest extends EclipseTest {
 	public void testIncludeAndExcludeDocs() throws TeamException, CoreException, IOException {
 		uploadProject("project2");
 		IProject project2 = checkoutProject("project2", null);
-		IRemoteSyncElement tree = getProvider(project2).getRemoteSyncTree(project2, CVSTag.DEFAULT, DEFAULT_MONITOR);
-		assertEquals(Path.EMPTY, Session.getManagedResource(project2), (ICVSResource)tree.getRemote(), false, false);
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project2, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		assertEquals(Path.EMPTY, CVSWorkspaceRoot.getCVSResourceFor(project2), (ICVSResource)tree.getRemote(), false, false);
 
 		RemoteModule module = getRemoteModule("project2");
 		assertEquals(Path.EMPTY, (RemoteFolder)tree.getRemote(), module, false);
 
 		project2 = checkoutProject("project2-only", null);
-		tree = getProvider(project2).getRemoteSyncTree(project2, CVSTag.DEFAULT, DEFAULT_MONITOR);
-		assertEquals(Path.EMPTY, Session.getManagedResource(project2), (ICVSResource)tree.getRemote(), false, false);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project2, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		assertEquals(Path.EMPTY, CVSWorkspaceRoot.getCVSResourceFor(project2), (ICVSResource)tree.getRemote(), false, false);
 
 		module = getRemoteModule("project2-only");
 		assertEquals(Path.EMPTY, (RemoteFolder)tree.getRemote(), module, false);
@@ -209,15 +228,15 @@ public class ModuleTest extends EclipseTest {
 	public void testAliasForFiles() throws TeamException, CoreException, IOException {
 		uploadProject("project3");
 		IProject project3 = checkoutProject("project3-sub", null);
-		IRemoteSyncElement tree = getProvider(project3).getRemoteSyncTree(project3, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project3, CVSTag.DEFAULT, DEFAULT_MONITOR);
 //		assertEquals("Local does not match remote", Session.getManagedResource(project3), (ICVSResource)tree.getRemote(), false, false);
 
 		project3 = checkoutProject("project3-src", null);
-		tree = getProvider(project3).getRemoteSyncTree(project3, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project3, CVSTag.DEFAULT, DEFAULT_MONITOR);
 //		assertEquals("Local does not match remote", Session.getManagedResource(project3), (ICVSResource)tree.getRemote(), false, false);
 
 		project3 = checkoutProject("project3-src_file", null);
-		tree = getProvider(project3).getRemoteSyncTree(project3, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project3, CVSTag.DEFAULT, DEFAULT_MONITOR);
 //		assertEquals("Local does not match remote", Session.getManagedResource(project3), (ICVSResource)tree.getRemote(), false, false);
 	}
 	
@@ -232,15 +251,15 @@ public class ModuleTest extends EclipseTest {
 	public void testAliases() throws TeamException, CoreException, IOException {
 		uploadProject("project7");
 		IProject project7 = checkoutProject("project7-common", null);
-		IRemoteSyncElement tree = getProvider(project7).getRemoteSyncTree(project7, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project7, CVSTag.DEFAULT, DEFAULT_MONITOR);
 //		assertEquals("Local does not match remote", Session.getManagedResource(project7), (ICVSResource)tree.getRemote(), false, false);
 
 		project7 = checkoutProject("project7-pc", null);
-		tree = getProvider(project7).getRemoteSyncTree(project7, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project7, CVSTag.DEFAULT, DEFAULT_MONITOR);
 //		assertEquals("Local does not match remote", Session.getManagedResource(project7), (ICVSResource)tree.getRemote(), false, false);
 
 		project7 = checkoutProject("project7-linux", null);
-		tree = getProvider(project7).getRemoteSyncTree(project7, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project7, CVSTag.DEFAULT, DEFAULT_MONITOR);
 //		assertEquals("Local does not match remote", Session.getManagedResource(project7), (ICVSResource)tree.getRemote(), false, false);
 	}
 	

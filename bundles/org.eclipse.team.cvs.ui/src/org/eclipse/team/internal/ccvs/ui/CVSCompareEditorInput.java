@@ -22,18 +22,15 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.CVSLocalSyncElement;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
-import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
@@ -304,22 +301,15 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		} else if (left instanceof ResourceNode) {
 			IResource resource = ((ResourceNode)left).getResource();
 			try {
-				ICVSResource element = null;
-				if(resource.getType()==IResource.FILE) {
-					element = new LocalFile(resource.getLocation().toFile());
-					if (((LocalFile)element).isDirty()) {
-						return NODE_NOT_EQUAL;
-					}
-				} else {
-					element = new LocalFolder(resource.getLocation().toFile());
+				ICVSResource element = CVSWorkspaceRoot.getCVSResourceFor(resource);
+				if (resource.getType() == IResource.FILE) {
+					if (((ICVSFile) element).isDirty()) return NODE_NOT_EQUAL;
 				}
 				if(cvsProvider==null) {
 					return NODE_UNKNOWN;
 				}
-				leftEdition = cvsProvider.getRemoteResource(resource);
+				leftEdition = CVSWorkspaceRoot.getRemoteResourceFor(resource);
 			} catch(CVSException e) {
-				return NODE_UNKNOWN;
-			} catch(TeamException e) {
 				return NODE_UNKNOWN;
 			}
 		}

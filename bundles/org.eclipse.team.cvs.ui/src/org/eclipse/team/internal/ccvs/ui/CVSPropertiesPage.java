@@ -23,7 +23,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -35,6 +34,7 @@ import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IUserInfo;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 public class CVSPropertiesPage extends PropertyPage {
@@ -166,15 +166,17 @@ public class CVSPropertiesPage extends PropertyPage {
 		provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(project);
 		if (provider == null) return;
 		
+		CVSWorkspaceRoot cvsRoot = provider.getCVSWorkspaceRoot();
 		String[] methods = CVSProviderPlugin.getProvider().getSupportedConnectionMethods();
 		for (int i = 0; i < methods.length; i++) {
 			methodType.add(methods[i]);
 		}
 		try {
-			String method = provider.getConnectionMethod(project);
+			ICVSRepositoryLocation location = cvsRoot.getRemoteLocation();
+			String method = location.getMethod().getName();
 			methodType.select(methodType.indexOf(method));
 		
-			info = provider.getUserInfo(project);
+			info = location.getUserInfo(true);
 			userText.setText(info.getUsername());
 		} catch (TeamException e) {
 			handle(e);
@@ -182,7 +184,7 @@ public class CVSPropertiesPage extends PropertyPage {
 		passwordText.setText("*********");
 		
 		try {
-			ICVSRemoteResource resource = provider.getRemoteResource(project);
+			ICVSRemoteResource resource = cvsRoot.getRemoteResourceFor(project);
 			ICVSRepositoryLocation location = resource.getRepository();
 			hostLabel.setText(location.getHost());
 			int port = location.getPort();

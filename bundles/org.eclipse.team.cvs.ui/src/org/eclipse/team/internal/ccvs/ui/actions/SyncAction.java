@@ -5,26 +5,19 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  * All Rights Reserved.
  */
  
-import java.util.ArrayList;
-
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
-import org.eclipse.team.ui.TeamUIPlugin;
 import org.eclipse.team.ui.actions.TeamAction;
 import org.eclipse.team.ui.sync.SyncView;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 
 /**
@@ -58,14 +51,14 @@ public class SyncAction extends TeamAction {
 	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
 		for (int i = 0; i < resources.length; i++) {
-			if (!resources[i].isAccessible()) return false;
-			ITeamProvider provider = TeamPlugin.getManager().getProvider(resources[i].getProject());
-			if (!(provider instanceof CVSTeamProvider)) return false;
+			IResource resource = resources[i];
+			if (!resource.isAccessible()) return false;
+			if(resource.getType()==IResource.PROJECT) continue;
 			// If the resource is not managed and its parent is not managed, disable.
-			CVSTeamProvider cvsProvider = (CVSTeamProvider)provider;
-			if (!cvsProvider.isManaged(resources[i])) {
+			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+			if (!cvsResource.isManaged()) {
 				// The resource is not managed. See if its parent is managed.
-				if (!cvsProvider.isManaged(resources[i].getParent())) return false;
+				if (!cvsResource.getParent().isManaged()) return false;
 			}
 		}
 		return true;

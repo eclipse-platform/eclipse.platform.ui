@@ -147,11 +147,7 @@ public interface ICVSProvider {
 	 */
 	public String[] getSupportedConnectionMethods();
 		
-	/**
-	 * Get the stream to which command message and error output is sent
-	 */
-	public PrintStream getPrintStream();
-	
+		
 	/**
 	 * Set the print stream to which command message and error output is sent
 	 */

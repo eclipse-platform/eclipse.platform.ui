@@ -9,7 +9,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteResource;
@@ -18,7 +20,6 @@ import org.eclipse.team.core.sync.RemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -33,7 +34,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	public CVSRemoteSyncElement(boolean ignoreBaseTree, IResource local, IRemoteResource base, IRemoteResource remote) {
 		localSync = new CVSLocalSyncElement(local, base);
 		this.remote = remote;	
-		this.ignoreBaseTree = ignoreBaseTree;			
+		this.ignoreBaseTree = ignoreBaseTree;		
 	}
 
 	/*
@@ -159,7 +160,8 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			if (local.exists()) {
 				// We could have an incoming change or deletion
 				if (remote == null) {
-					info =  new ResourceSyncInfo(local.getName(), ResourceSyncInfo.ADDED_REVISION, ResourceSyncInfo.DUMMY_TIMESTAMP, CVSProvider.isText(local.getName())?ResourceSyncInfo.USE_SERVER_MODE:ResourceSyncInfo.BINARY_TAG, local.getParent().getFolderSyncInfo().getTag(), null);
+					info =  new ResourceSyncInfo(local.getName(), ResourceSyncInfo.ADDED_REVISION, ResourceSyncInfo.DUMMY_TIMESTAMP,
+								CVSProvider.isText(local.getName()) ? ResourceSyncInfo.USE_SERVER_MODE:ResourceSyncInfo.BINARY_TAG, local.getParent().getFolderSyncInfo().getTag(), null);
 					revision = info.getRevision();
 				} else {
 					info = remote.getSyncInfo();
@@ -201,13 +203,11 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			} else {
 				// We have conflicting deletions. Clear the sync info
 				local.setSyncInfo(null);
-				CVSProviderPlugin.getSynchronizer().save(((LocalResource)local).getLocalFile(), Policy.monitorFor(monitor));
 				return;
 			}
 		}
 		info = new ResourceSyncInfo(info.getName(), revision, ResourceSyncInfo.DUMMY_TIMESTAMP, info.getKeywordMode(), local.getParent().getFolderSyncInfo().getTag(), info.getPermissions());
 		local.setSyncInfo(info);
-		CVSProviderPlugin.getSynchronizer().save(((LocalResource)local).getLocalFile(), Policy.monitorFor(monitor));
 	}
 	
 	/*
@@ -218,7 +218,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 		// To make outgoing deletions incoming, the local will not exist but
 		// it is still important to unmanage (e.g. delete all meta info) for the
 		// deletion.
-		Session.getManagedResource(getLocal()).unmanage();
+		CVSWorkspaceRoot.getCVSResourceFor(getLocal()).unmanage();
 	}
 	
 	/*
@@ -259,7 +259,6 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 		FolderSyncInfo remoteInfo = remote.getFolderSyncInfo();
 		FolderSyncInfo localInfo = local.getParent().getFolderSyncInfo();
 		local.setFolderSyncInfo(new FolderSyncInfo(remoteInfo.getRepository(), remoteInfo.getRoot(), localInfo.getTag(), localInfo.getIsStatic()));
-		CVSProviderPlugin.getSynchronizer().save(((LocalResource)local).getLocalFile(), Policy.monitorFor(monitor));
 	 }	 	
 	/*
 	 * @see ILocalSyncElement#getSyncKind(int, IProgressMonitor)

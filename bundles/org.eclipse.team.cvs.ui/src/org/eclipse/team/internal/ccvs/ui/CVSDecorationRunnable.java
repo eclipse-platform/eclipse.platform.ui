@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
@@ -22,16 +24,14 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSFile;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.ui.ISharedImages;
@@ -98,12 +98,7 @@ public class CVSDecorationRunnable implements Runnable {
 				continue;
 			}
 			
-			ICVSResource cvsResource;
-			if (resource.getType() == IResource.FILE) {
-				cvsResource = new LocalFile(resource.getLocation().toFile());
-			} else {
-				cvsResource = new LocalFolder(resource.getLocation().toFile());
-			}
+			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 			if (cvsResource.isIgnored()) continue;
 		
 			// determine a if resource has outgoing changes (e.g. is dirty).
@@ -154,7 +149,7 @@ public class CVSDecorationRunnable implements Runnable {
 			switch (type) {
 				case IResource.FOLDER : 
 				case IResource.PROJECT :
-					ICVSFolder folder = new LocalFolder(resourceLocation.toFile());
+					ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor((IContainer) resource);
 					FolderSyncInfo folderInfo = folder.getFolderSyncInfo();
 					if (folderInfo != null) {
 						CVSTag tag = folderInfo.getTag();
@@ -171,7 +166,7 @@ public class CVSDecorationRunnable implements Runnable {
 					break;
 				case IResource.FILE :
 					format = store.getString(ICVSUIConstants.PREF_FILETEXT_DECORATION);
-					ICVSFile file = new LocalFile(resourceLocation.toFile());
+					ICVSFile file = CVSWorkspaceRoot.getCVSFileFor((IFile) resource);
 					ResourceSyncInfo fileInfo = file.getSyncInfo();
 					if (fileInfo != null) {
 						CVSTag tag = fileInfo.getTag();
@@ -208,7 +203,7 @@ public class CVSDecorationRunnable implements Runnable {
 			try {
 				IPath location = resource.getLocation();
 				if(location!=null) {
-					ICVSFile cvsFile = new LocalFile(location.toFile());
+					ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile) resource);
 					ResourceSyncInfo info = cvsFile.getSyncInfo();
 					// show merged icon if file has been merged but has not been edited (e.g. on commit it will be ignored)
 					if(info!=null && info.isNeedsMerge(cvsFile.getTimeStamp())) {
@@ -257,12 +252,7 @@ public class CVSDecorationRunnable implements Runnable {
 						return false;
 					}
 
-					ICVSResource cvsResource;
-					if (resource.getType() == IResource.FILE) {
-						cvsResource = new LocalFile(resource.getLocation().toFile());
-					} else {
-						cvsResource = new LocalFolder(resource.getLocation().toFile());
-					}
+					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 
 					try {
 						if (!cvsResource.isManaged()) {

@@ -57,7 +57,7 @@ public class CVSServerException extends CVSException {
 		if (children.length > 0) {
 			return new CVSServerException(message, children);
 		} else {
-			return new CVSServerException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSStatus.SERVER_ERROR, message, null));
+			return new CVSServerException(new CVSStatus(IStatus.ERROR, CVSStatus.SERVER_ERROR, message, null));
 		}
 	}
 	

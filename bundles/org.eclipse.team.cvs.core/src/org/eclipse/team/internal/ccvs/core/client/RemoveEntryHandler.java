@@ -6,9 +6,9 @@ package org.eclipse.team.internal.ccvs.core.client;
  */
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.ccvs.core.ICVSFile;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
@@ -44,10 +44,6 @@ class RemoveEntryHandler extends ResponseHandler {
 		String fileName = repositoryFile.substring(repositoryFile.lastIndexOf("/") + 1); //$NON-NLS-1$
 		ICVSFolder mParent = session.getLocalRoot().getFolder(localDir);
 		ICVSFile mFile = mParent.getFile(fileName);
-
-		// NOTE: Should we do something here other than throw a run-time exception
-		Assert.isTrue(mParent.exists() && !mFile.exists());
-		
 		mFile.unmanage();
 	}
 

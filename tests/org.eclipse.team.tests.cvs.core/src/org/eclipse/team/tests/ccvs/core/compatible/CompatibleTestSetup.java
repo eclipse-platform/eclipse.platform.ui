@@ -14,12 +14,15 @@ import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
  * @author 	${user}
  */
 public class CompatibleTestSetup extends CVSTestSetup {
-
-	public static final String REFERENCE_CLIENT_REPOSITORY=System.getProperty("eclipse.cvs.repository1");
-	public static final String ECLIPSE_CLIENT_REPOSITORY=System.getProperty("eclipse.cvs.repository2");
-	
+	public static final String ECLIPSE_REPOSITORY_LOCATION;
+	public static final String REFERENCE_REPOSITORY_LOCATION;
 	public static CVSRepositoryLocation referenceClientRepository;
 	public static CVSRepositoryLocation eclipseClientRepository;
+	
+	static {
+		REFERENCE_REPOSITORY_LOCATION = System.getProperty("eclipse.cvs.repository1");
+		ECLIPSE_REPOSITORY_LOCATION = System.getProperty("eclipse.cvs.repository2");
+	}	
 	
 	/**
 	 * Constructor for CompatibleTestSetup.
@@ -34,10 +37,12 @@ public class CompatibleTestSetup extends CVSTestSetup {
 	public void setUp() throws CVSException {
 		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(false);
 		CVSProviderPlugin.getPlugin().setFetchAbsentDirectories(false);
-		if ((referenceClientRepository != null) && (eclipseClientRepository != null))
-			return;
-		referenceClientRepository = setupRepository(REFERENCE_CLIENT_REPOSITORY);
-		eclipseClientRepository = setupRepository(ECLIPSE_CLIENT_REPOSITORY);
+
+		// setup the repositories
+		if (referenceClientRepository == null)
+			referenceClientRepository = setupRepository(REFERENCE_REPOSITORY_LOCATION);
+		if (eclipseClientRepository == null)
+			eclipseClientRepository = setupRepository(ECLIPSE_REPOSITORY_LOCATION);
 	}
 	
 	public void tearDown() throws CVSException {

@@ -4,27 +4,33 @@ package org.eclipse.team.tests.ccvs.core.compatible;
  * All Rights Reserved.
  */
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.text.ParseException;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.team.ccvs.core.ICVSFile;
+import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.EntryFileDateFormat;
 import org.eclipse.team.internal.ccvs.core.util.Util;
+import org.eclipse.team.tests.ccvs.core.CVSClientException;
+import org.eclipse.team.tests.ccvs.core.CommandLineCVSClient;
+import org.eclipse.team.tests.ccvs.core.EclipseCVSClient;
 import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
-import org.eclipse.team.tests.ccvs.core.NullOutputStream;
 
 
 /**
@@ -40,212 +46,167 @@ import org.eclipse.team.tests.ccvs.core.NullOutputStream;
  * two (or more) different enviorments to test certain things.
  */
 public final class SameResultEnv extends JUnitTestCase {
-	
-	public static final String REFERENCE_CLIENT_WORKSPACE="reference";
-	public static final String ECLIPSE_CLIENT_WORKSPACE="eclipse";
-	
-	private File workspace;
-	private File referenceClientRoot;
-	private File eclipseClientRoot;
-	private boolean ignoreExceptions=false;
-	private boolean expectExceptions=false;
-	
-	private CVSRepositoryLocation referenceClientRepository;
-	private CVSRepositoryLocation eclipseClientRepository;
-		
-	public SameResultEnv(String arg, File workspace) {
+	private IProject referenceProject;
+	private ICVSFolder referenceRoot;
+	private IProject eclipseProject;
+	private ICVSFolder eclipseRoot;
+
+	private boolean ignoreExceptions;
+
+	public SameResultEnv(String arg) {
 		super(arg);
-		this.workspace = workspace;
-		referenceClientRoot = new File(workspace, REFERENCE_CLIENT_WORKSPACE);
-		eclipseClientRoot = new File(workspace, ECLIPSE_CLIENT_WORKSPACE);
-		
-		try {
-			deleteFile(".");
-		} catch (CVSException e) {
-			fail();
-		}
 	}
 	
 	/**
 	 * Always to be called in the setUp of the testCase that wants to 
 	 * use the same-result Enviorment.
 	 */
-	public void setUp() throws CVSException {
+	public void setUp() throws Exception {
+		super.setUp();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		// setup reference client test project
+		referenceProject = root.getProject(getName() + "-reference");
+		referenceProject.delete(true /*deleteContent*/, true /*force*/, null);
+		mkdirs(referenceProject);
+		referenceRoot = CVSWorkspaceRoot.getCVSFolderFor(referenceProject);
+		
+		// setup eclipse client test project
+		eclipseProject = root.getProject(getName() + "-eclipse");
+		eclipseProject.delete(true /*deleteContent*/, true /*force*/, null);
+		mkdirs(eclipseProject);
+		eclipseRoot = CVSWorkspaceRoot.getCVSFolderFor(eclipseProject);
+
 		// By default, exceptions are not ignored.
 		// Specific test cases can choose to ignore exceptions
 		ignoreExceptions = false;
-		mkdirs(".");
 	}
 	
 	/**
 	 * Always to be called in the tearDown of the testCase that wants to 
 	 * use the same-result Enviorment.
 	 */
-	public void tearDown() throws CVSException {
-		deleteFile("");
+	public void tearDown() throws Exception {
+		// we deliberately don't clean up test projects to simplify debugging
+		super.tearDown();
 	}
 	
 	/**
+	 * Helper method.
+	 * Calls execute(command, EMPTY_ARGS, localOptions, arguments, pathRelativeToRoot)
+	 */				
+	public void execute(String command, String[] localOptions, String[] arguments, String pathRelativeToRoot)
+		throws CVSException {
+		execute(command, EMPTY_ARGS, localOptions, arguments, pathRelativeToRoot);
+	}
+
+	/**
+	 * Helper method.
+	 * Calls execute(command, EMPTY_ARGS, localOptions, arguments, "")
+	 */				
+	public void execute(String command, String[] localOptions, String[] arguments)
+		throws CVSException {
+		execute(command, EMPTY_ARGS, localOptions, arguments, "");
+	}
+
+	/**
+	 * Runs a command twice, once in the reference environments, once
+	 * in the eclipse environment.  Compares the resulting resources
+	 * on disk, but not console output.
+	 */
+	public void execute(String command,
+		String[] globalOptions, String[] localOptions, String[] arguments,
+		String pathRelativeToRoot) throws CVSException {
+		
+		// run with reference client
+		boolean referenceClientException = false;
+		try {
+			File localRoot = referenceProject.getLocation().toFile();
+			if (pathRelativeToRoot.length() != 0) {
+				localRoot = new File(localRoot, pathRelativeToRoot);
+			}
+			CommandLineCVSClient.execute(
+				CompatibleTestSetup.referenceClientRepository.getLocation(),
+				localRoot, command, globalOptions, localOptions, arguments);
+		} catch (CVSClientException e) {
+			if (! ignoreExceptions) throw e;
+			referenceClientException = true;
+		} finally {
+			try {
+				referenceProject.refreshLocal(IResource.DEPTH_INFINITE, null);
+				EclipseSynchronizer.getInstance().flushAll(referenceProject, false); // remove me once refresh local fixed
+			} catch (CoreException e) {
+				fail("CoreException during refreshLocal: " + e.getMessage());
+			}
+		}
+		
+		// run with Eclipse client
+		boolean eclipseClientException = false;
+		try {
+			ICVSFolder localRoot = eclipseRoot;
+			IPath path = new Path(pathRelativeToRoot);
+			while (path.segmentCount() != 0) {
+				localRoot = localRoot.getFolder(path.segment(0));
+				path = path.removeFirstSegments(1);
+			}
+			EclipseCVSClient.execute(
+				CompatibleTestSetup.eclipseClientRepository, localRoot,
+				command, globalOptions, localOptions, arguments);
+		} catch (CVSClientException e) {
+			if (! ignoreExceptions) throw e;
+			eclipseClientException = true;
+		}
+		assertEquals(referenceClientException, eclipseClientException);
+		assertConsistent();
+	}	
+
+	/**
 	 * Deletes files on the both of the cvs-servers.
 	 */
-	public void deleteRemoteResource(String project) throws CVSException {
-		deleteRemoteResource(CompatibleTestSetup.referenceClientRepository,project);
-		deleteRemoteResource(CompatibleTestSetup.eclipseClientRepository,project);		
+	public void magicDeleteRemote(String remoteName) throws CVSException {
+		super.magicDeleteRemote(CompatibleTestSetup.referenceClientRepository, remoteName);
+		super.magicDeleteRemote(CompatibleTestSetup.eclipseClientRepository, remoteName);		
+	}
+	
+	/**
+	 * Set up both of the repos on the cvs-server(s) with the standard
+	 * file-structure:
+	 * project
+	 *   a.txt
+	 *   f1
+	 *     b.txt
+	 *     c.txt
+	 */
+	public void magicSetUpRepo(String projectName)
+		throws IOException, CoreException, CVSException {
+		magicSetUpRepo(projectName, new String[]{"a.txt","f1/b.txt","f1/c.txt"});
 	}
 	
 	/**
 	 * Set up both of the repos on the cvs-server(s) with a filestructre
 	 * resulting for your input in the parameter createResources.
 	 */
-	public void createRemoteProject(String project,String[] createResources) throws CVSException {
+	public void magicSetUpRepo(String projectName, String[] createResources)
+		throws IOException, CoreException, CVSException {
+		magicDeleteRemote(projectName);
+
+		IProject projectRoot = workspaceRoot.getProject(projectName + "-setup-tmp");
+		mkdirs(projectRoot);
+		createRandomFile(projectRoot, createResources);
 		
-		// This will trigger asynchronizer reload
-		// deleteFile(project);
-		deleteRemoteResource(project);
-		
-		createRandomFile(createResources, project);
-		execute("import",new String[]{"-m","msg"},new String[]{project,"a","b"},project);
-		
-		deleteFile(".");
-		mkdirs(".");
-	}
+		String[] lOptions = new String[]{"-m","msg"};
+		String[] args = new String[]{projectName,"a","b"};
 	
-	/**
-	 * Give null this gives an empty string-array back, otherwise
-	 * the parameter.
-	 */
-	private static String[] notNull(String[] arg) {
-		if (arg == null) {
-			return new String[0];
-		} else {
-			return arg;
-		}
+		magicDeleteRemote(CompatibleTestSetup.referenceClientRepository, projectName);
+		EclipseCVSClient.execute(CompatibleTestSetup.referenceClientRepository, CVSWorkspaceRoot.getCVSFolderFor(projectRoot),
+			"import", EMPTY_ARGS, lOptions, args);
+			
+		magicDeleteRemote(CompatibleTestSetup.eclipseClientRepository, projectName);
+		EclipseCVSClient.execute(CompatibleTestSetup.eclipseClientRepository, CVSWorkspaceRoot.getCVSFolderFor(projectRoot),
+			"import", EMPTY_ARGS, lOptions, args);
+
+		projectRoot.delete(false /*force*/, null);
 	}
 
-	/**
-	 * Convienience Method, does the same like:<br>
-	 * execute(request,null,localOptions,arguments,rootExtention) 
-	 */				
-	public void execute(String request, 
-						String[] localOptions, 
-						String[] arguments,
-						String rootExtention) 
-						throws CVSException {
-		
-		execute(request,new String[0],localOptions,arguments,rootExtention);
-	}
-
-	/**
-	 * Convienience Method, does the same like:<br>
-	 * execute(request,null,localOptions,arguments,null) 
-	 */		
-	public void execute(String request, 
-						String[] localOptions, 
-						String[] arguments) 
-						throws CVSException {
-
-		execute(request,new String[0],localOptions,arguments,"");
-	}
-	
-	/**
-	 * Run a command in the two folders of this enviorment. In one folder the
-	 * reference-client runs in the the other the eclipse-client. After that
-	 * the results on disc are compared (the output of the clients is not
-	 * considert for the comparison)
-	 */
-	public void execute(String request, 
-						String[] globalOptions, 
-						String[] localOptions, 
-						String[] arguments,
-						String rootExtention) 
-						throws CVSException {
-		
-		globalOptions = notNull(globalOptions);
-		
-		String[] gOptions1 = new String[globalOptions.length + 2];
-		String[] gOptions2 = new String[globalOptions.length + 2];
-		
-		System.arraycopy(globalOptions,0,gOptions1,0,globalOptions.length);
-		System.arraycopy(globalOptions,0,gOptions2,0,globalOptions.length);
-		
-		gOptions1[globalOptions.length] = gOptions2[globalOptions.length] = "-d";
-		gOptions1[globalOptions.length + 1] = CompatibleTestSetup.REFERENCE_CLIENT_REPOSITORY;
-		gOptions2[globalOptions.length + 1] = CompatibleTestSetup.ECLIPSE_CLIENT_REPOSITORY;
-
-		execute(request,gOptions1,gOptions2,localOptions,arguments,rootExtention);
-	}
-	
-	/**
-	 * Acctally run the command in both folders. See doc above.
-	 */
-	private void execute(String request, 
-						String[] globalOptions1, 
-						String[] globalOptions2, 
-						String[] localOptions, 
-						String[] arguments,
-						String rootExtention) 
-						throws CVSException {
-		
-		assertNotNull(request);
-		assertNotNull(globalOptions1);
-		assertNotNull(globalOptions);
-		
-		boolean referenceClientException = false;
-		boolean eclipseClientException = false;
-		
-		localOptions = notNull(localOptions);
-		arguments = notNull(arguments);
-		if (rootExtention == null || rootExtention.equals(".")) {
-			rootExtention = "";
-		}
-		
-		try {
-			ReferenceClient.execute(request, 
-									globalOptions1, 
-									localOptions, 
-									arguments,
-									new File(referenceClientRoot,rootExtention),
-									new NullProgressMonitor(), 
-									new PrintStream(new NullOutputStream()));
-		} catch (ReferenceException e) {
-			referenceClientException = true;			
-			if (!ignoreExceptions) {
-				throw e;
-			}
-		}
-		
-		try {
-			execute(request, 
-					globalOptions2, 
-					localOptions, 
-					arguments,
-					new File(eclipseClientRoot,rootExtention),
-					new NullProgressMonitor(), 
-					new PrintStream(new NullOutputStream()));
-		} catch (CVSServerException e) {
-			eclipseClientException = true;
-			if (!ignoreExceptions) {
-				throw e;
-			}
-		}
-		if(ignoreExceptions) {
-			assertEquals(referenceClientException == true, eclipseClientException == true);
-		}
-		assertConsistent();
-	}
-
-	/**
-	 * Checks whether the two directories inside the environment
-	 * are equal and therefore the state valid.
-	 */
-	public void assertConsistent() throws CVSException {
-		ICVSFolder referenceFolder = Session.getManagedFolder(referenceClientRoot);
-		ICVSFolder eclipseFolder = Session.getManagedFolder(eclipseClientRoot);
-		CVSProviderPlugin.getSynchronizer().reload(((LocalResource)referenceFolder).getLocalFile(), new NullProgressMonitor());
-		CVSProviderPlugin.getSynchronizer().reload(((LocalResource)eclipseFolder).getLocalFile(), new NullProgressMonitor());
-		assertEquals(referenceFolder,eclipseFolder);
-	}
-	
 	/**
 	 * Create a file with random-content in both, the reference client and 
 	 * the eclipse-client.
@@ -253,16 +214,10 @@ public final class SameResultEnv extends JUnitTestCase {
 	 * @param relativeFileName is the relative path as allways in the 
 	           class used for access
 	 */
-	public void createRandomFile(String relativeFileName) throws CVSException {
-		
-		String randomContent;
-		
-		randomContent = createRandomContent();
-		try {
-			writeToFile(relativeFileName,new String[]{randomContent});
-		} catch (IOException e) {
-			throw new CVSException("IOException while creating random content",e);
-		}
+	public void createRandomFile(String relativeFileName)
+		throws IOException, CoreException {
+		String[] contents = new String[] { createRandomContent() };
+		writeToFile(relativeFileName, contents);
 	}
 
 	/**
@@ -270,18 +225,15 @@ public final class SameResultEnv extends JUnitTestCase {
 	 * 
 	 * @see SameResultEnv#createRandomFile(String)
 	 */
-	public void createRandomFile(String[] relativeFileNames, String rootExtention) throws CVSException {
-		
-		if (rootExtention == null || rootExtention.equals(".")) {
-			rootExtention = "";
+	public void createRandomFile(String[] relativeFileNames,
+		String pathRelativeToRoot) throws CoreException, IOException {
+		if (pathRelativeToRoot == null) {
+			pathRelativeToRoot = "";
+		} else if (! pathRelativeToRoot.endsWith("/")) {
+			pathRelativeToRoot += "/";
 		}
-		
-		if (!rootExtention.equals("") && !rootExtention.startsWith("/")) {
-			rootExtention = rootExtention + "/";
-		}
-		
-		for (int i=0; i<relativeFileNames.length; i++) {
-			createRandomFile(rootExtention + relativeFileNames[i]);
+		for (int i = 0; i < relativeFileNames.length; i++) {
+			createRandomFile(pathRelativeToRoot + relativeFileNames[i]);
 		}
 	}
 	
@@ -289,89 +241,80 @@ public final class SameResultEnv extends JUnitTestCase {
 	 * Read from the file (check that we have acctually got the same
 	 * content in both versions
 	 */
-	public String[] readFromFile(String relativeFileName) throws IOException {
-		
-		String[] content1;
-		String[] content2;
-		
-		content1 = super.readFromFile(new File(referenceClientRoot,relativeFileName));
-		content2 = super.readFromFile(new File(eclipseClientRoot,relativeFileName));
-		
+	public String[] readFromFile(String relativeFileName)
+		throws IOException, CoreException {
+		IFile referenceFile = referenceProject.getFile(relativeFileName);
+		String[] content1 = super.readFromFile(referenceFile);
+		IFile eclipseFile = eclipseProject.getFile(relativeFileName);
+		String[] content2 = super.readFromFile(eclipseFile);
 		assertEqualsArrays(content1,content2);
-		
 		return content1;
 	}
 	
 	/**
-	 * Delete files from both of the directories
+	 * Delete a file / folder from both directories.
 	 */
-	public void deleteFile(String relativeFileName) throws CVSException {
-		
-		if (".".equals(relativeFileName)) {
-			relativeFileName = "";
-		}
-		
-		File file1 = new File(referenceClientRoot, relativeFileName);
-		File file2 = new File(eclipseClientRoot, relativeFileName);
-		
-		assertEquals(file1.exists(),file2.exists());
-		
-		if (!file1.exists()) {
-			return;
-		}
-		
-		// Call the "clean-up-delete" that cares about deleting the
-		// cache
-		if (file1.isDirectory()) {
-			delete(Session.getManagedFolder(file1));
-			delete(Session.getManagedFolder(file2));
+	public void deleteFile(String relativeFileName) throws CoreException {
+		IResource referenceFile, eclipseFile;
+		if (relativeFileName.length() != 0) {
+			referenceFile = referenceProject.findMember(relativeFileName);
+			eclipseFile = eclipseProject.findMember(relativeFileName);
 		} else {
-			delete(Session.getManagedFile(file1));
-			delete(Session.getManagedFile(file2));
+			referenceFile = referenceProject;
+			eclipseFile = eclipseProject;
 		}
+		assertEquals(referenceFile != null, eclipseFile != null);
+		if (referenceFile == null) return;
+		assertEquals(referenceFile.exists(), eclipseFile.exists());
+		referenceFile.delete(true, null);
+		eclipseFile.delete(true, null);
 	}
 	
 	/**
-	 * Create a folder and all the subfolders 
-	 * in both of the directories
+	 * Creates a folder (and its parents if needed) in both environments.
 	 */
-	public void mkdirs(String folderName) {	
-		(new File(referenceClientRoot,folderName)).mkdirs();
-		(new File(eclipseClientRoot,folderName)).mkdirs();
+	public void mkdirs(String relativeFolderName) throws CoreException {
+		IFolder referenceFolder = referenceProject.getFolder(relativeFolderName);
+		IFolder eclipseFolder = eclipseProject.getFolder(relativeFolderName);
+		assertEquals(referenceFolder.exists(), eclipseFolder.exists());
+		mkdirs(referenceFolder);
+		mkdirs(eclipseFolder);
 	}
 	
 	/**
 	 * Append a String to an file (acctally to both of the files, that are going
 	 * to have the same content)
 	 */
-	public void appendToFile(String relativeFileName, String txt) throws IOException {	
-		File file1 = new File(referenceClientRoot,relativeFileName);
-		File file2 = new File(eclipseClientRoot,relativeFileName);
-
+	public void appendToFile(String relativeFileName, String[] contents)
+		throws IOException, CoreException {
 		// Wait a second so that the timestamp will change for sure
-		waitMsec(2000);
-		
-		appendToFile(file1,txt);
-		appendToFile(file2,txt);
+		waitMsec(1500);
+
+		IFile referenceFile = referenceProject.getFile(relativeFileName);
+		appendToFile(referenceFile, contents);
+		IFile eclipseFile = eclipseProject.getFile(relativeFileName);
+		appendToFile(eclipseFile, contents);		
 	}
 	
 	/**
 	 * Write to the file (acctally to both of the files, that are going
 	 * to have the same content)
-	 * Does create the underlying folder if they do not exist (the version
-	 * of JUnitTest does currently not)
 	 */
-	public void writeToFile(String relativeFileName, String[] content) throws IOException {	
-		
-		File file1 = new File(referenceClientRoot,relativeFileName);
-		File file2 = new File(eclipseClientRoot,relativeFileName);
-		
-		file1.getParentFile().mkdirs();
-		file2.getParentFile().mkdirs();
-
-		writeToFile(file1,content);
-		writeToFile(file2,content);
+	public void writeToFile(String relativeFileName, String[] contents)
+		throws IOException, CoreException {
+		IFile referenceFile = referenceProject.getFile(relativeFileName);
+		writeToFile(referenceFile, contents);
+		IFile eclipseFile = eclipseProject.getFile(relativeFileName);
+		writeToFile(eclipseFile, contents);
 	}		
+
+	/**
+	 * Checks whether the two directories inside the environment
+	 * are equal and therefore the state valid.
+	 */
+	public void assertConsistent() throws CVSException {
+		assertEquals(referenceRoot, eclipseRoot);
+	}	
 
 	/**
 	 * Deep compare of two ManagedResources (most likly folders).
@@ -406,12 +349,12 @@ public final class SameResultEnv extends JUnitTestCase {
 	private static void assertEquals(ICVSFile mFile1, ICVSFile mFile2) throws CVSException {
 		
 		// Check the permissions on disk
-		assertEquals(getFile(mFile1).canWrite(), getFile(mFile2).canWrite());
+		assertEquals(mFile1.isReadOnly(), mFile2.isReadOnly());
 					
 		// Compare the content of the files
 		try {
-			InputStream in1 = new FileInputStream(getFile(mFile1)); 
-			InputStream in2 = new FileInputStream(getFile(mFile2)); 
+			InputStream in1 = mFile1.getInputStream();
+			InputStream in2 = mFile2.getInputStream();
 			byte[] buffer1 = new byte[(int)mFile1.getSize()];
 			byte[] buffer2 = new byte[(int)mFile2.getSize()];
 			// This is not the right way to do it, because the Stream
@@ -487,8 +430,8 @@ public final class SameResultEnv extends JUnitTestCase {
 		assertEquals(mFolder1.isCVSFolder(),mFolder2.isCVSFolder());
 		
 		if (mFolder1.isCVSFolder()) {
-			String root1 = Util.removePassword(mFolder1.getFolderSyncInfo().getRoot());
-			String root2 = Util.removePassword(mFolder2.getFolderSyncInfo().getRoot());
+			String root1 = removePassword(mFolder1.getFolderSyncInfo().getRoot());
+			String root2 = removePassword(mFolder2.getFolderSyncInfo().getRoot());
 			root1 = root1.substring(0,root1.lastIndexOf("@"));
 			root2 = root2.substring(0,root2.lastIndexOf("@"));
 			assertEquals(root1,root2);
@@ -540,5 +483,25 @@ public final class SameResultEnv extends JUnitTestCase {
 	 */
 	public void setIgnoreExceptions(boolean ignoreExceptions) {
 		this.ignoreExceptions = ignoreExceptions;
+	}
+	
+	/**
+	 * returns ":pserver:nkrambro@fiji:/home/nkrambro/repo"
+	 *         when you insert ":pserver:nkrambro:password@fiji:/home/nkrambro/repo"
+	 */
+	public static String removePassword(String root) {
+		StringTokenizer tok = new StringTokenizer(root, ":@", true);
+		StringBuffer filteredRoot = new StringBuffer();
+		int colonCounter = 3;
+		while (tok.hasMoreTokens()) {
+			String token = tok.nextToken();
+			if ("@".equals(token)) colonCounter = -1;
+			if (":".equals(token)) {
+				if (--colonCounter == 0) continue; // skip colon
+			}
+			if (colonCounter == 0) continue; // skip password
+			filteredRoot.append(token);
+		}
+		return filteredRoot.toString();
 	}
 }

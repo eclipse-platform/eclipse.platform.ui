@@ -18,13 +18,12 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.ccvs.core.ICVSResource;
+import org.eclipse.team.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
-import org.eclipse.team.internal.ccvs.core.resources.CVSFileNotFoundException;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
 
 /**
  * Abstract base class for the commands which implements the ICommand 
@@ -258,12 +257,20 @@ public abstract class Command {
 			// of the local root folder.
 			ICVSResource[] resources = new ICVSResource[arguments.length];
 			for (int i = 0; i < arguments.length; i++) {
-				try {
-					resources[i] = localRoot.getChild(arguments[i]);
-				} catch (CVSFileNotFoundException e) {
-					// XXX Temporary fix to allow non-managed resources to be used as arguments
-					resources[i] = localRoot.getFile(arguments[i]);
+				ICVSResource resource = localRoot.getChild(arguments[i]);				
+				// file does not exist, it could have been deleted. It doesn't matter
+				// which type we return since only the name of the resource is used
+				// and sent to the server.
+				if(resource==null) {
+					if(localRoot.getName().length()==0) {
+						// XXX returning a folder because it is the safest choice when
+						// localRoot is a handle to the IWorkspaceRoot!
+						resource = localRoot.getFolder(arguments[i]);
+					} else {
+						resource = localRoot.getFile(arguments[i]);
+					}
 				}
+				resources[i] = resource;
 			}
 			return resources;
 		}
@@ -292,55 +299,18 @@ public abstract class Command {
 	protected void checkResourcesManaged(ICVSResource[] resources) throws CVSException {
 		for (int i = 0; i < resources.length; ++i) {
 			ICVSFolder folder;
-			/// XXX should perhaps use a visitor instead of type checking
-			if (resources[i].isFolder()) folder = (ICVSFolder) resources[i];
-			else folder = resources[i].getParent();
-			if (! folder.isCVSFolder()) {
+			if (resources[i].isFolder()) {
+				folder = (ICVSFolder) resources[i];
+			}
+			else {
+				folder = resources[i].getParent();
+			}
+			if (folder==null || (!folder.isCVSFolder() && folder.exists())) {
 				throw new CVSException(Policy.bind("Command.argumentNotManaged", folder.getName()));//$NON-NLS-1$
 			}
 		}
 	}
-
-	/**
-	 * Reloads the sync info for all resource arguments.
-	 * 
-	 * @param resources the resource arguments for the command
-	 * @param monitor the progress monitor
-	 */
-	private void reloadSyncInfo(ICVSResource[] resources, IProgressMonitor monitor) throws CVSException {
-		try {
-			monitor = Policy.monitorFor(monitor);
-			monitor.beginTask(Policy.bind("Command.loadingSyncInfo"), 100 * resources.length);//$NON-NLS-1$
-			for (int i = 0; i < resources.length; i++) {
-				if(resources[i] instanceof LocalResource && resources[i].exists()) {
-					CVSProviderPlugin.getSynchronizer().reload(((LocalResource)resources[i]).getLocalFile(), Policy.subMonitorFor(monitor, 100));				
-				}
-			}
-		} finally {
-			monitor.done();
-		}
-	}
-	
-	/**
-	 * Saves the sync info for all resource arguments.
-	 * 
-	 * @param resources the resource arguments for the command
-	 * @param monitor the progress monitor
-	 */
-	private void saveSyncInfo(ICVSResource[] resources, IProgressMonitor monitor) throws CVSException {
-		try {
-			monitor = Policy.monitorFor(monitor);
-			monitor.beginTask(Policy.bind("Command.savingSyncInfo"), 100 * resources.length);//$NON-NLS-1$
-			for (int i = 0; i < resources.length; i++) {
-				if(resources[i] instanceof LocalResource) {
-					CVSProviderPlugin.getSynchronizer().save(((LocalResource)resources[i]).getLocalFile(), Policy.subMonitorFor(monitor, 100));				
-				}
-			}
-		} finally {
-			monitor.done();
-		}
-	}
-	
+		
 	/**
 	 * Executes a CVS command.
 	 * <p>
@@ -358,9 +328,23 @@ public abstract class Command {
 	 * @return a status code indicating success or failure of the operation
 	 * @throws CVSException if a fatal error occurs (e.g. connection timeout)
 	 */
-	public IStatus execute(Session session, GlobalOption[] globalOptions,
+	public final IStatus execute(final Session session, final GlobalOption[] globalOptions,
+		final LocalOption[] localOptions, final String[] arguments, final ICommandOutputListener listener,
+		IProgressMonitor pm) throws CVSException {		
+		final IStatus[] status = new IStatus[1];
+		ICVSRunnable job = new ICVSRunnable() {
+			public void run(IProgressMonitor monitor) throws CVSException {
+				status[0] = doExecute(session, globalOptions, localOptions, arguments, listener, monitor);
+			}
+		};
+		session.getLocalRoot().run(job, pm);
+		return status[0];
+	}
+	
+	protected IStatus doExecute(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, String[] arguments, ICommandOutputListener listener,
 		IProgressMonitor monitor) throws CVSException {
+			
 		ICVSResource[] resources = null;
 		/*** setup progress monitor ***/
 		monitor = Policy.monitorFor(monitor);
@@ -370,8 +354,7 @@ public abstract class Command {
 			/*** prepare for command ***/
 			// Ensure that the commands run with the latest contents of the CVS subdirectory sync files 
 			// and not the cached values. Allow 10% of work.
-			resources = computeWorkResources(session, localOptions, arguments);
-			reloadSyncInfo(resources, Policy.subMonitorFor(monitor, 10));
+			resources = computeWorkResources(session, localOptions, arguments);			
 			Policy.checkCanceled(monitor);
 
 			// clear stale command state from previous runs
@@ -402,11 +385,7 @@ public abstract class Command {
 			commandFinished(session, gOptions, lOptions, resources, Policy.subMonitorFor(monitor, 5),
 				status.getCode() != CVSStatus.SERVER_ERROR);
 			return status;
-		} finally {
-			// Give the synchronizer a chance to persist any pending changes.
-			if(resources != null) {
-				saveSyncInfo(resources, Policy.subMonitorFor(monitor, 5));
-			}
+		} finally {			
 			monitor.done();
 		}
 	}

@@ -22,6 +22,7 @@ import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.sync.CatchupReleaseViewer;
@@ -60,8 +61,7 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 		monitor.beginTask(null, work);
 		try {
 			for (int i = 0; i < trees.length; i++) {
-				CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resources[i].getProject());
-				trees[i] = provider.getRemoteSyncTree(resources[i], null, Policy.subMonitorFor(monitor, 1000));
+				trees[i] = CVSWorkspaceRoot.getRemoteSyncTree(resources[i], null, Policy.subMonitorFor(monitor, 1000));
 			}
 		} finally {
 			monitor.done();

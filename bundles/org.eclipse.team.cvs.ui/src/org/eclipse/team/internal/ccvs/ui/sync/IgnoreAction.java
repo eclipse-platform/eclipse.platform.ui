@@ -7,19 +7,18 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.ui.sync.ITeamNode;
 import org.eclipse.team.ui.sync.SyncSet;
@@ -45,10 +44,10 @@ public class IgnoreAction extends Action {
 		ICVSResource cvsResource = null;
 		if (first instanceof TeamFile) {
 			IResource resource = ((TeamFile)first).getMergeResource().getResource();
-			cvsResource = new LocalFile(resource.getLocation().toFile());
+			cvsResource = CVSWorkspaceRoot.getCVSFileFor((IFile) resource);
 		} else if (first instanceof ChangedTeamContainer) {
 			IResource resource = ((ChangedTeamContainer)first).getMergeResource().getResource();
-			cvsResource = new LocalFolder(resource.getLocation().toFile());
+			cvsResource = CVSWorkspaceRoot.getCVSFolderFor((IContainer) resource);
 		}
 		if (cvsResource != null) {
 			try {
@@ -72,17 +71,7 @@ public class IgnoreAction extends Action {
 		ITeamNode node = (ITeamNode)nodes[0];
 		if (node.getKind() != (ITeamNode.OUTGOING | IRemoteSyncElement.ADDITION)) return false;
 		IResource resource = node.getResource();
-		ICVSResource cvsResource = null;
-		switch (resource.getType()) {
-			case IResource.FILE:
-				cvsResource = new LocalFile(resource.getLocation().toFile());
-				break;
-			case IResource.FOLDER:
-				cvsResource = new LocalFolder(resource.getLocation().toFile());
-				break;
-			default:
-				return false;
-		}
+		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 		return !cvsResource.isManaged();
 	}
 	public void update() {

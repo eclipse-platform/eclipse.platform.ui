@@ -12,14 +12,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.team.ccvs.core.ICVSFile;
+import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.ui.actions.TeamAction;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.ui.actions.TeamAction;
 
 public abstract class ReplaceWithAction extends TeamAction {
 	private boolean confirmOverwrite = true;
@@ -43,13 +41,7 @@ public abstract class ReplaceWithAction extends TeamAction {
 						return false;
 					}
 
-					ICVSResource cvsResource;
-					if (resource.getType() == IResource.FILE) {
-						cvsResource = new LocalFile(resource.getLocation().toFile());
-					} else {
-						cvsResource = new LocalFolder(resource.getLocation().toFile());
-					}
-
+					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 					try {
 						if (!cvsResource.isManaged()) {
 							if (cvsResource.isIgnored()) {

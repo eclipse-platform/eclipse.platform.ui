@@ -5,12 +5,9 @@ package org.eclipse.team.tests.ccvs.core.compatible;
  */
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
 
 public class ConflictTest extends JUnitTestCase {
-
 	SameResultEnv env1;
 	SameResultEnv env2;
 	
@@ -20,8 +17,8 @@ public class ConflictTest extends JUnitTestCase {
 	
 	public ConflictTest(String arg) {
 		super(arg);
-		env1 = new SameResultEnv(arg, getFile("checkout1"));
-		env2 = new SameResultEnv(arg, getFile("checkout2"));
+		env1 = new SameResultEnv(arg + "checkout1");
+		env2 = new SameResultEnv(arg + "checkout2");
 	}
 
 	public void setUp() throws Exception {
@@ -29,11 +26,11 @@ public class ConflictTest extends JUnitTestCase {
 		env2.setUp();
 
 		// Set the project to the content we need ...
-		env1.createRemoteProject("proj2",new String[]{"a.txt","f1/b.txt","f1/c.txt"});
+		env1.magicSetUpRepo("proj2",new String[]{"a.txt","f1/b.txt","f1/c.txt"});
 		env2.deleteFile("proj2");
 	}
 	
-	public void tearDown() throws CVSException {
+	public void tearDown() throws Exception {
 		env1.tearDown();
 		env2.tearDown();
 	}
@@ -50,8 +47,8 @@ public class ConflictTest extends JUnitTestCase {
 		env2.execute("co",EMPTY_ARGS,new String[]{"proj2"},"");
 		
 		// change the file in both directories in a different way
-		env1.appendToFile("proj2/f1/c.txt","AppendIt This");
-		env2.appendToFile("proj2/f1/c.txt","AppendIt That");
+		env1.appendToFile("proj2/f1/c.txt", new String[] { "AppendIt This" });
+		env2.appendToFile("proj2/f1/c.txt", new String[] { "AppendIt That" });
 		
 		// commit changes of the first
 		env1.execute("ci",new String[]{"-m","TestMessage"},new String[]{"proj2"},"");
@@ -68,7 +65,7 @@ public class ConflictTest extends JUnitTestCase {
 		
 		// Make a change to the file in order to let the cvs-client know
 		// that we solved the confilict
-		env2.appendToFile("proj2/f1/c.txt","That's allright");		
+		env2.appendToFile("proj2/f1/c.txt", new String[] { "That's allright" });
 		env2.execute("ci",new String[]{"-m","TestMessage"},new String[]{"proj2"},"");
 	}
 }

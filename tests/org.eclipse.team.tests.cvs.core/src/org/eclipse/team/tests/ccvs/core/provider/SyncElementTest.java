@@ -16,7 +16,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.ccvs.core.*;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteResource;
@@ -25,7 +27,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
@@ -141,7 +143,7 @@ public class SyncElementTest extends EclipseTest {
 		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 
 		// Get the sync tree for the project
-		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testIncomingChanges", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt", "folder2/", "folder2/folder3/", "folder2/folder3/add.txt"}, 
 			new int[] {
@@ -159,7 +161,7 @@ public class SyncElementTest extends EclipseTest {
 		updateResources(project, new String[] {"folder1/a.txt", "folder1/b.txt", /* "folder2/", "folder2/folder3/", */ "folder2/folder3/add.txt"}, false);
 		
 		// Verify that we are in sync (except for "folder1/b.txt", which was deleted)
-		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testIncomingChanges", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/folder3/", "folder2/folder3/add.txt"}, 
 			new int[] {
@@ -192,7 +194,7 @@ public class SyncElementTest extends EclipseTest {
 		deleteResources(project, new String[] {"folder1/b.txt"}, false);
 
 		// Get the sync tree for the project
-		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testOutgoingChanges", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt", "folder2/", "folder2/folder3/", "folder2/folder3/add.txt"}, 
 			new int[] {
@@ -208,7 +210,7 @@ public class SyncElementTest extends EclipseTest {
 		commitResources(project, new String[] {"folder1/a.txt", "folder1/b.txt", "folder2/folder3/add.txt"});
 		
 		// Ensure we're in sync
-		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testOutgoingChanges", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/folder3/", "folder2/folder3/add.txt"}, 
 			new int[] {
@@ -236,7 +238,7 @@ public class SyncElementTest extends EclipseTest {
 		file.delete(true, DEFAULT_MONITOR);
 
 		// Get the sync tree for the project
-		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testOutgoingQuestionables", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt", "folder2/", "folder2/folder3/", "folder2/folder3/add.txt"}, 
 			new int[] {
@@ -255,7 +257,7 @@ public class SyncElementTest extends EclipseTest {
 		commitResources(project, new String[] {"folder1/b.txt", "folder2/folder3/add.txt"});
 		
 		// Ensure we are in sync
-		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testOutgoingQuestionables", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/folder3/", "folder2/folder3/add.txt"}, 
 			new int[] {
@@ -295,7 +297,7 @@ public class SyncElementTest extends EclipseTest {
 		file.setContents(getRandomContents(), false, false, null); // This will test conflicts (C)
 
 		// Get the sync tree for the project
-		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testFileConflict", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
 			new int[] {
@@ -307,7 +309,7 @@ public class SyncElementTest extends EclipseTest {
 		getProvider(project).update(new IResource[] {project.getFile("file1.txt")}, 
 												 new Command.LocalOption[] {Update.IGNORE_LOCAL_CHANGES, Command.DO_NOT_RECURSE}, 
 												 null, null, DEFAULT_MONITOR);
-		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testFileConflict", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
 			new int[] {
@@ -317,7 +319,7 @@ public class SyncElementTest extends EclipseTest {
 				
 		// Release the folder1/a.txt conflict by merging and then committing
 		makeOutgoing(tree, new String[] {"folder1/a.txt"});
-		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testFileConflict", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
 			new int[] {
@@ -325,7 +327,7 @@ public class SyncElementTest extends EclipseTest {
 				IRemoteSyncElement.IN_SYNC,
 				IRemoteSyncElement.OUTGOING | IRemoteSyncElement.CHANGE });
 		getProvider(project).checkin(new IResource[] {project.getFile("folder1/a.txt")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
-		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testFileConflict", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
 			new int[] {
@@ -361,7 +363,7 @@ public class SyncElementTest extends EclipseTest {
 		deleteResources(copy, new String[] { "add3.txt"}, true);
 
 		// Get the sync tree for the project
-		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testAdditionConflicts", tree, 
 			new String[] { "file.txt", "add1a.txt", "add1b.txt", "add2a.txt", "add2b.txt", "add3.txt"}, 
 			new int[] {
@@ -374,7 +376,7 @@ public class SyncElementTest extends EclipseTest {
 				
 		// Release the conflict cases (MERGE is not required for add3.txt but we do it anyway to ensure it doesn't cause problems)
 		makeOutgoing(tree, new String[]{"add1b.txt", "add2b.txt", "add3.txt"});
-		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testAdditionConflicts", tree, 
 			new String[] { "file.txt", "add1b.txt", "add2b.txt", "add3.txt"}, 
 			new int[] {
@@ -383,7 +385,7 @@ public class SyncElementTest extends EclipseTest {
 				IRemoteSyncElement.OUTGOING | IRemoteSyncElement.CHANGE,
 				IRemoteSyncElement.OUTGOING | IRemoteSyncElement.ADDITION });
 		getProvider(project).checkin(new IResource[] {project.getFile("add1b.txt"), project.getFile("add2b.txt"), project.getFile("add3.txt")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
-		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testAdditionConflicts", tree, 
 			new String[] { "file.txt", "add1b.txt", "add2b.txt", "add3.txt"}, 
 			new int[] {
@@ -398,7 +400,7 @@ public class SyncElementTest extends EclipseTest {
 		getProvider(project).update(new IResource[] {project.getFile("add1a.txt"), project.getFile("add2a.txt")}, 
 												 new Command.LocalOption[] {Command.DO_NOT_RECURSE}, 
 												 null, null, DEFAULT_MONITOR);
-		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testAdditionConflicts", tree, 
 			new String[] { "add1a.txt", "add2a.txt"}, 
 			new int[] {
@@ -454,7 +456,7 @@ public class SyncElementTest extends EclipseTest {
 
 		
 		// Get the sync tree for the project
-		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testDeletionConflictsA", tree, 
 			new String[] { "delete1.txt", "delete2.txt", "delete3.txt", "delete4.txt", "delete5.txt"}, 
 			new int[] {
@@ -473,7 +475,7 @@ public class SyncElementTest extends EclipseTest {
 		makeIncoming(tree, new String[] {"delete3.txt"});
 		project.getFile("delete3.txt").delete(false, DEFAULT_MONITOR);
 		updateResources(project, new String[] {"delete1.txt", "delete2.txt", "delete3.txt", "delete4.txt", "delete5.txt"}, true);
-		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testDeletionConflictsA", tree, 
 			new String[] { "delete1.txt", "delete2.txt"}, 
 			new int[] {
@@ -508,7 +510,7 @@ public class SyncElementTest extends EclipseTest {
 
 		
 		// Get the sync tree for the project
-		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testDeletionConflictsB", tree, 
 			new String[] { "delete1.txt", "delete2.txt", "delete3.txt", "delete4.txt", "delete5.txt"}, 
 			new int[] {
@@ -524,7 +526,7 @@ public class SyncElementTest extends EclipseTest {
 		// XXX SPECIAL CASE: "delete4.txt" and "delete5.txt" must be unmanaged
 		unmanageResources(project, new String[]{"delete4.txt", "delete5.txt"});
 		commitResources(project, new String[] { "delete1.txt", "delete2.txt", "delete3.txt", "delete4.txt", "delete5.txt"});
-		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testDeletionConflictsB", tree, 
 			new String[] { "delete3.txt"}, 
 			new int[] {
@@ -572,7 +574,7 @@ public class SyncElementTest extends EclipseTest {
 		IResource[] resources = buildResources(project, new String[] {"folder1/"});
 		((IFolder)resources[0]).create(false, true, DEFAULT_MONITOR);
 		
-		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testFolderConflict", tree, 
 			new String[] { "file.txt", "folder1/", "folder1/file.txt", "folder2/", "folder2/file.txt"}, 
 			new int[] {
@@ -583,7 +585,7 @@ public class SyncElementTest extends EclipseTest {
 				IRemoteSyncElement.INCOMING | IRemoteSyncElement.ADDITION});
 				
 		makeInSync(tree, new String[] {"folder1/"});
-		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testFolderConflict", tree, 
 			new String[] { "file.txt", "folder1/", "folder1/file.txt", "folder2/", "folder2/file.txt"}, 
 			new int[] {
@@ -607,7 +609,7 @@ public class SyncElementTest extends EclipseTest {
 		file.delete(true, DEFAULT_MONITOR); // WARNING: As of 2002/03/05, this is equivalent to a cvs remove
 
 		// Get the sync tree for the project
-		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testOutgoingDeletion", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"}, 
 			new int[] {
@@ -620,7 +622,7 @@ public class SyncElementTest extends EclipseTest {
 		getProvider(file).checkin(new IResource[] {file}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		
 		// Get the sync tree again for the project and ensure others aren't effected
-		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testOutgoingDeletion", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
 			new int[] {
@@ -644,7 +646,7 @@ public class SyncElementTest extends EclipseTest {
 		addResources(copy, new String[] { "folder1/add.txt" }, true);
 
 		// Get the sync tree for the project
-		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testIncomingAddition", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/add.txt"}, 
 			new int[] {
@@ -661,7 +663,7 @@ public class SyncElementTest extends EclipseTest {
 												 null, null, DEFAULT_MONITOR);
 		
 		// Get the sync tree again for the project and ensure the added resource is in sync
-		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testIncomingAddition", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/add.txt"}, 
 			new int[] {
@@ -695,7 +697,7 @@ public class SyncElementTest extends EclipseTest {
 		file.setContents(new ByteArrayInputStream("unique text".getBytes()), false, false, null);
 
 		// Get the sync tree for the project
-		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testGranularityContents", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
 			new int[] {
@@ -720,8 +722,8 @@ public class SyncElementTest extends EclipseTest {
 		deleteResources(project, new String[] {"folder1/b.txt"}, false);
 		
 		// Get the sync tree for the project
-		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
-		assertEquals(Path.EMPTY, (ICVSResource)tree.getBase(), Session.getManagedResource(copy), false, false);
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		assertEquals(Path.EMPTY, (ICVSResource)tree.getBase(), CVSWorkspaceRoot.getCVSResourceFor(copy), false, false);
 
 	 }
 	 
@@ -747,8 +749,8 @@ public class SyncElementTest extends EclipseTest {
 		changeResources(project, new String[] {"file2.txt"}, false);
 		changeResources(project, new String[] {"file3.txt"}, true);
 		
-		IRemoteResource base = getProvider(project).getRemoteTree(project, new CVSTag("v1", CVSTag.VERSION), DEFAULT_MONITOR);
-		IRemoteResource remote = getProvider(project).getRemoteTree(project, new CVSTag("branch1", CVSTag.BRANCH), DEFAULT_MONITOR);
+		IRemoteResource base = CVSWorkspaceRoot.getRemoteTree(project, new CVSTag("v1", CVSTag.VERSION), DEFAULT_MONITOR);
+		IRemoteResource remote = CVSWorkspaceRoot.getRemoteTree(project, new CVSTag("branch1", CVSTag.BRANCH), DEFAULT_MONITOR);
 		IRemoteSyncElement tree = new CVSRemoteSyncElement(false, project, base, remote);
 		
 		// watch for empty directories and the prune option!!!
@@ -779,7 +781,7 @@ public class SyncElementTest extends EclipseTest {
 		changeResources(copy, new String[] {"file1.txt", "file2.txt"}, true);
 		
 		// Sync on the original and assert the result equals the copy
-		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, null, DEFAULT_MONITOR);
-		assertEquals(Path.EMPTY, (ICVSResource)tree.getRemote(), Session.getManagedResource(copy), false, false);
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, null, DEFAULT_MONITOR);
+		assertEquals(Path.EMPTY, (ICVSResource)tree.getRemote(), CVSWorkspaceRoot.getCVSResourceFor(copy), false, false);
 	 }
 }

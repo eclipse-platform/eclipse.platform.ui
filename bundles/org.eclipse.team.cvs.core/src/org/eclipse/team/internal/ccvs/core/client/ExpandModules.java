@@ -7,10 +7,11 @@ package org.eclipse.team.internal.ccvs.core.client;
  
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.ccvs.core.*;
+import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 
 public class ExpandModules extends Command {
 
@@ -46,7 +47,6 @@ public class ExpandModules extends Command {
 	 * Convenient execute method
 	 */
 	public IStatus execute(Session session, String[] modules, IProgressMonitor monitor) throws CVSException {
-		return execute(session, NO_GLOBAL_OPTIONS, NO_LOCAL_OPTIONS, modules, null, monitor);
+		return super.execute(session, NO_GLOBAL_OPTIONS, NO_LOCAL_OPTIONS, modules, null, monitor);
 	}
-
 }

@@ -24,12 +24,13 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -144,7 +145,8 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 						IResource resource = node.getResource();
 						if (resource.getType() == IResource.FILE) {
 							try {
-								if (new LocalFile(((IFile)resource).getLocation().toFile()).getSyncInfo() == null) {
+								ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile) resource);
+								if (cvsFile.getSyncInfo() == null) {
 									DiffImage diffImage = new DiffImage(image, questionableDescriptor);
 									return diffImage.createImage();
 								}
@@ -164,7 +166,8 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 					IResource resource = node.getResource();
 					if (resource.exists() && resource.getType() == IResource.FILE) {
 						try {
-							ResourceSyncInfo info = new LocalFile(((IFile)resource).getLocation().toFile()).getSyncInfo();
+							ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile) resource);
+							ResourceSyncInfo info = cvsFile.getSyncInfo();
 							String kw;
 							if (info!=null) {
 								kw = CVSDecorator.getFileTypeString(resource.getName(), info.getKeywordMode());

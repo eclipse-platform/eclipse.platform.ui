@@ -83,6 +83,11 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	public String getUsername();
 	
 	/**
+	 * Returns the user information for the location.
+	 */
+	public IUserInfo getUserInfo(boolean allowModificationOfUsername);	
+	
+	/**
 	 * Validate that the receiver can be used to connect to a repository.
 	 * An exception is thrown if connection fails
 	 * 

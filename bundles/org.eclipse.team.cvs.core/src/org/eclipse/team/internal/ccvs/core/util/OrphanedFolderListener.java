@@ -5,14 +5,15 @@ package org.eclipse.team.internal.ccvs.core.util;
  * All Rights Reserved.
  */
  
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.ICVSFile;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
@@ -26,10 +27,9 @@ public class OrphanedFolderListener extends ResourceDeltaVisitor {
 	private void handleOrphanedSubtree(IResource resource) {
 		if (resource.getType() == IResource.FOLDER) {
 			try {
-				ICVSFolder mFolder = (ICVSFolder)Session.getManagedResource(resource);
+				ICVSFolder mFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resource);
 				if (mFolder.isCVSFolder() && ! mFolder.isManaged() && mFolder.getParent().isCVSFolder()) {
 					mFolder.unmanage();
-					CVSProviderPlugin.getSynchronizer().reload(resource.getLocation().toFile(), Policy.monitorFor(null));
 				}
 			} catch (CVSException e) {
 				CVSProviderPlugin.log(e);
@@ -40,7 +40,7 @@ public class OrphanedFolderListener extends ResourceDeltaVisitor {
 	private void handleDeletedResource(IResource resource) {
 		if (resource.getType() == IResource.FILE) {
 			try {
-				ICVSFile mFile = (ICVSFile)Session.getManagedResource(resource);
+				ICVSFile mFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
 				if (mFile.isManaged()) {
 					ResourceSyncInfo info = mFile.getSyncInfo();
 					if (info.isAdded()) {
@@ -48,7 +48,6 @@ public class OrphanedFolderListener extends ResourceDeltaVisitor {
 					} else {
 						mFile.setSyncInfo(new ResourceSyncInfo(info.getName(), info.DELETED_PREFIX + info.getRevision(), info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions()));
 					}
-					CVSProviderPlugin.getSynchronizer().reload(resource.getLocation().toFile(), Policy.monitorFor(null));
 				}
 			} catch (CVSException e) {
 				CVSProviderPlugin.log(e);

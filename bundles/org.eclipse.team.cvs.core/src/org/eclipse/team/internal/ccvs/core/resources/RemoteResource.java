@@ -7,12 +7,14 @@ package org.eclipse.team.internal.ccvs.core.resources;
  
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Update;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -148,5 +150,18 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	public void setIgnoredAs(String pattern) throws CVSException {
 		// ensure that clients are not trying to set sync info on remote handles.
 		Assert.isTrue(false);
+	}
+	/*
+	 * @see ICVSResource#reloadSyncInfo(IProgressMonitor)
+	 */
+	public void reloadSyncInfo(IProgressMonitor monitor) throws CVSException {
+		// NO-OP
+	}
+
+	/*
+	 * @see ICVSResource#saveSyncInfo(IProgressMonitor)
+	 */
+	public void saveSyncInfo(IProgressMonitor monitor) throws CVSException {
+		// NO-OP
 	}
 }

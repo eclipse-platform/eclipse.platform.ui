@@ -4,38 +4,28 @@ package org.eclipse.team.tests.ccvs.core;
  * All Rights Reserved.
  */
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import junit.awtui.TestRunner;
 import junit.framework.TestCase;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
-import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
-import org.eclipse.team.internal.ccvs.core.util.FileUtil;
-import org.eclipse.team.internal.ccvs.core.util.Util;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 
 /**
  * Base-class to the low level-testcases for the Session.
@@ -43,198 +33,41 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
  * Especally data for a default-connection to the server is stored.
  */
 public abstract class JUnitTestCase extends TestCase {
-	
 	protected static final int RANDOM_CONTENT_SIZE = 10000;
 	protected static final boolean NEWLINE_TEST = false;
 	protected static final String PLATFORM_NEWLINE = System.getProperty("line.separator");
-	protected static final File workspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
+	protected static final IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 	
 	public static final String[] EMPTY_ARGS = new String[0];
-	
-	// Predefined parameters for calles of the client
-	protected final String[] globalOptions;
-	protected final IProgressMonitor monitor;
-	protected final String[] arguments;
-	protected static final String REPOSITORY_NAME = CVSTestSetup.REPOSITORY_LOCATION;
 
-	static boolean propertiesSet = false;
-
-	private static final HashMap commandPool = new HashMap();
-	static {
-		commandPool.put("update", Command.UPDATE);
-		commandPool.put("co", Command.CHECKOUT);
-		commandPool.put("ci", Command.COMMIT);
-		commandPool.put("import", Command.IMPORT);
-		commandPool.put("add", Command.ADD);
-		commandPool.put("remove", Command.REMOVE);
-		commandPool.put("status", Command.STATUS);
-		commandPool.put("log", Command.LOG);
-		commandPool.put("tag", Command.TAG);
-		commandPool.put("rtag", Command.RTAG);
-		commandPool.put("admin", Command.ADMIN);
-		commandPool.put("diff", Command.DIFF);
-	}
-	
-	/**
-	 * Convinience method for:<br>
-	 * Session.execute(request,globalOptions,localOptions,arguments,Session.getManagedFolder(root),monitor,messageOut)
-	 */	
-	public static void execute(String request, 
-						String[] globalOptions, 
-						String[] localOptions, 
-						String[] arguments,
-						File root,
-						IProgressMonitor monitor, 
-						PrintStream messageOut) 
-						throws CVSException {
-		if (!CVSTestSetup.DEBUG)
-			messageOut = new PrintStream(new NullOutputStream());
-		
-		List globals = new ArrayList();
-		for (int i=0;i<globalOptions.length;i++) {
-			if (globalOptions[i].equals("-d")) {
-				i++;
-				continue;
-			}
-			globals.add(new CustomGlobalOption(globalOptions[i]));
-		}
-		List locals = new ArrayList();
-		for (int i=0;i<localOptions.length;i++) {
-			if ((i < localOptions.length - 1) && (localOptions[i + 1].charAt(0) != '-')) {
-				locals.add(new CustomLocalOption(localOptions[i], localOptions[i + 1]));
-				i++;
-			} else {
-				locals.add(new CustomLocalOption(localOptions[i], null));
-			}
-		}
-		Session s = new Session(getRepository(globalOptions, Session.getManagedFolder(root)), Session.getManagedFolder(root));
-		s.open(monitor);
-		try {
-			IStatus status = ((Command)commandPool.get(request)).execute(s,
-				(GlobalOption[]) globals.toArray(new GlobalOption[globals.size()]),
-				(LocalOption[]) locals.toArray(new LocalOption[locals.size()]),
-				arguments,
-				null,
-				monitor);
-			if (status.getCode() == CVSStatus.SERVER_ERROR) {
-				throw new CVSServerException(status);
-			}
-		} finally {
-			s.close();
-		}
-	}
-	
-	public static class CustomGlobalOption extends GlobalOption {
-		public CustomGlobalOption(String option) {
-			super(option);
-		}
-	}
-	public static class CustomLocalOption extends LocalOption {
-		public CustomLocalOption(String option, String arg) {
-			super(option, arg);
-		}
-	}
-	/**
-	 * This give you a new repo either from the global "-d" option
-	 * or form the root-property in the folder.
-	 * 
-	 * This has to be rewritten in a nicer style.
-	 */
-	private static CVSRepositoryLocation getRepository(String[] globalOptions, 
-										ICVSFolder mFolder) 
-										throws CVSException {
-		
-		String repoName = null;
-		
-		// look if the repo is specified in the global Options
-		// this delets the option as well which is not so beatyful, but
-		// we have got a copy and we do not want this option to appear
-		// any more
-		repoName = Util.getOption(globalOptions, "-d", true);
-		
-		// look if we have got an root-entrie in the root-folder
-		if (repoName == null && mFolder.exists() && mFolder.isCVSFolder()) {
-			repoName = mFolder.getFolderSyncInfo().getRoot();
-		}
-		
-		if (repoName == null) {
-			throw new CVSException("CVSROOT is not specified");
-		}
-		
-		return CVSRepositoryLocation.fromString(repoName);
-	}
-	
-	/**
-	 * Get a File relative to the working directory.
-	 */
-	protected static File getFile(String relativePath) {
-		// We need to get the cononical file in case relativePath contains a dot indicating the root directory
-		try {
-			return new File(workspaceRoot, relativePath).getCanonicalFile();
-		} catch (IOException e) {
-			fail(e.getMessage());
-			return null;
-		}
-	}
-	
-	/**
-	 * Get the IO File for the given CVS resource
-	 */
-	protected static File getFile(ICVSResource mResource) {
-		return new File(((LocalResource)mResource).getPath());
-	}
-	
-	/**
-	 * Get a CVSFolder relative to the working directory.
-	 */
-	protected static ICVSFolder getManagedFolder(String relativePath) {
-		try {
-			return Session.getManagedFolder(getFile(relativePath));
-		} catch (CVSException e) {
-			fail(e.getMessage());
-			return null;
-		}
-	}
-	
 	/**
 	 * Init the options and arguments to standard-values
 	 */
 	public JUnitTestCase(String name) {
 		super(name);
-		
-		monitor = new NullProgressMonitor();
-		globalOptions = new String[]{"-d",REPOSITORY_NAME};
-		arguments = new String[]{"proj1"};
 	}
 
 	/**
 	 * Delete a project/resource form the standard cvs-server
 	 */
-	protected void deleteRemoteResource(String project) throws CVSException {
-		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(REPOSITORY_NAME);
-		String host = location.getHost();
-		String repoRoot = location.getRootDirectory();
-		deleteRemoteResource(location, project);
+	protected void magicDeleteRemote(String remoteName) throws CVSException {
+		magicDeleteRemote(CVSTestSetup.repository, remoteName);
 	}
 
 	/**
-	 * Delete a project/resource form the standard cvs-server
+	 * Delete a project/resource form the specified cvs-server
 	 */
-	protected static void deleteRemoteResource(ICVSRepositoryLocation location, String project) throws CVSException {
-		
-		String commandLine;
-		Process process;
-		
-		commandLine = new String(CVSTestSetup.RSH + " " + location.getHost() + " -l " + location.getUsername() + " rm -rf " + new Path(location.getRootDirectory()).append(project).toString());
-
+	protected static void magicDeleteRemote(ICVSRepositoryLocation location, String remoteName)
+		throws CVSException {
+		String commandLine = new String(CVSTestSetup.RSH + " " + location.getHost() +
+			" -l " + location.getUsername() + " rm -rf " +
+			new Path(location.getRootDirectory()).append(remoteName).toString());
 		try {
-			process = Runtime.getRuntime().exec(commandLine);
+			Process process = Runtime.getRuntime().exec(commandLine);
 			process.waitFor();
-			
 			if (process.exitValue() != 0) {
 				// throw new CVSException("Return Code of magicDeleteProject :" + process.exitValue());
 			}
-			
 		} catch (IOException e) {
 			throw new CVSException("IOException in magicDeleteProject");
 		} catch (InterruptedException e) {
@@ -243,42 +76,38 @@ public abstract class JUnitTestCase extends TestCase {
 	}
 
 	/**
-	 * Set the project on the standard cvs-server up so that it contains the resources
-	 * in createResources. The files have random content.
+	 * Sends the project to the standard cvs-server so that it contains the resources
+	 * described in createResources.  The files have random content.
+	 *
+	 * @param projectName the name of the project to import
+	 * @param createResources e.g. new String[]{"a.txt","f1/b.txt","f1/c.txt","f2/d.txt"}
 	 */
-	public void createRemoteProject(String project, String[] createResources) throws CVSException {
-		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(REPOSITORY_NAME);
-		createRemoteProject(workspaceRoot, location ,project, createResources);
+	protected void magicSetUpRepo(String projectName, String[] createResources)
+		throws  IOException, CoreException, CVSException {
+		magicSetUpRepo(CVSTestSetup.repository, projectName, createResources);
 	}
 	
 	/**
-	 * Set the project on the standard cvs-server up so that it contains the resources
-	 * in createResources. The files have random content.
+	 * Sends the project to the specified cvs-server so that it contains the resources
+	 * described in createResources.  The files have random content.
 	 * 
-	 * @param root a folder to place files temporaryly
-	 * @param host e.g. dev.eclipse.org:2401
-	 * @param repoRoot e.g. /home/cvs
-	 * @param repoName e.g. :pserver:anonymous@dev.eclipse.org:2401:/home/eclipse
-	 * @param project e.g. org.eclipse.swt
+	 * @param location the CVS repository location
+	 * @param projectName the name of the project to import
 	 * @param createResources e.g. new String[]{"a.txt","f1/b.txt","f1/c.txt","f2/d.txt"}
 	 */
-	private static void createRemoteProject(File root, ICVSRepositoryLocation location, String project, String[] createResources) throws CVSException {
+	protected static void magicSetUpRepo(ICVSRepositoryLocation location, String projectName,
+		String[] createResources) throws IOException, CoreException, CVSException {
+		IProject projectRoot = workspaceRoot.getProject(projectName + "-setup-tmp");
+		mkdirs(projectRoot);
+		createRandomFile(projectRoot, createResources);
+		magicDeleteRemote(location, projectName);
 		
-		File workFolder;
-		
-		workFolder = new File(root, project + "tmpXXXtmp");
-		
-		createRandomFile(workFolder, createResources);
-		
-		deleteRemoteResource(location, project);
-		
-		String[] gOptions = new String[]{"-d", location.getLocation()};
 		String[] lOptions = new String[]{"-m","msg"};
-		String[] args = new String[]{project,"a","b"};
-		
-		execute("import",gOptions,lOptions,args,workFolder,new NullProgressMonitor(),System.err);
-		
-		FileUtil.deepDelete(workFolder);
+		String[] args = new String[]{projectName,"a","b"};
+	
+		EclipseCVSClient.execute(location, CVSWorkspaceRoot.getCVSFolderFor(projectRoot),
+			"import", EMPTY_ARGS, lOptions, args);
+		projectRoot.delete(false /*force*/, null);
 	}
 	
 	/**
@@ -310,69 +139,64 @@ public abstract class JUnitTestCase extends TestCase {
 			
 	}
 	
-	protected static void assertSynchronizerEmpty() {
-		assertTrue(CVSProviderPlugin.getSynchronizer().isEmpty());
-	}
-	
 	/**
-	 * Write String[] to file as lines
+	 * Write text lines to file from an array of strings.
 	 */
-	protected static void writeToFile(File file, String[] content)
-		throws IOException {
-		
-		BufferedWriter fileWriter;
-		
-		fileWriter = new BufferedWriter(new FileWriter(file));
-		for (int i = 0; i<content.length; i++) {
-			fileWriter.write(content[i]);
-			fileWriter.newLine();
+	protected static void writeToFile(IFile file, String[] contents)
+		throws IOException, CoreException {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		PrintStream os = new PrintStream(bos);
+		try {
+			for (int i = 0; i < contents.length; i++) {
+				os.println(contents[i]);
+			}
+			ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+			if (file.exists()) {
+				file.setContents(bis, false /*force*/, true /*keepHistory*/, null);
+			} else {
+				mkdirs(file.getParent());
+				file.create(bis, false /*force*/, null);
+			}
+		} finally {
+			os.close();
 		}
-		fileWriter.close();
 	}
 	
 	/**
-	 * load file in lines to String[]
+	 * Read text lines from file into an array of strings.
 	 */
-	protected static String[] readFromFile(File file)
-		throws IOException {
-
-		BufferedReader fileReader;
+	protected static String[] readFromFile(IFile file)
+		throws IOException, CoreException {
+		if (! file.exists()) return null;
+		BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents()));
 		List fileContentStore = new ArrayList();
-		String line;
-		
-		if (!file.exists()) {
-			return null;
+		try {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				fileContentStore.add(line);
+			}			
+		} finally {
+			reader.close();
 		}
-		
-		fileReader = new BufferedReader(new FileReader(file));
-		while ((line = fileReader.readLine()) != null) {
-			fileContentStore.add(line);
-		}
-		fileReader.close();
-			
 		return (String[]) fileContentStore.toArray(new String[fileContentStore.size()]);
 	}
 
 	/**
-	 * Append a String to an file (acctally to both of the files, that are going
-	 * to have the same content)
-	 * If the file is empty we create a new file with the content txt.
+	 * Append text files to file from an array of strings, create new file if it
+	 * does not exist yet.
 	 */
-	protected void appendToFile(File file, String txt) throws IOException {	
-		String[] content;
-		String[] newContent;
-		
-		content = readFromFile(file);
-		
-		if (content == null) {
-			content = new String[0];
+	protected static void appendToFile(IFile file, String[] contents)
+		throws IOException, CoreException {
+		String[] oldContents = readFromFile(file);
+		String[] newContents;
+		if (contents != null) {
+			newContents = contents;
+		} else {
+			newContents = new String[oldContents.length + contents.length];
+			System.arraycopy(oldContents, 0, newContents, 0, oldContents.length);
+			System.arraycopy(contents, 0, newContents, oldContents.length, contents.length);
 		}
-		
-		newContent = new String[content.length + 1];
-		System.arraycopy(content,0,newContent,0,content.length);
-		newContent[content.length] = txt;
-		
-		writeToFile(file,newContent);
+		writeToFile(file, newContents);
 	}
 	
 	/**
@@ -424,26 +248,43 @@ public abstract class JUnitTestCase extends TestCase {
 	}
 	
 	/**
-	 * Creates the file with random contend, and all the folders on the
-	 * way to there
+	 * Creates a folder (and its parents if needed).
 	 */
-	private static void createRandomFile(File file) throws CVSException {
-		try {
-			file.getParentFile().mkdirs();
-			writeToFile(file,new String[]{createRandomContent()});
-		} catch (IOException e) {
-			throw new CVSException(0,0,"IOException in test-setup",e);
-		}		
+	protected static void mkdirs(IContainer container) throws CoreException {
+		if (container.getType() == IResource.PROJECT) {
+			IProject project = (IProject) container;
+			if (! project.exists()) {
+				project.create(null);
+			}
+			project.open(null);
+		} else if (container.getType() == IResource.FOLDER) {
+			IFolder folder = (IFolder) container;
+			if (! folder.exists()) {
+				mkdirs(folder.getParent());
+				folder.create(false /*force*/, true /*local*/, null);
+			}
+		}
+	}
+
+	/**
+	 * Creates the file with random content, and all the folders on the
+	 * way to there.
+	 */
+	private static void createRandomFile(IFile file)
+		throws IOException, CoreException {
+		mkdirs(file.getParent());
+		writeToFile(file, new String[] { createRandomContent() });
 	}
 		
 	/**
 	 * Build the given fileStructure, all files are going to have
-	 * sample content, all folders on the way are created
+	 * sample content, all folders on the way are created.
 	 */
-	protected static void createRandomFile(File root, String[] fileNameArray) 
-														throws CVSException {
-		for (int i=0; i<fileNameArray.length; i++) {
-			createRandomFile(new File(root, fileNameArray[i]));
+	protected static void createRandomFile(IContainer parent, String[] fileNameArray) 
+		throws IOException, CoreException {
+		for (int i = 0; i < fileNameArray.length; i++) {
+			IFile file = parent.getFile(new Path(fileNameArray[i]));
+			createRandomFile(file);
 		}
 	}
 
@@ -463,37 +304,9 @@ public abstract class JUnitTestCase extends TestCase {
 	 * It initialises some required parameter and runs the testcase.
 	 */
 	protected static void run(Class test) {
-		System.setProperty("eclipse.cvs.standalone","true");
+		// XXX is this property used anywhere?
+		System.setProperty("eclipse.cvs.standalone", "true");
 		TestRunner.run(test);
 	}
-
-	/**
-	 * This delte does a deepDelete for an ICVSResource and deletes all
-	 * the cached information for the resource and all its children as
-	 * well.
-	 * At some point this should be integrated into the LocalResource ...
-	 */
-	public static void delete(ICVSResource resource) throws CVSException {
-		
-		// Deleting a file is an add-on that we need for the same-result
-		// enviorment
-		if (!resource.isFolder()) {
-			resource.delete();
-			CVSProviderPlugin.getSynchronizer().reload(((LocalResource)resource.getParent()).getLocalFile(), new NullProgressMonitor());
-			return;
-		}
-		
-		ICVSFolder folder = (ICVSFolder) resource;
-		
-		if (!folder.isCVSFolder()) {		
-			ICVSFolder[] folders = folder.getFolders();
-			for (int i = 0; i < folders.length; i++) {
-				delete(folders[i]);
-			}
-		}
-		
-		folder.delete();
-		CVSProviderPlugin.getSynchronizer().reload(((LocalResource)folder).getLocalFile(), new NullProgressMonitor());
-	}	
 }
 

@@ -8,22 +8,20 @@ import java.util.GregorianCalendar;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
 
 public class BasicTest extends JUnitTestCase {
-	
 	SameResultEnv env1;
 	SameResultEnv env2;
 	
 	public BasicTest(String arg) {
 		super(arg);
-		env1 = new SameResultEnv(arg,getFile("checkout1"));
-		env2 = new SameResultEnv(arg,getFile("checkout2"));
+		env1 = new SameResultEnv(arg + "-checkout1");
+		env2 = new SameResultEnv(arg + "-checkout2");
 	}
 	
 	public BasicTest() {
-		this(null);
+		this("BasicTest");
 	}
 
 	public static void main(String[] args) {	
@@ -33,21 +31,20 @@ public class BasicTest extends JUnitTestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(BasicTest.class);
 		return new CompatibleTestSetup(suite);
-		//return new CompatibleTestSetup(new BasicTest("testRTag"));
+		//return new CompatibleTestSetup(new BasicTest("testDate"));
 	}
 	public void setUp() throws Exception {
 		env1.setUp();
 		env2.setUp();
 
 		// Set the project to the content we need ...
-		env1.createRemoteProject("proj2",new String[]{"a.txt","f1/b.txt","f1/c.txt"});
+		env1.magicSetUpRepo("proj2",new String[]{"a.txt","f1/b.txt","f1/c.txt"});
 		env2.deleteFile("proj2");
 	}
 	
-	public void tearDown() throws CVSException {
+	public void tearDown() throws Exception {
 		env1.tearDown();
 		env2.tearDown();
-		assertSynchronizerEmpty();
 	}
 	
 	public void testAdd() throws Exception {
@@ -130,7 +127,7 @@ public class BasicTest extends JUnitTestCase {
 		
 		// change the file "proj1/folder1/c.txt" in env1 check it in
 		// on the server
-		env1.appendToFile("proj2/f1/c.txt","AppendIt");
+		env1.appendToFile("proj2/f1/c.txt", new String[] { "AppendIt" });
 		env1.execute("ci",new String[]{"-m","TestMessage"},new String[]{"proj2"},"");
 		
 		// assure that the file is different in env1 and env2
@@ -167,7 +164,7 @@ public class BasicTest extends JUnitTestCase {
 		
 		env1.deleteFile("proj2/a.txt");
 		env1.deleteFile("proj2/f1/c.txt");
-		env1.appendToFile("proj2/f1/b.txt","AppendIt");
+		env1.appendToFile("proj2/f1/b.txt",new String[] { "AppendIt" });
 
 		env1.execute("status",EMPTY_ARGS,new String[]{"proj2"});
 		env1.execute("status",EMPTY_ARGS,new String[0],"proj2");
@@ -186,7 +183,7 @@ public class BasicTest extends JUnitTestCase {
 		
 		env1.deleteFile("proj2/a.txt");
 		env1.deleteFile("proj2/f1/c.txt");
-		env1.appendToFile("proj2/f1/b.txt","AppendIt");
+		env1.appendToFile("proj2/f1/b.txt",new String[] { "AppendIt" });
 
 		env1.execute("log",EMPTY_ARGS,new String[]{"proj2"});
 		env1.execute("log",EMPTY_ARGS,new String[0],"proj2");
@@ -205,7 +202,7 @@ public class BasicTest extends JUnitTestCase {
 		
 		env1.deleteFile("proj2/a.txt");
 		env1.deleteFile("proj2/f1/c.txt");
-		env1.appendToFile("proj2/f1/b.txt","AppendIt");
+		env1.appendToFile("proj2/f1/b.txt",new String[] { "AppendIt" });
 
 		env1.execute("tag",new String[]{"-b"},new String[]{"tag2","proj2"});
 
@@ -215,7 +212,7 @@ public class BasicTest extends JUnitTestCase {
 		
 		// Try an commit and an add in the two different streams
 		env1.execute("co",new String[]{"-r","tag1"},new String[]{"proj2"});
-		env1.appendToFile("proj2/f1/b.txt","AppendItTwo");
+		env1.appendToFile("proj2/f1/b.txt", new String[] { "AppendItTwo" });
 		env1.createRandomFile("proj2/d.txt");
 		env1.execute("add",new String[0],new String[]{"d.txt"},"proj2");
 		env1.execute("ci",new String[]{"-m","branch"},new String[]{"proj2"});
@@ -223,7 +220,7 @@ public class BasicTest extends JUnitTestCase {
 		env1.execute("co",new String[]{"-r","tag1"},new String[]{"proj2"});
 
 		env2.execute("co",new String[]{"-r","tag2"},new String[]{"proj2"});
-		env2.appendToFile("proj2/f1/b.txt","AppendItThree");
+		env2.appendToFile("proj2/f1/b.txt", new String[] { "AppendItThree" });
 		env2.createRandomFile("proj2/d.txt");
 		env2.execute("add",new String[0],new String[]{"d.txt"},"proj2");
 		env2.execute("ci",new String[]{"-m","branch"},new String[]{"proj2"});	
@@ -235,7 +232,7 @@ public class BasicTest extends JUnitTestCase {
 		// Try to branch of a workspace with local changes
 		env1.execute("co",EMPTY_ARGS,new String[]{"proj2"});
 		JUnitTestCase.waitMsec(1500);
-		env1.appendToFile("proj2/f1/b.txt","AppendIt");
+		env1.appendToFile("proj2/f1/b.txt",new String[] { "AppendIt" });
 		env1.execute("tag",new String[]{"-b"},new String[]{"branch-with-changes","proj2"});
 		env1.execute("update",new String[]{"-r", "branch-with-changes"},new String[]{"proj2"});
 	}
@@ -247,7 +244,7 @@ public class BasicTest extends JUnitTestCase {
 		
 		env1.deleteFile("proj2/a.txt");
 		env1.deleteFile("proj2/f1/c.txt");
-		env1.appendToFile("proj2/f1/b.txt","AppendIt");
+		env1.appendToFile("proj2/f1/b.txt",new String[] { "AppendIt" });
 
 		env1.execute("tag",EMPTY_ARGS,new String[]{"tag2","proj2"});
 		env1.execute("tag",EMPTY_ARGS,new String[]{"tag2"},"proj2");
@@ -347,8 +344,8 @@ public class BasicTest extends JUnitTestCase {
 		
 		env1.setIgnoreExceptions(true);
 		
-		env1.appendToFile("proj2/f1/c.txt","AppendIt2");
-		env1.appendToFile("proj2/f1/b.txt","AppendIt");
+		env1.appendToFile("proj2/f1/c.txt",new String[] {"AppendIt2" });
+		env1.appendToFile("proj2/f1/b.txt",new String[] { "AppendIt" });
 		
 		env1.execute("diff",EMPTY_ARGS,new String[]{"proj2"});
 		env1.execute("diff",EMPTY_ARGS,new String[0],"proj2");
@@ -365,7 +362,7 @@ public class BasicTest extends JUnitTestCase {
 	public void testReadOnly() throws Exception {			
 		env1.execute("co",new String[]{"-r"},EMPTY_ARGS,new String[]{"proj2"},"");
 		env1.execute("update",new String[0],EMPTY_ARGS,new String[]{"proj2"},"");
-		env1.deleteFile(".");
+		env1.deleteFile("");
 		env1.writeToFile("tmp.txt",new String[0]);
 		env1.deleteFile("tmp.txt");	
 		env1.execute("co",EMPTY_ARGS,new String[]{"proj2"},"");
@@ -383,7 +380,7 @@ public class BasicTest extends JUnitTestCase {
 	
 	public void testImportWrappers() throws Exception {
 		// Make the project empty
-		env1.createRemoteProject("proj3",new String[]{"NoImportant.txt"});
+		env1.magicSetUpRepo("proj3",new String[]{"NoImportant.txt"});
 		env2.deleteFile("proj3");
 		
 		// Create resouces and import them with the 
@@ -400,7 +397,7 @@ public class BasicTest extends JUnitTestCase {
 	
 	public void testImportIgnores() throws Exception {
 		// Make the project empty
-		env1.createRemoteProject("proj3",new String[]{"NoImportant.txt"});
+		env1.magicSetUpRepo("proj3",new String[]{"NoImportant.txt"});
 		env2.deleteFile("proj3");
 		
 		// Create resouces and import them with the 
@@ -437,14 +434,14 @@ public class BasicTest extends JUnitTestCase {
 
 		waitMsec(1100);
 	
-		env1.appendToFile("proj2/a.txt","AppendIt");
+		env1.appendToFile("proj2/a.txt",new String[] { "AppendIt" });
 		env1.execute("ci",new String[]{"-m","msg"},new String[]{"proj2"});
 		firstChange = GregorianCalendar.getInstance().getTime();
 
 		waitMsec(1100);
 			
-		env1.appendToFile("proj2/a.txt","AppendIt2");
-		env1.appendToFile("proj2/f1/b.txt","AppendIt2");
+		env1.appendToFile("proj2/a.txt",new String[] { "AppendIt2" });
+		env1.appendToFile("proj2/f1/b.txt",new String[] { "AppendIt2" });
 		env1.execute("ci",new String[]{"-m","msg"},new String[]{"proj2"});
 		secondChange = GregorianCalendar.getInstance().getTime();
 
@@ -475,12 +472,12 @@ public class BasicTest extends JUnitTestCase {
 		
 		// We get try to merge changes from different dates
 		env1.execute("co",new String[0],new String[]{"proj2"});
-		env1.appendToFile("proj2/a.txt","This is the world ...");
+		env1.appendToFile("proj2/a.txt", new String[] { "This is the world ..." });
 		env1.execute("update",new String[]{"-D",toGMTString(beforeChange)},new String[]{"proj2"});
-		env1.appendToFile("proj2/a.txt","... witch constantly changes");
+		env1.appendToFile("proj2/a.txt", new String[] {"... which constantly changes" });
 		env1.execute("update",new String[]{"-A"},new String[]{"proj2"});
 		// Change something to be able to commit
-		env1.appendToFile("proj2/a.txt","... and the changes are aproved"); 
+		env1.appendToFile("proj2/a.txt", new String[] { "... and the changes are approved" });
 		env1.execute("ci",new String[]{"-m","msg"},new String[]{"proj2"});
 		
 	}

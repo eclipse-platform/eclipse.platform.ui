@@ -6,7 +6,6 @@ package org.eclipse.team.internal.ccvs.core.client;
  */
  
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,18 +13,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.ccvs.core.ICVSFile;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.Util;
@@ -180,28 +176,6 @@ public class Session {
 	public boolean isValidRequest(String request) {
 		return (validRequests == null) ||
 			(validRequests.indexOf(" " + request + " ") != -1); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
-	/**
-	 * Gives you an LocalFolder for a absolute path in
-	 * platform dependend style.
-	 * 
-	 * @throws CVSException on path.indexOf("CVS") != -1
-	 * @throws CVSException on internal IOExeption
-	 */
-	public static ICVSFolder getManagedFolder(File folder) throws CVSException {
-		return new LocalFolder(folder);
-	}
-	public static ICVSFile getManagedFile(File file) throws CVSException {
-		return new LocalFile(file);
-	}
-	
-	public static ICVSResource getManagedResource(IResource resource) throws CVSException {
-		File file = resource.getLocation().toFile();
-		if (resource.getType() == IResource.FILE)
-			return getManagedFile(file);
-		else
-			return getManagedFolder(file);
 	}
 
 	/**
@@ -781,4 +755,6 @@ public class Session {
 	boolean isOutputToConsole() {
 		return outputToConsole;
 	}
+
+		
 }

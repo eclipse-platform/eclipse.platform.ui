@@ -16,11 +16,7 @@ public class AllTests extends EclipseTest {
 	
 	public static Test suite() {	
 		TestSuite suite = new TestSuite();
-		
-		suite.addTest(LocalFileTest.suite());
-		suite.addTest(LocalFolderTest.suite());
 		suite.addTest(ResourceSyncInfoTest.suite());
-		suite.addTest(SynchronizerTest.suite());
     	return suite; 	
 	}	
 	

@@ -86,7 +86,7 @@ public class RemoveRootAction extends TeamAction {
 							ITeamProvider teamProvider = manager.getProvider(projects[j]);
 							if (teamProvider instanceof CVSTeamProvider) {
 								CVSTeamProvider cvsProvider = (CVSTeamProvider)teamProvider;
-								if (cvsProvider.getRemoteRoot().equals(roots[i])) {
+								if (cvsProvider.getCVSWorkspaceRoot().getRemoteLocation().equals(roots[i])) {
 									shared = true;
 									break;
 								}

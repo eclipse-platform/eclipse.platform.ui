@@ -33,10 +33,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.team.ccvs.core.*;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSListener;
 import org.eclipse.team.ccvs.core.ICVSProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
@@ -56,13 +58,12 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteModule;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
-import org.eclipse.team.internal.ccvs.core.Policy;
 
 public class CVSProvider implements ICVSProvider {
 
@@ -198,7 +199,7 @@ public class CVSProvider implements ICVSProvider {
 						pm.beginTask(null, 1000 * resources.length);
 						
 						// Get the location of the workspace root
-						ICVSFolder root = (ICVSFolder)Session.getManagedResource(ResourcesPlugin.getWorkspace().getRoot());
+						ICVSFolder root = CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot());
 						
 						for (int i=0;i<resources.length;i++) {
 							IProject project = null;
@@ -393,7 +394,7 @@ public class CVSProvider implements ICVSProvider {
 		if (resources.length == 0) return new String[0];
 		
 		// Get the location of the workspace root
-		ICVSFolder root = Session.getManagedFolder(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile());
+		ICVSFolder root = CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot());
 		
 		// Get the command arguments
 		String[] arguments = new String[resources.length];
@@ -430,17 +431,7 @@ public class CVSProvider implements ICVSProvider {
 	}
 
 
-	/**
-	 * Get the print stream to which information from CVS commands
-	 * is sent.
-	 */
-	public PrintStream getPrintStream() {
-		if (printStream == null)
-			return System.out;
-		else
-			return printStream;
-	}
-	
+		
 	/**
 	 * @see ICVSProvider#getRepository(String)
 	 */
@@ -472,6 +463,8 @@ public class CVSProvider implements ICVSProvider {
 		
 		// Determine if the repository is known
 		boolean alreadyExists = isCached(location);
+		// Set the folder sync info of the project to point to the remote module
+		ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(project);
 			
 		try {
 			// Get the import properties
@@ -498,9 +491,7 @@ public class CVSProvider implements ICVSProvider {
 			} finally {
 				s.close();
 			}
-			
-			// Set the folder sync info of the project to point to the remote module
-			ICVSFolder folder = (ICVSFolder)Session.getManagedResource(project);
+						
 			folder.setFolderSyncInfo(new FolderSyncInfo(moduleName, location.getLocation(), null, false));
 
 			// Register the project with Team
@@ -518,8 +509,6 @@ public class CVSProvider implements ICVSProvider {
 			if ( ! alreadyExists)
 				disposeRepository(location);
 			throw e;
-		} finally {
-			CVSProviderPlugin.getSynchronizer().save(project.getLocation().toFile(), Policy.subMonitorFor(monitor, 5));
 		}
 		// Add the repository if it didn't exist already
 		if ( ! alreadyExists)
@@ -569,7 +558,7 @@ public class CVSProvider implements ICVSProvider {
 	public void setSharing(IProject project, FolderSyncInfo info, IProgressMonitor monitor) throws TeamException {
 		
 		// Ensure provided info matches that of the project
-		ICVSFolder folder = (ICVSFolder)Session.getManagedResource(project);
+		ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(project);
 		FolderSyncInfo folderInfo = folder.getFolderSyncInfo();
 		if ( ! info.equals(folderInfo)) {
 			throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSProvider.infoMismatch", project.getName())));//$NON-NLS-1$
@@ -589,8 +578,6 @@ public class CVSProvider implements ICVSProvider {
 				TeamPlugin.getManager().setProvider(project, CVSProviderPlugin.NATURE_ID, null, monitor);
 		} catch (CoreException e) {
 			throw wrapException(e);
-		} finally {
-			CVSProviderPlugin.getSynchronizer().save(project.getLocation().toFile(), Policy.subMonitorFor(monitor, 5));
 		}
 	}
 	
@@ -638,7 +625,7 @@ public class CVSProvider implements ICVSProvider {
 				ITeamProvider provider = manager.getProvider(projects[i]);
 				if (provider instanceof CVSTeamProvider) {
 					CVSTeamProvider cvsProvider = (CVSTeamProvider)provider;
-					ICVSFolder folder = (ICVSFolder)Session.getManagedResource(projects[i]);
+					ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(projects[i]);
 					FolderSyncInfo info = folder.getFolderSyncInfo();
 					if (info != null) {
 						ICVSRepositoryLocation result = getRepository(info.getRoot());

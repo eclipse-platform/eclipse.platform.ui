@@ -6,20 +6,24 @@ package org.eclipse.team.internal.ccvs.ui;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -33,6 +37,7 @@ import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.util.ResourceDeltaVisitor;
 
 /**
  * Classes registered with the workbench decoration extension point. The <code>CVSDecorationRunnable</code> class
@@ -53,8 +58,18 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 
 	private static CVSDecorator theDecorator = null;
 	
-	// Resources that need an icon and text computed for display to the user, no order
-	private Set decoratorNeedsUpdating = Collections.synchronizedSet(new HashSet());
+	// Resources that need an icon and text computed for display to the user, sorted by canonical path
+	private SortedSet decoratorNeedsUpdating = Collections.synchronizedSortedSet(
+		new TreeSet(new Comparator() {
+		public boolean equals(Object a, Object b) {
+			return a == b || a.equals(b);
+		}
+		public int compare(Object a, Object b) {
+			IPath pathA = ((IResource) a).getFullPath();
+			IPath pathB = ((IResource) b).getFullPath();
+			return pathA.toString().compareTo(pathB.toString());
+		}
+	}));
 
 	// When decorations are computed they are added to this cache via decorated() method
 	private Map cache = Collections.synchronizedMap(new HashMap());
@@ -66,6 +81,25 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	
 	private Hashtable imageCache = new Hashtable();
 	
+	private ChangeListener changeListener;
+	
+	private class ChangeListener extends ResourceDeltaVisitor {
+		List changedResources = new ArrayList();
+		protected void handleAdded(IResource[] resources) {
+		}
+		protected void handleRemoved(IResource[] resources) {
+		}
+		protected void handleChanged(IResource[] resources) {
+			changedResources.addAll(Arrays.asList(resources));
+		}
+		protected void finished() {
+			resourceStateChanged((IResource[])changedResources.toArray(new IResource[changedResources.size()]));
+		}
+		protected int getEventMask() {
+			return IResourceChangeEvent.PRE_AUTO_BUILD;
+		}
+	}
+	
 	public CVSDecorator() {
 		// The decorator is a singleton, there should never be more than one instance.
 		// temporary until the UI component properly calls dispose when the workbench shutsdown
@@ -76,6 +110,8 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		decoratorUpdateThread = new Thread(new CVSDecorationRunnable(this), "CVS"); //$NON-NLS-1$
 		decoratorUpdateThread.start();
 		TeamPlugin.getManager().addResourceStateChangeListener(this);
+		changeListener = new ChangeListener();
+		changeListener.register();
 	}
 
 	public String decorateText(String text, Object o) {
@@ -155,9 +191,8 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 				// The decorator was awakened by the plug-in as it was shutting down.
 				return null;
 			}
-			Iterator iterator = decoratorNeedsUpdating.iterator();
-			IResource resource = (IResource) iterator.next();
-			iterator.remove();
+			IResource resource = (IResource) decoratorNeedsUpdating.first();
+			decoratorNeedsUpdating.remove(resource);
 
 			//System.out.println("++ Next: " + resource.getFullPath() + " remaining in cache: " + cache.size());
 
@@ -348,10 +383,15 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	 */
 	public void dispose() {
 		super.dispose();
+		
+		// terminate decoration thread
 		shutdown();
 		
+		// unregister change listeners
+		changeListener.register();
 		TeamPlugin.getManager().removeResourceStateChangeListener(this);
 		
+		// dispose of images created as overlays
 		decoratorNeedsUpdating.clear();
 		cache.clear();
 		Iterator it = imageCache.values().iterator();

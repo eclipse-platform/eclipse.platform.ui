@@ -13,114 +13,70 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.connection.ResourceStatus;
 
 /**
- * This is an exception that is thrown by the cvs-adaptor
- * for vcm
- * 
- * @see CoreExcpetion
+ * A checked expection representing a failure in the CVS plugin.
+ * <p>
+ * CVS exceptions contain a status object describing the cause of 
+ * the exception.
+ * </p>
+ *
+ * @see IStatus
  */
-
 public class CVSException extends TeamException {
+
+	/*
+	 * Helpers for creating CVS exceptions
+	 */
+	public CVSException(int severity, int code, String message, Exception e) {
+		super(new CVSStatus(severity, code, message, null));
+	}
 	
-	public CVSException(
-		int severity,
-		int code,
-		IPath path,
-		String message,
-		Throwable exception) {
-		super(new ResourceStatus(severity, code, path, message, exception));
-	}
-	public CVSException(
-		int severity,
-		int code,
-		IPath path,
-		String message) {
-		this(severity, code, path, message, null);
-	}
-	public CVSException(
-		int severity,
-		int code,
-		IPath path,
-		Throwable exception) {
-		this(severity, code, path, null, exception);
-	}
-	public CVSException(
-		int severity,
-		int code,
-		String message,
-		Exception e) {
-		super(new Status(severity, CVSProviderPlugin.ID, code, message, null));
-	}
-	public CVSException(
-		int severity,
-		int code,
-		String message) {
+	public CVSException(int severity, int code, String message) {
 		this(severity, code, message, null);
 	}
 
-	public CVSException(
-		int severity,
-		int code,
-		Exception e) {
-		super(new Status(severity, CVSProviderPlugin.ID, code, null, e));
-
-	}
-
 	public CVSException(String message) {
-		super(new Status(IStatus.ERROR, CVSProviderPlugin.ID, UNABLE, message, null));
+		super(new CVSStatus(IStatus.ERROR, UNABLE, message, null));
 	}
 
-	public CVSException(String message, IPath path) {
-		this(message, path, null);
-	}
-	
 	public CVSException(String message, Exception e) {
 		this(IStatus.ERROR, UNABLE, message, e);
 	}
 
 	public CVSException(String message, IPath path, Throwable throwable) {
-		this(new ResourceStatus(IStatus.ERROR, path, message, throwable));
+		this(new CVSStatus(IStatus.ERROR, path, message, throwable));
 	}
+
 	public CVSException(IStatus status) {
 		super(status);
 	}
-	
+
 	/*
 	 * Static helper methods for creating exceptions
 	 */
-	public static CVSException wrapException(IResource resource, String message,IOException e) {
+	public static CVSException wrapException(
+		IResource resource,
+		String message,
+		IOException e) {
 		// NOTE: we should record the resource somehow
 		// We should also inlcude the IO message
-		return new CVSException(new Status(
-				IStatus.ERROR,
-				CVSProviderPlugin.ID,
-				IO_FAILED,
-				message,
-				e));
+		return new CVSException(new CVSStatus(IStatus.ERROR, IO_FAILED, message, e));
 	}
+
 	/*
 	 * Static helper methods for creating exceptions
 	 */
 	public static CVSException wrapException(IResource resource, String message, CoreException e) {
-		return new CVSException(new Status(
-				IStatus.ERROR,
-				CVSProviderPlugin.ID,
-				UNABLE,
-				message,
-				e));
+		return new CVSException(new CVSStatus(IStatus.ERROR, UNABLE, message, e));
 	}
+
 	/*
 	 * Static helper methods for creating exceptions
 	 */
 	public static CVSException wrapException(Exception e) {
-		return new CVSException(new Status(
-				IStatus.ERROR,
-				CVSProviderPlugin.ID,
-				UNABLE,
-				e.getMessage() != null ? e.getMessage() : "",  //$NON-NLS-1$
-				e));
+		return new CVSException(new CVSStatus(IStatus.ERROR, UNABLE, e.getMessage() != null ? e.getMessage() : "",	e)); //$NON-NLS-1$
 	}
 }

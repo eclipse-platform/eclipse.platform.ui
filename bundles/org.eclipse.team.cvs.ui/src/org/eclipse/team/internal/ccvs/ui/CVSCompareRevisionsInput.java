@@ -57,6 +57,7 @@ import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class CVSCompareRevisionsInput extends CompareEditorInput {
@@ -86,7 +87,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 			if (revisionName != null) {
 				IResource resource = CVSCompareRevisionsInput.this.resource;
 				try {
-					ICVSRemoteFile currentEdition = (ICVSRemoteFile)provider.getRemoteResource(resource);
+					ICVSRemoteFile currentEdition = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(resource);
 					if (currentEdition != null && currentEdition.getRevision().equals(revisionName)) {
 						return "*" + revisionName;
 					} else {
@@ -392,7 +393,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 	}
 	private void updateCurrentEdition() {
 		try {
-			this.currentEdition = ((ICVSRemoteFile)provider.getRemoteResource(resource));
+			this.currentEdition = ((ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(resource));
 		} catch (TeamException e) {
 			handle(e);
 		}

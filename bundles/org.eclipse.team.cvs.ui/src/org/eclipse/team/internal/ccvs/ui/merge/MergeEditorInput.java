@@ -20,6 +20,7 @@ import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
 import org.eclipse.team.ui.sync.CatchupReleaseViewer;
@@ -45,9 +46,8 @@ public class MergeEditorInput extends CVSSyncCompareInput {
 	protected IRemoteSyncElement[] createSyncElements(IProgressMonitor monitor) throws TeamException {
 		monitor.beginTask(null, 100);
 		try {
-			CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(project);
-			IRemoteResource base = provider.getRemoteTree(project, start, Policy.subMonitorFor(monitor, 50));
-			IRemoteResource remote = provider.getRemoteTree(project, end, Policy.subMonitorFor(monitor, 50));
+			IRemoteResource base = CVSWorkspaceRoot.getRemoteTree(project, start, Policy.subMonitorFor(monitor, 50));
+			IRemoteResource remote = CVSWorkspaceRoot.getRemoteTree(project, end, Policy.subMonitorFor(monitor, 50));
 			return new IRemoteSyncElement[] {new CVSRemoteSyncElement(false, project, base, remote)};
 		} finally {
 			monitor.done();

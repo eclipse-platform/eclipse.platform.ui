@@ -7,12 +7,13 @@ package org.eclipse.team.internal.ccvs.core.client;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.ccvs.core.*;
+import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 
 /**
  * Runs the CVS diff command.
@@ -29,15 +30,13 @@ public class Diff extends Command {
 	}
 	
 	/**
-	 * Overwritten to throw the CVSDiffException if the server returns an error, because it just does so when there is a 
-	 * difference between  the checked files.	
+	 * Overwritten to throw the CVSDiffException if the server returns an error, because it just does 
+	 * so when there is a difference between the checked files.	
 	 */
-	public IStatus execute(Session session, GlobalOption[] globalOptions,
-		LocalOption[] localOptions, String[] arguments, ICommandOutputListener listener,
-		IProgressMonitor monitor)
-		throws CVSException {
+	protected IStatus doExecute(Session session, GlobalOption[] globalOptions, LocalOption[] localOptions,
+								  String[] arguments, ICommandOutputListener listener, IProgressMonitor monitor) throws CVSException {
 		try {
-			return super.execute(session, globalOptions, localOptions, arguments, listener, monitor);
+			return super.doExecute(session, globalOptions, localOptions, arguments, listener, monitor);
 		} catch (CVSServerException e) {
 			if (e.containsErrors()) throw e;
 			return e.getStatus();
@@ -53,5 +52,5 @@ public class Diff extends Command {
 		for (int i = 0; i < resources.length; i++) {
 			resources[i].accept(fsVisitor);
 		}
-	}
+	}		
 }

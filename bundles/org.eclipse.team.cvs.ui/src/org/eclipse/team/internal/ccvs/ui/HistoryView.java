@@ -64,6 +64,7 @@ import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
@@ -117,7 +118,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 					String revision = entry.getRevision();
 					if (file == null) return revision;
 					try {
-						ICVSRemoteFile currentEdition = (ICVSRemoteFile)provider.getRemoteResource(file);
+						ICVSRemoteFile currentEdition = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(file);
 						if (currentEdition != null && currentEdition.getRevision().equals(revision)) {
 							return "*" + revision;
 						}
@@ -631,7 +632,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 			if (teamProvider != null && teamProvider instanceof CVSTeamProvider) {
 				this.provider = (CVSTeamProvider)teamProvider;
 				try {
-					tableViewer.setInput(provider.getRemoteResource(file));
+					tableViewer.setInput(CVSWorkspaceRoot.getRemoteResourceFor(file));
 				} catch (TeamException e) {
 					ErrorDialog.openError(getViewSite().getShell(), null, null, e.getStatus());
 				}				

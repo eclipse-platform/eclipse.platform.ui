@@ -29,6 +29,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -74,13 +75,13 @@ public class BranchWizard extends Wizard {
 							CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
 							List list = (List)table.get(provider);
 							IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-							ICVSRepositoryLocation root = provider.getRemoteRoot();
+							ICVSRepositoryLocation root = provider.getCVSWorkspaceRoot().getRemoteLocation();
 							CVSTag tag = new CVSTag(tagString, CVSTag.BRANCH);
 							try {
 								if (versionTag != null) {
 									provider.tag(providerResources, IResource.DEPTH_INFINITE, versionTag, subMonitor);
 									for (int i = 0; i < providerResources.length; i++) {
-										ICVSRemoteFolder remoteResource = (ICVSRemoteFolder)provider.getRemoteResource(providerResources[i]);
+										ICVSRemoteFolder remoteResource = (ICVSRemoteFolder) CVSWorkspaceRoot.getRemoteResourceFor(providerResources[i]);
 										manager.addVersionTags(remoteResource, new CVSTag[] { versionTag });
 									}
 								}

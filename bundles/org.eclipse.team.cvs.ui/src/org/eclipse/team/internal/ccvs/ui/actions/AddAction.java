@@ -16,10 +16,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -66,8 +69,13 @@ public class AddAction extends TeamAction {
 		ITeamManager manager = TeamPlugin.getManager();
 		for (int i = 0; i < resources.length; i++) {
 			ITeamProvider provider = manager.getProvider(resources[i].getProject());
-			if (provider == null) return false;
-			if (((CVSTeamProvider)provider).isManaged(resources[i])) return false;
+			if(provider == null) return false;
+			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
+			if(cvsResource.isFolder()) {
+				if(((ICVSFolder)cvsResource).isCVSFolder()) return false;
+			} else {
+				if (cvsResource.isManaged()) return false;
+			}
 		}
 		return true;
 	}

@@ -14,9 +14,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.ui.dialogs.PropertyPage;
 
@@ -36,7 +36,7 @@ public class CVSFilePropertiesPage extends PropertyPage {
 		composite.setLayout(layout);
 		
 		try {
-			LocalFile cvsResource = new LocalFile(file.getLocation().toFile());
+			ICVSFile cvsResource = CVSWorkspaceRoot.getCVSFileFor(file);
 			if (!cvsResource.isManaged()) {
 				if (cvsResource.isIgnored()) {
 					createLabel(composite, Policy.bind("CVSFilePropertiesPage.ignored"));

@@ -11,11 +11,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -26,17 +25,8 @@ public class IgnoreAction extends TeamAction {
 		if (resources.length == 0) return false;
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			ICVSResource cvsResource = null;
-			switch (resource.getType()) {
-				case IResource.FILE:
-					cvsResource = new LocalFile(resource.getLocation().toFile());
-					break;
-				case IResource.FOLDER:
-					cvsResource = new LocalFolder(resource.getLocation().toFile());
-					break;
-				default:
-					return false;
-			}
+			if (resource.getType() == IResource.PROJECT) return false;
+			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 			if (cvsResource.isManaged()) return false;
 			if (cvsResource.isIgnored()) return false;
 		}
@@ -48,15 +38,7 @@ public class IgnoreAction extends TeamAction {
 				IResource[] resources = getSelectedResources();
 				for (int i = 0; i < resources.length; i++) {
 					IResource resource = resources[i];
-					ICVSResource cvsResource = null;
-					switch (resource.getType()) {
-						case IResource.FILE:
-							cvsResource = new LocalFile(resource.getLocation().toFile());
-							break;
-						case IResource.FOLDER:
-							cvsResource = new LocalFolder(resource.getLocation().toFile());
-							break;
-					}
+					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 					if (cvsResource == null) return;
 					try {
 						cvsResource.setIgnored();

@@ -11,19 +11,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -72,12 +73,15 @@ public class UpdateAction extends TeamAction {
 		if (resources.length == 0) return false;
 		ITeamManager manager = TeamPlugin.getManager();
 		for (int i = 0; i < resources.length; i++) {
-			ITeamProvider provider = manager.getProvider(resources[i].getProject());
+			IResource resource = resources[i];
+			ITeamProvider provider = manager.getProvider(resource.getProject());
 			if (provider == null) return false;
-			if (!((CVSTeamProvider)provider).isManaged(resources[i])) return false;
-			if (resources[i] instanceof IFile) {
-				LocalFile file = new LocalFile(resources[i].getLocation().toFile());
-				if (file.getSyncInfo().isAdded()) return false;
+			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+			ResourceSyncInfo info = cvsResource.getSyncInfo();
+			if(cvsResource.isFolder()) {
+				if(!((ICVSFolder)cvsResource).isCVSFolder()) return false;
+			} else {
+				if (!cvsResource.isManaged() || info.isAdded()) return false;
 			}
 		}
 		return true;
