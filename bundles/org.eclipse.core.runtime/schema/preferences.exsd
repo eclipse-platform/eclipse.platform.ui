@@ -83,7 +83,7 @@
                   The name of the class.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="AbstractPreferenceInitializer"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer"/>
                </appInfo>
             </annotation>
          </attribute>
