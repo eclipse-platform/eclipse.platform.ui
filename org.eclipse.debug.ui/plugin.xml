@@ -59,6 +59,9 @@
          <actionSet
                id="org.eclipse.ui.NavigateActionSet">
          </actionSet>
+		 <actionSet
+               id="org.eclipse.debug.ui.breakpointActionSet">
+         </actionSet>         
       </perspectiveExtension>
    </extension>
    <extension
@@ -170,7 +173,7 @@
          </action>
          <action
                id="org.eclipse.debug.ui.actions.RunToLine"
-               class="org.eclipse.debug.internal.ui.actions.RunToLineAction"
+               class="org.eclipse.debug.internal.ui.actions.RetargetRunToLineAction"
                definitionId="org.eclipse.debug.ui.commands.RunToLine"
                helpContextId="run_to_line_action_context"
                disabledIcon="icons/full/dlcl16/runtoline_co.gif"
@@ -245,7 +248,7 @@
                menubarPath="org.eclipse.ui.run/stepGroup">
          </action>
       </actionSet>
-   </extension>
+   </extension>         
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
@@ -363,6 +366,38 @@
          </action>
       </actionSet>
    </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="%BreakpoingActionSet.label"
+            visible="false"
+            id="org.eclipse.debug.ui.breakpointActionSet">
+         <menu
+               label="%RunMenu.label"
+               path="additions"
+               id="org.eclipse.ui.run">
+            <separator
+                  name="breakpointGroup">
+            </separator>
+            <groupMarker
+                  name="lineBreakpointGroup">
+            </groupMarker>
+            <groupMarker
+                  name="emptyBreakpointGroup">
+            </groupMarker>
+         </menu>
+         <action
+               definitionId="org.eclipse.debug.ui.commands.ToggleBreakpoint"
+               label="%ToggleBreakpointAction.label"
+               icon="icons/full/obj16/brkp_obj.gif"
+               disabledIcon="icons/full/obj16/brkpd_obj.gif"
+               helpContextId="toggle_breakpoint_action_context"
+               class="org.eclipse.debug.internal.ui.actions.RetargetToggleLineBreakpointAction"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               id="org.eclipse.debug.ui.actions.ToggleBreakpoint">
+         </action>         
+      </actionSet>
+   </extension>   
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
@@ -1362,6 +1397,18 @@
             command="org.eclipse.debug.ui.commands.RunToLine"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>          
+      <command
+            name="%ActionDefinition.toggleBreakpoint.name"
+            description="%ActionDefinition.toggleBreakpoint.description"
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.ui.commands.ToggleBreakpoint">
+      </command>
+      <keyBinding
+            string="Ctrl+Shift+B"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.ui.commands.ToggleBreakpoint"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>      
    </extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">

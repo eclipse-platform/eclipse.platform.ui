@@ -13,60 +13,61 @@ package org.eclipse.debug.internal.ui.actions;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartService;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
- * Global retargettable run to line action.
+ * Global retargettable debug action.
  * 
  * @since 3.0
  */
-public class RunToLineAction implements IWorkbenchWindowActionDelegate, IPartListener, IUpdate {
+public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, IPartListener, IUpdate {
 	
-	private IWorkbenchWindow window = null;
+	protected IWorkbenchWindow window = null;
 	private IWorkbenchPart activePart = null;
-	private IRunToLineTarget partTarget = null;
+	private Object partTarget = null;
 	private IAction action = null;
-	private ISelectionListener selectionListener = new DebugSelectionListener();
-	private ISuspendResume targetElement = null;
+	private static final ISelection EMPTY_SELECTION = new EmptySelection();  
 	
-	class DebugSelectionListener implements ISelectionListener {
+	static class EmptySelection implements ISelection {
 
 		/* (non-Javadoc)
-		 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+		 * @see org.eclipse.jface.viewers.ISelection#isEmpty()
 		 */
-		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-			targetElement = null;
-			if (selection instanceof IStructuredSelection) {
-				IStructuredSelection ss = (IStructuredSelection) selection;
-				if (ss.size() == 1) {
-					Object object = ss.getFirstElement();
-					if (object instanceof ISuspendResume) {
-						targetElement = (ISuspendResume) object;
-					}
-				}
-			}
-			update();
+		public boolean isEmpty() {
+			return true;
 		}
 		
+	}
+	
+	/**
+	 * Returns the current selection in the active part, possibly
+	 * and empty selection, but never <code>null</code>.
+	 * 
+	 * @return the selection in the active part, possibly empty
+	 */
+	private ISelection getTargetSelection() {
+		if (activePart != null) {
+			ISelectionProvider selectionProvider = activePart.getSite().getSelectionProvider();
+			if (selectionProvider != null) {
+				return selectionProvider.getSelection();
+			}
+		}
+		return EMPTY_SELECTION;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
-		window.getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, selectionListener);
 		window.getPartService().removePartListener(this);
 		activePart = null;
 		partTarget = null;
@@ -77,7 +78,6 @@ public class RunToLineAction implements IWorkbenchWindowActionDelegate, IPartLis
 	 */
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
-		window.getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, selectionListener);
 		IPartService partService = window.getPartService();
 		partService.addPartListener(this);
 		IWorkbenchPart part = partService.getActivePart();
@@ -89,14 +89,24 @@ public class RunToLineAction implements IWorkbenchWindowActionDelegate, IPartLis
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		if (partTarget != null && targetElement != null) {
+		if (partTarget != null) {
 			try {
-				partTarget.runToLine(targetElement);
+				performAction(partTarget, getTargetSelection(), activePart);
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.getString("RunToLineAction.0"), ActionMessages.getString("RunToLineAction.1"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.getString("RetargetAction.2"), ActionMessages.getString("RetargetAction.3"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
+	
+	/**
+	 * Performs the specific breakpoint toggling.
+	 * 
+	 * @param selection selection in the active part 
+	 * @param part active part
+	 * @throws CoreException if an exception occurrs
+	 */
+	protected abstract void performAction(Object target, ISelection selection, IWorkbenchPart part) throws CoreException;
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -110,16 +120,25 @@ public class RunToLineAction implements IWorkbenchWindowActionDelegate, IPartLis
 	 */
 	public void partActivated(IWorkbenchPart part) {
 		activePart = part;
-		partTarget  = (IRunToLineTarget) part.getAdapter(IRunToLineTarget.class);
+		partTarget = null;
+		partTarget  = part.getAdapter(getAdapterClass());
 		if (partTarget == null) {
 			IAdapterManager adapterManager = Platform.getAdapterManager();
 			// TODO: we could restrict loading to cases when the debugging context is on
-			if (adapterManager.hasAdapter(part, "org.eclipse.debug.internal.ui.actions.IRunToLineTarget")) { //$NON-NLS-1$
-				partTarget = (IRunToLineTarget) adapterManager.loadAdapter(part, "org.eclipse.debug.internal.ui.actions.IRunToLineTarget"); //$NON-NLS-1$
+			if (adapterManager.hasAdapter(part, getAdapterClass().getName())) { //$NON-NLS-1$
+				partTarget = adapterManager.loadAdapter(part, getAdapterClass().getName()); //$NON-NLS-1$
 			}
 		}
 		update();
 	}
+	
+	/**
+	 * Returns the type of adapter (target) this action works on.
+	 * 
+	 * @return the type of adapter this action works on
+	 */
+	protected abstract Class getAdapterClass();
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partBroughtToTop(org.eclipse.ui.IWorkbenchPart)
 	 */
@@ -129,19 +148,11 @@ public class RunToLineAction implements IWorkbenchWindowActionDelegate, IPartLis
 	 * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partClosed(IWorkbenchPart part) {
-		partDeactivated(part);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partDeactivated(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partDeactivated(IWorkbenchPart part) {
-		if (part.equals(activePart)) {
-			activePart = null;
-			if (partTarget != null) {
-				partTarget.dispose();
-				partTarget = null;
-			}
-		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
@@ -155,10 +166,20 @@ public class RunToLineAction implements IWorkbenchWindowActionDelegate, IPartLis
 		if (action == null) {
 			return;
 		}
-		if (partTarget != null && targetElement != null) {
-			action.setEnabled(targetElement.isSuspended());
+		if (partTarget != null) {
+			action.setEnabled(canPerformAction(partTarget, getTargetSelection(), activePart));
 		} else {
 			action.setEnabled(false);
 		}
 	}
+	
+	/**
+	 * Returns whether the specific operation is supported.
+	 * 
+	 * @param target the target adapter 
+	 * @param selection the selection to verify the operation on
+	 * @param part the part the operation has been requested on
+	 * @return whether the operation can be performed
+	 */
+	protected abstract boolean canPerformAction(Object target, ISelection selection, IWorkbenchPart part); 
 }

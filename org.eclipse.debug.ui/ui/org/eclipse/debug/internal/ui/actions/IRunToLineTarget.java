@@ -12,6 +12,8 @@ package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ISuspendResume;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * An implementation of the debug platform 'run to line' action. The debug
@@ -41,19 +43,13 @@ public interface IRunToLineTarget {
 	
 	/**
 	 * Perform a run to line action on the given element that is 
-	 * currently selected in the Debug view. Client implementations
-	 * determine the line to run to based on their internal state.
+	 * currently selected in the Debug view.
 	 * 
+	 * @param part the part on which the action has been invoked
+	 * @param selection the selection on which the action has been invoked
 	 * @param target suspended element to perform the 'run to line' action on
 	 * @throws CoreException if unable to perform the action 
 	 */
-	public void runToLine(ISuspendResume target) throws CoreException;
-	
-	/**
-	 * Disposes this target performing any required cleanup. When a part
-	 * with a 'run to line' adapter is deactivated, its 'run to line' target
-	 * is disposed.
-	 */
-	public void dispose();
+	public void runToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException;
 	
 }

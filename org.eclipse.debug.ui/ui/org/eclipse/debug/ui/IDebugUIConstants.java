@@ -375,6 +375,18 @@ public interface IDebugUIConstants {
 	public static final String IMG_LCL_CONTENT_ASSIST= "IMG_LCL_CONTENT_ASSIST"; //$NON-NLS-1$
 	
 	/**
+	 * Run to line action image identifier.
+	 * @since 3.0
+	 */
+	public static final String IMG_LCL_RUN_TO_LINE= "IMG_LCL_RUN_TO_LINE"; //$NON-NLS-1$
+
+	/**
+	 * Run to line action image identifier (disabled).
+	 * @since 3.0
+	 */
+	public static final String IMG_DLCL_RUN_TO_LINE= "IMG_DLCL_RUN_TO_LINE"; //$NON-NLS-1$
+	
+	/**
 	 * Content assist action image identifier (enabled).
 	 */
 	public static final String IMG_ELCL_CONTENT_ASSIST= "IMG_ELCL_CONTENT_ASSIST"; //$NON-NLS-1$
