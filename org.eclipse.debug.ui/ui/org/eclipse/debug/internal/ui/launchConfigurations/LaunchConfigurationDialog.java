@@ -1038,7 +1038,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		tree.setContentProvider(new LaunchConfigurationTreeContentProvider(getMode(), getShell()));
 		tree.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		tree.setSorter(new WorkbenchViewerSorter());
-		if (fFilters != null) {
+		if (fFilters == null) {
+			// default filter
+			tree.addFilter(new DefaultLaunchConfigurationFilter());
+		} else {
 			Iterator filters = fFilters.iterator();
 			while (filters.hasNext()) {
 				tree.addFilter((ViewerFilter)filters.next());
