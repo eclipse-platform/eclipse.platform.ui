@@ -261,6 +261,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			//this operation will never end because the world is going away
 			try {
 				prepareOperation(getRoot(), monitor);
+				//shutdown notification first to avoid calling third parties during shutdown
+				notificationManager.shutdown(null);
 				if (isOpen()) {
 					beginOperation(true);
 					IProject[] projects = getRoot().getProjects();
@@ -1638,7 +1640,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected void shutdown(IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			IManager[] managers = { buildManager, notificationManager, propertyManager, pathVariableManager, fileSystemManager, markerManager, saveManager, _workManager, aliasManager };
+			IManager[] managers = { buildManager, propertyManager, pathVariableManager, fileSystemManager, markerManager, saveManager, _workManager, aliasManager };
 			monitor.beginTask(null, managers.length);
 			String message = Policy.bind("resources.shutdownProblems"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);

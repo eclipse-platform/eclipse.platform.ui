@@ -271,6 +271,8 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		return !isNotifying && notificationRequested;
 	}
 	public void shutdown(IProgressMonitor monitor) {
+		//wipe out any existing listeners
+		listeners = new ResourceChangeListenerList();
 	}
 	public void startup(IProgressMonitor monitor) {
 		// get the current state of the workspace as the starting point and
