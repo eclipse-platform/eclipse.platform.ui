@@ -848,7 +848,7 @@ protected ElementTree[] sortTrees(ElementTree[] trees) {
 				parent = parent.getParent();
 			}
 			if (parent == null) {
-				IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, 13, "null parent found while collapsing trees", null);
+				IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "null parent found while collapsing trees", null);
 				ResourcesPlugin.getPlugin().getLog().log(status);
 				return null;
 			}

@@ -43,7 +43,7 @@ public void basicDelete(MultiStatus status) throws CoreException {
  */
 protected MultiStatus basicSetDescription(ProjectDescription description, boolean creation) {
 	String message = Policy.bind("resources.projectDesc");
-	MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, 13, message, null);
+	MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_WRITE_METADATA, message, null);
 	ProjectDescription current = (ProjectDescription) internalGetDescription();
 	current.setComment(description.getComment());
 	if (creation)
@@ -231,7 +231,7 @@ protected void configureNature(final String natureID, final MultiStatus status) 
 			if (exception instanceof CoreException)
 				status.add(((CoreException) exception).getStatus());
 			else
-				status.add(new ResourceStatus(13, getFullPath(), Policy.bind("resources.errorNature", natureID), exception));
+				status.add(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, getFullPath(), Policy.bind("resources.errorNature", natureID), exception));
 		}
 	};
 	Platform.run(code);
@@ -372,7 +372,7 @@ protected void deconfigureNature(final String natureID, final MultiStatus status
 			if (exception instanceof CoreException)
 				status.add(((CoreException) exception).getStatus());
 			else
-				status.add(new ResourceStatus(13, getFullPath(), Policy.bind("resources.natureDeconfig", natureID), exception));
+				status.add(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, getFullPath(), Policy.bind("resources.natureDeconfig", natureID), exception));
 		}
 	};
 	Platform.run(code);
