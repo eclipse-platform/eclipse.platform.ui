@@ -701,7 +701,7 @@ public void testTurnOnAutobuild() throws CoreException {
 
 	// Create some resource handles
 	IProject project = getWorkspace().getRoot().getProject("PROJECT");
-	IFile file = project.getFile("File.txt");
+	final IFile file = project.getFile("File.txt");
 	
 	try {
 		// Turn auto-building off
@@ -743,19 +743,17 @@ public void testTurnOnAutobuild() throws CoreException {
 	}
 
 	// Now make a change and then turn autobuild on.  Turning it on should cause a build.
-	try {
-		file.setContents(getRandomContents(), IResource.NONE, getMonitor());
-	} catch (CoreException e) {
-		fail("3.5", e);
-	}
 	IWorkspaceRunnable r = new IWorkspaceRunnable() {
 		public void run(IProgressMonitor monitor) throws CoreException {
+			file.setContents(getRandomContents(), IResource.NONE, getMonitor());
 			IWorkspaceDescription desc = getWorkspace().getDescription();
 			desc.setAutoBuilding(true);
 			getWorkspace().setDescription(desc);
 		}
 	};
+	aboutToBuild();
 	getWorkspace().run(r, getMonitor());
+	waitForBuild();
 	verifier.addExpectedLifecycleEvent(TestBuilder.DEFAULT_BUILD_ID);
 	verifier.assertLifecycleEvents("4.0");
 }

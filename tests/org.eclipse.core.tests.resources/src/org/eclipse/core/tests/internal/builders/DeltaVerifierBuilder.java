@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import junit.framework.Assert;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceDeltaVerifier;

@@ -100,7 +100,9 @@ public void testBasic() {
 		setAutoBuilding(true);
 		IProjectDescription desc = project.getDescription();
 		desc.setNatureIds(new String[] {NATURE_WATER, NATURE_SNOW});
+		aboutToBuild();
 		project.setDescription(desc, IResource.FORCE, getMonitor());
+		waitForBuild();
 	} catch (CoreException e) {
 		fail("0.99", e);
 	}
@@ -120,7 +122,9 @@ public void testDisabledNature() {
 		setAutoBuilding(true);
 		IProjectDescription desc = project.getDescription();
 		desc.setNatureIds(new String[] {NATURE_WATER, NATURE_SNOW});
+		aboutToBuild();
 		project.setDescription(desc, IResource.FORCE, getMonitor());
+		waitForBuild();
 	} catch (CoreException e) {
 		fail("0.99", e);
 	}
@@ -130,7 +134,9 @@ public void testDisabledNature() {
 	IFile descFile = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 	try {
 		//setting description file will also trigger build
+		aboutToBuild();
 		descFile.setContents(projectFileWithoutWater(), IResource.FORCE, getMonitor());
+		waitForBuild();
 	} catch(CoreException e) {
 		fail("1.99", e);
 	}
@@ -143,7 +149,9 @@ public void testDisabledNature() {
 	try {
 		IProjectDescription desc = project.getDescription();
 		desc.setNatureIds(new String[] {NATURE_WATER, NATURE_SNOW});
+		aboutToBuild();
 		project.setDescription(desc, IResource.FORCE, getMonitor());
+		waitForBuild();
 	} catch (CoreException e) {
 		fail("2.99", e);
 	}
@@ -161,7 +169,9 @@ public void testMissingNature() {
 		setAutoBuilding(true);
 		IProjectDescription desc = project.getDescription();
 		desc.setNatureIds(new String[] {NATURE_WATER, NATURE_SNOW});
+		aboutToBuild();
 		project.setDescription(desc, IResource.FORCE, getMonitor());
+		waitForBuild();
 	} catch (CoreException e) {
 		fail("0.99", e);
 	}
@@ -171,14 +181,16 @@ public void testMissingNature() {
 	try {
 		IProjectDescription desc = project.getDescription();
 		desc.setNatureIds(new String[] {NATURE_WATER});
+		aboutToBuild();
 		project.setDescription(desc, IResource.NONE, getMonitor());
+		waitForBuild();
 	} catch (CoreException e) {
 		fail("1.99", e);
 	}
 	//make sure the snow builder wasn't run
 	builder.assertLifecycleEvents("2.0");
 	
-	//make sure the build spec doesn't include snow nature
+	//make sure the build spec doesn't include snow builder
 	try {
 		ICommand[] commands = project.getDescription().getBuildSpec();
 		for (int i = 0; i < commands.length; i++)
@@ -194,7 +206,9 @@ public void testMissingNature() {
 	try {
 		IProjectDescription desc = project.getDescription();
 		desc.setNatureIds(new String[] {NATURE_WATER, NATURE_SNOW});
+		aboutToBuild();
 		project.setDescription(desc, IResource.KEEP_HISTORY, getMonitor());
+		waitForBuild();
 	} catch (CoreException e) {
 		fail("3.99", e);
 	}
@@ -206,14 +220,16 @@ public void testMissingNature() {
 	IFile descFile = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 	try {
 		//setting description file will also trigger build
+		aboutToBuild();
 		descFile.setContents(projectFileWithoutSnow(), IResource.FORCE, getMonitor());
+		waitForBuild();
 	} catch(CoreException e) {
 		fail("4.99", e);
 	}
 	//assert that builder was skipped
 	builder.assertLifecycleEvents("4.0");
 
-	//make sure the build spec doesn't include snow nature
+	//make sure the build spec doesn't include snow builder
 	try {
 		ICommand[] commands = project.getDescription().getBuildSpec();
 		for (int i = 0; i < commands.length; i++)
@@ -229,7 +245,9 @@ public void testMissingNature() {
 	try {
 		IProjectDescription desc = project.getDescription();
 		desc.setNatureIds(new String[] {NATURE_WATER, NATURE_SNOW});
+		aboutToBuild();
 		project.setDescription(desc, IResource.FORCE, getMonitor());
+		waitForBuild();
 	} catch (CoreException e) {
 		fail("6.99", e);
 	}
