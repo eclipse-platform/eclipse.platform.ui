@@ -146,8 +146,6 @@ public class Toc extends TocNode implements IToc {
 			// for memory foot print, release list of child
 			// and parent nodes.
 			children = null;
-			//TODO need parents to find path to a given topic later, get rid of not needed objects (at least TocFile member of Anchor)
-			//parents = null;
 			// after TOC is build, TocFile no longer needed
 			tocFile = null;
 		}

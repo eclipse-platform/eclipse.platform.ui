@@ -62,8 +62,6 @@ public class Topic extends TocNode implements ITopic {
 			// for memory foot print, release list of child
 			// and parent nodes.
 			children = null;
-			//TODO need parents to find path to a given topic later, get rid of not needed objects (at least TocFile member of Anchor)
-			//parents = null;
 		}
 		return topicArray;
 	}

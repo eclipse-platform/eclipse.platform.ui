@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
+import java.util.*;
+
 import org.xml.sax.Attributes;
 /**
  * Anchor.  Place holder that Toc objects can atatch to.
@@ -57,4 +59,14 @@ class Anchor extends TocNode {
 			parentToc.getChildrenTocs().add(child);
 		}
 	}
+	
+	/**
+	 * @return ITopic list
+	 */
+	public List getChildTopics() {
+		// after build, release TocFile
+		tocFile=null;
+		return super.getChildTopics();
+	}
+
 }
