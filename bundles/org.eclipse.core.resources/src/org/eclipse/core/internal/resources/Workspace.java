@@ -93,8 +93,11 @@ public void beginOperation(boolean createNewTree) throws CoreException {
 		String message = Policy.bind("resources.cannotModify");
 		throw new ResourceException(IResourceStatus.ERROR, null, message, null);
 	}
-	if (getWorkManager().getPreparedOperationDepth() > 1)
+	if (getWorkManager().getPreparedOperationDepth() > 1) {
+		if (createNewTree && tree.isImmutable())
+			newWorkingTree();
 		return;
+	}
 	if (createNewTree) {
 		// stash the current tree as the basis for this operation.
 		operationTree = tree;
