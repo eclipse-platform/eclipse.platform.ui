@@ -69,6 +69,8 @@ public class SearchOperation extends WorkspaceModifyOperation {
 				new SearchResults(scope, queryData.getMaxHits(), queryData.getLocale());
 			HelpSystem.getSearchManager().search(queryData, results, monitor);
 			displayResults(results.getSearchHits());
+		} catch (OperationCanceledException oce){
+			// allowed, no logging
 		} catch (Exception e) {
 			Logger.logError(WorkbenchResources.getString("WE021"), e);
 		}
