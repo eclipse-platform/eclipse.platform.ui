@@ -22,6 +22,12 @@ import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 public class AntCorePlugin extends Plugin implements Preferences.IPropertyChangeListener {
 
 	/**
+	 * Status code indicating an unexpected internal error.
+	 * @since 2.1
+	 */
+	public static final int INTERNAL_ERROR = 120;		
+	
+	/**
 	 * The single instance of this plug-in runtime class.
 	 */
 	private static AntCorePlugin plugin;
@@ -175,7 +181,7 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	 * 	 * @return the cached class loader	 */
 	protected ClassLoader getClassLoader() {
 		if (classLoader == null) {
-			AntCorePreferences preferences = AntCorePlugin.getPlugin().getPreferences();
+			AntCorePreferences preferences = getPreferences();
 			URL[] urls = preferences.getURLs();
 			ClassLoader[] pluginLoaders = preferences.getPluginClassLoaders();
 			classLoader= new AntClassLoader(urls, pluginLoaders, null);
@@ -191,5 +197,16 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 		if (event.getProperty().equals(IAntCoreConstants.PREFERENCE_URLS)) {
 			classLoader= null;
 		}
+	}
+	
+	/**
+	 * Logs the specified throwable with this plug-in's log.
+	 * 
+	 * @param t throwable to log 
+	 * @since 2.1
+	 */
+	public static void log(Throwable t) {
+		IStatus status= new Status(IStatus.ERROR, PI_ANTCORE, INTERNAL_ERROR, "Error logged from Ant Core: ", t); //$NON-NLS-1$
+		getPlugin().getLog().log(status);
 	}
 }
