@@ -25,7 +25,8 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * for providing is page for the page book views in which consoles are displayed.
  * </p>
  * <p>
- * Clients implementing this interface should subclass <code>AbstractConsole</code>.
+ * This interface is not intended to be implemented directly by clients. 
+ * Subclass <code>AbstractConsole</code> instead.
  * </p>
  * @since 3.0
  */
@@ -83,5 +84,14 @@ public interface IConsole {
 	 * @param listener a property listener
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener);	
+	
+	/**
+	 * Returns a unique identifier for this console's type, or <code>null</code>
+	 * if unspecified.
+	 * 
+	 * @return a unique identifier for this console's type, or <code>null</code>
+	 * @since 3.1
+	 */
+	public String getType();
 
 }

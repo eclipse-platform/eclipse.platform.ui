@@ -44,6 +44,11 @@ public abstract class AbstractConsole implements IConsole {
 	private ImageDescriptor fImageDescriptor = null;
 	
 	/**
+	 * Console type identifier
+	 */
+	private String fType = null;
+	
+	/**
 	 * Used to notify this console of lifecycle methods <code>init()</code>
 	 * and <code>dispose()</code>.
 	 */
@@ -277,4 +282,22 @@ public abstract class AbstractConsole implements IConsole {
     public void activate() {
         ConsolePlugin.getDefault().getConsoleManager().showConsoleView(this);
     }
+    
+    /**
+     * Sets this console's type identifier.
+     * 
+     * @param typeIdentifier the type identifier for this console 
+     */
+    protected void setType(String typeIdentifier) {
+        fType = typeIdentifier;
+    }
+    
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.ui.console.IConsole#getType()
+     */
+    public String getType() {
+        return fType;
+    }
+    
 }

@@ -118,12 +118,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     
     
     private ArrayList patterns = new ArrayList();
-    
-    /**
-     * A identifier for the console type (may be null). 
-     */
-    private String type;
-    
+        
     private HashMap attributes = new HashMap();
    
     private boolean autoScroll = true;
@@ -134,7 +129,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 
     public IOConsole(String title, String consoleType, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
         super(title, imageDescriptor, autoLifecycle);
-        type = consoleType;
+        setType(consoleType);
         inputStream = new IOConsoleInputStream(this);
         partitioner = new IOConsolePartitioner(inputStream, this);
         Document document = new Document();
@@ -150,21 +145,6 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     public IOConsole(String title, ImageDescriptor imageDescriptor) {
         this(title, null, imageDescriptor);
     }
-
-    
-    /**
-     * @return Returns the type.
-     */
-    public String getType() {
-        return type;
-    }
-    /**
-     * @param type The type to set.
-     */
-    public void setType(String type) {
-        this.type = type;
-    }
-    
     
     /**
      * @return Returns the attribute matching the specified key.
