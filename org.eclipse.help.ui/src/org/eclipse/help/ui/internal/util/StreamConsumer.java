@@ -5,6 +5,7 @@ package org.eclipse.help.ui.internal.util;
  */
 import java.io.*;
 
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.help.internal.util.Logger;
 /**
  * Used to receive output from processes
@@ -19,10 +20,9 @@ public class StreamConsumer extends Thread {
 		try {
 			String line;
 			while (null != (line = bReader.readLine())) {
-				Logger.logError(
-					WorkbenchResources.getString("StreamConsumer.linePrefix", line),
-					null);
+				BrowserLog.log(line);
 			}
+			bReader.close();
 		} catch (IOException ioe) {
 			Logger.logError(WorkbenchResources.getString("WE025"), ioe);
 		}
