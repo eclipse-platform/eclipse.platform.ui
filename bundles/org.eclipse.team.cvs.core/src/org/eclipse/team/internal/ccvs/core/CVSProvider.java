@@ -41,6 +41,7 @@ import org.eclipse.team.ccvs.core.ICVSListener;
 import org.eclipse.team.ccvs.core.ICVSProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.ccvs.core.ICVSRunnable;
 import org.eclipse.team.ccvs.core.IConnectionMethod;
 import org.eclipse.team.core.IFileTypeRegistry;
 import org.eclipse.team.core.RepositoryProvider;
@@ -51,6 +52,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Import;
 import org.eclipse.team.internal.ccvs.core.client.Request;
 import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
@@ -119,7 +121,7 @@ public class CVSProvider implements ICVSProvider {
 	/*
 	 * Delete the target projects before checking out
 	 */
-	private void scrubProjects(IProject[] projects, IProgressMonitor monitor) throws CoreException {
+	private void scrubProjects(IProject[] projects, IProgressMonitor monitor) throws CVSException {
 		if (projects == null) {
 			monitor.done();
 			return;
@@ -148,6 +150,8 @@ public class CVSProvider implements ICVSProvider {
 					}
 				}
 			}
+		} catch (CoreException e) {
+			throw wrapException(e);
 		} finally {
 			monitor.done();
 		}
@@ -225,7 +229,7 @@ public class CVSProvider implements ICVSProvider {
 								session.open(Policy.subMonitorFor(pm, 50));
 								
 								// Determine the local target projects (either the project provider or the module expansions) 
-								Set targetProjects = new HashSet();
+								final Set targetProjects = new HashSet();
 								if (project == null) {
 									
 									// Fetch the module expansions
@@ -246,7 +250,11 @@ public class CVSProvider implements ICVSProvider {
 								}
 								
 								// Prepare the target projects to receive resources
-								scrubProjects((IProject[]) targetProjects.toArray(new IProject[targetProjects.size()]), Policy.subMonitorFor(pm, 100));
+								root.run(new ICVSRunnable() {
+									public void run(IProgressMonitor monitor) throws CVSException {
+										scrubProjects((IProject[]) targetProjects.toArray(new IProject[targetProjects.size()]), monitor);
+									}
+								}, Policy.subMonitorFor(pm, 100));
 							
 								// Build the local options
 								List localOptions = new ArrayList();
@@ -259,9 +267,11 @@ public class CVSProvider implements ICVSProvider {
 									localOptions.add(Checkout.PRUNE_EMPTY_DIRECTORIES);
 								// Add the options related to the CVSTag
 								CVSTag tag = resource.getTag();
-								if (tag != null && tag.getType() != CVSTag.HEAD) {
-									localOptions.add(Checkout.makeTagOption(tag));
+								if (tag == null) {
+									// A null tag in a remote resource indicates HEAD
+									tag = CVSTag.DEFAULT;
 								}
+								localOptions.add(Update.makeTagOption(tag));
 		
 								// Perform the checkout
 								IStatus status = Command.CHECKOUT.execute(session,
