@@ -338,7 +338,7 @@ public class XmlTagFormatter {
                     } else if (mode.isAttributeNameSearching()) {
                         mode.setFinished();
 					} else if (mode.isFinished()){
-						; // consume the remaining characters
+						// consume the remaining characters
                     } else {
                         // we aren't ready to be done!
                         throw new ParseException("Unexpected '" + c //$NON-NLS-1$
