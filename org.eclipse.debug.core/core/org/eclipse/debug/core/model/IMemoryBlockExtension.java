@@ -85,11 +85,13 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	
 	/**
 	 * Returns whether this memory block manages the change state of its bytes.
-	 * If a memory block manages changes, the memory block is responsible for
+	 * <p>
+	 * If a memory block manages changes the memory block is responsible for
 	 * setting the <code>CHANGED</code> state of its <code>MemoryByte</code>'s
 	 * returned from <code>getBytesFromAddress</code> and
-	 * <code>getBytesFromOffset</code>.
-	 * 
+	 * <code>getBytesFromOffset</code>. The changed state of a byte should
+	 * be updated each time a thread suspends in a memory block's target.
+	 * </p>
 	 * @return whether this memory block manages the change state of its bytes  
 	 */
 	public boolean supportsChangeManagement();
@@ -106,40 +108,46 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	/**
 	 * Returns bytes from this memory block based on the base address and
 	 * addressable size of this memory block.
-	 * 
-	 * TODO:  please review this statement, this is to tell clients that 
-	 *  the offset can cross memory block boundary. 
-	 *  
-	 *  When asked to return bytes that are beyond the memory block's start
-	 *  or end address and if the memory block is unable to retrieve that memory,
-	 *  return the required memory bytes with their READABLE bit set to 0.
-	 *  
-	 * @param offset zero based offset into this memory block at which to start
-	 *  retrieving bytes.  Client should retrieve memory starting from "base address + offset".
-	 * @param units the number of addressible units to retrieve
+	 * <p>
+	 * A memory block may be asked to retrieve bytes beyond it's start
+	 * or end address. If a memory block is unable to retrieve memory outside
+	 * these boundaries, implementations should return memory bytes with
+	 * the <code>READABLE</code> bit turned off for each byte outside
+	 * the of the accessible range. An exception should not be thrown in this
+	 * case.
+	 * </p> 
+	 * @param unitOffset zero based offset into this memory block at which to start
+	 *  retrieving bytes.  Client should retrieve memory starting from
+	 *  "base address + (offset * addressible size)". Note that the offset is
+	 *  in terms of addressible units, rather than bytes.
+	 * @param addressableUnits the number of addressible units to retrieve
 	 * @return an array of bytes from this memory block based on the given offset
 	 *  and number of units. The size of the array returned must to be equal to 
 	 *  <code>units</code> * <code>getAddressableSize()</code>.
-	 * @throws DebugException if unable to retrieve the specified bytes
+	 * @throws DebugException if unable to retrieve the specified bytes due to
+	 *  a failure communicating with the target
 	 * @see MemoryByte
 	 */
-	public MemoryByte[] getBytesFromOffset(BigInteger offset, long units) throws DebugException;
+	public MemoryByte[] getBytesFromOffset(BigInteger unitOffset, long addressableUnits) throws DebugException;
 	
 	/**
 	 * Returns bytes from this memory block based on the given address and the
 	 * addressable size of this memory block.
-	 * 
-	 *  TODO:  again, please review the following statement:
-	 *  When asked to return bytes that are beyond the memory block's start
-	 *  or end address and if the memory block is unable to retrieve that memory,
-	 *  return the required memory bytes with their READABLE bit set to 0.
-	 *   
+	 * <p>
+	 * A memory block may be asked to retrieve bytes beyond it's start
+	 * or end address. If a memory block is unable to retrieve memory outside
+	 * these boundaries, implementations should return memory bytes with
+	 * the <code>READABLE</code> bit turned off for each byte outside
+	 * the of the accessible range. An exception should not be thrown in this
+	 * case.
+	 * </p>
 	 * @param address address at which to begin retrieving bytes
 	 * @param units is the number of addressible units of memory to retrieve 
 	 * @return an array of bytes from this memory block based on the given address
 	 *  and number of units. The size of the array returned must to be equal to 
 	 *  <code>units</code> * <code>getAddressableSize()</code>.
-	 * @throws DebugException if unable to retrieve the specified bytes
+	 * @throws DebugException if unable to retrieve the specified bytes due to
+	 *  a failure communicating with the target 
 	 * @see MemoryByte
 	 */
 	public MemoryByte[] getBytesFromAddress(BigInteger address, long units) throws DebugException;	
@@ -170,7 +178,11 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * to know when it is being monitored. Has no effect if an identical
 	 * client is already connected.
 	 * <p>
-	 * TODO: what is a memory block responsible for when there are connections?
+	 * Memory blocks supporting change management may selectively turn off
+	 * change management when no clients are connected, for reasons of
+	 * efficiency. Clients that require access to change state information
+	 * are required to connect to a memory block before change information
+	 * is considered to be valid.
 	 * </p>
 	 * @param client the client to connect
 	 */
