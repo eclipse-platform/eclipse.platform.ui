@@ -1135,7 +1135,7 @@ public class PreferenceDialog extends Dialog
 	}
 	private final String ellipsis = "..."; //$NON-NLS-1$
 	/**
-	 * Shortned the message if too long.
+	 * Shortened the message if too long.
 	 * 
 	 * @param textValue
 	 *            The messgae value.
@@ -1146,7 +1146,6 @@ public class PreferenceDialog extends Dialog
 			return null;
 		Display display = titleArea.getDisplay();
 		GC gc = new GC(display);
-		System.out.println();
 		int maxWidth = titleArea.getBounds().width - 28;
 		if (gc.textExtent(textValue).x < maxWidth) {
 			gc.dispose();
