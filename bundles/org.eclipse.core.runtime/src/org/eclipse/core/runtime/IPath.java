@@ -13,14 +13,20 @@ import java.io.File;
  * A path may also have a leading and/or a trailing separator.
  * Paths also be prefixed by an optional device id, which includes
  * the character(s) which separate the device id from the rest 
- * of the path. For example, "C:" and "Server/Volume:" are a typical
+ * of the path. For example, "C:" and "Server/Volume:" are typical
  * device ids.
  * A device independent path has <code>null</code> for a device id.
  * <p>
  * Note that paths are value objects; all operations on paths 
  * return a new path; the receiver is unscathed.
  * </p>
-* <p>
+ * <p>
+ * UNC paths are denoted by preceeding double-slashes such 
+ * as <code>//Server/Volume/My/Path</code>. When a new path
+ * is constructed all double-slashes are removed except those
+ * appearing at the beginning of the path.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
@@ -76,7 +82,9 @@ public IPath addTrailingSeparator();
  * path. If it has a trailing separator, 
  * the result will have a trailing separator.
  * The device id of this path is preserved (the one
- * of the given string is ignored).
+ * of the given string is ignored). Duplicate slashes
+ * are removed from the path except at the beginning
+ * where the path is considered to be UNC.
  * 
  * @param path the string path to concatenate
  * @return the new path
@@ -89,7 +97,9 @@ public IPath append(String path);
  * end of this path.  If the given path has a trailing
  * separator, the result will have a trailing separator.
  * The device id of this path is preserved (the one
- * of the given path is ignored).
+ * of the given path is ignored). Duplicate slashes
+ * are removed from the path except at the beginning
+ * where the path is considered to be UNC.
  *
  * @param path the path to concatenate
  * @return the new path
@@ -199,6 +209,15 @@ public boolean isPrefixOf(IPath anotherPath);
  */
 public boolean isRoot();
 /**
+ * Returns a boolean value indicating whether or not this path
+ * is considered to be in UNC form. Return false if this path
+ * has a device set or if the first 2 characters of the path string
+ * are not <code>Path.SEPARATOR</code>.
+ * 
+ * @return boolean indicating if this path is UNC
+ */
+public boolean isUNC();
+/**
  * Returns whether the given string is syntactically correct as
  * a path.  The device id is the prefix up to and including the first ":";
  * the path proper is everything to the right of it, or the entire string
@@ -250,6 +269,17 @@ public IPath makeAbsolute();
  * @return the new path
  */
 public IPath makeRelative();
+/**
+ * Return a new path which is the equivalent of this path converted to UNC
+ * form (if the given boolean is true) or this path not as a UNC path (if the given
+ * boolean is false). If UNC, the returned path will not have a device and the 
+ * first 2 characters of the path string will be <code>Path.SEPARATOR</code>. If not UNC, the
+ * 	first 2 characters of the returned path string will not be <code>Path.SEPARATOR</code>.
+ * 
+ * @param toUNC true if converting to UNC, false otherwise
+ * @return the new path, either in UNC form or not depending on the boolean parm
+ */
+public IPath makeUNC(boolean toUNC);
 /**
  * Returns a count of the number of segments which match in
  * this path and the given path (device ids are ignored),

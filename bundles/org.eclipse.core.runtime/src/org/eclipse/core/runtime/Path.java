@@ -45,25 +45,23 @@ public class Path implements IPath, Cloneable {
 /** 
  * Constructs a new path from the given string path.
  * The given string path must be valid.
- * The path is canonicalized.
+ * The path is canonicalized and double slashes are removed
+ * except at the beginning. (to handle UNC paths) All backslashes ('\')
+ * are replaced with forward slashes. ('/')
  *
  * @param fullPath the string path
  * @see #isValidPath
  */
 public Path(String fullPath) {
-	Assert.isNotNull(fullPath);
-	path = fullPath.replace(File.separatorChar, SEPARATOR);
-	int i = path.indexOf(DEVICE_SEPARATOR);
-	if (i != -1) {
-		device = path.substring(0, i + 1);
-		path = path.substring(i + 1, path.length());
-	}
-	canonicalize();
+	super();
+	initialize(null, fullPath);
 }
 /** 
  * Constructs a new path from the given device id and string path.
  * The given string path must be valid.
- * The path is canonicalized.
+ * The path is canonicalized and double slashes are removed except
+ * at the beginning (to handle UNC paths). All backslashes ('\')
+ * are replaced with forward slashes. ('/')
  *
  * @param device the device id
  * @param path the string path
@@ -71,8 +69,8 @@ public Path(String fullPath) {
  * @see #setDevice
  */
 public Path(String device, String path) {
-	this(path);
-	this.device = device;
+	super();
+	initialize(device, path);
 }
 /* (Intentionally not included in javadoc)
  * @see IPath#addFileExtension
@@ -100,14 +98,8 @@ public IPath append(String tail) {
 	if (tail.length() == 0) {
 		return this;
 	}
-	if (tail.indexOf('.') == -1 && tail.indexOf(SEPARATOR) == -1 && tail.indexOf(DEVICE_SEPARATOR) == -1) {
-		Path answer = (Path) clone();
-		answer.setPath(isEmpty() || isRoot() || hasTrailingSeparator() ? path.concat(tail) : path + SEPARATOR + tail);
-		return answer;
-	} else {
-		Path tailPath = new Path(tail);
-		return append(tailPath);
-	}
+	Path tailPath = new Path(tail);
+	return append(tailPath);
 }
 /* (Intentionally not included in javadoc)
  * @see IPath#append(IPath)
@@ -123,6 +115,7 @@ public IPath append(IPath tail) {
 	String newPath = (isRoot() || isEmpty() || hasTrailingSeparator()) ? path.concat(tailPathPart) : path + SEPARATOR + tailPathPart;
 	Path result = (Path) clone();
 	result.setPath(newPath);
+	result.collapseSlashes();
 	if (tailPathPart.startsWith("..") || tailPathPart.startsWith("./")) {
 		result.canonicalize();
 	}
@@ -194,6 +187,37 @@ private void collapseParentReferences() {
 	}
 	path = newPath.toString();
 }
+/*
+ *
+ */
+private void collapseSlashes() {
+	char[] result = new char[path.length()];
+	int count = 0;
+	boolean hasPrevious = false;
+	char[] characters = path.toCharArray();
+	for (int index = 0; index < characters.length; index++) {
+		char c = characters[index];
+		if (c == SEPARATOR) {
+			if (hasPrevious) {
+				// skip double slashes, except for beginning of UNC.
+				// note that a UNC path can't have a device.
+				if (device == null && index == 1) {
+					result[count] = c;
+					count++;
+				}
+			} else {
+				hasPrevious = true;
+				result[count] = c;
+				count++;
+			}
+		} else {
+			hasPrevious = false;
+			result[count] = c;
+			count++;
+		}
+	}
+	path = new String(result, 0, count);
+}
 /* (Intentionally not included in javadoc)
  * Compares objects for equality.
  */
@@ -262,7 +286,7 @@ public boolean hasTrailingSeparator() {
 private int indexOfSegment(int index) {
 	int len = path.length();
 	int i = 0;
-	if (i < len && path.charAt(i) == SEPARATOR) {
+	while (i < len && path.charAt(i) == SEPARATOR) {
 		++i;
 	}
 	int j = index;
@@ -277,6 +301,24 @@ private int indexOfSegment(int index) {
 		return i;
 	}
 	return -1;
+}
+/*
+ * Initialize the current path with the given string.
+ */
+private void initialize(String device, String fullPath) {
+	Assert.isNotNull(fullPath);
+	this.device = device;
+	path = fullPath.replace('\\', SEPARATOR);
+	int i = path.indexOf(DEVICE_SEPARATOR);
+	if (i != -1) {
+		// if the specified device is null then set it to
+		// be whatever is defined in the path string
+		if (device == null)
+			this.device = path.substring(0, i + 1);
+		path = path.substring(i + 1, path.length());
+	}
+	collapseSlashes();
+	canonicalize();
 }
 /* (Intentionally not included in javadoc)
  * @see IPath#isAbsolute
@@ -321,10 +363,21 @@ public boolean isRoot() {
 	return this == ROOT || (path.length() == 1 && path.charAt(0) == SEPARATOR);
 }
 /* (Intentionally not included in javadoc)
+ * @see IPath#isUNC
+ */
+public boolean isUNC() {
+	if (device != null) 
+		return false;
+	if (path.length() < 2)
+		return false;
+	return path.charAt(0) == SEPARATOR && path.charAt(1) == SEPARATOR;
+}
+/* (Intentionally not included in javadoc)
  * @see IPath#isValidPath
  */
 public boolean isValidPath(String path) {
-	if (path.indexOf("//") >= 0) {
+	// We allow "//" at the beginning for UNC paths
+	if (path.indexOf("//") > 0) {
 		return false;
 	}
 	Path test = new Path(path);
@@ -360,7 +413,7 @@ public boolean isValidSegment(String segment) {
  */
 public String lastSegment() {
 	int end = path.length() - 1;
-	if (end >= 0 && path.charAt(end) == SEPARATOR) {
+	while (end >= 0 && path.charAt(end) == SEPARATOR) {
 		--end;
 	}
 	if (end < 0) {
@@ -389,6 +442,26 @@ public IPath makeRelative() {
 	}
 	Path result = (Path) clone();
 	result.setPath(path.substring(1));
+	return result;
+}
+/* (Intentionally not included in javadoc)
+ * @see IPath#makeUNC
+ */
+public IPath makeUNC(boolean toUNC) {
+	Path result = (Path) this.clone();
+
+	// if we are already in the right form then just return
+	if (!(toUNC ^ result.isUNC()))
+		return result;
+		
+	if (toUNC) {
+		result = (Path) result.setDevice(null);
+		String prefix = isAbsolute() ? String.valueOf(SEPARATOR) : String.valueOf(new char[] {SEPARATOR, SEPARATOR});
+		result.setPath(prefix.concat(result.getPathPart()));
+	} else {
+		// remove one of the leading slashes
+		result.setPath(path.substring(1, path.length()));
+	}
 	return result;
 }
 /* (Intentionally not included in javadoc)
@@ -521,6 +594,9 @@ public String[] segments() {
 	int len = path.length();
 	// check for initial slash
 	int firstPosition = (path.charAt(0) == SEPARATOR) ? 1 : 0;
+	// check for UNC
+	if (firstPosition == 1 && isUNC())
+		firstPosition = 2;
 	int lastPosition = (path.charAt(len - 1) != SEPARATOR) ? len - 1 : len - 2;
 	// for non-empty paths, the number of segments is 
 	// the number of slashes plus 1, ignoring any leading
