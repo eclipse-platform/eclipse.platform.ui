@@ -69,3 +69,6 @@ org.eclipse.core.runtime/preferences/debug=false
 
 # Turn on debugging for the plugin stopper
 org.eclipse.core.runtime/debug/pluginstopper=false
+
+# Turn on debugging for content types
+org.eclipse.core.runtime/contenttypes/debug=false

@@ -167,8 +167,10 @@ public final class ContentType implements IContentType {
 		try {
 			return selectedDescriber.describe(contents, description);
 		} catch (IOException ioe) {
-			String message = Policy.bind("content.errorReadingContents", getId()); //$NON-NLS-1$ 
-			log(message, ioe);
+			if (ContentTypeManager.DEBUGGING) {
+				String message = Policy.bind("content.errorReadingContents", getId()); //$NON-NLS-1$ 
+				log(message, ioe);
+			}
 			return IContentDescriber.INVALID;
 		} catch (RuntimeException re) {
 			// describer seems to be buggy. just disable it (logging the reason)
@@ -187,8 +189,10 @@ public final class ContentType implements IContentType {
 		try {
 			return selectedDescriber.describe(contents, description);
 		} catch (IOException ioe) {
-			String message = Policy.bind("content.errorReadingContents", getId()); //$NON-NLS-1$ 
-			log(message, ioe);
+			if (ContentTypeManager.DEBUGGING) {
+				String message = Policy.bind("content.errorReadingContents", getId()); //$NON-NLS-1$
+				log(message, ioe);
+			}
 			return IContentDescriber.INVALID;
 		} catch (RuntimeException re) {
 			// describer seems to be buggy. just disable it (logging the reason)
