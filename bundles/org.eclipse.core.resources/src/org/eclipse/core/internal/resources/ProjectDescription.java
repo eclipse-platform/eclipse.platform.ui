@@ -229,7 +229,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			return true;
 		if (!Arrays.equals(staticRefs, description.getReferencedProjects(false)))
 			return true;
-		if (!Arrays.equals(staticRefs, description.getNatureIds(false)))
+		if (!Arrays.equals(natures, description.getNatureIds(false)))
 			return true;
 		HashMap otherLinks = description.getLinks();
 		if (linkDescriptions == null)
