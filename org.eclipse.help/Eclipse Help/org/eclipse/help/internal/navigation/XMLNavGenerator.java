@@ -88,7 +88,7 @@ public class XMLNavGenerator extends XMLGenerator {
 
 		StringBuffer options = new StringBuffer();
 		options.append("id=\"");
-		options.append(generateID(view));
+		options.append(view.getID());
 		options.append("\" label=\"");
 		options.append(((HelpContribution) view).getRawLabel());
 		options.append("\" ");
