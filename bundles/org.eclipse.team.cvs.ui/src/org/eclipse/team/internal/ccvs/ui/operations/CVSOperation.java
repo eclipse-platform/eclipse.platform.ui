@@ -105,7 +105,6 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	 * @return
 	 */
 	protected ISchedulingRule getSchedulingRule() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	

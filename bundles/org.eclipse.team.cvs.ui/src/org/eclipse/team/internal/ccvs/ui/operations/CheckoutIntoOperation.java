@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -106,13 +108,6 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
-		checkout(getRemoteFolders(), monitor);
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CheckoutOperation#checkout(org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IStatus checkout(ICVSRemoteFolder folder, IProgressMonitor monitor) throws CVSException {
@@ -124,9 +119,15 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 	 */
 	protected void checkout(ICVSRemoteFolder[] folders, IProgressMonitor monitor) throws CVSException {
 		monitor.beginTask(null, 100);
-		super.checkout(folders, Policy.subMonitorFor(monitor, 90));
-		refreshRoot(getLocalRoot(getLocalFolder()), Policy.subMonitorFor(monitor, 10));
-		monitor.done();
+		try {
+			//	Obtain a scheduling rule on the projects were about to overwrite
+			Platform.getJobManager().beginRule(getSchedulingRule());
+			super.checkout(folders, Policy.subMonitorFor(monitor, 90));
+			refreshRoot(getLocalRoot(getLocalFolder()), Policy.subMonitorFor(monitor, 10));
+		} finally {
+			Platform.getJobManager().endRule();
+			monitor.done();
+		}
 	}
 	
 	/*
@@ -417,4 +418,18 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 	public String getName() {
 		return getTaskName();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getSchedulingRule()
+	 */
+	protected ISchedulingRule getSchedulingRule() {
+		try {
+			// Use the project of the target folder as the scheduling rule
+			return getLocalFolder().getIResource().getProject();
+		} catch (CVSException e) {
+			CVSUIPlugin.log(e);
+			return null;
+		}
+	}
+
 }
