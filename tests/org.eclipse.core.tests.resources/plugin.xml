@@ -173,6 +173,9 @@
 	<test id = "org.eclipse.core.tests.resources.session.TestMissingBuilder">
 		<run class="org.eclipse.core.tests.resources.session.TestMissingBuilder"/>
 	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestClosedProjectLocation">
+		<run class="org.eclipse.core.tests.resources.session.TestClosedProjectLocation"/>
+	</test>
   
     <test id="usecase.AllTests">
       <run class="org.eclipse.core.tests.resources.usecase.AllTests"/>
