@@ -42,7 +42,7 @@ import org.eclipse.ui.internal.registry.AcceleratorRegistry;
  * responsability is the management of workbench windows and other ISV windows.
  */
 public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExtension {
-	private static final String VERSION_STRING = "0.046"; //$NON-NLS-1$
+	private static final String VERSION_STRING[] = { "0.046", "2.0" }; //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String P_PRODUCT_INFO = "productInfo"; //$NON-NLS-1$
 	private static final String DEFAULT_PRODUCT_INFO_FILENAME = "product.ini"; //$NON-NLS-1$
 	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
@@ -513,7 +513,14 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				// Restore the workbench state.
 				IMemento memento = XMLMemento.createReadRoot(reader);
 				String version = memento.getString(IWorkbenchConstants.TAG_VERSION);
-				if ((version == null) || (!version.equals(VERSION_STRING))) {
+				boolean valid = false;
+				for (int i = 0; i < VERSION_STRING.length; i++) {
+					if(VERSION_STRING[i].equals(version)) {
+						valid = true;
+						break;
+					}
+				}
+				if(!valid) {
 					reader.close();
 					MessageDialog.openError((Shell) null, WorkbenchMessages.getString("Restoring_Problems"), //$NON-NLS-1$
 					WorkbenchMessages.getString("Invalid_workbench_state_ve")); //$NON-NLS-1$
@@ -731,7 +738,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	public void saveState(IMemento memento) {
 		// Save the version number.
-		memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING);
+		memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING[1]);
 
 		// Save the workbench windows.
 		IWorkbenchWindow[] windows = getWorkbenchWindows();
@@ -954,31 +961,31 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			reader = new BufferedReader(new FileReader(stateFile));
 			for (int i = 0; i < 3; i++) {
 				String line = reader.readLine();
-				if (line != null && line.indexOf(VERSION_STRING) >= 0) {
-					bVersionTagFound = true;
-					break;
+				if (line != null) {
+					for (int j = 0; j < VERSION_STRING.length; j++) {
+						if(line.indexOf(VERSION_STRING[j]) > 0) {
+							reader.close();
+							return true;
+						}
+					}				
 				}
 			}
 			reader.close();
 		} catch (IOException e) {
-			bVersionTagFound = false;
 			if (reader != null) {
 				try {
 					reader.close();
 				} catch (IOException e2) {
 				}
 			}
-		}
-
-		// If the version string was found return true, else show an error and return false.
-		if (bVersionTagFound) {
-			return true;
-		} else {
-			stateFile.delete();
-			MessageDialog.openError((Shell) null, WorkbenchMessages.getString("Restoring_Problem"), //$NON-NLS-1$
-			WorkbenchMessages.getString("ErrorReadingWorkbenchState")); //$NON-NLS-1$
 			return false;
 		}
+
+		// If the version string was not found, show an error and return false.
+		stateFile.delete();
+		MessageDialog.openError((Shell) null, WorkbenchMessages.getString("Restoring_Problem"), //$NON-NLS-1$
+		WorkbenchMessages.getString("ErrorReadingWorkbenchState")); //$NON-NLS-1$
+		return false;
 	}
 
 	/**
