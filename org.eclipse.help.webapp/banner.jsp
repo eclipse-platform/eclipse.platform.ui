@@ -38,7 +38,7 @@ TABLE {
 
 
 FORM {
-	background:#000031;
+	background:black;
 	margin:0;
 }
 
