@@ -27,8 +27,10 @@ import org.eclipse.jface.viewers.Viewer;
 public class AntClasspathContentProvider2 implements ITreeContentProvider {
 	private TreeViewer treeViewer;
 	private ClasspathModel model= null;
+	private boolean refreshEnabled= false;
+	private boolean refreshRequested= false;
 		
-	public void add(Object parent, Object child) {
+	public void add(IClasspathEntry parent, Object child) {
 		Object newEntry= null;
 		if (parent == null) {
 			newEntry= model.addEntry(child);
@@ -50,6 +52,19 @@ public class AntClasspathContentProvider2 implements ITreeContentProvider {
 
 	public void removeAll() {
 		model.removeAll();
+		refresh();
+	}
+	
+	private void refresh() {
+		if (refreshEnabled) {
+			treeViewer.refresh();
+			refreshRequested= false;
+		} else {
+			refreshRequested= true;
+		}
+	}
+	public void removeAllGlobalAntClasspathEntries() {
+		model.removeAll(ClasspathModel.GLOBAL);
 		treeViewer.refresh();
 	}
 
@@ -154,11 +169,34 @@ public class AntClasspathContentProvider2 implements ITreeContentProvider {
 		treeViewer.refresh();
 	}
 
+	public Object[] getGlobalUserClasspathEntries() {
+		return model.getURLEntries(ClasspathModel.GLOBAL_USER);
+	}
+	
 	public Object[] getUserClasspathEntries() {
 		return model.getURLEntries(ClasspathModel.GLOBAL_USER);
 	}
 
-	public Object[] getAntClasspathEntries() {
+	public Object[] getGlobalAntClasspathEntries() {
 		return model.getURLEntries(ClasspathModel.GLOBAL);
+	}
+	
+	public void handleMove(int direction, IClasspathEntry entry) {
+		IClasspathEntry parent = (IClasspathEntry)getParent(entry);
+		parent.moveChild(direction, entry);
+	}
+
+	public ClasspathModel getModel() {
+		return model;
+	}
+	/**
+	 * @param refreshEnabled The refreshEnabled to set.
+	 */
+	public void setRefreshEnabled(boolean refreshEnabled) {
+		this.refreshEnabled = refreshEnabled;
+		treeViewer.getTree().setRedraw(refreshEnabled);
+		if (refreshEnabled && refreshRequested) {
+			refresh();
+		}
 	}
 }

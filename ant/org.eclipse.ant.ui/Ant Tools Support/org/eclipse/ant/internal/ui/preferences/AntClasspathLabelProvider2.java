@@ -72,10 +72,7 @@ public class AntClasspathLabelProvider2 implements ILabelProvider, IColorProvide
 			Display display= Display.getCurrent();
 			return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);		
 		} else if (element instanceof ClasspathEntry) {
-			if (((ClasspathEntry) element).getParent() instanceof GlobalClasspathEntries) {
-				Display display= Display.getCurrent();
-				return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);		
-			}
+			
 		}
 		return null;
 	}

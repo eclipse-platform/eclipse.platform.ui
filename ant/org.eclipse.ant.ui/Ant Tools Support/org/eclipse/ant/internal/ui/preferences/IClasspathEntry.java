@@ -11,34 +11,14 @@
 
 package org.eclipse.ant.internal.ui.preferences;
 
-public class GlobalClasspathEntries extends AbstractClasspathEntry {
-	private String name;
-	/**
-	 * 
-	 */
-	public GlobalClasspathEntries(String name, IClasspathEntry parent) {
-		this.parent= parent;
-		this.name= name;
-	}
-		
-	public void addEntry(ClasspathEntry entry) {
-		childEntries.add(entry);
-	}
+public interface IClasspathEntry {
 	
-	public void removeEntry(ClasspathEntry entry) {
-		childEntries.remove(entry);
-	}
+	public IClasspathEntry[] getEntries();
 	
-	public boolean contains(ClasspathEntry entry) {
-		return childEntries.contains(entry);
-	}
+	public boolean hasEntries();
 	
-	public String toString() {
-		return name;
-	}
-
-	public void removeAll() {
-		childEntries.clear();
-	}
+	public IClasspathEntry getParent();
+	
+	public void moveChild(int direction, IClasspathEntry child);
 
 }

@@ -17,6 +17,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -101,15 +102,9 @@ public class AntClasspathBlock2 {
 	
 	private IAntBlockContainer container;
 	
-	private boolean tablesEnabled= true;
-	
 	private int validated= 3;
 	
-	private Object currentParent;
-	
-	public AntClasspathBlock2() {
-		super();
-	}
+	private IClasspathEntry currentParent;
 	
 	public AntClasspathBlock2(boolean showExternalJARButton) {
 		super();
@@ -174,30 +169,20 @@ public class AntClasspathBlock2 {
 	
 	private void handleMove(int direction, TreeViewer viewer) {
 		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
-		List selList = sel.toList();
-		Object[] elements = ((AntClasspathContentProvider2) viewer.getContentProvider()).getElements(viewer.getInput());
-		List contents = new ArrayList(elements.length);
-		for (int i = 0; i < elements.length; i++) {
-			contents.add(elements[i]);
+		Iterator selected= null;
+		if (direction > 0) {
+			List list= sel.toList();
+			Collections.reverse(list);
+			selected= list.iterator();
+		} else {
+			selected= sel.toList().iterator();
 		}
-		Object[] moved = new Object[contents.size()];
-		int i;
-		for (Iterator current = selList.iterator(); current.hasNext();) {
-			Object config = current.next();
-			i = contents.indexOf(config);
-			moved[i + direction] = config;
+		while (selected.hasNext()) {
+			IClasspathEntry entry =  (IClasspathEntry) selected.next();
+			((AntClasspathContentProvider2) viewer.getContentProvider()).handleMove(direction, entry);
 		}
-
-		contents.removeAll(selList);
-
-		for (int j = 0; j < moved.length; j++) {
-			Object config = moved[j];
-			if (config != null) {
-				contents.add(j, config);
-			}
-		}
-		viewer.setInput(contents);
-		viewer.setSelection(viewer.getSelection());
+		treeViewer.refresh();
+		treeViewer.setSelection(treeViewer.getSelection());
 		updateContainer();
 	}
 
@@ -223,8 +208,7 @@ public class AntClasspathBlock2 {
 		if (result != null) {
 			try {
 				URL url = new URL("file:" + result + "/"); //$NON-NLS-2$;//$NON-NLS-1$;
-				//TODO
-				((AntClasspathContentProvider2)viewer.getContentProvider()).add(null, url);
+				((AntClasspathContentProvider2)viewer.getContentProvider()).add(currentParent, url);
 			} catch (MalformedURLException e) {
 			}
 		}
@@ -248,15 +232,18 @@ public class AntClasspathBlock2 {
 		}
 		IPath filterPath = new Path(dialog.getFilterPath());
 		String[] results = dialog.getFileNames();
+		AntClasspathContentProvider2 contentProvider= (AntClasspathContentProvider2)viewer.getContentProvider();
+		contentProvider.setRefreshEnabled(false);
 		for (int i = 0; i < results.length; i++) {
 			String jarName = results[i];
 			try {
 				IPath path = filterPath.append(jarName).makeAbsolute();
 				URL url = new URL("file:" + path.toOSString()); //$NON-NLS-1$;
-				((AntClasspathContentProvider2)viewer.getContentProvider()).add(currentParent, url);
+				contentProvider.add(currentParent, url);
 			} catch (MalformedURLException e) {
 			}
 		}
+		contentProvider.setRefreshEnabled(true);
 
 		viewer.setSelection(viewer.getSelection());
 		dialogSettings.put(IAntUIConstants.DIALOGSTORE_LASTEXTJAR, filterPath.toOSString());
@@ -265,7 +252,8 @@ public class AntClasspathBlock2 {
 	
 	private void addJars(TreeViewer viewer) {
 		List allURLs= new ArrayList();
-		allURLs.addAll(Arrays.asList(getAntClasspathEntries()));
+		//TODO not sure this is currect
+		allURLs.addAll(Arrays.asList(currentParent.getEntries()));
 		
 		ViewerFilter filter= new ArchiveFilter(allURLs);
 		
@@ -296,12 +284,14 @@ public class AntClasspathBlock2 {
 
 		if (dialog.open() == Window.OK) {
 			Object[] elements= dialog.getResult();
+			AntClasspathContentProvider2 contentProvider= (AntClasspathContentProvider2)viewer.getContentProvider();
+			contentProvider.setRefreshEnabled(false);
 			for (int i = 0; i < elements.length; i++) {
 				IFile file = (IFile)elements[i];
 				String varExpression= DebugPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", file.getFullPath().toString()); //$NON-NLS-1$
-				//TODO
-				((AntClasspathContentProvider2)viewer.getContentProvider()).add(null, varExpression);
+				contentProvider.add(currentParent, varExpression);
 			}
+			contentProvider.setRefreshEnabled(true);
 			updateContainer();
 		}
 	}
@@ -337,7 +327,7 @@ public class AntClasspathBlock2 {
 		
 		tree.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent event) {
-				if (tablesEnabled && event.character == SWT.DEL && event.stateMask == 0) {
+				if (event.character == SWT.DEL && event.stateMask == 0) {
 					remove(treeViewer);
 				}
 			}
@@ -350,7 +340,7 @@ public class AntClasspathBlock2 {
 		treeViewer.setLabelProvider(labelProvider);
 		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				if (tablesEnabled && !initializing) {
+				if (!initializing) {
 					tableSelectionChanged((IStructuredSelection) event.getSelection(),
 						(AntClasspathContentProvider2) treeViewer.getContentProvider());
 				}
@@ -373,6 +363,8 @@ public class AntClasspathBlock2 {
 		createSeparator(parent);
 
 		createAntHome(parent);
+		
+		tableSelectionChanged((IStructuredSelection)treeViewer.getSelection(), antContentProvider);
 	}
 
 	/**
@@ -447,19 +439,26 @@ public class AntClasspathBlock2 {
 	 * Method declared on AntPage.
 	 */
 	private void tableSelectionChanged(IStructuredSelection selection, AntClasspathContentProvider2 contentProvider) {
-		Object[] elements = contentProvider.getElements(null);
-		List urls = Arrays.asList(elements);
+		
+		
 		boolean notEmpty = !selection.isEmpty();
 		Iterator selected = selection.iterator();
 		boolean first = false;
 		boolean last = false;
-		int lastUrl = urls.size() - 1;
+		boolean canRemove= true;
+		
 		while (selected.hasNext()) {
-			Object element = selected.next();
-			if (!first && urls.indexOf(element) == 0) {
+			IClasspathEntry element = (IClasspathEntry) selected.next();
+			if (element instanceof GlobalClasspathEntries) {
+				canRemove= false;
+			}
+			Object[] childEntries = contentProvider.getChildren(element.getParent());
+			List entries = Arrays.asList(childEntries);
+			int lastEntryIndex = entries.size() - 1;
+			if (!first && entries.indexOf(element) == 0) {
 				first = true;
 			}
-			if (!last && urls.indexOf(element) == lastUrl) {
+			if (!last && entries.indexOf(element) == lastEntryIndex) {
 				last = true;
 			}
 		}
@@ -468,12 +467,14 @@ public class AntClasspathBlock2 {
 		if (notEmpty) {
 			canAdd= resolveCurrentParent(selection);
 		}
-		
+		if (addJARButton != null) {
+			addJARButton.setEnabled(canAdd);
+		}
 		addExternalJARButton.setEnabled(canAdd);
 		addFolderButton.setEnabled(canAdd);
-		removeButton.setEnabled(notEmpty);
-		upButton.setEnabled(notEmpty && !first);
-		downButton.setEnabled(notEmpty && !last);
+		removeButton.setEnabled(notEmpty && canRemove);
+		upButton.setEnabled(canRemove && notEmpty && !first);
+		downButton.setEnabled(canRemove && notEmpty && !last);
 		
 	}
 	
@@ -484,7 +485,7 @@ public class AntClasspathBlock2 {
 		while (selected.hasNext()) {
 			Object element = selected.next();
 			if (element instanceof ClasspathEntry) {
-				Object parent= ((ClasspathEntry)element).getParent();
+				IClasspathEntry parent= ((IClasspathEntry)element).getParent();
 				if (currentParent != null) {
 					if (!currentParent.equals(parent)) {
 						return false;
@@ -498,7 +499,7 @@ public class AntClasspathBlock2 {
 						return false;
 					}
 				} else {
-					currentParent= element;
+					currentParent= (IClasspathEntry)element;
 				}
 			}
 		}
@@ -558,7 +559,8 @@ public class AntClasspathBlock2 {
 		
 	private void setAntHome(File rootDir) {
 		AntClasspathContentProvider2 contentProvider = (AntClasspathContentProvider2) treeViewer.getContentProvider();
-		contentProvider.removeAll();
+		contentProvider.setRefreshEnabled(false);
+		contentProvider.removeAllGlobalAntClasspathEntries();
 		String[] names = rootDir.list();
 		for (int i = 0; i < names.length; i++) {
 			File file = new File(rootDir, names[i]);
@@ -577,11 +579,8 @@ public class AntClasspathBlock2 {
 		if (url != null) {
 			contentProvider.add(ClasspathModel.GLOBAL, url);
 		}
+		contentProvider.setRefreshEnabled(true);
 		updateContainer();
-	}
-	
-	public Object[] getAntClasspathEntries() { 
-		return antContentProvider.getAntClasspathEntries();
 	}
 	
 	public String getAntHome() {
@@ -590,36 +589,6 @@ public class AntClasspathBlock2 {
 			antHomeText= null;
 		}
 		return antHomeText;
-	}
-	
-	public void setEnabled(boolean enable) {
-		validated= 0;
-		setTablesEnabled(enable);
-		antHomeButton.setEnabled(enable);
-		addFolderButton.setEnabled(enable);
-		if (addJARButton != null) {
-			addJARButton.setEnabled(enable);
-		}
-		addExternalJARButton.setEnabled(enable);
-	
-		if (enable) {
-			treeViewer.setSelection(treeViewer.getSelection());
-			antHome.setEnabled(antHomeButton.getSelection());
-			browseAntHomeButton.setEnabled(antHomeButton.getSelection());
-		} else {
-			downButton.setEnabled(false);
-			
-			removeButton.setEnabled(false);
-			
-			upButton.setEnabled(false);
-			
-			AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
-			treeViewer.setInput(prefs.getAntURLs());
-			
-			initializeAntHome(prefs.getAntHome());
-			antHome.setEnabled(false);
-			browseAntHomeButton.setEnabled(false);
-		}
 	}
 	
 	public void initializeAntHome(String antHomeString) {
@@ -652,15 +621,11 @@ public class AntClasspathBlock2 {
 		return labelProvider.getClasspathImage();
 	}
 	
-	public void setTablesEnabled(boolean tablesEnabled) {
-		this.tablesEnabled= tablesEnabled;
-	}
-	
 	public boolean validateToolsJAR() {
 		validated++;
 		boolean check= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING);
 		if (check && !AntUIPlugin.isMacOS()) {
-			Object[] antURLs= getAntClasspathEntries();
+			Object[] antURLs= antContentProvider.getModel().getURLEntries(ClasspathModel.GLOBAL);
 			boolean valid= !JARPresent(antURLs, TOOLS).isEmpty();
 			if (!valid) {
 				valid= MessageDialogWithToggle.openQuestion(AntUIPlugin.getActiveWorkbenchWindow().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.31"), AntPreferencesMessages.getString("AntClasspathBlock.32"), IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.33"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -679,8 +644,12 @@ public class AntClasspathBlock2 {
 		validated++;
 		boolean check= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING);
 		if (check) {
-			Object[] antURLs= getAntClasspathEntries();
+			Object[] antURLs= antContentProvider.getModel().getURLEntries(ClasspathModel.GLOBAL);
 			List suffixes= JARPresent(antURLs, XERCES);
+			if (suffixes.isEmpty()) {
+				Object[] userURLs=  antContentProvider.getModel().getURLEntries(ClasspathModel.GLOBAL_USER);
+				suffixes= JARPresent(userURLs, XERCES);
+			}
 			if (sameVM && !suffixes.isEmpty()) {
 				valid= MessageDialogWithToggle.openQuestion(treeViewer.getControl().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.35"), MessageFormat.format(AntPreferencesMessages.getString("AntClasspathBlock.36"), new Object[]{suffixes.get(0)}), IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.33"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			} else if (!sameVM && suffixes.size() < 2) {
@@ -727,9 +696,5 @@ public class AntClasspathBlock2 {
 	
 	public void setValidated() {
 		validated= 3;
-	}
-
-	public Object[] getUserURLs() {
-		return antContentProvider.getUserClasspathEntries();
 	}
 }

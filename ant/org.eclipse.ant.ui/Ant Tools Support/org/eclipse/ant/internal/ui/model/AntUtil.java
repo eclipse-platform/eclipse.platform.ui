@@ -48,7 +48,8 @@ import org.eclipse.ui.PlatformUI;
 public final class AntUtil {
 	public static final String ATTRIBUTE_SEPARATOR = ","; //$NON-NLS-1$;
 	public static final char ANT_CLASSPATH_DELIMITER= '*';
-	
+	public static final String ANT_GLOBAL_CLASSPATH_PLACEHOLDER= "G"; //$NON-NLS-1$
+	public static final String ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER= "UG"; //$NON-NLS-1$
 	/**
 	 * No instances allowed
 	 */

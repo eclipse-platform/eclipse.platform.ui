@@ -1,45 +1,49 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.preferences;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
+
+import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.internal.ui.model.AntUtil;
 
 /** 
  * This class is a work in progress
  *
  */
-public class ClasspathModel {
+public class ClasspathModel extends AbstractClasspathEntry {
 	
 	public static final int GLOBAL= 0;
 	public static final int GLOBAL_USER= 1;
+	public static final int USER= 2;
 	
-	protected List elements = new ArrayList();
 	private GlobalClasspathEntries globalEntry;
 	private GlobalClasspathEntries userGlobalEntry;
 	
-	protected Object[] getEntries() {
-		return elements.toArray();
-	}
-
-	/**
-	 * @return
-	 */
-	public boolean hasEntries() {
-		return !elements.isEmpty();
-	}
-	
 	public Object addEntry(Object entry) {
 		if (entry instanceof GlobalClasspathEntries) {
-			if (!elements.contains(entry)) {
-				elements.add(entry);
+			if (!childEntries.contains(entry)) {
+				childEntries.add(entry);
 				return entry;
 			}
 			return null;
 		} else {
 			ClasspathEntry newEntry= createEntry(entry, null);
-			Iterator entries= elements.iterator();
+			Iterator entries= childEntries.iterator();
 			while (entries.hasNext()) {
 				Object element = entries.next();
 				if (element instanceof GlobalClasspathEntries) {
@@ -50,26 +54,26 @@ public class ClasspathModel {
 					return null;
 				}
 			}
-			elements.add(newEntry);
+			childEntries.add(newEntry);
 			return newEntry;
 		}
 	}
 	
 	public Object addEntry(int entryType, Object entry) {
-		Object parent= null;
+		IClasspathEntry entryParent= null;
 		switch (entryType) {
 			case GLOBAL :
-				parent= globalEntry;
+				entryParent= globalEntry;
 				break;
 			case GLOBAL_USER :
-				parent= userGlobalEntry;
+				entryParent= userGlobalEntry;
 				break;
 			default :
 				break;
 		}
 			
-		ClasspathEntry newEntry= createEntry(entry, parent);
-		Iterator entries= elements.iterator();
+		ClasspathEntry newEntry= createEntry(entry, entryParent);
+		Iterator entries= childEntries.iterator();
 		while (entries.hasNext()) {
 			Object element = entries.next();
 			if (element instanceof GlobalClasspathEntries) {
@@ -80,10 +84,10 @@ public class ClasspathModel {
 				return null;
 			}
 		}
-		if (parent != null) {
-			((GlobalClasspathEntries)parent).addEntry(newEntry);
+		if (entryParent != null) {
+			((GlobalClasspathEntries)entryParent).addEntry(newEntry);
 		} else {
-			elements.add(newEntry);
+			childEntries.add(newEntry);
 		}
 		return newEntry;		
 	}
@@ -97,6 +101,8 @@ public class ClasspathModel {
 			case GLOBAL_USER :
 				classpathEntries= userGlobalEntry.getEntries();
 				break;
+			case USER : 
+				classpathEntries= getUserEntries();
 			default :
 				return null;
 		}
@@ -114,14 +120,14 @@ public class ClasspathModel {
 	}
 	
 	public void remove(Object entry) {
-		elements.remove(entry);
+		childEntries.remove(entry);
 	}
 	
-	public ClasspathEntry createEntry(Object entry, Object parent) {
-		if (parent == null) {
-			parent= this;
+	public ClasspathEntry createEntry(Object entry, IClasspathEntry entryParent) {
+		if (entryParent == null) {
+			entryParent= this;
 		} 
-		return new ClasspathEntry(entry, parent);
+		return new ClasspathEntry(entry, entryParent);
 	}
 
 	public void removeAll() {
@@ -129,16 +135,29 @@ public class ClasspathModel {
 		userGlobalEntry.removeAll();
 	}
 	
+	public void removeAll(int entryType) {
+		switch (entryType) {
+			case GLOBAL :
+				globalEntry.removeAll();
+				break;
+			case GLOBAL_USER :
+				userGlobalEntry.removeAll();
+				break;
+			default :
+				break;
+		}
+	}
+	
 	public void removeAll(Object[] entries) {
 		
 		for (int i = 0; i < entries.length; i++) {
 			Object object = entries[i];
 			if (object instanceof ClasspathEntry) {
-				Object parent= ((ClasspathEntry)object).getParent();
-				if (parent instanceof GlobalClasspathEntries) {
-					((GlobalClasspathEntries)parent).removeEntry((ClasspathEntry) object);
-				} else if (parent instanceof ClasspathModel) {
-					((ClasspathModel)parent).remove(object);
+				IClasspathEntry entryParent= ((ClasspathEntry)object).getParent();
+				if (entryParent instanceof GlobalClasspathEntries) {
+					((GlobalClasspathEntries)entryParent).removeEntry((ClasspathEntry) object);
+				} else if (entryParent instanceof ClasspathModel) {
+					((ClasspathModel)entryParent).remove(object);
 				}
 			}
 		}
@@ -162,7 +181,7 @@ public class ClasspathModel {
 
 	private GlobalClasspathEntries createGlobalEntry(URL[] urls, String name) {
 		
-		GlobalClasspathEntries global= new GlobalClasspathEntries(name);
+		GlobalClasspathEntries global= new GlobalClasspathEntries(name, this);
 		
 		for (int i = 0; i < urls.length; i++) {
 			URL url = urls[i];
@@ -187,5 +206,61 @@ public class ClasspathModel {
 				userGlobalEntry.addEntry(new ClasspathEntry(url, userGlobalEntry));
 			}
 		}
+	}
+	
+	private IClasspathEntry[] getUserEntries() {
+		List userEntries= new ArrayList(childEntries.size());
+		Iterator itr= childEntries.iterator();
+		while (itr.hasNext()) {
+			IClasspathEntry element = (IClasspathEntry) itr.next();
+			if (element instanceof GlobalClasspathEntries) {
+				continue;
+			}
+			userEntries.add(element);
+		}
+		return (IClasspathEntry[])userEntries.toArray(new IClasspathEntry[userEntries.size()]);
+	}
+	
+	public String serializeClasspath() {
+		Iterator itr= childEntries.iterator();
+		StringBuffer buff= new StringBuffer();
+		while (itr.hasNext()) {
+			IClasspathEntry element = (IClasspathEntry) itr.next();
+			if (element instanceof GlobalClasspathEntries) {
+				if (element == globalEntry) {
+					buff.append(AntUtil.ANT_GLOBAL_CLASSPATH_PLACEHOLDER);
+				} else {
+					buff.append(AntUtil.ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER);
+				}
+			} else {
+				buff.append(element.toString());
+			}
+			buff.append(AntUtil.ATTRIBUTE_SEPARATOR);
+		}
+		return buff.substring(0, buff.length() - 1);
+	}
+	
+	public ClasspathModel(String serializedClasspath) {
+		StringTokenizer tokenizer= new StringTokenizer(serializedClasspath, AntUtil.ATTRIBUTE_SEPARATOR);
+		while (tokenizer.hasMoreTokens()) {
+			String string = tokenizer.nextToken().trim();
+			if (string.equals(AntUtil.ANT_GLOBAL_CLASSPATH_PLACEHOLDER)) {
+				setGlobalClasspath(AntCorePlugin.getPlugin().getPreferences().getAntURLs());
+			} else if (string.equals(AntUtil.ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER)) {
+				setGlobalUserClasspath(AntCorePlugin.getPlugin().getPreferences().getCustomURLs());
+			} else {
+				Object entry= null;
+				try {
+					entry=  new URL("file:" + string); //$NON-NLS-1$
+				} catch (MalformedURLException e) {
+					entry= string;
+				}
+				createEntry(entry, this);
+			}
+		}
+	}
+	
+	public ClasspathModel() {
+		super();
 	}
 }
