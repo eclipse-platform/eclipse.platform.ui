@@ -4539,7 +4539,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		// XXX this overwrite box is not proportiona-font aware
 		// take 'a' as a medium sized character
 		Point charSize= gc.stringExtent("a"); //$NON-NLS-1$
-		caret.setSize(charSize.x, caret.getSize().y);
+		caret.setSize(charSize.x, styledText.getLineHeight());
 		gc.dispose();
 			
 		return caret;
@@ -4548,7 +4548,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private Caret createInsertCaret(StyledText styledText) {
 		Caret caret= new Caret(styledText, SWT.NULL);
 		int width= getPreferenceStore().getBoolean(PREFERENCE_WIDE_CARET) ? WIDE_CARET_WIDTH : SINGLE_CARET_WIDTH;
-		caret.setSize(width, caret.getSize().y);
+		caret.setSize(width, styledText.getLineHeight());
 		return caret;
 	}
 	
@@ -4588,7 +4588,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (image != null)
 			caret.setImage(image);
 		else
-			caret.setSize(width, caret.getSize().y);
+			caret.setSize(width, styledText.getLineHeight());
 			
 		return caret;
 	}
