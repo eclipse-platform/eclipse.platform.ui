@@ -22,7 +22,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * An action which prompts the user to asign a breakpoint to a group.
@@ -57,12 +56,6 @@ public class AddBreakpointToGroupAction extends AbstractBreakpointsViewAction {
 				DebugUIPlugin.errorDialog(dialog.getShell(), BreakpointGroupMessages.getString("AddBreakpointToGroupAction.3"), BreakpointGroupMessages.getString("AddBreakpointToGroupAction.4"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
 	/* (non-Javadoc)
