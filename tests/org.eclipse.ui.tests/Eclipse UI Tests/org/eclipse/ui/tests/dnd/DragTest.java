@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dnd;
 
+import junit.framework.Assert;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -155,7 +157,7 @@ public class DragTest extends UITestCase {
 				
 				System.out.println("Failed " + getName() + ": " + errorMessage);
 				
-				fail(errorMessage);
+				Assert.assertEquals("Drag operation resulted in incorrect layout", intendedResult, resultingLayout);
 			}
 		} else {
 			fail("data/dragtests.xml is missing data for test" + getName());
