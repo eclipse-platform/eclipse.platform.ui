@@ -247,6 +247,11 @@ public class Utils {
 			int index = token.indexOf('@');
 			if (index != -1)
 				token = token.substring(0,index);
+			if (token.startsWith("reference:file:")) {
+				File f = new File(token.substring(15));
+				if (bundleURL.indexOf(f.getName()) != -1)
+					return true;
+			}
 			if (bundleURL.indexOf(token) != -1)
 				return true;
 		}
