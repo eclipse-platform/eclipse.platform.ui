@@ -20,7 +20,7 @@ public class UpdateSearchRequest {
 
 	public UpdateSearchRequest(UpdateSearchInput input, IUpdateSearchResultCollector resultCollector) {
 		this.input = input;
-		this.collector = collector;
+		this.collector = resultCollector;
 	}
 
 	public void execute(IProgressMonitor monitor) throws CoreException {
