@@ -14,7 +14,6 @@ package org.eclipse.help.internal;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.xml.sax.*;
 
 /**
  * This class is intended to capture all runtime exception happening during
@@ -39,10 +38,6 @@ public class RuntimeHelpStatus {
 	public RuntimeHelpStatus() {
 		super();
 	}
-	public synchronized void addError(Status status) {
-		errorList.add(status);
-
-	}
 	public synchronized void addParseError(
 		String message,
 		String invalidFileName) {
@@ -50,18 +45,6 @@ public class RuntimeHelpStatus {
 		// produce the list of files with errors.
 		if (!badFilesList.contains(invalidFileName))
 			badFilesList.add(invalidFileName);
-
-		// now add the message. All parser messages are added
-		parserErrorMessagesList.add(message);
-
-	}
-	public synchronized void addParseError(
-		String message,
-		SAXParseException parseException) {
-		// add the Exception to the files list only once. These exceptions will be used to
-		// produce the list of files with errors.
-		if (!badFilesList.contains(parseException))
-			badFilesList.add(parseException);
 
 		// now add the message. All parser messages are added
 		parserErrorMessagesList.add(message);
@@ -91,41 +74,41 @@ public class RuntimeHelpStatus {
 	public synchronized String toString() {
 		StringBuffer fullText = new StringBuffer();
 		if (!errorList.isEmpty()) {
-			fullText.append(HelpResources.getString("E006"));
-			fullText.append("******************** \n");
+			fullText.append(HelpResources.getString("E006")); //$NON-NLS-1$
+			fullText.append("******************** \n"); //$NON-NLS-1$
 			for (int i = 0; i < errorList.size(); i++) {
 				fullText.append(((Status) (errorList.get(i))).getMessage());
-				fullText.append("\n");
+				fullText.append("\n"); //$NON-NLS-1$
 			}
 		}
 
 		if (fullText.length() > 0)
-			fullText.append("\n");
+			fullText.append("\n"); //$NON-NLS-1$
 
 		if (!parserErrorMessagesList.isEmpty()) {
 			// display the files that failed to parse
-			fullText.append(HelpResources.getString("E007"));
-			fullText.append("********************  \n");
+			fullText.append(HelpResources.getString("E007")); //$NON-NLS-1$
+			fullText.append("********************  \n"); //$NON-NLS-1$
 			for (int i = 0; i < badFilesList.size(); i++) {
 				fullText.append(((String) (badFilesList.get(i))));
-				fullText.append("\n");
+				fullText.append("\n"); //$NON-NLS-1$
 			}
 
-			fullText.append("\n");
+			fullText.append("\n"); //$NON-NLS-1$
 
 			// and the parse error message
-			fullText.append(HelpResources.getString("E008"));
-			fullText.append("********************  \n");
+			fullText.append(HelpResources.getString("E008")); //$NON-NLS-1$
+			fullText.append("********************  \n"); //$NON-NLS-1$
 			for (int i = 0; i < parserErrorMessagesList.size(); i++) {
 				fullText.append(((String) (parserErrorMessagesList.get(i))));
-				fullText.append("\n");
+				fullText.append("\n"); //$NON-NLS-1$
 			}
 		}
 
 		if (fullText.length() > 0)
 			return fullText.toString();
 		else
-			return "null status object";
+			return ""; //$NON-NLS-1$
 
 	}
 }
