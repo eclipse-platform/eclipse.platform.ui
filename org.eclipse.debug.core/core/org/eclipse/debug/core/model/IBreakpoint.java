@@ -195,7 +195,7 @@ public interface IBreakpoint extends IAdaptable {
 	public void setRegistered(boolean registered) throws CoreException;
 	
 	/**
-	 * Returns whether this breakpoint is to be persisted accross
+	 * Returns whether this breakpoint is to be persisted across
 	 * workspace invocations, or when a project is closed and re-opened.
 	 * Since marker definitions only allow all/none of a specific type
 	 * of marker to be persisted (rathern than selective markers of a
@@ -208,7 +208,7 @@ public interface IBreakpoint extends IAdaptable {
 	public boolean isPersisted() throws CoreException;
 	
 	/**
-	 * Sets whether this breakpoint is to be persisted accorss
+	 * Sets whether this breakpoint is to be persisted across
 	 * workspace invocations, or when a project is closed and re-opened.
 	 * Since marker definitions only allow all/none of a specific type of
 	 * marker to be persisted (rather than selective markers of a specific
