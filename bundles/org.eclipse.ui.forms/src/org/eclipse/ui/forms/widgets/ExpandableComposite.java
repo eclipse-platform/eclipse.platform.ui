@@ -68,6 +68,10 @@ public class ExpandableComposite extends Composite {
 	 */
 	public static final int TITLE_BAR = 1 << 8;
 	/**
+	 * If this style is used, title will not be rendered.
+	 */
+	public static final int NO_TITLE = 1<<12;
+	/**
 	 * Width of the margin that will be added around the control (default is
 	 * 0).
 	 */	
@@ -112,7 +116,9 @@ public class ExpandableComposite extends Composite {
 				tcsize = textClient.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 			if (tcsize!=null)
 				twidth -= tcsize.x + GAP;
-			Point size = textLabel.computeSize(twidth, SWT.DEFAULT, changed);
+			Point size = null;
+			if (textLabel!=null)
+				size = textLabel.computeSize(twidth, SWT.DEFAULT, changed);
 			if (textLabel instanceof Label) {
 				Point defSize = textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT,
 						changed);
@@ -134,12 +140,14 @@ public class ExpandableComposite extends Composite {
 				toggle.setSize(tsize);
 				x += tsize.x + GAP;
 			}
-			textLabel.setBounds(x, y, size.x, size.y);
+			if (textLabel!=null)
+				textLabel.setBounds(x, y, size.x, size.y);
 			if (textClient!=null) {
 				int tcx = clientArea.width - tcsize.x-thmargin;
 				textClient.setBounds(tcx, y, tcsize.x, tcsize.y);
 			}
-			y += size.y;
+			if (size!=null)
+				y += size.y;
 			if ((expansionStyle & TITLE_BAR) != 0) 
 				y += tvmargin;
 			if (getSeparatorControl() != null) {
@@ -206,8 +214,10 @@ public class ExpandableComposite extends Composite {
 				if (innertHint!=SWT.DEFAULT)
 					innertHint -= GAP + tcsize.x;
 			}
-			Point size = textLabel
-					.computeSize(innertHint, SWT.DEFAULT, changed);
+			Point size = null;
+			
+			if (textLabel!=null)
+				size = textLabel.computeSize(innertHint, SWT.DEFAULT, changed);
 			if (textLabel instanceof Label) {
 				Point defSize = textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT,
 						changed);
@@ -216,8 +226,10 @@ public class ExpandableComposite extends Composite {
 					size.x = Math.min(defSize.x, size.x);
 				}
 			}
-			width = size.x;
-			height = tcsize!=null?Math.max(tcsize.y, size.y):size.y;
+			if (size!=null)
+				width = size.x;
+			int sizey = size!=null?size.y:0;
+			height = tcsize!=null?Math.max(tcsize.y, sizey):sizey;
 			if (getSeparatorControl() != null) {
 				height += VSPACE + SEPARATOR_HEIGHT;
 				if (expanded && client != null)
@@ -258,7 +270,7 @@ public class ExpandableComposite extends Composite {
 					height += csize.y;
 			}
 			if (toggle != null) {
-				height = height - size.y + Math.max(size.y, tsize.y);
+				height = height - sizey + Math.max(sizey, tsize.y);
 				width += twidth;
 			}
 			return new Point(width + marginWidth + marginWidth+thmargin+thmargin, height
@@ -266,7 +278,9 @@ public class ExpandableComposite extends Composite {
 		}
 		public int computeMinimumWidth(Composite parent, boolean changed) {
 			int width = 0;
-			Point size = textLabel.computeSize(5, SWT.DEFAULT, changed);
+			Point size = null;
+			if (textLabel!=null)
+				size = textLabel.computeSize(5, SWT.DEFAULT, changed);
 			Point tcsize=null;
 			if (textClient!=null) {
 				tcsize = textClient.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
@@ -278,7 +292,8 @@ public class ExpandableComposite extends Composite {
 				thmargin = GAP;
 				tvmargin = GAP;
 			}			
-			width = size.x;
+			if (size!=null)
+				width = size.x;
 			if (tcsize!=null)
 				width += GAP + tcsize.x;
 
@@ -307,7 +322,9 @@ public class ExpandableComposite extends Composite {
 		 */
 		public int computeMaximumWidth(Composite parent, boolean changed) {
 			int width = 0;
-			Point size = textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT,
+			Point size = null;
+			if (textLabel!=null)
+				textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT,
 					changed);
 			Point tcsize=null;
 			int thmargin = 0;
@@ -320,7 +337,8 @@ public class ExpandableComposite extends Composite {
 			if (textClient!=null) {
 				tcsize = textClient.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 			}
-			width = size.x;
+			if (size!=null)
+				width = size.x;
 			if (tcsize!=null)
 				width += GAP + tcsize.x;
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
@@ -400,7 +418,7 @@ public class ExpandableComposite extends Composite {
 				}
 			});
 			textLabel = link;
-		} else {
+		} else if ((expansionStyle & NO_TITLE) == 0) {
 			final Label label = new Label(this, SWT.WRAP);
 			if (!isFixedStyle()) {
 				label.setCursor(FormsResources.getHandCursor());
@@ -435,7 +453,8 @@ public class ExpandableComposite extends Composite {
 	 */
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
-		textLabel.setBackground(bg);
+		if (textLabel!=null)
+			textLabel.setBackground(bg);
 		if (toggle != null)
 			toggle.setBackground(bg);
 	}
@@ -444,7 +463,8 @@ public class ExpandableComposite extends Composite {
 	 */
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
-		textLabel.setForeground(fg);
+		if (textLabel!=null)
+			textLabel.setForeground(fg);
 		if (toggle != null)
 			toggle.setForeground(fg);
 	}
@@ -474,7 +494,8 @@ public class ExpandableComposite extends Composite {
 	 */
 	public void setFont(Font font) {
 		super.setFont(font);
-		textLabel.setFont(font);
+		if (textLabel!=null)
+			textLabel.setFont(font);
 		if (toggle != null)
 			toggle.setFont(font);
 	}
@@ -509,7 +530,7 @@ public class ExpandableComposite extends Composite {
 	public void setText(String title) {
 		if (textLabel instanceof Label)
 			((Label) textLabel).setText(title);
-		else
+		else if (textLabel instanceof Hyperlink)
 			((Hyperlink) textLabel).setText(title);
 	}
 	/**
@@ -521,8 +542,10 @@ public class ExpandableComposite extends Composite {
 	public String getText() {
 		if (textLabel instanceof Label)
 			return ((Label) textLabel).getText();
-		else
+		else if (textLabel instanceof Hyperlink)
 			return ((Hyperlink) textLabel).getText();
+		else
+			return "";
 	}
 	/**
 	 * Tests the expanded state of the composite.

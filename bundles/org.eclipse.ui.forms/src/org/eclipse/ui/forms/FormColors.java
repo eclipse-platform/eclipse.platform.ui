@@ -85,9 +85,10 @@ public class FormColors {
 	 * differently.
 	 */
 	protected void initializeColorTable() {
-		createColor(BORDER, 195, 191, 179);
+		//createColor(BORDER, 195, 191, 179);
 		createColor(SEPARATOR, 152, 170, 203);
 		createColor(TITLE, FormUtil.getSystemColor(this, SWT.COLOR_LIST_SELECTION));
+		createColor(BORDER, FormUtil.getSystemColor(this, SWT.COLOR_LIST_SELECTION));
 	}
 	/**
 	 * Creates the color for the specified key using the provided RGB object.

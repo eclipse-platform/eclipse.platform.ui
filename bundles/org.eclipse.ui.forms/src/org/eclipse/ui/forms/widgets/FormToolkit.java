@@ -20,17 +20,17 @@ import org.eclipse.ui.forms.internal.widgets.*;
 /**
  * The toolkit is responsible for creating SWT controls adapted to work in
  * Eclipse forms. In addition to changing their presentation properties (fonts,
- * colors etc.), various listeners are attached to make them behave correctly
- * in the form context.
+ * colors etc.), various listeners are attached to make them behave correctly in
+ * the form context.
  * <p>
- * In addition to being the control factory, the toolkit is also responsible
- * for painting flat borders for select controls, managing hyperlink groups and
+ * In addition to being the control factory, the toolkit is also responsible for
+ * painting flat borders for select controls, managing hyperlink groups and
  * control colors.
  * <p>
- * The toolkit creates some of the most common controls used to populate
- * Eclipse forms. Controls that must be created using their constructors,
- * <samp>adapt </samp> method is available to change its properties in the same
- * way as with the supported toolkit controls.
+ * The toolkit creates some of the most common controls used to populate Eclipse
+ * forms. Controls that must be created using their constructors, <samp>adapt
+ * </samp> method is available to change its properties in the same way as with
+ * the supported toolkit controls.
  * <p>
  * Typically, one toolkit object is created per workbench part (for example, an
  * editor or a form wizard). The toolkit is disposed when the part is disposed.
@@ -40,6 +40,7 @@ import org.eclipse.ui.forms.internal.widgets.*;
  * color object will not dispose the colors).
  * 
  * TODO (dejan) - spell out subclass contract
+ * 
  * @since 3.0
  */
 public class FormToolkit {
@@ -63,7 +64,8 @@ public class FormToolkit {
 				Control c = children[i];
 				boolean inactiveBorder = false;
 				boolean textBorder = false;
-				if (!c.isVisible()) continue;
+				if (!c.isVisible())
+					continue;
 				if (c.getEnabled() == false && !(c instanceof CCombo))
 					continue;
 				if (c instanceof Hyperlink)
@@ -77,15 +79,25 @@ public class FormToolkit {
 					else if (flag.equals(TEXT_BORDER))
 						textBorder = true;
 				}
+				if (getBorderStyle() == SWT.BORDER) {
+					if (!inactiveBorder && !textBorder) {
+						continue;
+					}
+					if (c instanceof Text || c instanceof Table
+							|| c instanceof Tree || c instanceof TableTree)
+						continue;
+				}
 				if (!inactiveBorder
-						&& (c instanceof Text /*|| c instanceof Canvas */
-								|| c instanceof CCombo || textBorder)) {
+						&& (c instanceof Text || c instanceof CCombo || textBorder)) {
 					Rectangle b = c.getBounds();
 					GC gc = event.gc;
 					gc.setForeground(c.getBackground());
 					gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1,
 							b.height + 1);
-					gc.setForeground(colors.getForeground());
+					gc.setForeground(getBorderStyle() == SWT.BORDER
+							? c.getDisplay()
+									.getSystemColor(
+											SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT):colors.getForeground());
 					if (c instanceof CCombo)
 						gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1,
 								b.height + 1);
@@ -116,7 +128,7 @@ public class FormToolkit {
 			Widget w = e.widget;
 			if (w instanceof Control) {
 				if (e.doit)
-				FormUtil.processKey(e.keyCode, (Control) w);
+					FormUtil.processKey(e.keyCode, (Control) w);
 			}
 		}
 	}
@@ -128,8 +140,8 @@ public class FormToolkit {
 		this(new FormColors(display));
 	}
 	/**
-	 * Creates a toolkit that will use the provided (shared) colors. The
-	 * toolkit will <b>not </b> dispose the provided colors.
+	 * Creates a toolkit that will use the provided (shared) colors. The toolkit
+	 * will <b>not </b> dispose the provided colors.
 	 * 
 	 * @param colors
 	 *            the shared colors
@@ -181,9 +193,9 @@ public class FormToolkit {
 		return composite;
 	}
 	/**
-	 * Creats the composite that can server as a separator between various
-	 * parts of a form. Separator height should be controlled by setting the
-	 * height hint on the layout data for the composite.
+	 * Creats the composite that can server as a separator between various parts
+	 * of a form. Separator height should be controlled by setting the height
+	 * hint on the layout data for the composite.
 	 * 
 	 * @param parent
 	 *            the separator parent
@@ -238,8 +250,8 @@ public class FormToolkit {
 		return label;
 	}
 	/**
-	 * Creates a hyperlink as a part of the form. The hyperlink will be added
-	 * to the hyperlink group that belongs to this toolkit.
+	 * Creates a hyperlink as a part of the form. The hyperlink will be added to
+	 * the hyperlink group that belongs to this toolkit.
 	 * 
 	 * @param parent
 	 *            the hyperlink parent
@@ -297,23 +309,24 @@ public class FormToolkit {
 	}
 	/**
 	 * Adapts a control to be used in a form that is associated with this
-	 * toolkit. This involves adjusting colors and optionally adding handlers
-	 * to ensure focus tracking and keyboard management.
+	 * toolkit. This involves adjusting colors and optionally adding handlers to
+	 * ensure focus tracking and keyboard management.
 	 * 
 	 * @param control
 	 *            a control to adapt
 	 * @param trackFocus
 	 *            if <code>true</code>, form will be scrolled horizontally
 	 *            and/or vertically if needed to ensure that the control is
-	 *            visible when it gains focus. Set it to <code>false</code>
-	 *            if the control is not capable of gaining focus.
+	 *            visible when it gains focus. Set it to <code>false</code> if
+	 *            the control is not capable of gaining focus.
 	 * @param trackKeyboard
 	 *            if <code>true</code>, the control that is capable of
 	 *            gaining focus will be tracked for certain keys that are
 	 *            important to the underlying form (for example, PageUp,
-	 *            PageDown, ScrollUp, ScrollDown etc.). Set it to <code>false</code>
-	 *            if the control is not capable of gaining focus or these
-	 *            particular key event are already used by the control.
+	 *            PageDown, ScrollUp, ScrollDown etc.). Set it to
+	 *            <code>false</code> if the control is not capable of gaining
+	 *            focus or these particular key event are already used by the
+	 *            control.
 	 */
 	public void adapt(Control control, boolean trackFocus, boolean trackKeyboard) {
 		control.setBackground(colors.getBackground());
@@ -352,8 +365,10 @@ public class FormToolkit {
 		section.setBackground(colors.getBackground());
 		section.setForeground(colors.getForeground());
 		section.setMenu(parent.getMenu());
-		section.textLabel.addFocusListener(visibilityHandler);
-		section.textLabel.addKeyListener(keyboardHandler);
+		if (section.textLabel != null) {
+			section.textLabel.addFocusListener(visibilityHandler);
+			section.textLabel.addKeyListener(keyboardHandler);
+		}
 		if (section.toggle != null) {
 			section.toggle.addFocusListener(visibilityHandler);
 			section.toggle.addKeyListener(keyboardHandler);
@@ -364,14 +379,17 @@ public class FormToolkit {
 		}
 		section.setFont(JFaceResources.getFontRegistry().get(
 				JFaceResources.BANNER_FONT));
-		if ((sectionStyle & Section.TITLE_BAR)!=0) {
+		if ((sectionStyle & Section.TITLE_BAR) != 0) {
 			FormUtil.allocateSectionTitleBarColors(colors);
 			//section.setForeground(colors.getColor(COLOR_TB_FG));
 			section.setTitleBarBackground(colors.getColor(FormColors.TB_GBG));
-			section.setTitleBarBorderColor(colors.getColor(FormColors.TB_BORDER));
-			section.setTitleGradientBackground(colors.getColor(FormColors.TB_GBG));
-			if (section.toggle!=null)
-				section.toggle.setDecorationColor(colors.getColor(FormColors.TB_TOGGLE));
+			section.setTitleBarBorderColor(colors
+					.getColor(FormColors.TB_BORDER));
+			section.setTitleGradientBackground(colors
+					.getColor(FormColors.TB_GBG));
+			if (section.toggle != null)
+				section.toggle.setDecorationColor(colors
+						.getColor(FormColors.TB_TOGGLE));
 		}
 		return section;
 	}
@@ -478,10 +496,9 @@ public class FormToolkit {
 		return tree;
 	}
 	/**
-	 * Creates a scrolled form widget in the provided parent.
-	 * If you do not require scrolling because there is
-	 * already a scrolled composite up the parent chain,
-	 * use 'createForm' instead.
+	 * Creates a scrolled form widget in the provided parent. If you do not
+	 * require scrolling because there is already a scrolled composite up the
+	 * parent chain, use 'createForm' instead.
 	 * 
 	 * @param parent
 	 *            the scrolled form parent
@@ -498,12 +515,12 @@ public class FormToolkit {
 		return form;
 	}
 	/**
-	 * Creates a form widget in the provided parent. Note
-	 * that this widget does not scroll its content, so make
-	 * sure there is a scrolled composite up the parent chain.
-	 * If you require scrolling, use 'createScrolledForm' instead.
+	 * Creates a form widget in the provided parent. Note that this widget does
+	 * not scroll its content, so make sure there is a scrolled composite up the
+	 * parent chain. If you require scrolling, use 'createScrolledForm' instead.
 	 * 
-	 * @param the form parent
+	 * @param the
+	 *            form parent
 	 * @return the form that does not scroll
 	 * @see #createScrolledForm
 	 */
@@ -534,10 +551,10 @@ public class FormToolkit {
 	//TODO hook delete key
 	/*
 	 * private void deleteKeyPressed(Widget widget) { if (!(widget instanceof
-	 * Control)) return; Control control = (Control) widget; for (Control
-	 * parent = control.getParent(); parent != null; parent =
-	 * parent.getParent()) { if (parent.getData() instanceof SectionPart) {
-	 * SectionPart section = (SectionPart) parent.getData();
+	 * Control)) return; Control control = (Control) widget; for (Control parent =
+	 * control.getParent(); parent != null; parent = parent.getParent()) { if
+	 * (parent.getData() instanceof SectionPart) { SectionPart section =
+	 * (SectionPart) parent.getData();
 	 * section.doGlobalAction(ActionFactory.DELETE.getId()); break; } } }
 	 */
 	/**
@@ -570,13 +587,14 @@ public class FormToolkit {
 		}
 		control.addKeyListener(deleteListener);
 	}
-/**
- * Sets the background color for the entire toolkit. The method
- * delegates the call to the FormColors object and also updates
- * the hyperlink group so that hyperlinks and other objects are
- * in sync.
- * @param bg the new background color
- */
+	/**
+	 * Sets the background color for the entire toolkit. The method delegates
+	 * the call to the FormColors object and also updates the hyperlink group so
+	 * that hyperlinks and other objects are in sync.
+	 * 
+	 * @param bg
+	 *            the new background color
+	 */
 	public void setBackground(Color bg) {
 		hyperlinkGroup.setBackground(bg);
 		colors.setBackground(bg);
@@ -596,16 +614,20 @@ public class FormToolkit {
 	 * pargin width and height must be chosen to allow the toolkit to paint the
 	 * border on the parent around the widgets.
 	 * <p>
-	 * Borders are painted for some controls that are selected by the toolkit
-	 * by default. If a control needs a border but is not on its list, it is
+	 * Borders are painted for some controls that are selected by the toolkit by
+	 * default. If a control needs a border but is not on its list, it is
 	 * possible to force border in the following way:
 	 * 
 	 * <pre>
-	 *  widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
+	 * 
 	 *  
-	 *  or
+	 *    widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
+	 *    
+	 *    or
+	 *    
+	 *    widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+	 *   
 	 *  
-	 *  widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 	 * </pre>
 	 * 
 	 * @param parent
@@ -613,8 +635,8 @@ public class FormToolkit {
 	 *            to be painted.
 	 */
 	public void paintBordersFor(Composite parent) {
-		if (borderStyle == SWT.BORDER)
-			return;
+		//if (borderStyle == SWT.BORDER)
+		//	return;
 		if (borderPainter == null)
 			borderPainter = new BorderPainter();
 		parent.addPaintListener(borderPainter);
@@ -629,8 +651,8 @@ public class FormToolkit {
 	}
 	/**
 	 * Returns the border style used for various widgets created by this
-	 * toolkit. The intent of the toolkit is to create controls with styles
-	 * that yield a 'flat' appearance. On systems where the native borders are
+	 * toolkit. The intent of the toolkit is to create controls with styles that
+	 * yield a 'flat' appearance. On systems where the native borders are
 	 * already flat, we set the style to SWT.BORDER and don't paint the borders
 	 * ourselves. Otherwise, the style is set to SWT.NULL, and borders are
 	 * painted by the toolkit.
@@ -641,22 +663,23 @@ public class FormToolkit {
 		return borderStyle;
 	}
 	/**
-	 * Sets the border style to be used when creating widgets. The
-	 * toolkit chooses the correct style based on the platform but
-	 * this value can be changed using this method.
+	 * Sets the border style to be used when creating widgets. The toolkit
+	 * chooses the correct style based on the platform but this value can be
+	 * changed using this method.
 	 * 
-	 * @param style <code>SWT.BORDER</code> or <code>SWT.NULL</code>
+	 * @param style
+	 *            <code>SWT.BORDER</code> or <code>SWT.NULL</code>
 	 * @see #getBorderStyle
 	 */
 	public void setBorderStyle(int style) {
 		this.borderStyle = style;
 	}
-	
 	private void initialize() {
 		String osname = System.getProperty("os.name");
 		if (osname.equals("Windows XP")) {
-			RGB rgb = FormUtil.getSystemColor(colors, SWT.COLOR_WIDGET_BACKGROUND);
-			if (rgb.red!=212 && rgb.green!=208 && rgb.blue != 200)
+			RGB rgb = FormUtil.getSystemColor(colors,
+					SWT.COLOR_WIDGET_BACKGROUND);
+			if (rgb.red != 212 && rgb.green != 208 && rgb.blue != 200)
 				borderStyle = SWT.BORDER;
 		}
 		hyperlinkGroup = new HyperlinkGroup(colors.getDisplay());
