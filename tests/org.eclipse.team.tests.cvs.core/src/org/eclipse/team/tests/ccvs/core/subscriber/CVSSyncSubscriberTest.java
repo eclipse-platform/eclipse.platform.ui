@@ -40,7 +40,7 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 
 	private ITeamResourceChangeListener listener;
 	private List accumulatedTeamDeltas = new ArrayList();
-	private static SyncInfoSource source = null;
+	private static SyncInfoSource source = new SyncInfoSource();
 
 	public CVSSyncSubscriberTest() {
 		super();
