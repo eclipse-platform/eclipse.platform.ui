@@ -245,6 +245,9 @@ public class AntRunner implements IPlatformRunnable {
 	 * 
 	 * Only one build can occur at any given time.
 	 * 
+	 * Sets the current threads context class loader to the AntClassLoader
+	 * for the duration of the build.
+	 * 
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 */
@@ -256,8 +259,10 @@ public class AntRunner implements IPlatformRunnable {
 		buildRunning= true;
 		Object runner= null;
 		Class classInternalAntRunner= null;
+		ClassLoader originalClassLoader= Thread.currentThread().getContextClassLoader();
 		try {
 			ClassLoader loader = getClassLoader();
+			Thread.currentThread().setContextClassLoader(loader);
 			classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
 			runner = classInternalAntRunner.newInstance();
 			// set build file
@@ -333,6 +338,7 @@ public class AntRunner implements IPlatformRunnable {
 			throw new CoreException(status);
 		} finally {
 			buildRunning= false;
+			Thread.currentThread().setContextClassLoader(originalClassLoader);
 		}
 	}
 
@@ -401,33 +407,42 @@ public class AntRunner implements IPlatformRunnable {
 	 * Invokes the building of a project object and executes a build using either a given
 	 * target or the default target. This method is called when running Eclipse headless
 	 * and specifying <code>org.eclipse.ant.core.antRunner</code> as the application.
+	 * 
+	 * Sets the current threads context class loader to the AntClassLoader
+	 * for the duration of the build.
 	 *
 	 * @param argArray the command line arguments
 	 * @exception Exception if a problem occurred during the script execution
 	 */
 	public Object run(Object argArray) throws Exception {
-		//set the preferences for headless mode
-		AntCorePlugin.getPlugin().setRunningHeadless();
-		
-		// Add debug information if necessary - fix for bug 5672.
-		// Since the platform parses the -debug command line arg
-		// and removes it from the args passed to the applications,
-		// we have to check if Eclipse is in debug mode in order to
-		// forward the -debug argument to Ant.
-		if (BootLoader.inDebugMode()) {
-			String[] args = (String[]) argArray;
-			String[] newArgs = new String[args.length + 1];
-			for (int i = 0; i < args.length; i++) {
-				newArgs[i] = args[i];
+		ClassLoader originalClassLoader= Thread.currentThread().getContextClassLoader();
+		try {
+			//set the preferences for headless mode
+			AntCorePlugin.getPlugin().setRunningHeadless();
+			
+			// Add debug information if necessary - fix for bug 5672.
+			// Since the platform parses the -debug command line arg
+			// and removes it from the args passed to the applications,
+			// we have to check if Eclipse is in debug mode in order to
+			// forward the -debug argument to Ant.
+			if (BootLoader.inDebugMode()) {
+				String[] args = (String[]) argArray;
+				String[] newArgs = new String[args.length + 1];
+				for (int i = 0; i < args.length; i++) {
+					newArgs[i] = args[i];
+				}
+				newArgs[args.length] = "-debug"; //$NON-NLS-1$
+				argArray = newArgs;
 			}
-			newArgs[args.length] = "-debug"; //$NON-NLS-1$
-			argArray = newArgs;
+			ClassLoader loader = getClassLoader();
+			Thread.currentThread().setContextClassLoader(loader);
+			Class classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
+			Object runner = classInternalAntRunner.newInstance();
+			Method run = classInternalAntRunner.getMethod("run", new Class[] { Object.class }); //$NON-NLS-1$
+			run.invoke(runner, new Object[] { argArray });
+		} finally {
+			Thread.currentThread().setContextClassLoader(originalClassLoader);
 		}
-		ClassLoader loader = getClassLoader();
-		Class classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
-		Object runner = classInternalAntRunner.newInstance();
-		Method run = classInternalAntRunner.getMethod("run", new Class[] { Object.class }); //$NON-NLS-1$
-		run.invoke(runner, new Object[] { argArray });
 		return null;
 	}
 	
