@@ -39,7 +39,7 @@ public class TagLocalAction extends TagAction {
 		return true;
 	}
 
-	protected ITagOperation getTagOperation() {
+	protected ITagOperation createTagOperation() {
 		return new TagOperation(getShell(), resources);
 	}
 	

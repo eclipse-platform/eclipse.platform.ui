@@ -39,9 +39,6 @@ public abstract class TagAction extends WorkspaceAction {
 	// remember if the execute action was cancelled
 	private boolean wasCancelled = false;
 
-	// The previously remembered tag
-	protected static String previousTag = ""; //$NON-NLS-1$
-
 	/**
 	 * @see CVSAction#execute(IAction)
 	 */
@@ -74,8 +71,6 @@ public abstract class TagAction extends WorkspaceAction {
 		}
 		
 		broadcastTagChange(result[0]);
-		
-		previousTag = result[0].getTag().getName();
 	}
 	
 	protected boolean performPrompting()  {
@@ -85,11 +80,11 @@ public abstract class TagAction extends WorkspaceAction {
 	/**
 	 * Prompts the user for a tag name.
 	 * Note: This method is designed to be overridden by test cases.
-	 * @return the tag, or null to cancel
+	 * @return the operation, or null to cancel
 	 */
 	protected ITagOperation configureOperation() {
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
-		ITagOperation operation = getTagOperation();
+		ITagOperation operation = createTagOperation();
 		TagAsVersionDialog dialog = new TagAsVersionDialog(getShell(),
 											Policy.bind("TagAction.tagResources"), //$NON-NLS-1$
 											operation);
@@ -114,7 +109,7 @@ public abstract class TagAction extends WorkspaceAction {
 		return dialog.getOperation();
 	}
 	
-	protected abstract ITagOperation getTagOperation();
+	protected abstract ITagOperation createTagOperation();
 
 	protected String getErrorTitle() {
 		return Policy.bind("TagAction.tagErrorTitle"); //$NON-NLS-1$
