@@ -50,7 +50,6 @@ package org.eclipse.ui;
  */
 public interface IEditorPart extends IWorkbenchPart, ISaveablePart {
 
-	// List of public property ids. See EditorSite for internal ones.
 	/**
 	 * The property id for <code>isDirty</code>.
 	 */
