@@ -56,6 +56,48 @@ static void setupElementTree(ElementTree tree, int num) {
 		}
 	}
 }
+
+public void testConcurrentModification() {
+	//the dining detectives problem
+	ElementTree baseTree = new ElementTree();
+	int n= 3;
+	setupElementTree(baseTree, n);
+	baseTree.immutable();
+	final ElementTree tree = baseTree.newEmptyDelta();
+	modifyTree(tree);
+	final ArrayList elts = new ArrayList();
+	final IElementContentVisitor visitor = new IElementContentVisitor() {
+		public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object info) {
+			elts.add(info);
+			return true;
+		}
+	};
+	Thread reader = new Thread(new Runnable() {
+		public void run() {
+			for (int i = 0; i < 80000; i++) {
+				new ElementTreeIterator(tree, Path.ROOT).iterate(visitor);
+			}
+		}
+	}, "Holmes (reader)");
+	Thread writer = new Thread(new Runnable() {
+		public void run() {
+			for (int i = 0; i < 1000; i++) {
+				modifyTree(tree);
+				recursiveDelete(tree, Path.ROOT);
+				setupElementTree(tree, 3);
+			}
+		}
+	}, "Doyle (writer)");
+	
+	reader.start();
+	writer.start();
+	//wait for both threads to finish
+	try {
+		reader.join();
+		writer.join();
+	} catch (InterruptedException e) {
+	}
+}
 public static Test suite() {  
 	TestSuite suite= new TestSuite(ElementTreeIteratorTest.class); 
 	return suite;
@@ -85,11 +127,16 @@ public void testContentIterator() {
 	new ElementTreeIterator(tree, innerElement).iterate(elementVisitor);
 	assertEquals("2", 1+n+n*n, elts.size());
 }
-protected void deleteTreeContents(ElementTree tree) {
-	IPath[] children = tree.getChildren(Path.ROOT);
+/**
+ * Method deleteChild.
+ * @param path
+ */
+private void recursiveDelete(ElementTree tree, IPath path) {
+	IPath[] children = tree.getChildren(path);
 	for (int i = 0; i < children.length; i++) {
-		tree.deleteElement(children[i]);
+		recursiveDelete(tree, children[i]);
 	}
+	tree.deleteElement(path);
 }
 protected void modifyTree(ElementTree tree) {
 	class MyStack extends Stack {
