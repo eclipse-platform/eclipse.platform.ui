@@ -274,10 +274,7 @@ public class DeferredTreeContentManager {
                 //Cancel the job if the tree viewer got closed
                 if (treeViewer.getControl().isDisposed())
                     return Status.CANCEL_STATUS;
-                //Prevent extra redraws on deletion and addition
-                treeViewer.getControl().setRedraw(false);
                 treeViewer.add(parent, children);
-                treeViewer.getControl().setRedraw(true);
                 return Status.OK_STATUS;
             }
         };
