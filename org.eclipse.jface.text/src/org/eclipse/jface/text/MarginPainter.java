@@ -24,54 +24,89 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 
 /**
- * Paints a vertical line at a given column.
+ * Paints a vertical line (margin line) after a given column respecting the source viewer's font.
+ * Clients usually instantiate and configure objects of this class. <p>
+ * This class is not intended to be subclassed.
+ * 
+ * @since 2.1
  */
 public class MarginPainter implements IPainter, PaintListener {
 	
-
+	/** The widget of the source viewer */
 	private StyledText fTextWidget;
 	
+	/** The column after which to paint the line, default value <code>60</code> */
 	private int fMarginWidth= 80;
+	/** The color in which to paint the line */
 	private Color fColor;
+	/** The line style of the line to be painted, default value <code>SWT.LINE_SOLID</code> */
 	private int fLineStyle= SWT.LINE_SOLID;
+	/** The line width of the line to be painted, default value <code>1</code> */
 	private int fLineWidth= 1;
-	
+	/** The cached x-offset of the <code>fMarginWidth</code> for the current font */
 	private int fCachedWidgetX= -1;
+	/** The active state of this painter */
 	private boolean fIsActive= false;
 	
-	
+	/**
+	 * Creates a new painter for the given source viewer.
+	 * 
+	 * @param sourceViewer the source viewer
+	 */
 	public MarginPainter(ISourceViewer sourceViewer) {
 		fTextWidget= sourceViewer.getTextWidget();
 	}
 	
+	/**
+	 * Sets the column after which to draw the margin line.
+	 * 
+	 * @param width the column
+	 */
 	public void setMarginRulerColumn(int width) {
 		fMarginWidth= width;
 		initialize();
 	}
 	
+	/**
+	 * Sets the line style of the margin line.
+	 * 
+	 * @param lineStyle a <code>SWT</code> style constant describing the line style
+	 */
 	public void setMarginRulerStyle(int lineStyle) {
 		fLineStyle= lineStyle;
 	}
 	
+	/** 
+	 * Sets the line width of the margin line.
+	 * 
+	 * @param lineWidth the line width
+	 */
 	public void setMarginRulerWidth(int lineWidth) {
 		fLineWidth= lineWidth;
 	}
 	
 	/**
-	 * Must be called before <code>paint</code> is called the first time.
+	 * Sets the color of the margin line. Must be called before <code>paint</code> is called the first time.
+	 * 
+	 * @param color the color
 	 */
 	public void setMarginRulerColor(Color color) {
 		fColor= color;
 	}
 	
 	/**
-	 * Must be called explicitly when font of text widget changes.
+	 * Initializes this painter, by flushing and recomputing all caches and causing
+	 * the widget to be redrawn. Must be called explicitly when font of text widget changes.
 	 */
 	public void initialize() {
 		computeWidgetX();
 		fTextWidget.redraw();
 	}
 	
+	/**
+	 * Computes and remembers the x-offset of the margin column for the
+	 * current widget font.
+	 */
 	private void computeWidgetX() {
 		GC gc= new GC(fTextWidget);
 		int pixels= gc.getFontMetrics().getAverageCharWidth();

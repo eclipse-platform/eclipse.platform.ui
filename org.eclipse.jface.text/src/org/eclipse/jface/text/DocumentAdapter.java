@@ -85,7 +85,7 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 	}
 	
 	/*
-	 * @see StyledTextContent#addTextChangeListener
+	 * @see StyledTextContent#addTextChangeListener(TextChangeListener)
 	 */
 	public void addTextChangeListener(TextChangeListener listener) {
 		Assert.isNotNull(listener);
@@ -94,7 +94,7 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 	}
 		
 	/*
-	 * @see StyledTextContent#removeTextChangeListener
+	 * @see StyledTextContent#removeTextChangeListener(TextChangeListener)
 	 */
 	public void removeTextChangeListener(TextChangeListener listener) {
 		Assert.isNotNull(listener);
@@ -169,7 +169,7 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 	}
 	
 	/*
-	 * @see StyledTextContent#setText
+	 * @see StyledTextContent#setText(String)
 	 */
 	public void setText(String text) {
 		fDocument.set(text);
@@ -183,7 +183,7 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 	}
 	
 	/*
-	 * @see StyledTextContent#getLineDelimiter
+	 * @see StyledTextContent#getLineDelimiter()
 	 */
 	public String getLineDelimiter() {
 		
@@ -254,10 +254,22 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 		fireTextChanging();
 	}
 	
+	/**
+	 * Checks whether this event has been changed between <code>documentAboutToBeChanged</code> and
+	 * <code>documentChanged</code>.
+	 * 
+	 * @param event the event to be checked
+	 * @return <code>true</code> if the event has been changed, <code>false</code> otherwise
+	 */
 	private boolean isPatchedEvent(DocumentEvent event) {
 		return fOriginalEvent.fOffset != event.fOffset || fOriginalEvent.fLength != event.fLength || fOriginalEvent.fText != event.fText;
 	}
 	
+	/**
+	 * Makes a copy of the given event and remembers it.
+	 * 
+	 * @param event the event to be copied
+	 */
 	private void rememberEventData(DocumentEvent event) {
 		fOriginalEvent.fOffset= event.fOffset;
 		fOriginalEvent.fLength= event.fLength;

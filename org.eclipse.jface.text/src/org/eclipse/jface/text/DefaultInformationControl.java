@@ -63,6 +63,9 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight);
 	};
 
+	/**
+	 * Layout used to achive the "tool tip" look, i.e., flat with a thin boarder.
+	 */
 	private static class BorderFillLayout extends Layout {
 		
 		/** The border widths. */
@@ -70,6 +73,8 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 
 		/**
 		 * Creates a fill layout with a border.
+		 * 
+		 * @param borderSize the size of the border
 		 */
 		public BorderFillLayout(int borderSize) {
 			if (borderSize < 0)
@@ -79,6 +84,8 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 
 		/**
 		 * Returns the border size.
+		 * 
+		 * @return the border size
 		 */		
 		public int getBorderSize() {
 			return fBorderSize;
@@ -121,7 +128,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 				}
 			}												
 		}
-	}	
+	}
 	
 	
 	/** Border thickness in pixels. */
@@ -150,9 +157,9 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * styles are applied to the created styled text widget.
 	 * 
 	 * @param parent the parent shell
-	 * @param presenter the presenter to be used
 	 * @param shellStyle the additional styles for the shell
 	 * @param style the additional styles for the styled text widget
+	 * @param presenter the presenter to be used
 	 */
 	public DefaultInformationControl(Shell parent, int shellStyle, int style, IInformationPresenter presenter) {
 		
@@ -188,8 +195,8 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * styles are applied to the created styled text widget.
 	 * 
 	 * @param parent the parent shell
-	 * @param presenter the presenter to be used
 	 * @param style the additional styles for the styled text widget
+	 * @param presenter the presenter to be used
 	 */	
 	public DefaultInformationControl(Shell parent,int style, IInformationPresenter presenter) {
 		this(parent, SWT.NO_TRIM, style, presenter);

@@ -27,25 +27,44 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 
 /**
- * Paints the background of the cursor line in the configured color.
+ * A painter the draws the background of the cursor line in a configured color.
+ * Clients usually instantiate and configure object of this class.<p>
+ * This class is not intended to be subclassed.
+ * 
+ * @since 2.1
  */
 public class CursorLinePainter implements IPainter, LineBackgroundListener {
 
+	/** The viewer the painter works on */
 	private final ISourceViewer fViewer;
+	/** The cursor line back ground color */
 	private Color fHighlightColor;
+	/** The paint position manager for managing the line coordinates */
 	private IPaintPositionManager fPositionManager;
 
-	// positions to keep track of beginning and end of line to be painted or cleared
+	/** Keeps track of the line to be painted */
 	private Position fCurrentLine= new Position(0, 0);
+	/** Keeps track of the line to be cleared */
 	private Position fLastLine= new Position(0, 0);
-	// used to keep track of the last line painted
+	/** Keeps track of the line number of the last painted line */
 	private int fLastLineNumber= -1;
+	/** Indicates whether this painter is active */
 	private boolean fIsActive;
 
+	/**
+	 * Creates a new painter for the given source viewer.
+	 * 
+	 * @param sourceViewer the source viewer for which to create a painter
+	 */
 	public CursorLinePainter(ISourceViewer sourceViewer) {
 		fViewer= sourceViewer;
 	}
-
+	
+	/**
+	 * Sets the color in which to draw the background of the cursor line.
+	 * 
+	 * @param highlightColor the color in which to draw the background of the cursor line
+	 */
 	public void setHighlightColor(Color highlightColor) {
 		fHighlightColor= highlightColor;
 	}
@@ -69,6 +88,12 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 		}
 	}
 
+	/**
+	 * Updates all the cached information about the lines to be painted and to be cleared. Returns <code>true</code>
+	 * if the line number of the cursor line has changed.
+	 * 
+	 * @return <code>true</code> if cursor line changed
+	 */
 	private boolean updateHighlightLine() {
 		try {
 
@@ -101,6 +126,12 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 		return false;
 	}
 	
+	/**
+	 * Returns the location of the caret as offset in the source viewer's
+	 * input document.
+	 * 
+	 * @return the caret location
+	 */
 	private int getModelCaret() {
 		int widgetCaret= fViewer.getTextWidget().getCaretOffset();
 		if (fViewer instanceof ITextViewerExtension3) {
@@ -112,6 +143,11 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 		}
 	}
 
+	/**
+	 * Assumes the given position to specify offset and length of a line to be painted.
+	 * 
+	 * @param position the specification of the line  to be painted
+	 */
 	private void drawHighlightLine(Position position) {
 		
 		// if the position that is about to be drawn was deleted then we can't

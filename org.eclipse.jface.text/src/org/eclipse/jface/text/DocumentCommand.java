@@ -25,7 +25,8 @@ import org.eclipse.swt.events.VerifyEvent;
 /**
  * Represents a text modification as a document replace command. The text modification is given
  * as a <code>VerifyEvent</code> and translated into a document replace command relative
- * to a given offset. A document command can also be used to initialize a given <code>VerifyEvent</code>.
+ * to a given offset. A document command can also be used to initialize a given <code>VerifyEvent</code>.<p>
+ * A document command can also represent a list of related changes.
  */
 public class DocumentCommand {
 	
@@ -34,12 +35,17 @@ public class DocumentCommand {
 	 * @since 2.1
 	 */
 	private static class Command implements Comparable {
+		/** The offset of the range to be replaced */
 		private final int fOffset;
+		/** The length of the range to be replaced. */
 		private final int fLength;
+		/** The replacement text */
 		private final String fText;
+		/** The listern who owns this command */
 		private final IDocumentListener fOwner;
 		
 		/**
+		 * Creates a new command with the given specification.
 		 * 
 		 * @param offset the offset of the replace command
 		 * @param length the length of the replace command
@@ -57,6 +63,8 @@ public class DocumentCommand {
 
 		/**
 		 * Returns the length delta for this command.
+		 * 
+		 * @return the length delta for this command
 		 */
 		public int getDeltaLength() {
 			return (fText == null ? 0 : fText.length()) - fLength;
@@ -66,7 +74,7 @@ public class DocumentCommand {
 		 * Executes the document command on the specified document.
 		 * 
 		 * @param document the document on which to execute the command.
-		 * @throws BadLocationException
+		 * @throws BadLocationException in case this commands cannot be executed
 		 */		
 		public void execute(IDocument document) throws BadLocationException {
 			
@@ -97,7 +105,7 @@ public class DocumentCommand {
 				if (value != 0)
 					return value;
 			}
-			// never happens
+			// the answer
 			return 42;
 		}
 
@@ -158,7 +166,7 @@ public class DocumentCommand {
 	 */
 	private static class CommandIterator implements Iterator {
 
-		/** The commdn iterator. */
+		/** The command iterator. */
 		private final Iterator fIterator;
 
 		/** The original command. */
@@ -172,6 +180,7 @@ public class DocumentCommand {
 		 * 
 		 * @param commands an ascending ordered list of commands
 		 * @param command the original command
+		 * @param forward the direction
 		 */
 		public CommandIterator(final List commands, final Command command, final boolean forward) {
 			if (commands == null || command == null)
@@ -350,6 +359,14 @@ public class DocumentCommand {
 		return 1 + fCommands.size();	
 	}
 
+	/**
+	 * Returns whether the two given commands intersect.
+	 * 
+	 * @param command0 the first command
+	 * @param command1 the second command
+	 * @return <code>true</code> if the commands intersect
+	 * @since 2.1
+	 */
 	private boolean intersects(Command command0, Command command1) {
 		// diff middle points if not intersecting
 		if (command0.fOffset + command0.fLength <= command1.fOffset || command1.fOffset + command1.fLength <= command0.fOffset)		
@@ -358,6 +375,13 @@ public class DocumentCommand {
 			return true;		
 	}
 	
+	/**
+	 * Returns whether the given command intersects with this command.
+	 * 
+	 * @param command the command
+	 * @return <code>true</code> if the command intersects with this command
+	 * @since 2.1
+	 */
 	private boolean intersects(Command command) {
 		// diff middle points if not intersecting
 		if (offset + length <= command.fOffset || command.fOffset + command.fLength <= offset)		

@@ -118,6 +118,14 @@ public class DefaultUndoManager implements IUndoManager {
 			fTextViewer.revealRange(modelRange.getOffset(), modelRange.getLength());
 		}
 		
+		/**
+		 * Translates a given widget range into the corresponding range of the source viewer's input document.
+		 * 
+		 * @param offset the offset of the widget range
+		 * @param length the length of the widget range
+		 * @return the corresponding model range
+		 * @since 2.1
+		 */
 		protected IRegion widgetRange2ModelRange(int offset, int length) {
 			if (fTextViewer instanceof ITextViewerExtension3) {
 				ITextViewerExtension3 extension= (ITextViewerExtension3) fTextViewer;
@@ -309,7 +317,9 @@ public class DefaultUndoManager implements IUndoManager {
 	 * Represents pretended <code>UndoManager</code> state.
 	 */
 	class PretendedUndoManagerState {
+		/** The counter in the undo stack */
 		protected int cmdCounter= -1;
+		/** The size of the undo stack */
 		protected int stackSize= -1;
 	};
 	
