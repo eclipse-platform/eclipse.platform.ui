@@ -85,7 +85,8 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	synchronized void build(boolean needsBuild) {
 		buildNeeded |= needsBuild;
 		long delay = Math.max(Policy.MIN_BUILD_DELAY, Policy.MAX_BUILD_DELAY + lastBuild - System.currentTimeMillis());
-		switch (getState()) {
+		int state = getState();
+		switch (state) {
 			case Job.SLEEPING :
 				wakeUp(delay);
 				break;
@@ -148,6 +149,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 				broadcastChanges(IResourceChangeEvent.PRE_BUILD);
 				if (shouldBuild()) 
 					workspace.getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, Policy.subMonitorFor(monitor, Policy.opWork));
+				buildNeeded = false;
 			} finally {
 				//building may close the tree, but we are still inside an
 				// operation so open it
@@ -205,7 +207,10 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		}
 	}
 
-	public synchronized boolean shouldBuild() {
+	/**
+	 * Returns true if a build is actually needed, and false otherwise.
+	 */
+	private synchronized boolean shouldBuild() {
 		try {
 			//if auto-build is off then we never run
 			if (!workspace.isAutoBuilding())
