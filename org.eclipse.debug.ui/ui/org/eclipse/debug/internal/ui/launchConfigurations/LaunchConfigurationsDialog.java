@@ -1207,17 +1207,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return DebugUIPlugin.buildAndLaunch(config, getMode(), null);		
 	}
 	
-	private void removeErrorLaunches() {
-		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
-		ILaunch[] launches= manager.getLaunches();
-		for (int i = 0; i < launches.length; i++) {
-		  ILaunch iLaunch = launches[i];
-		  if (!iLaunch.hasChildren()) {
-			  manager.removeLaunch(iLaunch);
-			 }
-		}
-	}
-	
 	private IPreferenceStore getPreferenceStore() {
 		return DebugUIPlugin.getDefault().getPreferenceStore();
 	}
@@ -1815,7 +1804,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				status = e.getStatus();
 			} 
 		}
-		// if no hanlder, or handler failed, display error/wanring dialog
+		// if no handler, or handler failed, display error/warning dialog
 		String title = null;
 		switch (status.getSeverity()) {
 			case IStatus.ERROR:

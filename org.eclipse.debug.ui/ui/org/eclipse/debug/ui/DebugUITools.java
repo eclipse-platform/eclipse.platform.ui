@@ -24,6 +24,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -44,6 +45,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -481,18 +483,26 @@ public class DebugUITools {
 	/**
 	 * Saves and builds the workspace according to current preference settings, and
 	 * launches the given launch configuration in the specified mode with a
-	 * progress dialog. Reports any exceptions that occurr in an error dilaog.
+	 * progress dialog. Reports any exceptions that occur in an error dilaog.
 	 * 
 	 * @param configuration the configuration to launch
 	 * @param mode launch mode - run or debug
 	 * @since 3.0
 	 */
-	public static void launch(final ILaunchConfiguration configuration, final String mode) {
+	public static void launch(ILaunchConfiguration configuration, String mode) {
 		if (DebugUIPlugin.preLaunchSave()) {
 			try {
 				buildAndLaunch(configuration, mode, null);
-			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.getString("DebugUITools.Error_1"), DebugUIMessages.getString("DebugUITools.Exception_occurred_during_launch_2"), e); //$NON-NLS-1$ //$NON-NLS-2$
+			} catch (CoreException ce) {
+				IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(ce.getStatus());
+				if (handler != null) {
+					LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
+					if (group != null) {
+						openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), ce.getStatus());
+						return;
+					}
+				}
+				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.getString("DebugUITools.Error_1"), DebugUIMessages.getString("DebugUITools.Exception_occurred_during_launch_2"), ce); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
