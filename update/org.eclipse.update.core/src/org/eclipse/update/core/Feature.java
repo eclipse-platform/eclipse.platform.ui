@@ -235,6 +235,15 @@ public class Feature extends FeatureModel implements IFeature {
 
 		// Get source feature provider and verifier. Initialize target variables.
 		IFeatureContentProvider provider = getFeatureContentProvider();
+
+		IVerifier parentVerifier=null;
+		if (getFeatureContentConsumer().getParent() != null) {
+			IFeatureContentConsumer parentConsumer =
+				getFeatureContentConsumer().getParent();
+			IFeature parentFeature = parentConsumer.getFeature();
+			parentVerifier = parentFeature.getFeatureContentProvider().getVerifier();
+		}
+
 		IVerifier verifier = provider.getVerifier();
 		IFeatureReference result = null;
 		IFeatureContentConsumer consumer = null;
@@ -268,14 +277,30 @@ public class Feature extends FeatureModel implements IFeature {
 			ContentReference[] references =
 				provider.getFeatureEntryArchiveReferences(monitor);
 			IVerificationResult vr;
-			if (verifier != null) {
+
+			// VERIFICATION 
+			// if the parent verified the reference, use the verification result
+			// if the parent doesn't recognize the reference or doesn't exist
+			// verify ourself
+			if (verifier != null || parentVerifier != null) {
 				for (int i = 0; i < references.length; i++) {
-					vr = verifier.verify(this, references[i], true, monitor);
+					vr=null;
+					if (parentVerifier != null) {
+						vr = parentVerifier.verify(this, references[i], true, monitor);
+						if (vr.getVerificationCode() == IVerificationResult.TYPE_ENTRY_UNRECOGNIZED) {
+							if (verifier != null)
+								vr = verifier.verify(this, references[i], true, monitor);
+						}
+					} else {
+						if (verifier != null)
+							vr = verifier.verify(this, references[i], true, monitor);
+					}
 					if (vr != null) {
 						promptForVerification(vr, verificationListener);
 					}
 				}
 			}
+
 			if (monitor != null) {
 				monitor.worked(1);
 				if (monitor.isCanceled())
@@ -286,14 +311,27 @@ public class Feature extends FeatureModel implements IFeature {
 			for (int i = 0; i < pluginsToInstall.length; i++) {
 				references =
 					provider.getPluginEntryArchiveReferences(pluginsToInstall[i], monitor);
-				if (verifier != null) {
+
+				// VERIFICATION
+				if (verifier != null || parentVerifier != null) {
 					for (int j = 0; j < references.length; j++) {
-						vr = verifier.verify(this, references[j], false, monitor);
+						vr=null;
+						if (parentVerifier != null) {
+							vr = parentVerifier.verify(this, references[j], false, monitor);
+							if (vr.getVerificationCode() == IVerificationResult.TYPE_ENTRY_UNRECOGNIZED) {
+								if (verifier != null)
+									vr = verifier.verify(this, references[i], true, monitor);
+							}
+						} else {
+							if (verifier != null)
+								vr = verifier.verify(this, references[i], true, monitor);
+						}
 						if (vr != null) {
 							promptForVerification(vr, verificationListener);
 						}
 					}
 				}
+
 				if (monitor != null) {
 					monitor.worked(1);
 					if (monitor.isCanceled())
@@ -471,33 +509,34 @@ public class Feature extends FeatureModel implements IFeature {
 		try {
 			Set allPluginEntries = new HashSet();
 			Set allNonPluginEntries = new HashSet();
-						
+
 			IPluginEntry[] plugins = getPluginEntries();
 			allPluginEntries.addAll(Arrays.asList(plugins));
-			INonPluginEntry[] nonPlugins = getNonPluginEntries();			
-			allNonPluginEntries.addAll(Arrays.asList(nonPlugins));			
+			INonPluginEntry[] nonPlugins = getNonPluginEntries();
+			allNonPluginEntries.addAll(Arrays.asList(nonPlugins));
 
 			IFeatureReference[] children = getIncludedFeatureReferences();
 			for (int i = 0; i < children.length; i++) {
 				plugins = children[i].getFeature().getPluginEntries();
 				allPluginEntries.addAll(Arrays.asList(plugins));
-				nonPlugins = children[i].getFeature().getNonPluginEntries();		
-				allNonPluginEntries.addAll(Arrays.asList(nonPlugins));				
+				nonPlugins = children[i].getFeature().getNonPluginEntries();
+				allNonPluginEntries.addAll(Arrays.asList(nonPlugins));
 			}
 
 			IPluginEntry[] totalPlugins = new IPluginEntry[allPluginEntries.size()];
-			INonPluginEntry[] totalNonPlugins= new INonPluginEntry[allNonPluginEntries.size()];
-			if (allPluginEntries.size()!=0){
+			INonPluginEntry[] totalNonPlugins =
+				new INonPluginEntry[allNonPluginEntries.size()];
+			if (allPluginEntries.size() != 0) {
 				allPluginEntries.toArray(totalPlugins);
-			} 
-			if (allNonPluginEntries.size()!=0){
+			}
+			if (allNonPluginEntries.size() != 0) {
 				allNonPluginEntries.toArray(totalNonPlugins);
-			} 		
-				
+			}
+
 			return getFeatureContentProvider().getDownloadSizeFor(
-					totalPlugins,
-					totalNonPlugins);
-			
+				totalPlugins,
+				totalNonPlugins);
+
 		} catch (CoreException e) {
 			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
 			return ContentEntryModel.UNKNOWN_SIZE;
@@ -514,33 +553,34 @@ public class Feature extends FeatureModel implements IFeature {
 		try {
 			Set allPluginEntries = new HashSet();
 			Set allNonPluginEntries = new HashSet();
-						
+
 			IPluginEntry[] plugins = getPluginEntries();
 			allPluginEntries.addAll(Arrays.asList(plugins));
-			INonPluginEntry[] nonPlugins = getNonPluginEntries();			
-			allNonPluginEntries.addAll(Arrays.asList(nonPlugins));			
+			INonPluginEntry[] nonPlugins = getNonPluginEntries();
+			allNonPluginEntries.addAll(Arrays.asList(nonPlugins));
 
 			IFeatureReference[] children = getIncludedFeatureReferences();
 			for (int i = 0; i < children.length; i++) {
 				plugins = children[i].getFeature().getPluginEntries();
 				allPluginEntries.addAll(Arrays.asList(plugins));
-				nonPlugins = children[i].getFeature().getNonPluginEntries();		
-				allNonPluginEntries.addAll(Arrays.asList(nonPlugins));				
+				nonPlugins = children[i].getFeature().getNonPluginEntries();
+				allNonPluginEntries.addAll(Arrays.asList(nonPlugins));
 			}
 
 			IPluginEntry[] totalPlugins = new IPluginEntry[allPluginEntries.size()];
-			INonPluginEntry[] totalNonPlugins= new INonPluginEntry[allNonPluginEntries.size()];
-			if (allPluginEntries.size()!=0){
+			INonPluginEntry[] totalNonPlugins =
+				new INonPluginEntry[allNonPluginEntries.size()];
+			if (allPluginEntries.size() != 0) {
 				allPluginEntries.toArray(totalPlugins);
-			} 
-			if (allNonPluginEntries.size()!=0){
+			}
+			if (allNonPluginEntries.size() != 0) {
 				allNonPluginEntries.toArray(totalNonPlugins);
-			} 		
-				
+			}
+
 			return getFeatureContentProvider().getInstallSizeFor(
-					totalPlugins,
-					totalNonPlugins);
-					
+				totalPlugins,
+				totalNonPlugins);
+
 		} catch (CoreException e) {
 			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
 			return ContentEntryModel.UNKNOWN_SIZE;
