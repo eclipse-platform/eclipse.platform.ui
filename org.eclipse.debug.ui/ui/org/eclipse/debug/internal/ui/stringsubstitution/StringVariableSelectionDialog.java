@@ -177,7 +177,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		gd.horizontalSpan = 2;
 		desc.setLayoutData(gd);
 		
-		fDescriptionText = new Text(container, SWT.BORDER | SWT.WRAP);
+		fDescriptionText = new Text(container, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
 		fDescriptionText.setFont(container.getFont());
 		fDescriptionText.setEditable(false);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
