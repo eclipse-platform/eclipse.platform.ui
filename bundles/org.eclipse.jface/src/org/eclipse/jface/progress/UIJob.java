@@ -16,6 +16,15 @@ import org.eclipse.swt.widgets.Display;
 public abstract class UIJob extends NotifyingJob {
 	private Display display;
 
+	public UIJob() {
+		super();
+	}
+
+	public UIJob(Display jobDisplay) {
+		this();
+		display = jobDisplay;
+	}
+
 	/**
 	 * Convenience method to return a status for an exception.
 	 * @param exception
@@ -36,9 +45,9 @@ public abstract class UIJob extends NotifyingJob {
 	public final IStatus run(final IProgressMonitor monitor) {
 
 		Display asyncDisplay = getDisplay();
-		
+
 		if (asyncDisplay == null) {
-			
+
 			System.out.println("No display");
 			return new Status(
 				IStatus.ERROR,
