@@ -9,7 +9,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
-import org.eclipse.debug.internal.ui.preferences.*;
 
 /**
  * Debug favorites and history

@@ -5,18 +5,13 @@ package org.eclipse.debug.internal.ui.views.expression;
  * All Rights Reserved.
  */
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.views.variables.*;
-import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.debug.internal.ui.views.variables.VariablesViewContentProvider;
  
 /**
  * Provides contents for the expression view
