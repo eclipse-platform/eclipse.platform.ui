@@ -237,7 +237,7 @@ public class SiteLocal
 		 ((InstallConfiguration) getCurrentConfiguration()).save(isTransient());
 
 		// save the local site
-		if (getLocationURL().getProtocol().equalsIgnoreCase("file")) { //$NON-NLS-1$
+		if ("file".equalsIgnoreCase(getLocationURL().getProtocol())) { //$NON-NLS-1$
 			File file = null;
 			try {
 				URL newURL = UpdateManagerUtils.getURL(getLocationURL(), SITE_LOCAL_FILE, null);
@@ -995,7 +995,7 @@ public class SiteLocal
 		String temp = configLocation.toExternalForm();
 		temp += UPDATE_STATE_SUFFIX + "/";
 		URL updateLocation = new URL(temp);
-		if (updateLocation.getProtocol().equals("file")) {
+		if ("file".equalsIgnoreCase(updateLocation.getProtocol())) {
 			// ensure path exists. Handle transient configurations
 			ArrayList list = new ArrayList();
 			File path = new File(updateLocation.getFile());
