@@ -34,8 +34,8 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
-import org.eclipse.ui.internal.presentations.WorkbenchPresentationFactory;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
+import org.eclipse.ui.presentations.WorkbenchPresentationFactory;
 
 /**
  * Internal class providing special access for configuring workbench windows.

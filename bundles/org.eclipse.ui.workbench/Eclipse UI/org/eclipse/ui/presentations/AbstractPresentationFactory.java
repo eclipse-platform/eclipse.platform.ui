@@ -98,20 +98,19 @@ public abstract class AbstractPresentationFactory {
             IStackPresentationSite site, int role, int flags,
             String perspectiveId, String folderId);
     
-    
     /**
      * Creates the status line manager for the window.
      * 
-     * @return the status line manager for the window
+     * @return the window's status line manager
      */
-    public abstract IStatusLineManager createWindowStatusLineManager();
+    public abstract IStatusLineManager createStatusLineManager();
 
     /**
-     * Creates the control for the status line.
+     * Creates the control for the window's status line.
      * 
-     * @param statusLine the status line manager
+     * @param statusLine the window's status line manager
      * @param parent the parent composite
-     * @return the status line control
+     * @return the window's status line control
      */
-    public abstract Control createWindowStatusLineControl(IStatusLineManager statusLine, Composite parent);
+    public abstract Control createStatusLineControl(IStatusLineManager statusLine, Composite parent);
 }

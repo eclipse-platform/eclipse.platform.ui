@@ -9,16 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.presentations;
+package org.eclipse.ui.presentations;
 
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.presentations.AbstractPresentationFactory;
-import org.eclipse.ui.presentations.IStackPresentationSite;
-import org.eclipse.ui.presentations.StackPresentation;
+import org.eclipse.ui.internal.presentations.PartTabFolderPresentation;
 
 /**
  * The default presentation factory for the Workbench.
@@ -48,14 +46,14 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.AbstractPresentationFactory
      */
-    public IStatusLineManager createWindowStatusLineManager() {
+    public IStatusLineManager createStatusLineManager() {
         return new StatusLineManager();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.AbstractPresentationFactory
      */
-    public Control createWindowStatusLineControl(IStatusLineManager statusLine, Composite parent) {
+    public Control createStatusLineControl(IStatusLineManager statusLine, Composite parent) {
         return ((StatusLineManager) statusLine).createControl(parent, SWT.NONE);
     }
 }

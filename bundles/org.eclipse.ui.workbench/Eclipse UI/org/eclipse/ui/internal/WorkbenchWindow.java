@@ -2283,7 +2283,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
      */
     protected StatusLineManager createStatusLineManager() {
         // @issue ApplicationWindow and WorkbenchWindow should allow full IStatusLineManager
-        return (StatusLineManager) getWindowConfigurer().getPresentationFactory().createWindowStatusLineManager();
+        return (StatusLineManager) getWindowConfigurer().getPresentationFactory().createStatusLineManager();
     }
     
     /**
@@ -2293,6 +2293,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
      * @since 3.0
      */
     protected void createStatusLine(Shell shell) {
-        getWindowConfigurer().getPresentationFactory().createWindowStatusLineControl(getStatusLineManager(), shell);
+        getWindowConfigurer().getPresentationFactory().createStatusLineControl(getStatusLineManager(), shell);
     }
 }
