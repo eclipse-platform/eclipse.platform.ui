@@ -30,6 +30,11 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	public WorkspacePreferences() {
 		super("Workspace"); //$NON-NLS-1$
 		this.preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
+		//initialize cached preferences (for better performance)
+		if (preferences.contains(ResourcesPlugin.PREF_AUTO_BUILDING))
+			super.setAutoBuilding(preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING));
+		if (preferences.contains(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL))
+			super.setSnapshotInterval(preferences.getInt(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL));
 	}
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#getBuildOrder()
@@ -69,21 +74,10 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		return preferences.getLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE);
 	}
 	/**
-	 * @see org.eclipse.core.resources.IWorkspaceDescription#getSnapshotInterval()
-	 */
-	public long getSnapshotInterval() {
-		return preferences.getInt(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL);
-	}
-	/**
-	 * @see org.eclipse.core.resources.IWorkspaceDescription#isAutoBuilding()
-	 */
-	public boolean isAutoBuilding() {
-		return preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING);
-	}
-	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setAutoBuilding(boolean)
 	 */
 	public void setAutoBuilding(boolean value) {
+		super.setAutoBuilding(value);
 		preferences.setValue(ResourcesPlugin.PREF_AUTO_BUILDING, value);
 	}
 	/**
@@ -115,6 +109,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setSnapshotInterval(long)
 	 */
 	public void setSnapshotInterval(long delay) {
+		super.setSnapshotInterval(delay);
 		preferences.setValue(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, delay);
 	}
 	/**
