@@ -10,13 +10,19 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+
 import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.text.IDocument;
 
-import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.*;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 import org.eclipse.compare.*;
@@ -62,6 +68,9 @@ public class EditionAction implements IActionDelegate {
 						
 		final ResourceBundle bundle= ResourceBundle.getBundle(fBundleName);
 		String title= Utilities.getString(bundle, "title"); //$NON-NLS-1$
+		
+		//IDocument doc= getDocument(file);
+		//System.out.println("doc: " + doc);
 	
 		Shell parentShell= CompareUIPlugin.getShell();
 		
@@ -125,6 +134,47 @@ public class EditionAction implements IActionDelegate {
 
 			d.selectEdition(base, editions, null);			
 		}
+	}
+	
+	private IDocument getDocument(IFile file) {
+		IWorkbench wb= PlatformUI.getWorkbench();
+		if (wb == null)
+			return null;
+		IWorkbenchWindow[] ws= wb.getWorkbenchWindows();
+		if (ws == null)
+			return null;
+			
+		FileEditorInput test= new FileEditorInput(file);
+		
+		for (int i= 0; i < ws.length; i++) {
+			IWorkbenchWindow w= ws[i];
+			IWorkbenchPage[] wps= w.getPages();
+			if (wps != null) {
+				for (int j= 0; j < wps.length; j++) {
+					IWorkbenchPage wp= wps[j];
+					IEditorPart[] eps= wp.getEditors();
+					if (eps != null) {
+						for (int k= 0; k < eps.length; k++) {
+							IEditorPart ep= eps[k];
+							IEditorInput ei= ep.getEditorInput();
+							if (test.equals(ei)) {
+								if (ep instanceof ITextEditor) {
+									ITextEditor te= (ITextEditor) ep;
+									IDocumentProvider dp= te.getDocumentProvider();
+									if (dp != null) {
+										IDocument doc= dp.getDocument(ei);
+										if (doc != null)
+											return doc;
+									}
+									
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;
 	}
 }
 
