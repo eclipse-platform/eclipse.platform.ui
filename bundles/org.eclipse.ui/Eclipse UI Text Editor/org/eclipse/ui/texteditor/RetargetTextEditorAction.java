@@ -94,7 +94,14 @@ public final class RetargetTextEditorAction extends ResourceAction {
 			fAction.addPropertyChangeListener(fListener);
 		}
 	}
-
+	/*(non-Javadoc)
+	 * Method declared on IAction.
+	 */
+	public String getActionDefinitionId() {
+		if(fAction != null)
+			return fAction.getActionDefinitionId();
+		return null;
+	}
 	/*
 	 * @see Action#run()
 	 */

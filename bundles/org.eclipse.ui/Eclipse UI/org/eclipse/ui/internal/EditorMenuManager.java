@@ -49,13 +49,13 @@ public class EditorMenuManager extends SubMenuManager {
 				return Boolean.FALSE;	
 		}
 		public Integer getAccelerator(IContributionItem item) {
-			return null;
+			return parentMgr.getOverrides().getAccelerator(item);
 		}
 		public String getAcceleratorText(IContributionItem item) {
-			return null;
+			return parentMgr.getOverrides().getAcceleratorText(item);
 		}
 		public String getText(IContributionItem item) {
-			return null;
+			return parentMgr.getOverrides().getText(item);
 		}
 	}
 	private Overrides overrides = new Overrides();
