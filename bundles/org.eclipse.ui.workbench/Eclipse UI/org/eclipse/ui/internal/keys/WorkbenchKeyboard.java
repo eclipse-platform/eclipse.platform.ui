@@ -10,23 +10,43 @@
 package org.eclipse.ui.internal.keys;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.TreeMap;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import org.eclipse.ui.IWindowListener;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.KeySupport;
@@ -37,6 +57,8 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.commands.CommandManager;
+import org.eclipse.ui.internal.util.StatusLineContributionItem;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -66,6 +88,11 @@ public class WorkbenchKeyboard {
 	static final String OUT_OF_ORDER_KEYS = "OutOfOrderKeys"; //$NON-NLS-1$
 	/** The collection of keys that are to be processed out-of-order. */
 	static KeySequence outOfOrderKeys;
+	/**
+	 * The translation bundle in which to look up internationalized text.
+	 */
+	private final static ResourceBundle RESOURCE_BUNDLE =
+		ResourceBundle.getBundle(WorkbenchKeyboard.class.getName());
 
 	/**
 	 * Generates any key strokes that are near matches to the given event. The
@@ -74,13 +101,22 @@ public class WorkbenchKeyboard {
 	 * @param event
 	 *            The event from which the key strokes should be generated;
 	 *            must not be <code>null</code>.
-	 * @return The set of nearly matching key strokes. It is never <code>null</code>
-	 *         and never empty.
+	 * @return The set of nearly matching key strokes. It is never <code>null</code>,
+	 *         but may be empty.
 	 */
 	public static List generatePossibleKeyStrokes(Event event) {
 		List keyStrokes = new ArrayList();
-		KeyStroke keyStroke;
 
+		/*
+		 * If this is not a keyboard event, then there are no key strokes. This
+		 * can happen if we are listening to focus traversal events.
+		 */
+		if ((event.stateMask == 0) && (event.keyCode == 0) && (event.character == 0)) {
+			return keyStrokes;
+		}
+
+		// Add each unique key stroke to the list for consideration.
+		KeyStroke keyStroke;
 		keyStrokes.add(
 			KeySupport.convertAcceleratorToKeyStroke(
 				KeySupport.convertEventToUnmodifiedAccelerator(event)));
@@ -137,8 +173,7 @@ public class WorkbenchKeyboard {
 	 *         otherwise.
 	 */
 	private static boolean isOutOfOrderKey(List keyStrokes) {
-		// Compare to see if one of the possible key strokes is out of
-		// order.
+		// Compare to see if one of the possible key strokes is out of order.
 		Iterator keyStrokeItr = keyStrokes.iterator();
 		while (keyStrokeItr.hasNext()) {
 			if (outOfOrderKeys.getKeyStrokes().contains(keyStrokeItr.next())) {
@@ -150,15 +185,10 @@ public class WorkbenchKeyboard {
 	}
 
 	/**
-	 * The listener that clears the state during focus changes.
+	 * The command manager to be used to resolve key bindings. This member
+	 * variable should never be <code>null</code>.
 	 */
-	final Listener focusListener = new Listener() {
-		public void handleEvent(Event event) {
-			state.setCollapseFully(true);
-			state.reset();
-		}
-	};
-
+	private final ICommandManager commandManager;
 	/**
 	 * The listener that runs key events past the global key bindings.
 	 */
@@ -167,7 +197,6 @@ public class WorkbenchKeyboard {
 			filterKeySequenceBindings(event);
 		}
 	};
-
 	/**
 	 * The listener that checks to see whether all of the modifier keys have
 	 * been released.
@@ -177,42 +206,111 @@ public class WorkbenchKeyboard {
 			checkModifierKeys(event);
 		}
 	};
-
+	/**
+	 * The <code>Shell</code> displayed to the user to assist them in
+	 * completing a multi-stroke keyboard shortcut.
+	 */
+	private Shell multiKeyAssistShell = null;
 	/**
 	 * The listener that allows out-of-order key processing to hook back into
 	 * the global key bindings.
 	 */
 	final OutOfOrderListener outOfOrderListener = new OutOfOrderListener(this);
-
 	/**
 	 * The listener that allows out-of-order key processing on <code>StyledText</code>
 	 * widgets to detect useful work in a verify key listener.
 	 */
 	final OutOfOrderVerifyListener outOfOrderVerifyListener =
 		new OutOfOrderVerifyListener(outOfOrderListener);
-
+	/**
+	 * The time at which the last timer was started. This is used to judge if a
+	 * sufficient amount of time has elapsed. This is simply the output of
+	 * <code>System.currentTimeMillis()</code>.
+	 */
+	private long startTime = Long.MAX_VALUE;
 	/**
 	 * The mode is the current state of the key binding architecture. In the
 	 * case of multi-stroke key bindings, this can be a partially complete key
 	 * binding.
 	 */
 	private final KeyBindingState state;
+	/**
+	 * The window listener responsible for maintaining internal state as the
+	 * focus moves between windows on the desktop.
+	 */
+	private final IWindowListener windowListener = new IWindowListener() {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
+		 */
+		public void windowActivated(IWorkbenchWindow window) {
+			checkActiveWindow(window);
+		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
+		 */
+		public void windowClosed(IWorkbenchWindow window) {
+			// Do nothing.
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
+		 */
+		public void windowDeactivated(IWorkbenchWindow window) {
+			// Do nothing
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
+		 */
+		public void windowOpened(IWorkbenchWindow window) {
+			// Do nothing.
+		}
+	};
 	/**
 	 * The workbench on which this keyboard interface should act.
 	 */
-	private final Workbench workbench;
+	private final IWorkbench workbench;
 
 	/**
 	 * Constructs a new instance of <code>WorkbenchKeyboard</code> associated
 	 * with a particular workbench.
 	 * 
 	 * @param associatedWorkbench
-	 *            The workbench with which this keyboard interface should work.
+	 *            The workbench with which this keyboard interface should work;
+	 *            must not be <code>null</code>.
 	 */
 	public WorkbenchKeyboard(Workbench associatedWorkbench) {
 		workbench = associatedWorkbench;
 		state = new KeyBindingState(associatedWorkbench);
+		commandManager = workbench.getCommandManager();
+
+		workbench.addWindowListener(windowListener);
+	}
+
+	/**
+	 * Verifies that the active workbench window is the same as the workbench
+	 * window associated with the state. This is used to verify that the state
+	 * is properly reset as focus changes. When they are not the same, the
+	 * state is reset and associated with the newly activated window.
+	 * 
+	 * @param window
+	 *            The activated window; must not be <code>null</code>.
+	 */
+	private void checkActiveWindow(IWorkbenchWindow window) {
+		if (!window.equals(state.getAssociatedWindow())) {
+			state.setCollapseFully(true);
+			resetState();
+			state.setAssociatedWindow(window);
+		}
 	}
 
 	/**
@@ -227,9 +325,48 @@ public class WorkbenchKeyboard {
 		if ((event.type == SWT.KeyUp) && (event.stateMask == event.keyCode)) {
 			state.setCollapseFully(true);
 			if (state.isSafeToReset()) {
-				state.reset();
+				resetState();
 			}
 		}
+	}
+
+	/**
+	 * Performs the actual execution of the command by looking up the current
+	 * handler from the command manager. If there is a handler and it is
+	 * enabled, then it tries the actual execution. Execution failures are
+	 * logged. When this method completes, the key binding state is reset.
+	 * 
+	 * @param commandId
+	 *            The identifier for the command that should be executed;
+	 *            should not be <code>null</code>.
+	 * @param event
+	 *            The event triggering the execution. This is needed for
+	 *            backwards compatability and might be removed in the future.
+	 *            This value should not be <code>null</code>.
+	 * @return <code>true</code> if there was a handler; <code>false</code>
+	 *         otherwise.
+	 */
+	private boolean executeCommand(String commandId, Event event) {
+		// Reset the key binding state (close window, clear status line, etc.)
+		resetState();
+
+		// Dispatch to the handler.
+		Map actionsById = ((CommandManager) workbench.getCommandManager()).getActionsById();
+		org.eclipse.ui.commands.IAction action =
+			(org.eclipse.ui.commands.IAction) actionsById.get(commandId);
+
+		if (action != null && action.isEnabled()) {
+			try {
+				action.execute(event);
+			} catch (Exception e) {
+				String message = "Action for command '" + commandId + "' failed to execute properly."; //$NON-NLS-1$ //$NON-NLS-2$
+				WorkbenchPlugin.log(
+					message,
+					new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
+			}
+		}
+
+		return (action != null);
 	}
 
 	/**
@@ -254,7 +391,7 @@ public class WorkbenchKeyboard {
 	private void filterKeySequenceBindings(Event event) {
 		/*
 		 * Only process key strokes containing natural keys to trigger key
-		 * bindings
+		 * bindings.
 		 */
 		if ((event.keyCode & SWT.MODIFIER_MASK) != 0)
 			return;
@@ -323,7 +460,42 @@ public class WorkbenchKeyboard {
 	 *         <code>null</code> if no command matches.
 	 */
 	private String getPerfectMatch(KeySequence keySequence) {
-		return workbench.getCommandManager().getPerfectMatch(keySequence);
+		return commandManager.getPerfectMatch(keySequence);
+	}
+
+	/**
+	 * Changes the key binding state to the given value. This should be an
+	 * incremental change, but there are no checks to guarantee this is so. It
+	 * also sets up a <code>Shell</code> to be displayed after one second has
+	 * elapsed. This shell will show the user the possible completions for what
+	 * they have typed.
+	 * 
+	 * @param sequence
+	 *            The new key sequence for the state; should not be <code>null</code>.
+	 */
+	private void incrementState(KeySequence sequence) {
+		// Record the starting time.
+		startTime = System.currentTimeMillis();
+
+		// Update the state.
+		state.setCurrentSequence(sequence);
+		state.setAssociatedWindow(workbench.getActiveWorkbenchWindow());
+
+		// After 1s, open a shell displaying the possible completions.
+		final IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		if (store.getBoolean(IPreferenceConstants.MULTI_KEY_ASSIST)) {
+			final Display display = workbench.getDisplay();
+			display
+				.timerExec(
+					1000 * store.getInt(IPreferenceConstants.MULTI_KEY_ASSIST_TIME),
+					new Runnable() {
+				public void run() {
+					if (System.currentTimeMillis() > (startTime - 1000L)) {
+						openMultiKeyAssistShell(display);
+					}
+				}
+			});
+		}
 	}
 
 	/**
@@ -337,7 +509,7 @@ public class WorkbenchKeyboard {
 	 *         otherwise.
 	 */
 	private boolean isPartialMatch(KeySequence keySequence) {
-		return workbench.getCommandManager().isPartialMatch(keySequence);
+		return commandManager.isPartialMatch(keySequence);
 	}
 
 	/**
@@ -351,7 +523,146 @@ public class WorkbenchKeyboard {
 	 *         otherwise.
 	 */
 	private boolean isPerfectMatch(KeySequence keySequence) {
-		return workbench.getCommandManager().isPerfectMatch(keySequence);
+		return commandManager.isPerfectMatch(keySequence);
+	}
+
+	/**
+	 * Opens a <code>Shell</code> to assist the user in completing a
+	 * multi-stroke key binding. After this method completes, <code>multiKeyAssistShell</code>
+	 * should point at the newly opened window.
+	 * 
+	 * @param display
+	 *            The display on which the shell should be opened; must not be
+	 *            <code>null</code>.
+	 */
+	private void openMultiKeyAssistShell(final Display display) {
+		// Get the status line. If none, then abort.
+		StatusLineContributionItem statusLine = state.getStatusLine();
+		if (statusLine == null) {
+			return;
+		}
+		Point statusLineLocation = statusLine.getDisplayLocation();
+		if (statusLineLocation == null) {
+			return;
+		}
+
+		// Set up the shell.
+		multiKeyAssistShell = new Shell(display, SWT.NO_TRIM);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		multiKeyAssistShell.setLayout(layout);
+		multiKeyAssistShell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+
+		// Get the list of items.
+		Map partialMatches = new TreeMap(new Comparator() {
+			public int compare(Object a, Object b) {
+				KeySequence sequenceA = (KeySequence) a;
+				KeySequence sequenceB = (KeySequence) b;
+				return sequenceA.format().compareTo(sequenceB.format());
+			}
+		});
+		partialMatches.putAll(commandManager.getPartialMatches(state.getCurrentSequence()));
+		Iterator partialMatchItr = partialMatches.entrySet().iterator();
+		while (partialMatchItr.hasNext()) {
+			Map.Entry entry = (Map.Entry) partialMatchItr.next();
+			String commandId = (String) entry.getValue();
+			ICommand command = commandManager.getCommand(commandId);
+			// TODO The enabled property of ICommand is broken.
+			if (!command.isDefined() || !command.isActive() // ||
+			// !command.isEnabled()
+			) {
+				partialMatchItr.remove();
+			}
+		}
+
+		// Layout the partial matches.
+		if (partialMatches.isEmpty()) {
+			Label noMatchesLabel = new Label(multiKeyAssistShell, SWT.NULL);
+			noMatchesLabel.setText(Util.translateString(RESOURCE_BUNDLE, "NoMatches.Message")); //$NON-NLS-1$
+			noMatchesLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
+			noMatchesLabel.setBackground(multiKeyAssistShell.getBackground());
+		} else {
+			final Table completionsTable = new Table(multiKeyAssistShell, SWT.SINGLE);
+			completionsTable.setBackground(multiKeyAssistShell.getBackground());
+
+			// Initialize the rows.
+			final List commands = new ArrayList(); // remember commands
+			completionsTable.setLayoutData(new GridData(GridData.FILL_BOTH));
+			new TableColumn(completionsTable, SWT.LEFT);
+			new TableColumn(completionsTable, SWT.LEFT);
+			Iterator itemsItr = partialMatches.entrySet().iterator();
+			while (itemsItr.hasNext()) {
+				Map.Entry entry = (Map.Entry) itemsItr.next();
+				KeySequence sequence = (KeySequence) entry.getKey();
+				String commandId = (String) entry.getValue();
+				ICommand command = commandManager.getCommand(commandId);
+				try {
+					String[] text = { sequence.format(), command.getName()};
+					TableItem item = new TableItem(completionsTable, SWT.NULL);
+					item.setText(text);
+					commands.add(command);
+				} catch (NotDefinedException e) {
+					// Not much to do, but this shouldn't really happen.
+				}
+			}
+
+			// If you double-click on the table, it should execute the selected
+			// command.
+			completionsTable.addSelectionListener(new SelectionListener() {
+				public void widgetDefaultSelected(SelectionEvent e) {
+					int selectionIndex = completionsTable.getSelectionIndex();
+					if (selectionIndex >= 0) {
+						ICommand command = (ICommand) commands.get(selectionIndex);
+						executeCommand(command.getId(), new Event());
+					}
+				}
+
+				public void widgetSelected(SelectionEvent e) {
+					// Do nothing
+				}
+			});
+		}
+
+		// Size the shell.
+		multiKeyAssistShell.pack();
+		Point assistShellSize = multiKeyAssistShell.getSize();
+		if (assistShellSize.x > 300) {
+			assistShellSize.x = 300;
+		}
+		if (assistShellSize.y > 200) {
+			assistShellSize.y = 200;
+		}
+		multiKeyAssistShell.setSize(assistShellSize);
+
+		// Position the shell.
+		Point assistShellLocation =
+			new Point(statusLineLocation.x, statusLineLocation.y - assistShellSize.y);
+		Rectangle displayBounds = display.getBounds();
+		final int displayRightEdge = displayBounds.x + displayBounds.width;
+		if (assistShellLocation.x < displayBounds.x) {
+			assistShellLocation.x = displayBounds.x;
+		} else if ((assistShellLocation.x + assistShellSize.x) > displayRightEdge) {
+			assistShellLocation.x = displayRightEdge - assistShellSize.x;
+		}
+		final int displayBottomEdge = displayBounds.y + displayBounds.height;
+		if (assistShellLocation.y < displayBounds.y) {
+			assistShellLocation.y = displayBounds.y;
+		} else if ((assistShellLocation.y + assistShellSize.y) > displayBottomEdge) {
+			assistShellLocation.y = displayBottomEdge - assistShellSize.y;
+		}
+		multiKeyAssistShell.setLocation(assistShellLocation);
+
+		// If the shell loses focus, it should be closed.
+		multiKeyAssistShell.addListener(SWT.Deactivate, new Listener() {
+			public void handleEvent(Event event) {
+				multiKeyAssistShell.close();
+				multiKeyAssistShell = null;
+			}
+		});
+
+		// Open the shell.
+		multiKeyAssistShell.open();
 	}
 
 	/**
@@ -367,10 +678,10 @@ public class WorkbenchKeyboard {
 	 * @return <code>true</code> if a command is executed; <code>false</code>
 	 *         otherwise.
 	 */
-	// TODO remove event parameter once key-modified actions are removed
 	public boolean press(List potentialKeyStrokes, Event event) {
-		KeySequence sequenceBeforeKeyStroke = state.getCurrentSequence();
+		// TODO remove event parameter once key-modified actions are removed
 
+		KeySequence sequenceBeforeKeyStroke = state.getCurrentSequence();
 		for (Iterator iterator = potentialKeyStrokes.iterator(); iterator.hasNext();) {
 			KeySequence sequenceAfterKeyStroke =
 				KeySequence.getInstance(sequenceBeforeKeyStroke, (KeyStroke) iterator.next());
@@ -378,40 +689,30 @@ public class WorkbenchKeyboard {
 			if (isPartialMatch(sequenceAfterKeyStroke)) {
 				final IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 				state.setCollapseFully(!store.getBoolean(IPreferenceConstants.MULTI_KEY_ROCKER));
-				state.setCurrentSequence(sequenceAfterKeyStroke);
+				incrementState(sequenceAfterKeyStroke);
 				return true;
 
 			} else if (isPerfectMatch(sequenceAfterKeyStroke)) {
 				String commandId = getPerfectMatch(sequenceAfterKeyStroke);
-				Map actionsById = ((CommandManager) workbench.getCommandManager()).getActionsById();
-				org.eclipse.ui.commands.IAction action =
-					(org.eclipse.ui.commands.IAction) actionsById.get(commandId);
-
-				if (action != null && action.isEnabled()) {
-					try {
-						action.execute(event);
-					} catch (Exception e) {
-						String message = "Action for command '" + commandId + "' failed to execute properly."; //$NON-NLS-1$ //$NON-NLS-2$
-						WorkbenchPlugin.log(
-							message,
-							new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
-					}
-				}
-
-				state.reset();
-				return action != null || sequenceBeforeKeyStroke.isEmpty();
-
+				return (executeCommand(commandId, event) || sequenceBeforeKeyStroke.isEmpty());
 			}
 		}
 
-		state.reset();
+		resetState();
 		return false;
 	}
 
 	/**
+	 * <p>
 	 * Actually performs the processing of the key event by interacting with
 	 * the <code>ICommandManager</code>. If work is carried out, then the
-	 * event is stopped here (i.e., <code>event.doit = false</code>).
+	 * event is stopped here (i.e., <code>event.doit = false</code>). It
+	 * does not do any processing if there are no matching key strokes.
+	 * </p>
+	 * <p>
+	 * If the active <code>Shell</code> is not the same as the one to which
+	 * the state is associated, then a reset occurs.
+	 * </p>
 	 * 
 	 * @param keyStrokes
 	 *            The set of all possible matching key strokes; must not be
@@ -420,7 +721,8 @@ public class WorkbenchKeyboard {
 	 *            The event to process; must not be <code>null</code>.
 	 */
 	void processKeyEvent(List keyStrokes, Event event) {
-		if (press(keyStrokes, event)) {
+		// Dispatch the keyboard shortcut, if any.
+		if ((!keyStrokes.isEmpty()) && (press(keyStrokes, event))) {
 			switch (event.type) {
 				case SWT.KeyDown :
 					event.doit = false;
@@ -433,6 +735,20 @@ public class WorkbenchKeyboard {
 					}
 
 			event.type = SWT.NONE;
+		}
+	}
+
+	/**
+	 * Resets the state, and cancels any running timers. If there is a <code>Shell</code>
+	 * currently open, then it closes it.
+	 */
+	private void resetState() {
+		startTime = Long.MAX_VALUE;
+		state.reset();
+		if ((multiKeyAssistShell != null) && (!multiKeyAssistShell.isDisposed())) {
+			multiKeyAssistShell.close();
+			multiKeyAssistShell.dispose();
+			multiKeyAssistShell = null;
 		}
 	}
 }
