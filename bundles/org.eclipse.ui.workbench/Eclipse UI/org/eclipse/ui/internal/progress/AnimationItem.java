@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 public class AnimationItem {
@@ -96,14 +95,9 @@ public class AnimationItem {
 			 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseDoubleClick(MouseEvent arg0) {
-				if (showingDetails)
-					closeFloatingWindow();
-				else
-					openFloatingWindow();
-
-				//Toggle the details flag
-				showingDetails = !showingDetails;
+				toggleFloatingWindow();
 			}
+			
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -211,10 +205,14 @@ public class AnimationItem {
 		if(floatingWindow != null)
 			return;
 		
+		//Don't bother if there is nothing showing yet
+		if(!window.getShell().isVisible())
+			return;
+		
 		floatingWindow =
-			new ProgressFloatingWindow(window.getShell(), imageCanvas);
+			new ProgressFloatingWindow(window, imageCanvas);
 
-		UIJob floatingJob = new WorkbenchJob(ProgressMessages.getString("AnimationItem.openFloatingWindowJob")) { //$NON-NLS-1$
+		WorkbenchJob floatingJob = new WorkbenchJob(ProgressMessages.getString("AnimationItem.openFloatingWindowJob")) { //$NON-NLS-1$
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -279,6 +277,19 @@ public class AnimationItem {
 	 */
 	public int getPreferredWidth() {
 		return AnimationManager.getInstance().getPreferredWidth() + 5;
+	}
+	
+	/**
+	 * Toggle the floating window for the receiver.
+	 */
+	public void toggleFloatingWindow() {
+		if (showingDetails)
+			closeFloatingWindow();
+		else
+			openFloatingWindow();
+
+		//Toggle the details flag
+		showingDetails = !showingDetails;
 	}
 
 }

@@ -16,8 +16,7 @@ import org.eclipse.jface.viewers.Viewer;
  * The ProgressContentProvider is the content provider used for classes that
  * listen to the progress changes.
  */
-public abstract class ProgressContentProvider
-	implements IProgressUpdateCollector {
+public abstract class ProgressContentProvider implements IProgressUpdateCollector {
 
 	/**
 	 * Create a new instance of the receiver.
@@ -34,7 +33,7 @@ public abstract class ProgressContentProvider
 	 */
 	public Object[] getElements(Object inputElement) {
 
-		return ProgressManager.getInstance().getJobInfos(
+		return ProgressManager.getInstance().getRootElements(
 			ProgressViewUpdater.getSingleton().debug);
 	}
 

@@ -9,61 +9,72 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-
+import org.eclipse.ui.internal.WorkbenchWindow;
 /**
- * The ProgressUtil is a class that contains static utility methods used for the progress
- * API.
+ * The ProgressUtil is a class that contains static utility methods used for
+ * the progress API.
  */
 class ProgressManagerUtil {
-
+	private static String PROGRESS_VIEW_ID = "org.eclipse.ui.views.ProgressView";
 	/**
 	 * Return a status for the exception.
+	 * 
 	 * @param exception
 	 * @return
 	 */
 	static Status exceptionStatus(Throwable exception) {
-		return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, exception.getMessage(), exception);
+		return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR,
+				exception.getMessage(), exception);
 	}
-
 	/**
 	 * Log the exception for debugging.
+	 * 
 	 * @param exception
 	 */
 	static void logException(Throwable exception) {
-		Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(exceptionStatus(exception));
+		Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(
+				exceptionStatus(exception));
 	}
-
 	/**
 	 * Sets the label provider for the viewer.
 	 */
 	static void initLabelProvider(ProgressTreeViewer viewer) {
 		viewer.setLabelProvider(new ProgressLabelProvider());
-
 	}
-	
 	/**
 	 * Return a viewer sorter for looking at the jobs.
+	 * 
 	 * @return
 	 */
 	static ViewerSorter getProgressViewerSorter() {
 		return new ViewerSorter() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,
+			 *      java.lang.Object, java.lang.Object)
 			 */
 			public int compare(Viewer testViewer, Object e1, Object e2) {
 				return ((Comparable) e1).compareTo(e2);
 			}
 		};
 	}
-	
-
+	static void openProgressView(WorkbenchWindow window) {
+		IWorkbenchPage page = window.getActivePage();
+		if (page == null)
+			return;
+		try {
+			page.showView(PROGRESS_VIEW_ID);
+		} catch (PartInitException exception) {
+			logException(exception);
+		}
+	}
 }

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 
 /**
  * The TaskInfo is the info on a task with a job. It is 
@@ -39,6 +41,19 @@ public class TaskInfo extends SubTaskInfo {
 	void addWork(double workIncrement) {
 		preWork += workIncrement;
 
+	}
+	
+	/**
+	 * Add the amount of work to the recevier. Update a parent
+	 * monitor by the increment scaled to the amount of ticks
+	 * this represents. 
+	 * @param workIncrement int the amount of work in the receiver
+	 * @param parentMonitor The IProgressMonitor that is also listening
+	 * @param parentTicks the number of ticks this monitor represents
+	 */
+	void addWork(double workIncrement, IProgressMonitor parentMonitor, int parentTicks) {
+		addWork(workIncrement);
+		parentMonitor.internalWorked(workIncrement * parentTicks /totalWork);
 	}
 
 	/**
@@ -78,4 +93,5 @@ public class TaskInfo extends SubTaskInfo {
 		return (int) (preWork * 100 / totalWork);
 	}
 
+	
 }

@@ -55,7 +55,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 		 * 
 		 * @param addition
 		 */
-		void add(JobInfo addition) {
+		void add(JobTreeElement addition) {
 			additions.add(addition);
 		}
 
@@ -64,7 +64,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 		 * 
 		 * @param addition
 		 */
-		void remove(JobInfo removal) {
+		void remove(JobTreeElement removal) {
 			deletions.add(removal);
 		}
 		/**
@@ -72,7 +72,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 		 * 
 		 * @param addition
 		 */
-		void refresh(JobInfo refresh) {
+		void refresh(JobTreeElement refresh) {
 			refreshes.add(refresh);
 		}
 		/**
@@ -89,10 +89,11 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
 			Iterator additionsIterator = additions.iterator();
 			while (additionsIterator.hasNext()) {
-				JobInfo next = (JobInfo) additionsIterator.next();
-				if (deletions.contains(next)
-					|| next.getJob().getState() == Job.NONE)
-					staleAdditions.add(next);
+				JobTreeElement treeElement = (JobTreeElement) additionsIterator.next();
+				if (!treeElement.isActive()) {
+					if (deletions.contains(treeElement))
+						staleAdditions.add(treeElement);
+				}
 			}
 
 			additions.removeAll(staleAdditions);
@@ -100,13 +101,13 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 			HashSet obsoleteRefresh = new HashSet();
 			Iterator refreshIterator = refreshes.iterator();
 			while (refreshIterator.hasNext()) {
-				JobInfo next = (JobInfo) refreshIterator.next();
-				if (deletions.contains(next) || additions.contains(next))
-					obsoleteRefresh.add(next);
-				if (next.getJob().getState() == Job.NONE) {
+				JobTreeElement treeElement = (JobTreeElement) refreshIterator.next();
+				if (deletions.contains(treeElement) || additions.contains(treeElement))
+					obsoleteRefresh.add(treeElement);
+				if (!treeElement.isActive()) {
 					//If it is done then delete it
-					obsoleteRefresh.add(next);
-					deletions.add(next);
+					obsoleteRefresh.add(treeElement);
+					deletions.add(treeElement);
 				}
 			}
 
@@ -178,8 +179,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 			if (!collectors[i].equals(provider))
 				newCollectors.add(collectors[i]);
 		}
-		IProgressUpdateCollector[] newArray =
-			new IProgressUpdateCollector[newCollectors.size()];
+		IProgressUpdateCollector[] newArray = new IProgressUpdateCollector[newCollectors.size()];
 		newCollectors.toArray(newArray);
 		collectors = newArray;
 		//Remove ourselves if there is nothing to update
@@ -233,12 +233,14 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 					}
 
 					for (int v = 0; v < collectors.length; v++) {
-						IProgressUpdateCollector collector =
-							collectors[v];
+						IProgressUpdateCollector collector = collectors[v];
 
-						collector.refresh(updateItems);
-						collector.add(additionItems);
-						collector.remove(deletionItems);
+						if(updateItems.length >0)
+							collector.refresh(updateItems);
+						if(additionItems.length >0)
+							collector.add(additionItems);
+						if(deletionItems.length >0)
+							collector.remove(deletionItems);
 					}
 				}
 
@@ -275,8 +277,51 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
 		synchronized (updateLock) {
 			currentInfo.refresh(info);
+			GroupInfo group = info.getGroupInfo();
+			if (group != null)
+				currentInfo.refresh(group);
 		}
 		//Add in a 100ms delay so as to keep priority low
+		scheduleUpdate();
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshJobInfo(org.eclipse.ui.internal.progress.JobInfo)
+	 */
+	public void refreshJobInfo(JobInfo info) {
+
+		if (isUpdateJob(info.getJob()))
+			return;
+
+		synchronized (updateLock) {
+			currentInfo.refresh(info);
+		}
+		//Add in a 100ms delay so as to keep priority low
+		scheduleUpdate();
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshGroup(org.eclipse.ui.internal.progress.GroupInfo)
+	 */
+	public void refreshGroup(GroupInfo info) {
+		synchronized (updateLock) {
+			currentInfo.refresh(info);
+		}
+		//Add in a 100ms delay so as to keep priority low
+		scheduleUpdate();
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#addGroup(org.eclipse.ui.internal.progress.GroupInfo)
+	 */
+	public void addGroup(GroupInfo info) {
+
+		synchronized (updateLock) {
+			currentInfo.add(info);
+		}
 		scheduleUpdate();
 
 	}
@@ -302,13 +347,19 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	 * 
 	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#add(org.eclipse.ui.internal.progress.JobInfo)
 	 */
-	public void add(JobInfo info) {
+	public void addJob(JobInfo info) {
 
 		if (isUpdateJob(info.getJob()))
 			return;
 
 		synchronized (updateLock) {
-			currentInfo.add(info);
+			GroupInfo group = info.getGroupInfo();
+
+			if (group == null)
+				currentInfo.add(info);
+			else {
+				currentInfo.refresh(group);
+			}
 		}
 		scheduleUpdate();
 
@@ -317,17 +368,34 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#remove(org.eclipse.ui.internal.progress.JobInfo)
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#removeJob(org.eclipse.ui.internal.progress.JobInfo)
 	 */
-	public void remove(JobInfo info) {
+	public void removeJob(JobInfo info) {
 
 		if (isUpdateJob(info.getJob()))
 			return;
 
 		synchronized (updateLock) {
-			currentInfo.remove(info);
+			GroupInfo group = info.getGroupInfo();
+			if (group == null)
+				currentInfo.remove(info);
+			else {
+				group.removeJobInfo(info);
+				currentInfo.refresh(group);
+			}
 		}
 		scheduleUpdate();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#removeGroup(org.eclipse.ui.internal.progress.GroupInfo)
+	 */
+	public void removeGroup(GroupInfo group) {
+		synchronized (updateLock) {
+			currentInfo.remove(group);
+		}
+		scheduleUpdate();
+
 	}
 
 	/*

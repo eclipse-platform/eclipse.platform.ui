@@ -30,37 +30,45 @@ class ProgressTreeViewer extends TreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#doUpdateItem(org.eclipse.swt.widgets.Item,
-	 *      java.lang.Object)
+	 * @param item
+	 * 			An item in the tree.
+	 * 
+	 * @param element
+	 * 			The item's information.
 	 */
 	protected void doUpdateItem(Item item, Object element) {
 		super.doUpdateItem(item, element);
-		if (element instanceof JobInfo) {
+		if (element instanceof JobTreeElement) {
 			if (item != null && item instanceof TreeItem) {
 				TreeItem treeItem = (TreeItem) item;
-				updateColors(treeItem, (JobInfo) element);
-				if(treeItem.getItemCount() >0 )
+				updateColors(treeItem, (JobTreeElement) element);
+				if (treeItem.getItemCount() > 0)
 					treeItem.setExpanded(true);
 			}
 		}
 	}
 	
 	/**
-	 * Update the colors for the treeItem.
+	 * This method updates the colors for the treeItem.
+	 * 
 	 * @param treeItem
+	 * 			The tree item to be updated.
+	 * 
 	 * @param info
+	 * 			The information for that tree item.
 	 */
 
-	private void updateColors(TreeItem treeItem, JobInfo info) {
+	private void updateColors(TreeItem treeItem, JobTreeElement element) {
 
-		if (info.getJob().getState() != Job.RUNNING) {
-			treeItem.setForeground(
-				JFaceColors.getActiveHyperlinkText(treeItem.getDisplay()));
-			return;
+		if (element.isJobInfo()) {
+			JobInfo info = (JobInfo) element;
+			if (info.getJob().getState() != Job.RUNNING) {
+				treeItem.setForeground(JFaceColors.getActiveHyperlinkText(treeItem.getDisplay()));
+				return;
+			}
 		}
 
-		treeItem.setForeground(
-			treeItem.getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+		treeItem.setForeground(treeItem.getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
 
 	}
 
@@ -69,7 +77,11 @@ class ProgressTreeViewer extends TreeViewer {
 	 * style.
 	 * 
 	 * @param parent
+	 * 			The parent Composite.
+	 * 
 	 * @param style
+	 * 			The style the SWT style bits used to create the tree.
+	 * 			
 	 */
 	public ProgressTreeViewer(Composite parent, int style) {
 		super(parent, style);
@@ -82,6 +94,7 @@ class ProgressTreeViewer extends TreeViewer {
 	 */
 	protected void createChildren(Widget widget) {
 		super.createChildren(widget);
+		
 		getTree().addKeyListener(new KeyAdapter() {
 			/*
 			 * (non-Javadoc)
@@ -91,20 +104,33 @@ class ProgressTreeViewer extends TreeViewer {
 			public void keyPressed(KeyEvent e) {
 				//Bind escape to cancel
 				if (e.keyCode == SWT.DEL) {
-					ISelection selection = getSelection();
-					if (selection instanceof IStructuredSelection) {
-						IStructuredSelection structured =
-							(IStructuredSelection) selection;
-						Iterator elements = structured.iterator();
-						while (elements.hasNext()) {
-							Object next = elements.next();
-							if (next instanceof JobInfo)
-								 ((JobInfo) next).cancel();
-						}
-					}
+					ISelection selection = getSelection();		
+					deleteJob(selection);	
 				}
 			}
 		});
+	}
+	
+	/**
+	 * This method deletes the selected job, as well as its children.
+	 * @param selection
+	 * 			The selected job.
+	 */
+	public void deleteJob(ISelection selection)
+	{
+		
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structured =
+				(IStructuredSelection) selection;
+			Iterator elements = structured.iterator();
+			while (elements.hasNext()) {
+				Object next = elements.next();
+				if (next instanceof JobInfo)
+					((JobInfo) next).cancel();
+			}
+			
+		}
+		
 	}
 
 }

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import java.util.HashSet;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 
@@ -20,10 +22,10 @@ import org.eclipse.jface.viewers.TableViewer;
 public class ProgressTableContentProvider
 	extends ProgressContentProvider
 	implements IStructuredContentProvider {
-	
+
 	TableViewer viewer;
-	
-	public ProgressTableContentProvider(TableViewer table){
+
+	public ProgressTableContentProvider(TableViewer table) {
 		viewer = table;
 	}
 
@@ -31,10 +33,10 @@ public class ProgressTableContentProvider
 	 * @see org.eclipse.ui.internal.progress.IProgressUpdateCollector#add(org.eclipse.ui.internal.progress.JobTreeElement[])
 	 */
 	public void add(Object[] elements) {
-		viewer.add(elements);
+		viewer.add(getRoots(elements,false));
 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.IProgressUpdateCollector#refresh()
 	 */
@@ -42,22 +44,64 @@ public class ProgressTableContentProvider
 		viewer.refresh(true);
 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.IProgressUpdateCollector#refresh(org.eclipse.ui.internal.progress.JobTreeElement[])
 	 */
 	public void refresh(Object[] elements) {
-		for (int i = 0; i < elements.length; i++) {
-			viewer.refresh(elements[i],true);
+		
+		Object[] refreshes = getRoots(elements,true);
+		
+		for (int i = 0; i < refreshes.length; i++) {
+			viewer.refresh(refreshes[i], true);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.IProgressUpdateCollector#remove(org.eclipse.ui.internal.progress.JobTreeElement[])
 	 */
 	public void remove(Object[] elements) {
-		viewer.remove(elements);
+		viewer.remove(getRoots(elements,false));
 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+	 */
+	public Object[] getElements(Object inputElement) {
+		return ProgressManager.getInstance().getRootElements(ProgressViewUpdater.getSingleton().debug);
+	}
+	
+	/**
+	 * Get the root elements of the passed elements as we only show roots.
+	 * Replace the element with its parent if subWithParent is true
+	 * @param elements
+	 * @param boolean subWithParent
+	 * @return
+	 */
+	private Object[] getRoots(Object[] elements, boolean subWithParent){
+		
+		if(elements.length == 0)
+			return elements;
+			
+		HashSet roots = new HashSet();
+		for (int i = 0; i < elements.length; i++) {
+			JobTreeElement element = (JobTreeElement) elements[i];
+			if(element.isJobInfo()){
+				GroupInfo group = ((JobInfo) element).getGroupInfo();
+				if(group == null)
+					roots.add(element);
+				else{
+					if(subWithParent)
+						roots.add(group);
+				}
+					
+			}
+			else
+				roots.add(element);
+		}
+		
+		return roots.toArray();
 	}
 
 }

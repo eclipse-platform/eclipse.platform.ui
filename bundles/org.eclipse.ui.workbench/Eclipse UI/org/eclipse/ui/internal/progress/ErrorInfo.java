@@ -77,12 +77,6 @@ public class ErrorInfo extends JobTreeElement {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	public int compareTo(Object arg0) {
-		return getDisplayString().compareTo(((JobTreeElement) arg0).getDisplayString());
-	}
 
 	/**
 	 * Return the current status of the receiver. 
@@ -90,5 +84,12 @@ public class ErrorInfo extends JobTreeElement {
 	 */
 	IStatus getErrorStatus() {
 		return errorStatus;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isActive()
+	 */
+	boolean isActive() {
+		return true;
 	}
 }

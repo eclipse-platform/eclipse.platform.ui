@@ -41,9 +41,31 @@ abstract class JobTreeElement implements Comparable{
 	abstract String getDisplayString();
 	
 	/**
+	 * Return the condensed version of the display string
+	 * @return
+	 */
+	String getCondensedDisplayString(){
+		return getDisplayString();
+	}
+	
+	/**
 	 * Return whether or not the receiver is an info.
 	 * @return boolean
 	 */
 	abstract boolean isJobInfo();
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	public int compareTo(Object arg0) {
+		return getDisplayString().compareTo(((JobTreeElement) arg0).getDisplayString());
+	}
+	
+	/**
+	 * Return whether or not this is currently active.
+	 * @return
+	 */
+	abstract boolean isActive();
+	
 
 }
