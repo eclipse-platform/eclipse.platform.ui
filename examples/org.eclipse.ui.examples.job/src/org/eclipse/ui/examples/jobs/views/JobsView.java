@@ -6,7 +6,9 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -28,7 +30,7 @@ import org.eclipse.ui.progress.IProgressService;
  */
 public class JobsView extends ViewPart {
 	private Combo durationField;
-	private Button lockField, failureField, threadField, systemField, userField, groupField, rescheduleField, keepField, keepOneField, unknownField;
+	private Button lockField, failureField, threadField, systemField, userField, groupField, rescheduleField, keepField, keepOneField, unknownField, gotoActionField;
 	private Text quantityField, delayField, rescheduleDelay;
 
 	protected void busyCursorWhile() {
@@ -65,6 +67,7 @@ public class JobsView extends ViewPart {
 		final long rescheduleWait =  Long.parseLong(rescheduleDelay.getText());
 		boolean keep = keepField.getSelection();
 		boolean keepOne = keepOneField.getSelection();
+		boolean gotoAction = gotoActionField.getSelection();
 
 		int groupIncrement = IProgressMonitor.UNKNOWN;
 		IProgressMonitor group = new NullProgressMonitor();
@@ -88,11 +91,15 @@ public class JobsView extends ViewPart {
 			else
 				result = new TestJob(duration, lock, failure, unknown, reschedule, rescheduleWait);
 
-			if(keep) 
-				result.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
+			result.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.valueOf(keep));
+			result.setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.valueOf(keepOne));
 			
-			if(keepOne)
-				result.setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.TRUE);
+			if(gotoAction)
+				result.setProperty(IProgressConstants.ACTION_PROPERTY, new Action("Pop up a dialog") { //$NON-NLS-1$
+					public void run() {
+						MessageDialog.openInformation(getSite().getShell(), "Goto Action", "The job can have an action associated with it"); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+				});
 			
 			result.setProgressGroup(group, groupIncrement);
 			result.setSystem(system);
@@ -353,6 +360,12 @@ public class JobsView extends ViewPart {
 		userField.setText("User job"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		userField.setLayoutData(data);
+		
+		//	whether the job has a goto action
+		gotoActionField = new Button(group, SWT.CHECK);
+		gotoActionField.setText("Goto action"); //$NON-NLS-1$
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		gotoActionField.setLayoutData(data);
 	}
 
 	protected void doRun(long duration, IProgressMonitor monitor) {
