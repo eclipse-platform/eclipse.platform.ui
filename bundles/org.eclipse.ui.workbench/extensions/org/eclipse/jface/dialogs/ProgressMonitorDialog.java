@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.*;
  * Note that not forking the process will result in it running
  * in the UI which may starve the UI. The most obvious symptom
  * of this problem is non responsiveness of the cancel button.
- * If you are running within the UI Thread you should do the bluk
+ * If you are running within the UI Thread you should do the bulk
  * of your work in another Thread to prevent starvation.
  * It is recommended that fork is set to true in most cases.
  * </p>
