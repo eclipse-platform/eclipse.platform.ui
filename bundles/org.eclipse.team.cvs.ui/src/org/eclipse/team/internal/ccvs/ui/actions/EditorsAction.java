@@ -47,10 +47,9 @@ public class EditorsAction implements IProviderAction, IRunnableWithProgress {
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction.IProviderAction#execute(org.eclipse.team.internal.ccvs.core.CVSTeamProvider, org.eclipse.core.resources.IResource, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IStatus execute(CVSTeamProvider provider, IResource[] resources, IProgressMonitor monitor)
-		throws CVSException {
-			f_editorsInfo = provider.editors(resources, monitor);
-			return Team.OK_STATUS;
+	public IStatus execute(CVSTeamProvider provider, IResource[] resources, IProgressMonitor monitor) throws CVSException {
+		f_editorsInfo = provider.editors(resources, monitor);
+		return Team.OK_STATUS;
 	}
 	
 	public boolean promptToEdit(Shell shell) {
@@ -73,16 +72,15 @@ public class EditorsAction implements IProviderAction, IRunnableWithProgress {
 	 * 
 	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void run(IProgressMonitor monitor)
-		throws InvocationTargetException, InterruptedException {
-			if (f_provider == null || f_resources == null) {
-				throw new InvocationTargetException(new RuntimeException(Policy.bind("EditorsAction.classNotInitialized", this.getClass().getName()))); //$NON-NLS-1$
-			}
-			try {
-				execute(f_provider,f_resources,monitor);
-			} catch (CVSException e) {
-				throw new InvocationTargetException(e);
-			}
+	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+		if (f_provider == null || f_resources == null) {
+			throw new InvocationTargetException(new RuntimeException(Policy.bind("EditorsAction.classNotInitialized", this.getClass().getName()))); //$NON-NLS-1$
+		}
+		try {
+			execute(f_provider,f_resources,monitor);
+		} catch (CVSException e) {
+			throw new InvocationTargetException(e);
+		}
 	}
 
 	/**

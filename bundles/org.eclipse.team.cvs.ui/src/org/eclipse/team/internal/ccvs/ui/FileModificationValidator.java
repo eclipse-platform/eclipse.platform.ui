@@ -15,23 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFileModificationValidator;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.actions.EditorsAction;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
  * IFileModificationValidator that is pluged into the CVS Repository Provider
@@ -120,21 +112,17 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 		return new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("internal"), target); //$NON-NLS-1$
 	}
 		
-	private IStatus edit(final IFile[] files, Shell shell) {
+	private IStatus edit(final IFile[] files, final Shell shell) {
 		try {
 			if (shell != null && !promptToEditFiles(files, shell)) {
-				return OK;
+				// The user didn't want to edit.
+				// OK is returned but the file remains read-only
+				throw new InterruptedException();
 			}
-		} catch (InvocationTargetException e) {
-			return getStatus(e);
-		} catch (InterruptedException e) {
-			// Is it correct to answer OK?????
-			return OK;
-		}
-
-		// Create a runnable to edit the file
-		try {
-			run(shell, new IRunnableWithProgress() {
+			
+			// Run the edit in a runnable in order to get a busy cursor.
+			// This runnable is syncExeced in order to get a busy cursor
+			CVSUIPlugin.runWithProgress(shell, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						edit(files, monitor);
@@ -142,13 +130,14 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 						new InvocationTargetException(e);
 					}
 				}
-			});
-			return OK;
+			}, CVSUIPlugin.PERFORM_SYNC_EXEC);
 		} catch (InvocationTargetException e) {
 			return getStatus(e);
 		} catch (InterruptedException e) {
-			return new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("FileModificationValidator.vetoMessage"), null); //$NON-NLS-1$;
+			// Fallthrough to return OK
 		}
+		return OK;
+		
 	}
 
 	private boolean promptToEditFiles(IFile[] files, Shell shell) throws InvocationTargetException, InterruptedException {
@@ -162,10 +151,9 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 			// Contact the server to see if anyone else is editing the files
 			EditorsAction editors = fetchEditors(files, shell);
 			if (editors.isEmpty()) {
-				if (isAlwaysPrompt())
+				if (isAlwaysPrompt()) 
 					return (promptEdit(shell));
-				else
-					return true;
+				return true;
 			} else {
 				return (editors.promptToEdit(shell));
 			}
@@ -181,16 +169,29 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 	}
 	
 	private boolean promptEdit(Shell shell) {
-		return MessageDialog.openQuestion(shell,Policy.bind("FileModificationValidator.3"),Policy.bind("FileModificationValidator.4")); //$NON-NLS-1$ //$NON-NLS-2$
+		// Open the dialog using a sync exec (there are no guarentees that we
+		// were called from the UI thread
+		final boolean[] result = new boolean[] { false };
+		CVSUIPlugin.openDialog(shell, new CVSUIPlugin.IOpenableInShell() {
+			public void open(Shell shell) {
+				result[0] = MessageDialog.openQuestion(shell,Policy.bind("FileModificationValidator.3"),Policy.bind("FileModificationValidator.4")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}, CVSUIPlugin.PERFORM_SYNC_EXEC);
+		return result[0];
 	}
 
-	public boolean isPerformEdit() {
+	private boolean isPerformEdit() {
 		return ICVSUIConstants.PREF_EDIT_PROMPT_EDIT.equals(CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_EDIT_ACTION));
 	}
 	
 	private EditorsAction fetchEditors(IFile[] files, Shell shell) throws InvocationTargetException, InterruptedException {
-		EditorsAction editors = new EditorsAction(getProvider(files),files);
-		run(shell, editors);
+		final EditorsAction editors = new EditorsAction(getProvider(files), files);
+		// Fetch the editors in a runnable in order to get the busy cursor
+		CVSUIPlugin.runWithProgress(shell, false, new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				editors.run(monitor);
+			}
+		}, CVSUIPlugin.PERFORM_SYNC_EXEC);
 		return editors;
 	}
 
@@ -201,10 +202,6 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 	private boolean isAlwaysPrompt() {
 		return ICVSUIConstants.PREF_EDIT_PROMPT_ALWAYS.equals(CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_EDIT_PROMPT));
 	}	
-
-	private void run(Shell shell, final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-		CVSUIPlugin.runWithProgress(shell, false, runnable, CVSUIPlugin.PERFORM_SYNC_EXEC);
-	}
 	
 	private void edit(IFile[] files, IProgressMonitor monitor) throws CVSException {
 		getProvider(files).edit(files, false /* recurse */, true /* notify server */, ICVSFile.NO_NOTIFICATION, monitor);
