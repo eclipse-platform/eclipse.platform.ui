@@ -11,6 +11,58 @@
 <h1>
 Eclipse Platform Build Notes<br>
 Workbench</h1>
+Eclipse Integration Build 20020402
+<h2>
+What's new in this drop</h2>
+
+<h3>
+API changes</h3>
+
+<blockquote>- ActionFactory and subclasses deprecated in org.eclipse.ui.views.navigator.&nbsp;
+These will be deleted in M6.
+<br>- Changed ResourceNavigator to use ActionGroups instead of ActionFactories.</blockquote>
+
+<h3>
+API additions</h3>
+
+<blockquote><b>ICombinedLabelDecorator</b> and <b>ICombinedLabelProvider</b>
+<br>- It is now possible to decorate both the text and the image for an
+element in the same method call. ICombinedLabelDecorator&nbsp; is a subclass
+of ILabelDecorator and specifies a method decorateLabel(Object, CombinedLabel).
+A CombinedLabel is a type that contains a text and an image for decoration.
+ICombinedLabelProvider extends ILabelProvider and implements a method getCombinedLabel(Object).
+The DecoratorManager now handles both the ILabelDecorator and ICombinedLabelDecorator.
+<p><b>ActionGroup</b> and <b>ActionContext</b> in org.eclipse.ui.actions
+<p><b>RadioGroupFieldEditor</b>
+<br>- Added constructor to RadioGroupFieldEditor to specify whether a Group
+control should be used (false by default for backwards compatibility).
+Preference pages are encouraged to use Group controls for groups of related
+radio buttons or toggle buttons, since they provide more context to accessibility
+aids like JAWS.</blockquote>
+
+<h3>
+Other highlights</h3>
+
+<blockquote><b>LabelProviderChangedEvent</b>
+<br>It is now possible to create a LabelProviderChangedEvent with multiple
+elements rather than sending an seperate event for each change. The StructuredViewer
+now updates based on an array of elements. The previous API has not changed,
+now LabelProviderChangedEvent .getElement() returns the first element in
+the elements of the event.</blockquote>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&chfield=bug_status&chfieldfrom=2002%2F03%2F28&chfieldto=2002%2F04%2F02&product=Platform&component=UI&cmdtype=doit&&order=Bug+Number">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+between 2002/03/28 and 2002/04/02.
+<p>
+<hr SIZE=0 WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
 Eclipse Integration Build 20020328
 <h2>
 What's new in this drop</h2>
