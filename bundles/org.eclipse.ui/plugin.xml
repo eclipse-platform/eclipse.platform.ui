@@ -60,7 +60,7 @@
 		id="org.eclipse.ui.resourcePerspective"
 		name="%Perspective.resourcePerspective"
 		class="org.eclipse.ui.internal.ResourcePerspective"
-		icon="icons/basic/cview16/resource_persp.gif">
+		icon="icons/full/cview16/resource_persp.gif">
 	</perspective>
 </extension>
 
@@ -70,7 +70,7 @@
 	   id="org.eclipse.ui.wizards.import.FileSystem"
 	   name="%ImportWizards.FileSystem"
 	   class="org.eclipse.ui.wizards.datatransfer.FileSystemImportWizard"
-	   icon="icons/basic/ctool16/importdir_wiz.gif">
+	   icon="icons/full/ctool16/importdir_wiz.gif">
 	   <description>%ImportWizards.FileSystemDescription</description>
 	   <selection class="org.eclipse.core.resources.IResource"/>
 	</wizard>
@@ -78,7 +78,7 @@
 	   id="org.eclipse.ui.wizards.import.ZipFile"
 	   name="%ImportWizards.ZipFile"
 	   class="org.eclipse.ui.wizards.datatransfer.ZipFileImportWizard"
-	   icon="icons/basic/ctool16/importzip_wiz.gif">
+	   icon="icons/full/ctool16/importzip_wiz.gif">
 	   <description>%ImportWizards.ZipFileDescription</description>
 	   <selection class="org.eclipse.core.resources.IResource"/>
       	</wizard>
@@ -90,7 +90,7 @@
 	   id="org.eclipse.ui.wizards.export.FileSystem"
 	   name="%ExportWizards.FileSystem"
 	   class="org.eclipse.ui.wizards.datatransfer.FileSystemExportWizard"
-	   icon="icons/basic/ctool16/exportdir_wiz.gif">
+	   icon="icons/full/ctool16/exportdir_wiz.gif">
 	   <description>%ExportWizards.FileSystemDescription</description>
 	   <selection class="org.eclipse.core.resources.IResource"/>
 	</wizard>
@@ -98,7 +98,7 @@
 	   id="org.eclipse.ui.wizards.export.ZipFile"
 	   name="%ExportWizards.ZipFile"
 	   class="org.eclipse.ui.wizards.datatransfer.ZipFileExportWizard"
-	   icon="icons/basic/ctool16/exportzip_wiz.gif">
+	   icon="icons/full/ctool16/exportzip_wiz.gif">
 	   <description>%ExportWizards.ZipFileDescription</description>
 	   <selection class="org.eclipse.core.resources.IResource"/>
 	</wizard>
@@ -115,35 +115,35 @@
 	   name="%Views.ResourceNavigator"
 	   category="org.eclipse.ui"
 	   class="org.eclipse.ui.views.navigator.ResourceNavigator"
-	   icon="icons/basic/cview16/filenav_nav.gif">
+	   icon="icons/full/cview16/filenav_nav.gif">
 	</view>
 	<view
        id="org.eclipse.ui.views.BookmarkNavigator"
 	   name="%Views.BookmarkNavigator"
 	   category="org.eclipse.ui"
 	   class="org.eclipse.ui.views.bookmarkexplorer.BookmarkNavigator"
-	   icon="icons/basic/cview16/bkmrk_nav.gif">
+	   icon="icons/full/cview16/bkmrk_nav.gif">
 	</view>
 	<view
        id="org.eclipse.ui.views.PropertySheet"
 	   name="%Views.PropertySheet"
 	   category="org.eclipse.ui"
 	   class="org.eclipse.ui.views.properties.PropertySheet"
-	   icon="icons/basic/cview16/prop_ps.gif">
+	   icon="icons/full/cview16/prop_ps.gif">
 	</view>
 	<view
 	   id="org.eclipse.ui.views.ContentOutline"
 	   name="%Views.ContentOutline"
 	   category="org.eclipse.ui"
 	   class="org.eclipse.ui.views.contentoutline.ContentOutline"
-	   icon="icons/basic/cview16/outline_co.gif">
+	   icon="icons/full/cview16/outline_co.gif">
 	</view>
 	<view
 	   id="org.eclipse.ui.views.TaskList"
 	   name="%Views.TaskList"
 	   category="org.eclipse.ui"
 	   class="org.eclipse.ui.views.tasklist.TaskList"
-	   icon="icons/basic/cview16/tasks_tsk.gif">
+	   icon="icons/full/cview16/tasks_tsk.gif">
 	</view>
 </extension>
 
@@ -152,7 +152,7 @@
 	<imageprovider 
 		id="org.eclipse.ui.taskMarkerProvider"
 		markertype="org.eclipse.core.resources.taskmarker"
-		icon="icons/basic/cview16/tasks_tsk.gif">
+		icon="icons/full/cview16/tasks_tsk.gif">
 	</imageprovider>
 	<imageprovider 
 		id="org.eclipse.ui.problemMarkerProvider"
@@ -178,7 +178,7 @@
 	   category="org.eclipse.ui.Basic"
 	   project="true"
 	   finalPerspective="org.eclipse.ui.resourcePerspective"
-	   icon="icons/basic/ctool16/newprj_wiz.gif">
+	   icon="icons/full/ctool16/newprj_wiz.gif">
            <description>%NewWizards.project.description</description>
 	   <selection class="org.eclipse.core.resources.IResource"/>
         </wizard>
@@ -187,7 +187,7 @@
 	   name="%NewWizards.folder"
 	   class="org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard"
 	   category="org.eclipse.ui.Basic"
-	   icon="icons/basic/ctool16/newfolder_wiz.gif">
+	   icon="icons/full/ctool16/newfolder_wiz.gif">
 	   <description>%NewWizards.folder.description</description>
 	   <selection class="org.eclipse.core.resources.IResource"/>
 	</wizard>
@@ -196,7 +196,7 @@
 	   name="%NewWizards.file"
 	   class="org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard"
 	   category="org.eclipse.ui.Basic"
-	   icon="icons/basic/ctool16/newfile_wiz.gif">
+	   icon="icons/full/ctool16/newfile_wiz.gif">
 	   <description>%NewWizards.file.description</description>
 	   <selection class="org.eclipse.core.resources.IResource"/>
 	</wizard>
@@ -263,7 +263,7 @@
     point = "org.eclipse.ui.editors">
     <editor id ="org.eclipse.ui.DefaultTextEditor"
       name="%Editors.DefaultTextEditor"
-      icon="icons/basic/obj16/file_obj.gif"
+      icon="icons/full/obj16/file_obj.gif"
       extensions="txt"
       class="org.eclipse.ui.editors.text.TextEditor"
       contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor">     
@@ -271,7 +271,7 @@
 
     <editor id="org.eclipse.ui.internal.dialogs.WelcomeEditor"
       name="%Editors.WelcomeEditor"
-      icon="icons/basic/obj16/welcome_editor.gif"
+      icon="icons/full/obj16/welcome_editor.gif"
       class="org.eclipse.ui.internal.dialogs.WelcomeEditor">
     </editor>
 </extension>
