@@ -26,13 +26,9 @@ import org.osgi.service.prefs.BackingStoreException;
  * implementations. A plug-in subclasses this class and overrides
  * the appropriate life cycle methods in order to react to the life cycle 
  * requests automatically issued by the platform.
- * 
- * TODO conditionla life cycle despcriont
- * the <code>startup</code> and <code>shutdown</code> methods 
- * 
- * TODO plugins are implemented on top of bunldes.  Unless otherwise neded, 
- * more people can successfully ignore these bundles
- * 
+ * For compatibility reasons, the methods called for those life cycle events 
+ * vary, please see the "Constructors and life cycle methods" section below. 
+ *  
  * <p>
  * Conceptually, the plug-in runtime class represents the entire plug-in
  * rather than an implementation of any one particular extension the
@@ -52,10 +48,14 @@ import org.osgi.service.prefs.BackingStoreException;
  * </p>
  * <p>
  * Instances of plug-in runtime classes are automatically created 
- * by the platform in the course of plug-in activation.
- * 
- * TODO conditional description of constructors
- * 
+ * by the platform in the course of plug-in activation. For compatibility reasons, 
+ * the constructor used to create plug-in instances varies, please see the "Constructors 
+ * and life cycle methods" section below.
+ * </p><p>
+ * The concept of bundles underlies plug-ins. However it is safe to regard plug-ins 
+ * and bundles as synonyms. 
+ * </p>
+ * <p>
  * <b>Clients must never explicitly instantiate a plug-in runtime class</b>.
  * </p>
  * <p>
@@ -82,6 +82,24 @@ import org.osgi.service.prefs.BackingStoreException;
  * </pre>
  * In the above example, a call to <code>MyPluginClass.getInstance()</code>
  * will always return an initialized instance of <code>MyPluginClass</code>.
+ * </p>
+ * <p>
+ * <b>Constructors and life cycle methods</b> 
+ * </p><p>
+ * If the plugin.xml of a plug-in indicates &lt;?eclipse version="3.0"?&gt; and its prerequisite
+ * list includes <code>org.eclipse.core.runtime</code>, the default constructor of the plug-in 
+ * class is used and {@link #start(BundleContext)} and {@link #stop(BundleContext)} are
+ * called as life cycle methods.    
+ * </p><p>
+ * If the plugin.xml of a plug-in indicates &lt;?eclipse version="3.0"?&gt; and its prerequisite list includes
+ * <code>org.eclipse.core.runtime.compatibility</code>, the {@link #Plugin(IPluginDescriptor)}
+ * constructor is used and {@link #startup()} and {@link #shutdown()} are called as life cycle methods.
+ * Note that in this situation, start() is called before startup() and stop() is called
+ * after shutdown. 
+ * </p><p>
+ * If the plugin.xml of your plug-in does <b>not</b> indicate &lt;?eclipse version="3.0"?&gt; it is therefore
+ * not a 3.0 plug-in. Consequently the {@link #Plugin(IPluginDescriptor)} is used and {@link #startup()} and 
+ * {@link #shutdown()} are called as life cycle methods.
  * </p>
  */
 public abstract class Plugin implements BundleActivator {
