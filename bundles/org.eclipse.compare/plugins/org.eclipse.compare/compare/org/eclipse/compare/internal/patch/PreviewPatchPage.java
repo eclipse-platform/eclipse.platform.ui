@@ -26,6 +26,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 
@@ -230,6 +231,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 		
 		// creating tree's content
 		buildTree();
+		Dialog.applyDialogFont(composite);		
 	}
 	
 	/**

@@ -80,6 +80,7 @@ public class ListDialog extends SelectionDialog {
 		gd.heightHint= convertHeightInCharsToPixels(15);
 		gd.widthHint= convertWidthInCharsToPixels(55);
 		table.setLayoutData(gd);
+		applyDialogFont(parent);
 		return parent;
 	}
 	

@@ -789,7 +789,8 @@ public class EditionSelectionDialog extends ResizableDialog {
 			}
 		};
 		vsplitter.setWeights(new int[] { 30, 70 });
-				
+
+		applyDialogFont(parent);				
 		return parent;
 	}	
 	

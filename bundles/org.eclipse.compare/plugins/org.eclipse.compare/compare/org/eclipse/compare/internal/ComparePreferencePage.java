@@ -19,6 +19,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.*;
 
@@ -206,7 +207,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		item.setControl(createTextComparePage(folder));
 		
 		initializeFields();
-		
+		Dialog.applyDialogFont(folder);
 		return folder;
 	}
 	

@@ -84,7 +84,7 @@ public class CompareDialog extends ResizableDialog implements IPropertyChangeLis
 		Shell shell= c.getShell();
 		shell.setText(fCompareEditorInput.getTitle());
 		shell.setImage(fCompareEditorInput.getTitleImage());
-
+		applyDialogFont(parent);
 		return parent;
 	}
 		

@@ -262,13 +262,14 @@ public class AddFromHistoryDialog extends ResizableDialog {
 		);
 		fEditionPane.setContent(fEditionTree);		
 		
+		applyDialogFont(parent); // to avoid applying font to compare viewer
 		fContentPane= new CompareViewerSwitchingPane(vsplitter, SWT.BORDER | SWT.FLAT) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
 				return CompareUIPlugin.findContentViewer(oldViewer, input, this, fCompareConfiguration);	
 			}
 		};
 		vsplitter.setWeights(new int[] { 30, 70 });
-				
+		
 		return parent;
 	}
 	

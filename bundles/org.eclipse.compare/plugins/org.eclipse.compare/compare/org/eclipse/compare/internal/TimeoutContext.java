@@ -211,7 +211,7 @@ public class TimeoutContext {
 			fProgressIndicator.worked(fProgressMonitor.fWorked);
 	
 			fProgressMonitor.activate(this);
-
+			applyDialogFont(c);
 			return c;
 		}
 		

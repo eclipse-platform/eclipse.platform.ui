@@ -20,6 +20,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 
@@ -94,6 +95,7 @@ import org.eclipse.core.runtime.*;
 		updateWidgetEnablements();
 		//updatePageCompletion();
 		
+		Dialog.applyDialogFont(composite);
 		WorkbenchHelp.setHelp(composite, ICompareContextIds.PATCH_INPUT_WIZARD_PAGE);
 	}
 	

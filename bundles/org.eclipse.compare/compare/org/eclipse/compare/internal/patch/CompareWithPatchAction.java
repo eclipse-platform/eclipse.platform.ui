@@ -134,6 +134,7 @@ public class CompareWithPatchAction implements IActionDelegate {
 						}
 					}
 				);
+				applyDialogFont(result);
 				return result;
 			}
 		};
