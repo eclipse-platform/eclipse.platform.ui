@@ -201,7 +201,7 @@ public final class ContentType implements IContentType {
 			invalidateDescriber(e);
 			throw e;
 		} finally {
-			((LazyInputStream) contents).reset();
+			((LazyInputStream) contents).rewind();
 		}
 	}
 
@@ -223,13 +223,7 @@ public final class ContentType implements IContentType {
 			invalidateDescriber(e);
 			throw e;
 		} finally {
-			try {
-				contents.reset();
-			} catch (IOException ioe) {
-				// this should only happen if the describer closed the reader (it should not)
-				String message = Policy.bind("content.errorReadingContents", getId()); //$NON-NLS-1$ 
-				log(message, ioe);
-			}
+			((LazyReader) contents).rewind();
 		}
 	}
 

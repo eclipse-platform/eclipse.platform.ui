@@ -134,4 +134,9 @@ public class LazyInputStream extends InputStream {
 		offset += skipped;
 		return skipped;
 	}
+
+	public void rewind() {
+		mark = 0;
+		offset = 0;
+	}
 }

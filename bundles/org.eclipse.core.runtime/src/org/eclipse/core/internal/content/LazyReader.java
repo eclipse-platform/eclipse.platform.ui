@@ -138,4 +138,9 @@ public class LazyReader extends Reader {
 	public void close() {
 		// we don't close the underlying stream
 	}
+
+	public void rewind() {
+		mark = 0;
+		offset = 0;
+	}
 }
