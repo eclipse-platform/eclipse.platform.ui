@@ -5,9 +5,6 @@ package org.eclipse.team.internal.ccvs.core.client;
  * All Rights Reserved.
  */
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
@@ -19,9 +16,6 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
  * folder is sent along with the added resource.
  */
 class AddStructureVisitor extends AbstractStructureVisitor {
-	private boolean forceSend = false;
-	private Set visitedFolders = new HashSet();
-	private ICVSFolder lastVisitedFolder;
 	
 	public AddStructureVisitor(Session session, IProgressMonitor monitor) {
 		super(session, false, true, monitor);
