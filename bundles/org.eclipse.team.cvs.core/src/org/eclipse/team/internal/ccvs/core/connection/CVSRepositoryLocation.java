@@ -14,21 +14,52 @@ package org.eclipse.team.internal.ccvs.core.connection;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.client.*;
-import org.eclipse.team.internal.ccvs.core.resources.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.IConnectionMethod;
+import org.eclipse.team.internal.ccvs.core.IUserAuthenticator;
+import org.eclipse.team.internal.ccvs.core.IUserInfo;
+import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteModule;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
-import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * This class manages a CVS repository location.
@@ -57,6 +88,12 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 */
 	public static final String PREF_REPOSITORIES_NODE = "repositories"; //$NON-NLS-1$
 	
+	/*
+	 * The name of the node in the default scope that has the default settings
+	 * for a repository.
+	 */
+	private static final String DEFAULT_REPOSITORY_SETTINGS_NODE = "default_repository_settings"; //$NON-NLS-1$
+
 	// Preference keys used to persist the state of the location
 	public static final String PREF_LOCATION = "location"; //$NON-NLS-1$
 	public static final String PREF_SERVER_ENCODING = "encoding"; //$NON-NLS-1$
@@ -106,7 +143,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public static final String USER_VARIABLE = "{user}"; //$NON-NLS-1$
 	public static final String PASSWORD_VARIABLE = "{password}"; //$NON-NLS-1$
 	public static final String HOST_VARIABLE = "{host}"; //$NON-NLS-1$
-	public static final String PORT_VARIABLE = "{port}";
+	public static final String PORT_VARIABLE = "{port}"; //$NON-NLS-1$
 
 	private static String extProxy; //$NON-NLS-1$
 	
@@ -134,7 +171,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * @return  a preferences node
 	 */
 	public static Preferences getDefaultPreferences() {
-		Preferences defaults = new EclipsePreferences();
+		Preferences defaults = new DefaultScope().getNode(CVSProviderPlugin.ID).node(DEFAULT_REPOSITORY_SETTINGS_NODE);
 		defaults.put(PREF_SERVER_ENCODING, getDefaultEncoding());
 		return defaults;
 	}
