@@ -340,6 +340,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Sets the feature identifier.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param featureId feature identifier
 	 * @since 2.0
 	 */
 	public void setFeatureIdentifier(String featureId) {
@@ -348,6 +352,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Sets the feature version.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param featureVersion feature version
 	 * @since 2.0
 	 */
 	public void setFeatureVersion(String featureVersion) {
@@ -356,6 +364,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Sets the feature displayable label.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param label displayable label
 	 * @since 2.0
 	 */
 	public void setLabel(String label) {
@@ -365,6 +377,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Sets the feature provider displayable label.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param provider provider displayable label
 	 * @since 2.0
 	 */
 	public void setProvider(String provider) {
@@ -374,6 +390,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Sets the unresolver URL for the feature image.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param imageURLString unresolved URL string
 	 * @since 2.0
 	 */
 	public void setImageURLString(String imageURLString) {
@@ -383,6 +403,11 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Sets the operating system specification.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @see org.eclipse.core.boot.BootLoader
+	 * @param os operating system specification as a comma-separated list
 	 * @since 2.0
 	 */
 	public void setOS(String os) {
@@ -391,6 +416,11 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Sets the windowing system specification.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @see org.eclipse.core.boot.BootLoader
+	 * @param ws windowing system specification as a comma-separated list
 	 * @since 2.0
 	 */
 	public void setWS(String ws) {
@@ -399,6 +429,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Sets the locale specification.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param nl locale specification as a comma-separated list
 	 * @since 2.0
 	 */
 	public void setNL(String nl) {
@@ -407,8 +441,12 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
-	 * Sets the arch.
-	 * @param arch The arch to set
+	 * Sets the system architecture specification.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @see org.eclipse.core.boot.BootLoader
+	 * @param arch system architecture specification as a comma-separated list
+	 * @since 2.0
 	 */
 	public void setArch(String arch) {
 		assertIsWriteable();
@@ -416,6 +454,12 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Indicates whether this feature can act as a primary feature.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param isPrimary <code>true</code> if this feature can act as primary,
+	 * <code>false</code> otherwise
+	 * 
 	 * @since 2.0
 	 */
 	public void isPrimary(boolean isPrimary) {
@@ -424,6 +468,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Sets the feature application identifier.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param application feature application identifier
 	 * @since 2.0
 	 */
 	public void setApplication(String application) {
