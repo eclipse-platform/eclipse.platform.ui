@@ -181,8 +181,8 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		bar.setLayoutData(gridData);
 		// Add a button to navigate back
 		backItem = new ToolItem(bar, SWT.HORIZONTAL, 0);
-		backItem.setText(ieResources.getString("back"));
-		backItem.setToolTipText(ieResources.getString("back_top"));
+		//backItem.setText(ieResources.getString("back"));
+		backItem.setToolTipText(ieResources.getString("back_tip"));
 		backItem.setImage(backImg);
 		backItem.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -194,7 +194,7 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		});
 		// Add a button to navigate forward
 		forwardItem = new ToolItem(bar, SWT.NONE, 1);
-		forwardItem.setText(ieResources.getString("forward"));
+		//forwardItem.setText(ieResources.getString("forward"));
 		forwardItem.setToolTipText(ieResources.getString("forward_tip"));
 		forwardItem.setImage(forwardImg);
 		forwardItem.setHotImage(null);
