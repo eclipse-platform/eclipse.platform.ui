@@ -26,6 +26,7 @@ public class AllTests extends TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
 		suite.addTest(IContentTypeManagerTest.suite());
+		suite.addTest(ContentDescriptionTest.suite());		
 		suite.addTest(XMLContentDescriberTest.suite());
 		return suite;
 	}
