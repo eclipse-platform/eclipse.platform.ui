@@ -48,7 +48,7 @@ public class MergeEditorInput extends CVSSyncCompareInput {
 		try {
 			IRemoteResource base = CVSWorkspaceRoot.getRemoteTree(project, start, Policy.subMonitorFor(monitor, 50));
 			IRemoteResource remote = CVSWorkspaceRoot.getRemoteTree(project, end, Policy.subMonitorFor(monitor, 50));
-			return new IRemoteSyncElement[] {new CVSRemoteSyncElement(false, project, base, remote)};
+			return new IRemoteSyncElement[] {new CVSRemoteSyncElement(true /*three way*/, project, base, remote)};
 		} finally {
 			monitor.done();
 		}

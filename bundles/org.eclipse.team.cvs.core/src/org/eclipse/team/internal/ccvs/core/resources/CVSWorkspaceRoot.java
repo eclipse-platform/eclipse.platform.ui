@@ -111,7 +111,7 @@ public class CVSWorkspaceRoot {
 			baseTree = RemoteFolderTreeBuilder.buildBaseTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
 			remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
 		}
-		return new CVSRemoteSyncElement(false, resource, baseTree, remote);
+		return new CVSRemoteSyncElement(true /*three way*/, resource, baseTree, remote);
 	}
 	
 	public static ICVSRemoteResource getRemoteTree(IResource resource, CVSTag tag, IProgressMonitor progress) throws TeamException {

@@ -32,10 +32,6 @@ import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
 
-/**
- * @version 	1.0
- * @author 	${user}
- */
 public class SyncElementTest extends EclipseTest {
 
 	/**
@@ -368,10 +364,10 @@ public class SyncElementTest extends EclipseTest {
 			new String[] { "file.txt", "add1a.txt", "add1b.txt", "add2a.txt", "add2b.txt", "add3.txt"}, 
 			new int[] {
 				IRemoteSyncElement.IN_SYNC,
-				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
-				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
-				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
-				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
+				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.ADDITION,
+				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.ADDITION,
+				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.ADDITION,
+				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.ADDITION,
 				IRemoteSyncElement.OUTGOING | IRemoteSyncElement.ADDITION });
 				
 		// Release the conflict cases (MERGE is not required for add3.txt but we do it anyway to ensure it doesn't cause problems)
@@ -583,7 +579,7 @@ public class SyncElementTest extends EclipseTest {
 			new String[] { "file.txt", "folder1/", "folder1/file.txt", "folder2/", "folder2/file.txt"}, 
 			new int[] {
 				IRemoteSyncElement.IN_SYNC,
-				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
+				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.ADDITION,
 				IRemoteSyncElement.INCOMING | IRemoteSyncElement.ADDITION,
 				IRemoteSyncElement.INCOMING | IRemoteSyncElement.ADDITION,
 				IRemoteSyncElement.INCOMING | IRemoteSyncElement.ADDITION});
@@ -755,7 +751,7 @@ public class SyncElementTest extends EclipseTest {
 		
 		IRemoteResource base = CVSWorkspaceRoot.getRemoteTree(project, new CVSTag("v1", CVSTag.VERSION), DEFAULT_MONITOR);
 		IRemoteResource remote = CVSWorkspaceRoot.getRemoteTree(project, new CVSTag("branch1", CVSTag.BRANCH), DEFAULT_MONITOR);
-		IRemoteSyncElement tree = new CVSRemoteSyncElement(false, project, base, remote);
+		IRemoteSyncElement tree = new CVSRemoteSyncElement(true /*three way*/, project, base, remote);
 		
 		// watch for empty directories and the prune option!!!
 		assertSyncEquals("testSimpleMerge sync check", tree,

@@ -48,7 +48,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	 * 
 	 * @return a client specific sync element.
 	 */
-	public abstract IRemoteSyncElement create(boolean ignoreBaseTree, IResource local, IRemoteResource base, IRemoteResource remote, Object data);
+	public abstract IRemoteSyncElement create(boolean isThreeWay, IResource local, IRemoteResource base, IRemoteResource remote, Object data);
 		
 	/*
 	 * @see ILocalSyncElement#members()
@@ -63,7 +63,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 			remote != null ? remote.members(progress) : new IRemoteResource[0];
 			
 		IRemoteResource[] baseChildren =
-			base != null && !ignoreBaseTree() ? base.members(progress) : new IRemoteResource[0];
+			base != null ? base.members(progress) : new IRemoteResource[0];
 			
 		IResource[] localChildren;			
 		try {	
@@ -143,7 +143,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 				}
 
 				if(!localChild.exists() || !isIgnored(localChild)) {
-					syncChildren.add(create(ignoreBaseTree(), localChild, baseChild, remoteChild, getData()));
+					syncChildren.add(create(isThreeWay(), localChild, baseChild, remoteChild, getData()));
 				}
 			}
 			return (IRemoteSyncElement[]) syncChildren.toArray(new IRemoteSyncElement[syncChildren.size()]);
@@ -160,25 +160,14 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 		int description = IN_SYNC;
 	
 		IResource local = getLocal();
-		boolean localExists = getLocal().exists();
 		IRemoteResource remote = getRemote();
 		IRemoteResource base = getBase();
 		
+		boolean localExists = getLocal().exists();
 		boolean isDirty = isDirty();
 		boolean isOutOfDate = isOutOfDate();
 	
-		boolean threeWay = (base != null && !ignoreBaseTree() ? true : false);
-	
-
-		// XXX projects are always in sync.
-		if(local.getType() == IResource.PROJECT) {
-			if (remote == null) 
-				return OUTGOING | ADDITION;
-			else 
-				return description;
-		}
-
-		if (threeWay) {
+		if (isThreeWay()) {
 			if (base == null) {
 				if (remote == null) {
 					if (!localExists) {
@@ -373,5 +362,32 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 		} else {
 			return ((IContainer) parent).getFile(new Path(childName));
 		}
+	}
+	
+	/*
+	 * @see Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(getName() + "[");
+		int kind = getSyncKind(GRANULARITY_TIMESTAMP, null);
+		if(kind==IN_SYNC) {
+			buffer.append("in-sync");
+		} else {
+			switch(kind & DIRECTION_MASK) {
+				case CONFLICTING: buffer.append("conflicting"); break;
+				case OUTGOING: buffer.append("outgoing"); break;
+				case INCOMING: buffer.append("incoming"); break;
+			}		
+			switch(kind & DIRECTION_MASK) {
+				case CHANGE: buffer.append("change"); break;
+				case ADDITION: buffer.append("addition"); break;
+				case DELETION: buffer.append("deletion"); break;
+			}
+			if((kind & MANUAL_CONFLICT) != 0) buffer.append("{manual}");
+			if((kind & AUTOMERGE_CONFLICT) != 0) buffer.append("{auto}");
+		}
+		buffer.append("]");
+		return buffer.toString();
 	}
 }

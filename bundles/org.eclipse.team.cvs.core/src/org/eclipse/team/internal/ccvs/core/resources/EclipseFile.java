@@ -74,10 +74,6 @@ class EclipseFile extends EclipseResource implements ICVSFile {
 				try {
 					IFile file = getIFile();
 					if (responseType == CREATED || (responseType == UPDATED && ! resource.exists())) {
-						// XXX Temporary deletion of existing resource
-						if (file.exists()) {
-							file.delete(true, true, null);
-						}
 						file.create(new ByteArrayInputStream(toByteArray()), false /*force*/, null);
 					} else if(responseType == UPDATE_EXISTING) {
 						file.setContents(new ByteArrayInputStream(toByteArray()), false /*force*/, true /*keep history*/, null);

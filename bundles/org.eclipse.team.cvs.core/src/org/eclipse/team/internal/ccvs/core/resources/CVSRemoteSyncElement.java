@@ -29,19 +29,19 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 
 	CVSLocalSyncElement localSync;
 	IRemoteResource remote;
-	boolean ignoreBaseTree = true;
+	boolean isThreeWay = true;
 
-	public CVSRemoteSyncElement(boolean ignoreBaseTree, IResource local, IRemoteResource base, IRemoteResource remote) {
+	public CVSRemoteSyncElement(boolean isThreeWay, IResource local, IRemoteResource base, IRemoteResource remote) {
 		localSync = new CVSLocalSyncElement(local, base);
 		this.remote = remote;	
-		this.ignoreBaseTree = ignoreBaseTree;		
+		this.isThreeWay = isThreeWay;		
 	}
 
 	/*
 	 * @see RemoteSyncElement#create(IResource, IRemoteResource, IRemoteResource)
 	 */
-	public IRemoteSyncElement create(boolean ignoreBaseTree, IResource local, IRemoteResource base, IRemoteResource remote, Object data) {
-		return new CVSRemoteSyncElement(ignoreBaseTree, local, base, remote);
+	public IRemoteSyncElement create(boolean isThreeWay, IResource local, IRemoteResource base, IRemoteResource remote, Object data) {
+		return new CVSRemoteSyncElement(isThreeWay, local, base, remote);
 	}
 
 	/*
@@ -133,8 +133,8 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	/*
 	 * @see IRemoteSyncElement#ignoreBaseTree()
 	 */
-	public boolean ignoreBaseTree() {
-		return ignoreBaseTree;
+	public boolean isThreeWay() {
+		return isThreeWay;
 	}
 	
 	/*
@@ -276,16 +276,12 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 				// the server compared both text files and decided that it cannot merge
 				// them without line conflicts.
 				case Update.STATE_CONFLICT: 
-					return ILocalSyncElement.CONFLICTING | 
-							   ILocalSyncElement.CHANGE | 
-							   ILocalSyncElement.MANUAL_CONFLICT;
+					return kind | ILocalSyncElement.MANUAL_CONFLICT;
 
 				// the server compared both text files and decided that it can safely merge
 				// them without line conflicts. 
 				case Update.STATE_MERGEABLE_CONFLICT: 
-					return ILocalSyncElement.CONFLICTING | 
-							   ILocalSyncElement.CHANGE | 
-							   ILocalSyncElement.AUTOMERGE_CONFLICT;				
+					return kind | ILocalSyncElement.AUTOMERGE_CONFLICT;				
 			}			
 		}
 		
@@ -296,8 +292,8 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	}
 	
 	/*
-	 * If the resource has a delete/delete conflict then ensure that the local is unmanaged so that the sync info
-	 * can be properly flushed.
+	 * If the resource has a delete/delete conflict then ensure that the local is unmanaged so that the 
+	 * sync info can be properly flushed.
 	 */
 	private int handleDeletionConflicts(int kind) {
 		if(kind == (IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.DELETION | IRemoteSyncElement.PSEUDO_CONFLICT)) {
