@@ -904,9 +904,28 @@ public final class FormText extends Canvas {
 
 	private void endSelection(MouseEvent e) {
 		mouseDown = false;
-		if (selData != null && !selData.isEnclosed())
-			selData = null;
+		if (selData != null) {
+			if (!selData.isEnclosed())
+				selData = null;
+			else
+				computeSelection();
+		}
 		notifySelectionChanged();
+	}
+	
+	private void computeSelection() {
+		GC gc = new GC(this);
+		Paragraph[] paragraphs = model.getParagraphs();
+		IHyperlinkSegment selectedLink = model.getSelectedLink();
+		if (getDisplay().getFocusControl() != this)
+			selectedLink = null;
+		for (int i = 0; i < paragraphs.length; i++) {
+			Paragraph p = paragraphs[i];
+			if (i>0) selData.markNewLine();
+			p.computeSelection(gc, resourceTable, selectedLink,
+							selData);
+		}
+		gc.dispose();
 	}
 
 	void clearSelection() {

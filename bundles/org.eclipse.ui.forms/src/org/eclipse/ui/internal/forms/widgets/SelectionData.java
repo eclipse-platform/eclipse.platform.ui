@@ -24,7 +24,8 @@ public class SelectionData {
 	private Point start;
 	private Point stop;
 	private ArrayList segments;
-
+	private boolean newLineNeeded;
+	
 	public SelectionData(MouseEvent e) {
 		display = e.display;
 		segments = new ArrayList();
@@ -34,11 +35,15 @@ public class SelectionData {
 		fg = e.display.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
 	}
 	
-	public void addSegment(String text) {
-		segments.add(text);
+	public void markNewLine() {
+		newLineNeeded=true;
 	}
-	public void addNewLine() {
-		addSegment(System.getProperty("line.separator"));
+	public void addSegment(String text) {
+		if (newLineNeeded) {
+			segments.add(System.getProperty("line.separator"));
+			newLineNeeded=false;
+		}
+		segments.add(text);
 	}
 
 	public void update(MouseEvent e) {

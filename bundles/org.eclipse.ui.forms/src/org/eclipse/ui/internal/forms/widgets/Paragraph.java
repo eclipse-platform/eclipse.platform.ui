@@ -206,6 +206,19 @@ public class Paragraph {
 			segment.paint(gc, false, resourceTable, doSelect, selData, repaintRegion);
 		}
 	}
+	
+	public void computeSelection(GC gc,	Hashtable resourceTable, IHyperlinkSegment selectedLink,
+			SelectionData selData) {
+		ParagraphSegment[] segments = getSegments();
+
+		for (int i = 0; i < segments.length; i++) {
+			ParagraphSegment segment = segments[i];
+			boolean doSelect = false;
+			if (selectedLink != null && segment.equals(selectedLink))
+				doSelect = true;
+			segment.computeSelection(gc, resourceTable, selData);
+		}
+	}
 
 	public String getAccessibleText() {
 		ParagraphSegment[] segments = getSegments();

@@ -288,4 +288,12 @@ public class ImageSegment extends ParagraphSegment {
 		bounds = new Rectangle(ix-(isSelectable()?1:0), 
 				iy-(isSelectable()?1:0), iwidth+1, iheight+1);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.forms.widgets.ParagraphSegment#computeSelection(org.eclipse.swt.graphics.GC, java.util.Hashtable, boolean, org.eclipse.ui.internal.forms.widgets.SelectionData)
+	 */
+	public void computeSelection(GC gc, Hashtable resourceTable, SelectionData selData) {
+		// TODO we should add this to the selection 
+		// if we want to support rich text
+	}
 }

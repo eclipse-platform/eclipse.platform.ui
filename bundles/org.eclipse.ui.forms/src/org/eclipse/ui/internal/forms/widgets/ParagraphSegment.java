@@ -50,6 +50,14 @@ public abstract class ParagraphSegment {
 	 */
 	public abstract void paint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData, Rectangle region);
 	/**
+	 * Paints this segment.
+	 * @param gc
+	 * @param resourceTable
+	 * @param selected
+	 * @param selData
+	 */
+	public abstract void computeSelection(GC gc, Hashtable resourceTable, SelectionData selData);	
+	/**
 	 * Tests if the coordinates are contained in one of the
 	 * bounding rectangles of this segment.
 	 * @param x

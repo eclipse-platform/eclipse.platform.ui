@@ -125,4 +125,14 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements IHype
 			segment.layout(gc, width, locator, resourceTable, selected);
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.forms.widgets.ParagraphSegment#computeSelection(org.eclipse.swt.graphics.GC, java.util.Hashtable, boolean, org.eclipse.ui.internal.forms.widgets.SelectionData)
+	 */
+	public void computeSelection(GC gc, Hashtable resourceTable, SelectionData selData) {
+		for (int i=0; i<segments.size(); i++) {
+			ParagraphSegment segment = (ParagraphSegment)segments.get(i);
+			segment.computeSelection(gc, resourceTable, selData);
+		}	
+	}
 }

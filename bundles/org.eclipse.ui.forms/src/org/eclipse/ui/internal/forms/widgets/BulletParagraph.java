@@ -94,16 +94,6 @@ public class BulletParagraph extends Paragraph {
 	public String getBulletText() {
 		return text;
 	}
-/*
-	public void paint(GC gc, int width, Locator loc, int lineHeight,
-			Hashtable resourceTable, IHyperlinkSegment selectedLink,
-			SelectionData selData) {
-		computeRowHeights(gc, width, loc, lineHeight, resourceTable);
-		paintBullet(gc, loc, lineHeight, resourceTable, selData);
-		super.paint(gc, width, loc, lineHeight, resourceTable, selectedLink,
-				selData);
-	}
-*/
 
 	public void layout(GC gc, int width, Locator loc, int lineHeight,
 			Hashtable resourceTable, IHyperlinkSegment selectedLink) {

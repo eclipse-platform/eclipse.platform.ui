@@ -32,6 +32,7 @@ public class TextSegment extends ParagraphSegment {
 	private boolean wrapAllowed = true;
 
 	protected Vector areaRectangles = new Vector();
+
 	private TextFragment[] textFragments;
 
 	class AreaRectangle {
@@ -48,6 +49,7 @@ public class TextSegment extends ParagraphSegment {
 		public boolean contains(int x, int y) {
 			return rect.contains(x, y);
 		}
+
 		public boolean intersects(Rectangle region) {
 			return rect.intersects(region);
 		}
@@ -75,10 +77,12 @@ public class TextSegment extends ParagraphSegment {
 			stop = -1;
 		}
 	}
-	
+
 	static class TextFragment {
 		short index;
+
 		short length;
+
 		public TextFragment(short index, short length) {
 			this.index = index;
 			this.length = length;
@@ -150,6 +154,7 @@ public class TextSegment extends ParagraphSegment {
 		}
 		return false;
 	}
+
 	public boolean intersects(Rectangle rect) {
 		for (int i = 0; i < areaRectangles.size(); i++) {
 			AreaRectangle ar = (AreaRectangle) areaRectangles.get(i);
@@ -157,7 +162,7 @@ public class TextSegment extends ParagraphSegment {
 				return true;
 		}
 		return false;
-	}	
+	}
 
 	public Rectangle getBounds() {
 		int x = 0, y = 0;
@@ -214,17 +219,17 @@ public class TextSegment extends ParagraphSegment {
 			return newLine;
 		}
 
-		//BreakIterator wb = BreakIterator.getLineInstance();
-		//wb.setText(text);
-		
+		// BreakIterator wb = BreakIterator.getLineInstance();
+		// wb.setText(text);
+
 		computeTextFragments(gc);
-		
+
 		int lineStart = 0;
 		int cursor = 0;
 		int width = 0;
-		Point lineExtent = new Point(0,0);
+		Point lineExtent = new Point(0, 0);
 
-		for (int i=0; i<textFragments.length; i++) {
+		for (int i = 0; i < textFragments.length; i++) {
 			TextFragment textFragment = textFragments[i];
 
 			if (locator.x + lineExtent.x + textFragment.length > wHint) {
@@ -244,15 +249,15 @@ public class TextSegment extends ParagraphSegment {
 				locator.rowHeight = 0;
 				locator.leading = 0;
 				lineExtent.x = 0;
-				lineExtent.y = 0;				
+				lineExtent.y = 0;
 				width = Math.max(width, lineWidth);
 				newLine = true;
 			}
 			cursor = textFragment.index;
 			lineExtent.x += textFragment.length;
-			lineExtent.y = Math.max(lineHeight, lineExtent.y);	
+			lineExtent.y = Math.max(lineHeight, lineExtent.y);
 		}
-		
+
 		String lastString = text.substring(lineStart, cursor);
 		int lineWidth = lineExtent.x;
 		if (isSelectable())
@@ -267,6 +272,7 @@ public class TextSegment extends ParagraphSegment {
 		}
 		return newLine;
 	}
+
 	/**
 	 * @param gc
 	 * @param width
@@ -294,7 +300,7 @@ public class TextSegment extends ParagraphSegment {
 			locator.rowCounter++;
 		}
 		int ly = locator.getBaseline(fm.getHeight() - fm.getLeading());
-		int lineY = ly + lineHeight - descent + 1;		
+		int lineY = ly + lineHeight - descent + 1;
 		Rectangle br = new Rectangle(locator.x - 1, ly, extent.x + 2,
 				lineHeight - descent + 3);
 		areaRectangles.add(new AreaRectangle(br, 0, -1));
@@ -304,8 +310,8 @@ public class TextSegment extends ParagraphSegment {
 		locator.rowHeight = Math.max(locator.rowHeight, extent.y);
 	}
 
-	protected int convertOffsetToStringIndex(GC gc, String s, int x, int swidth,
-			int selOffset) {
+	protected int convertOffsetToStringIndex(GC gc, String s, int x,
+			int swidth, int selOffset) {
 		int index = s.length();
 		while (index > 0 && x + swidth > selOffset) {
 			index--;
@@ -315,7 +321,8 @@ public class TextSegment extends ParagraphSegment {
 		return index;
 	}
 
-	public void paintFocus(GC gc, Color bg, Color fg, boolean selected, Rectangle repaintRegion) {
+	public void paintFocus(GC gc, Color bg, Color fg, boolean selected,
+			Rectangle repaintRegion) {
 		if (areaRectangles == null)
 			return;
 		for (int i = 0; i < areaRectangles.size(); i++) {
@@ -323,7 +330,7 @@ public class TextSegment extends ParagraphSegment {
 			Rectangle br = areaRectangle.rect;
 			int bx = br.x;
 			int by = br.y;
-			if (repaintRegion!=null) {
+			if (repaintRegion != null) {
 				bx -= repaintRegion.x;
 				by -= repaintRegion.y;
 			}
@@ -337,12 +344,16 @@ public class TextSegment extends ParagraphSegment {
 			}
 		}
 	}
-	
-	public void paint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData, Rectangle repaintRegion) {
-		this.paint(gc, hover, resourceTable, selected, false, selData, repaintRegion);
+
+	public void paint(GC gc, boolean hover, Hashtable resourceTable,
+			boolean selected, SelectionData selData, Rectangle repaintRegion) {
+		this.paint(gc, hover, resourceTable, selected, false, selData,
+				repaintRegion);
 	}
 
-	protected void paint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, boolean rollover, SelectionData selData, Rectangle repaintRegion) {
+	protected void paint(GC gc, boolean hover, Hashtable resourceTable,
+			boolean selected, boolean rollover, SelectionData selData,
+			Rectangle repaintRegion) {
 		Font oldFont = null;
 		Color oldColor = null;
 		Color oldBg = null;
@@ -361,7 +372,7 @@ public class TextSegment extends ParagraphSegment {
 				gc.setForeground(newColor);
 		}
 		oldBg = gc.getBackground();
-		
+
 		FontMetrics fm = gc.getFontMetrics();
 		int lineHeight = fm.getHeight();
 		int descent = fm.getDescent();
@@ -374,10 +385,10 @@ public class TextSegment extends ParagraphSegment {
 			Point extent = gc.textExtent(text);
 			int textX = rect.x + 1;
 			int lineY = rect.y + lineHeight - descent + 1;
-			repaintString(gc, text, extent.x, textX, rect.y, lineY, selData,
+			paintString(gc, text, extent.x, textX, rect.y, lineY, selData,
 					rect, hover, rollover, repaintRegion);
 			if (selected)
-				gc.drawFocus(rect.x, rect.y, rect.width, rect.height);			
+				gc.drawFocus(rect.x, rect.y, rect.width, rect.height);
 		}
 		// restore GC resources
 		if (oldFont != null) {
@@ -391,8 +402,33 @@ public class TextSegment extends ParagraphSegment {
 		}
 	}
 
-	private void repaintString(GC gc, String s, int swidth, int x, int y,
-			int lineY, SelectionData selData, Rectangle bounds, boolean hover, boolean rolloverMode, Rectangle repaintRegion) {
+	public void computeSelection(GC gc, Hashtable resourceTable, SelectionData selData) {
+		Font oldFont = null;
+
+		if (fontId != null) {
+			oldFont = gc.getFont();
+			Font newFont = (Font) resourceTable.get(fontId);
+			if (newFont != null)
+				gc.setFont(newFont);
+		}
+
+		for (int i = 0; i < areaRectangles.size(); i++) {
+			AreaRectangle areaRectangle = (AreaRectangle) areaRectangles.get(i);
+			Rectangle rect = areaRectangle.rect;
+			String text = areaRectangle.getText();
+			Point extent = gc.textExtent(text);
+			computeSelection(gc, text, extent.x, selData,
+					rect);
+		}
+		// restore GC resources
+		if (oldFont != null) {
+			gc.setFont(oldFont);
+		}
+	}
+
+	private void paintString(GC gc, String s, int swidth, int x, int y,
+			int lineY, SelectionData selData, Rectangle bounds, boolean hover,
+			boolean rolloverMode, Rectangle repaintRegion) {
 		// repaints one area rectangle
 		if (selData != null && selData.isEnclosed()) {
 			Color savedBg = gc.getBackground();
@@ -411,7 +447,8 @@ public class TextSegment extends ParagraphSegment {
 
 			if ((firstRow && x + swidth < leftOffset)
 					|| (lastRow && x > rightOffset)) {
-				repaintStringSegment(gc, s, gc.textExtent(s).x, x, y, lineY, hover, rolloverMode, repaintRegion);
+				paintStringSegment(gc, s, gc.textExtent(s).x, x, y, lineY,
+						hover, rolloverMode, repaintRegion);
 				return;
 			}
 
@@ -427,7 +464,8 @@ public class TextSegment extends ParagraphSegment {
 			if (firstRow && sstart != -1) {
 				String left = s.substring(0, sstart);
 				int width = gc.textExtent(left).x;
-				repaintStringSegment(gc, left, width, x, y, lineY, hover, rolloverMode, repaintRegion);
+				paintStringSegment(gc, left, width, x, y, lineY, hover,
+						rolloverMode, repaintRegion);
 				x += width;
 			}
 			if (selectedRow) {
@@ -438,19 +476,50 @@ public class TextSegment extends ParagraphSegment {
 				gc.setForeground(selData.fg);
 				gc.setBackground(selData.bg);
 				gc.fillRectangle(x, y, extent.x, extent.y);
-				repaintStringSegment(gc, mid, extent.x, x, y, lineY, hover, rolloverMode, repaintRegion);
+				paintStringSegment(gc, mid, extent.x, x, y, lineY, hover,
+						rolloverMode, repaintRegion);
 				x += extent.x;
 				gc.setForeground(savedFg);
 				gc.setBackground(savedBg);
 			} else {
-				repaintStringSegment(gc, s, gc.textExtent(s).x, x, y, lineY, hover, rolloverMode, repaintRegion);
+				paintStringSegment(gc, s, gc.textExtent(s).x, x, y, lineY,
+						hover, rolloverMode, repaintRegion);
 			}
 			if (lastRow && sstop != -1) {
 				String right = s.substring(sstop);
-				repaintStringSegment(gc, right, gc.textExtent(right).x, x, y, lineY, hover, rolloverMode, repaintRegion);
+				paintStringSegment(gc, right, gc.textExtent(right).x, x, y,
+						lineY, hover, rolloverMode, repaintRegion);
 			}
 		} else {
-			repaintStringSegment(gc, s, gc.textExtent(s).x, x, y, lineY, hover, rolloverMode, repaintRegion);
+			paintStringSegment(gc, s, gc.textExtent(s).x, x, y, lineY, hover,
+					rolloverMode, repaintRegion);
+		}
+	}
+
+	private void computeSelection(GC gc, String s, int swidth, SelectionData selData, Rectangle bounds) {
+		int leftOffset = selData.getLeftOffset(bounds.height);
+		int rightOffset = selData.getRightOffset(bounds.height);
+		boolean firstRow = selData.isFirstSelectionRow(bounds.y, bounds.height);
+		boolean lastRow = selData.isLastSelectionRow(bounds.y, bounds.height);
+		boolean selectedRow = selData.isSelectedRow(bounds.y, bounds.height);
+
+		int sstart = -1;
+		int sstop = -1;
+
+		if (firstRow && bounds.x + swidth > leftOffset) {
+			sstart = convertOffsetToStringIndex(gc, s, bounds.x, swidth,
+					leftOffset);
+		}
+		if (lastRow && bounds.x + swidth > rightOffset) {
+			sstop = convertOffsetToStringIndex(gc, s, bounds.x, swidth,
+					rightOffset);
+		}
+
+		if (selectedRow) {
+			int lindex = sstart != -1 ? sstart : 0;
+			int rindex = sstop != -1 ? sstop : s.length();
+			String mid = s.substring(lindex, rindex);
+			selData.addSegment(mid);
 		}
 	}
 
@@ -463,25 +532,26 @@ public class TextSegment extends ParagraphSegment {
 	 * @param hover
 	 * @param rolloverMode
 	 */
-	private void repaintStringSegment(GC gc, String s, int swidth, int x, int y, int lineY, boolean hover, boolean rolloverMode, Rectangle repaintRegion) {
+	private void paintStringSegment(GC gc, String s, int swidth, int x, int y,
+			int lineY, boolean hover, boolean rolloverMode,
+			Rectangle repaintRegion) {
 		boolean reverse = false;
 		int clipX = x;
 		int clipY = y;
 		int clipLineY = lineY;
-		if (repaintRegion!=null) {
+		if (repaintRegion != null) {
 			clipX -= repaintRegion.x;
 			clipY -= repaintRegion.y;
 			clipLineY -= repaintRegion.y;
 		}
 		if (underline || hover || rolloverMode) {
 			if (rolloverMode && !hover)
-				reverse=true;
+				reverse = true;
 		}
 		if (reverse) {
 			drawUnderline(gc, swidth, clipX, clipLineY, hover, rolloverMode);
 			gc.drawString(s, clipX, clipY, false);
-		}
-		else {
+		} else {
 			gc.drawString(s, clipX, clipY, false);
 			drawUnderline(gc, swidth, clipX, clipLineY, hover, rolloverMode);
 		}
@@ -500,11 +570,17 @@ public class TextSegment extends ParagraphSegment {
 				gc.setForeground(saved);
 		}
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.forms.widgets.ParagraphSegment#layout(org.eclipse.swt.graphics.GC, int, org.eclipse.ui.internal.forms.widgets.Locator, java.util.Hashtable, boolean, org.eclipse.ui.internal.forms.widgets.SelectionData)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.forms.widgets.ParagraphSegment#layout(org.eclipse.swt.graphics.GC,
+	 *      int, org.eclipse.ui.internal.forms.widgets.Locator,
+	 *      java.util.Hashtable, boolean,
+	 *      org.eclipse.ui.internal.forms.widgets.SelectionData)
 	 */
-	public void layout(GC gc, int width, Locator locator, Hashtable resourceTable,
-			boolean selected) {
+	public void layout(GC gc, int width, Locator locator,
+			Hashtable resourceTable, boolean selected) {
 		Font oldFont = null;
 
 		areaRectangles.clear();
@@ -520,21 +596,22 @@ public class TextSegment extends ParagraphSegment {
 		int descent = fm.getDescent();
 
 		if (!wrapAllowed) {
-			layoutWithoutWrapping(gc, width, locator, selected,
-					fm, lineHeight, descent);
+			layoutWithoutWrapping(gc, width, locator, selected, fm, lineHeight,
+					descent);
 		} else {
-			//BreakIterator wb = BreakIterator.getLineInstance();
-			//wb.setText(text);
+			// BreakIterator wb = BreakIterator.getLineInstance();
+			// wb.setText(text);
 
 			int lineStart = 0;
 			int lastLoc = 0;
-			Point lineExtent = new Point(0,0);
-			//System.out.println("Nbreaks: "+breaks.size());
+			Point lineExtent = new Point(0, 0);
+			// System.out.println("Nbreaks: "+breaks.size());
 
-			//for (int breakLoc = wb.first(); breakLoc != BreakIterator.DONE; breakLoc = wb
-			//		.next()) {
+			// for (int breakLoc = wb.first(); breakLoc != BreakIterator.DONE;
+			// breakLoc = wb
+			// .next()) {
 			computeTextFragments(gc);
-			for (int i=0; i<textFragments.length; i++) {
+			for (int i = 0; i < textFragments.length; i++) {
 				TextFragment fragment = textFragments[i];
 				int breakLoc = fragment.index;
 				if (breakLoc == 0)
@@ -578,7 +655,7 @@ public class TextSegment extends ParagraphSegment {
 				lastWidth += 2;
 			Rectangle br = new Rectangle(locator.x - 1, ly, lineExtent.x + 2,
 					lineHeight - descent + 3);
-			int lineY = ly + lineHeight - descent + 1;			
+			int lineY = ly + lineHeight - descent + 1;
 			areaRectangles.add(new AreaRectangle(br, lineStart, lastLoc));
 			locator.x += lastWidth;
 			locator.rowHeight = Math.max(locator.rowHeight, lineExtent.y);
@@ -587,20 +664,23 @@ public class TextSegment extends ParagraphSegment {
 			gc.setFont(oldFont);
 		}
 	}
+
 	private void computeTextFragments(GC gc) {
-		if (textFragments!=null)
+		if (textFragments != null)
 			return;
 		ArrayList list = new ArrayList();
 		BreakIterator wb = BreakIterator.getLineInstance();
 		wb.setText(getText());
 		int cursor = 0;
 		for (int loc = wb.first(); loc != BreakIterator.DONE; loc = wb.next()) {
-			if (loc==0) continue;
+			if (loc == 0)
+				continue;
 			String word = text.substring(cursor, loc);
 			Point extent = gc.textExtent(word);
-			list.add(new TextFragment((short)loc, (short)extent.x));
+			list.add(new TextFragment((short) loc, (short) extent.x));
 			cursor = loc;
 		}
-		textFragments = (TextFragment[])list.toArray(new TextFragment[list.size()]);
+		textFragments = (TextFragment[]) list.toArray(new TextFragment[list
+				.size()]);
 	}
 }
