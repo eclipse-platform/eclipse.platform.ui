@@ -304,7 +304,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	 * low water mark.
 	 */
 	private void checkBufferSize() {
-		if (document != null) {
+		if (document != null && highWaterMark > 0) {
 			int length = document.getLength();
 			if (length > highWaterMark) {
 			    trimJob.setOffset(length - lowWaterMark);
@@ -658,7 +658,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
          * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
          */
         public IStatus runInUIThread(IProgressMonitor monitor) {
-        	if (lastPartition == null || highWaterMark == -1 || document == null) {
+        	if (lastPartition == null || document == null) {
         		return Status.OK_STATUS;
         	}
         	
