@@ -967,114 +967,224 @@
          </description>
       </fontDefinition>
    </extension>
-   <extension point="org.eclipse.ui.actionDefinitions">
-      <actionDefinition
+   
+	<!-- commands and their bindings -->   
+	<extension point="org.eclipse.ui.commands">
+		<category
+			name="%runCategory.name"
+			description="%runCategory.description"
+			id="org.eclipse.debug.ui.category.run"
+		/>
+
+		<command
+			category="org.eclipse.debug.ui.category.run"
+			id="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
             name="%ActionDefinition.stepWithFilters.name"
             description="%ActionDefinition.stepWithFilters.description"
-            id="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate">
-      </actionDefinition>
-      <actionDefinition
+		/>
+		<keyBinding
+			string="Shift+F5"
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		<keyBinding
+			string="Shift+F5"
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
+			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+		/>
+
+		<command
+			category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"			
             name="%ActionDefinition.stepInto.name"
             description="%ActionDefinition.stepInto.description"
-            id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate">
-      </actionDefinition>
-      <actionDefinition
+		/>
+		<keyBinding
+			string="F5"
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		<keyBinding
+			string="F5"
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
+			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+		/>
+		
+		<command
+			category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
             name="%ActionDefinition.stepOver.name"
             description="%ActionDefinition.stepOver.description"
-            id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate">
-      </actionDefinition>
-      <actionDefinition
+		/>
+		<keyBinding
+			string="F6"
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		<keyBinding
+			string="F6"
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
+			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+		/>		
+		
+		<command
+			category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"			
             name="%ActionDefinition.stepReturn.name"
             description="%ActionDefinition.stepReturn.description"
-            id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate">
-      </actionDefinition>
-      <actionDefinition
+		/>
+		<keyBinding
+			string="F7"
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		<keyBinding
+			string="F7"
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
+			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+		/>
+		
+		<command
+			category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"			
             name="%ActionDefinition.resume.name"
             description="%ActionDefinition.resume.description"
-            id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate">
-      </actionDefinition>
-      <actionDefinition
+		/>
+		<keyBinding
+			string="F8"
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		<keyBinding
+			string="F8"
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
+			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+		/>	
+		
+		<command
+			category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"			
             name="%ActionDefinition.terminate.name"
             description="%ActionDefinition.terminate.description"
-            id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate">
-      </actionDefinition>
-      <actionDefinition
+		/>
+		<keyBinding
+			string=""
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		<keyBinding
+			string=""
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
+			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+		/>					
+		
+		<command
+			category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"			
             name="%ActionDefinition.suspend.name"
             description="%ActionDefinition.suspend.description"
-            id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate">
-      </actionDefinition>
-      <actionDefinition
+		/>
+		<keyBinding
+			string=""
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		<keyBinding
+			string=""
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
+			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+		/>		
+		
+		<command
+			category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"			
             name="%ActionDefinition.openRun.name"
             description="%ActionDefinition.openRun.description"
-            id="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations">
-      </actionDefinition>
-      <actionDefinition
-            name="%ActionDefinition.debugLast.name"
-            description="%ActionDefinition.debugLast.description"
-            id="org.eclipse.debug.internal.ui.actions.DebugLastAction">
-      </actionDefinition>
-      <actionDefinition
-            name="%ActionDefinition.runLast.name"
-            description="%ActionDefinition.runLast.description"
-            id="org.eclipse.debug.internal.ui.actions.RunLastAction">
-      </actionDefinition>
-      <actionDefinition
+		/>
+		<keyBinding
+			string=""
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		<keyBinding
+			string=""
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"
+			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+		/>	
+
+		<command
+			category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations"			
             name="%ActionDefinition.openDebug.name"
             description="%ActionDefinition.openDebug.description"
-            id="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations">
-      </actionDefinition>
-   </extension>
-   <extension
-         point="org.eclipse.ui.acceleratorSets">
-      <acceleratorSet
-            scopeId="org.eclipse.ui.globalScope"
-            configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-         <accelerator
-               key="F8"
-               id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate">
-         </accelerator>
-         <accelerator
-               key="Ctrl+F11"
-               id="org.eclipse.debug.internal.ui.actions.RunLastAction">
-         </accelerator>
-         <accelerator
-               key="F11"
-               id="org.eclipse.debug.internal.ui.actions.DebugLastAction">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations">
-         </accelerator>
-<!-- step actions -->
-         <accelerator
-               key="Shift+F5"
-               id="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate">
-         </accelerator>
-         <accelerator
-               key="F5"
-               id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate">
-         </accelerator>
-         <accelerator
-               key="F6"
-               id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate">
-         </accelerator>
-         <accelerator
-               key="F7"
-               id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate">
-         </accelerator>
-      </acceleratorSet>
-   </extension>
-
+		/>
+		<keyBinding
+			string=""
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		<keyBinding
+			string=""
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations"
+			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+		/>				
+		
+		<command
+			category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.DebugLastAction"			
+            name="%ActionDefinition.debugLast.name"
+            description="%ActionDefinition.debugLast.description"
+		/>
+		<keyBinding
+			string="F11"
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.DebugLastAction"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		<keyBinding
+			string="F11"
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.DebugLastAction"
+			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+		/>		
+		
+		<command
+			category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.RunLastAction"			
+            name="%ActionDefinition.runLast.name"
+            description="%ActionDefinition.runLast.description"
+		/>
+		<keyBinding
+			string="Ctrl+F11"
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.RunLastAction"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		<keyBinding
+			string="Ctrl+F11"
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.debug.internal.ui.actions.RunLastAction"
+			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+		/>
+				
+	</extension>   
+   
 </plugin>
