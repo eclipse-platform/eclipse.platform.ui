@@ -166,6 +166,30 @@ public class FormColors {
 	public Color createColor(String key, RGB rgb) {
 		return createColor(key, rgb.red, rgb.green, rgb.blue);
 	}
+
+	/**
+	 * Creates a color that can be used for areas of the form
+	 * that is inactive. These areas can contain images, links,
+	 * controls and other content but are considered auxilliary
+	 * to the main content area.
+	 * 
+	 * <p>The color should not be disposed because it is managed
+	 * by this class.
+	 * 
+	 * @return the inactive form color
+	 * @since 3.1
+	 */
+	public Color getInactiveBackground() {
+		String key = "__ncbg__";
+		Color color = getColor(key);
+		if (color==null) {
+			RGB sel = getSystemColor(SWT.COLOR_LIST_SELECTION);
+			// a blend of 95% white and 5% list selection system color
+			RGB ncbg = blend(sel, getSystemColor(SWT.COLOR_WHITE), 5);
+			color = createColor(key, ncbg);
+		}
+		return color;
+	}
 	/**
 	 * Creates the color for the specified key using the provided RGB values.
 	 * The color object will be returned and also put into the registry. 
