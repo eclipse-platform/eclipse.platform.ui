@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
@@ -478,15 +479,20 @@ void fillContextMenu(IMenuManager menu) {
  * Refreshes the viewer and title bar.
  */
 void filterChanged() {
-	// Filter has already been updated by dialog; just refresh.
-	// Don't need to update labels for existing elements 
-	// since changes to filter settings don't affect them.
-	viewer.getControl().setRedraw(false);
-	viewer.refresh(false);
-	viewer.getControl().setRedraw(true);
-	// update after refresh since the content provider caches summary info
-	updateStatusMessage();
-	updateTitle();
+	
+	BusyIndicator.showWhile(viewer.getControl().getShell().getDisplay(), new Runnable() {
+		public void run() {
+		// Filter has already been updated by dialog; just refresh.
+		// Don't need to update labels for existing elements 
+		// since changes to filter settings don't affect them.
+		viewer.getControl().setRedraw(false);
+		viewer.refresh(false);
+		viewer.getControl().setRedraw(true);
+		// update after refresh since the content provider caches summary info
+		updateStatusMessage();
+		updateTitle();}
+	});
+
 }
 void focusSelectionChanged(SelectionChangedEvent event) {
 	updateFocusResource(event.getSelection());
