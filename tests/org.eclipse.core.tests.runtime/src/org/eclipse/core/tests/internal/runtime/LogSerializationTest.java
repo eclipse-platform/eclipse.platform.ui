@@ -11,14 +11,10 @@
 package org.eclipse.core.tests.internal.runtime;
 
 import java.io.*;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.boot.DelegatingURLClassLoader;
-import org.eclipse.core.internal.boot.PlatformClassLoader;
 import org.eclipse.core.internal.runtime.PlatformLogReader;
 import org.eclipse.core.internal.runtime.PlatformLogWriter;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 
@@ -34,6 +30,9 @@ public LogSerializationTest() {
 }
 public static Test suite() {
 	return new TestSuite(LogSerializationTest.class);
+//	TestSuite suite = new TestSuite();
+//	suite.addTest(new LogSerializationTest("testDeepMultiStatus"));
+//	return suite;
 }
 protected void assertEquals(String msg, IStatus[] expected, IStatus[] actual) {
 	if (expected == null) {
@@ -66,10 +65,8 @@ protected void assertEquals(String msg, Throwable expected, Throwable actual) {
 		assertNull(msg + " expected " + expected + " but got null", expected);
 		return;
 	}
-	assertEquals(msg + " stack trace", 
-		encodeStackTrace(expected),
-		encodeStackTrace(actual));
-		assertEquals(msg + " message", expected.getMessage(), actual.getMessage());
+	assertEquals(msg + " stack trace", encodeStackTrace(expected),encodeStackTrace(actual));
+	assertEquals(msg + " message", expected.getMessage(), actual.getMessage());
 }
 protected String encodeStackTrace(Throwable t) {
 	StringWriter sWriter = new StringWriter();
@@ -125,22 +122,16 @@ protected IStatus[] readLog() {
 }
 protected void setUp() throws Exception {
 	super.setUp();
-	//XXX spoof up the classloader so we can load XML classes. See bug 5801
-	DelegatingURLClassLoader xmlClassLoader = (DelegatingURLClassLoader)Platform.getPluginRegistry().getPluginDescriptor("org.apache.xerces").getPluginClassLoader();
-	PlatformClassLoader.getDefault().setImports(new DelegatingURLClassLoader[] { xmlClassLoader });
-
 	//setup the log file
 	if (logFile == null) {
 		File parent = Platform.getLocation().toFile();
 		String logName = Long.toString(System.currentTimeMillis()) + ".log";
 		logFile = new File(parent, logName);
 	}
-
 }
 protected void tearDown() throws Exception {
 	super.tearDown();
 	logFile.delete();
-	PlatformClassLoader.getDefault().setImports(null);
 }
 public void testDeepMultiStatus() {
 	MultiStatus multi = new MultiStatus("id", 1, getInterestingMultiStatuses(), "ok", null);
@@ -184,6 +175,8 @@ protected void writeLog(IStatus status) {
 	writeLog(new IStatus[] {status});
 }
 protected void writeLog(IStatus[] statuses) {
+	if (logFile.exists())
+		logFile.delete();
 	PlatformLogWriter writer = new PlatformLogWriter(logFile);
 	for (int i = 0; i < statuses.length; i++) {
 		writer.logging(statuses[i], "org.eclipse.core.tests.runtime");

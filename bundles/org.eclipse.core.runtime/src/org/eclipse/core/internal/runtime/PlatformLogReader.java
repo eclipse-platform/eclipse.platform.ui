@@ -1,69 +1,47 @@
+/*******************************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
 import java.io.*;
-import java.util.*;
-
-import org.apache.xerces.parsers.SAXParser;
-import org.eclipse.core.internal.boot.DelegatingURLClassLoader;
-import org.eclipse.core.internal.boot.PlatformClassLoader;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.AttributesImpl;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Reads a structured log from disk and reconstructs status and exception objects.
  * General strategy: log entries that are malformed in any way are skipped, and an extra
  * status is returned mentioned that there were problems.
  */
-public class PlatformLogReader extends DefaultHandler {
-	private static final String NULL_STRING = "" + null;
-	private ArrayList result = null;
-	private Stack objectStack = null;
+public class PlatformLogReader {
+	private ArrayList list = null;
+	private String currentLine = "";
+	private BufferedReader reader;
 
-/**
- * Returns a severity given its string representation.  
- * Converse of PlatformLogReader#encodeSeverity.
- */
-protected int decodeSeverity(String severity) {
-	if (severity == null)
-		return -1;
-	if (severity.equals("ERROR"))
-		return IStatus.ERROR;
-	if (severity.equals("INFO"))
-		return IStatus.INFO;
-	if (severity.equals("WARNING"))
-		return IStatus.WARNING;
-	if (severity.equals("OK"))
-		return IStatus.OK;
-	try {
-		return Integer.parseInt(severity);
-	} catch (NumberFormatException e) {
-		return -1;
-	}
-}
-public void endElement(String uri, String elementName, String qName) {
-	if (elementName.equals(PlatformLogWriter.ELEMENT_LOG_ENTRY)) {
-		readLogEntry();
-	} else if (elementName.equals(PlatformLogWriter.ELEMENT_STATUS)) {
-		readStatus();
-	} else if (elementName.equals(PlatformLogWriter.ELEMENT_EXCEPTION)) {
-		readException();
-	}
-}
-/**
- * @see org.xml.sax.ErrorHandler#error.
- */
-public void error(SAXParseException ex) {
-	log(ex);
-}
-/**
- * @see org.xml.sax.ErrorHandler#fatalError
- */
-public void fatalError(SAXParseException ex) throws SAXException {
-	log(ex);
-	throw ex;
-}
+	// constants copied from the PlatformLogWriter (since they are private
+	// to that class and this class should be used only in test suites)
+	private static final String KEYWORD_SESSION = "!SESSION";
+	private static final String KEYWORD_ENTRY = "!ENTRY";
+	private static final String KEYWORD_SUBENTRY = "!SUBENTRY";
+	private static final String KEYWORD_MESSAGE = "!MESSAGE";
+	private static final String KEYWORD_STACK = "!STACK";
+
+	private static final int NULL = -2;
+	private static final int SESSION = 1;
+	private static final int ENTRY = 2;
+	private static final int SUBENTRY = 4;
+	private static final int MESSAGE = 8;
+	private static final int STACK = 16;
+	private static final int UNKNOWN = 32;
+
 /**
  * Given a stack trace without carriage returns, returns a pretty-printed stack.
  */
@@ -91,101 +69,78 @@ protected String formatStack(String stack) {
 	writer.close();
 	return sWriter.toString();
 }
-protected String getString(Attributes attributes, String attributeName) {
-	return attributes.getValue(attributeName);
-}
 protected void log(Exception ex) {
 	String msg = Policy.bind("meta.exceptionParsingLog", ex.getMessage());
-	result.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, msg, ex));
+	list.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, msg, ex));
 }
-protected void readException() {
-	Attributes attributes = (Attributes)objectStack.pop();
-	String message = getString(attributes, PlatformLogWriter.ATTRIBUTE_MESSAGE);
-	if (NULL_STRING.equals(message)) {
-		message = null;
-	}
-	String stack = getString(attributes, PlatformLogWriter.ATTRIBUTE_TRACE);
-	objectStack.push(new FakeException(message, formatStack(stack)));
-}
-protected void readLogEntry() {
-	while (!objectStack.isEmpty()) {
-		Object o = objectStack.pop();
-		if (o instanceof IStatus) {
-			result.add(o);
-		}
-	}
+protected Throwable readException(String message) throws IOException {
+	if (currentLine == null || getLineType() != STACK)
+		return null;
+	StringBuffer buffer = new StringBuffer();
+	buffer.append(currentLine.substring(KEYWORD_STACK.length()+1, currentLine.length()));
+	currentLine = reader.readLine();
+	buffer.append(readText());
+	String stack = buffer.toString();
+	return new FakeException(null, formatStack(stack));
 }
 /**
  * Reads the given log file and returns the contained status objects. 
  * If the log file could not be read, a status object indicating this fact
  * is returned.
  */
-public IStatus[] readLogFile(String path) {
-	result = new ArrayList();
-	objectStack = new Stack();
-	//XXX workaround.  See Bug 5801.
-	DelegatingURLClassLoader xmlClassLoader = (DelegatingURLClassLoader)Platform.getPluginRegistry().getPluginDescriptor("org.apache.xerces").getPluginClassLoader();
-	PlatformClassLoader.getDefault().setImports(new DelegatingURLClassLoader[] { xmlClassLoader });
+public synchronized IStatus[] readLogFile(String path) {
+	list = new ArrayList();
+	InputStream input = null;
 	try {
-		Reader reader = new BufferedReader(new FileReader(path));
-		SAXParser parser = new SAXParser();
-		parser.setContentHandler(this);
-		parser.setErrorHandler(this);
-		parser.parse(new InputSource(reader));
-	} catch (IllegalStateException e) {
-		log(e);
+		input = new FileInputStream(path);
+		reader = new BufferedReader(new InputStreamReader(input, "UTF-8"));//$NON-NLS-1$
+		currentLine = reader.readLine();
+		while (currentLine != null) {
+			switch (getLineType()) {
+				case ENTRY:
+					IStatus status = readEntry();
+					if (status != null)
+						list.add(status);
+					break;
+				case SUBENTRY:
+				case MESSAGE:
+				case STACK:
+				case SESSION:
+				case UNKNOWN:
+					currentLine = reader.readLine();
+					break;
+			}
+		}
 	} catch (IOException e) {
 		log(e);
-	}catch (SAXException e) {
-		log(e);
-	}finally {
-		PlatformClassLoader.getDefault().setImports(null);
-	}
-	return (IStatus[]) result.toArray(new IStatus[result.size()]);
-}
-protected void readStatus() {
-	//status children are either child statii or an exception
-	Attributes attributes = null;
-	Throwable exception = null;
-	ArrayList children = new ArrayList();
-	while (!objectStack.isEmpty()) {
-		Object o = objectStack.pop();
-		if (o instanceof IStatus) {
-			//stacking reversed order, so reverse order on pop
-			children.add(0, o);
-		} else if (o instanceof Throwable) {
-			exception = (Throwable)o;
-		} else {
-			attributes = (Attributes)o;
-			break;
+	} finally {
+		try {
+			if (input != null)
+				input.close();
+		} catch (IOException e) {
+			log(e);
 		}
 	}
-	if (attributes == null) 
-		throw new IllegalStateException("Status missing attributes");//$NON-NLS$
-	int severity = decodeSeverity(getString(attributes, PlatformLogWriter.ATTRIBUTE_SEVERITY));
-	String pluginID = getString(attributes, PlatformLogWriter.ATTRIBUTE_PLUGIN_ID);
-	String s = getString(attributes, PlatformLogWriter.ATTRIBUTE_CODE);
-	int code = s == null ? -1 : Integer.parseInt(s);
-	String message = getString(attributes, PlatformLogWriter.ATTRIBUTE_MESSAGE);
-	if (severity == -1 || pluginID == null || code == -1 || message == null)
-		throw new IllegalStateException();
+	return (IStatus[]) list.toArray(new IStatus[list.size()]);
+}
+protected int getLineType() {
+	if (currentLine == null) 
+		return NULL;
+	StringTokenizer tokenizer = new StringTokenizer(currentLine);
+	String token = tokenizer.nextToken();
+	if (token.equals(KEYWORD_SESSION))
+		return SESSION;
+	if (token.equals(KEYWORD_ENTRY))
+		return ENTRY;
+	if (token.equals(KEYWORD_SUBENTRY))
+		return SUBENTRY;
+	if (token.equals(KEYWORD_MESSAGE))
+		return MESSAGE;
+	if (token.equals(KEYWORD_STACK))
+		return STACK;
+	return UNKNOWN;
+}
 
-	if (children.size() > 0) {
-		IStatus[] childStatii = (IStatus[]) children.toArray(new IStatus[children.size()]);
-		objectStack.push(new MultiStatus(pluginID, code, childStatii, message, exception));
-	} else {
-		objectStack.push(new Status(severity, pluginID, code, message, exception));
-	}
-}
-public void startElement(String uri, String elementName, String qName, Attributes attributes) {
-	objectStack.push(new AttributesImpl(attributes));
-}
-/**
- * @see org.xml.sax.ErrorHandler#warning.
- */
-public void warning(SAXParseException ex) {
-	log(ex);
-}	
 /**
  * A reconsituted exception that only contains a stack trace and a message.
  */
@@ -209,5 +164,94 @@ class FakeException extends Throwable {
 		stream.println(stackTrace);
 	}		
 }
+protected IStatus readEntry() throws IOException {
+	if (currentLine == null || getLineType() != ENTRY)
+		return null;
+	StringTokenizer tokens = new StringTokenizer(currentLine);
+	// skip over the ENTRY keyword
+	tokens.nextToken();
+	String pluginID = tokens.nextToken();
+	int severity = Integer.parseInt(tokens.nextToken());
+	int code = Integer.parseInt(tokens.nextToken());
+	// ignore the rest of the line since its the date
+	currentLine = reader.readLine();
+	String message = readMessage();
+	Throwable exception = readException(message);
+	if (currentLine == null || getLineType() != SUBENTRY)
+		return new Status(severity, pluginID, code, message, exception);
+	MultiStatus parent = new MultiStatus(pluginID, code, message, exception);
+	readSubEntries(parent);
+	return parent;
 }
+protected void readSubEntries(MultiStatus parent) throws IOException {
+	while (getLineType() == SUBENTRY) {
+		StringTokenizer tokens = new StringTokenizer(currentLine);
+		// skip over the subentry keyword
+		tokens.nextToken();
+		int currentDepth = Integer.parseInt(tokens.nextToken());
+		String pluginID = tokens.nextToken();
+		int severity = Integer.parseInt(tokens.nextToken());
+		int code = Integer.parseInt(tokens.nextToken());
+		// ignore the rest of the line since its the date
+		currentLine = reader.readLine();
+		String message = readMessage();
+		Throwable exception = readException(message);
+	
+		IStatus current = new Status(severity, pluginID, code, message, exception);
+		if (currentLine == null || getLineType() != SUBENTRY) {
+			parent.add(current);
+			return;
+		}
 
+		tokens = new StringTokenizer(currentLine);
+		tokens.nextToken();
+		int depth = Integer.parseInt(tokens.nextToken());
+		if (currentDepth == depth) {
+			// next sub-entry is a sibling
+			parent.add(current);
+		} else if (currentDepth == (depth - 1)) {
+			// next sub-entry is a child
+			current = new MultiStatus(pluginID, code, message, exception);
+			readSubEntries((MultiStatus) current);
+			parent.add(current);
+		} else {
+			parent.add(current);
+			return;
+		}
+	}
+}
+protected int readDepth() throws IOException {
+	StringTokenizer tokens = new StringTokenizer(currentLine);
+	// skip the keyword
+	tokens.nextToken();
+	return Integer.parseInt(tokens.nextToken());
+}
+protected String readMessage() throws IOException {
+	if (currentLine == null || getLineType() != MESSAGE)
+		return "";
+	StringBuffer buffer = new StringBuffer();
+	buffer.append(currentLine.substring(KEYWORD_MESSAGE.length()+1, currentLine.length()));
+	currentLine = reader.readLine();
+	buffer.append(readText());
+	return buffer.toString();
+}
+protected String readText() throws IOException {
+	StringBuffer buffer = new StringBuffer();
+	if (currentLine == null || getLineType() != UNKNOWN)
+		return "";
+	else buffer.append(currentLine);
+	boolean done = false;
+	while (!done) {
+		currentLine = reader.readLine();
+		if (currentLine == null) {
+			done = true;
+			continue;
+		}
+		if (getLineType() == UNKNOWN)
+			buffer.append(currentLine);
+		else
+			done = true;
+	}
+	return buffer.toString();
+}
+}
