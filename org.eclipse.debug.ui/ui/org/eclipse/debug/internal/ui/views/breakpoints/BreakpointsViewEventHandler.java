@@ -24,6 +24,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
@@ -79,6 +80,7 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 							    viewer.reveal(breakpoints[i]); // Workaround to platform bug 77075
 								//viewer.expandToLevel(breakpoints[i], AbstractTreeViewer.ALL_LEVELS);
 							}
+							viewer.setSelection(new StructuredSelection(breakpoints));
 						} finally {
 							viewer.getControl().setRedraw(true);
 						}
