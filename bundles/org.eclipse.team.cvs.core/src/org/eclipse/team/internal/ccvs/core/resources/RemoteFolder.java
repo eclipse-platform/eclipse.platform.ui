@@ -91,12 +91,12 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		
 		// Create a listener for receiving the revision info
 		final IStatusListener listener = new IStatusListener() {
-			public void fileStatus(ICVSFolder parent, IPath path, String remoteRevision) {
+			public void fileStatus(ICVSFolder parent, String path, String remoteRevision) {
 				if (remoteRevision == IStatusListener.FOLDER_REVISION)
 					// Ignore any folders
 					return;
 				try {
-					((RemoteFile)getChild(path.lastSegment())).setRevision(remoteRevision);
+					((RemoteFile)getChild(Util.getLastSegment(path))).setRevision(remoteRevision);
 					count[0]++;
 				} catch (CVSException e) {
 					// The count will be off to indicate an error
@@ -187,10 +187,10 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			// Create the listener for remote files and folders
 			final boolean[] exists = new boolean[] {true};
 			final IUpdateMessageListener listener = new IUpdateMessageListener() {
-				public void directoryInformation(ICVSFolder parent, IPath path, boolean newDirectory) {
+				public void directoryInformation(ICVSFolder parent, String path, boolean newDirectory) {
 					exists[0] = true;
 				}
-				public void directoryDoesNotExist(ICVSFolder parent, IPath path) {
+				public void directoryDoesNotExist(ICVSFolder parent, String path) {
 					exists[0] = false;
 				}
 				public void fileInformation(int type, ICVSFolder parent, String filename) {
@@ -272,9 +272,9 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			final boolean[] exists = new boolean[] {true};
 			final List exceptions = new ArrayList();
 			final IUpdateMessageListener listener = new IUpdateMessageListener() {
-				public void directoryInformation(ICVSFolder commandRoot, IPath path, boolean newDirectory) {
+				public void directoryInformation(ICVSFolder commandRoot, String stringPath, boolean newDirectory) {
 					try {
-						path = getRelativePathFromRootRelativePath(commandRoot, path);
+						IPath path = getRelativePathFromRootRelativePath(commandRoot, new Path(stringPath));
 						if (newDirectory && path.segmentCount() == 1) {
 							newRemoteDirectories.add(path.lastSegment());
 							progress.subTask(path.lastSegment().toString());
@@ -284,9 +284,9 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 						exceptions.add(e);
 					}
 				}
-				public void directoryDoesNotExist(ICVSFolder parent, IPath path) {
+				public void directoryDoesNotExist(ICVSFolder parent, String stringPath) {
 					try {
-						path = getRelativePathFromRootRelativePath(parent, path);
+						IPath path = getRelativePathFromRootRelativePath(parent, new Path(stringPath));
 						if (path.isEmpty()) {
 							// the remote folder doesn't exist
 							exists[0] = false;
@@ -652,9 +652,9 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			// Create the listener for remote files and folders
 			final boolean[] exists = new boolean[] {true};
 			final IUpdateMessageListener listener = new IUpdateMessageListener() {
-				public void directoryInformation(ICVSFolder parent, IPath path, boolean newDirectory) {
+				public void directoryInformation(ICVSFolder parent, String path, boolean newDirectory) {
 				}
-				public void directoryDoesNotExist(ICVSFolder parent, IPath path) {
+				public void directoryDoesNotExist(ICVSFolder parent, String path) {
 					// If we get this, we can assume that the parent directory no longer exists
 					exists[0] = false;
 				}

@@ -10,13 +10,12 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client.listeners;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 
 public class StatusListener implements ICommandOutputListener {
@@ -39,22 +38,8 @@ public class StatusListener implements ICommandOutputListener {
 				// This is the full location on the server (e.g. /home/cvs/repo/project/file.txt)
 				String fileLocation = line.substring(separatingTabIndex + 1, line.length() - 2);
 
-				// This is the absolute remote pathincluding the repository root directory
-				IPath fullPath = new Path(fileLocation);
-
-				// If the status returns that the file is in the Attic, then remove the
-				// Attic segment. This is because files added to a branch that are not in
-				// the main trunk (HEAD) are added to the Attic but cvs does magic on update
-				// to put them in the correct location.
-				// (e.g. /project/Attic/file.txt -> /project/file.txt)
-				if ((fullPath.segmentCount() >= 2) && (fullPath.segment(fullPath.segmentCount() - 2).equals("Attic"))) { //$NON-NLS-1$
-					String filename = fullPath.lastSegment();
-					fullPath = fullPath.removeLastSegments(2);
-					fullPath = fullPath.append(filename);
-				}
-
 				// Inform the listener about the file revision
-				statusListener.fileStatus(commandRoot, fullPath, remoteRevision);
+				statusListener.fileStatus(commandRoot, removeAtticSegment(fileLocation), remoteRevision);
 			}
 		}
 		return OK;
@@ -74,18 +59,29 @@ public class StatusListener implements ICommandOutputListener {
 			}
 		}
 		if (isFolder) {
-			String serverAbortedMessage = ((CVSRepositoryLocation)location).getServerMessageWithoutPrefix(line, SERVER_ABORTED_PREFIX);
-			if (serverAbortedMessage.startsWith("could not chdir to")) {//$NON-NLS-1$
-				String folderPath = serverAbortedMessage.substring(19, line.indexOf(':', 20));
-				// Pass null to listener indicating that the resource exists but does not have a revision number
-				// (i.e. the resource is a folder)
-				if (statusListener != null)
-					// XXX We should be using that path relative to the root of the command (mRoot)!!!
-					statusListener.fileStatus(commandRoot, new Path(folderPath).removeFirstSegments(1), IStatusListener.FOLDER_REVISION);
-				isFolder = false;
-				return OK;
-			}
+			// This used to do something but it was obviously wrong and there was no indication
+			// why it was needed. Therefore, I have removed the code to see if anything is effected
+			isFolder = false;
 		}
 		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
+	}
+	
+	/**
+	 * If the status returns that the file is in the Attic, then remove the
+	 * Attic segment. This is because files added to a branch that are not in
+	 * the main trunk (HEAD) are added to the Attic but cvs does magic on
+	 * updateto put them in the correct location.
+	 * (e.g. /project/Attic/file.txt -> /project/file.txt)
+	 */ 
+	private String removeAtticSegment(String path) {
+		int lastSeparator = path.lastIndexOf(Session.SERVER_SEPARATOR);
+		if (lastSeparator == -1) return path;
+		int secondLastSeparator = path.lastIndexOf(Session.SERVER_SEPARATOR, lastSeparator - 1);
+		if (secondLastSeparator == -1) return path;
+		String secondLastSegment = path.substring(secondLastSeparator + 1, lastSeparator);
+		if (secondLastSegment.equals("Attic")) { //$NON-NLS-1$
+			return path.substring(0, secondLastSeparator) + path.substring(lastSeparator);
+		}
+		return path;
 	}
 }

@@ -42,6 +42,19 @@ public class Util {
 	}
 	
 	/**
+	 * Return the the given path with the last segment removed
+	 * @param path
+	 * @return String
+	 */
+	public static String removeLastSegment(String path) {
+		int index = path.lastIndexOf(Session.SERVER_SEPARATOR);
+		if (index == -1)
+			return ""; //$NON-NLS-1$
+		else
+			return path.substring(0, index);
+
+	}
+	/**
 	 * Return the path without a trailing /
 	 * @param path
 	 * @return String
@@ -52,7 +65,8 @@ public class Util {
 		}
 		return path;
 	}
-	/**
+	/*
+	 * *
 	 * Get the extention of the path of resource
 	 * relative to the path of root
 	 * 

@@ -10,10 +10,8 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client.listeners;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
@@ -105,19 +103,19 @@ public class UpdateListener implements ICommandOutputListener {
 			String message = serverMessage;
 			if (message.startsWith("Updating")) { //$NON-NLS-1$
 				if (updateMessageListener != null) {
-					IPath path = new Path(message.substring(9));
+					String path = message.substring(9);
 					updateMessageListener.directoryInformation(commandRoot, path, false);
 				}
 				return OK;
 			} else if (message.startsWith("skipping directory")) { //$NON-NLS-1$
 				if (updateMessageListener != null) {
-					IPath path = new Path(message.substring(18).trim());
+					String path = message.substring(18).trim();
 					updateMessageListener.directoryDoesNotExist(commandRoot, path);
 				}
 				return OK;
 			} else if (message.startsWith("New directory")) { //$NON-NLS-1$
 				if (updateMessageListener != null) {
-					IPath path = new Path(message.substring(15, message.indexOf('\'', 15)));
+					String path = message.substring(15, message.indexOf('\'', 15));
 					updateMessageListener.directoryInformation(commandRoot, path, true);
 				}
 				return OK;

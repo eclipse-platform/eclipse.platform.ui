@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client.listeners;
  
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 
 /**
@@ -25,7 +24,7 @@ public interface IUpdateMessageListener {
 	 * @param commandRoot the root directory of the command
 	 * @param path the path of the directory relative to the commandRoot
 	 */
-	public void directoryDoesNotExist(ICVSFolder commandRoot, IPath path);
+	public void directoryDoesNotExist(ICVSFolder commandRoot, String path);
 	/**
 	 * Notification of information about a directory.
 	 * 
@@ -33,7 +32,7 @@ public interface IUpdateMessageListener {
 	 * @param path the path of the directory relative to the commandRoot
 	 * @param newDirectory true if the directory does not exist locally (i.e. in the commandRoot hierarchy)
 	 */
-	public void directoryInformation(ICVSFolder commandRoot, IPath path, boolean newDirectory);
+	public void directoryInformation(ICVSFolder commandRoot, String path, boolean newDirectory);
 	/**
 	 * Notification of information about a file
 	 * 

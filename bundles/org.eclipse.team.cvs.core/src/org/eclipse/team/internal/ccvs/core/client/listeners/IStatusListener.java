@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client.listeners;
  
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 
 public interface IStatusListener {
@@ -24,5 +23,5 @@ public interface IStatusListener {
 	 * @param path the absolute remote path of the resource including the repository root directory
 	 * @param remoteRevision the remote revision of the file
 	 */
-	public void fileStatus(ICVSFolder commandRoot, IPath path, String remoteRevision);
+	public void fileStatus(ICVSFolder commandRoot, String path, String remoteRevision);
 }
