@@ -586,7 +586,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				IPerspectiveDescriptor persp = p.getPerspective();
 				ImageDescriptor image = persp.getImageDescriptor();
 				if(image == null)
-					image = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE);
+					image = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE);
 			} else {
 				ImageDescriptor image = null;
 				if(desc != null)

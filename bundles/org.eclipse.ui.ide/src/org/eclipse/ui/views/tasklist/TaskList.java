@@ -1000,39 +1000,34 @@ public class TaskList extends ViewPart {
 		gotoTaskAction = new GotoTaskAction(this, "gotoFile"); //$NON-NLS-1$
 		gotoTaskAction.setText(TaskListMessages.getString("GotoTask.text")); //$NON-NLS-1$
 		gotoTaskAction.setToolTipText(TaskListMessages.getString("GotoTask.tooltip")); //$NON-NLS-1$
-//		gotoTaskAction.setHoverImageDescriptor(MarkerUtil.getImageDescriptor("gotoobj")); //$NON-NLS-1$
-		gotoTaskAction.setImageDescriptor(MarkerUtil.getImageDescriptor("gotoobj_grey")); //$NON-NLS-1$
+		gotoTaskAction.setImageDescriptor(MarkerUtil.getImageDescriptor("gotoobj")); //$NON-NLS-1$
 		gotoTaskAction.setEnabled(false);
 
 		// new task
 		newTaskAction = new NewTaskAction(this, "newTask"); //$NON-NLS-1$
 		newTaskAction.setText(TaskListMessages.getString("NewTask.text")); //$NON-NLS-1$
 		newTaskAction.setToolTipText(TaskListMessages.getString("NewTask.tooltip")); //$NON-NLS-1$
-//		newTaskAction.setHoverImageDescriptor(MarkerUtil.getImageDescriptor("addtsk")); //$NON-NLS-1$
-		newTaskAction.setImageDescriptor(MarkerUtil.getImageDescriptor("addtsk_grey")); //$NON-NLS-1$
-//		newTaskAction.setDisabledImageDescriptor(MarkerUtil.getImageDescriptor("addtsk_disabled")); //$NON-NLS-1$
+		newTaskAction.setImageDescriptor(MarkerUtil.getImageDescriptor("addtsk")); //$NON-NLS-1$
+		newTaskAction.setDisabledImageDescriptor(MarkerUtil.getImageDescriptor("addtsk_disabled")); //$NON-NLS-1$
 
 		// copy task
 		copyTaskAction = new CopyTaskAction(this, "copy"); //$NON-NLS-1$
 		copyTaskAction.setText(TaskListMessages.getString("CopyTask.text")); //$NON-NLS-1$
 		copyTaskAction.setToolTipText(TaskListMessages.getString("CopyTask.tooltip")); //$NON-NLS-1$
-//		copyTaskAction.setHoverImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));
 		copyTaskAction.setEnabled(false);
 
 		// paste task
 		pasteTaskAction = new PasteTaskAction(this, "paste"); //$NON-NLS-1$
 		pasteTaskAction.setText(TaskListMessages.getString("PasteTask.text")); //$NON-NLS-1$
 		pasteTaskAction.setToolTipText(TaskListMessages.getString("PasteTask.tooltip")); //$NON-NLS-1$
-//		pasteTaskAction.setHoverImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_HOVER));
 		pasteTaskAction.setEnabled(false);
 
 		// remove task
 		removeTaskAction = new RemoveTaskAction(this, "delete"); //$NON-NLS-1$
 		removeTaskAction.setText(TaskListMessages.getString("RemoveTask.text")); //$NON-NLS-1$
 		removeTaskAction.setToolTipText(TaskListMessages.getString("RemoveTask.tooltip")); //$NON-NLS-1$
-//		removeTaskAction.setHoverImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_HOVER));
 		removeTaskAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
-//		removeTaskAction.setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
+		removeTaskAction.setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 		removeTaskAction.setEnabled(false);
 
 		//mark completed task

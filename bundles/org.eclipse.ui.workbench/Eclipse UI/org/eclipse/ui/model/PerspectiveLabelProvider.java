@@ -78,7 +78,7 @@ public final class PerspectiveLabelProvider
 				imageDescriptor =
 					WorkbenchImages.getImageDescriptor(
 						IWorkbenchGraphicConstants
-							.IMG_CTOOL_DEF_PERSPECTIVE_HOVER);
+							.IMG_ETOOL_DEF_PERSPECTIVE_HOVER);
 			}
 			Image image = (Image) imageCache.get(imageDescriptor);
 			if (image == null) {

@@ -53,13 +53,10 @@ public SaveAllAction(IWorkbenchWindow window) {
 	WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ALL_ACTION);
 	setImageDescriptor(
 		WorkbenchImages.getImageDescriptor(
-			IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT));
-//	setHoverImageDescriptor(
-//		WorkbenchImages.getImageDescriptor(
-//			IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT_HOVER));
-//	setDisabledImageDescriptor(
-//		WorkbenchImages.getImageDescriptor(
-//			IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT_DISABLED));
+			IWorkbenchGraphicConstants.IMG_ETOOL_SAVEALL_EDIT));
+	setDisabledImageDescriptor(
+		WorkbenchImages.getImageDescriptor(
+			IWorkbenchGraphicConstants.IMG_ETOOL_SAVEALL_EDIT_DISABLED));
 	setActionDefinitionId("org.eclipse.ui.file.saveAll"); //$NON-NLS-1$
 }
 /* (non-Javadoc)

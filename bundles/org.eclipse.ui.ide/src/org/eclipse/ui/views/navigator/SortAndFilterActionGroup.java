@@ -36,9 +36,8 @@ public class SortAndFilterActionGroup extends ResourceNavigatorActionGroup {
 			new FilterSelectionAction(
 				navigator,
 				ResourceNavigatorMessages.getString("ResourceNavigator.filterText")); //$NON-NLS-1$
-//		filterAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/filter_ps.gif"));//$NON-NLS-1$
+		filterAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/filter_ps.gif"));//$NON-NLS-1$
 		filterAction.setImageDescriptor(getImageDescriptor("elcl16/filter_ps.gif"));//$NON-NLS-1$
-//		filterAction.setHoverImageDescriptor(getImageDescriptor("clcl16/filter_ps.gif"));//$NON-NLS-1$
 	}
 
 	public void fillActionBars(IActionBars actionBars) {

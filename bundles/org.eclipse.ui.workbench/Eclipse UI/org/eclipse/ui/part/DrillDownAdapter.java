@@ -147,8 +147,7 @@ private void createActions() {
 		}
 	};
 	homeAction.setToolTipText(WorkbenchMessages.getString("GoHome.toolTip")); //$NON-NLS-1$
-	homeAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_HOME_NAV));
-//	homeAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_HOME_NAV_HOVER));
+	homeAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_HOME_NAV));
 
 	// Back.
 	ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
@@ -159,8 +158,7 @@ private void createActions() {
 	};
 	backAction.setToolTipText(WorkbenchMessages.getString("GoBack.toolTip")); //$NON-NLS-1$
 	backAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
-//	backAction.setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_HOVER));
-//	backAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
+	backAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
 
 	// Forward.
 	forwardAction = new Action(WorkbenchMessages.getString("GoInto.text")) { //$NON-NLS-1$
@@ -170,8 +168,7 @@ private void createActions() {
 	};
 	forwardAction.setToolTipText(WorkbenchMessages.getString("GoInto.toolTip")); //$NON-NLS-1$
 	forwardAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
-//	forwardAction.setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_HOVER));
-//	forwardAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
+	forwardAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
 
 	// Update the buttons when a selection change occurs.
 	fChildTree.addSelectionChangedListener(this);

@@ -1189,13 +1189,13 @@ public final class WorkbenchActionBuilder {
 		nextAction = ActionFactory.NEXT.create(getWindow());
 		nextAction.setImageDescriptor(
 			IDEInternalWorkbenchImages.getImageDescriptor(
-				IDEInternalWorkbenchImages.IMG_CTOOL_NEXT_NAV));
+				IDEInternalWorkbenchImages.IMG_ETOOL_NEXT_NAV));
 		registerGlobalAction(nextAction);
 
 		previousAction = ActionFactory.PREVIOUS.create(getWindow());
 		previousAction.setImageDescriptor(
 			IDEInternalWorkbenchImages.getImageDescriptor(
-				IDEInternalWorkbenchImages.IMG_CTOOL_PREVIOUS_NAV));
+				IDEInternalWorkbenchImages.IMG_ETOOL_PREVIOUS_NAV));
 		registerGlobalAction(previousAction);
 
 		buildProjectAction = IDEActionFactory.BUILD_PROJECT.create(getWindow());

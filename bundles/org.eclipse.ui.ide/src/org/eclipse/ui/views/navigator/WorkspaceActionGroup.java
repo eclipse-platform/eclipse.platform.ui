@@ -176,10 +176,8 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
 		openProjectAction = new OpenResourceAction(shell);
 		closeProjectAction = new CloseResourceAction(shell);
 		refreshAction = new RefreshAction(shell);
-//		refreshAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/refresh_nav.gif"));//$NON-NLS-1$
-		refreshAction.setImageDescriptor(getImageDescriptor("elcl16/refresh_nav.gif"));//$NON-NLS-1$
-//		refreshAction.setHoverImageDescriptor(getImageDescriptor("clcl16/refresh_nav.gif"));//$NON-NLS-1$		
-		
+		refreshAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/refresh_nav.gif"));//$NON-NLS-1$
+		refreshAction.setImageDescriptor(getImageDescriptor("elcl16/refresh_nav.gif"));//$NON-NLS-1$	
 		buildAction = new BuildAction(shell, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 		rebuildAction = new BuildAction(shell, IncrementalProjectBuilder.FULL_BUILD);
 	}

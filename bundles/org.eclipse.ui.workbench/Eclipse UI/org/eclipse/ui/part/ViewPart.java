@@ -25,7 +25,7 @@ import org.eclipse.ui.*;
  *      &LT;view id="com.example.myplugin.view"
  *         name="My View"
  *         class="com.example.myplugin.MyView"
- *         icon="images/cview.gif"
+ *         icon="images/eview.gif"
  *      /&GT;
  * &LT;/extension&GT;
  * </pre>

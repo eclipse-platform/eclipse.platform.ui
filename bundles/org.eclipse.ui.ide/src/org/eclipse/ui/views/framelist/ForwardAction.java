@@ -28,9 +28,8 @@ public class ForwardAction extends FrameAction {
 		super(frameList);
 		setText(FrameListMessages.getString("Forward.text")); //$NON-NLS-1$
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
-//		setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_HOVER));
 		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
-//		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
+		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
 		WorkbenchHelp.setHelp(this, IFrameListHelpContextIds.FORWARD_ACTION);
 		update();
 	}

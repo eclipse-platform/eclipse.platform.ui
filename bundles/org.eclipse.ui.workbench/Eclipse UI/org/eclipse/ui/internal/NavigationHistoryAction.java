@@ -103,10 +103,8 @@ public class NavigationHistoryAction extends PageEventAction {
 			WorkbenchHelp.setHelp(this, IHelpContextIds.NAVIGATION_HISTORY_FORWARD);
 			setImageDescriptor(
 				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
-//			setHoverImageDescriptor(
-//				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_HOVER));
-//			setDisabledImageDescriptor(
-//				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
+			setDisabledImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
 			setActionDefinitionId("org.eclipse.ui.navigate.forwardHistory"); //$NON-NLS-1$
 		} else {
 			setText(WorkbenchMessages.getString("NavigationHistoryAction.backward.text")); //$NON-NLS-1$
@@ -115,10 +113,8 @@ public class NavigationHistoryAction extends PageEventAction {
 			WorkbenchHelp.setHelp(this, IHelpContextIds.NAVIGATION_HISTORY_BACKWARD);
 			setImageDescriptor(
 				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
-//			setHoverImageDescriptor(
-//				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_HOVER));
-//			setDisabledImageDescriptor(
-//				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
+			setDisabledImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
 			setActionDefinitionId("org.eclipse.ui.navigate.backwardHistory"); //$NON-NLS-1$
 		}
 		// WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_PAGES_ACTION);

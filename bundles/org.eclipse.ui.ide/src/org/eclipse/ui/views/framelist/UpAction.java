@@ -28,9 +28,8 @@ public class UpAction extends FrameAction {
 		super(frameList);
 		setText(FrameListMessages.getString("Up.text")); //$NON-NLS-1$
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
-//		setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_UP_HOVER));
 		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_UP));
-//		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_UP_DISABLED));
+		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_UP_DISABLED));
 		WorkbenchHelp.setHelp(this, IFrameListHelpContextIds.UP_ACTION);
 		update();
 	}

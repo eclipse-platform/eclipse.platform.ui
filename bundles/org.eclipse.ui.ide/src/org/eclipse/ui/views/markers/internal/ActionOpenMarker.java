@@ -33,7 +33,6 @@ import org.eclipse.ui.ide.IDE;
  */
 public class ActionOpenMarker extends SelectionProviderAction {
 	
-	private final String HOVER_IMAGE_PATH = "clcl16/gotoobj_tsk.gif"; //$NON-NLS-1$
 	private final String IMAGE_PATH = "elcl16/gotoobj_tsk.gif"; //$NON-NLS-1$
 	private final String DISABLED_IMAGE_PATH = "dlcl16/gotoobj_tsk.gif"; //$NON-NLS-1$
 	
@@ -43,8 +42,7 @@ public class ActionOpenMarker extends SelectionProviderAction {
 		super(provider, Messages.getString("openAction.title")); //$NON-NLS-1$
 		this.part = part;
 		setImageDescriptor(ImageFactory.getImageDescriptor(IMAGE_PATH));
-//		setHoverImageDescriptor(ImageFactory.getImageDescriptor(HOVER_IMAGE_PATH));
-//		setDisabledImageDescriptor(ImageFactory.getImageDescriptor(DISABLED_IMAGE_PATH));
+		setDisabledImageDescriptor(ImageFactory.getImageDescriptor(DISABLED_IMAGE_PATH));
 		setEnabled(false);
 	}
 	

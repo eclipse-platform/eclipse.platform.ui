@@ -86,8 +86,7 @@ public class CreateProjectAction extends Action {
 		this.window = window;
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
 		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
-		//setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
-		//setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
+		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
 		setToolTipText(IDEWorkbenchMessages.getString("CreateProjectAction.toolTip"));	 //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
 	}

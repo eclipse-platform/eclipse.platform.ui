@@ -33,13 +33,10 @@ public class SaveAction extends BaseSaveAction {
 		WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ACTION);
 		setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT));
-//		setHoverImageDescriptor(
-//			WorkbenchImages.getImageDescriptor(
-//				IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT_HOVER));
-//		setDisabledImageDescriptor(
-//			WorkbenchImages.getImageDescriptor(
-//				IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT_DISABLED));
+				IWorkbenchGraphicConstants.IMG_ETOOL_SAVE_EDIT));
+		setDisabledImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_ETOOL_SAVE_EDIT_DISABLED));
 		setActionDefinitionId("org.eclipse.ui.file.save"); //$NON-NLS-1$
 	}
 	

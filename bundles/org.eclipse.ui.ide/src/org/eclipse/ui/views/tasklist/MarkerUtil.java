@@ -76,8 +76,7 @@ class MarkerUtil implements IMarkerConstants {
 	 * Creates the map of image descriptors.
 	 */
 	static void createImageDescriptors() {
-		String LOCAL = "clcl16/";//$NON-NLS-1$
-		String LOCAL_GREY = "elcl16/";//$NON-NLS-1$
+		String LOCAL = "elcl16/";//$NON-NLS-1$
 		String LOCAL_DISABLED = "dlcl16/";//$NON-NLS-1$
 		String OBJ = "obj16/";//$NON-NLS-1$
 		
@@ -93,22 +92,15 @@ class MarkerUtil implements IMarkerConstants {
 		imageDescriptors.put("complete_tsk", 	createImageDescriptor(OBJ + "complete_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("incomplete_tsk",	createImageDescriptor(OBJ + "incomplete_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("gotoobj", 		createImageDescriptor(LOCAL + "gotoobj_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
-		imageDescriptors.put("gotoobj_grey", 	createImageDescriptor(LOCAL_GREY + "gotoobj_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("addtsk", 			createImageDescriptor(LOCAL + "addtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
-		imageDescriptors.put("addtsk_grey", 	createImageDescriptor(LOCAL_GREY + "addtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("addtsk_disabled", createImageDescriptor(LOCAL_DISABLED + "addtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("showcomplete", 	createImageDescriptor(LOCAL + "showcomplete_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("selected_mode", 	createImageDescriptor(LOCAL + "selected_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
-		imageDescriptors.put("selected_mode_grey", createImageDescriptor(LOCAL_GREY + "selected_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("selected_mode_disabled", createImageDescriptor(LOCAL_DISABLED + "selected_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("showchild_mode",	createImageDescriptor(LOCAL + "showchild_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
-		imageDescriptors.put("showchild_mode_grey", createImageDescriptor(LOCAL_GREY + "showchild_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("showchild_mode_disabled",	createImageDescriptor(LOCAL_DISABLED + "showchild_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
-		imageDescriptors.put("showerr_grey", 	createImageDescriptor(LOCAL_GREY + "showerr_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("showerr_disabled", createImageDescriptor(LOCAL_DISABLED + "showerr_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
-		imageDescriptors.put("showwarn_grey", 	createImageDescriptor(LOCAL_GREY + "showwarn_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("showwarn_disabled", createImageDescriptor(LOCAL_DISABLED + "showwarn_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
-		imageDescriptors.put("showtsk_grey",	createImageDescriptor(LOCAL_GREY + "showtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("showtsk_disabled", createImageDescriptor(LOCAL_DISABLED + "showtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("filter", 			createImageDescriptor(LOCAL + "filter_ps.gif"));//$NON-NLS-2$//$NON-NLS-1$
 	}

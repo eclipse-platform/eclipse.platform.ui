@@ -43,7 +43,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%Perspective.resourcePerspective"
-            icon="icons/full/cview16/resource_persp.gif"
+            icon="icons/full/eview16/resource_persp.gif"
             class="org.eclipse.ui.internal.ide.ResourcePerspective"
             id="org.eclipse.ui.resourcePerspective">
       </perspective>
@@ -61,7 +61,7 @@
          point="org.eclipse.ui.importWizards">
       <wizard
             name="%ImportWizards.FileSystem"
-            icon="icons/full/ctool16/importdir_wiz.gif"
+            icon="icons/full/etool16/importdir_wiz.gif"
             class="org.eclipse.ui.wizards.datatransfer.FileSystemImportWizard"
             id="org.eclipse.ui.wizards.import.FileSystem">
          <description>
@@ -73,7 +73,7 @@
       </wizard>
       <wizard
             name="%ImportWizards.ExternalProject"
-            icon="icons/full/ctool16/newprj_wiz.gif"
+            icon="icons/full/etool16/newprj_wiz.gif"
             class="org.eclipse.ui.wizards.datatransfer.ExternalProjectImportWizard"
             id="org.eclipse.ui.wizards.import.ExternalProject">
          <description>
@@ -82,7 +82,7 @@
       </wizard>
       <wizard
             name="%ImportWizards.ZipFile"
-            icon="icons/full/ctool16/importzip_wiz.gif"
+            icon="icons/full/etool16/importzip_wiz.gif"
             class="org.eclipse.ui.wizards.datatransfer.ZipFileImportWizard"
             id="org.eclipse.ui.wizards.import.ZipFile">
          <description>
@@ -97,7 +97,7 @@
          point="org.eclipse.ui.exportWizards">
       <wizard
             name="%ExportWizards.FileSystem"
-            icon="icons/full/ctool16/exportdir_wiz.gif"
+            icon="icons/full/etool16/exportdir_wiz.gif"
             class="org.eclipse.ui.wizards.datatransfer.FileSystemExportWizard"
             id="org.eclipse.ui.wizards.export.FileSystem">
          <description>
@@ -109,7 +109,7 @@
       </wizard>
       <wizard
             name="%ExportWizards.ZipFile"
-            icon="icons/full/ctool16/exportzip_wiz.gif"
+            icon="icons/full/etool16/exportzip_wiz.gif"
             class="org.eclipse.ui.wizards.datatransfer.ZipFileExportWizard"
             id="org.eclipse.ui.wizards.export.ZipFile">
          <description>
@@ -124,7 +124,7 @@
          point="org.eclipse.ui.ide.markerImageProviders">
       <imageprovider
             markertype="org.eclipse.core.resources.taskmarker"
-            icon="icons/full/cview16/tasks_tsk.gif"
+            icon="icons/full/eview16/tasks_tsk.gif"
             id="org.eclipse.ui.taskMarkerProvider">
       </imageprovider>
       <imageprovider
@@ -145,7 +145,7 @@
       </category>
       <wizard
             name="%NewWizards.project"
-            icon="icons/full/ctool16/newprj_wiz.gif"
+            icon="icons/full/etool16/newprj_wiz.gif"
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard"
             project="true"
@@ -156,7 +156,7 @@
       </wizard>
       <wizard
             name="%NewWizards.folder"
-            icon="icons/full/ctool16/newfolder_wiz.gif"
+            icon="icons/full/etool16/newfolder_wiz.gif"
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard"
             id="org.eclipse.ui.wizards.new.folder">
@@ -169,7 +169,7 @@
       </wizard>
       <wizard
             name="%NewWizards.file"
-            icon="icons/full/ctool16/newfile_wiz.gif"
+            icon="icons/full/etool16/newfile_wiz.gif"
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard"
             id="org.eclipse.ui.wizards.new.file">
@@ -354,28 +354,28 @@
       </view>
       <view
             name="%Views.ResourceNavigator"
-            icon="icons/full/cview16/filenav_nav.gif"
+            icon="icons/full/eview16/filenav_nav.gif"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.navigator.ResourceNavigator"
             id="org.eclipse.ui.views.ResourceNavigator">
       </view>
       <view
             name="%Views.Bookmark"
-            icon="icons/full/cview16/bkmrk_nav.gif"
+            icon="icons/full/eview16/bkmrk_nav.gif"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.markers.internal.BookmarkView"
             id="org.eclipse.ui.views.BookmarkView">
       </view>
       <view
             name="%Views.Task"
-            icon="icons/full/cview16/tasks_tsk.gif"
+            icon="icons/full/eview16/tasks_tsk.gif"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.markers.internal.TaskView"
             id="org.eclipse.ui.views.TaskList">
       </view>
       <view
             name="%Views.Problem"
-            icon="icons/full/cview16/problems_view.gif"
+            icon="icons/full/eview16/problems_view.gif"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.markers.internal.ProblemView"
             id="org.eclipse.ui.views.ProblemView">
@@ -447,28 +447,28 @@
       </command>
       <command
             name="%command.buildProject.name"
-            icon="icons/full/ctool16/build_exec.gif"
+            icon="icons/full/etool16/build_exec.gif"
             description="%command.buildProject.description"
             categoryId="org.eclipse.ui.category.project"
             id="org.eclipse.ui.project.buildProject">
       </command>
       <command
             name="%command.rebuildProject.name"
-            icon="icons/full/ctool16/build_exec.gif"
+            icon="icons/full/etool16/build_exec.gif"
             description="%command.rebuildProject.description"
             categoryId="org.eclipse.ui.category.project"
             id="org.eclipse.ui.project.rebuildProject">
       </command>
       <command
             name="%command.buildAll.name"
-            icon="icons/full/ctool16/build_exec.gif"
+            icon="icons/full/etool16/build_exec.gif"
             description="%command.buildAll.description"
             categoryId="org.eclipse.ui.category.project"
             id="org.eclipse.ui.project.buildAll">
       </command>
       <command
             name="%command.rebuildAll.name"
-            icon="icons/full/ctool16/build_exec.gif"
+            icon="icons/full/etool16/build_exec.gif"
             description="%command.rebuildAll.description"
             categoryId="org.eclipse.ui.category.project"
             id="org.eclipse.ui.project.rebuildAll">
@@ -493,7 +493,7 @@
       </command>
       <command
             name="%command.addTask.name"
-            icon="icons/full/clcl16/addtsk_tsk.gif"
+            icon="icons/full/elcl16/addtsk_tsk.gif"
             description="%command.addTask.description"
             categoryId="org.eclipse.ui.category.edit"
             id="org.eclipse.ui.edit.addTask">

@@ -126,19 +126,16 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 			new PropertyDialogAction(shell, navigator.getViewer());
 		
 		importAction = new ImportResourcesAction(navigator.getSite().getWorkbenchWindow());
-//		importAction.setDisabledImageDescriptor(getImageDescriptor("dtool16/import_wiz.gif")); //$NON-NLS-1$
+		importAction.setDisabledImageDescriptor(getImageDescriptor("dtool16/import_wiz.gif")); //$NON-NLS-1$
 		importAction.setImageDescriptor(getImageDescriptor("etool16/import_wiz.gif")); //$NON-NLS-1$		
-//		importAction.setHoverImageDescriptor(getImageDescriptor("ctool16/import_wiz.gif")); //$NON-NLS-1$
 
 		exportAction = new ExportResourcesAction(navigator.getSite().getWorkbenchWindow());
-//		exportAction.setDisabledImageDescriptor(getImageDescriptor("dtool16/export_wiz.gif")); //$NON-NLS-1$
+		exportAction.setDisabledImageDescriptor(getImageDescriptor("dtool16/export_wiz.gif")); //$NON-NLS-1$
 		exportAction.setImageDescriptor(getImageDescriptor("etool16/export_wiz.gif")); //$NON-NLS-1$
-//		exportAction.setHoverImageDescriptor(getImageDescriptor("ctool16/export_wiz.gif")); //$NON-NLS-1$
 
 		collapseAllAction = new CollapseAllAction(navigator, ResourceNavigatorMessages.getString("CollapseAllAction.title"));//$NON-NLS-1$
 		collapseAllAction.setToolTipText(ResourceNavigatorMessages.getString("CollapseAllAction.toolTip")); //$NON-NLS-1$
 		collapseAllAction.setImageDescriptor(getImageDescriptor("elcl16/collapseall.gif")); //$NON-NLS-1$
-//		collapseAllAction.setHoverImageDescriptor(getImageDescriptor("clcl16/collapseall.gif")); //$NON-NLS-1$
 
 		toggleLinkingAction = new ToggleLinkingAction(
 			navigator, 
@@ -146,7 +143,6 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		toggleLinkingAction.setToolTipText(
 			ResourceNavigatorMessages.getString("ToggleLinkingAction.toolTip")); //$NON-NLS-1$
 		toggleLinkingAction.setImageDescriptor(getImageDescriptor("elcl16/synced.gif"));//$NON-NLS-1$
-//		toggleLinkingAction.setHoverImageDescriptor(getImageDescriptor("clcl16/synced.gif"));//$NON-NLS-1$
 	}
 	
 	/**

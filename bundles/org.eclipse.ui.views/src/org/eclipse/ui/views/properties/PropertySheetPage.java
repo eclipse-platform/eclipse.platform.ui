@@ -305,8 +305,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 		defaultsAction.setText(PropertiesMessages.getString("Defaults.text")); //$NON-NLS-1$
 		defaultsAction.setToolTipText(PropertiesMessages.getString("Defaults.toolTip")); //$NON-NLS-1$
 		defaultsAction.setImageDescriptor(getImageDescriptor("elcl16/defaults_ps.gif")); //$NON-NLS-1$
-//		defaultsAction.setHoverImageDescriptor(getImageDescriptor("clcl16/defaults_ps.gif")); //$NON-NLS-1$
-//		defaultsAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/defaults_ps.gif")); //$NON-NLS-1$
+		defaultsAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/defaults_ps.gif")); //$NON-NLS-1$
 		defaultsAction.setEnabled(false);
 
 		// Show Advanced Properties
@@ -314,7 +313,6 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 		filterAction.setText(PropertiesMessages.getString("Filter.text")); //$NON-NLS-1$
 		filterAction.setToolTipText(PropertiesMessages.getString("Filter.toolTip")); //$NON-NLS-1$
 		filterAction.setImageDescriptor(getImageDescriptor("elcl16/filter_ps.gif")); //$NON-NLS-1$
-//		filterAction.setHoverImageDescriptor(getImageDescriptor("clcl16/filter_ps.gif")); //$NON-NLS-1$
 		filterAction.setChecked(false);
 
 		// Show Categories
@@ -322,7 +320,6 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 		categoriesAction.setText(PropertiesMessages.getString("Categories.text")); //$NON-NLS-1$
 		categoriesAction.setToolTipText(PropertiesMessages.getString("Categories.toolTip")); //$NON-NLS-1$
 		categoriesAction.setImageDescriptor(getImageDescriptor("elcl16/tree_mode.gif")); //$NON-NLS-1$
-//		categoriesAction.setHoverImageDescriptor(getImageDescriptor("clcl16/tree_mode.gif")); //$NON-NLS-1$
 		categoriesAction.setChecked(true);
 	
 		// Copy	
@@ -331,9 +328,6 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 		copyAction = new CopyPropertyAction(viewer, "copy", clipboard); //$NON-NLS-1$
 		copyAction.setText(PropertiesMessages.getString("CopyProperty.text")); //$NON-NLS-1$
 		copyAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
-//		copyAction.setHoverImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));
-		
-		
 	}
 	/* (non-Javadoc)
 	 * Method declared on IPage (and Page).

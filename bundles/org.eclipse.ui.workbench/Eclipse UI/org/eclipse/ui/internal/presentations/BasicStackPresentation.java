@@ -212,7 +212,6 @@ public class BasicStackPresentation extends StackPresentation {
 		pullDownButton.setDisabledImage(hoverImage); // TODO: comment this out?
 		// PR#1GE56QT - Avoid creation of unnecessary image.
 		pullDownButton.setImage(hoverImage);
-		//				pullDownButton.setHotImage(hoverImage);
 		pullDownButton.setToolTipText(WorkbenchMessages.getString("Menu")); //$NON-NLS-1$
 		pullDownButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

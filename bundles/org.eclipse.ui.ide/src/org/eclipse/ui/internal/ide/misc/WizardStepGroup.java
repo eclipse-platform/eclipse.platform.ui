@@ -104,7 +104,7 @@ public class WizardStepGroup {
 	 * Creates an image descriptor.
 	 */
 	private Image createImage(String iconFileName) {
-		String iconPath = "icons/full/clcl16/"; //$NON-NLS-1$
+		String iconPath = "icons/full/elcl16/"; //$NON-NLS-1$
 		ImageDescriptor desc = null;
 		try {
 			URL url_basic = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor().getInstallURL();

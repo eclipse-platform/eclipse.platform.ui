@@ -16,52 +16,52 @@ package org.eclipse.ui.internal;
  */
 public interface IWorkbenchGraphicConstants {
 
-	public final static String IMG_CTOOL_IMPORT_WIZ = "IMG_CTOOL_IMPORT_WIZ"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_IMPORT_WIZ_HOVER = "IMG_CTOOL_IMPORT_WIZ_HOVER"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_IMPORT_WIZ_DISABLED = "IMG_CTOOL_IMPORT_WIZ_DISABLED"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_IMPORT_WIZ = "IMG_ETOOL_IMPORT_WIZ"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_IMPORT_WIZ_HOVER = "IMG_ETOOL_IMPORT_WIZ_HOVER"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_IMPORT_WIZ_DISABLED = "IMG_ETOOL_IMPORT_WIZ_DISABLED"; //$NON-NLS-1$
 
-	public final static String IMG_CTOOL_EXPORT_WIZ = "IMG_CTOOL_EXPORT_WIZ"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_EXPORT_WIZ_HOVER = "IMG_CTOOL_EXPORT_WIZ_HOVER"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_EXPORT_WIZ_DISABLED = "IMG_CTOOL_EXPORT_WIZ_DISABLED"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_EXPORT_WIZ = "IMG_ETOOL_EXPORT_WIZ"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_EXPORT_WIZ_HOVER = "IMG_ETOOL_EXPORT_WIZ_HOVER"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_EXPORT_WIZ_DISABLED = "IMG_ETOOL_EXPORT_WIZ_DISABLED"; //$NON-NLS-1$
 
-	public final static String IMG_CTOOL_SAVE_EDIT = "IMG_CTOOL_SAVE_EDIT" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_SAVE_EDIT_HOVER = "IMG_CTOOL_SAVE_EDIT_HOVER" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_SAVE_EDIT_DISABLED = "IMG_CTOOL_SAVE_EDIT_DISABLED" ; //$NON-NLS-1$
+	public final static String IMG_ETOOL_SAVE_EDIT = "IMG_ETOOL_SAVE_EDIT" ; //$NON-NLS-1$
+	public final static String IMG_ETOOL_SAVE_EDIT_HOVER = "IMG_ETOOL_SAVE_EDIT_HOVER" ; //$NON-NLS-1$
+	public final static String IMG_ETOOL_SAVE_EDIT_DISABLED = "IMG_ETOOL_SAVE_EDIT_DISABLED" ; //$NON-NLS-1$
 
-	public final static String IMG_CTOOL_SAVEAS_EDIT = "IMG_CTOOL_SAVEAS_EDIT" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_SAVEAS_EDIT_HOVER = "IMG_CTOOL_SAVEAS_EDIT_HOVER" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_SAVEAS_EDIT_DISABLED = "IMG_CTOOL_SAVEAS_EDIT_DISABLED" ; //$NON-NLS-1$
+	public final static String IMG_ETOOL_SAVEAS_EDIT = "IMG_ETOOL_SAVEAS_EDIT" ; //$NON-NLS-1$
+	public final static String IMG_ETOOL_SAVEAS_EDIT_HOVER = "IMG_ETOOL_SAVEAS_EDIT_HOVER" ; //$NON-NLS-1$
+	public final static String IMG_ETOOL_SAVEAS_EDIT_DISABLED = "IMG_ETOOL_SAVEAS_EDIT_DISABLED" ; //$NON-NLS-1$
 
-	public final static String IMG_CTOOL_SAVEALL_EDIT = "IMG_CTOOL_SAVEALL_EDIT" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_SAVEALL_EDIT_HOVER = "IMG_CTOOL_SAVEALL_EDIT_HOVER" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_SAVEALL_EDIT_DISABLED = "IMG_CTOOL_SAVEALL_EDIT_DISABLED" ; //$NON-NLS-1$
+	public final static String IMG_ETOOL_SAVEALL_EDIT = "IMG_ETOOL_SAVEALL_EDIT" ; //$NON-NLS-1$
+	public final static String IMG_ETOOL_SAVEALL_EDIT_HOVER = "IMG_ETOOL_SAVEALL_EDIT_HOVER" ; //$NON-NLS-1$
+	public final static String IMG_ETOOL_SAVEALL_EDIT_DISABLED = "IMG_ETOOL_SAVEALL_EDIT_DISABLED" ; //$NON-NLS-1$
 	
-	public final static String IMG_CTOOL_PRINT_EDIT = "IMG_CTOOL_PRINT_EDIT" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_PRINT_EDIT_HOVER = "IMG_CTOOL_PRINT_EDIT_HOVER" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_PRINT_EDIT_DISABLED = "IMG_CTOOL_PRINT_EDIT_DISABLED" ; //$NON-NLS-1$
+	public final static String IMG_ETOOL_PRINT_EDIT = "IMG_ETOOL_PRINT_EDIT" ; //$NON-NLS-1$
+	public final static String IMG_ETOOL_PRINT_EDIT_HOVER = "IMG_ETOOL_PRINT_EDIT_HOVER" ; //$NON-NLS-1$
+	public final static String IMG_ETOOL_PRINT_EDIT_DISABLED = "IMG_ETOOL_PRINT_EDIT_DISABLED" ; //$NON-NLS-1$
 
-	public final static String IMG_CTOOL_SEARCH_SRC = "IMG_CTOOL_SEARCH_SRC" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_SEARCH_SRC_HOVER = "IMG_CTOOL_SEARCH_SRC_HOVER" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_SEARCH_SRC_DISABLED = "IMG_CTOOL_SEARCH_SRC_DISABLED" ; //$NON-NLS-1$
+	public final static String IMG_ETOOL_SEARCH_SRC = "IMG_ETOOL_SEARCH_SRC" ; //$NON-NLS-1$
+	public final static String IMG_ETOOL_SEARCH_SRC_HOVER = "IMG_ETOOL_SEARCH_SRC_HOVER" ; //$NON-NLS-1$
+	public final static String IMG_ETOOL_SEARCH_SRC_DISABLED = "IMG_ETOOL_SEARCH_SRC_DISABLED" ; //$NON-NLS-1$
 
-	public final static String IMG_CTOOL_REFRESH_NAV = "IMG_CTOOL_REFRESH_NAV"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_REFRESH_NAV_HOVER = "IMG_CTOOL_REFRESH_NAV_HOVER"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_REFRESH_NAV_DISABLED = "IMG_CTOOL_REFRESH_NAV_DISABLED"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_REFRESH_NAV = "IMG_ETOOL_REFRESH_NAV"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_REFRESH_NAV_HOVER = "IMG_ETOOL_REFRESH_NAV_HOVER"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_REFRESH_NAV_DISABLED = "IMG_ETOOL_REFRESH_NAV_DISABLED"; //$NON-NLS-1$
 
-	public final static String IMG_CTOOL_HOME_NAV = "IMG_CTOOL_HOME_NAV"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_HOME_NAV_HOVER = "IMG_CTOOL_HOME_NAV_HOVER"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_HOME_NAV_DISABLED = "IMG_CTOOL_HOME_NAV_DISABLED"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_HOME_NAV = "IMG_ETOOL_HOME_NAV"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_HOME_NAV_HOVER = "IMG_ETOOL_HOME_NAV_HOVER"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_HOME_NAV_DISABLED = "IMG_ETOOL_HOME_NAV_DISABLED"; //$NON-NLS-1$
 
-	public final static String IMG_CTOOL_NEW_PAGE = "IMG_CTOOL_NEW_PAGE"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_NEW_PAGE_HOVER = "IMG_CTOOL_NEW_PAGE_HOVER"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_NEW_PAGE_DISABLED = "IMG_CTOOL_NEW_PAGE_DISABLED"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_NEW_PAGE = "IMG_ETOOL_NEW_PAGE"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_NEW_PAGE_HOVER = "IMG_ETOOL_NEW_PAGE_HOVER"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_NEW_PAGE_DISABLED = "IMG_ETOOL_NEW_PAGE_DISABLED"; //$NON-NLS-1$
 
-	public final static String IMG_CTOOL_PIN_EDITOR = "IMG_CTOOL_PIN_EDITOR"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_PIN_EDITOR_HOVER = "IMG_CTOOL_PIN_EDITOR_HOVER"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_PIN_EDITOR_DISABLED = "IMG_CTOOL_PIN_EDITOR_DISABLED"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_PIN_EDITOR = "IMG_ETOOL_PIN_EDITOR"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_PIN_EDITOR_HOVER = "IMG_ETOOL_PIN_EDITOR_HOVER"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_PIN_EDITOR_DISABLED = "IMG_ETOOL_PIN_EDITOR_DISABLED"; //$NON-NLS-1$
 		
-	public final static String IMG_CTOOL_DEF_PERSPECTIVE = "IMG_CTOOL_DEF_PERSPECTIVE"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_DEF_PERSPECTIVE_HOVER = "IMG_CTOOL_DEF_PERSPECTIVE_HOVER"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_DEF_PERSPECTIVE = "IMG_ETOOL_DEF_PERSPECTIVE"; //$NON-NLS-1$
+	public final static String IMG_ETOOL_DEF_PERSPECTIVE_HOVER = "IMG_ETOOL_DEF_PERSPECTIVE_HOVER"; //$NON-NLS-1$
 	
 	// local toolbars
 	public final static String IMG_LCL_CLOSE_VIEW = "IMG_LCL_CLOSE_VIEW" ; //$NON-NLS-1$

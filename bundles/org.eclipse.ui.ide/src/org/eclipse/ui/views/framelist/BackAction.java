@@ -28,9 +28,8 @@ public class BackAction extends FrameAction {
 		super(frameList);
 		setText(FrameListMessages.getString("Back.text")); //$NON-NLS-1$
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
-//		setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_HOVER));
 		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
-//		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
+		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
 		WorkbenchHelp.setHelp(this, IFrameListHelpContextIds.BACK_ACTION);
 		update();
 	}
