@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -100,8 +101,10 @@ public ImageData getImageData() {
 /**
  * Returns a stream on the image contents.  Returns
  * null if a stream could not be opened.
+ * 
+ * @return the buffered stream on the file
  */
-private InputStream getStream() {
+private BufferedInputStream getStream() {
 	InputStream is = null;
 
 	if (location != null) {
@@ -113,7 +116,7 @@ private InputStream getStream() {
 			return null;
 		}
 	}
-	return is;
+	return new BufferedInputStream(is);
 }
 /* (non-Javadoc)
  * Method declared on Object.

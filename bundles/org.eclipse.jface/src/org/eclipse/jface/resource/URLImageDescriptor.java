@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -71,10 +72,11 @@ public ImageData getImageData() {
 /**
  * Returns a stream on the image contents.  Returns
  * null if a stream could not be opened.
+ * @return the stream for loading the data
  */
 protected InputStream getStream() {
 	try {
-		return url.openStream();
+		return new BufferedInputStream(url.openStream());
 	} catch (IOException e) {
 		return null;
 	}
