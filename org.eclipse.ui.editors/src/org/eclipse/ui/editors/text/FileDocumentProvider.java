@@ -365,7 +365,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		
 		if (element instanceof IFileEditorInput) {
 			FileInfo info= (FileInfo) getElementInfo(element);
-			return info.fModificationStamp;
+			if (info != null)
+				return info.fModificationStamp;
 		}
 		
 		return super.getSynchronizationStamp(element);
