@@ -39,6 +39,7 @@ public class MultipleSelectionForm extends UpdateWebForm {
 	}
 
 	public void objectChanged(Object object, String property) {
+		if (selection==null) return;
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
 			if (object.equals(obj)) {

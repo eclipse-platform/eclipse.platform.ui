@@ -323,7 +323,18 @@ public class MultiOptionalFeaturesPage extends BannerPage implements IDynamicPag
 			fe.setChecked(checked);
 		}
 	}
-
+	
+	public Object [] getOptionalElements(PendingChange job) {
+		for (int i = 0; i < jobRoots.length; i++) {
+			JobRoot root = jobRoots[i];
+			PendingChange curr = root.getJob();
+			if (job.equals(curr)) {
+				return root.getElements();
+			}
+		}
+		return null;
+	}
+	
 	public IFeatureReference[] getCheckedOptionalFeatures(PendingChange currentJob) {
 		HashSet set = new HashSet();
 		JobRoot jobRoot = null;

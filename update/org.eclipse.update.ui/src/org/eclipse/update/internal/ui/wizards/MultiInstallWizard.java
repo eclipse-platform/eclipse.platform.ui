@@ -3,29 +3,35 @@ package org.eclipse.update.internal.ui.wizards;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.security.JarVerificationService;
 
 public class MultiInstallWizard extends Wizard {
-	private static final String KEY_UNABLE = "InstallWizard.error.unable";
-	private static final String KEY_OLD = "InstallWizard.error.old";
-	private static final String KEY_SAVED_CONFIG = "InstallWizard.savedConfig";
+	private static final String KEY_UNABLE = "MultiInstallWizard.error.unable";
+	private static final String KEY_OLD = "MultiInstallWizard.error.old";
+	private static final String KEY_SAVED_CONFIG =
+		"MultiInstallWizard.savedConfig";
+	private static final String KEY_INSTALLING =
+		"MultiInstallWizard.installing";
 	private MultiReviewPage reviewPage;
 	private LicensePage licensePage;
 	private MultiOptionalFeaturesPage optionalFeaturesPage;
 	private MultiTargetPage targetPage;
 	private PendingChange[] jobs;
-	private boolean successfulInstall = false;
 	private IInstallConfiguration config;
 	private boolean needLicensePage;
+	private int installCount = 0;
 
 	public MultiInstallWizard(PendingChange[] jobs) {
 		this(jobs, true);
@@ -43,51 +49,37 @@ public class MultiInstallWizard extends Wizard {
 	}
 
 	public boolean isSuccessfulInstall() {
-		return successfulInstall;
+		return installCount > 0;
 	}
 
 	/**
 	 * @see Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		/*
-		final IConfiguredSite targetSite =
-			(targetPage == null) ? null : targetPage.getTargetSite();
-		final IFeatureReference[] optionalFeatures =
-			(optionalFeaturesPage == null)
-				? null
-				: optionalFeaturesPage.getCheckedOptionalFeatures();
-		final Object[] optionalElements =
-			(optionalFeaturesPage == null)
-				? null
-				: optionalFeaturesPage.getOptionalElements();
-		if (job.getJobType() == PendingChange.INSTALL) {
-			ArrayList conflicts =
-				DuplicateConflictsDialog.computeDuplicateConflicts(
-					job,
-					config,
-					targetSite,
-					optionalFeatures);
-			if (conflicts != null) {
-				DuplicateConflictsDialog dialog =
-					new DuplicateConflictsDialog(getShell(), conflicts);
-				if (dialog.open() != 0)
-					return false;
-			}
+		final PendingChange[] selectedJobs = reviewPage.getSelectedJobs();
+		installCount = 0;
+
+		// Check for duplication conflicts
+		ArrayList conflicts =
+			DuplicateConflictsDialog.computeDuplicateConflicts(
+				selectedJobs,
+				config);
+		if (conflicts != null) {
+			DuplicateConflictsDialog dialog =
+				new DuplicateConflictsDialog(getShell(), conflicts);
+			if (dialog.open() != 0)
+				return false;
 		}
+
+		// ok to continue		
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
 				try {
-					successfulInstall = false;
-					makeConfigurationCurrent(config, job);
-					execute(
-						targetSite,
-						optionalElements,
-						optionalFeatures,
-						monitor);
-					saveLocalSite();
-					successfulInstall = true;
+					MultiInstallWizard.makeConfigurationCurrent(config, null);
+					execute(selectedJobs, monitor);
+				} catch (InstallAbortedException e) {
+					throw new InvocationTargetException(e);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -98,9 +90,9 @@ public class MultiInstallWizard extends Wizard {
 		try {
 			getContainer().run(true, true, operation);
 		} catch (InvocationTargetException e) {
-			Throwable target = e.getTargetException();
-			if (target instanceof InstallAbortedException) {
-				// should we revert to the previous configuration?
+			Throwable targetException = e.getTargetException();
+			if (targetException instanceof InstallAbortedException) {
+				return true;
 			} else {
 				UpdateUIPlugin.logException(e);
 			}
@@ -108,8 +100,31 @@ public class MultiInstallWizard extends Wizard {
 		} catch (InterruptedException e) {
 			return false;
 		}
-		*/
 		return true;
+	}
+
+	/*
+	 * When we are uninstalling, there is not targetSite
+	 */
+	private void execute(
+		PendingChange[] selectedJobs,
+		IProgressMonitor monitor)
+		throws InstallAbortedException, CoreException {
+		monitor.beginTask(
+			UpdateUIPlugin.getResourceString(KEY_INSTALLING),
+			jobs.length);
+		for (int i = 0; i < selectedJobs.length; i++) {
+			PendingChange job = selectedJobs[i];
+			SubProgressMonitor subMonitor =
+				new SubProgressMonitor(
+					monitor,
+					1,
+					SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
+			executeOneJob(job, subMonitor);
+			//monitor.worked(1);
+			InstallWizard.saveLocalSite();
+			installCount++;
+		}
 	}
 
 	public void addPages() {
@@ -200,23 +215,6 @@ public class MultiInstallWizard extends Wizard {
 		}
 	}
 
-	/*	
-		public IWizardPage getPreviousPage(IWizardPage page) {
-	
-			if (page instanceof LicensePage)
-				return reviewPage;
-			IWizardPage prevPage = super.getPreviousPage(page);
-			if (prevPage==null) return null;
-			if (prevPage.equals(licensePage)) {
-				PendingChange[] licenseJobs =
-					reviewPage.getSelectedJobsWithLicenses();
-				if (licenseJobs.length == 0)
-					return reviewPage;
-			}
-			return prevPage;
-		}
-	*/
-
 	public static IInstallConfiguration createInstallConfiguration() {
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();
@@ -266,64 +264,91 @@ public class MultiInstallWizard extends Wizard {
 		return page.getNextPage() == null && super.canFinish();
 	}
 
-	/*
-	 * When we are uninstalling, there is no targetSite
-	 */
-	private void execute(
+	private void executeOneJob(PendingChange job, IProgressMonitor monitor)
+		throws CoreException {
+		IConfiguredSite targetSite = null;
+		Object[] optionalElements = null;
+		IFeatureReference[] optionalFeatures = null;
+		if (job.getJobType() == PendingChange.INSTALL) {
+			if (optionalFeaturesPage != null) {
+				optionalElements =
+					optionalFeaturesPage.getOptionalElements(job);
+				optionalFeatures =
+					optionalFeaturesPage.getCheckedOptionalFeatures(job);
+			}
+			if (targetPage != null) {
+				targetSite = targetPage.getTargetSite(job);
+			}
+		}
+		executeOneJob(
+			job,
+			targetSite,
+			optionalElements,
+			optionalFeatures,
+			monitor);
+	}
+
+	private void executeOneJob(
+		PendingChange job,
 		IConfiguredSite targetSite,
 		Object[] optionalElements,
 		IFeatureReference[] optionalFeatures,
 		IProgressMonitor monitor)
 		throws CoreException {
-		/*
+
 		IFeature feature = job.getFeature();
 		if (job.getJobType() == PendingChange.UNINSTALL) {
-		//find the  config site of this feature
-		IConfiguredSite site = findConfigSite(feature, config);
-		if (site != null) {
-			site.remove(feature, monitor);
-		} else {
-			// we should do something here
-			throwError(UpdateUIPlugin.getResourceString(KEY_UNABLE));
-		}
+			//find the  config site of this feature
+			IConfiguredSite site = findConfigSite(feature, config);
+			if (site != null) {
+				site.remove(feature, monitor);
+			} else {
+				// we should do something here
+				throwError(
+					UpdateUIPlugin.getFormattedMessage(
+						KEY_UNABLE,
+						feature.getLabel()));
+			}
 		} else if (job.getJobType() == PendingChange.INSTALL) {
-		if (optionalFeatures == null)
-			targetSite.install(feature, getVerificationListener(), monitor);
-		else
-			targetSite.install(
-				feature,
-				optionalFeatures,
-				getVerificationListener(),
-				monitor);
-		IFeature oldFeature = job.getOldFeature();
-		if (oldFeature != null && !job.isOptionalDelta()) {
-			if (optionalElements != null)
-				preserveOptionalState(config, targetSite, optionalElements);
-			boolean oldSuccess = unconfigure(config, oldFeature);
-			if (!oldSuccess) {
-				if (!isNestedChild(oldFeature))
-					// "eat" the error if nested child
-					throwError(UpdateUIPlugin.getResourceString(KEY_OLD));
+			if (optionalFeatures == null)
+				targetSite.install(feature, getVerificationListener(), monitor);
+			else
+				targetSite.install(
+					feature,
+					optionalFeatures,
+					getVerificationListener(),
+					monitor);
+			IFeature oldFeature = job.getOldFeature();
+			if (oldFeature != null && !job.isOptionalDelta()) {
+				if (optionalElements != null)
+					preserveOptionalState(config, targetSite, optionalElements);
+				boolean oldSuccess = unconfigure(config, oldFeature);
+				if (!oldSuccess) {
+					if (!isNestedChild(oldFeature))
+						// "eat" the error if nested child
+						throwError(
+							UpdateUIPlugin.getFormattedMessage(
+								KEY_OLD,
+								oldFeature.getLabel()));
+				}
 			}
-		}
-		if (oldFeature == null) {
-			ensureUnique(config, feature, targetSite);
-			if (optionalFeatures != null) {
-				preserveOriginatingURLs(feature, optionalFeatures);
+			if (oldFeature == null) {
+				ensureUnique(config, feature, targetSite);
+				if (optionalFeatures != null) {
+					preserveOriginatingURLs(feature, optionalFeatures);
+				}
 			}
-		}
 		} else if (job.getJobType() == PendingChange.CONFIGURE) {
-		configure(feature);
-		ensureUnique(config, feature, targetSite);
+			configure(feature);
+			ensureUnique(config, feature, targetSite);
 		} else if (job.getJobType() == PendingChange.UNCONFIGURE) {
-		unconfigure(config, job.getFeature());
+			unconfigure(config, job.getFeature());
 		} else {
-		// should not be here
-		return;
+			// should not be here
+			return;
 		}
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		model.addPendingChange(job);
-		*/
 	}
 
 	static void ensureUnique(

@@ -29,8 +29,10 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 	private static final String KEY_TITLE =
 		"MultiInstallWizard.TargetPage.title";
 	private static final String KEY_DESC = "MultiInstallWizard.TargetPage.desc";
-	private static final String 	KEY_JOBS_LABEL = "MultiInstallWizard.TargetPage.jobsLabel";
-	private static final String 	KEY_SITE_LABEL = "MultiInstallWizard.TargetPage.siteLabel";
+	private static final String KEY_JOBS_LABEL =
+		"MultiInstallWizard.TargetPage.jobsLabel";
+	private static final String KEY_SITE_LABEL =
+		"MultiInstallWizard.TargetPage.siteLabel";
 	private static final String KEY_NEW = "MultiInstallWizard.TargetPage.new";
 	private static final String KEY_REQUIRED_FREE_SPACE =
 		"MultiInstallWizard.TargetPage.requiredSpace";
@@ -61,7 +63,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 	private Hashtable targetSites;
 	private Button addButton;
 
-	class JobTargetSite {
+	static class JobTargetSite {
 		PendingChange job;
 		IConfiguredSite affinitySite;
 		IConfiguredSite defaultSite;
@@ -268,19 +270,19 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
-		
+
 		createJobViewer(client);
-		
+
 		new Label(client, SWT.NULL);
-		
+
 		label = new Label(client, SWT.NULL);
 		label.setText(UpdateUIPlugin.getResourceString(KEY_SITE_LABEL));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
-		
+
 		createSiteViewer(client);
-		
+
 		Composite buttonContainer = new Composite(client, SWT.NULL);
 		GridLayout blayout = new GridLayout();
 		blayout.marginWidth = blayout.marginHeight = 0;
@@ -563,14 +565,53 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 			enum.hasMoreElements();
 			) {
 			JobTargetSite jobSite = (JobTargetSite) enum.nextElement();
-			if (jobSite.targetSite == null)
+			if (jobSite.targetSite == null) {
 				empty = true;
-			break;
+				break;
+			}
+			IFeature feature = jobSite.job.getFeature();
+			if (feature.isPatch()) {
+				// Patches must go together with the features
+				// they are patching.
+				JobTargetSite patchedSite = findPatchedFeature(feature);
+				if (patchedSite != null
+					&& jobSite.targetSite != null
+					&& patchedSite.targetSite != null
+					&& jobSite.targetSite.equals(patchedSite.targetSite)
+						== false) {
+					setErrorMessage(
+						"Patch '"
+							+ feature.getLabel()
+							+ "' must be installed in the same site as '"
+							+ patchedSite.job.getFeature().getLabel()
+							+ "'");
+					setPageComplete(false);
+					return;
+				}
+			}
 		}
 		verifyNotEmpty(empty);
 	}
 
+	private JobTargetSite findPatchedFeature(IFeature patch) {
+
+		for (Enumeration enum = targetSites.elements();
+			enum.hasMoreElements();
+			) {
+			JobTargetSite jobSite = (JobTargetSite) enum.nextElement();
+			IFeature target = jobSite.job.getFeature();
+			if (target.equals(patch))
+				continue;
+			if (UpdateUIPlugin.isPatch(target, patch))
+				return jobSite;
+
+		}
+		return null;
+	}
+
 	public IConfiguredSite getTargetSite(PendingChange job) {
+		JobTargetSite jobSite = (JobTargetSite)targetSites.get(job);
+		if (jobSite!=null) return jobSite.targetSite;
 		return null;
 	}
 }

@@ -1,10 +1,10 @@
 package org.eclipse.update.internal.ui.views;
 
 import java.util.*;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -15,7 +15,6 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.SharedLabelProvider;
 import org.eclipse.update.internal.ui.wizards.*;
-import org.eclipse.update.internal.ui.wizards.MultiInstallWizard;
 
 /**
  *
@@ -79,8 +78,11 @@ public class ItemsView extends BaseTableView {
 					flags = SharedLabelProvider.F_UNCONFIGURED;
 					break;
 			}
+			boolean patch = job.getFeature().isPatch();
+			ImageDescriptor desc = patch?UpdateUIPluginImages.DESC_EFIX_OBJ:
+			UpdateUIPluginImages.DESC_FEATURE_OBJ;
 			return UpdateUIPlugin.getDefault().getLabelProvider().get(
-				UpdateUIPluginImages.DESC_FEATURE_OBJ,
+				desc,
 				flags);
 		}
 	}

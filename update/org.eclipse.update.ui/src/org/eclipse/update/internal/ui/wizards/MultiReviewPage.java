@@ -140,7 +140,7 @@ public class MultiReviewPage extends BannerPage {
 		super("MultiReview");
 		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
 		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
-		this.jobs = jobs;
+		this.jobs = orderJobs(jobs);
 		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -321,6 +321,45 @@ public class MultiReviewPage extends BannerPage {
 	private void handleSelectAll(boolean select) {
 		tableViewer.setAllChecked(select);
 		pageChanged();
+	}
+	
+	PendingChange [] orderJobs(PendingChange [] jobs) {
+		ArrayList result = new ArrayList();
+		PendingChange [] input = new PendingChange [jobs.length];
+		System.arraycopy(jobs, 0, input, 0, jobs.length);
+		//Add jobs to unconfigure.
+		addJobs(input, result, PendingChange.UNCONFIGURE, false);
+		//Add jobs to configure.
+		addJobs(input, result, PendingChange.CONFIGURE, false);
+		//Add regular feature installs
+		addJobs(input, result, PendingChange.INSTALL, false);
+		//Add patch installs
+		addJobs(input, result, PendingChange.INSTALL, true);
+		//Add the remainder (only uninstalls)
+		addJobs(input, result, -1, false);
+		return (PendingChange[])result.toArray(new PendingChange[result.size()]);
+	}
+	
+	private void addJobs(PendingChange [] input, ArrayList result, int type, boolean patch) {
+		for (int i=0; i<input.length; i++) {
+			PendingChange job = input[i];
+			if (job==null) continue;
+			boolean match=false;
+			if (type == -1) match = true;
+			else {
+				if (type==job.getJobType()) {
+					if (type==PendingChange.INSTALL) {
+						if (job.getFeature().isPatch()==patch)
+							match=true;
+					}
+					else match=true;
+				}
+			}
+			if (match) {
+				result.add(job);
+				input[i] = null;
+			}
+		}
 	}
 
 	public PendingChange[] getSelectedJobs() {
