@@ -236,29 +236,22 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
  				newWraps = currentLayout.wrapsForNewRow(row, createIndex);
 			}
 		} else {
-			// add the item on a row by itself
-			int numRows = currentLayout.getNumberOfRows();
-			savedItemRow = Math.min(savedItemRow, numRows);
-			if (savedItemRow == numRows) {
-				// the row does not exist on the coolbar layout
-				createIndex = coolBar.getItemCount();
-			} else {
-				createIndex = currentLayout.getStartIndexOfRow(savedItemRow);
-			}	
- 			newWraps = currentLayout.wrapsForNewRow(savedItemRow, createIndex);
+			// add the item to the end of the coolbar
+			createIndex = coolBar.getItemCount();
 		}
 
 		// create the item
 // workaround for SWT 22055 bug
-coolBar.setRedraw(false);
+if (newWraps != null) coolBar.setRedraw(false);
 		CoolItem coolItem = new CoolItem(coolBar, SWT.DROP_DOWN, createIndex);
 		coolItem.setControl(toolBar);
 		coolItem.setData(cbItem);
-		setSizeFor(coolItem, position.getSizeOf(cbItem.getId()).x);
-		if (newWraps != null) {
+//		setSizeFor(coolItem, position.getSizeOf(cbItem.getId()).x);
+		setSizeFor(coolItem);
+		if (newWraps != null)	{
 			coolBar.setWrapIndices(newWraps);
-		}
 coolBar.setRedraw(true);
+		}
 		
 		positionAdded(position);
 		
@@ -432,7 +425,8 @@ coolBar.setRedraw(true);
 		if (!coolBarExist())
 			return null;	
 		CoolBarLayout layout = new CoolBarLayout(coolBar);
-		layout.rememberedPositions = rememberedPositions;
+		layout.rememberedPositions = new ArrayList();
+		layout.rememberedPositions.addAll(rememberedPositions);
 		return layout;
 	}
 	private RestoreItemData getRestoreData(CoolBarContributionItem cbItem, CoolItemPosition position) {
@@ -459,10 +453,7 @@ coolBar.setRedraw(true);
 				if (!previousLayout.isDerivativeOf(savedPosition.layout)) break;
 			}
 			
-			// flag what we've found previously
-			boolean afterItemFound = bestMatch.afterIndex != -1;
-			boolean beforeItemFound = bestMatch.beforeIndex != -1;
-			boolean afterBeforeItemFound = afterItemFound && beforeItemFound;
+			boolean afterBeforeItemFound = bestMatch.afterIndex != -1 && bestMatch.beforeIndex != -1;
 			
 			String afterId = null;
 			String beforeId = null;	
@@ -508,10 +499,9 @@ coolBar.setRedraw(true);
 				}
 			} else if (beforeIndex != -1) {
 				// If we found both items previously, that is the best match.
+				// This condition can happen if items were added between this 
+				// savedPosition and the previous savedPosition.
 				if (afterBeforeItemFound) break;
-				// if we found an after item previously, but not now, the
-				// layout is different, so break
-				if (afterItemFound) break; // layout different, so break
 				bestMatch.savedPosition = savedPosition;
 				bestMatch.beforeItemId = beforeId;
 				bestMatch.beforeIndex = beforeIndex;
@@ -519,10 +509,9 @@ coolBar.setRedraw(true);
 				bestMatch.afterIndex = -1;
 			} else if (afterIndex != -1) {
 				// If we found both items previously, that is the best match. 
+				// This condition can happen if items were added between this 
+				// savedPosition and the previous savedPosition.
 				if (afterBeforeItemFound) break;
-				// if we found a before item previously, but not now, the
-				// layout is different, so break
-				if (beforeItemFound) break; 
 				bestMatch.savedPosition = savedPosition;
 				bestMatch.afterItemId = afterId;
 				bestMatch.afterIndex = afterIndex;
@@ -700,20 +689,28 @@ coolBar.setRedraw(true);
 				done = true;
 			}			
 		}
-		// all except the least recently added position in a set of contiguously added positions can 
-		// be removed from the stack 
+		// all except the least recently added position in a set of contiguously added positions
+		// can be removed from the stack within each g
 		int testIndex = 1;
 		done =  testIndex + 1 > rememberedPositions.size() - 1;
 		while (!done) {
-			CoolItemPosition layout = (CoolItemPosition)rememberedPositions.get(testIndex);
-			if (layout.added) {
-				int nextIndex = testIndex + 1;
-				CoolItemPosition nextLayout = (CoolItemPosition)rememberedPositions.get(nextIndex);
-				if (nextLayout.added) {
+			CoolItemPosition pos = (CoolItemPosition)rememberedPositions.get(testIndex);
+			if (pos.added) {
+				CoolItemPosition nextPos = (CoolItemPosition)rememberedPositions.get(testIndex + 1);
+				CoolItemPosition prevPos = (CoolItemPosition)rememberedPositions.get(testIndex - 1);
+				boolean nextSameGroup = pos.layout.isDerivativeOf(nextPos.layout);
+				boolean prevSameGroup = prevPos.layout.isDerivativeOf(pos.layout);
+				if (!nextSameGroup && !prevSameGroup) {
+					// only item in this group
 					rememberedPositions.remove(testIndex);
-				} 
-			} 
-			testIndex++;
+				} else if (nextPos.added && nextSameGroup && !prevSameGroup) {
+					rememberedPositions.remove(testIndex);
+				} else {
+					testIndex++;
+				}
+			} else {
+				testIndex++;
+			}
 			done = testIndex + 1 > rememberedPositions.size() - 1; 
 		}	
 	}
@@ -729,6 +726,8 @@ coolBar.setRedraw(true);
 			CoolItem coolItem = coolItems[i];
 			setSizeFor(coolItem);
 		}
+		// clear any remembered data
+		rememberedPositions = new ArrayList();
 		relayout();		
 	}
 	/**
@@ -792,6 +791,7 @@ coolBar.setRedraw(true);
 		rememberedPositions = new ArrayList();
 	}
 	void setLayoutFor(Perspective perspective) {
+		rememberedPositions = new ArrayList();
 		setLayout(perspective.getToolBarLayout());
 		rememberPositions = true;
 	}
@@ -900,30 +900,25 @@ coolBar.setRedraw(true);
 		int[] wrapIndices = new int[wrapItems.length];
 		ArrayList currentCoolItemIds = getCoolItemIds();
 		int j = 0;
-		int numItems = itemSizes.length;
-		for (int i = 0; i < wrapItems.length; i++) {
-			int index = currentCoolItemIds.indexOf(wrapItems[i]);
+		int k = 0;
+		while (k < wrapItems.length) {
+			int index = currentCoolItemIds.indexOf(wrapItems[k]);
 			if (index != -1) {
 				wrapIndices[j] = index;
 				j++;
+				k++;
 			} else {
-				// wrap item no longer exists, wrap on the next visual item 
-				int visualIndex = layout.itemWrapIndices[i];
-				if ((i+1) < wrapItems.length) {
-					// there's another wrap row, set the wrap to the next
-					// visual item as long as it isn't on the next row
-					int nextWrapIndex = layout.itemWrapIndices[i+1];
-					if ((visualIndex < nextWrapIndex) && (visualIndex < itemSizes.length)) {
-						wrapIndices[j] = visualIndex;
-						j++;
-					}
+				// wrap item no longer exists, try wrapping on the next item in the
+				// saved layout, if we hit a new row, stop
+				int visualIndex = layout.items.indexOf(wrapItems[k]);
+				int row = layout.getRowOfIndex(visualIndex);
+				int nextIndex = visualIndex + 1;
+				int nextRow = layout.getRowOfIndex(nextIndex);
+				if (nextIndex < layout.items.size() && nextRow == row) {
+					String nextItem = (String)layout.items.get(nextIndex);
+					wrapItems[k]=nextItem;
 				} else {
-					// we're on the last row, set the wrap to the 
-					// next visual item
-					if (visualIndex < itemSizes.length) {
-						wrapIndices[j] = visualIndex;
-						j++;
-					}
+					k++;
 				}
 			}
 		}
