@@ -53,7 +53,11 @@ public class TocManager {
 
 		IToc[] tocs = (IToc[]) tocsByLang.get(locale);
 		if (tocs == null) {
-			build(locale);
+			synchronized (this) {
+				if (tocs == null) {
+					build(locale);
+				}
+			}
 			tocs = (IToc[]) tocsByLang.get(locale);
 			// one more sanity test...
 			if (tocs == null)
