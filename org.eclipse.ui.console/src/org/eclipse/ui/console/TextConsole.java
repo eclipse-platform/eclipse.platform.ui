@@ -368,6 +368,9 @@ public abstract class TextConsole extends AbstractConsole {
         }
 
         public boolean isConflicting(ISchedulingRule rule) {
+            if (contains(rule)) {
+                return true;
+            }
             if (rule != this && rule instanceof MatcherSchedulingRule) {
                 return (((MatcherSchedulingRule)rule).getConsole() == TextConsole.this);   
             }
