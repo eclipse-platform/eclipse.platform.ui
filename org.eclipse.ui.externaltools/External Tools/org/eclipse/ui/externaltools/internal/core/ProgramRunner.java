@@ -9,11 +9,10 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.ui.externaltools.internal.ui.LogConsoleDocument;
 
 /**
  * Execute external tools that represent programs in the file
@@ -31,19 +30,16 @@ public class ProgramRunner extends ExternalToolsRunner {
 	/* (non-Javadoc)
 	 * Method declared in ExternalToolsRunner.
 	 */
-	public void execute(IProgressMonitor monitor, IRunnerContext scriptContext) throws CoreException {
-		String commandLine = scriptContext.getExpandedLocation() + " " + scriptContext.getExpandedArguments(); //$NON-NLS-1$;
+	public void execute(IProgressMonitor monitor, IRunnerContext runnerContext) throws CoreException {
+		String commandLine = runnerContext.getExpandedLocation() + " " + runnerContext.getExpandedArguments(); //$NON-NLS-1$;
 		try {
-			startMonitor(monitor, scriptContext, monitor.UNKNOWN);
+			startMonitor(monitor, runnerContext, monitor.UNKNOWN);
 			Process p = Runtime.getRuntime().exec(commandLine);
 			boolean[] finished = new boolean[1];
 			
-			//
-			// DO TO: This needs to be updated to use log document support
-			//
-//			finished[0] = false;
-//			new Thread(getRunnable(p.getInputStream(), null, Project.MSG_INFO, finished)).start();
-//			new Thread(getRunnable(p.getErrorStream(), null, Project.MSG_ERR, finished)).start();
+			finished[0] = false;
+			new Thread(getRunnable(p.getInputStream(), LogConsoleDocument.getInstance(), LogConsoleDocument.MSG_INFO, finished)).start();
+			new Thread(getRunnable(p.getErrorStream(), LogConsoleDocument.getInstance(), LogConsoleDocument.MSG_ERR, finished)).start();
 
 			p.waitFor();
 			finished[0] = true;
@@ -58,12 +54,11 @@ public class ProgramRunner extends ExternalToolsRunner {
 	 * Returns a runnable that is used to capture and print out a stream
 	 * from another process.
 	 */
-/*	private Runnable getRunnable(final InputStream input, final BuildListener listener, final int severity, final boolean[] finished) {
+	private Runnable getRunnable(final InputStream input, final LogConsoleDocument document, final int severity, final boolean[] finished) {
 		return new Runnable() {
 			public void run() {
 				try {
 					StringBuffer sb;
-					BuildEvent event = new BuildEvent((Task)null);
 					while (!finished[0]) {
 						sb = new StringBuffer();
 						int c = input.read();
@@ -71,8 +66,7 @@ public class ProgramRunner extends ExternalToolsRunner {
 							sb.append((char)c);
 							c = input.read();
 						}
-						event.setMessage(sb.toString(), severity);
-						listener.messageLogged(event);
+						document.append(sb.toString(), severity);
 						try {
 							Thread.currentThread().sleep(100);
 						} catch (InterruptedException e) {
@@ -85,5 +79,5 @@ public class ProgramRunner extends ExternalToolsRunner {
 			}
 		};
 	}
-*/
+
 }
