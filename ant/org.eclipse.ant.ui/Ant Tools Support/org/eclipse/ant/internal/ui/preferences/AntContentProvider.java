@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -36,6 +37,7 @@ public class AntContentProvider implements IStructuredContentProvider {
 		}
 		elements.add(o);
 		tableViewer.add(o);
+		tableViewer.setSelection(new StructuredSelection(o), true);
 	}
 
 	public void dispose() {
