@@ -1,20 +1,13 @@
 Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-Version: 3.1.0
 Bundle-SymbolicName: org.eclipse.core.runtime; singleton=true
 Bundle-Vendor: %providerName
-Bundle-ClassPath: runtime.jar
 Bundle-Activator: org.eclipse.core.internal.runtime.PlatformActivator
 Bundle-Localization: plugin
 Export-Package: 
  org.osgi.service.prefs; specification-version=1.0,
- org.eclipse.core.runtime,
- org.eclipse.core.runtime.content,
- org.eclipse.core.runtime.dynamicHelpers,
- org.eclipse.core.runtime.jobs,
- org.eclipse.core.runtime.preferences
-Provide-Package: 
- org.osgi.service.prefs,
  org.eclipse.core.internal.registry,
  org.eclipse.core.internal.runtime,
  org.eclipse.core.internal.preferences,
