@@ -56,6 +56,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager  {
 	 * @see ILaunchManager
 	 */
 	public void deregisterLaunch(ILaunch launch) {
+		if (launch == null) {
+			return;
+		}
 		fLaunches.remove(launch);
 		fireUpdate(launch, DEREGISTERED);
 	}
