@@ -2167,12 +2167,6 @@
             id="org.eclipse.ui.preferencePages.FileEditors">
       </page>
       <page
-            name="%PreferencePages.LinkedResources"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.dialogs.LinkedResourcesPreferencePage"
-            id="org.eclipse.ui.preferencePages.LinkedResources">
-      </page>
-      <page
             name="%PreferencePages.FileStates"
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.dialogs.FileStatesPage"
@@ -2219,14 +2213,6 @@
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.commands.KeyPreferencePage"
             id="org.eclipse.ui.preferencePages.Keys">
-      </page>
-   </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            name="%PreferencePages.BuildOrder"
-            class="org.eclipse.ui.internal.dialogs.BuildOrderPreferencePage"
-            id="org.eclipse.ui.preferencePages.BuildOrder">
       </page>
    </extension>
    <extension
