@@ -38,7 +38,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	private static final int STATE_DESCRIPTION = 6;
 	private static final String PLUGIN_ID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 
-	public static boolean DEBUG = true;
+	public static boolean DEBUG = false;
 
 	public static final String SITE = "site";
 	public static final String FEATURE = "feature";
@@ -232,19 +232,21 @@ public class DefaultSiteParser extends DefaultHandler {
 		String urlInfo = attributes.getValue("url");
 		if (urlInfo == null || urlInfo.trim().equals(""))
 			internalError("Invalid URL tag of a feature tag. Value is required.");
-		feature.setURLString(urlInfo);
+		else {
+			feature.setURLString(urlInfo);
 
-		String type = attributes.getValue("type");
-		feature.setType(type);
+			String type = attributes.getValue("type");
+			feature.setType(type);
 
-		SiteMapModel site = (SiteMapModel) objectStack.peek();
-		site.addFeatureReferenceModel(feature);
-		feature.setSiteModel(site);
+			SiteMapModel site = (SiteMapModel) objectStack.peek();
+			site.addFeatureReferenceModel(feature);
+			feature.setSiteModel(site);
 
-		objectStack.push(feature);
+			objectStack.push(feature);
 
-		if (DEBUG)
-			debug("End Processing DefaultFeature Tag: url:" + urlInfo + " type:" + type);
+			if (DEBUG)
+				debug("End Processing DefaultFeature Tag: url:" + urlInfo + " type:" + type);
+		}
 	}
 
 	/** 
@@ -387,7 +389,7 @@ public class DefaultSiteParser extends DefaultHandler {
 						break;
 
 					default :
-						internalError("Description in wrong state:" + state);
+						internalError("Description declared in wrong place; state:" + state);
 						break;
 				}
 				break;

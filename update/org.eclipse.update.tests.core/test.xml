@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="testsuite" default="run" basedir=".">
+<project name="testsuite" default="run" basedir="."> 
   <!-- The property ${eclipse-home} should be passed into this script -->
   <!-- Set a meaningful default value for when it is not. -->
   <property name="eclipse-home" value="${basedir}/../.."/>

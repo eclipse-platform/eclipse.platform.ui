@@ -19,10 +19,9 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 	}
 	
 	
-	public void testParse(){
+	public void testParse() throws Exception {
 	
 		String xmlFile = "xmls/feature_1.0.0/";
-		try {		
 			ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 			URL url = UpdateManagerUtils.getURL(remoteSite.getURL(),xmlFile,null);
 			
@@ -34,10 +33,6 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 			String prov = feature.getProvider();
 			assertEquals("Object Technology International",prov);
 			
-		} catch (Exception e){
-			fail(e.toString());
-			e.printStackTrace();
-		}
 	}
 }
 
