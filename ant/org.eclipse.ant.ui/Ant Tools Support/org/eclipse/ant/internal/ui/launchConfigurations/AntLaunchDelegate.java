@@ -342,7 +342,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 			for (Iterator iter = properties.iterator(); iter.hasNext();) {
 				Property property = (Property) iter.next();
 				key= property.getName();
-				String value= property.getValue();
+				String value= property.getValue(false);
 				if (value != null) {
 					appendProperty(commandLine, key, value);
 				}

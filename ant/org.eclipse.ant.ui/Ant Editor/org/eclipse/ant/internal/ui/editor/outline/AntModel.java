@@ -558,7 +558,7 @@ public class AntModel {
 		if (properties != null) {
 			for (Iterator iter = properties.iterator(); iter.hasNext();) {
 				Property property = (Property) iter.next();
-				String value= property.getValue();
+				String value= property.getValue(false);
 				if (value != null) {
 					project.setUserProperty(property.getName(), value);
 				}
