@@ -83,6 +83,13 @@ Workbench window by the user customizing a perspective.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  a translatable description used by the Workbench to represent this action set to the user.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
