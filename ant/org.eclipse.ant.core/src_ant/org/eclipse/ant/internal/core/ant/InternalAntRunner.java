@@ -164,7 +164,11 @@ public class InternalAntRunner {
 	 * Adds user properties.
 	 */
 	public void addUserProperties(Map properties) {
-		userProperties = properties;
+		if (userProperties == null) {
+			userProperties= new HashMap(properties.size());
+		}
+		
+		userProperties.putAll(properties);
 	}
 	
 	/**
