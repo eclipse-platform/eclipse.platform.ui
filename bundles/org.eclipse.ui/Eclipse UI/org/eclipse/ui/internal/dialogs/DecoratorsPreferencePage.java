@@ -46,14 +46,13 @@ public class DecoratorsPreferencePage
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		mainComposite.setLayout(layout);
-		
+
 		Label topLabel = new Label(mainComposite, SWT.NULL);
 		topLabel.setText(
 			WorkbenchMessages.getString("DecoratorsPreferencePage.explanation"));
 		GridData topData = new GridData();
 		topData.horizontalSpan = 2;
 		topLabel.setLayoutData(topData);
-
 
 		//Create an intermediate composite to facilitate tab traversal
 		Composite definitionsComposite = new Composite(mainComposite, SWT.NULL);
@@ -144,7 +143,14 @@ public class DecoratorsPreferencePage
 	 * Show the selected description in the text.
 	 */
 	private void showDescription(DecoratorDefinition definition) {
-		descriptionText.setText(definition.getDescription());
+		String text = definition.getDescription();
+		if (text.length() == 0)
+			descriptionText.setText(
+				WorkbenchMessages.format(
+					"DecoratorsPreferencePage.noDescription",
+					new String[] { definition.getName()}));
+		else
+			descriptionText.setText(text);
 	}
 
 	/**
