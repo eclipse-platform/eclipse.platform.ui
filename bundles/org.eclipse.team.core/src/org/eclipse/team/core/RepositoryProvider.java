@@ -11,7 +11,9 @@
 package org.eclipse.team.core;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFileModificationValidator;
 import org.eclipse.core.resources.IProject;
@@ -29,8 +31,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.team.internal.core.*;
 import org.eclipse.team.internal.core.Policy;
+import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations;
 
 /**
@@ -266,7 +268,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 	 */
 	final public static String[] getAllProviderTypeIds() {
 		IProjectNatureDescriptor[] desc = ResourcesPlugin.getWorkspace().getNatureDescriptors();
-		List teamSet = new ArrayList();
+		Set teamSet = new HashSet();
 		
 		teamSet.addAll(AllProviderTypeIds);	// add in all the ones we know via extension point
 		
