@@ -49,6 +49,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -214,7 +215,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			};
 		dialog.setTitle(SearchMessages.getString("SearchPageSelectionDialog.title")); //$NON-NLS-1$
 		dialog.setInitialSelections(SearchPlugin.getDefault().getEnabledSearchPageDescriptors(fInitialPageId).toArray());
-		if (dialog.open() == ListSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			SearchPageDescriptor.setEnabled(dialog.getResult());
 			Display display= getShell().getDisplay();
 			close();			

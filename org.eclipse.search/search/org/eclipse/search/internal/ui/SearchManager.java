@@ -326,7 +326,7 @@ public class SearchManager implements IResourceChangeListener {
 
 	void setCurrentResults(ArrayList results) {
 		Assert.isNotNull(results);
-		((Search)getCurrentSearch()).setResults(results);
+		getCurrentSearch().setResults(results);
 		if (results.isEmpty()) {
 			// directly update because there will be no delta
 				Display display= getDisplay();
@@ -390,7 +390,7 @@ public class SearchManager implements IResourceChangeListener {
 
 	private void handleRemoveAll() {
 		if (fCurrentSearch != null)
-			((Search)fCurrentSearch).removeResults();
+			fCurrentSearch.removeResults();
 		Iterator iter= fListeners.iterator();
 		while (iter.hasNext())
 			((SearchResultViewer)iter.next()).handleRemoveAll();

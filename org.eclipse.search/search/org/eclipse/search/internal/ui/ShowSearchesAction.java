@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 
 import org.eclipse.search.internal.ui.util.ListDialog;
 
@@ -59,7 +60,7 @@ class ShowSearchesAction extends Action {
 			
 			fImages= null;
 		}
-	};
+	}
 
 	/**
 	 *	Create a new instance of this class
@@ -117,7 +118,7 @@ class ShowSearchesAction extends Action {
 			selected[0]= selectedAction;
 			dlg.setInitialSelections(selected);
 		}
-		if (dlg.open() == ListDialog.OK) {
+		if (dlg.open() == Window.OK) {
 			List result= Arrays.asList(dlg.getResult());
 			if (result != null && result.size() == 1) {
 				((ShowSearchAction)result.get(0)).run();

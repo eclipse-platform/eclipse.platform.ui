@@ -25,6 +25,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Widget;
 
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.IEditorRegistry;
 
 import org.eclipse.search.internal.ui.SearchMessages;
@@ -85,7 +87,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 	}
 	protected void handleBrowseButton() {
 		TypeFilteringDialog dialog= new TypeFilteringDialog(fTextField.getShell(), getFileTypes());
-		if (dialog.open() == TypeFilteringDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			setFileTypes(new HashSet(Arrays.asList(dialog.getResult())));
 		}
 	}

@@ -50,7 +50,7 @@ import org.eclipse.search.ui.ISearchResultView;
 public class SearchResultView extends ViewPart implements ISearchResultView {
 
 
-	private static Map fgLabelProviders= new HashMap(5);;
+	private static Map fgLabelProviders= new HashMap(5);
 	
 	private SearchResultViewer fViewer;
 	private Map fResponse;
@@ -242,7 +242,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 				groupFactory,
 				groupByKeyComputer,
 				operation));
-	};
+	}
 
 	/**
 	 * Implements method from ISearchResultView
@@ -259,7 +259,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 				IRunnableWithProgress	operation) {
 		
 		searchStarted(pageId, null, label, imageDescriptor, contributor, labelProvider, gotoAction, groupByKeyComputer, operation);
-	};
+	}
 
 	/**
 	 * Implements method from ISearchResultView
@@ -300,7 +300,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 				contributor,
 				groupByKeyComputer,
 				operation));
-	};
+	}
 
 	/*
 	 * Implements method from ISearchResultView

@@ -186,7 +186,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 			if (textPattern.equals(match.textPattern))
 				break;
 			i--;
-		};
+		}
 		if (i >= 0) {
 			match.ignoreCase= ignoreCase();
 			match.textPattern= getPattern();
@@ -385,7 +385,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				text= resource.getName();
 			}
 			else if (item instanceof ISearchResultViewEntry) {
-				IMarker marker= (IMarker)((ISearchResultViewEntry)item).getSelectedMarker();
+				IMarker marker= ((ISearchResultViewEntry)item).getSelectedMarker();
 				resource= marker.getResource();
 				try {
 					text= (String)marker.getAttribute(SearchUI.LINE);
@@ -446,7 +446,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				sbOut.append("\\"); //$NON-NLS-1$
 			sbOut.append(ch);
 			i= i+1;
-		};
+		}
 		return sbOut.toString();
 	}
 

@@ -38,7 +38,7 @@ class SortDropDownAction extends Action implements IMenuCreator {
 	private static final String TAG_PAGE_ID= "pageId"; //$NON-NLS-1$
 	private static final String TAG_SORTER_ID= "sorterId"; //$NON-NLS-1$
 
-	private static Map fgLastCheckedForType= new HashMap(5);;
+	private static Map fgLastCheckedForType= new HashMap(5);
 
 	private SearchResultViewer fViewer;
 	private String fPageId;
