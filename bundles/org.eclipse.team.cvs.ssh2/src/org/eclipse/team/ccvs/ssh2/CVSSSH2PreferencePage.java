@@ -821,7 +821,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
       mb.setMessage(Policy.bind("CVSSSH2PreferencePage.109")+(user+"@"+host+(port==22 ? "" : ":"+port)+":~/.ssh/authorized_keys"));  //$NON-NLS-1$
       mb.open();
 
-      session.disconnect();
+      c.disconnect();
+      //session.disconnect();
     }
     catch(CVSException eee){
     }
