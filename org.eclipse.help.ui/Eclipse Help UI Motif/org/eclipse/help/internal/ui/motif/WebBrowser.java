@@ -72,9 +72,6 @@ class WebBrowser implements IBrowser {
 					| GridData.GRAB_VERTICAL
 					| GridData.HORIZONTAL_ALIGN_FILL
 					| GridData.VERTICAL_ALIGN_FILL));
-		browserPath = HelpSystem.getBrowserPath();
-		if (browserPath == null || "".equals(browserPath))
-			browserPath = "netscape";
 	}
 	public int back() {
 		return 0;
@@ -97,6 +94,9 @@ class WebBrowser implements IBrowser {
 	/**
 	 */
 	public int navigate(String url) {
+		browserPath = HelpSystem.getBrowserPath();
+		if (browserPath == null || "".equals(browserPath))
+			browserPath = "netscape";
 		new BrowserThread(url).start();
 		return 0;
 	}
