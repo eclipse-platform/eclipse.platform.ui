@@ -8,14 +8,10 @@
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.ui.internal.progress;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -24,6 +20,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 /**
  * The ProgressMonitorJobsDialog is the progress monitor dialog used by the
  * progress service to allow locks to show the current jobs.
@@ -120,7 +122,30 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		detailsButton = createButton(parent, IDialogConstants.DETAILS_ID,
+		createDetailsButton(parent);
+		createSpacer(parent);
+		super.createButtonsForButtonBar(parent);
+	}
+	/**
+	 * Create a spacer label to get the layout to
+	 * not bunch the widgets.
+     * @param parent The parent of the new button.
+     */
+    protected void createSpacer(Composite parent) {
+        //Make a label to force the spacing
+		Label spacer = new Label(parent, SWT.NONE);
+		spacer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
+				| GridData.GRAB_HORIZONTAL));
+    }
+    /**
+	 * Create the details button for the receiver.
+     * @param parent The parent of the new button.
+     */
+    protected void createDetailsButton(Composite parent) {
+        
+       
+    	
+        detailsButton = createButton(parent, IDialogConstants.DETAILS_ID,
 				ProgressMessages
 						.getString("ProgressMonitorJobsDialog.DetailsTitle"), //$NON-NLS-1$
 				false);
@@ -134,14 +159,10 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 				handleDetailsButtonSelect();
 			}
 		});
+	    	
 		detailsButton.setCursor(arrowCursor);
-		//Make a label to force the spacing
-		Label spacer = new Label(parent, SWT.NONE);
-		spacer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
-				| GridData.GRAB_HORIZONTAL));
-		super.createButtonsForButtonBar(parent);
-	}
-	/*
+    }
+    /*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.jface.dialogs.IconAndMessageDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
@@ -164,7 +185,12 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 		composite.setLayoutData(data);
 		composite.setFont(parent.getFont());
 		// Add the buttons to the button bar.
+		
+		 if(arrowCursor == null)
+	    		arrowCursor = new Cursor(parent.getDisplay(),SWT.CURSOR_ARROW);		
+		 
 		createButtonsForButtonBar(composite);
+		
 		return composite;
 	}
 	/*

@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -115,7 +114,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			PROGRESS_80_KEY,
 			PROGRESS_100_KEY };
 
-	final Hashtable runnableMonitors = new Hashtable();
+	final Map runnableMonitors = Collections.synchronizedMap(new HashMap());
 
 	/**
 	 * Get the progress manager currently in use.
@@ -142,9 +141,10 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 * The JobMonitor is the inner class that handles the IProgressMonitor
 	 * integration with the ProgressMonitor.
 	 */
-	private class JobMonitor implements IProgressMonitorWithBlocking {
+	class JobMonitor implements IProgressMonitorWithBlocking {
 		Job job;
 		String currentTaskName;
+		IProgressMonitorWithBlocking listener;
 
 		/**
 		 * Create a monitor on the supplied job.
@@ -153,6 +153,20 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		 */
 		JobMonitor(Job newJob) {
 			job = newJob;
+		}
+		
+		/**
+		 * Add monitor as another monitor that 
+		 * @param monitor
+		 */
+		void addProgressListener(IProgressMonitorWithBlocking monitor){
+		    listener = monitor;
+		    JobInfo info = getJobInfo(job);
+		    TaskInfo currentTask = info.getTaskInfo();
+		    if(currentTask != null){
+		   		listener.beginTask(currentTaskName,currentTask.totalWork);
+		   		listener.internalWorked(currentTask.preWork);
+		    }
 		}
 
 		/*
@@ -166,6 +180,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			info.beginTask(taskName, totalWork);
 			refreshJobInfo(info);
 			currentTaskName = taskName;
+			if(listener != null)
+			    listener.beginTask(taskName,totalWork);
 		}
 		/*
 		 * (non-Javadoc)
@@ -177,6 +193,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			info.clearTaskInfo();
 			info.clearChildren();
 			runnableMonitors.remove(this);
+			if(listener != null)
+			    listener.done();
 		}
 
 		/*
@@ -190,6 +208,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 				info.addWork(work);
 				refreshJobInfo(info);
 			}
+			if(listener != null)
+			    listener.internalWorked(work);
 		}
 		/*
 		 * (non-Javadoc)
@@ -212,6 +232,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			//Don't bother cancelling twice
 			if (value && !info.isCanceled())
 				info.cancel();
+			if(listener != null)
+			    listener.setCanceled(value);
 		}
 
 		/*
@@ -232,6 +254,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			info.clearChildren();
 			refreshJobInfo(info);
 			currentTaskName = taskName;
+			if(listener != null)
+			    listener.setTaskName(taskName);
 		}
 
 		/*
@@ -248,6 +272,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			info.clearChildren();
 			info.addSubTask(name);
 			refreshJobInfo(info);
+			if(listener != null)
+			    listener.subTask(name);
 		}
 
 		/*
@@ -268,6 +294,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			JobInfo info = getJobInfo(job);
 			info.setBlockedStatus(null);
 			refreshJobInfo(info);
+			if(listener != null)
+			    listener.clearBlocked();
 
 		}
 
@@ -280,6 +308,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			JobInfo info = getJobInfo(job);
 			info.setBlockedStatus(null);
 			refreshJobInfo(info);
+			if(listener != null)
+			    listener.setBlocked(reason);
 		}
 	}
 
@@ -424,11 +454,16 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 * @param job
 	 * @return IProgressMonitor
 	 */
-	private JobMonitor progressFor(Job job) {
-		if (runnableMonitors.containsKey(job))
-			return (JobMonitor) runnableMonitors.get(job);
-		else
-			return new JobMonitor(job);
+	public JobMonitor progressFor(Job job) {
+		if (runnableMonitors.containsKey(job)){
+		   return (JobMonitor) runnableMonitors.get(job);
+		}
+			
+		else{
+		  	JobMonitor monitor =  new JobMonitor(job);
+			runnableMonitors.put(job,monitor);
+			return monitor;
+		}
 	}
 
 	/**
