@@ -12,7 +12,6 @@ Contributors:
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
-import org.apache.tools.ant.BuildListener;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
