@@ -28,7 +28,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -910,6 +909,8 @@ final class DialogCustomize extends Dialog {
 				selectedComboCustom();
 			}	
 		});
+
+		update();
 	}
 
 	private ActionRecord getSelectedActionRecord() {		
@@ -1209,6 +1210,7 @@ final class DialogCustomize extends Dialog {
 		} 
 
 		buildTableAction();
+		update();
 	}
 
 	private void selectedTableAction() {
@@ -1237,7 +1239,9 @@ final class DialogCustomize extends Dialog {
 				setAction(actionRecord.customSet, actionRecord.defaultSet);			
 			}
 		}
-	}
+
+		update();
+	}	
 	
 	private void selectedButtonDetails() {
 		// TBD add dialog to display the plugin map for selected row in tableAction
@@ -1268,6 +1272,8 @@ final class DialogCustomize extends Dialog {
 			setAction(keySequenceRecord.customSet, keySequenceRecord.defaultSet);
 		else
 			setAction(Collections.EMPTY_SET, Collections.EMPTY_SET);	
+
+		update();
 	}	
 	
 	private void selectedTableKeySequence() {
@@ -1279,6 +1285,8 @@ final class DialogCustomize extends Dialog {
 			setAction(keySequenceRecord.customSet, keySequenceRecord.defaultSet);
 		} else
 			setAction(Collections.EMPTY_SET, Collections.EMPTY_SET);	
+
+		update();
 	}
 	
 	private void selectedButtonBrowseSelectedAction() {
@@ -1299,6 +1307,8 @@ final class DialogCustomize extends Dialog {
 		
 		unbrowseAction();
 		*/	
+	
+		update();
 	}
 
 	private void selectedComboScope() {
@@ -1313,10 +1323,12 @@ final class DialogCustomize extends Dialog {
 		selectTableKeySequence(getScopeId(), getConfigurationId());
 		KeySequenceRecord keySequenceRecord = (KeySequenceRecord) getSelectedKeySequenceRecord();
 		
-		if (keySequenceRecord != null) {		
+		if (keySequenceRecord != null)		
 			setAction(keySequenceRecord.customSet, keySequenceRecord.defaultSet);
-		} else
+		else
 			setAction(Collections.EMPTY_SET, Collections.EMPTY_SET);
+
+		update();
 	}
 
 	private void selectedButtonDefault() {
@@ -1397,13 +1409,26 @@ final class DialogCustomize extends Dialog {
 		
 		buildTableKeySequence();
 		selectTableKeySequence(scopeId, configurationId);
+		update();
 	}
 
-	/*
 	private void update() {
+		boolean bValidAction = comboAction.getSelectionIndex() >= 0;
+		tableAction.setEnabled(bValidAction);
+
+		KeySequence keySequence = null;
+		String name = comboKeySequence.getText();
+		
+		if (name != null || name.length() > 0) {
+			keySequence = (KeySequence) nameToKeySequenceMap.get(name);
+			
+			if (keySequence == null)
+				keySequence = KeyManager.parseKeySequenceStrict(name);
+		}				
+
 		boolean bValidKeySequence = keySequence != null && keySequence.getKeyStrokes().size() >= 1;
-		tableKeySequence.setEnabled(bValidKeySequence);
-		buttonBrowseSelectedKeySequence.setEnabled(bValidKeySequence); //TBD + table has selection
+		tableKeySequence.setEnabled(bValidKeySequence);		
+		//buttonBrowseSelectedAction.setEnabled(bValidKeySequence); //TBD + table has selection
 		groupState.setEnabled(bValidKeySequence);
 		labelScope.setEnabled(bValidKeySequence);
 		comboScope.setEnabled(bValidKeySequence);
@@ -1415,5 +1440,4 @@ final class DialogCustomize extends Dialog {
 		buttonCustom.setEnabled(bValidKeySequence);
 		comboCustom.setEnabled(bValidKeySequence);
 	}
-	*/
 }
