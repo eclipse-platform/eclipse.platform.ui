@@ -337,10 +337,21 @@ public class InternalAntRunner {
 							new String[]{buildFile.getAbsolutePath()}));
 		}
 		
-		ProjectHelper helper = ProjectHelper.getProjectHelper();
-		project.addReference("ant.projectHelper", helper); //$NON-NLS-1$
-		helper.parse(project, buildFile);
+        if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
+            parseBuildFile(project, buildFile);
+        } else {
+            ProjectHelper helper = ProjectHelper.getProjectHelper();
+            project.addReference("ant.projectHelper", helper); //$NON-NLS-1$
+            helper.parse(project, buildFile);
+        }
 	}
+    
+    /**
+     * @deprecated support for Ant older than 1.5
+     */
+    private void parseBuildFile(Project project, File buildFile) {
+        ProjectHelper.configureProject(project, buildFile);   
+    }
 
 	/**
 	 * Gets all the target information from the build script.
@@ -599,7 +610,7 @@ public class InternalAntRunner {
 			System.setErr(new PrintStream(new DemuxOutputStream(getCurrentProject(), true)));
 			
 			if (!projectHelp) {
-				getCurrentProject().fireBuildStarted();
+				fireBuildStarted(getCurrentProject());
 			}
             
             if (fEarlyErrorMessage != null) {
@@ -799,6 +810,23 @@ public class InternalAntRunner {
 		return buildLogger;
 	}
 
+	/**
+	 * Project.fireBuildStarted is protected in Ant earlier than 1.5.*.
+     * Provides backwards compatibility with old Ant installs.
+	 */
+	private void fireBuildStarted(Project project) {
+        if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
+            BuildEvent event = new BuildEvent(project);
+            Vector listeners= (Vector) project.getBuildListeners().clone();
+            for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
+                BuildListener listener = (BuildListener) iterator.next();
+                listener.buildStarted(event);
+            }
+        } else {
+            project.fireBuildStarted();
+        }
+	}
+
 	private void fireBuildFinished(Project project, Throwable error) {
 		if(usingXmlLogger()) {
 			//generate the log file in the correct location
@@ -817,7 +845,18 @@ public class InternalAntRunner {
 		if (error == null && scriptExecuted) {
 			logMessage(project, InternalAntMessages.getString("InternalAntRunner.BUILD_SUCCESSFUL_1"), messageOutputLevel); //$NON-NLS-1$
 		} 
-		project.fireBuildFinished(error);
+        if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
+            BuildEvent event = new BuildEvent(project);
+            event.setException(error);
+            Vector listeners= (Vector) project.getBuildListeners().clone();
+            Iterator iter= listeners.iterator();
+            while (iter.hasNext()) {
+                BuildListener listener= (BuildListener) iter.next();
+                listener.buildFinished(event);
+            }   
+        } else {
+            project.fireBuildFinished(error);
+        }
 	}
 
 	private boolean usingXmlLogger() {
