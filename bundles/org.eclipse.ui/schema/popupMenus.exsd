@@ -318,6 +318,9 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
                <documentation>
                   a translatable text representing the action&apos;s tool tip. Only used if the action appears in the toolbar.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
