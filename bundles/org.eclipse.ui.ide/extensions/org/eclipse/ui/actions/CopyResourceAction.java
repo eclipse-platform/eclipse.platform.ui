@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.ide.IHelpContextIds;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class CopyResourceAction extends ResourceSelectionListenerAction implements ISelectionValidator {
+public class CopyResourceAction extends SelectionListenerAction implements ISelectionValidator {
 
 	/**
 	 * The id of this action.

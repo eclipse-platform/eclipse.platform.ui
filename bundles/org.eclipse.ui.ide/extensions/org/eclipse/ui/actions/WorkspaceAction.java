@@ -52,7 +52,7 @@ import java.util.*;
  * </ul>
  * </p>
  */
-public abstract class WorkspaceAction extends ResourceSelectionListenerAction {
+public abstract class WorkspaceAction extends SelectionListenerAction {
 
 	/**
 	 * Multi status containing the errors detected when running the operation or

@@ -32,7 +32,7 @@ import org.eclipse.ui.part.FileEditorInput;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class OpenSystemEditorAction extends ResourceSelectionListenerAction  {
+public class OpenSystemEditorAction extends SelectionListenerAction  {
 
 	/**
 	 * The id of this action.

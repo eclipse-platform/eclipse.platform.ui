@@ -42,7 +42,7 @@ import java.util.*;
  * </ul>
  * </p>
  */
-public abstract class ResourceSelectionListenerAction extends SelectionListenerAction {
+public abstract class SelectionListenerAction extends BaseSelectionListenerAction {
 	/**
 	 * Empty list that is immutable.
 	 */
@@ -74,7 +74,7 @@ public abstract class ResourceSelectionListenerAction extends SelectionListenerA
 	 * @param text the string used as the text for the action, 
 	 *   or <code>null</code> if there is no text
 	 */
-	protected ResourceSelectionListenerAction(String text) {
+	protected SelectionListenerAction(String text) {
 		super(text);
 	}
 	
@@ -197,8 +197,8 @@ public abstract class ResourceSelectionListenerAction extends SelectionListenerA
 	/**
 	 * Updates this action in response to the given selection.
 	 * <p>
-	 * The <code>ResourceSelectionListenerAction</code> implementation of this
-	 * <code>SelectionListenerAction</code> method clears its internal caches
+	 * The <code>SelectionListenerAction</code> implementation of this
+	 * <code>BaseSelectionListenerAction</code> method clears its internal caches
 	 * and returns <code>true</code>.
 	 * Subclasses may extend to react to selection changes; however, if the
 	 * super method returns <code>false</code>, the overriding method must also

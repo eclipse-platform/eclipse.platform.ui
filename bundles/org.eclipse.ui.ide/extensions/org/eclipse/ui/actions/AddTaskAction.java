@@ -30,7 +30,7 @@ import org.eclipse.ui.views.markers.internal.DialogTaskProperties;
  * </p>
  * @since 2.1
  */
-public class AddTaskAction extends ResourceSelectionListenerAction {
+public class AddTaskAction extends SelectionListenerAction {
 	/**
 	 * The id of this action.
 	 */

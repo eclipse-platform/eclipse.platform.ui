@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.ide.IHelpContextIds;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class DeleteResourceAction extends ResourceSelectionListenerAction {
+public class DeleteResourceAction extends SelectionListenerAction {
 
 	static class DeleteProjectDialog extends MessageDialog {
 

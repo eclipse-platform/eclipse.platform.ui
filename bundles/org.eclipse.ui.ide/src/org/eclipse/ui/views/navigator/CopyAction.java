@@ -23,7 +23,7 @@ import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ResourceSelectionListenerAction;
+import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ResourceTransfer;
 
@@ -35,7 +35,7 @@ import org.eclipse.ui.part.ResourceTransfer;
  * 
  * @since 2.0
  */
-/*package*/ class CopyAction extends ResourceSelectionListenerAction {
+/*package*/ class CopyAction extends SelectionListenerAction {
 
 	/**
 	 * The id of this action.
