@@ -5,7 +5,6 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 
-import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List; // otherwise ambiguous with org.eclipse.swt.widgets.List
@@ -15,10 +14,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.model.*;

@@ -4,9 +4,8 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.WorkbenchPart;
-import org.eclipse.ui.actions.*;
 
 /**
  * Show the menu on top of the icon in the

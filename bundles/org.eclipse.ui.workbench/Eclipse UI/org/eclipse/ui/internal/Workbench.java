@@ -92,7 +92,6 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.keybindings.Configuration;
 import org.eclipse.ui.internal.keybindings.KeyBindingManager;
-import org.eclipse.ui.internal.keybindings.Path;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.registry.AcceleratorConfiguration;

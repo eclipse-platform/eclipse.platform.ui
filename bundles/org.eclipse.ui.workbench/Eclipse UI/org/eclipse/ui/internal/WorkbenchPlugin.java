@@ -5,8 +5,6 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import java.io.*;
-import java.io.File;
-import java.util.*;
 import java.util.Iterator;
 import java.util.List;
 

@@ -8,10 +8,10 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
 **********************************************************************/
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
 
 public class ShortcutBarPartDragDrop extends PartDragDrop implements MouseListener, MouseMoveListener{
 	// The item that is being dragged by this PartDragDrop.

@@ -4,10 +4,11 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewPart;
 
 /**
  *

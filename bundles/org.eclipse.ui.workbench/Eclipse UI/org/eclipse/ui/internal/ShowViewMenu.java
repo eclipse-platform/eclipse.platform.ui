@@ -9,7 +9,6 @@ import java.util.*;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.*;

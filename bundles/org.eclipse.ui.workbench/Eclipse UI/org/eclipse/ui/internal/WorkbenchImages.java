@@ -4,15 +4,18 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
-import java.net.*;
-import java.util.*;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 
 /**
  * This class provides convenience access to many of the resources required

@@ -4,13 +4,13 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.window.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * A dynamic menu item to switch to other opened workbench windows.

@@ -4,8 +4,6 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.ArrayList;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.PartEventAction;

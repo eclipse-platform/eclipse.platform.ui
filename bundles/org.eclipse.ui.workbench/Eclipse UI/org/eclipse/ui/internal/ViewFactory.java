@@ -8,17 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
-import org.eclipse.ui.internal.registry.IViewRegistry;
 
 /**
  * The ViewFactory is used to control the creation and disposal of views.  

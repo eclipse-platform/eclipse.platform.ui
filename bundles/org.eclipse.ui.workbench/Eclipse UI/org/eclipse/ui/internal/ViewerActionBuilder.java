@@ -5,10 +5,9 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import java.util.*;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  *
