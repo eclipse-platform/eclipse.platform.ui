@@ -15,7 +15,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.help.internal.contributions.*;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.server.PluginURL;
 import org.eclipse.help.internal.ui.util.*;
 import org.eclipse.help.internal.util.Resources;
 import org.eclipse.help.internal.util.TString;

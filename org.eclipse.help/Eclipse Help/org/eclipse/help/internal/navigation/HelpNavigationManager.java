@@ -18,7 +18,7 @@ import org.eclipse.help.internal.contributors.xml.*;
 import org.eclipse.help.internal.util.*;
 
 /**
- * Manages the navigation model. It generates it and it reas it back
+ * Manages the navigation model. It generates it and it reads it back
  * and instantiates the model for future rendering.
  * There is a model (notifier) for each <views> node.
  */
