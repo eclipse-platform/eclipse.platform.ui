@@ -134,7 +134,8 @@ public class RepositoryManager {
 				ICVSFile file = null;
 				if (project instanceof ICVSRemoteFolder) {
 					// There should be a better way of doing this.
-					ICVSRemoteFolder parentFolder = location.getRemoteFolder(new Path(project.getName()).append(relativePath).removeLastSegments(1).toString(), CVSTag.DEFAULT);
+					ICVSRemoteFolder projectFolder = (ICVSRemoteFolder)project;
+					ICVSRemoteFolder parentFolder = location.getRemoteFolder(new Path(projectFolder.getRepositoryRelativePath()).append(relativePath).removeLastSegments(1).toString(), CVSTag.DEFAULT);
 					ICVSResource[] resources = parentFolder.fetchChildren(Policy.subMonitorFor(monitor, 5));
 					for (int i = 0; i < resources.length; i++) {
 						if (resources[i] instanceof ICVSRemoteFile && resources[i].getName().equals(new Path(relativePath).lastSegment())) {
