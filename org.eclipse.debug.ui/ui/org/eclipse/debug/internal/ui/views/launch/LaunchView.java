@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,7 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -117,8 +115,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener, IPageListener, IPropertyChangeListener, IResourceChangeListener, IShowInTarget, IShowInSource, IShowInTargetList {
 	
-	public static final String ID_CONTEXT_ACTIVITY_BINDINGS = "contextActivityBindings";
-	private Map fDebugModelActivityBindings= new HashMap();
+	public static final String ID_CONTEXT_ACTIVITY_BINDINGS = "contextActivityBindings"; //$NON-NLS-1$
+
 	/**
 	 * A marker for the source selection and icon for an
 	 * instruction pointer.  This marker is transient.
