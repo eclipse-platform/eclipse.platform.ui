@@ -319,7 +319,7 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.getString("ExpressionManager.An_exception_occurred_during_expression_change_notification._2"), exception); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.getString("ExpressionManager.An_exception_occurred_during_expression_change_notification._1"), exception); //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
 

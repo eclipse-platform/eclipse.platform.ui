@@ -1334,7 +1334,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.getString("LaunchManager.An_exception_occurred_during_launch_change_notification._2"), exception); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.getString("LaunchManager.An_exception_occurred_during_launch_change_notification._1"), exception); //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
 
