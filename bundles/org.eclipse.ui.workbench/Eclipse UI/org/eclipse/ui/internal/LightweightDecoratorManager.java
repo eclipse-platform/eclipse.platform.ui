@@ -145,7 +145,7 @@ class LightweightDecoratorManager {
 	ImageDescriptor[] findOverlays(Object element, Object adapted) {
 
 		LightweightDecoratorDefinition[] decorators = getDecoratorsFor(element);
-		ImageDescriptor[] descriptors = new ImageDescriptor[4];
+		ImageDescriptor[] descriptors = new ImageDescriptor[5];
 		boolean decorated =
 			overlayCache.findDescriptors(element, decorators, descriptors);
 		if (adapted != null) {

@@ -42,12 +42,14 @@ class DecoratorRegistryReader extends RegistryReader {
 	public static final int TOP_RIGHT = 1;
 	public static final int BOTTOM_LEFT = 2;
 	public static final int BOTTOM_RIGHT = 3;
+	public static final int UNDERLAY = 4;
 
 	//Constants for quadrants
 	private static final String TOP_LEFT_STRING = "TOP_LEFT";
 	private static final String TOP_RIGHT_STRING = "TOP_RIGHT";
 	private static final String BOTTOM_LEFT_STRING = "BOTTOM_LEFT";
 	private static final String BOTTOM_RIGHT_STRING = "BOTTOM_RIGHT";
+	private static final String UNDERLAY_STRING = "UNDERLAY";
 
 	/**
 	 * Constructor for DecoratorRegistryReader.
@@ -155,6 +157,8 @@ class DecoratorRegistryReader extends RegistryReader {
 			return TOP_LEFT;
 		if (BOTTOM_LEFT_STRING.equals(quadrantDefinition))
 			return BOTTOM_LEFT;
+		if (UNDERLAY_STRING.equals(quadrantDefinition))
+			return UNDERLAY;
 		return BOTTOM_RIGHT;
 
 	}

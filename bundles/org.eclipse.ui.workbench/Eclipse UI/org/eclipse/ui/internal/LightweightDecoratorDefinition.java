@@ -138,6 +138,7 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
 	 *  TOP_RIGHT
 	 *  BOTTOM_LEFT
 	 *  BOTTOM_RIGHT
+	 *  UNDERLAY
 	 * @return int
 	 */
 	public int getQuadrant() {
