@@ -917,7 +917,7 @@ protected boolean showPage(IPreferenceNode node) {
 	// Also prevent auto resize if the user has manually resized
 	Shell shell= getShell();
 	Point shellSize= shell.getSize();
-	if (oldPage != null && lastShellSize.equals(shellSize)) {
+	if (oldPage != null && shellSize.equals(lastShellSize)) {
 		Rectangle rect= pageContainer.getClientArea();
 		Point containerSize= new Point(rect.width, rect.height);
 		int hdiff= contentSize.x - containerSize.x;
