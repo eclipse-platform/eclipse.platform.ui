@@ -30,7 +30,7 @@ public class LogicalStructureManager {
 	public static final String EXTENSION_POINT_LOGICAL_STRUCTURE_TYPES = "logicalStructureTypes"; //$NON-NLS-1$
 
 	private static LogicalStructureManager fgDefault;
-	private List fTypes = new ArrayList();
+	private List fTypes = null;
 	
 	public static LogicalStructureManager getDefault() {
 		if (fgDefault == null) {
@@ -53,16 +53,19 @@ public class LogicalStructureManager {
 	}
 	
 	private void initialize() {
-		IExtensionPoint point = DebugPlugin.getDefault().getDescriptor().getExtensionPoint(EXTENSION_POINT_LOGICAL_STRUCTURE_TYPES);
-		IConfigurationElement[] extensions = point.getConfigurationElements();
-		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement extension = extensions[i];
-			LogicalStructureType type;
-			try {
-				type = new LogicalStructureType(extension);
-				fTypes.add(type);
-			} catch (CoreException e) {
-				DebugPlugin.log(e);
+		if (fTypes == null) {
+			fTypes = new ArrayList();
+			IExtensionPoint point = DebugPlugin.getDefault().getDescriptor().getExtensionPoint(EXTENSION_POINT_LOGICAL_STRUCTURE_TYPES);
+			IConfigurationElement[] extensions = point.getConfigurationElements();
+			for (int i = 0; i < extensions.length; i++) {
+				IConfigurationElement extension = extensions[i];
+				LogicalStructureType type;
+				try {
+					type = new LogicalStructureType(extension);
+					fTypes.add(type);
+				} catch (CoreException e) {
+					DebugPlugin.log(e);
+				}
 			}
 		}
 	}
