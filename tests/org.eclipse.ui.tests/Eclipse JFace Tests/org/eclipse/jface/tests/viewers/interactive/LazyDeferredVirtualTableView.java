@@ -44,17 +44,18 @@ public class LazyDeferredVirtualTableView extends VirtualTableView {
 
 			UIJob updateJob = new UIJob("Update") {
 				public IStatus runInUIThread(IProgressMonitor monitor) {
+					if(viewer.getControl().isDisposed())
+						return Status.CANCEL_STATUS;
 					int rangeLength = rangeEnd - rangeStart;
-					String[] elements = new String[rangeLength + 1];
 					for (int i = 0; i <= rangeLength; i++) {
-						elements[i] = "Element "
-								+ String.valueOf(i + rangeStart);
+						int index = i + rangeStart;
+						viewer.replace("Element " + String.valueOf(index),
+								index);
 					}
-					viewer.replace(elements, rangeStart);
+
 					return Status.OK_STATUS;
 				}
 			};
-
 
 			/*
 			 * (non-Javadoc)
@@ -64,24 +65,19 @@ public class LazyDeferredVirtualTableView extends VirtualTableView {
 			 */
 			public void updateElement(int index) {
 
-				int start = index;
-				int length = 1;
-				int endIndex = start + length;
-				
-				int begin = Math.max(0,start - 50);
-				int end = start + (Math.max(length, 50));
-				end = Math.min(end,9999);
-				
-				//Initial case
-				if(rangeStart == -1 || rangeEnd == -1){
+				int begin = Math.max(0, index - 50);
+				int end = Math.min(begin + 50, 9999);
+
+				// Initial case
+				if (rangeStart == -1 || rangeEnd == -1) {
 					rangeStart = begin;
 					rangeEnd = end;
 					updateJob.schedule(1000);
 					return;
 				}
-				
-				//Are we in the range already being worked on?
-				if(start >= rangeStart &&  endIndex <= rangeEnd)
+
+				// Are we in the range already being worked on?
+				if (index >= rangeStart && index <= rangeEnd)
 					return;
 
 				// Are we outside of the old range?
@@ -93,13 +89,13 @@ public class LazyDeferredVirtualTableView extends VirtualTableView {
 					return;
 				}
 
-				// Shift  if it is before
+				// Shift if it is before
 				if (begin < rangeStart) {
 					rangeStart = begin;
 					int oldEnd = rangeEnd;
 					rangeEnd = end;
 					viewer.getTable().clear(end + 1, oldEnd);
-					
+
 					updateJob.schedule(1000);
 					return;
 				}
@@ -108,7 +104,7 @@ public class LazyDeferredVirtualTableView extends VirtualTableView {
 				if (end > rangeEnd) {
 					rangeEnd = end;
 					int oldStart = rangeStart;
-					rangeStart = start;
+					rangeStart = begin;
 					viewer.getTable().clear(oldStart, rangeStart - 1);
 					updateJob.schedule(1000);
 					return;
