@@ -71,6 +71,10 @@ import org.eclipse.swt.graphics.Image;
  * <code>IDebugView#getPresentation(String)</code>.
  * </p>
  * <p>
+ * Since 3.1, debug model presentations may optionally implement <code>IColorProvider</code>
+ * and <code>IFontProvider</code> to override default fonts and colors for debug elements. 
+ * </p>
+ * <p>
  * Clients may implement this interface.
  * </p>
  * @see org.eclipse.debug.core.model.IDebugElement

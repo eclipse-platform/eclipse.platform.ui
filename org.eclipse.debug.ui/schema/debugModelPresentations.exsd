@@ -50,7 +50,7 @@ in a specific debug model.
                <documentation>
                   fully qualifed name of a Java class that implements the 
 &lt;code&gt;org.eclipse.debug.ui.IDebugModelPresentation&lt;/code&gt;
-interface.
+interface. Since 3.1, debug model presentations may optionally implement &lt;code&gt;IColorProvider&lt;/code&gt; and &lt;code&gt;IFontProvider&lt;/code&gt; to override default fonts and colors for debug elements.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.IDebugModelPresentation"/>
@@ -106,7 +106,7 @@ from the debug model identified by
       <documentation>
          Value of the action attribute &lt;samp&gt;class&lt;/samp&gt; must be a fully 
 qualified class name of a Java class that implements 
-&lt;samp&gt;org.eclipse.debug.ui.IDebugModelPresentation&lt;/samp&gt;.
+&lt;samp&gt;org.eclipse.debug.ui.IDebugModelPresentation&lt;/samp&gt;. Since 3.1, debug model presentations may optionally implement &lt;code&gt;IColorProvider&lt;/code&gt; and &lt;code&gt;IFontProvider&lt;/code&gt; to override default fonts and colors for debug elements.
       </documentation>
    </annotation>
 
