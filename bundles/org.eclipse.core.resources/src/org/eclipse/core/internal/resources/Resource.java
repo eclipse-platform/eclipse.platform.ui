@@ -507,8 +507,8 @@ public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) t
 			workspace.prepareOperation(workspace.getRoot(), monitor);
 			// The following assert method throws CoreExceptions as stated in the IResource.copy API
 			// and assert for programming errors. See checkCopyRequirements for more information.
+			Policy.checkCanceled(monitor);
 			assertCopyRequirements(destination, getType(), updateFlags);
-
 			workspace.beginOperation(true);
 			Resource destResource = workspace.newResource(makePathAbsolute(destination), getType());
 			getLocalManager().copy(this, destResource, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork));
