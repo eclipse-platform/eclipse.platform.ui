@@ -271,7 +271,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	 * plugins for unconfigured features that are not referenced
 	 * by any configured features.
 	 */
-	public String[] getPluginPath(ISite site, String[] pluginRead) throws CoreException {
+	public String[] getPluginPath(ISite site) throws CoreException {
 
 		String[] pluginsToWrite;
 
@@ -287,8 +287,8 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		IFeatureReference[] unconfiguredFeatures = getUnconfiguredFeatures();
 		// all configured features, including patches and patched features
 		IFeatureReference[] configuredFeatures = getConfiguredFeatures();
-		// configured patched features
-		IFeatureReference[] patched = getPatchedFeatures(configuredFeatures);
+		// patches indexed by patched features
+		Map patches = getPatchedFeatures(configuredFeatures);	
 		
 		if (getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
 			//	EXCLUDE: return unconfigured plugins MINUS any plugins that
@@ -298,24 +298,21 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				UpdateCore.warn("UNCONFIGURED PLUGINS");
 			
 			// virtually unconfigured 
-			unconfiguredFeatures = (IFeatureReference[]) union(patched, unconfiguredFeatures);
-			String[] unconfiguredPlugins = getPluginString(site, unconfiguredFeatures);
+			String[] unconfiguredPlugins = getUnconfiguredPluginStrings(site, unconfiguredFeatures, patches);
 			
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
 				UpdateCore.warn("CONFIGURED PLUGINS");
-			
+
 			// virtually configured
-			configuredFeatures = (IFeatureReference[]) subtract(configuredFeatures, patched);
-			String[] configuredPlugins = getPluginString(site, configuredFeatures);
+			String[] configuredPlugins = getConfiguredPluginStrings(site, configuredFeatures, patches);
 			if (isEnabled())
-				pluginsToWrite = (String[]) subtract(unconfiguredPlugins, configuredPlugins);
+				pluginsToWrite = subtract(unconfiguredPlugins, configuredPlugins);
 			else
-				pluginsToWrite = (String[]) union(configuredPlugins, unconfiguredPlugins);
+				pluginsToWrite = union(configuredPlugins, unconfiguredPlugins);
 		} else {
 			// INCLUDE: return configured plugins
 			if (isEnabled()) {
-				configuredFeatures = (IFeatureReference[]) subtract(configuredFeatures, patched);
-				pluginsToWrite = getPluginString(site, configuredFeatures);
+				pluginsToWrite = getConfiguredPluginStrings(site, configuredFeatures, patches);
 			} else
 				pluginsToWrite = new String[0];
 		}
@@ -332,43 +329,53 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	}
 	
 	/**
-	 * @return the list of features that are patched.
+	 * Obtains map of patch features indexed by patched features
+	 * 
+	 * @param configuredFeatures
+	 *            array of features to operate with
+	 * @return Map of IFeatureReference indexed by IFeatureReference
 	 */
-	private IFeatureReference[] getPatchedFeatures(IFeatureReference[] features) {
-		// Collect identifiers of all patched features
-		ArrayList patchedIdentifiers = new ArrayList();
+	private Map getPatchedFeatures(IFeatureReference[] features) {
+		// Create a map of Identifiers for all feature references
+		Map featureRefsById = new HashMap();
 		for (int f = 0; f < features.length; f++) {
-			IFeatureReference fRef = features[f];
-			// if patches anything add the patched to the list
+			IFeatureReference featureRef = features[f];
 			try {
-				IFeature feature = fRef.getFeature(null);
-				IImport[] imports = feature.getImports();
-				for (int i = 0; i < imports.length; i++) {
-					IImport oneImport = imports[i];
-					if (!oneImport.isPatch())
-						continue;
-					patchedIdentifiers.add(oneImport.getVersionedIdentifier());
-				}
-			} catch (CoreException e) {
-				UpdateCore.warn(null, e);
-			}
-		}
-		// Create a list of configured features which identifiers are in list of patched
-		ArrayList patchedFeatureRefs = new ArrayList();
-		for (int f = 0; f < features.length; f++) {
-			IFeatureReference enabled = features[f];
-			try {
-				VersionedIdentifier vi=enabled.getVersionedIdentifier();
-				if(patchedIdentifiers.contains(vi))
-					patchedFeatureRefs.add(features[f]);
+				VersionedIdentifier vi = featureRef.getVersionedIdentifier();
+				featureRefsById.put(vi, features[f]);
 			} catch (CoreException e) {
 				UpdateCore.warn(null, e);
 			}
 		}
 
-		return (IFeatureReference[]) patchedFeatureRefs.toArray(new IFeatureReference[patchedFeatureRefs.size()]);
-		
+		// Create map of patch IFeatureReferences to patched IFeatureReference
+		Map patches = new HashMap();
+		for (int f = 0; f < features.length; f++) {
+			IFeatureReference patchCandidate = features[f];
+			try {
+				IFeature feature = patchCandidate.getFeature(null);
+				IImport[] imports = feature.getImports();
+				for (int i = 0; i < imports.length; i++) {
+					IImport oneImport = imports[i];
+					if (!oneImport.isPatch())
+						continue;
+					VersionedIdentifier patchedIdentifier =
+						oneImport.getVersionedIdentifier();
+					if (featureRefsById.keySet().contains(patchedIdentifier)) {
+						patches.put(
+							featureRefsById.get(patchedIdentifier),
+							patchCandidate);
+					} else {
+						// patched not enabled
+					}
+				}
+			} catch (CoreException e) {
+				UpdateCore.warn(null, e);
+			}
+		}
+		return patches;
 	}
+	
 	/**
 	 * @since 2.0
 	 */
@@ -409,82 +416,164 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	}
 
 	/**
-	 * return an array of plugin path for the array of feature reference
-	 * Each plugin path only appears once [bug 21750]
+	 * @return an array of plugin path for the array of feature reference. For
+	 *         features that are also in the patched map, plugin path will
+	 *         point to plugin with the same ID provided by the patch if it
+	 *         exists. Each plugin path only appears once [bug 21750]
 	 */
-	private String[] getPluginString(ISite site, IFeatureReference[] arrayOfFeatureRef) throws CoreException {
+	private String[] getConfiguredPluginStrings(ISite site, IFeatureReference[] featureRefs, Map patchedIFeatureRefsToPatchIFeatureRefs) throws CoreException {
+		final Collection patchedFeatureRefs = patchedIFeatureRefsToPatchIFeatureRefs.keySet();
 
-		String[] result = new String[0];
-
-		// obtain path for each feature
-		if (arrayOfFeatureRef != null) {
-			//[bug 21750] replace the List by a Set
-			Set pluginsString = new HashSet();
-			for (int i = 0; i < arrayOfFeatureRef.length; i++) {
-				IFeatureReference element = arrayOfFeatureRef[i];
-				IFeature feature = null;
-				try {
-					feature = element.getFeature(null);
-				} catch (CoreException e) {
-					UpdateCore.warn(null, e);
-				}
-				IPluginEntry[] entries = null;
+		// plugin entries with feature reference for each
+		Map pluginEntriesToIFeatures = new HashMap();
+		for (int i = 0; i < featureRefs.length; i++) {
+			try {
+				IFeature feature = featureRefs[i].getFeature(null);
 				if (feature == null) {
 					UpdateCore.warn("Null Feature", new Exception());
-					entries = new IPluginEntry[0];
-				} else {
-					entries = feature.getPluginEntries();
+					continue;
 				}
 
-				for (int index = 0; index < entries.length; index++) {
-					IPluginEntry entry = entries[index];
-
-					// obtain the path of the plugin directories on the site
-					ContentReference[] featureContentReference = null;
-					try {
-						featureContentReference = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(entry, null /*IProgressMonitor*/
-						);
-					} catch (CoreException e) {
-						UpdateCore.warn(null, e);
-					}
-
-					// transform into a valid String
-					if (featureContentReference != null) {
-						for (int j = 0; j < featureContentReference.length; j++) {
-							URL url = site.getSiteContentProvider().getArchiveReference(featureContentReference[j].getIdentifier());
-							if (url != null) {
-								// make it relative to the site
-								String path = UpdateManagerUtils.getURLAsString(site.getURL(), url);
-								// add end "/"
-								path += (path.endsWith(File.separator) || path.endsWith("/")) ? "" : "/";
-								//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-								// add plugin.xml or fragment.xml
-								path += entry.isFragment() ? "fragment.xml" : "plugin.xml";
-								//$NON-NLS-1$ //$NON-NLS-2$
-								pluginsString.add(path);
-								if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
-									UpdateCore.warn("Add plugin: " + path + " to the list");
+				IPluginEntry[] entries = feature.getPluginEntries();
+				// add every plugin entry to the map
+				for (int entr = 0; entr < entries.length; entr++) {
+					// add either plugin entry from a feature or from its patch
+					boolean pluginUpdated = false;
+					if (patchedFeatureRefs.contains(featureRefs[i])) {
+						// if patch contributes the same plug-in add it instead
+						String pluginID = entries[entr].getVersionedIdentifier().getIdentifier();
+						IFeatureReference patchFeatureRef = (IFeatureReference) patchedIFeatureRefsToPatchIFeatureRefs.get(featureRefs[i]);
+						try {
+							IFeature patchFeature = patchFeatureRef.getFeature(null);
+							IPluginEntry[] newerEntries = patchFeature.getPluginEntries();
+							for (int n = 0; n < newerEntries.length; n++) {
+								if (pluginID.equals(newerEntries[n].getVersionedIdentifier().getIdentifier())) {
+									// patch has an updated plugin
+									pluginUpdated = true;
+									pluginEntriesToIFeatures.put(newerEntries[n], patchFeature);
+									break;
+								}
 							}
+						} catch (CoreException e) {
+							UpdateCore.warn(null, e);
 						}
-					}
-				}
-			}
 
-			// transform in String[]
-			if (!pluginsString.isEmpty()) {
-				result = new String[pluginsString.size()];
-				pluginsString.toArray(result);
+					}
+					if (!pluginUpdated) {
+						pluginEntriesToIFeatures.put(entries[entr], feature);
+					}
+
+				}
+
+			} catch (CoreException e) {
+				UpdateCore.warn(null, e);
 			}
 		}
-		return result;
+		Set pluginStrings = getEntriesPath(site, pluginEntriesToIFeatures);
+
+		// transform in String[]
+		if (!pluginStrings.isEmpty()) {
+			String[] result = new String[pluginStrings.size()];
+			pluginStrings.toArray(result);
+			return result;
+		} else {
+			return new String[0];
+		}
+	}
+	/**
+	 * @return an array of plugin path for the array of unconfigured feature
+	 *         reference, and for map of patched features Each plugin path only
+	 *         appears once [bug 21750]
+	 */
+	private String[] getUnconfiguredPluginStrings(ISite site, IFeatureReference[] featureRefs, Map patchedIFeatureRefsToPatchIFeatureRefs) throws CoreException {
+		// Unconfgured and patched features
+		Set virtuallyUnconfiguredFeatures = new HashSet();
+		virtuallyUnconfiguredFeatures.addAll(Arrays.asList(featureRefs));
+		virtuallyUnconfiguredFeatures.addAll(patchedIFeatureRefsToPatchIFeatureRefs.keySet());
+
+		// plugin entries with feature reference for each
+		Map pluginEntriesToIFeatures = new HashMap();
+		for (Iterator it = virtuallyUnconfiguredFeatures.iterator(); it.hasNext();) {
+			IFeatureReference featureRef = (IFeatureReference) it.next();
+			try {
+				IFeature feature = featureRef.getFeature(null);
+				if (feature == null) {
+					UpdateCore.warn("Null Feature", new Exception());
+					continue;
+				}
+
+				IPluginEntry[] entries = feature.getPluginEntries();
+				// add every plugin entry to the map
+				for (int entr = 0; entr < entries.length; entr++) {
+					pluginEntriesToIFeatures.put(entries[entr], feature);
+				}
+
+			} catch (CoreException e) {
+				UpdateCore.warn(null, e);
+			}
+		}
+		Set pluginStrings = getEntriesPath(site, pluginEntriesToIFeatures);
+
+		// transform in String[]
+		if (!pluginStrings.isEmpty()) {
+			String[] result = new String[pluginStrings.size()];
+			pluginStrings.toArray(result);
+			return result;
+		} else {
+			return new String[0];
+		}
+	}
+	/**
+	 * @param site
+	 * @param pluginEntriesToIFeatures plugin entries and corresponding IFeatures
+	 * @param pluginEntriesToFeatureRefs map of IPluginEntry'ies to IFeatures
+	 * @return valid string pointing to plugins in given features
+	 * @throws CoreException
+	 */
+	private Set getEntriesPath(ISite site, Map pluginEntriesToIFeatures) throws CoreException {
+		Set pluginStrings=new HashSet();
+		for (Iterator it= pluginEntriesToIFeatures.keySet().iterator(); it.hasNext();) {
+			IPluginEntry entry = (IPluginEntry)it.next();
+			IFeature feature=(IFeature)pluginEntriesToIFeatures.get(entry);
+
+			// obtain the path of the plugin directories on the site
+			ContentReference[] featureContentReference = null;
+			try {
+				featureContentReference = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(entry, null /*IProgressMonitor*/
+				);
+			} catch (CoreException e) {
+				UpdateCore.warn(null, e);
+			}
+
+			// transform into a valid String
+			if (featureContentReference != null) {
+				for (int j = 0; j < featureContentReference.length; j++) {
+					URL url = site.getSiteContentProvider().getArchiveReference(featureContentReference[j].getIdentifier());
+					if (url != null) {
+						// make it relative to the site
+						String path = UpdateManagerUtils.getURLAsString(site.getURL(), url);
+						// add end "/"
+						path += (path.endsWith(File.separator) || path.endsWith("/")) ? "" : "/";
+						//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						// add plugin.xml or fragment.xml
+						path += entry.isFragment() ? "fragment.xml" : "plugin.xml";
+						//$NON-NLS-1$ //$NON-NLS-2$
+						pluginStrings.add(path);
+						if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
+							UpdateCore.warn("Add plugin: " + path + " to the list");
+					}
+				}
+			}
+		}
+		return pluginStrings;
 	}
 
 	/**
-	*	 we need to figure out which plugin SHOULD NOT be written and
-	*	 remove them from include
-	*	 we can compare the String of the URL
-	*/
-	private Object[] subtract(Object[] allPlugins, Object[] pluginsToRemove) {
+	 *	 we need to figure out which plugin SHOULD NOT be written and
+	 *	 remove them from include
+	 *	 we can compare the String of the URL
+	 */
+	private String[] subtract(String[] allPlugins, String[] pluginsToRemove) {
 		// No plugins to remove, return allPlugins 
 		if (pluginsToRemove == null || pluginsToRemove.length == 0) {
 			return allPlugins;
@@ -504,14 +593,14 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				resultList.remove(pluginsToRemove[i]);
 			}
 		}
-		
-		return arrayTypeFor(resultList);
-	}
 
+		String[] resultEntry = new String[resultList.size()];
+		return (String[])resultList.toArray(resultEntry);
+	}
 	/**
 	 * Returns and array with the union of plugins
-	*/
-	private Object[] union(Object[] array1, Object[] array2) {
+	 */
+	private String[] union(String[] array1, String[] array2) {
 
 		// No string 
 		if (array2 == null || array2.length == 0) {
@@ -532,6 +621,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				resultList.add(array2[i]);
 		}
 
-		return arrayTypeFor(resultList);
+		String[] resultEntry = new String[resultList.size()];
+		return (String[])resultList.toArray(resultEntry);
 	}
 }

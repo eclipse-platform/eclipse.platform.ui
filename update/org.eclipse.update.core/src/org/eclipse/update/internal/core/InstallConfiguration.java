@@ -109,7 +109,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			ConfigurationPolicy configurationPolicy = configSite.getConfigurationPolicy();
 			String[] pluginPath = new String[0];
 			if (configurationPolicy.getPolicy() == IPlatformConfiguration.ISitePolicy.USER_INCLUDE)
-				pluginPath = configurationPolicy.getPluginPath(site, null);
+				pluginPath = configurationPolicy.getPluginPath(site);
 
 			// create new Site in configuration
 			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
@@ -157,7 +157,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			ConfigurationPolicy configurationPolicy = configSite.getConfigurationPolicy();
 			String[] pluginPath = new String[0];
 			if (configurationPolicy.getPolicy() == IPlatformConfiguration.ISitePolicy.USER_INCLUDE)
-				pluginPath = configurationPolicy.getPluginPath(site, null);
+				pluginPath = configurationPolicy.getPluginPath(site);
 
 			// create new Site in configuration
 			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
@@ -391,7 +391,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 		// create a ISitePolicy (policy, pluginPath)
 		// for the site
-		String[] pluginPath = configurationPolicy.getPluginPath(cSite.getSite(), cSite.getPreviousPluginPath());
+		String[] pluginPath = configurationPolicy.getPluginPath(cSite.getSite());
 		IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
 
 		// get the URL of the site that matches the one platform.cfg gave us
