@@ -84,6 +84,14 @@ public class LocalSystemInfo {
 	 * @since 2.0
 	 */
 	public static final int VOLUME_RAMDISK = 5;	
+
+	/**
+	 * Indicates the volume is removable (floppy disk 5 1/4)
+	 * 
+	 * @see LocalSystemInfo#getType(File)
+	 * @since 2.0
+	 */
+	public static final int VOLUME_FLOPPY_5 = 6;	
 	
 	/**
 	 * Indicates the volume is removable (floppy disk 3 1/2)
@@ -91,15 +99,7 @@ public class LocalSystemInfo {
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 */
-	public static final int VOLUME_FLOPPY_3 = 6;
-	
-	/**
-	 * Indicates the volume is removable (floppy disk 5 1/4)
-	 * 
-	 * @see LocalSystemInfo#getType(File)
-	 * @since 2.0
-	 */
-	public static final int VOLUME_FLOPPY_5 = 7;		
+	public static final int VOLUME_FLOPPY_3 = 7;
 	
 	/**
 	 * Indicates a new volume has been added

@@ -30,9 +30,36 @@ import org.eclipse.core.runtime.*;
  */
 public interface IFeature extends IAdaptable {
 
-	// FIXME javadoc
+	/**
+	 * Indicates a 'happy' feature
+	 * A feature is considered to be 'happy' in the context of a local site
+	 * if all the plug-ins referenced by the feature are installed on the site and no other
+	 * version of any of the plug-ins are installed on any other site of the local site.
+	 * 
+	 * @see ILocalSite#getStatus(IFeature)
+	 * @since 2.0
+	 */
 	public static final int STATUS_HAPPY = 0;
+	
+	/**
+	 * Indicates an 'unhappy' feature
+	 * A feature is considered to be 'unhappy' in the context of this site,
+	 * if some of the plug-ins referenced by the feature are not installed on this site.
+	 * 
+	 * @see ILocalSite#getStatus(IFeature)
+	 * @since 2.0
+	 */	
 	public static final int STATUS_UNHAPPY = 1;
+	
+	/**
+	 * Indicates a 'happy' feature
+	 * A feature is considered to be 'ambiguous' in the context of a local site
+	 * if all the plug-ins referenced by the feature are installed on the site and other
+	 * version of any of the plug-ins are installed on any other site of the local site.
+	 * 
+	 * @see ILocalSite#getStatus(IFeature)
+	 * @since 2.0
+	 */	
 	public static final int STATUS_AMBIGUOUS = 2;
 
 	/**

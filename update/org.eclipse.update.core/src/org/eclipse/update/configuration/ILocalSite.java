@@ -143,15 +143,25 @@ public interface ILocalSite extends IAdaptable {
 	public IInstallConfiguration[] getPreservedConfigurations();
 	
 	/**
-	 * Indicates if the specified feature is "broken". A feature is considered
-	 * to be broken in the context of this site, if some of the plug-ins
-	 * referenced by the feature are not installed on this site.
+	 * Indicates if the 'state' of the specified feature.
+	 * 
+	 * A feature is considered to be 'unhappy' in the context of this site,
+	 * if some of the plug-ins referenced by the feature are not installed on this site.
+	 * 
+	 * A feature is considered to be 'happy' in the context of a local site
+	 * if all the plug-ins referenced by the feature are installed on the site and no other
+	 * version of any of the plug-ins are installed on any other site of the local site.
+	 * 
+	 * A feature is considered to be 'ambiguous' in the context of a local site
+	 * if all the plug-ins referenced by the feature are installed on the site and other
+	 * version of any of the plug-ins are installed on any other site of the local site.
 	 * 
 	 * @param feature the feature
-	 * @return <code>true</code> if the feature is broken on this
-	 * site, <code>false</code> otherwise
+	 * @see IFeature#STATUS_HAPPY
+	 * @see IFeature#STATUS_UNHAPPY
+	 * @see IFeature#STATUS_AMBIGUOUS
+	 * @return the state of the feature
 	 * @since 2.0
 	 */
-	// FIXME javadoc
 	public int getStatus(IFeature feature);	
 }

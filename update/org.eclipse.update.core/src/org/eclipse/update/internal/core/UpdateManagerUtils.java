@@ -58,33 +58,26 @@ public class UpdateManagerUtils {
 	 */
 	public static String getURLAsString(URL rootURL, URL url) {
 		String result = null;
-
+	
 		if (rootURL == null) {
 			return (url == null) ? null : url.toString();
 		}
-
+	
 		// if no URL , return null
 		if (url != null) {
-			//DEBUG
-			if (UpdateManagerPlugin.DEBUG
-				&& UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION) {
-				UpdateManagerPlugin.getPlugin().debug(
-					"getURLAsString root:" + rootURL.toString());
-				UpdateManagerPlugin.getPlugin().debug("getURLAsString url:" + url.toString());
-			}
 
 			result = url.toExternalForm();
-
+	
 			if (rootURL.getHost() != null && !rootURL.getHost().equals(url.getHost()))
 				return result;
-
+	
 			if (rootURL.getProtocol() != null
 				&& !rootURL.getProtocol().equals(url.getProtocol()))
 				return result;
-
+	
 			if (rootURL.getPort() != url.getPort())
 				return result;
-
+	
 			String rootURLFileString = rootURL.getFile();
 			rootURLFileString.replace(File.separatorChar, '/');
 			if (!rootURLFileString.endsWith("/")) {
@@ -94,7 +87,7 @@ public class UpdateManagerUtils {
 				}
 			}
 			String urlFileString = url.getFile();
-
+	
 			if (urlFileString.startsWith(rootURLFileString)) {
 				result = urlFileString.substring(rootURLFileString.length());
 				result.replace(File.separatorChar, '/');
@@ -104,13 +97,13 @@ public class UpdateManagerUtils {
 				if ("file".equalsIgnoreCase(url.getProtocol())) {
 					File rootFile = new File(rootURLFileString);
 					File urlFile = new File(urlFileString);
-
+	
 					File relativePath = urlFile.getParentFile();
 					while (relativePath != null
 						&& !relativePath.getParentFile().equals(rootFile)) {
 						relativePath = relativePath.getParentFile();
 					}
-
+	
 					if (relativePath == null) {
 						//DEBUG
 						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
@@ -126,7 +119,7 @@ public class UpdateManagerUtils {
 								UpdateManagerPlugin.getPlugin().debug(
 									"Full path:" + fullString + " does not start with " + relativeRootString);
 							}
-
+	
 							return url.toString();
 						} else {
 							String returnString = fullString.substring(relativeRootString.length() + 1);
@@ -134,15 +127,15 @@ public class UpdateManagerUtils {
 							returnString = returnString.replace(File.separatorChar, '/');
 							return returnString;
 						}
-
+	
 					}
-
+	
 				} else {
 					result = url.toString();
 				}
 			}
 		}
-
+	
 		return result;
 	}
 	

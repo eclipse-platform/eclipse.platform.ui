@@ -271,6 +271,7 @@ public class ConfigurationView
 					children.add(childFeature);
 				}
 			} catch (CoreException e) {
+				// FIXME at least log
 			}
 		}
 

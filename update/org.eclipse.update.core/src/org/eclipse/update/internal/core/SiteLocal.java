@@ -353,8 +353,12 @@ public class SiteLocal
 		PrintWriter w,
 		InstallConfigurationModel config) {
 		w.print(gap + "<" + SiteLocalParser.CONFIG + " "); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		// need to get parent as location points to XML file and not directory
+		URL locationAsDirectory = UpdateManagerUtils.getParent(getLocationURL());
 		String URLInfoString =
-			UpdateManagerUtils.getURLAsString(getLocationURL(), config.getURL());
+			UpdateManagerUtils.getURLAsString(locationAsDirectory, config.getURL());
+			
 		w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" ");
 		//$NON-NLS-1$ //$NON-NLS-2$
 

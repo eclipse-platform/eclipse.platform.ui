@@ -419,6 +419,7 @@ public class DetailsForm extends PropertyWebForm {
 				}
 			}
 		} catch (CoreException e) {
+			// FIXME at least log
 		}
 		return (IFeature[]) features.toArray(new IFeature[features.size()]);
 	}

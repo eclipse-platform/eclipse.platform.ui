@@ -311,12 +311,14 @@ public class FormEngine extends Canvas {
 			else
 				model.parseRegularText(text, expandURLs);
 		} catch (CoreException e) {
+			//FIXME at least log
 		}
 	}
 	public void load(InputStream is, boolean expandURLs) {
 		try {
 			model.parseInputStream(is, expandURLs);
 		} catch (CoreException e) {
+			// FIXME at least log
 		}
 	}
 

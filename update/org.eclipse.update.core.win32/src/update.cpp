@@ -15,10 +15,6 @@ int WINME = 2;
 int WIN2000 = 3;
 int WINXP = 4;
 
-// FLOPPY size
-int FLOPPY_3 = 0; // 3 1/2
-int FLOPPY_5 = 1; // 5 1/4
-
 // set to 1 for DEBUG
 int DEBUG = 0;
 
@@ -35,10 +31,10 @@ int NOWIN95 = 1;
  * @param driveLetter path to the drive "c:\\"
  * @prama jnienv JNIEnvironment
  */
-jstring getLabel(char driveLetter[],JNIEnv * jnienv){
+jstring getLabel(TCHAR driveLetter[],JNIEnv * jnienv){
 
 	jstring result = NULL;
-	char buf[128];	
+	TCHAR buf[128];	
 	
 	int err = GetVolumeInformation(
 		driveLetter,
@@ -122,7 +118,7 @@ int getWindowsVersion(){
  * org_eclipse_update_configuration_LocalSystemInfo_VOLUME_FLOPPY_5
  * org_eclipse_update_configuration_LocalSystemInfo_VOLUME_REMOVABLE
  */
-jlong getFloppy(char driveLetter[]){
+jlong getFloppy(TCHAR driveLetter[]){
 
 	TCHAR floppyPath[8];
 	HANDLE handle;
@@ -174,11 +170,11 @@ jlong getFloppy(char driveLetter[]){
  * (\\Machine\path\path1\path2$)
  * returns NULL if an error occurs
  */
- jstring getRemoteNetworkName(char driveLetter[],JNIEnv * jnienv){
+ jstring getRemoteNetworkName(TCHAR driveLetter[],JNIEnv * jnienv){
  	
  	unsigned long size =256;
- 	char buf[256];	
- 	char drivePath[2];
+ 	TCHAR buf[256];	
+ 	TCHAR drivePath[2];
  	DWORD err;
  	jstring result = NULL;
  	
@@ -214,7 +210,7 @@ JNIEXPORT jlong JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_na
 	jobject obj;
 
 	// java.io.File.getAbsolutePath()
-	const char * lpDirectoryName;
+	const TCHAR * lpDirectoryName;
 
 	// Windows Parameters
 	__int64 i64FreeBytesAvailableToCaller;
@@ -268,7 +264,7 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_
 	jobject obj;
 
 	// java.io.File.getAbsolutePath()
-	const char * lpDirectoryName;
+	const TCHAR * lpDirectoryName;
 
 	// obtain the String from the parameter
 	cls = jnienv -> GetObjectClass(file);
@@ -291,7 +287,7 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_
 		
 	// Make sure we have a String of the Form: <letter>:
 	if (':' == lpDirectoryName[1]) {
-		char driveLetter[4]; // i.e. -> C:\\
+		TCHAR driveLetter[4]; // i.e. -> C:\\
 		memcpy(driveLetter, lpDirectoryName, 2);
 		strcpy(driveLetter + 2, "\\");
 		switch (GetDriveType(driveLetter)) {
@@ -328,7 +324,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_nat
 	jobject obj;
 
 	// java.io.File.getAbsolutePath()
-	const char * lpDirectoryName;
+	const TCHAR * lpDirectoryName;
 
 	// obtain the String from the parameter
 	cls = jnienv -> GetObjectClass(file);
@@ -348,7 +344,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_nat
 	
 	// Make sure we have a String of the Form: <letter>:
 	if (':' == lpDirectoryName[1]) {
-		char driveLetter[4]; //C:\\
+		TCHAR driveLetter[4]; //C:\\
 		memcpy(driveLetter, lpDirectoryName, 2);
 		strcpy(driveLetter + 2, "\\");
 
@@ -399,7 +395,7 @@ JNIEXPORT jobjectArray JNICALL Java_org_eclipse_update_configuration_LocalSystem
 	//
 	DWORD logDrives;
 	UINT drive;
-	char driveName[100];
+	TCHAR driveName[100];
 	jobjectArray returnArray;
 	int nDrive = 0;
 

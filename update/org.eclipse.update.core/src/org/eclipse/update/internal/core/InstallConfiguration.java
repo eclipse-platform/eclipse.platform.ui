@@ -27,6 +27,10 @@ public class InstallConfiguration
 	extends InstallConfigurationModel
 	implements IInstallConfiguration, IWritable {
 
+	private static final String PRODUCT_SITE_MARKER = ".eclipseproduct";
+	private static final String EXTENSION_SITE_MARKER = ".eclipseextension";
+	private static final String PRIVATE_SITE_MARKER = ".eclipseUM";
+
 	private ListenersList listeners = new ListenersList();
 
 	/*
@@ -107,9 +111,9 @@ public class InstallConfiguration
 			(ConfiguredSite) factory.createConfigurationSiteModel(
 				(SiteModel) site,
 				getDefaultPolicy());
-		configSite.isUpdatable(canWrite(file));
+		configSite.isUpdatable(canWrite(file) && notOverlay(file));
 
-		if (site != null) {
+		if (site != null && configSite.isUpdatable()) {
 			configSite.setPlatformURLString(site.getURL().toExternalForm());
 
 			// obtain the list of plugins
@@ -127,6 +131,9 @@ public class InstallConfiguration
 			IPlatformConfiguration.ISiteEntry siteEntry =
 				runtimeConfiguration.createSiteEntry(site.getURL(), sitePolicy);
 			runtimeConfiguration.configureSite(siteEntry);
+			
+			// add link file into product ??
+			// FIXME 
 		}
 
 		return configSite;
@@ -512,6 +519,107 @@ public class InstallConfiguration
 	}
 
 	/*
+	 * Verify the site is not inside another site and does not contain another site
+	 */
+	private static boolean notOverlay(File file) {
+		return (!containsAnotherSite(file) && !isContainedInAnotherSite(file));
+	}
+
+	/*
+	 * check if the directory contains a marker, 
+	 * if not ask the parent directory to check itself
+	 * if we end up with no parent, return false
+	 */
+	private static boolean containsAnotherSite(File file) {
+		if (file == null)
+			return false;
+		if (!file.isDirectory())
+			return containsAnotherSite(file.getParentFile());
+
+		File productFile = new File(file, PRODUCT_SITE_MARKER);
+		File extensionFile = new File(file, EXTENSION_SITE_MARKER);
+		File privateFile = new File(file, PRIVATE_SITE_MARKER);
+		if (productFile.exists() || extensionFile.exists())
+			return true;
+		if (privateFile.exists())
+			return !sameProduct(privateFile);
+		return containsAnotherSite(file.getParentFile());
+	}
+
+	/*
+	 * Check if the directory contains a marker
+	 * if not ask all directory children to check
+	 * if one validates the condition, returns true
+	 */
+	private static boolean isContainedInAnotherSite(File file) {
+
+		if (!file.isDirectory())
+			return isContainedInAnotherSite(file.getParentFile());
+
+		File productFile = new File(file, PRODUCT_SITE_MARKER);
+		File extensionFile = new File(file, EXTENSION_SITE_MARKER);
+		File privateFile = new File(file, PRIVATE_SITE_MARKER);
+		if (productFile.exists() || extensionFile.exists())
+			return true;
+		if (privateFile.exists())
+			return !sameProduct(privateFile);
+
+		File[] childrenFiles = file.listFiles();
+		for (int i = 0; i < childrenFiles.length; i++) {
+			if (childrenFiles[i].isDirectory()) {
+				if (isContainedInAnotherSite(childrenFiles[i]))
+					return true;
+			}
+		}
+		return false;
+	}
+
+	/*
+	 * Returns true if the identifier of the private Site markup is
+	 * the same as the identifier of the product the workbench was started with 
+	 */
+	private static boolean sameProduct(File privateFile) {
+		String productInstallDirectory = BootLoader.getInstallURL().getFile();
+		if (productInstallDirectory != null) {
+			File productFile = new File(productInstallDirectory, PRODUCT_SITE_MARKER);
+			if (productFile.exists()) {
+				String productId = getProductIdentifier(productFile);
+				String privateId = getProductIdentifier(privateFile);
+				if (productId == null)
+					return false;
+				if (productId.equalsIgnoreCase(privateId))
+					return true;
+			} else {
+				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
+					UpdateManagerPlugin.getPlugin().debug(
+						"Product marker doesn't exist:" + productFile);
+			}
+		} else {
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
+				UpdateManagerPlugin.getPlugin().debug(
+					"Cannot retrieve install URL from BootLoader");
+		}
+		return false;
+	}
+
+	/*
+	 * Returns the identifier of the product from the property file
+	 */
+	private static String getProductIdentifier(File propertyFile) {
+		String identifier = null;
+		try {
+			InputStream in = new FileInputStream(propertyFile);
+			PropertyResourceBundle bundle = new PropertyResourceBundle(in);
+			identifier = bundle.getString("id");
+		} catch (IOException e) {
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
+				UpdateManagerPlugin.getPlugin().debug(
+					"Exception reading 'id' from property file:"+propertyFile);			
+		}
+		return identifier;
+	}
+
+	/*
 	 * returns the list of platform plugins of the feature or an empty list 
 	 * if the feature doesn't contain any platform plugins
 	 */
@@ -566,13 +674,12 @@ public class InstallConfiguration
 			URL result = new URL(new URL(rootString), relativeString);
 			// DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
-				UpdateManagerPlugin.getPlugin().debug("getRuntimeCOnfiguration Full URL:"+fullURL+" Relative:"+relativeString);
+				UpdateManagerPlugin.getPlugin().debug(
+					"getRuntimeCOnfiguration Full URL:" + fullURL + " Relative:" + relativeString);
 			return result;
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-				Policy.bind(
-					"InstallConfiguration.UnableToCreateURL",
-					rootString),
+				Policy.bind("InstallConfiguration.UnableToCreateURL", rootString),
 				e);
 			//$NON-NLS-1$
 		}
