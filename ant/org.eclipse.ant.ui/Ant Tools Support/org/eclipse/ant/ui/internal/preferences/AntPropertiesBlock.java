@@ -191,7 +191,7 @@ public class AntPropertiesBlock {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		buttonGroup.setLayout(layout);
-		buttonGroup.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		buttonGroup.setLayoutData(new GridData(GridData.FILL_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL));
 		buttonGroup.setFont(top.getFont());
 
 		addButtonsToButtonGroup(buttonGroup);
@@ -245,6 +245,8 @@ public class AntPropertiesBlock {
 	private Button createPushButton(Composite parent, String label) {
 		Button button= container.createPushButton(parent, label);
 		button.addSelectionListener(buttonListener);
+		GridData gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
+		button.setLayoutData(gridData);
 		return button;
 	}
 	
