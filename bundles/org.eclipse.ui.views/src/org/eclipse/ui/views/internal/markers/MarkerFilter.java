@@ -24,13 +24,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.ui.IContainmentAdapter;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
-
-/**
- * Filters IMarker's based on their attributes and the current selection within the workbench.
- */
 public class MarkerFilter implements IFilter {
 	
 	private static final String TAG_DIALOG_SECTION = "filter"; //$NON-NLS-1$
@@ -42,7 +37,6 @@ public class MarkerFilter implements IFilter {
 	private static final String TAG_WORKING_SET = "workingSet"; //$NON-NLS-1$
 	private static final String TAG_TYPES_DELIMITER = ":"; //$NON-NLS-1$
 	
-	// Filter on resource constants
 	static final int ON_ANY_RESOURCE = 0;
 	static final int ON_SELECTED_RESOURCE_ONLY = 1;
 	static final int ON_SELECTED_RESOURCE_AND_CHILDREN = 2;
@@ -68,11 +62,12 @@ public class MarkerFilter implements IFilter {
 	
 	public MarkerFilter(String[] rootTypes) {
 		typesModel = new MarkerTypesModel();
+		
 		for (int i = 0; i < rootTypes.length; i++) {
 			MarkerType type = typesModel.getType(rootTypes[i]);
-			if (!this.rootTypes.contains(type)) {
+			
+			if (!this.rootTypes.contains(type))
 				this.rootTypes.add(type);
-			}
 		}
 	}
 	
@@ -84,37 +79,34 @@ public class MarkerFilter implements IFilter {
 	}
 	
 	private void addAllSubTypes(MarkerType type) {
-		if (type == null) {
+		if (type == null)
 			return;
-		}
-		if (!selectedTypes.contains(type)) {
+	
+		if (!selectedTypes.contains(type))
 			selectedTypes.add(type);
-		}
+	
 		MarkerType[] subTypes = type.getSubtypes();
-		for (int i = 0; i < subTypes.length; i++) {
+		
+		for (int i = 0; i < subTypes.length; i++)
 			addAllSubTypes(subTypes[i]);
-		}
 	} 
 	
-	/**
-	 * @see org.eclipse.ui.views.internal.markerregistry.IFilter#filter(java.util.List)
-	 */
 	public Object[] filter(Object[] elements) {
 		if (elements == null)	
 			return new Object[0];
+			
 		List filteredElements = new ArrayList();
+		
 		for (int i = 0; i < elements.length; i++) {
 			Object element = elements[i];
-			if (select(element)) {
+			
+			if (select(element))
 				filteredElements.add(element); 
-			}
 		}
+		
 		return filteredElements.toArray();
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.internal.markerregistry.IFilter#select(java.lang.Object)
-	 */
 	public boolean select(Object item) {
 		if (!isEnabled()) {
 			return true;
@@ -129,6 +121,7 @@ public class MarkerFilter implements IFilter {
 	
 	private boolean selectByType(IMarker marker) {
 		String type;
+
 		try {
 			type = marker.getType();
 		}
@@ -136,12 +129,7 @@ public class MarkerFilter implements IFilter {
 			return false;
 		}
 		
-		MarkerType markerType = typesModel.getType(type);
-		if (selectedTypes.contains(markerType)) {
-			return true;
-		}
-		
-		return false;
+		return selectedTypes.contains(typesModel.getType(type));
 	}
 	
 	/**
@@ -153,48 +141,48 @@ public class MarkerFilter implements IFilter {
 	 * 	false=the marker should be filtered out
 	 */
 	private boolean selectBySelection(IMarker marker) {
-		if (onResource == ON_ANY_RESOURCE || marker == null) {
+		if (onResource == ON_ANY_RESOURCE || marker == null)
 			return true;
-		}
-		if (focusResource == null) {
+	
+		if (focusResource == null)
 			return true;
-		}
+	
 		IResource resource = marker.getResource();
+		
 		if (onResource == ON_WORKING_SET) {
-			if (workingSet == null) {
+			if (workingSet == null)
 				return true;
-			}			
-			if (resource != null) {
+				
+			if (resource != null) 
 				return isEnclosed(resource);
-			}
-		}
-		else if (onResource == ON_ANY_RESOURCE_OF_SAME_PROJECT) {
+			
+		} else if (onResource == ON_ANY_RESOURCE_OF_SAME_PROJECT) {
 			IProject project = resource.getProject();
+			
 			for (int i = 0; i < focusResource.length; i++) {
 				IProject selectedProject = focusResource[i].getProject();
-				if (project.equals(selectedProject)) {
+			
+				if (project.equals(selectedProject))
 					return true;
-				}
 			}
-		}
-		else if (onResource == ON_SELECTED_RESOURCE_ONLY) {
+		} else if (onResource == ON_SELECTED_RESOURCE_ONLY) {
 			for (int i = 0; i < focusResource.length; i++) {
-				if (resource.equals(focusResource[i])) {
+				if (resource.equals(focusResource[i]))
 					return true;
-				}
 			}
-		}
-		else if (onResource == ON_SELECTED_RESOURCE_AND_CHILDREN) {
+		} else if (onResource == ON_SELECTED_RESOURCE_AND_CHILDREN) {
 			for (int i = 0; i < focusResource.length; i++) {
 				IResource parentResource = resource;
+				
 				while (parentResource != null) {
-					if (parentResource.equals(focusResource[i])) {
+					if (parentResource.equals(focusResource[i]))
 						return true;
-					}
+				
 					parentResource = parentResource.getParent();
 				}
 			}
 		}
+		
 		return false;
 	}
 
@@ -213,9 +201,9 @@ public class MarkerFilter implements IFilter {
 		IPath elementPath = element.getFullPath();
 		IAdaptable[] workingSetElements = workingSet.getElements();
 		
-		if (elementPath.isEmpty() || elementPath.isRoot()) {
+		if (elementPath.isEmpty() || elementPath.isRoot())
 			return false;
-		}
+		
 		for (int i = 0; i < workingSetElements.length; i++) {
 			IAdaptable workingSetElement = workingSetElements[i];
 			IContainmentAdapter containmentAdapter = (IContainmentAdapter) workingSetElement.getAdapter(IContainmentAdapter.class);
@@ -230,6 +218,7 @@ public class MarkerFilter implements IFilter {
 				return true;
 			}		
 		}
+		
 		return false;
 	}
 
@@ -252,17 +241,19 @@ public class MarkerFilter implements IFilter {
 		
 		if (workingSetElement.equals(element))
 			return true;
-		if (workingSetElement instanceof IResource) {
+			
+		if (workingSetElement instanceof IResource)
 			workingSetResource = (IResource) workingSetElement;
-		}
-		else {
+		else
 			workingSetResource = (IResource) workingSetElement.getAdapter(IResource.class);
-		}	
+	
 		if (workingSetResource != null) {
 			IPath resourcePath = workingSetResource.getFullPath();
+	
 			if (resourcePath.isPrefixOf(elementPath))
 				return true;
 		}
+	
 		return false;
 	}
 
@@ -278,8 +269,8 @@ public class MarkerFilter implements IFilter {
 	 * 
 	 * @param the new limit
 	 */
-	public void setMarkerLimit(int i) {
-		markerLimit = i;
+	public void setMarkerLimit(int markerLimit) {
+		this.markerLimit = markerLimit;
 	}
 
 	/**
@@ -311,9 +302,8 @@ public class MarkerFilter implements IFilter {
 	 * </ul>
 	 */
 	public void setOnResource(int onResource) {
-		if (onResource >= ON_ANY_RESOURCE && onResource <= ON_WORKING_SET) {
+		if (onResource >= ON_ANY_RESOURCE && onResource <= ON_WORKING_SET)
 			this.onResource = onResource;
-		}
 	}
 
 	/**
@@ -376,144 +366,119 @@ public class MarkerFilter implements IFilter {
 	/**
 	 * Sets the enablement state of the filter.
 	 */
-	public void setEnabled(boolean b) {
-		enabled = b;
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	/**
 	 * Sets the enablement state of filtering by marker limit.
 	 */
-	public void setFilterOnMarkerLimit(boolean b) {
-		filterOnMarkerLimit = b;
+	public void setFilterOnMarkerLimit(boolean filterOnMarkerLimit) {
+		this.filterOnMarkerLimit = filterOnMarkerLimit;
 	}
 
 	/**
 	 * Sets the selected marker types to be displayed. The List <b>MUST ONLY</b> contain 
 	 * <code>MarkerType</code> objects.
 	 */
-	public void setSelectedTypes(List list) {
-		selectedTypes = list;
+	public void setSelectedTypes(List selectedTypes) {
+		this.selectedTypes = selectedTypes;
 	}
 
 	/**
 	 * Sets the current working set.
 	 */
-	public void setWorkingSet(IWorkingSet set) {
-		workingSet = set;
+	public void setWorkingSet(IWorkingSet workingSet) {
+		this.workingSet = workingSet;
 	}
 	
-
 	public void resetState() {
 		enabled = DEFAULT_ACTIVATION_STATUS;
 		filterOnMarkerLimit = DEFAULT_FILTER_ON_MARKER_LIMIT;
 		markerLimit = DEFAULT_MARKER_LIMIT;
 		onResource = DEFAULT_ON_RESOURCE;
+		selectedTypes.clear();
 		addAllSubTypes();
+		workingSet = null;
 	}
 	
 	public void restoreState(IDialogSettings dialogSettings) {
-		resetState();
-		
-		if (dialogSettings == null) {
-			resetState();
-			return;
-		}
-		
+		resetState();		
 		IDialogSettings settings = dialogSettings.getSection(TAG_DIALOG_SECTION);
-		if (settings == null) {
-			resetState();
-			return;
-		}
 		
-		String setting = settings.get(TAG_ENABLED);
-		if (setting == null) {
-			enabled = DEFAULT_ACTIVATION_STATUS;
-		}
-		else {
-			enabled = settings.getBoolean(TAG_ENABLED);
-		}
-		setting = settings.get(TAG_FILTER_ON_MARKER_LIMIT);
-		if (setting == null) {
-			filterOnMarkerLimit = DEFAULT_FILTER_ON_MARKER_LIMIT;
-		}
-		else {
-			filterOnMarkerLimit = Boolean.valueOf(setting).booleanValue();
-		}
-		setting = settings.get(TAG_MARKER_LIMIT);
-		if (setting == null) {
-			markerLimit = DEFAULT_MARKER_LIMIT;
-		}
-		else {
-			try {
-				markerLimit = Integer.parseInt(setting); 
-			}
-			catch (NumberFormatException e) {
-				markerLimit = DEFAULT_MARKER_LIMIT;
-			}
-		}
-		setting = settings.get(TAG_ON_RESOURCE);
-		if (setting == null) {
-			setOnResource(DEFAULT_ON_RESOURCE);
-		}
-		else {
-			try {
-				setOnResource(Integer.parseInt(setting));
-			}
-			catch (NumberFormatException e) {
-				setOnResource(DEFAULT_ON_RESOURCE);
-			}
-		}
-		
-		String workingSetName = settings.get(TAG_WORKING_SET);
+		if (settings != null) {
+			String setting = settings.get(TAG_ENABLED);
 
-		if (workingSetName != null) {
-			IWorkingSetManager workingSetManager = WorkbenchPlugin.getDefault().getWorkingSetManager();
-			IWorkingSet workingSet = workingSetManager.getWorkingSet(workingSetName);
+			if (setting != null)
+				enabled = Boolean.valueOf(setting).booleanValue();
+
+			setting = settings.get(TAG_FILTER_ON_MARKER_LIMIT);
 			
-			if (workingSet != null) {
-				this.workingSet = workingSet;
-			}
-		}
+			if (setting != null)
+				filterOnMarkerLimit = Boolean.valueOf(setting).booleanValue();
+				
+			setting = settings.get(TAG_MARKER_LIMIT);
 
-		String types = settings.get(TAG_SELECTED_TYPES);
-		if (types == null) {
-			addAllSubTypes();
-		}
-		else {
-			for (StringTokenizer tokenizer = new StringTokenizer(types); tokenizer.hasMoreTokens();) {
-				String token = tokenizer.nextToken(TAG_TYPES_DELIMITER);
-				MarkerType type = typesModel.getType(token);
-				if (type != null && !selectedTypes.contains(type)) {
-					selectedTypes.add(type);
+			if (setting != null)
+				try {
+					markerLimit = Integer.parseInt(setting);		
+				}
+				catch (NumberFormatException eNumberFormat) {
+				}
+
+			setting = settings.get(TAG_ON_RESOURCE);
+
+			if (setting != null)
+				try {
+					onResource = Integer.parseInt(setting);		
+				}
+				catch (NumberFormatException eNumberFormat) {
+				}
+
+			setting = settings.get(TAG_SELECTED_TYPES);
+			
+			if (setting != null) {
+				selectedTypes.clear();
+				StringTokenizer stringTokenizer = new StringTokenizer(setting);
+				
+				while (stringTokenizer.hasMoreTokens()) {				
+					MarkerType markerType = typesModel.getType(stringTokenizer.nextToken(TAG_TYPES_DELIMITER));
+					
+					if (markerType != null && !selectedTypes.contains(markerType))
+						selectedTypes.add(markerType);
 				}
 			}
-		}
+
+			setting = settings.get(TAG_WORKING_SET);
+
+			if (setting != null)
+				workingSet = WorkbenchPlugin.getDefault().getWorkingSetManager().getWorkingSet(setting);					
+		}		
 	}
 	
-	public void saveState(IDialogSettings dialogSettings) {
-		if (dialogSettings == null) {
-			return;
-		}
+	public void saveState(IDialogSettings dialogSettings) {		
+		if (dialogSettings != null) {
+			IDialogSettings settings = dialogSettings.getSection(TAG_DIALOG_SECTION);
 
-		IDialogSettings settings = dialogSettings.getSection(TAG_DIALOG_SECTION);
-		if (settings == null) {
-			settings = dialogSettings.addNewSection(TAG_DIALOG_SECTION);
-		}
+			if (settings == null)
+				settings = dialogSettings.addNewSection(TAG_DIALOG_SECTION);
+
+			settings.put(TAG_ENABLED, enabled);
+			settings.put(TAG_FILTER_ON_MARKER_LIMIT, filterOnMarkerLimit);
+			settings.put(TAG_MARKER_LIMIT, markerLimit);
+			settings.put(TAG_ON_RESOURCE, onResource);
+
+			String markerTypeIds = ""; //$NON-NLS-1$
 		
-		settings.put(TAG_ENABLED, enabled);
-		settings.put(TAG_FILTER_ON_MARKER_LIMIT, filterOnMarkerLimit);
-		settings.put(TAG_MARKER_LIMIT, markerLimit);
-		settings.put(TAG_ON_RESOURCE, onResource);
+			for (int i = 0; i < selectedTypes.size(); i++) {
+				MarkerType markerType = (MarkerType) selectedTypes.get(i);
+				markerTypeIds += markerType.getId() + TAG_TYPES_DELIMITER;
+			}
 		
-		String types = ""; //$NON-NLS-1$
-		for (int i = 0; i < selectedTypes.size(); i++) {
-			MarkerType type = (MarkerType) selectedTypes.get(i);
-			types += type.getId() + TAG_TYPES_DELIMITER;
-		}
-		settings.put(TAG_SELECTED_TYPES, types);
+			settings.put(TAG_SELECTED_TYPES, markerTypeIds);
 		
-		if (workingSet != null) {
-			settings.put(TAG_WORKING_SET, workingSet.getName());
+			if (workingSet != null)
+				settings.put(TAG_WORKING_SET, workingSet.getName());
 		}
 	}
 }
