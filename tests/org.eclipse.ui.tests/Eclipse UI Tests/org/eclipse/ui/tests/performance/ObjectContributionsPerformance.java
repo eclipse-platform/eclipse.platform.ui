@@ -12,8 +12,11 @@ package org.eclipse.ui.tests.performance;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.test.performance.Dimension;
@@ -22,34 +25,38 @@ import org.eclipse.ui.tests.menus.ObjectContributionTest;
 
 public class ObjectContributionsPerformance extends BasicPerformanceTest {
 
+	public  static final int SEED = 1001001;
+	private IStructuredSelection selection;
+	
 	public static Test suite() {
-	    return new TestSuite(ObjectContributionsPerformance.class);
+		TestSuite suite = new TestSuite("Object contribution performance");
+		suite.addTest(new ObjectContributionsPerformance("large selection, limited contributors", generateAdaptableSelection(SEED, 5000), BasicPerformanceTest.LOCAL));
+		suite.addTest(new ObjectContributionsPerformance("limited selection, limited contributors", generateAdaptableSelection(SEED, 50), BasicPerformanceTest.LOCAL));
+	    return suite;
 	}
 	
-	public ObjectContributionsPerformance() {
-		super("testObjectContributions");
-	}
-	
-	public ObjectContributionsPerformance(String id, int tagging) {
-		super("testObjectContributions:" + id, tagging);
+	public ObjectContributionsPerformance(String label, IStructuredSelection selection, int tagging) {
+		super("testObjectContributions:" + label, tagging);
+		this.selection = selection;
 	}
 
-	public void testAllContributionTypes() throws Throwable {
+	protected void runTest() {
 		ObjectContributionTest tests = new ObjectContributionTest("testObjectContributions");
-		tagIfNecessary("Adding contributions to pop-up menu", new Dimension[]{Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});
+		tagIfNecessary(selection.size() + " contribution(s)", new Dimension[]{Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});
 		for (int i = 0; i < 10; i++) {			
 			startMeasuring();			
-			tests.assertPopupMenus("1", new String[] {"bogus"}, generateHugeAdaptableSelection(5000), null, false);
+			tests.assertPopupMenus("1", new String[] {"bogus"}, selection, null, false);
 			stopMeasuring();
 		}	
 		commitMeasurements();
 		assertPerformance();
 	}
 	
-	protected IStructuredSelection generateHugeAdaptableSelection(int size) {
+	protected static IStructuredSelection generateAdaptableSelection(int seed, int size) {
+		Random rand = new Random(seed);
 		List selection = new ArrayList();
 		for (int i = 0; i < size; i++) {
-			switch ((int) Math.round(Math.random() * 5)) {
+			switch ((int) Math.round(rand.nextDouble() * 5)) {
 				case 0 :
 					selection.add(new ObjectContributionClasses.A());
 					break;
