@@ -66,26 +66,34 @@ import org.eclipse.ui.tests.util.UITestCase;
  * </p>
  * <p></p>
  * <p>
- * Expecting 'layout (((layout ((Mock Editor 1, Mock Editor 2)|(Mock Editor 2)))|(Navigator))-(Outline, Problems, Properties))' and found 'layout (((Navigator)|(layout ((Mock Editor 1, Mock Editor 2)|(Mock Editor 2))))-(Outline, Problems, Properties))
+ * Expecting 'layout ((((*Navigator)-active (*Problems))|layout ((Mock Editor 1, *Mock Editor 2)|active_nofocus (*Mock Editor 2)))-(*Outline, Properties))' and found 'layout ((layout ((Mock Editor 1, *Mock Editor 2)|active_nofocus (*Mock Editor 2))-(*Outline, Problems, Properties))-active (*Navigator))'
  * </p>
  * <p></p>
  * <p>
  * The expected and actual results are ASCII pictures of the layout. A stack of views or editors
- * is shown as a list enclosed in brackets. For example, (Problems, Console, Properties) indicates
- * a stack containing the Problems, Console, and Properties views. The root layout and editor areas
- * are shown as "layout (...)". A vertical sash is shown as a bar "|" and a horizontal sash is shown
- * using a dash "-".  All drag tests are done in the Drag Test Perspective.
+ * is shown as a list enclosed in brackets, with an asterisk indicating the selected pane. The stack
+ * may be prefixed by the words "active" or "active_nofocus" if they currently have the active or 
+ * active_nofocus appearance. Inactive stacks have no prefix. 
+ * </p>
+ * <p></p>
+ * <p>
+ * For example, (Problems, *Console, Properties) indicates a stack containing the Problems, Console, and Properties views, 
+ * where the Console view was currently selected. The root layout and editor areas are shown as "layout (...)". A vertical sash is shown as a 
+ * bar "|" and a horizontal sash is shown using a dash "-".  All drag tests are done in the Drag Test 
+ * Perspective.
  * </p>
  * <p>
  * The initial layout is:
  * </p>
  * <p></p>
  * <p>
- * layout (((Navigator)|(layout ((Mock Editor 1, Mock Editor 2)|(Mock Editor 2))))-(Outline, Problems, Properties))
+ * layout (((*Navigator)|layout ((Mock Editor 1, *Mock Editor 2)|active (*Mock Editor 2)))-(*Outline, Problems, Properties))
  * </p>
+ * <p></p>
  * <p>
  * Where editor 0 is "Mock Editor 1", and editors 1 and 2 are shown as "Mock Editor 2".
  * </p>
+ * <p></p>
  * <p>
  * If you see a message like "dragtests.xml is out of date", this indicates that new tests
  * were added without describing their intended behavior in dragtests.xml. In that case, ensure that
