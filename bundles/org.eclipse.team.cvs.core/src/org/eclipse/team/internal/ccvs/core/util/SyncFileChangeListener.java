@@ -42,12 +42,13 @@ import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
  * 
  * 1. A user has an existing CVS project outside of Eclipse. By creating the project in Eclipse to point
  * to the existing location the project's contents will be brought into Eclipse and the CVS folders
- * will be marlked as team-private but other delta listeners will not know this. As a result, the user will
- * have to close views or restart the workbench to have the CVS folders filtered.
+ * will be marlked as team-private but other delta listeners that have handled the event already won't receive
+ * notification that the resource is now team-private. As a result, the user may have to close views or 
+ * restart the workbench to have the CVS folders filtered.
  * 
  * 2. A user performs CVS command line operations outside of Eclipse that result in new CVS folders.
  * From Eclipse the refresh local will bring in the new folders and they will be marked as team-private.
- * But as in 1, they may appear in the UI.
+ * But as in 1, they may not appear in the UI.
  * 
  * See: http://dev.eclipse.org/bugs/show_bug.cgi?id=12386
  */
@@ -71,11 +72,6 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 						// continue with the delta
 						return true;
 					}
-					
-					//if(RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId())==null) {
-						// a project that is not managed by cvs, don't bother visiting it's children
-					//	return false;
-					//}
 					
 					String name = resource.getName();
 					int kind = delta.getKind();
@@ -143,14 +139,14 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 				IFile rootFile = cvsDir.getFile(new Path(SyncFileWriter.ROOT));
 				IFile repositoryFile = cvsDir.getFile(new Path(SyncFileWriter.REPOSITORY));
 				if(rootFile.exists() && repositoryFile.exists() && !cvsDir.isTeamPrivateMember()) {
-//					try {
-//						cvsDir.setTeamPrivateMember(true);			
-//						if(Policy.DEBUG_METAFILE_CHANGES) {
-//							System.out.println("[cvs] found a new CVS meta folder, marking as team-private: " + cvsDir.getFullPath()); //$NON-NLS-1$
-//						}
-//					} catch(CoreException e) {
-//						CVSProviderPlugin.log(CVSException.wrapException(cvsDir, Policy.bind("SyncFileChangeListener.errorSettingTeamPrivateFlag"), e)); //$NON-NLS-1$
-//					}
+					try {
+						cvsDir.setTeamPrivateMember(true);			
+						if(Policy.DEBUG_METAFILE_CHANGES) {
+							System.out.println("[cvs] found a new CVS meta folder, marking as team-private: " + cvsDir.getFullPath()); //$NON-NLS-1$
+						}
+					} catch(CoreException e) {
+						CVSProviderPlugin.log(CVSException.wrapException(cvsDir, Policy.bind("SyncFileChangeListener.errorSettingTeamPrivateFlag"), e)); //$NON-NLS-1$
+					}
 				}
 			}
 		}
@@ -163,9 +159,8 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 		IContainer parent = resource.getParent();		
 		return resource.getType() == IResource.FILE &&
 				   parent!=null && 
-				   parent.getName().equals(SyncFileWriter.CVS_DIRNAME);
-					// TEAM-PRIVATE
-				   //&&  parent.isTeamPrivateMember();
+				   parent.getName().equals(SyncFileWriter.CVS_DIRNAME) &&
+				   parent.isTeamPrivateMember();
 	}
 	
 	/*
