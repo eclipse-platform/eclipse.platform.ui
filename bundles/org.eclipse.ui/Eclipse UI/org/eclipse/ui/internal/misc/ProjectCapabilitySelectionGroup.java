@@ -39,6 +39,10 @@ public class ProjectCapabilitySelectionGroup {
 	// user before being required by other capabilities.
 	private HashMap dependents = new HashMap();
 	
+	// For a given membership set id as key, the value is
+	// a checked capability
+	private HashMap memberships = new HashMap();
+	
 	/**
 	 * Creates a new instance of the <code>ProjectCapabilitySelectionGroup</code>
 	 * 
@@ -128,6 +132,7 @@ public class ProjectCapabilitySelectionGroup {
 		});
 
 		populateDependents();
+		populateMemberships();
 		
 		return composite;
 	}
@@ -184,9 +189,23 @@ public class ProjectCapabilitySelectionGroup {
 			descriptors.add(dependent);
 		}
 	}
-		
+
 	/**
-	 * Populate the dependents map based on the project's
+	 * Populate the memberships map based on the
+	 * current set of capabilities.
+	 */
+	private void populateMemberships() {
+		Object[] checked = listViewer.getCheckedElements();
+		for (int i = 0; i < checked.length; i++) {
+			String[] ids = registry.getMembershipSetIds((Capability)checked[i]);
+			for (int j = 0; j < ids.length; j++) {
+				memberships.put(ids[j], checked[i]);
+			}
+		}
+	}
+	
+	/**
+	 * Populate the dependents map based on the
 	 * current set of capabilities.
 	 */
 	private void populateDependents() {
@@ -229,10 +248,24 @@ public class ProjectCapabilitySelectionGroup {
 	 * capabilities are also checked.
 	 */
 	private void handleCapabilityChecked(Capability capability) {
+		// Is there a membership set problem...
+		String[] ids = registry.getMembershipSetIds(capability);
+		for (int i = 0; i < ids.length; i++) {
+			Capability member = (Capability)memberships.get(ids[i]);
+			if (member != null && member != capability) {
+				MessageDialog.openWarning(
+					listViewer.getControl().getShell(),
+					WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
+					WorkbenchMessages.format("ProjectCapabilitySelectionGroup.membershipConflict", new Object[] {capability.getName(), member.getName()})); //$NON-NLS-1$
+				listViewer.setChecked(capability, false);
+				return;
+			}
+		}
+		
+		// Is there any prerequisite problems...
 		if (registry.hasPrerequisites(capability)) {
 			// Retrieve all the prerequisite capabilities, including
 			// any prerequisite of the prerequisites!
-			ArrayList allPrereqs = new ArrayList();
 			LinkedList capabilities = new LinkedList();
 			capabilities.addLast(capability);
 			while (!capabilities.isEmpty()) {
@@ -253,12 +286,24 @@ public class ProjectCapabilitySelectionGroup {
 						listViewer.setChecked(capability, false);
 						return;
 					}
+					// If there is a membership problem, warn the user and
+					// do not allow the check to proceed
+					ids = registry.getMembershipSetIds(prereqCapabilities[i]);
+					for (int j = 0; j < ids.length; j++) {
+						Capability member = (Capability)memberships.get(ids[j]);
+						if (member != null && member != prereqCapabilities[i]) {
+							MessageDialog.openWarning(
+								listViewer.getControl().getShell(),
+								WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
+								WorkbenchMessages.format("ProjectCapabilitySelectionGroup.membershipPrereqConflict", new Object[] {capability.getName(), prereqCapabilities[i].getName(), member.getName()})); //$NON-NLS-1$
+							listViewer.setChecked(capability, false);
+							return;
+						}
+					}
 					// If the prerequisite capability has prerequisites
 					// also, then add it to be processed.
 					if (registry.hasPrerequisites(prereqCapabilities[i]))
 						capabilities.addLast(prereqCapabilities[i]);
-					// Merge the prerequisite into a master list
-					allPrereqs.add(prereqCapabilities[i]);
 				}
 			}
 			
@@ -283,6 +328,10 @@ public class ProjectCapabilitySelectionGroup {
 					listViewer.setGrayed(prereqCapabilities[i], true);
 					// Update the dependent map for the prerequisite capability
 					addDependency(prereqCapabilities[i], target);
+					// Update the membership set for the prerequisite capability
+					ids = registry.getMembershipSetIds(prereqCapabilities[i]);
+					for (int j = 0; j < ids.length; j++) 
+						memberships.put(ids[j], prereqCapabilities[i]);
 					// Recursive if prerequisite capability also has prerequisites
 					if (registry.hasPrerequisites(prereqCapabilities[i]))
 						capabilities.addLast(prereqCapabilities[i]);
@@ -293,7 +342,11 @@ public class ProjectCapabilitySelectionGroup {
 			// capability automatically even if a another capability which
 			// depended on it is unchecked.
 			addDependency(capability, capability);
-		
+			// Update the membership set for the capability
+			ids = registry.getMembershipSetIds(capability);
+			for (int j = 0; j < ids.length; j++) 
+				memberships.put(ids[j], capability);
+
 			// Notify those interested
 			notifyCheckStateListner();
 		}
@@ -309,6 +362,11 @@ public class ProjectCapabilitySelectionGroup {
 			// depended on it is unchecked.
 			addDependency(capability, capability);
 			
+			// Update the membership set for the capability
+			ids = registry.getMembershipSetIds(capability);
+			for (int j = 0; j < ids.length; j++) 
+				memberships.put(ids[j], capability);
+
 			// Notify those interested
 			notifyCheckStateListner();
 		}
@@ -334,7 +392,13 @@ public class ProjectCapabilitySelectionGroup {
 			capabilitiesModified();
 			// Remove the dependency entry.
 			dependents.remove(capability);
-			
+			// Update the membership set for the capability
+			String[] ids = registry.getMembershipSetIds(capability);
+			for (int j = 0; j < ids.length; j++) {
+				if (memberships.get(ids[j]) == capability)
+					memberships.remove(ids[j]);
+			}
+
 			// Remove this capability as a dependent on its prerequisite
 			// capabilities. Recursive if a prerequisite capability
 			// no longer has any dependents.
@@ -361,6 +425,12 @@ public class ProjectCapabilitySelectionGroup {
 							// and ungray prerequisite capability
 							listViewer.setChecked(prereqCap, false);
 							listViewer.setGrayed(prereqCap, false);
+							// Update the membership set for the prerequisite capability
+							ids = registry.getMembershipSetIds(prereqCap);
+							for (int j = 0; j < ids.length; j++) {
+								if (memberships.get(ids[j]) == prereqCap)
+									memberships.remove(ids[j]);
+							}
 							// Recursive if prerequisite capability also has
 							// prerequisite capabilities
 							if (registry.hasPrerequisites(prereqCap))
