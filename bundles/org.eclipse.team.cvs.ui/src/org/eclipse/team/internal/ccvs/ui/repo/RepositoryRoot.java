@@ -286,14 +286,6 @@ public class RepositoryRoot extends PlatformObject {
 		}
 	}
 	
-	/*
-	 * Method clearTags.
-	 */
-	private void clearTags(String remotePath) {
-		String name = getCachePathFor(remotePath);
-		knownTags.remove(name);
-	}
-	
 	/**
 	 * Returns Branch and Version tags for the given files
 	 */	
