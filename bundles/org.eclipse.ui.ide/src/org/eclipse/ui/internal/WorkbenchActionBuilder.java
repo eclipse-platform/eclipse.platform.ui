@@ -546,9 +546,11 @@ public final class WorkbenchActionBuilder {
 		newWizardDropDownAction = IDEActionFactory.NEW_WIZARD_DROP_DOWN.create(getWindow());
 
 		importResourcesAction = IDEActionFactory.IMPORT.create(getWindow());
+		registerGlobalAction(importResourcesAction);
 
 		exportResourcesAction = IDEActionFactory.EXPORT.create(getWindow());
-
+		registerGlobalAction(exportResourcesAction);
+		
 		rebuildAllAction = IDEActionFactory.REBUILD_ALL.create(getWindow());
 		registerGlobalAction(rebuildAllAction);
 
@@ -556,6 +558,7 @@ public final class WorkbenchActionBuilder {
 		registerGlobalAction(saveAction);
 
 		saveAsAction = ActionFactory.SAVE_AS.create(getWindow());
+		registerGlobalAction(saveAsAction);
 
 		saveAllAction = ActionFactory.SAVE_ALL.create(getWindow());
 		registerGlobalAction(saveAllAction);
@@ -611,6 +614,7 @@ public final class WorkbenchActionBuilder {
 		}
 
 		openPreferencesAction = ActionFactory.PREFERENCES.create(getWindow());
+		registerGlobalAction(openPreferencesAction);
 
 		addBookmarkAction = IDEActionFactory.BOOKMARK.create(getWindow());
 		registerGlobalAction(addBookmarkAction);
@@ -682,12 +686,19 @@ public final class WorkbenchActionBuilder {
 		registerGlobalAction(workbenchEditorsAction);
 
 		hideShowEditorAction = ActionFactory.SHOW_EDITOR.create(getWindow());
+		registerGlobalAction(hideShowEditorAction);
 		savePerspectiveAction = ActionFactory.SAVE_PERSPECTIVE.create(getWindow());
+		registerGlobalAction(savePerspectiveAction);
 		editActionSetAction = ActionFactory.EDIT_ACTION_SETS.create(getWindow());
+		registerGlobalAction(editActionSetAction);
 		lockToolBarAction = ActionFactory.LOCK_TOOL_BAR.create(getWindow());
+		registerGlobalAction(lockToolBarAction);
 		resetPerspectiveAction = ActionFactory.RESET_PERSPECTIVE.create(getWindow());
+		registerGlobalAction(resetPerspectiveAction);
 		closePerspAction = ActionFactory.CLOSE_PERSPECTIVE.create(getWindow());
+		registerGlobalAction(closePerspAction);
 		closeAllPerspsAction = ActionFactory.CLOSE_ALL_PERSPECTIVES.create(getWindow());
+		registerGlobalAction(closeAllPerspsAction);
 
 		forwardHistoryAction = ActionFactory.FORWARD_HISTORY.create(getWindow());
 		registerGlobalAction(forwardHistoryAction);
