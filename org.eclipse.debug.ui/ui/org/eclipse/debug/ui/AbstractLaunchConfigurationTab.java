@@ -84,7 +84,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	protected void updateLaunchConfigurationDialog() {
 		if (getLaunchConfigurationDialog() != null) {
 			//order is important here due to the call to 
-			//refresh the tab viewer in udpateButtons()
+			//refresh the tab viewer in updateButtons()
 			//which ensures that the messages are up to date
 			getLaunchConfigurationDialog().updateButtons();
 			getLaunchConfigurationDialog().updateMessage();
