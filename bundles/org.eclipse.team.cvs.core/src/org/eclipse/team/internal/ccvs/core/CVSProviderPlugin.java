@@ -134,7 +134,7 @@ public class CVSProviderPlugin extends Plugin {
 	 */
 	public CVSProviderPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
-		instance = this;
+		setPlugin(this);
 	}
 	
 	/**
@@ -142,11 +142,11 @@ public class CVSProviderPlugin extends Plugin {
 	 */
 	public static void log(TeamException e) {
 		// For now, we'll log the status. However we should do more
-		instance.getLog().log(e.getStatus());
+		log(e.getStatus());
 	}
 	public static void log(IStatus status) {
 		// For now, we'll log the status. However we should do more
-		instance.getLog().log(status);
+		getPlugin().getLog().log(status);
 	}
 
 	/**
@@ -154,10 +154,14 @@ public class CVSProviderPlugin extends Plugin {
 	 * 
 	 * @return the plugin instance
 	 */
-	public static CVSProviderPlugin getPlugin() {
+	public static synchronized CVSProviderPlugin getPlugin() {
 		return instance;
 	}
 
+	private static synchronized void setPlugin(CVSProviderPlugin plugin) {
+		instance = plugin;
+	}
+	
 	/**
 	 * Answers the repository provider type id for the cvs plugin
 	 */
