@@ -1620,6 +1620,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		Position[] annotationPositions= computeOverlappingAnnotationPositions(modelSelection);
 		for (int i= 0; i < annotationPositions.length; i++) {
 			IRegion[] regions= computeCollapsedRegions(annotationPositions[i]);
+			if (regions == null)
+				continue;
 			for (int j= 0; j < regions.length; j++) {
 				IRegion modelRange= regions[j];
 				IRegion widgetRange= modelRange2ClosestWidgetRange(modelRange);
