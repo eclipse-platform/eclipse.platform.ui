@@ -162,7 +162,7 @@ public class Project extends Container implements IProject {
 	public void close(IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String msg = Policy.bind("resources.closing.1", getFullPath().toString()); //$NON-NLS-1$
+			String msg = Policy.bind("resources.closing.1", getName()); //$NON-NLS-1$
 			monitor.beginTask(msg, Policy.totalWork);
 			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
 			try {
@@ -768,7 +768,7 @@ public class Project extends Container implements IProject {
 	public void open(int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String msg = Policy.bind("resources.opening.1", getFullPath().toString()); //$NON-NLS-1$
+			String msg = Policy.bind("resources.opening.1", getName()); //$NON-NLS-1$
 			monitor.beginTask(msg, Policy.totalWork);
 			monitor.subTask(msg);
 			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
