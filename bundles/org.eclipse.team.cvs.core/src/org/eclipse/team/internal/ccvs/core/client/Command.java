@@ -103,7 +103,7 @@ public abstract class Command extends Request {
 	public static final KSubstOption KSUBST_TEXT_KEYWORDS_ONLY = new KSubstOption("-kk"); //$NON-NLS-1$
 
 	/*** Default command output listener ***/
-	protected static final ICommandOutputListener DEFAULT_OUTPUT_LISTENER = new CommandOutputAdapter();
+	protected static final ICommandOutputListener DEFAULT_OUTPUT_LISTENER = new CommandOutputListener();
 	
 	/**
 	 * Prevents client code from instantiating us.

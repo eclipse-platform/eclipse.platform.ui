@@ -10,15 +10,15 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 
 /*
  * This class pares the output of the "cvs checkout -c" command which returns the list of modules 
  * defined in the CVSROOT/modules file.
  */
-public class ModuleDefinitionsListener implements ICommandOutputListener {
+public class ModuleDefinitionsListener extends CommandOutputListener {
 
 	// the last line read from the context (used to accumulate multi-line definitions)
 	private String lastLine = ""; //$NON-NLS-1$
@@ -53,13 +53,6 @@ public class ModuleDefinitionsListener implements ICommandOutputListener {
 			moduleMap.put(module, line);
 		}
 		return OK;
-	}
-
-	/*
-	 * @see ICommandOutputListener#errorLine(String, ICVSFolder, IProgressMonitor)
-	 */
-	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {	
-		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
 	}
 	
 	public String[] getModuleExpansions() {

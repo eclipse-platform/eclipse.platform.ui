@@ -15,10 +15,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 
-public class StatusListener implements ICommandOutputListener {
+public class StatusListener extends CommandOutputListener {
 	private static boolean isFolder = false;
 	private IStatusListener statusListener;
 
@@ -46,7 +46,7 @@ public class StatusListener implements ICommandOutputListener {
 	}
 
 	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {
-		String serverMessage = ((CVSRepositoryLocation)location).getServerMessageWithoutPrefix(line, SERVER_PREFIX);
+		String serverMessage = getServerMessage(line, location);
 		if (serverMessage != null) {
 			if (serverMessage.startsWith("conflict:")) {//$NON-NLS-1$
 				// We get this because we made up an entry line to send to the server
@@ -63,7 +63,7 @@ public class StatusListener implements ICommandOutputListener {
 			// why it was needed. Therefore, I have removed the code to see if anything is effected
 			isFolder = false;
 		}
-		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
+		return super.errorLine(line, location, commandRoot, monitor);
 	}
 	
 	/**

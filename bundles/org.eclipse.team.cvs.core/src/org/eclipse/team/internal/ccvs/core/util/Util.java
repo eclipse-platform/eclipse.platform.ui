@@ -125,25 +125,30 @@ public class Util {
 			if (stringPath.equals(Session.CURRENT_LOCAL_FOLDER)) {
 				return resource.getName();
 			}
-			// Search backwards until split separators are found
-			int count = 0;
-			int index = stringPath.length();
-			while (count++ < split && index != -1) {
-				index = stringPath.lastIndexOf(Session.SERVER_SEPARATOR, index - 1);
-			}
-			if (index == -1) {
-				return stringPath;
-			} else {
-				return Policy.bind("Util.truncatedPath", stringPath.substring(index)); //$NON-NLS-1$
-			}
+			return toTruncatedPath(stringPath, split);
 		} catch(CVSException e) {
 			return resource.getName();
+		}
+	}
+
+	public static String toTruncatedPath(String stringPath, int split) {
+		// Search backwards until split separators are found
+		int count = 0;
+		int index = stringPath.length();
+		while (count++ < split && index != -1) {
+			index = stringPath.lastIndexOf(Session.SERVER_SEPARATOR, index - 1);
+		}
+		if (index == -1) {
+			return stringPath;
+		} else {
+			return Policy.bind("Util.truncatedPath", stringPath.substring(index)); //$NON-NLS-1$
 		}
 	}
 	
 	/**
 	 * Helper method that will time out when making a socket connection.
-	 * This is required because there is no way to provide a timeout value
+	 * This i
+	 * s required because there is no way to provide a timeout value
 	 * when creating a socket and in some instances, they don't seem to
 	 * timeout at all.
 	 */

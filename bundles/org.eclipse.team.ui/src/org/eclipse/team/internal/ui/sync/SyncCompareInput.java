@@ -390,6 +390,8 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 			}
 			ErrorDialog.openError(shell, problemMessage, null, error);
 			TeamUIPlugin.log(error);
+			// Throw an interrupted exception so we drop out of the sync
+			throw new InterruptedException();
 		}
 	}
 

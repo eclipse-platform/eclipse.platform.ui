@@ -25,6 +25,7 @@ import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
+import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 
 /**
  * Abstract base class for requests that are to be sent to the server.
@@ -138,15 +139,33 @@ public abstract class Request {
 			if (response.equals("ok")) {  //$NON-NLS-1$
 				break;
 			} else if (response.equals("error") || (isCVSNT && response.equals(""))) {  //$NON-NLS-1$ //$NON-NLS-2$
-				if (argument.trim().length() == 0) {
+				argument = argument.trim();
+				boolean serious = false;
+				if (argument.length() == 0) {
 					argument = getServerErrorMessage();
+				} else {
+					argument = Policy.bind("Command.seriousServerError", argument); //$NON-NLS-1$
+					serious = true;
 				}
+					
 				if (accumulatedStatus.isEmpty()) {
 					accumulatedStatus.add(new CVSStatus(CVSStatus.ERROR, CVSStatus.SERVER_ERROR, Policy.bind("Command.noMoreInfoAvailable")));//$NON-NLS-1$
 				}
-				return new MultiStatus(CVSProviderPlugin.ID, CVSStatus.SERVER_ERROR, 
+				IStatus status = new MultiStatus(CVSProviderPlugin.ID, CVSStatus.SERVER_ERROR, 
 					(IStatus[]) accumulatedStatus.toArray(new IStatus[accumulatedStatus.size()]),
 					argument, null);
+				if (serious) {
+					throw new CVSServerException(status);
+				} else {
+					// look for particularly bad errors in the accumulated statii
+					for (Iterator iter = accumulatedStatus.iterator(); iter.hasNext();) {
+						IStatus s = (IStatus) iter.next();
+						if (s.getCode() == CVSStatus.PROTOCOL_ERROR) {
+							throw new CVSServerException(status);
+						}
+					}
+				}
+				return status;
 			// handle message responses
 			} else if (response.equals("MT")) {  //$NON-NLS-1$
 				// Handle the MT response

@@ -15,10 +15,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.Update;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 
-public class UpdateListener implements ICommandOutputListener {
+public class UpdateListener extends CommandOutputListener {
 
 	IUpdateMessageListener updateMessageListener;
 	boolean merging = false;
@@ -97,7 +97,7 @@ public class UpdateListener implements ICommandOutputListener {
 	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
 		
-		String serverMessage = ((CVSRepositoryLocation)location).getServerMessageWithoutPrefix(line, SERVER_PREFIX);
+		String serverMessage = getServerMessage(line, location);
 		if (serverMessage != null) {
 			// Strip the prefix from the line
 			String message = serverMessage;
@@ -160,10 +160,10 @@ public class UpdateListener implements ICommandOutputListener {
 				return new CVSStatus(IStatus.INFO, CVSStatus.CONFLICT, commandRoot, line);
 			} else if (!message.startsWith("cannot open directory") //$NON-NLS-1$
 					&& !message.startsWith("nothing known about")) { //$NON-NLS-1$
-				return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
+				return super.errorLine(line, location, commandRoot, monitor);
 			}
 		} else {
-			String serverAbortedMessage = ((CVSRepositoryLocation)location).getServerMessageWithoutPrefix(line, SERVER_ABORTED_PREFIX);
+			String serverAbortedMessage = getServerAbortedMessage(line, location);
 			if (serverAbortedMessage != null) {
 				// Strip the prefix from the line
 				String message = serverAbortedMessage;
@@ -172,10 +172,11 @@ public class UpdateListener implements ICommandOutputListener {
 					// To get the folders, the update request should be re-issued for HEAD
 					return new CVSStatus(CVSStatus.WARNING, CVSStatus.NO_SUCH_TAG, commandRoot, line);
 				} else {
-					return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
+					return super.errorLine(line, location, commandRoot, monitor);
 				}
 			}
 		}
-		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
+		return super.errorLine(line, location, commandRoot, monitor);
 	}
+
 }

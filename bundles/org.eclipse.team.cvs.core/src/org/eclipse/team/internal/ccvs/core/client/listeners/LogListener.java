@@ -18,10 +18,10 @@ import org.eclipse.team.internal.ccvs.core.DateUtil;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 
-public class LogListener implements ICommandOutputListener {
+public class LogListener extends CommandOutputListener {
 	private List entries;
 	private RemoteFile file;
 	
@@ -131,7 +131,7 @@ public class LogListener implements ICommandOutputListener {
 	}
 
 	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {
-		String serverMessage = ((CVSRepositoryLocation)location).getServerMessageWithoutPrefix(line, SERVER_PREFIX);
+		String serverMessage = getServerMessage(line, location);
 		if (serverMessage != null) {
 			// look for the following condition
 			// E cvs server: nothing known about .vcm_meta

@@ -15,6 +15,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
@@ -29,8 +30,10 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  * e.g.
  *   RCS file: path/filename,v
  *   done
+ * 
+ * We don't expect to see anything special on stderr if the command succeeds.
  */
-public class AdminKSubstListener implements ICommandOutputListener {
+public class AdminKSubstListener extends CommandOutputListener {
 	private KSubstOption ksubstMode;
 	
 	public AdminKSubstListener(KSubstOption ksubstMode) {
@@ -80,17 +83,5 @@ public class AdminKSubstListener implements ICommandOutputListener {
 			}
 		}
 		return OK;
-	}
-
-	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot,
-		IProgressMonitor monitor) {
-		// we don't expect to see anything on stderr if the command succeeds
-		// possible errors include:
-		//   cvs server: cannot open /repo/a.txt,v: Permission denied
-		//   cvs server: failed to create lock directory for `/repo/folder' (/repo/folder/#cvs.lock): Permission denied
-		//   cvs server: failed to remove lock /repo/folder/#cvs.wfl.fiji.4442: Permission denied
-		//   cvs server: lock failed - giving up
-		//   cvs [server aborted]: lock failed - giving up
-		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, line);
 	}
 }

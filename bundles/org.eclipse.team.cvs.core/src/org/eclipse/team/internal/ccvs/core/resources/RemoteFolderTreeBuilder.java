@@ -520,7 +520,7 @@ public class RemoteFolderTreeBuilder {
 				if (newDirectory) {
 					// Record new directory with parent so it can be retrieved when building the parent
 					recordDelta(path, FOLDER, Update.STATE_NONE);
-					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", path)); //$NON-NLS-1$
+					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", Util.toTruncatedPath(path, 3))); //$NON-NLS-1$
 					// Record new directory to be used as a parameter to fetch its contents
 					newChildDirectories.add(path.toString());
 				}
@@ -531,7 +531,7 @@ public class RemoteFolderTreeBuilder {
 					projectDoesNotExist = true;
 				} else {
 					recordDelta(path, DELETED, Update.STATE_NONE);
-					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", path)); //$NON-NLS-1$
+					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", Util.toTruncatedPath(path, 3))); //$NON-NLS-1$
 				}
 			}
 			public void fileInformation(int type, ICVSFolder root, String filename) {
@@ -554,13 +554,13 @@ public class RemoteFolderTreeBuilder {
 					case Update.STATE_REMOTE_CHANGES : // We have an remote change to an unmodified local file
 								changedFiles.add(filename);
 								recordDelta(filename, UNKNOWN, type);
-								monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", filename)); //$NON-NLS-1$
+								monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", Util.toTruncatedPath(filename, 3))); //$NON-NLS-1$
 								break;
 				}	
 			}
 			public void fileDoesNotExist(ICVSFolder root, String filename) {
 				recordDelta(filename, DELETED, Update.STATE_NONE);
-				monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", filename)); //$NON-NLS-1$
+				monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", Util.toTruncatedPath(filename, 3))); //$NON-NLS-1$
 			}
 		};
 		
@@ -589,7 +589,7 @@ public class RemoteFolderTreeBuilder {
 					// Record new directory with parent so it can be retrieved when building the parent
 					// NOTE: Check path prefix
 					recordDelta(path, FOLDER, Update.STATE_NONE);
-					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", path)); //$NON-NLS-1$
+					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", Util.toTruncatedPath(path, 3))); //$NON-NLS-1$
 				}
 			}
 			public void directoryDoesNotExist(ICVSFolder root, String path) {
@@ -598,7 +598,7 @@ public class RemoteFolderTreeBuilder {
 				// NOTE: Check path prefix
 				changedFiles.add(filename);
 				recordDelta(filename, ADDED, type);
-				monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", filename)); //$NON-NLS-1$
+				monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", Util.toTruncatedPath(filename, 3))); //$NON-NLS-1$
 			}
 			public void fileDoesNotExist(ICVSFolder root, String filename) {
 			}
@@ -642,7 +642,7 @@ public class RemoteFolderTreeBuilder {
 			public void fileStatus(ICVSFolder root, String path, String remoteRevision) {
 				try {
 					updateRevision(path, remoteRevision);
-					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingRevision", path.toString())); //$NON-NLS-1$
+					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingRevision", Util.toTruncatedPath(path, 3))); //$NON-NLS-1$
 				} catch (CVSException e) {
 					exceptions.add(e);
 				}

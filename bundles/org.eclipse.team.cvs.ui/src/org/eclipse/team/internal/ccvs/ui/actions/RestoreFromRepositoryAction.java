@@ -32,7 +32,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.CommandOutputAdapter;
+import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.Log;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
@@ -61,7 +61,7 @@ public class RestoreFromRepositoryAction extends CVSAction {
 	 * that have been deleted will be in the Attic. The Attic may also
 	 * contains files that exist on a branch but not in HEAD
 	 */
-	class AtticLogListener extends CommandOutputAdapter {
+	class AtticLogListener extends CommandOutputListener {
 		private static final String ATTIC = "Attic"; //$NON-NLS-1$
 		private static final String RCS_FILE_POSTFIX = ",v"; //$NON-NLS-1$
 		private static final String LOGGING_PREFIX = "Logging "; //$NON-NLS-1$
