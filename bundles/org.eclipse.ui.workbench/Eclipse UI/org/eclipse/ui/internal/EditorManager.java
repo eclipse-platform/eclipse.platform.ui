@@ -943,7 +943,7 @@ public class EditorManager {
 		} catch (InvocationTargetException e) {
 			String title = WorkbenchMessages.format("EditorManager.operationFailed", new Object[] { opName }); //$NON-NLS-1$
 			Throwable targetExc = e.getTargetException();
-			WorkbenchPlugin.log(title, new Status(Status.WARNING, PlatformUI.PLUGIN_ID, 0, title, targetExc));
+			WorkbenchPlugin.log(title, new Status(IStatus.WARNING, PlatformUI.PLUGIN_ID, 0, title, targetExc));
 			MessageDialog.openError(window.getShell(), WorkbenchMessages.getString("Error"), //$NON-NLS-1$
 			title + ':' + targetExc.getMessage());
 		} catch (InterruptedException e) {
@@ -1013,19 +1013,20 @@ public class EditorManager {
 			public void run(IProgressMonitor monitor) {
 //				try {
 					// @issue reference to workspace to run runnable
-/*					IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
-					ResourcesPlugin.getWorkspace().run(workspaceOp, monitorWrap);
-*/
+					IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
+//					ResourcesPlugin.getWorkspace().run(workspaceOp, monitorWrap);
+
 //--------- This code was in the IWorkspaceRunnable above
-					monitor.beginTask("", finalEditors.size()); //$NON-NLS-1$
+					monitorWrap.beginTask("", finalEditors.size()); //$NON-NLS-1$
 					Iterator enum = finalEditors.iterator();
 					while (enum.hasNext()) {
 						IEditorPart part = (IEditorPart) enum.next();
-						part.doSave(new SubProgressMonitor(monitor, 1));
-						if (monitor.isCanceled())
+						part.doSave(new SubProgressMonitor(monitorWrap, 1));
+						if (monitorWrap.isCanceled())
 							break;
 					}
 //-----------
+					monitorWrap.done();
 /*				} catch (CoreException e) {
 					IStatus status = new Status(Status.WARNING, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.getString("EditorManager.saveFailed"), e); //$NON-NLS-1$
 					WorkbenchPlugin.log(WorkbenchMessages.getString("EditorManager.saveFailed"), status); //$NON-NLS-1$
@@ -1220,12 +1221,13 @@ public class EditorManager {
 				this.name = title;
 		}
 		Editor() {
+			// do nothing
 		}
 
 		public String getFactoryId() {
-			IEditorPart part = getEditor(false);
-			if(part != null) {
-				IPersistableElement persistable = part.getEditorInput().getPersistable();
+			IEditorPart editor = getEditor(false);
+			if (editor != null) {
+				IPersistableElement persistable = editor.getEditorInput().getPersistable();
 				if(persistable != null)
 					return persistable.getFactoryId();
 				return null;
