@@ -140,4 +140,21 @@ public class FontDefinition implements IHierarchalThemeElementDefinition,
     public boolean isEditable() {
         return isEditable;
     }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof FontDefinition) {
+            return getId().equals(((FontDefinition)obj).getId());
+        }
+        return false;
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        return id.hashCode();
+    }    
 }

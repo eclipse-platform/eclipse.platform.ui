@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
@@ -28,17 +27,15 @@ import org.eclipse.core.runtime.IConfigurationElement;
 public class ThemeDescriptor implements IThemeDescriptor {
 
     /* Theme */
-    private static final String ATT_ID = "id";//$NON-NLS-1$
+    public static final String ATT_ID = "id";//$NON-NLS-1$
 
     private static final String ATT_NAME = "name";//$NON-NLS-1$	
 
-    private Collection colors = new ArrayList();
-
-    private IConfigurationElement configElement;
+    private Collection colors = new HashSet();
 
     private String description;
 
-    private Collection fonts = new ArrayList();
+    private Collection fonts = new HashSet();
 
     private String id;
 
@@ -47,11 +44,11 @@ public class ThemeDescriptor implements IThemeDescriptor {
     private Map dataMap = new HashMap();
 
     /**
-     * Create a new ThemeDescriptor for an extension.
+     * Create a new ThemeDescriptor
+     * @param id
      */
-    public ThemeDescriptor(IConfigurationElement e) throws CoreException {
-        configElement = e;
-        processExtension();
+    public ThemeDescriptor(String id) {
+        this.id = id;
     }
 
     /**
@@ -60,6 +57,8 @@ public class ThemeDescriptor implements IThemeDescriptor {
      * @param definition the definition to add
      */
     void add(ColorDefinition definition) {
+        if (colors.contains(definition))
+            return;
         colors.add(definition);
     }
 
@@ -69,6 +68,8 @@ public class ThemeDescriptor implements IThemeDescriptor {
      * @param definition the definition to add
      */
     void add(FontDefinition definition) {
+        if (fonts.contains(definition))
+            return;
         fonts.add(definition);
     }
 
@@ -79,6 +80,9 @@ public class ThemeDescriptor implements IThemeDescriptor {
      * @param data the data
      */
     void setData(String key, Object data) {
+        if (dataMap.containsKey(key))
+            return;
+            
         dataMap.put(key, data);
     }
 
@@ -124,11 +128,11 @@ public class ThemeDescriptor implements IThemeDescriptor {
     }
 
     /*
-     * load a theme descriptor from the registry.
+     * load the name if it is not already set.
      */
-    private void processExtension() throws CoreException {
-        id = configElement.getAttribute(ATT_ID);
-        name = configElement.getAttribute(ATT_NAME);
+    void extractName(IConfigurationElement configElement) {
+        if (name == null)
+            name = configElement.getAttribute(ATT_NAME);
     }
 
     /**
@@ -137,7 +141,8 @@ public class ThemeDescriptor implements IThemeDescriptor {
      * @param description the description
      */
     void setDescription(String description) {
-        this.description = description;
+        if (description == null)
+            this.description = description;
     }
 
     /* (non-Javadoc)

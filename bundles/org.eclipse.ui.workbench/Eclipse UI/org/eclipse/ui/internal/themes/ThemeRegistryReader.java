@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
@@ -87,11 +86,11 @@ public class ThemeRegistryReader extends RegistryReader {
 
     public static final String TAG_THEME = "theme";//$NON-NLS-1$
 
-    private Collection categoryDefinitions = new ArrayList();
+    private Collection categoryDefinitions = new HashSet();
 
-    private Collection colorDefinitions = new ArrayList();
+    private Collection colorDefinitions = new HashSet();
 
-    private Collection fontDefinitions = new ArrayList();
+    private Collection fontDefinitions = new HashSet();
 
     private ThemeDescriptor themeDescriptor = null;
 
@@ -284,14 +283,16 @@ public class ThemeRegistryReader extends RegistryReader {
         if (themeDescriptor == null && elementName.equals(TAG_COLORDEFINITION)) {
             ColorDefinition definition = readColor(element);
             if (definition != null) {
-                colorDefinitions.add(definition);
-                themeRegistry.add(definition);
+                if (!colorDefinitions.contains(definition)) {
+	                colorDefinitions.add(definition);
+	                themeRegistry.add(definition);
+                }
             }
             return true;
         } else if (themeDescriptor != null
                 && elementName.equals(TAG_COLOROVERRIDE)) {
             ColorDefinition definition = readColor(element);
-            if (definition != null) {
+            if (definition != null) {                
                 themeDescriptor.add(definition);
             }
             return true;
@@ -299,8 +300,10 @@ public class ThemeRegistryReader extends RegistryReader {
                 && elementName.equals(TAG_FONTDEFINITION)) {
             FontDefinition definition = readFont(element);
             if (definition != null) {
-                fontDefinitions.add(definition);
-                themeRegistry.add(definition);
+                if (!fontDefinitions.contains(definition)) {
+	                fontDefinitions.add(definition);
+	                themeRegistry.add(definition);
+                }
             }
             return true;
         } else if (themeDescriptor != null
@@ -314,8 +317,10 @@ public class ThemeRegistryReader extends RegistryReader {
                 && elementName.equals(TAG_CATEGORYDEFINITION)) {
             ThemeElementCategory definition = readCategory(element);
             if (definition != null) {
-                categoryDefinitions.add(definition);
-                themeRegistry.add(definition);
+                if (!categoryDefinitions.contains(definition)) {
+	                categoryDefinitions.add(definition);
+	                themeRegistry.add(definition);
+                }
             }
             return true;
         } else if (element.getName().equals(TAG_THEME)) {
@@ -344,7 +349,8 @@ public class ThemeRegistryReader extends RegistryReader {
                     themeDescriptor.setData(name, value);
                 } else {
                     themeRegistry.setData(name, value);
-                    dataMap.put(name, value);
+                    if (!dataMap.containsKey(name))                         
+                    	dataMap.put(name, value);
                 }
             }
             return true;
@@ -460,14 +466,20 @@ public class ThemeRegistryReader extends RegistryReader {
      */
     protected ThemeDescriptor readTheme(IConfigurationElement element) {
         ThemeDescriptor desc = null;
-        try {
-            desc = new ThemeDescriptor(element);
+
+        String id = element.getAttribute(ThemeDescriptor.ATT_ID);
+        if (id == null)
+            return null;
+        //see if the theme has already been created in another extension
+        desc = (ThemeDescriptor) themeRegistry.findTheme(id);
+        //if not, create it
+        if (desc == null) {
+            desc = new ThemeDescriptor(id);
             themeRegistry.add(desc);
-        } catch (CoreException e) {
-            // log an error since its not safe to open a dialog here
-            WorkbenchPlugin.log(
-                    "Unable to create theme descriptor.", e.getStatus());//$NON-NLS-1$
         }
+        //set the name as applicable
+        desc.extractName(element);
+    
         return desc;
     }
 
@@ -477,8 +489,7 @@ public class ThemeRegistryReader extends RegistryReader {
      * @param in the registry to read
      * @param out the registry to write to
      */
-    public void readThemes(IExtensionRegistry in, ThemeRegistry out)
-            throws CoreException {
+    public void readThemes(IExtensionRegistry in, ThemeRegistry out) {
         // this does not seem to really ever be throwing an the exception
         setRegistry(out);
         readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_THEMES);

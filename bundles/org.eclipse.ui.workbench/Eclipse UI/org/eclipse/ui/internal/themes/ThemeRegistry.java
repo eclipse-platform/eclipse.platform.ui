@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,6 +60,8 @@ public class ThemeRegistry implements IThemeRegistry {
      * Add a descriptor to the registry.
      */
     void add(IThemeDescriptor desc) {
+        if (findTheme(desc.getId()) != null)
+            return;
         themes.add(desc);
     }
 
@@ -66,6 +69,8 @@ public class ThemeRegistry implements IThemeRegistry {
      * Add a descriptor to the registry.
      */
     void add(ColorDefinition desc) {
+        if (findColor(desc.getId()) != null)
+            return;
         colors.add(desc);
     }
 
@@ -195,6 +200,8 @@ public class ThemeRegistry implements IThemeRegistry {
      * @param definition
      */
     void add(FontDefinition definition) {
+        if (findFont(definition.getId()) != null)
+            return;
         fonts.add(definition);
     }
 
@@ -220,6 +227,8 @@ public class ThemeRegistry implements IThemeRegistry {
      * @param definition
      */
     void add(ThemeElementCategory definition) {
+        if (findCategory(definition.getId()) != null)
+            return;
         categories.add(definition);
     }
 
@@ -239,6 +248,9 @@ public class ThemeRegistry implements IThemeRegistry {
      * @param value
      */
     void setData(String name, String value) {
+        if (dataMap.containsKey(name))
+            return;
+        
         dataMap.put(name, value);
     }
 
@@ -255,7 +267,12 @@ public class ThemeRegistry implements IThemeRegistry {
      * @param otherData the other data to add
      */
     public void addData(Map otherData) {
-        dataMap.putAll(otherData);
+        for (Iterator i = otherData.keySet().iterator(); i.hasNext();) {
+            Object key = i.next();
+            if (dataMap.containsKey(key))
+                continue;
+            dataMap.put(key, otherData.get(key));
+        }
     }
 
     /**

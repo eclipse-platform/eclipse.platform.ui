@@ -496,16 +496,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      */
     public IThemeRegistry getThemeRegistry() {
         if (themeRegistry == null) {
-            try {
-                themeRegistry = new ThemeRegistry();
-                ThemeRegistryReader reader = new ThemeRegistryReader();
-                reader.readThemes(Platform.getExtensionRegistry(),
-                        themeRegistry);
-            } catch (CoreException e) {
-                // cannot safely show a dialog so log it
-                WorkbenchPlugin.log(
-                        "Unable to read theme registry.", e.getStatus()); //$NON-NLS-1$
-            }
+            themeRegistry = new ThemeRegistry();
+            ThemeRegistryReader reader = new ThemeRegistryReader();
+            reader.readThemes(Platform.getExtensionRegistry(),
+                    themeRegistry);
         }
         return themeRegistry;
     }

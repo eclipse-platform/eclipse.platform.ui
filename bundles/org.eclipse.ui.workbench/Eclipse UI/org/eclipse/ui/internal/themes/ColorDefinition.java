@@ -160,4 +160,21 @@ public class ColorDefinition implements IPluginContribution,
     public boolean isEditable() {
         return isEditable;
     }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof ColorDefinition) {
+            return getId().equals(((ColorDefinition)obj).getId());
+        }
+        return false;
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

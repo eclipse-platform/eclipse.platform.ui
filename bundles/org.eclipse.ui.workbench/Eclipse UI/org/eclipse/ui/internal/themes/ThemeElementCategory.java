@@ -116,4 +116,21 @@ public class ThemeElementCategory implements IPluginContribution,
     public String getParentId() {
         return parentId;
     }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof ThemeElementCategory) {
+            return getId().equals(((ThemeElementCategory)obj).getId());
+        }
+        return false;
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        return id.hashCode();
+    }    
 }
