@@ -18,7 +18,6 @@ import org.eclipse.compare.IContentChangeListener;
 import org.eclipse.compare.IContentChangeNotifier;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -146,28 +145,6 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 		}
 	}
 	
-	/*
-	 * Flatten the text in the multiline comment
-	 * @param string
-	 * @return String
-	 */
-	private String flattenText(String string) {
-		StringBuffer buffer = new StringBuffer(string.length() + 20);
-		boolean skipAdjacentLineSeparator = true;
-		for (int i = 0; i < string.length(); i++) {
-			char c = string.charAt(i);
-			if (c == '\r' || c == '\n') {
-				if (!skipAdjacentLineSeparator)
-					buffer.append("/"); //$NON-NLS-1$
-				skipAdjacentLineSeparator = true;
-			} else {
-				buffer.append(c);
-				skipAdjacentLineSeparator = false;
-			}
-		}
-		return buffer.toString();
-	}	
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
 	 */
@@ -188,52 +165,10 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 	public boolean equals(Object other) {
 		if(other == this) return true;
 		if(other instanceof SyncInfoCompareInput) {
-			return equalDiffNodes(node, (SyncInfoDiffNode)((SyncInfoCompareInput)other).getCompareResult());
+			return getSyncInfo().equals(((SyncInfoCompareInput)other).getSyncInfo());
 		}
 		return false;
 	}	
-	
-	private boolean equalDiffNodes(SyncInfoDiffNode node1, SyncInfoDiffNode node2) {
-		
-		if(node1 == null || node2 == null) {
-			return false;
-		}
-		
-		// First, ensure the local resources are equals
-		IResource local1 = null;
-		if (node1.getLeft() != null)
-			local1 = ((LocalResourceTypedElement)node1.getLeft()).getResource();
-		IResource local2 = null;
-		if (node2.getLeft() != null)
-			local2 = ((LocalResourceTypedElement)node2.getLeft()).getResource();
-		if (!equalObjects(local1, local2)) return false;
-		
-		// Next, ensure the remote resources are equal
-		IRemoteResource remote1 = null;
-		if (node1.getRight() != null)
-			remote1 = ((RemoteResourceTypedElement)node1.getRight()).getRemote();
-		IRemoteResource remote2 = null;
-		if (node2.getRight() != null)
-			remote2 = ((RemoteResourceTypedElement)node2.getRight()).getRemote();
-		if (!equalObjects(remote1, remote2)) return false;
-
-		// Finally, ensure the base resources are equal
-		IRemoteResource base1 = null;
-		if (node1.getAncestor() != null)
-			base1 = ((RemoteResourceTypedElement)node1.getAncestor()).getRemote();
-		IRemoteResource base2 = null;
-		if (node2.getAncestor() != null)
-			base2 = ((RemoteResourceTypedElement)node2.getAncestor()).getRemote();
-		if (!equalObjects(base1, base2)) return false;
-		
-		return true;
-	}
-	
-	private boolean equalObjects(Object o1, Object o2) {
-		if (o1 == null && o2 == null) return true;
-		if (o1 == null || o2 == null) return false;
-		return o1.equals(o2);
-	}
 	
 	/* (non-Javadoc)
 	 * @see CompareEditorInput#saveChanges(org.eclipse.core.runtime.IProgressMonitor)
