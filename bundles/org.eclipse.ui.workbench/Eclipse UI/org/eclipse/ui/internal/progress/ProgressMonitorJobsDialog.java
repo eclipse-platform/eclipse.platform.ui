@@ -329,6 +329,12 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
                      * @see java.lang.Runnable#run()
                      */
                     public void run() {
+						//Reset the watch if it is not safe to open
+						 if (!ProgressManagerUtil.safeToOpen(ProgressMonitorJobsDialog.this)){
+							  watchTicks();
+							  return;
+						 }
+			                 
                         if (!alreadyClosed)
                             open();
                     }
