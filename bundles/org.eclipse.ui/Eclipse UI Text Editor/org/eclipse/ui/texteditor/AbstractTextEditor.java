@@ -598,52 +598,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * Restores a selection previously remembered by <code>rememberSelection</code>.
-	 * Subclasses should implement this method. This default implementation selects the
-	 * remembered textual range after having check whether it is valid or not.
+	 * Subclasses may reimplement this method and thereby semantically adapt the
+	 * remembered selection. This default implementation just selects the
+	 * remembered textual range. 
 	 * 
 	 * @see #rememberSelection
 	 */
 	protected void restoreSelection() {
-		ISourceViewer viewer= getSourceViewer();
-		if (viewer == null)
-			return;
-		
-		if (fRememberedSelection == null)
-			return;
-				
-		int offset= fRememberedSelection.getOffset();
-		int length= fRememberedSelection.getLength();
+		if (getSourceViewer() != null && fRememberedSelection != null)
+			selectAndReveal(fRememberedSelection.getOffset(), fRememberedSelection.getLength());
 		fRememberedSelection= null;
-		
-		IDocument document= viewer.getDocument();
-		if (offset + length <= document.getLength()) {
-			
-			try {
-				
-				IRegion line= document.getLineInformationOfOffset(offset);
-				int lineEnd= line.getOffset() + line.getLength();
-				int delta= offset - lineEnd;
-				if (delta > 0) {
-					// in the middle of a multi byte line delimiter
-					offset -= delta;
-					length += delta;
-				}
-				
-				int end= offset + length;
-				line= document.getLineInformationOfOffset(end);
-				lineEnd= line.getOffset() + line.getLength();
-				delta= end - lineEnd;
-				if (delta > 0) {
-					// in the middle of a multi byte line delimiter
-					length -= delta;
-				}
-					
-				selectAndReveal(offset, length);
-			
-			} catch (BadLocationException x) {
-				// select nothing
-			}
-		}
 	}
 	
 	/**
