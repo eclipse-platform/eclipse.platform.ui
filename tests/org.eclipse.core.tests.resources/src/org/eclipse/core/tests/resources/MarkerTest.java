@@ -47,7 +47,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	/**
 	 * Tests the appearance of marker changes in the resource delta.
 	 */
-	public void _testMarkerChangesInDelta3() {
+	public void testMarkerChangesInDelta3() {
 		log("TestMarkerChangesInDelta3");
 
 		// Create and register a listener.
@@ -71,9 +71,9 @@ public class MarkerTest extends EclipseWorkspaceTest {
 				listener.reset();
 				resource.move(destination, false, getMonitor());
 				destinationResource = getWorkspace().getRoot().findMember(destination);
-				markers[2] = destinationResource.getMarker(0);
+				markers[2] = destinationResource.getMarker(markers[0].getId());
 				destinationChild = ((IProject) destinationResource).findMember(child.getName());
-				markers[3] = destinationChild.getMarker(0);
+				markers[3] = destinationChild.getMarker(markers[1].getId());
 				assertEquals("1.1." + resource.getFullPath(), 4, listener.numAffectedResources());
 				assertTrue("1.2." + resource.getFullPath(), listener.checkChanges(resource, null, new IMarker[] {markers[0]}, null));
 				assertTrue("1.3." + resource.getFullPath(), listener.checkChanges(child, null, new IMarker[] {markers[1]}, null));
@@ -83,17 +83,15 @@ public class MarkerTest extends EclipseWorkspaceTest {
 				fail("1.99", e);
 			}
 
-			// COPY the resource and look at the deltas
+			// COPY the resource and look at the deltas - 
+			// there should be no changes since markers are not copied
 			try {
 				resource = getWorkspace().getRoot().findMember("2");
 				destination = resource.getFullPath().removeLastSegments(1).append(resource.getFullPath().lastSegment() + "copy");
-				markers[0] = resource.createMarker(IMarker.BOOKMARK);
+				resource.createMarker(IMarker.BOOKMARK);
 				listener.reset();
 				resource.copy(destination, false, getMonitor());
-				destinationResource = getWorkspace().getRoot().findMember(destination);
-				markers[1] = destinationResource.getMarker(0);
-				assertEquals("2.1." + resource.getFullPath(), 1, listener.numAffectedResources());
-				assertTrue("2.3." + destinationResource.getFullPath(), listener.checkChanges(destinationResource, new IMarker[] {markers[1]}, null, null));
+				assertEquals("2.1." + resource.getFullPath(), 0, listener.numAffectedResources());
 			} catch (CoreException e) {
 				fail("2.99", e);
 			}
@@ -271,30 +269,6 @@ public class MarkerTest extends EclipseWorkspaceTest {
 		display(start, stop);
 	}
 
-	/**
-	 * Test a specific PR case.
-	 */
-	public void _testPR() {
-		log("_testPR");
-
-		try {
-			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					IResource resource = getWorkspace().getRoot().getProjects()[0].members()[0];
-					resource.createMarker(IMarker.BOOKMARK);
-					IPath destination = resource.getFullPath().removeLastSegments(1).append(resource.getName() + "new");
-					resource.move(destination, true, getMonitor());
-					IResource dest = getWorkspace().getRoot().findMember(destination);
-					dest.move(resource.getFullPath(), true, getMonitor());
-				}
-			};
-			getWorkspace().run(body, getMonitor());
-		} catch (CoreException e) {
-			fail("99.9", e);
-		}
-
-	}
-
 	protected void addChildren(ArrayList result, IPath root, int breadth, int depth) {
 		for (int i = 1; i < breadth + 1; i++) {
 			IPath child = root.append(i + "");
@@ -439,9 +413,9 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	public static Test suite() {
 		return new TestSuite(MarkerTest.class);
 
-		//	TestSuite suite = new TestSuite();
-		//	suite.addTest(new MarkerTest("testMarkerDeltasMove"));
-		//	return suite;
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new MarkerTest("testMarkerChangesInDelta3"));
+		//		return suite;
 	}
 
 	public void tearDown() throws Exception {
