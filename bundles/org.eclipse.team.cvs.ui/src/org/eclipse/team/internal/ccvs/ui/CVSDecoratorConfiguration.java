@@ -42,7 +42,6 @@ public class CVSDecoratorConfiguration {
 	public static final String DEFAULT_PROJECTTEXTFORMAT = "{dirty_flag}{name}  {tag} [{host}]"; //$NON-NLS-1$
 
 	// prefix characters that can be removed if the following binding is not found
-	private static final char KEYWORD_SEPSPACE = ' ';
 	private static final char KEYWORD_SEPCOLON = ':';
 	private static final char KEYWORD_SEPAT = '@';
 		

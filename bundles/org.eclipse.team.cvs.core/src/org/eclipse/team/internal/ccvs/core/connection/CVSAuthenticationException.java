@@ -18,7 +18,9 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 
 public class CVSAuthenticationException extends CVSException {
 
-	/**
+	private static final long serialVersionUID = 1L;
+
+    /**
 	 * Code indicating that authentication can be retried after 
 	 * prompting the user for corrected authentication information
 	 */

@@ -16,10 +16,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -57,7 +54,6 @@ public class NotifyInfo {
 	 * @param line
 	 */
 	public NotifyInfo(IContainer parent, String line) throws CVSException {
-		ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(parent);
 		String[] strings = Util.parseIntoSubstrings(line, ResourceSyncInfo.SEPARATOR);
 		if(strings.length != 4) {
 			throw new CVSException(Policy.bind("NotifyInfo.MalformedLine", line)); //$NON-NLS-1$

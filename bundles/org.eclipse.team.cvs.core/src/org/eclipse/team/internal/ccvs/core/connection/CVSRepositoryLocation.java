@@ -467,7 +467,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			if (STANDALONE_MODE) {				
 				connectionMethods.add(new PServerConnectionMethod());
 			} else {
-				IExtension[] extensions = Platform.getPluginRegistry().getExtensionPoint(CVSProviderPlugin.ID, CVSProviderPlugin.PT_CONNECTIONMETHODS).getExtensions();
+				IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint(CVSProviderPlugin.ID, CVSProviderPlugin.PT_CONNECTIONMETHODS).getExtensions();
 				for(int i=0; i<extensions.length; i++) {
 					IExtension extension = extensions[i];
 					IConfigurationElement[] configs = extension.getConfigurationElements();
@@ -522,7 +522,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * Get the pluged-in authenticator from the plugin manifest.
 	 */
 	private static IUserAuthenticator getPluggedInAuthenticator() {
-		IExtension[] extensions = Platform.getPluginRegistry().getExtensionPoint(CVSProviderPlugin.ID, CVSProviderPlugin.PT_AUTHENTICATOR).getExtensions();
+		IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint(CVSProviderPlugin.ID, CVSProviderPlugin.PT_AUTHENTICATOR).getExtensions();
 		if (extensions.length == 0)
 			return null;
 		IExtension extension = extensions[0];

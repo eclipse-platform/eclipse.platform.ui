@@ -56,7 +56,7 @@ public class RemoveRootAction extends SelectionListenerAction {
 		ArrayList resources = null;
 		if (selection!=null && !selection.isEmpty()) {
 			resources = new ArrayList();
-			Iterator elements = ((IStructuredSelection) selection).iterator();
+			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {
 				Object next = CVSAction.getAdapter(elements.next(), RepositoryRoot.class);
 				if (next instanceof RepositoryRoot) {
@@ -79,7 +79,6 @@ public class RemoveRootAction extends SelectionListenerAction {
 	public void run() {
 		ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
 		if (roots.length == 0) return;
-		final CVSProviderPlugin provider = CVSProviderPlugin.getPlugin();
 		for (int i = 0; i < roots.length; i++) {
 			final ICVSRepositoryLocation root = roots[i];
 			try {	

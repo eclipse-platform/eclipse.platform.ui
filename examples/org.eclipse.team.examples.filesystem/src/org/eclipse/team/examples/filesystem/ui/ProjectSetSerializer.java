@@ -82,7 +82,7 @@ public class ProjectSetSerializer implements IProjectSetSerializer {
 	 * @return
 	 */
 	private String asReference(FileSystemProvider provider) {
-		return provider.getProject().getName() + "," + provider.getRoot().toString();
+		return provider.getProject().getName() + "," + provider.getRoot().toString(); //$NON-NLS-1$
 	}
 	
 	/**

@@ -40,7 +40,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 
 	private Dialog parentDialog;
-	private ICVSRepositoryLocation root;
 	private ICVSRemoteResource[] rootFolders;
 	private ListSelectionArea listArea;
 	private WorkingSetSelectionArea workingSetArea;
@@ -88,7 +87,6 @@ public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 		super(pageName, title, titleImage, description);
 		this.parentDialog = parentDialog;
 		this.settings = settings;
-		this.root = root;
 		this.rootFolders = rootFolders;
 	}
 

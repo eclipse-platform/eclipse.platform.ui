@@ -368,7 +368,6 @@ public class CVSCompareRevisionsInput extends CompareEditorInput implements ISav
 	 * @see org.eclipse.compare.CompareEditorInput#getTitle()
 	 */
 	public String getTitle() {
-		String resourceName = resource.getName();	
 		return Policy.bind("CVSCompareRevisionsInput.compareResourceAndVersions", new Object[] {resource.getFullPath().toString()}); //$NON-NLS-1$
 	}
 

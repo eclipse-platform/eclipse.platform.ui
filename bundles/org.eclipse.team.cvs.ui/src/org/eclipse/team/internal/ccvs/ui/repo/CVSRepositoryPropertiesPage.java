@@ -520,6 +520,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		}
 
 		String pathString = pathText.getText();
+		status = ConfigurationWizardMainPage.validatePath(pathString);
 		if (!isStatusOK(status)) {
 			return;
 		}
@@ -547,11 +548,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		} else if (newLabel.equals(getOldLabel(location))) {
 			return;
 		}
-		try {
-			CVSUIPlugin.getPlugin().getRepositoryManager().setLabel(location, newLabel);
-		} catch (CVSException e) {
-			CVSUIPlugin.log(e);
-		}
+		CVSUIPlugin.getPlugin().getRepositoryManager().setLabel(location, newLabel);
 	}
 	private String getOldLabel(CVSRepositoryLocation location) {
 		return CVSUIPlugin.getPlugin().getRepositoryManager().getRepositoryRootFor(location).getName();

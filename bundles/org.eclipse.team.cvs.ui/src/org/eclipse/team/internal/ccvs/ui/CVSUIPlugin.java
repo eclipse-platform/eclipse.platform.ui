@@ -44,6 +44,7 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipantReference;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 /**
  * UI Plugin for CVS provider-specific workbench functionality.
@@ -83,12 +84,8 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * 
 	 * @param descriptor  the plugin descriptor
 	 */
-	public CVSUIPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		// Initialize the images before the singleton is set
-		// to avoid accesses before they are initialized
-		initializeImages();
-		initializePreferences();
+	public CVSUIPlugin() {
+		super();
 		plugin = this;
 	}
 	
@@ -338,11 +335,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	public synchronized RepositoryManager getRepositoryManager() {
 		if (repositoryManager == null) {
 			repositoryManager = new RepositoryManager();
-			try {
-				repositoryManager.startup();
-			} catch (TeamException e) {
-				CVSUIPlugin.log(e);
-			}
+			repositoryManager.startup();
 		}
 		return repositoryManager;
 	}
@@ -351,7 +344,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * Initializes the table of images used in this plugin.
 	 */
 	private void initializeImages() {
-		URL baseURL = getDescriptor().getInstallURL();
+		URL baseURL = getBundle().getEntry("/"); //$NON-NLS-1$
 		
 		// objects
 		createImageDescriptor(ICVSUIConstants.IMG_REPOSITORY, baseURL); 
@@ -650,11 +643,14 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * @see Plugin#startup()
+	 * @see Plugin#start(BundleContext)
 	 */
-	public void startup() throws CoreException {
-		super.startup();
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 		Policy.localize("org.eclipse.team.internal.ccvs.ui.messages"); //$NON-NLS-1$
+		
+		initializeImages();
+		initializePreferences();
 		
 		CVSAdapterFactory factory = new CVSAdapterFactory();
 		Platform.getAdapterManager().registerAdapters(factory, ICVSRemoteFile.class);
@@ -690,18 +686,21 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * @see Plugin#shutdown()
+	 * @see Plugin#stop(BundleContext)
 	 */
-	public void shutdown() throws CoreException {
-		super.shutdown();
+	public void stop(BundleContext context) throws Exception {
 		try {
-			if (repositoryManager != null)
-				repositoryManager.shutdown();
-		} catch (TeamException e) {
-			throw new CoreException(e.getStatus());
+			try {
+				if (repositoryManager != null)
+					repositoryManager.shutdown();
+			} catch (TeamException e) {
+				throw new CoreException(e.getStatus());
+			}
+			
+			console.shutdown();
+		} finally {
+			super.stop(context);
 		}
-		
-		console.shutdown();
 	}
 	
 	/**

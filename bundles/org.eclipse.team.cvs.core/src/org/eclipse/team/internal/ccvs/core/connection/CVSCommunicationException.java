@@ -22,7 +22,9 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 
 public class CVSCommunicationException extends CVSException {
 
-	/**
+	private static final long serialVersionUID = 1L;
+
+    /**
 	 * Create a new <code>CVSCommunicationException with the
 	 * given status.
 	 */
@@ -58,7 +60,6 @@ public class CVSCommunicationException extends CVSException {
 	
 	public static IStatus getStatusFor(Exception e) {
 		if (e instanceof InterruptedIOException) {
-			InterruptedIOException ioEx = (InterruptedIOException) e;
 			MultiStatus status = new MultiStatus(CVSProviderPlugin.ID, 0, getMessageFor(e), e);
 			status.add(new CVSStatus(IStatus.ERROR, Policy.bind("CVSCommunicationException.interruptCause"))); //$NON-NLS-1$
 			status.add(new CVSStatus(IStatus.ERROR, Policy.bind("CVSCommunicationException.interruptSolution"))); //$NON-NLS-1$

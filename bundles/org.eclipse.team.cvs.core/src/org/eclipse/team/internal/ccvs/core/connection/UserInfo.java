@@ -44,7 +44,7 @@ public class UserInfo implements IUserInfo {
 	 * @see IUserInfo#isUsernameMutable()
 	 */
 	public boolean isUsernameMutable() {
-		return false;
+		return isUsernameMutable;
 	}
 
 	/*

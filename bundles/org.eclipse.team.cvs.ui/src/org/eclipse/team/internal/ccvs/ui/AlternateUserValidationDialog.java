@@ -92,7 +92,7 @@ public class AlternateUserValidationDialog extends Dialog {
 				if (inUpdate) return;
 				e.doit = false;
 				inUpdate = true;
-				switch ((int)e.character) {
+				switch (e.character) {
 					case 8: {
 						// backspace pressed
 						if (password.length() > 0) {

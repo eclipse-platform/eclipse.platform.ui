@@ -186,7 +186,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 	/**
 	 * Special alternate prompting.
 	 */
-	public void alternatePromptForUserInfo(final IUserInfo userinfo) throws CVSException {
+	public void alternatePromptForUserInfo(final IUserInfo userinfo) {
 		// ask the user for a password
 		final String[] result = new String[1];
 		Display display = Display.getCurrent();

@@ -99,10 +99,6 @@ public class CompareDiffListener extends CommandOutputListener {
 		return OK;
 	}
 
-	private IStatus handleUnknownDiffFormat(String line) {
-		return new CVSStatus(IStatus.ERROR, Policy.bind("CompareDiffListener.12", line)); //$NON-NLS-1$
-	}
-
 	public IStatus errorLine(
 			String line, 
 			ICVSRepositoryLocation location, 

@@ -210,7 +210,6 @@ public class BranchPromptDialog extends DetailsDialog {
 	 */
 	protected void updateEnablements() {
 		String message = null;
-		boolean complete = false;
 		
 		if (branchTag.length() == 0) {
 			message = ""; //$NON-NLS-1$

@@ -125,7 +125,6 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 	}
 	
 	protected void updateExamples() {
-		String example = ""; //$NON-NLS-1$
 		Map bindings = new HashMap();
 		try {
 			ICVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:username@host.acme.org:/home/cvsroot");				 //$NON-NLS-1$
@@ -141,7 +140,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_ROOT, location.getRootDirectory());
 			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_REPOSITORY, "org.eclipse.project1"); //$NON-NLS-1$
 		} catch(CVSException e) {
-			example = e.getMessage();
+			// Ignore
 		}
 		bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, "file.txt"); //$NON-NLS-1$
 		setTextFormatExample(bindings);
@@ -390,7 +389,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		
 		IStructuredContentProvider contentsProvider = new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
-				return (Object[]) variables.toArray(new StringPair[variables.size()]);
+				return variables.toArray(new StringPair[variables.size()]);
 			}
 			public void dispose() {}
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}

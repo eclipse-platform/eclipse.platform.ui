@@ -304,7 +304,7 @@ public class RepositoryManager {
 		broadcastRepositoryChange(root);
 	}
 	
-	public void startup() throws TeamException {
+	public void startup() {
 		loadState();
 		loadCommentHistory();
 		CVSProviderPlugin.getPlugin().addRepositoryListener(new ICVSListener() {
@@ -322,7 +322,7 @@ public class RepositoryManager {
 		saveCommentHistory();
 	}
 	
-	private void loadState() throws TeamException {
+	private void loadState() {
 		IPath pluginStateLocation = CVSUIPlugin.getPlugin().getStateLocation().append(REPOSITORIES_VIEW_FILE);
 		File file = pluginStateLocation.toFile();
 		if (file.exists()) {
@@ -359,7 +359,7 @@ public class RepositoryManager {
 			} 
 		}
 	}
-	private void loadCommentHistory() throws TeamException {
+	private void loadCommentHistory() {
 		IPath pluginStateLocation = CVSUIPlugin.getPlugin().getStateLocation().append(COMMENT_HIST_FILE);
 		File file = pluginStateLocation.toFile();
 		if (!file.exists()) return;
@@ -399,7 +399,7 @@ public class RepositoryManager {
 			throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.save",stateFile.getAbsolutePath()), e)); //$NON-NLS-1$
 		}
 	}
-	private void writeState(XMLWriter writer) throws IOException, CVSException {
+	private void writeState(XMLWriter writer) {
 		writer.startTag(RepositoriesViewContentHandler.REPOSITORIES_VIEW_TAG, null, true);
 		// Write the repositories
 		Collection repos = Arrays.asList(getKnownRepositoryLocations());
@@ -481,7 +481,7 @@ public class RepositoryManager {
 							Set filenames = new HashSet();
 							int numFilenames = dis.readInt();
 							for (int k = 0; k < numFilenames; k++) {
-								filenames.add(name + "/" + dis.readUTF());
+								filenames.add(name + "/" + dis.readUTF()); //$NON-NLS-1$
 							}
 							repoRoot.setAutoRefreshFiles(name, (String[]) filenames.toArray(new String[filenames.size()]));
 						}
@@ -516,7 +516,7 @@ public class RepositoryManager {
 		 		 throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.save",histFile.getAbsolutePath()), e)); //$NON-NLS-1$
 		 }
 	}
-	private void writeCommentHistory(XMLWriter writer) throws IOException, CVSException {
+	private void writeCommentHistory(XMLWriter writer) {
 		writer.startTag(ELEMENT_COMMIT_HISTORY, null, false);
 		for (int i=0; i<previousComments.length && i<MAX_COMMENTS; i++)
 			writer.printSimpleTag(ELEMENT_COMMIT_COMMENT, previousComments[i]);
@@ -529,16 +529,6 @@ public class RepositoryManager {
 	
 	public void removeRepositoryListener(IRepositoryListener listener) {
 		listeners.remove(listener);
-	}
-	
-	/**
-	 * Method getCurrentComment.
-	 * @return String
-	 */
-	private String getCurrentComment() {
-		if (previousComments.length == 0)
-			return ""; //$NON-NLS-1$
-		return previousComments[0];
 	}
 	
 	/**
@@ -725,7 +715,7 @@ public class RepositoryManager {
 	 * @param location
 	 * @param label
 	 */
-	public void setLabel(CVSRepositoryLocation location, String label) throws CVSException {
+	public void setLabel(CVSRepositoryLocation location, String label) {
 		RepositoryRoot root = getRepositoryRootFor(location);
 		String oldLabel = root.getName();
 		if (oldLabel == null) {

@@ -76,7 +76,6 @@ public class RemoteModule extends RemoteFolder {
 		Map modules = new HashMap();
 		Map referencedModulesTable = new HashMap();
 		Map moduleAliases = new HashMap();
-		List acceptableModules = new ArrayList();
 		
 		// First pass: Create the remote module instances based on remote mapping
 		for (int i = 0; i < moduleDefinitionStrings.length; i++) {
@@ -134,7 +133,7 @@ public class RemoteModule extends RemoteFolder {
 				while (tokenizer.hasMoreTokens())
 					expansions.add(tokenizer.nextToken());
 					
-				moduleAliases.put(moduleName, (String[]) expansions.toArray(new String[expansions.size()]));
+				moduleAliases.put(moduleName, expansions.toArray(new String[expansions.size()]));
 				modules.put(moduleName, new RemoteModule(moduleName, null, repository, null, localOptions, tag, true));
 
 			} else {
@@ -167,7 +166,7 @@ public class RemoteModule extends RemoteFolder {
 					children.add(next);
 					while (tokenizer.hasMoreTokens())
 						children.add(tokenizer.nextToken());
-					referencedModulesTable.put(moduleName, (String[])children.toArray(new String[children.size()]));
+					referencedModulesTable.put(moduleName, children.toArray(new String[children.size()]));
 				}
 			}
 		}
@@ -387,7 +386,7 @@ public class RemoteModule extends RemoteFolder {
 			if (path.indexOf(Session.SERVER_SEPARATOR) == -1) {
 				for (int i=0;i<referencedModules.length;i++) {
 					if (referencedModules[i].getName().equals(path))
-						return (ICVSResource)referencedModules[i];
+						return referencedModules[i];
 				}
 			}
 		}

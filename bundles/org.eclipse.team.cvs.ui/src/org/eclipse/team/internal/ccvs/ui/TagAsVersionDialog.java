@@ -223,7 +223,6 @@ public class TagAsVersionDialog extends DetailsDialog {
 	 */
 	protected void updateEnablements() {
 		String message = null;
-		boolean exists = false;
 		if(tagName.length() == 0) {
 			message = ""; //$NON-NLS-1$
 		} else {		

@@ -210,7 +210,7 @@ public class KSubstWizardSummaryPage extends CVSWizardPage {
 		});
 		
 		// add a cell editor in the Keyword Substitution Mode column
-		TableEditor tableEditor = new TableEditor(table);
+		new TableEditor(table);
 		CellEditor cellEditor = new ComboBoxCellEditor(table, ksubstOptionsDisplayText);
 		tableViewer.setCellEditors(new CellEditor[] { null, cellEditor });
 		tableViewer.setColumnProperties(new String[] { "file", "mode" }); //$NON-NLS-1$ //$NON-NLS-2$

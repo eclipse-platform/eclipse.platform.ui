@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
-import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -22,9 +21,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -37,8 +33,6 @@ public class ReleaseCommentDialog extends DetailsDialog {
 	//	dialogs settings that are persistent between workbench sessions
 	private IDialogSettings settings;
 	private IResource[] resourcesToCommit;
-	private CompareEditorInput compareEditorInput;
-	private SyncInfoTree set;
 	private int depth;
 	private static final String HEIGHT_KEY = "width-key"; //$NON-NLS-1$
 	private static final String WIDTH_KEY = "height-key"; //$NON-NLS-1$

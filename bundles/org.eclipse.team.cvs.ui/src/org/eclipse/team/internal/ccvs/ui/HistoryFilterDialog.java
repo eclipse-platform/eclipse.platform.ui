@@ -30,7 +30,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class HistoryFilterDialog extends Dialog {
 
-	private boolean dateEntered;
 	private HistoryView historyView;
 	private HistoryFilter historyFilter;	
 	

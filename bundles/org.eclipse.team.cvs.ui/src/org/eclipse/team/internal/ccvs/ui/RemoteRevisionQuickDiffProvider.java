@@ -143,7 +143,7 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 		
 		if(fDocumentProvider != null) {
 			CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().addListener(teamChangeListener);
-			((IDocumentProvider)fDocumentProvider).addElementStateListener(documentListener);
+			fDocumentProvider.addElementStateListener(documentListener);
 		}	
 		fReferenceInitialized= true;
 	}
@@ -206,8 +206,7 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 			} else if(info == null) {
 				return false;
 			}
-			
-			int kind = info.getKind();			
+					
 			if(fLastSyncState == null) {
 				needToUpdateReferenceDocument = true;
 			} else if(! fLastSyncState.equals(info)) {
@@ -229,7 +228,6 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 
 	private SyncInfo getSyncState(IResource resource) throws TeamException {
 		if (resource == null) return null;
-		ICVSFile cvsFile = getManagedCVSFile();
 		return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().getSyncInfo(resource);
 	}
 	

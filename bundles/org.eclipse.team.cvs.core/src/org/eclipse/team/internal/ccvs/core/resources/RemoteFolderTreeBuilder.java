@@ -681,7 +681,6 @@ public class RemoteFolderTreeBuilder {
 	private void fetchFileRevisions(Session session, String[] fileNames, final IProgressMonitor monitor) throws CVSException {
 		
 		// Create a listener for receiving the revision info
-		final Map revisions = new HashMap();
 		final List exceptions = new ArrayList();
 		IStatusListener listener = new IStatusListener() {
 			public void fileStatus(ICVSFolder root, String path, String remoteRevision) {

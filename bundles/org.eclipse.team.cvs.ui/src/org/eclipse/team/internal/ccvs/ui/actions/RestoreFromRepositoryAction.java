@@ -69,7 +69,7 @@ public class RestoreFromRepositoryAction extends CVSAction {
 			int index = line.indexOf(ATTIC);
 			if (index == -1) return OK;
 			// Extract the file name and path from the RCS path
-			String filePath = line.substring(index);
+			// String filePath = line.substring(index);
 			int start = line.indexOf(Session.SERVER_SEPARATOR, index);
 			String fileName = line.substring(start + 1);
 			if (fileName.endsWith(RCS_FILE_POSTFIX)) {

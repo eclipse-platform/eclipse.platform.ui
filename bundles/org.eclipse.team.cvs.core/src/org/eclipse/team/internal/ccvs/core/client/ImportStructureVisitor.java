@@ -11,17 +11,12 @@
 package org.eclipse.team.internal.ccvs.core.client;
 
 
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.Team;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
 
@@ -39,9 +34,7 @@ class ImportStructureVisitor implements ICVSResourceVisitor {
 	private static final String QUOTE = "'"; //$NON-NLS-1$
 	
 	protected Session session;
-	private Set sentFolders;
 	protected IProgressMonitor monitor;
-	private String[] wrappers;
 	
 	private FileNameMatcher ignoreMatcher;
 	private FileNameMatcher wrapMatcher;
@@ -57,7 +50,6 @@ class ImportStructureVisitor implements ICVSResourceVisitor {
 
 		this.session = session;
 		this.monitor = Policy.infiniteSubMonitorFor(monitor, 512);
-		this.wrappers = wrappers;
 		wrapMatcher = initWrapMatcher(wrappers);
 	}
 	

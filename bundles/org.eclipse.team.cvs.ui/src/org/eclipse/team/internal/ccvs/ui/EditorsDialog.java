@@ -12,15 +12,9 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.EditorsInfo;
 import org.eclipse.ui.help.WorkbenchHelp;
-
-
 
 /**
  * 
@@ -47,7 +41,6 @@ public class EditorsDialog extends Dialog {
 	protected Control createDialogArea(Composite container) {
 
 		Composite parent = (Composite) super.createDialogArea(container);
-		Layout layout = parent.getLayout();
 						
 		getShell().setText(Policy.bind("EditorsDialog.title")); //$NON-NLS-1$
 		createMessageArea(parent);

@@ -351,7 +351,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				throw new CVSException(IStatus.ERROR, CHILD_DOES_NOT_EXIST, Policy.bind("RemoteFolder.invalidChild", path, getName()));//$NON-NLS-1$
 			for (int i=0;i<children.length;i++) {
 				if (children[i].getName().equals(path))
-					return (ICVSResource)children[i];
+					return children[i];
 			}
 		}
 		throw new CVSException(IStatus.ERROR, CHILD_DOES_NOT_EXIST, Policy.bind("RemoteFolder.invalidChild", path, getName()));//$NON-NLS-1$
@@ -418,7 +418,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	/*
 	 * @see IRemoteResource#getContents(IProgressMonitor)
 	 */
-	public InputStream getContents(IProgressMonitor progress) throws TeamException {
+	public InputStream getContents(IProgressMonitor progress) {
 		return null;
 	}
 
@@ -580,7 +580,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.sync.IRemoteResource#getComment()
 	 */
-	public String getComment() throws TeamException {
+	public String getComment() {
 		return null;
 	}
 
@@ -594,7 +594,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.sync.IRemoteResource#getCreatorDisplayName()
 	 */
-	public String getCreatorDisplayName() throws TeamException {
+	public String getCreatorDisplayName() {
 		return null;
 	}
 	

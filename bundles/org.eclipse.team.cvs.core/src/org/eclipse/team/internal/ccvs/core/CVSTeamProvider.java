@@ -138,7 +138,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 	
 	private CVSWorkspaceRoot workspaceRoot;
 	private IProject project;
-	private String comment = "";  //$NON-NLS-1$
 	
 	private static MoveDeleteHook moveDeleteHook= new MoveDeleteHook();
 	private static IFileModificationValidator fileModificationValidator;
@@ -151,7 +150,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 		new QualifiedName("org.eclipse.team.cvs.core", "watch_edit");  //$NON-NLS-1$  //$NON-NLS-2$
 
 	private static IFileModificationValidator getPluggedInValidator() {
-		IExtension[] extensions = Platform.getPluginRegistry().getExtensionPoint(CVSProviderPlugin.ID, CVSProviderPlugin.PT_FILE_MODIFICATION_VALIDATOR).getExtensions();
+		IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint(CVSProviderPlugin.ID, CVSProviderPlugin.PT_FILE_MODIFICATION_VALIDATOR).getExtensions();
 		if (extensions.length == 0)
 			return null;
 		IExtension extension = extensions[0];
@@ -399,13 +398,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 			// We need to trigger a decorator refresh					
 			throw e;
 		}
-	}
-
-	/**
-	 * Set the comment to be used on the next checkin
-	 */
-	public void setComment(String comment) {
-		this.comment = comment;
 	}
 	
 	/*

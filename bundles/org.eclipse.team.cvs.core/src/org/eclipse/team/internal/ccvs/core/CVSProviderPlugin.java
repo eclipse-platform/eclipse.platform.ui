@@ -25,6 +25,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
 import org.eclipse.team.internal.ccvs.core.resources.FileModificationManager;
 import org.eclipse.team.internal.ccvs.core.util.*;
+import org.osgi.framework.BundleContext;
 
 public class CVSProviderPlugin extends Plugin {
 	
@@ -132,8 +133,8 @@ public class CVSProviderPlugin extends Plugin {
 	 * Constructor for CVSProviderPlugin.
 	 * @param descriptor
 	 */
-	public CVSProviderPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public CVSProviderPlugin() {
+		super();
 		instance = this;
 	}
 	
@@ -266,10 +267,10 @@ public class CVSProviderPlugin extends Plugin {
 	}
 	
 	/**
-	 * @see Plugin#startup()
+	 * @see Plugin#start(BundleContext)
 	 */
-	public void startup() throws CoreException {
-		super.startup();
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 		Policy.localize("org.eclipse.team.internal.ccvs.core.messages"); //$NON-NLS-1$
 
 		// load the state which includes the known repositories
@@ -281,7 +282,7 @@ public class CVSProviderPlugin extends Plugin {
 		addDeleteMoveListener = new BuildCleanupListener();
 		fileModificationManager = new FileModificationManager();
 		metaFileSyncListener = new SyncFileChangeListener();
-		workspace.addResourceChangeListener(addDeleteMoveListener, IResourceChangeEvent.POST_AUTO_BUILD);
+		workspace.addResourceChangeListener(addDeleteMoveListener, IResourceChangeEvent.POST_BUILD);
 		workspace.addResourceChangeListener(metaFileSyncListener, IResourceChangeEvent.POST_CHANGE);
 		workspace.addResourceChangeListener(fileModificationManager, IResourceChangeEvent.POST_CHANGE);
 		fileModificationManager.registerSaveParticipant();
@@ -290,24 +291,26 @@ public class CVSProviderPlugin extends Plugin {
 	}
 	
 	/**
-	 * @see Plugin#shutdown()
+	 * @see Plugin#stop(BundleContext)
 	 */
-	public void shutdown() throws CoreException {
-		super.shutdown();
-		
-		savePluginPreferences();
-		
-		// remove listeners
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		workspace.removeResourceChangeListener(metaFileSyncListener);
-		workspace.removeResourceChangeListener(fileModificationManager);
-		workspace.removeResourceChangeListener(addDeleteMoveListener);
-		
-		// remove all of this plugin's save participants. This is easier than having
-		// each class that added itself as a participant to have to listen to shutdown.
-		workspace.removeSaveParticipant(this);
-		
-		deleteCrashFile();
+	public void stop(BundleContext context) throws Exception {
+		try {
+			savePluginPreferences();
+			
+			// remove listeners
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			workspace.removeResourceChangeListener(metaFileSyncListener);
+			workspace.removeResourceChangeListener(fileModificationManager);
+			workspace.removeResourceChangeListener(addDeleteMoveListener);
+			
+			// remove all of this plugin's save participants. This is easier than having
+			// each class that added itself as a participant to have to listen to shutdown.
+			workspace.removeSaveParticipant(this);
+			
+			deleteCrashFile();
+		} finally {
+			super.stop(context);
+		}
 	}
 		
 	/**

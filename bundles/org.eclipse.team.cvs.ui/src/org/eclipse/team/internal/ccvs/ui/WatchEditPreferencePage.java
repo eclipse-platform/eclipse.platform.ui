@@ -22,7 +22,6 @@ public class WatchEditPreferencePage extends CVSFieldEditorPreferencePage {
 	
 	private RadioGroupFieldEditor promptEditor;
 	private RadioGroupFieldEditor actionEditor;
-	private IPreferenceStore source;
 	private IPreferenceStore store;
 
 	/**

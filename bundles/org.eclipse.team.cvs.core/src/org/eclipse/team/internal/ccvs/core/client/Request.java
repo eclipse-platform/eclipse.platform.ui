@@ -227,7 +227,7 @@ public abstract class Request {
 				}
 			// handle other responses
 			} else {
-				ResponseHandler handler = (ResponseHandler) session.getResponseHandler(response);
+				ResponseHandler handler = session.getResponseHandler(response);
 				if (handler != null) {
 					handler.handle(session, argument, monitor);
 				} else {

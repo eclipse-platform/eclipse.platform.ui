@@ -51,7 +51,6 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	private MessageConsoleStream errorStream;
 	
 	// preferences for showing the cvs console when cvs output is provided 
-	private boolean showOnError;
 	private boolean showOnMessage;
 	
 	private ConsoleDocument document;
@@ -97,7 +96,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		super("CVS", CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_CVS_CONSOLE)); //$NON-NLS-1$
 		// setup console showing preferences
 		showOnMessage = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE);
-		showOnError = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_ERROR);	
+		// showOnError = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_ERROR);	
 		document = new ConsoleDocument();
 		CVSProviderPlugin.getPlugin().setConsoleListener(CVSOutputConsole.this);
 		CVSUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(CVSOutputConsole.this);

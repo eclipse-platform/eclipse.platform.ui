@@ -59,7 +59,7 @@ public class RemoteTagsView extends RemoteViewPart {
 		if (selected.length == 0) {
 			getViewer().setInput(null);
 		} else {
-			getViewer().setInput((ICVSRepositoryLocation)selected[0]);
+			getViewer().setInput(selected[0]);
 		};
 		refreshViewer();
 	}

@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ccvs.ui.model;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -92,7 +91,7 @@ public class VersionCategory
   Object o,
   IProgressMonitor monitor)
   throws TeamException {
-		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+     
   ICVSRemoteResource[] resources =
    CVSUIPlugin.getPlugin().getRepositoryManager().getFoldersForTag(
     repository,

@@ -18,17 +18,12 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.RemoteFileEditorInput;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 
 public class OpenRemoteFileAction extends CVSAction {
 	/**
@@ -38,7 +33,7 @@ public class OpenRemoteFileAction extends CVSAction {
 		ArrayList resources = null;
 		if (!selection.isEmpty()) {
 			resources = new ArrayList();
-			Iterator elements = ((IStructuredSelection) selection).iterator();
+			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {
 				Object next = elements.next();
 				if (next instanceof ICVSRemoteFile) {

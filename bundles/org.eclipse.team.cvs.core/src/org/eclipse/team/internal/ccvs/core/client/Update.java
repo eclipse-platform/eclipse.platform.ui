@@ -126,7 +126,6 @@ public class Update extends Command {
 		List newOptions = new ArrayList(Arrays.asList(localOptions));
 		
 		// Look for absent directories if enabled and the option is not already included
-		ICVSFolder sessionRoot = session.getLocalRoot();
 		IResource resource = null;
 		RepositoryProvider provider = null;
 		// If there is a provider, use the providers setting

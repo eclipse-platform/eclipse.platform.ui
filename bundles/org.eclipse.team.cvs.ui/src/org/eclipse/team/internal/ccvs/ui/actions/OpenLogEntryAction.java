@@ -19,18 +19,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.RemoteFileEditorInput;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.ui.*;
 
 public class OpenLogEntryAction extends CVSAction {
 	/**
@@ -40,11 +33,11 @@ public class OpenLogEntryAction extends CVSAction {
 		ArrayList entries = null;
 		if (!selection.isEmpty()) {
 			entries = new ArrayList();
-			Iterator elements = ((IStructuredSelection) selection).iterator();
+			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {
 				Object next = elements.next();
 				if (next instanceof ILogEntry) {
-					entries.add((ILogEntry)next);
+					entries.add(next);
 					continue;
 				}
 				if (next instanceof IAdaptable) {

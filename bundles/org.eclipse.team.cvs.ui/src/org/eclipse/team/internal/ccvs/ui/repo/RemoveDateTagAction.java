@@ -68,7 +68,7 @@ public class RemoveDateTagAction extends SelectionListenerAction {
 		ArrayList cvsTagElements = null;
 		if (selection!=null && !selection.isEmpty()) {
 			cvsTagElements = new ArrayList();
-			Iterator elements = ((IStructuredSelection) selection).iterator();
+			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {
 				Object next = CVSAction.getAdapter(elements.next(), CVSTagElement.class);
 				if (next instanceof CVSTagElement) {

@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
@@ -40,7 +39,7 @@ public class ConfigureTagsFromRepoViewOnFolder extends CVSAction {
 		ArrayList resources = null;
 		if (!selection.isEmpty()) {
 			resources = new ArrayList();
-			Iterator elements = ((IStructuredSelection) selection).iterator();
+			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {
 				Object next = elements.next();
 				if (next instanceof RemoteModule) {
@@ -74,7 +73,7 @@ public class ConfigureTagsFromRepoViewOnFolder extends CVSAction {
 					public void run() {
 						ICVSFolder[] cvsFolders = new ICVSFolder[roots.length];
 						for (int i = 0; i < roots.length; i++) {
-							cvsFolders[i] = (ICVSFolder)roots[i];
+							cvsFolders[i] = roots[i];
 						}
 						TagConfigurationDialog d = new TagConfigurationDialog(shell, cvsFolders);
 						d.open();

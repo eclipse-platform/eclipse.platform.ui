@@ -50,8 +50,6 @@ public class ReplaceWithBaseVisitor implements ICVSResourceVisitor {
 			}
 			// Fetch the file from the server
 			if (isModified) {
-				ICVSFolder parent = file.getParent();
-				FolderSyncInfo folderInfo = parent.getFolderSyncInfo();
 				// Use the session opened in tghe replaceWithBase method to make the connection.
 				Command.UPDATE.execute(this.session, Command.NO_GLOBAL_OPTIONS, 
 					new LocalOption[] {Update.makeTagOption(CVSTag.BASE), Update.IGNORE_LOCAL_CHANGES}, 

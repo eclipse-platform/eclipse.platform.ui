@@ -31,7 +31,9 @@ import org.eclipse.team.core.TeamException;
  */
 public class CVSException extends TeamException {
 
-	public CVSException(CoreException e) {
+	private static final long serialVersionUID = 1L;
+
+    public CVSException(CoreException e) {
 		super(e);
 	}
 

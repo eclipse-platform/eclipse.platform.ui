@@ -15,10 +15,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.PropertyPage;
 /*
  * A property page which displays the  file system specific properties 
@@ -74,9 +71,7 @@ public class FileSystemPropertiesPage extends PropertyPage {
 		layout.marginHeight = layout.marginWidth = 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				
-		IResource resource = getSelectedElement();
-		RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
+		
 		return composite;
 	}
 }

@@ -32,9 +32,6 @@ import org.eclipse.team.internal.core.streams.TimeoutOutputStream;
  */
 public class ExtConnection implements IServerConnection {
 
-	// The default port for rsh
-	private static final int DEFAULT_PORT = 9999;
-
 	// cvs format for the repository (e.g. :extssh:user@host:/home/cvs/repo)
 	private ICVSRepositoryLocation location;
 	private String password;

@@ -54,7 +54,7 @@ public class RLog extends RemoteCommand {
 					if(date1.compareTo(date2) > 0) {
 						operator = ">"; //$NON-NLS-1$
 					}
-					return new LocalOption("-d'" + tag1.getName() + "'"+ operator + "'" + tag2.getName() + "'", null); //$NON-NLS-1$ //$NON-NLS-2$
+					return new LocalOption("-d'" + tag1.getName() + "'"+ operator + "'" + tag2.getName() + "'", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				default:
 					// Unknow tag type!!!
 					throw new IllegalArgumentException();

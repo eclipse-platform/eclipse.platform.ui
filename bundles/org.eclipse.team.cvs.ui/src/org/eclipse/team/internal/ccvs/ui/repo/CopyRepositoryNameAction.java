@@ -14,10 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
@@ -40,7 +37,7 @@ public class CopyRepositoryNameAction extends CVSAction {
 		ArrayList repositories = null;
 		if (!selection.isEmpty()) {
 			repositories = new ArrayList();
-			Iterator elements = ((IStructuredSelection)selection).iterator();
+			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {
 				Object next = getAdapter(elements.next(), ICVSRepositoryLocation.class);
 				if (next instanceof ICVSRepositoryLocation) {

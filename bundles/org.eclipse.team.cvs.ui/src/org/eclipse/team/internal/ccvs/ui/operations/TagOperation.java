@@ -59,14 +59,6 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
 		collectStatus(status);
 	}
 
-	private ICVSResource[] getCVSResources(IResource[] resources) {
-		ICVSResource[] cvsResources = new ICVSResource[resources.length];
-		for (int i = 0; i < cvsResources.length; i++) {
-			cvsResources[i] = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
-		}
-		return cvsResources;
-	}
-
 	/**
 	 * Override to dislay the number of tag operations that succeeded
 	 */

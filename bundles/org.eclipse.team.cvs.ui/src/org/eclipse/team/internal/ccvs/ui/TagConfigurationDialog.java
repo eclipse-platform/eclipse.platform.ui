@@ -600,8 +600,6 @@ public class TagConfigurationDialog extends Dialog {
 	private boolean isTagSelectedInKnownTagTree() {
 		IStructuredSelection selection = (IStructuredSelection)cvsDefinedTagsTree.getSelection();
 		if (!selection.isEmpty()) {
-			final List versions = new ArrayList();
-			final List branches = new ArrayList();
 			Iterator it = selection.iterator();
 			while(it.hasNext()) {
 				Object o = it.next();

@@ -38,7 +38,6 @@ public abstract class SyncInfoSetDetailsDialog extends DetailsDialog {
 	
 	private SyncInfoSet syncSet;
 	private Object[] selectedResources;
-	private String detailsTitle;
 
 	/**
 	 * @param parentShell
@@ -47,7 +46,7 @@ public abstract class SyncInfoSetDetailsDialog extends DetailsDialog {
 	public SyncInfoSetDetailsDialog(Shell parentShell, String dialogTitle, String detailsTitle, SyncInfoSet syncSet) {
 		super(parentShell, dialogTitle);
 		this.syncSet = syncSet;
-		this.detailsTitle = detailsTitle;
+		//this.detailsTitle = detailsTitle;
 	}
 
 	/* (non-Javadoc)
