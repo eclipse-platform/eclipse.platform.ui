@@ -2667,14 +2667,22 @@ public void setPerspective(final IPerspectiveDescriptor desc) {
 	// and its adjacent views appear jumpy as perspectives are
 	// switched.  Turn off redraw to help with this.
 	CoolBarManager mgr = window.getCoolBarManager();
-	mgr.getControl().setRedraw(false);
-	// Run op in busy cursor.
-	BusyIndicator.showWhile(null, new Runnable() {
-		public void run() {
-			busySetPerspective(desc);
-		}
-	});
-	mgr.getControl().setRedraw(true);
+	try {
+		mgr.getControl().setRedraw(false);
+		getClientComposite().setRedraw(false);
+		// Run op in busy cursor.
+		BusyIndicator.showWhile(null, new Runnable() {
+			public void run() {
+				busySetPerspective(desc);
+			}
+		});
+	} finally {
+		getClientComposite().setRedraw(true);
+		mgr.getControl().setRedraw(true);
+		IWorkbenchPart part = getActivePart();
+		if(part != null)
+			part.setFocus();
+	}
 }
 /**
  * Restore the toolbar layout for the active perspective.
