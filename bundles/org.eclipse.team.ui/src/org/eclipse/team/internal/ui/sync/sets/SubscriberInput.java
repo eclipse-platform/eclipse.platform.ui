@@ -157,12 +157,12 @@ public class SubscriberInput implements IPropertyChangeListener, ITeamResourceCh
 			try {
 				// Handle a deleted project	
 				if (((kind & IResourceDelta.REMOVED) != 0)
-					|| !getSubscriber().isSupervised((IProject) resource)) {
-					eventHandler.remove((IProject) resource);
+					|| !getSubscriber().isSupervised(resource)) {
+					eventHandler.remove(resource);
 					return;
 				}
 				// Only interested in projects mapped to the provider
-				if (!getSubscriber().isSupervised((IProject) resource)) {
+				if (!getSubscriber().isSupervised(resource)) {
 					return;
 				}
 			} catch (TeamException e) {
