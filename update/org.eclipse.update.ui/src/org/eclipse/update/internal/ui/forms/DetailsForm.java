@@ -66,6 +66,7 @@ public class DetailsForm extends PropertyWebForm {
 	private static final String KEY_DO_INSTALL = "FeaturePage.doButton.install";
 	private static final String KEY_DO_UNINSTALL =
 		"FeaturePage.doButton.uninstall";
+	private static final String KEY_DO_ADD = "FeaturePage.doButton.add";
 	private static final String KEY_DIALOG_UTITLE = "FeaturePage.dialog.utitle";
 	private static final String KEY_DIALOG_TITLE = "FeaturePage.dialog.title";
 	private static final String KEY_DIALOG_CTITLE = "FeaturePage.dialog.ctitle";
@@ -87,8 +88,10 @@ public class DetailsForm extends PropertyWebForm {
 	private static final String KEY_MISSING_ABORT = "FeaturePage.missing.abort";
 	private static final String KEY_SEARCH_OBJECT_NAME =
 		"FeaturePage.missing.searchObjectName";
-	private static final String KEY_OPTIONAL_INSTALL_MESSAGE = "FeaturePage.optionalInstall.message";
-	private static final String KEY_OPTIONAL_INSTALL_TITLE = "FeaturePage.optionalInstall.title";
+	private static final String KEY_OPTIONAL_INSTALL_MESSAGE =
+		"FeaturePage.optionalInstall.message";
+	private static final String KEY_OPTIONAL_INSTALL_TITLE =
+		"FeaturePage.optionalInstall.title";
 	//	
 	private static final int REPAIR = 1;
 	private static final int CHANGE = 2;
@@ -111,6 +114,8 @@ public class DetailsForm extends PropertyWebForm {
 	private ReflowGroup supportedPlatformsGroup;
 	private Image providerImage;
 	private Button uninstallButton;
+	private Button addButton;
+	private Button removeButton;
 	private Button doButton;
 	private IFeature currentFeature;
 	private IFeatureAdapter currentAdapter;
@@ -380,21 +385,39 @@ public class DetailsForm extends PropertyWebForm {
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		copyrightLink.getControl().setLayoutData(gd);
 
-		uninstallButton = factory.createButton(footer, "", SWT.PUSH);
-		uninstallButton.addSelectionListener(new SelectionAdapter() {
+		addButton = factory.createButton(footer, "Add", SWT.PUSH);
+		addButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				doUninstall();
+				doAdd();
 			}
 		});
+		addButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_ADD));
 		gd =
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_END
 					| GridData.VERTICAL_ALIGN_BEGINNING);
 		gd.grabExcessHorizontalSpace = true;
-		uninstallButton.setVisible(false);
-		uninstallButton.setText(
-			UpdateUIPlugin.getResourceString(KEY_DO_UNINSTALL));
-		uninstallButton.setLayoutData(gd);
+		addButton.setLayoutData(gd);
+		//SWTUtil.setButtonDimensionHint(addButton);
+
+		/*
+				uninstallButton = factory.createButton(footer, "", SWT.PUSH);
+				uninstallButton.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						doUninstall();
+					}
+				});
+				gd =
+					new GridData(
+						GridData.HORIZONTAL_ALIGN_END
+							| GridData.VERTICAL_ALIGN_BEGINNING);
+				//gd.grabExcessHorizontalSpace = true;
+				uninstallButton.setVisible(false);
+				uninstallButton.setText(
+					UpdateUIPlugin.getResourceString(KEY_DO_UNINSTALL));
+				uninstallButton.setLayoutData(gd);
+				//SWTUtil.setButtonDimensionHint(uninstallButton);
+		*/
 
 		doButton = factory.createButton(footer, "", SWT.PUSH);
 		doButton.addSelectionListener(new SelectionAdapter() {
@@ -408,6 +431,7 @@ public class DetailsForm extends PropertyWebForm {
 					| GridData.VERTICAL_ALIGN_BEGINNING);
 		//gd.grabExcessHorizontalSpace = true;
 		doButton.setLayoutData(gd);
+		//SWTUtil.setButtonDimensionHint(doButton);
 		WorkbenchHelp.setHelp(container, "org.eclipse.update.ui.DetailsForm");
 
 	}
@@ -526,8 +550,9 @@ public class DetailsForm extends PropertyWebForm {
 		licenseLink.setInfo(feature.getLicense());
 		copyrightLink.setInfo(feature.getCopyright());
 		this.reinstallCode = 0;
-		doButton.setVisible(getDoButtonVisibility());
-		uninstallButton.setVisible(getUninstallButtonVisibility());
+		doButton.setVisible(getDoButtonVisibility(false));
+		addButton.setEnabled(getDoButtonVisibility(true));
+		//uninstallButton.setVisible(getUninstallButtonVisibility());
 		if (doButton.isVisible())
 			updateButtonText(newerVersion);
 		reflow();
@@ -535,11 +560,11 @@ public class DetailsForm extends PropertyWebForm {
 		((Composite) getControl()).redraw();
 	}
 
-	private boolean getDoButtonVisibility() {
+	private boolean getDoButtonVisibility(boolean add) {
 		if (currentFeature instanceof MissingFeature) {
 			MissingFeature mf = (MissingFeature) currentFeature;
 			if (mf.isOptional() && mf.getOriginatingSiteURL() != null)
-				return true;
+				return add ? false : true;
 			else
 				return false;
 		}
@@ -555,16 +580,22 @@ public class DetailsForm extends PropertyWebForm {
 			if (!currentAdapter.isOptional())
 				return false;
 		}
-		
+
 		if (localContext) {
-			IConfiguredSiteContext context = (IConfiguredSiteContext)currentAdapter;
+			IConfiguredSiteContext context =
+				(IConfiguredSiteContext) currentAdapter;
 			if (!context.getInstallConfiguration().isCurrent())
 				return false;
 		}
 
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-		if (model.findRelatedPendingChange(currentFeature) != null)
-			return false;
+		PendingChange job = model.findRelatedPendingChange(currentFeature);
+		if (job != null) {
+			if (add)
+				return false;
+			if (job.isProcessed())
+				return false;
+		}
 
 		if (localContext) {
 			IConfiguredSiteContext context =
@@ -628,7 +659,8 @@ public class DetailsForm extends PropertyWebForm {
 
 	private boolean hasMissingOptionalFeatures(IFeature feature) {
 		try {
-			IIncludedFeatureReference refs[] = feature.getIncludedFeatureReferences();
+			IIncludedFeatureReference refs[] =
+				feature.getIncludedFeatureReferences();
 			for (int i = 0; i < refs.length; i++) {
 				IIncludedFeatureReference ref = refs[i];
 
@@ -685,14 +717,12 @@ public class DetailsForm extends PropertyWebForm {
 	}
 
 	private void updateButtonText(boolean update) {
-		if (reinstallCode==REPAIR) {
-			doButton.setText(
-				UpdateUIPlugin.getResourceString(KEY_DO_REPAIR));
+		if (reinstallCode == REPAIR) {
+			doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_REPAIR));
 			return;
 		}
-		if (reinstallCode==CHANGE) {
-			doButton.setText(
-				UpdateUIPlugin.getResourceString(KEY_DO_CHANGE));
+		if (reinstallCode == CHANGE) {
+			doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_CHANGE));
 			return;
 		}
 		if (currentFeature instanceof MissingFeature) {
@@ -849,6 +879,26 @@ public class DetailsForm extends PropertyWebForm {
 		});
 	}
 
+	private void doAdd() {
+		PendingChange job = createPendingChange(PendingChange.INSTALL);
+		IStatus validationStatus =
+			ActivityConstraints.validatePendingChange(job);
+		if (validationStatus != null) {
+			ErrorDialog.openError(
+				UpdateUIPlugin.getActiveWorkbenchShell(),
+				null,
+				null,
+				validationStatus);
+			return;
+		}
+		UpdateUIPlugin.getDefault().getUpdateModel().addPendingChange(job);
+		IWorkbenchPage page = UpdateUIPlugin.getActivePage();
+		IViewPart view = page.findView(UpdatePerspective.ID_ITEMS);
+		if (view != null) {
+			page.bringToTop(view);
+		}
+	}
+
 	private void doUninstall() {
 		executeJob(PendingChange.UNINSTALL);
 	}
@@ -868,29 +918,33 @@ public class DetailsForm extends PropertyWebForm {
 		VersionedIdentifier vid = mf.getVersionedIdentifier();
 		URL siteURL = mf.getOriginatingSiteURL();
 		IConfiguredSite targetSite = null;
-		if (mf.getParent()!=null) {
+		if (mf.getParent() != null) {
 			ISite psite = mf.getParent().getSite();
 			targetSite = psite.getCurrentConfiguredSite();
 		}
-		IFeature feature = fetchFeatureFromServer(getControl().getShell(), siteURL, vid);
-		if (feature!=null) {
+		IFeature feature =
+			fetchFeatureFromServer(getControl().getShell(), siteURL, vid);
+		if (feature != null) {
 			PendingChange job = new PendingChange(feature, targetSite);
 			executeJob(getControl().getShell(), job, true);
-		}		
+		}
 	}
-	
-	public static IFeature fetchFeatureFromServer(Shell shell, final URL siteURL, final VersionedIdentifier vid) {
+
+	public static IFeature fetchFeatureFromServer(
+		Shell shell,
+		final URL siteURL,
+		final VersionedIdentifier vid) {
 		// Locate remote site, find the optional feature
 		// and install it
 
-		final IFeature [] result = new IFeature[1];
-		final CoreException [] exception = new CoreException [1];
+		final IFeature[] result = new IFeature[1];
+		final CoreException[] exception = new CoreException[1];
 
 		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
 			public void run() {
 				try {
 					ISite site = SiteManager.getSite(siteURL);
-					IFeatureReference [] refs = site.getFeatureReferences();
+					IFeatureReference[] refs = site.getFeatureReferences();
 					result[0] = findFeature(vid, refs);
 				} catch (CoreException e) {
 					exception[0] = e;
@@ -898,26 +952,39 @@ public class DetailsForm extends PropertyWebForm {
 			}
 		});
 		IStatus status = null;
-		if (exception[0]!=null) {
+		if (exception[0] != null) {
 			// Show error dialog
 			status = exception[0].getStatus();
-		}
-		else if (result[0]!=null) {
+		} else if (result[0] != null) {
 			return result[0];
+		} else {
+			String message =
+				UpdateUIPlugin.getFormattedMessage(
+					KEY_OPTIONAL_INSTALL_MESSAGE,
+					siteURL.toString());
+			status =
+				new Status(
+					IStatus.ERROR,
+					UpdateUIPlugin.PLUGIN_ID,
+					IStatus.OK,
+					message,
+					null);
 		}
-		else {
-			String message = UpdateUIPlugin.getFormattedMessage(KEY_OPTIONAL_INSTALL_MESSAGE, siteURL.toString());
-			status = new Status(IStatus.ERROR, UpdateUIPlugin.PLUGIN_ID, IStatus.OK, message, null);
-		}
-		if (status!=null) {
+		if (status != null) {
 			// Show error dialog
-			ErrorDialog.openError(shell, UpdateUIPlugin.getResourceString(KEY_OPTIONAL_INSTALL_TITLE), null, status);
+			ErrorDialog.openError(
+				shell,
+				UpdateUIPlugin.getResourceString(KEY_OPTIONAL_INSTALL_TITLE),
+				null,
+				status);
 		}
 		return null;
 	}
-	
-	private static IFeature findFeature(VersionedIdentifier vid, IFeatureReference [] refs) {
-		for (int i=0; i<refs.length; i++) {
+
+	private static IFeature findFeature(
+		VersionedIdentifier vid,
+		IFeatureReference[] refs) {
+		for (int i = 0; i < refs.length; i++) {
 			IFeatureReference ref = refs[i];
 			try {
 				VersionedIdentifier refVid = ref.getVersionedIdentifier();
@@ -926,18 +993,21 @@ public class DetailsForm extends PropertyWebForm {
 				}
 				// Try children
 				IFeature feature = ref.getFeature();
-				IFeatureReference [] irefs = feature.getIncludedFeatureReferences();
+				IFeatureReference[] irefs =
+					feature.getIncludedFeatureReferences();
 				IFeature result = findFeature(vid, irefs);
-				if (result!=null)
+				if (result != null)
 					return result;
-			}
-			catch (CoreException e) {
+			} catch (CoreException e) {
 			}
 		}
 		return null;
 	}
 
-	public static void executeJob(Shell shell, final PendingChange job, final boolean needLicensePage) {
+	public static void executeJob(
+		Shell shell,
+		final PendingChange job,
+		final boolean needLicensePage) {
 		IStatus validationStatus =
 			ActivityConstraints.validatePendingChange(job);
 		if (validationStatus != null) {
@@ -948,8 +1018,8 @@ public class DetailsForm extends PropertyWebForm {
 				validationStatus);
 			return;
 		}
-		if (job.getJobType()==PendingChange.UNCONFIGURE &&
-			UpdateUIPlugin.isPatch(job.getFeature())) {
+		if (job.getJobType() == PendingChange.UNCONFIGURE
+			&& UpdateUIPlugin.isPatch(job.getFeature())) {
 			unconfigurePatch(shell, job.getFeature());
 			return;
 		}
@@ -968,11 +1038,13 @@ public class DetailsForm extends PropertyWebForm {
 			}
 		});
 	}
-	
+
 	private static void unconfigurePatch(Shell shell, IFeature feature) {
-		IInstallConfiguration config = UpdateUIPlugin.getBackupConfigurationFor(feature);
-		if (config==null) {
-			String message = "This feature is a patch and cannot be directly disabled. Locate a configuration before it was installed and revert to it instead.";
+		IInstallConfiguration config =
+			UpdateUIPlugin.getBackupConfigurationFor(feature);
+		if (config == null) {
+			String message =
+				"This feature is a patch and cannot be directly disabled. Locate a configuration before it was installed and revert to it instead.";
 			MessageDialog.openError(shell, "Disable Feature", message);
 			return;
 		}
@@ -984,8 +1056,7 @@ public class DetailsForm extends PropertyWebForm {
 				localSite.save();
 				UpdateUIPlugin.informRestartNeeded();
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			UpdateUIPlugin.logException(e);
 		}
 	}
@@ -994,8 +1065,7 @@ public class DetailsForm extends PropertyWebForm {
 		if (currentFeature != null) {
 			if (currentFeature instanceof MissingFeature) {
 				MissingFeature mf = (MissingFeature) currentFeature;
-				if (mf.isOptional()
-					&& mf.getOriginatingSiteURL() != null) {
+				if (mf.isOptional() && mf.getOriginatingSiteURL() != null) {
 					executeOptionalInstall(mf);
 					return;
 				}

@@ -17,6 +17,7 @@ public class PendingChange extends SimpleFeatureAdapter {
 	private IFeature oldFeature;
 	private boolean optionalDelta;
 	private IConfiguredSite targetSite;
+	private boolean processed;
 	
 	public PendingChange(IFeature feature, int jobType) {
 		super(feature);
@@ -55,5 +56,13 @@ public class PendingChange extends SimpleFeatureAdapter {
 	
 	public IConfiguredSite getTargetSite() {
 		return targetSite;
+	}
+	
+	public boolean isProcessed() {
+		return processed;
+	}
+	
+	public void markProcessed() {
+		processed = true;
 	}
 }

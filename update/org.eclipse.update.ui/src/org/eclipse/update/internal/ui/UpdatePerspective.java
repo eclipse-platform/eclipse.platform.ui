@@ -15,6 +15,7 @@ public class UpdatePerspective implements IPerspectiveFactory {
 	public static final String ID_DETAILS = PREFIX + "DetailsView";
 	public static final String ID_BROWSER = PREFIX + "WebBrowser";
 	public static final String ID_SEARCH_RESULTS = PREFIX + "SearchResultsView";
+	public static final String ID_ITEMS = PREFIX + "ItemsView";
 
 	public UpdatePerspective() {
 		super();
@@ -22,12 +23,14 @@ public class UpdatePerspective implements IPerspectiveFactory {
 
 	public void createInitialLayout(IPageLayout factory) {
 		factory.setEditorAreaVisible(false);
-		factory.addView(
-			ID_CONFIGURATION,
+		IFolderLayout upperFolder = factory.createFolder("upper",
 			IPageLayout.LEFT,
 			0.33f,
 			factory.getEditorArea());
-		factory.addView(ID_UPDATES, IPageLayout.BOTTOM, 0.5f, ID_CONFIGURATION);
+		upperFolder.addView(ID_CONFIGURATION);
+		upperFolder.addView(ID_ITEMS);
+		
+		factory.addView(ID_UPDATES, IPageLayout.BOTTOM, 0.5f, "upper");
 		IFolderLayout detailsFolder = factory.createFolder("details", IPageLayout.RIGHT, 0.67f, factory.getEditorArea());
 		detailsFolder.addView(ID_DETAILS);
 		if (SWT.getPlatform().equals("win32"))

@@ -10,7 +10,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.part.ViewPart;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
@@ -20,8 +19,9 @@ import org.eclipse.update.internal.ui.search.*;
  * 
  */
 
-public class SearchResultView extends ViewPart implements ISelectionListener {
-	private TableViewer viewer;
+public class SearchResultView
+	extends BaseTableView
+	implements ISelectionListener {
 	private Action showSearchAction;
 	private ModelListener modelListener;
 	private SearchObject currentSearch;
@@ -35,11 +35,10 @@ public class SearchResultView extends ViewPart implements ISelectionListener {
 	private static final String KEY_C_SIZE = "SearchResultView.column.size";
 	private static final String KEY_UNKNOWN_SIZE =
 		"SearchResultView.column.sizeUnknown";
-	private static final String KEY_TITLE = 
-		"SearchResultView.title";
-	private static final String KEY_SHOW_SEARCH_LABEL = 
+	private static final String KEY_TITLE = "SearchResultView.title";
+	private static final String KEY_SHOW_SEARCH_LABEL =
 		"SearchResultView.showSearch.label";
-	private static final String KEY_SHOW_SEARCH_TOOLTIP = 
+	private static final String KEY_SHOW_SEARCH_TOOLTIP =
 		"SearchResultView.showSearch.tooltip";
 
 	/*
@@ -115,7 +114,8 @@ public class SearchResultView extends ViewPart implements ISelectionListener {
 			return null;
 		}
 		public Image getImage(Object obj) {
-			return UpdateUIPlugin.getDefault().getLabelProvider().get(UpdateUIPluginImages.DESC_FEATURE_OBJ);
+			return UpdateUIPlugin.getDefault().getLabelProvider().get(
+				UpdateUIPluginImages.DESC_FEATURE_OBJ);
 		}
 	}
 	class NameSorter extends ViewerSorter {
@@ -124,7 +124,7 @@ public class SearchResultView extends ViewPart implements ISelectionListener {
 	class ModelListener implements IUpdateModelChangedListener {
 		public void objectsAdded(Object parent, Object[] children) {
 			if (parent instanceof SearchResultSite) {
-				viewer.add(children);
+				getTableViewer().add(children);
 				updateTitle();
 			}
 		}
@@ -133,7 +133,7 @@ public class SearchResultView extends ViewPart implements ISelectionListener {
 		public void objectChanged(Object object, String property) {
 			if (object instanceof SearchObject) {
 				if (SearchObject.P_REFRESH.equals(property)) {
-					viewer.refresh();
+					getViewer().refresh();
 					updateTitle();
 				}
 			}
@@ -144,7 +144,7 @@ public class SearchResultView extends ViewPart implements ISelectionListener {
 	 * The constructor.
 	 */
 	public SearchResultView() {
-	UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
+		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
 		modelListener = new ModelListener();
 	}
 
@@ -152,24 +152,16 @@ public class SearchResultView extends ViewPart implements ISelectionListener {
 	 * This is a callback that will allow us
 	 * to create the viewer and initialize it.
 	 */
-	public void createPartControl(Composite parent) {
-		viewer =
-			new TableViewer(
-				parent,
-				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+	public void initProviders() {
+		TableViewer viewer = getTableViewer();
 		createColumns();
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setSorter(new NameSorter());
 		viewer.setInput(ResourcesPlugin.getWorkspace());
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent e) {
-			}
-		});
-		makeActions();
-		hookContextMenu();
-		hookDoubleClickAction();
-		contributeToActionBars();
+	}
+
+	protected void controlCreated() {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		model.addUpdateModelChangedListener(modelListener);
 		hookSelectionListener(true);
@@ -186,7 +178,7 @@ public class SearchResultView extends ViewPart implements ISelectionListener {
 	}
 
 	private void createColumns() {
-		Table table = viewer.getTable();
+		Table table = getTableViewer().getTable();
 		table.setHeaderVisible(true);
 
 		TableColumn column = new TableColumn(table, SWT.NULL);
@@ -221,38 +213,17 @@ public class SearchResultView extends ViewPart implements ISelectionListener {
 		super.dispose();
 	}
 
-	private void hookContextMenu() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				SearchResultView.this.fillContextMenu(manager);
-			}
-		});
-		Menu menu = menuMgr.createContextMenu(viewer.getControl());
-		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, viewer);
-	}
-
-	private void contributeToActionBars() {
-		IActionBars bars = getViewSite().getActionBars();
-		fillLocalPullDown(bars.getMenuManager());
-		fillLocalToolBar(bars.getToolBarManager());
-	}
-
-	private void fillLocalPullDown(IMenuManager manager) {
-	}
-
-	private void fillContextMenu(IMenuManager manager) {
+	protected void fillContextMenu(IMenuManager manager) {
 		manager.add(showSearchAction);
 		manager.add(new Separator("additions"));
 	}
 
-	private void fillLocalToolBar(IToolBarManager manager) {
+	protected void fillActionBars(IActionBars bars) {
+		IToolBarManager manager = bars.getToolBarManager();
 		manager.add(showSearchAction);
 	}
 
-	private void makeActions() {
+	protected void makeActions() {
 		showSearchAction = new Action() {
 			public void run() {
 				try {
@@ -266,29 +237,17 @@ public class SearchResultView extends ViewPart implements ISelectionListener {
 				}
 			}
 		};
-		showSearchAction.setText(UpdateUIPlugin.getResourceString(KEY_SHOW_SEARCH_LABEL));
-		showSearchAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_SHOW_SEARCH_TOOLTIP));
+		showSearchAction.setText(
+			UpdateUIPlugin.getResourceString(KEY_SHOW_SEARCH_LABEL));
+		showSearchAction.setToolTipText(
+			UpdateUIPlugin.getResourceString(KEY_SHOW_SEARCH_TOOLTIP));
 		showSearchAction.setImageDescriptor(
 			UpdateUIPluginImages.DESC_SHOW_SEARCH);
 	}
 
-	private void hookDoubleClickAction() {
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-			}
-		});
-	}
-
-	/**
-	 * Passing the focus request to the viewer's control.
-	 */
-	public void setFocus() {
-		viewer.getControl().setFocus();
-	}
-
 	public void setCurrentSearch(SearchObject currentSearch) {
 		this.currentSearch = currentSearch;
-		viewer.setInput(currentSearch);
+		getViewer().setInput(currentSearch);
 		updateTitle();
 	}
 
@@ -296,12 +255,14 @@ public class SearchResultView extends ViewPart implements ISelectionListener {
 		if (currentSearch == null)
 			setTitle(getSite().getRegisteredName());
 		else {
-			int count = viewer.getTable().getItemCount();
-			String title = UpdateUIPlugin.getFormattedMessage(KEY_TITLE, 
-				new String [] {
-					getSite().getRegisteredName(),
-					getSearchLabel(currentSearch),
-					""+count });
+			int count = getTableViewer().getTable().getItemCount();
+			String title =
+				UpdateUIPlugin.getFormattedMessage(
+					KEY_TITLE,
+					new String[] {
+						getSite().getRegisteredName(),
+						getSearchLabel(currentSearch),
+						"" + count });
 			setTitle(title);
 		}
 	}
@@ -319,7 +280,7 @@ public class SearchResultView extends ViewPart implements ISelectionListener {
 
 	public void setSelectionActive(boolean active) {
 		if (active)
-			getSite().setSelectionProvider(viewer);
+			getSite().setSelectionProvider(getViewer());
 		else
 			getSite().setSelectionProvider(null);
 		updateTitle();

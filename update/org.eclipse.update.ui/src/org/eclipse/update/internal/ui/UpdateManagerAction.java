@@ -54,15 +54,20 @@ public class UpdateManagerAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	private void ensureCriticalViewsVisible(IWorkbenchPage page) {
-		ensureViewVisible(page, UpdatePerspective.ID_CONFIGURATION);
-		ensureViewVisible(page, UpdatePerspective.ID_UPDATES);
-		ensureViewVisible(page, UpdatePerspective.ID_DETAILS);
+		ensureViewVisible(page, UpdatePerspective.ID_ITEMS, false);
+		ensureViewVisible(page, UpdatePerspective.ID_CONFIGURATION, true);
+		ensureViewVisible(page, UpdatePerspective.ID_UPDATES, false);
+		ensureViewVisible(page, UpdatePerspective.ID_DETAILS, false);
 	}
 
-	private void ensureViewVisible(IWorkbenchPage page, String viewId) {
+	private void ensureViewVisible(IWorkbenchPage page, String viewId, boolean top) {
 		try {
-			if (page.findView(viewId) == null) {
+			IViewPart view = page.findView(viewId);
+			if (view == null) {
 				page.showView(viewId);
+			}
+			else if (top) {
+				page.bringToTop(view);
 			}
 		} catch (PartInitException e) {
 			UpdateUIPlugin.logException(e, true);

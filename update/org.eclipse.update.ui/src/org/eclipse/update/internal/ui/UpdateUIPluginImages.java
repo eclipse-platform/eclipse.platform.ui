@@ -87,6 +87,9 @@ public class UpdateUIPluginImages {
 	public static final ImageDescriptor DESC_ERROR_CO = create(PATH_OVR, "error_co.gif");
 	public static final ImageDescriptor DESC_WARNING_CO = create(PATH_OVR, "warning_co.gif");
 	public static final ImageDescriptor DESC_MOD_CO = create(PATH_OVR, "mod_co.gif");
+	public static final ImageDescriptor DESC_ADD_CO = create(PATH_OVR, "add_stat.gif");
+	public static final ImageDescriptor DESC_DEL_CO = create(PATH_OVR, "del_stat.gif");
+	public static final ImageDescriptor DESC_UNCONF_CO = create(PATH_OVR, "unconfigured_co.gif");
 
 	/**
 	 * VIEW16

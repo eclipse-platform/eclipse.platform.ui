@@ -30,6 +30,9 @@ public class SharedLabelProvider
 	public static final int F_LINKED = 16;
 	public static final int F_MOD = 32;
 	public static final int F_UPDATED = 64;
+	public static final int F_UNCONFIGURED = 128;
+	public static final int F_ADD = 256;
+	public static final int F_DEL = 512;
 
 	Hashtable images = new Hashtable();
 	ArrayList consumers = new ArrayList();
@@ -144,6 +147,12 @@ public class SharedLabelProvider
 			return new ImageDescriptor[] { UpdateUIPluginImages.DESC_CURRENT_CO };
 		if ((flags & F_MOD) != 0)
 			return new ImageDescriptor[] { UpdateUIPluginImages.DESC_MOD_CO };
+		if ((flags & F_ADD) != 0)
+			return new ImageDescriptor[] { UpdateUIPluginImages.DESC_ADD_CO };
+		if ((flags & F_DEL) != 0)
+			return new ImageDescriptor[] { UpdateUIPluginImages.DESC_DEL_CO };
+		if ((flags & F_UNCONFIGURED) != 0)
+			return new ImageDescriptor[] { UpdateUIPluginImages.DESC_UNCONF_CO };
 		return null;
 	}
 	

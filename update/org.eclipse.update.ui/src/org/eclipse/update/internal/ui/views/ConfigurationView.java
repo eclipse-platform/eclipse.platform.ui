@@ -212,7 +212,9 @@ public class ConfigurationView
 		private Object[] getConfigurationSites(final IInstallConfiguration config) {
 			final Object[][] bag = new Object[1][];
 			BusyIndicator
-				.showWhile(viewer.getControl().getDisplay(), new Runnable() {
+				.showWhile(
+					getViewer().getControl().getDisplay(),
+					new Runnable() {
 				public void run() {
 					IConfiguredSite[] sites = config.getConfiguredSites();
 					Object[] adapters = new Object[sites.length];
@@ -229,8 +231,7 @@ public class ConfigurationView
 		private Object[] getConfiguredFeatures(final IConfiguredSiteAdapter adapter) {
 			final Object[][] bag = new Object[1][];
 
-			BusyIndicator
-				.showWhile(viewer.getControl().getDisplay(), new Runnable() {
+			BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 				public void run() {
 					IConfiguredSite csite = adapter.getConfigurationSite();
 					IFeatureReference[] refs = csite.getConfiguredFeatures();
@@ -522,11 +523,12 @@ public class ConfigurationView
 	}
 
 	public void initProviders() {
-		viewer.setContentProvider(new LocalSiteProvider());
-		viewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
-		viewer.setLabelProvider(new LocalSiteLabelProvider());
-		viewer.setSorter(new ConfigurationSorter());
-		viewer.addFilter(new ViewerFilter() {
+		final TreeViewer treeViewer = getTreeViewer();
+		treeViewer.setContentProvider(new LocalSiteProvider());
+		treeViewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
+		treeViewer.setLabelProvider(new LocalSiteLabelProvider());
+		treeViewer.setSorter(new ConfigurationSorter());
+		treeViewer.addFilter(new ViewerFilter() {
 			public boolean select(Viewer v, Object parent, Object element) {
 				if (element instanceof IConfiguredFeatureAdapter) {
 					IConfiguredFeatureAdapter adapter =
@@ -552,19 +554,16 @@ public class ConfigurationView
 			public void objectsRemoved(Object parent, Object[] children) {
 			}
 			public void objectChanged(final Object obj, String property) {
-				viewer.getControl().getDisplay().asyncExec(new Runnable() {
+				getControl().getDisplay().asyncExec(new Runnable() {
 					public void run() {
-							//viewer.update(obj, null);
-		//must refresh because name change may
-		// require resort
-	viewer.refresh();
+						treeViewer.refresh();
 					}
 				});
 			}
 		};
 		model.addUpdateModelChangedListener(modelListener);
 		WorkbenchHelp.setHelp(
-			viewer.getControl(),
+			getControl(),
 			"org.eclipse.update.ui.ConfigurationView");
 	}
 
@@ -579,8 +578,7 @@ public class ConfigurationView
 
 	private Object[] openLocalSite() {
 		final Object[][] bag = new Object[1][];
-		BusyIndicator
-			.showWhile(viewer.getControl().getDisplay(), new Runnable() {
+		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 			public void run() {
 				try {
 					ILocalSite localSite = SiteManager.getLocalSite();
@@ -626,7 +624,7 @@ public class ConfigurationView
 		super.dispose();
 	}
 	private Object getSelectedObject() {
-		ISelection selection = viewer.getSelection();
+		ISelection selection = getTreeViewer().getSelection();
 		if (selection instanceof IStructuredSelection
 			&& !selection.isEmpty()) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
@@ -638,15 +636,19 @@ public class ConfigurationView
 	}
 
 	public void selectHistoryFolder() {
-		viewer.setExpandedState(historyFolder, true);
-		viewer.setSelection(new StructuredSelection(historyFolder), true);
+		getTreeViewer().setExpandedState(historyFolder, true);
+		getTreeViewer().setSelection(
+			new StructuredSelection(historyFolder),
+			true);
 	}
 	public void selectCurrentConfiguration() {
-		viewer.setSelection(new StructuredSelection(getLocalSite()), true);
+		getTreeViewer().setSelection(
+			new StructuredSelection(getLocalSite()),
+			true);
 	}
 
 	private boolean canPreserve() {
-		ISelection selection = viewer.getSelection();
+		ISelection selection = getTreeViewer().getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			if (ssel.isEmpty())
@@ -663,7 +665,7 @@ public class ConfigurationView
 	}
 
 	private void doPreserve() {
-		ISelection selection = viewer.getSelection();
+		ISelection selection = getTreeViewer().getSelection();
 		ILocalSite localSite;
 		ArrayList errors = new ArrayList();
 		int nsaved = 0;
@@ -703,20 +705,28 @@ public class ConfigurationView
 			} catch (CoreException e) {
 				UpdateUIPlugin.logException(e);
 			}
-			viewer.refresh(savedFolder);
-			viewer.expandToLevel(savedFolder, 1);
+			getTreeViewer().refresh(savedFolder);
+			getTreeViewer().expandToLevel(savedFolder, 1);
 		}
 		if (errors.size() > 0) {
-			IStatus [] children = (IStatus[])errors.toArray(new IStatus[errors.size()]);
-			String message = UpdateUIPlugin.getResourceString(KEY_SAVING_ERRORS);
-			MultiStatus status = new MultiStatus(UpdateUIPlugin.getPluginId(), IStatus.OK, children, message, null);
+			IStatus[] children =
+				(IStatus[]) errors.toArray(new IStatus[errors.size()]);
+			String message =
+				UpdateUIPlugin.getResourceString(KEY_SAVING_ERRORS);
+			MultiStatus status =
+				new MultiStatus(
+					UpdateUIPlugin.getPluginId(),
+					IStatus.OK,
+					children,
+					message,
+					null);
 			CoreException e = new CoreException(status);
 			UpdateUIPlugin.logException(e);
 		}
 	}
 
 	private boolean canDelete() {
-		ISelection selection = viewer.getSelection();
+		ISelection selection = getTreeViewer().getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			if (ssel.isEmpty())
@@ -732,9 +742,9 @@ public class ConfigurationView
 	}
 
 	private void doDelete() {
-		ISelection selection = viewer.getSelection();
+		ISelection selection = getTreeViewer().getSelection();
 		ILocalSite localSite;
-		
+
 		if (!confirmDeletion())
 			return;
 
@@ -753,7 +763,7 @@ public class ConfigurationView
 				Object obj = iter.next();
 				IInstallConfiguration target = null;
 				if (obj instanceof PreservedConfiguration)
-					target = ((PreservedConfiguration)obj).getConfiguration();
+					target = ((PreservedConfiguration) obj).getConfiguration();
 				if (target == null)
 					continue;
 				localSite.removeFromPreservedConfigurations(target);
@@ -766,7 +776,7 @@ public class ConfigurationView
 			} catch (CoreException e) {
 				UpdateUIPlugin.logException(e);
 			}
-			viewer.refresh(savedFolder);
+			getTreeViewer().refresh(savedFolder);
 		}
 	}
 
@@ -807,7 +817,7 @@ public class ConfigurationView
 		showUnconfFeaturesAction = new Action() {
 			public void run() {
 					//viewer.refresh(getLocalSite());
-	viewer.refresh();
+	getTreeViewer().refresh();
 				settings.put(
 					STATE_SHOW_UNCONF,
 					showUnconfFeaturesAction.isChecked());
@@ -823,7 +833,7 @@ public class ConfigurationView
 		showUnconfFeaturesAction.setChecked(showUnconfState);
 		showUnconfFeaturesAction.setToolTipText(
 			UpdateUIPlugin.getResourceString(KEY_SHOW_UNCONF_FEATURES_TOOLTIP));
-		drillDownAdapter = new DrillDownAdapter(viewer);
+		drillDownAdapter = new DrillDownAdapter(getTreeViewer());
 		super.makeActions();
 		revertAction = new Action() {
 			public void run() {
@@ -890,7 +900,7 @@ public class ConfigurationView
 		propertiesAction =
 			new PropertyDialogAction(
 				UpdateUIPlugin.getActiveWorkbenchShell(),
-				viewer);
+				getTreeViewer());
 		WorkbenchHelp.setHelp(
 			propertiesAction,
 			"org.eclipse.update.ui.CofigurationView_propertiesAction");
@@ -941,14 +951,14 @@ public class ConfigurationView
 		switch (severity) {
 			case IStatus.ERROR :
 				ErrorDialog.openError(
-					viewer.getControl().getShell(),
+					getControl().getShell(),
 					title,
 					null,
 					status);
 				break;
 			case IStatus.WARNING :
 				MessageDialog.openWarning(
-					viewer.getControl().getShell(),
+					getControl().getShell(),
 					title,
 					status.getMessage());
 				break;
@@ -958,7 +968,7 @@ public class ConfigurationView
 					message =
 						UpdateUIPlugin.getResourceString(KEY_STATUS_DEFAULT);
 				MessageDialog.openInformation(
-					viewer.getControl().getShell(),
+					getControl().getShell(),
 					title,
 					message);
 		}
@@ -1060,28 +1070,28 @@ public class ConfigurationView
 			UpdateUIPlugin.logException(e);
 		}
 	} /**
-																																				 * @see IInstallConfigurationChangedListener#installSiteAdded(ISite)
-																																				 */
+																																						 * @see IInstallConfigurationChangedListener#installSiteAdded(ISite)
+																																						 */
 	public void installSiteAdded(IConfiguredSite csite) {
 		asyncRefresh();
 	} /**
-																																				 * @see IInstallConfigurationChangedListener#installSiteRemoved(ISite)
-																																				 */
+																																						 * @see IInstallConfigurationChangedListener#installSiteRemoved(ISite)
+																																						 */
 	public void installSiteRemoved(IConfiguredSite site) {
 		asyncRefresh();
 	} /**
-																																				 * @see IConfiguredSiteChangedListener#featureInstalled(IFeature)
-																																				 */
+																																						 * @see IConfiguredSiteChangedListener#featureInstalled(IFeature)
+																																						 */
 	public void featureInstalled(IFeature feature) {
 		asyncRefresh();
 	} /**
-																																				 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
-																																				 */
+																																						 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
+																																						 */
 	public void featureRemoved(IFeature feature) {
 		asyncRefresh();
 	} /**
-																																				 * @see IConfiguredSiteChangedListener#featureUConfigured(IFeature)
-																																				 */
+																																						 * @see IConfiguredSiteChangedListener#featureUConfigured(IFeature)
+																																						 */
 	public void featureConfigured(IFeature feature) {
 	};
 	/**
@@ -1101,12 +1111,12 @@ public class ConfigurationView
 		Display display = SWTUtil.getStandardDisplay();
 		if (display == null)
 			return;
-		if (viewer.getControl().isDisposed())
+		if (getControl().isDisposed())
 			return;
 		display.asyncExec(new Runnable() {
 			public void run() {
-				if (!viewer.getControl().isDisposed())
-					viewer.refresh();
+				if (!getControl().isDisposed())
+					getTreeViewer().refresh();
 			}
 		});
 	}

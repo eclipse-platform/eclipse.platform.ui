@@ -108,7 +108,7 @@ public class UpdatesView
 		public void update() {
 			boolean enabled = true;
 			IStructuredSelection sel =
-				(IStructuredSelection) UpdatesView.this.viewer.getSelection();
+				(IStructuredSelection) UpdatesView.this.getViewer().getSelection();
 			for (Iterator iter = sel.iterator(); iter.hasNext();) {
 				Object obj = iter.next();
 				if (obj instanceof NamedModelObject) {
@@ -197,7 +197,7 @@ public class UpdatesView
 			if (parent instanceof SiteCategory) {
 				final SiteCategory category = (SiteCategory) parent;
 				BusyIndicator
-					.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+					.showWhile(getControl().getDisplay(), new Runnable() {
 					public void run() {
 						try {
 							category.touchFeatures();
@@ -397,10 +397,6 @@ public class UpdatesView
 		volumeLabelProvider = new VolumeLabelProvider();
 	}
 
-	protected TreeViewer createTree(Composite parent, int styles) {
-		return new UpdateTreeViewer(parent, styles);
-	}
-
 	public void dispose() {
 		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
 		volumeLabelProvider.dispose();
@@ -419,29 +415,29 @@ public class UpdatesView
 	public void initProviders() {
 		searchMonitorManager = new SearchMonitorManager();
 		searchMonitorManager.register(updateSearchObject);
-		viewer.setContentProvider(new SiteProvider());
-		viewer.setLabelProvider(new SiteLabelProvider());
-		viewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
+		getTreeViewer().setContentProvider(new SiteProvider());
+		getTreeViewer().setLabelProvider(new SiteLabelProvider());
+		getTreeViewer().setInput(UpdateUIPlugin.getDefault().getUpdateModel());
 		WorkbenchHelp.setHelp(
-			viewer.getControl(),
+			getControl(),
 			"org.eclipse.update.ui.UpdatesView");
 	}
 
 	protected void initDragAndDrop() {
-		clipboard = new Clipboard(viewer.getControl().getDisplay());
+		clipboard = new Clipboard(getControl().getDisplay());
 		int ops = DND.DROP_COPY | DND.DROP_MOVE;
 		Transfer[] transfers =
 			new Transfer[] {
 				UpdateModelDataTransfer.getInstance(),
 				TextTransfer.getInstance()};
-		viewer.addDragSupport(
+		getTreeViewer().addDragSupport(
 			ops,
 			transfers,
-			new UpdatesDragAdapter((ISelectionProvider) viewer));
-		viewer.addDropSupport(
+			new UpdatesDragAdapter((ISelectionProvider)getViewer()));
+		getTreeViewer().addDropSupport(
 			ops | DND.DROP_DEFAULT,
 			transfers,
-			new UpdatesDropAdapter(viewer));
+			new UpdatesDropAdapter(getTreeViewer()));
 	}
 
 	public void makeActions() {
@@ -449,7 +445,7 @@ public class UpdatesView
 		propertiesAction =
 			new PropertyDialogAction(
 				UpdateUIPlugin.getActiveWorkbenchShell(),
-				viewer);
+				getTreeViewer());
 		newAction = new Action() {
 			public void run() {
 				performNewBookmark();
@@ -559,9 +555,9 @@ public class UpdatesView
 		fileFilterAction = new Action() {
 			public void run() {
 				if (fileFilterAction.isChecked()) {
-					viewer.removeFilter(fileFilter);
+					getTreeViewer().removeFilter(fileFilter);
 				} else
-					viewer.addFilter(fileFilter);
+					getTreeViewer().addFilter(fileFilter);
 			}
 		};
 		WorkbenchHelp.setHelp(
@@ -571,15 +567,15 @@ public class UpdatesView
 			UpdateUIPlugin.getResourceString(KEY_FILTER_FILES));
 		fileFilterAction.setChecked(false);
 
-		viewer.addFilter(fileFilter);
+		getTreeViewer().addFilter(fileFilter);
 
 		filterEnvironmentAction = new Action() {
 			public void run() {
 				boolean checked = filterEnvironmentAction.isChecked();
 				if (checked) {
-					viewer.addFilter(environmentFilter);
+					getTreeViewer().addFilter(environmentFilter);
 				} else
-					viewer.removeFilter(environmentFilter);
+					getTreeViewer().removeFilter(environmentFilter);
 				setStoredEnvironmentValue(checked);
 			}
 		};
@@ -591,8 +587,8 @@ public class UpdatesView
 		boolean envValue = getStoredEnvironmentValue();
 		filterEnvironmentAction.setChecked(envValue);
 
-		viewer.addFilter(environmentFilter);
-		viewer.setSorter(new UpdatesViewSorter());
+		getTreeViewer().addFilter(environmentFilter);
+		getTreeViewer().setSorter(new UpdatesViewSorter());
 
 		showCategoriesAction = new Action() {
 			public void run() {
@@ -617,7 +613,7 @@ public class UpdatesView
 		linkExtensionAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_LINK_EXTENSION));
 
-		viewer.addSelectionChangedListener(selectionListener);
+		getTreeViewer().addSelectionChangedListener(selectionListener);
 		hookGlobalActions();
 	}
 	
@@ -702,7 +698,7 @@ public class UpdatesView
 	}
 
 	private boolean canDelete() {
-		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
+		IStructuredSelection sel = (IStructuredSelection) getTreeViewer().getSelection();
 		if (sel.isEmpty())
 			return false;
 		for (Iterator iter = sel.iterator(); iter.hasNext();) {
@@ -730,7 +726,7 @@ public class UpdatesView
 	}
 
 	private Object getSelectedObject() {
-		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
+		IStructuredSelection sel = (IStructuredSelection) getViewer().getSelection();
 		if (sel.isEmpty() || sel.size() > 1)
 			return null;
 		return sel.getFirstElement();
@@ -790,7 +786,7 @@ public class UpdatesView
 	}
 
 	private void performNewLocal() {
-		ISelection selection = viewer.getSelection();
+		ISelection selection = getViewer().getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			Object obj = ssel.getFirstElement();
@@ -820,7 +816,7 @@ public class UpdatesView
 	}
 
 	private void performDelete() {
-		ISelection selection = viewer.getSelection();
+		ISelection selection = getViewer().getSelection();
 		if (selection instanceof IStructuredSelection) {
 			if (!confirmDeletion())
 				return;
@@ -868,19 +864,19 @@ public class UpdatesView
 			return;
 		if (!performCopy())
 			return;
-		doDelete((IStructuredSelection) viewer.getSelection());
+		doDelete((IStructuredSelection) getViewer().getSelection());
 	}
 	
 	private boolean canCopy() {
 		IStructuredSelection selection =
-			(IStructuredSelection) viewer.getSelection();
+			(IStructuredSelection) getViewer().getSelection();
 		return UpdatesDragAdapter.canCopy(selection);
 	}
 		
 
 	private boolean performCopy() {
 		IStructuredSelection selection =
-			(IStructuredSelection) viewer.getSelection();
+			(IStructuredSelection) getViewer().getSelection();
 		if (!UpdatesDragAdapter.canCopy(selection))
 			return false;
 		NamedModelObject[] objects =
@@ -926,7 +922,7 @@ public class UpdatesView
 					getSelectedObject());
 			for (int i = 0; i < objects.length; i++) {
 				NamedModelObject object = (NamedModelObject)objects[i];
-				if (!UpdatesDropAdapter.addToModel(viewer.getControl().getShell(),
+				if (!UpdatesDropAdapter.addToModel(getControl().getShell(),
 					parentFolder,
 					object))
 					return;
@@ -958,12 +954,12 @@ public class UpdatesView
 	}
 
 	private void performRefresh() {
-		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
+		IStructuredSelection sel = (IStructuredSelection) getViewer().getSelection();
 		final Object obj = sel.getFirstElement();
 
 		if (obj != null) {
 			BusyIndicator
-				.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+				.showWhile(getControl().getDisplay(), new Runnable() {
 				public void run() {
 					try {
 						// reinitialize the authenticator  
@@ -973,7 +969,7 @@ public class UpdatesView
 							auth.reset();
 						if (obj instanceof SiteBookmark)
 							 ((SiteBookmark) obj).connect(false);
-						viewer.refresh(obj);
+						getViewer().refresh(obj);
 					} catch (CoreException e) {
 						UpdateUIPlugin.logException(e);
 					}
@@ -991,7 +987,7 @@ public class UpdatesView
 				InstallWizard.createInstallConfiguration();
 			if (TargetPage
 				.addConfiguredSite(
-					viewer.getControl().getShell(),
+					getControl().getShell(),
 					config,
 					dir,
 					true)) {
@@ -1017,7 +1013,7 @@ public class UpdatesView
 		return array;
 	}
 	public void selectUpdateObject() {
-		viewer.setSelection(new StructuredSelection(updateSearchObject), true);
+		getViewer().setSelection(new StructuredSelection(updateSearchObject), true);
 	}
 
 	class CatalogBag {
@@ -1039,7 +1035,7 @@ public class UpdatesView
 		final SiteBookmark bookmark,
 		final boolean connect) {
 		final CatalogBag bag = new CatalogBag();
-		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 			public void run() {
 				try {
 					if (connect)
@@ -1055,10 +1051,10 @@ public class UpdatesView
 	}
 
 	private void showCategories(boolean show) {
-		Object[] expanded = viewer.getExpandedElements();
+		Object[] expanded = getTreeViewer().getExpandedElements();
 		for (int i = 0; i < expanded.length; i++) {
 			if (expanded[i] instanceof SiteBookmark) {
-				viewer.refresh(expanded[i]);
+				getViewer().refresh(expanded[i]);
 			}
 		}
 	}
@@ -1068,7 +1064,7 @@ public class UpdatesView
 	}
 
 	protected void deleteKeyPressed(Widget widget) {
-		if (deleteAction.isEnabled())
+		if (canDelete())
 			deleteAction.run();
 	}
 
@@ -1083,10 +1079,10 @@ public class UpdatesView
 			}
 			if (parent == null)
 				parent = model;
-			viewer.add(parent, children);
+			getTreeViewer().add(parent, children);
 			if (parent != model)
-				viewer.setExpandedState(parent, true);
-			viewer.setSelection(new StructuredSelection(children), true);
+				getTreeViewer().setExpandedState(parent, true);
+			getViewer().setSelection(new StructuredSelection(children), true);
 		}
 	}
 
@@ -1095,8 +1091,8 @@ public class UpdatesView
 			return;
 		if (children[0] instanceof NamedModelObject
 			) {
-			viewer.remove(children);
-			viewer.setSelection(new StructuredSelection());
+			getTreeViewer().remove(children);
+			getTreeViewer().setSelection(new StructuredSelection());
 			for (int i=0; i<children.length; i++) {
 				if (children[i] instanceof SearchObject)	
 			   		searchMonitorManager.unregister((SearchObject)children[i]);
@@ -1107,11 +1103,11 @@ public class UpdatesView
 	public void objectChanged(Object object, String property) {
 		if (object instanceof NamedModelObject) {
 			if (property.equals(NamedModelObject.P_NAME)) {
-				viewer.update(object, null);
+				getTreeViewer().update(object, null);
 			}
 			if (object instanceof SiteBookmark) {
 				if (property.equals(SiteBookmark.P_URL)) {
-					viewer.refresh(object);
+					getTreeViewer().refresh(object);
 				}
 			}
 			//viewer.setSelection(viewer.getSelection());
@@ -1119,7 +1115,7 @@ public class UpdatesView
 	}
 
 	public void setSelection(IStructuredSelection selection) {
-		viewer.setSelection(selection, true);
+		getViewer().setSelection(selection, true);
 	}
 
 	private void disposeImages() {
@@ -1131,7 +1127,7 @@ public class UpdatesView
 		final CoreException[] exception = new CoreException[1];
 
 		BusyIndicator
-			.showWhile(viewer.getControl().getDisplay(), new Runnable() {
+			.showWhile(getControl().getDisplay(), new Runnable() {
 			public void run() {
 				try {
 					result[0] = adapter.getFeature();

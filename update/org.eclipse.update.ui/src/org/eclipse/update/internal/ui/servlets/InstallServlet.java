@@ -49,7 +49,7 @@ public class InstallServlet extends HttpServlet {
 		PrintWriter writer =
 			ServletsUtil.createResponsePrologue(servletResponse);
 		execute(writer, servletRequest);
-		ServletsUtil.createResponseEpilogue(servletResponse, writer);
+		ServletsUtil.createResponseEpilogue(servletRequest, servletResponse, writer);
 	}
 
 	/**
@@ -68,24 +68,28 @@ public class InstallServlet extends HttpServlet {
 		String [] versionedIds = servletRequest.getParameterValues("feature");
 		
 		if (serverURL == null) {
-			createError(writer, "Update server URL is unknown.");
+			createPageError(writer, "Update server URL is unknown.");
 			return;
 		}
 		if (versionedIds == null) {
-			createError(writer, "No features to install.");
+			createPageError(writer, "No features to install.");
 			return;
 		}
 		try {
 			URL url = new URL(serverURL);
 			VersionedIdentifier [] vids = computeVersionedIdentifiers(versionedIds);
 			boolean success = executeInstall(writer, url, vids, needLicensePage);
-			if (success) createInfo(writer);
+			if (success) ServletsUtil.createInfo(writer);
 		} catch (MalformedURLException e) {
-			createError(
+			createPageError(
 				writer,
 				"Update server URL has incorrect format: "
 					+ serverURL.toString());
 		}
+	}
+	
+	private void createPageError(PrintWriter writer, String problem) {
+		ServletsUtil.createError(writer, problem, "Contact Web master that maintains the page that initiated this operation.");
 	}
 	
 	private VersionedIdentifier[] computeVersionedIdentifiers(String [] array) {
@@ -102,15 +106,7 @@ public class InstallServlet extends HttpServlet {
 		return (VersionedIdentifier[])result.toArray(new VersionedIdentifier[result.size()]);
 	}
 
-	private void createError(PrintWriter writer, String message) {
-		writer.println(
-			"<H3>Error received from Eclipse application server.</H3>");
-		writer.println("<b>Message:</b>" + message);
-	}
 
-	private void createInfo(PrintWriter writer) {
-		writer.println("Request succesfully executed.");
-	}
 	private boolean executeInstall(PrintWriter writer,
 								URL siteURL,
 								VersionedIdentifier [] vids,
@@ -119,7 +115,7 @@ public class InstallServlet extends HttpServlet {
 			return executeInstall(writer, siteURL, vids[0], needLicensePage);
 		}
 		else {
-			createError(writer, "Multiple feature install not supported");
+			ServletsUtil.createError(writer, "Multiple feature install not supported", null);
 			return false;
 		}
 	}
@@ -162,16 +158,19 @@ public class InstallServlet extends HttpServlet {
 				.getVersionedIdentifier()
 				.equals(feature.getVersionedIdentifier())) {
 				// Already installed.
-				createError(writer, "The feature is already installed.");
+				ServletsUtil.createError(writer, 
+					"The feature is already installed.",
+					"Nothing - you already have it.");
 				return false;
 			}
 			if (latestOldFeature
 				.getVersionedIdentifier()
 				.getVersion()
 				.isGreaterThan(feature.getVersionedIdentifier().getVersion())) {
-				createError(
+				ServletsUtil.createError(
 					writer,
-					"The feature is older than the one already installed");
+					"The feature is older than the one already installed",
+					"Nothing - update can only install features that you do not have or that are updates to the one already installed.");
 				return false;
 			}
 		}
