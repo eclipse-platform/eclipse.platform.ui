@@ -95,11 +95,10 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					}
 					break;
 				case DebugEvent.CHANGE :
+				    IStackFrame lastFrame = getLaunchView().getStackFrame();
 					if (source instanceof IStackFrame) {
-						IStackFrame lastFrame= getLaunchView().getStackFrame();
 						if (source.equals(lastFrame)) {
 							getLaunchView().setStackFrame(null);
-							getLaunchView().showEditorForCurrentSelection();
 						}
 					}
 					if (event.getDetail() == DebugEvent.STATE) {
@@ -107,6 +106,9 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					} else {
 						//structural change
 						refresh(source);
+					}
+					if (lastFrame != null) {
+					    getLaunchView().autoExpand(lastFrame, true);
 					}
 					break;
 			}
