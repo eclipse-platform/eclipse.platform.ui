@@ -184,8 +184,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	public IBreakpoint createBreakpoint(IMarker marker) throws DebugException {
 		if (fMarkers.containsKey(marker)) {
 			return (IBreakpoint) fMarkers.get(marker);
-		}
-		IBreakpoint breakpoint= null;	
+		}	
 		try {
 			IConfigurationElement config = (IConfigurationElement)fBreakpointExtensions.get(marker.getType());
 			if (config == null) {
@@ -333,7 +332,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		protected void handleAddBreakpoint(IResourceDelta rDelta, final IMarker marker, IMarkerDelta mDelta) {
 			if (0 != (rDelta.getFlags() & IResourceDelta.MOVED_FROM)) {
 				// this breakpoint has actually been moved - removed from the Breakpoint manager and deleted
-				final IWorkspace workspace= getWorkspace();
 				final IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
 					public void run(IProgressMonitor monitor) {
 						try {
