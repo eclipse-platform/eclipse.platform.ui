@@ -48,8 +48,8 @@ public abstract class Key implements Comparable {
 	private final static int HASH_INITIAL = Key.class.getName().hashCode();
 
 	/**
-	 * The name of this key object. Equality of Key objects is determined 
-	 * solely by this field.
+	 * The formal string representation for this object. Equality of Key objects 
+	 * is determined solely by this field.
 	 */
 	protected String name;
 
@@ -68,9 +68,11 @@ public abstract class Key implements Comparable {
 	private transient boolean hashCodeComputed;
 	
 	/**
-	 * Constructs an instance of <code>Key</code> given a name.
+	 * Constructs an instance of <code>Key</code> given its formal string
+	 * representation.
 	 * 
-	 * @param name The name of the key, must not be null.
+	 * @param name the formal string representation of this key. Must not be
+	 * 			   <code>null</code>.
 	 */
 	Key(String name) {	
 		if (name == null)
@@ -102,12 +104,13 @@ public abstract class Key implements Comparable {
 	}
 
 	/**
-	 * Returns the formal string representation of this key, translated for the 
+	 * Returns the formal string representation for this key, translated for the 
 	 * user's current platform and locale.
 	 * 
-	 * @return The formal string representation of this key, translated for the 
-	 * 		   user's current platform and locale. Guaranteed not to be null.
-	 */
+	 * @return The formal string representation for this key, translated for the 
+	 * 		   user's current platform and locale. Guaranteed not to be 
+	 *         <code>null</code>.
+	 */	
 	public abstract String format();
 
 	/* (non-Javadoc)
@@ -122,14 +125,14 @@ public abstract class Key implements Comparable {
 			
 		return hashCode;
 	}
-	
+
 	/**
-	 * Returns the formal string representation of this key.
+	 * Returns the formal string representation for this key.
 	 * 
-	 * @return The formal string representation of this key. Guaranteed not to 
-	 * 		   be null.
+	 * @return The formal string representation for this key. Guaranteed not to 
+	 * 		   be <code>null</code>. 
 	 * @see java.lang.Object#toString()
-	 */
+	 */	
 	public String toString() {
 		return name;
 	}
