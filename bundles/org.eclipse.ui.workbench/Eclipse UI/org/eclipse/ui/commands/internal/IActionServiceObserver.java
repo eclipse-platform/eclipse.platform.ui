@@ -9,28 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.commands.internal;
 
-/**
- * <p>
- * This interface is not intended to be implemented or extended by clients.
- * </p>
- * @since 3.0
- */
-public interface IActiveContextService {
+import org.eclipse.ui.commands.IActionService;
 
-	/**
-	 * Returns the active contexts.
-	 * 
-	 * @return the active contexts.
-	 */
-	String[] getActiveContexts();
-	
-	/**
-	 * Sets the active contexts.
-	 *
-	 * @param ids the active contexts.
-	 */	
-	void setActiveContexts(String[] activeContexts)
-		throws IllegalArgumentException;
+public interface IActionServiceObserver {
+
+	void actionServiceChanged(IActionService actionService);
 }

@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.commands;
 
-import java.util.SortedMap;
+import java.util.List;
 
 /**
  * <p>
@@ -19,20 +19,20 @@ import java.util.SortedMap;
  * </p>
  * @since 3.0
  */
-public interface IActionService {
-	
+public interface IContextService {
+
 	/**
-	 * Returns the mapping of command ids to IAction instances.
-	 * 
-	 * @return the mapping of command ids to IAction instances.
-	 */
-	SortedMap getActionMap();
-	
-	/**
-	 * Sets the mapping of command ids to IAction instances.
+	 * Returns the context ids.
 	 *
-	 * @param ids the mapping of command ids to IAction instances.
+	 * @return the context ids.
+	 */
+	List getContexts();
+	
+	/**
+	 * Sets the context ids.
+	 *
+	 * @param ids the context ids.
 	 */	
-	void setActionMap(SortedMap actionMap)
+	void setContexts(List contextIds)
 		throws IllegalArgumentException;
 }

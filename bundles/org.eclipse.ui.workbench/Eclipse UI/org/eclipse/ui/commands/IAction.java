@@ -11,28 +11,7 @@
 
 package org.eclipse.ui.commands;
 
-import java.util.SortedMap;
+public interface IAction {
 
-/**
- * <p>
- * This interface is not intended to be implemented or extended by clients.
- * </p>
- * @since 3.0
- */
-public interface IActionService {
-	
-	/**
-	 * Returns the mapping of command ids to IAction instances.
-	 * 
-	 * @return the mapping of command ids to IAction instances.
-	 */
-	SortedMap getActionMap();
-	
-	/**
-	 * Sets the mapping of command ids to IAction instances.
-	 *
-	 * @param ids the mapping of command ids to IAction instances.
-	 */	
-	void setActionMap(SortedMap actionMap)
-		throws IllegalArgumentException;
+	void run();
 }
