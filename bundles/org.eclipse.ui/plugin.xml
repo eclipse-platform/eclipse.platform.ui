@@ -1235,7 +1235,7 @@
             value="COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT"
             id="org.eclipse.ui.workbench.ACTIVE_NOFOCUS_TAB_BG_END">
          <description>
-            %Color.activeNofocusTabBGStartDesc
+            %Color.activeNofocusTabBGEndDesc
          </description>
       </colorDefinition>
       <colorDefinition
@@ -1244,7 +1244,7 @@
             categoryId="org.eclipse.ui.presentation.default"
             id="org.eclipse.ui.workbench.ACTIVE_NOFOCUS_TAB_BG_START">
          <description>
-            %Color.activeNofocusTabBGEndDesc
+            %Color.activeNofocusTabBGStartDesc
          </description>
       </colorDefinition>      
 <!-- Inactive Tab Colors -->
