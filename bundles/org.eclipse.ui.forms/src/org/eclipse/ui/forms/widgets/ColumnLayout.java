@@ -84,8 +84,17 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 		int cwidth = 0;
 		int cheight = 0;
 		Point[] sizes = new Point[children.length];
+		
+		int cwHint = SWT.DEFAULT;
+		if (ncolumns!= -1) {
+			cwHint = wHint - leftMargin - rightMargin - (ncolumns-1)*horizontalSpacing;
+			if (cwHint <=0) cwHint = 0;
+			else
+				cwHint /= ncolumns;
+		}
+		
 		for (int i = 0; i < children.length; i++) {
-			sizes[i] = computeControlSize(children[i]);
+			sizes[i] = computeControlSize(children[i], cwHint);
 			cwidth = Math.max(cwidth, sizes[i].x);
 			cheight += sizes[i].y;
 		}
@@ -128,9 +137,9 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 		size.y += topMargin + bottomMargin;
 		return size;
 	}
-	private Point computeControlSize(Control c) {
+	private Point computeControlSize(Control c, int wHint) {
 		ColumnLayoutData cd = (ColumnLayoutData) c.getLayoutData();
-		int widthHint = cd != null ? cd.widthHint : SWT.DEFAULT;
+		int widthHint = cd != null ? cd.widthHint : wHint;
 		int heightHint = cd != null ? cd.heightHint : SWT.DEFAULT;
 		return c.computeSize(widthHint, heightHint);
 	}
@@ -158,7 +167,7 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 		int cheight = 0;
 		Point[] sizes = new Point[children.length];
 		for (int i = 0; i < children.length; i++) {
-			sizes[i] = computeControlSize(children[i]);
+			sizes[i] = computeControlSize(children[i], SWT.DEFAULT);
 			cwidth = Math.max(cwidth, sizes[i].x);
 			cheight += sizes[i].y;
 		}

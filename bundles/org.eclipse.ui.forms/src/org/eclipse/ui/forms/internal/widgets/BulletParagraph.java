@@ -33,13 +33,18 @@ public class BulletParagraph extends Paragraph {
 	}
 
 	public int getIndent() {
-		if (indent != -1)
-			return indent;
+		int ivalue = indent;
+		if (ivalue != -1)
+			return ivalue;
 		switch (style) {
 			case CIRCLE :
-				return CIRCLE_DIAM + SPACING;
+				ivalue = CIRCLE_DIAM + SPACING;
+				break;
+			default:
+				ivalue = 20;
+				break;
 		}
-		return 20;
+		return getBulletIndent() + ivalue;
 	}
 	
 	public int getBulletIndent() {

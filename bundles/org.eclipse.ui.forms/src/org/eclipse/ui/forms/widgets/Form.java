@@ -285,8 +285,8 @@ public class Form extends Composite {
 		bufferGC.setBackground(getBackground());
 		bufferGC.setForeground(getForeground());
 		bufferGC.setFont(getFont());
-		Rectangle tbounds = new Rectangle(TITLE_VMARGIN, 
-				TITLE_HMARGIN,
+		Rectangle tbounds = new Rectangle(TITLE_HMARGIN, 
+				TITLE_VMARGIN,
 				carea.width-TITLE_HMARGIN-TITLE_HMARGIN, 
 				textSize.y);
 		if (backgroundImage != null) {
