@@ -82,7 +82,7 @@ public class ResourceComponent implements IVariableComponent {
 	/**
 	 * Creates the list of resources.
 	 */
-	private void createResourceList() {
+	protected void createResourceList() {
 		Tree tree = new Tree(mainGroup, SWT.SINGLE | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = tree.getItemHeight() * getInitialVisibleItemCount();
@@ -145,7 +145,7 @@ public class ResourceComponent implements IVariableComponent {
 	/**
 	 * Returns the dialog page this component is part of
 	 */
-	private final IGroupDialogPage getPage() {
+	protected final IGroupDialogPage getPage() {
 		return page;
 	}
 	
@@ -189,7 +189,7 @@ public class ResourceComponent implements IVariableComponent {
 	 * @param isValid <code>true</code> if all values valid,
 	 * 		<code>false</code> otherwise
 	 */
-	private final void setIsValid(boolean isValid) {
+	protected final void setIsValid(boolean isValid) {
 		if (this.isValid != isValid) {
 			this.isValid = isValid;
 			this.page.updateValidState();
