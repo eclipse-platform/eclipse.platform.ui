@@ -257,7 +257,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		});
 		lv.setContentProvider(createContentProvider());
 		final DelegatingModelPresentation presentation = new DelegatingModelPresentation();
-		DebugViewDecoratingLabelProvider labelProvider= new DebugViewDecoratingLabelProvider(new DebugViewInterimLabelProvider(presentation), new DebugViewLabelDecorator(presentation));
+		DebugViewDecoratingLabelProvider labelProvider= new DebugViewDecoratingLabelProvider(lv, new DebugViewInterimLabelProvider(presentation), new DebugViewLabelDecorator(presentation));
 		lv.setLabelProvider(labelProvider);
 		fEditorPresentation = presentation;
 		// add my viewer as a selection provider, so selective re-launch works

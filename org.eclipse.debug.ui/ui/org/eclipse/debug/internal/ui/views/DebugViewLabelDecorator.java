@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 import java.util.Vector;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -31,11 +30,9 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -135,7 +132,7 @@ public class DebugViewLabelDecorator extends LabelProvider implements ILabelDeco
 	public void labelsComputed(final Object[] computedElements) {
 		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
-				fireLabelProviderChanged(new LabelProviderChangedEvent(DebugViewLabelDecorator.this, computedElements));
+				fLabelProvider.labelsComputed(computedElements);
 			}
 		});
 	}

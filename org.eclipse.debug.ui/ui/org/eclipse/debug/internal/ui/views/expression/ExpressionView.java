@@ -35,6 +35,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
@@ -74,15 +75,15 @@ public class ExpressionView extends VariablesView {
 			return super.getForeground(element);
 		}
 
-		public ExpressionViewDecoratingLabelProvider(ILabelProvider provider, DebugViewLabelDecorator decorator) {
-			super(provider, decorator);
+		public ExpressionViewDecoratingLabelProvider(StructuredViewer viewer, ILabelProvider provider, DebugViewLabelDecorator decorator) {
+			super(viewer, provider, decorator);
 		}
 	}
 	/**
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createLabelProvider()
 	 */
-	protected IBaseLabelProvider createLabelProvider() {
-		return new ExpressionViewDecoratingLabelProvider(new DebugViewInterimLabelProvider(getModelPresentation()), new DebugViewLabelDecorator(getModelPresentation()));
+	protected IBaseLabelProvider createLabelProvider(StructuredViewer viewer) {
+		return new ExpressionViewDecoratingLabelProvider(viewer, new DebugViewInterimLabelProvider(getModelPresentation()), new DebugViewLabelDecorator(getModelPresentation()));
 	}
 
 	/**

@@ -133,8 +133,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	protected class VariablesViewDecoratingLabelProvider extends DebugViewDecoratingLabelProvider implements IColorProvider {
 		
-		public VariablesViewDecoratingLabelProvider(ILabelProvider provider, DebugViewLabelDecorator decorator) {
-			super(provider, decorator);
+		public VariablesViewDecoratingLabelProvider(StructuredViewer viewer, ILabelProvider provider, DebugViewLabelDecorator decorator) {
+			super(viewer, provider, decorator);
 		}
 
 		public Color getForeground(Object element) {
@@ -588,7 +588,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		// add tree viewer
 		final TreeViewer variablesViewer = new VariablesViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		variablesViewer.setContentProvider(createContentProvider());
-		variablesViewer.setLabelProvider(createLabelProvider());
+		variablesViewer.setLabelProvider(createLabelProvider(variablesViewer));
 		variablesViewer.setUseHashlookup(true);
 		variablesViewer.getControl().addFocusListener(new FocusAdapter() {
 			/* (non-Javadoc)
@@ -618,8 +618,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * 
 	 * @return a label provider for this view.
 	 */
-	protected IBaseLabelProvider createLabelProvider() {
-		return new VariablesViewDecoratingLabelProvider(new DebugViewInterimLabelProvider(getModelPresentation()), new DebugViewLabelDecorator(getModelPresentation()));
+	protected IBaseLabelProvider createLabelProvider(StructuredViewer viewer) {
+		return new VariablesViewDecoratingLabelProvider(viewer, new DebugViewInterimLabelProvider(getModelPresentation()), new DebugViewLabelDecorator(getModelPresentation()));
 	}
 
 	/**

@@ -12,9 +12,9 @@ package org.eclipse.debug.internal.ui.views;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
 
 /**
  * A label provider which receives notification of labels computed in
@@ -31,13 +31,16 @@ public class DebugViewDecoratingLabelProvider extends DecoratingLabelProvider {
 	 * value: String the label text
 	 */
 	private Map computedText= new HashMap();
+	private StructuredViewer viewer= null;
+	private boolean disposed= false;
 	
 	/**
 	 * @see DecoratingLabelProvider#DecoratingLabelProvider(org.eclipse.jface.viewers.ILabelProvider, org.eclipse.jface.viewers.ILabelDecorator)
 	 */
-	public DebugViewDecoratingLabelProvider(ILabelProvider provider, DebugViewLabelDecorator decorator) {
+	public DebugViewDecoratingLabelProvider(StructuredViewer viewer, ILabelProvider provider, DebugViewLabelDecorator decorator) {
 		super(provider, decorator);
 		decorator.setLabelProvider(this);
+		this.viewer= viewer;
 	}
 	
 	/**
@@ -50,6 +53,22 @@ public class DebugViewDecoratingLabelProvider extends DecoratingLabelProvider {
 	 */
 	public void textComputed(Object element, String text) {
 		computedText.put(element, text);
+	}
+	
+	/**
+	 * Labels have been computed for the given block of elements.
+	 * This method tells the label provider to update the
+	 * given elements in the view.
+	 * 
+	 * @param elements the elements which have had their text computed
+	 */
+	public void labelsComputed(Object[] elements) {
+		if (!disposed) {
+			viewer.update(elements, null);
+		}
+		for (int i = 0; i < elements.length; i++) {
+			computedText.remove(elements[i]);
+		}
 	}
 	
 	/**
@@ -69,4 +88,11 @@ public class DebugViewDecoratingLabelProvider extends DecoratingLabelProvider {
 		return super.getText(element);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+	 */
+	public void dispose() {
+		disposed= true;
+		super.dispose();
+	}
 }
