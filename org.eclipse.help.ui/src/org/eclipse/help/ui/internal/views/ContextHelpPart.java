@@ -145,13 +145,6 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	}
 
 	private void updateDynamicHelp() {
-		/*
-		SearchPart part = (SearchPart) parent
-		.findPart(IHelpUIConstants.HV_SEARCH);
-		if (part!=null) {
-			part.doClear();
-		}
-		*/
 		if (lastProvider!=null || lastControl!=null)
 			updateDynamicHelp(lastProvider!=null?lastProvider.getSearchExpression(lastControl):null, lastControl);		
 	}

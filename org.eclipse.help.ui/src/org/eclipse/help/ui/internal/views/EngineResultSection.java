@@ -12,6 +12,7 @@ package org.eclipse.help.ui.internal.views;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.search.federated.ISearchEngineResult;
 import org.eclipse.help.ui.internal.*;
@@ -23,6 +24,7 @@ import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.widgets.*;
+import org.osgi.framework.Bundle;
 
 public class EngineResultSection {
 	private SearchResultsPart part;
@@ -48,6 +50,8 @@ public class EngineResultSection {
 	private static final String HREF_PREV = "__prev__";
 
 	private static final String HREF_NEXT = "__next__";
+	private static final String HREF_PROGRESS = "__progress__";
+	private static final String PROGRESS_VIEW = "org.eclipse.ui.views.ProgressView";
 
 	private int resultOffset = 0;
 
@@ -115,14 +119,48 @@ public class EngineResultSection {
 				} else if (HREF_PREV.equals(href)) {
 					resultOffset -= HITS_PER_PAGE;
 					asyncUpdateResults(false);
+				} else if (HREF_PROGRESS.equals(href)) {
+					showProgressView();
 				} else
 					part.doOpenLink(e.getHref());
 			}
 		});
-		searchResults.setText("Search in progress...", false, false); //$NON-NLS-1$
-		// searchResults.setLayoutData(new
-		// TableWrapData(TableWrapData.FILL_GRAB));
+		initializeText();
 		needsUpdating = true;
+	}
+	
+	private void initializeText() {
+		Bundle bundle = Platform.getBundle("org.eclipse.ui.views");
+		if (bundle!=null) {
+			StringBuffer buff = new StringBuffer();
+			buff.append("<form>");
+			buff.append("<p><a href=\"");
+			buff.append(HREF_PROGRESS);
+			buff.append("\" alt=\"");
+			buff.append("Show Progress View");
+			buff.append("\">");
+			buff.append("Search in progress...");
+			buff.append("</a></p></form>");
+			searchResults.setText(buff.toString(), true, false);
+		}
+		else {
+			searchResults.setText("Search in progress...", false, false);
+		}
+	}
+	
+	private void showProgressView() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window!=null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page!=null) {
+				try {
+					page.showView(PROGRESS_VIEW);
+				}
+				catch (PartInitException e) {
+					HelpUIPlugin.logError("Error opening the progress view", e);
+				}
+			}
+		}
 	}
 
 	public synchronized void add(ISearchEngineResult match) {

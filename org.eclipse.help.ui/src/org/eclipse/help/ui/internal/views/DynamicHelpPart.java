@@ -108,7 +108,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		section.setTextClient(clearLink);		
 		resultSorter = new SorterByScore();
 		searchResults = toolkit.createFormText(section, true);
-		searchResults.marginWidth = 10;
+		//searchResults.marginWidth = 10;
 		section.setClient(searchResults);
 		// stext.setFormText(searchResults);
 		searchResults.setColor(FormColors.TITLE, toolkit.getColors().getColor(
@@ -332,7 +332,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	private boolean isExcluded(String href, IHelpResource [] excludedTopics) {
 		if (excludedTopics==null) return false;
 		for (int i=0; i<excludedTopics.length; i++) {
-			if (href.equals(excludedTopics[i].getHref()))
+			if (href.startsWith(excludedTopics[i].getHref()))
 				return true;
 		}
 		return false;
