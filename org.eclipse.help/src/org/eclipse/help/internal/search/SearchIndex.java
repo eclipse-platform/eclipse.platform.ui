@@ -25,6 +25,8 @@ public class SearchIndex {
 	private String locale;
 	private AnalyzerDescriptor analyzerDescriptor;
 	private PluginVersionInfo docPlugins;
+	private String indexedDocsFile;
+	// table of all document names, used during indexing batches
 	private HelpProperties indexedDocs;
 	private static final String INDEXED_CONTRIBUTION_INFO_FILE =
 		"indexed_contributions";
@@ -53,14 +55,8 @@ public class SearchIndex {
 		analyzerVersionFile =
 			new File(
 				searchStatePath + File.separator + ANALYZER_VERSION_FILENAME);
-		indexedDocs =
-			new HelpProperties(
-				"nl"
-					+ File.separator
-					+ locale
-					+ File.separator
-					+ INDEXED_DOCS_FILE,
-				HelpPlugin.getDefault());
+		indexedDocsFile =
+			"nl" + File.separator + locale + File.separator + INDEXED_DOCS_FILE;
 		parser = new HTMLDocParser();
 	}
 	/**
@@ -123,6 +119,8 @@ public class SearchIndex {
 				if (!indexDir.exists())
 					return false; // unable to setup index directory
 			}
+			indexedDocs =
+				new HelpProperties(indexedDocsFile, HelpPlugin.getDefault());
 			indexedDocs.restore();
 			setInconsistent(true);
 			iw =
@@ -147,6 +145,8 @@ public class SearchIndex {
 			if (ir != null) {
 				ir.close();
 			}
+			indexedDocs =
+				new HelpProperties(indexedDocsFile, HelpPlugin.getDefault());
 			indexedDocs.restore();
 			setInconsistent(true);
 			ir = IndexReader.open(indexDir);
@@ -188,6 +188,7 @@ public class SearchIndex {
 			//  - all the docs
 			//  - plugins (and their version) that were indexed
 			indexedDocs.save();
+			indexedDocs = null;
 			getDocPlugins().save();
 			saveAnalyzerId();
 			setInconsistent(false);
@@ -210,6 +211,7 @@ public class SearchIndex {
 			//  - all the docs
 			//  - plugins (and their version) that were indexed
 			indexedDocs.save();
+			indexedDocs = null;
 			getDocPlugins().save();
 			saveAnalyzerId();
 			setInconsistent(false);
