@@ -1,7 +1,7 @@
 package org.eclipse.ui.internal;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import org.eclipse.ui.PlatformUI;
@@ -65,7 +65,8 @@ public interface IHelpContextIds {
 	public static final String TOGGLE_EDITORS_VISIBILITY_ACTION = PREFIX + "target_editors_visibility_action_context"; //$NON-NLS-1$
 	public static final String SWITCH_TO_PERSPECTIVE_ACTION = PREFIX + "switch_to_perspective_action_context"; //$NON-NLS-1$
 	public static final String SHOW_VIEW_ACTION = PREFIX + "show_view_action_context"; //$NON-NLS-1$
-
+	public static final String SELECT_WORKING_SET_ACTION = PREFIX + "select_working_set_action" ; //$NON-NLS-1$
+	public static final String CLEAR_WORKING_SET_ACTION = PREFIX + "clear_working_set_action" ; //$NON-NLS-1$
 	
 	// Dialogs
 	public static final String ABOUT_DIALOG = PREFIX + "about_dialog_context"; //$NON-NLS-1$

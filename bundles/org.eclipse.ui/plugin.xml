@@ -49,6 +49,7 @@
    <extension-point id="projectNatureImages" name="%ExtPoint.projectNatureImages"/>
    <extension-point id="markerUpdaters" name="%ExtPoint.markerUpdaters"/>
    <extension-point id="documentProviders" name="%ExtPoint.documentProviders"/>
+   <extension-point id="workingSets" name="%ExtPoint.workingSets"/>
 
    <extension
          id="workbench"
@@ -1040,6 +1041,10 @@
             class="org.eclipse.ui.internal.dialogs.WelcomeEditorInputFactory"
             id="org.eclipse.ui.internal.dialogs.WelcomeEditorInputFactory">
       </factory>
+      <factory
+            class="org.eclipse.ui.internal.WorkingSetFactory"
+            id="org.eclipse.ui.internal.WorkingSetFactory">
+      </factory>
    </extension>
    <extension
          point="org.eclipse.ui.markerUpdaters">
@@ -1062,6 +1067,14 @@
             selected="false"
             pattern=".*">
       </filter>
+   </extension>
+   <extension
+         point="org.eclipse.ui.workingSets">
+      <workingSet
+            id="org.eclipse.ui.resourceWorkingSetDialog"
+            elementClass="org.eclipse.core.resources.IResource"
+            dialogClass="org.eclipse.ui.internal.dialogs.ResourceWorkingSetDialog">
+      </workingSet>
    </extension>
 
 </plugin>

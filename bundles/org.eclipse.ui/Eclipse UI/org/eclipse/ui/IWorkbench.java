@@ -123,6 +123,13 @@ public IMarkerHelpRegistry getMarkerHelpRegistry();
  */
 public IWorkbenchWindow[] getWorkbenchWindows();
 /**
+ * Returns the working set manager for the workbench.
+ *
+ * @return the working set manager
+ * @since 2.0
+ */
+public IWorkingSetManager getWorkingSetManager();
+/**
  * Shows a workbench page with the given input using the default perspective.
  * Same as calling <code>openPage(input, getPerspectiveRegistry().getDefaultPerspective())</code>.
  * 

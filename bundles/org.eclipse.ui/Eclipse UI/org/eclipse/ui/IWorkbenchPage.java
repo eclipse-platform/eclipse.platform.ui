@@ -1,12 +1,13 @@
 package org.eclipse.ui;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IAdaptable; 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.util.IPropertyChangeListener; 
 
 /**
  * A workbench page consists of an arrangement of views and editors intended to
@@ -119,6 +120,14 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	 * @see IPerspectiveListener
 	 */
 	 public static final String CHANGE_FAST_VIEW_REMOVE = "fastViewRemove"; //$NON-NLS-1$
+	 
+	/**
+	 * Change event id when the page working set was replaced
+	 *
+	 * @see IPropertyChangeListener
+	 */
+	 public static final String CHANGE_WORKING_SET_REPLACE = "workingSetReplace";	//$NON-NLS-1$	 
+	 
 /**
  * Activates the given part. The part will be brought to the front and given
  * focus. The part must belong to this page.
@@ -126,6 +135,13 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
  * @param part the part to activate
  */
 public void activate(IWorkbenchPart part);
+/**
+ * Adds a property change listener.
+ * 
+ * @param listener the property change listener to add
+ * @since 2.0
+ */
+public void addPropertyChangeListener(IPropertyChangeListener listener);
 /**
  * Moves the given part forward in the Z order of this page so as to make
  * it visible. The part must belong to this page.
@@ -234,6 +250,13 @@ public IViewPart[] getViews();
  * @return the workbench window
  */
 public IWorkbenchWindow getWorkbenchWindow();
+/**
+ * Returns the working set of this page.
+ * 
+ * @return the working set of this page.
+ * @since 2.0
+ */
+public IWorkingSet getWorkingSet();
 /**
  * Hides an action set in this page.
  * <p>
@@ -398,6 +421,13 @@ public IEditorPart openEditor(IEditorInput input, String editorId, boolean activ
  * @exception PartInitException if the editor could not be opened.
  */
 public void openSystemEditor(IFile input) throws PartInitException;
+/**
+ * Removes the property change listener.
+ * 
+ * @param listener the property change listener to remove
+ * @since 2.0
+ */
+public void removePropertyChangeListener(IPropertyChangeListener listener);
 /**
  * Changes the visible views, their layout, and the visible action sets 
  * within the page to match the current perspective descriptor.  This is a 

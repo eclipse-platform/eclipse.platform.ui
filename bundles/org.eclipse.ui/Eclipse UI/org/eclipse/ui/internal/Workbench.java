@@ -402,6 +402,15 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		return dwindows;
 	}
 	/**
+	 * Implements IWorkbench
+	 * 
+	 * @see org.eclipse.ui.IWorkbench#getWorkingSetManager()
+	 * @since 2.0
+	 */
+	public IWorkingSetManager getWorkingSetManager() {
+		return WorkbenchPlugin.getDefault().getWorkingSetManager();
+	}
+	/**
 	 * Initializes the workbench.
 	 *
 	 * @return true if init succeeded.

@@ -1,7 +1,7 @@
 package org.eclipse.ui.internal;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -26,6 +26,7 @@ import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -35,6 +36,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 public class WorkbenchPage implements IWorkbenchPage {
 	private WorkbenchWindow window;
 	private IAdaptable input;
+	private IWorkingSet workingSet;
 	private Composite composite;
 	private ControlListener resizeListener;
 	private IWorkbenchPart activePart; //Could be delete. This information is in the active part list;
@@ -43,6 +45,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private EditorManager editorMgr;
 	private EditorPresentation editorPresentation;
 	private PartListenerList partListeners = new PartListenerList();
+	private ListenerList propertyChangeListeners = new ListenerList();
 	private PageSelectionService selectionService = new PageSelectionService(this);
 	private IActionBars actionBars;
 	private ViewFactory viewFactory;
@@ -50,6 +53,19 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private Listener mouseDownListener;
 	private IMemento deferredMemento;
 	private PerspectiveDescriptor deferredActivePersp;
+	private IPropertyChangeListener propertyChangeListener= new IPropertyChangeListener() {
+		/*
+		 * Remove the working set from the page if the working set is deleted.
+		 */
+		public void propertyChange(PropertyChangeEvent event) {
+			String property = event.getProperty();
+			if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property) && 
+				event.getOldValue().equals(workingSet)) {
+				setWorkingSet(null);
+			}
+		}
+	};
+
 /**
  * Constructs a new page with a given perspective and input.
  *
@@ -160,6 +176,15 @@ public void addFastView(IViewPart view) {
  */
 public void addPartListener(IPartListener l) {
 	partListeners.addPartListener(l);
+}
+/**
+ * Implements IWorkbenchPage
+ * 
+ * @see org.eclipse.ui.IWorkbenchPage#addPropertyChangeListener(IPropertyChangeListener)
+ * @since 2.0
+ */
+public void addPropertyChangeListener(IPropertyChangeListener listener) {
+	propertyChangeListeners.add(listener);
 }
 
 /*
@@ -731,6 +756,21 @@ public void firePartOpened(IWorkbenchPart part) {
 	partListeners.firePartOpened(part);
 	selectionService.partOpened(part);
 }
+/**
+ * Notify property change listeners about a property change.
+ * 
+ * @param changeId the change id
+ * @param oldValue old property value
+ * @param newValue new property value
+ */
+private void firePropertyChange(String changeId, Object oldValue, Object newValue) {
+	Object[] listeners = propertyChangeListeners.getListeners();
+	PropertyChangeEvent event = new PropertyChangeEvent(this, changeId, oldValue, newValue);
+
+	for (int i = 0; i < listeners.length; i++) {
+		((IPropertyChangeListener) listeners[i]).propertyChange(event);
+	}
+}
 /*
  * Returns the action bars.
  */
@@ -934,6 +974,16 @@ public IWorkbenchWindow getWorkbenchWindow() {
 	return window;
 }
 /**
+ * Implements IWorkbenchPage
+ * 
+ * @see org.eclipse.ui.IWorkbenchPage#getWorkingSet()
+ * @since 2.0
+ */
+public IWorkingSet getWorkingSet() {
+	return workingSet;
+}
+
+/**
  * @see IWorkbenchPage
  */
 public void hideActionSet(String actionSetID) {
@@ -945,7 +995,7 @@ public void hideActionSet(String actionSetID) {
 	}
 }
 /**
- * See IPerpsective
+ * See IPerspective
  */
 public void hideView(IViewPart view) {
 	// Sanity check.	
@@ -1376,6 +1426,16 @@ public void removePartListener(IPartListener l) {
 	partListeners.removePartListener(l);
 }
 
+/**
+ * Implements IWorkbenchPage
+ * 
+ * @see org.eclipse.ui.IWorkbenchPage#removePropertyChangeListener(IPropertyChangeListener)
+ * @since 2.0
+ */
+public void removePropertyChangeListener(IPropertyChangeListener listener) {
+	propertyChangeListeners.remove(listener);
+}
+
 /*
  * (non-Javadoc)
  * Method declared on ISelectionListener.
@@ -1423,6 +1483,13 @@ public void resetPerspective() {
  * @see IPersistable.
  */
 private void restoreState(IMemento memento) {
+	// Restore working set
+	String workingSetName = memento.getString(IWorkbenchConstants.TAG_WORKING_SET);
+	if (workingSetName != null) {
+		WorkingSetManager workingSetManager = (WorkingSetManager) getWorkbenchWindow().getWorkbench().getWorkingSetManager();
+		setWorkingSet(workingSetManager.getWorkingSet(workingSetName));
+	}
+	
 	// Restore editor manager.
 	IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_EDITORS);
 	getEditorManager().restoreState(childMem);
@@ -1560,6 +1627,10 @@ public void saveState(IMemento memento) {
 		Perspective persp = (Perspective)enum.next();
 		IMemento gChildMem = childMem.createChild(IWorkbenchConstants.TAG_PERSPECTIVE);
 		persp.saveState(gChildMem);
+	}
+	// Save working set if set
+	if (workingSet != null) {
+		memento.putString(IWorkbenchConstants.TAG_WORKING_SET, workingSet.getName());
 	}
 }
 /**
@@ -1809,6 +1880,28 @@ public void setPerspective(final IPerspectiveDescriptor desc) {
 			busySetPerspective(desc);
 		}
 	});
+}
+/**
+ * Sets the active working set for the workbench page.
+ * Notifies property change listener about the change.
+ * 
+ * @param newWorkingSet the active working set for the page.
+ * 	May be null.
+ * @since 2.0
+ */
+public void setWorkingSet(IWorkingSet newWorkingSet) {
+	IWorkingSet oldWorkingSet = workingSet;
+
+	workingSet = newWorkingSet;
+	if (oldWorkingSet != newWorkingSet) {
+		firePropertyChange(CHANGE_WORKING_SET_REPLACE, oldWorkingSet, newWorkingSet);
+	}
+	if (newWorkingSet != null) {
+		WorkbenchPlugin.getDefault().getWorkingSetManager().addPropertyChangeListener(propertyChangeListener);
+	}
+	else {
+		WorkbenchPlugin.getDefault().getWorkingSetManager().removePropertyChangeListener(propertyChangeListener);
+	}
 }
 /**
  * @see IWorkbenchPage

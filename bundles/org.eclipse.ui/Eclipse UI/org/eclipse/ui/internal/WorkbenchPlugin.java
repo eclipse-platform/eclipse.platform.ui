@@ -8,23 +8,18 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.FontData;
-
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
-
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.JFaceResources;
-
+import org.eclipse.jface.preference.*;
+import org.eclipse.jface.resource.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.internal.dialogs.WorkingSetSelectionDialog;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -59,7 +54,11 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private DecoratorManager decoratorManager;
 	// Manager that maps markers to help context ids and resolutions
 	private MarkerHelpRegistry markerHelpRegistry;
-
+	// Manager for working sets (IWorkingSet)
+	private WorkingSetManager workingSetManager;
+	// Working set registry, stores working set dialogs
+	private WorkingSetRegistry workingSetRegistry;	
+	
 	// Global workbench ui plugin flag. Only workbench implementation is allowed to use this flag
 	// All other plugins, examples, or test cases must *not* use this flag.
 	public static boolean DEBUG = false;
@@ -289,6 +288,32 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 */
 	public static IWorkspace getPluginWorkspace() {
 		return ResourcesPlugin.getWorkspace();
+	}
+	/**
+	 * Returns the working set manager
+	 * 
+	 * @return the working set manager
+	 * @since 2.0
+	 */
+	public IWorkingSetManager getWorkingSetManager() {
+		if (workingSetManager == null) {
+			workingSetManager = new WorkingSetManager();
+			workingSetManager.restoreState();			
+		}
+		return workingSetManager;
+	}
+	/**
+	 * Returns the working set registry
+	 * 
+	 * @return the working set registry
+	 * @since 2.0
+	 */
+	public WorkingSetRegistry getWorkingSetRegistry() {
+		if (workingSetRegistry == null) {
+			workingSetRegistry = new WorkingSetRegistry();
+			workingSetRegistry.load();
+		}
+		return workingSetRegistry;
 	}
 	/*
 	 * Get the preference manager.

@@ -1,7 +1,7 @@
 package org.eclipse.ui.internal;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import org.eclipse.ui.PlatformUI;
@@ -38,7 +38,8 @@ public interface IWorkbenchConstants {
 	public static final String PL_ACCELERATOR_SETS ="acceleratorSets"; //$NON-NLS-1$
 	public static final String PL_ACTION_DEFINITIONS ="actionDefinitions"; //$NON-NLS-1$
 	public static final String PL_CAPABILITIES = "capabilities"; //$NON-NLS-1$
-
+	public static final String PL_WORKINGSETS = "workingSets"; //$NON-NLS-1$	
+	
 	/**
 	 * @deprecated Extension point no longer applicable with new project capability
 	 */
@@ -139,4 +140,8 @@ public interface IWorkbenchConstants {
 	public static final String TAG_PERSISTABLE = "persistable";	//$NON-NLS-1$
 	public static final String TAG_MRU_LIST = "mruList";	//$NON-NLS-1$
 	public static final String TAG_PERSPECTIVE_HISTORY = "perspHistory";	//$NON-NLS-1$	
+	public static final String TAG_WORKING_SET_MANAGER = "workingSetManager"; //$NON-NLS-1$		
+	public static final String TAG_WORKING_SETS = "workingSets";	//$NON-NLS-1$	
+	public static final String TAG_WORKING_SET = "workingSet";	//$NON-NLS-1$		
+	public static final String TAG_ITEM = "item";	//$NON-NLS-1$			
 }

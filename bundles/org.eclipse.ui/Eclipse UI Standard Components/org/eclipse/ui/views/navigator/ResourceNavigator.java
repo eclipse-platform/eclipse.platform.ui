@@ -13,6 +13,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
@@ -21,10 +23,9 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.actions.NewWizardAction;
-import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.*;
@@ -54,6 +55,7 @@ public class ResourceNavigator
 	
 	//The filter the resources are cleared up on
 	private ResourcePatternFilter patternFilter = new ResourcePatternFilter();
+	private ResourceWorkingSetFilter workingSetFilter;
 
 	/** Property store constant for sort order. */
 	private static final String STORE_SORT_TYPE = "ResourceViewer.STORE_SORT_TYPE";
@@ -106,6 +108,47 @@ public class ResourceNavigator
 		public void partOpened(IWorkbenchPart part) {
 		}
 	};
+	private IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			String property = event.getProperty();
+			if (IWorkbenchPage.CHANGE_WORKING_SET_REPLACE.equals(property)) {
+				IWorkingSet oldWorkingSet = (IWorkingSet) event.getOldValue();				
+				IWorkingSet newWorkingSet = (IWorkingSet) event.getNewValue();
+				TreeViewer viewer = getTreeViewer();
+
+				if (newWorkingSet == null) {
+					oldWorkingSet.removePropertyChangeListener(propertyChangeListener);
+					if (workingSetFilter != null) {
+						viewer.removeFilter(workingSetFilter);
+						workingSetFilter = null;
+					}
+				}
+				else {
+					if (workingSetFilter == null) {					
+						workingSetFilter = new ResourceWorkingSetFilter();
+						workingSetFilter.setWorkingSet(newWorkingSet);					
+						viewer.addFilter(workingSetFilter);
+						newWorkingSet.addPropertyChangeListener(propertyChangeListener);	
+					}
+					else {
+						oldWorkingSet.removePropertyChangeListener(propertyChangeListener);
+						newWorkingSet.addPropertyChangeListener(propertyChangeListener);
+						workingSetFilter.setWorkingSet(newWorkingSet);
+						getResourceViewer().refresh();
+					}
+				}
+				updateTitle();
+			}
+			else
+			if (IWorkingSet.CHANGE_WORKING_SET_NAME_CHANGE.equals(property)) {
+				updateTitle();
+			}
+			else
+			if (IWorkingSet.CHANGE_WORKING_SET_CONTENT_CHANGE.equals(property)) {
+				getResourceViewer().refresh();			
+			}
+		}
+	};
 	/**
 	 * Creates a new ResourceNavigator.
 	 */
@@ -153,6 +196,14 @@ public class ResourceNavigator
 				new WorkbenchLabelProvider(), 
 				getPlugin().getWorkbench().getCombinedDecoratorManager()));
 		viewer.addFilter(this.patternFilter);
+		
+		IWorkingSet workingSet = getSite().getPage().getWorkingSet();
+		if (workingSet != null) {
+			workingSetFilter = new ResourceWorkingSetFilter();
+			workingSetFilter.setWorkingSet(workingSet);		
+			viewer.addFilter(workingSetFilter);
+			workingSet.addPropertyChangeListener(propertyChangeListener);				
+		}		
 		if (memento != null)
 			restoreFilters();
 		viewer.setInput(getInitialInput());
@@ -200,7 +251,9 @@ public class ResourceNavigator
 
 		getSite().setSelectionProvider(viewer);
 
-		getSite().getPage().addPartListener(partListener);
+		IWorkbenchPage page = getSite().getPage();
+		page.addPartListener(partListener);
+		page.addPropertyChangeListener(propertyChangeListener);
 
 		if (memento != null)
 			restoreState(memento);
@@ -694,22 +747,29 @@ public class ResourceNavigator
 	 */
 	void updateTitle() {
 		Object input = getResourceViewer().getInput();
-		String viewName = getConfigurationElement().getAttribute("name");
-		//$NON-NLS-1$
+		String viewName = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkingSet workingSet = getSite().getPage().getWorkingSet();
+					
+		if (workingSet != null) {
+			setTitle(ResourceNavigatorMessages.format(
+				"ResourceNavigator.title", //$NON-NLS-1$
+				new Object[] {viewName, workingSet.getName()}));
+			setTitleToolTip(getToolTipText(input));
+		}
+		else
 		if (input == null
 			|| input.equals(workspace)
 			|| input.equals(workspace.getRoot())) {
 			setTitle(viewName);
 			setTitleToolTip(""); //$NON-NLS-1$
-		} else {
-			ILabelProvider labelProvider =
-				(ILabelProvider) getTreeViewer().getLabelProvider();
-			setTitle(
-				ResourceNavigatorMessages.format(
-					"ResourceNavigator.title",
-					new Object[] { viewName, labelProvider.getText(input)}));
-			//$NON-NLS-1$
+		} 
+		else {
+			ILabelProvider labelProvider = (ILabelProvider) getTreeViewer().getLabelProvider();
+
+			setTitle(ResourceNavigatorMessages.format(
+				"ResourceNavigator.title", //$NON-NLS-1$
+				new Object[] {viewName, labelProvider.getText(input)}));
 			setTitleToolTip(getToolTipText(input));
 		}
 	}
