@@ -587,8 +587,12 @@ public WWinKeyBindingService getKeyBindingService() {
  * Re-register the action sets actions in the keybinding service.
  */
 private void updateActiveActions() {
-	IActionSet sets[] = actionPresentation.getActionSets();
-	keyBindingService.registerActionSets(sets);
+	if(keyBindingService == null) {
+		getKeyBindingService();
+	} else {
+		IActionSet sets[] = actionPresentation.getActionSets();
+		keyBindingService.registerActionSets(sets);
+	}
 }
 
 /**
