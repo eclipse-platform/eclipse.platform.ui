@@ -134,13 +134,13 @@ function showTab(tab)
 	
  	// show the appropriate pressed tab
   	var buttons = document.body.getElementsByTagName("TD");
-  	for (var i=0; i<buttons.length-1; i++)
+  	for (var i=0; i<buttons.length; i++)
   	{
   		if (buttons[i].id == tab) { 
 			buttons[i].className = "pressed";
 			if (i > 0) 
 				buttons[i-1].className = "separator_pressed";
-			if (i<buttons.length-1-1) 
+			if (i<buttons.length-1) 
 				buttons[i+1].className = "separator_pressed";
 		} else if (buttons[i].className == "pressed") {
 			buttons[i].className = "tab";
@@ -149,8 +149,8 @@ function showTab(tab)
 					buttons[i-1].className = "separator_pressed";
 				else
 					buttons[i-1].className = "separator";
-			if (i<buttons.length-1-1) 
-				if (i<buttons.length-1-2 && buttons[i+2].id == tab) 
+			if (i<buttons.length-1) 
+				if (i<buttons.length-2 && buttons[i+2].id == tab) 
 					buttons[i+1].className = "separator_pressed";
 				else
 					buttons[i+1].className = "separator";
@@ -273,9 +273,6 @@ function getPreviousLink(currentLink){
 %>
  
    </tr>
-  <tr>
-		<td width="0px" colspan="<%=views.length*2-1%>" class="separator2"></td>
-  </tr>
    </table>
 
 </body>
