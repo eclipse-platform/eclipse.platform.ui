@@ -51,6 +51,10 @@ import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * The IDE workbench main preference page.
+ * 
+ * @issue rather than having a separate preference page for IDE settings,
+ *   these should be added to the generic workbench preference page (via 
+ *   subclassing) 
  */
 public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private final String PROJECT_SWITCH_PERSP_MODE_TITLE = IDEWorkbenchMessages.getString("ProjectSwitchPerspectiveMode.optionsTitle"); //$NON-NLS-1$
