@@ -258,7 +258,10 @@ protected void constrainShellSize() {
 	// limit the shell size to the display size
 	Point size = shell.getSize();
 	Rectangle bounds = shell.getDisplay().getBounds();
-	shell.setSize(Math.min(size.x, bounds.width), Math.min(size.y, bounds.height));
+	int newX = Math.min(size.x, bounds.width);
+	int newY = Math.min(size.y, bounds.height);
+	if (size.x != newX || size.y != newY)
+		shell.setSize(newX, newY);
 }
 /**
  * Creates this window's widgetry in a new top-level shell.

@@ -1016,8 +1016,8 @@ public void updateMessage() {
  * @param height the shell height
  */
 private void setShellSize(int width, int height) {
-	Rectangle bounds = getShell().getDisplay().getBounds();
-	getShell().setSize(Math.min(width, bounds.width), Math.min(height, bounds.height));
+	getShell().setSize(width, height);
+	constrainShellSize();	
 }
 /**
  * Computes the correct dialog size for the current page and resizes 
