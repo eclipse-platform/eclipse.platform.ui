@@ -508,7 +508,15 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				}
 				PlatformUI.getWorkbench().getProgressService().runInUI(context, operation, rule);
 			} catch (InvocationTargetException e) {
+			    AntUIPlugin.log("Internal error occurred retrieving targets", e.getTargetException()); //$NON-NLS-1$
+			    setErrorMessage(AntLaunchConfigurationMessages.getString("AntTargetsTab.1")); //$NON-NLS-1$
+			    fAllTargets= null;
+			    return null;
 			} catch (InterruptedException e) {
+			    AntUIPlugin.log("Internal error occurred retrieving targets", e); //$NON-NLS-1$
+			    setErrorMessage(AntLaunchConfigurationMessages.getString("AntTargetsTab.1")); //$NON-NLS-1$
+			    fAllTargets= null;
+			    return null;
 			}
 			
 			if (exceptions[0] != null) {
@@ -524,6 +532,12 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				fAllTargets= null;
 				return fAllTargets;
 			}
+			
+			if (fAllTargets == null) {
+			    setErrorMessage(AntLaunchConfigurationMessages.getString("AntTargetsTab.1")); //$NON-NLS-1$
+			    return fAllTargets;
+			}
+			
 			for (int i=0; i < fAllTargets.length; i++) {
 			    AntTargetNode target= fAllTargets[i];
 				if (target.isDefaultTarget()) {
@@ -534,7 +548,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				    if (message != null) {
 				        setErrorMessage(message);
 				    } else {
-				        setErrorMessage("Buildfile contains errors/problems. Check syntax and classpath"); //$NON-NLS-1$
+				        setErrorMessage(AntLaunchConfigurationMessages.getString("AntTargetsTab.0")); //$NON-NLS-1$
 				    }
 				}
 			}
