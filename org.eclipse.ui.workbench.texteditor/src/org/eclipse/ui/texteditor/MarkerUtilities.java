@@ -1,9 +1,15 @@
-package org.eclipse.ui.texteditor;
+/**********************************************************************
+Copyright (c) 2000, 2003 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+	IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.ui.texteditor;
 
 
 import java.util.Map;
@@ -65,7 +71,9 @@ public final class MarkerUtilities {
 	 * Returns the given default if the attribute value is not an integer.
 	 */
 	private static int getIntAttribute(IMarker marker, String attributeName, int defaultValue) {
-		return marker.getAttribute(attributeName, defaultValue);
+		if (marker.exists())
+			return marker.getAttribute(attributeName, defaultValue);
+		return defaultValue;
 	}
 	
 	/**
@@ -109,7 +117,7 @@ public final class MarkerUtilities {
 	 */
 	public static boolean isMarkerType(IMarker marker, String type) {
 		try {
-			return marker.isSubtypeOf(type);
+			return marker.exists() && marker.isSubtypeOf(type);
 		} catch (CoreException e) {
 			handleCoreException(e);
 			return false;
@@ -171,7 +179,8 @@ public final class MarkerUtilities {
 	 */
 	private static void setIntAttribute(IMarker marker, String attributeName, int value) {
 		try {
-			marker.setAttribute(attributeName, value);
+			if (marker.exists())
+				marker.setAttribute(attributeName, value);
 		} catch (CoreException e) {
 			handleCoreException(e);
 		}

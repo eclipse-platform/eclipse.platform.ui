@@ -154,8 +154,8 @@ public class MarkerAnnotation extends Annotation {
 	 */
 	protected void initialize() {
 		
-		String name= null;
-		int layer= -1;
+		String name= getUnknownImageName(fMarker);
+		int layer= 1;
 		
 		if (MarkerUtilities.isMarkerType(fMarker, IMarker.TASK)) {
 			name= ISharedImages.IMG_OBJS_TASK_TSK;
@@ -170,20 +170,16 @@ public class MarkerAnnotation extends Annotation {
 					layer= 3;
 					break;
 				case IMarker.SEVERITY_WARNING:
-					layer= 3;
 					name= ISharedImages.IMG_OBJS_WARN_TSK;
+					layer= 3;
 					break;
 				case IMarker.SEVERITY_ERROR:
-					layer= PROBLEM_LAYER;
 					name= ISharedImages.IMG_OBJS_ERROR_TSK;
+					layer= PROBLEM_LAYER;
 					break;
-			};
-		} else {
-			name= getUnknownImageName(fMarker);
-			layer= 1;
+			}
 		}
 		
-		// setImage(getImage(name));
 		fImage= null;
 		fImageName= name;
 		setLayer(layer);
@@ -194,10 +190,8 @@ public class MarkerAnnotation extends Annotation {
 	 */
 	public void paint(GC gc, Canvas canvas, Rectangle r) {
 		Image image= getImage(canvas.getDisplay());
-		if (image != null) {
-			// http://dev.eclipse.org/bugs/show_bug.cgi?id=19184
+		if (image != null)
 			drawImage(image, gc, canvas, r, SWT.CENTER, SWT.TOP);
-		}
 	}
 	
 	/**
@@ -246,11 +240,13 @@ public class MarkerAnnotation extends Annotation {
 	protected Image getImage(Display display) {
 		if (fImage == null) {
 			
-			IWorkbenchAdapter adapter= (IWorkbenchAdapter) fMarker.getAdapter(IWorkbenchAdapter.class);
-			if (adapter != null) {
-				ImageDescriptor descriptor= adapter.getImageDescriptor(fMarker);
-				if (descriptor != null)
-					fImage= getImage(display, descriptor);
+			if (fMarker.exists()) {
+				IWorkbenchAdapter adapter= (IWorkbenchAdapter) fMarker.getAdapter(IWorkbenchAdapter.class);
+				if (adapter != null) {
+					ImageDescriptor descriptor= adapter.getImageDescriptor(fMarker);
+					if (descriptor != null)
+						fImage= getImage(display, descriptor);
+				}
 			}
 			
 			if (fImage == null)
