@@ -33,7 +33,7 @@ import org.eclipse.team.internal.core.*;
 public class SubscriberEventHandler extends BackgroundEventHandler {
 	// The set that receives notification when the resource synchronization state
 	// has been calculated by the job.
-	private SyncSetInputFromSubscriber syncSetInput;
+	private final SyncSetInputFromSubscriber syncSetInput;
 
 	// Changes accumulated by the event handler
 	private List resultCache = new ArrayList();

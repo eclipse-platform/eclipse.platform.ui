@@ -30,7 +30,7 @@ import org.eclipse.team.internal.core.Policy;
  */
 public final class SubscriberSyncInfoCollector extends SubscriberResourceCollector {
 
-	private SyncSetInputFromSubscriber subscriberInput;
+	private final SyncSetInputFromSubscriber subscriberInput;
 	private SyncSetInputFromSyncSet filteredInput;
 	private SubscriberEventHandler eventHandler;
 	private IResource[] roots;
