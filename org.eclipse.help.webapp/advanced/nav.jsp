@@ -20,8 +20,8 @@
 if (data.isMozilla()) {
 %>
 HTML {
-	border-top:2px groove Window;
-	border-left:2px groove Window;
+	border-top:2px groove ThreeDHighlight;
+	border-left:2px groove ThreeDHighlight;
 
 	background:<%=prefs.getToolbarBackground()%>;
 }
@@ -31,7 +31,7 @@ HTML {
 FRAMESET {
 	border-top:2px groove;
 	border-left:2px groove;
-	border-right:3px ridge Window;
+	border-right:3px ridge ThreeDHighlight;
 	border-bottom:2px inset ThreeDShadow;
 }
 <%

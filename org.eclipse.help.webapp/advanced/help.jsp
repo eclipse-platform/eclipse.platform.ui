@@ -37,6 +37,7 @@ HTML {
 */
 HTML {
 	padding: 0px 0px 3px 0px;
+	background:<%=prefs.getToolbarBackground()%>;
 }
 <%
 }

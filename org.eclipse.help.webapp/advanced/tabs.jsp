@@ -27,13 +27,19 @@ BODY {
 	padding:0px;
 	background:<%=prefs.getToolbarBackground()%>;
 	height:100%;
+<% 
+if (data.isMozilla()){
+%>
+	height:21px;
+<%
+}
+%>
 }
 
 /* tabs at the bottom */
 .tab {
 	margin:0px;
 	padding:0px;
- 	border-bottom:1px solid <%=prefs.getToolbarBackground()%>;
 	border:1px solid <%=prefs.getToolbarBackground()%>;
 	cursor:default;
 	align:center;
@@ -42,10 +48,7 @@ BODY {
 .pressed {
 	margin:0px;
 	padding:0px;
-	border-top:1px solid Window;
-	border:1px solid Window;
-	border-top:1px solid <%=prefs.getToolbarBackground()%>;
-	border:1px solid Window;
+	border:1px solid ThreeDHighlight;
 	cursor:default;
 	align:center;
 }
@@ -53,6 +56,14 @@ BODY {
 .separator {
 	background-color:ThreeDShadow;
 	border-top:10px solid <%=prefs.getToolbarBackground()%>;
+<% 
+if (data.isMozilla()){
+%>
+	top:10px;
+	width:5px;
+<%
+}
+%>
 }
 
 .separator_pressed {
@@ -74,16 +85,6 @@ IMG {
 	padding:0px;
 	align:center;
 }
-
-<% 
-if (data.isMozilla()){
-%>
-BODY { 
-	height:21px;
-}
-<%
-}
-%>
 
 </style>
  
