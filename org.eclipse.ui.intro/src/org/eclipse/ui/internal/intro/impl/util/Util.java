@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the
- * terms of the Common Public License v1.0 which accompanies this distribution,
- * and is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004 IBM Corporation and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Common Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
@@ -52,8 +52,8 @@ public class Util {
     /**
      * Handle the exception by displaying an Error Dialog. <br>
      * The errorId is used to NL enable the error message. Also, the error is
-     * logged by the Log. Pass <code>null</code> as the messageId to
-     * indicate that the error's message should be shown as the primary message
+     * logged by the Log. Pass <code>null</code> as the messageId to indicate
+     * that the error's message should be shown as the primary message
      */
     public static void handleExceptionWithPopUp(Shell parent, String errorId,
             Exception e) {
@@ -154,7 +154,7 @@ public class Util {
                 //SWT.MouseMove,
                 SWT.MouseEnter, SWT.MouseExit, SWT.MouseHover, SWT.FocusIn,
                 SWT.FocusOut, SWT.KeyDown, SWT.KeyUp, SWT.Traverse, SWT.Show,
-                SWT.Hide};
+                SWT.Hide };
         for (int i = 0; i < allEvents.length; i++) {
             control.addListener(allEvents[i], listener);
         }
@@ -175,7 +175,7 @@ public class Util {
     /**
      * Launch an external brwoser on the given url.
      */
-    public static void openBrowser(String href) {
+    public static boolean openBrowser(String href) {
         // format the href for an html file (file:///<filename.html>
         // required for Mac only.
         if (href.startsWith("file:")) { //$NON-NLS-1$
@@ -191,25 +191,35 @@ public class Util {
         String platform = SWT.getPlatform();
 
         if ("win32".equals(platform)) { //$NON-NLS-1$
-            Program.launch(localHref);
+            return Program.launch(localHref);
         } else if ("carbon".equals(platform)) { //$NON-NLS-1$
             try {
-                Runtime.getRuntime().exec("/usr/bin/open " + localHref); //$NON-NLS-1$
+                Process process = Runtime.getRuntime().exec(
+                        "/usr/bin/open " + localHref); //$NON-NLS-1$
+                if (process == null)
+                    return false;
+                return process.exitValue() == 0 ? true : false;
             } catch (IOException e) {
                 openBrowserError(display, e);
+                return false;
             }
         } else {
+            final boolean[] result = new boolean[1];
             Thread launcher = new Thread("Intro browser Launcher") {//$NON-NLS-1$
 
                 public void run() {
                     try {
-                        Process p = doOpenBrowser(localHref, true);
-                        if (p == null)
+                        Process process = doOpenBrowser(localHref, true);
+                        if (process == null)
                             // no browser already opened. Launch new one.
-                            doOpenBrowser(localHref, false);
+                            process = doOpenBrowser(localHref, false);
+                        if (process == null)
+                            result[0] = false;
+                        result[0] = process.exitValue() == 0 ? true : false;
 
                     } catch (Exception e) {
                         openBrowserError(display, e);
+                        result[0] = false;
                     }
                 }
 
@@ -271,6 +281,7 @@ public class Util {
                 }
             };
             launcher.start();
+            return result[0];
         }
     }
 
