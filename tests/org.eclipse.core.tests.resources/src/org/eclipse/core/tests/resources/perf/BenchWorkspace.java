@@ -37,10 +37,10 @@ public class BenchWorkspace extends CorePerformanceTest {
 		Workspace workspace = (Workspace)getWorkspace();
 		int count = 0;
 		startBench();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 100; i++) {
 			count = workspace.countResources(project.getFullPath(), IResource.DEPTH_INFINITE, true);
 		}
-		stopBench("benchCountResources", 10);
+		stopBench("benchCountResources", 100);
 		System.out.println("Count: " + count);
 	}
 	public void benchCountResourcesDuringOperation() {
