@@ -51,7 +51,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	public static final int LEFT_COLUMN_SIZE = 15;
 
 	/**
-	 * Associated process - discovered on creation via process id
+	 * Associated process - discovered as needed to log messages
 	 */
 	private AntProcess fProcess = null;
 	
@@ -236,13 +236,15 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	
 	/**
 	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.
-	 * ant.uildEvent)
+	 * ant.BuildEvent)
 	 */
 	public void buildFinished(BuildEvent event) {
 		handleException(event);
 		fHandledException= null;
 		fBuildFileParent= null;
 		logMessage(getTimeString(System.currentTimeMillis() - fStartTime), event, fMessageOutputLevel);
+		fProcess= null;
+		event.getProject().removeBuildListener(this);
 	}
 	
 	private String getTimeString(long milliseconds) {
