@@ -5,6 +5,7 @@ package org.eclipse.team.internal.ccvs.core;
  * All Rights Reserved.
  */
  
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -32,10 +33,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.client.Checkout;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Import;
@@ -52,7 +55,6 @@ import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteModule;
-import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 public class CVSProvider implements ICVSProvider {
@@ -340,6 +342,11 @@ public class CVSProvider implements ICVSProvider {
 			((CVSRepositoryLocation)repository).updateCache();
 			repositoryAdded(repository);
 		}
+		try {
+			saveState();
+		} catch (TeamException e) {
+			CVSProviderPlugin.log(e.getStatus());
+		}
 	}
 	
 	/**
@@ -589,16 +596,23 @@ public class CVSProvider implements ICVSProvider {
 			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 			for (int i = 0; i < projects.length; i++) {
 				RepositoryProvider provider = RepositoryProvider.getProvider(projects[i], CVSProviderPlugin.getTypeId());
-				if (provider!=null) {
+				String location = null;
+				if (provider==null) {
+					// Check for old 1.0 sync info
+					// location = getRepositoryLocationFromOneO(projects[i]);
+				} else {
 					ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(projects[i]);
 					FolderSyncInfo info = folder.getFolderSyncInfo();
 					if (info != null) {
-						ICVSRepositoryLocation result = getRepository(info.getRoot());
-						addToCache(result);
-						repositoryAdded(result);
+						location = info.getRoot();
 					}
 				}
+				if (location != null) {
+					// getRepository() will add the repo if it doesn't exist already
+					ICVSRepositoryLocation result = getRepository(location);
+				}
 			}
+			saveState();
 		}
 	}
 	
@@ -637,6 +651,24 @@ public class CVSProvider implements ICVSProvider {
 			ICVSRepositoryLocation root = (ICVSRepositoryLocation)it.next();
 			dos.writeUTF(root.getLocation());
 		}
+	}
+	
+	private String getRepositoryLocationFromOneO(IProject project) throws CVSException {
+		try {
+			byte[] syncBytes = ResourcesPlugin.getWorkspace().getSynchronizer().getSyncInfo(
+				new QualifiedName("org.eclipse.vcm.core", "Sharing"), project);
+			if (syncBytes != null) {
+				DataInputStream reader = new DataInputStream(new ByteArrayInputStream(syncBytes));
+				String repoType = reader.readUTF();
+				String repoLocation = reader.readUTF();
+				if (repoType.equals("CVS")) return repoLocation;
+			}
+		} catch (CoreException ex) {
+			throw CVSException.wrapException(ex);
+		} catch (IOException ex) {
+			throw CVSException.wrapException(ex);
+		}
+		return null;
 	}
 }
 
