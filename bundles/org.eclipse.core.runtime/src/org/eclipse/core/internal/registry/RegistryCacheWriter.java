@@ -146,7 +146,7 @@ public class RegistryCacheWriter {
 		try {
 			out.writeInt(RegistryCacheReader.REGISTRY_CACHE_VERSION);
 			out.writeLong(InternalPlatform.getDefault().getStateTimeStamp());
-			EnvironmentInfo info = InternalPlatform.getDefault().getEnvironmentInfoService();
+			IPlatform info = InternalPlatform.getDefault();
 			out.writeUTF(info.getOS());
 			out.writeUTF(info.getWS());
 			out.writeUTF(info.getNL());

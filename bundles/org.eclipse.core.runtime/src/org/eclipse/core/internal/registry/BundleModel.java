@@ -29,7 +29,7 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 	private final static String DEFAULT_BUNDLE_NAME = "plugin"; //$NON-NLS-1$
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$	
-	private static String[] NL_JAR_VARIANTS = buildNLVariants(InternalPlatform.getDefault().getEnvironmentInfoService().getNL());
+	private static String[] NL_JAR_VARIANTS = buildNLVariants(InternalPlatform.getDefault().getNL());
 
 	private String hostId;
 	private IExtensionPoint[] extensionPoints;

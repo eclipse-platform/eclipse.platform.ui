@@ -74,7 +74,7 @@ public class RegistryCacheReader {
 			String osStamp = in.readUTF();
 			String windowsStamp = in.readUTF();
 			String localeStamp = in.readUTF();
-			EnvironmentInfo info = InternalPlatform.getDefault().getEnvironmentInfoService();
+			IPlatform info = InternalPlatform.getDefault();
 			return ((installStamp == InternalPlatform.getDefault().getStateTimeStamp()) && (osStamp.equals(info.getOS())) && (windowsStamp.equals(info.getWS())) && (localeStamp.equals(info.getNL())));
 		} catch (IOException e) {
 			throw new InvalidRegistryCacheException(Policy.bind("meta.regCacheIOExceptionReading","HeaderInformation"), e);  //$NON-NLS-1$//$NON-NLS-2$
