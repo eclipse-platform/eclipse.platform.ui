@@ -52,6 +52,7 @@ import org.w3c.dom.*;
  * <li>Pages and shared groups that are contributed through extensions become
  * children of the atrget configuration, and so any includes they may have will
  * be resolved correctly.</li>
+ * <li>An infinite loop can occur ig </li>
  * <li>unresolved includes are left as children of the parent container.</li>
  * <li>Unresolved extensions are left as children of the targetted model.</li>
  * <li>For dynamic awarness, the model is nulled and then reloaded. However, we
@@ -378,29 +379,6 @@ public class IntroModelRoot extends AbstractIntroContainer {
         }
     }
 
-
-    private void handleExtensionStyleInheritenceOLD(
-            IntroExtensionContent extension,
-            AbstractIntroElement targetContainer) {
-
-        if (targetContainer.getType() == AbstractIntroElement.GROUP
-                && targetContainer.getParent().getType() == AbstractIntroElement.MODEL_ROOT)
-            // if we are extending a shared group, defined under a config, we
-            // can not include styles.
-            return;
-
-        // Update the parent page styles. skip style if it is null;
-        String style = extension.getStyle();
-        if (style != null)
-            targetContainer.getParentPage().addStyle(style);
-
-        // for alt-style cache bundle for loading resources.
-        style = extension.getAltStyle();
-        if (style != null) {
-            Bundle bundle = extension.getBundle();
-            targetContainer.getParentPage().addAltStyle(style, bundle);
-        }
-    }
 
 
     /**

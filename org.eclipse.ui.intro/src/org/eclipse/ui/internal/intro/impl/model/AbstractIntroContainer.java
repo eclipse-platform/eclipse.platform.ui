@@ -447,7 +447,9 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
             // under a config, do not include styles.
             return;
 
-        // Update the parent page styles. skip style if it is null;
+        // Update the parent page styles. skip style if it is null. Note,
+        // include both the target page styles and inherited styles. The full
+        // page styles need to be include.
         String style = target.getParentPage().getStyle();
         if (style != null)
             getParentPage().addStyle(style);
@@ -458,6 +460,12 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
             Bundle bundle = target.getBundle();
             getParentPage().addAltStyle(style, bundle);
         }
+
+        // now add inherited styles. Race condition could happen here if Page A
+        // is including from Page B which is in turn including from Page A. 
+        getParentPage().addStyles(target.getParentPage().getStyles());
+        getParentPage().addAltStyles(target.getParentPage().getAltStyles());
+
     }
 
     /*

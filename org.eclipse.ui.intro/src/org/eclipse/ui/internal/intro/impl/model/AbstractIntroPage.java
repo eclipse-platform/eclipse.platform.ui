@@ -50,8 +50,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * <li>If an extension is extending a shared div, merging the styles of
      * this extension into the target is ignored. Shared divs do not have
      * styles.</li>
-     * <li>Shared hastable has alt-styles as keys, the plugin descriptors as
-     * values.</li>
+     * <li>Shared hashtable has alt-styles as keys and bundles as values.</li>
      * </ul>
      */
     private Vector styles;
@@ -176,6 +175,25 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             return;
         altStyles.put(altStyle, bundle);
     }
+
+
+    /**
+     * Util method to add given styles to the list.
+     *  
+     */
+    protected void addStyles(String[] styles) {
+        for (int i = 0; i < styles.length; i++)
+            addStyle(styles[i]);
+    }
+
+    /**
+     * Util method to add map of altstyles to list.
+     */
+    protected void addAltStyles(Hashtable altStyles) {
+        // 
+        this.altStyles.putAll(altStyles);
+    }
+
 
     /*
      * (non-Javadoc)
