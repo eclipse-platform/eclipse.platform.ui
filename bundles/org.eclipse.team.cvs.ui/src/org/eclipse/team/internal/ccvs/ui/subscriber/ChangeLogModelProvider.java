@@ -22,6 +22,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.*;
@@ -308,11 +309,16 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	private void refreshViewer() {
 		UIJob updateUI = new UIJob("") { //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				StructuredViewer tree = getViewer();	
-				tree.refresh();
-				ISynchronizeModelElement root = getModelRoot();
-				if(root instanceof SynchronizeModelElement)
-					((SynchronizeModelElement)root).fireChanges();
+				BusyIndicator.showWhile(getDisplay(), new Runnable() {
+					public void run() {
+						StructuredViewer tree = getViewer();	
+						tree.refresh();
+						ISynchronizeModelElement root = getModelRoot();
+						if(root instanceof SynchronizeModelElement)
+							((SynchronizeModelElement)root).fireChanges();
+					}
+				});
+
 				return Status.OK_STATUS;
 			}
 		};
