@@ -80,7 +80,7 @@ public class MergeWizard extends Wizard {
 						TeamProvider.registerSubscriber(s);
 				}
 			});
-			SyncViewer.showInActivePage(null /* no default page */);
+			SyncViewer.showInActivePage(null /* no default page */, s);
 		} catch (InvocationTargetException e) {
 			CVSUIPlugin.openError(getContainer().getShell(), null, null, e);
 			return false;

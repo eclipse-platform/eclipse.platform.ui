@@ -41,6 +41,8 @@ public class SyncViewerSubscriberListActions extends SyncViewerActionGroup {
 			this.input = input;
 		}
 		public void run() {
+			// Uncheck and let the activate check once the activate succeeds
+			setChecked(false);
 			SyncViewerSubscriberListActions.this.activate(this);
 		}
 		public SubscriberInput getSubscriberInput() {
@@ -55,12 +57,9 @@ public class SyncViewerSubscriberListActions extends SyncViewerActionGroup {
 
 	public void activate(SwitchSubscriberAction activatedAction) {
 		if(activeInput == null || ! activatedAction.getSubscriberInput().getSubscriber().getId().equals(activeInput.getSubscriber().getId())) {
-			for (Iterator it = actions.values().iterator(); it.hasNext();) {
-				SwitchSubscriberAction action = (SwitchSubscriberAction) it.next();
-				action.setChecked(activatedAction == action);
-			}
-			final SyncViewer view = getSyncView();
-			view.initializeSubscriberInput(activatedAction.getSubscriberInput());
+			getSyncView().initializeSubscriberInput(activatedAction.getSubscriberInput());
+			// The action check state will be updated when the view invokes
+			// setContext which then invokes initializeActions
 		} else {
 			activatedAction.setChecked(true);
 		}
@@ -112,7 +111,7 @@ public class SyncViewerSubscriberListActions extends SyncViewerActionGroup {
 		SwitchSubscriberAction action =  new SwitchSubscriberAction(input);
 		actions.put(input.getSubscriber().getId(), action);
 		if(enableFirstContext) {
-				activate(action);
+			activate(action);
 		}			
 	}
 	

@@ -21,13 +21,15 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -73,6 +75,7 @@ import org.eclipse.team.internal.ui.sync.actions.SyncViewerActions;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -394,19 +397,50 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		actions = new SyncViewerActions(this);
 		actions.restore(memento);
 	}
-	
-	private void showMessage(String message) {
-		MessageDialog.openInformation(
-			viewer.getControl().getShell(),
-			"Sample View",
-			message);
-	}
 
-	public void initializeSubscriberInput(final SubscriberInput input) {
+	public void activateSubscriber(TeamSubscriber subscriber) {
+		SubscriberInput input = (SubscriberInput)subscriberInputs.get(subscriber.getId());
+		if (input == null) {
+			addSubscriber(subscriber);
+		};
+		initializeSubscriberInput(input);
+	}
+	
+	public void initializeSubscriberInput(SubscriberInput input) {
 		Assert.isNotNull(input);
-		
+		new ActivateSubscriberJob(input).schedule();
+	}
+	
+	private class ActivateSubscriberJob extends Job {
+		private SubscriberInput input;
+		public ActivateSubscriberJob(SubscriberInput input) {
+			super("Activating Team subscriber: " + input.getSubscriber().getName());
+			this.input = input;
+		}
+		public IStatus run(IProgressMonitor monitor) {
+			try {
+				input.prepareInput(monitor);
+				SyncViewer.this.activateSubscriberInput(input);
+			} catch (TeamException e) {
+				IStatus status = e.getStatus();
+				return new Status(status.getSeverity(), status.getPlugin(), status.getCode(), "Could not activate Team subscriber: " + input.getSubscriber().getName(), e);
+			}
+			return Status.OK_STATUS;
+		}
+		public boolean shouldRun() {
+			return input != null;
+		}
+	}
+	
+	/*
+	 * This method is invoked from the ActivateSubscriberJob job
+	 * after the input has been initialized. It is synchronized
+	 * to ensure that two jobs do not activate an input at the
+	 * same time.
+	 */
+	protected synchronized void activateSubscriberInput(SubscriberInput in) {
 		this.lastInput = this.input;
-		this.input = input;
+		this.input = in;
 		
 		if(lastInput != null) {
 			lastInput.getFilteredSyncSet().removeSyncSetChangedListener(this);
@@ -416,25 +450,12 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		input.getFilteredSyncSet().addSyncSetChangedListener(this);
 		input.getSubscriberSyncSet().addSyncSetChangedListener(this);
 
-		final IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					ActionContext context = new ActionContext(null);
-					context.setInput(input);					
-					input.prepareInput(monitor);
-					// important to set the context after the input has been initialized. There
-					// are some actions that depend on the sync set to be initialized.
-					actions.setContext(context);
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		};
-
+		ActionContext context = new ActionContext(null);
+		context.setInput(input);					
+		actions.setContext(context);
+		
 		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				if (!hasRunnableContext()) return;				
-				SyncViewer.this.run(runnable);
+			public void run() {			
 				viewer.setInput(input.getFilteredSyncSet());
 				RefreshSubscriberJob refreshJob = TeamUIPlugin.getPlugin().getRefreshJob();
 				refreshJob.setSubscriberInput(input);
@@ -478,7 +499,6 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	 * Passing the focus request to the viewer's control.
 	 */
 	public void setFocus() {
-		// TODO: Broken on startup. Probably due to use of workbench progress
 		if (viewer == null) return;
 		viewer.getControl().setFocus();
 	}
@@ -571,6 +591,10 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		}
 	}
 
+	/*
+	 * Add the subscriber to the view. This method does not activate
+	 * the subscriber.
+	 */
 	private void addSubscriber(final TeamSubscriber s) {
 		showInActivePage(null);
 		SubscriberInput si = new SubscriberInput(s);
@@ -578,7 +602,6 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		ActionContext context = new ActionContext(null);
 		context.setInput(si);
 		actions.addContext(context);
-		initializeSubscriberInput(si);
 	}
 	
 	private void removeSubscriber(TeamSubscriber s) {
@@ -591,8 +614,10 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		// forget about this input
 		subscriberInputs.remove(s.getId());
 		
-		// show last input
-		initializeSubscriberInput(lastInput);
+		if (si == input && lastInput != null) {
+			// show last input
+			initializeSubscriberInput(lastInput);
+		}
 	}
 	
 	public void collapseAll() {
@@ -697,17 +722,26 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	 * Makes this view visible in the active page.
 	 */
 	public static void showInActivePage(IWorkbenchPage activePage) {
+		showInActivePage(activePage, null);
+	}
+
+	/**
+	 * Makes this view visible in the active page.
+	 */
+	public static void showInActivePage(IWorkbenchPage activePage, TeamSubscriber subscriber) {
 		try {
 			if (activePage == null) {
 				activePage = TeamUIPlugin.getActivePage();
 				if (activePage == null) return;
 			}
-			activePage.showView(VIEW_ID);
+			IViewPart view = activePage.showView(VIEW_ID);
+			if (subscriber != null && view instanceof SyncViewer) {
+				((SyncViewer)view).activateSubscriber(subscriber);
+			}
 		} catch (PartInitException pe) {
 			TeamUIPlugin.log(new TeamException("error showing view", pe));
 		}
 	}
-
 	/**
 	 * Update the title when either the subscriber or filter sync set changes.
 	 */
