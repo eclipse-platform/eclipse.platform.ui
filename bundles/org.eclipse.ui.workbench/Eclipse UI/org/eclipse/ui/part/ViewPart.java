@@ -118,6 +118,9 @@ public void saveState(IMemento memento){
     // do nothing
 }
 
+/* (non-Javadoc)
+ * @see org.eclipse.ui.part.WorkbenchPart#setPartName(java.lang.String)
+ */
 protected void setPartName(String partName) {
 	if (compatibilityTitleListener != null) {
 		removePropertyListener(compatibilityTitleListener);
