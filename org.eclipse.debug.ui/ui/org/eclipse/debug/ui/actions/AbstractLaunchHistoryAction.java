@@ -167,8 +167,10 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 			label= ActionMessages.getString("AbstractLaunchHistoryAction.1"); //$NON-NLS-1$
 		} else if (mode.equals(ILaunchManager.DEBUG_MODE)){
 			label= ActionMessages.getString("AbstractLaunchHistoryAction.2"); //$NON-NLS-1$
-		} else {
+		} else if (mode.equals(ILaunchManager.PROFILE_MODE)){
 			label= ActionMessages.getString("AbstractLaunchHistoryAction.3"); //$NON-NLS-1$
+		} else {
+			label= ActionMessages.getString("AbstractLaunchHistoryAction.4"); //$NON-NLS-1$
 		}
 		return MessageFormat.format(ActionMessages.getString("AbstractLaunchHistoryAction.0"), new String[] {label, launchName}); //$NON-NLS-1$
 	}
