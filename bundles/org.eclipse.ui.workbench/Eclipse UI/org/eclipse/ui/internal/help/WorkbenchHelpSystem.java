@@ -337,7 +337,6 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 		isInitialized = false;
 		PlatformUI.getWorkbench().getExtensionTracker()
 				.unregisterRemovalHandler(handler);
-		handler = null;
 	}
 
 	/**
