@@ -35,6 +35,8 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.variables.VariableUtil;
+import org.eclipse.debug.ui.launchVariables.RefreshTab;
 import org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -196,7 +198,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			background.start();
 			monitor.worked(1);
 			// refresh resources after process finishes
-			if (ExternalToolsUtil.getRefreshScope(configuration) != null) {
+			if (VariableUtil.getRefreshScope(configuration) != null) {
 				BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, process);
 				refresher.startBackgroundRefresh();
 			}				
@@ -211,7 +213,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			process.terminated();
 			
 			// refresh resources
-			ExternalToolsUtil.refreshResources(configuration, monitor);
+			RefreshTab.refreshResources(configuration, monitor);
 		}	
 		
 		monitor.done();	

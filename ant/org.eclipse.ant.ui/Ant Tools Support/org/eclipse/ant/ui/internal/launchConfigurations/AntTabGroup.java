@@ -21,9 +21,9 @@ import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.launchVariables.RefreshTab;
 import org.eclipse.debug.ui.launchVariables.IVariableConstants;
 import org.eclipse.debug.ui.launchVariables.VariableContextManager;
-import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsRefreshTab;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 
@@ -35,7 +35,7 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new AntMainTab(true),
-			new ExternalToolsRefreshTab(),
+			new RefreshTab(),
 			new AntTargetsTab(),
 			new AntClasspathTab(),
 			new AntPropertiesTab(),
