@@ -11,7 +11,35 @@
 <h1>
 Eclipse Platform Build Notes&nbsp;<br>
 Platform Debug</h1>
-June ??, 2003
+June 3, 2003
+
+<h3> Extensible Launch Modes</h3>
+<p>The debug platform supports an extensible set of launch modes. Releases prior 
+  to 3.0 only supported two launch modes - run and debug. The debug platform now 
+  provides an extension point for contributing new launch modes - <code>org.eclipse.debug.core.launchModes</code>. 
+  The debug platform now defines (contributes) three basic launch modes - run, 
+  debug, and profile. Other clients may contribute new launch modes. The launch 
+  manager (<code>ILaunchManager</code>) has additional API to retrieve all launch 
+  modes, and a human readable label for each launch mode.</p>
+<p>The debug platform has a new extension point to support the contribution of 
+  a launch delegate for a specific launch configuration type and launch mode - 
+  <code>org.eclipse.debug.core.launchDelegates</code>. This allows launch configurations 
+  to be extended by third parties, to support new launch modes. For example, a 
+  client could contribute a launch delegate that launches a Java Application in 
+  profile mode (currently, the SDK does not provide a profiler).</p>
+<p>The debug platform has added an optional element (<code>launchMode</code>), 
+  to the definition of a launch tab group extension - <code>(org.eclipse.debug.ui.launchConfigurationTabGroup</code>), 
+  to support the contribution of a set of tabs for a specific launch configuration 
+  type and launch mode. This allows third parties to extend an existing lauch 
+  configuration user interface. For example, a client contributing a launch delegate 
+  to profile a Java Application would also contribute a set of tabs to configure 
+  the profiler. The launchMode element defines a perpsective attribute to specify 
+  the default perspective assocaited with the launch configuration type and mode. 
+  This controls the perspective that is switched to/opened, by default, when a 
+  configuration is launched in the associated mode. For example, a client contributing 
+  a profiler may also contribute a profiling perspective that should be displayed 
+  when an application is profiled.</p>
+
 <h3>
 Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38083">38083</a>: [Viewers] Debug exception when double-clicking on hashtable<br>
