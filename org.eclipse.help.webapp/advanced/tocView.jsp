@@ -96,9 +96,10 @@ function onloadHandler()
 	} else {
 		topicSelected = selectTopicById(tocId);
 	}
+<%
 	// if topic failed to be selected, but we know it exist in some book,
 	// offer to turn on "show all"
-<%
+	
 	// do not offer to show all just after it was manually turned off
 	if (null==request.getParameter("showAll")) {
 %>
