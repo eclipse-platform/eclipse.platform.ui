@@ -128,11 +128,11 @@ public class Search {
 				"    <TR><TD>" + WebappResources.getString("Indexing", request) + "</TD></TR>")
 			.append("    <TR>")
 			.append("    	<TD ALIGN='LEFT'>")
-			.append("			<DIV STYLE='width:100px;height:16px;border-width:1px;border-style:solid;border-color:black'>")
+			.append("			<DIV STYLE='width:100px;height:16px;border:1px solid black;'>")
 			.append(
 				"				<DIV ID='divProgress' STYLE='width:"
 					+ percentage
-					+ "px;height:15px;background-color:Highlight'>")
+					+ "px;height:100%;background-color:Highlight'>")
 			.append("				</DIV>")
 			.append("			</DIV>")
 			.append("		</TD>")
