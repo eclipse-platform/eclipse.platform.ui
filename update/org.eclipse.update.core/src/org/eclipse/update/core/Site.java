@@ -437,25 +437,32 @@ public class Site extends SiteModel implements ISite {
 	}
 
 	/**
-	 * @see org.eclipse.update.core.ISite#createFeature(VersionedIdentifier, String, URL)
+	 * @see org.eclipse.update.core.ISite#createFeature(String, URL)
 	 */
 	public IFeature createFeature(String type, URL url) throws CoreException {
+		return createFeature(type,url,null);
+	}
+
+	/**
+	 * @see org.eclipse.update.core.ISite#createFeature(String, URL)
+	 */
+	public IFeature createFeature(String type, URL url, IProgressMonitor monitor) throws CoreException {
 
 		// First check the cache
 		URLKey key = new URLKey(url);
 		IFeature feature = (IFeature) featureCache.get(key);
 		if (feature != null) return feature;
-			
+
 		// Create a new one
 		if (type == null || type.equals("")) { //$NON-NLS-1$
-			// ask the Site for the default type 
+			// ask the Site for the default type
 			type = getDefaultPackagedFeatureType();
 		}
-		
+
 		IFeatureFactory factory = FeatureTypeFactory.getInstance().getFactory(type);
 		feature = factory.createFeature(url, this);
 		if (feature != null) {
-			// Add the feature to the cache 
+			// Add the feature to the cache
 			featureCache.put(key, feature);
 		}
 		return feature;

@@ -26,6 +26,9 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 
 	private List categories;
 	private VersionedIdentifier versionId;
+	
+	//PERF: new instance variable
+	private IFeature exactFeature;
  
 	/**
 	 * Feature reference default constructor
@@ -65,12 +68,17 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 *  @return the feature on the Site
 	 */
 	public IFeature getFeature() throws CoreException {
+		
+		if (exactFeature!=null)	
+			return exactFeature;
+		
 		String type = getType();
 		if (type == null || type.equals("")) { //$NON-NLS-1$
 			// ask the Site for the default type 
 			type = getSite().getDefaultPackagedFeatureType();
 		}
-		return getSite().createFeature(type, this.getURL());
+		exactFeature = getSite().createFeature(type, this.getURL());
+		return exactFeature;
 	}
 
 	/**
@@ -148,4 +156,16 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	}
 	
 	
+	/**
+	 * @see org.eclipse.update.core.IFeatureReference#getName()
+	 */
+	public String getName() {
+		if (super.getLabel()!=null) return super.getLabel();
+		try {
+			return getFeature().getLabel();
+		} catch (CoreException e){
+			return getVersionedIdentifier().toString();
+		}
+	}
+
 }

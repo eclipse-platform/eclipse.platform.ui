@@ -573,6 +573,11 @@ public class DefaultSiteParser extends DefaultHandler {
 			feature.setFeatureVersion(ver);
 		}
 		
+		// get label if it exists
+		String label = attributes.getValue("label"); //$NON-NLS-1$
+		if ("".equals(label.trim())) label=null;
+		feature.setLabel(label);
+		
 		SiteModel site = (SiteModel) objectStack.peek();
 		site.addFeatureReferenceModel(feature);
 		feature.setSiteModel(site);

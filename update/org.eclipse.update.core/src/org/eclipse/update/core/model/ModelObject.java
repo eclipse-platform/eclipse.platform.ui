@@ -5,13 +5,12 @@ package org.eclipse.update.core.model;
  */
 
 import java.lang.reflect.Array;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.update.internal.core.Assert;
-import org.eclipse.update.internal.core.Policy;
+import org.eclipse.update.core.Feature;
+import org.eclipse.update.internal.core.*;
 
 /**
  * Root model object. Extended by all model objects.
@@ -25,6 +24,8 @@ public abstract class ModelObject extends PlatformObject {
 
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = KEY_PREFIX + KEY_PREFIX;
+
+	private static Map bundles;
 
 	/**
 	 * Creates a base model object.
@@ -103,12 +104,11 @@ public abstract class ModelObject extends PlatformObject {
 	 * 
 	 * Subclasses need to override this method to perform the actual resolution.
 	 * @param base base URL.
-	 * @param bundle resource bundle.
+	 * @param bundleURL resource bundle URL.
 	 * @exception MalformedURLException
 	 * @since 2.0
 	 */
-	public void resolve(URL base, ResourceBundle bundle)
-		throws MalformedURLException {
+	public void resolve(URL base, URL bundleURL) throws MalformedURLException {
 		return;
 	}
 
@@ -121,11 +121,10 @@ public abstract class ModelObject extends PlatformObject {
 	 * @exception MalformedURLException
 	 * @since 2.0
 	 */
-	protected void resolveReference(ModelObject o, URL url, ResourceBundle bundle)
-		throws MalformedURLException {
+	protected void resolveReference(ModelObject o, URL url, URL bundleURL) throws MalformedURLException {
 		if (o == null)
 			return;
-		o.resolve(url, bundle);
+		o.resolve(url, bundleURL);
 	}
 
 	/**
@@ -137,15 +136,11 @@ public abstract class ModelObject extends PlatformObject {
 	 * @exception MalformedURLException
 	 * @since 2.0
 	 */
-	protected void resolveListReference(
-		ModelObject[] o,
-		URL url,
-		ResourceBundle bundle)
-		throws MalformedURLException {
+	protected void resolveListReference(ModelObject[] o, URL url,URL bundleURL) throws MalformedURLException {
 		if (o == null)
 			return;
 		for (int i = 0; i < o.length; i++) {
-			o[i].resolve(url, bundle);
+			o[i].resolve(url, bundleURL);
 		}
 	}
 
@@ -159,15 +154,14 @@ public abstract class ModelObject extends PlatformObject {
 	 * @exception MalformedURLException
 	 * @since 2.0
 	 */
-	protected URL resolveURL(URL context, ResourceBundle bundle, String urlString)
-		throws MalformedURLException {
+	protected URL resolveURL(URL context, URL bundleURL, String urlString) throws MalformedURLException {
 
 		// URL string was not specified
 		if (urlString == null || urlString.trim().equals("")) //$NON-NLS-1$
 			return null;
 
 		// check to see if we have NL-sensitive URL
-		String resolvedUrlString = resolveNLString(bundle, urlString);
+		String resolvedUrlString = resolveNLString(bundleURL, urlString);
 
 		// if we don't have a base url, use only the supplied string
 		if (context == null)
@@ -209,7 +203,7 @@ public abstract class ModelObject extends PlatformObject {
 	 * @return string, or <code>null</code>
 	 * @since 2.0
 	 */
-	protected String resolveNLString(ResourceBundle b, String string) {
+	protected String resolveNLString(URL bundleURL, String string) {
 
 		if (string == null)
 			return null;
@@ -228,6 +222,8 @@ public abstract class ModelObject extends PlatformObject {
 		int ix = s.indexOf(" "); //$NON-NLS-1$
 		String key = ix == -1 ? s : s.substring(0, ix);
 		String dflt = ix == -1 ? s : s.substring(ix + 1);
+
+		ResourceBundle b = getResourceBundle(bundleURL);
 
 		if (b == null)
 			return dflt;
@@ -271,4 +267,48 @@ public abstract class ModelObject extends PlatformObject {
 		Iterator i = s.iterator();
 		return (Object[]) Array.newInstance(i.next().getClass(), 0);
 	}
+
+	   /**
+		* Helper method to access resouce bundle for feature. The default 
+		* implementation attempts to load the appropriately localized 
+		* feature.properties file.
+		* 
+		* @param url base URL used to load the resource bundle.
+		* @return resource bundle, or <code>null</code>.
+		* @since 2.0
+		*/
+		protected ResourceBundle getResourceBundle(URL url)  {
+	
+			if (url == null)
+				return null;
+	
+			if (bundles==null){
+				bundles = new HashMap();
+			} else {
+				ResourceBundle bundle = (ResourceBundle)bundles.get(url.toExternalForm());
+				if (bundle!=null) return bundle;
+			}
+	
+			ResourceBundle bundle = null;
+			try {
+				url = UpdateManagerUtils.asDirectoryURL(url);
+				ClassLoader l = new URLClassLoader(new URL[] { url }, null);
+				bundle = ResourceBundle.getBundle(getPropertyName(), Locale.getDefault(), l);
+				bundles.put(url.toExternalForm(),bundle);
+			} catch (MissingResourceException e) {
+				UpdateManagerPlugin.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
+			} catch (MalformedURLException e) {
+				UpdateManagerPlugin.warn(e.getLocalizedMessage()); //$NON-NLS-1$
+			}
+			return bundle;
+		}
+		
+	/**
+	 * Method getPropertyName.
+	 * @return String
+	 */
+	protected String getPropertyName() {
+		return Feature.FEATURE_FILE;
+	}
+
 }

@@ -185,16 +185,16 @@ public class SiteLocalModel extends ModelObject {
 	}
 
 	/*
-	 * @see ModelObject#resolve(URL, ResourceBundle)
+	 * @see ModelObject#resolve(URL)
 	 */
-	public void resolve(URL base, ResourceBundle bundle) throws MalformedURLException {
+	public void resolve(URL base,URL bundleURL) throws MalformedURLException {
 		// local
-		location = resolveURL(base,bundle,getLocationURLString());
+		location = resolveURL(base,bundleURL,getLocationURLString());
 		
 		// delegate
-		resolveListReference(getConfigurationHistoryModel(),base,bundle);
-		resolveListReference(getPreservedConfigurationsModel(),base,bundle);
-		resolveReference(getCurrentConfigurationModel(),base,bundle);
+		resolveListReference(getConfigurationHistoryModel(),base,bundleURL);
+		resolveListReference(getPreservedConfigurationsModel(),base,bundleURL);
+		resolveReference(getCurrentConfigurationModel(),base,bundleURL);
 	}
 	
 
@@ -212,6 +212,13 @@ public class SiteLocalModel extends ModelObject {
 	 */
 	public void setStamp(long stamp) {
 		this.stamp = stamp;
+	}
+
+	/**
+	 * @see org.eclipse.update.core.model.ModelObject#getPropertyName()
+	 */
+	protected String getPropertyName() {
+		return SiteLocalModel.SITE_LOCAL_FILE;
 	}
 
 }

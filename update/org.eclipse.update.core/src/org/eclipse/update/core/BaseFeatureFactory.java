@@ -4,14 +4,10 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
 
-import java.io.IOException;
-import java.net.*;
-import java.util.*;
+import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
  * Base implementation of a feature factory.
@@ -40,34 +36,6 @@ public abstract class BaseFeatureFactory
 	 */
 	public abstract IFeature createFeature(URL url, ISite site)
 		throws CoreException;
-
-	/**
-	 * Helper method to access resouce bundle for feature. The default 
-	 * implementation attempts to load the appropriately localized 
-	 * feature.properties file.
-	 * 
-	 * @param url base URL used to load the resource bundle.
-	 * @return resource bundle, or <code>null</code>.
-	 * @since 2.0
-	 */
-	protected ResourceBundle getResourceBundle(URL url)
-		throws IOException, CoreException {
-			
-		if (url == null)
-			return null;
-
-		ResourceBundle bundle = null;
-		try {
-			url = UpdateManagerUtils.asDirectoryURL(url);
-			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
-			bundle = ResourceBundle.getBundle(Feature.FEATURE_FILE, Locale.getDefault(), l);
-		} catch (MissingResourceException e) {
-			UpdateManagerPlugin.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
-		} catch (MalformedURLException e) {
-			UpdateManagerPlugin.warn(e.getLocalizedMessage()); //$NON-NLS-1$
-		}
-		return bundle;
-	}
 
 	/**
 	 * Create a concrete implementation of feature model.

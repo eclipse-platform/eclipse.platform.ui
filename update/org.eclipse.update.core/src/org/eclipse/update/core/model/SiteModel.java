@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
+import org.eclipse.update.core.Site;
 import org.eclipse.update.core.SiteFeatureReferenceModel;
 import org.eclipse.update.internal.model.ConfiguredSiteModel;
 
@@ -74,8 +75,7 @@ public class SiteModel extends ModelObject {
 		if (featureReferences == null)
 			return new SiteFeatureReferenceModel[0];
 
-		return (SiteFeatureReferenceModel[]) featureReferences.toArray(
-			arrayTypeFor(featureReferences));
+		return (SiteFeatureReferenceModel[]) featureReferences.toArray(arrayTypeFor(featureReferences));
 	}
 
 	/**
@@ -90,8 +90,7 @@ public class SiteModel extends ModelObject {
 		if (archiveReferences == null)
 			return new ArchiveReferenceModel[0];
 
-		return (ArchiveReferenceModel[]) archiveReferences.toArray(
-			arrayTypeFor(archiveReferences));
+		return (ArchiveReferenceModel[]) archiveReferences.toArray(arrayTypeFor(archiveReferences));
 	}
 
 	/**
@@ -315,23 +314,22 @@ public class SiteModel extends ModelObject {
 	 * resource bundle.
 	 * 
 	 * @param base URL
-	 * @param bundle resource bundle
+	 * @param bundleURL resource bundle URL
 	 * @exception MalformedURLException
 	 * @since 2.0
 	 */
-	public void resolve(URL base, ResourceBundle bundle)
-		throws MalformedURLException {
+	public void resolve(URL base, URL bundleURL) throws MalformedURLException {
 
-		// Archives and feature are relative to location URL is teh Site element had 
-		// a URL tag: see spec	
-		locationURL = resolveURL(base, bundle, getLocationURLString());
+		// Archives and feature are relative to location URL
+		// if the Site element has a URL tag: see spec	
+		locationURL = resolveURL(base, bundleURL, getLocationURLString());
 		if (locationURL == null)
 			locationURL = base;
-		resolveListReference(getFeatureReferenceModels(), locationURL, bundle);
-		resolveListReference(getArchiveReferenceModels(), locationURL, bundle);
+		resolveListReference(getFeatureReferenceModels(), locationURL, bundleURL);
+		resolveListReference(getArchiveReferenceModels(), locationURL, bundleURL);
 
-		resolveReference(getDescriptionModel(), base, bundle);
-		resolveListReference(getCategoryModels(), base, bundle);
+		resolveReference(getDescriptionModel(), base, bundleURL);
+		resolveListReference(getCategoryModels(), base, bundleURL);
 	}
 
 	/**
@@ -341,15 +339,18 @@ public class SiteModel extends ModelObject {
 		return this.configuredSiteModel;
 	}
 
-
-
 	/**
 	 * @see org.eclipse.update.core.ISite#setConfiguredSite(IConfiguredSite)
 	 */
 	public void setConfiguredSiteModel(ConfiguredSiteModel configuredSiteModel) {
-		this.configuredSiteModel = configuredSiteModel;		
+		this.configuredSiteModel = configuredSiteModel;
 	}
 
-
+	/**
+	 * @see org.eclipse.update.core.model.ModelObject#getPropertyName()
+	 */
+	protected String getPropertyName() {
+		return Site.SITE_FILE;
+	}
 
 }

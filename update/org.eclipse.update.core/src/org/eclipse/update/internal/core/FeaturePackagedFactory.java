@@ -29,7 +29,7 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 			ContentReference manifest = contentProvider.getFeatureManifestReference(null/*IProgressMonitor*/);
 			featureStream = manifest.getInputStream();
 			feature = (Feature)parseFeature(featureStream);
-
+	
 			// if there is no update URL for the Feature
 			// use the Site URL
 			if (feature.getUpdateSiteEntry()==null){
@@ -48,7 +48,7 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 				baseUrl = new URL(manifest.asURL(),"."); // make sure we have URL to feature directory //$NON-NLS-1$
 			} catch(MalformedURLException e) {	
 			}
-			feature.resolve(baseUrl, getResourceBundle(baseUrl));
+			feature.resolve(baseUrl, baseUrl);
 			feature.markReadOnly();			
 		}  catch (CoreException e){
 			throw e;

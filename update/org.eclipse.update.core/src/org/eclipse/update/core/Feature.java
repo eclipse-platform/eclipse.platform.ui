@@ -4,7 +4,6 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
 
-import java.io.IOException;
 import java.net.*;
 import java.util.*;
 
@@ -39,6 +38,9 @@ public class Feature extends FeatureModel implements IFeature {
 	private IFeatureContentProvider featureContentProvider; // content provider
 	private List /*of IFeatureReference*/
 	includedFeatureReferences;
+	
+	//PERF: new instance variable
+	private VersionedIdentifier versionId;
 
 	/**
 	 * Feature default constructor
@@ -70,7 +72,22 @@ public class Feature extends FeatureModel implements IFeature {
 	 * @since 2.0
 	 */
 	public VersionedIdentifier getVersionedIdentifier() {
-		return new VersionedIdentifier(getFeatureIdentifier(), getFeatureVersion());
+		if (versionId != null)
+			return versionId;
+
+		String id = getFeatureIdentifier();
+		String ver = getFeatureVersion();
+		if (id != null && ver != null) {
+			try {
+				versionId = new VersionedIdentifier(id, ver);
+				return versionId;
+			} catch (Exception e) {
+				UpdateManagerPlugin.warn("Unable to create versioned identifier:" + id + ":" + ver);
+			}
+		}
+
+		versionId = new VersionedIdentifier(getURL().toExternalForm(),null);
+		return versionId;
 	}
 
 	/**
@@ -718,7 +735,7 @@ public class Feature extends FeatureModel implements IFeature {
 	 * 
 	 */
 	private IIncludedFeatureReference getPerfectIncludeFeature(ISite site, IIncludedFeatureReference include) throws CoreException {
-
+	
 		// [20367] no site, cannot initialize nested references
 		ISiteFeatureReference[] refs = site.getFeatureReferences();
 		VersionedIdentifier identifier = include.getVersionedIdentifier();
@@ -737,7 +754,7 @@ public class Feature extends FeatureModel implements IFeature {
 						} catch (CoreException e) {
 							UpdateManagerPlugin.warn(null, e);
 						};
-
+	
 						if (identifier.equals(id)) {
 							// found a ISiteFeatureReference that matches our IIncludedFeatureReference
 							IncludedFeatureReference newRef = new IncludedFeatureReference(refs[ref]);
@@ -751,7 +768,7 @@ public class Feature extends FeatureModel implements IFeature {
 				}
 			}
 		}
-
+	
 		// instanciate by mapping it based on the site.xml
 		// in future we may ask for a factory to create the feature ref
 		IncludedFeatureReference newRef = new IncludedFeatureReference(include);
@@ -771,33 +788,6 @@ public class Feature extends FeatureModel implements IFeature {
 		} catch (Exception e) {
 			throw Utilities.newCoreException(Policy.bind("Feature.UnableToInitializeFeatureReference", identifier.toString()), e);
 		}
-	}
-
-	/**
-	 * Helper method to access resouce bundle for feature. The default 
-	 * implementation attempts to load the appropriately localized 
-	 * feature.properties file.
-	 * 
-	 * @param url base URL used to load the resource bundle.
-	 * @return resource bundle, or <code>null</code>.
-	 * @since 2.0
-	 */
-	private ResourceBundle getResourceBundle(URL url) throws IOException, CoreException {
-
-		if (url == null)
-			return null;
-
-		ResourceBundle bundle = null;
-		try {
-			url = UpdateManagerUtils.asDirectoryURL(url);
-			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
-			bundle = ResourceBundle.getBundle(Site.SITE_FILE, Locale.getDefault(), l);
-		} catch (MissingResourceException e) {
-			UpdateManagerPlugin.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
-		} catch (MalformedURLException e) {
-			UpdateManagerPlugin.warn(e.getLocalizedMessage()); //$NON-NLS-1$
-		}
-		return bundle;
 	}
 
 	/*

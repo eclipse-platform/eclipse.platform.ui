@@ -31,6 +31,9 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	contentConsumers;
 	private List /*of path as String */
 	installedFiles;
+	
+	// PERF: new instance variable
+	private SiteFileFactory archiveFactory = new SiteFileFactory();
 
 	/*
 	 * Constructor 
@@ -237,7 +240,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	 * (creates the map between the plugin id and the location of the plugin)
 	 */
 	private void commitPlugins(IFeatureReference localFeatureReference) throws CoreException {
-
+	
 		// get the feature
 		 ((SiteFile) getSite()).addFeatureReferenceModel((SiteFeatureReferenceModel) localFeatureReference);
 		IFeature localFeature = null;
@@ -247,12 +250,11 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			UpdateManagerPlugin.warn(null, e);
 			return;
 		}
-
+	
 		if (localFeature == null)
 			return;
-
+	
 		// add the installed plugins directories as archives entry
-		SiteFileFactory archiveFactory = new SiteFileFactory();
 		ArchiveReferenceModel archive = null;
 		IPluginEntry[] pluginEntries = localFeature.getPluginEntries();
 		for (int i = 0; i < pluginEntries.length; i++) {
@@ -266,7 +268,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 				archive.resolve(url, null);
 				((SiteFile) getSite()).addArchiveReferenceModel(archive);
 			} catch (MalformedURLException e) {
-
+	
 				String urlString = (getSite().getURL() != null) ? getSite().getURL().toExternalForm() : "";
 				//$NON-NLS-1$
 				urlString += Site.DEFAULT_PLUGIN_PATH + pluginEntries[i].toString();

@@ -39,6 +39,15 @@ public interface IFeatureReference extends IAdaptable {
 	public ISite getSite();
 
 	/**
+	 * Returns the label for the referenced feature
+	 *
+	 * @return the label
+	 * @since 2.1
+	 */
+	public String getName();
+
+
+	/**
 	 * Returns the referenced feature.
 	 * This is a factory method that creates the full feature object.
 	 * 

@@ -4,6 +4,7 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
 import org.eclipse.update.core.model.ImportModel;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
@@ -17,13 +18,31 @@ import org.eclipse.update.internal.core.UpdateManagerUtils;
  */
 public class Import extends ImportModel implements IImport {
 
+	//PERF: new instance variable
+	private VersionedIdentifier versionId;
 
 	/**
 	 * Returns an identifier of the dependent plug-in.
 	 * @see IImport#getIdentifier()
 	 */
 	public VersionedIdentifier getVersionedIdentifier() {
-		return new VersionedIdentifier(getIdentifier(), getVersion());
+		if (versionId != null)
+			return versionId;
+
+		String id = getIdentifier();
+		String ver = getVersion();
+		if (id != null && ver != null) {
+			try {
+				versionId = new VersionedIdentifier(id, ver);
+				return versionId;
+			} catch (Exception e) {
+				UpdateManagerPlugin.warn("Unable to create versioned identifier:" + id + ":" + ver);
+			}
+		}
+
+		
+		versionId = new VersionedIdentifier("",null);
+		return versionId;		
 	}
 
 	/**

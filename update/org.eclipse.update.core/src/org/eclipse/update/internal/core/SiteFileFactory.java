@@ -18,57 +18,16 @@ public class SiteFileFactory extends BaseSiteFactory {
 	// private when parsing file system
 	private SiteFile site;
 
-	/**
-	 * manages the versionedIdentifier and location of parsed plugins
-	 */
-	public class PluginIdentifier {
-		private VersionedIdentifier id;
-		private File location;
-		private boolean isFragment = false;
-
-		public PluginIdentifier(VersionedIdentifier id, File location, boolean fragment) {
-			this.id = id;
-			this.location = location;
-			this.isFragment = fragment;
-		}
-
-		public String getIdentifier() {
-			if (id != null)
-				return id.getIdentifier();
-			return null;
-		}
-
-		public PluginVersionIdentifier getVersion() {
-			if (id != null)
-				return id.getVersion();
-			return null;
-		}
-
-		public boolean isFragment() {
-			return isFragment;
-		}
-
-		public File getLocation() {
-			return location;
-		}
-
-		public String toString() {
-			String msg = "";
-			if (id != null)
-				msg = id.toString();
-			return msg; //$NON-NLS-1$
-		}
-	}
 
 	/*
 	 * @see ISiteFactory#createSite(URL,boolean)
 	 */
 	public ISite createSite(URL url) throws CoreException, InvalidSiteTypeException {
-
+	
 		Site site = null;
 		InputStream siteStream = null;
 		SiteModelFactory factory = (SiteModelFactory) this;
-
+	
 		try {
 			// if url points to a directory
 			// attempt to parse site.xml
@@ -79,7 +38,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 				if (!path.endsWith("/"))
 					path += "/";
 				url = new URL("file:" + path); //$NON-NLS-1$
-
+	
 				if (new File(siteLocation, Site.SITE_XML).exists()) {
 					siteStream = new FileInputStream(new File(siteLocation, Site.SITE_XML));
 					site = (Site) factory.parseSite(siteStream);
@@ -95,31 +54,31 @@ public class SiteFileFactory extends BaseSiteFactory {
 					siteStream = openStream(resolvedURL);
 					site = (Site) factory.parseSite(siteStream);
 				} catch (IOException e) {
-
+	
 					// attempt to parse parent directory
 					File file = new File(url.getFile());
 					File parentDirectory = file.getParentFile();
-
+	
 					// do not create directory if it doesn't exist	[18318]
 					// instead hrow error					
 					if (parentDirectory != null && !parentDirectory.exists())
 						throw Utilities.newCoreException(Policy.bind("SiteFileFactory.DirectoryDoesNotExist", file.getAbsolutePath()), null);
 					//$NON-NLS-1$
-
+	
 					if (parentDirectory == null || !parentDirectory.isDirectory())
 						throw Utilities.newCoreException(Policy.bind("SiteFileFactory.UnableToObtainParentDirectory", file.getAbsolutePath()), null);
 					//$NON-NLS-1$
-
+	
 					site = parseSite(parentDirectory);
-
+	
 				}
 			}
-
+	
 			SiteContentProvider contentProvider = new SiteFileContentProvider(url);
 			site.setSiteContentProvider(contentProvider);
 			contentProvider.setSite(site);
-			site.resolve(url, getResourceBundle(url));
-
+			site.resolve(url, url);
+	
 			// Do not set read only as may install in it
 			//site.markReadOnly();
 		} catch (MalformedURLException e) {
@@ -190,9 +149,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 					if (!featureXMLFile.exists()) {
 						UpdateManagerPlugin.warn("Unable to find feature.xml in directory:" + currentFeatureDir);
 					} else {
-						SiteFileFactory archiveFactory = new SiteFileFactory();
+						// PERF: remove code
+						//SiteFileFactory archiveFactory = new SiteFileFactory();
 						featureURL = currentFeatureDir.toURL();
-						featureRef = archiveFactory.createFeatureReferenceModel();
+						featureRef = createFeatureReferenceModel();
 						featureRef.setSiteModel(site);
 						featureRef.setURLString(featureURL.toExternalForm());
 						featureRef.setType(ISite.DEFAULT_INSTALLED_FEATURE_TYPE);
@@ -239,8 +199,9 @@ public class SiteFileFactory extends BaseSiteFactory {
 						UpdateManagerPlugin.warn("Unable to find feature.xml in file:" + currentFeatureFile);
 					} else {
 						featureURL = currentFeatureFile.toURL();
-						SiteFileFactory archiveFactory = new SiteFileFactory();
-						featureRef = archiveFactory.createFeatureReferenceModel();
+						// PERF: remove code
+						//SiteFileFactory archiveFactory = new SiteFileFactory();
+						featureRef = createFeatureReferenceModel();
 						featureRef.setSiteModel(site);
 						featureRef.setURLString(featureURL.toExternalForm());
 						featureRef.setType(ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
@@ -264,7 +225,6 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 * @throws CoreException
 	 */
 	private void parseInstalledPlugin(File dir) throws CoreException {
-		PluginIdentifier plugin = null;
 		File pluginFile = null;
 
 		try {
@@ -279,11 +239,8 @@ public class SiteFileFactory extends BaseSiteFactory {
 						}
 
 						if (pluginFile != null && pluginFile.exists() && !pluginFile.isDirectory()) {
-							IPluginEntry entry = parser.parse(new FileInputStream(pluginFile));
-							VersionedIdentifier identifier = entry.getVersionedIdentifier();
-							plugin = new PluginIdentifier(identifier, files[i], entry.isFragment());
-
-							addParsedPlugin(plugin);
+							PluginEntry entry = parser.parse(new FileInputStream(pluginFile));
+							addParsedPlugin(entry,files[i]);
 						}
 					} // files[i] is a directory
 				}
@@ -304,26 +261,25 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 * tranform each Plugin and Fragment into an ArchiveReferenceModel
 	 * and a PluginEntry for the Site	 
 	 */
-	private void addParsedPlugin(PluginIdentifier plugin) throws CoreException {
+	// PERF: removed intermediate Plugin object
+	private void addParsedPlugin(PluginEntry entry,File file) throws CoreException {
 
 		String location = null;
 		try {
-			if (plugin != null) {
+			if (entry != null) {
 
 				// create the plugin Entry
-				PluginEntry entry = new PluginEntry();
-				entry.setPluginIdentifier(plugin.getIdentifier());
-				entry.setPluginVersion(plugin.getVersion().toString());
-				entry.isFragment(plugin.isFragment());
 				((Site) site).addPluginEntry(entry);
 
 				// Create the Site mapping ArchiveRef->PluginEntry
-				// the id of the archiveRef is plugins\<pluginid>_<ver>.jar as per the specs				
-				SiteFileFactory archiveFactory = new SiteFileFactory();
-				ArchiveReferenceModel archive = archiveFactory.createArchiveReferenceModel();
-				String pluginID = Site.DEFAULT_PLUGIN_PATH + plugin.toString() + FeaturePackagedContentProvider.JAR_EXTENSION;
+				// the id of the archiveRef is plugins\<pluginid>_<ver>.jar as per the specs
+				// PERF: remove code
+				//SiteFileFactory archiveFactory = new SiteFileFactory();				
+				ArchiveReferenceModel archive = createArchiveReferenceModel();
+				String id = (entry.getVersionedIdentifier().toString());
+				String pluginID = Site.DEFAULT_PLUGIN_PATH + id + FeaturePackagedContentProvider.JAR_EXTENSION;
 				archive.setPath(pluginID);
-				location = plugin.getLocation().toURL().toExternalForm();
+				location = file.toURL().toExternalForm();
 				archive.setURLString(location);
 				((Site) site).addArchiveReferenceModel(archive);
 
@@ -346,7 +302,6 @@ public class SiteFileFactory extends BaseSiteFactory {
 		File file = null;
 		String[] dir;
 
-		PluginIdentifier plugin;
 		ContentReference ref = null;
 		String refString = null;
 
@@ -363,10 +318,8 @@ public class SiteFileFactory extends BaseSiteFactory {
 					refString = (ref == null) ? null : ref.asURL().toExternalForm();
 
 					if (ref != null) {
-						IPluginEntry entry = new DefaultPluginParser().parse(ref.getInputStream());
-						VersionedIdentifier identifier = entry.getVersionedIdentifier();
-						plugin = new PluginIdentifier(identifier, file, entry.isFragment());
-						addParsedPlugin(plugin);
+						PluginEntry entry = new DefaultPluginParser().parse(ref.getInputStream());
+						addParsedPlugin(entry,file);
 					} //ref!=null
 				} //for
 			}

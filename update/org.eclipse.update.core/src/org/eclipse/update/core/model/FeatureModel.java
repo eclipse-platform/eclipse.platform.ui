@@ -10,6 +10,7 @@ import java.util.*;
 
 import org.eclipse.update.core.IIncludedFeatureReference;
 import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
  * Feature model object.
@@ -50,13 +51,18 @@ public class FeatureModel extends ModelObject {
 	imports;
 	private List /*of PluginEntryModel*/
 	pluginEntries;
-	private List /*of IncludedFeatureReferenceModel */	
+	private List /*of IncludedFeatureReferenceModel */
 	featureIncludes;
 	private List /*of NonPluginEntryModel*/
 	nonPluginEntries;
 	private List /*of ContentGroupModel*/
 	groupEntries;
-	
+
+	// performance
+	private URL bundleURL;
+	private URL base;
+	private boolean resolved = false;
+
 	/**
 	 * Creates an uninitialized feature object.
 	 * 
@@ -79,9 +85,7 @@ public class FeatureModel extends ModelObject {
 			return false;
 		FeatureModel model = (FeatureModel) obj;
 
-		return (
-			featureId.toLowerCase().equals(model.getFeatureIdentifier())
-				&& featureVersion.toLowerCase().equals(model.getFeatureVersion()));
+		return (featureId.toLowerCase().equals(model.getFeatureIdentifier()) && featureVersion.toLowerCase().equals(model.getFeatureVersion()));
 	}
 
 	/**
@@ -92,6 +96,7 @@ public class FeatureModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public String getFeatureIdentifier() {
+		//delayedResolve(); no delay
 		return featureId;
 	}
 
@@ -103,6 +108,7 @@ public class FeatureModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public String getFeatureVersion() {
+		//delayedResolve(); no delay
 		return featureVersion;
 	}
 
@@ -114,6 +120,7 @@ public class FeatureModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public String getLabel() {
+		delayedResolve();
 		if (localizedLabel != null)
 			return localizedLabel;
 		else
@@ -138,6 +145,7 @@ public class FeatureModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public String getProvider() {
+		delayedResolve();
 		if (localizedProvider != null)
 			return localizedProvider;
 		else
@@ -161,6 +169,7 @@ public class FeatureModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public String getImageURLString() {
+		delayedResolve();
 		return imageURLString;
 	}
 
@@ -171,6 +180,7 @@ public class FeatureModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public URL getImageURL() {
+		delayedResolve();
 		return imageURL;
 	}
 
@@ -256,6 +266,7 @@ public class FeatureModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public InstallHandlerEntryModel getInstallHandlerModel() {
+		//delayedResolve(); no delay
 		return installHandler;
 	}
 
@@ -266,6 +277,7 @@ public class FeatureModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public URLEntryModel getDescriptionModel() {
+		//delayedResolve(); no delay
 		return description;
 	}
 
@@ -276,6 +288,7 @@ public class FeatureModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public URLEntryModel getCopyrightModel() {
+		//delayedResolve(); no delay
 		return copyright;
 	}
 
@@ -286,6 +299,7 @@ public class FeatureModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public URLEntryModel getLicenseModel() {
+		//delayedResolve(); no delay;
 		return license;
 	}
 
@@ -297,6 +311,7 @@ public class FeatureModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public URLEntryModel getUpdateSiteEntryModel() {
+		//delayedResolve(); no delay;
 		return updateSiteInfo;
 	}
 
@@ -309,11 +324,11 @@ public class FeatureModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public URLEntryModel[] getDiscoverySiteEntryModels() {
+		//delayedResolve(); no delay;
 		if (discoverySiteInfo == null)
 			return new URLEntryModel[0];
 
-		return (URLEntryModel[]) discoverySiteInfo.toArray(
-			arrayTypeFor(discoverySiteInfo));
+		return (URLEntryModel[]) discoverySiteInfo.toArray(arrayTypeFor(discoverySiteInfo));
 	}
 
 	/**
@@ -323,6 +338,7 @@ public class FeatureModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public ImportModel[] getImportModels() {
+		//delayedResolve(); no delay;
 		if (imports == null)
 			return new ImportModel[0];
 
@@ -350,16 +366,17 @@ public class FeatureModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public VersionedIdentifier[] getFeatureIncludeVersionedIdentifier() {
+		//delayedResolve(); no delay
 		if (featureIncludes == null)
 			return new VersionedIdentifier[0];
-			
+
 		//
 		Iterator iter = featureIncludes.iterator();
 		VersionedIdentifier[] versionIncluded = new VersionedIdentifier[featureIncludes.size()];
 		int index = 0;
 		while (iter.hasNext()) {
-			IncludedFeatureReferenceModel model = (IncludedFeatureReferenceModel)iter.next();
-			versionIncluded[index]=model.getVersionedIdentifier();
+			IncludedFeatureReferenceModel model = (IncludedFeatureReferenceModel) iter.next();
+			versionIncluded[index] = model.getVersionedIdentifier();
 			index++;
 		}
 		return versionIncluded;
@@ -372,10 +389,10 @@ public class FeatureModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public IIncludedFeatureReference[] getFeatureIncluded() {
+		//delayedResolve(); no delay
 		if (featureIncludes == null)
-			return new IIncludedFeatureReference[0];	
-		return (IIncludedFeatureReference[]) featureIncludes.toArray(
-			arrayTypeFor(featureIncludes));
+			return new IIncludedFeatureReference[0];
+		return (IIncludedFeatureReference[]) featureIncludes.toArray(arrayTypeFor(featureIncludes));
 	}
 
 	/**
@@ -388,8 +405,7 @@ public class FeatureModel extends ModelObject {
 		if (nonPluginEntries == null)
 			return new NonPluginEntryModel[0];
 
-		return (NonPluginEntryModel[]) nonPluginEntries.toArray(
-			arrayTypeFor(nonPluginEntries));
+		return (NonPluginEntryModel[]) nonPluginEntries.toArray(arrayTypeFor(nonPluginEntries));
 	}
 
 	/**
@@ -544,7 +560,6 @@ public class FeatureModel extends ModelObject {
 		assertIsWriteable();
 		this.affinity = affinity;
 	}
-
 
 	/**
 	 * Sets the custom install handler for the feature.
@@ -707,10 +722,11 @@ public class FeatureModel extends ModelObject {
 		assertIsWriteable();
 		if (this.pluginEntries == null)
 			this.pluginEntries = new ArrayList();
-		if (!this.pluginEntries.contains(pluginEntry))
-			this.pluginEntries.add(pluginEntry);
+		//PERF: no ListContains()
+		//if (!this.pluginEntries.contains(pluginEntry))
+		this.pluginEntries.add(pluginEntry);
 	}
-	
+
 	/**
 	 * Adds a feature identifier.
 	 * Throws a runtime exception if this object is marked read-only.
@@ -719,14 +735,15 @@ public class FeatureModel extends ModelObject {
 	 * @param options the options associated with the nested feature
 	 * @since 2.1
 	 */
-	public void addIncludedFeatureReferenceModel(IncludedFeatureReferenceModel include){
+	public void addIncludedFeatureReferenceModel(IncludedFeatureReferenceModel include) {
 		assertIsWriteable();
-		if (this.featureIncludes==null)
+		if (this.featureIncludes == null)
 			this.featureIncludes = new ArrayList();
-		if (!this.featureIncludes.contains(include))
-			this.featureIncludes.add(include);
+		//PERF: no ListContains()
+		//if (!this.featureIncludes.contains(include))
+		this.featureIncludes.add(include);
 	}
-		
+
 	/**
 	 * Adds a non-plug-in data reference.
 	 * Throws a runtime exception if this object is marked read-only.
@@ -738,8 +755,9 @@ public class FeatureModel extends ModelObject {
 		assertIsWriteable();
 		if (this.nonPluginEntries == null)
 			this.nonPluginEntries = new ArrayList();
-		if (!this.nonPluginEntries.contains(nonPluginEntry))
-			this.nonPluginEntries.add(nonPluginEntry);
+		//PERF: no ListContains()
+		//if (!this.nonPluginEntries.contains(nonPluginEntry))
+		this.nonPluginEntries.add(nonPluginEntry);
 	}
 
 	/**
@@ -823,33 +841,51 @@ public class FeatureModel extends ModelObject {
 	 * @exception MalformedURLException
 	 * @since 2.0
 	 */
-	public void resolve(URL base, ResourceBundle bundle)
-		throws MalformedURLException {
-		// resolve local elements
-		localizedLabel = resolveNLString(bundle, label);
-		localizedProvider = resolveNLString(bundle, provider);
-		imageURL = resolveURL(base, bundle, imageURLString);
+	public void resolve(URL base,URL bundleURL) throws MalformedURLException {
+		this.bundleURL = bundleURL;
+		this.base = base;
 
-		// delegate to references		
-		resolveReference(getDescriptionModel(), base, bundle);
-		resolveReference(getCopyrightModel(), base, bundle);
-		resolveReference(getLicenseModel(), base, bundle);
-		resolveReference(getUpdateSiteEntryModel(), null, bundle);
-		resolveListReference(getDiscoverySiteEntryModels(), null, bundle);
-		resolveListReference(getImportModels(), base, bundle);
-		resolveListReference(getPluginEntryModels(), base, bundle);
-		resolveListReference(getNonPluginEntryModels(), base, bundle);
+		// plugin entry and nonpluginentry are optimized too
+		resolveListReference(getPluginEntryModels(), base, bundleURL);
+		resolveListReference(getNonPluginEntryModels(), base, bundleURL);
+		
+		//URLSiteModel are optimized
+		resolveReference(getDescriptionModel(),base, bundleURL);
+		resolveReference(getCopyrightModel(),base, bundleURL);
+		resolveReference(getLicenseModel(),base, bundleURL);
+		resolveReference(getUpdateSiteEntryModel(),base, bundleURL);
+		resolveListReference(getDiscoverySiteEntryModels(),base, bundleURL);
+		
+		// Import Models are optimized
+		resolveListReference(getImportModels(),base, bundleURL);
 	}
-	
+
+	private void delayedResolve() {
+
+		// PERF: delay resolution
+		if (resolved)
+			return;
+
+		resolved = true;
+		// resolve local elements
+		localizedLabel = resolveNLString(bundleURL, label);
+		localizedProvider = resolveNLString(bundleURL, provider);
+		try {
+			imageURL = resolveURL(base,bundleURL, imageURLString);
+		} catch (MalformedURLException e){
+			UpdateManagerPlugin.warn("",e);
+		}
+	}
+
 	/**
 	 * Method setPrimaryPlugin.
 	 * @param plugin
 	 */
 	public void setPrimaryPluginID(String plugin) {
-		if (isPrimary && primaryPluginID==null){
+		if (isPrimary && primaryPluginID == null) {
 			primaryPluginID = featureId;
 		}
-		primaryPluginID= plugin;
+		primaryPluginID = plugin;
 	}
 	/**
 	 * Returns the primaryPluginID.

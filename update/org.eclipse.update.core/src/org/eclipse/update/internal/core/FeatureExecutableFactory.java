@@ -22,36 +22,37 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 	 * @see IFeatureFactory#createFeature(URL,ISite)
 	 */
 	public IFeature createFeature(URL url, ISite site) throws CoreException {
-
+	
+	
 		TargetFeature feature = null;
 		InputStream featureStream = null;
-
+	
 		if (url == null)
 			return createFeature(site);
-
+	
 		// the URL should point to a directory
 		url = validate(url);
-
+	
 		try {
 			IFeatureContentProvider contentProvider =
 				new FeatureExecutableContentProvider(url);
 			// PERF: FeatureContentConsumer
 			//IFeatureContentConsumer contentConsumer =new FeatureExecutableContentConsumer();
-
+	
 			URL nonResolvedURL =
 				contentProvider.getFeatureManifestReference(null /*IProgressMonitor*/
 			).asURL(); 
 			URL resolvedURL = URLEncoder.encode(nonResolvedURL);
 			featureStream = UpdateManagerPlugin.getPlugin().get(resolvedURL).getInputStream();
-
+	
 			feature = (TargetFeature) this.parseFeature(featureStream);
 			feature.setSite(site);
-
+	
 			feature.setFeatureContentProvider(contentProvider);
 			// PERF: FeatureContentConsumer
 			//feature.setContentConsumer(contentConsumer);
-
-			feature.resolve(url, getResourceBundle(url));
+	
+			feature.resolve(url, url);
 			feature.markReadOnly();
 		} catch (CoreException e){
 			throw e;

@@ -36,21 +36,21 @@ public class SiteURLFactory extends BaseSiteFactory {
 	public ISite createSite(URL url) throws CoreException, InvalidSiteTypeException {
 		Site site = null;
 		InputStream siteStream = null;
-
+	
 		try {
 			SiteURLContentProvider contentProvider = new SiteURLContentProvider(url);
-
+	
 			URL resolvedURL = URLEncoder.encode(url);
 			Response response = UpdateManagerPlugin.getPlugin().get(resolvedURL);
 			UpdateManagerUtils.checkConnectionResult(response, resolvedURL);
 			siteStream = response.getInputStream();
-
+	
 			SiteModelFactory factory = (SiteModelFactory) this;
 			site = (Site) factory.parseSite(siteStream);
-
+	
 			site.setSiteContentProvider(contentProvider);
 			contentProvider.setSite(site);
-			site.resolve(url, getResourceBundle(url));
+			site.resolve(url, url);
 			site.markReadOnly();
 		} catch (MalformedURLException e) {
 			throw Utilities.newCoreException(Policy.bind("SiteURLFactory.UnableToCreateURL", url == null ? "" : url.toExternalForm()), e);

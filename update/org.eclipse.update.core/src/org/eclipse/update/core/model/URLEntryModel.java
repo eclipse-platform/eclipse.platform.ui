@@ -6,7 +6,8 @@ package org.eclipse.update.core.model;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ResourceBundle;
+
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
  * Annotated URL model object.
@@ -26,6 +27,11 @@ public class URLEntryModel extends ModelObject {
 	private String urlString;
 	private URL url;
 	
+	//performance
+	private URL bundleURL;
+	private URL base;
+	private boolean resolved=false;
+	
 	/**
 	 * Creates a uninitialized annotated URL model object.
 	 * 
@@ -43,6 +49,7 @@ public class URLEntryModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public String getAnnotation() {
+		delayedResolve();
 		if (localizedAnnotation != null)
 			return localizedAnnotation;
 		else
@@ -66,6 +73,7 @@ public class URLEntryModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public String getURLString() {
+		delayedResolve();
 		return urlString;
 	}
 	
@@ -76,6 +84,7 @@ public class URLEntryModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public URL getURL() {
+		delayedResolve();
 		return url;
 	}
 	
@@ -117,9 +126,24 @@ public class URLEntryModel extends ModelObject {
 	 * @exception MalformedURLException
 	 * @since 2.0
 	 */
-	public void resolve(URL base, ResourceBundle bundle) throws MalformedURLException {
+	public void resolve(URL base, URL bundleURL) throws MalformedURLException {
+		this.base = base;
+		this.bundleURL = bundleURL;
+	}
+
+
+	private void delayedResolve() {
+		
+		//PERF: delay resolution
+		if (resolved)return;
+		
+		resolved= true;
 		// resolve local elements
-		localizedAnnotation = resolveNLString(bundle, annotation);
-		url = resolveURL(base, bundle, urlString);
+		localizedAnnotation = resolveNLString(bundleURL, annotation);
+		try {
+			url = resolveURL(base,bundleURL, urlString);
+		} catch (MalformedURLException e){
+			UpdateManagerPlugin.warn("",e);
+		}
 	}
 }

@@ -6,8 +6,9 @@ package org.eclipse.update.core.model;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ResourceBundle;
 
+import org.eclipse.update.core.Site;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
@@ -28,6 +29,13 @@ public class FeatureReferenceModel extends ModelObject {
 	private String featureId;
 	private String featureVersion;
 	private SiteModel site;
+	private String label;
+	private String localizedLabel;
+
+	// performance
+	private URL bundleURL;
+	private URL base;
+	private boolean resolved = false;
 
 	/**
 	 * Creates an uninitialized feature reference model object.
@@ -110,6 +118,7 @@ public class FeatureReferenceModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public URL getURL() {
+		delayedResolve();
 		return url;
 	}
 
@@ -204,13 +213,29 @@ public class FeatureReferenceModel extends ModelObject {
 	 * resource bundle.
 	 * 
 	 * @param base URL
-	 * @param bundle resource bundle
+	 * @param bundleURL resource bundle URL
 	 * @exception MalformedURLException
 	 * @since 2.0
 	 */
-	public void resolve(URL base, ResourceBundle bundle) throws MalformedURLException {
+	public void resolve(URL base,URL bundleURL) throws MalformedURLException {
+		this.base = base;
+		this.bundleURL = bundleURL;
+	}
+
+	private void delayedResolve() {
+
+		// PERF: delay resolution
+		if (resolved)
+			return;
+
+		resolved = true;
 		// resolve local elements
-		url = resolveURL(base, bundle, urlString);
+		localizedLabel = resolveNLString(bundleURL, label);
+		try {
+			url = resolveURL(base, bundleURL, urlString);
+		} catch (MalformedURLException e){
+			UpdateManagerPlugin.warn("",e);
+		}
 	}
 
 	/**
@@ -223,6 +248,46 @@ public class FeatureReferenceModel extends ModelObject {
 		if (url != null)
 			buffer.append(url.toExternalForm());
 		return buffer.toString();
+	}
+
+	/**
+	 * @see org.eclipse.update.core.model.ModelObject#getPropertyName()
+	 */
+	protected String getPropertyName() {
+		return Site.SITE_FILE;
+	}
+	
+	/**
+	 * Retrieve the displayable label for the feature reference. If the model
+	 * object has been resolved, the label is localized.
+	 *
+	 * @return displayable label, or <code>null</code>.
+	 * @since 2.0
+	 */
+	public String getLabel() {
+		delayedResolve();
+		if (localizedLabel != null)
+			return localizedLabel;
+		else
+			return label;
+	}
+
+	/**
+	 * Retrieve the non-localized displayable label for the feature reference.
+	 *
+	 * @return non-localized displayable label, or <code>null</code>.
+	 * @since 2.0
+	 */
+	public String getLabelNonLocalized() {
+		return label;
+	}
+
+	/**
+	 * Sets the label.
+	 * @param label The label to set
+	 */
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 }

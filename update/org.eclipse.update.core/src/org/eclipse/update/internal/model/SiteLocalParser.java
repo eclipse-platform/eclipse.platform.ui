@@ -22,6 +22,24 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class SiteLocalParser extends DefaultHandler {
 
+	/**
+	 * return the appropriate resource bundle for this sitelocal
+	 */
+	private ResourceBundle getResourceBundle() throws CoreException {
+		ResourceBundle bundle = null;
+		URL url = null;
+		try {
+			url = UpdateManagerUtils.asDirectoryURL(site.getLocationURL());
+			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
+			bundle = ResourceBundle.getBundle(SiteLocalModel.SITE_LOCAL_FILE, Locale.getDefault(), l);
+		} catch (MissingResourceException e) {
+			UpdateManagerPlugin.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
+		} catch (MalformedURLException e) {
+			UpdateManagerPlugin.warn(e.getLocalizedMessage()); //$NON-NLS-1$
+		}
+		return bundle;
+	}
+
 	private SAXParser parser;
 	private InputStream siteStream;
 	private SiteLocalModel site;
@@ -29,9 +47,7 @@ public class SiteLocalParser extends DefaultHandler {
 	public static final String SITE = "localsite"; //$NON-NLS-1$
 	public static final String CONFIG = "config"; //$NON-NLS-1$
 	public static final String PRESERVED_CONFIGURATIONS = "preservedConfigurations"; //$NON-NLS-1$
-
 	private ResourceBundle bundle;
-
 	private IFeatureReference feature;
 
 	// trus if we are now parsing preserved config
@@ -53,7 +69,7 @@ public class SiteLocalParser extends DefaultHandler {
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
 			UpdateManagerPlugin.debug("Start parsing localsite:" + ((SiteLocalModel) site).getLocationURLString()); //$NON-NLS-1$
 		}
-
+		
 		bundle = getResourceBundle();
 
 		parser.parse(new InputSource(this.siteStream));
@@ -62,19 +78,16 @@ public class SiteLocalParser extends DefaultHandler {
 	/**
 	 * return the appropriate resource bundle for this sitelocal
 	 */
-	private ResourceBundle getResourceBundle() throws CoreException {
-		ResourceBundle bundle = null;
+	private URL getResourceBundleURL() throws CoreException {
 		URL url = null;
 		try {
 			url = UpdateManagerUtils.asDirectoryURL(site.getLocationURL());
-			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
-			bundle = ResourceBundle.getBundle(SiteLocalModel.SITE_LOCAL_FILE, Locale.getDefault(), l);
 		} catch (MissingResourceException e) {
 			UpdateManagerPlugin.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			UpdateManagerPlugin.warn(e.getLocalizedMessage()); //$NON-NLS-1$
 		}
-		return bundle;
+		return url;
 	}
 
 	/**
@@ -121,7 +134,7 @@ public class SiteLocalParser extends DefaultHandler {
 		String info = attributes.getValue("label"); //$NON-NLS-1$
 		info = UpdateManagerUtils.getResourceString(info, bundle);
 		site.setLabel(info);
-
+	
 		// history
 		String historyString = attributes.getValue("history"); //$NON-NLS-1$
 		int history;
@@ -131,17 +144,17 @@ public class SiteLocalParser extends DefaultHandler {
 			history = Integer.parseInt(historyString);
 		}
 		site.setMaximumHistoryCount(history);
-
+	
 		//stamp
 		String stampString = attributes.getValue("stamp"); //$NON-NLS-1$
 		long stamp = Long.parseLong(stampString);
 		site.setStamp(stamp);
-
+	
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
 			UpdateManagerPlugin.debug("End process Site label:" + info); //$NON-NLS-1$
 		}
-
+	
 	}
 
 	/** 
@@ -156,7 +169,7 @@ public class SiteLocalParser extends DefaultHandler {
 		InstallConfigurationModel config = new BaseSiteLocalFactory().createInstallConfigurationModel();
 		config.setLocationURLString(url.toExternalForm());
 		config.setLabel(label);
-		config.resolve(url, getResourceBundle());
+		config.resolve(url, getResourceBundleURL());
 
 		// add the config
 		if (preserved) {

@@ -46,13 +46,13 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 *Internal call is reconciliation needs to be optimistic
 	 */
 	public static ILocalSite internalGetLocalSite(boolean isOptimistic) throws CoreException {
-
+	
 		SiteLocal localSite = new SiteLocal();
-
+	
 		// obtain platform configuration
 		IPlatformConfiguration currentPlatformConfiguration = BootLoader.getCurrentPlatformConfiguration();
 		localSite.isTransient(currentPlatformConfiguration.isTransient());
-
+	
 		try {
 			// obtain LocalSite.xml location
 			URL location;
@@ -66,11 +66,11 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			URL configXML = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
 			localSite.setLocationURLString(configXML.toExternalForm());
 			localSite.resolve(configXML, null);
-
+	
 			// Attempt to read previous state
 			// if reconcile or recover happens (erro reading state), it returns false
 			boolean hasRecoveredState = parseLocalSiteFile(localSite, configXML);
-
+	
 			if (hasRecoveredState) {
 				// check if we have to reconcile, if the timestamp has changed
 				long bootStamp = currentPlatformConfiguration.getChangeStamp();
@@ -89,7 +89,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		} catch (MalformedURLException exception) {
 			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor", localSite.getLocationURLString() + " & " + SITE_LOCAL_FILE), exception); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-
+	
 		return localSite;
 	}
 
@@ -696,7 +696,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			InstallConfigurationModel config = new BaseSiteLocalFactory().createInstallConfigurationModel();
 			String relativeURL = UpdateManagerUtils.getURLAsString(url, configURL);
 			config.setLocationURLString(relativeURL);
-			config.resolve(configURL, getResourceBundle(url));
+			config.resolve(configURL, url);
 			config.setLabel(Utilities.format(config.getCreationDate()));
 			validConfig.add(config);
 		}
@@ -726,29 +726,10 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			InstallConfigurationModel config = new BaseSiteLocalFactory().createInstallConfigurationModel();
 			String relativeURL = UpdateManagerUtils.getURLAsString(url, configURL);
 			config.setLocationURLString(relativeURL);
-			config.resolve(configURL, getResourceBundle(url));
+			config.resolve(configURL, url);
 			config.setLabel(Utilities.format(config.getCreationDate()));
 			site.addPreservedInstallConfigurationModel(config);
 		}
-	}
-
-	/**
-	 * return the appropriate resource bundle for this sitelocal
-	 */
-	private static ResourceBundle getResourceBundle(URL url) throws CoreException {
-		ResourceBundle bundle = null;
-		try {
-			url = UpdateManagerUtils.asDirectoryURL(url);
-			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
-			bundle = ResourceBundle.getBundle(SiteLocalModel.SITE_LOCAL_FILE, Locale.getDefault(), l);
-		} catch (MissingResourceException e) {
-			UpdateManagerPlugin.warn(e.getLocalizedMessage() + ":" + url.toExternalForm());
-			//$NON-NLS-1$
-		} catch (MalformedURLException e) {
-			UpdateManagerPlugin.warn(e.getLocalizedMessage());
-			//$NON-NLS-1$
-		}
-		return bundle;
 	}
 
 	/*

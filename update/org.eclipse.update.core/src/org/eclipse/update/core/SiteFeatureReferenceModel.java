@@ -3,12 +3,14 @@ package org.eclipse.update.core;
 import java.util.*;
 
 /**
- * @author celek
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
+ * Site Feature reference model object.
+ * <p>
+ * This class may be instantiated or subclassed by clients. However, in most 
+ * cases clients should instead instantiate or subclass the provided 
+ * concrete implementation of this model.
+ * </p>
+ * @see org.eclipse.update.core.FeatureReference
+ * @since 2.1
  */
 public class SiteFeatureReferenceModel extends FeatureReference {
 

@@ -6,7 +6,6 @@ package org.eclipse.update.core.model;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ResourceBundle;
 
 /**
  * Site archive model object.
@@ -100,9 +99,9 @@ public class ArchiveReferenceModel extends ModelObject {
 	 * @exception MalformedURLException
 	 * @since 2.0
 	 */
-	public void resolve(URL base, ResourceBundle bundle)
+	public void resolve(URL base,URL bundleURL)
 		throws MalformedURLException {
 		// resolve local elements
-		url = resolveURL(base, bundle, urlString);
+		url = resolveURL(base, bundleURL, urlString);
 	}
 }

@@ -7,7 +7,8 @@ package org.eclipse.update.core.model;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Comparator;
-import java.util.ResourceBundle;
+
+import org.eclipse.update.core.Site;
 
 /**
  * Feature category definition model object.
@@ -140,13 +141,13 @@ public class CategoryModel extends ModelObject {
 	 * @exception MalformedURLException
 	 * @since 2.0
 	 */
-	public void resolve(URL base, ResourceBundle bundle)
+	public void resolve(URL base,URL bundleURL)
 		throws MalformedURLException {
 		// resolve local elements
-		localizedLabel = resolveNLString(bundle, label);
+		localizedLabel = resolveNLString(bundleURL, label);
 
 		// delegate to references
-		resolveReference(getDescriptionModel(), base, bundle);
+		resolveReference(getDescriptionModel(),base, bundleURL);
 	}
 
 	/**
@@ -202,4 +203,11 @@ public class CategoryModel extends ModelObject {
 		}
 		return comp;
 	}
+	
+	/**
+	 * @see org.eclipse.update.core.model.ModelObject#getPropertyName()
+	 */
+	protected String getPropertyName() {
+		return Site.SITE_FILE;
+	}	
 }

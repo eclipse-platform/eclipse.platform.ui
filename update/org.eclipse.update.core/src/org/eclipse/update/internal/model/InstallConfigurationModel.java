@@ -221,15 +221,15 @@ public class InstallConfigurationModel extends ModelObject {
 	}
 
 	/*
-	 * @see ModelObject#resolve(URL, ResourceBundle)
+	 * @see ModelObject#resolve(URL)
 	 */
-	public void resolve(URL base, ResourceBundle bundle) throws MalformedURLException {
+	public void resolve(URL base,URL bundleURL) throws MalformedURLException {
 		// local
-		locationURL = resolveURL(base, bundle, locationURLString);
+		locationURL = resolveURL(base, bundleURL, locationURLString);
 
 		// delagate
-		resolveListReference(getActivityModel(), base, bundle);
-		resolveListReference(getConfigurationSitesModel(), base, bundle);
+		resolveListReference(getActivityModel(), base,bundleURL);
+		resolveListReference(getConfigurationSitesModel(),base, bundleURL);
 	}
 
 	/**
@@ -247,6 +247,13 @@ public class InstallConfigurationModel extends ModelObject {
 	 */
 	public void setTimeline(long timeline) {
 		this.timeline = timeline;
+	}
+
+	/**
+	 * @see org.eclipse.update.core.model.ModelObject#getPropertyName()
+	 */
+	protected String getPropertyName() {
+		return SiteLocalModel.SITE_LOCAL_FILE;
 	}
 
 }

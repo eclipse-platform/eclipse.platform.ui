@@ -106,7 +106,7 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 			if (changes)
 				markChanges(cfg);
 			if (DEBUG)
-				debug("restarting ...");  //$NON-NLS-1$
+				debug("restarting ..."+new Date());  //$NON-NLS-1$
 			return EXIT_RESTART;
 //		} else {
 //			// plugins lineup did not change ... no need to restart, 
@@ -122,6 +122,7 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 //				appArgs = markChanges(appArgs);
 //			return originalRunnable.run(appArgs);
 //		}
+
 	}
 	
 	private boolean reconcile(IPlatformConfiguration cfg) {

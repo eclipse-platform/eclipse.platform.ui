@@ -81,19 +81,40 @@ public class InternalSiteManager {
 			return site;
 		}
 
-		try {
-			site = attemptCreateSite(DEFAULT_SITE_TYPE, siteURL);
-		} catch (CoreException preservedException) {
-			// attempt a retry is the protocol is file, with executbale type
-			if (!"file".equalsIgnoreCase(siteURL.getProtocol()))
-				throw preservedException;
+		// consider file protocol also if the URL points to a directory
+		// and no site.xml exist
+		// if the user points to a file, consider DEFAULT_SITE_TYPE
+		// site.xml will have to specify the type
+		boolean fileProtocol = "file".equalsIgnoreCase(siteURL.getProtocol());
+		boolean directoryExists = false;
+		if (fileProtocol) {
+			File dir;
+			dir = new File(siteURL.getFile());
+			if (dir != null && dir.isDirectory()){
+				if (!(new File(dir,Site.SITE_XML).exists()))
+				directoryExists = true;
+			}
+		}
+
+		//PERF: if file: <path>/ and directory exists then consider executable
+		if (fileProtocol && directoryExists) {
+			site = attemptCreateSite(DEFAULT_EXECUTABLE_SITE_TYPE, siteURL);
+		} else {
 			try {
-				site = attemptCreateSite(DEFAULT_EXECUTABLE_SITE_TYPE, siteURL);
-			} catch (CoreException retryException) {
-				IStatus firstStatus = preservedException.getStatus();
-				MultiStatus multi = new MultiStatus(firstStatus.getPlugin(), IStatus.OK, Policy.bind("InternalSiteManager.FailedRetryAccessingSite"), retryException); //$NON-NLS-1$
-				multi.addAll(firstStatus);
-				throw preservedException;
+				site = attemptCreateSite(DEFAULT_SITE_TYPE, siteURL);
+			} catch (CoreException preservedException) {
+				// attempt a retry is the protocol is file, with executbale type
+				if (!fileProtocol)
+					throw preservedException;
+
+				try {
+					site = attemptCreateSite(DEFAULT_EXECUTABLE_SITE_TYPE, siteURL);
+				} catch (CoreException retryException) {
+					IStatus firstStatus = preservedException.getStatus();
+					MultiStatus multi = new MultiStatus(firstStatus.getPlugin(), IStatus.OK, Policy.bind("InternalSiteManager.FailedRetryAccessingSite"), retryException); //$NON-NLS-1$
+					multi.addAll(firstStatus);
+					throw preservedException;
+				}
 			}
 		}
 

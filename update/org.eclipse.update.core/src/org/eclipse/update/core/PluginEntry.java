@@ -5,6 +5,7 @@ package org.eclipse.update.core;
  */
 
 import org.eclipse.update.core.model.PluginEntryModel;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
  * Convenience implementation of plug-in entry.
@@ -16,6 +17,9 @@ import org.eclipse.update.core.model.PluginEntryModel;
  * @since 2.0
  */
 public class PluginEntry extends PluginEntryModel implements IPluginEntry {
+	
+	// PERF: new instance variable
+	private VersionedIdentifier versionId;
 
 	/**
 	 * Plug-in entry default constructor
@@ -31,7 +35,22 @@ public class PluginEntry extends PluginEntryModel implements IPluginEntry {
 	 * @since 2.0
 	 */
 	public VersionedIdentifier getVersionedIdentifier() {
-		return new VersionedIdentifier(getPluginIdentifier(), getPluginVersion());
+		if (versionId != null)
+			return versionId;
+
+		String id = getPluginIdentifier();
+		String ver = getPluginVersion();
+		if (id != null && ver != null) {
+			try {
+				versionId = new VersionedIdentifier(id, ver);
+				return versionId;
+			} catch (Exception e) {
+				UpdateManagerPlugin.warn("Unable to create versioned identifier:" + id + ":" + ver);
+			}
+		}
+
+		versionId = new VersionedIdentifier("",null);
+		return versionId;
 	}
 
 	/**
