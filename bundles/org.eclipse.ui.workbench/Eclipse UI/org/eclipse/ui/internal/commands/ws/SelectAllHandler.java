@@ -15,6 +15,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -49,6 +50,7 @@ public class SelectAllHandler extends WidgetMethodHandler {
                 if (numParams == 0) {
                     // This is a no-argument selectAll method.
                     methodToExecute.invoke(focusControl, null);
+                    focusControl.notifyListeners(SWT.Selection, null);
 
                 } else if (numParams == 1) {
                     // This is a single-point selection method.
@@ -59,6 +61,7 @@ public class SelectAllHandler extends WidgetMethodHandler {
                     final Object[] parameters = { new Point(0, textLimit
                             .intValue()) };
                     methodToExecute.invoke(focusControl, parameters);
+                    focusControl.notifyListeners(SWT.Selection, null);
 
                 } else {
                     /*
