@@ -82,10 +82,10 @@ import org.eclipse.core.runtime.*;
 				
 		Composite composite= new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(/* GridData.VERTICAL_ALIGN_FILL | */ GridData.HORIZONTAL_ALIGN_FILL));
+		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		setControl(composite);
 		
-		Label l= new Label(composite, SWT.NONE);	// a spacer
+		Label l= new Label(composite, SWT.NONE);	
 		l.setText(PatchMessages.getString("InputPatchPage.SelectInput")); //$NON-NLS-1$
 		buildInputGroup(composite);
 		
@@ -96,7 +96,6 @@ import org.eclipse.core.runtime.*;
 		restoreWidgetValues();
 
 		updateWidgetEnablements();
-		//updatePageCompletion();
 		
 		Dialog.applyDialogFont(composite);
 		WorkbenchHelp.setHelp(composite, ICompareContextIds.PATCH_INPUT_WIZARD_PAGE);
@@ -274,7 +273,7 @@ import org.eclipse.core.runtime.*;
 		IWorkspaceRoot root= workspace.getRoot();
 		
 		Tree tree= new Tree(parent, SWT.BORDER);
-		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd= new GridData(GridData.FILL_BOTH);
 		gd.heightHint= 200;
 		tree.setLayoutData(gd);
 		
