@@ -168,8 +168,7 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 	}
 	
 	protected boolean areJobsEnabled() {
-		int speed = CVSUIPlugin.getPlatformPerformance();
-		return speed != Platform.MIN_PERFORMANCE;
+		return true;
 	}
 	
 	/**

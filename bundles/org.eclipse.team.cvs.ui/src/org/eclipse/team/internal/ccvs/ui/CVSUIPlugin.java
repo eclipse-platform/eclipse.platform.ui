@@ -721,15 +721,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Returns the system speed setting. This is mainly used to determine to enable/disable
-	 * certain CVS features.
-	 * @since 3.0 
-	 */
-	public static int getPlatformPerformance() {
-		return Platform.getPlugin(Platform.PI_RUNTIME).getPluginPreferences().getInt(Platform.PREF_PLATFORM_PERFORMANCE);
-	}
-	
-	/**
 	 * This is a convenience method to show the CVS workspace subscriber in the sync view.
 	 * The working set of the workspace participant will be set to the provided working set
 	 * and the provided resources will be refreshed.

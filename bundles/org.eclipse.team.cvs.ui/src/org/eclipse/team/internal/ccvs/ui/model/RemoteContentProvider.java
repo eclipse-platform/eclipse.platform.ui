@@ -40,9 +40,7 @@ public class RemoteContentProvider extends WorkbenchContentProvider {
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (viewer instanceof AbstractTreeViewer) {
-			if(CVSUIPlugin.getPlatformPerformance() != Platform.MIN_PERFORMANCE) {
-				manager = new DeferredTreeContentManager(this, (AbstractTreeViewer) viewer);
-			}
+			manager = new DeferredTreeContentManager(this, (AbstractTreeViewer) viewer);
 		}
 		super.inputChanged(viewer, oldInput, newInput);
 	}

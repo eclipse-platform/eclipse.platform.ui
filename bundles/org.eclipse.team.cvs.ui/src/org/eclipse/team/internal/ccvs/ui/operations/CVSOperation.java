@@ -81,7 +81,7 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	}
 
 	protected boolean areJobsEnabled() {
-		return CVSUIPlugin.getPlatformPerformance() != Platform.MIN_PERFORMANCE;
+		return true;
 	}
 
 	/**
