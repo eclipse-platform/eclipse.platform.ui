@@ -26,9 +26,11 @@ import org.eclipse.debug.internal.ui.actions.TerminateAllAction;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ISourcePresentation;
 import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -39,6 +41,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -292,15 +295,20 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		setActive(page.findView(getSite().getId()) != null);
 		updateActions();
 		showMarkerForCurrentSelection();
+		if (isActive()) {
+			asyncExec(new Runnable() {
+				public void run() {
+					updateDebugActionSetAccelerators();
+				}
+			});
+
+		}
 	}
 
 	/**
 	 * @see IPerspectiveListener#perspectiveChanged(IWorkbenchPage, IPerspectiveDescriptor, String)
 	 */
-	public void perspectiveChanged(
-		IWorkbenchPage page,
-		IPerspectiveDescriptor perspective,
-		String changeId) {
+	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 			setActive(page.findView(getSite().getId()) != null);
 	}
 
@@ -315,6 +323,25 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			ILaunch[] launches= DebugPlugin.getDefault().getLaunchManager().getLaunches();
 			if (launches.length > 0) {
 				((LaunchViewEventHandler)getEventHandler()).removeTerminatedLaunches(launches[launches.length - 1]);
+			}
+		}
+	}
+	
+	/**
+	 * Workaround for bug 9082
+	 */
+	protected void updateDebugActionSetAccelerators() {
+		IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+		if (window instanceof ApplicationWindow) {
+			ApplicationWindow appWindow= (ApplicationWindow)window;
+			IMenuManager manager= appWindow.getMenuBarManager();
+			IContributionItem actionSetItem= manager.findUsingPath("org.eclipse.debug.ui.DebugMenu"); //$NON-NLS-1$
+			if (actionSetItem instanceof SubContributionItem) {
+				IContributionItem item= ((SubContributionItem)actionSetItem).getInnerItem();
+				if (item instanceof IMenuManager) {
+					//force the accelerators to be updated
+					((IMenuManager)item).update(true);
+				}
 			}
 		}
 	}
