@@ -301,16 +301,14 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 					return;
 				if((System.currentTimeMillis() - watchTime) > ProgressManager.getInstance().getLongOperationTime()){
 					watchTime = -1;
-					openDialog(false);
+					openDialog();
 				}
 			}
 
 			/**
 			 * Open the dialog in the ui Thread
-			 * @param force Open the dialog whether or not there
-			 * are other dialogs open.
 			 */
-			private void openDialog(final boolean force) {
+			private void openDialog() {
 				if(!PlatformUI.isWorkbenchRunning())
 					return;
 				
@@ -318,12 +316,9 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 					/* (non-Javadoc)
 					 * @see java.lang.Runnable#run()
 					 */
-					public void run() {
-						//Try again if still not safe and we are not forcing
-						if(force || ProgressManagerUtil.safeToOpen(ProgressMonitorJobsDialog.this)){
-							if(!alreadyClosed)
-								open();
-						}
+					public void run() {					
+						if(!alreadyClosed)
+							open();
 					}
 				});
 			}
@@ -417,7 +412,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 			 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
 			 */
 			public void setBlocked(IStatus reason) {
-				openDialog(true);
+				openDialog();
 				if (superMonitor instanceof IProgressMonitorWithBlocking)
 					((IProgressMonitorWithBlocking) superMonitor)
 							.setBlocked(reason);
