@@ -10,8 +10,8 @@ var framesLoaded = false;
 var args = parseQueryString();
 
 var tocURL = "tocs.jsp";
-var searchURL = "search_results.jsp";
-var linksURL = "links.jsp";
+var searchURL = "search_results.jsp" + getQuery();
+var linksURL = "links.jsp" + getQuery();
 
 var tocTitle;
 var currToc;
