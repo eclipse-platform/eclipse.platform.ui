@@ -13,6 +13,7 @@
 
 var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
+var isSafari = navigator.userAgent.indexOf('Safari') != -1;
 
 // selected node
 var active;
@@ -412,6 +413,12 @@ if (isMozilla) {
   document.addEventListener('click', mouseClickHandler, true);
   document.addEventListener('keydown', keyDownHandler, true);
   //document.addEventListener("focus", focusHandler, true);
+	if (isSafari) {
+		// workaround for lack of good system colors in Safari
+		document.write('<style type="text/css">');
+		document.write('.active {background:#FFB090;color:#000000;}');
+		document.write('</style>');
+	}
 }
 else if (isIE){
   document.onclick = mouseClickHandler;
