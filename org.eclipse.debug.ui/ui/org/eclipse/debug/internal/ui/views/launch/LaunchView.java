@@ -591,17 +591,22 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	private IRegion getLineInformation(ITextEditor editor, int lineNumber) {
 		IDocumentProvider provider= editor.getDocumentProvider();
 		IEditorInput input= editor.getEditorInput();
-		IRegion region= null;
 		try {
 			provider.connect(input);
-			IDocument document= provider.getDocument(input);
-			region= document.getLineInformation(lineNumber);
-			provider.disconnect(input);
 		} catch (CoreException e) {
-		} catch (BadLocationException e) {
+			return null;
 		}
-		return region;
+		try {
+			IDocument document= provider.getDocument(input);
+			if (document != null)
+				return document.getLineInformation(lineNumber);
+		} catch (BadLocationException e) {
+		} finally {
+			provider.disconnect(input);
+		}
+		return null;
 	}
+
 
 	/**
 	 * Opens the editor used to display the source for an element selected in
