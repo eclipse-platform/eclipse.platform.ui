@@ -62,7 +62,7 @@ public class ActivityConstraints {
 	private static final String KEY_EXCLUSIVE = "ActivityConstraints.exclusive";
 	private static final String KEY_WRONG_TIMELINE =
 		"ActivityConstraints.timeline";
-	private static final String KEY_NO_LICENSE = 
+	private static final String KEY_NO_LICENSE =
 		"ActivityConstraints.noLicense";
 
 	/*
@@ -100,7 +100,9 @@ public class ActivityConstraints {
 	/*
 	 * Called by UI before processing a delta
 	 */
-	public static IStatus validateSessionDelta(ISessionDelta delta, IFeatureReference [] deltaRefs) {
+	public static IStatus validateSessionDelta(
+		ISessionDelta delta,
+		IFeatureReference[] deltaRefs) {
 		// check initial state
 		ArrayList beforeStatus = new ArrayList();
 		validateInitialState(beforeStatus);
@@ -188,7 +190,7 @@ public class ActivityConstraints {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * Check the current state.
 	 */
@@ -313,7 +315,7 @@ public class ActivityConstraints {
 	 */
 	private static void validateDeltaConfigure(
 		ISessionDelta delta,
-		IFeatureReference [] deltaRefs,
+		IFeatureReference[] deltaRefs,
 		ArrayList status) {
 		try {
 			ArrayList features = computeFeaturesAfterDelta(delta, deltaRefs);
@@ -525,6 +527,24 @@ public class ActivityConstraints {
 		ArrayList features,
 		boolean tolerateMissingChildren)
 		throws CoreException {
+		return computeFeatureSubtree(
+			top,
+			feature,
+			features,
+			tolerateMissingChildren,
+			null);
+	}
+
+	/*
+	 * Compute the nested feature subtree starting at the specified base feature
+	 */
+	private static ArrayList computeFeatureSubtree(
+		IFeature top,
+		IFeature feature,
+		ArrayList features,
+		boolean tolerateMissingChildren,
+		ArrayList configuredFeatures)
+		throws CoreException {
 
 		// check arguments
 		if (features == null)
@@ -536,8 +556,7 @@ public class ActivityConstraints {
 
 		// check for <includes> cycle
 		if (features.contains(feature)) {
-			IStatus status =
-				createStatus(top, UpdateUI.getString(KEY_CYCLE));
+			IStatus status = createStatus(top, UpdateUI.getString(KEY_CYCLE));
 			throw new CoreException(status);
 		}
 
@@ -547,7 +566,11 @@ public class ActivityConstraints {
 			feature.getIncludedFeatureReferences();
 		for (int i = 0; i < children.length; i++) {
 			try {
-				IFeature child = children[i].getFeature(null);
+				IFeature child;
+				if (configuredFeatures == null)
+					child = children[i].getFeature(null);
+				else
+					child = getBestMatch(children[i], configuredFeatures);
 				features =
 					computeFeatureSubtree(
 						top,
@@ -561,12 +584,79 @@ public class ActivityConstraints {
 		}
 		return features;
 	}
-	
+	/*
+	 * This method fixes the defect 34241. Included feature reference
+	 * of the feature from the remote server always returns 
+	 * a perfect match. However, the actual install behaviour is
+	 * different if that feature already exists (as disabled) 
+	 * while a better one is enabled. This typically happens
+	 * through branch updates or patches.
+	 * 
+	 * To avoid this problem, we need to check if a better feature
+	 * that still matches the reference is enabled in the current
+	 * configuration. If it is, it will be used instead of the
+	 * 'perfect' match. If not, we should default to the old
+	 * behaviour.
+	 */
+
+	private static IFeature getBestMatch(
+		IIncludedFeatureReference ref,
+		ArrayList configuredFeatures)
+		throws CoreException {
+		int match = ref.getMatch();
+		ISite site = ref.getSite();
+		IConfiguredSite csite = site.getCurrentConfiguredSite();
+		// If the feature is from the remote server and
+		// it can handle better features, see if you can
+		// resolve locally.
+		if (csite == null && match != IUpdateConstants.RULE_PERFECT) {
+			// there is a chance that there is a better match
+			// in the platform
+			VersionedIdentifier vid = ref.getVersionedIdentifier();
+			PluginVersionIdentifier version = vid.getVersion();
+
+			for (int i = 0; i < configuredFeatures.size(); i++) {
+				IFeature feature = (IFeature) configuredFeatures.get(i);
+				VersionedIdentifier fvid = feature.getVersionedIdentifier();
+				if (fvid.getIdentifier().equals(vid.getIdentifier())) {
+					// Feature found in local configuration.
+					// Ignore if the same version.
+					// Use it if better
+					PluginVersionIdentifier fversion = fvid.getVersion();
+					if (fversion.isGreaterThan(version)) {
+						boolean matches = false;
+						switch (match) {
+							case IImport.RULE_COMPATIBLE :
+								matches =
+									fvid.getVersion().isCompatibleWith(
+										vid.getVersion());
+								break;
+							case IImport.RULE_EQUIVALENT :
+								matches =
+									fvid.getVersion().isEquivalentTo(
+										vid.getVersion());
+								break;
+							case IImport.RULE_GREATER_OR_EQUAL :
+								matches =
+									fvid.getVersion().isGreaterOrEqualTo(
+										vid.getVersion());
+								break;
+						}
+						if (matches)
+							return feature;
+					}
+				}
+			}
+		}
+		// fallback - just get the feature from the reference.
+		return ref.getFeature(null);
+	}
+
 	private static void checkLicense(IFeature feature, ArrayList status) {
 		IURLEntry licenseEntry = feature.getLicense();
-		if (licenseEntry!=null) {
+		if (licenseEntry != null) {
 			String license = licenseEntry.getAnnotation();
-			if (license!=null && license.trim().length()>0)
+			if (license != null && license.trim().length() > 0)
 				return;
 		}
 		status.add(createStatus(feature, UpdateUI.getString(KEY_NO_LICENSE)));
@@ -586,8 +676,9 @@ public class ActivityConstraints {
 				add,
 				null,
 				null,
-				false /* do not tolerate missing children */
-		);
+				false,
+		/* do not tolerate missing children */
+		features);
 		ArrayList removeTree =
 			computeFeatureSubtree(
 				remove,
@@ -600,7 +691,7 @@ public class ActivityConstraints {
 			// those features. Include them in the list.
 			contributePatchesFor(removeTree, features, removeTree);
 		}
-		
+
 		if (remove != null)
 			features.removeAll(removeTree);
 
@@ -659,12 +750,14 @@ public class ActivityConstraints {
 	 * Compute a list of features that will be configured after applying the
 	 * specified delta
 	 */
-	private static ArrayList computeFeaturesAfterDelta(ISessionDelta delta, IFeatureReference [] deltaRefs)
+	private static ArrayList computeFeaturesAfterDelta(
+		ISessionDelta delta,
+		IFeatureReference[] deltaRefs)
 		throws CoreException {
 
 		if (delta == null || deltaRefs == null)
 			deltaRefs = new IFeatureReference[0];
-		else if (deltaRefs==null)
+		else if (deltaRefs == null)
 			deltaRefs = delta.getFeatureReferences();
 
 		ArrayList features = new ArrayList(); // cumulative results list
@@ -771,7 +864,8 @@ public class ActivityConstraints {
 		throws CoreException {
 		if (features == null)
 			return;
-		IIncludedFeatureReference[] irefs = feature.getIncludedFeatureReferences();
+		IIncludedFeatureReference[] irefs =
+			feature.getIncludedFeatureReferences();
 		for (int i = 0; i < irefs.length; i++) {
 			IIncludedFeatureReference iref = irefs[i];
 			IFeature ifeature = iref.getFeature(null);
@@ -812,10 +906,10 @@ public class ActivityConstraints {
 				// All the features carried in a patch must
 				// already be present, unless this feature
 				// is a patch itself
-				
+
 				// 30849: optional feature does not
 				// need to be present.
-				if (!patch && iref.isOptional()==false) {
+				if (!patch && iref.isOptional() == false) {
 					String msg =
 						UpdateUI.getFormattedMessage(
 							KEY_PATCH_MISSING_TARGET,
@@ -866,9 +960,7 @@ public class ActivityConstraints {
 			if (fos.size() > 0) {
 				if (!fos.contains(os)) {
 					status.add(
-						createStatus(
-							feature,
-							UpdateUI.getString(KEY_OS)));
+						createStatus(feature, UpdateUI.getString(KEY_OS)));
 					continue;
 				}
 			}
@@ -876,9 +968,7 @@ public class ActivityConstraints {
 			if (fws.size() > 0) {
 				if (!fws.contains(ws)) {
 					status.add(
-						createStatus(
-							feature,
-							UpdateUI.getString(KEY_WS)));
+						createStatus(feature, UpdateUI.getString(KEY_WS)));
 					continue;
 				}
 			}
@@ -886,9 +976,7 @@ public class ActivityConstraints {
 			if (farch.size() > 0) {
 				if (!farch.contains(arch)) {
 					status.add(
-						createStatus(
-							feature,
-							UpdateUI.getString(KEY_ARCH)));
+						createStatus(feature, UpdateUI.getString(KEY_ARCH)));
 					continue;
 				}
 			}
@@ -920,9 +1008,7 @@ public class ActivityConstraints {
 			}
 			if (!found) {
 				status.add(
-					createStatus(
-						null,
-						UpdateUI.getString(KEY_PLATFORM)));
+					createStatus(null, UpdateUI.getString(KEY_PLATFORM)));
 				return;
 			}
 		}
@@ -947,8 +1033,7 @@ public class ActivityConstraints {
 				return;
 		}
 
-		status.add(
-			createStatus(null, UpdateUI.getString(KEY_PRIMARY)));
+		status.add(createStatus(null, UpdateUI.getString(KEY_PRIMARY)));
 	}
 
 	/*
@@ -1031,8 +1116,7 @@ public class ActivityConstraints {
 					// report status
 					String target =
 						featurePrereq
-							? UpdateUI.getString(
-								KEY_PREREQ_FEATURE)
+							? UpdateUI.getString(KEY_PREREQ_FEATURE)
 							: UpdateUI.getString(KEY_PREREQ_PLUGIN);
 					String msg =
 						UpdateUI.getFormattedMessage(
@@ -1165,33 +1249,33 @@ public class ActivityConstraints {
 			IIncludedFeatureReference child = refs[i];
 			VersionedIdentifier fvid = feature.getVersionedIdentifier();
 			VersionedIdentifier cvid = child.getVersionedIdentifier();
-			
-			if (fvid.getIdentifier().equals(cvid.getIdentifier())==false)
+
+			if (fvid.getIdentifier().equals(cvid.getIdentifier()) == false)
 				continue;
 			// same ID
 			PluginVersionIdentifier fversion = fvid.getVersion();
 			PluginVersionIdentifier cversion = cvid.getVersion();
-			
+
 			int match = child.getMatch();
-			boolean matched=false;
-			
+			boolean matched = false;
+
 			switch (match) {
-				case IUpdateConstants.RULE_EQUIVALENT:
+				case IUpdateConstants.RULE_EQUIVALENT :
 					if (fversion.isEquivalentTo(cversion))
 						matched = true;
 					break;
-				case IUpdateConstants.RULE_COMPATIBLE:
+				case IUpdateConstants.RULE_COMPATIBLE :
 					if (fversion.isCompatibleWith(cversion))
 						matched = true;
 					break;
-				case IUpdateConstants.RULE_GREATER_OR_EQUAL:
+				case IUpdateConstants.RULE_GREATER_OR_EQUAL :
 					if (fversion.isGreaterOrEqualTo(cversion))
-						matched=true;
+						matched = true;
 					break;
-				default:
+				default :
 					if (fversion.equals(cversion))
-						matched=true;
-					
+						matched = true;
+
 			}
 			if (matched) {
 				// included and matched; return true if optionality is not 
