@@ -443,6 +443,12 @@ public class GenerateDiffFileWizard extends Wizard {
 			}
 			return (LocalOption[]) options.toArray(new LocalOption[options.size()]);
 		}		
+		public void setVisible(boolean visible) {
+			super.setVisible(visible);
+			if (visible) {
+				recurseOption.setFocus();
+			}
+		}
 	}
 	// end of PatchFileCreationOptionsPage
 	
