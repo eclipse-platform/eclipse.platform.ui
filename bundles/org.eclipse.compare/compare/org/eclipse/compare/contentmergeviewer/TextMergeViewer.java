@@ -43,6 +43,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
 
@@ -1964,7 +1965,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				if (contents != null) {
 					byte[] bytes;
 					try {
-						bytes= contents.getBytes("UTF-16");	//$NON-NLS-1$
+						bytes= contents.getBytes(ResourcesPlugin.getEncoding());
 					} catch(UnsupportedEncodingException ex) {
 						// use default encoding
 						bytes= contents.getBytes();
