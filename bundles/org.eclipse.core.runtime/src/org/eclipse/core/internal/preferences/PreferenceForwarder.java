@@ -178,6 +178,8 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 *  value is known for the named property, and <code>false</code>otherwise
 	 */
 	public boolean contains(String name) {
+		if (name == null)
+			return false;
 		String value = getPluginPreferences().get(name, null);
 		if (value != null)
 			return true;

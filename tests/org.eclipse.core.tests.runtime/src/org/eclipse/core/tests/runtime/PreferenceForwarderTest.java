@@ -368,6 +368,14 @@ public class PreferenceForwarderTest extends RuntimeTest {
 		assertEquals("1.6", false, ps.contains("b"));
 		ps.setToDefault("a");
 		assertEquals("1.7", true, ps.contains("a"));
+		
+		// test bug 62586
+		// fail gracefully in PreferenceForwarder.contains(null)
+		try {
+			assertTrue("2.0", !ps.contains(null));
+		} catch (NullPointerException e) {
+			fail("2.1", e);
+		}
 	}
 
 	public void testDefaultPropertyNames() {
