@@ -107,22 +107,27 @@ public void prependToGroup(String groupName, IContributionItem item) {
 /**
  * Sets the visibility of the manager. If the visibility is <code>true</code>
  * then each item within the manager appears within the parent manager.
- * Otherwise, the items are not visible if force visibility is
- * <code>true</code>, or grayed out if force visibility is <code>false</code>
+ * Otherwise, the items are not visible.
+ * <p>
+ * If force visibility is <code>true</code>, or grayed out if force visibility is <code>false</code>
  * <p>
  * This is a workaround for the layout flashing when editors contribute
  * large amounts of items.</p>
  *
  * @param visible the new visibility
  * @param forceVisibility whether to change the visibility or just the
- * 		enablement state. This parameter is ignored if visible is 
- * 		<code>true</code>.
+ * 		enablement state.
  */
 public void setVisible(boolean visible, boolean forceVisibility) {
 	if (visible) {
-		// Make the items visible 
-		if (!enabledAllowed) 
-			setEnabledAllowed(true);
+		if (forceVisibility) {
+			// Make the items visible 
+			if (!enabledAllowed) 
+				setEnabledAllowed(true);
+		} else {
+			if (enabledAllowed) 
+				setEnabledAllowed(false);
+		}
 		if (!isVisible())
 			setVisible(true);
 	}

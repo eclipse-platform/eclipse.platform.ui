@@ -432,9 +432,9 @@ public void bringToTop(IWorkbenchPart part) {
 	boolean broughtToTop = false;
 	if (part instanceof IEditorPart) {
 		broughtToTop = getEditorManager().setVisibleEditor((IEditorPart)part, false);
+		actionSwitcher.updateTopEditor((IEditorPart)part);
 		if (broughtToTop) {
-				actionSwitcher.updateTopEditor((IEditorPart)part);
-				lastActiveEditor = null;
+			lastActiveEditor = null;
 		}
 	} else if (part instanceof IViewPart) {
 		broughtToTop = persp.bringToTop((IViewPart)part);
@@ -636,6 +636,7 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	if (partWasActive)
 		setActivePart(null);
 	if (lastActiveEditor == editor) {
+		actionSwitcher.updateTopEditor(null);
 		lastActiveEditor = null;
 	}
 

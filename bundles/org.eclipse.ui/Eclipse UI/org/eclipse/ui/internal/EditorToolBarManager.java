@@ -135,9 +135,14 @@ public void prependToGroup(String groupName, IContributionItem item) {
  */
 public void setVisible(boolean visible, boolean forceVisibility) {
 	if (visible) {
-		// Make the items visible 
-		if (!enabledAllowed) 
-			setEnabledAllowed(true);
+		if (forceVisibility) {
+			// Make the items visible 
+			if (!enabledAllowed) 
+				setEnabledAllowed(true);
+		} else {
+			if (enabledAllowed) 
+				setEnabledAllowed(false);
+		}
 		if (!isVisible())
 			setVisible(true);
 	}
