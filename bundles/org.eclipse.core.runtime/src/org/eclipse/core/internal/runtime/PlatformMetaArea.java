@@ -96,8 +96,11 @@ public IPath getOptionsLocation() {
 /**
  * Returns the read/write location of the file for storing plugin preferences.
  */
-public IPath getPluginPreferenceLocation(IPluginDescriptor descriptor) {
-	return getPluginStateLocation(descriptor).append(PREFERENCES_FILE_NAME);
+public IPath getPluginPreferenceLocation(IPluginDescriptor descriptor, boolean create) {
+	IPath result = getPluginStateLocation(descriptor);
+	if (create)
+		result.toFile().mkdirs();
+	return result.append(PREFERENCES_FILE_NAME);
 }
 /**
  * Returns the read/write location in which the given plugin can manage

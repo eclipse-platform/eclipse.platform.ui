@@ -371,7 +371,7 @@ public final Preferences getPluginPreferences() {
 private void loadPluginPreferences() {
 	// the preferences file is located in the plug-in's state area at a well-known name
 	// don't need to create the directory if there are no preferences to load
-	File prefFile = InternalPlatform.getMetaArea().getPluginPreferenceLocation(descriptor).toFile();
+	File prefFile = InternalPlatform.getMetaArea().getPluginPreferenceLocation(descriptor, false).toFile();
 	if (!prefFile.exists()) {
 		// no preference file - that's fine
 		if (InternalPlatform.DEBUG_PREFERENCES) {
@@ -442,10 +442,13 @@ public final void savePluginPreferences() {
 	// preferences need to be saved
 	// the preferences file is located in the plug-in's state area
 	// at a well-known name (pref_store.ini)
-	File prefFile = InternalPlatform.getMetaArea().getPluginPreferenceLocation(descriptor).toFile();
+	File prefFile = InternalPlatform.getMetaArea().getPluginPreferenceLocation(descriptor, true).toFile();
 	if (preferences.propertyNames().length == 0) {
 		// there are no preference settings
 		// rather than write an empty file, just delete any existing file
+		if (InternalPlatform.DEBUG_PREFERENCES) {
+			System.out.println("Removing saved preferences from " + prefFile); //$NON-NLS-1$
+		}
 		if (prefFile.exists()) {
 			prefFile.delete();
 			// don't worry if delete unsuccessful
@@ -462,12 +465,20 @@ public final void savePluginPreferences() {
 		preferences.store(out, null);
 	} catch (IOException e) {
 		// problems saving preference store - quietly ignore
+		if (InternalPlatform.DEBUG_PREFERENCES) {
+			System.out.println("IOException writing to preference file " + prefFile);
+			e.printStackTrace();
+		}
 	} finally {
 		if (out != null) {
 			try {
 				out.close();
 			} catch (IOException e) {
 				// ignore problems with close
+				if (InternalPlatform.DEBUG_PREFERENCES) {
+					System.out.println("IOException closing preference file " + prefFile);
+					e.printStackTrace();
+				}
 			}
 		}
 	}

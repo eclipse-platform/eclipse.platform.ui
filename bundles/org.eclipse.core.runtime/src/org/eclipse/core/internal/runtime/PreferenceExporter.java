@@ -102,7 +102,7 @@ public class PreferenceExporter {
 	 */
 	private static boolean mergePluginPreferences(IPluginDescriptor descriptor, Preferences preferences) throws CoreException {
 		boolean found = false;
-		IPath propertiesFile = InternalPlatform.getMetaArea().getPluginPreferenceLocation(descriptor);
+		IPath propertiesFile = InternalPlatform.getMetaArea().getPluginPreferenceLocation(descriptor, false);
 		if (propertiesFile.toFile().exists()) {
 			Preferences pluginPreferences = loadPreferences(propertiesFile, new Preferences());
 			String pluginId = descriptor.getUniqueIdentifier();
@@ -123,7 +123,7 @@ public class PreferenceExporter {
 	 * the given preferences is null, all values are returned to their default value.
 	 */
 	private static void setPluginPreferences(IPluginDescriptor descriptor, Preferences newPreferences) throws CoreException {
-		IPath location = InternalPlatform.getMetaArea().getPluginPreferenceLocation(descriptor);
+		IPath location = InternalPlatform.getMetaArea().getPluginPreferenceLocation(descriptor, false);
 		if (descriptor.isPluginActivated()) {
 			Plugin plugin = descriptor.getPlugin();
 			if (plugin != null) {

@@ -189,6 +189,9 @@
    <test id="org.eclipse.core.tests.plugintests.CmdLineAndStateAndPrimaryFeatureTest">
       <run class="org.eclipse.core.tests.plugintests.CmdLineAndStateAndPrimaryFeatureTest"/>
     </test>
+   <test id="org.eclipse.core.tests.plugintests.SavePreferencesTests">
+      <run class="org.eclipse.core.tests.plugintests.SavePreferencesTests"/>
+    </test>
  </extension>
 
 </plugin>
