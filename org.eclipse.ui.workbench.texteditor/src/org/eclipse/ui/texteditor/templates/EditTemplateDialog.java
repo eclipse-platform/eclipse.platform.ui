@@ -275,6 +275,7 @@ class EditTemplateDialog extends StatusDialog {
 		fDescriptionText.setText(fTemplate.getDescription());
 		if (fIsNameModifiable) {
 			fNameText.setText(fTemplate.getName());
+			fNameText.addModifyListener(listener);
 			fContextCombo.select(getIndex(fTemplate.getContextTypeId()));
 		} else {
 			fPatternEditor.getControl().setFocus();
@@ -287,6 +288,7 @@ class EditTemplateDialog extends StatusDialog {
 	
 	private void doTextWidgetChanged(Widget w) {
 		if (w == fNameText) {
+			fSuppressError= false;
 			String name= fNameText.getText();
 			fTemplate.setName(name);
 			updateButtons();			
