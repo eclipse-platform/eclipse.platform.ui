@@ -1,7 +1,7 @@
 package org.eclipse.team.ui.sync;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
@@ -45,6 +45,12 @@ import org.eclipse.ui.views.navigator.ResourceNavigator;
 import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
 
 /**
+ * <b>Note:</b> This class/interface is part of an interim API that is still under 
+ * development and expected to change significantly before reaching stability. 
+ * It is being made available at this early stage to solicit feedback from pioneering 
+ * adopters on the understanding that any code that uses this API will almost 
+ * certainly be broken (repeatedly) as the API evolves.
+ * 
  * This viewer adds a custom filter and some merge actions.
  * Note this is a layer breaker and needs to be refactored. Viewers should
  * not contain references to workbench actions. Actions should be contributed

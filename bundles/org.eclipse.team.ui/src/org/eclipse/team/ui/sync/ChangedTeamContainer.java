@@ -1,7 +1,7 @@
 package org.eclipse.team.ui.sync;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
@@ -10,6 +10,12 @@ import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 
 /**
+ * <b>Note:</b> This class/interface is part of an interim API that is still under 
+ * development and expected to change significantly before reaching stability. 
+ * It is being made available at this early stage to solicit feedback from pioneering 
+ * adopters on the understanding that any code that uses this API will almost 
+ * certainly be broken (repeatedly) as the API evolves.
+ * 
  * A node in a sync tree that represents a changed folder
  * (incoming/outgoing creation or deletion).
  */
