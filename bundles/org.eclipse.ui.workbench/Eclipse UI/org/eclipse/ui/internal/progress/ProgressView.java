@@ -228,7 +228,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 				if (element == null) {
 					return;
 				}
-				JobProgressManager.getInstance().clearJob(element.getJob());
+				ProgressManager.getInstance().clearJob(element.getJob());
 			}
 		};
 	}
@@ -243,7 +243,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 			public void run() {
-				JobProgressManager.getInstance().clearAllErrors();
+				ProgressManager.getInstance().clearAllErrors();
 			}
 		};
 	}

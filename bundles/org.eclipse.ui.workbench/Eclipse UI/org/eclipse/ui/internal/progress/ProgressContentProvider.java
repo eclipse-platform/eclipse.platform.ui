@@ -81,7 +81,7 @@ public class ProgressContentProvider
 
 	public ProgressContentProvider(ProgressTreeViewer mainViewer) {
 		viewer = mainViewer;
-		JobProgressManager.getInstance().addListener(this);
+		ProgressManager.getInstance().addListener(this);
 		createUpdateJob();
 	}
 	/* (non-Javadoc)
@@ -106,7 +106,7 @@ public class ProgressContentProvider
 	 */
 	public boolean hasChildren(Object element) {
 		if (element == this)
-			return JobProgressManager.getInstance().hasJobInfos();
+			return ProgressManager.getInstance().hasJobInfos();
 		else
 			return ((JobTreeElement) element).hasChildren();
 	}
@@ -116,7 +116,7 @@ public class ProgressContentProvider
 	 */
 	public Object[] getElements(Object inputElement) {
 
-		JobInfo[] infos = JobProgressManager.getInstance().getJobInfos();
+		JobInfo[] infos = ProgressManager.getInstance().getJobInfos();
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < infos.length; i++) {
 			if (isNonDisplayableJob(infos[i].getJob()))
@@ -134,7 +134,7 @@ public class ProgressContentProvider
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
-		JobProgressManager.getInstance().removeListener(this);
+		ProgressManager.getInstance().removeListener(this);
 	}
 
 	/* (non-Javadoc)

@@ -67,8 +67,8 @@ class AnimationManager {
 	AnimationManager() {
 		URL iconsRoot =
 			Platform.getPlugin(PlatformUI.PLUGIN_ID).find(
-				new Path(JobProgressManager.PROGRESS_FOLDER));
-		JobProgressManager manager = JobProgressManager.getInstance();
+				new Path(ProgressManager.PROGRESS_FOLDER));
+		ProgressManager manager = ProgressManager.getInstance();
 
 		try {
 			URL runningRoot = new URL(iconsRoot, RUNNING_ICON);
@@ -96,7 +96,7 @@ class AnimationManager {
 			manager.getImageData(backRoot, errorLoader);
 
 			listener = getProgressListener();
-			JobProgressManager.getInstance().addListener(listener);
+			ProgressManager.getInstance().addListener(listener);
 		} catch (MalformedURLException exception) {
 			ProgressUtil.logException(exception);
 		}
@@ -178,7 +178,7 @@ class AnimationManager {
 	 */
 	void dispose() {
 		setAnimated(false);
-		JobProgressManager.getInstance().removeListener(listener);
+		ProgressManager.getInstance().removeListener(listener);
 	}
 
 	/**
@@ -200,7 +200,7 @@ class AnimationManager {
 
 		ImageData[] imageDataArray = getImageData();
 		ImageData imageData = imageDataArray[0];
-		Image image = JobProgressManager.getInstance().getImage(imageData);
+		Image image = ProgressManager.getInstance().getImage(imageData);
 		int imageDataIndex = 0;
 
 		ImageLoader loader = getLoader();
@@ -392,7 +392,7 @@ class AnimationManager {
 			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshAll()
 			 */
 			public void refreshAll() {
-				JobProgressManager manager = JobProgressManager.getInstance();
+				ProgressManager manager = ProgressManager.getInstance();
 				showingError = manager.hasErrorsDisplayed();
 				jobs.clear();
 				setAnimated(false);

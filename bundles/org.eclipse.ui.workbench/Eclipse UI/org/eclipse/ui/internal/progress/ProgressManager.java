@@ -10,16 +10,32 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IProgressProvider;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -29,11 +45,12 @@ import org.eclipse.ui.progress.UIJob;
  * JobProgressManager provides the progress monitor to the job manager and
  * informs any ProgressContentProviders of changes.
  */
-public class JobProgressManager extends JobChangeAdapter implements IProgressProvider {
+public class ProgressManager extends JobChangeAdapter implements IProgressProvider {
 
-	private static JobProgressManager singleton;
+	private static ProgressManager singleton;
 	private Map jobs = Collections.synchronizedMap(new HashMap());
 	private Collection listeners = Collections.synchronizedList(new ArrayList());
+	private WorkbenchMonitorProvider monitorProvider;
 
 	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 	static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
@@ -68,9 +85,9 @@ public class JobProgressManager extends JobChangeAdapter implements IProgressPro
 	 * 
 	 * @return JobProgressManager
 	 */
-	public static JobProgressManager getInstance() {
+	public static ProgressManager getInstance() {
 		if (singleton == null)
-			singleton = new JobProgressManager();
+			singleton = new ProgressManager();
 		return singleton;
 	}
 
@@ -81,6 +98,7 @@ public class JobProgressManager extends JobChangeAdapter implements IProgressPro
 	private class JobMonitor implements IProgressMonitor {
 		Job job;
 		boolean cancelled = false;
+		IProgressMonitor workbenchMonitor;
 
 		/**
 		 * Create a monitor on the supplied job.
@@ -89,6 +107,7 @@ public class JobProgressManager extends JobChangeAdapter implements IProgressPro
 		 */
 		JobMonitor(Job newJob) {
 			job = newJob;
+			workbenchMonitor = monitorProvider.getMonitor(job);
 		}
 		/*
 		 * (non-Javadoc) @see
@@ -99,12 +118,14 @@ public class JobProgressManager extends JobChangeAdapter implements IProgressPro
 			JobInfo info = getJobInfo(job);
 			info.beginTask(taskName, totalWork);
 			refresh(info);
+			workbenchMonitor.beginTask(taskName,totalWork);
 		}
 		/* (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#done() */
 		public void done() {
 			JobInfo info = getJobInfo(job);
 			info.clearTaskInfo();
 			info.clearChildren();
+			workbenchMonitor.done();
 		}
 
 		/*
@@ -117,6 +138,7 @@ public class JobProgressManager extends JobChangeAdapter implements IProgressPro
 				info.addWork(work);
 				refresh(info);
 			}
+			workbenchMonitor.internalWorked(work);
 		}
 		/*
 		 * (non-Javadoc) @see
@@ -132,6 +154,7 @@ public class JobProgressManager extends JobChangeAdapter implements IProgressPro
 		 */
 		public void setCanceled(boolean value) {
 			cancelled = value;
+			workbenchMonitor.setCanceled(value);
 		}
 
 		/*
@@ -150,6 +173,7 @@ public class JobProgressManager extends JobChangeAdapter implements IProgressPro
 
 			info.clearChildren();
 			refresh(info);
+			workbenchMonitor.setTaskName(taskName);
 		}
 
 		/*
@@ -165,7 +189,7 @@ public class JobProgressManager extends JobChangeAdapter implements IProgressPro
 			info.clearChildren();
 			info.addSubTask(name);
 			refresh(info);
-
+			workbenchMonitor.subTask(name);
 		}
 
 		/*
@@ -174,16 +198,17 @@ public class JobProgressManager extends JobChangeAdapter implements IProgressPro
 		 */
 		public void worked(int work) {
 			internalWorked(work);
+			workbenchMonitor.worked(work);
 		}
 	}
 
 	/**
 	 * Create a new instance of the receiver. */
-	JobProgressManager() {
+	ProgressManager() {
 		Platform.getJobManager().setProgressProvider(this);
 		Platform.getJobManager().addJobChangeListener(this);
-		addListener(new StatusLineProgressListener());
-		URL iconsRoot = Platform.getPlugin(PlatformUI.PLUGIN_ID).find(new Path(JobProgressManager.PROGRESS_FOLDER));
+		monitorProvider = new WorkbenchMonitorProvider();
+		URL iconsRoot = Platform.getPlugin(PlatformUI.PLUGIN_ID).find(new Path(ProgressManager.PROGRESS_FOLDER));
 
 		try {
 			setUpImage(iconsRoot, PROGRESS_20, PROGRESS_20_KEY);
@@ -559,4 +584,5 @@ public class JobProgressManager extends JobChangeAdapter implements IProgressPro
 		}
 		return null;
 	}
+	
 }
