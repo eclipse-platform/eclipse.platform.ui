@@ -397,30 +397,12 @@ public IStatus validateLinkLocation(IResource linkHandle) {
 		return createStatus(IStatus.OK, "");
 
 	IStatus locationStatus = workspace.validateLinkLocation(linkHandle,	path);
-	if (locationStatus.getSeverity() == IStatus.ERROR) {
-		if (locationStatus.getCode() == IResourceStatus.VARIABLE_NOT_DEFINED) {
-			// check if path is empty/invalid and give more specific error message
-			// work around for bug 29539.
-			IStatus nameStatus = validateLinkTargetName(linkTargetName); 
-			if (nameStatus.isOK() == false)
-				return nameStatus;		
-		}
+	if (locationStatus.getSeverity() != IStatus.OK) {
 		return locationStatus;
-	}	
-	IStatus nameStatus = validateLinkTargetName(linkTargetName); 
-	if (nameStatus.isOK() == false)
-		return nameStatus;
-			
-	String resolvedName = resolvedPathLabelData.getText();
-	if (resolvedName.length() > 0) {
-		linkTargetName = resolvedName;
-		path = new Path(linkTargetName);
 	}
-	if (path.isAbsolute() == false)
-		return createStatus(
-			IStatus.ERROR,
-			WorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetNotAbsolute"));	//$NON-NLS-1$
-	
+	// use the resolved link target name
+	linkTargetName = resolvedPathLabelData.getText();
+	path = new Path(linkTargetName);
 	File linkTargetFile = new Path(linkTargetName).toFile();
 	if (linkTargetFile.exists() == false) {
 		return createStatus(
