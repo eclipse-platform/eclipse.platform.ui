@@ -86,6 +86,11 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 	private Thread fPollingThread = null;
 	
 	/**
+	 * Whether an append is still in  progress or to be run
+	 */
+	private boolean fAppending = false;
+	
+	/**
 	 * Whether associated process has terminated
 	 */
 	private boolean fTerminated = false;
@@ -279,12 +284,15 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 	 * Polls the queue for new output and updates this document
 	 */
 	protected void poll() {
+		if (isAppendInProgress()) {
+			return;
+		}
 		synchronized(fQueue) {
 			StringBuffer buffer = null;
 			StreamEntry prev = null;
 			int processed = 0;
 			int amount = 0;
-			while (processed < fQueue.size() && amount < 256) {
+			while (processed < fQueue.size() && amount < 8096) {
 				StreamEntry entry = (StreamEntry)fQueue.get(processed);
 				if (prev == null) {
 					buffer = new StringBuffer(entry.getText());
@@ -292,8 +300,8 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 					if (prev.getKind() == entry.getKind()) {
 						buffer.append(entry.getText());
 					} else {
-						appendToDocument(buffer.toString(),prev.getKind());
-						buffer = new StringBuffer(entry.getText());
+						// only do one append per poll
+						break;
 					}
 				}
 				prev = entry;
@@ -328,6 +336,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 	 * @see IStreamListener#streamAppended(String, IStreamMonitor)
 	 */
 	protected void appendToDocument(final String text, final int source) {
+		setAppendInProgress(true);
 		update(new Runnable() {
 			public void run() {
 				int appendedLength= text.length();
@@ -335,6 +344,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 				replace0(fLastStreamWriteEnd, 0, text);
 				updateOutputStyleRanges(source);
 				fLastStreamWriteEnd= fNewStreamWriteEnd;
+				setAppendInProgress(false);
 			}
 		});
 	}
@@ -558,5 +568,20 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 	protected void setConsoleViewer(ConsoleViewer viewer) {
 		fConsoleViewer = viewer;
 	}
+	
+	/**
+	 * Sets whether a runnable has been submitted to update the console
+	 * document.
+	 */
+	protected void setAppendInProgress(boolean appending) {
+		fAppending = appending;
+	}
 
+	/**
+	 * Sets whether a runnable has been submitted to update the console
+	 * document.
+	 */
+	protected boolean isAppendInProgress() {
+		return fAppending;
+	}
 }
