@@ -69,9 +69,13 @@ public void menuAboutToShow(IMenuManager mgr) {
  * Read static items for the context menu.
  */
 private void readStaticActions() {
-	staticActionBuilder = new ViewerActionBuilder();
-	if (!staticActionBuilder.readViewerContributions(menuID, selProvider, part))
-		staticActionBuilder = null;
+	// If no menu id provided, then there is no contributions
+	// to add. Fix for bug #33140.
+	if (menuID != null && menuID.length() > 0) {
+		staticActionBuilder = new ViewerActionBuilder();
+		if (!staticActionBuilder.readViewerContributions(menuID, selProvider, part))
+			staticActionBuilder = null;
+	}
 }
 /**
  * Checks for the existance of an MB_ADDITIONS group.
@@ -79,10 +83,12 @@ private void readStaticActions() {
 private void testForAdditions() {
 	IContributionItem item = menu.find(IWorkbenchActionConstants.MB_ADDITIONS);
 	if (item == null) {
-		WorkbenchPlugin.log("Context menu does not contain standard group for "//$NON-NLS-1$
-			+ "additions ("//$NON-NLS-1$
-			+ IWorkbenchActionConstants.MB_ADDITIONS 
-			+ ")");//$NON-NLS-1$
+		WorkbenchPlugin.log(
+			"Context menu missing standard group 'org.eclipse.ui.IWorkbenchActionConstants.MB_ADDITIONS'. (menu id = " //$NON-NLS-1$
+			+ (menuID == null ? "???" : menuID) //$NON-NLS-1$
+			+ ")  part id = " //$NON-NLS-1$
+			+ (part == null ? "???" : part.getSite().getId()) //$NON-NLS-1$
+			+ ")"); //$NON-NLS-1$
 	}
 }
 }
