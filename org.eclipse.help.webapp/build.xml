@@ -35,12 +35,7 @@
 		<mkdir dir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 		<copy file="${build.result.folder}/WEB-INF/lib/webapp.jar" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 		<copy todir="${destination.temp.folder}/${full.name}">
-			<!-- custom change begin -->
-			<!--
-			<fileset dir="${basedir}" includes="images/,infocenter/,ns4/,WEB-INF/,*.css,*.html,*.js,*.jsp,plugin.properties,plugin.xml,webapp.properties"/>
-			-->
 			<fileset dir="${basedir}" includes="images/,infocenter/,ns4/,WEB-INF/,*.css,*.html,*.js,*.jsp,plugin.properties,plugin.xml,webapp.properties" excludes="WEB-INF/classes/"/>
-			<!-- custom end -->
 		</copy>
 		<!-- custom addition begin -->
 		<copy file="${basedir}/web.xml" todir="${destination.temp.folder}/${full.name}/WEB-INF" overwrite="true"/>
