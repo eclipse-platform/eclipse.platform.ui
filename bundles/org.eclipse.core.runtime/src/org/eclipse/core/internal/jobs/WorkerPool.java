@@ -120,8 +120,6 @@ class WorkerPool {
 	protected synchronized void jobQueued(InternalJob job) {
 		//if there is a sleeping thread, wake it up
 		if (sleepingThreads > 0) {
-			if (JobManager.DEBUG)
-				JobManager.debug("notifying a worker"); //$NON-NLS-1$
 			notify();
 			return;
 		}

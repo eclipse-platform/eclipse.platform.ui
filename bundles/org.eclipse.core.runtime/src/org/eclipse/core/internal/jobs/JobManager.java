@@ -820,6 +820,8 @@ public class JobManager implements IJobManager {
 			//can't schedule a job that is waiting or sleeping
 			if (job.internalGetState() != Job.NONE)
 				return;
+			if (JobManager.DEBUG)
+				JobManager.debug("Scheduling job: " + job); //$NON-NLS-1$
 			//remember that we are about to schedule the job
 			//to prevent multiple schedule attempts from succeeding (bug 68452)
 			changeState(job, InternalJob.ABOUT_TO_SCHEDULE);
