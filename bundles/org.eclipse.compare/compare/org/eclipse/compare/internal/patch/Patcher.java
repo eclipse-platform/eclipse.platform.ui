@@ -834,7 +834,16 @@ public class Patcher {
 			InputStream is= null;
 			try {
 				is= file.getContents();
-				BufferedReader reader= new BufferedReader(new InputStreamReader(is));
+				
+				Reader streamReader= null;
+				try {
+					streamReader= new InputStreamReader(is, ResourcesPlugin.getEncoding());
+				} catch (UnsupportedEncodingException x) {
+					// use default encoding
+					streamReader= new InputStreamReader(is);
+				}
+				
+				BufferedReader reader= new BufferedReader(streamReader);
 				lines= new LineReader(reader).readLines();
 			} catch(CoreException ex) {
 			} finally {
@@ -863,7 +872,15 @@ public class Patcher {
 	 */
 	private void store(String contents, IFile file, IProgressMonitor pm) throws CoreException {
 		
-		InputStream is= new ByteArrayInputStream(contents.getBytes());
+		byte[] bytes;
+		try {
+			bytes= contents.getBytes(ResourcesPlugin.getEncoding());
+		} catch (UnsupportedEncodingException x) {
+			// uses default encoding
+			bytes= contents.getBytes();
+		}
+		
+		InputStream is= new ByteArrayInputStream(bytes);
 		try {
 			if (file.exists()) {
 				file.setContents(is, false, true, pm);

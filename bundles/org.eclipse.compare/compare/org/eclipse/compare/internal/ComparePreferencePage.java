@@ -67,10 +67,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	private OverlayPreferenceStore fOverlayStore;
 	private Map fCheckBoxes= new HashMap();
 	private SelectionListener fCheckBoxListener;
-	private Button fBackgroundDefaultRadioButton;
-	private Button fBackgroundCustomRadioButton;
-	private Button fBackgroundColorButton;
-	private ColorEditor fBackgroundColorEditor;
 
 
 	public final OverlayPreferenceStore.OverlayKey[] fKeys= new OverlayPreferenceStore.OverlayKey[] {	
@@ -150,8 +146,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		initializeFields();
 		
 		super.performDefaults();
-		
-		//fPreviewViewer.invalidateTextPresentation();
 	}
 	
 	/*
@@ -232,53 +226,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 1;
 		composite.setLayout(layout);
-		
-			// background color
-			Composite backgroundComposite= new Composite(composite, SWT.NULL);
-			layout= new GridLayout();
-			layout.marginHeight= 0;
-			layout.marginWidth= 0;
-			layout.numColumns= 2;
-			backgroundComposite.setLayout(new RowLayout());
-	
-			Label label= new Label(backgroundComposite, SWT.NULL);
-			label.setText(Utilities.getString("ComparePreferencePage.backgroundColor1.label"));	//$NON-NLS-1$
-	
-			SelectionListener backgroundSelectionListener= new SelectionListener() {
-				public void widgetSelected(SelectionEvent e) {				
-					boolean custom= fBackgroundCustomRadioButton.getSelection();
-					fBackgroundColorButton.setEnabled(custom);
-					fOverlayStore.setValue(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, !custom);
-				}
-				public void widgetDefaultSelected(SelectionEvent e) {}
-			};
-	
-			fBackgroundDefaultRadioButton= new Button(backgroundComposite, SWT.RADIO | SWT.LEFT);
-			fBackgroundDefaultRadioButton.setText(Utilities.getString("ComparePreferencePage.backgroundColor2.label"));	//$NON-NLS-1$
-			fBackgroundDefaultRadioButton.addSelectionListener(backgroundSelectionListener);
-	
-			fBackgroundCustomRadioButton= new Button(backgroundComposite, SWT.RADIO | SWT.LEFT);
-			fBackgroundCustomRadioButton.setText(Utilities.getString("ComparePreferencePage.backgroundColor3.label"));	//$NON-NLS-1$
-			fBackgroundCustomRadioButton.addSelectionListener(backgroundSelectionListener);
-	
-			fBackgroundColorEditor= new ColorEditor(backgroundComposite);
-			
-			fBackgroundColorButton= fBackgroundColorEditor.getButton();
-			fBackgroundColorButton.addSelectionListener(
-				new SelectionListener() {
-					public void widgetDefaultSelected(SelectionEvent e) {
-						// do nothing
-					}
-					public void widgetSelected(SelectionEvent e) {
-						PreferenceConverter.setValue(fOverlayStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, fBackgroundColorEditor.getColorValue());					
-					}
-				}
-			);
-
-
-			// background color end
-		
-		
+				
 		addCheckBox(composite, "ComparePreferencePage.synchronizeScrolling.label", SYNCHRONIZE_SCROLLING, 0);	//$NON-NLS-1$
 		
 		addCheckBox(composite, "ComparePreferencePage.initiallyShowAncestorPane.label", INITIALLY_SHOW_ANCESTOR_PANE, 0);	//$NON-NLS-1$
@@ -334,13 +282,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 			String key= (String) fCheckBoxes.get(b);
 			b.setSelection(fOverlayStore.getBoolean(key));
 		}
-
-		RGB rgb= PreferenceConverter.getColor(fOverlayStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
-		fBackgroundColorEditor.setColorValue(rgb);		
-		boolean default_= fOverlayStore.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
-		fBackgroundDefaultRadioButton.setSelection(default_);
-		fBackgroundCustomRadioButton.setSelection(!default_);
-		fBackgroundColorButton.setEnabled(!default_);
 	}
 
 	// overlay stuff

@@ -8,6 +8,7 @@ import java.io.*;
 
 import org.eclipse.swt.graphics.Image;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 
 import org.eclipse.compare.*;
@@ -38,10 +39,17 @@ import org.eclipse.compare.*;
 				is= new ByteArrayInputStream(new byte[0]);
 			}
 			if (is != null) {
-				BufferedReader br= new BufferedReader(new InputStreamReader(is));
-				String s= fPatcher.patch(fDiff,br, null);
-				if (s != null)
-					fContent= s.getBytes();
+				
+				try {
+					String encoding= ResourcesPlugin.getEncoding();
+					BufferedReader br= new BufferedReader(new InputStreamReader(is, encoding));
+					String s= fPatcher.patch(fDiff,br, null);
+					if (s != null)
+						fContent= s.getBytes(encoding);
+				} catch (UnsupportedEncodingException e) {
+					throw new CoreException(new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, Platform.PLUGIN_ERROR, e.getMessage(), e));
+				}
+					
 				try {
 					is.close();
 				} catch (IOException ex) {

@@ -13,8 +13,8 @@ import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
-import java.lang.InterruptedException;
 
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.swt.SWT;
@@ -42,6 +42,7 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
 
@@ -174,7 +175,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private RGB fBackground;
 	private RGB fForeground;
 	private boolean fPollSystemForeground= true;
-		
+	private boolean fPollSystemBackground= true;
+	
 	private RGB SELECTED_INCOMING;
 	private RGB INCOMING;
 	private RGB INCOMING_FILL;
@@ -614,9 +616,17 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				updateColors(display);
 			}
 		}
+		if (fPollSystemBackground) {
+			RGB bg= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB();
+			if (fBackground == null || !bg.equals(fBackground)) {
+				fBackground= bg;
+				updateColors(display);
+			}
+		}
 	}
 	
 	public void setBackgroundColor(RGB background) {
+		fPollSystemBackground= (background == null);
 		fBackground= background;
 		updateColors(null);
 	}
@@ -674,6 +684,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		// invalidate color cache
 		fColors= null;
+		
+		refreshBirdsEyeView();
+		invalidateLines();
 		
 		updateAllDiffBackgrounds(display);
 	}
@@ -1566,8 +1579,16 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			IDocument d= v.getDocument();
 			if (d != null) {
 				String contents= d.get();
-				if (contents != null)
-					return contents.getBytes();
+				if (contents != null) {
+					byte[] bytes;
+					try {
+						bytes= contents.getBytes(ResourcesPlugin.getEncoding());
+					} catch(UnsupportedEncodingException ex) {
+						// use default encoding
+						bytes= contents.getBytes();
+					}
+					return bytes;
+				}
 			}
 		}	
 		return null;	
@@ -2622,20 +2643,20 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (isThreeWay()) {
 			if (Utilities.okToUse(fAncestorCanvas))
 				fAncestorCanvas.redraw();
-			if (fAncestor.isControlOkToUse())
+			if (fAncestor != null && fAncestor.isControlOkToUse())
 				fAncestor.getTextWidget().redraw();
 		}
 		
 		if (Utilities.okToUse(fLeftCanvas))
 			fLeftCanvas.redraw();
 			
-		if (fLeft.isControlOkToUse())
+		if (fLeft != null && fLeft.isControlOkToUse())
 			fLeft.getTextWidget().redraw();
 			
 		if (Utilities.okToUse(getCenter()))
 			getCenter().redraw();
 			
-		if (fRight.isControlOkToUse())
+		if (fRight != null && fRight.isControlOkToUse())
 			fRight.getTextWidget().redraw();
 			
 		if (Utilities.okToUse(fRightCanvas))

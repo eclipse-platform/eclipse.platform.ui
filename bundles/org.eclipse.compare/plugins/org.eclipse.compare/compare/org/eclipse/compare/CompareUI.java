@@ -34,6 +34,12 @@ import org.eclipse.compare.structuremergeviewer.IStructureCreator;
  */
 public final class CompareUI {
 	
+	/**
+	 * Compare Plug-in ID (value <code>"org.eclipse.compare"</code>).
+	 * @since 2.0
+	 */
+	public static final String PLUGIN_ID= "org.eclipse.compare"; //$NON-NLS-1$
+
 	/** Image descriptors for the 'Next' tool bar button. */
 	public static final ImageDescriptor DESC_DTOOL_NEXT= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.DTOOL_NEXT);
 	public static final ImageDescriptor DESC_CTOOL_NEXT= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.CTOOL_NEXT);

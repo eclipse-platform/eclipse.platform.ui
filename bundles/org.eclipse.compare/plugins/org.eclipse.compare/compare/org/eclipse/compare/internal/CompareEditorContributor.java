@@ -21,12 +21,18 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 	private IgnoreWhiteSpaceAction fIgnoreWhitespace;
 	private NavigationAction fNext;
 	private NavigationAction fPrevious;
+	
+	private NavigationAction fToolbarNext;
+	private NavigationAction fToolbarPrevious;
+
 
 	public CompareEditorContributor() {
 		ResourceBundle bundle= CompareUIPlugin.getResourceBundle();
 		fIgnoreWhitespace= new IgnoreWhiteSpaceAction(bundle, null);
 		fNext= new NavigationAction(bundle, true);
 		fPrevious= new NavigationAction(bundle, false);
+		fToolbarNext= new NavigationAction(bundle, true);
+		fToolbarPrevious= new NavigationAction(bundle, false);
 	}
 
 	/*
@@ -35,8 +41,8 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 	public void contributeToToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator());
 		tbm.add(fIgnoreWhitespace);
-		tbm.add(fNext);
-		tbm.add(fPrevious);
+		tbm.add(fToolbarNext);
+		tbm.add(fToolbarPrevious);
 	}
 	
 	/*
