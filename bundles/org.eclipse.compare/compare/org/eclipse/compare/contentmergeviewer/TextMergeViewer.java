@@ -281,13 +281,16 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fSeparatorColor= getColor(fSummaryHeader.getDisplay(), ViewForm.borderInsideRGB);
 		}
 		
+		/**
+		 * Returns true on color change
+		 */
 		public boolean setColor(RGB color) {
 			RGB oldColor= fIndicatorColor;
 			fIndicatorColor= color;
 			if (color == null)
 				return oldColor != null;
 			if (oldColor != null)
-				return color.equals(oldColor);
+				return !color.equals(oldColor);
 			return true;
 		}
 		
@@ -308,7 +311,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			if (fIndicatorColor != null) {
 				Display d= fSummaryHeader.getDisplay();
 				e.gc.setBackground(getColor(d, fIndicatorColor));
-				//Rectangle r= new Rectangle(INSET, (s.y - (2*ANNOTATION_HEIGHT)) / 2, s.x - (2*INSET), 2*ANNOTATION_HEIGHT);
 				int min= Math.min(s.x, s.y)-2*INSET;
 				Rectangle r= new Rectangle((s.x-min)/2, (s.y-min)/2, min, min);
 				e.gc.fillRectangle(r);
