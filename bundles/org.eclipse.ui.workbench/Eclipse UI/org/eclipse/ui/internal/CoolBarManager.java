@@ -808,8 +808,10 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 						} 				
 					}
 
-					updateTabOrder();
-					updateItemSizes();
+					if (cbItemsToRemove.size() > 0 || coolItemsToRemove.size() > 0 || changed) {
+						updateTabOrder();
+						updateItemSizes();
+					}
 					setDirty(false);
 	
 					// workaround for 14330
@@ -843,13 +845,16 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		if (coolItem != null) setSizeFor(coolItem);
 	}
 	/**
-	 * Sets the tab order of the coolbar to the visual order of its items.
+	 * Sets the item sizes of the coolitems.
 	 */
 	/* package */ void updateItemSizes() {
         CoolItem[] items = coolBar.getItems();
 		Point[] itemSizes = new Point[coolBar.getItemCount()];
 		for (int i=0; i < coolBar.getItemCount(); i++) {
-			itemSizes[i]=items[i].getMinimumSize();
+			CoolItem item = items[i];
+			Point minSize = item.getMinimumSize();
+			Point coolSize = item.computeSize (minSize.x, minSize.y);
+			itemSizes[i]=coolSize;
 		}
 		coolBar.setItemLayout(coolBar.getItemOrder(), coolBar.getWrapIndices(), itemSizes);
 	}
