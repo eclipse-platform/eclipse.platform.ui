@@ -11,8 +11,8 @@
 package org.eclipse.core.internal.dtree;
 
 import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.StringPool;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.StringPool;
 
 /**
  * This class and its subclasses are used to represent nodes of AbstractDataTrees.

@@ -13,10 +13,10 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import java.util.Map;
 import org.eclipse.core.internal.properties.PropertyStore;
-import org.eclipse.core.internal.utils.ObjectMap;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.IElementTreeData;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.QualifiedName;
 
 public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPoolParticipant {
 	protected static final int LOWER = 0xFFFF;

@@ -17,9 +17,7 @@ import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.PropertyManager;
 import org.eclipse.core.internal.refresh.RefreshManager;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
@@ -99,6 +97,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	/** indicates if the workspace crashed in a previous session */
 	protected boolean crashed = false;
 
+	/**
+	 * Job that performs periodic string pool canonicalization.
+	 */
+	private StringPoolJob stringPoolJob;
+
 	public Workspace() {
 		super();
 		localMetaArea = new LocalMetaArea();
@@ -169,7 +172,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			newWorkingTree();
 	}
 
-	protected void broadcastChanges(int type, boolean lockTree) throws CoreException {
+	protected void broadcastChanges(int type, boolean lockTree) {
 		notificationManager.broadcastChanges(tree, type, lockTree);
 	}
 
@@ -489,11 +492,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			// ignore projects that are not accessible
 			if (!project.isAccessible())
 				continue;
-			ProjectDescription description = project.internalGetDescription();
-			if (description == null)
+			ProjectDescription desc = project.internalGetDescription();
+			if (desc == null)
 				continue;
 			//obtain both static and dynamic project references
-			IProject[] refs = description.getAllReferences(false);
+			IProject[] refs = desc.getAllReferences(false);
 			allAccessibleProjects.add(project);
 			for (int j = 0; j < refs.length; j++) {
 				IProject ref = refs[j];
@@ -1621,7 +1624,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			}
 		}
 		//finally register a string pool participant
-		InternalPlatform.getDefault().addStringPoolParticipant(saveManager, getRoot());
+		stringPoolJob = new StringPoolJob();
+		stringPoolJob.addStringPoolParticipant(saveManager, getRoot());
 		return Status.OK_STATUS;
 	}
 
@@ -1737,7 +1741,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	/* (non-Javadoc)
 	 * @see IWorkspace#setDescription(IWorkspaceDescription)
 	 */
-	public void setDescription(IWorkspaceDescription value) throws CoreException {
+	public void setDescription(IWorkspaceDescription value) {
 		// if both the old and new description's build orders are null, leave the
 		// workspace's build order slot because it is caching the computed order.
 		// Otherwise, set the slot to null to force recomputation or building from the description.

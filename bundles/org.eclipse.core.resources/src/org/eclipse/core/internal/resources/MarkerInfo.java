@@ -11,9 +11,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.Map;
-import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.runtime.IStringPoolParticipant;
-import org.eclipse.core.runtime.StringPool;
+import org.eclipse.core.internal.utils.*;
 
 public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolParticipant {
 

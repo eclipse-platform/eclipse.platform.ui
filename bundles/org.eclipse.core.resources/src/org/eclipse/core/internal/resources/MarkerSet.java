@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.runtime.IStringPoolParticipant;
-import org.eclipse.core.runtime.StringPool;
+import org.eclipse.core.internal.utils.IStringPoolParticipant;
+import org.eclipse.core.internal.utils.StringPool;
 
 public class MarkerSet implements Cloneable, IStringPoolParticipant {
 	protected static final int MINIMUM_SIZE = 5;

@@ -11,8 +11,8 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.*;
-import org.eclipse.core.runtime.IStringPoolParticipant;
-import org.eclipse.core.runtime.StringPool;
+import org.eclipse.core.internal.utils.IStringPoolParticipant;
+import org.eclipse.core.internal.utils.StringPool;
 
 /**
  * A specialized map implementation that is optimized for a 

@@ -13,7 +13,6 @@ package org.eclipse.core.internal.watson;
 import java.util.HashMap;
 import org.eclipse.core.internal.dtree.*;
 import org.eclipse.core.internal.utils.*;
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 

@@ -31,6 +31,9 @@ org.eclipse.core.resources/history=false
 # Report debugging for project preferences.
 org.eclipse.core.resources/preferences=false
 
+# Prints debug information (elapsed time, estimated savings) from string compaction
+org.eclipse.core.resources/strings=false
+
 # Report timings for restoring the workspace state
 org.eclipse.core.resources/restore=false
 org.eclipse.core.resources/restore/markers=false
