@@ -28,6 +28,7 @@ public interface ICVSUIConstants {
 	
 	// preferences
 	public final String PREF_SHOW_COMMENTS = "pref_show_comments";
+	public final String PREF_SHOW_TAGS = "pref_show_tags";
 	public final String PREF_PRUNE_EMPTY_DIRECTORIES = "pref_prune_empty_directories";	
 	public final String PREF_TIMEOUT = "pref_timeout";	
 	public final String PREF_QUIETNESS = "pref_quietness";

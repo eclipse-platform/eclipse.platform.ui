@@ -155,6 +155,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	protected void initializePreferences() {
 		IPreferenceStore store = getPreferenceStore();
 		store.setDefault(ICVSUIConstants.PREF_SHOW_COMMENTS, true);
+		store.setDefault(ICVSUIConstants.PREF_SHOW_TAGS, true);
 		store.setDefault(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES, CVSProviderPlugin.DEFAULT_PRUNE);
 		store.setDefault(ICVSUIConstants.PREF_TIMEOUT, CVSProviderPlugin.DEFAULT_TIMEOUT);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_MODULES, false);

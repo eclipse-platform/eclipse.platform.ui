@@ -27,7 +27,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.ITextOperationTarget;
-import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelection;
@@ -40,6 +39,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
@@ -74,7 +74,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * The history view allows browsing of an array of resource revisions
@@ -85,14 +84,17 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 	
 	private TableViewer tableViewer;
 	private TextViewer textViewer;
+	private TableViewer tagViewer;
 	
 	private OpenRemoteFileAction openAction;
 	private IAction toggleTextAction;
+	private IAction toggleListAction;
 	private TextViewerAction copyAction;
 	private TextViewerAction selectAllAction;
 	private Action addAction;
 	
 	private SashForm sashForm;
+	private SashForm innerSashForm;
 	
 	//column constants
 	private static final int COL_REVISION = 0;
@@ -101,6 +103,9 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 	private static final int COL_AUTHOR = 3;
 	private static final int COL_COMMENT = 4;
 
+	private Image branchImage;
+	private Image versionImage;
+	
 	class HistoryLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
@@ -225,15 +230,19 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 		toggleTextAction = new Action(Policy.bind("HistoryView.showComment")) {
 			public void run() {
-				if (sashForm.getMaximizedControl() != null) {
-					sashForm.setMaximizedControl(null);
-				} else {
-					sashForm.setMaximizedControl(tableViewer.getControl());
-				}
+				setViewerVisibility();
 				store.setValue(ICVSUIConstants.PREF_SHOW_COMMENTS, toggleTextAction.isChecked());
 			}
 		};
 		toggleTextAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_SHOW_COMMENTS));
+		// Toggle list visible action
+		toggleListAction = new Action(Policy.bind("HistoryView.showTags")) {
+			public void run() {
+				setViewerVisibility();
+				store.setValue(ICVSUIConstants.PREF_SHOW_TAGS, toggleListAction.isChecked());
+			}
+		};
+		toggleListAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_SHOW_TAGS));
 		
 		// Contribute actions to popup menu
 		MenuManager menuMgr = new MenuManager();
@@ -251,6 +260,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		IActionBars actionBars = getViewSite().getActionBars();
 		IMenuManager actionBarsMenu = actionBars.getMenuManager();
 		actionBarsMenu.add(toggleTextAction);
+		actionBarsMenu.add(toggleListAction);
 
 		// Create the local tool bar
 		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
@@ -279,7 +289,22 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		menu = menuMgr.createContextMenu(text);
 		text.setMenu(menu);
 	}
-	
+	private void setViewerVisibility() {
+		boolean showText = toggleTextAction.isChecked();
+		boolean showList = toggleListAction.isChecked();
+		if (showText && showList) {
+			sashForm.setMaximizedControl(null);
+			innerSashForm.setMaximizedControl(null);
+		} else if (showText) {
+			sashForm.setMaximizedControl(null);
+			innerSashForm.setMaximizedControl(textViewer.getTextWidget());
+		} else if (showList) {
+			sashForm.setMaximizedControl(null);
+			innerSashForm.setMaximizedControl(tagViewer.getTable());
+		} else {
+			sashForm.setMaximizedControl(tableViewer.getControl());
+		}
+	}
 	/**
 	 * Creates the columns for the history table.
 	 */
@@ -324,19 +349,26 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 	 * Method declared on IWorkbenchPart
 	 */
 	public void createPartControl(Composite parent) {
+		initializeImages();
 		sashForm = new SashForm(parent, SWT.VERTICAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tableViewer = createTable(sashForm);
-		textViewer = createText(sashForm);
+		innerSashForm = new SashForm(sashForm, SWT.HORIZONTAL);
+		tagViewer = createTagTable(innerSashForm);
+		textViewer = createText(innerSashForm);
 		sashForm.setWeights(new int[] { 70, 30 });
+		innerSashForm.setWeights(new int[] { 50, 50 });
 		getSite().getPage().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
 		contributeActions();
-		if (!CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_COMMENTS)) {
-			sashForm.setMaximizedControl(tableViewer.getControl());
-		}
+		setViewerVisibility();
 		// set F1 help
 		//WorkbenchHelp.setHelp(viewer.getControl(), new ViewContextComputer (this, IVCMHelpContextIds.RESOURCE_HISTORY_VIEW));
 		initDragAndDrop();
+	}
+	private void initializeImages() {
+		CVSUIPlugin plugin = CVSUIPlugin.getPlugin();
+		versionImage = plugin.getImageDescriptor(ICVSUIConstants.IMG_PROJECT_VERSION).createImage();
+		branchImage = plugin.getImageDescriptor(ICVSUIConstants.IMG_TAG).createImage();
 	}
 	/**
 	 * Creates the group that displays lists of the available repositories
@@ -393,15 +425,18 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 				ISelection selection = event.getSelection();
 				if (selection == null || !(selection instanceof IStructuredSelection)) {
 					textViewer.setDocument(new Document(""));
+					tagViewer.setInput(null);
 					return;
 				}
 				IStructuredSelection ss = (IStructuredSelection)selection;
 				if (ss.size() != 1) {
 					textViewer.setDocument(new Document(""));
+					tagViewer.setInput(null);
 					return;
 				}
 				ILogEntry entry = (ILogEntry)ss.getFirstElement();
 				textViewer.setDocument(new Document(entry.getComment()));
+				tagViewer.setInput(entry.getTags());
 			}
 		});
 		
@@ -411,6 +446,51 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		viewer.setSorter(sorter);
 		
 		return viewer;
+	}
+	private TableViewer createTagTable(Composite parent) {
+		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		TableViewer result = new TableViewer(table);
+		TableLayout layout = new TableLayout();
+		layout.addColumnData(new ColumnWeightData(100));
+		table.setLayout(layout);
+		result.setContentProvider(new SimpleContentProvider() {
+			public Object[] getElements(Object inputElement) {
+				if (inputElement == null) return new Object[0];
+				CVSTag[] tags = (CVSTag[])inputElement;
+				return tags;
+			}
+		});
+		result.setLabelProvider(new LabelProvider() {
+			public Image getImage(Object element) {
+				if (element == null) return null;
+				CVSTag tag = (CVSTag)element;
+				switch (tag.getType()) {
+					case CVSTag.BRANCH:
+					case CVSTag.HEAD:
+						return branchImage;
+					case CVSTag.VERSION:
+						return versionImage;
+				}
+				return null;
+			}
+			public String getText(Object element) {
+				return ((CVSTag)element).getName();
+			}
+		});
+		result.setSorter(new ViewerSorter() {
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				if (!(e1 instanceof CVSTag) || !(e2 instanceof CVSTag)) return super.compare(viewer, e1, e2);
+				CVSTag tag1 = (CVSTag)e1;
+				CVSTag tag2 = (CVSTag)e2;
+				int type1 = tag1.getType();
+				int type2 = tag2.getType();
+				if (type1 != type2) {
+					return type2 - type1;
+				}
+				return super.compare(viewer, tag1, tag2);
+			}
+		});
+		return result;
 	}
 	protected TextViewer createText(Composite parent) {
 		TextViewer result = new TextViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.READ_ONLY);
@@ -423,6 +503,8 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 	}
 	public void dispose() {
 		getSite().getPage().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
+		branchImage.dispose();
+		versionImage.dispose();
 	}	
 	/**
 	 * Adds the listener that sets the sorter.
