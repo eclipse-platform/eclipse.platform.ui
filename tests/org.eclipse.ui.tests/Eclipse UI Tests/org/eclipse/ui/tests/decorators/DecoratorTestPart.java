@@ -15,10 +15,13 @@ import org.eclipse.ui.part.ViewPart;
  */
 public abstract class DecoratorTestPart extends ViewPart {
 
+	private static final int DELAY_TIME = 2000;// Wait 2 seconds
+
 	public boolean waitingForDecoration = true;
-	
 
 	private long endTime;
+
+	private ILabelProviderListener listener;
 
 	public DecoratorTestPart() {
 		super();
@@ -33,7 +36,18 @@ public abstract class DecoratorTestPart extends ViewPart {
 
 		IDecoratorManager manager = PlatformUI.getWorkbench()
 				.getDecoratorManager();
-		manager.addListener(new ILabelProviderListener() {
+		manager.addListener(getDecoratorManagerListener());
+		return new DecoratingLabelProvider(new TestLabelProvider(), manager);
+
+	}
+
+	/**
+	 * Get the listener for the suite.
+	 * 
+	 * @return
+	 */
+	private ILabelProviderListener getDecoratorManagerListener() {
+		listener = new ILabelProviderListener() {
 
 			/*
 			 * (non-Javadoc)
@@ -41,15 +55,13 @@ public abstract class DecoratorTestPart extends ViewPart {
 			 * @see org.eclipse.jface.viewers.ILabelProviderListener#labelProviderChanged(org.eclipse.jface.viewers.LabelProviderChangedEvent)
 			 */
 			public void labelProviderChanged(LabelProviderChangedEvent event) {
-				if(event.getElements() == null)
-					return;
-				//Reset the end time each time we get an update
-				endTime = System.currentTimeMillis() + 1000;
-					
-			}
-		});
-		return new DecoratingLabelProvider(new TestLabelProvider(), manager);
+				// Reset the end time each time we get an update
+				endTime = System.currentTimeMillis() + DELAY_TIME;
 
+			}
+		};
+
+		return listener;
 	}
 
 	public void readAndDispatchForUpdates() {
@@ -59,9 +71,14 @@ public abstract class DecoratorTestPart extends ViewPart {
 	}
 
 	public void setUpForDecorators() {
-		endTime = System.currentTimeMillis() + 1000;
-		
+		endTime = System.currentTimeMillis() + DELAY_TIME;
+
 	}
 
+	public void dispose() {
+		PlatformUI.getWorkbench().getDecoratorManager()
+				.removeListener(listener);
+
+	}
 
 }
