@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
-
 /**
  * A generic super class of all refactoring specific argument
  * classes.

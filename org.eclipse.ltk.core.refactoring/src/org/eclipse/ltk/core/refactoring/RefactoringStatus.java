@@ -45,35 +45,29 @@ public class RefactoringStatus {
 
 	/** 
 	 * Status severity constant (value 0) indicating this status represents the nominal case.
-	 * @see #getSeverity
-	 * @see #isOK
 	 */
 	public static final int OK= 0;
 
 	/** 
 	 * Status severity constant (value 1) indicating this status is informational only.
-	 * @see #getSeverity
 	 */
 	public static final int INFO= 1;
 
 	/** 
 	 * Status severity constant (value 2) indicating this status represents a warning.
 	 * This is used when the refactoring might cause confusion such as unintended overloading.
-	 * @see #getSeverity
 	 */
 	public static final int WARNING= 2;
 
 	/** 
 	 * Status severity constant (value 3) indicating this status represents an error.
 	 * This is used when the refactoring will introduce compilation errors if executed.
-	 * @see #getSeverity
 	 */
 	public static final int ERROR= 3;
 
 	/** 
 	 * Status severity constant (value 4) indicating this status represents a fatal error.
 	 * This is used when the refactoring can't be executed.
-	 * @see #getSeverity
 	 */
 	public static final int FATAL= 4;
 
@@ -211,6 +205,8 @@ public class RefactoringStatus {
 	 * @param code the problem code. Must be either <code>NO_CODE</code> or equals or greater
 	 *  than zero
 	 * @param data application specific data
+	 * 
+	 * @return the newly created refactoring status
 	 * 
 	 * @see RefactoringStatusEntry
 	 */
@@ -369,14 +365,12 @@ public class RefactoringStatus {
 
 	/**
 	 * Merges the receiver and the parameter statuses. The resulting list of
-	 * entries in the receiver will contain entries from both. The resuling
-	 * severity in the reciver will be the more severe of its current severity
+	 * entries in the receiver will contain entries from both. The resulting
+	 * severity in the receiver will be the more severe of its current severity
 	 * and the parameter's severity. Merging with <code>null</code> is
 	 * allowed - it has no effect.
 	 * 
 	 * @param other the refactoring status to merge with
-	 * 
-	 * @see #getSeverity
 	 */
 	public void merge(RefactoringStatus other) {
 		if (other == null)

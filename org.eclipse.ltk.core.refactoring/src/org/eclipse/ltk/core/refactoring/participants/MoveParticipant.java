@@ -10,6 +10,19 @@
  ******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
+/**
+ * A participant to participate in refactorings that move elements. A move
+ * participant can't assume that its associated refactoring processor is a
+ * move processor. A move operation might be a side effect of another
+ * refactoring operation.
+ * <p>
+ * Move participants are registered via the extension point <code>
+ * org.eclipse.ltk.core.refactoring.moveParticipants</code>.
+ * Extensions to this extension point must therefore extend this abstract class.
+ * </p>
+ * 
+ * @since 3.0
+ */
 public abstract class MoveParticipant extends RefactoringParticipant {
 
 	private MoveArguments fArguments;
@@ -17,7 +30,7 @@ public abstract class MoveParticipant extends RefactoringParticipant {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void initialize(RefactoringArguments arguments) {
+	protected final void initialize(RefactoringArguments arguments) {
 		fArguments= (MoveArguments)arguments;
 	}
 	

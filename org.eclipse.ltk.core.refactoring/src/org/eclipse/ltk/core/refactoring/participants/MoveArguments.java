@@ -13,7 +13,7 @@ package org.eclipse.ltk.core.refactoring.participants;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
- * Move arguments describes the data that a processor
+ * Move arguments describe the data that a processor
  * provides to its move participants.
  * 
  * @since 3.0

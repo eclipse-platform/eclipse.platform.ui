@@ -13,7 +13,7 @@ package org.eclipse.ltk.core.refactoring.participants;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
- * Copy arguments describes the data that a processor
+ * Copy arguments describe the data that a processor
  * provides to its copy participants.
  * 
  * @since 3.0

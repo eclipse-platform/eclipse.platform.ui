@@ -6,12 +6,21 @@
          <meta.schema plugin="org.eclipse.ltk.core.refactoring" id="moveParticipants" name="Move Participants"/>
       </appInfo>
       <documentation>
-         This extension point is used to define refactoring move participants.
+         This extension point is used to define refactoring move participants. The reader of the expression provides the following predefined variables which can be referenced via the &amp;lt;with variable=&quot;...&quot;&amp;gt; expression element:
+
+&lt;ul&gt;
+  &lt;li&gt;List&amp;lt;String&amp;gt; affectedNatures: a list containing the natures of the projects affected 
+      by the refactoring&lt;/li&gt;
+  &lt;li&gt;Object element: the element to be moved&lt;/li&gt;
+  &lt;li&gt;String processorId: the id of the refactoring processor that will own the participant.
+&lt;/ul&gt;
+
+The default variable used during expression evaluation is bound to the element variable.
       </documentation>
    </annotation>
 
    <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.mxsd"/>
-   
+
    <element name="extension">
       <complexType>
          <sequence>
@@ -78,7 +87,26 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         
+         The example below defines a type move participant. The participant is enabled if one of the project affected by the refactoring has a Java nature and when the type to be moved is a JUnit test.
+
+&lt;pre&gt;
+&lt;moveParticipant
+    id=&quot;org.eclipse.jdt.junit.moveTypeParticipant&quot;
+    name=&quot;%MoveTypeParticipant.name&quot; 
+    class=&quot;org.eclipse.jdt.internal.junit.ui.TypeMoveParticipant&quot;&gt;
+    &lt;enablement&gt;
+      &lt;with variable=&quot;affectedNatures&quot;&gt;
+        &lt;iterate operator=&quot;or&quot;&gt;
+          &lt;equals value=&quot;org.eclipse.jdt.core.javanature&quot;/&gt;
+        &lt;/iterate&gt;
+      &lt;/with&gt;
+      &lt;with variable=&quot;element&quot;&gt;
+        &lt;instanceof value=&quot;org.eclipse.jdt.core.IType&quot;/&gt;
+        &lt;test property=&quot;org.eclipse.jdt.junit.isTest&quot;/&gt;
+      &lt;/with&gt;
+    &lt;/enablement&gt;
+&lt;/moveParticipant&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 

@@ -87,6 +87,8 @@ public interface IUndoManager {
 	 * @param pm a progress monitor to report progress during performing
 	 *  the undo change. The progress monitor must not be <code>null</code>
 	 * @return the validation status of the undone change.
+	 * 
+	 * @throws CoreException if performing the undo caused an exception
 	 */	
 	public RefactoringStatus performUndo(IProgressMonitor pm) throws CoreException;
 
@@ -113,6 +115,8 @@ public interface IUndoManager {
 	 * @param pm a progress monitor to report progress during performing
 	 *  the redo change. The progress monitor must not be <code>null</code>
 	 * @return the validation status of the redone change.
+	 * 
+	 * @throws CoreException if performing the redo caused an exception
 	 */	
 	public RefactoringStatus performRedo(IProgressMonitor pm) throws CoreException;
 	

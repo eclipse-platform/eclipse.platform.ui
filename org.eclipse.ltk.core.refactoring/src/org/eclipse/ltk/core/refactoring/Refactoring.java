@@ -17,11 +17,11 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
  * Abstract super class for all refactorings. Refactorings are used to perform
- * behaviour preseving work space transformations. A refactoring offers two 
+ * behaviour preserving work space transformations. A refactoring offers two 
  * different kind of methods:
  * <ol> 
  *   <li>methods to check conditions to determine if the refactoring can be carried out 
- *       in general and if transformation will be bahavioural persevering.
+ *       in general and if transformation will be behavioural persevering.
  *   </li>
  *   <li>a method to create a {@link org.eclipse.ltk.core.refactoring.Change} object
  *       that represents the actual work space modifications.
@@ -74,6 +74,14 @@ public abstract class Refactoring extends PlatformObject {
 	 * Subclasses may extend this method to provide additional condition checks.
 	 * </p>
 	 * 
+	 * @param pm a progress monitor to report progress
+	 * 
+	 * @return a refactoring status. If the status is <code>RefactoringStatus#FATAL</code>
+	 *  the refactoring is considered as not being executable.
+	 * 
+	 * @throws CoreException if an exception occurred during condition checking.
+	 *  If this happens then the condition checking is interpreted as failed.
+	 * 
 	 * @see #checkInitialConditions(IProgressMonitor)
 	 * @see #checkFinalConditions(IProgressMonitor)
 	 */
@@ -93,13 +101,13 @@ public abstract class Refactoring extends PlatformObject {
 	 * action has been executed.
 	 * <p>
 	 * The refactoring is considered as not being executable if the returned status
-	 * has the severity <code>RefactoringStatus#FATAL</code>.
+	 * has the severity of <code>RefactoringStatus#FATAL</code>.
 	 * </p>
 	 * <p>
 	 * This method can be called more than once.
 	 * </p>
 	 * 
-	 * @param pm a progress monitor to report progress. Although availability checks 
+	 * @param pm a progress monitor to report progress. Although initial checks 
 	 *  are supposed to execute fast, there can be certain situations where progress
 	 *  reporting is necessary. For example rebuilding a corrupted index may report
 	 *  progress.
@@ -107,7 +115,8 @@ public abstract class Refactoring extends PlatformObject {
 	 * @return a refactoring status. If the status is <code>RefactoringStatus#FATAL</code>
 	 *  the refactoring is considered as not being executable.
 	 * 
-	 * @throws CoreException if an exception occurred during initial condition checking
+	 * @throws CoreException if an exception occurred during initial condition checking.
+	 *  If this happens then the initial condition checking is interpreted as failed.
 	 * 
 	 * @see #checkFinalConditions(IProgressMonitor)
 	 * @see RefactoringStatus#FATAL
@@ -120,7 +129,7 @@ public abstract class Refactoring extends PlatformObject {
 	 * to check the remaining preconditions.
 	 * <p>
 	 * The refactoring is considered as not being executable if the returned status
-	 * has the severity <code>RefactoringStatus#FATAL</code>.
+	 * has the severity of <code>RefactoringStatus#FATAL</code>.
 	 * </p>
 	 * <p>
 	 * This method can be called more than once.
@@ -132,6 +141,7 @@ public abstract class Refactoring extends PlatformObject {
 	 *  the refactoring is considered as not being executable.
 	 * 
 	 * @throws CoreException if an exception occurred during final condition checking
+	 *  If this happens then the final condition checking is interpreted as failed.
 	 * 
 	 * @see #checkInitialConditions(IProgressMonitor)
 	 * @see RefactoringStatus#FATAL
@@ -145,7 +155,7 @@ public abstract class Refactoring extends PlatformObject {
 	 * 
 	 * @param pm a progress monitor to report progress
 	 * 
-	 * @return the change representing the work space modifications of the
+	 * @return the change representing the workspace modifications of the
 	 *  refactoring
 	 * 
 	 * @throws CoreException if an error occurred while creating the change 

@@ -82,7 +82,7 @@ public class RefactoringUI {
 	 * 
 	 * @return the dialog 
 	 */
-	public static Dialog createRefactoringWizardDialog(RefactoringWizard wizard, Shell parent) {
+	/* package */ static Dialog createRefactoringWizardDialog(RefactoringWizard wizard, Shell parent) {
 		Dialog result;
 		if (wizard.needsWizardBasedUserInterface())
 			result= new RefactoringWizardDialog(parent, wizard);

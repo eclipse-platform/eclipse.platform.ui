@@ -6,15 +6,16 @@
          <meta.schema plugin="org.eclipse.ltk.core.refactoring" id="renameParticipants" name="Rename Participants"/>
       </appInfo>
       <documentation>
-         This extension point is used to define refactoring rename participants. The evaluator of the expression provides the following perdefined variables which can be referenced via the with expression element:
+         This extension point is used to define refactoring rename participants. The reader of the expression provides the following predefined variables which can be referenced via the &amp;lt;with variable=&quot;...&quot;&amp;gt; expression element:
 
-&lt;ol&gt;
-  &lt;li&gt;List&lt;String&gt; affectedNatures: a list containing the natures of the projects affected by the refactoring&lt;/li&gt;
+&lt;ul&gt;
+  &lt;li&gt;List&amp;lt;String&amp;gt; affectedNatures: a list containing the natures of the projects affected 
+      by the refactoring&lt;/li&gt;
   &lt;li&gt;Object element: the element to be renamed&lt;/li&gt;
-  &lt;li&gt;String processorId: the id of the refactoring processor. The refactoring processor depends on the kind
-      of refactoring performed and is defined by the refactoring provider. For example if a field get renamed
-      then the processor id is the id of the rename field processor.
-&lt;/ol&gt;
+  &lt;li&gt;String processorId: the id of the refactoring processor that will own the participant.
+&lt;/ul&gt;
+
+The default variable used during expression evaluation is bound to the element variable.
       </documentation>
    </annotation>
 
@@ -92,22 +93,22 @@ Java nature and when the type to be renamed is a JUnit test.
 
 &lt;pre&gt;
 &lt;renameParticipant
-	id=&quot;org.eclipse.jdt.junit.renameTypeParticipant&quot;
-	name=&quot;%RenameTypeParticipant.name&quot; 
-	class=&quot;org.eclipse.jdt.internal.junit.ui.TypeRenameParticipant&quot;&gt;
-	&lt;enablement&gt;
-		&lt;with variable=&quot;affectedNatures&quot;&gt;
-			&lt;iterate&gt;
-    	    	&lt;equals value=&quot;org.eclipse.jdt.core.javanature&quot;/&gt;
-	        &lt;/iterate&gt;
-    	&lt;/with&gt;
-	    &lt;with variable=&quot;element&quot;&gt;
-    		&lt;instanceof value=&quot;org.eclipse.jdt.core.IType&quot;/&gt;
-    	    &lt;test property=&quot;org.eclipse.jdt.junit.isTest&quot;/&gt;
-	    &lt;/with&gt;
+    id=&quot;org.eclipse.jdt.junit.renameTypeParticipant&quot;
+    name=&quot;%RenameTypeParticipant.name&quot; 
+    class=&quot;org.eclipse.jdt.internal.junit.ui.TypeRenameParticipant&quot;&gt;
+    &lt;enablement&gt;
+      &lt;with variable=&quot;affectedNatures&quot;&gt;
+        &lt;iterate operator=&quot;or&quot;&gt;
+          &lt;equals value=&quot;org.eclipse.jdt.core.javanature&quot;/&gt;
+        &lt;/iterate&gt;
+      &lt;/with&gt;
+      &lt;with variable=&quot;element&quot;&gt;
+        &lt;instanceof value=&quot;org.eclipse.jdt.core.IType&quot;/&gt;
+        &lt;test property=&quot;org.eclipse.jdt.junit.isTest&quot;/&gt;
+      &lt;/with&gt;
     &lt;/enablement&gt;
 &lt;/renameParticipant&gt;
-&lt;pre&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 

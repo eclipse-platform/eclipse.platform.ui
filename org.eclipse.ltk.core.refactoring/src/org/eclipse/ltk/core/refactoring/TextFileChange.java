@@ -71,7 +71,7 @@ public class TextFileChange extends TextChange {
 	 * Sets the save state. If set to <code>true</code> the change will save the
 	 * content of the file back to disk.
 	 * 
-	 * @param save whether or not the changes should be saved to disk
+	 * @param saveMode whether or not the changes should be saved to disk
 	 */
 	public void setSaveMode(int saveMode) {
 		fSaveMode= saveMode;
@@ -138,7 +138,7 @@ public class TextFileChange extends TextChange {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected IDocument aquireDocument(IProgressMonitor pm) throws CoreException {
+	protected IDocument acquireDocument(IProgressMonitor pm) throws CoreException {
 		if (fAquireCount > 0)
 			return fBuffer.getDocument();
 		

@@ -10,38 +10,18 @@
  ******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
-import org.eclipse.core.runtime.CoreException;
-
 /**
- * A rename processor is a special refactoring processor to support 
- * participating in rename refactorings. A rename processor is responsible
- * for actual renaming the element to be refactored. Additionally the
- * processor can update reference which are part of the same domain as the 
- * element to be renamed. For example a processor to rename a Java field 
- * can also update all references to that field found in Java files.
+ * A special processor that performs rename operations. A rename processor is
+ * responsible for actually renaming the element. Additionally it may update
+ * other resources of the same domain which are affected by the rename
+ * operation. For example, a Java method rename processor also updates all
+ * references in Java code to the method to be renamed.
  * <p>
- * A rename processor is also responsible to load participants that want
- * to participate in a rename refactoring.
+ * The main purpose of this class is type safety for the generic rename
+ * refactoring
  * </p>
  * 
  * @since 3.0
  */
 public abstract class RenameProcessor extends RefactoringProcessor {
-
-	/**
-	 * Returns the participants that participate in the rename of the element. The
-	 * method is called after {@link #checkInitialConditions} has been called on the 
-	 * processor itself. 
-	 * 
-	 * The arguments are set to the participants by the processor via the call 
-	 * {@link RenameParticipant#setArguments(RenameArguments)}. They are set 
-	 * before {@link #checkFinalConditions}is called on the participants. 
-	 * 
-	 * @return an array of rename participants
-	 * 
-	 * @throws CoreException if creating or loading of the participants failed
-	 */
-	public final RenameParticipant[] loadElementParticipants() throws CoreException {
-		return null;
-	}	
 }

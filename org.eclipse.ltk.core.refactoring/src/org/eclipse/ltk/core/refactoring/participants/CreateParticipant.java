@@ -10,6 +10,19 @@
  ******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
+/**
+ * Copy participants are to participate in refactorings that copy elements. A copy
+ * participant can't assume that its associated refactoring processor is
+ * a copy processor. A copy operation might be a side effect of another
+ * refactoring operation.  
+ * <p>
+ * Copy participants are registered via the extension point <code>
+ * org.eclipse.ltk.core.refactoring.copyParticipants</code>. Extensions to
+ * this extension point must therefore extend this abstract class
+ * </p>
+ * 
+ * @since 3.0
+ */
 public abstract class CreateParticipant extends RefactoringParticipant {
 	
 	private CreateArguments fArguments;
@@ -17,7 +30,7 @@ public abstract class CreateParticipant extends RefactoringParticipant {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void initialize(RefactoringArguments arguments) {
+	protected final void initialize(RefactoringArguments arguments) {
 		fArguments= (CreateArguments)arguments;
 	}
 	

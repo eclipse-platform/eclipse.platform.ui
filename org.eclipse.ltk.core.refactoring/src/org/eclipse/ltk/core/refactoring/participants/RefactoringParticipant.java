@@ -12,6 +12,7 @@ package org.eclipse.ltk.core.refactoring.participants;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.PlatformObject;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -26,8 +27,13 @@ import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
  * then the whole refactoring will not be carried out. 
  * </p>
  * <p>
- * The change created from a participant must not conflict with any changes
- * provided by other participants or the refactoring itself. 
+ * The change created from a participant <em>MUST</em> not conflict with any changes
+ * provided by other participants or the refactoring itself. To ensure this a participant
+ * is only allowed to manipulate resources belonging to its domain. For example a rename type 
+ * participant updating launch configuration is only allowed to update launch configurations.
+ * It is not allowed to manipulate any Java resources or any other resources not belonging to
+ * its domain. If a change conflicts with another change during execution then the participant
+ * who created the change will be disabled for the rest of the eclipse session.
  * </p>
  * <p>
  * A refactoring participant can not assume that all resources are saved before any 
@@ -35,10 +41,11 @@ import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
  * resources.
  * </p>
  * 
- * @since 3.0
  * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor
+ * 
+ * @since 3.0
  */
-public abstract class RefactoringParticipant {
+public abstract class RefactoringParticipant extends PlatformObject {
 	
 	private RefactoringProcessor fProcessor;
 	
@@ -63,7 +70,8 @@ public abstract class RefactoringParticipant {
 	 * @param arguments the refactoring arguments
 	 * 
 	 * @return <code>true</code> if the participant could be initialized;
-	 *  otherwise <code>false</code> is returned.
+	 *  otherwise <code>false</code> is returned. If <code>false</code> is
+	 *  returned then the participant will not be added to the refactoring. 
 	 * 
 	 * @see #initialize(Object)
 	 */
@@ -113,6 +121,7 @@ public abstract class RefactoringParticipant {
 	 * </p>
 	 * 
 	 * @param pm a progress monitor to report progress
+	 * @param context a condition checking context to collect shared condition checks
 	 * 
 	 * @return a refactoring status. If the status is <code>RefactoringStatus#FATAL</code>
 	 *  the refactoring is considered as not being executable.
@@ -134,7 +143,7 @@ public abstract class RefactoringParticipant {
 	 * </p>
 	 * <p>
 	 * If an exception occurs while creating the change the refactoring can not
-	 * be carried out and the particpant will be disabled for the rest of the
+	 * be carried out and the participant will be disabled for the rest of the
 	 * eclipse session.
 	 * </p>
 	 * 
@@ -145,35 +154,6 @@ public abstract class RefactoringParticipant {
 	 * @throws CoreException if an error occurred while creating the change
 	 */
 	public abstract Change createChange(IProgressMonitor pm) throws CoreException;
-
-	/**
-	 * TO be deleted before 3.0.
-	 * FIXME
-	 */
-	private final void initialize(RefactoringProcessor processor, Object element) throws CoreException {
-	}
-	/**
-	 * TO be deleted before 3.0.
-	 * FIXME
-	 */
-	private final boolean isApplicable() throws CoreException {
-		return false;
-	}
-	/**
-	 * TO be deleted before 3.0.
-	 * FIXME
-	 */
-	private final RefactoringStatus checkInitialConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException {
-		return null;
-	}
-	
-	/**
-	 * TO be deleted before 3.0.
-	 * FIXME
-	 */
-	private final RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException {
-		return null;
-	}
 
 	//---- helper method ----------------------------------------------------
 	

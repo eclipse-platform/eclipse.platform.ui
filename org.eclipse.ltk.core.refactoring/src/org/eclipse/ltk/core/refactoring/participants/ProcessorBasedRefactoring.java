@@ -18,11 +18,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
+/**
+ * An abstract base implementation for refactorings that are split into
+ * one refactoring processor and 0..n participants.
+ * 
+ * @since 3.0 
+ */
 public abstract class ProcessorBasedRefactoring extends Refactoring {
 	
 	private RefactoringParticipant[] fParticipants;
@@ -42,7 +49,19 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	 */
 	public abstract RefactoringProcessor getProcessor();
 	
-	public boolean isAvailable() throws CoreException {
+	
+	/**
+	 * Checks whether the refactoring is applicable to the elements to be
+	 * refactored or not.
+	 * <p>
+	 * This default implementation forwards the call to the refactoring
+	 * processor.
+	 * </p>
+	 * @return <code>true</code> if the refactoring is applicable to the
+	 *         elements; otherwise <code>false</code> is returned.
+	 * @throws CoreException if the test fails
+	 */
+	public final boolean isApplicable() throws CoreException {
 		return getProcessor().isApplicable();
 	}
 		
@@ -121,7 +140,7 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 				RefactoringCorePlugin.logRemovedParticipant(descriptor, e);
 			}
 		}
-		ProcessorChange result= new ProcessorChange(getName());
+		CompositeChange result= new CompositeChange(getName());
 		result.addAll((Change[]) changes.toArray(new Change[changes.size()]));
 		return result;
 	}
@@ -136,6 +155,8 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	 *       requested type.</li>
 	 *   <li>the request is delegated to the super class.</li>
 	 * </ol>
+	 * 
+	 * @param clazz the adapter class to look up
 	 * 
 	 * @return the requested adapter or <code>null</code>if no adapter
 	 *  exists. 

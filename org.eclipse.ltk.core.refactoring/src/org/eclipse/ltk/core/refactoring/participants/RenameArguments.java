@@ -13,7 +13,7 @@ package org.eclipse.ltk.core.refactoring.participants;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
- * Rename arguments describes the data that a processor
+ * Rename arguments describe the data that a processor
  * provides to its rename participants.
  * 
  * @since 3.0

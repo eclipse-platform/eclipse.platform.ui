@@ -188,7 +188,7 @@ public class RefactoringStatusEntry {
 	/**
 	 * Returns whether the entry represents a fatal error or not.
 	 * 
-	 * @return <code>true</code> iff (severity ==<code>RefactoringStatus.FATAL</code>)
+	 * @return <code>true</code> if (severity ==<code>RefactoringStatus.FATAL</code>)
 	 */
 	public boolean isFatalError() {
 		return fSeverity == RefactoringStatus.FATAL;
@@ -197,7 +197,7 @@ public class RefactoringStatusEntry {
 	/**
 	 * Returns whether the entry represents an error or not.
 	 * 
-	 * @return <code>true</code> iff (severity ==<code>RefactoringStatus.ERROR</code>).
+	 * @return <code>true</code> if (severity ==<code>RefactoringStatus.ERROR</code>).
 	 */
 	public boolean isError() {
 		return fSeverity == RefactoringStatus.ERROR;
@@ -206,7 +206,7 @@ public class RefactoringStatusEntry {
 	/**
 	 * Returns whether the entry represents a warning or not.
 	 * 
-	 * @return <code>true</code> iff (severity ==<code>RefactoringStatus.WARNING</code>).
+	 * @return <code>true</code> if (severity ==<code>RefactoringStatus.WARNING</code>).
 	 */
 	public boolean isWarning() {
 		return fSeverity == RefactoringStatus.WARNING;
@@ -215,7 +215,7 @@ public class RefactoringStatusEntry {
 	/**
 	 * Returns whether the entry represents an information or not.
 	 * 
-	 * @return <code>true</code> iff (severity ==<code>RefactoringStatus.INFO</code>).
+	 * @return <code>true</code> if (severity ==<code>RefactoringStatus.INFO</code>).
 	 */
 	public boolean isInfo() {
 		return fSeverity == RefactoringStatus.INFO;

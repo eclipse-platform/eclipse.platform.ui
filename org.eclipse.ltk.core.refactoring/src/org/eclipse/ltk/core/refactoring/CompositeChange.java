@@ -321,25 +321,9 @@ public class CompositeChange extends Change {
 	 *  that got executed.
 	 * 
 	 * @return the undo change
-	 * 
-	 * @throws CoreException if an undo change can't be created
 	 */
 	protected Change createUndoChange(Change[] childUndos) {
 		return new CompositeChange(getName(), childUndos);
-	}
-	
-	/**
-	 * This method is a framework internal method and shouldn't 
-	 * therefore not be overridden or extended by normal clients.
-	 * 
-	 * @param child the child change to be performed
-	 * @param pm a progress monitor to report progress
-	 * 
-	 * @return <code>true</code> if the change can be performed;
-	 *  other <code>false</code> is returned 
-	 */
-	protected boolean canPerformChange(Change child, IProgressMonitor pm) {
-		return true;
 	}
 	
 	/**

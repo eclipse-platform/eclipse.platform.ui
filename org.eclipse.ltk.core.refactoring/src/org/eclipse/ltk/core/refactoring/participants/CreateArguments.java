@@ -11,7 +11,7 @@
 package org.eclipse.ltk.core.refactoring.participants;
 
 /**
- * Create arguments describes the data that a processor 
+ * Create arguments describe the data that a processor 
  * provides to its create participants.
  *  
  * @since 3.0

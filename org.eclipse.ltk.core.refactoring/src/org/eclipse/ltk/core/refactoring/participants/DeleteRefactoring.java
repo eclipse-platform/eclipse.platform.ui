@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
@@ -29,7 +27,7 @@ public class DeleteRefactoring extends ProcessorBasedRefactoring {
 	 * 
 	 * @param processor the delete processor
 	 */
-	public DeleteRefactoring(DeleteProcessor processor) throws CoreException {
+	public DeleteRefactoring(DeleteProcessor processor) {
 		Assert.isNotNull(processor);
 		fProcessor= processor;
 	}

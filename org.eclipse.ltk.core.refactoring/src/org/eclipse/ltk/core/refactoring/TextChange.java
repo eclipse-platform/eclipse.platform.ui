@@ -40,8 +40,8 @@ import org.eclipse.ltk.internal.core.refactoring.Changes;
  * A text change is a special change object that applies a {@link TextEdit
  * text edit tree} to a document. The text change manages the text edit tree. 
  * Access to the document must be provided by concrete subclasses via the method
- * {@link #aquireDocument(IProgressMonitor) aquireDocument}, {@link
- * #commitDocument(IDocument document, IProgressMonitor pm) commitDocument}, and
+ * {@link #acquireDocument(IProgressMonitor) aquireDocument}, 
+ * {@link #commit(IDocument document, IProgressMonitor pm) commitDocument}, and
  * {@link #releaseDocument(IDocument, IProgressMonitor) releaseDocument}.
  * <p>
  * A text change offers the ability to access the original content of
@@ -187,7 +187,7 @@ public abstract class TextChange extends Change {
 	 * </p>
 	 * 
 	 * @param type the text type. If <code>null</code> is passed the text type is 
-	 *  resetted to the default text type <code>txt</code>.
+	 *  reseted to the default text type <code>txt</code>.
 	 */
 	public void setTextType(String type) {
 		if (type == null)
@@ -264,8 +264,8 @@ public abstract class TextChange extends Change {
 	}
 	
 	/**
-	 * Aquires a reference to the document to be changed by this text
-	 * change. A document aquired by this call <em>MUST</em> be released
+	 * Acquires a reference to the document to be changed by this text
+	 * change. A document acquired by this call <em>MUST</em> be released
 	 * via a call to {@link #releaseDocument(IDocument, IProgressMonitor)}.
 	 * <p>
 	 * The method <code>releaseDocument</code> must be call as many times as 
@@ -276,12 +276,12 @@ public abstract class TextChange extends Change {
 	 * 
 	 * @return a reference to the document to be changed
 	 * 
-	 * @throws CoreException if the document can't be aquired
+	 * @throws CoreException if the document can't be acquired
 	 */
-	protected abstract IDocument aquireDocument(IProgressMonitor pm) throws CoreException;
+	protected abstract IDocument acquireDocument(IProgressMonitor pm) throws CoreException;
 	
 	/**
-	 * Commits the document aquired via a call to {@link #aquireDocument(IProgressMonitor)
+	 * Commits the document acquired via a call to {@link #acquireDocument(IProgressMonitor)
 	 * aquireDocument}. It is up to the implementors of this method to decide what committing
 	 * a document means. Typically, the content of the document is written back to the file
 	 * system.
@@ -298,7 +298,7 @@ public abstract class TextChange extends Change {
 	protected abstract void commit(IDocument document, IProgressMonitor pm) throws CoreException;
 	
 	/**
-	 * Releases the document aquired via a call to {@link #aquireDocument(IProgressMonitor)
+	 * Releases the document acquired via a call to {@link #acquireDocument(IProgressMonitor)
 	 * aquireDocument}.
 	 * 
 	 * @param document the document to release
@@ -328,7 +328,7 @@ public abstract class TextChange extends Change {
 		pm.beginTask("", 3); //$NON-NLS-1$
 		IDocument document= null;
 		try {
-			document= aquireDocument(new SubProgressMonitor(pm, 1));
+			document= acquireDocument(new SubProgressMonitor(pm, 1));
 			TextEditProcessor processor= createTextEditProcessor(document, TextEdit.CREATE_UNDO, false);
 			UndoEdit undo= processor.performEdits();
 			commit(document, new SubProgressMonitor(pm, 1));
@@ -384,14 +384,14 @@ public abstract class TextChange extends Change {
 	 * @return the current content of the text change clipped to a region
 	 *  determined by the given parameters.
 	 * 
-	 * @throws CoreException
+	 * @throws CoreException if an exception occurs while accessing the current content
 	 */
-	public String getCurrentContent(IRegion region, boolean expandRegionToFullLine, int surroundLines) throws CoreException {
+	public String getCurrentContent(IRegion region, boolean expandRegionToFullLine, int surroundingLines) throws CoreException {
 		Assert.isNotNull(region);
-		Assert.isTrue(surroundLines >= 0);
+		Assert.isTrue(surroundingLines >= 0);
 		IDocument document= getDocument();
 		Assert.isTrue(document.getLength() >= region.getOffset() + region.getLength());
-		return getContent(document, region, expandRegionToFullLine, surroundLines);
+		return getContent(document, region, expandRegionToFullLine, surroundingLines);
 	}
 
 	//---- Method to access the preview content of the text change ---------
@@ -441,7 +441,7 @@ public abstract class TextChange extends Change {
 	
 	/**
 	 * Returns the edits that were executed during preview generation
-	 * instead of the given array of orignial edits. The method requires 
+	 * instead of the given array of original edits. The method requires 
 	 * that <code>setKeepPreviewEdits</code> is set to <code>true</code> 
 	 * and that a preview has been requested via one of the <code>
 	 * getPreview*</code> methods.
@@ -450,7 +450,7 @@ public abstract class TextChange extends Change {
 	 * is managed by this text change.
 	 * </p>
 	 * 
-	 * @param original an array of original edits managed by this text
+	 * @param originals an array of original edits managed by this text
 	 *  change
 	 * 
 	 * @return an array of edits containing the corresponding edits 
@@ -498,7 +498,7 @@ public abstract class TextChange extends Change {
 	
 	/**
 	 * Returns a preview of the text change clipped to a specific region.
-	 * The preview is created by appying the text edits managed by the
+	 * The preview is created by applying the text edits managed by the
 	 * given array of {@link TextEditChangeGroup text edit change groups}. 
 	 * The region is determined as follows:
 	 * <ul>
@@ -516,6 +516,8 @@ public abstract class TextChange extends Change {
 	 *   </li>
 	 * </ul> 
 	 * 
+	 * @param changeGroups a set of change groups for which a preview is to be
+	 *  generated
 	 * @param region the starting region for the clipping
 	 * @param expandRegionToFullLine if <code>true</code> is passed the region
 	 *  is extended to cover full lines
@@ -526,15 +528,15 @@ public abstract class TextChange extends Change {
 	 * @return the current content of the text change clipped to a region
 	 *  determined by the given parameters.
 	 * 
-	 * @throws CoreException
+	 * @throws CoreException if an exception occurs while generating the preview
 	 * 
 	 * @see #getCurrentContent(IRegion, boolean, int)
 	 */
-	public String getPreviewContent(TextEditChangeGroup[] changes, IRegion region, boolean expandRegionToFullLine, int surroundingLines) throws CoreException {
-		IRegion currentRegion= getRegion(changes);
+	public String getPreviewContent(TextEditChangeGroup[] changeGroups, IRegion region, boolean expandRegionToFullLine, int surroundingLines) throws CoreException {
+		IRegion currentRegion= getRegion(changeGroups);
 		Assert.isTrue(region.getOffset() <= currentRegion.getOffset() && 
 			currentRegion.getOffset() + currentRegion.getLength() <= region.getOffset() + region.getLength());
-		PreviewAndRegion result= getPreviewDocument(changes);
+		PreviewAndRegion result= getPreviewDocument(changeGroups);
 		int delta= result.region.getLength() - currentRegion.getLength();
 		return getContent(result.document, new Region(region.getOffset(), region.getLength() + delta), expandRegionToFullLine, surroundingLines);
 		
@@ -615,7 +617,7 @@ public abstract class TextChange extends Change {
 	private IDocument getDocument() throws CoreException {
 		IDocument result= null;
 		try{
-			result= aquireDocument(new NullProgressMonitor());
+			result= acquireDocument(new NullProgressMonitor());
 		} finally {
 			if (result != null)
 				releaseDocument(result, new NullProgressMonitor());

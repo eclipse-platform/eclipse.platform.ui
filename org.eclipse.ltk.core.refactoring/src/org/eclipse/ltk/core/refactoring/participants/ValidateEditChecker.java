@@ -28,6 +28,8 @@ import org.eclipse.ltk.internal.core.refactoring.Resources;
  * A validate edit checker is a shared checker to collect files
  * to be validated all at once.
  * 
+ * @see org.eclipse.core.resources.IWorkspace#validateEdit(org.eclipse.core.resources.IFile[], java.lang.Object)
+ * 
  * @since 3.0
  */
 public class ValidateEditChecker implements IConditionChecker {

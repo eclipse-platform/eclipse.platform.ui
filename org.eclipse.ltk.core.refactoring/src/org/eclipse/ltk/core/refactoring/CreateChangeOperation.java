@@ -76,9 +76,7 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 	 *  decide whether the condition check is interpreted as passed or not. The condition 
 	 *  check is considered to be passed if the refactoring status's severity is less or 
 	 *  equal than the given severity value. The given value must be smaller than {@link 
-	 *  RefactoringStatus.FATAL}.
-	 * 
-	 * @see #setCheckPassedSeverity(int)
+	 *  RefactoringStatus#FATAL}.
 	 */
 	public CreateChangeOperation(CheckConditionsOperation operation, int checkPassedSeverity) {
 		Assert.isNotNull(operation);
@@ -153,7 +151,7 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 	 * Returns the condition checking style as set to the {@link CheckConditionsOperation}.
 	 * If no condition checking operation is provided (e.g. the change is created directly
 	 * by calling {@link Refactoring#createChange(IProgressMonitor)} then {@link 
-	 * CheckConditionsOperation.NONE} is returned.
+	 * CheckConditionsOperation#NONE} is returned.
 	 * 
 	 * @return the condition checking style
 	 */

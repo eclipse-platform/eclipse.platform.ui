@@ -11,20 +11,18 @@
 package org.eclipse.ltk.core.refactoring.participants;
 
 /**
- * A rename processor is a special refactoring processor to support 
- * participating in rename refactorings. A rename processor is responsible
- * for actual renaming the element to be refactored. Additionally the
- * processor can update reference which are part of the same domain as the 
- * element to be renamed. For example a processor to rename a Java field 
- * can also update all references to that field found in Java files.
+ * A special processor that performs move operations. A move processor is
+ * responsible for actually moving the elements. Additionally it may update
+ * other resources of the same domain which are affected by the move operation.
+ * For example, a Java type move processor also updates all references in Java
+ * code to the type to be moved.
  * <p>
- * A rename processor is also responsible to load participants that want
- * to participate in a rename refactoring.
+ * The main purpose of this class is type safety for the generic move
+ * refactoring
  * </p>
  * 
  * @since 3.0
  */
 public abstract class MoveProcessor extends RefactoringProcessor {
 
-	
 }

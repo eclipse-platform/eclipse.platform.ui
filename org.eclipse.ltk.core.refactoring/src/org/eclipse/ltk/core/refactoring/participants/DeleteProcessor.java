@@ -10,7 +10,18 @@
  ******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
-
+/**
+ * A special processor that performs delete operations. A delete processor is
+ * responsible for actually deleting the elements. Additionally it may update
+ * other resources of the same domain which are affected by the delete
+ * operation. For example, a Java delete processor could also delete additional
+ * Java elements which refer to the elements to be deleted.
+ * <p>
+ * The main purpose of this class is type safety for the generic delete
+ * refactoring
+ * </p>
+ * 
+ * @since 3.0
+ */
 public abstract class DeleteProcessor extends RefactoringProcessor {
-
 }

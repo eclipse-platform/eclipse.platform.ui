@@ -77,7 +77,7 @@ public class DocumentChange extends TextChange {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected IDocument aquireDocument(IProgressMonitor pm) throws CoreException {
+	protected IDocument acquireDocument(IProgressMonitor pm) throws CoreException {
 		return fDocument;
 	}
 	

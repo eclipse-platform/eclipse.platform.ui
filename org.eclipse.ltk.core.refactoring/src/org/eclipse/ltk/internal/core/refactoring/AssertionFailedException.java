@@ -27,7 +27,10 @@ class AssertionFailedException extends RuntimeException {
 	public AssertionFailedException() {
 		super();
 	}
-	/** Constructs a new exception with the given message.
+	/** 
+	 * Constructs a new exception with the given message.
+	 * 
+	 * @param detail the detailed message
 	 */
 	public AssertionFailedException(String detail) {
 		super(detail);
