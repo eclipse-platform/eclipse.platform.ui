@@ -19,7 +19,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -511,11 +511,10 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 * Checks whether the given file is synchronized with the the local file system. 
 	 * If the file has been changed, a <code>CoreException</code> is thrown.
 	 * 
-	 * @param file the file to check
 	 * @exception CoreException if file has been changed on the file system
 	 */
 	private void checkSynchronizationState() throws CoreException {
-		if (!fFile.isSynchronized(IFile.DEPTH_ZERO)) {
+		if (!fFile.isSynchronized(IResource.DEPTH_ZERO)) {
 			Status status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IResourceStatus.OUT_OF_SYNC_LOCAL, FileBuffersMessages.getString("FileBuffer.error.outOfSync"), null);  //$NON-NLS-1$
 			throw new CoreException(status);
 		}

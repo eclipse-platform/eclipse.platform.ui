@@ -424,7 +424,6 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	 * Checks whether the given file is synchronized with the the local file system. 
 	 * If the file has been changed, a <code>CoreException</code> is thrown.
 	 * 
-	 * @param file the file to check
 	 * @exception CoreException if file has been changed on the file system
 	 */
 	private void checkSynchronizationState() throws CoreException {

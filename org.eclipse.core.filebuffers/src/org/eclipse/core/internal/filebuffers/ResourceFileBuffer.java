@@ -49,7 +49,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 			 * Execute the change.
 			 * Subclass responsibility.
 			 * 
-			 * @exception an exception in case of error
+			 * @exception Exception in case of error
 			 */
 			protected void execute() throws Exception {
 			}
@@ -191,7 +191,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	/** The file synchronizer. */
 	protected FileSynchronizer fFileSynchronizer;
 	/** The time stamp at which this buffer synchronized with the underlying file. */
-	protected long fSynchronizationStamp= IFile.NULL_STAMP;
+	protected long fSynchronizationStamp= IResource.NULL_STAMP;
 	/** How often the synchronization context has been requested */
 	protected int fSynchronizationContextCount;
 	/** The text file buffer manager */
@@ -371,10 +371,12 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	
 	/**
 	 * Refreshes the given  file.
+	 * 
+	 * @param monitor the progress monitor
 	 */
 	protected void refreshFile(IProgressMonitor monitor) {
 		try {
-			fFile.refreshLocal(IFile.DEPTH_INFINITE, monitor);
+			fFile.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (OperationCanceledException x) {
 		} catch (CoreException x) {
 			handleCoreException(x);
@@ -386,7 +388,6 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	 * are written to the plug-in log.
 	 *
 	 * @param exception the exception to be logged
-	 * @param message the message to be logged
 	 */
 	protected void handleCoreException(CoreException exception) {
 		ILog log= FileBuffersPlugin.getDefault().getLog();

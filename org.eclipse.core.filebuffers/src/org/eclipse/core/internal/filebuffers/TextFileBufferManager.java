@@ -225,6 +225,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * directly executed.
 	 * 
 	 * @param runnable the runnable to be executed
+	 * @param requestSynchronizationContext <code>true</code> if the synchronization context is requested for the execution
 	 */
 	public void execute(Runnable runnable, boolean requestSynchronizationContext) {
 		if (requestSynchronizationContext && fSynchronizationContext != null)

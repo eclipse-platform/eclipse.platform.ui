@@ -12,7 +12,7 @@ package org.eclipse.core.internal.filebuffers;
 
 import java.io.File;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
@@ -38,7 +38,7 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	/** The status of this element */
 	protected IStatus fStatus;
 	/** The time stamp at which this buffer synchronized with the underlying file. */
-	protected long fSynchronizationStamp= IFile.NULL_STAMP;
+	protected long fSynchronizationStamp= IResource.NULL_STAMP;
 	/** How often the synchronization context has been requested */
 	protected int fSynchronizationContextCount;
 	/** The text file buffer manager */
@@ -180,7 +180,6 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	 * are written to the plug-in log.
 	 *
 	 * @param exception the exception to be logged
-	 * @param message the message to be logged
 	 */
 	protected void handleCoreException(CoreException exception) {
 		ILog log= FileBuffersPlugin.getDefault().getLog();

@@ -71,7 +71,7 @@ public class ContainerGenerator {
 		return root.getProject(projectName);
 	}
 
-	public IContainer generateContainer(IProgressMonitor monitor) throws CoreException {
+	public IContainer generateContainer(IProgressMonitor progressMonitor) throws CoreException {
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				monitor.beginTask(FileBuffersMessages.getString("ContainerGenerator.task.creatingContainer"), 1000 * fContainerFullPath.segmentCount()); //$NON-NLS-1$
@@ -124,7 +124,7 @@ public class ContainerGenerator {
 			existingParentPath= existingParentPath.removeLastSegments(1);
 		
 		IResource schedulingRule= root.findMember(existingParentPath);
-		fWorkspace.run(runnable, schedulingRule, IWorkspace.AVOID_UPDATE, monitor);
+		fWorkspace.run(runnable, schedulingRule, IWorkspace.AVOID_UPDATE, progressMonitor);
 		return fContainer;
 	}
 }
