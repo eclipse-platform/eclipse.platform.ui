@@ -13,13 +13,18 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.presentations.IPartMenu;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
@@ -27,10 +32,15 @@ public class PresentableViewPart implements IPresentablePart {
 
     private final List listeners = new ArrayList();
  
-
     private ViewPane pane;
     
     private boolean busy = false;
+    
+    private IPartMenu viewMenu = new IPartMenu() {
+		public void showMenu(Point location) {
+			pane.showViewMenu(location);
+		}
+    };
 
     private final IPropertyListener propertyListenerProxy = new IPropertyListener() {
 
@@ -52,17 +62,20 @@ public class PresentableViewPart implements IPresentablePart {
         				/* (non-Javadoc)
 						 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 						 */
-						public void propertyChange(PropertyChangeEvent event) {
-							
+						public void propertyChange(PropertyChangeEvent event) {							
 							Boolean state = (Boolean) event.getNewValue();
 							PresentableViewPart.this.busy = state.booleanValue();
-							 for (int i = 0; i < listeners.size(); i++)
-				                ((IPropertyListener) listeners.get(i)).propertyChanged(
-				                        PresentableViewPart.this, IPresentablePart.PROP_BUSY);
+							firePropertyChange(IPresentablePart.PROP_BUSY);
 						}
         			});
     }
 
+    public void firePropertyChange(int propertyId) {
+		 for (int i = 0; i < listeners.size(); i++)
+            ((IPropertyListener) listeners.get(i)).propertyChanged(
+                    this, propertyId);    	
+    }
+    
     public void addPropertyListener(final IPropertyListener listener) {
         if (listeners.isEmpty())
                 getViewReference().addPropertyListener(propertyListenerProxy);
@@ -121,6 +134,43 @@ public class PresentableViewPart implements IPresentablePart {
 	 */
 	public boolean isBusy() {
 		return busy;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.IPresentablePart#getToolBar()
+	 */
+	public Control getToolBar() {
+		
+		ToolBarManager toolbarManager = pane.getToolBarManager();
+		
+		if (toolbarManager == null) {
+			return null;
+		}
+		
+		ToolBar control = toolbarManager.getControl();
+		
+		if (control == null || control.isDisposed() ) {
+			return null;
+		}
+		
+		if (control.getItemCount() == 0) {
+			control.setVisible(false);
+			return null;
+		}
+		
+		control.setVisible(true);
+		return control;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.IPresentablePart#getPartMenu()
+	 */
+	public IPartMenu getMenu() {
+		if (pane.hasViewMenu()) {
+			return viewMenu;
+		}
+		
+		return null;
 	}
 	
 	

@@ -73,9 +73,15 @@ public abstract class StackPresentation {
 	public abstract void dispose();
 
 	/**
-	 * This is invoked to cause the presentation to become active. This
-	 * is typically called as a result of focus moving to one of the parts
-	 * in this presentation, so it should not change the part's focus.
+	 * This is invoked notify the presentation that one of its parts
+	 * has gained or lost keyboard focus. It should not change the part's focus.
+	 * Only one presentation may be active at a time.
+	 * <p>
+	 * This method relates specifically to keyboard focus, and should
+	 * not be confused with the notion of an "active" editor (which would
+	 * be the editor that most recently had focus if no editor currently
+	 * has focus). 
+	 * </p> 
 	 * 
 	 * @param isActive
 	 */
@@ -162,4 +168,15 @@ public abstract class StackPresentation {
 	 * a drop target in this location.
 	 */
 	public abstract StackDropResult dragOver(Control currentControl, Point location);
+	
+	/**
+	 * Instructs the presentation to display the system menu
+	 *
+	 */
+	public abstract void showSystemMenu();
+
+	/**
+	 * 
+	 */
+	public abstract void showPaneMenu();
 }

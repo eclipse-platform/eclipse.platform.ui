@@ -425,4 +425,20 @@ public class NativeStackPresentation extends StackPresentation {
 //			tabFolder.indexOf(tabUnderPointer));
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.StackPresentation#showSystemMenu()
+	 */
+	public void showSystemMenu() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.StackPresentation#showPaneMenu()
+	 */
+	public void showPaneMenu() {
+		// TODO Auto-generated method stub
+		
+	}
 }

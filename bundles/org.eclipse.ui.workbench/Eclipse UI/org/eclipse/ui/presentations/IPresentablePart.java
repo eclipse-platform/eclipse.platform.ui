@@ -12,7 +12,10 @@ package org.eclipse.ui.presentations;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * This is a skin's interface to the contents of a view or editor. Note that this
@@ -26,10 +29,36 @@ import org.eclipse.ui.IPropertyListener;
 public interface IPresentablePart {
 	
 	/**
+	 * The property id for <code>isDirty</code>.
+	 */
+	public static final int PROP_DIRTY = IEditorPart.PROP_DIRTY;
+
+	/**
+	 * The property id for <code>getEditorInput</code>.
+	 */
+	public static final int PROP_INPUT = IEditorPart.PROP_INPUT;
+
+	/**
+	 * The property id for <code>getTitle</code>, <code>getTitleImage</code>
+	 * and <code>getTitleToolTip</code>.
+	 */
+	public static final int PROP_TITLE = IWorkbenchPart.PROP_TITLE;
+	
+	/**
 	 * The property id for <code>isBusy</code>.
 	 */
 	public static final int PROP_BUSY = 0x92;
 		
+	/**
+	 * The property id for toolbar changes
+	 */
+	public static final int PROP_TOOLBAR = 0x93;
+	
+	/**
+	 * The property id for pane menu changes
+	 */
+	public static final int PROP_PANE_MENU = 0x302;
+	
 	/**
 	 * Sets the bounds of this part.
 	 *  
@@ -58,9 +87,10 @@ public interface IPresentablePart {
 	 * <p>
 	 * The properties ids are as follows:
 	 * <ul>
-	 *   <li><code>IWorkbenchPart.PROP_TITLE</code> </li>
-	 *   <li><code>IEditorPart.PROP_INPUT</code> </li>
-	 *   <li><code>IEditorPart.PROP_DIRTY</code> </li>
+	 *   <li><code>PROP_TITLE</code> </li>
+	 *   <li><code>PROP_INPUT</code> </li>
+	 *   <li><code>PROP_DIRTY</code> </li>
+	 *   <li><code>PROP_TOOLBAR</code> </li>
 	 * </ul>
 	 * </p>
 	 *
@@ -138,5 +168,20 @@ public interface IPresentablePart {
 	 * @return boolean true if busy
 	 */
 	public boolean isBusy();
+
+	/**
+	 * Returns the local toolbar for this part, or null if this part does not
+	 * have a local toolbar. Callers must not dispose or downcast the return value.
+	 * 
+	 * @return the local toolbar for the part, or null if none
+	 */
+	public Control getToolBar();
+	
+	/**
+	 * Returns the menu for this part or null if none
+	 * 
+	 * @return the menu for this part or null if none
+	 */
+	public IPartMenu getMenu();
 	
 }

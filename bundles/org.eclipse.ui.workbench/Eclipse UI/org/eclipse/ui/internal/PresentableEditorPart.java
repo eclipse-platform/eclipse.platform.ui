@@ -15,8 +15,10 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.presentations.IPartMenu;
 import org.eclipse.ui.presentations.IPresentablePart;
 
 public class PresentableEditorPart implements IPresentablePart {
@@ -97,5 +99,19 @@ public class PresentableEditorPart implements IPresentablePart {
 	public boolean isBusy() {
 		// editors do not support busy currently
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.IPresentablePart#getToolBar()
+	 */
+	public Control getToolBar() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.IPresentablePart#getPartMenu()
+	 */
+	public IPartMenu getMenu() {
+		return null;
 	}
 }

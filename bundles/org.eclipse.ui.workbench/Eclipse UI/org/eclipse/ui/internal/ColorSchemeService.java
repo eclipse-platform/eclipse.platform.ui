@@ -132,10 +132,13 @@ public class ColorSchemeService {
         c[0] = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START);
         c[1] = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END);
 
+        // Note: This is currently being overridden in PartTabFolderPresentation
         percent[0] = theme.getInt(IWorkbenchThemeConstants.INACTIVE_TAB_PERCENT);
+        // Note: This is currently being overridden in PartTabFolderPresentation
         vertical = theme.getBoolean(IWorkbenchThemeConstants.INACTIVE_TAB_VERTICAL);
-        
-        control.setBackground(c, percent, vertical);		
+	        
+
+        presentation.setBackgroundColors(c[0], c[1], c[1]);
 
         if (presentation.isActive()) {                
 			control.setSelectionForeground(colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR));

@@ -50,6 +50,16 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.StackDropResult;
 import org.eclipse.ui.presentations.StackPresentation;
 
+/**
+ * Manages a set of ViewPanes that are docked into the workbench window. The container for a PartTabFolder
+ * is always a PartSashContainer (or null), and its children are always either PartPlaceholders or PartPanes.
+ * 
+ * TODO: write a common base class for EditorWorkbook and PartTabFolder.
+ * TODO: remove the LayoutPart superclass. All code can either refer to PartPane, 
+ * PartPlaceholder, PartSashContainer, or the common base class for EditorWorkbook and PartTabFolder.
+ * The frequent downcasting is due to the fact that much of the code tries to use LayoutPart 
+ * or ILayoutContainer references for many different purposes.
+ */
 public class PartTabFolder extends LayoutPart implements ILayoutContainer {
 
     private boolean active = false;
@@ -589,20 +599,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
                 .performDrag(part, DragUtil.getDisplayBounds(part.getControl()));
     }
 
-    /**
-     * Returns the current presentable part, or null if there is no current
-     * selection
-     * 
-     * @return the current presentable part, or null if there is no current
-     *         selection
-     */
-    /*
-     * not used private IPresentablePart getCurrentPresentablePart() { if
-     * (current != null) { return current.getPresentablePart(); }
-     * 
-     * return null; }
-     */
-
     private void presentationSelectionChanged(IPresentablePart newSelection) {
         setSelection(getLayoutPart(newSelection));
 
@@ -973,4 +969,15 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
 	        }
         }
     }
+
+	/**
+	 * 
+	 */
+	public void showSystemMenu() {
+		getPresentation().showSystemMenu();
+	}
+	
+	public void showPaneMenu() {
+		getPresentation().showPaneMenu();
+	}
 }
