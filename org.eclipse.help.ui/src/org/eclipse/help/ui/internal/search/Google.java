@@ -61,7 +61,7 @@ public class Google implements ISearchEngine {
         }
 
         public String getLabel() {
-            return "Google search hits. Click to see them.";
+            return "Google search results";
         }
 
         public float getScore() {

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -24,6 +25,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -284,5 +286,11 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	}
 	void scrollToBeginning() {
 		innerForm.setOrigin(0, 0);
+	}
+
+	public IAction getGlobalAction(String id) {
+		if (id.equals(ActionFactory.COPY.getId()))
+			return parent.getCopyAction();
+		return null;
 	}
 }

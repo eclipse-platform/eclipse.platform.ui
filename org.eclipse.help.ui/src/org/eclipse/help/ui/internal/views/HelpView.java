@@ -97,7 +97,7 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 		init(site);
 		reusableHelpPart = new ReusableHelpPart(site.getWorkbenchWindow(), getHelpPartStyle());
 		IActionBars actionBars = site.getActionBars();
-		reusableHelpPart.init(actionBars.getToolBarManager(), actionBars.getStatusLineManager());
+		reusableHelpPart.init(actionBars, actionBars.getToolBarManager(), actionBars.getStatusLineManager());
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		IPartService service = window.getPartService();

@@ -13,6 +13,7 @@ package org.eclipse.help.ui.internal.views;
 import org.eclipse.help.*;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -22,6 +23,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.internal.forms.widgets.FormsResources;
@@ -281,5 +283,11 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 	public void setFocus() {
 		if (treeViewer != null)
 			treeViewer.getTree().setFocus();
+	}
+
+	public IAction getGlobalAction(String id) {
+		if (id.equals(ActionFactory.COPY.getId()))
+			return parent.getCopyAction();
+		return null;
 	}
 }

@@ -18,11 +18,13 @@ import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.federated.*;
 import org.eclipse.help.search.*;
 import org.eclipse.help.ui.internal.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -451,5 +453,11 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 
 	public void setFocus() {
 		searchWordCombo.setFocus();
+	}
+
+	public IAction getGlobalAction(String id) {
+		if (id.equals(ActionFactory.COPY.getId()))
+			return parent.getCopyAction();
+		return null;
 	}
 }

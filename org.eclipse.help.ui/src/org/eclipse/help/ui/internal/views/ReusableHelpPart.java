@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
+import java.util.*;
 import java.util.ArrayList;
 
 import org.eclipse.help.*;
@@ -25,6 +26,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
 
@@ -54,6 +56,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 
 	private IToolBarManager toolBarManager;
 	private IStatusLineManager statusLineManager;
+	private IActionBars actionBars;
 	
 	private abstract class BusyRunAction extends Action {
 		public BusyRunAction(String name) {
@@ -113,7 +116,8 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		private int horizontalMargin = 0;
 
 		private String text;
-		private SubToolBarManager toolBarManager;
+		private SubActionBars bars;
+		private IToolBarManager toolBarManager;
 		protected ArrayList partRecs;
 		private int nflexible;
 		private Control focusControl;
@@ -122,10 +126,21 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			this.id = id;
 			this.text = text;
 			partRecs = new ArrayList();
-			toolBarManager = new SubToolBarManager(ReusableHelpPart.this.toolBarManager);
+			if (ReusableHelpPart.this.actionBars!=null) {
+				bars = new SubActionBars(ReusableHelpPart.this.actionBars);
+				toolBarManager = bars.getToolBarManager();
+			}
+			else
+				toolBarManager = new SubToolBarManager(ReusableHelpPart.this.toolBarManager);
 		}
 		public void dispose() {
-			toolBarManager.disposeManager();
+			if (bars!=null) {
+				bars.dispose();
+				bars = null;
+				toolBarManager = null;
+			}
+			else
+				((SubToolBarManager)toolBarManager).disposeManager();
 			partRecs = null;
 		}
 		public void setVerticalSpacing(int value) {
@@ -192,14 +207,44 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		}
 
 		public void setVisible(boolean visible) {
+			if (bars!=null) bars.clearGlobalActionHandlers();
 			for (int i = 0; i < partRecs.size(); i++) {
 				PartRec rec = (PartRec) partRecs.get(i);
 				if (visible) {
 					createRecPart(rec);
+					hookGlobalAction(ActionFactory.PRINT.getId(), rec.part);
+					hookGlobalAction(ActionFactory.COPY.getId(), rec.part);
 				}
 				rec.part.setVisible(visible);
-				toolBarManager.setVisible(visible);
 			}
+			if (actionBars!=null) {
+				actionBars.clearGlobalActionHandlers();
+				if (visible) {
+					Map handlers = bars.getGlobalActionHandlers();
+					if (handlers!=null) {
+						Set keys = handlers.keySet();
+						for (Iterator iter=keys.iterator(); iter.hasNext();) {
+							String key = (String)iter.next();
+							actionBars.setGlobalActionHandler(key, (IAction)handlers.get(key));
+						}
+					}
+				}
+			}
+			if (bars!=null) {
+				if (visible)
+					bars.activate();
+				else
+					bars.deactivate();
+				bars.updateActionBars();
+			}
+			else
+				((SubToolBarManager)toolBarManager).setVisible(visible);			
+		}
+		private void hookGlobalAction(String id, IHelpPart part) {
+			if (bars==null) return;
+			IAction action = part.getGlobalAction(id);
+			if (action!=null)
+				bars.setGlobalActionHandler(id, action);
 		}
 		private void createRecPart(PartRec rec) throws SWTError {
 			if (rec.part == null) {
@@ -372,12 +417,14 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		pages.add(page);
 	}
 
-	public void init(IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
+	public void init(IActionBars bars, IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
+		this.actionBars = bars;
 		this.toolBarManager = toolBarManager;
 		this.statusLineManager = statusLineManager;
 		makeActions();
 		definePages();
 	}
+	
 	private void makeActions() {
 		backAction = new Action("back") { //$NON-NLS-1$
 			public void run() {
@@ -444,8 +491,10 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			HelpPartPage page = showPage(entry.getTarget());
 			mform.setInput(entry.getData());
 		}
-		else if (entry.getType()==HistoryEntry.URL)
-			showURL(entry.getTarget(), true);
+		else if (entry.getType()==HistoryEntry.URL) {
+			String relativeUrl = (String)entry.getData();
+			showURL(relativeUrl!=null?relativeUrl:entry.getTarget(), true);
+		}
 	}
 
 	public void createControl(Composite parent, FormToolkit toolkit) {
@@ -510,12 +559,14 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		}
 		return true;
 	}
+	/*
 	void addPageHistoryEntry(String id, Object data) {
 		if (!history.isBlocked()) {
 			history.addEntry(new HistoryEntry(HistoryEntry.PAGE, id, data));
 		}
 		updateNavigation();
 	}
+	*/
 	public HelpPartPage getCurrentPage() {
 		return currentPage;
 	}
@@ -525,7 +576,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 
 	void browserChanged(String url) {
 		if (!history.isBlocked()) {
-			history.addEntry(new HistoryEntry(HistoryEntry.URL, url, null));
+			history.addEntry(new HistoryEntry(HistoryEntry.URL, url, toRelativeURL(url)));
 		}
 		updateNavigation();
 	}
@@ -661,7 +712,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			showPage(IHelpUIConstants.HV_BROWSER_PAGE);
 			BrowserPart bpart = (BrowserPart)findPart(IHelpUIConstants.HV_BROWSER);
 			if (bpart!=null) {
-				bpart.showURL(url, toAbsoluteURL(url));
+				bpart.showURL(toAbsoluteURL(url));
 				return;
 			}
 		}
@@ -707,16 +758,27 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		return false;
 	}
 
-	private String toAbsoluteURL(String url) {
+	String toAbsoluteURL(String url) {
 		if (url==null || url.indexOf("://")!= -1) //$NON-NLS-1$
 			return url;
 		BaseHelpSystem.ensureWebappRunning();
-		String base = "http://" //$NON-NLS-1$
-				+ WebappManager.getHost() + ":" //$NON-NLS-1$
-				+ WebappManager.getPort() + "/help/nftopic"; //$NON-NLS-1$
+		String base = getBase();
 		return base + url;
 		//char sep = url.lastIndexOf('?')!= -1 ? '&':'?';
 		//return base + url+sep+"noframes=true"; //$NON-NLS-1$
+	}
+	
+	String toRelativeURL(String url) {
+		String base = getBase();
+		if (url.startsWith(base))
+			return url.substring(base.length());
+		return url;
+	}
+	
+	private String getBase() {
+		return "http://" //$NON-NLS-1$
+			+ WebappManager.getHost() + ":" //$NON-NLS-1$
+			+ WebappManager.getPort() + "/help/nftopic"; //$NON-NLS-1$
 	}
 
 	private void contextMenuAboutToShow(IMenuManager manager) {
@@ -759,6 +821,9 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		manager.add(copyAction);
 		copyAction.setTarget(text);
 		return true;
+	}
+	IAction getCopyAction() {
+		return copyAction;
 	}
 	private String getHref(Object target) {
 		if (target instanceof ISelectionProvider) {

@@ -12,12 +12,12 @@ package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.help.ui.internal.*;
-import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -31,8 +31,6 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private int lastProgress = -1;
 
 	private String url;
-
-	private String relativeUrl;
 
 	private Action showExternalAction;
 	private Action printAction;
@@ -49,6 +47,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 			public void changed(LocationEvent event) {
 				String url = event.location;
 				BrowserPart.this.parent.browserChanged(url);
+				BrowserPart.this.url = url;
 			}
 		});
 		browser.addProgressListener(new ProgressListener() {
@@ -87,10 +86,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 			public void run() {
 				BusyIndicator.showWhile(browser.getDisplay(), new Runnable() {
 					public void run() {
-						if (relativeUrl != null)
-							parent.showExternalURL(relativeUrl);
-						else
-							parent.showExternalURL(url);
+						parent.showExternalURL(parent.toRelativeURL(url));
 					}
 				});
 			}
@@ -100,6 +96,11 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				.getImageDescriptor(IHelpUIConstants.IMAGE_NW));
 		tbm.insertBefore("back", showExternalAction);
 		tbm.insertBefore("back", new Separator());
+		printAction = new Action(ActionFactory.PRINT.getId()) {
+			public void run() {
+				doPrint();
+			}
+		};
 	}
 
 	/*
@@ -145,12 +146,14 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 			browser.setFocus();
 	}
 
-	public void showURL(String relativeUrl, String url) {
+	public void showURL(String url) {
 		if (browser != null && url != null) {
 			browser.setUrl(url);
-			this.url = url;
-			this.relativeUrl = relativeUrl;
 		}
+	}
+	
+	private void doPrint() {
+		browser.execute("window.print();");
 	}
 
 	private boolean redirectLink(final String url) {
@@ -180,5 +183,11 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	 */
 	public boolean hasFocusControl(Control control) {
 		return browser.equals(control);
+	}
+
+	public IAction getGlobalAction(String id) {
+		if (id.equals(ActionFactory.PRINT.getId()))
+			return printAction;
+		return null;
 	}
 }

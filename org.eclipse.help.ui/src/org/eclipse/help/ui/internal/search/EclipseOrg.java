@@ -70,7 +70,7 @@ public class EclipseOrg implements ISearchEngine {
         }
 
         public String getLabel() {
-            return "Eclipse.org search hits. Click to see them.";
+            return "Eclipse.org search results";
         }
 
         public float getScore() {

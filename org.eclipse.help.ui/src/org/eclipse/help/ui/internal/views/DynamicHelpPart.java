@@ -17,10 +17,12 @@ import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.search.federated.IndexerJob;
 import org.eclipse.help.ui.internal.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -378,5 +380,11 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	 */
 	public boolean hasFocusControl(Control control) {
 		return searchResults.equals(control);
+	}
+
+	public IAction getGlobalAction(String id) {
+		if (id.equals(ActionFactory.COPY.getId()))
+			return parent.getCopyAction();
+		return null;
 	}
 }

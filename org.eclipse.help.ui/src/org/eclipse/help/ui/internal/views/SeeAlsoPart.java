@@ -12,9 +12,11 @@ package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
@@ -162,5 +164,11 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	 */
 	public boolean hasFocusControl(Control control) {
 		return text.equals(control);
+	}
+
+	public IAction getGlobalAction(String id) {
+		if (id.equals(ActionFactory.COPY.getId()))
+			return parent.getCopyAction();
+		return null;
 	}
 }
