@@ -605,7 +605,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 	private XmlElement findNextElementToFixAfter(XmlElement anElement, boolean aProcessChildsFlag) {
 		List tempChildNodes = null;
         
-		if(aProcessChildsFlag) {
+		if(aProcessChildsFlag && !anElement.isRootExternal()) {
 			tempChildNodes = anElement.getChildNodes();
 			if(tempChildNodes.size() > 0) {
 				return (XmlElement)tempChildNodes.get(0);
