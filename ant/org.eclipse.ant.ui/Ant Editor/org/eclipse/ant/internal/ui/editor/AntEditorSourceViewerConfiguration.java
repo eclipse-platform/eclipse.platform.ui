@@ -18,9 +18,7 @@ package org.eclipse.ant.internal.ui.editor;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
-import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.ColorManager;
 import org.eclipse.ant.internal.ui.editor.derived.HTMLTextPresenter;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormattingStrategy;
@@ -33,7 +31,6 @@ import org.eclipse.ant.internal.ui.editor.text.XMLAnnotationHover;
 import org.eclipse.ant.internal.ui.editor.text.XMLReconcilingStrategy;
 import org.eclipse.ant.internal.ui.editor.text.XMLTextHover;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IAutoEditStrategy;
@@ -88,28 +85,26 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 		fContentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 		fContentAssistant.setContentAssistProcessor(processor, AntEditorPartitionScanner.XML_TAG);
         fContentAssistant.setDocumentPartitioning(AntDocumentSetupParticipant.ANT_PARTITIONING);
-        
-		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
 		
-		String triggers= store.getString(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS);
+		String triggers= fPreferenceStore.getString(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS);
 		if (triggers != null) {
 			processor.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 		}
 				
-		fContentAssistant.enableAutoInsert(store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT));
-		fContentAssistant.enableAutoActivation(store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION));
-		fContentAssistant.setAutoActivationDelay(store.getInt(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY));
+		fContentAssistant.enableAutoInsert(fPreferenceStore.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT));
+		fContentAssistant.enableAutoActivation(fPreferenceStore.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION));
+		fContentAssistant.setAutoActivationDelay(fPreferenceStore.getInt(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY));
 		fContentAssistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
 		fContentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
 		fContentAssistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
 
 		ColorManager manager= ColorManager.getDefault();	
-		Color background= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);			
+		Color background= getColor(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);			
 		fContentAssistant.setContextInformationPopupBackground(background);
 		fContentAssistant.setContextSelectorBackground(background);
 		fContentAssistant.setProposalSelectorBackground(background);
 
-		Color foreground= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, manager);
+		Color foreground= getColor(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, manager);
 		fContentAssistant.setContextInformationPopupForeground(foreground);
 		fContentAssistant.setContextSelectorForeground(foreground);
 		fContentAssistant.setProposalSelectorForeground(foreground);
@@ -163,38 +158,37 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 		return fTextHover;
 	}
 
-	private Color getColor(IPreferenceStore store, String key, ColorManager manager) {
-		RGB rgb= PreferenceConverter.getColor(store, key);
+	private Color getColor(String key, ColorManager manager) {
+		RGB rgb= PreferenceConverter.getColor(fPreferenceStore, key);
 		return manager.getColor(rgb);
 	}
 	
 	protected void changeConfiguration(PropertyChangeEvent event) {
-		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
 		String p= event.getProperty();
 
 		ColorManager manager= ColorManager.getDefault();
 		if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION.equals(p)) {
-			boolean enabled= store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION);
+			boolean enabled= fPreferenceStore.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION);
 			fContentAssistant.enableAutoActivation(enabled);
 		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY.equals(p) && fContentAssistant != null) {
-			int delay= store.getInt(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY);
+			int delay= fPreferenceStore.getInt(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY);
 			fContentAssistant.setAutoActivationDelay(delay);
 		} else if (AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND.equals(p) && fContentAssistant != null) {
-			Color c= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, manager);
+			Color c= getColor(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, manager);
 			fContentAssistant.setProposalSelectorForeground(c);
 		} else if (AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND.equals(p) && fContentAssistant != null) {
-			Color c= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);
+			Color c= getColor(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);
 			fContentAssistant.setProposalSelectorBackground(c);
 		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT.equals(p) && fContentAssistant != null) {
-			boolean enabled= store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT);
+			boolean enabled= fPreferenceStore.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT);
 			fContentAssistant.enableAutoInsert(enabled);
 		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS.equals(p)) {
-			changeContentAssistProcessor(store);
+			changeContentAssistProcessor();
 		}
 	}
 	
-	private void changeContentAssistProcessor(IPreferenceStore store) {
-		String triggers= store.getString(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS);
+	private void changeContentAssistProcessor() {
+		String triggers= fPreferenceStore.getString(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS);
 		if (triggers != null) {
 			AntEditorCompletionProcessor cp= (AntEditorCompletionProcessor)fContentAssistant.getContentAssistProcessor(IDocument.DEFAULT_CONTENT_TYPE);
 			if (cp != null) {

@@ -163,7 +163,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	 * Returns the preference color, identified by the given preference.
 	 */
 	public static Color getPreferenceColor(String pref) {
-		return ColorManager.getDefault().getColor(PreferenceConverter.getColor(getDefault().getPreferenceStore(), pref));
+		return ColorManager.getDefault().getColor(PreferenceConverter.getColor(getDefault().getCombinedPreferenceStore(), pref));
 	}	
 	
 	/**

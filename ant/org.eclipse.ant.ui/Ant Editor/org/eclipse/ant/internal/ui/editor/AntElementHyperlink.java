@@ -27,9 +27,9 @@ public class AntElementHyperlink implements IHyperlink {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.jface.text.hyperlink.IHyperlink#getRegion()
+     * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkRegion()
      */
-    public IRegion getRegion() {
+    public IRegion getHyperlinkRegion() {
         return fRegion;
     }
 
@@ -41,9 +41,9 @@ public class AntElementHyperlink implements IHyperlink {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.jface.text.hyperlink.IHyperlink#getText()
+     * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkText()
      */
-    public String getText() {
+    public String getHyperlinkText() {
         return null;
     }
 

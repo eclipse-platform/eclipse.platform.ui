@@ -24,18 +24,18 @@ public class AntElementHyperlinkDetector implements IHyperlinkDetector {
         fEditor= editor;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetector#detectHyperlinks(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
-     */
-    public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region) {
-        if (region == null) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetector#detectHyperlinks(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion, boolean)
+	 */
+	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
+		 if (region == null) {
 			return null;
         }
-        region= XMLTextHover.getRegion(fEditor.getViewer(), region.getOffset());
-        Object linkTarget= this.fEditor.findTarget(region);
+        region= XMLTextHover.getRegion(textViewer, region.getOffset());
+        Object linkTarget= fEditor.findTarget(region);
 		if (linkTarget == null) {
 			return null;
 		}
         return new IHyperlink[] {new AntElementHyperlink(fEditor, region, linkTarget)};
-    }
+	}
 }
