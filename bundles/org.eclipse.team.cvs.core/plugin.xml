@@ -49,13 +49,6 @@
             id="org.eclipse.team.cvs.core.cvsnature">
       </repository>
 	</extension>
-   
-	<!-- *************** Project Nature **************** -->
-	<extension point="org.eclipse.core.resources.natures" id="cvsnature" name="%cvsNature">
-		<runtime>
-			<run class="org.eclipse.team.internal.ccvs.core.CVSTeamProvider"/>
-		</runtime>
-	</extension>
  
  	<!-- *************** Resource patterns ignored by CVS **************** -->
  	<extension point="org.eclipse.team.core.ignore">
