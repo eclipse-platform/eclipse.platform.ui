@@ -8,6 +8,7 @@ package org.eclipse.team.tests.ccvs.ui;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
+import org.eclipse.core.runtime.IStatus;
 
 public class LoggingTestCase extends TestCase {
 	private LoggingTestResult logResult;
@@ -79,5 +80,15 @@ public class LoggingTestCase extends TestCase {
 		Assert.assertTrue(disableLogStack > 0);
 		disableLogStack -= 1;
 		Assert.assertTrue(disableLogStack != 0 || logResult != null);
+	}
+	
+	/**
+	 * Prints a warning message to the log.
+	 * @param message the message, or null
+	 * @param error an exception with a stack trace, or null
+	 * @param status a status code, or null
+	 */
+	protected void printWarning(String message, Throwable error, IStatus status) {
+		if (disableLogStack == 0) logResult.printWarning(message, error, status);
 	}
 }

@@ -19,6 +19,7 @@ import junit.framework.TestResult;
 import junit.runner.BaseTestRunner;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.core.TeamException;
 
 public class LoggingTestResult extends TestResult {
 	protected Stack groupStack;
@@ -57,17 +58,22 @@ public class LoggingTestResult extends TestResult {
 	}
 	
 	/**
+	 * Prints a warning message to the log file.
+	 * @param message the message, or null
+	 * @param error an exception with a stack trace, or null
+	 * @param status a status code, or null
+	 */
+	public void printWarning(String message, Throwable error, IStatus status) {
+		printAbort("warning", message, error, status);
+	}
+	
+	/**
 	 * Called by the JUnit framework when an error occurs.
 	 * @param test the test
 	 * @param error the exception that occurred 
 	 */
 	public void addError(Test test, Throwable error) {
-		IStatus status = null;
-		if (error instanceof CoreException) {
-			CoreException ex = (CoreException) error;
-			status = ex.getStatus();
-		}
-		printAbort("error", error, status);
+		printAbort("error", null, error, null);
 		super.addError(test, error);
 	}
 	
@@ -77,7 +83,7 @@ public class LoggingTestResult extends TestResult {
 	 * @param error the exception that occurred
 	 */
 	public void addFailure(Test test, AssertionFailedError error) {
-		printAbort("failure", error, null);
+		printAbort("failure", null, error, null);
 		super.addFailure(test, error);
 	}
 	
@@ -192,13 +198,28 @@ public class LoggingTestResult extends TestResult {
 		println(line);
 	}
 	
-	protected void printAbort(String type, Throwable error, IStatus status) {
-		String message = error.getMessage();
+	protected void printAbort(String type, String message, Throwable error, IStatus status) {
+		if (status == null && error != null) {
+			if (error instanceof CoreException) {
+				status = ((CoreException) error).getStatus();
+			} else if (error instanceof TeamException) {
+				status = ((TeamException) error).getStatus();
+			}
+		}
+		if (message == null && error != null) {
+			message = error.getMessage();
+			if (message == null) {
+				message = error.getClass().getName();
+			}
+		}
+		if (message == null && status != null) {
+			message = status.getMessage();
+		}
 		if (message == null) message = "";
 		startXMLElement("abort", new String[] { "type", "message" },
 			new String[] { type, message });
 		if (status != null) printStatus(status);
-		printStackTrace(error);
+		if (error != null) printStackTrace(error);
 		endXMLElement();
 	}
 	

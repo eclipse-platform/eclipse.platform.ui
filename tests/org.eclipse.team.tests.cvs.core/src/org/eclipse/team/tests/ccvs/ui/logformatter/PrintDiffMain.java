@@ -25,8 +25,8 @@ public class PrintDiffMain {
 				} else throw new IllegalArgumentException(args[i]);
 			}
 		} catch (Exception e) {
-			System.err.println("Usage: java CompareSummaryMain [-t thresh] [-i] <newer log> <older log>");
-			System.err.println("  -t thresh: minimum absolute non-negligible difference in ms");
+			System.err.println("Usage: java PrintDiffMain [-t thresh] [-i] <newer log> <older log>");
+			System.err.println("  -t thresh: minimum non-negligible absolute difference in ms");
 			System.err.println("  -i       : ignore negligible changes in results");
 			return;
 		}
@@ -49,7 +49,7 @@ public class PrintDiffMain {
 			ps.println("Newer File: " + newerFile);
 			ps.println("  Generated: " + newerRoot.getTimestamp());
 			ps.println("  SDK Build: " + newerRoot.getSDKBuildId());
-			ps.println("Older File:" + olderFile);
+			ps.println("Older File: " + olderFile);
 			ps.println("  Generated: " + olderRoot.getTimestamp());
 			ps.println("  SDK Build: " + olderRoot.getSDKBuildId());
 			ps.println("Options:");

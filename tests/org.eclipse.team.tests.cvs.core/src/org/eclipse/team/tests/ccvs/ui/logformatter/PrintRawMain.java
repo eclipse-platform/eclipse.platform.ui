@@ -11,7 +11,7 @@ import java.io.PrintStream;
 public class PrintRawMain {
 	public static void main(String[] args) {
 		if (args.length != 1) {
-			System.err.println("Usage: java PrintSummaryMain <log>");
+			System.err.println("Usage: java PrintRawMain <log>");
 			return;
 		}
 		File file = new File(args[0]);

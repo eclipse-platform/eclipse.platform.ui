@@ -28,32 +28,23 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.ccvs.core.CVSTag;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.core.TeamPlugin;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
-import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
-import org.eclipse.team.internal.ccvs.ui.sync.CommitSyncAction;
-import org.eclipse.team.ui.sync.ITeamNode;
-import org.eclipse.team.ui.sync.SyncSet;
+import org.eclipse.ui.internal.dialogs.InternalErrorDialog;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 
@@ -96,7 +87,7 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 	 * @param project the project
 	 */
 	public static void deleteProject(IProject project) throws CoreException {
-		project.delete(true, null);
+		project.delete(false /*force*/, null);
 	}
 	
 	/**
@@ -108,7 +99,7 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 		IContainer container = file.getParent();
 		while (container != null && container instanceof IFolder &&
 			isFolderEmpty((IFolder) container)) {
-			container.delete(true, null);
+			container.delete(false /*force*/, null);
 			container = container.getParent();
 		}
 	}
@@ -161,7 +152,7 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 	 */
 	public static IFolder createUniqueFolder(SequenceGenerator gen, IContainer parent) throws CoreException {
 		IFolder folder = parent.getFolder(new Path(Util.makeUniqueName(gen, "folder", null)));
-		folder.create(true, true, null);
+		folder.create(false /*force*/, true /*local*/, null);
 		return folder;
 	}
 	
@@ -172,7 +163,17 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 	 * @param newName the new name for the resource
 	 */
 	public static void renameResource(IResource resource, String newName) throws CoreException {
-		resource.move(new Path(newName), true, null);
+		switch (resource.getType()) {
+			case IResource.PROJECT: {
+				IProject project = (IProject) resource;
+				IProjectDescription desc = project.getDescription();
+				desc.setName(newName);
+				project.move(desc, false /*force*/, true /*keepHistory*/, null);
+			} break;
+			default:
+				resource.move(new Path(newName), false /*force*/, null);
+				break;
+		}
 	}
 
 	/**
@@ -200,7 +201,7 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 					writeRandomText(gen, os, changeSize); // enlarge file
 				}
 				if (! changed) os.write('!'); // make sure we actually did change the file
-				file.setContents(new ByteArrayInputStream(os.toByteArray()), true, false, null);
+				file.setContents(new ByteArrayInputStream(os.toByteArray()), false /*force*/, true /*keepHistory*/, null);
 			} finally {
 				is.close();
 			}
@@ -535,7 +536,7 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 	
 	/**
 	 * Opens the specified wizard, then notifies the waiter.
-	 * The WizardDialog instance is passed as argument to notify().
+	 * The WizardDialog instance is passed as argument to notify() in the waiter.
 	 */
 	public static void waitForWizardToOpen(Shell parent, IWizard wizard, final Waiter waiter) {
 		WizardDialog dialog = new WizardDialog(parent, wizard) {
@@ -559,30 +560,69 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 	}
 	
 	/**
-	 * Notifies the waiter when a Shell with the specified title opens.
-	 * The Shell instance is passed as argument to notify().
+	 * Notifies the waiter when a Shell matching the specified criteria opens.
+	 * The Shell instance is passed as argument to notify() in the waiter.
+	 * 
+	 * @param display the root display
+	 * @param pollingPeriod the number of milliseconds to wait between polls
+	 * @param value a value used for matching
+	 * @param criteria a strategy for matching the controls against a value,
+	 *           or null to match any Shell.
+	 * @param waiter the waiter to be notified
 	 */
-	public static void waitForShellToOpen(final Display display, final String title,
-		final Waiter waiter) {
+	public static void waitForShellToOpen(final Display display, final int pollingPeriod,
+		final Object value, final ICriteria criteria, final Waiter waiter) {
 		final Runnable hook = new Runnable() {
 			public void run() {
+				if (display.isDisposed()) return;
 				Shell[] shells = display.getShells();
 				for (int i = 0; i < shells.length; ++i) {
-					final Shell shell = shells[i];
-					final String shellTitle = shell.getText();
-					if (title.equals(shellTitle)) {
-						if (! waiter.notify(shell)) return;
-					}
+					Shell shell = shells[i];
+					if (criteria != null && ! criteria.test(shell, value)) continue;
+					if (! waiter.notify(shell)) return;
 				}
 				// poll again as soon as possible
 				if (waiter.keepWaiting()) {
-					display.timerExec(50, this); // reschedule with a timer instead of spinning
+					display.timerExec(pollingPeriod, this);
 				}
 			}
 		};
 		hook.run();
 	}
+
 	
+	/**
+	 * Installs a watchdog for JFace error dialogs for the current display.
+	 * The Dialog instance is passed as argument to notify() in the waiter.
+	 * Recognized dialogs:
+	 *   - ErrorDialog
+	 *   - InternalErrorDialog
+	 * 
+	 * @param display the root display
+	 * @param pollingPeriod the number of milliseconds to wait between polls
+	 * @param waiter the waiter to be notified
+	 */
+	public static void waitForErrorDialog(Display display, int pollingPeriod, final Waiter waiter) {
+		ICriteria criteria = new ICriteria() {
+			public boolean test(Object candidate, Object value) {
+				Shell shell = (Shell) candidate;
+				if (shell.isDisposed()) return false;
+				Object data = shell.getData();
+				if (data == null) return false;
+				return data instanceof ErrorDialog || data instanceof InternalErrorDialog;
+			}
+		};
+		waitForShellToOpen(display, pollingPeriod, null, criteria, new Waiter() {
+			public boolean keepWaiting() {
+				return waiter.keepWaiting();
+			}
+
+			public boolean notify(Object object) {
+				return waiter.notify(((Shell) object).getData());
+			}
+		});
+	}
+
 	/**
 	 * Finds a Control in a Composite hierarchy matching the specified criteria.
 	 * 
@@ -670,5 +710,39 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 			buf.append(c);
 		}
 		return buf.toString();
+	}
+	
+	/**
+	 * Process pending events for the current display, until at least the
+	 * specified number of milliseconds elapses.
+	 */
+	public static void processEventsUntil(int hiatus) {
+		Display display = Display.getCurrent();
+		Assert.assertNotNull(display);
+		final boolean done[] = new boolean[] { hiatus == 0 };
+		if (hiatus != 0) display.timerExec(hiatus, new Runnable() {
+			public void run() { done[0] = true; }
+		});
+		for (;;) {
+			while (display.readAndDispatch());
+			if (done[0]) return;
+			display.sleep();
+		}
+	}
+	
+	/**
+	 * Process pending events for the current display, until resumed by the user.
+	 * Very useful for inspecting intermediate results while debugging.
+	 */
+	public static void processEventsUntilResumed(String title) {
+		Display display = Display.getCurrent();
+		Assert.assertNotNull(display);
+		Shell shell = new Shell(display, SWT.CLOSE);
+		shell.setText("Close me to resume: " + title);
+		shell.setBounds(0, 0, 500, 30);
+		shell.open();
+		while (! shell.isDisposed()) {
+			while (! display.readAndDispatch()) display.sleep();
+		}
 	}
 }

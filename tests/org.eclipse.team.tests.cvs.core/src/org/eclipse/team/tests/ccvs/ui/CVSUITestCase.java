@@ -8,8 +8,10 @@ package org.eclipse.team.tests.ccvs.ui;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
@@ -21,13 +23,14 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
@@ -37,8 +40,10 @@ import org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRemoteAction;
 import org.eclipse.team.internal.ccvs.ui.actions.TagAction;
 import org.eclipse.team.internal.ccvs.ui.actions.UpdateAction;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
+import org.eclipse.team.internal.ccvs.ui.sync.CommitSyncAction;
 import org.eclipse.team.internal.ccvs.ui.sync.ForceCommitSyncAction;
 import org.eclipse.team.internal.ccvs.ui.sync.ForceUpdateSyncAction;
+import org.eclipse.team.internal.ccvs.ui.sync.UpdateSyncAction;
 import org.eclipse.team.internal.ccvs.ui.wizards.SharingWizard;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.ui.sync.ITeamNode;
@@ -52,6 +57,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
 public class CVSUITestCase extends LoggingTestCase {
+	protected static Set installedTrap = new HashSet();
 	private List testWindows;
 	protected IWorkbenchWindow testWindow;
 	protected CVSRepositoryLocation testRepository;
@@ -65,6 +71,19 @@ public class CVSUITestCase extends LoggingTestCase {
 		super.setUp();
 		testRepository = CVSTestSetup.repository;
 		testWindow = openTestWindow();
+		
+		Display display = testWindow.getShell().getDisplay();
+		if (! installedTrap.contains(display)) {
+			installedTrap.add(display);
+			Util.waitForErrorDialog(display, 10000 /*ms*/, new Waiter() {
+				public boolean notify(Object object) {
+					Dialog dialog = (Dialog) object;
+					printWarning("Encountered error dialog with title: " + dialog.getShell().getText(), null, null);
+					dialog.close();
+					return true;
+				}
+			});
+		}
 
 		// disable auto-build
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -73,12 +92,12 @@ public class CVSUITestCase extends LoggingTestCase {
 		workspace.setDescription(description);
 		
 		// wait for UI to settle
-		processEventsUntil(100);
+		Util.processEventsUntil(100);
 	}
 	
 	protected void tearDown() throws Exception {
 		// wait for UI to settle
-		processEventsUntil(100);
+		Util.processEventsUntil(100);
 		closeAllTestWindows();
 		super.tearDown();
 	}
@@ -86,7 +105,7 @@ public class CVSUITestCase extends LoggingTestCase {
  	/** 
 	 * Open a test window with the empty perspective.
 	 */
-	public IWorkbenchWindow openTestWindow() {
+	protected IWorkbenchWindow openTestWindow() {
 		try {
 			IWorkbenchWindow win = PlatformUI.getWorkbench().openWorkbenchWindow(
 				EmptyPerspective.PERSP_ID, ResourcesPlugin.getWorkspace());
@@ -101,7 +120,7 @@ public class CVSUITestCase extends LoggingTestCase {
  	/**
 	 * Close all test windows.
 	 */
-	public void closeAllTestWindows() {
+	protected void closeAllTestWindows() {
 		Iterator iter = testWindows.iterator();
 		IWorkbenchWindow win;
 		while (iter.hasNext()) {
@@ -112,42 +131,9 @@ public class CVSUITestCase extends LoggingTestCase {
 	}
 
 	/**
-	 * Process pending events until at least the specified number of milliseconds elapses.
-	 */
-	public void processEventsUntil(int hiatus) {
-		if (testWindow == null) return;
-		Display display = testWindow.getShell().getDisplay();
-		final boolean done[] = new boolean[] { hiatus == 0 };
-		if (hiatus != 0) display.timerExec(hiatus, new Runnable() {
-			public void run() { done[0] = true; }
-		});
-		for (;;) {
-			while (display.readAndDispatch());
-			if (done[0]) return;
-			display.sleep();
-		}
-	}
-	
-	/**
-	 * Process pending events until the tests are resumed by the user.
-	 * Very useful for inspecting intermediate results while debugging.
-	 */
-	public void processEventsUntilResumed() {
-		if (testWindow == null) return;
-		Display display = testWindow.getShell().getDisplay();
-		Shell shell = new Shell(testWindow.getShell(), SWT.CLOSE);
-		shell.setText("Close me to resume tests");
-		shell.setBounds(0, 0, 300, 30);
-		shell.open();
-		while (! shell.isDisposed()) {
-			while (! display.readAndDispatch()) display.sleep();
-		}
-	}
-
-	/**
 	 * Checks out the projects with the specified tags from the test repository.
 	 */
-	protected void actionCheckoutProjects(String[] projectNames, CVSTag[] tags) throws Exception {		
+	protected void actionCheckoutProjects(String[] projectNames, CVSTag[] tags) throws Exception {
 		ICVSRemoteFolder[] projects = lookupRemoteProjects(projectNames, tags);
 		runActionDelegate(new AddToWorkspaceAction(), projects, "Repository View Checkout action");
 		timestampGranularityHiatus();
@@ -337,11 +323,20 @@ public class CVSUITestCase extends LoggingTestCase {
 	}
 	
 	/**
-	 * Commits the resources represented by an array of synchronizer nodes.
+	 * Commits NON-CONFLICTING and CONFLICTING resources represented by an array of synchronizer nodes.
 	 */
 	private void syncCommitInternal(CVSSyncCompareInput input, ITeamNode[] nodes, final String comment) {
 		FakeSelectionProvider selectionProvider = new FakeSelectionProvider(nodes);
-		ForceCommitSyncAction action = new ForceCommitSyncAction(input, selectionProvider, "Commit",
+		// Commit ONLY NON-CONFLICTING changes
+		CommitSyncAction commitAction = new CommitSyncAction(input, selectionProvider, "Commit",
+			testWindow.getShell()) {
+			protected String promptForComment(RepositoryManager manager) {
+				return comment; // use our comment
+			}
+		};
+		commitAction.run();
+		// Commit ONLY CONFLICTING changes
+		ForceCommitSyncAction forceCommitAction = new ForceCommitSyncAction(input, selectionProvider, "Force Commit",
 			testWindow.getShell()) {
 			protected int promptForConflicts(SyncSet syncSet) {
 				return 0; // yes! sync conflicting changes
@@ -350,15 +345,16 @@ public class CVSUITestCase extends LoggingTestCase {
 				return comment; // use our comment
 			}
 		};
-		action.run();
+		forceCommitAction.run();
 	}
 
 	/**
-	 * Commits the resources represented by an array of synchronizer nodes.
+	 * Updates NON-CONFLICTING and CONFLICTING resources represented by an array of synchronizer nodes.
 	 */
 	private void syncGetInternal(CVSSyncCompareInput input, ITeamNode[] nodes) {
 		FakeSelectionProvider selectionProvider = new FakeSelectionProvider(nodes);
-		ForceUpdateSyncAction action = new ForceUpdateSyncAction(input, selectionProvider, "Get",
+		// Update ONLY NON-CONFLICTING changes
+		UpdateSyncAction updateAction = new UpdateSyncAction(input, selectionProvider, "Update",
 			testWindow.getShell()) {
 			protected boolean promptForConflicts() {
 				return true;
@@ -367,7 +363,18 @@ public class CVSUITestCase extends LoggingTestCase {
 				return 2;
 			}
 		};
-		action.run();
+		updateAction.run();
+		// Update ONLY CONFLICTING changes
+		ForceUpdateSyncAction forceUpdateAction = new ForceUpdateSyncAction(input, selectionProvider, "Force Update",
+			testWindow.getShell()) {
+			protected boolean promptForConflicts() {
+				return true;
+			}
+			protected int promptForMergeableConflicts() {
+				return 2;
+			}
+		};
+		forceUpdateAction.run();
 	}
 
 	/**
@@ -383,6 +390,9 @@ public class CVSUITestCase extends LoggingTestCase {
 	}
 	
 	private static ITeamNode findTeamNodeForResource(IDiffElement root, IResource resource) {
+		RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
+		assertNotNull("Resource " + resource.getFullPath() + " must have an associated CVSProvider", provider);
+		
 		if (root instanceof ITeamNode) {
 			ITeamNode node = (ITeamNode) root;
 			if (resource.equals(node.getResource())) return node;
@@ -410,6 +420,6 @@ public class CVSUITestCase extends LoggingTestCase {
 	 */
 	private void timestampGranularityHiatus() {
 		//JUnitTestCase.waitMsec(1500);
-		processEventsUntil(1500);
+		Util.processEventsUntil(1500);
 	}
 }
