@@ -709,6 +709,20 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		}
 	}
 	
+	/*
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension3#isSynchronized(java.lang.Object)
+	 * @since 3.0
+	 */
+	public boolean isSynchronized(Object element) {
+		Object elementInfo= getElementInfo(element);
+		if (elementInfo instanceof FileInfo) {
+			FileEditorInput input= (FileEditorInput) element;
+			IResource resource= input.getFile();
+			return resource.isSynchronized(IResource.DEPTH_ZERO);
+		}
+		return false;
+	}
+	
 	// --------------- Encoding support ---------------
 	
 	/**

@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
@@ -49,16 +50,18 @@ import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.IElementStateListenerExtension;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+
 /**
  * @since 3.0
  */
 public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IStorageDocumentProvider {
 	
-	
-	static protected interface  IStorageDocumentProvider2 extends IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IStorageDocumentProvider  {
-	}
-	
-	static protected class NullProvider implements IStorageDocumentProvider2  {
+		
+	static protected class NullProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IStorageDocumentProvider  {
+		
+		static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, EditorsPlugin.getPluginId(), IStatus.INFO, "Error", null);
+		
 		public void connect(Object element) throws CoreException {}
 		public void disconnect(Object element) {}
 		public IDocument getDocument(Object element) { return null; }
@@ -80,10 +83,10 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		public boolean isStateValidated(Object element) { return true; }
 		public void updateStateCache(Object element) throws CoreException {}
 		public void setCanSaveDocument(Object element) {}
-		public IStatus getStatus(Object element) { return null; }
+		public IStatus getStatus(Object element) { return STATUS_ERROR; }
 		public void synchronize(Object element) throws CoreException {}
 		public void setProgressMonitor(IProgressMonitor progressMonitor) {}
-		public IProgressMonitor getProgressMonitor() { return null; }
+		public IProgressMonitor getProgressMonitor() { return new NullProgressMonitor(); }
 		public boolean isSynchronized(Object element) { return true; }
 		public String getDefaultEncoding() { return null; }
 		public String getEncoding(Object element) { return null; }
@@ -198,7 +201,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 
 	
 	/** The parent document provider */
-	private IStorageDocumentProvider2 fParentProvider;
+	private IDocumentProvider fParentProvider;
 	/** Element information of all connected elements */
 	private Map fFileInfoMap= new HashMap();
 	/** The list of element state listeners */
@@ -210,15 +213,31 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	
 	
 	public TextFileDocumentProvider()  {
-		fParentProvider= new NullProvider();
 		IFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		manager.addFileBufferListener(fBufferedFileListener);
 	}
 	
-	public void setParentDocumentProvider(IDocumentProvider parentProvider)  {
-		fParentProvider= (IStorageDocumentProvider2) parentProvider;
+	final public void setParentDocumentProvider(IDocumentProvider parentProvider)  {
+		
+		Assert.isTrue(parentProvider instanceof IDocumentProviderExtension);
+		Assert.isTrue(parentProvider instanceof IDocumentProviderExtension2);
+		Assert.isTrue(parentProvider instanceof IDocumentProviderExtension3);
+		Assert.isTrue(parentProvider instanceof IStorageDocumentProvider);
+		
+		fParentProvider= parentProvider;
 		if (fParentProvider == null)
 			fParentProvider= new NullProvider();
+	}
+	
+	/**
+	 * Returns the parent document provider.
+	 * 
+	 * @return the parent document provider
+	 */
+	final protected  IDocumentProvider getParentProvider() {
+		if (fParentProvider == null)
+			fParentProvider= new StorageDocumentProvider();
+		return fParentProvider;
 	}
 
 	/*
@@ -230,7 +249,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			
 			info= createFileInfo(element);
 			if (info == null)  {
-				fParentProvider.connect(element);
+				getParentProvider().connect(element);
 				return;
 			}
 								
@@ -271,7 +290,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		
 		if (info == null)  {
-			fParentProvider.disconnect(element);
+			getParentProvider().disconnect(element);
 			return;
 		}
 		
@@ -311,7 +330,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
 			return info.fTextFileBuffer.getDocument();
-		return fParentProvider.getDocument(element);
+		return getParentProvider().getDocument(element);
 	}
 
 	/*
@@ -322,7 +341,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		if (info != null)
 			info.fTextFileBuffer.revert(getProgressMonitor());
 		else
-			fParentProvider.resetDocument(element);
+			getParentProvider().resetDocument(element);
 	}
 
 	/*
@@ -333,7 +352,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		if (info != null)
 			info.fTextFileBuffer.commit(monitor, overwrite);
 		else
-			fParentProvider.saveDocument(monitor, element, document, overwrite);
+			getParentProvider().saveDocument(monitor, element, document, overwrite);
 	}
 	
 	/*
@@ -347,7 +366,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 				return file.lastModified();
 			return info.fTextFileBuffer.getUnderlyingFile().getModificationStamp();
 		}
-		return fParentProvider.getModificationStamp(element);
+		return getParentProvider().getModificationStamp(element);
 	}
 
 	/*
@@ -357,7 +376,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
 			return 0;
-		return fParentProvider.getSynchronizationStamp(element);
+		return getParentProvider().getSynchronizationStamp(element);
 	}
 
 	/*
@@ -369,7 +388,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			File file= getSystemFile(info);
 			return file == null ? true : !file.exists();
 		}
-		return fParentProvider.isDeleted(element);
+		return getParentProvider().isDeleted(element);
 	}
 
 	/*
@@ -379,7 +398,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
 			return (info.fCount == 1) && info.fTextFileBuffer.isDirty();
-		return fParentProvider.mustSaveDocument(element);
+		return getParentProvider().mustSaveDocument(element);
 	}
 
 	/*
@@ -389,7 +408,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
 			return info.fTextFileBuffer.isDirty();
-		return fParentProvider.canSaveDocument(element);
+		return getParentProvider().canSaveDocument(element);
 	}
 
 	/*
@@ -399,7 +418,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
 			return info.fModel;
-		return fParentProvider.getAnnotationModel(element);
+		return getParentProvider().getAnnotationModel(element);
 	}
 
 	/*
@@ -408,7 +427,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	public void aboutToChange(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info == null)
-			fParentProvider.aboutToChange(element);
+			getParentProvider().aboutToChange(element);
 	}
 
 	/*
@@ -417,7 +436,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	public void changed(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info == null)
-			fParentProvider.changed(element);
+			getParentProvider().changed(element);
 	}
 
 	/*
@@ -427,7 +446,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		Assert.isNotNull(listener);
 		if (!fElementStateListeners.contains(listener))
 			fElementStateListeners.add(listener);
-		fParentProvider.addElementStateListener(listener);
+		getParentProvider().addElementStateListener(listener);
 	}
 
 	/*
@@ -436,7 +455,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	public void removeElementStateListener(IElementStateListener listener) {
 		Assert.isNotNull(listener);
 		fElementStateListeners.remove(listener);
-		fParentProvider.removeElementStateListener(listener);
+		getParentProvider().removeElementStateListener(listener);
 	}
 
 	/*
@@ -446,7 +465,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
 			return isSystemFileReadOnly(info);
-		return fParentProvider.isReadOnly(element);
+		return ((IDocumentProviderExtension) getParentProvider()).isReadOnly(element);
 	}
 
 	/*
@@ -456,7 +475,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
 			return info.fTextFileBuffer.isStateValidated() ? !isSystemFileReadOnly(info) : true;
-		return fParentProvider.isModifiable(element);
+		return ((IDocumentProviderExtension) getParentProvider()).isModifiable(element);
 	}
 
 	/*
@@ -467,7 +486,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		if (info != null)
 			info.fTextFileBuffer.validateState(getProgressMonitor(), computationContext);
 		else
-			fParentProvider.validateState(element, computationContext);
+			((IDocumentProviderExtension) getParentProvider()).validateState(element, computationContext);
 	}
 
 	/*
@@ -477,7 +496,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
 			return info.fTextFileBuffer.isStateValidated();
-		return fParentProvider.isStateValidated(element);
+		return ((IDocumentProviderExtension) getParentProvider()).isStateValidated(element);
 	}
 
 	/*
@@ -486,7 +505,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	public void updateStateCache(Object element) throws CoreException {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info == null)
-			fParentProvider.updateStateCache(element);
+			((IDocumentProviderExtension) getParentProvider()).updateStateCache(element);
 	}
 
 	/*
@@ -495,7 +514,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	public void setCanSaveDocument(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info == null)
-			fParentProvider.setCanSaveDocument(element);
+			((IDocumentProviderExtension) getParentProvider()).setCanSaveDocument(element);
 	}
 
 	/*
@@ -505,7 +524,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
 			return info.fTextFileBuffer.getStatus();
-		return fParentProvider.getStatus(element);
+		return ((IDocumentProviderExtension) getParentProvider()).getStatus(element);
 	}
 
 	/*
@@ -516,7 +535,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		if (info != null)
 			info.fTextFileBuffer.revert(getProgressMonitor());
 		else
-			fParentProvider.synchronize(element);
+			((IDocumentProviderExtension) getParentProvider()).synchronize(element);
 	}
 
 	/*
@@ -524,7 +543,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	 */
 	public void setProgressMonitor(IProgressMonitor progressMonitor) {
 		fProgressMonitor= progressMonitor;
-		fParentProvider.setProgressMonitor(progressMonitor);
+		((IDocumentProviderExtension2) getParentProvider()).setProgressMonitor(progressMonitor);
 	}
 
 	/*
@@ -541,7 +560,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
 			return info.fTextFileBuffer.getUnderlyingFile().isSynchronized(IResource.DEPTH_ZERO);
-		return fParentProvider.isSynchronized(element);
+		return ((IDocumentProviderExtension3) getParentProvider()).isSynchronized(element);
 	}
 
 	/*
@@ -558,7 +577,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
 			return info.fTextFileBuffer.getEncoding();
-		return fParentProvider.getEncoding(element);
+		return ((IStorageDocumentProvider) getParentProvider()).getEncoding(element);
 	}
 
 	/*
@@ -569,7 +588,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		if (info != null)
 			info.fTextFileBuffer.setEncoding(encoding);
 		else
-			fParentProvider.setEncoding(element, encoding);
+			((IStorageDocumentProvider) getParentProvider()).setEncoding(element, encoding);
 	}
 	
 	/**

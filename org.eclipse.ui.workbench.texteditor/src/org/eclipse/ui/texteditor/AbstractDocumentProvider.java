@@ -44,7 +44,7 @@ import org.eclipse.core.runtime.Status;
  * <code>createAnnotationModel</code>, and <code>doSaveDocument</code>.
  * </p>
  */
-public abstract class AbstractDocumentProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2 {
+public abstract class AbstractDocumentProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3 {
 		
 		/**
 		 * Collection of all information managed for a connected element.
@@ -815,5 +815,13 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 */
 	public void setProgressMonitor(IProgressMonitor progressMonitor) {
 		fProgressMonitor= progressMonitor;
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension3#isSynchronized(java.lang.Object)
+	 * @since 3.0
+	 */
+	public boolean isSynchronized(Object element) {
+		return true;
 	}
 }

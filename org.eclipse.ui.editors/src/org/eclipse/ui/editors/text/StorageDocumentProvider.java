@@ -197,11 +197,25 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		
 		if (element instanceof IEditorInput) {
 			IDocument document= createEmptyDocument();
-			if (setDocumentContent(document, (IEditorInput) element, getEncoding(element)))
+			if (setDocumentContent(document, (IEditorInput) element, getEncoding(element))) {
+				setupDocument(element, document);
 				return document;
+			}
 		}
-		
+	
 		return null;
+	}
+	
+	/**
+	 * Sets up the given document as it would be provided for the given element. The
+	 * content of the document is not changed. This default implementation is empty.
+	 * Subclasses may reimplement.
+	 * 
+	 * @param element the blue-print element
+	 * @param document the document to set up
+	 * @since 3.0
+	 */
+	protected void setupDocument(Object element, IDocument document) {
 	}
 	
 	/*
