@@ -47,7 +47,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	 * <p>
 	 * The stub has the same life cycle as the find/replace dialog.</p>
 	 */
-	class FindReplaceDialogStub implements IPartListener, DisposeListener {
+	static class FindReplaceDialogStub implements IPartListener, DisposeListener {
 		
 		/** The workbench part */
 		private IWorkbenchPart fPart;

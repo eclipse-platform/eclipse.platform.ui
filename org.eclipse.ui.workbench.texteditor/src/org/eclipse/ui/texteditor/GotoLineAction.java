@@ -81,7 +81,7 @@ public class GotoLineAction extends TextEditorAction {
 	 * 1GIJZOO: ITPSRCEDIT:ALL - Gotodialog's edit field has no initial focus
 	 * @since 2.0
 	 */
-	class GotoLineDialog extends InputDialog {
+	static class GotoLineDialog extends InputDialog {
 		
 		/*
 		 * @see InputDialog#InputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.lang.String, org.eclipse.jface.dialogs.IInputValidator)

@@ -165,7 +165,7 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 	/**
 	 * Disposes of an item 
 	 */
-	private final class MyDisposeListener implements DisposeListener {
+	private final static class MyDisposeListener implements DisposeListener {
 		/*
 		 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
 		 */
