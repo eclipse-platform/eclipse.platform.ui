@@ -37,15 +37,19 @@ import java.util.*;
  * </p>
  */
 public class PageLayout implements IPageLayout {
+	private static final String MISSING_REF_PART = "Referenced part does not exist yet: ";
+	
 	private ViewFactory viewFactory;
 	private LayoutPart editorFolder;
 	private boolean editorVisible = true;
 	private RootLayoutContainer rootLayoutContainer;
 	private Map mapIDtoPart = new HashMap(10);
+	private Map mapIDtoFolder = new HashMap(10);
 	private ArrayList actionSets = new ArrayList(3);
 	private ArrayList newWizardActions = new ArrayList(3);
 	private ArrayList showViewActions = new ArrayList(3);
 	private ArrayList perspectiveActions = new ArrayList(3);
+	
 /**
  * LayoutFactory constructor comment.
  */
@@ -95,6 +99,27 @@ public void addNewWizardShortcut(String id) {
 	}
 }
 /**
+ * Add the layout part to the page's layout
+ */
+private void addPart(LayoutPart newPart, String partId, int relationship, float ratio, String refId) {
+	setRefPart(partId, newPart);
+
+	// If the referenced part is inside a folder,
+	// then use the folder as the reference part.
+	LayoutPart refPart = getFolderPart(refId);
+	if (refPart == null)
+		refPart = getRefPart(refId);
+			
+	// Add it to the layout.
+	if (refPart != null) {
+		ratio = normalizeRatio(ratio);
+		rootLayoutContainer.add(newPart, getPartSashConst(relationship), ratio, refPart);
+	} else {
+		WorkbenchPlugin.log(MISSING_REF_PART + refId);//$NON-NLS-1$
+		rootLayoutContainer.add(newPart);
+	}
+}
+/**
  * Adds a perspective shortcut to the Perspective menu.
  * The id must name a perspective extension contributed to the 
  * workbench's extension point (named <code>"org.eclipse.ui.perspectives"</code>).
@@ -107,26 +132,15 @@ public void addPerspectiveShortcut(String id) {
 	}
 }
 /**
- * @see ILayoutFactory
+ * @see IPageLayout
  */
-public void addPlaceholder(String newID, int relationship, float ratio, String refID) 
-{
-	// If the part already exists just return.
-	if (getRefPart(newID) != null)
+public void addPlaceholder(String viewId, int relationship, float ratio, String refId) {
+	if (checkPartInLayout(viewId))
 		return;
 			
 	// Create the placeholder.
-	PartPlaceholder newPart = new PartPlaceholder(newID);
-	setRefPart(newID, newPart);
-
-	// Add it to the layout.
-	LayoutPart refPart = getRefPart(refID);
-	if (refPart != null) {
-		ratio = normalizeRatio(ratio);
-		rootLayoutContainer.add(newPart, getPartSashConst(relationship), ratio, refPart);
-	} else {
-		rootLayoutContainer.add(newPart);
-	}
+	PartPlaceholder newPart = new PartPlaceholder(viewId);
+	addPart(newPart, viewId, relationship, ratio, refId);
 }
 /**
  * Adds a view to the Show View menu.
@@ -141,52 +155,47 @@ public void addShowViewShortcut(String id) {
 	}
 }
 /**
- * @see ILayoutFactory
+ * @see IPageLayout
  */
-public void addView(String newID, int relationship, float ratio, String refID) {
-	// If the part already exists just return.
-	if (getRefPart(newID) != null)
+public void addView(String viewId, int relationship, float ratio, String refId) {
+	if (checkPartInLayout(viewId))
 		return;
-			
+	
 	try {
 		// Create the part.
-		LayoutPart newPart = createView(newID);
-		setRefPart(newID, newPart);
-
-		// Add it to the layout.
-		LayoutPart refPart = getRefPart(refID);
-		if (refPart != null) {
-			ratio = normalizeRatio(ratio);
-			rootLayoutContainer.add(newPart, getPartSashConst(relationship), ratio, refPart);
-		} else {
-			rootLayoutContainer.add(newPart);
-		}
+		LayoutPart newPart = createView(viewId);
+		addPart(newPart, viewId, relationship, ratio, refId);
 	} catch (PartInitException e) {
 		WorkbenchPlugin.log(e.getMessage());
 	}
 }
 /**
- * @see ILayoutFactory
+ * Verify that the part is already present in the layout
+ * and cannot be added again. Log a warning message.
  */
-public IFolderLayout createFolder(String folderID, int relationship, 
-	float ratio, String refID) 
-{
+/*package*/ boolean checkPartInLayout(String partId) {
+	if (getRefPart(partId) != null) {
+		WorkbenchPlugin.log("Part already exists in page layout: " + partId);//$NON-NLS-1$
+		return true;
+	}
+	
+	return false;
+}
+
+/**
+ * @see IPageLayout
+ */
+public IFolderLayout createFolder(String folderId, int relationship, float ratio, String refId) {
+	if (checkPartInLayout(folderId))
+		return new FolderLayout(this, (PartTabFolder) getRefPart(folderId), viewFactory);
+
 	// Create the folder.
 	PartTabFolder folder = new PartTabFolder();
-	folder.setID(folderID);
-	setRefPart(folderID, folder);
-
-	// Add it to the layout.
-	LayoutPart refPart = getRefPart(refID);
-	if (refPart != null) {
-		ratio = normalizeRatio(ratio);
-		rootLayoutContainer.add(folder, getPartSashConst(relationship), ratio, refPart);
-	} else {
-		rootLayoutContainer.add(folder);
-	}
-
+	folder.setID(folderId);
+	addPart(folder, folderId, relationship, ratio, refId);
+	
 	// Create a wrapper.
-	return new FolderLayout(folder, viewFactory);
+	return new FolderLayout(this, folder, viewFactory);
 }
 /**
  * Create the given view.
@@ -215,24 +224,6 @@ public String getEditorArea() {
 	return ID_EDITOR_AREA;
 }
 /**
- * Returns the first folder which contains the given part.
- */
-private PartTabFolder getFolderFor(String partID) {
-	Iterator iter = mapIDtoPart.values().iterator();
-	while (iter.hasNext()) {
-		Object object = iter.next();
-		if (object instanceof PartTabFolder) {
-			PartTabFolder folder = (PartTabFolder)object;
-			LayoutPart [] children = folder.getChildren();
-			for (int nX = 0; nX < children.length; nX ++) {
-				if (children[nX].getID().equals(partID))
-					return folder;
-			}
-		}
-	}
-	return null;
-}
-/**
  * Returns the new wizard actions the page.
  * This is List of Strings.
  */
@@ -255,8 +246,16 @@ public ArrayList getPerspectiveActions() {
 /**
  * Answer the part for a given ID.
  */
-private LayoutPart getRefPart(String partID) {
+/*package*/ LayoutPart getRefPart(String partID) {
 	return (LayoutPart)mapIDtoPart.get(partID);
+}
+/**
+ * Answer the folder part containing the given view ID
+ * or <code>null</code> if none (i.e. part of the
+ * page layout instead of a folder layout).
+ */
+private PartTabFolder getFolderPart(String viewId) {
+	return (PartTabFolder)mapIDtoFolder.get(viewId);
 }
 /**
  * Answer the top level layout container
@@ -274,8 +273,7 @@ public ArrayList getShowViewActions() {
 /**
  * Answer the label for a view.
  */
-private String getViewLabel(String partID)
-{
+private String getViewLabel(String partID) {
 	IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
 	IViewDescriptor desc = reg.find(partID);
 	if (desc != null)
@@ -328,49 +326,56 @@ public void setEditorAreaVisible(boolean showEditorArea) {
 /**
  * Map an ID to a part.
  */
-private void setRefPart(String partID, LayoutPart part) {
+/*package*/ void setRefPart(String partID, LayoutPart part) {
 	mapIDtoPart.put(partID, part);
+}
+/**
+ * Map the folder part containing the given view ID.
+ */
+/*package*/ void setFolderPart(String viewId, PartTabFolder folder) {
+	mapIDtoFolder.put(viewId, folder);
 }
 /**
  * Stack one view on top of another.
  */
-public void stackView(String newID, String refID) {
-	// If the part already exists just return.
-	if (getRefPart(newID) != null)
+public void stackView(String viewId, String refId) {
+	if (checkPartInLayout(viewId))
 		return;
-	if (getFolderFor(newID) != null)
-		return;
-
+	
 	// Create the new part.
 	LayoutPart newPart;	
 	try {
-		newPart = createView(newID);
+		newPart = createView(viewId);
+		setRefPart(viewId, newPart);
 	} catch (PartInitException e) {
 		WorkbenchPlugin.log(e.getMessage());
 		return;
 	}
-	setRefPart(newID, newPart);
 
-	// If the ref part is in the page layout then create a new folder and
-	// add part.
-	LayoutPart refPart = getRefPart(refID);
-	if (refPart != null) {
-		rootLayoutContainer.remove(refPart);
-		PartTabFolder newFolder = new PartTabFolder();
-		newFolder.add(refPart);
-		newFolder.add(newPart);
-		rootLayoutContainer.add(newFolder);
-		return;
-	}
-
-	// If ref part is in folder than just add new part to folder.
-	PartTabFolder folder = getFolderFor(refID);
+	// If ref part is in a folder than just add the
+	// new view to that folder.
+	PartTabFolder folder = getFolderPart(refId);
 	if (folder != null) {
 		folder.add(newPart);
+		setFolderPart(viewId, folder);
+		return;
+	}
+	
+	// If the ref part is in the page layout then create
+	// a new folder and add the new view.
+	LayoutPart refPart = getRefPart(refId);
+	if (refPart != null) {
+		PartTabFolder newFolder = new PartTabFolder();
+		rootLayoutContainer.replace(refPart, newFolder);
+		newFolder.add(refPart);
+		newFolder.add(newPart);
+		setFolderPart(refId, newFolder);
+		setFolderPart(viewId, newFolder);
 		return;
 	}
 
 	// If ref part is not found then just do add.
+	WorkbenchPlugin.log(MISSING_REF_PART + refId);//$NON-NLS-1$
 	rootLayoutContainer.add(newPart);
 }
 }

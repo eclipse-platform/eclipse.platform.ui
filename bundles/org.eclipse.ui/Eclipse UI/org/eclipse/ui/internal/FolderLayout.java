@@ -10,55 +10,63 @@ import org.eclipse.ui.internal.registry.*;
 import java.util.*;
 
 /**
- * This factory is used to define the initial layout of a part sash container.
- * By definition, one part may exist in several containers, so views are added
- * to the container by id rather than handle.  This id is used to identify 
+ * This layout is used to define the initial set of views and placeholders
+ * in a folder.
+ * <p>
+ * Views are added to the folder by ID. This id is used to identify 
  * a view descriptor in the view registry, and this descriptor is used to 
  * instantiate the IViewPart.
+ * </p>
  */
 public class FolderLayout implements IFolderLayout {
 	private ViewFactory viewFactory;
 	private PartTabFolder folder;
+	private PageLayout pageLayout;
+	
 /**
- * LayoutFactory constructor comment.
+ * Create an instance of a FolderLayout belonging to an PageLayout.
  */
-public FolderLayout(PartTabFolder folder, ViewFactory viewFactory) {
+public FolderLayout(PageLayout pageLayout, PartTabFolder folder, ViewFactory viewFactory) {
 	super();
 	this.folder = folder;
 	this.viewFactory = viewFactory;
+	this.pageLayout = pageLayout;
 }
 /**
- * @see ILayoutFactory
+ * @see IFolderLayout
  */
-public void addPlaceholder(String newID) 
-{
-	// Get the view label.
+public void addPlaceholder(String viewId) {
+	if (pageLayout.checkPartInLayout(viewId))
+		return;
+
+	// Get the view's label.
 	IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
-	IViewDescriptor desc = reg.find(newID);
+	IViewDescriptor desc = reg.find(viewId);
 	if (desc == null) {
 		// cannot safely open the dialog so log the problem
-		WorkbenchPlugin.log("Unable to find view label: " + newID);//$NON-NLS-1$
+		WorkbenchPlugin.log("Unable to find view label: " + viewId);//$NON-NLS-1$
 		return;
 	}
 
 	// Create the placeholder.
-	LayoutPart newPart = new PartPlaceholder(newID);
+	LayoutPart newPart = new PartPlaceholder(viewId);
+	linkPartToPageLayout(viewId, newPart);
 	
-	// Add it to the layout.
+	// Add it to the folder layout.
 	String label = desc.getLabel();
 	folder.add(label, folder.getItemCount(), newPart);
 }
 /**
- * Adds a view with the given id to this folder.
- * The id must name a view contributed to the workbench's view extension point 
- * (named <code>"org.eclipse.ui.views"</code>).
- *
- * @param viewId the view id
+ * @see IFolderLayout
  */
-public void addView(String newID) {
+public void addView(String viewId) {
+	if (pageLayout.checkPartInLayout(viewId))
+		return;
+
 	try {
 		// Create the part.
-		LayoutPart newPart = viewFactory.createView(newID);
+		LayoutPart newPart = viewFactory.createView(viewId);
+		linkPartToPageLayout(viewId, newPart);
 
 		// Add it to the folder.
 		folder.add(newPart);
@@ -66,5 +74,13 @@ public void addView(String newID) {
 		// cannot safely open the dialog so log the problem
 		WorkbenchPlugin.log(e.getMessage()) ;
 	}
+}
+/**
+ * Inform the page layout of the new part created
+ * and the folder the part belongs to.
+ */
+private void linkPartToPageLayout(String viewId, LayoutPart newPart) {
+	pageLayout.setRefPart(viewId, newPart);
+	pageLayout.setFolderPart(viewId, folder);
 }
 }
