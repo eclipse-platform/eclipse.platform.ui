@@ -186,7 +186,7 @@ protected void setInput(IEditorInput input) {
 protected void setPartName(String partName) {
 	automaticPartName = partName.equals(""); //$NON-NLS-1$
 	
-	if (automaticPartName) {
+	if (automaticPartName && !automaticTitle) {
 		partName = getTitle();
 	}
 	
@@ -210,7 +210,7 @@ protected void setPartName(String partName) {
 protected void setTitle(String title) {
 	super.setTitle(title);
 	
-	if (automaticPartName) {
+	if (automaticPartName && !automaticTitle) {
 		setPartName(""); //$NON-NLS-1$
 	}
 }
