@@ -55,7 +55,17 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 	 * will be.
 	 */
 	private String elementToFind = null;
-
+	/* (Intentionally not included in javadoc)
+	 * Determines the validation status for the given contents.
+	 * 
+	 * @param contents the contents to be evaluated
+	 * @return one of the following:<ul>
+	 * <li><code>VALID</code></li>,
+	 * <li><code>INVALID</code></li>,
+	 * <li><code>INDETERMINATE</code></li>
+	 * </ul>
+	 * @throws IOException
+	 */
 	private int checkCriteria(InputSource contents) throws IOException {
 		XMLRootHandler xmlHandler = new XMLRootHandler(elementToFind != null);
 		try {
