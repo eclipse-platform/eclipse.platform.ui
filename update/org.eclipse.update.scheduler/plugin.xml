@@ -27,7 +27,7 @@
 
    <extension
          point="org.eclipse.ui.startup">
-      <startup>
+      <startup class="org.eclipse.update.internal.scheduler.SchedulerStartup">
       </startup>
    </extension>
    <extension
