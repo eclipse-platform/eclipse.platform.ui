@@ -76,7 +76,7 @@ class StaticHandler extends ResponseHandler {
 					 mRoot,
 					 localDirectory,
 					 remoteDirectory,
-					 null,
+					 "Unvalid Tag that should never appear",
 					 setStatic,
 					 false,
 					 true);

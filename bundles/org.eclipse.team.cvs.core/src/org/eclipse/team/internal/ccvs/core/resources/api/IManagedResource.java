@@ -116,6 +116,42 @@ public interface IManagedResource extends Comparable {
 	 * @throws NullPointerException if stopSearching in not an ancestor of this
 	 */
 	public String getRemoteLocation(IManagedFolder stopSearching) throws CVSException;
+	
+	/**
+	 * Get if the file has been modified since the last time
+	 * saved in the fileEntry. Used on a folder it returns 
+	 * whether a file in the tree under this folder has been 
+	 * modified. This is an aproximation -- not to be used on 
+	 * critical operations.<br>
+	 * Use isDirty of the IManagedFile instead.
+	 * 
+	 * @return true if !isManaged()
+	 * @throws CVSFileNotFoundException if exists() = false
+	 */
+	boolean showDirty() throws CVSException;
+
+	/**
+	 * Look, whether the dirty-state of the file has acctally changed.
+	 * If so then clear the cache for the dirty status of this element
+	 * and all elements above.
+	 * 
+	 * @param up determins if the parents are acctually called. Setting this to false
+	 * 			can have bad consequences. Use it only if you are sure that the parents 
+	 * 			allready have a clean cache.
+	 */
+	void clearDirty(boolean up) throws CVSException;
+	
+	/**
+	 * Get the information if a resource is managed from a 
+	 * buffer. showManaged on a not-existing resource may or
+	 * may not give the proper result.
+	 */
+	boolean showManaged() throws CVSException;
+	
+	/**
+	 * clear the buffer whether this resource is managed.
+	 */
+	void clearManaged() throws CVSException;
 }
 
 

@@ -8,19 +8,19 @@ package org.eclipse.team.internal.ccvs.core;
 import java.io.File;
 import java.io.PrintStream;
 
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.commands.CommandDispatcher;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
 import org.eclipse.team.internal.ccvs.core.resources.ResourceFactory;
 import org.eclipse.team.internal.ccvs.core.resources.api.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedResource;
 import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
 import org.eclipse.team.internal.ccvs.core.response.ResponseDispatcher;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
@@ -367,6 +367,9 @@ public class Client {
 	}
 	public static IManagedResource getManagedResource(File file) throws CVSException {
 		return ResourceFactory.getManaged(file);
+	}
+	public static IManagedFile getManagedFile(File file) throws CVSException {
+		return ResourceFactory.getManagedFile(file);
 	}
 	
 	/**

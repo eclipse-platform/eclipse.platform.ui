@@ -204,7 +204,7 @@ public interface IManagedFolder extends IManagedResource {
 	 * to be called.
 	 */
 	public void acceptChildren(IManagedVisitor visitor) throws CVSException;
-	
+
 }
 
 

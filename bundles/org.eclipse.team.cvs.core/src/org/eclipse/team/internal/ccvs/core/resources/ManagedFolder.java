@@ -7,15 +7,16 @@ package org.eclipse.team.internal.ccvs.core.resources;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.commands.FileNameMatcher;
 import org.eclipse.team.internal.ccvs.core.resources.api.CVSFileNotFoundException;
-import org.eclipse.team.internal.ccvs.core.resources.api.CVSProperties;
 import org.eclipse.team.internal.ccvs.core.resources.api.FileProperties;
 import org.eclipse.team.internal.ccvs.core.resources.api.FolderProperties;
 import org.eclipse.team.internal.ccvs.core.resources.api.ICVSFile;
@@ -36,17 +37,51 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
 class ManagedFolder extends ManagedResource implements IManagedFolder {
 	
 	public static final String PWD_PROPERTY = "Password";
+	private static final boolean cacheing = true;
 	
 	private ICVSFolder cvsFolder;
 	private FilePropertiesContainer fileInfoContainer;
+
+	// If we do not extend the key and therefore the key is the same like
+	// the absolut pathname we have indirectly an reference to the key in
+	// the weak hashmap. Therefore the WeakHashMap does not finalize anything
+	private static final String KEY_EXTENTION = "KEY";
 	
+	// We could use a normal HashMap in case the caller does not have instances
+	// for all the time it needs the object
+	private static Map instancesCache = new HashMap();
+
 	/**
-	 * Constructor for ManagedFolder
+	 * This constructor should never be used. Use createInternalFolderFrom
+	 * instead.
 	 */
-	ManagedFolder(ICVSFolder cvsFolder) {
+	private ManagedFolder(ICVSFolder cvsFolder) {
 		super();
 		this.cvsFolder = cvsFolder;
 		fileInfoContainer = new FilePropertiesContainer(cvsFolder,AUTO_SAVE);
+	}
+	
+	/**
+	 * This method is the alternative constructor for the class. It ensures, that 
+	 * for every file there exists only one instance. This is needed in order to 
+	 * make caching possible.
+	 */
+	static ManagedFolder createInternalFolderFrom(ICVSFolder newFolder) {
+		
+		ManagedFolder resultFolder;
+		
+		if (!cacheing) {
+			return new ManagedFolder(newFolder);
+		}
+
+		resultFolder = (ManagedFolder) instancesCache.get(newFolder.getPath()+KEY_EXTENTION);
+		
+		if (resultFolder == null) {
+			resultFolder = new ManagedFolder(newFolder);
+			instancesCache.put(newFolder.getPath()+KEY_EXTENTION,resultFolder);
+		}
+		
+		return resultFolder;
 	}
 
 	/**
@@ -320,7 +355,7 @@ class ManagedFolder extends ManagedResource implements IManagedFolder {
 		}
 		
 		getInternalParent().addFolderEntrie(this);
-		
+		clearManaged();
 	}
 	
 	/**
@@ -331,11 +366,35 @@ class ManagedFolder extends ManagedResource implements IManagedFolder {
 	 */
 	private void removeFolderInfo() throws CVSException {
 		
+		IManagedFile[] subFiles;
+		
 		if (exists() && cvsFolder.isCVSFolder()) {
 			cvsFolder.unmakeCVSFolder();
 		}
 		
-		getInternalParent().removeFolderEntrie(this);	
+		getInternalParent().removeFolderEntrie(this);
+		
+		// Remove chached information about this folder
+		clearDirty(true);
+		clearManaged();
+
+		// Remove all the cached information from the children
+		// because effectivly we are removing all the entries 
+		// of the children.
+		
+		// If the folder does not exist, then the sub-files do 
+		// not exist any more neither. Therefore a delete on them
+		// was called and we do not need to do anything any more
+		if (!exists()) {
+			return;
+		}
+		
+		subFiles =getFiles();
+		
+		for (int i = 0; i < subFiles.length; i++) {
+			subFiles[i].clearDirty(false);
+			subFiles[i].clearManaged();
+		}
 	}
 	
 	/**
@@ -501,7 +560,14 @@ class ManagedFolder extends ManagedResource implements IManagedFolder {
 	public ICVSResource getCVSResource() {
 		return cvsFolder;
 	}
-	
+
+//	/**
+//	 * @see ManagedResource#delete()
+//	 */
+//	public void delete() {	
+//		instancesCache.remove(cvsFolder.getPath()+KEY_EXTENTION);
+//		super.delete();
+//	}
 
 	/**
 	 * @see IManagedFolder#isCVSFolder()
@@ -599,6 +665,73 @@ class ManagedFolder extends ManagedResource implements IManagedFolder {
 		if (result.size() == resources.length)
 			return resources;
 		return (ICVSResource[])result.toArray(type);	
+	}
+
+	/**
+	 * @see IManagedFolder#clearCache(boolean)
+	 */
+	public void clearCache(boolean deep) throws CVSException {
+		
+//		for (Iterator iter = instancesCache.keySet().iterator(); iter.hasNext();) {
+//			String element = (String) iter.next();
+//			System.out.println(element);
+//		}
+//		
+//		
+////		IManagedResource[] resources;
+////		
+////		// Do that first, maybe we have got wrong entries
+////		// cached
+////		cvsFolder.clearCache(false);
+////		
+////		if (!deep) {
+////			return;
+////		}
+////		
+////		resources = getFolders();
+////		
+////		for (int i = 0; i < resources.length; i++) {
+////			resources[i].clearCache(true);
+////		}
+
+	}
+
+	/**
+	 * @see IManagedResource#isDirty()
+	 */
+	public boolean showDirty() throws CVSException {
+		
+		IManagedResource[] children;
+		boolean result = false;
+		
+		if (showDirtyCache == null) {
+			
+			// We do not have a cached value therefore we:
+			// 1. init the result to false
+			// 2. search in all subfolders and files
+			//    until we find a dirty element
+			// 3. If we do we just skip the rest with the
+			//    "shortcut OR" (||)
+			
+			if (!exists() || !isCVSFolder()) {
+				showDirtyCache = new Boolean(true);
+			} else {
+				
+				children = getFiles();
+				for (int i = 0; i < children.length; i++) {
+					result = result || children[i].showDirty();
+				}
+				
+				children = getFolders();
+				for (int i = 0; i < children.length; i++) {
+					result = result || children[i].showDirty();
+				}
+				
+				showDirtyCache = new Boolean(result);
+			}
+		}
+		
+		return showDirtyCache.booleanValue();
 	}
 
 }

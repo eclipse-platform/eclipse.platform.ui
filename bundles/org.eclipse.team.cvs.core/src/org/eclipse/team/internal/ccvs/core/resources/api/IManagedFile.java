@@ -86,15 +86,6 @@ public interface IManagedFile extends IManagedResource {
 	 * @throws CVSException if the format of the date is not correct
 	 */
 	void setTimeStamp(String date) throws CVSException;
-	
-	/**
-	 * Get if the file has been modified since the last time
-	 * saved in the fileEntry
-	 * 
-	 * @return true if !isManaged()
-	 * @throws CVSFileNotFoundException if exists() = false
-	 */
-	boolean isDirty() throws CVSException;
 
 	/**
 	 * Move the resource to another location. Does overwrite without
@@ -112,6 +103,17 @@ public interface IManagedFile extends IManagedResource {
 	 * @throws CVSFileNotFoundException if exists() = false
 	 */
 	String[] getContent() throws CVSException;
+	
+	/**
+	 * Get if the file has been modified since the last time
+	 * saved in the fileEntry. This is the exact but slow 
+	 * operation that acctually reads the dirty-state from 
+	 * disk.
+	 * 
+	 * @return true if !isManaged()
+	 * @throws CVSFileNotFoundException if exists() = false
+	 */
+	boolean isDirty() throws CVSException;
 }
 
 

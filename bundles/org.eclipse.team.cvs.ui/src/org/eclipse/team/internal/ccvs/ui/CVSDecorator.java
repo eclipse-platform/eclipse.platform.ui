@@ -79,7 +79,7 @@ public class CVSDecorator implements ITeamDecorator {
 					IManagedResource file = Client.getManagedResource(resource.getLocation().toFile());
 					FileProperties fileInfo =  file.getParent().getFile(resource.getName()).getFileInfo();
 					String tag = "";
-					if (file.isManaged()) {
+					if (file.showManaged()) {
 						tag = fileInfo.getTag();
 					} else {
 						return text;

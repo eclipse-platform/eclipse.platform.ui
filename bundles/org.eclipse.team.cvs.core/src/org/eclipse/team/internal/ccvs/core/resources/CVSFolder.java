@@ -45,6 +45,7 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 	// for all the time it needs the object
 	private static Map instancesCache = new HashMap();
 	private HashMap propertiesCache = new HashMap();
+	private Boolean cvsFolderCache = null;
 	
 	/**
 	 * NOT to be called (directly). Use createInternalFolder indtead.
@@ -136,14 +137,6 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 	 * 
 	 * Here is checked, wether the file we try to create exists
 	 * and if we try to create somthing unallowed (e.g. the cvs-folder)
-	 */	
-	/*
-	public static ICVSFolder createFolderFrom(String path) throws CVSException {
-		return createFolderFrom(new File(convertSeparator(path)));
-	}
-	*/
-	/**
-	 * @see CVSFolder#createFolderFrom(String)
 	 */
 	public static ICVSFolder createFolderFrom(File newFolder) throws CVSException {
 		
@@ -198,11 +191,13 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 	 * @see ICVSFolder#isCVSFolder()
 	 */
 	public boolean isCVSFolder() throws CVSFileNotFoundException {
-	
-		exceptionIfNotExist();
-
-
-		return (new File(ioResource, CVS_FOLDER_NAME)).exists();
+		
+		if (cvsFolderCache == null) {
+			exceptionIfNotExist();
+			cvsFolderCache = new Boolean((new File(ioResource, CVS_FOLDER_NAME)).exists());
+		}
+		
+		return cvsFolderCache.booleanValue();
 		
 	}
 
@@ -215,6 +210,8 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 		exceptionIfNotExist();
 
 		(new File(ioResource, CVS_FOLDER_NAME)).mkdir();
+		
+		clearCache(false);
 		
 	}
 
@@ -299,7 +296,6 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 		} 
 
 		if (PROPERTY_READ_CHACHING) {	
-			// propertiesCache.remove(key);	
 			propertiesCache.put(key, property);
 		}
 		
@@ -315,7 +311,6 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 		File[] fileList;
 		
 		try {
-			
 			if (!isCVSFolder()) {
 				return;
 			}
@@ -324,10 +319,10 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 			for (int i = 0; i < fileList.length; i++) {
 				fileList[i].delete();
 			}
-			getCVSFolder().delete();	
+			getCVSFolder().delete();
+			clearCache(false);
 		} catch (CVSException e) {
-			// Do nothing. We are no cvs-folder
-			// and that is were we want to be
+			Assert.isTrue(false);
 		}	
 		
 	}
@@ -359,7 +354,11 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 		unmakeCVSFolder();
 		super.delete();
 		
-		instancesCache.remove(ioResource.getAbsolutePath()+KEY_EXTENTION);
+		try {
+			clearCache(false);
+		} catch (CVSException e) {
+			Assert.isTrue(false);
+		}
 	}
 
 
@@ -429,6 +428,7 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 		// Do that first, maybe we have got wrong entries
 		// cached
 		propertiesCache = new HashMap();
+		cvsFolderCache = null;
 		
 		if (!deep) {
 			return;

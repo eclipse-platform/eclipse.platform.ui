@@ -5,25 +5,26 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.api.CVSFileNotFoundException;
 import org.eclipse.team.internal.ccvs.core.resources.api.FileProperties;
 import org.eclipse.team.internal.ccvs.core.resources.api.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.resources.api.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.api.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.FileDateFormat;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -36,14 +37,49 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 class ManagedFile extends ManagedResource implements IManagedFile {
 	
 	ICVSFile cvsFile;
+
 	private static final byte[] BUFFER = new byte[4096];
 
+	private static final boolean cacheing = true;
+	
+	// If we do not extend the key and therefore the key is the same like
+	// the absolut pathname we have indirectly an reference to the key in
+	// the weak hashmap. Therefore the WeakHashMap does not finalize anything
+	private static final String KEY_EXTENTION = "KEY";
+	
+	// We could use a normal HashMap in case the caller does not have instances
+	// for all the time it needs the object
+	private static Map instancesCache = new HashMap();
+		
 	/**
-	 * Constructor for ManagedFile
+	 * Not to be used. Use createInternalFileFrom istead.
 	 */
-	ManagedFile(ICVSFile cvsFile) {
+	private ManagedFile(ICVSFile cvsFile) {
 		super();
 		this.cvsFile = cvsFile;
+	}
+
+	/**
+	 * This method is the alternative constructor for the class. It ensures, that 
+	 * for every file there exists only one instance. This is needed in order to 
+	 * make caching possible.
+	 */
+	static ManagedFile createInternalFileFrom(ICVSFile newFile) {
+		
+		ManagedFile resultFile;
+		
+		if (!cacheing) {
+			return new ManagedFile(newFile);
+		}
+
+		resultFile = (ManagedFile) instancesCache.get(newFile.getPath()+KEY_EXTENTION);
+		
+		if (resultFile == null) {
+			resultFile = new ManagedFile(newFile);
+			instancesCache.put(newFile.getPath()+KEY_EXTENTION,resultFile);
+		}
+		
+		return resultFile;
 	}
 
 	/**
@@ -73,6 +109,8 @@ class ManagedFile extends ManagedResource implements IManagedFile {
 		
 		getInternalParent().setFileInfo(this,fileInfo);
 		
+		clearDirty(true);
+		clearManaged();
 	}
 
 	/**
@@ -113,6 +151,8 @@ class ManagedFile extends ManagedResource implements IManagedFile {
 		} catch (IOException e) {
 			throw wrapException(e);
 		}
+		
+		clearDirty(true);
 	}
 
 	/**
@@ -193,6 +233,8 @@ class ManagedFile extends ManagedResource implements IManagedFile {
 		}
 		
 		cvsFile.setTimeStamp(millSec);
+		
+		clearDirty(true);
 	}
 
 	/**
@@ -309,16 +351,26 @@ class ManagedFile extends ManagedResource implements IManagedFile {
 		return cvsFile;
 	}
 
+
+	/**
+	 * @see IManagedResource#showDirty()
+	 */
+	public boolean showDirty() throws CVSException {
+		if (showDirtyCache == null) {
+			showDirtyCache = new Boolean(isDirty());
+		}
+		return showDirtyCache.booleanValue();
+	}
+
 	/**
 	 * @see IManagedFile#isDirty()
 	 */
 	public boolean isDirty() throws CVSException {
-		
 		if (!exists() || !isManaged()) {
 			return true;
+		} else {
+			return !getTimeStamp().equals(getFileInfo().getTimeStamp());
 		}
-		
-		return !getTimeStamp().equals(getFileInfo().getTimeStamp());
 	}
 
 	/**
@@ -333,6 +385,8 @@ class ManagedFile extends ManagedResource implements IManagedFile {
 	 */
 	public void moveTo(IManagedFile mFile) throws CVSException, ClassCastException {
 		cvsFile.moveTo(((ManagedFile)mFile).cvsFile);
+		
+		clearDirty(true);
 	}
 
 	/**
@@ -355,5 +409,6 @@ class ManagedFile extends ManagedResource implements IManagedFile {
 	public void unmanage() throws CVSException {
 		setFileInfo(null);
 	}
+
 }
 

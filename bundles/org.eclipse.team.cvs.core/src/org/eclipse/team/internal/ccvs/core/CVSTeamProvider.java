@@ -47,6 +47,7 @@ import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
 import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.DiffErrorHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.DiffMessageHandler;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 
 /**
@@ -906,7 +907,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 				return isManaged(resource);
 				
 			IManagedResource child = getChild(resource);
-			if (!child.isManaged())
+			if (!child.showManaged())
 				return false;
 			if (resource.getType() == IResource.FOLDER) {
 				// if it's managed and its a folder than it exists remotely
@@ -947,48 +948,13 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * @see ITeamSynch#isDirty(IResource)
 	 */
 	public boolean isDirty(IResource resource) {
-		if (!isChildResource(resource))
-			return false;
 		try {
-			resource.accept(new IResourceVisitor() {
-				public boolean visit(IResource resource) throws CoreException {
-					try {
-						IManagedResource r = getChild(resource);
-						boolean ignored = r.isIgnored();
-						
-						if (ignored)
-							return false;
-							
-						// for projects continue checking children
-						if(resource.getType()==IResource.PROJECT) {
-							return true;
-						}
-						
-						// mark additions as dirty to remind that they should be commited						
-						if(!r.isManaged() && !ignored) {
-							throw CORE_EXCEPTION;
-						}
-						
-						// for files that are managed calculate their dirty state
-						if( !r.isFolder()  ) {
-							IManagedFile file = (IManagedFile)r;
-							if( file.isDirty() ) {
-								throw CORE_EXCEPTION;
-							}
-						} 
-						
-						// continue looking at children
-						return true;
-					} catch(CVSException e) {
-						return false;
-					}
-				}
-			}, IResource.DEPTH_INFINITE, false);
-		} catch (CoreException e) {
-			//if our exception was caught, we know there's a dirty child
-			return e == CORE_EXCEPTION;
+			IManagedResource r = getChild(resource);
+			return r.showDirty();
+		} catch (CVSException e) {
+			Assert.isTrue(false);
+			return true;
 		}
-		return false;
 	}
 	
 	/**
@@ -1009,7 +975,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			return false;
 			
 		// Get the IManagedResource corresponding to the resource and check if its managed
-		return getChild(resource).isManaged();
+		return getChild(resource).showManaged();
 	}
 	
 	/**

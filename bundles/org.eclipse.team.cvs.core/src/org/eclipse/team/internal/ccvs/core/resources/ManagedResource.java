@@ -32,7 +32,11 @@ abstract class ManagedResource implements IManagedResource {
 	
 	static final byte[] PLATFORM_NEWBYTE = PLATFORM_NEWLINE.getBytes();
 	static final byte[] SERVER_NEWBYTE = SERVER_NEWLINE.getBytes();
-
+	
+	// Initialise Chaches to empty
+	Boolean showDirtyCache = null;
+	Boolean showManagedCache = null;
+	
 	/**
 	 * Constructor for ManagedResource
 	 */
@@ -95,6 +99,13 @@ abstract class ManagedResource implements IManagedResource {
 	 */
 	public void delete() {
 		getCVSResource().delete();
+		
+		try {
+			clearDirty(true);
+		} catch (CVSException e) {
+			Assert.isTrue(false);
+		}
+		
 	}
 
 	/**
@@ -108,14 +119,14 @@ abstract class ManagedResource implements IManagedResource {
 	 * @see IManagedResource#getParent()
 	 */
 	public IManagedFolder getParent() {
-		return new ManagedFolder(getCVSResource().getParent());
+		return getInternalParent();
 	}
 
 	/**
 	 * @see IManagedResource#getParent()
 	 */
 	ManagedFolder getInternalParent() {
-		return new ManagedFolder(getCVSResource().getParent());
+		return ManagedFolder.createInternalFolderFrom(getCVSResource().getParent());
 	}
 
 
@@ -137,7 +148,7 @@ abstract class ManagedResource implements IManagedResource {
 	 * Create a IManagedFolder from a CVSFolder
 	 */
 	public static IManagedFolder createResourceFrom(ICVSFolder folder) {
-		return new ManagedFolder(folder);
+		return ManagedFolder.createInternalFolderFrom(folder);
 	}
 	
 	/**
@@ -146,7 +157,7 @@ abstract class ManagedResource implements IManagedResource {
 	 * For internal use only
 	 */
 	public static IManagedFile createResourceFrom(ICVSFile file) {
-		return new ManagedFile(file);
+		return ManagedFile.createInternalFileFrom(file);
 	}
 	
 	/** 
@@ -244,7 +255,7 @@ abstract class ManagedResource implements IManagedResource {
 	public int hashCode() {
 		return getCVSResource().hashCode();
 	}
-	/**
+	/*
 	 * Comparing for the work with the sets,
 	 * 
 	 * The coparison is done by the paths.
@@ -252,7 +263,34 @@ abstract class ManagedResource implements IManagedResource {
 	public int compareTo(Object obj) {
 		return cvsResource.compareTo(obj);
 	}
-	*/
-
+	*/		
+	
+	/**
+	 * @see IManagedResource#clearDirty(boolean)
+	 */
+	public void clearDirty(boolean up) throws CVSException {
+		if (showDirtyCache == null) {
+			return;
+		}
+		
+		showDirtyCache = null;
+		
+		if (up) {
+			getParent().clearDirty(up);
+		}	
+	}
+	
+	public boolean showManaged() throws CVSException {	
+		if (showManagedCache == null) {
+			showManagedCache = new Boolean(isManaged());
+		}		
+		return showManagedCache.booleanValue();
+	}
+	
+	public void clearManaged() throws CVSException {
+		showManagedCache = null;
+	}
 }
+
+
 

@@ -24,17 +24,18 @@ import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 
-public class ResourceDeltaVisitor implements IResourceDeltaVisitor {
+public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 
 	private static IResourceChangeListener listener;
 	private static ResourceDeltaVisitor visitor;
 	
 	private Map removals;
 	private Map additions;
+	private Map changes;
 	
-	public static ResourceDeltaVisitor register() {
+	public ResourceDeltaVisitor register() {
 		if (visitor == null)
-			visitor = new ResourceDeltaVisitor();
+			visitor = this;
 		if (listener == null)
 			listener = new IResourceChangeListener() {
 				public void resourceChanged(IResourceChangeEvent event) {
@@ -48,7 +49,7 @@ public class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 							if (provider instanceof CVSTeamProvider)
 								delta.accept(visitor);
 						}
-						visitor.handleChanges();
+						visitor.handle();
 					} catch (CoreException e) {
 						Util.logError(Policy.bind("ResourceDeltaVisitor.visitError"), e);
 					}
@@ -58,13 +59,14 @@ public class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 		return visitor;
 	}
 	
-	public static void deregister() {
+	public void deregister() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
 	}
 	
 	public ResourceDeltaVisitor() {
 		this.additions = new HashMap();
 		this.removals = new HashMap();
+		this.changes = new HashMap();
 	}
 	
 	/**
@@ -86,9 +88,19 @@ public class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 					addAddition(project, project.getFile(delta.getMovedToPath()));
 				if ((delta.getFlags() & IResourceDelta.MOVED_FROM) > 0)
 					addRemoval(project, project.getFile(delta.getMovedFromPath()));
+				addChange(project, resource);
 				break;
 		}
 		return true;
+	}
+	
+	private void addChange(IProject project, IResource resource) {
+		List changes = (List)this.changes.get(project);
+		if (changes == null) {
+			changes = new ArrayList();
+			this.changes.put(project, changes);
+		}
+		changes.add(resource);
 	}
 	
 	private void addAddition(IProject project, IResource resource) {
@@ -112,7 +124,26 @@ public class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 		removals.add(resource);
 	}
 	
-	private void handleChanges() {
+	private void handle() {
+		
+		handleAdded(additions);
+		additions.clear();
+		
+		handleRemoved(removals);
+		removals.clear();
+		
+		handleChanged(changes);
+		changes.clear();
+	}
+	
+	/**
+	 * Handle all the additions, can be overwritten (not suggested)
+	 * 
+	 * The map contains lists of changes mapped to the IProjects 
+	 * the changes are in. The default handling calles handleAdded
+	 * for every entry.
+	 */
+	protected void handleAdded(Map additions) {
 		// Start by printing out the changes
 		//System.out.println("Resources added");
 		Iterator i = additions.keySet().iterator();
@@ -122,23 +153,71 @@ public class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 			Iterator j = ((List)additions.get(project)).iterator();
 			while (j.hasNext()) {
 				IResource resource = (IResource)j.next();
+				handleAdded(project,resource);
 				//System.out.println(resource.toString());
 			}
-		}	
-		additions.clear();
-		
+		}			
+	}
+
+	/**
+	 * Handle all the changes, can be overwritten (not suggested)
+	 * 
+	 * The map contains lists of changes mapped to the IProjects 
+	 * the changes are in. The default handling calles handleChanged
+	 * for every entry.
+	 */
+	protected void handleChanged(Map changes) {
+		// Start by printing out the changes
+		//System.out.println("Resources added");
+		Iterator i = changes.keySet().iterator();
+		while (i.hasNext()) {
+			IProject project = (IProject)i.next();
+			ITeamProvider provider = TeamPlugin.getManager().getProvider(project);
+			Iterator j = ((List)changes.get(project)).iterator();
+			while (j.hasNext()) {
+				IResource resource = (IResource)j.next();
+				handleChanged(project,resource);
+				//System.out.println(resource.toString());
+			}
+		}			
+	}
+
+	/**
+	 * Handle all the removals, can be overwritten (not suggested)
+	 * 
+	 * The map contains lists of changes mapped to the IProjects 
+	 * the changes are in. The default handling calles handleRemoved
+	 * for every entry.
+	 */	
+	protected void handleRemoved(Map removals) {
 		//System.out.println("Resources removed");
-		i = removals.keySet().iterator();
+		Iterator i = removals.keySet().iterator();
 		while (i.hasNext()) {
 			IProject project = (IProject)i.next();
 			ITeamProvider provider = TeamPlugin.getManager().getProvider(project);
 			Iterator j = ((List)removals.get(project)).iterator();
 			while (j.hasNext()) {
 				IResource resource = (IResource)j.next();
+				handleRemoved(project,resource);
 				//System.out.println(resource.toString());
 			}
-		}	
-		removals.clear();
+		}
 	}
+	
+	/**
+	 * React on every addition
+	 */
+	protected abstract void handleAdded(IProject project,IResource resource);
+	
+	/**
+	 * React on every removal
+	 */
+	protected abstract void handleRemoved(IProject project,IResource resource);
+	
+	/**
+	 * React on every change
+	 */
+	protected abstract void handleChanged(IProject project,IResource resource);
+	
 }
 

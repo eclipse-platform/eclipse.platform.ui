@@ -98,9 +98,10 @@ abstract class CVSResource implements ICVSResource, Comparable {
 		} catch (CVSException e) {
 			// This should not happen, because the canonical Path of
 			// a parent should be O.K.
-			Util.logError(Policy.bind("CVSFolder.invalidPath"),e);
-			Assert.isTrue(false);
-			return null;
+			throw new RuntimeException("Can not canonize: " + ioResource.getParentFile().getAbsolutePath());
+//			Util.logError(Policy.bind("CVSFolder.invalidPath"),e);
+//			Assert.isTrue(false);
+//			return null;
 		}
 	}
 

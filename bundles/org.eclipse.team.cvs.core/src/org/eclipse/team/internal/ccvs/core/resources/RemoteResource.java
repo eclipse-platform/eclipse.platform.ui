@@ -133,5 +133,31 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 		return CVSTeamProvider.getPrintStream();
 	}
 
+	/*
+	 * @see IManagedResource#showDirty()
+	 */
+	public boolean showDirty() throws CVSException {
+		return false;
+	}
+
+	/*
+	 * @see IManagedResource#clearDirty(boolean)
+	 */
+	public void clearDirty(boolean up) throws CVSException {
+	}
+
+	/*
+	 * @see IManagedResource#showManaged()
+	 */
+	public boolean showManaged() throws CVSException {
+		return true;
+	}
+
+	/*
+	 * @see IManagedResource#clearManaged()
+	 */
+	public void clearManaged() throws CVSException {
+	}
+
 }
 
