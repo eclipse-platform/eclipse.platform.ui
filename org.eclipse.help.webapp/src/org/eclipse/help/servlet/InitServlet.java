@@ -4,12 +4,10 @@ package org.eclipse.help.servlet;
  * All Rights Reserved.
  */
 import java.io.*;
-import java.net.*;
 import java.util.ResourceBundle;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import org.w3c.dom.Element;
 
 /**
  * Servlet to initialize eclipse, tocs, etc.
