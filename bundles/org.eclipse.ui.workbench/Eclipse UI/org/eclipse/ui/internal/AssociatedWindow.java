@@ -11,139 +11,124 @@
 
 package org.eclipse.ui.internal;
 
-
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * The AssociatedWindow is a window that is associated with
- * another shell.
+ * The AssociatedWindow is a window that is associated with another shell.
  */
-class AssociatedWindow {
-	
-	private Shell floatingShell;
-	private Composite control;
-	
-	/**
-	 * 
-	 */
-	public AssociatedWindow(Shell parent, Composite owner) {
-		this.createShell(parent);
-		this.associateWith(owner, parent);
-	}
-	
-	public void setVisible(boolean visible) {
-		floatingShell.setVisible(visible);
-	}
+public class AssociatedWindow extends Window {
+
+	private Control owner;
+	private ControlListener controlListener;
 	
 	/**
-	 * @return a <code>Composite</code> which is the child control
-	 * to add widgets to for the receiver.  Or <code>null</null> if one has not
-	 * been created yet.
+	 * Create a new instance of the receiver parented from parent and
+	 * associated with the owning Composite.
 	 * 
+	 * @param parent
+	 *            The shell this will be parented from
+	 * @param associatedControl
+	 *            The Composite that the position of this window will be
+	 *            associated with.
 	 */
-	public Composite getControl() {
-		return control;
+	public AssociatedWindow(Shell parent, Control associatedControl) {
+		super(parent);
+		setShellStyle(SWT.NO_TRIM);
+		owner = associatedControl;
 	}
-	
-	
-	public void createShell(Shell parent) {
-		floatingShell = new Shell(parent, SWT.NO_TRIM);
-		floatingShell.setLayout(new GridLayout());
-		control = new Composite(parent, SWT.NONE);
-		GridLayout gd = new GridLayout(1,true);
-		gd.marginHeight = 1;
-		gd.marginWidth = 1;
-		control.setLayout(gd);
-		control.setData(new GridData(GridData.FILL_BOTH));
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setTransparent(70);
+		this.associate(newShell);
+		newShell.setBackground(newShell.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+	}
+
+	/**
+	 * Move the shell based on the position of the owner.
+	 * 
+	 * @param shellToMove
+	 */
+	protected void moveShell(Shell shellToMove) {
+			
+		if(shellToMove.isDisposed())
+			return;
 		
-//		floatingShell.setSize(floatingShell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-//		Point shellSize = floatingShell.getSize();
-//		Region r = new Region(d);
-//		Rectangle rect = new Rectangle(0,0, shellSize.x, shellSize.y);
-//		r.add(rect);
-//		Region cornerRegion = new Region(d);
-//		
-//		//top right corner region
-//		cornerRegion.add(new Rectangle(shellSize.x - 5, 0, 5 ,1));
-//		cornerRegion.add(new Rectangle(shellSize.x - 3, 1, 3 ,1));
-//		cornerRegion.add(new Rectangle(shellSize.x - 2, 2, 2 ,1));
-//		cornerRegion.add(new Rectangle(shellSize.x - 1, 3, 1 ,2));
-//		
-//		//bottom right corner region
-//		int y = shellSize.y;
-//		cornerRegion.add(new Rectangle(shellSize.x - 5, y - 1, 5 ,1));
-//		cornerRegion.add(new Rectangle(shellSize.x - 3, y - 2, 3 ,1));
-//		cornerRegion.add(new Rectangle(shellSize.x - 2, y - 3, 2 ,1));
-//		cornerRegion.add(new Rectangle(shellSize.x - 1, y - 5, 1 ,2));
-//				
-//		
-//		r.subtract(cornerRegion);
-//		floatingShell.setRegion(r);
-		floatingShell.setTransparent(70);
+		Point shellPosition = getParentShell().getLocation();
+		Point itemLocation = owner.getLocation();
+		itemLocation.x += shellPosition.x;
+		itemLocation.y += shellPosition.y;
 		
-		control.setBackground(new Color(control.getDisplay(), 255, 0,0));
-		floatingShell.setBackground(new Color(control.getDisplay(), 0, 255,0));
-		Button b = new Button(control, SWT.PUSH);
-		b.setData(new GridData(GridData.FILL_BOTH));
-		b.setText("HI");
-		floatingShell.pack();
+		
+		Point size;
+		//If there are no contents just set the location
+		if(getContents() == null)
+			size =  shellToMove.getSize();
+		else
+			size = getContents().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		
+		size.x += 5;
+		size.y += 5;
+		if(size.x > 500)
+			size.x = 500;
+		shellToMove.setSize(size);
+
+		Point windowLocation = new Point(itemLocation.x - size.x, itemLocation.y );
+		
+		shellToMove.setLocation(windowLocation);
 		
 	}
 
-	public void layout() {
-		floatingShell.layout();
-	}
-	
-	public void moveShell(Control control) {
-		Point location = control.getLocation();
-		Point size = control.getSize();
-		int x = location.x + size.x;
-		int y = location.y + 0;
-		floatingShell.setLocation(x,y);
-	}
-	
 	/**
-	 * Track the following controls location, by locating the receiver
-	 * along the right hand side of the control.  If the control moves the reciever
+	 * Track the following controls location, by locating the receiver along
+	 * the right hand side of the control. If the control moves the reciever
 	 * should move along with it.
 	 * 
-	 * @param control
+	 * @param shell floatingShell
 	 */
-	public void associateWith(final Composite sibling, Shell parent) {
-		
-		ControlListener cl = new ControlListener() {
+	private void associate(final Shell floatingShell) {
+
+		controlListener = new ControlListener() {
 			public void controlMoved(ControlEvent e) {
-				moveShell((Control)e.widget);
+				moveShell(floatingShell);
 			}
 
 			public void controlResized(ControlEvent e) {
-				moveShell((Control)e.widget);
+				moveShell(floatingShell);
 			}
 		};
-		
-		sibling.addControlListener(cl);
-		parent.addControlListener(cl);
-		
+
+		owner.addControlListener(controlListener);
+		getParentShell().addControlListener(controlListener);
+
 		//set initial location
-		moveShell(sibling);
-		
+		moveShell(floatingShell);
+
 		//Add the floating shell to the tab list
-		Control[] c = parent.getTabList();
+		Control[] c = getParentShell().getTabList();
 		Control[] newTab = new Control[c.length + 1];
 		System.arraycopy(c, 0, newTab, 0, c.length);
-		newTab[c.length] = floatingShell;
-		parent.setTabList(newTab);
-		
-		
+		newTab[c.length] = owner;
+		getParentShell().setTabList(newTab);
+
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#handleShellCloseEvent()
+	 */
+	protected void handleShellCloseEvent() {
+		super.handleShellCloseEvent();
+		owner.removeControlListener(controlListener);
 	}
 }

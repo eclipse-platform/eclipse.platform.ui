@@ -41,21 +41,23 @@ public class AnimationItem {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * @param workbenchWindow the window being created
-	 * @param manager the AnimationManager that will run this item.
+	 * 
+	 * @param workbenchWindow
+	 *            the window being created
+	 * @param manager
+	 *            the AnimationManager that will run this item.
 	 */
 
-	public AnimationItem(
-		WorkbenchWindow workbenchWindow) {
+	public AnimationItem(WorkbenchWindow workbenchWindow) {
 		this.window = workbenchWindow;
 	}
 
 	/**
 	 * Create the canvas that will display the image.
+	 * 
 	 * @param parent
 	 */
 	public void createControl(Composite parent) {
-
 
 		final AnimationManager manager = AnimationManager.getInstance();
 		// Canvas to show the image.
@@ -66,7 +68,10 @@ public class AnimationItem {
 
 		imageCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
-				paintImage(event, manager.getImage(), manager.getImageData()[0]);
+				paintImage(
+					event,
+					manager.getImage(),
+					manager.getImageData()[0]);
 			}
 		});
 
@@ -78,24 +83,30 @@ public class AnimationItem {
 		});
 
 		imageCanvas.addMouseListener(new MouseListener() {
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseDoubleClick(MouseEvent arg0) {
-				if(showingDetails)
+				if (showingDetails)
 					closeFloatingWindow();
 				else
 					openFloatingWindow();
-	
+
 				//Toggle the details flag
 				showingDetails = !showingDetails;
 			}
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseDown(MouseEvent arg0) {
 			}
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseUp(MouseEvent arg0) {
@@ -106,7 +117,9 @@ public class AnimationItem {
 		imageCanvas
 			.getAccessible()
 			.addAccessibleControlListener(new AccessibleControlAdapter() {
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.swt.accessibility.AccessibleControlAdapter#getValue(org.eclipse.swt.accessibility.AccessibleControlEvent)
 			 */
 			public void getValue(AccessibleControlEvent arg0) {
@@ -118,7 +131,9 @@ public class AnimationItem {
 		});
 
 		imageCanvas.addHelpListener(new HelpListener() {
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.swt.events.HelpListener#helpRequested(org.eclipse.swt.events.HelpEvent)
 			 */
 			public void helpRequested(HelpEvent e) {
@@ -126,16 +141,20 @@ public class AnimationItem {
 
 			}
 		});
-		
+
 		manager.addItem(this);
 
 	}
 
 	/**
 	 * Paint the image in the canvas.
-	 * @param event The PaintEvent that generated this call.
-	 * @param image The image to display
-	 * @param imageData The array of ImageData. Required to show an animation.
+	 * 
+	 * @param event
+	 *            The PaintEvent that generated this call.
+	 * @param image
+	 *            The image to display
+	 * @param imageData
+	 *            The array of ImageData. Required to show an animation.
 	 */
 	void paintImage(PaintEvent event, Image image, ImageData imageData) {
 
@@ -157,41 +176,45 @@ public class AnimationItem {
 
 	/**
 	 * Get the SWT control for the receiver.
+	 * 
 	 * @return Control
 	 */
 	public Control getControl() {
 		return imageCanvas;
 	}
-	
+
 	/**
 	 * Get the bounds of the image being displayed here.
+	 * 
 	 * @return Rectangle
 	 */
 	public Rectangle getImageBounds() {
 		return AnimationManager.getInstance().getImageBounds();
 	}
-	
+
 	/**
 	 * Open a floating window for the receiver.
+	 * 
 	 * @param event
 	 */
-	void openFloatingWindow(){
-		floatingWindow = new ProgressFloatingWindow(window);
+	void openFloatingWindow() {
+		floatingWindow =
+			new ProgressFloatingWindow(window.getShell(), imageCanvas);
 		floatingWindow.open();
 	}
-	
+
 	/**
 	 * The animation has begun.
 	 */
-	void animationStart(){
-		if(showingDetails)
+	void animationStart() {
+		if (showingDetails)
 			openFloatingWindow();
 	}
 
 	/**
 	 * The animation has ended.
 	 */
-	void animationDone(){
+	void animationDone() {
 		closeFloatingWindow();
 	}
 
@@ -199,19 +222,20 @@ public class AnimationItem {
 	 * Close the floating window.
 	 */
 	private void closeFloatingWindow() {
-		if(floatingWindow != null){
+		if (floatingWindow != null) {
 			floatingWindow.close();
 			floatingWindow = null;
 		}
-		
+
 	}
-	
+
 	/**
 	 * Get the preferred width of the receiver.
+	 * 
 	 * @return
 	 */
-	public int getPreferredWidth(){
+	public int getPreferredWidth() {
 		return AnimationManager.getInstance().getPreferredWidth() + 5;
 	}
-	
+
 }

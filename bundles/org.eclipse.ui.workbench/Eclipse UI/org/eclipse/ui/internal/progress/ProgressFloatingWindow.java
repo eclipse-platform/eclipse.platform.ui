@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.progress;
 
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -20,47 +19,41 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.internal.AssociatedWindow;
 import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * The ProgressFloatingWindow is a window that opens next to an
  * animation item.
  */
-class ProgressFloatingWindow extends Window {
+class ProgressFloatingWindow extends AssociatedWindow {
 
 	ProgressTreeViewer viewer;
 	WorkbenchWindow window;
 
 	/**
-	 * Create a new window with a shell based off of
-	 * parent window.
-	 * @param parentWindow window
+	 * Create a new instance of the receiver.
+	 * @param parent
+	 * @param associatedControl
 	 */
-	public ProgressFloatingWindow(WorkbenchWindow parentWindow) {
-		super(parentWindow.getShell());
-		setShellStyle(SWT.NONE);
-		window = parentWindow;
+	ProgressFloatingWindow(Shell parent, Control associatedControl) {
+		super(parent, associatedControl);
+
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
-	protected void configureShell(Shell newShell) {
-		super.configureShell(newShell);
-		newShell.setTransparent(75);
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite root) {
+		
 		viewer = new ProgressTreeViewer(root, SWT.MULTI) {
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.internal.progress.ProgressTreeViewer#createChildren(org.eclipse.swt.widgets.Widget)
 			 */
 			protected void createChildren(Widget widget) {
 				super.createChildren(widget);
-				adjustSizeAndPosition();
+				adjustSize();
 			}
 
 			/* (non-Javadoc)
@@ -68,7 +61,7 @@ class ProgressFloatingWindow extends Window {
 			 */
 			protected void createTreeItem(Widget parent, Object element, int index) {
 				super.createTreeItem(parent, element, index);
-				adjustSizeAndPosition();
+				adjustSize();
 			}
 
 			/* (non-Javadoc)
@@ -76,15 +69,14 @@ class ProgressFloatingWindow extends Window {
 			 */
 			protected void doUpdateItem(Item item, Object element) {
 				super.doUpdateItem(item, element);
-				adjustSizeAndPosition();
+				adjustSize();
 			}
 
 		};
 		viewer.setUseHashlookup(true);
 		viewer.setSorter(ProgressManagerUtil.getProgressViewerSorter());
 		
-		viewer.getTree().setLayoutData(new GridData(GridData.FILL_VERTICAL));
-
+		viewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
 		initContentProvider();
 		ProgressManagerUtil.initLabelProvider(viewer);
 
@@ -92,14 +84,9 @@ class ProgressFloatingWindow extends Window {
 	}
 
 	/**
-	 * Adjust the size and position of the viewer.
+	 * Adjust the size of the viewer.
 	 */
-	private void adjustSizeAndPosition() {
-
-		Point shellPosition = getParentShell().getLocation();
-		Point itemLocation = window.getAnimationItem().getControl().getLocation();
-		itemLocation.x += shellPosition.x;
-		itemLocation.y += shellPosition.y;
+	private void adjustSize() {
 		
 		Point size = viewer.getTree().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		size.x += 5;
@@ -108,9 +95,6 @@ class ProgressFloatingWindow extends Window {
 			size.x = 500;
 		getShell().setSize(size);
 
-		Point windowLocation = new Point(itemLocation.x - size.x, itemLocation.y );
-		
-		getShell().setLocation(windowLocation);
 	}
 
 	/**
@@ -128,6 +112,14 @@ class ProgressFloatingWindow extends Window {
 	protected Point getInitialSize() {
 		return viewer.getControl().computeSize(100, 25);
 
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#initializeBounds()
+	 */
+	protected void initializeBounds() {
+		super.initializeBounds();
+		adjustSize();
 	}
 
 }

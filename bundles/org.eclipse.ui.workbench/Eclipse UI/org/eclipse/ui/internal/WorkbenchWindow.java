@@ -94,7 +94,6 @@ import org.eclipse.ui.internal.contexts.ws.WorkbenchWindowContextSupport;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.AnimationItem;
-import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -2301,4 +2300,11 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	protected boolean showTopSeperator() {
 		return false;
 	}
+	/**
+	 * @return Returns the animationItem.
+	 */
+	public AnimationItem getAnimationItem() {
+		return animationItem;
+	}
+
 }
