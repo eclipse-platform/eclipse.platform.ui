@@ -149,10 +149,11 @@ public interface IPluginDescriptor {
 	 * TODO @deprecated 
 	 * Use 
 	 * <pre>
-	 *     bundle.getEntry("");
+	 *     bundle.getEntry("/");
 	 * </pre>
 	 * where <code>bundle</code> is the bundle associated with 
-	 * the relevant plug-in.
+	 * the relevant plug-in or simply use the <code>getEntry</code> API
+	 * to construct the desired URL.
 	 */
 	public URL getInstallURL();
 
