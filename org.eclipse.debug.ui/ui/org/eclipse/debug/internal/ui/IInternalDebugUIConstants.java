@@ -11,6 +11,7 @@ public interface IInternalDebugUIConstants {
 	public static final String ID_NAVIGATOR_FOLDER_VIEW= "org.eclipse.debug.internal.ui.NavigatorFolderView";
 	public static final String ID_TOOLS_FOLDER_VIEW= "org.eclipse.debug.internal.ui.ToolsFolderView";
 	public static final String ID_CONSOLE_FOLDER_VIEW= "org.eclipse.debug.internal.ui.ConsoleFolderView";
+	public static final String ID_OUTLINE_FOLDER_VIEW= "org.eclipse.debug.internal.ui.OutlineFolderView";
 
 	//Current stack frame instruction pointer
 	public static final String INSTRUCTION_POINTER= "org.eclipse.debug.ui.instructionPointer";
