@@ -20,7 +20,7 @@ import org.eclipse.ui.internal.Workbench;
  * The FontDefiniton is the representation of the fontDefinition
  * from the plugin.xml of a type.
  */
-public class FontDefinition implements IHierarchalThemeElementDefinition, ICategorizedThemeElementDefinition {
+public class FontDefinition implements IHierarchalThemeElementDefinition, ICategorizedThemeElementDefinition, IEditable {
 	
 	private String label;
 	private String id;
@@ -136,8 +136,8 @@ public class FontDefinition implements IHierarchalThemeElementDefinition, ICateg
         return parsedValue;
     }
     
-    /**
-     * @return Returns the isEditable.
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.themes.IEditable#isEditable()
      */
     public boolean isEditable() {
         return isEditable;

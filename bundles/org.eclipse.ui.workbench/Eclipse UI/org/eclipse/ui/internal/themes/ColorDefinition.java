@@ -19,7 +19,7 @@ import org.eclipse.ui.IPluginContribution;
  * 
  *  @since 3.0
  */
-public class ColorDefinition implements IPluginContribution, IHierarchalThemeElementDefinition, ICategorizedThemeElementDefinition {
+public class ColorDefinition implements IPluginContribution, IHierarchalThemeElementDefinition, ICategorizedThemeElementDefinition, IEditable {
 	private String defaultsTo;
 	private String description;
 	private String id;
@@ -150,10 +150,10 @@ public class ColorDefinition implements IPluginContribution, IHierarchalThemeEle
 	 */
 	public String toString() {
 		return getId();
-	}	
-	
-    /**
-     * @return Returns the isEditable.
+	}		
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.themes.IEditable#isEditable()
      */
     public boolean isEditable() {
         return isEditable;
