@@ -44,7 +44,9 @@ public interface IWatchExpression extends IErrorReportingExpression {
 	 */
 	public void setExpressionContext(IDebugElement context);
 	/**
-	 * Sets this watch expression's snippet of code.
+	 * Sets this watch expression's snippet of code. This method
+	 * causes the new snippet to be evaluated immediately in
+	 * the expression's last context.
 	 * 
 	 * @param expressionText the snippet which will be evaluated
 	 */
@@ -65,7 +67,9 @@ public interface IWatchExpression extends IErrorReportingExpression {
 	 */
 	public boolean isEnabled();
 	/**
-	 * Sets this expression's enabled state.
+	 * Sets this expression's enabled state. This method
+	 * causes the new snippet to be evaluated immediately in
+	 * the expression's last context.
 	 * 
 	 * @param enabled whether this expression should be enabled
 	 */
