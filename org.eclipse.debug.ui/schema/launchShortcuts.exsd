@@ -97,9 +97,6 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
                <documentation>
                   specifies the launch configuration type category this shortcut is applicable for. When unspecified, the category is null (default).
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="resource"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="helpContextId" type="string">
