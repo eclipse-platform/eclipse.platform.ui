@@ -212,9 +212,13 @@ public class AntRunner implements IPlatformRunnable {
 			}
 			return targets;
 		} catch (NoClassDefFoundError e) {
-			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"), e)); //$NON-NLS-1$
+			problemLoadingClass(e);
+			//not possible to reach this line
+			return new TargetInfo[0];
 		} catch (ClassNotFoundException e) {
-			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"), e)); //$NON-NLS-1$
+			problemLoadingClass(e);
+			//not possible to reach this line
+			return new TargetInfo[0];
 		} catch (InvocationTargetException e) {
 			handleInvocationTargetException(runner, classInternalAntRunner, e);
 			//not possible to reach this line
