@@ -1254,20 +1254,19 @@ public class TextMergeViewer extends ContentMergeViewer  {
 						}
 					}
 				);
-				canvas.addMouseTrackListener(
-					new MouseTrackAdapter() {
-						public void mouseEnter(MouseEvent e) {
-							System.out.println("enter");
-							if (fCenterButton != null)
-								fCenterButton.setVisible(false);
-						}
-						public void mouseExit(MouseEvent e) {
-							System.out.println("exit");
-							if (fCenterButton != null)
-								fCenterButton.setVisible(false);
-						}
-					}
-				);
+//				canvas.addMouseTrackListener(
+//					new MouseTrackAdapter() {
+//						public void mouseEnter(MouseEvent e) {
+//							System.out.println("enter");
+//							if (fCenterButton != null)
+//								fCenterButton.setVisible(false);
+//						}
+//						public void mouseExit(MouseEvent e) {
+//							if (fCenterButton != null)
+//								fCenterButton.setVisible(false);
+//						}
+//					}
+//				);
 				
 				fCenterButton= new Button(canvas, "carbon".equals(SWT.getPlatform()) ? SWT.FLAT : SWT.PUSH);
 				fCenterButton.setText("<");
@@ -3477,6 +3476,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 
 //		if (d == fCurrentDiff)
 //			return;
+
+		if (fCenterButton != null)
+			fCenterButton.setVisible(false);
 						
 		fEndOfDocReached= false;	
 
