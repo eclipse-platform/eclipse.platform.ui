@@ -10,19 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
@@ -129,7 +120,7 @@ public abstract class Request {
 		// still effected
 		boolean isCVSNT = session.isCVSNT();
 
-		List accumulatedStatus = new ArrayList();
+		session.clearErrors();
 		for (;;) {
 			// update monitor work amount
 			if (--nextProgress <= 0) {
@@ -165,24 +156,25 @@ public abstract class Request {
 					argument = getServerErrorMessage();
 				} else {
 					argument = Policy.bind("Command.seriousServerError", argument); //$NON-NLS-1$
-					if (!accumulatedStatus.isEmpty()) {
-						accumulatedStatus.add(new CVSStatus(CVSStatus.ERROR, CVSStatus.SERVER_ERROR, argument));
+					if (!session.hasErrors()) {
+						session.addError(new CVSStatus(CVSStatus.ERROR, CVSStatus.SERVER_ERROR, argument));
 					}
 					serious = true;
 				}
 					
-				if (accumulatedStatus.isEmpty()) {
-					accumulatedStatus.add(new CVSStatus(CVSStatus.ERROR, CVSStatus.SERVER_ERROR, Policy.bind("Command.noMoreInfoAvailable")));//$NON-NLS-1$
+				if (!session.hasErrors()) {
+				    session.addError(new CVSStatus(CVSStatus.ERROR, CVSStatus.SERVER_ERROR, Policy.bind("Command.noMoreInfoAvailable")));//$NON-NLS-1$
 				}
 				IStatus status = new MultiStatus(CVSProviderPlugin.ID, CVSStatus.SERVER_ERROR, 
-					(IStatus[]) accumulatedStatus.toArray(new IStatus[accumulatedStatus.size()]),
+				        session.getErrors(),
 					argument, null);
 				if (serious) {
 					throw new CVSServerException(status);
 				} else {
 					// look for particularly bad errors in the accumulated statii
-					for (Iterator iter = accumulatedStatus.iterator(); iter.hasNext();) {
-						IStatus s = (IStatus) iter.next();
+				    IStatus[] errors = session.getErrors();
+				    for (int i = 0; i < errors.length; i++) {
+                        IStatus s = errors[i];
 						if (s.getCode() == CVSStatus.PROTOCOL_ERROR) {
 							throw new CVSServerException(status);
 						}
@@ -205,7 +197,7 @@ public abstract class Request {
 				if (handler.isLineAvailable()) {
 					String line = handler.getLine();
 					IStatus status = listener.messageLine(line, session.getCVSRepositoryLocation(), session.getLocalRoot(), monitor);
-					if (status != ICommandOutputListener.OK) accumulatedStatus.add(status);
+					if (status != ICommandOutputListener.OK) session.addError(status);
 					if (session.isOutputToConsole()) {
 						IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();
 						if (consoleListener != null) consoleListener.messageLineReceived(line);
@@ -213,14 +205,14 @@ public abstract class Request {
 				}
 			} else if (response.equals("M")) {  //$NON-NLS-1$
 				IStatus status = listener.messageLine(argument, session.getCVSRepositoryLocation(), session.getLocalRoot(), monitor);
-				if (status != ICommandOutputListener.OK) accumulatedStatus.add(status);
+				if (status != ICommandOutputListener.OK) session.addError(status);
 				if (session.isOutputToConsole()) {
 					IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();
 					if (consoleListener != null) consoleListener.messageLineReceived(argument);
 				}
 			} else if (response.equals("E")) { //$NON-NLS-1$
 				IStatus status = listener.errorLine(argument, session.getCVSRepositoryLocation(), session.getLocalRoot(), monitor);
-				if (status != ICommandOutputListener.OK) accumulatedStatus.add(status);
+				if (status != ICommandOutputListener.OK) session.addError(status);
 				if (session.isOutputToConsole()) {
 					IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();
 					if (consoleListener != null) consoleListener.errorLineReceived(argument);
@@ -237,11 +229,11 @@ public abstract class Request {
 				}
 			}
 		}
-		if (accumulatedStatus.isEmpty()) {
+		if (!session.hasErrors()) {
 			return ICommandOutputListener.OK;
 		} else {
 			return new MultiStatus(CVSProviderPlugin.ID, CVSStatus.INFO,
-				(IStatus[]) accumulatedStatus.toArray(new IStatus[accumulatedStatus.size()]),
+				session.getErrors(),
 				Policy.bind("Command.warnings", Policy.bind("Command." + getRequestId())), null);  //$NON-NLS-1$  //$NON-NLS-2$
 		}
 	}

@@ -11,11 +11,10 @@
 package org.eclipse.team.internal.ccvs.core.client;
 
 import java.io.*;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
@@ -44,8 +43,16 @@ public class TemplateHandler extends ResponseHandler {
 		session.readLine(); /* read the remote dir which is not needed */
 		ICVSFolder localFolder = getExistingFolder(session, localDir);
 		IContainer container = (IContainer)localFolder.getIResource();
-		ICVSStorage templateFile;
-		if (container == null) {
+		ICVSStorage templateFile = null;
+		if (container != null) {
+		    try {
+                templateFile = CVSWorkspaceRoot.getCVSFileFor(SyncFileWriter.getTemplateFile(container));
+            } catch (CVSException e) {
+                // Log the inability to create the template file
+                CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, "Could not write template file in " + container.getFullPath() + ": " + e.getMessage(), e)); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+		}
+		if (container == null || templateFile == null) {
 			// Create a dummy storage handle to recieve the contents from the server
 			templateFile = new ICVSStorage() {
 				public String getName() {
@@ -88,10 +95,14 @@ public class TemplateHandler extends ResponseHandler {
 					return new ByteArrayInputStream(new byte[0]);
 				}
 			};
-		} else {
-			templateFile = CVSWorkspaceRoot.getCVSFileFor(SyncFileWriter.getTemplateFile(container));
 		}
-		session.receiveFile(templateFile, false, UpdatedHandler.HANDLE_UPDATED, monitor);
+		try {
+            session.receiveFile(templateFile, false, UpdatedHandler.HANDLE_UPDATED, monitor);
+        } catch (CVSException e) {
+            if (!(templateFile instanceof ICVSFile && handleInvalidResourceName(session, (ICVSFile)templateFile, e))) {
+                throw e;
+            }
+        }
 	}
 
 }

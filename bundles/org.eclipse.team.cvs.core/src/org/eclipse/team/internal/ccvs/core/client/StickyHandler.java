@@ -62,16 +62,22 @@ class StickyHandler extends ResponseHandler {
 		// create the directory then set or clear the sticky tag
 		Assert.isTrue(repositoryDir.endsWith("/")); //$NON-NLS-1$
 		repositoryDir = repositoryDir.substring(0, repositoryDir.length() - 1);		
-		ICVSFolder folder = createFolder(session, localDir, repositoryDir);
-		FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
-		// Added to ignore sync info for workspace root
-		if (syncInfo == null) return;
-		FolderSyncInfo newInfo = new FolderSyncInfo(syncInfo.getRepository(),
-			syncInfo.getRoot(), tag != null ? new CVSEntryLineTag(tag) : null,
-			syncInfo.getIsStatic());
-		// only set the sync info if it has changed
-		if (!syncInfo.equals(newInfo))
-			folder.setFolderSyncInfo(newInfo);
+		try {
+            ICVSFolder folder = createFolder(session, localDir, repositoryDir);
+            FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
+            // Added to ignore sync info for workspace root
+            if (syncInfo == null) return;
+            FolderSyncInfo newInfo = new FolderSyncInfo(syncInfo.getRepository(),
+            	syncInfo.getRoot(), tag != null ? new CVSEntryLineTag(tag) : null,
+            	syncInfo.getIsStatic());
+            // only set the sync info if it has changed
+            if (!syncInfo.equals(newInfo))
+            	folder.setFolderSyncInfo(newInfo);
+        } catch (CVSException e) {
+            if (!handleInvalidResourceName(session, session.getLocalRoot().getFolder(localDir), e)) {
+                throw e;
+            }
+        }
 	}
 }
 

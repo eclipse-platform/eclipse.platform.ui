@@ -77,6 +77,9 @@ public class Session {
 	// The resource bundle key that provides the file sending message
 	private String sendFileTitleKey;
 	private Map responseHandlers;
+	
+	// List of errors accumulated while the command is executing
+    private List errors = new ArrayList();
 
 	/**
 	 * Creates a new CVS session, initially in the CLOSED state.
@@ -941,5 +944,25 @@ public class Session {
 	public ResponseHandler getResponseHandler(String responseID) {
 		return (ResponseHandler)getReponseHandlers().get(responseID);
 	}
+
+    /**
+     * Accumulate the added errors so they can be included in the status returned
+     * when the command execution is finished.
+     * @param status the status to be accumulated
+     */
+    public void addError(IStatus status) {
+        errors.add(status);
+    }
+    
+    public boolean hasErrors() {
+        return !errors.isEmpty();
+    }
+    
+    public IStatus[] getErrors() {
+        return (IStatus[]) errors.toArray(new IStatus[errors.size()]);
+    }
 	
+    public void clearErrors() {
+        errors.clear();
+    }
 }

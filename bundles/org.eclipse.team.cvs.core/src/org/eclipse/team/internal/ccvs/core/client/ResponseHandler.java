@@ -11,8 +11,9 @@
 package org.eclipse.team.internal.ccvs.core.client;
 
 
-import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
@@ -92,8 +93,14 @@ public abstract class ResponseHandler {
 				// First, check if the parent is a phantom
 				IContainer container = (IContainer)mParent.getIResource();
 				if (container != null) {
-					// Create all the parents as need
-					recreatePhatomFolders(mParent);
+					try {
+                        // Create all the parents as need
+                        recreatePhatomFolders(mParent);
+                    } catch (CVSException e) {
+                        if (!handleInvalidResourceName(session, mParent, e)) {
+                            throw e;
+                        }
+                    }
 				}
 			}
 			return mParent;
@@ -118,5 +125,33 @@ public abstract class ResponseHandler {
 	/* package */ ResponseHandler getInstance() {
 		return this;
 	}
+	
+    protected boolean handleInvalidResourceName(Session session, ICVSResource resource, CVSException e) {
+        int code = e.getStatus().getCode();
+        if (code == IResourceStatus.INVALID_VALUE
+                || code == IResourceStatus.INVALID_RESOURCE_NAME
+                || code == IResourceStatus.RESOURCE_NOT_FOUND
+                || code == IResourceStatus.RESOURCE_EXISTS
+                || code == IResourceStatus.RESOURCE_WRONG_TYPE
+                || code == IResourceStatus.CASE_VARIANT_EXISTS
+                || code == IResourceStatus.PATH_OCCUPIED) {
+            
+            try {
+                IResource local = resource.getIResource();
+                String path;
+                if (local == null) {
+                    path = resource.getRepositoryRelativePath();
+                } else {
+                    path = local.getFullPath().toString();
+                }
+                IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.INVALID_LOCAL_RESOURCE_PATH, Policy.bind("ResponseHandler.0", path, e.getMessage()), e); //$NON-NLS-1$
+                session.addError(status);
+            } catch (CVSException e1) {
+                CVSProviderPlugin.log(e1);
+            }
+            return true;
+        }
+        return false;
+    }
 }
 

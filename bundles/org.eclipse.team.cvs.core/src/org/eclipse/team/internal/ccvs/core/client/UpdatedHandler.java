@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.core.client;
 
 import java.util.Date;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
@@ -87,10 +88,20 @@ public class UpdatedHandler extends ResponseHandler {
 		// The file may have been set as read-only by a previous checkout/update
 		if (mFile.isReadOnly()) mFile.setReadOnly(false);
 		
-		receiveTargetFile(session, mFile, entryLine, modTime, binary, readOnly, monitor);
+		try {
+            receiveTargetFile(session, mFile, entryLine, modTime, binary, readOnly, monitor);
+        } catch (CVSException e) {
+            // An error occurred while recieving the file.
+            // If it is due to an invalid file name,
+            // accumulate the error and continue.
+            // Otherwise, exit
+            if (!handleInvalidResourceName(session, mFile, e)) {
+                throw e;
+            }
+        }
 	}
 
-	protected ICVSFile getTargetFile(ICVSFolder mParent, String fileName, byte[] entryBytes) throws CVSException {
+    protected ICVSFile getTargetFile(ICVSFolder mParent, String fileName, byte[] entryBytes) throws CVSException {
 		return mParent.getFile(fileName);
 	}
 	

@@ -248,16 +248,11 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 					new String[]{getRemoteModuleName(resource)},
 					null,
 					Policy.subMonitorFor(pm, 90));
-				if (status.getCode() == CVSStatus.SERVER_ERROR) {
-					// Any created projects will exist but will not be mapped to CVS
-					return status;
-				}
+				return status;
 			} finally {
 				// Map the projects if they have CVS meta infomation even if a failure occurred
 				refreshProjects(targetProjects, Policy.subMonitorFor(pm, 1));
 			}
-			
-			return OK;
 		} finally {
 			pm.done();
 		}

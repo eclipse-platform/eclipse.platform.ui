@@ -124,15 +124,13 @@ public class UpdateOperation extends SingleCommandOperation {
 		List serverErrors = new ArrayList();
 		for (int i = 0; i < errors.length; i++) {
 			IStatus status = errors[i];
-			if (status.getCode() == CVSStatus.SERVER_ERROR) {
-				serverErrors.add(status);
-			} else if (status.getCode() == CVSStatus.UNMEGERED_BINARY_CONFLICT) {
+			if (isReportableError(status)) {
 				serverErrors.add(status);
 			} else if (status.isMultiStatus()) {
 				IStatus[] children = status.getChildren();
 				for (int j = 0; j < children.length; j++) {
 					IStatus child = children[j];
-					if (child.getCode() == CVSStatus.UNMEGERED_BINARY_CONFLICT) {
+					if (isReportableError(child)) {
 						serverErrors.add(status);
 						break;
 					}
@@ -143,7 +141,13 @@ public class UpdateOperation extends SingleCommandOperation {
 		super.handleErrors((IStatus[]) serverErrors.toArray(new IStatus[serverErrors.size()]));
 	}
 
-	/* (non-Javadoc)
+    private boolean isReportableError(IStatus status) {
+        return status.getCode() == CVSStatus.SERVER_ERROR
+        	|| status.getCode() == CVSStatus.UNMEGERED_BINARY_CONFLICT
+        	|| status.getCode() == CVSStatus.INVALID_LOCAL_RESOURCE_PATH;
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getErrorMessage(org.eclipse.core.runtime.IStatus[], int)
 	 */
 	protected String getErrorMessage(IStatus[] failures, int totalOperations) {
