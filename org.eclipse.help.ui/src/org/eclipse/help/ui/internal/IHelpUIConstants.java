@@ -13,6 +13,8 @@ public interface IHelpUIConstants {
 	public static final String F1_SHELL = HELP_UI_PLUGIN_ID + "f1Shell";
 	public static final String PREF_PAGE_BROWSERS =
 		HELP_UI_PLUGIN_ID + "prefPageBrowsers";
+	public static final String PREF_PAGE_APPSERVER =
+		HELP_UI_PLUGIN_ID + "prefPageAppServer";
 	public static final String PREF_PAGE_CUSTOM_BROWSER_PATH =
 		HELP_UI_PLUGIN_ID + "prefPageCustomBrowserPath";
 	public static final String SEARCH_FILTERING_OPTIONS =

@@ -39,6 +39,11 @@
             class="org.eclipse.help.ui.internal.browser.BrowsersPreferencePage"
             id="org.eclipse.help.ui.browsersPreferancePage">
       </page>
+      <page
+            name="%appserver_preferences_page_name"
+            class="org.eclipse.help.ui.internal.TomcatPreferencePage"
+            id="org.eclipse.help.ui.appserverPreferancePage">
+      </page>
    </extension>
 <!-- Context Help contribution -->
    <extension

@@ -34,7 +34,17 @@ This infopop opened because you pressed F1 while an infopop was already open.</d
    <context  id="prefPageCustomBrowserPath" >
       <description>When custom web browser is selected from the list, specify path to the browser program or script that launches the browser.  If the program is available on your system path, you may specify only the program name.
 
-The program will be passed one paramter - a URL of a page to display.</description>
+The program will be passed one parameter - a URL of a page to display.</description>
+   </context>
+
+   <context  id="prefPageAppServer" >
+      <description>These settings allow you to override the network interface address and port number that the internal <b>application server</b> will use.  Change the settings when the port it is trying to use is taken, or when your IP address has changed.
+
+To automatically determine the interface address, leave the host field <b>blank</b>.
+
+To use port dynamically assigned by the system, specify <b>0</b> in the port field.
+
+Under normal circumstances, use the <b>Default</b> settings.</description>
    </context>
 
 <!-- Search dialog Search Help -->
