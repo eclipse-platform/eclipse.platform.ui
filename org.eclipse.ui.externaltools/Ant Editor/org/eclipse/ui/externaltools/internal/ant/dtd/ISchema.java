@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.ant.dtd;
 
-
 public interface ISchema {
 
 	/**
@@ -26,7 +25,7 @@ public interface ISchema {
 	IElement[] getElements();
 	
 	/**
-	 * @return Exception thrown by parser when schema was built or null if none.
+	 * @return Exception thrown by parser when schema was built or <code>null</code> if none.
 	 * Note that the exception does not necessarily mean the schema is
 	 * incomplete.
 	 */
