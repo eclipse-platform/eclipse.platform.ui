@@ -79,8 +79,8 @@ public interface IEditorPart extends IWorkbenchPart, ISaveablePart {
 	/**
 	 * Initializes this editor with the given editor site and input.
 	 * <p>
-	 * This method is automatically called shortly after part construction; it marks
-	 * the start of the part's lifecycle. The 
+	 * This method is automatically called shortly after the part is instantiated.
+	 * It marks the start of the part's lifecycle. The 
 	 * {@link IWorkbenchPart#dispose IWorkbenchPart.dispose} method will be called 
 	 * automically at the end of the lifecycle. Clients must not call this method.
 	 * </p><p>

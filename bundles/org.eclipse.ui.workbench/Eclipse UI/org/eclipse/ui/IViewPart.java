@@ -50,8 +50,8 @@ public IViewSite getViewSite();
 /**
  * Initializes this view with the given view site.  
  * <p>
- * This method is automatically called by the workbench shortly after part 
- * construction.  It marks the start of the views's lifecycle. Clients must 
+ * This method is automatically called by the workbench shortly after the
+ * part is instantiated.  It marks the start of the views's lifecycle. Clients must 
  * not call this method.
  * </p>
  *
@@ -65,8 +65,8 @@ public void init(IViewSite site) throws PartInitException;
  * session.  Where possible, the view should try to recreate that state
  * within the part controls.
  * <p>
- * This method is automatically called by the workbench shortly after part 
- * construction.  It marks the start of the views's lifecycle. Clients must 
+ * This method is automatically called by the workbench shortly after the part 
+ * is instantiated.  It marks the start of the views's lifecycle. Clients must 
  * not call this method.
  * </p>
  *
