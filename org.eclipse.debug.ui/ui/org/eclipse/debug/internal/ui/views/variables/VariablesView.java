@@ -68,6 +68,7 @@ import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.ISourceViewerExtension2;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -486,11 +487,16 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 				DebugUIPlugin.errorDialog(getSite().getShell(), VariablesViewMessages.getString("VariablesView.Error_1"), VariablesViewMessages.getString("VariablesView.Unable_to_configure_variable_details_area._2"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
-		if (svc == null) {
+		ISourceViewer detailViewer = getDetailViewer();
+        if (svc == null) {
 			svc = new SourceViewerConfiguration();
-			getDetailViewer().setEditable(false);
+			detailViewer.setEditable(false);
 		}
-		getDetailViewer().configure(svc);
+        if (detailViewer instanceof ISourceViewerExtension2) {
+            ISourceViewerExtension2 sourceViewer = (ISourceViewerExtension2) detailViewer;
+            sourceViewer.unconfigure();
+        }
+		detailViewer.configure(svc);
 		//update actions that depend on the configuration of the details viewer
 		updateAction("ContentAssist"); //$NON-NLS-1$
 		setDetailViewerConfiguration(svc);
