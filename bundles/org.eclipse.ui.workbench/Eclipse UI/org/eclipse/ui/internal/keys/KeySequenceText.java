@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -69,7 +71,6 @@ public final class KeySequenceText {
 		// Set up the text field.
 		text = new Text(composite, SWT.BORDER);
 
-		/* TODO doug: pls. investigate. works until one backspaces to an empty text field, at which point the font gets changed somehow 
 		if ("carbon".equals(SWT.getPlatform())) {
 			// don't worry about this font name here, it is the official menu font and point size on the mac.
 			final Font font = new Font(text.getDisplay(), "Lucida Grande", 13, SWT.NORMAL); //$NON-NLS-1$
@@ -82,7 +83,6 @@ public final class KeySequenceText {
 			
 			text.setFont(font);		
 		}
-		*/
 
 		// Add the key listener.
 		final Listener keyFilter = new KeyTrapListener();
