@@ -405,6 +405,9 @@ public interface IDebugUIConstants {
 	
 	/** Breakpoint group image identifier. */
 	public static final String IMG_OBJS_BREAKPOINT_GROUP = "IMG_OBJS_BREAKPOINT_GROUP"; //$NON-NLS-1$
+	
+	/** Disabled breakpoint group image identifier. */
+	public static final String IMG_OBJS_BREAKPOINT_GROUP_DISABLED = "IMG_OBJS_BREAKPOINT_GROUP_DISABLED"; //$NON-NLS-1$
 		
 	/**
 	 * Enabled watchpoint image identifier (access & modification).
@@ -943,6 +946,8 @@ public interface IDebugUIConstants {
 	 * components extension point specifies an <code>IVariableComponent</code>
 	 * for an <code>IContextLaunchVariable</code>.
 	 */
-	public static final String EXTENSION_POINT_LAUNCH_VARIABLE_COMPONENTS = "launchVariableComponents";		//$NON-NLS-1$	
+	public static final String EXTENSION_POINT_LAUNCH_VARIABLE_COMPONENTS = "launchVariableComponents";		//$NON-NLS-1$
+	
+	public static final String EXTENSION_POINT_BREAKPOINT_CONTAINER_FACTORIES = "breakpointContainerFactories"; //$NON-NLS-1$
 		
 }

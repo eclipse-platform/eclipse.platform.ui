@@ -24,7 +24,9 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
+import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainer;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -65,11 +67,11 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 		 * @see ViewerFilter#select(Viewer, Object, Object)
 		 */
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (element instanceof String) {
-				// Breakpoint groups are visible if any of their children are visible.
-				Object[] children = fView.getTreeContentProvider().getChildren(element);
-				for (int i = 0; i < children.length; i++) {
-					if (select(viewer, element, children[i])) {
+			if (element instanceof IBreakpointContainer) {
+				// Breakpoint containers are visible if any of their children are visible.
+				IBreakpoint[] breakpoints = ((IBreakpointContainer) element).getBreakpoints();
+				for (int i = 0; i < breakpoints.length; i++) {
+					if (select(viewer, element, breakpoints[i])) {
 						return true;
 					}
 				}
@@ -171,7 +173,6 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 	protected void reapplyFilters(List debugTargets) {
 		fDebugTargets= debugTargets;		
 		getViewer().refresh();
-		((BreakpointsView)getView()).initializeCheckedState();
 	}
 	
 	protected IViewPart getView() {
@@ -220,9 +221,9 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 			getView().getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		}
 		super.valueChanged(on);
-		if (!on) {
-			((BreakpointsView)getView()).initializeCheckedState();
-		}
+//		if (!on) {
+//			((BreakpointsView)getView()).initializeCheckedState((CheckboxTreeViewer) getViewer());
+//		}
 	}
 	
 }

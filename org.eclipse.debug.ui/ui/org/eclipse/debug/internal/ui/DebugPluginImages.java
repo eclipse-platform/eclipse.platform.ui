@@ -150,7 +150,8 @@ public class DebugPluginImages {
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_REGISTER_GROUP, OBJECT + "genericreggroup_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_BREAKPOINT, OBJECT + "brkp_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED, OBJECT + "brkpd_obj.gif"); //$NON-NLS-1$
-		declareRegistryImage(IDebugUIConstants.IMG_OBJS_BREAKPOINT_GROUP, OBJECT + "breakpoint_group.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_OBJS_BREAKPOINT_GROUP, OBJECT + "brkp_grp.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_OBJS_BREAKPOINT_GROUP_DISABLED, OBJECT + "brkp_grp_disabled.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_WATCHPOINT, OBJECT + "readwrite_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_WATCHPOINT_DISABLED, OBJECT + "readwrite_obj_disabled.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_ACCESS_WATCHPOINT, OBJECT + "read_obj.gif"); //$NON-NLS-1$
