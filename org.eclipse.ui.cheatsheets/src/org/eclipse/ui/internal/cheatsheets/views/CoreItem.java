@@ -11,20 +11,15 @@
 package org.eclipse.ui.internal.cheatsheets.views;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.data.*;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
@@ -47,8 +42,8 @@ public class CoreItem extends ViewItem {
 	 * @param parent
 	 * @param contentItem
 	 */
-	public CoreItem(ScrolledForm form, Composite parent, IContainsContent contentItem, Color itemColor, CheatSheetView theview) {
-		super(form, parent, contentItem, itemColor, theview);
+	public CoreItem(FormToolkit toolkit, ScrolledForm form, IContainsContent contentItem, Color itemColor, CheatSheetView theview) {
+		super(toolkit, form, contentItem, itemColor, theview);
 	}
 
 	/**
@@ -82,7 +77,7 @@ public class CoreItem extends ViewItem {
 				//Need to log exception here. 
 				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.LESS_THAN_2_SUBITEMS), e);
 				CheatSheetPlugin.getPlugin().getLog().log(status);
-				org.eclipse.jface.dialogs.ErrorDialog.openError(new Shell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.LESS_THAN_2_SUBITEMS), null, status);
+				org.eclipse.jface.dialogs.ErrorDialog.openError(theview.getViewSite().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.LESS_THAN_2_SUBITEMS), null, status);
 			}
 			return;
 		}
@@ -90,34 +85,27 @@ public class CoreItem extends ViewItem {
 		if (buttonsHandled)
 			return;
 		
-		buttonComposite = new Composite(bodyWrapperComposite, SWT.NONE);
+		buttonComposite = toolkit.createComposite(bodyWrapperComposite);
 		GridLayout buttonlayout = new GridLayout(4, false);
 		buttonlayout.marginHeight = 2;
 		buttonlayout.marginWidth = 2;
 		buttonlayout.verticalSpacing = 2;
 
-//		GridData buttonData = new GridData(GridData.FILL_HORIZONTAL);
-//		buttonData.grabExcessHorizontalSpace = true;
 		TableWrapData buttonData = new TableWrapData(TableWrapData.FILL);
 
 		buttonComposite.setLayout(buttonlayout);
 		buttonComposite.setLayoutData(buttonData);
 		buttonComposite.setBackground(itemColor);
-		Label filllabel = new Label(buttonComposite, SWT.NULL);
-		filllabel.setBackground(itemColor);
-		GridData filldata = new GridData();
-		filldata.widthHint = 16;
-		filllabel.setLayoutData(filldata);
+
+		Label spacer = toolkit.createLabel(buttonComposite, null);
+		spacer.setBackground(itemColor);
+		GridData spacerData = new GridData();
+		spacerData.widthHint = 16;
+		spacer.setLayoutData(spacerData);
 
 		if (((Item)contentItem).isPerform()) {
-			startButton = new ImageHyperlink(buttonComposite, SWT.NULL);
-			startButton.setImage(startImage);
-			startButton.setData(this);
-			startButton.setBackground(itemColor);
-			startButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
-//			startButton.setFAccessibleDescription(bodyText.getText());
-//			startButton.setFAccessibleName(startButton.getToolTipText());
-
+			startButton = createButton(buttonComposite, startImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
+			toolkit.adapt(startButton, true, true);
 			startButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					theview.runPerformAction(startButton);
@@ -125,14 +113,8 @@ public class CoreItem extends ViewItem {
 			});
 		}
 		if (((Item)contentItem).isSkip()) {
-			skipButton = new ImageHyperlink(buttonComposite, SWT.NULL);
-			skipButton.setImage(skipImage);
-			skipButton.setData(this);
-			skipButton.setBackground(itemColor);
-			skipButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.SKIP_TASK_TOOLTIP));
-//			skipButton.setFAccessibleName(skipButton.getToolTipText());
-//			skipButton.setFAccessibleDescription(bodyText.getText());
-
+			skipButton = createButton(buttonComposite, skipImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.SKIP_TASK_TOOLTIP));
+			toolkit.adapt(skipButton, true, true);
 			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					theview.advanceItem(skipButton, false);
@@ -140,14 +122,8 @@ public class CoreItem extends ViewItem {
 			});
 		}
 		if (((Item)contentItem).isComplete()) {
-			completeButton = new ImageHyperlink(buttonComposite, SWT.NULL);
-			completeButton.setImage(completeImage);
-			completeButton.setData(this);
-			completeButton.setBackground(itemColor);
-			completeButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
-//			completeButton.setFAccessibleName(completeButton.getToolTipText());
-//			completeButton.setFAccessibleDescription(bodyText.getText());
-
+			completeButton = createButton(buttonComposite, completeImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
+			toolkit.adapt(completeButton, true, true);
 			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					theview.advanceItem(completeButton, true);
@@ -177,13 +153,14 @@ public class CoreItem extends ViewItem {
 			throw new Exception(ICheatSheetResource.LESS_THAN_2_SUBITEMS);
 		
 		
-		buttonComposite = new Composite(bodyWrapperComposite, SWT.NULL);
-		GridLayout xbuttonlayout = new GridLayout(1, false);
+		buttonComposite = toolkit.createComposite(bodyWrapperComposite);
+		GridLayout xbuttonlayout = new GridLayout(6, false);
 		xbuttonlayout.marginHeight = 2;
 		xbuttonlayout.marginWidth = 2;
 		xbuttonlayout.verticalSpacing = 2;
-		GridData xbuttonData = new GridData(GridData.FILL_HORIZONTAL);
-		xbuttonData.grabExcessHorizontalSpace = true;
+
+		TableWrapData xbuttonData = new TableWrapData(TableWrapData.FILL);
+
 		buttonComposite.setLayout(xbuttonlayout);
 		buttonComposite.setLayoutData(xbuttonData);
 		buttonComposite.setBackground(itemColor);
@@ -194,56 +171,27 @@ public class CoreItem extends ViewItem {
 		for (int i = 0; i < sublist.length; i++) {
 			int added = 0;
 			//Get the sub item to add.
-			SubItem sub = (SubItem) sublist[i];
-
-			//composite added.
-			Composite b = new Composite(buttonComposite, SWT.NULL);
-
-			GridLayout buttonlayout = new GridLayout(6, false);
-			buttonlayout.marginHeight = 2;
-			buttonlayout.marginWidth = 2;
-			buttonlayout.verticalSpacing = 2;
-			GridData buttonData = new GridData(GridData.FILL_HORIZONTAL);
-			buttonData.grabExcessHorizontalSpace = true;
-
-			b.setLayout(buttonlayout);
-			b.setLayoutData(buttonData);
-			b.setBackground(itemColor);
+			SubItem sub = sublist[i];
 
 			//Spacer label added.
-			Label filllabel = new Label(b, SWT.NULL);
-			filllabel.setBackground(itemColor);
-			GridData filldata = new GridData();
-			filldata.widthHint = 16;
-			filllabel.setLayoutData(filldata);
+			Label checkDoneLabel = toolkit.createLabel(buttonComposite, null);
+			checkDoneLabel.setBackground(itemColor);
+			GridData checkDoneData = new GridData();
+			checkDoneData.widthHint = 16;
+			checkDoneLabel.setLayoutData(checkDoneData);
 			added++;
 
 			//Now add the label.
-			StyledText label = new StyledText(b, SWT.NULL);
-			label.setText(sub.getLabel());
-			GridData labelData = new GridData();
-			label.setLayoutData(labelData);
+			Label label = toolkit.createLabel(buttonComposite, sub.getLabel());
 			label.setBackground(itemColor);
-			label.setEnabled(false);
-			label.getCaret().setVisible(false);
 			added++;
-
-			//Bold the title.
-			//			StyleRange r = new StyleRange(0, label.getText().length(), null, null, SWT.BOLD);
-			//			label.setStyleRange(r);
 
 			final int fi = i;
 
 			if (sub.isPerform()) {
 				added++;
-				startButton = new ImageHyperlink(buttonComposite, SWT.NULL);
-				startButton.setImage(startImage);
-				startButton.setData(this);
-				startButton.setBackground(itemColor);
-				startButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
-//				startButton.setFAccessibleDescription(bodyText.getText());
-//				startButton.setFAccessibleName(startButton.getToolTipText());
-
+				startButton = createButton(buttonComposite, startImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
+				toolkit.adapt(startButton, true, true);
 				startButton.addHyperlinkListener(new HyperlinkAdapter() {
 					public void linkActivated(HyperlinkEvent e) {
 						theview.runSubItemPerformAction(startButton, fi);
@@ -252,14 +200,8 @@ public class CoreItem extends ViewItem {
 			}
 			if (sub.isSkip()) {
 				added++;
-				skipButton = new ImageHyperlink(buttonComposite, SWT.NULL);
-				skipButton.setImage(skipImage);
-				skipButton.setData(this);
-				skipButton.setBackground(itemColor);
-				skipButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.SKIP_TASK_TOOLTIP));
-//				skipButton.setFAccessibleName(skipButton.getToolTipText());
-//				skipButton.setFAccessibleDescription(bodyText.getText());
-
+				skipButton = createButton(buttonComposite, skipImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.SKIP_TASK_TOOLTIP));
+				toolkit.adapt(skipButton, true, true);
 				skipButton.addHyperlinkListener(new HyperlinkAdapter() {
 					public void linkActivated(HyperlinkEvent e) {
 						theview.advanceSubItem(skipButton, false, fi);
@@ -268,14 +210,8 @@ public class CoreItem extends ViewItem {
 			}
 			if (sub.isComplete()) {
 				added++;
-				completeButton = new ImageHyperlink(buttonComposite, SWT.NULL);
-				completeButton.setImage(completeImage);
-				completeButton.setData(this);
-				completeButton.setBackground(itemColor);
-				completeButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
-//				completeButton.setFAccessibleName(completeButton.getToolTipText());
-//				completeButton.setFAccessibleDescription(bodyText.getText());
-
+				completeButton = createButton(buttonComposite, completeImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
+				toolkit.adapt(completeButton, true, true);
 				completeButton.addHyperlinkListener(new HyperlinkAdapter() {
 					public void linkActivated(HyperlinkEvent e) {
 						theview.advanceSubItem(completeButton, true, fi);
@@ -284,15 +220,12 @@ public class CoreItem extends ViewItem {
 			}
 
 			while (added < 6) {
-				//Spacer label added.
-				Label xfilllabel = new Label(b, SWT.NULL);
-				xfilllabel.setBackground(itemColor);
-				GridData xfilldata = new GridData(GridData.FILL_HORIZONTAL);
-				xfilllabel.setLayoutData(xfilldata);
+				// Add filler labels as needed to complete the row
+				Label filler = toolkit.createLabel(buttonComposite, null);
+				filler.setBackground(itemColor);
 				added++;
 			}
-			buttonCompositeList.add(b);
-			listOfSubItemCompositeHolders.add(new SubItemCompositeHolder(filllabel, startButton));
+			listOfSubItemCompositeHolders.add(new SubItemCompositeHolder(checkDoneLabel, startButton));
 		}
 		buttonsHandled = true;
 	}
