@@ -233,6 +233,17 @@ public class TextPresentation {
 	}
 		
 	/**
+	 * Replaces the given range in this presentation. The range must be a 
+	 * subrange of the presentation's default range.
+	 *
+	 * @param range the range to be added
+	 * @since 3.0
+	 */
+	public void replaceStyleRange(StyleRange range) {
+		applyStyleRange(range, false);
+	}
+	
+	/**
 	 * Merges the given range into this presentation. The range must be a 
 	 * subrange of the presentation's default range.
 	 *
@@ -240,6 +251,18 @@ public class TextPresentation {
 	 * @since 3.0
 	 */
 	public void mergeStyleRange(StyleRange range) {
+		applyStyleRange(range, true);
+	}
+	
+	/**
+	 * Applies the given range to this presentation. The range must be a 
+	 * subrange of the presentation's default range.
+	 *
+	 * @param range the range to be added
+	 * @param merge <code>true</code> if the style should be merged instead of replaced
+	 * @since 3.0
+	 */
+	private void applyStyleRange(StyleRange range, boolean merge) {
 		if (range.length == 0)
 			return;
 
@@ -256,7 +279,7 @@ public class TextPresentation {
 			
 			defaultRange.start= start;
 			defaultRange.length= length;
-			applyStyle(range, defaultRange);
+			applyStyle(range, defaultRange, merge);
 			fRanges.add(defaultRange);
 		} else {
 			IRegion rangeRegion= new Region(start, length);
@@ -268,7 +291,7 @@ public class TextPresentation {
 					defaultRange= range;
 				defaultRange.start= start;
 				defaultRange.length= length;
-				applyStyle(range, defaultRange);
+				applyStyle(range, defaultRange, merge);
 				fRanges.add(defaultRange);
 				return;
 			}
@@ -300,14 +323,14 @@ public class TextPresentation {
 					
 					defaultRange.start= start;
 					defaultRange.length= currentStart - start;
-					applyStyle(range, defaultRange);
+					applyStyle(range, defaultRange, merge);
 					fRanges.add(i, defaultRange);
 					i++; last++;
 					
 					
 					// Apply background to first part of current range
 					current.length= Math.min(end, currentEnd) - currentStart;
-					applyStyle(range, current);
+					applyStyle(range, current, merge);
 				}
 				
 				if (start >= currentStart) {
@@ -320,7 +343,7 @@ public class TextPresentation {
 						i++; last++;
 						fRanges.add(i, current);
 					}
-					applyStyle(range, current);
+					applyStyle(range, current, merge);
 					current.start= start;
 					current.length= Math.min(end, currentEnd) - start;
 				}
@@ -353,6 +376,18 @@ public class TextPresentation {
 	}
 	
 	/**
+	 * Replaces the given ranges in this presentation. Each range must be a 
+	 * subrange of the presentation's default range. The ranges must be ordered
+	 * by increasing offset and must not overlap (but may be adjacent).
+	 *
+	 * @param ranges the ranges to be added
+	 * @since 3.0
+	 */
+	public void replaceStyleRanges(StyleRange[] ranges) {
+		applyStyleRanges(ranges, false);
+	}
+	
+	/**
 	 * Merges the given ranges into this presentation. Each range must be a 
 	 * subrange of the presentation's default range. The ranges must be ordered
 	 * by increasing offset and must not overlap (but may be adjacent).
@@ -361,6 +396,19 @@ public class TextPresentation {
 	 * @since 3.0
 	 */
 	public void mergeStyleRanges(StyleRange[] ranges) {
+		applyStyleRanges(ranges, true);
+	}
+	
+	/**
+	 * Applies the given ranges to this presentation. Each range must be a 
+	 * subrange of the presentation's default range. The ranges must be ordered
+	 * by increasing offset and must not overlap (but may be adjacent).
+	 *
+	 * @param ranges the ranges to be added
+	 * @param merge <code>true</code> if the style should be merged instead of replaced
+	 * @since 3.0
+	 */
+	private void applyStyleRanges(StyleRange[] ranges, boolean merge) {
 		int j= 0;
 		ArrayList oldRanges= fRanges;
 		ArrayList newRanges= new ArrayList(2*ranges.length + oldRanges.size());
@@ -370,7 +418,7 @@ public class TextPresentation {
 			for (int m= getFirstIndexAfterWindow(new Region(range.start, range.length)); j < m; j++)
 				newRanges.add(oldRanges.get(j));
 			fRanges= newRanges; // for mergeStyleRange(...)
-			mergeStyleRange(range);
+			applyStyleRange(range, merge);
 		}
 		for (int m= oldRanges.size(); j < m; j++)
 			newRanges.add(oldRanges.get(j));
@@ -382,14 +430,21 @@ public class TextPresentation {
 	 * 
 	 * @param template the style range to be used as template
 	 * @param target the style range to which to apply the template
+	 * @param merge <code>true</code> if the style should be merged instead of replaced
 	 * @since 3.0
 	 */
-	private void applyStyle(StyleRange template, StyleRange target) {
-		if (template.foreground != null)
+	private void applyStyle(StyleRange template, StyleRange target, boolean merge) {
+		if (merge) {
+			if (template.foreground != null)
+				target.foreground= template.foreground;
+			if (template.background != null)
+				target.background= template.background;
+			target.fontStyle |= template.fontStyle;
+		} else {
 			target.foreground= template.foreground;
-		if (template.background != null)
 			target.background= template.background;
-		target.fontStyle |= template.fontStyle;
+			target.fontStyle= template.fontStyle;
+		}
 	}
 
 	/**
