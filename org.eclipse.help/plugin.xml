@@ -102,21 +102,21 @@
    <extension-point id="prebuiltIndex" name="%prebuilt_index" />
 
 	<!-- ================================================================ -->
-	<!-- Declares an extension point for Lucene Analyzers                 -->
+	<!-- Declares an extension point for Lucene Text Analyzers            -->
 	<!-- ================================================================ -->
 	<extension-point id="luceneAnalyzer" name="%lucene_analyzer" />
 
 	<!-- ================ -->
 	<!-- English Analyzer -->
 	<!-- ================ -->
-	<extension id="Analyzer_en" point="org.eclipse.help.luceneAnalyzer">
+	<extension id="org.eclipse.help.Analyzer_en" point="org.eclipse.help.luceneAnalyzer">
 		<analyzer locale="en" class="org.eclipse.help.internal.search.Analyzer_en" />
 	</extension>
 	
-	<!-- ================ -->
-	<!-- German Analyzer -->
-	<!-- ================ -->
-	<extension id="Analyzer_de" point="org.eclipse.help.luceneAnalyzer">
+	<!-- =============== -->
+	<!-- German Analyzer  -->
+	<!-- =============== -->
+	<extension id="org.eclipse.help.Analyzer_de" point="org.eclipse.help.luceneAnalyzer">
 		<analyzer locale="de" class="org.apache.lucene.analysis.de.GermanAnalyzer" />
 	</extension>
    

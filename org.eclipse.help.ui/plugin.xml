@@ -25,7 +25,7 @@
 
    <runtime>
       <library name="helpworkbench.jar">
-         <export name="org.eclipse.help.ui.browser.*"/>
+         <export name="*"/>
       </library>
    </runtime>
 
