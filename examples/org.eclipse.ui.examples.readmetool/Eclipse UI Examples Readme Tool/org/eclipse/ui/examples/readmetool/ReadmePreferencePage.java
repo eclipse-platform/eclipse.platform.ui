@@ -260,6 +260,7 @@ protected void performDefaults() {
  */
 public boolean performOk() {
 	storeValues();
+	ReadmePlugin.getDefault().savePluginPreferences();
 	return true;
 }
 /**
