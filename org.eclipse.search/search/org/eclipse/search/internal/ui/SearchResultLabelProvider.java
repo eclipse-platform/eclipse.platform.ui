@@ -18,7 +18,7 @@ class SearchResultLabelProvider extends LabelProvider implements ILabelProvider 
 	
 	private static class FileLabelProvider extends LabelProvider {
 
-		private Image fImage= SearchPluginImages.get(SearchPluginImages.IMG_OBJS_TSEARCH);
+		private Image fImage= SearchPluginImages.get(SearchPluginImages.IMG_OBJS_TSEARCH_DPDN);
 		
 		public String getText(Object element) {
 			if (!(element instanceof ISearchResultViewEntry))
@@ -66,13 +66,4 @@ class SearchResultLabelProvider extends LabelProvider implements ILabelProvider 
 	public Image getImage(Object rowElement) {
 		return fgLabelProvider.getImage(rowElement);	
 	}
-/*
-	public void dispose() {
-		if (fgLabelProvider != DEFAULT_LABEL_PROVIDER) {
-			fgLabelProvider.dispose();
-			setLabelProvider(null);
-		}
-		super.dispose();
-	}
-	*/
 }

@@ -25,8 +25,8 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 	
 	public SearchDropDownAction(SearchResultViewer viewer) {
 		fViewer= viewer;
-		setText(SearchPlugin.getResourceString("SearchResultView.searchAgain.text"));
-		setToolTipText(SearchPlugin.getResourceString("SearchResultView.searchAgain.tooltip"));
+		setText(SearchPlugin.getResourceString("SearchResultView.previousSearches.text"));
+		setToolTipText(SearchPlugin.getResourceString("SearchResultView.previousSearches.tooltip"));
 		setImageDescriptor(SearchPluginImages.DESC_CLCL_SEARCH_HISTROY);
 		setMenuCreator(this);
 	}
@@ -55,7 +55,7 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 		}
 		if (iter.hasNext()) {
 			new MenuItem(menu, SWT.SEPARATOR);
-			Action others= new ShowOtherSearchesAction();
+			Action others= new ShowSearchesAction();
 			others.setChecked(!checkedOne);
 			addActionToMenu(menu, others);
 		}
@@ -68,8 +68,6 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 	}
 
 	public void run() {
-		Search selected= SearchManager.getDefault().getCurrentSearch();
-		if (selected != null)
-			selected.searchAgain();
+			new ShowSearchesAction().run(true);
 	}
 }

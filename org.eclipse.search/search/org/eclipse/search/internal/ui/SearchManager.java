@@ -279,11 +279,12 @@ class SearchManager implements IResourceChangeListener {
 	}
 
 	void addNewSearch(Search newSearch) {
-		if (fCurrentSearch != null)
+		if (fCurrentSearch != null) {
 			if (fCurrentSearch.isSameSearch(newSearch))
-			getPreviousSearches().removeFirst();
-		else
-			fCurrentSearch.backupMarkers();
+				getPreviousSearches().remove(fCurrentSearch);
+			else
+				fCurrentSearch.backupMarkers();
+		}
 		fCurrentSearch= newSearch;
 		getPreviousSearches().addFirst(fCurrentSearch);
 	}

@@ -21,7 +21,7 @@ import org.eclipse.search.internal.ui.util.ListDialog;
  * Invoke the resource creation wizard selection Wizard.
  * This action will retarget to the active view.
  */
-class ShowOtherSearchesAction extends Action {
+class ShowSearchesAction extends Action {
 
 	private static final LabelProvider fgLabelProvider= new LabelProvider() {
 		public String getText(Object element) {
@@ -39,7 +39,7 @@ class ShowOtherSearchesAction extends Action {
 	/**
 	 *	Create a new instance of this class
 	 */
-	public ShowOtherSearchesAction() {
+	public ShowSearchesAction() {
 		super(SearchPlugin.getResourceString("ShowOtherSearchesAction.label"));
 		setToolTipText(SearchPlugin.getResourceString("ShowOtherSearchesAction.tooltip"));
 	}
@@ -47,15 +47,24 @@ class ShowOtherSearchesAction extends Action {
 	 * Overrides method from Action
 	 */
 	public void run() {
+		run(false);
+	}
+	 
+	public void run(boolean showAll) {
 		Iterator iter= SearchManager.getDefault().getPreviousSearches().iterator();
-		int size= SearchManager.getDefault().getPreviousSearches().size() - SearchDropDownAction.RESULTS_IN_DROP_DOWN;
+		int cutOffSize;
+		if (showAll)
+			cutOffSize= 0;
+		else
+			cutOffSize= SearchDropDownAction.RESULTS_IN_DROP_DOWN;
+		int size= SearchManager.getDefault().getPreviousSearches().size() - cutOffSize;
 		Search selectedSearch= SearchManager.getDefault().getCurrentSearch();
 		Action selectedAction = null;
 		ArrayList input= new ArrayList(size);
 		int i= 0;
 		while (iter.hasNext()) {
 			Search search= (Search)iter.next();
-			if (i++ < SearchDropDownAction.RESULTS_IN_DROP_DOWN)
+			if (i++ < cutOffSize)
 				continue;
 			Action action= new ShowSearchAction(search);
 			input.add(action);
@@ -64,8 +73,16 @@ class ShowOtherSearchesAction extends Action {
 		}
 
 		// Open a list dialog.
-		String title= SearchPlugin.getResourceString("OtherSearchesDialog.title");
-		String message= SearchPlugin.getResourceString("OtherSearchesDialog.message");
+		String title;
+		String message;
+		if (showAll) {
+			title= SearchPlugin.getResourceString("PreviousSearchesDialog.title");
+			message= SearchPlugin.getResourceString("PreviousSearchesDialog.message");
+		}
+		else {
+			title= SearchPlugin.getResourceString("OtherSearchesDialog.title");
+			message= SearchPlugin.getResourceString("OtherSearchesDialog.message");
+		}		
 		ListDialog dlg= new ListDialog(SearchPlugin.getActiveWorkbenchShell(),input, title, message, new SearchResultContentProvider(), fgLabelProvider);
 		if (selectedAction != null) {
 			Object[] selected= new Object[1];

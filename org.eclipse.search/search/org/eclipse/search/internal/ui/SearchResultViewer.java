@@ -49,6 +49,7 @@ class SearchResultViewer extends TableViewer {
 	private ShowNextResultAction fShowNextResultAction;
 	private ShowPreviousResultAction fShowPreviousResultAction;
 	private GotoMarkerAction fGotoMarkerAction;
+	private SearchAgainAction fSearchAgainAction;
 	private RemoveAllSearchesAction fRemoveAllSearchesAction;
 	private SortDropDownAction fSortDropDownAction;
 	private SearchDropDownAction fSearchDropDownAction;
@@ -72,6 +73,8 @@ class SearchResultViewer extends TableViewer {
 		setContentProvider(new SearchResultContentProvider());
 		setLabelProvider(new SearchResultLabelProvider());
 
+		boolean hasSearch= SearchManager.getDefault().getCurrentSearch() != null;
+
 		fShowNextResultAction= new ShowNextResultAction(this);
 		fShowNextResultAction.setEnabled(false);
 		fShowPreviousResultAction= new ShowPreviousResultAction(this);
@@ -79,11 +82,13 @@ class SearchResultViewer extends TableViewer {
 		fGotoMarkerAction= new GotoMarkerAction(this);
 		fGotoMarkerAction.setEnabled(false);
 		fRemoveAllSearchesAction= new RemoveAllSearchesAction();
-		fRemoveAllSearchesAction.setEnabled(SearchManager.getDefault().getCurrentSearch() != null);
+		fSearchAgainAction= new SearchAgainAction();
+		fSearchAgainAction.setEnabled(hasSearch);
+		fRemoveAllSearchesAction.setEnabled(hasSearch);
 		fSortDropDownAction = new SortDropDownAction(this);
 		fSortDropDownAction.setEnabled(getItemCount() > 0);
 		fSearchDropDownAction= new SearchDropDownAction(this);
-		fSearchDropDownAction.setEnabled(SearchManager.getDefault().getCurrentSearch() != null);
+		fSearchDropDownAction.setEnabled(hasSearch);
 
 		addSelectionChangedListener(
 			new ISelectionChangedListener() {
@@ -133,20 +138,18 @@ class SearchResultViewer extends TableViewer {
 			fSearchDropDownAction.setEnabled(state);
 		if (fGotoMarkerAction.isEnabled())
 			fGotoMarkerAction.setEnabled(false);
+		if (state != fSearchAgainAction.isEnabled())
+			fSearchAgainAction.setEnabled(state);
 	}
 
 	protected void inputChanged(Object input, Object oldInput) {
+		getTable().removeAll();
 		super.inputChanged(input, oldInput);
 		fMarkerToShow= -1;
 		updateTitle();
 		enableActions();
 	}
 
-	protected void unmapAllElements() {
-		super.unmapAllElements();
-		getTable().removeAll();
-	}
-	
 	//--- Contribution management -----------------------------------------------
 	
 	void fillContextMenu(IMenuManager menu) {
@@ -163,6 +166,7 @@ class SearchResultViewer extends TableViewer {
 		if (getItemCount() > 0) {
 			menu.add(new RemoveAllResultsAction());
 		}
+		menu.add(fSearchAgainAction);
 		menu.add(fSortDropDownAction);
 	}
 
