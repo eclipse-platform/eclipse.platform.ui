@@ -17,8 +17,7 @@ import org.eclipse.jface.wizard.IWizard;
 /**
  * Interface for project capability install wizard. The wizard is
  * responsible for collecting any necessary information from the
- * user and adding this capability's nature along with all other
- * natures from capabilities this capability handles the UI for.
+ * user.
  * <p>
  * The install wizard must only add natures that represent the
  * capability and any capabilities it handles the UI for. The
