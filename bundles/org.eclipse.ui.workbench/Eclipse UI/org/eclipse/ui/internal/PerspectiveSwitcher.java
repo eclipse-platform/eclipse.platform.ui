@@ -387,7 +387,7 @@ public class PerspectiveSwitcher {
 	private void unhookDragSupport() {
 		ToolBar bar = perspectiveBar.getControl();
 
-		if (bar != null || !bar.isDisposed() || dragListener == null)
+		if (bar == null || bar.isDisposed() || dragListener == null)
 			return;
 		PresentationUtil.removeDragListener(bar, dragListener);
 		DragUtil.removeDragTarget(perspectiveBar.getControl(), dragTarget);
