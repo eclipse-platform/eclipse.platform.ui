@@ -57,6 +57,11 @@ public class RectangleAnimation extends Job {
 	private UIJob paintJob = new UIJob(WorkbenchMessages.getString("RectangleAnimation.Animating_Rectangle")) { //$NON-NLS-1$
 
 		public IStatus runInUIThread(IProgressMonitor monitor) {
+			if (canvas == null || canvas.isDisposed()) {
+				done = true;
+				return Status.OK_STATUS;
+			}
+			
 			canvas.redraw();
 			
 			return Status.OK_STATUS;
@@ -66,6 +71,11 @@ public class RectangleAnimation extends Job {
 
 	private void draw(GC gc) {
 		if (startTime == 0) {
+			return;
+		}
+		
+		if (canvas == null || canvas.isDisposed()) {
+			done = true;
 			return;
 		}
 		
@@ -145,11 +155,13 @@ public class RectangleAnimation extends Job {
 			}
 		}
 
-		canvas.getDisplay().syncExec(new Runnable() {
-			public void run() {
-				canvas.dispose();
-			}
-		});
+		if (!canvas.isDisposed()) {
+			canvas.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					canvas.dispose();
+				}
+			});
+		}
 		
 		return Status.OK_STATUS;
 	}
