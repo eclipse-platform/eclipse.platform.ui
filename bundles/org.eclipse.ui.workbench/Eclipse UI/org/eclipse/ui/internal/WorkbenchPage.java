@@ -1426,10 +1426,10 @@ public void hideView(IViewPart view) {
  * or active parts. Bug 7743.
  */
 private void lastPartClosePerspective() {
-	Perspective persp = getActivePerspective();
-	if (persp != null && getActivePart() == null)
-		if(persp.getViewReferences().length == 0 && getEditorReferences().length == 0)
-			closePerspective(persp, false);
+//	Perspective persp = getActivePerspective();
+//	if (persp != null && getActivePart() == null)
+//		if(persp.getViewReferences().length == 0 && getEditorReferences().length == 0)
+//			closePerspective(persp, false);
 }
 
 /**
