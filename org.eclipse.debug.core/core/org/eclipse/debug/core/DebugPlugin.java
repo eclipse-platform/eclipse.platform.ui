@@ -20,7 +20,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IProcess;
@@ -177,6 +179,18 @@ public class DebugPlugin extends Plugin {
 	private HashMap fStatusHandlers = null;
 	
 	/**
+	 * A safe runnable to catch/log any exceptions that occurr while dispatching
+	 * debug events.
+	 */
+	private EventDispatcher fEventDispatcher = null;
+	
+	/**
+	 * A safe runnable to catch/log any exceptions that occurr while filtering
+	 * debug events.
+	 */
+	private EventFilter fEventFunnel = null;
+	
+	/**
 	 * Returns the singleton instance of the debug plug-in.
 	 */
 	public static DebugPlugin getDefault() {
@@ -250,19 +264,11 @@ public class DebugPlugin extends Plugin {
 	public void fireDebugEventSet(DebugEvent[] events) {
 		if (isShuttingDown() || events == null || fEventListeners == null)
 			return;
-		events = filterEvents(events);
+		events = getEventFilter().filter(events);
 		if (events == null) {
 			return;
 		} else {
-			try {
-				setDispatching(true);
-				Object[] listeners= getEventListeners();
-				for (int i= 0; i < listeners.length; i++) {
-					((IDebugEventSetListener)listeners[i]).handleDebugEvents(events);
-				}
-			} finally {
-				setDispatching(false);
-			}
+			getEventDispatcher().dispatch(events);
 		}
 	}
 	
@@ -289,29 +295,6 @@ public class DebugPlugin extends Plugin {
 				fAsynchRunner.notifyAll();
 			}			
 		} 
-	}
-	
-	/**
-	 * Returns a collection of events, based on the given event
-	 * set, removing any events that are filtered by registered
-	 * debug event filters. Returns <code>null</code> or an empty 
-	 * collection if all events are filtered.
-	 * 
-	 * @param events the event set to filter
-	 * @return filtered event set
-	 */
-	private DebugEvent[] filterEvents(DebugEvent[] events) {
-		if (hasEventFilters()) {
-			Object[] filters = fEventFilters.getListeners();
-			for (int i = 0; i < filters.length; i++) {
-				events = ((IDebugEventFilter)filters[i]).filterDebugEvents(events);
-				if (events == null || events.length == 0) {
-					break;
-				}
-			}
-
-		}
-		return events;
 	}
 	
 	/**
@@ -361,7 +344,12 @@ public class DebugPlugin extends Plugin {
 		IConfigurationElement config = (IConfigurationElement)fStatusHandlers.get(key);
 		if (config != null) {
 			try {
-				return (IStatusHandler)config.createExecutableExtension("class"); //$NON-NLS-1$
+				Object handler = config.createExecutableExtension("class"); //$NON-NLS-1$
+				if (handler instanceof IStatusHandler) {
+					return (IStatusHandler)handler;
+				} else {
+					invalidStatusHandler(null, MessageFormat.format(DebugCoreMessages.getString("DebugPlugin.Registered_status_handler_{0}_does_not_implement_required_interface_IStatusHandler._1"), new String[] {config.getDeclaringExtension().getUniqueIdentifier()})); //$NON-NLS-1$
+				}
 			} catch (CoreException e) {
 				log(e);
 			}
@@ -758,6 +746,115 @@ public class DebugPlugin extends Plugin {
 		}		
 	}
 	
+	/**
+	 * Returns the debug event dispatcher.
+	 * 
+	 * @return the debug event dispatcher
+	 */
+	private EventDispatcher getEventDispatcher() {
+		if (fEventDispatcher == null) {
+			fEventDispatcher = new EventDispatcher();
+		}
+		return fEventDispatcher;
+	}
+	
+	/**
+	 * Dispatches events in a safe runnable to handle any exceptions.
+	 */
+	class EventDispatcher implements ISafeRunnable {
+		
+		private DebugEvent[] fEvents;
+		
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+		 */
+		public void handleException(Throwable exception) {
+			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.getString("DebugPlugin.An_exception_occurred_while_dispatching_debug_events._2"), exception); //$NON-NLS-1$
+			log(status);
+		}
+
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+		 */
+		public void run() throws Exception {
+			try {
+				setDispatching(true);
+				Object[] listeners= getEventListeners();
+				for (int i= 0; i < listeners.length; i++) {
+					((IDebugEventSetListener)listeners[i]).handleDebugEvents(fEvents);
+				}
+			} finally {
+				setDispatching(false);
+			}			
+		}
+		
+		/**
+		 * Dispatch the given events.
+		 * 
+		 * @param events debug events
+		 */
+		public void dispatch(DebugEvent[] events) {
+			fEvents = events;
+			Platform.run(this);
+		}
+
+	}
+	
+	/**
+	 * Returns the debug event dispatcher.
+	 * 
+	 * @return the debug event dispatcher
+	 */
+	private EventFilter getEventFilter() {
+		if (fEventFunnel == null) {
+			fEventFunnel = new EventFilter();
+		}
+		return fEventFunnel;
+	}
+		
+	/**
+	 * Filters events in a safe runnable to handle any exceptions.
+	 */
+	class EventFilter implements ISafeRunnable {
+		
+		private DebugEvent[] fEvents;
+		
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+		 */
+		public void handleException(Throwable exception) {
+			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.getString("DebugPlugin.An_exception_occurred_while_filtering_debug_events._3"), exception); //$NON-NLS-1$
+			log(status);
+		}
+
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+		 */
+		public void run() throws Exception {
+			Object[] filters = fEventFilters.getListeners();
+			for (int i = 0; i < filters.length; i++) {
+				fEvents = ((IDebugEventFilter)filters[i]).filterDebugEvents(fEvents);
+				if (fEvents == null || fEvents.length == 0) {
+					break;
+				}
+			}		
+		}
+		
+		/**
+		 * Returns the remaining debug events after applying all filters.
+		 * 
+		 * @param events raw debug events
+		 * @return filtered debug events
+		 */
+		public DebugEvent[] filter(DebugEvent[] events) {
+			fEvents = events;
+			if (hasEventFilters()) {
+				Platform.run(this);
+			}
+			return fEvents;
+		}
+
+	}	
 }
 
 
