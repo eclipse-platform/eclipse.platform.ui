@@ -76,11 +76,6 @@ public class KSubstWizardSummaryPage extends CVSWizardPage {
 		createWrappingLabel(top, Policy.bind("KSubstWizardSummaryPage.contents"), 0, LABEL_WIDTH_HINT);		 //$NON-NLS-1$
 
 		createSeparator(top, 0);
-		tableViewer = createFileTableViewer(top,
-			Policy.bind("KSubstWizardSummaryPage.summaryViewer.title"), //$NON-NLS-1$
-			Policy.bind("KSubstWizardSummaryPage.summaryViewer.fileHeader"), //$NON-NLS-1$
-			Policy.bind("KSubstWizardSummaryPage.summaryViewer.ksubstHeader"), //$NON-NLS-1$
-			LIST_HEIGHT_HINT);
 
 		showUnaffectedFilesButton = new Button(top, SWT.CHECK);
 		showUnaffectedFilesButton.setText(Policy.bind("KSubstWizardSummaryPage.showUnaffectedFiles")); //$NON-NLS-1$
@@ -95,6 +90,12 @@ public class KSubstWizardSummaryPage extends CVSWizardPage {
 				});
 			}
 		});
+
+		tableViewer = createFileTableViewer(top,
+			Policy.bind("KSubstWizardSummaryPage.summaryViewer.title"), //$NON-NLS-1$
+			Policy.bind("KSubstWizardSummaryPage.summaryViewer.fileHeader"), //$NON-NLS-1$
+			Policy.bind("KSubstWizardSummaryPage.summaryViewer.ksubstHeader"), //$NON-NLS-1$
+			LIST_HEIGHT_HINT);
 	}
 	
 	/**
