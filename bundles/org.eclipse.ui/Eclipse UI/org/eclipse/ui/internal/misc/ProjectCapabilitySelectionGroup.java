@@ -6,6 +6,7 @@ package org.eclipse.ui.internal.misc;
  */
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
@@ -93,7 +94,7 @@ public class ProjectCapabilitySelectionGroup {
 		
 		// Text field to display the capability's description
 		final Text descText = new Text(composite, SWT.WRAP | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
-		descText.setText("\n\n\n");
+		descText.setText("\n\n\n"); //$NON-NLS-1$
 		descText.setEditable(false);
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
@@ -265,13 +266,10 @@ public class ProjectCapabilitySelectionGroup {
 					// If the prerequisite is missing, warn the user and
 					// do not allow the check to proceed.
 					if (prereqCapabilities[i] == null) {
-						StringBuffer msg = new StringBuffer();
-						msg.append("The capability \"");
-						msg.append(capability.getName());
-						msg.append("\" requires another capability which is missing (id = ");
-						msg.append(prereqIds[i]);
-						msg.append(").\n\nThis capability cannot be checked.");
-						MessageDialog.openWarning(listViewer.getControl().getShell(), "Required Capability Missing", msg.toString());
+						MessageDialog.openWarning(
+							listViewer.getControl().getShell(),
+							WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
+							WorkbenchMessages.format("ProjectCapabilitySelectionGroup.missingPrereqs", new Object[] {capability.getName(), prereqIds[i]})); //$NON-NLS-1$
 						listViewer.setChecked(capability, false);
 						return;
 					}
@@ -283,60 +281,41 @@ public class ProjectCapabilitySelectionGroup {
 					allPrereqs.add(prereqCapabilities[i]);
 				}
 			}
-			// Warn the user that the prerequisites need to be checked also
-/*			StringBuffer msg = new StringBuffer();
-			msg.append("The capability \"");
-			msg.append(capability.getName());
-			msg.append("\" requires the following:");
-			for (int i = 0; i < allPrereqs.size(); i++) {
-				Capability cap = (Capability) allPrereqs.get(i);
-				msg.append("\n   ");
-				msg.append(cap.getName());
-			}
-			msg.append("\n\nDo you want these required capabilities checked also?");
-			boolean yes = MessageDialog.openQuestion(listViewer.getControl().getShell(), "Required Capabilities", msg.toString());
-*/			boolean yes = true;
-			if (yes) {
-				// User wants all prerequisite capabilities to be checked.
-				capabilitiesModified();
-				capabilities = new LinkedList();
-				capabilities.addLast(capability);
-				// For each capability that has prerequisites...
-				while (!capabilities.isEmpty()) {
-					Capability target;
-					target = (Capability) capabilities.removeFirst();
-					// Retrieve the prerequisite capabilities...
-					String[] prereqIds = registry.getPrerequisiteIds(target);
-					Capability[] prereqCapabilities;
-					prereqCapabilities = registry.findCapabilities(prereqIds);
-					// For each prerequisite capability...
-					for (int i = 0; i < prereqCapabilities.length; i++) {
-						// Check the prerequisite capability
-						listViewer.setChecked(prereqCapabilities[i], true);
-						// Gray the prerequisite to show the user its required
-						// by another capability.
-						listViewer.setGrayed(prereqCapabilities[i], true);
-						// Update the dependent map for the prerequisite capability
-						addDependency(prereqCapabilities[i], target);
-						// Recursive if prerequisite capability also has prerequisites
-						if (registry.hasPrerequisites(prereqCapabilities[i]))
-							capabilities.addLast(prereqCapabilities[i]);
-					}
-				}
-				// Add the capability as a dependent of itself.
-				// It will indicate to the uncheck handler to not uncheck this
-				// capability automatically even if a another capability which
-				// depended on it is unchecked.
-				addDependency(capability, capability);
 			
-				// Notify those interested
-				notifyCheckStateListner();
+			// User wants all prerequisite capabilities to be checked.
+			capabilitiesModified();
+			capabilities = new LinkedList();
+			capabilities.addLast(capability);
+			// For each capability that has prerequisites...
+			while (!capabilities.isEmpty()) {
+				Capability target;
+				target = (Capability) capabilities.removeFirst();
+				// Retrieve the prerequisite capabilities...
+				String[] prereqIds = registry.getPrerequisiteIds(target);
+				Capability[] prereqCapabilities;
+				prereqCapabilities = registry.findCapabilities(prereqIds);
+				// For each prerequisite capability...
+				for (int i = 0; i < prereqCapabilities.length; i++) {
+					// Check the prerequisite capability
+					listViewer.setChecked(prereqCapabilities[i], true);
+					// Gray the prerequisite to show the user its required
+					// by another capability.
+					listViewer.setGrayed(prereqCapabilities[i], true);
+					// Update the dependent map for the prerequisite capability
+					addDependency(prereqCapabilities[i], target);
+					// Recursive if prerequisite capability also has prerequisites
+					if (registry.hasPrerequisites(prereqCapabilities[i]))
+						capabilities.addLast(prereqCapabilities[i]);
+				}
 			}
-			else {
-				// User does not want prerequisite checked so do not
-				// allow the original capability to be checked
-				listViewer.setChecked(capability, false);
-			}
+			// Add the capability as a dependent of itself.
+			// It will indicate to the uncheck handler to not uncheck this
+			// capability automatically even if a another capability which
+			// depended on it is unchecked.
+			addDependency(capability, capability);
+		
+			// Notify those interested
+			notifyCheckStateListner();
 		}
 		else {
 			// There are no prerequisite capabilities so allow the
@@ -423,21 +402,31 @@ public class ProjectCapabilitySelectionGroup {
 		}
 		else {
 			// At least one other capability depends on it being checked
-			// so force it checked and warn the user.
+			// so force it to remain checked and warn the user.
 			listViewer.setChecked(capability, true);
-			StringBuffer msg = new StringBuffer();
-			msg.append("The capability \"");
-			msg.append(capability.getName());
-			msg.append("\" is required by the following:");
-			for (int i = 0; i < descriptors.size(); i++) {
-				Capability cap = (Capability) descriptors.get(i);
-				if (cap != capability) {
-					msg.append("\n   ");
+			// Get a copy and remove the target capability
+			ArrayList descCopy = (ArrayList) descriptors.clone();
+			descCopy.remove(capability);
+			// Show the prereq problem to the user
+			if (descCopy.size() == 1) {
+				Capability cap = (Capability) descCopy.get(0);
+				MessageDialog.openWarning(
+					listViewer.getControl().getShell(),
+					WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
+					WorkbenchMessages.format("ProjectCapabilitySelectionGroup.requiredPrereq", new Object[] {capability.getName(), cap.getName()})); //$NON-NLS-1$
+			} else {
+				StringBuffer msg = new StringBuffer();
+				Iterator enum = descCopy.iterator();
+				while (enum.hasNext()) {
+					Capability cap = (Capability) enum.next();
+					msg.append("\n    "); //$NON-NLS-1$
 					msg.append(cap.getName());
 				}
+				MessageDialog.openWarning(
+					listViewer.getControl().getShell(),
+					WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
+					WorkbenchMessages.format("ProjectCapabilitySelectionGroup.requiredPrereqs", new Object[] {capability.getName(), msg.toString()})); //$NON-NLS-1$
 			}
-			msg.append("\n\nThis capability must remain checked.");
-			MessageDialog.openWarning(listViewer.getControl().getShell(), "Capability Required", msg.toString());
 		}
 	}
 	
