@@ -34,7 +34,23 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter2;
 
 /**
- * Workbench adapter for a elements in the debug view 
+ * A workbench adapter for standard elements displayed in the debug view.
+ * <p>
+ * The adapter works for the following type of elements:
+ * <ul>
+ * <li>ILaunchManager</li>
+ * <li>ILaunch</li>
+ * <li>IDebugTarget</li>
+ * <li>IProcess</li>
+ * <li>IDebugThread</li>
+ * <li>IStackFrame</li>
+ * </ul> 
+ * </p>
+ * <p>
+ * Clients may subclass this class to provide custom adapters for elements in a debug
+ * model.
+ * </p>
+ * @since 3.1
  */
 public class DebugElementWorkbenchAdapter implements IWorkbenchAdapter, IWorkbenchAdapter2 {
     
