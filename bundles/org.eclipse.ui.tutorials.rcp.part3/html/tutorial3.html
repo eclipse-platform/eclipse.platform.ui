@@ -43,10 +43,9 @@ Much of our discussion in the previous
 two parts focused on taking things away from
 the platform - turning off toolbars, getting
 rid of menus, and so forth.
-For the final installment of this
-tutorial series we're going to look at putting things back in.
-As before, all source code for the tutorial 
-can be found in the
+For this installment we're going to look at putting things back in.
+All source code for the tutorial 
+can be downloaded from the
 <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.ui.tutorials.rcp.part3">Eclipse project here</a>.
 </p>
 
@@ -143,7 +142,7 @@ The most important part of this class is the <code>createPartControl</code> meth
 (<img src="images/tag_2.gif" height="13" width="24" align="center" alt="#2">).
 It's where you create your JFace or SWT controls that make
 up the view.
-The rest of the source was can be found in the example zip file.
+The rest of the source was can be found in the example project.
 View programming is beyond the scope of this tutorial
 but you can see the reference section for more information.
 </p>
@@ -226,7 +225,7 @@ perspectives and fixed views.
 <p>
 A fixed view is a view that cannot be closed.
 The title bar of the view doesn't even have a close button.
-To create one of these you can use the <code>addFixedView()</code>
+To create one of these you can use the <code>setFixed()</code>
 method on <code>IPageLayout</code>.
 </p>
 <p>
@@ -242,9 +241,10 @@ for example:
         point=&quot;org.eclipse.ui.perspectives&quot;&gt;
         &lt;perspective
             name=&quot;%perspectiveName&quot;
+            icon=&quot;icons/sample.gif&quot;
             <b>fixed=&quot;true&quot;</b>
-            class=&quot;org.eclipse.ui.tutorials.rcp.part1.RcpPerspective&quot;
-            id=&quot;org.eclipse.ui.tutorials.rcp.part1.RcpPerspective&quot;&gt;
+            class=&quot;org.eclipse.ui.tutorials.rcp.part3.RcpPerspective&quot;
+            id=&quot;org.eclipse.ui.tutorials.rcp.part3.RcpPerspective&quot;&gt;
         &lt;/perspective&gt;
     &lt;/extension&gt;
 </pre>
@@ -281,7 +281,7 @@ First let's take a look at <code>fillActionBars</code>:
 	    IActionBarConfigurer configurer,
 	    int flags) {
 	    super.fillActionBars(window, configurer, flags);
-<img src="images/tag_1.gif" height="13" width="24" align="center" alt="#1">      if ((flags & FILL_MENU_BAR) != 0) {
+<img src="images/tag_1.gif" height="13" width="24" align="center" alt="#1">         if ((flags & FILL_MENU_BAR) != 0) {
 	        fillMenuBar(window, configurer);
 	    }
 	}
@@ -462,7 +462,7 @@ source.part3.jar = src/
 
 <h2>Conclusion</h2>
 <p>
-In the final part of this tutorial, we 
+In this part of the tutorial, we 
 added a simple view, some menus, and help files
 to a create a sample RCP application.
 Hopefully you can can use this example as a reference in
