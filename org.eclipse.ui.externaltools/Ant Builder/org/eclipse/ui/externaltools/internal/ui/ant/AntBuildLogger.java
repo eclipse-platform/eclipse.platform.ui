@@ -37,7 +37,7 @@ public class AntBuildLogger extends NullBuildLogger {
 		// we get the display from the console #0 (that exists for sure because consoles!=null)
 		Display display = doc.getDisplay();
 		// create a new thread for synchronizing all the refresh operations
-		display.syncExec(new Runnable() {
+		display.asyncExec(new Runnable() {
 			public void run() {
 				doc.refreshTree();
 			}
