@@ -134,7 +134,7 @@ if (data.isIE()){
 	// move the dialog just a bit higher than the middle
 	if (t-50 > 0) t = t-50;
 	
-	advancedDialog = window.open("workingSetManager.jsp?workingSet="+escape(workingSet), "advancedDialog", "resizeable=no,height="+h+",width="+w+",left="+l+",top="+t );
+	advancedDialog = window.open("workingSetManager.jsp?workingSet="+escape(workingSet)+"&encoding=js", "advancedDialog", "resizeable=no,height="+h+",width="+w+",left="+l+",top="+t );
 	advancedDialog.focus(); 
 }
 

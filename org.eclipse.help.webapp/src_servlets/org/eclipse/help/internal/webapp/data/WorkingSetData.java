@@ -9,7 +9,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.webapp.servlet.UrlUtil;
 import org.eclipse.help.internal.workingset.*;
 
 /**
