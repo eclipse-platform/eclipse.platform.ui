@@ -7,11 +7,8 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.core.runtime.CoreException;
@@ -33,6 +30,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
@@ -138,7 +136,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		upButton = createPushButton(buttonComposite, AntLaunchConfigurationMessages.getString("AntTargetsTab.U&p_3"), null); //$NON-NLS-1$
 		upButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					handleMove(-1);
+					handleMoveUp();
 					updateLaunchConfigurationDialog();
 				}
 			});
@@ -146,7 +144,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		downButton = createPushButton(buttonComposite, AntLaunchConfigurationMessages.getString("AntTargetsTab.&Down_4"), null); //$NON-NLS-1$
 		downButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					handleMove(1);
+					handleMoveDown();
 					updateLaunchConfigurationDialog();
 				}
 			});
@@ -197,6 +195,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		if (dialog.open() == SelectionDialog.OK) {
 			getContentProvider().addAll(Arrays.asList(dialog.getResult()));
 		}
+		updateItemColoring();
 	}
 	
 	private AntTargetContentProvider getContentProvider() {
@@ -204,38 +203,66 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	private void removeTargets() {
-		IStructuredSelection selection = (IStructuredSelection)executeTargetsTable.getSelection();
-		getContentProvider().remove(selection);
+		int startIndex = executeTargetsTable.getTable().getSelectionIndex();
+		int indices[] = executeTargetsTable.getTable().getSelectionIndices();
+		for (int i = indices.length - 1; i >= 0; i--) {
+			getContentProvider().removeTarget(indices[i]);
+		}
+		executeTargetsTable.refresh();
+		executeTargetsTable.getTable().select(startIndex - 1);
 	}
 	
-	private void handleMove(int direction) {
-		IStructuredSelection sel = (IStructuredSelection)executeTargetsTable.getSelection();
-		List selList= sel.toList();
-		Object[] elements = getContentProvider().getElements(null);
-		List contents= new ArrayList(elements.length);
-		for (int i = 0; i < elements.length; i++) {
-			contents.add(elements[i]);
+	/**
+	 * Moves the selected targets up in the list of active targets
+	 */
+	private void handleMoveUp() {
+		int indices[] = executeTargetsTable.getTable().getSelectionIndices();
+		if (indices.length == 0) {
+			return;
 		}
-		Object[] moved= new Object[contents.size()];
-		int i;
-		for (Iterator current = selList.iterator(); current.hasNext();) {
-			Object config = current.next();
-			i= contents.indexOf(config);
-			moved[i + direction]= config;
+		int newIndices[] = new int[indices.length];
+		if (indices[0] == 0) {
+			// Only perform the move if the items have somewhere to move to
+			return;
 		}
-		
-		contents.removeAll(selList);
-			
-		for (int j = 0; j < moved.length; j++) {
-			Object config = moved[j];
-			if (config != null) {
-				contents.add(j, config);		
-			}
+		for (int i = 0; i < newIndices.length; i++) {
+			int index = indices[i];
+			getContentProvider().moveUpTarget(index);
+			newIndices[i] = index - 1;
 		}
-		executeTargetsTable.setInput(contents.toArray(new TargetInfo[contents.size()]));
-		executeTargetsTable.setSelection(executeTargetsTable.getSelection());
+		executeTargetsTable.refresh();
+		// TODO: Remove the call to deselectAll() once Bug 30745 is fixed
+		executeTargetsTable.getTable().deselectAll();
+		executeTargetsTable.getTable().select(newIndices);
+		updateButtonEnablement();
+		updateItemColoring();
 	}
-
+	
+	/**
+	 * Moves the selected targets down in the list of active targets
+	 */
+	private void handleMoveDown() {
+		int indices[] = executeTargetsTable.getTable().getSelectionIndices();
+		if (indices.length == 0) {
+			return;
+		}
+		int newIndices[] = new int[indices.length];
+		if (indices[indices.length - 1] == executeTargetsTable.getTable().getItemCount() - 1) {
+			// Only perform the move if the items have somewhere to move to
+			return;
+		}
+		for (int i= indices.length - 1; i >= 0; i--) {
+			int index = indices[i];
+			getContentProvider().moveDownTarget(index);
+			newIndices[i] = index + 1;
+		}
+		executeTargetsTable.refresh();
+		// TODO: Remove the call to deselectAll() once Bug 30745 is fixed
+		executeTargetsTable.getTable().deselectAll();
+		executeTargetsTable.getTable().select(newIndices);
+		updateButtonEnablement();
+		updateItemColoring();
+	}
 
 	/*
 	 * Creates the list of targets that will be used when the tool is run.
@@ -329,7 +356,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		if (newLocation == null) {
 			allTargets= null;
 			location= newLocation;
-			executeTargetsTable.setInput(new TargetInfo[0]);
+			setInput(new TargetInfo[0]);
 			return; 
 		}
 		
@@ -340,15 +367,15 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		
 		TargetInfo[] allInfos= getTargets();
 		if (allInfos == null) {
-			executeTargetsTable.setInput(new TargetInfo[0]);
+			setInput(new TargetInfo[0]);
 			return; 
 		}
 		String[] targetNames= AntUtil.parseRunTargets(configTargets);
 		if (targetNames.length == 0) {
 			if (defaultTarget != null) {
-				executeTargetsTable.setInput(new TargetInfo[]{defaultTarget});
+				setInput(new TargetInfo[]{defaultTarget});
 			} else {
-				executeTargetsTable.setInput(new TargetInfo[0]);
+				setInput(new TargetInfo[0]);
 			}
 			return;
 		}
@@ -359,13 +386,21 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 
 		if (found != targetNames.length) {
 			if (defaultTarget == null) {
-				executeTargetsTable.setInput(new TargetInfo[0]);
+				setInput(new TargetInfo[0]);
 			} else {
-				executeTargetsTable.setInput(new TargetInfo[]{defaultTarget});
+				setInput(new TargetInfo[]{defaultTarget});
 			}
 		} else {
-			executeTargetsTable.setInput(targetInfos);
+			setInput(targetInfos);
 		}
+	}
+	
+	/**
+	 * Sets the table's input to the given input.
+	 */
+	private void setInput(Object input) {
+		executeTargetsTable.setInput(input);
+		updateItemColoring();
 	}
 	
 	private int initializeTargetInfos(TargetInfo[] allInfos, String[] targetNames, TargetInfo[] targetInfos) {
@@ -462,6 +497,21 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			downButton.setEnabled(true);
 		} else {
 			downButton.setEnabled(false);		
+		}
+	}
+
+	public void updateItemColoring() {
+		if (executeTargetsTable != null &&  !executeTargetsTable.getTable().isDisposed()) {
+			TableItem[] items = executeTargetsTable.getTable().getItems();
+			for (int i = 0; i < items.length; i++) {
+				TableItem item = items[i];
+				TargetInfo info = (TargetInfo) item.getData();
+				if (info.isDefault()) {
+					item.setForeground(executeTargetsTable.getControl().getDisplay().getSystemColor(SWT.COLOR_BLUE));
+				} else {
+					item.setForeground(executeTargetsTable.getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+				}
+			}
 		}
 	}
 	

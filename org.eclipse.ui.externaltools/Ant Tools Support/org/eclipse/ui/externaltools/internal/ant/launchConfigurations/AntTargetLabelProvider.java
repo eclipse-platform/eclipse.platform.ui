@@ -12,9 +12,7 @@ Contributors:
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
@@ -36,24 +34,11 @@ public class AntTargetLabelProvider extends LabelProvider {
 		
 		if (target != null) {
 			StringBuffer result = new StringBuffer(target.getName());
-			if (viewer != null) {
-				TableItem[] items= viewer.getTable().getItems();
-				for (int i = 0; i < items.length; i++) {
-					TableItem item = items[i];
-					TargetInfo info = (TargetInfo)item.getData();
-					if (info == target) {					
-						if (info.isDefault()) {
-							item.setForeground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_BLUE));
-							result.append(" ("); //$NON-NLS-1$;
-							result.append(AntLaunchConfigurationMessages.getString("AntTargetLabelProvider.default_target_1")); //$NON-NLS-1$
-							result.append(")"); //$NON-NLS-1$;
-						}  else {
-							item.setForeground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
-						}
-						break;
-					} 
-				}
-			} 
+			if (target.isDefault()) {
+				result.append(" ("); //$NON-NLS-1$;
+				result.append(AntLaunchConfigurationMessages.getString("AntTargetLabelProvider.default_target_1")); //$NON-NLS-1$
+				result.append(")"); //$NON-NLS-1$;
+			}
 			return result.toString();
 		}
 		return ""; //$NON-NLS-1$

@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -25,11 +24,6 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	protected List elements = new ArrayList();
 	protected TableViewer viewer;
 
-	public void add(Object o) {
-		elements.add(o);
-		viewer.add(o);
-	}
-	
 	public void addAll(List list) {
 		elements.addAll(list);
 		viewer.add(list.toArray());
@@ -49,23 +43,52 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = (TableViewer) viewer;
 		elements.clear();
-		if (newInput != null && ((Object[])newInput).length != 0) {
-			elements.addAll(Arrays.asList((Object[])newInput));
+		if (newInput != null && ((Object[]) newInput).length != 0) {
+			elements.addAll(Arrays.asList((Object[]) newInput));
 		}
 	}
 
-	public void remove(Object o) {
-		elements.remove(o);
-		viewer.remove(o);
+	/**
+	 * Removes the given target from the list of targets. Has no effect if the
+	 * given index is invalid.
+	 * 
+	 * @param index the index of the the target to remove
+	 */
+	public void removeTarget(int index) {
+		if (elements.size() > index && index >= 0) {
+			elements.remove(index);
+		}
 	}
-	
-	public void removeAll(List list) {
-		elements.removeAll(list);
-		viewer.remove(list.toArray());
+
+	/**
+	 * Moves the given target up in the list of active targets. Has no effect if
+	 * the given target is already the first target in the list or the given
+	 * index is invalid.
+	 * 
+	 * @param index the index of the target to move up
+	 */
+	public void moveUpTarget(int index) {
+		Object target = elements.get(index);
+		if (index == 0 || target == null) {
+			return;
+		}
+		elements.set(index, elements.get(index - 1));
+		elements.set(index - 1, target);
 	}
-	
-	public void remove(IStructuredSelection selection) {
-		elements.removeAll(selection.toList());
-		viewer.remove(selection.toArray());
+
+	/**
+	 * Moves the given target down in the list of active targets. Has no effect
+	 * if the given target is already the last target in the list or the given
+	 * index is invalid.
+	 *
+	 * @param index the index of the target to move down
+	 */
+	public void moveDownTarget(int index) {
+		Object target = elements.get(index);
+		if (index == elements.size() - 1 || target == null) {
+			return;
+		}
+		elements.set(index, elements.get(index + 1));
+		elements.set(index + 1, target);
 	}
 }

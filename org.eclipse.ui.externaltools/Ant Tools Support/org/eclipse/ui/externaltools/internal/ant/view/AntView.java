@@ -900,6 +900,8 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			newIndices[i] = index - 1;
 		}
 		targetViewer.refresh();
+		// TODO: Remove the call to deselectAll() once Bug 30745 is fixed
+		targetViewer.getTable().deselectAll();
 		targetViewer.getTable().select(newIndices);
 		updateActions();
 	}
@@ -923,6 +925,8 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			newIndices[i] = index + 1;
 		}
 		targetViewer.refresh();
+		// TODO: Remove the call to deselectAll() once Bug 30745 is fixed
+		targetViewer.getTable().deselectAll();
 		targetViewer.getTable().select(newIndices);
 		updateActions();
 	}
