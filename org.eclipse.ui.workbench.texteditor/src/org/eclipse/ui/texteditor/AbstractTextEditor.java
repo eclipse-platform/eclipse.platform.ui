@@ -786,7 +786,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		
 		/**
-		 * Disposes this activation listenern.
+		 * Disposes this activation listener.
 		 *
 		 * @since 3.1
 		 */
