@@ -42,9 +42,6 @@ public class Options {
 	private static String host;
 	// port to override appserver preferences
 	private static String port;
-	// time to wait for help system to start,
-	// before sending command is possible
-	private static int serverTimeout;
 	/**
 	 * Initializes options.
 	 * 
@@ -131,19 +128,6 @@ public class Options {
 			port = (String) ports.get(0);
 		}
 
-		// consume -servertimout option
-		serverTimeout = 0;
-		List timeouts = extractOption(eclipseArgs, "-servertimeout"); //$NON-NLS-1$
-		if (timeouts != null && timeouts.size() > 0) {
-			try {
-				int timeout = Integer.parseInt((String) timeouts.get(0));
-				if (timeout >= 0) {
-					serverTimeout = timeout;
-				}
-			} catch (NumberFormatException nfe) {
-			}
-		}
-
 		// consume -vm option
 		List vms = extractOption(eclipseArgs, "-vm"); //$NON-NLS-1$
 		if (vms != null && !vms.isEmpty()) {
@@ -222,16 +206,6 @@ public class Options {
 
 	public static List getEclipseArgs() {
 		return eclipseArgs;
-	}
-
-	/**
-	 * Returns the serverTimeout.
-	 * 
-	 * @return number of seconds to wait for the server, 0 when not set, and
-	 *         default should be used
-	 */
-	public static int getServerTimeout() {
-		return serverTimeout;
 	}
 
 	/**
