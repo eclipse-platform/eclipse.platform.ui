@@ -107,7 +107,7 @@ public void save(IResource resource, DataOutputStream output, List writtenTypes)
 /**
  * Snapshot the markers for the specified resource to the given output stream.
  * 
- * SNAP_FILE -> VERSION_ID RESOURCE*
+ * SNAP_FILE -> [VERSION_ID RESOURCE]*
  * VERSION_ID -> int (used for backwards compatibiliy)
  * RESOURCE -> RESOURCE_PATH MARKER_SIZE MARKER+
  * RESOURCE_PATH -> String
