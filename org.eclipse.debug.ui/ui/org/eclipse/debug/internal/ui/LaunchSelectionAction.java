@@ -5,15 +5,12 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -60,12 +57,7 @@ public class LaunchSelectionAction extends Action {
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
 				if (fElement != null || !DebugUIPlugin.getDefault().hasWizard(fLauncher)) {
-					boolean ok= fLauncher.launch(new Object[] {fElement}, fMode);
-					if (!ok) {
-						String string= DebugUIMessages.getString("LaunchSelectionAction.The_launcher,_{0},_failed_to_launch._1"); //$NON-NLS-1$
-						String message= MessageFormat.format(string, new String[] {fLauncher.getLabel()});
-						MessageDialog.openError(DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("LaunchSelectionAction.Launch_Failed_2"), message);	 //$NON-NLS-1$
-					}
+					fLauncher.launch(new Object[] {fElement}, fMode);
 				} else {
 					Shell shell= DebugUIPlugin.getActiveWorkbenchWindow().getShell();
 					if (shell != null) {
