@@ -94,7 +94,6 @@ public void createControl(Composite parent) {
 	initialPopulateContainerNameField();
 	if (initialFileName != null)
 		resourceGroup.setResource(initialFileName);
-	resourceGroup.setFocus();
 	validatePage();
 	// Show description on opening
 	setErrorMessage(null);
@@ -366,5 +365,14 @@ protected boolean validatePage() {
 	}
 
 	return valid;
+}
+
+/*
+ * @see DialogPage.setVisible(boolean)
+ */
+public void setVisible(boolean visible) {
+	super.setVisible(visible);
+	if(visible)
+		resourceGroup.setFocus();
 }
 }

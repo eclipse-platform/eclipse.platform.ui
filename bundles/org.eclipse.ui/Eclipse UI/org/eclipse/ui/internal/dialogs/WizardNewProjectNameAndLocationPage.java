@@ -117,7 +117,6 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
 		createProjectNameGroup(composite);
 		createProjectLocationGroup(composite);
 		
-		projectNameField.setFocus();
 		validatePage();
 		
 		// Show description on opening
@@ -421,4 +420,14 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
 		setMessage(null);
 		return true;
 	}
+	
+/*
+ * see @DialogPage.setVisible(boolean)
+ */
+public void setVisible(boolean visible) {
+	super.setVisible(visible);
+	if(visible)
+		projectNameField.setFocus();
+}
+
 }

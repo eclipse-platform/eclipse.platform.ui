@@ -247,7 +247,6 @@ protected void initializePage() {
 		}
 	}
 
-	resourceGroup.setFocus();
 	setPageComplete(false);
 }
 /**
@@ -302,5 +301,15 @@ protected boolean validatePage() {
 
 	return valid;
 }
+
+/*
+ * @see DialogPage.setVisible(boolean)
+ */
+public void setVisible(boolean visible) {
+	super.setVisible(visible);
+	if(visible)
+		resourceGroup.setFocus();
+}
+
 }
 

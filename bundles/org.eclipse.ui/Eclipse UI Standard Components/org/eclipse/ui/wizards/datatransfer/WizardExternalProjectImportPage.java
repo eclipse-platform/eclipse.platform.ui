@@ -101,7 +101,6 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
 		createProjectNameGroup(composite);
 		createProjectLocationGroup(composite);
-		this.locationPathField.setFocus();
 		validatePage();
 		// Show description on opening
 		setErrorMessage(null);
@@ -490,4 +489,14 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
 		return project;
 	}
+	
+	/*
+ 	 * see @DialogPage.setVisible(boolean)
+ 	 */
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if(visible)
+			this.locationPathField.setFocus();
+	}
+
 }

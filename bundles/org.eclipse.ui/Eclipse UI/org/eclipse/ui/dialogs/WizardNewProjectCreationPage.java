@@ -104,7 +104,6 @@ public void createControl(Composite parent) {
 	
 	createProjectNameGroup(composite);
 	createProjectLocationGroup(composite);
-	projectNameField.setFocus();
 	validatePage();
 	// Show description on opening
 	setErrorMessage(null);
@@ -385,4 +384,14 @@ private boolean validatePage() {
 	setMessage(null);
 	return true;
 }
+
+/*
+ * see @DialogPage.setVisible(boolean)
+ */
+public void setVisible(boolean visible) {
+	super.setVisible(visible);
+	if(visible)
+		projectNameField.setFocus();
+}
+
 }

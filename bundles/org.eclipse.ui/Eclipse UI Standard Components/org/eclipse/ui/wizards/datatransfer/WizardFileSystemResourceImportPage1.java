@@ -298,8 +298,6 @@ protected void createRootDirectoryGroup(Composite parent) {
 	sourceBrowseButton.setText(DataTransferMessages.getString("DataTransfer.browse")); //$NON-NLS-1$
 	sourceBrowseButton.addListener(SWT.Selection, this);
 	sourceBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-
-	sourceNameField.setFocus();
 }
 
 /**
@@ -817,6 +815,8 @@ protected void setupSelectionsBasedOnSelectedTypes() {
 public void setVisible(boolean visible) {
 	super.setVisible(visible);
 	resetSelection();
+	if(visible)
+		this.sourceNameField.setFocus();
 }
 /**
  * Update the selections with those in map . Implemented here to give inner class
@@ -873,4 +873,6 @@ protected boolean sourceConflictsWithDestination(IPath sourcePath){
 	else
 		return getSpecifiedContainer().getLocation().isPrefixOf(sourcePath);
 }
+
+
 }
