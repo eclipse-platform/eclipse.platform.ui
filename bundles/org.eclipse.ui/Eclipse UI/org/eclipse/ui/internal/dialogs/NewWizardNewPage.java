@@ -186,14 +186,14 @@ protected IContentProvider getWizardProvider() {
 private void handleCategorySelection(SelectionChangedEvent selectionEvent) {
 	page.setErrorMessage(null);
 	page.setMessage(null);
-	page.selectWizardNode(null);
 
-	WizardCollectionElement selectedCategory =
-		(WizardCollectionElement)getSingleSelection((IStructuredSelection)selectionEvent.getSelection());
-	if (selectedCategory == null)
-		wizardSelectionViewer.setInput(null);
-	else
+	Object currentSelection = wizardSelectionViewer.getInput();
+	Object selectedCategory =
+		getSingleSelection((IStructuredSelection)selectionEvent.getSelection());
+	if (currentSelection != selectedCategory) {
+		page.selectWizardNode(null);
 		wizardSelectionViewer.setInput(selectedCategory);
+	}
 }
 /**
  *	Handle the (de)selection of wizard element(s)
