@@ -23,10 +23,10 @@ import org.eclipse.jface.util.Util;
  * Bindings are linked to particular conditions within the application. Some of
  * these conditions change infrequently (e.g., locale, scheme), while some will
  * tend to change quite frequently (e.g., context). This allows the bindings to
- * be tailored to particular situations. For example, you may want a particular
- * set of bindings to become available when in a text editor. Or, perhaps, you
- * do not want to interfere with the Input Method Editor (IME) on Chinese
- * locales.
+ * be tailored to particular situations. For example, a set of bindings may be
+ * appropriate only inside a text editor.  Or, perhaps, a set of bindings might
+ * be appropriate only for a given locale, such as bindings that coexist with
+ * the Input Method Editor (IME) on Chinese locales.
  * </p>
  * <p>
  * It is also possible to remove a particular binding. This is typically done as
@@ -40,19 +40,20 @@ import org.eclipse.jface.util.Util;
  * unbinding. Note: the locale and platform can be different.
  * </p>
  * <p>
- * An example might be helpful. For the example, I will use the KeyBinding
- * concrete subclass. Image you have a key binding that looks like this:
+ * For example, imagine you have a key binding that looks like this:
  * </p>
  * <code><pre>
  * KeyBinding(command, scheme, context, &quot;Ctrl+Shift+F&quot;)
  * </pre></code>
  * <p>
- * Now, on GTK+, the "Ctrl+Shift+F" interferes with some native behaviour. So we
- * decide we need to change it.
+ * On GTK+, the "Ctrl+Shift+F" interferes with some native behaviour. To change
+ * the binding, we first unbind the "Ctrl+Shift+F" key sequence by 
+ * assigning it a null command on the gtk platform.  We then create a new binding
+ * that maps the command to the "Esc Ctrl+F" key sequence.
  * </p>
  * <code><pre>
- *                  KeyBinding(null,scheme,context,&quot;Ctrl+Shift+F&quot;,gtk)
- *                  KeyBinding(command,scheme,context,&quot;Esc Ctrl+F&quot;,gtk)
+ *     KeyBinding("Ctrl+Shift+F",null,scheme,context,null,gtk,null,SYSTEM)
+ *     KeyBinding("Esc Ctrl+F",parameterizedCommand,scheme,context,null,gtk,SYSTEM)
  * </pre></code>
  * <p>
  * Bindings are intended to be immutable objects.
@@ -154,7 +155,7 @@ public abstract class Binding {
 	 * @param command
 	 *            The parameterized command to which this binding applies; this
 	 *            value may be <code>null</code> if the binding is meant to
-	 *            "unbind" (no op).
+	 *            "unbind" a previously defined binding.
 	 * @param schemeId
 	 *            The scheme to which this binding belongs; this value must not
 	 *            be <code>null</code>.
@@ -201,12 +202,13 @@ public abstract class Binding {
 
 	/**
 	 * Tests whether this binding is intended to delete another binding. The
-	 * <code>binding</code> must be a <code>SYSTEM</code> binding, and the
 	 * receiver must have a <code>null</code> command identifier.
 	 * 
 	 * @param binding
-	 *            The binding with which to test; must not be <code>null</code>.
-	 * @return <code>true</code> if the receiver deletes the argument.
+	 *            The binding to test; must not be <code>null</code>.
+	 *            This binding must be a <code>SYSTEM</code> binding.
+	 * @return <code>true</code> if the receiver deletes the binding defined by
+	 * 			the argument.
 	 */
 	final boolean deletes(final Binding binding) {
 		boolean deletes = true;
@@ -330,7 +332,7 @@ public abstract class Binding {
 
 	/**
 	 * Returns the type for this binding. As it stands now, this value will
-	 * either by <code>SYSTEM</code> or <code>USER</code>. In the future,
+	 * either be <code>SYSTEM</code> or <code>USER</code>. In the future,
 	 * more types might be added.
 	 * 
 	 * @return The type for this binding.

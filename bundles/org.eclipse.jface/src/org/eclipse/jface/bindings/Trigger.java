@@ -12,14 +12,9 @@ package org.eclipse.jface.bindings;
 
 /**
  * <p>
- * Any object that can be used as a trigger for a binding. This ensures that
- * trigger conform to certain minimum requirements. Namely, triggers need to be
- * hashable.
- * </p>
- * <p>
- * To assist with the hashing, some member fields have been provided:
- * <code>HASH_FACTOR</code>,<code>hashCode</code> and
- * <code>hashCodeComputed</code>.
+ * The abstract class for any object that can be used as a trigger for a binding. 
+ * This ensures that trigger conform to certain minimum requirements. Namely, triggers 
+ * need to be hashable.
  * </p>
  * 
  * @since 3.1

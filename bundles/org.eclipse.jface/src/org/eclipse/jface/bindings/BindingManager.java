@@ -39,13 +39,13 @@ import org.eclipse.swt.SWT;
  * A central repository for bindings -- both in the defined and undefined
  * states. Schemes and bindings can be created and retrieved using this manager.
  * It is possible to listen to changes in the collection of schemes and bindings
- * by attaching a listener to the manager.
+ * by adding a listener to the manager.
  * </p>
  * <p>
  * The binding manager is very sensitive to performance. Misusing the manager
  * can render an application unenjoyable to use. As such, each of the public
  * methods states the current run-time performance. In future releases, it is
- * guaranteed that that method will run in at least the stated time constraint --
+ * guaranteed that the method will run in at least the stated time constraint --
  * though it might get faster. Where possible, we have also tried to be memory
  * efficient.
  * </p>
@@ -309,7 +309,7 @@ public final class BindingManager implements IContextManagerListener,
 
 	/**
 	 * <p>
-	 * Adds a single new binding to the exist array of bindings. If the array is
+	 * Adds a single new binding to the existing array of bindings. If the array is
 	 * currently <code>null</code>, then a new array is created and this
 	 * binding is added to it. This method does not detect duplicates.
 	 * </p>
@@ -926,8 +926,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * </p>
 	 * 
 	 * @param parameterizedCommand
-	 *            The fully-parameterized command whose bindings you wish to
-	 *            find. This argument may be <code>null</code>.
+	 *            The fully-parameterized command whose bindings are
+	 *            requested. This argument may be <code>null</code>.
 	 * @return The array of active triggers (<code>TriggerSequence</code>)
 	 *         for a particular command identifier. This value is guaranteed to
 	 *         never be <code>null</code>, but it may be empty.
@@ -957,13 +957,12 @@ public final class BindingManager implements IContextManagerListener,
 	 * </p>
 	 * 
 	 * @param commandId
-	 *            The identifier of the command whose bindings you wish to find.
+	 *            The identifier of the command whose bindings are requested.
 	 *            This argument may be <code>null</code>. It is assumed that
-	 *            you are looking for an instance of the command without
-	 *            parameters.
+	 *            the command has no parameters.
 	 * @return The array of active triggers (<code>TriggerSequence</code>)
-	 *         for a particular command identifier. This value is guaranteed to
-	 *         never be <code>null</code>, but it may be empty.
+	 *         for a particular command identifier. This value is guaranteed not
+	 *         to be <code>null</code>, but it may be empty.
 	 */
 	public final TriggerSequence[] getActiveBindingsFor(
 			final String commandId) {
@@ -989,7 +988,7 @@ public final class BindingManager implements IContextManagerListener,
 	 * </p>
 	 * 
 	 * @return The active scheme; may be <code>null</code> if there is no
-	 *         active scheme. This scheme is guaranteed to be defined.
+	 *         active scheme. If a scheme is returned, it is guaranteed to be defined.
 	 */
 	public final Scheme getActiveScheme() {
 		return activeScheme;
@@ -997,9 +996,7 @@ public final class BindingManager implements IContextManagerListener,
 
 	/**
 	 * <p>
-	 * Returns the set of all bindings managed by this class. This set is
-	 * wrapped in a <code>Collections.unmodifiableSet</code>. This is to
-	 * prevent modification of the manager's internal data structures.
+	 * Returns the set of all bindings managed by this class. 
 	 * </p>
 	 * <p>
 	 * This method completes in <code>O(1)</code>.
@@ -1414,17 +1411,17 @@ public final class BindingManager implements IContextManagerListener,
 	 * </p>
 	 * 
 	 * @param sequence
-	 *            The sequence to look for; may be <code>null</code>.
+	 *            The sequence to match; may be <code>null</code>.
 	 * @param schemeId
-	 *            The scheme id to look for; may be <code>null</code>.
+	 *            The scheme id to match; may be <code>null</code>.
 	 * @param contextId
-	 *            The context id to look for; may be <code>null</code>.
+	 *            The context id to match; may be <code>null</code>.
 	 * @param locale
-	 *            The locale to look for; may be <code>null</code>.
+	 *            The locale to match; may be <code>null</code>.
 	 * @param platform
-	 *            The platform to look for; may be <code>null</code>.
+	 *            The platform to match; may be <code>null</code>.
 	 * @param windowManager
-	 *            The window manager to look for; may be <code>null</code>.
+	 *            The window manager to match; may be <code>null</code>.
 	 *            TODO Currently ignored.
 	 * @param type
 	 *            The type to look for.
@@ -1765,6 +1762,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * This method calls out to listeners, and so the time it takes to complete
 	 * is dependent on third-party code.
 	 * </p>
+	 * @param schemeEvent 
+	 *			An event describing the change in the scheme.
 	 */
 	public final void schemeChanged(final SchemeEvent schemeEvent) {
 		if (schemeEvent.isDefinedChanged()) {
@@ -1907,9 +1906,9 @@ public final class BindingManager implements IContextManagerListener,
 	 * <p>
 	 * Changes the set of bindings for this binding manager. Changing the set of
 	 * bindings all at once ensures that: (1) duplicates are removed; and (2)
-	 * avoids the possibility of unnecessary intermediate computations. This
-	 * method clears the existing solution, but does not trigger a recomputation
-	 * (other method calls are required to do that).
+	 * avoids unnecessary intermediate computations. This method clears the existing
+	 * bindings, but does not trigger a recomputation (other method calls are required 
+	 * to do that).
 	 * </p>
 	 * <p>
 	 * This method completes in <code>O(n)</code>, where <code>n</code> is
@@ -1941,7 +1940,7 @@ public final class BindingManager implements IContextManagerListener,
 	 * <p>
 	 * Changes the locale for this binding manager. The locale can be used to
 	 * provide locale-specific bindings. If the locale is different than the
-	 * current locale, then this will force a recomputation of the bindings. The
+	 * current locale, this will force a recomputation of the bindings. The
 	 * locale is in the same format as
 	 * <code>Locale.getDefault().toString()</code>.
 	 * </p>
