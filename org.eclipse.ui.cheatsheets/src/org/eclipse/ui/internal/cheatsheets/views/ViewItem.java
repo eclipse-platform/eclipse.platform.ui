@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.cheatsheets.views;
 import java.net.URL;
 import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.util.*;
@@ -144,7 +145,7 @@ public abstract class ViewItem {
 		// check number of extensions for this item and adjust layout accordingly
 		int number = 0;
 		ArrayList itemExts = item.getItemExtensions();
-		if (itemExts != null) {
+		if(itemExts != null) {
 			for (int g = 0; g < itemExts.size(); g++) {
 				AbstractItemExtensionElement[] eea = (AbstractItemExtensionElement[]) itemExts.get(g);
 				number += eea.length;
@@ -154,15 +155,21 @@ public abstract class ViewItem {
 			}
 		}
 
-		// don't add the help icon unless there is a help link
-		if (item.getHref() != null) {
+		// don't add the help icon unless there is a context id or help link
+		if(item.getContextId() != null || item.getHref() != null) {
 			// adjust the layout count
 			number++;
 			ImageHyperlink helpButton = createButton(titleComposite, helpImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.HELP_BUTTON_TOOLTIP));
 			toolkit.adapt(helpButton, true, true);
 			helpButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
-					openHelpTopic(item.getHref());
+					// If we have a context id, handle this first and ignore an hrefs
+					if(item.getContextId() != null) {
+						openInfopop(e.widget);
+					} else {
+						// We only have an href, so let's open it in the help system
+						openHelpTopic();
+					}
 				}
 			});
 		}
@@ -338,11 +345,32 @@ public abstract class ViewItem {
 	}
 
 	/**
-	* Open a help topic
-	*/
-	private void openHelpTopic(String href) {
-		if (href != null) {
-			WorkbenchHelp.displayHelpResource(href);
+	 * Open a help topic
+	 */
+	private void openHelpTopic() {
+		if (item == null || item.getHref() == null) {
+			return;
+		}
+
+		WorkbenchHelp.displayHelpResource(item.getHref());
+	}
+
+	/**
+	 * Open an infopop
+	 */
+	private void openInfopop(Widget widget) {
+		if (item == null || item.getContextId() == null) {
+			return;
+		}
+
+		IContext context = HelpSystem.getContext(ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID+'.'+item.getContextId());
+
+		if (context != null) {
+			// determine a location in the upper right corner of the widget
+			Point point = widget.getDisplay().getCursorLocation();
+			point = new Point(point.x + 15, point.y);
+			// display the help
+			WorkbenchHelp.displayContext(context, point.x, point.y);
 		}
 	}
 
