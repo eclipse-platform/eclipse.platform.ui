@@ -2,55 +2,17 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; I) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.78 [en] (Win98; U) [Netscape]">
    <title>Eclipse Platform Release Notes Core</title>
 <!-- saved from url=(0079)http://home.ott.oti.com/hubba/drops/sdk/latest-javadoc/doc/buildnotes_core.html -->
 <!-- saved from url=(0079)http://home.ott.oti.com/hubba/drops/sdk/latest-javadoc/doc/buildnotes_core.html -->
 </head>
-
-
 <body>
-<h1>
-Eclipse Platform Build Notes<br>
-Core</h1>
-Eclipse SDK Build 20020507
-<h2>
-What's new in this drop</h2>
-
-<h3>API changes</h3>
-<ul>
-<li>Added new API to org.eclipse.core.runtime.BootLoader to return the lists of known OS, ARCH, and WS values. 
-See the BootLoader class for more details.
-</li>
-<li>
-Added new constants BootLoader.OS_MACOSX and BootLoader.WS_CARBON.
-See the BootLoader class for more details.
-</li>
-</ul>
-
-<h3>Other highlights</h3>
-<ul>
-<li>
-The non-API class org.eclipse.core.launcher.UIMain has been removed.
-Code previously calling this class can reference org.eclipse.core.launcher.Main since UIMain was a wrapper to call Main with
-the workbench application, and now the application will be picked up from the primary feature.
-</li>
-</ul>
-
-<h3>Resolved Bugs</h3>
-<ul>
-<li>
-<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&amp;bug_status=VERIFIED&amp;bug_status=CLOSED&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfield=bug_status&amp;chfieldfrom=2002%2F04%2F30&amp;chfieldto=2002%2F05%2F07&amp;chfieldvalue=&amp;product=Platform&amp;version=2.0&amp;component=Core&amp;short_desc=&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;cmdtype=doit&amp;namedcmd=ant&amp;newqueryname=&amp;order=Bug+Number">Click
-here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
-since the last integration build.</li>
-</ul>
-
-<hr WIDTH="100%">
 
 <h1>
 Eclipse Platform Build Notes<br>
 Core</h1>
-Eclipse SDK Build 20020430
+Eclipse SDK Build 20020514
 <h2>
 What's new in this drop</h2>
 
@@ -59,28 +21,7 @@ API changes</h3>
 
 <ul>
 <li>
-Added a new constant (PREF_ENCODING) and API (ResourcesPlugin.getEncoding()) to
-help with persistence of the encoding type to use when reading text files. See
-org.eclipse.core.resources.ResourcesPlugin and the Platform/UI build notes for
-details.</li>
-<li>
-Added new API IWorkspace.loadProjectDescription(IPath) which loads a project
-description file from a .project file on disk. The resulting description file
-can be used to create the project via the IProject.create APIs. This method is
-useful for discovering the name of a project from a .project file. See
-IWorkspace.loadProjectDescription for more details.</li>
-<li>
-Added API for IPluginDescriptor.find to match the API Plugin.find. These methods
-are functionally equivalent except the method on IPluginDescriptor does not
-require the plugin to be activated. Also note that the resulting URL is NEVER a
-platform: URL and thus does not need to be resolved via Platform.resolve.
-(although calling #resolve will be a no-op and not cause any harm) See
-IPluginDescriptor for more details.</li>
-<li>
-Added new API IResource.isSynchronized(int) which will return a boolean value
-indicating whether or not the given resource is considered to be synchronized
-with the local file system to the given depth. See IResource.isSychronized for
-more information.</li>
+None.</li>
 </ul>
 
 <h3>
@@ -96,13 +37,112 @@ Resolved Bugs</h3>
 
 <ul>
 <li>
-<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&amp;bug_status=VERIFIED&amp;bug_status=CLOSED&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfield=bug_status&amp;chfieldfrom=2002%2F04%2F25&amp;chfieldto=2002%2F04%2F30&amp;chfieldvalue=&amp;product=Platform&amp;version=2.0&amp;component=Core&amp;short_desc=&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;cmdtype=doit&amp;namedcmd=ant&amp;newqueryname=&amp;order=Bug+Number">Click
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&email1=&emailtype1=substring&emailassigned_to1=1&email2=&emailtype2=substring&emailreporter2=1&bugidtype=include&bug_id=&changedin=&votes=&chfield=bug_status&chfieldfrom=2002%2F05%2F07&chfieldto=2002%2F05%2F14&chfieldvalue=&product=Platform&version=2.0&component=Core&short_desc=&short_desc_type=allwordssubstr&long_desc=&long_desc_type=allwordssubstr&keywords=&keywords_type=anywords&field0-0-0=noop&type0-0-0=noop&value0-0-0=&cmdtype=doit&order=Bug+Number">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+since the last integration build.</li>
+</ul>
+
+<h1>
+
+<hr WIDTH="100%">Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 20020507
+<h2>
+What's new in this drop</h2>
+
+<h3>
+API changes</h3>
+
+<ul>
+<li>
+Added new API to org.eclipse.core.runtime.BootLoader to return the lists
+of known OS, ARCH, and WS values. See the BootLoader class for more details.</li>
+
+<li>
+Added new constants BootLoader.OS_MACOSX and BootLoader.WS_CARBON. See
+the BootLoader class for more details.</li>
+</ul>
+
+<h3>
+Other highlights</h3>
+
+<ul>
+<li>
+The non-API class org.eclipse.core.launcher.UIMain has been removed. Code
+previously calling this class can reference org.eclipse.core.launcher.Main
+since UIMain was a wrapper to call Main with the workbench application,
+and now the application will be picked up from the primary feature.</li>
+</ul>
+
+<h3>
+Resolved Bugs</h3>
+
+<ul>
+<li>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&email1=&emailtype1=substring&emailassigned_to1=1&email2=&emailtype2=substring&emailreporter2=1&bugidtype=include&bug_id=&changedin=&votes=&chfield=bug_status&chfieldfrom=2002%2F04%2F30&chfieldto=2002%2F05%2F07&chfieldvalue=&product=Platform&version=2.0&component=Core&short_desc=&short_desc_type=allwordssubstr&long_desc=&long_desc_type=allwordssubstr&keywords=&keywords_type=anywords&field0-0-0=noop&type0-0-0=noop&value0-0-0=&cmdtype=doit&namedcmd=ant&newqueryname=&order=Bug+Number">Click
 here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
 since the last integration build.</li>
 </ul>
 
 <hr WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 20020430
+<h2>
+What's new in this drop</h2>
 
+<h3>
+API changes</h3>
+
+<ul>
+<li>
+Added a new constant (PREF_ENCODING) and API (ResourcesPlugin.getEncoding())
+to help with persistence of the encoding type to use when reading text
+files. See org.eclipse.core.resources.ResourcesPlugin and the Platform/UI
+build notes for details.</li>
+
+<li>
+Added new API IWorkspace.loadProjectDescription(IPath) which loads a project
+description file from a .project file on disk. The resulting description
+file can be used to create the project via the IProject.create APIs. This
+method is useful for discovering the name of a project from a .project
+file. See IWorkspace.loadProjectDescription for more details.</li>
+
+<li>
+Added API for IPluginDescriptor.find to match the API Plugin.find. These
+methods are functionally equivalent except the method on IPluginDescriptor
+does not require the plugin to be activated. Also note that the resulting
+URL is NEVER a platform: URL and thus does not need to be resolved via
+Platform.resolve. (although calling #resolve will be a no-op and not cause
+any harm) See IPluginDescriptor for more details.</li>
+
+<li>
+Added new API IResource.isSynchronized(int) which will return a boolean
+value indicating whether or not the given resource is considered to be
+synchronized with the local file system to the given depth. See IResource.isSychronized
+for more information.</li>
+</ul>
+
+<h3>
+Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+Resolved Bugs</h3>
+
+<ul>
+<li>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&email1=&emailtype1=substring&emailassigned_to1=1&email2=&emailtype2=substring&emailreporter2=1&bugidtype=include&bug_id=&changedin=&votes=&chfield=bug_status&chfieldfrom=2002%2F04%2F25&chfieldto=2002%2F04%2F30&chfieldvalue=&product=Platform&version=2.0&component=Core&short_desc=&short_desc_type=allwordssubstr&long_desc=&long_desc_type=allwordssubstr&keywords=&keywords_type=anywords&field0-0-0=noop&type0-0-0=noop&value0-0-0=&cmdtype=doit&namedcmd=ant&newqueryname=&order=Bug+Number">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+since the last integration build.</li>
+</ul>
+
+<hr WIDTH="100%">
 <h1>
 Eclipse Platform Build Notes<br>
 Core</h1>
