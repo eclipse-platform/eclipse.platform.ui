@@ -58,6 +58,7 @@ class SearchResultViewer extends TableViewer {
 	private SortDropDownAction fSortDropDownAction;
 	private SearchDropDownAction fSearchDropDownAction;
 	private int fMarkerToShow;
+	private boolean fUserTriggeredSelection= true;
 	
 	/*
 	 * These static fields will go away when support for 
@@ -123,6 +124,10 @@ class SearchResultViewer extends TableViewer {
 	}
 
 	private void handleSelectionChanged() {
+		if (!fUserTriggeredSelection) {
+			fUserTriggeredSelection= true;
+			return;
+		}
 		int selectionCount= getSelectedEntriesCount();
 		boolean hasSingleSelection= selectionCount == 1;
 		boolean hasElements= getItemCount() > 0;
@@ -363,6 +368,7 @@ class SearchResultViewer extends TableViewer {
 	}
 		
 	private void selectResult(Table table, int index) {
+		fUserTriggeredSelection= false;
 		table.setSelection(index);
 		table.showSelection();
 	}
