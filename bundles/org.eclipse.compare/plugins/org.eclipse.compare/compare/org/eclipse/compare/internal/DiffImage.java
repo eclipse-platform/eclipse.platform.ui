@@ -37,11 +37,11 @@ public class DiffImage extends CompositeImageDescriptor {
 			ImageData base= fBaseImage.getImageData();
 			if (base == null)
 				base= DEFAULT_IMAGE_DATA;
-			try {
+			//try {
 				drawImage(base, fWidth - base.width, 0);
-			} catch (ArrayIndexOutOfBoundsException ex) {
+			//} catch (ArrayIndexOutOfBoundsException ex) {
 				// workaround for PR 1GCQKWP 
-			}
+			//}
 		}
 
 		if (fOverlayImage != null) {

@@ -13,11 +13,12 @@ IBM Eclipse Platform Compare</h1></center>
 This document lists all of the extension points that the compare plug-in
 makes available to tool developers.
 <p>All XML sub-elements defined in the individual extension point documents
-may appear more than once inside an extension element. For example, a <tt>org.eclipse.compare.contentMergeViewers</tt>
-extension may contain several instances of <tt>viewer</tt> elements. Although
-making one extension per sub-element is not technically incorrect, we recommend
-grouping for consistent style. It can also improve platform startup time
-because there will be fewer extensions to process.
+may appear more than once inside an extension element. For example, an
+<tt>org.eclipse.compare.contentMergeViewers</tt> extension may contain
+several instances of <tt>viewer</tt> elements. Although making one extension
+per sub-element is not technically incorrect, we recommend grouping for
+consistent style. It can also improve platform startup time because there
+will be fewer extensions to process.
 <br>
 <hr WIDTH="100%">
 <h1>
@@ -26,13 +27,16 @@ The following extension points can be used to extend the capabilities of
 the compare infrastructure:
 <ul>
 <li>
-<a href="org_eclipse_ui_compare_contentMergeViewers.html">org.eclipse.compare.contentMergeViewers</a></li>
+<a href="org_eclipse_compare_contentMergeViewers.html">org.eclipse.compare.contentMergeViewers</a></li>
 
 <li>
-<a href="org_eclipse_ui_compare_structureMergeViewers.html">org.eclipse.compare.structureMergeViewers</a></li>
+<a href="org_eclipse_compare_contentViewers.html">org.eclipse.compare.contentViewers</a></li>
 
 <li>
-<a href="org_eclipse_ui_compare_structureCreators.html">org.eclipse.compare.structureCreators</a></li>
+<a href="org_eclipse_compare_structureMergeViewers.html">org.eclipse.compare.structureMergeViewers</a></li>
+
+<li>
+<a href="org_eclipse_compare_structureCreators.html">org.eclipse.compare.structureCreators</a></li>
 </ul>
 <a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000" BORDER=0 height=12 width=195></a>
 </body>

@@ -33,6 +33,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchActionConstants;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.MergeSourceViewer;
@@ -40,6 +42,7 @@ import org.eclipse.compare.internal.BufferedCanvas;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.internal.TokenComparator;
 import org.eclipse.compare.internal.ChangePropertyAction;
+import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
 import org.eclipse.compare.internal.DocLineComparator;
@@ -562,6 +565,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			new FocusAdapter() {
 				public void focusGained(FocusEvent fe) {
 					fFocusPart= part;
+					globalActions(fFocusPart);
 				}
 			}
 		);
@@ -590,41 +594,55 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return part;
 	}
 	
+	
 	/**
 	 * Allows the viewer to add menus and/or tools to the context menu.
 	 */
 	private void fillContextMenu(IMenuManager menu, MergeSourceViewer part) {
 
-		ResourceBundle rb= getResourceBundle();
 		boolean mutable= part.isEditable();
 			
 		menu.add(new Separator("undo"));
 		if (mutable) {
-			menu.add(new TextMergeAction(rb, "action.UndoText.", part, MergeSourceViewer.UNDO));
-			menu.add(new TextMergeAction(rb, "action.RedoText.", part, MergeSourceViewer.REDO));
+			menu.add(getAction(part, MergeSourceViewer.UNDO, "UndoText"));
+			menu.add(getAction(part, MergeSourceViewer.REDO, "RedoText"));
 		}
 	
 		menu.add(new Separator("ccp"));
 		if (mutable)
-			menu.add(new TextMergeAction(rb, "action.CutText.", part, MergeSourceViewer.CUT));
-		menu.add(new TextMergeAction(rb, "action.CopyText.", part, MergeSourceViewer.COPY));
+			menu.add(getAction(part, MergeSourceViewer.CUT, "CutText"));
+		menu.add(getAction(part, MergeSourceViewer.COPY, "CopyText"));
 		if (mutable) {
-			menu.add(new TextMergeAction(rb, "action.PasteText.", part, MergeSourceViewer.PASTE));
-			menu.add(new TextMergeAction(rb, "action.DeleteText.", part, MergeSourceViewer.DELETE));
+			menu.add(getAction(part, MergeSourceViewer.PASTE, "PasteText"));
+			menu.add(getAction(part, MergeSourceViewer.DELETE, "DeleteText"));
 		}
-		menu.add(new TextMergeAction(rb, "action.SelectAllText.", part, MergeSourceViewer.SELECT_ALL));
+		menu.add(getAction(part, MergeSourceViewer.SELECT_ALL, "SelectAllText"));
 
 		menu.add(new Separator("edit"));
 		menu.add(new Separator("find"));
-		//contributeAction(menu, part, "find", "Find");
-		//menu.add(new TextMergeAction(rb, "action.ContentAssistProposal.", part, MergeSourceViewer.CONTENTASSIST_PROPOSAL));
-		//menu.add(new TextMergeAction(rb, "action.ContentAssistTip.", part, MergeSourceViewer.CONTENTASSIST_TIP));
+		//menu.add(getAction(part, MergeSourceViewer.FIND, "Find"));
 		
 		menu.add(new Separator("save"));
 		//if (mutable)
 		//	contributeAction(menu, part, "save", "Save");
 		
 		menu.add(new Separator("rest"));
+	}
+	
+	private Action getAction(MergeSourceViewer part, int operation, String prefix) {
+		Action action= part.getAction(operation);
+		if (action.getText() == null)
+			Utilities.initAction(action, getResourceBundle(), "action." + prefix + ".");
+		return action;
+	}
+	
+	void globalActions(MergeSourceViewer part) {
+		IActionBars actionBars= CompareEditor.findActionBars(fComposite);
+		if (actionBars != null) {
+			actionBars.setGlobalActionHandler(IWorkbenchActionConstants.CUT,
+							getAction(part, MergeSourceViewer.CUT, "CutText"));
+			actionBars.updateActionBars();
+		}
 	}
 
 	/**

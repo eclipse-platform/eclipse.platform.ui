@@ -9,13 +9,13 @@
 
 <center>
 <h1>
-ContentMergeViewer</h1></center>
+ContentMergeViewers</h1></center>
 <b><i>Identifier: </i></b>org.eclipse.compare.contentMergeViewers
 <p><b><i>Description: </i></b>This extension point allows to plug in a
 compare/merge viewer for specific content types. The viewer must extend
-<tt>org.eclipse.jface.viewers.Viewer</tt>. However since viewers don't have
-a default constructor the extension point must implement a factory object
-for viewers: the interface <tt>org.eclipse.compare.IViewerCreator</tt>.
+<tt>org.eclipse.jface.viewers.Viewer</tt>.
+<br>However since viewers don't have a default constructor the extension
+point must implement a factory object for viewers: the interface <tt>org.eclipse.compare.IViewerCreator</tt>.
 <p><b><i>Configuration Markup:</i></b>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT viewer EMPTY></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST viewer</tt>

@@ -5,6 +5,8 @@
  */
 package org.eclipse.compare.internal;
 
+import java.util.HashMap;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
@@ -12,8 +14,12 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.graphics.Color;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.SourceViewer;
+
+import org.eclipse.ui.texteditor.IUpdate;
+
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
 
 /**
@@ -21,8 +27,33 @@ import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
  */
 public class MergeSourceViewer extends SourceViewer {
 						
+	class TextMergeAction extends Action implements IUpdate {
+		
+		int fOperationCode;
+		
+		TextMergeAction(int operationCode) {
+			fOperationCode= operationCode;
+			update();
+		}
+		
+		public void run() {
+			if (fOperationCode != -1 && canDoOperation(fOperationCode))
+				doOperation(fOperationCode);
+		}
+
+		public boolean isEnabled() {
+			return canDoOperation(fOperationCode);
+		}
+		
+		public void update() {
+			this.setEnabled(isEnabled());
+		}	
+	}
+
+
 	private IRegion fRegion;
 	private boolean fEnabled= true;
+	private HashMap fActions= new HashMap();
 	
 	
 	public MergeSourceViewer(Composite parent) {
@@ -215,4 +246,15 @@ public class MergeSourceViewer extends SourceViewer {
 				setTopIndex(line + getDocumentRegionOffset());
 		}
 	}
+	
+	public Action getAction(int operation) {
+		Integer key= new Integer(operation);
+		Action action= (Action) fActions.get(key);
+		if (action == null) {
+			action= new TextMergeAction(operation);
+			fActions.put(key, action);
+		}
+		return action;
+	}
 }
+

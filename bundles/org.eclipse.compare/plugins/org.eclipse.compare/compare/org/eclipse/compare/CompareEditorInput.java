@@ -113,6 +113,9 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	private boolean fDirty= false;
 	private IPropertyChangeListener fDirtyStateListener;
 
+	private IgnoreWhiteSpaceAction fIgnoreWhitespace;
+	private ShowPseudoConflicts fShowPseudoConflicts;
+
 	/**
 	 * Creates a <code>CompareEditorInput</code> which is initialized with the given
 	 * compare configuration.
@@ -122,7 +125,11 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public CompareEditorInput(CompareConfiguration configuration) {
 		fCompareConfiguration= configuration;
-		Assert.isNotNull(configuration); 
+		Assert.isNotNull(configuration);
+		
+		ResourceBundle bundle= CompareUIPlugin.getResourceBundle();
+		fIgnoreWhitespace= new IgnoreWhiteSpaceAction(bundle, configuration);
+		fShowPseudoConflicts= new ShowPseudoConflicts(bundle, configuration);
 		
 		fDirtyStateListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
@@ -248,12 +255,12 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @param toolBarManager the <code>ToolBarManager</code> to which to contribute
 	 */
 	public void contributeToToolBar(ToolBarManager toolBarManager) {
-
+		
 		ResourceBundle bundle= CompareUIPlugin.getResourceBundle();
 
 		toolBarManager.add(new Separator());
-		toolBarManager.add(new IgnoreWhiteSpaceAction(bundle, fCompareConfiguration));
-		toolBarManager.add(new ShowPseudoConflicts(bundle, fCompareConfiguration));
+		toolBarManager.add(fIgnoreWhitespace);
+		toolBarManager.add(fShowPseudoConflicts);
 	}
 	
 	/**
@@ -372,8 +379,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 						fStructurePane1.setInput(null);
 					} else {
 						Object o= getElement(e.getSelection());
-						if (o != null /*o instanceof ICompareInput*/)
-							input= (ICompareInput) o;
+						if (o != null)
+							input= o;
 						fContentInputPane.setInput(input);
 						fStructurePane2.setInput(null); // clear downstream pane
 						
@@ -392,11 +399,11 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				new IDoubleClickListener() {
 					public void doubleClick(DoubleClickEvent e) {
 						ISelection s= e.getSelection();
-						ICompareInput input= null;
+						Object input= null;
 						if (!s.isEmpty()) {
 							Object o= getElement(e.getSelection());
-							if (o instanceof ICompareInput)
-								input= (ICompareInput) o;
+							if (o != null)
+								input= o;
 							fStructurePane1.setInput(input);
 						}
 					}
@@ -415,8 +422,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 						fStructurePane2.setInput(null);
 					} else {
 						Object o= getElement(e.getSelection());
-						if (o != null /* o instanceof ICompareInput */)
-							input= (ICompareInput) o;
+						if (o != null)
+							input= o;
 						fContentInputPane.setInput(input);
 						fStructurePane2.setInput(input);
 					}
@@ -433,8 +440,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 						input= fStructurePane2.getInput();
 					} else {
 						Object o= getElement(e.getSelection());
-						if (o != null /* o instanceof ICompareInput */)
-							input= (ICompareInput) o;
+						if (o != null)
+							input= o;
 					}
 					fContentInputPane.setInput(input);
 				}
@@ -446,6 +453,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			public void handleEvent(Event event) {
 				if (event.widget instanceof CompareViewerSwitchingPane) {
 					fFocusPane= (CompareViewerSwitchingPane) event.widget;
+					//System.out.println("switch focus: " + fFocusPane);
 				}
 			}
 		};

@@ -562,13 +562,13 @@ public class EditionSelectionDialog extends Dialog {
 			if (fMemberTable != null) {
 				if (!fMemberTable.isDisposed() && fMemberTable.getItemCount() == 0) {
 					TableItem ti= new TableItem(fMemberTable, SWT.NONE);
-					ti.setText("No Editions found");
+					ti.setText("No additional members found");
 				}
 				return;
 			}			
 			if (fEditionTree != null && !fEditionTree.isDisposed() && fEditionTree.getItemCount() == 0) {
 				TreeItem ti= new TreeItem(fEditionTree, SWT.NONE);
-				ti.setText("No Editions found");
+				ti.setText("No editions found");
 			}
 			return;
 		}

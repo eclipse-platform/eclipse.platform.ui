@@ -13,10 +13,12 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.part.EditorActionBarContributor;
 
-import org.eclipse.compare.*;
+import org.eclipse.compare.CompareConfiguration;
 
 
 public class CompareEditorContributor extends EditorActionBarContributor {
+	
+	private IEditorPart fActiveEditorPart= null;
 
 	private IgnoreWhiteSpaceAction fIgnoreWhitespace;
 	private ShowPseudoConflicts fShowPseudoConflicts;
@@ -35,10 +37,18 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 	}
 
 	public void setActiveEditor(IEditorPart targetEditor) {
-		if (targetEditor instanceof CompareEditor) {
-			CompareConfiguration cc= ((CompareEditor) targetEditor).getCompareConfiguration();
-			fIgnoreWhitespace.setCompareConfiguration(cc);
-			fShowPseudoConflicts.setCompareConfiguration(cc);
+				
+		if (fActiveEditorPart != targetEditor) {
+			fActiveEditorPart= targetEditor;
+				
+			if (targetEditor instanceof CompareEditor) {
+				CompareEditor editor= (CompareEditor) targetEditor;
+				editor.setActionBars(getActionBars());
+			
+				CompareConfiguration cc= editor.getCompareConfiguration();
+				fIgnoreWhitespace.setCompareConfiguration(cc);
+				fShowPseudoConflicts.setCompareConfiguration(cc);
+			}
 		}
 	}
 }
