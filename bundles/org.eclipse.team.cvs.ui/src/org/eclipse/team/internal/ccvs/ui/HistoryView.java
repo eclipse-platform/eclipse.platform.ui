@@ -61,6 +61,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
@@ -421,17 +422,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 			}
 			public void dispose() {
 			}
-			/**
-			 * The input has changed. Change the title of the view if necessary.
-			 */
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-				if (oldInput == null && newInput == null) return;
-				if (!(newInput instanceof ICVSRemoteFile)) {
-					setTitle(Policy.bind("HistoryView.title"));
-					return;
-				}
-				ICVSRemoteFile newFile = (ICVSRemoteFile)newInput;
-				setTitle(Policy.bind("HistoryView.titleWithArgument", newFile.getName()));
 			}
 		});
 		viewer.setLabelProvider(new HistoryLabelProvider());
@@ -652,7 +643,9 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 			if (teamProvider != null && teamProvider instanceof CVSTeamProvider) {
 				this.provider = (CVSTeamProvider)teamProvider;
 				try {
-					tableViewer.setInput(CVSWorkspaceRoot.getRemoteResourceFor(file));
+					ICVSRemoteResource remoteResource = CVSWorkspaceRoot.getRemoteResourceFor(file);
+					tableViewer.setInput(remoteResource);
+					setTitle(Policy.bind("HistoryView.titleWithArgument", remoteResource.getName()));
 				} catch (TeamException e) {
 					ErrorDialog.openError(getViewSite().getShell(), null, null, e.getStatus());
 				}				
@@ -661,6 +654,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		}
 		this.file = null;
 		tableViewer.setInput(null);
+		setTitle(Policy.bind("HistoryView.title"));
 	}
 	
 	/**
@@ -669,9 +663,11 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 	public void showHistory(ICVSRemoteFile file) {
 		if (file == null) {
 			tableViewer.setInput(null);
+			setTitle(Policy.bind("HistoryView.title"));
 			return;
 		}
 		this.file = null;
 		tableViewer.setInput(file);
+		setTitle(Policy.bind("HistoryView.titleWithArgument", file.getName()));
 	}
 }
