@@ -5,24 +5,33 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
  
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.HashMap;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.ccvs.core.IRemoteFile;
 import org.eclipse.team.core.TeamException;
@@ -31,8 +40,6 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.help.ViewContextComputer;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.part.ResourceTransfer;
@@ -43,13 +50,11 @@ import org.eclipse.ui.part.ViewPart;
  * a resource.
  */
 public class HistoryView extends ViewPart implements IMenuListener, ISelectionListener {
-	//private IVersionHistory history;
-	//private IResourceEdition currentEdition;
 	private IRemoteFile remoteFile;
 	
 	private HashMap infoMap = new HashMap(30);
 	private TableViewer viewer;
-	//private OpenRemoteFileAction openAction;
+	private OpenRemoteFileAction openAction;
 
 	private static final int DIALOG_WIDTH = 600;
 	private static final int DIALOG_HEIGHT = 250;
@@ -94,33 +99,26 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 	public static final String VIEW_ID = "org.eclipse.team.ccvs.ui.HistoryView";
 	
 	/**
-	 * Creates a new HistoryView.
-	 */
-	public HistoryView() {
-		super();
-	}
-	
-	/**
 	 * Adds the action contributions for this view.
 	 */
 	protected void contributeActions() {
 		//double click
-//		openAction = new OpenRemoteFileAction();
-//		viewer.getTable().addListener(SWT.MouseDoubleClick, new Listener() {
-//			public void handleEvent(Event e) {
-//				openAction.selectionChanged(null, viewer.getSelection());
-//				openAction.run(null);
-//			}
-//		});
+		openAction = new OpenRemoteFileAction();
+		viewer.getTable().addListener(SWT.MouseDoubleClick, new Listener() {
+			public void handleEvent(Event e) {
+				openAction.selectionChanged(null, viewer.getSelection());
+				openAction.run(null);
+			}
+		});
 		
 		
 		//popup menu
-//		MenuManager menuMgr = new MenuManager();
-//		Menu menu = menuMgr.createContextMenu(viewer.getTable());
-//		menuMgr.addMenuListener(this);
-//		menuMgr.setRemoveAllWhenShown(true);
-//		viewer.getTable().setMenu(menu);
-//		getSite().registerContextMenu(menuMgr, viewer);
+		MenuManager menuMgr = new MenuManager();
+		Menu menu = menuMgr.createContextMenu(viewer.getTable());
+		menuMgr.addMenuListener(this);
+		menuMgr.setRemoveAllWhenShown(true);
+		viewer.getTable().setMenu(menu);
+		getSite().registerContextMenu(menuMgr, viewer);
 	}
 	
 	/**
@@ -131,39 +129,39 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 		// revision
 		TableColumn col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText("Revision");
+		col.setText(Policy.bind("HistoryView.revision"));
 		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(10, true));
+		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		// tags
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText("Tags");
+		col.setText(Policy.bind("HistoryView.tags"));
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		// creation date
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText("Date");
+		col.setText(Policy.bind("HistoryView.date"));
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		// author
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText("Author");
+		col.setText(Policy.bind("HistoryView.author"));
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		//comment
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText("Comment");
+		col.setText(Policy.bind("HistoryView.comment"));
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(50, true));
 	}
-	/** (Non-javadoc)
+	/*
 	 * Method declared on IWorkbenchPart
 	 */
 	public void createPartControl(Composite parent) {
@@ -212,12 +210,7 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 		 * Repeated selection of the header will toggle
 		 * sorting order (ascending versus descending).
 		 */
-		return new SelectionListener() {
-			/**
-			  * Unused - double-click on the table header will
-			  * not produce any result.
-			  */
-			public void widgetDefaultSelected(SelectionEvent e) {}
+		return new SelectionAdapter() {
 			/**
 			 * Handles the case of user selecting the
 			 * header area.
@@ -258,7 +251,7 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 	 * @see IMenuListener#menuAboutToShow
 	 */
 	public void menuAboutToShow(IMenuManager manager) {
-		//file actions go first (view file)
+		// file actions go first (view file)
 		manager.add(new Separator(IWorkbenchActionConstants.GROUP_FILE));
 	
 		manager.add(new Separator("additions"));
@@ -311,7 +304,7 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 	public void showHistory(IRemoteFile file) {
 		this.remoteFile = file;
 		if (remoteFile == null) {
-			setTitle("Resource History");
+			setTitle(Policy.bind("HistoryView.title"));
 			viewer.setInput(new AdaptableList());
 			return;
 		}
@@ -320,19 +313,14 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 			entries = file.getLogEntries(new NullProgressMonitor());
 		} catch (TeamException e) {
 			CVSUIPlugin.log(e.getStatus());
-			setTitle("Resource History");
+			setTitle(Policy.bind("HistoryView.title"));
 			viewer.setInput(new AdaptableList());
 			return;
 		}
 		if (entries.length > 0) {
-			/*if (editions[0].getType() == IResource.PROJECT) {
-				name = editions[0].getName();
-			} else {
-				name = "/" + editions[0].getProjectName() + "/" + editions[0].getProjectRelativePath().toString();
-			}*/
-			setTitle("Resource History - " + file.getName());
+			setTitle(Policy.bind("HistoryView.titleWithArgument", file.getName()));
 		} else {
-			setTitle("Resource History");
+			setTitle(Policy.bind("HistoryView.title"));
 		}
 		viewer.setInput(new AdaptableList(entries));
 		if (viewer.getSorter() == null) {
