@@ -32,7 +32,7 @@ public class ResourceMappingSelectionArea extends DialogArea {
 		WorkbenchLabelProvider provider = new WorkbenchLabelProvider();
 		public String getText(Object element) {
             String text = provider.getText(element);
-            if (text != null)
+            if (text != null && text.length() > 0)
                 return text;
 			if (element instanceof ResourceMapping) {
 				ResourceMapping mapping = (ResourceMapping) element;
