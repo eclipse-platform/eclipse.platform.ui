@@ -157,10 +157,10 @@ public final class InternalPlatform {
 	private DebugOptions options = null;
 	private IProduct product;
 	private IExtensionRegistry registry;
-	
+
 	private FileManager runtimeFileManager;
 	private Plugin runtimeInstance; // Keep track of the plugin object for runtime in case the backward compatibility is run.
-	
+
 	private ServiceTracker userLocation = null;
 
 	public static InternalPlatform getDefault() {
@@ -584,7 +584,7 @@ public final class InternalPlatform {
 		}
 		if (logEntries != null)
 			getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Messages.provider_invalid_general, 0, null, (FrameworkLogEntry[]) logEntries.toArray()));
-		
+
 		if (!missingProductReported) {
 			getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, NLS.bind(Messages.product_notFound, productId), 0, null, null));
 			missingProductReported = true;
@@ -722,64 +722,43 @@ public final class InternalPlatform {
 			DEBUG_MESSAGE_BUNDLES = getBooleanOption(OPTION_DEBUG_MESSAGE_BUNDLES, false);
 		}
 	}
-	
+
 	public void initializeMessages(String bundleName, Class clazz) {
 
-		// load the resource bundle
 		long start = System.currentTimeMillis();
-		Properties bundle = MessageResourceBundle.load(bundleName, clazz.getClassLoader());
-		Set unusedKeys = null;
-		if (DEBUG_MESSAGE_BUNDLES)
-			unusedKeys = new HashSet(bundle.keySet());
-
-		// iterate over the fields in the class
-		Field[] fields = clazz.getDeclaredFields();
-		for (int i = 0; i < fields.length; i++) {
+		// load the resource bundle and set the fields
+		final Field[] fields = clazz.getDeclaredFields();
+		MessageResourceBundle.load(bundleName, clazz.getClassLoader(), fields);
+		
+		// iterate over the fields in the class to make sure that there aren't any empty ones
+		final int MOD_EXPECTED = Modifier.PUBLIC | Modifier.STATIC ;
+		final int MOD_MASK = MOD_EXPECTED | Modifier.FINAL;
+		final int numFields = fields.length;
+		for (int i = 0; i < numFields; i++) {
 			Field field = fields[i];
-			int flags = field.getModifiers();
-			if (!(Modifier.isPublic(flags) && Modifier.isStatic(flags) && !Modifier.isFinal(flags)))
+			if ((field.getModifiers() & MOD_MASK) != MOD_EXPECTED)
 				continue;
-			String key = field.getName();
-
-			// check to see if there is an entry in the bundle for this field
-			String value = bundle == null ? "Missing bundle: " + bundleName : bundle.getProperty(key); //$NON-NLS-1$
-
-			// The key was not found in the bundle. Shouldn't happen but if it does,
-			// then just set the message to be the same as the key.
-			if (value == null) {
-				value = "Missing message: " + key + " in: " + bundleName; //$NON-NLS-1$ //$NON-NLS-2$
-				if (DEBUG_MESSAGE_BUNDLES)
-					System.out.println(value);
-			}
-
-			if (DEBUG_MESSAGE_BUNDLES)
-				unusedKeys.remove(key);
-
-			// Set the value into the field. We should never get an exception here because
-			// we know we have a public static non-final field. If we do get an exception, silently
-			// log it and continue. This means that the field will (most likely) be un-initialized and
-			// will fail later in the code and if so then we will see both the NPE and this error.
 			try {
-				field.set(null, value);
+				// Set the value into the field if its empty. We should never get an exception here because
+				// we know we have a public static non-final field. If we do get an exception, silently
+				// log it and continue. This means that the field will (most likely) be un-initialized and
+				// will fail later in the code and if so then we will see both the NPE and this error.
+				if (field.get(clazz) == null) {
+					String value = "Missing message: " + field.getName() + " in: " + bundleName; //$NON-NLS-1$ //$NON-NLS-2$
+					if (InternalPlatform.DEBUG_MESSAGE_BUNDLES)
+						System.out.println(value);
+					field.set(null, value);
+				}
 			} catch (IllegalArgumentException e) {
-				// TODO externalize message
-				IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, "Exception setting field value.", e);
-				InternalPlatform.getDefault().log(status);
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO externalize message
-				IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, "Exception setting field value.", e);
-				InternalPlatform.getDefault().log(status);
-			}
-
-		}
-		if (DEBUG_MESSAGE_BUNDLES) {
-			System.out.println("Time to load message bundle: " + bundleName + " was "+ (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			//print out unused keys in the bundle file
-			for (Iterator it = unusedKeys.iterator(); it.hasNext();) {
-				String key = (String) it.next();
-				System.out.println("Unused message: " + key + " in: " + bundleName); //$NON-NLS-1$ //$NON-NLS-2$
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
+		if (DEBUG_MESSAGE_BUNDLES)
+			System.out.println("Time to load message bundle: " + bundleName + " was " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	private void initializeLocationTrackers() {
@@ -817,7 +796,7 @@ public final class InternalPlatform {
 		installLocation = new ServiceTracker(context, filter, null);
 		installLocation.open();
 	}
-	
+
 	private void initializeRuntimeFileManager() throws IOException {
 		File controlledDir = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + Platform.PI_RUNTIME);
 		controlledDir.mkdirs();
@@ -883,6 +862,7 @@ public final class InternalPlatform {
 				public void handleException(Throwable e) {
 					//Ignore
 				}
+
 				public void run() throws Exception {
 					listener.logging(status, Platform.PI_RUNTIME);
 				}
@@ -1088,6 +1068,7 @@ public final class InternalPlatform {
 				// just continue ... the exception has already been logged by
 				// the platform (see handleException(ISafeRunnable)
 			}
+
 			public void run() throws Exception {
 				finalHandler.run();
 			}
@@ -1128,7 +1109,7 @@ public final class InternalPlatform {
 		getMetaArea();
 		initializeAuthorizationHandler();
 		platformLog = new PlatformLogWriter();
-		addLogListener(platformLog);		
+		addLogListener(platformLog);
 		initializeRuntimeFileManager();
 	}
 
