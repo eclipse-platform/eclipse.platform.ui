@@ -1585,12 +1585,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException {
 		run(action, defaultRoot, IWorkspace.AVOID_UPDATE, monitor);
 	}
-	/**
-	 * @deprecated
-	 */
-	public void run(IWorkspaceRunnable action, ISchedulingRule rule, IProgressMonitor monitor) throws CoreException {
-		run(action, rule, IResource.NONE, monitor);
-	}
+
 	
 	/** 
 	 * @see IWorkspace

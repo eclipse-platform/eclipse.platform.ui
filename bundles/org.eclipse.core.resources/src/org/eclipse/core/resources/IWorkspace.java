@@ -862,12 +862,6 @@ public void removeSaveParticipant(Plugin plugin);
  */
 public void run(IWorkspaceRunnable action, ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException;
 /**
- * @deprecated
- * Use run(IWorkspaceRunnable, ISchedulingRule, int, IProgressMonitor).
- * This method will be removed before the 3.0 release.
- */
-public void run(IWorkspaceRunnable action, ISchedulingRule rule, IProgressMonitor monitor) throws CoreException;
-/**
  * Runs the given action as an atomic workspace operation.
  * <p>
  * This is a convenience method, fully equivalent to:
