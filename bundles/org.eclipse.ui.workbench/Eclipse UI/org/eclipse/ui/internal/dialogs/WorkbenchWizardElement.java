@@ -44,6 +44,8 @@ public class WorkbenchWizardElement
 	private String description;
 	private SelectionEnabler selectionEnabler;
 	private IConfigurationElement configurationElement;
+    private ImageDescriptor descriptionImage;
+    private String helpHref;
 	/**
 	 * Create a new instance of this class
 	 * 
@@ -269,4 +271,45 @@ public class WorkbenchWizardElement
         }
         return null;
     }
+    
+    
+    /**
+     * Return the description image for this wizard.
+     * 
+     * @return the description image for this wizard
+     * @since 3.0
+     */
+    public ImageDescriptor getDescriptionImage() {
+        return descriptionImage;
+    }
+    
+    /**
+     * Set the descriptive image for this wizard.
+     * 
+     * @param descriptor the descriptive image
+     * @since 3.0
+     */
+    public void setDescriptionImage(ImageDescriptor descriptor) {
+        descriptionImage = descriptor;
+    }
+    
+    /**
+     * Return the help system href for this wizard.
+     * 
+     * @return the help system href for this wizard
+     * @since 3.0
+     */
+    public String getHelpHref() {
+        return helpHref;
+    }
+    
+    /**
+     * Set the help system href for this wizard.
+     * 
+     * @param href the help system href for this wizard
+     * @since 3.0
+     */
+    public void setHelpHref(String href) {
+        helpHref = href;
+    }    
 }

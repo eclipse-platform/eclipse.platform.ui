@@ -232,6 +232,7 @@ private final static void declareImages() {
 	declareImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW_HOVER, PATH_CLOCALTOOL+"min_view.gif", true); //$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU, PATH_ELOCALTOOL+"view_menu.gif", true); //$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_HOVER, PATH_CLOCALTOOL+"view_menu.gif", true); //$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_LCL_LINKTO_HELP, PATH_CLOCALTOOL+"linkto_help.gif", true); //$NON-NLS-1$
 	
 	declareImage(ISharedImages.IMG_OBJS_ERROR_TSK, PATH_OBJECT+"error_tsk.gif", true); //$NON-NLS-1$
 	declareImage(ISharedImages.IMG_OBJS_WARN_TSK, PATH_OBJECT+"warn_tsk.gif", true); //$NON-NLS-1$
@@ -252,7 +253,7 @@ private final static void declareImages() {
 	declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_OFFSCREEN_SOURCE, PATH_DND+"offscreen_source.bmp", true); //$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_OFFSCREEN_MASK, PATH_DND+"offscreen_mask.bmp", true); //$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOFASTVIEW_SOURCE, PATH_DND+"tofastview_source.bmp", true); //$NON-NLS-1$
-	declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOFASTVIEW_MASK, PATH_DND+"tofastview_mask.bmp", true); //$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOFASTVIEW_MASK, PATH_DND+"tofastview_mask.bmp", true); //$NON-NLS-1$		
 }
 
 /**

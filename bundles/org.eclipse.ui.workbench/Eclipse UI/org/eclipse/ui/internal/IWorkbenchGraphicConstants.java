@@ -78,6 +78,7 @@ public interface IWorkbenchGraphicConstants {
 	public final static String IMG_LCL_DEFAULTS_PS = "IMG_LCL_DEFAULTS_PS"; //$NON-NLS-1$
 	public final static String IMG_LCL_FILTER_PS = "IMG_LCL_FILTER_PS"; //$NON-NLS-1$
 	public final static String IMG_LCL_SHOWSYNC_RN = "IMG_LCL_SHOWSYNC_RN"; //$NON-NLS-1$
+	public static final String IMG_LCL_LINKTO_HELP = "IMGS_LCL_LINKTO_HELP"; //$NON-NLS-1$
 
 	//wizard images
 	public final static String IMG_WIZBAN_NEW_WIZ = "IMG_WIZBAN_NEW_WIZ"; //$NON-NLS-1$
@@ -106,5 +107,5 @@ public interface IWorkbenchGraphicConstants {
 	public final static String IMG_OBJS_DND_OFFSCREEN_SOURCE = "IMG_OBJS_DND_OFFSCREEN_SOURCE"; //$NON-NLS-1$
 	public final static String IMG_OBJS_DND_OFFSCREEN_MASK = "IMG_OBJS_DND_OFFSCREEN_MASK"; //$NON-NLS-1$
 	public static final String IMG_OBJS_DND_TOFASTVIEW_SOURCE = "IMG_OBJS_DND_TOFASTVIEW_SOURCE"; //$NON-NLS-1$
-	public static final String IMG_OBJS_DND_TOFASTVIEW_MASK = "IMG_OBJS_DND_TOFASTVIEW_MASK"; //$NON-NLS-1$
+	public static final String IMG_OBJS_DND_TOFASTVIEW_MASK = "IMG_OBJS_DND_TOFASTVIEW_MASK"; //$NON-NLS-1$    
 }

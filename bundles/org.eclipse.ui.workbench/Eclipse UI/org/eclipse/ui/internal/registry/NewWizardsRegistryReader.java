@@ -20,11 +20,14 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  *	Instances of this class provide a simple API to the workbench for
@@ -45,6 +48,8 @@ public class NewWizardsRegistryReader extends WizardsRegistryReader {
 	public final static String		FULL_EXAMPLES_WIZARD_CATEGORY = "org.eclipse.ui.Examples";//$NON-NLS-1$
 	private final static String		TAG_CATEGORY = "category";	//$NON-NLS-1$
 	private final static String		TAG_PRIMARYWIZARD = "primaryWizard";	//$NON-NLS-1$
+	private final static String		ATT_HELP_HREF = "helpHref";	//$NON-NLS-1$
+	private final static String		ATT_DESCRIPTION_IMAGE = "descriptionImage";	//$NON-NLS-1$
 	private final static String		UNCATEGORIZED_WIZARD_CATEGORY = "org.eclipse.ui.Other";//$NON-NLS-1$
 	private final static String		UNCATEGORIZED_WIZARD_CATEGORY_LABEL = WorkbenchMessages.getString("NewWizardsRegistryReader.otherCategory");//$NON-NLS-1$
 	private final static String		CATEGORY_SEPARATOR = "/";//$NON-NLS-1$
@@ -426,5 +431,25 @@ protected Object[] getWizardCollectionElements() {
 		readWizards();
 	}
 	return wizardElements.getChildren();
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.registry.WizardsRegistryReader#initializeWizard(org.eclipse.ui.internal.dialogs.WorkbenchWizardElement, org.eclipse.core.runtime.IConfigurationElement)
+ */
+protected boolean initializeWizard(WorkbenchWizardElement element,
+        IConfigurationElement config) {
+    boolean result = super.initializeWizard(element, config);
+    if (!result)
+        return result;
+    element.setHelpHref(config.getAttribute(ATT_HELP_HREF));
+	String descImage = config.getAttribute(ATT_DESCRIPTION_IMAGE);
+	if (descImage != null) {
+		IExtension extension = config.getDeclaringExtension();
+		String extendingPluginId =
+			extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
+		ImageDescriptor image =
+			AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, descImage);
+		element.setDescriptionImage(image);
+	}
+	return result;
 }
 }
