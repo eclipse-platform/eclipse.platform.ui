@@ -434,6 +434,77 @@ public class CVSSSH2PreferencePage extends PreferencePage
     gd.horizontalSpan=2;
     keyPassphrase2Text.setLayoutData(gd);
 
+    keyPassphrase1Text.addModifyListener(new ModifyListener(){
+    	public void modifyText(ModifyEvent e){
+    		String pass1=keyPassphrase1Text.getText();
+    		String pass2=keyPassphrase2Text.getText();
+    		if(pass2.length()==0){
+    			setErrorMessage(null);
+    			return;
+    		}
+    		if(pass1.equals(pass2)){
+    			setErrorMessage(null);
+    		}
+    		else{
+    			setErrorMessage(Policy.bind("CVSSSH2PreferencePage.48")); //$NON-NLS-1$
+    		}
+    	}
+    });	
+
+    keyPassphrase2Text.addModifyListener(new ModifyListener(){
+    	public void modifyText(ModifyEvent e){
+    		String pass1=keyPassphrase1Text.getText();
+    		String pass2=keyPassphrase2Text.getText();
+    		if(pass2.length()<pass1.length()){
+    			if(pass1.startsWith(pass2)){
+    				setErrorMessage(null);
+    			}
+    			else{
+    				setErrorMessage(Policy.bind("CVSSSH2PreferencePage.48")); //$NON-NLS-1$
+    			}
+    			return;
+    		}
+    		if(pass1.equals(pass2)){
+    			setErrorMessage(null);
+    		}
+    		else{
+    			setErrorMessage(Policy.bind("CVSSSH2PreferencePage.48")); //$NON-NLS-1$
+    		}
+    	}
+    });
+    
+    keyPassphrase2Text.addFocusListener(new FocusListener(){
+    	public void focusGained(FocusEvent e){
+    		String pass1=keyPassphrase1Text.getText();
+    		String pass2=keyPassphrase2Text.getText();
+    		if(pass2.length()<pass1.length()){
+    			if(pass1.startsWith(pass2)){
+    				setErrorMessage(null);
+    			}
+    			else{
+    				setErrorMessage(Policy.bind("CVSSSH2PreferencePage.48")); //$NON-NLS-1$
+    			}
+    			return;
+    		}
+    		if(pass1.equals(pass2)){
+    			setErrorMessage(null);
+    		}
+    		else{
+    			setErrorMessage(Policy.bind("CVSSSH2PreferencePage.48")); //$NON-NLS-1$
+    		}   	
+    	}
+    	public void focusLost(FocusEvent e){
+    		String pass1=keyPassphrase1Text.getText();
+    		String pass2=keyPassphrase2Text.getText();
+    		if(pass1.equals(pass2)){
+    			setErrorMessage(null);
+    		}
+    		else{
+    			setErrorMessage(Policy.bind("CVSSSH2PreferencePage.48")); //$NON-NLS-1$
+    		}
+    	}
+    });
+
     saveKeyPair=new Button(group, SWT.NULL);
     saveKeyPair.setText(Policy.bind("CVSSSH2PreferencePage.45")); //$NON-NLS-1$
     gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
@@ -508,10 +579,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  MessageBox mb;
 	  String pass=keyPassphrase1Text.getText();
 	  if(!pass.equals(keyPassphrase2Text.getText())){
-	    mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_ERROR);
-	    mb.setText(Policy.bind("CVSSSH2PreferencePage.error")); //$NON-NLS-1$
-	    mb.setMessage(Policy.bind("CVSSSH2PreferencePage.48")); //$NON-NLS-1$
-	    mb.open();
+	    setErrorMessage(Policy.bind("CVSSSH2PreferencePage.48")); //$NON-NLS-1$
 	    return;
 	  }
 	  if(pass.length()==0){
