@@ -95,7 +95,8 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 		try {
 			fillTestDescriptor(descriptor);
 		} catch (SetupException e) {
-			result.addError(descriptor.getTest(), e.getCause());
+			Throwable cause = e.getCause() == null ? e : e.getCause(); 
+			result.addError(descriptor.getTest(), cause);
 			return;
 		}
 		descriptor.getSetup().setSystemProperty("eclipse.perf.dbloc", System.getProperty("eclipse.perf.dbloc"));
