@@ -11,47 +11,73 @@
 
 package org.eclipse.help.ui.internal;
 
+import java.util.*;
+
 import org.eclipse.help.internal.*;
-import org.eclipse.ui.internal.roles.*;
+import org.eclipse.ui.activities.*;
 
 /**
  * Wrapper for eclipe ui role manager
  */
 public class HelpRoleManager implements IHelpRoleManager {
-	private RoleManager roleManager;
-	public HelpRoleManager(RoleManager roleManager) {
-		this.roleManager = roleManager;
+	private IActivityManager activityManager;
+	public HelpRoleManager(IActivityManager activityManager) {
+		this.activityManager = activityManager;
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.help.internal.IHelpRoleManager#isEnabled()
 	 */
 	public boolean isEnabled(String href) {
-		if (roleManager == null || !roleManager.isFiltering())
+		if (activityManager == null) {
 			return true;
+		}
 
 		// For the time being, only look at plugin id filtering
 		if (href.startsWith("/"))
 			href = href.substring(1);
 		int i = href.indexOf("/");
 		if (i > 0)
-			href = href.substring(0,i);
-		return roleManager.isEnabledId(href);
+			href = href.substring(0, i);
+		Set enabledOrActiveIds =
+			new HashSet(activityManager.getEnabledActivityIds());
+		enabledOrActiveIds.addAll(activityManager.getActiveActivityIds());
+		return activityManager.match(href, enabledOrActiveIds);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.help.internal.IHelpRoleManager#enabledActivities(java.lang.String)
 	 */
 	public void enabledActivities(String href) {
-		if (roleManager == null || !roleManager.isFiltering())
+		if (activityManager == null) {
 			return;
+		}
+
 		// For the time being, only look at plugin id filtering
 		if (href.startsWith("/"))
 			href = href.substring(1);
 		int i = href.indexOf("/");
 		if (i > 0)
-			href = href.substring(0,i);
-		if (!roleManager.isEnabledId(href))
-			roleManager.enableActivities(href);
+			href = href.substring(0, i);
+
+		if (!activityManager
+			.match(href, activityManager.getEnabledActivityIds())) {
+			Set enabledActivities =
+				new HashSet(activityManager.getEnabledActivityIds());
+			Set definedActivityIds = activityManager.getDefinedActivityIds();
+			for (Iterator it = definedActivityIds.iterator(); it.hasNext();) {
+				String definedActivityId = (String) it.next();
+				IActivity definedActivity =
+					activityManager.getActivity(definedActivityId);
+				if (definedActivity.match(href))
+					enabledActivities.add(definedActivityId);
+
+			}
+			activityManager.setEnabledActivityIds(enabledActivities);
+		}
 	}
 
 }
