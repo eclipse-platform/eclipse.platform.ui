@@ -1,12 +1,25 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.update.core.org.eclipse.update.core">
+<schema targetNamespace="org.eclipse.update.core">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.update.core.org.eclipse.update.core" id="siteTypes" name="Install/Update Concrete Site Type Implementation Factory"/>
+      <meta.schema plugin="org.eclipse.update.core" id="siteTypes" name="Site Type Factory"/>
    </appInfo>
    <documentation>
-      [Enter description of this extension point]
+      &lt;p&gt;
+The platform update mechanism supports pluggable site type
+implementations. A new site type can be registered in order
+to support
+alternate site layout schemes.
+&lt;/p&gt;
+
+&lt;p&gt;
+The &lt;code&gt;siteTypes&lt;/code&gt;
+extension point allows alternate site implementations to be
+registered using a symbolic type identifier. Whenever the 
+type is referenced using this identifier, the supplied factory
+is used to create the correct concrete site implementation.
+&lt;/p&gt;
    </documentation>
 </annotation>
 
@@ -18,21 +31,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  must be specified as &lt;b&gt;org.eclipse.update.core.siteTypes&lt;/b&gt;
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  must be specified. Identifies the new site type
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+                  optional displayable label for the new site type
                </documentation>
             </annotation>
          </attribute>
@@ -57,7 +70,19 @@ site type
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         The following is an example of new site type registration.
+&lt;br&gt;&lt;br&gt;
+&lt;code&gt;
+&amp;lt;extension&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;id="custom"&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;point="org.eclipse.update.core.siteTypes"&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;name="Custom site"&amp;gt;&lt;br&gt;
+&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;lt;site-factory&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;class="com.xyz.update.CustomSiteFactory"&amp;gt;&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;lt;/site-factory&amp;gt;&lt;br&gt;
+&amp;lt;/extension&amp;gt;&lt;br&gt;
+&lt;/code&gt;
       </documentation>
    </annotation>
 
@@ -66,7 +91,8 @@ site type
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         Registered factory classes must implement 
+&lt;code&gt;&lt;b&gt;org.eclipse.update.core.ISiteFactory&lt;/b&gt;&lt;/code&gt;
       </documentation>
    </annotation>
 
@@ -75,7 +101,9 @@ site type
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         The platform supplies two standard implementations of site
+types. One representing the default update server type, and
+the other representing the local file system site.
       </documentation>
    </annotation>
 
@@ -84,7 +112,8 @@ site type
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         &lt;br&gt;&lt;br&gt;&lt;a href="hglegal.htm"&gt;&lt;img SRC="ngibmcpy.gif" ALT="Copyright
+IBM Corp. and others 2000, 2002.  All Rights Reserved." BORDER=0&gt;&lt;/a&gt;
       </documentation>
    </annotation>
 
