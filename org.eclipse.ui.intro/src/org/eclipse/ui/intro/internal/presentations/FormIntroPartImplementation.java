@@ -162,7 +162,7 @@ public class FormIntroPartImplementation extends AbstractIntroPart implements
         toolBarManager.add(homeAction);
         toolBarManager.update(true);
         actionBars.updateActionBars();
-        super.addToolBarActions();
+        //super.addToolBarActions();
     }
 
     public void setFocus() {
