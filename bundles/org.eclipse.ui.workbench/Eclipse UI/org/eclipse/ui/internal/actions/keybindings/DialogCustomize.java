@@ -1391,17 +1391,7 @@ final class DialogCustomize extends Dialog {
 			}
 		}
 
-		ActionRecord actionRecord = getSelectedActionRecord();
-		actionRecords.clear();
-		
-		if (actionRecord != null)		
-			buildActionRecords(tree, actionRecord.actionId, actionRecords);
-		
-		buildTableAction();
-		
-		if (actionRecord != null)	
-			selectTableAction(actionRecord.scopeId, actionRecord.configurationId, actionRecord.keySequence);
-
+		selectedComboAction();
 		keySequenceRecords.clear();
 		
 		if (keySequence != null)	
