@@ -77,10 +77,10 @@ public class LayoutData extends RequestData {
 
 		View tocview = new View("toc", //$NON-NLS-1$
 				"", //$NON-NLS-1$
-				preferences.getImagesDirectory() + "/contents_view.gif"); //$NON-NLS-1$
+				preferences.getImagesDirectory() + "/contents_view.gif", 'C'); //$NON-NLS-1$
 		View searchview = new View("search", //$NON-NLS-1$
 				"", //$NON-NLS-1$
-				preferences.getImagesDirectory() + "/search_results_view.gif"); //$NON-NLS-1$
+				preferences.getImagesDirectory() + "/search_results_view.gif", 'R'); //$NON-NLS-1$
 
 		View linksview = null;
 		View bookmarksview = null;
@@ -88,11 +88,11 @@ public class LayoutData extends RequestData {
 		if (preferences.isLinksView())
 			linksview = new View("links", //$NON-NLS-1$
 					"", //$NON-NLS-1$
-					preferences.getImagesDirectory() + "/links_view.gif"); //$NON-NLS-1$
+					preferences.getImagesDirectory() + "/links_view.gif", (char)0); //$NON-NLS-1$
 		if (preferences.isBookmarksView())
 			bookmarksview = new View("bookmarks", //$NON-NLS-1$
 					"", //$NON-NLS-1$
-					preferences.getImagesDirectory() + "/bookmarks_view.gif"); //$NON-NLS-1$
+					preferences.getImagesDirectory() + "/bookmarks_view.gif", (char)0); //$NON-NLS-1$
 
 		if (linksview != null && bookmarksview != null)
 			views = new View[]{tocview, searchview, linksview, bookmarksview};

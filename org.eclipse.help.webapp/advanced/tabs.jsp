@@ -274,7 +274,8 @@ function getPreviousLink(currentLink){
 	         onclick='this.blur();return false;' 
 	         onmouseover="window.status='<%=title%>';return true;" 
 	         onmouseout="window.status='';"
-	         id="link<%=views[i].getName()%>">
+	         id="link<%=views[i].getName()%>"
+	         <%=views[i].getKey()==View.NO_SHORTCUT?"":"ACCESSKEY=\""+views[i].getKey()+"\""%>>
 	         <img alt="<%=title%>" 
 	              title="<%=title%>" 
 	              src="<%=views[i].getOnImage()%>"

@@ -11,14 +11,17 @@
 package org.eclipse.help.internal.webapp.data;
 
 public class View {
+    public static char NO_SHORTCUT = (char)0;
 	private String name;
 	private String url;
 	private String imageURL;
+	private char shortcut;
 
-	public View(String name, String url, String imageURL) {
+	public View(String name, String url, String imageURL, char shortcut) {
 		this.name = name;
 		this.url = url;
 		this.imageURL = imageURL;
+		this.shortcut = shortcut;
 	}
 
 	public String getName() {
@@ -46,5 +49,13 @@ public class View {
 	 */
 	public String getOnImage() {
 		return getImage();
+	}
+	/**
+	 * Returns the image when selected
+	 * 
+	 * @return char or 0 if no shortcut
+	 */
+	public char getKey() {
+		return shortcut;
 	}
 }
