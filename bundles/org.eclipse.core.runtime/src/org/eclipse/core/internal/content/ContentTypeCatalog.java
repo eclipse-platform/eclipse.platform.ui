@@ -256,7 +256,7 @@ public class ContentTypeCatalog {
 		List result = new ArrayList(5);
 		for (Iterator i = this.contentTypes.values().iterator(); i.hasNext();) {
 			ContentType next = (ContentType) i.next();
-			if (next != parent && next.isKindOf(this, parent))
+			if (next.getBaseType(this) == parent)
 				result.add(next);
 		}
 		children = (ContentType[]) result.toArray(new ContentType[result.size()]);
@@ -367,6 +367,8 @@ public class ContentTypeCatalog {
 	}
 
 	public boolean internalAccept(ContentTypeVisitor visitor, ContentType root) {
+		if (!root.isValid() || root.isAlias(this))
+			return false;;
 		int result = visitor.visit(root);
 		switch (result) {
 			// stop traversing the tree

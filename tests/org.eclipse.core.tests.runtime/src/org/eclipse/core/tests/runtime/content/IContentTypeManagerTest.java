@@ -591,6 +591,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 			selected = manager.findContentTypesFor(new InputStream() {
 
 				public int available() throws IOException {
+					// trick the client into reading the file 
 					return Integer.MAX_VALUE;
 				}
 
@@ -852,7 +853,13 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		//		description = contentTypeManager.getDescriptionFor(getInputStream(new byte[][] {IContentDescription.BOM_UTF_8,XML_ROOT_ELEMENT_NO_DECL.getBytes("UTF-8")}), "fake.xml", IContentDescription.ALL);
 		//		assertTrue("7.0", description != null);
 		//		assertEquals("7.1", rootElement, description.getContentType());
-		//		assertEquals("7.2", IContentDescription.BOM_UTF_8, description.getProperty(IContentDescription.BYTE_ORDER_MARK));		
+		//		assertEquals("7.2", IContentDescription.BOM_UTF_8, description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+
+		// bug 84354
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NO_DECL,"UTF-8"), "test.txt");
+		assertTrue("8.0", contentTypes.length > 0);
+		assertEquals("8.1", contentTypeManager.getContentType(IContentTypeManager.CT_TEXT), contentTypes[0]);
+		
 	}
 
 	/**

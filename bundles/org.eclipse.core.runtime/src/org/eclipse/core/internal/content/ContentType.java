@@ -205,7 +205,7 @@ public final class ContentType implements IContentType {
 		return getBaseType(manager.getCatalog());
 	}
 
-	private ContentType getBaseType(ContentTypeCatalog catalog) {
+	ContentType getBaseType(ContentTypeCatalog catalog) {
 		ContentType aliasTarget = getTarget(catalog, false);
 		if (aliasTarget != null)
 			return aliasTarget.getBaseType(catalog);
