@@ -23,19 +23,23 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
  * to the server.
  */
 abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
-	protected final Session session;
+	protected Session session;
 	
 	// The last folder that has already been sent to the server during this visit
 	private ICVSFolder lastFolderSend;
 
 	// Subclasses can use to show visitor progress
-	protected final IProgressMonitor monitor;
+	protected IProgressMonitor monitor;
 
 	public AbstractStructureVisitor(Session session, IProgressMonitor monitor) {
 		this.session = session;
 		this.monitor = monitor;
 	}
 
+	protected boolean isOrphanedSubtree(ICVSFolder mFolder) {
+		return mFolder.isCVSFolder() && ! mFolder.isManaged() && ! mFolder.equals(session.getLocalRoot()) && mFolder.getParent().isCVSFolder();
+	}
+	
 	/**
 	 * Send the folder relative to the root to the server. Send all 
 	 * appropiate modifier like Sticki, Questionable, Static-directory.
@@ -61,8 +65,11 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 			lastFolderSend = mFolder;
 			return;
 		}
+		
+		boolean isQuestionable = !mFolder.isCVSFolder() || isOrphanedSubtree(mFolder);
 
-		if (sendQuestionable && !mFolder.isCVSFolder()) {
+		// XXX The logic of when to send what looks wrong!
+		if (sendQuestionable && isQuestionable) {
 			// This implies, that the mFolder exists. If we have not send the parent-folder of this 
 			// folder we have to send the parent-folder to have this questionable below this parent-folder.
 			Assert.isTrue(mFolder.getParent().isCVSFolder());
