@@ -85,8 +85,6 @@ public class InstallConfigurationModel extends ModelObject {
 	 */
 	public boolean removeConfigurationSiteModel(ConfiguredSiteModel site) {
 		if (!initialized) initialize();
-		if (!isCurrent)
-			return false;
 
 		if (configurationSites != null) {
 			return configurationSites.remove(site);

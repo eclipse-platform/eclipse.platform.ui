@@ -218,11 +218,12 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		addActivityModel((ConfigurationActivityModel)activity);
 	}
 
-
 	/*
 	 *
 	 */
 	public void removeConfiguredSite(IConfiguredSite site) {
+		if (!isCurrent() && isReadOnly())
+			return;
 
 		if (removeConfigurationSiteModel((ConfiguredSiteModel) site)) {
 			// notify listeners
