@@ -457,11 +457,8 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 			} catch (InterruptedException e) {
 				// ignore
 			}
-			try {
-				file.setLocalTimeStamp(System.currentTimeMillis());
-			} catch (CoreException e) {
-				fail("#touchInFilesystem: " + file, e);
-			}
+			file.getLocation().toFile().setLastModified(System.currentTimeMillis());
 		}
+		assertTrue("File not out of sync: " + file.getLocation().toOSString(), !file.isSynchronized(IResource.DEPTH_ZERO));
 	}
 }
