@@ -23,7 +23,7 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
  *      id="com.example.ExampleIdentifier"
  *      delegate="com.example.ExampleLaunchConfigurationDelegate"
  *      modes="run, debug"
- *      name="Example Application"
+ *      name="Example Application"&gt;
  *   &lt;/launchConfigurationType&gt;
  * &lt;/extension&gt;
  * </pre>
@@ -36,7 +36,7 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
  *   instances of this type will delegate to instances of this class
  *   to perform launching.</li>
  * <li><code>modes</code> specifies a comma separated list of the modes this
- *    type of launch configuration suports - <code>"run"</code> and/or <code>"debug</code>.</li>
+ *    type of launch configuration suports - <code>"run"</code> and/or <code>"debug"</code>.</li>
  * <li><code>name</code> specifies a human readable name for this type
  *    of launch configuration.</li>
  * </ul>
@@ -56,8 +56,8 @@ public interface ILaunchConfigurationType {
 	 * the specified mode.
 	 * 
 	 * @param mode a mode in which a configuration can be launched, one of
-	 *  the mode constants defined by this interface - <code>RUN</code> or
-	 *  <code>DEBUG</code>.
+	 *  the mode constants defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or
+	 *  <code>DEBUG_MODE</code>.
 	 * @return whether this kind of launch configuration supports the
 	 *  specified mode
 	 */
@@ -93,13 +93,13 @@ public interface ILaunchConfigurationType {
 	 * that resides in the specified container, with the given name.
 	 * When <code>container</code> is </code>null</code>, the configuration
 	 * will reside locally in the metadata area.
-	 * Note: a working copy is not actually created until saved.
+	 * Note: a launch configuration is not actually created until the working copy is saved.
 	 * 
 	 * @param container the container in which the new configuration will
 	 *  reside, or <code>null</code> if the configuration should reside
 	 *  locally with the metadata.
 	 * @param name name for the launch configuration
-	 * @return a new launch configuration instance of this type
+	 * @return a new launch configuration working copy instance of this type
 	 * @exception CoreException if an instance of this type
 	 *  of launch configuration could not be created for any
 	 *  reason
