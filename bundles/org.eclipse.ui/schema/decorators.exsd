@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui" id="decorators" name="Decorators"/>
       </appInfo>
       <documentation>
-         This extension point is used to add decorators to views that subscribe to a decorator manager. As of 2.1 there will be the concept of a lightweight decorator that will handle the image management for the decorator. It is also possible to declare a lightweight decorator that simply overlays an icon when enabled that requires no implementation from the plug-in.
+         This extension point is used to add decorators to views that subscribe to a decorator manager. As of 2.1 there is the concept of a lightweight decorator that will handle the image management for the decorator. It is also possible to declare a lightweight decorator that simply overlays an icon when enabled that requires no implementation from the plug-in.
       </documentation>
    </annotation>
 
@@ -98,25 +98,6 @@ This flag is used only if objectClass adapts to IResource.  Default value is fal
                   a flag that indicates if the decorator is on by default.  Default value is false.
                </documentation>
             </annotation>
-         </attribute>
-         <attribute name="quadrant">
-            <annotation>
-               <documentation>
-                  if the decorator is &lt;b&gt;&lt;i&gt;lightweight&lt;/b&gt;&lt;/i&gt; this is the quadrant to apply the decorator to. Defaults to BOTTOM_RIGHT. Replaced by location for M4.
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="TOP_LEFT">
-                  </enumeration>
-                  <enumeration value="TOP_RIGHT">
-                  </enumeration>
-                  <enumeration value="BOTTOM_RIGHT">
-                  </enumeration>
-                  <enumeration value="BOTTOM_LEFT">
-                  </enumeration>
-               </restriction>
-            </simpleType>
          </attribute>
          <attribute name="lightweight">
             <annotation>
@@ -281,7 +262,7 @@ This is currently in use by the Resource Navigator.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2002, 2003 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2002, 2004 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Common Public License v1.0 which accompanies 
 this distribution, and is available at 
