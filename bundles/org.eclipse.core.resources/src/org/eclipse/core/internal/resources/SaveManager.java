@@ -740,8 +740,8 @@ protected void saveMetaInfo(Workspace workspace, IProgressMonitor monitor) throw
  * @exception CoreException if there is a problem writing the tree to disk.
  */
 protected void saveTree(Map contexts, IProgressMonitor monitor) throws CoreException {
+	IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(workspace.getRoot(), true);
 	try {
-		IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(workspace.getRoot(), true);
 		IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
 		DataOutputStream output = new DataOutputStream(new SafeFileOutputStream(treeLocation.toOSString(), tempLocation.toOSString()));
 		try {
@@ -751,7 +751,7 @@ protected void saveTree(Map contexts, IProgressMonitor monitor) throws CoreExcep
 			output.close();
 		}
 	} catch (Exception e) {
-		String msg = Policy.bind("resources.writeMeta", Path.ROOT.toString());
+		String msg = Policy.bind("resources.writeWorkspaceMeta", treeLocation.toString());
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, Path.ROOT, msg, e);
 	}
 }
