@@ -7,6 +7,16 @@
 
 <script>
 
+/**
+ * Handles Netscape 4.7 resize bug we use on Linux
+ */
+function resizeFix()
+{ 
+    window.location.reload();
+}
+if (!document.all)
+	window.onresize = resizeFix;
+
 /** 
  * Parses the query string
  */
@@ -30,6 +40,7 @@ function parseQueryString (str)
     return args;
 }
 
+// Get the infoset title
 var args = parseQueryString ();
 var infosetTitle = args['title'];
 
