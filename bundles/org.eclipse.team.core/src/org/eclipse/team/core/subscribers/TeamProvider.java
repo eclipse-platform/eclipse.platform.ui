@@ -79,14 +79,18 @@ public class TeamProvider implements ISaveParticipant {
 	 * Method declared on IBaseLabelProvider.
 	 */
 	static public void addListener(ITeamResourceChangeListener listener) {
-		listeners.add(listener);
+		synchronized(listener) {
+			listeners.add(listener);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * Method declared on IBaseLabelProvider.
 	 */
 	static public void removeListener(ITeamResourceChangeListener listener) {
-		listeners.remove(listener);
+		synchronized(listener) {
+			listeners.remove(listener);
+		}
 	}
 	
 	public void doneSaving(ISaveContext context) {
@@ -117,9 +121,11 @@ public class TeamProvider implements ISaveParticipant {
 	 * Only listeners registered at the time this method is called are notified.
 	 */
 	static protected void fireTeamResourceChange(final TeamDelta[] deltas) {
-		for (Iterator it = listeners.iterator(); it.hasNext();) {
-			final ITeamResourceChangeListener l = (ITeamResourceChangeListener) it.next();
-			l.teamResourceChanged(deltas);	
+		synchronized(listeners) {
+			for (Iterator it = listeners.iterator(); it.hasNext();) {
+				final ITeamResourceChangeListener l = (ITeamResourceChangeListener) it.next();
+				l.teamResourceChanged(deltas);	
+			}
 		}
 	}	
 	
