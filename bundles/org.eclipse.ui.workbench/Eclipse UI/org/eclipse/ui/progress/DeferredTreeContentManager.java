@@ -124,7 +124,7 @@ public class DeferredTreeContentManager {
 
 		// Cancel any jobs currently fetching children for the same parent instance.
 		Platform.getJobManager().cancel(parent);
-		Job job = new Job(ProgressMessages.getString("DeferredTreeContentManager.FetchChildrenJob")) { //$NON-NLS-1$
+		Job job = new Job(adapter.getLabel(parent)) { //$NON-NLS-1$
 			public IStatus run(IProgressMonitor monitor) {
 				try {
 					adapter.fetchDeferredChildren(parent, collector, monitor);
