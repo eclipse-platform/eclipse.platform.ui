@@ -200,9 +200,22 @@ public class UnifiedReviewPage
 		if (tableViewer != null) {
 			tableViewer.refresh();
 			tableViewer.getTable().layout(true);
+			if (searchRunner.getSearchProvider() instanceof UnifiedModeSelectionPage) {
+				selectTrueUpdates();
+			}
 		}
 		pageChanged();
 	}
+	
+	private void selectTrueUpdates() {
+		ArrayList trueUpdates = new ArrayList();
+		for (int i=0; i<jobs.size(); i++) {
+			PendingOperation job = (PendingOperation)jobs.get(i);
+			if (!UpdateUI.isPatch(job.getFeature()))
+				trueUpdates.add(job);
+		}
+		tableViewer.setCheckedElements(trueUpdates.toArray()); 
+	}	
 
 	/**
 	 * @see DialogPage#createControl(Composite)
