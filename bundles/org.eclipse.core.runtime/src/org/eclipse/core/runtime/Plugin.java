@@ -10,6 +10,7 @@ import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.model.PluginFragmentModel;
 import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.internal.boot.PlatformURLHandler;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.net.*;
@@ -259,7 +260,7 @@ private URL findInPlugin(URL install, String filePath) {
 	try {
 		URL result = new URL(install, filePath);
 		URL location = Platform.resolve(result);
-		String file = ((PluginDescriptor)getDescriptor()).getFileFromURL(location);
+		String file = getFileFromURL(location);
 		if (file != null && new File(file).exists())
 			return result;						
 	} catch (IOException e) {
@@ -275,7 +276,7 @@ private URL findInFragments(String path) {
 	for (int i = 0; i < fragments.length; i++) {
 		try {
 			URL location = new URL(fragments[i].getLocation() + path);
-			String file = ((PluginDescriptor)getDescriptor()).getFileFromURL(location);
+			String file = getFileFromURL(location);
 			if (file != null && new File(file).exists())
 				return location;
 		} catch (IOException e) {
@@ -285,8 +286,23 @@ private URL findInFragments(String path) {
 	return null;
 }
 
-private boolean exists(URL location) {
-	return true;
+private String getFileFromURL(URL target) {
+	String protocol = target.getProtocol();
+	if (protocol.equals(PlatformURLHandler.FILE))
+		return target.getFile();
+	if (protocol.equals(PlatformURLHandler.VA))
+		return target.getFile();
+	if (protocol.equals(PlatformURLHandler.JAR)) {
+		// strip off the jar separator at the end of the url then do a recursive call
+		// to interpret the sub URL.
+		String file = target.getFile();
+		file = file.substring(0, file.length() - PlatformURLHandler.JAR_SEPARATOR.length());
+		try {
+			return getFileFromURL(new URL(file));
+		} catch (MalformedURLException e) {
+		}
+	}
+	return null;
 }
 /**
  * Returns the plug-in descriptor for this plug-in runtime object.
