@@ -128,13 +128,7 @@ class ReplaceDialog extends ExtendedDialogWindow {
 		
 		protected abstract void doReplace(IProgressMonitor pm) throws BadLocationException, CoreException, IOException;
 	}
-	
-	private abstract class ReplaceMarkersRunnable implements Runnable {
-		public CoreException fCoreException;
-		public BadLocationException fBadLocationException;
-		public OperationCanceledException fOperationCanceled;
-	}
-	
+		
 	// various widget related constants
 	private static final int REPLACE= IDialogConstants.CLIENT_ID + 1;
 	private static final int REPLACE_ALL_IN_FILE= IDialogConstants.CLIENT_ID + 2;
@@ -332,7 +326,7 @@ class ReplaceDialog extends ExtendedDialogWindow {
 					skipFile();
 					break;
 				case REPLACE :
-					run(true, true, new ReplaceOperation() {
+					run(false, true, new ReplaceOperation() {
 					protected void doReplace(IProgressMonitor pm) throws BadLocationException, CoreException {
 						replace(pm, replaceText);
 					}
@@ -341,7 +335,7 @@ class ReplaceDialog extends ExtendedDialogWindow {
 						gotoCurrentMarker();
 					break;
 				case REPLACE_ALL_IN_FILE :
-					run(true, true, new ReplaceOperation() {
+					run(false, true, new ReplaceOperation() {
 					protected void doReplace(IProgressMonitor pm) throws BadLocationException, CoreException {
 						replaceInFile(pm, replaceText);
 						
@@ -351,7 +345,7 @@ class ReplaceDialog extends ExtendedDialogWindow {
 						gotoCurrentMarker();
 					break;
 				case REPLACE_ALL :
-					run(true, true, new ReplaceOperation() {
+					run(false, true, new ReplaceOperation() {
 					protected void doReplace(IProgressMonitor pm) throws BadLocationException, CoreException {
 						replaceAll(pm, replaceText);
 					}
@@ -409,26 +403,7 @@ class ReplaceDialog extends ExtendedDialogWindow {
 	private void replaceInFile(final IProgressMonitor pm, final IFile file, final String replacementText, final ReplaceMarker[] markers) throws BadLocationException, CoreException {
 		if (pm.isCanceled())
 			throw new OperationCanceledException();
-		ReplaceMarkersRunnable rmr= new ReplaceMarkersRunnable() {
-			public void run() {
-				try {
-					doReplaceInFile(pm, file, replacementText, markers);
-				} catch (BadLocationException e) {
-					fBadLocationException= e;
-				} catch (CoreException e) {
-					fCoreException= e;
-				} catch (OperationCanceledException e) {
-					fOperationCanceled= e;
-				}
-			}
-		};
-		getShell().getDisplay().syncExec(rmr);
-		if (rmr.fCoreException != null)
-			throw rmr.fCoreException;
-		if (rmr.fBadLocationException != null)
-			throw rmr.fBadLocationException;
-		if (rmr.fOperationCanceled != null)
-			throw rmr.fOperationCanceled;
+		doReplaceInFile(pm, file, replacementText, markers);
 	}
 	
 	private void doReplaceInFile(IProgressMonitor pm, IFile file, String replacementText, final ReplaceMarker[] markers) throws BadLocationException, CoreException {
