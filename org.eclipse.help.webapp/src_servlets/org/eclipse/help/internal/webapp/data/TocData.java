@@ -23,8 +23,8 @@ import org.eclipse.help.internal.webapp.servlet.*;
  * Helper class for tocView.jsp initialization
  */
 public class TocData extends RequestData {
-	private static final int DYNAMIC_LOAD_TRESHOLD = 1000;
-	private static final int DYNAMIC_LOAD_LEVELS = 2;
+	private static int loadBookAtOnceLimit;
+	private static int dynamicLoadDepths;
 
 	// Request parameters
 	private String tocHref;
@@ -52,6 +52,11 @@ public class TocData extends RequestData {
 	 */
 	public TocData(ServletContext context, HttpServletRequest request) {
 		super(context, request);
+		if (dynamicLoadDepths < 1) {
+			WebappPreferences pref = new WebappPreferences();
+			loadBookAtOnceLimit = pref.getBookAtOnceLimit();
+			dynamicLoadDepths = pref.getLoadDepth();
+		}
 
 		this.tocHref = request.getParameter("toc");
 		this.topicHref = request.getParameter("topic");
@@ -230,9 +235,9 @@ public class TocData extends RequestData {
 		ITopic[] topics = tocs[toc].getTopics();
 		tocs[toc].getTopics();
 
-		int maxLevels = DYNAMIC_LOAD_LEVELS;
+		int maxLevels = dynamicLoadDepths;
 		if (tocs[toc] instanceof Toc
-			&& ((Toc) tocs[toc]).size() < DYNAMIC_LOAD_TRESHOLD) {
+			&& ((Toc) tocs[toc]).size() <= loadBookAtOnceLimit) {
 			maxLevels = -1;
 		}
 		// Construct ID of subtree root
@@ -318,7 +323,7 @@ public class TocData extends RequestData {
 
 			ITopic[] topics = topic.getSubtopics();
 			if (1 <= maxLevels
-				&& maxLevels <= DYNAMIC_LOAD_LEVELS
+				&& maxLevels <= dynamicLoadDepths
 				&& isAncestor) {
 				// ignore max levels, show children
 				for (int i = 0; i < topics.length; i++) {
@@ -326,7 +331,7 @@ public class TocData extends RequestData {
 						topics[i],
 						out,
 						id + "_" + i,
-						DYNAMIC_LOAD_LEVELS,
+						dynamicLoadDepths,
 						currentLevel + 1);
 				}
 			} else {

@@ -36,9 +36,6 @@ public final class HelpSystem {
 		"org.eclipse.help.support";
 	private static final String HELP_SUPPORT_CLASS_ATTRIBUTE = "class";
 
-	public final static String BANNER_KEY = "banner";
-	public final static String BANNER_HEIGHT_KEY = "banner_height";
-	public final static String LINKS_VIEW_KEY = "linksView";
 	public final static String BASE_TOCS_KEY = "baseTOCS";
 	public final static String BOOKMARKS = "bookmarks";
 	public final static String WORKING_SETS = "workingSets";
