@@ -368,6 +368,28 @@ public class CharsetTest extends EclipseWorkspaceTest {
 		} finally {
 			ensureDoesNotExistInWorkspace(project);
 		}
-
 	}
+	public void testBug64503() throws CoreException {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject("MyProject");
+		try {
+			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+			IContentType text = contentTypeManager.getContentType("org.eclipse.core.runtime.text");			
+			IFile file = project.getFile("file.txt");			
+			ensureExistsInWorkspace(file, true);
+			IContentDescription description = file.getContentDescription();
+			assertNotNull("1.0", description);
+			assertEquals("1.1", text, description.getContentType());
+			ensureDoesNotExistInWorkspace(file);
+			try {
+				description = file.getContentDescription();
+				fail("1.2 - should have failed");
+			} catch (CoreException ce) {
+				// ok, the resource does not exist
+			}
+		} finally {
+			ensureDoesNotExistInWorkspace(project);
+		}		
+	}	
+	
 }

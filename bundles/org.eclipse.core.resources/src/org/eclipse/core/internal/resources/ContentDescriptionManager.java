@@ -30,10 +30,11 @@ public class ContentDescriptionManager implements IManager {
 		return cache;
 	}
 
-	public IContentDescription getDescriptionFor(File file) throws CoreException {
+	public IContentDescription getDescriptionFor(File file, ResourceInfo info) throws CoreException {
 		//first look for cached description information to avoid looking in the cache
 		// don't need to copy the info because the modified bits are not in the deltas
-		ResourceInfo info = file.getResourceInfo(false, false);
+		if (info == null)
+			return null;
 		int flags = info.getFlags();
 		if ((flags & ICoreConstants.M_NO_CONTENT_DESCRIPTION) != 0)
 			return null;

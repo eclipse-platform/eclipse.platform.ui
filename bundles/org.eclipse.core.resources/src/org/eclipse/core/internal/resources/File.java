@@ -208,14 +208,16 @@ public class File extends Resource implements IFile {
 	 */
 	public String getCharset(boolean checkImplicit) throws CoreException {
 		// non-existing resources default to parent's charset
-		if (!exists())
+		ResourceInfo info = getResourceInfo(false, false);
+		int flags = getFlags(info);		
+		if (!exists(flags, false))
 			return checkImplicit ? getParent().getDefaultCharset() : null;
 		// if there is a file-specific user setting, use it
 		String charset = workspace.getCharsetManager().getCharsetFor(getFullPath());
 		if (charset != null || !checkImplicit)
 			return charset;
 		// tries to obtain a description for the file contents
-		IContentDescription description = getContentDescription();
+		IContentDescription description = workspace.getContentDescriptionManager().getDescriptionFor(this, info);
 		if (description == null)
 			return getParent().getDefaultCharset();
 		String contentCharset = description.getCharset();
@@ -227,7 +229,11 @@ public class File extends Resource implements IFile {
 	 * @see org.eclipse.core.resources.IFile#getContentDescription()
 	 */
 	public IContentDescription getContentDescription() throws CoreException {
-		return workspace.getContentDescriptionManager().getDescriptionFor(this);
+		ResourceInfo info = getResourceInfo(false, false);
+		int flags = getFlags(info);
+		checkAccessible(flags);
+		checkLocal(flags, DEPTH_ZERO);
+		return workspace.getContentDescriptionManager().getDescriptionFor(this, info);
 	}
 
 	/* (non-Javadoc)
