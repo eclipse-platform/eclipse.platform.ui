@@ -59,16 +59,6 @@ public class JobQueue {
 		return toRemove.remove();
 	}
 	/**
-	 * Adds an entire list of entries to the queue
-	 */
-	public void enqueueAll(InternalJob newEntry) {
-		while (newEntry != null) {
-			InternalJob previous = newEntry.previous();
-			enqueue(newEntry);
-			newEntry = previous;
-		}
-	}
-	/**
 	 * Adds an item to the queue
 	 */
 	public void enqueue(InternalJob newEntry) {
