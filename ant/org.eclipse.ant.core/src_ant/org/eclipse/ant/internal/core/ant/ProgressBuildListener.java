@@ -23,6 +23,7 @@ public class ProgressBuildListener implements BuildListener {
 	protected Map projects;
 	protected Project mainProject;
 	protected Project parentProject;
+	private Thread currentTaskThread;
 
 	/**
 	 *  Contains the progress monitor instances for the various	 *	projects in a chain.
@@ -226,6 +227,7 @@ public class ProgressBuildListener implements BuildListener {
 		if (task == null) {
 			return;
 		}
+		currentTaskThread= Thread.currentThread();
 		monitors.setTaskMonitor(subMonitorFor(monitors.getTargetMonitor(), 1));
 		monitors.getTaskMonitor().beginTask("", 1);  //$NON-NLS-1$
 		// If this script is calling another one, track the project chain.
@@ -251,6 +253,7 @@ public class ProgressBuildListener implements BuildListener {
 			return;
 		}
 		monitors.getTaskMonitor().done();
+		currentTaskThread= null;
 	}
 
 	/**
@@ -261,8 +264,15 @@ public class ProgressBuildListener implements BuildListener {
 	}
 
 	protected void checkCanceled() {
+		//only cancel if the current task thread matches the current thread
+		//do not want to throw an exception in a separate thread or process
+		//see bug 32657
+		if (currentTaskThread != null && currentTaskThread != Thread.currentThread()) {
+			return;
+		}
 		ProjectMonitors monitors = (ProjectMonitors) projects.get(mainProject);
 		if (monitors.getMainMonitor().isCanceled()) {
+			currentTaskThread= null;
 			throw new OperationCanceledException(InternalAntMessages.getString("ProgressBuildListener.Build_cancelled._5")); //$NON-NLS-1$
 		}
 	}
