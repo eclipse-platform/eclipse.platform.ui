@@ -164,12 +164,15 @@ private boolean testName(Object object) {
 	String nameFilter = config.getAttribute(ATT_NAME_FILTER);
 	if (nameFilter == null)
 		return true;
-	String objectName = object.toString();
+	String objectName = null;
 	if (object instanceof IAdaptable) {
 		IAdaptable element = (IAdaptable) object;
 		IWorkbenchAdapter de = (IWorkbenchAdapter)element.getAdapter(IWorkbenchAdapter.class);
 		if (de != null)
 			objectName = de.getLabel(element);
+	}
+	if (objectName == null) {
+		objectName = object.toString();
 	}
 	return SelectionEnabler.verifyNameMatch(objectName, nameFilter);
 }
