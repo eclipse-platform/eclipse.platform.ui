@@ -12,36 +12,37 @@ package org.eclipse.ui.forms.parts;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.ScrollBar;
-import org.eclipse.ui.forms.FormWidgetFactory;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.*;
 
 public class ScrollableRichText {
 	private ScrolledComposite scomp;
 	private RichText richText;
 	private String text;
-	private FormWidgetFactory factory;
+	private FormToolkit factory;
 	private int style;
 
 	public ScrollableRichText(int style) {
 		this.style = style;
+		factory = new FormToolkit();
 	}
+	
+	public ScrollableRichText(FormColors colors, int style) {
+		this.style = style;
+		factory = new FormToolkit(colors);
+	}
+	
+	
 
 	public void createControl(Composite parent) {
-		factory = new FormWidgetFactory(parent.getDisplay());
 		scomp = new ScrolledComposite(parent, style);
-		scomp.setBackground(factory.getBackgroundColor());
+		scomp.setBackground(factory.getColors().getBackground());
 		richText = factory.createRichText(scomp, false);
 		richText.marginWidth = 2;
 		richText.marginHeight = 2;
-		richText.setHyperlinkSettings(factory.getHyperlinkHandler());
+		richText.setHyperlinkSettings(factory.getHyperlinkGroup());
 		scomp.setContent(richText);
 		scomp.addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event e) {

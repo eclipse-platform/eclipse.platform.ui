@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.*;
  * end-result will be similar to the one provided by GridLayout. The difference
  * will show up for layouts that contain controls whose minimum and maximum
  * widths are not the same.
+ * @since 3.0
  */
 
 public class HTMLTableLayout extends Layout implements ILayoutExtension {
@@ -54,6 +55,9 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 	private int widestColumnWidth;
 	private int[] growingColumns;
 
+	/**
+	 * Implements ILayoutExtension.
+	 */
 	public int computeMinimumWidth(Composite parent, boolean changed) {
 		changed = true;
 		initializeIfNeeded(parent, changed);
@@ -73,7 +77,9 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 		}
 		return internalGetMinimumWidth(parent, changed);
 	}
-
+	/**
+	 * Implements ILayoutExtension.
+	 */
 	public int computeMaximumWidth(Composite parent, boolean changed) {
 		changed = true;
 		initializeIfNeeded(parent, changed);
@@ -581,7 +587,9 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 					Layout l = cc.getLayout();
 					if (l instanceof ILayoutExtension) {
 						minWidth =
-							((ILayoutExtension) l).computeMinimumWidth(cc, changed);
+							((ILayoutExtension) l).computeMinimumWidth(
+								cc,
+								changed);
 					}
 				}
 				if (minWidth == -1) {
@@ -631,7 +639,9 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 					Layout l = cc.getLayout();
 					if (l instanceof ILayoutExtension) {
 						maxWidth =
-							((ILayoutExtension) l).computeMaximumWidth(cc, changed);
+							((ILayoutExtension) l).computeMaximumWidth(
+								cc,
+								changed);
 					}
 				}
 				if (maxWidth == -1) {

@@ -8,12 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.forms.internal.parts;
+package org.eclipse.ui.forms.parts;
 
-/**
- * @version 	1.0
- * @author
- */
-public interface IObjectReference {
-	public String getObjectId();
+public interface IFormEntryListener {
+	void textValueChanged(FormEntry entry);
+	void textDirty(FormEntry entry);
 }

@@ -11,55 +11,21 @@
 package org.eclipse.ui.forms.parts;
 
 import java.io.InputStream;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.ACC;
-import org.eclipse.swt.accessibility.Accessible;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleControlAdapter;
-import org.eclipse.swt.accessibility.AccessibleControlEvent;
-import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.ui.forms.internal.parts.HyperlinkSegment;
-import org.eclipse.ui.forms.internal.parts.Locator;
-import org.eclipse.ui.forms.internal.parts.Paragraph;
-import org.eclipse.ui.forms.internal.parts.ParagraphSegment;
-import org.eclipse.ui.forms.internal.parts.RichTextModel;
-import org.eclipse.ui.forms.internal.parts.TextSegment;
-import org.eclipse.update.ui.forms.internal.AbstractSectionForm;
-import org.eclipse.update.ui.forms.internal.FormsPlugin;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.HyperlinkSettings;
-import org.eclipse.update.ui.forms.internal.ILayoutExtension;
+import org.eclipse.ui.forms.internal.parts.*;
+import org.eclipse.update.ui.forms.internal.FormsPlugin;
+
 
 public class RichText extends Canvas {
 	/**
@@ -89,17 +55,18 @@ public class RichText extends Canvas {
 	private Action openAction;
 	private Action copyShortcutAction;
 	private boolean loading = true;
+	//TODO translate this text
 	private String loadingText = "Loading...";
 
 	private class RichTextLayout extends Layout implements ILayoutExtension {
 		public RichTextLayout() {
 		}
 
-		public int getMaximumWidth(Composite parent, boolean changed) {
+		public int computeMaximumWidth(Composite parent, boolean changed) {
 			return computeSize(parent, SWT.DEFAULT, SWT.DEFAULT, changed).x;
 		}
 
-		public int getMinimumWidth(Composite parent, boolean changed) {
+		public int computeMinimumWidth(Composite parent, boolean changed) {
 			return 30;
 		}
 
@@ -785,10 +752,10 @@ public class RichText extends Canvas {
 		ScrolledComposite scomp = getScrolledComposite();
 		if (scomp == null)
 			return;
-		Point origin = AbstractSectionForm.getControlLocation(scomp, this);
+		Point origin = FormUtil.getControlLocation(scomp, this);
 		origin.x += bounds.x;
 		origin.y += bounds.y;
-		AbstractSectionForm.ensureVisible(
+		FormUtil.ensureVisible(
 			scomp,
 			origin,
 			new Point(bounds.width, bounds.height));

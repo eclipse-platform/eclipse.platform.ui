@@ -142,7 +142,6 @@ public class ToggleControl extends SelectableControl {
 		int y = (size.y - 9)/2;
 		if (selection)
 			data = translate(onPoints, x, y);
-		
 		else 
 			data = translate(offPoints, x, y);
 		gc.fillPolygon(data);

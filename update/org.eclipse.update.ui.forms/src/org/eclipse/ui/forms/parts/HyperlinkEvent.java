@@ -1,30 +1,48 @@
-/*
- * Created on Nov 26, 2003
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.forms.parts;
 
 import org.eclipse.swt.events.TypedEvent;
 
 /**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * Notifies listeners about a hyperlink change.
  */
 public class HyperlinkEvent extends TypedEvent {
 	private String label;
 	
+/**
+ * Creates a new hyperlink
+ * @param obj event source
+ * @param href the hyperlink reference that will be followed upon when
+ * the hyperlink is activated.
+ * @param label the name of the hyperlink (the text that is rendered
+ * as a link in the source widget).
+ */
 	public HyperlinkEvent(Object obj, Object href, String label) {
 		super(obj);
 		this.data = href;
 		this.label = label;
 	}
+/**
+ * The hyperlink reference that will be followed when the hyperlink
+ * is activated.
+ * @return the hyperlink reference object
+ */
 	public Object getHref() {
 		return this.data;
 	}
+/**
+ * The text of the hyperlink rendered in the source widget.
+ * @return the hyperlink label
+ */
 	public String getLabel() {
 		return label;
 	}

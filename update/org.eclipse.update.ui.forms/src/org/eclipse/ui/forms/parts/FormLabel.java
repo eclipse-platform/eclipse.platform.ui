@@ -15,12 +15,17 @@ import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.internal.parts.FormUtil;
 
 /**
  * A custom control that is similar to SWT Label.
  * It is capable of wrapping text, but it can also
  * underline text. 
+ * <dl>
+ * <dt><b>Styles:</b></dt>
+ * <dd>WRAP</dd>
+ * <dt><b>Events:</b></dt>
+ * <dd>(none)</dd>
+ * </dl>
  */
 public class FormLabel extends Canvas {
 	private String text = "";

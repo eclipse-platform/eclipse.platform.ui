@@ -14,49 +14,56 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.FormsResources;
 
 /**
- * HyperlinkLabel is a selectable label that acts as a browser hyperlink. It is
+ * Hyperlink is a selectable label that acts as a browser hyperlink. It is
  * capable of notifying listeners when it is entered, exited and activated. A
- * group of hyperlinks should be managed using a HyperlinkManager that is
+ * group of hyperlinks should be managed using a HyperlinkGroup that is
  * responsible for managing shared cursors, color changes, changes in underline
  * status and focus traversal between hyperlinks.
+ * 
+ * @see org.eclipse.ui.forms.HyperlinkGroup
+ * @since 3.0
  */
-public class HyperlinkLabel extends SelectableFormLabel {
+public class Hyperlink extends TraversableLabel {
 	private Vector listeners;
-
 	/**
+	 * Creates a new hyperlink control in the provided parent.
+	 * 
 	 * @param parent
+	 *            the control parent
 	 * @param style
+	 *            the widget style
 	 */
-	public HyperlinkLabel(Composite parent, int style) {
+	public Hyperlink(Composite parent, int style) {
 		super(parent, style);
-		addListener(SWT.Selection, new Listener() {
+		Listener listener = new Listener() {
 			public void handleEvent(Event e) {
-				if (getSelection())
-					handleEnter();
-				else
-					handleExit();
+				switch (e.type) {
+					case SWT.Selection :
+						if (getSelection())
+							handleEnter();
+						else
+							handleExit();
+						break;
+					case SWT.DefaultSelection :
+						handleActivate();
+						break;
+					case SWT.MouseEnter :
+						handleEnter();
+						break;
+					case SWT.MouseExit :
+						handleExit();
+						break;
+					case SWT.MouseUp :
+						handleMouseUp(e);
+						break;
+				}
 			}
-		});
-		addListener(SWT.DefaultSelection, new Listener() {
-			public void handleEvent(Event e) {
-				handleActivate();
-			}
-		});
-		addListener(SWT.MouseEnter, new Listener() {
-			public void handleEvent(Event e) {
-				handleEnter();
-			}
-		});
-		addListener(SWT.MouseExit, new Listener() {
-			public void handleEvent(Event e) {
-				handleExit();
-			}
-		});
-		addListener(SWT.MouseUp, new Listener() {
-			public void handleEvent(Event e) {
-				handleMouseUp(e);
-			}
-		});
+		};
+		addListener(SWT.Selection, listener);
+		addListener(SWT.DefaultSelection, listener);
+		addListener(SWT.MouseEnter, listener);
+		addListener(SWT.MouseExit, listener);
+		addListener(SWT.MouseUp, listener);
 		setCursor(FormsResources.getHandCursor());
 	}
 	/**
@@ -90,7 +97,7 @@ public class HyperlinkLabel extends SelectableFormLabel {
 		return getData("href");
 	}
 
-	void handleEnter() {
+	private void handleEnter() {
 		if (listeners == null)
 			return;
 		int size = listeners.size();
@@ -101,7 +108,7 @@ public class HyperlinkLabel extends SelectableFormLabel {
 		}
 	}
 
-	void handleExit() {
+	private void handleExit() {
 		if (listeners == null)
 			return;
 		int size = listeners.size();
@@ -112,7 +119,7 @@ public class HyperlinkLabel extends SelectableFormLabel {
 		}
 	}
 
-	void handleActivate() {
+	private void handleActivate() {
 		if (listeners == null)
 			return;
 		int size = listeners.size();

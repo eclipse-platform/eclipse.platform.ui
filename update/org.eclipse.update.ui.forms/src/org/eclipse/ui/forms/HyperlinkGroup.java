@@ -30,8 +30,8 @@ import org.eclipse.ui.forms.parts.*;
 
 public class HyperlinkGroup extends HyperlinkSettings {
 	private ArrayList links;
-	private HyperlinkLabel lastActivated;
-	private HyperlinkLabel lastEntered;
+	private Hyperlink lastActivated;
+	private Hyperlink lastEntered;
 	private GroupListener listener;
 
 	private class GroupListener implements Listener, HyperlinkListener {
@@ -41,7 +41,7 @@ public class HyperlinkGroup extends HyperlinkSettings {
 					onMouseDown(e);
 					break;
 				case SWT.Dispose :
-					unhook((HyperlinkLabel) e.widget);
+					unhook((Hyperlink) e.widget);
 					break;
 			}
 		}
@@ -52,7 +52,7 @@ public class HyperlinkGroup extends HyperlinkSettings {
 			if (lastEntered != null) {
 				linkExited(lastEntered);
 			}
-			HyperlinkLabel link = (HyperlinkLabel) e.widget;
+			Hyperlink link = (Hyperlink) e.widget;
 			link.setCursor(getHyperlinkCursor());
 			if (getActiveBackground() != null)
 				link.setBackground(getActiveBackground());
@@ -64,9 +64,9 @@ public class HyperlinkGroup extends HyperlinkSettings {
 		}
 
 		public void linkExited(HyperlinkEvent e) {
-			linkExited((HyperlinkLabel) e.widget);
+			linkExited((Hyperlink) e.widget);
 		}
-		private void linkExited(HyperlinkLabel link) {
+		private void linkExited(Hyperlink link) {
 			link.setCursor(null);
 			if (getHyperlinkUnderlineMode() == UNDERLINE_ROLLOVER)
 				link.setUnderlined(false);
@@ -87,7 +87,7 @@ public class HyperlinkGroup extends HyperlinkSettings {
 		listener = new GroupListener();
 		links = new ArrayList();
 	}
-
+	
 	/**
 	 * Returns the link that has been active the last, or <code>null</code>
 	 * if no link has been active yet or the last active link has been
@@ -95,7 +95,7 @@ public class HyperlinkGroup extends HyperlinkSettings {
 	 * 
 	 * @return the last active link or <code>null</code>
 	 */
-	public HyperlinkLabel getLastActivated() {
+	public Hyperlink getLastActivated() {
 		return lastActivated;
 	}
 	/**
@@ -106,7 +106,7 @@ public class HyperlinkGroup extends HyperlinkSettings {
 	 * @param link
 	 */
 
-	public void add(HyperlinkLabel link) {
+	public void add(Hyperlink link) {
 		if (getBackground() != null)
 			link.setBackground(getBackground());
 		if (getForeground() != null)
@@ -119,7 +119,7 @@ public class HyperlinkGroup extends HyperlinkSettings {
 	public void setBackground(Color color) {
 		super.setBackground(color);
 		for (int i = 0; i < links.size(); i++) {
-			HyperlinkLabel label = (HyperlinkLabel) links.get(i);
+			Hyperlink label = (Hyperlink) links.get(i);
 			label.setBackground(color);
 		}
 	}
@@ -127,7 +127,7 @@ public class HyperlinkGroup extends HyperlinkSettings {
 	public void setForeground(Color color) {
 		super.setForeground(color);
 		for (int i = 0; i < links.size(); i++) {
-			HyperlinkLabel label = (HyperlinkLabel) links.get(i);
+			Hyperlink label = (Hyperlink) links.get(i);
 			label.setForeground(color);
 		}
 	}
@@ -135,18 +135,18 @@ public class HyperlinkGroup extends HyperlinkSettings {
 	public void setHyperlinkUnderlineMode(int newHyperlinkUnderlineMode) {
 		super.setHyperlinkUnderlineMode(newHyperlinkUnderlineMode);
 		for (int i = 0; i < links.size(); i++) {
-			HyperlinkLabel label = (HyperlinkLabel) links.get(i);
+			Hyperlink label = (Hyperlink) links.get(i);
 			label.setUnderlined(newHyperlinkUnderlineMode == UNDERLINE_ALWAYS);
 		}
 	}
 
-	private void hook(HyperlinkLabel link) {
+	private void hook(Hyperlink link) {
 		link.addListener(SWT.MouseDown, listener);
 		link.addHyperlinkListener(listener);
 		link.addListener(SWT.Dispose, listener);
 	}
 
-	private void unhook(HyperlinkLabel link) {
+	private void unhook(Hyperlink link) {
 		link.removeListener(SWT.MouseDown, listener);
 		link.removeHyperlinkListener(listener);
 		if (lastActivated == link)
@@ -159,6 +159,6 @@ public class HyperlinkGroup extends HyperlinkSettings {
 	private void onMouseDown(Event e) {
 		if (e.button == 1)
 			return;
-		lastActivated = (HyperlinkLabel) e.widget;
+		lastActivated = (Hyperlink) e.widget;
 	}
 }

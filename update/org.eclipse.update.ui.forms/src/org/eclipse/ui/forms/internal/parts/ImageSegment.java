@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.*;
  * @version 	1.0
  * @author
  */
-public class ImageSegment extends ParagraphSegment implements IObjectReference {
+public class ImageSegment extends ParagraphSegment {
 	public static final int TOP = 1;
 	public static final int MIDDLE = 2;
 	public static final int BOTTOM = 3;
