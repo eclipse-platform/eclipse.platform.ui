@@ -107,7 +107,6 @@ public void createControl(Composite parent) {
 
 	this.parent = parent;
 	tabFolder = new CTabFolder(parent, SWT.BORDER | tabLocation);
-	tabFolder.MIN_TAB_WIDTH = 5;
 
 	// prevent close button and scroll buttons from taking focus
 	tabFolder.setTabList(new Control[0]);
