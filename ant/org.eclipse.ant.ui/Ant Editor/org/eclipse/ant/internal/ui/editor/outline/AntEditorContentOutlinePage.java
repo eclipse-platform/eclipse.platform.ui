@@ -171,10 +171,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof AntElementNode) {
 			    AntElementNode node = (AntElementNode) element; 			    
-				if (node.isStructuralNode()) {
-					return true;
-				}
-				return false;
+				return node.isStructuralNode();
 			} 
 			return true;
 		}
