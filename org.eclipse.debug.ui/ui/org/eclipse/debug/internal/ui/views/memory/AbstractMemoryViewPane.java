@@ -21,8 +21,6 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.core.MemoryBlockManager;
-import org.eclipse.debug.internal.core.memory.IMemoryRenderingInfo;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
@@ -278,14 +276,14 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		if (fRenderingInfoTable == null)
 			fRenderingInfoTable = new Hashtable();
 		
-		IMemoryRenderingInfo info;
+		IMemoryRenderingType info;
 		
-		info = (IMemoryRenderingInfo)fRenderingInfoTable.get(renderingId);
+		info = (IMemoryRenderingType)fRenderingInfoTable.get(renderingId);
 		
 		// ask manager for new info
 		if (info == null)
 		{
-			info = MemoryBlockManager.getMemoryRenderingManager().getRenderingInfo(renderingId);
+			info = MemoryRenderingManager.getMemoryRenderingManager().getRenderingTypeById(renderingId);
 			fRenderingInfoTable.put(renderingId, info);
 		}
 		
@@ -322,13 +320,13 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		if (fRenderingInfoTable == null)
 			fRenderingInfoTable = new Hashtable();
 		
-		IMemoryRenderingInfo info;
-		info = (IMemoryRenderingInfo)fRenderingInfoTable.get(renderingId);
+		IMemoryRenderingType info;
+		info = (IMemoryRenderingType)fRenderingInfoTable.get(renderingId);
 		
 		// ask manager for new info
 		if (info == null)
 		{
-			info = MemoryBlockManager.getMemoryRenderingManager().getRenderingInfo(renderingId);
+			info = MemoryRenderingManager.getMemoryRenderingManager().getRenderingTypeById(renderingId);
 			fRenderingInfoTable.put(renderingId, info);
 		}
 		

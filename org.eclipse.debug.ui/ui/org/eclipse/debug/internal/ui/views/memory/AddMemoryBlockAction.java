@@ -26,7 +26,6 @@ import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockExtensionRetrieval;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.ITerminate;
-import org.eclipse.debug.internal.core.MemoryBlockManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -370,17 +369,31 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 	private void addDefaultRenderings(IMemoryBlock memoryBlock)
 	{
 		// get default renderings
-		String renderingIds[] = MemoryBlockManager.getMemoryRenderingManager().getDefaultRenderings(memoryBlock);
+		IMemoryRenderingType renderingTypes[] = MemoryRenderingManager.getMemoryRenderingManager().getDefaultRenderingTypes(memoryBlock);
 		
 		// add renderings
-		for (int i=0; i<renderingIds.length; i++)
+		for (int i=0; i<renderingTypes.length; i++)
 		{
 			try {
-				MemoryBlockManager.getMemoryRenderingManager().addMemoryBlockRendering(memoryBlock, renderingIds[i]);
+				// make sure the defaut supports the rendering view
+				String[] viewIds = renderingTypes[i].getSupportedViewIds();
+				boolean viewSupported = false;
+				for (int j=0; j<viewIds.length; j++)
+				{
+					if (viewIds[j].equals(IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE))
+					{
+						viewSupported = true;
+						break;
+					}
+				}
+				
+				if (viewSupported)
+					MemoryRenderingManager.getMemoryRenderingManager().addMemoryBlockRendering(memoryBlock, renderingTypes[i].getRenderingId());
+				
 			} catch (DebugException e) {
 				// catch error silently
 				// log error
-				DebugUIPlugin.logErrorMessage("Cannot create default rendering: " + renderingIds[i]); //$NON-NLS-1$
+				DebugUIPlugin.logErrorMessage("Cannot create default rendering: " + renderingTypes[i].getRenderingId()); //$NON-NLS-1$
 			}
 		}
 	}

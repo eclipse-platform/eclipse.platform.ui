@@ -14,9 +14,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.internal.core.MemoryBlockManager;
-import org.eclipse.debug.internal.core.memory.IMemoryRendering;
-import org.eclipse.debug.internal.core.memory.IMemoryRenderingInfo;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -80,9 +77,9 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 		 */
 		public String getText(Object element) {
-			if (element instanceof IMemoryRenderingInfo)
+			if (element instanceof IMemoryRenderingType)
 			{	
-				String label = ((IMemoryRenderingInfo)element).getName();
+				String label = ((IMemoryRenderingType)element).getName();
 				return label;
 			}
             return element.toString();
@@ -122,7 +119,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			IMemoryRenderingInfo[] renderings = MemoryBlockManager.getMemoryRenderingManager().getAllRenderingInfo(inputElement);
+			IMemoryRenderingType[] renderings = MemoryRenderingManager.getMemoryRenderingManager().getRenderingTypes(inputElement, IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE);
 			return renderings;
 		}
 

@@ -9,27 +9,28 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.debug.internal.core.memory;
 
+package org.eclipse.debug.internal.ui.views.memory;
+
+import org.eclipse.debug.core.model.IMemoryBlock;
 
 
 
 /**
- * Rendering listeners listen for add/removal events from IMemoryRenderingManager.
- * Implementors should add itself to IMemoryRenderingManager
- * @since 3.0
+ * Represent a memory rendering in Memory Rendering View 
+ * @since 3.1
  */
-public interface IMemoryRenderingListener
+public interface IMemoryRendering
 {
 	/**
-	 * This function is called when a new rendering is added.
-	 * @param rendering
+	 * @return the memory block of this rendering.
 	 */
-	void MemoryBlockRenderingAdded(IMemoryRendering rendering);
+	public IMemoryBlock getBlock();
 
 	/**
-	 * Fired when a memory rendering is removed.
-	 * @param rendering
+	 * @return the rendering id of this rendering.
 	 */
-	void MemoryBlockRenderingRemoved(IMemoryRendering rendering);	
+	public String getRenderingId();
+	
+
 }

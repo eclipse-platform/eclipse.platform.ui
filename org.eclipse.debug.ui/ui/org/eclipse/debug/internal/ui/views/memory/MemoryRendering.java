@@ -8,14 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.core.memory;
+package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.debug.core.model.IMemoryBlock;
 
 
 /**
  * Implementation of IMemoryRendering
- * @since 3.0
+ * @since 3.1
  */
 public class MemoryRendering implements IMemoryRendering
 {

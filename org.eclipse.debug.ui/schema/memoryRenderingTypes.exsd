@@ -1,0 +1,281 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.debug.ui">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.debug.ui" id="memoryRenderingTypes" name="Memory Rendering Types"/>
+      </appInfo>
+      <documentation>
+         Allows plug-ins to contribute renderings for memory blocks. A rendering translates raw bytes of a memory block into text that can be displayed in the memory view. The debug platform provides a set of memory renderings (HEX, ASCII, Signed Integer and Unsigned Integer). NOTE: this extension point was provided in the 3.0 release as experimental API, subject to change, and became public API in the 3.1 release.
+      </documentation>
+   </annotation>
+
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
+   <element name="extension">
+      <complexType>
+         <choice>
+            <element ref="rendering" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="renderingBinding" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="defaultRenderings" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="viewBinding" minOccurs="0" maxOccurs="unbounded"/>
+         </choice>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="rendering">
+      <annotation>
+         <documentation>
+            This element defines a rendering.  A rendering is comprised of an id, a name, an optional rendering factory, and an optional list of rendering properties.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="renderingProperty" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="viewBinding" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="renderingId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  unique identifier for this rendering
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  human-readable name of this rendering
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="renderingFactory" type="string" use="required">
+            <annotation>
+               <documentation>
+                  requied fully qualified name of the Java class that implements &lt;code&gt;org.eclipse.debug.core.memory.IMemoryRenderingFactory&lt;/code&gt;.  When unspecified, a default rendering factory will be used.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="renderingProperty">
+      <annotation>
+         <documentation>
+            Specifies rendering specific properties.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  human-readable name of this property
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  value of this property
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="renderingId" type="string">
+            <annotation>
+               <documentation>
+                  rendering id of the rendering type that this property is associated with.  If not specified, the rendering manager tries to determine the rendering id from the property&apos;s parent configuration element.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="renderingBinding">
+      <annotation>
+         <documentation>
+            Binds a type of memory block with available renderings.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="enablement" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="renderingIds" type="string" use="required">
+            <annotation>
+               <documentation>
+                  comma delimited list of memory renderings available for the associated type of memory block
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="defaultRenderings">
+      <annotation>
+         <documentation>
+            Specifies the default renderings to create for a specific type of memory block.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="enablement" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="renderingIds" type="string" use="required">
+            <annotation>
+               <documentation>
+                  comma delimited list of of memory renderings to be created by default for memory blocks of the associated type.  Memory renderings are specified via their &lt;code&gt;renderingId&lt;/code&gt;. An equivalent rendering binding must exist for a default rendering to be considered.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="viewBinding">
+      <annotation>
+         <documentation>
+            Define the views that are supported by the specified rendering
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="renderingId" type="string">
+            <annotation>
+               <documentation>
+                  rendering id of the rendering to bind.  If not specified, the rendering manager tries to retrieve the rendering id from its parent&apos;s configuration element.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="viewIds" type="string" use="required">
+            <annotation>
+               <documentation>
+                  views ids of the views supported by the specified rendering type
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         Eclipse 3.1
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example for defining a new rendering type.
+
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension
+    id=&quot;org.eclipse.debug.ui.renderings&quot;
+    name=&quot;Sample Rendering Type&quot;
+    point=&quot;org.eclipse.debug.ui.memoryRenderingTypes&quot;&gt;
+    &lt;rendering 
+        name=&quot;Sample Rendering&quot;
+        renderingId=&quot;com.example.sampleRendering&quot;
+        renderingFactory=&quot;com.example.SampleRenderingsFactory&quot;&gt;
+        &lt;renderingProperty
+            name=&quot;viewTabFactory&quot;
+            value=&quot;com.example.SampleViewTabFactory&quot;&gt;
+        &lt;/renderingProperty&gt;
+        &lt;viewBinding viewIds=&quot;org.eclipse.debug.ui.MemoryView.RenderingViewPane&quot;/&gt;
+    &lt;/rendering&gt;        
+&lt;/extension&gt;        
+&lt;/pre&gt;
+&lt;/p&gt;
+
+In the above example, a new rendering type, Sample Rendering, is defined. This rendering type supports the rendering view pane from the Memory View.
+&lt;br&gt;&lt;br&gt;
+The following is an example for allowing Sample Rendering to be displayed in the rendering view pane from the Memory View.  
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension
+    id=&quot;com.example&quot;
+    name=&quot;Sample Rendering Extension&quot;
+    point=&quot;org.eclipse.debug.ui.memoryRenderingTypes&quot;&gt;
+    &lt;renderingBinding
+        renderingIds=&quot;com.example.sampleRendering&quot;&gt;
+        &lt;enablement&gt;
+            &lt;instanceof value=&quot;com.example.SampleMemoryBlock&quot;/&gt;
+        &lt;/enablement&gt;    
+    &lt;/renderingBinding&gt;  
+    &lt;defaultRenderings
+        renderingIds=&quot;com.example.sampleRendering&quot;&gt;
+        &lt;enablement&gt;
+            &lt;instanceof value=&quot;com.example.SampleMemoryBlock&quot;/&gt;
+        &lt;/enablement&gt;    
+    &lt;/defaultRenderings&gt;
+&lt;/extension&gt;  
+&lt;/pre&gt;
+&lt;/p&gt;   
+
+In the above example, the Sample Rendering is defined as a valid rendering for SampleMemoryBlock. Whenever SampleMemoryBlock is created in the Memory View, a Sample Rendering will be created.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+&lt;li&gt;Value of the attribute &lt;b&gt;renderingFactory &lt;/b&gt; must be a fully qualifed name of a Java class that implements &lt;b&gt;IMemoryRenderingFactory&lt;/b&gt;.&lt;/li&gt;
+&lt;li&gt;Value of the attribute &lt;b&gt; value &lt;/b&gt; from the &lt;b&gt;viewTabFactory&lt;/b&gt; rendering property must be a fully qualifed name of a Java class that implements &lt;b&gt;IMemoryViewTabFactory&lt;/b&gt;.&lt;/li&gt;
+&lt;li&gt;Value of the attribute &lt;b&gt;instanceof&lt;/b&gt; from the &lt;b&gt; enablement &lt;/b&gt; element must be a fully qualified name of a Java class that implements the interface &lt;b&gt;IMemoryBlock&lt;/b&gt;.&lt;/li&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The debug platform provides the following rendering types:&lt;br&gt;
+&lt;li&gt;Hex Rendering (rendering id: org.eclipse.debug.ui.rendering.raw_memory)&lt;/li&gt;
+&lt;li&gt;ASCII Rendering (rendering id: org.eclipse.debug.ui.rendering.ascii)&lt;/li&gt;
+&lt;li&gt;Signed Integer Rendering (rendering id: org.eclipse.debug.ui.rendering.signedint)&lt;/li&gt;
+&lt;li&gt;Unsigned Integer Rendering (rendering id: org.eclipse.debug.ui.rendering.unsignedint) &lt;/li&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2004 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Common Public License v1.0 which 
+accompanies this distribution, and is available at 
+&lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
+      </documentation>
+   </annotation>
+
+</schema>

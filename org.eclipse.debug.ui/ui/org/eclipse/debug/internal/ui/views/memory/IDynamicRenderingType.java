@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.core.memory;
+package org.eclipse.debug.internal.ui.views.memory;
 
 
 /**
@@ -22,18 +22,18 @@ package org.eclipse.debug.internal.core.memory;
  * If this property is defined in the rendering, the rendering defined will be considered
  * dynamic.  The manager will ask the dynamicRenderingFactory for a list of rendering types.
  * 
- * The manager will create IMemoryRenderingInfo ojbect for each of the dynamic rendering
+ * The manager will create IMemoryRenderingType ojbect for each of the dynamic rendering
  * type.  The dynamic rendering info will have all the properties defined in the extension.
  * When one of these dynamic renderings is created, it will use the rendering factory defined
  * in the extension to create the rendering.
- * @since 3.0
+ * @since 3.1
  */
-public interface IDynamicRenderingInfo {
+public interface IDynamicRenderingType {
 	
 	/**
 	 * @return the parent rendering definition of the dynamic rendering type
 	 */
-	IMemoryRenderingInfo getParentRenderingInfo();
+	IMemoryRenderingType getParentRenderingType();
 	
 	/**
 	 * @return the rendering id of this rendering

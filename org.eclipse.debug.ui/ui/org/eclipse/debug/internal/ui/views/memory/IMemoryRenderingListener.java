@@ -8,18 +8,28 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.core.memory;
+
+package org.eclipse.debug.internal.ui.views.memory;
+
 
 
 
 /**
- * Class for creating a list of dynamic rendering types.
- * @since 3.0
+ * Rendering listeners listen for add/removal events from IMemoryRenderingManager.
+ * Implementors should add itself to IMemoryRenderingManager
+ * @since 3.1
  */
-public interface IDynamicRenderingFactory {
-	
+public interface IMemoryRenderingListener
+{
 	/**
-	 * @return a list of dynamic rendering types
+	 * This function is called when a new rendering is added.
+	 * @param rendering
 	 */
-	IDynamicRenderingInfo [] getRenderingInfos();
+	void MemoryBlockRenderingAdded(IMemoryRendering rendering);
+
+	/**
+	 * Fired when a memory rendering is removed.
+	 * @param rendering
+	 */
+	void MemoryBlockRenderingRemoved(IMemoryRendering rendering);	
 }

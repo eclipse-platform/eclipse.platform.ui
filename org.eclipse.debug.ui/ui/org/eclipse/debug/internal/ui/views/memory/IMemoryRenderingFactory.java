@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.core.memory;
+package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
@@ -20,7 +20,7 @@ import org.eclipse.debug.core.model.IMemoryBlock;
  * 
  * If this class is not specified in the redering definition, a default
  * factory will be used and an instance of MemoryRendering will be created.
- * @since 3.0
+ * @since 3.1
  */
 public interface IMemoryRenderingFactory {
 

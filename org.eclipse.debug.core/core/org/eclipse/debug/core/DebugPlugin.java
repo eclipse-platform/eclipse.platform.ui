@@ -483,8 +483,6 @@ public class DebugPlugin extends Plugin {
 				fMemoryBlockManager.shutdown();
 			}
 			
-			MemoryBlockManager.pluginShutdown();
-			
 			if (fEventListeners != null) {
 				fEventListeners.removeAll();
 			}

@@ -33,7 +33,6 @@
    <extension-point id="logicalStructureTypes" name="%logicalStructureTypesExtensionPointName" schema="schema/logicalStructureTypes.exsd"/>
    <extension-point id="sourceContainerTypes" name="%sourceContainerTypesName" schema="schema/sourceContainerTypes.exsd"/>
    <extension-point id="sourcePathComputers" name="%sourcePathComputersName" schema="schema/sourcePathComputers.exsd"/>
-   <extension-point id="memoryRenderings" name="%renderingExtensionPointName" schema="schema/memoryRenderings.exsd"/>
 
 <!-- Extensions -->
    <extension

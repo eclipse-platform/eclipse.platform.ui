@@ -15,8 +15,6 @@ import java.math.BigInteger;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.internal.core.MemoryBlockManager;
-import org.eclipse.debug.internal.core.memory.IMemoryRendering;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -63,9 +61,9 @@ public class EmptyViewTab extends AbstractMemoryViewTab {
 	 */
 	private String getRenderingName() {
 		String name =
-			MemoryBlockManager
+			MemoryRenderingManager
 			.getMemoryRenderingManager()
-			.getRenderingInfo(getRenderingId())
+			.getRenderingTypeById(getRenderingId())
 			.getName();
 		
 		return name;

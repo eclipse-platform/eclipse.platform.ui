@@ -13,8 +13,6 @@ package org.eclipse.debug.internal.ui.views.memory;
 import java.math.BigInteger;
 
 import org.eclipse.debug.core.model.MemoryByte;
-import org.eclipse.debug.internal.core.MemoryBlockManager;
-import org.eclipse.debug.internal.core.memory.IMemoryRendering;
 
 /**
  * Converts bytes to signed integer and vice versa
@@ -116,7 +114,7 @@ public class SignedIntegerRenderer
 		int endianess = RendererUtil.BIG_ENDIAN;
 
 		// Check current state of the rendering
-		IMemoryRendering[] renderings = MemoryBlockManager.getMemoryRenderingManager().getRenderings(fViewTab.getMemoryBlock(), fViewTab.getRenderingId());
+		IMemoryRendering[] renderings = MemoryRenderingManager.getMemoryRenderingManager().getRenderings(fViewTab.getMemoryBlock(), fViewTab.getRenderingId());
 		
 		if (renderings.length > 0){
 			if (renderings[0] instanceof IntegerRendering)

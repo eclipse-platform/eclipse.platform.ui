@@ -57,6 +57,7 @@ import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
 import org.eclipse.debug.internal.ui.views.launch.DeferredContentAdapterFactory;
 import org.eclipse.debug.internal.ui.views.memory.IMemoryBlockViewSynchronizer;
 import org.eclipse.debug.internal.ui.views.memory.MemoryBlockViewSynchronizer;
+import org.eclipse.debug.internal.ui.views.memory.MemoryRenderingManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -322,6 +323,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			if (fMemBlkViewSynchronizer != null){
 				fMemBlkViewSynchronizer.shutdown();
 			}
+			
+			MemoryRenderingManager.pluginShutdown();
 			
 			DebugElementHelper.dispose();
 			

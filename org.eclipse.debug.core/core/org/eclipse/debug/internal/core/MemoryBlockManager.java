@@ -24,8 +24,6 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.core.memory.IMemoryRenderingManager;
-import org.eclipse.debug.internal.core.memory.MemoryRenderingManager;
 
 
 /**
@@ -48,12 +46,6 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 	
 	private static final int ADDED = 0;
 	private static final int REMOVED = 1;
-	/**
-	 * The singleton memory rendering manager.
-	 */
-	private static MemoryRenderingManager fgMemoryRenderingManager;
-	
-	
 	/**
 	 * Notifies a memory block listener in a safe runnable to
 	 * handle exceptions.
@@ -318,30 +310,6 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 			memoryBlocks.clear();
 			memoryBlocks = null;
 		}
-	}
-
-
-	/**
-	 * Returns the memory rendering manager.
-	 * @return the memory rendering manager.
-	 * @see IMemoryRenderingManager
-	 * @since 3.0
-	 */
-	public static IMemoryRenderingManager getMemoryRenderingManager() {
-		if (fgMemoryRenderingManager == null)
-		{
-			fgMemoryRenderingManager = new MemoryRenderingManager();
-		}
-		
-		return fgMemoryRenderingManager;
-	}
-	
-	public static void pluginShutdown() {
-
-		if (fgMemoryRenderingManager != null) {
-			fgMemoryRenderingManager.shutdown();
-		}
-		
 	}
 	
 }

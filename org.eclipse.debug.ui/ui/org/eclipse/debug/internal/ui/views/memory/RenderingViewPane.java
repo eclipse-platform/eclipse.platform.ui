@@ -24,10 +24,6 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.core.MemoryBlockManager;
-import org.eclipse.debug.internal.core.memory.IMemoryRendering;
-import org.eclipse.debug.internal.core.memory.IMemoryRenderingInfo;
-import org.eclipse.debug.internal.core.memory.IMemoryRenderingListener;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -144,7 +140,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 					}
 					
 					// get all renderings from this memroy block and remove them from the view
-					IMemoryRendering[] renderings = MemoryBlockManager.getMemoryRenderingManager().getRenderingsFromMemoryBlock(memory);
+					IMemoryRendering[] renderings = MemoryRenderingManager.getMemoryRenderingManager().getRenderingsFromMemoryBlock(memory);
 					
 					for (int k=0; k<renderings.length; k++)
 					{
@@ -393,7 +389,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		}
 		
 		// restore view tabs
-		IMemoryRendering[] renderings = MemoryBlockManager.getMemoryRenderingManager().getRenderingsFromMemoryBlock(memBlock);
+		IMemoryRendering[] renderings = MemoryRenderingManager.getMemoryRenderingManager().getRenderingsFromMemoryBlock(memBlock);
 		TabFolder toDisplay = (TabFolder)fStackLayout.topControl;
 		
 		// remember tab folder for current debug target
@@ -535,7 +531,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			
 			// remove the rendering if view tab factory is not defined
 			// otherwise, we will keep getting the error
-			MemoryBlockManager.getMemoryRenderingManager().removeMemoryBlockRendering(rendering.getBlock(), rendering.getRenderingId());
+			MemoryRenderingManager.getMemoryRenderingManager().removeMemoryBlockRendering(rendering.getBlock(), rendering.getRenderingId());
 		}
 		updateToolBarActionsEnablement();
 		
@@ -586,8 +582,8 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 					Enumeration enumeration = fTabFolderForMemoryBlock.elements();
 					while (enumeration.hasMoreElements())
 					{
-						tabFolder = (TabFolder) enumeration.nextElement();
-						tabs = tabFolder.getItems();
+						TabFolder otherTabFolder = (TabFolder) enumeration.nextElement();
+						tabs = otherTabFolder.getItems();
 						IMemoryViewTab viewTab = null;
 						for (int i = 0; i < tabs.length; i++)
 						{
@@ -631,14 +627,14 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		if (fRenderingInfoTable == null)
 			fRenderingInfoTable = new Hashtable();
 		
-		IMemoryRenderingInfo info;
+		IMemoryRenderingType info;
 		
-		info = (IMemoryRenderingInfo)fRenderingInfoTable.get(renderingId);
+		info = (IMemoryRenderingType)fRenderingInfoTable.get(renderingId);
 		
 		// ask manager for new info
 		if (info == null)
 		{
-			info = MemoryBlockManager.getMemoryRenderingManager().getRenderingInfo(renderingId);
+			info = MemoryRenderingManager.getMemoryRenderingManager().getRenderingTypeById(renderingId);
 			fRenderingInfoTable.put(renderingId, info);
 		}
 		
@@ -671,13 +667,13 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		if (fRenderingInfoTable == null)
 			fRenderingInfoTable = new Hashtable();
 		
-		IMemoryRenderingInfo info;
-		info = (IMemoryRenderingInfo)fRenderingInfoTable.get(renderingId);
+		IMemoryRenderingType info;
+		info = (IMemoryRenderingType)fRenderingInfoTable.get(renderingId);
 		
 		// ask manager for new info
 		if (info == null)
 		{
-			info = MemoryBlockManager.getMemoryRenderingManager().getRenderingInfo(renderingId);
+			info = MemoryRenderingManager.getMemoryRenderingManager().getRenderingTypeById(renderingId);
 			fRenderingInfoTable.put(renderingId, info);
 		}
 		
@@ -845,11 +841,11 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	
 	protected void addListeners() {
 		super.addListeners();
-		MemoryBlockManager.getMemoryRenderingManager().addListener(this);
+		MemoryRenderingManager.getMemoryRenderingManager().addListener(this);
 	}
 	protected void removeListeners() {
 		super.removeListeners();
-		MemoryBlockManager.getMemoryRenderingManager().removeListener(this);
+		MemoryRenderingManager.getMemoryRenderingManager().removeListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -982,7 +978,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 					fViewPaneCanvas.layout();
 					
 					// restore view tabs
-					IMemoryRendering[] renderings = MemoryBlockManager.getMemoryRenderingManager().getRenderingsFromMemoryBlock(memoryBlock);
+					IMemoryRendering[] renderings = MemoryRenderingManager.getMemoryRenderingManager().getRenderingsFromMemoryBlock(memoryBlock);
 					
 					if (toDisplay.getItemCount() == 0)
 					{

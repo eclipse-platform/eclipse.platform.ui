@@ -11,8 +11,6 @@
 
 package org.eclipse.debug.internal.ui.views.memory;
 
-import org.eclipse.debug.internal.core.MemoryBlockManager;
-import org.eclipse.debug.internal.core.memory.IMemoryRendering;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -62,7 +60,7 @@ public class RemoveMemoryRenderingAction extends AbstractMemoryAction
 			if (rendering != null)
 			{
 				// remove from Memory Rendering Manager
-				MemoryBlockManager.getMemoryRenderingManager().removeMemoryBlockRendering(rendering);
+				MemoryRenderingManager.getMemoryRenderingManager().removeMemoryBlockRendering(rendering);
 			}
 		}
 	}

@@ -10,7 +10,7 @@
  *******************************************************************************/
 
 
-package org.eclipse.debug.internal.core.memory;
+package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -19,7 +19,7 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 
 /**
  * Manages all memory renderings in the workbench.
- * @since 3.0
+ * @since 3.1
  */
 public interface IMemoryRenderingManager
 {
@@ -92,20 +92,29 @@ public interface IMemoryRenderingManager
 	
 	/**
 	 * @param renderingId
-	 * @return rendering information of the given rendering id
+	 * @return rendering type of the given rendering id
 	 */
-	public IMemoryRenderingInfo getRenderingInfo(String renderingId);
+	public IMemoryRenderingType getRenderingTypeById(String renderingId);
 	
 	/**
 	 * @param obj
-	 * @return all rendering information valid for the given object
+	 * @return all rendering types valid for the given object
 	 */
-	public IMemoryRenderingInfo[] getAllRenderingInfo(Object obj);
+	public IMemoryRenderingType[] getRenderingTypes(Object obj);
+	
+	/**
+	 * @param obj
+	 * @param viewId
+	 * @return all rendering types valid for the given object and view
+	 */
+	public IMemoryRenderingType[] getRenderingTypes(Object obj, String viewId);
 	
 	/**
 	 * @param obj
 	 * @return default renderings' ids for the given object
 	 */
-	public String[] getDefaultRenderings(Object obj);
+	public IMemoryRenderingType[] getDefaultRenderingTypes(Object obj);
+	
+
 	
 }

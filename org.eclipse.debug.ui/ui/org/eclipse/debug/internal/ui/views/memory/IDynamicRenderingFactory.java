@@ -8,29 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
-
-package org.eclipse.debug.internal.core.memory;
-
-import org.eclipse.debug.core.model.IMemoryBlock;
+package org.eclipse.debug.internal.ui.views.memory;
 
 
 
 /**
- * Represent a memory rendering in Memory Rendering View 
- * @since 3.0
+ * Class for creating a list of dynamic rendering types.
+ * @since 3.1
  */
-public interface IMemoryRendering
-{
-	/**
-	 * @return the memory block of this rendering.
-	 */
-	public IMemoryBlock getBlock();
-
-	/**
-	 * @return the rendering id of this rendering.
-	 */
-	public String getRenderingId();
+public interface IDynamicRenderingFactory {
 	
-
+	/**
+	 * @return a list of dynamic rendering types
+	 */
+	IDynamicRenderingType [] getRenderingTypes();
 }

@@ -10,7 +10,7 @@
  *******************************************************************************/
 
 
-package org.eclipse.debug.internal.core.memory;
+package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 
@@ -18,12 +18,12 @@ import org.eclipse.core.runtime.IConfigurationElement;
 /**
  * Store information about a type of rendering
  * e.g.  raw memory, ascii, ebcdic, integer, etc.
- * Extension point org.eclipse.debug.ui.rendering is
+ * Extension point org.eclipse.debug.ui.memoryRenderingType is
  * provided to allow plugins to contribute additional rendering
  * types.
- * @since 3.0
+ * @since 3.1
  */
-public interface IMemoryRenderingInfo
+public interface IMemoryRenderingType
 {
 	/**
 	 * @return the name of the rendering type.
@@ -59,4 +59,9 @@ public interface IMemoryRenderingInfo
 	 * @return the configuration element of all the properties
 	 */
 	public IConfigurationElement[] getAllProperties();
+	
+	/**
+	 * @return view ids supported by this rendering type
+	 */
+	public String[] getSupportedViewIds();
 }

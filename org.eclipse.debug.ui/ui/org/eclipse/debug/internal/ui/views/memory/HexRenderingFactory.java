@@ -12,8 +12,6 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.internal.core.memory.IMemoryRendering;
-import org.eclipse.debug.internal.core.memory.IMemoryRenderingFactory;
 
 /**
  * @since 3.0

@@ -13,6 +13,8 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -22,11 +24,9 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.core.MemoryBlockManager;
-import org.eclipse.debug.internal.core.memory.IMemoryRendering;
-import org.eclipse.debug.internal.core.memory.IMemoryRenderingInfo;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -76,9 +76,9 @@ public class CreateRenderingTab implements IMemoryViewTab, IDebugEventSetListene
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 		 */
 		public String getText(Object element) {
-			if (element instanceof IMemoryRenderingInfo)
+			if (element instanceof IMemoryRenderingType)
 			{	
-				String label = ((IMemoryRenderingInfo)element).getName();
+				String label = ((IMemoryRenderingType)element).getName();
 				return label;
 			}
             return element.toString();
@@ -118,7 +118,7 @@ public class CreateRenderingTab implements IMemoryViewTab, IDebugEventSetListene
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			IMemoryRenderingInfo[] renderings = MemoryBlockManager.getMemoryRenderingManager().getAllRenderingInfo(inputElement);
+			IMemoryRenderingType[] renderings = MemoryRenderingManager.getMemoryRenderingManager().getRenderingTypes(inputElement, IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE);
 			return renderings;
 		}
 
@@ -302,8 +302,10 @@ public class CreateRenderingTab implements IMemoryViewTab, IDebugEventSetListene
 		
 		if (renderings == null)
 		{
-//			RenderingViewUtil.openError(RenderingViewUtil.getResourceString(AddMemoryRenderingAction.ADD_RENDERING_FAILED),
-//				RenderingViewUtil.getResourceString("CreateRenderingTab.NoRenderingSelected"), null); //$NON-NLS-1$
+			Status stat = new Status(
+					IStatus.ERROR,DebugUIPlugin.getUniqueIdentifier(),
+					DebugException.INTERNAL_ERROR, DebugUIMessages.getString("CreateRenderingTab.0"), null); //$NON-NLS-1$
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.getString("CreateRenderingTab.1"), DebugUIMessages.getString("CreateRenderingTab.2"), stat); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 										
@@ -319,14 +321,13 @@ public class CreateRenderingTab implements IMemoryViewTab, IDebugEventSetListene
 		// add memory renderings to Memory Rendering Manager
 		for (int i=0; i<renderings.length; i++)
 		{	
-			if (renderings[i] instanceof IMemoryRenderingInfo)
+			if (renderings[i] instanceof IMemoryRenderingType)
 			{
-				String id = ((IMemoryRenderingInfo)renderings[i]).getRenderingId();
+				String id = ((IMemoryRenderingType)renderings[i]).getRenderingId();
 				try {
-					MemoryBlockManager.getMemoryRenderingManager().addMemoryBlockRendering(fMemoryBlock, id );
+					MemoryRenderingManager.getMemoryRenderingManager().addMemoryBlockRendering(fMemoryBlock, id );
 				} catch (DebugException e) {
-//					RenderingViewUtil.openError(RenderingViewUtil.getResourceString(AddMemoryRenderingAction.ADD_RENDERING_FAILED),
-//							RenderingViewUtil.getResourceString(AddMemoryRenderingAction.FAILED_TO_ADD_THE_SELECTED_RENDERING), e);
+					DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.getString("CreateRenderingTab.3"), DebugUIMessages.getString("CreateRenderingTab.4"), e); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}					
 		}		

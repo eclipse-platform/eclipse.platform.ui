@@ -22,8 +22,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.internal.core.MemoryBlockManager;
-import org.eclipse.debug.internal.core.memory.IMemoryRendering;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
@@ -441,7 +439,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 				DebugUIPlugin.log(e.getStatus());
 			}
 			
-			String preName = MemoryBlockManager.getMemoryRenderingManager().getRenderingInfo(getRenderingId()).getName();
+			String preName = MemoryRenderingManager.getMemoryRenderingManager().getRenderingTypeById(getRenderingId()).getName();
 			
 			if (preName != null)
 				tabName += " <" + preName + ">"; //$NON-NLS-1$ //$NON-NLS-2$

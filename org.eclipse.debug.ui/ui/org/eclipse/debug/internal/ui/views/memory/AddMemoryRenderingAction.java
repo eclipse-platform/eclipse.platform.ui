@@ -15,8 +15,6 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.core.MemoryBlockManager;
-import org.eclipse.debug.internal.core.memory.IMemoryRenderingInfo;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.viewers.ISelection;
@@ -76,11 +74,11 @@ public class AddMemoryRenderingAction extends AddMemoryBlockAction {
 			// add memory renderings to Memory Rendering Manager
 			for (int i=0; i<renderings.length; i++)
 			{	
-				if (renderings[i] instanceof IMemoryRenderingInfo)
+				if (renderings[i] instanceof IMemoryRenderingType)
 				{
-					String id = ((IMemoryRenderingInfo)renderings[i]).getRenderingId();
+					String id = ((IMemoryRenderingType)renderings[i]).getRenderingId();
 					try {
-						MemoryBlockManager.getMemoryRenderingManager().addMemoryBlockRendering(blk, id );
+						MemoryRenderingManager.getMemoryRenderingManager().addMemoryBlockRendering(blk, id );
 					} catch (DebugException e) {
 						MemoryViewUtil.openError(DebugUIMessages.getString("AddMemoryRenderingAction.Add_rendering_failed"), DebugUIMessages.getString("AddMemoryRenderingAction.Unable_to_add_selected_renderings"), null); //$NON-NLS-1$ //$NON-NLS-2$
 					}

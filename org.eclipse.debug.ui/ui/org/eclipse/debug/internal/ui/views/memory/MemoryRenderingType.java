@@ -10,29 +10,31 @@
  *******************************************************************************/
 
 
-package org.eclipse.debug.internal.core.memory;
+package org.eclipse.debug.internal.ui.views.memory;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 
 /**
- * Implementation of IMemoryRenderingInfo
+ * Implementation of IMemoryRenderingType
  * This class is for holding rendering information about a type
  * of rendering.
- * @since 3.0
+ * @since 3.1
  */
-public class MemoryRenderingInfo implements IMemoryRenderingInfo
+public class MemoryRenderingType implements IMemoryRenderingType
 {
 	private String fRenderingId;			// id of the type of rendering
 	private String fName;					// name of the type of rendering
 	private Hashtable fProperties;			// list of properties for the rendering type
 	private IConfigurationElement fElement;	// configuration element defining this rendering type
+	private ArrayList fViewBindings;		// supported views
 	
 	private static final String VALUE = "value"; //$NON-NLS-1$
 	
-	public MemoryRenderingInfo(String renderingId, String name,IConfigurationElement element)
+	public MemoryRenderingType(String renderingId, String name,IConfigurationElement element)
 	{
 		fRenderingId = renderingId;
 		fName = name;
@@ -70,8 +72,37 @@ public class MemoryRenderingInfo implements IMemoryRenderingInfo
 		}
 	}
 	
+	/**
+	 * @param viewIds of the views supported by this rendering type
+	 */
+	public void addViewBindings(String[] viewIds)
+	{
+		if (viewIds == null)
+			return;
+		
+		if (fViewBindings == null)
+			fViewBindings = new ArrayList();
+		
+		for (int i=0; i<viewIds.length; i++)
+		{
+			if (!fViewBindings.contains(viewIds[i]))
+				fViewBindings.add(viewIds[i]);
+		}
+	}
+	
+	/**
+	 * @return view ids supported by this rendering type
+	 */
+	public String[] getSupportedViewIds()
+	{
+		if (fViewBindings == null)
+			return new String[0];
+		
+		return (String[])fViewBindings.toArray(new String[fViewBindings.size()]);
+	}
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryRenderingInfo#getProperty(java.lang.String)
+	 * @see org.eclipse.debug.ui.IMemoryRenderingType#getProperty(java.lang.String)
 	 */
 	public String getProperty(String propertyId) {
 		
@@ -93,13 +124,13 @@ public class MemoryRenderingInfo implements IMemoryRenderingInfo
 	
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryRenderingInfo#getElement()
+	 * @see org.eclipse.debug.ui.IMemoryRenderingType#getElement()
 	 */
 	public IConfigurationElement getConfigElement() {
 		return fElement;
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryRenderingInfo#getPropertyElement(java.lang.String)
+	 * @see org.eclipse.debug.ui.IMemoryRenderingType#getPropertyElement(java.lang.String)
 	 */
 	public IConfigurationElement getPropertyConfigElement(String propertyId) {
 		if (fProperties != null)
@@ -110,7 +141,7 @@ public class MemoryRenderingInfo implements IMemoryRenderingInfo
 		return null;
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryRenderingInfo#getAllProperties()
+	 * @see org.eclipse.debug.ui.IMemoryRenderingType#getAllProperties()
 	 */
 	public IConfigurationElement[] getAllProperties() {
 		

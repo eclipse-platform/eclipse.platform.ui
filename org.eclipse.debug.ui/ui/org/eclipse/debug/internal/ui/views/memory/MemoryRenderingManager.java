@@ -10,13 +10,18 @@
  *******************************************************************************/
 
 
-package org.eclipse.debug.internal.core.memory;
+package org.eclipse.debug.internal.ui.views.memory;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -33,37 +38,45 @@ import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 
 /**
- * @since 3.0
+ * @since 3.1
  */
 
 public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEventSetListener, IMemoryBlockListener
 {
 	private ArrayList listeners = new ArrayList();
 	private ArrayList fRenderings = new ArrayList();
-	private Hashtable fMemoryRenderingInfo = new Hashtable();
-	private ArrayList fRenderingInfoOrderList = new ArrayList();
-	private Hashtable fDefaultRenderings = new Hashtable();
-	private Hashtable fRenderingBinds = new Hashtable();
+	private Hashtable fMemoryRenderingTypes = new Hashtable();
+	private ArrayList fRenderingTypesOrderList = new ArrayList();
 	private Hashtable fDynamicRenderingMap = new Hashtable();
 	private Hashtable fDynamicRenderingFactory = new Hashtable();
+	private Hashtable fRenderingsEnablement = new Hashtable();
+	private Hashtable fDefaultsEnablement = new Hashtable();
 	
 	private static final int ADDED = 0;
 	private static final int REMOVED = 1;
 	
-	private static final String RENDERING_EXT = "memoryRenderings"; //$NON-NLS-1$
+	private static final String RENDERING_EXT = "memoryRenderingTypes"; //$NON-NLS-1$
 	private static final String RENDERING_ELEMENT = "rendering"; //$NON-NLS-1$
-	private static final String RENDERING_PROPERTY_ELEMENT = "rendering_property"; //$NON-NLS-1$
+	private static final String RENDERING_PROPERTY_ELEMENT = "renderingProperty"; //$NON-NLS-1$
 	private static final String RENDERING_ID = "renderingId"; //$NON-NLS-1$
 	private static final String NAME = "name"; //$NON-NLS-1$
 	private static final String VALUE = "value"; //$NON-NLS-1$
-	private static final String DEFAULT_RENDERING="default_renderings"; //$NON-NLS-1$
-	private static final String MEMORYBLOCKCLASS = "memoryBlockClass"; //$NON-NLS-1$
+	private static final String DEFAULT_RENDERING="defaultRenderings"; //$NON-NLS-1$
 	private static final String RENDERINGS="renderingIds"; //$NON-NLS-1$
-	private static final String RENDERING_BIND = "rendering_binding"; //$NON-NLS-1$
+	private static final String RENDERING_BIND = "renderingBinding"; //$NON-NLS-1$
 	private static final String RENDERING_FACTORY = "renderingFactory"; //$NON-NLS-1$
 	private static final String DYNAMIC_RENDERING_FACTORY = "dynamicRenderingFactory"; //$NON-NLS-1$
+	private static final String ENABLEMENT = "enablement";  //$NON-NLS-1$
+	private static final String VIEW_BINDING = "viewBinding";  //$NON-NLS-1$
+	private static final String VIEW_IDS = "viewIds";  //$NON-NLS-1$
+	
+	/**
+	 * The singleton memory rendering manager.
+	 */
+	private static MemoryRenderingManager fgMemoryRenderingManager;
 		
 	/**
 	 * Notifies a memory block listener  in a safe runnable to
@@ -79,7 +92,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			DebugPlugin.log(exception);
+			DebugUIPlugin.log(exception);
 		}
 
 		/**
@@ -116,24 +129,24 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 	public MemoryRenderingManager()
 	{
 		DebugPlugin.getDefault().getMemoryBlockManager().addListener(this);
-		buildMemoryRenderingInfo();		
+		buildMemoryRenderingTypes();		
 	}
 	
 	/**
 	 * Build rendering info in the manager
 	 * Then read in extended rendering types
 	 */
-	private void buildMemoryRenderingInfo()
+	private void buildMemoryRenderingTypes()
 	{	
 		// get rendering extensions
-		getExtendedRendering();
+		processRenderingTypeExtensions();
 	}
 	
 	/**
 	 * Read in and store extension to rendering
 	 */
-	private void getExtendedRendering() {
-		IExtensionPoint rendering= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), RENDERING_EXT);
+	private void processRenderingTypeExtensions() {
+		IExtensionPoint rendering= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), RENDERING_EXT);
 		IExtension[] extensions = rendering.getExtensions();
 		
 		for (int i=0; i<extensions.length; i++)
@@ -144,7 +157,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 			{
 				if (elements[j].getName().equals(RENDERING_ELEMENT))
 				{	
-					addRendering(elements[j]);
+					addStaticRenderingType(elements[j]);
 				}
 				else if (elements[j].getName().equals(RENDERING_PROPERTY_ELEMENT))
 				{
@@ -152,15 +165,19 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 				}
 				else if (elements[j].getName().equals(DEFAULT_RENDERING))
 				{
-					addDefaultRenderings(elements[j]);
+					addDefaultRenderingTypes(elements[j]);
 				}
 				else if (elements[j].getName().equals(RENDERING_BIND))
 				{
 					addRenderingBind(elements[j]);
 				}
+				else if (elements[j].getName().equals(VIEW_BINDING))
+				{
+					addViewBind(elements[j]);
+				}
 				else
 				{
-					DebugPlugin.logMessage("Unknown element in rendering extenstion: " + elements[j].getName(), null); //$NON-NLS-1$			
+					DebugUIPlugin.logErrorMessage("Unknown element in rendering extenstion: " + elements[j].getName()); //$NON-NLS-1$			
 				}
 			}
 		}
@@ -169,7 +186,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 	/**
 	 * @param element
 	 */
-	private void addRendering(IConfigurationElement element) {
+	private void addStaticRenderingType(IConfigurationElement element) {
 		
 		String renderingId = element.getAttribute(RENDERING_ID);
 		String name = element.getAttribute(NAME);
@@ -179,22 +196,22 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 		    name == null)
 		{
 			String extension = element.getDeclaringExtension().getUniqueIdentifier();
-			DebugPlugin.logMessage("Rendering defined is malformed: " + extension, null); //$NON-NLS-1$
+			DebugUIPlugin.logErrorMessage("Rendering defined is malformed: " + extension); //$NON-NLS-1$
 		}
 		else
 		{	
-			MemoryRenderingInfo info = new MemoryRenderingInfo(renderingId, name,  element);
+			MemoryRenderingType info = new MemoryRenderingType(renderingId, name,  element);
 			
-			if (fMemoryRenderingInfo.containsKey(renderingId))
+			if (fMemoryRenderingTypes.containsKey(renderingId))
 			{
 				// if a rendering already exists with the same id, log a warning of duplicated rendering
-				Status status = new Status(IStatus.WARNING, DebugPlugin.getUniqueIdentifier(),	0, 
+				Status status = new Status(IStatus.WARNING, DebugUIPlugin.getUniqueIdentifier(),	0, 
 						"Duplicated rendering definition: " + renderingId, null); //$NON-NLS-1$
-				DebugPlugin.log(status);
+				DebugUIPlugin.log(status);
 			}
 			
-			fMemoryRenderingInfo.put(renderingId, info);
-			fRenderingInfoOrderList.add(renderingId);
+			fMemoryRenderingTypes.put(renderingId, info);
+			fRenderingTypesOrderList.add(renderingId);
 		}
 		
 		// get sub-elements from rendering and parse as properties
@@ -205,9 +222,13 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 			{
 				addRenderingProperty(subElements[k]);
 			}
+			else if (subElements[k].getName().equals(VIEW_BINDING))
+			{
+				addViewBind(subElements[k]);
+			}
 			else
 			{
-				DebugPlugin.logMessage("Unknown element in rendering extenstion: " + element.getName(), null); //$NON-NLS-1$					
+				DebugUIPlugin.logErrorMessage("Unknown element in rendering extenstion: " + element.getName()); //$NON-NLS-1$					
 			}
 		}
 	}
@@ -220,20 +241,31 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 		String propertyId = element.getAttribute(NAME);
 		String propertyValue = element.getAttribute(VALUE);
 		
+		if (renderingId == null)
+		{
+			Object obj = element.getParent();
+			
+			if (obj != null && obj instanceof IConfigurationElement)
+			{
+				IConfigurationElement parentElm = (IConfigurationElement)obj;
+				renderingId = parentElm.getAttribute(RENDERING_ID);
+			}
+		}
+		
 		if (renderingId == null ||
 			propertyId == null || 
 			propertyValue == null)
 		{
 			String extension = element.getDeclaringExtension().getUniqueIdentifier();
-			DebugPlugin.logMessage("Rendering property defined is malformed: " + extension, null); //$NON-NLS-1$
+			DebugUIPlugin.logErrorMessage("Rendering property defined is malformed: " + extension); //$NON-NLS-1$
 		}
 		else
 		{
 			// find the rendering
-			MemoryRenderingInfo info = (MemoryRenderingInfo)fMemoryRenderingInfo.get(renderingId);
+			MemoryRenderingType info = (MemoryRenderingType)fMemoryRenderingTypes.get(renderingId);
 			
 			if (info == null){
-				DebugPlugin.logMessage("Rendering info for this property is not found: " + propertyId, null); //$NON-NLS-1$
+				DebugUIPlugin.logErrorMessage("Rendering info for this property is not found: " + propertyId); //$NON-NLS-1$
 			}
 			else
 			{	
@@ -248,62 +280,62 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 	 * a type of memory block.
 	 * @param element
 	 */
-	private void addDefaultRenderings(IConfigurationElement element)
+	private void addDefaultRenderingTypes(IConfigurationElement element)
 	{
-		String memoryBlockClass = element.getAttribute(MEMORYBLOCKCLASS);
 		String renderings = element.getAttribute(RENDERINGS);
+		IConfigurationElement[] enablementElms = element.getChildren(ENABLEMENT);
 		
-		if(memoryBlockClass == null || renderings == null)
+		if (renderings == null)
 		{
 			String extension = element.getDeclaringExtension().getUniqueIdentifier();
-			DebugPlugin.logMessage("Default rendering defined is malformed: " + extension, null); //$NON-NLS-1$			
-			return;
+			DebugUIPlugin.logErrorMessage("Default rendering defined is malformed: " + extension); //$NON-NLS-1$			
+			return;			
 		}
 		
-		ArrayList renderingsArray = new ArrayList();
-		
-		// seperate renderings and create an array
-		int idx = renderings.indexOf(","); //$NON-NLS-1$
-		if (idx == -1)
+		if(enablementElms == null)
 		{
-			renderingsArray.add(renderings);
+			String extension = element.getDeclaringExtension().getUniqueIdentifier();
+			DebugUIPlugin.logErrorMessage("Default rendering defined is malformed: " + extension); //$NON-NLS-1$			
+			return;			
 		}
-		else
+		
+		ArrayList renderingsArray = breakStringIntoArray(renderings);
+		
+		if (enablementElms != null && enablementElms.length > 0)
 		{
-			StringTokenizer tokenizer = new StringTokenizer(renderings, ","); //$NON-NLS-1$
-			while (tokenizer.hasMoreElements())
+			for (int j=0; j<enablementElms.length; j++)
 			{
-				String rendering = tokenizer.nextToken();
+				if (fDefaultsEnablement == null)
+					fDefaultsEnablement = new Hashtable();
 				
-				rendering = rendering.trim();
+				Expression enablementExp = null;
+				try {
+					IConfigurationElement enablement = enablementElms[j]; 
+					if (enablement != null) {
+						enablementExp = ExpressionConverter.getDefault().perform(enablement);
+					}
+				} catch (CoreException e) {
+					String extension = element.getDeclaringExtension().getUniqueIdentifier();
+					DebugUIPlugin.logErrorMessage("Cannot create eanblement expression of the default renderings from  " + extension); //$NON-NLS-1$
+					return;
+				}
 				
-				// check if rendering is valid
-				
-				renderingsArray.add(rendering);
-			}
-		}
-		
-		if (fDefaultRenderings == null)
-		{
-			fDefaultRenderings = new Hashtable();
-		}
-		
-		// check hash table to see if something is alreay added
-		ArrayList definedrenderings = (ArrayList)fDefaultRenderings.get(memoryBlockClass);
-		
-		if (definedrenderings == null)
-		{
-			// add renderings to hashtable
-			fDefaultRenderings.put(memoryBlockClass, renderingsArray);
-		}
-		else
-		{
-			for (int i=0; i<renderingsArray.size(); i++)
-			{
-				// append to the list
-				if (!definedrenderings.contains(renderingsArray.get(i)))
+				ArrayList definedrenderings = (ArrayList)fDefaultsEnablement.get(enablementExp);
+				if (definedrenderings == null)
 				{
-					definedrenderings.add(renderingsArray.get(i));
+					// add renderings to hashtable
+					fDefaultsEnablement.put(enablementExp, renderingsArray);
+				}
+				else
+				{
+					for (int i=0; i<renderingsArray.size(); i++)
+					{
+						// append to the list
+						if (!definedrenderings.contains(renderingsArray.get(i)))
+						{
+							definedrenderings.add(renderingsArray.get(i));
+						}
+					}
 				}
 			}
 		}
@@ -311,27 +343,125 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 	
 	private void addRenderingBind(IConfigurationElement element){
 
-		String memoryBlockClass = element.getAttribute(MEMORYBLOCKCLASS);
 		String renderings = element.getAttribute(RENDERINGS);
+		IConfigurationElement[] enablementElms = element.getChildren(ENABLEMENT);
 		
-		if(memoryBlockClass == null || renderings == null)
+		if (renderings == null)
 		{
 			String extension = element.getDeclaringExtension().getUniqueIdentifier();
-			DebugPlugin.logMessage("Rendering bind defined is malformed: " + extension, null); //$NON-NLS-1$			
+			DebugUIPlugin.logErrorMessage("Rendering bind defined is malformed: " + extension); //$NON-NLS-1$			
+			return;		
+		}
+		
+		if(enablementElms == null)
+		{
+			String extension = element.getDeclaringExtension().getUniqueIdentifier();
+			DebugUIPlugin.logErrorMessage("Rendering bind defined is malformed: " + extension); //$NON-NLS-1$			
+			return;					
+		}
+		
+		
+		if (enablementElms != null && enablementElms.length > 0)
+		{
+			for (int j=0; j<enablementElms.length; j++)
+			{
+				if (fRenderingsEnablement == null)
+					fRenderingsEnablement = new Hashtable();
+				Expression enablementExp = null;
+				try {
+					IConfigurationElement enablement = enablementElms[j]; 
+					if (enablement != null) {
+						enablementExp = ExpressionConverter.getDefault().perform(enablement);
+					}
+				} catch (CoreException e) {
+					String extension = element.getDeclaringExtension().getUniqueIdentifier();
+					DebugUIPlugin.logErrorMessage("Cannot create eanblement expression of the rendering bind from  " + extension); //$NON-NLS-1$
+					return;
+				}
+				
+				if (enablementExp != null)
+				{
+					ArrayList renderingsArray = breakStringIntoArray(renderings);
+					// check hash table to see if something is alreay added
+					ArrayList renderingIds = (ArrayList)fRenderingsEnablement.get(enablementExp);		
+					
+					if (renderingIds == null)
+					{
+						fRenderingsEnablement.put(enablementExp, renderingsArray);
+					}
+					else
+					{
+						for (int i=0; i<renderingsArray.size(); i++)
+						{
+							// append to the list
+							if (!renderingIds.contains(renderingsArray.get(i)))
+							{
+								renderingIds.add(renderingsArray.get(i));
+							}
+						}					
+					}
+				}
+			}
+		}
+	}
+	
+	private void addViewBind(IConfigurationElement element)
+	{
+		String renderingId = element.getAttribute(RENDERING_ID);
+		String viewIds = element.getAttribute(VIEW_IDS);
+		
+		if (renderingId == null)
+		{
+			Object obj = element.getParent();
+			
+			if (obj != null && obj instanceof IConfigurationElement)
+			{
+				IConfigurationElement parent = (IConfigurationElement) obj;
+				renderingId = parent.getAttribute(RENDERING_ID);
+			}
+		}
+		
+		if (renderingId == null)
+		{
+			DebugUIPlugin.logErrorMessage("renderingId not defined in view binding extension: " + element.getDeclaringExtension().getExtensionPointUniqueIdentifier()); //$NON-NLS-1$
 			return;
 		}
 		
-		ArrayList renderingsArray = new ArrayList();
+		if (viewIds == null)
+		{
+			DebugUIPlugin.logErrorMessage("viewIds not defined in view binding extension: " + element.getDeclaringExtension().getExtensionPointUniqueIdentifier()); //$NON-NLS-1$
+			return;
+		}
+		
+		ArrayList supportedViews = breakStringIntoArray(viewIds);
+		
+		MemoryRenderingType info = (MemoryRenderingType)fMemoryRenderingTypes.get(renderingId);
+		
+		if (info == null){
+			DebugUIPlugin.logErrorMessage("Rendering info for this rendering type is not found: " + renderingId); //$NON-NLS-1$
+		}
+		else
+		{	
+			// add the property to the rendering
+			info.addViewBindings((String[])supportedViews.toArray(new String[supportedViews.size()]));
+		}
+	}
+
+	/**
+	 * @param renderings
+	 */
+	private ArrayList breakStringIntoArray(String str) {
+		ArrayList returnedArray = new ArrayList();
 		
 		// seperate renderings and create an array
-		int idx = renderings.indexOf(","); //$NON-NLS-1$
+		int idx = str.indexOf(","); //$NON-NLS-1$
 		if (idx == -1)
 		{
-			renderingsArray.add(renderings);
+			returnedArray.add(str);
 		}
 		else
 		{
-			StringTokenizer tokenizer = new StringTokenizer(renderings, ","); //$NON-NLS-1$
+			StringTokenizer tokenizer = new StringTokenizer(str, ","); //$NON-NLS-1$
 			while (tokenizer.hasMoreElements())
 			{
 				String rendering = tokenizer.nextToken();
@@ -339,34 +469,10 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 				
 				// check if rendering is valid
 				
-				renderingsArray.add(rendering);
+				returnedArray.add(rendering);
 			}
 		}
-		
-		if (fRenderingBinds == null)
-		{
-			fRenderingBinds = new Hashtable();
-		}
-		
-		// check hash table to see if something is alreay added
-		ArrayList renderingIds = (ArrayList)fRenderingBinds.get(memoryBlockClass);
-		
-		if (renderingIds == null)
-		{
-			// add renderings to hashtable
-			fRenderingBinds.put(memoryBlockClass, renderingsArray);
-		}
-		else
-		{
-			for (int i=0; i<renderingsArray.size(); i++)
-			{
-				// append to the list
-				if (!renderingIds.contains(renderingsArray.get(i)))
-				{
-					renderingIds.add(renderingsArray.get(i));
-				}
-			}
-		}
+		return returnedArray;
 	}
 
 	private MemoryRenderingManagerNotifier getMemoryBlockNotifier() {
@@ -411,7 +517,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 	 * Returns null if an error has occurred
 	 */
 	public IMemoryRendering createRendering(IMemoryBlock mem, String renderingId) throws DebugException{
-		IMemoryRenderingInfo info = getRenderingInfo(renderingId);
+		IMemoryRenderingType info = getRenderingTypeById(renderingId);
 		
 		if (info != null){
 			IConfigurationElement element = info.getConfigElement();
@@ -601,7 +707,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 		
 		return (IMemoryRendering[])ret.toArray(new IMemoryRendering[ret.size()]);		
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IMemoryRenderingManager#addListener(org.eclipse.debug.ui.IMemoryBlockListener)
 	 */
@@ -611,7 +717,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 			return;
 		
 		if(listener == null){
-			DebugPlugin.logMessage("Null argument passed into IMemoryRenderingManager.addListener", null); //$NON-NLS-1$
+			DebugUIPlugin.logErrorMessage("Null argument passed into IMemoryRenderingManager.addListener"); //$NON-NLS-1$
 			return;
 		}
 		
@@ -629,7 +735,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 			return;
 		
 		if(listener == null){
-			DebugPlugin.logMessage("Null argument passed into IMemoryRenderingManager.removeListener", null); //$NON-NLS-1$
+			DebugUIPlugin.logErrorMessage("Null argument passed into IMemoryRenderingManager.removeListener"); //$NON-NLS-1$
 			return;
 		}		
 		
@@ -704,12 +810,13 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 	}
 	
 
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryRenderingManager#getRenderingInfo(java.lang.String)
+	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryRenderingManager#getRenderingTypeById(java.lang.String)
 	 */
-	public IMemoryRenderingInfo getRenderingInfo(String renderingId)
+	public IMemoryRenderingType getRenderingTypeById(String renderingId)
 	{
-		MemoryRenderingInfo info = (MemoryRenderingInfo)fMemoryRenderingInfo.get(renderingId);
+		MemoryRenderingType info = (MemoryRenderingType)fMemoryRenderingTypes.get(renderingId);
 		
 		if (info != null) {
 			return info;
@@ -717,57 +824,104 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 		return null;
 	}
 
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryRenderingManager#getAllRenderingInfo(java.lang.Object)
+	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryRenderingManager#getRenderingTypes(java.lang.Object)
 	 */
-	public IMemoryRenderingInfo[] getAllRenderingInfo(Object obj)
-	{
-		String[] hierarchy = getHierarchy(obj);
-		
+	public IMemoryRenderingType[] getRenderingTypes(Object obj)
+	{	
 		ArrayList renderingIds = new ArrayList();
-		ArrayList renderingInfos = new ArrayList();
 		
-		// get all rendering ids
-		for (int i=0; i<hierarchy.length; i++)
-		{	
-			ArrayList ids = (ArrayList)fRenderingBinds.get(hierarchy[i]);
-			
-			if (ids != null)
-			{
-				for (int j=0; j<ids.size(); j++)
-				{	
-					if (!renderingIds.contains(ids.get(j)))
-						renderingIds.add(ids.get(j));
+		// get all rendering ids from fRenderingsEnablement (supported way of enabling a memory rendering type)
+		Enumeration enumeration = fRenderingsEnablement.keys();
+		EvaluationContext evalContext = new EvaluationContext(null, obj);
+		while (enumeration.hasMoreElements())
+		{
+			Object key = enumeration.nextElement();
+			try {
+				if (key instanceof Expression)
+				{
+					Expression expression = (Expression)key;
+					EvaluationResult result = expression.evaluate(evalContext);
+					if (result.equals(EvaluationResult.TRUE))
+					{
+						ArrayList ids = (ArrayList)fRenderingsEnablement.get(expression);
+						if (ids != null)
+						{
+							for (int j=0; j<ids.size(); j++)
+							{	
+								if (!renderingIds.contains(ids.get(j)))
+									renderingIds.add(ids.get(j));
+							}
+						}						
+					}
 				}
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
 			}
 		}
 		
+		return getRenderingTypesByIds((String[])renderingIds.toArray(new String[renderingIds.size()]));
+		
+	}
+	
+	
+	
+
+	/**
+	 * @param renderingIds
+	 * @param renderingTypes
+	 */
+	private IMemoryRenderingType[] getRenderingTypesByIds(String[] renderingIds) {
+		ArrayList renderingTypes = new ArrayList();
+		
 		// get all rendering infos
-		for (int i=0; i<renderingIds.size(); i++){
-			IMemoryRenderingInfo info = (IMemoryRenderingInfo)fMemoryRenderingInfo.get(renderingIds.get(i));
-			IDynamicRenderingInfo[] dynamic = null;
+		for (int i=0; i<renderingIds.length; i++){
+			IMemoryRenderingType info = (IMemoryRenderingType)fMemoryRenderingTypes.get(renderingIds[i]);
+			IDynamicRenderingType[] dynamic = null;
 			
 			if (info != null)
-				dynamic = getDynamicRenderingInfo(info);
+				dynamic = getDynamicRenderingType(info);
 			
 			if (dynamic != null)
 			{
 				for (int j=0; j<dynamic.length; j++)
 				{
-					IMemoryRenderingInfo dynamicInfo = (IMemoryRenderingInfo)fMemoryRenderingInfo.get(dynamic[j].getRenderingId());
-					renderingInfos.add(dynamicInfo);
+					IMemoryRenderingType dynamicInfo = (IMemoryRenderingType)fMemoryRenderingTypes.get(dynamic[j].getRenderingId());
+					renderingTypes.add(dynamicInfo);
 				}
 			}
 			else if (info!= null)
 			{
-				renderingInfos.add(info);
+				renderingTypes.add(info);
+			}
+		}
+		return (IMemoryRenderingType[])renderingTypes.toArray(new IMemoryRenderingType[renderingTypes.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryRenderingManager#getRenderingTypes(java.lang.Object, java.lang.String)
+	 */
+	public IMemoryRenderingType[] getRenderingTypes(Object obj, String viewId) {
+		IMemoryRenderingType[] renderingTypes = getRenderingTypes(obj);
+		ArrayList returnList = new ArrayList();
+		
+		for (int i=0; i<renderingTypes.length; i++)
+		{
+			String[] viewIds = renderingTypes[i].getSupportedViewIds();
+
+			for (int j=0; j<viewIds.length; j++)
+			{
+				if (viewIds[j].equals(viewId))
+					returnList.add(renderingTypes[i]);
+				
 			}
 		}
 		
-		return (IMemoryRenderingInfo[])renderingInfos.toArray(new IMemoryRenderingInfo[renderingInfos.size()]);
+		return (IMemoryRenderingType[])returnList.toArray(new IMemoryRenderingType[returnList.size()]);
 	}
 	
-	private IDynamicRenderingInfo[] getDynamicRenderingInfo(IMemoryRenderingInfo rendering)
+	private IDynamicRenderingType[] getDynamicRenderingType(IMemoryRenderingType rendering)
 	{	
 		IConfigurationElement element = rendering.getPropertyConfigElement(DYNAMIC_RENDERING_FACTORY);
 		
@@ -784,11 +938,11 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 				if (obj != null && obj instanceof IDynamicRenderingFactory)
 				{
 					fDynamicRenderingFactory.put(rendering.getRenderingId(), obj);
-					IDynamicRenderingInfo[] dynamicRenderingTypes = ((IDynamicRenderingFactory)obj).getRenderingInfos();
+					IDynamicRenderingType[] dynamicRenderingTypes = ((IDynamicRenderingFactory)obj).getRenderingTypes();
 					
 					if (dynamicRenderingTypes != null)
 					{
-						addRenderingInfo(dynamicRenderingTypes);
+						addDynamicRenderingTypes(dynamicRenderingTypes);
 						
 						// now compare the returned list to what is orginally cached
 						Enumeration enumeration = fDynamicRenderingMap.keys();
@@ -813,7 +967,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 								if (!found)
 								{
 									// if the rendering no longer exists, remove rendering info
-									fMemoryRenderingInfo.remove(dynamicRenderingId);
+									fMemoryRenderingTypes.remove(dynamicRenderingId);
 									fDynamicRenderingMap.remove(dynamicRenderingId);
 								}
 							}
@@ -833,26 +987,27 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 				
 			}
 		} catch (CoreException e) {
-			DebugPlugin.logMessage("Cannot create the dynamic rendering factory for " + element.getDeclaringExtension().getUniqueIdentifier(), null); //$NON-NLS-1$
+			DebugUIPlugin.logErrorMessage("Cannot create the dynamic rendering factory for " + element.getDeclaringExtension().getUniqueIdentifier()); //$NON-NLS-1$
 			return null;
 		}
 		return null;
 	}
 	
-	private IMemoryRenderingInfo createRenderingInfo(IDynamicRenderingInfo info)
+	private IMemoryRenderingType createRenderingType(IDynamicRenderingType info)
 	{
 		if (info == null)
 			return null;
 			
-		if (info.getParentRenderingInfo() == null)
+		if (info.getParentRenderingType() == null)
 		{
-			DebugPlugin.logMessage("Dynamic rendering info does not have a parent " +  info.getRenderingId(), null); //$NON-NLS-1$
+			DebugUIPlugin.logErrorMessage("Dynamic rendering info does not have a parent " +  info.getRenderingId()); //$NON-NLS-1$
 			return null;		
 		}
 	
-		IMemoryRenderingInfo parent = info.getParentRenderingInfo();
-		MemoryRenderingInfo dynamicInfo = new MemoryRenderingInfo(info.getRenderingId(), info.getName(), info.getParentRenderingInfo().getConfigElement());
+		IMemoryRenderingType parent = info.getParentRenderingType();
+		MemoryRenderingType dynamicInfo = new MemoryRenderingType(info.getRenderingId(), info.getName(), info.getParentRenderingType().getConfigElement());
 	
+		// copy all properties
 		IConfigurationElement[] properties = parent.getAllProperties();
 		
 		for (int i=0; i<properties.length; i++)
@@ -865,131 +1020,89 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 			}
 		}
 		
+		// copy view bindings
+		String[] supportedViews = parent.getSupportedViewIds();
+		dynamicInfo.addViewBindings(supportedViews);
+		
 		return dynamicInfo;
 	}
 	
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryRenderingManager#getDefaultRenderings(java.lang.Object)
+	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryRenderingManager#getDefaultRenderingTypes(java.lang.Object)
 	 */
-	public String[] getDefaultRenderings(Object obj) {
-		
-		if (fDefaultRenderings == null)
-		{
-			return new String[0];
-		}
+	public IMemoryRenderingType[] getDefaultRenderingTypes(Object obj) {
 		
 		if (obj == null)
 		{
-			return new String[0];
+			return new IMemoryRenderingType[0];
 		}
 		
-		// get all rendering info supporting the object
-		IMemoryRenderingInfo[] supported = getAllRenderingInfo(obj);
 		ArrayList results = new ArrayList();
 		
-		// match it with default renderings
-		String hierarchy[] = getHierarchy(obj);
-		
-		// get defaults for the entire hierarchy
-		for (int i=0; i<hierarchy.length; i++)
+		// get default renderings specified via expression enablment
+		Enumeration enumeration = fDefaultsEnablement.keys();
+		EvaluationContext evalContext = new EvaluationContext(null, obj);
+		while (enumeration.hasMoreElements())
 		{
-			ArrayList defaults = (ArrayList)fDefaultRenderings.get(hierarchy[i]);
-			// if defaults is defined
-			if (defaults != null)
-			{
-				for (int j=0; j<defaults.size(); j++)
+			Object key = enumeration.nextElement();
+			try {
+				if (key instanceof Expression)
 				{
-					// check if the default is supported
-					for (int k=0; k<supported.length; k++)
+					Expression expression = (Expression)key;
+					EvaluationResult result = expression.evaluate(evalContext);
+					if (result.equals(EvaluationResult.TRUE))
 					{
-						if (supported[k].getRenderingId().equals(defaults.get(j)))
+						ArrayList ids = (ArrayList)fDefaultsEnablement.get(expression);
+						if (ids != null)
 						{
-							results.add(supported[k].getRenderingId());
-						}
+							for (int j=0; j<ids.size(); j++)
+							{	
+								if (isValidRenderingType(obj, (String)ids.get(j)) && !results.contains(ids.get(j)))
+									results.add(ids.get(j));
+							}
+						}						
 					}
 				}
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
 			}
 		}
 		 
 		// return the list
-		return (String[])results.toArray(new String[results.size()]);
+		return  getRenderingTypesByIds((String[])results.toArray(new String[results.size()]));
 	}
 	
-	protected void addRenderingInfo (IDynamicRenderingInfo[] dynamicRenderingTypes)
+	private boolean isValidRenderingType(Object obj, String renderingId)
+	{
+		IMemoryRenderingType[] supported = getRenderingTypes(obj);
+		for (int i=0; i<supported.length; i++)
+		{
+			if (supported[i].getRenderingId().equals(renderingId))
+				return true;
+		}
+		return false;
+	}
+	
+	protected void addDynamicRenderingTypes (IDynamicRenderingType[] dynamicRenderingTypes)
 	{
 		if (dynamicRenderingTypes != null)
 		{	
-			// store in fMemoryRenderingInfo arrays so they can be queried
+			// store in fMemoryRenderingTypes arrays so they can be queried
 			for (int i=0; i<dynamicRenderingTypes.length; i++)
 			{
-				IMemoryRenderingInfo dynamicInfo;
-				if (fMemoryRenderingInfo.get(dynamicRenderingTypes[i].getRenderingId()) == null)
+				IMemoryRenderingType dynamicInfo;
+				if (fMemoryRenderingTypes.get(dynamicRenderingTypes[i].getRenderingId()) == null)
 				{
-					dynamicInfo = createRenderingInfo(dynamicRenderingTypes[i]);
+					dynamicInfo = createRenderingType(dynamicRenderingTypes[i]);
 					
 					if (dynamicInfo != null)
 					{
-						fMemoryRenderingInfo.put(dynamicRenderingTypes[i].getRenderingId(), dynamicInfo);
+						fMemoryRenderingTypes.put(dynamicRenderingTypes[i].getRenderingId(), dynamicInfo);
 					}
 				}
 			}
 		}		
-	}
-	
-	/**
-	 * @param obj
-	 * @return all superclasses and interfaces
-	 */
-	private String[] getHierarchy(Object obj)
-	{
-		ArrayList hierarchy = new ArrayList();
-		
-		// get class name
-		hierarchy.add(obj.getClass().getName());
-		
-		// get all super classes
-		Class superClass = obj.getClass().getSuperclass();
-		
-		while (superClass != null)
-		{
-			hierarchy.add(superClass.getName());
-			superClass = superClass.getSuperclass();
-		}
-		
-		// get all interfaces
-		ArrayList interfaces = new ArrayList();
-		Class[] baseInterfaces = obj.getClass().getInterfaces();
-		
-		for (int i=0; i<baseInterfaces.length; i++)
-		{
-			interfaces.add(baseInterfaces[i]);
-		}
-		
-		getInterfaces(interfaces, baseInterfaces);
-		
-		for (int i=0; i<interfaces.size(); i++)
-		{
-			hierarchy.add(((Class)interfaces.get(i)).getName());
-		}
-		
-		return (String[])hierarchy.toArray(new String[hierarchy.size()]);
-		
-	}
-		
-	private void getInterfaces(ArrayList list, Class[] interfaces)
-	{	
-		Class[] superInterfaces = new Class[0];
-		for (int i=0 ;i<interfaces.length; i++)
-		{
-			superInterfaces = interfaces[i].getInterfaces();
-			
-			for (int j=0; j<superInterfaces.length; j++)
-			{
-				list.add(superInterfaces[j]);
-			}
-			
-			getInterfaces(list, superInterfaces);   
-		}
 	}
 	
 	/**
@@ -1010,16 +1123,16 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 			fRenderings = null;
 		}
 		
-		if (fMemoryRenderingInfo != null)
+		if (fMemoryRenderingTypes != null)
 		{
-			fMemoryRenderingInfo.clear();
-			fMemoryRenderingInfo = null;
+			fMemoryRenderingTypes.clear();
+			fMemoryRenderingTypes = null;
 		}
 		
-		if (fRenderingInfoOrderList != null)
+		if (fRenderingTypesOrderList != null)
 		{	
-			fRenderingInfoOrderList.clear();
-			fRenderingInfoOrderList = null;
+			fRenderingTypesOrderList.clear();
+			fRenderingTypesOrderList = null;
 		}
 		
 		if (fDynamicRenderingMap != null)
@@ -1037,4 +1150,26 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 		// remove listener
 		DebugPlugin.getDefault().getMemoryBlockManager().removeListener(this);
 	}
+
+	/**
+	 * Returns the memory rendering manager.
+	 * @return the memory rendering manager.
+	 * @see IMemoryRenderingManager
+	 * @since 3.0
+	 */
+	public static IMemoryRenderingManager getMemoryRenderingManager() {
+		if (fgMemoryRenderingManager == null)
+		{
+			fgMemoryRenderingManager = new MemoryRenderingManager();
+		}
+		
+		return fgMemoryRenderingManager;
+	}
+
+	public static void pluginShutdown() {
+		if (fgMemoryRenderingManager != null) {
+			fgMemoryRenderingManager.shutdown();
+		}
+	}
+
 }
