@@ -117,10 +117,19 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 				url = new URL(decodedText);
 				super.validatePage();
 			} catch (MalformedURLException e) {
-				setDelayedErrorMessage(UpdateUI.getString(KEY_INVALID));
-				setPageComplete(false);
+				handleInvalidURL();
+			} catch (ArrayIndexOutOfBoundsException e) {
+				//33159
+				handleInvalidURL();
+			} catch (IllegalArgumentException e) {
+				// 33159
+				handleInvalidURL();
 			}
 		}
+	}
+	private void handleInvalidURL() {
+		setDelayedErrorMessage(UpdateUI.getString(KEY_INVALID));
+		setPageComplete(false);
 	}
 
 	public boolean finish() {
