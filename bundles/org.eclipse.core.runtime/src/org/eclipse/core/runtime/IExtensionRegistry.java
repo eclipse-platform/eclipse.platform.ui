@@ -18,6 +18,27 @@ package org.eclipse.core.runtime;
  * extension points and extensions.  
  * </p>
  * <p>
+ * The various objects that describe the contents of the extension registry
+ * ({@link IExtensionPoint}, {@link IExtension}, and {@link IConfigurationElement})
+ * are intended for relatively short-term use. Clients that deal with these objects
+ * must be aware that they may become invalid if the declaring plug-in is updated
+ * or uninstalled. If this happens, all methods on these object except
+ * <code>isValid()</code> will throw {@link InvalidRegistryObjectException}.
+ * Code in a plug-in that has declared that it is not dynamic aware (or not declared
+ * anything) can safely ignore this issue, since the registry would not be
+ * modified while it is active. However, code in a plug-in that declares that it
+ * is dynamic aware must be careful if it accesses extension registry objects,
+ * because it's at risk if plug-in are removed. Similiarly, tools that analyze
+ * or display the extension registry are vulnerable. Client code can pre-test for
+ * invalid objects by calling <code>isValid()</code>, which never throws this exception.
+ * However, pre-tests are usually not sufficient because of the possibility of the
+ * extension registry object becoming invalid as a result of a concurrent activity.
+ * At-risk clients must treat <code>InvalidRegistryObjectException</code> as if it
+ * were a checked exception. Also, such clients should probably register a listener
+ * with the extension registry so that they receive notification of any changes to
+ * the registry.
+ * </p>
+ * <p>
  * Extensions and extension points are declared by generic entities called 
  * <cite>namespaces</cite>. The only fact known about namespaces is that they 
  * have unique string-based identifiers. One example of a namespace 

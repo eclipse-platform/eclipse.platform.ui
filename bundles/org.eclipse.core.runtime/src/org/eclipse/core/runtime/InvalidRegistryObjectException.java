@@ -13,22 +13,21 @@ package org.eclipse.core.runtime;
 import org.eclipse.core.internal.runtime.Policy;
 
 /** 
- * An unchecked exception representing a failure while using an registry object  
+ * An unchecked exception indicating that an attempt to access
+ * an extension registry object that is no longer valid.
  * @since 3.1
  */
 public class InvalidRegistryObjectException extends RuntimeException {
-	/**
+	/*
 	 * Comment for <code>serialVersionUID</code>
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private int staleId;
-	
-	public InvalidRegistryObjectException(int objectId) {
-		staleId = objectId;
-	}
-	
+	/* (non-javadoc)
+	 * @see Throwable#getMessage()
+	 */
 	public String getMessage() {
-		return Policy.bind("registry.staleHandle", Integer.toString(staleId)); //$NON-NLS-1$
+		return Policy.bind("registry.staleHandle"); //$NON-NLS-1$
 	}
+	
 }

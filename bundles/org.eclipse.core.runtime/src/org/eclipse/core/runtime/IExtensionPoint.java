@@ -17,17 +17,25 @@ package org.eclipse.core.runtime;
  * manifest (<code>plugin.xml</code>) file.
  * <p>
  * These registry objects are intended for relatively short-term use. Clients that 
- * need to retain an object must be aware that it may become invalid if the 
- * declaring plug-in is updated or uninstalled. If this happens, all methods except 
- * {@link #isValid()} will throw an {@link org.eclipse.core.runtime.InvalidRegistryObjectException}.
- * Clients may check for invalid objects by calling {@link #isValid()}.
- * More generally, clients may registry a listener with the extension registry to receive
- * notification of changes.
- * Due to the concurrent nature of eclipse, an isValid() check does not save you from the exception 
- * checks, since the object you are using can be uninstalled while you are processing it.
- * 
- * A plug-in declaring that it is not dynamic aware can ignore the InvalidRegistryObjectExceptions.
- * 
+ * deal with these objects must be aware that they may become invalid if the 
+ * declaring plug-in is updated or uninstalled. If this happens, all methods except
+ * {@link #isValid()} will throw {@link InvalidRegistryObjectException}.
+ * For extension point objects, the most common case is code in a plug-in dealing
+ * with one of the extension points it declares. These extension point objects are
+ * guaranteed to be valid while the plug-in is active. Code in a plug-in that has
+ * declared that it is not dynamic aware (or not declared anything) can also safely
+ * ignore this issue, since the registry would not be modified while it is
+ * active. However, code in a plug-in that declares that it is dynamic aware
+ * must be careful if it access the extension point object of a different plug-in,
+ * because it's at risk if that other plug-in is removed. Similiarly,
+ * tools that analyze or display the extension registry are vulnerable.
+ * Client code can pre-test for invalid objects by calling {@link #isValid()},
+ * which never throws this exception. However, pre-tests are usually not sufficient
+ * because of the possibility of the extension point object becoming invalid as a
+ * result of a concurrent activity. At-risk clients must treat 
+ * <code>InvalidRegistryObjectException</code> as if it were a checked exception.
+ * Also, such clients should probably register a listener with the extension registry
+ * so that they receive notification of any changes to the registry.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -42,6 +50,7 @@ public interface IExtensionPoint {
 	 *
 	 * @return the configuration elements for all extension configured 
 	 *   into this extension point
+	 * @throws InvalidRegistryObjectException if this extension point is no longer valid
 	 */
 	public IConfigurationElement[] getConfigurationElements() throws InvalidRegistryObjectException;
 
@@ -49,6 +58,7 @@ public interface IExtensionPoint {
 	 * Returns the descriptor of the plug-in that declares this extension point.
 	 *
 	 * @return the plug-in that declares this extension point
+	 * @throws InvalidRegistryObjectException if this extension point is no longer valid
 	 * @deprecated IPluginDescriptor is not part of the new runtime and its function
 	 * has been split over several parts of the new runtime.  This method
 	 * is not available (returns null) if the compatibility layer is not installed.  Use getNamespace()
@@ -69,6 +79,7 @@ public interface IExtensionPoint {
 	 * their finished, stable form (post-3.0). </p>
 	 * 
 	 * @return the namespace for this extension point
+	 * @throws InvalidRegistryObjectException if this extension point is no longer valid
 	 * @see Platform#getBundle(String)
 	 * @see IExtensionRegistry
 	 * @since 3.0
@@ -84,6 +95,7 @@ public interface IExtensionPoint {
 	 * @param extensionId the unique identifier of an extension 
 	 *		(e.g. <code>"com.example.acme.main"</code>).
 	 * @return an extension, or <code>null</code>
+	 * @throws InvalidRegistryObjectException if this extension point is no longer valid
 	 */
 	public IExtension getExtension(String extensionId) throws InvalidRegistryObjectException;
 
@@ -92,6 +104,7 @@ public interface IExtensionPoint {
 	 * Returns an empty array if this extension point has no extensions.
 	 *
 	 * @return the extensions configured into this extension point
+	 * @throws InvalidRegistryObjectException if this extension point is no longer valid
 	 */
 	public IExtension[] getExtensions() throws InvalidRegistryObjectException;
 
@@ -105,6 +118,7 @@ public interface IExtensionPoint {
 	 *
 	 * @return a displayable string label for this extension point,
 	 *    possibly the empty string
+	 * @throws InvalidRegistryObjectException if this extension point is no longer valid
 	 */
 	public String getLabel() throws InvalidRegistryObjectException;
 
@@ -116,6 +130,7 @@ public interface IExtensionPoint {
 	 * is specified in the plug-in manifest file.
 	 *
 	 * @return a relative URL path, or an empty string
+	 * @throws InvalidRegistryObjectException if this extension point is no longer valid
 	 */
 	public String getSchemaReference() throws InvalidRegistryObjectException;
 
@@ -126,6 +141,7 @@ public interface IExtensionPoint {
 	 * to be unique within the defining plug-in.
 	 *
 	 * @return the simple identifier of the extension point (e.g. <code>"builders"</code>)
+	 * @throws InvalidRegistryObjectException if this extension point is no longer valid
 	 */
 	public String getSimpleIdentifier() throws InvalidRegistryObjectException;
 
@@ -138,17 +154,21 @@ public interface IExtensionPoint {
 	 *
 	 * @return the unique identifier of the extension point
 	 *    (e.g. <code>"org.eclipse.core.resources.builders"</code>)
+	 * @throws InvalidRegistryObjectException if this extension point is no longer valid
 	 */
 	public String getUniqueIdentifier() throws InvalidRegistryObjectException;
 
-	/** 
+	/* (non-javadoc) 
 	 * @see Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o);
 	
 	/**
-	 * Indicates whether or not the object is valid.
-	 * @return true if the object is still valid.
+	 * Returns whether this extension point object is valid.
+	 * 
+	 * @return <code>true</code> if the object is valid, and <code>false</code>
+	 * if it is no longer valid
+	 * @since 3.1
 	 */
 	public boolean isValid();
 }

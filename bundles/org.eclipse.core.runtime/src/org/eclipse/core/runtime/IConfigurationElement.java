@@ -20,17 +20,24 @@ package org.eclipse.core.runtime;
  * </p>
  * <p>
  * These registry objects are intended for relatively short-term use. Clients that 
- * need to retain an object must be aware that it may become invalid if the 
- * declaring plug-in is updated or uninstalled. If this happens, all methods except 
- * {@link #isValid()} will throw an {@link org.eclipse.core.runtime.InvalidRegistryObjectException}.
- *  Clients may check for invalid objects by calling {@link #isValid()}.
- * More generally, clients may registry a listener with the extension registry to receive
- * notification of changes.
- * Due to the concurrent nature of eclipse, an isValid() check does not save you from the exception 
- * checks, since the object you are using can be uninstalled while you are processing it.
- * 
-
- * A plug-in declaring that it is not dynamic aware can ignore the InvalidRegistryObjectExceptions.
+ * deal with these objects must be aware that they may become invalid if the 
+ * declaring plug-in is updated or uninstalled. If this happens, all methods except
+ * {@link #isValid()} will throw {@link InvalidRegistryObjectException}.
+ * For configuration element objects, the most common case is code in a plug-in dealing
+ * with extensions contributed to one of the extension points it declares.
+ * Code in a plug-in that has declared that it is not dynamic aware (or not
+ * declared anything) can safely ignore this issue, since the registry
+ * would not be modified while it is active. However, code in a plug-in that
+ * declares that it is dynamic aware must be careful when accessing the extension
+ * and configuration element objects because they become invalid if the contributing
+ * plug-in is removed. Similiarly, tools that analyze or display the extension registry
+ * are vulnerable. Client code can pre-test for invalid objects by calling {@link #isValid()},
+ * which never throws this exception. However, pre-tests are usually not sufficient
+ * because of the possibility of the extension or configuration element object becoming
+ * invalid as a result of a concurrent activity. At-risk clients must treat 
+ * <code>InvalidRegistryObjectException</code> as if it were a checked exception.
+ * Also, such clients should probably register a listener with the extension registry
+ * so that they receive notification of any changes to the registry.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -57,7 +64,7 @@ public interface IConfigurationElement {
 	 * @param propertyName the name of the property
 	 * @return the executable instance
 	 * @exception CoreException if an instance of the executable extension
-	 *   could not be created for any reason.
+	 *   could not be created for any reason
 	 * @see IExecutableExtension#setInitializationData(IConfigurationElement, String, Object)
 	 */
 	public Object createExecutableExtension(String propertyName) throws CoreException;
@@ -82,6 +89,7 @@ public interface IConfigurationElement {
 	 *
 	 * @param name the name of the attribute
 	 * @return attribute value, or <code>null</code> if none
+	 * @throws InvalidRegistryObjectException if this configuration element is no longer valid
 	 */
 	public String getAttribute(String name) throws InvalidRegistryObjectException;
 
@@ -106,6 +114,7 @@ public interface IConfigurationElement {
 	 *
 	 * @param name the name of the attribute
 	 * @return attribute value, or <code>null</code> if none
+	 * @throws InvalidRegistryObjectException if this configuration element is no longer valid
 	 */
 	public String getAttributeAsIs(String name) throws InvalidRegistryObjectException;
 
@@ -125,6 +134,7 @@ public interface IConfigurationElement {
 	 * </p>
 	 *
 	 * @return the names of the attributes 
+	 * @throws InvalidRegistryObjectException if this configuration element is no longer valid
 	 */
 	public String[] getAttributeNames() throws InvalidRegistryObjectException;
 
@@ -147,6 +157,7 @@ public interface IConfigurationElement {
 	 * </p>
 	 *
 	 * @return the child configuration elements
+	 * @throws InvalidRegistryObjectException if this configuration element is no longer valid
 	 * @see #getChildren(String)
 	 */
 	public IConfigurationElement[] getChildren() throws InvalidRegistryObjectException;
@@ -158,6 +169,7 @@ public interface IConfigurationElement {
 	 *
 	 * @param name the name of the child configuration element
 	 * @return the child configuration elements with that name
+	 * @throws InvalidRegistryObjectException if this configuration element is no longer valid
 	 * @see #getChildren()
 	 */
 	public IConfigurationElement[] getChildren(String name) throws InvalidRegistryObjectException;
@@ -166,6 +178,7 @@ public interface IConfigurationElement {
 	 * Returns the extension that declares this configuration element.
 	 *
 	 * @return the extension
+	 * @throws InvalidRegistryObjectException if this configuration element is no longer valid
 	 */
 	public IExtension getDeclaringExtension() throws InvalidRegistryObjectException;
 
@@ -180,6 +193,7 @@ public interface IConfigurationElement {
 	 * corresponds to a configuration element named <code>"wizard"</code>.
 	 *
 	 * @return the name of this configuration element
+	 * @throws InvalidRegistryObjectException if this configuration element is no longer valid
 	 */
 	public String getName() throws InvalidRegistryObjectException;
 
@@ -192,6 +206,7 @@ public interface IConfigurationElement {
 	 *
 	 * @return the parent of this configuration element
 	 *  or <code>null</code>
+	 * @throws InvalidRegistryObjectException if this configuration element is no longer valid
 	 * @since 3.0
 	 */
 	public Object getParent() throws InvalidRegistryObjectException;
@@ -211,6 +226,7 @@ public interface IConfigurationElement {
 	 * </p>
 	 *
 	 * @return the text value of this configuration element or <code>null</code>
+	 * @throws InvalidRegistryObjectException if this configuration element is no longer valid
 	 */
 	public String getValue() throws InvalidRegistryObjectException;
 
@@ -236,6 +252,7 @@ public interface IConfigurationElement {
 	 * </p>
 	 *
 	 * @return the untranslated text value of this configuration element or <code>null</code>
+	 * @throws InvalidRegistryObjectException if this configuration element is no longer valid
 	 */
 	public String getValueAsIs() throws InvalidRegistryObjectException;
 	
@@ -245,20 +262,24 @@ public interface IConfigurationElement {
 	 * <p>
 	 * 
 	 * @return the namespace for this configuration element
+	 * @throws InvalidRegistryObjectException if this configuration element is no longer valid
 	 * @see Platform#getBundle(String)
 	 * @see IExtensionRegistry
 	 * @since 3.1
 	 */
 	public String getNamespace() throws InvalidRegistryObjectException;
 	
-	/** 
+	/* (non-javadoc) 
 	 * @see Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o);
 	
 	/**
-	 * Indicates whether or not the object is valid.
-	 * @return true if the object is still valid.
+	 * Returns whether this configuration element object is valid.
+	 * 
+	 * @return <code>true</code> if the object is valid, and <code>false</code>
+	 * if it is no longer valid
+	 * @since 3.1
 	 */
 	public boolean isValid();
 }

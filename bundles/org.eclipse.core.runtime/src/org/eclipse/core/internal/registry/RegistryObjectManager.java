@@ -181,7 +181,7 @@ public class RegistryObjectManager implements IObjectManager {
 			result = load(id, type);
 		}
 		if (result == null)
-			throw new InvalidRegistryObjectException(id); //$NON-NLS-1$
+			throw new InvalidRegistryObjectException(); //$NON-NLS-1$
 		cache.put(new Integer(id), result);
 		return result;
 	}

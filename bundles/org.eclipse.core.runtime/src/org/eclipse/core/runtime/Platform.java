@@ -738,6 +738,7 @@ public final class Platform {
 	 *
 	 * @param participant the participant to deregister
 	 * @see #addStringPoolParticipant(IStringPoolParticipant, ISchedulingRule)
+	 * @since 3.1
 	 */
 	public static void removeStringPoolParticipant(IStringPoolParticipant participant) {
 		InternalPlatform.getDefault().removeStringPoolParticipant(participant);
