@@ -2544,12 +2544,11 @@ public class TextViewer extends Viewer implements
 	 * @param command the document command representing the verify event
 	 */
 	protected void customizeDocumentCommand(DocumentCommand command) {
-		if (!fIgnoreAutoIndent) {
-			IAutoIndentStrategy s= (IAutoIndentStrategy) selectContentTypePlugin(command.offset, fAutoIndentStrategies);
-			if (s != null)
-				s.customizeDocumentCommand(getDocument(), command);
-		}
-		fIgnoreAutoIndent= false;
+		if (fIgnoreAutoIndent)
+			return;
+		IAutoIndentStrategy s= (IAutoIndentStrategy) selectContentTypePlugin(command.offset, fAutoIndentStrategies);
+		if (s != null)
+			s.customizeDocumentCommand(getDocument(), command);
 	}
 	
 	/**
@@ -2655,12 +2654,14 @@ public class TextViewer extends Viewer implements
 				if (fUndoManager != null) {
 					fIgnoreAutoIndent= true;
 					fUndoManager.undo();
+					fIgnoreAutoIndent= false;
 				}
 				break;
 			case REDO:
 				if (fUndoManager != null) {
 					fIgnoreAutoIndent= true;
 					fUndoManager.redo();
+					fIgnoreAutoIndent= false;
 				}
 				break;
 			case CUT:
@@ -2678,6 +2679,7 @@ public class TextViewer extends Viewer implements
 			case PASTE:
 //				fIgnoreAutoIndent= true;
 				fTextWidget.paste();
+//				fIgnoreAutoIndent= false;
 				break;
 			case DELETE:
 				deleteText();
