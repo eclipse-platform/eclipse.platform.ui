@@ -19,10 +19,11 @@
    </requires>
 
 
-   <extension-point id="contexts" name="%contexts_extention_point_name" schema="schema/contexts.mxsd"/>
+   <extension-point id="contexts" name="%contexts_extension_point_name" schema="schema/contexts.mxsd"/>
    <extension-point id="luceneAnalyzer" name="%lucene_analyzer" schema="schema/luceneAnalyzer.mxsd"/>
-   <extension-point id="support" name="%support_extention_point_name" schema="schema/support.mxsd"/>
-   <extension-point id="toc" name="%toc_extention_point_name" schema="schema/toc.mxsd"/>
+   <extension-point id="support" name="%support_extension_point_name" schema="schema/support.mxsd"/>
+   <extension-point id="toc" name="%toc_extension_point_name" schema="schema/toc.mxsd"/>
+   <extension-point id="webapp" name="%webapp_extension_point_name" schema="schema/webapp.mxsd"/>
 
 <!--  Help URL protocols -->
    <extension

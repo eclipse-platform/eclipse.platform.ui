@@ -20,6 +20,9 @@ import org.eclipse.help.internal.workingset.*;
 public final class HelpSystem {
 	protected static final HelpSystem instance = new HelpSystem();
 
+	private final static String WEBAPP_EXTENSION_ID = "org.eclipse.help.webapp";
+	private static final String WEBAPP_DEFAULT_ATTRIBUTE = "default";
+
 	public final static String LOG_LEVEL_KEY = "log_level";
 	public final static String BANNER_KEY = "banner";
 	public final static String BANNER_HEIGHT_KEY = "banner_height";
@@ -139,24 +142,30 @@ public final class HelpSystem {
 	public static boolean ensureWebappRunning() {
 		if (!getInstance().webappStarted) {
 			getInstance().webappStarted = true;
+
+			String webappPlugin = getWebappPlugin();
+
 			if (getMode() != MODE_WORKBENCH) {
 				// start the help control web app
 				try {
-					WebappManager.start("helpControl", "org.eclipse.help.webapp", Path.EMPTY);
+					WebappManager.start(
+						"helpControl",
+						webappPlugin,
+						Path.EMPTY);
 				} catch (CoreException e) {
-					Logger.logError("ensureWebappRunning()",e);
+					Logger.logError("ensureWebappRunning()", e);
 					return false;
 				}
 			}
 			// start the help web app
 			try {
-				WebappManager.start("help", "org.eclipse.help.webapp", Path.EMPTY);
+				WebappManager.start("help", webappPlugin, Path.EMPTY);
 			} catch (CoreException e) {
-				Logger.logError("ensureWebappRunning()",e);
+				Logger.logError("ensureWebappRunning()", e);
 				return false;
 			}
 			getInstance().webappRunning = true;
-				
+
 		}
 		return getInstance().webappRunning;
 	}
@@ -175,6 +184,45 @@ public final class HelpSystem {
 	 */
 	public static void setMode(int mode) {
 		getInstance().mode = mode;
+	}
+
+	/**
+	 * Returns the plugin id that defines the help webapp
+	 */
+	private static String getWebappPlugin() {
+
+		// get the webapp extension from the system plugin registry
+		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
+		IExtensionPoint point =
+			pluginRegistry.getExtensionPoint(WEBAPP_EXTENSION_ID);
+		if (point != null) {
+			IExtension[] extensions = point.getExtensions();
+			if (extensions.length != 0) {
+				// We need to pick up the non-default configuration
+				IConfigurationElement[] elements =
+					extensions[0].getConfigurationElements();
+
+				for (int i = 0; i < elements.length; i++) {
+					String defaultValue =
+						elements[i].getAttribute(WEBAPP_DEFAULT_ATTRIBUTE);
+					if (defaultValue == null || defaultValue.equals("false")) {
+						return elements[i]
+							.getDeclaringExtension()
+							.getDeclaringPluginDescriptor()
+							.getUniqueIdentifier();
+					}
+				}
+				// if reached this point, then then pick the first (default) webapp
+				if (elements.length > 0)
+					return elements[0]
+						.getDeclaringExtension()
+						.getDeclaringPluginDescriptor()
+						.getUniqueIdentifier();
+			}
+		}
+		
+		// if all fails
+		return "org.eclipse.help.webapp";
 	}
 
 }
