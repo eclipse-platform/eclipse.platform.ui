@@ -10,7 +10,7 @@
 	<context-param>
 		<param-name>ECLIPSE_HOME</param-name>
 		<param-value></param-value>
-		<description>The directory where eclipse is installed.  For example, "d:/eclipse".  THe parameter is required only when deployed help web application is not installed inside of Eclipse plugins directory.</description>
+		<description>The directory where eclipse is installed.  For example, "d:/eclipse".  The parameter is required only when deployed help web application is not installed inside of Eclipse plugins directory.</description>
 	</context-param>
 
     <servlet>
