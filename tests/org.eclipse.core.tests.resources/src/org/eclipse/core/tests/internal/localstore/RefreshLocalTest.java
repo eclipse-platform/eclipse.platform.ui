@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
@@ -23,6 +22,11 @@ import org.eclipse.osgi.service.environment.Constants;
 
 //
 public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
+
+	public static Test suite() {
+		return new TestSuite(RefreshLocalTest.class);
+	}
+
 	public RefreshLocalTest() {
 		super();
 	}
@@ -31,8 +35,41 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 		super(name);
 	}
 
-	public static Test suite() {
-		return new TestSuite(RefreshLocalTest.class);
+	/**
+	 * Tests if files with names that are invalid segments are properly rejected - does not run on Windows.
+	 */
+	public void testDiscoverFileWithInvalidName() {
+		//FIXME Temporarily skip this test due to VM vendor bug #96338
+
+		if (Platform.getOS().equals(Constants.OS_WIN32))
+			return;
+
+		/* initialize common objects */
+		IProject project = projects[0];
+
+		/* test root deletion */
+		IFile file = project.getFile("file.txt");
+		ensureExistsInFileSystem(file);
+
+		File fileWithInvalidName = new File(project.getLocation().toFile(), "a\\b");
+		try {
+			assertTrue("0.1", fileWithInvalidName.createNewFile());
+		} catch (IOException e) {
+			fail("0.2", e);
+		}
+		assertTrue("1.0", !file.exists());
+		try {
+			project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			fail("2.0 - should have failed");
+		} catch (CoreException ce) {
+			IStatus status = ce.getStatus();
+			assertTrue("2.1", status.isMultiStatus());
+			IStatus[] children = status.getChildren();
+			assertEquals("2.2", 1, children.length);
+			assertTrue("2.3", children[0] instanceof ResourceStatus);
+			assertEquals("2.4", IResourceStatus.INVALID_RESOURCE_NAME, children[0].getCode());
+		}
+		assertTrue("3.0", file.exists());
 	}
 
 	/**
@@ -246,42 +283,5 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 		folder.refreshLocal(IResource.DEPTH_INFINITE, null);
 		assertTrue("2.1", folder.exists());
 		assertTrue("2.2", ((Resource) folder).countResources(IResource.DEPTH_INFINITE, false) == (getTree(target).length + 1));
-	}
-
-	/**
-	 * Tests if files with names that are invalid segments are properly rejected - does not run on Windows.
-	 */
-	public void skipTestDiscoverFileWithInvalidName() {
-		//FIXME Temporarily skip this test due to VM vendor bug #96338
-
-		if (BootLoader.getOS().equals(Constants.OS_WIN32))
-			return;
-
-		/* initialize common objects */
-		IProject project = projects[0];
-
-		/* test root deletion */
-		IFile file = project.getFile("file.txt");
-		ensureExistsInFileSystem(file);
-
-		File fileWithInvalidName = new File(project.getLocation().toFile(), "a\\b");
-		try {
-			assertTrue("0.1", fileWithInvalidName.createNewFile());
-		} catch (IOException e) {
-			fail("0.2", e);
-		}
-		assertTrue("1.0", !file.exists());
-		try {
-			project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
-			fail("2.0 - should have failed");
-		} catch (CoreException ce) {
-			IStatus status = ce.getStatus();
-			assertTrue("2.1", status.isMultiStatus());
-			IStatus[] children = status.getChildren();
-			assertEquals("2.2", 1, children.length);
-			assertTrue("2.3", children[0] instanceof ResourceStatus);
-			assertEquals("2.4", IResourceStatus.INVALID_RESOURCE_NAME, children[0].getCode());
-		}
-		assertTrue("3.0", file.exists());
 	}
 }
