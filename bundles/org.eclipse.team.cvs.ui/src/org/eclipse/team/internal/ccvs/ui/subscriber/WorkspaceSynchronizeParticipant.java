@@ -245,4 +245,11 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
         }
         return capability;
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#isViewerContributionsSupported()
+     */
+    protected boolean isViewerContributionsSupported() {
+        return true;
+    }
 }

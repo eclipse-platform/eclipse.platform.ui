@@ -318,11 +318,14 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	 */
 	public final ISynchronizePageConfiguration createPageConfiguration() {
 		SynchronizePageConfiguration configuration = new SynchronizePageConfiguration(this);
+		if (isViewerContributionsSupported()) {
+		    configuration.setProperty(ISynchronizePageConfiguration.P_OBJECT_CONTRIBUTION_ID, getId());
+		}
 		initializeConfiguration(configuration);
 		return configuration;
 	}
 
-	/**
+    /**
 	 * This method is invoked after a page configuration is created but before it is returned by the 
 	 * <code>createPageConfiguration</code> method. Subclasses can implement this method to
 	 * tailor the configuration in ways appropriate to the participant.
@@ -381,5 +384,40 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
      */
     public ChangeSetCapability getChangeSetCapability() {
         return null;
+    }
+    
+	/**
+	 * Return whether this particpant supports the contribution of actions to
+	 * the context menu by contributing a <code>viewerContribution</code>
+	 * to the <code>org.eclipse.ui.popupMenus</code> extension point. By default,
+	 * <code>false</code> is returned. If a subclasses overrides to return <code>true</code>,
+	 * the <code>id</code> of the participant is used as the <code>targetId</code>. Here is
+	 * an extension that could be added to the plugin manifets to contribute an action to
+	 * the context menu for a participant
+	 * 
+	 * <pre>
+	 *    &lt;extension point="org.eclipse.ui.popupMenus"&gt;          
+	 * 		&lt;viewerContribution
+	 *             id="org.eclipse.team.cvs.ui.viewContributionId"
+	 *             targetID="org.eclipse.team.cvs.ui.cvsworkspace-participant"&gt;
+	 * 			&lt;action
+	 *                label="Add"
+	 *                menubarPath="additions"
+	 *                tooltip="Add a file to CVS version control"
+	 *                class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"
+	 *                helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_add"
+	 *                id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriber.add"&gt;
+	 *          &lt;/action&gt;
+	 * 		&lt;/viewerContribution&gt;
+	 *   &lt;/extension&gt;
+	 * </pre>
+	 * 
+	 * 
+     * @return whether this participant supports the contribution of actions to
+	 * the context menu using the <code>org.eclipse.ui.popupMenus</code> extension point
+     * @since 3.1
+     */
+    protected boolean isViewerContributionsSupported() {
+        return false;
     }
 }

@@ -11,54 +11,23 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.internal.INavigatable;
-import org.eclipse.compare.structuremergeviewer.DiffNode;
-import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
+import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IOpenListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.OpenEvent;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DragSourceListener;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.events.MenuListener;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.core.Assert;
-import org.eclipse.team.internal.ui.IPreferenceIds;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.actions.StatusLineContributionGroup;
-import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
-import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
-import org.eclipse.ui.IActionBars;
+import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
@@ -475,7 +444,15 @@ public abstract class StructuredViewerAdvisor implements IAdaptable {
 	 * @see fillContextMenu(StructuredViewer, IMenuManager)
 	 */
 	private void hookContextMenu(final StructuredViewer viewer) {
-		final MenuManager menuMgr = new MenuManager(null); //$NON-NLS-1$
+		String targetID;
+		Object o = configuration.getProperty(ISynchronizePageConfiguration.P_OBJECT_CONTRIBUTION_ID);
+		if (o instanceof String) {
+			targetID = (String)o;
+		} else {
+			targetID = null;
+		}
+		final MenuManager menuMgr = new MenuManager(targetID); //$NON-NLS-1$
+		
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 	
@@ -508,6 +485,19 @@ public abstract class StructuredViewerAdvisor implements IAdaptable {
 			}
 		});
 		viewer.getControl().setMenu(menu);
+		if (targetID != null) {
+			IWorkbenchSite workbenchSite = configuration.getSite().getWorkbenchSite();
+			IWorkbenchPartSite ws = null;
+			if (workbenchSite instanceof IWorkbenchPartSite)
+				ws = (IWorkbenchPartSite)workbenchSite;
+//			if (ws == null) 
+//				ws = Utils.findSite();
+			if (ws != null) {
+				ws.registerContextMenu(targetID, menuMgr, viewer);
+			} else {
+				TeamUIPlugin.log(IStatus.ERROR, "Cannot add menu contributions because the site cannot be found: " + targetID, null); //$NON-NLS-1$
+			}
+		}
 	}
 	
 	/*

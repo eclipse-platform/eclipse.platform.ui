@@ -167,4 +167,11 @@ public class CVSParticipant extends SubscriberParticipant {
     protected CVSChangeSetCapability createChangeSetCapability() {
         return new CVSChangeSetCapability();
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#isViewerContributionsSupported()
+     */
+    protected boolean isViewerContributionsSupported() {
+        return true;
+    }
 }
