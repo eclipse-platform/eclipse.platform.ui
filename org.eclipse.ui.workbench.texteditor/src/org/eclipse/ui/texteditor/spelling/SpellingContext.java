@@ -32,7 +32,7 @@ public class SpellingContext {
 	/**
 	 * Sets the content type of the document.
 	 * 
-	 * @param contentType the content type of the document
+	 * @param contentType the content type of the document or <code>null</code> if unknown
 	 */
 	public void setContentType(IContentType contentType) {
 		fContentType= contentType;
@@ -41,7 +41,7 @@ public class SpellingContext {
 	/**
 	 * Returns the content type of the document.
 	 * 
-	 * @return the content type of the document
+	 * @return the content type of the document or <code>null</code> if unknown
 	 */
 	public IContentType getContentType() {
 		return fContentType;
