@@ -78,7 +78,7 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	 * @param target the target to examine
 	 * @return whether the given target is an internal target
 	 */
-	private boolean isInternal(TargetInfo target) {
+	public boolean isInternal(TargetInfo target) {
 		return !target.isDefault() && target.getDescription() == null;
 	}
 

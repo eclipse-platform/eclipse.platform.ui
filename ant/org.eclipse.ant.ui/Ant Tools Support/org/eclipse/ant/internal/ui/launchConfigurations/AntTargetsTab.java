@@ -162,7 +162,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			ListIterator iter= fOrderedTargets.listIterator();
 			while (iter.hasNext()) {
 				TargetInfo target= (TargetInfo) iter.next();
-				if (target.getDescription() == null) {
+				if (fTargetContentProvider.isInternal(target)) {
 					iter.remove();
 				}
 			}
