@@ -12,7 +12,7 @@
          <packages prefixes="org.eclipse.team.cvs.ssh2"/>
       </library>
       <library name="jsch-0.1.9.jar">
-         <packages prefixes="com.jcraft.jsch,com.jcraft.jsch.jce"/>
+         <packages prefixes="com.jcraft.jsch"/>
       </library>
    </runtime>
    <requires>
