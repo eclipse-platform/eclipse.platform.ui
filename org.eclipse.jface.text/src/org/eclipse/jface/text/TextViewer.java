@@ -29,6 +29,7 @@ import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
@@ -181,8 +182,14 @@ public class TextViewer extends Viewer implements
 			if (fDoubleClicked) {
 				fDoubleClicked= false;
 				ITextDoubleClickStrategy s= (ITextDoubleClickStrategy) selectContentTypePlugin(getSelectedRange().x, fDoubleClickStrategies);
-				if (s != null)
+				if (s != null) {
+					StyledText textWidget= getTextWidget();
+					Point oldSelection= textWidget.getSelection();
 					s.doubleClicked(TextViewer.this);
+					Point newSelection= textWidget.getSelection();
+					if (newSelection.y > 0 && !oldSelection.equals(newSelection))
+						textWidget.copy(DND.SELECTION_CLIPBOARD);
+				}
 			}
 		}
 	}
