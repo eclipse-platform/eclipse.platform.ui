@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.session;
 
-import org.eclipse.swt.SWT;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -24,10 +22,6 @@ public class SessionTests extends TestSuite {
 	 * 
 	 */
 	public SessionTests() {
-		// commented out until after the holidays to prevent the nightly builds
-		// from failing
-		if (SWT.getPlatform().equals("gtk"))
-			return;
 		addIntroTests();
 	}
 
