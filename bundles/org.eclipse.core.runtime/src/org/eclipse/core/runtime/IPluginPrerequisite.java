@@ -58,6 +58,7 @@ public boolean isExported();
  *
  * @return <code>true</code> if greater or equal match is allowed,
  *   <code>false</code> otherwise.
+ * @since 2.0
  */
 public boolean isMatchedAsGreaterOrEqual();
 /**
@@ -75,6 +76,7 @@ public boolean isMatchedAsCompatible();
  *
  * @return <code>true</code> if only equivalent identifier match
  * satisfies this dependency, <code>false</code> otherwise.
+ * @since 2.0
  */
 public boolean isMatchedAsEquivalent();
 /**
@@ -85,6 +87,7 @@ public boolean isMatchedAsEquivalent();
  * @return <code>true</code> if only perfectly equal
  * identifier match satisfies this dependency,
  * <code>false</code> otherwise.
+ * @since 2.0
  */
 public boolean isMatchedAsPerfect();
 /**

@@ -65,6 +65,7 @@ public boolean getMatch() {
  * PREREQ_MATCH_GREATER_OR_EQUAL	greater than or equal to match
  *
  * @return a byte code indicating the type of match this pre-requisite requires
+ * @since 2.0
  */
 public byte getMatchByte() {
 	return match;
@@ -133,6 +134,7 @@ public void setMatch(boolean value) {
  * This object must not be read-only.
  *
  * @param value whether or not this pre-requisite requires an exact match
+ * @since 2.0
  */
 public void setMatchByte(byte value) {
 	assertIsWriteable();

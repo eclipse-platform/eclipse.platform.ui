@@ -45,6 +45,7 @@ public PluginFragmentModel() {
  * FRAGMENT_MATCH_GREATER_OR_EQUAL		greater than or equal to match
  *
  * @return a byte code indicating the type of match this fragment requires
+ * @since 2.0
  */
 public byte getMatch() {
 	return pluginMatch;
@@ -89,6 +90,7 @@ public String getPluginVersion() {
  * This object must not be read-only.
  *
  * @param value the type of match required with the associated plugin
+ * @since 2.0
  */
 public void setMatch(byte value) {
 	assertIsWriteable();

@@ -174,6 +174,7 @@ public int getServiceComponent() {
  * @return <code>true</code> is this version identifier
  *    is compatible with the given version identifier, and
  *    <code>false</code> otherwise
+ * @since 2.0
  */
 public boolean isGreaterOrEqualTo(PluginVersionIdentifier id) {
 	if (id == null)
@@ -256,6 +257,7 @@ public boolean isEquivalentTo(PluginVersionIdentifier id) {
  * @return <code>true</code> is this version identifier
  *    is perfectly equal to the given version identifier, and
  *    <code>false</code> otherwise
+ * @since 2.0
  */
 public boolean isPerfect(PluginVersionIdentifier id) {
 	if (id == null)
