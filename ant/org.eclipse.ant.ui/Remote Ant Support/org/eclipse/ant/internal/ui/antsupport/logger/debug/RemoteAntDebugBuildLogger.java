@@ -46,11 +46,10 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	
 	private BufferedReader fRequestReader;
 	
-	protected boolean fStepIntoSuspend= false;
-	
-	protected boolean fClientSuspend= false;
-	
-	protected boolean fBuildStartedSuspend= false;
+	private boolean fStepIntoSuspend= false;
+	private boolean fClientSuspend= false;
+	private boolean fShouldSuspend= false;
+	private boolean fConsiderTargetBreakpoints= false;
 	
 	private Stack fTasks= new Stack();
 	private Task fCurrentTask;
@@ -73,7 +72,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	 * Request port to connect to.
 	 * Used for debug connections
 	 */
-	protected int fRequestPort= -1;
+	private int fRequestPort= -1;
 
 	/**
 	 * Reader thread that processes requests from the debug client.
@@ -99,6 +98,10 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 						} if (message.startsWith(DebugMessageIds.STEP_OVER)){
 							synchronized(RemoteAntDebugBuildLogger.this) {
 								fStepOverTask= fCurrentTask;
+								if (fCurrentTask == null) {
+									//stepping over target breakpoint
+									fShouldSuspend= true;
+								}
 								RemoteAntDebugBuildLogger.this.notifyAll();
 							}
 						} else if (message.startsWith(DebugMessageIds.SUSPEND)) {
@@ -201,7 +204,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		} else {
 			shutDown();
 		}
-		fBuildStartedSuspend= true;
+		fShouldSuspend= true;
 		waitIfSuspended();
 	}
     
@@ -219,6 +222,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		}
 		super.taskStarted(event);
 		fCurrentTask= event.getTask();
+		fConsiderTargetBreakpoints= false;
 		fTasks.push(fCurrentTask);
 		waitIfSuspended();
 	}
@@ -234,23 +238,25 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	}
 	
 	private synchronized void waitIfSuspended() {
-	    if (fCurrentTask != null) {
-	        String detail= null;
-	        boolean shouldSuspend= true;
-	        RemoteAntBreakpoint breakpoint= breakpointAtLineNumber(fCurrentTask.getLocation());
-	        if (breakpoint != null) {
-	            detail= breakpoint.toMarshallString();
-	            if (fStepOverTask != null) {
-	            	fStepOverTaskInterrupted= fStepOverTask;
-	            	fStepOverTask= null;
-	            }
-	        } else if (fStepIntoSuspend) {
+		String detail= null;
+		boolean shouldSuspend= true;
+		RemoteAntBreakpoint breakpoint= breakpointAtLineNumber(getBreakpointLocation());
+		if (breakpoint != null) {
+			detail= breakpoint.toMarshallString();
+			fShouldSuspend= false;
+			if (fStepOverTask != null) {
+				fStepOverTaskInterrupted= fStepOverTask;
+				fStepOverTask= null;
+			}
+		} else if (fCurrentTask != null) {
+	        if (fStepIntoSuspend) {
 	            detail= DebugMessageIds.STEP;
 	            fStepIntoSuspend= false;
-	        } else if (fLastTaskFinished != null && fLastTaskFinished == fStepOverTask) {
+	        } else if ((fLastTaskFinished != null && fLastTaskFinished == fStepOverTask) || fShouldSuspend) {
 	        	//suspend as a step over has finished
 	        	detail= DebugMessageIds.STEP;
 	        	fStepOverTask= null;
+				fShouldSuspend= false;
 	        } else if (fLastTaskFinished != null && fLastTaskFinished == fStepIntoTask) {
 	        	//suspend as a task that was stepped into has finally completed
 	        	 detail= DebugMessageIds.STEP;
@@ -265,26 +271,27 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	        } else {
 	            shouldSuspend= false;
 	        }
-	        if (shouldSuspend) {
-	            StringBuffer message= new StringBuffer(DebugMessageIds.SUSPENDED);
-	            message.append(detail);
-	            sendRequestResponse(message.toString());
-	            try {
-	                wait();
-	            } catch (InterruptedException e) {
-	            }
-	        }
-	    } else if (fBuildStartedSuspend) {
-	        try {
-	            fBuildStartedSuspend= false;
-	            wait();
-	        } catch (InterruptedException e) {
-	        }
+	    } else if (fShouldSuspend) {
+			fShouldSuspend= false;
+	    } else {
+			shouldSuspend= false;
 	    }
+		
+		if (shouldSuspend) {
+			if (detail != null) {
+				StringBuffer message= new StringBuffer(DebugMessageIds.SUSPENDED);
+				message.append(detail);
+				sendRequestResponse(message.toString());
+			}
+			 try {
+				 wait();
+			 } catch (InterruptedException e) {
+			 }
+		}
 	}
 
 	private RemoteAntBreakpoint breakpointAtLineNumber(Location location) {
-		if (fBreakpoints == null) {
+		if (fBreakpoints == null || location == null || location == Location.UNKNOWN_LOCATION) {
 			return null;
 		}
 		String fileName= AntDebugUtil.getFileName(location);
@@ -355,7 +362,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		if (fTargetToBuildSequence == null) {
 			initializeBuildSequenceInformation(event);
 		}
-		super.targetStarted(event);
+		
 		fTargetExecuting= event.getTarget();
 		if (event.getTarget().equals(fTargetToExecute)) {
 		    //the dependancies of the target to execute have been met
@@ -367,6 +374,12 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		        fTargetToExecute= null;
             }
 		}
+		fConsiderTargetBreakpoints= true;
+		if (!fSentProcessId) {
+			establishConnection();
+		}
+		waitIfSuspended();
+		super.targetStarted(event);
 	}
     
     public void configure(Map userProperties) {
@@ -376,4 +389,14 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
             fRequestPort= Integer.parseInt(requestPortProperty);
         }
     } 
+	
+	private Location getBreakpointLocation() {
+		if (fCurrentTask != null) {
+			return fCurrentTask.getLocation();
+		}
+		if (fConsiderTargetBreakpoints && fTargetExecuting != null) {
+			return AntDebugUtil.getLocation(fTargetExecuting);
+		}
+		return null;
+	}
 }

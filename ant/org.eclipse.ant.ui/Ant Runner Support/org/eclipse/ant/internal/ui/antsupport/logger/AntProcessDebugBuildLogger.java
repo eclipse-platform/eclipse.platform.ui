@@ -36,7 +36,6 @@ import org.eclipse.debug.core.model.IProcess;
 
 public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements IAntDebugController {
 	
-	private boolean fStepOverSuspend= false;
 	private boolean fStepIntoSuspend= false;
 	private boolean fClientSuspend= false;
 	private boolean fShouldSuspend= false;
@@ -55,6 +54,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
     private Map fTargetToBuildSequence= null;
     private Target fTargetToExecute= null;
     private Target fTargetExecuting= null;
+	private boolean fConsiderTargetBreakpoints= false;
 	
 	private AntDebugTarget fAntDebugTarget;
 	
@@ -94,30 +94,30 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
             fInitialProperties= event.getProject().getProperties();
         }
 		super.taskStarted(event);
+		fConsiderTargetBreakpoints= false;
 		fCurrentTask= event.getTask();
 		fTasks.push(fCurrentTask);
 		waitIfSuspended();
 	}
 	
 	private synchronized void waitIfSuspended() {
-	    if (fCurrentTask != null) {
-            int detail= -1;
+		IBreakpoint breakpoint= breakpointAtLineNumber(getBreakpointLocation());
+		if (breakpoint != null) {
+			 fAntDebugTarget.breakpointHit(breakpoint);
+			 try {
+				 wait();
+			 } catch (InterruptedException e) {
+			 }
+		} else if (fCurrentTask != null) {
+			int detail= -1;
 	        boolean shouldSuspend= true;
-	        IBreakpoint breakpoint= breakpointAtLineNumber(fCurrentTask.getLocation());
-	        if (breakpoint != null) {
-                detail= -2;
-	            fAntDebugTarget.breakpointHit(breakpoint);
-	        } else if (fStepIntoSuspend) {
+	        if (fStepIntoSuspend) {
 	            detail= DebugEvent.STEP_END;
 	            fStepIntoSuspend= false;               
-	        } else if (fStepOverSuspend) {
-	            if (fLastTaskFinished == fStepOverTask) {
-	                detail= DebugEvent.STEP_END;
-	                fStepOverSuspend= false;
-	                fStepOverTask= null;
-	            } else {
-	                shouldSuspend= false;
-	            }
+	        } else if ((fLastTaskFinished != null && fLastTaskFinished == fStepOverTask) || fShouldSuspend) {
+				detail= DebugEvent.STEP_END;
+				fShouldSuspend= false;
+				fStepOverTask= null;
 	        } else if (fClientSuspend) {
 	            detail= DebugEvent.CLIENT_REQUEST;
 	            fClientSuspend= false;
@@ -125,19 +125,11 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	            shouldSuspend= false;
 	        }
 	        if (shouldSuspend) {
-                if (detail != -2) { //not already notified of hitting breakpoint
-                    fAntDebugTarget.suspended(detail);
-                }
+                fAntDebugTarget.suspended(detail);
 	            try {
 	                wait();
 	            } catch (InterruptedException e) {
 	            }
-	        }
-	    } else if (fShouldSuspend) {
-	        try {
-	            fShouldSuspend= false;
-	            wait();
-	        } catch (InterruptedException e) {
 	        }
 	    }
 	}
@@ -168,8 +160,11 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#stepOver()
 	 */
 	public synchronized void stepOver() {
-		fStepOverSuspend= true;
 		fStepOverTask= fCurrentTask;
+		if (fCurrentTask == null) {
+			//stepping over target breakpoint
+			fShouldSuspend= true;
+		}
 		notifyAll();
 	}
 
@@ -216,7 +211,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	}
     
     private IBreakpoint breakpointAtLineNumber(Location location) {
-        if (fBreakpoints == null) {
+        if (fBreakpoints == null || location == null || location == Location.UNKNOWN_LOCATION) {
             return null;
         }
         int lineNumber= AntDebugUtil.getLineNumber(location);
@@ -250,7 +245,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
         if (fTargetToBuildSequence == null) {
         	initializeBuildSequenceInformation(event);
         }
-        super.targetStarted(event);
+       
         fTargetExecuting= event.getTarget();
         if (event.getTarget().equals(fTargetToExecute)) {
             //the dependancies of the target to execute have been met
@@ -262,5 +257,26 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
                 fTargetToExecute= null;
             }
         }
+		fConsiderTargetBreakpoints= true;
+		waitIfSuspended();
+		super.targetStarted(event);
     }
+	
+	/* (non-Javadoc)
+	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
+	 */
+	public void targetFinished(BuildEvent event) {
+		super.targetFinished(event);
+		fTargetExecuting= null;
+	}	
+	
+	private Location getBreakpointLocation() {
+		if (fCurrentTask != null) {
+			return fCurrentTask.getLocation();
+		}
+		if (fConsiderTargetBreakpoints && fTargetExecuting != null) {
+			return AntDebugUtil.getLocation(fTargetExecuting);
+		}
+		return null;
+	}
 }

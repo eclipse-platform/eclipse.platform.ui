@@ -101,10 +101,14 @@ public final class AntDebugUtil {
         stackRepresentation.append(DebugMessageIds.STACK);
         stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
         
-        for (int i = tasks.size() - 1; i >= 0 ; i--) {
-            Task task= (Task) tasks.get(i);
-            appendToStack(stackRepresentation, task.getOwningTarget().getName(), task.getTaskName(), task.getLocation());
-        }   
+		if (tasks.isEmpty()) {
+			appendToStack(stackRepresentation, targetExecuting.getName(), "", getLocation(targetExecuting)); //$NON-NLS-1$
+		} else {
+			for (int i = tasks.size() - 1; i >= 0 ; i--) {
+				Task task= (Task) tasks.get(i);
+				appendToStack(stackRepresentation, task.getOwningTarget().getName(), task.getTaskName(), task.getLocation());
+			}
+		}
         //target dependancy stack 
          if (targetToExecute != null) {
          	Vector buildSequence= (Vector) targetToBuildSequence.get(targetToExecute);
