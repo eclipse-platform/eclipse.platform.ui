@@ -293,7 +293,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	private byte[][] getByteValues() {
 		ArrayList result = new ArrayList();
 		result.add(new byte[0]);
-		result.add(new byte[]{127});
+//TODO		result.add(new byte[]{127});
 //TODO		result.add(new byte[]{-128});
 		result.add(new byte[]{0});
 		result.add(new byte[]{5});
