@@ -58,8 +58,6 @@ public void createControl(Composite parent) {
 	GridData data = (GridData)composite.getLayoutData();
 	this.setFileName("sample" + nameCounter + ".readme"); //$NON-NLS-1$ //$NON-NLS-2$
 
-	new Label(composite,SWT.NONE);	// vertical spacer
-
 	// sample section generation group
 	Group group = new Group(composite,SWT.NONE);
 	group.setLayout(new GridLayout());
@@ -76,8 +74,6 @@ public void createControl(Composite parent) {
 	subsectionCheckbox.setText(MessageUtil.getString("Generate_sample_subsection_titles")); //$NON-NLS-1$
 	subsectionCheckbox.setSelection(true);
 	subsectionCheckbox.addListener(SWT.Selection,this);
-
-	new Label(composite,SWT.NONE);	// vertical spacer
 
 	// open file for editing checkbox
 	openFileCheckbox = new Button(composite,SWT.CHECK);
