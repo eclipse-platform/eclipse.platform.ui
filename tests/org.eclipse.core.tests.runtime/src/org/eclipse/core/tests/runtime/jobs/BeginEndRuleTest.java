@@ -260,7 +260,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			//check that the final status of all jobs is correct		
 			assertEquals("9." + i, StatusChecker.STATUS_DONE, status[i]);
 			assertEquals("10." + i, Job.NONE, jobs[i].getState());
-			assertEquals("11." + i, Status.OK, jobs[i].getResult().getSeverity());
+			assertEquals("11." + i, IStatus.OK, jobs[i].getResult().getSeverity());
 		}
 	}
 
@@ -364,8 +364,8 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		assertEquals("6.2", StatusChecker.STATUS_DONE, status[1]);
 		assertEquals("6.3", Job.NONE, jobs[0].getState());
 		assertEquals("6.4", Job.NONE, jobs[1].getState());
-		assertEquals("6.5", Status.OK, jobs[0].getResult().getSeverity());
-		assertEquals("6.6", Status.OK, jobs[1].getResult().getSeverity());
+		assertEquals("6.5", IStatus.OK, jobs[0].getResult().getSeverity());
+		assertEquals("6.6", IStatus.OK, jobs[1].getResult().getSeverity());
 		
 		RuleSetA.conflict = false;
 	}
@@ -693,22 +693,5 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		}
 	}
 	
-	/**
-	 * A job has been scheduled.  Pause this thread so that a worker thread
-	 * has a chance to pick up the new job.
-	 */
-	private void waitForStart(Job job) {
-		int i = 0;
-		while (job.getState() != Job.RUNNING) {
-			try {
-				//Thread.yield();
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
 
-			}
-
-			//sanity test to avoid hanging tests
-			assertTrue("Timeout waiting for job to start", i++ < 100);
-		}
-	}
 }
