@@ -17,13 +17,10 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException;
-import org.eclipse.team.internal.ccvs.core.streams.PollingInputStream;
-import org.eclipse.team.internal.ccvs.core.streams.PollingOutputStream;
-import org.eclipse.team.internal.ccvs.core.streams.TimeoutOutputStream;
+import org.eclipse.team.internal.core.streams.PollingInputStream;
+import org.eclipse.team.internal.core.streams.PollingOutputStream;
+import org.eclipse.team.internal.core.streams.TimeoutOutputStream;
 
 public class Client {
 	// client identification string

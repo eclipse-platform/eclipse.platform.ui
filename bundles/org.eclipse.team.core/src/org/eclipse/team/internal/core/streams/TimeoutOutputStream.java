@@ -8,14 +8,14 @@
  * Contributors:
  * IBM - Initial API and implementation
  ******************************************************************************/
-package org.eclipse.team.internal.ccvs.core.streams;
+package org.eclipse.team.internal.core.streams;
 
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
 
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.core.Policy;
 
 /**
  * Wraps an output stream that blocks indefinitely to simulate timeouts on write(),

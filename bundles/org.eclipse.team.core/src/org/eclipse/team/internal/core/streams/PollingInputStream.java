@@ -8,7 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  ******************************************************************************/
-package org.eclipse.team.internal.ccvs.core.streams;
+package org.eclipse.team.internal.core.streams;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -16,10 +16,11 @@ import java.io.InputStream;
 import java.io.InterruptedIOException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.team.internal.core.Policy;
+import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
  * Polls a progress monitor periodically and handles timeouts over extended durations.
@@ -65,7 +66,7 @@ public class PollingInputStream extends FilterInputStream {
 		} catch (IOException e) {
 			// We shouldn't get an exception when we're getting the available input.
 			// If we do, just log it so we can close.
-			CVSProviderPlugin.log(CVSException.wrapException(e).getStatus());
+			TeamPlugin.log(new Status(IStatus.ERROR, TeamPlugin.ID, 0, e.getMessage(), e));
 		} finally {
 			for (;;) {
 				try {

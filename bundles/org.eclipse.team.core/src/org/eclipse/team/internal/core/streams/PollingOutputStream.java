@@ -8,7 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  ******************************************************************************/
-package org.eclipse.team.internal.ccvs.core.streams;
+package org.eclipse.team.internal.core.streams;
 
 import java.io.FilterOutputStream;
 import java.io.IOException;
@@ -17,7 +17,7 @@ import java.io.OutputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.core.Policy;
 
 /**
  * Polls a progress monitor periodically and handles timeouts over extended durations.

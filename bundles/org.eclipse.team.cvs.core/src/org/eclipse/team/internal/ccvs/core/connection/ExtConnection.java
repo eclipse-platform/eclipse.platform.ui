@@ -5,7 +5,6 @@ package org.eclipse.team.internal.ccvs.core.connection;
  * All Rights Reserved.
  */
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,7 +14,10 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.IServerConnection;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.streams.*;
+import org.eclipse.team.internal.core.streams.PollingInputStream;
+import org.eclipse.team.internal.core.streams.PollingOutputStream;
+import org.eclipse.team.internal.core.streams.TimeoutInputStream;
+import org.eclipse.team.internal.core.streams.TimeoutOutputStream;
 
 /**
  * Implements a connection method which invokes an external tool to 

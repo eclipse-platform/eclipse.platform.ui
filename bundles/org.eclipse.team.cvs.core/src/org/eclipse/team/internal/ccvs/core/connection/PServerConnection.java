@@ -6,7 +6,6 @@ package org.eclipse.team.internal.ccvs.core.connection;
  */
  
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
@@ -17,7 +16,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.IServerConnection;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.streams.*;
+import org.eclipse.team.internal.core.streams.PollingInputStream;
+import org.eclipse.team.internal.core.streams.PollingOutputStream;
+import org.eclipse.team.internal.core.streams.TimeoutOutputStream;
 
 /**
  * A connection used to talk to an cvs pserver.

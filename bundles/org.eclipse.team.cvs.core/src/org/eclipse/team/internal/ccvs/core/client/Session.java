@@ -48,15 +48,15 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.streams.CRLFtoLFInputStream;
-import org.eclipse.team.internal.ccvs.core.streams.LFtoCRLFInputStream;
-import org.eclipse.team.internal.ccvs.core.streams.ProgressMonitorInputStream;
-import org.eclipse.team.internal.ccvs.core.streams.SizeConstrainedInputStream;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.Util;
+import org.eclipse.team.internal.core.streams.CRLFtoLFInputStream;
+import org.eclipse.team.internal.core.streams.LFtoCRLFInputStream;
+import org.eclipse.team.internal.core.streams.ProgressMonitorInputStream;
+import org.eclipse.team.internal.core.streams.SizeConstrainedInputStream;
 
 /**
  * Maintains CVS communication state for the lifetime of a connection

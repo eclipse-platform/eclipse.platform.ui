@@ -8,7 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  ******************************************************************************/
-package org.eclipse.team.internal.ccvs.core.streams;
+package org.eclipse.team.internal.core.streams;
 
 import java.io.FilterInputStream;
 import java.io.IOException;

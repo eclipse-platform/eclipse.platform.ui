@@ -8,7 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  ******************************************************************************/
-package org.eclipse.team.internal.ccvs.core.streams;
+package org.eclipse.team.internal.core.streams;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -16,50 +16,46 @@ import java.io.InputStream;
 import java.io.InterruptedIOException;
 
 /**
- * Converts CR/LFs in the underlying input stream to LF.
+ * Converts LFs in the underlying input stream to CR/LF.
  * 
  * Supports resuming partially completed operations after an InterruptedIOException
  * if the underlying stream does.  Check the bytesTransferred field to determine how
  * much of the operation completed; conversely, at what point to resume.
  */
-public class CRLFtoLFInputStream extends FilterInputStream {
-	private boolean pendingByte = false;
-	private int lastByte = -1;
+public class LFtoCRLFInputStream extends FilterInputStream {
+	private boolean mustReturnLF = false;
 	
 	/**
 	 * Creates a new filtered input stream.
 	 * @param in the underlying input stream
 	 */
-	public CRLFtoLFInputStream(InputStream in) {
+	public LFtoCRLFInputStream(InputStream in) {
 		super(in);
 	}
 
 	/**
 	 * Wraps the underlying stream's method.
-	 * Translates CR/LF sequences to LFs transparently.
+	 * Translates LFs to CR/LF sequences transparently.
 	 * @throws InterruptedIOException if the operation was interrupted before all of the
 	 *         bytes specified have been skipped, bytesTransferred will be zero
 	 * @throws IOException if an i/o error occurs
 	 */
 	public int read() throws IOException {
-		if (! pendingByte) {
-			lastByte = in.read(); // ok if this throws
-			pendingByte = true; // remember the byte in case we throw an exception later on
+		if (mustReturnLF) {
+			mustReturnLF = false;
+			return '\n';
 		}
-		if (lastByte == '\r') {
-			lastByte = in.read(); // ok if this throws
-			if (lastByte != '\n') {
-				if (lastByte == -1) pendingByte = false;
-				return '\r'; // leaves the byte pending for later
-			}
+		int b = in.read(); // ok if this throws
+		if (b == '\n') {
+			mustReturnLF = true;
+			b = '\r';
 		}
-		pendingByte = false;
-		return lastByte;
+		return b;
 	}
-	
+
 	/**
 	 * Wraps the underlying stream's method.
-	 * Translates CR/LF sequences to LFs transparently.
+	 * Translates LFs to CR/LF sequences transparently.
 	 * @throws InterruptedIOException if the operation was interrupted before all of the
 	 *         bytes specified have been skipped, bytesTransferred may be non-zero
 	 * @throws IOException if an i/o error occurs
@@ -74,17 +70,22 @@ public class CRLFtoLFInputStream extends FilterInputStream {
 			buffer[off] = (byte) b;
 			return 1;
 		}
-		// read some bytes from the stream
-		// prefix with pending byte from last read if any
+		// prefix with remembered \n from last read, but don't expand it a second time
 		int count = 0;
-		if (pendingByte) {
-			buffer[off] = (byte) lastByte;
-			pendingByte = false;
+		if (mustReturnLF) {
+			mustReturnLF = false;
+			buffer[off++] = '\n';
+			--len;
 			count = 1;
+			if (len < 2) return count; // is there still enough room to expand more?
 		}
+		// read some bytes from the stream into the back half of the buffer
+		// this guarantees that there is always room to expand
+		len /= 2;
+		int j = off + len;
 		InterruptedIOException iioe = null;
 		try {
-			len = in.read(buffer, off + count, len - count);
+			len = in.read(buffer, j, len);
 			if (len == -1) {
 				return (count == 0) ? -1 : count;
 			}
@@ -93,30 +94,20 @@ public class CRLFtoLFInputStream extends FilterInputStream {
 			iioe = e;
 		}
 		count += len;
-		// strip out CR's in CR/LF pairs
-		// pendingByte will be true iff previous byte was a CR
-		int j = off;
-		for (int i = off; i < off + count; ++i) { // invariant: j <= i
-			lastByte = buffer[i];
-			if (lastByte == '\r') {
-				if (pendingByte) {
-					buffer[j++] = '\r'; // write out orphan CR
-				} else {
-					pendingByte = true;
-				}
-			} else {
-				if (pendingByte) {
-					if (lastByte != '\n') buffer[j++] = '\r'; // if LF, don't write the CR
-					pendingByte = false;
-				}
-				buffer[j++] = (byte) lastByte;
+		// copy bytes from the middle to the front of the array, expanding LF->CR/LF
+		while (len-- > 0) {
+			byte b = buffer[j++];
+			if (b == '\n') {
+				buffer[off++] = '\r';
+				count++;
 			}
-		}
-		if (iioe != null) {
-			iioe.bytesTransferred = j - off;
-			throw iioe;
-		}
-		return j - off;
+			buffer[off++] = b;
+ 		}
+ 		if (iioe != null) {
+ 			iioe.bytesTransferred = count;
+ 			throw iioe;
+ 		}
+		return count;
 	}
 
 	/**
@@ -139,11 +130,11 @@ public class CRLFtoLFInputStream extends FilterInputStream {
 	/**
 	 * Wraps the underlying stream's method.
 	 * Returns the number of bytes that can be read without blocking; accounts for
-	 * possible translation of CR/LF sequences to LFs in these bytes.
+	 * possible translation of LFs to CR/LF sequences in these bytes.
 	 * @throws IOException if an i/o error occurs
 	 */
 	public int available() throws IOException {
-		return in.available() / 2; // we can guarantee at least this amount after contraction
+		return in.available(); // we can guarantee at least this amount after expansion
 	}
 	
 	/**
