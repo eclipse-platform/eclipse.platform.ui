@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- File written by PDE 1.0 -->
 <plugin
-   id="org.eclipse.team.ui"
-   name="%pluginName"
-   version="2.0.0"
-   provider-name="Object Technology International, Inc."
-   class="org.eclipse.team.internal.ui.TeamUIPlugin">
+	id="org.eclipse.team.ui"
+	name="%pluginName"
+	version="2.0.0"
+	provider-name="%providerName"
+	class="org.eclipse.team.internal.ui.TeamUIPlugin">
+
 <requires>
    <import plugin="org.eclipse.core.resources"/>
    <import plugin="org.eclipse.team.core"/>
