@@ -29,8 +29,6 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
  */
 public class PreferencePageRegistryReader extends CategorizedPageRegistryReader {
 
-	private static final String ATT_CLASS = "class"; //$NON-NLS-1$
-
 	private static final String ATT_NAME = "name"; //$NON-NLS-1$
 
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
@@ -179,20 +177,21 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	 * @return WorkbenchPreferenceNode
 	 */
 	public static WorkbenchPreferenceNode createNode(IConfigurationElement element) {
-		String name = element.getAttribute(ATT_NAME);
-		String id = element.getAttribute(ATT_ID);
-		String className = element.getAttribute(ATT_CLASS);
+		boolean nameMissing = element.getAttribute(ATT_NAME) == null;
+		String id = element.getAttribute(ATT_ID);		
+		boolean classMissing = getClassValue(element, ATT_CLASS) == null;
 
-		if (name == null) {
+		if (nameMissing) {
 			logMissingAttribute(element, ATT_NAME);
 		}
 		if (id == null) {
 			logMissingAttribute(element, ATT_ID);
 		}
-		if (className == null) {
+		if (classMissing) {
 			logMissingAttribute(element, ATT_CLASS);
 		}
-		if (name == null || id == null || className == null) {
+		
+		if (nameMissing || id == null || classMissing) {
 			return null;
 		} 
 

@@ -41,11 +41,6 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
      */
     public static final String ATT_FILTER_VALUE = "value";//$NON-NLS-1$
 
-    /**
-     * Value "<code>class</code>".
-     */
-    public static final String ATT_CLASS = "class";//$NON-NLS-1$
-
     private static final String TAG_PAGE = "page";//$NON-NLS-1$
 
     /**
@@ -130,7 +125,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
      */
     private void processPageElement(IConfigurationElement element) {
     	String pageId = element.getAttribute(ATT_ID);
-        String pageClassName = element.getAttribute(ATT_CLASS);
+        String pageClassName = getClassValue(element, ATT_CLASS);
         String objectClassName = element.getAttribute(ATT_OBJECTCLASS); 
 
         if (pageId == null) {

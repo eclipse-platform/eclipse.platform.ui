@@ -35,6 +35,15 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * done by default.
  */
 public abstract class RegistryReader {
+	
+	/**
+	 * Class attribute.  Value <code>class</code>.
+	 */
+	public static final String ATT_CLASS = "class"; //$NON-NLS-1$
+	
+	/**
+	 * Description element.  Value <code>description</code>.
+	 */
     public static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 
     // for dynamic UI - remove this cache to avoid inconsistency
@@ -84,9 +93,11 @@ public abstract class RegistryReader {
     }
 
     /**
-     *	Apply a reproducable order to the list of extensions
+     * Apply a reproducable order to the list of extensions
      * provided, such that the order will not change as
      * extensions are added or removed.
+     * @param extensions the extensions to order
+     * @return ordered extensions
      */
     public static IExtension[] orderExtensions(IExtension[] extensions) {
         // By default, the order is based on plugin id sorted
@@ -150,6 +161,10 @@ public abstract class RegistryReader {
     /**
      *	Start the registry reading process using the
      * supplied plugin ID and extension point.
+     * 
+     * @param registry the registry to read from
+     * @param pluginId the plugin id of the extenion point
+     * @param extensionPoint the extension point id
      */
     public void readRegistry(IExtensionRegistry registry, String pluginId,
             String extensionPoint) {
@@ -176,5 +191,28 @@ public abstract class RegistryReader {
 	        return children[0].getValue();
 	    }
 	    return "";//$NON-NLS-1$
+    }
+    
+    /**
+	 * Utility for extracting the value of a class attribute or a nested class
+	 * element that follows the pattern set forth by
+	 * {@link org.eclipse.core.runtime.IExecutableExtension}.
+	 * 
+	 * @param configElement
+	 *            the element
+	 * @param classAttributeName
+	 *            the name of the class attribute to check
+	 * @return the value of the attribute or nested class element
+	 * @since 3.1
+	 */
+    public static String getClassValue(IConfigurationElement configElement, String classAttributeName) {
+    	String className = configElement.getAttribute(classAttributeName);
+    	if (className != null) 
+    		return className;
+		IConfigurationElement [] candidateChildren = configElement.getChildren(classAttributeName);
+		if (candidateChildren.length == 0) 
+			return null;
+	
+		return candidateChildren[0].getAttribute(ATT_CLASS);
     }
 }

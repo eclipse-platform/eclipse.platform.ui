@@ -78,14 +78,9 @@ public class WizardsRegistryReader extends RegistryReader {
 
     public final static String ATT_NAME = "name";//$NON-NLS-1$
 
-    // @issue we should have an IExtensionConstants class with all these attribute names, element names, attribute values (like true, false, etc).
-    public final static String ATT_CLASS = "class";//$NON-NLS-1$
-
     public final static String ATT_ICON = "icon";//$NON-NLS-1$
 
     public final static String ATT_ID = "id";//$NON-NLS-1$
-
-    public final static String trueString = "TRUE";//$NON-NLS-1$
 
     
     private class CategoryNode {
@@ -536,7 +531,7 @@ public class WizardsRegistryReader extends RegistryReader {
             return null;
         }
         
-        if (element.getAttribute(ATT_CLASS) == null && element.getChildren(ATT_CLASS).length == 0) {       
+        if (getClassValue(element, ATT_CLASS) == null) {       
             logMissingAttribute(element, ATT_CLASS);
             return null;
         }

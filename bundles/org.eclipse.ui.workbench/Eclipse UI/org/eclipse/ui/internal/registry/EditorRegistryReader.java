@@ -82,7 +82,7 @@ public class EditorRegistryReader extends RegistryReader {
 
         // Get editor icon (required field for internal editors)
         if (element.getAttribute(EditorDescriptor.ATT_ICON) == null) {
-            if (element.getAttribute(EditorDescriptor.ATT_CLASS) != null) {
+            if (getClassValue(element, EditorDescriptor.ATT_CLASS) != null) {
                 logMissingAttribute(element, EditorDescriptor.ATT_ICON);
                 return true;
             }
