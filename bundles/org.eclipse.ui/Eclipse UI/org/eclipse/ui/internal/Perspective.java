@@ -510,6 +510,7 @@ private void loadPredefinedPersp(
 
 	// Create action sets.
 	createInitialActionSets(layout.getActionSets());
+	alwaysOnActionSets.addAll(visibleActionSets);
 	newWizardActions = layout.getNewWizardActions();
 	showViewActions = layout.getShowViewActions();
 	perspectiveActions = layout.getPerspectiveActions();
