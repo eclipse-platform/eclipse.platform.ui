@@ -47,7 +47,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.ViewerSorter;
 
-import org.eclipse.ui.internal.ide.dialogs.IElementFilter;
 
 /**
  * Workbench-level composite that combines a CheckboxTreeViewer and
@@ -55,6 +54,25 @@ import org.eclipse.ui.internal.ide.dialogs.IElementFilter;
  * within this object
  */
 class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedListener, ITreeViewerListener {
+	
+	
+	/**
+	 * The IElementFilter is a interface that defines 
+	 * the API for filtering the current selection of 
+	 * a ResourceTreeAndListGroup in order to find a 
+	 * subset to update as the result of a type filtering.
+	 * This is meant as an internal class and is used exclusively
+	 * by the import dialog.
+	 */
+	static interface IElementFilter {
+
+		void filterElements(Collection elements, IProgressMonitor monitor)
+	            throws InterruptedException;
+
+	    void filterElements(Object[] elements, IProgressMonitor monitor)
+	            throws InterruptedException;
+	}
+	
 	
 	private Object root;
 
