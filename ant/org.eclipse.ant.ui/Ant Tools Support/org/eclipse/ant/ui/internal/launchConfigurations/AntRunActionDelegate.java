@@ -11,6 +11,8 @@
 package org.eclipse.ant.ui.internal.launchConfigurations;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -46,8 +48,14 @@ public class AntRunActionDelegate extends ActionDelegate implements IObjectActio
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 			if (structuredSelection.size() == 1) {
 				Object selectedResource = structuredSelection.getFirstElement();
-				if (selectedResource instanceof IFile)
+				if (selectedResource instanceof IFile) {
 					selectedFile = (IFile) selectedResource;
+				} else if (selectedResource instanceof IAdaptable) {
+					selectedResource= ((IAdaptable) selectedResource).getAdapter(IResource.class);
+					if (selectedResource instanceof IFile) {
+						selectedFile= (IFile) selectedResource;
+					}
+				}
 			}
 		}
 	}
