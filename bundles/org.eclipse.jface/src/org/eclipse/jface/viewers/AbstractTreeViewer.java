@@ -128,6 +128,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * XXX: temporary API in support of Dirk's explorations
      * into grouping by working sets, which requires viewers
      * to support multiple equal elements.
+     *
+     * @since 3.1
      */
     protected void internalAdd(Widget widget, Object parentElement, Object[] childElements) {
 		Control tree = getControl();
@@ -615,7 +617,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 * @param index the index of the widget
 	 * @return Item or <code>null</code> if widget is not a type
 	 * that can contain items.
+     *
 	 * @throws ArrayIndexOutOfBoundsException if the index is not valid.
+     * @since 3.1
 	 */
     protected Item getChild (Widget widget, int index) {
 		return getChildren(widget)[index];
