@@ -230,9 +230,7 @@ public abstract class CoreFileSystemLibrary {
 
 	public static void setResourceAttributes(String fileName, ResourceAttributes attributes) throws CoreException {
 		if (!hasNatives) {
-			// inlined (no native) implementation
-			if (attributes.isReadOnly())
-				new File(fileName).setReadOnly();
+			//do nothing if there are no natives
 			return;
 		}
 		if (isUnicode ? internalSetResourceAttributesW(fileName.toCharArray(), attributes) : internalSetResourceAttributes(Convert.toPlatformBytes(fileName), attributes))
