@@ -13,8 +13,6 @@ package org.eclipse.update.internal.operations;
 import java.lang.reflect.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.operations.*;
 
@@ -66,17 +64,6 @@ public class BatchInstallOperation
 				if (operations[i].getOperationListener() != null)
 					operations[i].getOperationListener().afterExecute(operations[i]);
 
-				IFeature oldFeature = operations[i].getOldFeature();
-				if (oldFeature != null
-					//&& !operations[i].isOptionalDelta()
-					&& operations[i].getOptionalElements() != null) {
-					preserveOptionalState(
-					operations[i].getInstallConfiguration(),
-					operations[i].getTargetSite(),
-						UpdateManager.isPatch(operations[i].getFeature()),
-						operations[i].getOptionalElements());
-				}
-
 				//monitor.worked(1);
 				UpdateManager.saveLocalSite();
 				installCount++;
@@ -90,29 +77,6 @@ public class BatchInstallOperation
 			throw new InvocationTargetException(e);
 		} finally {
 			monitor.done();
-		}
-	}
-
-	private void preserveOptionalState(
-		IInstallConfiguration config,
-		IConfiguredSite targetSite,
-		boolean patch,
-		FeatureHierarchyElement2[] optionalElements) {
-		for (int i = 0; i < optionalElements.length; i++) {
-			FeatureHierarchyElement2[] children =
-				optionalElements[i].getChildren(true, patch, config);
-			preserveOptionalState(config, targetSite, patch, children);
-			if (!optionalElements[i].isEnabled(config)) {
-				IFeature newFeature = optionalElements[i].getFeature();
-				try {
-					IFeature localFeature =
-						UpdateManager.getLocalFeature(targetSite, newFeature);
-					if (localFeature != null)
-						targetSite.unconfigure(localFeature);
-				} catch (CoreException e) {
-					// Ignore this - we will leave with it
-				}
-			}
 		}
 	}
 }

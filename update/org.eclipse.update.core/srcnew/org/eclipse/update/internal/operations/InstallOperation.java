@@ -74,8 +74,38 @@ public class InstallOperation extends SingleOperation implements IInstallOperati
 		if (oldFeature == null) {
 			ensureUnique();
 		}
+
+		if (oldFeature != null
+			//&& !operations[i].isOptionalDelta()
+			&& optionalElements != null) {
+			preserveOptionalState(config, targetSite,
+				UpdateManager.isPatch(feature),
+				optionalElements);
+		}
 		
 		return true;
 	}
 
+	private void preserveOptionalState(
+		IInstallConfiguration config,
+		IConfiguredSite targetSite,
+		boolean patch,
+		FeatureHierarchyElement2[] optionalElements) {
+		for (int i = 0; i < optionalElements.length; i++) {
+			FeatureHierarchyElement2[] children =
+				optionalElements[i].getChildren(true, patch, config);
+			preserveOptionalState(config, targetSite, patch, children);
+			if (!optionalElements[i].isEnabled(config)) {
+				IFeature newFeature = optionalElements[i].getFeature();
+				try {
+					IFeature localFeature =
+						UpdateManager.getLocalFeature(targetSite, newFeature);
+					if (localFeature != null)
+						targetSite.unconfigure(localFeature);
+				} catch (CoreException e) {
+					// Ignore this - we will leave with it
+				}
+			}
+		}
+	}
 }
