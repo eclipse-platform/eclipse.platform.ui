@@ -8,12 +8,11 @@ package org.eclipse.team.internal.ccvs.ui;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -24,12 +23,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.model.WorkbenchAdapter;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -196,7 +194,11 @@ public class ReleaseCommentDialog extends Dialog {
 	protected void okPressed() {
 		comment = text.getText();
 		if (hasUnaddedResources()) {
-			resourcesToAdd = getSelectedResources();
+			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+				public void run() {
+					resourcesToAdd = getSelectedResources();
+				}
+			});
 		} else {
 			resourcesToAdd = new IResource[0];
 		}
