@@ -61,7 +61,7 @@ public interface IPersistableSourceLocator extends ISourceLocator {
 	 * @param memento a memento to initialize this source locator
 	 * @exception CoreException on failure to initialize 
 	 */
-	public void initiatlizeFromMemento(String memento) throws CoreException;
+	public void initializeFromMemento(String memento) throws CoreException;
 	
 	/**
 	 * Initializes this source locator to perform default

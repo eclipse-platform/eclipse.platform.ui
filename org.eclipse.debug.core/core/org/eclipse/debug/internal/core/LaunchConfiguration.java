@@ -164,7 +164,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				if (memento == null) {
 					locator.initializeDefaults(this);
 				} else {
-					locator.initiatlizeFromMemento(memento);
+					locator.initializeFromMemento(memento);
 				}
 				launch.setSourceLocator(locator);
 			}
