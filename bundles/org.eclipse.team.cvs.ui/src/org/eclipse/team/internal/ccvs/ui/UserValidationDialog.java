@@ -17,9 +17,12 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -35,6 +38,7 @@ public class UserValidationDialog extends Dialog {
 	protected String defaultUsername;
 	protected String password = null;
 	protected boolean allowCaching = false;
+	protected Image keyLockImage;
 	
 	// whether or not the username can be changed
 	protected boolean isUsernameMutable = true;
@@ -106,7 +110,8 @@ public class UserValidationDialog extends Dialog {
 		main.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Label imageLabel = new Label(imageComposite, SWT.NONE);
-		imageLabel.setImage(getImage(DLG_IMG_INFO));
+		keyLockImage = TeamImages.getImageDescriptor(ISharedImages.IMG_KEY_LOCK).createImage();
+		imageLabel.setImage(keyLockImage);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		imageLabel.setLayoutData(data);
 		
@@ -267,5 +272,15 @@ public class UserValidationDialog extends Dialog {
 	
 	public void setShowAllowCachingButton(boolean value) {
 		showAllowCachingButton = value;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#close()
+	 */
+	public boolean close() {
+		if(keyLockImage != null) {
+			keyLockImage.dispose();
+		}
+		return super.close();
 	}
 }

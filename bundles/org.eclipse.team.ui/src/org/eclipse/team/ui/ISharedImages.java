@@ -74,6 +74,7 @@ public interface ISharedImages {
 	 public final String IMG_WIZBAN_SHARE = "wizban/share_wizban.gif"; //$NON-NLS-1$
 	 public final String IMG_PROJECTSET_IMPORT_BANNER = "wizban/import_projectset_wizban.gif"; //$NON-NLS-1$
 	 public final String IMG_PROJECTSET_EXPORT_BANNER = "wizban/export_projectset_wizban.gif"; //$NON-NLS-1$
+	 public final String IMG_KEY_LOCK = "wizban/keylock.gif"; //$NON-NLS-1$
 	
 	 //objects
 	 public final String IMG_SITE_ELEMENT = "elcl16/site_element.gif"; //$NON-NLS-1$
