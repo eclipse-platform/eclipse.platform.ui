@@ -15,7 +15,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownServiceException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -29,9 +32,20 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private URL configLocation;
 	private HashMap sites;
 	private HashMap nativeSites;
+	private long lastChangeStamp;
+	private long changeStamp;
+	private boolean changeStampIsValid = false;
+	private long lastFeaturesChangeStamp;
+	private long featuresChangeStamp;
+	private boolean featuresChangeStampIsValid = false;
+	private long lastPluginsChangeStamp;
+	private long pluginsChangeStamp;
+	private boolean pluginsChangeStampIsValid = false;
+	private boolean featureChangesConfigured = false;
 
 	public static boolean DEBUG = true;
 
+	private static final String ECLIPSEDIR = "eclipse";
 	private static final String PLUGINS = "plugins";
 	private static final String INSTALL = "install";
 	private static final String CONFIG_FILE = "platform.cfg";
@@ -44,9 +58,12 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String CFG_SITE = "site";
 	private static final String CFG_URL = "url";
 	private static final String CFG_POLICY = "policy";
-	private static final String[] CFG_POLICY_TYPE = {"USER-INCLUDE", "USER-EXCLUDE", "SITE-INCLUDE"};
+	private static final String[] CFG_POLICY_TYPE = {"USER-INCLUDE", "USER-EXCLUDE"};
 	private static final String CFG_POLICY_TYPE_UNKNOWN = "UNKNOWN";
 	private static final String CFG_LIST = "list";
+	private static final String CFG_STAMP = "stamp";
+	private static final String CFG_FEATURE_STAMP = "stamp.features";
+	private static final String CFG_PLUGIN_STAMP = "stamp.plugins";
 	private static final String CFG_VERSION = "version";
 	private static final String VERSION = "1.0";
 	private static final String EOF = "eof";
@@ -61,18 +78,32 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		private ISitePolicy policy;
 		private ArrayList features;
 		private ArrayList plugins;
+		private PlatformConfiguration parent;
+		private long lastChangeStamp;
+		private long changeStamp;
+		private boolean changeStampIsValid = false;
+		private long lastFeaturesChangeStamp;
+		private long featuresChangeStamp;
+		private boolean featuresChangeStampIsValid = false;
+		private long lastPluginsChangeStamp;
+		private long pluginsChangeStamp;
+		private boolean pluginsChangeStampIsValid = false;
 
 		private SiteEntry() {
 		}
-		private SiteEntry(URL url, ISitePolicy policy) {
+		private SiteEntry(URL url, ISitePolicy policy, PlatformConfiguration parent) {
 			if (url==null)
 				throw new IllegalArgumentException();
 				
 			if (policy==null)
 				throw new IllegalArgumentException();
 				
+			if (parent==null)
+				throw new IllegalArgumentException();
+				
 			this.url = url;
 			this.policy = policy;
+			this.parent = parent;
 			this.features = null;
 			this.plugins = null;
 		}
@@ -100,12 +131,93 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			this.policy = policy;
 		}
 		
+		/*
+		 * @see ISiteEntry#getFeatures()
+		 */
+		public String[] getFeatures() {
+			return getDetectedFeatures();
+		}
+		
+		/*
+		 * @see ISiteEntry#getPlugins()
+		 */
+		public String[] getPlugins() {
+			
+			ISitePolicy policy = getSitePolicy();
+			
+			if (policy.getType()==ISitePolicy.USER_INCLUDE)
+				return policy.getList();
+				
+			if (policy.getType()==ISitePolicy.USER_EXCLUDE) {
+				List detectedPlugins = Arrays.asList(getDetectedPlugins());
+				String[] excludedPlugins = policy.getList();
+				for (int i=0; i<excludedPlugins.length; i++) {
+					if (detectedPlugins.contains(excludedPlugins[i]))
+						detectedPlugins.remove(excludedPlugins[i]);
+				}
+				return (String[])detectedPlugins.toArray(new String[0]);
+			}
+			
+			// bad policy type
+			return new String[0];
+		}
+		
+		/*
+		 * @see ISiteEntry#getChangeStamp()
+		 */
+		public long getChangeStamp() {
+			if (!changeStampIsValid)				
+				computeChangeStamp();
+			return changeStamp;
+		}
+		
+		/*
+		 * @see ISiteEntry#getFeaturesChangeStamp()
+		 */
+		public long getFeaturesChangeStamp() {
+			if (!featuresChangeStampIsValid)				
+				computeFeaturesChangeStamp();
+			return featuresChangeStamp;
+		}
+		
+		/*
+		 * @see ISiteEntry#getPluginsChangeStamp()
+		 */
+		public long getPluginsChangeStamp() {
+			if (!pluginsChangeStampIsValid)
+				computePluginsChangeStamp();				
+			return pluginsChangeStamp;
+		}
+		
+		/*
+		 * @see ISiteEntry#isUpdateable()
+		 */
+		public boolean isUpdateable() {
+			//FIXME: for now always return true for file sites. Link sites will return false
+			return supportsDetection();
+		}
+		
+		private boolean supportsDetection() {
+			return url.getProtocol().equals("file");
+		}
+		
 		private String[] detectFeatures() {
+			
+			// invalidate stamps ... we are doing discovery
+			changeStampIsValid = false;
+			featuresChangeStampIsValid = false;
+			parent.changeStampIsValid = false;
+			parent.featuresChangeStampIsValid = false;
+			
+			features = new ArrayList();
+				
 			if (!supportsDetection())
 				return new String[0];
 
 			// locate feature entries on site
-			features = new ArrayList();
+			long start = 0;
+			if (DEBUG)
+				start = (new Date()).getTime();
 			File root =
 				new File(url.getFile().replace('/', File.separatorChar) + FEATURES);
 			String[] list = root.list();
@@ -118,17 +230,32 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 					continue;
 				}
 				features.add(FEATURES + "/" + path.replace(File.separatorChar, '/'));
+			}
+			if (DEBUG) {
+				long end = (new Date()).getTime();
+				debug(url.toString()+" located  "+features.size()+" feature(s) in "+(end-start)+"ms");
 			}				
 				
 			return (String[])features.toArray(new String[0]);
 		}
 		
 		private String[] detectPlugins() {
+				
+			// invalidate stamps ... we are doing discovery
+			changeStampIsValid = false;
+			pluginsChangeStampIsValid = false;
+			parent.changeStampIsValid = false;
+			parent.pluginsChangeStampIsValid = false;
+			
+			plugins = new ArrayList();
+			
 			if (!supportsDetection())
 				return new String[0];
 								
 			// locate plugin entries on site
-			plugins = new ArrayList();
+			long start = 0;
+			if (DEBUG)
+				start = (new Date()).getTime();
 			File root =
 				new File(url.getFile().replace('/', File.separatorChar) + PLUGINS);
 			String[] list = root.list();
@@ -144,13 +271,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 						continue;
 				}
 				plugins.add(PLUGINS + "/" + path.replace(File.separatorChar, '/'));
-			}				
+			}
+			if (DEBUG) {
+				long end = (new Date()).getTime();
+				debug(url.toString()+" located  "+plugins.size()+" plugin(s) in "+(end-start)+"ms");
+			}								
 				
 			return (String[])plugins.toArray(new String[0]);
-		}
-		
-		private boolean supportsDetection() {
-			return url.getProtocol().equals("file");
 		}
 		
 		private String[] getDetectedFeatures() {
@@ -166,7 +293,68 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			else 
 				return (String[])plugins.toArray(new String[0]);
 		}
-	}
+		
+		private void computeChangeStamp() {
+			computeFeaturesChangeStamp();
+			computePluginsChangeStamp();
+			changeStamp = featuresChangeStamp ^ pluginsChangeStamp;
+			changeStampIsValid = true;
+		}
+		
+		private void computeFeaturesChangeStamp() {
+			if (featuresChangeStampIsValid)
+				return;
+				
+			String[] features = getFeatures();
+			featuresChangeStamp = computeStamp(features);
+			featuresChangeStampIsValid = true;
+			if (DEBUG) 
+				debug(url.toString()+" feature stamp: "+featuresChangeStamp+((featuresChangeStamp==lastFeaturesChangeStamp)?" [no changes]":" [was "+lastFeaturesChangeStamp+"]"));
+		}
+		
+		private void computePluginsChangeStamp() {
+			if (pluginsChangeStampIsValid)
+				return;
+				
+			String[] plugins = getPlugins();
+			pluginsChangeStamp = computeStamp(plugins);
+			pluginsChangeStampIsValid = true;
+			if (DEBUG) 
+				debug(url.toString()+" plugin stamp: "+pluginsChangeStamp+((pluginsChangeStamp==lastPluginsChangeStamp)?" [no changes]":" [was "+lastPluginsChangeStamp+"]"));
+		}
+		
+		private long computeStamp(String[] targets) {
+			
+			long result = 0;
+			if (!supportsDetection()) {
+				// FIXME: this path should not be executed until we support running
+				//        from an arbitrary URL (in particular from http server). For
+				//        now just compute stamp across the list of names. Eventually
+				//        when general URLs are supported we need to do better (factor
+				//        in at least the existence of the target). However, given this
+				//        code executes early on the startup sequence we need to be
+				//        extremely mindful of performance issues.
+				for (int i=0; i<targets.length; i++)
+					result ^= targets[i].hashCode();				
+			} else {
+				// compute stamp across local targets		
+				String rootPath = url.getFile().replace('/',File.separatorChar);
+				if (rootPath.endsWith(File.separator))
+					rootPath += File.separator;
+				File rootFile = new File(rootPath);
+				if (rootFile.exists()) {
+					File f = null;
+					for (int i=0; i<targets.length; i++) {
+						f = new File(rootFile,targets[i]);
+						if (f.exists())
+							result ^= f.getAbsolutePath().hashCode() ^ f.lastModified() ^ f.length();
+					}
+				}
+			}
+			
+			return result;
+		}
+}
 
 	public class SitePolicy implements IPlatformConfiguration.ISitePolicy {
 
@@ -177,8 +365,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 		private SitePolicy(int type, String[] list) {
 			if (type != ISitePolicy.USER_INCLUDE
-				&& type != ISitePolicy.USER_EXCLUDE
-				&& type != ISitePolicy.SITE_INCLUDE)
+				&& type != ISitePolicy.USER_EXCLUDE)
 				throw new IllegalArgumentException();
 			this.type = type;
 
@@ -217,7 +404,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	PlatformConfiguration() throws IOException {
 		this.sites = new HashMap();
 		this.nativeSites = new HashMap();
-		initializeCurrent();
+		initializeCurrent(null); // for now always search
 	}
 	
 	PlatformConfiguration(URL url) throws IOException {
@@ -230,7 +417,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 * @see IPlatformConfiguration#createSiteEntry(URL, ISitePolicy)
 	 */
 	public ISiteEntry createSiteEntry(URL url, ISitePolicy policy) {
-		return new PlatformConfiguration.SiteEntry(url, policy);
+		return new PlatformConfiguration.SiteEntry(url, policy, this);
 	}
 
 	/*
@@ -305,6 +492,67 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	public URL getConfigurationLocation() {
 		return configLocation;
 	}
+	
+	/*
+	 * @see IPlatformConfiguration#getChangeStamp()
+	 */
+	public long getChangeStamp() {
+		if (!changeStampIsValid)				
+			computeChangeStamp();
+		return changeStamp;
+	}
+
+	/*
+	 * @see IPlatformConfiguration#getFeaturesChangeStamp()
+	 */
+	public long getFeaturesChangeStamp() {
+		if (!featuresChangeStampIsValid)				
+			computeFeaturesChangeStamp();
+		return featuresChangeStamp;
+	}
+
+	/*
+	 * @see IPlatformConfiguration#getPluginsChangeStamp()
+	 */
+	public long getPluginsChangeStamp() {
+		if (!pluginsChangeStampIsValid)
+			computePluginsChangeStamp();				
+		return pluginsChangeStamp;
+	}
+	
+	/*
+	 * @see IPlatformConfiguration#setFeatureChangesConfigured()
+	 */
+	public void setFeatureChangesConfigured() {
+		featureChangesConfigured = true;
+	}
+
+	/*
+	 * @see IPlatformConfiguration#getPluginPath()
+	 */
+	public URL[] getPluginPath() {
+		ArrayList path = new ArrayList();
+		if (DEBUG)
+			debug("computed plug-in path:");
+			
+		ISiteEntry[] sites = getConfiguredSites();
+		for (int i=0; i<sites.length; i++) {
+			String[] plugins = sites[i].getPlugins();
+			for (int j=0; j<plugins.length; j++) {
+				URL pathURL;
+				try {
+					pathURL = new URL(sites[i].getURL(),plugins[j]);
+					path.add(pathURL);
+					if (DEBUG)
+						debug("   "+pathURL.toString());
+				} catch(MalformedURLException e) {
+					if (DEBUG)
+						debug("   bad URL: "+e);
+				}
+			}
+		}			
+		return (URL[])path.toArray(new URL[0]);
+	}
 
 	/*
 	 * @see IPlatformConfiguration#save()
@@ -329,7 +577,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			// retry with direct file i/o
 			if (!url.getProtocol().equals("file"))
 				throw e;
-			os = new FileOutputStream(url.getFile());
+			os = new FileOutputStream(url.getFile().replace('/',File.separatorChar));
 		}
 		PrintWriter w = new PrintWriter(os);
 		try {
@@ -339,46 +587,164 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 	}
 
-	private void initializeCurrent() throws IOException {
+	private void initializeCurrent(URL url) throws IOException {
 
-		// FIXME:
-		// check for safe mode
-		// flag: -safe		come up in safe mode (loads configuration
-		//                  but compute "safe" plugin path
+		// FIXME: support for "safe mode"
+				
+		// URL of configuration file was specified ... just use it
+		// flag: -config COMMON | USER.HOME | USER.DIR | <path>
+		//        COMMON		in <eclipse>/install/<cfig>
+		//        USER.HOME		in <user.home>/eclipse/install/<cfig>
+		//        USER.DIR		in <user.dir>/eclipse/install/<cfig>
+		//        <path>		as specififed
+		if (url != null) {
+			load(url);
+			configLocation = url;
+			return;
+		}
 
-		// determine configuration to use
-		// flag: -config COMMON | HOME | CURRENT | <path>
-		//        COMMON	in <eclipse>/install/<cfig>
-		//        HOME		in <user.home>/eclipse/install/<cfig>
-		//        CURRENT	in <user.dir>/eclipse/install/<cfig>
-		//        <path>	as specififed
-		//        SAFE		come up in SAFE mode
-		// if none specified, search order for configuration is
-		// CURRENT, HOME, COMMON
-		// if none found new configuration is created in the first
-		// r/w location in order of COMMON, HOME, CURRENT	
-
-		// load configuration. 
-
-		// if none found, do default setup
-		setupDefaultConfiguration();
+		// URL was not specified. Default behavior is to look for configuration file in
+		// USER.DIR then USER.HOME then COMMON
+		
+		URL userdirURL = null;
+		try {
+			String tmp = System.getProperty("user.dir");
+			if (!tmp.endsWith(File.separator))
+				tmp += File.separator;
+			userdirURL = new URL("file:" + tmp.replace(File.separatorChar,'/') + ECLIPSEDIR + "/" + INSTALL + "/" + CONFIG_FILE);
+			load(userdirURL);
+			configLocation = userdirURL;
+			if (DEBUG)
+				debug("Using configuration " + configLocation.toString());
+			return;
+		} catch (IOException e) {
+			if (DEBUG)
+				debug("Unable to load configuration from USER.DIR\n" + e);
+		}
+		
+		URL userhomeURL = null;
+		try {
+			String tmp = System.getProperty("user.home");
+			if (!tmp.endsWith(File.separator))
+				tmp += File.separator;
+			userhomeURL = new URL("file:" + tmp.replace(File.separatorChar,'/') + ECLIPSEDIR + "/" + INSTALL + "/" + CONFIG_FILE);
+			load(userhomeURL);
+			configLocation = userhomeURL;
+			if (DEBUG)
+				debug("Using configuration " + configLocation.toString());
+			return;
+		} catch (IOException e) {
+			if (DEBUG)
+				debug("Unable to load configuration from USER.HOME\n" + e);
+		}
+		
+		URL commonURL = null;
+		try {
+			commonURL = new URL(BootLoader.getInstallURL(), INSTALL + "/" + CONFIG_FILE);
+			load(commonURL);
+			configLocation = commonURL;
+			if (DEBUG)
+				debug("Using configuration " + configLocation.toString());
+			return;
+		} catch (IOException e) {
+			if (DEBUG)
+				debug("Unable to load configuration from COMMON\n" + e);
+		}
+		
+		// no configuration files found. Pick the "highest" r/w location to create
+		// default one (try COMMON then USER.HOME then USER.DIR)
+		
+		ISitePolicy defaultPolicy = createSitePolicy(DEFAULT_POLICY_TYPE, DEFAULT_POLICY_LIST);
+		ISiteEntry defaultSite = createSiteEntry(BootLoader.getInstallURL(), defaultPolicy);
+		configureSite(defaultSite);
+		
+		if (isReadWriteLocation(commonURL)) {
+			configLocation = commonURL;
+			if (DEBUG)
+				debug("Creating configuration " + configLocation.toString());
+			return;
+		} else {
+			if (DEBUG)
+				debug("Unable to create configuration in COMMON");
+		}	
+			
+		if (isReadWriteLocation(userhomeURL)) {
+			configLocation = userhomeURL;
+			if (DEBUG)
+				debug("Creating configuration " + configLocation.toString());
+			return;
+		} else {
+			if (DEBUG)
+				debug("Unable to create configuration in USER.HOME");
+		}
+		
+		if (isReadWriteLocation(userdirURL)) {
+			configLocation = userdirURL;
+			if (DEBUG)
+				debug("Creating configuration " + configLocation.toString());
+			return;
+		} else {		
+			if (DEBUG)
+				debug("Unable to create configuration in USER.DIR");
+		}
+		
+		// we were unable to find or create configuration file. Come up with
+		// minimal configuration (whatever is in the install tree).
+		if (DEBUG)
+			debug("Starting with default settings");
+		configLocation = null;
 		
 		// detect links
+		// FIXME: need to add link support
 
 		// detect changes
-
-		// if (feature changes)
-		// 	trigger alternate startup (into update app)
-		// else 
-		//	process any plugin-only changes
+		computeChangeStamp();
 	}
 	
 	private void initialize(URL url) throws IOException {
-		if (url == null) 
+		if (url == null) {
+			if (DEBUG)
+				debug("Creating empty configuration");
 			return;
+		}
 			
 		load(url);
 		configLocation = url;
+		if (DEBUG)
+			debug("Using configuration " + configLocation.toString());
+	}
+			
+	private void computeChangeStamp() {
+		computeFeaturesChangeStamp();
+		computePluginsChangeStamp();
+		changeStamp = featuresChangeStamp ^ pluginsChangeStamp;
+		changeStampIsValid = true;
+	}
+		
+	private void computeFeaturesChangeStamp() {
+		if (featuresChangeStampIsValid)
+			return;
+				
+		long result = 0;
+		ISiteEntry[] sites = getConfiguredSites();
+		for (int i=0; i<sites.length; i++) {
+			result ^= sites[i].getFeaturesChangeStamp();
+		}
+		featuresChangeStamp = result;
+		featuresChangeStampIsValid = true;
+	}
+		
+	private void computePluginsChangeStamp() {
+		if (pluginsChangeStampIsValid)
+			return;
+				
+		long result = 0;
+		ISiteEntry[] sites = getConfiguredSites();
+		for (int i=0; i<sites.length; i++) {
+			result ^= sites[i].getPluginsChangeStamp();
+		}
+		pluginsChangeStamp = result;
+		pluginsChangeStampIsValid = true;
 	}
 	
 	private void load(URL url) throws IOException {		
@@ -394,8 +760,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			props.load(is);
 			// check to see if we have complete config file
 			if (!EOF.equals(props.getProperty(EOF))) {
-				if (DEBUG)
-					debug("skipping incomplete configuration file " + url.toString());
 				throw new IOException(Policy.bind("cfig.unableToLoad.incomplete",url.toString()));
 			}
 		} finally {
@@ -407,11 +771,36 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			}
 		}
 		
-		if (DEBUG)
-			debug("using configuration file " + url.toString());
+		// check version
+		String v = props.getProperty(CFG_VERSION);
+		if (!VERSION.equals(v)) {			
+			throw new IOException(Policy.bind("cfig.badVersion",v));
+		}
 		
 		// load simple properties 
-		// FIXME: currently none
+		String stamp = loadAttribute(props, CFG_STAMP, null);
+		if (stamp != null) {
+			try {
+				lastChangeStamp = Long.parseLong(stamp);
+			} catch(NumberFormatException e) {
+			}
+		}
+		
+		stamp = loadAttribute(props, CFG_FEATURE_STAMP, null);
+		if (stamp != null) {
+			try {
+				lastFeaturesChangeStamp = Long.parseLong(stamp);
+			} catch(NumberFormatException e) {
+			}
+		}
+		
+		stamp = loadAttribute(props, CFG_PLUGIN_STAMP, null);
+		if (stamp != null) {
+			try {
+				lastPluginsChangeStamp = Long.parseLong(stamp);
+			} catch(NumberFormatException e) {
+			}
+		}
 		
 		// load site properties
 		ISiteEntry se = loadSite(props, CFG_SITE+".0", null);					
@@ -457,7 +846,33 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 
 		ISitePolicy sp = createSitePolicy(policyType, policyList);
-		return createSiteEntry(url,sp);
+		SiteEntry site = (SiteEntry) createSiteEntry(url,sp);
+		
+		String stamp = loadAttribute(props, name+"."+CFG_STAMP, null);
+		if (stamp != null) {
+			try {
+				site.lastChangeStamp = Long.parseLong(stamp);
+			} catch(NumberFormatException e) {
+			}
+		}
+		
+		stamp = loadAttribute(props, name+"."+CFG_FEATURE_STAMP, null);
+		if (stamp != null) {
+			try {
+				site.lastFeaturesChangeStamp = Long.parseLong(stamp);
+			} catch(NumberFormatException e) {
+			}
+		}
+		
+		stamp = loadAttribute(props, name+"."+CFG_PLUGIN_STAMP, null);
+		if (stamp != null) {
+			try {
+				site.lastPluginsChangeStamp = Long.parseLong(stamp);
+			} catch(NumberFormatException e) {
+			}
+		}
+		
+		return site;
 	}
 	
 	private String[] loadListAttribute(Properties props, String name, String[] dflt) {
@@ -495,34 +910,38 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			return prop.trim();
 	}
 	
-	private void setupDefaultConfiguration() throws IOException {
-		// default initial startup configuration:
-		// site: current install, policy: USER_EXCLUDE, empty list
-		ISitePolicy sp = createSitePolicy(DEFAULT_POLICY_TYPE, DEFAULT_POLICY_LIST);
-		ISiteEntry se =
-			createSiteEntry(
-				BootLoader.getInstallURL(), sp);
-		configureSite(se);
-		configLocation =
-				new URL(BootLoader.getInstallURL(), INSTALL + "/" + CONFIG_FILE);
-		if (DEBUG)
-			debug("creating default configuration " + configLocation.getFile());
+	private boolean isReadWriteLocation(URL url) {
+		return true; // FIXME: for now force use of the first location tried
 	}
-
+	
 	private void write(PrintWriter w) {
+		// write header
 		writeAttribute(w, CFG_VERSION, VERSION);
+		
+		// write global attributes
+		writeAttribute(w,CFG_STAMP,Long.toString(getChangeStamp()));
+		writeAttribute(w,CFG_FEATURE_STAMP,Long.toString(getFeaturesChangeStamp()));
+		writeAttribute(w,CFG_PLUGIN_STAMP,Long.toString(getPluginsChangeStamp()));
+		
+		// write out site entries
 		SiteEntry[] list = (SiteEntry[]) sites.values().toArray(new SiteEntry[0]);
-		if (list.length == 0)
-			return;
-
 		for (int i = 0; i < list.length; i++) {
 			writeSite(w, CFG_SITE + "." + Integer.toString(i), list[i]);
 		}
+		
+		// write end-of-file marker
 		writeAttribute(w, EOF, EOF);
 	}
 
 	private void writeSite(PrintWriter w, String id, SiteEntry entry) {
+		
+		// write out site settings
 		writeAttribute(w, id + "." + CFG_URL, entry.getURL().toString());
+		writeAttribute(w, id + "." + CFG_STAMP,Long.toString(entry.getChangeStamp()));
+		writeAttribute(w, id + "." + CFG_FEATURE_STAMP,Long.toString(entry.getFeaturesChangeStamp()));
+		writeAttribute(w, id + "." + CFG_PLUGIN_STAMP,Long.toString(entry.getPluginsChangeStamp()));
+		
+		// write out site policy
 		int type = entry.getSitePolicy().getType();
 		String typeString = CFG_POLICY_TYPE_UNKNOWN;
 		try {
@@ -559,7 +978,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private void writeAttribute(PrintWriter w, String id, String value) {
 		w.println(id + "=" + escapedValue(value));
 	}
-
+	
 	private String escapedValue(String value) {
 		// FIXME: implement escaping for property file
 		return value;

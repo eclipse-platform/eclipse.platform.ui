@@ -12,11 +12,15 @@ import java.net.URL;
  * configuration used by the Eclipse platform. Any configuration
  * changes do not take effect until next startup of the Eclipse
  * platform
+ * 
+ * @since 2.0
  */
 public interface IPlatformConfiguration {
 	
 	/**
-	 * Configuration entry representing an install site. 
+	 * Configuration entry representing an install site.
+	 * 
+	 * @since 2.0 
 	 */
 	public interface ISiteEntry {
 		
@@ -24,6 +28,7 @@ public interface IPlatformConfiguration {
 		 * Returns the URL for this site
 		 * 
 		 * @return site url
+		 * @since 2.0
 		 */		
 		public URL getURL();
 		
@@ -31,6 +36,7 @@ public interface IPlatformConfiguration {
 		 * Returns the policy for this site
 		 * 
 		 * @return site policy
+		 * @since 2.0
 		 */				
 		public ISitePolicy getSitePolicy();
 		
@@ -38,8 +44,69 @@ public interface IPlatformConfiguration {
 		 * Sets the site policy
 		 * 
 		 * @param policy site policy
+		 * @since 2.0
 		 */
-		public void setSitePolicy(ISitePolicy policy);				
+		public void setSitePolicy(ISitePolicy policy);
+		
+		/**
+		 * Returns a list of features visible on the site. Note, that this is simply a 
+		 * reflection of the site content. The features may or may not be actually configured.
+		 * 
+		 * @return an array of feature entries, or an empty array if no features are found.
+		 * A feature entry is returned as a path relative to the site URL
+		 * @since 2.0
+		 */
+		public String[] getFeatures();
+		
+		/**
+		 * Returns a list of plug-ins visible on the site. Note, that this is simply a 
+		 * reflection of the site content and the current policy for the site. The plug-ins
+		 * may or may not end up being used by Eclipse (depends on which plug-in are 
+		 * actually bound by the platform).
+		 * 
+		 * @return an array of plug-in entries, or an empty array if no plug-ins are found.
+		 * A plug-in entry is returned as a path relative to the site URL		 * 
+		 * @since 2.0
+		 */
+		public String[] getPlugins();
+		
+		/**
+		 * Returns a stamp reflecting the current state of the site. If called repeatedly,
+		 * returns the same value as long as no changes were made to the site (changes to
+		 * features or plugins).
+		 * 
+		 * @return site change stamp
+		 * @since 2.0
+		 */
+		public long getChangeStamp();
+		
+		/**
+		 * Returns a stamp reflecting the current state of the features on the site. 
+		 * If called repeatedly, returns the same value as long as no changes were made to
+		 * features on the site.
+		 * 
+		 * @return site features change stamp 
+		 * @since 2.0
+		 */
+		public long getFeaturesChangeStamp();
+		
+		/**
+		 * Returns a stamp reflecting the current state of the plug-ins on the site. 
+		 * If called repeatedly, returns the same value as long as no changes were made to
+		 * plug-ins on the site.
+		 * 
+		 * @return site plug-ins change stamp 
+		 * @since 2.0
+		 */
+		public long getPluginsChangeStamp();		
+		
+		/**
+		 * Returns an indication whether the site can be updated.
+		 * 
+		 * @return <code>true</code> if site can be updated, <code>false</code> otherwise
+		 * @since 2.0
+		 */
+		public boolean isUpdateable();			
 	}
 	
 	/**
@@ -60,12 +127,9 @@ public interface IPlatformConfiguration {
 	 * discovery. In general, these are sites defined using the "file"
 	 * URL protocol. This is typically the best policy for local
 	 * install sites (on the user system).
-	 * <li>specify site-defined plug-in list(s) (type==SITE_INCLUDE). 
-	 * This is typically the best policy when using a remote administered 
-	 * site where the user wants to defer to the site administrator the
-	 * maintenance of the list of plug-ins that will be included at
-	 * startup.
 	 * </ul>
+	 * 
+	 * @since 2.0
 	 */
 	public interface ISitePolicy {
 		
@@ -86,35 +150,12 @@ public interface IPlatformConfiguration {
 		 * or fragment.xml <b>relative</b> to the site URL
 		 */
 		public static final int USER_EXCLUDE = 1;
-	
-		/**
-		 * Site-defined inclusion list. The list associated with this
-		 * policy type is interpreted as path entries of site-include
-		 * files <b>relative</b> to the site URL. Each site-include file
-		 * is a Java properties file with one or more properties containing
-		 * comma-separated list of plugin.xml or fragment.xml paths 
-		 * <b>relative</b> to the site URL. The property keys are not
-		 * interpreted. They are simply supported as a convenience to the
-		 * list administrator (able to organize the site-include file
-		 * as several shorter path lists, rather than one long one).
-		 * 
-		 * Following is an example of the content of a site-include file.
-		 * <code>
-		 * tools.xml = plugins/com.xyz.xml_1.0.3/plugin.xml,\
-		 *             plugins/com.xyz.xml.nl/fragment.xml
-		 * tools.ejb = ejb/com.xyz.ejbV1/plugin.xml,\
-		 *             plugins/com.xyz.ejb_3/plugin.xml
-		 * util.common = utils/testharness/plugin.xml,\
-		 *               utils/relengtools/plugin.xml,\
-		 *               utils/nltools/plugin.xml
-		 * </code>
-		 */
-		public static final int SITE_INCLUDE = 2;
 		
 		/**
 		 * Return policy type
 		 * 
 		 * @return policy type
+		 * @since 2.0
 		 */
 		public int getType();
 		
@@ -122,14 +163,19 @@ public interface IPlatformConfiguration {
 		 * Return policy inclusion/ exclusion list
 		 * 
 		 * @return the list as an array
+		 * @since 2.0
 		 */
 		public String[] getList();
 		
 		/**
-		 * Set new policy list
+		 * Set new policy list. The list entries are interpreted based on the policy
+		 * type. See description of the policy type constants for details.
 		 * 
 		 * @param list policy inclusion/ exclusion list as an array.
 		 * Returns an empty array if there are no entries.
+		 * @see USER_INCLUDE
+		 * @see USER_EXCLUDE
+		 * @since 2.0
 		 */
 		public void setList(String[] list);
 	}
@@ -140,6 +186,7 @@ public interface IPlatformConfiguration {
 	 * @param url site URL
 	 * @param policy site policy
 	 * @return created site entry
+	 * @since 2.0
 	 */	
 	public ISiteEntry createSiteEntry(URL url, ISitePolicy policy);
 			
@@ -151,6 +198,7 @@ public interface IPlatformConfiguration {
 	 * @param list an array of site-relative paths representing the
 	 * inclusion/ exclusion list
 	 * @return created site policy entry
+	 * @since 2.0
 	 */		
 	public ISitePolicy createSitePolicy(int type, String[] list);		
 		
@@ -159,6 +207,7 @@ public interface IPlatformConfiguration {
 	 * same site URL is already configured, the entry is <b>not</b> replaced.
 	 * 
 	 * @param entry site entry 
+	 * @since 2.0
 	 */	
 	public void configureSite(ISiteEntry entry);
 		
@@ -170,6 +219,7 @@ public interface IPlatformConfiguration {
 	 * @param entry site entry 
 	 * @param  flag indicating whether an existing configured entry with
 	 * the same URL should be replaced (<code>true</code>) or not (<code>false</code>).
+	 * @since 2.0
 	 */	
 	public void configureSite(ISiteEntry entry, boolean replace);
 		
@@ -178,6 +228,7 @@ public interface IPlatformConfiguration {
 	 * is not configured.
 	 * 
 	 * @param entry site entry
+	 * @since 2.0
 	 */	
 	public void unconfigureSite(ISiteEntry entry);
 		
@@ -186,6 +237,7 @@ public interface IPlatformConfiguration {
 	 * 
 	 * @return array of site entries. Returns an empty array if no sites are
 	 * configured
+	 * @since 2.0
 	 */	
 	public ISiteEntry[] getConfiguredSites();
 		
@@ -194,6 +246,7 @@ public interface IPlatformConfiguration {
 	 * 
 	 * @param url site url
 	 * @return matching site entry, or <code>null</code> if no match found
+	 * @since 2.0
 	 */	
 	public ISiteEntry findConfiguredSite(URL url);
 	
@@ -202,11 +255,64 @@ public interface IPlatformConfiguration {
 	 * 
 	 * @return configuration location URL, or <code>null</code> if the
 	 * configuration location could not be determined.
+	 * @since 2.0
 	 */
 	public URL getConfigurationLocation();
+		
+	/**
+	 * Returns a stamp reflecting the current state of the configuration. If called repeatedly,
+	 * returns the same value as long as no changes were made to the configuration (changes to
+	 * sites, features or plugins).
+	 * 
+	 * @return configuration change stamp
+	 * @since 2.0
+	 */
+	public long getChangeStamp();
+		
+	/**
+	 * Returns a stamp reflecting the current state of the features in the configuration. 
+	 * If called repeatedly, returns the same value as long as no changes were made to
+	 * features in the configuration.
+	 * 
+	 * @return configuration features change stamp 
+	 * @since 2.0
+	 */
+	public long getFeaturesChangeStamp();
+		
+	/**
+	 * Returns a stamp reflecting the current state of the plug-ins in the configuration. 
+	 * If called repeatedly, returns the same value as long as no changes were made to
+	 * plug-ins in the configuration.
+	 * 
+	 * @return configuration plug-ins change stamp 
+	 * @since 2.0
+	 */
+	public long getPluginsChangeStamp();	
+	
+	/**
+	 * Indicates that feature changes have been processed and the corresponding plug-ins
+	 * have been configured into this configuration. Making this call causes the 
+	 * configuration change stamps to be "hardened" when the configuration is saved.
+	 * If this method is not called, the change stamps are not "hardened" when the 
+	 * configuration is saved. This will cause the changes to be detected again next
+	 * time the configuration is recreated.
+	 * 
+	 * @since 2.0
+	 */
+	public void setFeatureChangesConfigured();		
+	
+	/**
+	 * Computes the plug-in path for this configuration. The result includes all plug-ins
+	 * visible on each of the configured sites based on each site policy.
+	 * 
+	 * @return an array of plug-in path elements (full URL entries), or an empty array.
+	 * @since 2.0
+	 */
+	public URL[] getPluginPath();
 	
 	/**
 	 * Called to save the configuration information
+	 * @since 2.0
 	 */	
 	public void save() throws IOException;
 	
@@ -215,6 +321,7 @@ public interface IPlatformConfiguration {
 	 * specified location
 	 * 
 	 * @param url save location.
+	 * @since 2.0
 	 */	
 	public void save(URL url) throws IOException;
 
