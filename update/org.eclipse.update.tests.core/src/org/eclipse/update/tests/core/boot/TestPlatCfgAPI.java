@@ -57,7 +57,7 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 
 		URL u4 = null;
 		try {
-			u1 = new URL("file:d:/temp/");
+			u1 = new URL("file:/d:/temp/");
 			u2 = new URL("file://localhost/temp/");
 			new URL("http://some.server/temp/");
 			u4 = new URL("http://bad.url");
@@ -67,7 +67,7 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 				
 		// site creation tests
 		ISiteEntry s1 = cfig.createSiteEntry(u1,p2);
-		Assert.assertEquals("3.0.0",s1.getURL().getFile(),u1.getFile());
+		Assert.assertEquals("3.0.0",s1.getURL(),u1);
 		Assert.assertEquals("3.0.1",s1.getSitePolicy(),p2);
 		s1.setSitePolicy(p1);
 		Assert.assertEquals("3.0.2",s1.getSitePolicy(),p1);
