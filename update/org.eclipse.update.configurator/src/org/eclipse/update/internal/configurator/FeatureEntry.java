@@ -349,6 +349,7 @@ public class FeatureEntry
 	}
 	
 	public boolean hasBranding() {
-		return pluginIdentifier != null || Platform.getBundle(id) != null; 
+        String bundleId = getFeaturePluginIdentifier();
+		return bundleId != null && Platform.getBundle(bundleId) != null;
 	}
 }
