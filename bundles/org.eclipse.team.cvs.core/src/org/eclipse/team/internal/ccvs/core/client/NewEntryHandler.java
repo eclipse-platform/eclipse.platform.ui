@@ -11,10 +11,6 @@ import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
-/**
- * @version 	1.0
- * @author
- */
 public class NewEntryHandler extends ResponseHandler {
 
 	/*
