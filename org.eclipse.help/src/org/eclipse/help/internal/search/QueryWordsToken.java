@@ -27,11 +27,17 @@ public class QueryWordsToken {
 	/**
 	 * Creates a lucene query for a field
 	 */
-	public Query createLuceneQuery(String field, float boost)
-	{
+	public Query createLuceneQuery(String field, float boost) {
 		Term t = new Term(field, value);
-		TermQuery q = new TermQuery(t);
-		q.setBoost(boost);
+		Query q;
+		if (value.indexOf('?') >= 0 || value.indexOf('*') >= 0) {
+			q = new WildcardQuery(t);
+			((WildcardQuery) q).setBoost(boost);
+		} else {
+			q = new TermQuery(t);
+			((TermQuery) q).setBoost(boost);
+		}
+		// after updating Lucene, set boost on a Query class
 		return q;
 	}
 	public static QueryWordsToken AND() {

@@ -98,11 +98,14 @@ public class QueryBuilder
 			QueryWordsToken token = (QueryWordsToken) tokens.get(i);
 			if (token.type == QueryWordsToken.WORD)
 			{
-				List wordList = analyzeText(analyzer, token.value);
-				for (Iterator it = wordList.iterator(); it.hasNext();)
-				{
-					String word = (String) it.next();
-					newTokens.add(QueryWordsToken.word(word));
+				if (token.value.indexOf('?') >= 0 || token.value.indexOf('*') >= 0) {
+					newTokens.add(QueryWordsToken.word(token.value));
+				} else {
+					List wordList = analyzeText(analyzer, token.value);
+					for (Iterator it = wordList.iterator(); it.hasNext();) {
+						String word = (String) it.next();
+						newTokens.add(QueryWordsToken.word(word));
+					}
 				}
 			}
 			else if (// forget ANDs
