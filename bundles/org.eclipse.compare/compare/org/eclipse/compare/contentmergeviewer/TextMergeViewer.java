@@ -739,7 +739,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		OUTGOING_FILL= interpolate(SELECTED_OUTGOING, bg, 0.97);
 		
 		// invalidate color cache
-		fColors= null;
+		disposeColors();
 		
 		refreshBirdsEyeView();
 		invalidateLines();
@@ -832,14 +832,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		unsetDocument(fLeft);
 		unsetDocument(fRight);
 		
-		if (fColors != null) {
-			Iterator i= fColors.values().iterator();
-			while (i.hasNext()) {
-				Color color= (Color) i.next();
-				if (!color.isDisposed())
-					color.dispose();
-			}
-		}
+		disposeColors();
 		
 		if (fFont != null) {
 			fFont.dispose();
@@ -851,6 +844,18 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 		
 		super.handleDispose(event);
+  	}
+  	
+  	private void disposeColors() {
+		if (fColors != null) {
+			Iterator i= fColors.values().iterator();
+			while (i.hasNext()) {
+				Color color= (Color) i.next();
+				if (!color.isDisposed())
+					color.dispose();
+			}
+			fColors= null;
+		}
   	}
   	  				 		
 	//-------------------------------------------------------------------------------------------------------------
