@@ -403,6 +403,8 @@ public class JobManager implements IJobManager {
 					reportedWorkDone = actualWorkDone;
 					monitor.subTask(Policy.bind("jobs.waitForFamilySubTask", Integer.toString(jobsLeft))); //$NON-NLS-1$
 				}
+				if (Thread.interrupted())
+					throw new InterruptedException();
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
 				Thread.sleep(100);
