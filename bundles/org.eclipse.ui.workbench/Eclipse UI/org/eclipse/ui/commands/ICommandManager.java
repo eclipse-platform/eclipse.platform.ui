@@ -114,7 +114,7 @@ public interface ICommandManager {
      * 
      * @param commandId
      *            an identifier. Must not be <code>null</code>
-     * @return a handle to a command.
+     * @return a handle to a command; never <code>null</code>.
      */
     ICommand getCommand(String commandId);
 

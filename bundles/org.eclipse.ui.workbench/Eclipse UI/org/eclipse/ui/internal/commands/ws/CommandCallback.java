@@ -13,7 +13,10 @@ package org.eclipse.ui.internal.commands.ws;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ExternalActionManager.ICallback;
 import org.eclipse.jface.util.Assert;
@@ -26,6 +29,8 @@ import org.eclipse.ui.commands.ICommandListener;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.NotDefinedException;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.SWTKeySupport;
@@ -34,6 +39,12 @@ import org.eclipse.ui.keys.SWTKeySupport;
  * @since 3.0
  */
 public final class CommandCallback implements ICallback {
+
+    /**
+     * The internationalization bundle for text produced by this class.
+     */
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+            .getBundle(CommandCallback.class.getName());
 
     /**
      * The list of listeners that have registered for property change
@@ -172,10 +183,23 @@ public final class CommandCallback implements ICallback {
             final ICommand command = workbench.getCommandSupport()
                     .getCommandManager().getCommand(commandId);
 
-            if (command != null)
-                return command.isDefined()
-                        && workbench.getActivitySupport().getActivityManager()
-                                .getIdentifier(command.getId()).isEnabled();
+            if (!command.isDefined()) {
+                // The command is not yet defined, so we should log this.
+                final StringBuffer message = new StringBuffer();
+                message.append("The command '"); //$NON-NLS-1$
+                message.append(command.getId());
+                message
+                        .append("' is not defined, but is being asked if it is active.  Are you using an actionDefinitionId without defining a command?"); //$NON-NLS-1$
+                IStatus status = new Status(IStatus.ERROR,
+                        WorkbenchPlugin.PI_WORKBENCH, 0, Util.translateString(
+                                RESOURCE_BUNDLE,
+                                "undefinedCommand.WarningMessage"), null); //$NON-NLS-1$
+                WorkbenchPlugin.log(message.toString(), status);
+                return false;
+            }
+
+            return workbench.getActivitySupport().getActivityManager()
+                    .getIdentifier(command.getId()).isEnabled();
         }
 
         return true;
