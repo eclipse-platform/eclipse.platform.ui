@@ -1144,8 +1144,12 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 // Disabled turning redraw off, because it causes setFocus
 // in activate(editor) to fail.
 // getClientComposite().setRedraw(false);
- 
-	// Otherwise, create a new one.
+
+	// Remember the old visible editor 
+	IEditorPart oldVisibleEditor = getEditorManager().getVisibleEditor();
+	
+	// Otherwise, create a new one. This may cause the new editor to
+	// become the visible (i.e top) editor.
 	if(useEditorID)
 		editor = getEditorManager().openEditor(editorID, input);
 	else
@@ -1158,7 +1162,13 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 			activate(editor);
 		} else {
 			activationList.add(editor);
-			bringToTop(editor);
+			// The previous openEditor call may create a new editor
+			// and make it visible, so send the notification.
+			IEditorPart visibleEditor = getEditorManager().getVisibleEditor();
+			if ((visibleEditor == editor) && (oldVisibleEditor != editor))
+				firePartBroughtToTop(editor);
+			else
+				bringToTop(editor);
 		}
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_OPEN);
 	}
