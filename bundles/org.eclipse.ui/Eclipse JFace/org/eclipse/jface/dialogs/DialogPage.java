@@ -5,8 +5,10 @@ package org.eclipse.jface.dialogs;
  * All Rights Reserved.
  */
 import org.eclipse.jface.resource.*;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+
 import java.util.*;
 
 /**
@@ -14,40 +16,34 @@ import java.util.*;
  * All dialog pages are subclasses of this one.
  */
 public abstract class DialogPage implements IDialogPage {
-
 	/**
 	 * The control for this dialog page.
 	 */
 	private Control control;
-
 	/**
 	 * Optional title; <code>null</code> if none.
 	 *
 	 * @see #setTitle
 	 */
 	private String title = null;
-
 	/**
 	 * Optional description; <code>null</code> if none.
 	 *
 	 * @see #setDescription
 	 */
 	private String description = null;
-
 	/**
 	 * Cached image; <code>null</code> if none.
 	 *
 	 * @see #setImageDescription
 	 */
 	private Image image = null;
-
 	/**
 	 * Optional image; <code>null</code> if none.
 	 *
 	 * @see #setImageDescription
 	 */
 	private ImageDescriptor imageDescriptor = null;
-
 	/**
 	 * The current message; <code>null</code> if none.
 	 */
@@ -59,14 +55,9 @@ public abstract class DialogPage implements IDialogPage {
 	private String errorMessage = null;
 
 	/**
-	 * Horizontal dialog units.
+	 * Font metrics to use for determining pixel sizes.
 	 */
-	private double horizontalDialogUnitSize;
-
-	/**
-	 * Vertical dialog units.
-	 */
-	private double verticalDialogUnitSize;
+	private FontMetrics fontMetrics;
 
 /**
  * Creates a new empty dialog page.
@@ -109,7 +100,8 @@ protected DialogPage(String title, ImageDescriptor image) {
  * @return the number of pixels
  */
 protected int convertHeightInCharsToPixels(int chars) {
-	return convertVerticalDLUsToPixels(chars * 8);
+	Assert.isNotNull(fontMetrics, "Must call initializeDialogUnits before calling this method"); //$NON-NLS-1$
+	return Dialog.convertHeightInCharsToPixels(fontMetrics, chars);
 }
 /**
  * Returns the number of pixels corresponding to the
@@ -126,7 +118,8 @@ protected int convertHeightInCharsToPixels(int chars) {
  * @return the number of pixels
  */
 protected int convertHorizontalDLUsToPixels(int dlus) {
-	return (int)Math.round(dlus * horizontalDialogUnitSize);
+	Assert.isNotNull(fontMetrics, "Must call initializeDialogUnits before calling this method"); //$NON-NLS-1$
+	return Dialog.convertHorizontalDLUsToPixels(fontMetrics, dlus);
 }
 /**
  * Returns the number of pixels corresponding to the
@@ -143,7 +136,8 @@ protected int convertHorizontalDLUsToPixels(int dlus) {
  * @return the number of pixels
  */
 protected int convertVerticalDLUsToPixels(int dlus) {
-	return (int)Math.round(dlus * verticalDialogUnitSize);
+	Assert.isNotNull(fontMetrics, "Must call initializeDialogUnits before calling this method"); //$NON-NLS-1$
+	return Dialog.convertVerticalDLUsToPixels(fontMetrics, dlus);
 }
 /**
  * Returns the number of pixels corresponding to the
@@ -160,7 +154,8 @@ protected int convertVerticalDLUsToPixels(int dlus) {
  * @return the number of pixels
  */
 protected int convertWidthInCharsToPixels(int chars) {
-	return convertHorizontalDLUsToPixels(chars * 4);
+	Assert.isNotNull(fontMetrics, "Must call initializeDialogUnits before calling this method"); //$NON-NLS-1$
+	return Dialog.convertWidthInCharsToPixels(fontMetrics, chars);
 }
 /**	
  * The <code>DialogPage</code> implementation of an <code>IDialogPage</code>
@@ -261,7 +256,7 @@ protected final String getToolTipText(int widgetId) {
 	return null;
 }
 /**
- * Initializes the values of the horizontal and vertical dialog units
+ * Initializes the computation of horizontal and vertical dialog units
  * based on the size of current font.
  * <p>
  * This method must be called before any of the dialog unit based
@@ -271,14 +266,11 @@ protected final String getToolTipText(int widgetId) {
  * @param control a control from which to obtain the current font
  */
 protected void initializeDialogUnits(Control control) {
-	GC gc= new GC(control);
+	// Compute and store a font metric
+	GC gc = new GC(control);
 	gc.setFont(control.getFont());
-	int averageWidth= gc.getFontMetrics().getAverageCharWidth();
-	int height = gc.getFontMetrics().getHeight();
+	fontMetrics = gc.getFontMetrics();
 	gc.dispose();
-
-	horizontalDialogUnitSize = averageWidth * 0.25;
-	verticalDialogUnitSize = height * 0.125;
 }
 /**
  * Tests whether this page's UI content has already been created.

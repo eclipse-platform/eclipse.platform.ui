@@ -4,6 +4,7 @@ package org.eclipse.jface.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.resource.*;
 
@@ -66,27 +67,117 @@ public abstract class Dialog extends Window {
 	private Control buttonBar;
 
 	/**
-	 * Horizontal dialog units.
+	 * Font metrics to use for determining pixel sizes.
 	 */
-	private double horizontalDialogUnitSize;
-
+	private FontMetrics fontMetrics;
+	
 	/**
-	 * Vertical dialog units.
+	 * Number of horizontal dialog units per character, value <code>4</code>. 
 	 */
-	private double verticalDialogUnitSize;
+	private static final int HORIZONTAL_DIALOG_UNIT_PER_CHAR = 4;
+	
+	/**
+	 * Number of vertical dialog units per character, value <code>8</code>. 
+	 */
+	private static final int VERTICAL_DIALOG_UNITS_PER_CHAR = 8;
+	
+
 /**
- * Creates a dialog instance.
- * Note that the window will have no visual representation (no widgets)
- * until it is told to open. 
- * By default, <code>open</code> blocks for dialogs.
- *
- * @param parentShell the parent shell, or <code>null</code> to create a top-level shell
+ * Returns the number of pixels corresponding to the
+ * height of the given number of characters.
+ * <p>
+ * The required <code>FontMetrics</code> parameter may be created in the 
+ * following way:
+ * <code>
+ * 	GC gc = new GC(control);
+ *	gc.setFont(control.getFont());
+ *	fontMetrics = gc.getFontMetrics();
+ *	gc.dispose();
+ * </code>
+ * </p>
+ * 
+ * @param fontMetrics used in performing the conversion
+ * @param chars the number of characters
+ * @return the number of pixels
+ * @since 2.0
  */
-protected Dialog(Shell parentShell) {
-	super(parentShell);
-	setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-	setBlockOnOpen(true);
+public static int convertHeightInCharsToPixels(FontMetrics fontMetrics, int chars) {
+	return fontMetrics.getHeight() * chars;
 }
+
+/**
+ * Returns the number of pixels corresponding to the
+ * given number of horizontal dialog units.
+ * <p>
+ * The required <code>FontMetrics</code> parameter may be created in the 
+ * following way:
+ * <code>
+ * 	GC gc = new GC(control);
+ *	gc.setFont(control.getFont());
+ *	fontMetrics = gc.getFontMetrics();
+ *	gc.dispose();
+ * </code>
+ * </p>
+ *
+ * @param fontMetrics used in performing the conversion
+ * @param dlus the number of horizontal dialog units
+ * @return the number of pixels
+ * @since 2.0
+ */
+public static int convertHorizontalDLUsToPixels(FontMetrics fontMetrics, int dlus) {
+	// round to the nearest pixel
+	return (fontMetrics.getAverageCharWidth()*dlus + HORIZONTAL_DIALOG_UNIT_PER_CHAR/2)
+		/ HORIZONTAL_DIALOG_UNIT_PER_CHAR; 
+}
+
+/**
+ * Returns the number of pixels corresponding to the
+ * given number of vertical dialog units.
+ * <p>
+ * The required <code>FontMetrics</code> parameter may be created in the 
+ * following way:
+ * <code>
+ * 	GC gc = new GC(control);
+ *	gc.setFont(control.getFont());
+ *	fontMetrics = gc.getFontMetrics();
+ *	gc.dispose();
+ * </code>
+ * </p>
+ *
+ * @param fontMetrics used in performing the conversion
+ * @param dlus the number of vertical dialog units
+ * @return the number of pixels
+ * @since 2.0
+ */
+public static int convertVerticalDLUsToPixels(FontMetrics fontMetrics, int dlus) {
+	// round to the nearest pixel
+	return (fontMetrics.getHeight()*dlus + VERTICAL_DIALOG_UNITS_PER_CHAR/2)
+		/ VERTICAL_DIALOG_UNITS_PER_CHAR; 
+}
+
+/**
+ * Returns the number of pixels corresponding to the
+ * width of the given number of characters.
+ * <p>
+ * The required <code>FontMetrics</code> parameter may be created in the 
+ * following way:
+ * <code>
+ * 	GC gc = new GC(control);
+ *	gc.setFont(control.getFont());
+ *	fontMetrics = gc.getFontMetrics();
+ *	gc.dispose();
+ * </code>
+ * </p>
+ *
+ * @param fontMetrics used in performing the conversion
+ * @param chars the number of characters
+ * @return the number of pixels
+ * @since 2.0
+ */
+public static int convertWidthInCharsToPixels(FontMetrics fontMetrics, int chars) {
+	return fontMetrics.getAverageCharWidth() * chars;
+}
+
 /**
  * Notifies that this dialog's button with the given id has been pressed.
  * <p>
@@ -101,6 +192,19 @@ protected Dialog(Shell parentShell) {
  * @param buttonId the id of the button that was pressed (see
  *  <code>IDialogConstants.*_ID</code> constants)
  */
+/**
+ * Creates a dialog instance.
+ * Note that the window will have no visual representation (no widgets)
+ * until it is told to open. 
+ * By default, <code>open</code> blocks for dialogs.
+ *
+ * @param parentShell the parent shell, or <code>null</code> to create a top-level shell
+ */
+protected Dialog(Shell parentShell) {
+	super(parentShell);
+	setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+	setBlockOnOpen(true);
+}
 protected void buttonPressed(int buttonId) {
 	if (IDialogConstants.OK_ID == buttonId) 
 		okPressed();
@@ -134,7 +238,8 @@ protected void cancelPressed() {
  * @return the number of pixels
  */
 protected int convertHeightInCharsToPixels(int chars) {
-	return convertVerticalDLUsToPixels(chars * 8);
+	Assert.isNotNull(fontMetrics, "Must call initializeDialogUnits before calling this method"); //$NON-NLS-1$
+	return convertHeightInCharsToPixels(fontMetrics, chars);
 }
 /**
  * Returns the number of pixels corresponding to the
@@ -151,7 +256,8 @@ protected int convertHeightInCharsToPixels(int chars) {
  * @return the number of pixels
  */
 protected int convertHorizontalDLUsToPixels(int dlus) {
-	return (int)Math.round(dlus * horizontalDialogUnitSize);
+	Assert.isNotNull(fontMetrics, "Must call initializeDialogUnits before calling this method"); //$NON-NLS-1$
+	return convertHorizontalDLUsToPixels(fontMetrics, dlus);
 }
 /**
  * Returns the number of pixels corresponding to the
@@ -168,7 +274,8 @@ protected int convertHorizontalDLUsToPixels(int dlus) {
  * @return the number of pixels
  */
 protected int convertVerticalDLUsToPixels(int dlus) {
-	return (int)Math.round(dlus * verticalDialogUnitSize);
+	Assert.isNotNull(fontMetrics, "Must call initializeDialogUnits before calling this method"); //$NON-NLS-1$
+	return convertVerticalDLUsToPixels(fontMetrics, dlus);
 }
 /**
  * Returns the number of pixels corresponding to the
@@ -185,7 +292,8 @@ protected int convertVerticalDLUsToPixels(int dlus) {
  * @return the number of pixels
  */
 protected int convertWidthInCharsToPixels(int chars) {
-	return convertHorizontalDLUsToPixels(chars * 4);
+	Assert.isNotNull(fontMetrics, "Must call initializeDialogUnits before calling this method"); //$NON-NLS-1$
+	return convertWidthInCharsToPixels(fontMetrics, chars);
 }
 /**
  * Creates a new button with the given id.
@@ -382,7 +490,7 @@ public static Image getImage(String key) {
 	return JFaceResources.getImageRegistry().get(key);
 }
 /**
- * Initializes the values of the horizontal and vertical dialog units
+ * Initializes the computation of horizontal and vertical dialog units
  * based on the size of current font.
  * <p>
  * This method must be called before any of the dialog unit based
@@ -392,14 +500,11 @@ public static Image getImage(String key) {
  * @param control a control from which to obtain the current font
  */
 protected void initializeDialogUnits(Control control) {
-	GC gc= new GC(control);
+	// Compute and store a font metric
+	GC gc = new GC(control);
 	gc.setFont(control.getFont());
-	int averageWidth= gc.getFontMetrics().getAverageCharWidth();
-	int height = gc.getFontMetrics().getHeight();
+	fontMetrics = gc.getFontMetrics();
 	gc.dispose();
-
-	horizontalDialogUnitSize = averageWidth * 0.25;
-	verticalDialogUnitSize = height * 0.125;
 }
 /**
  * Notifies that the ok button of this dialog has been pressed.
