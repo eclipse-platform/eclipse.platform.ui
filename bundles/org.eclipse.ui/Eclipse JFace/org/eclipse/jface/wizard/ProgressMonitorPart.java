@@ -12,7 +12,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
- 
+
 /**
  * A standard implementation of an IProgressMonitor. It consists
  * of a label displaying the task and subtask name, and a
@@ -24,6 +24,7 @@ public class ProgressMonitorPart extends Composite implements IProgressMonitor {
 
 	protected Label fLabel;
 	protected String fTaskName;
+	protected String fSubTaskName;
 	protected ProgressIndicator fProgressIndicator;
 	protected Control fCancelComponent;
 	protected boolean fIsCanceled;
@@ -71,28 +72,24 @@ public class ProgressMonitorPart extends Composite implements IProgressMonitor {
 	 * Implements <code>IProgressMonitor.beginTask</code>.
 	 * @see IProgressMonitor#beginTask(java.lang.String, int)
 	 */
-	public void beginTask(String name, int totalWork){
-		if (name == null)
-			fTaskName= "";//$NON-NLS-1$
-		else	
-			fTaskName= name;
-			
-		fLabel.setText(fTaskName);
+	public void beginTask(String name, int totalWork) {
+		fTaskName= name;
+		updateLabel();
 		if (totalWork == IProgressMonitor.UNKNOWN || totalWork == 0) {
 			fProgressIndicator.beginAnimatedTask();
 		} else {
 			fProgressIndicator.beginTask(totalWork);
 		}	
 	}
-/**
- * Implements <code>IProgressMonitor.done</code>.
- * @see IProgressMonitor#done()
- */
-public void done() {
-	fLabel.setText("");//$NON-NLS-1$
-	fProgressIndicator.sendRemainingWork();
-	fProgressIndicator.done();
-}
+	/**
+	 * Implements <code>IProgressMonitor.done</code>.
+	 * @see IProgressMonitor#done()
+	 */
+	public void done() {
+		fLabel.setText("");//$NON-NLS-1$
+		fProgressIndicator.sendRemainingWork();
+		fProgressIndicator.done();
+	}
 	/**
 	 * Escapes any occurrence of '&' in the given String so that
 	 * it is not considered as a mnemonic
@@ -145,13 +142,13 @@ public void done() {
 		gd.heightHint= progressIndicatorHeight;
 		fProgressIndicator.setLayoutData(gd);
 	}
-/**
- * Implements <code>IProgressMonitor.internalWorked</code>.
- * @see IProgressMonitor#internalWorked(double)
- */
-public void internalWorked(double work) {
-	fProgressIndicator.worked(work);
-}
+	/**
+	 * Implements <code>IProgressMonitor.internalWorked</code>.
+	 * @see IProgressMonitor#internalWorked(double)
+	 */
+	public void internalWorked(double work) {
+		fProgressIndicator.worked(work);
+	}
 	/**
 	 * Implements <code>IProgressMonitor.isCanceled</code>.
 	 * @see IProgressMonitor#isCanceled()
@@ -188,23 +185,28 @@ public void internalWorked(double work) {
 	 */
 	public void setTaskName(String name) {
 		fTaskName= name;
+		updateLabel();
 	}
-/**
- * Implements <code>IProgressMonitor.subTask</code>.
- * @see IProgressMonitor#subTask(java.lang.String)
- */
-public void subTask(String name) {
-	if (name == null)
-		name = "";//$NON-NLS-1$
+	/**
+	 * Implements <code>IProgressMonitor.subTask</code>.
+	 * @see IProgressMonitor#subTask(java.lang.String)
+	 */
+	public void subTask(String name) {
+		fSubTaskName= name;
+		updateLabel();
+	}
 
-	String text;
-	if (fTaskName != null && fTaskName.length() > 0)
-		text = JFaceResources.format("Set_SubTask", new Object[] {fTaskName, name});//$NON-NLS-1$
-	else
-		text = name;
+	/**
+	 * Updates the label with the current task and subtask names.
+	 */
+	protected void updateLabel() {
+		String text = fSubTaskName == null ? "" : fSubTaskName; //$NON-NLS-1$
+		if (fTaskName != null && fTaskName.length() > 0) {
+			text = JFaceResources.format("Set_SubTask", new Object[] {fTaskName, text});//$NON-NLS-1$
+		}
+		fLabel.setText(escapeMetaCharacters(text));
+	}
 
-	fLabel.setText(escapeMetaCharacters(text));
-}
 	/**
 	 * Implements <code>IProgressMonitor.worked</code>.
 	 * @see IProgressMonitor#worked(int)
