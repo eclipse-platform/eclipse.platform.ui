@@ -499,6 +499,7 @@ public abstract class Dialog extends Window {
 		((GridLayout) parent.getLayout()).numColumns++;
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText(label);
+		button.setFont(JFaceResources.getDialogFont());
 		button.setData(new Integer(id));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
