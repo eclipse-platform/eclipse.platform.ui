@@ -1,29 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-  name="Eclipse Core Tests Save Participant"
-  id="org.eclipse.core.tests.resources.saveparticipant"
-  version="3.0.0"
-  provider-name="Eclipse.org">
+<plugin>
 
-  <requires>
-    <import plugin="org.eclipse.core.resources"/>
-    <import plugin="org.eclipse.core.tests.harness"/>
-    <import plugin="org.eclipse.core.runtime.compatibility"/> 
-    <import plugin="org.junit"/>
-    <import plugin="org.eclipse.core.tests.resources"/>
-    <import plugin="org.eclipse.core.tests.resources.saveparticipant1"/>
-    <import plugin="org.eclipse.core.tests.resources.saveparticipant2"/>
-    <import plugin="org.eclipse.core.tests.resources.saveparticipant3"/>
-  </requires>
-
-  <runtime>
-    <library name="saveparticipant.jar">
-      <export name="*"/>
-    </library>
-  </runtime>
-
-  <extension point="org.eclipse.core.tests.harness.tests">
+    <extension point="org.eclipse.core.tests.harness.tests">
     <test id="org.eclipse.core.tests.resources.saveparticipant.SaveManagerTest">
       <run class="org.eclipse.core.tests.resources.saveparticipant.SaveManagerTest"/>
     </test>
