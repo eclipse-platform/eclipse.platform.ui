@@ -17,23 +17,10 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TreeEditor;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -43,14 +30,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class ChangeVariableValueAction extends SelectionProviderAction {
 
-	// Fields for inline editing 
-	protected Composite fComposite;
-	protected Tree fTree;
-	protected Label fEditorLabel;
-	protected Text fEditorText;
-	protected TreeEditor fTreeEditor;
+	private MultilineInputDialog fInputDialog;
 	protected IVariable fVariable;
-	protected boolean fKeyReleased= false;
 	
 	public ChangeVariableValueAction(Viewer viewer) {
 		super(viewer, ActionMessages.getString("ChangeVariableValue.title")); //$NON-NLS-1$
@@ -58,8 +39,6 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_CHANGE_VARIABLE_VALUE));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CHANGE_VARIABLE_VALUE));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_CHANGE_VARIABLE_VALUE));
-		fTree= ((TreeViewer)viewer).getTree();
-		fTreeEditor= new TreeEditor(fTree);
 		WorkbenchHelp.setHelp(
 			this,
 			IDebugHelpContextIds.CHANGE_VALUE_ACTION);
@@ -73,129 +52,53 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 		if (window == null) {
 			return;
 		}
-		final Shell activeShell= window.getShell();
+		Shell activeShell= window.getShell();
 		
-		// If a previous edit is still in progress, finish it
-		if (fEditorText != null) {
-			saveChangesAndCleanup(fVariable, activeShell);
-		}
-		fVariable = variable;
-		
-		// Use a Composite containing a Label and a Text.  This allows us to edit just
-		// the value, while still showing the variable name.
-		fComposite = new Composite(fTree, SWT.NONE);
-		fComposite.setBackground(fTree.getBackground());
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		fComposite.setLayout(layout);
-		
-		fEditorLabel = new Label(fComposite, SWT.LEFT);
-		fEditorLabel.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-		
-		// Fix for bug 1766.  Border behavior on Windows & Linux for text
-		// fields is different.  On Linux, you always get a border, on Windows,
-		// you don't.  Specifying a border on Linux results in the characters
-		// getting pushed down so that only there very tops are visible.  Thus,
-		// we have to specify different style constants for the different platforms.
-		int textStyles = SWT.SINGLE | SWT.LEFT;
-		if (SWT.getPlatform().equals("win32")) {  //$NON-NLS-1$
-			textStyles |= SWT.BORDER;
-		}
-		fEditorText = new Text(fComposite, textStyles);
-		fEditorText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
-		String valueString= ""; //$NON-NLS-1$
-		try {
-			valueString= fVariable.getValue().getValueString();
-		} catch (DebugException de) {
-			DebugUIPlugin.errorDialog(activeShell,ActionMessages.getString("ChangeVariableValue.errorDialogTitle"),ActionMessages.getString("ChangeVariableValue.errorDialogMessage"), de);	 //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		TreeItem[] selectedItems = fTree.getSelection();
-		fTreeEditor.horizontalAlignment = SWT.LEFT;
-		fTreeEditor.grabHorizontal = true;
-		fTreeEditor.setEditor(fComposite, selectedItems[0]);
-
-		// There is no API on the model presentation to get just the variable name, 
-		// so we have to make do with just calling IVariable.getName()
-		String varName = ""; //$NON-NLS-1$
-		try {
-			varName = fVariable.getName();
-		} catch (DebugException de) {
-			DebugUIPlugin.errorDialog(activeShell,ActionMessages.getString("ChangeVariableValue.errorDialogTitle"),ActionMessages.getString("ChangeVariableValue.errorDialogMessage"), de.getStatus());	 //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		fEditorLabel.setText(varName + "="); //$NON-NLS-1$
-
-		fEditorText.setText(valueString);
-		fEditorText.selectAll();
-		
-		fComposite.layout(true);
-		fComposite.setVisible(true);
-		fEditorText.setFocus();
-	
-		// CR means commit the changes, ESC means abort changing the value
-		fEditorText.addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent event) {
-				if (event.character == SWT.CR) {
-					if (fKeyReleased) {
-						saveChangesAndCleanup(fVariable, activeShell);
-					} else {
-						cleanup();
-						return;
-					}
-				}
-				if (event.character == SWT.ESC) {
-					cleanup();
-					return;
-				}
-				fKeyReleased= true;
-			}
-		});
-	
-		// If the focus is lost, then act as if user hit CR and commit changes
-		fEditorText.addFocusListener(new FocusAdapter() {
-			public void focusLost(FocusEvent fe) {
-				if (fKeyReleased) {
-					saveChangesAndCleanup(fVariable, activeShell);
-				} else {
-					cleanup();
-				}
-			}
-		});				
-	}
-	
-	/** 
-	 * If the new value validates, save it, and dispose the text widget, 
-	 * otherwise sound the system bell and leave the user in the editor.
-	 */
-	protected void saveChangesAndCleanup(IVariable variable, Shell shell) {
-		String newValue= fEditorText.getText();
-		try {
-			if (!variable.verifyValue(newValue)) {
-				shell.getDisplay().beep();
-				return;
-			}
-			variable.setValue(newValue);
-		} catch (DebugException de) {
-			cleanup();
-			DebugUIPlugin.errorDialog(shell, ActionMessages.getString("ChangeVariableValue.errorDialogTitle"),ActionMessages.getString("ChangeVariableValue.errorDialogMessage"), de);	//$NON-NLS-2$ //$NON-NLS-1$
+		// If a previous edit is still in progress, don't start another
+		if (fInputDialog != null) {
 			return;
 		}
-		cleanup();		
-	}
 
-	/**
-	 * Tidy up the widgets that were used
-	 */
-	private void cleanup() {
-		fKeyReleased= false;
-		if (fEditorText != null) {
-			fEditorText.dispose();
-			fEditorText = null;
-			fVariable = null;
-			fTreeEditor.setEditor(null, null);
-			fComposite.setVisible(false);
+		fVariable = variable;
+		String name= ""; //$NON-NLS-1$
+		String value= ""; //$NON-NLS-1$
+		try {
+			name= fVariable.getName();
+			value= fVariable.getValue().getValueString();
+		} catch (DebugException exception) {
+			DebugUIPlugin.errorDialog(activeShell, ActionMessages.getString("ChangeVariableValue.errorDialogTitle"),ActionMessages.getString("ChangeVariableValue.errorDialogMessage"), exception);	//$NON-NLS-2$ //$NON-NLS-1$
+			fInputDialog= null;
+			return;
 		}
+		fInputDialog= new MultilineInputDialog(activeShell, ActionMessages.getString("ChangeVariableValueSet_Variable_Value_1"), ActionMessages.getString("ChangeVariableValueEnter_a_new_value_for__2") + name + ':', value, new IInputValidator() { //$NON-NLS-1$ //$NON-NLS-2$
+			/**
+			 * Returns an error string if the input is invalid
+			 */
+			public String isValid(String input) {
+				try {
+					if (fVariable.verifyValue(input)) {
+						return null; // null means valid
+					}
+				} catch (DebugException exception) {
+					return ActionMessages.getString("ChangeVariableValueAn_exception_occurred_3"); //$NON-NLS-1$
+				}
+				return ActionMessages.getString("ChangeVariableValueInvalid_value_4"); //$NON-NLS-1$
+			}
+		});
+		
+		fInputDialog.open();
+		String newValue= fInputDialog.getValue();
+		if (newValue != null) {
+			// null value means cancel was pressed
+			try {
+				fVariable.setValue(newValue);
+			} catch (DebugException de) {
+				DebugUIPlugin.errorDialog(activeShell, ActionMessages.getString("ChangeVariableValue.errorDialogTitle"),ActionMessages.getString("ChangeVariableValue.errorDialogMessage"), de);	//$NON-NLS-2$ //$NON-NLS-1$
+				fInputDialog= null;
+				return;
+			}
+		}
+		fInputDialog= null;
 	}
 		
 	/**
