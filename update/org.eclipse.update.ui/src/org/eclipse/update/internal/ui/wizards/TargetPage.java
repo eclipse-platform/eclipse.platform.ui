@@ -29,13 +29,23 @@ public class TargetPage extends BannerPage {
 	private static final String KEY_TITLE = "InstallWizard.TargetPage.title";
 	private static final String KEY_DESC = "InstallWizard.TargetPage.desc";
 	private static final String KEY_NEW = "InstallWizard.TargetPage.new";
-	private static final String KEY_REQUIRED_FREE_SPACE = "InstallWizard.TargetPage.requiredSpace";
-	private static final String KEY_AVAILABLE_FREE_SPACE = "InstallWizard.TargetPage.availableSpace";
+	private static final String KEY_REQUIRED_FREE_SPACE =
+		"InstallWizard.TargetPage.requiredSpace";
+	private static final String KEY_AVAILABLE_FREE_SPACE =
+		"InstallWizard.TargetPage.availableSpace";
 	private static final String KEY_LOCATION = "InstallWizard.TargetPage.location";
-	private static final String KEY_LOCATION_MESSAGE = "InstallWizard.TargetPage.location.message";
-	private static final String KEY_LOCATION_EMPTY = "InstallWizard.TargetPage.location.empty";
-	private static final String KEY_LOCATION_ERROR_TITLE = "InstallWizard.TargetPage.location.error.title";
-	private static final String KEY_LOCATION_ERROR_MESSAGE = "InstallWizard.TargetPage.location.error.message";
+	private static final String KEY_LOCATION_MESSAGE =
+		"InstallWizard.TargetPage.location.message";
+	private static final String KEY_LOCATION_EMPTY =
+		"InstallWizard.TargetPage.location.empty";
+	private static final String KEY_LOCATION_ERROR_TITLE =
+		"InstallWizard.TargetPage.location.error.title";
+	private static final String KEY_LOCATION_ERROR_MESSAGE =
+		"InstallWizard.TargetPage.location.error.message";
+	private static final String KEY_SIZE =
+		"InstallWizard.TargetPage.size";
+	private static final String KEY_SIZE_UNKNOWN = 
+		"InstallWizard.TargetPage.unknownSize";
 	private TableViewer tableViewer;
 	private IInstallConfiguration config;
 	private Image siteImage;
@@ -153,7 +163,7 @@ public class TargetPage extends BannerPage {
 		label.setText(UpdateUIPlugin.getResourceString(KEY_AVAILABLE_FREE_SPACE));
 		availableSpaceLabel = new Label(status, SWT.NULL);
 		availableSpaceLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		tableViewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
 		selectFirstTarget();
 		return client;
@@ -167,32 +177,32 @@ public class TargetPage extends BannerPage {
 		tableViewer.setLabelProvider(new TableLabelProvider());
 		tableViewer.addFilter(new ViewerFilter() {
 			public boolean select(Viewer v, Object parent, Object obj) {
-				IConfiguredSite site = (IConfiguredSite)obj;
+				IConfiguredSite site = (IConfiguredSite) obj;
 				return site.isUpdatable();
 			}
 		});
-		tableViewer.addSelectionChangedListener(new ISelectionChangedListener () {
+		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
 				boolean empty = selection.isEmpty();
 				verifyNotEmpty(empty);
-				updateStatus(((IStructuredSelection)selection).getFirstElement());
+				updateStatus(((IStructuredSelection) selection).getFirstElement());
 			}
 		});
 		config.addInstallConfigurationChangedListener(configListener);
 	}
-	
+
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
 			tableViewer.getTable().setFocus();
 		}
 	}
-	
+
 	private void verifyNotEmpty(boolean empty) {
 		String errorMessage = null;
-		if (empty) 
-		  errorMessage = UpdateUIPlugin.getResourceString(KEY_LOCATION_EMPTY);
+		if (empty)
+			errorMessage = UpdateUIPlugin.getResourceString(KEY_LOCATION_EMPTY);
 		setErrorMessage(errorMessage);
 		setPageComplete(!empty);
 	}
@@ -220,14 +230,13 @@ public class TargetPage extends BannerPage {
 		if (path != null) {
 			try {
 				File file = new File(path);
-				IConfiguredSite csite =
-					config.createConfiguredSite(file);
+				IConfiguredSite csite = config.createConfiguredSite(file);
 				if (csite.isUpdatable())
 					config.addConfiguredSite(csite);
 				else {
 					String title = UpdateUIPlugin.getResourceString(KEY_LOCATION_ERROR_TITLE);
-					String message = UpdateUIPlugin.getFormattedMessage(KEY_LOCATION_ERROR_MESSAGE,
-								path);
+					String message =
+						UpdateUIPlugin.getFormattedMessage(KEY_LOCATION_ERROR_MESSAGE, path);
 					MessageDialog.openError(getContainer().getShell(), title, message);
 				}
 			} catch (CoreException e) {
@@ -235,26 +244,28 @@ public class TargetPage extends BannerPage {
 			}
 		}
 	}
-	
+
 	private void updateStatus(Object element) {
-		if (element==null) {
+		if (element == null) {
 			requiredSpaceLabel.setText("");
 			availableSpaceLabel.setText("");
 			return;
 		}
-		IConfiguredSite site = (IConfiguredSite)element;
+		IConfiguredSite site = (IConfiguredSite) element;
 		URL url = site.getSite().getURL();
 		String fileName = url.getFile();
 		File file = new File(fileName);
 		long available = LocalSystemInfo.getFreeSpace(file);
-		//long required = site.getSite().getInstallSizeFor(feature);
-		//long required = random.nextLong();
-		//requiredSpaceLabel.setText(required+"KB");
-		requiredSpaceLabel.setText("Unknown");
-		if (available==LocalSystemInfo.SIZE_UNKNOWN)
-		   availableSpaceLabel.setText("Unknown");
+		long required = site.getSite().getInstallSizeFor(feature);
+		if (required == -1)
+			requiredSpaceLabel.setText(UpdateUIPlugin.getResourceString(KEY_SIZE_UNKNOWN));
 		else
-		availableSpaceLabel.setText(available+"KB");
+			requiredSpaceLabel.setText(UpdateUIPlugin.getFormattedMessage(KEY_SIZE, ""+required));
+
+		if (available == LocalSystemInfo.SIZE_UNKNOWN)
+			availableSpaceLabel.setText(UpdateUIPlugin.getResourceString(KEY_SIZE_UNKNOWN));
+		else
+			availableSpaceLabel.setText(UpdateUIPlugin.getFormattedMessage(KEY_SIZE, ""+available));
 	}
 
 	public IConfiguredSite getTargetSite() {

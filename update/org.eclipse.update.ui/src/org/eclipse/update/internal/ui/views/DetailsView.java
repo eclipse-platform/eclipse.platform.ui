@@ -146,6 +146,7 @@ public void createPartControl(Composite parent) {
 }
 
 public void showPageWithInput(String pageId, Object input) {
+	if (!(input instanceof ModelObject)) return;
 	showPage(pageId, input);
 	if (input!=null)
 		history.add(pageId, input);

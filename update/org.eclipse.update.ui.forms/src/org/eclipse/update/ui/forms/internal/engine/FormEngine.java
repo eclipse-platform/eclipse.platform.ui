@@ -55,9 +55,30 @@ public class FormEngine extends Canvas {
 		});
 		addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
-				if (e.character == '\r') {
-					// Activation
+				System.out.println("Key: "+e.character);
+				if (e.character=='\r') {
 					activateSelectedLink();
+					return;
+				}
+				switch (e.keyCode) {
+					case SWT.ARROW_DOWN:
+						scrollVertical(false);
+						break;
+					case SWT.ARROW_UP:
+						scrollVertical(true);
+						break;
+					case SWT.ARROW_LEFT:
+						scrollHorizontal(true);
+						break;
+					case SWT.ARROW_RIGHT:
+						scrollHorizontal(false);
+						break;
+					case SWT.PAGE_UP:
+						scrollPage(true);
+						break;
+					case SWT.PAGE_DOWN:
+						scrollPage(false);
+						break;
 				}
 			}
 		});
@@ -156,6 +177,16 @@ public class FormEngine extends Canvas {
 			}
 
 		}
+	}
+	
+	private void scrollVertical(boolean up) {
+		System.out.println("Scroll vertical :"+up);
+	}
+	private void scrollHorizontal(boolean left) {
+		System.out.println("Scroll horizontal :"+left);
+	}
+	private void scrollPage(boolean up) {
+		System.out.println("Scroll page :"+up);
 	}
 
 	public HyperlinkSettings getHyperlinkSettings() {
