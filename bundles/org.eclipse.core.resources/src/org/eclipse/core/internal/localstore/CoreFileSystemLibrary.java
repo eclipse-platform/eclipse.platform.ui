@@ -139,6 +139,13 @@ public static boolean copyAttributes(String source, String destination, boolean 
 	return false; // not supported
 }
 /**
+ * Return <code>true</code> if we have found the core library and are using it for
+ * our file-system calls, and <code>false</code> otherwise. */
+public static boolean usingNatives() {
+	return hasNatives;
+}
+
+/**
  * Copies file attributes from source to destination. The copyLastModified attribute
  * indicates whether the lastModified attribute should be copied.
  */
