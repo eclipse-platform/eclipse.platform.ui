@@ -3,7 +3,7 @@
   name="Eclipse Core Tests Harness"
   id="org.eclipse.core.tests.harness"
   version="2.0.0"
-  provider-name="Object Technology International, Inc.">
+  provider-name="Eclipse.org">
 
   <requires>
     <import plugin="org.eclipse.core.resources"/>
