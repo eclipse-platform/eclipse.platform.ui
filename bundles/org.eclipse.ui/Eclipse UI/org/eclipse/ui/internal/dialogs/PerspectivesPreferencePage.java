@@ -52,11 +52,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	private Button openFastButton;
 
 	// widgets for perspective switching when creating new projects
-	private Button openProjectInNewWindowButton;
-	private Button openProjectInSameWindowButton;
 	private Button switchOnNewProjectButton;
-
-	private String newProjectPerspectiveSetting;
+	private boolean switchOnNewProject;
 
 	private static final int LIST_WIDTH = 200;
 	private static final int LIST_HEIGHT = 200;
@@ -64,9 +61,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	// labels
 	private static final String NEW_PROJECT_PERSPECTIVE_TITLE = WorkbenchMessages.getString("WorkbenchPreference.projectOptionsTitle"); //$NON-NLS-1$
 
-	private static final String OPEN_NEW_WINDOW_PROJECT_LABEL = WorkbenchMessages.getString("WorkbenchPreference.projectNewWindow"); //$NON-NLS-1$
-	private static final String OPEN_SAME_WINDOW_PROJECT_LABEL = WorkbenchMessages.getString("WorkbenchPreference.projectSameWindow"); //$NON-NLS-1$
-	private static final String DO_NOT_SWITCH_PERSPECTIVES = WorkbenchMessages.getString("WorkbenchPreference.noSwitch"); //$NON-NLS-1$
+	private static final String SWITCH_PERSPECTIVES_LABEL = WorkbenchMessages.getString("WorkbenchPreference.switch"); //$NON-NLS-1$
 
 	private static final String OVM_TITLE = WorkbenchMessages.getString("OpenViewMode.title"); //$NON-NLS-1$
 	private static final String OVM_EMBED = WorkbenchMessages.getString("OpenViewMode.embed"); //$NON-NLS-1$
@@ -207,50 +202,14 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		buttonComposite.setText(NEW_PROJECT_PERSPECTIVE_TITLE);
 		buttonComposite.setFont(font);
 
-		// Open same window button
-		openProjectInSameWindowButton =
-			WorkbenchPreferencePage.createRadioButton(
-				buttonComposite,
-				OPEN_SAME_WINDOW_PROJECT_LABEL);
-		openProjectInSameWindowButton.setSelection(
-			newProjectPerspectiveSetting.equals(
-				IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE));
-		openProjectInSameWindowButton
-			.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				newProjectPerspectiveSetting =
-					IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE;
-			}
-		});
-
-		// Open New Window button
-		openProjectInNewWindowButton =
-			WorkbenchPreferencePage.createRadioButton(
-				buttonComposite,
-				OPEN_NEW_WINDOW_PROJECT_LABEL);
-		openProjectInNewWindowButton.setSelection(
-			newProjectPerspectiveSetting.equals(
-				IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW));
-		openProjectInNewWindowButton
-			.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				newProjectPerspectiveSetting =
-					IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW;
-			}
-		});
-
 		// No switch button
-		switchOnNewProjectButton =
-			WorkbenchPreferencePage.createRadioButton(
-				buttonComposite,
-				DO_NOT_SWITCH_PERSPECTIVES);
-		switchOnNewProjectButton.setSelection(
-			newProjectPerspectiveSetting.equals(
-				IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE));
+		switchOnNewProjectButton = new Button(buttonComposite, SWT.CHECK | SWT.LEFT);
+		switchOnNewProjectButton.setText(SWITCH_PERSPECTIVES_LABEL);
+		switchOnNewProjectButton.setFont(buttonComposite.getFont());
+		switchOnNewProjectButton.setSelection(switchOnNewProject);
 		switchOnNewProjectButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				newProjectPerspectiveSetting =
-					IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE;
+				switchOnNewProject = switchOnNewProjectButton.getSelection();
 			}
 		});
 	}
@@ -400,8 +359,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		this.workbench = aWorkbench;
 		this.perspectiveRegistry = (PerspectiveRegistry) workbench.getPerspectiveRegistry();
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		newProjectPerspectiveSetting =
-			store.getString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
+		switchOnNewProject = !IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE.equals(
+			store.getString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE));
 		openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
 		openPerspMode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
 	}
@@ -412,14 +371,9 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	protected void performDefaults() {
 		//Project perspective preferences
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		newProjectPerspectiveSetting =
-			store.getDefaultString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
-		openProjectInSameWindowButton.setSelection(
-			newProjectPerspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE));
-		openProjectInNewWindowButton.setSelection(
-			newProjectPerspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW));
-		switchOnNewProjectButton.setSelection(
-			newProjectPerspectiveSetting.equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE));
+		switchOnNewProject = !IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE.equals(
+			store.getDefaultString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE));
+		switchOnNewProjectButton.setSelection(switchOnNewProject);
 
 		openViewMode = store.getDefaultInt(IPreferenceConstants.OPEN_VIEW_MODE);
 		// Open view as float no longer supported
@@ -484,6 +438,14 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 
 		// store the open new project perspective settings
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		String newProjectPerspectiveSetting;
+		if(!switchOnNewProject)
+			newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE;
+		else if(openPerspMode == IPreferenceConstants.OPM_NEW_WINDOW)
+			newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW;
+		else
+			newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE;
+		
 		store.setValue(
 			IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
 			newProjectPerspectiveSetting);
