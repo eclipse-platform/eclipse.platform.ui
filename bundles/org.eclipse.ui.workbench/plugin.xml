@@ -9,7 +9,7 @@
    <runtime>
       <library name="workbench.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.ui, org.eclipse.jface, org.eclipse.example"/>
+         <packages prefixes="org.eclipse.ui, org.eclipse.jface"/>
       </library>
    </runtime>
    <requires>
