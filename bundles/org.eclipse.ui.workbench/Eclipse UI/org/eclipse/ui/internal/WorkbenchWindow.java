@@ -1292,32 +1292,34 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				continue;
 
 			// Get the input factory.
+			IAdaptable input = null;
 			IMemento inputMem = pageMem.getChild(IWorkbenchConstants.TAG_INPUT);
-			String factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
-			if (factoryID == null) {
-				WorkbenchPlugin.log("Unable to restore page - no input factory ID."); //$NON-NLS-1$
-				result.add(unableToRestorePage(pageMem));
-				continue;
-			}
-			IAdaptable input;
-			try {
-				UIStats.start(UIStats.RESTORE_WORKBENCH, "WorkbenchPageFactory"); //$NON-NLS-1$
-				IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
-				if (factory == null) {
-					WorkbenchPlugin.log("Unable to restore page - cannot instantiate input factory: " + factoryID); //$NON-NLS-1$
+			if (inputMem != null) {
+				String factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+				if (factoryID == null) {
+					WorkbenchPlugin.log("Unable to restore page - no input factory ID."); //$NON-NLS-1$
 					result.add(unableToRestorePage(pageMem));
 					continue;
 				}
-
-				// Get the input element.
-				input = factory.createElement(inputMem);
-				if (input == null) {
-					WorkbenchPlugin.log("Unable to restore page - cannot instantiate input element: " + factoryID); //$NON-NLS-1$
-					result.add(unableToRestorePage(pageMem));
-					continue;
+				try {
+					UIStats.start(UIStats.RESTORE_WORKBENCH, "WorkbenchPageFactory"); //$NON-NLS-1$
+					IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
+					if (factory == null) {
+						WorkbenchPlugin.log("Unable to restore page - cannot instantiate input factory: " + factoryID); //$NON-NLS-1$
+						result.add(unableToRestorePage(pageMem));
+						continue;
+					}
+	
+					// Get the input element.
+					input = factory.createElement(inputMem);
+					if (input == null) {
+						WorkbenchPlugin.log("Unable to restore page - cannot instantiate input element: " + factoryID); //$NON-NLS-1$
+						result.add(unableToRestorePage(pageMem));
+						continue;
+					}
+				} finally {
+					UIStats.end(UIStats.RESTORE_WORKBENCH, "WorkbenchPageFactory"); //$NON-NLS-1$
 				}
-			} finally {
-				UIStats.end(UIStats.RESTORE_WORKBENCH, "WorkbenchPageFactory"); //$NON-NLS-1$
 			}
 			// Open the perspective.
 			WorkbenchPage newPage = null;
@@ -1684,32 +1686,33 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		while (enum.hasNext()) {
 			WorkbenchPage page = (WorkbenchPage) enum.next();
 
-			// Get the input.
-			IAdaptable input = page.getInput();
-			if (input == null) {
-				WorkbenchPlugin.log("Unable to save page input: " + page); //$NON-NLS-1$
-				continue;
-			}
-			IPersistableElement persistable =
-				(IPersistableElement) input.getAdapter(IPersistableElement.class);
-			if (persistable == null) {
-				WorkbenchPlugin.log("Unable to save page input: " + input); //$NON-NLS-1$
-				continue;
-			}
-
 			// Save perspective.
 			IMemento pageMem = memento.createChild(IWorkbenchConstants.TAG_PAGE);
 			pageMem.putString(IWorkbenchConstants.TAG_LABEL, page.getLabel());
 			result.add(page.saveState(pageMem));
-
+			
 			if (page == getActiveWorkbenchPage()) {
 				pageMem.putString(IWorkbenchConstants.TAG_FOCUS, "true"); //$NON-NLS-1$
 			}
 
-			// Save input.
-			IMemento inputMem = pageMem.createChild(IWorkbenchConstants.TAG_INPUT);
-			inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
-			persistable.saveState(inputMem);
+			// Get the input.
+			IAdaptable input = page.getInput();
+			if (input != null) {
+				IPersistableElement persistable =
+					(IPersistableElement) input.getAdapter(IPersistableElement.class);
+				if (persistable == null) {
+					WorkbenchPlugin.log(
+						"Unable to save page input: " //$NON-NLS-1$
+							+ input
+							+ ", because it does not adapt to IPersistableElement"); //$NON-NLS-1$
+				}
+				else {
+					// Save input.	
+					IMemento inputMem = pageMem.createChild(IWorkbenchConstants.TAG_INPUT);
+					inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
+					persistable.saveState(inputMem);
+				}
+			}
 		}
 		return result;
 	}
