@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.zip.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.environment.*;
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.configurator.IPlatformConfiguration.*;
 import org.w3c.dom.*;
@@ -23,6 +24,8 @@ import org.xml.sax.*;
 
 
 public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurationConstants{	
+	private static final String MAC_OS_MARKER = ".DS_Store";
+	
 	private URL url; // this is the external URL for the site
 	private URL resolvedURL; // this is the resolved URL used internally
 	private ISitePolicy policy;
@@ -38,6 +41,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	
 	private static FeatureParser featureParser = new FeatureParser();
 	private static PluginParser pluginParser = new PluginParser();
+	private static boolean isMacOS = Platform.getOS().equals(Constants.OS_MACOSX);
 
 	public SiteEntry(URL url) {
 		this(url,null);
@@ -267,6 +271,9 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			// handle the installed features under the features directory
 			File[] dirs = featuresDir.listFiles(new FileFilter() {
 				public boolean accept(File f) {
+					// mac os folders contain a file .DS_Store in each folder, and we need to skip it (bug 76869) 
+					if (isMacOS && f.getName().equals(MAC_OS_MARKER))
+						return false;
 					boolean valid = f.isDirectory() && (new File(f,FEATURE_XML).exists());
 					if (!valid)
 						Utils.log(Messages.getString("SiteEntry.cannotFindFeatureInDir", f.getAbsolutePath())); //$NON-NLS-1$
