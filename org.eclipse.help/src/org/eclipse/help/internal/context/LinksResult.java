@@ -4,6 +4,8 @@
  */
 package org.eclipse.help.internal.context;
 import java.io.*;
+import java.util.Locale;
+
 import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xml.serialize.*;
 import org.eclipse.help.*;
@@ -43,6 +45,14 @@ public class LinksResult {
 		// the document name is the actual plugin url
 		e.setAttribute(ITopic.HREF, res.getHref());
 		e.setAttribute(ITopic.LABEL, res.getLabel());
+		IToc toc = findTocForTopic(res.getHref());
+		ITopic topic = toc==null? null : toc.getTopic(res.getHref());
+		// Set the document toc
+		if (toc != null)
+		{
+			e.setAttribute(IToc.TOC, toc.getHref());
+			e.setAttribute(IToc.TOC+IToc.LABEL, toc.getLabel());
+		}
 	}
 	public int getSize() {
 		if (factory == null || factory.getDocumentElement() == null)
@@ -68,5 +78,19 @@ public class LinksResult {
 		} catch (IOException e) {
 			return null;
 		}
+	}
+	
+	/**
+	 * Finds a topic in a bookshelf
+	 * or within a scope if specified
+	 */
+	protected IToc findTocForTopic(String href) {
+		IToc[] tocs = HelpSystem.getTocManager().getTocs(Locale.getDefault().toString());
+		for (int i = 0; i < tocs.length; i++) {
+			ITopic topic = tocs[i].getTopic(href);
+			if (topic != null)
+				return tocs[i];
+		}
+		return null;
 	}
 }
