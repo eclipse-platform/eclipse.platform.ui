@@ -349,12 +349,6 @@
             id="org.eclipse.ui.preferencePages.Keys">
       </page>
       <page
-            name="%PreferencePages.Keys2"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.commands.KeysPreferencePage2"
-            id="org.eclipse.ui.preferencePages.Keys2">
-      </page>
-      <page
             name="%PreferencePages.WorkbenchWorkInProgress"
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.ide.misc.WorkInProgressPreferencePage"
