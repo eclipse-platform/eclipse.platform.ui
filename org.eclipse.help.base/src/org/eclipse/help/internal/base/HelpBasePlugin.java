@@ -93,6 +93,7 @@ public class HelpBasePlugin extends Plugin {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
+		plugin.savePluginPreferences();
 		BaseHelpSystem.shutdown();
 		plugin = null;
 		bundleContext = null;
