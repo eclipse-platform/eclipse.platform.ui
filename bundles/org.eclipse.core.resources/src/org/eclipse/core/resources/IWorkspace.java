@@ -501,7 +501,7 @@ public IStatus move(IResource[] resources, IPath destination, boolean force, IPr
 public IProjectDescription newProjectDescription(String projectName);
 /** 
  * Removes the given resource change listener from this workspace.
- * Has no affect if an identical listener is not registered.
+ * Has no effect if an identical listener is not registered.
  *
  * @param listener the listener
  * @see IResourceChangeListener
