@@ -197,7 +197,6 @@ private static synchronized void clearLockFile() {
 private static synchronized void createLockFile() throws CoreException {
 	String lockLocation = metaArea.getLocation().append(PlatformMetaArea.F_LOCK_FILE).toOSString();
 	lockFile = new File(lockLocation);
-	boolean success = false;
 	//if the lock file already exists, try to delete,
 	//assume failure means another eclipse has it open
 	if (lockFile.exists())
@@ -210,7 +209,6 @@ private static synchronized void createLockFile() throws CoreException {
 		//open the lock file so other instances can't co-exist
 		lockRAF = new RandomAccessFile(lockFile, "rw");
 		lockRAF.writeByte(0);
-		success = true;
 	} catch (IOException e) {
 		String message = Policy.bind("meta.failCreateLock", lockLocation);
 		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, e));

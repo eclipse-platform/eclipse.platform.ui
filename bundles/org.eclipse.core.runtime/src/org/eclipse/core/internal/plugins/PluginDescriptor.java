@@ -619,7 +619,6 @@ private void internalDoPluginActivation() throws CoreException {
 	}
 
 	// create a new instance
-	Plugin result = null;
 	try {
 		pluginObject = (Plugin) construct.newInstance(new Object[] { this });
 	} catch (ClassCastException e) {
