@@ -484,7 +484,7 @@ public class AntRunner implements IPlatformRunnable {
 	 * Sets the input handler. The parameter <code>className</code>
 	 * is the class name of a <code>org.apache.tools.ant.input.InputHandler</code>
 	 * implementation. The class will be instantiated at runtime and the
-	 * input handler will be used to respond to <input> requests
+	 * input handler will be used to respond to &lt;input&gt; requests
 	 * Only one input handler is permitted for any build.
 	 * 
 	 * @param className an input handler class name
