@@ -40,8 +40,6 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
 
     private BuildAction buildAction;
 
-    private BuildAction rebuildAction;
-
     private OpenResourceAction openProjectAction;
 
     private CloseResourceAction closeProjectAction;
@@ -57,8 +55,6 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
                 refreshAction);
         actionBars.setGlobalActionHandler(IDEActionFactory.BUILD_PROJECT
                 .getId(), buildAction);
-        actionBars.setGlobalActionHandler(IDEActionFactory.REBUILD_PROJECT
-                .getId(), rebuildAction);
         actionBars.setGlobalActionHandler(
                 IDEActionFactory.OPEN_PROJECT.getId(), openProjectAction);
         actionBars.setGlobalActionHandler(IDEActionFactory.CLOSE_PROJECT
@@ -185,8 +181,6 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
                 .setImageDescriptor(getImageDescriptor("elcl16/refresh_nav.gif"));//$NON-NLS-1$	
         buildAction = new BuildAction(shell,
                 IncrementalProjectBuilder.INCREMENTAL_BUILD);
-        rebuildAction = new BuildAction(shell,
-                IncrementalProjectBuilder.FULL_BUILD);
     }
 
     public void updateActionBars() {
@@ -194,7 +188,6 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
                 .getSelection();
         refreshAction.selectionChanged(selection);
         buildAction.selectionChanged(selection);
-        rebuildAction.selectionChanged(selection);
         openProjectAction.selectionChanged(selection);
         closeProjectAction.selectionChanged(selection);
     }

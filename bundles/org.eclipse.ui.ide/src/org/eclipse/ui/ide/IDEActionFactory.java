@@ -286,6 +286,8 @@ public final class IDEActionFactory {
     /**
      * IDE-specific workbench action: Full build.
      * This action maintains its enablement state.
+     * 
+     * @deprecated as of 3.0, this action no longer appears in the UI (was deprecated in 3.1)
      */
     public static final ActionFactory REBUILD_ALL = new ActionFactory(
             "rebuildAll") { //$NON-NLS-1$
@@ -305,6 +307,8 @@ public final class IDEActionFactory {
      * IDE-specific workbench action: Rebuild project.
      * This action is a {@link RetargetAction} with 
      * id "rebuildProject". This action maintains its enablement state.
+     * 
+     * @deprecated as of 3.0, this action no longer appears in the UI (was deprecated in 3.1)
      */
     public static final ActionFactory REBUILD_PROJECT = new ActionFactory(
             "rebuildProject") { //$NON-NLS-1$
