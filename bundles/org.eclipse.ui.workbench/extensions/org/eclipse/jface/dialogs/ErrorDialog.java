@@ -23,7 +23,7 @@ import java.util.*;
  *
  * @see org.eclipse.core.runtime.IStatus
  */
-public class ErrorDialog extends Dialog {
+public class ErrorDialog extends IconAndMessageDialog {
 
 	/**
 	 * Reserve room for this many list items.
@@ -39,11 +39,6 @@ public class ErrorDialog extends Dialog {
 	 * The title of the dialog.
 	 */
 	private String title;
-	
-	/**
-	 * The message to display.
-	 */
-	private String message;
 
 	/**
 	 * The SWT list control that displays the error details.
@@ -137,71 +132,7 @@ protected void createButtonsForButtonBar(Composite parent) {
 		detailsButton = createButton(parent, IDialogConstants.DETAILS_ID, IDialogConstants.SHOW_DETAILS_LABEL, false);
 	}
 }
-/**
- * Create the area the message will be shown in.
- */
-protected Control createMessageArea(Composite composite) {
-	// create composite
 
-	// create image
-	Image image = getImage();
-	if (image != null) {
-		Label label = new Label(composite, 0);
-		image.setBackground(label.getBackground());
-		label.setImage(image);
-		label.setLayoutData(new GridData(
-			GridData.HORIZONTAL_ALIGN_CENTER |
-			GridData.VERTICAL_ALIGN_BEGINNING));
-	}
-
-	// create message
-	if (message != null) {
-		Label label = new Label(composite, SWT.WRAP);
-		label.setText(message);
-		GridData data = new GridData(
-			GridData.GRAB_HORIZONTAL |
-			//GridData.GRAB_VERTICAL |
-			GridData.HORIZONTAL_ALIGN_FILL |
-			GridData.VERTICAL_ALIGN_CENTER);
-		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
-		label.setLayoutData(data);
-		label.setFont(composite.getFont());
-	}
-	return composite;
-}
-
-/*
- * @see Dialog.createButtonBar()
- */
-protected Control createButtonBar(Composite parent) {
-	
-	Composite composite = new Composite(parent, SWT.NONE);
-
-	// create a layout with spacing and margins appropriate for the font size.
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 0; // this is incremented by createButton
-	layout.makeColumnsEqualWidth = true;
-	layout.marginWidth = 0;
-	layout.marginHeight = 0;
-	layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-	layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-
-	composite.setLayout(layout);
-
-	GridData data = new GridData(
-		GridData.HORIZONTAL_ALIGN_END |
-		GridData.VERTICAL_ALIGN_CENTER);
-	data.horizontalSpan = 2;
-	composite.setLayoutData(data);
-
-	composite.setFont(parent.getFont());
-	
-	// Add the buttons to the button bar.
-	createButtonsForButtonBar(composite);
-
-	return composite;
-
-}
 
 /*
  * @see Dialog.createContents(Composite)
@@ -230,16 +161,10 @@ protected Control createContents(Composite parent) {
 }
 
 
-/**
- * Returns the image to display beside the message in this dialog.
- * <p>
- * Subclasses may override.
- * </p>
- * 
- * @return the image to display beside the message
- * @since 2.0
+/*
+ * @see IconAndMessageDialog#getImage()
  */
-protected Image getImage() {
+public Image getImage() {
 	return JFaceResources.getImageRegistry().get(DLG_IMG_ERROR);
 }
 

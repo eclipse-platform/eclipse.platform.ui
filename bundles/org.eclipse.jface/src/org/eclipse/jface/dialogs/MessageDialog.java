@@ -18,7 +18,7 @@ import org.eclipse.jface.resource.*;
  * or further subclassed as required.
  * </p>
  */
-public class MessageDialog extends Dialog {
+public class MessageDialog extends IconAndMessageDialog {
 	
 
 	/**
@@ -70,11 +70,6 @@ public class MessageDialog extends Dialog {
 	 * Dialog title image.
 	 */
 	private Image titleImage;
-	
-	/**
-	 * Message (a localized string).
-	 */
-	private String message;
 
 	/**
 	 * Image, or <code>null</code> if none.
@@ -179,42 +174,7 @@ protected Control createContents(Composite parent) {
 	
 	
 	return parent;
-}
-
-/*
- * @see Dialog.createButtonBar()
- */
-protected Control createButtonBar(Composite parent) {
-	
-	Composite composite = new Composite(parent, SWT.NONE);
-
-	// create a layout with spacing and margins appropriate for the font size.
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 0; // this is incremented by createButton
-	layout.makeColumnsEqualWidth = true;
-	layout.marginWidth = 0;
-	layout.marginHeight = 0;
-	layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-	layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-
-	composite.setLayout(layout);
-
-	GridData data = new GridData(
-		GridData.HORIZONTAL_ALIGN_END |
-		GridData.VERTICAL_ALIGN_CENTER);
-	data.horizontalSpan = 2;
-	composite.setLayoutData(data);
-
-	composite.setFont(parent.getFont());
-	
-	// Add the buttons to the button bar.
-	createButtonsForButtonBar(composite);
-
-	return composite;
-
-}
-
-/* (non-Javadoc)
+}/* (non-Javadoc)
  * Method declared on Dialog.
  */
 protected void createButtonsForButtonBar(Composite parent) {
@@ -272,45 +232,6 @@ protected Control createDialogArea(Composite parent) {
 	if(customArea == null)
 		customArea = new Label(composite,SWT.NULL);
 
-	return composite;
-}
-/**
- * Creates and returns the contents of the message area
- * of the dialog.
- * <p>
- * Rather than override this method, subclasses should 
- * override <code>createCustomArea</code> to add contents
- * below the message.
- * </p>
- * 
- * @param the parent composite to contain the message area
- * @return the message area control
- */
-private Control createMessageArea(Composite composite) {
-
-	// create image
-	if (image != null) {
-		Label label = new Label(composite, 0);
-		image.setBackground(label.getBackground());
-		label.setImage(image);
-		label.setLayoutData(new GridData(
-			GridData.HORIZONTAL_ALIGN_CENTER |
-			GridData.VERTICAL_ALIGN_BEGINNING));
-	}
-
-	// create message
-	if (message != null) {
-		Label label = new Label(composite, SWT.WRAP);
-		label.setText(message);
-		GridData data = new GridData(
-			GridData.GRAB_HORIZONTAL |
-			GridData.GRAB_VERTICAL |
-			GridData.HORIZONTAL_ALIGN_FILL |
-			GridData.VERTICAL_ALIGN_CENTER);
-		data.widthHint = getMinimumMessageWidth();
-		label.setLayoutData(data);
-		label.setFont(composite.getFont());
-	}
 	return composite;
 }
 /**
@@ -451,4 +372,10 @@ protected Button createButton(Composite parent,int id,String label,boolean defau
 	return button;
 }
 
+	/*
+	 * @see IconAndMessageDialog#getImage()
+	 */
+	public Image getImage() {
+		return image;
+	}
 }
