@@ -146,33 +146,58 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 */
 	public ILaunchConfiguration doSave() throws CoreException {
 		if (isDirty()) {
-			IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor pm) throws CoreException {
-					// set up from/to information if this is a move
-					boolean moved = (!isNew() && isMoved());
-					if (moved) {
-						ILaunchConfiguration to = new LaunchConfiguration(getLocation());
-						ILaunchConfiguration from = getOriginal();
-						getLaunchManager().setMovedFromTo(from, to);
-					}
-					// write the new file
-					writeNewFile();
-					// delete the old file if this is not a new configuration
-					// or the file was renamed/moved
-					if (moved) {
-						getOriginal().delete();
-					}
-					resetDirty();
+			boolean useRunnable= true;
+			if (isLocal()) {
+				if (isMoved()) {
+					useRunnable= !isNew() && !getOriginal().isLocal();
+				} else {
+					useRunnable= false;
 				}
-			};
-			
-			ResourcesPlugin.getWorkspace().run(wr, null);
+			}
+
+			if (useRunnable) {
+				IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+					public void run(IProgressMonitor pm) throws CoreException {
+						doSave0();
+					}
+				};
+				
+				IFile file= null;
+				IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(getLocation());
+				if (files.length > 0) {
+					file= files[0];
+				}
+				ResourcesPlugin.getWorkspace().run(wr, file, 0, null);
+
+			} else {
+				//file is persisted in the metadata not the workspace
+				doSave0();
+			}
+
 			getLaunchManager().setMovedFromTo(null, null);
 		}
-		
-		return new LaunchConfiguration(getLocation());		
+
+		return new LaunchConfiguration(getLocation());
 	}
-	
+
+	private void doSave0() throws CoreException {
+		// set up from/to information if this is a move
+		boolean moved = (!isNew() && isMoved());
+		if (moved) {
+			ILaunchConfiguration to = new LaunchConfiguration(getLocation());
+			ILaunchConfiguration from = getOriginal();
+			getLaunchManager().setMovedFromTo(from, to);
+		}
+		// write the new file
+		writeNewFile();
+		// delete the old file if this is not a new configuration
+		// or the file was renamed/moved
+		if (moved) {
+			getOriginal().delete();
+		}
+		resetDirty();
+	}
+
 	/**
 	 * Writes the new configuration information to a file.
 	 * 
@@ -333,7 +358,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * Sets the launch configuration this working copy
 	 * is based on.
 	 * 
-	 * @param originl the launch configuration this working
+	 * @param original the launch configuration this working 
 	 *  copy is based on.
 	 */
 	private void setOriginal(LaunchConfiguration original) {
