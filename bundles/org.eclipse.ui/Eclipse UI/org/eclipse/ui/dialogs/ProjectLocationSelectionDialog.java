@@ -4,19 +4,20 @@ package org.eclipse.ui.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.*;
 import java.io.File;
 import java.util.ArrayList;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * The ProjectLocationSelectionDialog is the dialog used to select the name
@@ -73,7 +74,8 @@ private void applyValidationResult(String errorMsg) {
 		getOkButton().setEnabled(true);
 	} else {
 		statusMessageLabel.setForeground(
-			statusMessageLabel.getDisplay().getSystemColor(SWT.COLOR_RED));
+			JFaceColors.getErrorText(
+				statusMessageLabel.getDisplay()));
 		statusMessageLabel.setText(errorMsg);
 		getOkButton().setEnabled(false);
 	}

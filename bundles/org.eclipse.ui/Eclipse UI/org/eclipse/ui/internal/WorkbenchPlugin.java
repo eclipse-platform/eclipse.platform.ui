@@ -13,15 +13,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.*;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.jface.util.OpenStrategy;
-
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.internal.dialogs.WorkingSetSelectionDialog;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -385,6 +382,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * because the default values are not stored in the preference store.
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
+		
+		JFacePreferences.setPreferenceStore(store);
 		store.setDefault(IPreferenceConstants.AUTO_BUILD, true);
 		store.setDefault(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, false);
 		store.setDefault(IPreferenceConstants.WELCOME_DIALOG, true);
@@ -396,7 +395,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
 		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_FAST);
 		store.setDefault(IPreferenceConstants.ENABLED_DECORATORS, ""); //$NON-NLS-1$
-
+		
+		//Set the default status line colour to red
+		PreferenceConverter.setDefault(store,JFacePreferences.ERROR_COLOUR, new RGB(255, 0, 0));
+		
 		// Temporary option to enable wizard for project capability
 		store.setDefault("ENABLE_CONFIGURABLE_PROJECT_WIZARD", false); //$NON-NLS-1$
 		// Temporary option to enable working sets
