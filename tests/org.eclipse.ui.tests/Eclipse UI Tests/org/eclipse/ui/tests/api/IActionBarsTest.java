@@ -116,25 +116,19 @@ public class IActionBarsTest extends UITestCase {
 
 		// Run the real workbench actions.
 		// Verify the actions are invoked.
+		cut.hasRun = copy.hasRun = undo.hasRun = false;
 		ActionUtil.runActionUsingPath(this, fWindow, 
 			IWorkbenchActionConstants.M_EDIT + '/' + IWorkbenchActionConstants.CUT);
 		ActionUtil.runActionUsingPath(this, fWindow, 
 			IWorkbenchActionConstants.M_EDIT + '/' + IWorkbenchActionConstants.UNDO);
-			
-		// PR 1GkD5O0 - Fails on all platforms
-		// DS: The actions are not run because updateActionBars
-		// above in ViewActionBars does not call the super.  The
-		// following assertions fail.
-		if (false) {
-			assertTrue(cut.hasRun);
-			assertTrue(!copy.hasRun);
-			assertTrue(undo.hasRun);
-		}
-		cut.hasRun = copy.hasRun = undo.hasRun = false;
+		assertTrue(cut.hasRun);
+		assertTrue(!copy.hasRun);
+		assertTrue(undo.hasRun);
 		
 		// Now create a second view and run the actions again.
 		// Our global actions should not be invoked.
 		IViewPart part2 = fPage.showView(MockViewPart.ID2);
+		cut.hasRun = copy.hasRun = undo.hasRun = false;
 		ActionUtil.runActionUsingPath(this, fWindow, 
 			IWorkbenchActionConstants.M_EDIT + '/' + IWorkbenchActionConstants.CUT);
 		ActionUtil.runActionUsingPath(this, fWindow, 
@@ -146,6 +140,7 @@ public class IActionBarsTest extends UITestCase {
 		// Reactivate test view and run actions again.
 		// This time our global actions should be invoked.		
 		fPage.activate(part);
+		cut.hasRun = copy.hasRun = undo.hasRun = false;
 		ActionUtil.runActionUsingPath(this, fWindow, 
 			IWorkbenchActionConstants.M_EDIT + '/' + IWorkbenchActionConstants.CUT);
 		ActionUtil.runActionUsingPath(this, fWindow, 
