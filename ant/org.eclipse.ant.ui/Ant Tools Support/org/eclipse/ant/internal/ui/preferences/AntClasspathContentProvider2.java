@@ -11,6 +11,10 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -26,11 +30,23 @@ public class AntClasspathContentProvider2 implements ITreeContentProvider {
 	private ViewerSorter sorter= null;
 	private ClasspathModel model= null;
 		
-	public void add(Object o, Object parent) {
+	public void add(Object parent, Object child) {
+		Object newEntry= null;
 		if (parent == null) {
-			model.addEntry(o);
+			newEntry= model.addEntry(child);
 		} else if (parent instanceof GlobalClasspathEntries) {
-			((GlobalClasspathEntries)parent).addEntry(model.createEntry(o, parent));
+			newEntry= model.createEntry(child, parent);
+			((GlobalClasspathEntries)parent).addEntry((ClasspathEntry)newEntry);
+		}
+		if (newEntry != null) {
+			treeViewer.add(getParent(newEntry), newEntry);
+		}
+	}
+	
+	public void add(int entryType, Object child) {
+		Object newEntry= model.addEntry(entryType, child);
+		if (newEntry != null) {
+			treeViewer.add(getParent(newEntry), newEntry);
 		}
 	}
 
@@ -122,7 +138,17 @@ public class AntClasspathContentProvider2 implements ITreeContentProvider {
 			return ((ClasspathModel)parentElement).getEntries();
 		}
 		if (parentElement == null) {
-			return model.getEntries();
+			List all= new ArrayList();
+			Object[] topEntries= model.getEntries();
+			for (int i = 0; i < topEntries.length; i++) {
+				Object object = topEntries[i];
+				if (object instanceof ClasspathEntry) {
+					all.add(object);
+				} else if (object instanceof GlobalClasspathEntries) {
+					all.addAll(Arrays.asList(((GlobalClasspathEntries)object).getEntries()));
+				}
+			}
+			return all.toArray();
 		}
 		
 		return null;

@@ -219,7 +219,8 @@ public class AntClasspathBlock2 {
 		if (result != null) {
 			try {
 				URL url = new URL("file:" + result + "/"); //$NON-NLS-2$;//$NON-NLS-1$;
-				((AntClasspathContentProvider2)viewer.getContentProvider()).add(url, null);
+				//TODO
+				((AntClasspathContentProvider2)viewer.getContentProvider()).add(null, url);
 			} catch (MalformedURLException e) {
 			}
 		}
@@ -249,7 +250,7 @@ public class AntClasspathBlock2 {
 				IPath path = filterPath.append(jarName).makeAbsolute();
 				URL url = new URL("file:" + path.toOSString()); //$NON-NLS-1$;
 				//TODO
-				((AntClasspathContentProvider2)viewer.getContentProvider()).add(url, null);
+				((AntClasspathContentProvider2)viewer.getContentProvider()).add(null, url);
 			} catch (MalformedURLException e) {
 			}
 		}
@@ -295,7 +296,8 @@ public class AntClasspathBlock2 {
 			for (int i = 0; i < elements.length; i++) {
 				IFile file = (IFile)elements[i];
 				String varExpression= DebugPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", file.getFullPath().toString()); //$NON-NLS-1$
-				((AntClasspathContentProvider2)viewer.getContentProvider()).add(varExpression, null);
+				//TODO
+				((AntClasspathContentProvider2)viewer.getContentProvider()).add(null, varExpression);
 			}
 			updateContainer();
 		}
@@ -526,8 +528,7 @@ public class AntClasspathBlock2 {
 					String name= file.getAbsolutePath();
 					IPath jarPath = new Path(name);
 					URL url = new URL("file:" + jarPath.toOSString()); //$NON-NLS-1$
-					//TODO
-					contentProvider.add(url, null);
+					contentProvider.add(ClasspathModel.GLOBAL, url);
 				} catch (MalformedURLException e) {
 				}
 			}
@@ -535,8 +536,7 @@ public class AntClasspathBlock2 {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 		URL url = prefs.getToolsJarURL();
 		if (url != null) {
-			//TODO
-			contentProvider.add(url, null);
+			contentProvider.add(ClasspathModel.GLOBAL, url);
 		}
 		updateContainer();
 	}
