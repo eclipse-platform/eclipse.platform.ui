@@ -160,7 +160,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 * Evaluate the given expression within the given context and return
 	 * the result. Returns <code>true</code> iff result is either TRUE or NOT_LOADED.
 	 * This allows optimistic inclusion of shortcuts before plugins are loaded.
-	 * Returns <code>true</code> if exp is <code>null</code>.
+	 * Returns <code>false</code> if exp is <code>null</code>.
 	 * 
 	 * @param exp the enablement expression to evaluate or <code>null</code>
 	 * @param context the context of the evaluation. Usually, the
@@ -169,7 +169,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 * @throws CoreException
 	 */
 	public boolean evalEnablementExpression(IEvaluationContext context, Expression exp) throws CoreException {
-		return (exp != null) ? ((exp.evaluate(context)) != EvaluationResult.FALSE) : true;
+		return (exp != null) ? ((exp.evaluate(context)) != EvaluationResult.FALSE) : false;
 	}
 	
 	/**
