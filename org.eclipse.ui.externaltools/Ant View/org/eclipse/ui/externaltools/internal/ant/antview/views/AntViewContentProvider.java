@@ -1,20 +1,23 @@
-/*
- * Copyright (c) 2002, Roscoe Rush. All Rights Reserved.
- *
- * The contents of this file are subject to the Common Public License
- * Version 0.5 (the "License"). You may not use this file except in
- * compliance with the License. A copy of the License is available at
- * http://www.eclipse.org/
- *
- */
+/**********************************************************************
+Copyright (c) 2002 Roscoe Rush, IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+
+Contributors:
+	Roscoe Rush - Initial implementation
+    IBM Corporation - Maintenance
+    Kevin Bedell - restoreTargetVector() patch
+*********************************************************************/
 package org.eclipse.ui.externaltools.internal.ant.antview.views;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.ListIterator;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.apache.tools.ant.Project;
@@ -110,7 +113,7 @@ public class AntViewContentProvider implements IStructuredContentProvider, ITree
 			return ((TreeNode) parent).hasChildren();
 		return false;
 	}
-	
+
 	public void removeNode(TreeNode node) {
 		node.getParent().removeChild(node);
 	}
@@ -220,7 +223,7 @@ public class AntViewContentProvider implements IStructuredContentProvider, ITree
 			target.setName(info.getName());
 			String[] dependencies = info.getDependencies();
 			StringBuffer depends = new StringBuffer();
-			int numDependencies= dependencies.length;
+			int numDependencies = dependencies.length;
 			if (numDependencies > 0) {
 				// Onroll the loop to avoid trailing comma
 				depends.append(dependencies[0]);
@@ -236,9 +239,9 @@ public class AntViewContentProvider implements IStructuredContentProvider, ITree
 			return new ProjectErrorNode(filename, ResourceMgr.getString("Tree.NoProjectElement"));
 		}
 
-		String projectName= project.getName();
+		String projectName = project.getName();
 		if (projectName == null) {
-			projectName= "(unnamed)";
+			projectName = "(unnamed)";
 		}
 		TreeNode projectNode = new ProjectNode(filename, projectName);
 		Enumeration projTargets = project.getTargets().elements();
@@ -353,8 +356,10 @@ public class AntViewContentProvider implements IStructuredContentProvider, ITree
 		TreeNode rootChildren[] = getTreeRoot().getChildren();
 		for (int i = 0; i < rootChildren.length; i++) {
 			TreeNode targetNodes[] = rootChildren[i].getChildren();
+			TreeNode node;
 			for (int j = 0; j < targetNodes.length; j++) {
-				targetMap.put(targetNodes[j].getProperty("BuildFile") + SEP_KEYVAL + targetNodes[j].getText(), targetNodes[j]);
+				node= targetNodes[j];
+				targetMap.put(node.getProperty("BuildFile") + SEP_KEYVAL + node.getText(), node);
 			}
 		}
 
@@ -362,7 +367,13 @@ public class AntViewContentProvider implements IStructuredContentProvider, ITree
 		if (null == targetsPref || targetsPref.equals("")) {
 			return;
 		}
-		String targets[] = split(targetsPref, SEP_REC);
+		StringTokenizer st = new StringTokenizer(targetsPref, SEP_REC);
+		String targets[] = new String[st.countTokens()];
+
+		for (int tokenCounter = 0; st.hasMoreTokens(); tokenCounter++) {
+			targets[tokenCounter] = st.nextToken();
+		}
+
 		for (int i = 0; i < targets.length; i++) {
 			if (null == targets[i] || targets[i].equals(""))
 				continue;
@@ -379,22 +390,6 @@ public class AntViewContentProvider implements IStructuredContentProvider, ITree
 		if (view != null) {
 			view.refresh();
 		}
-	}
-	private String[] split(String string, String regExp) {
-		List strings = new ArrayList();
-		int start = string.indexOf(regExp);
-		int stop = -1;
-		while (start >= 0) {
-			stop = string.indexOf(regExp, start + 1);
-			if (stop > start) {
-				strings.add(string.substring(start, stop));
-			} else {
-				strings.add(string.substring(start));
-			}
-		}
-		String[] array = new String[strings.size()];
-		strings.toArray(array);
-		return array;
 	}
 
 	private void setTreeRoot(TreeNode treeRoot) {
