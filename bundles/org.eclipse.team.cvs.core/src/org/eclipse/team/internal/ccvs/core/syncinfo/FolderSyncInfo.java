@@ -123,8 +123,11 @@ public class FolderSyncInfo {
 			if (index == -1) {
 				// If the username is mising, we have to find the third ':'.
 				index = root.indexOf(':');
-				index = root.indexOf(':', index + 1);
-				index = root.indexOf(':', index + 1);
+				if (index == 0) {
+					// The method is optional so if it's not there, there is only one ':'
+					index = root.indexOf(':', index + 1);
+					index = root.indexOf(':', index + 1);
+				}
 			} else {
 				// If the username was there, we find the first ':' past the '@'
 				index = root.indexOf(':', index + 1);

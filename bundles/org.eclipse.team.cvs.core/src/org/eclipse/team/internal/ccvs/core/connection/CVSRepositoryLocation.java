@@ -623,17 +623,25 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			// Get the connection method
 			partId = "CVSRepositoryLocation.parsingMethod";//$NON-NLS-1$ 
 			int start = location.indexOf(COLON);
-			if (start != 0)
-				throw new CVSException(Policy.bind("CVSRepositoryLocation.startOfLocation"));//$NON-NLS-1$ 
-			int end = location.indexOf(COLON, start + 1);
-			String methodName = location.substring(start + 1, end);
+			String methodName;
+			int end;
+			if (start == 0) {
+				end = location.indexOf(COLON, start + 1);
+				methodName = location.substring(start + 1, end);
+				start = end + 1;
+			} else {
+				// this could be an alternate format for ext: username:password@host:path
+				methodName = "ext"; // $NON-NLS-1$
+				start = 0;
+			}
+			
 			IConnectionMethod method = getPluggedInConnectionMethod(methodName);
 			if (method == null)
 				throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSRepositoryLocation.methods", new Object[] {getPluggedInConnectionMethodNames()})));//$NON-NLS-1$ 
 			
 			// Get the user name and password (if provided)
 			partId = "CVSRepositoryLocation.parsingUser";//$NON-NLS-1$ 
-			start = end + 1;
+			
 			end = location.indexOf(HOST_SEPARATOR, start);
 			String user = null;;
 			String password = null;
