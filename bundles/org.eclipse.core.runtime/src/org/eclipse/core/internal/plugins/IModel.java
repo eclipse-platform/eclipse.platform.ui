@@ -67,6 +67,8 @@ public interface IModel {
 	public static final String LIBRARY_TYPE = "type"; //$NON-NLS-1$
 	public static final String LIBRARY_EXPORT = "export"; //$NON-NLS-1$
 	public static final String LIBRARY_EXPORT_MASK = "name"; //$NON-NLS-1$
+	public static final String LIBRARY_PACKAGES = "packages"; //$NON-NLS-1$
+	public static final String LIBRARY_PACKAGES_PREFIXES = "prefixes"; //$NON-NLS-1$
 
 	public static final String EXTENSION_POINT = "extension-point"; //$NON-NLS-1$
 	public static final String EXTENSION_POINT_NAME = "name"; //$NON-NLS-1$

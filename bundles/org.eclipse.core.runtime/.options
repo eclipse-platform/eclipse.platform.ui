@@ -36,6 +36,11 @@ org.eclipse.core.runtime/loader/debug/filter/loader=*
 org.eclipse.core.runtime/loader/debug/filter/class=*
 org.eclipse.core.runtime/loader/debug/filter/resource=*
 org.eclipse.core.runtime/loader/debug/filter/native=*
+# Debug use of the classloader package prefix enhancement
+org.eclipse.core.runtime/loader/debug/prefixes=false
+org.eclipse.core.runtime/loader/debug/prefixes/success=false
+org.eclipse.core.runtime/loader/debug/prefixes/failure=false
+org.eclipse.core.runtime/loader/debug/properties=false
 
 # Turn on debugging in the support for non-local plugins.
 org.eclipse.core.runtime/url/debug=false

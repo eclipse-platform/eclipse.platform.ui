@@ -8,6 +8,7 @@
   <runtime>
     <library name="runtime.jar">
       <export name="*"/>
+      <packages prefixes="org.eclipse.core"/>
     </library>
   </runtime>
 

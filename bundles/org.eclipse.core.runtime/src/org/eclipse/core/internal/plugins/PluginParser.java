@@ -11,14 +11,13 @@
 
 package org.eclipse.core.internal.plugins;
 
-import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.runtime.Policy;
+import java.util.*;
 import org.apache.xerces.parsers.SAXParser;
-import java.util.Stack;
-import java.util.Vector;
+import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.*;
 import org.xml.sax.*;
-import org.xml.sax.helpers.*;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class PluginParser extends DefaultHandler implements IModel {
 
@@ -55,6 +54,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 	private static final int PLUGIN_EXTENSION_STATE = 6;
 	private static final int RUNTIME_LIBRARY_STATE = 7;
 	private static final int LIBRARY_EXPORT_STATE = 8;
+	private static final int LIBRARY_PACKAGES_STATE = 12;
 	private static final int PLUGIN_REQUIRES_IMPORT_STATE = 9;
 	private static final int CONFIGURATION_ELEMENT_STATE = 10;
 	private static final int FRAGMENT_STATE = 11;
@@ -306,44 +306,75 @@ public void handleLibraryExportState(String elementName, Attributes attributes) 
 	internalError(Policy.bind("parse.unknownElement", LIBRARY_EXPORT, elementName)); //$NON-NLS-1$
 }
 public void handleLibraryState(String elementName, Attributes attributes) {
-	// The only valid element at this stage is a export
-	if (!elementName.equals(LIBRARY_EXPORT)) {
-		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-		internalError(Policy.bind("parse.unknownElement", LIBRARY, elementName)); //$NON-NLS-1$
+	if (elementName.equals(LIBRARY_EXPORT)) {
+		// Change State
+		stateStack.push(new Integer(LIBRARY_EXPORT_STATE));
+		// The top element on the stack much be a library element
+		LibraryModel currentLib = (LibraryModel) objectStack.peek();
+	
+		if (attributes == null)
+			return;
+	
+		String maskValue = null;
+	
+		// Process Attributes
+		int len = attributes.getLength();
+		for (int i = 0; i < len; i++) {
+			String attrName = attributes.getLocalName(i);
+			String attrValue = attributes.getValue(i).trim();
+	
+			if (attrName.equals(LIBRARY_EXPORT_MASK))
+				maskValue = attrValue;
+			else 
+				internalError(Policy.bind("parse.unknownAttribute", LIBRARY, attrName)); //$NON-NLS-1$
+		}
+	
+		// set up mask tables
+		// pop off the library - already in currentLib
+		objectStack.pop();
+		Vector exportMask = (Vector)objectStack.peek();
+		// push library back on
+		objectStack.push(currentLib);
+		if ((maskValue != null) && (!exportMask.contains(maskValue)))
+			exportMask.addElement(maskValue);
+		return;
+	}
+	
+	if (elementName.equals(LIBRARY_PACKAGES)) {
+		LibraryModel currentLib = (LibraryModel) objectStack.peek();
+		if (attributes == null)
+			return;
+		for (int i=0; i<attributes.getLength(); i++) {
+			if (LIBRARY_PACKAGES_PREFIXES.equals(attributes.getLocalName(i))) {
+				String line = attributes.getValue(i);
+				String[] prefixes = getArrayFromList(line);
+				currentLib.setPackagePrefixes(prefixes);
+			}
+		}
 		return;
 	}
 
-	// Change State
-	stateStack.push(new Integer(LIBRARY_EXPORT_STATE));
-	// The top element on the stack much be a library element
-	LibraryModel currentLib = (LibraryModel) objectStack.peek();
-
-	if (attributes == null)
-		return;
-
-	String maskValue = null;
-
-	// Process Attributes
-	int len = attributes.getLength();
-	for (int i = 0; i < len; i++) {
-		String attrName = attributes.getLocalName(i);
-		String attrValue = attributes.getValue(i).trim();
-
-		if (attrName.equals(LIBRARY_EXPORT_MASK))
-			maskValue = attrValue;
-		else 
-			internalError(Policy.bind("parse.unknownAttribute", LIBRARY, attrName)); //$NON-NLS-1$
-	}
-
-	// set up mask tables
-	// pop off the library - already in currentLib
-	objectStack.pop();
-	Vector exportMask = (Vector)objectStack.peek();
-	// push library back on
-	objectStack.push(currentLib);
-	if ((maskValue != null) && (!exportMask.contains(maskValue)))
-		exportMask.addElement(maskValue);
+	// Any other element is invalid
+	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+	internalError(Policy.bind("parse.unknownElement", LIBRARY, elementName)); //$NON-NLS-1$
+	return;
 }
+/**
+ * convert a list of comma-separated tokens into an array
+ */
+protected static String[] getArrayFromList(String line) {
+	if (line == null || line.trim().length()  == 0)
+		return null;
+	Vector list = new Vector();
+	StringTokenizer tokens = new StringTokenizer(line, ","); //$NON-NLS-1$
+	while (tokens.hasMoreTokens()) {
+		String token = tokens.nextToken().trim();
+		if (token.length() != 0)
+			list.addElement(token);
+	}
+	return list.isEmpty() ? null : (String[]) list.toArray(new String[0]);
+}
+
 public void handlePluginState(String elementName, Attributes attributes) {
 
 	if (elementName.equals(RUNTIME)) {
@@ -633,7 +664,6 @@ public void parsePluginAttributes(Attributes attributes) {
 							internalError(Policy.bind("parse.unknownAttribute", PLUGIN, attrName)); //$NON-NLS-1$
 	}
 }
-
 public void parsePluginRequiresImport(Attributes attributes) {
 	PluginPrerequisiteModel current = factory.createPluginPrerequisite();
 	current.setStartLine(locator.getLineNumber());

@@ -1,22 +1,23 @@
 /**********************************************************************
  * Copyright (c) 2000,2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-
 package org.eclipse.core.internal.plugins;
 
-import org.eclipse.core.runtime.*;
+import java.net.URL;
+import java.util.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.boot.*;
+import org.eclipse.core.internal.boot.DelegatingURLClassLoader;
+import org.eclipse.core.internal.boot.URLContentFilter;
 import org.eclipse.core.internal.runtime.Policy;
-import java.util.*;
-import java.net.URL;
+import org.eclipse.core.runtime.*;
 
 /**
  * Plugin class loader.
@@ -33,6 +34,8 @@ public final class PluginClassLoader extends DelegatingURLClassLoader {
 	private PluginDescriptor descriptor;
 	private boolean pluginActivationInProgress = false;
 	private boolean loadInProgress = false;
+	public static boolean usePackagePrefixes = true;
+
 public PluginClassLoader(URL[] codePath, URLContentFilter[] codeFilters, URL[] resourcePath, URLContentFilter[] resourceFilters, ClassLoader parent, PluginDescriptor descriptor) {
 	// create a class loader with the given classpath and filters.  Also, the parent
 	// should be the parent of the platform class loader.  This allows us to decouple standard
@@ -40,14 +43,64 @@ public PluginClassLoader(URL[] codePath, URLContentFilter[] codeFilters, URL[] r
 	super(codePath, codeFilters, resourcePath, resourceFilters, parent);
 	this.descriptor = descriptor;
 	base = descriptor.getInstallURL();
-	// prime the prefix list.  XXX eventually this will change to read an extension for this plugin
-	prefixs = getArrayFromList((String)prefixTable.get(getPrefixId()));
+	initializePrefixes();
 	debugConstruction(); // must have initialized loader
 
 	//	Note: initializeImportedLoaders() is called by PluginDescriptor.getPluginClassLoader().
 	//	The split between construction and initialization is needed
 	//	to correctly handle the case where the user defined loops in 
 	//	the prerequisite definitions.
+}
+private void initializePrefixes() {
+	// use the classloader.properties file as an over-ride to what
+	// appears in the plugin.xml
+	if (InternalBootLoader.useClassLoaderProperties()) {
+		String list = (String) prefixTable.get(getPrefixId());
+		if (list == null)
+			return;
+		// if there is an entry in the file but no value then treat that as
+		// a "don't use any package prefixes"
+		if (list.trim().length() == 0) {
+			if (DEBUG_PROPERTIES)
+				System.out.println("Clearing prefixes for: " + descriptor.getUniqueIdentifier()); //$NON-NLS-1$
+			return;
+		}
+		if (DEBUG_PROPERTIES)
+			System.out.println("Using prefixes for " + descriptor.getUniqueIdentifier() + " from classloader.properties: " + list); //$NON-NLS-1$ //$NON-NLS-2$
+		prefixes = getArrayFromList(list);
+		return;
+	}
+
+	// setup the package prefixes to use
+	if (usePackagePrefixes) {
+		if (DEBUG_PACKAGE_PREFIXES)
+			System.out.println("Reading package prefixes for plug-in: " + descriptor.getUniqueIdentifier()); //$NON-NLS-1$
+		// collect all of the package prefixes for all of the runtime entries in the plugin.xml
+		Set set = new HashSet(5);
+		ILibrary[] libraries = descriptor.getRuntimeLibraries();
+		for (int i = 0; libraries != null && i < libraries.length; i++) {
+			String[] entries = libraries[i].getPackagePrefixes();
+			for (int j=0; entries != null && j < entries.length; j++)
+				set.add(entries[j]);
+		}
+		if (set.size() != 0)
+			prefixes = (String[]) set.toArray(new String[set.size()]);
+		if (DEBUG_PACKAGE_PREFIXES) {
+			String list = arrayToString(prefixes);
+			System.out.println("Using the following prefixes: " + list); //$NON-NLS-1$
+		}
+	}
+}
+static String arrayToString(String[] array) {
+	if (array == null)
+		return null;
+	StringBuffer buffer = new StringBuffer();
+	for (int i=0; i<array.length; i++) {
+		buffer.append(array[i]);
+		if (i != array.length - 1)
+			buffer.append(',');
+	}
+	return buffer.toString();
 }
 protected void activatePlugin(String name) {
 	try {
@@ -162,7 +215,7 @@ public PluginDescriptor getPluginDescriptor() {
 	return descriptor;
 }
 /**
- * Returns the id to use to lookup class prefixs for this loader
+ * Returns the id to use to lookup class prefixes for this loader
  */
 protected String getPrefixId() {
 	return descriptor.getUniqueIdentifier();

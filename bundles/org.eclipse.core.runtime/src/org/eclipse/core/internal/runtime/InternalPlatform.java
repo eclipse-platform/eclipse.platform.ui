@@ -88,7 +88,8 @@ public final class InternalPlatform {
 	protected static final String PASSWORD = "-password"; //$NON-NLS-1$
 	private static final String NOREGISTRYCACHE = "-noregistrycache"; //$NON-NLS-1$
 	private static final String PLUGIN_CUSTOMIZATION = "-plugincustomization"; //$NON-NLS-1$
-	
+	private static final String NO_PACKAGE_PREFIXES = "-noPackagePrefixes"; //$NON-NLS-1$
+
 	// debug support:  set in loadOptions()
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_CONTEXT = false;
@@ -765,6 +766,12 @@ private static String[] processCommandLine(String[] args) {
 		// look for the no registry cache flag
 		if (args[i].equalsIgnoreCase(NOREGISTRYCACHE)) {
 			cacheRegistry = false;
+			found = true;
+		}
+
+		// look for the flag to turn off using package prefixes
+		if (args[i].equalsIgnoreCase(NO_PACKAGE_PREFIXES)) {
+			PluginClassLoader.usePackagePrefixes = false;
 			found = true;
 		}
 

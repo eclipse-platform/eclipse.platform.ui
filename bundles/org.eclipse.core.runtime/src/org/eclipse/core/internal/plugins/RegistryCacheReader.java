@@ -31,7 +31,7 @@ public class RegistryCacheReader {
 
 	public MultiStatus cacheReadProblems = null;
 
-	public static final byte REGISTRY_CACHE_VERSION = 9;
+	public static final byte REGISTRY_CACHE_VERSION = 10;
 
 	public static final byte NONLABEL = 0;
 
@@ -65,6 +65,8 @@ public class RegistryCacheReader {
 	public static final byte LIBRARY_END_LABEL = 16;
 	public static final byte LIBRARY_EXPORTS_LABEL = 17;
 	public static final byte LIBRARY_EXPORTS_LENGTH_LABEL = 18;
+	public static final byte LIBRARY_PACKAGES_PREFIXES_LENGTH_LABEL = 60;
+	public static final byte LIBRARY_PACKAGES_PREFIXES_LABEL = 61;
 	public static final byte NAME_LABEL = 19;
 	public static final byte LIBRARY_INDEX_LABEL = 57;
 	public static final byte START_LINE = 59;
@@ -102,7 +104,7 @@ public class RegistryCacheReader {
 	public static final byte VERSION_LABEL = 44;
 	
 	// So it's easier to add a new label ...
-	public static final byte LARGEST_LABEL = 59;
+	public static final byte LARGEST_LABEL = 61;
 	
 	// String constants for those byte values in the cache that
 	// do not translate directly to strings found in manifest xml
@@ -793,6 +795,7 @@ public LibraryModel readLibrary(DataInputStream in, boolean debugFlag) {
 	// can't set it now or you won't be able to add anything more to this
 	// library.
 	int exportsLength = 0;
+	int prefixesLength = 0;
 	try {
 		byte inByte = 0;
 		boolean done = false;
@@ -840,6 +843,28 @@ public LibraryModel readLibrary(DataInputStream in, boolean debugFlag) {
 					break;
 				case LIBRARY_END_LABEL :
 					done = true;
+					break;
+				case LIBRARY_PACKAGES_PREFIXES_LENGTH_LABEL:
+					prefixesLength = in.readInt();
+					break;
+				case LIBRARY_PACKAGES_PREFIXES_LABEL:
+					String[] prefixes = new String[prefixesLength];
+					for (int i = 0; i < prefixesLength && !done; i++) {
+						prefixes[i] = in.readUTF();
+						if (prefixes[i] == null) {
+							if (debugFlag) {
+								String name = library.getName();
+								if (name == null)
+									name = new String ("<unknown name>"); //$NON-NLS-1$
+								debug ("Empty prefix string for prefix #" + i + " reading library " + name); //$NON-NLS-1$ //$NON-NLS-2$
+							}
+							done = true;
+							library = null;
+						}
+					}
+					if (!done)
+						library.setPackagePrefixes(prefixes);
+					prefixes = null;
 					break;
 				default:
 					// We got something unexpected

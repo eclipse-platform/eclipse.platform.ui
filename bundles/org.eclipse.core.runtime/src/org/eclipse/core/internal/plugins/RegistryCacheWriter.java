@@ -374,6 +374,16 @@ public void writeLibrary(LibraryModel library, DataOutputStream out) {
 				out.writeUTF(exports[i]);
 			}
 		}
+		
+		// write out the declared package prefixes
+		String[] prefixes = library.getPackagePrefixes();
+		if (prefixes != null) {
+			writeLabel(RegistryCacheReader.LIBRARY_PACKAGES_PREFIXES_LENGTH_LABEL, out);
+			out.writeInt(prefixes.length);
+			writeLabel(RegistryCacheReader.LIBRARY_PACKAGES_PREFIXES_LABEL, out);
+			for (int i=0; i<prefixes.length; i++)
+				out.writeUTF(prefixes[i]);
+		}
 
 		// Don't bother caching 'isExported' and 'isFullyExported'.  There
 		// is no way of explicitly setting these fields.  They are computed
