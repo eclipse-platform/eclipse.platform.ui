@@ -85,16 +85,6 @@ public interface IWorkbenchGraphicConstants {
 	public final static String IMG_WIZBAN_IMPORT_WIZ = "IMG_WIZBAN_IMPORT_WIZ"; //$NON-NLS-1$
 	public final static String IMG_WIZBAN_WORKINGSET_WIZ = "IMG_WIZBAN_WORKINGSET_WIZ"; //$NON-NLS-1$
 	
-	/**
-	 * @since 3.0 
-	 */
-	public final static String IMG_WIZBAN_FONT = "IMG_WIZBAN_FONT"; //$NON-NLS-1$
-	
-	/**
-	 * @since 3.0 
-	 */	
-	public final static String IMG_WIZBAN_GRADIENT = "IMG_WIZBAN_GRADIENT"; //$NON-NLS-1$
-	
 	public final static String IMG_VIEW_DEFAULTVIEW_MISC = "IMG_VIEW_DEFAULTVIEW_MISC"; //$NON-NLS-1$
 	
 	// dialog images

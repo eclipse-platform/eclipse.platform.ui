@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.Gradient;
 import org.eclipse.jface.resource.GradientData;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
@@ -69,16 +70,12 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IPresentationPreview;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
 
 /**
- * Preference page for management of system colors and fonts.
- * 
- * TODO:  Make fonts work exactly as colors now (ie: they can have defaults or values).
+ * Preference page for management of system colors, gradients and fonts.
  * 
  * @since 3.0
  */
@@ -90,11 +87,16 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
         private HashMap images = new HashMap();
         
+        private int imageSize = -1;
+        private int usableImageSize = -1;
+        
         private IPropertyChangeListener listener = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
                 fireLabelProviderChanged(new LabelProviderChangedEvent(PresentationLabelProvider.this));                
             }            
         };
+
+        private Image emptyImage;        
         
         /**
          * 
@@ -116,10 +118,17 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
             for (Iterator i = images.values().iterator(); i.hasNext();) {
                 ((Image) i.next()).dispose();
             }
+            images.clear();
             
             for (Iterator i = fonts.values().iterator(); i.hasNext();) {
                 ((Font) i.next()).dispose();
-            }            
+            }
+            fonts.clear();
+                        
+            if (emptyImage != null) {
+            	emptyImage.dispose();
+            	emptyImage = null;
+            }
         }
         
     	
@@ -152,21 +161,26 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
     	 */
     	public Image getImage(Object element) {
-    	    if (element instanceof ColorDefinition) {
-	    		Display display = presentationList.getControl().getDisplay();
-	    		
+    	    if (element instanceof ColorDefinition) {	    			    		
     	        Color c = colorRegistry.get(((ColorDefinition)element).getId());
     	        Image image = (Image) images.get(c);
     	        if (image == null) {
+    	        	Display display = presentationList.getControl().getDisplay();
+    	            ensureImageSize(display);
 		    		//int size = presentationList.getControl().getFont().getFontData()[0].getHeight();
-		    		int size = 16;
-	    	        image = new Image(display, size, size);
+	    	        image = new Image(display, imageSize, imageSize);
 	    	        
 		    		GC gc = new GC(image);
-		    		gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+		    		gc.setBackground(presentationList.getControl().getBackground());
+		    		gc.setForeground(presentationList.getControl().getBackground());
+		    		gc.drawRectangle(0, 0, imageSize - 1, imageSize - 1);
+		    		
+		    		gc.setForeground(display.getSystemColor(SWT.COLOR_GRAY));
 		    		gc.setBackground(c);
-		    		gc.drawRectangle(0, 0, size - 1, size - 1);
-		    		gc.fillRectangle(1, 1, size - 2, size - 2);		    			    	
+		    		
+		    		int offset = (imageSize - usableImageSize) / 2;
+		    		gc.drawRectangle(offset, offset, usableImageSize - offset, usableImageSize - offset);
+		    		gc.fillRectangle(offset + 1, offset + 1, usableImageSize - offset - 1, usableImageSize - offset - 1);		    			    	
 		    		gc.dispose();
 		    		
 		    		images.put(c, image);
@@ -174,14 +188,68 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	    		return image;
     	        
     	    }
-    	    else if (element instanceof FontDefinition) {
-    	    	return WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_WIZBAN_FONT);
-    	    }
     	    else if (element instanceof GradientDefinition) {
-    	    	return WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_WIZBAN_GRADIENT);
+    	    	// currently only draws a gradient from the first to the last gradient element.
+    	    	// gradients with more than 2 colors are not visualized correctly.	    		
+    	        Gradient g = gradientRegistry.get(((GradientDefinition)element).getId());
+    	        Image image = (Image) images.get(g);
+    	        if (image == null) {
+    	        	Display display = presentationList.getControl().getDisplay();
+    	            ensureImageSize(display);
+	    	        image = new Image(display, imageSize, imageSize);
+	    	        
+		    		GC gc = new GC(image);
+		    		gc.setBackground(presentationList.getControl().getBackground());		    		
+		    		gc.setForeground(presentationList.getControl().getBackground());
+		    		gc.drawRectangle(0, 0, imageSize - 1, imageSize - 1);
+		    		
+		    		gc.setForeground(display.getSystemColor(SWT.COLOR_GRAY));
+					int offset = (imageSize - usableImageSize) / 2;
+		    		gc.drawRectangle(offset, offset, usableImageSize - offset, usableImageSize - offset);
+		    		gc.fillRectangle(offset + 1, offset + 1, usableImageSize - offset - 1, usableImageSize - offset - 1);		    		
+		    		
+		    		Color[] colors = g.getColors();
+                    gc.setForeground(colors[0]);
+		    		gc.setBackground(colors[colors.length -1]);
+		    		gc.fillGradientRectangle(offset + 1, offset + 1, usableImageSize - offset - 1, usableImageSize - offset - 1, g.getDirection() == SWT.VERTICAL);		    			    	
+		    		gc.dispose();
+		    		
+		    		images.put(g, image);
+    	        }
+	    		return image;
+    	    	
     	    }
-    	    return null;   	    
+    	    else {
+    	    	if (emptyImage == null) {
+    	    		Display display = presentationList.getControl().getDisplay();
+    	    		ensureImageSize(display);
+	    	        emptyImage = new Image(display, imageSize, imageSize);
+	    	        
+		    		GC gc = new GC(emptyImage);
+		    		gc.setBackground(presentationList.getControl().getBackground());		    		
+		    		gc.setForeground(presentationList.getControl().getBackground());
+		    		gc.fillRectangle(0, 0, imageSize - 1 , imageSize - 1);
+		    		gc.dispose();
+    	    	}
+    	    	return emptyImage;
+    	    }
     	}
+
+        /**
+         * @param display
+         * @return
+         */
+        private void ensureImageSize(Display display) {
+            if (imageSize == -1) {    	        
+	    		GC gc = new GC(display);
+	    		gc.setFont(presentationList.getControl().getFont());
+	    		imageSize = gc.getFontMetrics().getHeight();    
+	    		usableImageSize = (int)(imageSize * .75f);
+	    		if (usableImageSize < 6)
+	    			imageSize = usableImageSize = 6;
+	    		gc.dispose();
+            }
+        }
 
         /* (non-Javadoc)
     	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
@@ -299,6 +367,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 * The layout for the previewComposite.
 	 */
     private StackLayout stackLayout;
+    
+    /**
+	 * The last category viewed.
+ 	 */ 
+    private static String lastCategory;
 
 	/**
 	 * Create a new instance of the receiver. 
@@ -340,13 +413,26 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
         }
         categoryCombo.add(RESOURCE_BUNDLE.getString("uncategorized")); //$NON-NLS-1$
         
-        categoryCombo.select(0);
-
-		data = new GridData(GridData.FILL_HORIZONTAL);
+        data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;		
 		categoryCombo.setLayoutData(data);
-				
-		return categories.length > 0 ? categories[0] : null;
+         
+        if (categories.length == 0) {
+        	categoryCombo.select(0);
+        	return null;
+        }
+        	
+        int idx = 0;
+        if (lastCategory != null) {
+        	idx = Arrays.binarySearch(PresentationCategory.getCategories(), lastCategory, PresentationCategory.ID_COMPARATOR);
+        	if (idx < 0) {
+        		categoryCombo.select(categories.length);
+        		return null; // unknown category.   default to uncategorized
+        	}    	
+        }
+        
+        categoryCombo.select(idx);
+        return categories[idx];
     }
 
 	/**
@@ -452,7 +538,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 		createPreviewControl(mainColumn);
 		
-		updateCategorySelection(category);
+		updateCategorySelection(category == null ? null : category.getId());
 		
 		hookListeners();
 		
@@ -804,7 +890,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
                 if (index == categoryCombo.getItemCount() - 1)
                     updateCategorySelection(null);
                 else 
-                    updateCategorySelection(PresentationCategory.getCategories()[index]); 
+                    updateCategorySelection(PresentationCategory.getCategories()[index].getId()); 
                 
                 updateColorControls(null);
             }
@@ -1314,12 +1400,23 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 * Set the color list.
 	 * @param category the category to use.
 	 */
-	private void updateCategorySelection(PresentationCategory category) {
+	private void updateCategorySelection(String categoryId) {
 		Object [] defintions;
-		Object key = category;
-		if (category == null) {
+		String key = categoryId;
+		PresentationCategory category = null;
+		
+		if (categoryId == null) {
 		    key = "uncategorized"; //$NON-NLS-1$
 		}
+		else {		
+			int idx = Arrays.binarySearch(PresentationCategory.getCategories(), categoryId, PresentationCategory.ID_COMPARATOR);
+			if (idx == -1)
+				categoryId = null;	
+			else 
+				category = PresentationCategory.getCategories()[idx];	
+		}		
+		
+		lastCategory = key;
 		
 		defintions = (Object []) categoryMap.get(key);
 		if (defintions == null) {	
@@ -1329,7 +1426,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			ColorDefinition[] colorDefinitions = ColorDefinition.getColorDefinitions();
             for (int i = 0; i < colorDefinitions.length; i++) {
 			    String catId = colorDefinitions[i].getCategoryId();
-			    if ((catId == null && category == null) || (catId != null && category != null && category.getId().equals(catId))) {
+			    if ((catId == null && categoryId == null) || (catId != null && categoryId != null && categoryId.equals(catId))) {
 			        list.add(colorDefinitions[i]);
 			    }
 			}
@@ -1337,7 +1434,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			FontDefinition[] fontDefinitions = FontDefinition.getDefinitions();
             for (int i = 0; i < fontDefinitions.length; i++) {
 			    String catId = fontDefinitions[i].getCategoryId();
-			    if ((catId == null && category == null) || (catId != null && category != null && category.getId().equals(catId))) {
+			    if ((catId == null && categoryId == null) || (catId != null && categoryId != null && categoryId.equals(catId))) {
 			        list.add(fontDefinitions[i]);
 			    }
 			}
@@ -1345,7 +1442,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			GradientDefinition[] gradientDefinitions = ColorDefinition.getGradientDefinitions();
             for (int i = 0; i < gradientDefinitions.length; i++) {
 			    String catId = gradientDefinitions[i].getCategoryId();
-			    if ((catId == null && category == null) || (catId != null && category != null && category.getId().equals(catId))) {
+			    if ((catId == null && categoryId == null) || (catId != null && categoryId != null && categoryId.equals(catId))) {
 			        list.add(gradientDefinitions[i]);
 			    }
 			}
