@@ -753,11 +753,14 @@ public final class CommandManager implements ICommandManager {
 		
 		return keyConfigurationEventsByKeyConfigurationId;			
 	}
+	
+	
+	
 
 	public Map getPartialMatches(KeySequence keySequence) {
 		Map map = new HashMap(keySequenceBindingMachine.getMatchesByKeySequenceForMode(keySequence));
 		
-		for (Iterator iterator = map.values().iterator(); iterator.hasNext();) {
+		for (Iterator iterator = map.entrySet().iterator(); iterator.hasNext();) {
 			Map.Entry entry	= (Map.Entry) iterator.next();
 			entry.setValue(((Match) entry.getValue()).getCommandId());
 		}		
@@ -779,13 +782,7 @@ public final class CommandManager implements ICommandManager {
 	}
 
 
-	
-	
-	public Map getMatchesByKeySequenceForMode() {
-		return keySequenceBindingMachine.getMatchesByKeySequenceForMode();
-	}
 
-	
 	
 	public ICommandRegistry getCommandRegistry() {
 		return commandRegistry;
