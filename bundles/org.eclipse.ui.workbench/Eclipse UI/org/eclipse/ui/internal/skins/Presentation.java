@@ -11,17 +11,19 @@
 package org.eclipse.ui.internal.skins;
 
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 
 
 /**
- * This represents the common interface to PartPresentation and StackPresentation.
+ * This represents an object that can supply trim around a IPresentablePart. 
+ * Clients can implement subclasses to provide the behavior for editor workbooks,
+ * view folders, fast views, and detached windows.
  * 
- * Clients should implement PartPresentation or StackPresentation, and should not
- * implement this interface directly.
+ * Subclasses that implement this class directly can render exactly
+ * one IPresentablePart, which is typically passed into the object's constructor.
+ * Classes that can render a collection of parts should subclass StackPresentation.
  * 
  * @since 3.0
  */
