@@ -794,7 +794,7 @@ public interface IDebugUIConstants {
 	 *
 	 * @since 3.0
 	 */
-	public static final String EXTENSION_POINT_VARIABLES_CONTENT_PROVIDERS = "variablesContentProviders";	 //$NON-NLS-1$
+	public static final String EXTENSION_POINT_OBJECT_BROWSERS = "objectBrowsers";	 //$NON-NLS-1$
 	
 	/**
 	 * Launch variable components extension point identifier (value

@@ -14,20 +14,15 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
-public class DefaultVariablesContentProvider implements IVariablesContentProvider {
+/**
+ * 
+ * 
+ * @since 3.0
+ */
+public interface IObjectBrowser {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IVariablesContentProvider#getVariableChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.debug.core.model.IVariable)
-	 */
-	public IVariable[] getVariableChildren(IDebugView view, IValue value) throws DebugException {
-		return value.getVariables();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IVariablesContentProvider#hasVariableChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.debug.core.model.IVariable)
-	 */
-	public boolean hasVariableChildren(IDebugView view, IValue value) throws DebugException {
-		return value != null && value.hasVariables();
-	}
-
+	public IVariable[] getChildren(IDebugView view, IValue value) throws DebugException;
+	
+	public boolean hasChildren(IDebugView view, IValue value) throws DebugException;
+	
 }
