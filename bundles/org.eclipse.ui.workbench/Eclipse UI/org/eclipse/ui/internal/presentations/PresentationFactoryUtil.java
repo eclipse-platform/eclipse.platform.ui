@@ -41,7 +41,7 @@ public class PresentationFactoryUtil {
 				presentation = factory.createStandaloneViewPresentation(parent, site, true);
 				break;
 			case ROLE_STANDALONE_NOTITLE: 
-				presentation = factory.createStandaloneViewPresentation(parent, site, true);
+				presentation = factory.createStandaloneViewPresentation(parent, site, false);
 				break;
 			default:
 				presentation = factory.createViewPresentation(parent, site);
