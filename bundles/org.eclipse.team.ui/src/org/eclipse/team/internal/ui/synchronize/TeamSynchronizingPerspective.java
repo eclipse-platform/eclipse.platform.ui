@@ -41,7 +41,11 @@ public class TeamSynchronizingPerspective implements IPerspectiveFactory {
 		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
 		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
 		
+		// Add "action sets"
 		layout.addActionSet("org.eclipse.team.ui.actionSet"); //$NON-NLS-1$
+		
+		// Add "perspective short cuts"
+		layout.addPerspectiveShortcut("org.eclipse.ui.resourcePerspective"); //$NON-NLS-1$
 	}
 
 	/**
