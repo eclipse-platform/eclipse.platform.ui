@@ -74,14 +74,14 @@ public String getText() {
 public boolean isLinkAt(int offset) {
 	// Check if there is a link at the offset
 	for (int i = 0; i < helpRanges.length; i++){
-		if (offset > helpRanges[i][0] && offset <= helpRanges[i][0] + helpRanges[i][1]) {
+		if (offset >= helpRanges[i][0] && offset < helpRanges[i][0] + helpRanges[i][1]) {
 			return true;
 		}
 	}
 
 	// Check if there is an action link at the offset
 	for (int i = 0; i < actionRanges.length; i++){
-		if (offset > actionRanges[i][0] && offset <= actionRanges[i][0] + actionRanges[i][1]) {
+		if (offset >= actionRanges[i][0] && offset < actionRanges[i][0] + actionRanges[i][1]) {
 			return true;
 		}
 	}
@@ -100,9 +100,9 @@ private void openHelpTopic(String topic, String href) {
 	IHelp helpSupport = WorkbenchHelp.getHelpSupport();
 	if (helpSupport != null) {
 		if (href != null) 
-			helpSupport.displayHelp(topic, href);
+			helpSupport.displayHelpResource(href);
 		else
-			helpSupport.displayHelp(topic);
+			helpSupport.displayHelpResource(topic);
 	}
 }
 /**
@@ -142,7 +142,7 @@ private void runAction(String pluginId, String className) {
 public void triggerLinkAt(int offset) {
 	// Check if there is a help link at the offset
 	for (int i = 0; i < helpRanges.length; i++){
-		if (offset > helpRanges[i][0] && offset <= helpRanges[i][0] + helpRanges[i][1]) {
+		if (offset >= helpRanges[i][0] && offset < helpRanges[i][0] + helpRanges[i][1]) {
 			// trigger the link
 			openHelpTopic(helpIds[i], helpHrefs[i]);
 			return;
