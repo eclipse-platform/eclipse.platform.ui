@@ -225,7 +225,13 @@ public class PartSite implements IWorkbenchPartSite {
             return getWorkbenchWindow().getShell();
         }
         
-        return getPane().getShell();
+        Shell s = pane.getShell(); 
+        
+        if (s == null) {
+            return getWorkbenchWindow().getShell();
+        }
+        
+        return s;
     }
 
     /**
