@@ -379,8 +379,8 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 * @see IDebugEventSetListener#handleDebugEvent(DebugEvent)
 	 */
 	public void handleDebugEvents(DebugEvent[] events) {
+		List changed = null;
 		for (int i = 0; i < events.length; i++) {
-			List changed = null;
 			DebugEvent event = events[i];
 			if (event.getSource() instanceof IExpression) {
 				switch (event.getKind()) {
@@ -394,10 +394,10 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 						break;
 				}
 			} 
-			if (changed != null) {
-				IExpression[] array = (IExpression[])changed.toArray(new IExpression[changed.size()]);
-				fireUpdate(array, CHANGED);
-			}
+		}
+		if (changed != null) {
+			IExpression[] array = (IExpression[])changed.toArray(new IExpression[changed.size()]);
+			fireUpdate(array, CHANGED);
 		}
 	}
 	
