@@ -278,7 +278,7 @@ public Map createBuildersPersistentInfo(IProject project) throws CoreException {
 	/* get the old builder map */
 	Map oldInfos = getBuildersPersistentInfo(project);
 	/* nuke the old builder map */
-	setBuildersPersistentInfo(project, null);
+//	setBuildersPersistentInfo(project, null);
 
 	ICommand[] buildCommands = ((Project) project).internalGetDescription().getBuildSpec(false);
 	if (buildCommands.length == 0)
