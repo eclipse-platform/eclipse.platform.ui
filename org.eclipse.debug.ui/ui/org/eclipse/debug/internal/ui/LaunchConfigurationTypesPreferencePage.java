@@ -209,7 +209,7 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 			StringBuffer buffer = new StringBuffer(configType.getName());
 			String selectedFileType = getFileTypeSelection();
 			if (getDefaultConfigsMap().get(selectedFileType).equals(configType)) {
-				buffer.append(" (default)");
+				buffer.append(DebugUIMessages.getString("LaunchConfigurationTypesPreferencePage._(default)_1")); //$NON-NLS-1$
 			}
 			return buffer.toString();
 		}
@@ -227,7 +227,7 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 		GridData gd;
 	
 		setFileTypeLabel(new Label(topComp, SWT.LEFT));
-		getFileTypeLabel().setText("File types");
+		getFileTypeLabel().setText(DebugUIMessages.getString("LaunchConfigurationTypesPreferencePage.File_types_2")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		getFileTypeLabel().setLayoutData(gd);
@@ -249,7 +249,7 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 		createSpacer(topComp, 2);
 	
 		setConfigTypeLabel(new Label(topComp, SWT.LEFT));
-		getConfigTypeLabel().setText("Configuration types");
+		getConfigTypeLabel().setText(DebugUIMessages.getString("LaunchConfigurationTypesPreferencePage.Configuration_types_3")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		getConfigTypeLabel().setLayoutData(gd);
@@ -266,7 +266,7 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 		getConfigTypeTableViewer().getTable().setLayoutData(gd);
 		
 		setDefaultButton(new Button(topComp, SWT.PUSH));
-		getDefaultButton().setText("Set as default");
+		getDefaultButton().setText(DebugUIMessages.getString("LaunchConfigurationTypesPreferencePage.Set_as_default_4")); //$NON-NLS-1$
 		getDefaultButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleDefaultButtonSelected();
