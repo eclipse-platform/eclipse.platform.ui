@@ -17,13 +17,14 @@ import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class CharsetTest extends EclipseWorkspaceTest {
 	private static final String SAMPLE_XML_DEFAULT_ENCODING = "<?xml version=\"1.0\"?><org.eclipse.core.resources.tests.root/>";
 	private static final String SAMPLE_XML_US_ASCII_ENCODING = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><org.eclipse.core.resources.tests.root/>";
 	private static final String SAMPLE_XML_UTF_8_ENCODING = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.resources.tests.root/>";
+	private static final String SAMPLE_SPECIFIC_XML = "<?xml version=\"1.0\"?><org.eclipse.core.tests.resources.anotherXML/>";
 
 	public static Test suite() {
 		//		TestSuite suite = new TestSuite();
@@ -346,5 +347,27 @@ public class CharsetTest extends EclipseWorkspaceTest {
 		} finally {
 			ensureDoesNotExistInWorkspace(project);
 		}
+	}
+
+	public void testBug62732() throws UnsupportedEncodingException, CoreException {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject("MyProject");
+		try {
+			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+			IContentType anotherXML = contentTypeManager.getContentType("org.eclipse.core.tests.resources.anotherXML");
+			assertNotNull("0.5", anotherXML);
+			ensureExistsInWorkspace(project, true);
+			IFile file = project.getFile("file.xml");
+			ensureExistsInWorkspace(file, new ByteArrayInputStream(SAMPLE_SPECIFIC_XML.getBytes("UTF-8")));
+			IContentDescription description = file.getContentDescription();
+			assertNotNull("1.0", description);
+			assertEquals("1.1", anotherXML, description.getContentType());
+			description = file.getContentDescription();
+			assertNotNull("2.0", description);
+			assertEquals("2.1", anotherXML, description.getContentType());
+		} finally {
+			ensureDoesNotExistInWorkspace(project);
+		}
+
 	}
 }

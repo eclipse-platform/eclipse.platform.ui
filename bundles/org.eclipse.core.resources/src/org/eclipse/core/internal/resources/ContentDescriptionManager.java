@@ -16,8 +16,7 @@ import org.eclipse.core.internal.content.ContentType;
 import org.eclipse.core.internal.utils.Cache;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 
 /**
@@ -35,7 +34,7 @@ public class ContentDescriptionManager implements IManager {
 		//open the resource info
 		ResourceInfo info = file.getResourceInfo(false, true);
 		//make sure no cached information is set on the info
-		info.clear(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION);
+		info.clear(ICoreConstants.M_CONTENT_CACHE);
 		// tries to get a description from the cache		
 		Cache.Entry entry = cache.getEntry(file.getFullPath());
 		if (entry != null && entry.getTimestamp() == info.getContentId())
@@ -43,21 +42,27 @@ public class ContentDescriptionManager implements IManager {
 			return (IContentDescription) entry.getCached();
 		// either we didn't find a description in the cache, or it was not up-to-date - has to be read again
 		IContentDescription newDescription = readDescription(file);
-		if (newDescription == null)
-			// no content type exists for this file name
+		if (newDescription == null) {
+			// no content type exists for this file name/contents
 			info.set(ICoreConstants.M_NO_CONTENT_DESCRIPTION);
-		else if (((ContentType) newDescription.getContentType()).getDefaultDescription() == newDescription)
-			// the default content description is enough fo this file
-			info.set(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION);
-		else {
-			// we actually got a description filled by a describer
-			if (entry == null)
-				// there was none - creates one
-				entry = cache.addEntry(file.getFullPath(), newDescription, info.getContentId());
-			else {
-				entry.setTimestamp(info.getContentId());
-				entry.setCached(newDescription);
+			return null;
+		}
+		// if it is a default description for the default type, we don't have to cache 
+		if (((ContentType) newDescription.getContentType()).getDefaultDescription() == newDescription) {
+			IContentType defaultForName = Platform.getContentTypeManager().findContentTypeFor(file.getName());
+			if (newDescription.getContentType() == defaultForName) {
+				// the default content description is enough for this file
+				info.set(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION);
+				return newDescription;
 			}
+		}
+		// we actually got a description filled by a describer (or a default description for a non-obvious type)
+		if (entry == null)
+			// there was none - creates one
+			entry = cache.addEntry(file.getFullPath(), newDescription, info.getContentId());
+		else {
+			entry.setTimestamp(info.getContentId());
+			entry.setCached(newDescription);
 		}
 		return newDescription;
 	}
@@ -67,7 +72,7 @@ public class ContentDescriptionManager implements IManager {
 	 */
 	private IContentDescription readDescription(File file) throws CoreException {
 		// tries to obtain a description for this file contents
-		IContentTypeManager contentTypeManager = org.eclipse.core.runtime.Platform.getContentTypeManager();
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		InputStream contents = file.getContents(true);
 		try {
 			IContentDescription newDescription = contentTypeManager.getDescriptionFor(contents, file.getName(), IContentDescription.ALL);
