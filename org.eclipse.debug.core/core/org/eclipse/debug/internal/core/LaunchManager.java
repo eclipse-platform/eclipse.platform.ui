@@ -8,6 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids - bug 50567 Eclipse native environment support on Win98
+ *     Pawel Piech - Bug 82001: When shutting down the IDE, the debugger should first
+ *                      attempt to disconnect debug targets before terminating them
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
@@ -81,6 +83,7 @@ import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
@@ -505,7 +508,15 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		for (int i= 0; i < launches.length; i++) {
 			ILaunch launch= launches[i];
 			try {
-				launch.terminate();
+                if (launch instanceof IDisconnect) {
+                    IDisconnect disconnect = (IDisconnect)launch;
+                    if (disconnect.canDisconnect()) {
+                        disconnect.disconnect();
+                    }
+                }
+                if (launch.canTerminate()) {
+                    launch.terminate();
+                }
 			} catch (DebugException e) {
 				DebugPlugin.log(e);
 			}
