@@ -18,7 +18,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.ui.launchVariables.IVariableComponentContainer;
 import org.eclipse.debug.ui.launchVariables.IVariableConstants;
-import org.eclipse.debug.ui.launchVariables.expanders.*;
+import org.eclipse.debug.ui.launchVariables.expanders.WorkingSetExpander;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -68,7 +68,7 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 		GridData data= new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		chooseButton.setLayoutData(data);
 		chooseButton.setFont(font);
-		chooseButton.setText(LaunchConfigurationsMessages.getString("WorkingSetComponent.1")); //$NON-NLS-1$
+		chooseButton.setText(LaunchVariableMessages.getString("WorkingSetComponent.1")); //$NON-NLS-1$
 		chooseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleChooseButtonPressed();
@@ -84,7 +84,7 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 		IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
 		
 		if (currentWorkingSet == null){
-			currentWorkingSet= workingSetManager.createWorkingSet(LaunchConfigurationsMessages.getString("WorkingSetComponent.2"), new IAdaptable[0]); //$NON-NLS-1$
+			currentWorkingSet= workingSetManager.createWorkingSet(LaunchVariableMessages.getString("WorkingSetComponent.2"), new IAdaptable[0]); //$NON-NLS-1$
 		}
 		IWorkingSetEditWizard wizard= workingSetManager.createWorkingSetEditWizard(currentWorkingSet);
 		WizardDialog dialog = new WizardDialog(DebugUIPlugin.getStandardDisplay().getActiveShell(), wizard);
@@ -121,7 +121,7 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 			}
 			return writer.toString();
 		}
-		getContainer().setErrorMessage(LaunchConfigurationsMessages.getString("WorkingSetComponent.3")); //$NON-NLS-1$
+		getContainer().setErrorMessage(LaunchVariableMessages.getString("WorkingSetComponent.3")); //$NON-NLS-1$
 		return null;
 	}
 

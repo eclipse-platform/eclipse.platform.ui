@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchVariables;
 
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.ui.launchVariables.IVariableComponentContainer;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
@@ -49,7 +48,7 @@ final class DefaultVariableComponent extends AbstractVariableComponent {
 			GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			message.setLayoutData(data);
 			message.setFont(parent.getFont());
-			message.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationVariable.Problem_displaying_UI")); //$NON-NLS-1$
+			message.setText(LaunchVariableMessages.getString("DefaultVariableComponent.0")); //$NON-NLS-1$
 			message.setForeground(JFaceColors.getErrorText(message.getDisplay()));
 		}
 	}
