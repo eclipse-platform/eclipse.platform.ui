@@ -78,6 +78,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 	private ShortcutMenu selectedMenuCategory = null;
 		
 	private ImageDescriptor menuImageDescriptor = null;
+	private ImageDescriptor submenuImageDescriptor = null;
 	private ImageDescriptor toolbarImageDescriptor = null;
 	
 	private ShortcutMenu rootMenu; 
@@ -212,6 +213,10 @@ public class CustomizePerspectiveDialog extends Dialog {
 				elements.addAll(child.getElements());
 			}
 			return elements;
+		}
+		protected boolean isTopLevelMenu() {
+			if (parent == null) return false;
+			return parent.parent == null;
 		}
 	}
 	public class CustomizeActionBars extends WWinActionBars {
@@ -510,7 +515,10 @@ public class CustomizePerspectiveDialog extends Dialog {
 			ImageDescriptor descriptor = item.imageDescriptor;
 			if (descriptor == null) {
 				if (item.type == ActionSetDisplayItem.MENUITEM) {
-					if (item.children.size() > 0) descriptor = menuImageDescriptor;
+					if (item.children.size() > 0) {
+						if (item.isTopLevelMenu()) descriptor = menuImageDescriptor;
+						else descriptor = submenuImageDescriptor;
+					}
 					else return null;
 				} else if (item.type == ActionSetDisplayItem.TOOLITEM) {
 					if (item.children.size() > 0) descriptor = toolbarImageDescriptor;
@@ -534,6 +542,9 @@ public class CustomizePerspectiveDialog extends Dialog {
 			if (element instanceof ActionSetDisplayItem) {
 				ActionSetDisplayItem item = (ActionSetDisplayItem)element;
 				String text = item.getDisplayText();
+				if ((item.type == ActionSetDisplayItem.MENUITEM) 
+				&& (item.children.size() > 0)) 
+					text = text + "  >"; //$NON-NLS-1$ 
 				return text;
 			}
 			return ""; //$NON-NLS-1$
@@ -1106,6 +1117,16 @@ private void initializeActionSetInput() {
 		URL installURL = plugin.getDescriptor().getInstallURL();
 		URL url = new URL(installURL, iconPath);
 		menuImageDescriptor = ImageDescriptor.createFromURL(url);
+	}
+	catch (MalformedURLException e) {
+		// Should not happen
+	}
+	iconPath = "icons/full/obj16/submenu.gif";//$NON-NLS-1$
+	try {
+		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
+		URL installURL = plugin.getDescriptor().getInstallURL();
+		URL url = new URL(installURL, iconPath);
+		submenuImageDescriptor = ImageDescriptor.createFromURL(url);
 	}
 	catch (MalformedURLException e) {
 		// Should not happen
