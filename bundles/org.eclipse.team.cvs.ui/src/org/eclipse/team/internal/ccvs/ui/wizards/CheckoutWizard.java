@@ -191,6 +191,7 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 						// Only allow configuration if one module is selected
 						hasMetafile = hasProjectMetafile(selectedModules[0]);
 					}
+					resetSubwizard();
 					wizard = new CheckoutAsWizard(getPart(), selectedModules, ! hasMetafile /* allow configuration */);
 					wizard.addPages();
 					return wizard.getStartingPage();
@@ -283,5 +284,15 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
+	}
+
+	/*
+	 * Reset the sub-wizard
+	 */
+	/* package */ void resetSubwizard() {
+		if (wizard != null) {
+			wizard.dispose();
+			wizard = null;
+		}
 	}
 }

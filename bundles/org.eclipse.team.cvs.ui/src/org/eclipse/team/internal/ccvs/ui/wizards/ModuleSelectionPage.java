@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -104,6 +105,10 @@ public class ModuleSelectionPage extends CVSWizardPage {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
+			IWizard w = getWizard();
+			if (w instanceof CheckoutWizard) {
+				((CheckoutWizard)w).resetSubwizard();
+			}
 			if (useProjectNameButton != null && useProjectNameButton.getSelection()) {
 				useProjectNameButton.setFocus();
 			} else if (useSpecifiedNameButton.getSelection()) {
