@@ -251,8 +251,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		if (launch == null) {
 			return;
 		}
-		fLaunches.remove(launch);
-		fireUpdate(launch, REMOVED);
+		if (fLaunches.remove(launch)) {
+			fireUpdate(launch, REMOVED);
+		}
 	}	
 
 	/**
@@ -270,10 +271,22 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 					listener.launchRemoved(launch);
 					break;
 				case CHANGED:
-					listener.launchChanged(launch);
+					if (isRegistered(launch)) {
+						listener.launchChanged(launch);
+					}
 					break;
 			}
 		}
+	}
+	
+	/**
+	 * Returns whether the given launch is currently registered.
+	 * 
+	 * @param launch a launch
+	 * @return whether the given launch is currently registered
+	 */
+	protected boolean isRegistered(ILaunch launch) {
+		return fLaunches.contains(launch);
 	}
 
 	/**
