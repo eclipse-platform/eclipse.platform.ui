@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.debug.ui" id="breakpointContainerFactories" name="Breakpoint Container Factories"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         This extension point provides a mechanism for contributing breakpoint container factories. A breakpoint container factories divides breakpoints up into containers based on some specific criteria. For example, breakpoint container factories are provided which organize breakpoints by project.
       </documentation>
    </annotation>
 
