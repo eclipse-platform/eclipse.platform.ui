@@ -706,11 +706,12 @@ public class OverviewRuler implements IOverviewRuler {
 
 		int[] lines= new int[2];
 		
-		int pixel= Math.max(y_coordinate - 1, 0);
-		lines[0]= (pixel * maxLines) / rulerLength;
+		int pixel0= Math.max(y_coordinate - 1, 0);
+		int pixel1= Math.min(rulerLength, y_coordinate + 1);
+		rulerLength= Math.max(rulerLength, 1);
 		
-		pixel= Math.min(rulerLength, y_coordinate + 1);
-		lines[1]= (pixel * maxLines) / rulerLength;
+		lines[0]= (pixel0 * maxLines) / rulerLength;
+		lines[1]= (pixel1 * maxLines) / rulerLength;
 		
 		if (fTextViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
