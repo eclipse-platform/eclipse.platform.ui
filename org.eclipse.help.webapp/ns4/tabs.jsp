@@ -20,22 +20,29 @@
 	 // Load the preferences
 	boolean linksView = true;
 	
-	ContentUtil content = new ContentUtil(application, request);
-	Element prefsElement = content.loadPreferences();
+	// check if we are running infocenter or workbench
+	if (application.getAttribute("org.eclipse.help.servlet.eclipse") == null)
+	{
+		// this is workbench
+		ContentUtil content = new ContentUtil(application, request);
+		Element prefsElement = content.loadPreferences();
 
-	if (prefsElement != null){
-		NodeList prefs = prefsElement.getElementsByTagName("pref");
-		for (int i=0; i<prefs.getLength(); i++)
-		{
-			Element pref = (Element)prefs.item(i);
-			String name = pref.getAttribute("name");
-			if (name.equals("linksView"))
+		if (prefsElement != null){
+			NodeList prefs = prefsElement.getElementsByTagName("pref");
+			for (int i=0; i<prefs.getLength(); i++)
 			{
-				linksView = "true".equals(pref.getAttribute("value"));
-				break;
+				Element pref = (Element)prefs.item(i);
+				String name = pref.getAttribute("name");
+				if (name.equals("linksView"))
+				{
+					linksView = "true".equals(pref.getAttribute("value"));
+					break;
+				}
 			}
 		}
-	}
+	} else
+		// this is infocenter
+		linksView = false;
 	
 %>
 
