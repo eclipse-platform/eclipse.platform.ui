@@ -84,7 +84,7 @@ private IViewPart createView(IViewDescriptor desc,IMemento memento)
 	try {
 		view = desc.createView();
 	} catch (CoreException e) {
-		throw new PartInitException(WorkbenchMessages.format("ViewFactory.initException", new Object[] {desc.getID()})); //$NON-NLS-1$
+		throw new PartInitException(WorkbenchMessages.format("ViewFactory.initException", new Object[] {desc.getID()}),e); //$NON-NLS-1$
 	}
 	
 	// Create site
