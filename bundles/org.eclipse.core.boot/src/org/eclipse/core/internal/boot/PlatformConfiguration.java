@@ -64,6 +64,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String CONFIG_FILE = CONFIG_DIR + "/platform.cfg";
 	private static final String CONFIG_FILE_INIT = "install.ini";
 	private static final String CONFIG_FILE_LOCK_SUFFIX = ".lock";
+	private static final String CONFIG_FILE_TEMP_SUFFIX = ".tmp";
+	private static final String CONFIG_FILE_BAK_SUFFIX = ".bak";
 	private static final String CHANGES_MARKER = ".newupdates"; 
 	private static final String LINKS = "links";
 	private static final String PLUGIN_XML = "plugin.xml";
@@ -1190,28 +1192,71 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	public synchronized void save(URL url) throws IOException {		
 		if (url == null)
 			throw new IOException(Policy.bind("cfig.unableToSave.noURL"));
-
-		URLConnection uc = url.openConnection();
-		uc.setDoOutput(true);
+			
+		PrintWriter w = null;
 		OutputStream os = null;
-		try {
+		if (!url.getProtocol().equals("file")) {
+			// not a file protocol - attempt to save to the URL
+			URLConnection uc = url.openConnection();
+			uc.setDoOutput(true);
 			os = uc.getOutputStream();
-		} catch (UnknownServiceException e) {
-			// retry with direct file i/o
-			if (!url.getProtocol().equals("file"))
-				throw e;
+			w = new PrintWriter(os);
+			try {
+				write(w);
+			} finally {
+				w.close();
+			}
+		} else {
+			// file protocol - do safe i/o
 			File cfigFile = new File(url.getFile().replace('/',File.separatorChar));
 			File cfigDir = cfigFile.getParentFile();
-			if (cfigDir!=null) {
+			if (cfigDir!=null)
 				cfigDir.mkdirs();
+				
+			// first save the file as temp
+			File cfigTmp = new File(cfigFile.getAbsolutePath()+CONFIG_FILE_TEMP_SUFFIX);
+			os = new FileOutputStream(cfigTmp); 
+			w = new PrintWriter(os);
+			try {
+				write(w);
+			} finally {
+				w.close();
 			}
-			os = new FileOutputStream(cfigFile);
-		}
-		PrintWriter w = new PrintWriter(os);
-		try {
-			write(w);
-		} finally {
-			w.close();
+			
+			// make sure we actually succeeded saving the whole configuration.
+			InputStream is = new FileInputStream(cfigTmp);
+			Properties tmpProps = new Properties();
+			try {
+				tmpProps.load(is);
+				if (!EOF.equals(tmpProps.getProperty(EOF))) {
+					throw new IOException(Policy.bind("cfig.unableToSave",cfigTmp.getAbsolutePath()));
+				}				
+			} finally {
+				is.close();
+			}
+			
+			// make the saved config the "active" one
+			File cfigBak = new File(cfigFile.getAbsolutePath()+CONFIG_FILE_BAK_SUFFIX);
+			cfigBak.delete(); // may have old .bak due to prior failure
+
+			if (cfigFile.exists()) 
+				cfigFile.renameTo(cfigBak);
+				
+			// at this point we have old config (if existed) as "bak" and the 
+			// new config as "tmp". 
+			boolean ok = cfigTmp.renameTo(cfigFile);
+			if (ok) {
+				// at this point we have the new config "activated", and the old
+				// config (if it existed) as "bak"
+				cfigBak.delete(); // clean up
+			} else {
+				// this codepath represents a tiny failure window. The load processing
+				// on startup will detect missing config and will attempt to start
+				// with "tmp" (latest), then "bak" (the previous). We can also end up
+				// here if we failed to rename the current config to "bak". In that
+				// case we will restart with the previous state.
+				throw new IOException(Policy.bind("cfig.unableToSave",cfigTmp.getAbsolutePath()));
+			}	
 		}
 	}
 	
@@ -1418,6 +1463,9 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	}
 	
 	private boolean getConfigurationLock(URL url) {
+		if (configurationInWorkspace(url))
+			return false;
+		
 		if (!url.getProtocol().equals("file"))
 			return false;
 			
@@ -1458,6 +1506,11 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			cfgLockFile.delete();
 			cfgLockFile = null;
 		}
+	}
+	
+	private boolean configurationInWorkspace(URL url) {
+		// the configuration file is now in the workspace, so return true
+		return true;
 	}
 			
 	private void computeChangeStamp() {
@@ -1763,24 +1816,21 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		
 		if (url == null) 
 			throw new IOException(Policy.bind("cfig.unableToLoad.noURL"));
-
 		
-		// try to load saved configuration file
-		Properties props = new Properties();
-		InputStream is = null;
+		// try to load saved configuration file (watch for failed prior save())
+		Properties props = null;
+		IOException originalException = null;
 		try {
-			is = url.openStream();
-			props.load(is);
-			// check to see if we have complete config file
-			if (!EOF.equals(props.getProperty(EOF))) {
-				throw new IOException(Policy.bind("cfig.unableToLoad.incomplete",url.toString()));
-			}
-		} finally {
-			if (is!=null) {
+			props = loadProperties(url, null); // try to load config file
+		} catch(IOException e1) {
+			originalException = e1;
+			try {
+				props = loadProperties(url, CONFIG_FILE_TEMP_SUFFIX); // check for failures on save
+			} catch(IOException e2) {
 				try {
-					is.close();
-				} catch(IOException e) {
-					// ignore ...
+					props = loadProperties(url, CONFIG_FILE_BAK_SUFFIX); // check for failures on save
+				} catch(IOException e3) {
+					throw originalException; // we tried, but no config here ...
 				}
 			}
 		}
@@ -1852,6 +1902,34 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				externalLinkSites.put(se.getURL(),se); 
 			se = (SiteEntry) loadSite(props, CFG_SITE+"."+i, null);	
 		}
+	}
+	
+	private Properties loadProperties(URL url, String suffix) throws IOException {
+		
+		// figure out what we will be loading
+		if (suffix != null && !suffix.equals(""))
+			url = new URL(url.getProtocol(),url.getHost(),url.getPort(),url.getFile()+suffix);
+			
+		// try to load saved configuration file
+		Properties props = new Properties();
+		InputStream is = null;
+		try {
+			is = url.openStream();
+			props.load(is);
+			// check to see if we have complete config file
+			if (!EOF.equals(props.getProperty(EOF))) {
+				throw new IOException(Policy.bind("cfig.unableToLoad.incomplete",url.toString()));
+			}
+		} finally {
+			if (is!=null) {
+				try {
+					is.close();
+				} catch(IOException e) {
+					// ignore ...
+				}
+			}
+		}
+		return props;
 	}
 	
 	private ISiteEntry loadSite(Properties props, String name, ISiteEntry dflt) {
