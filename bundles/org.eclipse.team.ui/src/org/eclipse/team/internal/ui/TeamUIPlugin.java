@@ -5,24 +5,27 @@ package org.eclipse.team.internal.ui;
  * All Rights Reserved.
  */
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -140,6 +143,49 @@ public class TeamUIPlugin extends AbstractUIPlugin implements ISharedImages {
 		}
 	}
 	
+	public static void runWithProgress(Shell parent, boolean cancelable,
+		final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
+		boolean createdShell = false;
+		try {
+			if (parent == null || parent.isDisposed()) {
+				Display display = Display.getCurrent();
+				if (display == null) {
+					// cannot provide progress (not in UI thread)
+					runnable.run(new NullProgressMonitor());
+					return;
+				}
+				// get the active shell or a suitable top-level shell
+				parent = display.getActiveShell();
+				if (parent == null) {
+					parent = new Shell(display);
+					createdShell = true;
+				}
+			}
+			// pop up progress dialog after a short delay
+			final Exception[] holder = new Exception[1];
+			BusyIndicator.showWhile(parent.getDisplay(), new Runnable() {
+				public void run() {
+					try {
+						runnable.run(new NullProgressMonitor());
+					} catch (InvocationTargetException e) {
+						holder[0] = e;
+					} catch (InterruptedException e) {
+						holder[0] = e;
+					}
+				}
+			});
+			if (holder[0] != null) {
+				if (holder[0] instanceof InvocationTargetException) {
+					throw (InvocationTargetException) holder[0];
+				} else {
+					throw (InterruptedException) holder[0];
+				}
+			}
+			//new TimeoutProgressMonitorDialog(parent, TIMEOUT).run(true /*fork*/, cancelable, runnable);
+		} finally {
+			if (createdShell) parent.dispose();
+		}
+	}
 	/**
 	 * @see Plugin#startup()
 	 */
@@ -147,4 +193,29 @@ public class TeamUIPlugin extends AbstractUIPlugin implements ISharedImages {
 		Policy.localize("org.eclipse.team.internal.ui.messages"); //$NON-NLS-1$
 		initializePreferences();
 	}
+	
+	public static void handle(Throwable t) {
+		IStatus error = null;
+		if (t instanceof CoreException) {
+			error = ((CoreException)t).getStatus();
+		} else if (t instanceof TeamException) {
+			error = ((TeamException)t).getStatus();
+		} else {
+			error = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("simpleInternal"), t);
+		}
+	
+		Shell shell = new Shell(Display.getDefault());
+	
+		if (error.getSeverity() == IStatus.INFO) {
+			MessageDialog.openInformation(shell, Policy.bind("information"), error.getMessage());
+		} else {
+			ErrorDialog.openError(shell, Policy.bind("exception"), null, error);
+		}
+		shell.dispose();
+		// Let's log non-team exceptions
+		if (!(t instanceof TeamException)) {
+			TeamUIPlugin.log(error);
+		}
+	}
+
 }

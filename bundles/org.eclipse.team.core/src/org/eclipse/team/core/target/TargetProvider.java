@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.sync.IRemoteResource;
 
 public abstract class TargetProvider {
 	/**
@@ -65,6 +66,8 @@ public abstract class TargetProvider {
 	 * array.
 	 */
 	public abstract void put(IResource[] resources, IProgressMonitor progress) throws TeamException;
+	
+	public abstract IRemoteTargetResource getRemoteResourceFor(IResource resource);
 	
 	/**
 	 * Replies true if its believed possible to get the given resource.

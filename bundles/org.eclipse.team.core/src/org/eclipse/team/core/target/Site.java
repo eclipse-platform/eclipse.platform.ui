@@ -15,6 +15,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.sync.IRemoteResource;
 
 /**
  * A <code>Site</code> is a place where resources can be deployed and 
@@ -97,4 +98,10 @@ public abstract class Site {
 	public String toString() {
 		return getDisplayName();
 	}
+	
+	/**
+	 * Returns a remote resource handle for this site. The handle can be used to 
+	 * browse the remote site.
+	 */
+	public abstract IRemoteTargetResource getRemoteResource() throws TeamException;
 }

@@ -4,11 +4,13 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.target.Site;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -34,7 +36,12 @@ public class SiteElement implements IWorkbenchAdapter, IAdaptable {
 	}
 
 	public Object[] getChildren(Object o) {
-		return new Object[0];
+		try {
+			return new RemoteResourceElement(site.getRemoteResource()).getChildren(this);
+		} catch (TeamException e) {
+			TeamUIPlugin.handle(e);
+			return new Object[0];
+		}
 	}
 	
 	public ImageDescriptor getImageDescriptor(Object object) {
@@ -47,5 +54,12 @@ public class SiteElement implements IWorkbenchAdapter, IAdaptable {
 	
 	public Object getParent(Object o) {
 		return null;
+	}
+	
+	public boolean equals(Object obj) {
+		if(obj == null) return false;
+		if(!(obj instanceof SiteElement)) return false;
+		Site otherSite = ((SiteElement)obj).getSite();
+		return getSite().equals(otherSite);
 	}
 }

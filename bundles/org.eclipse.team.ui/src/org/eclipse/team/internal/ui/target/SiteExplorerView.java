@@ -13,6 +13,7 @@ import org.eclipse.team.core.target.ISiteListener;
 import org.eclipse.team.core.target.Site;
 import org.eclipse.team.core.target.TargetManager;
 import org.eclipse.team.internal.ui.ConfigureProjectWizard;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.IActionBars;
@@ -59,7 +60,7 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 		// Create actions
 		
 		// Refresh (toolbar)
-		addSiteAction = new Action("Add a Site", TeamImages.getImageDescriptor(ISharedImages.IMG_SITE_ELEMENT)) {
+		addSiteAction = new Action(Policy.bind("SiteExplorerViewaddSiteAction"), TeamImages.getImageDescriptor(ISharedImages.IMG_SITE_ELEMENT)) { //$NON-NLS-1$
 			public void run() {
 				ConfigureProjectWizard wizard = new ConfigureTargetWizard();
 				wizard.init(null, null);
@@ -67,7 +68,7 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 				dialog.open();
 			}
 		};
-		addSiteAction.setToolTipText("Add a Site");
+		addSiteAction.setToolTipText(Policy.bind("SiteExplorerViewaddSiteActionTooltip")); //$NON-NLS-1$
 
 		IActionBars bars = getViewSite().getActionBars();
 		IToolBarManager tbm = bars.getToolBarManager();

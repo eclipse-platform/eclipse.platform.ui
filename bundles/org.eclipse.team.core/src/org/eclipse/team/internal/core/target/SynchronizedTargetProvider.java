@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.*;
+import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.target.*;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.Assert;
@@ -152,6 +153,8 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 		ResourceState state = getState(resource);
 		return state.hasRemote();
 	}
+	
+	
 
 	/**
 	 * Perform the given operation on the array of resources, each to the
@@ -264,5 +267,5 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 		} //end-if
 		else
 			return new IResource[0];
-	}
+	}	
 }

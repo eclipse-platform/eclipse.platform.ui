@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.core.target.Site;
 import org.eclipse.team.core.target.TargetManager;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -35,6 +36,7 @@ public class SiteSelectionPage extends TargetWizardPage {
 	
 	public SiteSelectionPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
+		setDescription(Policy.bind("SiteSelectionPage.description")); //$NON-NLS-1$
 	}
 
 	protected TableViewer createTable(Composite parent) {
@@ -57,9 +59,9 @@ public class SiteSelectionPage extends TargetWizardPage {
 		data.horizontalSpan = 2;
 		data.widthHint = 350;
 		description.setLayoutData(data);
-		description.setText("Select an existing site or create a new one");
+		description.setText(Policy.bind("SiteSelectionPage.label")); //$NON-NLS-1$
 
-		useExistingRepo = createRadioButton(composite, "Use Existing Site", 2);
+		useExistingRepo = createRadioButton(composite, Policy.bind("SiteSelectionPage.useExisting"), 2); //$NON-NLS-1$
 		table = createTable(composite);
 		table.setContentProvider(new WorkbenchContentProvider());
 		table.setLabelProvider(new WorkbenchLabelProvider());
@@ -72,7 +74,7 @@ public class SiteSelectionPage extends TargetWizardPage {
 				setPageComplete(true);
 			}
 		});
-		useNewRepo = createRadioButton(composite, "Create a new Site", 2);
+		useNewRepo = createRadioButton(composite, Policy.bind("SiteSelectionPage.createNew"), 2); //$NON-NLS-1$
 
 		useExistingRepo.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
