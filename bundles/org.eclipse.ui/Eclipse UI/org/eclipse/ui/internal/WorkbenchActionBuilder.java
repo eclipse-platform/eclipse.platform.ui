@@ -460,14 +460,12 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			menu.add(hideShowEditorAction);
 			if (manager instanceof CoolBarManager) {
 				menu.add(lockToolBarAction);	
+				menu.add(resetToolBarAction);	
 			}
 			menu.add(new Separator());
 			menu.add(editActionSetAction);
 			menu.add(savePerspectiveAction);
 			menu.add(resetPerspectiveAction);
-			if (manager instanceof CoolBarManager) {
-				menu.add(resetToolBarAction);	
-			}
 			menu.add(closePerspAction);	
 			menu.add(closeAllPerspsAction);
 		}
@@ -478,11 +476,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			menu.add(editActionSetAction);
 			if (manager instanceof CoolBarManager) {
 				menu.add(lockToolBarAction);	
-			}
-			menu.add(resetPerspectiveAction);
-			if (manager instanceof CoolBarManager) {
 				menu.add(resetToolBarAction);	
 			}
+			menu.add(resetPerspectiveAction);
 			menu.add(new Separator());
 			menu.add(closePerspAction);
 			menu.add(closeAllPerspsAction);
