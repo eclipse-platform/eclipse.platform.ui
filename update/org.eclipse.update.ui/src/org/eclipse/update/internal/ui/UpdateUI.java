@@ -38,7 +38,8 @@ import org.osgi.framework.*;
 public class UpdateUI extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.update.ui"; //$NON-NLS-1$
 	public static final String WEB_APP_ID = "org.eclipse.update"; //$NON-NLS-1$
-
+	// preference key
+	public static final String P_DISCOVERY_SITES_ENABLED = "discoverySitesEnabled"; //$NON-NLS-1$
 	
 	//The shared instance.
 	private static UpdateUI plugin;
@@ -402,5 +403,14 @@ public class UpdateUI extends AbstractUIPlugin {
 		if (display == null)
 			display = Display.getDefault();
 		return display;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#initializeDefaultPluginPreferences()
+	 */
+	protected void initializeDefaultPluginPreferences() {
+		Preferences store = getPluginPreferences();
+		store.setDefault(P_DISCOVERY_SITES_ENABLED, true);
 	}
 }

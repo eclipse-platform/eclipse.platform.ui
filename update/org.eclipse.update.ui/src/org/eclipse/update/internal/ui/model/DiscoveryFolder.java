@@ -22,6 +22,10 @@ public class DiscoveryFolder extends BookmarkFolder {
 	}
 	public void initialize() {
 		children.clear();
+		// check if discovery sites defined by features should be exposed to the user
+		if (!UpdateUI.getDefault().getPluginPreferences().getBoolean(UpdateUI.P_DISCOVERY_SITES_ENABLED))
+			return;
+		
 		try {
 			ILocalSite site = SiteManager.getLocalSite();
 			IInstallConfiguration config = site.getCurrentConfiguration();

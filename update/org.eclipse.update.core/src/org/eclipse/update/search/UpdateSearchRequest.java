@@ -195,6 +195,8 @@ public class UpdateSearchRequest {
 				for (int i = 0; i < queries.length; i++) {
 					IUpdateSearchQuery query = queries[i];
 					IQueryUpdateSiteAdapter qsite = query.getQuerySearchSite();
+					// currently, the next conditional is only executed (qsite!=null) when
+					// running an update search. 
 					if (qsite != null && searchFeatureProvidedSites) {
 						// check for mapping
 						IUpdateSiteAdapter mappedSite = getMappedSite(updatePolicy, qsite);

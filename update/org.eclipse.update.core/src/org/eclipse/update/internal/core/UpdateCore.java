@@ -37,7 +37,16 @@ public class UpdateCore extends Plugin {
 	public static boolean DEBUG_SHOW_IHANDLER;
 	public static boolean DEBUG_SHOW_RECONCILER;
 
+
+	public static String HTTP_PROXY_HOST = "org.eclipse.update.core.proxy.host"; //$NON-NLS-1$
+	public static String HTTP_PROXY_PORT = "org.eclipse.update.core.proxy.port"; //$NON-NLS-1$
+	public static String HTTP_PROXY_ENABLE = "org.eclipse.update.core.proxy.enable"; //$NON-NLS-1$
+	
 	// preference keys
+	public static final String P_HTTP_HOST = "http.proxyHost"; //$NON-NLS-1$
+	public static final String P_HTTP_PORT = "http.proxyPort";	 //$NON-NLS-1$
+	public static final String P_HTTP_PROXY = "http.proxySet"; //$NON-NLS-1$
+		
 	private static final String PREFIX = "org.eclipse.update.core"; //$NON-NLS-1$
 	public static final String P_HISTORY_SIZE = PREFIX + ".historySize"; //$NON-NLS-1$
 	public static final String P_CHECK_SIGNATURE = PREFIX + ".checkSignature"; //$NON-NLS-1$
@@ -56,14 +65,6 @@ public class UpdateCore extends Plugin {
 	
 	//Connection manager
 	private ConnectionThreadManager connectionManager;
-
-	public static String HTTP_PROXY_HOST = "org.eclipse.update.core.proxy.host"; //$NON-NLS-1$
-	public static String HTTP_PROXY_PORT = "org.eclipse.update.core.proxy.port"; //$NON-NLS-1$
-	public static String HTTP_PROXY_ENABLE = "org.eclipse.update.core.proxy.enable"; //$NON-NLS-1$
-	
-	public static final String P_HTTP_HOST = "http.proxyHost"; //$NON-NLS-1$
-	public static final String P_HTTP_PORT = "http.proxyPort";	 //$NON-NLS-1$
-	public static final String P_HTTP_PROXY = "http.proxySet"; //$NON-NLS-1$
 
 	// bundle data
 	private BundleContext context;
