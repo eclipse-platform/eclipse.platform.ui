@@ -7,6 +7,7 @@ package org.eclipse.debug.ui;
  
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.swt.graphics.Image;
@@ -81,13 +82,6 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 */
 	protected void setControl(Control control) {
 		fControl = control;
-	}
-
-	/**
-	 * @see ILaunchConfigurationTab#okToLeave()
-	 */
-	public boolean okToLeave() {
-		return isValid();
 	}
 
 	/**
@@ -186,6 +180,13 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 */
 	public boolean canSave() {
 		return true;
+	}
+	
+	/**
+	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
+	 */
+	public boolean isValid(ILaunchConfiguration config) {
+		return isValid();
 	}
 		
 }

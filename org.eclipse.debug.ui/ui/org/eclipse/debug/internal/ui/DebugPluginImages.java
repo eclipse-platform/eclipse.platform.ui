@@ -56,6 +56,7 @@ public class DebugPluginImages {
 	private final static String ELCL= "elcl16/"; //enabled - size 16x16 //$NON-NLS-1$
 	private final static String OBJECT= "obj16/"; //basic colors - size 16x16 //$NON-NLS-1$
 	private final static String WIZBAN= "wizban/"; //basic colors - size 16x16 //$NON-NLS-1$
+	private final static String OVR= "ovr16/"; //basic colors - size 7x8 //$NON-NLS-1$
 	
 	/**
 	 * Declare all images
@@ -124,7 +125,6 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_COPY, ELCL + "copy_edit.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE, ELCL + "hidenav.gif"); //$NON-NLS-1$
 
-
 		//Object
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_LAUNCH_DEBUG, OBJECT + "ldebug_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_LAUNCH_RUN, OBJECT + "lrun_obj.gif"); //$NON-NLS-1$
@@ -144,6 +144,10 @@ public class DebugPluginImages {
 		//Wizard Banners
 		declareRegistryImage(IDebugUIConstants.IMG_WIZBAN_DEBUG, WIZBAN + "debug_wiz.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_WIZBAN_RUN, WIZBAN + "run_wiz.gif"); //$NON-NLS-1$
+			
+		// Overlays
+		declareRegistryImage(IDebugUIConstants.IMG_OVR_ERROR, OVR + "error.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_OVR_TRANSPARENT, OVR + "transparent.gif"); //$NON-NLS-1$		
 				
 		// launch configuration types
 		IPluginDescriptor pluginDescriptor = DebugUIPlugin.getDefault().getDescriptor();

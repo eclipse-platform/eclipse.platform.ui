@@ -610,13 +610,20 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	/**
+	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
+	 */
+	public boolean isValid(ILaunchConfiguration config) {
+		return isValid();
+	}
+	
+	/**
 	 * @see ILaunchConfigurationTab#isValid()
 	 */
 	public boolean isValid() {
 		setMessage(null);
 		setErrorMessage(null);
 		
-		return validateLocalShared();
+		return validateLocalShared();		
 	}
 	
 	private boolean validateLocalShared() {

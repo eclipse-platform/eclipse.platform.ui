@@ -48,15 +48,6 @@ import org.eclipse.swt.widgets.Control;
 public interface ILaunchConfigurationTab {
 
 	/**
-	 * Returns whether it is ok to leave this tab and display
-	 * another tab.
-	 *
-	 * @return whether it is ok to leave this tab and display
-	 *  another tab
-	 */
-	public boolean okToLeave();
-
-	/**
 	 * Creates the top level control for this launch configuration
 	 * tab under the given parent composite. Marks the beginning
 	 * of this tab's lifecycle. This method is called once on
@@ -150,10 +141,28 @@ public interface ILaunchConfigurationTab {
 	 * This information is typically used by the launch configuration
 	 * dialog to decide when it is okay to launch.
 	 * </p>
-	 *
+	 * <p>
+	 * This method is deprecated.  Clients should use <code>isValid(ILaunchConfiguration)</code> instead.
+	 * </p>
+	 * 
+	 * @deprecated
 	 * @return whether this tab is in a valid state
 	 */
 	public boolean isValid();	
+	
+	/**
+	 * Returns whether this tab is in a valid state in the context of the specified launch configuration.
+	 * <p>
+	 * This information is typically used by the launch configuration
+	 * dialog to decide when it is okay to launch.
+	 * </p>
+	 *
+	 * @param launchConfig launch configuration which provides context for validating this tab.
+	 *         This value must not be <code>null</code>.
+	 *
+	 * @return whether this tab is in a valid state
+	 */
+	public boolean isValid(ILaunchConfiguration launchConfig);
 	
 	/**
 	 * Returns whether this tab is in a state that allows the launch configuration whose values
@@ -176,7 +185,7 @@ public interface ILaunchConfigurationTab {
 	 * This is the first method called on a launch configuration
 	 * tab, and marks the beginning of this tab's lifecycle.
 	 * 
-	 * @param dilaog launch configuration dialog
+	 * @param dialog launch configuration dialog
 	 */
 	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog);
 	

@@ -598,7 +598,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		}
  		return group;
 	}
-		
+	
+
+	
 	/**
 	 * Returns the selected IResource context from the workbench,
 	 * or <code>null</code> if there was no context in the workbench.
@@ -653,16 +655,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Verify the working copy
-	 */
-	protected void verify() throws CoreException {
-		verifyStandardAttributes();	
-	}
-	
-	/**
 	 * Verify the attributes common to all launch configuration.
-	 * To be consistent with <code>ILaunchConfiguration.verify</code>,
-	 * indicate failure by throwing a <code>CoreException</code>.
+	 * Indicate failure by throwing a <code>CoreException</code>.
 	 */
 	protected void verifyStandardAttributes() throws CoreException {
 		verifyName();
@@ -1822,17 +1816,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}
 		if (fCurrentTabIndex != -1) {
 			ILaunchConfigurationTab tab = tabs[fCurrentTabIndex];
-			if (tab.okToLeave()) {
-				ILaunchConfigurationWorkingCopy wc = getLaunchConfiguration();
-				if (wc != null) {
-					// apply changes when leaving a tab
-					tab.performApply(getLaunchConfiguration());
-					// update when entering a tab
-					getActiveTab().initializeFrom(wc);
-				}
-			} else {
-				getTabFolder().setSelection(fCurrentTabIndex);
-				return;
+			ILaunchConfigurationWorkingCopy wc = getLaunchConfiguration();
+			if (wc != null) {
+				// apply changes when leaving a tab
+				tab.performApply(getLaunchConfiguration());
+				// re-initialize a tab when entering it
+				getActiveTab().initializeFrom(wc);
 			}
 		}
 		fCurrentTabIndex = getTabFolder().getSelectionIndex();
@@ -2210,7 +2199,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	public boolean canLaunch() {
 		try {
-			verify();
+			verifyStandardAttributes();
 		} catch (CoreException e) {
 			return false;
 		}
@@ -2220,7 +2209,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			return false;
 		}
 		for (int i = 0; i < tabs.length; i++) {
-			if (!tabs[i].isValid()) {
+			if (!tabs[i].isValid(getLaunchConfiguration())) {
 				return false;
 			}
 		}
@@ -2257,6 +2246,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			while (iter.hasNext()) {
 				if (iter.next() instanceof ILaunchConfigurationType) {
 					enable = false;
+					break;
 				}
 			}
 			getDeleteButton().setEnabled(enable);
@@ -2268,17 +2258,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			getApplyButton().setEnabled(false);
 			getButton(ID_LAUNCH_BUTTON).setEnabled(false);
 		} else {
-			ILaunchConfigurationTab tab = getActiveTab();
-			boolean verified = false;
-			try {
-				verify();
-				verified = true;
-			} catch (CoreException e) {
-			}
-			if (tab != null) {
-				getApplyButton().setEnabled(verified && tab.isValid());
-				getButton(ID_LAUNCH_BUTTON).setEnabled(canLaunch());		
-			}
+			boolean canLaunch = canLaunch();
+			getApplyButton().setEnabled(canLaunch);
+			getButton(ID_LAUNCH_BUTTON).setEnabled(canLaunch);		
 		}
 		
 		// Revert button
@@ -2309,6 +2291,21 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns the currently active TabItem
+	 * 
+	 * @return launch configuration tab item
+	 */
+	protected TabItem getActiveTabItem() {
+		TabFolder folder = getTabFolder();
+		TabItem tabItem = null;
+		int selectedIndex = folder.getSelectionIndex();
+		if (selectedIndex >= 0) {
+			tabItem = folder.getItem(selectedIndex);
+		}		
+		return tabItem;
+	}
 
 	/**
 	 * @see ILaunchConfigurationDialog#updateMessage()
@@ -2318,6 +2315,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			return;
 		}
 		
+		// If there is no current working copy, show a default informational message and clear the error message
 		if (getLaunchConfiguration() == null) {
 			setErrorMessage(null);
 			setMessage(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Select_a_type_of_configuration_to_create,_and_press___new__51")); //$NON-NLS-1$
@@ -2325,23 +2323,75 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}
 		
 		try {
-			verify();
-		} catch (CoreException e) {
-			setErrorMessage(e.getMessage());
+			verifyStandardAttributes();
+		} catch (CoreException ce) {
+			setErrorMessage(ce.getMessage());
 			return;
 		}
 		
-		ILaunchConfigurationTab page = getActiveTab();
-		if (page == null) {
+		// Get the active tab.  If there isn't one, clear the information & error messages
+		ILaunchConfigurationTab activeTab = getActiveTab();
+		if (activeTab == null) {
 			setMessage(null);
 			setErrorMessage(null);
 			return;
 		}
 		
+		// Always set the informational (non-error) message based on the active tab		
+		setMessage(activeTab.getMessage());
 		
-		setErrorMessage(page.getErrorMessage());
-		setMessage(page.getMessage());
-
+		// The bias is to show the active page's error message, but if there isn't one,
+		// show the error message for one of the other tabs that has an error.  Set the icon
+		// for all tabs according to whether they contain errors.
+		String errorMessage = checkTabForError(activeTab);
+		boolean errorOnActiveTab = errorMessage != null;
+		setTabIcon(getActiveTabItem(), errorOnActiveTab);
+		if (!errorOnActiveTab) {
+			ILaunchConfigurationTab[] allTabs = getTabs();
+			for (int i = 0; i < allTabs.length; i++) {
+				String tabError = checkTabForError(allTabs[i]);				
+				TabItem tabItem = getTabFolder().getItem(i);
+				boolean errorOnTab = tabError != null;
+				setTabIcon(tabItem, errorOnTab);
+				if (errorOnTab) {
+					errorMessage = '[' + removeAmpersandsFrom(tabItem.getText()) + "]: " + tabError;
+				}
+			}
+		} 
+		setErrorMessage(errorMessage);				
+	}
+	
+	/**
+	 * Force the tab to update it's error state and return any error message.
+	 */
+	protected String checkTabForError(ILaunchConfigurationTab tab) {
+		tab.isValid(getLaunchConfiguration());
+		return tab.getErrorMessage();
+	}
+	
+	/**
+	 * Set the specified tab item's icon to an error icon if <code>error</code> is true,
+	 * or a transparent icon of the same size otherwise.
+	 */
+	protected void setTabIcon(TabItem tabItem, boolean error) {
+		if (error) {			
+			tabItem.setImage(DebugUITools.getImage(IDebugUIConstants.IMG_OVR_ERROR));
+		} else {
+			tabItem.setImage(DebugUITools.getImage(IDebugUIConstants.IMG_OVR_TRANSPARENT));								
+		}
+	}
+	
+	/**
+	 * Return a copy of the specified string 
+	 */
+	protected String removeAmpersandsFrom(String string) {
+		String newString = new String(string);
+		int index = newString.indexOf('&');
+		while (index != -1) {
+			newString = string.substring(0, index) + newString.substring(index + 1, newString.length());
+			index = newString.indexOf('&');
+		}
+		return newString;
 	}
 
 	/**
