@@ -102,6 +102,7 @@ protected Control createDialogArea(Composite parent) {
 	tree.setInput(viewReg);
 	tree.addSelectionChangedListener(this);
 	tree.addDoubleClickListener(this);
+	tree.getTree().setFont(parent.getFont());
 
 	// Set tree size.
 	Control ctrl = tree.getControl();
