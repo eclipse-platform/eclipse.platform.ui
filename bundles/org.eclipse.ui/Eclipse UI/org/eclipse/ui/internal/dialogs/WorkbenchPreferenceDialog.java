@@ -132,11 +132,13 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 		String filename = d.open();
 		if (filename == null)
 			return;
-		// Append the default filename if none was specifed	
+		// Append the default filename if none was specifed	and such a file does not exist
 		IPath path = new Path(filename);
 		if (path.getFileExtension() == null) {
-			path = path.addFileExtension(PREFERENCE_EXT);			
-			filename = path.toOSString();
+			if (!path.toFile().exists()) {
+				path = path.addFileExtension(PREFERENCE_EXT);			
+				filename = path.toOSString();
+			}
 		}
 
 		WorkbenchPlugin.getDefault().getDialogSettings().put(LOAD_SETTING, filename);
