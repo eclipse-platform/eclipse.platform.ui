@@ -35,7 +35,7 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 	/**
 	 * @see AbstractDebugEventHandler#handleDebugEvents(DebugEvent[])
 	 */
-	protected void doHandleDebugEvents(DebugEvent[] events) {
+	protected void doHandleDebugEvents(DebugEvent[] events, Object data) {
 		for (int i = 0; i < events.length; i++) {	
 			DebugEvent event = events[i];
 			switch (event.getKind()) {
@@ -55,7 +55,7 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 	/**
 	 * @see AbstractDebugEventHandler#updateForDebugEvents(DebugEvent[])
 	 */
-	protected void updateForDebugEvents(DebugEvent[] events) {
+	protected void updateForDebugEvents(DebugEvent[] events, Object data) {
 		for (int i = 0; i < events.length; i++) {	
 			DebugEvent event = events[i];
 			switch (event.getKind()) {

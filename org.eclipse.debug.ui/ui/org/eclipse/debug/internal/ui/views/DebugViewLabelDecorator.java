@@ -258,7 +258,8 @@ public class DebugViewLabelDecorator extends LabelProvider implements ILabelDeco
 		public LabelJob(String name, IDebugModelPresentation presentation) {
 			super(name);
 			fJobPresentation= presentation;
-			setRule(this);
+			// TODO: why was this rule needed?
+			//setRule(this);
 			setSystem(true);
 		}
 		
@@ -284,17 +285,13 @@ public class DebugViewLabelDecorator extends LabelProvider implements ILabelDeco
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public IStatus run(IProgressMonitor monitor) {
-			synchronized(DebugViewLabelDecorator.this) {
-				fNextJob= null;
-			}
-
 			int numElements= fElementQueue.size();
 			monitor.beginTask(MessageFormat.format(DebugUIViewsMessages.getString("DebugViewLabelDecorator.1"), new String[] { Integer.toString(numElements) }), numElements); //$NON-NLS-1$
 			while (!fElementQueue.isEmpty() && !monitor.isCanceled()) {
 				StringBuffer message= new StringBuffer(MessageFormat.format(DebugUIViewsMessages.getString("DebugViewLabelDecorator.1"), new String[] { Integer.toString(fElementQueue.size()) })); //$NON-NLS-1$
-				if (fNextJob != null) {
+				//if (fNextJob != null) {
 					message.append(MessageFormat.format(DebugUIViewsMessages.getString("DebugViewLabelDecorator.2"), new String[] { Integer.toString(fNextJob.fElementQueue.size()) })); //$NON-NLS-1$
-				}
+				//}
 				monitor.setTaskName(message.toString());
 				int blockSize= 10;
 				if (fElementQueue.size() < blockSize) {

@@ -29,7 +29,6 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 
 /**
  * Handles debug events, updating the launch view and viewer.
@@ -84,7 +83,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	/**
 	 * @see AbstractDebugEventHandler#doHandleDebugEvents(DebugEvent[])
 	 */
-	protected void doHandleDebugEvents(DebugEvent[] events) {
+	protected void doHandleDebugEvents(DebugEvent[] events, Object data) {
 		fThreadTimer.handleDebugEvents(events);
 		Object suspendee = null;
 		for (int i = 0; i < events.length; i++) {
@@ -103,19 +102,24 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 						fThreadTimer.getTimedOutThreads().remove(source);
 						remove(source);
 					} else {
+					    Object parent = null;
 						if (source instanceof IDebugTarget) {
 							clearSourceSelection(source);
+							parent = ((IDebugTarget)source).getLaunch();
+						} else if (source instanceof IProcess) {
+						    parent = ((IProcess)source).getLaunch();
 						}
-						Object parent = ((ITreeContentProvider)getTreeViewer().getContentProvider()).getParent(source);
-						refresh(parent);
+						if (parent != null) {
+						    refresh(parent);
+						}
 					}
 					break;
 				case DebugEvent.RESUME :
-					doHandleResumeEvent(event, source);
+					doHandleResumeEvent(event, source, data);
 					break;
 				case DebugEvent.SUSPEND :
 					if (suspendee == null || !suspendee.equals(source)) {
-						doHandleSuspendEvent(source, event);
+						doHandleSuspendEvent(source, event, data);
 						suspendee = source;
 					}
 					break;
@@ -146,7 +150,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	/**
 	 * Handles the given resume event with the given source.
 	 */
-	protected void doHandleResumeEvent(DebugEvent event, Object source) {
+	protected void doHandleResumeEvent(DebugEvent event, Object source, Object data) {
 		if (!event.isEvaluation()) {
 			clearSourceSelection(source);
 		}
@@ -161,18 +165,9 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		}
 		refresh(source);
 		if (source instanceof IThread) {
-			// When a thread resumes, try to select another suspended thread
-			// in the same target.
-			try {
-				IThread[] threads= ((IThread) source).getDebugTarget().getThreads();
-				for (int i = 0; i < threads.length; i++) {
-					IStackFrame frame = threads[i].getTopStackFrame();
-					if (frame != null) {
-						selectAndReveal(frame);
-						return;
-					}
-				}
-			} catch (DebugException e) {
+		    if (data instanceof IStackFrame) {
+				selectAndReveal(data);
+				return;
 			}
 			selectAndReveal(source);
 			return;
@@ -191,7 +186,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		clearSourceSelection(thread);
 	}
 
-	protected void doHandleSuspendEvent(Object element, DebugEvent event) {
+	protected void doHandleSuspendEvent(Object element, DebugEvent event, Object data) {
 		IThread thread= getThread(element);
 		if (thread != null) {
 			fThreadTimer.stopTimer(thread);
@@ -205,7 +200,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			}
 		}
 		if (element instanceof IThread) {
-			doHandleSuspendThreadEvent((IThread)element, event, wasTimedOut);
+			doHandleSuspendThreadEvent((IThread)element, event, wasTimedOut, data);
 			return;
 		}
 		refresh(element);
@@ -214,7 +209,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	/**
 	 * Updates the given thread for the given suspend event.
 	 */
-	protected void doHandleSuspendThreadEvent(IThread thread, DebugEvent event, boolean wasTimedOut) {
+	protected void doHandleSuspendThreadEvent(IThread thread, DebugEvent event, boolean wasTimedOut, Object data) {
 		// if the thread has already resumed, do nothing
 		if (!thread.isSuspended() || !isAvailable()) {
 			return;
@@ -223,48 +218,48 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		// do not update source selection for evaluation events
 		boolean evaluationEvent = event.isEvaluation();
 		
+		// get the top frame
+		IStackFrame frame = null;
+		if (data instanceof IStackFrame) {
+		    frame = (IStackFrame) data;
+		}
+	    
 		// if the top frame is the same, only update labels and images, and re-select
 		// the frame to display source
-		try {
-			IStackFrame frame = thread.getTopStackFrame();
-			if (frame != null && frame.equals(fLastStackFrame)) {
-				if (wasTimedOut) {
-					getLaunchViewer().updateStackFrameImages(thread);
-				}
-				getLaunchViewer().update(new Object[] {thread, frame}, null);
-				if (!evaluationEvent) {
-				    getLaunchViewer().deferExpansion(thread);
-					getLaunchViewer().setDeferredSelection(frame);
-				} else if (wasTimedOut) {
-					getLaunchView().showEditorForCurrentSelection();
-				}
-				return;
+		if (frame != null && frame.equals(fLastStackFrame)) {
+			if (wasTimedOut) {
+				getLaunchViewer().updateStackFrameImages(thread);
 			}
-		} catch (DebugException e) {
+			getLaunchViewer().update(new Object[] {thread, frame}, null);
+			if (!evaluationEvent) {
+			    getLaunchViewer().deferExpansion(thread);
+				getLaunchViewer().setDeferredSelection(frame);
+			} else if (wasTimedOut) {
+				getLaunchView().showEditorForCurrentSelection();
+			}
+			return;
 		}
 		
-		try {
-			fLastStackFrame = thread.getTopStackFrame();
+		if (frame != null) {
+		    fLastStackFrame = frame;
 			// Auto-expand the thread. Only select the thread if this wasn't the end
 			// of an evaluation
 			getLaunchView().autoExpand(thread, false);
 			if (fLastStackFrame != null) {
 			    getLaunchView().autoExpand(fLastStackFrame, !evaluationEvent);
 			}
-		} catch (DebugException e) {
-			fLastStackFrame = null;
 		}
 	}
 	
 	/**
 	 * @see AbstractDebugEventHandler#updateForDebugEvents(DebugEvent[])
 	 */
-	protected void updateForDebugEvents(DebugEvent[] events) {
-		super.updateForDebugEvents(events);
+	protected void updateForDebugEvents(DebugEvent[] events, Object data) {
+		super.updateForDebugEvents(events, data);
 		if (isViewVisible()) {
 			return;
 		}
-		doHandleDebugEvents(events);
+		doHandleDebugEvents(events, null);
 	}
 	
 	/**
@@ -579,4 +574,44 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		getView().asyncExec(r);
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler#doPreprocessEvents(org.eclipse.debug.core.DebugEvent[])
+     */
+    protected DebugEvent[] doPreprocessEvents(DebugEvent[] events) {
+        for (int i = 0; i < events.length; i++) {
+            DebugEvent event = events[i];
+            Object source = event.getSource();
+            switch (event.getKind()) {
+            	case DebugEvent.SUSPEND:
+            	    if (source instanceof IThread) {
+            	        IThread thread = (IThread)source;
+            		    try {
+            		        IStackFrame frame = thread.getTopStackFrame();
+            		        queueData(frame);
+            		    } catch (DebugException e) {
+            		    }
+            	    }
+            	    break;
+            	case DebugEvent.RESUME:
+            		if (source instanceof IThread && event.getDetail() == DebugEvent.CLIENT_REQUEST) {
+            			// When a thread resumes, try to select another suspended thread
+            			// in the same target.
+            			try {
+            			    IDebugTarget target = ((IThread) source).getDebugTarget();
+            				IThread[] threads= target.getThreads();
+            				for (int j = 0; j < threads.length; j++) {
+            					IStackFrame frame = threads[j].getTopStackFrame();
+            					if (frame != null) {
+            						queueData(frame);
+            						break;
+            					}
+            				}
+            			} catch (DebugException e) {
+            			}
+            		}
+            		break;
+            }
+        }
+        return events;
+    }
 }

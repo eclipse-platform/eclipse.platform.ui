@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -42,9 +43,14 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	private AbstractDebugView fView;
 	
 	/**
-	 * Queued debug event sets (arrays of events) to process, or <code>null</code> if none.
+	 * Queued debug event sets (arrays of events) to process.
 	 */
 	private List fEventSetQueue = new ArrayList();
+	
+	/**
+	 * Queued data associated with event sets. Entries may be <code>null</code>.
+	 */
+	private List fDataQueue = new ArrayList();
 	
 	/**
 	 * Update job 
@@ -56,6 +62,8 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	 */
 	protected static final DebugEvent[] EMPTY_EVENT_SET = new DebugEvent[0];
 	
+	private Object NULL = new Object();
+	
 	/**
 	 * Job to dispatch debug event sets
 	 */
@@ -64,6 +72,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	    public EventProcessingJob() {
 	        super(DebugUIViewsMessages.getString("AbstractDebugEventHandler.0")); //$NON-NLS-1$
 	        setSystem(true);
+	        setPriority(Job.INTERACTIVE);
 	    }
 	    
         /* (non-Javadoc)
@@ -75,6 +84,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
             // to avoid blocking the UI thread, process a max of 50 event sets at once
             while (more && (count < 50)) {
                 DebugEvent[] eventSet = null;
+                Object data = null;
 			    synchronized (fEventSetQueue) {
 			        if (fEventSetQueue.isEmpty()) {
 			            return Status.OK_STATUS;
@@ -82,11 +92,17 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 			        eventSet = (DebugEvent[]) fEventSetQueue.remove(0);
 			        more = !fEventSetQueue.isEmpty();
 			    }
+			    synchronized (fDataQueue) {
+			        data = fDataQueue.remove(0);
+			        if (data == NULL) {
+			            data = null;
+			        }
+			    }
 				if (isAvailable()) {
 					if (isViewVisible()) {
-						doHandleDebugEvents(eventSet);
+						doHandleDebugEvents(eventSet, data);
 					}
-					updateForDebugEvents(eventSet);
+					updateForDebugEvents(eventSet, data);
 				}
 				count++;
             }
@@ -132,11 +148,30 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 		if (events.length == 0) {
 		    return;
 		}
+		events = doPreprocessEvents(events);
+		if (events.length == 0) {
+		    return;
+		}
 		// add the event set to the queue and schedule update
 		synchronized (fEventSetQueue) {
 		    fEventSetQueue.add(events);
+		    synchronized (fDataQueue) {
+		        if (fDataQueue.size() < fEventSetQueue.size()) {
+		            fDataQueue.add(NULL);
+		        }
+		    }		    
 		}
 		fUpdateJob.schedule();
+	}
+	
+	protected void queueData(Object data) {
+	    synchronized (fDataQueue) {
+	        fDataQueue.add(data);
+        }
+	}
+	
+	protected DebugEvent[] doPreprocessEvents(DebugEvent[] events) {
+	    return events;
 	}
 	
 	/**
@@ -156,14 +191,14 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	 * updating that must always be performed, even when the view is not
 	 * visible.
 	 */
-	protected void updateForDebugEvents(DebugEvent[] events) {
+	protected void updateForDebugEvents(DebugEvent[] events, Object data) {
 	}
 	
 	/**
 	 * Implementation specific handling of debug events.
 	 * Subclasses should override.
 	 */
-	protected abstract void doHandleDebugEvents(DebugEvent[] events);	
+	protected abstract void doHandleDebugEvents(DebugEvent[] events, Object data);	
 		
 	/**
 	 * Helper method for inserting the given element - must be called in UI thread
@@ -315,6 +350,5 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	 */
 	protected void viewBecomesHidden() {
 	}
-
 }
 
