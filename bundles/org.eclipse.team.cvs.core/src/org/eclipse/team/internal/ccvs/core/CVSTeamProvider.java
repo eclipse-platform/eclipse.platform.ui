@@ -194,11 +194,10 @@ public class CVSTeamProvider extends RepositoryProvider {
 			this.workspaceRoot = new CVSWorkspaceRoot(project);
 			// Ensure that the project has CVS info
 			if (workspaceRoot.getLocalRoot().getFolderSyncInfo() == null) {
-				throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTeamProvider.noFolderInfo", project.getName()))); //$NON-NLS-1$
+				CVSProviderPlugin.log(new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTeamProvider.noFolderInfo", project.getName())))); //$NON-NLS-1$
 			}
 		} catch (CVSException e) {
-			// Log any problems creating the CVS managed resource
-			CVSProviderPlugin.log(e);
+			// Ignore exceptions here. They will be surfaced elsewhere
 		}
 	}
 
