@@ -20,7 +20,7 @@ public interface ISearchResultListener {
 	 * The event object <code>e</code> can only guarantueed to be valid for
 	 * the duration of the call.
 	 * 
-	 * @param e The event object describing the change. Notice that
+	 * @param e The event object describing the change. Note that
 	 *            implementers of <code>ISearchResult</code> will be sending
 	 *            subclasses of <code>SearchResultEvent</code>.
 	 */

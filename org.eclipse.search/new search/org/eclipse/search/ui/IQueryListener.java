@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2004 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Common Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/cpl-v10.html
@@ -8,24 +8,24 @@
  ******************************************************************************/
 package org.eclipse.search.ui;
 /**
- * A listener for changes to the set of ISearchResults
+ * A listener for changes to the set of search queries.
+ * This interface is supposed to be implemented by clients.
  * 
  * This API is preliminary and subject to change at any time.
  * 
  * @since 3.0
  */
-public interface ISearchResultManagerListener {
+public interface IQueryListener {
 	/**
-	 * Called when an ISearchResult has been added to the ISearchResultManager.
+	 * Called when an query has been added to the system.
 	 * 
-	 * @param search The search result that has been added
+	 * @param query The query that has been added
 	 */
-	void searchResultAdded(ISearchResult search);
+	void queryAdded(ISearchQuery query);
 	/**
-	 * Called when an ISearchResult has been removed from the
-	 * ISearchResultManager.
+	 * Called when a query has been removed.
 	 * 
-	 * @param search The search result that has been removed
+	 * @param query The query that has been removed
 	 */
-	void searchResultRemoved(ISearchResult search);
+	void queryRemoved(ISearchQuery query);
 }

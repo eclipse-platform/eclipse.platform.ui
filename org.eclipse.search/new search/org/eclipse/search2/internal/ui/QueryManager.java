@@ -16,83 +16,82 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.search.ui.ISearchResult;
-import org.eclipse.search.ui.ISearchResultManagerListener;
-import org.eclipse.search.ui.ISearchResultManager;
+import org.eclipse.search.ui.IQueryListener;
+import org.eclipse.search.ui.ISearchQuery;
 
-public class SearchResultsManager implements ISearchResultManager {
-	private List fSearches;
+class QueryManager {
+	private List fQueries;
 	private List fListeners;
-	public SearchResultsManager() {
+	public QueryManager() {
 		super();
 		// an ArrayList should be plenty fast enough (few searches).
-		fSearches= new ArrayList();
+		fQueries= new ArrayList();
 		fListeners= new ArrayList();
 	}
-	public synchronized ISearchResult[] getSearchResults() {
-		ISearchResult[] result= new ISearchResult[fSearches.size()];
-		return (ISearchResult[]) fSearches.toArray(result);
+	synchronized ISearchQuery[] getQueries() {
+		ISearchQuery[] result= new ISearchQuery[fQueries.size()];
+		return (ISearchQuery[]) fQueries.toArray(result);
 	}
 
-	public void removeSearchResult(ISearchResult search) {
-		synchronized (fSearches) {
-			fSearches.remove(search);
+	void removeQuery(ISearchQuery query) {
+		synchronized (fQueries) {
+			fQueries.remove(query);
 		}
-		fireRemoved(search);
+		fireRemoved(query);
 	}
 
-	public void addSearchResult(ISearchResult search) {
-		synchronized (fSearches) {
-			if (fSearches.contains(search))
+	void addQuery(ISearchQuery query) {
+		synchronized (fQueries) {
+			if (fQueries.contains(query))
 				return;
-			fSearches.add(search);
+			fQueries.add(query);
 		}
-		fireAdded(search);
+		fireAdded(query);
 	}
 	
-	public void addSearchResultListener(ISearchResultManagerListener l) {
+	void addQueryListener(IQueryListener l) {
 		synchronized (fListeners) {
 			fListeners.add(l);
 		}
 	}
 
-	public void removeSearchResultListener(ISearchResultManagerListener l) {
+	void removeQueryListener(IQueryListener l) {
 		synchronized (fListeners) {
 			fListeners.remove(l);
 		}
 	}
-	void fireAdded(ISearchResult search) {
+	void fireAdded(ISearchQuery query) {
 		Set copiedListeners= new HashSet();
 		synchronized (fListeners) {
 			copiedListeners.addAll(fListeners);
 		}
 		Iterator listeners= copiedListeners.iterator();
 		while (listeners.hasNext()) {
-			ISearchResultManagerListener l= (ISearchResultManagerListener) listeners.next();
-			l.searchResultAdded(search);
+			IQueryListener l= (IQueryListener) listeners.next();
+			l.queryAdded(query);
 		}
 	}
 
-	void fireRemoved(ISearchResult search) {
+	void fireRemoved(ISearchQuery query) {
 		Set copiedListeners= new HashSet();
 		synchronized (fListeners) {
 			copiedListeners.addAll(fListeners);
 		}
 		Iterator listeners= copiedListeners.iterator();
 		while (listeners.hasNext()) {
-			ISearchResultManagerListener l= (ISearchResultManagerListener) listeners.next();
-			l.searchResultRemoved(search);
+			IQueryListener l= (IQueryListener) listeners.next();
+			l.queryRemoved(query);
 		}
 	}
 
-	public void removeAll() {
+	void removeAll() {
 		Set copiedSearches= new HashSet();
-		synchronized (fSearches) {
-			copiedSearches.addAll(fSearches);
-			fSearches.clear();
+		synchronized (fQueries) {
+			copiedSearches.addAll(fQueries);
+			fQueries.clear();
 			Iterator iter= copiedSearches.iterator();
 			while (iter.hasNext()) {
-				ISearchResult element= (ISearchResult) iter.next();
+				ISearchQuery element= (ISearchQuery) iter.next();
 				fireRemoved(element);
 			}
 		}

@@ -20,9 +20,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
+import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.ISearchResult;
-import org.eclipse.search.ui.ISearchResultManager;
 import org.eclipse.search.ui.SearchUI;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
@@ -36,11 +35,11 @@ public class InternalSearchUI {
 	private static InternalSearchUI plugin;
 	private HashMap fSearchJobs;
 	
-	private ISearchResultManager fSearchResultsManager;
+	private QueryManager fSearchResultsManager;
 	private PositionTracker fPositionTracker;
 	private HashSet fJobListeners;
 
-	private static final String SEARCH_VIEW_ID= "org.eclipse.search.ui.views.SearchView"; //$NON-NLS-1$
+	public static final String SEARCH_VIEW_ID= "org.eclipse.search.ui.views.SearchView"; //$NON-NLS-1$
 
 	private class SearchJobRecord {
 		public ISearchQuery fQuery;
@@ -57,11 +56,9 @@ public class InternalSearchUI {
 	
 	private class InternalSearchJob extends Job {
 		SearchJobRecord fSearchJobRecord;
-		ISearchResult fResult;
-		public InternalSearchJob(SearchJobRecord sjr, ISearchResult result) {
-			super(sjr.fQuery.getName());
+		public InternalSearchJob(SearchJobRecord sjr) {
+			super(sjr.fQuery.getLabel());
 			fSearchJobRecord= sjr;
-			fResult= result;
 		}
 		
 		protected IStatus run(IProgressMonitor monitor) {
@@ -69,7 +66,7 @@ public class InternalSearchUI {
 			searchJobStarted(fSearchJobRecord);
 			IStatus status= null;
 			try{
-				status= fSearchJobRecord.fQuery.run(monitor, fResult);
+				status= fSearchJobRecord.fQuery.run(monitor);
 			} finally {
 				searchJobFinished(fSearchJobRecord);
 			}
@@ -111,7 +108,7 @@ public class InternalSearchUI {
 	public InternalSearchUI() {
 		plugin= this;
 		fSearchJobs= new HashMap();
-		fSearchResultsManager= new SearchResultsManager();
+		fSearchResultsManager= new QueryManager();
 		fPositionTracker= new PositionTracker();
 		fJobListeners= new HashSet();
 	}
@@ -129,64 +126,66 @@ public class InternalSearchUI {
 		return SearchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(SEARCH_VIEW_ID);
 	}
 
-	public boolean runSearchInBackground(ISearchQuery job, ISearchResult result) {
-		Assert.isTrue(fSearchJobs.get(job) == null);
+	public boolean runSearchInBackground(ISearchQuery query) {
+		Assert.isTrue(fSearchJobs.get(query) == null);
 		
-		getSearchManager().addSearchResult(result);
+		getSearchManager().addQuery(query);
 		
-		if (isQueryRunning(job))
+		if (isQueryRunning(query))
 			return false;
-		SearchJobRecord sjr= new SearchJobRecord(job, true);
-		fSearchJobs.put(job, sjr);
-		doRunSearchInBackground(sjr, result);
+		SearchJobRecord sjr= new SearchJobRecord(query, true);
+		fSearchJobs.put(query, sjr);
+		doRunSearchInBackground(sjr);
 		return true;
 	}
 
-	boolean isQueryRunning(ISearchQuery job) {
-		SearchJobRecord sjr= (SearchJobRecord) fSearchJobs.get(job);
+	public boolean isQueryRunning(ISearchQuery query) {
+		SearchJobRecord sjr= (SearchJobRecord) fSearchJobs.get(query);
 		return sjr != null && sjr.fIsRunning;
 	}
 
-	public boolean runSearchInForeground(IRunnableContext context, final ISearchQuery job, ISearchResult result) {
-		Assert.isTrue(fSearchJobs.get(job) == null);
-		getSearchManager().addSearchResult(result);
-		if (isQueryRunning(job))
+	public boolean runSearchInForeground(IRunnableContext context, final ISearchQuery query) {
+		Assert.isTrue(fSearchJobs.get(query) == null);
+		getSearchManager().addQuery(query);
+		if (isQueryRunning(query))
 			return false;
-		SearchJobRecord sjr= new SearchJobRecord(job, false);
-		fSearchJobs.put(job, sjr);
+		SearchJobRecord sjr= new SearchJobRecord(query, false);
+		fSearchJobs.put(query, sjr);
 		
-		doRunSearchInForeground(sjr, result, context);
+		doRunSearchInForeground(sjr, context);
 		return true;
 	}
 	
-	private void doRunSearchInBackground(SearchJobRecord jobRecord, ISearchResult result) {
+	private void doRunSearchInBackground(SearchJobRecord jobRecord) {
 		if (jobRecord.fJob == null) {
-			jobRecord.fJob= new InternalSearchJob(jobRecord, result);
+			jobRecord.fJob= new InternalSearchJob(jobRecord);
 			jobRecord.fJob.setPriority(Job.BUILD);
 		}
 		jobRecord.fJob.schedule();
 	}
 
-	public boolean runAgain(ISearchQuery job, ISearchResult result) {
+	public boolean runAgain(ISearchQuery job) {
 		final SearchJobRecord rec= (SearchJobRecord) fSearchJobs.get(job);
 		if (rec == null)
 			return false;
 		if (rec.fBackground) {
-			doRunSearchInBackground(rec, result);
+			doRunSearchInBackground(rec);
 		} else {
 			ProgressMonitorDialog pmd= new ProgressMonitorDialog(getSearchView().getSite().getShell());
-			doRunSearchInForeground(rec, result, pmd);
+			doRunSearchInForeground(rec, pmd);
 		}
 		return true;
 	}
 	
-	private void doRunSearchInForeground(final SearchJobRecord rec, final ISearchResult result, IRunnableContext context) {
+	private void doRunSearchInForeground(final SearchJobRecord rec, IRunnableContext context) {
+		if (context == null)
+			context= getContext();
 		try {
 			context.run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
 					searchJobStarted(rec);
 					try {
-						rec.fQuery.run(monitor, result);
+						rec.fQuery.run(monitor);
 					} finally {
 						searchJobFinished(rec);
 					}
@@ -198,6 +197,13 @@ public class InternalSearchUI {
 		} catch (InterruptedException e) {
 			// means we were cancelled.
 		}
+	}
+
+	/**
+	 * @return
+	 */
+	private IRunnableContext getContext() {
+		return new ProgressMonitorDialog(null);
 	}
 
 	public void shutdown() {
@@ -239,11 +245,30 @@ public class InternalSearchUI {
 		}	
 	}
 
-	public ISearchResultManager getSearchManager() {
+	public QueryManager getSearchManager() {
 		return fSearchResultsManager;
 	}
 
 	public PositionTracker getPositionTracker() {
 		return fPositionTracker;
+	}
+	
+	public void addQueryListener(IQueryListener l) {
+		getSearchManager().addQueryListener(l);
+	}
+	public ISearchQuery[] getQueries() {
+		return getSearchManager().getQueries();
+	}
+	public void removeQueryListener(IQueryListener l) {
+		getSearchManager().removeQueryListener(l);
+	}
+
+	public void removeQuery(ISearchQuery query) {
+		cancelSearch(query);
+		getSearchManager().removeQuery(query);
+	}
+
+	public void addQuery(ISearchQuery query) {
+		getSearchManager().addQuery(query);
 	}
 }

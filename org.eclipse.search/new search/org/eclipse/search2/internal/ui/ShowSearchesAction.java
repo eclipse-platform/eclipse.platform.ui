@@ -15,9 +15,8 @@ import java.util.ArrayList;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 
+import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
-import org.eclipse.search.ui.ISearchResultManager;
-import org.eclipse.search.ui.NewSearchUI;
 
 /**
  * Invoke the resource creation wizard selection Wizard.
@@ -68,17 +67,17 @@ class ShowSearchesAction extends Action {
 	}
 	 
 	public void run() {
-		ISearchResultManager sm= NewSearchUI.getSearchManager();
-		ISearchResult[] searches= sm.getSearchResults();
+		QueryManager sm= InternalSearchUI.getInstance().getSearchManager();
+		ISearchQuery[] queries= sm.getQueries();
 
 		ArrayList input= new ArrayList();
 		int i= 0;
-		for (int j= 0; j < searches.length; j++) {
-			ISearchResult search= searches[i];
-			String label= searches[i].getText();
+		for (int j= 0; j < queries.length; j++) {
+			ISearchResult search= queries[i].getSearchResult();
+			String label= search.getLabel();
 			String tooltip= search.getTooltip();
 			ImageDescriptor image= search.getImageDescriptor();
-			ShowSearchAction action= new ShowSearchAction(fSearchView, searches[i], label, image, tooltip );
+			ShowSearchAction action= new ShowSearchAction(fSearchView, search, label, image, tooltip );
 			input.add(action);
 		}
 	}

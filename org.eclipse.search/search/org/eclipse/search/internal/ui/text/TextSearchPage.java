@@ -67,8 +67,8 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.search.ui.IReplacePage;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
-import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultViewEntry;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.SearchUI;
 
 import org.eclipse.search.internal.core.text.TextSearchScope;
@@ -258,8 +258,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		scope.addExtensions(patternData.fileNamePatterns);
 	
 		FileSearchQuery wsJob= new FileSearchQuery(scope, getSearchOptions(), patternData.textPattern, "Searching for "+patternData.textPattern);
-		ISearchResult result= new FileSearchResult(wsJob);
-		org.eclipse.search.ui.NewSearchUI.runSearchInBackground(wsJob, result);
+		NewSearchUI.runQuery(wsJob);
 	
 		return true;
 	}

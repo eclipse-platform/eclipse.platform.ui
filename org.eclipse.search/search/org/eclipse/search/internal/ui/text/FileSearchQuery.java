@@ -36,6 +36,7 @@ public class FileSearchQuery implements ISearchQuery {
 	private String fSearchOptions;
 	private TextSearchScope fScope;
 	private String fName;
+	private FileSearchResult fResult;
 
 	public FileSearchQuery(TextSearchScope scope, String options, String searchString, String description) {
 		
@@ -49,8 +50,8 @@ public class FileSearchQuery implements ISearchQuery {
 		return true;
 	}
 
-	public IStatus run(final IProgressMonitor pm, ISearchResult result) {
-		final AbstractTextSearchResult textResult= (AbstractTextSearchResult) result;
+	public IStatus run(final IProgressMonitor pm) {
+		final AbstractTextSearchResult textResult= (AbstractTextSearchResult) getSearchResult();
 		textResult.removeAll();
 		ITextSearchResultCollector collector= new ITextSearchResultCollector() {
 			public IProgressMonitor getProgressMonitor() {
@@ -78,7 +79,7 @@ public class FileSearchQuery implements ISearchQuery {
 		return new Status(IStatus.OK, SearchPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
 	}
 
-	public String getName() {
+	public String getLabel() {
 		return fName;
 	}
 	
@@ -127,5 +128,15 @@ public class FileSearchQuery implements ISearchQuery {
 		SearchScope scope= new SearchScope("", new IResource[] { file }); //$NON-NLS-1$
 		new TextSearchEngine().search(SearchPlugin.getWorkspace(), scope, collector, new MatchLocator(fSearchString, fSearchOptions));
 		return new Status(IStatus.OK, SearchPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+	}
+	
+	public boolean canRerun() {
+		return true;
+	}
+
+	public ISearchResult getSearchResult() {
+		if (fResult == null)
+			fResult= new FileSearchResult(this);
+		return fResult;
 	}
 }

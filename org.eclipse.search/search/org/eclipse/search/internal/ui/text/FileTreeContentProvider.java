@@ -17,17 +17,17 @@ import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
 /**
  * @author Thomas Mäder
  *  
  */
 public class FileTreeContentProvider extends FileContentProvider implements ITreeContentProvider {
-	private TreeViewer fTreeViewer;
+	private AbstractTreeViewer fTreeViewer;
 	private Map fChildrenMap;
 	
-	FileTreeContentProvider(TreeViewer viewer) {
+	FileTreeContentProvider(AbstractTreeViewer viewer) {
 		fTreeViewer= viewer;
 	}
 	

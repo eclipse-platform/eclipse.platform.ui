@@ -10,8 +10,8 @@ package org.eclipse.search.ui;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 /**
- * Represents a particular search query (i.e. "fina all occurrences of 'foo' in
- * workspace"). When executed, the query must update the given search result
+ * Represents a particular search query (e.g. "find all occurrences of 'foo' in
+ * workspace"). When executed, the query must update its ISearchResult
  * with the results of the query. This interface must be implemented by
  * clients.
  * 
@@ -24,16 +24,32 @@ public interface ISearchQuery {
 	 * Runs this query.
 	 * 
 	 * @param monitor The progress monitor to be used
-	 * @param result The search result where the query should put the results.
 	 * @return The status after completion of the search job.
 	 */
-	IStatus run(IProgressMonitor monitor, ISearchResult result);
+	IStatus run(IProgressMonitor monitor);
 	/**
-	 * Returns the name of this search job. This will be used, for example to
-	 * set the <code>Job</code> name if this search job is executed in the
+	 * Returns the a user readeable label for this query. This will be used, for example to
+	 * set the <code>Job</code> name if this query is executed in the
 	 * background.
 	 * 
-	 * @return The user readeable name of this query.
+	 * @return The user readeable label of this query.
 	 */
-	String getName();
+	String getLabel();
+	/**
+	 * Returns whether the query can be run more than once. Some queries may depend on transient
+	 * information. 
+	 * @return Whether this query can be run more than once.
+	 */
+	boolean canRerun();
+	/**
+	 * Returns whether this query can be run in the background. Note that queries must do proper locking 
+	 * when they are run in the background (e.g. get the appropriate workspace locks). 
+	 * @return Whether this query can be run in the background.
+	 */
+	boolean canRunInBackground();
+	/**
+	 * Returns the search result associated with this query.
+	 * @return This query's search result.
+	 */
+	ISearchResult getSearchResult();
 }

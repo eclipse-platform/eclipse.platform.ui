@@ -18,10 +18,10 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TreeViewer;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -35,6 +35,7 @@ import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
+import org.eclipse.search.ui.text.Match;
 
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
@@ -62,19 +63,21 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 		return getViewer();
 	}
 
-	protected void configureViewer(StructuredViewer viewer) {
+	protected void configureTableViewer(TableViewer viewer) {
 		viewer.setLabelProvider(new DelegatingLabelProvider(this, new FileLabelProvider(FileLabelProvider.SHOW_LABEL)));
-		if (viewer instanceof TreeViewer)
-			viewer.setContentProvider(new FileTreeContentProvider((TreeViewer) viewer));
-		else {
-			viewer.setContentProvider(new FileTableContentProvider((TableViewer) viewer));
-			setSortOrder(fCurrentSortAction);
-		}
+		viewer.setContentProvider(new FileTableContentProvider(viewer));
+		setSortOrder(fCurrentSortAction);
 		fContentProvider= (FileContentProvider) viewer.getContentProvider();
 	}
 
-	protected void showMatch(Object element, int offset, int length) throws PartInitException {
-		IFile file= (IFile) element;
+	protected void configureTreeViewer(AbstractTreeViewer viewer) {
+		viewer.setLabelProvider(new DelegatingLabelProvider(this, new FileLabelProvider(FileLabelProvider.SHOW_LABEL)));
+		viewer.setContentProvider(new FileTreeContentProvider(viewer));
+		fContentProvider= (FileContentProvider) viewer.getContentProvider();
+	}
+
+	protected void showMatch(Match match, int offset, int length) throws PartInitException {
+		IFile file= (IFile) match.getElement();
 		IWorkbenchPage page= SearchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IEditorPart editor= IDE.openEditor(page, file, false);
 		if (!(editor instanceof ITextEditor)) {

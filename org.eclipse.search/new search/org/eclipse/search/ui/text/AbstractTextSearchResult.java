@@ -8,13 +8,24 @@
  ******************************************************************************/
 package org.eclipse.search.ui.text;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.core.resources.IFile;
+
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationModelExtension;
+
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.texteditor.ITextEditor;
+
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
@@ -23,20 +34,81 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	private List fListeners;
 	private static final Match[] EMPTY_ARRAY= new Match[0];
 	private MatchEvent fMatchEvent;
+
+	/**
+	 * Constructor
+	 */
 	protected AbstractTextSearchResult() {
 		fElementsToMatches= new HashMap();
 		fListeners= new ArrayList();
 		fMatchEvent= new MatchEvent(this);
 	}
+	
+	
+	/**
+	 * Adds annotations to the given editor. The default implementation works for editors that
+	 * implement <code>ITextEditor</code>.
+	 * Subclasses may override this method. 
+	 * @param editor
+	 * @param annotationToPositionMap A map containing annotations as keys and Positions as values.
+	 * 			 @see Annotation
+	 * 			 @see Position
+	 */
+	public void addAnnotations(IEditorPart editor, Map annotationToPositionMap) {
+		if (!(editor instanceof ITextEditor))
+			return;
+		ITextEditor textEditor= (ITextEditor) editor;
+		IAnnotationModel model= textEditor.getDocumentProvider().getAnnotationModel(textEditor.getEditorInput());
+		if (model == null) {
+			return;
+		}
+		if (model instanceof IAnnotationModelExtension) {
+			IAnnotationModelExtension ame= (IAnnotationModelExtension) model;
+			ame.replaceAnnotations(new Annotation[0], annotationToPositionMap);
+		} else {
+			for (Iterator elements= annotationToPositionMap.keySet().iterator(); elements.hasNext();) {
+				Annotation element= (Annotation) elements.next();
+				Position p= (Position) annotationToPositionMap.get(element);
+				model.addAnnotation(element, p);
+			}
+		}
+	}
+	
+	/**
+	 * Removes annotations from the given editor. The default implementation works for editors that
+	 * implement <code>ITextEditor</code>.
+	 * Subclasses may override this method. 
+	 * @param editor
+	 * @param annotions A set containing the annotations to be removed.
+	 * 			 @see Annotation
+	 */
+	public void removeAnnotations(IEditorPart editor, Set annotations) {
+		if (!(editor instanceof ITextEditor))
+			return;
+		ITextEditor textEditor= (ITextEditor) editor;
+		IAnnotationModel model= textEditor.getDocumentProvider().getAnnotationModel(textEditor.getEditorInput());
+		if (model == null)
+			return;
+		if (model instanceof IAnnotationModelExtension) {
+			IAnnotationModelExtension ame= (IAnnotationModelExtension) model;
+			Annotation[] annotationArray= new Annotation[annotations.size()];
+			ame.replaceAnnotations((Annotation[]) annotations.toArray(annotationArray), Collections.EMPTY_MAP);
+		} else {
+			for (Iterator iter= annotations.iterator(); iter.hasNext();) {
+				Annotation element= (Annotation) iter.next();
+				model.removeAnnotation(element);
+			}
+		}
+	}
+
 	/**
 	 * Returns an array with all matches reported against the given element.
 	 * 
 	 * @see Match#getElement()
 	 * @param element The element to report matches for.
-	 * @return All matches against this element or an empty array if none are
-	 *         found.
+	 * @return All matches reported for this element.
 	 */
-	public final Match[] getMatches(Object element) {
+	public Match[] getMatches(Object element) {
 		synchronized (fElementsToMatches) {
 			return doGetMatches(element);
 		}
@@ -53,7 +125,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * 
 	 * @param match The match to add.
 	 */
-	public final void addMatch(Match match) {
+	public void addMatch(Match match) {
 		boolean hasAdded= false;
 		synchronized (fElementsToMatches) {
 			hasAdded= doAddMatch(match);
@@ -66,6 +138,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		fMatchEvent.setMatch(match);
 		return fMatchEvent;
 	}
+	
 	private boolean doAddMatch(Match match) {
 		List matches= (List) fElementsToMatches.get(match.getElement());
 		if (matches == null) {
@@ -81,7 +154,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	/**
 	 * Removes all matches from this search result.
 	 */
-	public final void removeAll() {
+	public void removeAll() {
 		synchronized (fElementsToMatches) {
 			doRemoveAll();
 		}
@@ -129,6 +202,13 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			fListeners.remove(l);
 		}
 	}
+	
+	/**
+	 * Send the given <code>SearchResultEvent<code> to all registered search
+	 * result listeners
+	 * @see ISearchResultListener
+	 * @param e The event to be sent.
+	 */
 	protected void fireChange(SearchResultEvent e) {
 		HashSet copiedListeners= new HashSet();
 		synchronized (fListeners) {
@@ -172,14 +252,15 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * Returns an array containing the set of all elements that matches are
 	 * reported against in this search result.
 	 * 
-	 * @return The set of elements in this search result. This will not return
-	 *         null.
+	 * @return The set of elements in this search result. 
 	 */
 	public Object[] getElements() {
 		synchronized (fElementsToMatches) {
 			return fElementsToMatches.keySet().toArray();
 		}
 	}
+	
+		
 	/**
 	 * Returns an array with all matches contained in the given file. If the
 	 * matches are not contained within an <code>IFile</code>, this method
@@ -190,17 +271,18 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 */
 	public abstract Match[] findContainedMatches(IFile file);
 	/**
-	 * Returns the file the given element is associated with (usually the file
+	 * Returns the file associated with the given element (usually the file
 	 * the element is contained in). If the element is not associated with a
-	 * file, this method must return null.
+	 * file, this method should return <code>null</code>.
 	 * 
 	 * @param element An element associated with a match.
 	 * @return The file associated with the element or null.
 	 */
 	public abstract IFile getFile(Object element);
 	/**
-	 * Determines whether a match is contained in the element shown in the
-	 * given editor.
+	 * Determines whether a match should be displayed in the given editor.
+	 * For example, if a match is reported in a file, This method should return 
+	 * <code>true</code>, if the given editor displays the file. 
 	 * 
 	 * @param match The match.
 	 * @param editor The editor that possibly contains the matches element.
@@ -210,10 +292,14 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	/**
 	 * Returns all matches that are contained in the element shown in the given
 	 * editor.
+	 * For example, if the editor shows a particular file, all matches in that file should
+	 * be returned.
 	 * 
 	 * @param editor The editor.
 	 * @return All matches that are contained in the element that is shown in
 	 *         the given editor.
 	 */
 	public abstract Match[] findContainedMatches(IEditorPart editor);
+	
+
 }

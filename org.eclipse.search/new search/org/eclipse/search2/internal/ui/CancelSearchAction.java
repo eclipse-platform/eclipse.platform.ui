@@ -12,6 +12,8 @@ package org.eclipse.search2.internal.ui;
 
 import org.eclipse.jface.action.Action;
 
+import org.eclipse.search.ui.ISearchResult;
+
 import org.eclipse.search.internal.ui.SearchPluginImages;
 
 public class CancelSearchAction extends Action {
@@ -26,6 +28,7 @@ public class CancelSearchAction extends Action {
 	}
 	
 	public void run() {
-		InternalSearchUI.getInstance().cancelSearch(fView.getCurrentSearchResult().getQuery());
+		ISearchResult result= fView.getCurrentSearchResult();
+		InternalSearchUI.getInstance().cancelSearch(result.getQuery());
 	}
 }

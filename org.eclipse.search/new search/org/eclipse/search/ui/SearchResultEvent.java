@@ -24,7 +24,7 @@ public abstract class SearchResultEvent {
 		this(null);
 	}
 	/**
-	 * Get the <code>ISearhResult</code> that sent out this notfication.
+	 * Gets the <code>ISearchResult</code> for this event.
 	 * 
 	 * @return The source of this event.
 	 */
@@ -32,6 +32,7 @@ public abstract class SearchResultEvent {
 		return fSearchResult;
 	}
 	/**
+	 * Sets the search result for this event.
 	 * @param searchResult The searchResult to set.
 	 */
 	protected void setSearchResult(ISearchResult searchResult) {

@@ -29,9 +29,10 @@ import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Position;
 
+import org.eclipse.search.ui.IQueryListener;
+import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
-import org.eclipse.search.ui.ISearchResultManagerListener;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
@@ -44,7 +45,7 @@ import org.eclipse.search.ui.text.RemoveAllEvent;
  * @author Thomas Mäder
  *
  */
-public class PositionTracker implements ISearchResultManagerListener, ISearchResultListener, IFileBufferListener {
+public class PositionTracker implements IQueryListener, ISearchResultListener, IFileBufferListener {
 
 	private Map fMatchesToPositions= new HashMap();
 	private Map fMatchesToSearchResults= new HashMap();
@@ -55,18 +56,19 @@ public class PositionTracker implements ISearchResultManagerListener, ISearchRes
 	}
 	
 	public PositionTracker() {
-		NewSearchUI.getSearchManager().addSearchResultListener(this);
+		NewSearchUI.addQueryListener(this);
 		FileBuffers.getTextFileBufferManager().addFileBufferListener(this);
 	}
 	
 	// tracking search results --------------------------------------------------------------
-	public void searchResultAdded(org.eclipse.search.ui.ISearchResult result) {
-		if (result instanceof AbstractTextSearchResult) {
-			result.addListener(this);
+	public void queryAdded(ISearchQuery query) {
+		if (query.getSearchResult() instanceof AbstractTextSearchResult) {
+			query.getSearchResult().addListener(this);
 		}
 	}
 	
-	public void searchResultRemoved(ISearchResult result) {
+	public void queryRemoved(ISearchQuery query) {
+		ISearchResult result= query.getSearchResult();
 		if (result instanceof AbstractTextSearchResult) {
 			untrackAll((AbstractTextSearchResult)result);
 			result.removeListener(this);
@@ -158,7 +160,7 @@ public class PositionTracker implements ISearchResultManagerListener, ISearchRes
 	}
 	
 	public void dispose() {
-		NewSearchUI.getSearchManager().removeSearchResultListener(this);
+		NewSearchUI.removeQueryListener(this);
 		FileBuffers.getTextFileBufferManager().removeFileBufferListener(this);
 	}
 
@@ -174,13 +176,14 @@ public class PositionTracker implements ISearchResultManagerListener, ISearchRes
 		IFile file= ws.getRoot().getFileForLocation(buffer.getLocation());
 		if (file == null)
 			file= ws.getRoot().getFile(buffer.getLocation());
-		ISearchResult[] results= NewSearchUI.getSearchManager().getSearchResults();
-		for (int i= 0; i < results.length; i++) {
-			if (results[i] instanceof AbstractTextSearchResult) {
-				Match[] matches= ((AbstractTextSearchResult)results[i]).findContainedMatches(file);
+		ISearchQuery[] queries= NewSearchUI.getQueries();
+		for (int i= 0; i < queries.length; i++) {
+			ISearchResult result= queries[i].getSearchResult();
+			if (result instanceof AbstractTextSearchResult) {
+				Match[] matches= ((AbstractTextSearchResult)result).findContainedMatches(file);
 				for (int j= 0; j < matches.length; j++) {
 					trackCount[0]++;
-					trackPosition((AbstractTextSearchResult)results[i], (ITextFileBuffer) buffer, matches[j]);
+					trackPosition((AbstractTextSearchResult)result, (ITextFileBuffer) buffer, matches[j]);
 				}
 			}
 		}

@@ -25,6 +25,8 @@ import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
 
+import org.eclipse.search.internal.ui.SearchPluginImages;
+
 
 /**
  * @author Thomas Mäder
@@ -41,16 +43,15 @@ public class FileSearchResult extends AbstractTextSearchResult {
 		fQuery= job;
 	}
 	public ImageDescriptor getImageDescriptor() {
-		// TODO Auto-generated method stub
-		return null;
+		return SearchPluginImages.DESC_OBJ_TSEARCH_DPDN;
 	}
-	public String getText() {
+	public String getLabel() {
 		if (getMatchCount() == 1)
 			return fQuery.getSingularLabel();
 		else return MessageFormat.format(fQuery.getPluralPattern(), new Object[] { new Integer(getMatchCount()) });
 	}
 	public String getTooltip() {
-		return getText();
+		return getLabel();
 	}
 
 	public Match[] findContainedMatches(IFile file) {

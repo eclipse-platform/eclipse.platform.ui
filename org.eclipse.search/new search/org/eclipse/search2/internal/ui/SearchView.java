@@ -2,27 +2,19 @@ package org.eclipse.search2.internal.ui;
 
 import java.util.HashMap;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Tree;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.search.internal.ui.SearchPluginImages;
-import org.eclipse.search.ui.IContextMenuConstants;
-import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.ISearchResult;
-import org.eclipse.search.ui.ISearchResultListener;
-import org.eclipse.search.ui.ISearchResultManagerListener;
-import org.eclipse.search.ui.ISearchResultPage;
-import org.eclipse.search.ui.ISearchResultViewPart;
-import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.SearchResultEvent;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Tree;
+
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
@@ -33,6 +25,17 @@ import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
+
+import org.eclipse.search.ui.IContextMenuConstants;
+import org.eclipse.search.ui.IQueryListener;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.ISearchResultListener;
+import org.eclipse.search.ui.ISearchResultPage;
+import org.eclipse.search.ui.ISearchResultViewPart;
+import org.eclipse.search.ui.SearchResultEvent;
+
+import org.eclipse.search.internal.ui.SearchPluginImages;
 
 /*******************************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
@@ -49,7 +52,7 @@ import org.eclipse.ui.part.PageBookView;
  * @author Thomas Mäder
  *
  */
-public class SearchView extends PageBookView implements ISearchResultViewPart, ISearchResultManagerListener, ISearchResultListener, ISearchQueryListener {
+public class SearchView extends PageBookView implements ISearchResultViewPart, IQueryListener, ISearchResultListener, ISearchQueryListener {
 	private HashMap fPartsToPages;
 	private HashMap fPagesToParts;
 	private HashMap fSearchViewStates;
@@ -120,20 +123,16 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			// do nothing
 		}
 
-		/* (non-Javadoc)
+		/** (non-Javadoc)
 		 * @see org.eclipse.search2.ui.ISearchResultsPage#getUIState()
 		 */
 		public Object getUIState() {
-			// TODO Auto-generated method stub
+			// empty implementation
 			return null;
 		}
 
 	
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.part.IPageBookViewPage#init(org.eclipse.ui.part.IPageSite)
-		 */
 		public void init(IPageSite pageSite) {
-			// TODO Auto-generated method stub
 			super.init(pageSite);
 			getSite().setSelectionProvider(null);
 		}
@@ -197,7 +196,8 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		ISearchResultPage currentPage= (ISearchResultPage) getCurrentPage();
 		Object uiState= currentPage.getUIState();
 		if (fCurrentSearch != null) {
-			fSearchViewStates.put(fCurrentSearch, uiState);
+			if (uiState != null)
+				fSearchViewStates.put(fCurrentSearch, uiState);
 			fCurrentSearch.removeListener(this);
 		}
 		currentPage.setInput(null, null);
@@ -225,16 +225,19 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	
 	private void updateTitle(ISearchResult search) {
 		String label= SearchMessages.getString("SearchView.title.search"); //$NON-NLS-1$
-		label+= "(";
+		
+		// TODO workaround for bug 53391
+		label+= "("; //$NON-NLS-1$
 		if (search != null) {
 			boolean queryRunning= InternalSearchUI.getInstance().isQueryRunning(search.getQuery());
 			fCancelAction.setEnabled(queryRunning);
 			if (queryRunning) {
 				label= label+SearchMessages.getString("SearchView.title.running"); //$NON-NLS-1$
 			}
-			label= label+" "+search.getText(); //$NON-NLS-1$ //$NON-NLS-2$
+			label= label+" "+search.getLabel(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		label+= ")";
+		// TODO workaround for bug 53391
+		label+= ")"; //$NON-NLS-1$
 		setTitle(label);
 	}
 	
@@ -256,7 +259,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		super.createPartControl(parent);
 		createActions();
 		initializeToolBar();
-		NewSearchUI.getSearchManager().addSearchResultListener(this);
+		InternalSearchUI.getInstance().getSearchManager().addQueryListener(this);
 	}
 
 	private void initializeToolBar() {
@@ -269,33 +272,33 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		
 	private void createActions() {
 		fSearchesDropDownAction= new SearchDropDownAction(this);
-		fSearchesDropDownAction.setEnabled(NewSearchUI.getSearchManager().getSearchResults().length != 0);
+		fSearchesDropDownAction.setEnabled(InternalSearchUI.getInstance().getSearchManager().getQueries().length != 0);
 		fSearchAgainAction= new SearchAgainAction(this);
 		fCancelAction= new CancelSearchAction(this);
 		fCancelAction.setEnabled(false);
 	}
 
 	public void dispose() {
-		NewSearchUI.getSearchManager().removeSearchResultListener(this);
+		InternalSearchUI.getInstance().getSearchManager().removeQueryListener(this);
 		if (fCurrentSearch != null)
 			fCurrentSearch.removeListener(this);
 		InternalSearchUI.getInstance().removeSearchQueryListener(this);
 		super.dispose();
 	}
 
-	public void searchResultAdded(ISearchResult search) {
-		showSearchResult(search);
-		fSearchesDropDownAction.setEnabled(NewSearchUI.getSearchManager().getSearchResults().length != 0);
+	public void queryAdded(ISearchQuery query) {
+		showSearchResult(query.getSearchResult());
+		fSearchesDropDownAction.setEnabled(InternalSearchUI.getInstance().getSearchManager().getQueries().length != 0);
 	}
 
-	public void searchResultRemoved(ISearchResult search) {
-		InternalSearchUI.getInstance().cancelSearch(search.getQuery());
-		if (search.equals(fCurrentSearch)) {
+	public void queryRemoved(ISearchQuery query) {
+		InternalSearchUI.getInstance().cancelSearch(query);
+		if (query.getSearchResult().equals(fCurrentSearch)) {
 			showSearchResult(null);
 			partActivated(fDefaultPart);
 		}
-		fSearchViewStates.remove(search);
-		fSearchesDropDownAction.setEnabled(NewSearchUI.getSearchManager().getSearchResults().length != 0);
+		fSearchViewStates.remove(query.getSearchResult());
+		fSearchesDropDownAction.setEnabled(InternalSearchUI.getInstance().getSearchManager().getQueries().length != 0);
 	}
 
 	public void searchResultChanged(SearchResultEvent e) {

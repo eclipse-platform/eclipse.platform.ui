@@ -8,6 +8,7 @@
  ******************************************************************************/
 package org.eclipse.search.ui;
 import org.eclipse.jface.operation.IRunnableContext;
+
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 /**
  * A facade for the new search ui. This API is preliminary and subject to
@@ -17,38 +18,63 @@ import org.eclipse.search2.internal.ui.InternalSearchUI;
  */
 public class NewSearchUI {
 	/**
-	 * @return Returns the singleton search manager.
-	 */
-	public static ISearchResultManager getSearchManager() {
-		return InternalSearchUI.getInstance().getSearchManager();
-	}
-	/**
 	 * Activates the search result view in the current perspective.
 	 */
 	public static void activateSearchResultView() {
 		InternalSearchUI.getInstance().activateSearchView();
 	}
+	
 	/**
-	 * Runs the given search job and associates it with the given search
-	 * result. This method runs the query in the background.
+	 * Runs the given search query. This method may run the given query in a separate thread 
+	 * if <code>ISearchQuery#canRunInBackground()</code> returns <code>true</code>.
+	 * Running a query adds it to the set of known queries.
 	 * 
 	 * @param query The query to execute.
-	 * @param search The search result the given query should fill.
 	 */
-	public static void runSearchInBackground(ISearchQuery query, ISearchResult result) {
-		InternalSearchUI.getInstance().runSearchInBackground(query, result);
+	public static void runQuery(ISearchQuery query) {
+		if (query.canRunInBackground())
+			InternalSearchUI.getInstance().runSearchInBackground(query);
+		else
+			InternalSearchUI.getInstance().runSearchInForeground(null, query);
 	}
+	
 	/**
-	 * Runs the given search job and associates it with the given search
-	 * result. This method will execute the query in the same thread as the
-	 * caller. This method blocks until the query is finished.
+	 * Runs the given search query. This method will execute the query in the same thread 
+	 * as the caller. This method blocks until the query is finished.
+	 * Running a query adds it to the set of known queries.
 	 * 
 	 * @param context The runnable context to run the query in.
 	 * @param query The query to execute.
-	 * @param search The search result the given query should fill.
 	 */
-	public static void runSearchInForeground(IRunnableContext context, ISearchQuery job, ISearchResult result) {
-		InternalSearchUI.getInstance().runSearchInForeground(context, job,
-				result);
+	public static void runQueryInForeground(IRunnableContext context, ISearchQuery query) {
+		InternalSearchUI.getInstance().runSearchInForeground(context, query);
+	}
+	
+	/**
+	 * Adds the given query listener. Does nothing when the listener is already
+	 * present.
+	 * 
+	 * @param l The listener to be added.
+	 */
+	public static void addQueryListener(IQueryListener l) {
+		InternalSearchUI.getInstance().addQueryListener(l);
+	}
+	/**
+	 * Removes the given query listener. Does nothing if the listener is
+	 * not present.
+	 * 
+	 * @param l The listener to be removed.
+	 */
+	public static void removeQueryListener(IQueryListener l) {
+		InternalSearchUI.getInstance().removeQueryListener(l);
+	}
+	
+	/**
+	 * Returns all search results know to the search ui.
+	 * 
+	 * @return All search result.
+	 */
+	public static ISearchQuery[] getQueries() {
+		return InternalSearchUI.getInstance().getQueries();
 	}
 }

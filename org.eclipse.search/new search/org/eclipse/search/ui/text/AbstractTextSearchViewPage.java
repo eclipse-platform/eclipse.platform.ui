@@ -5,6 +5,14 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionManager;
@@ -14,7 +22,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.text.Position;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -24,14 +32,26 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.search.internal.ui.CopyToClipboardAction;
-import org.eclipse.search.internal.ui.SearchPluginImages;
+
+import org.eclipse.jface.text.Position;
+
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.part.Page;
+
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.SearchResultEvent;
+
+import org.eclipse.search.internal.ui.CopyToClipboardAction;
+import org.eclipse.search.internal.ui.SearchPluginImages;
+
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.SearchMessages;
 import org.eclipse.search2.internal.ui.basic.views.INavigate;
@@ -43,18 +63,6 @@ import org.eclipse.search2.internal.ui.basic.views.SetLayoutAction;
 import org.eclipse.search2.internal.ui.basic.views.ShowNextResultAction;
 import org.eclipse.search2.internal.ui.basic.views.ShowPreviousResultAction;
 import org.eclipse.search2.internal.ui.text.AnnotationManager;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.part.IPageSite;
-import org.eclipse.ui.part.Page;
 
 public abstract class AbstractTextSearchViewPage extends Page implements ISearchResultPage {
 	private static final boolean INITIALLY_FLAT= false;
@@ -104,12 +112,15 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	/**
 	 * Opens an editor on the given element and selects the given range
 	 * of text.
-	 * @param object The object to show
-	 * @param offset The start offset of the selection
-	 * @param length The length of the selection
+	 * The location of matches are automatically updated when a file is editor through the file buffer
+	 * infrastructure (@see org.eclipse.core.filebuffers.ITextFileBufferManager). When a file buffer is
+	 * saved, the current positions are written back to the match.
+	 * @param match The match to show
+	 * @param currentOffset The current start offset of the match
+	 * @param currentLength The current length of the selection
 	 * @throws PartInitException If an editor can't be opened.
 	 */
-	protected abstract void showMatch(Object object, int offset, int length) throws PartInitException;
+	protected abstract void showMatch(Match match, int currentOffset, int currentLength) throws PartInitException;
 	/**
 	 * This method is called whenever the set of matches for the given elements 
 	 * changes. This method is guaranteed to be called in the UI thread.
@@ -130,11 +141,17 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	protected abstract void clear();
 	
 	/**
-	 * Sets up the given viewer. Implementers have to set up at least
+	 * Configures the given viewer. Implementers have to set at least
 	 * a content provider and a label provider.
-	 * @param viewer The viewer to be set up. Will be either a TreeViewer or a TableViewer.
+	 * @param viewer The viewer to be configured
 	 */
-	protected abstract void configureViewer(StructuredViewer viewer);
+	protected abstract void configureTreeViewer(AbstractTreeViewer viewer);
+	/**
+	 * Configures the given viewer. Implementers have to set at least
+	 * a content provider and a label provider.
+	 * @param viewer The viewer to be configured
+	 */
+	protected abstract void configureTableViewer(TableViewer viewer);
 
 	private static void createStandardGroups(IContributionManager menu) {
 		menu.add(new Separator(IContextMenuConstants.GROUP_NEW));
@@ -150,7 +167,13 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		menu.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));
 		menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
 	}
+	
 
+	/**
+	 * Fills the context menu for this page.
+	 * Subclasses may override this method.
+	 * @param tbm
+	 */
 	protected void fillContextMenu(IMenuManager mgr) {
 		mgr.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fCopyToClipboardAction);
 		mgr.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowNextAction);
@@ -205,6 +228,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	/**
 	 * Tells whether the page shows it's result as a tree or as a 
 	 * table.
+	 * @see AbstractTextSearchViewPage#configureTreeViewer(AbstractTreeViewer);
+	 * @see AbstractTextSearchViewPage#configureTableViewer(TableViewer);
 	 * @return Whether the page shows a tree or a table.
 	 */
 	public boolean isFlatLayout() {
@@ -214,13 +239,18 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	private void createViewer(Composite parent, boolean flatMode) {
 		if (flatMode) {
-			fViewer= new SearchResultsTableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+			TableViewer viewer= new SearchResultsTableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+			fViewer= viewer;
+			configureTableViewer(viewer);
 		} else { 
-			fViewer= new SearchResultsTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+			TreeViewer viewer= new SearchResultsTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+			fViewer= viewer;
+			configureTreeViewer(viewer);
 		}
-		configureViewer(fViewer);
 
 		IToolBarManager tbm= getSite().getActionBars().getToolBarManager();
+		tbm.removeAll();
+		createStandardGroups(tbm);
 		fillToolbar(tbm);
 		tbm.update(false);
 
@@ -305,6 +335,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		return result;
 	}
 	
+	/**
+	 * Returns the viewer currently used in this page. 
+	 * @return The currently used viewer or <code>null</code> if none has been created yet.
+	 */
 	protected StructuredViewer getViewer() {
 		return fViewer;
 	}
@@ -321,9 +355,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			public void run() throws Exception {
 				Position currentPosition= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(match);
 				if (currentPosition != null) {
-					showMatch(match.getElement(), currentPosition.getOffset(), currentPosition.getLength());
+					showMatch(match, currentPosition.getOffset(), currentPosition.getLength());
 				} else {
-					showMatch(match.getElement(), match.getOffset(), match.getLength());
+					showMatch(match, match.getOffset(), match.getLength());
 				}
 			}
 
@@ -390,7 +424,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	
 	/**
 	 * Returns the currently selected match.
-	 * @return The selected match or null.
+	 * @return The selected match or null if none are selected.
 	 */
 	public Match getCurrentMatch() {
 		Object element= getFirstSelectedElement();
@@ -422,13 +456,16 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 */
 	public void init(IPageSite pageSite) {
 		super.init(pageSite);
-				
+		
 		addLayoutMenu(pageSite.getActionBars().getMenuManager());
 	}
 
+	/**
+	 * Fills the toolbar contribution for this page.
+	 * Subclasses may override this method.
+	 * @param tbm
+	 */
 	protected void fillToolbar(IToolBarManager tbm) {
-		tbm.removeAll();
-		createStandardGroups(tbm);
 		tbm.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowNextAction); //$NON-NLS-1$
 		tbm.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowPreviousAction); //$NON-NLS-1$
 		tbm.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveResultsAction); //$NON-NLS-1$
