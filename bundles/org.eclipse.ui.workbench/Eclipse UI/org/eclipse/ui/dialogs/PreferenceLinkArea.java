@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
-import java.security.InvalidParameterException;
 import java.text.MessageFormat;
 import java.util.Iterator;
 
@@ -63,7 +62,7 @@ public class PreferenceLinkArea extends Object {
 		});
 		IPreferenceNode node = getPreferenceNode(pageId);
 		if (node == null) {
-			throw new InvalidParameterException("Node not found");//$NON-NLS-1$
+			throw new IllegalArgumentException("Node not found");//$NON-NLS-1$
 		}
 		String result = MessageFormat.format(message, new String[] { node
 				.getLabelText() });
