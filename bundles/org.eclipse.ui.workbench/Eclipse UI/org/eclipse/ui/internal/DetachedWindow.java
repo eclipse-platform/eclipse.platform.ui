@@ -122,7 +122,7 @@ public class DetachedWindow extends Window {
         contextSupport.registerShell(shell,
                 IWorkbenchContextSupport.TYPE_WINDOW);
 
-        WorkbenchHelp.setHelp(shell, IHelpContextIds.DETACHED_WINDOW);
+        WorkbenchHelp.setHelp(shell, IWorkbenchHelpContextIds.DETACHED_WINDOW);
     }
 
     /**

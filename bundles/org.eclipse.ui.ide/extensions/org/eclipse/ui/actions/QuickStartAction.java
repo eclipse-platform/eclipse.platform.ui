@@ -34,7 +34,7 @@ import org.eclipse.ui.internal.ide.AboutInfo;
 import org.eclipse.ui.internal.ide.FeatureSelectionDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
 
 /**
@@ -74,7 +74,7 @@ public class QuickStartAction extends Action implements
         }
         this.workbenchWindow = window;
         setToolTipText(IDEWorkbenchMessages.getString("QuickStart.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IHelpContextIds.QUICK_START_ACTION);
+        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.QUICK_START_ACTION);
         setActionDefinitionId("org.eclipse.ui.help.quickStartAction"); //$NON-NLS-1$
     }
 
@@ -144,7 +144,7 @@ public class QuickStartAction extends Action implements
                         .getString("WelcomePageSelectionDialog.title"), //$NON-NLS-1$
                 IDEWorkbenchMessages
                         .getString("WelcomePageSelectionDialog.message"), //$NON-NLS-1$
-                IHelpContextIds.WELCOME_PAGE_SELECTION_DIALOG);
+                IIDEHelpContextIds.WELCOME_PAGE_SELECTION_DIALOG);
         if (d.open() != Window.OK || d.getResult().length != 1)
             return null;
         return (AboutInfo) d.getResult()[0];

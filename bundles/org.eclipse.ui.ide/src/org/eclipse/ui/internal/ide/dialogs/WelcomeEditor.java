@@ -67,7 +67,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.part.EditorPart;
 import org.xml.sax.SAXException;
 
@@ -694,7 +694,7 @@ public class WelcomeEditor extends EditorPart {
 
         createInfoArea(editorComposite);
 
-        WorkbenchHelp.setHelp(editorComposite, IHelpContextIds.WELCOME_EDITOR);
+        WorkbenchHelp.setHelp(editorComposite, IIDEHelpContextIds.WELCOME_EDITOR);
 
         this.colorListener = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {

@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -51,7 +51,7 @@ public class FileExtensionDialog extends TitleAreaDialog {
         super.configureShell(shell);
         shell.setText(WorkbenchMessages.getString("FileExtension.shellTitle")); //$NON-NLS-1$
         //$NON-NLS-1$
-        WorkbenchHelp.setHelp(shell, IHelpContextIds.FILE_EXTENSION_DIALOG);
+        WorkbenchHelp.setHelp(shell, IWorkbenchHelpContextIds.FILE_EXTENSION_DIALOG);
     }
 
     /**

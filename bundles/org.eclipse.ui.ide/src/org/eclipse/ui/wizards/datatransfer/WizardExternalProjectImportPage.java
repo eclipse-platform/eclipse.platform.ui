@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * Standard main page for a wizard that creates a project resource from
@@ -118,7 +118,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
         Composite composite = new Composite(parent, SWT.NULL);
 
         WorkbenchHelp.setHelp(composite,
-                IHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
+                IIDEHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
 
         composite.setLayout(new GridLayout());
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));

@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.about.AboutBundleGroupData;
 import org.eclipse.ui.internal.about.AboutData;
@@ -159,7 +159,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
                 WorkbenchMessages.format(
                         "AboutFeaturesDialog.pluginInfoMessage", //$NON-NLS-1$
                         new Object[] { bundleGroup.getIdentifier() }),
-                IHelpContextIds.ABOUT_FEATURES_PLUGINS_DIALOG);
+                IWorkbenchHelpContextIds.ABOUT_FEATURES_PLUGINS_DIALOG);
         d.open();
     }
 
@@ -190,7 +190,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
                     "AboutFeaturesDialog.shellTitle", //$NON-NLS-1$
                     new Object[] { productName }));
 
-        WorkbenchHelp.setHelp(newShell, IHelpContextIds.ABOUT_FEATURES_DIALOG);
+        WorkbenchHelp.setHelp(newShell, IWorkbenchHelpContextIds.ABOUT_FEATURES_DIALOG);
     }
 
     /**

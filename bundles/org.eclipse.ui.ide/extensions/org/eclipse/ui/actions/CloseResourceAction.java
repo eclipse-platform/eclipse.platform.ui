@@ -37,7 +37,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
@@ -66,7 +66,7 @@ public class CloseResourceAction extends WorkspaceAction implements
         setId(ID);
         setToolTipText(IDEWorkbenchMessages
                 .getString("CloseResourceAction.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_RESOURCE_ACTION);
+        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.CLOSE_RESOURCE_ACTION);
     }
 
     /**

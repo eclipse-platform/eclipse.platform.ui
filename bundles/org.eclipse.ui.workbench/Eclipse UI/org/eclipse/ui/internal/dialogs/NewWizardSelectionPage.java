@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -68,7 +68,7 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
 
         Control control = newResourcePage.createControl(parent);
         WorkbenchHelp.setHelp(control,
-                IHelpContextIds.NEW_WIZARD_SELECTION_WIZARD_PAGE);
+                IWorkbenchHelpContextIds.NEW_WIZARD_SELECTION_WIZARD_PAGE);
         setControl(control);
     }
 

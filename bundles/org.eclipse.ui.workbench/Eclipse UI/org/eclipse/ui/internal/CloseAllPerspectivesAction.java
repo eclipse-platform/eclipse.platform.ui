@@ -44,7 +44,7 @@ public class CloseAllPerspectivesAction extends Action implements
         // @issue missing action id
         setToolTipText(WorkbenchMessages
                 .getString("CloseAllPerspectivesAction.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_PAGES_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CLOSE_ALL_PAGES_ACTION);
         setEnabled(false);
     }
 

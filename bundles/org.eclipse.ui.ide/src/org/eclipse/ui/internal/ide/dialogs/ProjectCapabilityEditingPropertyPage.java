@@ -54,7 +54,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.registry.Capability;
 import org.eclipse.ui.internal.ide.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
@@ -95,7 +95,7 @@ public class ProjectCapabilityEditingPropertyPage extends
     protected Control createContents(Composite parent) {
         Font font = parent.getFont();
         WorkbenchHelp.setHelp(getControl(),
-                IHelpContextIds.PROJECT_CAPABILITY_PROPERTY_PAGE);
+                IIDEHelpContextIds.PROJECT_CAPABILITY_PROPERTY_PAGE);
         noDefaultAndApplyButton();
         reg = IDEWorkbenchPlugin.getDefault().getCapabilityRegistry();
 
@@ -247,7 +247,7 @@ public class ProjectCapabilityEditingPropertyPage extends
                 Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),
                 SIZING_WIZARD_HEIGHT);
         WorkbenchHelp.setHelp(dialog.getShell(),
-                IHelpContextIds.UPDATE_CAPABILITY_WIZARD);
+                IIDEHelpContextIds.UPDATE_CAPABILITY_WIZARD);
         dialog.open();
 
         table.refresh();
@@ -318,7 +318,7 @@ public class ProjectCapabilityEditingPropertyPage extends
                             .max(SIZING_WIZARD_WIDTH, dialog.getShell()
                                     .getSize().x), SIZING_WIZARD_HEIGHT);
             WorkbenchHelp.setHelp(dialog.getShell(),
-                    IHelpContextIds.UPDATE_CAPABILITY_WIZARD);
+                    IIDEHelpContextIds.UPDATE_CAPABILITY_WIZARD);
             dialog.open();
         }
 

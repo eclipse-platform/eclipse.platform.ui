@@ -22,7 +22,7 @@ public class ShowViewMenuAction extends ShowPartPaneMenuAction {
     public ShowViewMenuAction(IWorkbenchWindow window) {
         super(window);
         // @issue missing action id
-        WorkbenchHelp.setHelp(this, IHelpContextIds.SHOW_VIEW_MENU_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.SHOW_VIEW_MENU_ACTION);
         setActionDefinitionId("org.eclipse.ui.window.showViewMenu"); //$NON-NLS-1$
     }
 

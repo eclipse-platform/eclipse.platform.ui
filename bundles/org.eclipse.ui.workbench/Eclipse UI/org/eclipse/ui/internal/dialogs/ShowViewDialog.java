@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.Category;
@@ -93,7 +93,7 @@ public class ShowViewDialog extends Dialog implements
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
         shell.setText(WorkbenchMessages.getString("ShowView.shellTitle")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(shell, IHelpContextIds.SHOW_VIEW_DIALOG);
+        WorkbenchHelp.setHelp(shell, IWorkbenchHelpContextIds.SHOW_VIEW_DIALOG);
     }
 
     /**

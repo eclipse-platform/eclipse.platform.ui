@@ -15,7 +15,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -37,7 +37,7 @@ public class ClearWorkingSetAction extends Action {
         setToolTipText(WorkbenchMessages
                 .getString("ClearWorkingSetAction.toolTip")); //$NON-NLS-1$
         setEnabled(actionGroup.getWorkingSet() != null);
-        WorkbenchHelp.setHelp(this, IHelpContextIds.CLEAR_WORKING_SET_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CLEAR_WORKING_SET_ACTION);
         this.actionGroup = actionGroup;
     }
 

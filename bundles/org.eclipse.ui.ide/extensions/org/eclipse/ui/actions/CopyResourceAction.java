@@ -26,7 +26,7 @@ import org.eclipse.ui.dialogs.ISelectionValidator;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * Standard action for copying the currently selected resources elsewhere
@@ -81,7 +81,7 @@ public class CopyResourceAction extends SelectionListenerAction implements
      */
     public CopyResourceAction(Shell shell) {
         this(shell, IDEWorkbenchMessages.getString("CopyResourceAction.title")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IHelpContextIds.COPY_RESOURCE_ACTION);
+        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.COPY_RESOURCE_ACTION);
     }
 
     /**

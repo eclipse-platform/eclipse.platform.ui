@@ -28,7 +28,7 @@ import org.eclipse.ui.dialogs.ProjectLocationMoveDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 
 /**
@@ -63,7 +63,7 @@ public class MoveProjectAction extends CopyProjectAction {
 		super(shell, MOVE_TITLE);
 		setToolTipText(MOVE_TOOL_TIP);
 		setId(MoveProjectAction.ID);
-		WorkbenchHelp.setHelp(this, IHelpContextIds.MOVE_PROJECT_ACTION);
+		WorkbenchHelp.setHelp(this, IIDEHelpContextIds.MOVE_PROJECT_ACTION);
 	}
 
 	/**

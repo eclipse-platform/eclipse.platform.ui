@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -199,7 +199,7 @@ public class TypeFilteringDialog extends SelectionDialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        WorkbenchHelp.setHelp(shell, IHelpContextIds.TYPE_FILTERING_DIALOG);
+        WorkbenchHelp.setHelp(shell, IWorkbenchHelpContextIds.TYPE_FILTERING_DIALOG);
     }
 
     /*

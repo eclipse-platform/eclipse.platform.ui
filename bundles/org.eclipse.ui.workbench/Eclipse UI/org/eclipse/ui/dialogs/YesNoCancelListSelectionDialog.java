@@ -14,7 +14,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 
 /**
  * YesNoCancelListSelectionDialog is a list selection dialog that also allows
@@ -71,7 +71,7 @@ public class YesNoCancelListSelectionDialog extends ListSelectionDialog {
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
         WorkbenchHelp.setHelp(shell,
-                IHelpContextIds.YES_NO_CANCEL_LIST_SELECTION_DIALOG);
+                IWorkbenchHelpContextIds.YES_NO_CANCEL_LIST_SELECTION_DIALOG);
     }
 
     /*

@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -77,7 +77,7 @@ public class WizardNewProjectReferencePage extends WizardPage {
         composite.setFont(font);
 
         WorkbenchHelp.setHelp(composite,
-                IHelpContextIds.NEW_PROJECT_REFERENCE_WIZARD_PAGE);
+                IIDEHelpContextIds.NEW_PROJECT_REFERENCE_WIZARD_PAGE);
 
         Label referenceLabel = new Label(composite, SWT.NONE);
         referenceLabel.setText(REFERENCED_PROJECTS_TITLE);

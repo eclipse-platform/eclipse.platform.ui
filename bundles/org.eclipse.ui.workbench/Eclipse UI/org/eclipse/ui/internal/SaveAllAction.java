@@ -48,7 +48,7 @@ public class SaveAllAction extends PageEventAction implements IPropertyListener 
         setToolTipText(WorkbenchMessages.getString("SaveAll.toolTip")); //$NON-NLS-1$
         setId("saveAll"); //$NON-NLS-1$
         setEnabled(false);
-        WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ALL_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.SAVE_ALL_ACTION);
         setImageDescriptor(WorkbenchImages
                 .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_SAVEALL_EDIT));
         setDisabledImageDescriptor(WorkbenchImages

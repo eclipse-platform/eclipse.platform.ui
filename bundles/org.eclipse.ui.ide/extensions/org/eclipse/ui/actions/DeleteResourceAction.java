@@ -42,7 +42,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 
 /**
@@ -99,7 +99,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
         protected void configureShell(Shell newShell) {
             super.configureShell(newShell);
             WorkbenchHelp.setHelp(newShell,
-                    IHelpContextIds.DELETE_PROJECT_DIALOG);
+                    IIDEHelpContextIds.DELETE_PROJECT_DIALOG);
         }
 
         protected Control createCustomArea(Composite parent) {
@@ -182,7 +182,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
         super(IDEWorkbenchMessages.getString("DeleteResourceAction.text")); //$NON-NLS-1$
         setToolTipText(IDEWorkbenchMessages
                 .getString("DeleteResourceAction.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IHelpContextIds.DELETE_RESOURCE_ACTION);
+        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.DELETE_RESOURCE_ACTION);
         setId(ID);
         if (shell == null) {
             throw new IllegalArgumentException();

@@ -41,7 +41,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -73,7 +73,7 @@ public class ProjectReferencePage extends PropertyPage {
     protected Control createContents(Composite parent) {
 
         WorkbenchHelp.setHelp(getControl(),
-                IHelpContextIds.PROJECT_REFERENCE_PROPERTY_PAGE);
+                IIDEHelpContextIds.PROJECT_REFERENCE_PROPERTY_PAGE);
         Font font = parent.getFont();
 
         Composite composite = new Composite(parent, SWT.NONE);

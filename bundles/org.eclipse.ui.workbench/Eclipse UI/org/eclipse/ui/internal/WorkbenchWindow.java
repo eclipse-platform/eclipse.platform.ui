@@ -674,7 +674,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
             shell.setText(title);
         }
 
-        WorkbenchHelp.setHelp(shell, IHelpContextIds.WORKBENCH_WINDOW);
+        WorkbenchHelp.setHelp(shell, IWorkbenchHelpContextIds.WORKBENCH_WINDOW);
         getWorkbench().getContextSupport().registerShell(shell,
                 IWorkbenchContextSupport.TYPE_WINDOW);
 

@@ -52,7 +52,7 @@ public class OpenPreferencesAction extends Action implements
         setActionDefinitionId("org.eclipse.ui.window.preferences"); //$NON-NLS-1$
         // @issue action id not set
         setToolTipText(WorkbenchMessages.getString("OpenPreferences.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_PREFERENCES_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.OPEN_PREFERENCES_ACTION);
     }
 
     /* (non-Javadoc)
@@ -71,7 +71,7 @@ public class OpenPreferencesAction extends Action implements
                     .getShell(), pm);
             d.create();
             WorkbenchHelp.setHelp(d.getShell(),
-                    IHelpContextIds.PREFERENCE_DIALOG);
+                    IWorkbenchHelpContextIds.PREFERENCE_DIALOG);
             d.open();
         }
     }

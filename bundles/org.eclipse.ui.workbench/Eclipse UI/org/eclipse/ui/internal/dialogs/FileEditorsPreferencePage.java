@@ -38,7 +38,7 @@ import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Assert;
@@ -274,7 +274,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         updateEnabledState();
 
         WorkbenchHelp.setHelp(parent,
-                IHelpContextIds.FILE_EDITORS_PREFERENCE_PAGE);
+                IWorkbenchHelpContextIds.FILE_EDITORS_PREFERENCE_PAGE);
 
         return pageComponent;
     }

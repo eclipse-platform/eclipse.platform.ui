@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.PropertyDialog;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
@@ -70,7 +70,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
         Assert.isNotNull(shell);
         this.shell = shell;
         setToolTipText(WorkbenchMessages.getString("PropertyDialog.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IHelpContextIds.PROPERTY_DIALOG_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.PROPERTY_DIALOG_ACTION);
     }
 
     /**
@@ -182,7 +182,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
         propertyDialog.create();
         propertyDialog.getShell().setText(title);
         WorkbenchHelp.setHelp(propertyDialog.getShell(),
-                IHelpContextIds.PROPERTY_DIALOG);
+                IWorkbenchHelpContextIds.PROPERTY_DIALOG);
         propertyDialog.open();
     }
 

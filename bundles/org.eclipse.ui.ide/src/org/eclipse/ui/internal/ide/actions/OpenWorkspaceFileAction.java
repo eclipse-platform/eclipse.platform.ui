@@ -29,7 +29,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.OpenResourceDialog;
 
 /**
@@ -47,7 +47,7 @@ public class OpenWorkspaceFileAction extends Action implements
      */
     public OpenWorkspaceFileAction() {
         super();
-        WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_WORKSPACE_FILE_ACTION);
+        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.OPEN_WORKSPACE_FILE_ACTION);
     }
 
     /**

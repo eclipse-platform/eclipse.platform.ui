@@ -54,7 +54,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -161,7 +161,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         WorkbenchHelp.setHelp(newShell,
-                IHelpContextIds.WORKBENCH_EDITORS_DIALOG);
+                IWorkbenchHelpContextIds.WORKBENCH_EDITORS_DIALOG);
     }
 
     /*

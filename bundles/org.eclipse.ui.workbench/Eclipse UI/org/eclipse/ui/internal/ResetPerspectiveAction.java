@@ -51,7 +51,7 @@ public class ResetPerspectiveAction extends Action implements
         // @issue missing action id
         setToolTipText(WorkbenchMessages.getString("ResetPerspective.toolTip")); //$NON-NLS-1$
         setEnabled(false);
-        WorkbenchHelp.setHelp(this, IHelpContextIds.RESET_PERSPECTIVE_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.RESET_PERSPECTIVE_ACTION);
     }
 
     /* (non-Javadoc)

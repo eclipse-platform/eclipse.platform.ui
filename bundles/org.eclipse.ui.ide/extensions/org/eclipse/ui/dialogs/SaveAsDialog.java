@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
 
 /**
@@ -76,7 +76,7 @@ public class SaveAsDialog extends TitleAreaDialog {
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
         shell.setText(IDEWorkbenchMessages.getString("SaveAsDialog.text")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(shell, IHelpContextIds.SAVE_AS_DIALOG);
+        WorkbenchHelp.setHelp(shell, IIDEHelpContextIds.SAVE_AS_DIALOG);
     }
 
     /* (non-Javadoc)

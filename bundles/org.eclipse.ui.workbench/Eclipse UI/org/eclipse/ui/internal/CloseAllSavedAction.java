@@ -44,7 +44,7 @@ public class CloseAllSavedAction extends PageEventAction implements
         // @issue Should create a ID in IWorkbenchActionConstants when it becames API?
         setId("closeAllSaved"); //$NON-NLS-1$
         updateState();
-        WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_SAVED_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CLOSE_ALL_SAVED_ACTION);
         setActionDefinitionId("org.eclipse.ui.file.closeAllSaved"); //$NON-NLS-1$
     }
 

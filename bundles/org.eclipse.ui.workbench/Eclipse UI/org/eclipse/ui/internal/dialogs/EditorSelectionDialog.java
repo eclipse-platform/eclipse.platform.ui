@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
@@ -126,7 +126,7 @@ public class EditorSelectionDialog extends Dialog implements Listener {
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
         shell.setText(WorkbenchMessages.getString("EditorSelection.title")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(shell, IHelpContextIds.EDITOR_SELECTION_DIALOG);
+        WorkbenchHelp.setHelp(shell, IWorkbenchHelpContextIds.EDITOR_SELECTION_DIALOG);
     }
 
     /**

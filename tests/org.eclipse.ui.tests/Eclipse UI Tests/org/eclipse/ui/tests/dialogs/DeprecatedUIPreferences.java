@@ -24,7 +24,7 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.PropertyDialog;
@@ -83,7 +83,7 @@ public class DeprecatedUIPreferences extends TestCase {
             dialog = new PreferenceDialogWrapper(getShell(), manager);
             dialog.create();
             WorkbenchHelp.setHelp(dialog.getShell(),
-                    new Object[] { IHelpContextIds.PREFERENCE_DIALOG });
+                    new Object[] { IWorkbenchHelpContextIds.PREFERENCE_DIALOG });
 
             for (Iterator iterator = manager.getElements(
                     PreferenceManager.PRE_ORDER).iterator(); iterator.hasNext();) {
@@ -132,7 +132,7 @@ public class DeprecatedUIPreferences extends TestCase {
             dialog.create();
             dialog.getShell().setText(title);
             WorkbenchHelp.setHelp(dialog.getShell(),
-                    new Object[] { IHelpContextIds.PROPERTY_DIALOG });
+                    new Object[] { IWorkbenchHelpContextIds.PROPERTY_DIALOG });
             for (Iterator iterator = manager.getElements(
                     PreferenceManager.PRE_ORDER).iterator(); iterator.hasNext();) {
                 IPreferenceNode node = (IPreferenceNode) iterator.next();

@@ -29,7 +29,7 @@ public class SaveAction extends BaseSaveAction {
         setText(WorkbenchMessages.getString("SaveAction.text")); //$NON-NLS-1$
         setToolTipText(WorkbenchMessages.getString("SaveAction.toolTip")); //$NON-NLS-1$
         setId("save"); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.SAVE_ACTION);
         setImageDescriptor(WorkbenchImages
                 .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_SAVE_EDIT));
         setDisabledImageDescriptor(WorkbenchImages

@@ -97,7 +97,7 @@ public class ShowViewMenu extends ContributionItem {
         super(id);
         this.window = window;
         WorkbenchHelp.setHelp(showDlgAction,
-                IHelpContextIds.SHOW_VIEW_OTHER_ACTION);
+                IWorkbenchHelpContextIds.SHOW_VIEW_OTHER_ACTION);
     }
 
     public boolean isDirty() {

@@ -83,7 +83,7 @@ import org.eclipse.ui.internal.AbstractActionBarConfigurer;
 import org.eclipse.ui.internal.ActionSetActionBars;
 import org.eclipse.ui.internal.ActionSetContributionItem;
 import org.eclipse.ui.internal.ActionSetMenuManager;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.Perspective;
 import org.eclipse.ui.internal.PluginActionContributionItem;
 import org.eclipse.ui.internal.PluginActionCoolBarContributionItem;
@@ -968,7 +968,7 @@ public class CustomizePerspectiveDialog extends Dialog {
         shell.setText(WorkbenchMessages
                 .getString("ActionSetSelection.customize")); //$NON-NLS-1$
         WorkbenchHelp.setHelp(shell,
-                IHelpContextIds.ACTION_SET_SELECTION_DIALOG);
+                IWorkbenchHelpContextIds.ACTION_SET_SELECTION_DIALOG);
     }
 
     boolean containsActionSet(MenuManager mgr, String actionSetId) {

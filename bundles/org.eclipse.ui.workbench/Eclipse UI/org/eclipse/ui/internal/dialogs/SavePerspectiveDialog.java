@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.activities.ws.ActivityViewerFilter;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
@@ -83,7 +83,7 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
         shell
                 .setText(WorkbenchMessages
                         .getString("SavePerspective.shellTitle")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(shell, IHelpContextIds.SAVE_PERSPECTIVE_DIALOG);
+        WorkbenchHelp.setHelp(shell, IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_DIALOG);
     }
 
     /**

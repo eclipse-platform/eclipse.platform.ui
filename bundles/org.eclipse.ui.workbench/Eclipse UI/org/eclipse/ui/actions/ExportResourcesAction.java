@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -95,7 +95,7 @@ public class ExportResourcesAction extends BaseSelectionListenerAction
         setToolTipText(WorkbenchMessages
                 .getString("ExportResourcesAction.toolTip")); //$NON-NLS-1$
         setId("export"); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IHelpContextIds.EXPORT_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.EXPORT_ACTION);
         // self-register selection listener (new for 3.0)
         workbenchWindow.getSelectionService().addSelectionListener(
                 selectionListener);
@@ -162,7 +162,7 @@ public class ExportResourcesAction extends BaseSelectionListenerAction
         dialog.getShell().setSize(
                 Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),
                 SIZING_WIZARD_HEIGHT);
-        WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.EXPORT_WIZARD);
+        WorkbenchHelp.setHelp(dialog.getShell(), IWorkbenchHelpContextIds.EXPORT_WIZARD);
         dialog.open();
     }
 

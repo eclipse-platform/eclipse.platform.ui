@@ -29,7 +29,7 @@ public class CloseAllAction extends PageEventAction {
         setEnabled(false);
         setId("closeAll"); //$NON-NLS-1$
         updateState();
-        WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CLOSE_ALL_ACTION);
         setActionDefinitionId("org.eclipse.ui.file.closeAll"); //$NON-NLS-1$
     }
 

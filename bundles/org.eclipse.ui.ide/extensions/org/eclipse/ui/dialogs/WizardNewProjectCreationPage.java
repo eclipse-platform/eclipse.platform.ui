@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * Standard main page for a wizard that is creates a project resource.
@@ -115,7 +115,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
         initializeDialogUnits(parent);
 
         WorkbenchHelp.setHelp(composite,
-                IHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
+                IIDEHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
 
         composite.setLayout(new GridLayout());
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));

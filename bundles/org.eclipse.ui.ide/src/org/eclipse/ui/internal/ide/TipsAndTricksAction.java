@@ -47,7 +47,7 @@ public class TipsAndTricksAction extends PartEventAction implements
         }
         this.workbenchWindow = window;
         setToolTipText(IDEWorkbenchMessages.getString("TipsAndTricks.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IHelpContextIds.TIPS_AND_TRICKS_ACTION);
+        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.TIPS_AND_TRICKS_ACTION);
         setActionDefinitionId("org.eclipse.ui.help.tipsAndTricksAction"); //$NON-NLS-1$
         workbenchWindow.getPartService().addPartListener(this);
     }
@@ -88,7 +88,7 @@ public class TipsAndTricksAction extends PartEventAction implements
                         .getString("TipsAndTricksPageSelectionDialog.title"), //$NON-NLS-1$
                 IDEWorkbenchMessages
                         .getString("TipsAndTricksPageSelectionDialog.message"), //$NON-NLS-1$
-                IHelpContextIds.TIPS_AND_TRICKS_PAGE_SELECTION_DIALOG);
+                IIDEHelpContextIds.TIPS_AND_TRICKS_PAGE_SELECTION_DIALOG);
 
         if (d.open() != Dialog.OK || d.getResult().length != 1)
             return;

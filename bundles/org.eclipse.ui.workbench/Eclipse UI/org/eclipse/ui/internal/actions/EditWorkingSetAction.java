@@ -22,7 +22,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -49,7 +49,7 @@ public class EditWorkingSetAction extends Action {
 
         this.shell = shell;
         this.actionGroup = actionGroup;
-        WorkbenchHelp.setHelp(this, IHelpContextIds.EDIT_WORKING_SET_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.EDIT_WORKING_SET_ACTION);
     }
 
     /**

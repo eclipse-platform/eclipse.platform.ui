@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.views.markers.internal.DialogTaskProperties;
 
 /**
@@ -52,7 +52,7 @@ public class AddTaskAction extends SelectionListenerAction {
         this.shell = shell;
         Assert.isNotNull(shell);
         setToolTipText(IDEWorkbenchMessages.getString("AddTaskToolTip")); //$NON-NLS-1$		
-        WorkbenchHelp.setHelp(this, IHelpContextIds.ADD_TASK_ACTION);
+        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.ADD_TASK_ACTION);
     }
 
     private IResource getElement(IStructuredSelection selection) {

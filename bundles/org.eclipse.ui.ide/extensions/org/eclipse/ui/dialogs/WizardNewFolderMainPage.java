@@ -50,7 +50,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.CreateLinkedResourceGroup;
 import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
 
@@ -169,7 +169,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
                 | GridData.HORIZONTAL_ALIGN_FILL));
 
         WorkbenchHelp
-                .setHelp(composite, IHelpContextIds.NEW_FOLDER_WIZARD_PAGE);
+                .setHelp(composite, IIDEHelpContextIds.NEW_FOLDER_WIZARD_PAGE);
 
         resourceGroup = new ResourceAndContainerGroup(
                 composite,

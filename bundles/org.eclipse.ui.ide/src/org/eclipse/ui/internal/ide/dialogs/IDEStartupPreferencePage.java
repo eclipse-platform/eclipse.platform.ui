@@ -19,12 +19,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.dialogs.StartupPreferencePage;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceData;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * Extends the Startup and Shutdown preference page with IDE-specific settings.
@@ -49,7 +49,7 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
      */
     protected Control createContents(Composite parent) {
 
-        WorkbenchHelp.setHelp(parent, IHelpContextIds.STARTUP_PREFERENCE_PAGE);
+        WorkbenchHelp.setHelp(parent, IWorkbenchHelpContextIds.STARTUP_PREFERENCE_PAGE);
 
         Composite composite = createComposite(parent);
 

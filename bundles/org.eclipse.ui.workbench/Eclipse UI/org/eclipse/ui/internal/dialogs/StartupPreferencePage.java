@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -44,7 +44,7 @@ public class StartupPreferencePage extends PreferencePage implements
      * @see PreferencePage#createContents(Composite)
      */
     protected Control createContents(Composite parent) {
-        WorkbenchHelp.setHelp(parent, IHelpContextIds.STARTUP_PREFERENCE_PAGE);
+        WorkbenchHelp.setHelp(parent, IWorkbenchHelpContextIds.STARTUP_PREFERENCE_PAGE);
 
         Composite composite = createComposite(parent);
 

@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * Standard action for moving the currently selected resources elsewhere
@@ -52,7 +52,7 @@ public class MoveResourceAction extends CopyResourceAction {
         setToolTipText(IDEWorkbenchMessages
                 .getString("MoveResourceAction.toolTip")); //$NON-NLS-1$
         setId(MoveResourceAction.ID);
-        WorkbenchHelp.setHelp(this, IHelpContextIds.MOVE_RESOURCE_ACTION);
+        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.MOVE_RESOURCE_ACTION);
     }
 
     /* (non-Javadoc)

@@ -45,7 +45,7 @@ public class ClosePerspectiveAction extends Action implements
         setToolTipText(WorkbenchMessages
                 .getString("ClosePerspectiveAction.toolTip")); //$NON-NLS-1$
         setEnabled(false);
-        WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_PAGE_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CLOSE_PAGE_ACTION);
     }
 
     /* (non-Javadoc)

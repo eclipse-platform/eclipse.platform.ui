@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.misc.Assert;
 
 /**
@@ -194,7 +194,7 @@ public class CellEditorActionHandler {
         protected CutActionHandler() {
             setId("CellEditorCutActionHandler");//$NON-NLS-1$
             setEnabled(false);
-            WorkbenchHelp.setHelp(this, IHelpContextIds.CELL_CUT_ACTION);
+            WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CELL_CUT_ACTION);
         }
 
         public void runWithEvent(Event event) {
@@ -225,7 +225,7 @@ public class CellEditorActionHandler {
         protected CopyActionHandler() {
             setId("CellEditorCopyActionHandler");//$NON-NLS-1$
             setEnabled(false);
-            WorkbenchHelp.setHelp(this, IHelpContextIds.CELL_COPY_ACTION);
+            WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CELL_COPY_ACTION);
         }
 
         public void runWithEvent(Event event) {
@@ -256,7 +256,7 @@ public class CellEditorActionHandler {
         protected PasteActionHandler() {
             setId("CellEditorPasteActionHandler");//$NON-NLS-1$
             setEnabled(false);
-            WorkbenchHelp.setHelp(this, IHelpContextIds.CELL_PASTE_ACTION);
+            WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CELL_PASTE_ACTION);
         }
 
         public void runWithEvent(Event event) {
@@ -287,7 +287,7 @@ public class CellEditorActionHandler {
         protected DeleteActionHandler() {
             setId("CellEditorDeleteActionHandler");//$NON-NLS-1$
             setEnabled(false);
-            WorkbenchHelp.setHelp(this, IHelpContextIds.CELL_DELETE_ACTION);
+            WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CELL_DELETE_ACTION);
         }
 
         public void runWithEvent(Event event) {
@@ -318,7 +318,7 @@ public class CellEditorActionHandler {
         protected SelectAllActionHandler() {
             setId("CellEditorSelectAllActionHandler");//$NON-NLS-1$
             setEnabled(false);
-            WorkbenchHelp.setHelp(this, IHelpContextIds.CELL_SELECT_ALL_ACTION);
+            WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CELL_SELECT_ALL_ACTION);
         }
 
         public void runWithEvent(Event event) {
@@ -349,7 +349,7 @@ public class CellEditorActionHandler {
         protected FindActionHandler() {
             setId("CellEditorFindActionHandler");//$NON-NLS-1$
             setEnabled(false);
-            WorkbenchHelp.setHelp(this, IHelpContextIds.CELL_FIND_ACTION);
+            WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CELL_FIND_ACTION);
         }
 
         public void runWithEvent(Event event) {
@@ -380,7 +380,7 @@ public class CellEditorActionHandler {
         protected UndoActionHandler() {
             setId("CellEditorUndoActionHandler");//$NON-NLS-1$
             setEnabled(false);
-            WorkbenchHelp.setHelp(this, IHelpContextIds.CELL_UNDO_ACTION);
+            WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CELL_UNDO_ACTION);
         }
 
         public void runWithEvent(Event event) {
@@ -411,7 +411,7 @@ public class CellEditorActionHandler {
         protected RedoActionHandler() {
             setId("CellEditorRedoActionHandler");//$NON-NLS-1$
             setEnabled(false);
-            WorkbenchHelp.setHelp(this, IHelpContextIds.CELL_REDO_ACTION);
+            WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CELL_REDO_ACTION);
         }
 
         public void runWithEvent(Event event) {

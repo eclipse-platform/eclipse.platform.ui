@@ -44,7 +44,7 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
@@ -180,7 +180,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 
         Font font = parent.getFont();
 
-        WorkbenchHelp.setHelp(parent, IHelpContextIds.VIEWS_PREFERENCE_PAGE);
+        WorkbenchHelp.setHelp(parent, IWorkbenchHelpContextIds.VIEWS_PREFERENCE_PAGE);
 
         IPreferenceStore internalStore = PrefUtil.getInternalPreferenceStore();
         IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();

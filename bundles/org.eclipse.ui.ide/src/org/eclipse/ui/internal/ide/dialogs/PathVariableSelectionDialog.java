@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * A selection dialog which shows the path variables defined in the 
@@ -111,7 +111,7 @@ public class PathVariableSelectionDialog extends SelectionDialog {
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
         WorkbenchHelp.setHelp(shell,
-                IHelpContextIds.PATH_VARIABLE_SELECTION_DIALOG);
+                IIDEHelpContextIds.PATH_VARIABLE_SELECTION_DIALOG);
     }
 
     /**

@@ -25,7 +25,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -88,7 +88,7 @@ public class NewWizardAction extends Action implements
         setDisabledImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
         setToolTipText(WorkbenchMessages.getString("NewWizardAction.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.NEW_ACTION);
         setActionDefinitionId("org.eclipse.ui.newWizard"); //$NON-NLS-1$
     }
 
@@ -168,7 +168,7 @@ public class NewWizardAction extends Action implements
         dialog.getShell().setSize(
                 Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),
                 SIZING_WIZARD_HEIGHT);
-        WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_WIZARD);
+        WorkbenchHelp.setHelp(dialog.getShell(), IWorkbenchHelpContextIds.NEW_WIZARD);
         dialog.open();
     }
 

@@ -46,7 +46,7 @@ import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**	
  * Page used to determine what order projects will be built in 
@@ -202,7 +202,7 @@ public class BuildOrderPreferencePage extends PreferencePage implements
     protected Control createContents(Composite parent) {
 
         WorkbenchHelp.setHelp(parent,
-                IHelpContextIds.BUILD_ORDER_PREFERENCE_PAGE);
+                IIDEHelpContextIds.BUILD_ORDER_PREFERENCE_PAGE);
 
         Font font = parent.getFont();
 

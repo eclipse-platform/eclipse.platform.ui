@@ -41,7 +41,7 @@ public class QuitAction extends Action implements
         setText(WorkbenchMessages.getString("Exit.text")); //$NON-NLS-1$
         setToolTipText(WorkbenchMessages.getString("Exit.toolTip")); //$NON-NLS-1$
         setActionDefinitionId("org.eclipse.ui.file.exit"); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IHelpContextIds.QUIT_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.QUIT_ACTION);
     }
 
     /* (non-Javadoc)

@@ -34,7 +34,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 import org.eclipse.ui.internal.activities.ws.ActivityViewerFilter;
@@ -90,7 +90,7 @@ public class SelectPerspectiveDialog extends Dialog implements
         super.configureShell(shell);
         shell.setText(WorkbenchMessages
                 .getString("SelectPerspective.shellTitle")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(shell, IHelpContextIds.SELECT_PERSPECTIVE_DIALOG);
+        WorkbenchHelp.setHelp(shell, IWorkbenchHelpContextIds.SELECT_PERSPECTIVE_DIALOG);
     }
 
     /**

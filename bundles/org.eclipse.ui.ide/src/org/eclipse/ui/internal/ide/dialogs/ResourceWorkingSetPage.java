@@ -50,7 +50,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -131,7 +131,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
         setControl(composite);
 
         WorkbenchHelp.setHelp(composite,
-                IHelpContextIds.WORKING_SET_RESOURCE_PAGE);
+                IIDEHelpContextIds.WORKING_SET_RESOURCE_PAGE);
         Label label = new Label(composite, SWT.WRAP);
         label.setText(IDEWorkbenchMessages
                 .getString("ResourceWorkingSetPage.message")); //$NON-NLS-1$

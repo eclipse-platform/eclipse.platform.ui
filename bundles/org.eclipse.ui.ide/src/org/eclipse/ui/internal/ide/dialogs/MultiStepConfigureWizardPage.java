@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.WizardStepGroup;
 
 /**
@@ -82,7 +82,7 @@ public class MultiStepConfigureWizardPage extends WizardPage {
         composite.setFont(parent.getFont());
 
         WorkbenchHelp.setHelp(composite,
-                IHelpContextIds.NEW_PROJECT_CONFIGURE_WIZARD_PAGE);
+                IIDEHelpContextIds.NEW_PROJECT_CONFIGURE_WIZARD_PAGE);
 
         createStepGroup(composite);
         createEmbeddedPageSite(composite);

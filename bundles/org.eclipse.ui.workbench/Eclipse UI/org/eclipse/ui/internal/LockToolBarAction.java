@@ -53,7 +53,7 @@ public class LockToolBarAction extends Action implements
                 }
             }
         });
-        WorkbenchHelp.setHelp(this, IHelpContextIds.LOCK_TOOLBAR_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.LOCK_TOOLBAR_ACTION);
     }
 
     /* (non-Javadoc)

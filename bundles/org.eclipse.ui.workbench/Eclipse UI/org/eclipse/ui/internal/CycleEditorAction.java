@@ -38,7 +38,7 @@ public class CycleEditorAction extends CyclePartAction {
                     .getString("CycleEditorAction.next.toolTip")); //$NON-NLS-1$
             // @issue missing action ids
             WorkbenchHelp.setHelp(this,
-                    IHelpContextIds.CYCLE_EDITOR_FORWARD_ACTION);
+                    IWorkbenchHelpContextIds.CYCLE_EDITOR_FORWARD_ACTION);
             setActionDefinitionId("org.eclipse.ui.window.nextEditor"); //$NON-NLS-1$
         } else {
             setText(WorkbenchMessages.getString("CycleEditorAction.prev.text")); //$NON-NLS-1$
@@ -46,7 +46,7 @@ public class CycleEditorAction extends CyclePartAction {
                     .getString("CycleEditorAction.prev.toolTip")); //$NON-NLS-1$
             // @issue missing action ids
             WorkbenchHelp.setHelp(this,
-                    IHelpContextIds.CYCLE_EDITOR_BACKWARD_ACTION);
+                    IWorkbenchHelpContextIds.CYCLE_EDITOR_BACKWARD_ACTION);
             setActionDefinitionId("org.eclipse.ui.window.previousEditor"); //$NON-NLS-1$
         }
     }

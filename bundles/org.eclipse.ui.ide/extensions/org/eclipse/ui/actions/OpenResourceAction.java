@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * Standard action for opening the currently selected project(s).
@@ -53,7 +53,7 @@ public class OpenResourceAction extends WorkspaceAction implements
      */
     public OpenResourceAction(Shell shell) {
         super(shell, IDEWorkbenchMessages.getString("OpenResourceAction.text")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_RESOURCE_ACTION);
+        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.OPEN_RESOURCE_ACTION);
         setToolTipText(IDEWorkbenchMessages
                 .getString("OpenResourceAction.toolTip")); //$NON-NLS-1$
         setId(ID);

@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * Standard action for refreshing the workspace from the local file system for
@@ -55,7 +55,7 @@ public class RefreshAction extends WorkspaceAction {
         super(shell, IDEWorkbenchMessages.getString("RefreshAction.text")); //$NON-NLS-1$
         setToolTipText(IDEWorkbenchMessages.getString("RefreshAction.toolTip")); //$NON-NLS-1$
         setId(ID);
-        WorkbenchHelp.setHelp(this, IHelpContextIds.REFRESH_ACTION);
+        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.REFRESH_ACTION);
     }
 
     /**

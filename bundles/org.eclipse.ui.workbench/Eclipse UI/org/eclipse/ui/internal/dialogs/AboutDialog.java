@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.ProductProperties;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.about.AboutBundleGroupData;
@@ -134,7 +134,7 @@ public class AboutDialog extends ProductInfoDialog {
         super.configureShell(newShell);
         newShell.setText(WorkbenchMessages.format("AboutDialog.shellTitle", //$NON-NLS-1$
                 new Object[] { productName }));
-        WorkbenchHelp.setHelp(newShell, IHelpContextIds.ABOUT_DIALOG);
+        WorkbenchHelp.setHelp(newShell, IWorkbenchHelpContextIds.ABOUT_DIALOG);
     }
 
     /**

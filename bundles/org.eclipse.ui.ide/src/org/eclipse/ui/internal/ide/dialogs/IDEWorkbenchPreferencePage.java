@@ -29,11 +29,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.WorkInProgressMessages;
 
 /**
@@ -61,7 +61,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
     protected Control createContents(Composite parent) {
 
         WorkbenchHelp
-                .setHelp(parent, IHelpContextIds.WORKBENCH_PREFERENCE_PAGE);
+                .setHelp(parent, IWorkbenchHelpContextIds.WORKBENCH_PREFERENCE_PAGE);
 
         Composite composite = createComposite(parent);
 

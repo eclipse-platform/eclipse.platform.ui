@@ -40,7 +40,7 @@ public class ShowInAction extends Action {
     protected ShowInAction(IWorkbenchWindow window, IViewDescriptor desc) {
         super(desc.getLabel());
         setImageDescriptor(desc.getImageDescriptor());
-        WorkbenchHelp.setHelp(this, IHelpContextIds.SHOW_IN_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.SHOW_IN_ACTION);
         this.window = window;
         this.desc = desc;
     }

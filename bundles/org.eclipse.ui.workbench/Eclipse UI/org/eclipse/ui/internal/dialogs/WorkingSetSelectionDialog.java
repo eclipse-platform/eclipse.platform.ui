@@ -53,7 +53,7 @@ import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkingSet;
@@ -230,7 +230,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
         WorkbenchHelp.setHelp(shell,
-                IHelpContextIds.WORKING_SET_SELECTION_DIALOG);
+                IWorkbenchHelpContextIds.WORKING_SET_SELECTION_DIALOG);
     }
 
     /**
@@ -298,7 +298,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
 
         dialog.create();
         WorkbenchHelp.setHelp(dialog.getShell(),
-                IHelpContextIds.WORKING_SET_NEW_WIZARD);
+                IWorkbenchHelpContextIds.WORKING_SET_NEW_WIZARD);
         if (dialog.open() == Window.OK) {
             IWorkingSetManager manager = WorkbenchPlugin.getDefault()
                     .getWorkingSetManager();
@@ -339,7 +339,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
         }
         dialog.create();
         WorkbenchHelp.setHelp(dialog.getShell(),
-                IHelpContextIds.WORKING_SET_EDIT_WIZARD);
+                IWorkbenchHelpContextIds.WORKING_SET_EDIT_WIZARD);
         if (dialog.open() == Window.OK) {
             editWorkingSet = wizard.getSelection();
             listViewer.update(editWorkingSet, null);

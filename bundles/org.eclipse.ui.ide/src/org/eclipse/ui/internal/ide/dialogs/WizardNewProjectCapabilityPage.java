@@ -18,7 +18,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.Category;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.ProjectCapabilitySelectionGroup;
 import org.eclipse.ui.internal.ide.registry.Capability;
 import org.eclipse.ui.internal.ide.registry.CapabilityRegistry;
@@ -66,7 +66,7 @@ public class WizardNewProjectCapabilityPage extends WizardPage {
      */
     public void createControl(Composite parent) {
         WorkbenchHelp.setHelp(parent,
-                IHelpContextIds.NEW_PROJECT_CAPABILITY_WIZARD_PAGE);
+                IIDEHelpContextIds.NEW_PROJECT_CAPABILITY_WIZARD_PAGE);
         CapabilityRegistry reg = IDEWorkbenchPlugin.getDefault()
                 .getCapabilityRegistry();
         capabilityGroup = new ProjectCapabilitySelectionGroup(

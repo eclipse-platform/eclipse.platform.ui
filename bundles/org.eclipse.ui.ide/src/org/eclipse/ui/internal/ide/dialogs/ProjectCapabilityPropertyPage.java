@@ -28,7 +28,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.Category;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.ProjectCapabilitySelectionGroup;
 import org.eclipse.ui.internal.ide.registry.Capability;
 import org.eclipse.ui.internal.ide.registry.CapabilityRegistry;
@@ -64,7 +64,7 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
      */
     protected Control createContents(Composite parent) {
         WorkbenchHelp.setHelp(getControl(),
-                IHelpContextIds.PROJECT_CAPABILITY_PROPERTY_PAGE);
+                IIDEHelpContextIds.PROJECT_CAPABILITY_PROPERTY_PAGE);
         noDefaultAndApplyButton();
         CapabilityRegistry reg = IDEWorkbenchPlugin.getDefault()
                 .getCapabilityRegistry();
@@ -194,7 +194,7 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
                             .max(SIZING_WIZARD_WIDTH, dialog.getShell()
                                     .getSize().x), SIZING_WIZARD_HEIGHT);
             WorkbenchHelp.setHelp(dialog.getShell(),
-                    IHelpContextIds.UPDATE_CAPABILITY_WIZARD);
+                    IIDEHelpContextIds.UPDATE_CAPABILITY_WIZARD);
             dialog.open();
         }
 

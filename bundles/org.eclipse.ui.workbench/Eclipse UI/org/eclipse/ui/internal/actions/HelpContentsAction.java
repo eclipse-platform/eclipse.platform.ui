@@ -15,7 +15,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -63,7 +63,7 @@ public class HelpContentsAction extends Action implements IWorkbenchAction {
         }
         setImageDescriptor(WorkbenchImages
                 .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_CONTENTS));
-        WorkbenchHelp.setHelp(this, IHelpContextIds.HELP_CONTENTS_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.HELP_CONTENTS_ACTION);
     }
 
     /* (non-Javadoc)

@@ -32,7 +32,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * Standard action for full and incremental builds of all projects within the
@@ -119,7 +119,7 @@ public class GlobalBuildAction extends Action implements
                     .getString("GlobalBuildAction.toolTip")); //$NON-NLS-1$
             setId("build"); //$NON-NLS-1$
             WorkbenchHelp.setHelp(this,
-                    IHelpContextIds.GLOBAL_INCREMENTAL_BUILD_ACTION);
+                    IIDEHelpContextIds.GLOBAL_INCREMENTAL_BUILD_ACTION);
             setImageDescriptor(IDEInternalWorkbenchImages
                     .getImageDescriptor(IDEInternalWorkbenchImages.IMG_ETOOL_BUILD_EXEC));
             setDisabledImageDescriptor(IDEInternalWorkbenchImages
@@ -133,7 +133,7 @@ public class GlobalBuildAction extends Action implements
                     .getString("GlobalBuildAction.rebuildToolTip")); //$NON-NLS-1$
             setId("rebuildAll"); //$NON-NLS-1$
             WorkbenchHelp.setHelp(this,
-                    IHelpContextIds.GLOBAL_FULL_BUILD_ACTION);
+                    IIDEHelpContextIds.GLOBAL_FULL_BUILD_ACTION);
             setActionDefinitionId("org.eclipse.ui.project.rebuildAll"); //$NON-NLS-1$
             break;
         default:

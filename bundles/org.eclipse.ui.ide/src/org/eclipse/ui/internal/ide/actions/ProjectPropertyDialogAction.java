@@ -27,7 +27,7 @@ import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * Implementation for the action Property on the Project menu.
@@ -51,7 +51,7 @@ public class ProjectPropertyDialogAction extends PartEventAction implements
         setToolTipText(IDEWorkbenchMessages
                 .getString("Workbench.projectPropertiesToolTip")); //$NON-NLS-1$
         WorkbenchHelp.setHelp(this,
-                IHelpContextIds.PROJECT_PROPERTY_DIALOG_ACTION);
+                IIDEHelpContextIds.PROJECT_PROPERTY_DIALOG_ACTION);
         workbenchWindow.getSelectionService().addSelectionListener(this);
         workbenchWindow.getPartService().addPartListener(this);
         setActionDefinitionId("org.eclipse.ui.project.properties"); //$NON-NLS-1$

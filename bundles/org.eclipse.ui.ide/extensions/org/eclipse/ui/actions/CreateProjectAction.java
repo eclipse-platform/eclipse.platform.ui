@@ -24,7 +24,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.Category;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.MultiStepWizardDialog;
 import org.eclipse.ui.internal.ide.dialogs.NewProjectWizard;
 import org.eclipse.ui.internal.ide.registry.Capability;
@@ -91,7 +91,7 @@ public class CreateProjectAction extends Action {
                 .getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
         setToolTipText(IDEWorkbenchMessages
                 .getString("CreateProjectAction.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
+        WorkbenchHelp.setHelp(this, org.eclipse.ui.internal.IWorkbenchHelpContextIds.NEW_ACTION);
     }
 
     /**
@@ -191,7 +191,7 @@ public class CreateProjectAction extends Action {
                 Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),
                 SIZING_WIZARD_HEIGHT);
         WorkbenchHelp.setHelp(dialog.getShell(),
-                IHelpContextIds.NEW_PROJECT_WIZARD);
+                IIDEHelpContextIds.NEW_PROJECT_WIZARD);
 
         // Open the wizard.
         dialog.open();

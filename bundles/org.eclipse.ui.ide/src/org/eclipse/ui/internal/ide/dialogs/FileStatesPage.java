@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * The FileStatesPage is the page used to set the file states sizes for the workbench.
@@ -145,7 +145,7 @@ public class FileStatesPage extends PreferencePage implements
     protected Control createContents(Composite parent) {
 
         WorkbenchHelp.setHelp(parent,
-                IHelpContextIds.FILE_STATES_PREFERENCE_PAGE);
+                IIDEHelpContextIds.FILE_STATES_PREFERENCE_PAGE);
 
         // button group
         Composite composite = new Composite(parent, SWT.NONE);

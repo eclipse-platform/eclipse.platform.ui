@@ -50,7 +50,7 @@ public class EditActionSetsAction extends Action implements
         setToolTipText(WorkbenchMessages
                 .getString("EditActionSetsAction.toolTip")); //$NON-NLS-1$
         setEnabled(false);
-        WorkbenchHelp.setHelp(this, IHelpContextIds.EDIT_ACTION_SETS_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.EDIT_ACTION_SETS_ACTION);
     }
 
     /* (non-Javadoc)

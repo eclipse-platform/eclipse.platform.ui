@@ -16,7 +16,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.AboutDialog;
 
@@ -54,7 +54,7 @@ public class AboutAction extends Action implements
                 "AboutAction.toolTip", new Object[] { productName })); //$NON-NLS-1$
         setId("about"); //$NON-NLS-1$
         setActionDefinitionId("org.eclipse.ui.help.aboutAction"); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IHelpContextIds.ABOUT_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.ABOUT_ACTION);
     }
 
     /*

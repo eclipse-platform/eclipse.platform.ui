@@ -25,7 +25,7 @@ public class CloseEditorAction extends ActiveEditorAction {
         super(WorkbenchMessages.getString("CloseEditorAction.text"), window); //$NON-NLS-1$
         setToolTipText(WorkbenchMessages.getString("CloseEditorAction.toolTip")); //$NON-NLS-1$
         setId("close"); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_PART_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CLOSE_PART_ACTION);
         setActionDefinitionId("org.eclipse.ui.file.close"); //$NON-NLS-1$
     }
 

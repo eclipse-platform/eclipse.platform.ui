@@ -35,7 +35,7 @@ public class ActivateEditorAction extends PageEventAction {
                 .getString("ActivateEditorAction.toolTip")); //$NON-NLS-1$
         // @issue missing action id
         updateState();
-        WorkbenchHelp.setHelp(this, IHelpContextIds.ACTIVATE_EDITOR_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.ACTIVATE_EDITOR_ACTION);
         setActionDefinitionId("org.eclipse.ui.window.activateEditor"); //$NON-NLS-1$
     }
 

@@ -30,7 +30,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * Preference page for linked resources. 
@@ -67,7 +67,7 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements
         Font font = parent.getFont();
 
         WorkbenchHelp.setHelp(parent,
-                IHelpContextIds.LINKED_RESOURCE_PREFERENCE_PAGE);
+                IIDEHelpContextIds.LINKED_RESOURCE_PREFERENCE_PAGE);
         // define container & its gridding
         Composite pageComponent = new Composite(parent, SWT.NULL);
         GridLayout layout = new GridLayout();

@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.dialogs.PerspectivesPreferencePage;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * Extends the Perspectives preference page with IDE-specific settings.
@@ -52,7 +52,7 @@ public class IDEPerspectivesPreferencePage extends PerspectivesPreferencePage {
         // @issue if the product subclasses this page, then it should provide
         // the help content
         WorkbenchHelp.setHelp(parent,
-                IHelpContextIds.PERSPECTIVES_PREFERENCE_PAGE);
+                org.eclipse.ui.internal.IWorkbenchHelpContextIds.PERSPECTIVES_PREFERENCE_PAGE);
 
         Composite composite = createComposite(parent);
 

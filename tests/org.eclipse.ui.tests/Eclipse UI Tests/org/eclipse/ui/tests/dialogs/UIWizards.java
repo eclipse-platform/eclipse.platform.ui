@@ -24,12 +24,13 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ExportWizard;
 import org.eclipse.ui.internal.dialogs.ImportWizard;
 import org.eclipse.ui.internal.dialogs.NewWizard;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.tests.util.DialogCheck;
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
@@ -73,7 +74,7 @@ public class UIWizards extends TestCase {
         dialog.getShell().setSize(
                 Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),
                 SIZING_WIZARD_HEIGHT);
-        WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.EXPORT_WIZARD);
+        WorkbenchHelp.setHelp(dialog.getShell(), IWorkbenchHelpContextIds.EXPORT_WIZARD);
 
         if (page != null) {
             page.setWizard(wizard);
@@ -100,7 +101,7 @@ public class UIWizards extends TestCase {
         dialog.getShell().setSize(
                 Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),
                 SIZING_WIZARD_HEIGHT);
-        WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.IMPORT_WIZARD);
+        WorkbenchHelp.setHelp(dialog.getShell(), IWorkbenchHelpContextIds.IMPORT_WIZARD);
 
         if (page != null) {
             page.setWizard(wizard);
@@ -152,7 +153,7 @@ public class UIWizards extends TestCase {
         dialog.getShell().setText(
                 WorkbenchMessages.getString("CreateFileAction.title")); //$NON-NLS-1$
         WorkbenchHelp.setHelp(dialog.getShell(),
-                IHelpContextIds.NEW_FILE_WIZARD);
+                IIDEHelpContextIds.NEW_FILE_WIZARD);
         DialogCheck.assertDialog(dialog, this);
     }
 
@@ -165,7 +166,7 @@ public class UIWizards extends TestCase {
         dialog.getShell().setText(
                 WorkbenchMessages.getString("CreateFolderAction.title")); //$NON-NLS-1$
         WorkbenchHelp.setHelp(dialog.getShell(),
-                IHelpContextIds.NEW_FOLDER_WIZARD);
+        		IIDEHelpContextIds.NEW_FOLDER_WIZARD);
         DialogCheck.assertDialog(dialog, this);
     }
 
@@ -182,7 +183,7 @@ public class UIWizards extends TestCase {
         dialog.getShell().setText(
                 WorkbenchMessages.getString("CreateFileAction.title")); //$NON-NLS-1$
         WorkbenchHelp.setHelp(dialog.getShell(),
-                IHelpContextIds.NEW_PROJECT_WIZARD);
+        		IIDEHelpContextIds.NEW_PROJECT_WIZARD);
         DialogCheck.assertDialog(dialog, this);
     }
 
@@ -208,7 +209,7 @@ public class UIWizards extends TestCase {
                 WorkbenchMessages.getString("CreateFileAction.title")); //$NON-NLS-1$			
         dialog.showPage(page);
         WorkbenchHelp.setHelp(dialog.getShell(),
-                IHelpContextIds.NEW_PROJECT_WIZARD);
+        		IIDEHelpContextIds.NEW_PROJECT_WIZARD);
         DialogCheck.assertDialog(dialog, this);
     }
 
@@ -240,7 +241,7 @@ public class UIWizards extends TestCase {
                 Math.max(SIZING_WIZARD_WIDTH_2, dialog.getShell().getSize().x),
                 SIZING_WIZARD_HEIGHT_2);
         WorkbenchHelp.setHelp(dialog.getShell(),
-                IHelpContextIds.NEW_PROJECT_WIZARD);
+        		IIDEHelpContextIds.NEW_PROJECT_WIZARD);
         DialogCheck.assertDialog(dialog, this);
     }
 
@@ -268,7 +269,7 @@ public class UIWizards extends TestCase {
         dialog.getShell().setSize(
                 Math.max(SIZING_WIZARD_WIDTH_2, dialog.getShell().getSize().x),
                 SIZING_WIZARD_HEIGHT_2);
-        WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_WIZARD);
+        WorkbenchHelp.setHelp(dialog.getShell(), IWorkbenchHelpContextIds.NEW_WIZARD);
         DialogCheck.assertDialog(dialog, this);
     }
 }

@@ -17,7 +17,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
@@ -66,7 +66,7 @@ public class OpenInNewWindowAction extends Action implements
         setToolTipText(WorkbenchMessages
                 .getString("OpenInNewWindowAction.toolTip")); //$NON-NLS-1$
         pageInput = input;
-        WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_NEW_WINDOW_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.OPEN_NEW_WINDOW_ACTION);
     }
 
     /**

@@ -510,7 +510,7 @@ public class EditorList {
             setText(WorkbenchMessages.getString("EditorList.saveSelected.text")); //$NON-NLS-1$
             setToolTipText(WorkbenchMessages
                     .getString("EditorList.saveSelected.toolTip")); //$NON-NLS-1$
-            WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ACTION);
+            WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.SAVE_ACTION);
         }
 
         /**
@@ -547,7 +547,7 @@ public class EditorList {
                     .getString("EditorList.closeSelected.text")); //$NON-NLS-1$
             setToolTipText(WorkbenchMessages
                     .getString("EditorList.closeSelected.toolTip")); //$NON-NLS-1$
-            WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_PART_ACTION);
+            WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.CLOSE_PART_ACTION);
         }
 
         /**

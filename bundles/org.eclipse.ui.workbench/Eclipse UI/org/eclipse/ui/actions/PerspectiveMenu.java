@@ -35,7 +35,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -117,7 +117,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
                 run(desc, e);
             }
         });
-        WorkbenchHelp.setHelp(mi, IHelpContextIds.OPEN_PERSPECTIVE_ACTION);
+        WorkbenchHelp.setHelp(mi, IWorkbenchHelpContextIds.OPEN_PERSPECTIVE_ACTION);
     }
 
     /* (non-Javadoc)
@@ -133,7 +133,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
             }
         });
         WorkbenchHelp
-                .setHelp(mi, IHelpContextIds.OPEN_PERSPECTIVE_OTHER_ACTION);
+                .setHelp(mi, IWorkbenchHelpContextIds.OPEN_PERSPECTIVE_OTHER_ACTION);
     }
 
     /* (non-Javadoc)

@@ -48,7 +48,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.CreateLinkedResourceGroup;
 import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
 
@@ -176,7 +176,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
         topLevel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL
                 | GridData.HORIZONTAL_ALIGN_FILL));
         topLevel.setFont(parent.getFont());
-        WorkbenchHelp.setHelp(topLevel, IHelpContextIds.NEW_FILE_WIZARD_PAGE);
+        WorkbenchHelp.setHelp(topLevel, IIDEHelpContextIds.NEW_FILE_WIZARD_PAGE);
 
         // resource and container group
         resourceGroup = new ResourceAndContainerGroup(

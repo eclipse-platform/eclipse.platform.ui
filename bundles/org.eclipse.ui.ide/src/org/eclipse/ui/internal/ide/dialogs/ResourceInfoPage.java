@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * This is a dummy page that is added to the property dialog
@@ -259,7 +259,7 @@ public class ResourceInfoPage extends PropertyPage {
     protected Control createContents(Composite parent) {
 
         WorkbenchHelp.setHelp(getControl(),
-                IHelpContextIds.RESOURCE_INFO_PROPERTY_PAGE);
+                IIDEHelpContextIds.RESOURCE_INFO_PROPERTY_PAGE);
 
         // layout the page
         IResource resource = (IResource) getElement();

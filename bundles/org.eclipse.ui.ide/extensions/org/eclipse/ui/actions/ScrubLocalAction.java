@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * Standard action for scrubbing the local content in the local file system of
@@ -43,7 +43,7 @@ public class ScrubLocalAction extends WorkspaceAction {
         setToolTipText(IDEWorkbenchMessages
                 .getString("ScrubLocalAction.toolTip")); //$NON-NLS-1$
         setId(ID);
-        WorkbenchHelp.setHelp(this, IHelpContextIds.SCRUB_LOCAL_ACTION);
+        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.SCRUB_LOCAL_ACTION);
     }
 
     /* (non-Javadoc)

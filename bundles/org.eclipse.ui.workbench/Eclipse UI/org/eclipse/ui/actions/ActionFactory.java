@@ -26,7 +26,7 @@ import org.eclipse.ui.internal.CycleEditorAction;
 import org.eclipse.ui.internal.CyclePartAction;
 import org.eclipse.ui.internal.CyclePerspectiveAction;
 import org.eclipse.ui.internal.EditActionSetsAction;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IntroAction;
 import org.eclipse.ui.internal.LockToolBarAction;
@@ -344,7 +344,7 @@ public abstract class ActionFactory {
             action.setActionDefinitionId("org.eclipse.ui.edit.delete"); //$NON-NLS-1$
             action.enableAccelerator(false);
             WorkbenchHelp.setHelp(action,
-                    IHelpContextIds.DELETE_RETARGET_ACTION);
+                    IWorkbenchHelpContextIds.DELETE_RETARGET_ACTION);
             ISharedImages sharedImages = window.getWorkbench()
                     .getSharedImages();
             action.setImageDescriptor(sharedImages

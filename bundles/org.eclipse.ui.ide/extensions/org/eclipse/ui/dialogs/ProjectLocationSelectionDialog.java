@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * The ProjectLocationSelectionDialog is the dialog used to select the name
@@ -212,7 +212,7 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
         WorkbenchHelp.setHelp(shell,
-                IHelpContextIds.PROJECT_LOCATION_SELECTION_DIALOG);
+                IIDEHelpContextIds.PROJECT_LOCATION_SELECTION_DIALOG);
     }
 
     /* (non-Javadoc)

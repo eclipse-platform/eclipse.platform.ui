@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.WizardStepGroup;
 
 /**
@@ -77,7 +77,7 @@ public class MultiStepReviewWizardPage extends WizardPage {
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         WorkbenchHelp.setHelp(composite,
-                IHelpContextIds.NEW_PROJECT_REVIEW_WIZARD_PAGE);
+                IIDEHelpContextIds.NEW_PROJECT_REVIEW_WIZARD_PAGE);
 
         createStepGroup(composite);
         createDetailsGroup(composite);

@@ -47,7 +47,7 @@ public class SavePerspectiveAction extends Action implements
         // @issue missing action id
         setToolTipText(WorkbenchMessages.getString("SavePerspective.toolTip")); //$NON-NLS-1$
         setEnabled(false);
-        WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_PERSPECTIVE_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
     }
 
     /* (non-Javadoc)

@@ -46,7 +46,7 @@ public class ShowPartPaneMenuAction extends PartEventAction implements
         // @issue missing action id
         initText();
         workbenchWindow.getPartService().addPartListener(this);
-        WorkbenchHelp.setHelp(this, IHelpContextIds.SHOW_PART_PANE_MENU_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.SHOW_PART_PANE_MENU_ACTION);
         setActionDefinitionId("org.eclipse.ui.window.showSystemMenu"); //$NON-NLS-1$
     }
 

@@ -39,7 +39,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * Standard actions for full and incremental builds of the selected project(s).
@@ -86,13 +86,13 @@ public class BuildAction extends WorkspaceAction {
                     .getString("BuildAction.toolTip")); //$NON-NLS-1$
             setId(ID_BUILD);
             WorkbenchHelp.setHelp(this,
-                    IHelpContextIds.INCREMENTAL_BUILD_ACTION);
+                    IIDEHelpContextIds.INCREMENTAL_BUILD_ACTION);
         } else {
             setText(IDEWorkbenchMessages.getString("RebuildAction.text")); //$NON-NLS-1$
             setToolTipText(IDEWorkbenchMessages
                     .getString("RebuildAction.tooltip")); //$NON-NLS-1$
             setId(ID_REBUILD_ALL);
-            WorkbenchHelp.setHelp(this, IHelpContextIds.FULL_BUILD_ACTION);
+            WorkbenchHelp.setHelp(this, IIDEHelpContextIds.FULL_BUILD_ACTION);
         }
 
         this.buildType = type;

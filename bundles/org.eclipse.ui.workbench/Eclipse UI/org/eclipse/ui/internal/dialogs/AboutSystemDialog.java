@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.about.ISystemSummarySection;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -61,7 +61,7 @@ public final class AboutSystemDialog extends ProductInfoDialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setText(WorkbenchMessages.getString("SystemSummary.title")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(newShell, IHelpContextIds.SYSTEM_SUMMARY_DIALOG);
+        WorkbenchHelp.setHelp(newShell, IWorkbenchHelpContextIds.SYSTEM_SUMMARY_DIALOG);
     }
 
     /* (non-Javadoc)

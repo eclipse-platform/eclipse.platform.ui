@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * First page for the new project creation wizard. This page
@@ -122,7 +122,7 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
         composite.setFont(parent.getFont());
 
         WorkbenchHelp.setHelp(composite,
-                IHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
+                IIDEHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
 
         createProjectNameGroup(composite);
         createProjectLocationGroup(composite);

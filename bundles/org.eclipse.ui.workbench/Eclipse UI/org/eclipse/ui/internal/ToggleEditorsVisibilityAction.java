@@ -72,7 +72,7 @@ public class ToggleEditorsVisibilityAction extends Action implements
         // @issue missing action id
         setToolTipText(WorkbenchMessages.getString("ToggleEditor.toolTip")); //$NON-NLS-1$
         WorkbenchHelp.setHelp(this,
-                IHelpContextIds.TOGGLE_EDITORS_VISIBILITY_ACTION);
+                IWorkbenchHelpContextIds.TOGGLE_EDITORS_VISIBILITY_ACTION);
         setEnabled(false);
 
         // Once the API on IWorkbenchPage to hide/show

@@ -54,7 +54,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.CreateLinkedResourceGroup;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 
@@ -133,7 +133,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        WorkbenchHelp.setHelp(shell, IHelpContextIds.NEW_FOLDER_DIALOG);
+        WorkbenchHelp.setHelp(shell, IIDEHelpContextIds.NEW_FOLDER_DIALOG);
     }
 
     /**

@@ -25,7 +25,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.NewWizard;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * Standard action for launching the create project selection
@@ -78,7 +78,7 @@ public class NewProjectAction extends Action {
                 .getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
         setToolTipText(IDEWorkbenchMessages
                 .getString("NewProjectAction.toolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
+        WorkbenchHelp.setHelp(this, org.eclipse.ui.internal.IWorkbenchHelpContextIds.NEW_ACTION);
     }
 
     /* (non-Javadoc)
@@ -111,7 +111,7 @@ public class NewProjectAction extends Action {
                 Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),
                 SIZING_WIZARD_HEIGHT);
         WorkbenchHelp.setHelp(dialog.getShell(),
-                IHelpContextIds.NEW_PROJECT_WIZARD);
+                IIDEHelpContextIds.NEW_PROJECT_WIZARD);
 
         // Open wizard.
         dialog.open();

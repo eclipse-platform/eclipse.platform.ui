@@ -20,7 +20,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
 
 /**
@@ -63,7 +63,7 @@ public class CreateFolderAction extends SelectionListenerAction {
         setToolTipText(IDEWorkbenchMessages
                 .getString("CreateFolderAction.toolTip")); //$NON-NLS-1$
         setId(ID);
-        WorkbenchHelp.setHelp(this, IHelpContextIds.CREATE_FOLDER_ACTION);
+        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.CREATE_FOLDER_ACTION);
     }
 
     /**
@@ -80,7 +80,7 @@ public class CreateFolderAction extends SelectionListenerAction {
         dialog.getShell().setText(
                 IDEWorkbenchMessages.getString("CreateFolderAction.title")); //$NON-NLS-1$
         WorkbenchHelp.setHelp(dialog.getShell(),
-                IHelpContextIds.NEW_FOLDER_WIZARD);
+                IIDEHelpContextIds.NEW_FOLDER_WIZARD);
         dialog.open();
 
     }

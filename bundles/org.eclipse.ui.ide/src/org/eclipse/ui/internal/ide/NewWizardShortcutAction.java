@@ -27,6 +27,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 
 /**
@@ -98,7 +99,7 @@ public class NewWizardShortcutAction extends Action implements
         WizardDialog dialog = new WizardDialog(parent, wizard);
         dialog.create();
         WorkbenchHelp.setHelp(dialog.getShell(),
-                IHelpContextIds.NEW_WIZARD_SHORTCUT);
+                IWorkbenchHelpContextIds.NEW_WIZARD_SHORTCUT);
         dialog.open();
     }
 

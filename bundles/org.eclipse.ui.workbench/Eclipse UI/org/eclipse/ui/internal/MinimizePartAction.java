@@ -30,7 +30,7 @@ public class MinimizePartAction extends PageEventAction {
                 .getString("MinimizePartAction.toolTip")); //$NON-NLS-1$
         // @issue missing action id
         updateState();
-        WorkbenchHelp.setHelp(this, IHelpContextIds.MINIMIZE_PART_ACTION);
+        WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.MINIMIZE_PART_ACTION);
         setActionDefinitionId("org.eclipse.ui.window.minimizePart"); //$NON-NLS-1$
     }
 

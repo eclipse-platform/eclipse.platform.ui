@@ -48,7 +48,7 @@ public class CyclePerspectiveAction extends CyclePartAction implements
                     .getString("CyclePerspectiveAction.next.toolTip")); //$NON-NLS-1$
             // @issue missing action ids
             WorkbenchHelp.setHelp(this,
-                    IHelpContextIds.CYCLE_PERSPECTIVE_FORWARD_ACTION);
+                    IWorkbenchHelpContextIds.CYCLE_PERSPECTIVE_FORWARD_ACTION);
             setActionDefinitionId("org.eclipse.ui.window.nextPerspective"); //$NON-NLS-1$
         } else {
             setText(WorkbenchMessages
@@ -57,7 +57,7 @@ public class CyclePerspectiveAction extends CyclePartAction implements
                     .getString("CyclePerspectiveAction.prev.toolTip")); //$NON-NLS-1$
             // @issue missing action ids
             WorkbenchHelp.setHelp(this,
-                    IHelpContextIds.CYCLE_PERSPECTIVE_BACKWARD_ACTION);
+                    IWorkbenchHelpContextIds.CYCLE_PERSPECTIVE_BACKWARD_ACTION);
             setActionDefinitionId("org.eclipse.ui.window.previousPerspective"); //$NON-NLS-1$
         }
     }

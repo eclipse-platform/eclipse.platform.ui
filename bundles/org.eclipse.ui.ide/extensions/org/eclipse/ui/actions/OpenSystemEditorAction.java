@@ -22,7 +22,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.part.FileEditorInput;
 
 /**
@@ -56,7 +56,7 @@ public class OpenSystemEditorAction extends SelectionListenerAction {
         setToolTipText(IDEWorkbenchMessages
                 .getString("OpenSystemEditorAction.toolTip")); //$NON-NLS-1$
         setId(ID);
-        WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_SYSTEM_EDITOR_ACTION);
+        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.OPEN_SYSTEM_EDITOR_ACTION);
         if (page == null) {
             throw new IllegalArgumentException();
         }

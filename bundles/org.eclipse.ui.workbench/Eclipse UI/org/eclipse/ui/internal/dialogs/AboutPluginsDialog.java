@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.about.AboutBundleData;
@@ -89,7 +89,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
      */
     public AboutPluginsDialog(Shell parentShell, String productName) {
         this(parentShell, productName, WorkbenchPlugin.getDefault()
-                .getBundles(), null, null, IHelpContextIds.ABOUT_PLUGINS_DIALOG);
+                .getBundles(), null, null, IWorkbenchHelpContextIds.ABOUT_PLUGINS_DIALOG);
     }
 
     /**

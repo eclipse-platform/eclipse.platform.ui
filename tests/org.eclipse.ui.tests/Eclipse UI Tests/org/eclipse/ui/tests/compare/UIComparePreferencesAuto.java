@@ -20,7 +20,7 @@ import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.tests.dialogs.PreferenceDialogWrapper;
 import org.eclipse.ui.tests.util.DialogCheck;
@@ -43,7 +43,7 @@ public class UIComparePreferencesAuto extends TestCase {
             dialog = new PreferenceDialogWrapper(getShell(), manager);
             dialog.create();
             WorkbenchHelp.setHelp(dialog.getShell(),
-                    IHelpContextIds.PREFERENCE_DIALOG);
+                    IWorkbenchHelpContextIds.PREFERENCE_DIALOG);
 
             for (Iterator iterator = manager.getElements(
                     PreferenceManager.PRE_ORDER).iterator(); iterator.hasNext();) {

@@ -47,7 +47,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * Standard action for renaming the selected resources.
@@ -113,7 +113,7 @@ public class RenameResourceAction extends WorkspaceAction {
         setToolTipText(IDEWorkbenchMessages
                 .getString("RenameResourceAction.toolTip")); //$NON-NLS-1$
         setId(ID);
-        WorkbenchHelp.setHelp(this, IHelpContextIds.RENAME_RESOURCE_ACTION);
+        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.RENAME_RESOURCE_ACTION);
     }
 
     /**

@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * Shows a list of resources to the user with a text entry field
@@ -34,7 +34,7 @@ public class OpenResourceDialog extends ResourceListSelectionDialog {
         super(parentShell, container, typesMask);
         setTitle(IDEWorkbenchMessages.getString("OpenResourceDialog.title")); //$NON-NLS-1$
         WorkbenchHelp
-                .setHelp(parentShell, IHelpContextIds.OPEN_RESOURCE_DIALOG);
+                .setHelp(parentShell, IIDEHelpContextIds.OPEN_RESOURCE_DIALOG);
     }
 
     /**

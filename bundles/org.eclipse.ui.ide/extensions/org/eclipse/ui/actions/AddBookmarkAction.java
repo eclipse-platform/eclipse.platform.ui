@@ -31,7 +31,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * Standard action for adding a bookmark to the currently selected file
@@ -82,7 +82,7 @@ public class AddBookmarkAction extends SelectionListenerAction {
         this.shell = shell;
         this.promptForName = promptForName;
         setToolTipText(IDEWorkbenchMessages.getString("AddBookmarkToolTip")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(this, IHelpContextIds.ADD_BOOKMARK_ACTION);
+        WorkbenchHelp.setHelp(this, IIDEHelpContextIds.ADD_BOOKMARK_ACTION);
     }
 
     /**

@@ -112,7 +112,7 @@ public class NavigationHistoryAction extends PageEventAction {
                     .getString("NavigationHistoryAction.forward.toolTip")); //$NON-NLS-1$
             // @issue missing action id
             WorkbenchHelp.setHelp(this,
-                    IHelpContextIds.NAVIGATION_HISTORY_FORWARD);
+                    IWorkbenchHelpContextIds.NAVIGATION_HISTORY_FORWARD);
             setImageDescriptor(sharedImages
                     .getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
             setDisabledImageDescriptor(sharedImages
@@ -125,7 +125,7 @@ public class NavigationHistoryAction extends PageEventAction {
                     .getString("NavigationHistoryAction.backward.toolTip")); //$NON-NLS-1$
             // @issue missing action id
             WorkbenchHelp.setHelp(this,
-                    IHelpContextIds.NAVIGATION_HISTORY_BACKWARD);
+                    IWorkbenchHelpContextIds.NAVIGATION_HISTORY_BACKWARD);
             setImageDescriptor(sharedImages
                     .getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
             setDisabledImageDescriptor(sharedImages
