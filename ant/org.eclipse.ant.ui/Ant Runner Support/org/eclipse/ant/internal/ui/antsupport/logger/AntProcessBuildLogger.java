@@ -60,8 +60,10 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			return;
 		}
 		
-		StringBuffer fullMessage= new StringBuffer(System.getProperty("line.separator")); //$NON-NLS-1$
-		
+		StringBuffer fullMessage= new StringBuffer();
+		 if (!loggingToLogFile()) {
+			fullMessage.append(System.getProperty("line.separator")); //$NON-NLS-1$
+		}
 		if (event.getException() == null && event.getTask() != null && !fEmacsMode) {
 			adornMessage(event, fullMessage);
 		} else {
@@ -69,9 +71,12 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		}
 		message= fullMessage.toString();
 		
-		AntStreamMonitor monitor = getMonitor(priority);
-		monitor.append(message);
-		logMessageToLogFile(message, priority);
+		if (loggingToLogFile()) {
+			logMessageToLogFile(message, priority);
+		} else {
+			AntStreamMonitor monitor = getMonitor(priority);
+			monitor.append(message);
+		}
 	}
 
 	/**
@@ -159,15 +164,9 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 
 	private void logMessageToLogFile(String message, int priority) {
 		if (priority == Project.MSG_ERR) {
-			if (getErrorPrintStream() != null && getErrorPrintStream() != System.err) {
-				//user has designated to log to a logfile
-				getErrorPrintStream().println(message);
-			}
+			getErrorPrintStream().println(message);
 		} else {
-			if (getOutputPrintStream() != null && getOutputPrintStream() != System.out) {
-				//user has designated to log to a logfile
-				getOutputPrintStream().println(message);
-			}
+			getOutputPrintStream().println(message);
 		}
 	}
 	
@@ -294,5 +293,10 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		msg.append(event.getTarget().getName());
 		msg.append(':');
 		logMessage(msg.toString(), event, Project.MSG_INFO);
+	}
+	
+	private boolean loggingToLogFile() {
+		//check if user has designated to log to a logfile
+		return getErrorPrintStream() != null && getErrorPrintStream() != System.err;
 	}
 }
