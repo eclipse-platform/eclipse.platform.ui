@@ -27,6 +27,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	private boolean avoidBuild = false;
 	private boolean buildNeeded = false;
 	private boolean forceBuild = false;
+	private boolean isAutoBuilding = false;
 	/**
 	 * Indicates that another thread tried to modify the workspace during
 	 * the autobuild.  The autobuild should be immediately rescheduled
@@ -39,7 +40,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	AutoBuildJob(Workspace workspace) {
 		super(ICoreConstants.MSG_EVENTS_BUILDING_0);
 		setRule(workspace.getRoot());
-		setSystem(!workspace.isAutoBuilding());
+		isAutoBuilding = workspace.isAutoBuilding();
 		this.workspace = workspace;
 		ResourcesPlugin.getPlugin().getPluginPreferences().addPropertyChangeListener(this);
 	}
@@ -49,8 +50,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	 * @param isAutoBuilding the new autobuild state
 	 */
 	private void autoBuildChanged(boolean wasAutoBuilding, boolean isAutoBuilding) {
-		//make the autobuild a system job if autobuild is off
-		setSystem(!isAutoBuilding);
+		this.isAutoBuilding = isAutoBuilding;
 		//force a build if autobuild has been turned on
 		if (!forceBuild && !wasAutoBuilding && isAutoBuilding) {
 			forceBuild = true;
@@ -84,6 +84,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 				wakeUp(delay);
 				break;
 			case NONE:
+				setSystem(!isAutoBuilding);
 				schedule(delay);
 				break;
 		}
