@@ -1,13 +1,17 @@
 package org.eclipse.search2.internal.ui;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.Job;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -18,6 +22,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
@@ -40,6 +45,8 @@ public class InternalSearchUI {
 
 	public static final String SEARCH_VIEW_ID= "org.eclipse.search.ui.views.SearchView"; //$NON-NLS-1$
 
+	public static final Object FAMILY_SEARCH = new Object();
+	
 	private class SearchJobRecord {
 		public ISearchQuery fQuery;
 		public Job fJob;
@@ -72,7 +79,9 @@ public class InternalSearchUI {
 			fSearchJobRecord.fJob= null;
 			return status;
 		}
-
+		public boolean belongsTo(Object family) {
+			return family == InternalSearchUI.FAMILY_SEARCH;
+		}
 
 	}
 
@@ -139,9 +148,37 @@ public class InternalSearchUI {
 	private void doRunSearchInBackground(SearchJobRecord jobRecord) {
 		if (jobRecord.fJob == null) {
 			jobRecord.fJob= new InternalSearchJob(jobRecord);
-			jobRecord.fJob.setPriority(Job.BUILD);
+			jobRecord.fJob.setPriority(Job.BUILD);	
 		}
-		jobRecord.fJob.schedule();
+		// TODO temporary to experiment with new jobs view
+		configureJob(jobRecord.fJob);
+		getProgressService().schedule(jobRecord.fJob, 0, true);
+	}
+
+	private void configureJob(Job job) {
+		job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keep"), Boolean.TRUE);
+		job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "goto"), new Action() {
+			public void run() {
+				activateSearchView();
+			}
+		});
+		try {
+			URL install= SearchPlugin.getDefault().getDescriptor().getInstallURL();
+			URL icon;
+			icon= new URL(install, "icons/full/cview16/searchres.gif");
+			job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "icon"), icon); 
+		} catch (MalformedURLException e) {
+			// don't set any icon
+		}
+	}
+
+	public IWorkbenchSiteProgressService getProgressService() {
+		IWorkbenchSiteProgressService service = null;
+		Object siteService =
+			getSearchView().getSite().getAdapter(IWorkbenchSiteProgressService.class);
+		if(siteService != null)
+			service = (IWorkbenchSiteProgressService) siteService;
+		return service;
 	}
 
 	public boolean runAgain(ISearchQuery job) {

@@ -28,6 +28,7 @@ import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.IQueryListener;
@@ -377,6 +378,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		fPageState= memento;
+		getProgressService().showBusyForFamily(InternalSearchUI.FAMILY_SEARCH);
 	}
 	
 	/**
@@ -416,4 +418,18 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			return (ISearchResultPage) page;
 		return null;
 	}
+	
+	public IWorkbenchSiteProgressService getProgressService() {
+		IWorkbenchSiteProgressService service = null;
+		Object siteService =
+			getSite().getAdapter(IWorkbenchSiteProgressService.class);
+		if(siteService != null)
+			service = (IWorkbenchSiteProgressService) siteService;
+		return service;
+	}
+
+    public void showBusy(boolean busy) {
+        super.showBusy(busy);
+        getProgressService().warnOfContentChange();
+    }
 }
