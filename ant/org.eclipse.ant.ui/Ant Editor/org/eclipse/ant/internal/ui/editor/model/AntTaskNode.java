@@ -13,7 +13,6 @@ package org.eclipse.ant.internal.ui.editor.model;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.UnknownElement;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -24,6 +23,7 @@ public class AntTaskNode extends AntElementNode {
 	private Task fTask= null;
 	private String fLabel= null;
 	private String fId= null;
+	protected boolean configured= false;
 	
 	public AntTaskNode(Task task) {
 		super(task.getTaskName());
@@ -69,10 +69,6 @@ public class AntTaskNode extends AntElementNode {
 			return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_MACRODEF);
 		}
 		
-		if("import".equalsIgnoreCase(getName())) { //$NON-NLS-1$
-			return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_IMPORT);
-		}
-		
 		if (fId != null) {
 			return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TYPE);
 		}
@@ -92,24 +88,31 @@ public class AntTaskNode extends AntElementNode {
 	 * Configures the associated task if required.
 	 * Allows subclasses to do specific configuration (such as executing the task) by
 	 * calling <code>nodeSpecificConfigure</code>
+	 * 
+	 * @return whether the configuration of this node could have impact on other nodes
 	 */
-	public void configure() {
-		if (((UnknownElement)getTask()).getRealThing() != null) {
-			return;
+	public boolean configure(boolean validateFully) {
+		if (!validateFully || (getParentNode() instanceof AntTaskNode)) {
+			return false;
+		}
+		if (configured) {
+			return false;
 		}
 		try {
 			getTask().maybeConfigure();
 			nodeSpecificConfigure();
+			configured= true;
+			return true;
 		} catch (BuildException be) {
 			//TODO Currently we hide this exception as a user may have defined a property nested element
 			//that has a different syntax than the built in property task
 			//see bug 52040. All back to having a classloader for parsing/resolving the buildfile
 			//getAntModel().handleBuildException(be, this);
 		}
+		return false;
 	}
 
 	protected void nodeSpecificConfigure() {
 		//by default do nothing
-		
 	}
 }

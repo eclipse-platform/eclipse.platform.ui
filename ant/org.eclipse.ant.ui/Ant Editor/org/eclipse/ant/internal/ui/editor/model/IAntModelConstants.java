@@ -7,14 +7,13 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49380
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.editor.model;
 
 /**
- * Constants used by the Ant editor
+ * Constants used by the Ant model to reference attributes
  */
-public interface IAntEditorConstants {
+public interface IAntModelConstants {
 	
 	/**
 	 * Attributes of Ant elements
@@ -32,25 +31,5 @@ public interface IAntEditorConstants {
 	public static final String ATTR_ZIPFILE= "zipfile"; //$NON-NLS-1$
 	public static final String ATTR_COMMAND= "command"; //$NON-NLS-1$
 	public static final String ATTR_EXECUTABLE= "executable"; //$NON-NLS-1$
-	public static final String ATTR_TYPE= "type"; //$NON-NLS-1$
 	public static final String ATTR_DESCRIPTION= "description"; //$NON-NLS-1$
-	/**
-	 * Values of the type attribute stored in XmlElements
-	 */
-	public static final String TYPE_EXTERNAL = "external"; //$NON-NLS-1$
-	public static final String TYPE_TARGET = "target"; //$NON-NLS-1$
-	public static final String TYPE_PROJECT = "project"; //$NON-NLS-1$
-	public static final String TYPE_PROPERTY = "property"; //$NON-NLS-1$
-	public static final String TYPE_ANTCALL = "antcall"; //$NON-NLS-1$
-	public static final String TYPE_MKDIR = "mkdir"; //$NON-NLS-1$
-	public static final String TYPE_COPY = "copy"; //$NON-NLS-1$
-	public static final String TYPE_ARCHIVE = "archive"; //$NON-NLS-1$
-	public static final String TYPE_DECOMPRESS = "decompress"; //$NON-NLS-1$
-	public static final String TYPE_COMPRESS = "compress"; //$NON-NLS-1$
-	public static final String TYPE_EXEC = "exec"; //$NON-NLS-1$
-	public static final String TYPE_DELETE = "delete"; //$NON-NLS-1$
-	public static final String TYPE_UNKNOWN = "unknown"; //$NON-NLS-1$
-	public static final String TYPE_MACRODEF = "macrodef"; //$NON-NLS-1$
-	public static final String TYPE_IMPORT = "import"; //$NON-NLS-1$
-
 }

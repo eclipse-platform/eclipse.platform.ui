@@ -14,9 +14,11 @@ package org.eclipse.ant.internal.ui.editor.outline;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -29,11 +31,12 @@ import org.apache.tools.ant.UnknownElement;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
+import org.eclipse.ant.internal.ui.editor.model.AntImportNode;
 import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
-import org.eclipse.ant.internal.ui.editor.model.IAntEditorConstants;
+import org.eclipse.ant.internal.ui.editor.model.IAntModelConstants;
 import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
@@ -61,6 +64,7 @@ public class AntModel {
 	private AntProjectNode fProjectNode;
 	private AntTargetNode fCurrentTargetNode;
 	private AntElementNode fLastNode;
+	private AntElementNode fNodeBeingResolved;
 	
 	 /**
      * Stack of still open elements.
@@ -70,6 +74,8 @@ public class AntModel {
 	private Stack fStillOpenElements = new Stack();
 	
 	private Map fTaskToNode= new HashMap();
+	
+	private List fProperties= null;
 	
 	private Map fEntityNameToPath;
 
@@ -147,9 +153,11 @@ public class AntModel {
 
 	private void reset() {
 		fCurrentTargetNode= null;
-			fStillOpenElements= new Stack();
-			fTaskToNode= new HashMap();
-			fProjectNode= null;
+		fStillOpenElements= new Stack();
+		fTaskToNode= new HashMap();
+		fProperties= new ArrayList();
+		fProjectNode= null;
+		fNodeBeingResolved= null;
 		//removeProblems();
 	}
 
@@ -246,16 +254,31 @@ public class AntModel {
 //		}
 //	}
 
-	private void resolveBuildfile() {	
+	private void resolveBuildfile() {
+		resolveProperties();
 		Collection nodes= fTaskToNode.values();
-		Iterator iter= nodes.iterator();
+		Collection nodeCopy= new ArrayList();
+		nodeCopy.addAll(nodes);
+		Iterator iter= nodeCopy.iterator();
 		while (iter.hasNext()) {
 			AntTaskNode node = (AntTaskNode) iter.next();
-			if (fValidateFully && !(node.getParentNode() instanceof AntTaskNode)) {
-				//only configure task nodes and not nested elements
-				node.configure();
-			} else if (node instanceof AntPropertyNode) {
-				((AntPropertyNode)node).configure();
+			if (!(node instanceof AntPropertyNode)) {
+				fNodeBeingResolved= node;
+				if (node.configure(fValidateFully)) {
+					//resolve any new elements
+					resolveBuildfile();
+				}
+			}
+		}
+		fNodeBeingResolved= null;
+	}
+
+	private void resolveProperties() {
+		if (fProperties != null) {
+			Iterator itr= fProperties.iterator();
+			while (itr.hasNext()) {
+				AntPropertyNode node = (AntPropertyNode)itr.next();
+				node.configure(fValidateFully);
 			}
 		}
 	}
@@ -313,6 +336,9 @@ public class AntModel {
 		fCurrentTargetNode= targetNode;
 		fStillOpenElements.push(targetNode);
 		computeOffset(targetNode, line, column);
+		if (fNodeBeingResolved instanceof AntImportNode) {
+			targetNode.setImportNode(fNodeBeingResolved);
+		}
 	}
 	
 	public void addProject(Project project, int line, int column) {
@@ -339,6 +365,9 @@ public class AntModel {
 		}
 		fStillOpenElements.push(taskNode);
 		computeOffset(taskNode, line, column);
+		if (fNodeBeingResolved instanceof AntImportNode) {
+			taskNode.setImportNode(fNodeBeingResolved);
+		}
 	}
 	
 	public void addEntity(String entityName, String entityPath) {
@@ -354,49 +383,55 @@ public class AntModel {
 		String taskName= newTask.getTaskName();
 		if (taskName.equalsIgnoreCase("property")) { //$NON-NLS-1$
 			newNode= new AntPropertyNode(newTask, attributes);
+			if (fProperties == null) {
+				fProperties= new ArrayList();
+			}
+			fProperties.add(newNode);
+		} else if (taskName.equalsIgnoreCase("import")) { //$NON-NLS-1$
+			newNode= new AntImportNode(newTask, attributes);
 		} else if (taskName.equalsIgnoreCase("macrodef")  //$NON-NLS-1$
         		|| taskName.equalsIgnoreCase("presetdef")) { //$NON-NLS-1$
-                    String name = attributes.getValue(IAntEditorConstants.ATTR_NAME);
+                    String name = attributes.getValue(IAntModelConstants.ATTR_NAME);
                     newNode= new AntTaskNode(newTask, name);
 		} else if(taskName.equalsIgnoreCase("antcall")) { //$NON-NLS-1$
-            newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntEditorConstants.ATTR_TARGET));
+            newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntModelConstants.ATTR_TARGET));
         } else if(taskName.equalsIgnoreCase("mkdir")) { //$NON-NLS-1$
-            newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntEditorConstants.ATTR_DIR));
+            newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntModelConstants.ATTR_DIR));
         } else if(taskName.equalsIgnoreCase("copy")) { //$NON-NLS-1$
-        	 newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntEditorConstants.ATTR_DESTFILE));
+        	 newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntModelConstants.ATTR_DESTFILE));
         } else if(taskName.equalsIgnoreCase("tar")  //$NON-NLS-1$
         	|| taskName.equalsIgnoreCase("jar") //$NON-NLS-1$
         	|| taskName.equalsIgnoreCase("war") //$NON-NLS-1$
         	|| taskName.equalsIgnoreCase("zip")) { //$NON-NLS-1$
-        	newNode= new AntTaskNode(newTask, generateLabel(newTask.getTaskName(), attributes, IAntEditorConstants.ATTR_DESTFILE));
+        	newNode= new AntTaskNode(newTask, generateLabel(newTask.getTaskName(), attributes, IAntModelConstants.ATTR_DESTFILE));
         } else if(taskName.equalsIgnoreCase("untar")  //$NON-NLS-1$
         	|| taskName.equalsIgnoreCase("unjar") //$NON-NLS-1$
         	|| taskName.equalsIgnoreCase("unwar") //$NON-NLS-1$
         	|| taskName.equalsIgnoreCase("gunzip") //$NON-NLS-1$
         	|| taskName.equalsIgnoreCase("bunzip2") //$NON-NLS-1$
         	|| taskName.equalsIgnoreCase("unzip")) { //$NON-NLS-1$
-        	newNode= new AntTaskNode(newTask, generateLabel(newTask.getTaskName(), attributes, IAntEditorConstants.ATTR_SRC));
+        	newNode= new AntTaskNode(newTask, generateLabel(newTask.getTaskName(), attributes, IAntModelConstants.ATTR_SRC));
         } else if(taskName.equalsIgnoreCase("gzip")  //$NON-NLS-1$
         		|| taskName.equalsIgnoreCase("bzip2")) { //$NON-NLS-1$
-        	newNode= new AntTaskNode(newTask, generateLabel(newTask.getTaskName(), attributes, IAntEditorConstants.ATTR_ZIPFILE));
+        	newNode= new AntTaskNode(newTask, generateLabel(newTask.getTaskName(), attributes, IAntModelConstants.ATTR_ZIPFILE));
         } else if(taskName.equalsIgnoreCase("exec")) { //$NON-NLS-1$
         	String label = "exec "; //$NON-NLS-1$
-            String command = attributes.getValue(IAntEditorConstants.ATTR_COMMAND);
+            String command = attributes.getValue(IAntModelConstants.ATTR_COMMAND);
             if(command != null) {
             	label += command;
             }
-            command = attributes.getValue(IAntEditorConstants.ATTR_EXECUTABLE);
+            command = attributes.getValue(IAntModelConstants.ATTR_EXECUTABLE);
             if(command != null) {
             	label += command;
             }
             newNode= new AntTaskNode(newTask, label);        
 		} else if(taskName.equalsIgnoreCase("delete")) { //$NON-NLS-1$
         	String label = "delete "; //$NON-NLS-1$
-            String file = attributes.getValue(IAntEditorConstants.ATTR_FILE);
+            String file = attributes.getValue(IAntModelConstants.ATTR_FILE);
             if(file != null) {
             	label+= file;
             } else {
-            	file = attributes.getValue(IAntEditorConstants.ATTR_DIR);
+            	file = attributes.getValue(IAntModelConstants.ATTR_DIR);
             	if(file != null) {
             		label+= file;
             	}
@@ -404,7 +439,7 @@ public class AntModel {
             newNode= new AntTaskNode(newTask, label);
         	
         } else if(taskName.equalsIgnoreCase("import")) { //$NON-NLS-1$
-        	newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntEditorConstants.ATTR_FILE)); //$NON-NLS-1$
+        	newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntModelConstants.ATTR_FILE)); //$NON-NLS-1$
         } else {   
         	newNode= new AntTaskNode(newTask);
         	if (id != null) {

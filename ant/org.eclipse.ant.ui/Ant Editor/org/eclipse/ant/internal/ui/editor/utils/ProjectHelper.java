@@ -113,6 +113,8 @@ public class ProjectHelper extends ProjectHelper2 {
 	
 	private static String currentEntityName= null;
 	
+	private static int currentImportStackSize= 1;
+	
 	/**
 	 * The Ant Model
 	 */
@@ -295,9 +297,10 @@ public class ProjectHelper extends ProjectHelper2 {
 		 */
 		public void onEndElement(String uri, String tag, AntXMLContext context) {
 			super.onEndElement(uri, tag, context);
-			
-			Locator locator= context.getLocator();
-			fAntModel.setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
+			if (currentImportStackSize == 1) {
+				Locator locator= context.getLocator();
+				fAntModel.setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
+			}
 		}
 		/* (non-Javadoc)
 		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#onStartElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes, org.apache.tools.ant.helper.AntXMLContext)
@@ -305,9 +308,10 @@ public class ProjectHelper extends ProjectHelper2 {
 		public void onStartElement(String uri, String tag, String qname, Attributes attrs, AntXMLContext context) {
 			try {
 				super.onStartElement(uri, tag, qname, attrs, context);
-				
-				Locator locator= context.getLocator();
-				fAntModel.addProject(context.getProject(), locator.getLineNumber(), locator.getColumnNumber());
+				if (currentImportStackSize == 1) {
+					Locator locator= context.getLocator();
+					fAntModel.addProject(context.getProject(), locator.getLineNumber(), locator.getColumnNumber());
+				}
 				
 			} catch (SAXParseException e) {
 				fAntModel.error(e);
@@ -561,6 +565,7 @@ public class ProjectHelper extends ProjectHelper2 {
 	 */
 	public void setBuildFile(File file) {
 		buildFile= file;
+		currentImportStackSize= 1;
 	}
 	
 	/* (non-Javadoc)
@@ -571,7 +576,8 @@ public class ProjectHelper extends ProjectHelper2 {
 	 * @see org.apache.tools.ant.ProjectHelper#parse(org.apache.tools.ant.Project, java.lang.Object)
 	 */
 	public void parse(Project project, Object source) throws BuildException {
-		 getImportStack().addElement(source);
+		getImportStack().addElement(source);
+		currentImportStackSize= getImportStack().size();
         AntXMLContext context = null;
         context = (AntXMLContext) project.getReference("ant.parsing.context"); //$NON-NLS-1$
         if (context == null) {

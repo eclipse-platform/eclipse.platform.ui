@@ -18,47 +18,40 @@ import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.xml.sax.Attributes;
 
-public class AntPropertyNode extends AntTaskNode {
+public class AntImportNode extends AntTaskNode {
 	
-	private String fValue= null;
+	private String fFile= null;
 	
-	public AntPropertyNode(Task task, Attributes attributes) {
+	public AntImportNode(Task task, Attributes attributes) {
 		super(task);
-		 String label = attributes.getValue(IAntModelConstants.ATTR_NAME);
-         if(label == null) {
-         	label = attributes.getValue(IAntModelConstants.ATTR_FILE);
-         	if(label != null) {
-         		label=  "file="+label; //$NON-NLS-1$
-         	} else {	
-         		label =  attributes.getValue(IAntModelConstants.ATTR_RESOURCE);
-         		if (label != null) {
-         			label= "resource="+label; //$NON-NLS-1$
-         		} else {
-         			label = attributes.getValue(IAntModelConstants.ATTR_ENVIRONMENT);
-         			if(label != null) {
-         				label= "environment=" + label; //$NON-NLS-1$
-         			}
-         		}
-         	}
-         } else {
-         	fValue= attributes.getValue(IAntModelConstants.ATTR_VALUE);
-         }
-         setLabel(label);
+         fFile= attributes.getValue(IAntModelConstants.ATTR_FILE);
 	}
 	
-	public String getValue() {
-		return fValue;
+	public String getFile() {
+		return fFile;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#getBaseImageDescriptor()
 	 */
 	protected ImageDescriptor getBaseImageDescriptor() {
-		return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_PROPERTY);
+		return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_IMPORT);
 	}
 	
+	public String getLabel() {
+		StringBuffer label= new StringBuffer(getTask().getTaskName());
+		label.append(' ');
+		label.append(fFile);
+		
+		if (isExternal()) {
+			appendEntityName(label);
+		}
+		return label.toString();
+	}
+
 	/**
-	 * Sets the property in the project.
+	 * Execute the import.
+	 * Returns <code>true</code> as the import adds to the Ant model
 	 */
 	public boolean configure(boolean validateFully) {
 		if (configured) {
@@ -68,8 +61,8 @@ public class AntPropertyNode extends AntTaskNode {
 			getTask().maybeConfigure();
 			getTask().execute();
 			configured= true;
+			return true;
 		} catch (BuildException be) {
-			
 		}
 		return false;
 	}
