@@ -13,10 +13,9 @@ package org.eclipse.ui.internal.editors.text;
 
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -375,33 +374,54 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	private String[][] createAnnotationTypeListModel(MarkerAnnotationPreferences preferences) {
 		ArrayList listModelItems= new ArrayList();
-		SortedSet sortedPreferences= new TreeSet(new Comparator() {
+		Iterator e= preferences.getAnnotationPreferences().iterator();
+		while (e.hasNext()) {
+			AnnotationPreference info= (AnnotationPreference) e.next();
+			if (info.isIncludeOnPreferencePage()) {
+				String label= info.getPreferenceLabel();
+				if (containsMoreThanOne(preferences.getAnnotationPreferences().iterator(), label))
+					label += " (" + info.getAnnotationType() + ")";  //$NON-NLS-1$//$NON-NLS-2$
+				listModelItems.add(new String[] { label, info.getColorPreferenceKey(), info.getTextPreferenceKey(), info.getOverviewRulerPreferenceKey(), info.getHighlightPreferenceKey(), info.getVerticalRulerPreferenceKey(), info.getTextStylePreferenceKey()});
+			}
+		}
+		
+		Comparator comparator= new Comparator() {
 			/*
 			 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 			 */
 			public int compare(Object o1, Object o2) {
-				if (!(o2 instanceof AnnotationPreference))
+				if (!(o2 instanceof String[]))
 					return -1;
-				if (!(o1 instanceof AnnotationPreference))
+				if (!(o1 instanceof String[]))
 					return 1;
 				
-				AnnotationPreference a1= (AnnotationPreference)o1;
-				AnnotationPreference a2= (AnnotationPreference)o2;
+				String label1= ((String[])o1)[0];
+				String label2= ((String[])o2)[0];
 				
-				return Collator.getInstance().compare(a1.getPreferenceLabel(), a2.getPreferenceLabel());
+				return Collator.getInstance().compare(label1, label2);
 				
 			}
-		});
-		sortedPreferences.addAll(preferences.getAnnotationPreferences());
-		Iterator e= sortedPreferences.iterator();
-		while (e.hasNext()) {
-			AnnotationPreference info= (AnnotationPreference) e.next();
-			if (info.isIncludeOnPreferencePage())
-				listModelItems.add(new String[] { info.getPreferenceLabel(), info.getColorPreferenceKey(), info.getTextPreferenceKey(), info.getOverviewRulerPreferenceKey(), info.getHighlightPreferenceKey(), info.getVerticalRulerPreferenceKey(), info.getTextStylePreferenceKey()});
-		}
+		};
+		Collections.sort(listModelItems, comparator);
+		
 		String[][] items= new String[listModelItems.size()][];
 		listModelItems.toArray(items);
 		return items;
+	}
+	
+	private boolean containsMoreThanOne(Iterator annotationPrefernceIterator, String label) {
+		if (label == null)
+			return false;
+
+		int count= 0;
+		while (annotationPrefernceIterator.hasNext()) {
+			if (label.equals(((AnnotationPreference)annotationPrefernceIterator.next()).getPreferenceLabel()))
+				count++;
+
+			if (count == 2)
+				return true;
+		}
+		return false;
 	}
 	
 	private static void indent(Control control) {
