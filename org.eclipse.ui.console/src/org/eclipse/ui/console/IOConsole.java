@@ -397,6 +397,11 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         } catch (IOException ioe) {
         }
         synchronized (patterns) {
+            Iterator iterator = patterns.iterator();
+            while (iterator.hasNext()) {
+                CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) iterator.next();
+                notifier.listener.disconnect();
+            }
             patterns.clear();
         }
         synchronized(attributes) {
