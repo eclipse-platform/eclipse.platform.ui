@@ -23,6 +23,8 @@ package org.eclipse.jface.text;
  * <ul>
  * <li> {@link org.eclipse.jface.text.IDocumentInformationMappingExtension} since version 3.0 extending the
  *      degree of detail of the mapping information.</li>
+ * <li> {@link org.eclipse.jface.text.IDocumentInformationMappingExtension2} since version 3.1, adding lenient
+ *      image region computation.</li>
  * </ul>
  * 
  * @since 2.1

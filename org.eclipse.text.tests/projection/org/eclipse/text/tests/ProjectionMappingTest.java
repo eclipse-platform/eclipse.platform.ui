@@ -391,15 +391,18 @@ public class ProjectionMappingTest extends TestCase {
 			// test a region starting outside a fragment and ending inside a fragment
 			imageRegion= fProjectionMapping.toExactImageRegion(new Region(45, 30));
 			assertEquals(null, imageRegion);
-			// test a region starting outside a fragment and ending outside a fragment
+			// test a region starting outside a fragment and ending outside a fragment (covering one)
 			imageRegion= fProjectionMapping.toExactImageRegion(new Region(45, 50));
+			assertEquals(null, imageRegion);
+			// test a region starting outside a fragment and ending outside a fragment (covering two)
+			imageRegion= fProjectionMapping.toExactImageRegion(new Region(15, 70));
 			assertEquals(null, imageRegion);
 			
 		} catch (BadLocationException e) {
 			assertTrue(false);
 		}
 	}
-
+	
 	public void test8() {
 		// test toImageRegion
 		
@@ -416,9 +419,66 @@ public class ProjectionMappingTest extends TestCase {
 			// test a region starting outside a fragment and ending inside a fragment
 			imageRegion= fProjectionMapping.toImageRegion(new Region(45, 30));
 			assertEquals(new Region(20, 15), imageRegion);
-			// test a region starting outside a fragment and ending outside a fragment
+			// test a region starting outside a fragment and ending outside a fragment (covering one)
 			imageRegion= fProjectionMapping.toImageRegion(new Region(45, 50));
 			assertEquals(new Region(20, 20), imageRegion);
+			// test a region starting outside a fragment and ending outside a fragment (covering two)
+			imageRegion= fProjectionMapping.toImageRegion(new Region(15, 70));
+			assertEquals(new Region(0, 40), imageRegion);
+			
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+	}
+
+	public void test8b() {
+		// test toImageRegion
+		
+		createStandardProjection();
+				
+		try {
+			// test a region contained by a fragment
+			IRegion imageRegion= fProjectionMapping.toClosestImageRegion(new Region(25, 10));
+			assertEquals(new Region(5, 10), imageRegion);
+			// test region of length 0
+			imageRegion= fProjectionMapping.toClosestImageRegion(new Region(25, 0));
+			assertEquals(new Region(5, 0), imageRegion);
+			// test a complete fragment
+			imageRegion= fProjectionMapping.toClosestImageRegion(new Region(20, 20));
+			assertEquals(new Region(0, 20), imageRegion);
+			// test a region spanning multiple fragments incompletely
+			imageRegion= fProjectionMapping.toClosestImageRegion(new Region(25, 50));
+			assertEquals(new Region(5, 30), imageRegion);
+			// test a region spanning multiple fragments completely
+			imageRegion= fProjectionMapping.toClosestImageRegion(new Region(20, 60));
+			assertEquals(new Region(0, 40), imageRegion);
+			// test a region non overlapping with a fragment
+			imageRegion= fProjectionMapping.toClosestImageRegion(new Region(45, 10));
+			assertEquals(new Region(20, 0), imageRegion);
+			// test a zero-length region at the end of the last fragment
+			imageRegion= fProjectionMapping.toClosestImageRegion(new Region(80, 0));
+			assertEquals(new Region(40, 0), imageRegion);
+			// test a region at the end of the last fragment
+			imageRegion= fProjectionMapping.toClosestImageRegion(new Region(80, 10));
+			assertEquals(new Region(40, 0), imageRegion);
+			// test a region before the first fragment
+			imageRegion= fProjectionMapping.toClosestImageRegion(new Region(10, 5));
+			assertEquals(new Region(0, 0), imageRegion);
+			// test a region surrounded by two fragments
+			imageRegion= fProjectionMapping.toClosestImageRegion(new Region(40, 20));
+			assertEquals(new Region(20, 0), imageRegion);
+			// test a region starting in a fragment and ending outside a fragment
+			imageRegion= fProjectionMapping.toClosestImageRegion(new Region(25, 30));
+			assertEquals(new Region(5, 15), imageRegion);
+			// test a region starting outside a fragment and ending inside a fragment
+			imageRegion= fProjectionMapping.toClosestImageRegion(new Region(45, 30));
+			assertEquals(new Region(20, 15), imageRegion);
+			// test a region starting outside a fragment and ending outside a fragment (covering one)
+			imageRegion= fProjectionMapping.toClosestImageRegion(new Region(45, 50));
+			assertEquals(new Region(20, 20), imageRegion);
+			// test a region starting outside a fragment and ending outside a fragment (covering two)
+			imageRegion= fProjectionMapping.toClosestImageRegion(new Region(15, 70));
+			assertEquals(new Region(0, 40), imageRegion);
 			
 		} catch (BadLocationException e) {
 			assertTrue(false);
