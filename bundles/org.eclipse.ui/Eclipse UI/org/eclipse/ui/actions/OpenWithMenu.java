@@ -39,6 +39,13 @@ import org.eclipse.swt.widgets.*;
 public class OpenWithMenu extends ContributionItem {
 	private IWorkbenchPage page;
 	private IAdaptable file;
+	
+	/**
+	 * The id of this action.
+	 */
+	public static final String ID = PlatformUI.PLUGIN_ID + ".OpenWithAction";//$NON-NLS-1$
+
+
 	private Sorter sorter = new Sorter() {
 		private Collator collator = Collator.getInstance();
 		
@@ -72,7 +79,7 @@ public OpenWithMenu(IWorkbenchPage page) {
  * @param file the selected file
  */
 public OpenWithMenu(IWorkbenchPage page, IAdaptable file) {
-	super("OpenWithMenu");//$NON-NLS-1$
+	super(ID);
 	this.page = page;
 	this.file = file;
 }
