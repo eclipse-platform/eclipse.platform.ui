@@ -29,7 +29,9 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
+import org.eclipse.jface.text.Region;
 import org.eclipse.ui.externaltools.internal.ant.AntSupportMessages;
+import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.*;
 import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntProcess;
 import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntStreamMonitor;
 import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntStreamsProxy;
@@ -59,11 +61,6 @@ public class AntProcessBuildLogger implements BuildLogger {
 	private AntProcess fProcess = null;
 	
 	/**
-	 * Current length of output
-	 */
-	private int fLength = 0;
-	
-	/**
 	 * @see org.eclipse.ui.externaltools.internal.ant.logger.NullBuildLogger#logMessage(java.lang.String, int)
 	 */
 	private void logMessage(String message, BuildEvent event, int overridePriority) {
@@ -82,14 +79,14 @@ public class AntProcessBuildLogger implements BuildLogger {
 		
 		AntStreamMonitor monitor = getMonitor(priority);
 		
-		if (event.getTarget() == null && event.getTarget() == null) {
+		if (event.getTarget() == null) {
 			// look for "Buildfile:" message
 			if (message.startsWith("Buildfile:")) { //$NON-NLS-1$
 				String fileName = message.substring(10).trim();
 				IFile file = getFileForLocation(fileName);
 				if (file != null) {
 					FileLink link = new FileLink(file, null,  -1, -1, -1);
-					addLink(link, fLength + 11 + StringUtils.LINE_SEP.length(), fileName.length());
+					TaskLinkManager.addTaskHyperlink(fProcess, link, new Region(11 + StringUtils.LINE_SEP.length(), fileName.length()), fileName);
 				}
 			}
 		}
@@ -106,7 +103,6 @@ public class AntProcessBuildLogger implements BuildLogger {
 		monitor.append(message);
 		logMessageToLogFile(message, priority);
 		
-		fLength += message.length();	
 	}
 
 	/**
@@ -128,21 +124,12 @@ public class AntProcessBuildLogger implements BuildLogger {
 		fullMessage.append('[');
 		fullMessage.append(name);
 		fullMessage.append("] "); //$NON-NLS-1$
-		int offset = fLength + Math.max(size, 0) + StringUtils.LINE_SEP.length();
-		int length = LEFT_COLUMN_SIZE - size - 1;
+		int offset = Math.max(size, 0) + 1;
+		int length = LEFT_COLUMN_SIZE - size - 3;
 		IConsoleHyperlink taskLink = getTaskLink(event);
 		if (taskLink != null) {
-			addLink(taskLink, offset, length);
+			TaskLinkManager.addTaskHyperlink(fProcess, taskLink, new Region(offset, length), name);
 		}
-	}
-	
-	/**
-	 * Adds the given link to the console
-	 *  
-	 * @param link
-	 */
-	protected void addLink(IConsoleHyperlink link, int offset, int length) {
-		fProcess.getConsole().addLink(link, offset, length);
 	}
 
 	private AntStreamMonitor getMonitor(int priority) {
