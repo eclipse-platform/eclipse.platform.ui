@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.Collator;
@@ -21,12 +22,14 @@ import java.util.Locale;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
@@ -42,9 +45,11 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * what is displayed is selectable through the
  * <code>org.eclipse.ui.systemSummaryExtensions</code> extension point.
  */
-public final class AboutSystemDialog extends Dialog {
-	
-	public AboutSystemDialog(Shell parentShell) {
+public final class AboutSystemDialog extends ProductInfoDialog {
+
+    private final static int BROWSE_ERROR_LOG_BUTTON = IDialogConstants.CLIENT_ID;
+
+    public AboutSystemDialog(Shell parentShell) {
 		super(parentShell);
 		setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.APPLICATION_MODAL);
 	}
@@ -62,7 +67,18 @@ public final class AboutSystemDialog extends Dialog {
 	 * Method declared on Dialog.
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.CLOSE_ID, IDialogConstants.CLOSE_LABEL, true);
+        parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+	    createButton(parent, BROWSE_ERROR_LOG_BUTTON, WorkbenchMessages
+                .getString("AboutSystemDialog.browseErrorLogName"), false); //$NON-NLS-1$
+
+        new Label(parent, SWT.NONE).setLayoutData(new GridData(
+                GridData.FILL_HORIZONTAL));
+        GridLayout layout = (GridLayout) parent.getLayout();
+        layout.numColumns++;
+        layout.makeColumnsEqualWidth = false;
+
+        createButton(parent, IDialogConstants.CLOSE_ID, IDialogConstants.CLOSE_LABEL, true);
 	}
 
 	/* (non-Javadoc)
@@ -165,9 +181,30 @@ public final class AboutSystemDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
 	protected void buttonPressed(int buttonId) {
-		if (buttonId == IDialogConstants.CLOSE_ID) {
+	    switch (buttonId) {
+	    case IDialogConstants.CLOSE_ID:
 			close();
+	    	break;
+	    case BROWSE_ERROR_LOG_BUTTON:
+	        openErrorLogBrowser();
+	        break;
 		}
 		super.buttonPressed(buttonId);
+	}
+
+	private void openErrorLogBrowser() {
+	    String filename = Platform.getLogFileLocation().toOSString();
+
+        File log = new File(filename);
+        if (log.exists()) {
+            openLink(filename);
+            return;
+        }
+
+        MessageDialog.openInformation(
+                getShell(),
+                WorkbenchMessages.getString("AboutSystemDialog.noLogTitle"), //$NON-NLS-1$
+                WorkbenchMessages.format("AboutSystemDialog.noLogMessage", //$NON-NLS-1$
+                        new String[] { filename }));
 	}
 }

@@ -1334,11 +1334,6 @@
             class="org.eclipse.ui.internal.about.ConfigurationLogDefaultSection"
             id="10.DefaultSection">
       </section>
-      <section
-            sectionTitle="Error Log"
-            class="org.eclipse.ui.internal.about.ConfigurationLogErrorLogSection"
-            id="20.ErrorLogSection">
-      </section>
    </extension>
    <extension
          point="org.eclipse.ui.presentationFactories">
