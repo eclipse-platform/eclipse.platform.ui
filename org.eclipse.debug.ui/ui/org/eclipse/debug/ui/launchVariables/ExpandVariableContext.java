@@ -18,7 +18,6 @@ import org.eclipse.core.resources.IResource;
  * @since 3.0
  */
 public class ExpandVariableContext {
-	public static final ExpandVariableContext EMPTY_CONTEXT = new ExpandVariableContext(null);
 	
 	private IProject project = null;
 	private IResource selectedResource = null;
