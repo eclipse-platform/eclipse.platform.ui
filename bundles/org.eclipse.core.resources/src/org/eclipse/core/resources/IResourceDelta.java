@@ -199,6 +199,7 @@ public void accept(IResourceDeltaVisitor visitor, boolean includePhantoms) throw
  * @param path the path of the desired descendent delta
  * @return the descendent delta, or <code>null</code> if no such
  * 		descendent exists in the delta
+ * @since 2.0
  */
 public IResourceDelta findMember(IPath path);
 /**

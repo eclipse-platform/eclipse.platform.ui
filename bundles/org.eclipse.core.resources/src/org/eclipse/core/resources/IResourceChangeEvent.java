@@ -147,6 +147,7 @@ public interface IResourceChangeEvent {
  * @param type the type of marker to consider, or <code>null</code> to indicate all types
  * @param includeSubtypes whether or not to consider subtypes of the given type
  * @return an array of marker deltas
+ * @since 2.0
  */
 public IMarkerDelta[] findMarkerDeltas(String type, boolean includeSubtypes);
 /**

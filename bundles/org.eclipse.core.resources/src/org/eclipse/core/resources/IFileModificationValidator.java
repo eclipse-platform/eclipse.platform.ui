@@ -7,7 +7,9 @@ package org.eclipse.core.resources;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;
-
+/**
+ * @since 2.0
+ */
 public interface IFileModificationValidator {
 /**
  * Validates that the given files can be modified.  The files must all exist
@@ -29,7 +31,7 @@ public IStatus validateEdit(IFile[] files, Object context);
  * that the save will succeed.
  * 
  * @return a status indicating whether or not it is reasonable to try writing to the given file.
- *	A return value with an <code>IStatus.OK<code> code indicates a save should be attempted.
+ *	A return value with an <code>IStatus.OK</code> code indicates a save should be attempted.
  */
 public IStatus validateSave(IFile file);
 }
