@@ -105,7 +105,7 @@ public class Theme implements ITheme {
                     	return;
                     try { 
 	                    if (themeColorRegistry != null) { // we're using cascading registries
-	                        if (((CascadingColorRegistry)getColorRegistry()).hasOverrideFor(key) && theme != null && theme.equals(getId())) {
+	                        if (getColorRegistry().hasValueFor(key) && theme != null && theme.equals(getId())) {
 		                        RGB rgb = StringConverter.asRGB((String) event.getNewValue());
 		                        getColorRegistry().put(key, rgb);
 		                        processDefaultsTo(key, rgb);
@@ -122,7 +122,7 @@ public class Theme implements ITheme {
 	                    }	 
 	                    
 	                    if (themeFontRegistry != null) {
-	                        if (((CascadingFontRegistry)getFontRegistry()).hasOverrideFor(key)  && theme != null && theme.equals(getId())) {
+	                        if (getFontRegistry().hasValueFor(key)  && theme != null && theme.equals(getId())) {
 		                        FontData [] data = PreferenceConverter.basicGetFontData((String) event.getNewValue());
 		                        getFontRegistry().put(key, data);
 		                        processDefaultsTo(key, data);
