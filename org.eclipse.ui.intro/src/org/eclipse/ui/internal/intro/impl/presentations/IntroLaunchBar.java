@@ -135,6 +135,8 @@ public class IntroLaunchBar {
 		};
 		closeAction.setText(IntroPlugin.getString("IntroLaunchBar.close.label")); //$NON-NLS-1$
 		closeAction.setToolTipText(IntroPlugin.getString("IntroLaunchBar.close.tooltip")); //$NON-NLS-1$
+		closeAction.setImageDescriptor(ImageUtil.
+				createImageDescriptor("full/elcl16/close_view.gif")); //$NON-NLS-1$
 
 		action = new Action("restore") { //$NON-NLS-1$
 			public void run() {
@@ -144,6 +146,7 @@ public class IntroLaunchBar {
 		action.setToolTipText(IntroPlugin.getString("IntroLaunchBar.restore.tooltip")); //$NON-NLS-1$
 		action.setImageDescriptor(ImageUtil
 				.createImageDescriptor("full/etool16/restore_welcome.gif")); //$NON-NLS-1$
+		toolBarManager.add(closeAction);
 		toolBarManager.add(action);
 		toolBarManager.add(new Separator());
 		if (element == null)
