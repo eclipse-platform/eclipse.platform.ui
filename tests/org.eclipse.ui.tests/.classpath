@@ -13,5 +13,6 @@
         path="D:/eclipse/plugins/org.eclipse.swt/swt.jar" sourcepath="D:/eclipse/plugins/org.eclipse.swt/swtsrc.zip"/>
     <classpathentry kind="lib" path="/org.junit/junit.jar"/>
     <classpathentry kind="src" path="Eclipse UI Tests"/>
+    <classpathentry kind="src" path="/org.eclipse.ui.test.harness.launcher"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

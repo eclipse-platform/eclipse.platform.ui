@@ -1,19 +1,20 @@
 package org.eclipse.ui.tests.api;
-
 import org.eclipse.ui.*;
 
-
 /**
- * This test generates a session state in the workbench.
- * The SessionRestoreTest is used to verify the state after
- * the workbench is shutdown and run again.
- */
-public class SessionRestoreTest extends AbstractTestCase {
+ * SessionTest2 runs the second half of our session
+ * presistance tests.
+ * 
+*/
+public class SessionTest2 extends AbstractTestCase {
 
-	public SessionRestoreTest(String testName) {
-		super(testName);
+	/** 
+	 * Construct an instance.
+	 */
+	public SessionTest2() {
+		super("testRestore");
 	}
-	
+		
 	/**
 	 * Generates a session state in the workbench.
 	 */
@@ -41,7 +42,7 @@ public class SessionRestoreTest extends AbstractTestCase {
 			IWorkbenchPage [] pages = windows[nX].getPages();
 			for (int nY = 0; nY < pages.length; nY ++) {
 				IPerspectiveDescriptor desc = pages[nY].getPerspective();
-				if (desc.getId().equals(SessionCreateTest.SESSION_PERSPID_ID))
+				if (desc.getId().equals(SessionTest1.SESSION_PERSPID_ID))
 					return pages[nY];
 			}
 		}

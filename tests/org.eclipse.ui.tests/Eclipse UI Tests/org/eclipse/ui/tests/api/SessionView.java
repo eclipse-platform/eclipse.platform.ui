@@ -3,7 +3,6 @@ package org.eclipse.ui.tests.api;
 import junit.framework.TestCase;
 import org.eclipse.ui.*;
 
-
 /**
  * This view is used to test the creation and restoration of 
  * view state between sessions.

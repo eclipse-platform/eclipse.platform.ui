@@ -26,11 +26,11 @@
 		id="ui.api.TestSuite"
 		class="org.eclipse.ui.tests.api.ApiTestSuite"/>
 	<uiTest 
-		id="ui.api.PlatformUITest"
-		class="org.eclipse.ui.tests.api.PlatformUITest"/>
+		id="ui.api.SessionTest1"
+		class="org.eclipse.ui.tests.api.SessionTest1"/>
 	<uiTest 
-		id="ui.api.IWorkbenchTest"
-		class="org.eclipse.ui.tests.api.IWorkbenchTest"/>
+		id="ui.api.SessionTest2"
+		class="org.eclipse.ui.tests.api.SessionTest2"/>
 </extension>
 
 <extension 
@@ -38,6 +38,11 @@
 	<perspective
 		id="org.eclipse.ui.tests.api.EmptyPerspective"
 		name="Empty Perspective"
+		class="org.eclipse.ui.tests.api.EmptyPerspective">
+	</perspective>
+	<perspective
+		id="org.eclipse.ui.tests.api.SessionPerspective"
+		name="Session Perspective"
 		class="org.eclipse.ui.tests.api.EmptyPerspective">
 	</perspective>
 </extension>
@@ -59,6 +64,11 @@
 	   name="Mock View 3"
        icon="icons\view.gif"
 	   class="org.eclipse.ui.tests.api.MockViewPart"/>
+	<view
+       id="org.eclipse.ui.tests.api.SessionView"
+	   name="SessionView"
+       icon="icons\view.gif"
+	   class="org.eclipse.ui.tests.api.SessionView"/>
 </extension>
 
 <extension
