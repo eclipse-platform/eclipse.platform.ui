@@ -386,7 +386,6 @@ protected Button createButton(Composite parent, int id, String label, boolean de
 	Button button = new Button(parent, SWT.PUSH);
 
 	button.setText(label);
-	setButtonLayoutData(button);
 	
 	button.setData(new Integer(id));
 	button.addSelectionListener(new SelectionAdapter() {
@@ -402,6 +401,7 @@ protected Button createButton(Composite parent, int id, String label, boolean de
 	}
 	button.setFont(parent.getFont());
 	buttons.put(new Integer(id), button);
+	setButtonLayoutData(button);
 	
 	return button;
 }
@@ -465,6 +465,16 @@ protected void createButtonsForButtonBar(Composite parent) {
 	createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 	createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 }
+
+/*
+ * @see Window.configureShell()
+ */
+protected void configureShell(Shell newShell) {
+
+	super.configureShell(newShell);
+	newShell.setFont(JFaceResources.getDialogFont());
+}
+
 /**
  * The <code>Dialog</code> implementation of this <code>Window</code> method 
  * creates and lays out the top level composite for the dialog, and
@@ -484,7 +494,7 @@ protected Control createContents(Composite parent) {
 	layout.verticalSpacing = 0;
 	composite.setLayout(layout);
 	composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-	composite.setFont(JFaceResources.getDialogFont());
+	composite.setFont(parent.getFont());
 
 	// initialize the dialog units
 	initializeDialogUnits(composite);
