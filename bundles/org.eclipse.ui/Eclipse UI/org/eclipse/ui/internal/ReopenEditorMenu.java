@@ -75,13 +75,14 @@ public class ReopenEditorMenu extends ContributionItem {
 				sb.append("]"); //$NON-NLS-1$
 			}
 		} else {
-			// need to shorten the item name
 			int length = fileName.length();
 			if (length > MAX_TEXT_LENGTH) {
 				// file name does not fit within length, truncate it
 				sb.append(fileName.substring(0, MAX_TEXT_LENGTH - 3));
 				sb.append("..."); //$NON-NLS-1$
-			} else {				
+			} else if (length > MAX_TEXT_LENGTH - 7) {
+				sb.append(fileName);
+			} else {
 				sb.append(fileName);
 				int segmentCount = path.segmentCount();
 				if (segmentCount > 0) {
@@ -91,7 +92,7 @@ public class ReopenEditorMenu extends ContributionItem {
 
 					// Add first n segments that fit
 					int i = 0;
-					while (i < segmentCount) {
+					while (i < segmentCount && length < MAX_TEXT_LENGTH) {
 						String segment = path.segment(i);
 						if (length + segment.length() < MAX_TEXT_LENGTH) {
 							sb.append(segment);
@@ -112,7 +113,7 @@ public class ReopenEditorMenu extends ContributionItem {
 
 					i = segmentCount - 1;
 					// Add last n segments that fit
-					while (i > 0) {			
+					while (i > 0 && length < MAX_TEXT_LENGTH) {			
 						String segment = path.segment(i);
 						if (length + segment.length() < MAX_TEXT_LENGTH) {
 							sb.append(path.SEPARATOR);
@@ -156,14 +157,22 @@ public class ReopenEditorMenu extends ContributionItem {
 		// Add one item for each item.
 		for (int i = 0; i < array.length; i++) {
 			final EditorHistoryItem item = array[i];
-			MenuItem mi = new MenuItem(menu, SWT.PUSH, index);
-			++index;
-			mi.setText(calcText(i, item));
-			mi.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					open(item);
-				}
-			});
+			try {
+				String text = calcText(i, item);
+				MenuItem mi = new MenuItem(menu, SWT.PUSH, index);
+				++index;
+				mi.setText(text);
+				mi.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						open(item);
+					}
+				});
+			}
+			catch (RuntimeException e) {
+				// just skip the item if there's an error,
+				// e.g. in the calculation of the shortened name
+				WorkbenchPlugin.log("Error in ReopenEditorMenu.fill: " + e);  // $NON-NLS-1
+			}
 		}
 	}
 	/**
