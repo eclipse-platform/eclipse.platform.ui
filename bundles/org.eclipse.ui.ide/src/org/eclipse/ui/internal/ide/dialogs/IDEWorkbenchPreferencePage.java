@@ -68,6 +68,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 		createExitPromptPref(composite);
 		createShowTasksOnAutoBuildPref(composite);
 		createStickyCyclePref(composite);
+		createShowUserDialogPref(composite);
 
 		createSpace(composite);
 		createSaveIntervalGroup(composite);

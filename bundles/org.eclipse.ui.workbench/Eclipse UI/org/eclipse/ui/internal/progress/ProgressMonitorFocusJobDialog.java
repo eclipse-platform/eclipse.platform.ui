@@ -48,8 +48,13 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
         super(parent);
         setCancelable(true);
         job = jobToWatch;
+    }
 
-        jobToWatch.addJobChangeListener(new JobChangeAdapter() {
+    /**
+     * Schedule the opening of the dialog.
+     */
+    public void scheduleOpen() {
+        job.addJobChangeListener(new JobChangeAdapter() {
 
             /*
              * (non-Javadoc)
@@ -57,7 +62,9 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
              * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
              */
             public void aboutToRun(IJobChangeEvent event) {
-                WorkbenchJob openJob = new WorkbenchJob(ProgressMessages.getString("ProgressMonitorFocusJobDialog.OpenDialogJob")) { //$NON-NLS-1$
+                WorkbenchJob openJob = new WorkbenchJob(
+                        ProgressMessages
+                                .getString("ProgressMonitorFocusJobDialog.OpenDialogJob")) { //$NON-NLS-1$
 
                     /*
                      * (non-Javadoc)
@@ -66,7 +73,7 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
                      */
                     public IStatus runInUIThread(IProgressMonitor monitor) {
                         create();
-                        ProgressManager.getInstance().progressFor(jobToWatch)
+                        ProgressManager.getInstance().progressFor(job)
                                 .addProgressListener(
                                         getBlockingProgressMonitor());
 
@@ -86,7 +93,9 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
              * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
              */
             public void done(IJobChangeEvent event) {
-                WorkbenchJob closeJob = new WorkbenchJob(ProgressMessages.getString("ProgressMonitorFocusJobDialog.CLoseDialogJob")) { //$NON-NLS-1$
+                WorkbenchJob closeJob = new WorkbenchJob(
+                        ProgressMessages
+                                .getString("ProgressMonitorFocusJobDialog.CLoseDialogJob")) { //$NON-NLS-1$
 
                     /*
                      * (non-Javadoc)
@@ -338,8 +347,12 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
     protected void createButtonsForButtonBar(Composite parent) {
         createDetailsButton(parent);
 
-        Button runInWorkspace = createButton(parent, IDialogConstants.CLOSE_ID,
-                ProgressMessages.getString("ProgressMonitorFocusJobDialog.RunInBackgroundButton"), false); //$NON-NLS-1$
+        Button runInWorkspace = createButton(
+                parent,
+                IDialogConstants.CLOSE_ID,
+                ProgressMessages
+                        .getString("ProgressMonitorFocusJobDialog.RunInBackgroundButton"), //$NON-NLS-1$
+                false);
         runInWorkspace.addSelectionListener(new SelectionAdapter() {
 
             /*
@@ -351,18 +364,19 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
                 close();
             }
         });
-        
+
         runInWorkspace.setCursor(arrowCursor);
         createSpacer(parent);
         createCancelButton(parent);
     }
-    
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#configureShell(org.eclipse.swt.widgets.Shell)
      */
     protected void configureShell(Shell shell) {
-      super.configureShell(shell);
-      shell.setText(job.getName());
+        super.configureShell(shell);
+        shell.setText(job.getName());
     }
 }

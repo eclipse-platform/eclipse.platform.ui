@@ -479,6 +479,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.MULTI_KEY_ASSIST, false);
 		store.setDefault(IPreferenceConstants.MULTI_KEY_ASSIST_TIME, 1000);			
 		
+		//Option to show user jobs in a dialog
+		store.setDefault(IPreferenceConstants.SHOW_USER_JOBS_IN_DIALOG,true);
+		
 		// Temporary option to enable wizard for project capability
 		store.setDefault("ENABLE_CONFIGURABLE_PROJECT_WIZARD", false); //$NON-NLS-1$
 		// Temporary option to enable single click

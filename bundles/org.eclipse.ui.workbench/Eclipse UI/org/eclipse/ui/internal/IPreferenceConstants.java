@@ -210,4 +210,8 @@ public interface IPreferenceConstants {
 	 */	
 	public static String CURRENT_THEME_ID = "CURRENT_THEME_ID"; //$NON-NLS-1$
 	
+	/**
+	 * Preference to show user jobs in a dialog.
+	 */
+	public static String SHOW_USER_JOBS_IN_DIALOG = "SHOW_USER_JOBS_IN_DIALOG"; //$NON-NLS-1$
 }
