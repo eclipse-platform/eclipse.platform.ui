@@ -46,7 +46,8 @@ public class NewFolderDialog extends SelectionDialog {
 	private CreateLinkedResourceGroup linkedResourceGroup;
 	private MessageLine statusLine;	
 
-	IContainer container;
+	private IContainer container;
+	private boolean firstLinkCheck = true;
 	
 /**
  * Creates a NewFolderDialog
@@ -62,6 +63,7 @@ public NewFolderDialog(Shell parentShell, IContainer container) {
 		new Listener() {
 			public void handleEvent(Event e) {
 				validateLinkedResource();
+				firstLinkCheck = false;
 			}
 		});
 	setTitle(WorkbenchMessages.getString("NewFolderDialog.title")); //$NON-NLS-1$
@@ -223,7 +225,20 @@ protected void okPressed() {
  */
 private void updateStatus(IStatus status) {
 	if (statusLine != null && statusLine.isDisposed() == false) {
-		statusLine.setErrorStatus(status);
+		if (firstLinkCheck && status != null) {
+			// don't show the first validation result as an error.
+			// fixes bug 29659
+			Status newStatus = new Status(
+				IStatus.OK, 
+				status.getPlugin(), 
+				status.getCode(), 
+				status.getMessage(), 
+				status.getException());
+			statusLine.setErrorStatus(newStatus);
+		}
+		else {
+			statusLine.setErrorStatus(status);
+		}
 	}
 }
 /**

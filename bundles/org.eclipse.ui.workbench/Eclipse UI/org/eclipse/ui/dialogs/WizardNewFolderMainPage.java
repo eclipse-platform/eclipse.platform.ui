@@ -64,6 +64,21 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	private ResourceAndContainerGroup resourceGroup;
 	private Button advancedButton;
 	private CreateLinkedResourceGroup linkedResourceGroup;
+
+	/**
+	 * Whether or not the advanced widget group is currently visible.
+	 */
+	private boolean linkedResourceGroupVisible = false;
+	/**
+	 * Height of the "advanced" linked resource group. Set when the
+	 * advanced group is first made visible. 
+	 */
+	private int linkedResourceGroupHeight = -1;
+	/**
+	 * First time the advanced group is validated.
+	 */	
+	private boolean firstLinkCheck = true;
+	
 /**
  * Creates a new folder creation wizard page. If the initial resource selection 
  * contains exactly one container resource then it will be used as the default
@@ -95,6 +110,14 @@ protected void createAdvancedControls(Composite parent) {
 			handleAdvancedButtonSelect();
 		}
 	});
+	linkedResourceGroup = new CreateLinkedResourceGroup(
+		IResource.FOLDER,
+		new Listener() {
+			public void handleEvent(Event e) {
+				setPageComplete(validatePage());
+				firstLinkCheck = false;					
+			}
+		});
 }
 /** (non-Javadoc)
  * Method declared on IDialogPage.
@@ -171,14 +194,9 @@ protected IFolder createFolderHandle(IPath folderPath) {
  * Creates the link target path if a link target has been specified. 
  */
 protected void createLinkTarget() {
-	if (linkedResourceGroup != null) {
-		String linkTarget = linkedResourceGroup.getLinkTarget();
-		if (linkTarget != null) {
-			linkTargetPath = new Path(linkTarget);
-		}
-		else {
-			linkTargetPath = null;
-		}
+	String linkTarget = linkedResourceGroup.getLinkTarget();
+	if (linkTarget != null) {
+		linkTargetPath = new Path(linkTarget);
 	}
 	else {
 		linkTargetPath = null;
@@ -259,41 +277,24 @@ public IFolder createNewFolder() {
  */
 protected void handleAdvancedButtonSelect() {
 	Shell shell = getShell();
-	
-	if (linkedResourceGroup != null) {
-		Composite composite = (Composite) getControl();
-		linkedResourceGroup.dispose();
-		linkedResourceGroup = null;
-		setPageComplete(validatePage());
+	Point shellSize = shell.getSize();
+	Composite composite = (Composite) getControl();
+						
+	if (linkedResourceGroupHeight == -1) {
+		Composite linkedResourceComposite = linkedResourceGroup.createContents(composite);
+		Point groupSize = linkedResourceComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		
+		linkedResourceGroupHeight = groupSize.y; 
+	}
+	if (linkedResourceGroupVisible) {
+		linkedResourceGroupVisible = false;
+		shell.setSize(shellSize.x, shellSize.y - linkedResourceGroupHeight);
 		advancedButton.setText(WorkbenchMessages.getString("WizardNewFolderMainPage.advancedButtonCollapsed"));
-		
-		Point newSize = composite.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		Point oldSize = composite.getSize();
-		int heightDelta = newSize.y - oldSize.y; 
-		if (heightDelta < 0) {
-			Point shellSize = shell.getSize();
-			shell.setSize(shellSize.x, shellSize.y + heightDelta);
-		}
 	} else {
-		Composite composite = (Composite) getControl();
-		linkedResourceGroup = new CreateLinkedResourceGroup(
-			IResource.FOLDER,
-			new Listener() {
-				public void handleEvent(Event e) {
-					setPageComplete(validatePage());
-				}
-			});
-		linkedResourceGroup.createContents(composite);
+		linkedResourceGroupVisible = true;		
+		shell.setSize(shellSize.x, shellSize.y + linkedResourceGroupHeight);
+		composite.layout();
 		advancedButton.setText(WorkbenchMessages.getString("WizardNewFolderMainPage.advancedButtonExpanded"));
-		
-		Point newSize = composite.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		Point oldSize = composite.getSize();
-		int widthDelta = Math.max(newSize.x - oldSize.x, 0);
-		int heightDelta = Math.max(newSize.y - oldSize.y, 0); 
-		if (widthDelta > 0 || heightDelta > 0) {
-			Point shellSize = shell.getSize();
-			shell.setSize(shellSize.x + widthDelta, shellSize.y + heightDelta);
-		}
 	}
 }
 /**
@@ -327,6 +328,14 @@ protected void initializePage() {
 
 	setPageComplete(false);
 }
+/*
+ * @see DialogPage.setVisible(boolean)
+ */
+public void setVisible(boolean visible) {
+	super.setVisible(visible);
+	if(visible)
+		resourceGroup.setFocus();
+}
 /**
  * Checks whether the linked resource target is valid.
  * Sets the error message accordingly and returns the status.
@@ -340,7 +349,10 @@ protected IStatus validateLinkedResource() {
 	IStatus status = linkedResourceGroup.validateLinkLocation(newFolderHandle);
 
 	if (status.getSeverity() == IStatus.ERROR) {
-		setErrorMessage(status.getMessage());
+		if (firstLinkCheck)
+			setMessage(status.getMessage());
+		else
+			setErrorMessage(status.getMessage());		
 	} else if (status.getSeverity() == IStatus.WARNING) {
 		setMessage(status.getMessage(), WARNING);
 		setErrorMessage(null);		
@@ -358,7 +370,6 @@ protected boolean validatePage() {
 	boolean valid = true;
 	
 	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
-
     IStatus nameStatus = null;
     String folderName = resourceGroup.getResource();
     if (folderName.indexOf(IPath.SEPARATOR) != -1) {
@@ -372,13 +383,12 @@ protected boolean validatePage() {
         }
     }
    
-   //If the name status was not set validate using the name
-   	if(nameStatus == null)
-        nameStatus =
-            workspace.validateName(folderName, IResource.FOLDER);
-            
-    if (!nameStatus.isOK()) {
-        setErrorMessage(nameStatus.getMessage());
+ 	//If the name status was not set validate using the name
+   	if(nameStatus == null && folderName.length() > 0)
+        nameStatus = workspace.validateName(folderName, IResource.FOLDER);
+   
+    if (nameStatus != null && !nameStatus.isOK()) {
+       	setErrorMessage(nameStatus.getMessage());
         return false;
     }
 
@@ -388,13 +398,14 @@ protected boolean validatePage() {
 			|| resourceGroup.getProblemType() == ResourceAndContainerGroup.PROBLEM_CONTAINER_EMPTY) {
 			setMessage(resourceGroup.getProblemMessage());
 			setErrorMessage(null);
-		} else
+		} else {
 			setErrorMessage(resourceGroup.getProblemMessage());
+		}
 		valid = false;
 	}
 
 	IStatus linkedResourceStatus = null;
-	if (valid && linkedResourceGroup != null) {
+	if (valid) {
 		linkedResourceStatus = validateLinkedResource();
 		if (linkedResourceStatus.getSeverity() == IStatus.ERROR)
 			valid = false;
@@ -405,14 +416,6 @@ protected boolean validatePage() {
 		setErrorMessage(null);
 	}
 	return valid;
-}
-/*
- * @see DialogPage.setVisible(boolean)
- */
-public void setVisible(boolean visible) {
-	super.setVisible(visible);
-	if(visible)
-		resourceGroup.setFocus();
 }
 
 }

@@ -45,7 +45,8 @@ public class CreateLinkedResourceGroup {
 	private Text linkTargetField;
 	private Button browseButton;
 	private Button variablesButton;
-	private Label resolvedPathLabel;
+	private Label resolvedPathLabelText;
+	private Label resolvedPathLabelData;
  
 /**
  * Creates a link target group 
@@ -71,7 +72,6 @@ public Composite createContents(Composite parent) {
 	// top level group
 	groupComposite = new Composite(parent,SWT.NONE);
 	GridLayout layout = new GridLayout();
-	layout.numColumns = 3;
 	groupComposite.setLayout(layout);
 	groupComposite.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
@@ -83,9 +83,6 @@ public Composite createContents(Composite parent) {
 	else
 		createLinkButton.setText(WorkbenchMessages.getString("CreateLinkedResourceGroup.linkFolderButton")); //$NON-NLS-1$
 	createLinkButton.setSelection(createLink);
-	GridData data = new GridData();
-	data.horizontalSpan = 3;
-	createLinkButton.setLayoutData(data);
 	createLinkButton.setFont(font);
 	SelectionListener selectionListener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -110,15 +107,26 @@ public Composite createContents(Composite parent) {
  */
 private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 	Font font = locationGroup.getFont();
-	Label fill = new Label(locationGroup, SWT.NONE);
-	GridData data = new GridData();
 	Button button = new Button(locationGroup, SWT.CHECK);
-	data.widthHint = button.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+	int indent = button.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+	
 	button.dispose();
-	fill.setLayoutData(data);
-		
+
+	// linkTargetGroup is necessary to decouple layout from 
+	// resolvedPathGroup layout
+	Composite linkTargetGroup = new Composite(locationGroup, SWT.NONE);
+	GridLayout layout = new GridLayout();
+	layout.numColumns = 3;
+	layout.marginHeight = 0;
+	layout.marginWidth = 0;
+	linkTargetGroup.setLayout(layout);
+	GridData data = new GridData(GridData.FILL_HORIZONTAL);
+	data.horizontalIndent = indent;
+	linkTargetGroup.setLayoutData(data);
+	linkTargetGroup.setFont(font);
+	
 	// link target location entry field
-	linkTargetField = new Text(locationGroup, SWT.BORDER);
+	linkTargetField = new Text(linkTargetGroup, SWT.BORDER);
 	data = new GridData(GridData.FILL_HORIZONTAL);
 	linkTargetField.setLayoutData(data);
 	linkTargetField.setFont(font);
@@ -135,7 +143,7 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 	}
 
 	// browse button
-	browseButton = new Button(locationGroup, SWT.PUSH);
+	browseButton = new Button(linkTargetGroup, SWT.PUSH);
 	setButtonLayoutData(browseButton);
 	browseButton.setFont(font);
 	browseButton.setText(WorkbenchMessages.getString("CreateLinkedResourceGroup.browseButton")); //$NON-NLS-1$
@@ -146,16 +154,8 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 	});
 	browseButton.setEnabled(enabled);
 
-	fill = new Label(locationGroup, SWT.NONE);
-	data = new GridData();
-	fill.setLayoutData(data);
-	
-	resolvedPathLabel = new Label(locationGroup, SWT.SINGLE);
-	data = new GridData(GridData.FILL_HORIZONTAL);
-	resolvedPathLabel.setLayoutData(data);
-
 	// variables button
-	variablesButton = new Button(locationGroup, SWT.PUSH);
+	variablesButton = new Button(linkTargetGroup, SWT.PUSH);
 	setButtonLayoutData(variablesButton);
 	variablesButton.setFont(font);
 	variablesButton.setText(WorkbenchMessages.getString("CreateLinkedResourceGroup.variablesButton")); //$NON-NLS-1$
@@ -165,6 +165,24 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 		}
 	});
 	variablesButton.setEnabled(enabled);
+
+	Composite resolvedPathGroup = new Composite(locationGroup, SWT.NONE);
+	layout = new GridLayout();
+	layout.numColumns = 2;
+	layout.marginHeight = 0;
+	layout.marginWidth = 0;
+	resolvedPathGroup.setLayout(layout);
+	data = new GridData(GridData.FILL_HORIZONTAL);
+	data.horizontalIndent = indent;
+	resolvedPathGroup.setLayoutData(data);
+	resolvedPathGroup.setFont(font);
+
+	resolvedPathLabelText = new Label(resolvedPathGroup, SWT.SINGLE);
+	resolvedPathLabelText.setText(WorkbenchMessages.getString("CreateLinkedResourceGroup.resolvedPathLabel")); //$NON-NLS-1$
+
+	resolvedPathLabelData = new Label(resolvedPathGroup, SWT.SINGLE);
+	data = new GridData(GridData.FILL_HORIZONTAL);
+	resolvedPathLabelData.setLayoutData(data);
 }
 /**
  * Returns a new status object with the given severity and message.
@@ -283,18 +301,10 @@ private void resolveVariable() {
 	
 	if (path.isAbsolute() == false) {
 		IPathVariableManager pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
-		IPath resolvedPath = pathVariableManager.resolvePath(path);
-	
-		if (path != resolvedPath) {
-			resolvedPathLabel.setText(resolvedPath.toOSString());
-		}
-		else {
-			resolvedPathLabel.setText("");	//$NON-NLS-1$
-		}
+		
+		path = pathVariableManager.resolvePath(path);
 	}
-	else {
-		resolvedPathLabel.setText("");	//$NON-NLS-1$
-	}
+	resolvedPathLabelData.setText(path.toOSString());
 }
 /**
  * Sets the <code>GridData</code> on the specified button to
@@ -376,6 +386,9 @@ private IStatus validateLinkTargetName(String linkTargetName) {
  * 	specified link target is valid given the linkHandle.
  */
 public IStatus validateLinkLocation(IResource linkHandle) {
+	if (linkTargetField == null || linkTargetField.isDisposed())
+		return createStatus(IStatus.OK, "");	//$NON-NLS-1$
+	
 	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
 	String linkTargetName = linkTargetField.getText();
 	IPath path = new Path(linkTargetName);
@@ -398,7 +411,7 @@ public IStatus validateLinkLocation(IResource linkHandle) {
 	if (nameStatus.isOK() == false)
 		return nameStatus;
 			
-	String resolvedName = resolvedPathLabel.getText();
+	String resolvedName = resolvedPathLabelData.getText();
 	if (resolvedName.length() > 0) {
 		linkTargetName = resolvedName;
 		path = new Path(linkTargetName);

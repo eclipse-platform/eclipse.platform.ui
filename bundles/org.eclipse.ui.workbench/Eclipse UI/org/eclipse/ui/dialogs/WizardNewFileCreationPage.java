@@ -59,19 +59,31 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 	
 	// cache of newly-created file
 	private IFile newFile;
-	
 	private IPath linkTargetPath;
+
+	// widgets
+	private ResourceAndContainerGroup resourceGroup;
+	private Button advancedButton;
+	private CreateLinkedResourceGroup linkedResourceGroup;
 		
 	// initial value stores
 	private String initialFileName;
 	private IPath initialContainerFullPath;
+	/**
+	 * Whether or not the advanced widget group is currently visible.
+	 */
+	private boolean linkedResourceGroupVisible = false;
+	/**
+	 * Height of the "advanced" linked resource group. Set when the
+	 * advanced group is first made visible. 
+	 */
+	private int linkedResourceGroupHeight = -1;
+	/**
+	 * First time the advanced group is validated.
+	 */	
+	private boolean firstLinkCheck = true;
 
-	// widgets
-	private Composite topLevel;
-	private ResourceAndContainerGroup resourceGroup;
-	private Button advancedButton;
-	private CreateLinkedResourceGroup linkedResourceGroup;
-	
+
 /**
  * Creates a new file creation wizard page. If the initial resource selection 
  * contains exactly one container resource then it will be used as the default
@@ -102,6 +114,14 @@ protected void createAdvancedControls(Composite parent) {
 			handleAdvancedButtonSelect();
 		}
 	});
+	linkedResourceGroup = new CreateLinkedResourceGroup(
+		IResource.FILE,
+		new Listener() {
+			public void handleEvent(Event e) {
+				setPageComplete(validatePage());
+				firstLinkCheck = false;					
+			}
+		});	
 }
 /** (non-Javadoc)
  * Method declared on IDialogPage.
@@ -109,7 +129,7 @@ protected void createAdvancedControls(Composite parent) {
 public void createControl(Composite parent) {
 	initializeDialogUnits(parent);
 	// top level group
-	topLevel = new Composite(parent,SWT.NONE);
+	Composite topLevel = new Composite(parent,SWT.NONE);
 	topLevel.setLayout(new GridLayout());
 	topLevel.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
@@ -177,18 +197,13 @@ protected IFile createFileHandle(IPath filePath) {
  * Creates the link target path if a link target has been specified. 
  */
 protected void createLinkTarget() {
-	if (linkedResourceGroup != null) {
-		String linkTarget = linkedResourceGroup.getLinkTarget();
-		if (linkTarget != null) {
-			linkTargetPath = new Path(linkTarget);
-		}
-		else {
-			linkTargetPath = null;
-		}
+	String linkTarget = linkedResourceGroup.getLinkTarget();
+	if (linkTarget != null) {
+		linkTargetPath = new Path(linkTarget);
 	}
 	else {
 		linkTargetPath = null;
-	}		
+	}
 }
 /**
  * Creates a new file resource in the selected container and with the selected
@@ -314,41 +329,24 @@ protected String getNewFileLabel() {
  */
 protected void handleAdvancedButtonSelect() {
 	Shell shell = getShell();
-	
-	if (linkedResourceGroup != null) {
-		Composite composite = (Composite) getControl();
-		linkedResourceGroup.dispose();
-		linkedResourceGroup = null;
-		setPageComplete(validatePage());
+	Point shellSize = shell.getSize();
+	Composite composite = (Composite) getControl();
+
+	if (linkedResourceGroupHeight == -1) {
+		Composite linkedResourceComposite = linkedResourceGroup.createContents(composite);
+		Point groupSize = linkedResourceComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		
+		linkedResourceGroupHeight = groupSize.y; 
+	}
+	if (linkedResourceGroupVisible) {
+		linkedResourceGroupVisible = false;
+		shell.setSize(shellSize.x, shellSize.y - linkedResourceGroupHeight);
 		advancedButton.setText(WorkbenchMessages.getString("WizardNewFileCreationPage.advancedButtonCollapsed"));
-		
-		Point newSize = composite.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		Point oldSize = composite.getSize();
-		int heightDelta = newSize.y - oldSize.y; 
-		if (heightDelta < 0) {
-			Point shellSize = shell.getSize();
-			shell.setSize(shellSize.x, shellSize.y + heightDelta);
-		}
 	} else {
-		Composite composite = (Composite) getControl();
-		linkedResourceGroup = new CreateLinkedResourceGroup(
-			IResource.FILE,
-			new Listener() {
-				public void handleEvent(Event e) {
-					setPageComplete(validatePage());
-				}
-			});
-		linkedResourceGroup.createContents(composite);
+		linkedResourceGroupVisible = true;
+		shell.setSize(shellSize.x, shellSize.y + linkedResourceGroupHeight);
+		composite.layout();
 		advancedButton.setText(WorkbenchMessages.getString("WizardNewFileCreationPage.advancedButtonExpanded"));
-		
-		Point newSize = composite.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		Point oldSize = composite.getSize();
-		int widthDelta = Math.max(newSize.x - oldSize.x, 0);
-		int heightDelta = Math.max(newSize.y - oldSize.y, 0); 
-		if (widthDelta > 0 || heightDelta > 0) {
-			Point shellSize = shell.getSize();
-			shell.setSize(shellSize.x + widthDelta, shellSize.y + heightDelta);
-		}
 	}
 }
 /**
@@ -423,7 +421,10 @@ protected IStatus validateLinkedResource() {
 	IStatus status = linkedResourceGroup.validateLinkLocation(newFileHandle);
 
 	if (status.getSeverity() == IStatus.ERROR) {
-		setErrorMessage(status.getMessage());
+		if (firstLinkCheck)
+			setMessage(status.getMessage());
+		else
+			setErrorMessage(status.getMessage());		
 	} else if (status.getSeverity() == IStatus.WARNING) {
 		setMessage(status.getMessage(), WARNING);
 		setErrorMessage(null);		
@@ -439,14 +440,6 @@ protected IStatus validateLinkedResource() {
  */
 protected boolean validatePage() {
 	boolean valid = true;
-	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
-	String fileName = getFileName();	
-	IStatus nameStatus = workspace.validateName(fileName, IResource.FILE);
-	
-	if (!nameStatus.isOK()) {
-		setErrorMessage(nameStatus.getMessage());
-		return false;
-	}
 	
 	if (!resourceGroup.areAllValuesValid()) {
 		// if blank name then fail silently
@@ -459,15 +452,8 @@ protected boolean validatePage() {
 		valid = false;
 	}
 	
-	IPath container = workspace.getRoot().getLocation().append(getContainerFullPath());
-	java.io.File systemFile = new java.io.File(container.toOSString(),fileName);
-	if(systemFile.exists()){
-		setErrorMessage(WorkbenchMessages.format("WizardNewFileCreationPage.fileExistsMessage", new String[] {systemFile.getPath()}));
-		valid = false;
-	}
-
 	IStatus linkedResourceStatus = null;
-	if (valid && linkedResourceGroup != null) {
+	if (valid) {
 		linkedResourceStatus = validateLinkedResource();
 		if (linkedResourceStatus.getSeverity() == IStatus.ERROR)
 			valid = false;
