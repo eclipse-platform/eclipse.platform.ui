@@ -138,6 +138,9 @@ public class AntPropertyNode extends AntTaskNode {
         return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#containsOccurrence(java.lang.String)
+	 */
 	public boolean containsOccurrence(String identifier) {
 		if (fBaseLabel != null) {
 			if (fBaseLabel.equals(identifier)) {
@@ -150,10 +153,16 @@ public class AntPropertyNode extends AntTaskNode {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getOccurrencesIdentifier()
+	 */
 	public String getOccurrencesIdentifier() {
 		return fBaseLabel;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#isRegionPotentialReference(org.eclipse.jface.text.IRegion)
+	 */
 	public boolean isRegionPotentialReference(IRegion region) {
 		if (super.isRegionPotentialReference(region)) {
 			String textToSearch= getAntModel().getText(getOffset(), getLength());

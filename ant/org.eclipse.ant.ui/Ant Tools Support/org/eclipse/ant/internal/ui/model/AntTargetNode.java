@@ -140,6 +140,9 @@ public class AntTargetNode extends AntElementNode {
 		return targetName;
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#containsOccurrence(java.lang.String)
+	 */
 	public boolean containsOccurrence(String identifier) {
 		if (getTargetName().equals(identifier)) {
 			return true;
@@ -154,6 +157,9 @@ public class AntTargetNode extends AntElementNode {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getOccurrencesIdentifier()
+	 */
 	public String getOccurrencesIdentifier() {
 		return getTargetName();
 	}

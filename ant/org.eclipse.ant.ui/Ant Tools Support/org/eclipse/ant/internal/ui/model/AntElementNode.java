@@ -614,18 +614,53 @@ public class AntElementNode implements IAdaptable {
         fProblemMessage = problemMessage;
     }
 
+	/**
+	 * Returns whether this node contains a reference to the supplied identifier
+	 * 
+	 * @param identifier
+	 * @return whether this node contains a reference to the supplied identifier
+	 */
 	public boolean containsOccurrence(String identifier) {
 		return false;
 	}
 	
+	/**
+	 * Returns the identifier to use for matching occurrences in the Ant editor.
+	 * 
+	 * @return the occurrences identifier for this node
+	 */
 	public String getOccurrencesIdentifier() {
 		return getLabel();
 	}
 	
-	public String getModifiedIdentifier(String identifier) {
+	/**
+	 * Returns a modified identifier to use for matching occurrences in the Ant editor so
+	 * that false position matches are not considered
+	 * 
+	 * @return the modified identifier for this node
+	 */
+	public String getModifiedOccurrencesIdentifier(String identifier) {
 		return identifier;
 	}
+	
+	/**
+	 * Returns the position offset to adjust reference matches resulting from the use of
+	 * the modified identifier for this node.
+	 * 
+	 * @return the position offset
+	 * @see #getModifiedIdentifier(String)
+	 */
+	public int getOccurrencePositionOffset() {
+		return 0;
+	}
 
+	/**
+	 * Returns whether the supplied region can be considered as an area in this node containing
+	 * a reference.
+	 * 
+	 * @param region the area to consider for finding a reference
+	 * @return whether a reference could exist in this node from the supplied region 
+	 */
 	public boolean isRegionPotentialReference(IRegion region) {
 		return region.getOffset() >= fOffset;
 	}

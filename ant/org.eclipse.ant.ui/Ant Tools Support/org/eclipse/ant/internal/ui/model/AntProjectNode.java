@@ -112,11 +112,24 @@ public class AntProjectNode extends AntElementNode {
         return this;
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#containsOccurrence(java.lang.String)
+	 */
 	public boolean containsOccurrence(String identifier) {
 		return identifier.equals(getDefaultTargetName());
 	}
 
-	public String getModifiedIdentifier(String identifier) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getModifiedIdentifier(java.lang.String)
+	 */
+	public String getModifiedOccurrencesIdentifier(String identifier) {
 		return new StringBuffer("\"").append(identifier).append('"').toString(); //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getOccurrencePositionOffset()
+	 */
+	public int getOccurrencePositionOffset() {
+		return 1;
 	}
 }
