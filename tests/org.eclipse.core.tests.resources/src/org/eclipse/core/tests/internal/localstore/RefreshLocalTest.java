@@ -73,7 +73,6 @@ public void testFileToFolder() throws Throwable {
 	file.create(null, true, null);
 	ensureDoesNotExistInFileSystem(file);
 	//
-	Thread.sleep(sleepTime);
 	File target = file.getLocation().toFile();
 	target.mkdirs();
 	//
@@ -93,7 +92,6 @@ public void testFolderToFile() throws Throwable {
 	folder.create(true, true, null);
 	ensureDoesNotExistInFileSystem(folder);
 	//
-	Thread.sleep(sleepTime);
 	IFile file = project.getFile("folder");
 	ensureExistsInFileSystem(file);
 	//
