@@ -38,6 +38,7 @@ public class ImageHyperlink extends Hyperlink {
 	private int state;
 	private static final int HOVER = 1 << 1;
 	private static final int ACTIVE = 1 << 2;
+	private int verticalAlignment=SWT.CENTER;
 	/**
 	 * Creates the image hyperlink instance.
 	 * 
@@ -47,7 +48,8 @@ public class ImageHyperlink extends Hyperlink {
 	 *            the control style (SWT.WRAP, BOTTOM, TOP, MIDDLE)
 	 */
 	public ImageHyperlink(Composite parent, int style) {
-		super(parent, style);
+		super(parent, removeAlignment(style));
+		extractAlignment(style);
 	}
 	/*
 	 * (non-Javadoc)
@@ -79,9 +81,9 @@ public class ImageHyperlink extends Hyperlink {
 			int slotHeight = clientArea.height - marginHeight - marginHeight;
 			int textY;
 			int textHeight = textSize.y;
-			if ((getStyle() & SWT.BOTTOM) != 0) {
+			if (verticalAlignment==SWT.BOTTOM) {
 				textY = marginHeight + slotHeight - textHeight;
-			} else if ((getStyle() & SWT.CENTER) != 0) {
+			} else if (verticalAlignment==SWT.CENTER) {
 				textY = marginHeight + slotHeight / 2 - textHeight / 2;
 			} else {
 				textY = marginHeight;
@@ -204,5 +206,28 @@ public class ImageHyperlink extends Hyperlink {
 			y = Math.max(activeImage.getBounds().height, y);
 		}
 		return new Point(x, y);
+	}
+	private static int removeAlignment(int style) {
+		if ((style & SWT.CENTER)!=0) {
+			return style & (~SWT.CENTER);
+		}
+		if ((style & SWT.TOP)!=0) {
+			return style & (~SWT.TOP);
+		}
+		if ((style & SWT.BOTTOM)!=0) {
+			return style & (~SWT.BOTTOM);
+		}
+		return style;
+	}
+	private void extractAlignment(int style) {
+		if ((style & SWT.CENTER)!=0) {
+			verticalAlignment = SWT.CENTER;
+		}
+		else if ((style & SWT.TOP)!=0) {
+			verticalAlignment = SWT.TOP;
+		}
+		else if ((style & SWT.BOTTOM)!=0) {
+			verticalAlignment = SWT.BOTTOM;
+		}
 	}
 }
