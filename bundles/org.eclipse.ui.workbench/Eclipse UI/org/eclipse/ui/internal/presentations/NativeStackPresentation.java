@@ -47,7 +47,6 @@ import org.eclipse.ui.presentations.StackPresentation;
 public class NativeStackPresentation extends StackPresentation {
 	
 	private TabFolder tabFolder;
-	private IStackPresentationSite site;
 	private IPresentablePart current;
 	private MenuManager systemMenuManager = new MenuManager();
 	private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
@@ -90,7 +89,7 @@ public class NativeStackPresentation extends StackPresentation {
 		public void handleEvent(Event e) {
 			IPresentablePart item = getPartForTab((TabItem) e.item);
 			if (item != null) {
-				site.selectPart(item);
+				getSite().selectPart(item);
 //				item.setFocus();
 			}
 		}
@@ -123,10 +122,11 @@ public class NativeStackPresentation extends StackPresentation {
 
 
 	public NativeStackPresentation(Composite parent, IStackPresentationSite stackSite, int flags) {
+	    super(stackSite);
+	    
 	    // TODO: flags are currently ignored
 		int tabPos = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
 		tabFolder = new TabFolder(parent, tabPos);
-		site = stackSite;
 		
 		// listener to switch between visible tabItems
 		tabFolder.addListener(SWT.Selection, selectionListener);
@@ -151,8 +151,8 @@ public class NativeStackPresentation extends StackPresentation {
 
 				IPresentablePart part = getPartForTab(tabUnderPointer); 
 				
-				if (site.isMoveable(part)) {
-					site.dragStart(part, 
+				if (getSite().isMoveable(part)) {
+				    getSite().dragStart(part, 
 						tabFolder.toDisplay(localPos), false);
 				}
 			}

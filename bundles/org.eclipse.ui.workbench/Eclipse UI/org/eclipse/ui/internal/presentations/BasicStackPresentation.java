@@ -45,7 +45,6 @@ import org.eclipse.ui.presentations.StackPresentation;
 public class BasicStackPresentation extends StackPresentation {
 	
 	private CTabFolder tabFolder;
-	private IStackPresentationSite site;
 	private IPresentablePart current;
 	private boolean activeState = false;
 	private int tabPosition;
@@ -58,25 +57,25 @@ public class BasicStackPresentation extends StackPresentation {
 	private CTabFolder2Adapter expandListener = new CTabFolder2Adapter() {
 		public void minimize(CTabFolderEvent event) {
 			event.doit = false;
-			if (mousedownState == site.getState()) {
-				site.setState(IStackPresentationSite.STATE_MINIMIZED);
+			if (mousedownState == getSite().getState()) {
+				getSite().setState(IStackPresentationSite.STATE_MINIMIZED);
 			}
 		}
 		
 		public void restore(CTabFolderEvent event) {
 			event.doit = false;
-			site.setState(IStackPresentationSite.STATE_RESTORED);
+			getSite().setState(IStackPresentationSite.STATE_RESTORED);
 		}
 		
 		public void maximize(CTabFolderEvent event) {
 			event.doit = false;
-			site.setState(IStackPresentationSite.STATE_MAXIMIZED);
+			getSite().setState(IStackPresentationSite.STATE_MAXIMIZED);
 		}
 	};
 	
 	private MouseListener mouseListener = new MouseAdapter() {
 		public void mouseDown(MouseEvent e) {
-			mousedownState = site.getState();
+			mousedownState = getSite().getState();
 			
 			// PR#1GDEZ25 - If selection will change in mouse up ignore mouse down.
 			// Else, set focus.
@@ -92,10 +91,10 @@ public class BasicStackPresentation extends StackPresentation {
 		}
 		
 		public void mouseDoubleClick(MouseEvent e) {
-			if (site.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
-				site.setState(IStackPresentationSite.STATE_RESTORED);
+			if (getSite().getState() == IStackPresentationSite.STATE_MAXIMIZED) {
+				getSite().setState(IStackPresentationSite.STATE_RESTORED);
 			} else {
-				site.setState(IStackPresentationSite.STATE_MAXIMIZED);
+				getSite().setState(IStackPresentationSite.STATE_MAXIMIZED);
 			}
 		}
 		
@@ -121,7 +120,7 @@ public class BasicStackPresentation extends StackPresentation {
 			IPresentablePart item = getPartForTab((CTabItem)e.item);
 			
 			if (item != null) {
-				site.selectPart(item);
+				getSite().selectPart(item);
 			}
 		}
 	};
@@ -140,7 +139,7 @@ public class BasicStackPresentation extends StackPresentation {
 			event.doit = false;
 			IPresentablePart part = getPartForTab((CTabItem)event.item);
 			
-			site.close(part);
+			getSite().close(part);
 		}
 	}; 
 
@@ -166,8 +165,8 @@ public class BasicStackPresentation extends StackPresentation {
 	};
 
 	public BasicStackPresentation(CTabFolder control, IStackPresentationSite stackSite) {
+	    super(stackSite);
 		tabFolder = control;
-		site = stackSite;
 		
 		// listener to switch between visible tabItems
 		tabFolder.addListener(SWT.Selection, selectionListener);
@@ -195,8 +194,8 @@ public class BasicStackPresentation extends StackPresentation {
 
 				IPresentablePart part = getPartForTab(tabUnderPointer); 
 				
-				if (site.isMoveable(part)) {
-					site.dragStart(part, 
+				if (getSite().isMoveable(part)) {
+					getSite().dragStart(part, 
 						tabFolder.toDisplay(localPos), false);
 				}
 			}
@@ -204,6 +203,15 @@ public class BasicStackPresentation extends StackPresentation {
 						
 	}
 
+	/**
+	 * Returns the currently selected part, or <code>null</code>.
+	 * 
+	 * @return the currently selected part, or <code>null</code>
+	 */
+	protected IPresentablePart getCurrent() {
+	    return current;
+	}
+	
 	/**
 	 * Returns the index of the tab for the given part, or returns tabFolder.getItemCount()
 	 * if there is no such tab.
@@ -344,7 +352,7 @@ public class BasicStackPresentation extends StackPresentation {
 
 		int style = SWT.NONE;
 		
-		if (site.isCloseable(part)) {
+		if (getSite().isCloseable(part)) {
 			style |= SWT.CLOSE;
 		}
 		

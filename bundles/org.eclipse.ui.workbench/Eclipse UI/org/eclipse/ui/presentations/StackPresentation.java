@@ -14,6 +14,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.internal.misc.Assert;
 
 
 /**
@@ -24,6 +25,29 @@ import org.eclipse.swt.widgets.Control;
  * @since 3.0
  */
 public abstract class StackPresentation {
+
+    /**
+     * The presentation site.
+     */
+	private IStackPresentationSite site;
+	
+	/**
+	 * Constructs a new stack presentation with the given site.
+	 * 
+	 * @param stackSite the stack site
+	 */
+	protected StackPresentation(IStackPresentationSite stackSite) {
+	    Assert.isNotNull(stackSite);
+	    site = stackSite;
+	}
+
+	/**
+	 * Returns the presentation site.
+	 */
+	protected IStackPresentationSite getSite() {
+	    return site;
+	}
+	
 	/**
 	 * Sets the bounding rectangle for this presentation. 
 	 * 
