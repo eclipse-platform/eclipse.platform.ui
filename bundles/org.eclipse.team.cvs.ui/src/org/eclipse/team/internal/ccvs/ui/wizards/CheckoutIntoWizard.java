@@ -72,6 +72,7 @@ public class CheckoutIntoWizard extends Wizard {
 	public boolean performFinish() {
 		try {
 			final IContainer targetFolder = projectSelectionPage.getLocalFolder();
+			if (targetFolder == null) return false;
 			PromptingDialog prompt = new PromptingDialog(getShell(), new IResource[] { targetFolder },
 				getOverwriteLocalAndFileSystemPrompt(), Policy.bind("CheckoutIntoWizard.confirmOverwrite"));//$NON-NLS-1$
 			if (prompt.promptForMultiple().length == 0) return false;
