@@ -292,25 +292,24 @@ public void compareRequires(PluginPrerequisiteModel originalPrerequisite, Plugin
 	assertEquals("4.6 Requires plugin", originalPrerequisite.getPlugin(), cachedPrerequisite.getPlugin());
 	assertEquals("4.7 Requires optional", originalPrerequisite.getOptional(), cachedPrerequisite.getOptional());
 }
-public PluginRegistryModel doCacheWriteAndRead(PluginRegistryModel inRegistry, String filename, Factory factory) {
+public PluginRegistryModel doCacheWriteAndRead(PluginRegistryModel inRegistry, Factory factory) {
 	File cacheFile = new File(DEFAULT_LOCATION);
 	DataOutputStream output = null;
 	try {
 		output = new DataOutputStream(new FileOutputStream(cacheFile));
 	} catch (IOException ioe) {
-		assertTrue("1.0 IOException encountered", true);
+		fail("1.0 IOException encountered", ioe);
 	}
-	// write the registry to the cache
-	RegistryCacheWriter cacheWriter = new RegistryCacheWriter();
-	cacheWriter.writePluginRegistry(inRegistry, output);
-	// read the registry back in
+	doCacheWrite(inRegistry, output, factory);
 	DataInputStream input = null;
 	try {
 		input = new DataInputStream(new FileInputStream(cacheFile));
 	} catch (IOException ioe) {
-		assertTrue("2.0 IOException encountered", true);
+		fail("2.0 IOException encountered", ioe);
 	}
-	
+	return doCacheRead(inRegistry, input, factory);
+}
+public PluginRegistryModel doCacheRead(PluginRegistryModel inRegistry, DataInputStream input, Factory factory) {
 	// Cobble together a plugin path
 	Map regIndex = InternalPlatform.getRegIndex();
 	URL[] pluginPath = null;
@@ -331,6 +330,11 @@ public PluginRegistryModel doCacheWriteAndRead(PluginRegistryModel inRegistry, S
 	RegistryCacheReader cacheReader = new RegistryCacheReader(factory);
 	PluginRegistryModel newRegistry = cacheReader.readPluginRegistry(input, pluginPath, false);
 	return newRegistry;
+}
+public void doCacheWrite(PluginRegistryModel inRegistry, DataOutputStream output, Factory factory) {
+	// write the registry to the cache
+	RegistryCacheWriter cacheWriter = new RegistryCacheWriter();
+	cacheWriter.writePluginRegistry(inRegistry, output);
 }
 /* doInitialParsing
  * This method will parse a series of XML files.  The input array should be
