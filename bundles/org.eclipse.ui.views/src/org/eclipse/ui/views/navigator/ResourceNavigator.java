@@ -643,7 +643,9 @@ public class ResourceNavigator
 		IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 		updateStatusLine(sel);
 		updateActionBars(sel);
-		linkToEditor(sel);
+		if (isLinkingEnabled()) {
+			linkToEditor(sel);
+		}
 	}
 
 	/**
