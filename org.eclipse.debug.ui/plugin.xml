@@ -905,7 +905,7 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            name="No Source Found"
+            name="%NoSourceFoundEditor.name"
             icon="./icons/full/obj16/stckframe_obj.gif"
             contributorClass="org.eclipse.ui.part.EditorActionBarContributor"
             class="org.eclipse.debug.internal.ui.views.launch.SourceNotFoundEditor"
