@@ -12,6 +12,7 @@ package org.eclipse.ltk.internal.ui.refactoring;
 
 import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 
 /**
@@ -69,6 +70,14 @@ abstract class ChangeElement {
 	public abstract ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException;
 	
 	public abstract void feedInput(IChangePreviewViewer viewer) throws CoreException;
+	
+	/**
+	 * Returns the change directly associated with this change element or <code
+	 * null</code> if the element isn't associated with a change.
+	 * 
+	 * @return the change or <code>null</code>
+	 */
+	public abstract Change getChange();
 	
 	/**
 	 * Sets the activation status for this <code>ChangeElement</code>. When a 

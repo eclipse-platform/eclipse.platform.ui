@@ -115,11 +115,9 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 		DefaultChangeElement changeElement= (DefaultChangeElement)object;
 		Change change= changeElement.getChange();
 		if (change instanceof CompositeChange) {
-			Change[] children= ((CompositeChange)change).getChildren();
-			result= new ChangeElement[children.length];
-			for (int i= 0; i < children.length; i++) {
-				result[i]= new DefaultChangeElement(changeElement, children[i]);
-			}
+			List children= new ArrayList();
+			getFlattendedChildren(children, changeElement, (CompositeChange)change);
+			result= (ChangeElement[])children.toArray(new ChangeElement[children.size()]);
 		} else if (change instanceof TextChange) {
 			TextChange textChange= (TextChange)change;
 			ICompilationUnit cunit= (ICompilationUnit)textChange.getAdapter(ICompilationUnit.class);
@@ -206,6 +204,18 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 			// Do nothing, use old value.
 		}
 		return result;
+	}
+	
+	private void getFlattendedChildren(List result, DefaultChangeElement parent, CompositeChange focus) {
+		Change[] changes= focus.getChildren();
+		for (int i= 0; i < changes.length; i++) {
+			Change change= changes[i];
+			if (change instanceof CompositeChange && ((CompositeChange)change).isSynthetic()) {
+				getFlattendedChildren(result, parent, (CompositeChange)change);
+			} else {
+				result.add(new DefaultChangeElement(parent, change));
+			}
+		}
 	}
 	
 	public boolean coveredBy(TextEditChangeGroup group, IRegion sourceRegion) {

@@ -42,6 +42,10 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 		return fChangeGroup;
 	}
 		
+	public Change getChange() {
+		return null;
+	}
+	
 	public ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException {
 		DefaultChangeElement element= getDefaultChangeElement();
 		if (element == null)

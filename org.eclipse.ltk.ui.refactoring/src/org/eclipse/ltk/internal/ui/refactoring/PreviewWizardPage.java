@@ -42,7 +42,6 @@ import org.eclipse.ui.part.PageBook;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
 import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
@@ -266,9 +265,8 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 				IStructuredSelection selection= (IStructuredSelection)fTreeViewer.getSelection();
 				if (selection.isEmpty()) {
 					ITreeContentProvider provider= (ITreeContentProvider)fTreeViewer.getContentProvider();
-					Object[] elements= provider.getElements(treeViewerInput);
-					if (elements != null && elements.length > 0) {
-						Object element= elements[0];
+					ChangeElement element= getFirstNonCompositeChange(provider, treeViewerInput);
+					if (element != null) {
 						if (getRefactoringWizard().internalGetExpandFirstNode(InternalAPI.INSTANCE)) {
 							Object[] subElements= provider.getElements(element);
 							if (subElements != null && subElements.length > 0) {
@@ -288,51 +286,35 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		getRefactoringWizard().internalSetPreviewShown(InternalAPI.INSTANCE, visible);
 	}
 	
+	private ChangeElement getFirstNonCompositeChange(ITreeContentProvider provider, ChangeElement input) {
+		ChangeElement focus= input;
+		Change change= input.getChange();
+		while (change != null && change instanceof CompositeChange) {
+			ChangeElement[] children= (ChangeElement[])provider.getElements(focus);
+			if (children != null && children.length > 0) {
+				focus= children[0];
+				change= focus.getChange();
+			}
+		}
+		return focus;
+	}
+	
 	private void setTreeViewerInput() {
 		ChangeElement input= null;
-		Change change= computeChangeInput();
-		if (change == null) {
+		if (fChange == null) {
 			input= null;
-		} else if (change instanceof CompositeChange && !(change instanceof TextChange)) {
-			input= new DefaultChangeElement(null, change);
+		} else if (fChange instanceof CompositeChange) {
+			input= new DefaultChangeElement(null, fChange);
 		} else {
-			Change parent= null;
-			while ((parent= change.getParent()) != null) {
-				if (parent instanceof CompositeChange) {
-					input= new DefaultChangeElement(null, parent);
-					break;
-				}
-			}
-			if (input == null) {
-				// The change will not be shown in the user interface.
-				CompositeChange root= new CompositeChange("Dummy Change"); //$NON-NLS-1$
-				root.add(change);
-				input= new DefaultChangeElement(null, root);
-			}
+			CompositeChange root= new CompositeChange("Dummy Change"); //$NON-NLS-1$
+			root.add(fChange);
+			input= new DefaultChangeElement(null, root);
 		}
 		if (fTreeViewer != null) {
 			fTreeViewer.setInput(input);
 		}
 	}
 	
-	private Change computeChangeInput() {
-		Change result= fChange;
-		if (result == null)
-			return result;
-		while (true) {
-			if (result instanceof CompositeChange) {
-				Change[] children= ((CompositeChange)result).getChildren();
-				if (children.length == 1) {
-					result= children[0];
-				} else {
-					return result;
-				}
-			} else {
-				return result;
-			}
-		}
-	}
-
 	private ICheckStateListener createCheckStateListener() {
 		return new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event){

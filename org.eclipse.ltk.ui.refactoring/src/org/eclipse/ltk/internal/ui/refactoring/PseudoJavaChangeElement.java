@@ -49,6 +49,10 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 		return fJavaElement;
 	}
 
+	public Change getChange() {
+		return null;
+	}
+	
 	public ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException {
 		DefaultChangeElement element= getDefaultChangeElement();
 		if (element == null)
@@ -71,9 +75,6 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 		}
 	}
 	
-	/* non Java-doc
-	 * @see ChangeElement#setActive
-	 */
 	public void setActive(boolean active) {
 		for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
 			ChangeElement element= (ChangeElement)iter.next();
@@ -81,9 +82,6 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 		}
 	}
 	
-	/* non Java-doc
-	 * @see ChangeElement.getActive
-	 */
 	public int getActive() {
 		Assert.isTrue(fChildren.size() > 0);
 		int result= ((ChangeElement)fChildren.get(0)).getActive();
