@@ -1986,15 +1986,23 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/**
 	 * Enables/Disabled sanity checking.
 	 */
-	protected synchronized void enableSanityChecking(boolean enable) {
-		fIsSanityCheckEnabled= enable;
+	protected void enableSanityChecking(boolean enable) {
+		synchronized (this) {
+			fIsSanityCheckEnabled= enable;
+		}
 	}
 	
 	/**
 	 * Checks the state of the editor input if enabled.
 	 */
-	protected synchronized void safelySanityCheckState(IEditorInput input) {
-		if (fIsSanityCheckEnabled)
+	protected void safelySanityCheckState(IEditorInput input) {
+		boolean enabled= false;
+		
+		synchronized (this) {
+			enabled= fIsSanityCheckEnabled;
+		}
+		
+		if (enabled)
 			sanityCheckState(input);
 	}
 	
