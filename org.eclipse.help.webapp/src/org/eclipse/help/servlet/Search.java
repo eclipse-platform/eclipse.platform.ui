@@ -5,6 +5,7 @@
 package org.eclipse.help.servlet;
 import java.io.*;
 import java.text.NumberFormat;
+import java.net.URLEncoder;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -98,9 +99,15 @@ public class Search {
 			// external href
 			if (href.charAt(0) == '/')
 				href = "content/help:" + href;
+			if (href.indexOf('?') == -1)
+				href +="?toc="+URLEncoder.encode(topic.getAttribute("toc"));
+			else
+				href += "&toc="+URLEncoder.encode(topic.getAttribute("toc"));			
 		} else
 			href = "javascript:void 0";
-		out.write("'" + href + "'>");
+		out.write("'" + href + "' onclick='parent.parent.setToolbarTitle(\"");
+		out.write(topic.getAttribute("toclabel"));
+		out.write("\")'>");
 
 		out.write(topic.getAttribute("label"));
 

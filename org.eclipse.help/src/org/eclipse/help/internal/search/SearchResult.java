@@ -16,7 +16,11 @@ import org.w3c.dom.*;
 /**
  * An XML based search result. This is needed in order to decouple
  * the search client from the search server. The server encodes
- * the search results as an XML Document and passes it to the client
+ * the search results as an XML Document and passes it to the client.
+ * <pre>
+ * 	<toc>
+ * 		<topic label=".." score="..." toc=".." toclabel=".."/>
+ *  .....
  */
 public class SearchResult {
 	private Document factory;
@@ -61,9 +65,9 @@ public class SearchResult {
 				score *= scoreScale;
 			}
 			String href = doc.get("name");
-			ITopic topic = findTopic(href);
-			if (topic == null)
-				continue;
+			IToc toc = findTocForTopic(href);
+			ITopic topic = toc==null? null : toc.getTopic(href);
+
 			// Create topic
 			Element e = factory.createElement(ITopic.TOPIC);
 			factory.getDocumentElement().appendChild(e);
@@ -73,19 +77,25 @@ public class SearchResult {
 			e.setAttribute(ITopic.HREF, href + "?resultof=" + urlEncodedWords);
 			// Set the document label
 			String label = doc.get("raw_title");
-			if ("".equals(label)) {
+			if ("".equals(label) && topic!=null) {
 				label = topic.getLabel();
 			}
 			if (label == null || "".equals(label))
 				label = href;
 			e.setAttribute(ITopic.LABEL, label);
+			// Set the document toc
+			if (toc != null)
+			{
+				e.setAttribute(IToc.TOC, toc.getHref());
+				e.setAttribute(IToc.TOC+IToc.LABEL, toc.getLabel());
+			}
 		}
 	}
 	/**
 	 * Finds a topic in a bookshelf
 	 * or within a scope if specified
 	 */
-	protected ITopic findTopic(String href) {
+	protected IToc findTocForTopic(String href) {
 		IToc[] tocs = HelpSystem.getTocManager().getTocs(locale);
 		for (int i = 0; i < tocs.length; i++) {
 			if (scope != null)
@@ -93,7 +103,7 @@ public class SearchResult {
 					continue;
 			ITopic topic = tocs[i].getTopic(href);
 			if (topic != null)
-				return topic;
+				return tocs[i];
 		}
 		return null;
 	}
