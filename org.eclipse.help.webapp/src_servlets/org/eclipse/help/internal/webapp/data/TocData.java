@@ -21,6 +21,8 @@ public class TocData extends RequestData {
 	private String tocHref;
 	private String topicHref;
 
+	// help form of selected topic href
+	private String topicHelpHref;
 	// Selected TOC
 	private int selectedToc;
 
@@ -53,19 +55,19 @@ public class TocData extends RequestData {
 	// Accessor methods to avoid exposing help classes directly to JSP.
 	// Note: this seems ok for now, but maybe we need to reconsider this 
 	//       and allow help classes in JSP's.
-	
+
 	public int getTocCount() {
 		return tocs.length;
 	}
-	
+
 	public String getTocLabel(int i) {
 		return tocs[i].getLabel();
 	}
-	
+
 	public String getTocHref(int i) {
 		return tocs[i].getHref();
 	}
-	
+
 	public String getTocDescriptionTopic(int i) {
 		return UrlUtil.getHelpURL(tocs[i].getTopic(null).getHref());
 	}
@@ -122,8 +124,7 @@ public class TocData extends RequestData {
 			selectedToc = findTocContainingTopic(topicHref);
 		}
 	}
-	
-	
+
 	/**
 	 * Finds a TOC that contains specified topic
 	 * @param topic the topic href
@@ -174,10 +175,7 @@ public class TocData extends RequestData {
 			out.write("<img src='");
 			out.write(imagesDirectory);
 			out.write("/plus.gif' class='collapsed' >");
-			out.write(
-				"<a href='"
-					+ UrlUtil.getHelpURL(topic.getHref())
-					+ "'>");
+			out.write("<a href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>");
 			out.write("<img src='");
 			out.write(imagesDirectory);
 			out.write("/container_obj.gif'>");
@@ -196,10 +194,7 @@ public class TocData extends RequestData {
 			out.write("<img src='");
 			out.write(imagesDirectory);
 			out.write("/plus.gif' class='h'>");
-			out.write(
-				"<a href='"
-					+ UrlUtil.getHelpURL(topic.getHref())
-					+ "'>");
+			out.write("<a href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>");
 			out.write("<img src='");
 			out.write(imagesDirectory);
 			out.write("/topic.gif'>");
@@ -228,14 +223,14 @@ public class TocData extends RequestData {
 		throws IOException {
 
 		out.write("<li>");
-
 		boolean hasNodes = topic.getSubtopics().length > 0;
 		if (hasNodes) {
 			out.write("<nobr>");
-			out.write(
-				"<a href='"
-					+ UrlUtil.getHelpURL(topic.getHref())
-					+ "'>");
+			out.write("<a ");
+			if (getSelectedTopicHelpHref().equals(topic.getHref())) {
+				out.write("name=\"selectedItem\" ");
+			}
+			out.write("href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>");
 			out.write("<img src='");
 			out.write(imagesDirectory);
 			out.write("/container_obj.gif' border=0>&nbsp;");
@@ -253,10 +248,11 @@ public class TocData extends RequestData {
 			out.write("</ul>");
 		} else {
 			out.write("<nobr>");
-			out.write(
-				"<a href='"
-					+ UrlUtil.getHelpURL(topic.getHref())
-					+ "'>");
+			out.write("<a ");
+			if (getSelectedTopicHelpHref().equals(topic.getHref())) {
+				out.write("name=\"selectedItem\" ");
+			}
+			out.write("href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>");
 			out.write("<img src='");
 			out.write(imagesDirectory);
 			out.write("/topic.gif' border=0>&nbsp;");
@@ -266,5 +262,28 @@ public class TocData extends RequestData {
 		}
 
 		out.write("</li>");
+	}
+	/**
+	 * @return String - help form of selected topic URL, or ""
+	 */
+	private String getSelectedTopicHelpHref() {
+		if (topicHelpHref == null) {
+			String topic = getSelectedTopic();
+			if (topic == null || topic.length() == 0) {
+				topicHelpHref = "";
+				return topicHelpHref;
+			}
+			int index = topic.indexOf("/topic/");
+			if (index != -1)
+				topic = topic.substring(index + 6);
+			index = topic.indexOf('?');
+			if (index != -1)
+				topic = topic.substring(0, index);
+			topicHelpHref = topic;
+			if (topic == null) {
+				topicHelpHref = "";
+			}
+		}
+		return topicHelpHref;
 	}
 }

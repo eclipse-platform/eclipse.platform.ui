@@ -17,6 +17,23 @@
 <title><%=ServletResources.getString("Tabs", request)%></title>
     
 <base target="ViewsFrame">
+<SCRIPT TYPE="text/javascript">
+<!--
+function resynch()
+{
+		var topic = parent.HelpFrame.ContentViewFrame.window.location.href;
+		// remove the query, if any
+		var i = topic.indexOf('?');
+		if (i != -1)
+			topic = topic.substring(0, i);
+		// remove the fragment, if any
+		var i = topic.indexOf('#');
+		if (i != -1)
+			topic = topic.substring(0, i);
+		parent.HelpFrame.ViewsFrame.location="view.jsp?view=toc&topic="+topic;
+}
+//-->
+</SCRIPT>
 </head>
    
 <body bgcolor="<%=prefs.getBasicToolbarBackground()%>" link="#0000FF" vlink="#0000FF" alink="#0000FF">
@@ -59,6 +76,14 @@
 <%
 	}
 %>
+<SCRIPT TYPE="text/javascript">
+<!--
+document.write("<td nowrap><b><a  href='javascript:parent.parent.TabsFrame.resynch();' >"); 
+document.write("<img alt=\"\" title=\"<%=ServletResources.getString("Synch", request)%>\" src=\"images/synch_toc_nav.gif\" border=0>");
+document.write("<%=ServletResources.getString("Synch", request)%></a>&nbsp;</b></td>");
+//-->
+</SCRIPT>
+
 	</tr>
 	</table>
 	<iframe name="liveHelpFrame" frameborder="no" width="0" height="0" scrolling="no">
