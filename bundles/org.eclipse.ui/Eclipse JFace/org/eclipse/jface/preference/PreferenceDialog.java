@@ -918,9 +918,6 @@ protected boolean showPage(IPreferenceNode node) {
 	if (currentPage.getControl() == null) 
 		currentPage.createControl(pageContainer);
 		
-	//Layout the new widgets so the resize is correct
-	pageContainer.layout(true);
-
 	// Force calculation of the page's description label because
 	// label can be wrapped.
 	Point contentSize = currentPage.computeSize();
@@ -930,18 +927,25 @@ protected boolean showPage(IPreferenceNode node) {
 	// Also prevent auto resize if the user has manually resized
 	Shell shell= getShell();
 	Point shellSize= shell.getSize();
-	if (oldPage != null && shellSize.equals(lastShellSize)) {
+	if (oldPage != null) {
 		Rectangle rect= pageContainer.getClientArea();
 		Point containerSize= new Point(rect.width, rect.height);
 		int hdiff= contentSize.x - containerSize.x;
 		int vdiff= contentSize.y - containerSize.y;
 
 		if (hdiff > 0 || vdiff > 0) {
-			hdiff= Math.max(0, hdiff);
-			vdiff= Math.max(0, vdiff);
-			setShellSize(shellSize.x + hdiff, shellSize.y + vdiff);
-			lastShellSize = shell.getSize();
+			if (shellSize.equals(lastShellSize)) {
+				hdiff= Math.max(0, hdiff);
+				vdiff= Math.max(0, vdiff);
+				setShellSize(shellSize.x + hdiff, shellSize.y + vdiff);
+				lastShellSize = shell.getSize();
+			} else {
+				currentPage.setSize(containerSize);
+			}
+		} else if (hdiff < 0 || vdiff < 0) {
+			currentPage.setSize(containerSize);
 		}
+		
 	}
 
 	// Ensure that all other pages are invisible 
