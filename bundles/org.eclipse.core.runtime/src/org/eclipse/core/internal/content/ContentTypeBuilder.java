@@ -93,12 +93,19 @@ public class ContentTypeBuilder {
 		}
 	}
 
-	private ContentType createContentType(IConfigurationElement contentTypeCE) {
-		//TODO: need to ensure the config. element is valid
-		String simpleId = contentTypeCE.getAttributeAsIs("id"); //$NON-NLS-1$
-		byte priority = parsePriority(contentTypeCE.getAttributeAsIs("priority")); //$NON-NLS-1$);
+	/**
+	 * @throws CoreException if mandatory attributes are missing in the markup
+	 */
+	private ContentType createContentType(IConfigurationElement contentTypeCE) throws CoreException {
 		String namespace = contentTypeCE.getDeclaringExtension().getNamespace();
+		String simpleId = contentTypeCE.getAttributeAsIs("id"); //$NON-NLS-1$
 		String name = contentTypeCE.getAttribute("name"); //$NON-NLS-1$
+		String uniqueId = namespace + '.' + simpleId;
+		if (simpleId == null)
+			missingMandatoryAttribute(Messages.content_missingIdentifier, uniqueId);
+		if (name == null)
+			missingMandatoryAttribute(Messages.content_missingName, uniqueId);
+		byte priority = parsePriority(contentTypeCE.getAttributeAsIs("priority")); //$NON-NLS-1$);
 		String[] fileNames = Util.parseItems(contentTypeCE.getAttributeAsIs("file-names")); //$NON-NLS-1$
 		String[] fileExtensions = Util.parseItems(contentTypeCE.getAttributeAsIs("file-extensions")); //$NON-NLS-1$
 		String baseTypeId = getUniqueId(namespace, contentTypeCE.getAttributeAsIs("base-type")); //$NON-NLS-1$
@@ -130,7 +137,7 @@ public class ContentTypeBuilder {
 				defaultProperties = Collections.singletonMap(IContentDescription.CHARSET, defaultCharset);
 			else if (!defaultProperties.containsKey(IContentDescription.CHARSET))
 				defaultProperties.put(IContentDescription.CHARSET, defaultCharset);
-		return ContentType.createContentType(catalog, namespace, simpleId, name, priority, fileExtensions, fileNames, baseTypeId, aliasTargetTypeId, defaultProperties, contentTypeCE);
+		return ContentType.createContentType(catalog, uniqueId, name, priority, fileExtensions, fileNames, baseTypeId, aliasTargetTypeId, defaultProperties, contentTypeCE);
 	}
 
 	protected IConfigurationElement[] getConfigurationElements() {
@@ -140,26 +147,19 @@ public class ContentTypeBuilder {
 		return allContentTypeCEs;
 	}
 
-	/* Checks whether the content type has all required pieces. */
-	private boolean isComplete(ContentType contentType) {
-		String message = null;
-		if (contentType.getSimpleId() == null)
-			message = NLS.bind(Messages.content_missingIdentifier, contentType.getId());
-		else if (contentType.getName() == null)
-			message = NLS.bind(Messages.content_missingName, contentType.getId());
-		if (message == null)
-			return true;
-		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, null);
-		InternalPlatform.getDefault().log(status);
-		return false;
+	private void missingMandatoryAttribute(String messageKey, String argument) throws CoreException {
+		String message = NLS.bind(messageKey, argument);
+		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, null));
 	}
 
 	private void registerContentType(IConfigurationElement contentTypeCE) {
-		//TODO: need to ensure the config. element is valid
-		ContentType contentType = createContentType(contentTypeCE);
-		if (!isComplete(contentType))
-			return;
-		catalog.addContentType(contentType);
+		try {
+			ContentType contentType = createContentType(contentTypeCE);
+			catalog.addContentType(contentType);
+		} catch (CoreException e) {
+			// failed validation
+			InternalPlatform.getDefault().log(e.getStatus());
+		}
 	}
 
 	/* Adds extra file associations to existing content types. If the content 

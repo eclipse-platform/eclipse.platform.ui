@@ -65,18 +65,16 @@ public final class ContentType implements IContentType {
 	private List fileSpecs;
 	private ContentTypeManager manager;
 	private String name;
-	private String namespace;
 	private byte priority;
-	private String simpleId;
 	private byte validation = STATUS_UNKNOWN;
 	private Map defaultProperties;
 	private boolean builtInAssociations = false;
+	private String id;
 
-	public static ContentType createContentType(ContentTypeCatalog catalog, String namespace, String simpleId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String aliasTargetId, Map defaultProperties, IConfigurationElement contentTypeElement) {
+	public static ContentType createContentType(ContentTypeCatalog catalog, String uniqueId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String aliasTargetId, Map defaultProperties, IConfigurationElement contentTypeElement) {
 		ContentType contentType = new ContentType(catalog.getManager());
 		contentType.defaultDescription = new DefaultDescription(contentType);
-		contentType.simpleId = simpleId;
-		contentType.namespace = namespace;
+		contentType.id = uniqueId;
 		contentType.name = name;
 		contentType.priority = priority;
 		if ((fileExtensions != null && fileExtensions.length > 0) || (fileNames != null && fileNames.length > 0)) {
@@ -378,7 +376,7 @@ public final class ContentType implements IContentType {
 	 * @see IContentType
 	 */
 	public String getId() {
-		return namespace + '.' + simpleId;
+		return id;
 	}
 
 	/**
@@ -390,10 +388,6 @@ public final class ContentType implements IContentType {
 
 	byte getPriority() {
 		return priority;
-	}
-
-	String getSimpleId() {
-		return simpleId;
 	}
 
 	/*
