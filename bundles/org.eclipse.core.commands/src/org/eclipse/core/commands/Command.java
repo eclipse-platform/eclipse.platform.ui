@@ -13,7 +13,6 @@ package org.eclipse.core.commands;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.eclipse.core.commands.common.NamedHandleObject;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -194,8 +193,8 @@ public final class Command extends NamedHandleObject implements Comparable {
 		final boolean categoryChanged = !Util.equals(this.category, category);
 		this.category = category;
 
-		fireCommandChanged(new CommandEvent(this, false, categoryChanged,
-				definedChanged, descriptionChanged, false, nameChanged, null));
+		fireCommandChanged(new CommandEvent(this, categoryChanged,
+				definedChanged, descriptionChanged, false, nameChanged));
 	}
 
 	/**
@@ -228,9 +227,9 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 * the debugging flag is set, then this print information about which
 	 * handler is selected for performing this command.
 	 * 
-     * @param event
-     *            An event containing all the information about the current
-     *            state of the application; must not be <code>null</code>.
+	 * @param event
+	 *            An event containing all the information about the current
+	 *            state of the application; must not be <code>null</code>.
 	 * @return The result of the execution; may be <code>null</code>.
 	 * @throws ExecutionException
 	 *             If the handler has problems executing this command.
@@ -257,7 +256,7 @@ public final class Command extends NamedHandleObject implements Comparable {
 		}
 
 		// Perform the execution, if there is a handler.
-		if (handler != null)
+		if ((handler != null) && (handler.isHandled()))
 			return handler.execute(event);
 
 		throw new NotHandledException("There is no handler to execute."); //$NON-NLS-1$
@@ -284,25 +283,6 @@ public final class Command extends NamedHandleObject implements Comparable {
 	}
 
 	/**
-	 * An accessor for the attribute values for the current handler for this
-	 * command. These attributes are just a map of attribute names (
-	 * <code>String</code>) to some attribute value (anything).
-	 * 
-	 * @return The map of attribute names to attribute values for this handler;
-	 *         may be empty, but is never <code>null</code>.
-	 * @throws NotHandledException
-	 *             If there is no current handler.
-	 */
-	public final Map getAttributeValuesByName() throws NotHandledException {
-		final IHandler handler = this.handler;
-		if (handler != null)
-			return handler.getAttributeValuesByName();
-
-		throw new NotHandledException(
-				"There is no handler from which to retrieve attributes."); //$NON-NLS-1$
-	}
-
-	/**
 	 * Returns the category for this command.
 	 * 
 	 * @return The category for this command; never <code>null</code>.
@@ -325,18 +305,26 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 * @return <code>true</code> if the command is handled; <code>false</code>
 	 *         otherwise.
 	 */
+	public final boolean isEnabled() {
+		if (handler == null) {
+			return false;
+		}
+
+		return handler.isHandled() && handler.isEnabled();
+	}
+
+	/**
+	 * Returns whether this command has a handler, and whether this handler is
+	 * also enabled.
+	 * 
+	 * @return <code>true</code> if the command is handled; <code>false</code>
+	 *         otherwise.
+	 */
 	public final boolean isHandled() {
 		if (handler == null)
 			return false;
 
-		final Map attributeValuesByName = handler.getAttributeValuesByName();
-		if (attributeValuesByName
-				.containsKey(IHandlerAttributes.ATTRIBUTE_HANDLED) //$NON-NLS-1$
-				&& !Boolean.TRUE.equals(attributeValuesByName
-						.get(IHandlerAttributes.ATTRIBUTE_HANDLED))) //$NON-NLS-1$
-			return false;
-
-		return true;
+		return handler.isHandled();
 	}
 
 	/**
@@ -371,19 +359,6 @@ public final class Command extends NamedHandleObject implements Comparable {
 			return false;
 		}
 
-		// Figure out if the attributes are changing.
-		Map previousAttributeValuesByName = null;
-		if (this.handler != null) {
-			previousAttributeValuesByName = this.handler
-					.getAttributeValuesByName();
-		}
-		final boolean attributesValuesChanged = !Util.equals(
-				previousAttributeValuesByName, handler
-						.getAttributeValuesByName());
-		if (!attributesValuesChanged) {
-			previousAttributeValuesByName = null;
-		}
-
 		// Update the handler, and flush the string representation.
 		this.handler = handler;
 		string = null;
@@ -404,8 +379,8 @@ public final class Command extends NamedHandleObject implements Comparable {
 		}
 
 		// Send notification
-		fireCommandChanged(new CommandEvent(this, attributesValuesChanged,
-				false, false, false, true, false, previousAttributeValuesByName));
+		fireCommandChanged(new CommandEvent(this, false, false, false, true,
+				false));
 
 		return true;
 	}
@@ -457,7 +432,7 @@ public final class Command extends NamedHandleObject implements Comparable {
 		final boolean categoryChanged = category != null;
 		category = null;
 
-		fireCommandChanged(new CommandEvent(this, false, categoryChanged,
-				definedChanged, descriptionChanged, false, nameChanged, null));
+		fireCommandChanged(new CommandEvent(this, categoryChanged,
+				definedChanged, descriptionChanged, false, nameChanged));
 	}
 }

@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.commands;
 
-import java.util.Map;
-
-import org.eclipse.core.internal.commands.util.Util;
-
 /**
  * An instance of this class describes changes to an instance of
  * <code>IHandler</code>.
@@ -21,9 +17,9 @@ import org.eclipse.core.internal.commands.util.Util;
  * This class is not intended to be extended by clients.
  * </p>
  * <p>
- * <em>EXPERIMENTAL</em>.  The commands architecture is currently under
- * development for Eclipse 3.1.  This class -- its existence, its name and its
- * methods -- are in flux.  Do not use this class yet.
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
  * </p>
  * 
  * @since 3.1
@@ -31,111 +27,66 @@ import org.eclipse.core.internal.commands.util.Util;
  */
 public class HandlerEvent {
 
-    /**
-     * Whether the attributes of the handler changed.
-     */
-    private final boolean attributeValuesByNameChanged;
+	/**
+	 * Whether the enabled state of the handler has changed.
+	 */
+	private final boolean enabledChanged;
 
-    /**
-     * The handler that changed; this value is never <code>null</code>.
-     */
-    private final IHandler handler;
+	/**
+	 * The handler that changed; this value is never <code>null</code>.
+	 */
+	private final IHandler handler;
 
-    /**
-     * This is the cached result of getPreviousAttributeValuesByName. It is
-     * computed the first time getPreviousAttributeValuesByName is called.
-     */
-    private Map previousAttributeValuesByName;
+	/**
+	 * Whether the handled state of the handler has changed.
+	 */
+	private final boolean handledChanged;
 
-    /**
-     * The map of previous attributes, if they changed.  If they did not change,
-     * then this value is <code>null</code>.  The map's keys are the attribute
-     * names (strings), and its value are any object.
-     * 
-     * This is the original map passed into the constructor. This object always
-     * returns a copy of this map, not the original. However the constructor of
-     * this object is called very frequently and the map is rarely requested,
-     * so we only copy the map the first time it is requested. 
-     * 
-     * @since 3.1
-     */
-    private final Map originalPreviousAttributeValuesByName;
-    
-    /**
-     * Creates a new instance of this class.
-     * 
-     * @param handler
-     *            the instance of the interface that changed.
-     * @param attributeValuesByNameChanged
-     *            true, iff the attributeValuesByName property changed.
-     * @param previousAttributeValuesByName
-     *            the map of previous attribute values by name. This map may be
-     *            empty. If this map is not empty, it's collection of keys must
-     *            only contain instances of <code>String</code>. This map
-     *            must be <code>null</code> if attributeValuesByNameChanged is
-     *            <code>false</code> and must not be null if
-     *            attributeValuesByNameChanged is <code>true</code>.
-     */
-    public HandlerEvent(IHandler handler, boolean attributeValuesByNameChanged,
-            Map previousAttributeValuesByName) {
-        if (handler == null)
-            throw new NullPointerException();
+	/**
+	 * Creates a new instance of this class.
+	 * 
+	 * @param handler
+	 *            the instance of the interface that changed.
+	 * @param enabledChanged
+	 *            Whether the enabled state of the handler has changed.
+	 * @param handledChanged
+	 *            Whether the handled state of the handler has changed.
+	 */
+	public HandlerEvent(final IHandler handler, final boolean enabledChanged,
+			final boolean handledChanged) {
+		if (handler == null)
+			throw new NullPointerException();
 
-        if (!attributeValuesByNameChanged
-                && previousAttributeValuesByName != null)
-            throw new IllegalArgumentException();
+		this.handler = handler;
+		this.enabledChanged = enabledChanged;
+		this.handledChanged = handledChanged;
+	}
 
-        if (attributeValuesByNameChanged) {
-            this.originalPreviousAttributeValuesByName = previousAttributeValuesByName;
-        } else {
-            this.originalPreviousAttributeValuesByName = null;
-        }
+	/**
+	 * Returns the instance of the interface that changed.
+	 * 
+	 * @return the instance of the interface that changed. Guaranteed not to be
+	 *         <code>null</code>.
+	 */
+	public IHandler getHandler() {
+		return handler;
+	}
 
-        this.handler = handler;
-        this.attributeValuesByNameChanged = attributeValuesByNameChanged;
-    }
+	/**
+	 * Returns whether or not the handled property changed.
+	 * 
+	 * @return <code>true</code>, iff the handled property changed.
+	 */
+	public boolean isEnabledChanged() {
+		return enabledChanged;
+	}
 
-    /**
-     * Returns the instance of the interface that changed.
-     * 
-     * @return the instance of the interface that changed. Guaranteed not to be
-     *         <code>null</code>.
-     */
-    public IHandler getHandler() {
-        return handler;
-    }
-
-    /**
-     * Returns the map of previous attribute values by name.
-     * 
-     * @return the map of previous attribute values by name. This map may be
-     *         empty. If this map is not empty, it's collection of keys is
-     *         guaranteed to only contain instances of <code>String</code>.
-     *         This map is guaranteed to be <code>null</code> if
-     *         haveAttributeValuesByNameChanged() is <code>false</code> and is
-     *         guaranteed to not be null if haveAttributeValuesByNameChanged()
-     *         is <code>true</code>.
-     */
-    public Map getPreviousAttributeValuesByName() {
-        if (originalPreviousAttributeValuesByName == null) {
-            return null;
-        }
-        
-        if (previousAttributeValuesByName == null) {
-            previousAttributeValuesByName = Util.safeCopy(
-                    originalPreviousAttributeValuesByName, String.class, Object.class,
-                    false, true);
-        }
-        
-        return previousAttributeValuesByName;
-    }
-
-    /**
-     * Returns whether or not the attributeValuesByName property changed.
-     * 
-     * @return true, iff the attributeValuesByName property changed.
-     */
-    public boolean haveAttributeValuesByNameChanged() {
-        return attributeValuesByNameChanged;
-    }
+	/**
+	 * Returns whether or not the handled property changed.
+	 * 
+	 * @return <code>true</code>, iff the handled property changed.
+	 */
+	public boolean isHandledChanged() {
+		return handledChanged;
+	}
 }

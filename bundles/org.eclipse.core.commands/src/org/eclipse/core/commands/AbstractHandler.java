@@ -11,9 +11,7 @@
 package org.eclipse.core.commands;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -22,103 +20,112 @@ import java.util.Map;
  * subclass from this method unless you want to implement your own listener
  * support. Subclasses should call
  * {@link AbstractHandler#fireHandlerChanged(HandlerEvent)}when the handler
- * changes. Subclasses should also override
- * {@link AbstractHandler#getAttributeValuesByName()}if they have any
- * attributes.
+ * changes. Subclasses can also override {@link AbstractHandler#isEnabled()} and
+ * {@link AbstractHandler#isHandled()}.
  * </p>
  * <p>
- * <em>EXPERIMENTAL</em>.  The commands architecture is currently under
- * development for Eclipse 3.1.  This class -- its existence, its name and its
- * methods -- are in flux.  Do not use this class yet.
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
  * </p>
  * 
  * @since 3.1
  */
 public abstract class AbstractHandler implements IHandler {
 
-    /**
-     * Those interested in hearing about changes to this instance of
-     * <code>IHandler</code>. This member is null iff there are no listeners
-     * attached to this handler. (Most handlers don't have any listeners, and
-     * this optimization saves some memory.)
-     */
-    private List handlerListeners;
+	/**
+	 * Those interested in hearing about changes to this instance of
+	 * <code>IHandler</code>. This member is null iff there are no listeners
+	 * attached to this handler. (Most handlers don't have any listeners, and
+	 * this optimization saves some memory.)
+	 */
+	private List handlerListeners;
 
-    /**
-     * @see IHandler#addHandlerListener(IHandlerListener)
-     */
-    public void addHandlerListener(final IHandlerListener handlerListener) {
-        if (handlerListener == null)
-            throw new NullPointerException();
-        if (handlerListeners == null)
-            handlerListeners = new ArrayList();
-        if (!handlerListeners.contains(handlerListener))
-            handlerListeners.add(handlerListener);
-    }
+	/**
+	 * @see IHandler#addHandlerListener(IHandlerListener)
+	 */
+	public void addHandlerListener(final IHandlerListener handlerListener) {
+		if (handlerListener == null)
+			throw new NullPointerException();
+		if (handlerListeners == null)
+			handlerListeners = new ArrayList();
+		if (!handlerListeners.contains(handlerListener))
+			handlerListeners.add(handlerListener);
+	}
 
-    /**
-     * The default implementation does nothing. Subclasses who attach listeners
-     * to other objects are encouraged to detach them in this method.
-     * 
-     * @see org.eclipse.core.commands.IHandler#dispose()
-     */
-    public void dispose() {
-        // Do nothing.
-    }
+	/**
+	 * The default implementation does nothing. Subclasses who attach listeners
+	 * to other objects are encouraged to detach them in this method.
+	 * 
+	 * @see org.eclipse.core.commands.IHandler#dispose()
+	 */
+	public void dispose() {
+		// Do nothing.
+	}
 
-    /**
-     * Fires an event to all registered listeners describing changes to this
-     * instance.
-     * 
-     * @param handlerEvent
-     *            the event describing changes to this instance. Must not be
-     *            <code>null</code>.
-     */
-    protected void fireHandlerChanged(final HandlerEvent handlerEvent) {
-        if (handlerEvent == null)
-            throw new NullPointerException();
-        if (handlerListeners != null)
-            for (int i = 0; i < handlerListeners.size(); i++)
-                ((IHandlerListener) handlerListeners.get(i))
-                        .handlerChanged(handlerEvent);
-    }
+	/**
+	 * Fires an event to all registered listeners describing changes to this
+	 * instance.
+	 * 
+	 * @param handlerEvent
+	 *            the event describing changes to this instance. Must not be
+	 *            <code>null</code>.
+	 */
+	protected final void fireHandlerChanged(final HandlerEvent handlerEvent) {
+		if (handlerEvent == null)
+			throw new NullPointerException();
+		if (handlerListeners != null)
+			for (int i = 0; i < handlerListeners.size(); i++)
+				((IHandlerListener) handlerListeners.get(i))
+						.handlerChanged(handlerEvent);
+	}
 
-    /**
-     * This simply return an empty map. The default implementation has no
-     * attributes.
-     * 
-     * @see IHandler#getAttributeValuesByName()
-     */
-    public Map getAttributeValuesByName() {
-        return Collections.EMPTY_MAP;
-    }
+	/**
+	 * Whether this handler is capable of executing at this time. Subclasses may
+	 * override this method.
+	 * 
+	 * @return <code>true</code>
+	 */
+	public boolean isEnabled() {
+		return true;
+	}
 
-    /**
-     * Returns true iff there is one or more IHandlerListeners attached to this
-     * AbstractHandler.
-     * 
-     * @return true iff there is one or more IHandlerListeners attached to this
-     *         AbstractHandler
-     * @since 3.1
-     */
-    protected final boolean hasListeners() {
-        return handlerListeners != null;
-    }
+	/**
+	 * Whether this handler is capable of handling delegated responsibilities at
+	 * this time. Subclasses may override this method.
+	 * 
+	 * @return <code>true</code>
+	 */
+	public boolean isHandled() {
+		return true;
+	}
 
-    /**
-     * @see IHandler#removeHandlerListener(IHandlerListener)
-     */
-    public void removeHandlerListener(final IHandlerListener handlerListener) {
-        if (handlerListener == null)
-            throw new NullPointerException();
-        if (handlerListeners == null) {
-            return;
-        }
+	/**
+	 * Returns true iff there is one or more IHandlerListeners attached to this
+	 * AbstractHandler.
+	 * 
+	 * @return true iff there is one or more IHandlerListeners attached to this
+	 *         AbstractHandler
+	 */
+	protected final boolean hasListeners() {
+		return handlerListeners != null;
+	}
 
-        if (handlerListeners != null)
-            handlerListeners.remove(handlerListener);
-        if (handlerListeners.isEmpty()) {
-            handlerListeners = null;
-        }
-    }
+	/**
+	 * @see IHandler#removeHandlerListener(IHandlerListener)
+	 */
+	public void removeHandlerListener(
+			final IHandlerListener handlerListener) {
+		if (handlerListener == null)
+			throw new NullPointerException();
+		if (handlerListeners == null) {
+			return;
+		}
+
+		if (handlerListeners != null)
+			handlerListeners.remove(handlerListener);
+		if (handlerListeners.isEmpty()) {
+			handlerListeners = null;
+		}
+	}
 }

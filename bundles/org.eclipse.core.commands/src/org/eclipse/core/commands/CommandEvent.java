@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.commands;
 
-import java.util.Map;
-
-import org.eclipse.core.internal.commands.util.Util;
 
 /**
  * An instance of this class describes changes to an instance of
@@ -30,12 +27,6 @@ import org.eclipse.core.internal.commands.util.Util;
  * @see ICommandListener#commandChanged(CommandEvent)
  */
 public class CommandEvent {
-
-	/**
-	 * Whether the attributes of the command have changed. These are name and
-	 * value pairs representing properties of the command.
-	 */
-	private final boolean attributeValuesByNameChanged;
 
 	/**
 	 * Whether the category of the command has changed.
@@ -68,18 +59,10 @@ public class CommandEvent {
 	private final boolean nameChanged;
 
 	/**
-	 * The map of attributes before the change. This is a map of attribute name
-	 * (strings) to values (any object).
-	 */
-	private Map previousAttributeValuesByName;
-
-	/**
 	 * Creates a new instance of this class.
 	 * 
 	 * @param command
 	 *            the instance of the interface that changed.
-	 * @param attributeValuesByNameChanged
-	 *            true, iff the attributeValuesByName property changed.
 	 * @param categoryChanged
 	 *            true, iff the category property changed.
 	 * @param definedChanged
@@ -90,38 +73,14 @@ public class CommandEvent {
 	 *            true, iff the handled property changed.
 	 * @param nameChanged
 	 *            true, iff the name property changed.
-	 * @param previousAttributeValuesByName
-	 *            the map of previous attribute values by name. This map may be
-	 *            empty. If this map is not empty, it's collection of keys must
-	 *            only contain instances of <code>String</code>. This map
-	 *            must be <code>null</code> if attributeValuesByNameChanged is
-	 *            <code>false</code> and must not be null if
-	 *            attributeValuesByNameChanged is <code>true</code>.
 	 */
-	public CommandEvent(final Command command,
-			final boolean attributeValuesByNameChanged,
-			final boolean categoryChanged, final boolean definedChanged,
-			final boolean descriptionChanged, final boolean handledChanged,
-			final boolean nameChanged, final Map previousAttributeValuesByName) {
+	public CommandEvent(final Command command, final boolean categoryChanged,
+			final boolean definedChanged, final boolean descriptionChanged,
+			final boolean handledChanged, final boolean nameChanged) {
 		if (command == null)
 			throw new NullPointerException();
 
-		if (!attributeValuesByNameChanged
-				&& previousAttributeValuesByName != null)
-			throw new IllegalArgumentException();
-
-		if (attributeValuesByNameChanged) {
-			if (previousAttributeValuesByName == null) {
-				this.previousAttributeValuesByName = null;
-			} else {
-				this.previousAttributeValuesByName = Util.safeCopy(
-						previousAttributeValuesByName, String.class,
-						Object.class, false, true);
-			}
-		}
-
 		this.command = command;
-		this.attributeValuesByNameChanged = attributeValuesByNameChanged;
 		this.categoryChanged = categoryChanged;
 		this.definedChanged = definedChanged;
 		this.descriptionChanged = descriptionChanged;
@@ -137,21 +96,6 @@ public class CommandEvent {
 	 */
 	public final Command getCommand() {
 		return command;
-	}
-
-	/**
-	 * Returns the map of previous attribute values by name.
-	 * 
-	 * @return the map of previous attribute values by name. This map may be
-	 *         empty. If this map is not empty, it's collection of keys is
-	 *         guaranteed to only contain instances of <code>String</code>.
-	 *         This map is guaranteed to be <code>null</code> if
-	 *         haveAttributeValuesByNameChanged() is <code>false</code> and is
-	 *         guaranteed to not be null if haveAttributeValuesByNameChanged()
-	 *         is <code>true</code>.
-	 */
-	public final Map getPreviousAttributeValuesByName() {
-		return previousAttributeValuesByName;
 	}
 
 	/**
@@ -197,14 +141,5 @@ public class CommandEvent {
 	 */
 	public final boolean hasNameChanged() {
 		return nameChanged;
-	}
-
-	/**
-	 * Returns whether or not the attributeValuesByName property changed.
-	 * 
-	 * @return true, iff the attributeValuesByName property changed.
-	 */
-	public final boolean haveAttributeValuesByNameChanged() {
-		return attributeValuesByNameChanged;
 	}
 }
