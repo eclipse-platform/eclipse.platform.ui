@@ -29,18 +29,35 @@ public class InternalSiteManager {
 	private static InternalSiteManager inst;
 	public static ILocalSite localSite;
 
-	private static void init() {
+	private static void init() throws CoreException {
 		inst = new InternalSiteManager();
 		inst.initVariables();
 	}
 
-	private void initVariables() {
-		// sites
+	private void initVariables() throws CoreException{
 
 		// sites types
 		sitesTypes = new HashMap();
-		sitesTypes.put("http", "org.eclipse.update.internal.core.SiteURL");
-		sitesTypes.put("file", "org.eclipse.update.internal.core.SiteFile");
+	/*	String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
+		IConfigurationElement[] elements = pluginRegistry.getConfigurationElementsFor(pluginID,ISite.SIMPLE_EXTENSION_ID);
+		if (elements==null || elements.length==0){
+			IStatus status = new Status(IStatus.ERROR,pluginID,IStatus.OK,"Cannot find any site factory  ",null);
+			throw new CoreException(status);
+		} else {
+			for (int i = 0; i < elements.length; i++) {
+				IConfigurationElement element = elements[i];
+				String protocol = element.getAttribute("protocol");
+				String siteType = element.getAttribute("siteFactory");
+				sitesTypes.put(protocol,siteType);			
+			}
+		}*/
+
+		//sitesTypes.put("http", "org.eclipse.update.internal.core.SiteURL");
+		//sitesTypes.put("file", "org.eclipse.update.internal.core.SiteFile");
+		
+		sitesTypes.put("http", "org.eclipse.update.core.http");
+		sitesTypes.put("file", "org.eclipse.update.core.file");		
 	}
 
 	/**
@@ -62,26 +79,54 @@ public class InternalSiteManager {
 		ISite site = null;
 		if (inst == null)
 			init();
+		
+		// protocol
 		String protocol = siteURL.getProtocol();
-		String clazz = (String) inst.getSitesTypes().get(protocol);
-		if (clazz != null) {
+		String type = (String) inst.getSitesTypes().get(protocol);
+		
+		// if error
+		Exception caughtException = null;
+		
+		if (type != null) {
 			try {
-				Class siteClass = Class.forName(clazz);
-				Class classArgs[] = { siteURL.getClass()};
-				Constructor constructor = siteClass.getConstructor(classArgs);
-				Object objArgs[] = { siteURL };
-				site = (ISite) constructor.newInstance(objArgs);
-
-			} catch (Exception e) {
-				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "cannot create an instance of the Site Object", e);
-				throw new CoreException(status);
+					site = createSite(type,siteURL);
+			}  catch (InvalidSiteTypeException e){
+				// the type in the site.xml is not the one expected				
+				try {
+						InvalidSiteTypeException exception = (InvalidSiteTypeException) e;
+						site = createSite(exception.getNewType(),siteURL);
+					} catch (Exception e2){
+						caughtException = e2;
+					}
+			}catch (Exception e) {
+				caughtException = e;
 			}
 		} else {
+			// protocol not found, attempt to use default
+			// if the site hasn't a specific type, then cancel...
+			// otherwise use the type in site.xml
+			try {
+				URL newURL = new URL("http",siteURL.getHost(), siteURL.getFile());
+				ISite newSite = getSite(newURL);
+				if (newSite.getType().equals(inst.getSitesTypes().get(protocol))){
+					//The type hasn't changed so we haven't found one in the Site.xml
+					// does not continue.... 
+					caughtException = new Exception("Protocol not found and site.xml does not contain specific type");
+				}
+			} catch (Exception e){
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "The protocol of the URL is not recognized", null);
+				throw new CoreException(status);
+			}
+		}
+
+
+		if (caughtException!=null){
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "The protocol of the URL is not recognized", null);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "cannot create an instance of the Site Object", caughtException);
 			throw new CoreException(status);
 		}
+		
 		return site;
 	}
 
@@ -94,7 +139,7 @@ public class InternalSiteManager {
 				String tempDir = System.getProperty("java.io.tmpdir");
 				if (!tempDir.endsWith(File.separator))
 					tempDir += File.separator;
-				TEMP_SITE = new SiteFile(new URL("file", null, tempDir + TEMP_NAME + '/')); // URL must end with '/' if they refer to a path/directory
+				TEMP_SITE = InternalSiteManager.getSite(new URL("file", null, tempDir + TEMP_NAME + '/')); // URL must end with '/' if they refer to a path/directory
 			} catch (MalformedURLException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create Temporary Site", e);
@@ -134,6 +179,16 @@ public class InternalSiteManager {
 	}
 
 	/**
+	 * create an instance of a class that implements ISite
+	 */
+	private static ISite createSite(String siteType, URL url) throws CoreException, InvalidSiteTypeException {
+		ISite site = null;
+		ISiteFactory factory = SiteTypeFactory.getInstance().getFactory(siteType);
+		site = factory.createSite(url);
+		return site;
+	}
+
+	/**
 	 * Creates a new site on the file system
 	 * This is the only Site we can create.
 	 * 
@@ -149,7 +204,7 @@ public class InternalSiteManager {
 				site.save();
 			} catch (MalformedURLException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "cannot create a URL from:"+siteLocation.getAbsolutePath(), e);
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "cannot create a URL from:" + siteLocation.getAbsolutePath(), e);
 				throw new CoreException(status);
 			}
 		}
@@ -163,14 +218,13 @@ public class InternalSiteManager {
 	public static IConfigurationSite createConfigurationSite(ISite site, int policy) {
 		return new ConfigurationSite(site, createConfigurationPolicy(policy));
 	}
-	
+
 	/**
 	 * Creates a Configuration policy
 	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
 	 */
-	public static IConfigurationPolicy createConfigurationPolicy(int policy){
+	public static IConfigurationPolicy createConfigurationPolicy(int policy) {
 		return new ConfigurationPolicy(policy);
 	}
-	
 
 }

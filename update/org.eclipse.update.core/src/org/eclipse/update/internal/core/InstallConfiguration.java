@@ -278,115 +278,106 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		while (iterConfigurationSites.hasNext()) {
 			IConfigurationSite element = (IConfigurationSite) iterConfigurationSites.next();
 			ConfigurationPolicy configurationPolicy = (ConfigurationPolicy) element.getConfigurationPolicy();
-			String[] pluginsID = configurationPolicy.getPlugins();
-			String[] pluginPath = null;
-			if (pluginsID != null) {
-				pluginPath = new String[pluginsID.length];
-				for (int i = 0; i < pluginsID.length; i++) {
-					URL url =  ((Site) element.getSite()).getURL(pluginsID[i]);
-					pluginPath[i] =( url==null)?"":url.getFile();
-				}
-			}
-
+			String[] pluginPath = configurationPolicy.getPluginPath(element.getSite());
 			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
 			runtimeConfiguration.findConfiguredSite(element.getSite().getURL()).setSitePolicy(sitePolicy);
-			try {
-				runtimeConfiguration.save();
-			} catch (IOException e) {
-				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot save Platform Configuration ", e);
-				throw new CoreException(status);
-			}
-
+		try {
+			runtimeConfiguration.save();
+		} catch (IOException e) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot save Platform Configuration ", e);
+			throw new CoreException(status);
 		}
 
 	}
 
-	/*
-	 * @see IWritable#write(int, PrintWriter)
-	 */
-	public void write(int indent, PrintWriter w) {
+}
 
-		String gap = "";
-		for (int i = 0; i < indent; i++)
-			gap += " ";
-		String increment = "";
-		for (int i = 0; i < IWritable.INDENT; i++)
-			increment += " ";
+/*
+ * @see IWritable#write(int, PrintWriter)
+ */
+public void write(int indent, PrintWriter w) {
 
-		w.print(gap + "<" + InstallConfigurationParser.CONFIGURATION + " ");
-		w.print("date=\"" + date.getTime() + "\" ");
-		w.println(">");
-		w.println("");
+	String gap = "";
+	for (int i = 0; i < indent; i++)
+		gap += " ";
+	String increment = "";
+	for (int i = 0; i < IWritable.INDENT; i++)
+		increment += " ";
 
-		// site configurations
-		if (configurationSites != null) {
-			Iterator iter = configurationSites.iterator();
-			while (iter.hasNext()) {
-				ConfigurationSite element = (ConfigurationSite) iter.next();
-				((IWritable) element).write(indent + IWritable.INDENT, w);
+	w.print(gap + "<" + InstallConfigurationParser.CONFIGURATION + " ");
+	w.print("date=\"" + date.getTime() + "\" ");
+	w.println(">");
+	w.println("");
+
+	// site configurations
+	if (configurationSites != null) {
+		Iterator iter = configurationSites.iterator();
+		while (iter.hasNext()) {
+			ConfigurationSite element = (ConfigurationSite) iter.next();
+			((IWritable) element).write(indent + IWritable.INDENT, w);
+		}
+	}
+
+	// activities
+	if (activities != null && !activities.isEmpty()) {
+		Iterator iter = activities.iterator();
+		while (iter.hasNext()) {
+			ConfigurationActivity element = (ConfigurationActivity) iter.next();
+			((IWritable) element).write(indent + IWritable.INDENT, w);
+		}
+	}
+
+	// end
+	w.println(gap + "</" + InstallConfigurationParser.CONFIGURATION + ">");
+
+}
+
+/**
+ * reverts this configuration to the match the new one
+ * 
+ * remove any site that are in the current but not in the old state
+ * 
+ * replace all the config sites of the current state with the old one
+ * 
+ * for all the sites left in the current state, calculate the revert
+ * 
+ */
+public void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor, IProblemHandler handler) throws CoreException, InterruptedException {
+
+	IConfigurationSite[] oldConfigSites = configuration.getConfigurationSites();
+
+	// create a hashtable of the *old* sites
+	Map oldSitesMap = new Hashtable(0);
+	for (int i = 0; i < oldConfigSites.length; i++) {
+		IConfigurationSite element = oldConfigSites[i];
+		oldSitesMap.put(element.getSite().getURL().toExternalForm(), element);
+	}
+
+	// create list of all the sites that map the *old* sites
+	// we want the intersection between teh old sites and teh current sites
+	if (configurationSites != null) {
+
+		// for each current site, ask the old site
+		// to calculate the delta 
+		Iterator currentSites = configurationSites.iterator();
+		String key = null;
+		while (currentSites.hasNext()) {
+			IConfigurationSite element = (IConfigurationSite) currentSites.next();
+			key = element.getSite().getURL().toExternalForm();
+			IConfigurationSite oldSite = (IConfigurationSite) oldSitesMap.get(key);
+			if (oldSite != null) {
+				((ConfigurationSite) oldSite).deltaWith(element, monitor, handler);
 			}
+
 		}
 
-		// activities
-		if (activities != null && !activities.isEmpty()) {
-			Iterator iter = activities.iterator();
-			while (iter.hasNext()) {
-				ConfigurationActivity element = (ConfigurationActivity) iter.next();
-				((IWritable) element).write(indent + IWritable.INDENT, w);
-			}
-		}
-
-		// end
-		w.println(gap + "</" + InstallConfigurationParser.CONFIGURATION + ">");
+		// the new configuration has the exact same sites as the old configuration
+		configurationSites = new ArrayList(0);
+		configurationSites.addAll(oldSitesMap.values());
 
 	}
 
-	/**
-	 * reverts this configuration to the match the new one
-	 * 
-	 * remove any site that are in the current but not in the old state
-	 * 
-	 * replace all the config sites of the current state with the old one
-	 * 
-	 * for all the sites left in the current state, calculate the revert
-	 * 
-	 */
-	public void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor,IProblemHandler handler) throws CoreException {
-
-		IConfigurationSite[] oldConfigSites = configuration.getConfigurationSites();
-
-		// create a hashtable of the *old* sites
-		Map oldSitesMap = new Hashtable(0);
-		for (int i = 0; i < oldConfigSites.length; i++) {
-			IConfigurationSite element = oldConfigSites[i];
-			oldSitesMap.put(element.getSite().getURL().toExternalForm(), element);
-		}
-
-		// create list of all the sites that map the *old* sites
-		// we want the intersection between teh old sites and teh current sites
-		if (configurationSites != null) {
-
-			// for each current site, ask the old site
-			// to calculate the delta 
-			Iterator currentSites = configurationSites.iterator();
-			String key = null;
-			while (currentSites.hasNext()) {
-				IConfigurationSite element = (IConfigurationSite) currentSites.next();
-				key = element.getSite().getURL().toExternalForm();
-				IConfigurationSite oldSite = (IConfigurationSite) oldSitesMap.get(key);
-				if (oldSite != null) {
-					((ConfigurationSite) oldSite).deltaWith(element, monitor,handler);
-				}
-
-			}
-
-			// the new configuration has the exact same sites as the old configuration
-			configurationSites = new ArrayList(0);
-			configurationSites.addAll(oldSitesMap.values());
-
-		}
-
-	}
+}
 
 }

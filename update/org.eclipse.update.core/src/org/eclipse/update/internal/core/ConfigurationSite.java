@@ -197,7 +197,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 	 * process the delta with the configuration site
 	 */
 	/*package*/
-	void deltaWith(IConfigurationSite currentConfiguration, IProgressMonitor monitor, IProblemHandler handler) throws CoreException {
+	void deltaWith(IConfigurationSite currentConfiguration, IProgressMonitor monitor, IProblemHandler handler) throws CoreException, InterruptedException {
 		IFeatureReference[] configuredFeatures = processConfiguredFeatures(handler);
 
 		// we only care about unconfigured features if the Site policy is USER_EXCLUDE
@@ -281,7 +281,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 	 * @return IFeatureReference[]
 	 * @throws CoreException
 	 */
-	private IFeatureReference[] processConfiguredFeatures(IProblemHandler handler) throws CoreException {
+	private IFeatureReference[] processConfiguredFeatures(IProblemHandler handler) throws CoreException, InterruptedException {
 		// we keep our configured feature
 		// check if they are all valid
 		IFeatureReference[] configuredFeatures = getConfiguredFeatures();
@@ -293,8 +293,9 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 					feature = configuredFeatures[i].getFeature();
 				} catch (CoreException e) {
 					//FIXME notify we cannot find the feature
+					UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
 					if (!handler.reportProblem("Cannot find feature " + configuredFeatures[i].getURL().toExternalForm())) {
-						throw new CoreException(e.getStatus());
+						throw new InterruptedException();
 					}
 				}
 
@@ -314,10 +315,11 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 							if (!siteIdentifiers.contains(entry.getIdentifier())) {
 								// FIXME: teh plugin defined by teh feature
 								// doesn't see to exist on the site
+								String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+								IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error verifying existence of plugin:" + entry.getIdentifier().toString(), null);
+								UpdateManagerPlugin.getPlugin().getLog().log(status);								
 								if (!handler.reportProblem("Cannot find entry " + entry.getIdentifier().toString() + " on site " + feature.getSite().getURL().toExternalForm())) {
-									String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-									IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error verifying existence of plugin:" + entry.getIdentifier().toString(), null);
-									throw new CoreException(status);
+									throw new InterruptedException();
 								}
 							} // end if not found in site
 						} // end for

@@ -8,9 +8,16 @@ import java.io.InputStream;
 import java.net.URL;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 public interface ISite extends IPluginContainer {
-	
+
+
+	/**
+	 * extension point ID
+	 */
+	public static final String SIMPLE_EXTENSION_ID = "siteTypeProtocols";
+		
 	/**
 	 * Returns an array of feature this site contains
 	 * 
@@ -57,6 +64,14 @@ public interface ISite extends IPluginContainer {
 	 */
 
 	URL getURL() ;
+	
+	/**
+	 * 
+	 * @return teh type of the site
+	 * @since 2.0 
+	 */
+
+	String getType() ;
 	
 	
 	/**

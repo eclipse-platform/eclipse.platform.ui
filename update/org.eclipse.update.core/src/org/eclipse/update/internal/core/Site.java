@@ -42,6 +42,7 @@ public abstract class Site implements ISite, IWritable {
 
 	private ListenersList listeners = new ListenersList();
 	private URL siteURL;
+	private String siteType;
 	private URL infoURL;
 	private List features;
 	private Set categories;
@@ -50,7 +51,7 @@ public abstract class Site implements ISite, IWritable {
 	/**
 	 * Constructor for AbstractSite
 	 */
-	public Site(URL siteReference) throws CoreException {
+	public Site(URL siteReference) throws CoreException, InvalidSiteTypeException {
 		super();
 		this.siteURL = siteReference;
 		initializeSite();
@@ -60,13 +61,12 @@ public abstract class Site implements ISite, IWritable {
 	 * Initializes the site by reading the site.xml file
 	 * 
 	 */
-	private void initializeSite() throws CoreException {
+	private void initializeSite() throws CoreException, InvalidSiteTypeException {
 		try {
 			URL siteXml = new URL(siteURL, SITE_XML);
 			parser = new SiteParser(siteXml.openStream(), this);
 			isManageable = true;
-
-		} catch (FileNotFoundException e) {
+		}catch (FileNotFoundException e) {
 			//attempt to parse the site if possible
 			parseSite();
 			// log not manageable site
@@ -172,9 +172,9 @@ public abstract class Site implements ISite, IWritable {
 	 */
 	public abstract URL getURL(String archiveID) throws CoreException;
 	/**
-	 * returns the default prefered feature for this site
+	 * returns the default prefered feature type for this site
 	 */
-	public abstract IFeature getDefaultFeature(URL featureURL) throws CoreException;
+	public abstract String getDefaultFeatureType(URL featureURL) throws CoreException;
 
 	/**
 	 * parse the physical site to initialize the site object
@@ -505,6 +505,13 @@ public abstract class Site implements ISite, IWritable {
 	 * @see IPluginContainer#store(IPluginEntry, String, InputStream)
 	 */
 	public void store(IPluginEntry entry, String name, InputStream inStream) throws CoreException {
+	}
+
+	/*
+	 * @see ISite#getType()
+	 */
+	public String getType() {
+		return siteType;
 	}
 
 }

@@ -17,4 +17,24 @@
       <export name="*"/>
    </library>
 </runtime>
+
+<extension-point id="featureTypes" name="Install/Update Concrete Feature Type Implementation Factory"/>
+
+<extension 	id="jar" point="org.eclipse.update.core.featureTypes">
+	<feature-factory class="org.eclipse.update.internal.core.FeaturePackagedFactory"/>
+</extension>
+
+<extension 	id="exe" point="org.eclipse.update.core.featureTypes">
+	<feature-factory class="org.eclipse.update.internal.core.FeatureExecutableFactory"/>
+</extension>
+
+<extension-point id="siteTypes" name="Install/Update Concrete Site Type Implementation Factory"/>
+
+<extension 	id="http" point="org.eclipse.update.core.siteTypes">
+	<feature-factory class="org.eclipse.update.internal.core.SiteURLFactory"/>
+</extension>
+
+<extension 	id="file" point="org.eclipse.update.core.siteTypes">
+	<feature-factory class="org.eclipse.update.internal.core.SiteFileFactory"/>
+</extension>
 </plugin>

@@ -17,4 +17,10 @@
       <export name="*"/>
     </library>
 </runtime>
+
+
+<extension 	id="url" point="org.eclipse.update.core.siteTypes">
+	<site-factory class="org.eclipse.update.internal.core.SiteURLFactory"/>
+</extension>
+
 </plugin>

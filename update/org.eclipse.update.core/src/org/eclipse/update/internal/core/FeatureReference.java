@@ -99,19 +99,19 @@ public class FeatureReference implements IFeatureReference, IWritable {
 	public IFeature getFeature() throws CoreException {
 
 		if (feature == null) {
-			if (featureType != null && !featureType.equals("")) {
-				feature = createFeature(featureType);
-				Assert.isTrue(false,"Type not available yet for featuresConfigured in Site.XML...");
-			} else {
+			if (featureType == null || featureType.equals("")) {
 				if (url.toExternalForm().endsWith(FeaturePackaged.JAR_EXTENSION)) {
 					// if it ends with JAR, guess it is a FeaturePackaged
-					feature = new FeaturePackaged(url,site);
+					String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier()+".";
+					featureType = pluginID+IFeatureFactory.PACKAGED_FEATURE_TYPE;
 				} else {
 					// ask the Site for the default type 
-					feature = (Feature) ((Site) site).getDefaultFeature(url);
+					featureType = ((Site) site).getDefaultFeatureType(url);
 				}
 			}
 		}
+		
+		feature = createFeature(featureType,url,site);		
 		return feature;
 	}
 
@@ -192,9 +192,10 @@ public class FeatureReference implements IFeatureReference, IWritable {
 	/**
 	 * create an instance of a class that implements IFeature
 	 */
-	private IFeature createFeature(String featureClass) throws CoreException{
+	private IFeature createFeature(String featureType, URL url, ISite site) throws CoreException{
 		IFeature feature = null;
-		//FIXME: Executable extension for Feature Type
+		IFeatureFactory factory = FeatureTypeFactory.getInstance().getFactory(featureType);
+		feature = factory.createFeature(url,site);
 		return feature;
 	}
 	

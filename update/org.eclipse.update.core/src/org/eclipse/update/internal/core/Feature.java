@@ -646,9 +646,8 @@ public abstract class Feature implements IFeature {
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during Install", e);
 			throw new CoreException(status);
 		} finally {
-			// clean up TEMP drive
-			String path = UpdateManagerUtils.getPath(tempSite.getURL());
-			UpdateManagerUtils.removeFromFileSystem(new File(path));
+			//do not clean up TEMP drive
+			// as other feature may be there... clean up when exiting the plugin
 		}
 	}
 
@@ -968,6 +967,18 @@ public abstract class Feature implements IFeature {
 		 * Call the site with the ID to get the URL of the contentReference of the Site
 		 */
 		public abstract String[] getArchives();
+
+		/**
+		 * return the archive ID for a plugin
+		 * The id is based on the feature
+		 * the default ID is plugins/pluginId_pluginVer or
+		 * the default ID is fragments/pluginId_pluginVer or
+	 	*/
+		public String getArchiveID(IPluginEntry entry){
+			//FIXME: fragments
+			String type = (entry.isFragment())?Site.DEFAULT_FRAGMENT_PATH:Site.DEFAULT_PLUGIN_PATH;
+			return type+entry.getIdentifier().toString();
+		}
 
 		/**
 		 * return the list of FILE to be transfered for a Plugin

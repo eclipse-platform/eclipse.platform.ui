@@ -28,7 +28,7 @@ public class SiteFile extends SiteURL {
 	/**
 	 * Constructor for FileSite
 	 */
-	public SiteFile(URL siteReference) throws CoreException {
+	public SiteFile(URL siteReference) throws CoreException, InvalidSiteTypeException {
 		super(siteReference);
 	}
 
@@ -113,8 +113,9 @@ public class SiteFile extends SiteURL {
 	/*
 	 * @see Site#getDefaultFeature(URL)
 	 */
-	public IFeature getDefaultFeature(URL featureURL) throws CoreException {
-		return new FeatureExecutable(featureURL, this);
+	public String getDefaultFeatureType(URL featureURL) throws CoreException {
+		String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier()+".";
+		return pluginID+IFeatureFactory.EXECUTABLE_FEATURE_TYPE;
 	}
 
 	/**

@@ -350,14 +350,13 @@ public class SiteLocal implements ILocalSite, IWritable {
 			// create a configuration
 			newConfiguration = cloneCurrentConfiguration(null, configuration.getLabel());
 			
-			// add to the stack which will set up as current
-			addConfiguration(newConfiguration);
-			
-			
 			// process delta
 			// the Configured featuresConfigured are the same as the old configuration
 			// the unconfigured featuresConfigured are the rest...
 			 ((InstallConfiguration) newConfiguration).revertTo(configuration, monitor, handler);
+
+			// add to the stack which will set up as current
+			addConfiguration(newConfiguration);
 			
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);
@@ -365,6 +364,9 @@ public class SiteLocal implements ILocalSite, IWritable {
 			// error
 			activity.setStatus(IActivity.STATUS_NOK);
 			throw e;
+		} catch (InterruptedException e){
+			//user decided not to revert, do nothing
+			// because we didn't add the configuration to the history
 		} finally{
 			if (newConfiguration!=null) ((InstallConfiguration)newConfiguration).addActivity(activity);
 		}

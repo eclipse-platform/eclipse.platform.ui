@@ -6,6 +6,9 @@ package org.eclipse.update.internal.core;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.update.core.SiteManager;
+
+import java.io.File;
 import java.util.*;
 
 /**
@@ -99,5 +102,13 @@ public class UpdateManagerPlugin extends Plugin {
 	public void debug(String s){
 		System.out.println(toString()+"^"+Integer.toHexString(Thread.currentThread().hashCode())+" "+s);
 	}
-
+
+	// clean TEMP drive
+	public void shutdown() throws CoreException {
+			String path = UpdateManagerUtils.getPath(SiteManager.getTempSite().getURL());
+			UpdateManagerUtils.removeFromFileSystem(new File(path));
+	}
+
+
+	
 }

@@ -236,12 +236,4 @@ public class FeatureExecutable extends Feature {
 		return result;
 	}
 
-	/**
-	 * return the archive ID for a plugin
-	 * plugins/pluginid_ver 
-	 */
-	private String getArchiveID(IPluginEntry entry) {
-		return SiteFile.DEFAULT_PLUGIN_PATH+entry.getIdentifier().toString();
-	}
-
 }

@@ -22,7 +22,7 @@ public class SiteURL extends Site {
 	/**
 	 * Constructor for HTTPSite
 	 */
-	public SiteURL(URL siteReference) throws CoreException {
+	public SiteURL(URL siteReference) throws CoreException, InvalidSiteTypeException {
 		super(siteReference);
 	}
 
@@ -120,10 +120,11 @@ public class SiteURL extends Site {
 	}
 
 	/**
-	 * @see Site#getDefaultFeature(URL)
+	 * @see Site#getDefaultFeatureType(URL)
 	 */
-	public IFeature getDefaultFeature(URL featureURL) throws CoreException {
-		return new FeaturePackaged(featureURL,this);
+	public String getDefaultFeatureType(URL featureURL) throws CoreException {
+		String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier()+".";		
+		return pluginID+IFeatureFactory.PACKAGED_FEATURE_TYPE;
 	}
 
 	/**

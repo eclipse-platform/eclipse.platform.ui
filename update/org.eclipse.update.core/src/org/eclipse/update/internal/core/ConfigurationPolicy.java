@@ -3,6 +3,7 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.File;
 import java.net.URL;
 import java.util.*;
 
@@ -150,9 +151,10 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 	 * returns an array of string corresponding to plugin
 	 */
 	/*package*/
-	String[] getPlugins() throws CoreException {
+	String[] getPluginPath(ISite site) throws CoreException {
 		String[] result = new String[0];
 
+		// which features
 		Iterator iter = null;
 		if (policy == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
 			if (unconfiguredFeatureReferences != null)
@@ -162,19 +164,33 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 				iter = configuredFeatureReferences.iterator();
 		}
 
+		// obtain path for each feature
 		if (iter != null) {
 			List pluginsString = new ArrayList(0);
 			while (iter.hasNext()) {
 				IFeatureReference element = (IFeatureReference) iter.next();
 				IFeature feature = element.getFeature();
 				IPluginEntry[] entries = feature.getPluginEntries();
+				
 				for (int index = 0; index < entries.length; index++) {
 					IPluginEntry entry = entries[index];
 					String id = entry.getIdentifier().toString();
-					pluginsString.add(id);
+					// obtain the path of the plugin directory on teh site	
+					String archiveID = ((Feature)feature).getArchiveID(entry);				
+					URL url =  ((Site) site).getURL(archiveID);
+					if (url!=null){
+						// make it relative to teh site
+						String path = UpdateManagerUtils.getURLAsString(site.getURL(),url);
+						// add end "/"
+						path += (path.endsWith(File.separator) || path.endsWith("/"))?"":File.separator;
+						// add plugin.xml or fragment.xml
+						path += entry.isFragment()?"fragment.xml":"plugin.xml"; //FIXME: fragments
+						pluginsString.add(path);
+					}
 				}
 			}
 
+			// transform in String[]
 			if (!pluginsString.isEmpty()) {
 				result = new String[pluginsString.size()];
 				pluginsString.toArray(result);

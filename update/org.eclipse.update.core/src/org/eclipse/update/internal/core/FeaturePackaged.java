@@ -162,8 +162,9 @@ public class FeaturePackaged extends Feature {
 	/**
 	 * return the archive ID for a plugin
 	 */
-	private String getArchiveID(IPluginEntry entry) {
-		return Site.DEFAULT_PLUGIN_PATH+entry.getIdentifier().toString() + JAR_EXTENSION;
+	public String getArchiveID(IPluginEntry entry) {
+		String type = (entry.isFragment())?Site.DEFAULT_FRAGMENT_PATH:Site.DEFAULT_PLUGIN_PATH;
+		return type+entry.getIdentifier().toString() + JAR_EXTENSION;
 	}
 
 	/**
@@ -237,7 +238,6 @@ public class FeaturePackaged extends Feature {
 	private String[] getJAREntries(String path) throws CoreException {
 		String[] result = new String[0];
 		try {
-			System.out.println(path);
 			JarFile jarFile = new JarFile(path);
 			List list = new ArrayList();
 			Enumeration enum = jarFile.entries();
