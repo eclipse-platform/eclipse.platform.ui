@@ -30,6 +30,24 @@ public abstract class Action implements IAction {
 	 */
 	private static Map keyCodes = null;
 	/**
+	 * Table of key codes (key type: <code>String</code>,
+	 * value type: <code>Integer</code>); <code>null</code>
+	 * if not yet initialized. The key is the localalized name
+	 * of the key as it appears in menus.
+	 * @see #findLocalizedKeyCode
+	 */
+	private static Map localizedKeyCodes = null;
+	
+	/**
+	 * The localized uppercase versions of the modifer 
+	 * keys.
+	 */
+	private static String LOCALIZED_CTRL;
+	private static String LOCALIZED_SHIFT;
+	private static String LOCALIZED_ALT;
+	
+	
+	/**
 	 * Table of string representations of keys
 	 * (key type: <code>Integer</code>,
 	 * value type: <code>String</code>); <code>null</code>>
@@ -143,6 +161,47 @@ protected Action(String text, ImageDescriptor image) {
 public void addPropertyChangeListener(IPropertyChangeListener listener) { 
 	listeners.add(listener);
 }
+
+/**
+ * Parses the given accelerator text, and converts it to an accelerator key code.
+ * 
+ * Support for localized modifiers is for backwards compatibility
+ * with 1.0. Use setAccelerator(int) to set accelerators programatically
+ * or the <code>accelerator</code> tag in action definitions in 
+ * plugin.xml.
+ *
+ * @param acceleratorText the accelerator text localized to the current locale
+ * @return the SWT key code, or 0 if there is no accelerator
+ */
+private static int convertLocalizedAccelerator(String acceleratorText) {
+	int accelerator = 0;
+	StringTokenizer stok = new StringTokenizer(acceleratorText, "+");    //$NON-NLS-1$
+
+	int keyCode = -1;
+
+	boolean hasMoreTokens = stok.hasMoreTokens();
+	while (hasMoreTokens) {
+		String token = stok.nextToken();
+		hasMoreTokens = stok.hasMoreTokens();
+		// Every token except the last must be one of the modifiers
+		// Ctrl, Shift, or Alt.
+		if (hasMoreTokens) {
+			int modifier = findLocalizedModifier(token);
+			if (modifier != 0) {
+				accelerator |= modifier;
+			} else {//Leave if there are none
+				return 0;
+			}
+		} else {
+			keyCode = findLocalizedKeyCode(token);
+		}
+	}
+	if (keyCode != -1) {
+		accelerator |= keyCode;
+	}
+	return accelerator;
+}
+
 /**
  * Parses the given accelerator text, and converts it to an accelerator key code.
  *
@@ -274,6 +333,31 @@ public static int findKeyCode(String token) {
 		return token.charAt(0);
 	return -1;
 }
+
+/**
+ * Find the supplied code for a localized key. As
+ * #findKeyCode but localized to the current locale.
+ * 
+ * Support for localized modifiers is for backwards compatibility
+ * with 1.0. Use setAccelerator(int) to set accelerators programatically
+ * or the <code>accelerator</code> tag in action definitions in 
+ * plugin.xml.
+ *
+ * @param token the localized key name
+ * @return the SWT key code, <code>-1</code> if no match was found
+ * @see #findKeyCode
+ */
+private static int findLocalizedKeyCode(String token) {
+	if (localizedKeyCodes == null)
+		initLocalizedKeyCodes();
+	token= token.toUpperCase();
+	Integer i= (Integer) localizedKeyCodes.get(token);
+	if (i != null) 
+		return i.intValue();
+	if (token.length() == 1)
+		return token.charAt(0);
+	return -1;
+}
 /**
  * Maps an SWT key code to a standard keyboard key name. The key code is
  * stripped of modifiers (SWT.CTRL, SWT.ALT, and SWT.SHIFT). If the key code is
@@ -317,6 +401,41 @@ public static int findModifier(String token) {
 		return SWT.ALT;
 	return 0;
 }
+
+/**
+ * Maps the localized modifier names to a code in the same
+ * manner as #findModifier.
+ * 
+ * Support for localized modifiers is for backwards compatibility
+ * with 1.0. Use setAccelerator(int) to set accelerators programatically
+ * or the <code>accelerator</code> tag in action definitions in 
+ * plugin.xml.
+ * 
+ * @see findModifier
+ */
+private static int findLocalizedModifier(String token) {
+	if(LOCALIZED_CTRL == null)
+		initLocalizedModifiers();
+		
+	token= token.toUpperCase();
+	if (token.equals(LOCALIZED_CTRL))//$NON-NLS-1$
+		return SWT.CTRL;
+	if (token.equals(LOCALIZED_SHIFT))//$NON-NLS-1$
+		return SWT.SHIFT;
+	if (token.equals(LOCALIZED_ALT))//$NON-NLS-1$
+		return SWT.ALT;
+	return 0;
+}
+
+/**
+ * Initialize the list of localized modifiers
+ */
+private static void initLocalizedModifiers(){
+	LOCALIZED_CTRL = JFaceResources.getString("Ctrl").toUpperCase();//$NON-NLS-1$
+	LOCALIZED_SHIFT = JFaceResources.getString("Shift").toUpperCase();//$NON-NLS-1$
+	LOCALIZED_ALT = JFaceResources.getString("Alt").toUpperCase();//$NON-NLS-1$
+}
+
 /**
  * Returns a string representation of an SWT modifier bit (SWT.CTRL,
  * SWT.ALT, and SWT.SHIFT). Returns <code>null</code> if the key code 
@@ -491,6 +610,46 @@ private static void initKeyCodes() {
 	keyCodes.put("F11", new Integer(SWT.F11));//$NON-NLS-1$
 	keyCodes.put("F12", new Integer(SWT.F12));//$NON-NLS-1$
 }
+
+/** 
+ * Initializes the localized internal key code table.
+ */
+private static void initLocalizedKeyCodes() {
+	localizedKeyCodes = new HashMap(40);
+
+	localizedKeyCodes.put(JFaceResources.getString("Backspace"),new Integer(8));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("Tab"),new Integer(9));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("Return"), new Integer(13));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("Enter"), new Integer(13));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("Escape"), new Integer(27));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("Esc"), new Integer(27));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("Delete"), new Integer(127));//$NON-NLS-1$
+
+	localizedKeyCodes.put(JFaceResources.getString("Space"), new Integer(' '));//$NON-NLS-1$
+	
+	localizedKeyCodes.put(JFaceResources.getString("Arrow_Up"), new Integer(SWT.ARROW_UP));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("Arrow_Down"), new Integer(SWT.ARROW_DOWN));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("Arrow_Left"), new Integer(SWT.ARROW_LEFT));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("Arrow_Right"), new Integer(SWT.ARROW_RIGHT));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("Page_Up"), new Integer(SWT.PAGE_UP));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("Page_Down"), new Integer(SWT.PAGE_DOWN));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("Home"), new Integer(SWT.HOME));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("End"), new Integer(SWT.END));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("Insert"), new Integer(SWT.INSERT));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("F1"), new Integer(SWT.F1));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("F2"), new Integer(SWT.F2));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("F3"), new Integer(SWT.F3));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("F4"), new Integer(SWT.F4));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("F5"), new Integer(SWT.F5));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("F6"), new Integer(SWT.F6));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("F7"), new Integer(SWT.F7));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("F8"), new Integer(SWT.F8));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("F9"), new Integer(SWT.F9));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("F10"), new Integer(SWT.F10));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("F11"), new Integer(SWT.F11));//$NON-NLS-1$
+	localizedKeyCodes.put(JFaceResources.getString("F12"), new Integer(SWT.F12));//$NON-NLS-1$
+}
+
 /**
  * Initializes the internal key string table.
  */
@@ -708,7 +867,7 @@ public void setText(String text) {
 	if(text != null) {
 		String acceleratorText = extractAcceleratorText(text);
 		if (acceleratorText != null) {
-			int newAccelerator = convertAccelerator(acceleratorText);
+			int newAccelerator = convertLocalizedAccelerator(acceleratorText);
 			//Be sure to not wipe out the accelerator if nothing found
 			if (newAccelerator > 0) {
 				setAccelerator(newAccelerator);
