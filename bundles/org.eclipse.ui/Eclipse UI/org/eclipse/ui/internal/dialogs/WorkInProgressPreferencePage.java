@@ -34,15 +34,6 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 	// Temporary option to enable new menu structure
 	private Button newMenusButton;
 	
-	private Button doubleClickButton;
-	private Button singleClickButton;
-	private Button selectOnHoverButton;
-	private Button openAfterDelayButton;
-	
-	private boolean openOnSingleClick;
-	private boolean selectOnHover;
-	private boolean openAfterDelay;
-
 	// State for encoding group
 	private String defaultEnc;
 	private Button defaultEncodingButton;
@@ -57,11 +48,6 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		
 		//Call commented out on WorkbenchPreferencePage. 
 		acceleratorInit(aWorkbench);
-		
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		openOnSingleClick = store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK); //$NON-NLS-1$
-		selectOnHover = store.getBoolean(IPreferenceConstants.SELECT_ON_HOVER); //$NON-NLS-1$
-		openAfterDelay = store.getBoolean(IPreferenceConstants.OPEN_AFTER_DELAY); //$NON-NLS-1$
 	}
 	
 	/**
@@ -125,83 +111,12 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 				true);
 */
 		createSpace(composite);
-		createSingleClickGroup(composite);
-
-		createSpace(composite);
 		createEncodingGroup(composite);
 		
 		validCheck();
 		
 		return composite;
 	}
-	
-	private void createSingleClickGroup(Composite composite) {
-		
-		Group buttonComposite = new Group(composite, SWT.LEFT);
-		GridLayout layout = new GridLayout();
-		buttonComposite.setLayout(layout);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-		buttonComposite.setLayoutData(data);
-		buttonComposite.setText(WorkbenchMessages.getString("WorkInProgressPreference.openMode")); //$NON-NLS-1$
-		
-
-		String label = WorkbenchMessages.getString("WorkInProgressPreference.doubleClick"); //$NON-NLS-1$	
-		doubleClickButton = createRadioButton(buttonComposite,label);
-		doubleClickButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				selectClickMode(singleClickButton.getSelection());
-			}
-		});
-		doubleClickButton.setSelection(!openOnSingleClick);
-
-		label = WorkbenchMessages.getString("WorkInProgressPreference.singleClick"); //$NON-NLS-1$
-		singleClickButton = createRadioButton(buttonComposite,label);
-		singleClickButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				selectClickMode(singleClickButton.getSelection());
-			}
-		});
-		singleClickButton.setSelection(openOnSingleClick);
-		
-		label = WorkbenchMessages.getString("WorkInProgressPreference.singleClick_SelectOnHover"); //$NON-NLS-1$				
-		selectOnHoverButton = new Button(buttonComposite, SWT.CHECK | SWT.LEFT);
-		selectOnHoverButton.setText(label);
-		selectOnHoverButton.setEnabled(openOnSingleClick);
-		selectOnHoverButton.setSelection(selectOnHover);
-		selectOnHoverButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				selectOnHover = selectOnHoverButton.getSelection();
-			}
-		});
-		data = new GridData();
-		data.horizontalIndent = 20;
-		selectOnHoverButton.setLayoutData(data);
-		
-		
-		label = WorkbenchMessages.getString("WorkInProgressPreference.singleClick_OpenAfterDelay"); //$NON-NLS-1$				
-		openAfterDelayButton = new Button(buttonComposite, SWT.CHECK | SWT.LEFT);
-		openAfterDelayButton.setText(label);
-		openAfterDelayButton.setEnabled(openOnSingleClick);
-		openAfterDelayButton.setSelection(openAfterDelay);
-		openAfterDelayButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				openAfterDelay = openAfterDelayButton.getSelection();
-			}
-		});		
-		data = new GridData();
-		data.horizontalIndent = 20;
-		openAfterDelayButton.setLayoutData(data);
-		
-		Label note = new Label(buttonComposite, SWT.NONE);
-		note.setText(WorkbenchMessages.getString("WorkInProgressPreference.noEffectOnAllViews")); //$NON-NLS-1$
-	}
-	
-	private void selectClickMode(boolean singleClick) {
-		openOnSingleClick = singleClick;
-		selectOnHoverButton.setEnabled(openOnSingleClick);
-		openAfterDelayButton.setEnabled(openOnSingleClick);
-	}
-
 
 	private void createEncodingGroup(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
@@ -320,16 +235,6 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		//Call commented out on WorkbenchPreferencePage. 
 		acceleratorPerformDefaults(store);
 		
-		boolean openOnSingleClick = store.getDefaultBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK); //$NON-NLS-1$
-		boolean selectOnHover = store.getDefaultBoolean(IPreferenceConstants.SELECT_ON_HOVER); //$NON-NLS-1$
-		boolean openAfterDelay = store.getDefaultBoolean(IPreferenceConstants.OPEN_AFTER_DELAY); //$NON-NLS-1$
-		singleClickButton.setSelection(openOnSingleClick);
-		doubleClickButton.setSelection(!openOnSingleClick);
-		selectOnHoverButton.setSelection(selectOnHover);
-		openAfterDelayButton.setSelection(openAfterDelay);
-		selectOnHoverButton.setEnabled(openOnSingleClick);
-		openAfterDelayButton.setEnabled(openOnSingleClick);
-
 		coolBarsButton.setSelection(store.getDefaultBoolean("ENABLE_COOL_BARS")); //$NON-NLS-1$				
 //		newMenusButton.setSelection(store.getDefaultBoolean("ENABLE_NEW_MENUS")); //$NON-NLS-1$
 		
@@ -344,18 +249,6 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 
 //		store.setValue("ENABLE_NEW_MENUS", newMenusButton.getSelection()); //$NON-NLS-1$
 		store.setValue("ENABLE_COOL_BARS", coolBarsButton.getSelection()); //$NON-NLS-1$
-
-		store.setValue(IPreferenceConstants.OPEN_ON_SINGLE_CLICK,openOnSingleClick); //$NON-NLS-1$
-		store.setValue(IPreferenceConstants.SELECT_ON_HOVER,selectOnHover); //$NON-NLS-1$
-		store.setValue(IPreferenceConstants.OPEN_AFTER_DELAY,openAfterDelay); //$NON-NLS-1$
-		int singleClickMethod = openOnSingleClick ? OpenStrategy.SINGLE_CLICK : OpenStrategy.DOUBLE_CLICK;
-		if(openOnSingleClick) {
-			if(selectOnHover)
-				singleClickMethod |= OpenStrategy.SELECT_ON_HOVER;
-			if(openAfterDelay)
-				singleClickMethod |= OpenStrategy.ARROW_KEYS_OPEN;
-		}
-		OpenStrategy.setOpenMethod(singleClickMethod);
 
 		//Call commented out on WorkbenchPreferencePage. 
 		acceleratorPerformOk(store);

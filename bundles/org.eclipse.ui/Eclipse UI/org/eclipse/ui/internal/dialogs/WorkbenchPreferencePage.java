@@ -22,6 +22,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.ui.*;
@@ -42,6 +43,14 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private IntegerFieldEditor reuseEditorsThreshold;
 	private IntegerFieldEditor recentFilesEditor;
 
+	private Button doubleClickButton;
+	private Button singleClickButton;
+	private Button selectOnHoverButton;
+	private Button openAfterDelayButton;
+	private boolean openOnSingleClick;
+	private boolean selectOnHover;
+	private boolean openAfterDelay;
+	
 	// hashtable mapping accelerator configuration names to accelerator configuration
 	private Hashtable namesToConfiguration;
 	// the name of the active accelerator configuration
@@ -103,9 +112,12 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		
 		createSpace(composite);
 		createEditorReuseGroup(composite);
-		
+				
 //		createSpace(composite);
 //		createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration"));
+
+		createSpace(composite);
+		createSingleClickGroup(composite);
 
 		// set initial values
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
@@ -224,6 +236,73 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		});
 		
 	}
+	
+	private void createSingleClickGroup(Composite composite) {
+		
+		Group buttonComposite = new Group(composite, SWT.LEFT);
+		GridLayout layout = new GridLayout();
+		buttonComposite.setLayout(layout);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+		buttonComposite.setLayoutData(data);
+		buttonComposite.setText(WorkbenchMessages.getString("WorkInProgressPreference.openMode")); //$NON-NLS-1$
+		
+
+		String label = WorkbenchMessages.getString("WorkInProgressPreference.doubleClick"); //$NON-NLS-1$	
+		doubleClickButton = createRadioButton(buttonComposite,label);
+		doubleClickButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				selectClickMode(singleClickButton.getSelection());
+			}
+		});
+		doubleClickButton.setSelection(!openOnSingleClick);
+
+		label = WorkbenchMessages.getString("WorkInProgressPreference.singleClick"); //$NON-NLS-1$
+		singleClickButton = createRadioButton(buttonComposite,label);
+		singleClickButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				selectClickMode(singleClickButton.getSelection());
+			}
+		});
+		singleClickButton.setSelection(openOnSingleClick);
+		
+		label = WorkbenchMessages.getString("WorkInProgressPreference.singleClick_SelectOnHover"); //$NON-NLS-1$				
+		selectOnHoverButton = new Button(buttonComposite, SWT.CHECK | SWT.LEFT);
+		selectOnHoverButton.setText(label);
+		selectOnHoverButton.setEnabled(openOnSingleClick);
+		selectOnHoverButton.setSelection(selectOnHover);
+		selectOnHoverButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				selectOnHover = selectOnHoverButton.getSelection();
+			}
+		});
+		data = new GridData();
+		data.horizontalIndent = 20;
+		selectOnHoverButton.setLayoutData(data);
+		
+		
+		label = WorkbenchMessages.getString("WorkInProgressPreference.singleClick_OpenAfterDelay"); //$NON-NLS-1$				
+		openAfterDelayButton = new Button(buttonComposite, SWT.CHECK | SWT.LEFT);
+		openAfterDelayButton.setText(label);
+		openAfterDelayButton.setEnabled(openOnSingleClick);
+		openAfterDelayButton.setSelection(openAfterDelay);
+		openAfterDelayButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				openAfterDelay = openAfterDelayButton.getSelection();
+			}
+		});		
+		data = new GridData();
+		data.horizontalIndent = 20;
+		openAfterDelayButton.setLayoutData(data);
+		
+		Label note = new Label(buttonComposite, SWT.NONE);
+		note.setText(WorkbenchMessages.getString("WorkInProgressPreference.noEffectOnAllViews")); //$NON-NLS-1$
+	}
+	
+	private void selectClickMode(boolean singleClick) {
+		openOnSingleClick = singleClick;
+		selectOnHoverButton.setEnabled(openOnSingleClick);
+		openAfterDelayButton.setEnabled(openOnSingleClick);
+	}	
 	/**
 	 * Utility method that creates a radio button instance
 	 * and sets the default layout data.
@@ -298,6 +377,10 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	public void init(IWorkbench aWorkbench) {
 		workbench = aWorkbench;
 //		acceleratorInit(aWorkbench);
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		openOnSingleClick = store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK); //$NON-NLS-1$
+		selectOnHover = store.getBoolean(IPreferenceConstants.SELECT_ON_HOVER); //$NON-NLS-1$
+		openAfterDelay = store.getBoolean(IPreferenceConstants.OPEN_AFTER_DELAY); //$NON-NLS-1$
 	}
 	protected void acceleratorInit(IWorkbench aWorkbench) {
 		namesToConfiguration = new Hashtable();
@@ -340,6 +423,16 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 			name = config.getName();
 		if((name != null) && (accelConfigCombo != null))
 			accelConfigCombo.select(accelConfigCombo.indexOf(name));
+			
+		boolean openOnSingleClick = store.getDefaultBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK); //$NON-NLS-1$
+		boolean selectOnHover = store.getDefaultBoolean(IPreferenceConstants.SELECT_ON_HOVER); //$NON-NLS-1$
+		boolean openAfterDelay = store.getDefaultBoolean(IPreferenceConstants.OPEN_AFTER_DELAY); //$NON-NLS-1$
+		singleClickButton.setSelection(openOnSingleClick);
+		doubleClickButton.setSelection(!openOnSingleClick);
+		selectOnHoverButton.setSelection(selectOnHover);
+		openAfterDelayButton.setSelection(openAfterDelay);
+		selectOnHoverButton.setEnabled(openOnSingleClick);
+		openAfterDelayButton.setEnabled(openOnSingleClick);			
 	}
 	/**
 	 *	The user has pressed Ok.  Store/apply this page's values appropriately.
@@ -387,6 +480,18 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		// store the recent files setting
 		recentFilesEditor.store();
 
+		store.setValue(IPreferenceConstants.OPEN_ON_SINGLE_CLICK,openOnSingleClick); //$NON-NLS-1$
+		store.setValue(IPreferenceConstants.SELECT_ON_HOVER,selectOnHover); //$NON-NLS-1$
+		store.setValue(IPreferenceConstants.OPEN_AFTER_DELAY,openAfterDelay); //$NON-NLS-1$
+		int singleClickMethod = openOnSingleClick ? OpenStrategy.SINGLE_CLICK : OpenStrategy.DOUBLE_CLICK;
+		if(openOnSingleClick) {
+			if(selectOnHover)
+				singleClickMethod |= OpenStrategy.SELECT_ON_HOVER;
+			if(openAfterDelay)
+				singleClickMethod |= OpenStrategy.ARROW_KEYS_OPEN;
+		}
+		OpenStrategy.setOpenMethod(singleClickMethod);
+		
 //		acceleratorPerformOk(store);
 
 		WorkbenchPlugin.getDefault().savePluginPreferences();
