@@ -467,11 +467,12 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 						}
 					} catch (CoreException e) {
 						if (!resource.exists()) {
-							// Throw to the outer try-catch
-							throw e;
+							// The resource was deleted concurrently. Forget any previously found property
+							property = null;
+							break;
 						}
 						// If the marker exists, log the exception and continue.
-						// Otherwise, just ignore the exception
+						// Otherwise, just ignore the exception and keep going
 						if (marker.exists()) {
 							TeamPlugin.log(e);
 						}
@@ -480,7 +481,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 			} catch (CoreException e) {
 				// If the resource exists, log the exception and continue.
 				// Otherwise, just ignore the exception
-				if (resource.exists()) {
+				if (resource.exists() && e.getStatus().getCode() != IResourceStatus.RESOURCE_NOT_FOUND) {
 					TeamPlugin.log(e);
 				}
 			}
