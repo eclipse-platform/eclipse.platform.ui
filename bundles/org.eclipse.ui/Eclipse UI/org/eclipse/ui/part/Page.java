@@ -85,12 +85,14 @@ public void setActionBars(IActionBars actionBars) {
 		actionBars.getStatusLineManager());
 }
 /**
- * The <code>Page</code> implementation of this <code>IPage</code> method
+ * The <code>Page</code> implementation of this <code>IPageBookViewPage</code> method
  * stores a reference to the supplied site (the site which contains this 
  * page). 
  * <p>
  * Subclasses may extend.
  * </p>
+ * 
+ * @since 2.0
  */
 public void init(IPageSite pageSite) {
 	site = pageSite;
