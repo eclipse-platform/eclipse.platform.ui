@@ -19,7 +19,9 @@ import org.eclipse.jface.text.Position;
 /**
  * A <code>Position</code> on a document that knows which document it is
  * registered with and has a sequence number for tab stops.
- * 
+ * <p>
+ * Clients may extend this class.
+ * </p>
  * @since 3.0
  */
 public class LinkedPosition extends Position {
@@ -44,7 +46,7 @@ public class LinkedPosition extends Position {
 	}
 
 	/**
-	 * Creates a new instance. Equivalent to calling 
+	 * Creates a new instance. Equivalent to calling
 	 * <code>LinkedPosition(document, offset, length, LinkedPositionGroup.NO_STOP)</code>
 	 * 
 	 * @param document the document
@@ -77,7 +79,8 @@ public class LinkedPosition extends Position {
 	 * Returns whether this position overlaps with <code>position</code>.
 	 * 
 	 * @param position the position to check.
-	 * @return <code>true</code> if this position overlaps with <code>position</code>, <code>false</code> otherwise
+	 * @return <code>true</code> if this position overlaps with
+	 *         <code>position</code>,<code>false</code> otherwise
 	 */
 	public boolean overlapsWith(LinkedPosition position) {
 		return position.getDocument() == fDocument && overlapsWith(position.getOffset(), position.getLength());
@@ -87,7 +90,8 @@ public class LinkedPosition extends Position {
 	 * Returns whether this position includes <code>event</code>.
 	 * 
 	 * @param event the event to check.
-	 * @return <code>true</code> if this position includes <code>event</code>, <code>false</code> otherwise
+	 * @return <code>true</code> if this position includes <code>event</code>,
+	 *         <code>false</code> otherwise
 	 */
 	public boolean includes(DocumentEvent event) {
 		return includes(event.getDocument(), event.getOffset(), event.getLength());
@@ -97,19 +101,21 @@ public class LinkedPosition extends Position {
 	 * Returns whether this position includes <code>position</code>.
 	 * 
 	 * @param position the position to check.
-	 * @return <code>true</code> if this position includes <code>position</code>, <code>false</code> otherwise
+	 * @return <code>true</code> if this position includes
+	 *         <code>position</code>,<code>false</code> otherwise
 	 */
 	public boolean includes(LinkedPosition position) {
 		return includes(position.getDocument(), position.getOffset(), position.getLength());
 	}
 	
 	/**
-	 * Overrides {@link Position#includes(int)} so every offset is considered included that lies in
-	 * between the first and last offset of this position, and offsets that are right at the end
-	 * of the position.
+	 * Overrides {@link Position#includes(int)}so every offset is considered
+	 * included that lies in between the first and last offset of this position,
+	 * and offsets that are right at the end of the position.
 	 * 
 	 * @param pOffset the offset to check
-	 * @return <code>true</code> if <code>pOffset</code> is in [offset, offset + length]
+	 * @return <code>true</code> if <code>pOffset</code> is in
+	 *         <code>[offset, offset + length]</code>
 	 */
 	public boolean includes(int pOffset) {
 		return this.offset <= pOffset && pOffset <= this.offset + this.length;
@@ -168,5 +174,4 @@ public class LinkedPosition extends Position {
 	public int hashCode() {
 		return fDocument.hashCode() | super.hashCode() | fSequenceNumber;
 	}
-
 }

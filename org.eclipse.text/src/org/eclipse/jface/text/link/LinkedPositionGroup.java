@@ -36,8 +36,11 @@ import org.eclipse.jface.text.Position;
  * Normally, new positions are given a tab stop weight which can be used by
  * clients, e.g. the UI. If no weight is given, a position will not be visited.
  * If no weights are used at all, the first position in a document is taken as
- * the only stop as to comply with the behaviour of the old linked position
+ * the only stop as to comply with the behavior of the old linked position
  * infrastructure.
+ * </p>
+ * <p>
+ * Clients may instantiate this class.
  * </p>
  * 
  * @since 3.0
@@ -315,7 +318,8 @@ public class LinkedPositionGroup {
 	/**
 	 * Returns whether this group contains any positions.
 	 * 
-	 * @return <code>true</code> if this group is empty, <code>false</code> if it is not
+	 * @return <code>true</code> if this group is empty, <code>false</code>
+	 *         if it is not
 	 */
 	public boolean isEmtpy() {
 		return fPositions.size() == 0;

@@ -46,7 +46,7 @@ import org.eclipse.jface.text.IDocumentExtension.IReplace;
  * </p>
  * <p>
  * If the document is changed outside any linked position, the model is
- * teared down and all positions are deleted. The same happens upon calling
+ * torn down and all positions are deleted. The same happens upon calling
  * {@link #exit(int)}.
  * </p>
  * <h4>Nesting</h4>
@@ -56,13 +56,16 @@ import org.eclipse.jface.text.IDocumentExtension.IReplace;
  * single position in a parent model that has previously been installed on
  * the same document(s).
  * </p>
+ * <p>
+ * Clients may instantiate instances of this class.
+ * </p>
  * 
  * @since 3.0
  */
 public class LinkedModeModel {
 	
 	/**
-	 * Checks whether there is already a linked mode model installed on <code>document</code>.
+	 * Checks whether there is already a model installed on <code>document</code>.
 	 * 
 	 * @param document the <code>IDocument</code> of interest
 	 * @return <code>true</code> if there is an existing model, <code>false</code>
@@ -251,7 +254,7 @@ public class LinkedModeModel {
 	private final IPositionUpdater fUpdater= new InclusivePositionUpdater(getCategory());
 	/** The document listener on the documents affected by this model. */
 	private final IDocumentListener fDocumentListener= new DocumentListener();
-	/** The parent model for a hierachical set up, or <code>null</code>. */
+	/** The parent model for a hierarchical set up, or <code>null</code>. */
 	private LinkedModeModel fParentEnvironment;
 	/**
 	 * The position in <code>fParentEnvironment</code> that includes all
@@ -304,7 +307,7 @@ public class LinkedModeModel {
 
 	/**
 	 * Causes this model to exit. Called either if a document change
-	 * outside this enviroment is detected, or by the UI.
+	 * outside this model is detected, or by the UI.
 	 * 
 	 * <p>
 	 * This method part of the private protocol between
@@ -380,11 +383,9 @@ public class LinkedModeModel {
 	 * If the positions in <code>group</code> conflict with any other group in
 	 * this model, a <code>BadLocationException</code> is thrown. Also,
 	 * if this model is nested inside another one, all positions in all
-	 * groups of the child model have to lie in a single position in the
-	 * parent model, otherwise a <code>BadLocationException</code> is
-	 * thrown.
+	 * groups of the child model have to reside within a single position in the
+	 * parent model, otherwise a <code>BadLocationException</code> is thrown.
 	 * </p>
-	 * 
 	 * <p>
 	 * If <code>group</code> already exists, nothing happens.
 	 * </p>
@@ -408,7 +409,6 @@ public class LinkedModeModel {
 		group.seal();
 		fGroups.add(group);
 	}
-	
 	
 	/**
 	 * Installs this model, which includes registering as document
@@ -588,7 +588,7 @@ public class LinkedModeModel {
 	 * Returns whether this model is nested.
 	 * 
 	 * <p>
-	 * This method part of the private protocol between
+	 * This method is part of the private protocol between
 	 * <code>LinkedUIControl</code> and <code>LinkedModeModel</code>.
 	 * </p>
 	 * 
@@ -604,7 +604,7 @@ public class LinkedModeModel {
 	 * order they were added.
 	 * 
 	 * <p>
-	 * This method part of the private protocol between
+	 * This method is part of the private protocol between
 	 * <code>LinkedUIControl</code> and <code>LinkedModeModel</code>.
 	 * </p>
 	 * 
@@ -757,5 +757,4 @@ public class LinkedModeModel {
 		}
 		return null;
 	}
-
 }

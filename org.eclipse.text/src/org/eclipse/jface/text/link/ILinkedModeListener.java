@@ -10,43 +10,64 @@
  *******************************************************************************/
 package org.eclipse.jface.text.link;
 
-
 /**
- * Protocol used by <code>LinkedModeModel</code>s to communicate state changes, such
- * as leaving the environment, suspending it due to a child environment coming up, and resuming
- * after a child environment has left.
+ * Protocol used by {@link LinkedModeModel}s to communicate state changes, such
+ * as leaving linked mode, suspending it due to a child mode coming up, and
+ * resuming after a child mode has left.
+ * <p>
+ * This interface may implemented by clients.
+ * </p>
  * 
  * @since 3.0
  */
 public interface ILinkedModeListener {
+
 	/** Flag to <code>leave</code> specifying no special action. */
 	int NONE= 0;
-	/** Flag to <code>leave</code> specifying that all nested environments should exit. */
-	int EXIT_ALL= 1 << 0;
-	/** Flag to <code>leave</code> specifying that the caret should be moved to the exit position. */
-	int UPDATE_CARET= 1 << 1;
-	/** Flag to <code>leave</code> specifying that a UI of a parent environment should select the current position. */
-	int SELECT= 1 << 2;
-	/** Flag to <code>leave</code> specifying that document content outside of a linked position was modified. */
-	int EXTERNAL_MODIFICATION= 1 << 3;
 	/**
-	 * The leave event occurs when a linked environment exits.
+	 * Flag to <code>leave</code> specifying that all nested modes should
+	 * exit.
+	 */
+	int EXIT_ALL= 1 << 0;
+	/**
+	 * Flag to <code>leave</code> specifying that the caret should be moved to
+	 * the exit position.
+	 */
+	int UPDATE_CARET= 1 << 1;
+	/**
+	 * Flag to <code>leave</code> specifying that a UI of a parent mode should
+	 * select the current position.
+	 */
+	int SELECT= 1 << 2;
+	/**
+	 * Flag to <code>leave</code> specifying that document content outside of
+	 * a linked position was modified.
+	 */
+	int EXTERNAL_MODIFICATION= 1 << 3;
+
+	/**
+	 * The leave event occurs when linked is left.
 	 * 
-	 * @param environment the leaving environment
+	 * @param model the model being left
 	 * @param flags the reason and commands for leaving linked mode
 	 */
-	void left(LinkedModeModel environment, int flags);
+	void left(LinkedModeModel model, int flags);
+
 	/**
-	 * The suspend event occurs when a nested linked environment is installed on this environment.
+	 * The suspend event occurs when a nested linked mode is installed within
+	 * <code>model</code>.
 	 * 
-	 * @param environment the environment being suspended due to a nested environment being installed
+	 * @param model the model being suspended due to a nested model being
+	 *        installed
 	 */
-	void suspend(LinkedModeModel environment);
+	void suspend(LinkedModeModel model);
+
 	/**
-	 * The resume event occurs when a nested linked environment exits.
+	 * The resume event occurs when a nested linked mode exits.
 	 * 
-	 * @param environment the environment being resumed due to a nested environment exiting
+	 * @param model the linked mode model being resumed due to a nested mode
+	 *        exiting
 	 * @param flags the commands to execute when resuming after suspend
 	 */
-	void resume(LinkedModeModel environment, int flags);
+	void resume(LinkedModeModel model, int flags);
 }
