@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.preferences;
 
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IExportedPreferences;
 import org.osgi.service.prefs.BackingStoreException;
@@ -70,7 +70,7 @@ public class ExportedPreferences extends EclipsePreferences implements IExported
 			try {
 				removeNode();
 			} catch (BackingStoreException e) {
-				String message = Policy.bind("preferences.removeExported", absolutePath()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.preferences_removeExported, absolutePath());
 				IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
 				log(status);
 			}

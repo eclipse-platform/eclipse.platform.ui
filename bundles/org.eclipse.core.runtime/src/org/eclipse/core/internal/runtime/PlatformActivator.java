@@ -195,7 +195,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 					}
 				}
 				if (applicationId == null)
-					throw new RuntimeException(Policy.bind("application.noIdFound")); //$NON-NLS-1$
+					throw new RuntimeException(Messages.application_noIdFound);
 				IExtensionRegistry registry = InternalPlatform.getDefault().getRegistry();
 				IExtension applicationExtension = registry.getExtension(Platform.PI_RUNTIME, Platform.PT_APPLICATIONS, applicationId);
 				if (applicationExtension == null) {
@@ -207,11 +207,11 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 							availableAppsString = availableAppsString + ", " + availableApps[i].getUniqueIdentifier(); //$NON-NLS-1$
 						}
 					}
-					throw new RuntimeException(Policy.bind("application.notFound", applicationId, availableAppsString)); //$NON-NLS-1$
+					throw new RuntimeException(Messages.bind(Messages.application_notFound, applicationId, availableAppsString));
 				}
 				IConfigurationElement[] configs = applicationExtension.getConfigurationElements();
 				if (configs.length == 0)
-					throw new RuntimeException(Policy.bind("application.invalidExtension", applicationId)); //$NON-NLS-1$
+					throw new RuntimeException(Messages.bind(Messages.application_invalidExtension, applicationId));
 				IConfigurationElement config = configs[0];
 				application = (IPlatformRunnable) config.createExecutableExtension("run"); //$NON-NLS-1$
 				// if the given arg is null the pass in the left over command line args.
@@ -221,7 +221,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 				int exitCode = result instanceof Integer ? ((Integer) result).intValue() : 0;
 				System.setProperty(PROP_ECLIPSE_EXITCODE, Integer.toString(exitCode));
 				if (InternalPlatform.DEBUG)
-					System.out.println(Policy.bind("application.returned", new String[] {applicationId, result == null ? "null" : result.toString()})); //$NON-NLS-1$ //$NON-NLS-2$
+					System.out.println(Messages.bind(Messages.application_returned, new String[] {applicationId, result == null ? "null" : result.toString()})); //$NON-NLS-1$
 				return result;
 			}
 		};

@@ -178,7 +178,7 @@ public class ExtensionsParser extends DefaultHandler {
 				break;
 			case INITIAL_STATE :
 				// shouldn't get here
-				internalError(Policy.bind("parse.internalStack", elementName)); //$NON-NLS-1$
+				internalError(Messages.bind(Messages.parse_internalStack, elementName));
 				break;
 			case BUNDLE_STATE :
 				if (elementName.equals(manifestType)) {
@@ -295,7 +295,7 @@ public class ExtensionsParser extends DefaultHandler {
 	private void handleInitialState(String elementName, Attributes attributes) {
 		if (!elementName.equals(manifestType)) {
 			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-			internalError(Policy.bind("parse.unknownTopElement", elementName)); //$NON-NLS-1$
+			internalError(Messages.bind(Messages.parse_unknownTopElement, elementName));
 			return;
 		}
 		// new manifests should have the plugin (not fragment) element empty
@@ -335,10 +335,10 @@ public class ExtensionsParser extends DefaultHandler {
 
 		String msg;
 		if (name.equals("")) //$NON-NLS-1$
-			msg = Policy.bind("parse.error", ex.getMessage()); //$NON-NLS-1$
+			msg = Messages.bind(Messages.parse_error, ex.getMessage());
 		else
-			msg = Policy.bind("parse.errorNameLineColumn", //$NON-NLS-1$
-					new String[] {name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()});
+			msg = Messages.bind(Messages.parse_errorNameLineColumn,
+					new Object[] {name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()});
 		error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, PARSE_PROBLEM, msg, ex));
 	}
 
@@ -354,7 +354,7 @@ public class ExtensionsParser extends DefaultHandler {
 		SAXParserFactory factory = (SAXParserFactory) factoryTracker.getService();
 
 		if (factory == null)
-			throw new SAXException(Policy.bind("parse.xmlParserNotAvailable")); //$NON-NLS-1$
+			throw new SAXException(Messages.parse_xmlParserNotAvailable);
 
 		try {
 			if (manifestKind == null)
@@ -437,25 +437,26 @@ public class ExtensionsParser extends DefaultHandler {
 		objectManager.add(currentExtension, true);
 	}
 
+	//todo: Are all three methods needed??
 	private void missingAttribute(String attribute, String element) {
 		if (locator == null)
-			internalError(Policy.bind("parse.missingAttribute", new String[] {attribute, element})); //$NON-NLS-1$
+			internalError(Messages.bind(Messages.parse_missingAttribute, attribute, element));
 		else
-			internalError(Policy.bind("parse.missingAttributeLine", new String[] {attribute, element, Integer.toString(locator.getLineNumber())})); //$NON-NLS-1$
+			internalError(Messages.bind(Messages.parse_missingAttributeLine, new String[] {attribute, element, Integer.toString(locator.getLineNumber())}));
 	}
 
 	private void unknownAttribute(String attribute, String element) {
 		if (locator == null)
-			internalError(Policy.bind("parse.unknownAttribute", new String[] {attribute, element})); //$NON-NLS-1$
+			internalError(Messages.bind(Messages.parse_unknownAttribute, attribute, element));
 		else
-			internalError(Policy.bind("parse.unknownAttributeLine", new String[] {attribute, element, Integer.toString(locator.getLineNumber())})); //$NON-NLS-1$
+			internalError(Messages.bind(Messages.parse_unknownAttributeLine, new String[] {attribute, element, Integer.toString(locator.getLineNumber())}));
 	}
 
 	private void unknownElement(String element, String parent) {
 		if (locator == null)
-			internalError(Policy.bind("parse.unknownAttribute", new String[] {parent, element})); //$NON-NLS-1$
+			internalError(Messages.bind(Messages.parse_unknownAttribute, parent, element));
 		else
-			internalError(Policy.bind("parse.unknownAttributeLine", new String[] {parent, element, Integer.toString(locator.getLineNumber())})); //$NON-NLS-1$
+			internalError(Messages.bind(Messages.parse_unknownAttributeLine, new String[] {parent, element, Integer.toString(locator.getLineNumber())}));
 	}
 
 	private void parseExtensionPointAttributes(Attributes attributes) {
@@ -517,7 +518,7 @@ public class ExtensionsParser extends DefaultHandler {
 			default :
 				stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 				if (!compatibilityMode)
-					internalError(Policy.bind("parse.unknownTopElement", elementName)); //$NON-NLS-1$
+					internalError(Messages.bind(Messages.parse_unknownTopElement, elementName));
 		}
 	}
 

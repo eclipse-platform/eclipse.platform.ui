@@ -12,8 +12,7 @@ package org.eclipse.core.internal.preferences;
 
 import java.io.*;
 import java.util.*;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
 import org.osgi.service.prefs.BackingStoreException;
@@ -143,8 +142,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 */
 	protected void checkRemoved() {
 		if (removed) {
-			String message = Policy.bind("preferences.removedNode", name); //$NON-NLS-1$
-			throw new IllegalStateException(message);
+			throw new IllegalStateException(Messages.bind(Messages.preferences_removedNode, name));
 		}
 	}
 
@@ -302,7 +300,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			result.flush();
 		} catch (BackingStoreException e) {
 			IPath location = result.getLocation();
-			String message = Policy.bind("preferences.loadException", location == null ? EMPTY_STRING : location.toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.preferences_loadException, location == null ? EMPTY_STRING : location.toString());
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
 			InternalPlatform.getDefault().log(status);
 		} finally {
@@ -614,7 +612,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				Policy.debug("Preference file does not exist: " + location); //$NON-NLS-1$
 			return;
 		} catch (IOException e) {
-			String message = Policy.bind("preferences.loadException", location.toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.preferences_loadException, location);
 			log(new Status(IStatus.INFO, Platform.PI_RUNTIME, IStatus.INFO, message, e));
 			throw new BackingStoreException(message);
 		} finally {
@@ -926,7 +924,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		if (table.isEmpty()) {
 			// nothing to save. delete existing file if one exists.
 			if (location.toFile().exists() && !location.toFile().delete()) {
-				String message = Policy.bind("preferences.failedDelete", location.toString()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.preferences_failedDelete, location);
 				log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, IStatus.WARNING, message, null));
 			}
 			return;
@@ -943,7 +941,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			output = new BufferedOutputStream(new FileOutputStream(location.toOSString(), false));
 			table.store(output, null);
 		} catch (IOException e) {
-			String message = Policy.bind("preferences.saveException", location.toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.preferences_saveException, location);
 			log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e));
 			throw new BackingStoreException(message);
 		} finally {

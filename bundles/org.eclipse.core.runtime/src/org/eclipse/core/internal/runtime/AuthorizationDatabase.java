@@ -261,9 +261,9 @@ public class AuthorizationDatabase {
 				input.close();
 			}
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_READ_METADATA, Policy.bind("meta.unableToReadAuthorization", file.toString()), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_READ_METADATA, Messages.bind(Messages.meta_unableToReadAuthorization, file), e));
 		} catch (ClassNotFoundException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_READ_METADATA, Policy.bind("meta.unableToReadAuthorization", file.toString()), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_READ_METADATA, Messages.bind(Messages.meta_unableToReadAuthorization, file), e));
 		}
 	}
 
@@ -282,7 +282,7 @@ public class AuthorizationDatabase {
 			}
 		} else {
 			//the format has changed, just log a warning
-			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.FAILED_READ_METADATA, Policy.bind("meta.authFormatChanged"), null)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.FAILED_READ_METADATA, Messages.meta_authFormatChanged, null));
 			//close the stream and save a new file in the correct format
 			try {
 				is.close();
@@ -303,7 +303,7 @@ public class AuthorizationDatabase {
 		try {
 			file.delete();
 			if ((!file.getParentFile().exists() && !file.getParentFile().mkdirs()) || !canWrite(file.getParentFile()))
-				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, Policy.bind("meta.unableToWriteAuthorization", file.toString()), null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, Messages.bind(Messages.meta_unableToWriteAuthorization, file), null));
 			file.createNewFile();
 			FileOutputStream out = new FileOutputStream(file);
 			try {
@@ -312,7 +312,7 @@ public class AuthorizationDatabase {
 				out.close();
 			}
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, Policy.bind("meta.unableToWriteAuthorization", file.toString()), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, Messages.bind(Messages.meta_unableToWriteAuthorization, file), e));
 		}
 		needsSaving = false;
 	}

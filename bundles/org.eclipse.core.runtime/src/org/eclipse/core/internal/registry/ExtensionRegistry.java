@@ -55,7 +55,7 @@ public class ExtensionRegistry implements IExtensionRegistry {
 		}
 
 		public IStatus run(IProgressMonitor monitor) {
-			MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, Policy.bind("plugin.eventListenerError"), null); //$NON-NLS-1$			
+			MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, Messages.plugin_eventListenerError, null);
 			for (int i = 0; i < listenerInfos.length; i++) {
 				ListenerInfo listenerInfo = (ListenerInfo) listenerInfos[i];
 				if (listenerInfo.filter != null && !deltas.containsKey(listenerInfo.filter))

@@ -12,7 +12,7 @@ package org.eclipse.core.internal.jobs;
 import java.util.HashMap;
 import java.util.Stack;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.LockListener;
@@ -164,13 +164,12 @@ public class LockManager {
 	 * LockManager. This is essentially an inlined version of Platform.run(ISafeRunnable)
 	 */
 	private static void handleException(Throwable e) {
-		String message = Policy.bind("jobs.internalError"); //$NON-NLS-1$
 		IStatus status;
 		if (e instanceof CoreException) {
-			status = new MultiStatus(Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, e);
+			status = new MultiStatus(Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, Messages.jobs_internalError, e);
 			((MultiStatus) status).merge(((CoreException) e).getStatus());
 		} else {
-			status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, e);
+			status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, Messages.jobs_internalError, e);
 		}
 		InternalPlatform.getDefault().log(status);
 	}

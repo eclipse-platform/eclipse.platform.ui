@@ -12,7 +12,7 @@ package org.eclipse.core.internal.registry;
 
 import java.util.Hashtable;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
 import org.osgi.framework.Bundle;
 
@@ -106,9 +106,9 @@ public class ConfigurationElement extends RegistryObject {
 
 			// specified name is not a simple attribute nor child element
 			else {
-				String message = Policy.bind("plugin.extDefNotFound", attributeName); //$NON-NLS-1$
-				IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, PLUGIN_ERROR, message, null); //$NON-NLS-1$
-				InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status); //$NON-NLS-1$
+				String message = Messages.bind(Messages.plugin_extDefNotFound, attributeName);
+				IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, PLUGIN_ERROR, message, null); 
+				InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status); 
 				throw new CoreException(status);
 			}
 		} else {
@@ -129,9 +129,9 @@ public class ConfigurationElement extends RegistryObject {
 		}
 
 		if (className == null || className.equals("")) { //$NON-NLS-1$
-			String message = Policy.bind("plugin.extDefNoClass", attributeName); //$NON-NLS-1$
-			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, PLUGIN_ERROR, message, null); //$NON-NLS-1$ 
-			InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status); //$NON-NLS-1$
+			String message = Messages.bind(Messages.plugin_extDefNoClass, attributeName);
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, PLUGIN_ERROR, message, null);
+			InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status);
 			throw new CoreException(status);
 		}
 
@@ -140,7 +140,7 @@ public class ConfigurationElement extends RegistryObject {
 
 	private Object createExecutableExtension(String pluginName, String className, Object initData, ConfigurationElement cfig, String propertyName) throws CoreException {
 		if(contributingBundle==null) {
-			throwException(Policy.bind("plugin.loadClassError", "UNKNOWN BUNDLE", className), new InvalidRegistryObjectException());  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+			throwException(Messages.bind(Messages.plugin_loadClassError, "UNKNOWN BUNDLE", className), new InvalidRegistryObjectException());  //$NON-NLS-1$ 
 		}
 		String id = contributingBundle.getSymbolicName(); // this plugin id check if we need to delegate to some other plugin
 		if (pluginName != null && !pluginName.equals("") && !pluginName.equals(id)) { //$NON-NLS-1$
@@ -153,16 +153,16 @@ public class ConfigurationElement extends RegistryObject {
 
 	private Object createExecutableExtension(Bundle bundle, String className, Object initData, ConfigurationElement cfig, String propertyName) throws CoreException {
 		if(contributingBundle==null) {
-			throwException(Policy.bind("plugin.loadClassError", "UNKNOWN BUNDLE", className), new InvalidRegistryObjectException());  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+			throwException(Messages.bind(Messages.plugin_loadClassError, "UNKNOWN BUNDLE", className), new InvalidRegistryObjectException());  //$NON-NLS-1$ 
 		}
 		// load the requested class from this plugin
 		Class classInstance = null;
 		try {
 			classInstance = bundle.loadClass(className);
 		} catch (Exception e1) {
-			throwException(Policy.bind("plugin.loadClassError", bundle.getSymbolicName(), className), e1); //$NON-NLS-1$
+			throwException(Messages.bind(Messages.plugin_loadClassError, bundle.getSymbolicName(), className), e1);
 		} catch (LinkageError e) {
-			throwException(Policy.bind("plugin.loadClassError", bundle.getSymbolicName(), className), e); //$NON-NLS-1$
+			throwException(Messages.bind(Messages.plugin_loadClassError, bundle.getSymbolicName(), className), e); 
 		}
 
 		// create a new instance
@@ -170,7 +170,7 @@ public class ConfigurationElement extends RegistryObject {
 		try {
 			result = classInstance.newInstance();
 		} catch (Exception e) {
-			throwException(Policy.bind("plugin.instantiateClassError", bundle.getSymbolicName(), className), e); //$NON-NLS-1$
+			throwException(Messages.bind(Messages.plugin_instantiateClassError, bundle.getSymbolicName(), className), e);
 		}
 
 		// check if we have extension adapter and initialize
@@ -185,7 +185,7 @@ public class ConfigurationElement extends RegistryObject {
 				throw new CoreException(ce.getStatus());
 			} catch (Exception te) {
 				// user code caused exception
-				throwException(Policy.bind("policy.initObjectError", bundle.getSymbolicName(), className), te); //$NON-NLS-1$
+				throwException(Messages.bind(Messages.plugin_initObjectError, bundle.getSymbolicName(), className), te);
 			}
 		}
 		return result;

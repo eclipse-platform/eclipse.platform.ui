@@ -13,7 +13,7 @@ package org.eclipse.core.runtime.content;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -90,7 +90,7 @@ public final class BinarySignatureDescriber implements IContentDescriber, IExecu
 			else if (data instanceof Hashtable) {
 				Hashtable parameters = (Hashtable) data;
 				if (!parameters.containsKey(SIGNATURE)) {
-					String message = Policy.bind("content.badInitializationData", XMLRootElementContentDescriber.class.getName()); //$NON-NLS-1$
+					String message = Messages.bind(Messages.content_badInitializationData, XMLRootElementContentDescriber.class.getName());
 					throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, null));
 				}
 				signature = parseSignature((String) parameters.get(SIGNATURE));
@@ -100,7 +100,7 @@ public final class BinarySignatureDescriber implements IContentDescriber, IExecu
 					required = Boolean.valueOf((String) parameters.get(REQUIRED)).booleanValue();
 			}
 		} catch (NumberFormatException nfe) {
-			String message = Policy.bind("content.badInitializationData", BinarySignatureDescriber.class.getName()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.content_badInitializationData, BinarySignatureDescriber.class.getName());
 			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, nfe));
 		}
 	}

@@ -178,7 +178,7 @@ public final class ContentType implements IContentType {
 		try {
 			contentTypeNode.flush();
 		} catch (BackingStoreException bse) {
-			String message = Policy.bind("content.errorSavingSettings", getId()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.content_errorSavingSettings, getId());
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, bse);
 			throw new CoreException(status);
 		}
@@ -200,7 +200,7 @@ public final class ContentType implements IContentType {
 		} catch (IOException ioe) {
 			// bugs 67841/ 62443  - non-low level IOException should be "ignored"
 			if (ContentTypeManager.DEBUGGING) {
-				String message = Policy.bind("content.errorReadingContents", getId()); //$NON-NLS-1$ 
+				String message = Messages.bind(Messages.content_errorReadingContents, getId());
 				ContentType.log(message, ioe);
 			}
 		} finally {
@@ -225,7 +225,7 @@ public final class ContentType implements IContentType {
 		} catch (IOException ioe) {
 			// bugs 67841/ 62443  - non-low level IOException should be "ignored"
 			if (ContentTypeManager.DEBUGGING) {
-				String message = Policy.bind("content.errorReadingContents", getId()); //$NON-NLS-1$ 
+				String message = Messages.bind(Messages.content_errorReadingContents, getId());
 				ContentType.log(message, ioe);
 			}
 		} finally {
@@ -494,7 +494,7 @@ public final class ContentType implements IContentType {
 
 	private IContentDescriber invalidateDescriber(Throwable reason) {
 		setValidation(STATUS_INVALID);
-		String message = Policy.bind("content.invalidContentDescriber", getId()); //$NON-NLS-1$ 
+		String message = Messages.bind(Messages.content_invalidContentDescriber, getId());
 		log(message, reason);
 		return describer = new InvalidDescriber();
 	}
@@ -550,7 +550,7 @@ public final class ContentType implements IContentType {
 		try {
 			contentTypeNode.flush();
 		} catch (BackingStoreException bse) {
-			String message = Policy.bind("content.errorSavingSettings", getId()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.content_errorSavingSettings, getId());
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, bse);
 			throw new CoreException(status);
 		}
@@ -589,7 +589,7 @@ public final class ContentType implements IContentType {
 		try {
 			contentTypeNode.flush();
 		} catch (BackingStoreException bse) {
-			String message = Policy.bind("content.errorSavingSettings", getId()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.content_errorSavingSettings, getId());
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, bse);
 			throw new CoreException(status);
 		}

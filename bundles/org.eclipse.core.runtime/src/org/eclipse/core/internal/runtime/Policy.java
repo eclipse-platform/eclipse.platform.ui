@@ -10,78 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.*;
+import java.util.Date;
 import org.eclipse.core.runtime.*;
-import org.osgi.framework.Bundle;
 
 public class Policy {
-	private static String bundleName = "org.eclipse.core.internal.runtime.messages"; //$NON-NLS-1$
-	private static ResourceBundle bundle;
-
-	/*
-	 * Returns a resource bundle, creating one if it none is available. 
-	 */
-	private static ResourceBundle getResourceBundle() {
-		// thread safety
-		ResourceBundle tmpBundle = bundle;
-		if (tmpBundle != null)
-			return tmpBundle;
-		// always create a new classloader to be passed in 
-		// in order to prevent ResourceBundle caching
-		return bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault(), new RuntimeBundleClassLoader());
-	}
-
-	/**
-	 * Forces the internal resource bundle to be recreated.
-	 */
-	public static void forgetResourceBundle() {
-		bundle = null;
-	}
-
-	/**
-	 * Lookup the message with the given ID in this catalog 
-	 */
-	public static String bind(String id) {
-		return bind(id, (String[]) null);
-	}
-
-	/**
-	 * Lookup the message with the given ID in this catalog and bind its
-	 * substitution locations with the given string.
-	 */
-	public static String bind(String id, String binding) {
-		return bind(id, new String[] {binding});
-	}
-
-	/**
-	 * Lookup the message with the given ID in this catalog and bind its
-	 * substitution locations with the given strings.
-	 */
-	public static String bind(String id, String binding1, String binding2) {
-		return bind(id, new String[] {binding1, binding2});
-	}
-
-	/**
-	 * Lookup the message with the given ID in this catalog and bind its
-	 * substitution locations with the given string values.
-	 */
-	public static String bind(String id, String[] bindings) {
-		if (id == null)
-			return "No message available"; //$NON-NLS-1$
-		String message = null;
-		try {
-			message = getResourceBundle().getString(id);
-		} catch (MissingResourceException e) {
-			// If we got an exception looking for the message, fail gracefully by just returning
-			// the id we were looking for.  In most cases this is semi-informative so is not too bad.
-			return "Missing message: " + id + " in: " + bundleName; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if (bindings == null)
-			return message;
-		return MessageFormat.format(message, bindings);
-	}
 
 	public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
 		if (monitor == null)
@@ -119,22 +51,7 @@ public class Policy {
 		System.out.println(buffer.toString());
 	}
 
-	/**
-	 * A temporary classloader for the runtime plug-in.
-	 */
-	private static class RuntimeBundleClassLoader extends ClassLoader {
-
-		private Bundle getRuntimeBundle() {
-			return InternalPlatform.getDefault().getBundleContext().getBundle();
-		}
-
-		protected Class findClass(String name) throws ClassNotFoundException {
-			return getRuntimeBundle().loadClass(name);
-		}
-
-		protected URL findResource(String name) {
-			return getRuntimeBundle().getResource(name);
-		}
+	public static void forgetResourceBundle() {
+		//todo
 	}
-
 }

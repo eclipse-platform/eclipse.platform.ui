@@ -35,11 +35,11 @@ public class DataArea {
 			return;
 		Location service = InternalPlatform.getDefault().getInstanceLocation();
 		if (service == null)
-			throw new IllegalStateException(Policy.bind("meta.noDataModeSpecified")); //$NON-NLS-1$
+			throw new IllegalStateException(Messages.meta_noDataModeSpecified);
 		try {
 			URL url = service.getURL();
 			if (url == null)
-				throw new IllegalStateException(Policy.bind("meta.instanceDataUnspecified")); //$NON-NLS-1$
+				throw new IllegalStateException(Messages.meta_instanceDataUnspecified);
 			// TODO assume the URL is a file: 
 			// Use the new File technique to ensure that the resultant string is 
 			// in the right format (e.g., leading / removed from /c:/foo etc)
@@ -101,7 +101,7 @@ public class DataArea {
 		// check if the location can be created
 		if (location.toFile().exists()) {
 			if (!location.toFile().isDirectory()) {
-				String message = Policy.bind("meta.notDir", location.toString()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.meta_notDir, location);
 				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, null));
 			}
 		}
@@ -118,11 +118,11 @@ public class DataArea {
 		try {
 			file.mkdirs();
 		} catch (Exception e) {
-			String message = Policy.bind("meta.couldNotCreate", file.getAbsolutePath()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.meta_couldNotCreate, file.getAbsolutePath());
 			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, e));
 		}
 		if (!file.canWrite()) {
-			String message = Policy.bind("meta.readonly", file.getAbsolutePath()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.meta_readonly, file.getAbsolutePath());
 			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, null));
 		}
 		// set the log file location now that we created the data area

@@ -108,7 +108,7 @@ public class AuthorizationHandler {
 
 	public static void setKeyringFile(String file) {
 		if (keyringFile != null)
-			throw new IllegalStateException(Policy.bind("meta.keyringFileAlreadySpecified", keyringFile)); //$NON-NLS-1$
+			throw new IllegalStateException(Messages.bind(Messages.meta_keyringFileAlreadySpecified, keyringFile));
 		keyringFile = file;
 	}
 

@@ -12,7 +12,7 @@ package org.eclipse.core.internal.content;
 
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentType;
 
@@ -107,9 +107,9 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 	private boolean isComplete(ContentType contentType) {
 		String message = null;
 		if (contentType.getSimpleId() == null)
-			message = Policy.bind("content.missingIdentifier", contentType.getId()); //$NON-NLS-1$
+			message = Messages.bind(Messages.content_missingIdentifier, contentType.getId());
 		else if (contentType.getName() == null)
-			message = Policy.bind("content.missingName", contentType.getId()); //$NON-NLS-1$
+			message = Messages.bind(Messages.content_missingName, contentType.getId());
 		if (message == null)
 			return true;
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, null);

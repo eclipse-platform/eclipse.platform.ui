@@ -228,7 +228,7 @@ public final class InternalPlatform {
 	private void assertInitialized() {
 		//avoid the Policy.bind if assertion is true
 		if (!initialized)
-			Assert.isTrue(false, Policy.bind("meta.appNotInit")); //$NON-NLS-1$
+			Assert.isTrue(false, Messages.meta_appNotInit);
 	}
 
 	/**
@@ -578,15 +578,15 @@ public final class InternalPlatform {
 				} catch (CoreException e) {
 					if (logEntries == null)
 						logEntries = new ArrayList(3);
-					logEntries.add(new FrameworkLogEntry(Platform.PI_RUNTIME, Policy.bind("provider.invalid", element.getParent().toString()), 0, e, null)); //$NON-NLS-1$
+					logEntries.add(new FrameworkLogEntry(Platform.PI_RUNTIME, Messages.bind(Messages.provider_invalid, element.getParent().toString()), 0, e, null));
 				}
 			}
 		}
 		if (logEntries != null)
-			getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Policy.bind("provider.invalid.general"), 0, null, (FrameworkLogEntry[]) logEntries.toArray())); //$NON-NLS-1$
+			getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Messages.provider_invalid_general, 0, null, (FrameworkLogEntry[]) logEntries.toArray()));
 		
 		if (!missingProductReported) {
-			getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Policy.bind("product.notFound", productId), 0, null, null)); //$NON-NLS-1$
+			getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Messages.bind(Messages.product_notFound, productId), 0, null, null));
 			missingProductReported = true;
 		}
 		return null;
@@ -675,7 +675,7 @@ public final class InternalPlatform {
 	private void handleException(ISafeRunnable code, Throwable e) {
 		if (!(e instanceof OperationCanceledException)) {
 			String pluginId = Platform.PI_RUNTIME;
-			String message = Policy.bind("meta.pluginProblems", pluginId); //$NON-NLS-1$
+			String message = Messages.bind(Messages.meta_pluginProblems, pluginId);
 			IStatus status;
 			if (e instanceof CoreException) {
 				status = new MultiStatus(pluginId, Platform.PLUGIN_ERROR, message, e);
@@ -1028,7 +1028,7 @@ public final class InternalPlatform {
 						result.addElement(new URL(entry));
 					} catch (MalformedURLException e) {
 						//intentionally ignore bad URLs
-						System.err.println(Policy.bind("ignore.plugin", entry)); //$NON-NLS-1$
+						System.err.println("Ignoring plugin: " + entry); //$NON-NLS-1$
 					}
 			}
 		}

@@ -10,8 +10,6 @@
 package org.eclipse.core.internal.jobs;
 
 import org.eclipse.core.internal.runtime.*;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 
@@ -129,7 +127,7 @@ class JobListeners {
 		if (e instanceof OperationCanceledException)
 			return;
 		String pluginId = Platform.PI_RUNTIME;
-		String message = Policy.bind("meta.pluginProblems", pluginId); //$NON-NLS-1$
+		String message = Messages.bind(Messages.meta_pluginProblems, pluginId);
 		IStatus status = new Status(IStatus.ERROR, pluginId, Platform.PLUGIN_ERROR, message, e);
 		//we have to be safe, so don't try to log if the platform is not running 
 		//since it will fail - last resort is to print the stack trace on stderr

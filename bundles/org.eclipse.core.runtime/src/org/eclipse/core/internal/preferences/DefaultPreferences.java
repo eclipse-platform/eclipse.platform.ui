@@ -144,8 +144,7 @@ public class DefaultPreferences extends EclipsePreferences {
 			initializer = (AbstractPreferenceInitializer) element.createExecutableExtension(ATTRIBUTE_CLASS);
 			initializer.initializeDefaultPreferences();
 		} catch (ClassCastException e) {
-			String message = Policy.bind("preferences.invalidExtensionSuperclass"); //$NON-NLS-1$
-			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, Messages.preferences_invalidExtensionSuperclass, e);
 			log(status);
 		} catch (CoreException e) {
 			log(e.getStatus());
@@ -339,7 +338,7 @@ public class DefaultPreferences extends EclipsePreferences {
 			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Preference customization file not found: " + filename); //$NON-NLS-1$
 		} catch (IOException e) {
-			String message = Policy.bind("preferences.loadException", filename); //$NON-NLS-1$
+			String message = Messages.bind(Messages.preferences_loadException, filename);
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
 			InternalPlatform.getDefault().log(status);
 		} finally {
