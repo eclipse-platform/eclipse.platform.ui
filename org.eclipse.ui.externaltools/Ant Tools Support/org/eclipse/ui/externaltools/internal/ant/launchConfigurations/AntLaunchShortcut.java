@@ -80,8 +80,8 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	/**
 	 * Inform the user that an ant file was not found to run.
 	 */
-	protected void antFileNotFound() {
-		reportError(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Unable_to_determine_which_Ant_file_to_run._1"), null); //$NON-NLS-1$
+	private void antFileNotFound() {
+		reportError(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Unable"), null); //$NON-NLS-1$	
 	}
 	
 	/**
@@ -94,7 +94,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 * or IContainer.
 	 * @param mode the mode in which the build file should be executed
 	 */
-	public void launch(IResource resource, String mode) {
+	protected void launch(IResource resource, String mode) {
 		if (!("xml".equalsIgnoreCase(resource.getFileExtension()))) { //$NON-NLS-1$
 			if (resource.getType() == IResource.FILE) {
 				resource= resource.getParent();
@@ -103,7 +103,9 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		} 
 		if (resource != null) {
 			launch((IFile)resource, mode, null);
-		}
+		} else {
+		 	antFileNotFound();
+		 }
 	}
 	
 	/**
@@ -162,13 +164,10 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 * search criteria.
 	 */
 	private IFile findBuildFile(IContainer parent) {
-		IPreferenceStore prefs= ExternalToolsPlugin.getDefault().getPreferenceStore();
-		String buildFileNames= prefs.getString(IPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES);
-		if (buildFileNames.length() == 0) {
-			//the user has not specified any names to look for
+		String[] names= getBuildFileNames();
+		if (names == null) {
 			return null;
 		}
-		String[] names= AntUtil.parseString(buildFileNames, ","); //$NON-NLS-1$
 		IResource file= null;
 		while (file == null || file.getType() != IFile.FILE) {		
 			for (int i = 0; i < names.length; i++) {
@@ -184,6 +183,16 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			}
 		}
 		return (IFile)file;
+	}
+	
+	private String[] getBuildFileNames() {
+		IPreferenceStore prefs= ExternalToolsPlugin.getDefault().getPreferenceStore();
+		String buildFileNames= prefs.getString(IPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES);
+		if (buildFileNames.length() == 0) {
+			//the user has not specified any names to look for
+			return null;
+		}
+		return AntUtil.parseString(buildFileNames, ","); //$NON-NLS-1$
 	}
 	
 	/**
