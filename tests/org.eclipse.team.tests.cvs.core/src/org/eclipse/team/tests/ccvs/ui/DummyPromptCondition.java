@@ -1,7 +1,7 @@
 package org.eclipse.team.tests.ccvs.ui;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.internal.ccvs.ui.IPromptCondition;
+import org.eclipse.team.internal.ui.IPromptCondition;
 
 public class DummyPromptCondition implements IPromptCondition {
 	public boolean needsPrompt(IResource resource) {
