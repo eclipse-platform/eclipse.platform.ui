@@ -11,14 +11,23 @@
 package org.eclipse.ui.tests.util;
 
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.*;
+
+import org.eclipse.ui.IWindowListener;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 
 
 /**
@@ -31,6 +40,7 @@ public abstract class UITestCase extends TestCase
 {
 	protected IWorkbench fWorkbench;
 	private List testWindows;
+	private IWindowListener windowListener;
 
 
 	public UITestCase(String testName) {
@@ -40,11 +50,90 @@ public abstract class UITestCase extends TestCase
 		testWindows = new ArrayList(3);
 	}
 
+	/**
+	 * Adds a window listener to the workbench to keep track of
+	 * opened test windows.
+	 */
+	private void addWindowListener() {
+		windowListener = new IWindowListener() {
+			public void windowActivated(IWorkbenchWindow window) {
+				// do nothing
+			}
+			public void windowDeactivated(IWorkbenchWindow window) {
+				// do nothing
+			}
+
+			public void windowClosed(IWorkbenchWindow window) {
+				testWindows.remove(window);
+			}
+
+			public void windowOpened(IWorkbenchWindow window) {
+				testWindows.add(window);
+			}
+		};
+		fWorkbench.addWindowListener(windowListener);
+	}
+	
+	/**
+	 * Removes the listener added by <code>addWindowListener</code>. 
+	 */
+	private void removeWindowListener() {
+		if (windowListener != null) {
+			fWorkbench.removeWindowListener(windowListener);
+		}
+	}
+	
+	/**
+	 * Outputs a trace message to the trace output device, if enabled.
+	 * By default, trace messages are sent to <code>System.out</code>.
+	 * 
+	 * @param msg the trace message
+	 */
+	protected void trace(String msg) {
+		System.out.println(msg);
+	}
 
 	/**
-	 * Tear down.  May be overridden.
+	 * Simple implementation of setUp. Subclasses are prevented 
+	 * from overriding this method to maintain logging consistency.
+	 * doSetUp() should be overriden instead.
 	 */
-	protected void tearDown() throws Exception {
+	protected final void setUp() throws Exception {
+		trace("----- " + this.getName()); //$NON-NLS-1$
+		trace(this.getName() + ": setUp..."); //$NON-NLS-1$
+		addWindowListener();
+		doSetUp();
+	}
+
+	/**
+	 * Sets up the fixture, for example, open a network connection.
+	 * This method is called before a test is executed.
+	 * The default implementation does nothing.
+	 * Subclasses may extend.
+	 */
+	protected void doSetUp() throws Exception {
+		// do nothing.
+	}
+	
+	/**
+	 * Simple implementation of tearDown.  Subclasses are prevented 
+	 * from overriding this method to maintain logging consistency.
+	 * doTearDown() should be overriden instead.
+	 */
+	protected final void tearDown() throws Exception {
+		trace(this.getName() + ": tearDown...\n"); //$NON-NLS-1$
+		removeWindowListener();
+		doTearDown();
+	}
+	
+	/**
+	 * Tears down the fixture, for example, close a network connection.
+	 * This method is called after a test is executed.
+	 * The default implementation closes all test windows, processing events both before
+	 * and after doing so.
+	 * Subclasses may extend.
+	 */
+	protected void doTearDown() throws Exception {
 		processEvents();
 		closeAllTestWindows();
 		processEvents();
@@ -62,12 +151,10 @@ public abstract class UITestCase extends TestCase
 	 */
 	public IWorkbenchWindow openTestWindow() {
 		try {
-			IWorkbenchWindow win =
+			return 
 				fWorkbench.openWorkbenchWindow(
 					EmptyPerspective.PERSP_ID,
 					ResourcesPlugin.getWorkspace());
-			testWindows.add(win);
-			return win;
 		} catch (WorkbenchException e) {
 			fail();
 			return null;
@@ -79,10 +166,9 @@ public abstract class UITestCase extends TestCase
 	 * Close all test windows.
 	 */
 	public void closeAllTestWindows() {
-		Iterator iter = testWindows.iterator();
-		IWorkbenchWindow win;
+		Iterator iter = new ArrayList(testWindows).iterator();
 		while (iter.hasNext()) {
-			win = (IWorkbenchWindow) iter.next();
+			IWorkbenchWindow win = (IWorkbenchWindow) iter.next();
 			win.close();
 		}
 		testWindows.clear();
@@ -110,9 +196,9 @@ public abstract class UITestCase extends TestCase
 			IWorkbenchPage[] pages = new IWorkbenchPage[pageTotal];
 			IWorkspace work = ResourcesPlugin.getWorkspace();
 
-
-			for (int i = 0; i < pageTotal; i++) 			
+			for (int i = 0; i < pageTotal; i++) {
 				pages[i] = win.openPage(EmptyPerspective.PERSP_ID, work);
+			}
 			return pages;
 		}
 		catch( WorkbenchException e )
@@ -131,4 +217,5 @@ public abstract class UITestCase extends TestCase
 		for (int i = 0; i < pages.length; i++)
 			pages[i].close();
 	}
+	
 }
