@@ -118,4 +118,10 @@ public class ContainerPlaceholder extends PartPlaceholder implements ILayoutCont
 			container.findSashes(this, sashes);
 		}
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ILayoutContainer#allowsAutoFocus()
+	 */
+	public boolean allowsAutoFocus() {
+		return false;
+	}
 }

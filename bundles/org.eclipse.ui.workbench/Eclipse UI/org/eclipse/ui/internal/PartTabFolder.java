@@ -13,22 +13,17 @@ package org.eclipse.ui.internal;
  *      - Fix for bug 10025 - Resizing views should not use height ratios
 **********************************************************************/
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.Geometry;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.window.ColorSchemeService;
-import org.eclipse.jface.window.Window;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.CTabFolderCloseAdapter;
@@ -49,23 +44,34 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.ColorSchemeService;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
+
 import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
-import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.themes.ITabThemeDescriptor;
 import org.eclipse.ui.internal.themes.IThemeDescriptor;
 import org.eclipse.ui.internal.themes.TabThemeDescriptor;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
-import org.eclipse.ui.progress.UIJob;
 
 public class PartTabFolder extends LayoutPart implements ILayoutContainer, IPropertyListener, IWorkbenchDragSource {
 	
@@ -89,22 +95,30 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	private LayoutPart inactiveCurrent;
 	private Composite parent;
 	private boolean active = false;
-
-	/**
-	 * Makes changes in the minimize state be exposed in the tab folder 
-	 */
-	IChangeListener stateListener = new IChangeListener() {
-		public void update(boolean changed) {
-		}
-	};
 	
+	private int mousedownState = -1;
+
 	/**
 	 * Sets the minimized state based on the state of the tab folder
 	 */
 	CTabFolderMinMaxAdapter expandListener = new CTabFolderMinMaxAdapter() {
 		
 		public void minimize(CTabFolderEvent event) {
-			setState(STATE_MINIMIZED);	
+			// Work around a bug in CTabFolder2. A minimized PartTabFolder restores itself
+			// when it receives focus. However, if the user gives the view focus
+			// by clicking on the "restore" button, CTabFolder2 will process
+			// the mouseclick after being restored and treat it as though the user clicked
+			// on the minimize button (which shows up in the same place). To detect this,
+			// we remember the state of the view at the last mousedown event. If the view
+			// was already minimized when the mousedown happened and we receive another minimize
+			// event, it means that CTabFolder2 was restored in the meantime by a focus change. 
+			// In this case, we can ignore the event.
+			if (mousedownState == STATE_MINIMIZED) {
+				mousedownState = -1;
+				event.doit = false;
+			} else {
+				setState(STATE_MINIMIZED);
+			}
 		}
 		
 		public void restore(CTabFolderEvent event) {
@@ -119,25 +133,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	// listen for mouse down on tab to set focus.
 	private MouseListener mouseListener = new MouseAdapter() {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-		 */
-		public void mouseDoubleClick(MouseEvent e) {
-//
-//			if (current instanceof PartPane) {
-//				WorkbenchPage page = ((PartPane) current).getPage();
-//				if (current instanceof ViewPane) {
-//					if (page.isZoomed()) {
-//						setState(STATE_RESTORED);
-//					} else {
-//						setState(STATE_MAXIMIZED);
-//					}
-//				}
-//			}
-
-		}
-
 		public void mouseDown(MouseEvent e) {
+			mousedownState = viewState;
 			// PR#1GDEZ25 - If selection will change in mouse up ignore mouse down.
 			// Else, set focus.
 			CTabItem2 newItem = tabFolder.getItem(new Point(e.x, e.y));
@@ -151,7 +148,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 				//tabFolder.setBorderVisible(true);
 			}
 		}
-
 	};
 
 	private class TabInfo {
@@ -390,7 +386,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 
 		// listen for mouse down on tab to set focus.
 		tabFolder.addMouseListener(this.mouseListener);
-
+		
 		tabFolder.addListener(SWT.MenuDetect, new Listener() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
@@ -811,6 +807,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 			child.setVisible(false);
 			child.setContainer(null);
 		}
+		
+		updateContainerVisibleTab();
 	}
 	private void removeTab(CTabItem2 tab) {
 
@@ -957,6 +955,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 
 		if (!(oldChild instanceof PartPlaceholder) && (newChild instanceof PartPlaceholder)) {
 			replaceChild(oldChild, (PartPlaceholder) newChild);
+			updateContainerVisibleTab();
 			return;
 		}
 
@@ -1161,7 +1160,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		current.moveAbove(tabFolder);
 	}
 
-	public boolean isMinimized() {
+	private boolean isMinimized() {
 		return viewState == STATE_MINIMIZED;
 	}
 	
@@ -1246,6 +1245,9 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	 * @param active
 	 */
 	public void setActive(boolean activeState) {
+		if (activeState && viewState == STATE_MINIMIZED) {
+			setState(STATE_RESTORED);
+		}
 		drawGradient(activeState);
 	}
 	
@@ -1447,8 +1449,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		}
 	}
 	
-	
-	
 	/**
 	 * Indicate busy state in the supplied partPane.
 	 * @param partPane PartPane.
@@ -1541,6 +1541,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 				}
 			}
 		}
+		
+		if (viewState == STATE_MINIMIZED) {
+			page.refreshActiveView();
+		}
 	}
 	
 	private void updateControlBounds() {
@@ -1577,10 +1581,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 			tabFolder.setMinimized(minimized);
 			tabFolder.setMaximized(maximized);
 			
-			if (current != null) {
-				current.setVisible(!minimized);
-			}
-			
 			updateControlBounds();
 		}
 	}
@@ -1591,6 +1591,65 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		if (container != null) {
 			container.findSashes(this, sashes);
 		}
-	}	
+	}
+	
+	/**
+	 * Update the container to show the correct visible tab based on the
+	 * activation list.
+	 * 
+	 * @param org.eclipse.ui.internal.ILayoutContainer
+	 */
+	private void updateContainerVisibleTab() {
+
+		LayoutPart[] parts = getChildren();
+		if (parts.length < 1)
+			return;
+
+		PartPane selPart = null;
+		int topIndex = 0;
+		IWorkbenchPartReference sortedPartsArray[] = page.getSortedParts();
+		List sortedParts = Arrays.asList(sortedPartsArray);
+		for (int i = 0; i < parts.length; i++) {
+			if (parts[i] instanceof PartPane) {
+				IWorkbenchPartReference part =
+					((PartPane) parts[i]).getPartReference();
+				int index = sortedParts.indexOf(part);
+				if (index >= topIndex) {
+					topIndex = index;
+					selPart = (PartPane) parts[i];
+				}
+			}
+		}
+
+		if (selPart != null) {
+			//Make sure the new visible part is restored.
+			//If part can't be restored an error part is created.
+			selPart.getPartReference().getPart(true);
+			int selIndex = indexOf(selPart);
+			if (getSelection() != selIndex)
+				setSelection(selIndex);
+		}
+	}
+	
+	public boolean resizesVertically() {
+		return viewState != STATE_MINIMIZED;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ILayoutContainer#allowsAutoFocus()
+	 */
+	public boolean allowsAutoFocus() {
+		if (viewState == STATE_MINIMIZED) {
+			return false;
+		}
+		
+		ILayoutContainer parent = getContainer();
+		
+		if (parent != null && ! parent.allowsAutoFocus()) {
+			return false;
+		}
+		
+		return true;
+	}
 }
 

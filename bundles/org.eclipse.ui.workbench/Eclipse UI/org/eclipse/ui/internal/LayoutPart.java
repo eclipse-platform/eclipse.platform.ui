@@ -300,6 +300,10 @@ abstract public class LayoutPart implements IWorkbenchDropTarget {
 		result.add(this);
 	}
 
+	public boolean resizesVertically() {
+		return true;
+	}
+	
 /**
  * @return Returns the propertyListeners.
  */

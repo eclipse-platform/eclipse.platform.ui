@@ -66,6 +66,7 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
@@ -1702,6 +1703,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			hideView(getActivePerspective(), ref);
 		}		
 	}
+	
+	/* package */ void refreshActiveView() {
+		IWorkbenchPart nextActive = activationList.getActive();
+		
+		if (nextActive != activePart) {
+			if (nextActive != null) {
+				activate(nextActive);
+			} else {
+				setActivePart(null);
+			}
+		}
+	}
+	
 	/**
 	 * See IPerspective
 	 */
@@ -3126,8 +3140,25 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			for (int i = start; i >= 0; i--) {
 				IWorkbenchPartReference ref =
 					(IWorkbenchPartReference) parts.get(i);
+				
+				// Skip parts whose containers have disabled auto-focus
+				IWorkbenchPart part = ref.getPart(false);
+				
+				if (part != null) {
+					IWorkbenchPartSite site = part.getSite();
+					if (site instanceof PartSite) {
+						PartSite partSite = (PartSite)site;
+						
+						ILayoutContainer container = partSite.getPane().getContainer();
+						if (!container.allowsAutoFocus()) {
+							continue;
+						}
+					}
+				}
+				
+				// Skip fastviews
 				if (ref instanceof IViewReference) {
-					if (!((IViewReference) ref).isFastView()) {
+					if (!((IViewReference) ref).isFastView()  ) {
 						for (int j = 0; j < views.length; j++) {
 							if (views[j] == ref) {
 								return ref.getPart(true);

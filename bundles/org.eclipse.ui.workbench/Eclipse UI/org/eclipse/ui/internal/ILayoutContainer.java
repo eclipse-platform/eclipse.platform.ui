@@ -38,6 +38,17 @@ public void replace(LayoutPart oldPart, LayoutPart newPart);
 public void findSashes(LayoutPart toFind, PartPane.Sashes result);
 
 /**
+ * When a layout part closes, focus will return to the previously active part.
+ * This method determines whether the parts in this container should participate
+ * in this behavior. If this method returns true, its parts may automatically be
+ * given focus when another part is closed. 
+ * 
+ * @return true iff the parts in this container may be given focus when the active
+ * part is closed
+ */
+public boolean allowsAutoFocus();
+
+/**
  * Gets the parent for this container.
  */
 //public ILayoutContainer getContainer();

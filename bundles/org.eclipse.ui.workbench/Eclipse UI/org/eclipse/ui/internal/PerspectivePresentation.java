@@ -452,7 +452,7 @@ public class PerspectivePresentation {
 			return;
 		
 		oldContainer.remove(part);
-		updateContainerVisibleTab(oldContainer);
+		//updateContainerVisibleTab(oldContainer);
 
 		LayoutPart[] children = oldContainer.getChildren();
 		if (oldWindow instanceof WorkbenchWindow) {
@@ -1162,7 +1162,7 @@ public class PerspectivePresentation {
 		ILayoutContainer container = part.getContainer();
 		if (container != null) {
 			container.replace(part, new PartPlaceholder(part.getID()));
-			updateContainerVisibleTab(container);
+			//updateContainerVisibleTab(container);
 
 			// If the parent is root we're done. Do not try to replace
 			// it with placeholder.
@@ -1379,47 +1379,47 @@ public class PerspectivePresentation {
 			folder.add(newPart);
 		}
 	}
-	/**
-	 * Update the container to show the correct visible tab based on the
-	 * activation list.
-	 * 
-	 * @param org.eclipse.ui.internal.ILayoutContainer
-	 */
-	private void updateContainerVisibleTab(ILayoutContainer container) {
-		if (!(container instanceof PartTabFolder))
-			return;
-
-		PartTabFolder folder = (PartTabFolder) container;
-		LayoutPart[] parts = folder.getChildren();
-		if (parts.length < 1)
-			return;
-
-		PartPane selPart = null;
-		int topIndex = 0;
-		IWorkbenchPartReference sortedPartsArray[] =
-			((WorkbenchPage) page).getSortedParts();
-		List sortedParts = Arrays.asList(sortedPartsArray);
-		for (int i = 0; i < parts.length; i++) {
-			if (parts[i] instanceof PartPane) {
-				IWorkbenchPartReference part =
-					((PartPane) parts[i]).getPartReference();
-				int index = sortedParts.indexOf(part);
-				if (index >= topIndex) {
-					topIndex = index;
-					selPart = (PartPane) parts[i];
-				}
-			}
-		}
-
-		if (selPart != null) {
-			//Make sure the new visible part is restored.
-			//If part can't be restored an error part is created.
-			selPart.getPartReference().getPart(true);
-			int selIndex = folder.indexOf(selPart);
-			if (folder.getSelection() != selIndex)
-				folder.setSelection(selIndex);
-		}
-	}
+//	/**
+//	 * Update the container to show the correct visible tab based on the
+//	 * activation list.
+//	 * 
+//	 * @param org.eclipse.ui.internal.ILayoutContainer
+//	 */
+//	private void updateContainerVisibleTab(ILayoutContainer container) {
+//		if (!(container instanceof PartTabFolder))
+//			return;
+//
+//		PartTabFolder folder = (PartTabFolder) container;
+//		LayoutPart[] parts = folder.getChildren();
+//		if (parts.length < 1)
+//			return;
+//
+//		PartPane selPart = null;
+//		int topIndex = 0;
+//		IWorkbenchPartReference sortedPartsArray[] =
+//			((WorkbenchPage) page).getSortedParts();
+//		List sortedParts = Arrays.asList(sortedPartsArray);
+//		for (int i = 0; i < parts.length; i++) {
+//			if (parts[i] instanceof PartPane) {
+//				IWorkbenchPartReference part =
+//					((PartPane) parts[i]).getPartReference();
+//				int index = sortedParts.indexOf(part);
+//				if (index >= topIndex) {
+//					topIndex = index;
+//					selPart = (PartPane) parts[i];
+//				}
+//			}
+//		}
+//
+//		if (selPart != null) {
+//			//Make sure the new visible part is restored.
+//			//If part can't be restored an error part is created.
+//			selPart.getPartReference().getPart(true);
+//			int selIndex = folder.indexOf(selPart);
+//			if (folder.getSelection() != selIndex)
+//				folder.setSelection(selIndex);
+//		}
+//	}
 	/**
 	 * Zoom in on a particular layout part.
 	 */

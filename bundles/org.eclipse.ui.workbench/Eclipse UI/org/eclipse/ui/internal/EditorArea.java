@@ -358,4 +358,10 @@ public void updateTabList() {
 	public int getType() {
 		return EDITOR;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ILayoutContainer#allowsAutoFocus()
+	 */
+	public boolean allowsAutoFocus() {
+		return true;
+	}
 }

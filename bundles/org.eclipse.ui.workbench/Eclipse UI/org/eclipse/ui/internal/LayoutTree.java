@@ -43,11 +43,7 @@ public LayoutPart computeRelation(ArrayList relations) {
 }
 
 public boolean fixedHeight() {
-	if (this.part instanceof PartTabFolder) {
-		return ((PartTabFolder)this.part).isMinimized();
-	}
-	
-	return false;
+	return !part.resizesVertically();
 }
 
 /**

@@ -173,4 +173,10 @@ public IStatus saveState(IMemento memento) {
 	}
 	return result;
 }
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.ILayoutContainer#allowsAutoFocus()
+ */
+public boolean allowsAutoFocus() {
+	return true;
+}
 }

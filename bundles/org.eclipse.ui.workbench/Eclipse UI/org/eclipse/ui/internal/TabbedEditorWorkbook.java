@@ -971,5 +971,12 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ILayoutContainer#allowsAutoFocus()
+	 */
+	public boolean allowsAutoFocus() {
+		return true;
+	}
+
 	}
 	
