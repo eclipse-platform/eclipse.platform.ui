@@ -35,7 +35,7 @@ public interface IDocumentInformationMappingExtension {
 	 * given region of the original document. Returns <code>null</code> if
 	 * there are no such image regions.
 	 * 
-	 * @param imageRegion the region in the origin document
+	 * @param originRegion the region in the origin document
 	 * @return the segments in the image document or <code>null</code>
 	 * @throws BadLocationException in case the given origin region is not valid
 	 *             in the original document

@@ -22,7 +22,6 @@ package org.eclipse.jface.text;
  */
 public interface IRepairableDocument {
 	
-	
 	/**
 	 * Repairs the line information of this document.
 	 */

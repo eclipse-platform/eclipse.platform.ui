@@ -1178,6 +1178,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	
 	/*
 	 * @see org.eclipse.jface.text.IDocumentExtension3#computeZeroLengthPartitioning(java.lang.String, int, int)
+	 * @since 3.0
 	 */
 	public ITypedRegion[] computePartitioning(String partitioning, int offset, int length, boolean includeZeroLengthPartitions) throws BadLocationException, BadPartitioningException {
 		if ((0 > offset) || (0 > length) || (offset + length > getLength()))
@@ -1197,6 +1198,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	
 	/*
 	 * @see org.eclipse.jface.text.IDocumentExtension3#getZeroLengthContentType(java.lang.String, int)
+	 * @since 3.0
 	 */
 	public String getContentType(String partitioning, int offset, boolean preferOpenPartitions) throws BadLocationException, BadPartitioningException {
 		if ((0 > offset) || (offset > getLength()))
@@ -1237,6 +1239,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 	/*
 	 * @see org.eclipse.jface.text.IDocumentExtension3#getZeroLengthPartition(java.lang.String, int)
+	 * @since 3.0
 	 */
 	public ITypedRegion getPartition(String partitioning, int offset, boolean preferOpenPartitions) throws BadLocationException, BadPartitioningException {
 		if ((0 > offset) || (offset > getLength()))

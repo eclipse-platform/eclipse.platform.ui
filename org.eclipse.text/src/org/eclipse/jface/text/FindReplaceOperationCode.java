@@ -15,7 +15,7 @@ package org.eclipse.jface.text;
 /**
  * Enumeration type declaring the available findReplace operation codes.
  * 
- * @see org.eclipse.jface.text.FindReplaceDocumentAdapter#findReplace(int, String, String, boolean, boolean, boolean, boolean, int)
+ * @see org.eclipse.jface.text.FindReplaceDocumentAdapter#findReplace(FindReplaceOperationCode, int, String, String, boolean, boolean, boolean, boolean)
  * @since 3.0
  */
 public final class FindReplaceOperationCode {
@@ -27,6 +27,8 @@ public final class FindReplaceOperationCode {
 
 	/**
 	 * Creates and returns a new findReplace operation code.
+	 * 
+	 * @param operationName the name of this operation
 	 */
 	private FindReplaceOperationCode(String operationName) {
 		Assert.isNotNull(operationName);

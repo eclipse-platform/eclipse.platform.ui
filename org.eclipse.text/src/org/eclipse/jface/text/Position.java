@@ -18,8 +18,8 @@ package org.eclipse.jface.text;
  * is specified by an offset and a length. Positions can be marked as
  * deleted. Deleted positions are considered to no longer represent 
  * a valid text range in the managing document. <p>
- * Positions attached to documents are ususally updated by position updaters.
- * Because position updaters are freely defineable and because of the
+ * Positions attached to documents are usually updated by position updaters.
+ * Because position updaters are freely definable and because of the
  * frequence in which they are used, the fields of a position are made
  * publicly accessible. Clients other than position updaters are not 
  * allowed to access these public fields.

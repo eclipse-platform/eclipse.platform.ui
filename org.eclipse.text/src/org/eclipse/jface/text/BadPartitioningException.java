@@ -12,6 +12,7 @@ package org.eclipse.jface.text;
 
 /**
  * Represents the attempt to refer to a non-existing document partitioning.
+ *
  * @see org.eclipse.jface.text.IDocument
  * @see org.eclipse.jface.text.IDocumentExtension3
  * @since 3.0

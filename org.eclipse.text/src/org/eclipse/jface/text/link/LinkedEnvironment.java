@@ -521,6 +521,7 @@ public class LinkedEnvironment {
 	 * 
 	 * @param group the group of the nested environment to be adopted.
 	 * @param environment the environment to check against
+	 * @return <code>false</code> if it failed to enforce nestability
 	 */
 	private boolean enforceNestability(LinkedPositionGroup group, LinkedEnvironment environment) {
 		Assert.isNotNull(environment);

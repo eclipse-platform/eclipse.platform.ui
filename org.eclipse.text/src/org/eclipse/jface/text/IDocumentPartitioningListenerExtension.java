@@ -27,7 +27,7 @@ public interface IDocumentPartitioningListenerExtension {
 	 *
 	 * @param document the document whose partitioning changed
 	 * @param region the region in which the partitioning changed
-	 * @see IDocument#addDocumentPartitioningListener
+	 * @see IDocument#addDocumentPartitioningListener(IDocumentPartitioningListener)
 	 */
 	void documentPartitioningChanged(IDocument document, IRegion region);
 }

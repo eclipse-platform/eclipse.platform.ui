@@ -27,7 +27,7 @@ public interface IDocumentPartitioningListener {
 	 *
 	 * @param document the document whose partitioning changed
 	 *
-	 * @see IDocument#addDocumentPartitioningListener
+	 * @see IDocument#addDocumentPartitioningListener(IDocumentPartitioningListener)
 	 */
 	void documentPartitioningChanged(IDocument document);
 }

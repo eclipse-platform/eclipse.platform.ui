@@ -12,7 +12,7 @@ package org.eclipse.jface.text;
 
 /**
  * Extension interface for <code>IDocument</code>. Adds the concept of
- * multiple partitionings the concept of open and delimited paritions.
+ * multiple partitionings the concept of open and delimited partitions.
  * 
  * @see org.eclipse.jface.text.IDocumentPartitionerExtension2
  * @since 3.0
@@ -26,7 +26,7 @@ public interface IDocumentExtension3 {
 	
 	
 	/**
-	 * Returns the exisiting partitionings for this document. This includes
+	 * Returns the existing partitionings for this document. This includes
 	 * the default partitioning.
 	 * 
 	 * @return the existing partitionings for this document
@@ -68,8 +68,7 @@ public interface IDocumentExtension3 {
 	 *        closed partition starting at <code>offset</code>
 	 * @return the partition type
 	 * @exception BadLocationException if offset is invalid in this document
-	 * @exception BadPartitioningException if partitioning is invalid for this
-	 *            document
+	 * @exception BadPartitioningException if partitioning is invalid for this document
 	 */
 	String getContentType(String partitioning, int offset, boolean preferOpenPartitions) throws BadLocationException, BadPartitioningException;
 	
@@ -95,8 +94,7 @@ public interface IDocumentExtension3 {
 	 *        closed partition starting at <code>offset</code>
 	 * @return a specification of the partition
 	 * @exception BadLocationException if offset is invalid in this document
-	 * @exception BadPartitioningException if partitioning is invalid for this
-	 *            document
+	 * @exception BadPartitioningException if partitioning is invalid for this document
 	 */
 	ITypedRegion getPartition(String partitioning, int offset, boolean preferOpenPartitions) throws BadLocationException, BadPartitioningException;
 	
@@ -120,7 +118,8 @@ public interface IDocumentExtension3 {
 	 * @param includeZeroLengthPartitions <code>true</code> if zero-length
 	 *        partitions should be returned as part of the computed partitioning
 	 * @return a specification of the range's partitioning
-	 * @exception BadLocationException if the range is invalid in this document
+	 * @exception BadLocationException if the range is invalid in this document$
+	 * @exception BadPartitioningException if partitioning is invalid for this document 
 	 */
 	ITypedRegion[] computePartitioning(String partitioning, int offset, int length, boolean includeZeroLengthPartitions) throws BadLocationException, BadPartitioningException;
 
@@ -131,7 +130,7 @@ public interface IDocumentExtension3 {
 	 * listeners about this change.
 	 *
 	 * @param  partitioning the partitioning for which to set the partitioner
-	 * @param the document's new partitioner
+	 * @param partitioner the document's new partitioner
 	 * @see IDocumentPartitioningListener
 	 */
 	void setDocumentPartitioner(String partitioning, IDocumentPartitioner partitioner);	
@@ -140,6 +139,7 @@ public interface IDocumentExtension3 {
 	 * Returns the partitioner for the given partitioning or <code>null</code> if
 	 * no partitioner is registered.
 	 *
+	 * @param  partitioning the partitioning for which to set the partitioner
 	 * @return the partitioner for the given partitioning
 	 */
 	IDocumentPartitioner getDocumentPartitioner(String partitioning);

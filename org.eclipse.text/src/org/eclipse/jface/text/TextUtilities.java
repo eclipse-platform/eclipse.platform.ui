@@ -45,6 +45,7 @@ public class TextUtilities {
 	 * 
 	 * @param text the text to be checked
 	 * @param hint the line delimiter hint
+	 * @return the line delimiter
 	 */
 	public static String determineLineDelimiter(String text, String hint) {
 		try {
@@ -214,7 +215,7 @@ public class TextUtilities {
 				length= offset + length - eventOffset;
 				offset= eventOffset;
 			
-			// events overlap eachother				
+			// events overlap each other				
 			} else {
 				final int start= Math.max(0, eventOffset - offset);
 				final int end= Math.min(text.length(), eventLength + eventOffset - offset);
@@ -273,7 +274,7 @@ public class TextUtilities {
 				textLength= offset + textLength - eventOffset;
 				offset= eventOffset;
 
-			// events overlap eachother				
+			// events overlap each other				
 			} else {
 				final int start= Math.max(0, eventOffset - offset);
 				final int end= Math.min(length, eventTextLength + eventOffset - offset);

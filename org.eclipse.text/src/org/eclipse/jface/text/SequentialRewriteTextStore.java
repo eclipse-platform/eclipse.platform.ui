@@ -174,6 +174,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 	 * rewrite store after the replace operation.
 	 * 
 	 * @param replace the replace command
+	 * @return the difference
 	 */
 	private static final int getDelta(Replace replace) {
 		return replace.newOffset - replace.offset + replace.text.length() - replace.length;

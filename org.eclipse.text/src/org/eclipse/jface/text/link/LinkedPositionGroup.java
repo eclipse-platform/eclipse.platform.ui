@@ -79,7 +79,7 @@ public class LinkedPositionGroup {
 	 * @param length the length of the position
 	 * @throws BadLocationException if the position is invalid or conflicts
 	 *         with other positions in the group
-	 * @throws IllegalStateException if the group has alreay been added to an
+	 * @throws IllegalStateException if the group has already been added to an
 	 *         environment
 	 */
 	public void createPosition(IDocument document, int offset, int length) throws BadLocationException {
@@ -97,7 +97,7 @@ public class LinkedPositionGroup {
 	 * @param sequence the tab stop number of the position
 	 * @throws BadLocationException if the position is invalid or conflicts
 	 *         with other positions in the group
-	 * @throws IllegalStateException if the group has alreay been added to an
+	 * @throws IllegalStateException if the group has already been added to an
 	 *         environment
 	 */
 	public void createPosition(IDocument document, int offset, int length, int sequence) throws BadLocationException {
@@ -114,7 +114,7 @@ public class LinkedPositionGroup {
 	 *        stored, only its values are used)
 	 * @throws BadLocationException if the position is invalid or conflicts
 	 *         with other positions in the group
-	 * @throws IllegalStateException if the group has alreay been added to an
+	 * @throws IllegalStateException if the group has already been added to an
 	 *         environment
 	 */
 	public void createPosition(IDocument document, IRegion region) throws BadLocationException {
@@ -132,7 +132,7 @@ public class LinkedPositionGroup {
 	 * @param sequence the tab stop number of the position
 	 * @throws BadLocationException if the position is invalid or conflicts
 	 *         with other positions in the group
-	 * @throws IllegalStateException if the group has alreay been added to an
+	 * @throws IllegalStateException if the group has already been added to an
 	 *         environment
 	 */
 	public void createPosition(IDocument document, IRegion region, int sequence) throws BadLocationException {
@@ -151,7 +151,7 @@ public class LinkedPositionGroup {
 //	 *        this type comes up
 //	 * @throws BadLocationException if the position is invalid or conflicts
 //	 *         with other positions in the group
-//	 * @throws IllegalStateException if the group has alreay been added to an
+//	 * @throws IllegalStateException if the group has already been added to an
 //	 *         environment
 //	 */
 //	public void createPosition(IDocument document, IRegion region, ICompletionProposal[] proposals) throws BadLocationException {
@@ -171,7 +171,7 @@ public class LinkedPositionGroup {
 //	 * @param sequence the tab stop number of the position
 //	 * @throws BadLocationException if the position is invalid or conflicts
 //	 *         with other positions in the group
-//	 * @throws IllegalStateException if the group has alreay been added to an
+//	 * @throws IllegalStateException if the group has already been added to an
 //	 *         environment
 //	 */
 //	public void createPosition(IDocument document, int offset, int length, int sequence, ICompletionProposal[] proposals) throws BadLocationException {
@@ -190,7 +190,7 @@ public class LinkedPositionGroup {
 //	 *        this type comes up
 //	 * @throws BadLocationException if the position is invalid or conflicts
 //	 *         with other positions in the group
-//	 * @throws IllegalStateException if the group has alreay been added to an
+//	 * @throws IllegalStateException if the group has already been added to an
 //	 *         environment
 //	 */
 //	public void createPosition(IDocument document, int offset, int length, ICompletionProposal[] proposals) throws BadLocationException {
@@ -210,7 +210,7 @@ public class LinkedPositionGroup {
 //	 * @param sequence the tab stop number of the position
 //	 * @throws BadLocationException if the position is invalid or conflicts
 //	 *         with other positions in the group
-//	 * @throws IllegalStateException if the group has alreay been added to an
+//	 * @throws IllegalStateException if the group has already been added to an
 //	 *         environment
 //	 */
 //	public void createPosition(IDocument document, IRegion region, int sequence, ICompletionProposal[] proposals) throws BadLocationException {
@@ -232,7 +232,7 @@ public class LinkedPositionGroup {
 //	 *        compute proposals for this position.
 //	 * @throws BadLocationException if the position is invalid or conflicts
 //	 *         with other positions in the group
-//	 * @throws IllegalStateException if the group has alreay been added to an
+//	 * @throws IllegalStateException if the group has already been added to an
 //	 *         environment
 //	 */
 //	public void createPosition(IDocument document, IRegion region, int sequence, IContentAssistProcessor processor) throws BadLocationException {
@@ -252,7 +252,7 @@ public class LinkedPositionGroup {
 	 * @param position the position to add
 	 * @throws BadLocationException if the position is invalid or conflicts
 	 *         with other positions in the group
-	 * @throws IllegalStateException if the group has alreay been added to an
+	 * @throws IllegalStateException if the group has already been added to an
 	 *         environment
 	 */
 	public void addPosition(LinkedPosition position) throws BadLocationException {
@@ -383,8 +383,6 @@ public class LinkedPositionGroup {
 	/**
 	 * Sets the environment of this group. Once an environment has been set, no
 	 * more positions can be added and the environment cannot be changed.
-	 * 
-	 * @param environment the environment
 	 */
 	void seal() {
 		Assert.isTrue(!fIsSealed);
@@ -447,6 +445,9 @@ public class LinkedPositionGroup {
 
 	/**
 	 * Finds the closest position to <code>toFind</code>.
+	 * 
+	 * @param toFind the linked position for which to find the closest position
+	 * @return the closest position to <code>toFind</code>.
 	 */
 	LinkedPosition getPosition(LinkedPosition toFind) {
 		for (Iterator it= fPositions.iterator(); it.hasNext(); ) {

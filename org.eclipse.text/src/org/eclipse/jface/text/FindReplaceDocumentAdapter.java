@@ -96,7 +96,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	 * 			this value is only used in the FIND_FIRST operation and otherwise ignored
 	 * @param findString the string to find
 	 * 			this value is only used in the FIND_FIRST operation and otherwise ignored
-	 * @param replaceString the string to replace the current match
+	 * @param replaceText the string to replace the current match
 	 * 			this value is only used in the REPLACE and REPLACE_FIND operations and otherwise ignored
 	 * @param forwardSearch the search direction
 	 * @param caseSensitive indicates whether lower and upper case should be distinguished
@@ -255,12 +255,11 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	}
 	
 	/**
-	 * Subsitutes the previous match with the given text.
+	 * Substitutes the previous match with the given text.
 	 * Sends a <code>DocumentEvent</code> to all registered <code>IDocumentListener</code>.
 	 *
-	 * @param length the length of the specified range
 	 * @param text the substitution text
-	 * @param isRegExReplace if <code>true</code> <code>text</code> represents a regular expression
+	 * @param regExReplace if <code>true</code> <code>text</code> represents a regular expression
 	 * @return the replace region or <code>null</code> if there was no match
 	 * @throws BadLocationException if startOffset is an invalid document offset
 	 * @throws IllegalStateException if a REPLACE or REPLACE_FIND operation is not preceded by a successful FIND operation
