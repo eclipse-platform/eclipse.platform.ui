@@ -172,7 +172,7 @@ public class AntOpenWithMenu extends ContributionItem {
 			return;
 		}
 
-		IEditorDescriptor defaultEditor = registry.getDefaultEditor(); // should not be null
+		IEditorDescriptor defaultEditor = registry.findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID); // should not be null
 		IEditorDescriptor preferredEditor = IDE.getDefaultEditor(fileResource); // may be null
 		
 		Object[] editors= registry.getEditors(fileResource.getName());
@@ -224,7 +224,7 @@ public class AntOpenWithMenu extends ContributionItem {
 		}
 
 		// Add system editor.
-		IEditorDescriptor descriptor = registry.findEditor(SYSTEM_EDITOR_ID);
+		IEditorDescriptor descriptor = registry.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 		createMenuItem(menu, descriptor, preferredEditor);
 		createDefaultMenuItem(menu, fileResource);
 	}

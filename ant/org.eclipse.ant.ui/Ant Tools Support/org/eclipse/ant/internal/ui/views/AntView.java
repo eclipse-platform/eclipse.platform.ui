@@ -353,7 +353,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			IFile file= AntUtil.getFile(project.getBuildFileName());
 			IEditorDescriptor editor = IDE.getDefaultEditor(file);
 			if (editor == null) {
-				editor= registry.getDefaultEditor();
+				editor= registry.findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
 			}
 			try {
 				if (editor == null) {
