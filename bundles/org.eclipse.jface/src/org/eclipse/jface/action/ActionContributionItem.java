@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -676,8 +677,12 @@ public class ActionContributionItem extends ContributionItem {
 
 				if (textChanged) {
 					if (action instanceof Action
-						&& (((Action) action).showTextInToolBar()))
-						ti.setText(shortenText(action.getText(),ti));
+						&& (((Action) action).showTextInToolBar())){
+							ti.setText(shortenText(action.getText(),ti));
+							if(ti.getControl() != null)
+								ti.getControl().setFont(JFaceResources.getSmallFont());
+					}
+						
 				}
 
 				if (enableStateChanged) {
