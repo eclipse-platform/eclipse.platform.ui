@@ -38,10 +38,8 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -62,7 +60,7 @@ import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
-import org.eclipse.team.internal.ui.jobs.IJobListener;
+import org.eclipse.team.internal.ui.jobs.JobBusyCursor;
 import org.eclipse.team.internal.ui.jobs.RefreshSubscriberInputJob;
 import org.eclipse.team.internal.ui.sync.actions.OpenInCompareAction;
 import org.eclipse.team.internal.ui.sync.actions.RefreshAction;
@@ -126,31 +124,7 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 	// be reset when the input changes.
 	private SyncViewerActions actions;
 	
-	// Cursor used to indicate that work that affects the view is happening
-	private Cursor waitCursor;
-	
-	/*
-	 * Listener to indicate when work is happening that affects the view.
-	 * The methods are synchronized to allow the registration of the listener
-	 * to properly set the cursor.
-	 */
-	private IJobListener jobListener = new IJobListener() {
-		public synchronized void started(QualifiedName jobType) {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					showBusyCursor();
-				}
-			});
-		}
-
-		public synchronized void finished(QualifiedName jobType) {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					showNormalCursor();
-				}
-			});
-		}
-	};
+	private JobBusyCursor busyCursor;
 	
 	/**
 	 * Constructs a new SynchronizeView.
@@ -172,12 +146,8 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 		gridLayout.marginHeight = 0;
 		parent.setLayout(gridLayout);
 		
-		// Create the cursor which indicates work is happening in the background
-		Display display = Display.getCurrent();
-		if (display == null) {
-			display = Display.getDefault();
-		}	
-		waitCursor = new Cursor(display, SWT.CURSOR_APPSTARTING);
+		// Create the busy cursor with no control to start with (createViewer will set it)
+		busyCursor = new JobBusyCursor(null /* control */, SubscriberAction.SUBSCRIBER_JOB_TYPE);
 		
 		createViewer(parent);
 		this.composite = parent;
@@ -293,15 +263,6 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 				handleOpen(event);
 			}
 		});
-		
-		// Register for feedback from subscriber jobs.
-		// Synchronize so the state doesn't change while setting the cursor
-		synchronized (jobListener) {
-			SubscriberAction.getJobStatusHandler().addJobListener(jobListener);
-			if (SubscriberAction.getJobStatusHandler().hasRunningJobs()) {
-				showBusyCursor();
-			}
-		}
 	}	
 
 	protected void initializeActions() {
@@ -344,7 +305,8 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 			viewer.setInput(input);
 			viewer.getControl().setFocus();
 			hookContextMenu();
-			initializeListeners();	
+			initializeListeners();
+			busyCursor.setControl(viewer.getControl());
 		}		
 	}
 
@@ -403,12 +365,15 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 	}
 	
 	protected void disposeChildren(Composite parent) {
+		// Null out the control of the busy cursor while we are switching viewers
+		busyCursor.setControl(null);
 		Control[] children = parent.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			Control control = children[i];
 			control.dispose();
 		}
 	}
+	
 	/**
 	 * Handles a selection changed event from the viewer. Updates the status line and the action 
 	 * bars, and links to editor (if option enabled).
@@ -521,11 +486,7 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 			input.dispose();
 		}
 		
-		// Synchronize so we don't process an event after the cursor is disposed
-		synchronized (jobListener) {
-			SubscriberAction.getJobStatusHandler().removeJobListener(jobListener);
-			waitCursor.dispose();
-		}
+		busyCursor.dispose();
 	}
 
 	public void run(IRunnableWithProgress runnable) {
@@ -847,21 +808,5 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 		} catch (TeamException e) {
 			Utils.handleError(getSite().getShell(), e, Policy.bind("SynchronizeView.16"), e.getMessage()); //$NON-NLS-1$
 		}
-	}
-	
-	/* internal use only */ void showBusyCursor() {
-		showCursor(waitCursor);
-	}
-	
-	/* internal use only */ void showNormalCursor() {
-		showCursor(null);
-	}
-	
-	private void showCursor(Cursor cursor) {
-		Viewer viewer = getViewer();
-		if (viewer == null) return;
-		Control control = viewer.getControl();
-		if (control.isDisposed()) return;
-		control.setCursor(cursor);
 	}
 }

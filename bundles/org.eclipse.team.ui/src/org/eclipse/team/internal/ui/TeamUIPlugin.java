@@ -35,7 +35,6 @@ import org.eclipse.team.internal.ui.jobs.RefreshSubscriberJob;
 import org.eclipse.team.internal.ui.sync.actions.SyncViewerDirectionFilters;
 import org.eclipse.team.internal.ui.sync.views.SyncViewerTableSorter;
 import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.sync.SubscriberAction;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -197,7 +196,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 			refreshJob.setRestartOnCancel(true);
 			refreshJob.setReschedule(true);
 			// start once the platform has started and stabilized
-			SubscriberAction.getJobStatusHandler().schedule(refreshJob, 20000 /* 20 seconds */);
+			refreshJob.schedule(20000 /* 20 seconds */);
 		}
 	}
 	

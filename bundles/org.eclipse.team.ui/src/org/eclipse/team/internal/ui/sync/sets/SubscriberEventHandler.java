@@ -25,6 +25,7 @@ import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.core.ExceptionCollector;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.jobs.JobStatusHandler;
 import org.eclipse.team.ui.sync.SubscriberAction;
 
 /**
@@ -118,7 +119,7 @@ public class SubscriberEventHandler {
 	 * Schedule the job or process the events now.
 	 */
 	public void schedule() {
-		SubscriberAction.getJobStatusHandler().schedule(eventHandlerJob);
+		JobStatusHandler.schedule(eventHandlerJob, SubscriberAction.SUBSCRIBER_JOB_TYPE);
 	}
 	/**
 	 * Initialize all resources for the subscriber associated with the set. This will basically recalculate
