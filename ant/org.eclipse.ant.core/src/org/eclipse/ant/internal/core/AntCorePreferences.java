@@ -43,10 +43,10 @@ public AntCorePreferences(Map defaultTasks, Map defaultObjects, Map defaultTypes
 protected void restoreCustomObjects() {
 	customTasks = new Task[0];
 	customTypes = new Type[0];
-	customURLs = computeCustomURLs();
+	customURLs = getDefaultURLs();
 }
 
-protected URL[] computeCustomURLs() {
+public URL[] getDefaultURLs() {
 	List result = new ArrayList(10);
 	IPluginDescriptor descriptor = Platform.getPlugin("org.apache.ant").getDescriptor();
 	addLibraries(descriptor, result);
