@@ -33,7 +33,7 @@ public class AuthorizationHandler {
 		if (keyring != null && new File(keyringFile).lastModified() == keyringTimeStamp)
 			return;
 		if (keyringFile == null) {
-			File file = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath());
+			File file = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + InternalPlatform.PI_RUNTIME);
 			file = new File(file, F_KEYRING);
 			keyringFile = file.getAbsolutePath();
 		}
