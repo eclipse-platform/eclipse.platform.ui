@@ -1,67 +1,60 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
 import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
+/**
+ * Collator to compare two CVS revisions
+ */
 public class VersionCollator {
-	static final int WORD = 0;
-	static final int NUMBER = 1;
-	
-	public int compare(String version1, String version2) {
-		if (version1 == null && version2 == null) return 0;
-		if (version1 == null) return -1;
-		if (version2 == null) return 1;
-		String[] version1Segments = getStringSegments(version1);
-		String[] version2Segments = getStringSegments(version2);
-		Collator collator = Collator.getInstance();
-		for (int i = 0; i < version1Segments.length && i < version2Segments.length; i++) {
-			int oneType = isNumber(version1Segments[i]) ? NUMBER : WORD;
-			int twoType = isNumber(version2Segments[i]) ? NUMBER : WORD;
-			if (oneType != twoType) {
-				return collator.compare(version1, version2);
-			}
-			if (oneType == NUMBER) {
-				int intOne = Integer.parseInt(version1Segments[i]);
-				int intTwo = Integer.parseInt(version2Segments[i]);
-				if (intOne != intTwo) return (intOne < intTwo) ? -1 : 1;
-			} else {
-				int result = collator.compare(version1Segments[i], version2Segments[i]);
-				if (result != 0) return result;
+	public int compare(String revision1, String revision2) {
+		if (revision1 == null && revision2 == null) return 0;
+		if (revision1 == null) return -1;
+		if (revision2 == null) return 1;
+		int[] revision1Segments = getIntSegments(revision1);
+		int[] revision2Segments = getIntSegments(revision2);
+		for (int i = 0; i < revision1Segments.length && i < revision2Segments.length; i++) {
+			int i1 = revision1Segments[i];
+			int i2 = revision2Segments[i];
+			if (i1 != i2) {
+				return i1 > i2 ? 1 : -1;
 			}
 		}
-		if (version1Segments.length != version2Segments.length) {
-			return version1Segments.length < version2Segments.length ? -1 : 1;
+		if (revision1Segments.length != revision2Segments.length) {
+			return revision1Segments.length > revision2Segments.length ? 1 : -1;
 		}
 		return 0;
 	}
-	String[] getStringSegments(String string) {
+	
+	int[] getIntSegments(String string) {
 		int size = string.length();
-		if (size == 0) return new String[0];
+		if (size == 0) return new int[0];
 		StringBuffer buffer = new StringBuffer();
-		Vector vector = new Vector();
-		int current = Character.isDigit(string.charAt(0)) ? NUMBER : WORD;
+		List list = new ArrayList();
 		for (int i = 0; i < size; i++) {
 			char ch = string.charAt(i);
-			int newCurrent = Character.isDigit(string.charAt(i)) ? NUMBER : WORD;
-			if (newCurrent != current) {
-				vector.addElement(buffer.toString());
+			if (ch == '.') {
+				list.add(new Integer(buffer.toString()));
 				buffer = new StringBuffer();
-				current = newCurrent;
+			} else {
+				buffer.append(ch);
 			}
-			buffer.append(ch);
 		}
-		vector.addElement(buffer.toString());
-		String[] result = new String[vector.size()];
-		vector.toArray(result);
+		list.add(new Integer(buffer.toString()));
+		int[] result = new int[list.size()];
+		Iterator it = list.iterator();
+		for (int i = 0; i < result.length; i++) {
+			result[i] = ((Integer)it.next()).intValue();
+		}
 		return result;
-	}
-	boolean isNumber(String string) {
-		return Character.isDigit(string.charAt(0));
 	}
 }
 
