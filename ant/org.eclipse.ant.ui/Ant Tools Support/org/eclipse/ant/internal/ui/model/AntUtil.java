@@ -41,6 +41,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -448,5 +449,51 @@ public final class AntUtil {
 			return file;
 		}
 		return null;
+	}
+
+	/**
+	 * Migrates the classpath in the given configuration from the old format
+	 * to the new foramt. The old format is not preserved. Instead, the default
+	 * classpath will be used. However, ANT_HOME settings are preserved.
+	 * 
+	 * @param configuration a configuration to migrate
+	 * @throws CoreException if unable to migrate
+	 * @since 3.0
+	 */
+	public static void migrateToNewClasspathFormat(ILaunchConfiguration configuration) throws CoreException {
+		String oldClasspath = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
+		String oldAntHome = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_HOME, (String)null);
+		String provider = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, (String)null);
+		if (oldClasspath != null || oldAntHome != null || provider == null) {
+			ILaunchConfigurationWorkingCopy workingCopy = null;
+			if (configuration.isWorkingCopy()) {
+				workingCopy = (ILaunchConfigurationWorkingCopy) configuration;
+			} else {
+				workingCopy = configuration.getWorkingCopy();
+			}
+			workingCopy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
+			workingCopy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_HOME, (String)null);
+			workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
+			workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
+			if (oldAntHome != null) {
+				IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(workingCopy);
+				List mementos = new ArrayList(entries.length);
+				for (int i = 0; i < entries.length; i++) {
+					IRuntimeClasspathEntry entry = entries[i];
+					if (entry.getType() == IRuntimeClasspathEntry.OTHER) {
+						IRuntimeClasspathEntry2 entry2 = (IRuntimeClasspathEntry2) entry;
+						if (entry2.getTypeId().equals(AntHomeClasspathEntry.TYPE_ID)) {
+							AntHomeClasspathEntry homeEntry = new AntHomeClasspathEntry(oldAntHome);
+							mementos.add(homeEntry.getMemento());
+							continue;
+						}
+					}
+					mementos.add(entry.getMemento());
+				}
+				workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
+				workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, mementos);
+			}
+			workingCopy.doSave();
+		}
 	}
 }

@@ -70,6 +70,9 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			return;
 		}
 		
+		// migrate the config to the new classpath format if required
+		AntUtil.migrateToNewClasspathFormat(configuration);
+		
 		String vmTypeID= null;
 		try {
 			//check if set to run in a separate VM

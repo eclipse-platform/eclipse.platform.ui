@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
+import org.eclipse.ant.internal.ui.model.AntUtil;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab;
 import org.eclipse.jdt.internal.debug.ui.actions.AddExternalJarAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddFolderAction;
@@ -55,5 +58,17 @@ public class AntClasspathTab2 extends JavaClasspathTab {
 	 */
 	public void setDirty(boolean dirty) {
 		super.setDirty(dirty);
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void initializeFrom(ILaunchConfiguration configuration) {
+		try {
+			AntUtil.migrateToNewClasspathFormat(configuration);
+		} catch (CoreException e) {
+		}
+		super.initializeFrom(configuration);
 	}
 }
