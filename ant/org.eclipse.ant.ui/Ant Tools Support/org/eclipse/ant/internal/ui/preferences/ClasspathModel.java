@@ -14,7 +14,6 @@ package org.eclipse.ant.internal.ui.preferences;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -65,14 +64,14 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		switch (entryType) {
 			case GLOBAL :
 				if (globalEntry == null) {
-					String name= "Global Ant Classpath";
+					String name= AntPreferencesMessages.getString("ClasspathModel.2"); //$NON-NLS-1$
 					globalEntry= createGlobalEntry(new URL[0], name);
 				}
 				entryParent= globalEntry;
 				break;
 			case GLOBAL_USER :
 				if (userGlobalEntry == null) {
-					String name= "Global User Ant Classpath";
+					String name= AntPreferencesMessages.getString("ClasspathModel.3"); //$NON-NLS-1$
 					userGlobalEntry= createGlobalEntry(new URL[0], name);
 				}
 				entryParent= userGlobalEntry;
@@ -195,7 +194,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	 */
 	public void setGlobalClasspath(URL[] urls) {
 		if (globalEntry == null) {
-			String name= "Global Ant Classpath";
+			String name= AntPreferencesMessages.getString("ClasspathModel.4"); //$NON-NLS-1$
 			globalEntry= createGlobalEntry(urls, name);
 		} else {
 			globalEntry.removeAll();
@@ -224,7 +223,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	 */
 	public void setGlobalUserClasspath(URL[] urls) {
 		if (userGlobalEntry == null) {
-			String name= "Global User Ant Classpath";
+			String name= AntPreferencesMessages.getString("ClasspathModel.5"); //$NON-NLS-1$
 			userGlobalEntry= createGlobalEntry(urls, name);
 		} else {
 			userGlobalEntry.removeAll();
