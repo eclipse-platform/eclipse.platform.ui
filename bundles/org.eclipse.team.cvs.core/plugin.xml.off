@@ -43,4 +43,9 @@
 		</runtime>
 	</extension>
  
+ 	<!-- *************** Resource patterns ignored by CVS **************** -->
+ 	<extension point="org.eclipse.team.core.ignore">
+		<ignore pattern = ".#*" selected = "true"/>
+	</extension>
+ 
 </plugin>

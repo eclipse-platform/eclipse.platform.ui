@@ -81,6 +81,16 @@ public interface ICVSSynchronizer {
 	public void deleteResourceSync(File file) throws CVSException;
 
 	/**
+	 * Answers if the following resource is ignored
+	 */
+	public boolean isIgnored(File file);
+	
+	/**
+	 * Adds a pattern or file name to be ignored in the current files directory.
+	 */
+	public void setIgnored(File file, String pattern) throws CVSException;	
+	
+	/**
 	 * Allows the synchronizer to update the workspace with changes made by an 3rd
 	 * party tool to the sync info. 
 	 */

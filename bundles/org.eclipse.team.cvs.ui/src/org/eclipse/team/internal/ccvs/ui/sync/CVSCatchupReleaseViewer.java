@@ -25,7 +25,10 @@ import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -108,7 +111,26 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				return image;
 			}
 			public String getText(Object element) {
-				return oldProvider.getText(element);
+				StringBuffer postfix = new StringBuffer();
+				if (element instanceof ITeamNode) {					
+					ITeamNode node = (ITeamNode)element;
+					IResource resource = node.getResource();
+					if (resource.exists() && resource.getType() == IResource.FILE) {
+						try {
+							ResourceSyncInfo info = new LocalFile(((IFile)resource).getLocation().toFile()).getSyncInfo();
+							String kw;
+							if (info!=null) {
+								kw = CVSDecorator.getFileTypeString(resource.getName(), info.getKeywordMode());
+							} else {
+								kw = CVSDecorator.getFileTypeString(resource.getName(), null);
+							}
+							postfix.append("(" + kw + ")");
+						} catch(CVSException e) {
+							ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
+						}
+					}
+				}								
+				return oldProvider.getText(element) + " " + postfix.toString() ;
 			}
 		});
 	}

@@ -20,14 +20,6 @@ public class UpdateListener implements ICommandOutputListener {
 	static final String SERVER_PREFIX = "cvs server: "; //$NON-NLS-1$
 	static final String SERVER_ABORTED_PREFIX = "cvs [server aborted]: "; //$NON-NLS-1$
 
-	// Message line prefix constants
-	private static final char MLP_ADDED_LOCAL = 'A'; // new file locally that was added but not comitted to server yet
-	private static final char MLP_UNKOWN = '?'; // new file locally but not added to server
-	private static final char MLP_REMOTE_CHANGES = 'U'; // remote changes to an unmodified local file
-	private static final char MLP_DELETED = 'R'; // removed locally but still exists on the server
-	private static final char MLP_MODIFIED = 'M'; // modified locally
-	private static final char MLP_CONFLICT = 'C'; // modified locally and on the server but cannot be auto-merged
-	
 	IUpdateMessageListener updateMessageListener;
 	boolean merging = false;
 
@@ -55,6 +47,7 @@ public class UpdateListener implements ICommandOutputListener {
 				case 'R': type = Update.STATE_DELETED; break; // removed locally but still exists on the server
 				case 'M': type = Update.STATE_MODIFIED; break; // modified locally
 				case 'C': type = Update.STATE_CONFLICT; break;  // modified locally and on the server but cannot be auto-merged
+				case 'D': type = Update.STATE_DELETED; break;  // deleted locally but still exists on server
 				default: type = Update.STATE_NONE;
 			}
 				

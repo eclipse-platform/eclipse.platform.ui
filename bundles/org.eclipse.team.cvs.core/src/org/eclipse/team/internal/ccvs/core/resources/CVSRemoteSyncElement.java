@@ -7,8 +7,8 @@ package org.eclipse.team.internal.ccvs.core.resources;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.ILocalSyncElement;
@@ -20,7 +20,8 @@ import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 public class CVSRemoteSyncElement extends RemoteSyncElement {
@@ -230,26 +231,14 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	}
 	
 	/*
-	 * Update the sync info of the local resource in such a way that the remote resource can be loaded ignore any local changes.
-	 * 
-	 * XXX This is a quick fix to allow conflicts to be loaded and has not been tested for non-conflict cases
+	 * Update the sync info of the local resource in such a way that the remote resource can be loaded 
+	 * ignore any local changes. 
 	 */
 	public void makeIncoming(IProgressMonitor monitor) throws TeamException {
-		if (!getLocal().exists()) return;
-		int syncKind = getSyncKind(GRANULARITY_TIMESTAMP, monitor);
-		boolean conflict = (syncKind & DIRECTION_MASK) == CONFLICTING;
-		boolean incoming = (syncKind & DIRECTION_MASK) == INCOMING;
-		boolean outgoing = (syncKind & DIRECTION_MASK) == OUTGOING;
-		
-		if (incoming) {
-			// No need to do anything
-		} else if (outgoing) {
-			// For now, just unmanage the local resource so the remote change can be loaded with an update
-			Session.getManagedResource(getLocal()).unmanage();
-		} else {
-			// For now, just unmanage the local resource so the remote change can be loaded with an update
-			Session.getManagedResource(getLocal()).unmanage();
-		}
+		// To make outgoing deletions incoming, the local will not exist but
+		// it is still important to unmanage (e.g. delete all meta info) for the
+		// deletion.
+		Session.getManagedResource(getLocal()).unmanage();
 	}
 	
 	/*
@@ -301,22 +290,76 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	 */
 	public int getSyncKind(int granularity, IProgressMonitor progress) {
 		
+		// 1. Run the generic sync calculation algorithm, then handle CVS specific
+		// sync cases.
 		int kind = super.getSyncKind(granularity, progress);
 		
-		if(remote instanceof RemoteFile && (kind & IRemoteSyncElement.PSEUDO_CONFLICT) == 0) {
-			int type = ((RemoteFile)remote).getWorkspaceSyncState();
+		// 2. Set the CVS specific sync type based on the workspace sync state provided
+		// by the CVS server.
+		if(remote!=null && (kind & IRemoteSyncElement.PSEUDO_CONFLICT) == 0) {
+			int type = ((RemoteResource)remote).getWorkspaceSyncState();
 			switch(type) {
+				// the server compared both text files and decided that it cannot merge
+				// them without line conflicts.
 				case Update.STATE_CONFLICT: 
 					return ILocalSyncElement.CONFLICTING | 
 							   ILocalSyncElement.CHANGE | 
 							   ILocalSyncElement.MANUAL_CONFLICT;
 
+				// the server compared both text files and decided that it can safely merge
+				// them without line conflicts. 
 				case Update.STATE_MERGEABLE_CONFLICT: 
 					return ILocalSyncElement.CONFLICTING | 
 							   ILocalSyncElement.CHANGE | 
 							   ILocalSyncElement.AUTOMERGE_CONFLICT;
+				
+				// Commented out until we decide on how to handle the deletions case.
+				// you can't delete a remote folder from a CVS server, so don't show folders
+				// as outgoing deletions. This will just confuse the user.
+				//case Update.STATE_DELETED:
+				//	if(remote.isContainer()) {
+				//		return ILocalSyncElement.IN_SYNC;
+				//	} else {
+				//		return ILocalSyncElement.OUTGOING | ILocalSyncElement.DELETION;
+				//	}
 			}			
-		}		
+		}
+		
+		// 3. Handle outgoing deletions of folders when user has deleted a folder
+		// locally. This will force children to be shown as outgoing deletions.
+		IResource local = getLocal();
+		
+		/* Commented until we decide how to handle outgoing deletions of folders
+		if(remote != null && remote.isContainer()) {
+			ICVSFolder cvsFolder = (ICVSFolder)localSync.getCVSResource();
+			// folder is managed and doesn't have its meta directory, then consider
+			// all children as deleted.
+			try {
+				if(cvsFolder.isManaged() && !cvsFolder.isCVSFolder() && !cvsFolder.exists()) {
+					markChildrenAsOutgoingDeletions((RemoteResource)remote, progress);
+					return ILocalSyncElement.IN_SYNC;
+				}			
+			} catch(CVSException e) {
+				CVSProviderPlugin.log(e);
+			}
+		}
+		*/
+				
 		return kind;
+	}
+	
+	private void markChildrenAsOutgoingDeletions(RemoteResource remote, IProgressMonitor progress) {
+		if(remote.isContainer()) {
+			try {
+				IRemoteResource[] children = remote.members(progress);
+				for (int i = 0; i < children.length; i++) {
+					markChildrenAsOutgoingDeletions((RemoteResource)children[i], progress);
+				}
+			} catch(TeamException e) {
+				CVSProviderPlugin.log(e);
+			}
+		}
+		// mark as deleted locally, forcing sync state to become outgoing deletions.		
+		remote.setWorkspaceSyncState(Update.STATE_DELETED);
 	}
 }

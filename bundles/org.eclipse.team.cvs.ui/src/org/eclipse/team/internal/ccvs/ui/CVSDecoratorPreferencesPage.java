@@ -105,7 +105,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		try {
 			ICVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:username@host.acme.org:/home/cvsroot");				
 			bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, "v2_0");
-			bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, "-kb");
+			bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, CVSDecorator.getFileTypeString("file.txt",null));
 			bindings.put(CVSDecoratorConfiguration.FILE_REVISION, "1.34");
 			bindings.put(CVSDecoratorConfiguration.DIRTY_FLAG, dirtyFlag.getText());
 			bindings.put(CVSDecoratorConfiguration.ADDED_FLAG, addedFlag.getText());

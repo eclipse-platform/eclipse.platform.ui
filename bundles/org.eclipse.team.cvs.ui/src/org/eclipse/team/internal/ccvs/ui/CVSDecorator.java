@@ -30,6 +30,7 @@ import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.IResourceStateChangeListener;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSProvider;
 
 /**
  * Classes registered with the workbench decoration extension point. The <code>CVSDecorationRunnable</code> class
@@ -291,6 +292,28 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 
 	public static void shutdownAll() {
 		theDecorator.dispose();
+	}
+	
+	public static String getFileTypeString(String name, String keyword) {
+		StringBuffer buffer = new StringBuffer();
+		boolean isBinary = false;
+		if(keyword!=null) {
+			if (keyword.equals("-kb")) {
+				isBinary = true;
+			}
+		} else {
+			isBinary = !CVSProvider.isText(name);
+		}
+		
+		if(isBinary) {
+			buffer.append(Policy.bind("CVSFilePropertiesPage.binary")); 
+		} else {
+			buffer.append(Policy.bind("CVSFilePropertiesPage.text"));
+			if(keyword!=null && !keyword.equals("-ko") && !"".equals(keyword)) {
+				buffer.append(" " + keyword);
+			}
+		}		
+		return buffer.toString();
 	}
 	
 	/*

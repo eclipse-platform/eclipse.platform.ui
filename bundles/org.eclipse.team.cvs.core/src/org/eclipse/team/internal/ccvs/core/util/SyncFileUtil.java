@@ -36,6 +36,9 @@ public class SyncFileUtil {
 	public static final String ENTRIES = "Entries";
 	public static final String PERMISSIONS = "Permissions";
 	public static final String ENTRIES_LOG="Entries.Log";
+	
+	// the local workspace file that contains pattern for ignored resources
+	public static final String IGNORE_FILE = ".cvsignore"; //$NON-NLS-1$
 
 	// Some older CVS clients may of added a line to the entries file consisting
 	// of only a 'D'. It is safe to ingnore these entries.	
@@ -362,6 +365,29 @@ public class SyncFileUtil {
 			fileWriter.close();
 		} catch (IOException e) {
 			throw CVSException.wrapException(e);
+		}
+	}
+	
+	public static void addCvsIgnoreEntry(File file, String pattern) throws CVSException {
+		FileOutputStream out = null;
+		try {
+			File cvsignore = new File(file.getParentFile(), IGNORE_FILE);
+			if(!cvsignore.exists()) {
+				cvsignore.createNewFile();
+			}
+			String line = pattern == null ? file.getName() : pattern +"\n";
+			out = new FileOutputStream(cvsignore.getAbsolutePath(), true /*append*/);
+			out.write(line.getBytes());
+		} catch(IOException e) {
+			throw new CVSException(IStatus.ERROR, 0, "Error writing to .cvsignore.", e);
+		} finally {
+			try {
+				if(out!=null) {
+					out.close();
+				}
+			} catch(IOException e) {
+				throw new CVSException(IStatus.ERROR, 0, "Cannot close .cvsignore.", e);
+			}
 		}
 	}
 }

@@ -172,10 +172,13 @@ public class CVSDecorationRunnable implements Runnable {
 						} else {
 							bindings.put(CVSDecoratorConfiguration.FILE_REVISION, fileInfo.getRevision());
 						}
-						bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, fileInfo.getKeywordMode());
+						bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, CVSDecorator.getFileTypeString(fileInfo.getName(), fileInfo.getKeywordMode()));
 						if (tag != null && (tag.getType() != CVSTag.HEAD)) {
 							bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, tag.getName());
 						}
+					} else {
+						// only show the type that cvs will use when comitting the file
+						bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, CVSDecorator.getFileTypeString(file.getName(), null));
 					}
 					break;
 			}			

@@ -23,11 +23,19 @@ public class UpdateMergeAction extends UpdateSyncAction {
 	}
 	protected Command.LocalOption[] getLocalOptions(Command.LocalOption[] baseOptions) {
 		List list = new ArrayList();
+
 		list.addAll(Arrays.asList(baseOptions));
+		
 		CVSTag startTag = ((MergeEditorInput)getDiffModel()).getStartTag();
 		CVSTag endTag = ((MergeEditorInput)getDiffModel()).getEndTag();
-		list.add(Update.makeArgumentOption(Update.JOIN, startTag.getName()));
-		list.add(Update.makeArgumentOption(Update.JOIN, endTag.getName()));
+
+		if(!Update.IGNORE_LOCAL_CHANGES.isElementOf(baseOptions)) {
+			list.add(Update.makeArgumentOption(Update.JOIN, startTag.getName()));
+			list.add(Update.makeArgumentOption(Update.JOIN, endTag.getName()));
+		} else {
+			//list.add(Update.makeTagOption(endTag));
+			list.add(Update.makeArgumentOption(Update.JOIN, endTag.getName()));
+		}
 		return (Command.LocalOption[]) list.toArray(new Command.LocalOption[list.size()]);
 	}
 }

@@ -56,8 +56,18 @@ public interface ICVSResource {
 	 * @return <code>true</code> if this resource is listed in one of the ignore
 	 * files maintained by CVS and <code>false</code> otherwise.
 	 */
-	public boolean isIgnored() throws CVSException;
+	public boolean isIgnored();
 	
+	/**
+	 * Add the following file to the parent's ignore list
+	 */
+	public void setIgnored() throws CVSException;
+	
+	/**
+	 * Add the following pattern to the file's parent ignore list
+	 */
+	public void setIgnoredAs(String pattern) throws CVSException;
+			
 	/**
 	 * Answers if the handle is a file or a folder handle.
 	 * 

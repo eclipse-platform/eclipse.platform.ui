@@ -41,6 +41,8 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	public static final String ID = "org.eclipse.team.cvs.ui";
 	
 	private Hashtable imageDescriptors = new Hashtable(20);
+	
+	private ChangeListener changeListener = new ChangeListener();
 
 	public final static String ICON_PATH;
 	static {
@@ -210,6 +212,8 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		initializeImages();
 		initializePreferences();
 		repositoryManager = new RepositoryManager();
+		changeListener.register();
+		
 		try {
 			repositoryManager.startup();
 		} catch (TeamException e) {
@@ -222,6 +226,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 */
 	public void shutdown() throws CoreException {
 		CVSDecorator.shutdownAll();
+		changeListener.deregister();
 		super.shutdown();
 		try {
 			repositoryManager.shutdown();

@@ -11,6 +11,7 @@ import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.Util;
@@ -25,6 +26,10 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 
 	protected ResourceSyncInfo info;
 	protected RemoteFolder parent;
+
+	// relative synchronization state calculated by server of this remote file compare to the current local 
+	// workspace copy.
+	private int workspaceSyncState = Update.STATE_NONE;
 
 	/*
 	 * @see ICVSRemoteResource#getName()
@@ -46,6 +51,14 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	public abstract String getRepositoryRelativePath();
 	
 	public abstract ICVSRepositoryLocation getRepository();
+	
+ 	public int getWorkspaceSyncState() {
+ 		return workspaceSyncState;
+ 	}
+ 	
+ 	public void setWorkspaceSyncState(int workspaceSyncState) {
+ 		this.workspaceSyncState = workspaceSyncState;
+ 	}
 	
 	/*
 	 * @see ICVSResource#delete()
@@ -81,7 +94,7 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	/*
 	 * @see ICVSResource#isIgnored()
 	 */
-	public boolean isIgnored() throws CVSException {
+	public boolean isIgnored() {
 		return false;
 	}
 
@@ -120,5 +133,20 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 			return false;
 		RemoteResource remote = (RemoteResource) target;
 		return remote.isContainer() == isContainer() && remote.getRepositoryRelativePath().equals(getRepositoryRelativePath());
+	}
+	/*
+	 * @see ICVSResource#setIgnored()
+	 */
+	public void setIgnored() throws CVSException {
+		// ensure that clients are not trying to set sync info on remote handles.
+		Assert.isTrue(false);
+	}
+
+	/*
+	 * @see ICVSResource#setIgnoredAs(String)
+	 */
+	public void setIgnoredAs(String pattern) throws CVSException {
+		// ensure that clients are not trying to set sync info on remote handles.
+		Assert.isTrue(false);
 	}
 }

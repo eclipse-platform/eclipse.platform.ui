@@ -43,11 +43,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 
 	// cache for file contents received from the server
 	private byte[] contents;
-	
-	// relative synchronization state calculated by server of this remote file compare to the current local 
-	// workspace copy.
-	private int workspaceSyncState = Update.STATE_NONE;
-	
+			
 	/**
 	 * Static method which creates a file as a single child of its parent.
 	 * This should only be used when one is only interested in the file alone.
@@ -139,7 +135,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	public RemoteFile(RemoteFolder parent, int workspaceSyncState, ResourceSyncInfo info) {
 		this.parent = parent;
 		this.info = info;
-		this.workspaceSyncState = workspaceSyncState;
+		setWorkspaceSyncState(workspaceSyncState);
 		Assert.isTrue(!info.isDirectory());
 	}
 
@@ -243,14 +239,6 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 
 	public ICVSFolder getParent() {
 		return parent;
- 	}
- 	
- 	public int getWorkspaceSyncState() {
- 		return workspaceSyncState;
- 	}
- 	
- 	public void setWorkspaceSyncState(int workspaceSyncState) {
- 		this.workspaceSyncState = workspaceSyncState;
  	}
  	
 	/**

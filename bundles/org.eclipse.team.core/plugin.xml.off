@@ -19,6 +19,7 @@
 
 <extension-point id="providers" name="Providers"/>
 <extension-point id="fileTypes" name="File Types Registry"/>
+<extension-point id="ignore" name="Global Ignore Registry"/>
 
 <extension point="org.eclipse.core.resources.fileModificationValidator">
 	<fileModificationValidator class="org.eclipse.team.core.internal.FileModificationValidator"/>

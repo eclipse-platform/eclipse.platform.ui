@@ -41,6 +41,9 @@ final public class TeamPlugin extends Plugin {
 	
 	// The id of the file types extension point
 	public static final String FILE_TYPES_EXTENSION = "fileTypes";
+	
+	// The id of the global ignore extension point
+	public static final String IGNORE_EXTENSION = "ignore";
 
 	// The team manager - manages relationships between projects and providers
 	private static TeamManager manager;

@@ -23,8 +23,6 @@ public class FileNameMatcher {
 	private List matchers = new ArrayList();
 	private List results = new ArrayList();
 	private static final String TRUE = "true"; //$NON-NLS-1$
-	private static final String IGNORE_FILE = ".cvsignore"; //$NON-NLS-1$
-	
 	
 	public FileNameMatcher() {
 	}
@@ -73,17 +71,4 @@ public class FileNameMatcher {
 	public boolean match(String name) {
 		return getMatch(name) != null;
 	}
-	
-	/**
-	 * Return a file name matcher build from the .cvsignore file
-	 * in the provided directory or null if no such file exists
-	 */
-	public static FileNameMatcher getIgnoreMatcherFor(File folder) throws CVSException {		
-		File cvsignore = new File(folder, IGNORE_FILE);
-		if (!cvsignore.exists()) {
-			return new FileNameMatcher(new String[0]);			
-		} else {
-			return new FileNameMatcher(SyncFileUtil.readLines(cvsignore));
-		}
-	}	
 }

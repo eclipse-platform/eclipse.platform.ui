@@ -9,9 +9,10 @@ import java.io.File;
 
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
 import org.eclipse.team.internal.ccvs.core.util.FileUtil;
+import org.eclipse.team.internal.ccvs.core.util.SyncFileUtil;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
@@ -23,12 +24,10 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
  */
 public abstract class LocalResource implements ICVSResource {
 
-	/**
-	 * The seperator that must be used when creating CVS resource paths. Never use
-	 * the platform default seperator since it is not compatible with CVS resources.
-	 */
+	 // The seperator that must be used when creating CVS resource paths. Never use
+	 // the platform default seperator since it is not compatible with CVS resources.
 	protected static final String SEPARATOR = "/";
-	
+		
 	/**
 	 * The local file represented by this handle.
 	 */
@@ -97,9 +96,16 @@ public abstract class LocalResource implements ICVSResource {
 	/**
 	 * @see ICVSResource#isIgnored()
 	 */
-	public boolean isIgnored() throws CVSException {
-		FileNameMatcher matcher = FileNameMatcher.getIgnoreMatcherFor(ioResource.getParentFile());
-		return (!isManaged() && matcher.match(getName()));
+	public boolean isIgnored() {
+		return CVSProviderPlugin.getSynchronizer().isIgnored(ioResource);		
+	}
+
+	public void setIgnored() throws CVSException {
+		CVSProviderPlugin.getSynchronizer().setIgnored(ioResource, null);
+	}
+	
+	public void setIgnoredAs(String pattern) throws CVSException {
+		CVSProviderPlugin.getSynchronizer().setIgnored(ioResource, pattern);		
 	}
 
 	/**

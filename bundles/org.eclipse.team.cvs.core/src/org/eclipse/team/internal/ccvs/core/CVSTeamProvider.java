@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.IFileTypeRegistry;
@@ -38,12 +37,10 @@ import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Commit;
-import org.eclipse.team.internal.ccvs.core.client.Diff;
 import org.eclipse.team.internal.ccvs.core.client.ResponseHandler;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Tag;
 import org.eclipse.team.internal.ccvs.core.client.Update;
-import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.DiffListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
@@ -589,10 +586,10 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			try {
 				remote = (ICVSRemoteResource)remoteParent.getChild(resource.getName());
 			} catch (CVSException e) {
-				// XXX Either need an exception or null to indicate child does not exist
+				remote = null;
 			}
 			// The types need to match or we're in trouble
-			if (!(remote.isContainer() == managed.isFolder()))
+			if (remote != null && !(remote.isContainer() == managed.isFolder()))
 				throw new CVSException(new CVSStatus(CVSStatus.ERROR, resource.getFullPath(), Policy.bind("CVSTeamProvider.typesDiffer", resource.getFullPath().toString()), null)); //$NON-NLS-1$
 		}
 		return remote;

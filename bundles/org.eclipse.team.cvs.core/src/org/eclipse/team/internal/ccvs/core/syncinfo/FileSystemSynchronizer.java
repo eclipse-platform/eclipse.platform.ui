@@ -6,9 +6,7 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
  */
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
@@ -19,10 +17,13 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.*;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSSynchronizer;
+import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
 import org.eclipse.team.internal.ccvs.core.util.FileUtil;
 import org.eclipse.team.internal.ccvs.core.util.ResourceDeltaVisitor;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileUtil;
@@ -412,5 +413,32 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 		// and be able to traverse children. This is the safest for now.
 		resourceSyncCache.clear();
 		folderSyncCache.clear();
+	}
+	
+	/*
+	 * @see ICVSSynchronizer#isIgnored(File)
+	 */
+	public boolean isIgnored(File file) {
+		try {
+			File cvsignore = new File(file.getParentFile(), SyncFileUtil.IGNORE_FILE);
+			String[] patterns;
+			if (!cvsignore.exists()) {
+				patterns = new String[0];			
+			} else {
+				patterns = SyncFileUtil.readLines(cvsignore);
+			}
+			FileNameMatcher matcher = new FileNameMatcher(patterns);
+			return matcher.match(file.getName());
+		} catch(CVSException e) {
+			CVSProviderPlugin.log(e);
+			return false;
+		}
+	}
+
+	/*
+	 * @see ICVSSynchronizer#setIgnored(File, String)
+	 */
+	public void setIgnored(File file, String pattern) throws CVSException {
+		SyncFileUtil.addCvsIgnoreEntry(file, pattern);
 	}
 }

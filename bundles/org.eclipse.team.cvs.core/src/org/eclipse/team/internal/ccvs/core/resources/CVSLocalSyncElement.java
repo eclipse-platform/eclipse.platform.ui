@@ -66,6 +66,9 @@ public class CVSLocalSyncElement extends LocalSyncElement {
 		if(cvsResource == null) {
 			return false;
 		} else {
+			// a folder is dirty if it is managed but is not a CVS folder. This can
+			// easily happen if someone deletes a folder from the file system but
+			// doesn't unmanage it.
 			if(cvsResource.isFolder()) {
 				return false;
 			} else {
