@@ -157,7 +157,7 @@
             pattern="*.obj">
       </ignore>
       <ignore
-            enabled="true"
+            enabled="false"
             pattern="*.so">
       </ignore>
       <ignore
