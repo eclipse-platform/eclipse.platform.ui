@@ -55,6 +55,9 @@ public class DefaultLabelProvider implements ILabelProvider {
 	 */
 	public Image getImage(Object element) {
 		String key= getImageKey(element);
+		if (key == null && element instanceof ILaunch) {
+			return null;
+		}
 		if (key == null && element instanceof IAdaptable) {
 			IWorkbenchAdapter de= (IWorkbenchAdapter) ((IAdaptable) element).getAdapter(IWorkbenchAdapter.class);
 			if (de != null) {
