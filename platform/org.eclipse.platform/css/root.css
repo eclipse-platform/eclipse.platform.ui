@@ -33,7 +33,6 @@ body {
 	position : relative;
 	top : 10%; /* same as variable-space and background height */
 	height : 253px;
-	width : 100%;
 	background-image : url(graphics/background/background.jpg);
 	background-repeat : repeat-x;
 	text-align : center;
