@@ -51,6 +51,17 @@
 
 <!-- Extensions -->
 
+	<extension point="org.eclipse.ui.fontDefinitions">
+		<fontDefinition
+			label="%compareFontDefiniton.label"
+			id="org.eclipse.compare.TextFont"
+			defaultsTo="org.eclipse.jface.textfont">
+	        <description>
+				%compareFontDefiniton.description
+			</description>
+		</fontDefinition>
+	</extension>
+
 	<extension point="org.eclipse.core.resources.markers"
 		id="rejectedPatchMarker" name="%rejectedPatchMarker.name">
 		<super type="org.eclipse.core.resources.taskmarker"/>

@@ -32,6 +32,7 @@ import org.eclipse.swt.custom.*;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -139,7 +140,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	};
 					
 	private static final String BUNDLE_NAME= "org.eclipse.compare.contentmergeviewer.TextMergeViewerResources"; //$NON-NLS-1$
-		
+			
 	// constants
 	/** Width of left and right vertical bar */
 	private static final int MARGIN_WIDTH= 6;
@@ -192,6 +193,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private IPreferenceStore fPreferenceStore;
 	private IPropertyChangeListener fPreferenceChangeListener;
+	
+	/** The editor's font properties change listener */
+	private IPropertyChangeListener fFontPropertyChangeListener;
+
 	
 	/** All diffs for calculating scrolling position (includes line ranges without changes) */
 	private ArrayList fAllDiffs;
@@ -641,6 +646,24 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fComposite.setData(INavigatable.NAVIGATOR_PROPERTY, nav);
 		
 		fBirdsEyeCursor= new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
+		
+		// Internal property change listener for handling workbench font changes.
+		fFontPropertyChangeListener= new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				String property= event.getProperty();
+				if (ComparePreferencePage.TEXT_FONT.equals(property)) {
+					Font font= JFaceResources.getFont(ComparePreferencePage.TEXT_FONT);
+					System.out.println("workbench font: " + font);
+				}					
+				/*
+				if (fSourceViewer == null)
+					return;
+				if (getFontPropertyPreferenceKey().equals(property))
+					initializeViewerFont(fSourceViewer);
+				*/
+			}			
+		};
+		JFaceResources.getFontRegistry().addListener(fFontPropertyChangeListener);
 	}
 	
 	private void updateFont(IPreferenceStore ps, Display display) {
@@ -858,6 +881,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			if (fPreferenceStore != null)
 				fPreferenceStore.removePropertyChangeListener(fPreferenceChangeListener);
 			fPreferenceChangeListener= null;
+		}
+		
+		if (fFontPropertyChangeListener != null) {
+			JFaceResources.getFontRegistry().removeListener(fFontPropertyChangeListener);
+			fFontPropertyChangeListener= null;
 		}
 		
 		fLeftCanvas= null;
