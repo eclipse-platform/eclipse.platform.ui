@@ -79,6 +79,7 @@ import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.operations.RedoActionHandler;
@@ -94,7 +95,6 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.framelist.FrameList;
 import org.eclipse.ui.views.framelist.TreeFrame;
-import org.eclipse.ui.views.navigator.internal.ResourceNavigatorMessages;
 
 /**
  * Implements the Resource Navigator view.

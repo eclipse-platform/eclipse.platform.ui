@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.views.navigator.internal.ResourceNavigatorMessages;
+import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 
 /**
  * A LocalSelectionTransfer may be used for drag and drop operations

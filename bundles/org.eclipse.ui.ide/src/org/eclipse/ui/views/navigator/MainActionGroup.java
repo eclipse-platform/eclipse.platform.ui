@@ -42,7 +42,7 @@ import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.ide.IDEActionFactory;
-import org.eclipse.ui.views.navigator.internal.ResourceNavigatorMessages;
+import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 
 /**
  * The main action group for the navigator.

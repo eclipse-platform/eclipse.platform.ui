@@ -21,7 +21,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenInNewWindowAction;
 import org.eclipse.ui.actions.OpenWithMenu;
-import org.eclipse.ui.views.navigator.internal.ResourceNavigatorMessages;
+import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 
 /**
  * This is the action group for the open actions.

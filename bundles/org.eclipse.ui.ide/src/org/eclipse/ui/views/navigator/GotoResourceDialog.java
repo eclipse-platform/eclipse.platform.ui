@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.views.navigator.internal.ResourceNavigatorMessages;
+import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 
 /**
  * Shows a list of resources to the user with a text entry field

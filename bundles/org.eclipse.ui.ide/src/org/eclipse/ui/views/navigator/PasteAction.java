@@ -26,8 +26,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
 import org.eclipse.ui.actions.CopyProjectOperation;
 import org.eclipse.ui.actions.SelectionListenerAction;
+import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.part.ResourceTransfer;
-import org.eclipse.ui.views.navigator.internal.ResourceNavigatorMessages;
 
 /**
  * Standard action for pasting resources on the clipboard to the selected resource's location.

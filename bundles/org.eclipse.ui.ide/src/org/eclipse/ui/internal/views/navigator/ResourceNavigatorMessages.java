@@ -7,7 +7,7 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.ui.views.navigator.internal;
+package org.eclipse.ui.internal.views.navigator;
 
 import org.eclipse.osgi.util.NLS;
 

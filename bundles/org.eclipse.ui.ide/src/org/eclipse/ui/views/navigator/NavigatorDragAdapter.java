@@ -31,8 +31,8 @@ import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.ReadOnlyStateChecker;
+import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.part.ResourceTransfer;
-import org.eclipse.ui.views.navigator.internal.ResourceNavigatorMessages;
 
 /**
  * Implements drag behaviour when items are dragged out of the
