@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.help.webapp"
    name="%help_plugin_name"
-   version="2.1.0"
+   version="3.0.0"
    provider-name="%providerName"
    class="org.eclipse.help.internal.webapp.HelpWebappPlugin">
 
@@ -19,7 +19,9 @@
 
    <extension
          point="org.eclipse.help.webapp">
-         <webapp default="true"/>
+      <webapp
+            default="true">
+      </webapp>
    </extension>
 
 </plugin>

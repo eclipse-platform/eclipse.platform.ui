@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.help.ui"
    name="%help_system_plugin_name"
-   version="2.1.0"
+   version="3.0.0"
    provider-name="%providerName"
    class="org.eclipse.help.ui.internal.WorkbenchHelpPlugin">
 
@@ -19,6 +19,7 @@
       <import plugin="org.eclipse.search"/>
       <import plugin="org.eclipse.ui"/>
    </requires>
+
 
 <!-- Default Help UI  -->
    <extension
