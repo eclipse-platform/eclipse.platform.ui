@@ -39,8 +39,9 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 
 		try {
 			IFeatureContentProvider contentProvider = new FeatureExecutableContentProvider(url);
-			// PERF: Do not create FeatureContentConsumer
-			//IFeatureContentConsumer contentConsumer =new FeatureExecutableContentConsumer();
+//			// PERF: Do not create FeatureContentConsumer
+// bug 79893
+			IFeatureContentConsumer contentConsumer =new FeatureExecutableContentConsumer();
 
 			URL nonResolvedURL = contentProvider.getFeatureManifestReference(null).asURL();
 			URL resolvedURL = URLEncoder.encode(nonResolvedURL);
@@ -51,8 +52,9 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 			feature.setSite(site);
 
 			feature.setFeatureContentProvider(contentProvider);
-			// PERF: FeatureContentConsumer
-			//feature.setContentConsumer(contentConsumer);
+//			// PERF: FeatureContentConsumer
+// bug 79893
+			feature.setContentConsumer(contentConsumer);
 
 			feature.resolve(url, url);
 			feature.markReadOnly();
