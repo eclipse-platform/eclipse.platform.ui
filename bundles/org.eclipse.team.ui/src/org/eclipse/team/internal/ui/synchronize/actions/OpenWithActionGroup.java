@@ -15,13 +15,13 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.OpenWithMenu;
-import org.eclipse.ui.views.navigator.ResourceNavigatorMessages;
 
 /**
  * This is the action group for the open actions. It contains open
@@ -90,7 +90,7 @@ public class OpenWithActionGroup extends ActionGroup {
 		IWorkbenchSite ws = site.getWorkbenchSite();
 		if (ws != null) {
 			MenuManager submenu =
-				new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.openWith")); //$NON-NLS-1$
+				new MenuManager(Policy.bind("OpenWithActionGroup.0")); //$NON-NLS-1$
 			submenu.add(new OpenWithMenu(ws.getPage(), resource));
 			menu.appendToGroup(groupId, submenu);
 		}
