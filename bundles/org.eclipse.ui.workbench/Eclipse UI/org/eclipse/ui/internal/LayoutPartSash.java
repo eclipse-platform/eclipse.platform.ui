@@ -56,9 +56,8 @@ class LayoutPartSash extends LayoutPart {
         this.rootContainer = rootContainer;
 
         selectionListener = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) { 
                 checkDragLimit(e);
-            
                 
                 // Ensure that we don't wear out the poor CPU -- if
                 // we have more than 5 updates scheduled at once then
@@ -97,7 +96,7 @@ class LayoutPartSash extends LayoutPart {
     	int eventX = eventRect.x;
     	int left = Math.max(0, eventX - nodeBounds.x);
     	left = Math.min(left, nodeBounds.width); 
-    	int right = nodeBounds.width - left;
+    	int right = nodeBounds.width - left - LayoutTreeNode.SASH_WIDTH;
     	
     	LayoutTreeNode.ChildSizes sizes = node.computeChildSizes(nodeBounds.width, nodeBounds.height, left, right, nodeBounds.width);
 

@@ -406,7 +406,7 @@ public class LayoutTreeNode extends LayoutTree {
                 
         preferredWidth = Math.max(0, subtract(preferredWidth, SASH_WIDTH));
         width = Math.max(0, subtract(width, SASH_WIDTH));
-        int redistribute = preferredWidth - total;
+        int redistribute = subtract(preferredWidth, total);
         
     	int leftMinimum = 0;
     	
