@@ -153,4 +153,6 @@ public interface IWorkbenchConstants {
 	public static final String TAG_PATH = "path";//$NON-NLS-1$
 	public static final String TAG_TOOLTIP = "tooltip";//$NON-NLS-1$
 	public static final String TAG_VIEWS = "views";//$NON-NLS-1$
+	public static final String TAG_ADDED = "added";//$NON-NLS-1$
+	public static final String TAG_POSITION = "position";//$NON-NLS-1$
 }

@@ -5,12 +5,8 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 
-import java.util.Vector;
-
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.*;
 
 /**
@@ -65,12 +61,6 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 		CoolBar parentControl = getParentManager().getControl();
 		if (parentControl != null) {
 			tBar = toolBarManager.createControl(parentControl);
-			// add support for popup menu
-			tBar.addMouseListener(new MouseAdapter() {
-				public void mouseDown(MouseEvent e) {
-					getParentManager().popupCoolBarMenu(e);
-				}
-			});
 		}
 		return tBar;
 	}

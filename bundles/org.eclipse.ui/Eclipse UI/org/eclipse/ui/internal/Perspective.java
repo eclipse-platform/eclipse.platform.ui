@@ -750,7 +750,8 @@ public IStatus restoreState(IMemento memento) {
 	IMemento layoutMem = memento.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
 	if (layoutMem != null) {
 		toolBarLayout = new CoolBarLayout();
-		result.add(toolBarLayout.restoreState(layoutMem));
+		boolean success = toolBarLayout.restoreState(layoutMem);
+		if (!success) toolBarLayout = null;
 	}	
 	this.memento = memento;
 	// Add the visible views.
@@ -1003,6 +1004,11 @@ public IStatus saveState(IMemento memento) {
 	// Save the toolbar layout.
 	if (toolBarLayout != null) {
 		IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
+ArrayList list = toolBarLayout.rememberedPositions;
+System.out.println("remembered " + list.size());
+for (int i=0; i<list.size(); i++) {
+	System.out.println(((CoolItemPosition)list.get(i)).id);
+}
 		result.add(toolBarLayout.saveState(childMem));
 	}
 	return result;
