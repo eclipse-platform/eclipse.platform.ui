@@ -18,6 +18,7 @@ import org.eclipse.team.internal.ccvs.core.DateUtil;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 
 public class LogListener implements ICommandOutputListener {
@@ -35,6 +36,8 @@ public class LogListener implements ICommandOutputListener {
 	private String fileState;   //
 	private StringBuffer comment; // comment
 
+	private static final String NOTHING_KNOWN_ABOUT = "nothing known about ";
+	
 	public LogListener(RemoteFile file, List entries) {
 		this.file = file;
 		this.entries = entries;
@@ -127,8 +130,16 @@ public class LogListener implements ICommandOutputListener {
 		return OK;
 	}
 
-	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot,
-		IProgressMonitor monitor) {
+	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {
+		String serverMessage = ((CVSRepositoryLocation)location).getServerMessageWithoutPrefix(line, SERVER_PREFIX);
+		if (serverMessage != null) {
+			// look for the following condition
+			// E cvs server: nothing known about .vcm_meta
+			if (serverMessage.startsWith(NOTHING_KNOWN_ABOUT)) {
+				String filename = serverMessage.substring(NOTHING_KNOWN_ABOUT.length());
+				return new CVSStatus(IStatus.ERROR, CVSStatus.DOES_NOT_EXIST, commandRoot, line);
+			}
+		}
 		return OK;
 	}
 	
