@@ -108,8 +108,10 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
      * @see org.eclipse.ui.part.EditorActionBarContributor#contributeToToolBar(org.eclipse.jface.action.IToolBarManager)
      */
 	public void contributeToToolBar(IToolBarManager toolBarManager) {
-		toolBarManager.add(fValidateAction);
-		toolBarManager.update(false);
+		super.contributeToToolBar(toolBarManager);
+		//TODO the validate action is still in development
+		//toolBarManager.add(fValidateAction);
+		//toolBarManager.update(false);
 	}
     
 	/* (non-Javadoc)
