@@ -30,7 +30,8 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	/**
 	 * Creates a new working set
 	 * 
-	 * @param name the name of the new working set
+	 * @param name the name of the new working set. Should not have 
+	 * 	leading or trailing whitespace.
 	 * @param element the content of the new working set. 
 	 * 	May be empty but not null.
 	 */

@@ -44,14 +44,20 @@ public void run() {
 		if (workingSet != null) {
 			dialog.setSelection(new IWorkingSet[]{workingSet});
 		}
-		if (dialog.open() == Window.OK && page instanceof WorkbenchPage) {
+		if (page instanceof WorkbenchPage) {
 			WorkbenchPage workbenchPage = (WorkbenchPage) page;
-			IWorkingSet[] result = dialog.getSelection();
-			if (result != null && result.length > 0) {
-				workbenchPage.setWorkingSet(result[0]);
+			if (dialog.open() == Window.OK) {
+				IWorkingSet[] result = dialog.getSelection();
+				if (result != null && result.length > 0) {
+					workbenchPage.setWorkingSet(result[0]);
+				}
+				else {
+					workbenchPage.setWorkingSet(null);
+				}
 			}
-			else {
-				workbenchPage.setWorkingSet(null);
+			else
+			if (page.getWorkingSet() != workingSet) {
+				workbenchPage.setWorkingSet(workingSet);				
 			}
 		}
 	}

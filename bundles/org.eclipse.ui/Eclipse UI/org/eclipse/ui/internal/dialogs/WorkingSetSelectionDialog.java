@@ -6,8 +6,9 @@ package org.eclipse.ui.internal.dialogs;
 
 
 import java.util.*;
-import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.util.Assert;
@@ -54,6 +55,9 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 	private Button removeButton;
 	private IWorkingSet[] result;
 	private boolean multiSelect;
+	private List addedWorkingSets;	
+	private List removedWorkingSets;
+	private Map editedWorkingSets;
 
 	/**
 	 * Creates a working set selection dialog.
@@ -113,6 +117,15 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 				removeSelectedWorkingSets();
 			}
 		});
+	}
+	/**
+	 * @see Dialog#cancelPressed()
+	 */
+	protected void cancelPressed() {
+		restoreChangedWorkingSets();
+		restoreAddedWorkingSets();
+		restoreRemovedWorkingSets();
+		super.cancelPressed();
 	}
 	/** 
 	 * Overrides method from Window.
@@ -189,6 +202,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 			listViewer.add(workingSet);
 			listViewer.setSelection(new StructuredSelection(workingSet), true);
 			manager.addWorkingSet(workingSet);
+			addedWorkingSets.add(workingSet);
 		}
 	}
 	/**
@@ -198,8 +212,8 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 	 * @see org.eclipse.ui.IWorkingSetPage
 	 */
 	private void editSelectedWorkingSet() {
-		IWorkingSet workingSet = (IWorkingSet) getSelectedWorkingSets().get(0);		
-		String editPageId = ((WorkingSet) workingSet).getEditPageId();
+		WorkingSet editWorkingSet = (WorkingSet) getSelectedWorkingSets().get(0);		
+		String editPageId = ((WorkingSet) editWorkingSet).getEditPageId();
 		
 		if (editPageId == null) {
 			return;
@@ -215,68 +229,25 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		}
 		WorkingSetEditWizard wizard = new WorkingSetEditWizard(editPage);
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
-
-		dialog.create();
-		wizard.setSelection(workingSet);
-		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.WORKING_SET_EDIT_WIZARD);
-		if (dialog.open() == Window.OK) {
-			listViewer.update(wizard.getSelection(), null);
-		}
-	}
-	/**
-	 * Sets the selected working sets as the dialog result.
-	 * Overrides method from Dialog
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
-	protected void okPressed() {
-		List newResult = getSelectedWorkingSets();
-
-		result = (IWorkingSet[]) newResult.toArray(new IWorkingSet[newResult.size()]);
-		setResult(newResult);
-		super.okPressed();
-	}
-	/**
-	 * Called when the selection has changed.
-	 */
-	private void handleSelectionChanged() {
-		updateButtonAvailability();
-	}
-	/**
-	 * Updates the modify buttons' enabled state based on the 
-	 * current seleciton.
-	 */
-	private void updateButtonAvailability() {
-		ISelection selection = listViewer.getSelection();
-		boolean hasSelection = selection != null && !selection.isEmpty();
-		boolean hasSingleSelection = hasSelection;
-
-		removeButton.setEnabled(hasSelection);
-		if (hasSelection && selection instanceof IStructuredSelection) {
-			hasSingleSelection = ((IStructuredSelection) selection).size() == 1;
-		}
-		detailsButton.setEnabled(hasSingleSelection);
-		if (multiSelect) {
-			getOkButton().setEnabled(hasSelection);
+		WorkingSet originalWorkingSet = (WorkingSet) editedWorkingSets.get(editWorkingSet);
+		boolean firstEdit = originalWorkingSet == null;
+		
+		// save the original working set values for restoration when selection 
+		// dialog is cancelled.
+		if (firstEdit) {
+			originalWorkingSet = new WorkingSet(editWorkingSet.getName(), editWorkingSet.getElements());
 		}
 		else {
-			getOkButton().setEnabled(hasSingleSelection);
+			editedWorkingSets.remove(editWorkingSet);
 		}
-	}
-	/**
-	 * Removes the selected working sets from the workbench.
-	 */
-	private void removeSelectedWorkingSets() {
-		ISelection selection = listViewer.getSelection();
-		IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();
-
-		if (selection instanceof IStructuredSelection) {
-			Iterator iter = ((IStructuredSelection) selection).iterator();
-			while (iter.hasNext()) {
-				manager.removeWorkingSet(((IWorkingSet) iter.next()));
-			}
-			listViewer.remove(((IStructuredSelection) selection).toArray());
+		dialog.create();		
+		wizard.setSelection(editWorkingSet);
+		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.WORKING_SET_EDIT_WIZARD);
+		if (dialog.open() == Window.OK) {		
+			editWorkingSet = (WorkingSet) wizard.getSelection();
+			listViewer.update(editWorkingSet, null);
 		}
+		editedWorkingSets.put(editWorkingSet, originalWorkingSet);
 	}
 	/**
 	 * Implements IWorkingSetSelectionDialog.
@@ -298,6 +269,97 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		return null;
 	}
 	/**
+	 * Called when the selection has changed.
+	 */
+	private void handleSelectionChanged() {
+		updateButtonAvailability();
+	}
+	/**
+	 * Sets the selected working sets as the dialog result.
+	 * Overrides method from Dialog
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+	 */
+	protected void okPressed() {
+		List newResult = getSelectedWorkingSets();
+
+		result = (IWorkingSet[]) newResult.toArray(new IWorkingSet[newResult.size()]);
+		setResult(newResult);
+		super.okPressed();
+	}
+	/**
+	 * Overrides org.eclipse.jface.dialogs.Dialog#open()
+	 */
+	public int open() {
+		addedWorkingSets = new ArrayList();
+		removedWorkingSets = new ArrayList();
+		editedWorkingSets = new HashMap();
+		return super.open();
+	}
+	/**
+	 * Removes the selected working sets from the workbench.
+	 */
+	private void removeSelectedWorkingSets() {
+		ISelection selection = listViewer.getSelection();
+
+		if (selection instanceof IStructuredSelection) {
+			IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();
+			Iterator iter = ((IStructuredSelection) selection).iterator();
+			while (iter.hasNext()) {
+				IWorkingSet workingSet = (IWorkingSet) iter.next();
+				manager.removeWorkingSet(workingSet);
+				if (addedWorkingSets.contains(workingSet)) {
+					addedWorkingSets.remove(workingSet);
+				}
+				else {
+					removedWorkingSets.add(workingSet);
+				}
+			}
+			listViewer.remove(((IStructuredSelection) selection).toArray());
+		}			
+	}
+	/**
+	 * Removes newly created working sets from the working set manager.
+	 */
+	private void restoreAddedWorkingSets() {
+		IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();
+		Iterator iterator = addedWorkingSets.iterator();
+		
+		while (iterator.hasNext()) {
+			manager.removeWorkingSet(((IWorkingSet) iterator.next()));
+		}		
+	}
+	/**
+	 * Rolls back changes to working sets.
+	 */
+	private void restoreChangedWorkingSets() {
+		Iterator iterator = editedWorkingSets.keySet().iterator();
+		
+		while (iterator.hasNext()) {
+			IWorkingSet editedWorkingSet = (IWorkingSet) iterator.next();
+			IWorkingSet originalWorkingSet = (IWorkingSet) editedWorkingSets.get(editedWorkingSet);
+						
+			if (editedWorkingSet.getName().equals(originalWorkingSet.getName()) == false) {
+				editedWorkingSet.setName(originalWorkingSet.getName());
+			}
+			if (editedWorkingSet.getElements().equals(originalWorkingSet.getElements()) == false) {
+				editedWorkingSet.setElements(originalWorkingSet.getElements());
+			}
+		}		
+	}
+
+	/**
+	 * Adds back removed working sets to the working set manager.
+	 */
+	private void restoreRemovedWorkingSets() {
+		IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();
+		Iterator iterator = removedWorkingSets.iterator();
+		
+		while (iterator.hasNext()) {
+			manager.addWorkingSet(((IWorkingSet) iterator.next()));
+		}		
+	}
+	/**
 	 * Implements IWorkingSetSelectionDialog.
 	 *
 	 * @see org.eclipse.ui.dialogs.IWorkingSetSelectionDialog#setSelection(IWorkingSet[])
@@ -305,5 +367,23 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 	public void setSelection(IWorkingSet[] workingSets) {
 		result = workingSets;
 		setInitialSelections(workingSets);
+	}
+	/**
+	 * Updates the modify buttons' enabled state based on the 
+	 * current seleciton.
+	 */
+	private void updateButtonAvailability() {
+		ISelection selection = listViewer.getSelection();
+		boolean hasSelection = selection != null && !selection.isEmpty();
+		boolean hasSingleSelection = hasSelection;
+
+		removeButton.setEnabled(hasSelection);
+		if (hasSelection && selection instanceof IStructuredSelection) {
+			hasSingleSelection = ((IStructuredSelection) selection).size() == 1;
+		}
+		detailsButton.setEnabled(hasSingleSelection);
+		if (multiSelect == false) {
+			getOkButton().setEnabled(hasSelection == false || hasSingleSelection);
+		}
 	}
 }

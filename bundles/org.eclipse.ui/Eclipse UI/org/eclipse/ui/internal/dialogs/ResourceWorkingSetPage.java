@@ -33,6 +33,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.model.*;
+import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
  * A resource working set page allows the user to edit an 
@@ -94,9 +95,12 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		tree = new CheckboxTreeViewer(composite);
 		tree.setUseHashlookup(true);
 		tree.setContentProvider(new WorkbenchContentProvider());
-		tree.setLabelProvider(new WorkbenchLabelProvider());
+		tree.setLabelProvider(
+			new CombinedDecoratingLabelProvider(
+				new WorkbenchLabelProvider(), 
+				WorkbenchPlugin.getDefault().getWorkbench().getDecoratorManager()));
 		tree.setInput(WorkbenchPlugin.getPluginWorkspace().getRoot());
-		tree.setSorter(new WorkbenchViewerSorter());
+		tree.setSorter(new ResourceSorter(ResourceSorter.NAME));
 
 		data = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
 		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
@@ -367,6 +371,10 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		String errorMessage = null;	//$NON-NLS-1$
 		String newText = text.getText();
 
+		if (newText.equals(newText.trim()) == false) {
+			errorMessage = WorkbenchMessages.getString("ResourceWorkingSetPage.warning.nameWhitespace"); //$NON-NLS-1$
+		}
+		else
 		if (firstCheck) {
 			firstCheck = false;
 			return;
