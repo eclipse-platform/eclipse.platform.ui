@@ -223,7 +223,7 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 					ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
 					IDebugTarget[] targets= lm.getDebugTargets();
 					if (targets.length > 0) {
-						IDebugTarget target= targets[0];
+						IDebugTarget target= targets[targets.length - 1];
 						try {
 							IDebugElement[] threads= target.getChildren();
 							for (int i=0; i < threads.length; i++) {
