@@ -43,7 +43,7 @@ public interface IMessageProvider {
 	public final static int ERROR = 3;
 
 	/**
-	 * Returns the current message for this message provider
+	 * Returns the current message for this message provider.
 	 * <p>
 	 * A message provides instruction or information to the 
 	 * user.

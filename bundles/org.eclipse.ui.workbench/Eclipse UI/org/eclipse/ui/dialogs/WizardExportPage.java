@@ -499,17 +499,11 @@ protected void internalSaveWidgetValues() {
 /**
  * Queries the user for the individual resources that are to be exported
  * and returns these resources as a collection.
- * <p>
- * A similar method is available which queries the user for a single root 
- * resource selection to export. To get this functionality instead, use
- * <code>queryRootResourceToExport</code>.
- * </p>
  * 
  * @param rootResource the resource to use as the root of the selection query
  * @return the resources selected for export (element type: 
  *   <code>IResource</code>), or <code>null</code> if the user canceled the 
  *   selection
- * @see #queryRootResourceToExport
  */
 protected Object[] queryIndividualResourcesToExport(IAdaptable rootResource) {
 	ResourceSelectionDialog dialog =

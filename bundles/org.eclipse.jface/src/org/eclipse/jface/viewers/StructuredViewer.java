@@ -731,7 +731,7 @@ protected void internalRefresh(Object element, boolean updateLabels) {
 }
 
 /**
- * Adds the element item pair to the element map
+ * Adds the element item pair to the element map.
  * <p>
  * This method is internal to the framework; subclassers should not call
  * this method.
@@ -1104,7 +1104,7 @@ public Widget testFindItem(Object element) {
 	return findItem(element);
 }
 /**
- * Removes all elements from the map
+ * Removes all elements from the map.
  * <p>
  * This method is internal to the framework; subclassers should not call
  * this method.

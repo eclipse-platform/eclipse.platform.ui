@@ -32,7 +32,7 @@ public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor per
 /**
  * Notifies this listener that the given page's perspective
  * has change in some way (e.g. editor area hidden, perspective reset,
- * view show/hide, editor open/close, ...).
+ * view show/hide, editor open/close, etc.).
  *
  * @param page the page whose perspective was reset
  * @param perspective the perspective descriptor

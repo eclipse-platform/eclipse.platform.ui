@@ -124,7 +124,7 @@ protected FieldEditor(String name, String labelText, Composite parent) {
 	createControl(parent);
 }
 /**
- * Adjusts the horizontal span of this field editor's basic controls 
+ * Adjusts the horizontal span of this field editor's basic controls.
  * <p>
  * Subclasses must implement this method to adjust the horizontal span 
  * of controls so they appear correct in the given number of columns.

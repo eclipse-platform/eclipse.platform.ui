@@ -217,7 +217,7 @@ public void addPerspectiveShortcut(String id);
 public void addPlaceholder(String viewId, int relationship, float ratio, String refId);
 
 /**
- * Adds an item to the Show In... prompter.
+ * Adds an item to the Show In prompter.
  * The id must name a view contributed to the workbench's view extension point 
  * (named <code>"org.eclipse.ui.views"</code>).
  *

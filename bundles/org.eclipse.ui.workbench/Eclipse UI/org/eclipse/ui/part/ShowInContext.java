@@ -14,7 +14,7 @@ package org.eclipse.ui.part;
 import org.eclipse.jface.viewers.ISelection;
 
 /**
- * Carries the context for the Show In... action.
+ * Carries the context for the Show In action.
  * The default implementation carries an input and a selection.
  * Subclasses may extend.
  *
