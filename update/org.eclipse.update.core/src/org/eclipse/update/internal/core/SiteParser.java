@@ -79,9 +79,14 @@ public class SiteParser extends DefaultHandler {
 
 			String tag = localName.trim();
 
-			if (tag.equalsIgnoreCase(SITE)) {
-				processSite(attributes);
-				return;
+			// throw SaxException is the site is not valid
+			try {
+				if (tag.equalsIgnoreCase(SITE)) {
+					processSite(attributes);
+					return;
+				}
+			} catch (InvalidSiteTypeException e) {
+				throw new SAXException(e);
 			}
 
 			if (tag.equalsIgnoreCase(FEATURE)) {
@@ -117,7 +122,7 @@ public class SiteParser extends DefaultHandler {
 	/** 
 	 * process the Site info
 	 */
-	private void processSite(Attributes attributes) throws MalformedURLException {
+	private void processSite(Attributes attributes) throws MalformedURLException, InvalidSiteTypeException {
 		//
 		String infoURL = attributes.getValue("url");
 		infoURL = UpdateManagerUtils.getResourceString(infoURL, bundle);
@@ -126,7 +131,11 @@ public class SiteParser extends DefaultHandler {
 
 		// process the Site....if the site has a different type
 		// throw an exception so the new parser can be used...
-		// TODO:
+		String type = attributes.getValue("type");
+		if (type!=null && type!="" && !type.equals(site.getType())) {
+			InvalidSiteTypeException exception = new InvalidSiteTypeException(type);
+			throw exception;
+		}
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
@@ -257,14 +266,13 @@ public class SiteParser extends DefaultHandler {
 
 			// clean the text
 			text = null;
-			
+
 		}
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
 			UpdateManagerPlugin.getPlugin().debug("End Element:" + uri + ":" + localName + ":" + qName);
 		}
-		
 
 	}
 

@@ -10,6 +10,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.xml.sax.SAXException;
 
 public abstract class Site implements ISite, IWritable {
 
@@ -73,7 +74,16 @@ public abstract class Site implements ISite, IWritable {
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
 				UpdateManagerPlugin.getPlugin().debug(siteURL.toExternalForm() + " is not manageable by Update Manager: Couldn't find the site.xml file.");
 			}
-		} catch (Exception e) {
+		}  catch (Exception e) {
+			
+			// is is an InvalidSiteTypeException meaning the type of the site is wrong ?
+			if (e instanceof SAXException){
+				SAXException exception = (SAXException)e;
+				if (exception.getException() instanceof InvalidSiteTypeException){
+					throw ((InvalidSiteTypeException)exception.getException());
+				}
+			}
+			
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during parsing of the site XML", e);
 			throw new CoreException(status);
@@ -510,8 +520,8 @@ public abstract class Site implements ISite, IWritable {
 	/*
 	 * @see ISite#getType()
 	 */
-	public String getType() {
+	public String getType(){
 		return siteType;
-	}
+	};
 
 }

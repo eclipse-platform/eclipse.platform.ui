@@ -14,6 +14,7 @@ public class InvalidSiteTypeException extends Exception {
 	private String newSiteType;
 	
 	public InvalidSiteTypeException(String newType){
+		super();
 		newSiteType = newType;
 	}
 	

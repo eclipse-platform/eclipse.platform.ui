@@ -24,6 +24,7 @@ public class SiteFile extends SiteURL {
 	private String path;
 	
 	public static final String INSTALL_FEATURE_PATH = "install/features/";
+	public static final String SITE_TYPE = "org.eclipse.update.core.file";	
 
 	/**
 	 * Constructor for FileSite
@@ -338,5 +339,12 @@ public class SiteFile extends SiteURL {
 		 finally {try {zipFile.close();} catch (Exception e) {}}
 		 
 	}
+	
+	/*
+	 * @see ISite#getType()
+	 */
+	public String getType() {
+		return SITE_TYPE;
+	}	
 	
 }

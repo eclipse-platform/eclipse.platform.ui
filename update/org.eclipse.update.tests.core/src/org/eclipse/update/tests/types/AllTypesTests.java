@@ -16,6 +16,7 @@ public static Test suite() {
 	
 	// the following will take all teh test methods in teh class that start with 'test'
 	suite.addTest(new TestSuite(TestFeatureType.class));
+	suite.addTest(new TestSuite(TestSiteType.class));	
 	
 	// or you can specify the method
 	//suite.addTest(new TestGetFeature("methodThatDoesNotStartWithtest"));	

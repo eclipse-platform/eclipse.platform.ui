@@ -14,6 +14,8 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeature;
 
 public class SiteURL extends Site {
+	
+	public static final String SITE_TYPE = "org.eclipse.update.core.http";
 
 	/**
 	 * plugin entries
@@ -132,6 +134,13 @@ public class SiteURL extends Site {
 	 */
 	protected void parseSite() throws CoreException {
 		//does nothing
+	}
+
+	/*
+	 * @see ISite#getType()
+	 */
+	public String getType() {
+		return SITE_TYPE;
 	}
 
 }

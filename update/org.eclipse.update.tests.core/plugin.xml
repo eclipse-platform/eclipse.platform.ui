@@ -19,8 +19,9 @@
 </runtime>
 
 
-<extension 	id="url" point="org.eclipse.update.core.siteTypes">
-	<site-factory class="org.eclipse.update.internal.core.SiteURLFactory"/>
+<extension 	id="feature1" point="org.eclipse.update.core.featureTypes">
+	<feature-factory class="org.eclipse.update.internal.core.FeatureExecutableFactory"/>
 </extension>
+
 
 </plugin>

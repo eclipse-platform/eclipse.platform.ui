@@ -171,7 +171,6 @@ public class FeatureParser extends DefaultHandler {
 		String application = attributes.getValue("application"); 
 		feature.setApplication(application);		
 		
-		
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
 			UpdateManagerPlugin.getPlugin().debug("End process Feature tag: id:"+id+" ver:"+ver+" label:"+label+" provider:"+provider);

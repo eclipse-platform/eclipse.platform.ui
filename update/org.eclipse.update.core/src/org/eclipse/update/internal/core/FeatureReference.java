@@ -208,4 +208,12 @@ public class FeatureReference implements IFeatureReference, IWritable {
 		return site;
 	}
 
+	/**
+	 * Gets the eatureType.
+	 * @return Returns a String
+	 */
+	public String getFeatureType() {
+		return featureType;
+	}
+
 }
