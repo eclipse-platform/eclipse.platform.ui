@@ -42,6 +42,7 @@ class WorkingSetDialog extends InputDialog {
 	private static class WorkingSetNameInputValidator implements IInputValidator {
 		
 		String fInitalName;
+		boolean fFirstCheck= true;
 		
 		public WorkingSetNameInputValidator(String initialName) {
 			Assert.isNotNull(initialName, "initial name must not be null"); //$NON-NLS-1$
@@ -49,14 +50,19 @@ class WorkingSetDialog extends InputDialog {
 		}
 		
 		public String isValid(String newText) {
-			if (newText == null ||newText.equals("")) //$NON-NLS-1$
+			if (newText == null || newText.equals("")) { //$NON-NLS-1$
+				if (fInitalName.equals("") && fFirstCheck) { //$NON-NLS-1$
+					fFirstCheck= false;
+					return null;
+				}
 				return WorkingSetMessages.getString("WorkingSetDialog.warning.nameMustNotBeEmpty"); //$NON-NLS-1$
+			}
 			IWorkingSet[] workingSets= WorkingSet.getWorkingSets();
 			if (newText.equals(fInitalName))
 				return null;
 			for (int i= 0; i < workingSets.length; i++) {
 				if (newText.equals(workingSets[i].getName()))
-					return WorkingSetMessages.getString("WorkingSetDialog.warning.workspaceExists"); //$NON-NLS-1$
+					return WorkingSetMessages.getString("WorkingSetDialog.warning.workingSetExists"); //$NON-NLS-1$
 			}
 			return null;
 		}

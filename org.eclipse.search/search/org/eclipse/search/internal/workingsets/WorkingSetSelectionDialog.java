@@ -78,10 +78,10 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 	 */
 	public WorkingSetSelectionDialog(Shell parentShell) {
 		super(parentShell);
-		setTitle("Working Sets"); //$NON-NLS-1$
+		setTitle(WorkingSetMessages.getString("WorkingSetSelectionDialog.title")); //$NON-NLS-1$;
 		fContentProvider= new ListContentProvider();
 		fLabelProvider= new WorkingSetLabelProvider();
-		setMessage("Select a working set."); //$NON-NLS-1$
+		setMessage(WorkingSetMessages.getString("WorkingSetSelectionDialog.message")); //$NON-NLS-1$
 
 	}
 
@@ -100,7 +100,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 		composite.setData(data);
 	
 		int id= IDialogConstants.CLIENT_ID + 1;
-		fNewButton= createButton(buttonComposite, id++, WorkingSetMessages.getString("WorkingSetSelectionDialognewButton.label"), false); //$NON-NLS-1$
+		fNewButton= createButton(buttonComposite, id++, WorkingSetMessages.getString("WorkingSetSelectionDialog.newButton.label"), false); //$NON-NLS-1$
 		fNewButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				WorkingSetDialog dlg= new WorkingSetDialog(getShell());
@@ -112,7 +112,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 			}
 		});
 
-		fDetailsButton= createButton(buttonComposite, id++, WorkingSetMessages.getString("WorkingSetSelectionDialogdetailsButton.label"), false); //$NON-NLS-1$
+		fDetailsButton= createButton(buttonComposite, id++, WorkingSetMessages.getString("WorkingSetSelectionDialog.detailsButton.label"), false); //$NON-NLS-1$
 		fDetailsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				WorkingSetDialog dlg= new WorkingSetDialog(getShell(), getWorkingSet());
@@ -121,7 +121,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 			}
 		});
 	
-		fRemoveButton= createButton(buttonComposite, id++, WorkingSetMessages.getString("WorkingSetSelectionDialogremoveButton.label"), false); //$NON-NLS-1$
+		fRemoveButton= createButton(buttonComposite, id++, WorkingSetMessages.getString("WorkingSetSelectionDialog.removeButton.label"), false); //$NON-NLS-1$
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				removeSelectedWorkingSets();
