@@ -26,7 +26,7 @@ public interface ICVSRemoteFile extends ICVSRemoteResource, ICVSFile {
 	 * This method will return null until after the getContents(IProgressMonitor)
 	 * method is called (i.e. the call to getContents also fetches the entry.
 	 */
-	public ILogEntry getLogEntry();
+	public ILogEntry getLogEntry(IProgressMonitor monitor) throws TeamException;
 	
 	/**
 	 * Get all the log entries of the remote file

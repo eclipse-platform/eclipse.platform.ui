@@ -20,6 +20,7 @@ public class CVSTag {
 	public final static int DATE = 3;
 	
 	public static final CVSTag DEFAULT = new CVSTag();
+	public static final CVSTag BASE = new CVSTag("BASE", VERSION); //$NON-NLS-1$
 	
 	protected String name;
 	protected int type;

@@ -67,17 +67,14 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 						if (file.getChangeDirection() != ITeamNode.OUTGOING) {
 							IRemoteSyncElement element = file.getMergeResource().getSyncElement();
 							ICVSRemoteFile remoteFile = (ICVSRemoteFile)element.getRemote();
+							ILogEntry logEntry;
 							if (remoteFile != null) {
-								ILogEntry logEntry = remoteFile.getLogEntry();
-								if (logEntry == null) {
-									// Hack: call getContents() so that the log entry is available.
-									try {
-										remoteFile.getContents(new NullProgressMonitor());
-									} catch (TeamException ex) {
-										tree.setToolTipText(null);
-										return;
-									}
-									logEntry = remoteFile.getLogEntry();
+								try {
+									// XXX Should have real progress here
+									logEntry = remoteFile.getLogEntry(new NullProgressMonitor());
+								} catch (TeamException ex) {
+									tree.setToolTipText(null);
+									return;
 								}
 								if (logEntry != null) {
 									String newText = logEntry.getComment();

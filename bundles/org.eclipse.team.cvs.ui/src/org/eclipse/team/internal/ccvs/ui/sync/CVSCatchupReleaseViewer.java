@@ -282,12 +282,8 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 			try {
 				ICVSRemoteFile remoteFile = (ICVSRemoteFile)remote;
 				String revision = remoteFile.getRevision();
-				ILogEntry logEntry = remoteFile.getLogEntry();
-				if (logEntry == null) {
-					// Hack: call getContents() so that the log entry is available.
-					remoteFile.getContents(new NullProgressMonitor());
-					logEntry = remoteFile.getLogEntry();
-				}
+				// XXX Should have real progress
+				ILogEntry logEntry = remoteFile.getLogEntry(new NullProgressMonitor());
 				String author = logEntry.getAuthor();
 				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.repositoryFileRevision", new Object[] {name, revision, author}));
 			} catch (TeamException e) {

@@ -169,18 +169,10 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 						new String[] { getName() },
 						null,
 						Policy.subMonitorFor(monitor, 80));
-					if (status.getCode() != CVSStatus.SERVER_ERROR) {
-						IStatus logStatus = Command.LOG.execute(s,
-							Command.NO_GLOBAL_OPTIONS,
-							new LocalOption[] { 
-								Command.LOG.makeRevisionOption(info.getRevision())},
-							new String[] { getName() },
-							new LogListener(this, entries),
-							Policy.subMonitorFor(monitor, 10));
-						if (logStatus.isMultiStatus()) {
-							((MultiStatus)logStatus).merge(status);
-							status = logStatus;
-						}
+					if (status.getCode() != CVSStatus.SERVER_ERROR && entry == null) {
+						getLogEntry(s, Policy.subMonitorFor(monitor, 10));
+						// Ignore the status of the log entry fetch. 
+						// If it fails, the entry will still be null
 					}
 				} finally {
 					s.close();
@@ -191,19 +183,58 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 				}
 				// If the update succeeded but no contents were retreived from the server
 				// than we can assume that the remote file has no contents.
-				if (contents == null)
+				if (contents == null) {
 					contents = new byte[0];
-					
-				if (entries.size() == 1) {
-					entry = (ILogEntry)entries.get(0);
-				} else {
-					// No log entry was fetch for the remote file.
 				}
 			}
 			return new ByteArrayInputStream(contents);
 		} catch(CVSException e) {
 			return null;
 		}
+	}
+	
+	/*
+	 * @see ICVSRemoteFile#getLogEntry()
+	 */
+	public ILogEntry getLogEntry(IProgressMonitor monitor) throws CVSException {
+		if (entry == null) {
+			monitor.beginTask(null, 100);
+			Session s = new Session(getRepository(), parent, false);
+			s.open(Policy.subMonitorFor(monitor, 10));
+			try {
+				IStatus status = getLogEntry(s, Policy.subMonitorFor(monitor, 90));
+				if (status.getCode() == CVSStatus.SERVER_ERROR) {
+					throw new CVSServerException(status);
+				}
+			} finally {
+				s.close();
+				monitor.done();
+			}
+		}
+		return entry;
+	}
+	
+	/*
+	 * Fetch the log entry corresponding to the receivers revision and set the entry
+	 * instance variable to the result. If the fecth failed, entry will be null and
+	 * the resulting IStatus will contain any errors.
+	 */
+	private IStatus getLogEntry(Session session, IProgressMonitor monitor) throws CVSException {
+		List entries = new ArrayList();
+		IStatus status = Command.LOG.execute(session,
+			Command.NO_GLOBAL_OPTIONS,
+			new LocalOption[] { 
+				Command.LOG.makeRevisionOption(info.getRevision())},
+			new String[] { getName() },
+			new LogListener(this, entries),
+			Policy.subMonitorFor(monitor, 10));
+		if (entries.size() == 1) {
+			entry = (ILogEntry)entries.get(0);
+		} else {
+			// No log entry was fetch for the remote file.
+			entry = null;
+		}
+		return status;
 	}
 	
 	/**
@@ -329,13 +360,6 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 */
 	public InputStream getContents() throws CVSException {
 		return new ByteArrayInputStream(contents == null ? new byte[0] : contents);
-	}
-
-	/*
-	 * @see ICVSRemoteFile#getLogEntry()
-	 */
-	public ILogEntry getLogEntry() {
-		return entry;
 	}
 
 	/*
