@@ -11,14 +11,13 @@ import org.eclipse.ui.IWorkbenchPage;
 
 public abstract class AbstractTestCase extends TestCase {
 	protected IWorkbench fWorkbench;
-	private List testWindows, testPages;
+	private List testWindows;
 	protected static int DEF_PAGETOTAL = 3, DEF_WINTOTAL = 3;
 
 	public AbstractTestCase(String testName) {
 		super(testName);
 		fWorkbench = PlatformUI.getWorkbench();
 		testWindows = new ArrayList(DEF_WINTOTAL);
-		testPages = new ArrayList(DEF_PAGETOTAL);
 	}
 
 	/**
@@ -33,8 +32,6 @@ public abstract class AbstractTestCase extends TestCase {
 	 */
 	public void cleanUp() {
 		closeAllTestWindows();
-
-		// ^_^?
 	}
 
 	/** 
@@ -68,6 +65,9 @@ public abstract class AbstractTestCase extends TestCase {
 		return pages[0];
 	}
 
+	/**
+	 * opens test pages in an existing Workbench window
+	 */
 	public IWorkbenchPage[] openTestPage(IWorkbenchWindow win, int pageTotal)
 		throws WorkbenchException {
 		IWorkbenchPage[] pages = new IWorkbenchPage[pageTotal];
@@ -75,20 +75,18 @@ public abstract class AbstractTestCase extends TestCase {
 
 		for (int i = 0; i < pageTotal; i++) {
 			pages[i] = win.openPage(EmptyPerspective.PERSP_ID, work);
-			testPages.add(pages[i]);
 		}
 
 		return pages;
 	}
 
-	public void closeAllTestPages() {
-		IWorkbenchPage page;
-		Iterator iter = testPages.iterator();
-		while (iter.hasNext()) {
-			page = (IWorkbenchPage) iter.next();
-			page.close();
-		}
-		testPages.clear();
-	}
+	/**
+	 * @param window a TestWindow
+	 */
+	public void closeAllPages( IWorkbenchWindow window ) {
 
+		IWorkbenchPage[] pages = window.getPages();
+		for( int i = 0; i < pages.length; i ++ )
+			pages[ i ].close();
+	}
 }
