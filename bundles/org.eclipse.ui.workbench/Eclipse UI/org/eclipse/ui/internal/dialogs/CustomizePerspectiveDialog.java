@@ -1404,8 +1404,44 @@ private void popUp(String description) {
 		location.y = displayBounds.y + displayBounds.height - bounds.height;
 	}
 	descShell.setLocation(location);
-	descShell.setVisible(true);
-	descShell.setActive();
+	descShell.open();
+	descShell.addShellListener(new ShellListener() {
+        /* (non-Javadoc)
+         * @see org.eclipse.swt.events.ShellListener#shellActivated(org.eclipse.swt.events.ShellEvent)
+         */
+        public void shellActivated(ShellEvent e) {
+            // Do nothing
+
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.swt.events.ShellListener#shellClosed(org.eclipse.swt.events.ShellEvent)
+         */
+        public void shellClosed(ShellEvent e) {
+			// Do nothing.
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.swt.events.ShellListener#shellDeactivated(org.eclipse.swt.events.ShellEvent)
+         */
+        public void shellDeactivated(ShellEvent e) {
+			descShell.dispose();
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.swt.events.ShellListener#shellDeiconified(org.eclipse.swt.events.ShellEvent)
+         */
+        public void shellDeiconified(ShellEvent e) {
+            // Do nothing
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.swt.events.ShellListener#shellIconified(org.eclipse.swt.events.ShellEvent)
+         */
+        public void shellIconified(ShellEvent e) {
+			descShell.dispose();
+        }
+    });
 }
 String removeShortcut(String label) {
 	if (label == null) return label;
