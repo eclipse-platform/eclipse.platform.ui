@@ -201,7 +201,8 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 				toInclude = remove(getUnconfiguredFeatures(),include);
 		}		
 		
-		result = union(toInclude,result);
+		// FIXME 
+		//result = union(toInclude,result);
 
 		return result;
 	}

@@ -198,7 +198,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 				}
 			}
 			
-			// UI will check. For non-UI application, throw error is feature s configured
+			// UI will check. For non-UI application, throw error is feature is configured
 			if (referenceToUnconfigure!=null){
 				if (getConfigurationPolicy().isConfigured(referenceToUnconfigure)){
 					IFeature featureToUnconfigure = referenceToUnconfigure.getFeature();
