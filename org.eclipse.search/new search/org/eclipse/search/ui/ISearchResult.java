@@ -31,7 +31,7 @@ public interface ISearchResult {
 	 */
 	public void addListener(ISearchResultListener l);
 	/**
-	 * Removes a ISearchResultChangedListener. Has no effect when the
+	 * Removes a <code>ISearchResultChangedListener</code>. Has no effect when the
 	 * listener hasn't previously been added.
 	 * @param l The listener to be removed.
 	 */
@@ -42,7 +42,7 @@ public interface ISearchResult {
 	 */
 	String getLabel();
 	/**
-	 * Returns a tooltip for this  search result.
+	 * Returns a tooltip to be used when this search result is shown in the UI.
 	 * @return A user readable String.
 	 */
 	public String getTooltip();

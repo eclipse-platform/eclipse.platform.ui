@@ -34,6 +34,14 @@ public interface IQueryListener {
 	 */
 	void queryRemoved(ISearchQuery query);
 	
+	/**
+	 * Called before an <code>ISearchQuery</code> is starting.
+	 * @param query the query about to start
+	 */
 	void queryStarting(ISearchQuery query);
+	/**
+	 * Called after an <code>ISearchQuery</code> has finished.
+	 * @param query the query that has finished
+	 */
 	void queryFinished(ISearchQuery query);
 }

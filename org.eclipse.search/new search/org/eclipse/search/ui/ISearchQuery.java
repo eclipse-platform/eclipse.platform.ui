@@ -21,7 +21,8 @@ import org.eclipse.core.runtime.IStatus;
  */
 public interface ISearchQuery {
 	/**
-	 * Runs this query.
+	 * This is the method that actually does the work, i.e. finds the results
+	 * of the search query.
 	 * 
 	 * @param monitor The progress monitor to be used
 	 * @return The status after completion of the search job.
@@ -38,7 +39,7 @@ public interface ISearchQuery {
 	String getLabel();
 	/**
 	 * Returns whether the query can be run more than once. Some queries may depend on transient
-	 * information. 
+	 * information and return <code>false</code>.
 	 * @return Whether this query can be run more than once.
 	 */
 	boolean canRerun();

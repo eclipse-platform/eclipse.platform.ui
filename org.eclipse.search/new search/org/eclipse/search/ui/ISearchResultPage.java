@@ -37,21 +37,21 @@ public interface ISearchResultPage extends IPageBookViewPage {
 	 * object.
 	 * @see ISearchResultPage#getUIState()
 	 * 
-	 * @param search The search result to be shown
-	 * @param uiState The previously saved UI state.
+	 * @param search the search result to be shown
+	 * @param uiState the previously saved UI state.
 	 */
 	void setInput(ISearchResult search, Object uiState);
 	/**
 	 * Sets the search view this search results page is shown in. This method will be called before the page is shown
 	 * for the first time (i.e. before the page control is created).
 	 * 
-	 * @param part The parent search view.
+	 * @param part the parent search view.
 	 */
 	void setViewPart(ISearchResultViewPart part);
 	
 	/**
-	 * Restores the page state. Note that this applies to state that is saved
-	 * across sessions.
+	 * Restores the page state. Note that this applies only to state that is saved
+	 * across sessions. For restoring state that is transient: 
 	 * 
 	 * @see #setInput(ISearchResult, Object)
 	 * 
@@ -62,7 +62,7 @@ public interface ISearchResultPage extends IPageBookViewPage {
 	
 	/**
 	 * Saves the page state in a memento. Note that this applies to state that
-	 * should persist across sessions.
+	 * should persist across sessions. For transient state: 
 	 * 
 	 * @see #getUIState()
 	 * 
@@ -71,8 +71,8 @@ public interface ISearchResultPage extends IPageBookViewPage {
 	void saveState(IMemento memento);
 	
 	/**
-	 *  Sets the id for this page. This method will be called before any other initialization is done. 
-	 * @param id
+	 * Sets the id for this page. This method will be called before any other initialization is done. 
+	 * @param id assigns an id to this page.
 	 */
 	void setID(String id);
 	/**
