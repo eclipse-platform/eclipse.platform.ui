@@ -31,6 +31,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.internal.console.IOConsoleHyperlinkPosition;
 import org.eclipse.ui.internal.console.IOConsolePage;
@@ -619,5 +620,44 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
             return Status.OK_STATUS;
         } 
 
+    }
+    
+    /**
+     * Returns all hyperlinks in this console.
+     * 
+     * @return all hyperlinks in this console
+     */
+    public IHyperlink[] getHyperlinks() {
+        try {
+            Position[] positions = getDocument().getPositions(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
+            IHyperlink[] hyperlinks = new IHyperlink[positions.length];
+            for (int i = 0; i < positions.length; i++) {
+                IOConsoleHyperlinkPosition position = (IOConsoleHyperlinkPosition) positions[i];
+                hyperlinks[i] = position.getHyperLink();
+            }
+            return hyperlinks;
+        } catch (BadPositionCategoryException e) {
+            return new IHyperlink[0];
+        }
+    }
+    
+    /**
+     * Returns the hyperlink at the given offset of <code>null</code> if none.
+     * 
+     * @param offset the hyperlink at the given offset of <code>null</code> if none
+     * @return
+     */
+    public IHyperlink getHyperlink(int offset) {
+        try {
+            Position[] positions = getDocument().getPositions(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
+            for (int i = 0; i < positions.length; i++) {
+                IOConsoleHyperlinkPosition position = (IOConsoleHyperlinkPosition) positions[i];
+                if (offset >= position.getOffset() && offset <= (position.getOffset() + position.getLength())) {
+                    return position.getHyperLink();
+                }
+            }
+        } catch (BadPositionCategoryException e) {
+        }        
+        return null;
     }
 }
