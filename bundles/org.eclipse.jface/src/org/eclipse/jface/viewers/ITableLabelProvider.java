@@ -28,6 +28,8 @@ public interface ITableLabelProvider extends IBaseLabelProvider {
      *    in the viewer
      * @param columnIndex the zero-based index of the column in which
      *   the label appears
+     * @return Image or <code>null</code> if there is no image for the 
+     *  given object at columnIndex
      */
     public Image getColumnImage(Object element, int columnIndex);
 
@@ -38,6 +40,8 @@ public interface ITableLabelProvider extends IBaseLabelProvider {
      *   <code>null</code> indicating that no input object is set
      *   in the viewer
      * @param columnIndex the zero-based index of the column in which the label appears
+     * @return String or or <code>null</code> if there is no text for the 
+     *  given object at columnIndex
      */
     public String getColumnText(Object element, int columnIndex);
 }
