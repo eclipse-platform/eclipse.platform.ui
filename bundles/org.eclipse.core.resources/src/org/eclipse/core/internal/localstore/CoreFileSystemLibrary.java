@@ -157,6 +157,7 @@ public abstract class CoreFileSystemLibrary {
 	 */
 	public static boolean copyAttributes(String source, String destination, boolean copyLastModified) {
 		if (hasNatives) 
+			// Note that support for copying last modified info is not implemented on Windows
 			return isUnicode ? internalCopyAttributesW(source.toCharArray(), destination.toCharArray(), copyLastModified) : internalCopyAttributes(Convert.toPlatformBytes(source), Convert.toPlatformBytes(destination), copyLastModified); 
 		return false; // not supported
 	}
