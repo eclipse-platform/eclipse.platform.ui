@@ -121,21 +121,21 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		
 		action = new RemoveTerminatedAction(this);
 		action.setEnabled(false);
-		setAction("RemoveAll", action);
+		setAction("RemoveAll", action); //$NON-NLS-1$
 
 		action = new ControlAction(viewer, new RelaunchActionDelegate());
 		action.setEnabled(false);
-		setAction("Relaunch",action);
+		setAction("Relaunch",action); //$NON-NLS-1$
 
 		setAction(REMOVE_ACTION, new ControlAction(viewer, new TerminateAndRemoveActionDelegate()));
-		setAction("TerminateAll", new TerminateAllAction());
-		setAction("Properties", new PropertyDialogAction(getSite().getWorkbenchWindow().getShell(), getSite().getSelectionProvider()));
+		setAction("TerminateAll", new TerminateAllAction()); //$NON-NLS-1$
+		setAction("Properties", new PropertyDialogAction(getSite().getWorkbenchWindow().getShell(), getSite().getSelectionProvider())); //$NON-NLS-1$
 		
 		setAction("CopyToClipboard", new ControlAction(viewer, new CopyToClipboardActionDelegate()));
 
 		IAction qAction = new ShowQualifiedAction(viewer);
 		qAction.setChecked(false);
-		setAction("ShowQualifiedNames", qAction);	
+		setAction("ShowQualifiedNames", qAction);	 //$NON-NLS-1$
 		
 		// submit an async exec to update the selection once the
 		// view has been created - i.e. auto-expand and select the
@@ -469,7 +469,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			editor = page.openEditor(input, editorId, false);
 		} catch (PartInitException e) {
 			DebugUIPlugin.errorDialog(DebugUIPlugin.getDefault().getShell(), 
-			 "Error", "Exception occurred opening editor for debugger.", e.getStatus());
+			 DebugUIViewsMessages.getString("LaunchView.Error_1"), DebugUIViewsMessages.getString("LaunchView.Exception_occurred_opening_editor_for_debugger._2"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 		}		
 		
 		if (editor != null && (lineNumber >= 0 || charStart >= 0)) {
@@ -553,10 +553,11 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	/**
 	 * @see AbstractDebugView#fillContextMenu(IMenuManager)
 	 */
-	protected void fillContextMenu(IMenuManager menu) {		
+	protected void fillContextMenu(IMenuManager menu) {
+		
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EDIT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EDIT_GROUP));
-		menu.add(getAction("CopyToClipboard"));
+		menu.add(getAction("CopyToClipboard")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_STEP_GROUP));
 		menu.add(new Separator(IDebugUIConstants.STEP_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_THREAD_GROUP));
@@ -564,14 +565,14 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		menu.add(new Separator(IDebugUIConstants.EMPTY_LAUNCH_GROUP));
 		menu.add(new Separator(IDebugUIConstants.LAUNCH_GROUP));
 		menu.add(getAction(REMOVE_ACTION));
-		menu.add(getAction("TerminateAll"));
-		menu.add(getAction("RemoveAll"));
-		menu.add(getAction("Relaunch"));
+		menu.add(getAction("TerminateAll")); //$NON-NLS-1$
+		menu.add(getAction("RemoveAll")); //$NON-NLS-1$
+		menu.add(getAction("Relaunch")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-		menu.add(getAction("ShowQualifiedNames"));
+		menu.add(getAction("ShowQualifiedNames")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.PROPERTY_GROUP));
-		PropertyDialogAction action = (PropertyDialogAction)getAction("Properties");
+		PropertyDialogAction action = (PropertyDialogAction)getAction("Properties"); //$NON-NLS-1$
 		action.setEnabled(action.isApplicableForSelection());
 		menu.add(action);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));

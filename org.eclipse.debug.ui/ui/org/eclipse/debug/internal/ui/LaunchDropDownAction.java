@@ -30,7 +30,7 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	private void createMenuForAction(Menu parent, Action action, int count) {
 		if (count > 0) {
 			//add the numerical accelerator
-			StringBuffer label= new StringBuffer("&");
+			StringBuffer label= new StringBuffer("&"); //$NON-NLS-1$
 			label.append(count);
 			label.append(' ');
 			label.append(action.getText());

@@ -169,7 +169,7 @@ public class LazyModelPresentation implements IDebugModelPresentation {
 	 * presentation is registered for.
 	 */
 	public String getDebugModelIdentifier() {
-		return fConfig.getAttribute("id");
+		return fConfig.getAttribute("id"); //$NON-NLS-1$
 	}
 	
 }

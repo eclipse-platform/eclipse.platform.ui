@@ -52,25 +52,25 @@ public class InspectorView extends AbstractDebugView {
 		
 		action = new ShowTypesAction(getViewer());
 		action.setChecked(false);
-		setAction("ShowTypes", action);
+		setAction("ShowTypes", action); //$NON-NLS-1$
 		
 		action = new ShowQualifiedAction(getViewer());
 		action.setChecked(false);
-		setAction("ShowQualifiedNames", action);
+		setAction("ShowQualifiedNames", action); //$NON-NLS-1$
 				
-		setAction("AddToInspector", new InspectorViewAddToInspectorAction(getViewer()));
+		setAction("AddToInspector", new InspectorViewAddToInspectorAction(getViewer())); //$NON-NLS-1$
 		setAction(REMOVE_ACTION, new RemoveFromInspectorAction(getViewer()));
 		
 		action = new RemoveAllFromInspectorAction(getViewer());
-		setAction("RemoveAll", action);
+		setAction("RemoveAll", action); //$NON-NLS-1$
 		getContentProvider().setRemoveAllAction((RemoveAllFromInspectorAction)action);
 		
 		action = new ChangeVariableValueAction(getViewer());
 		action.setEnabled(false);
-		setAction("ChangeVariableValue", action);
+		setAction("ChangeVariableValue", action); //$NON-NLS-1$
 		setAction(DOUBLE_CLICK_ACTION, action);
 		
-		setAction("CopyToClipboard", new ControlAction(getViewer(), new CopyVariablesToClipboardActionDelegate()));
+		setAction("CopyToClipboard", new ControlAction(getViewer(), new CopyVariablesToClipboardActionDelegate())); //$NON-NLS-1$
 	}
 
 	/**
@@ -78,11 +78,11 @@ public class InspectorView extends AbstractDebugView {
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator(this.getClass().getName()));
-		tbm.add(getAction("ShowTypes"));
-		tbm.add(getAction("ShowQualifiedNames"));
+		tbm.add(getAction("ShowTypes")); //$NON-NLS-1$
+		tbm.add(getAction("ShowQualifiedNames")); //$NON-NLS-1$
 		tbm.add(new Separator(this.getClass().getName()));
 		tbm.add(getAction(REMOVE_ACTION));
-		tbm.add(getAction("RemoveAll"));
+		tbm.add(getAction("RemoveAll")); //$NON-NLS-1$
 	}
 
 	/**
@@ -91,15 +91,15 @@ public class InspectorView extends AbstractDebugView {
 	protected void fillContextMenu(IMenuManager menu) {
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
-		menu.add(getAction("AddToInspector"));
-		menu.add(getAction("ChangeVariableValue"));
-		menu.add(getAction("CopyToClipboard"));
+		menu.add(getAction("AddToInspector")); //$NON-NLS-1$
+		menu.add(getAction("ChangeVariableValue")); //$NON-NLS-1$
+		menu.add(getAction("CopyToClipboard")); //$NON-NLS-1$
 		menu.add(getAction(REMOVE_ACTION));
-		menu.add(getAction("RemoveAll"));
+		menu.add(getAction("RemoveAll")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-		menu.add(getAction("ShowTypes"));
-		menu.add(getAction("ShowQualifiedNames"));
+		menu.add(getAction("ShowTypes")); //$NON-NLS-1$
+		menu.add(getAction("ShowQualifiedNames")); //$NON-NLS-1$
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
