@@ -19,50 +19,64 @@ import org.eclipse.ui.intro.internal.model.*;
  */
 public class BrowserIntroPartLocationListener implements LocationListener {
 
-	private AbstractIntroPartImplementation implementation;
+    private AbstractIntroPartImplementation implementation;
 
-	/**
-	 * Takes the implementation as an input.
-	 */
-	public BrowserIntroPartLocationListener(AbstractIntroPartImplementation implementation) {
-		this.implementation = implementation;
-	}
+    // flag used to filter out mutiple URL navigation events in one URL due to
+    // frames.
+    private int redundantNavigation = 0;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.browser.LocationListener#changed(org.eclipse.swt.browser.LocationEvent)
-	 */
-	public void changed(LocationEvent event) {
-	}
+    /**
+     * Takes the implementation as an input.
+     */
+    public BrowserIntroPartLocationListener(
+            AbstractIntroPartImplementation implementation) {
+        this.implementation = implementation;
+    }
 
-	/**
-	 * Intercept any LocationEvents on the browser. If the event location is a
-	 * valid IntroURL, cancel the event and execute the intro action that is
-	 * embedded in the URL
-	 */
-	public void changing(LocationEvent event) {
-		String url = event.location;
-		if (url == null)
-			return;
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.swt.browser.LocationListener#changed(org.eclipse.swt.browser.LocationEvent)
+     */
+    public void changed(LocationEvent event) {
+        // note: navigations fired due to a setText do not fire closing changed.
+        redundantNavigation--;
+    }
 
-		IntroURLParser parser = new IntroURLParser(url);
-		if (parser.hasIntroUrl()) {
-			// stop URL first.
-			event.doit = false;
-			// execute the action embedded in the IntroURL
-			IntroURL introURL = parser.getIntroURL();
-			introURL.execute();
-			// if action is a show page, update UI history.
-			if (introURL.getAction().equals(IntroURL.SHOW_PAGE))
-				implementation.getModelRoot().getPresentation().updateHistory(
-					introURL.getParameter(IntroURL.KEY_ID));
-		} else if (parser.hasProtocol())
-			// Update the history even with real URLs. If this listener gets
-			// called due to a navigation, the navigation state controls the
-			// update.
-			implementation.getModelRoot().getPresentation().updateHistory(url);
+    /**
+     * Intercept any LocationEvents on the browser. If the event location is a
+     * valid IntroURL, cancel the event and execute the intro action that is
+     * embedded in the URL
+     */
+    public void changing(LocationEvent event) {
+        String url = event.location;
+        if (url == null)
+            return;
+        IntroURLParser parser = new IntroURLParser(url);
+        if (parser.hasIntroUrl()) {
+            // stop URL first.
+            event.doit = false;
+            // execute the action embedded in the IntroURL
+            IntroURL introURL = parser.getIntroURL();
+            introURL.execute();
+            // if action is a show page, update UI history.
+            if (introURL.getAction().equals(IntroURL.SHOW_PAGE))
+                implementation.getModelRoot().getPresentation().updateHistory(
+                        introURL.getParameter(IntroURL.KEY_ID));
+            return;
+        }
 
-	}
+        if (parser.hasProtocol()) {
+            // Update the history even with real URLs. If this listener gets
+            // called due to a navigation, the navigation state controls the
+            // update. Note that if we have multiple embedded URL navigations
+            // due to frames, the redundantNavigation flag filters them out.
+            if (redundantNavigation == 0)
+                implementation.getModelRoot().getPresentation().updateHistory(
+                        url);
+        }
+        redundantNavigation++;
+        return;
+    }
 
 }

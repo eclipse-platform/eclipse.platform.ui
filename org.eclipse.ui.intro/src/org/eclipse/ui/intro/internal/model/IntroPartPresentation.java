@@ -45,23 +45,15 @@ import org.eclipse.ui.intro.internal.util.*;
 public class IntroPartPresentation extends IntroElement {
 
     protected static final String PRESENTATION_ELEMENT = "presentation";
-
     private static final String IMPLEMENTATION_ELEMENT = "implementation";
-
     private static final String TITLE_ATTRIBUTE = "title";
-
     private static final String STYLE_ATTRIBUTE = "style";
-
     private static final String OS_ATTRIBUTE = "os";
-
     private static final String WS_ATTRIBUTE = "ws";
-
     protected static final String HOME_PAGE_ID_ATTRIBUTE = "home-page-id";
 
     private String title;
-
     private String style;
-
     private String homePageId;
 
     // The Head contributions to this preentation (inherited from child
@@ -175,19 +167,19 @@ public class IntroPartPresentation extends IntroElement {
                 implementation.init(introPart);
                 implementation.createPartControl(parent);
                 Logger.logInfo("Loaded config implementation from: "
-                        + ExtensionPointManager
-                                .getLogString(implementationElement, "class"));
+                        + ExtensionPointManager.getLogString(
+                                implementationElement, "class"));
                 break;
             } catch (SWTError e) {
                 Logger.logWarning("Failed to create implementation from: "
-                        + ExtensionPointManager
-                                .getLogString(implementationElement, "class"));
+                        + ExtensionPointManager.getLogString(
+                                implementationElement, "class"));
                 implementation = null;
                 implementationElement = null;
             } catch (Exception e) {
                 Logger.logWarning("Failed to create implementation from: "
-                        + ExtensionPointManager
-                                .getLogString(implementationElement, "class"));
+                        + ExtensionPointManager.getLogString(
+                                implementationElement, "class"));
                 implementation = null;
                 implementationElement = null;
             }
