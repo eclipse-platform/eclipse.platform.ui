@@ -1,4 +1,4 @@
-package org.eclipse.help.internal.ui.win32;
+package org.eclipse.help.ui.internal.browser.win32;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -8,6 +8,7 @@ package org.eclipse.help.internal.ui.win32;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.ole.win32.*;
 import org.eclipse.help.internal.ui.util.WorkbenchResources;
+import org.eclipse.help.ui.internal.browser.win32.*;
 
 /**
  * Needed for the OLE implementation

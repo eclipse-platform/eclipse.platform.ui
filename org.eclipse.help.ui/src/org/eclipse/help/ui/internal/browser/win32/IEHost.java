@@ -7,7 +7,6 @@ import java.io.*;
 import java.util.StringTokenizer;
 import org.eclipse.help.internal.ui.ICommandStateChangedListener;
 import org.eclipse.help.internal.ui.util.HelpWorkbenchException;
-import org.eclipse.help.internal.ui.win32.WebBrowser;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;

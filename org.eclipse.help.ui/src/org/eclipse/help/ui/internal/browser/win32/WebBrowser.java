@@ -1,4 +1,4 @@
-package org.eclipse.help.internal.ui.win32;
+package org.eclipse.help.ui.internal.browser.win32;
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.*;
 /**
  * ActiveX based web browser control.
  */
-public class WebBrowser implements OleListener, IBrowser {
+public class WebBrowser implements OleListener{
 	// Generated from typelib filename: shdocvw.dll
 	// Constants for WebBrowser CommandStateChange
 	public static final short CSC_UPDATECOMMANDS = -1;
