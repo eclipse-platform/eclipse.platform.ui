@@ -294,7 +294,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		if (frame == null)
 			return false;
 		if (fContextFrameStack.isEmpty())
-				return false;
+			return false;
 		// stack not empty
 		ContextFrame top= (ContextFrame) fContextFrameStack.peek();
 		return frame.equals(top);
