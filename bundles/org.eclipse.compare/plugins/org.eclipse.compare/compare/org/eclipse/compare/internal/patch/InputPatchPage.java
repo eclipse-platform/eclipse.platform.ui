@@ -28,6 +28,7 @@ import org.eclipse.ui.help.*;
 import org.eclipse.ui.model.*;
 
 import org.eclipse.compare.internal.ICompareContextIds;
+import org.eclipse.compare.internal.Utilities;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -289,7 +290,7 @@ import org.eclipse.core.runtime.*;
 		fPatchTargets.addSelectionChangedListener(
 			new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
-					fPatchWizard.setTargets(PatchWizard.getResource(event.getSelection()));
+					fPatchWizard.setTargets(Utilities.getResources(event.getSelection()));
 					updateWidgetEnablements();
 				}
 			}

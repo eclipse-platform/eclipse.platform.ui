@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
@@ -34,13 +33,12 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
-import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorPart;
 
 import org.eclipse.compare.internal.*;
 
 
-public class CompareWithPatchAction implements IActionDelegate {
+public class CompareWithPatchAction extends BaseCompareAction {
 
 	static class PatchWizardDialog extends WizardDialog {
 	
@@ -52,17 +50,15 @@ public class CompareWithPatchAction implements IActionDelegate {
 		}
 	}
 	
-	private ISelection fSelection;
-	
-
-	public void selectionChanged(IAction action, ISelection selection) {
-		fSelection= selection;
-		IResource[] resources= PatchWizard.getResource(fSelection);
-		action.setEnabled(resources != null && resources.length == 1);
+	protected boolean isEnabled(ISelection selection) {
+		return Utilities.getResources(selection).length == 1;
 	}
 		
-	public void run(IAction action) {
-		PatchWizard wizard= new PatchWizard(fSelection);
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.internal.BaseCompareAction#run(org.eclipse.jface.viewers.ISelection)
+	 */
+	protected void run(ISelection selection) {
+		PatchWizard wizard= new PatchWizard(selection);
 		
 		if (areAllEditorsSaved()) {
 			PatchWizardDialog dialog= new PatchWizardDialog(CompareUIPlugin.getShell(), wizard);

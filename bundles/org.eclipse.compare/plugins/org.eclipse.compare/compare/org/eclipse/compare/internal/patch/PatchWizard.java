@@ -11,7 +11,6 @@
 package org.eclipse.compare.internal.patch;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
@@ -47,7 +46,7 @@ import org.eclipse.compare.internal.*;
 		setDefaultPageImageDescriptor(CompareUIPlugin.getImageDescriptor("wizban/applypatch_wizban.gif"));	//$NON-NLS-1$
 		setWindowTitle(PatchMessages.getString("PatchWizard.title")); //$NON-NLS-1$
 
-		setTargets(getResource(selection));
+		setTargets(Utilities.getResources(selection));
 
 		fPatcher= new Patcher();
 				
@@ -59,22 +58,6 @@ import org.eclipse.compare.internal.*;
 			fHasNewDialogSettings= false;
 			setDialogSettings(section);
 		}	
-	}
-	
-	static IResource[] getResource(ISelection selection) {
-		IResource[] rs= Utilities.getResources(selection);
-		ArrayList list= null;
-		for (int i= 0; i < rs.length; i++) {
-			IResource r= rs[i];
-			if (r != null && r.isAccessible()) {
-				if (list == null)
-					list= new ArrayList();
-				list.add(r);
-			}
-		}
-		if (list != null && list.size() > 0)
-			return (IResource[]) list.toArray(new IResource[list.size()]);
-		return null;
 	}
 	
 	Patcher getPatcher() {

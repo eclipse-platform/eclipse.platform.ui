@@ -12,7 +12,6 @@ package org.eclipse.compare.internal;
 
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.lang.reflect.InvocationTargetException;
 
@@ -25,7 +24,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.BadLocationException;
 
@@ -84,12 +82,11 @@ public class EditionAction extends BaseCompareAction {
 	}
 
 	protected boolean isEnabled(ISelection selection) {
-		IFile[] files= getFiles(selection);
-		return files.length == 1;		// we don't support multiple selection for now
+		return Utilities.getFiles(selection).length == 1;		// we don't support multiple selection for now
 	}
 
 	protected void run(ISelection selection) {
-		IFile[] files= getFiles(selection);
+		IFile[] files= Utilities.getFiles(selection);
 		for (int i= 0; i < files.length; i++)
 			doFromHistory(files[i]);
 	}
@@ -230,31 +227,6 @@ public class EditionAction extends BaseCompareAction {
 			}
 		}
 		return null;
-	}
-	
-	private IFile[] getFiles(ISelection selection) {
-		ArrayList result= new ArrayList();
-		Object[] s= (selection instanceof IStructuredSelection)
-						? ((IStructuredSelection) selection).toArray()
-						: new Object[0];
-		for (int i= 0; i < s.length; i++) {
-			Object o= s[i];
-			IFile file= null;
-			
-			if (o instanceof IFile) {
-				file= (IFile) o;
-				
-			} else if (o instanceof IAdaptable) {
-				IAdaptable a= (IAdaptable) o;
-				Object adapter= a.getAdapter(IResource.class);
-				if (adapter instanceof IFile)
-					file= (IFile) adapter;
-			}
-			
-			if (file != null)
-				result.add(file);
-		}
-		return (IFile[]) result.toArray(new IFile[result.size()]);
 	}
 }
 

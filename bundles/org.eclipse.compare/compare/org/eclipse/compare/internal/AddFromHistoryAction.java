@@ -31,6 +31,10 @@ public class AddFromHistoryAction extends BaseCompareAction {
 	public AddFromHistoryAction() {
 	}
 	
+	protected boolean isEnabled(ISelection selection) {
+		return Utilities.getResources(selection).length == 1;
+	}
+
 	protected void run(ISelection selection) {
 			
 		ResourceBundle bundle= ResourceBundle.getBundle(BUNDLE_NAME);

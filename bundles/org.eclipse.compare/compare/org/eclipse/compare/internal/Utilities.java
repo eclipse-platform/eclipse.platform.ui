@@ -16,6 +16,7 @@ import java.util.*;
 
 import org.eclipse.swt.widgets.*;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.action.IAction;
@@ -100,11 +101,7 @@ public class Utilities {
 		return widget != null && !widget.isDisposed();
 	}
 	
-	/**
-	 * Convenience method: extract all <code>IResources</code> from given selection.
-	 * Never returns null.
-	 */
-	public static IResource[] getResources(ISelection selection) {
+	private static ArrayList internalGetResources(ISelection selection, Class type) {
 		
 		ArrayList tmp= new ArrayList();
 
@@ -113,21 +110,44 @@ public class Utilities {
 			Object[] s= ((IStructuredSelection)selection).toArray();
 				
 			for (int i= 0; i < s.length; i++) {
+				
+				IResource resource= null;
+				
 				Object o= s[i];
-				if (o instanceof IResource) {
-					tmp.add(o);
-					continue;
-				}
-				if (o instanceof IAdaptable) {
+				if (type.isInstance(o)) {
+					resource= (IResource) o;
+						
+				} else if (o instanceof IAdaptable) {
 					IAdaptable a= (IAdaptable) o;
 					Object adapter= a.getAdapter(IResource.class);
-					if (adapter instanceof IResource)
-						tmp.add(adapter);
-					continue;
+					if (type.isInstance(adapter))
+						resource= (IResource) adapter;
 				}
+				
+				if (resource != null && resource.isAccessible())
+					tmp.add(resource);
 			}
 		}
+		
+		return tmp;
+	}
+	
+	/**
+	 * Convenience method: extract all accessible <code>IResources</code> from given selection.
+	 * Never returns null.
+	 */
+	public static IResource[] getResources(ISelection selection) {
+		ArrayList tmp= internalGetResources(selection, IResource.class);
 		return (IResource[]) tmp.toArray(new IResource[tmp.size()]);
+	}
+	
+	/**
+	 * Convenience method: extract all accessible <code>IFiles</code> from given selection.
+	 * Never returns null.
+	 */
+	public static IFile[] getFiles(ISelection selection) {
+		ArrayList tmp= internalGetResources(selection, IFile.class);
+		return (IFile[]) tmp.toArray(new IFile[tmp.size()]);
 	}
 
 	public static byte[] readBytes(InputStream in) {
