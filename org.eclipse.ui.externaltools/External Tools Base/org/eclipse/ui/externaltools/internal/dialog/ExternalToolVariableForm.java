@@ -186,6 +186,9 @@ public class ExternalToolVariableForm {
 	public void setEnabled(boolean enabled) {
 		variableListLabel.setEnabled(enabled);
 		variableList.setEnabled(enabled);
+		if (enabled && variableList.getSelection().length == 0) {
+			variableList.select(0);
+		}
 		variableComposite.setVisible(enabled);
 	}
 	
