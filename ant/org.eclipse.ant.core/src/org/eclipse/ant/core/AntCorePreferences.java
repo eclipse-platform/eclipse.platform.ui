@@ -228,22 +228,16 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	protected Task[] extractTasks(Preferences prefs, String[] tasks) {
 		List result = new ArrayList(tasks.length);
 		for (int i = 0; i < tasks.length; i++) {
-			try {
-				String taskName = tasks[i];
-				String[] values = getArrayFromString(prefs.getString(IAntCoreConstants.PREFIX_TASK + taskName));
-				if (values.length < 2) {
-					continue;
-				}
-				Task task = new Task();
-				task.setTaskName(taskName);
-				task.setClassName(values[0]);
-				task.setLibrary(new URL(values[1]));
-				result.add(task);
-			} catch (MalformedURLException e) {
-				// if the URL does not have a valid format, just log and ignore the exception
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
-				AntCorePlugin.getPlugin().getLog().log(status);
+			String taskName = tasks[i];
+			String[] values = getArrayFromString(prefs.getString(IAntCoreConstants.PREFIX_TASK + taskName));
+			if (values.length < 2) {
+				continue;
 			}
+			Task task = new Task();
+			task.setTaskName(taskName);
+			task.setClassName(values[0]);
+			task.setLibraryEntry(new AntClasspathEntry(values[1]));
+			result.add(task);
 		}
 		return (Task[]) result.toArray(new Task[result.size()]);
 	}
@@ -251,22 +245,16 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	protected Type[] extractTypes(Preferences prefs, String[] types) {
 		List result = new ArrayList(types.length);
 		for (int i = 0; i < types.length; i++) {
-			try {
-				String typeName = types[i];
-				String[] values = getArrayFromString(prefs.getString(IAntCoreConstants.PREFIX_TYPE + typeName));
-				if (values.length < 2) {
-					continue;
-				}
-				Type type = new Type();
-				type.setTypeName(typeName);
-				type.setClassName(values[0]);
-				type.setLibrary(new URL(values[1]));
-				result.add(type);
-			} catch (MalformedURLException e) {
-				// if the URL does not have a valid format, just log and ignore the exception
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e);  //$NON-NLS-1$
-				AntCorePlugin.getPlugin().getLog().log(status);
+			String typeName = types[i];
+			String[] values = getArrayFromString(prefs.getString(IAntCoreConstants.PREFIX_TYPE + typeName));
+			if (values.length < 2) {
+				continue;
 			}
+			Type type = new Type();
+			type.setTypeName(typeName);
+			type.setClassName(values[0]);
+			type.setLibraryEntry(new AntClasspathEntry(values[1]));
+			result.add(type);
 		}
 		return (Type[]) result.toArray(new Type[result.size()]);
 	}
@@ -400,7 +388,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 					}
 					result.add(task);
 					addPluginClassLoader(descriptor.getPluginClassLoader());
-					task.setLibrary(url);
+					task.setLibraryEntry(new AntClasspathEntry(url.getFile()));
 				} else {
 					//task specifies a library that does not exist
 					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.No_library_for_task"), new String[]{url.toExternalForm(), descriptor.getLabel()}), null); //$NON-NLS-1$
@@ -449,7 +437,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 					}
 					result.add(type);
 					addPluginClassLoader(descriptor.getPluginClassLoader());
-					type.setLibrary(url);
+					type.setLibraryEntry(new AntClasspathEntry(url.getFile()));
 				} else {
 					//type specifies a library that does not exist
 					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.No_library_for_type"), new String[]{url.toExternalForm(), descriptor.getLabel()}), null); //$NON-NLS-1$
@@ -1100,7 +1088,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		for (int i = 0; i < customTasks.length; i++) {
 			tasks.append(customTasks[i].getTaskName());
 			tasks.append(',');
-			prefs.setValue(IAntCoreConstants.PREFIX_TASK + customTasks[i].getTaskName(), customTasks[i].getClassName() + "," + customTasks[i].getLibrary().toExternalForm()); //$NON-NLS-1$
+			prefs.setValue(IAntCoreConstants.PREFIX_TASK + customTasks[i].getTaskName(), customTasks[i].getClassName() + "," + customTasks[i].getLibraryEntry().getLabel()); //$NON-NLS-1$
 		}
 		prefs.setValue(IAntCoreConstants.PREFERENCE_TASKS, tasks.toString());
 	}
@@ -1122,7 +1110,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		for (int i = 0; i < customTypes.length; i++) {
 			types.append(customTypes[i].getTypeName());
 			types.append(',');
-			prefs.setValue(IAntCoreConstants.PREFIX_TYPE + customTypes[i].getTypeName(), customTypes[i].getClassName() + "," + customTypes[i].getLibrary().toExternalForm()); //$NON-NLS-1$
+			prefs.setValue(IAntCoreConstants.PREFIX_TYPE + customTypes[i].getTypeName(), customTypes[i].getClassName() + "," + customTypes[i].getLibraryEntry().getLabel()); //$NON-NLS-1$
 		}
 		prefs.setValue(IAntCoreConstants.PREFERENCE_TYPES, types.toString());
 	}

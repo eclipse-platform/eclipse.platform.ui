@@ -16,6 +16,7 @@ import java.net.URL;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Type;
+import org.eclipse.ant.internal.core.AntClasspathEntry;
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
 import org.eclipse.core.runtime.CoreException;
@@ -25,12 +26,12 @@ public class TypeTests extends AbstractAntTest {
 	public TypeTests(String name) {
 		super(name);
 	}
-
+	
 	public void testAddType() throws CoreException {
 		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
 		URL[] urls= prefs.getExtraClasspathURLs();
 		Type newType= new Type();
-		newType.setLibrary(urls[0]);
+		newType.setLibraryEntry(new AntClasspathEntry(urls[0].getFile()));
 		newType.setTypeName("anttestpath");
 		newType.setClassName("org.eclipse.ant.tests.core.support.types.AntTestPath");
 		prefs.setCustomTypes(new Type[]{newType});

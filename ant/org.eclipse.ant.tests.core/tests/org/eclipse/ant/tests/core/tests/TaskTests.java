@@ -30,7 +30,11 @@ public class TaskTests extends AbstractAntTest {
 		super(name);
 	}
 	
-	public void testAddTask() throws CoreException {
+	/**
+	 * Testing the old deprecated API
+	 * @throws CoreException
+	 */
+	public void testAddTaskSettingLibrary() throws CoreException {
 		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
 		URL[] urls= prefs.getExtraClasspathURLs();
 		Task newTask= new Task();
@@ -41,7 +45,24 @@ public class TaskTests extends AbstractAntTest {
 		
 		prefs.updatePluginPreferences();
 		
-		run("CustomTask.xml");
+		run("CustomTask.xml", new String[0], false);
+		String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
+		assertTrue("Message incorrect: " + msg, msg.equals("Testing Ant in Eclipse with a custom task"));
+		assertSuccessful();
+	}
+	
+	public void testAddTaskSettingLibraryEntry() throws CoreException {
+		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
+		URL[] urls= prefs.getExtraClasspathURLs();
+		Task newTask= new Task();
+		newTask.setLibraryEntry(new AntClasspathEntry(urls[0].getFile()));
+		newTask.setTaskName("AntTestTask2");
+		newTask.setClassName("org.eclipse.ant.tests.core.support.tasks.AntTestTask");
+		prefs.setCustomTasks(new Task[]{newTask});
+		
+		prefs.updatePluginPreferences();
+		
+		run("CustomTask.xml", new String[] {"Custom Task from Entry"}, false);
 		String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
 		assertTrue("Message incorrect: " + msg, msg.equals("Testing Ant in Eclipse with a custom task"));
 		assertSuccessful();
@@ -73,14 +94,14 @@ public class TaskTests extends AbstractAntTest {
 			newEntries[entries.length] = entry;
 			prefs.setAdditionalClasspathEntries(newEntries);
 		
-			newTask.setLibrary(entry.getEntryURL());
+			newTask.setLibraryEntry(entry);
 			newTask.setTaskName("AntTestTask");
 			newTask.setClassName("org.eclipse.ant.tests.core.support.tasks.AntTestTask2");
 			prefs.setCustomTasks(new Task[]{newTask});
 		
 			prefs.updatePluginPreferences();
 		
-			run("CustomTask.xml");
+			run("CustomTask.xml", new String[0], false);
 			String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
 			assertTrue("Message incorrect: " + msg, msg.equals("Testing Ant in Eclipse with a custom task"));
 			assertSuccessful();

@@ -68,7 +68,7 @@ public class AntObjectLabelProvider extends LabelProvider implements ITableLabel
 			AntObject object = (AntObject) element;
 			StringBuffer text= new StringBuffer(object.toString());
 			text.append(" ("); //$NON-NLS-1$
-			text.append(object.getLibrary().getFile());
+			text.append(object.getLibraryEntry().getLabel());
 			text.append(": "); //$NON-NLS-1$
 			text.append(object.getClassName());
 			text.append(')');

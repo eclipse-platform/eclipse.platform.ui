@@ -6,4 +6,8 @@
 	<target name="Custom Task" description= "Test adding a custom task" depends="init">
 		<AntTestTask/>
 	</target>
+	
+	<target name="Custom Task from Entry" description= "Test adding a custom task">
+		<AntTestTask2/>
+	</target>
 </project>
