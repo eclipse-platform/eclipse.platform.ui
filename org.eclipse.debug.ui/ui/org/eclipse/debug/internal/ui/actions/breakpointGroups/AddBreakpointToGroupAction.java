@@ -17,18 +17,9 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
@@ -43,69 +34,28 @@ public class AddBreakpointToGroupAction implements IViewActionDelegate {
 	
 	private static String fgLastValue= null;
 	
-	/**
-	 * A dialog that sets the focus to the text area.
-	 */
-	class BreakpointGroupDialog extends InputDialog {
-		
-		private Button fAutoAddToGroup;
-		
-		protected  BreakpointGroupDialog(Shell parentShell,
-									String dialogTitle,
-									String dialogMessage,
-									String initialValue,
-									IInputValidator validator) {
-			super(parentShell, dialogTitle, dialogMessage, initialValue, validator);
-		}
-		
-		
-		/**
-		 * @see Dialog#createDialogArea(Composite)
-		 */
-		protected Control createDialogArea(Composite parent) {
-			Composite area= (Composite)super.createDialogArea(parent);
-			
-			fAutoAddToGroup = new Button(area, SWT.CHECK);
-			GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
-			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
-			fAutoAddToGroup.setLayoutData(data);
-			fAutoAddToGroup.setFont(parent.getFont());
-			fAutoAddToGroup.setText("Automatically add new breakpoints to this group");
-			fAutoAddToGroup.setSelection(fView.getAutoGroup() != null);
-			
-			return area;
-		}
-		protected void okPressed() {
-		    String value= getValue();
-		    if (fAutoAddToGroup.getSelection()) {
-		        fView.setAutoGroup(value);
-		    }
-		    fgLastValue= value;
-			super.okPressed();
-		}
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		String initialValue= fView.getAutoGroup();
+		String initialValue= fgLastValue;
 		if (initialValue == null) {
-		    initialValue= fgLastValue;
+		    initialValue= fView.getAutoGroup();
 		}
-		BreakpointGroupDialog dialog = new BreakpointGroupDialog(null, "Add To Group", "Specify the name of the group", initialValue, null);
+		SelectBreakpointGroupDialog dialog = new SelectBreakpointGroupDialog(fView, BreakpointGroupMessages.getString("AddBreakpointToGroupAction.0"), BreakpointGroupMessages.getString("AddBreakpointToGroupAction.1"), initialValue, null); //$NON-NLS-1$ //$NON-NLS-2$
 		int dialogResult = dialog.open();
 		if (dialogResult == Window.OK) {
 			String value= dialog.getValue();
-			if (value.equals("")) {
+			if (value.equals("")) { //$NON-NLS-1$
 				value= null;
 			}
+			fgLastValue= value;
 			try {
 				for (int i = 0; i < fBreakpoints.length; i++) {
 					((IBreakpoint) fBreakpoints[i]).setGroup(value);
 				}
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(dialog.getShell(), "Error Adding To Group", "An exception occurred while attempting to add the breakpoint to the specified group.", e);
+				DebugUIPlugin.errorDialog(dialog.getShell(), BreakpointGroupMessages.getString("AddBreakpointToGroupAction.3"), BreakpointGroupMessages.getString("AddBreakpointToGroupAction.4"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}

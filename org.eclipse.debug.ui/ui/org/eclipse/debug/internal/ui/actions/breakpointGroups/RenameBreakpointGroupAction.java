@@ -31,7 +31,7 @@ public class RenameBreakpointGroupAction extends AbstractBreakpointGroupAction {
 		String[] groups= getSelectedGroups();
 		for (int i = 0; i < groups.length; i++) {
 		    String group= groups[i];
-		    InputDialog dialog= new InputDialog(fView.getViewSite().getShell(), "Rename Group", "Specify the new name for the group:", group, null);
+		    InputDialog dialog= new InputDialog(fView.getViewSite().getShell(), BreakpointGroupMessages.getString("RenameBreakpointGroupAction.0"), BreakpointGroupMessages.getString("RenameBreakpointGroupAction.1"), group, null); //$NON-NLS-1$ //$NON-NLS-2$
 			if (dialog.open() != Window.OK) {
 				return;
 			}
