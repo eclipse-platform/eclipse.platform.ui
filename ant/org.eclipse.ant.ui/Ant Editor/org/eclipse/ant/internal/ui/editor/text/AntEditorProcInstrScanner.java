@@ -9,42 +9,50 @@
  * 
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
- * 	   IBM Corporation - bug 24108
+ * 	   IBM Corporation - bug 24108, bug 47139
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor.text;
 
-/*
- * This file originates from an internal package of Eclipse's 
- * Manifest Editor. It has been copied by GEBIT to here in order to
- * permanently use those features. It has been renamed and edited by GEBIT 
- * after copying.
- */
-
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 
+/**
+ * The scanner to tokenize for XML processing instructions and text
+ */
 public class AntEditorProcInstrScanner extends RuleBasedScanner {
 
+	Token fProcInstructionToken= null;
+	
     public AntEditorProcInstrScanner() {
 		IRule[] rules =new IRule[2];
-        IToken procInstr =
+        fProcInstructionToken =
             new Token(
                 new TextAttribute(
                     AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_PROC_INSTR)));
 
         //Add rule for processing instructions
-        rules[0]= new SingleLineRule("<?", "?>", procInstr); //$NON-NLS-1$ //$NON-NLS-2$
+        rules[0]= new SingleLineRule("<?", "?>", fProcInstructionToken); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Add generic whitespace rule.
         rules[1]= new WhitespaceRule(new AntEditorWhitespaceDetector());
 
         setRules(rules);
+        
+        setDefaultReturnToken(new Token(
+        						new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_DEFAULT))));
     }
+
+	/**
+	 * Update the text attributes associated with the tokens of this scanner as a color preference has been changed. 
+	 */
+	public void adaptToColorChange() {
+		((Token)fDefaultReturnToken).setData(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_DEFAULT)));
+		fProcInstructionToken.setData(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_PROC_INSTR)));
+	}
 }

@@ -40,7 +40,6 @@ import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
-import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
@@ -143,9 +142,6 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
     private AntEditorProcInstrScanner getDefaultScanner() {
         if (instructionScanner == null) {
             instructionScanner = new AntEditorProcInstrScanner();
-            instructionScanner.setDefaultReturnToken(
-                new Token(
-                    new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_DEFAULT))));
         }
         return instructionScanner;
     }
@@ -153,8 +149,6 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 	private AntEditorTagScanner getTagScanner() {
         if (tagScanner == null) {
             tagScanner = new AntEditorTagScanner();
-            tagScanner.setDefaultReturnToken(
-                new Token(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_TAG))));
         }
         return tagScanner;
     }
@@ -185,12 +179,8 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 	 * Update the default tokens of the scanners.
 	 */
 	public void updateScanners() {
-		tagScanner.setDefaultReturnToken(
-				new Token(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_TAG))));
-				
-		instructionScanner.setDefaultReturnToken(
-			   new Token(
-				   new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_DEFAULT))));
+		tagScanner.adaptToColorChange();
+		instructionScanner.adaptToColorChange();
 				   
 		damageRepairer.setDefaultTextAttribute(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_XML_COMMENT)));				  
 	}
