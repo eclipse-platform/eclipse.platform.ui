@@ -23,7 +23,7 @@ import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
  * {@link org.eclipse.ltk.core.refactoring.participants.ParticipantManager}
  * </p>
  * <p> 
- * Note: this class is not intended to be extended by clients.
+ * Note: this class is not intended to be extended or instantiated by clients.
  * </p>
  * 
  * @see ISharableParticipant
