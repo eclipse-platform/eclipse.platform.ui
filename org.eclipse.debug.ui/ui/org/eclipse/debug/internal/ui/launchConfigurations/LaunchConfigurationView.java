@@ -62,6 +62,11 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	private DuplicateLaunchConfigurationAction fDuplicateAction;
 	
 	/**
+	 * Whether to automatically select configs that are added
+	 */
+	private boolean fAutoSelect = true;
+	
+	/**
 	 * Constructs a launch configuration view for the given launch group
 	 */
 	public LaunchConfigurationView(LaunchGroupExtension launchGroup) {
@@ -214,7 +219,9 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		} catch (CoreException e) {
 		}
 		viewer.getControl().setRedraw(true);
-		getTreeViewer().setSelection(new StructuredSelection(configuration), true);
+		if (isAutoSelect()) {
+			getTreeViewer().setSelection(new StructuredSelection(configuration), true);
+		}
 		
 	}
 
@@ -307,5 +314,27 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
-
+	
+	/**
+	 * Sets whether to automatically select configs that are
+	 * added into the view (newly created).
+	 * 
+	 * @param select whether to automatically select configs that are
+	 * added into the view (newly created)
+	 */
+	public void setAutoSelect(boolean select) {
+		fAutoSelect = select;
+	}
+	
+	/**
+	 * Returns whether this view is currently configured to
+	 * automatically select newly created configs that are
+	 * added into the view.
+	 * 
+	 * @return whether this view is currently configured to
+	 * automatically select newly created configs
+	 */
+	protected boolean isAutoSelect() {
+		return fAutoSelect;
+	}
 }

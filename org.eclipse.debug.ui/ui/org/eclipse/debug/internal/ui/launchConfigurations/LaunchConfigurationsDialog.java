@@ -1035,7 +1035,16 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		
 		// If they hit 'Yes', save the working copy 
 		if (selectedButton == 0) {
+			// Turn off auto select if prompting to save changes. The user
+			// has made another selection and we don't want a 'rename' to
+			// cause an auto-select.
+			if (fLaunchConfigurationView != null) {
+				fLaunchConfigurationView.setAutoSelect(false);
+			}
 			getTabViewer().handleApplyPressed();
+			if (fLaunchConfigurationView != null) {
+				fLaunchConfigurationView.setAutoSelect(true);
+			}
 		}
 		
 		return true;
