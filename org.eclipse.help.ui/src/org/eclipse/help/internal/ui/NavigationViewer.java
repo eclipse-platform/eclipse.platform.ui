@@ -4,7 +4,6 @@ package org.eclipse.help.internal.ui;
  * All Rights Reserved.
  */
 import java.util.*;
-
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.topics.TopicsNavigationManager;
 import org.eclipse.help.topics.*;
@@ -154,13 +153,13 @@ public class NavigationViewer implements ISelectionProvider, IMenuListener {
 	public void menuAboutToShow(IMenuManager mgr) {
 		if (!(getSelection() instanceof IStructuredSelection))
 			return;
-		IStructuredSelection selection = (IStructuredSelection)getSelection();
+		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		if (((IStructuredSelection) selection).size() == 1) {
 			// Menu items for single selection
 			if (!(selection.getFirstElement() instanceof ITopic))
 				return;
 			ITopic topic = (ITopic) selection.getFirstElement();
-			if (topic.getSubtopics().length >0) {
+			if (topic.getSubtopics().length > 0) {
 				// add print tree action
 				mgr.add(new PrintTopicTreeAction((IStructuredSelection) selection));
 				mgr.add(new Separator());
