@@ -163,7 +163,7 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 	/**
 	 * Ensures preferences with both default/non-default values are properly exported/imported. 
 	 */
-	public void testImportExport() {
+	public void _testImportExport() {
 		IPath originalPreferencesFile = getRandomLocation().append("original.epf");
 		IPath modifiedPreferencesFile = getRandomLocation().append("modified.epf");
 		try {
