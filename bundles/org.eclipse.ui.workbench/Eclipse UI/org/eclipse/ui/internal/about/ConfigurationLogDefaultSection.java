@@ -43,6 +43,8 @@ import org.osgi.framework.Bundle;
  */
 public class ConfigurationLogDefaultSection implements ISystemSummarySection {
 
+    private static final String ECLIPSE_PROPERTY_PREFIX = "eclipse."; //$NON-NLS-1$
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.about.ISystemSummarySection#write(java.io.PrintWriter)
      */
@@ -71,11 +73,24 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
         set.addAll(properties.keySet());
         Iterator i = set.iterator();
         while (i.hasNext()) {
-            Object key = i.next();
+            String key = (String)i.next();
+            String value = properties.getProperty(key);
+
             writer.print(key);
             writer.print('=');
-            writer.println(properties.get(key));
+
+            // some types of properties have special characters embedded
+            if (key.startsWith(ECLIPSE_PROPERTY_PREFIX))
+                printEclipseProperty(writer, value);
+            else
+                writer.println(value);
         }
+    }
+
+    private static void printEclipseProperty(PrintWriter writer, String value) {
+        String[] lines = value.split("\n"); //$NON-NLS-1$
+        for (int i = 0; i < lines.length; ++i)
+            writer.println(lines[i]);
     }
 
     /**
