@@ -89,9 +89,9 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	protected void removeLaunch(ILaunch launch) {
 		IProcess currentProcess= getCurrentProcess();
 		IProcess[] processes= launch.getProcesses();
+		IDocumentProvider provider = getDocumentProvider();
 		for (int i= 0; i < processes.length; i++) {
 			IProcess iProcess = processes[i];
-			IDocumentProvider provider = getDocumentProvider(iProcess);
 			provider.disconnect(iProcess);
 			if (iProcess.equals(currentProcess)) {
 				setCurrentProcess(null);
@@ -120,10 +120,10 @@ public class ConsoleDocumentManager implements ILaunchListener {
 			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable () {
 				public void run() {
 					IProcess[] processes= launch.getProcesses();
+					IDocumentProvider provider = getDocumentProvider();
 					for (int i= 0; i < processes.length; i++) {
 						if (getConsoleDocument(processes[i]) == null) {
 							IProcess process = processes[i];
-							IDocumentProvider provider = getDocumentProvider(process);
 							try {
 								provider.connect(process);
 							} catch (CoreException e) {
@@ -191,7 +191,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	 * if none.
 	 */
 	public IDocument getConsoleDocument(IProcess process) {
-		IDocumentProvider provider = getDocumentProvider(process);
+		IDocumentProvider provider = getDocumentProvider();
 		return provider.getDocument(process);
 	}
 		
@@ -311,12 +311,11 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	}
 	
 	/**
-	 * Returns the document provider applicable for the given process.
+	 * Returns the document provider.
 	 * 
-	 * @param process
 	 * @return document provider
 	 */
-	protected IDocumentProvider getDocumentProvider(IProcess process) {
+	private IDocumentProvider getDocumentProvider() {
 		if (fDefaultDocumentProvider == null) {
 			fDefaultDocumentProvider = new ConsoleDocumentProvider();
 		}
