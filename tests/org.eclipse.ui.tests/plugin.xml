@@ -7,10 +7,12 @@
    provider-name="Object Technology International"
    class="org.eclipse.ui.tests.TestPlugin">
 <requires>
+   <import plugin="org.eclipse.core.boot"/>
    <import plugin="org.eclipse.core.runtime"/>
    <import plugin="org.eclipse.core.resources"/>
-   <import plugin="org.eclipse.ui.test.harness"/>
+   <import plugin="org.eclipse.swt"/>
    <import plugin="org.eclipse.ui"/>
+   <import plugin="org.eclipse.ui.junit"/>
    <import plugin="org.junit"/>
 </requires>
 
@@ -19,39 +21,7 @@
 </runtime>
 
 <extension 
-	point="org.eclipse.ui.test.harness.uiTests">
-	<uiTest 
-		id="ui.TestSuite"
-		class="org.eclipse.ui.tests.UiTestSuite"/>
-	<uiTest 
-		id="ui.api.TestSuite"
-		class="org.eclipse.ui.tests.api.ApiTestSuite"/>
-	<uiTest 
-		id="ui.api.SessionCreateTest"
-		class="org.eclipse.ui.tests.api.SessionCreateTest"/>
-	<uiTest 
-		id="ui.api.SessionRestoreTest"
-		class="org.eclipse.ui.tests.api.SessionRestoreTest"/>
-	<uiTest
-		id="ui.dialogs.Automated"
-		class="org.eclipse.ui.tests.dialogs.UIAutomatedSuite"/>
-	<uiTest 
-		id="ui.propertysheet.PropertySheetTestSuite"
-		class="org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite"/>
-	
-	<!-- Interactive Test Suites -->
-	<uiTest
-		id="ui.dialogs.Interactive"
-		class="org.eclipse.ui.tests.dialogs.UIInteractiveSuite"/>
-</extension>
-
-<extension 
 	point="org.eclipse.ui.perspectives">
-	<perspective
-		id="org.eclipse.ui.tests.api.EmptyPerspective"
-		name="Empty Perspective"
-		class="org.eclipse.ui.tests.api.EmptyPerspective">
-	</perspective>
 	<perspective
 		id="org.eclipse.ui.tests.api.SessionPerspective"
 		name="Session Perspective"
@@ -87,12 +57,15 @@
        icon="icons\view.gif"
 	   class="org.eclipse.ui.tests.api.MockViewPart"/>
 	<view
+       id="org.eclipse.ui.tests.api.ActionFilterTestView"
+	   name="Action Filter Test View"
+       icon="icons\view.gif"
+	   class="org.eclipse.ui.tests.api.ListView"/>
+	<view
        id="org.eclipse.ui.tests.propertysheet.SelectionProviderView"
 	   name="Selection Provider Test View"
        icon="icons\view.gif"
 	   class="org.eclipse.ui.tests.propertysheet.SelectionProviderView"/>
-
-
 </extension>
 
 <extension
@@ -133,5 +106,27 @@
 		</action> 
 	</viewContribution> 
 </extension> 
+
+<extension point="org.eclipse.ui.popupMenus"> 
+    <objectContribution 
+        id="redActionContribution" 
+        objectClass="org.eclipse.ui.tests.api.ListElement"> 
+        <filter name="name" value="red"/> 
+        <action id="redAction" 
+            label="redAction" 
+            class="bogus"> 
+        </action> 
+    </objectContribution> 
+    <objectContribution 
+        id="blueActionContribution" 
+        objectClass="org.eclipse.ui.tests.api.ListElement"> 
+        <filter name="name" value="blue"/> 
+        <action id="blueAction" 
+            label="blueAction" 
+            class="bogus"> 
+        </action> 
+    </objectContribution> 
+</extension> 
+
 
 </plugin>

@@ -15,7 +15,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.tests.api.AbstractTestCase;
+import org.eclipse.ui.junit.util.UITestCase;
 import org.eclipse.ui.views.properties.ColorPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -31,7 +31,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
  * properties.
  */
 
-public class PropertySheetAuto extends AbstractTestCase {
+public class PropertySheetAuto extends UITestCase {
 	
 	/**
 	 * This car serves as a simple porperty source.
