@@ -1,0 +1,49 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="IBM">
+   <meta name="GENERATOR" content="Mozilla/4.79 [en] (Windows NT 5.0; U) [Netscape]">
+   <title>Package-level Javadoc</title>
+</head>
+<body>
+Provides access to stand alone help system.&nbsp;
+Classes in this package are not supposed to be called by Eclipse plugins,
+they are intended to be called from outside of Eclipse environment.
+<h2>
+Package Specification</h2>
+The help system in Eclipse can be used by other products.&nbsp; Access
+to this help system is provided through <tt>org.eclipse.help.standalone.Help
+</tt>class.
+<p>This Help class should be placed on the application class path, and
+methods of the Help class provide means or launching help.&nbsp; There
+is a general mechanism (defined at the plug-in level) by which individual
+plug-ins contribute online help and context-sensitive help for their component.
+This Eclipse mechanism for contributing help content need to be used.&nbsp;
+The stand alone help system is responsible for accessing this information
+and displaying it to the user.
+<p>The use of the stand-alone help system involves:
+<ul>
+<li>
+Placing the <tt>Help</tt> class from this package on the application class
+path.</li>
+
+<li>
+Instantiation of the H<tt>elp</tt> class, providing name of the directory
+where Eclipse and documentation plugins reside.</li>
+
+<li>
+Calling methods of H<tt>elp</tt> class to start help.</li>
+
+<li>
+Calling methods of H<tt>elp</tt> class to display help.&nbsp; The call
+can be repeated multiple times as needed.</li>
+
+<li>
+Calling methods of H<tt>elp</tt> class to shut down help.</li>
+</ul>
+
+<br>&nbsp;
+<br>&nbsp;
+</body>
+</html>
