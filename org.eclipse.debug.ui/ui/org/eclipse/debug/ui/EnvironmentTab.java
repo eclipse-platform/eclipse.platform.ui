@@ -291,11 +291,12 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * Adds a new environment variable to the table.
 	 */
 	protected void handleEnvAddButtonSelected() {
-		String name = new String(LaunchConfigurationsMessages.getString("EnvironmentTab.variable_7")); //$NON-NLS-1$
-		String value = new String(LaunchConfigurationsMessages.getString("EnvironmentTab.value_8")); //$NON-NLS-1$
+		String name = LaunchConfigurationsMessages.getString("EnvironmentTab.variable_7"); //$NON-NLS-1$
+		String value = LaunchConfigurationsMessages.getString("EnvironmentTab.value_8"); //$NON-NLS-1$
 		EnvironmentVariable var = new EnvironmentVariable(name, value);
 		environmentTable.add(var);
 		environmentTable.editElement(var, 0);
+		updateLaunchConfigurationDialog();
 	}
 
 	/**
@@ -307,6 +308,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		EnvironmentVariable var =
 			(EnvironmentVariable) sel.getFirstElement();
 		environmentTable.editElement(var, 1);
+		updateLaunchConfigurationDialog();
 	}
 
 	/**
@@ -318,6 +320,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		EnvironmentVariable var =
 			(EnvironmentVariable) sel.getFirstElement();
 		environmentTable.remove(var);
+		updateLaunchConfigurationDialog();
 	}
 
 	/**
@@ -348,8 +351,8 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {	
 		// Convert the table's items into a Map so that this can be saved in the
 		// configuration's attributes.
-		HashMap map = new HashMap();
 		TableItem[] items = environmentTable.getTable().getItems();
+		Map map = new HashMap(items.length);
 		for (int i = 0; i < items.length; i++)
 		{
 			EnvironmentVariable var = (EnvironmentVariable) items[i].getData();
@@ -368,5 +371,4 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	public String getName() {
 		return LaunchConfigurationsMessages.getString("EnvironmentTab.Environment_9"); //$NON-NLS-1$
 	}
-
 }
