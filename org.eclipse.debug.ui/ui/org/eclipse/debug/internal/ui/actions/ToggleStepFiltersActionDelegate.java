@@ -62,9 +62,15 @@ public class ToggleStepFiltersActionDelegate extends AbstractDebugActionDelegate
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IInternalDebugUIConstants.PREF_USE_STEP_FILTERS)) {
-			getAction().setChecked(((Boolean)(event.getNewValue())).booleanValue());
+			Object newValue= event.getNewValue();
+			if (newValue instanceof Boolean) {
+				getAction().setChecked(((Boolean)(newValue)).booleanValue());
+			} else if (newValue instanceof String) {
+				getAction().setChecked(Boolean.getBoolean((String)(newValue)));
+			}
 		}
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
