@@ -33,7 +33,7 @@
 	<extension point="org.eclipse.ui.popupMenus">
 		<objectContribution
 			id="org.eclipse.ui.externaltools.RunAnt"
-			objectClass="org.eclipse.core.resources.IResource"
+			objectClass="org.eclipse.core.resources.IFile"
 			adaptable="true"
 			nameFilter="*.xml">
 			<action

@@ -28,7 +28,7 @@ public class AntRunActionDelegate extends ActionDelegate implements IObjectActio
 	 * Method declared on IActionDelegate.
 	 */
 	public void run(IAction action) {
-		if (part != null) && selectedFile != null) {
+		if (part != null && selectedFile != null) {
 			new AntAction(selectedFile, part.getSite().getWorkbenchWindow()).run();
 		}
 	}
