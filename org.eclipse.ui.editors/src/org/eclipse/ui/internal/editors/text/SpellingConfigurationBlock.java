@@ -450,11 +450,12 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	public void performOk() {
-		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
-			ISpellingPreferenceBlock block= (ISpellingPreferenceBlock) it.next();
-			if (block.canPerformOk())
-				block.performOk();
-		}
+		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();)
+			if (!((ISpellingPreferenceBlock) it.next()).canPerformOk())
+				return;
+		
+		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();)
+			((ISpellingPreferenceBlock) it.next()).performOk();
 	}
 	
 	public void performDefaults() {
