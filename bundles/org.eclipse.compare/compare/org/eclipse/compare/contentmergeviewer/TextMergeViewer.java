@@ -995,6 +995,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fRight.getTextWidget().getVerticalBar().setVisible(!fSynchronizedScrolling);
 		fRight.addAction(MergeSourceViewer.SAVE_ID, fRightSaveAction);
 		
+		hsynchViewport(fLeft, fRight);
+		hsynchViewport(fRight, fLeft);
+
 		if (fMarginWidth > 0) {
 			fRightCanvas= new BufferedCanvas(composite, SWT.NONE) {
 				public void doPaint(GC gc) {
@@ -1059,6 +1062,23 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		);
 	}
 	
+	private void hsynchViewport(final TextViewer tv1, final TextViewer tv2) {
+		final StyledText st1= tv1.getTextWidget();
+		final StyledText st2= tv2.getTextWidget();
+		final ScrollBar sb1= st1.getHorizontalBar();
+		final ScrollBar sb2= st2.getHorizontalBar();
+		sb1.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				int max= sb1.getMaximum()-sb1.getThumb();
+				double v= 0.0;
+				if (max > 0)
+					v= (float)sb1.getSelection() / (float)max;
+				max= sb2.getMaximum()-sb2.getThumb();
+				st2.setHorizontalPixel((int)(max * v));
+			}
+		});
+	}
+
 	private void setCurrentDiff2(Diff diff, boolean reveal) {
 		if (diff != null && diff.fDirection != Differencer.NO_CHANGE) {
 			//fCurrentDiff= null;
