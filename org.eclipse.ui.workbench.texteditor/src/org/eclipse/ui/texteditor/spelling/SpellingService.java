@@ -20,6 +20,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 
+import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.internal.texteditor.spelling.SpellingEngineRegistry;
 
 /**
@@ -99,7 +100,7 @@ public class SpellingService {
 					if (engine != null)
 						engine.check(document, regions, context, collector, monitor);
 				} catch (CoreException x) {
-					throw new RuntimeException(x);
+					TextEditorPlugin.getDefault().getLog().log(x.getStatus());
 				}
 		} finally {
 			collector.endReporting();
