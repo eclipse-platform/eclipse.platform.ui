@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!-- ======================================================================= -->
 <!-- The Readme tool is a sample plugin which demonstrates many available    -->
@@ -187,11 +187,6 @@
               /> 
 		</editorContribution>
  </extension>
-
-  <extension point="org.eclipse.help.contributions">
-     <!-- contributed help topics -->
-     <manifest name="helpnav.xml"/>
-  </extension>
 
   <extension point="org.eclipse.help.contexts"> 
     <contexts name="HelpContexts.xml"/> 
