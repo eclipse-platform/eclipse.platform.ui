@@ -16,6 +16,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Shell;
@@ -47,8 +48,8 @@ public abstract class UncommittedChangesDialog extends MappingSelectionDialog {
     private final ResourceMapping[] allMappings;
     
     
-    public UncommittedChangesDialog(Shell parentShell, String dialogTitle, ResourceMapping[] mappings) {
-        super(parentShell, dialogTitle, getMatchingMappings(mappings, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), getResourceFilter()), new UncommittedFilter());
+    public UncommittedChangesDialog(Shell parentShell, String dialogTitle, ResourceMapping[] mappings, IProgressMonitor monitor) {
+        super(parentShell, dialogTitle, getMatchingMappings(mappings, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), getResourceFilter(), monitor), new UncommittedFilter());
         allMappings = mappings;
     }
 
@@ -88,18 +89,18 @@ public abstract class UncommittedChangesDialog extends MappingSelectionDialog {
         }
     }
 
-    private static ResourceMapping[] getMatchingMappings(ResourceMapping[] mappings, final Subscriber subscriber, final FastSyncInfoFilter resourceFilter) {
+    private static ResourceMapping[] getMatchingMappings(ResourceMapping[] mappings, final Subscriber subscriber, final FastSyncInfoFilter resourceFilter, IProgressMonitor monitor) {
         Set result = new HashSet();
         for (int i = 0; i < mappings.length; i++) {
             ResourceMapping mapping = mappings[i];
-            if (matchesFilter(mapping, subscriber, resourceFilter)) {
+            if (matchesFilter(mapping, subscriber, resourceFilter, monitor)) {
                 result.add(mapping);
             }
         }
         return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
     }
 
-    private static boolean matchesFilter(ResourceMapping mapping, final Subscriber subscriber, final FastSyncInfoFilter resourceFilter) {
+    private static boolean matchesFilter(ResourceMapping mapping, final Subscriber subscriber, final FastSyncInfoFilter resourceFilter, IProgressMonitor monitor) {
         try {
             mapping.accept(ResourceMappingContext.LOCAL_CONTEXT, new IResourceVisitor() {
                 public boolean visit(IResource resource) throws CoreException {
@@ -109,7 +110,7 @@ public abstract class UncommittedChangesDialog extends MappingSelectionDialog {
                     }
                     return true;
                 }
-            }, null);
+            }, monitor);
         } catch (CoreException e) {
             if (e.getStatus().isOK()) {
                 return true;

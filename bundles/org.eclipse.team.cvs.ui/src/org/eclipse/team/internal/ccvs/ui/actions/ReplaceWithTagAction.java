@@ -21,38 +21,52 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSelectionDialog;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
 import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
 import org.eclipse.team.internal.ui.dialogs.ResourceMappingResourceDisplayArea;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Action for replace with tag.
  */
 public class ReplaceWithTagAction extends WorkspaceTraversalAction {
     
-    /* package*/ static UncommittedChangesDialog getPromptingDialog(Shell shell, ResourceMapping[] mappings) {
-        return new UncommittedChangesDialog(shell, Policy.bind("ReplaceWithTagAction.4"), mappings) { //$NON-NLS-1$
-            protected String getSingleMappingMessage(ResourceMapping mapping) {
-                String label = ResourceMappingResourceDisplayArea.getLabel(mapping);
-                if (getAllMappings().length == 1) {
-                    return Policy.bind("ReplaceWithTagAction.2", label); //$NON-NLS-1$
+    /* package*/ static UncommittedChangesDialog getPromptingDialog(final Shell shell, final ResourceMapping[] mappings) {
+        final UncommittedChangesDialog[] dialog = new UncommittedChangesDialog[] { null };
+        try {
+            PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
+                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                    dialog[0] = new UncommittedChangesDialog(shell, Policy.bind("ReplaceWithTagAction.4"), mappings, monitor) { //$NON-NLS-1$
+                        protected String getSingleMappingMessage(ResourceMapping mapping) {
+                            String label = ResourceMappingResourceDisplayArea.getLabel(mapping);
+                            if (getAllMappings().length == 1) {
+                                return Policy.bind("ReplaceWithTagAction.2", label); //$NON-NLS-1$
+                            }
+                            return Policy.bind("ReplaceWithTagAction.0", label); //$NON-NLS-1$
+                        }
+            
+                        protected String getMultipleMappingsMessage() {
+                            return Policy.bind("ReplaceWithTagAction.1"); //$NON-NLS-1$
+                        }
+                    };
                 }
-                return Policy.bind("ReplaceWithTagAction.0", label); //$NON-NLS-1$
-            }
-
-            protected String getMultipleMappingsMessage() {
-                return Policy.bind("ReplaceWithTagAction.1"); //$NON-NLS-1$
-            }
-        };
+            });
+        } catch (InvocationTargetException e) {
+            CVSUIPlugin.openError(shell, null, null, e);
+            return null;
+        } catch (InterruptedException e) {
+            return null;
+        }
+        return dialog[0];
     }
     
     protected static ResourceMapping[] checkOverwriteOfDirtyResources(Shell shell, ResourceMapping[] mappings, IProgressMonitor monitor)  {
         // Prompt for any uncommitted changes
         UncommittedChangesDialog dialog = getPromptingDialog(shell, mappings);
+        if (dialog == null) return null;
         mappings = dialog.promptToSelectMappings();
         if(mappings.length == 0) {
             // nothing to do
