@@ -254,7 +254,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 				++first;
 			}
 			
-			fScanner.setRange(d, reparseStart, d.getLength());
+			fScanner.setRange(d, reparseStart, d.getLength() - reparseStart);
 			
 			int lastScannedPosition= reparseStart;
 			IToken token= fScanner.nextToken();

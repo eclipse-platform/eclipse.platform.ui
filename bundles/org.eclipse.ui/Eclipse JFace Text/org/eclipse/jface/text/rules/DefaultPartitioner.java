@@ -249,9 +249,8 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 				}
 			}
 			category= d.getPositions(CONTENT_TYPES_CATEGORY);
-			
-			
-			fScanner.setPartialRange(d, reparseStart, d.getLength(), contentType, partitionStart);
+						
+			fScanner.setPartialRange(d, reparseStart, d.getLength() - reparseStart, contentType, partitionStart);
 			
 			int lastScannedPosition= reparseStart;
 			IToken token= fScanner.nextToken();
