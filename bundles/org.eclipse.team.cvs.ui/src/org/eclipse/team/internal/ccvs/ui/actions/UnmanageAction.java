@@ -199,8 +199,6 @@ public class UnmanageAction extends TeamAction {
 			if(resources[i].getType()!=IResource.PROJECT) return false;
 			RepositoryProvider provider = RepositoryProvider.getProvider(resources[i].getProject(), CVSProviderPlugin.getTypeId());
 			if (provider == null) return false;
-			ICVSFolder project = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resources[i]);
-			if (!project.isCVSFolder()) return false;
 		}
 		return true;
 	}

@@ -44,6 +44,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.IUserInfo;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.wizards.UpdateWizard;
 import org.eclipse.ui.dialogs.PropertyPage;
 
@@ -193,29 +194,25 @@ public class CVSPropertiesPage extends PropertyPage {
 	private void initializeValues() {
 		passwordChanged = false;
 		
+		// Do some pre-checks to ensure we're in a good state
 		provider = (CVSTeamProvider)RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
 		if (provider == null) return;
-		
 		CVSWorkspaceRoot cvsRoot = provider.getCVSWorkspaceRoot();
+		ICVSFolder folder = cvsRoot.getLocalRoot();
+		if (!folder.isCVSFolder()) return;
+		
 		String[] methods = CVSProviderPlugin.getProvider().getSupportedConnectionMethods();
 		for (int i = 0; i < methods.length; i++) {
 			methodType.add(methods[i]);
 		}
 		try {
 			ICVSRepositoryLocation location = cvsRoot.getRemoteLocation();
+			
 			String method = location.getMethod().getName();
 			methodType.select(methodType.indexOf(method));
-		
 			info = location.getUserInfo(true);
 			userText.setText(info.getUsername());
-		} catch (TeamException e) {
-			handle(e);
-		}
-		passwordText.setText("*********"); //$NON-NLS-1$
-		
-		try {
-			ICVSRemoteResource resource = cvsRoot.getRemoteResourceFor(project);
-			ICVSRepositoryLocation location = resource.getRepository();
+			passwordText.setText("*********"); //$NON-NLS-1$
 			hostLabel.setText(location.getHost());
 			int port = location.getPort();
 			if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT) {
@@ -224,7 +221,9 @@ public class CVSPropertiesPage extends PropertyPage {
 				portLabel.setText("" + port); //$NON-NLS-1$
 			}
 			pathLabel.setText(location.getRootDirectory());
-			moduleLabel.setText(resource.getRepositoryRelativePath());
+			FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
+			if (syncInfo == null) return;
+			moduleLabel.setText(syncInfo.getRepository());
 		} catch (TeamException e) {
 			handle(e);
 		}
