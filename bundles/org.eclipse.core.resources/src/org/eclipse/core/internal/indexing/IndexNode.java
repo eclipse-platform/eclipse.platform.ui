@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,15 +21,15 @@ class IndexNode extends IndexedStoreObject {
 	/* field definitions */
 	private static final int EntriesFieldOffset = 64;
 	private static final int EntriesFieldSize = SIZE - EntriesFieldOffset;
-	private static final FieldDef NodeType        = new FieldDef(FieldDef.F_INT  ,  2, 2);
-	private static final FieldDef AnchorAddress   = new FieldDef(FieldDef.F_BYTES,  4, 4);
-	private static final FieldDef ParentAddress   = new FieldDef(FieldDef.F_BYTES,  8, 4);
+	private static final FieldDef NodeType = new FieldDef(FieldDef.F_INT, 2, 2);
+	private static final FieldDef AnchorAddress = new FieldDef(FieldDef.F_BYTES, 4, 4);
+	private static final FieldDef ParentAddress = new FieldDef(FieldDef.F_BYTES, 8, 4);
 	private static final FieldDef PreviousAddress = new FieldDef(FieldDef.F_BYTES, 12, 4);
-	private static final FieldDef NextAddress     = new FieldDef(FieldDef.F_BYTES, 16, 4);
-	private static final FieldDef NumberOfEntries = new FieldDef(FieldDef.F_INT,   20, 2);
-	private static final FieldDef UsedSpace       = new FieldDef(FieldDef.F_INT,   22, 2);
-	private static final FieldDef UsedSpaceMax    = new FieldDef(FieldDef.F_INT,   24, 2);
-	private static final FieldDef EntriesField    = new FieldDef(FieldDef.F_BYTES, EntriesFieldOffset, EntriesFieldSize);
+	private static final FieldDef NextAddress = new FieldDef(FieldDef.F_BYTES, 16, 4);
+	private static final FieldDef NumberOfEntries = new FieldDef(FieldDef.F_INT, 20, 2);
+	private static final FieldDef UsedSpace = new FieldDef(FieldDef.F_INT, 22, 2);
+	private static final FieldDef UsedSpaceMax = new FieldDef(FieldDef.F_INT, 24, 2);
+	private static final FieldDef EntriesField = new FieldDef(FieldDef.F_BYTES, EntriesFieldOffset, EntriesFieldSize);
 
 	/* field values */
 	private int nodeType;
@@ -49,10 +49,10 @@ class IndexNode extends IndexedStoreObject {
 
 	/* miscellaneous constants */
 	private static final int DescriptorLength = 6;
-	
+
 	/* cursors in this node */
 	private HashSet cursors = new HashSet();
-	
+
 	/**
 	 * Reconstructs a node from a field.
 	 */
@@ -115,19 +115,19 @@ class IndexNode extends IndexedStoreObject {
 	 * Compresses the space in the entries area of the node.
 	 */
 	private void compress() throws IndexedStoreException {
-	
+
 		/* some preliminaries */
 		int entriesLength = entriesField.length();
 		int descriptorBlockSize = numberOfEntries * DescriptorLength;
-	
+
 		/* need to make a copy of the entries in the area, this will compress it */
 		Field f2 = new Field(entriesField.length());
 		copyEntries(entriesField, 0, numberOfEntries, f2);
-	
+
 		/* copy the entries area back to the node and modify the usedSpaceMax to reflect the compression */
 		entriesField.put(f2.get());
 		usedSpaceMax = usedSpace;
-	
+
 		/* clear the space in the between the descriptor array and the entries heap */
 		int freeBlockSize = entriesLength - (descriptorBlockSize + usedSpaceMax);
 		Field f3 = entriesField.subfield(descriptorBlockSize, freeBlockSize);
@@ -153,31 +153,31 @@ class IndexNode extends IndexedStoreObject {
 	 * low end and a heap of (key,value) pairs at the high end.
 	 */
 	private static int copyEntries(Field sourceField, int sourceIndex, int numberOfEntries, Field targetField) {
-	
+
 		Pointer tDescriptor = targetField.pointTo(0);
 		Pointer sDescriptor = sourceField.pointTo(sourceIndex * DescriptorLength);
 		int tEntryOffset = targetField.length();
-	
+
 		// for each descriptor make a new one in the new area and copy its (key,value) entry
 		for (int i = 0; i < numberOfEntries; i++) {
-	
+
 			// extract information from old descriptor
 			int sEntryOffset = sDescriptor.getField(0, 2).getUInt();
 			int keyLength = sDescriptor.getField(2, 2).getUInt();
 			int valueLength = sDescriptor.getField(4, 2).getUInt();
 			int entryLength = keyLength + valueLength;
 			Field sEntry = sourceField.subfield(sEntryOffset, entryLength);
-	
+
 			// copy the (key,value) entry from the old to the new space
 			tEntryOffset -= entryLength;
 			Field tEntry = targetField.subfield(tEntryOffset, entryLength);
 			tEntry.put(sEntry.get());
-	
+
 			// create a new descriptor
 			tDescriptor.getField(0, 2).put(tEntryOffset);
 			tDescriptor.getField(2, 2).put(keyLength);
 			tDescriptor.getField(4, 2).put(valueLength);
-	
+
 			// on to the next one
 			tDescriptor.inc(DescriptorLength);
 			sDescriptor.inc(DescriptorLength);
@@ -252,7 +252,7 @@ class IndexNode extends IndexedStoreObject {
 			cursor.set(address, 0);
 		}
 	}
-	
+
 	/**
 	 * Returns the index of the first entry greater than a key.
 	 */
@@ -288,7 +288,7 @@ class IndexNode extends IndexedStoreObject {
 			cursor.set(address, i);
 		}
 	}
-	
+
 	/**
 	 * Returns the index of the last entry less than a key.
 	 */
@@ -311,7 +311,7 @@ class IndexNode extends IndexedStoreObject {
 	ObjectAddress getAnchorAddress() {
 		return anchorAddress;
 	}
-	
+
 	/**
 	 * Returns the descriptor field for the node entry at a given index.
 	 */
@@ -341,17 +341,16 @@ class IndexNode extends IndexedStoreObject {
 	 * Returns a Field covering the key for an entry at a given index.
 	 */
 	private Field getKeyField(int i) {
-//		Field descriptor = getDescriptor(i);
-//		int keyOffset = descriptor.subfield(0, 2).getUInt();
-//		int keyLength = descriptor.subfield(2, 2).getUInt();
-//		return entriesField.subfield(keyOffset, keyLength);
+		//		Field descriptor = getDescriptor(i);
+		//		int keyOffset = descriptor.subfield(0, 2).getUInt();
+		//		int keyLength = descriptor.subfield(2, 2).getUInt();
+		//		return entriesField.subfield(keyOffset, keyLength);
 		//above is the original code that created three garbage field objects
 		//below is the optimized code that only creates one field object
 		int descriptorOff = i * DescriptorLength;
 		Buffer buffer = entriesField.buffer;
-		return entriesField.subfield(
-			buffer.getUInt(descriptorOff, 2),//these bytes hold the key offset
-			buffer.getUInt(descriptorOff+2, 2));//these bytes hold the key length
+		return entriesField.subfield(buffer.getUInt(descriptorOff, 2), //these bytes hold the key offset
+				buffer.getUInt(descriptorOff + 2, 2));//these bytes hold the key length
 	}
 
 	/**
@@ -373,6 +372,7 @@ class IndexNode extends IndexedStoreObject {
 			return new byte[0];
 		return getKey(0);
 	}
+
 	/**
 	 * Returns the minimum size of this object's instance -- including its type field.
 	 * Subclasses should override.
@@ -380,7 +380,7 @@ class IndexNode extends IndexedStoreObject {
 	protected int getMinimumSize() {
 		return SIZE;
 	}
-	
+
 	ObjectAddress getNextAddress() {
 		return nextAddress;
 	}
@@ -420,11 +420,11 @@ class IndexNode extends IndexedStoreObject {
 	protected int getRequiredType() {
 		return TYPE;
 	}
-	
+
 	private int getUsedSpace() {
 		return usedSpace;
 	}
-	
+
 	/**
 	 * Returns the value for an entry at a given index.
 	 */
@@ -507,7 +507,7 @@ class IndexNode extends IndexedStoreObject {
 			}
 			return;
 		}
-	
+
 		/* place the value and key fields into the space */
 		compress(neededSpace);
 		Pointer p = entries.pointTo(entriesLength - usedSpaceMax);
@@ -515,16 +515,16 @@ class IndexNode extends IndexedStoreObject {
 		p.dec(key.length).put(key);
 		usedSpaceMax += keyValueLength;
 		usedSpace += keyValueLength;
-	
+
 		/* create a hole in the descriptor area for a new descriptor */
 		Field newDescriptor = getDescriptorArray().insert(i);
 		numberOfEntries++;
-	
+
 		/* create a new descriptor */
 		newDescriptor.subfield(0, 2).put(entriesLength - usedSpaceMax);
 		newDescriptor.subfield(2, 2).put(key.length);
 		newDescriptor.subfield(4, 2).put(value.length);
-	
+
 		/* update the parent key for this node if this was the 0th entry */
 		if (i == 0 && !parentAddress.isNull()) {
 			IndexNode parent = acquireNode(parentAddress);
@@ -554,7 +554,7 @@ class IndexNode extends IndexedStoreObject {
 	boolean isInterior() {
 		return (nodeType == InteriorNode);
 	}
-	
+
 	boolean isLeaf() {
 		return (nodeType == LeafNode);
 	}
@@ -592,17 +592,17 @@ class IndexNode extends IndexedStoreObject {
 	 * result in the node becoming empty.  The caller will need to take steps to plan for this.
 	 */
 	void removeEntry(int i) throws IndexedStoreException {
-	
+
 		/* remove the (key,value) entry */
 		byte[] key = getKey(i);
 		Field f = getKeyValueField(i);
 		f.clear();
 		usedSpace -= f.length();
-	
+
 		/* remove the descriptor */
 		getDescriptorArray().remove(i);
 		numberOfEntries--;
-	
+
 		/* if the 0th entry was removed, need to update the parent node with the new "low key" */
 		if (i == 0 && !parentAddress.isNull()) {
 			IndexNode parent = acquireNode(parentAddress);
@@ -613,7 +613,7 @@ class IndexNode extends IndexedStoreObject {
 			}
 			parent.release();
 		}
-	
+
 		/* Notify any cursors and the anchor */
 		Object[] cursorArray = cursors.toArray();
 		for (int j = 0; j < cursorArray.length; j++) {
@@ -675,24 +675,25 @@ class IndexNode extends IndexedStoreObject {
 		this.usedSpaceMax = usedSpaceMax;
 		setChanged();
 	}
+
 	/**
 	 * Splits an index node.  This split results in a new "low key" being placed in the parent.  This may
 	 * cause a parent node to split as well.  Splits eventually propagate to the root node, cause it 
 	 * to split and a new root node to be created.
 	 */
 	private ObjectAddress split() throws IndexedStoreException {
-	
+
 		/* Nodes can only be split if there are at least 2 entries */
 		int n = numberOfEntries;
 		if (n < 2) {
 			throw new IndexedStoreException(IndexedStoreException.IndexNodeNotSplit);
 		}
-	
+
 		/* 
-		If this is a root node, need to make it an interior node and create a new parent root node.
-		Also need to modify the index anchor to indicate the new root node, and place this node (the old root node) 
-		into the new root node.  The new root node can always accept its first entry without splitting.
-		*/
+		 If this is a root node, need to make it an interior node and create a new parent root node.
+		 Also need to modify the index anchor to indicate the new root node, and place this node (the old root node) 
+		 into the new root node.  The new root node can always accept its first entry without splitting.
+		 */
 		if (isRoot()) {
 			ObjectAddress newRootNodeAddress = insertObject(new IndexNode(anchorAddress));
 			parentAddress = newRootNodeAddress;
@@ -704,13 +705,13 @@ class IndexNode extends IndexedStoreObject {
 			anchor.setRootNodeAddress(newRootNodeAddress);
 			anchor.release();
 		}
-	
+
 		/*
-		Get a new node, fill it with half the entries from this node, then compress this node.  The
-		new node is created with current parent. However, the node at the current parentAddress may
-		split when the key is added to it for the new node.  Non-leaf nodes compensate for this
-		by updating the newNode's parentAddress during the insertion.
-		*/
+		 Get a new node, fill it with half the entries from this node, then compress this node.  The
+		 new node is created with current parent. However, the node at the current parentAddress may
+		 split when the key is added to it for the new node.  Non-leaf nodes compensate for this
+		 by updating the newNode's parentAddress during the insertion.
+		 */
 		ObjectAddress newNodeAddress = insertObject(new IndexNode(anchorAddress, parentAddress));
 		IndexNode newNode = acquireNode(newNodeAddress);
 		Field f1 = entriesField;
@@ -722,11 +723,11 @@ class IndexNode extends IndexedStoreObject {
 		usedSpace = usedSpace - newNode.getUsedSpace();
 		numberOfEntries = n - k;
 		compress();
-	
+
 		/*
-		If this was a leaf node, need to set the previous and next pointers of the this node, 
-		the new node, and the old "next" node.
-		*/
+		 If this was a leaf node, need to set the previous and next pointers of the this node, 
+		 the new node, and the old "next" node.
+		 */
 		if (isLeaf()) {
 			newNode.setNodeType(LeafNode);
 			newNode.setNextAddress(nextAddress);
@@ -738,11 +739,11 @@ class IndexNode extends IndexedStoreObject {
 			}
 			nextAddress = newNodeAddress;
 		}
-	
+
 		/*
-		If this is a non-leaf node, need to update the parent addresses of any child nodes
-		of the new node.  k is the number of entries in the new node.
-		*/
+		 If this is a non-leaf node, need to update the parent addresses of any child nodes
+		 of the new node.  k is the number of entries in the new node.
+		 */
 		if (!isLeaf()) {
 			for (int i = 0; i < k; i++) {
 				ObjectAddress childAddress = new ObjectAddress(newNode.getValue(i));
@@ -751,18 +752,18 @@ class IndexNode extends IndexedStoreObject {
 				childNode.release();
 			}
 		}
-	
+
 		/*
-		Need to insert the new node's low key and address into the parent.  This may
-		result in the parent splitting and having to update the parent address of this node.
-		*/
+		 Need to insert the new node's low key and address into the parent.  This may
+		 result in the parent splitting and having to update the parent address of this node.
+		 */
 		IndexNode parentNode = acquireNode(parentAddress);
 		parentNode.insertKeyForChild(newNodeAddress, newNode.getLowKey());
 		parentNode.release();
-	
+
 		/* Clean up. */
 		newNode.release();
-	
+
 		/* Notify any cursors and the anchor */
 		Object[] cursorArray = cursors.toArray();
 		for (int j = 0; j < cursorArray.length; j++) {
@@ -805,13 +806,13 @@ class IndexNode extends IndexedStoreObject {
 	 * The caller must be able to recognize that the node has split and compensate for that.
 	 */
 	private void updateEntry(int i, byte[] key, byte[] value) throws IndexedStoreException {
-	
+
 		/*
-		If the node needs to be split, split it and then attempt the update again.  Note that if
-		this is a non-leaf node the value is a child address.  Unlike the insert of a key/value
-		pair, the child is already in the node, thus a split will update its parent address properly
-		and there is no need to handle that special case.
-		*/
+		 If the node needs to be split, split it and then attempt the update again.  Note that if
+		 this is a non-leaf node the value is a child address.  Unlike the insert of a key/value
+		 pair, the child is already in the node, thus a split will update its parent address properly
+		 and there is no need to handle that special case.
+		 */
 		Field entries = entriesField;
 		int entriesLength = entries.length();
 		int newKeyValueLength = key.length + value.length;
@@ -829,27 +830,27 @@ class IndexNode extends IndexedStoreObject {
 			}
 			return;
 		}
-	
+
 		/*
-		The node has enough free space to do the update.
-		Remove the old value and key fields from the space.
-		Clear the space used by the old value.
-		We can do this just by modifying the descriptor.
-		*/
+		 The node has enough free space to do the update.
+		 Remove the old value and key fields from the space.
+		 Clear the space used by the old value.
+		 We can do this just by modifying the descriptor.
+		 */
 		Field keyValueField = getKeyValueField(i);
 		keyValueField.clear();
 		Field descriptor = getDescriptor(i);
 		descriptor.clear();
 		usedSpace -= oldKeyValueLength;
 		compress(newKeyValueLength);
-	
+
 		/* place the value and key fields into the space */
 		Pointer p = entries.pointTo(entriesLength - usedSpaceMax);
 		p.dec(value.length).put(value);
 		p.dec(key.length).put(key);
 		usedSpaceMax += newKeyValueLength;
 		usedSpace += newKeyValueLength;
-	
+
 		/* update the descriptor */
 		descriptor.subfield(0, 2).put(entriesLength - usedSpaceMax);
 		descriptor.subfield(2, 2).put(key.length);

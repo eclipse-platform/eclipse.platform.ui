@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,34 +21,38 @@ public class ArrayEnumeration implements Enumeration {
 	int index;
 	int lastElement;
 	Object[] elements;
-/**
- * Returns new array enumeration over the given object array
- */
-public ArrayEnumeration(Object[] elements) {
-	this(elements, 0, elements.length - 1);
-}
-/**
- * Returns new array enumeration over the given object array
- */
-public ArrayEnumeration(Object[] elements, int firstElement, int lastElement) {
-	super();
-	this.elements = elements;
-	index = firstElement;
-	this.lastElement = lastElement;
-}
-/**
- * Returns true if this enumeration contains more elements.
- */
-public boolean hasMoreElements() {
-	return elements != null && index <= lastElement;
-}
-/**
- * Returns the next element of this enumeration.
- * @exception  NoSuchElementException  if no more elements exist.
- */
-public Object nextElement() throws NoSuchElementException {
-	if (!hasMoreElements())
-		throw new NoSuchElementException();
-	return elements[index++];
-}
+
+	/**
+	 * Returns new array enumeration over the given object array
+	 */
+	public ArrayEnumeration(Object[] elements) {
+		this(elements, 0, elements.length - 1);
+	}
+
+	/**
+	 * Returns new array enumeration over the given object array
+	 */
+	public ArrayEnumeration(Object[] elements, int firstElement, int lastElement) {
+		super();
+		this.elements = elements;
+		index = firstElement;
+		this.lastElement = lastElement;
+	}
+
+	/**
+	 * Returns true if this enumeration contains more elements.
+	 */
+	public boolean hasMoreElements() {
+		return elements != null && index <= lastElement;
+	}
+
+	/**
+	 * Returns the next element of this enumeration.
+	 * @exception  NoSuchElementException  if no more elements exist.
+	 */
+	public Object nextElement() throws NoSuchElementException {
+		if (!hasMoreElements())
+			throw new NoSuchElementException();
+		return elements[index++];
+	}
 }

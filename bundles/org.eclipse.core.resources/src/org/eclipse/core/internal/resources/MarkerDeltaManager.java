@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -39,13 +39,14 @@ class MarkerDeltaManager {
 				result = MarkerDelta.merge(result, batches[i]);
 		return result;
 	}
+
 	/**
 	 * Flushes all delta batches up to but not including the given start Id.
 	 */
 	protected void resetDeltas(long startId) {
 		//find offset of first batch to keep
 		int startOffset = 0;
-		for(;startOffset<nextFree;startOffset++)
+		for (; startOffset < nextFree; startOffset++)
 			if (startIds[startOffset] >= startId)
 				break;
 		if (startOffset == 0)
@@ -58,7 +59,7 @@ class MarkerDeltaManager {
 			newBatches = new Map[DEFAULT_SIZE];
 		}
 		//copy and compact into the new array
-		int remaining = nextFree-startOffset;
+		int remaining = nextFree - startOffset;
 		System.arraycopy(startIds, startOffset, newIds, 0, remaining);
 		System.arraycopy(batches, startOffset, newBatches, 0, remaining);
 		//clear the end of the array
@@ -68,11 +69,12 @@ class MarkerDeltaManager {
 		batches = newBatches;
 		nextFree = remaining;
 	}
+
 	protected Map newGeneration(long start) {
 		int len = startIds.length;
 		if (nextFree >= len) {
-			long[] newIds = new long[len*2];
-			Map[] newBatches = new Map[len*2];
+			long[] newIds = new long[len * 2];
+			Map[] newBatches = new Map[len * 2];
 			System.arraycopy(startIds, 0, newIds, 0, len);
 			System.arraycopy(batches, 0, newBatches, 0, len);
 			startIds = newIds;

@@ -9,9 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.resources;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.events.InternalBuilder;
 import java.util.Map;
+
 /**
  * The abstract base class for all incremental project builders. This class
  * provides the infrastructure for defining a builder and fulfills the contract
@@ -63,6 +65,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * @since 3.0
 	 */
 	public static final int CLEAN_BUILD = 15;
+
 	/**
 	 * Runs this builder in the specified manner. Subclasses should implement
 	 * this method to do the processing they require.
@@ -121,6 +124,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * @see IProject#build(int, String, Map, IProgressMonitor)
 	 */
 	protected abstract IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException;
+
 	/**
 	 * Clean is an opportunity for a builder to discard any additional state
 	 * that has been computed as a result of previous builds. The platform will
@@ -152,6 +156,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 */
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 	}
+
 	/**
 	 * Requests that this builder forget any state it may be retaining regarding
 	 * previously built states. Typically this means that the next time the
@@ -161,6 +166,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	public final void forgetLastBuiltState() {
 		super.forgetLastBuiltState();
 	}
+
 	/**
 	 * Returns the resource delta recording the changes in the given project
 	 * since the last time this builder was run. <code>null</code> is returned
@@ -197,6 +203,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	public final IResourceDelta getDelta(IProject project) {
 		return super.getDelta(project);
 	}
+
 	/**
 	 * Returns the project for which this builder is defined.
 	 * 
@@ -205,6 +212,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	public final IProject getProject() {
 		return super.getProject();
 	}
+
 	/**
 	 * Returns whether the given project has already been built during this
 	 * build iteration.
@@ -225,6 +233,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	public final boolean hasBeenBuilt(IProject project) {
 		return super.hasBeenBuilt(project);
 	}
+
 	/**
 	 * Returns whether an interrupt request has been made for this build.
 	 * Background autobuild is interrupted when another thread tries to modify
@@ -242,6 +251,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	public final boolean isInterrupted() {
 		return super.isInterrupted();
 	}
+
 	/**
 	 * Indicates that this builder made changes that affect a project that
 	 * preceeds this project in the currently executing build order, and thus a
@@ -258,6 +268,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	public final void needRebuild() {
 		super.needRebuild();
 	}
+
 	/**
 	 * Sets initialization data for this builder.
 	 * <p>
@@ -286,6 +297,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 */
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 	}
+
 	/**
 	 * Informs this builder that it is being started by the build management
 	 * infrastructure. By the time this method is run, the builder's project is

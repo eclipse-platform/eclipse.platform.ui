@@ -8,6 +8,7 @@
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.core.internal.refresh;
+
 import java.util.ArrayList;
 
 import org.eclipse.core.internal.utils.Policy;
@@ -57,6 +58,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 	 */
 	private static final long MAX_DURATION = 100;
 	private static final long HOT_ROOT_DECAY = 90000;
+
 	/**
 	 * Creates a new polling monitor.
 	 */
@@ -68,6 +70,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		resourceRoots = new ArrayList();
 		toRefresh = new ArrayList();
 	}
+
 	/**
 	 * Add the given root to the list of roots that need to be polled.
 	 */
@@ -75,6 +78,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		resourceRoots.add(root);
 		schedule(MIN_FREQUENCY);
 	}
+
 	/**
 	 * Polls the filesystem under the root containers for changes.
 	 */
@@ -84,11 +88,11 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		if (toRefresh.isEmpty()) {
 			beginIteration();
 			if (RefreshManager.DEBUG)
-				System.out.println(RefreshManager.DEBUG_PREFIX+"New polling iteration on " + toRefresh.size() + " roots"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println(RefreshManager.DEBUG_PREFIX + "New polling iteration on " + toRefresh.size() + " roots"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		final int oldSize = toRefresh.size();
 		if (RefreshManager.DEBUG)
-			System.out.println(RefreshManager.DEBUG_PREFIX+"started polling"); //$NON-NLS-1$
+			System.out.println(RefreshManager.DEBUG_PREFIX + "started polling"); //$NON-NLS-1$
 		//refresh the hot root if applicable
 		if (time - hotRootTime > HOT_ROOT_DECAY)
 			hotRoot = null;
@@ -99,22 +103,23 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		while (!toRefresh.isEmpty()) {
 			if (monitor.isCanceled())
 				break;
-			poll((IResource)toRefresh.remove(toRefresh.size()-1));
+			poll((IResource) toRefresh.remove(toRefresh.size() - 1));
 			//stop the iteration if we have exceed maximum duration
 			if (System.currentTimeMillis() - loopStart > MAX_DURATION)
 				break;
 		}
 		time = System.currentTimeMillis() - time;
 		if (RefreshManager.DEBUG)
-			System.out.println(RefreshManager.DEBUG_PREFIX+"polled " + (oldSize-toRefresh.size()) + " roots in " + time + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			System.out.println(RefreshManager.DEBUG_PREFIX + "polled " + (oldSize - toRefresh.size()) + " roots in " + time + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		//reschedule automatically - shouldRun will cancel if not needed
 		//make sure it doesn't run more than 5% of the time
-		long delay = Math.max(MIN_FREQUENCY, time*30);
+		long delay = Math.max(MIN_FREQUENCY, time * 30);
 		if (RefreshManager.DEBUG)
-			System.out.println(RefreshManager.DEBUG_PREFIX+"rescheduling polling job in: " + delay/1000 + " seconds"); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println(RefreshManager.DEBUG_PREFIX + "rescheduling polling job in: " + delay / 1000 + " seconds"); //$NON-NLS-1$ //$NON-NLS-2$
 		schedule(delay);
 		return Status.OK_STATUS;
 	}
+
 	/**
 	 * Instructs the polling job to do one complete iteration of all workspace roots, and
 	 * then discard itself. This is used when
@@ -132,6 +137,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		}
 		schedule(MIN_FREQUENCY);
 	}
+
 	/**
 	 * @param hotRoot2
 	 */
@@ -143,8 +149,9 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		hotRoot = resource;
 		hotRootTime = System.currentTimeMillis();
 		if (RefreshManager.DEBUG)
-			System.out.println(RefreshManager.DEBUG_PREFIX+"new hot root: " + resource); //$NON-NLS-1$
+			System.out.println(RefreshManager.DEBUG_PREFIX + "new hot root: " + resource); //$NON-NLS-1$
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#shouldRun
 	 */
@@ -152,6 +159,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		//only run if there is something to refresh
 		return !resourceRoots.isEmpty() || !toRefresh.isEmpty();
 	}
+
 	/**
 	 * Copies the resources to be polled into the list of resources
 	 * to refresh this iteration. This method is synchronized to
@@ -162,13 +170,14 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		if (hotRoot != null)
 			toRefresh.remove(hotRoot);
 	}
+
 	/*
 	 * @see org.eclipse.core.resources.refresh.IRefreshMonitor#unmonitor(IContainer)
 	 */
 	public synchronized void unmonitor(IResource resource) {
-		if (resource == null) 
+		if (resource == null)
 			resourceRoots.clear();
-		else 
+		else
 			resourceRoots.remove(resource);
 		if (resourceRoots.isEmpty())
 			cancel();

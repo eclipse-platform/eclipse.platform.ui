@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public abstract class StoredObject extends Observable implements Referable, Inse
 	protected StoredObject() {
 		type = getRequiredType();
 	}
-	
+
 	/** 
 	 * Constructs a new instance from a field.
 	 */
@@ -96,7 +96,7 @@ public abstract class StoredObject extends Observable implements Referable, Inse
 	public final ObjectStore getStore() {
 		return store;
 	}
-	
+
 	/**
 	 * Returns the address of the object.
 	 * Subclasses must not override.
@@ -112,16 +112,17 @@ public abstract class StoredObject extends Observable implements Referable, Inse
 	public final void setAddress(ObjectAddress address) {
 		this.address = address;
 	}
-	
+
 	/**
 	 * Places the contents of the buffer into the members.
 	 * Subclasses should implement and call super.
 	 */
 	protected void extractValues(Field f) throws ObjectStoreException {
 		type = f.subfield(TYPE_OFFSET, TYPE_LENGTH).getInt();
-		if (type != getRequiredType()) throw new ObjectStoreException(ObjectStoreException.ObjectTypeFailure);
-	}	
-	
+		if (type != getRequiredType())
+			throw new ObjectStoreException(ObjectStoreException.ObjectTypeFailure);
+	}
+
 	/**
 	 * Places the contents of the fields into the buffer.
 	 * Subclasses should implement and call super.
@@ -137,8 +138,8 @@ public abstract class StoredObject extends Observable implements Referable, Inse
 	 */
 	protected int getMaximumSize() {
 		return getMinimumSize();
-	}	
-	
+	}
+
 	/**
 	 * Returns the minimum size of this object's instance -- including its type field.
 	 * Subclasses should override.
@@ -146,7 +147,7 @@ public abstract class StoredObject extends Observable implements Referable, Inse
 	protected int getMinimumSize() {
 		return 2;
 	}
-	
+
 	/**
 	 * Returns the actual size of this object's instance -- including its type field.
 	 * Subclasses should override.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,62 +26,65 @@ import java.io.PrintWriter;
  * @see IStatus
  */
 public class ResourceException extends CoreException {
-public ResourceException(int code, IPath path, String message, Throwable exception) {
-	super(new ResourceStatus(code, path, message, exception));
-}
-/**
- * Constructs a new exception with the given status object.
- *
- * @param status the status object to be associated with this exception
- * @see IStatus
- */
-public ResourceException(IStatus status) {
-	super(status);
-}
+	public ResourceException(int code, IPath path, String message, Throwable exception) {
+		super(new ResourceStatus(code, path, message, exception));
+	}
 
-/**
- * Prints a stack trace out for the exception, and
- * any nested exception that it may have embedded in
- * its Status object.
- */
-public void printStackTrace() {
-	printStackTrace(System.err);
-}
-/**
- * Prints a stack trace out for the exception, and
- * any nested exception that it may have embedded in
- * its Status object.
- */
-public void printStackTrace(PrintStream output) {
-	synchronized (output) {
-		IStatus status = getStatus();
-		if (status.getException() != null) {
-			String path = "()"; //$NON-NLS-1$
-			if (status instanceof IResourceStatus)
-				path = "(" + ((IResourceStatus)status).getPath() + ")"	; //$NON-NLS-1$ //$NON-NLS-2$
-			output.print(getClass().getName() + path + "[" + status.getCode() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
-			status.getException().printStackTrace(output);
-		} else
-			super.printStackTrace(output);
+	/**
+	 * Constructs a new exception with the given status object.
+	 *
+	 * @param status the status object to be associated with this exception
+	 * @see IStatus
+	 */
+	public ResourceException(IStatus status) {
+		super(status);
 	}
-}
-/**
- * Prints a stack trace out for the exception, and
- * any nested exception that it may have embedded in
- * its Status object.
- */
-public void printStackTrace(PrintWriter output) {
-	synchronized (output) {
-		IStatus status = getStatus();
-		if (status.getException() != null) {
-			String path = "()"; //$NON-NLS-1$
-			if (status instanceof IResourceStatus)
-				path = "(" + ((IResourceStatus)status).getPath() + ")"	; //$NON-NLS-1$ //$NON-NLS-2$
-			output.print(getClass().getName() + path + "[" + status.getCode() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
-			status.getException().printStackTrace(output);
-		} else
-			super.printStackTrace(output);
+
+	/**
+	 * Prints a stack trace out for the exception, and
+	 * any nested exception that it may have embedded in
+	 * its Status object.
+	 */
+	public void printStackTrace() {
+		printStackTrace(System.err);
 	}
-}
+
+	/**
+	 * Prints a stack trace out for the exception, and
+	 * any nested exception that it may have embedded in
+	 * its Status object.
+	 */
+	public void printStackTrace(PrintStream output) {
+		synchronized (output) {
+			IStatus status = getStatus();
+			if (status.getException() != null) {
+				String path = "()"; //$NON-NLS-1$
+				if (status instanceof IResourceStatus)
+					path = "(" + ((IResourceStatus) status).getPath() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+				output.print(getClass().getName() + path + "[" + status.getCode() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
+				status.getException().printStackTrace(output);
+			} else
+				super.printStackTrace(output);
+		}
+	}
+
+	/**
+	 * Prints a stack trace out for the exception, and
+	 * any nested exception that it may have embedded in
+	 * its Status object.
+	 */
+	public void printStackTrace(PrintWriter output) {
+		synchronized (output) {
+			IStatus status = getStatus();
+			if (status.getException() != null) {
+				String path = "()"; //$NON-NLS-1$
+				if (status instanceof IResourceStatus)
+					path = "(" + ((IResourceStatus) status).getPath() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+				output.print(getClass().getName() + path + "[" + status.getCode() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
+				status.getException().printStackTrace(output);
+			} else
+				super.printStackTrace(output);
+		}
+	}
 
 }

@@ -25,7 +25,7 @@ public class InternalTeamHook {
 	 * Internal implementation of TeamHook#setRulesFor(IProject,IResourceRuleFactory)
 	 */
 	protected void setRuleFactory(IProject project, IResourceRuleFactory factory) {
-		Workspace workspace = ((Workspace)project.getWorkspace());
-		((Rules)workspace.getRuleFactory()).setRuleFactory(project, factory);
+		Workspace workspace = ((Workspace) project.getWorkspace());
+		((Rules) workspace.getRuleFactory()).setRuleFactory(project, factory);
 	}
 }

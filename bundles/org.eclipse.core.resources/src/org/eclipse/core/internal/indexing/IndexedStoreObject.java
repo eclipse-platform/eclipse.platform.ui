@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ abstract class IndexedStoreObject extends StoredObject {
 	public IndexedStoreObject() {
 		super();
 	}
-	
+
 	/**
 	 * Constructs an object from bytes that came from the store.
 	 * These bytes include the 2 byte type field.
@@ -23,21 +23,21 @@ abstract class IndexedStoreObject extends StoredObject {
 	public IndexedStoreObject(Field f, ObjectStore store, ObjectAddress address) throws ObjectStoreException {
 		super(f, store, address);
 	}
-	
+
 	/**
 	 * Acquires an anchor.
 	 */
 	protected final IndexAnchor acquireAnchor(ObjectAddress address) throws IndexedStoreException {
 		return (IndexAnchor) acquireObject(address);
 	}
-	
+
 	/**
 	 * Acquires a node.
 	 */
 	protected final IndexNode acquireNode(ObjectAddress address) throws IndexedStoreException {
 		return (IndexNode) acquireObject(address);
 	}
-	
+
 	/**
 	 * Acquires an object.
 	 */
@@ -50,7 +50,7 @@ abstract class IndexedStoreObject extends StoredObject {
 		}
 		return object;
 	}
-	
+
 	/** 
 	 * Inserts a new object into my store. Subclasses must not override.
 	 */
@@ -62,7 +62,7 @@ abstract class IndexedStoreObject extends StoredObject {
 			throw new IndexedStoreException(IndexedStoreException.ObjectNotStored, e);
 		}
 	}
-	
+
 	/**
 	 * Releases this object.  Subclasses must not override.
 	 */
@@ -73,7 +73,7 @@ abstract class IndexedStoreObject extends StoredObject {
 			throw new IndexedStoreException(IndexedStoreException.ObjectNotReleased, e);
 		}
 	}
-	
+
 	/** 
 	 * Removes an object from my store.  Subclasses must not override.
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ public class Index {
 	private Index() {
 		super();
 	}
+
 	/**
 	 * Index constructor.
 	 */
@@ -33,6 +34,7 @@ public class Index {
 		this.store = store;
 		this.anchorAddress = anchorAddress;
 	}
+
 	/**
 	 * Returns the number of entries in the index.
 	 */
@@ -42,6 +44,7 @@ public class Index {
 		anchor.release();
 		return n;
 	}
+
 	/**
 	 * Returns the number of nodes in the index.
 	 */
@@ -51,6 +54,7 @@ public class Index {
 		anchor.release();
 		return n;
 	}
+
 	/**
 	 * Returns a vector of ObjectIDs whose keys match the key given in the index.  
 	 * This assumes that the underlying index has values that can be converted 
@@ -67,24 +71,25 @@ public class Index {
 		cursor.close();
 		return vector;
 	}
+
 	/**
 	 * Returns a vector of ObjectIDs whose keys match the
 	 * key given in the index.  This assumes that the underlying 
 	 * index has values that can be converted to ObjectIDs.
 	 */
-	public synchronized Vector getObjectIdentifiersMatching(String key)
-		throws IndexedStoreException {
+	public synchronized Vector getObjectIdentifiersMatching(String key) throws IndexedStoreException {
 		return getObjectIdentifiersMatching(Convert.toUTF8(key));
 	}
+
 	/**
 	 * Returns a vector of ObjectIDs whose keys match the
 	 * key given in the index.  This assumes that the underlying 
 	 * index has values that can be converted to ObjectIDs.
 	 */
-	public synchronized Vector getObjectIdentifiersMatching(Insertable key)
-		throws IndexedStoreException {
+	public synchronized Vector getObjectIdentifiersMatching(Insertable key) throws IndexedStoreException {
 		return getObjectIdentifiersMatching(key.toByteArray());
 	}
+
 	/**
 	 * Inserts an entry into an index.  The key and the value are byte arrays.  
 	 * Keys cannot be more than 1024 bytes in length.  Values must not 
@@ -100,31 +105,39 @@ public class Index {
 		anchor.insert(key, value);
 		anchor.release();
 	}
+
 	public synchronized void insert(byte[] key, String value) throws IndexedStoreException {
 		insert(key, Convert.toUTF8(value));
 	}
+
 	public synchronized void insert(byte[] key, Insertable value) throws IndexedStoreException {
 		insert(key, value.toByteArray());
 	}
+
 	public synchronized void insert(String key, byte[] value) throws IndexedStoreException {
 		insert(Convert.toUTF8(key), value);
 	}
+
 	public synchronized void insert(String key, String value) throws IndexedStoreException {
 		insert(Convert.toUTF8(key), Convert.toUTF8(value));
 	}
+
 	public synchronized void insert(String key, Insertable value) throws IndexedStoreException {
 		insert(Convert.toUTF8(key), value.toByteArray());
 	}
+
 	public synchronized void insert(Insertable key, byte[] value) throws IndexedStoreException {
 		insert(key.toByteArray(), value);
 	}
+
 	public synchronized void insert(Insertable key, String value) throws IndexedStoreException {
 		insert(key.toByteArray(), Convert.toUTF8(value));
 	}
-	public synchronized void insert(Insertable key, Insertable value)
-		throws IndexedStoreException {
+
+	public synchronized void insert(Insertable key, Insertable value) throws IndexedStoreException {
 		insert(key.toByteArray(), value.toByteArray());
 	}
+
 	/**
 	 * Returns a cursor for this index.  The cursor is initially in the unset state
 	 * and should be positioned using "find" before being used.
@@ -133,6 +146,7 @@ public class Index {
 		IndexCursor c = new IndexCursor(store, anchorAddress);
 		return c;
 	}
+
 	/**
 	 * Removes all entries that have a key that is equal to the supplied key.
 	 */
@@ -144,6 +158,7 @@ public class Index {
 		}
 		c.close();
 	}
+
 	/**
 	 * Removes all entries that have a key that begins with the supplied prefix.
 	 */

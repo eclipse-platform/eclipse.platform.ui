@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		//accumulate characters and process them when endElement is reached
 		charBuffer.append(chars, offset, length);
 	}
+
 	/**
 	 * End of an element that is part of a build command
 	 */
@@ -78,6 +79,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			state = S_BUILD_SPEC;
 		}
 	}
+
 	/**
 	 * End of an element that is part of a build spec
 	 */
@@ -93,6 +95,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			projectDescription.setBuildSpec(commandArray);
 		}
 	}
+
 	/**
 	 * End of a dictionary element
 	 */
@@ -108,6 +111,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			state = S_BUILD_COMMAND_ARGUMENTS;
 		}
 	}
+
 	private void endDictionaryKey(String elementName) {
 		if (elementName.equals(KEY)) {
 			// There is a value place holder on the top of the stack and
@@ -126,6 +130,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			state = S_DICTIONARY;
 		}
 	}
+
 	private void endDictionaryValue(String elementName) {
 		if (elementName.equals(VALUE)) {
 			String newValue = charBuffer.toString();
@@ -140,6 +145,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			state = S_DICTIONARY;
 		}
 	}
+
 	/**
 	 * @see ContentHandler#endElement(String, String, String)
 	 */
@@ -174,7 +180,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					if (dictionaryArgs.isEmpty())
 						break;
 					// Below the hashMap on the stack, there is a BuildCommand.
-					 ((BuildCommand) objectStack.peek()).setArguments(dictionaryArgs);
+					((BuildCommand) objectStack.peek()).setArguments(dictionaryArgs);
 				}
 				break;
 			case S_BUILD_COMMAND :
@@ -203,14 +209,14 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					projectDescription.setDefaultCharset(charBuffer.toString());
 					state = S_PROJECT_DESC;
 				}
-				break;				
+				break;
 			case S_REFERENCED_PROJECT_NAME :
 				if (elementName.equals(PROJECT)) {
 					//top of stack is list of project references
 					// Referenced projects are just project names and, therefore,
 					// are also IResource names and cannot have leading/trailing 
 					// whitespace.
-					 ((ArrayList) objectStack.peek()).add(charBuffer.toString().trim());
+					((ArrayList) objectStack.peek()).add(charBuffer.toString().trim());
 					state = S_PROJECTS;
 				}
 				break;
@@ -219,7 +225,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					//top of stack is the build command
 					// A build command name is an extension id and
 					// cannot have leading/trailing whitespace.
-					 ((BuildCommand) objectStack.peek()).setName(charBuffer.toString().trim());
+					((BuildCommand) objectStack.peek()).setName(charBuffer.toString().trim());
 					state = S_BUILD_COMMAND;
 				}
 				break;
@@ -234,7 +240,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					//top of stack is list of nature names
 					// A nature name is an extension id and cannot
 					// have leading/trailing whitespace.
-					 ((ArrayList) objectStack.peek()).add(charBuffer.toString().trim());
+					((ArrayList) objectStack.peek()).add(charBuffer.toString().trim());
 					state = S_NATURES;
 				}
 				break;
@@ -250,6 +256,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		}
 		charBuffer.setLength(0);
 	}
+
 	/**
 	 * End this group of linked resources and add them to the project description.
 	 */
@@ -262,6 +269,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			projectDescription.setLinkDescriptions(linkedResources);
 		}
 	}
+
 	/**
 	 * End a single linked resource and add it to the HashMap.
 	 */
@@ -288,9 +296,10 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			}
 
 			// The HashMap of linked resources is the next thing on the stack
-			 ((HashMap) objectStack.peek()).put(link.getName(), link);
+			((HashMap) objectStack.peek()).put(link.getName(), link);
 		}
 	}
+
 	private void endLinkLocation(String elementName) {
 		if (elementName.equals(LOCATION)) {
 			// A link location is an IPath.  IPath segments cannot have
@@ -306,6 +315,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			state = S_LINK;
 		}
 	}
+
 	private void endLinkName(String elementName) {
 		if (elementName.equals(NAME)) {
 			// A link name is an IResource name.  IResource names
@@ -322,6 +332,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			state = S_LINK;
 		}
 	}
+
 	private void endLinkType(String elementName) {
 		if (elementName.equals(TYPE)) {
 			//FIXME we should handle this case by removing the entire link
@@ -346,6 +357,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			state = S_LINK;
 		}
 	}
+
 	/**
 	 * End of an element that is part of a nature list
 	 */
@@ -360,6 +372,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			projectDescription.setNatureIds(natureNames);
 		}
 	}
+
 	/**
 	 * End of an element that is part of a project references list
 	 */
@@ -377,12 +390,14 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		}
 		projectDescription.setReferencedProjects(projects);
 	}
+
 	/**
 	 * @see ErrorHandler#error(SAXParseException)
 	 */
 	public void error(SAXParseException error) throws SAXException {
 		log(error);
 	}
+
 	/**
 	 * @see ErrorHandler#fatalError(SAXParseException)
 	 */
@@ -392,14 +407,17 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		problems.add(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, message == null ? "" : message, error)); //$NON-NLS-1$
 		throw error;
 	}
+
 	protected void log(Exception ex) {
 		// ensure a null value is not passed as message to Status constructor (bug 42782)		
 		String message = ex.getMessage();
 		problems.add(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, message == null ? "" : message, ex)); //$NON-NLS-1$
 	}
+
 	private void parseProblem(String errorMessage) {
 		problems.add(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, errorMessage, null));
 	}
+
 	private void parseProjectDescription(String elementName) {
 		if (elementName.equals(NAME)) {
 			state = S_PROJECT_NAME;
@@ -412,7 +430,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		if (elementName.equals(CHARSET)) {
 			state = S_CHARSET;
 			return;
-		}		
+		}
 		if (elementName.equals(PROJECTS)) {
 			state = S_PROJECTS;
 			// Push an array list on the object stack to hold the name
@@ -445,6 +463,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			return;
 		}
 	}
+
 	public ProjectDescription read(InputSource input) {
 		problems = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, Policy.bind("projectDescriptionReader.failureReadingProjectDesc"), null); //$NON-NLS-1$
 		objectStack = new Stack();
@@ -478,6 +497,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				return projectDescription;
 		}
 	}
+
 	/**
 	 * Reads and returns a project description stored at the given location
 	 */
@@ -491,6 +511,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				file.close();
 		}
 	}
+
 	/**
 	 * Reads and returns a project description stored at the given location, or 
 	 * temporary location.
@@ -503,6 +524,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			file.close();
 		}
 	}
+
 	/**
 	 * @see ContentHandler#startElement(String, String, String, Attributes)
 	 */
@@ -581,6 +603,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				break;
 		}
 	}
+
 	/**
 	 * @see ErrorHandler#warning(SAXParseException)
 	 */

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
+
 import java.io.*;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.eclipse.core.internal.localstore.SafeChunkyOutputStream;
@@ -33,9 +34,11 @@ public class LocalMetaArea implements ICoreConstants {
 	/* package */static final String F_SNAP_EXTENSION = "snap"; //$NON-NLS-1$
 	/* package */static final String F_SYNCINFO = ".syncinfo"; //$NON-NLS-1$
 	/* package */static final String F_TREE = ".tree"; //$NON-NLS-1$
+
 	public LocalMetaArea() {
 		super();
 	}
+
 	/**
 	 * For backwards compatibility, if there is a project at the old project
 	 * description location, delete it.
@@ -43,12 +46,14 @@ public class LocalMetaArea implements ICoreConstants {
 	public void clearOldDescription(IProject target) {
 		Workspace.clear(getOldDescriptionLocationFor(target).toFile());
 	}
+
 	public void create(IProject target) {
 		java.io.File file = locationFor(target).toFile();
 		//make sure area is empty
 		Workspace.clear(file);
 		file.mkdirs();
 	}
+
 	/**
 	 * Creates the meta area root directory.
 	 */
@@ -60,6 +65,7 @@ public class LocalMetaArea implements ICoreConstants {
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, null);
 		}
 	}
+
 	/**
 	 * The project is being deleted. Delete all meta-data associated with the
 	 * project.
@@ -71,9 +77,11 @@ public class LocalMetaArea implements ICoreConstants {
 			throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, target.getFullPath(), message, null);
 		}
 	}
+
 	public IPath getBackupLocationFor(IPath file) {
 		return file.removeLastSegments(1).append(file.lastSegment() + F_BACKUP_FILE_EXTENSION);
 	}
+
 	/**
 	 * The project description file is the only metadata file stored outside
 	 * the metadata area. It is stored as a file directly under the project
@@ -83,9 +91,11 @@ public class LocalMetaArea implements ICoreConstants {
 	public IPath getOldDescriptionLocationFor(IProject target) {
 		return locationFor(target).append(F_OLD_PROJECT);
 	}
+
 	public IPath getHistoryStoreLocation() {
 		return getLocation().append(F_HISTORY_STORE);
 	}
+
 	/**
 	 * Returns the local filesystem location which contains the META data for
 	 * the resources plugin (i.e., the entire workspace).
@@ -95,6 +105,7 @@ public class LocalMetaArea implements ICoreConstants {
 			metaAreaLocation = ResourcesPlugin.getPlugin().getStateLocation();
 		return metaAreaLocation;
 	}
+
 	/**
 	 * Returns the path of the file in which to save markers for the given
 	 * resource. Should only be called for the workspace root and projects.
@@ -104,6 +115,7 @@ public class LocalMetaArea implements ICoreConstants {
 		Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
 		return locationFor(resource).append(F_MARKERS);
 	}
+
 	/**
 	 * Returns the path of the file in which to snapshot markers for the given
 	 * resource. Should only be called for the workspace root and projects.
@@ -111,11 +123,13 @@ public class LocalMetaArea implements ICoreConstants {
 	public IPath getMarkersSnapshotLocationFor(IResource resource) {
 		return getMarkersLocationFor(resource).addFileExtension(F_SNAP_EXTENSION);
 	}
+
 	public IPath getPropertyStoreLocation(IResource resource) {
 		int type = resource.getType();
 		Assert.isTrue(type != IResource.FILE && type != IResource.FOLDER);
 		return locationFor(resource).append(F_PROPERTIES);
 	}
+
 	public IPath getSafeTableLocationFor(String pluginId) {
 		IPath prefix = getLocation().append(F_SAFE_TABLE);
 		// if the plugin is the resources plugin, we return the master table
@@ -125,9 +139,11 @@ public class LocalMetaArea implements ICoreConstants {
 		int saveNumber = getWorkspace().getSaveManager().getSaveNumber(pluginId);
 		return prefix.append(pluginId + "." + saveNumber); //$NON-NLS-1$
 	}
+
 	public IPath getSnapshotLocationFor(IResource resource) {
 		return getLocation().append(F_SNAP);
 	}
+
 	/**
 	 * Returns the path of the file in which to save the sync information for
 	 * the given resource. Should only be called for the workspace root and
@@ -138,6 +154,7 @@ public class LocalMetaArea implements ICoreConstants {
 		Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
 		return locationFor(resource).append(F_SYNCINFO);
 	}
+
 	/**
 	 * Returns the path of the file in which to snapshot the sync information
 	 * for the given resource. Should only be called for the workspace root and
@@ -146,6 +163,7 @@ public class LocalMetaArea implements ICoreConstants {
 	public IPath getSyncInfoSnapshotLocationFor(IResource resource) {
 		return getSyncInfoLocationFor(resource).addFileExtension(F_SNAP_EXTENSION);
 	}
+
 	/**
 	 * Returns the local file system location of the tree file for the given
 	 * resource. This file does not follow the same save number as its plug-in.
@@ -165,22 +183,28 @@ public class LocalMetaArea implements ICoreConstants {
 		}
 		return locationFor(target).append(sequenceNumber + F_TREE);
 	}
+
 	public IPath getWorkingLocation(IResource resource, IPluginDescriptor plugin) {
 		return locationFor(resource).append(plugin.getUniqueIdentifier());
 	}
+
 	protected Workspace getWorkspace() {
 		return (Workspace) ResourcesPlugin.getWorkspace();
 	}
+
 	public IPath getOldWorkspaceDescriptionLocation() {
 		return getLocation().append(F_DESCRIPTION);
 	}
+
 	public boolean hasSavedProject(IProject project) {
 		//if there is a location file, then the project exists
 		return getOldDescriptionLocationFor(project).toFile().exists() || locationFor(project).append(F_PROJECT_LOCATION).toFile().exists();
 	}
+
 	public boolean hasSavedWorkspace() throws CoreException {
 		return getLocation().toFile().exists() || getBackupLocationFor(getLocation()).toFile().exists();
 	}
+
 	/**
 	 * Returns the local filesystem location in which the meta data for the
 	 * given resource is stored.
@@ -191,6 +215,7 @@ public class LocalMetaArea implements ICoreConstants {
 		else
 			return getLocation().append(F_PROJECTS).append(resource.getProject().getName());
 	}
+
 	/**
 	 * Returns the portions of the project description that are private, and
 	 * adds them to the supplied project description. In particular, the
@@ -229,7 +254,7 @@ public class LocalMetaArea implements ICoreConstants {
 				int numRefs = dataIn.readInt();
 				IProject[] references = new IProject[numRefs];
 				IWorkspaceRoot root = getWorkspace().getRoot();
-				for (int i = 0; i < numRefs; i++) 
+				for (int i = 0; i < numRefs; i++)
 					references[i] = root.getProject(dataIn.readUTF());
 				description.setDynamicReferences(references);
 			} finally {
@@ -240,6 +265,7 @@ public class LocalMetaArea implements ICoreConstants {
 			// closing the stream
 		}
 	}
+
 	/**
 	 * Reads and returns the project description for the given project. Returns
 	 * null if there was no project description file on disk. Throws an
@@ -263,6 +289,7 @@ public class LocalMetaArea implements ICoreConstants {
 		}
 		return description;
 	}
+
 	/**
 	 * Provides backward compatibility with existing workspaces based on
 	 * descriptions.
@@ -280,6 +307,7 @@ public class LocalMetaArea implements ICoreConstants {
 			return null;
 		}
 	}
+
 	/**
 	 * Write the private project description information, including the location
 	 * and the dynamic project references.  See <tt>readPrivateDescription</tt>
@@ -318,6 +346,7 @@ public class LocalMetaArea implements ICoreConstants {
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 		}
 	}
+
 	/**
 	 * Writes the workspace description to the local meta area. This method is
 	 * synchronized to prevent multiple current write attempts.

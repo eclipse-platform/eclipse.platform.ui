@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,11 +23,11 @@ public class LifecycleEvent {
 	public static final int PRE_PROJECT_CHANGE = 0x02;
 	public static final int PRE_PROJECT_COPY = 0x04;
 	public static final int PRE_PROJECT_CREATE = 0x08;
-	
+
 	public static final int PRE_PROJECT_DELETE = 0x10;
 	public static final int PRE_PROJECT_OPEN = 0x20;
 	public static final int PRE_PROJECT_MOVE = 0x40;
-	
+
 	public static final int PRE_LINK_COPY = 0x100;
 	public static final int PRE_LINK_CREATE = 0x200;
 	public static final int PRE_LINK_DELETE = 0x400;
@@ -49,16 +49,18 @@ public class LifecycleEvent {
 	 * copy/move.
 	 */
 	public IResource newResource;
-	
+
 	/**
 	 * The update flags for the event.
 	 */
 	public int updateFlags;
-	
+
 	private static final LifecycleEvent instance = new LifecycleEvent();
+
 	private LifecycleEvent() {
 		super();
 	}
+
 	public static LifecycleEvent newEvent(int kind, IResource resource) {
 		instance.kind = kind;
 		instance.resource = resource;
@@ -66,6 +68,7 @@ public class LifecycleEvent {
 		instance.updateFlags = 0;
 		return instance;
 	}
+
 	public static LifecycleEvent newEvent(int kind, IResource oldResource, IResource newResource, int updateFlags) {
 		instance.kind = kind;
 		instance.resource = oldResource;

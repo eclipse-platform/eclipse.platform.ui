@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.resources;
+
 import org.eclipse.core.runtime.*;
+
 /**
  * A callback for requesting information about a resource when using a fast
  * resource visitor. All of the "get" methods on a resource proxy have trivial
@@ -36,6 +38,7 @@ public interface IResourceProxy {
 	 * @see IResource#getModificationStamp()
 	 */
 	public long getModificationStamp();
+
 	/**
 	 * Returns whether the resource being visited is accessible.
 	 *
@@ -44,6 +47,7 @@ public interface IResourceProxy {
 	 * @see IResource#isAccessible()
 	 */
 	public boolean isAccessible();
+
 	/**
 	 * Returns whether the resource being visited is derived.
 	 *
@@ -52,6 +56,7 @@ public interface IResourceProxy {
 	 * @see IResource#isDerived()
 	 */
 	public boolean isDerived();
+
 	/**
 	 * Returns whether the resource being visited is a linked resource.
 	 * 
@@ -60,6 +65,7 @@ public interface IResourceProxy {
 	 * @see IResource#isLinked()
 	 */
 	public boolean isLinked();
+
 	/**
 	 * Returns whether the resource being visited is a phantom resource.
 	 * 
@@ -68,6 +74,7 @@ public interface IResourceProxy {
 	 * @see IResource#isPhantom()
 	 */
 	public boolean isPhantom();
+
 	/**
 	 * Returns whether the resource being visited is a team private member.
 	 *
@@ -76,6 +83,7 @@ public interface IResourceProxy {
 	 * @see IResource#isTeamPrivateMember()
 	 */
 	public boolean isTeamPrivateMember();
+
 	/**
 	 * Returns the simple name of the resource being visited.
 	 * 
@@ -83,6 +91,7 @@ public interface IResourceProxy {
 	 * @see IResource#getName()
 	 */
 	public String getName();
+
 	/**
 	 * Returns the value of the session property of the resource being
 	 * visited, identified by the given key.  Returns <code>null</code> if this
@@ -99,6 +108,7 @@ public interface IResourceProxy {
 	 *	 @see IResource#getSessionProperty(QualifiedName)
 	 */
 	public Object getSessionProperty(QualifiedName key);
+
 	/**
 	 * Returns the type of the resource being visited.
 	 * 
@@ -106,6 +116,7 @@ public interface IResourceProxy {
 	 * @see IResource#getType()
 	 */
 	public int getType();
+
 	/**
 	 * Returns the full workspace path of the resource being visited.  
 	 * <p>
@@ -118,6 +129,7 @@ public interface IResourceProxy {
 	 * @see IResource#getFullPath()
 	 */
 	public IPath requestFullPath();
+
 	/**
 	 * Returns the handle of the resource being visited.  
 	 * <p>

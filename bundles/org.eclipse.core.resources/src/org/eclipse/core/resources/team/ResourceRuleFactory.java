@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.jobs.MultiRule;
  */
 public class ResourceRuleFactory implements IResourceRuleFactory {
 	private final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+
 	/**
 	 * Creates a new default resource rule factory. This constructor must only
 	 * be called by subclasses.
@@ -31,6 +32,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	protected ResourceRuleFactory() {
 		super();
 	}
+
 	/**
 	 * Default implementation of <code>IResourceRuleFactory#buildRule</code>.
 	 * This default implementation always returns the workspace root.
@@ -42,6 +44,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	public final ISchedulingRule buildRule() {
 		return workspace.getRoot();
 	}
+
 	/**
 	 * Default implementation of <code>IResourceRuleFactory#copyRule</code>.
 	 * This default implementation always returns the parent of the destination
@@ -57,11 +60,12 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 		//source is not modified, destination is created
 		return parent(destination);
 	}
+
 	/**
 	 * Default implementation of <code>IResourceRuleFactory#createRule</code>.
 	 * This default implementation always returns the parent of the resource 
 	 * being created.
- 	 * <p>
+	 * <p>
 	 * Subclasses may override this method. The rule provided by an overriding 
 	 * method must at least contain the rule from this default implementation.
 	 * 
@@ -71,6 +75,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	public ISchedulingRule createRule(IResource resource) {
 		return parent(resource);
 	}
+
 	/**
 	 * Default implementation of <code>IResourceRuleFactory#deleteRule</code>.
 	 * This default implementation always returns the parent of the resource 
@@ -85,6 +90,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	public ISchedulingRule deleteRule(IResource resource) {
 		return parent(resource);
 	}
+
 	/**
 	 * Default implementation of <code>IResourceRuleFactory#markerRule</code>.
 	 * This default implementation always returns <code>null</code>.
@@ -96,6 +102,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	public final ISchedulingRule markerRule(IResource resource) {
 		return null;
 	}
+
 	/**
 	 * Default implementation of <code>IResourceRuleFactory#modifyRule</code>.
 	 * This default implementation always returns the resource being modified. Note
@@ -111,6 +118,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	public ISchedulingRule modifyRule(IResource resource) {
 		return resource;
 	}
+
 	/**
 	 * Default implementation of <code>IResourceRuleFactory#moveRule</code>.
 	 * This default implementation returns a rule that combines the parent
@@ -126,6 +134,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 		//move needs the parent of both source and destination
 		return MultiRule.combine(parent(source), parent(destination));
 	}
+
 	/**
 	 * Convenience method to return the parent of the given resource, 
 	 * or the resource itself for projects and the workspace root.
@@ -142,6 +151,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 				return resource.getParent();
 		}
 	}
+
 	/**
 	 * Default implementation of <code>IResourceRuleFactory#refreshRule</code>.
 	 * This default implementation always returns the parent of the resource 
@@ -156,6 +166,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	public ISchedulingRule refreshRule(IResource resource) {
 		return parent(resource);
 	}
+
 	/**
 	 * Default implementation of <code>IResourceRuleFactory#validateEditRule</code>.
 	 * This default implementation returns a rule that combines the parents of
@@ -183,8 +194,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 			return null;
 		if (rules.size() == 1)
 			return (ISchedulingRule) rules.iterator().next();
-		ISchedulingRule[] ruleArray = (ISchedulingRule[]) rules
-				.toArray(new ISchedulingRule[rules.size()]);
+		ISchedulingRule[] ruleArray = (ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]);
 		return new MultiRule(ruleArray);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,13 +20,13 @@ public abstract class Page extends Observable implements Referable {
 	protected int referenceCount;
 	protected Buffer pageBuffer;
 	protected PageStore pageStore;
-	
+
 	/**
 	 * Default constructor.
 	 */
 	protected Page() {
 	}
-		
+
 	/**
 	 * Constructs a new page of the given size.
 	 */
@@ -69,10 +69,11 @@ public abstract class Page extends Observable implements Referable {
 	 * Removes a reference.
 	 */
 	public int removeReference() {
-		if (referenceCount > 0) referenceCount--;
+		if (referenceCount > 0)
+			referenceCount--;
 		return referenceCount;
 	}
-	
+
 	/**
 	 * Writes the contents of the page to a buffer.
 	 */

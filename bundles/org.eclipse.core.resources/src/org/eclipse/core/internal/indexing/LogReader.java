@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ class LogReader {
 	protected PageStore store;
 	protected byte[] b4;
 	protected byte[] pageBuffer;
-	
+
 	/** 
 	 * Returns the Hashmap of the modified pages.
 	 */
@@ -30,7 +30,7 @@ class LogReader {
 		reader.close();
 		return modifiedPages;
 	}
-	
+
 	public LogReader(PageStore store) {
 		this.store = store;
 		this.pageBuffer = new byte[Page.SIZE];
@@ -42,7 +42,8 @@ class LogReader {
 	 */
 	protected void open(PageStore store) throws PageStoreException {
 		String name = store.getName();
-		if (!Log.exists(name)) return;
+		if (!Log.exists(name))
+			return;
 		try {
 			in = new FileInputStream(Log.name(name));
 		} catch (IOException e) {
@@ -54,25 +55,28 @@ class LogReader {
 	 * Closes the log.
 	 */
 	protected void close() {
-		if (in == null) return;
+		if (in == null)
+			return;
 		try {
 			in.close();
 		} catch (IOException e) {
 		}
 		in = null;
 	}
-	
+
 	/**
 	 * Returns the Hashmap of modified pages read from the log.
 	 */
 	protected Map getModifiedPages() throws PageStoreException {
 		Map modifiedPages = new TreeMap();
-		if (in == null) return modifiedPages;
+		if (in == null)
+			return modifiedPages;
 		Field f4 = new Field(b4);
 		readBuffer(b4);
 		int numberOfPages = f4.getInt();
 		int recordSize = 4 + Page.SIZE;
-		if (bytesAvailable() != (numberOfPages * recordSize)) return modifiedPages;
+		if (bytesAvailable() != (numberOfPages * recordSize))
+			return modifiedPages;
 		for (int i = 0; i < numberOfPages; i++) {
 			readBuffer(b4);
 			readBuffer(pageBuffer);
@@ -91,7 +95,7 @@ class LogReader {
 			throw new PageStoreException(PageStoreException.LogReadFailure, e);
 		}
 	}
-	
+
 	protected int bytesAvailable() throws PageStoreException {
 		try {
 			return in.available();
@@ -99,6 +103,5 @@ class LogReader {
 			throw new PageStoreException(PageStoreException.LogReadFailure, e);
 		}
 	}
-		
 
 }

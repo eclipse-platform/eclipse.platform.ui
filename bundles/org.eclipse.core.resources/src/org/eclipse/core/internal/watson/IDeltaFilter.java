@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,12 +15,12 @@ package org.eclipse.core.internal.watson;
  * to navigate through the delta in a selective manner.
  */
 public interface IDeltaFilter {
-/**
- * Returns true if the delta element with the given flag should be
- * included in the response to an ElementTreeDelta query, and false 
- * otherwise.  The flag is the integer set by the IElementComparator.
- *
- * @see IComparator.compare(Object, Object)
- */
-public boolean includeElement(int flag);
+	/**
+	 * Returns true if the delta element with the given flag should be
+	 * included in the response to an ElementTreeDelta query, and false 
+	 * otherwise.  The flag is the integer set by the IElementComparator.
+	 *
+	 * @see IComparator.compare(Object, Object)
+	 */
+	public boolean includeElement(int flag);
 }

@@ -35,7 +35,7 @@ public class ProjectPreferences extends EclipsePreferences {
 	// cache which nodes have been loaded from disk
 	private static Set loadedNodes = new HashSet();
 	private static IResourceChangeListener listener = createListener();
-	
+
 	static {
 		addListener();
 	}

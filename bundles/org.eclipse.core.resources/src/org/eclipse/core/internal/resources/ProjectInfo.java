@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,78 +26,88 @@ public class ProjectInfo extends ResourceInfo {
 
 	/** The list of natures for this project */
 	protected HashMap natures = null;
-		 
+
 	/** Map of all resources with user-defined charsets (project relative path -> charset) */
 	// don't use properties because keys are non-string 
 	protected Map charsets = null;
-		  
-public synchronized void clearNatures() {
-	natures = null;
-}
-public Hashtable getBuilders() {
-	if (builders == null)
-		builders = new Hashtable(5);
-	return builders;
-}
-public synchronized Map getCharsets() {
-	return charsets;
-}
-/**
- * Returns the description associated with this info.  The return value may be null.
- */
-public ProjectDescription getDescription() {
-	return description;
-}
-public IProjectNature getNature(String natureId) {
-	// thread safety: (Concurrency001)
-	HashMap temp = natures;
-	if (temp == null)
-		return null;
-	return (IProjectNature) temp.get(natureId);
-}
-/**
- * Returns the property store associated with this info.  The return value may be null.
- */
-public PropertyStore getPropertyStore() {
-	return propertyStore;
-}
-public void setBuilders(Hashtable value) {
-	builders = value;
-}
-public synchronized void setCharsets(Map value) {
-	charsets = value; 
-}
-/**
- * Sets the description associated with this info.  The value may be null.
- */
-public void setDescription(ProjectDescription value) {
-	description = value;
-}
-public synchronized void setNature(String natureId, IProjectNature value) {
-	// thread safety: (Concurrency001)
-	if (value == null) {
-		if (natures == null)
-			return;
-		HashMap temp = (HashMap) natures.clone();
-		temp.remove(natureId);
-		if (temp.isEmpty())
-			natures = null;
-		else
-			natures = temp;
-	} else {
+
+	public synchronized void clearNatures() {
+		natures = null;
+	}
+
+	public Hashtable getBuilders() {
+		if (builders == null)
+			builders = new Hashtable(5);
+		return builders;
+	}
+
+	public synchronized Map getCharsets() {
+		return charsets;
+	}
+
+	/**
+	 * Returns the description associated with this info.  The return value may be null.
+	 */
+	public ProjectDescription getDescription() {
+		return description;
+	}
+
+	public IProjectNature getNature(String natureId) {
+		// thread safety: (Concurrency001)
 		HashMap temp = natures;
 		if (temp == null)
-			temp = new HashMap(5);
-		else
-			temp = (HashMap) natures.clone();
-		temp.put(natureId, value);
-		natures = temp;
+			return null;
+		return (IProjectNature) temp.get(natureId);
 	}
-}
-/**
- * Sets the property store associated with this info.  The value may be null.
- */
-public void setPropertyStore(PropertyStore value) {
-	propertyStore = value;
-}
+
+	/**
+	 * Returns the property store associated with this info.  The return value may be null.
+	 */
+	public PropertyStore getPropertyStore() {
+		return propertyStore;
+	}
+
+	public void setBuilders(Hashtable value) {
+		builders = value;
+	}
+
+	public synchronized void setCharsets(Map value) {
+		charsets = value;
+	}
+
+	/**
+	 * Sets the description associated with this info.  The value may be null.
+	 */
+	public void setDescription(ProjectDescription value) {
+		description = value;
+	}
+
+	public synchronized void setNature(String natureId, IProjectNature value) {
+		// thread safety: (Concurrency001)
+		if (value == null) {
+			if (natures == null)
+				return;
+			HashMap temp = (HashMap) natures.clone();
+			temp.remove(natureId);
+			if (temp.isEmpty())
+				natures = null;
+			else
+				natures = temp;
+		} else {
+			HashMap temp = natures;
+			if (temp == null)
+				temp = new HashMap(5);
+			else
+				temp = (HashMap) natures.clone();
+			temp.put(natureId, value);
+			natures = temp;
+		}
+	}
+
+	/**
+	 * Sets the property store associated with this info.  The value may be null.
+	 */
+	public void setPropertyStore(PropertyStore value) {
+		propertyStore = value;
+	}
 }

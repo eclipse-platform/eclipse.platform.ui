@@ -55,6 +55,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		clone.linkDescriptions = null;
 		return clone;
 	}
+
 	/**
 	 * Returns a copy of the given array with all duplicates removed
 	 */
@@ -79,6 +80,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		}
 		return result;
 	}
+
 	/**
 	 * Returns the union of the description's static and dyamic project references,
 	 * with duplicates omitted. The calculation is optimized by caching the result
@@ -93,49 +95,56 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 				cachedRefs = dynamic;
 			} else {
 				//combine all references
-				IProject[] result = new IProject[dynamic.length+statik.length];
+				IProject[] result = new IProject[dynamic.length + statik.length];
 				System.arraycopy(statik, 0, result, 0, statik.length);
 				System.arraycopy(dynamic, 0, result, statik.length, dynamic.length);
 				cachedRefs = copyAndRemoveDuplicates(result);
 			}
 		}
 		//still need to copy the result to prevent tampering with the cache
-		return makeCopy ? (IProject[])cachedRefs.clone() : cachedRefs;
+		return makeCopy ? (IProject[]) cachedRefs.clone() : cachedRefs;
 	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#getBuildSpec()
 	 */
 	public ICommand[] getBuildSpec() {
 		return getBuildSpec(true);
 	}
+
 	public ICommand[] getBuildSpec(boolean makeCopy) {
 		if (buildSpec == null)
 			return EMPTY_COMMAND_ARRAY;
 		return makeCopy ? (ICommand[]) buildSpec.clone() : buildSpec;
 	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#getComment()
 	 */
 	public String getComment() {
 		return comment;
 	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#getDefaultCharset()
 	 */
 	public String getDefaultCharset() {
 		return defaultCharset;
-	}	
+	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#getDynamicReferences()
 	 */
 	public IProject[] getDynamicReferences() {
 		return getDynamicReferences(true);
 	}
+
 	public IProject[] getDynamicReferences(boolean makeCopy) {
 		if (dynamicRefs == null)
 			return EMPTY_PROJECT_ARRAY;
 		return makeCopy ? (IProject[]) dynamicRefs.clone() : dynamicRefs;
 	}
+
 	/**
 	 * Returns the link location for the given resource name. Returns null if
 	 * no such link exists.
@@ -146,6 +155,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		LinkDescription desc = (LinkDescription) linkDescriptions.get(name);
 		return desc == null ? null : desc.getLocation();
 	}
+
 	/**
 	 * Returns the map of link descriptions (String name -> LinkDescription).
 	 * Since this method is only used internally, it never creates a copy.
@@ -154,34 +164,40 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	public HashMap getLinks() {
 		return linkDescriptions;
 	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#getLocation()
 	 */
 	public IPath getLocation() {
 		return location;
 	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#getNatureIds()
 	 */
 	public String[] getNatureIds() {
 		return getNatureIds(true);
 	}
+
 	public String[] getNatureIds(boolean makeCopy) {
 		if (natures == null)
 			return EMPTY_STRING_ARRAY;
 		return makeCopy ? (String[]) natures.clone() : natures;
 	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#getReferencedProjects()
 	 */
 	public IProject[] getReferencedProjects() {
 		return getReferencedProjects(true);
 	}
+
 	public IProject[] getReferencedProjects(boolean makeCopy) {
 		if (staticRefs == null)
 			return EMPTY_PROJECT_ARRAY;
 		return makeCopy ? (IProject[]) staticRefs.clone() : staticRefs;
 	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#hasNature(String)
 	 */
@@ -192,12 +208,14 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 				return true;
 		return false;
 	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#newCommand()
 	 */
 	public ICommand newCommand() {
 		return new BuildCommand();
 	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#setBuildSpec(ICommand[])
 	 */
@@ -205,18 +223,21 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		Assert.isLegal(value != null);
 		buildSpec = (ICommand[]) value.clone();
 	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#setComment(String)
 	 */
 	public void setComment(String value) {
 		comment = value;
 	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#setDefaultCharset(String)
 	 */
 	public void setDefaultCharset(String value) {
 		defaultCharset = value;
 	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#setDynamicReferences(IProject[])
 	 */
@@ -225,6 +246,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		dynamicRefs = copyAndRemoveDuplicates(value);
 		cachedRefs = null;
 	}
+
 	/**
 	 * Sets the map of link descriptions (String name -> LinkDescription).
 	 * Since this method is only used internally, it never creates a copy. May
@@ -233,6 +255,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	public void setLinkDescriptions(HashMap linkDescriptions) {
 		this.linkDescriptions = linkDescriptions;
 	}
+
 	/**
 	 * Sets the description of a link. Setting to a description of null will
 	 * remove the link from the project description.
@@ -252,24 +275,28 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			}
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#setLocation(IPath)
 	 */
 	public void setLocation(IPath location) {
 		this.location = location;
 	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#setName(String)
 	 */
 	public void setName(String value) {
 		super.setName(value);
 	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#setNatureIds(String[])
 	 */
 	public void setNatureIds(String[] value) {
 		natures = (String[]) value.clone();
 	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#setReferencedProjects(IProject[])
 	 */

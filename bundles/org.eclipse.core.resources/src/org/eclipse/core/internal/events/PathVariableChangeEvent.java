@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,12 +52,14 @@ public class PathVariableChangeEvent extends EventObject implements IPathVariabl
 	public IPath getValue() {
 		return value;
 	}
+
 	/**
 	 * @see org.eclipse.core.resources.IPathVariableChangeEvent#getVariableName()
 	 */
 	public String getVariableName() {
 		return variableName;
 	}
+
 	/**
 	 * @see org.eclipse.core.resources.IPathVariableChangeEvent#getType()
 	 */
@@ -69,7 +71,7 @@ public class PathVariableChangeEvent extends EventObject implements IPathVariabl
 	 * Return a string representation of this object.
 	 */
 	public String toString() {
-		String[] typeStrings = { "VARIABLE_CHANGED", "VARIABLE_CREATED", "VARIABLE_DELETED" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String[] typeStrings = {"VARIABLE_CHANGED", "VARIABLE_CREATED", "VARIABLE_DELETED"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		StringBuffer sb = new StringBuffer(getClass().getName());
 		sb.append("[variable = "); //$NON-NLS-1$
 		sb.append(variableName);

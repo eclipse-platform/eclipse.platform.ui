@@ -15,6 +15,7 @@ import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+
 /**
  * The <code>RefreshJob</code> class maintains a list of resources that
  * need to be refreshed, and periodically schedules itself to perform the
@@ -38,6 +39,7 @@ public class RefreshJob extends WorkspaceJob {
 		setRule(ResourcesPlugin.getWorkspace().getRoot());
 		fRequests = new ArrayList(1);
 	}
+
 	/**
 	 * Adds the given resource to the set of resources that need refreshing.
 	 * Synchronized in order to protect the collection during add.
@@ -57,12 +59,14 @@ public class RefreshJob extends WorkspaceJob {
 		//finally add the new request
 		fRequests.add(resource);
 	}
+
 	private synchronized IResource[] getRequests() {
 		// synchronized: in order to atomically obtain and clear requests
 		IResource[] toRefresh = (IResource[]) fRequests.toArray(new IResource[fRequests.size()]);
 		fRequests.clear();
 		return toRefresh;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.refresh.IRefreshResult#refresh
 	 */
@@ -73,6 +77,7 @@ public class RefreshJob extends WorkspaceJob {
 		if (active)
 			schedule(UPDATE_DELAY);
 	}
+
 	/* (non-Javadoc)
 	 * @see WorkspaceJob#runInWorkspace
 	 */
@@ -97,12 +102,13 @@ public class RefreshJob extends WorkspaceJob {
 		} finally {
 			monitor.done();
 			if (RefreshManager.DEBUG)
-				System.out.println(RefreshManager.DEBUG_PREFIX + " finished refresh job in: " + (System.currentTimeMillis()-start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println(RefreshManager.DEBUG_PREFIX + " finished refresh job in: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (!errors.isOK())
 			return errors;
 		return Status.OK_STATUS;
 	}
+
 	/**
 	 * Starts the refresh job
 	 */
@@ -111,6 +117,7 @@ public class RefreshJob extends WorkspaceJob {
 			System.out.println(RefreshManager.DEBUG_PREFIX + " enabling auto-refresh"); //$NON-NLS-1$
 		active = true;
 	}
+
 	/**
 	 * Stops the refresh job
 	 */

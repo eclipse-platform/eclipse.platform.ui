@@ -23,20 +23,25 @@ public class CharsetManager implements IManager {
 	private IResourceChangeListener listener;
 	CharsetManagerJob job;
 	final boolean[] isSaving = new boolean[1];
+
 	public CharsetManager(Workspace workspace) {
 		this.workspace = workspace;
 	}
+
 	public void startup(IProgressMonitor monitor) throws CoreException {
 		job = new CharsetManagerJob();
 		listener = new Listener();
 		workspace.addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
 	}
+
 	public void shutdown(IProgressMonitor monitor) {
 		workspace.removeResourceChangeListener(listener);
 	}
+
 	public void setCharsetFor(IPath resourcePath, String newCharset) throws CoreException {
 		setCharsetFor(resourcePath, newCharset, true);
 	}
+
 	public void setCharsetFor(IPath resourcePath, String newCharset, boolean save) throws CoreException {
 		Assert.isLegal(resourcePath.segmentCount() >= 1);
 		Project project;
@@ -52,6 +57,7 @@ public class CharsetManager implements IManager {
 		if (save)
 			storeSettings(project, charsets);
 	}
+
 	public String getCharsetFor(IPath resourcePath) throws CoreException {
 		Assert.isLegal(resourcePath.segmentCount() >= 1);
 		synchronized (this) {
@@ -60,6 +66,7 @@ public class CharsetManager implements IManager {
 			return charsets == null ? null : (String) charsets.get(resourcePath.removeFirstSegments(1));
 		}
 	}
+
 	/*
 	 * Retrieves the settings for the given project, reading them from disk if needed.
 	 */
@@ -82,6 +89,7 @@ public class CharsetManager implements IManager {
 		}
 		return charsets;
 	}
+
 	/*
 	 * Unmarshals settings from the given stream.  
 	 */
@@ -105,6 +113,7 @@ public class CharsetManager implements IManager {
 			}
 		}
 	}
+
 	/*
 	 * Create a serializable representation for the settings.
 	 */
@@ -120,9 +129,11 @@ public class CharsetManager implements IManager {
 		writer.close();
 		return new ByteArrayInputStream(tmpOutput.toByteArray());
 	}
+
 	void storeSettings(Project project) throws CoreException {
 		storeSettings(project, ((ProjectInfo) project.getResourceInfo(false, false)).getCharsets());
 	}
+
 	private void storeSettings(final Project project, final Map charsets) throws CoreException {
 		synchronized (isSaving) {
 			// only one storeSettings operation happens at a time
@@ -158,6 +169,7 @@ public class CharsetManager implements IManager {
 			}
 		}
 	}
+
 	/*
 	 * Forgets the in-memory state. This will cause the state to be fetched
 	 * from the file system (when needed).
@@ -167,6 +179,7 @@ public class CharsetManager implements IManager {
 		if (info != null)
 			info.setCharsets(null);
 	}
+
 	class Listener implements IResourceChangeListener {
 		/**
 		 * For any change to the encoding file or any resource with encoding
@@ -215,6 +228,7 @@ public class CharsetManager implements IManager {
 			}
 			job.addChanges(projectsToSave);
 		}
+
 		private boolean processEntryChanges(IResourceDelta projectDelta, Map charsets) {
 			// check each resource with user-set encoding to see if it has
 			// been moved/deleted
@@ -247,17 +261,20 @@ public class CharsetManager implements IManager {
 			return resourceChanges;
 		}
 	}
+
 	/**
 	 * This job implementation is used to allow the resource change listener
 	 * to schedule operations that need to modify the workspace. 
 	 */
 	private class CharsetManagerJob extends Job {
 		private List asyncChanges = new ArrayList();
+
 		public CharsetManagerJob() {
 			super("Charset Updater"); //$NON-NLS-1$
 			setSystem(true);
 			setPriority(Job.INTERACTIVE);
 		}
+
 		protected IStatus run(IProgressMonitor monitor) {
 			Project next;
 			while ((next = getNextChange()) != null)
@@ -270,16 +287,19 @@ public class CharsetManager implements IManager {
 				}
 			return new Status(IStatus.OK, ResourcesPlugin.PI_RESOURCES, 0, "", null); //$NON-NLS-1$
 		}
+
 		public boolean shouldRun() {
 			synchronized (asyncChanges) {
 				return !asyncChanges.isEmpty();
 			}
 		}
+
 		public Project getNextChange() {
 			synchronized (asyncChanges) {
 				return asyncChanges.isEmpty() ? null : (Project) asyncChanges.remove(asyncChanges.size() - 1);
 			}
 		}
+
 		public void addChanges(List newChanges) {
 			if (newChanges.isEmpty())
 				return;

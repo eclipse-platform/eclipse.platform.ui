@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.internal.indexing;
-
 
 /**
  * Implements a storage area that is accessible at various offsets and lengths.
@@ -124,105 +123,106 @@ public class Buffer {
 		System.arraycopy(contents, offset, result, 0, length);
 		return result;
 	}
-	
+
 	public byte[] get(FieldDef d) {
 		return get(d.offset, d.length);
 	}
-	
+
 	public Field getField(int offset, int length) {
 		return new Field(this, offset, length);
-		}
-		
+	}
+
 	public Field getField(FieldDef d) {
 		return new Field(this, d.offset, d.length);
 	}
-		
+
 	public byte getByte(int offset) {
 		return contents[offset];
 	}
-	
+
 	public int getInt(int offset, int length) {
-		return (int)getLong(offset, length);
+		return (int) getLong(offset, length);
 	}
-	
+
 	public int getInt(FieldDef d) {
-		return (int)getLong(d.offset, d.length);
+		return (int) getLong(d.offset, d.length);
 	}
-	
+
 	public int getUInt(int offset, int length) {
 		int shift = Math.max(0, 32 - (length * 8));
 		int mask = (-1 >>> shift) & Integer.MAX_VALUE;
 		return getInt(offset, length) & mask;
 	}
-	
+
 	public int getUInt(FieldDef d) {
 		return getUInt(d.offset, d.length);
 	}
-	
+
 	public long getLong(int offset, int length) {
-		if (length <= 0) return 0;
+		if (length <= 0)
+			return 0;
 		long v = contents[offset];
 		for (int i = offset + 1; i < offset + length; i++) {
 			v = (v << 8) | (contents[i] & 255);
 		}
 		return v;
 	}
-	
+
 	public long getLong(FieldDef d) {
 		return getLong(d.offset, d.length);
 	}
-	
+
 	public byte[] getByteArray() {
 		return contents;
 	}
-	
+
 	public int length() {
 		return contents.length;
-		}
-	
+	}
+
 	public Pointer pointTo(int offset) {
 		return new Pointer(this, offset);
 	}
-	
+
 	public void put(int offset, byte value) {
 		contents[offset] = value;
 	}
-	
+
 	public void put(int offset, byte[] source) {
 		System.arraycopy(source, 0, contents, offset, source.length);
 	}
-	
+
 	public void put(int offset, int length, byte[] source) {
 		int n = Math.min(length, source.length);
 		System.arraycopy(source, 0, contents, offset, n);
 	}
-	
+
 	public void put(FieldDef d, byte[] source) {
 		put(d.offset, d.length, source);
 	}
-	
+
 	public void put(int offset, int length, long n) {
 		long v = n;
 		int i = offset + length;
 		while (i > offset) {
 			i--;
-			contents[i] = (byte)v;
+			contents[i] = (byte) v;
 			v = (v >>> 8);
 		}
 	}
-	
+
 	public void put(FieldDef d, long n) {
 		put(d.offset, d.length, n);
 	}
-	
+
 	public void put(int offset, int length, int n) {
-		put(offset, length, (long)n);
+		put(offset, length, (long) n);
 	}
-	
+
 	public void put(FieldDef d, int n) {
-		put(d.offset, d.length, (long)n);
+		put(d.offset, d.length, (long) n);
 	}
-	
+
 	public void put(int offset, Insertable source) {
 		put(offset, source.toByteArray());
 	}

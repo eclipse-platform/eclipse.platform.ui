@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.core.internal.indexing;
 
 public abstract class AbstractPagePolicy {
-	
+
 	/**
 	 * Returns a page given a page number, a buffer, and the page store.  The
 	 * buffer should be copied in the implementations as it may be reused later.

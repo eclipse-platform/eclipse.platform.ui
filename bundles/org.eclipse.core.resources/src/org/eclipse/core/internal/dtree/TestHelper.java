@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,10 @@ package org.eclipse.core.internal.dtree;
  * Helper class for the test suite.
  */
 public class TestHelper {
-/**
- * Returns the root node of a tree.
- */
-public static AbstractDataTreeNode getRootNode(AbstractDataTree tree) {
-	return tree.getRootNode();
-}
+	/**
+	 * Returns the root node of a tree.
+	 */
+	public static AbstractDataTreeNode getRootNode(AbstractDataTree tree) {
+		return tree.getRootNode();
+	}
 }

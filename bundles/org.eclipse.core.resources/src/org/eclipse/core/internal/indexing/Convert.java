@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,19 +13,20 @@ package org.eclipse.core.internal.indexing;
 import java.io.UnsupportedEncodingException;
 
 class Convert {
-		
+
 	/**
 	 * Converts the string argument to a byte array.
 	 */
 	static String fromUTF8(byte[] b) {
 		String result;
 		try {
-			result = new String(b,"UTF8"); //$NON-NLS-1$
+			result = new String(b, "UTF8"); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException e) {
 			result = new String(b);
 		}
 		return result;
 	}
+
 	/**
 	 * Converts the string argument to a byte array.
 	 */
@@ -33,8 +34,7 @@ class Convert {
 		byte[] result;
 		try {
 			result = s.getBytes("UTF8"); //$NON-NLS-1$
-		}
-		catch (UnsupportedEncodingException e) {
+		} catch (UnsupportedEncodingException e) {
 			result = s.getBytes();
 		}
 		return result;

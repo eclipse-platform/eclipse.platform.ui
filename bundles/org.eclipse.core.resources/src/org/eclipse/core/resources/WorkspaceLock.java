@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,49 +23,53 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class WorkspaceLock {
 
-/**
- * Returns a new workspace lock.
- */
-public WorkspaceLock(IWorkspace workspace) throws CoreException {
-}
-/**
- * Attempts to acquire this lock.  Callers will block indefinitely until this lock comes
- * available to them.  
- * <p>
- * Clients may extend this method but should not otherwise call it.
- * </p>
- * @see #release()
- */
-public boolean acquire() throws InterruptedException {
-	//deprecated API
-	return false;
-}
-/**
- * Returns the thread that currently owns the workspace lock.
- */
-protected Thread getCurrentOperationThread() {
-	//deprecated API
-	return null;
-}
-/**
- * Releases this lock allowing others to acquire it.
- * <p>
- * Clients may extend this method but should not otherwise call it.
- * </p>
- * @see #acquire()
- */
-public void release() {
-	//deprecated API
-}
-/**
- * Returns whether the workspace tree is locked
- * for resource changes.
- *
- * @return <code>true</code> if the tree is locked, otherwise
- *    <code>false</code>
- */
-protected boolean isTreeLocked() {
-	//deprecated API
-	return true;
-}
+	/**
+	 * Returns a new workspace lock.
+	 */
+	public WorkspaceLock(IWorkspace workspace) throws CoreException {
+	}
+
+	/**
+	 * Attempts to acquire this lock.  Callers will block indefinitely until this lock comes
+	 * available to them.  
+	 * <p>
+	 * Clients may extend this method but should not otherwise call it.
+	 * </p>
+	 * @see #release()
+	 */
+	public boolean acquire() throws InterruptedException {
+		//deprecated API
+		return false;
+	}
+
+	/**
+	 * Returns the thread that currently owns the workspace lock.
+	 */
+	protected Thread getCurrentOperationThread() {
+		//deprecated API
+		return null;
+	}
+
+	/**
+	 * Releases this lock allowing others to acquire it.
+	 * <p>
+	 * Clients may extend this method but should not otherwise call it.
+	 * </p>
+	 * @see #acquire()
+	 */
+	public void release() {
+		//deprecated API
+	}
+
+	/**
+	 * Returns whether the workspace tree is locked
+	 * for resource changes.
+	 *
+	 * @return <code>true</code> if the tree is locked, otherwise
+	 *    <code>false</code>
+	 */
+	protected boolean isTreeLocked() {
+		//deprecated API
+		return true;
+	}
 }

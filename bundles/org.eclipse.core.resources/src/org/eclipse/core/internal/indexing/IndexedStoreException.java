@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,45 +14,45 @@ import org.eclipse.core.internal.utils.Policy;
 
 public class IndexedStoreException extends StoreException {
 
-	public static final int GenericError                =  0;
-	public static final int EntryKeyLengthError         =  1;
-	public static final int EntryNotRemoved             =  2;
-	public static final int EntryValueLengthError       =  3;
-	public static final int EntryValueNotUpdated        =  4;
-	public static final int IndexNodeNotRetrieved       =  5;
-	public static final int IndexNodeNotStored          =  6;
-	public static final int IndexNodeNotSplit           =  7;
-	public static final int IndexNodeNotCreated         =  8;
-	public static final int IndexExists                 =  9;
-	public static final int IndexNotCreated             = 10;
-	public static final int IndexNotFound               = 11;
-	public static final int IndexNotRemoved             = 12;
-	public static final int ObjectExists                = 13;
-	public static final int ObjectNotAcquired           = 14;
-	public static final int ObjectNotCreated            = 15;
-	public static final int ObjectNotFound              = 16;
-	public static final int ObjectNotReleased           = 17;
-	public static final int ObjectNotRemoved            = 18;
-	public static final int ObjectNotUpdated            = 19;
-	public static final int ObjectNotStored             = 20;
-	public static final int ObjectTypeError             = 21;
-	public static final int StoreEmpty                  = 22;
-	public static final int StoreFormatError            = 23;
-	public static final int StoreNotCreated             = 24;
-	public static final int StoreNotOpen                = 25;
-	public static final int StoreNotClosed              = 26;
-	public static final int StoreNotFlushed             = 27;
-	public static final int StoreNotOpened              = 28;
-	public static final int StoreNotReadWrite           = 29;
-	public static final int ContextNotAvailable         = 30;
-	public static final int ObjectIDInvalid             = 31;
-	public static final int MetadataRequestError        = 32;
-	public static final int EntryRemoved                = 33;
-	public static final int StoreNotConverted           = 34;
-	public static final int StoreIsOpen					= 35;
-	public static final int StoreNotCommitted           = 36;
-	public static final int StoreNotRolledBack          = 37;
-	
+	public static final int GenericError = 0;
+	public static final int EntryKeyLengthError = 1;
+	public static final int EntryNotRemoved = 2;
+	public static final int EntryValueLengthError = 3;
+	public static final int EntryValueNotUpdated = 4;
+	public static final int IndexNodeNotRetrieved = 5;
+	public static final int IndexNodeNotStored = 6;
+	public static final int IndexNodeNotSplit = 7;
+	public static final int IndexNodeNotCreated = 8;
+	public static final int IndexExists = 9;
+	public static final int IndexNotCreated = 10;
+	public static final int IndexNotFound = 11;
+	public static final int IndexNotRemoved = 12;
+	public static final int ObjectExists = 13;
+	public static final int ObjectNotAcquired = 14;
+	public static final int ObjectNotCreated = 15;
+	public static final int ObjectNotFound = 16;
+	public static final int ObjectNotReleased = 17;
+	public static final int ObjectNotRemoved = 18;
+	public static final int ObjectNotUpdated = 19;
+	public static final int ObjectNotStored = 20;
+	public static final int ObjectTypeError = 21;
+	public static final int StoreEmpty = 22;
+	public static final int StoreFormatError = 23;
+	public static final int StoreNotCreated = 24;
+	public static final int StoreNotOpen = 25;
+	public static final int StoreNotClosed = 26;
+	public static final int StoreNotFlushed = 27;
+	public static final int StoreNotOpened = 28;
+	public static final int StoreNotReadWrite = 29;
+	public static final int ContextNotAvailable = 30;
+	public static final int ObjectIDInvalid = 31;
+	public static final int MetadataRequestError = 32;
+	public static final int EntryRemoved = 33;
+	public static final int StoreNotConverted = 34;
+	public static final int StoreIsOpen = 35;
+	public static final int StoreNotCommitted = 36;
+	public static final int StoreNotRolledBack = 37;
+
 	public static String[] messages = new String[40];
 
 	static {
@@ -60,7 +60,7 @@ public class IndexedStoreException extends StoreException {
 	}
 
 	public int id = GenericError;
-	
+
 	/**
 	 * IndexedStoreException constructor comment.
 	 */
@@ -68,7 +68,7 @@ public class IndexedStoreException extends StoreException {
 		super(messages[id]);
 		this.id = id;
 	}
-	
+
 	/**
 	 * IndexedStoreException constructor comment.
 	 */
@@ -76,7 +76,7 @@ public class IndexedStoreException extends StoreException {
 		super(messages[id], e);
 		this.id = id;
 	}
-	
+
 	/**
 	 * IndexedStoreException constructor comment.
 	 */
@@ -84,7 +84,7 @@ public class IndexedStoreException extends StoreException {
 		super(s);
 		id = GenericError;
 	}
-	
+
 	/**
 	 * Initializes the messages at class load time.
 	 */
@@ -128,11 +128,11 @@ public class IndexedStoreException extends StoreException {
 		messages[StoreNotCommitted] = bind("indexedStore.storeNotCommitted"); //$NON-NLS-1$
 		messages[StoreNotRolledBack] = bind("indexedStore.storeNotRolledBack"); //$NON-NLS-1$
 	}
-	
+
 	private static String bind(String name) {
 		return Policy.bind(name);
 	}
-	
+
 	/**
 	 * Creates a printable representation of this exception.
 	 */

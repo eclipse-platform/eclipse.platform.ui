@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,16 +11,16 @@
 package org.eclipse.core.internal.indexing;
 
 /**
-An ObjectPage is a page in a page file that contains objects.  Objects are byte arrays.
-An object page contains metainformation about the objects located on that page as well
-as information about the state of the page.  This information is updated as the page
-has objects placed on it or removed from it.  Objects within a page are identified by
-their object number, which is in the range of 1-255 inclusive.
+ An ObjectPage is a page in a page file that contains objects.  Objects are byte arrays.
+ An object page contains metainformation about the objects located on that page as well
+ as information about the state of the page.  This information is updated as the page
+ has objects placed on it or removed from it.  Objects within a page are identified by
+ their object number, which is in the range of 1-255 inclusive.
 
-All pages are numbered.  Space map pages are located at page numbers i*(Page.Size) in 
-the page file.  Object pages are located at all page numbers between space map pages.  
-Thus object pages will never have page numbers that are multiples of the page size.
-*/
+ All pages are numbered.  Space map pages are located at page numbers i*(Page.Size) in 
+ the page file.  Object pages are located at all page numbers between space map pages.  
+ Thus object pages will never have page numbers that are multiples of the page size.
+ */
 
 class ObjectPage extends ObjectStorePage {
 
@@ -46,7 +46,7 @@ class ObjectPage extends ObjectStorePage {
 	public ObjectPage(int pageNumber, byte[] buffer, PageStore pageStore) {
 		super(pageNumber, buffer, pageStore);
 	}
-	
+
 	/**
 	 * Writes the contents of the page to a buffer.
 	 */
@@ -54,12 +54,12 @@ class ObjectPage extends ObjectStorePage {
 		dematerialize();
 		pageBuffer.copyTo(buffer);
 	}
-	
+
 	/**
 	 * Updates the page fields from its bytes.  This is used when the page has just been mutated from
 	 * a its superclass.
 	 */
-	 
+
 	protected void materialize() {
 		int initialized = pageBuffer.getUInt(FlagOffset, 2);
 		if (initialized == 0xEEEE) {
@@ -93,7 +93,8 @@ class ObjectPage extends ObjectStorePage {
 	public Field getObjectField(int objectNumber) throws ObjectStoreException {
 		int entryOffset = ObjectDirectoryOffset + 2 * objectNumber;
 		int blockOffset = pageBuffer.getUInt(entryOffset, 2);
-		if (blockOffset == 0) return null;
+		if (blockOffset == 0)
+			return null;
 		ObjectHeader header = new ObjectHeader(pageBuffer.get(blockOffset, ObjectHeader.SIZE));
 		Field f = pageBuffer.getField(blockOffset + ObjectHeader.SIZE, header.getObjectLength());
 		return f;
@@ -109,7 +110,7 @@ class ObjectPage extends ObjectStorePage {
 		if (getFreeSpace() < blockLength) {
 			throw new ObjectStoreException(ObjectStoreException.ObjectSizeFailure);
 		}
-	
+
 		// make sure the slot is still empty
 		int objectNumber = object.getAddress().getObjectNumber();
 		int entryOffset = ObjectDirectoryOffset + (objectNumber * 2);
@@ -117,22 +118,23 @@ class ObjectPage extends ObjectStorePage {
 		if (blockOffset != 0) {
 			throw new ObjectStoreException(ObjectStoreException.PageVacancyFailure);
 		}
-	
+
 		// place the object into the object space portion of the page
-		if (blockLength > (SIZE - freeSpaceOffset)) compress();	// compress the space if necessary
-		blockOffset = freeSpaceOffset;						// place the object at the beginning of the free space
+		if (blockLength > (SIZE - freeSpaceOffset))
+			compress(); // compress the space if necessary
+		blockOffset = freeSpaceOffset; // place the object at the beginning of the free space
 		ObjectHeader header = new ObjectHeader(object.length());
 		pageBuffer.put(blockOffset, header);
 		pageBuffer.put(blockOffset + ObjectHeader.SIZE, object.toByteArray());
 		pageBuffer.put(entryOffset, 2, blockOffset);
-		freeSpaceOffset += blockLength;						// update where the new free space is
-		usedSpace += blockLength;							// indicate that space is used up
-		usedEntries++;									// indicate that an entry is used up
-		initialEntry = (objectNumber + 1) % MaxEntries;	// set where to begin the next search
+		freeSpaceOffset += blockLength; // update where the new free space is
+		usedSpace += blockLength; // indicate that space is used up
+		usedEntries++; // indicate that an entry is used up
+		initialEntry = (objectNumber + 1) % MaxEntries; // set where to begin the next search
 		setChanged();
 		notifyObservers();
 	}
-	
+
 	/**
 	 * Reserves space for an object on the page.  Records the reservation in the
 	 * reservation table.
@@ -144,13 +146,13 @@ class ObjectPage extends ObjectStorePage {
 		if (getFreeSpace() < blockLength) {
 			throw new ObjectStoreException(ObjectStoreException.ObjectSizeFailure);
 		}
-		
+
 		// get the reservation for this page from the table, create a new one if necessary
 		Reservation r = reservations.get(pageNumber);
 		if (r == null) {
 			r = new Reservation(getFreeSpace(), MaxEntries - usedEntries, initialEntry);
 			reservations.put(pageNumber, r);
-		}		
+		}
 
 		// find an empty slot that is not already reserved
 		int objectNumber = r.getInitialEntry();
@@ -160,37 +162,39 @@ class ObjectPage extends ObjectStorePage {
 			if (!r.contains(objectNumber)) {
 				entryOffset = ObjectDirectoryOffset + (objectNumber * 2);
 				blockOffset = pageBuffer.getUInt(entryOffset, 2);
-				if (blockOffset == 0) break;
+				if (blockOffset == 0)
+					break;
 			}
 			objectNumber = (objectNumber + 1) % MaxEntries;
 		}
 		if (blockOffset != 0) {
 			throw new ObjectStoreException(ObjectStoreException.PageVacancyFailure);
 		}
-		
+
 		// begin the next search just after where we left off
 		r.setInitialEntry((objectNumber + 1) % MaxEntries);
-		
+
 		// update the reservation for this page
 		r.add(objectNumber, blockLength);
 		return objectNumber;
 	}
 
 	public void removeObject(int objectNumber) throws ObjectStoreException {
-		
+
 		/* check for existence of the object to be removed */
 		int entryOffset = ObjectDirectoryOffset + 2 * objectNumber;
 		int blockOffset = pageBuffer.getUInt(entryOffset, 2);
-		if (blockOffset == 0) throw new ObjectStoreException(ObjectStoreException.ObjectExistenceFailure);
-	
+		if (blockOffset == 0)
+			throw new ObjectStoreException(ObjectStoreException.ObjectExistenceFailure);
+
 		/* remove the object */
-		pageBuffer.put(entryOffset, 2, 0);			// remove its offset from the object table
-		ObjectHeader h = new ObjectHeader(pageBuffer.get(blockOffset,ObjectHeader.SIZE));
+		pageBuffer.put(entryOffset, 2, 0); // remove its offset from the object table
+		ObjectHeader h = new ObjectHeader(pageBuffer.get(blockOffset, ObjectHeader.SIZE));
 		int objectLength = h.getObjectLength();
-		int blockLength = objectLength + ObjectHeader.SIZE;	// find the length of it in the object space
-		pageBuffer.clear(blockOffset,blockLength);	// clear its spot in the object space
-		usedSpace -= blockLength;					// space has been freed
-		usedEntries--;								// an entry has been freed;
+		int blockLength = objectLength + ObjectHeader.SIZE; // find the length of it in the object space
+		pageBuffer.clear(blockOffset, blockLength); // clear its spot in the object space
+		usedSpace -= blockLength; // space has been freed
+		usedEntries--; // an entry has been freed;
 		setChanged();
 		notifyObservers();
 	}
@@ -199,29 +203,29 @@ class ObjectPage extends ObjectStorePage {
 	 * Updates an object value on the page.  An object may not change its size.  
 	 */
 	public void updateObject(StoredObject object) throws ObjectStoreException {
-	
+
 		int objectNumber = object.getAddress().getObjectNumber();
-	
+
 		/* check for existence of the object to be updated */
 		int entryOffset = ObjectDirectoryOffset + 2 * objectNumber;
 		int blockOffset = pageBuffer.getUInt(entryOffset, 2);
 		if (blockOffset == 0) {
 			throw new ObjectStoreException(ObjectStoreException.ObjectExistenceFailure);
 		}
-	
+
 		/* retrieve the header and check the size */
 		ObjectHeader header = new ObjectHeader(pageBuffer.get(blockOffset, ObjectHeader.SIZE));
 		if (header.getObjectLength() != object.length()) {
 			throw new ObjectStoreException(ObjectStoreException.ObjectSizeFailure);
 		}
-	
+
 		/* update in place */
 		int objectOffset = blockOffset + ObjectHeader.SIZE;
 		pageBuffer.put(objectOffset, object.toByteArray());
 		setChanged();
 		notifyObservers();
 	}
-	
+
 	/**
 	 * Compresses the space in the page, putting all the free space at the end of the page.
 	 * This will adjust the free space offset and the offsets of the individual objects.  All
@@ -248,12 +252,13 @@ class ObjectPage extends ObjectStorePage {
 		pageBuffer.put(ObjectSpaceOffset, temp.get(ObjectSpaceOffset, SIZE - ObjectSpaceOffset));
 		freeSpaceOffset = newBlockOffset;
 	}
-	
+
 	/**
 	 * Returns the amount of free space on this page.
 	 */
 	public int getFreeSpace() {
-		if (usedEntries >= MaxEntries) return 0;
+		if (usedEntries >= MaxEntries)
+			return 0;
 		return SIZE - (ObjectSpaceOffset + usedSpace);
 	}
 

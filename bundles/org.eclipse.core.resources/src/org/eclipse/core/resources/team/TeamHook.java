@@ -39,6 +39,7 @@ public abstract class TeamHook extends InternalTeamHook {
 	 * @since 3.0
 	 */
 	protected final IResourceRuleFactory defaultFactory = new ResourceRuleFactory();
+
 	/**
 	 * Creates a new team hook.  Default constructor for use by subclasses and the 
 	 * resources plug-in only.
@@ -46,6 +47,7 @@ public abstract class TeamHook extends InternalTeamHook {
 	protected TeamHook() {
 		super();
 	}
+
 	/**
 	 * Returns the resource scheduling rule factory that should be used when workspace
 	 * operations are invoked on resources in that project. The workspace will ask the
@@ -69,6 +71,7 @@ public abstract class TeamHook extends InternalTeamHook {
 	public IResourceRuleFactory getRuleFactory(IProject project) {
 		return defaultFactory;
 	}
+
 	/**
 	 * Sets the resource scheduling rule factory to use for resource modifications
 	 * in the given project. This method only needs to be called if the factory has changed
@@ -93,6 +96,7 @@ public abstract class TeamHook extends InternalTeamHook {
 	protected final void setRuleFactory(IProject project, IResourceRuleFactory factory) {
 		super.setRuleFactory(project, factory);
 	}
+
 	/**
 	 * Validates whether a particular attempt at link creation is allowed.  This gives
 	 * team providers an opportunity to hook into the beginning of the implementation
@@ -122,6 +126,7 @@ public abstract class TeamHook extends InternalTeamHook {
 	public IStatus validateCreateLink(IFile file, int updateFlags, IPath location) {
 		return Status.OK_STATUS;
 	}
+
 	/**
 	 * Validates whether a particular attempt at link creation is allowed.  This gives
 	 * team providers an opportunity to hook into the beginning of the implementation

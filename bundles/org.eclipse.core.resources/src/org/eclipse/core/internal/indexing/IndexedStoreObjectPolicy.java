@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.core.internal.indexing;
 
 public class IndexedStoreObjectPolicy extends AbstractObjectPolicy {
-	
+
 	/**
 	 * Default constructor
 	 */
@@ -29,22 +29,22 @@ public class IndexedStoreObjectPolicy extends AbstractObjectPolicy {
 		int length = StoredObject.TYPE_LENGTH;
 		int type = field.subfield(offset, length).getInt();
 		StoredObject object = null;
-			switch (type) {
-				case IndexAnchor.TYPE:
-					object = new IndexAnchor(field, store, address);
-					break;
-				case IndexNode.TYPE:
-					object = new IndexNode(field, store, address);
-					break;
-				case IndexedStoreContext.TYPE:
-					object = new IndexedStoreContext(field, store, address);
-					break;
-				case BinarySmallObject.TYPE:
-					object = new BinarySmallObject(field, store, address);
-					break;
-				default:
-					throw new ObjectStoreException(ObjectStoreException.ObjectTypeFailure);
-			} 
+		switch (type) {
+			case IndexAnchor.TYPE :
+				object = new IndexAnchor(field, store, address);
+				break;
+			case IndexNode.TYPE :
+				object = new IndexNode(field, store, address);
+				break;
+			case IndexedStoreContext.TYPE :
+				object = new IndexedStoreContext(field, store, address);
+				break;
+			case BinarySmallObject.TYPE :
+				object = new BinarySmallObject(field, store, address);
+				break;
+			default :
+				throw new ObjectStoreException(ObjectStoreException.ObjectTypeFailure);
+		}
 		return object;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,14 +29,16 @@ public class ObjectID implements Insertable {
 	}
 
 	public boolean equals(Object anObject) {
-		if (!(anObject instanceof ObjectID)) return false;
+		if (!(anObject instanceof ObjectID))
+			return false;
 		ObjectID id = (ObjectID) anObject;
-		if (this.objectNumber != id.objectNumber) return false;
+		if (this.objectNumber != id.objectNumber)
+			return false;
 		return true;
 	}
 
 	public int hashCode() {
-		return (int)objectNumber;
+		return (int) objectNumber;
 	}
 
 	public byte[] toByteArray() {

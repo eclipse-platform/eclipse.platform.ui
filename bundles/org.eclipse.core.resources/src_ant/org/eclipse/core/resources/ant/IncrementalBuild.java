@@ -34,79 +34,82 @@ public class IncrementalBuild extends Task {
 	 * indicating that an incremental build should be performed.
 	 */
 	public final static String KIND_INCREMENTAL = "incremental"; //$NON-NLS-1$
-	
+
 	/**
 	 * Unique identifier constant (value <code>"KIND_FULL"</code>)
 	 * indicating that a full build should be performed.
 	 */
 	public final static String KIND_FULL = "full"; //$NON-NLS-1$
-	
+
 	/**
 	 * Unique identifier constant (value <code>"KIND_AUTO"</code>)
 	 * indicating that an auto build should be performed.
 	 */
 	public final static String KIND_AUTO = "auto"; //$NON-NLS-1$
-	
-	
-/**
- * Constructs an <code>IncrementalBuild</code> instance.
- */
-public IncrementalBuild() {
-	super();
-}
-/**
- * Executes this task.
- * 
- * @exception BuildException thrown if a problem occurs during execution
- */
-public void execute() throws BuildException {
-	try {
-		IProgressMonitor monitor = null;
-		Hashtable references = getProject().getReferences();
-		if (references != null)
-			monitor = (IProgressMonitor) references.get(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR);
-		if (project == null) {
-			ResourcesPlugin.getWorkspace().build(kind, monitor);
-		} else {
-			IProject targetProject = ResourcesPlugin.getWorkspace().getRoot().getProject(project);
-			if (builder == null)
-				targetProject.build(kind, monitor);
-			else
-				targetProject.build(kind, builder, null, monitor);
-		}
-	} catch (CoreException e) {
-		throw new BuildException(e);
+
+	/**
+	 * Constructs an <code>IncrementalBuild</code> instance.
+	 */
+	public IncrementalBuild() {
+		super();
 	}
-}
-/**
- * Sets the name of the receiver's builder.
- * 
- * @param value the name of the receiver's builder
- */
-public void setBuilder(String value) {
-	builder = value;
-}
-/**
- * Sets the receiver's kind> attribute.  This value must be one
- * of <code>IncrementalBuild.KIND_FULL</code>, <code>IncrementalBuild.KIND_AUTO</code>,
- * <code>IncrementalBuild.KIND_INCR</code>.
- * 
- * @param value the receiver's kind attribute
- */
-public void setKind(String value) {
-	if (IncrementalBuild.KIND_FULL.equalsIgnoreCase(value))
-		kind = IncrementalProjectBuilder.FULL_BUILD;
-	else if (IncrementalBuild.KIND_AUTO.equalsIgnoreCase(value))
-		kind = IncrementalProjectBuilder.AUTO_BUILD;
-	else if (IncrementalBuild.KIND_INCREMENTAL.equalsIgnoreCase(value))
-		kind = IncrementalProjectBuilder.INCREMENTAL_BUILD;
-}
-/**
- * Sets the receiver's target project.
- * 
- * @param value the receiver's target project
- */
-public void setProject(String value) {
-	project = value;
-}
+
+	/**
+	 * Executes this task.
+	 * 
+	 * @exception BuildException thrown if a problem occurs during execution
+	 */
+	public void execute() throws BuildException {
+		try {
+			IProgressMonitor monitor = null;
+			Hashtable references = getProject().getReferences();
+			if (references != null)
+				monitor = (IProgressMonitor) references.get(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR);
+			if (project == null) {
+				ResourcesPlugin.getWorkspace().build(kind, monitor);
+			} else {
+				IProject targetProject = ResourcesPlugin.getWorkspace().getRoot().getProject(project);
+				if (builder == null)
+					targetProject.build(kind, monitor);
+				else
+					targetProject.build(kind, builder, null, monitor);
+			}
+		} catch (CoreException e) {
+			throw new BuildException(e);
+		}
+	}
+
+	/**
+	 * Sets the name of the receiver's builder.
+	 * 
+	 * @param value the name of the receiver's builder
+	 */
+	public void setBuilder(String value) {
+		builder = value;
+	}
+
+	/**
+	 * Sets the receiver's kind> attribute.  This value must be one
+	 * of <code>IncrementalBuild.KIND_FULL</code>, <code>IncrementalBuild.KIND_AUTO</code>,
+	 * <code>IncrementalBuild.KIND_INCR</code>.
+	 * 
+	 * @param value the receiver's kind attribute
+	 */
+	public void setKind(String value) {
+		if (IncrementalBuild.KIND_FULL.equalsIgnoreCase(value))
+			kind = IncrementalProjectBuilder.FULL_BUILD;
+		else if (IncrementalBuild.KIND_AUTO.equalsIgnoreCase(value))
+			kind = IncrementalProjectBuilder.AUTO_BUILD;
+		else if (IncrementalBuild.KIND_INCREMENTAL.equalsIgnoreCase(value))
+			kind = IncrementalProjectBuilder.INCREMENTAL_BUILD;
+	}
+
+	/**
+	 * Sets the receiver's target project.
+	 * 
+	 * @param value the receiver's target project
+	 */
+	public void setProject(String value) {
+		project = value;
+	}
 }

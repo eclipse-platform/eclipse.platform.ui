@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,31 +22,35 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class MarkerReader {
 	protected Workspace workspace;
-public MarkerReader(Workspace workspace) {
-	super();
-	this.workspace = workspace;
-}
-/**
- * Returns the appropriate reader for the given version.
- */
-protected MarkerReader getReader(int formatVersion) throws IOException {
-	switch (formatVersion) {
-		case 1 :
-			return new MarkerReader_1(workspace);
-		case 2 :
-			return new MarkerReader_2(workspace);
-		case 3 :
-			return new MarkerReader_3(workspace);
-		default :
-			throw new IOException(Policy.bind("resources.format")); //$NON-NLS-1$
+
+	public MarkerReader(Workspace workspace) {
+		super();
+		this.workspace = workspace;
 	}
-}
-public void read(DataInputStream input, boolean generateDeltas) throws IOException, CoreException {
-	int formatVersion = readVersionNumber(input);
-	MarkerReader reader = getReader(formatVersion);
-	reader.read(input, generateDeltas);
-}
-protected static int readVersionNumber(DataInputStream input) throws IOException {
-	return input.readInt();
-}
+
+	/**
+	 * Returns the appropriate reader for the given version.
+	 */
+	protected MarkerReader getReader(int formatVersion) throws IOException {
+		switch (formatVersion) {
+			case 1 :
+				return new MarkerReader_1(workspace);
+			case 2 :
+				return new MarkerReader_2(workspace);
+			case 3 :
+				return new MarkerReader_3(workspace);
+			default :
+				throw new IOException(Policy.bind("resources.format")); //$NON-NLS-1$
+		}
+	}
+
+	public void read(DataInputStream input, boolean generateDeltas) throws IOException, CoreException {
+		int formatVersion = readVersionNumber(input);
+		MarkerReader reader = getReader(formatVersion);
+		reader.read(input, generateDeltas);
+	}
+
+	protected static int readVersionNumber(DataInputStream input) throws IOException {
+		return input.readInt();
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,27 +30,34 @@ public class SavedState implements ISavedState {
 		this.oldTree = oldTree;
 		this.fileTable = restoreFileTable();
 	}
+
 	void forgetTrees() {
 		newTree = null;
 		oldTree = null;
 	}
+
 	public int getSaveNumber() {
 		return workspace.getSaveManager().getSaveNumber(pluginId);
 	}
+
 	protected SafeFileTable getFileTable() {
 		return fileTable;
 	}
+
 	protected SafeFileTable restoreFileTable() throws CoreException {
 		if (fileTable == null)
 			fileTable = new SafeFileTable(pluginId);
 		return fileTable;
 	}
+
 	public IPath lookup(IPath file) {
 		return getFileTable().lookup(file);
 	}
+
 	public IPath[] getFiles() {
 		return getFileTable().getFiles();
 	}
+
 	public void processResourceChangeEvents(IResourceChangeListener listener) {
 		try {
 			try {

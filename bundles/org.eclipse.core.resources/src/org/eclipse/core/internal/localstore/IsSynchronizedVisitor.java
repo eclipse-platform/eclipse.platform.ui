@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.core.internal.localstore;
 
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 /**
  * Visits a unified tree, and throws a ResourceChangedException on the first 
  * node that is discovered to be out of sync.  The exception that is thrown 
@@ -22,18 +23,20 @@ public class IsSynchronizedVisitor extends CollectSyncStatusVisitor {
 	static class ResourceChangedException extends RuntimeException {
 		// empty
 	}
+
 	protected static ResourceChangedException exception = new ResourceChangedException();
 
-/**
- * Creates a new IsSynchronizedVisitor.
- */
-public IsSynchronizedVisitor(IProgressMonitor monitor) {
-	super("", monitor); //$NON-NLS-1$
-}
-/**
- * @see CollectSyncStatusVisitor#changed(Resource)
- */
-protected void changed(Resource target) {
-	throw exception;
-}
+	/**
+	 * Creates a new IsSynchronizedVisitor.
+	 */
+	public IsSynchronizedVisitor(IProgressMonitor monitor) {
+		super("", monitor); //$NON-NLS-1$
+	}
+
+	/**
+	 * @see CollectSyncStatusVisitor#changed(Resource)
+	 */
+	protected void changed(Resource target) {
+		throw exception;
+	}
 }

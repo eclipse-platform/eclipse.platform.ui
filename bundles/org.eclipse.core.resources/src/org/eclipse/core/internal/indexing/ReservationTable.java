@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,43 +13,45 @@ package org.eclipse.core.internal.indexing;
 import java.util.*;
 
 public class ReservationTable {
-	
+
 	protected Map table = new HashMap();
-	
+
 	public ReservationTable() {
 	}
-	
+
 	public Reservation get(int pageNumber) {
-		return (Reservation)table.get(new Integer(pageNumber));
+		return (Reservation) table.get(new Integer(pageNumber));
 	}
-	
+
 	public void put(int pageNumber, Reservation r) {
 		table.put(new Integer(pageNumber), r);
 	}
-	
+
 	public boolean contains(int pageNumber) {
 		return table.containsKey(new Integer(pageNumber));
 	}
-	
+
 	public boolean contains(ObjectAddress address) {
 		int pageNumber = address.getPageNumber();
 		int objectNumber = address.getObjectNumber();
 		if (contains(pageNumber)) {
-			if (get(pageNumber).contains(objectNumber)) return true;
+			if (get(pageNumber).contains(objectNumber))
+				return true;
 		}
 		return false;
 	}
-	
+
 	public void remove(ObjectAddress address) {
 		int pageNumber = address.getPageNumber();
 		int objectNumber = address.getObjectNumber();
-		Reservation r = (Reservation)table.get(new Integer(pageNumber));
-		if (r == null) return;
+		Reservation r = (Reservation) table.get(new Integer(pageNumber));
+		if (r == null)
+			return;
 		r.remove(objectNumber);
 	}
-	
+
 	public void clear() {
 		table.clear();
 	}
-	
+
 }

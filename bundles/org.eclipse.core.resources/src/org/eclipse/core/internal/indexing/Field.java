@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ public class Field implements Insertable {
 	protected Buffer buffer; // contents
 	protected int offset; // offset of the field within the buffer
 	protected int length; // length of the field
-	
+
 	/**
 	 * Constructor for a new Field.
 	 */
@@ -93,12 +93,14 @@ public class Field implements Insertable {
 	}
 
 	public Field subfield(int offset, int length) {
-		if (offset + length > this.length) throw new IllegalArgumentException();
+		if (offset + length > this.length)
+			throw new IllegalArgumentException();
 		return buffer.getField(this.offset + offset, length);
 	}
 
 	public Field subfield(FieldDef d) {
-		if (d.offset + d.length > this.length) throw new IllegalArgumentException();
+		if (d.offset + d.length > this.length)
+			throw new IllegalArgumentException();
 		return buffer.getField(this.offset + d.offset, d.length);
 	}
 
@@ -137,7 +139,7 @@ public class Field implements Insertable {
 	public int getUInt(FieldDef d) {
 		return subfield(d).getUInt();
 	}
-	
+
 	public int length() {
 		return length;
 	}
@@ -154,7 +156,7 @@ public class Field implements Insertable {
 		buffer.put(offset, length, b);
 		return this;
 	}
-	
+
 	public Field put(int n) {
 		buffer.put(offset, length, n);
 		return this;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,12 +44,12 @@ import org.eclipse.core.runtime.CoreException;
  * @see IResource#accept(IResourceVisitor)
  */
 public interface IResourceDeltaVisitor {
-/** 
- * Visits the given resource delta.
- * 
- * @return <code>true</code> if the resource delta's children should
- *		be visited; <code>false</code> if they should be skipped.
- * @exception CoreException if the visit fails for some reason.
- */
-public boolean visit(IResourceDelta delta) throws CoreException;
+	/** 
+	 * Visits the given resource delta.
+	 * 
+	 * @return <code>true</code> if the resource delta's children should
+	 *		be visited; <code>false</code> if they should be skipped.
+	 * @exception CoreException if the visit fails for some reason.
+	 */
+	public boolean visit(IResourceDelta delta) throws CoreException;
 }

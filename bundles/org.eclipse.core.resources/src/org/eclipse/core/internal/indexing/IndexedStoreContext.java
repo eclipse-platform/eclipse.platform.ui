@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,19 +16,19 @@ class IndexedStoreContext extends IndexedStoreObject {
 	public static final int TYPE = 2;
 
 	/* 
-	The open number field is no longer used to generate object ids, but may not be deleted since a non-zero 
-	open number indicates that the object number field has not been initialized.
-	*/
+	 The open number field is no longer used to generate object ids, but may not be deleted since a non-zero 
+	 open number indicates that the object number field has not been initialized.
+	 */
 	private static final int OpenNumberOffset = 2;
 	private static final int OpenNumberLength = 4;
 	private Field openNumberField;
 	private int openNumber;
-	
-	private static final int ObjectDirectoryAddressOffset	= 6;
+
+	private static final int ObjectDirectoryAddressOffset = 6;
 	private static final int ObjectDirectoryAddressLength = 4;
 	private Field objectDirectoryAddressField;
 	private ObjectAddress objectDirectoryAddress;
-	
+
 	private static final int IndexDirectoryAddressOffset = 10;
 	private static final int IndexDirectoryAddressLength = 4;
 	private Field indexDirectoryAddressField;
@@ -49,7 +49,7 @@ class IndexedStoreContext extends IndexedStoreObject {
 		openNumber = 0;
 		objectNumber = 0;
 	}
-	
+
 	/** 
 	 * Constructs a context from a field read from the store.
 	 */
@@ -80,7 +80,7 @@ class IndexedStoreContext extends IndexedStoreObject {
 		objectNumber = objectNumberField.getLong();
 		/* here is where we transition to using object numbers -- upward compatible change */
 		if (openNumber > 0) {
-			objectNumber = (long)openNumber << 32;
+			objectNumber = (long) openNumber << 32;
 			openNumber = 0;
 			setChanged();
 		}
@@ -98,7 +98,7 @@ class IndexedStoreContext extends IndexedStoreObject {
 		indexDirectoryAddressField.put(indexDirectoryAddress);
 		objectNumberField.put(objectNumber);
 	}
-	
+
 	/**
 	 * Returns the index directory address from the buffer.
 	 */
@@ -154,7 +154,7 @@ class IndexedStoreContext extends IndexedStoreObject {
 		this.objectDirectoryAddress = address;
 		setChanged();
 	}
-	
+
 	/**
 	 * Provides a printable representation of this object.
 	 */

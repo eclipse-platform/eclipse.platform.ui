@@ -37,6 +37,7 @@ public interface IRefreshResult {
 	 * longer monitor any of the resources it was monitoring
 	 */
 	public void monitorFailed(IRefreshMonitor monitor, IResource resource);
+
 	/**
 	 * Requests that the provided resource be refreshed.  The refresh will
 	 * occur in the background during the next scheduled refresh.

@@ -49,6 +49,7 @@ public abstract class WorkspaceJob extends InternalWorkspaceJob {
 	public WorkspaceJob(String name) {
 		super(name);
 	}
+
 	/**
 	 * Runs the operation, reporting progress to and accepting
 	 * cancelation requests from the given progress monitor.

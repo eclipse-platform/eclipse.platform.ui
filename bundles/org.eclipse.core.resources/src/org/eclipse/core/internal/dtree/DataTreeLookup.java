@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.dtree;
 
 import org.eclipse.core.runtime.IPath;
+
 /**
  * The result of doing a lookup() in a data tree.  Uses an instance
  * pool that assumes no more than POOL_SIZE instance will ever be
@@ -37,39 +38,42 @@ public class DataTreeLookup {
 			instancePool[i] = new DataTreeLookup();
 		}
 	}
-/**
- * Constructors for internal use only.  Use factory methods.
- */
-private DataTreeLookup() {
-}
-/**
- * Factory method for creating a new lookup object.
- */
-public static DataTreeLookup newLookup(IPath nodeKey, boolean isPresent, Object data) {
-	DataTreeLookup instance;
-	synchronized (instancePool) {
-		instance = instancePool[nextFree];
-		nextFree = ++nextFree % POOL_SIZE;
+
+	/**
+	 * Constructors for internal use only.  Use factory methods.
+	 */
+	private DataTreeLookup() {
 	}
-	instance.key = nodeKey;
-	instance.isPresent = isPresent;
-	instance.data = data;
-	instance.foundInFirstDelta = false;
-	return instance;
-}
-/**
- * Factory method for creating a new lookup object.
- */
-public static DataTreeLookup newLookup(IPath nodeKey, boolean isPresent, Object data, boolean foundInFirstDelta) {
-	DataTreeLookup instance;
-	synchronized (instancePool) {
-		instance = instancePool[nextFree];
-		nextFree = ++nextFree % POOL_SIZE;
+
+	/**
+	 * Factory method for creating a new lookup object.
+	 */
+	public static DataTreeLookup newLookup(IPath nodeKey, boolean isPresent, Object data) {
+		DataTreeLookup instance;
+		synchronized (instancePool) {
+			instance = instancePool[nextFree];
+			nextFree = ++nextFree % POOL_SIZE;
+		}
+		instance.key = nodeKey;
+		instance.isPresent = isPresent;
+		instance.data = data;
+		instance.foundInFirstDelta = false;
+		return instance;
 	}
-	instance.key = nodeKey;
-	instance.isPresent = isPresent;
-	instance.data = data;
-	instance.foundInFirstDelta = foundInFirstDelta;
-	return instance;
-}
+
+	/**
+	 * Factory method for creating a new lookup object.
+	 */
+	public static DataTreeLookup newLookup(IPath nodeKey, boolean isPresent, Object data, boolean foundInFirstDelta) {
+		DataTreeLookup instance;
+		synchronized (instancePool) {
+			instance = instancePool[nextFree];
+			nextFree = ++nextFree % POOL_SIZE;
+		}
+		instance.key = nodeKey;
+		instance.isPresent = isPresent;
+		instance.data = data;
+		instance.foundInFirstDelta = foundInFirstDelta;
+		return instance;
+	}
 }

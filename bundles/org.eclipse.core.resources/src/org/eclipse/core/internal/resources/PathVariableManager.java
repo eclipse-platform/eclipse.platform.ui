@@ -77,6 +77,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		// notify listeners from outside the synchronized block to avoid deadlocks
 		fireVariableChangeEvent(varName, newValue, eventType);
 	}
+
 	/**
 	 * Throws an exception if the given path is not valid as a path variable
 	 * value.
@@ -86,12 +87,14 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		if (!status.isOK())
 			throw new CoreException(status);
 	}
+
 	/**
 	 * Return a key to use in the Preferences.
 	 */
 	private String getKeyForName(String varName) {
 		return VARIABLE_PREFIX + varName;
 	}
+
 	/**
 	 * @see org.eclipse.core.resources.IPathVariableManager#resolvePath(IPath)
 	 */
@@ -130,6 +133,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 				public void handleException(Throwable exception) {
 					// already being logged in Platform#run()
 				}
+
 				public void run() throws Exception {
 					l.pathVariableChanged(pve);
 				}
@@ -209,6 +213,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		}
 		return Status.OK_STATUS;
 	}
+
 	/**
 	 * @see IPathVariableManager#validateValue(IPath)
 	 */
@@ -219,6 +224,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		}
 		return Status.OK_STATUS;
 	}
+
 	/**
 	 * Throws a runtime exception if the given name is not valid as a path
 	 * variable name.
@@ -228,6 +234,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		if (!status.isOK())
 			throw new CoreException(status);
 	}
+
 	/**
 	 * @see org.eclipse.core.internal.resources.IManager#startup(IProgressMonitor)
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,24 +14,24 @@ import org.eclipse.core.internal.utils.Policy;
 
 public class ObjectStoreException extends StoreException {
 
-	public final static int GenericFailure              = 0;
-	public final static int InternalFailure             = 1;
-	public final static int StoreCreateFailure          = 10;
-	public final static int StoreConversionFailure      = 11;
-	public final static int StoreOpenFailure            = 12;
-	public final static int StoreCloseFailure           = 13;
-	public final static int PageReadFailure             = 20;
-	public final static int PageWriteFailure            = 21;
-	public final static int PageVacancyFailure          = 22;
-	public final static int ObjectTypeFailure           = 23;
-	public final static int ObjectSizeFailure           = 24;
-	public final static int ObjectExistenceFailure 	    = 25;
-	public final static int ObjectHeaderFailure         = 26;
-	public final static int ObjectInsertFailure         = 27;
-	public final static int ObjectRemoveFailure         = 28;
-	public final static int ObjectUpdateFailure         = 29;
-	public final static int ObjectIsLocked              = 30;
-	public final static int MetadataRequestFailure 	    = 40;
+	public final static int GenericFailure = 0;
+	public final static int InternalFailure = 1;
+	public final static int StoreCreateFailure = 10;
+	public final static int StoreConversionFailure = 11;
+	public final static int StoreOpenFailure = 12;
+	public final static int StoreCloseFailure = 13;
+	public final static int PageReadFailure = 20;
+	public final static int PageWriteFailure = 21;
+	public final static int PageVacancyFailure = 22;
+	public final static int ObjectTypeFailure = 23;
+	public final static int ObjectSizeFailure = 24;
+	public final static int ObjectExistenceFailure = 25;
+	public final static int ObjectHeaderFailure = 26;
+	public final static int ObjectInsertFailure = 27;
+	public final static int ObjectRemoveFailure = 28;
+	public final static int ObjectUpdateFailure = 29;
+	public final static int ObjectIsLocked = 30;
+	public final static int MetadataRequestFailure = 40;
 
 	public final static String[] message = new String[50];
 	static {
@@ -43,18 +43,21 @@ public class ObjectStoreException extends StoreException {
 	public ObjectStoreException(int id) {
 		this(id, null);
 	}
+
 	public ObjectStoreException(int id, Throwable exception) {
 		super(message[id], exception);
 		this.id = id;
 	}
+
 	public ObjectStoreException(String s) {
 		this(s, null);
 	}
+
 	public ObjectStoreException(String s, Throwable exception) {
 		super(s, exception);
 		this.id = GenericFailure;
 	}
-	
+
 	/**
 	 * Initializes the messages at class load time.
 	 */
@@ -82,5 +85,5 @@ public class ObjectStoreException extends StoreException {
 	private static String bind(String name) {
 		return Policy.bind(name);
 	}
-	
+
 }

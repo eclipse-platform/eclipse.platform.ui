@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ class BinarySmallObject extends IndexedStoreObject {
 	public static final int TYPE = 5;
 	public static final int VALUE_OFFSET = 2;
 	protected byte[] value;
-	
+
 	/**
 	 * Constructs a new object that will be inserted into a store.
 	 */
@@ -22,14 +22,14 @@ class BinarySmallObject extends IndexedStoreObject {
 		super();
 		this.value = new Buffer(value).get();
 	}
-	
+
 	/**
 	 * Constructs an object from bytes that came from the store.
 	 */
 	public BinarySmallObject(Field f, ObjectStore store, ObjectAddress address) throws ObjectStoreException {
 		super(f, store, address);
 	}
-	
+
 	/**
 	 * Places the contents of the fields into the buffer.
 	 * Subclasses should implement and call super.
@@ -40,6 +40,7 @@ class BinarySmallObject extends IndexedStoreObject {
 		super.insertValues(f);
 		f.subfield(VALUE_OFFSET).put(value);
 	}
+
 	/**
 	 * Extracts the values from a field into the members of this object;
 	 */
@@ -47,7 +48,7 @@ class BinarySmallObject extends IndexedStoreObject {
 		super.extractValues(f);
 		value = f.subfield(VALUE_OFFSET).get();
 	}
-	
+
 	/**
 	 * Returns the maximum size of this object's instance -- including its type field.
 	 * Subclasses should override.
@@ -55,11 +56,11 @@ class BinarySmallObject extends IndexedStoreObject {
 	protected int getMaximumSize() {
 		return 6000 + VALUE_OFFSET;
 	}
-	
+
 	protected int length() {
 		return value.length + VALUE_OFFSET;
 	}
-	
+
 	/**
 	 * Returns the minimum size of this object's instance -- including its type field.
 	 * Subclasses should override.
@@ -67,7 +68,7 @@ class BinarySmallObject extends IndexedStoreObject {
 	protected int getMinimumSize() {
 		return VALUE_OFFSET;
 	}
-	
+
 	/**
 	 * Returns the required type of this class of object.
 	 * Subclasses must override.
@@ -75,14 +76,14 @@ class BinarySmallObject extends IndexedStoreObject {
 	protected int getRequiredType() {
 		return TYPE;
 	}
-	
+
 	/**
 	 * Returns the value of the object.
 	 */
 	public byte[] getValue() {
 		return new Field(value).get();
 	}
-	
+
 	/** 
 	 * Provides a printable representation of this object.
 	 */
@@ -93,11 +94,14 @@ class BinarySmallObject extends IndexedStoreObject {
 		b.append(value.length);
 		b.append(" ["); //$NON-NLS-1$
 		for (int i = 0; i < value.length; i++) {
-			if (i > 0) b.append(" "); //$NON-NLS-1$
-			if (i == n) break;
+			if (i > 0)
+				b.append(" "); //$NON-NLS-1$
+			if (i == n)
+				break;
 			b.append(value[i]);
 		}
-		if (value.length > n) b.append(" ..."); //$NON-NLS-1$
+		if (value.length > n)
+			b.append(" ..."); //$NON-NLS-1$
 		b.append("])"); //$NON-NLS-1$
 		return b.toString();
 	}

@@ -14,6 +14,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.TeamHook;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
+
 /**
  * Class for calculating scheduling rules for resource changing operations.
  * This factory delegates to the TeamHook to obtain an appropriate factory
@@ -35,6 +36,7 @@ class Rules implements IResourceRuleFactory {
 		this.root = workspace.getRoot();
 		this.teamHook = workspace.getTeamHook();
 	}
+
 	/**
 	 * Obtains the scheduling rule from the appropriate factory for a build operation.
 	 */
@@ -42,6 +44,7 @@ class Rules implements IResourceRuleFactory {
 		//team hook currently cannot change this rule
 		return root;
 	}
+
 	/**
 	 * Obtains the scheduling rule from the appropriate factories for a copy operation.
 	 */
@@ -51,6 +54,7 @@ class Rules implements IResourceRuleFactory {
 		//source is not modified, destination is created
 		return factoryFor(destination).copyRule(source, destination);
 	}
+
 	/**
 	 * Obtains the scheduling rule from the appropriate factory for a create operation.
 	 */
@@ -59,6 +63,7 @@ class Rules implements IResourceRuleFactory {
 			return root;
 		return factoryFor(resource).createRule(resource);
 	}
+
 	/**
 	 * Obtains the scheduling rule from the appropriate factory for a delete operation.
 	 */
@@ -67,6 +72,7 @@ class Rules implements IResourceRuleFactory {
 			return root;
 		return factoryFor(resource).deleteRule(resource);
 	}
+
 	/**
 	 * Returns the scheduling rule factory for the given resource
 	 */
@@ -79,6 +85,7 @@ class Rules implements IResourceRuleFactory {
 		}
 		return fac;
 	}
+
 	/**
 	 * Obtains the scheduling rule from the appropriate factory for a marker change operation.
 	 */
@@ -86,6 +93,7 @@ class Rules implements IResourceRuleFactory {
 		//team hook currently cannot change this rule
 		return null;
 	}
+
 	/**
 	 * Obtains the scheduling rule from the appropriate factory for a modify operation.
 	 */
@@ -94,6 +102,7 @@ class Rules implements IResourceRuleFactory {
 			return root;
 		return factoryFor(resource).modifyRule(resource);
 	}
+
 	/**
 	 * Obtains the scheduling rule from the appropriate factories for a move operation.
 	 */
@@ -105,6 +114,7 @@ class Rules implements IResourceRuleFactory {
 			return MultiRule.combine(deleteRule(source), createRule(destination));
 		return factoryFor(source).moveRule(source, destination);
 	}
+
 	/**
 	 * Obtains the scheduling rule from the appropriate factory for a refresh operation.
 	 */
@@ -113,12 +123,14 @@ class Rules implements IResourceRuleFactory {
 			return root;
 		return factoryFor(resource).refreshRule(resource);
 	}
+
 	/* (non-javadoc)
 	 * Implements TeamHook#setRuleFactory
 	 */
 	void setRuleFactory(IProject project, IResourceRuleFactory factory) {
 		projectsToRules.put(project.getName(), factory);
 	}
+
 	/**
 	 * Combines rules for each parameter to validateEdit from the corresponding
 	 * rule factories.
@@ -127,7 +139,7 @@ class Rules implements IResourceRuleFactory {
 		if (resources.length == 0)
 			return null;
 		//optimize rule for single file
-		if (resources.length == 1) 
+		if (resources.length == 1)
 			return factoryFor(resources[0]).validateEditRule(resources);
 		//gather rules for each resource from appropriate factory
 		HashSet rules = new HashSet();
@@ -142,7 +154,7 @@ class Rules implements IResourceRuleFactory {
 			return null;
 		if (rules.size() == 1)
 			return (ISchedulingRule) rules.iterator().next();
-		ISchedulingRule[] ruleArray = (ISchedulingRule[]) rules	.toArray(new ISchedulingRule[rules.size()]);
+		ISchedulingRule[] ruleArray = (ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]);
 		return new MultiRule(ruleArray);
 	}
 }

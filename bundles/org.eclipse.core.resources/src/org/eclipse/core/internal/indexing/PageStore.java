@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ import java.util.*;
 
 public class PageStore implements Observer {
 
-	private static final int NumberOfMetadataAreas = 16;  // NEVER change this
+	private static final int NumberOfMetadataAreas = 16; // NEVER change this
 	private static final int SizeOfMetadataArea = 64; // NEVER change this
 	private static final int CurrentPageStoreVersion = 1; // version 1
 	private static final byte[] ZEROES = new byte[1024];
@@ -34,7 +34,7 @@ public class PageStore implements Observer {
 	private AbstractPagePolicy policy;
 	private byte[] pageBuffer;
 	private byte[] metadataBuffer;
-	
+
 	/**
 	 * Creates the page file on the file system.  Creates a file of zero length.
 	 */
@@ -53,14 +53,14 @@ public class PageStore implements Observer {
 	public static void delete(String fileName) {
 		new File(fileName).delete();
 	}
-	
+
 	/** 
 	 * Returns true if the file exists in the file system.
 	 */
 	public static boolean exists(String fileName) {
 		return new File(fileName).exists();
 	}
-	
+
 	/**
 	 * Creates a new PageStore with a given policy.
 	 */
@@ -68,56 +68,52 @@ public class PageStore implements Observer {
 		this.policy = policy;
 		this.storeOffset = NumberOfMetadataAreas * SizeOfMetadataArea;
 	}
-	
-	
-	
-/** 
- * Acquires a new empty page.
- */
-//public Page acquire(IPageFactory pageFactory) throws PageStoreException {
-//	return acquire(pageFactory, numberOfPages);
-//}
-/**
- * Returns the page that has the given page number from the page file.
- */
-//public Page acquire(IPageFactory pageFactory, int pageNumber) throws PageStoreException {
-//	Page p = null;
-//	numberOfReads++;
-//	Integer key = new Integer(pageNumber);
-//	p = (Page)acquiredPages.get(key);
-//	if (p != null) {
-//		numberOfCacheHits++;
-//		addReference(p);
-//		return p;
-//	}
-//	p = (Page)modifiedPages.get(key);
-//	if (p != null) {
-//		numberOfCacheHits++;
-//		addReference(p);
-//		return p;
-//	}
-//	p = readCache.get(pageNumber);
-//	if (p != null) {
-//		numberOfCacheHits++;
-//		addReference(p);
-//		return p;
-//	}
-//	numberOfPages = Math.max(pageNumber + 1, numberOfPages);
-//	p = pageFactory.create(this, pageNumber);
-//	getPageFromFile(pageNumber, p);
-//	addReference(p);
-//	return p;
-//}
 
-/** 
- * Adds a reference to a page.
- */
-//private void addReference(Page page) {
-//	Integer key = new Integer(page.getPageNumber());
-//	if (!page.hasReferences()) acquiredPages.put(key, page);
-//	page.addReference();
-//}
-
+	/** 
+	 * Acquires a new empty page.
+	 */
+	//public Page acquire(IPageFactory pageFactory) throws PageStoreException {
+	//	return acquire(pageFactory, numberOfPages);
+	//}
+	/**
+	 * Returns the page that has the given page number from the page file.
+	 */
+	//public Page acquire(IPageFactory pageFactory, int pageNumber) throws PageStoreException {
+	//	Page p = null;
+	//	numberOfReads++;
+	//	Integer key = new Integer(pageNumber);
+	//	p = (Page)acquiredPages.get(key);
+	//	if (p != null) {
+	//		numberOfCacheHits++;
+	//		addReference(p);
+	//		return p;
+	//	}
+	//	p = (Page)modifiedPages.get(key);
+	//	if (p != null) {
+	//		numberOfCacheHits++;
+	//		addReference(p);
+	//		return p;
+	//	}
+	//	p = readCache.get(pageNumber);
+	//	if (p != null) {
+	//		numberOfCacheHits++;
+	//		addReference(p);
+	//		return p;
+	//	}
+	//	numberOfPages = Math.max(pageNumber + 1, numberOfPages);
+	//	p = pageFactory.create(this, pageNumber);
+	//	getPageFromFile(pageNumber, p);
+	//	addReference(p);
+	//	return p;
+	//}
+	/** 
+	 * Adds a reference to a page.
+	 */
+	//private void addReference(Page page) {
+	//	Integer key = new Integer(page.getPageNumber());
+	//	if (!page.hasReferences()) acquiredPages.put(key, page);
+	//	page.addReference();
+	//}
 	/**
 	 * Opens the PageStore.  The file is created if necessary.
 	 * This will raise an exception if the
@@ -128,7 +124,8 @@ public class PageStore implements Observer {
 		this.name = name;
 		pageBuffer = new byte[Page.SIZE];
 		metadataBuffer = new byte[SizeOfMetadataArea];
-		if (!exists(name)) create(name);
+		if (!exists(name))
+			create(name);
 		try {
 			this.file = new RandomAccessFile(name, "rw"); //$NON-NLS-1$
 		} catch (IOException e) {
@@ -175,7 +172,7 @@ public class PageStore implements Observer {
 	private void convertPageStore(int fromVersion) throws PageStoreException {
 		throw new PageStoreException(PageStoreException.ConversionFailure);
 	}
-	
+
 	/**
 	 * Commits all changes and closes the page store.
 	 */
@@ -204,12 +201,13 @@ public class PageStore implements Observer {
 	 * Commits all modified pages to the file.
 	 */
 	public void commit() throws PageStoreException {
-		if (modifiedPages.size() == 0) return;
+		if (modifiedPages.size() == 0)
+			return;
 		LogWriter.putModifiedPages(this, modifiedPages);
 		flush();
 		Log.delete(name);
 	}
-	
+
 	/**
 	 * Throws out the modified pages.
 	 */
@@ -221,96 +219,94 @@ public class PageStore implements Observer {
 	 * Writes the modified pages to the page file.
 	 */
 	private void flush() throws PageStoreException {
-		if (modifiedPages.size() == 0) return;
+		if (modifiedPages.size() == 0)
+			return;
 		Iterator pageStream = modifiedPages.values().iterator();
 		while (pageStream.hasNext()) {
-			Page page = (Page)pageStream.next();
+			Page page = (Page) pageStream.next();
 			writePage(page);
 		}
 		modifiedPages.clear();
 	}
-	
 
-//public void readFrom(RandomAccessFile file, long offset) throws IOException {
-//	long n = file.length() - offset;
-//	if (n <= 0) {
-//		clear(contents, 0, contents.length);
-//		return;
-//	}
-//	file.seek(offset);
-//	int m = (int)Math.min((long)contents.length, n);
-//	file.readFully(contents, 0, m);
-//	if (m < contents.length) {
-//		clear(contents, m, contents.length - m);
-//	}
-//}
-//public void writeTo(OutputStream out) throws IOException {
-//	out.write(contents);
-//}
-//public void writeTo(OutputStream out, int offset, int length) throws IOException {
-//	out.write(contents, offset, length);
-//}
-//public void writeTo(RandomAccessFile file, long offset) throws IOException {
-//	long p = file.length();
-//	long n = offset - p;
-//	while (n > 0) {
-//		int m = (int)Math.min((long)ZEROES.length, n);
-//		file.seek(p);
-//		file.write(ZEROES, 0, m);
-//		p += m;
-//		n -= m;
-//	}
-//	file.seek(offset);
-//	file.write(contents);
-//}
-	
+	//public void readFrom(RandomAccessFile file, long offset) throws IOException {
+	//	long n = file.length() - offset;
+	//	if (n <= 0) {
+	//		clear(contents, 0, contents.length);
+	//		return;
+	//	}
+	//	file.seek(offset);
+	//	int m = (int)Math.min((long)contents.length, n);
+	//	file.readFully(contents, 0, m);
+	//	if (m < contents.length) {
+	//		clear(contents, m, contents.length - m);
+	//	}
+	//}
+	//public void writeTo(OutputStream out) throws IOException {
+	//	out.write(contents);
+	//}
+	//public void writeTo(OutputStream out, int offset, int length) throws IOException {
+	//	out.write(contents, offset, length);
+	//}
+	//public void writeTo(RandomAccessFile file, long offset) throws IOException {
+	//	long p = file.length();
+	//	long n = offset - p;
+	//	while (n > 0) {
+	//		int m = (int)Math.min((long)ZEROES.length, n);
+	//		file.seek(p);
+	//		file.write(ZEROES, 0, m);
+	//		p += m;
+	//		n -= m;
+	//	}
+	//	file.seek(offset);
+	//	file.write(contents);
+	//}
 
-/**
- * Opens the PageStore with a cache size of 40.
- */
-//public void open(String name) throws PageStoreException {
-//	open(name, 40);
-//}
-/**
- * Opens the PageStore.  The file is created if necessary.
- * This will raise an exception if the
- * media on which the file is located is read-only 
- * or not authorized to the user.
- */
-//public void open(String name, int cacheSize) throws PageStoreException {
-//	if (!exists(name)) create(name);
-//	try {
-//		this.file = new RandomAccessFile(name, "rw");
-//	} catch (IOException e) {
-//		throw new PageStoreException(PageStoreException.OpenFailure);
-//	}
-//	this.name = name;
-//	checkMetadata();
-//	numberOfPages = numberOfPagesInFile();
-//	numberOfFileReads = 0;
-//	numberOfFileWrites = 0;
-//	numberOfReads = 0;
-//	numberOfWrites = 0;
-//	numberOfCacheHits = 0;
-//	/* apply any outstanding transaction by reading the log file and applying it */
-//	readCache = new PageCache(0);
-//	modifiedPages = LogReader.getModifiedPages(name);
-//	flush();
-//	Log.delete(name);
-//	/* prepare for normal operation */
-//	readCache = new PageCache(cacheSize);
-//	acquiredPages = new HashMap();
-//}
-
+	/**
+	 * Opens the PageStore with a cache size of 40.
+	 */
+	//public void open(String name) throws PageStoreException {
+	//	open(name, 40);
+	//}
+	/**
+	 * Opens the PageStore.  The file is created if necessary.
+	 * This will raise an exception if the
+	 * media on which the file is located is read-only 
+	 * or not authorized to the user.
+	 */
+	//public void open(String name, int cacheSize) throws PageStoreException {
+	//	if (!exists(name)) create(name);
+	//	try {
+	//		this.file = new RandomAccessFile(name, "rw");
+	//	} catch (IOException e) {
+	//		throw new PageStoreException(PageStoreException.OpenFailure);
+	//	}
+	//	this.name = name;
+	//	checkMetadata();
+	//	numberOfPages = numberOfPagesInFile();
+	//	numberOfFileReads = 0;
+	//	numberOfFileWrites = 0;
+	//	numberOfReads = 0;
+	//	numberOfWrites = 0;
+	//	numberOfCacheHits = 0;
+	//	/* apply any outstanding transaction by reading the log file and applying it */
+	//	readCache = new PageCache(0);
+	//	modifiedPages = LogReader.getModifiedPages(name);
+	//	flush();
+	//	Log.delete(name);
+	//	/* prepare for normal operation */
+	//	readCache = new PageCache(cacheSize);
+	//	acquiredPages = new HashMap();
+	//}
 	/**
 	 * Acquires the page that has the given page number from the page store.
 	 */
 	public Page acquire(int pageNumber) throws PageStoreException {
 		numberOfReads++;
 		Integer key = new Integer(pageNumber);
-		Page page = (Page)acquiredPages.get(key);
+		Page page = (Page) acquiredPages.get(key);
 		if (page == null) {
-			page = (Page)modifiedPages.get(key);
+			page = (Page) modifiedPages.get(key);
 			if (page == null) {
 				numberOfPages = Math.max(pageNumber + 1, numberOfPages);
 				page = readPage(pageNumber);
@@ -319,29 +315,30 @@ public class PageStore implements Observer {
 			}
 			acquiredPages.put(key, page);
 			page.addObserver(this);
-		} else { 
+		} else {
 			numberOfCacheHits++;
 		}
 		page.addReference();
 		return page;
 	}
-	
+
 	/**
 	 * Releases a page and decrements its reference count.
 	 */
 	public void release(Page page) {
 		Integer key = new Integer(page.getPageNumber());
 		page.removeReference();
-		if (page.hasReferences()) return;
+		if (page.hasReferences())
+			return;
 		page.deleteObserver(this);
 		acquiredPages.remove(key);
 	}
-	
+
 	/**
 	 * Processes a page update.
 	 */
 	public void update(Observable object, Object arg) {
-		Page page = (Page)object;
+		Page page = (Page) object;
 		Integer key = new Integer(page.getPageNumber());
 		modifiedPages.put(key, page);
 	}
@@ -362,7 +359,7 @@ public class PageStore implements Observer {
 		p.addObserver(this);
 		return p;
 	}
-	
+
 	protected void writePage(Page page) throws PageStoreException {
 		page.toBuffer(pageBuffer);
 		long fileOffset = offsetOfPage(page.getPageNumber());
@@ -371,14 +368,14 @@ public class PageStore implements Observer {
 		}
 		numberOfFileWrites++;
 	}
-	
+
 	/**
 	 * Returns the file seek offset for a given metadata area
 	 */
 	protected long offsetOfMetadataArea(int i) {
 		return (long) i * SizeOfMetadataArea;
 	}
-	
+
 	public byte[] readMetadataArea(int i) throws PageStoreException {
 		if (!readBuffer(offsetOfMetadataArea(i), metadataBuffer)) {
 			throw new PageStoreException(PageStoreException.MetadataRequestFailure);
@@ -396,21 +393,22 @@ public class PageStore implements Observer {
 		}
 		return;
 	}
-	
+
 	protected boolean readBuffer(long fileOffset, byte[] buffer) {
 		new Buffer(buffer).clear();
 		long fileLength = getFileLength();
-		if (fileOffset >= fileLength) return true;
-		int bytesToRead = (int)Math.min(buffer.length, (fileLength - fileOffset));
+		if (fileOffset >= fileLength)
+			return true;
+		int bytesToRead = (int) Math.min(buffer.length, (fileLength - fileOffset));
 		try {
-			file.seek(fileOffset); 
+			file.seek(fileOffset);
 			file.readFully(buffer, 0, bytesToRead);
 		} catch (IOException e) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	protected boolean writeBuffer(long fileOffset, byte[] buffer, int offset, int length) {
 		clearFileToOffset(fileOffset);
 		try {
@@ -421,7 +419,7 @@ public class PageStore implements Observer {
 		}
 		return true;
 	}
-	
+
 	protected long getFileLength() {
 		long n = 0;
 		try {
@@ -431,16 +429,16 @@ public class PageStore implements Observer {
 		}
 		return n;
 	}
-	
+
 	protected void clearFileToOffset(long fileOffset) {
 		long fileLength = getFileLength();
 		while (fileLength < fileOffset) {
-			int m = (int)Math.min(ZEROES.length, (fileOffset - fileLength));
+			int m = (int) Math.min(ZEROES.length, (fileOffset - fileLength));
 			writeBuffer(fileLength, ZEROES, 0, m);
 			fileLength += m;
 		}
 	}
-	
+
 	/**
 	 * Returns the number of pages actually in the underlying file.
 	 */
@@ -454,11 +452,11 @@ public class PageStore implements Observer {
 	public String getName() {
 		return name;
 	}
-	
+
 	public AbstractPagePolicy getPolicy() {
 		return policy;
 	}
-	
+
 	/** 
 	 * Returns the number of read cache hits that have been made on the cache.
 	 */
@@ -502,6 +500,7 @@ public class PageStore implements Observer {
 	public int numberOfWrites() {
 		return numberOfWrites;
 	}
+
 	/**
 	 * Internal test for page log consistency.  Throws an exception if
 	 * a problem is detected.
@@ -513,7 +512,7 @@ public class PageStore implements Observer {
 		int n = modifiedPages.size();
 		if (m != n) {
 			throw new PageStoreException("Page set sizes do not match" //$NON-NLS-1$
-				+ m + " " + n); //$NON-NLS-1$
+					+ m + " " + n); //$NON-NLS-1$
 		}
 		Iterator testPagesStream = testPages.values().iterator();
 		Iterator modifiedPagesStream = modifiedPages.values().iterator();
@@ -521,17 +520,17 @@ public class PageStore implements Observer {
 			Page testPage = (Page) testPagesStream.next();
 			Page modifiedPage = (Page) modifiedPagesStream.next();
 			if (testPage.getPageNumber() != modifiedPage.getPageNumber()) {
-				throw new PageStoreException("Page number mismatch at "  //$NON-NLS-1$
-					+ testPage.getPageNumber() + " " + modifiedPage.getPageNumber()); //$NON-NLS-1$
+				throw new PageStoreException("Page number mismatch at " //$NON-NLS-1$
+						+ testPage.getPageNumber() + " " + modifiedPage.getPageNumber()); //$NON-NLS-1$
 			}
 			if (Buffer.compare(testPage.pageBuffer, modifiedPage.pageBuffer) != 0) {
-				throw new PageStoreException("Page buffer mismatch at "  //$NON-NLS-1$
-					+ testPage.getPageNumber());
+				throw new PageStoreException("Page buffer mismatch at " //$NON-NLS-1$
+						+ testPage.getPageNumber());
 			}
 		}
 		Log.delete(name);
 	}
-	
+
 	/**
 	 * Internal test for applying a page log to the file.  Does the 
 	 * equivalent of a flush.
@@ -541,7 +540,7 @@ public class PageStore implements Observer {
 		modifiedPages = LogReader.getModifiedPages(this);
 		flush();
 	}
-	
+
 	/**
 	 * Internal test for simulating failure after the log is written but before the
 	 * log is applied.  Tests the open sequence.  Does the equivalent of a close and

@@ -39,7 +39,7 @@ public final class ResourcesPlugin extends Plugin {
 	 * for the builders extension point.
 	 */
 	public static final String PT_BUILDERS = "builders"; //$NON-NLS-1$
-	
+
 	/**
 	 * Simple identifier constant (value <code>"natures"</code>)
 	 * for the natures extension point.
@@ -80,9 +80,8 @@ public final class ResourcesPlugin extends Plugin {
 	 * 
 	 * @since 3.0
 	 */
-	public static final String PT_REFRESH_PROVIDERS= "refreshProviders"; //$NON-NLS-1$
-	
-	
+	public static final String PT_REFRESH_PROVIDERS = "refreshProviders"; //$NON-NLS-1$
+
 	/**
 	 * Constant identifying the job family identifier for the background autobuild job.
 	 * 
@@ -120,11 +119,11 @@ public final class ResourcesPlugin extends Plugin {
 	 * @see java.io.UnsupportedEncodingException
 	 */
 	public static final String PREF_ENCODING = "encoding"; //$NON-NLS-1$
-	
+
 	/** 
 	 * Common prefix for workspace preference names.
 	 * @since 2.1 
-	 */ 
+	 */
 	private static final String PREF_DESCRIPTION_PREFIX = "description."; //$NON-NLS-1$
 
 	/**
@@ -154,7 +153,7 @@ public final class ResourcesPlugin extends Plugin {
 	 * @since 2.1
 	 */
 	public static final String PREF_DEFAULT_BUILD_ORDER = PREF_DESCRIPTION_PREFIX + "defaultbuildorder"; //$NON-NLS-1$
-	
+
 	/**
 	 * Name of a preference for configuring the maximum number of times that the
 	 * workspace should rebuild when builders affect projects that have already
@@ -215,112 +214,116 @@ public final class ResourcesPlugin extends Plugin {
 	 */
 	private static Workspace workspace = null;
 
-/** 
- * Constructs an instance of this plug-in runtime class.
- * <p>
- * An instance of this plug-in runtime class is automatically created 
- * when the facilities provided by the Resources plug-in are required.
- * <b>Clients must never explicitly instantiate a plug-in runtime class.</b>
- * </p>
- * 
- * @param pluginDescriptor the plug-in descriptor for the
- *   Resources plug-in
- */
-public ResourcesPlugin(IPluginDescriptor pluginDescriptor) {
-	super(pluginDescriptor);
-	plugin = this;
-}
-/**
- * Constructs a brand new workspace structure at the location in the local file system
- * identified by the given path and returns a new workspace object.
- * 
- * @exception CoreException if the workspace structure could not be constructed.
- * Reasons include:
- * <ll>
- * <li> There is an existing workspace structure on at the given location
- *      in the local file system.
- * <li> A file exists at the given location in the local file system.
- * <li> A directory could not be created at the given location in the
- *      local file system.
- * </ll>
- */
-private static void constructWorkspace() throws CoreException {
-	new LocalMetaArea().createMetaArea();	
-}
-
-/**
- * Returns the encoding to use when reading text files in the workspace.
- * This is the value of the <code>PREF_ENCODING</code> preference, or the
- * file system encoding (<code>System.getProperty("file.encoding")</code>)
- * if the preference is not set.
- * <p>
- * Note that this method does not check whether the result is a supported
- * encoding.  Callers should be prepared to handle 
- * <code>UnsupportedEncodingException</code> where this encoding is used.
- * 
- * @return  the encoding to use when reading text files in the workspace
- * @see java.io.UnsupportedEncodingException
- */
-public static String getEncoding() {
-	String enc = getPlugin().getPluginPreferences().getString(PREF_ENCODING);
-	if (enc == null || enc.length() == 0) {
-		enc = System.getProperty("file.encoding"); //$NON-NLS-1$
-	}
-	return enc;
-}
-
-/**
- * Returns the Resources plug-in.
- *
- * @return the single instance of this plug-in runtime class
- */
-public static ResourcesPlugin getPlugin() {
-	return plugin;
-}
-/**
- * Returns the workspace. The workspace is not accessible after the resources
- * plug-in has shutdown.
- *
- * @return the workspace that was created by the single instance of this
- *   plug-in class, or <code>null</code> if this plug-in has been shut down.
- */
-public static IWorkspace getWorkspace() {
-	return workspace;
-}
-/**
- * This implementation of the corresponding <code>Plugin</code> method
- * closes the workspace (without saving).
- * @see Plugin#shutdown()
- */
-public void shutdown() throws CoreException {
-	if (workspace == null) {
-		return;
-	}
-	// save the preferences for this plug-in
-	getPlugin().savePluginPreferences();
-	workspace.close(null);
-	
-	/* Forget workspace only if successfully closed, to
-	 * make it easier to debug cases where close() is failing.
+	/** 
+	 * Constructs an instance of this plug-in runtime class.
+	 * <p>
+	 * An instance of this plug-in runtime class is automatically created 
+	 * when the facilities provided by the Resources plug-in are required.
+	 * <b>Clients must never explicitly instantiate a plug-in runtime class.</b>
+	 * </p>
+	 * 
+	 * @param pluginDescriptor the plug-in descriptor for the
+	 *   Resources plug-in
 	 */
-	workspace = null;
-}
-/**
- * This implementation of the corresponding <code>Plugin</code> method
- * opens the workspace.
- * @see Plugin#startup()
- */
-public void startup() throws CoreException {
-	if (!new LocalMetaArea().hasSavedWorkspace()) {
-		constructWorkspace();
+	public ResourcesPlugin(IPluginDescriptor pluginDescriptor) {
+		super(pluginDescriptor);
+		plugin = this;
 	}
-	Workspace.DEBUG = ResourcesPlugin.getPlugin().isDebugging();
-	// Remember workspace before opening, to
-	// make it easier to debug cases where open() is failing.
-	workspace = new Workspace();
-	PlatformURLResourceConnection.startup(Platform.getLocation());
-	IStatus result = workspace.open(null);
-	if (!result.isOK())
-		getLog().log(result);
-}
+
+	/**
+	 * Constructs a brand new workspace structure at the location in the local file system
+	 * identified by the given path and returns a new workspace object.
+	 * 
+	 * @exception CoreException if the workspace structure could not be constructed.
+	 * Reasons include:
+	 * <ll>
+	 * <li> There is an existing workspace structure on at the given location
+	 *      in the local file system.
+	 * <li> A file exists at the given location in the local file system.
+	 * <li> A directory could not be created at the given location in the
+	 *      local file system.
+	 * </ll>
+	 */
+	private static void constructWorkspace() throws CoreException {
+		new LocalMetaArea().createMetaArea();
+	}
+
+	/**
+	 * Returns the encoding to use when reading text files in the workspace.
+	 * This is the value of the <code>PREF_ENCODING</code> preference, or the
+	 * file system encoding (<code>System.getProperty("file.encoding")</code>)
+	 * if the preference is not set.
+	 * <p>
+	 * Note that this method does not check whether the result is a supported
+	 * encoding.  Callers should be prepared to handle 
+	 * <code>UnsupportedEncodingException</code> where this encoding is used.
+	 * 
+	 * @return  the encoding to use when reading text files in the workspace
+	 * @see java.io.UnsupportedEncodingException
+	 */
+	public static String getEncoding() {
+		String enc = getPlugin().getPluginPreferences().getString(PREF_ENCODING);
+		if (enc == null || enc.length() == 0) {
+			enc = System.getProperty("file.encoding"); //$NON-NLS-1$
+		}
+		return enc;
+	}
+
+	/**
+	 * Returns the Resources plug-in.
+	 *
+	 * @return the single instance of this plug-in runtime class
+	 */
+	public static ResourcesPlugin getPlugin() {
+		return plugin;
+	}
+
+	/**
+	 * Returns the workspace. The workspace is not accessible after the resources
+	 * plug-in has shutdown.
+	 *
+	 * @return the workspace that was created by the single instance of this
+	 *   plug-in class, or <code>null</code> if this plug-in has been shut down.
+	 */
+	public static IWorkspace getWorkspace() {
+		return workspace;
+	}
+
+	/**
+	 * This implementation of the corresponding <code>Plugin</code> method
+	 * closes the workspace (without saving).
+	 * @see Plugin#shutdown()
+	 */
+	public void shutdown() throws CoreException {
+		if (workspace == null) {
+			return;
+		}
+		// save the preferences for this plug-in
+		getPlugin().savePluginPreferences();
+		workspace.close(null);
+
+		/* Forget workspace only if successfully closed, to
+		 * make it easier to debug cases where close() is failing.
+		 */
+		workspace = null;
+	}
+
+	/**
+	 * This implementation of the corresponding <code>Plugin</code> method
+	 * opens the workspace.
+	 * @see Plugin#startup()
+	 */
+	public void startup() throws CoreException {
+		if (!new LocalMetaArea().hasSavedWorkspace()) {
+			constructWorkspace();
+		}
+		Workspace.DEBUG = ResourcesPlugin.getPlugin().isDebugging();
+		// Remember workspace before opening, to
+		// make it easier to debug cases where open() is failing.
+		workspace = new Workspace();
+		PlatformURLResourceConnection.startup(Platform.getLocation());
+		IStatus result = workspace.open(null);
+		if (!result.isOK())
+			getLog().log(result);
+	}
 }

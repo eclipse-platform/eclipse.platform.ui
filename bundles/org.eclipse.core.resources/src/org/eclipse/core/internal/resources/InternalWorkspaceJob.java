@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -25,6 +25,7 @@ public abstract class InternalWorkspaceJob extends Job {
 		super(name);
 		this.workspace = (Workspace) ResourcesPlugin.getWorkspace();
 	}
+
 	public final IStatus run(IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -49,5 +50,6 @@ public abstract class InternalWorkspaceJob extends Job {
 			monitor.done();
 		}
 	}
+
 	protected abstract IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException;
 }

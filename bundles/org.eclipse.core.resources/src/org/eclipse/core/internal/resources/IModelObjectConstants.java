@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,6 @@ public interface IModelObjectConstants {
 	public static final String VALUE = "value"; //$NON-NLS-1$
 	public static final String VERSION = "version"; //$NON-NLS-1$
 	public static final String WORKSPACE_DESCRIPTION = "workspaceDescription"; //$NON-NLS-1$
-	public static final String LINKED_RESOURCES= "linkedResources"; //$NON-NLS-1$
+	public static final String LINKED_RESOURCES = "linkedResources"; //$NON-NLS-1$
 	public static final String LINK = "link"; //$NON-NLS-1$
 }

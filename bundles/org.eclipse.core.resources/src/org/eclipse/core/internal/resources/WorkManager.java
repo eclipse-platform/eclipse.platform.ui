@@ -38,10 +38,12 @@ class WorkManager implements IManager {
 		public boolean contains(ISchedulingRule rule) {
 			return (rule instanceof IResource) || rule.getClass().equals(NotifyRule.class);
 		}
+
 		public boolean isConflicting(ISchedulingRule rule) {
 			return contains(rule);
 		}
 	}
+
 	protected NotifyRule notifyRule = new NotifyRule();
 	/**
 	 * Indicates that the last checkIn failed, either due to cancelation or due to the
@@ -64,6 +66,7 @@ class WorkManager implements IManager {
 		this.jobManager = Platform.getJobManager();
 		this.lock = jobManager.newLock();
 	}
+
 	/**
 	 * Releases the workspace lock without changing the nested operation depth.
 	 * Must be followed eventually by endUnprotected. Any
@@ -77,6 +80,7 @@ class WorkManager implements IManager {
 			lock.release();
 		return depth;
 	}
+
 	/**
 	 * An operation calls this method and it only returns when the operation is
 	 * free to run.
@@ -98,6 +102,7 @@ class WorkManager implements IManager {
 				checkInFailed.set(Boolean.TRUE);
 		}
 	}
+
 	/**
 	 * Inform that an operation has finished. 
 	 */
@@ -105,8 +110,8 @@ class WorkManager implements IManager {
 		decrementPreparedOperations();
 		rebalanceNestedOperations();
 		//reset state if this is the end of a top level operation
-		if (preparedOperations == 0) 
-			operationCanceled = 	hasBuildChanges = false;
+		if (preparedOperations == 0)
+			operationCanceled = hasBuildChanges = false;
 		try {
 			lock.release();
 		} finally {
@@ -114,6 +119,7 @@ class WorkManager implements IManager {
 			jobManager.endRule(rule);
 		}
 	}
+
 	/**
 	 * Returns true if the check in for this thread failed, in which case the
 	 * check out and other end of operation code should not run.
@@ -133,6 +139,7 @@ class WorkManager implements IManager {
 		}
 		return false;
 	}
+
 	/**
 	 * This method can only be safelly called from inside a workspace
 	 * operation. Should NOT be called from outside a
@@ -141,6 +148,7 @@ class WorkManager implements IManager {
 	private void decrementPreparedOperations() {
 		preparedOperations--;
 	}
+
 	/**
 	 * Re-acquires the workspace lock that was temporarily released during an
 	 * operation, and restores the old lock depth.
@@ -150,12 +158,14 @@ class WorkManager implements IManager {
 		for (int i = 0; i < depth; i++)
 			lock.acquire();
 	}
+
 	/**
 	 * Returns the work manager's lock
 	 */
 	ILock getLock() {
 		return lock;
 	}
+
 	/**
 	 * This method can only be safelly called from inside a workspace
 	 * operation. Should NOT be called from outside a
@@ -173,6 +183,7 @@ class WorkManager implements IManager {
 	void incrementNestedOperations() {
 		nestedOperations++;
 	}
+
 	/**
 	 * This method can only be safelly called from inside a workspace
 	 * operation. Should NOT be called from outside a
@@ -181,6 +192,7 @@ class WorkManager implements IManager {
 	private void incrementPreparedOperations() {
 		preparedOperations++;
 	}
+
 	/**
 	 * Returns true if the nested operation depth is the same as the prepared
 	 * operation depth, and false otherwise. This method can only be safelly
@@ -190,6 +202,7 @@ class WorkManager implements IManager {
 	boolean isBalanced() {
 		return nestedOperations == preparedOperations;
 	}
+
 	/**
 	 * This method can only be safelly called from inside a workspace
 	 * operation. Should NOT be called from outside a
@@ -198,6 +211,7 @@ class WorkManager implements IManager {
 	public void operationCanceled() {
 		operationCanceled = true;
 	}
+
 	/**
 	 * Used to make things stable again after an operation has failed between a
 	 * workspace.prepareOperation() and workspace.beginOperation(). This method
@@ -207,6 +221,7 @@ class WorkManager implements IManager {
 	public void rebalanceNestedOperations() {
 		nestedOperations = preparedOperations;
 	}
+
 	/**
 	 * Indicates if the operation that has just completed may potentially
 	 * require a build.
@@ -227,12 +242,15 @@ class WorkManager implements IManager {
 		}
 		return false;
 	}
+
 	public void shutdown(IProgressMonitor monitor) {
 		// do nothing
 	}
+
 	public void startup(IProgressMonitor monitor) {
 		// do nothing
 	}
+
 	/**
 	 * Returns true if the workspace lock has already been acquired by this
 	 * thread, and false otherwise.

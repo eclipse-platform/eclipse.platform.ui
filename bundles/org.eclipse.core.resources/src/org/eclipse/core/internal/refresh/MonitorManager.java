@@ -80,6 +80,7 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 		providers = (RefreshProvider[]) providerList.toArray(new RefreshProvider[providerList.size()]);
 		return providers;
 	}
+
 	/**
 	 * Collects the set of root resources that required monitoring. This
 	 * includes projects and all linked resources.
@@ -100,6 +101,7 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 		}
 		return resourcesToMonitor;
 	}
+
 	private boolean isMonitoring(IResource resource) {
 		synchronized (registeredMonitors) {
 			for (Iterator i = registeredMonitors.keySet().iterator(); i.hasNext();) {
@@ -110,6 +112,7 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 		}
 		return false;
 	}
+
 	/**
 	 * Installs a monitor on the given resource. Returns true if the polling
 	 * monitor was installed, and false if a refresh provider was installed.
@@ -132,6 +135,7 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 		}
 		return pollingMonitorNeeded;
 	}
+
 	private IRefreshMonitor safeInstallMonitor(RefreshProvider provider, IResource resource) {
 		Throwable t = null;
 		try {
@@ -177,6 +181,7 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 			registerMonitor(pollMonitor, resource);
 		}
 	}
+
 	/**
 	 * @see org.eclipse.core.resources.IPathVariableChangeListener#pathVariableChanged(org.eclipse.core.resources.IPathVariableChangeEvent)
 	 */
@@ -204,6 +209,7 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 			}
 		}
 	}
+
 	private void registerMonitor(IRefreshMonitor monitor, IResource resource) {
 		// synchronized: protect the collection during add
 		synchronized (registeredMonitors) {
@@ -218,11 +224,12 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 		if (RefreshManager.DEBUG)
 			System.out.println(RefreshManager.DEBUG_PREFIX + " added monitor (" + monitor + ") on resource: " + resource); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
 	private void removeMonitor(IRefreshMonitor monitor, IResource resource) {
 		// synchronized: protect the collection during remove
 		synchronized (registeredMonitors) {
 			List resources = (List) registeredMonitors.get(monitor);
-			if (resources != null && !resources.isEmpty()) 
+			if (resources != null && !resources.isEmpty())
 				resources.remove(resource);
 			else
 				registeredMonitors.remove(monitor);
@@ -230,6 +237,7 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 		if (RefreshManager.DEBUG)
 			System.out.println(RefreshManager.DEBUG_PREFIX + " removing monitor (" + monitor + ") on resource: " + resource); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
 	public void resourceChanged(IResourceChangeEvent event) {
 		switch (event.getType()) {
 			case IResourceChangeEvent.PRE_DELETE :
@@ -249,6 +257,7 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 				}
 		}
 	}
+
 	/**
 	 * Start the monitoring of resources by all monitors.
 	 */
@@ -265,6 +274,7 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 		if (refreshNeeded)
 			new PollingMonitor(refreshManager).runOnce();
 	}
+
 	/**
 	 * Stop the monitoring of resources by all monitors.
 	 */
@@ -282,8 +292,9 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 		if (RefreshManager.DEBUG)
 			System.out.println(RefreshManager.DEBUG_PREFIX + " stopping monitor manager."); //$NON-NLS-1$
 	}
+
 	private void unmonitor(IResource resource) {
-		if (resource == null || !isMonitoring(resource)) 
+		if (resource == null || !isMonitoring(resource))
 			return;
 		synchronized (registeredMonitors) {
 			for (Iterator i = registeredMonitors.entrySet().iterator(); i.hasNext();) {
@@ -296,6 +307,7 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 			}
 		}
 	}
+
 	private void unmonitorLinkedContents(IProject project) {
 		IResource[] children = null;
 		try {
@@ -303,11 +315,12 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 		} catch (CoreException e) {
 			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 		}
-		if (children != null && children.length > 0) 
-			for (int i = 0; i < children.length; i++) 
-				if (children[i].isLinked()) 
+		if (children != null && children.length > 0)
+			for (int i = 0; i < children.length; i++)
+				if (children[i].isLinked())
 					unmonitor(children[i]);
 	}
+
 	/*(non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 	 */
@@ -339,13 +352,13 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 						 * Project deletion is handled in
 						 * resourceChanged(IResourceEvent)
 						 */
-						if (project.isOpen()) 
+						if (project.isOpen())
 							monitor(project);
 						break;
 					case IResourceDelta.CHANGED :
 						// Project closure is handled in resourceChanged(IResourceEvent)
-						if ((delta.getFlags() & IResourceDelta.OPEN) != 0) 
-							if (project.isOpen()) 
+						if ((delta.getFlags() & IResourceDelta.OPEN) != 0)
+							if (project.isOpen())
 								monitor(project);
 						break;
 					default :

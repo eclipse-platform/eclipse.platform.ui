@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.internal.watson;
-
-
 
 /**
  * This is what you would expect for an element tree comparator.
@@ -22,36 +20,44 @@ package org.eclipse.core.internal.watson;
  */
 public final class DefaultElementComparator implements IElementComparator {
 	private static DefaultElementComparator singleton;
-/**
- * Force clients to use the singleton
- */
-protected DefaultElementComparator() {
-	super();
-}
-/**
- * Returns the type of change.
- */
-public int compare (Object oldInfo, Object newInfo) {
-	if (oldInfo == null && newInfo == null) return 0;
-	if (oldInfo == null || newInfo == null) return 1;
-	return testEquality(oldInfo, newInfo) ? 0 : 1;
-}
-/**
- * Returns the singleton instance
- */
-public static IElementComparator getComparator() {
-	if (singleton == null) {
-		singleton = new DefaultElementComparator();
+
+	/**
+	 * Force clients to use the singleton
+	 */
+	protected DefaultElementComparator() {
+		super();
 	}
-	return singleton;
-}
-/**
- * Makes a comparison based on equality
- */
-protected boolean testEquality(Object oldInfo, Object newInfo) {
-	if (oldInfo == null && newInfo == null) return true;
-	if (oldInfo == null || newInfo == null) return false;
-	
-	return oldInfo.equals(newInfo);
-}
+
+	/**
+	 * Returns the type of change.
+	 */
+	public int compare(Object oldInfo, Object newInfo) {
+		if (oldInfo == null && newInfo == null)
+			return 0;
+		if (oldInfo == null || newInfo == null)
+			return 1;
+		return testEquality(oldInfo, newInfo) ? 0 : 1;
+	}
+
+	/**
+	 * Returns the singleton instance
+	 */
+	public static IElementComparator getComparator() {
+		if (singleton == null) {
+			singleton = new DefaultElementComparator();
+		}
+		return singleton;
+	}
+
+	/**
+	 * Makes a comparison based on equality
+	 */
+	protected boolean testEquality(Object oldInfo, Object newInfo) {
+		if (oldInfo == null && newInfo == null)
+			return true;
+		if (oldInfo == null || newInfo == null)
+			return false;
+
+		return oldInfo.equals(newInfo);
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public class ElementTreeReader {
 
 	/** Debug flag turns on internal trace.
 	 */
-	protected static final boolean DEBUG= false;
+	protected static final boolean DEBUG = false;
 
 	/** The element info factory.
 	 */
@@ -48,82 +48,90 @@ public class ElementTreeReader {
 	 * For reading and writing delta trees
 	 */
 	protected DataTreeReader dataTreeReader;
-/**
- * Constructs a new element tree reader that works for
- * the given element info flattener.
- */
-public ElementTreeReader(final IElementInfoFlattener factory) {
-	Assert.isNotNull(factory);
-	elementInfoFlattener = factory;
 
-	/* wrap the IElementInfoFlattener in an IDataFlattener */
-	IDataFlattener f = new IDataFlattener() {
-		public void writeData(IPath path, Object data, DataOutput output) {}
-		public Object readData(IPath path, DataInput input) throws IOException {
-			//never read the root node of an ElementTree
-			//this node is reserved for the parent backpointer
-			if (!Path.ROOT.equals(path)) {
-				return factory.readElement(path, input);
-			} else {
-				return null;
+	/**
+	 * Constructs a new element tree reader that works for
+	 * the given element info flattener.
+	 */
+	public ElementTreeReader(final IElementInfoFlattener factory) {
+		Assert.isNotNull(factory);
+		elementInfoFlattener = factory;
+
+		/* wrap the IElementInfoFlattener in an IDataFlattener */
+		IDataFlattener f = new IDataFlattener() {
+			public void writeData(IPath path, Object data, DataOutput output) {
 			}
-		}
-	};
-	dataTreeReader = new DataTreeReader(f);	
-}
-/**
- * Returns the appropriate reader for the given version.
- */
-public ElementTreeReader getReader(int formatVersion) throws IOException {
-	switch (formatVersion) {
-		case 1:
-			return new ElementTreeReaderImpl_1(elementInfoFlattener);
-		default:
-			throw new IOException(Policy.bind("watson.unknown")); //$NON-NLS-1$
-	}
-}
-/**
- * Reads an element tree delta from the input stream, and
- * reconstructs it as a delta on the given tree.
- */
-public ElementTree readDelta(ElementTree completeTree, DataInput input) throws IOException {
-	/* Dispatch to the appropriate reader. */
-	ElementTreeReader realReader = getReader(readNumber(input));
-	return realReader.readDelta(completeTree, input);
-}
-/**
- * Reads a chain of ElementTrees from the given input stream.
- * @return A chain of ElementTrees, where the first tree in the list is
- * complete, and all other trees are deltas on the previous tree in the list.
- */
-public ElementTree[] readDeltaChain(DataInput input) throws IOException {
-	/* Dispatch to the appropriate reader. */
-	ElementTreeReader realReader = getReader(readNumber(input));
-	return realReader.readDeltaChain(input);
-}
-/** 
- * Reads an integer stored in compact format.  Numbers between
- * 0 and 254 inclusive occupy 1 byte; other numbers occupy 5 bytes,
- * the first byte being 0xff and the next 4 bytes being the standard
- * representation of an int.
- */
-protected static int readNumber(DataInput input) throws IOException {
-	byte b= input.readByte();
-	int number= (b & 0xff); // not a no-op! converts unsigned byte to int
 
-	if (number==0xff) { // magic escape value
-		number= input.readInt();
+			public Object readData(IPath path, DataInput input) throws IOException {
+				//never read the root node of an ElementTree
+				//this node is reserved for the parent backpointer
+				if (!Path.ROOT.equals(path)) {
+					return factory.readElement(path, input);
+				} else {
+					return null;
+				}
+			}
+		};
+		dataTreeReader = new DataTreeReader(f);
 	}
-	return number;
-}
-/**
- * Reads an element tree from the input stream and returns it.
- * This method actually just dispatches to the appropriate reader
- * depending on the stream version id.
- */
-public ElementTree readTree(DataInput input) throws IOException {
-	/* Dispatch to the appropriate reader. */
-	ElementTreeReader realReader = getReader(readNumber(input));
-	return realReader.readTree(input);
-}
+
+	/**
+	 * Returns the appropriate reader for the given version.
+	 */
+	public ElementTreeReader getReader(int formatVersion) throws IOException {
+		switch (formatVersion) {
+			case 1 :
+				return new ElementTreeReaderImpl_1(elementInfoFlattener);
+			default :
+				throw new IOException(Policy.bind("watson.unknown")); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * Reads an element tree delta from the input stream, and
+	 * reconstructs it as a delta on the given tree.
+	 */
+	public ElementTree readDelta(ElementTree completeTree, DataInput input) throws IOException {
+		/* Dispatch to the appropriate reader. */
+		ElementTreeReader realReader = getReader(readNumber(input));
+		return realReader.readDelta(completeTree, input);
+	}
+
+	/**
+	 * Reads a chain of ElementTrees from the given input stream.
+	 * @return A chain of ElementTrees, where the first tree in the list is
+	 * complete, and all other trees are deltas on the previous tree in the list.
+	 */
+	public ElementTree[] readDeltaChain(DataInput input) throws IOException {
+		/* Dispatch to the appropriate reader. */
+		ElementTreeReader realReader = getReader(readNumber(input));
+		return realReader.readDeltaChain(input);
+	}
+
+	/** 
+	 * Reads an integer stored in compact format.  Numbers between
+	 * 0 and 254 inclusive occupy 1 byte; other numbers occupy 5 bytes,
+	 * the first byte being 0xff and the next 4 bytes being the standard
+	 * representation of an int.
+	 */
+	protected static int readNumber(DataInput input) throws IOException {
+		byte b = input.readByte();
+		int number = (b & 0xff); // not a no-op! converts unsigned byte to int
+
+		if (number == 0xff) { // magic escape value
+			number = input.readInt();
+		}
+		return number;
+	}
+
+	/**
+	 * Reads an element tree from the input stream and returns it.
+	 * This method actually just dispatches to the appropriate reader
+	 * depending on the stream version id.
+	 */
+	public ElementTree readTree(DataInput input) throws IOException {
+		/* Dispatch to the appropriate reader. */
+		ElementTreeReader realReader = getReader(readNumber(input));
+		return realReader.readTree(input);
+	}
 }

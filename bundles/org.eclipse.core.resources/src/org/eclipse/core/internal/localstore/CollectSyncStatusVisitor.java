@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Policy;
 import java.util.ArrayList;
 import java.util.List;
+
 //
 /**
  * Visits a unified tree, and collects local sync information in 
@@ -26,49 +27,59 @@ import java.util.List;
 public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
 	protected MultiStatus status;
 	protected List affectedResources;
-/**
- * Creates a new visitor, whose sync status will have the given title.
- */
-public CollectSyncStatusVisitor(String multiStatusTitle, IProgressMonitor monitor) {
-	super(monitor);
-	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.INFO, multiStatusTitle, null);
-	affectedResources = new ArrayList(20);
-}
-protected void changed(Resource target) {
-	String message = Policy.bind("localstore.resourceIsOutOfSync", target.getFullPath().toString()); //$NON-NLS-1$
-	status.add(new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message));
-	affectedResources.add(target);
-	resourceChanged = true;
-}
-/**
- * Returns the list of resources that were not synchronized with
- * the local filesystem.
- */
-public List getAffectedResources() {
-	return affectedResources;
-}
-/**
- * Returns the sync status that has been collected as a result of this visit.
- */
-public MultiStatus getSyncStatus() {
-	return status;
-}
-protected void refresh(Container parent) throws CoreException {
-	changed(parent);
-}
-protected void createResource(UnifiedTreeNode node, Resource target) throws CoreException {
-	changed(target);
-}
-protected void deleteResource(UnifiedTreeNode node, Resource target) throws CoreException {
-	changed(target);
-}
-protected void fileToFolder(UnifiedTreeNode node, Resource target) throws CoreException {
-	changed(target);
-}
-protected void folderToFile(UnifiedTreeNode node, Resource target) throws CoreException {
-	changed(target);
-}
-protected void resourceChanged(UnifiedTreeNode node, Resource target) throws CoreException {
-	changed(target);
-}
+
+	/**
+	 * Creates a new visitor, whose sync status will have the given title.
+	 */
+	public CollectSyncStatusVisitor(String multiStatusTitle, IProgressMonitor monitor) {
+		super(monitor);
+		status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.INFO, multiStatusTitle, null);
+		affectedResources = new ArrayList(20);
+	}
+
+	protected void changed(Resource target) {
+		String message = Policy.bind("localstore.resourceIsOutOfSync", target.getFullPath().toString()); //$NON-NLS-1$
+		status.add(new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message));
+		affectedResources.add(target);
+		resourceChanged = true;
+	}
+
+	/**
+	 * Returns the list of resources that were not synchronized with
+	 * the local filesystem.
+	 */
+	public List getAffectedResources() {
+		return affectedResources;
+	}
+
+	/**
+	 * Returns the sync status that has been collected as a result of this visit.
+	 */
+	public MultiStatus getSyncStatus() {
+		return status;
+	}
+
+	protected void refresh(Container parent) throws CoreException {
+		changed(parent);
+	}
+
+	protected void createResource(UnifiedTreeNode node, Resource target) throws CoreException {
+		changed(target);
+	}
+
+	protected void deleteResource(UnifiedTreeNode node, Resource target) throws CoreException {
+		changed(target);
+	}
+
+	protected void fileToFolder(UnifiedTreeNode node, Resource target) throws CoreException {
+		changed(target);
+	}
+
+	protected void folderToFile(UnifiedTreeNode node, Resource target) throws CoreException {
+		changed(target);
+	}
+
+	protected void resourceChanged(UnifiedTreeNode node, Resource target) throws CoreException {
+		changed(target);
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,12 +33,15 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable {
 	public MarkerInfo() {
 		super();
 	}
+
 	public Object getAttribute(String attributeName) {
 		return attributes == null ? null : attributes.get(attributeName);
 	}
+
 	public Map getAttributes() {
 		return getAttributes(true);
 	}
+
 	/**
 	 * See Object#clone.
 	 */
@@ -53,37 +56,45 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable {
 			return null;
 		}
 	}
+
 	public Object[] getAttributes(String[] attributeNames) {
 		Object[] result = new Object[attributeNames.length];
 		for (int i = 0; i < attributeNames.length; i++)
 			result[i] = getAttribute(attributeNames[i]);
 		return result;
 	}
+
 	public Map getAttributes(boolean makeCopy) {
 		if (attributes == null)
 			return null;
 		return makeCopy ? new MarkerAttributeMap(attributes) : attributes;
 	}
+
 	public long getCreationTime() {
 		return creationTime;
 	}
+
 	public long getId() {
 		return id;
 	}
+
 	public String getType() {
 		return type;
 	}
+
 	public void internalSetAttributes(Map map) {
 		//the cast effectively acts as an assertion to make sure
 		//the right kind of map is being used
 		attributes = (MarkerAttributeMap) map;
 	}
+
 	/**
 	 * Returns whether the given object is a valid attribute value.
 	 */
 	protected static boolean isValidAttributeValue(Object value) {
 		return value == null || value instanceof String || value instanceof Integer || value instanceof Boolean;
 	}
+
 	public void setAttribute(String attributeName, Object value) {
 		Assert.isTrue(isValidAttributeValue(value));
 		if (attributes == null) {
@@ -103,23 +114,28 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable {
 			}
 		}
 	}
+
 	public void setAttributes(String[] attributeNames, Object[] values) {
 		Assert.isTrue(attributeNames.length == values.length);
 		for (int i = 0; i < attributeNames.length; i++)
 			setAttribute(attributeNames[i], values[i]);
 	}
+
 	public void setAttributes(Map map) {
 		if (map == null)
 			attributes = null;
 		else
 			attributes = new MarkerAttributeMap(map);
 	}
+
 	public void setCreationTime(long value) {
 		creationTime = value;
 	}
+
 	public void setId(long value) {
 		id = value;
 	}
+
 	public void setType(String value) {
 		type = value;
 	}

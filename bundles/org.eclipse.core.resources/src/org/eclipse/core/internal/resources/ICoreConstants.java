@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.QualifiedName;
 
 public interface ICoreConstants {
-	
+
 	// Standard resource properties
 	/** map of builders to their last built state. */
 	public static final QualifiedName K_BUILD_MAP = new QualifiedName(ResourcesPlugin.PI_RESOURCES, "BuildMap"); //$NON-NLS-1$
@@ -68,12 +68,12 @@ public interface ICoreConstants {
 
 	public static final int WORKSPACE_TREE_VERSION_1 = 67305985;
 	public static final int WORKSPACE_TREE_VERSION_2 = 67305986;
-	
+
 	// helper constants for empty structures
 	public static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
 	public static final IResource[] EMPTY_RESOURCE_ARRAY = new IResource[0];
 	public static final IFileState[] EMPTY_FILE_STATES = new IFileState[0];
-	
+
 	//common externalized strings
 	public static final String MSG_RESOURCES_UPDATING = Policy.bind("resources.updating");//$NON-NLS-1$
 	public static final String MSG_EVENTS_BUILDING_0 = Policy.bind("events.building.0");//$NON-NLS-1$

@@ -28,15 +28,16 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 	public static final String DEBUG_PREFIX = "Auto-refresh: "; //$NON-NLS-1$
 	private MonitorManager monitors;
 	private RefreshJob refreshJob;
-	
+
 	/**
 	 * The workspace.
 	 */
 	private IWorkspace workspace;
-	
+
 	public RefreshManager(IWorkspace workspace) {
 		this.workspace = workspace;
 	}
+
 	/*
 	 * Starts or stops auto-refresh depending on the auto-refresh preference.
 	 */
@@ -47,28 +48,32 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 		} else {
 			refreshJob.stop();
 			monitors.stop();
-		}		
+		}
 	}
+
 	public void monitorFailed(IRefreshMonitor monitor, IResource resource) {
 	}
+
 	/**
 	 * Checks for changes to the the PREF_AUTO_UPDATE property.
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		String property= event.getProperty();
+		String property = event.getProperty();
 		if (ResourcesPlugin.PREF_AUTO_REFRESH.equals(property)) {
-			Preferences preferences= ResourcesPlugin.getPlugin().getPluginPreferences();
-			boolean autoRefresh= preferences.getBoolean(ResourcesPlugin.PREF_AUTO_REFRESH);
+			Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
+			boolean autoRefresh = preferences.getBoolean(ResourcesPlugin.PREF_AUTO_REFRESH);
 			manageAutoRefresh(autoRefresh);
-		} 
+		}
 	}
+
 	/* (non-Javadoc)
 	 * @see IRefreshResult#refresh
 	 */
 	public void refresh(IResource resources) {
 		refreshJob.refresh(resources);
 	}
+
 	/**
 	 * Shuts down the refresh manager.  This only happens when
 	 * the resources plugin is going away.
@@ -84,18 +89,19 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 			refreshJob = null;
 		}
 	}
+
 	/**
 	 * Initializes the refresh manager. This does a minimal amount of work
 	 * if autobuild is turned off.
 	 */
 	public void startup(IProgressMonitor monitor) {
-		Preferences preferences= ResourcesPlugin.getPlugin().getPluginPreferences();
+		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 		preferences.setDefault(ResourcesPlugin.PREF_AUTO_REFRESH, false);
 		preferences.addPropertyChangeListener(this);
-		
+
 		refreshJob = new RefreshJob();
 		monitors = new MonitorManager(workspace, this);
-		boolean autoRefresh= preferences.getBoolean(ResourcesPlugin.PREF_AUTO_REFRESH);
+		boolean autoRefresh = preferences.getBoolean(ResourcesPlugin.PREF_AUTO_REFRESH);
 		if (autoRefresh)
 			manageAutoRefresh(autoRefresh);
 	}

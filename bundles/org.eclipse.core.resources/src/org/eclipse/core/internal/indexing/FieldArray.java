@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,11 @@ package org.eclipse.core.internal.indexing;
 class FieldArray {
 
 	protected Buffer buffer; // buffer over which this array is defined
-	protected int offset;			// offset within the buffer of the first field in the array
-	protected int length;			// length of a field
-	protected int stride;			// the amount of space from one field to the next
-	protected int count;			// the number of fields in the array
-	
+	protected int offset; // offset within the buffer of the first field in the array
+	protected int length; // length of a field
+	protected int stride; // the amount of space from one field to the next
+	protected int count; // the number of fields in the array
+
 	/**
 	 * Constructor.
 	 * buffer is the underlying Buffer object.
@@ -32,15 +32,15 @@ class FieldArray {
 		this.length = length;
 		this.stride = stride;
 		this.count = count;
-		}
-	
+	}
+
 	/**
 	 * Returns the number of fields in the array.
 	 */
 	public int count() {
 		return count;
 	}
-	
+
 	/**
 	 * Returns the ith field of the array.
 	 */
@@ -49,7 +49,7 @@ class FieldArray {
 			throw new ArrayIndexOutOfBoundsException();
 		return new Field(buffer, offset + (i * stride), length);
 	}
-	
+
 	/**
 	 * Inserts a new "empty" field before index i.
 	 */
@@ -63,7 +63,7 @@ class FieldArray {
 		buffer.copyInternal(s, t, n);
 		return fieldAt(i).clear();
 	}
-	
+
 	/**
 	 * Removes the entry at index i and "squeezes the space up".  Clears the last entry.
 	 */

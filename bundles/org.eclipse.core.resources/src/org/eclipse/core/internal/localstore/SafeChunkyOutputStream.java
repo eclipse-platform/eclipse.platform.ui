@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.localstore;
 
 import java.io.*;
+
 /**
  * Appends data, in chunks, to a file. Each chunk is defined by the moment
  * the stream is opened (created) and a call to #succeed is made. It is
@@ -33,37 +34,44 @@ import java.io.*;
 public class SafeChunkyOutputStream extends FilterOutputStream {
 	protected String filePath;
 	protected boolean isOpen;
-public SafeChunkyOutputStream(File target) throws IOException {
-	this(target.getAbsolutePath());
-}
-public SafeChunkyOutputStream(String filePath) throws IOException {
-	super(new BufferedOutputStream(new FileOutputStream(filePath, true)));
-	this.filePath = filePath;
-	isOpen = true;
-	beginChunk();
-}
-protected void beginChunk() throws IOException {
-	write(ILocalStoreConstants.BEGIN_CHUNK);
-}
-protected void endChunk() throws IOException {
-	write(ILocalStoreConstants.END_CHUNK);
-}
-protected void open() throws IOException {
-	out = new BufferedOutputStream(new FileOutputStream(filePath, true));
-	isOpen = true;
-	beginChunk();
-}
-public void succeed() throws IOException {
-	try {
-		endChunk();
-	} finally {
-		isOpen = false;
-		close();
+
+	public SafeChunkyOutputStream(File target) throws IOException {
+		this(target.getAbsolutePath());
 	}
-}
-public void write(int b) throws IOException {
-	if (!isOpen)
-		open();
-	super.write(b);
-}
+
+	public SafeChunkyOutputStream(String filePath) throws IOException {
+		super(new BufferedOutputStream(new FileOutputStream(filePath, true)));
+		this.filePath = filePath;
+		isOpen = true;
+		beginChunk();
+	}
+
+	protected void beginChunk() throws IOException {
+		write(ILocalStoreConstants.BEGIN_CHUNK);
+	}
+
+	protected void endChunk() throws IOException {
+		write(ILocalStoreConstants.END_CHUNK);
+	}
+
+	protected void open() throws IOException {
+		out = new BufferedOutputStream(new FileOutputStream(filePath, true));
+		isOpen = true;
+		beginChunk();
+	}
+
+	public void succeed() throws IOException {
+		try {
+			endChunk();
+		} finally {
+			isOpen = false;
+			close();
+		}
+	}
+
+	public void write(int b) throws IOException {
+		if (!isOpen)
+			open();
+		super.write(b);
+	}
 }

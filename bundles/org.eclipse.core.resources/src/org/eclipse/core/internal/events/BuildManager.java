@@ -31,18 +31,21 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		private ElementTree newTree;
 		private ElementTree oldTree;
 		private IPath projectPath;
+
 		public void cache(IPath project, ElementTree oldTree, ElementTree newTree, Object delta) {
 			this.projectPath = project;
 			this.oldTree = oldTree;
 			this.newTree = newTree;
 			this.delta = delta;
 		}
+
 		public void flush() {
 			this.projectPath = null;
 			this.oldTree = null;
 			this.newTree = null;
 			this.delta = null;
 		}
+
 		/**
 		 * Returns the cached resource delta for the given project and trees, or
 		 * null if there is no matching delta in the cache.
@@ -56,29 +59,32 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			return null;
 		}
 	}
+
 	/**
 	 * These builders are added to build tables in place of builders that couldn't be instantiated
 	 */
 	class MissingBuilder extends IncrementalProjectBuilder {
 		private boolean hasBeenBuilt = false;
 		private String name;
+
 		MissingBuilder(String name) {
 			this.name = name;
 		}
+
 		/**
 		 * Log an exception on the first build, and silently do nothing on subsequent builds.
 		 */
 		protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 			if (!hasBeenBuilt) {
 				hasBeenBuilt = true;
-				String msg = Policy.bind("events.skippingBuilder", new String[] { name, getProject().getName()}); //$NON-NLS-1$
+				String msg = Policy.bind("events.skippingBuilder", new String[] {name, getProject().getName()}); //$NON-NLS-1$
 				IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, 1, msg, null);
 				ResourcesPlugin.getPlugin().getLog().log(status);
 			}
 			return null;
 		}
 	}
-	
+
 	//the job for performing background autobuild
 	protected final AutoBuildJob autoBuildJob;
 	protected boolean building = false;
@@ -97,7 +103,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * Caches the DeltaDataTree used to determine if a build is necessary
 	 */
 	final protected DeltaCache deltaTreeCache = new DeltaCache();
-	
+
 	protected ElementTree lastBuiltTree;
 
 	//used for the build cycle looping mechanism
@@ -106,10 +112,12 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	//used for debug/trace timing
 	private long timeStamp = -1;
 	protected Workspace workspace;
+
 	public BuildManager(Workspace workspace) {
 		this.workspace = workspace;
 		this.autoBuildJob = new AutoBuildJob(workspace);
 	}
+
 	protected void basicBuild(int trigger, IncrementalProjectBuilder builder, Map args, MultiStatus status, IProgressMonitor monitor) {
 		try {
 			currentBuilder = builder;
@@ -157,6 +165,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			currentDelta = null;
 		}
 	}
+
 	protected void basicBuild(IProject project, int trigger, ICommand[] commands, MultiStatus status, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -172,6 +181,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			monitor.done();
 		}
 	}
+
 	protected void basicBuild(final IProject project, final int trigger, final MultiStatus status, final IProgressMonitor monitor) {
 		if (!project.isAccessible())
 			return;
@@ -193,12 +203,14 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 					message = Policy.bind("events.unknown", e.getClass().getName(), currentBuilder.getClass().getName()); //$NON-NLS-1$
 				status.add(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e));
 			}
+
 			public void run() throws Exception {
 				basicBuild(project, trigger, commands, status, monitor);
 			}
 		};
 		Platform.run(code);
 	}
+
 	/**
 	 * Peforms aspects of build clean that apply to the entire project
 	 */
@@ -210,6 +222,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			status.merge(e.getStatus());
 		}
 	}
+
 	protected void basicBuild(IProject project, int trigger, String builderName, Map args, MultiStatus status, IProgressMonitor monitor) {
 		IncrementalProjectBuilder builder = null;
 		try {
@@ -217,7 +230,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			if (!validateNature(builder, builderName)) {
 				//skip this builder and null its last built tree because it is invalid
 				//if the nature gets added or re-enabled a full build will be triggered
-				 ((InternalBuilder) builder).setLastBuiltTree(null);
+				((InternalBuilder) builder).setLastBuiltTree(null);
 				return;
 			}
 		} catch (CoreException e) {
@@ -226,6 +239,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		}
 		basicBuild(trigger, builder, args, status, monitor);
 	}
+
 	/**
 	 * Loop the workspace build until no more builders request a rebuild.
 	 */
@@ -256,6 +270,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			trigger = IncrementalProjectBuilder.INCREMENTAL_BUILD;
 		}
 	}
+
 	public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -284,12 +299,14 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				autoBuildJob.avoidBuild();
 		}
 	}
+
 	private void cleanup() {
 		building = false;
 		builtProjects.clear();
 		deltaCache.flush();
 		deltaTreeCache.flush();
 	}
+
 	public void build(IProject project, int trigger, IProgressMonitor monitor) throws CoreException {
 		if (!canRun(trigger))
 			return;
@@ -303,6 +320,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			cleanup();
 		}
 	}
+
 	public void build(IProject project, int kind, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -323,9 +341,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			monitor.done();
 		}
 	}
+
 	protected boolean canRun(int trigger) {
 		return !building;
 	}
+
 	/**
 	 * Another thread is attempting to modify the workspace. Cancel the
 	 * autobuild and wait until it completes.
@@ -333,6 +353,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	public void interrupt() {
 		autoBuildJob.interrupt();
 	}
+
 	/**
 	 * Cancel the build if the user has canceled or if an auto-build has been interrupted.
 	 */
@@ -345,6 +366,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		if (autoBuildJob.isInterrupted())
 			throw new OperationCanceledException();
 	}
+
 	protected IProject[] computeUnorderedProjects(IProject[] ordered) {
 		IProject[] unordered;
 		HashSet leftover = new HashSet(Arrays.asList(workspace.getRoot().getProjects()));
@@ -352,6 +374,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		unordered = (IProject[]) leftover.toArray(new IProject[leftover.size()]);
 		return unordered;
 	}
+
 	/**
 	 * Creates and returns a Map mapping String(builder name) -> BuilderPersistentInfo. 
 	 * The table includes entries for all builders that are
@@ -394,20 +417,24 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		}
 		return newInfos;
 	}
+
 	protected String debugBuilder() {
 		return currentBuilder == null ? "<no builder>" : currentBuilder.getClass().getName(); //$NON-NLS-1$
 	}
+
 	protected String debugProject() {
 		if (currentBuilder == null)
 			return "<no project>"; //$NON-NLS-1$
 		return currentBuilder.getProject().getFullPath().toString();
 	}
+
 	/**
 	 * The outermost workspace operation has finished.  Do an autobuild if necessary.
 	 */
 	public void endTopLevel(boolean needsBuild) {
 		autoBuildJob.build(needsBuild);
 	}
+
 	protected IncrementalProjectBuilder getBuilder(String builderName, IProject project, MultiStatus status) throws CoreException {
 		Hashtable builders = getBuilders(project);
 		IncrementalProjectBuilder result = (IncrementalProjectBuilder) builders.get(builderName);
@@ -419,6 +446,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		((InternalBuilder) result).startupOnInitialize();
 		return result;
 	}
+
 	/**
 	 * Returns a hashtable of all instantiated builders for the given project.
 	 * This hashtable maps String(builder name) -> Builder.
@@ -429,6 +457,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			Assert.isNotNull(info, Policy.bind("events.noProject", project.getName())); //$NON-NLS-1$
 		return info.getBuilders();
 	}
+
 	/**
 	 * Returns a Map mapping String(builder name) -> BuilderPersistentInfo.
 	 * The map includes entries for all builders that are in the builder spec,
@@ -438,6 +467,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	public Map getBuildersPersistentInfo(IProject project) throws CoreException {
 		return (Map) project.getSessionProperty(K_BUILD_MAP);
 	}
+
 	protected IResourceDelta getDelta(IProject project) {
 		if (currentTree == null) {
 			if (Policy.DEBUG_BUILD_FAILURE)
@@ -459,7 +489,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			return ResourceDeltaFactory.newEmptyDelta(project);
 		}
 		//now check against the cache
-		IResourceDelta result = (IResourceDelta)deltaCache.getDelta(project.getFullPath(), lastBuiltTree, currentTree);
+		IResourceDelta result = (IResourceDelta) deltaCache.getDelta(project.getFullPath(), lastBuiltTree, currentTree);
 		if (result != null)
 			return result;
 
@@ -476,6 +506,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			Policy.debug(true, "Finished computing delta, time: " + (System.currentTimeMillis() - startTime) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		return result;
 	}
+
 	/**
 	 * Returns the safe runnable instance for invoking a builder
 	 */
@@ -486,7 +517,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 					throw (OperationCanceledException) e;
 				//ResourceStats.buildException(e);
 				// don't log the exception....it is already being logged in Platform#run
-				
+
 				//add a generic message to the MultiStatus
 				String builderName = currentBuilder.getLabel();
 				if (builderName == null || builderName.length() == 0)
@@ -494,7 +525,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				String pluginId = currentBuilder.getPluginDescriptor().getUniqueIdentifier();
 				String message = Policy.bind("events.builderError", builderName, currentBuilder.getProject().getName()); //$NON-NLS-1$
 				status.add(new Status(IStatus.WARNING, pluginId, IResourceStatus.BUILD_FAILED, message, null));
-				
+
 				//add the exception status to the MultiStatus
 				if (e instanceof CoreException)
 					status.add(((CoreException) e).getStatus());
@@ -505,6 +536,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 					status.add(new Status(IStatus.WARNING, pluginId, IResourceStatus.BUILD_FAILED, message, e));
 				}
 			}
+
 			public void run() throws Exception {
 				IProject[] prereqs = null;
 				//invoke the appropriate build method depending on the trigger
@@ -518,6 +550,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			}
 		};
 	}
+
 	public void handleEvent(LifecycleEvent event) {
 		IProject project = null;
 		switch (event.kind) {
@@ -529,6 +562,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 					setBuildersPersistentInfo(project, null);
 		}
 	}
+
 	/**
 	 * Returns true if the given project has been built during this build cycle, and
 	 * false otherwise.
@@ -536,6 +570,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	public boolean hasBeenBuilt(IProject project) {
 		return builtProjects.contains(project);
 	}
+
 	/**
 	 * Hook for adding trace options and debug information at the end of a build.
 	 */
@@ -568,6 +603,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			Policy.debug(true, "Invoking (" + type + ") on builder: " + toString(builder)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
+
 	/**
 	 * Instantiates the builder with the given name.  If the builder, its plugin, or its nature
 	 * is missing, create a placeholder builder to takes its place.  This is needed to generate 
@@ -594,7 +630,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			if (info != null) {
 				ElementTree tree = info.getLastBuiltTree();
 				if (tree != null)
-					 ((InternalBuilder) builder).setLastBuiltTree(tree);
+					((InternalBuilder) builder).setLastBuiltTree(tree);
 				((InternalBuilder) builder).setInterestingProjects(info.getInterestingProjects());
 			}
 			// delete the build map if it's now empty 
@@ -603,6 +639,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		}
 		return builder;
 	}
+
 	/**
 	 * Instantiates and returns the builder with the given name.  If the builder, its plugin, or its nature
 	 * is missing, returns null.
@@ -646,6 +683,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		}
 		return false;
 	}
+
 	/**
 	 * Returns true if the given builder needs to be invoked, and false
 	 * otherwise.
@@ -662,7 +700,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		ElementTree oldTree = builder.getLastBuiltTree();
 		ElementTree newTree = workspace.getElementTree();
 		long start = System.currentTimeMillis();
-		currentDelta = (DeltaDataTree)deltaTreeCache.getDelta(null, oldTree, newTree);
+		currentDelta = (DeltaDataTree) deltaTreeCache.getDelta(null, oldTree, newTree);
 		if (currentDelta == null) {
 			if (Policy.DEBUG_NEEDS_BUILD) {
 				String message = "Checking if need to build. Starting delta computation between: " + oldTree.toString() + " and " + newTree.toString(); //$NON-NLS-1$ //$NON-NLS-2$
@@ -692,6 +730,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		}
 		return false;
 	}
+
 	/**
 	 * Removes all builders with the given ID from the build spec.
 	 * Does nothing if there were no such builders in the spec
@@ -721,12 +760,14 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		desc.setBuildSpec(newSpec);
 		project.setDescription(desc, IResource.NONE, null);
 	}
+
 	/**
 	 * Hook for builders to request a rebuild.
 	 */
 	public void requestRebuild() {
 		rebuildRequested = true;
 	}
+
 	/**
 	 * Sets the builder map for the given project.  The builder map is
 	 * a Map mapping String(builder name) -> BuilderPersistentInfo.
@@ -744,12 +785,15 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			ResourcesPlugin.getPlugin().getLog().log(error);
 		}
 	}
+
 	public void shutdown(IProgressMonitor monitor) {
 		autoBuildJob.cancel();
 	}
+
 	public void startup(IProgressMonitor monitor) {
 		workspace.addLifecycleListener(this);
 	}
+
 	/**
 	 * Returns a string representation of the given builder.  
 	 * For debugging purposes only.
@@ -759,6 +803,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		name = name.substring(name.lastIndexOf('.') + 1);
 		return name + "(" + builder.getProject().getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
 	/**
 	 * Returns true if the nature membership rules are satisifed for the given
 	 * builder extension on the given project, and false otherwise.  A builder that 

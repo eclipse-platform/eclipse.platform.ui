@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,11 +18,13 @@ import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.localstore.SafeFileOutputStream;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
+
 //
 public class ModelObjectWriter implements IModelObjectConstants {
 	public ModelObjectWriter() {
 		super();
 	}
+
 	protected String[] getReferencedProjects(ProjectDescription description) {
 		IProject[] projects = description.getReferencedProjects();
 		String[] result = new String[projects.length];
@@ -30,6 +32,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			result[i] = projects[i].getName();
 		return result;
 	}
+
 	/**
 	 * The OutputStream is closed in this method.
 	 */
@@ -43,6 +46,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			output.close();
 		}
 	}
+
 	protected void write(Object obj, XMLWriter writer) throws IOException {
 		if (obj instanceof BuildCommand) {
 			write((BuildCommand) obj, writer);
@@ -63,6 +67,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		writer.printTabulation();
 		writer.println(obj.toString());
 	}
+
 	/**
 	 * The parameter tempLocation is a location to place our temp file (copy of the target one)
 	 * to be used in case we could not successfully write the new file.
@@ -78,18 +83,21 @@ public class ModelObjectWriter implements IModelObjectConstants {
 				file.close();
 		}
 	}
+
 	protected void write(String name, String elementTagName, String[] array, XMLWriter writer) throws IOException {
 		writer.startTag(name, null);
 		for (int i = 0; i < array.length; i++)
 			writer.printSimpleTag(elementTagName, array[i]);
 		writer.endTag(name);
 	}
+
 	protected void write(String name, Collection collection, XMLWriter writer) throws IOException {
 		writer.startTag(name, null);
 		for (Iterator it = collection.iterator(); it.hasNext();)
 			write(it.next(), writer);
 		writer.endTag(name);
 	}
+
 	/**
 	 * Write maps of (String, String).
 	 */
@@ -108,6 +116,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		}
 		writer.endTag(name);
 	}
+
 	protected void write(BuildCommand command, XMLWriter writer) throws IOException {
 		writer.startTag(BUILD_COMMAND, null);
 		if (command != null) {
@@ -116,6 +125,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		}
 		writer.endTag(BUILD_COMMAND);
 	}
+
 	protected void write(LinkDescription description, XMLWriter writer) throws IOException {
 		writer.startTag(LINK, null);
 		if (description != null) {
@@ -125,6 +135,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		}
 		writer.endTag(LINK);
 	}
+
 	protected void write(ProjectDescription description, XMLWriter writer) throws IOException {
 		writer.startTag(PROJECT_DESCRIPTION, null);
 		if (description != null) {
@@ -143,6 +154,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		}
 		writer.endTag(PROJECT_DESCRIPTION);
 	}
+
 	protected void write(WorkspaceDescription description, XMLWriter writer) throws IOException {
 		writer.startTag(WORKSPACE_DESCRIPTION, null);
 		if (description != null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,13 +25,13 @@ class IndexAnchor extends IndexedStoreObject {
 
 	protected static final int NumberOfEntriesOffset = 14;
 	protected static final int NumberOfEntriesLength = 4;
-	
-	protected Field numberOfEntriesField; 
+
+	protected Field numberOfEntriesField;
 	protected int numberOfEntries;
 
 	protected Field rootNodeAddressField;
 	protected ObjectAddress rootNodeAddress;
-	
+
 	/** 
 	 * Constructs a new index anchor from nothing.
 	 */
@@ -40,7 +40,7 @@ class IndexAnchor extends IndexedStoreObject {
 		numberOfEntries = 0;
 		rootNodeAddress = ObjectAddress.Null;
 	}
-	
+
 	/** 
 	 * Constructs a new index anchor from a field read from the store.  Used by the factory.
 	 */
@@ -134,7 +134,7 @@ class IndexAnchor extends IndexedStoreObject {
 		this.rootNodeAddress = rootNodeAddress;
 		setChanged();
 	}
-	
+
 	/**
 	 * This method requests the anchor to destroy its children.
 	 */
@@ -215,7 +215,8 @@ class IndexAnchor extends IndexedStoreObject {
 	 * Returns the number of nodes in the index.
 	 */
 	int getNumberOfNodes() throws IndexedStoreException {
-		if (rootNodeAddress.isNull()) return 0;
+		if (rootNodeAddress.isNull())
+			return 0;
 		IndexNode node = acquireNode(rootNodeAddress);
 		int n = node.getNumberOfNodes();
 		node.release();

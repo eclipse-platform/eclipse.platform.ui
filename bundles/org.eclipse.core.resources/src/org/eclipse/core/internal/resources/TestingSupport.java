@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ public class TestingSupport {
 			return null;
 		return info.sessionProperties == null ? null : (Map) info.sessionProperties.clone();
 	}
+
 	/**
 	 * Installs the given move-delete hook implementation in the given 
 	 * workspace. This overrides the normal workspace behavior. Subsequent
@@ -65,6 +66,7 @@ public class TestingSupport {
 			ws.initializeMoveDeleteHook();
 		}
 	}
+
 	/**
 	 * Blocks the calling thread until auto-build completes.
 	 * @deprecated to be removed before release 3.0
@@ -78,6 +80,7 @@ public class TestingSupport {
 			throw new RuntimeException("Interrupted while waiting for build"); //$NON-NLS-1$
 		}
 	}
+
 	/**
 	 * Blocks the calling thread until background snapshot completes.
 	 * @since 3.0
@@ -90,6 +93,7 @@ public class TestingSupport {
 			throw new RuntimeException("Interrupted while waiting for snapshot"); //$NON-NLS-1$
 		}
 	}
+
 	/* 
 	 * Class cannot be instantiated.
 	 */

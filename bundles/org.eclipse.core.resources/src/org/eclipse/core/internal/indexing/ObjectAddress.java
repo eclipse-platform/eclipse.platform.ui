@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,11 +23,13 @@ public class ObjectAddress implements Insertable {
 	 * Constructor for an address from a four byte field.
 	 */
 	public ObjectAddress(byte[] b) throws IllegalArgumentException {
-		if (b.length != Size) throw new IllegalArgumentException();
+		if (b.length != Size)
+			throw new IllegalArgumentException();
 		Buffer buf = new Buffer(b);
 		pageNumber = buf.getUInt(PageNumberOffset, 3);
 		objectNumber = buf.getUInt(ObjectNumberOffset, 1);
 	}
+
 	/**
 	 * Constructs an address from its constituent page and object numbers.
 	 */
@@ -37,46 +39,58 @@ public class ObjectAddress implements Insertable {
 			this.objectNumber = 0;
 			return;
 		}
-		if (pageNumber < 0 || pageNumber > 0xFFFFFF) throw new IllegalArgumentException();
-		if (pageNumber % ObjectStorePage.SIZE == 0) throw new IllegalArgumentException();
-		if (objectNumber < 0 || objectNumber > 0xFF) throw new IllegalArgumentException();
+		if (pageNumber < 0 || pageNumber > 0xFFFFFF)
+			throw new IllegalArgumentException();
+		if (pageNumber % ObjectStorePage.SIZE == 0)
+			throw new IllegalArgumentException();
+		if (objectNumber < 0 || objectNumber > 0xFF)
+			throw new IllegalArgumentException();
 		this.pageNumber = pageNumber;
 		this.objectNumber = objectNumber;
 	}
+
 	/**
 	 * Returns true if and only if the addresses are equal.
 	 */
 	public boolean equals(Object anObject) {
-		if (!(anObject instanceof ObjectAddress)) return false;
+		if (!(anObject instanceof ObjectAddress))
+			return false;
 		ObjectAddress address = (ObjectAddress) anObject;
-		if (pageNumber != address.pageNumber) return false;
-		if (objectNumber != address.objectNumber) return false;
+		if (pageNumber != address.pageNumber)
+			return false;
+		if (objectNumber != address.objectNumber)
+			return false;
 		return true;
 	}
+
 	/**
 	 * Returns the object number from the address.
 	 */
 	public int getObjectNumber() {
 		return objectNumber;
 	}
+
 	/** 
 	 * Returns the page number from the address.
 	 */
 	public int getPageNumber() {
 		return pageNumber;
 	}
+
 	/**
 	 * Returns an int representing the hash code for the address.
 	 */
 	public int hashCode() {
 		return (pageNumber << 8) | objectNumber;
 	}
+
 	/**
 	 * Tests the address for the null address value.
 	 */
 	public boolean isNull() {
 		return (pageNumber == 0 && objectNumber == 0);
 	}
+
 	/**
 	 * Returns a byte array form of the address.
 	 */
@@ -86,6 +100,7 @@ public class ObjectAddress implements Insertable {
 		buf.put(ObjectNumberOffset, 1, objectNumber);
 		return buf.get();
 	}
+
 	/**
 	 * Returns a string representation of the address suitable for printing.
 	 */

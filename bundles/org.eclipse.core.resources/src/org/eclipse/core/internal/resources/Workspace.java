@@ -51,7 +51,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected AliasManager aliasManager;
 	protected CharsetManager charsetManager;
 	protected RefreshManager refreshManager;
-	
+
 	protected long nextNodeId = 1;
 	protected long nextModificationStamp = 0;
 	protected long nextMarkerId = 0;
@@ -86,7 +86,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	protected TeamHook teamHook = null;
 
-
 	/**
 	 * This field is used to control access to the workspace tree during
 	 * resource change notifications. It tracks which thread, if any, is
@@ -97,7 +96,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	/** indicates if the workspace crashed in a previous session */
 	protected boolean crashed = false;
-	
+
 	public Workspace() {
 		super();
 		localMetaArea = new LocalMetaArea();
@@ -107,6 +106,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		treeLocked = Thread.currentThread();
 		tree.setTreeData(newElement(IResource.ROOT));
 	}
+
 	/**
 	 * Adds a listener for internal workspace lifecycle events.  There is no way to
 	 * remove lifecycle listeners.
@@ -114,18 +114,21 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public void addLifecycleListener(ILifecycleListener listener) {
 		lifecycleListeners.add(listener);
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#addResourceChangeListener(IResourceChangeListener)
 	 */
 	public void addResourceChangeListener(IResourceChangeListener listener) {
 		notificationManager.addListener(listener, IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.POST_CHANGE);
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#addResourceChangeListener(IResourceChangeListener, int)
 	 */
 	public void addResourceChangeListener(IResourceChangeListener listener, int eventMask) {
 		notificationManager.addListener(listener, eventMask);
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#addSaveParticipant(Plugin, ISaveParticipant)
 	 */
@@ -134,6 +137,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		Assert.isNotNull(participant, "Participant must not be null"); //$NON-NLS-1$
 		return saveManager.addParticipant(plugin, participant);
 	}
+
 	public void beginOperation(boolean createNewTree) throws CoreException {
 		WorkManager workManager = getWorkManager();
 		workManager.incrementNestedOperations();
@@ -149,9 +153,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		if (createNewTree && tree.isImmutable())
 			newWorkingTree();
 	}
+
 	protected void broadcastChanges(int type, boolean lockTree) throws CoreException {
 		notificationManager.broadcastChanges(tree, type, lockTree);
 	}
+
 	/**
 	 * Broadcasts an internal workspace lifecycle event to interested
 	 * internal listeners.
@@ -162,6 +168,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			listener.handleEvent(event);
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#build(int, IProgressMonitor)
 	 */
@@ -184,6 +191,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			monitor.done();
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#checkpoint(boolean)
 	 */
@@ -200,6 +208,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 		}
 	}
+
 	/**
 	 * Deletes all the files and directories from the given root down (inclusive).
 	 * Returns false if we could not delete some file or an exception occurred
@@ -216,6 +225,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		return result;
 	}
+
 	/**
 	 * Deletes all the files and directories from the given root down, except for 
 	 * the root itself.
@@ -235,6 +245,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		return result;
 	}
+
 	/**
 	 * Closes this workspace; ignored if this workspace is not open.
 	 * The state of this workspace is not saved before the workspace
@@ -291,6 +302,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			monitor.done();
 		}
 	}
+
 	/**
 	 * Implementation of API method declared on IWorkspace.
 	 * 
@@ -313,7 +325,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	private IProject[][] computePrerequisiteOrder1(IProject[] projects) {
 		IWorkspace.ProjectOrder r = computeProjectOrder(projects);
 		if (!r.hasCycles) {
-			return new IProject[][] { r.projects, new IProject[0] };
+			return new IProject[][] {r.projects, new IProject[0]};
 		}
 		// when there are cycles, we need to remove all knotted projects from
 		// r.projects to form result[0] and merge all knots to form result[1]
@@ -345,7 +357,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		IProject[] result1 = new IProject[p.size()];
 		p.toArray(result1);
-		return new IProject[][] { result1, result2 };
+		return new IProject[][] {result1, result2};
 	}
 
 	/* (non-Javadoc)
@@ -451,7 +463,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// List<IProject[]> edges
 		List edges = new ArrayList(allProjects.length);
 		for (int i = 0; i < allProjects.length; i++) {
-			Project project = (Project)allProjects[i];
+			Project project = (Project) allProjects[i];
 			// ignore projects that are not accessible
 			if (!project.isAccessible())
 				continue;
@@ -465,7 +477,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				IProject ref = refs[j];
 				// ignore self references and references to projects that are not accessible
 				if (ref.isAccessible() && !ref.equals(project))
-					edges.add(new IProject[] { project, ref });
+					edges.add(new IProject[] {project, ref});
 			}
 		}
 
@@ -614,6 +626,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			copyTree(child, childPath, depth, updateFlags, keepSyncInfo);
 		}
 	}
+
 	/**
 	 * Returns the number of resources in a subtree of the resource tree.
 	 * 
@@ -643,9 +656,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		return 0;
 	}
+
 	public ResourceInfo createResource(IResource resource, ResourceInfo info, boolean phantom, boolean overwrite) throws CoreException {
 		return createResource(resource, info, phantom, overwrite, false);
 	}
+
 	/*
 	 * Creates the given resource in the tree and returns the new resource info object.  
 	 * If phantom is true, the created element is marked as a phantom.
@@ -696,6 +711,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		return info;
 	}
+
 	/*
 	 * Creates the given resource in the tree and returns the new resource info object.  
 	 * If phantom is true, the created element is marked as a phantom.
@@ -708,9 +724,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public ResourceInfo createResource(IResource resource, boolean phantom) throws CoreException {
 		return createResource(resource, null, phantom, false);
 	}
+
 	public ResourceInfo createResource(IResource resource, boolean phantom, boolean overwrite) throws CoreException {
 		return createResource(resource, null, phantom, overwrite);
 	}
+
 	public static WorkspaceDescription defaultWorkspaceDescription() {
 		return new WorkspaceDescription("Workspace"); //$NON-NLS-1$
 	}
@@ -794,6 +812,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			endOperation(null, false, null);
 		}
 	}
+
 	/**
 	 * Delete the given resource from the current tree of the receiver.
 	 * This method simply removes the resource from the tree.  No cleanup or 
@@ -810,12 +829,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		} else
 			tree.deleteElement(path);
 	}
+
 	/**
 	 * For debugging purposes only.  Dumps plugin stats to console
 	 */
 	public void dumpStats() {
 		EventStats.dumpStats();
 	}
+
 	/**
 	 * End an operation (group of resource changes).
 	 * Notify interested parties that resource changes have taken place.  All
@@ -883,6 +904,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		if (description.getBuildOrder(false) == null)
 			buildOrder = null;
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#forgetSavedTree(String)
 	 */
@@ -890,12 +912,15 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		Assert.isNotNull(pluginId, "PluginId must not be null"); //$NON-NLS-1$
 		saveManager.forgetSavedTree(pluginId);
 	}
+
 	public AliasManager getAliasManager() {
 		return aliasManager;
 	}
+
 	public CharsetManager getCharsetManager() {
 		return charsetManager;
 	}
+
 	/**
 	 * Returns this workspace's build manager
 	 */
@@ -970,6 +995,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		return result;
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#getDescription()
 	 */
@@ -978,59 +1004,71 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		description.copyTo(workingCopy);
 		return workingCopy;
 	}
+
 	/** 
 	 * Returns the current element tree for this workspace
 	 */
 	public ElementTree getElementTree() {
 		return tree;
 	}
+
 	public FileSystemResourceManager getFileSystemManager() {
 		return fileSystemManager;
 	}
+
 	/**
 	 * Returns the marker manager for this workspace
 	 */
 	public MarkerManager getMarkerManager() {
 		return markerManager;
 	}
+
 	public LocalMetaArea getMetaArea() {
 		return localMetaArea;
 	}
+
 	protected IMoveDeleteHook getMoveDeleteHook() {
 		if (moveDeleteHook == null)
 			initializeMoveDeleteHook();
 		return moveDeleteHook;
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#getNatureDescriptor(String)
 	 */
 	public IProjectNatureDescriptor getNatureDescriptor(String natureId) {
 		return natureManager.getNatureDescriptor(natureId);
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#getNatureDescriptors()
 	 */
 	public IProjectNatureDescriptor[] getNatureDescriptors() {
 		return natureManager.getNatureDescriptors();
 	}
+
 	/**
 	 * Returns the nature manager for this workspace.
 	 */
 	public NatureManager getNatureManager() {
 		return natureManager;
 	}
+
 	public NotificationManager getNotificationManager() {
 		return notificationManager;
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#getPathVariableManager()
 	 */
 	public IPathVariableManager getPathVariableManager() {
 		return pathVariableManager;
 	}
+
 	public PropertyManager getPropertyManager() {
 		return propertyManager;
 	}
+
 	/**
 	 * Returns the resource info for the identified resource.
 	 * null is returned if no such resource can be found.
@@ -1060,12 +1098,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			return null;
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#getRoot()
 	 */
 	public IWorkspaceRoot getRoot() {
 		return defaultRoot;
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#getRuleFactory()
 	 */
@@ -1076,15 +1116,18 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			ruleFactory = new Rules(this);
 		return ruleFactory;
 	}
+
 	public SaveManager getSaveManager() {
 		return saveManager;
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#getSynchronizer()
 	 */
 	public ISynchronizer getSynchronizer() {
 		return synchronizer;
 	}
+
 	/**
 	 * Returns the installed team hook.  Never returns null.
 	 */
@@ -1093,6 +1136,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			initializeTeamHook();
 		return teamHook;
 	}
+
 	/**
 	 * We should not have direct references to this field. All references should go through
 	 * this method.
@@ -1104,6 +1148,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		return _workManager;
 	}
+
 	/**
 	 * A file modification validator hasn't been initialized. Check the extension point and 
 	 * try to create a new validator if a user has one defined as an extension.
@@ -1135,6 +1180,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
 	}
+
 	/**
 	 * A move/delete hook hasn't been initialized. Check the extension point and 
 	 * try to create a new hook if a user has one defined as an extension. Otherwise
@@ -1170,6 +1216,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				moveDeleteHook = new MoveDeleteHook();
 		}
 	}
+
 	/**
 	 * A team hook hasn't been initialized. Check the extension point and 
 	 * try to create a new hook if a user has one defined as an extension. 
@@ -1208,15 +1255,18 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				};
 		}
 	}
+
 	public WorkspaceDescription internalGetDescription() {
 		return description;
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#isAutoBuilding()
 	 */
 	public boolean isAutoBuilding() {
 		return description.isAutoBuilding();
 	}
+
 	/**
 	 * Returns true if the object at the specified position has any
 	 * other copy in the given array.
@@ -1229,9 +1279,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				return true;
 		return false;
 	}
+
 	public boolean isOpen() {
 		return openFlag;
 	}
+
 	/**
 	 * Returns true if the given file system locations overlap. If "bothDirections" is true,
 	 * this means they are the same, or one is a proper prefix of the other.  If "bothDirections"
@@ -1249,18 +1301,21 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		return one.isPrefixOf(two) || (bothDirections && two.isPrefixOf(one));
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#isTreeLocked()
 	 */
 	public boolean isTreeLocked() {
 		return treeLocked == Thread.currentThread();
 	}
+
 	/**
 	 * Link the given tree into the receiver's tree at the specified resource.
 	 */
 	protected void linkTrees(IPath path, ElementTree[] newTrees) {
 		tree = tree.mergeDeltaChain(path, newTrees);
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#loadProjectDescription(IPath)
 	 * @since 2.0
@@ -1380,6 +1435,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		copyTree(source, destination, depth, updateFlags, keepSyncInfo);
 		source.fixupAfterMoveSource();
 	}
+
 	/**
 	 * Create and return a new tree element of the given type.
 	 */
@@ -1402,6 +1458,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		result.setType(type);
 		return result;
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#newProjectDescription(String)
 	 */
@@ -1410,6 +1467,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		result.setName(projectName);
 		return result;
 	}
+
 	public Resource newResource(IPath path, int type) {
 		String message;
 		switch (type) {
@@ -1434,6 +1492,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// will never get here because of assertion.
 		return null;
 	}
+
 	/**
 	 * Opens a new mutable element tree layer, thus allowing 
 	 * modifications to the tree.
@@ -1442,18 +1501,22 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		tree = tree.newEmptyDelta();
 		return tree;
 	}
+
 	/**
 	 * Returns the next, previously unassigned, marker id.
 	 */
 	protected long nextMarkerId() {
 		return nextMarkerId++;
 	}
+
 	public long nextModificationStamp() {
 		return nextModificationStamp++;
 	}
+
 	public long nextNodeId() {
 		return nextNodeId++;
 	}
+
 	/**
 	 * Opens this workspace using the data at its location in the local file system.
 	 * This workspace must not be open.
@@ -1518,6 +1581,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		return Status.OK_STATUS;
 	}
+
 	/**
 	 * Called before checking the pre-conditions of an operation.  Optionally supply
 	 * a scheduling rule to determine when the operation is safe to run.  If a scheduling 
@@ -1534,6 +1598,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, null);
 		}
 	}
+
 	protected boolean refreshRequested() {
 		String[] args = Platform.getCommandLineArgs();
 		for (int i = 0; i < args.length; i++)
@@ -1541,12 +1606,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				return true;
 		return false;
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#removeResourceChangeListener(IResourceChangeListener)
 	 */
 	public void removeResourceChangeListener(IResourceChangeListener listener) {
 		notificationManager.removeListener(listener);
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#removeSaveParticipant(Plugin)
 	 */
@@ -1554,6 +1621,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		Assert.isNotNull(plugin, "Plugin must not be null"); //$NON-NLS-1$
 		saveManager.removeParticipant(plugin);
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int, IProgressMonitor)
 	 */
@@ -1584,13 +1652,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			monitor.done();
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#run(IWorkspaceRunnable, IProgressMonitor)
 	 */
 	public void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException {
 		run(action, defaultRoot, IWorkspace.AVOID_UPDATE, monitor);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#save(boolean, IProgressMonitor)
 	 */
@@ -1616,9 +1685,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			endOperation(getRoot(), false, null);
 		}
 	}
+
 	public void setCrashed(boolean value) {
 		crashed = value;
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#setDescription(IWorkspaceDescription)
 	 */
@@ -1634,9 +1705,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		Policy.setupAutoBuildProgress(description.isAutoBuilding());
 		ResourcesPlugin.getPlugin().savePluginPreferences();
 	}
+
 	public void setTreeLocked(boolean locked) {
 		treeLocked = locked ? Thread.currentThread() : null;
 	}
+
 	/**
 	 * @deprecated
 	 */
@@ -1647,7 +1720,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected void shutdown(IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			IManager[] managers = { buildManager, propertyManager, pathVariableManager, charsetManager, fileSystemManager, markerManager, saveManager, _workManager, aliasManager, refreshManager };
+			IManager[] managers = {buildManager, propertyManager, pathVariableManager, charsetManager, fileSystemManager, markerManager, saveManager, _workManager, aliasManager, refreshManager};
 			monitor.beginTask(null, managers.length);
 			String message = Policy.bind("resources.shutdownProblems"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
@@ -1682,12 +1755,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			monitor.done();
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#sortNatureSet(String[])
 	 */
 	public String[] sortNatureSet(String[] natureIds) {
 		return natureManager.sortNatureSet(natureIds);
 	}
+
 	protected void startup(IProgressMonitor monitor) throws CoreException {
 		// ensure the tree is locked during the startup notification
 		_workManager = new WorkManager(this);
@@ -1735,9 +1810,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		new ElementTreeIterator(tree, Path.ROOT).iterate(visitor);
 		return buffer.toString();
 	}
+
 	public void updateModificationStamp(ResourceInfo info) {
 		info.setModificationStamp(nextModificationStamp());
 	}
+
 	/* (non-javadoc)
 	 * @see IWorkspace#validateEdit(IFile[], Object)
 	 */
@@ -1768,6 +1845,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			public void run() throws Exception {
 				status[0] = validator.validateEdit(files, context);
 			}
+
 			public void handleException(Throwable exception) {
 				status[0] = new ResourceStatus(IStatus.ERROR, null, Policy.bind("resources.errorValidator"), exception); //$NON-NLS-1$
 			}
@@ -1775,6 +1853,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		Platform.run(body);
 		return status[0];
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#validateLinkLocation(IResource, IPath)
 	 */
@@ -1878,6 +1957,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		return Status.OK_STATUS;
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#validateName(String, int)
 	 */
@@ -1923,12 +2003,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		return Status.OK_STATUS;
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#validateNatureSet(String[])
 	 */
 	public IStatus validateNatureSet(String[] natureIds) {
 		return natureManager.validateNatureSet(natureIds);
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#validatePath(String, int)
 	 */
@@ -1940,6 +2022,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		return validatePath(new Path(path), type, false);
 	}
+
 	/**
 	 * Validates that the given workspace path is valid for the given type.  If 
 	 * <code>lastSegmentOnly</code> is true, it is assumed that all segments except
@@ -2007,6 +2090,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		message = Policy.bind("resources.invalidPath", path.toString()); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#validateProjectLocation(IProject, IPath)
 	 */
@@ -2084,6 +2168,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		return Status.OK_STATUS;
 	}
+
 	/**
 	 * Internal method. To be called only from the following methods:
 	 * <ul>
@@ -2111,6 +2196,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			public void run() throws Exception {
 				status[0] = validator.validateSave(file);
 			}
+
 			public void handleException(Throwable exception) {
 				status[0] = new ResourceStatus(IStatus.ERROR, null, Policy.bind("resources.errorValidator"), exception); //$NON-NLS-1$
 			}

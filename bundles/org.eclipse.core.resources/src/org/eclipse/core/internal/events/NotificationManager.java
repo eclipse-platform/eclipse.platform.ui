@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,10 +25,12 @@ public class NotificationManager implements IManager, ILifecycleListener {
 			public void run(IProgressMonitor monitor) throws CoreException {
 			}
 		};
+
 		public NotifyJob() {
 			super(ICoreConstants.MSG_RESOURCES_UPDATING);
 			setSystem(true);
 		}
+
 		public IStatus run(IProgressMonitor monitor) {
 			if (monitor.isCanceled())
 				return Status.CANCEL_STATUS;
@@ -41,6 +43,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 			return Status.OK_STATUS;
 		}
 	}
+
 	private static final long NOTIFICATION_DELAY = 1500;
 	/**
 	 * The Threads that are currently avoiding notification.
@@ -105,12 +108,14 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		listeners = new ResourceChangeListenerList();
 		notifyJob = new NotifyJob();
 	}
+
 	public void addListener(IResourceChangeListener listener, int eventMask) {
 		synchronized (listeners) {
 			listeners.add(listener, eventMask);
 		}
 		EventStats.listenerAdded(listener);
 	}
+
 	/**
 	 * Returns true if notification avoidance really started, and false for nested
 	 * operations.
@@ -118,12 +123,14 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	public boolean beginAvoidNotify() {
 		return avoidNotify.add(Thread.currentThread());
 	}
+
 	/**
 	 * Indicates that a notification phase is beginning. */
 	public void beginNotify() {
 		notifyJob.cancel();
 		notificationRequested = false;
 	}
+
 	/**
 	 * The main broadcast point for notification deltas */
 	public void broadcastChanges(ElementTree lastState, int type, boolean lockTree) throws CoreException {
@@ -162,17 +169,19 @@ public class NotificationManager implements IManager, ILifecycleListener {
 			}
 		}
 	}
+
 	/**
 	 * Helper method for the save participant lifecycle computation. */
 	public void broadcastChanges(IResourceChangeListener listener, int type, IResourceDelta delta) {
 		ResourceChangeListenerList.ListenerEntry[] entries;
-		entries = new ResourceChangeListenerList.ListenerEntry[] { new ResourceChangeListenerList.ListenerEntry(listener, type)};
+		entries = new ResourceChangeListenerList.ListenerEntry[] {new ResourceChangeListenerList.ListenerEntry(listener, type)};
 		notify(entries, new ResourceChangeEvent(workspace, type, delta), false);
 	}
 
 	public void endAvoidNotify() {
 		avoidNotify.remove(Thread.currentThread());
 	}
+
 	public void endOperation() {
 		//don't do intermediate notifications if the current thread doesn't want them
 		if (avoidNotify.contains(Thread.currentThread()))
@@ -182,6 +191,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		if (notifyJob.getState() == Job.NONE)
 			notifyJob.schedule(delay);
 	}
+
 	protected ResourceDelta getDelta(ElementTree tree, int type) {
 		long id = workspace.getMarkerManager().getChangeId();
 		// if we have a delta from last time and no resources have changed
@@ -205,6 +215,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		lastDeltaId = id;
 		return lastDelta;
 	}
+
 	protected ResourceChangeListenerList.ListenerEntry[] getListeners() {
 		ResourceChangeListenerList.ListenerEntry[] result;
 		synchronized (listeners) {
@@ -212,6 +223,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		}
 		return result;
 	}
+
 	public void handleEvent(LifecycleEvent event) {
 		switch (event.kind) {
 			case LifecycleEvent.PRE_PROJECT_CLOSE :
@@ -225,7 +237,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 				// away
 				if (event.resource.equals(event.newResource))
 					return;
-				//fall through
+			//fall through
 			case LifecycleEvent.PRE_PROJECT_DELETE :
 				if (!listeners.hasListenerFor(IResourceChangeEvent.PRE_DELETE))
 					return;
@@ -234,6 +246,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 				break;
 		}
 	}
+
 	private void notify(ResourceChangeListenerList.ListenerEntry[] resourceListeners, final IResourceChangeEvent event, final boolean lockTree) {
 		int type = event.getType();
 		boolean oldLock = workspace.isTreeLocked();
@@ -251,6 +264,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 							// don't log the exception....it is already being
 							// logged in Platform#run
 						}
+
 						public void run() throws Exception {
 							listener.resourceChanged(event);
 						}
@@ -264,19 +278,23 @@ public class NotificationManager implements IManager, ILifecycleListener {
 				workspace.setTreeLocked(oldLock);
 		}
 	}
+
 	public void removeListener(IResourceChangeListener listener) {
 		synchronized (listeners) {
 			listeners.remove(listener);
 		}
 		EventStats.listenerRemoved(listener);
 	}
+
 	public boolean shouldNotify() {
 		return !isNotifying && notificationRequested;
 	}
+
 	public void shutdown(IProgressMonitor monitor) {
 		//wipe out any existing listeners
 		listeners = new ResourceChangeListenerList();
 	}
+
 	public void startup(IProgressMonitor monitor) {
 		// get the current state of the workspace as the starting point and
 		// tell the workspace to track changes from there. This gives the
@@ -284,6 +302,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		lastPostBuildTree = lastPostChangeTree = workspace.getElementTree();
 		workspace.addLifecycleListener(this);
 	}
+
 	/**
 	 * Build delta listeners need to receive marker deltas that are accumulated
 	 * over several post change notifications. This method keeps the set of

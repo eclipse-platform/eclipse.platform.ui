@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,14 +20,17 @@ import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+
 /**
  *
  */
 public class PropertyManager implements IManager, ILifecycleListener {
 	protected Workspace workspace;
+
 	public PropertyManager(Workspace workspace) {
 		this.workspace = workspace;
 	}
+
 	public void closePropertyStore(IResource target) throws CoreException {
 		PropertyStore store = getPropertyStoreOrNull(target);
 		if (store == null)
@@ -37,6 +40,7 @@ public class PropertyManager implements IManager, ILifecycleListener {
 			setPropertyStore(target, null);
 		}
 	}
+
 	/**
 	 * Copy all the properties of one resource to another. Both resources
 	 * must have a property store available.
@@ -55,6 +59,7 @@ public class PropertyManager implements IManager, ILifecycleListener {
 			}
 		}
 	}
+
 	/**
 	 * Throws an exception if the store has been shut down
 	 */
@@ -66,6 +71,7 @@ public class PropertyManager implements IManager, ILifecycleListener {
 			throw new ResourceException(IResourceStatus.RESOURCE_NOT_FOUND, target.getFullPath(), message, null);
 		}
 	}
+
 	protected void copyProperties(IResource source, IResource destination, int depth) throws CoreException {
 		PropertyStore sourceStore = getPropertyStore(source);
 		PropertyStore destStore = getPropertyStore(destination);
@@ -85,6 +91,7 @@ public class PropertyManager implements IManager, ILifecycleListener {
 			destStore.set(resourceName, propsArray, IResource.DEPTH_ZERO, PropertyStore.SET_UPDATE);
 		}
 	}
+
 	public void deleteProperties(IResource target, int depth) throws CoreException {
 		switch (target.getType()) {
 			case IResource.FILE :
@@ -101,6 +108,7 @@ public class PropertyManager implements IManager, ILifecycleListener {
 				deletePropertyStore(target, true);
 		}
 	}
+
 	/**
 	 * The resource is being deleted so permanently erase its properties.
 	 * In the case of projects, this means the property store will not be
@@ -118,6 +126,7 @@ public class PropertyManager implements IManager, ILifecycleListener {
 				deletePropertyStore(target, false);
 		}
 	}
+
 	protected void deletePropertyStore(IResource target, boolean restart) throws CoreException {
 		PropertyStore store = getPropertyStoreOrNull(target);
 		if (store == null)
@@ -133,6 +142,7 @@ public class PropertyManager implements IManager, ILifecycleListener {
 			}
 		}
 	}
+
 	/**
 	 * Returns the value of the identified property on the given resource as
 	 * maintained by this store.
@@ -145,13 +155,15 @@ public class PropertyManager implements IManager, ILifecycleListener {
 			return result == null ? null : result.getStringValue();
 		}
 	}
+
 	/**
 	 * Returns the resource which hosts the property store
 	 * for the given resource.
 	 */
 	protected Resource getPropertyHost(IResource target) {
-		return (Resource)(target.getType() == IResource.ROOT ? target : target.getProject());
+		return (Resource) (target.getType() == IResource.ROOT ? target : target.getProject());
 	}
+
 	/**
 	 * Returns the key to use in the property store when accessing
 	 * the properties of the given resource.
@@ -159,6 +171,7 @@ public class PropertyManager implements IManager, ILifecycleListener {
 	protected ResourceName getPropertyKey(IResource target) {
 		return new ResourceName("", target.getProjectRelativePath()); //$NON-NLS-1$
 	}
+
 	/**
 	 * Returns the property store to use when storing a property for the 
 	 * given resource.  
@@ -183,30 +196,32 @@ public class PropertyManager implements IManager, ILifecycleListener {
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, e);
 		}
 	}
-/**
- * Returns the property store to use when storing a property for the 
- * given resource, or null if the store is not available.  
- */
-protected PropertyStore getPropertyStoreOrNull(IResource target) {
-	Resource host = getPropertyHost(target);
-	ResourceInfo info = host.getResourceInfo(false, false);
-	if (info != null) {
-		PropertyStore store = info.getPropertyStore();
-		if (store != null) {
-			//sync on the store in case of concurrent deletion
-			synchronized (store) {
-				if (store.isRunning())
-					return store;
+
+	/**
+	 * Returns the property store to use when storing a property for the 
+	 * given resource, or null if the store is not available.  
+	 */
+	protected PropertyStore getPropertyStoreOrNull(IResource target) {
+		Resource host = getPropertyHost(target);
+		ResourceInfo info = host.getResourceInfo(false, false);
+		if (info != null) {
+			PropertyStore store = info.getPropertyStore();
+			if (store != null) {
+				//sync on the store in case of concurrent deletion
+				synchronized (store) {
+					if (store.isRunning())
+						return store;
+				}
 			}
 		}
+		return null;
 	}
-	return null;
-}
 
 	public void handleEvent(LifecycleEvent event) throws CoreException {
 		if (event.kind == LifecycleEvent.PRE_PROJECT_CLOSE)
 			closePropertyStore(event.resource);
 	}
+
 	protected PropertyStore openPropertyStore(IResource target) {
 		int type = target.getType();
 		Assert.isTrue(type != IResource.FILE && type != IResource.FOLDER);
@@ -217,6 +232,7 @@ protected PropertyStore getPropertyStoreOrNull(IResource target) {
 		setPropertyStore(target, store);
 		return store;
 	}
+
 	public void setProperty(IResource target, QualifiedName key, String value) throws CoreException {
 		PropertyStore store = getPropertyStore(target);
 		synchronized (store) {
@@ -230,19 +246,22 @@ protected PropertyStore getPropertyStoreOrNull(IResource target) {
 			store.commit();
 		}
 	}
+
 	protected void setPropertyStore(IResource target, PropertyStore value) {
 		// fetch the info but don't bother making it mutable even though we are going
 		// to modify it.  We don't know whether or not the tree is open and it really doesn't
 		// matter as the change we are doing does not show up in deltas.
 		ResourceInfo info = getPropertyHost(target).getResourceInfo(false, false);
 		if (info.getType() == IResource.PROJECT)
-			 ((ProjectInfo) info).setPropertyStore(value);
+			((ProjectInfo) info).setPropertyStore(value);
 		else
-			 ((RootInfo) info).setPropertyStore(value);
+			((RootInfo) info).setPropertyStore(value);
 	}
+
 	public void shutdown(IProgressMonitor monitor) throws CoreException {
 		closePropertyStore(workspace.getRoot());
 	}
+
 	public void startup(IProgressMonitor monitor) throws CoreException {
 		workspace.addLifecycleListener(this);
 	}

@@ -9,10 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.resources;
+
 import java.util.Map;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+
 /**
  * Workspaces are the basis for Eclipse Platform resource management. There is
  * only one workspace per running platform. All resources exist in the context
@@ -63,6 +65,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 3.0
 	 */
 	public static final int AVOID_UPDATE = 1;
+
 	/**
 	 * Adds the given listener for resource change events to this workspace. Has
 	 * no effect if an identical listener is already registered.
@@ -82,6 +85,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #removeResourceChangeListener(IResourceChangeListener)
 	 */
 	public void addResourceChangeListener(IResourceChangeListener listener);
+
 	/**
 	 * Adds the given listener for the specified resource change events to this
 	 * workspace. Has no effect if an identical listener is already registered
@@ -114,6 +118,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #removeResourceChangeListener(IResourceChangeListener)
 	 */
 	public void addResourceChangeListener(IResourceChangeListener listener, int eventMask);
+
 	/**
 	 * Registers the given plug-in's workspace save participant, and returns an
 	 * object describing the workspace state at the time of the last save in
@@ -136,6 +141,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #removeSaveParticipant(Plugin)
 	 */
 	public ISavedState addSaveParticipant(Plugin plugin, ISaveParticipant participant) throws CoreException;
+
 	/**
 	 * Builds all projects in this workspace. Projects are built in the order
 	 * specified in this workspace's description. Projects not mentioned in the
@@ -176,6 +182,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResourceRuleFactory#buildRule()
 	 */
 	public void build(int kind, IProgressMonitor monitor) throws CoreException;
+
 	/**
 	 * Checkpoints the operation currently in progress. This method is used in
 	 * the middle of a group of operations to force a background auto-build (if
@@ -203,6 +210,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int, IProgressMonitor)
 	 */
 	public void checkpoint(boolean build);
+
 	/**
 	 * Returns the prerequisite ordering of the given projects. The computation
 	 * is done by interpreting project references as dependency relationships.
@@ -230,6 +238,7 @@ public interface IWorkspace extends IAdaptable {
 	 * reference graph.
 	 */
 	public IProject[][] computePrerequisiteOrder(IProject[] projects);
+
 	/**
 	 * Data structure for holding the multi-part outcome of
 	 * <code>IWorkspace.computeProjectOrder</code>.
@@ -256,6 +265,7 @@ public interface IWorkspace extends IAdaptable {
 			this.hasCycles = hasCycles;
 			this.knots = knots;
 		}
+
 		/**
 		 * A list of projects ordered so as to honor the project reference
 		 * relationships between these projects wherever possible. The elements
@@ -282,6 +292,7 @@ public interface IWorkspace extends IAdaptable {
 		 */
 		public IProject[][] knots;
 	}
+
 	/**
 	 * Computes a total ordering of the given projects based on both static and
 	 * dynamic project references. If an existing and open project P references
@@ -317,6 +328,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 2.1
 	 */
 	public ProjectOrder computeProjectOrder(IProject[] projects);
+
 	/**
 	 * Copies the given sibling resources so that they are located as members of
 	 * the resource at the given path; the names of the copies are the same as
@@ -356,6 +368,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #copy(IResource[],IPath,int,IProgressMonitor)
 	 */
 	public IStatus copy(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
+
 	/**
 	 * Copies the given sibling resources so that they are located as members of
 	 * the resource at the given path; the names of the copies are the same as
@@ -435,6 +448,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 2.0
 	 */
 	public IStatus copy(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
+
 	/**
 	 * Deletes the given resources.
 	 * <p>
@@ -470,6 +484,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #delete(IResource[],int,IProgressMonitor)
 	 */
 	public IStatus delete(IResource[] resources, boolean force, IProgressMonitor monitor) throws CoreException;
+
 	/**
 	 * Deletes the given resources.
 	 * <p>
@@ -517,6 +532,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 2.0
 	 */
 	public IStatus delete(IResource[] resources, int updateFlags, IProgressMonitor monitor) throws CoreException;
+
 	/**
 	 * Removes the given markers from the resources with which they are
 	 * associated. Markers that do not exist are ignored.
@@ -535,6 +551,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResourceRuleFactory#markerRule(IResource)
 	 */
 	public void deleteMarkers(IMarker[] markers) throws CoreException;
+
 	/**
 	 * Forgets any resource tree being saved for the plug-in with the given
 	 * name. If the plug-in id is <code>null</code>, all trees are forgotten.
@@ -553,6 +570,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see ISaveContext#needDelta()
 	 */
 	public void forgetSavedTree(String pluginId);
+
 	/**
 	 * Returns all nature descriptors known to this workspace. Returns an empty
 	 * array if there are no installed natures.
@@ -561,6 +579,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 2.0
 	 */
 	public IProjectNatureDescriptor[] getNatureDescriptors();
+
 	/**
 	 * Returns the nature descriptor with the given unique identifier, or
 	 * <code>null</code> if there is no such nature.
@@ -571,6 +590,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 2.0
 	 */
 	public IProjectNatureDescriptor getNatureDescriptor(String natureId);
+
 	/**
 	 * Finds all dangling project references in this workspace. Projects which
 	 * are not open are ignored. Returns a map with one entry for each open
@@ -583,6 +603,7 @@ public interface IWorkspace extends IAdaptable {
 	 * <code>IProject[]</code>) from project to dangling project references
 	 */
 	public Map getDanglingReferences();
+
 	/**
 	 * Returns the workspace description. This object is responsible for
 	 * defining workspace preferences. The returned value is a modifiable copy
@@ -594,12 +615,14 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #setDescription(IWorkspaceDescription)
 	 */
 	public IWorkspaceDescription getDescription();
+
 	/**
 	 * Returns the root resource of this workspace.
 	 * 
 	 * @return the workspace root
 	 */
 	public IWorkspaceRoot getRoot();
+
 	/**
 	 * Returns a factory for obtaining scheduling rules prior to modifying
 	 * resources in the workspace.
@@ -609,6 +632,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 3.0
 	 */
 	public IResourceRuleFactory getRuleFactory();
+
 	/**
 	 * Returns the synchronizer for this workspace.
 	 * 
@@ -616,6 +640,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see ISynchronizer
 	 */
 	public ISynchronizer getSynchronizer();
+
 	/**
 	 * Returns whether this workspace performs auto-builds.
 	 * 
@@ -623,6 +648,7 @@ public interface IWorkspace extends IAdaptable {
 	 * otherwise
 	 */
 	public boolean isAutoBuilding();
+
 	/**
 	 * Returns whether the workspace tree is currently locked. Resource changes
 	 * are disallowed during certain types of resource change event
@@ -634,6 +660,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 2.1
 	 */
 	public boolean isTreeLocked();
+
 	/**
 	 * Reads the project description file (".project") from the given location
 	 * in the local file system. This object is useful for discovering the
@@ -653,6 +680,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 2.0
 	 */
 	public IProjectDescription loadProjectDescription(IPath projectDescriptionFile) throws CoreException;
+
 	/**
 	 * Moves the given sibling resources so that they are located as members of
 	 * the resource at the given path; the names of the new members are the
@@ -695,6 +723,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #move(IResource[],IPath,int,IProgressMonitor)
 	 */
 	public IStatus move(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
+
 	/**
 	 * Moves the given sibling resources so that they are located as members of
 	 * the resource at the given path; the names of the new members are the
@@ -780,6 +809,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 2.0
 	 */
 	public IStatus move(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
+
 	/**
 	 * Creates and returns a new project description for a project with the
 	 * given name. This object is useful when creating, moving or copying
@@ -805,6 +835,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IProject#move(IProjectDescription, boolean, IProgressMonitor)
 	 */
 	public IProjectDescription newProjectDescription(String projectName);
+
 	/**
 	 * Removes the given resource change listener from this workspace. Has no
 	 * effect if an identical listener is not registered.
@@ -814,6 +845,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #addResourceChangeListener(IResourceChangeListener)
 	 */
 	public void removeResourceChangeListener(IResourceChangeListener listener);
+
 	/**
 	 * Removes the workspace save participant for the given plug-in from this
 	 * workspace. If no such participant is registered, no action is taken.
@@ -827,6 +859,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #addSaveParticipant(Plugin, ISaveParticipant)
 	 */
 	public void removeSaveParticipant(Plugin plugin);
+
 	/**
 	 * Runs the given action as an atomic workspace operation.
 	 * <p>
@@ -889,6 +922,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 3.0
 	 */
 	public void run(IWorkspaceRunnable action, ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException;
+
 	/**
 	 * Runs the given action as an atomic workspace operation.
 	 * <p>
@@ -908,6 +942,7 @@ public interface IWorkspace extends IAdaptable {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 */
 	public void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException;
+
 	/**
 	 * Saves this workspace's valuable state on disk. Consults with all
 	 * registered plug-ins so that they can coordinate the saving of their
@@ -1105,6 +1140,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #addSaveParticipant(Plugin, ISaveParticipant)
 	 */
 	public IStatus save(boolean full, IProgressMonitor monitor) throws CoreException;
+
 	/**
 	 * Sets the workspace description.
 	 * 
@@ -1116,6 +1152,7 @@ public interface IWorkspace extends IAdaptable {
 	 * </ul>
 	 */
 	public void setDescription(IWorkspaceDescription description) throws CoreException;
+
 	/**
 	 * Sets the lock to use for controlling write access to this workspace. The
 	 * lock must only be set once.
@@ -1131,6 +1168,7 @@ public interface IWorkspace extends IAdaptable {
 	 * implementing the org.eclipse.core.runtime.jobs.ILockListener interface.
 	 */
 	public void setWorkspaceLock(WorkspaceLock lock);
+
 	/**
 	 * Returns a copy of the given set of natures sorted in prerequisite order.
 	 * For each nature, it is guaranteed that all of its prerequisites will
@@ -1148,6 +1186,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 2.0
 	 */
 	public String[] sortNatureSet(String[] natureIds);
+
 	/**
 	 * Advises that the caller intends to modify the contents of the given files
 	 * in the near future and asks whether modifying all these files would be
@@ -1224,6 +1263,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 2.0
 	 */
 	public IStatus validateEdit(IFile[] files, Object context);
+
 	/**
 	 * Validates the given path as the location of the given resource on disk.
 	 * The path must be either an absolute file system path, or a relative path
@@ -1269,6 +1309,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 2.1
 	 */
 	public IStatus validateLinkLocation(IResource resource, IPath location);
+
 	/**
 	 * Validates the given string as the name of a resource valid for one of the
 	 * given types.
@@ -1305,6 +1346,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IStatus#OK
 	 */
 	public IStatus validateName(String segment, int typeMask);
+
 	/**
 	 * Validates that each of the given natures exists, and that all nature
 	 * constraints are satisfied within the given set.
@@ -1330,6 +1372,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 2.0
 	 */
 	public IStatus validateNatureSet(String[] natureIds);
+
 	/**
 	 * Validates the given string as a path for a resource of the given type(s).
 	 * <p>
@@ -1372,6 +1415,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResourceStatus#getPath()
 	 */
 	public IStatus validatePath(String path, int typeMask);
+
 	/**
 	 * Validates the given path as the location of the given project on disk.
 	 * The path must be either an absolute file system path, or a relative path
@@ -1400,6 +1444,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IStatus#OK
 	 */
 	public IStatus validateProjectLocation(IProject project, IPath location);
+
 	/**
 	 * Returns the path variable manager for this workspace.
 	 * 

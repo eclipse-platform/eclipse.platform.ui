@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,18 +39,21 @@ public class PageStoreException extends StoreException {
 	public PageStoreException(int id) {
 		this(id, null);
 	}
+
 	public PageStoreException(int id, Throwable exception) {
 		super(message[id], exception);
 		this.id = id;
 	}
+
 	public PageStoreException(String s) {
 		this(s, null);
 	}
+
 	public PageStoreException(String s, Throwable exception) {
 		super(s, exception);
 		this.id = GenericFailure;
 	}
-	
+
 	/**
 	 * Initialize the messages at class load time.
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.watson;
 
 import org.eclipse.core.internal.dtree.IComparator;
+
 /**
  * This interface allows clients of the element tree to specify
  * how element infos are compared, and thus how element tree deltas

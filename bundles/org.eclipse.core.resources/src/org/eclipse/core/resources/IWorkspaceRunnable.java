@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,19 +24,19 @@ import org.eclipse.core.runtime.CoreException;
  * @see IWorkspace#run(IWorkspaceRunnable, IProgressMonitor)
  */
 public interface IWorkspaceRunnable {
-/**
- * Runs the operation reporting progress to and accepting
- * cancellation requests from the given progress monitor.
- * <p>
- * Implementors of this method should check the progress monitor
- * for cancellation when it is safe and appropriate to do so.  The cancellation
- * request should be propagated to the caller by throwing 
- * <code>OperationCanceledException</code>.
- * </p>
- * 
- * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
- * @exception CoreException if this operation fails.
- */
-public void run(IProgressMonitor monitor) throws CoreException;
+	/**
+	 * Runs the operation reporting progress to and accepting
+	 * cancellation requests from the given progress monitor.
+	 * <p>
+	 * Implementors of this method should check the progress monitor
+	 * for cancellation when it is safe and appropriate to do so.  The cancellation
+	 * request should be propagated to the caller by throwing 
+	 * <code>OperationCanceledException</code>.
+	 * </p>
+	 * 
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting and cancellation are not desired
+	 * @exception CoreException if this operation fails.
+	 */
+	public void run(IProgressMonitor monitor) throws CoreException;
 }

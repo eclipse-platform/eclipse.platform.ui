@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import org.eclipse.core.internal.dtree.AbstractDataTreeNode;
 import org.eclipse.core.internal.dtree.DataTreeNode;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+
 /**
  * A class for performing operations on each element in an element tree.
  * For example, this can be used to print the contents of a tree.
@@ -25,17 +26,17 @@ import org.eclipse.core.runtime.Path;
  * that node, and a callback for requesting the full path of that node.
  * <p>
  * <b>Example:</b>
-<code><pre>
-// printing a crude representation of the posterchild
-IElementContentVisitor visitor=
-	new IElementContentVisitor() {
-	  public void visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
-		 System.out.println(requestor.requestPath() + " -> " + elementContent);
-	  }
-	});
-ElementTreeIterator iterator = new ElementTreeIterator(tree, Path.ROOT);
-iterator.iterate(visitor);
-</pre></code>
+ <code><pre>
+ // printing a crude representation of the posterchild
+ IElementContentVisitor visitor=
+ new IElementContentVisitor() {
+ public void visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+ System.out.println(requestor.requestPath() + " -> " + elementContent);
+ }
+ });
+ ElementTreeIterator iterator = new ElementTreeIterator(tree, Path.ROOT);
+ iterator.iterate(visitor);
+ </pre></code>
  */
 public class ElementTreeIterator implements IPathRequestor {
 	//for path requestor
@@ -44,10 +45,10 @@ public class ElementTreeIterator implements IPathRequestor {
 
 	/* the tree being visited */
 	private ElementTree tree;
-	
+
 	/* the root of the subtree to visit */
 	private IPath path;
-	
+
 	/* the immutable data tree being visited */
 	private DataTreeNode treeRoot;
 
@@ -61,6 +62,7 @@ public class ElementTreeIterator implements IPathRequestor {
 		//treeRoot can be null if deleted concurrently
 		treeRoot = (DataTreeNode) tree.getDataTree().safeCopyCompleteSubtree(path);
 	}
+
 	/**
 	 * Iterates through the given element tree and visit each element (node)
 	 * passing in the element's ID and element object.
@@ -86,6 +88,7 @@ public class ElementTreeIterator implements IPathRequestor {
 		if (nextFreeSegment < 0)
 			nextFreeSegment = 0;
 	}
+
 	/**
 	 * Method grow.
 	 */
@@ -96,6 +99,7 @@ public class ElementTreeIterator implements IPathRequestor {
 		System.arraycopy(segments, 0, newPaths, 0, oldLen);
 		segments = newPaths;
 	}
+
 	/**
 	 * Iterates through this iterator's tree and visits each element in the
 	 * subtree rooted at the given path.  The visitor is passed each element's
@@ -119,6 +123,7 @@ public class ElementTreeIterator implements IPathRequestor {
 			doIteration(treeRoot, visitor);
 		}
 	}
+
 	/**
 	 * Push the first "toPush" segments of this path.
 	 */
@@ -132,11 +137,13 @@ public class ElementTreeIterator implements IPathRequestor {
 			segments[nextFreeSegment++] = path.segment(i);
 		}
 	}
+
 	public String requestName() {
 		if (nextFreeSegment == 0)
 			return ""; //$NON-NLS-1$
 		return segments[nextFreeSegment - 1];
 	}
+
 	public IPath requestPath() {
 		if (nextFreeSegment == 0)
 			return Path.ROOT;

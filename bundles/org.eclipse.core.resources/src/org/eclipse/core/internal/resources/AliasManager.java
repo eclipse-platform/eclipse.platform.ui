@@ -52,6 +52,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 		 * Map of IPath->IResource OR IPath->ArrayList of (IResource)
 		 */
 		private final SortedMap map = new TreeMap(getComparator());
+
 		/**
 		 * Adds the given resource to the map, keyed by the given location.
 		 * Returns true if a new entry was added, and false otherwise.
@@ -71,7 +72,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 				map.put(location, newValue);
 				return true;
 			}
-			ArrayList list = (ArrayList)oldValue;
+			ArrayList list = (ArrayList) oldValue;
 			if (list.contains(resource))
 				return false;//duplicate
 			list.add(resource);
@@ -84,6 +85,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 		public void clear() {
 			map.clear();
 		}
+
 		/**
 		 * Invoke the given doit for every resource whose location has the
 		 * given location as a prefix.
@@ -94,7 +96,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 				//endPoint is the smallest possible path greater than the prefix that doesn't
 				//match the prefix
 				IPath endPoint = new Path(prefix.removeTrailingSeparator().toString() + "\0");//$NON-NLS-1$
-				matching= map.subMap(prefix, endPoint);
+				matching = map.subMap(prefix, endPoint);
 			} else {
 				matching = map;
 			}
@@ -103,14 +105,15 @@ public class AliasManager implements IManager, ILifecycleListener {
 				if (value == null)
 					return;
 				if (value instanceof List) {
-					Iterator duplicates = ((List)value).iterator();
+					Iterator duplicates = ((List) value).iterator();
 					while (duplicates.hasNext())
-						doit.doit((IResource)duplicates.next());
+						doit.doit((IResource) duplicates.next());
 				} else {
-					doit.doit((IResource)value);
+					doit.doit((IResource) value);
 				}
 			}
 		}
+
 		/**
 		 * Invoke the given doit for every resource that matches the given
 		 * location.
@@ -120,13 +123,14 @@ public class AliasManager implements IManager, ILifecycleListener {
 			if (value == null)
 				return;
 			if (value instanceof List) {
-				Iterator duplicates = ((List)value).iterator();
+				Iterator duplicates = ((List) value).iterator();
 				while (duplicates.hasNext())
-					doit.doit((IResource)duplicates.next());
+					doit.doit((IResource) duplicates.next());
 			} else {
-				doit.doit((IResource)value);
+				doit.doit((IResource) value);
 			}
 		}
+
 		/**
 		 * Calls the given doit with the project of every resource in the map
 		 * whose location overlaps another resource in the map.
@@ -136,19 +140,19 @@ public class AliasManager implements IManager, ILifecycleListener {
 			IPath previousPath = null;
 			IResource previousResource = null;
 			while (entries.hasNext()) {
-				Map.Entry current = (Map.Entry)entries.next();
+				Map.Entry current = (Map.Entry) entries.next();
 				//value is either single resource or List of resources
-				IPath currentPath = (IPath)current.getKey();
+				IPath currentPath = (IPath) current.getKey();
 				IResource currentResource = null;
 				Object value = current.getValue();
 				if (value instanceof List) {
 					//if there are several then they're all overlapping
-					Iterator duplicates = ((List)value).iterator();
+					Iterator duplicates = ((List) value).iterator();
 					while (duplicates.hasNext())
-						doit.doit(((IResource)duplicates.next()).getProject());
+						doit.doit(((IResource) duplicates.next()).getProject());
 				} else {
 					//value is a single resource
-					currentResource = (IResource)value;
+					currentResource = (IResource) value;
 				}
 				if (previousPath != null) {
 					//check for overlap with previous
@@ -166,6 +170,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 				previousResource = currentResource;
 			}
 		}
+
 		/**
 		 * Removes the given location from the map.  Returns true if anything
 		 * was actually removed, and false otherwise.
@@ -181,13 +186,14 @@ public class AliasManager implements IManager, ILifecycleListener {
 				}
 				return false;
 			}
-			ArrayList list = (ArrayList)oldValue;
+			ArrayList list = (ArrayList) oldValue;
 			boolean wasRemoved = list.remove(resource);
 			if (list.size() == 0)
 				map.remove(location);
 			return wasRemoved;
 		}
 	}
+
 	interface Doit {
 		public void doit(IResource resource);
 	}
@@ -195,6 +201,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 	class FindAliasesDoit implements Doit {
 		private IPath searchPath;
 		private int aliasType;
+
 		public void doit(IResource match) {
 			//don't record the resource we're computing aliases against as a match
 			if (match.getFullPath().isPrefixOf(searchPath))
@@ -229,6 +236,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 						aliases.add(workspace.getRoot().getFolder(aliasPath));
 				}
 		}
+
 		/**
 		 * Sets the resource that we are searching for aliases for.
 		 */
@@ -237,53 +245,56 @@ public class AliasManager implements IManager, ILifecycleListener {
 			this.searchPath = aliasResource.getFullPath();
 		}
 	}
+
 	public class AddToCollectionDoit implements Doit {
 		Collection collection;
+
 		public void setCollection(Collection collection) {
 			this.collection = collection;
 		}
+
 		public void doit(IResource resource) {
 			collection.add(resource);
 		}
 	}
-	
+
 	/**
 	 * This maps IPath->IResource, where the path is an absolute file system
 	 * location, and the resource contains the projects and/or linked resources
 	 * that are rooted at that location.
 	 */
 	protected final LocationMap locationsMap = new LocationMap();
-	
+
 	/**
 	 * The set of IProjects that have aliases.
 	 */
 	protected final Set aliasedProjects = new HashSet();
-	
+
 	/**
 	 * The set of resources that have had structure changes that might
 	 * invalidate the locations map or aliased projects set.  These will be
 	 * updated incrementally on the next alias request.
 	 */
 	private final Set structureChanges = new HashSet();
-	
+
 	/**
 	 * The total number of linked resources that exist in the workspace.  This
 	 * count includes linked resources that don't currently have valid locations
 	 * (due to an undefined path variable).
 	 */
 	private int linkedResourceCount = 0;
-	
+
 	/**
 	 * A temporary set of aliases.  Used during computeAliases, but maintained
 	 * as a field as an optimization to prevent recreating the set.
 	 */
 	protected final HashSet aliases = new HashSet();
-	
+
 	/**
 	 * The Doit class used for finding aliases.
 	 */
 	private final FindAliasesDoit findAliases = new FindAliasesDoit();
-	
+
 	/**
 	 * Doit convenience class for adding items to a list
 	 */
@@ -295,13 +306,14 @@ public class AliasManager implements IManager, ILifecycleListener {
 	 * the need for synthetic accessor methods.
 	 */
 	public IPath suffix;
-	
+
 	/** the workspace */
 	protected final Workspace workspace;
 
 	public AliasManager(Workspace workspace) {
 		this.workspace = workspace;
 	}
+
 	private void addToLocationsMap(IProject project) {
 		IPath location = project.getLocation();
 		if (location != null)
@@ -317,12 +329,14 @@ public class AliasManager implements IManager, ILifecycleListener {
 			//skip inaccessible projects
 		}
 	}
+
 	private void addToLocationsMap(IResource linkedResource) {
 		IPath location = linkedResource.getLocation();
 		if (location != null)
 			if (locationsMap.add(location, linkedResource))
 				linkedResourceCount++;
 	}
+
 	/**
 	 * Builds the table of aliased projects from scratch.
 	 */
@@ -331,13 +345,14 @@ public class AliasManager implements IManager, ILifecycleListener {
 		//if there are no linked resources then there can't be any aliased projects
 		if (linkedResourceCount <= 0) {
 			//paranoid check -- count should never be below zero
-//			Assert.isTrue(linkedResourceCount == 0, "Linked resource count below zero");//$NON-NLS-1$
+			//			Assert.isTrue(linkedResourceCount == 0, "Linked resource count below zero");//$NON-NLS-1$
 			return;
 		}
 		//for every resource that overlaps another, marked its project as aliased
 		addToCollection.setCollection(aliasedProjects);
 		locationsMap.overLappingResourcesDo(addToCollection);
 	}
+
 	/**
 	 * Builds the table of resource locations from scratch.  Also computes an
 	 * initial value for the linked resource counter.
@@ -351,6 +366,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 			addToLocationsMap(projects[i]);
 		}
 	}
+
 	/**
 	 * Returns all aliases of the given resource, or null if there are none.
 	 */
@@ -358,7 +374,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 		//nothing to do if we are or were in an alias-free workspace or project
 		if (hasNoAliases(resource))
 			return null;
-		
+
 		aliases.clear();
 		internalComputeAliases(resource, location);
 		int size = aliases.size();
@@ -366,6 +382,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 			return null;
 		return (IResource[]) aliases.toArray(new IResource[size]);
 	}
+
 	/**
 	 * Computes the aliases of the given resource at the given location, and
 	 * adds them to the "aliases" collection.
@@ -392,6 +409,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 			searchLocation = searchLocation.removeLastSegments(1);
 		}
 	}
+
 	/**
 	 * Returns true if this resource is guaranteed to have no aliases, and false
 	 * otherwise.
@@ -401,7 +419,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 		//deletion case, we need to know if the resource was in an aliased project *before* deletion.
 		IProject project = resource.getProject();
 		boolean noAliases = linkedResourceCount <= 0 || !aliasedProjects.contains(project);
-		
+
 		//now update any structure changes and check again if an update is needed
 		if (!structureChanges.isEmpty()) {
 			updateStructureChanges();
@@ -409,6 +427,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 		}
 		return noAliases;
 	}
+
 	/**
 	 * Returns all aliases of this resource, and any aliases of subtrees of this
 	 * resource.  Returns null if no aliases are found.
@@ -425,7 +444,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 		//if this is a project, get all resources rooted below links in this project
 		if (resource.getType() == IResource.PROJECT) {
 			try {
-				IResource[] members = ((IProject)resource).members();
+				IResource[] members = ((IProject) resource).members();
 				for (int i = 0; i < members.length; i++) {
 					if (members[i].isLinked()) {
 						IPath linkLocation = members[i].getLocation();
@@ -438,6 +457,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 			}
 		}
 	}
+
 	/**
 	 * Returns the comparator to use when sorting the locations map.  Comparison
 	 * is based on segments, so that paths with the most segments in common will
@@ -460,10 +480,11 @@ public class AliasManager implements IManager, ILifecycleListener {
 						return compare;
 				}
 				//all segments are equal, so they are the same if they have the same number of segments
-				return segmentCount1-segmentCount2;
+				return segmentCount1 - segmentCount2;
 			}
 		};
 	}
+
 	public void handleEvent(LifecycleEvent event) throws CoreException {
 		/*
 		 * We can't determine the end state for most operations because they may
@@ -472,34 +493,35 @@ public class AliasManager implements IManager, ILifecycleListener {
 		 * next alias request.
 		 */
 		switch (event.kind) {
-			case LifecycleEvent.PRE_PROJECT_CLOSE:
-			case LifecycleEvent.PRE_PROJECT_DELETE:
-				removeFromLocationsMap((IProject)event.resource);
-				//fall through
-			case LifecycleEvent.PRE_PROJECT_CREATE:
-			case LifecycleEvent.PRE_PROJECT_OPEN:
+			case LifecycleEvent.PRE_PROJECT_CLOSE :
+			case LifecycleEvent.PRE_PROJECT_DELETE :
+				removeFromLocationsMap((IProject) event.resource);
+			//fall through
+			case LifecycleEvent.PRE_PROJECT_CREATE :
+			case LifecycleEvent.PRE_PROJECT_OPEN :
 				structureChanges.add(event.resource);
 				break;
-			case LifecycleEvent.PRE_LINK_DELETE:
+			case LifecycleEvent.PRE_LINK_DELETE :
 				removeFromLocationsMap(event.resource);
-				//fall through
-			case LifecycleEvent.PRE_LINK_CREATE:
+			//fall through
+			case LifecycleEvent.PRE_LINK_CREATE :
 				structureChanges.add(event.resource);
 				break;
-			case LifecycleEvent.PRE_PROJECT_COPY:
-			case LifecycleEvent.PRE_LINK_COPY:
+			case LifecycleEvent.PRE_PROJECT_COPY :
+			case LifecycleEvent.PRE_LINK_COPY :
 				structureChanges.add(event.newResource);
 				break;
-			case LifecycleEvent.PRE_PROJECT_MOVE:
-				removeFromLocationsMap((IProject)event.resource);
+			case LifecycleEvent.PRE_PROJECT_MOVE :
+				removeFromLocationsMap((IProject) event.resource);
 				structureChanges.add(event.newResource);
 				break;
-			case LifecycleEvent.PRE_LINK_MOVE:
+			case LifecycleEvent.PRE_LINK_MOVE :
 				removeFromLocationsMap(event.resource);
 				structureChanges.add(event.newResource);
 				break;
 		}
 	}
+
 	private void removeFromLocationsMap(IProject project) {
 		//remove this project and all linked children from the location table
 		IPath location = project.getLocation();
@@ -515,6 +537,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 			//ignore inaccessible projects
 		}
 	}
+
 	private void removeFromLocationsMap(IResource linkedResource) {
 		//this linked resource is being deleted
 		IPath location = linkedResource.getLocation();
@@ -522,12 +545,13 @@ public class AliasManager implements IManager, ILifecycleListener {
 			if (locationsMap.remove(location, linkedResource))
 				linkedResourceCount--;
 	}
+
 	/* (non-Javadoc)
 	 * @see IManager#shutdown(IProgressMonitor)
 	 */
 	public void shutdown(IProgressMonitor monitor) throws CoreException {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see IManager#startup(IProgressMonitor)
 	 */
@@ -536,6 +560,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 		buildLocationsMap();
 		buildAliasedProjectsSet();
 	}
+
 	/**
 	 * The file underlying the given resource has changed on disk.  Compute all
 	 * aliases for this resource and update them.  This method will not attempt
@@ -560,11 +585,12 @@ public class AliasManager implements IManager, ILifecycleListener {
 			return;
 		FileSystemResourceManager localManager = workspace.getFileSystemManager();
 		for (Iterator it = aliases.iterator(); it.hasNext();) {
-			IResource alias = (IResource)it.next();
+			IResource alias = (IResource) it.next();
 			monitor.subTask(Policy.bind("links.updatingDuplicate", alias.getFullPath().toString()));//$NON-NLS-1$
 			localManager.refresh(alias, IResource.DEPTH_INFINITE, false, null);
 		}
 	}
+
 	/**
 	 * Process any structural changes that have occurred since the last alias
 	 * request.
@@ -577,8 +603,8 @@ public class AliasManager implements IManager, ILifecycleListener {
 				continue;
 			hadChanges = true;
 			if (resource.getType() == IResource.PROJECT)
-				addToLocationsMap((IProject)resource);
-			else 
+				addToLocationsMap((IProject) resource);
+			else
 				addToLocationsMap(resource);
 		}
 		structureChanges.clear();

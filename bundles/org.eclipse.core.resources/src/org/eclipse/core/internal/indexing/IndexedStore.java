@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package org.eclipse.core.internal.indexing;
 import java.util.*;
 
 public class IndexedStore {
-	
+
 	private static final int CurrentVersion = 1;
 	private static final int MetadataID = 2;
 	/*
@@ -26,12 +26,12 @@ public class IndexedStore {
 	private static final ObjectAddress ContextAddress10 = new ObjectAddress(1, 0);
 	private static final ObjectAddress ContextAddress11 = new ObjectAddress(1, 1);
 
-	private ObjectAddress objectDirectoryAddress; /* initialized at open */	
-	private Index objectDirectory; /* initialized at open */	
+	private ObjectAddress objectDirectoryAddress; /* initialized at open */
+	private Index objectDirectory; /* initialized at open */
 	private IndexCursor objectDirectoryCursor; /* initialized at open */
 
-	private ObjectAddress indexDirectoryAddress; /* initialized at open */	
-	private Index indexDirectory; /* initialized at open */	
+	private ObjectAddress indexDirectoryAddress; /* initialized at open */
+	private Index indexDirectory; /* initialized at open */
 	private IndexCursor indexDirectoryCursor; /* initialized at open */
 	private ObjectAddress contextAddress;
 
@@ -44,6 +44,7 @@ public class IndexedStore {
 	IndexAnchor acquireAnchor(ObjectAddress address) throws IndexedStoreException {
 		return (IndexAnchor) acquireObject(address);
 	}
+
 	/**
 	 * Acquires a context.  Returns null if the context could not be acquired.
 	 */
@@ -55,12 +56,14 @@ public class IndexedStore {
 			return null;
 		}
 	}
+
 	/**
 	 * Acquire an index node.
 	 */
 	IndexNode acquireNode(ObjectAddress address) throws IndexedStoreException {
 		return (IndexNode) acquireObject(address);
 	}
+
 	/**
 	 * Acquires an object.
 	 */
@@ -68,17 +71,19 @@ public class IndexedStore {
 		StoredObject object;
 		try {
 			object = objectStore.acquireObject(address);
-		} catch(ObjectStoreException e) {
+		} catch (ObjectStoreException e) {
 			throw new IndexedStoreException(IndexedStoreException.ObjectNotAcquired, e);
 		}
 		return object;
 	}
+
 	/**
 	 * Acquires a Binary Object.
 	 */
 	BinarySmallObject acquireBinarySmallObject(ObjectAddress address) throws IndexedStoreException {
 		return (BinarySmallObject) acquireObject(address);
 	}
+
 	/**
 	 * Checks to see if the metadata stored in the object store matches that expected by this
 	 * code.  If not, a conversion is necessary.
@@ -97,6 +102,7 @@ public class IndexedStore {
 			return;
 		convert(version);
 	}
+
 	/**
 	 * Closes the store.  This is required to free the underlying file.
 	 */
@@ -132,6 +138,7 @@ public class IndexedStore {
 		indexDirectoryAddress = null;
 		indexDirectoryCursor = null;
 	}
+
 	public synchronized void commit() throws IndexedStoreException {
 		try {
 			objectStore.commit();
@@ -139,6 +146,7 @@ public class IndexedStore {
 			throw new IndexedStoreException(IndexedStoreException.StoreNotCommitted, e);
 		}
 	}
+
 	/**
 	 * Converts the store from a previous to the current version.  
 	 * No conversions are yet defined.
@@ -146,6 +154,7 @@ public class IndexedStore {
 	private void convert(int fromVersion) throws IndexedStoreException {
 		throw new IndexedStoreException(IndexedStoreException.StoreNotConverted);
 	}
+
 	/**
 	 * Creates and initializes an IndexedStore.
 	 */
@@ -175,6 +184,7 @@ public class IndexedStore {
 			throw new IndexedStoreException(IndexedStoreException.StoreNotCreated, e1);
 		}
 	}
+
 	/**
 	 * Creates an Index with the given name.
 	 */
@@ -189,6 +199,7 @@ public class IndexedStore {
 		index = new Index(this, address);
 		return index;
 	}
+
 	/**
 	 * Places a byte array into the store, return a new object identifier.
 	 */
@@ -198,30 +209,35 @@ public class IndexedStore {
 		objectDirectory.insert(id.toByteArray(), address.toByteArray());
 		return id;
 	}
+
 	/**
 	 * Places a String into the store.
 	 */
 	public synchronized ObjectID createObject(String s) throws IndexedStoreException {
 		return createObject(Convert.toUTF8(s));
 	}
+
 	/**
 	 * Places an Insertable into the store.
 	 */
 	public synchronized ObjectID createObject(Insertable anObject) throws IndexedStoreException {
 		return createObject(anObject.toByteArray());
 	}
+
 	/**
 	 * Deletes the store if it exists.  Does nothing if it does not exist.
 	 */
 	public static synchronized void delete(String filename) {
 		ObjectStore.delete(filename);
 	}
+
 	/**
 	 * Tests to see if the file acting as the store exists.
 	 */
 	public static synchronized boolean exists(String filename) {
 		return ObjectStore.exists(filename);
 	}
+
 	/**
 	 * If a store disappears unexpectedly, make sure it gets closed.
 	 */
@@ -232,6 +248,7 @@ public class IndexedStore {
 			//unsafe to throw exceptions from a finalize
 		}
 	}
+
 	/**
 	 * Finds the handle of an open store for a given its name.  The store may continue with the current transaction,
 	 * or may abort the current transaction.  Used to initiate recovery if the reference to the store should be
@@ -239,8 +256,9 @@ public class IndexedStore {
 	 * must compare equal to the name the store was opened under.
 	 */
 	public synchronized static IndexedStore find(String name) {
-		return (IndexedStore)registry.get(name);
+		return (IndexedStore) registry.get(name);
 	}
+
 	/**
 	 * @deprecated -- use commit()
 	 */
@@ -251,6 +269,7 @@ public class IndexedStore {
 			throw new IndexedStoreException(IndexedStoreException.StoreNotFlushed, e);
 		}
 	}
+
 	/**
 	 * Returns an index given its name.
 	 */
@@ -264,19 +283,22 @@ public class IndexedStore {
 		index = new Index(this, address);
 		return index;
 	}
-private Buffer getMetadataArea(int i) throws IndexedStoreException {
-	try {
-		return objectStore.getMetadataArea(i);
-	} catch (ObjectStoreException e) {
-		throw new IndexedStoreException(IndexedStoreException.MetadataRequestError, e);
+
+	private Buffer getMetadataArea(int i) throws IndexedStoreException {
+		try {
+			return objectStore.getMetadataArea(i);
+		} catch (ObjectStoreException e) {
+			throw new IndexedStoreException(IndexedStoreException.MetadataRequestError, e);
+		}
 	}
-}
+
 	/**
 	 * Returns the name of the store.
 	 */
 	public synchronized String getName() {
 		return name;
 	}
+
 	/**
 	 * Returns the next ObjectID
 	 */
@@ -288,6 +310,7 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 		context.release();
 		return new ObjectID(objectNumber);
 	}
+
 	/**
 	 * Returns a byte array given its object identifier.
 	 */
@@ -299,6 +322,7 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 		object.release();
 		return b;
 	}
+
 	/**
 	 * Returns an object as a string, truncated at the first null.
 	 */
@@ -310,12 +334,14 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 			return s;
 		return s.substring(0, i);
 	}
+
 	/**
 	 * Returns the object store.
 	 */
 	public synchronized ObjectStore getObjectStore() {
 		return objectStore;
 	}
+
 	/** 
 	 * Inserts a new object into my store.
 	 */
@@ -327,6 +353,7 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 			throw new IndexedStoreException(IndexedStoreException.ObjectNotStored, e);
 		}
 	}
+
 	/**
 	 * Opens the store.
 	 */
@@ -334,7 +361,8 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 		if (registry.get(name) != null) {
 			throw new IndexedStoreException(IndexedStoreException.StoreIsOpen);
 		}
-		if (!exists(name)) create(name);
+		if (!exists(name))
+			create(name);
 		try {
 			objectStore = new ObjectStore(new IndexedStoreObjectPolicy());
 			objectStore.open(name);
@@ -363,6 +391,7 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 			throw new IndexedStoreException(IndexedStoreException.GenericError, e);
 		}
 	}
+
 	private void putMetadataArea(int i, Buffer b) throws IndexedStoreException {
 		try {
 			objectStore.putMetadataArea(i, b);
@@ -370,6 +399,7 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 			throw new IndexedStoreException(IndexedStoreException.MetadataRequestError, e);
 		}
 	}
+
 	/**
 	 * Destroys an Index given its name.
 	 */
@@ -386,6 +416,7 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 		removeObject(address);
 		indexDirectoryCursor.remove();
 	}
+
 	/** 
 	 * Removes an object from my store.
 	 */
@@ -396,6 +427,7 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 			throw new IndexedStoreException(IndexedStoreException.ObjectNotRemoved, e);
 		}
 	}
+
 	/**
 	 * Removes the object identified by id from the store.
 	 */
@@ -409,13 +441,15 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 		objectDirectoryCursor.remove();
 		removeObject(address);
 	}
+
 	public synchronized void rollback() throws IndexedStoreException {
 		try {
-		objectStore.rollback();
+			objectStore.rollback();
 		} catch (ObjectStoreException e) {
 			throw new IndexedStoreException(IndexedStoreException.StoreNotRolledBack, e);
 		}
 	}
+
 	/**
 	 * Replaces the contents of the object identified by "id" with the byte array "b".
 	 */
@@ -430,17 +464,18 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 		objectDirectoryCursor.updateValue(newAddress.toByteArray());
 		removeObject(oldAddress);
 	}
+
 	/**
 	 * Updates an object with a String.
 	 */
 	public synchronized void updateObject(ObjectID id, String s) throws IndexedStoreException {
 		updateObject(id, Convert.toUTF8(s));
 	}
+
 	/**
 	 * Updates an object with an Insertable.
 	 */
-	public synchronized void updateObject(ObjectID id, Insertable anObject)
-		throws IndexedStoreException {
+	public synchronized void updateObject(ObjectID id, Insertable anObject) throws IndexedStoreException {
 		updateObject(id, anObject.toByteArray());
 	}
 }

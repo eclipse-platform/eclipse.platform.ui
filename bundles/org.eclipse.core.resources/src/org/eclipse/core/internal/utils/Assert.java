@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public final class Assert {
 	private Assert() {
 		// not allowed
 	}
+
 	/** Asserts that an argument is legal. If the given boolean is
 	 * not <code>true</code>, an <code>IllegalArgumentException</code>
 	 * is thrown.
@@ -40,6 +41,7 @@ public final class Assert {
 	public static boolean isLegal(boolean expression) {
 		return isLegal(expression, ""); //$NON-NLS-1$
 	}
+
 	/** Asserts that an argument is legal. If the given boolean is
 	 * not <code>true</code>, an <code>IllegalArgumentException</code>
 	 * is thrown.
@@ -56,6 +58,7 @@ public final class Assert {
 			throw new IllegalArgumentException(message);
 		return expression;
 	}
+
 	/** Asserts that the given object is not <code>null</code>. If this
 	 * is not the case, some kind of unchecked exception is thrown.
 	 * 
@@ -65,6 +68,7 @@ public final class Assert {
 	public static void isNotNull(Object object) {
 		isNotNull(object, ""); //$NON-NLS-1$
 	}
+
 	/** Asserts that the given object is not <code>null</code>. If this
 	 * is not the case, some kind of unchecked exception is thrown.
 	 * The given message is included in that exception, to aid debugging.
@@ -77,6 +81,7 @@ public final class Assert {
 		if (object == null)
 			throw new AssertionFailedException(Policy.bind("utils.null", message)); //$NON-NLS-1$
 	}
+
 	/** Asserts that the given boolean is <code>true</code>. If this
 	 * is not the case, some kind of unchecked exception is thrown.
 	 *
@@ -87,6 +92,7 @@ public final class Assert {
 	public static boolean isTrue(boolean expression) {
 		return isTrue(expression, ""); //$NON-NLS-1$
 	}
+
 	/** Asserts that the given boolean is <code>true</code>. If this
 	 * is not the case, some kind of unchecked exception is thrown.
 	 * The given message is included in that exception, to aid debugging.

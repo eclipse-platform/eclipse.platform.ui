@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,20 +15,22 @@ import org.eclipse.core.internal.watson.IDeltaFilter;
 
 public class DeltaFilter implements IDeltaFilter {
 	protected int mask;
-public DeltaFilter(int mask) {
-	super();
-	this.mask = mask;
-}
-public boolean includeElement(int flags) {
-	/**
-	 * There are two conditions for accepting a flag: 1) The flags and the mask
-	 * have at least one bit in common, 2) The flags is zero, and the
-	 * mask specifies to include changed children.  The only reason
-	 * the flags can be zero is if there are changed children, in which
-	 * case we want to treat it as a change.
-	 */
-	if (flags == 0)
-		flags = IResourceDelta.CHANGED;
-	return (flags & mask) != 0;
-}
+
+	public DeltaFilter(int mask) {
+		super();
+		this.mask = mask;
+	}
+
+	public boolean includeElement(int flags) {
+		/**
+		 * There are two conditions for accepting a flag: 1) The flags and the mask
+		 * have at least one bit in common, 2) The flags is zero, and the
+		 * mask specifies to include changed children.  The only reason
+		 * the flags can be zero is if there are changed children, in which
+		 * case we want to treat it as a change.
+		 */
+		if (flags == 0)
+			flags = IResourceDelta.CHANGED;
+		return (flags & mask) != 0;
+	}
 }

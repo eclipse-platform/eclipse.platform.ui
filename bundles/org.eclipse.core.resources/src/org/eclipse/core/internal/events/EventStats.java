@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.core.internal.plugins.PluginClassLoader;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+
 /**
  * A placeholder for statistics about the runtime behaviour
  * of a particular plugin.  PluginStats objects are used internally
@@ -62,7 +63,7 @@ public class EventStats {
 		this.id = id;
 		this.project = project;
 	}
-	
+
 	public static void buildException(Exception e) {
 		if (currentStats == null) {
 			if (DEBUG)
@@ -82,6 +83,7 @@ public class EventStats {
 		writer.close();
 
 	}
+
 	public static void dumpStats(PrintWriter out) {
 		/* gather totals */
 		long totalBuildTime = 0;
@@ -108,27 +110,28 @@ public class EventStats {
 
 			int notifyCount = stats.getNotifyCount();
 			if (notifyCount > 0)
-				out.println(Policy.bind("utils.notifications", Integer.toString(notifyCount), Integer.toString((int) ( notifyCount * 100.0 /  totalNotifications)))); //$NON-NLS-1$
+				out.println(Policy.bind("utils.notifications", Integer.toString(notifyCount), Integer.toString((int) (notifyCount * 100.0 / totalNotifications)))); //$NON-NLS-1$
 
 			long notifyTime = stats.getNotifyRunningTime();
 			if (notifyTime > 0)
-				out.println(Policy.bind("utils.notifyTime", Long.toString(notifyTime), Integer.toString((int) ( notifyTime * 100.0 /  totalNotifyTime)))); //$NON-NLS-1$
+				out.println(Policy.bind("utils.notifyTime", Long.toString(notifyTime), Integer.toString((int) (notifyTime * 100.0 / totalNotifyTime)))); //$NON-NLS-1$
 
 			int buildCount = stats.getBuildCount();
 			if (buildCount > 0)
-				out.println(Policy.bind("utils.builds", Integer.toString(buildCount), Integer.toString((int) ( buildCount * 100.0 /  totalBuilds)))); //$NON-NLS-1$
+				out.println(Policy.bind("utils.builds", Integer.toString(buildCount), Integer.toString((int) (buildCount * 100.0 / totalBuilds)))); //$NON-NLS-1$
 
 			long buildTime = stats.getBuildRunningTime();
 			if (buildTime > 0)
-				out.println(Policy.bind("utils.buildTime", Long.toString(buildTime), Integer.toString((int) ( buildTime * 100.0 /  totalBuildTime)))); //$NON-NLS-1$
+				out.println(Policy.bind("utils.buildTime", Long.toString(buildTime), Integer.toString((int) (buildTime * 100.0 / totalBuildTime)))); //$NON-NLS-1$
 
 			int exceptions = stats.getExceptionCount();
 			if (exceptions > 0)
-				out.println(Policy.bind("utils.exceptions", Integer.toString(exceptions), Integer.toString((int) ( exceptions * 100.0 /  totalExceptions)))); //$NON-NLS-1$
+				out.println(Policy.bind("utils.exceptions", Integer.toString(exceptions), Integer.toString((int) (exceptions * 100.0 / totalExceptions)))); //$NON-NLS-1$
 
 			out.println(""); //$NON-NLS-1$
 		}
 	}
+
 	public static void endBuild() {
 		long end = System.currentTimeMillis();
 		if (currentStats == null || currentStart == -1) {
@@ -165,10 +168,10 @@ public class EventStats {
 	private static IPluginDescriptor getPluginFor(Object target) {
 		ClassLoader loader = target.getClass().getClassLoader();
 		if (loader instanceof PluginClassLoader)
-			return ((PluginClassLoader)loader).getPluginDescriptor();
+			return ((PluginClassLoader) loader).getPluginDescriptor();
 		return null;
 	}
-	
+
 	/**
 	 * Returns the stats object for the given ID.
 	 */
@@ -188,7 +191,7 @@ public class EventStats {
 					stats = new HashMap(5);
 					project.setSessionProperty(STATS_PROPERTY, stats);
 				}
-				result = (EventStats)stats.get(id);
+				result = (EventStats) stats.get(id);
 				if (result == null) {
 					result = new EventStats(id, project);
 					result.setPlugin(getPluginFor(origin));
@@ -199,6 +202,7 @@ public class EventStats {
 		}
 		return result;
 	}
+
 	/**
 	 * Returns stats objects for all plugins that are registered
 	 * for statistics (either notification listeners or builders).
@@ -220,12 +224,13 @@ public class EventStats {
 		}
 		return (EventStats[]) result.toArray(new EventStats[result.size()]);
 	}
+
 	/**
 	 * Resets all known statistics.
 	 */
 	public static void resetStats() {
-		for (Iterator iter = notificationStats.values().iterator(); iter.hasNext();) 
-			((EventStats)iter.next()).reset();
+		for (Iterator iter = notificationStats.values().iterator(); iter.hasNext();)
+			((EventStats) iter.next()).reset();
 		try {
 			IResource[] projects = ResourcesPlugin.getWorkspace().getRoot().members();
 			for (int i = 0; i < projects.length; i++) {
@@ -234,13 +239,14 @@ public class EventStats {
 					Map stats = (Map) project.getSessionProperty(STATS_PROPERTY);
 					if (stats != null)
 						for (Iterator iter = stats.values().iterator(); iter.hasNext();)
-							((EventStats)iter.next()).reset();
+							((EventStats) iter.next()).reset();
 				} catch (CoreException e) {
 				}
 			}
 		} catch (CoreException e) {
 		}
 	}
+
 	/**
 	 * Notifies the stats tool that a resource change listener has been removed.
 	 */
@@ -248,6 +254,7 @@ public class EventStats {
 		if (listener != null)
 			notificationStats.remove(listener.toString());
 	}
+
 	/**
 	 * Notifies the stats tool that a resource change listener has been added.
 	 */
@@ -255,6 +262,7 @@ public class EventStats {
 		if (listener != null)
 			getStats(listener.toString(), null, listener);
 	}
+
 	public static void notifyException(Exception e) {
 		if (currentStats == null) {
 			if (DEBUG)
@@ -274,6 +282,7 @@ public class EventStats {
 		currentStats = getStats(listener.toString(), null, listener);
 		currentStart = System.currentTimeMillis();
 	}
+
 	public static void startSnapshot() {
 		currentStart = System.currentTimeMillis();
 	}
@@ -282,19 +291,24 @@ public class EventStats {
 		buildCount++;
 		buildRunningTime += elapsed;
 	}
+
 	void addException(Exception e) {
 		exceptions.addElement(e);
 	}
+
 	void addNotify(long elapsed) {
 		notificationCount++;
 		notificationRunningTime += elapsed;
 	}
+
 	public int getBuildCount() {
 		return buildCount;
 	}
+
 	public long getBuildRunningTime() {
 		return buildRunningTime;
 	}
+
 	public Enumeration getCoreExceptions() {
 		Vector runtime = new Vector();
 		for (Enumeration e = exceptions.elements(); e.hasMoreElements();) {
@@ -305,15 +319,19 @@ public class EventStats {
 		}
 		return runtime.elements();
 	}
+
 	public int getExceptionCount() {
 		return exceptions.size();
 	}
+
 	public String getName() {
 		return id;
 	}
+
 	public int getNotifyCount() {
 		return notificationCount;
 	}
+
 	public long getNotifyRunningTime() {
 		return notificationRunningTime;
 	}
@@ -336,10 +354,11 @@ public class EventStats {
 		}
 		return runtime.elements();
 	}
+
 	public long getTotalRunningTime() {
 		return notificationRunningTime + buildRunningTime;
 	}
-	
+
 	public void reset() {
 		notificationRunningTime = 0;
 		buildRunningTime = 0;
@@ -347,6 +366,7 @@ public class EventStats {
 		buildCount = 0;
 		exceptions = new Vector();
 	}
+
 	public void setPlugin(IPluginDescriptor value) {
 		plugin = value;
 	}

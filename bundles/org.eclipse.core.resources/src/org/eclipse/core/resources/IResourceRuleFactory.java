@@ -49,6 +49,7 @@ public interface IResourceRuleFactory {
 	 * @return a scheduling rule, or <code>null</code>
 	 */
 	public ISchedulingRule createRule(IResource resource);
+
 	/**
 	 * Returns the scheduling rule that is required for building a project or the
 	 * entire workspace.
@@ -56,6 +57,7 @@ public interface IResourceRuleFactory {
 	 * @return a scheduling rule, or <code>null</code>
 	 */
 	public ISchedulingRule buildRule();
+
 	/**
 	 * Returns the scheduling rule that is required for copying a resource.
 	 * 
@@ -64,6 +66,7 @@ public interface IResourceRuleFactory {
 	 * @return a scheduling rule, or <code>null</code>
 	 */
 	public ISchedulingRule copyRule(IResource source, IResource destination);
+
 	/**
 	 * Returns the scheduling rule that is required for deleting a resource.
 	 * 
@@ -71,6 +74,7 @@ public interface IResourceRuleFactory {
 	 * @return a scheduling rule, or <code>null</code>
 	 */
 	public ISchedulingRule deleteRule(IResource resource);
+
 	/**
 	 * Returns the scheduling rule that is required for creating, modifying, or
 	 * deleting markers on a resource.
@@ -79,6 +83,7 @@ public interface IResourceRuleFactory {
 	 * @return a scheduling rule, or <code>null</code>
 	 */
 	public ISchedulingRule markerRule(IResource resource);
+
 	/**
 	 * Returns the scheduling rule that is required for modifying a resource.
 	 * For files, modification includes setting and appending contents. For
@@ -89,6 +94,7 @@ public interface IResourceRuleFactory {
 	 * @return a scheduling rule, or <code>null</code>
 	 */
 	public ISchedulingRule modifyRule(IResource resource);
+
 	/**
 	 * Returns the scheduling rule that is required for moving a resource.
 	 * 
@@ -97,6 +103,7 @@ public interface IResourceRuleFactory {
 	 * @return a scheduling rule, or <code>null</code>
 	 */
 	public ISchedulingRule moveRule(IResource source, IResource destination);
+
 	/**
 	 * Returns the scheduling rule that is required for performing 
 	 * <code>refreshLocal</code> on a resource.
@@ -105,6 +112,7 @@ public interface IResourceRuleFactory {
 	 * @return a scheduling rule, or <code>null</code>
 	 */
 	public ISchedulingRule refreshRule(IResource resource);
+
 	/**
 	 * Returns the scheduling rule that is required for a <code>validateEdit</code>
 	 * 
