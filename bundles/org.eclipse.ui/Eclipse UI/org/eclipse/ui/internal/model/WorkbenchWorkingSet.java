@@ -19,12 +19,14 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * @author
  */
 public class WorkbenchWorkingSet extends WorkbenchAdapter implements IAdaptable {
-	IResource resource;
-	IResource[] workingSet;
+	IAdaptable resource;
+	IAdaptable[] workingSet;
+	String name;
 		
-public WorkbenchWorkingSet(IResource resource, IResource[] workingSet) {
+public WorkbenchWorkingSet(IAdaptable resource, IAdaptable[] workingSet, String name) {
 	this.resource = resource;
 	this.workingSet = workingSet;
+	this.name = name;
 }
 public Object getAdapter(Class clazz) {
 //	if (clazz == IWorkbenchAdapter.class) {
@@ -32,21 +34,45 @@ public Object getAdapter(Class clazz) {
 //	}
 	return resource.getAdapter(clazz);
 }
-private boolean isWorkingSetParent(IResource resource) {
-	if (resource instanceof IContainer) {
+/**
+ * @see IWorkbenchAdapter#getLabel
+ */
+public String getLabel(Object o) {
+	return o == null ? "" : o.toString();//$NON-NLS-1$
+}
+
+private boolean isWorkingSetParent(IAdaptable adaptable) {
+	IWorkbenchAdapter workbenchAdapter = (IWorkbenchAdapter) adaptable.getAdapter(IWorkbenchAdapter.class);
+	if (workbenchAdapter != null && workbenchAdapter.getChildren(adaptable).length > 0) {
 		for (int i = 0; i < workingSet.length; i++) {	
-			IContainer parent = workingSet[i].getParent();
-			while (parent != null) {
-				if (parent.equals(resource)) {
-					return true;
+			IWorkbenchAdapter adapter = (IWorkbenchAdapter) workingSet[i].getAdapter(IWorkbenchAdapter.class);
+			
+			if (adapter != null) {
+				Object parent = adapter.getParent(workingSet[i]);
+				while (parent != null) {
+					if ((parent instanceof IAdaptable) == false) {
+						parent = null;
+					}
+					else
+					if (parent.equals(adaptable)) {
+						return true;
+					}
+					else {
+						adapter = (IWorkbenchAdapter) ((IAdaptable) parent).getAdapter(IWorkbenchAdapter.class);
+						if (adapter != null) {
+							parent = adapter.getParent(parent);
+						}
+						else {
+							parent = null;
+						}
+					}
 				}
-				parent = parent.getParent();
 			}
 		}
 	}
 	return false;
 }
-private boolean isWorkingSetResource(IResource resource) {
+private boolean isWorkingSetResource(IAdaptable resource) {
 	for (int i = 0; i < workingSet.length; i++) {	
 		if (workingSet[i].equals(resource)) {
 			return true;
@@ -58,40 +84,45 @@ private boolean isWorkingSetResource(IResource resource) {
  * @see IWorkbenchAdapter#getChildren
  */
 public Object[] getChildren(Object o) {
+	for (int i = 0; i < workingSet.length; i++) {
+		System.out.println((IResource) workingSet[i].getAdapter(IResource.class));
+	}
+	
 	if (o instanceof IWorkingSet) {
 		// return the projects of all working set items
 		return getProjects();
 	}
 	if (o instanceof WorkbenchWorkingSet) {
-		IResource resource = ((WorkbenchWorkingSet) o).getResource();
-		if (resource instanceof IContainer) {
-			IContainer container = (IContainer) resource;
-			IResource[] children = new IResource[0];
+		IAdaptable resource = ((WorkbenchWorkingSet) o).getItem();
+		IWorkbenchAdapter adapter = (IWorkbenchAdapter) resource.getAdapter(IWorkbenchAdapter.class);
+		if (adapter != null) {
+			Object[] children = adapter.getChildren(resource);
 			
-			try {
-				children = container.members();
-			} catch (CoreException e) {
-				WorkbenchPlugin.log("Problem getting members of: " + container.getName(), e.getStatus()); //$NON-NLS-1$	
-			}
-			if (isWorkingSetResource(container)) {
+			if (isWorkingSetResource(resource)) {
 				// return the regular (unwrapped) children if the object 
 				// is a working set item
 				return children;
 			}
 			int childCount = 0;		
 			for (int i = 0; i < children.length; i++) {
-				if (isWorkingSetResource(children[i]) || isWorkingSetParent(children[i])) {
-					childCount++;
+				if ((children[i] instanceof IAdaptable) == false) {
+					children[i] = null;
 				}
 				else {
-					children[i] = null;
+					IAdaptable adaptableChild = (IAdaptable) children[i];
+					if (isWorkingSetResource(adaptableChild) || isWorkingSetParent(adaptableChild)) {
+						childCount++;
+					}
+					else {
+						children[i] = null;
+					}
 				}
 			}
 			WorkbenchWorkingSet[] workingSetChildren = new WorkbenchWorkingSet[childCount];
 			childCount = 0;
 			for (int i = 0; i < children.length; i++) {
 				if (children[i] != null) {
-					workingSetChildren[childCount++] = new WorkbenchWorkingSet(children[i], workingSet);
+					workingSetChildren[childCount++] = new WorkbenchWorkingSet((IAdaptable) children[i], workingSet, name);
 				}
 			}
 			// return the wrapped children that are parents of working set items
@@ -103,22 +134,45 @@ public Object[] getChildren(Object o) {
 private WorkbenchWorkingSet[] getProjects() {
 	HashSet projects = new HashSet();
 
-	for (int i = 0; i < workingSet.length; i++) {	
-		IProject project = workingSet[i].getProject();
-		if (project != null) {
-			projects.add(project);
+	if (workingSet.length > 0) {	
+		IWorkbenchAdapter adapter = (IWorkbenchAdapter) workingSet[0].getAdapter(IWorkbenchAdapter.class);
+		if (adapter != null) {
+			Object parent = adapter.getParent(workingSet[0]);
+			while (parent != null && parent instanceof IAdaptable) {
+				adapter = (IWorkbenchAdapter) ((IAdaptable) parent).getAdapter(IWorkbenchAdapter.class);
+				
+				if (adapter == null || adapter.getParent(parent) == null) {
+					break;
+				}
+				parent = adapter.getParent(parent);
+			}
+			if (parent != null && parent instanceof IAdaptable) {
+				adapter = (IWorkbenchAdapter) ((IAdaptable) parent).getAdapter(IWorkbenchAdapter.class);
+				if (adapter != null) {
+					Object[] children = adapter.getChildren(parent);
+					for (int i = 0; i < children.length; i++) {
+						if (children[i] instanceof IAdaptable) {
+							IAdaptable adaptableChild = (IAdaptable) children[i];
+							if (isWorkingSetResource(adaptableChild) ||
+								isWorkingSetParent(adaptableChild)) {
+								projects.add(adaptableChild);
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 	Iterator iterator = projects.iterator();
 	WorkbenchWorkingSet[] workbenchAdapters = new WorkbenchWorkingSet[projects.size()];
 	int count = 0;
 	while (iterator.hasNext()) {
-		IProject project = (IProject) iterator.next();
-		workbenchAdapters[count++] = new WorkbenchWorkingSet(project, workingSet);
+		IAdaptable project = (IAdaptable) iterator.next();
+		workbenchAdapters[count++] = new WorkbenchWorkingSet(project, workingSet, name);
 	}
 	return workbenchAdapters;
 }
-public IResource getResource() {
+public IAdaptable getItem() {
 	return resource;
 }
 }
