@@ -15,6 +15,7 @@ import java.io.InputStream;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.*;
 
@@ -59,7 +60,7 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 			if (!isContentsCached()) {
 				// The cache may have been cleared if someone held
 				// on to the storage too long
-				throw new TeamException(Policy.bind("CachedResourceVariant.0", getCachePath())); //$NON-NLS-1$
+				throw new TeamException(NLS.bind(Messages.CachedResourceVariant_0, new String[] { getCachePath() })); //$NON-NLS-1$
 			}
 			return getCachedContents();
 		}
@@ -81,7 +82,7 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 				String charSet = TeamPlugin.getCharset(getName(), contents);
 				return charSet;
 			} catch (IOException e) {
-				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.FAILED_DESCRIBING_CONTENTS, Policy.bind("CachedResourceVariant.1", getFullPath().toString()), e)); //$NON-NLS-1$
+				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.FAILED_DESCRIBING_CONTENTS, NLS.bind(Messages.CachedResourceVariant_1, new String[] { getFullPath().toString() }), e)); //$NON-NLS-1$
 			} finally {
 				try {
 					contents.close();

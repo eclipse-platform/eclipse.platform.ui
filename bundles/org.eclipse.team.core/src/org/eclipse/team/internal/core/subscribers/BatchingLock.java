@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.core.*;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
@@ -210,7 +211,7 @@ public class BatchingLock {
 			return true;
 		}
 		private void handleAbortedFlush(Throwable t) {
-			TeamPlugin.log(IStatus.ERROR, Policy.bind("BatchingLock.11"), t); //$NON-NLS-1$
+			TeamPlugin.log(IStatus.ERROR, Messages.BatchingLock_11, t); //$NON-NLS-1$
 		}
 		private void addRule(ISchedulingRule rule) {
 			rules.add(rule);

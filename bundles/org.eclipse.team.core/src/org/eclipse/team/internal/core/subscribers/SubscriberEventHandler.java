@@ -17,6 +17,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.*;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -116,8 +117,8 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 	 */
 	public SubscriberEventHandler(Subscriber subscriber, IResource[] roots) {
 		super(
-			Policy.bind("SubscriberEventHandler.jobName", subscriber.getName()), //$NON-NLS-1$
-			Policy.bind("SubscriberEventHandler.errors", subscriber.getName())); //$NON-NLS-1$
+			NLS.bind(Messages.SubscriberEventHandler_jobName, new String[] { subscriber.getName() }), //$NON-NLS-1$
+			NLS.bind(Messages.SubscriberEventHandler_errors, new String[] { subscriber.getName() })); //$NON-NLS-1$
 		this.roots = roots;
 		this.syncSetInput = new SyncSetInputFromSubscriber(subscriber, this);
 	}
@@ -238,11 +239,11 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 						monitor);
 				}
 			} catch (TeamException e) {
-				handleException(e, resource, ITeamStatus.SYNC_INFO_SET_ERROR, Policy.bind("SubscriberEventHandler.8", resource.getFullPath().toString(), e.getMessage())); //$NON-NLS-1$
+				handleException(e, resource, ITeamStatus.SYNC_INFO_SET_ERROR, NLS.bind(Messages.SubscriberEventHandler_8, new String[] { resource.getFullPath().toString(), e.getMessage() })); //$NON-NLS-1$
 			}
 		}
 
-		monitor.subTask(Policy.bind("SubscriberEventHandler.2", resource.getFullPath().toString())); //$NON-NLS-1$
+		monitor.subTask(NLS.bind(Messages.SubscriberEventHandler_2, new String[] { resource.getFullPath().toString() })); //$NON-NLS-1$
 		try {
 			SyncInfo info = syncSetInput.getSubscriber().getSyncInfo(resource);
 			// resource is no longer under the subscriber control
@@ -255,7 +256,7 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 			}
 			handlePendingDispatch(monitor);
 		} catch (TeamException e) {
-			handleException(e, resource, ITeamStatus.RESOURCE_SYNC_INFO_ERROR, Policy.bind("SubscriberEventHandler.9", resource.getFullPath().toString(), e.getMessage())); //$NON-NLS-1$
+			handleException(e, resource, ITeamStatus.RESOURCE_SYNC_INFO_ERROR, NLS.bind(Messages.SubscriberEventHandler_9, new String[] { resource.getFullPath().toString(), e.getMessage() })); //$NON-NLS-1$
 		}
 		monitor.worked(1);
 	}
@@ -406,7 +407,7 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 						monitor);
 					break;
 				case SubscriberEvent.INITIALIZE :
-					monitor.subTask(Policy.bind("SubscriberEventHandler.2", event.getResource().getFullPath().toString())); //$NON-NLS-1$
+					monitor.subTask(NLS.bind(Messages.SubscriberEventHandler_2, new String[] { event.getResource().getFullPath().toString() })); //$NON-NLS-1$
 					collectAll(
 					        event.getResource(),
 					        ((ResourceEvent)event).getDepth(),
@@ -417,10 +418,10 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 			// the job has been cancelled. 
 			// Clear the queue and propogate the cancellation through the sets.
 			resultCache.clear();
-			syncSetInput.handleError(new TeamStatus(IStatus.ERROR, TeamPlugin.ID, ITeamStatus.SYNC_INFO_SET_CANCELLATION, Policy.bind("SubscriberEventHandler.12"), e, ResourcesPlugin.getWorkspace().getRoot())); //$NON-NLS-1$
+			syncSetInput.handleError(new TeamStatus(IStatus.ERROR, TeamPlugin.ID, ITeamStatus.SYNC_INFO_SET_CANCELLATION, Messages.SubscriberEventHandler_12, e, ResourcesPlugin.getWorkspace().getRoot())); //$NON-NLS-1$
 		} catch (RuntimeException e) {
 			// handle the exception and keep processing
-			handleException(new TeamException(Policy.bind("SubscriberEventHandler.10"), e), event.getResource(), ITeamStatus.SYNC_INFO_SET_ERROR, Policy.bind("SubscriberEventHandler.11", event.getResource().getFullPath().toString(), e.getMessage())); //$NON-NLS-1$ //$NON-NLS-2$
+			handleException(new TeamException(Messages.SubscriberEventHandler_10, e), event.getResource(), ITeamStatus.SYNC_INFO_SET_ERROR, NLS.bind(Messages.SubscriberEventHandler_11, new String[] { event.getResource().getFullPath().toString(), e.getMessage() })); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 		

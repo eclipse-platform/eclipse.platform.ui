@@ -15,6 +15,7 @@ import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.CachedResourceVariant;
 
@@ -63,7 +64,7 @@ public class ResourceVariantCacheEntry {
 			}
 		} catch (IOException e) {
 			// We will end up here if we couldn't read or delete the cache file
-			throw new TeamException(Policy.bind("RemoteContentsCache.fileError", ioFile.getAbsolutePath()), e); //$NON-NLS-1$
+			throw new TeamException(NLS.bind(Messages.RemoteContentsCache_fileError, new String[] { ioFile.getAbsolutePath() }), e); //$NON-NLS-1$
 		}
 		// This can occur when there is no remote contents
 		return new ByteArrayInputStream(new byte[0]);
@@ -102,7 +103,7 @@ public class ResourceVariantCacheEntry {
 	private void internalSetContents(InputStream stream, IProgressMonitor monitor) throws TeamException {
 		// if the state is DISPOSED then there is a problem
 		if (state == DISPOSED) {
-			throw new TeamException(Policy.bind("RemoteContentsCacheEntry.3", cache.getName(), id)); //$NON-NLS-1$
+			throw new TeamException(NLS.bind(Messages.RemoteContentsCacheEntry_3, new String[] { cache.getName(), id })); //$NON-NLS-1$
 		}
 		// Otherwise, the state is UNINITIALIZED or READY so we can proceed
 		registerHit();
@@ -120,7 +121,7 @@ public class ResourceVariantCacheEntry {
 					out = new ByteArrayOutputStream();
 				}
 			} catch (FileNotFoundException e) {
-				throw new TeamException(Policy.bind("RemoteContentsCache.fileError", ioFile.getAbsolutePath()), e); //$NON-NLS-1$
+				throw new TeamException(NLS.bind(Messages.RemoteContentsCache_fileError, new String[] { ioFile.getAbsolutePath() }), e); //$NON-NLS-1$
 			}
 			
 			// Transfer the contents
@@ -144,7 +145,7 @@ public class ResourceVariantCacheEntry {
 			// Mark the cache entry as ready
 			state = READY;
 		} catch (IOException e) {
-			throw new TeamException(Policy.bind("RemoteContentsCache.fileError", ioFile.getAbsolutePath()), e); //$NON-NLS-1$
+			throw new TeamException(NLS.bind(Messages.RemoteContentsCache_fileError, new String[] { ioFile.getAbsolutePath() }), e); //$NON-NLS-1$
 		} finally {
 			try {
 				stream.close();

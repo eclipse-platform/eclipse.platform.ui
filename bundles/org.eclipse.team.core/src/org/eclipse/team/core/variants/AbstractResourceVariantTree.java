@@ -24,7 +24,9 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.core.*;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.Policy;
 
@@ -88,7 +90,7 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 		IResource[] changedResources = null;
 		monitor.beginTask(null, 100);
 		try {
-			monitor.setTaskName(Policy.bind("SynchronizationCacheRefreshOperation.0", resource.getFullPath().makeRelative().toString())); //$NON-NLS-1$
+			monitor.setTaskName(NLS.bind(Messages.SynchronizationCacheRefreshOperation_0, new String[] { resource.getFullPath().makeRelative().toString() })); //$NON-NLS-1$
 			
 			// build the remote tree only if an initial tree hasn't been provided
 			IResourceVariant tree = fetchVariant(resource, depth, Policy.subMonitorFor(monitor, 70));

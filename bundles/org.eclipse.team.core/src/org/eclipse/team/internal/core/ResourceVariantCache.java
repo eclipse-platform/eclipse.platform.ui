@@ -21,6 +21,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.CachedResourceVariant;
 
@@ -167,7 +168,7 @@ public class ResourceVariantCache {
 			}
 		}
 		if (! file.exists() && ! file.mkdirs()) {
-			TeamPlugin.log(new TeamException(Policy.bind("RemoteContentsCache.fileError", file.getAbsolutePath()))); //$NON-NLS-1$
+			TeamPlugin.log(new TeamException(NLS.bind(Messages.RemoteContentsCache_fileError, new String[] { file.getAbsolutePath() }))); //$NON-NLS-1$
 		}
 		cacheEntries = new HashMap();
 		lastCacheCleanup = -1;
@@ -198,7 +199,7 @@ public class ResourceVariantCache {
 			}
 		}
 		if (! file.delete()) {
-			throw new TeamException(Policy.bind("RemoteContentsCache.fileError", file.getAbsolutePath())); //$NON-NLS-1$
+			throw new TeamException(NLS.bind(Messages.RemoteContentsCache_fileError, new String[] { file.getAbsolutePath() })); //$NON-NLS-1$
 		}
 	}
 
@@ -214,7 +215,7 @@ public class ResourceVariantCache {
 	private synchronized ResourceVariantCacheEntry internalGetCacheEntry(String id) {
 		if (cacheEntries == null) {
 			// This probably means that the cache has been disposed
-			throw new IllegalStateException(Policy.bind("RemoteContentsCache.cacheDisposed", name)); //$NON-NLS-1$
+			throw new IllegalStateException(NLS.bind(Messages.RemoteContentsCache_cacheDisposed, new String[] { name })); //$NON-NLS-1$
 		}
 		ResourceVariantCacheEntry entry = (ResourceVariantCacheEntry)cacheEntries.get(id);
 		if (entry != null) {

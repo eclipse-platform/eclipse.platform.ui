@@ -18,12 +18,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamStatus;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
+import org.eclipse.team.internal.core.*;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 
@@ -305,11 +307,11 @@ abstract public class Subscriber {
 						monitor);
 				}
 			} catch (TeamException e) {
-				set.addError(new TeamStatus(IStatus.ERROR, TeamPlugin.ID, ITeamStatus.SYNC_INFO_SET_ERROR, Policy.bind("SubscriberEventHandler.8", resource.getFullPath().toString(), e.getMessage()), e, resource)); //$NON-NLS-1$
+				set.addError(new TeamStatus(IStatus.ERROR, TeamPlugin.ID, ITeamStatus.SYNC_INFO_SET_ERROR, NLS.bind(Messages.SubscriberEventHandler_8, new String[] { resource.getFullPath().toString(), e.getMessage() }), e, resource)); //$NON-NLS-1$
 			}
 		}
 
-		monitor.subTask(Policy.bind("SubscriberEventHandler.2", resource.getFullPath().toString())); //$NON-NLS-1$
+		monitor.subTask(NLS.bind(Messages.SubscriberEventHandler_2, new String[] { resource.getFullPath().toString() })); //$NON-NLS-1$
 		try {
 			SyncInfo info = getSyncInfo(resource);
 			if (info == null || info.getKind() == SyncInfo.IN_SYNC) {
@@ -322,7 +324,7 @@ abstract public class Subscriber {
 		} catch (TeamException e) {
 			set.addError(new TeamStatus(
 					IStatus.ERROR, TeamPlugin.ID, ITeamStatus.RESOURCE_SYNC_INFO_ERROR, 
-					Policy.bind("SubscriberEventHandler.9", resource.getFullPath().toString(), e.getMessage()),  //$NON-NLS-1$
+					NLS.bind(Messages.SubscriberEventHandler_9, new String[] { resource.getFullPath().toString(), e.getMessage() }),  //$NON-NLS-1$
 					e, resource));
 		}
 		// Tick the monitor to give the owner a chance to do something

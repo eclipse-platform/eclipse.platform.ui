@@ -16,7 +16,8 @@ import java.util.Map;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
-import org.eclipse.team.internal.core.*;
+import org.eclipse.team.internal.core.DefaultProjectSetCapability;
+import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
  * This class represents provisional API. A provider is not required to implement this API.
@@ -114,7 +115,7 @@ public abstract class RepositoryProviderType {
 							TeamPlugin.log(e);
 						} catch (ClassCastException e) {
 							String className = configElements[j].getAttribute("typeClass"); //$NON-NLS-1$
-							TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProviderType.invalidClass", id, className), e); //$NON-NLS-1$
+							TeamPlugin.log(IStatus.ERROR, "Class " + className + " registered for repository provider type id " + id + " is not a subclass of RepositoryProviderType", e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						}
 						return null;
 					}

@@ -16,6 +16,7 @@ import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.core.*;
 
 /**
@@ -115,7 +116,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 						project.setSessionProperty(PROVIDER_PROP_KEY, null);
 					} catch (CoreException inner) {
 						// something is seriously wrong
-						TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProvider.couldNotClearAfterError", project.getName(), id), inner);//$NON-NLS-1$
+						TeamPlugin.log(IStatus.ERROR, NLS.bind(Messages.RepositoryProvider_couldNotClearAfterError, new String[] { project.getName(), id }), inner);//$NON-NLS-1$
 					}
 					throw outer;
 				}	
@@ -153,7 +154,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 		RepositoryProvider provider = newProvider(id); 	// instantiate via extension point
 
 		if(provider == null)
-			throw new TeamException(Policy.bind("RepositoryProvider.couldNotInstantiateProvider", project.getName(), id)); //$NON-NLS-1$
+			throw new TeamException(NLS.bind(Messages.RepositoryProvider_couldNotInstantiateProvider, new String[] { project.getName(), id })); //$NON-NLS-1$
 		
 		// validate that either the provider supports linked resources or the project has no linked resources
 		if (!provider.canHandleLinkedResources()) {
@@ -162,7 +163,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 				for (int i = 0; i < members.length; i++) {
 					IResource resource = members[i];
 					if (resource.isLinked()) {
-						throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.LINKING_NOT_ALLOWED, Policy.bind("RepositoryProvider.linkedResourcesExist", project.getName(), id), null)); //$NON-NLS-1$
+						throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.LINKING_NOT_ALLOWED, NLS.bind(Messages.RepositoryProvider_linkedResourcesExist, new String[] { project.getName(), id }), null)); //$NON-NLS-1$
 					}
 				}
 			} catch (CoreException e) {
@@ -223,7 +224,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 				
 				//If you tried to remove a non-existant nature it would fail, so we need to as well with the persistent prop
 				if(id == null) {
-					throw new TeamException(Policy.bind("RepositoryProvider.No_Provider_Registered", project.getName())); //$NON-NLS-1$
+					throw new TeamException(NLS.bind(Messages.RepositoryProvider_No_Provider_Registered, new String[] { project.getName() })); //$NON-NLS-1$
 				}
 				
 				//This will instantiate one if it didn't already exist,
@@ -233,7 +234,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 					// There is a persistant property but the provider cannot be obtained.
 					// The reason could be that the provider's plugin is no longer available.
 					// Better log it just in case this is unexpected.
-					TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProvider.couldNotInstantiateProvider", project.getName(), id), null);  //$NON-NLS-1$
+					TeamPlugin.log(IStatus.ERROR, NLS.bind(Messages.RepositoryProvider_couldNotInstantiateProvider, new String[] { project.getName(), id }), null);  //$NON-NLS-1$
 				}
 	
 				if (provider != null) provider.deconfigure();
@@ -299,7 +300,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 			try {
 				RepositoryProvider.unmap(getProject());
 			} catch(TeamException e2) {
-				throw new CoreException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("RepositoryProvider_Error_removing_nature_from_project___1") + getID(), e2)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Messages.RepositoryProvider_Error_removing_nature_from_project___1 + getID(), e2)); //$NON-NLS-1$
 			}
 			throw e;
 		}
@@ -357,7 +358,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 * @return a string description of this provider
 	 */
 	public String toString() {
-		return Policy.bind("RepositoryProvider.toString", getProject().getName(), getID());   //$NON-NLS-1$
+		return NLS.bind(Messages.RepositoryProvider_toString, new String[] { getProject().getName(), getID() });   //$NON-NLS-1$
 	}
 	
 	/**
@@ -580,7 +581,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 								TeamPlugin.log(e);
 							} catch (ClassCastException e) {
 								String className = configElements[j].getAttribute("class"); //$NON-NLS-1$
-								TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProvider.invalidClass", id, className), e); //$NON-NLS-1$
+								TeamPlugin.log(IStatus.ERROR, NLS.bind(Messages.RepositoryProvider_invalidClass, new String[] { id, className }), e); //$NON-NLS-1$
 							}
 							return null;
 						}
@@ -612,7 +613,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 		if (canHandleLinkedResources()) {
 			return Team.OK_STATUS;
 		} else {
-			return new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.LINKING_NOT_ALLOWED, Policy.bind("RepositoryProvider.linkedResourcesNotSupported", getProject().getName(), getID()), null); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.LINKING_NOT_ALLOWED, NLS.bind(Messages.RepositoryProvider_linkedResourcesNotSupported, new String[] { getProject().getName(), getID() }), null); //$NON-NLS-1$
 		}
 	}
 	

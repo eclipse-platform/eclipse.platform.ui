@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core;
 
+import org.eclipse.osgi.util.NLS;
+
  
 
 public final class Assert {
@@ -19,7 +21,7 @@ public final class Assert {
         public AssertionFailedException() {
 		}
 		public AssertionFailedException(String detail) {
-			super(Policy.bind("Assert.assertionFailed", detail)); //$NON-NLS-1$
+			super(NLS.bind(Messages.Assert_assertionFailed, new String[] { detail })); //$NON-NLS-1$
 		}
 	}
 /* This class is not intended to be instantiated. */

@@ -12,10 +12,11 @@ package org.eclipse.team.core.synchronize;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.*;
 import org.eclipse.team.internal.core.Assert;
-import org.eclipse.team.internal.core.Policy;
+import org.eclipse.team.internal.core.Messages;
 
 /**
  * Describes the synchronization of a <b>local</b> resource 
@@ -352,26 +353,26 @@ public class SyncInfo implements IAdaptable {
 	public static String kindToString(int kind) {
 		String label = ""; //$NON-NLS-1$
 		if(kind==IN_SYNC) {
-			label = Policy.bind("RemoteSyncElement.insync"); //$NON-NLS-1$
+			label = Messages.RemoteSyncElement_insync; //$NON-NLS-1$
 		} else {
 			switch(kind & DIRECTION_MASK) {
-				case CONFLICTING: label = Policy.bind("RemoteSyncElement.conflicting"); break; //$NON-NLS-1$
-				case OUTGOING: label = Policy.bind("RemoteSyncElement.outgoing"); break; //$NON-NLS-1$
-				case INCOMING: label = Policy.bind("RemoteSyncElement.incoming"); break; //$NON-NLS-1$
+				case CONFLICTING: label = Messages.RemoteSyncElement_conflicting; break; //$NON-NLS-1$
+				case OUTGOING: label = Messages.RemoteSyncElement_outgoing; break; //$NON-NLS-1$
+				case INCOMING: label = Messages.RemoteSyncElement_incoming; break; //$NON-NLS-1$
 			}	
 			switch(kind & CHANGE_MASK) {
-				case CHANGE: label = Policy.bind("concatStrings", label, Policy.bind("RemoteSyncElement.change")); break; //$NON-NLS-1$ //$NON-NLS-2$
-				case ADDITION: label = Policy.bind("concatStrings", label, Policy.bind("RemoteSyncElement.addition")); break; //$NON-NLS-1$ //$NON-NLS-2$
-				case DELETION: label = Policy.bind("concatStrings", label, Policy.bind("RemoteSyncElement.deletion")); break; //$NON-NLS-1$ //$NON-NLS-2$
+				case CHANGE: label = NLS.bind(Messages.concatStrings, new String[] { label, Messages.RemoteSyncElement_change }); break; //$NON-NLS-1$ //$NON-NLS-2$
+				case ADDITION: label = NLS.bind(Messages.concatStrings, new String[] { label, Messages.RemoteSyncElement_addition }); break; //$NON-NLS-1$ //$NON-NLS-2$
+				case DELETION: label = NLS.bind(Messages.concatStrings, new String[] { label, Messages.RemoteSyncElement_deletion }); break; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if((kind & MANUAL_CONFLICT) != 0) {			
-				label = Policy.bind("concatStrings", label, Policy.bind("RemoteSyncElement.manual")); //$NON-NLS-1$ //$NON-NLS-2$
+				label = NLS.bind(Messages.concatStrings, new String[] { label, Messages.RemoteSyncElement_manual }); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if((kind & AUTOMERGE_CONFLICT) != 0) {				
-				label = Policy.bind("concatStrings", label, Policy.bind("RemoteSyncElement.auto")); //$NON-NLS-1$ //$NON-NLS-2$
+				label = NLS.bind(Messages.concatStrings, new String[] { label, Messages.RemoteSyncElement_auto }); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
-		return Policy.bind("RemoteSyncElement.delimit", label); //$NON-NLS-1$
+		return NLS.bind(Messages.RemoteSyncElement_delimit, new String[] { label }); //$NON-NLS-1$
 	}
 	
 	/**

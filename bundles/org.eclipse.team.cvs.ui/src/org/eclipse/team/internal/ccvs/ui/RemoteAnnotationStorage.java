@@ -15,16 +15,8 @@ import java.io.InputStream;
 
 import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.core.Policy;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.core.TeamPlugin;
 
 public class RemoteAnnotationStorage extends PlatformObject implements IEncodedStorage {
@@ -53,7 +45,7 @@ public class RemoteAnnotationStorage extends PlatformObject implements IEncodedS
 			String charSet = TeamPlugin.getCharset(getName(), contents);
 			return charSet;
 		} catch (IOException e) {
-			throw new CVSException(new Status(IStatus.ERROR, CVSUIPlugin.ID, IResourceStatus.FAILED_DESCRIBING_CONTENTS, Policy.bind("RemoteAnnotationStorage.1", getFullPath().toString()), e)); //$NON-NLS-1$
+			throw new CVSException(new Status(IStatus.ERROR, CVSUIPlugin.ID, IResourceStatus.FAILED_DESCRIBING_CONTENTS, Policy.bind("RemoteAnnotationStorage.1", new String[] { getFullPath().toString() }), e)); //$NON-NLS-1$
 		} finally {
 			try {
 				contents.close();

@@ -77,11 +77,10 @@ public class FileModificationValidatorManager implements IFileModificationValida
 		return new MultiStatus(TeamPlugin.ID,
 			0, 
 			(IStatus[])returnStati.toArray(new IStatus[returnStati.size()]),
-			Policy.bind(
 				allOK
-					? "FileModificationValidator.ok"  //$NON-NLS-1$
-					: "FileModificationValidator.editFailed"),  //$NON-NLS-1$
-			null); //$NON-NLS-1$
+					? Messages.ok
+					: Messages.FileModificationValidator_editFailed,
+			null);
 	}
 
 	/*

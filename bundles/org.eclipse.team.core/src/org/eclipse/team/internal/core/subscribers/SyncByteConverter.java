@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.subscribers;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.Policy;
+import org.eclipse.team.internal.core.Messages;
 
 /**
  * Utility for managing slash separated sync information fields. 
@@ -30,7 +31,7 @@ public class SyncByteConverter {
 	public static byte[] setSlot(byte[] syncBytes, int slot, byte[] newBytes) throws TeamException {
 		int start = startOfSlot(syncBytes, slot);
 		if (start == -1) {
-			throw new TeamException(Policy.bind("SyncByteConverter.1", new String(syncBytes))); //$NON-NLS-1$
+			throw new TeamException(NLS.bind(Messages.SyncByteConverter_1, new String[] { new String(syncBytes) })); //$NON-NLS-1$
 		}
 		int end = startOfSlot(syncBytes, slot + 1);
 		int totalLength = start + 1 + newBytes.length;

@@ -18,6 +18,7 @@ import java.io.InterruptedIOException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.team.internal.core.*;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 
@@ -77,7 +78,7 @@ public class PollingInputStream extends FilterInputStream {
 				} catch (InterruptedIOException e) {
 					if (checkCancellation()) throw new OperationCanceledException();
 					if (++attempts == numAttempts)
-						throw new InterruptedIOException(Policy.bind("PollingInputStream.closeTimeout")); //$NON-NLS-1$
+						throw new InterruptedIOException(Messages.PollingInputStream_closeTimeout); //$NON-NLS-1$
 					if (DEBUG) System.out.println("close retry=" + attempts); //$NON-NLS-1$
 				}
 			}
@@ -99,7 +100,7 @@ public class PollingInputStream extends FilterInputStream {
 				return in.read();
 			} catch (InterruptedIOException e) {
 				if (++attempts == numAttempts)
-					throw new InterruptedIOException(Policy.bind("PollingInputStream.readTimeout")); //$NON-NLS-1$
+					throw new InterruptedIOException(Messages.PollingInputStream_readTimeout); //$NON-NLS-1$
 				if (DEBUG) System.out.println("read retry=" + attempts); //$NON-NLS-1$
 			}
 		}
@@ -121,7 +122,7 @@ public class PollingInputStream extends FilterInputStream {
 			} catch (InterruptedIOException e) {
 				if (e.bytesTransferred != 0) return e.bytesTransferred; // keep partial transfer
 				if (++attempts == numAttempts)
-					throw new InterruptedIOException(Policy.bind("PollingInputStream.readTimeout")); //$NON-NLS-1$
+					throw new InterruptedIOException(Messages.PollingInputStream_readTimeout); //$NON-NLS-1$
 				if (DEBUG) System.out.println("read retry=" + attempts); //$NON-NLS-1$
 			}
 		}
@@ -143,7 +144,7 @@ public class PollingInputStream extends FilterInputStream {
 			} catch (InterruptedIOException e) {
 				if (e.bytesTransferred != 0) return e.bytesTransferred; // keep partial transfer
 				if (++attempts == numAttempts)
-					throw new InterruptedIOException(Policy.bind("PollingInputStream.readTimeout")); //$NON-NLS-1$
+					throw new InterruptedIOException(Messages.PollingInputStream_readTimeout); //$NON-NLS-1$
 				if (DEBUG) System.out.println("read retry=" + attempts); //$NON-NLS-1$
 			}
 		}
