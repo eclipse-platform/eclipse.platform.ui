@@ -146,7 +146,7 @@ protected void exportResource(IResource resource, int leadupDepth) throws Interr
 		String destinationName;
 		IPath fullPath = resource.getFullPath();
 		if(createLeadupStructure)
-		 	destinationName = fullPath.toString();
+		 	destinationName = fullPath.makeRelative().toString();
 		else
 			destinationName = fullPath.removeFirstSegments(fullPath.segmentCount() - leadupDepth).toString();
 		monitor.subTask(destinationName);
