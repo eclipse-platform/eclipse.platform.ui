@@ -59,6 +59,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ant.internal.ui.views.actions.*;
 import org.eclipse.ant.internal.ui.views.actions.AddBuildFileAction;
 import org.eclipse.ant.internal.ui.views.actions.AntOpenWithMenu;
 import org.eclipse.ant.internal.ui.views.actions.EditLaunchConfigurationAction;
@@ -82,6 +83,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * The root node of the project viewer as restored during initialization
 	 */
 	private RootNode restoredRoot = null;
+	private boolean restoredFilterInternalTargets= false;
 
 	/**
 	 * XML tag used to identify an ant project in storage
@@ -104,6 +106,14 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * XML key used to store an ant project's default target name
 	 */
 	private static final String KEY_DEFAULT = "default"; //$NON-NLS-1$
+	/**
+	 * XML tag used to identify the "filter internal targets" preference.
+	 */
+	private static final String TAG_FILTER_INTERNAL_TARGETS = "filterInternalTargets"; //$NON-NLS-1$
+	/**
+	 * XML key used to store the value of the "filter internal targets" preference. 
+	 */
+	private static final String KEY_VALUE = "value"; //$NON-NLS-1$
 
 	/**
 	 * The tree viewer that displays the users ant projects
@@ -123,6 +133,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	private RunTargetAction runTargetAction;
 	private RemoveProjectAction removeProjectAction;
 	private RemoveAllAction removeAllAction;
+	private FilterInternalTargetsAction filterInternalTargetsAction;
 	// Context-menu-only actions
 	private AntOpenWithMenu openWithMenu;
 	private EditLaunchConfigurationAction editConfigAction;
@@ -237,6 +248,8 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		
 		editConfigAction= new EditLaunchConfigurationAction(this);
 		updateProjectActions.add(editConfigAction);
+		
+		filterInternalTargetsAction= new FilterInternalTargetsAction(this);
 	}
 
 	/**
@@ -257,6 +270,8 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		projectViewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 		projectContentProvider = new AntProjectContentProvider();
 		projectViewer.setContentProvider(projectContentProvider);
+		projectContentProvider.setFilterInternalTargets(restoredFilterInternalTargets);
+		filterInternalTargetsAction.setChecked(restoredFilterInternalTargets);
 		projectViewer.setLabelProvider(new AntViewLabelProvider());
 		projectViewer.setInput(restoredRoot);
 		projectViewer.setSorter(new ViewerSorter() {
@@ -491,6 +506,10 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		init(site);
 		restoreRoot(memento);
+		IMemento child= memento.getChild(TAG_FILTER_INTERNAL_TARGETS);
+		if (child != null) {
+			restoredFilterInternalTargets= Boolean.valueOf(child.getString(KEY_VALUE)).booleanValue();
+		}
 	}
 
 	/**
@@ -561,6 +580,8 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 				projectMemento.putString(KEY_ERROR, String.valueOf(false));
 			}
 		}
+		IMemento filterTargets= memento.createChild(TAG_FILTER_INTERNAL_TARGETS);
+		filterTargets.putString(KEY_VALUE, isFilterInternalTargets() ? String.valueOf(true) : String.valueOf(false));
 	}
 
 	/**
@@ -618,6 +639,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		
 		toolBarMgr.add(addBuildFileAction);
 		toolBarMgr.add(searchForBuildFilesAction);
+		toolBarMgr.add(filterInternalTargetsAction);
 
 		toolBarMgr.add(runTargetAction);
 		toolBarMgr.add(removeProjectAction);
@@ -653,5 +675,25 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			return new ShowInContext(null, selection);
 		}
 		return null;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isFilterInternalTargets() {
+		if (projectContentProvider != null) {
+			return projectContentProvider.isFilterInternalTargets();
+		}
+		return false;
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setFilterInternalTargets(boolean filter) {
+		if (projectContentProvider != null) {
+			projectContentProvider.setFilterInternalTargets(filter);
+			projectViewer.refresh();
+		}
 	}
 }

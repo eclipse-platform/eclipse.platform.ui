@@ -11,12 +11,15 @@
 package org.eclipse.ant.internal.ui.views;
 
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.ant.internal.ui.views.elements.AntNode;
 import org.eclipse.ant.internal.ui.views.elements.ProjectNode;
 import org.eclipse.ant.internal.ui.views.elements.RootNode;
 import org.eclipse.ant.internal.ui.views.elements.TargetNode;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
 
 /**
  * Content provider that provides a tree of ant projects.
@@ -27,6 +30,7 @@ public class AntProjectContentProvider implements ITreeContentProvider {
 	 * The root node of the project tree
 	 */
 	private RootNode rootNode;
+	private boolean fIsFilteringInternalTargets= false;
 
 	/**
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
@@ -83,8 +87,19 @@ public class AntProjectContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object element) {
 		if (element instanceof RootNode) {
 			return ((RootNode) element).getProjects();
-		} else if (element instanceof ProjectNode) {
-			return ((ProjectNode) element).getTargets();
+		} else if (element instanceof ProjectNode) { 
+			if (!fIsFilteringInternalTargets) {
+				return ((ProjectNode) element).getTargets();
+			}
+			TargetNode[] targets= ((ProjectNode) element).getTargets();
+			List filteredTargets= new ArrayList();
+			for (int i = 0; i < targets.length; i++) {
+				TargetNode node = targets[i];
+				if (node.getDescription() != null) {
+					filteredTargets.add(node);
+				}
+			}
+			return filteredTargets.toArray();
 		}
 		return null;
 	}
@@ -107,6 +122,17 @@ public class AntProjectContentProvider implements ITreeContentProvider {
 			return false;
 		}
 		return true;
+	}
+	
+	public boolean isFilterInternalTargets() {
+		return fIsFilteringInternalTargets;
+	}
+
+	/**
+	 * @param filter
+	 */
+	public void setFilterInternalTargets(boolean filter) {
+		fIsFilteringInternalTargets= filter;
 	}
 
 }

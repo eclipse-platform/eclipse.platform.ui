@@ -8,32 +8,34 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ant.internal.ui.editor.outline;
+package org.eclipse.ant.internal.ui.views.actions;
 
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.views.AntView;
 import org.eclipse.jface.action.Action;
 
 /** 
- * An action which toggles filtering of internal targets from the Ant outline.
+ * An action which toggles filtering of internal targets from the Ant view.
  */
 public class FilterInternalTargetsAction extends Action {
+
+	private AntView fView;
 	
-	private AntEditorContentOutlinePage fPage;
-	
-	public FilterInternalTargetsAction(AntEditorContentOutlinePage page) {
-		super(AntOutlineMessages.getString("FilterInternalTargetsAction.0")); //$NON-NLS-1$
-		fPage = page;
+	public FilterInternalTargetsAction(AntView view) {
+		super(AntViewActionMessages.getString("FilterInternalTargetsAction.0")); //$NON-NLS-1$
+		fView = view;
 		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_FILTER_INTERNAL_TARGETS));
-		setToolTipText(AntOutlineMessages.getString("FilterInternalTargetsAction.0")); //$NON-NLS-1$
-		setChecked(fPage.isFilterInternalTargets());
+		setToolTipText(AntViewActionMessages.getString("FilterInternalTargetsAction.1")); //$NON-NLS-1$
+		setChecked(fView.isFilterInternalTargets());
 	}
 	
 	/**
-	 * Toggles the filtering of internal targets from the Ant outline
+	 * Toggles the filtering of internal targets from the Ant view
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		fPage.setFilterInternalTargets(isChecked());
+		fView.setFilterInternalTargets(isChecked());
 	}
+
 }
