@@ -818,8 +818,14 @@ class CompletionProposalPopup implements IContentAssistListener {
 		}		
 	}
 	
+	/**
+	 * Completes the common prefix of all proposals directly in the code.
+	 * 
+	 * @return an error message if completion failed.
+	 * @since 3.0
+	 */
 	public String incrementalComplete() {
-		if (fFilteredProposals != null) {
+		if (Helper.okToUse(fProposalShell) && fFilteredProposals != null) {
 			completeCommonPrefix();
 		} else {
 			final Control control= fContentAssistSubjectAdapter.getControl();
@@ -916,10 +922,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 		// 2: replace / insert the common prefix in the document
 		
 		try {
-			// check if our assumptions are correct - TODO what for?
-			// the current content must be a prefix of prefix (hehe)
-			String presentPart= prefix.substring(0, currentPrefixLen);
 			
+			String presentPart= prefix.substring(0, currentPrefixLen);
 			int replaceOffset;
 			int replaceLen;
 			if (isCaseCompatible && !currentPrefix.equals(presentPart)) {
