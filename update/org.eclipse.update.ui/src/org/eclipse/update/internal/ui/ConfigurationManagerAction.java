@@ -12,11 +12,12 @@ package org.eclipse.update.internal.ui;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.ui.*;
 
 /**
  * Insert the type's description here.
@@ -25,7 +26,8 @@ import org.eclipse.update.internal.ui.UpdateUI;
 public class ConfigurationManagerAction implements IWorkbenchWindowActionDelegate {
 
 	IWorkbenchWindow window;
-	ConfigurationManagerWindow openedWindow;
+	ApplicationWindow applicationWindow;
+	
 	/**
 	 * The constructor.
 	 */
@@ -33,7 +35,7 @@ public class ConfigurationManagerAction implements IWorkbenchWindowActionDelegat
 	}
 
 	/**
-	 * Insert the method's description here.
+	 * Runs the action when selected
 	 */
 	public void run(IAction action) {
 		BusyIndicator
@@ -45,46 +47,41 @@ public class ConfigurationManagerAction implements IWorkbenchWindowActionDelegat
 	}
 
 	private void openConfigurationManager() {
-		if (openedWindow!=null) {
+		if (applicationWindow!=null) {
 			restoreConfigurationWindow();
 			return;
 		}
-		ConfigurationManagerWindow cwindow = new ConfigurationManagerWindow(window.getShell());
+		ApplicationWindow cwindow = UpdateManagerUI.createConfigurationManagerWindow(window.getShell());
 		cwindow.create();
-		cwindow.getShell().setText(UpdateUI.getString("ConfigurationManagerAction.title")); //$NON-NLS-1$
 		cwindow.getShell().setSize(800, 600);
 		cwindow.getShell().addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				openedWindow = null;
+				applicationWindow = null;
 			}
 		});
-		cwindow.updateActionBars();
-		openedWindow = cwindow;
+		applicationWindow = cwindow;
 		cwindow.open();
 	}
 	
 	private void restoreConfigurationWindow() {
-		Shell shell = openedWindow.getShell();
+		Shell shell = applicationWindow.getShell();
 		if (shell.getMinimized())
 			shell.setMinimized(false);
 		shell.open();
 	}
 
 	/**
-	 * Insert the method's description here.
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
 	/**
-	 * Insert the method's description here.
 	 * @see IWorkbenchWindowActionDelegate#dispose
 	 */
 	public void dispose() {
 	}
 
 	/**
-	 * Insert the method's description here.
 	 * @see IWorkbenchWindowActionDelegate#init
 	 */
 	public void init(IWorkbenchWindow window) {

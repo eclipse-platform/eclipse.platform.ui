@@ -21,10 +21,9 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.views.*;
-import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
- * 
+ * Configuration Manager window.
  */
 public class ConfigurationManagerWindow
 	extends ApplicationWindow
@@ -80,7 +79,7 @@ public class ConfigurationManagerWindow
 		addMenuBar();
 		addActions();
 		addToolBar(SWT.FLAT);
-		addStatusLine();
+//		addStatusLine();
 	}
 
 	private void addActions() {
@@ -144,10 +143,10 @@ public class ConfigurationManagerWindow
 		return container;
 	}
 
-	public void updateActionBars() {
+	private void updateActionBars() {
 		getMenuBarManager().updateAll(false);
 		getToolBarManager().update(false);
-		getStatusLineManager().update(false);
+//		getStatusLineManager().update(false);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#close()
@@ -157,9 +156,25 @@ public class ConfigurationManagerWindow
 			view.dispose();
 		return super.close();
 	}
-	public StatusLineManager getStatusLineManager() {
-		return super.getStatusLineManager();
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#create()
+	 */
+	public void create() {
+		super.create();
+		// set the title
+		getShell().setText(UpdateUI.getString("ConfigurationManagerAction.title")); //$NON-NLS-1$
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#open()
+	 */
+	public int open() {
+		// update action bars
+		updateActionBars();
+		return super.open();
+	}
+	
 	public void setPropertiesActionHandler(IAction handler){
 		propertiesActionHandler=handler;
 	}

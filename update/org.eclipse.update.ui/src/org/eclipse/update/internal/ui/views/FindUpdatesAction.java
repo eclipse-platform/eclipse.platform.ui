@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
@@ -64,12 +63,9 @@ public class FindUpdatesAction extends Action {
 		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
 			public void run() {
 				InstallWizard wizard = new InstallWizard(searchRequest);
-				WizardDialog dialog = new ResizableWizardDialog(shell, wizard);
+				WizardDialog dialog = new ResizableInstallWizardDialog(shell, wizard, UpdateUI.getString("FindUpdatesAction.updates")); //$NON-NLS-1$
 				dialog.create();
-				dialog.getShell().setText(UpdateUI.getString("FindUpdatesAction.updates")); //$NON-NLS-1$
-				SWTUtil.setDialogSize(dialog, 600, 500);
-				if (dialog.open() == IDialogConstants.OK_ID)
-					UpdateUI.requestRestart(wizard.isRestartNeeded());				
+				dialog.open();				
 			}
 		});
 	}

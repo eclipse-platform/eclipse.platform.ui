@@ -35,6 +35,7 @@ import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.operations.*;
 
+
 /**
  * Insert the type's description here.
  * @see ViewPart

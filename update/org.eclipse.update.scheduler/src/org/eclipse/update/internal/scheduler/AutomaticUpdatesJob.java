@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -22,8 +21,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.UpdateUtils;
-import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
@@ -181,13 +178,11 @@ public class AutomaticUpdatesJob extends Job {
 			
 		InstallWizard wizard = new InstallWizard(searchRequest, updates);
 		WizardDialog dialog =
-			new ResizableWizardDialog(
+			new ResizableInstallWizardDialog(
 				UpdateScheduler.getActiveWorkbenchShell(),
-				wizard);
+				wizard,
+				UpdateScheduler.getString("AutomaticUpdatesJob.Updates")); //$NON-NLS-1$
 		dialog.create();
-		dialog.getShell().setText(UpdateScheduler.getString("AutomaticUpdatesJob.Updates")); //$NON-NLS-1$
-		SWTUtil.setDialogSize(dialog, 600, 500);
-		if (dialog.open() == IDialogConstants.OK_ID)
-			UpdateUI.requestRestart(wizard.isRestartNeeded());
+		dialog.open();
 	}
 }

@@ -11,14 +11,11 @@
 package org.eclipse.update.internal.ui;
 
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.ui.*;
-import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.ui.wizards.*;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.ui.*;
 
 /**
  * Insert the type's description here.
@@ -43,23 +40,15 @@ public class InstallWizardAction extends Action implements IWorkbenchWindowActio
 		BusyIndicator
 			.showWhile(window.getShell().getDisplay(), new Runnable() {
 			public void run() {
-				doRun();
+				openNewUpdatesWizard();
 			}
 		});
 	}
-
-	private void doRun() {
-		openNewUpdatesWizard();
-	}
 	
 	private void openNewUpdatesWizard() {
-		InstallWizard wizard = new InstallWizard();
-		WizardDialog dialog = new ResizableWizardDialog(window.getShell(), wizard);
+		WizardDialog dialog = UpdateManagerUI.createInstallWizardDialog(window.getShell());
 		dialog.create();
-		dialog.getShell().setText(UpdateUI.getString("InstallWizardAction.title")); //$NON-NLS-1$
-		SWTUtil.setDialogSize(dialog, 600, 500);
-		if (dialog.open() == IDialogConstants.OK_ID)
-			UpdateUI.requestRestart(wizard.isRestartNeeded());
+		dialog.open();
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

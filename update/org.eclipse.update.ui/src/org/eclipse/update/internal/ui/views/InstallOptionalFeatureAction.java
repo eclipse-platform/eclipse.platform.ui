@@ -22,7 +22,6 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
@@ -82,13 +81,9 @@ public class InstallOptionalFeatureAction extends Action {
 	}
 	private void openWizard(UpdateSearchRequest searchRequest) {
 		InstallWizard wizard = new InstallWizard(searchRequest);
-		WizardDialog dialog = new ResizableWizardDialog(shell, wizard);
+		WizardDialog dialog = new ResizableInstallWizardDialog(shell, wizard, UpdateUI.getString(KEY_OPTIONAL_INSTALL_TITLE));
 		dialog.create();
-		dialog.getShell().setText(
-			UpdateUI.getString(KEY_OPTIONAL_INSTALL_TITLE));
-		SWTUtil.setDialogSize(dialog, 600, 500);
-		if (dialog.open() == IDialogConstants.OK_ID)
-			UpdateUI.requestRestart(wizard.isRestartNeeded());
+		dialog.open();
 	}
 	
 	private boolean confirm(String message) {
