@@ -505,7 +505,7 @@ protected boolean isCurrentPageValid() {
  * The preference dialog implementation of this <code>Dialog</code>
  * framework method sends <code>performOk</code> to all pages of the 
  * preference dialog, then calls <code>handleSave</code> on this dialog
- * to save any state, and then calls <code>hardClose</code> to close
+ * to save any state, and then calls <code>close</code> to close
  * this dialog.
  */
 protected void okPressed() {
