@@ -60,7 +60,7 @@ public class LogConsoleDocument {
 	public void append(final String message, final int priority) {
 		if (views.size() == 0)
 			return;
-		((LogConsoleView)views.get(0)).getViewSite().getShell().getDisplay().syncExec(new Runnable() {
+		((LogConsoleView)views.get(0)).getViewSite().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				int start = getDocument().getLength();
 				try {
