@@ -18,13 +18,24 @@ package org.eclipse.ui;
  * </p>
  */
 public interface IViewReference extends IWorkbenchPartReference {
+	
 	/**
-	 * Returns the IViewPart referenced by this object.
-	 * Returns null if the view was not instanciated or
-	 * it failed to be restored. Tries to restore the view
+	 * Returns the secondary ID for the view.
+	 * 
+	 * @return the secondary ID, or <code>null</code> if there is no secondary id
+     * @see IWorkbenchPage#showView(String, String, String)
+     * @since 3.0
+	 */
+	public String getSecondaryId();
+	
+	/**
+	 * Returns the <code>IViewPart</code> referenced by this object.
+	 * Returns <code>null</code> if the view was not instantiated or
+	 * it failed to be restored.  Tries to restore the view
 	 * if <code>restore</code> is true.
 	 */
 	public IViewPart getView(boolean restore);
+
 	/**
 	 * Returns true if the view is a fast view otherwise returns false.
 	 */	

@@ -299,7 +299,7 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 //								//((WorkbenchPage)pages[j]).getStateMap().put(id, memento);
 //							}
 							((WorkbenchPage)pages[j]).hideView(viewRef);
-							((WorkbenchPage)pages[j]).getViewFactory().releaseView(id);
+							((WorkbenchPage)pages[j]).getViewFactory().releaseView(viewRef);
 						}
 						viewsRemoved.add(id);
 						((ViewRegistry)vReg).remove(id);
@@ -722,7 +722,7 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 						IViewReference viewRef = viewFactory.getView(id);
 						if (viewRef != null) {
 							((WorkbenchPage)pages[j]).hideView(viewRef);
-							((WorkbenchPage)pages[j]).getViewFactory().releaseView(id);
+							((WorkbenchPage)pages[j]).getViewFactory().releaseView(viewRef);
 						}
 					}
 				}

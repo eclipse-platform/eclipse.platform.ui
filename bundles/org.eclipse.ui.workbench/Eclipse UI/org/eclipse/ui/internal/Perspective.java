@@ -22,9 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -45,12 +43,18 @@ import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -259,9 +263,9 @@ private void checkDragLimit(SelectionEvent event) {
  * Returns whether a view exists within the perspective.
  */
 public boolean containsView(IViewPart view) {
-	String id = view.getSite().getId();
-	IViewReference ref = findView(id);
-	if(ref == null)
+    IViewSite site = view.getViewSite();
+    IViewReference ref = findView(site.getId(), site.getSecondaryId());
+    if (ref == null)
 		return false;
 	return (view == ref.getPart(false));
 }
@@ -307,7 +311,7 @@ public void dispose() {
 	// Release each view.
 	IViewReference refs[] = getViewReferences();
 	for (int i = 0,length = refs.length; i < length; i ++) {
-		getViewFactory().releaseView(refs[i].getId());
+		getViewFactory().releaseView(refs[i]);
 	}
 
 	// Dispose of the sash too...
@@ -319,17 +323,34 @@ public void dispose() {
 	mapFastViewToWidthRatio.clear();
 }
 /**
- * See IWorkbenchPage@findView.
+ * Finds the view with the given ID that is open in this page, or <code>null</code>
+ * if not found.
+ * 
+ * @param viewId the view ID
  */
-public IViewReference findView(String id) {
+public IViewReference findView(String viewId) {
+	return findView(viewId, null);
+}
+
+/**
+ * Finds the view with the given id and secondary id that is open in this page, 
+ * or <code>null</code> if not found.
+ * 
+ * @param viewId the view ID
+ * @param secondaryId the secondary ID
+ */
+public IViewReference findView(String id, String secondaryId) {
 	IViewReference refs[] = getViewReferences();
 	for (int i = 0; i < refs.length; i ++) {
 		IViewReference ref = refs[i];
-		if (id.equals(ref.getId()))
+			if (id.equals(ref.getId())
+					&& (secondaryId == null ? ref.getSecondaryId() == null : secondaryId.equals(ref
+							.getSecondaryId())))
 			return ref;
 	}
 	return null;
 }
+
 /**
  * Returns an array of the visible action sets. 
  */
@@ -594,7 +615,7 @@ public boolean hideView(IViewReference ref) {
 	}
 	
 	// Dispose view if ref count == 0.
-	getViewFactory().releaseView(ref.getId());
+	getViewFactory().releaseView(ref);
 	return true;
 }
 /*
@@ -1452,13 +1473,13 @@ public void updateFastViewSashBounds(Rectangle partBounds) {
 	fastViewSash.setBounds(partBounds.x + partBounds.width - 1, partBounds.y + 1, SASH_SIZE, partBounds.height - 2);
 }
 /**
- * See IWorkbenchPage.
+ * Shows the view with the given id and secondary id.
  */
-public IViewPart showView(String viewID) 
+public IViewPart showView(String viewId, String secondaryId) 
 	throws PartInitException 
 {
 	ViewFactory factory = getViewFactory();
-	IViewReference ref = factory.createView(viewID);
+	IViewReference ref = factory.createView(viewId, secondaryId);
 	IViewPart part = (IViewPart)ref.getPart(false);
 	if(part == null) {
 		IStatus status = factory.restoreView(ref);
@@ -1476,7 +1497,7 @@ public IViewPart showView(String viewID)
 	
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	int openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
-	if (presentation.hasPlaceholder(viewID)) {
+	if (presentation.hasPlaceholder(viewId)) {
 		presentation.addPart(pane);
 	} else if (openViewMode == IPreferenceConstants.OVM_EMBED) {
 		presentation.addPart(pane);

@@ -40,6 +40,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 	private static final String ATT_CATEGORY = "category"; //$NON-NLS-1$
 	private static final String ATT_CLASS = "class"; //$NON-NLS-1$
 	private static final String ATT_RATIO = "fastViewWidthRatio"; //$NON-NLS-1$
+	private static final String ATT_MULTIPLE = "allowMultiple"; //$NON-NLS-1$
 	private String label;
 	private String accelerator;
 	private String className;
@@ -47,6 +48,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 	private String[] categoryPath;
 	private String description;
 	private float fastViewWidthRatio;
+	private boolean allowMultiple;
     
 	/**
 	 * Create a new ViewDescriptor for an extension.
@@ -156,7 +158,8 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 		className = configElement.getAttribute(ATT_CLASS);
 		String category = configElement.getAttribute(ATT_CATEGORY);
 		String ratio = configElement.getAttribute(ATT_RATIO);
-
+		String mult = configElement.getAttribute(ATT_MULTIPLE);
+		
 		// Sanity check.
 		if ((label == null) || (className == null)) {
 			throw new CoreException(new Status(IStatus.ERROR, configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(), 0, "Invalid extension (missing label or class name): " + id, //$NON-NLS-1$
@@ -184,6 +187,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 		} else {
 			fastViewWidthRatio = IPageLayout.DEFAULT_FASTVIEW_RATIO;
 		}
+		allowMultiple = mult != null && "true".equalsIgnoreCase(mult); //$NON-NLS-1$
 	}
 	/**
 	 * Returns a string representation of this descriptor. For debugging
@@ -219,4 +223,11 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 	public boolean fromPlugin() {
 		return true;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.registry.IViewDescriptor#getAllowMultiple()
+     */
+    public boolean getAllowMultiple() {
+        return allowMultiple;
+    }
 }

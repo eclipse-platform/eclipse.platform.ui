@@ -694,18 +694,21 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		}
 	}
 	/**
-	 * Opens a view.
+	 * Shows a view.
 	 * 
 	 * Assumes that a busy cursor is active.
 	 */
-	private IViewPart busyShowView(String viewID, boolean activate)
+	private IViewPart busyShowView(
+			String viewID, 
+			String secondaryID, 
+			boolean activate)
 		throws PartInitException {
 		Perspective persp = getActivePerspective();
 		if (persp == null)
 			return null;
 
 		// If this view is already visible just return.
-		IViewReference ref = persp.findView(viewID);
+		IViewReference ref = persp.findView(viewID, secondaryID);
 		IViewPart view = null;
 		if (ref != null)
 			view = ref.getView(true);
@@ -716,7 +719,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		}
 
 		// Show the view.
-		view = persp.showView(viewID);
+		view = persp.showView(viewID, secondaryID);
 		if (view != null) {
 			zoomOutIfNecessary(view);
 			if (activate)
@@ -1243,14 +1246,22 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#findViewReference(java.lang.String)
+	 * @see org.eclipse.ui.IWorkbenchPage
 	 */
 	public IViewReference findViewReference(String viewId) {
+	    return findViewReference(viewId, null);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPage
+	 */
+	public IViewReference findViewReference(String viewId, String secondaryId) {
 		Perspective persp = getActivePerspective();
 		if (persp == null)
 			return null;
-		return persp.findView(viewId);
+		return persp.findView(viewId, secondaryId);
 	}
+
 	/**
 	 * Fire part activation out.
 	 */
@@ -2791,21 +2802,37 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	/**
 	 * See IWorkbenchPage.
 	 */
-	public IViewPart showView(final String viewID) throws PartInitException {
-		return showView(viewID, true);
+	public IViewPart showView(String viewID) throws PartInitException {
+		return showView(viewID, null, true);
 	}
 
 	/**
 	 * See IWorkbenchPage.
 	 */
-	private IViewPart showView(final String viewID, final boolean activate)
+	public IViewPart showView(
+			String viewID, 
+			String secondaryId) throws PartInitException {
+		return showView(viewID, secondaryId, true);
+	}
+
+	/**
+	 * See IWorkbenchPage.
+	 */
+	private IViewPart showView(String viewID, boolean activate)
 		throws PartInitException {
+		return showView(viewID, null, activate);
+	}
+	
+	private IViewPart showView(
+			final String viewID, 
+			final String secondaryID, 
+			final boolean activate) throws PartInitException {
 		// Run op in busy cursor.
 		final Object[] result = new Object[1];
 		BusyIndicator.showWhile(null, new Runnable() {
 			public void run() {
 				try {
-					result[0] = busyShowView(viewID, activate);
+					result[0] = busyShowView(viewID, secondaryID, activate);
 				} catch (PartInitException e) {
 					result[0] = e;
 				}

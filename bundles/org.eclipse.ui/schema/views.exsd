@@ -147,6 +147,13 @@ If no value is supplied, a default ratio will be used.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="allowMultiple" type="boolean">
+            <annotation>
+               <documentation>
+                  flag indicating whether this view allows multiple instances to be created using IWorkbenchPage.showView(String id, String secondaryId).  The default is false.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

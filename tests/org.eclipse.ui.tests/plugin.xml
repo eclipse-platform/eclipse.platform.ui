@@ -80,6 +80,13 @@
             id="org.eclipse.ui.tests.api.MockViewPart4">
       </view>      
       <view
+            name="Mock View Mult"
+            icon="icons\view.gif"
+            class="org.eclipse.ui.tests.api.MockViewPart"
+            id="org.eclipse.ui.tests.api.MockViewPartMult"
+            allowMultiple="true">
+      </view>      
+      <view
             name="Session Test View"
             icon="icons\view.gif"
             class="org.eclipse.ui.tests.api.SessionView"

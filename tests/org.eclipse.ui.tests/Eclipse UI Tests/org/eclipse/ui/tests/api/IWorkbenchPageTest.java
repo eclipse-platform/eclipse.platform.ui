@@ -25,6 +25,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPage;
@@ -185,6 +186,73 @@ public class IWorkbenchPageTest extends UITestCase {
 		callTrace.clear();
 		assertEquals(fActivePage.showView(MockViewPart.ID), view);
 		assertEquals(callTrace.contains("setFocus"), true);
+	}
+
+	public void testShowViewMult() throws Throwable {
+		/*
+			javadoc: Shows the view identified by the given view id and secondary id 
+			  in this page and gives it focus. 
+			  This allows multiple instances of a particular view to be created.  
+			  They are disambiguated using the secondary id.
+		*/
+		MockViewPart view =
+			(MockViewPart) fActivePage.showView(MockViewPart.IDMULT);
+		assertNotNull(view);
+		assertTrue(
+			view.getCallHistory().verifyOrder(
+				new String[] { "init", "createPartControl", "setFocus" }));
+		MockViewPart view2 =
+			(MockViewPart) fActivePage.showView(MockViewPart.IDMULT, "2");
+		assertNotNull(view2);
+		assertTrue(
+			view2.getCallHistory().verifyOrder(
+				new String[] { "init", "createPartControl", "setFocus" }));
+		assertTrue(!view.equals(view2));
+		MockViewPart view3 =
+			(MockViewPart) fActivePage.showView(MockViewPart.IDMULT, "3");
+		assertNotNull(view3);
+		assertTrue(
+			view3.getCallHistory().verifyOrder(
+				new String[] { "init", "createPartControl", "setFocus" }));
+		assertTrue(!view.equals(view3));
+		assertTrue(!view2.equals(view3));
+
+		/*
+			javadoc: If there is a view identified by the given view id and 
+			  secondary id already open in this page, it is given focus.
+		*/
+		CallHistory callTrace = view.getCallHistory();
+		callTrace.clear();
+		assertEquals(fActivePage.showView(MockViewPart.IDMULT), view);
+		assertEquals(callTrace.contains("setFocus"), true);
+		CallHistory callTrace2 = view2.getCallHistory();
+		callTrace.clear();
+		callTrace2.clear();
+		assertEquals(fActivePage.showView(MockViewPart.IDMULT, "2"), view2);
+		assertEquals(callTrace2.contains("setFocus"), true);
+		assertEquals(callTrace.contains("setFocus"), false);
+		CallHistory callTrace3 = view3.getCallHistory();
+		callTrace.clear();
+		callTrace2.clear();
+		callTrace3.clear();
+		assertEquals(fActivePage.showView(MockViewPart.IDMULT, "3"), view3);
+		assertEquals(callTrace3.contains("setFocus"), true);
+		assertEquals(callTrace.contains("setFocus"), false);
+		assertEquals(callTrace2.contains("setFocus"), false);
+		
+		/*
+		    javadoc: If a secondary id is given, the view must allow multiple instances by
+		      having specified allowMultiple="true" in its extension.
+		*/
+		boolean exceptionThrown = false;
+		try {
+		    fActivePage.showView(MockViewPart.ID, "2");
+		}
+		catch (PartInitException e) {
+		    assertEquals(e.getMessage().indexOf("mult") != -1, true);
+		    exceptionThrown = true;
+		}
+		assertEquals(exceptionThrown, true);
 	}
 
 	/**

@@ -47,9 +47,14 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 
 	private class ViewReference extends WorkbenchPartReference implements IViewReference {
 
-		boolean create = true;
+		private String secondaryId;
+		private boolean create = true;
 
 		public ViewReference(String id) {
+			this(id, null);
+		}
+		
+		public ViewReference(String id, String secondaryId) {
 			ViewDescriptor desc = (ViewDescriptor) viewReg.find(id);
 			ImageDescriptor iDesc = null;
 			String title = null;
@@ -58,6 +63,7 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 				title = desc.getLabel();
 			}
 			init(id, title, null, iDesc);
+			this.secondaryId = secondaryId;
 		}
 		
 		/* (non-Javadoc)
@@ -99,7 +105,7 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 			}
 			return part;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.internal.WorkbenchPartReference#getRegisteredName()
 		 */
@@ -114,6 +120,13 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 			return getTitle();
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.IViewReference
+		 */
+		public String getSecondaryId() {
+			return secondaryId;
+		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.IViewReference#getView(boolean)
 		 */
@@ -200,7 +213,7 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 				}
 
 				// Create site
-				ViewSite site = new ViewSite(view, page, desc);
+				ViewSite site = new ViewSite(ref, view, page, desc);
 				try {
 					try {
 						UIStats.start(UIStats.INIT_PART, label);
@@ -209,13 +222,13 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 						UIStats.end(UIStats.INIT_PART, label);
 					}
 				} catch (PartInitException e) {
-					releaseView(viewID);
+					releaseView(ref);
 					result[0] = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.format("Perspective.exceptionRestoringView", new String[] { viewID }), //$NON-NLS-1$
 					e);
 					return;
 				}
 				if (view.getSite() != site) {
-					releaseView(viewID);
+					releaseView(ref);
 					result[0] = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.format("ViewFactory.siteException", new Object[] { desc.getID()}), //$NON-NLS-1$
 					null);
 					return;
@@ -246,25 +259,46 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 	 * to getView.
 	 */
 	public IViewReference createView(final String id) throws PartInitException {
+	    return createView(id, null);
+	}
+
+	/**
+	 * Creates an instance of a view defined by id and secondary id.
+	 * 
+	 * This factory implements reference counting.  The first call to this
+	 * method will return a new view.  Subsequent calls will return the
+	 * first view with an additional reference count.  The view is
+	 * disposed when releaseView is called an equal number of times
+	 * to createView.
+	 */
+	public IViewReference createView(String id, String secondaryId) throws PartInitException {
 		IViewDescriptor desc = viewReg.find(id);
+		// ensure that the view id is valid
 		if (desc == null)
 			throw new PartInitException(WorkbenchMessages.format("ViewFactory.couldNotCreate", new Object[] { id })); //$NON-NLS-1$
-		IViewReference ref = (IViewReference) counter.get(desc);
+		// ensure that multiple instances are allowed if a secondary id is given
+		if (secondaryId != null) {
+		    if (!desc.getAllowMultiple()) {
+				throw new PartInitException(WorkbenchMessages.format("ViewFactory.noMultiple", new Object[] { id })); //$NON-NLS-1$
+		    }
+		}
+		String key = getKey(id, secondaryId);
+		IViewReference ref = (IViewReference) counter.get(key);
 		if (ref == null) {
-			ref = new ViewReference(id);
-			counter.put(desc, ref);
+			ref = new ViewReference(id, secondaryId);
+			counter.put(key, ref);
 		} else {
-			counter.addRef(desc);
+			counter.addRef(key);
 		}
 		return ref;
 	}
-	
-	/**
+
+    /**
 	 * Remove a view rec from the manager.
 	 *
 	 * The IViewPart.dispose method must be called at a higher level.
 	 */
-	private void destroyView(IViewDescriptor desc, IViewPart view) {
+	private void destroyView(IViewPart view) {
 		// Free action bars, pane, etc.
 		PartSite site = (PartSite) view.getSite();
 		ViewActionBars actionBars = (ViewActionBars) site.getActionBars();
@@ -277,11 +311,29 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 	}
 	
 	/**
+     * Returns the key to use in the ReferenceCounter.
+     * 
+     * @param id the primary view id
+     * @param secondaryId the secondary view id or <code>null</code>
+     * @return the key to use in the ReferenceCounter
+     */
+    private String getKey(String id, String secondaryId) {
+        return secondaryId == null ? id : id + '/' + secondaryId;
+    }
+
+	/**
 	 * Returns the view with the given id, or <code>null</code> if not found.
 	 */
 	public IViewReference getView(String id) {
-		IViewDescriptor desc = viewReg.find(id);
-		return (IViewReference) counter.get(desc);
+	    return getView(id, null);
+	}
+
+	/**
+	 * Returns the view with the given id and secondary id, or <code>null</code> if not found.
+	 */
+	public IViewReference getView(String id, String secondaryId) {
+	    String key = getKey(id, secondaryId);
+		return (IViewReference) counter.get(key);
 	}
 
 	/**
@@ -298,9 +350,7 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 	public IViewReference[] getViews() {
 		List list = counter.values();
 		IViewReference[] array = new IViewReference[list.size()];
-		for (int i = 0; i < array.length; i++) {
-			array[i] = (IViewReference) list.get(i);
-		}
+		list.toArray(array);
 		return array;
 	}
 	
@@ -316,27 +366,25 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 	 * Returns whether a view with the given id exists.
 	 */
 	public boolean hasView(String id) {
-		IViewDescriptor desc = viewReg.find(id);
-		Object view = counter.get(desc);
-		return (view != null);
+	    return getView(id) != null;
 	}
 	
 	/**
-	 * Releases an instance of a view defined by id.
+	 * Releases an instance of a view.
 	 *
 	 * This factory does reference counting.  For more info see
 	 * getView.
 	 */
-	public void releaseView(String id) {
-		IViewDescriptor desc = viewReg.find(id);
-		IViewReference ref = (IViewReference) counter.get(desc);
+	public void releaseView(IViewReference viewRef) {
+	    String key = getKey(viewRef.getId(), viewRef.getSecondaryId());
+		IViewReference ref = (IViewReference) counter.get(key);
 		if (ref == null)
 			return;
-		int count = counter.removeRef(desc);
+		int count = counter.removeRef(key);
 		if (count <= 0) {
 			IViewPart view = (IViewPart) ref.getPart(false);
 			if (view != null)
-				destroyView(desc, view);
+				destroyView(view);
 		}
 	}
 	

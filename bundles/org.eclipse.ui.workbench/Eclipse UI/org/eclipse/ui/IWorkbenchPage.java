@@ -228,6 +228,17 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	 */	
 	public IViewReference findViewReference(String viewId);
 	/**
+	 * Returns the view reference with the specified id and secondary id. 
+	 * 
+	 * @param viewId
+	 *            the id of the view extension to use
+	 * @param secondaryId
+	 *            the secondary id to use, or <code>null</code> for no secondary id
+	 * @return the view reference, or <code>null</code> if none is found
+	 * @since 3.0
+	 */	
+	public IViewReference findViewReference(String viewId, String secondaryId);
+	/**
 	 * Returns the active editor open in this page.
 	 * <p>
 	 * This is the visible editor on the page, or, if there is more than one
@@ -566,24 +577,41 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	 */
 	public void showActionSet(String actionSetID);
 	/**
-	 * Shows a view in this page and give it focus. If the view is already
-	 * visible, it is given focus.
-	 * <p>
-	 * The view type is determined by mapping <code>viewId</code> to a view
-	 * extension registered with the workbench. A view id is passed rather than
-	 * a view object to prevent the accidental creation of more than one view
-	 * of a particular type. It also guarantees a consistent lifecycle for
-	 * views, regardless of whether they are created by the user or restored
-	 * from saved data.
-	 * </p>
+	 * Shows the view identified by the given view id in this page and gives it 
+	 * focus.  If there is a view identified by the given view id (and with no 
+	 * secondary id) already open in this page, it is given focus.
 	 * 
 	 * @param viewId
 	 *            the id of the view extension to use
-	 * @return a view
+	 * @return the shown view
 	 * @exception PartInitException
 	 *                if the view could not be initialized
 	 */
 	public IViewPart showView(String viewId) throws PartInitException;
+
+	/**
+	 * Shows the view identified by the given view id and secondary id in this 
+	 * page and gives it focus.  If there is a view identified by the given 
+	 * view id and secondary id already open in this page, it is given focus.
+	 * <p>
+	 * This allows multiple instances of a particular view to be created.
+	 * They are disambiguated using the secondary id.
+	 * If a secondary id is given, the view must allow multiple instances by
+	 * having specified allowMultiple="true" in its extension.
+	 * </p>
+	 * 
+	 * @param viewId
+	 *            the id of the view extension to use
+	 * @param secondaryId
+	 *            the secondary id to use, or <code>null</code> for no secondary id
+	 * @return the shown view
+	 * @exception PartInitException
+	 *                if the view could not be initialized
+     * @since 3.0
+	 */
+	public IViewPart showView(String viewId, String secondaryId)
+			throws PartInitException;
+	
 	/**
 	 * Returns true if the editor is pinned and should not be reused.
 	 * 

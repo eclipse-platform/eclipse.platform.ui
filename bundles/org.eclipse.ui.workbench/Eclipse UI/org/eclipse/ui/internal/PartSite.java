@@ -29,6 +29,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
@@ -62,6 +63,7 @@ import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
  */
 public class PartSite implements IWorkbenchPartSite {
 
+    private IWorkbenchPartReference partReference;
 	private IWorkbenchPart part;
 	private IWorkbenchPage page;
 	private PartPane pane;
@@ -77,7 +79,8 @@ public class PartSite implements IWorkbenchPartSite {
 	/**
 	 * EditorContainer constructor comment.
 	 */
-	public PartSite(IWorkbenchPart part, IWorkbenchPage page) {
+	public PartSite(IWorkbenchPartReference ref, IWorkbenchPart part, IWorkbenchPage page) {
+	    this.partReference = ref;
 		this.part = part;
 		this.page = page;
 		extensionID = "org.eclipse.ui.UnknownID"; //$NON-NLS-1$
@@ -140,6 +143,12 @@ public class PartSite implements IWorkbenchPartSite {
 	 */
 	public IWorkbenchPart getPart() {
 		return part;
+	}
+	/**
+	 * Returns the part reference.
+	 */
+	public IWorkbenchPartReference getPartReference() {
+		return partReference;
 	}
 	/**
 	 * Returns the part registry plugin ID.  It cannot be <code>null</code>.
