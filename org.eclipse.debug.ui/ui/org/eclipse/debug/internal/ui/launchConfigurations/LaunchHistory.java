@@ -335,7 +335,6 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 			ILaunchConfiguration[] history = getHistory();
 			for (int i = 0; i < history.length; i++) {
 				if (history[i].getName().equals(movedFromName)) {
-					history[i]= configuration;
 					if (i == 0) {
 						fRecentLaunch= configuration;
 					}

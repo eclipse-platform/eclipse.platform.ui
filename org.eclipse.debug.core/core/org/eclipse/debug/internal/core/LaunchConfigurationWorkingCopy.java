@@ -216,13 +216,13 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			ILaunchConfiguration from = getOriginal();
 			getLaunchManager().setMovedFromTo(from, to);
 		}
-		// write the new file
-		writeNewFile();
 		// delete the old file if this is not a new configuration
 		// or the file was renamed/moved
 		if (moved) {
 			getOriginal().delete();
 		}
+		// write the new file
+		writeNewFile();
 		resetDirty();
 	}
 
