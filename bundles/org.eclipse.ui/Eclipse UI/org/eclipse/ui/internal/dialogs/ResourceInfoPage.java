@@ -5,19 +5,19 @@ package org.eclipse.ui.internal.dialogs;
  * All Rights Reserved.
  */
 import java.io.File;
-import java.text.*;
+import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -63,6 +63,8 @@ public class ResourceInfoPage extends PropertyPage {
  * @return the composite for the group
  */
 private Composite createBasicInfoGroup(Composite parent, IResource resource) {
+	
+	Font font = parent.getFont();
 
 	Composite basicInfoComposite = new Composite(parent, SWT.NULL);
 	GridLayout layout = new GridLayout();
@@ -74,6 +76,7 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 	data.verticalAlignment = GridData.FILL;
 	data.horizontalAlignment = GridData.FILL;
 	basicInfoComposite.setLayoutData(data);
+	basicInfoComposite.setFont(font);
 
 	//The group for path
 	Label pathLabel = new Label(basicInfoComposite, SWT.NONE);
@@ -81,6 +84,7 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 	GridData gd = new GridData();
 	gd.verticalAlignment = SWT.TOP;
 	pathLabel.setLayoutData(gd);
+	pathLabel.setFont(font);
 	
 	// path value label
 	Text pathValueText = new Text(basicInfoComposite, SWT.WRAP | SWT.READ_ONLY);
@@ -88,12 +92,16 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 	gd = new GridData();
 	gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
 	pathValueText.setLayoutData(gd);
+	pathValueText.setFont(font);
 	
 	//The group for types
 	Label typeTitle = new Label(basicInfoComposite, SWT.LEFT);
 	typeTitle.setText(TYPE_TITLE);
+	typeTitle.setFont(font);
+	
 	Text typeValue = new Text(basicInfoComposite, SWT.LEFT | SWT.READ_ONLY);
 	typeValue.setText(getTypeString(resource));
+	typeValue.setFont(font);
 
 	//The group for location
 	Label locationTitle = new Label(basicInfoComposite, SWT.LEFT);
@@ -101,18 +109,25 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 	gd = new GridData();
 	gd.verticalAlignment = SWT.TOP;
 	locationTitle.setLayoutData(gd);
+	locationTitle.setFont(font);
+	
+	
 	Text locationValue = new Text(basicInfoComposite, SWT.WRAP | SWT.READ_ONLY);
 	locationValue.setText(getLocationText(resource));
 	gd = new GridData();
 	gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
 	locationValue.setLayoutData(gd);
+	locationValue.setFont(font);
 	
 	if (resource.getType() == IResource.FILE) {
 		//The group for size
 		Label sizeTitle = new Label(basicInfoComposite, SWT.LEFT);
 		sizeTitle.setText(SIZE_TITLE);
+		sizeTitle.setFont(font);
+		
 		Text sizeValue = new Text(basicInfoComposite, SWT.LEFT | SWT.READ_ONLY);
 		sizeValue.setText(MessageFormat.format(BYTES_LABEL, new Object[] {getSizeString((IFile) resource)}));
+		sizeValue.setFont(font);
 	}
 
 	return basicInfoComposite;
@@ -136,6 +151,7 @@ protected Control createContents(Composite parent) {
 	GridData data = new GridData(GridData.FILL);
 	data.grabExcessHorizontalSpace = true;
 	composite.setLayoutData(data);
+	composite.setFont(parent.getFont());
 
 	createBasicInfoGroup(composite, resource);
 	createSeparator(composite);
@@ -159,6 +175,7 @@ private void createEditableButton(Composite composite) {
 			readOnlyValue = editableBox.getSelection();
 		}
 	});
+	this.editableBox.setFont(composite.getFont());
 	GridData data = new GridData();
 	data.horizontalSpan = 2;
 	this.editableBox.setLayoutData(data);
@@ -181,6 +198,7 @@ private void createDerivedButton(Composite composite) {
 		}
 	});
 	
+	this.derivedBox.setFont(composite.getFont());
 	GridData data = new GridData();
 	data.horizontalSpan = 2;
 	this.derivedBox.setLayoutData(data);
@@ -206,6 +224,8 @@ private void createSeparator(Composite composite) {
  * @param resource the resource the information is being taken from.
  */
 private void createStateGroup(Composite parent, IResource resource) {
+	
+	Font font = parent.getFont();
 
 	Composite composite = new Composite(parent, SWT.NULL);
 	GridLayout layout = new GridLayout();
@@ -216,13 +236,16 @@ private void createStateGroup(Composite parent, IResource resource) {
 	GridData data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	composite.setLayoutData(data);
+	composite.setFont(font);
 
 	Label timeStampLabel = new Label(composite, SWT.NONE);
 	timeStampLabel.setText(TIMESTAMP_TITLE);
+	timeStampLabel.setFont(font);
 
 	// path value label
 	Text timeStampValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 	timeStampValue.setText(getDateStringValue(resource));
+	timeStampValue.setFont(font);
 
 	createEditableButton(composite);
 	
