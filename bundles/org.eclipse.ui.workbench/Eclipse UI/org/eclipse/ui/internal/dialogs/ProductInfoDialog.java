@@ -300,42 +300,62 @@ private Process openWebBrowser(String href) throws IOException{
 }
 
 /**
+ * display an error message
+ */
+private void openWebBrowserError(Display display) {
+	display.asyncExec(new Runnable() {
+		public void run() {
+			MessageDialog.openError(getShell(), WorkbenchMessages.getString("ProductInfoDialog.errorTitle"), //$NON-NLS-1$
+			WorkbenchMessages.getString("ProductInfoDialog.unableToOpenWebBrowser")); //$NON-NLS-1$
+		}
+	});
+}
+/**
  * Open a link
  */
-protected void openLink(final String href) {
+protected void openLink(String href) {
+	// format the href for an html file (file:///<filename.html>
+	// required for Mac only.
+	if (href.startsWith("file:")) { //$NON-NLS-1$
+		href = href.substring(5);
+		while (href.startsWith("/")) { //$NON-NLS-1$
+			href = href.substring(1);
+		}
+		href = "file:///" + href; //$NON-NLS-1$
+	}
+	final String localHref = href;
+	
 	final Display d = Display.getCurrent();
-	if (SWT.getPlatform().equals("win32")) { //$NON-NLS-1$
-		Program.launch(href);
+	String platform = SWT.getPlatform();
+	
+	if ("win32".equals(platform)) { //$NON-NLS-1$
+		Program.launch(localHref);
+	} else if ("carbon".equals(platform)) { //$NON-NLS-1$
+		try {
+			Runtime.getRuntime().exec("/usr/bin/open " + localHref); //$NON-NLS-1$
+		} catch (IOException e) {
+			openWebBrowserError(d);
+		}
 	} else {
 		Thread launcher = new Thread("About Link Launcher") {//$NON-NLS-1$
 			public void run() {
 				try {
 					if (webBrowserOpened) {
-						Runtime.getRuntime().exec(webBrowser + " -remote openURL(" + href + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+						Runtime.getRuntime().exec(webBrowser + " -remote openURL(" + localHref + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
-						Process p = openWebBrowser(href);
+						Process p = openWebBrowser(localHref);
 						webBrowserOpened = true;
 						try {
 							if (p != null)
 								p.waitFor();
 						} catch (InterruptedException e) {
-							d.asyncExec(new Runnable() {
-								public void run() {
-									MessageDialog.openError(getShell(), WorkbenchMessages.getString("ProductInfoDialog.errorTitle"), //$NON-NLS-1$
-									WorkbenchMessages.getString("ProductInfoDialog.unableToOpenWebBrowser")); //$NON-NLS-1$
-								}
-							});
+							openWebBrowserError(d);
 						} finally {
 							webBrowserOpened = false;
 						}
 					}
 				} catch (IOException e) {
-					d.asyncExec(new Runnable() {
-						public void run() {
-							MessageDialog.openError(getShell(), WorkbenchMessages.getString("ProductInfoDialog.errorTitle"), //$NON-NLS-1$
-							WorkbenchMessages.getString("ProductInfoDialog.unableToOpenWebBrowser")); //$NON-NLS-1$
-						}
-					});
+					openWebBrowserError(d);
 				}
 			}
 		};
