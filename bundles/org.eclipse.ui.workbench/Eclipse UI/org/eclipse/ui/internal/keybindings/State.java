@@ -8,133 +8,77 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 package org.eclipse.ui.internal.keybindings;
 
-import org.eclipse.ui.IMemento;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 final class State implements Comparable {
 
+	final static int MAXIMUM_PATHS = 8;
 	final static String ELEMENT = "state";
 
-	static State create(Configuration configuration, Locale locale, 
-		Platform platform, Scope scope)
+	static State create(Path configuration, Path locale, Path platform, Path scope)
 		throws IllegalArgumentException {
-		return new State(configuration, locale, platform, scope);
+		List paths = new ArrayList();
+		paths.add(scope);			
+		paths.add(configuration);
+		paths.add(platform);
+		paths.add(locale);
+		return new State(paths);
 	}
 
-	static State read(IMemento memento)
-		throws IllegalArgumentException {
-		if (memento == null)
-			throw new IllegalArgumentException();
-		
-		Configuration configuration = 
-			Configuration.read(memento.getChild(Configuration.ELEMENT));
-		Locale locale = Locale.read(memento.getChild(Locale.ELEMENT));
-		Platform platform = Platform.read(memento.getChild(Platform.ELEMENT));
-		Scope scope = Scope.read(memento.getChild(Scope.ELEMENT));
-		return State.create(configuration, locale, platform, scope);
-	}
+	private List paths;
 
-	//private List paths;
-
-	private Configuration configuration;
-	private Locale locale;
-	private Platform platform;
-	private Scope scope;
-
-	private State(Configuration configuration, Locale locale, 
-		Platform platform, Scope scope)
+	private State(List paths)
 		throws IllegalArgumentException {
 		super();
-
-		if (configuration == null || locale == null || platform == null || 
-			scope == null)
+		
+		if (paths == null)
 			throw new IllegalArgumentException();
 		
-		this.configuration = configuration;
-		this.locale = locale;
-		this.platform = platform;
-		this.scope = scope;
-	}
-	
-	Configuration getConfiguration() {
-		return configuration;	
-	}
-	
-	Locale getLocale() {
-		return locale;	
-	}
-	
-	Platform getPlatform() {
-		return platform;
-	}
-	
-	Scope getScope() {
-		return scope;
-	}
-	
-	int match(State state) {
-		int configurationMatch = configuration.match(state.configuration);
+		this.paths = Collections.unmodifiableList(new ArrayList(paths));
 		
-		if (configurationMatch == -1)
-			return -1;
-			
-		int localeMatch = locale.match(state.locale);
+		if (this.paths.size() >= MAXIMUM_PATHS)
+			throw new IllegalArgumentException();
 		
-		if (localeMatch == -1)
-			return -1;
+		Iterator iterator = this.paths.iterator();
+		
+		while (iterator.hasNext())
+			if (!(iterator.next() instanceof Path))
+				throw new IllegalArgumentException();
+	}
 
-		int platformMatch = platform.match(state.platform);
+	List getPaths() {
+		return paths;	
+	}
+
+	int match(State state) {
+		int match = 0;
 		
-		if (platformMatch == -1)
-			return -1;
+		for (int i = 0; i < paths.size(); i++) {
+			int path = ((Path) paths.get(i)).match((Path) state.paths.get(i)); 
 			
-		int scopeMatch = scope.match(state.scope);
+			if (path == -1 || path >= 16)
+				return -1;	
+			else 
+				match += path << (MAXIMUM_PATHS - 1 - i) * 8;
+		}		
 		
-		if (scopeMatch == -1)
-			return -1;		
-				
-		return (scopeMatch << 24) + (configurationMatch << 16) + 
-			(platformMatch << 8) + (localeMatch);
+		return match;
 	}
 
 	public int compareTo(Object object) {
 		if (!(object instanceof State))
 			throw new ClassCastException();	
 		
-		State state = (State) object;
-		int compareTo = configuration.compareTo(state.configuration);
-		
-		if (compareTo == 0) {
-			compareTo = locale.compareTo(state.locale);
-			
-			if (compareTo == 0) {
-				compareTo = platform.compareTo(state.platform);	
-				
-				if (compareTo == 0)
-					compareTo = scope.compareTo(state.scope);
-			}
-		}
-		
-		return compareTo;
+		return Util.compare(paths.iterator(), ((State) object).paths.iterator());
 	}
 	
 	public boolean equals(Object object) {
 		if (!(object instanceof State)) 
 			return false;
 		
-		State state = (State) object;
-		return configuration.equals(state.configuration) && 
-			locale.equals(state.locale) && platform.equals(state.platform) && 
-			scope.equals(state.scope);
-	}
-
-	void write(IMemento memento)
-		throws IllegalArgumentException {
-		if (memento == null)
-			throw new IllegalArgumentException();	
-			
-		configuration.write(memento.createChild(Configuration.ELEMENT));
-		locale.write(memento.createChild(Locale.ELEMENT));
-		platform.write(memento.createChild(Platform.ELEMENT));
-		scope.write(memento.createChild(Scope.ELEMENT));
+		return paths.equals(((State) object).paths); 
 	}
 }

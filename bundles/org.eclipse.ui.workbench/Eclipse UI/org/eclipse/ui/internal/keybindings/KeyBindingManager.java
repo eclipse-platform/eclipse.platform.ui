@@ -20,6 +20,7 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.Accelerator;
 import org.eclipse.ui.internal.registry.AcceleratorConfiguration;
@@ -31,6 +32,7 @@ public final class KeyBindingManager {
 
 	private final static String KEY_SEQUENCE_SEPARATOR = ", ";
 	private final static String KEY_STROKE_SEPARATOR = " ";
+	private final static String LOCALE_SEPARATOR = "_";
 
 	private static KeyBindingManager instance;
 
@@ -41,25 +43,150 @@ public final class KeyBindingManager {
 		return instance;	
 	}
 	
-	private SortedMap configurationMap = new TreeMap();
-	private SortedMap scopeMap = new TreeMap();
-
-	private List bindings = new ArrayList();
-	private SortedMap tree = new TreeMap();
+	private static SortedMap buildConfigurationMap() {
+		AcceleratorRegistry acceleratorRegistry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();	
+		return buildConfigurationMap(acceleratorRegistry.getAcceleratorConfigurations());	
+	}
 	
-	private Configuration configuration = Configuration.create();
-	private Locale locale = Locale.system();
-	private Platform platform = Platform.system();
-	private Scope[] scopes = new Scope[] { Scope.create() };
+	private static SortedMap buildConfigurationMap(Map acceleratorConfigurations) {
+		SortedMap configurations = new TreeMap();
+		Iterator iterator = acceleratorConfigurations.keySet().iterator();
 
-	private KeySequence mode = KeySequence.create();
-	private SortedMap actionKeySequenceSetMap;
-	private SortedMap keySequenceActionMap;
-	private SortedMap actionKeySequenceSetMapForMode;
-	private SortedMap keySequenceActionMapForMode;
-	private SortedSet keyStrokeSetForMode;
+		while (iterator.hasNext()) {
+			String id = (String) iterator.next();
+			Path path = pathForConfigurationId(id, acceleratorConfigurations);
+			
+			if (path != null)
+				configurations.put(id, path);
+		}
 
-	static int[][] getAccelerators(String key) {
+		return configurations;		
+	}
+
+	private static Path pathForConfigurationId(String id, Map acceleratorConfigurations) {
+		Path path = null;
+
+		if (id != null) {
+			List pathItems = new ArrayList();
+
+			while (id != null) {	
+				if (pathItems.contains(id))
+					return null;
+							
+				AcceleratorConfiguration acceleratorConfiguration = (AcceleratorConfiguration) acceleratorConfigurations.get(id);
+				
+				if (acceleratorConfiguration == null)
+					return null;
+							
+				pathItems.add(0, PathItem.create(id));
+				id = acceleratorConfiguration.getParentId();
+			}
+		
+			path = Path.create(pathItems);
+		}
+		
+		return path;			
+	}	
+
+	private static SortedMap buildScopeMap() {
+		AcceleratorRegistry acceleratorRegistry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();	
+		return buildScopeMap(acceleratorRegistry.getAcceleratorScopes());	
+	}
+	
+	private static SortedMap buildScopeMap(Map acceleratorScopes) {
+		SortedMap scopes = new TreeMap();
+		Iterator iterator = acceleratorScopes.keySet().iterator();
+
+		while (iterator.hasNext()) {
+			String id = (String) iterator.next();
+			Path path = pathForScopeId(id, acceleratorScopes);
+			
+			if (path != null)
+				scopes.put(id, path);
+		}
+
+		return scopes;		
+	}
+
+	private static Path pathForScopeId(String id, Map acceleratorScopes) {
+		Path path = null;
+		
+		if (id != null) {
+			List pathItems = new ArrayList();
+
+			while (id != null) {	
+				if (pathItems.contains(id))
+					return null;
+							
+				AcceleratorScope acceleratorScope = (AcceleratorScope) acceleratorScopes.get(id);
+				
+				if (acceleratorScope == null)
+					return null;
+							
+				pathItems.add(0, PathItem.create(id));
+				id = acceleratorScope.getParentId();
+			}
+		
+			path = Path.create(pathItems);
+		}
+		
+		return path;	
+	}	
+
+	private static Path pathForLocale(String locale) {
+		Path path = null;
+
+		if (locale != null) {
+			List pathItems = new ArrayList();				
+			locale = locale.trim();
+			
+			if (locale.length() > 0) {
+				StringTokenizer st = new StringTokenizer(locale, LOCALE_SEPARATOR);
+						
+				while (st.hasMoreElements()) {
+					String value = ((String) st.nextElement()).trim();
+					
+					if (value != null)
+						pathItems.add(PathItem.create(value));
+				}
+			}
+
+			path = Path.create(pathItems);
+		}
+			
+		return path;		
+	}
+
+	private static Path systemLocale() {
+		java.util.Locale locale = java.util.Locale.getDefault();
+		return locale != null ? pathForLocale(locale.toString()) : null;
+	}
+
+	private static Path pathForPlatform(String platform) {
+		Path path = null;
+
+		if (platform != null) {
+			List pathItems = new ArrayList();				
+			platform = platform.trim();
+			
+			if (platform.length() > 0) {
+				pathItems.add(PathItem.create(platform));
+			}
+
+			path = Path.create(pathItems);
+		}
+			
+		return path;		
+	}
+
+	private static Path systemPlatform() {
+		return pathForPlatform(SWT.getPlatform());
+	}
+
+
+
+
+	private static int[][] getAccelerators(String key) {
 		List accelerators = new ArrayList(1);
 		StringTokenizer orTokenizer = new StringTokenizer(key,"||"); //$NON-NLS-1$
 		
@@ -86,164 +213,100 @@ public final class KeyBindingManager {
 		return result;
 	}
 	
-	static String[] parseLocale(String locale) {
-		final String EMPTY = ""; //$NON-NLS-1$
-		
-		//Parse language
-		String localeArray[] = {EMPTY, EMPTY, EMPTY};
-		
-		int index = locale.indexOf("_"); //$NON-NLS-1$
-		
-		if (index < 0) {
-			localeArray[0] = locale;
-			return localeArray;
-		} else if(index >= 0) {
-			localeArray[0] = locale.substring(0,index);
-		}
-		
-		if (index + 1 >= locale.length())
-			return localeArray;
-		
-		//Parse country
-		int newIndex = locale.indexOf("_",index + 1); //$NON-NLS-1$
-		
-		if (newIndex < 0) {
-			localeArray[1] = locale.substring(index + 1);
-			return localeArray;
-		} else if(newIndex > 0) {
-			localeArray[1] = locale.substring(index + 1,newIndex);
-		}
-		
-		index = newIndex;
-		
-		if(index + 1 >= locale.length())
-			return localeArray;
-		
-		//Parse variant
-		newIndex = locale.indexOf("_",index + 1); //$NON-NLS-1$
-		
-		if(newIndex < 0) {
-			localeArray[2] = locale.substring(index + 1);
-			return localeArray;
-		} else if(newIndex > 0) {
-			localeArray[2] = locale.substring(index + 1,newIndex);
-		}
-		
-		return localeArray;
-	}
 
+
+	
+	private SortedMap configurationMap;
+	private SortedMap scopeMap;
+
+	private List bindings = new ArrayList();
+	private SortedMap tree = new TreeMap();
+	
+	private Path configuration = Path.create();
+	private Path locale = systemLocale();
+	private Path platform = systemPlatform();
+	private Path[] scopes = new Path[] { Path.create() };
+
+	private KeySequence mode = KeySequence.create();
+	private SortedMap actionKeySequenceSetMap;
+	private SortedMap keySequenceActionMap;
+	private SortedMap actionKeySequenceSetMapForMode;
+	private SortedMap keySequenceActionMapForMode;
+	private SortedSet keyStrokeSetForMode;
 
 	private KeyBindingManager() {
-		super();				
-		AcceleratorRegistry acceleratorRegistry = 
-			WorkbenchPlugin.getDefault().getAcceleratorRegistry();				
-		AcceleratorConfiguration[] acceleratorConfigurations = 
-			acceleratorRegistry.getConfigurations();
-			
-		for (int i = 0; i < acceleratorConfigurations.length; i++) {
-			AcceleratorConfiguration acceleratorConfiguration = 
-				acceleratorConfigurations[i];
-			String id = acceleratorConfiguration.getId();
-			String initialId = id;
-			List pathItems = new ArrayList();				
-			acceleratorConfiguration = 
-				acceleratorConfiguration.getParent();
-				
-			while (acceleratorConfiguration != null) {
-				pathItems.add(0, PathItem.create(id));
-				id = acceleratorConfiguration.getId();
-				acceleratorConfiguration = 
-					acceleratorConfiguration.getParent();
-			}
-					
-			configurationMap.put(initialId, 
-				Configuration.create(Path.create(pathItems)));
-		}		
-	
-		AcceleratorScope[] acceleratorScopes = acceleratorRegistry.getScopes();				
-				
-		for (int i = 0; i < acceleratorScopes.length; i++) {
-			AcceleratorScope acceleratorScope = acceleratorScopes[i];
-			String id = acceleratorScope.getId();
-			String initialId = id;
-			List pathItems = new ArrayList();				
-			acceleratorScope = acceleratorScope.getParent();
-			
-			while (acceleratorScope != null) {
-				pathItems.add(0, PathItem.create(id));
-				id = acceleratorScope.getId();
-				acceleratorScope = acceleratorScope.getParent();
-			}
-						
-			scopeMap.put(initialId, 
-				Scope.create(Path.create(pathItems)));
-		}		
-		
+		super();
+		configurationMap = Collections.unmodifiableSortedMap(buildConfigurationMap());
+		scopeMap = Collections.unmodifiableSortedMap(buildScopeMap());
+
+		AcceleratorRegistry acceleratorRegistry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();	
 		List acceleratorSets = acceleratorRegistry.getAcceleratorSets();
+		Iterator iterator = acceleratorSets.iterator();
 		
-		for (Iterator iterator = acceleratorSets.iterator(); 
-			iterator.hasNext();) {
+		while (iterator.hasNext()) {
 			AcceleratorSet acceleratorSet = (AcceleratorSet) iterator.next();		
-			Accelerator[] accelerators = acceleratorSet.getAccelerators();
 
-			String configurationId = acceleratorSet.getConfigurationId();
-			Configuration configuration = 
-				(Configuration) configurationMap.get(configurationId);
+			String configurationId = acceleratorSet.getAcceleratorConfigurationId();
+			Path configuration = (Path) configurationMap.get(configurationId);
 			
-			String scopeId = acceleratorSet.getScopeId();	
-			Scope scope = (Scope) scopeMap.get(scopeId);
+			if (configuration == null)
+				continue;
+
+			String scopeId = acceleratorSet.getAcceleratorScopeId();	
+			Path scope = (Path) scopeMap.get(scopeId);
 			
-			if (configuration != null && scope != null) {					
-				for (int i = 0; i < accelerators.length; i++) {
-					Accelerator accelerator = accelerators[i];
-					int[][] a = getAccelerators(accelerator.getKey());
-					String id = accelerator.getId();					
-					String localeString = accelerator.getLocale();		
-					List localePathItems = new ArrayList();	
+			if (scope == null)
+				continue;			
+			
+			String pluginId = acceleratorSet.getPluginId();
+			
+			if (pluginId == null)
+				pluginId = "";
+			
+			List accelerators = acceleratorSet.getAccelerators();
+			Iterator iterator2 = accelerators.iterator();
+			
+			while (iterator2.hasNext()) {
+				Accelerator accelerator = (Accelerator) iterator2.next();				
+				String id = accelerator.getId();					
+				
+				if (id == null)
+					// this means explicit null action. should these be stripped?
+					continue;
+				
+				int[][] keySequences = getAccelerators(accelerator.getKey());
+				
+				if (keySequences == null)
+					// this means explicit null key sequences. should these be stripped?
+					continue;
+				
+				Path locale = pathForLocale(accelerator.getLocale());
+				
+				if (locale == null)
+					locale = Path.create();
+
+				Path platform = pathForPlatform(accelerator.getPlatform());
+				
+				if (platform == null)
+					platform = Path.create();
+
+				State state = State.create(configuration, locale, platform, scope);				
+				Action action = Action.create(id); 
+				Contributor contributor = Contributor.create(pluginId);
+											
+				for (int j = 0; j < keySequences.length; j++) {
+					int[] keyStrokes = keySequences[j];						
+					List strokes = new ArrayList();
 					
-					if (localeString != null) {
-						StringTokenizer st = 
-							new StringTokenizer(localeString, "_");
-						
-						while (st.hasMoreElements()) {
-							String value = ((String) st.nextElement()).trim();
-							
-							if (value.length() > 0) {							
-								localePathItems.add(PathItem.create(value));
-							}							
-						}
+					for (int k = 0; k < keyStrokes.length; k++) {
+						strokes.add(KeyStroke.create(keyStrokes[k]));	
 					}
-
-					Locale locale = Locale.create(Path.create(localePathItems));
-					String platformString = accelerator.getPlatform();
-					List platformPathItems = new ArrayList();	
 					
-					if (platformString != null)	
-						platformPathItems.add(PathItem.create(platformString));
-										
-					Platform platform = 
-						Platform.create(Path.create(platformPathItems));
-					State state = 
-						State.create(configuration, locale, platform, scope); 			
-					
-					// TBD:
-					Contributor contributor = Contributor.create("");
-					Action action = Action.create(id); 
-												
-					for (int j = 0; j < a.length; j++) {
-						int[] b = a[j];						
-						List strokes = new ArrayList();
-						
-						for (int k = 0; k < b.length; k++) {
-							strokes.add(KeyStroke.create(b[k]));	
-						}
-						
-						KeySequence sequence = KeySequence.create(strokes);
-						Node.addToTree(tree, KeyBinding.create(sequence, state, 
-							contributor, action));
-					}												
-				}			
-			}
+					KeySequence sequence = KeySequence.create(strokes);
+					Node.addToTree(tree, KeyBinding.create(sequence, state, 
+						contributor, action));
+				}												
+			}			
 		}					
 		
 		// TBD: add all custom bindings here..
@@ -261,19 +324,19 @@ public final class KeyBindingManager {
 		solve();
 	}
 	
-	public Configuration getConfigurationForId(String id) {
-		return (Configuration) configurationMap.get(id);	
+	public Path getConfigurationForId(String id) {
+		return (Path) configurationMap.get(id);	
 	}
 
-	public Scope getScopeForId(String id) {
-		return (Scope) scopeMap.get(id);	
+	public Path getScopeForId(String id) {
+		return (Path) scopeMap.get(id);	
 	}
 	
-	public Configuration getConfiguration() {
+	public Path getConfiguration() {
 		return configuration;	
 	}
 
-	public void setConfiguration(Configuration configuration)
+	public void setConfiguration(Path configuration)
 		throws IllegalArgumentException {
 		if (configuration == null)
 			throw new IllegalArgumentException();
@@ -284,18 +347,18 @@ public final class KeyBindingManager {
 		}
 	}
 
-	public Scope[] getScopes() {
-		Scope[] scopes = new Scope[this.scopes.length];
+	public Path[] getScopes() {
+		Path[] scopes = new Path[this.scopes.length];
 		System.arraycopy(this.scopes, 0, scopes, 0, this.scopes.length);		
 		return scopes;
 	}	
 	
-	public void setScopes(Scope[] scopes)
+	public void setScopes(Path[] scopes)
 		throws IllegalArgumentException {
 		if (scopes == null || scopes.length < 1)
 			throw new IllegalArgumentException();
 
-		Scope[] scopesCopy = new Scope[scopes.length];
+		Path[] scopesCopy = new Path[scopes.length];
 		System.arraycopy(scopes, 0, scopesCopy, 0, scopes.length);
 		
 		if (!Arrays.equals(this.scopes, scopesCopy)) {

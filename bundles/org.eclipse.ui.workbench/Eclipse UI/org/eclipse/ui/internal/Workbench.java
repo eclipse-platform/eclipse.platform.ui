@@ -20,6 +20,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import javax.security.auth.login.Configuration;
+
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.boot.IPlatformRunnable;
@@ -90,8 +92,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
-import org.eclipse.ui.internal.keybindings.Configuration;
 import org.eclipse.ui.internal.keybindings.KeyBindingManager;
+import org.eclipse.ui.internal.keybindings.Path;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.registry.AcceleratorConfiguration;
@@ -748,11 +750,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (id == null)
 			id = IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID;
 
-		Configuration configuration = 
+		Path configuration = 
 			KeyBindingManager.getInstance().getConfigurationForId(id);
 		
 		if (configuration == null)
-			configuration = Configuration.create();
+			configuration = Path.create();
 		
 		KeyBindingManager.getInstance().setConfiguration(configuration);
 	}
@@ -1474,14 +1476,15 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (config != null) {
 			acceleratorConfiguration = config; 
  			String id = config.getId();			
-			Configuration configuration = KeyBindingManager.getInstance().getConfigurationForId(id);
+			Path configuration = KeyBindingManager.getInstance().getConfigurationForId(id);
 		
 			if (configuration == null)
-				configuration = Configuration.create();
+				configuration = Path.create();
 	
 			KeyBindingManager.getInstance().setConfiguration(configuration);
 		}	
 	}
+
 	/**
 	 * @see IExecutableExtension
 	 */

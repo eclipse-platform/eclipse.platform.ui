@@ -32,7 +32,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.keybindings.KeyBindingManager;
 import org.eclipse.ui.internal.keybindings.KeySequence;
 import org.eclipse.ui.internal.keybindings.KeyStroke;
-import org.eclipse.ui.internal.keybindings.Scope;
+import org.eclipse.ui.internal.keybindings.Path;
 import org.eclipse.ui.internal.keybindings.Util;
 import org.eclipse.ui.internal.registry.IActionSet;
 
@@ -259,7 +259,7 @@ public class WWinKeyBindingService {
    			newScopeIds = activeService.getScopeIds();
 
     	if (force || Util.compare(oldScopeIds, newScopeIds) != 0) {
-	    	Scope[] scopes = new Scope[newScopeIds.length];
+	    	Path[] scopes = new Path[newScopeIds.length];
 	    	
 	    	for (int i = 0; i < newScopeIds.length; i++)
 	    		scopes[i] = KeyBindingManager.getInstance().getScopeForId(newScopeIds[i]);

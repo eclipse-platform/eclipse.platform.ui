@@ -9,6 +9,8 @@ http://www.eclipse.org/legal/cpl-v10.html
 package org.eclipse.ui.internal.registry;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
@@ -62,11 +64,28 @@ final class AcceleratorRegistryReader extends RegistryReader {
 		return false;
 	}
 
+	private String getPluginId(IConfigurationElement element) {
+		String pluginId = null;	
+		
+		if (element != null) {	
+			IExtension extension = element.getDeclaringExtension();
+			
+			if (extension != null) {
+				IPluginDescriptor pluginDescriptor = extension.getDeclaringPluginDescriptor();
+				
+				if (pluginDescriptor != null) 
+					pluginId = pluginDescriptor.getUniqueIdentifier();				
+			}
+		}
+
+		return pluginId;
+	}
+
 	private boolean readAcceleratorConfiguration(IConfigurationElement element) {
 		String id = element.getAttribute(ATTRIBUTE_ID);
 		String name = element.getAttribute(ATTRIBUTE_NAME);
 		String description = element.getAttribute(ATTRIBUTE_DESCRIPTION);
-		String parent = element.getAttribute(ATTRIBUTE_PARENT_CONFIGURATION);
+		String parentId = element.getAttribute(ATTRIBUTE_PARENT_CONFIGURATION);
 			
 		if (id == null)
 			logMissingAttribute(element, ATTRIBUTE_ID);
@@ -77,9 +96,9 @@ final class AcceleratorRegistryReader extends RegistryReader {
 		if (description == null)
 			logMissingAttribute(element, ATTRIBUTE_DESCRIPTION);
 
-		String pluginId = element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
-		AcceleratorConfiguration acceleratorConfiguration = new AcceleratorConfiguration(id, name, description, parent, pluginId);
-		acceleratorRegistry.addConfiguration(acceleratorConfiguration);
+		String pluginId = getPluginId(element);
+		AcceleratorConfiguration acceleratorConfiguration = new AcceleratorConfiguration(id, name, description, parentId, pluginId);
+		acceleratorRegistry.addAcceleratorConfiguration(acceleratorConfiguration);
 		return true;
 	}
 
@@ -87,7 +106,7 @@ final class AcceleratorRegistryReader extends RegistryReader {
 		String id = element.getAttribute(ATTRIBUTE_ID);
 		String name = element.getAttribute(ATTRIBUTE_NAME);
 		String description = element.getAttribute(ATTRIBUTE_DESCRIPTION);
-		String parent = element.getAttribute(ATTRIBUTE_PARENT_SCOPE);
+		String parentId = element.getAttribute(ATTRIBUTE_PARENT_SCOPE);
 			
 		if (id == null)
 			logMissingAttribute(element, ATTRIBUTE_ID);
@@ -98,25 +117,25 @@ final class AcceleratorRegistryReader extends RegistryReader {
 		if (description == null)
 			logMissingAttribute(element, ATTRIBUTE_DESCRIPTION);
 
-		String pluginId = element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
-		AcceleratorScope acceleratorScope = new AcceleratorScope(id, name, description, parent, pluginId);
-		acceleratorRegistry.addScope(acceleratorScope);
+		String pluginId = getPluginId(element);
+		AcceleratorScope acceleratorScope = new AcceleratorScope(id, name, description, parentId, pluginId);
+		acceleratorRegistry.addAcceleratorScope(acceleratorScope);
 		return true;		
 	}
 
 	private boolean readAcceleratorSet(IConfigurationElement element) {
-		String configurationId = element.getAttribute(ATTRIBUTE_CONFIGURATION_ID);
-		String scopeId = element.getAttribute(ATTRIBUTE_SCOPE_ID);
+		String acceleratorConfigurationId = element.getAttribute(ATTRIBUTE_CONFIGURATION_ID);
+		String acceleratorScopeId = element.getAttribute(ATTRIBUTE_SCOPE_ID);
 			
-		if (configurationId == null)
+		if (acceleratorConfigurationId == null)
 			logMissingAttribute(element, ATTRIBUTE_CONFIGURATION_ID);
 		
-		if (scopeId == null)
+		if (acceleratorScopeId == null)
 			logMissingAttribute(element, ATTRIBUTE_SCOPE_ID);
 
-		String pluginId = element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
-		acceleratorSet = new AcceleratorSet(configurationId, scopeId,  pluginId);
-		acceleratorRegistry.addSet(acceleratorSet);
+		String pluginId = getPluginId(element);
+		acceleratorSet = new AcceleratorSet(acceleratorConfigurationId, acceleratorScopeId,  pluginId);
+		acceleratorRegistry.addAcceleratorSet(acceleratorSet);
 		readElementChildren(element);
 		acceleratorSet = null;
 		return true;	
@@ -127,15 +146,12 @@ final class AcceleratorRegistryReader extends RegistryReader {
 		String key = element.getAttribute(ATTRIBUTE_KEY);
 		String locale = element.getAttribute(ATTRIBUTE_LOCALE);
 		String platform = element.getAttribute(ATTRIBUTE_PLATFORM);
-		
-		if (id == null)
-			logMissingAttribute(element, ATTRIBUTE_ID);
-		
+
 		if (key == null)
 			logMissingAttribute(element, ATTRIBUTE_KEY);	
 		
 		if (acceleratorSet != null)
-			acceleratorSet.add(new Accelerator(id, key, locale, platform));
+			acceleratorSet.addAccelerator(new Accelerator(id, key, locale, platform));
 
 		return true;
 	}	

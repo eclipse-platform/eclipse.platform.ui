@@ -8,9 +8,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 package org.eclipse.ui.internal.registry;
 
-import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-
 public final class AcceleratorScope {
 
 	private String id;
@@ -18,7 +15,6 @@ public final class AcceleratorScope {
 	private String description;
 	private String parentId;
 	private String pluginId;
-	private AcceleratorScope parent;
 		
 	AcceleratorScope(String id, String name, String description, String parentId, String pluginId) {
 		super();
@@ -47,21 +43,5 @@ public final class AcceleratorScope {
 	
 	public String getPluginId() {
 		return pluginId;
-	}
-
-	public AcceleratorScope getParent() {
-		if (IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID.equals(id))
-			return null;
-			
-		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
-		
-		if (parent == null) {
-			parent = registry.getScope(parentId);
-			
-			if (parent == null) 
-				parent = registry.getScope(IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID);
-		}
-		
-		return parent;
 	}
 }

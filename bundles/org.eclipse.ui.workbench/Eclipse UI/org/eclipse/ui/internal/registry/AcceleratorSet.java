@@ -9,40 +9,41 @@ http://www.eclipse.org/legal/cpl-v10.html
 package org.eclipse.ui.internal.registry;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public final class AcceleratorSet {
 	
-	private String configurationId;
-	private String scopeId;
+	private String acceleratorConfigurationId;
+	private String acceleratorScopeId;
 	private String pluginId;
 	private List accelerators;
 
-	AcceleratorSet(String configurationId, String scopeId, String pluginId) {
+	AcceleratorSet(String acceleratorConfigurationId, String acceleratorScopeId, String pluginId) {
 		super();
-		this.configurationId = configurationId;
-		this.scopeId = scopeId;
+		this.acceleratorConfigurationId = acceleratorConfigurationId;
+		this.acceleratorScopeId = acceleratorScopeId;
 		this.pluginId = pluginId;
 		accelerators = new ArrayList();
 	}
 
-	public String getConfigurationId() {
-		return configurationId;
+	public String getAcceleratorConfigurationId() {
+		return acceleratorConfigurationId;
 	}
 
-	public String getScopeId() {
-		return scopeId;
+	public String getAcceleratorScopeId() {
+		return acceleratorScopeId;
 	}
 
 	public String getPluginId() {
 		return pluginId;	
 	}
 
-	public boolean add(Accelerator a) {
-		return accelerators.add(a);
+	void addAccelerator(Accelerator accelerator) {
+		accelerators.add(accelerator);
 	}
 
-	public Accelerator[] getAccelerators() {
-		return (Accelerator[]) accelerators.toArray(new Accelerator[accelerators.size()]);
+	public List getAccelerators() {
+		return Collections.unmodifiableList(accelerators);
 	}
 }

@@ -10,7 +10,10 @@ package org.eclipse.ui.internal.keybindings;
 
 import java.text.Collator;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -90,30 +93,41 @@ public class KeyBindingPreferencePage extends PreferencePage
 	
 	public void init(IWorkbench workbench) {
 		namesToConfiguration = new Hashtable();
-		WorkbenchPlugin plugin = WorkbenchPlugin.getDefault();
-		AcceleratorRegistry registry = plugin.getAcceleratorRegistry();
-		AcceleratorConfiguration configs[] = registry.getConfigsWithSets();
-		for (int i = 0; i < configs.length; i++)
-			namesToConfiguration.put(configs[i].getName(), configs[i]);	
+		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
+		Collection acceleratorConfigurations = registry.getAcceleratorConfigurations().values();
+		Iterator iterator = acceleratorConfigurations.iterator();
+
+		while (iterator.hasNext()) {
+			AcceleratorConfiguration acceleratorConfiguration = (AcceleratorConfiguration) iterator.next();
+			namesToConfiguration.put(acceleratorConfiguration.getName(), acceleratorConfiguration);	
+		}
 		
-		AcceleratorConfiguration config = ((Workbench)workbench).getActiveAcceleratorConfiguration();
-		if(config != null)
-			activeAcceleratorConfigurationName = config.getName();
+		AcceleratorConfiguration acceleratorConfiguration = ((Workbench)workbench).getActiveAcceleratorConfiguration();
+		
+		if (acceleratorConfiguration != null)
+			activeAcceleratorConfigurationName = acceleratorConfiguration.getName();
 	}
 
 	protected void performDefaults() {
-		IPreferenceStore preferenceStore = getPreferenceStore();
-		// Sets the accelerator configuration selection to the default configuration
+		IPreferenceStore preferenceStore = getPreferenceStore();	
 		String id = preferenceStore.getDefaultString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
-		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
-		AcceleratorConfiguration config = registry.getConfiguration(id);
-		String name = null;
-		if(config != null) 
-			name = config.getName();
-		if((name != null) && (accelConfigCombo != null))
-			accelConfigCombo.select(accelConfigCombo.indexOf(name));
-	}	
+
+		AcceleratorRegistry acceleratorRegistry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
+		Map acceleratorConfigurations = acceleratorRegistry.getAcceleratorConfigurations();
+		AcceleratorConfiguration acceleratorConfiguration = (AcceleratorConfiguration) acceleratorConfigurations.get(id);
 		
+		if (acceleratorConfiguration == null)
+			acceleratorConfiguration = 
+				(AcceleratorConfiguration) acceleratorConfigurations.get(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID); 
+
+		if (acceleratorConfiguration != null) { 
+			String name = acceleratorConfiguration.getName();
+
+			if (name != null && accelConfigCombo != null)
+				accelConfigCombo.select(accelConfigCombo.indexOf(name));
+		}
+	}	
+
 	public boolean performOk() {
 		IPreferenceStore preferenceStore = getPreferenceStore();		
 			// store the active accelerator configuration id

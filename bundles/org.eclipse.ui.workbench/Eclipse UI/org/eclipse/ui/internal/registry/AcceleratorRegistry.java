@@ -9,113 +9,59 @@ http://www.eclipse.org/legal/cpl-v10.html
 package org.eclipse.ui.internal.registry;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
 
 public final class AcceleratorRegistry {
 	
-	private List configurations;
-	private List scopes;
-	private List sets;
-	private HashMap idToScope;
+	private Map acceleratorConfigurations;
+	private Map acceleratorScopes;
+	private List acceleratorSets;
 	
 	public AcceleratorRegistry() {
 		super();
-		configurations = new ArrayList();
-		scopes = new ArrayList();
-		sets = new ArrayList();
+		acceleratorConfigurations = new HashMap();
+		acceleratorScopes = new HashMap();
+		acceleratorSets = new ArrayList();
 	}
 
 	public void load() {
 		(new AcceleratorRegistryReader()).read(Platform.getPluginRegistry(), this);
 	}
 	
-	boolean addConfiguration(AcceleratorConfiguration a) {
-		return configurations.add(a);	
-	}
-
-	public AcceleratorConfiguration getConfiguration(String id) {
-		for (Iterator iterator = configurations.iterator(); iterator.hasNext();) {
-			AcceleratorConfiguration element = (AcceleratorConfiguration) iterator.next();
-			
-			if (element.getId().equals(id))
-				return element;
-		}
-
-		return null;
-	}	
-
-	public AcceleratorConfiguration[] getConfigurations() {
-		AcceleratorConfiguration[] result = new AcceleratorConfiguration[configurations.size()];
-		configurations.toArray(result);
-		return result;
-	}
-
-	boolean addScope(AcceleratorScope a) {
-		return scopes.add(a);	
-	}
-
-	AcceleratorScope getScope(String id) {
-		if (idToScope == null) {
-			idToScope = new HashMap();
-			AcceleratorScope scopes[] = getScopes();
-			
-			for (int i = 0; i < scopes.length; i++) {
-				AcceleratorScope s = scopes[i];
-				idToScope.put(s.getId(), s);
-			}
-		}
+	void addAcceleratorConfiguration(AcceleratorConfiguration acceleratorConfiguration)
+		throws IllegalArgumentException {
+		if (acceleratorConfiguration == null)
+			throw new IllegalArgumentException();
 		
-		return (AcceleratorScope) idToScope.get(id);
+		acceleratorConfigurations.put(acceleratorConfiguration.getId(), acceleratorConfiguration);	
 	}
 
-	public AcceleratorScope[] getScopes() {
-		AcceleratorScope[] result = new AcceleratorScope[scopes.size()];
-		scopes.toArray(result);
-		return result;
+	public Map getAcceleratorConfigurations() {
+		return Collections.unmodifiableMap(acceleratorConfigurations);			
 	}
 
-	boolean addSet(AcceleratorSet a) {
-		return sets.add(a);
-	}
-
-	AcceleratorSet getSet(String configId, String scopeId,String pluginId) {
-		for (Iterator iterator = sets.iterator(); iterator.hasNext();) {
-			AcceleratorSet set = (AcceleratorSet) iterator.next();
-			
-			if (set.getConfigurationId().equals(configId) &&
-				set.getScopeId().equals(scopeId) &&
-				set.getPluginId().equals(pluginId))
-				return set;
-		}
+	void addAcceleratorScope(AcceleratorScope acceleratorScope)
+		throws IllegalArgumentException {
+		if (acceleratorScope == null)
+			throw new IllegalArgumentException();
 		
-		return null;
+		acceleratorScopes.put(acceleratorScope.getId(), acceleratorScope);	
+	}
+
+	public Map getAcceleratorScopes() {
+		return Collections.unmodifiableMap(acceleratorScopes);			
+	}
+
+	void addAcceleratorSet(AcceleratorSet acceleratorSet) {
+		acceleratorSets.add(acceleratorSet);
 	}
 
 	public List getAcceleratorSets() {
-		return sets;
+		return Collections.unmodifiableList(acceleratorSets);		
 	}	
-
-	public AcceleratorConfiguration[] getConfigsWithSets() {
-		List list = new ArrayList();
-		
-		for (int i = 0; i < configurations.size(); i++) {
-			AcceleratorConfiguration config = (AcceleratorConfiguration) configurations.get(i);
-			String configId = config.getId();
-			
-			for (int j = 0; j < sets.size(); j++) {
-				AcceleratorSet set = (AcceleratorSet) sets.get(j);
-				
-				if (configId.equals(set.getConfigurationId())) {
-					list.add(config);
-					break;
-				}	
-			}
-		}
-		
-		return (AcceleratorConfiguration[]) list.toArray(new AcceleratorConfiguration[list.size()]);
-	}
 }

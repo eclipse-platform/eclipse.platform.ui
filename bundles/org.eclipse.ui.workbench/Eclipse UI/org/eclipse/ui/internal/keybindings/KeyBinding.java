@@ -38,7 +38,7 @@ public final class KeyBinding implements Comparable {
 		
 		KeySequence sequence = 
 			KeySequence.read(memento.getChild(KeySequence.ELEMENT));
-		State state = State.read(memento.getChild(State.ELEMENT));
+		State state = KeyBinding.readState(memento.getChild(State.ELEMENT));
 		Contributor contributor = 
 			Contributor.read(memento.getChild(Contributor.ELEMENT));
 		Action action = Action.read(memento.getChild(Action.ELEMENT));
@@ -105,6 +105,7 @@ public final class KeyBinding implements Comparable {
 		}
 	}
 
+	/*
 	public static void filterConfiguration(List bindings, Set configurations,
 		boolean exclusive) {
 		Iterator iterator = bindings.iterator();
@@ -112,13 +113,15 @@ public final class KeyBinding implements Comparable {
 		while (iterator.hasNext()) {
 			KeyBinding binding = (KeyBinding) iterator.next();
 			State state = binding.getState();			
-			Configuration configuration = state.getConfiguration();
+			Path configuration = state.getConfiguration();
 			
 			if (exclusive ^ !configurations.contains(configuration))
 				iterator.remove();
 		}
 	}
+	*/
 
+	/*
 	public static void filterLocale(List bindings, Set locales, 
 		boolean exclusive) {
 		Iterator iterator = bindings.iterator();
@@ -126,13 +129,15 @@ public final class KeyBinding implements Comparable {
 		while (iterator.hasNext()) {
 			KeyBinding binding = (KeyBinding) iterator.next();
 			State state = binding.getState();			
-			Locale locale = state.getLocale();
+			Path locale = state.getLocale();
 			
 			if (exclusive ^ !locales.contains(locale))
 				iterator.remove();
 		}
 	}
+	*/
 
+	/*
 	public static void filterPlatform(List bindings, Set platforms, 
 		boolean exclusive) {
 		Iterator iterator = bindings.iterator();
@@ -140,13 +145,15 @@ public final class KeyBinding implements Comparable {
 		while (iterator.hasNext()) {
 			KeyBinding binding = (KeyBinding) iterator.next();
 			State state = binding.getState();			
-			Platform platform = state.getPlatform();
+			Path platform = state.getPlatform();
 			
 			if (exclusive ^ !platforms.contains(platform))
 				iterator.remove();
 		}
 	}
+	*/
 
+	/*
 	public static void filterScope(List bindings, Set scopes, 
 		boolean exclusive) {
 		Iterator iterator = bindings.iterator();
@@ -154,12 +161,13 @@ public final class KeyBinding implements Comparable {
 		while (iterator.hasNext()) {
 			KeyBinding binding = (KeyBinding) iterator.next();
 			State state = binding.getState();			
-			Scope scope = state.getScope();
+			Path scope = state.getScope();
 			
 			if (exclusive ^ !scopes.contains(scope))
 				iterator.remove();
 		}
 	}
+	*/
 
 	private KeySequence keySequence;
 	private State state;
@@ -234,8 +242,34 @@ public final class KeyBinding implements Comparable {
 			throw new IllegalArgumentException();
 			
 		keySequence.write(memento.createChild(KeySequence.ELEMENT));
-		state.write(memento.createChild(State.ELEMENT));
+		writeState(memento.createChild(State.ELEMENT), state);
 		contributor.write(memento.createChild(Contributor.ELEMENT));
 		action.write(memento.createChild(Action.ELEMENT));			
 	}
+
+	static State readState(IMemento memento)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();
+		
+		Path configuration = Path.read(memento.getChild("configuration"));
+		Path locale = Path.read(memento.getChild("locale"));
+		Path platform = Path.read(memento.getChild("platform"));
+		Path scope = Path.read(memento.getChild("scope"));
+		return State.create(configuration, locale, platform, scope);
+	}
+
+	static void writeState(IMemento memento, State state)
+		throws IllegalArgumentException {
+		if (memento == null || state == null)
+			throw new IllegalArgumentException();	
+			
+		List paths = state.getPaths();
+		((Path) paths.get(1)).write(memento.createChild("configuration"));
+		((Path) paths.get(3)).write(memento.createChild("locale"));
+		((Path) paths.get(2)).write(memento.createChild("platform"));
+		((Path) paths.get(0)).write(memento.createChild("scope"));
+	}
+	
+	//private List paths;
 }

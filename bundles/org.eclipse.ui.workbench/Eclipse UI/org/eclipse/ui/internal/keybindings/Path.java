@@ -18,7 +18,7 @@ import org.eclipse.ui.IMemento;
 
 public final class Path implements Comparable {
 
-	public final static int MAXIMUM_DEPTH = 16;
+	public final static int MAXIMUM_PATH_ITEMS = 16;
 	public final static String ELEMENT = "path";
 
 	public static Path create() {
@@ -64,7 +64,7 @@ public final class Path implements Comparable {
 		throws IllegalArgumentException {
 		super();
 		
-		if (pathItems == null || pathItems.size() >= MAXIMUM_DEPTH)
+		if (pathItems == null || pathItems.size() >= MAXIMUM_PATH_ITEMS)
 			throw new IllegalArgumentException();
 		
 		this.pathItems = Collections.unmodifiableList(new ArrayList(pathItems));
