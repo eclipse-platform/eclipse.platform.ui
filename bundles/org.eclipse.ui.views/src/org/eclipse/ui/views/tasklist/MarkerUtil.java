@@ -6,6 +6,8 @@ package org.eclipse.ui.views.tasklist;
  */
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -437,5 +439,17 @@ static public boolean isNumeric(String value) {
 			return false;
 	}
 	return true;
+}
+/**
+ * Method getCreationTime.
+ * @param marker
+ * @return String
+ */
+public static String getCreationTime(IMarker marker) {
+	try {
+		return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(marker.getCreationTime()));
+	} catch (CoreException e) {
+		return null;
+	}
 }
 }

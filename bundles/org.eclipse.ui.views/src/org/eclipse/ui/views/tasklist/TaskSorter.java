@@ -5,6 +5,7 @@ package org.eclipse.ui.views.tasklist;
  * All Rights Reserved.
  */
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
@@ -16,17 +17,16 @@ import org.eclipse.jface.viewers.ViewerSorter;
 	private boolean reversed = false;
 	private int columnNumber;
 	
-	private static final int NUM_COLUMNS = 7;
-	
 	// column headings:	"","C", "!","Description","Resource Name", "In Folder", "Location"
 	private static final int[][] SORT_ORDERS_BY_COLUMN = {
-		{0, 2, 4, 5, 6, 3, 1},	/* category */ 
-		{1, 0, 2, 4, 5, 6, 3},	/* completed */
-		{2, 0, 4, 5, 6, 3, 1},	/* priority */
-		{3, 4, 5, 6, 0, 2, 1},	/* description */
-		{4, 5, 6, 3, 0, 2, 1},	/* resource */
-		{5, 4, 6, 3, 0, 2, 1},	/* container */
-		{6, 4, 5, 3, 0, 2, 1} 	/* location */
+		{0, 2, 4, 5, 6, 3, 1, 7, 8},	/* category */ 
+		{1, 0, 2, 4, 5, 6, 3, 7, 8},	/* completed */
+		{2, 0, 4, 5, 6, 3, 1, 7, 8},	/* priority */
+		{3, 4, 5, 6, 0, 2, 1, 7, 8},	/* description */
+		{4, 5, 6, 3, 0, 2, 1, 7, 8},	/* resource */
+		{5, 4, 6, 3, 0, 2, 1, 7, 8},	/* container */
+		{6, 4, 5, 3, 0, 2, 1, 7, 8}, 	/* location */
+		{7, 8, 5, 4, 6, 3, 0, 2, 1}		/* creation time */
 	};
 /**
  * Creates a new task sorter.
@@ -47,7 +47,7 @@ public int compare(Viewer viewer, Object e1, Object e2) {
 	IMarker m2 = (IMarker) e2;
 	int[] columnSortOrder = SORT_ORDERS_BY_COLUMN[columnNumber];
 	int result = 0;
-	for (int i = 0; i < NUM_COLUMNS; ++i) {
+	for (int i = 0; i < columnSortOrder.length; ++i) {
 		result = compareColumnValue(columnSortOrder[i], m1, m2);
 		if (result != 0)
 			break;
@@ -86,9 +86,43 @@ private int compareColumnValue(int columnNumber, IMarker m1, IMarker m2) {
 			return collator.compare(MarkerUtil.getContainerName(m1), MarkerUtil.getContainerName(m2));
 		case 6: /* line and location */
 			return compareLineAndLocation(m1, m2);
+		case 7: /* creation time */
+			return compareCreationTime(m1, m2);
+		case 8: /* id */
+			return compareId(m1, m2);
 		default:
 			return 0;
 	}
+}
+/**
+ * Method compareId.
+ * @param m1
+ * @param m2
+ * @return int
+ */
+private int compareId(IMarker m1, IMarker m2) {
+	long result;
+	result = m1.getId() - m2.getId();
+	if (result > 0) return 1;
+	else if (result < 0) return -1;
+	return 0;
+}
+/**
+ * Method compareCreationTime.
+ * @param m1
+ * @param m2
+ * @return int
+ */
+private int compareCreationTime(IMarker m1, IMarker m2) {
+	long result;
+	try {
+		result = m1.getCreationTime() - m2.getCreationTime();
+	} catch (CoreException e) {
+		result = 0;
+	}
+	if (result > 0) return 1;
+	else if (result < 0) return -1;
+	return 0;
 }
 /**
  * Compares the line number and location of the two markers.
