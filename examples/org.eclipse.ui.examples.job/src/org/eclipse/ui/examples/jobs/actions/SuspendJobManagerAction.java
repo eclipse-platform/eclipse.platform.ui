@@ -12,7 +12,6 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  * Toggles the suspend/resume state of the job manager.
  */
 public class SuspendJobManagerAction implements IWorkbenchWindowActionDelegate {
-	private IWorkbenchWindow window;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
@@ -44,6 +43,6 @@ public class SuspendJobManagerAction implements IWorkbenchWindowActionDelegate {
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
-		this.window = window;
+		//do nothing
 	}
 }

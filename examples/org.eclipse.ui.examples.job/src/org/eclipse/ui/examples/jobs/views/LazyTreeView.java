@@ -42,7 +42,7 @@ public class LazyTreeView extends ViewPart {
 		parent.setLayoutData(data);
 //		parent.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WHITE));
 		serializeButton = new Button(parent, SWT.CHECK | SWT.FLAT);
-		serializeButton.setText("Serialize fetch jobs");
+		serializeButton.setText("Serialize fetch jobs"); //$NON-NLS-1$
 //		serializeButton.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WHITE));
 		serializeButton.setSelection(SlowElementAdapter.isSerializeFetching());
 		serializeButton.addSelectionListener(new SelectionAdapter() {
@@ -52,7 +52,7 @@ public class LazyTreeView extends ViewPart {
 		});
 		serializeButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		batchButton = new Button(parent, SWT.CHECK | SWT.FLAT);
-		batchButton.setText("Batch returned children");
+		batchButton.setText("Batch returned children"); //$NON-NLS-1$
 //		batchButton.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WHITE));
 		serializeButton.setSelection(SlowElementAdapter.isBatchFetchedChildren());
 		batchButton.addSelectionListener(new SelectionAdapter() {
@@ -64,7 +64,7 @@ public class LazyTreeView extends ViewPart {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new DeferredContentProvider());
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
-		viewer.setInput(new SlowElement("root"));
+		viewer.setInput(new SlowElement("root")); //$NON-NLS-1$
 		viewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 	/**

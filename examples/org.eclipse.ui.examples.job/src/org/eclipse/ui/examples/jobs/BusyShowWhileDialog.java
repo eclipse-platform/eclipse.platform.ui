@@ -21,7 +21,7 @@ public class BusyShowWhileDialog extends IconAndMessageDialog {
 	 */
 	public BusyShowWhileDialog(Shell parentShell) {
 		super(parentShell);
-		message = "Busy While Test";
+		message = "Busy While Test"; //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IconAndMessageDialog#getImage()
@@ -34,7 +34,7 @@ public class BusyShowWhileDialog extends IconAndMessageDialog {
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
-		Button detailsButton = createButton(parent, 4, "Start busy show while", false);
+		Button detailsButton = createButton(parent, 4, "Start busy show while", false); //$NON-NLS-1$
 		detailsButton.addSelectionListener(new SelectionListener() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
@@ -76,6 +76,7 @@ public class BusyShowWhileDialog extends IconAndMessageDialog {
 			 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetDefaultSelected(SelectionEvent e) {
+				//do nothing
 			}
 		});
 	}

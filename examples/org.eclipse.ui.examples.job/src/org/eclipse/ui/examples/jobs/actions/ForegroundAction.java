@@ -16,14 +16,18 @@ public class ForegroundAction implements IWorkbenchWindowActionDelegate {
 				}
 			}, null);
 		} catch (OperationCanceledException e) {
+			e.printStackTrace();
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
 	}
 	public void selectionChanged(IAction action, ISelection selection) {
+		//do nothing
 	}
 	public void dispose() {
+		//do nothing
 	}
 	public void init(IWorkbenchWindow window) {
+		//do nothing
 	}
 }

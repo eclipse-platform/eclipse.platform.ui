@@ -39,7 +39,7 @@ public class TestJob extends Job {
 	 * @param indeterminate Whether the job should report indeterminate progress
 	 */
 	public TestJob(long duration, boolean lock, boolean failure, boolean indeterminate) {
-		super("Test job");
+		super("Test job"); //$NON-NLS-1$
 		this.duration = duration;
 		this.failure = failure;
 		this.unknown = indeterminate;
@@ -72,7 +72,7 @@ public class TestJob extends Job {
 			for (int i = 0; i < ticks; i++) {
 				if (monitor.isCanceled())
 					return Status.CANCEL_STATUS;
-				monitor.subTask("Processing tick #" + i);
+				monitor.subTask("Processing tick #" + i); //$NON-NLS-1$
 				try {
 					Thread.sleep(sleep);
 				} catch (InterruptedException e) {

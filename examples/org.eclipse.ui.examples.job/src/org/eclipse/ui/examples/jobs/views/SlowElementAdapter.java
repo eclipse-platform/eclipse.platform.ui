@@ -18,7 +18,6 @@ import org.eclipse.ui.progress.IElementCollector;
 
 public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 
-	private final String FAMILLY = "SlowAdapterRule";
 	private static boolean serializeFetching = false;
 	private static boolean batchFetchedChildren = false;
 
@@ -60,6 +59,7 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
+			//ignore
 		}
 	}
 
@@ -78,12 +78,10 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#getRule(java.lang.Object)
 	 */
 	public ISchedulingRule getRule(final Object object) {
-		if (isSerializeFetching()) {
+		if (isSerializeFetching())
 			return mutexRule;
-		} else {
-			// Allow several SlowElement parents to fetch children concurrently
-			return null;
-		}
+		// Allow several SlowElement parents to fetch children concurrently
+		return null;
 	}
 
 	/*
@@ -117,7 +115,7 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 		if (o instanceof SlowElement) {
 			return ((SlowElement) o).getName();
 		}
-		return "unknown";
+		return "unknown"; //$NON-NLS-1$
 	}
 
 	/*

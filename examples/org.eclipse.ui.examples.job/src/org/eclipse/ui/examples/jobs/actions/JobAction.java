@@ -22,16 +22,16 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  * @see IWorkbenchWindowActionDelegate
  */
 public class JobAction implements IWorkbenchWindowActionDelegate {
-	private IWorkbenchWindow window;
 	public void run(IAction action) {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		Job job = new WorkspaceJob("Background job") {
+		Job job = new WorkspaceJob("Background job") { //$NON-NLS-1$
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-				monitor.beginTask("Doing something in background", 100);
+				monitor.beginTask("Doing something in background", 100); //$NON-NLS-1$
 				for (int i = 0; i < 100; i++) {
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
+						//ignore
 					}
 					monitor.worked(1);
 				}
@@ -42,10 +42,12 @@ public class JobAction implements IWorkbenchWindowActionDelegate {
 		job.schedule();
 	}
 	public void selectionChanged(IAction action, ISelection selection) {
+		//do nothing
 	}
 	public void dispose() {
+		//do nothing
 	}
 	public void init(IWorkbenchWindow window) {
-		this.window = window;
+		//do nothing
 	}
 }

@@ -12,12 +12,12 @@ package org.eclipse.ui.examples.jobs.actions;
 
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.examples.jobs.TestJob;
@@ -30,20 +30,18 @@ public class CreateJobsAction implements IWorkbenchWindowActionDelegate {
 
 	private IWorkbenchWindow window;
 
-	public CreateJobsAction() {
-	}
 	private long askForDuration() {
-		InputDialog dialog = new InputDialog(window.getShell(), "How long?", "Enter the number of milliseconds per job", "1000", new IInputValidator() {
+		InputDialog dialog = new InputDialog(window.getShell(), "How long?", "Enter the number of milliseconds per job", "1000", new IInputValidator() { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			public String isValid(String newText) {
 				try {
 					Long.parseLong(newText);
 				} catch (NumberFormatException e) {
-					return "Not a number";
+					return "Not a number"; //$NON-NLS-1$
 				}
 				return null;
 			}
 		});
-		if (dialog.open() == Dialog.CANCEL)
+		if (dialog.open() == Window.CANCEL)
 			throw new OperationCanceledException();
 		return Long.parseLong(dialog.getValue());
 	}
@@ -51,9 +49,9 @@ public class CreateJobsAction implements IWorkbenchWindowActionDelegate {
 		MessageDialog dialog =
 			new MessageDialog(
 				window.getShell(),
-				"Likes to be left alone?",
+				"Likes to be left alone?", //$NON-NLS-1$
 				null,
-				"Press yes if the jobs should be run one at a time, and no otherwise",
+				"Press yes if the jobs should be run one at a time, and no otherwise", //$NON-NLS-1$
 				MessageDialog.QUESTION,
 				new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL },
 				1 // no is the default
@@ -64,9 +62,9 @@ public class CreateJobsAction implements IWorkbenchWindowActionDelegate {
 		MessageDialog dialog =
 			new MessageDialog(
 				window.getShell(),
-				"Born to fail?",
+				"Born to fail?", //$NON-NLS-1$
 				null,
-				"Should the jobs return an error status?",
+				"Should the jobs return an error status?", //$NON-NLS-1$
 				MessageDialog.QUESTION,
 				new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL },
 				1 // no is the default
@@ -74,21 +72,22 @@ public class CreateJobsAction implements IWorkbenchWindowActionDelegate {
 		return dialog.open() == 0;
 	}
 	private int askForJobCount() {
-		InputDialog dialog = new InputDialog(window.getShell(), "How much work?", "Enter the number of jobs to run", "100", new IInputValidator() {
+		InputDialog dialog = new InputDialog(window.getShell(), "How much work?", "Enter the number of jobs to run", "100", new IInputValidator() { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			public String isValid(String newText) {
 				try {
 					Integer.parseInt(newText);
 				} catch (NumberFormatException e) {
-					return "Not a number";
+					return "Not a number"; //$NON-NLS-1$
 				}
 				return null;
 			}
 		});
-		if (dialog.open() == Dialog.CANCEL)
+		if (dialog.open() == Window.CANCEL)
 			throw new OperationCanceledException();
 		return Integer.parseInt(dialog.getValue());
 	}
 	public void dispose() {
+		//do nothing
 	}
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
@@ -120,5 +119,6 @@ public class CreateJobsAction implements IWorkbenchWindowActionDelegate {
 		}
 	}
 	public void selectionChanged(IAction action, ISelection selection) {
+		//do nothing
 	}
 }

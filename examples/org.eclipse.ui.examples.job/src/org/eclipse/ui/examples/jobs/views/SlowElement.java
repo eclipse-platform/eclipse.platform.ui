@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.PlatformObject;
 
 public class SlowElement extends PlatformObject {
 	private String name;
-	private SlowElement[] children;
 	private SlowElement parent;
 
 	SlowElement(String name) {
@@ -29,7 +28,6 @@ public class SlowElement extends PlatformObject {
 	
 	SlowElement(SlowElement parent, String name, SlowElement[] children) {
 		this.name = name;
-		this.children = children;	
 		this.parent = parent;
 	}
 	
@@ -46,7 +44,7 @@ public class SlowElement extends PlatformObject {
 		int random = r.nextInt(15);
 		List children = new ArrayList();
 		for(int i = 0; i < random; i++) {
-			children.add(new SlowElement("child" + i));
+			children.add(new SlowElement("child" + i)); //$NON-NLS-1$
 		}
 		return (SlowElement[]) children.toArray(new SlowElement[children.size()]);
 	}

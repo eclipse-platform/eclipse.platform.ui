@@ -19,7 +19,7 @@ public class UITestJob extends UIJob {
 	private boolean failure;
 	private boolean unknown;
 	public UITestJob(long duration, boolean lock, boolean failure, boolean indeterminate) {
-		super("Test job");
+		super("Test job"); //$NON-NLS-1$
 		this.duration = duration;
 		this.failure = failure;
 		this.unknown = indeterminate;
@@ -40,7 +40,7 @@ public class UITestJob extends UIJob {
 			for (int i = 0; i < ticks; i++) {
 				if (monitor.isCanceled())
 					return Status.CANCEL_STATUS;
-				monitor.subTask("Processing tick #" + i);
+				monitor.subTask("Processing tick #" + i); //$NON-NLS-1$
 				try {
 					Thread.sleep(sleep);
 				} catch (InterruptedException e) {
