@@ -461,8 +461,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		checkRemoved();
 		//Thread safety: copy field reference in case of concurrent modification
 		Properties temp = properties;
-		if (temp == null)
+		if (temp == null) {
+			if (InternalPlatform.DEBUG_PREFERENCES)
+				Policy.debug("Getting preference value: " + absolutePath() + '/' + key + "->null"); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
+		}
 		String result = temp.getProperty(key);
 		if (InternalPlatform.DEBUG_PREFERENCES)
 			Policy.debug("Getting preference value: " + absolutePath() + '/' + key + "->" + result); //$NON-NLS-1$ //$NON-NLS-2$
