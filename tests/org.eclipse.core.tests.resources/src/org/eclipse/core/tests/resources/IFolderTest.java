@@ -17,9 +17,11 @@ import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.osgi.service.environment.Constants;
 
 public class IFolderTest extends EclipseWorkspaceTest {
 public IFolderTest() {
+	super();
 }
 public IFolderTest(String name) {
 	super(name);
@@ -142,6 +144,7 @@ public void testFolderCreation() throws Exception {
 		target = getWorkspace().getRoot().getFolder(new Path("/Folder3"));
 		fail("6.0");
 	} catch (IllegalArgumentException e) {
+		// expected
 	}
 
 	// try to create a folder as a child of a file
@@ -225,7 +228,7 @@ public void testInvalidFolderNames() {
 	
 	//do some tests with invalid names
 	String[] names = new String[0];
-	if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
+	if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
 		//invalid windows names
 		names = new String[] {"prn", "nul", "con", "aux", "clock$", "com1", 
 			"com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9",
@@ -243,12 +246,13 @@ public void testInvalidFolderNames() {
 			folder.create(true, true, getMonitor());
 			fail("1.1 " + names[i]);
 		} catch (CoreException e) {
+			// expected
 		}
 		assertTrue("1.2 " + names[i], !folder.exists());		
 	}
 		
 	//do some tests with valid names that are *almost* invalid
-	if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
+	if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
 		//these names are valid on windows
 		names = new String[] {"hello.prn.txt", "null", "con3", "foo.aux", "lpt0",
 			"com0", "com10", "lpt10", ",", "'", ";"};
@@ -323,7 +327,7 @@ public void testSetGetFolderPersistentProperty() throws Throwable {
 	ensureExistsInWorkspace(target, true);
 	target.setPersistentProperty(name, value);
 	// see if we can get the property
-	assertTrue("2.0", ((String) target.getPersistentProperty(name)).equals(value));
+	assertTrue("2.0", target.getPersistentProperty(name).equals(value));
 	// see what happens if we get a non-existant property
 	name = new QualifiedName("itp-test", "testNonProperty");
 	assertNull("2.1", target.getPersistentProperty(name));

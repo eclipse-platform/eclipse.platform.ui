@@ -21,6 +21,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
+import org.eclipse.osgi.service.environment.Constants;
 
 public class IFileTest extends EclipseWorkspaceTest {
 	IProject[] projects = null;
@@ -44,6 +45,7 @@ public class IFileTest extends EclipseWorkspaceTest {
 	protected static final IProgressMonitor[] PROGRESS_MONITORS = new IProgressMonitor[] {new FussyProgressMonitor(), null};
 
 public IFileTest() {
+	super();
 }
 public IFileTest(String name) {
 	super(name);
@@ -93,7 +95,7 @@ protected void generateInterestingFiles() throws CoreException {
  * Conditions on these files (out of sync, workspace only, etc)
  * will be ensured by refreshFiles
  */
-public void generateInterestingFiles(IContainer container) throws CoreException {
+public void generateInterestingFiles(IContainer container) {
 	//non-existent file
 	IFile file = container.getFile(new Path(DOES_NOT_EXIST));
 	nonExistingFiles.addElement(file);
@@ -280,7 +282,7 @@ public void testAppendContents() {
  * Performs black box testing of the following method:
  *     void create(InputStream, boolean, IProgressMonitor)
  */
-public void testCreate() throws CoreException {
+public void testCreate() {
 	Object[][] inputs = new Object[][] {interestingFiles(), interestingStreams(), TRUE_AND_FALSE, PROGRESS_MONITORS};
 	new TestPerformer("IFileTest.testCreate") {
 		public boolean shouldFail(Object[] args, int count) {
@@ -399,6 +401,7 @@ public void testFileCreation(){
 		target.create(null, true, getMonitor());
 		fail("4.2");
 	} catch (CoreException e) {
+		// expected
 	}
 	assertTrue("4.3", folder.exists());
 	assertTrue("4.4", !target.exists());
@@ -411,6 +414,7 @@ public void testFileCreation(){
 		target.create(null, true, getMonitor());
 		fail("5.1");
 	} catch (CoreException e) {
+		// expected
 	}
 	assertTrue("5.2", !folder.exists());
 	assertTrue("5.3", !target.exists());
@@ -429,6 +433,7 @@ public void testFileCreation(){
 		target.create(content, false, getMonitor());
 		fail("6.1");
 	} catch (CoreException e) {
+		// expected
 	}
 	assertDoesNotExistInWorkspace("6.2", target);
 	assertDoesNotExistInFileSystem("6.3", target);
@@ -602,6 +607,7 @@ public void testGetContents2() throws IOException {
 		}
 		fail("1.0");
 	} catch (CoreException e) {
+		// expected
 	}
 
 	try {
@@ -624,6 +630,7 @@ public void testGetContents2() throws IOException {
 		}
 		fail("3.0");
 	} catch (CoreException e) {
+		// expected
 	}
 	content = new InputStream() {
 		public int read() throws IOException {
@@ -634,6 +641,7 @@ public void testGetContents2() throws IOException {
 		target.setContents(content, IResource.NONE, getMonitor());
 		fail("4.1");
 	} catch (CoreException e) {
+		// expected
 	}
 	assertExistsInWorkspace("4.2", target);
 	assertExistsInFileSystem("4.3", target);
@@ -659,7 +667,7 @@ public void testInvalidFileNames() {
 	
 	//do some tests with invalid names
 	names = new String[0];
-	if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
+	if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
 		//invalid windows names
 		names = new String[] {"prn", "nul", "con", "aux", "clock$", "com1", 
 			"com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9",
@@ -676,12 +684,13 @@ public void testInvalidFileNames() {
 			file.create(getRandomContents(), true, getMonitor());
 			fail("1.1 " + names[i]);
 		} catch (CoreException e) {
+			// expected
 		}
 		assertTrue("1.2 " + names[i], !file.exists());		
 	}
 		
 	//do some tests with valid names that are *almost* invalid
-	if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
+	if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
 		//these names are valid on windows
 		names = new String[] {"hello.prn.txt", "null", "con3", "foo.aux", "lpt0",
 			"com0", "com10", "lpt10", ",", "'", ";"};
@@ -754,22 +763,34 @@ public void testSetContents1() {
 	}
 	.performTest(inputs);
 }
-public void testSetContents2() throws Throwable {
+public void testSetContents2() {
 	IFile target = projects[0].getFile("file1");
-	target.create(null, false, null);
+	try {
+		target.create(null, false, null);
+	} catch (CoreException e) {
+		fail("0.0", e);
+	}
 
 	String testString = getRandomString();
-	target.setContents(getContents(testString), true, false, getMonitor());
+	try {
+		target.setContents(getContents(testString), true, false, getMonitor());
+	} catch (CoreException e) {
+		fail("1.0", e);
+	}
 
 	InputStream content = null;
 	try {
 		content = target.getContents(false);
 		assertTrue("get not equal set", compareContent(content, getContents(testString)));
+	} catch (CoreException e) {
+		fail("2.0", e);
 	} finally {
-		content.close();
+		try {
+			content.close();
+		} catch (IOException e) {
+			// ignore
+		}
 	}
-}
-public void testSetContents3() {
 }
 public void testAppendContents2() {
 	IFile file = projects[0].getFile("file1");
@@ -884,7 +905,7 @@ public void testSetGetFolderPersistentProperty() throws Throwable {
 	ensureExistsInWorkspace(target, true);
 	target.setPersistentProperty(name, value);
 	// see if we can get the property
-	assertTrue("2.0", ((String) target.getPersistentProperty(name)).equals(value));
+	assertTrue("2.0", target.getPersistentProperty(name).equals(value));
 	// see what happens if we get a non-existant property
 	name = new QualifiedName("itp-test", "testNonProperty");
 	assertNull("2.1", target.getPersistentProperty(name));
