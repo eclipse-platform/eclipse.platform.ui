@@ -102,8 +102,6 @@ public class UserValidationDialog extends Dialog {
 		Composite main = new Composite(top, SWT.NONE);
 		layout = new GridLayout();
 		layout.numColumns = 3;
-		layout.marginHeight = 0;
-		layout.marginHeight = 0;
 		main.setLayout(layout);
 		main.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
@@ -139,7 +137,7 @@ public class UserValidationDialog extends Dialog {
 		createUsernameFields(main);
 		createPasswordFields(main);
 		
-		if(showAllowCachingButton) {
+		if(domain != null && showAllowCachingButton) {
 			allowCachingButton = new Button(main, SWT.CHECK);
 			allowCachingButton.setText(Policy.bind("UserValidationDialog.6")); //$NON-NLS-1$
 			data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);

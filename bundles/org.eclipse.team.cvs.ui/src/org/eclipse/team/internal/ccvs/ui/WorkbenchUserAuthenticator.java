@@ -77,11 +77,15 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 		
 		if (userinfo.isUsernameMutable()) {
 			userinfo.setUsername(result[0]);
-			location.setUsername(result[0]);
+		
 		}
 		userinfo.setPassword(result[1]);
-		location.setPassword(result[1]);
-		location.setAllowCaching(allowCaching[0]);
+		
+		if(location != null) {
+			location.setUsername(result[0]);
+			location.setPassword(result[1]);
+			location.setAllowCaching(allowCaching[0]);
+		}
 	}
 	
 	/**

@@ -79,7 +79,7 @@ class JSchSession {
 					);
 			return prompt == 0;
 		}
-		private String promptSecret(String message) throws CVSException{
+		private String promptSecret(String message, boolean includeLocation) throws CVSException{
 			IUserAuthenticator authenticator = location.getUserAuthenticator();
 			final String[] _password = new String[1];
 			IUserInfo info = new IUserInfo() {
@@ -95,12 +95,12 @@ class JSchSession {
 				public void setUsername(String username) {
 				}
 			};
-			authenticator.promptForUserInfo(location, info,	message);
+			authenticator.promptForUserInfo(includeLocation ? location : null, info,	message);
 			return _password[0];	
 		}
 		public boolean promptPassphrase(String message) {
 			try{
-				String _passphrase=promptSecret(message);
+				String _passphrase=promptSecret(message, false);
 				if(_passphrase!=null){
 				  passphrase=_passphrase;
 				}
@@ -112,7 +112,7 @@ class JSchSession {
 		}
 		public boolean promptPassword(String message) {
 			try{
-				String _password=promptSecret(message);
+				String _password=promptSecret(message, true);
 				if(_password!=null){
 					password=_password;
 					// Cache the password with the repository location on the memory.
