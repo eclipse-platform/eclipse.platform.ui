@@ -131,7 +131,7 @@ public class DecoratorsPreferencePage
 			WorkbenchMessages.getString("DecoratorsPreferencePage.description")); //$NON-NLS-1$
 		
 		descriptionText =
-			new Text(textComposite, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
+			new Text(textComposite, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER | SWT.H_SCROLL);
 		descriptionText.setLayoutData(new GridData(GridData.FILL_BOTH));	}
 
 	/**
