@@ -53,8 +53,6 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
-
 /**
  * UI Plugin for CVS provider-specific workbench functionality.
  */
@@ -528,19 +526,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 			outerRunnable.run();
 		}
 	}
-	
-	/*
-	 * Ensure that the PREF_CONSOLE_FONT is in the preference store.
-	 * This method avoids initializePreferences() having to access WorkbenchChainedTextFontFieldEditor
-	 * and trip plugin startup of the text plugin.
-	 */
-	protected void ensureInit_PREF_CONSOLE_FONT() {
-		IPreferenceStore store = getPreferenceStore();
-		
-		if(! store.contains(ICVSUIConstants.PREF_CONSOLE_FONT)) {
-			WorkbenchChainedTextFontFieldEditor.startPropagate(store, ICVSUIConstants.PREF_CONSOLE_FONT);
-		}
-	}
+
 
 	/**
 	 * Initializes the preferences for this plugin if necessary.

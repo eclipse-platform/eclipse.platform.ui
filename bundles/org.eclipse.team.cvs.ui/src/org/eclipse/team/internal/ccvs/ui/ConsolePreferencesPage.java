@@ -24,14 +24,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
 
 public class ConsolePreferencesPage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private ColorFieldEditor commandColorEditor;
 	private ColorFieldEditor messageColorEditor;
 	private ColorFieldEditor errorColorEditor;
-	private WorkbenchChainedTextFontFieldEditor fontEditor;
 	private Button autoOpenCheckBox;
 
 	/**
@@ -72,13 +70,7 @@ public class ConsolePreferencesPage extends PreferencePage implements IWorkbench
 			Policy.bind("ConsolePreferencePage.messageColor"), composite); //$NON-NLS-1$
 		errorColorEditor = createColorFieldEditor(ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR,
 			Policy.bind("ConsolePreferencePage.errorColor"), composite); //$NON-NLS-1$
-
-		CVSUIPlugin.getPlugin().ensureInit_PREF_CONSOLE_FONT();	
-		fontEditor = new WorkbenchChainedTextFontFieldEditor(ICVSUIConstants.PREF_CONSOLE_FONT,
-			Policy.bind("ConsolePreferencePage.font"), composite); //$NON-NLS-1$
-		fontEditor.setPreferencePage(this);
-		fontEditor.setPreferenceStore(getPreferenceStore());
-		
+	
 		autoOpenCheckBox = createCheckBox(composite, Policy.bind("ConsolePreferencePage.autoOpen")); //$NON-NLS-1$
 		
 		initializeValues();
@@ -138,7 +130,6 @@ public class ConsolePreferencesPage extends PreferencePage implements IWorkbench
 		commandColorEditor.load();
 		messageColorEditor.load();
 		errorColorEditor.load();
-		fontEditor.load();
 		autoOpenCheckBox.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONSOLE_AUTO_OPEN));
 	}
 
@@ -158,7 +149,6 @@ public class ConsolePreferencesPage extends PreferencePage implements IWorkbench
 		commandColorEditor.store();
 		messageColorEditor.store();
 		errorColorEditor.store();
-		fontEditor.store();
 		store.setValue(ICVSUIConstants.PREF_CONSOLE_AUTO_OPEN, autoOpenCheckBox.getSelection());
 		return true;
 	}
@@ -173,7 +163,6 @@ public class ConsolePreferencesPage extends PreferencePage implements IWorkbench
 		commandColorEditor.loadDefault();
 		messageColorEditor.loadDefault();
 		errorColorEditor.loadDefault();
-		fontEditor.loadDefault();
 		autoOpenCheckBox.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_CONSOLE_AUTO_OPEN));
 	}
 
