@@ -105,7 +105,8 @@ public abstract class UIJob extends Job {
 		display = runDisplay;
 	}
 	/**
-	 * Get the display for use by the receiver.
+	 * Get the display for use by the receiver. If there are no 
+	 * windows yet return the default display.
 	 * @return Display
 	 */
 	public Display getDisplay() {
@@ -114,7 +115,7 @@ public abstract class UIJob extends Job {
 		IWorkbenchWindow windows[] =
 			WorkbenchPlugin.getDefault().getWorkbench().getWorkbenchWindows();
 		if (windows.length == 0)
-			return null;
+			return Display.getDefault();
 		else
 			return windows[0].getShell().getDisplay();
 
