@@ -48,17 +48,17 @@
                id="org.eclipse.update.ui.newUpdates">
          </action>
          <action
+               label="%actionSets.pendingChanges.label"
+               class="org.eclipse.update.internal.ui.DeltaWizardAction"
+               menubarPath="help/org.eclipse.update.ui.updateMenu/group1"
+               id="org.eclipse.update.ui.pendingChanges">
+         </action>
+         <action
                label="%actionSets.updateManager.label"
                icon="icons/full/cview16/update_pers.gif"
                class="org.eclipse.update.internal.ui.UpdateManagerAction"
                menubarPath="help/org.eclipse.update.ui.updateMenu/group2"
                id="org.eclipse.update.ui.updateManager">
-         </action>
-         <action
-               label="%actionSets.pendingChanges.label"
-               class="org.eclipse.update.internal.ui.DeltaWizardAction"
-               menubarPath="help/org.eclipse.update.ui.updateMenu/group1"
-               id="org.eclipse.update.ui.pendingChanges">
          </action>
       </actionSet>
    </extension>

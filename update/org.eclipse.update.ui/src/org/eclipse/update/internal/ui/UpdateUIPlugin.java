@@ -7,19 +7,17 @@ package org.eclipse.update.internal.ui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.Authenticator;
-import java.text.MessageFormat;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.forms.UpdateAdapterFactory;
 import org.eclipse.update.internal.ui.model.*;
@@ -205,6 +203,29 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 			}
 		}
 		return (IFeature[]) result.toArray(new IFeature[result.size()]);
+	}
+	
+	public static IFeature[] getInstalledFeatures(IFeature feature) {
+		Vector features = new Vector();
+		try {
+			ILocalSite localSite = SiteManager.getLocalSite();
+			IInstallConfiguration config = localSite.getCurrentConfiguration();
+			IConfiguredSite[] isites = config.getConfiguredSites();
+			VersionedIdentifier vid = feature.getVersionedIdentifier();
+			String id = vid.getIdentifier();
+
+			for (int i = 0; i < isites.length; i++) {
+				IConfiguredSite isite = isites[i];
+				IFeature[] result = UpdateUIPlugin.searchSite(id, isite, true);
+				for (int j = 0; j < result.length; j++) {
+					IFeature installedFeature = result[j];
+					features.add(installedFeature);
+				}
+			}
+		} catch (CoreException e) {
+			UpdateUIPlugin.logException(e);
+		}
+		return (IFeature[]) features.toArray(new IFeature[features.size()]);
 	}
 	/**
 	 * Gets the database.

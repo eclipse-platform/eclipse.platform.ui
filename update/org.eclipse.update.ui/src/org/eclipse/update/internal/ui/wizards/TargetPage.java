@@ -119,10 +119,10 @@ public class TargetPage extends BannerPage {
 		this.pendingChange = pendingChange;
 		siteImage = UpdateUIPluginImages.DESC_LSITE_OBJ.createImage();
 		configListener = new ConfigListener();
-		defaultTargetSite = getDefaultTargetSite();
+		defaultTargetSite = getDefaultTargetSite(config, pendingChange);
 	}
 
-	private IConfiguredSite getDefaultTargetSite() {
+	public static IConfiguredSite getDefaultTargetSite(IInstallConfiguration config, PendingChange pendingChange) {
 		IFeature oldFeature = pendingChange.getOldFeature();
 		IFeature newFeature = pendingChange.getFeature();
 		if (oldFeature != null) {
@@ -137,10 +137,10 @@ public class TargetPage extends BannerPage {
 		}
 		// This is a new install. Check if there is 
 		// a disabled feature with the same ID
-		return findSameIdFeatureSite(newFeature);
+		return findSameIdFeatureSite(config, newFeature);
 	}
 
-	private IConfiguredSite findSameIdFeatureSite(IFeature newFeature) {
+	private static IConfiguredSite findSameIdFeatureSite(IInstallConfiguration config, IFeature newFeature) {
 		IConfiguredSite[] sites = config.getConfiguredSites();
 		for (int i = 0; i < sites.length; i++) {
 			IConfiguredSite site = sites[i];

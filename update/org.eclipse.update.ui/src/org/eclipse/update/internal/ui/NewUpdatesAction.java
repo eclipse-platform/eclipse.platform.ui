@@ -5,9 +5,11 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.update.internal.ui.search.DefaultUpdatesSearchObject;
@@ -15,12 +17,15 @@ import org.eclipse.update.internal.ui.search.ISearchCategory;
 import org.eclipse.update.internal.ui.search.SearchCategoryDescriptor;
 import org.eclipse.update.internal.ui.search.SearchCategoryRegistryReader;
 import org.eclipse.update.internal.ui.search.SearchObject;
+import org.eclipse.update.internal.ui.wizards.NewUpdatesWizard;
 
 /**
  * Insert the type's description here.
  * @see IWorkbenchWindowActionDelegate
  */
 public class NewUpdatesAction implements IWorkbenchWindowActionDelegate {
+	private static final String KEY_TITLE = "NewUpdates.noUpdates.title";
+	private static final String KEY_MESSAGE = "NewUpdates.noUpdates.message";
 	IWorkbenchWindow window;
 	SearchObject searchObject;
 	ISearchCategory category;
@@ -48,6 +53,10 @@ public class NewUpdatesAction implements IWorkbenchWindowActionDelegate {
 			new ProgressMonitorDialog(window.getShell());
 		try {
 			pmd.run(true, true, getOperation());
+			if (searchObject.hasChildren())
+				openNewUpdatesWizard();
+			else
+				showNoUpdatesMessage();
 		} catch (InterruptedException e) {
 			UpdateUIPlugin.logException(e);
 		} catch (InvocationTargetException e) {
@@ -55,8 +64,25 @@ public class NewUpdatesAction implements IWorkbenchWindowActionDelegate {
 		}
 	}
 
+	private void showNoUpdatesMessage() {
+		MessageDialog.openInformation(
+			window.getShell(),
+			UpdateUIPlugin.getResourceString(KEY_TITLE),
+			UpdateUIPlugin.getResourceString(KEY_MESSAGE));
+	}
+
+	private void openNewUpdatesWizard() {
+		NewUpdatesWizard wizard = new NewUpdatesWizard(searchObject);
+		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
+		dialog.create();
+		dialog.getShell().setSize(500, 500);
+		dialog.open();
+	}
+
 	private IRunnableWithProgress getOperation() {
-		return searchObject.getSearchOperation(window.getShell().getDisplay(), category.getQueries());
+		return searchObject.getSearchOperation(
+			window.getShell().getDisplay(),
+			category.getQueries());
 	}
 
 	/**

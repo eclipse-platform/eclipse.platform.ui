@@ -453,36 +453,13 @@ public class DetailsForm extends PropertyWebForm {
 			return null;
 	}
 
-	private IFeature[] getInstalledFeatures(IFeature feature) {
-		Vector features = new Vector();
-		try {
-			ILocalSite localSite = SiteManager.getLocalSite();
-			IInstallConfiguration config = localSite.getCurrentConfiguration();
-			IConfiguredSite[] isites = config.getConfiguredSites();
-			VersionedIdentifier vid = feature.getVersionedIdentifier();
-			String id = vid.getIdentifier();
-
-			for (int i = 0; i < isites.length; i++) {
-				IConfiguredSite isite = isites[i];
-				IFeature[] result = UpdateUIPlugin.searchSite(id, isite, true);
-				for (int j = 0; j < result.length; j++) {
-					IFeature installedFeature = result[j];
-					features.add(installedFeature);
-				}
-			}
-		} catch (CoreException e) {
-			UpdateUIPlugin.logException(e);
-		}
-		return (IFeature[]) features.toArray(new IFeature[features.size()]);
-	}
-
 	private void refresh() {
 		IFeature feature = currentFeature;
 
 		if (feature == null)
 			return;
 
-		installedFeatures = getInstalledFeatures(feature);
+		installedFeatures = UpdateUIPlugin.getInstalledFeatures(feature);
 
 		setHeadingText(feature.getLabel());
 		providerLabel.setText(feature.getProvider());
