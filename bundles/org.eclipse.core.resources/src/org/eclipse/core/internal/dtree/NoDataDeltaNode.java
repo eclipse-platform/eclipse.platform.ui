@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.dtree;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 /**
  * A <code>NoDataDeltaNode</code>is a node in a delta tree whose subtree contains

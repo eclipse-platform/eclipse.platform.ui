@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.core.internal.resources;
 
-import java.io.*;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.properties.PropertyManager;
 import org.eclipse.core.internal.utils.Assert;

@@ -10,17 +10,11 @@
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
  
-import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import java.util.*;
+
 import org.eclipse.core.internal.localstore.HistoryStore;
-import org.eclipse.core.internal.utils.*;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 
 public abstract class Container extends Resource implements IContainer {
 protected Container(IPath path, Workspace container) {

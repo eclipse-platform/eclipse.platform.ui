@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.dtree;
 
 import org.eclipse.core.runtime.IPath;
-import java.util.Enumeration;
 /**
  * A <code>DataTree</code> represents the complete information of a source tree.
  * The tree contains all information within its branches, and has no relation to any

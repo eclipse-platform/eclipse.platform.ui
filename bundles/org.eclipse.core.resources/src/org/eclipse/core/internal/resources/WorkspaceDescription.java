@@ -10,11 +10,8 @@
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceDescription;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.resources.IWorkspaceDescription;
 /**
  * @see IWorkspaceDescription
  */

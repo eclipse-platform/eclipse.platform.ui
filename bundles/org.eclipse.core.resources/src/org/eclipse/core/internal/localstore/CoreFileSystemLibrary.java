@@ -10,13 +10,13 @@
  **********************************************************************/
 package org.eclipse.core.internal.localstore;
 
+import java.io.File;
+
 import org.eclipse.core.internal.resources.ResourceStatus;
 import org.eclipse.core.internal.utils.Convert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Platform;
-import java.io.File;
 
 public abstract class CoreFileSystemLibrary {
 

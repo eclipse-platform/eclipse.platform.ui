@@ -10,9 +10,8 @@
  **********************************************************************/
 package org.eclipse.core.internal.watson;
 
+import org.eclipse.core.internal.dtree.NodeComparison;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.internal.dtree.*;
-import java.util.*;
 
 /**
  * An element delta describes how an element has been affected

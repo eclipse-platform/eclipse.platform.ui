@@ -11,10 +11,8 @@
 package org.eclipse.core.internal.indexing;
 
 import java.io.*;
-import java.util.*;
 
 class Log {
-
 
 /**
  * Creates the log file in the file system.  The string 

@@ -12,7 +12,6 @@ package org.eclipse.core.resources.team;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IPath;
 
 /**
  * Primary interface for hooking the implementation of

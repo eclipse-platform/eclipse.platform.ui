@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.watson;
 
 import org.eclipse.core.internal.dtree.IComparator;
-import org.eclipse.core.internal.dtree.NodeComparison;
 /**
  * This interface allows clients of the element tree to specify
  * how element infos are compared, and thus how element tree deltas

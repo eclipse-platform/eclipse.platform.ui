@@ -10,13 +10,14 @@
  **********************************************************************/
 package org.eclipse.core.internal.localstore;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import java.util.*;
+
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.utils.*;
-import java.util.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 /**
  * Represents the workspace's tree merged with the file system's tree.
  */

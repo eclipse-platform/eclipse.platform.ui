@@ -11,10 +11,9 @@
 package org.eclipse.core.internal.resources;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.localstore.FileSystemStore;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.resources.team.IResourceTree;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * @since 2.0

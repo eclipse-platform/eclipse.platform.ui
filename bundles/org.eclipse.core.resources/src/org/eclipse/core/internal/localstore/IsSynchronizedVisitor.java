@@ -11,9 +11,7 @@
 package org.eclipse.core.internal.localstore;
 
 import org.eclipse.core.internal.resources.Resource;
-import org.eclipse.core.internal.utils.Policy;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * Visits a unified tree, and throws a ResourceChangedException on the first 
  * node that is discovered to be out of sync.  The exception that is thrown 

@@ -10,12 +10,10 @@
  **********************************************************************/
 package org.eclipse.core.resources;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.internal.resources.WorkManager;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.utils.Semaphore;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * A lock used to control write access to the resources in a workspace.

@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.core.resources;
 
-import java.util.Map;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 /**

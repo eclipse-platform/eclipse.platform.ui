@@ -10,10 +10,11 @@
  **********************************************************************/
 package org.eclipse.core.internal.events;
 
-import org.eclipse.core.internal.utils.Assert;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.internal.resources.ModelObject;
 import org.eclipse.core.resources.ICommand;
-import java.util.*;
 public class BuildCommand extends ModelObject implements ICommand {
 	protected HashMap arguments;
 public BuildCommand() {

@@ -22,8 +22,6 @@ the page file.  Object pages are located at all page numbers between space map p
 Thus object pages will never have page numbers that are multiples of the page size.
 */
 
-import java.util.*;
-
 class ObjectPage extends ObjectStorePage {
 
 	protected static final int MaxEntries = 256;

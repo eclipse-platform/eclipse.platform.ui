@@ -10,13 +10,13 @@
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.io.*;
+import java.util.HashMap;
+
+import org.eclipse.core.internal.properties.PropertyStore;
+import org.eclipse.core.internal.watson.IElementTreeData;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.internal.properties.PropertyStore;
-import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.internal.watson.IElementTreeData;
-import java.io.*;
-import java.util.*;
 
 public class ResourceInfo implements IElementTreeData, ICoreConstants {
 

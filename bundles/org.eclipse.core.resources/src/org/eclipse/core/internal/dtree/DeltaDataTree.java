@@ -10,11 +10,10 @@
  **********************************************************************/
 package org.eclipse.core.internal.dtree;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
-import java.util.Enumeration;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Externally, a <code>DeltaDataTree</code> appears to have the same content as

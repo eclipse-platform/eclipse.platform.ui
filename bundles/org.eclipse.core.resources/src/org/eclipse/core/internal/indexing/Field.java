@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.core.internal.indexing;
 
-import java.io.*;
-
 public class Field implements Insertable {
 	protected Buffer buffer; // contents
 	protected int offset; // offset of the field within the buffer

@@ -10,14 +10,14 @@
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.events.*;
-import org.eclipse.core.internal.localstore.SafeFileOutputStream;
-import org.eclipse.core.internal.utils.ArrayEnumeration;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
+
+import org.eclipse.core.internal.events.BuildCommand;
+import org.eclipse.core.internal.localstore.SafeFileOutputStream;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 //
 public class ModelObjectWriter implements IModelObjectConstants {
 public ModelObjectWriter() {

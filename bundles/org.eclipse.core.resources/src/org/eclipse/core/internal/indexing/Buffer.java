@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.core.internal.indexing;
 
-import java.io.*;
 
 /**
  * Implements a storage area that is accessible at various offsets and lengths.

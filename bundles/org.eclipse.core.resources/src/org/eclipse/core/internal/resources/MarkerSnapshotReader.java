@@ -10,11 +10,11 @@
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.internal.utils.Policy;
-import java.io.IOException;
 import java.io.DataInputStream;
+import java.io.IOException;
+
+import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.runtime.CoreException;
 
 public class MarkerSnapshotReader {
 	protected Workspace workspace;

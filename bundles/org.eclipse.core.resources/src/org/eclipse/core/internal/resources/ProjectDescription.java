@@ -10,11 +10,10 @@
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.utils.Assert;
-import java.util.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.IPath;
 
 public class ProjectDescription extends ModelObject implements IProjectDescription {
 	// fields

@@ -10,18 +10,17 @@
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.events.*;
-import org.eclipse.core.internal.localstore.SafeFileInputStream;
-import org.eclipse.core.internal.utils.EmptyEnumeration;
-import org.eclipse.core.internal.utils.Policy;
-
 import java.io.*;
 import java.util.*;
+
+import javax.xml.parsers.*;
+import org.eclipse.core.internal.events.BuildCommand;
+import org.eclipse.core.internal.localstore.SafeFileInputStream;
+import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
-import javax.xml.parsers.*;
 /**
  *
  */

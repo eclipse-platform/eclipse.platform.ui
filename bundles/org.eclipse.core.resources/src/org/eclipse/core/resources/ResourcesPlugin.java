@@ -10,10 +10,8 @@
  **********************************************************************/
 package org.eclipse.core.resources;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.utils.Assert;
-import java.io.File;
+import org.eclipse.core.runtime.*;
 
 /**
  * The plug-in runtime class for the Resources plug-in.  This is

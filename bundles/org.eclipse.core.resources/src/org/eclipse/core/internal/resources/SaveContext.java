@@ -10,11 +10,8 @@
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.resources.ISaveContext;
-import java.util.Map;
 
 public class SaveContext implements ISaveContext {
 	protected Plugin plugin;

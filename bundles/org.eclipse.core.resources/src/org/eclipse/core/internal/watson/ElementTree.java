@@ -10,13 +10,13 @@
  **********************************************************************/
 package org.eclipse.core.internal.watson;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import java.util.HashMap;
+
 import org.eclipse.core.internal.dtree.*;
-import org.eclipse.core.internal.events.ResourceComparator;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
-import java.util.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * An ElementTree can be viewed as a generic rooted tree that stores

@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.core.resources;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 /**
  * A data structure returned by <code>addSaveParticipant</code>

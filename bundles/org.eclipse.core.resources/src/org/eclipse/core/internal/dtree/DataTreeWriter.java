@@ -10,13 +10,12 @@
  **********************************************************************/
 package org.eclipse.core.internal.dtree;
 
-import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.internal.utils.Policy;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.Enumeration;
+
+import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 /**
  * Class for writing a single data tree (no parents) to an output stream.
  */

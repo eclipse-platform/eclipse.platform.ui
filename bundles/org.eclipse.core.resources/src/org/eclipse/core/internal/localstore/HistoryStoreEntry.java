@@ -10,12 +10,11 @@
  **********************************************************************/
 package org.eclipse.core.internal.localstore;
 
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.properties.IndexedStoreWrapper;
-import org.eclipse.core.internal.resources.ResourceException;
-import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.indexing.*;
+import org.eclipse.core.internal.properties.IndexedStoreWrapper;
+import org.eclipse.core.internal.utils.Convert;
+import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
+import org.eclipse.core.runtime.*;
 
 /**
  * HistoryStoreEntry objects perform all required conversion operations

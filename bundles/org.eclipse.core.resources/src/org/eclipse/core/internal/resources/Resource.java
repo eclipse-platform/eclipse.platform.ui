@@ -10,19 +10,16 @@
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IResourceVisitor;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.properties.PropertyManager;
-import org.eclipse.core.internal.utils.*;
-import org.eclipse.core.internal.watson.*;
-import java.io.*;
-import java.util.*;
-import java.net.URL;
-import java.net.MalformedURLException;
-import org.eclipse.core.resources.team.*;
+import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.team.IMoveDeleteHook;
+import org.eclipse.core.runtime.*;
 
 public abstract class Resource extends PlatformObject implements IResource, ICoreConstants, Cloneable {
 	/* package */ IPath path;

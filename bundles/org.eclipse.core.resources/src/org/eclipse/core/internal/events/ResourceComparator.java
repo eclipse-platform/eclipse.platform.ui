@@ -10,12 +10,11 @@
  **********************************************************************/
 package org.eclipse.core.internal.events;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.internal.resources.ICoreConstants;
 import org.eclipse.core.internal.resources.ResourceInfo;
 import org.eclipse.core.internal.watson.IElementComparator;
-import java.util.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
 
 /**
  * Compares two Resources and returns flags describing how

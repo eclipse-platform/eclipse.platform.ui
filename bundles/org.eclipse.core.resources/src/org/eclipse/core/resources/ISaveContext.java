@@ -10,8 +10,7 @@
  **********************************************************************/
 package org.eclipse.core.resources;
 
-import org.eclipse.core.runtime.*;
-import java.util.Map;
+import org.eclipse.core.runtime.IPath;
 /**
  * A context for workspace <code>save</code> operations.
  * <p>

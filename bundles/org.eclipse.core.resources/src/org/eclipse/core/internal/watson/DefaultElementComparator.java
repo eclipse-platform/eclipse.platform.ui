@@ -10,7 +10,7 @@
  **********************************************************************/
 package org.eclipse.core.internal.watson;
 
-import org.eclipse.core.internal.utils.Assert;
+
 
 /**
  * This is what you would expect for an element tree comparator.

@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.core.internal.indexing;
 
-import java.util.*;
-
 public class IndexCursor {
 
 	private IndexedStore store;

@@ -10,13 +10,15 @@
  ******************************************************************************/
 package org.eclipse.core.internal.properties;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.resources.ResourceException;
-import org.eclipse.core.internal.resources.ResourceStatus;
-import org.eclipse.core.internal.utils.Policy;
-import org.eclipse.core.internal.indexing.*;
 import java.util.*;
+
+import org.eclipse.core.internal.indexing.IndexCursor;
+import org.eclipse.core.internal.indexing.ObjectID;
+import org.eclipse.core.internal.resources.ResourceException;
+import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.runtime.*;
 /**
  *
  */

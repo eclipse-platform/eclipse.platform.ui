@@ -10,13 +10,14 @@
  **********************************************************************/
 package org.eclipse.core.internal.properties;
 
+import java.util.Enumeration;
+import java.util.List;
+
+import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.localstore.*;
-import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.utils.*;
-import java.io.*;
-import java.util.*;
 /**
  *
  */

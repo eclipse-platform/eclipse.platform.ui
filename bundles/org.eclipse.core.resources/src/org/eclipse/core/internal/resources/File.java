@@ -13,7 +13,6 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
-import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
