@@ -134,6 +134,16 @@ protected void configureShell(Shell shell) {
 	super.configureShell(shell);
 	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.LIST_SELECTION_DIALOG});
 }
+
+/* (non-Javadoc)
+ * Method declared on Dialog.
+ */
+protected Control createContents(Composite parent) {
+	Control result = super.createContents(parent);
+	listViewer.getControl().setFocus();
+	return result;
+}
+
 /* (non-Javadoc)
  * Method declared on Dialog.
  */
@@ -159,7 +169,7 @@ protected Control createDialogArea(Composite parent) {
 	// initialize page
 	if (getInitialSelections() != null && !getInitialSelections().isEmpty())
 		checkInitialSelections();
-
+	
 	return composite;
 }
 /**

@@ -31,14 +31,15 @@ public class ViewsPreferencePage
 	private int editorAlignment;
 	private int viewAlignment;
 
-	private static final String EDITORS_TITLE = WorkbenchMessages.getString("Editors"); //$NON-NLS-1$
-	private static final String VIEWS_TITLE = WorkbenchMessages.getString("Views"); //$NON-NLS-1$
-	private static final String TOP_TITLE = WorkbenchMessages.getString("Top"); //$NON-NLS-1$
-	private static final String BOTTOM_TITLE = WorkbenchMessages.getString("Bottom"); //$NON-NLS-1$
-	private static final String TAB_POSITIONS_LABEL = WorkbenchMessages.getString("ViewPreferences.tabPositions"); //$NON-NLS-1$
-
-	private static final String APPLY_MESSAGE =
-		WorkbenchMessages.getString("ViewPreferences.applyMessage"); //$NON-NLS-1$
+	private static final String EDITORS_TITLE = WorkbenchMessages.getString("ViewsPreference.editors"); //$NON-NLS-1$
+	private static final String EDITORS_TOP_TITLE = WorkbenchMessages.getString("ViewsPreference.editors.top"); //$NON-NLS-1$
+	private static final String EDITORS_BOTTOM_TITLE = WorkbenchMessages.getString("ViewsPreference.editors.bottom"); //$NON-NLS-1$
+	private static final String VIEWS_TITLE = WorkbenchMessages.getString("ViewsPreference.views"); //$NON-NLS-1$
+	private static final String VIEWS_TOP_TITLE = WorkbenchMessages.getString("ViewsPreference.views.top"); //$NON-NLS-1$
+	private static final String VIEWS_BOTTOM_TITLE = WorkbenchMessages.getString("ViewsPreference.views.bottom"); //$NON-NLS-1$
+	private static final String NOTE_LABEL = WorkbenchMessages.getString("ViewsPreference.note"); //$NON-NLS-1$
+	private static final String TAB_POSITIONS_LABEL = WorkbenchMessages.getString("ViewsPreference.tabPositions"); //$NON-NLS-1$
+	private static final String APPLY_MESSAGE = WorkbenchMessages.getString("ViewsPreference.applyMessage"); //$NON-NLS-1$
 /**
  * Create a composite that for creating the tab toggle buttons.
  * @param composite Composite
@@ -99,7 +100,7 @@ protected Control createContents(Composite parent) {
 		new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
 	Label noteLabel = new Label(messageComposite,SWT.BOLD );
-	noteLabel.setText(WorkbenchMessages.getString("ViewPreferences.note")); //$NON-NLS-1$
+	noteLabel.setText(NOTE_LABEL);
 	noteLabel.setFont(JFaceResources.getBannerFont());
 	noteLabel.setLayoutData(
 		new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
@@ -122,7 +123,7 @@ private void createEditorTabButtonGroup(Composite composite) {
 	Composite buttonComposite = createButtonGroup(composite);
 
 	this.editorTopButton = new Button(buttonComposite, SWT.RADIO);
-	this.editorTopButton.setText(TOP_TITLE);
+	this.editorTopButton.setText(EDITORS_TOP_TITLE);
 	this.editorTopButton.setSelection(this.editorAlignment == SWT.TOP);
 
 	this.editorTopButton.addSelectionListener(new SelectionAdapter() {
@@ -132,7 +133,7 @@ private void createEditorTabButtonGroup(Composite composite) {
 	});
 
 	this.editorBottomButton = new Button(buttonComposite, SWT.RADIO);
-	this.editorBottomButton.setText(BOTTOM_TITLE);
+	this.editorBottomButton.setText(EDITORS_BOTTOM_TITLE);
 	this.editorBottomButton.setSelection(this.editorAlignment == SWT.BOTTOM);
 
 	this.editorBottomButton.addSelectionListener(new SelectionAdapter() {
@@ -188,7 +189,7 @@ private void createViewTabButtonGroup(Composite composite) {
 	Composite buttonComposite = createButtonGroup(composite);
 
 	this.viewTopButton = new Button(buttonComposite, SWT.RADIO);
-	this.viewTopButton.setText(TOP_TITLE);
+	this.viewTopButton.setText(VIEWS_TOP_TITLE);
 	this.viewTopButton.setSelection(this.viewAlignment == SWT.TOP);
 
 	this.viewTopButton.addSelectionListener(new SelectionAdapter() {
@@ -198,7 +199,7 @@ private void createViewTabButtonGroup(Composite composite) {
 	});
 
 	this.viewBottomButton = new Button(buttonComposite, SWT.RADIO);
-	this.viewBottomButton.setText(BOTTOM_TITLE);
+	this.viewBottomButton.setText(VIEWS_BOTTOM_TITLE);
 	this.viewBottomButton.setSelection(this.viewAlignment == SWT.BOTTOM);
 
 	this.viewBottomButton.addSelectionListener(new SelectionAdapter() {
