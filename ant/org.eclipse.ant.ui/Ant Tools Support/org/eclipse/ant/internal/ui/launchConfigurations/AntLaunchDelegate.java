@@ -360,9 +360,11 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		}
 		
 		if (separateVM) { 
-			if (commandLine.indexOf("-logger") == -1 && captureOutput) { //$NON-NLS-1$
+			if (commandLine.indexOf("-logger") == -1) { //$NON-NLS-1$
 				commandLine.append(" -logger "); //$NON-NLS-1$
-				commandLine.append(REMOTE_ANT_LOGGER_CLASS);
+				if (captureOutput) {
+					commandLine.append(REMOTE_ANT_LOGGER_CLASS);
+				}
 			}
 		} else {
 			commandLine.append(" -inputhandler "); //$NON-NLS-1$

@@ -650,9 +650,7 @@ public class InternalAntRunner {
 
 		arg = getArgument(commands, "-logger"); //$NON-NLS-1$
 		if (arg != null) {
-			if (arg.length() == 0) {
-				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-logger_argument_2")); //$NON-NLS-1$
-			} 
+			//allow empty string to mean no logger
 			loggerClassname = arg;
 		}
 		arg = getArgument(commands, "-logger"); //$NON-NLS-1$
