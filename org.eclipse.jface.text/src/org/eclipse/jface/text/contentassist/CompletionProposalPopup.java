@@ -641,7 +641,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 				
 				case '\t':
 					e.doit= false;
-//					completeCommonPrefix(e.stateMask); // T ODO just testing
 					fProposalShell.setFocus();
 					return false;
 					
@@ -819,7 +818,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 	}
 	
 	/**
-	 * Completes the common prefix of all proposals directly in the code.
+	 * Completes the common prefix of all proposals directly in the code. If no
+	 * common prefix can be found, the proposal popup is shown.
 	 * 
 	 * @return an error message if completion failed.
 	 * @since 3.0
@@ -868,6 +868,15 @@ class CompletionProposalPopup implements IContentAssistListener {
 		return getErrorMessage();
 	}
 	
+	/**
+	 * Acts upon <code>fFilteredProposals</code>: if there is just one valid 
+	 * proposal, it is inserted, otherwise, the common prefix of all proposals
+	 * is inserted into the document. If there is no common prefix, <code>false</code>
+	 * is returned.
+	 * 
+	 * @return <code>true</code> if common prefix insertion was successful, <code>false</code> otherwise
+	 * @since 3.0
+	 */
 	private boolean completeCommonPrefix() {
 		
 		// 0: insert single proposals
@@ -952,22 +961,21 @@ class CompletionProposalPopup implements IContentAssistListener {
 	}
 
 	/**
-	 * @param proposal
-	 * @return
+	 * Truncates <code>prefix</code> to the longest prefix it has in common with
+	 * <code>sequence</code> and returns <code>true</code> if the common prefix
+	 * has the same case for <code>prefix</code> and <code>sequence</code>.
+	 * 
+	 * @param prefix the previous prefix that will get truncated to the prefix it has in common with <code>sequence</code>
+	 * @param sequence the character sequence to match
+	 * @return <code>true</code> if the match is case compatible, <code>false</code> if the common prefix differs in case
+	 * @since 3.0
 	 */
-	private int getReplacementOffset(ICompletionProposal proposal) {
-		if (proposal instanceof ICompletionProposalExtension3)
-			return ((ICompletionProposalExtension3) proposal).getCompletionOffset();
-		else
-			return fInvocationOffset;	
-	}
-
-	private boolean truncatePrefix(StringBuffer prefix, CharSequence anycase) {
+	private boolean truncatePrefix(StringBuffer prefix, CharSequence sequence) {
 		// find common prefix
-		int min= Math.min(prefix.length(), anycase.length());
+		int min= Math.min(prefix.length(), sequence.length());
 		boolean caseCompatible= true;
 		for (int c= 0; c < min; c++) {
-			char compareChar= anycase.charAt(c);
+			char compareChar= sequence.charAt(c);
 			char prefixChar= prefix.charAt(c);
 			if (prefixChar != compareChar) {
 				if (isCaseSensitive() || Character.toLowerCase(prefixChar) != Character.toLowerCase(compareChar)) {
@@ -983,15 +991,41 @@ class CompletionProposalPopup implements IContentAssistListener {
 	}
 
 	/**
-	 * @return
+	 * Returns whether common prefix completion should be case sensitive or not. 
+	 * Returns <code>true</code> if no proposal popup is currently showing, <code>false</code> if there is.
+	 * 
+	 * @return <code>true</code> if common prefix completion should be case sensitive, <code>false</code> otherwise
+	 * @since 3.0
 	 */
 	private boolean isCaseSensitive() {
 		return !Helper.okToUse(fProposalShell);
 	}
 
 	/**
-	 * @param proposal
-	 * @return
+	 * Extracts the completion offset of an <code>ICompletionProposal</code>. If
+	 * <code>proposal</code> is a <code>ICompletionProposalExtension3</code>, its
+	 * <code>getCompletionOffset</code> method is called, otherwise, the invocation
+	 * offset of this popup is shown.
+	 * 
+	 * @param proposal the proposal to extract the offset from
+	 * @return the proposals completion offset, or <code>fInvocationOffset</code>
+	 */
+	private int getReplacementOffset(ICompletionProposal proposal) {
+		if (proposal instanceof ICompletionProposalExtension3)
+			return ((ICompletionProposalExtension3) proposal).getCompletionOffset();
+		else
+			return fInvocationOffset;	
+	}
+
+	/**
+	 * Extracts the replacement string from an <code>ICompletionProposal</code>.
+	 *  If <code>proposal</code> is a <code>ICompletionProposalExtension3</code>, its
+	 * <code>getCompletionText</code> method is called, otherwise, the display
+	 * string is used.
+	 * 
+	 * @param proposal the proposal to extract the text from
+	 * @return the proposals completion text
+	 * @since 3.0
 	 */
 	private CharSequence getReplacementString(ICompletionProposal proposal) {
 		CharSequence insertion= null;
