@@ -60,14 +60,14 @@ public class SiteSearchCategory extends BaseSearchCategory {
 				try {
 					if (!skipFeature) {
 						if (filter.accept(ref)) {
-							IFeature feature = ref.getFeature(monitor);
+							IFeature feature = ref.getFeature(null);
 							if (filter.accept(feature))
 								collector.accept(feature);
 							monitor.subTask(feature.getLabel());
 						}
 					}
 				} catch (CoreException e) {
-					//System.out.println(e);
+					System.out.println(e);
 				} finally {
 					monitor.worked(1);
 				}
