@@ -239,6 +239,11 @@ class AnimationManager {
 				while (isAnimated()
 					&& !monitor.isCanceled()
 					&& (startErrorState == showingError)) {
+						
+					if(display.isDisposed()){
+						monitor.setCanceled(true);
+						continue;
+					}
 
 					if (imageData.disposalMethod == SWT.DM_FILL_BACKGROUND) {
 						// Fill with the background color before drawing.
@@ -472,7 +477,8 @@ class AnimationManager {
 				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 				 */
 				public void done(IJobChangeEvent event) {
-					if (isAnimated())
+					//Only schedule the job if we are showing anything
+					if (isAnimated() && items.size() > 0)
 						animateJob.schedule();
 					else {
 						//Clear the image
