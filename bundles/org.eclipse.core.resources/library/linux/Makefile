@@ -3,8 +3,7 @@
 CORE.C = core.c
 CORE.O = core.o
 LIB_NAME = libcore.so
-LIB_NAME_FULL = libcore102.so
-JDK_INCLUDE = /opt/IBMJava2-13/include
+LIB_NAME_FULL = libcore104.so
 
 core :
 	gcc -fPIC -g -c -I$(JDK_INCLUDE) $(CORE.C) -o $(CORE.O)

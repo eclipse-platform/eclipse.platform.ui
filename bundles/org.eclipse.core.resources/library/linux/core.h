@@ -14,19 +14,19 @@ extern "C" {
 #undef STAT_READ_ONLY
 #define STAT_READ_ONLY 0x1000000000000000l
 /*
- * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibraryLinux
+ * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
  * Method:    internalGetStat
  * Signature: (Ljava/lang/String;)J
  */
-JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibraryLinux_internalGetStat
+JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalGetStat
   (JNIEnv *, jclass, jstring);
 
 /*
- * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibraryLinux
+ * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
  * Method:    internalSetReadOnly
  * Signature: (Ljava/lang/String;Z)V
  */
-JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibraryLinux_internalSetReadOnly
+JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalSetReadOnly
    (JNIEnv *, jclass, jstring, jboolean);
 
 #ifdef __cplusplus

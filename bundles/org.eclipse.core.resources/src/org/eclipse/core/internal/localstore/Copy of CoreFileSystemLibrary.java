@@ -33,8 +33,10 @@ public abstract class CoreFileSystemLibrary {
 	private static final long STAT_FOLDER 		= 0x2000000000000000l;
 	/** indicates if the resource is marked as read-only */
 	private static final long STAT_READ_ONLY 	= 0x1000000000000000l;
+	/** indicates if the resource is marked as hidden */
+	private static final long STAT_HIDDEN 		= 0x800000000000000l;
 	/** used to extract the last modified timestamp */
-	private static final long STAT_LASTMODIFIED = ~(STAT_RESERVED | STAT_VALID | STAT_FOLDER | STAT_READ_ONLY);
+	private static final long STAT_LASTMODIFIED = ~(STAT_RESERVED | STAT_VALID | STAT_FOLDER | STAT_READ_ONLY | STAT_HIDDEN);
 
 	/** instance of this library */
 	private static final String LIBRARY_NAME = "core104";
@@ -71,6 +73,9 @@ public static long getStat(String fileName) {
 	result |= STAT_VALID;
 	if (target.isDirectory())
 		result |= STAT_FOLDER;
+	// hidden is only considered in win32
+	if (BootLoader.getOS().equals(BootLoader.OS_WIN32) && target.isHidden())
+		result |= STAT_HIDDEN;
 	return result;
 }
 private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
@@ -87,10 +92,10 @@ private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
 private static final native long internalGetStat(String fileName);
 private static final native boolean internalSetReadOnly(String fileName, boolean readOnly);
 public static boolean isFile(long stat) {
-	return isSet(stat, STAT_VALID) && !isSet(stat, STAT_FOLDER);
+	return isSet(stat, STAT_VALID) && !isSet(stat, STAT_FOLDER) && !isHidden(stat);
 }
 public static boolean isFolder(long stat) {
-	return isSet(stat, STAT_VALID) && isSet(stat, STAT_FOLDER);
+	return isSet(stat, STAT_VALID) && isSet(stat, STAT_FOLDER) && !isHidden(stat);
 }
 public static boolean isReadOnly(String fileName) {
 	if (hasNatives) 
@@ -110,5 +115,14 @@ public static boolean setReadOnly(String fileName, boolean readOnly) {
 	if (!readOnly)
 		return false; // unsupported
 	return new File(fileName).setReadOnly();
+}
+/**
+ * Only valid in Win32.
+ */
+public static boolean isHidden(long stat) {
+	return isSet(stat, STAT_VALID) && isSet(stat, STAT_HIDDEN);
+}
+public static boolean exists(long stat) {
+	return isSet(stat, STAT_VALID) && !isSet(stat, STAT_HIDDEN);
 }
 }

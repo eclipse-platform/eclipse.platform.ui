@@ -20,18 +20,18 @@ jlong fileTimeToMillis(FILETIME ft) {
 }
 
 /*
- * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibraryWindows
+ * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
  * Method:    internalGetStat
  * Signature: (Ljava/lang/String;)J
  */
-JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibraryWindows_internalGetStat
+JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalGetStat
    (JNIEnv *env, jclass clazz, jstring target) {
 
 	HANDLE handle;
 	WIN32_FIND_DATA info;
 	jlong result;
 
-	const char *fileName = (*env)->GetStringUTFChars(env, target, 0);
+	const char *fileName = (*env)->GetStringUTFChars(env, target, NULL);
 	handle = FindFirstFile(fileName, &info);
 	if (handle == INVALID_HANDLE_VALUE) {
 		FindClose(handle);
@@ -56,11 +56,11 @@ JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystem
 }
 
 /*
- * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibraryWindows
+ * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
  * Method:    internalSetReadOnly
  * Signature: (Ljava/lang/String;Z)V
  */
-JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibraryWindows_internalSetReadOnly
+JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalSetReadOnly
    (JNIEnv *env, jclass clazz, jstring target, jboolean readOnly) {
 
 	int mode;

@@ -2,19 +2,16 @@
 APPVER=4.0
 !include <win32.mak>
 
-DLLNAME=core102.dll# declaration
+DLLNAME=core104.dll
 
-LIBNAME=core# declaration
+LIBNAME=core
 
-LIBPATH=# declaration
+LIBPATH=
 
 .c.obj:
-	$(cc) $(cflags) $(cvarsmt) -DWIN32 /I. /IC:\jdk1.2.2\include /IC:\jdk1.2.2\include\win32 $(VMDEBUG) $*.c
+	$(cc) $(cflags) $(cvarsmt) -DWIN32 /I. /IC:\jdk1.2.2\include /IC:\jdk1.2.2\include\win32 $*.c
 
-.asm.obj:
-	ml /c /Cp /W3 /nologo /coff /Zm $(VMASMDEBUG)  $<
-
-BUILDFILES1 = core.obj
+BUILDFILES1=core.obj
 
 MDLLIBFILES1 = g:\apps\tools\msvc40\lib\winmm.lib 
 

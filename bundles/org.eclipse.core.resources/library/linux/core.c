@@ -4,11 +4,11 @@
 #include "core.h"
 
 /*
- * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibraryLinux
+ * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
  * Method:    internalGetStat
  * Signature: (Ljava/lang/String;)J
  */
-JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibraryLinux_internalGetStat
+JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalGetStat
    (JNIEnv *env, jclass clazz, jstring target) {
 
 	struct stat info;
@@ -38,11 +38,11 @@ JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystem
 }
 
 /*
- * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibraryLinux
+ * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
  * Method:    internalSetReadOnly
  * Signature: (Ljava/lang/String;Z)V
  */
-JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibraryLinux_internalSetReadOnly
+JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalSetReadOnly
    (JNIEnv *env, jclass clazz, jstring target, jboolean readOnly) {
 
 	int mask;
