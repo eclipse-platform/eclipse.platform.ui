@@ -12,6 +12,7 @@
       </library>
    </runtime>
    <requires>
+      <import plugin="org.eclipse.core.commands" export="true" />
       <import plugin="org.eclipse.swt" export="true"/>
       <import plugin="org.eclipse.core.runtime"/>
    </requires>

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
+import org.eclipse.commands.Command;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.events.HelpListener;
@@ -129,6 +130,19 @@ public interface IAction {
      * @since 3.0
      */
     public static final String RESULT = "result"; //$NON-NLS-1$
+    
+    /**
+     * Property name of an action's handler. Some actions delegate some or all
+     * of their behaviour or state to another object. In this case, if the
+     * object to which behaviour has been delegated changes, then a property
+     * change event should be sent with this name.
+     * 
+     * This is used to support backward compatibility of actions within the
+     * commands framework.
+     * 
+     * @since 3.1
+     */
+    public static final String HANDLED = Command.ATTRIBUTE_HANDLED; //$NON-NLS-1$
 
     /**
      * Adds a property change listener to this action.
