@@ -83,24 +83,40 @@ public class UndoManager implements IUndoManager {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void aboutToPerformChange(Change change) {
+	public void aboutToPerformChange(final Change change) {
 		if (fListeners == null)
 			return;
 		Object[] listeners= fListeners.getListeners();
 		for (int i= 0; i < listeners.length; i++) {
-			((IUndoManagerListener)listeners[i]).aboutToPerformChange(this, change);
+			final IUndoManagerListener listener= (IUndoManagerListener)listeners[i];
+			Platform.run(new ISafeRunnable() {
+				public void run() throws Exception {
+					listener.aboutToPerformChange(UndoManager.this, change);
+				}
+				public void handleException(Throwable exception) {
+					RefactoringCorePlugin.log(exception);
+				}
+			});			
 		}
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	public void changePerformed(Change change) {
+	public void changePerformed(final Change change) {
 		if (fListeners == null)
 			return;
 		Object[] listeners= fListeners.getListeners();
 		for (int i= 0; i < listeners.length; i++) {
-			((IUndoManagerListener)listeners[i]).changePerformed(this, change);
+			final IUndoManagerListener listener= (IUndoManagerListener)listeners[i];
+			Platform.run(new ISafeRunnable() {
+				public void run() throws Exception {
+					listener.changePerformed(UndoManager.this, change);
+				}
+				public void handleException(Throwable exception) {
+					RefactoringCorePlugin.log(exception);
+				}
+			});
 		}
 	}
 
@@ -254,12 +270,13 @@ public class UndoManager implements IUndoManager {
 						return;
 					}
 					ResourcesPlugin.getWorkspace().checkpoint(false);
-					aboutToPerformChange(change);
-					
-					undo[0]= change.perform(new SubProgressMonitor(monitor, 8));
-					
-					ResourcesPlugin.getWorkspace().checkpoint(false);
-					changePerformed(change);
+					try {
+						aboutToPerformChange(change);
+						undo[0]= change.perform(new SubProgressMonitor(monitor, 8));
+						ResourcesPlugin.getWorkspace().checkpoint(false);
+					} finally {
+						changePerformed(change);
+					}
 					change.dispose();
 					if (undo[0] != null) {
 						undo[0].initializeValidationData(new SubProgressMonitor(monitor, 1));

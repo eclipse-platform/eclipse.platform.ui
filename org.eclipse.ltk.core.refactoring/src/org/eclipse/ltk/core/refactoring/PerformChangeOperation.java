@@ -220,17 +220,23 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 					fValidationStatus= fChange.isValid(new SubProgressMonitor(monitor, 1));
 					if (fValidationStatus.hasFatalError())
 						return;
-					if (fUndoManager != null) {
-						ResourcesPlugin.getWorkspace().checkpoint(false);
-						fUndoManager.aboutToPerformChange(fChange);
-					}
-					fChangeExecutionFailed= true;
-					fUndoChange= fChange.perform(new SubProgressMonitor(monitor, 9));
-					fChangeExecutionFailed= false;
-					fChangeExecuted= true;
-					if (fUndoManager != null) {
-						ResourcesPlugin.getWorkspace().checkpoint(false);
-						fUndoManager.changePerformed(fChange);
+					boolean aboutToPerformChangeCalled= false;
+					try {
+						if (fUndoManager != null) {
+							ResourcesPlugin.getWorkspace().checkpoint(false);
+							fUndoManager.aboutToPerformChange(fChange);
+							aboutToPerformChangeCalled= true;
+						}
+						fChangeExecutionFailed= true;
+						fUndoChange= fChange.perform(new SubProgressMonitor(monitor, 9));
+						fChangeExecutionFailed= false;
+						fChangeExecuted= true;
+					} finally {
+						if (fUndoManager != null) {
+							ResourcesPlugin.getWorkspace().checkpoint(false);
+							if (aboutToPerformChangeCalled)
+								fUndoManager.changePerformed(fChange);
+						}
 					}
 					fChange.dispose();
 					if (fUndoChange != null) {

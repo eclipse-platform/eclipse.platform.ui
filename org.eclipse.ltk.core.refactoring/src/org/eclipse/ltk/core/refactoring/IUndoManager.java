@@ -43,7 +43,19 @@ public interface IUndoManager {
 	public void removeListener(IUndoManagerListener listener);
 	
 	/**
-	 * The infrastructure is going to perform the given change.
+	 * The infrastructure is going to perform the given change. If a
+	 * client calls this method it must make sure that the corresponding
+	 * method {@link #changePerformed(Change)} is called after the
+	 * change got executed. A typically code snippet looks as follows:
+	 * <pre>
+	 *   Change change= ...;
+	 *   try {
+	 *     undoManager.aboutToPerformChange(change);
+	 *     // execute change
+	 *   } finally {
+	 *     undoManager.changePerformed(change);
+	 *   }
+	 * </pre>
 	 * 
 	 * @param change the change to be performed.
 	 */
