@@ -47,6 +47,10 @@ public class Perspective
 	private Color borderColor3;
 	private Map mapFastViewToWidth = new HashMap();
 	private Sash fastViewSash;
+	
+	//Number of open editors before reusing. If < 0, use the 
+	//user preference settings.
+	private int reuseEditors = -1;
 
 	// resize listener to update fast view height when
 	// window resized.
@@ -475,6 +479,8 @@ private void loadPredefinedPersp(
 	// Hide editor area if requested by factory
 	if (!layout.isEditorAreaVisible())
 		hideEditorArea();
+		
+	setEditorReuseThreshold(layout.getEditorReuseThreshold());
 }
 /**
  * activate.
@@ -673,6 +679,9 @@ public void restoreState(IMemento memento) {
 	Integer areaVisible = memento.getInteger(IWorkbenchConstants.TAG_AREA_VISIBLE);
 	if (areaVisible != null && areaVisible.intValue() == 0)
 		hideEditorArea();
+	Integer threshold = memento.getInteger(IWorkbenchConstants.TAG_EDITOR_REUSE_THRESHOLD);	
+	if (threshold != null && threshold.intValue() != 0)
+		setEditorReuseThreshold(threshold.intValue());	
 }
 /*
  * Create and return a new ViewPane. Return null if any error occur; 
@@ -833,6 +842,9 @@ private void saveState(IMemento memento, PerspectiveDescriptor p,
 		memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 1);
 	else
 		memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 0);
+	
+	//Save editor reuse threshold	
+	memento.putInteger(IWorkbenchConstants.TAG_EDITOR_REUSE_THRESHOLD,getEditorReuseThreshold());
 }
 /**
  * Save the layout.
@@ -1026,4 +1038,20 @@ public void toggleFastView(IViewPart view) {
 		setActiveFastView(view);
 	}
 }
+/**
+ * Returns the number of open editors before reusing editors.
+ *
+ * @return a int
+ */
+public int getEditorReuseThreshold() {
+	return reuseEditors;
+}
+/**
+ * Set the number of open editors before reusing editors.
+ * If < 0 the user preference settings will be used.
+ */
+public void setEditorReuseThreshold(int openEditors) {
+	reuseEditors = openEditors;
+}
+
 }

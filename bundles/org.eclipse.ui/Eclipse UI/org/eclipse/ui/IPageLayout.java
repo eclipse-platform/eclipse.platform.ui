@@ -235,4 +235,18 @@ public boolean isEditorAreaVisible();
  * @param showEditorArea <code>true</code> to show the editor area, <code>false</code> to hide the editor area
  */
 public void setEditorAreaVisible(boolean showEditorArea);
+/**
+ * Returns the number of open editors before reusing editors or -1 if the 
+ * preference settings should be used instead.
+ *
+ * @return a int
+ */
+public int getEditorReuseThreshold();
+/**
+ * Set the number of open editors before reusing editors.
+ * If < 0 the user preference settings will be used.
+ * 
+ * @param openEditors the number of open editors.
+ */
+public void setEditorReuseThreshold(int openEditors);
 }

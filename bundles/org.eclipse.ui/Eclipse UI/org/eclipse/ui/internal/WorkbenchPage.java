@@ -46,9 +46,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private Perspective activePersp;
 	private ViewFactory viewFactory;
 	private ArrayList perspList = new ArrayList(1);
-	//Number of open editors before reusing. If < 0, use the 
-	//user preference settings.
-	private int reuseEditors = -1;
 	private Listener mouseDownListener;
 	private IMemento deferredMemento;
 	private PerspectiveDescriptor deferredActivePersp;
@@ -1699,22 +1696,23 @@ private void zoomOut() {
 		getPersp().getPresentation().zoomOut();
 }
 /**
- * See IWorkbenchPage.
+ * @see IPageLayout.
  */
 public int getEditorReuseThreshold() {
-	//reuseEditors <= 0 -> use the global preference IPreferenceConstants.REUSE_EDITORS.
-	//reuseEditors > 0 -> reuse editors after openning 'N' editors.
-	if(reuseEditors > 0)
-		return reuseEditors;
-
-	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	if (activePersp != null) {
+		int result = activePersp.getEditorReuseThreshold();
+		if(result > 0)
+			return result;
+	}
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();		
 	return store.getInt(IPreferenceConstants.REUSE_EDITORS);
 }
 /**
- * See IWorkbenchPage.
+ * @see IPageLayout.
  */
 public void setEditorReuseThreshold(int openEditors) {
-	reuseEditors = openEditors;
+	if (activePersp != null)
+		activePersp.setEditorReuseThreshold(openEditors);
 }
 /*
  * Returns the editors in activation order (oldest first).

@@ -49,7 +49,9 @@ public class PageLayout implements IPageLayout {
 	private ArrayList newWizardActions = new ArrayList(3);
 	private ArrayList showViewActions = new ArrayList(3);
 	private ArrayList perspectiveActions = new ArrayList(3);
-	
+	//Number of open editors before reusing. If < 0, use the 
+	//user preference settings.
+	private int reuseEditors = -1;
 /**
  * LayoutFactory constructor comment.
  */
@@ -377,5 +379,17 @@ public void stackView(String viewId, String refId) {
 	// If ref part is not found then just do add.
 	WorkbenchPlugin.log(MISSING_REF_PART + refId);//$NON-NLS-1$
 	rootLayoutContainer.add(newPart);
+}
+/**
+ * @see IPageLayout
+ */
+public int getEditorReuseThreshold() {
+	return reuseEditors;
+}
+/**
+ * @see IPageLayout
+ */
+public void setEditorReuseThreshold(int openEditors) {
+	reuseEditors = openEditors;
 }
 }
