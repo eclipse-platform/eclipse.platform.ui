@@ -340,7 +340,7 @@ public class TagSelectionArea extends DialogArea {
     }
 	
     protected TreeViewer createTree(Composite parent) {
-		Tree tree = new Tree(parent, SWT.MULTI | SWT.BORDER);
+		Tree tree = new Tree(parent, SWT.SINGLE | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
         tree.setLayoutData(data);
 		TreeViewer result = new TreeViewer(tree);
