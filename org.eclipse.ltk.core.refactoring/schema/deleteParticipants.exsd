@@ -45,6 +45,9 @@ The default variable used during expression evaluation is bound to the element v
                <documentation>
                   an optional name of the extension instance
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -67,6 +70,9 @@ The default variable used during expression evaluation is bound to the element v
                <documentation>
                   a human reabable name of the delete participant
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">

@@ -44,6 +44,9 @@ Variables can be accessed using the &amp;lt;with variable=&quot;...&quot;/&amp;g
                <documentation>
                   an optional name of the extension instance.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
