@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -362,7 +363,6 @@ public class SyncFileWriter {
 	 * Returns null if the file does not exist.
 	 */
 	private static String[] readLines(IFile file) throws CVSException {
-		if (! file.exists()) return null;
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents()));
 			List fileContentStore = new ArrayList();
@@ -378,6 +378,8 @@ public class SyncFileWriter {
 		} catch (IOException e) {
 			throw CVSException.wrapException(e);
 		}  catch (CoreException e) {
+			if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND)
+				return null;
 			throw CVSException.wrapException(e);
 		}
 	}
