@@ -960,6 +960,9 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			case '\"':
 				buf.append("&quot;"); //$NON-NLS-1$
 				break;
+			case 0x160:
+				buf.append(" ");
+				break;
 			default:
 				buf.append(c);
 				break;

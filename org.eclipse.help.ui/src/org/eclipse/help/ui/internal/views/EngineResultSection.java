@@ -301,7 +301,9 @@ public class EngineResultSection {
 			if (!hit.getForceExternalWindow()) {
 				buff.append(" <a href=\""); //$NON-NLS-1$ 
 				buff.append("nw:");//$NON-NLS-1$ 
-				buff.append(part.parent.escapeSpecialChars(hit.toAbsoluteHref(hit.getHref(), true)));
+				String ahref = part.parent.escapeSpecialChars(hit.toAbsoluteHref(hit.getHref(), true));
+				//System.out.println(ahref);
+				buff.append(ahref);
 				buff.append("\"><img href=\""); //$NON-NLS-1$ 
 				buff.append(IHelpUIConstants.IMAGE_NW);
 				buff.append("\" alt=\""); //$NON-NLS-1$
@@ -316,6 +318,7 @@ public class EngineResultSection {
 				if (summary != null) {
 					buff.append("<br/>"); //$NON-NLS-1$
 					//buff.append("<span color=\"summary\">"); //$NON-NLS-1$
+					//System.out.println(summary);
 					buff.append(summary);
 					//buff.append("</span>"); //$NON-NLS-1$
 				}
