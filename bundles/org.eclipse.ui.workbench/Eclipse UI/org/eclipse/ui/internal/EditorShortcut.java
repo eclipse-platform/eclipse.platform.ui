@@ -47,7 +47,7 @@ public class EditorShortcut {
 		title = mem.getString(IWorkbenchConstants.TAG_TITLE);
 		tooltip = mem.getString(IWorkbenchConstants.TAG_TOOLTIP);
 		memento = mem.getChild(IWorkbenchConstants.TAG_INPUT);
-		factoryId = mem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+		factoryId = memento.getString(IWorkbenchConstants.TAG_FACTORY_ID);
 		path = mem.getString(IWorkbenchConstants.TAG_PATH);	
 		
 		IEditorRegistry reg = WorkbenchPlugin.getDefault().getEditorRegistry();
@@ -192,7 +192,9 @@ public class EditorShortcut {
 			mem.putMemento(memento);
 		} else if(input != null) {
 			IMemento childMem = mem.createChild(IWorkbenchConstants.TAG_INPUT);
-			input.getPersistable().saveState(childMem);
+			IPersistableElement persistable = input.getPersistable();
+			childMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
+			persistable.saveState(childMem);
 			if (input instanceof IFileEditorInput) {
 				IFile file = ((IFileEditorInput)input).getFile();
 				mem.putString(IWorkbenchConstants.TAG_PATH,file.getFullPath().toString());
