@@ -791,10 +791,57 @@ public void setDescription(IWorkspaceDescription description) throws CoreExcepti
  */
 public void setWorkspaceLock(WorkspaceLock lock);
 /**
- * Method validateEdit.
- * @param files
- * @param context
- * @return IStatus
+ * Advises that the caller intends to modify the contents of the given files in the near future and
+ * asks whether modifying all these files would be reasonable. The files must all exist.
+ * This method is used to give the VCM component an opportunity to check out (or otherwise
+ * prepare) the files if required. (It is provided in this component rather than in the UI so that
+ * "core" (i.e., head-less) clients can use it. Similarly, it is located outside the VCM component 
+ * for the convenience of clients that must also operate in configurations without VCM.)
+ * <p>
+ * Clients can make use of this method to achieve better integration of VCM with their tools.
+ * Clients should call this method when they are about to modify files that have not been 
+ * modified previously. Calling this method might trigger check outs for those files not already
+ * checked out. By passing a UI context, the caller indicates that the VCM component may
+ * contact the user to help decide how best to proceed. If no UI context is provided, the
+ * VCM component will make its decision without additional interaction with the user.
+ * If OK is returned, the caller can safely assume that all of the given files haven been prepared
+ * for modification and that there is good reason to believe that <code>IFile.setContents</code>
+ * (or <code>appendContents</code>) would be successful on any of them. If the result
+ * is not OK, modifying the given files might not succeed for the reason(s) indicated.
+ * </p>
+ * <p>
+ * If a shell is passed in as the context, the VCM component
+ * may bring up a dialogs to query the user or report difficulties; the shell should be used to
+ * parent any such dialogs; the caller may safely assume that the reasons for failure will have
+ * been made clear to the user. If <code>null</code> is passed, the user should not be contacted;
+ * any failures should be reported via the result; the caller may chose to present these to the
+ * user however they see fit. The ideal implementation of this method is transactional; no files
+ * would be affected unless the go-ahead could be given. (In practice, there may be no feasible
+ * way to ensure such changes get done atomically.)
+ * </p>
+ * <p>
+ * The contact is loose (intentionally). Repeated revalidation is not required; a client is free to
+ * assume that once the modification has been validated, a file will remain in that state until the
+ * contents of the file actually change. On the other hand, occasional revalidation of a file is not
+ * a problem; a client may assume that the VCM component knows which files can be considered
+ * already open for modification and will not pester the user without good reason.
+ * Failing to call this method prior to modifying a file's contents places the VCM component
+ * in a position where it is forced to react to each individual file modification without further opportunity
+ * to interact with the user.
+ * </p>
+ * <p>
+ * The method calls <code>IFileModificationValidator.validateEdit</code> for
+ * the file modification validator (if provided by the VCM plug-in). When there is no file modification
+ * validator, this method immediately return an OK status.
+ * </p>
+ * 
+ * @param files the files that are to be modified; these files must all exist in the workspace
+ * @param context the <code>org.eclipse.swt.Shell</code> that is to be used to
+ *    parent any dialogs with the user, or <code>null</code> if there is no UI context (declared
+ *   as an Object to avoid any direct references on the SWT component)
+ * @return a status object that is OK if things are fine, otherwise a status describing
+ *    reasons why mofifying the given files is not a reasonable
+ * @since 2.0
  */
 public IStatus validateEdit(IFile[] files, Object context);
 /**
