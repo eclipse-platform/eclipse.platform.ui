@@ -438,6 +438,9 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 			// (this allows lazy page control creation)
 			if (page.getControl() == null) {
 				page.createControl(pageSite);
+				// the page is responsible for ensuring the created control is accessable
+				// via getControl.
+				Assert.isNotNull(page.getControl());
 				// ensure the dialog is large enough for this page
 				updateSizeForPage(page);
 				wizardDialog.updateLayout();
