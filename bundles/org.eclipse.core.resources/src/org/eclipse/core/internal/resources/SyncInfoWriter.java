@@ -58,7 +58,7 @@ public void saveSyncInfo(IResource target, DataOutputStream output, List written
 	ResourceInfo info = workspace.getResourceInfo(resource.getFullPath(), true, false);
 	if (info == null)
 		return;
-	HashMap table = info.getSyncInfo(false);
+	Map table = info.getSyncInfo(false);
 	if (table == null)
 		return;
 	// if this is the first sync info that we have written, then
@@ -105,7 +105,7 @@ public void snapSyncInfo(IResource target, DataOutputStream output) throws IOExc
 		return;
 	if (!info.isSet(ICoreConstants.M_SYNCINFO_SNAP_DIRTY))
 		return;
-	HashMap table = info.getSyncInfo(false);
+	Map table = info.getSyncInfo(false);
 	if (table == null)
 		return;
 	// write the version id for the snapshot.

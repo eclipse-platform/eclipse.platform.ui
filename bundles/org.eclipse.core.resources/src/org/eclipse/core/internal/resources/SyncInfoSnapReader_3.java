@@ -12,17 +12,16 @@ package org.eclipse.core.internal.resources;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.HashMap;
-
+import org.eclipse.core.internal.utils.ObjectMap;
 import org.eclipse.core.runtime.*;
 public class SyncInfoSnapReader_3 extends SyncInfoSnapReader {
 	
 public SyncInfoSnapReader_3(Workspace workspace, Synchronizer synchronizer) {
 	super(workspace, synchronizer);
 }
-private HashMap internalReadSyncInfo(DataInputStream input) throws IOException {
+private ObjectMap internalReadSyncInfo(DataInputStream input) throws IOException {
 	int size = input.readInt();
-	HashMap map = new HashMap(size);
+	ObjectMap map = new ObjectMap(size);
 	for (int i = 0; i < size; i++) {
 		// read the qualified name
 		String qualifier = input.readUTF();
@@ -49,7 +48,7 @@ private HashMap internalReadSyncInfo(DataInputStream input) throws IOException {
  */
 public void readSyncInfo(DataInputStream input) throws IOException {
 	IPath path = new Path(input.readUTF());
-	HashMap map = internalReadSyncInfo(input);
+	ObjectMap map = internalReadSyncInfo(input);
 	// set the table on the resource info
 	ResourceInfo info = workspace.getResourceInfo(path, true, false);
 	if (info == null)

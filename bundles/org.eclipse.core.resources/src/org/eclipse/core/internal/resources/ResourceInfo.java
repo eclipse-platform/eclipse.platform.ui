@@ -11,9 +11,9 @@
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
-import java.util.HashMap;
-
+import java.util.Map;
 import org.eclipse.core.internal.properties.PropertyStore;
+import org.eclipse.core.internal.utils.ObjectMap;
 import org.eclipse.core.internal.watson.IElementTreeData;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.QualifiedName;
@@ -41,11 +41,23 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	/** The generation count for sync info changes. */
 	protected int syncInfoGenerationCount = 0;
 	
-	/** The table of sync infos */
-	protected HashMap syncInfo = null;
+	/** 
+	 * The table of sync infos. 
+	 * <p>
+	 * This field is declared as the implementing class rather than the
+	 * interface so we ensure that we get it right since we are making certain
+	 * assumptions about the object type w.r.t. casting.
+	 */
+	protected ObjectMap syncInfo = null;
 
-	/** The properties which are maintained for the lifecycle of the workspace */
-	protected HashMap sessionProperties = null;
+	/** 
+	 * The properties which are maintained for the lifecycle of the workspace.
+	 * <p>
+	 * This field is declared as the implementing class rather than the
+	 * interface so we ensure that we get it right since we are making certain
+	 * assumptions about the object type w.r.t. casting.
+	 */
+	protected ObjectMap sessionProperties = null;
 
 	/** The generation count for marker changes. */
 	protected int markerGenerationCount = 0;
@@ -120,7 +132,7 @@ public PropertyStore getPropertyStore() {
  */
 public Object getSessionProperty(QualifiedName name) {
 	// thread safety: (Concurrency001)
-	HashMap temp = sessionProperties;
+	Map temp = sessionProperties;
 	if (temp == null)
 		return null;
 	return temp.get(name);
@@ -133,10 +145,15 @@ public synchronized byte[] getSyncInfo(QualifiedName id, boolean makeCopy) {
 	b = (byte[]) syncInfo.get(id);
 	return b == null ? null : (makeCopy ? (byte[]) b.clone() : b);
 }
-public synchronized HashMap getSyncInfo(boolean makeCopy) {
+/**
+ * The parameter to this method is the implementing class rather than the
+ * interface so we ensure that we get it right since we are making certain
+ * assumptions about the object type w.r.t. casting.
+ */
+public synchronized ObjectMap getSyncInfo(boolean makeCopy) {
 	if (syncInfo == null)
 		return null;
-	return makeCopy ? (HashMap) syncInfo.clone() : syncInfo;
+	return makeCopy ? (ObjectMap) syncInfo.clone() : syncInfo;
 }
 /** 
  * Returns the sync information generation count.
@@ -265,23 +282,28 @@ public synchronized void setSessionProperty(QualifiedName name, Object value) {
 	if (value == null) {
 		if (sessionProperties == null)
 			return;
-		HashMap temp = (HashMap) sessionProperties.clone();
+		ObjectMap temp = (ObjectMap) sessionProperties.clone();
 		temp.remove(name);
 		if (temp.isEmpty())
 			sessionProperties = null;
 		else
 			sessionProperties = temp;
 	} else {
-		HashMap temp = sessionProperties;
+		ObjectMap temp = sessionProperties;
 		if (temp == null)
-			temp = new HashMap(5);
+			temp = new ObjectMap(5);
 		else
-			temp = (HashMap) sessionProperties.clone();
+			temp = (ObjectMap) sessionProperties.clone();
 		temp.put(name, value);
 		sessionProperties = temp;
 	}
 }
-protected void setSyncInfo(HashMap syncInfo) {
+/**
+ * The parameter to this method is the implementing class rather than the
+ * interface so we ensure that we get it right since we are making certain
+ * assumptions about the object type w.r.t. casting.
+ */
+protected void setSyncInfo(ObjectMap syncInfo) {
 	this.syncInfo = syncInfo;
 }
 public synchronized void setSyncInfo(QualifiedName id, byte[] value) {
@@ -295,7 +317,7 @@ public synchronized void setSyncInfo(QualifiedName id, byte[] value) {
 	} else {
 		//add sync info
 		if (syncInfo == null)
-			syncInfo = new HashMap(5);
+			syncInfo = new ObjectMap(5);
 		syncInfo.put(id, value.clone());
 	}
 }

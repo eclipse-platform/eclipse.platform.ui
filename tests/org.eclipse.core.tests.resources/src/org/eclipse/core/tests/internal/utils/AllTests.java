@@ -25,6 +25,7 @@ public AllTests(String name) {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 		suite.addTest(QueueTest.suite());
+		suite.addTest(ObjectMapTest.suite());
 		return suite;
 	}
 }

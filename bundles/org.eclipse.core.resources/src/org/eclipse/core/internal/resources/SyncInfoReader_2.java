@@ -11,8 +11,9 @@
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.List;
+import org.eclipse.core.internal.utils.ObjectMap;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
@@ -56,7 +57,7 @@ public void readSyncInfo(DataInputStream input) throws IOException, CoreExceptio
 }
 private void readSyncInfo(IPath path, DataInputStream input, List readPartners) throws IOException, CoreException {
 	int size = input.readInt();
-	HashMap table = new HashMap(size);
+	ObjectMap table = new ObjectMap(size);
 	for (int i = 0; i < size; i++) {
 		QualifiedName name = null;
 		int type = input.readInt();
