@@ -51,6 +51,12 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	protected Vector fBreakpoints;
 	
 	/**
+	 * A table of breakpoint extension points, keyed by
+	 * marker type
+	 */
+	protected HashMap fBreakpointExtensions;
+	
+	/**
 	 * Collection of markers that associates markers to breakpoints
 	 */	
 	protected HashMap fMarkers;
@@ -70,7 +76,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	public BreakpointManager() {
 		fBreakpoints= new Vector(15);
-		fMarkers= new HashMap(15);		
+		fMarkers= new HashMap(15);	
+		fBreakpointExtensions = new HashMap(15);	
 	}
 
 	/**
@@ -82,6 +89,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * @exception CoreException if an error occurrs retreiving breakpoint markers
 	 */
 	public void startup() throws CoreException {
+		initBreakpointExtensions();
 		getWorkspace().addResourceChangeListener(this);
 		getLaunchManager().addLaunchListener(this);
 		
@@ -92,7 +100,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		for (int i = 0; i < breakpoints.length; i++) {
 			IMarker marker= breakpoints[i];
 			try {
-				loadMarker(marker);
+				createBreakpoint(marker);
 			} catch (DebugException e) {
 				logError(e);
 			}
@@ -107,6 +115,14 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		getLaunchManager().removeLaunchListener(this);
 	}
 
+	protected void initBreakpointExtensions() {
+		IExtensionPoint ep= DebugPlugin.getDefault().getDescriptor().getExtensionPoint(IDebugConstants.EXTENSION_POINT_BREAKPOINTS);
+		IConfigurationElement[] elements = ep.getConfigurationElements();
+		for (int i= 0; i < elements.length; i++) {
+			fBreakpointExtensions.put(elements[i].getAttribute("markerType"), elements[i]);
+		}
+		
+	}
 
 	/**
 	 * Convenience method to get the launch manager.
@@ -219,24 +235,24 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	/**
 	 * @see IBreakpointManager
 	 */
-	public IBreakpoint loadMarker(IMarker marker) throws DebugException {
+	public IBreakpoint createBreakpoint(IMarker marker) throws DebugException {
 		if (fMarkers.containsKey(marker)) {
 			return (IBreakpoint) fMarkers.get(marker);
 		}
 		IBreakpoint breakpoint= null;	
-		IBreakpointFactory[] factories= DebugPlugin.getDefault().getBreakpointFactories();
-		for (int i=0; i<factories.length; i++) {
-			try {
-				if (factories[i].canCreateBreakpointsFor(marker)) {
-					breakpoint= factories[i].createBreakpointFor(marker);
-					addBreakpoint(breakpoint);
-					break;
-				}
-			} catch (CoreException ce) {
-				throw new DebugException(ce.getStatus());
+		try {
+			IConfigurationElement config = (IConfigurationElement)fBreakpointExtensions.get(marker.getType());
+			if (config == null) {
+				// error
+				return null;
 			}
+			IBreakpoint bp = (IBreakpoint)config.createExecutableExtension("class");
+			bp.setMarker(marker);
+			addBreakpoint(bp);
+			return bp;		
+		} catch (CoreException e) {
+			throw new DebugException(e.getStatus());
 		}
-		return breakpoint;		
 	}	
 
 	/**
@@ -294,7 +310,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			Enumeration breakpoints= fBreakpoints.elements();
 			while (breakpoints.hasMoreElements()) {
 				IBreakpoint breakpoint= (IBreakpoint) breakpoints.nextElement();
-				IResource markerResource= breakpoint.getResource();
+				IResource markerResource= breakpoint.getMarker().getResource();
 				if (project.getFullPath().isPrefixOf(markerResource.getFullPath())) {
 					try {
 						removeBreakpoint(breakpoint, false);
@@ -316,7 +332,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			if (markers != null) {
 				for (int i= 0; i < markers.length; i++) {
 					try {
-						loadMarker(markers[i]);
+						createBreakpoint(markers[i]);
 					} catch (DebugException e) {
 						logError(e);
 					}

@@ -21,11 +21,11 @@
 
 <!-- Extension points -->
 <extension-point id="launchers" name="Launcher"/>
-<extension-point id="breakpoint_factories" name="BreakpointFactory"/>
+<extension-point id="breakpoints" name="Breakpoint"/>
 
 <!-- Extensions -->
 <extension
-      id="breakpoint"
+      id="breakpointMarker"
       point="org.eclipse.core.resources.markers">
    <super
          type="org.eclipse.core.resources.marker">
@@ -41,10 +41,10 @@
    </attribute>
 </extension>
 <extension
-      id="lineBreakpoint"
+      id="lineBreakpointMarker"
       point="org.eclipse.core.resources.markers">
    <super
-         type="org.eclipse.debug.core.breakpoint">
+         type="org.eclipse.debug.core.breakpointMarker">
    </super>
    <super
          type="org.eclipse.core.resources.textmarker">

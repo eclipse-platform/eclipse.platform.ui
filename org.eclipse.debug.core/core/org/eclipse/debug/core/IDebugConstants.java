@@ -32,34 +32,34 @@ public interface IDebugConstants {
 	public static final String EXTENSION_POINT_LAUNCHER= "launchers";
 	
 	/**
-	 * Breakpoint factory extension point identifier
-	 * (value <code>"breakpoint_factories"</code>).
+	 * Breakpoint extension point identifier
+	 * (value <code>"breakpoints"</code>).
 	 */
-	public static final String EXTENSION_POINT_BREAKPOINT_FACTORY= "breakpoint_factories";	
+	public static final String EXTENSION_POINT_BREAKPOINTS= "breakpoints";	
 	
 	/**
-	 * Root breakpoint marker type	
+	 * Root breakpoint marker type
 	 * (value <code>"org.eclipse.debug.core.breakpoint"</code>).
 	 */
-	public static final String BREAKPOINT_MARKER = PLUGIN_ID + ".breakpoint";
-	
-	/**
-	 * Line breakpoint marker type.
-	 * (value <code>"org.eclipse.debug.core.lineBreakpoint"</code>).
-	 */
-	public static final String LINE_BREAKPOINT_MARKER = PLUGIN_ID + ".lineBreakpoint";
-	
-	/**
-	 * Root breakpoint type	
-	 * (value <code>"org.eclipse.debug.core.breakpoint"</code>).
-	 */
-	public static final String BREAKPOINT = "breakpoint";
+	public static final String BREAKPOINT = "breakpointMarker";
 	
 	/**
 	 * Line breakpoint type.
 	 * (value <code>"org.eclipse.debug.core.lineBreakpoint"</code>).
 	 */
-	public static final String LINE_BREAKPOINT = "lineBreakpoint";	
+	public static final String LINE_BREAKPOINT = "lineBreakpointMarker";	
+	
+	/**
+	 * Root breakpoint marker type	
+	 * (value <code>"org.eclipse.debug.core.breakpoint"</code>).
+	 */
+	public static final String BREAKPOINT_MARKER = PLUGIN_ID + "." + BREAKPOINT;
+	
+	/**
+	 * Line breakpoint marker type.
+	 * (value <code>"org.eclipse.debug.core.lineBreakpoint"</code>).
+	 */
+	public static final String LINE_BREAKPOINT_MARKER = PLUGIN_ID + "." + LINE_BREAKPOINT;
 	
 	/**
 	 * Debug model identifier breakpoint marker attribute

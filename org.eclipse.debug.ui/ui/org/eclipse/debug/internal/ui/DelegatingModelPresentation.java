@@ -229,7 +229,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 							try {
 								IMarker marker= (IMarker) element;
 								IBreakpoint breakpoint= DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(marker);
-								if (breakpoint.exists()) {
+								if (breakpoint != null && marker.exists()) {
 									if (breakpoint.isEnabled()) {
 										return DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_BREAKPOINT);
 									} else {

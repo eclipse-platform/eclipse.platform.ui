@@ -41,7 +41,7 @@ public class BreakpointsContentProvider extends BasicContentProvider implements 
 	 * @see IBreakpointListener
 	 */
 	public void breakpointAdded(final IBreakpoint breakpoint) {
-		if (breakpoint.exists()) {		
+		if (breakpoint.getMarker().exists()) {		
 			asyncExec(new Runnable() {
 				public void run() {
 					if (!isDisposed()) {
@@ -69,7 +69,7 @@ public class BreakpointsContentProvider extends BasicContentProvider implements 
 	 * @see IBreakpointListener
 	 */
 	public void breakpointChanged(final IBreakpoint breakpoint, IMarkerDelta delta) {
-		if (breakpoint.exists()) {
+		if (breakpoint.getMarker().exists()) {
 			asyncExec(new Runnable() {
 				public void run() {
 					if (!isDisposed()) {

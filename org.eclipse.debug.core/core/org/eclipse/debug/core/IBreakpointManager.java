@@ -58,13 +58,6 @@ public interface IBreakpointManager {
 	void addBreakpoint(IBreakpoint breakpoint) throws DebugException;
 	
 	/**
-	 * Create a breakpoint for the given marker and add it.
-	 * 
-	 * @return the breakpoint that is created
-	 */	
-	IBreakpoint loadMarker(IMarker marker) throws DebugException;
-	
-	/**
 	 * Returns the breakpoint that is associated with marker or
 	 * <code>null</code> if no such breakpoint exists
 	 * 

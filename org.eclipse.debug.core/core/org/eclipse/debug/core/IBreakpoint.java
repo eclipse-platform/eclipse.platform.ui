@@ -1,10 +1,7 @@
 package org.eclipse.debug.core;
 
-import java.util.Map;
-
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.model.IDebugTarget;
 
 public interface IBreakpoint {
 
@@ -18,14 +15,7 @@ public interface IBreakpoint {
  * </ul>
  */
 public void delete() throws CoreException;
-/**
- * Returns whether this marker exists in the workspace.  A marker
- * exists if its resource exists and has a marker with the marker's id.
- *
- * @return <code>true</code> if this marker exists, otherwise
- *    <code>false</code>
- */
-public boolean exists();
+
 /**
  * Returns the marker associated with the breakpoint.
  * 
@@ -41,31 +31,6 @@ public void setMarker(IMarker marker);
  */
 public String getModelIdentifier();
 /**
- * Returns the id of the marker.  The id of a marker is unique
- * relative to the resource with which the marker is associated.
- * Marker ids are not globally unique.
- *
- * @return the id of the marker
- * @see IResource#findMarker
- */
-public long getId();
-/**
- * Returns the resource with which this marker is associated. 
- *
- * @return the resource with which this marker is associated
- */
-public IResource getResource();
-/**
- * Returns the type of this breakpoint.
- *
- * @return the type of this marker
- * @exception CoreException if this method fails. Reasons include:
- * <ul>
- * <li> This marker does not exist.</li>
- * </ul>
- */
-public String getType() throws CoreException;
-/**
  * Returns whether this breakpoint is enabled
  */
 public boolean isEnabled() throws CoreException;
@@ -75,24 +40,6 @@ public boolean isEnabled() throws CoreException;
  * @param enabled  whether this breakpoint should be enabled
  */
 public void setEnabled(boolean enabled) throws CoreException;
-/**
- * Install a breakpoint request for this breakpoint in the given target.
- * 
- * @param target the debug target into which the request should be added.
- */
-public abstract void addToTarget(IDebugTarget target);
-/**
- * Update the breakpoint request for this breakpoint in the given target.
- * 
- * @param target the debug target for which the request should be updated.
- */
-public abstract void changeForTarget(IDebugTarget target);
-/**
- * Remove the breakpoint request for this breakpoint from the given target.
- * 
- * @param target the debug target from which the request should be removed.
- */
-public abstract void removeFromTarget(IDebugTarget target);
 
 }
 

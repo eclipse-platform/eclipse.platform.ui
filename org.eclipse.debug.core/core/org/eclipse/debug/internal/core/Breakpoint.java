@@ -58,10 +58,14 @@ public abstract class Breakpoint implements IBreakpoint {
 	 * A breakpoint is not equal to any other kind of object.
 	 */
 	public boolean equals(Object item) {
-		if (item instanceof Breakpoint) {
-			return getId() == ((IBreakpoint)item).getId();
+		if (item instanceof IBreakpoint) {
+			return getMarker().equals(((IBreakpoint)item).getMarker());
 		}
 		return false;
+	}
+	
+	public int hashCode() {
+		return getMarker().hashCode();
 	}
 	
 	/**
@@ -125,39 +129,10 @@ public abstract class Breakpoint implements IBreakpoint {
 	}
 
 	/**
-	 * @see IBreakpoint#exists()
-	 */
-	public boolean exists() {
-		return fMarker.exists();
-	}
-	
-
-	/**
 	 * @see IBreakpoint#getMarker()
 	 */
 	public IMarker getMarker() {
 		return fMarker;
-	}
-
-	/**
-	 * @see IBreakpoint#getId()
-	 */
-	public long getId() {
-		return fMarker.getId();
-	}
-
-	/**
-	 * @see IBreakpoint#getResource()
-	 */
-	public IResource getResource() {
-		return fMarker.getResource();
-	}	
-
-	/**
-	 * @see IBreakpoint#getType()
-	 */
-	public String getType() throws CoreException {
-		return fMarker.getType();
 	}
 
 	/**
