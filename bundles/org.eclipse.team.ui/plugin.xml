@@ -153,18 +153,6 @@
                tooltip="Discard this Site"
                class="org.eclipse.team.internal.ui.target.DiscardSiteAction"
                id="org.eclipse.team.internal.ui.target.DiscardSiteAction">
-         </action>        
-         <action
-               label="Get As..."
-               tooltip="Get As..."
-               class="org.eclipse.team.internal.ui.target.GetAsAction"
-               id="org.eclipse.team.internal.ui.target.GetAsAction">
-         </action>
-         <action
-               label="Get As Project"
-               tooltip="Get As Project"
-               class="org.eclipse.team.internal.ui.target.GetAsProjectAction"
-               id="org.eclipse.team.internal.ui.target.GetAsProjectAction">
          </action>
    </objectContribution>
 </extension>
