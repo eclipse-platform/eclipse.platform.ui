@@ -98,6 +98,7 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 */
 	class MouseHandler implements MouseListener, MouseMoveListener, MouseTrackListener {
 		
+		private int fCachedViewportSize;
 		private IRegion fStartLine;
 		private int fStartLineNumber;
 		private int fAutoScrollDirection;
@@ -129,9 +130,10 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseMove(MouseEvent event) {
-			autoScroll(event);
-			int newLine= fParentRuler.toDocumentLineNumber(event.y);
-			expandSelection(newLine);
+			if (!autoScroll(event)) {
+				int newLine= fParentRuler.toDocumentLineNumber(event.y);
+				expandSelection(newLine);
+			}
 		}
 		
 		/*
@@ -151,7 +153,7 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 		 */
 		public void mouseHover(MouseEvent event) {
 		}
-		
+				
 		private void startSelecting() {
 			try {
 				
@@ -160,6 +162,7 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 				fStartLineNumber= fParentRuler.getLineOfLastMouseButtonActivity();
 				fStartLine= document.getLineInformation(fStartLineNumber);
 				fCachedTextViewer.setSelectedRange(fStartLine.getOffset(), fStartLine.getLength());
+				fCachedViewportSize= getVisibleLinesInViewport();
 				
 				// prepare for drag selection
 				fCanvas.addMouseMoveListener(this);
@@ -203,14 +206,21 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 		/*
 		 * Follows the scheme of StyledText. 
 		 */
-		private void autoScroll(MouseEvent event) {
+		private boolean autoScroll(MouseEvent event) {
 			Rectangle area= fCanvas.getClientArea();
-			if (event.y > area.height)
+			
+			if (event.y > area.height) {
 				autoScroll(SWT.DOWN);
-			else if (event.y < 0) 
+				return true;
+			}
+			
+			if (event.y < 0) {
 				autoScroll(SWT.UP);
-			else
-				stopAutoScroll();
+				return true;
+			}
+			
+			stopAutoScroll();
+			return false;
 		}
 		
 		/*
@@ -232,6 +242,7 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 								int top= getInclusiveTopIndex();
 								if (top > 0) {
 									fCachedTextViewer.setTopIndex(top -1);
+									expandSelection(top -1);
 									display.timerExec(TIMER_INTERVAL, this);
 								}
 							}
@@ -244,6 +255,7 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 							if (fAutoScrollDirection == SWT.DOWN) {
 								int top= getInclusiveTopIndex();
 								fCachedTextViewer.setTopIndex(top +1);
+								expandSelection(top +1 + fCachedViewportSize);
 								display.timerExec(TIMER_INTERVAL, this);
 							}
 						}
