@@ -43,7 +43,7 @@ public class QuickStartAction
 		extends Action 
 		implements ActionFactory.IWorkbenchAction {
 
-	private static final String EDITOR_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditor"; //$NON-NLS-1$
+	private static final String EDITOR_ID = "org.eclipse.ui.internal.ide.dialogs.WelcomeEditor"; //$NON-NLS-1$
 
 	/**
 	 * The workbench window; or <code>null</code> if this
@@ -197,6 +197,7 @@ public class QuickStartAction
 			try {
 				page = PlatformUI.getWorkbench().showPerspective(perspectiveId, workbenchWindow);
 			} catch (WorkbenchException e) {
+				IDEWorkbenchPlugin.log("Error opening perspective: " + perspectiveId, e.getStatus()); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -216,6 +217,7 @@ public class QuickStartAction
 		try {
 			page.openEditor(input, EDITOR_ID);
 		} catch (PartInitException e) {
+			IDEWorkbenchPlugin.log("Error opening welcome editor for feature: " + feature.getFeatureId()); //$NON-NLS-1$
 			IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
 			ErrorDialog.openError(
 			workbenchWindow.getShell(),
