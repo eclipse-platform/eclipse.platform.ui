@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 
@@ -288,4 +289,133 @@ public abstract class FileBufferFunctions extends TestCase {
 		}
 	}
 	
+	/*
+	 * Test IFileBufferListener#bufferCreated and IFileBufferListener#bufferDisposed
+	 */
+	public void test10() throws Exception {
+		class Listener extends FileBufferListener {
+			
+			public IFileBuffer buffer;
+			public int count;
+			
+			public void bufferCreated(IFileBuffer buffer) {
+				++count;
+				this.buffer= buffer;
+			}
+			
+			public void bufferDisposed(IFileBuffer buffer) {
+				--count;
+				this.buffer= buffer;
+			}
+		}
+		
+		Listener listener= new Listener();
+		fManager.addFileBufferListener(listener);
+		
+		fManager.connect(fPath, null);
+		try {
+			
+			assertTrue(listener.count == 1);
+			assertNotNull(listener.buffer);
+			IFileBuffer fileBuffer= fManager.getFileBuffer(fPath);
+			assertTrue(listener.buffer == fileBuffer);
+			
+			fManager.disconnect(fPath, null);
+			assertTrue(listener.count == 0);
+			assertTrue(listener.buffer == fileBuffer);
+			
+		} finally {
+			fManager.disconnect(fPath, null);
+		}
+	}
+	
+	/*
+	 * Test IFileBufferListener#dirtyStateChanged
+	 */
+	public void test11_1() throws Exception {
+		class Listener extends FileBufferListener {
+			
+			public IFileBuffer buffer;
+			public int count;
+			public boolean isDirty;
+			
+			public void dirtyStateChanged(IFileBuffer buffer, boolean isDirty) {
+				++count;
+				this.buffer= buffer;
+				this.isDirty= isDirty;
+			}
+		}
+		
+		Listener listener= new Listener();
+		fManager.addFileBufferListener(listener);
+		
+		ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+		assertTrue(listener.count == 0 && listener.buffer == null);
+		
+		fManager.connect(fPath, null);
+		try {
+			
+			fileBuffer= fManager.getTextFileBuffer(fPath);
+			IDocument document= fileBuffer.getDocument();
+			document.replace(0, 0, "prefix");
+			
+			assertTrue(listener.count == 1);
+			assertTrue(listener.buffer == fileBuffer);
+			assertTrue(listener.isDirty);
+			
+			fileBuffer.commit(null, true);
+			
+			assertTrue(listener.count == 2);
+			assertTrue(listener.buffer == fileBuffer);
+			assertFalse(listener.isDirty);
+			
+		} finally {
+			fManager.disconnect(fPath, null);
+		}
+	}
+	
+	/*
+	 * Test IFileBufferListener#dirtyStateChanged
+	 */
+	public void test11_2() throws Exception {
+		class Listener extends FileBufferListener {
+			
+			public IFileBuffer buffer;
+			public int count;
+			public boolean isDirty;
+			
+			public void dirtyStateChanged(IFileBuffer buffer, boolean isDirty) {
+				++count;
+				this.buffer= buffer;
+				this.isDirty= isDirty;
+			}
+		}
+		
+		Listener listener= new Listener();
+		fManager.addFileBufferListener(listener);
+		
+		ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+		assertTrue(listener.count == 0 && listener.buffer == null);
+		
+		fManager.connect(fPath, null);
+		try {
+			
+			fileBuffer= fManager.getTextFileBuffer(fPath);
+			IDocument document= fileBuffer.getDocument();
+			document.replace(0, 0, "prefix");
+			
+			assertTrue(listener.count == 1);
+			assertTrue(listener.buffer == fileBuffer);
+			assertTrue(listener.isDirty);
+			
+			fileBuffer.revert(null);
+			
+			assertTrue(listener.count == 2);
+			assertTrue(listener.buffer == fileBuffer);
+			assertFalse(listener.isDirty);
+			
+		} finally {
+			fManager.disconnect(fPath, null);
+		}
+	}
 }
