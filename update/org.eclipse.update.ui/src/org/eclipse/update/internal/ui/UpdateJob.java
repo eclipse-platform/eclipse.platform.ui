@@ -90,7 +90,7 @@ public class UpdateJob extends Job {
 
         try {
             if (resultCollector == null)
-                resultCollector = new SearchResultCollector();
+                resultCollector = new ResultCollectorWithMirrors();
             searchRequest.performSearch(resultCollector, monitor);
             if (UpdateCore.DEBUG) {
                 UpdateCore.debug("Automatic update search finished - " //$NON-NLS-1$
@@ -114,7 +114,7 @@ public class UpdateJob extends Job {
         searchRequest = UpdateUtils.createNewUpdatesRequest(null);
 
         if (resultCollector == null)
-            resultCollector = new SearchResultCollector();
+            resultCollector = new ResultCollectorWithMirrors();
         try {
             searchRequest.performSearch(resultCollector, monitor);
         } catch (CoreException e) {
@@ -175,5 +175,43 @@ public class UpdateJob extends Job {
     
     public UpdateSearchRequest getSearchRequest() {
         return searchRequest;
+    }
+    
+    private class ResultCollectorWithMirrors extends SearchResultCollector
+            implements IUpdateSearchResultCollectorFromMirror {
+        
+        private HashMap mirrors = new HashMap(0);
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.update.search.IUpdateSearchResultCollectorFromMirror#getMirror(org.eclipse.update.core.ISite, java.lang.String)
+         */
+        public IURLEntry getMirror(final ISiteWithMirrors site, final String siteName) {
+            return null;
+//            if (mirrors.containsKey(site))
+//                return (IURLEntry)mirrors.get(site);
+//            try {
+//                IURLEntry[] mirrorURLs = site.getMirrorSiteEntries();
+//                if (mirrorURLs.length == 0)
+//                    return null;
+//                else {
+//                    // here we need to prompt the user
+//                    final Shell shell = UpdateUI.getActiveWorkbenchShell();
+//                    final IURLEntry[] returnValue = new IURLEntry[1];
+//                    shell.getDisplay().syncExec(new Runnable() {
+//                        public void run() {
+//                            MirrorsDialog dialog = new MirrorsDialog(shell, site, siteName);
+//                            dialog.create();
+//                            dialog.open();
+//                            IURLEntry mirror = dialog.getMirror();
+//                            mirrors.put(site, mirror);
+//                            returnValue[0] = mirror;
+//                        }
+//                    });
+//                    return returnValue[0];
+//                }
+//            } catch (CoreException e) {
+//                return null;
+//            }
+        }
     }
 }

@@ -38,9 +38,7 @@ import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
 
-public class ReviewPage
-	extends BannerPage
-	implements IUpdateSearchResultCollectorFromMirror {
+public class ReviewPage	extends BannerPage {
 
 	private Label label;
 	private ArrayList jobs;
@@ -65,7 +63,6 @@ public class ReviewPage
 	private int VERSION_ORDER = 1;
 	private int PROVIDER_ORDER = 1;
     private ContainerCheckedTreeViewer treeViewer;
-    private HashMap mirrors = new HashMap(0);
     private boolean initialized;
     private boolean isUpdateSearch;
     
@@ -773,33 +770,7 @@ public class ReviewPage
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.update.search.IUpdateSearchResultCollectorFromMirror#getMirror(org.eclipse.update.core.ISite, java.lang.String)
-	 */
-	public IURLEntry getMirror(ISiteWithMirrors site, String siteName) {
-        if (mirrors.containsKey(site))
-            return (IURLEntry)mirrors.get(site);
-		try {
-			IURLEntry[] mirrorURLs = site.getMirrorSiteEntries();
-			if (mirrorURLs.length == 0)
-				return null;
-			else {
-				// here we need to prompt the user
-				final MirrorsDialog dialog = new MirrorsDialog(getShell(), site, siteName);
-				getShell().getDisplay().syncExec(new Runnable() {
-					public void run() {
-						dialog.create();
-						dialog.open();
-					}
-				});
-				IURLEntry mirror = dialog.getMirror();
-                mirrors.put(site, mirror);
-                return mirror;
-			}
-		} catch (CoreException e) {
-			return null;
-		}
-	}
+
 	private void jobSelected(IStructuredSelection selection) {
 		IInstallFeatureOperation job = (IInstallFeatureOperation) selection.getFirstElement();
 		IFeature feature = job != null ? job.getFeature() : null;
