@@ -189,8 +189,8 @@ public interface IPlatformConfiguration {
 		 * 
 		 * @param list policy inclusion/ exclusion list as an array.
 		 * Returns an empty array if there are no entries.
-		 * @see USER_INCLUDE
-		 * @see USER_EXCLUDE
+		 * @see #USER_INCLUDE
+		 * @see #USER_EXCLUDE
 		 * @since 2.0
 		 */
 		public void setList(String[] list);

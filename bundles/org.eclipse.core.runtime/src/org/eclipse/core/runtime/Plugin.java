@@ -424,7 +424,7 @@ private void loadPluginPreferences() {
  * Plug-in preferences are <b>not</b> saved automatically on plug-in shutdown.
  * </p>
  * 
- * @see Preferences#save
+ * @see Preferences#store
  * @see Preferences#needsSaving
  * @since 2.0
  */

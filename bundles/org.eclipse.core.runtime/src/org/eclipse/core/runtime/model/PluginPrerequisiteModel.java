@@ -94,7 +94,7 @@ public String getPlugin() {
  * returned value is in the format specified by <code>PluginVersionIdentifier</code>.
  *
  * @return the version of the prerequisite plug-in
- * @see PluginVersionIdentifier
+ * @see org.eclipse.core.runtime.PluginVersionIdentifier
  */
 public String getResolvedVersion() {
 	return resolvedVersion;
@@ -172,7 +172,7 @@ public void setPlugin(String value) {
  * given value is in the format specified by <code>PluginVersionIdentifier</code>.
  *
  * @param value the version of the prerequisite plug-in
- * @see PluginVersionIdentifier
+ * @see org.eclipse.core.runtime.PluginVersionIdentifier
  */
 public void setResolvedVersion(String value) {
 	assertIsWriteable();

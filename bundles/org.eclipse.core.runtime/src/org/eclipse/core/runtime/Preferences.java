@@ -135,7 +135,7 @@ public class Preferences {
 	 * </p>
 	 *
 	 * @see #addPropertyChangeListener
-	 * @see #IPropertyChangeListener
+	 * @see Preferences.IPropertyChangeListener
 	 */
 	public static class PropertyChangeEvent extends EventObject {
 
@@ -436,7 +436,7 @@ public class Preferences {
 
 	/**
 	 * Exports all non-default-valued preferences for all installed plugins to the 
-	 * provided file. if a file already exists at the given location, it will be deleted.
+	 * provided file. If a file already exists at the given location, it will be deleted.
 	 * If there are no preferences to export, no file will be written.
 	 * <p>
 	 * The file that is written can be read later using the importPreferences method.

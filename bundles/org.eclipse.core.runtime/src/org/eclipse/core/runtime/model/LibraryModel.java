@@ -122,7 +122,7 @@ public void setType(String value) {
 	type = lcValue;
 }
 /**
- * @see ILibrary#getPackagePrefixes
+ * @see org.eclipse.core.runtime.ILibrary#getPackagePrefixes
  */
 public String[] getPackagePrefixes() {
 	return packagePrefixes;
