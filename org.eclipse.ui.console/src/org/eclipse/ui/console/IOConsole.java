@@ -538,7 +538,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 							int startOfNextSearch = 0;
 							int endOfLastMatch = -1;
 							int lineOfLastMatch = -1;
-							while (startOfNextSearch < lengthToSearch && !monitor.isCanceled()) {
+							while ((startOfNextSearch < lengthToSearch) && !monitor.isCanceled()) {
 								if (quick != null) {
 									if (quick.find(startOfNextSearch)) {
 										// start searching on the beginning of the line where the potential
@@ -559,7 +559,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 										lineOfLastMatch = doc.getLineOfOffset(baseOffset + endOfLastMatch);
 										int regStart = reg.start();
 										IPatternMatchListener listener = notifier.listener;
-										if (listener != null) {
+										if (listener != null && !monitor.isCanceled()) {
 										    listener.matchFound(new PatternMatchEvent(IOConsole.this, baseOffset + regStart, endOfLastMatch - regStart));
 										}
 										startOfNextSearch = endOfLastMatch;
@@ -587,6 +587,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 						int lastLineOfNotifier = doc.getLineOfOffset(notifier.end);
 						allDone = allDone && (lastLineOfNotifier >= lastLineOfDoc);
 					} catch (BadLocationException e) {
+					    allDone = false;
 					}
 		        }
 	        	if (allDone && partitionerFinished && !monitor.isCanceled()) {
