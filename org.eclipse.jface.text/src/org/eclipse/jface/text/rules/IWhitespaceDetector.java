@@ -20,6 +20,8 @@ public interface IWhitespaceDetector {
 
 	/**
 	 * Returns whether the specified character is whitespace.
+	 * 
+	 * @param c the character to be checked
 	 */
 	boolean isWhitespace(char c);
 }

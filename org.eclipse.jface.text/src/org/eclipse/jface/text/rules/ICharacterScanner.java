@@ -18,7 +18,9 @@ package org.eclipse.jface.text.rules;
  */
 public interface ICharacterScanner {
 	
-	
+	/**
+	 * The value returned when this scanner has read EOF.
+	 */
 	public static final int EOF= -1;
 
 	/**

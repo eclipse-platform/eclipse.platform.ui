@@ -46,14 +46,16 @@ public class MultiLineRule extends PatternRule {
 	
 	/**
 	 * Creates a rule for the given starting and ending sequence
-	 * which, if detected, will return the specific token.
-	 * Any character which follows the given escape character will be ignored.
+	 * which, if detected, will return the specific token. Any character that follows the
+	 * given escape character will be ignored. <code>breakOnEOF</code> indicates whether
+	 * EOF is equivalent to detecting the <code>endSequence</code>.
 	 *
 	 * @param startSequence the pattern's start sequence
 	 * @param endSequence the pattern's end sequence
 	 * @param token the token to be returned on success
 	 * @param escapeCharacter the escape character
 	 * @param breaksOnEOF indicates whether the end of the file terminates this rule successfully
+	 * @since 2.1
 	 */
 	public MultiLineRule(String startSequence, String endSequence, IToken token, char escapeCharacter, boolean breaksOnEOF) {
 		super(startSequence, endSequence, token, escapeCharacter, false, breaksOnEOF);

@@ -47,7 +47,8 @@ public class SingleLineRule extends PatternRule {
 	
 	/**
 	 * Creates a rule for the given starting and ending sequence
-	 * which, if detected, will return the specified token.
+	 * which, if detected, will return the specified token. Alternatively, the
+	 * line can also be ended with the end of the file.
 	 * Any character which follows the given escape character
 	 * will be ignored.
 	 *
@@ -56,6 +57,7 @@ public class SingleLineRule extends PatternRule {
 	 * @param token the token to be returned on success
 	 * @param escapeCharacter the escape character
 	 * @param breaksOnEOF indicates whether the end of the file successfully terminates this rule
+	 * @since 2.1
 	 */
 	public SingleLineRule(String startSequence, String endSequence, IToken token, char escapeCharacter, boolean breaksOnEOF) {
 		super(startSequence, endSequence, token, escapeCharacter, true, breaksOnEOF);

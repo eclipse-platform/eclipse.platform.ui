@@ -31,18 +31,23 @@ import org.eclipse.jface.text.IDocument;
  */
 public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	
+	/** The list of rules of this scanner */
 	protected IRule[] fRules;
+	/** The token to be returned by default if no rule fires */
 	protected IToken fDefaultReturnToken;
-	
+	/** The document to be scanned */
 	protected IDocument fDocument;
+	/** The cached legal line delimiters of the document */
 	protected char[][] fDelimiters;
-	
+	/** The offset of the next character to be read */
 	protected int fOffset;
+	/** The end offset of the range to be scanned */
 	protected int fRangeEnd;
-	
+	/** The offset of the last read token */
 	protected int fTokenOffset;
+	/** The cached column of the current scanner position */
 	protected int fColumn;
-	
+	/** Internal setting for the uninitialized column cache. */
 	protected static final int UNDEFINED= -1;
 	
 	/**
@@ -126,7 +131,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	}
 	
 	/*
-	 * @see ICharacterScanner#getLegalLineDelimiters
+	 * @see ICharacterScanner#getLegalLineDelimiters()
 	 */
 	public char[][] getLegalLineDelimiters() {
 		return fDelimiters;
@@ -160,7 +165,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	}
 	
 	/*
-	 * @see ICharacterScanner#read
+	 * @see ICharacterScanner#read()
 	 */
 	public int read() {
 		
@@ -181,7 +186,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	}
 	
 	/*
-	 * @see ICharacterScanner#unread
+	 * @see ICharacterScanner#unread()
 	 */
 	public void unread() {
 	    	--fOffset;

@@ -17,17 +17,22 @@ import org.eclipse.jface.text.IDocument;
 
 /**
  * A buffered rule based scanner. The buffer always contains a section 
- * of a fixed size of the document to be scanned.
+ * of a fixed size of the document to be scanned. Completely adheres to
+ * the contract of <code>RuleBasedScanner</code>.
  */
 public class BufferedRuleBasedScanner extends RuleBasedScanner {
 	
+	/** The default buffer size. Value = 500 */
 	private final static int DEFAULT_BUFFER_SIZE= 500;
-	
+	/** The actual size of the buffer. Initially set to <code>DEFAULT_BUFFER_SIZE</code> */
 	private int fBufferSize= DEFAULT_BUFFER_SIZE;
+	/** The buffer */
 	private char[] fBuffer= new char[DEFAULT_BUFFER_SIZE];
-	
+	/** The offset of the document at which the buffer starts */
 	private int fStart;
+	/** The offset of the document at which the buffer ends */
 	private int fEnd;
+	/** The cached length of the document */
 	private int fDocumentLength;
 	
 	
@@ -85,7 +90,7 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 	}
 	
 	/*
-	 * @see RuleBasedScanner#setRange
+	 * @see RuleBasedScanner#setRange(IDocument, int, int)
 	 */
 	public void setRange(IDocument document, int offset, int length) {
 		
@@ -96,7 +101,7 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 	}
 	
 	/*
-	 * @see RuleBasedScanner#read
+	 * @see RuleBasedScanner#read()
 	 */
 	public int read() {
 		
@@ -114,7 +119,7 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 	}
 	
 	/*
-	 * @see RuleBasedScanner#unread
+	 * @see RuleBasedScanner#unread()
 	 */
 	public void unread() {
 		

@@ -18,10 +18,12 @@ import org.eclipse.jface.text.Assert;
  * An implementation of <code>IRule</code> capable of detecting a numerical value.
  */
 public class NumberRule implements IRule {
-
+	
+	/** Internal setting for the uninitialized column constraint */
 	protected static final int UNDEFINED= -1;
-
+	/** The token to be returned when this rule is successful */
 	protected IToken fToken;
+	/** The column constraint */
 	protected int fColumn= UNDEFINED;
 
 	/**
@@ -50,7 +52,7 @@ public class NumberRule implements IRule {
 	}
 
 	/*
-	 * @see IRule#evaluate
+	 * @see IRule#evaluate(ICharacterScanner)
 	 */
 	public IToken evaluate(ICharacterScanner scanner) {
 		int c= scanner.read();

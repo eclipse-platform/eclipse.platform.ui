@@ -78,8 +78,8 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 	}
 	
 	/*
-	 * @see IPresentationDamager#setDocument
-	 * @see IPresentationRepairer#setDocument
+	 * @see IPresentationDamager#setDocument(IDocument)
+	 * @see IPresentationRepairer#setDocument(IDocument)
 	 */
 	public void setDocument(IDocument document) {
 		fDocument= document;
@@ -112,7 +112,7 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 	}
 	
 	/*
-	 * @see IPresentationDamager#getDamageRegion
+	 * @see IPresentationDamager#getDamageRegion(ITypedRegion, DocumentEvent, boolean)
 	 */
 	public IRegion getDamageRegion(ITypedRegion partition, DocumentEvent e, boolean documentPartitioningChanged) {
 		
@@ -143,7 +143,7 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 	//---- IPresentationRepairer
 	
 	/*
-	 * @see IPresentationRepairer#createPresentation
+	 * @see IPresentationRepairer#createPresentation(TextPresentation, ITypedRegion)
 	 */
 	public void createPresentation(TextPresentation presentation, ITypedRegion region) {
 		

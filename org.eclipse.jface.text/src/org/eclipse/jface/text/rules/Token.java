@@ -19,10 +19,14 @@ import org.eclipse.jface.text.Assert;
  */
 public class Token implements IToken {
 	
-	private static final int T_UNDEFINED=	0;
-	private static final int T_EOF=			1;
-	private static final int T_WHITESPACE=	2;
-	private static final int T_OTHER=		3;
+	/** Internal token type: Undefined */
+	private static final int T_UNDEFINED= 0;
+	/** Internal token type: EOF */
+	private static final int T_EOF=	1;
+	/** Internal token type: Whitespace */
+	private static final int T_WHITESPACE= 2;
+	/** Internal token type: Others */
+	private static final int T_OTHER=	3;
 	
 	
 	/** 
@@ -44,8 +48,9 @@ public class Token implements IToken {
 	 */
 	public static final IToken OTHER= new Token(T_OTHER);
 	
-	
+	/** The type of this token */
 	private int fType;
+	/** The data associated with this token */
 	private Object fData;
 	
 	/**

@@ -40,7 +40,7 @@ public class WhitespaceRule implements IRule {
 	}
 
 	/*
-	 * @see IRule#evaluate
+	 * @see IRule#evaluate(ICharacterScanner)
 	 */
 	public IToken evaluate(ICharacterScanner scanner) {
 		int c= scanner.read();

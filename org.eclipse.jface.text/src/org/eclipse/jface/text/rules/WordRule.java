@@ -28,6 +28,7 @@ import org.eclipse.jface.text.Assert;
  */
 public class WordRule implements IRule {
 	
+	/** Internal setting for the uninitialized column constraint */
 	protected static final int UNDEFINED= -1;
 	
 	/** The word detector used by this rule */
@@ -38,7 +39,7 @@ public class WordRule implements IRule {
 	protected int fColumn= UNDEFINED;
 	/** The table of predefined words and token for this rule */
 	protected Map fWords= new HashMap();
-	
+	/** Buffer used for pattern detection */
 	private StringBuffer fBuffer= new StringBuffer();
 
 	/**
@@ -103,7 +104,7 @@ public class WordRule implements IRule {
 	}
 	
 	/*
-	 * @see IRule#evaluate
+	 * @see IRule#evaluate(ICharacterScanner)
 	 */
 	public IToken evaluate(ICharacterScanner scanner) {
 		int c= scanner.read();

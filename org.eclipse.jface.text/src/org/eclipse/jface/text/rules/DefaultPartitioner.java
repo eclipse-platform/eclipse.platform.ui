@@ -80,7 +80,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	}
 				
 	/*
-	 * @see IDocumentPartitioner#connect
+	 * @see IDocumentPartitioner#connect(IDocument)
 	 */
 	public void connect(IDocument document) {
 		Assert.isNotNull(document);
@@ -120,7 +120,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	}	
 	
 	/*
-	 * @see IDocumentPartitioner#disconnect
+	 * @see IDocumentPartitioner#disconnect()
 	 */
 	public void disconnect() {
 		
@@ -134,7 +134,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	}
 	
 	/*
-	 * @see IDocumentPartitioner#documentAboutToBeChanged
+	 * @see IDocumentPartitioner#documentAboutToBeChanged(DocumentEvent)
 	 */
 	public void documentAboutToBeChanged(DocumentEvent e) {
 		
@@ -147,7 +147,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	}
 	
 	/*
-	 * @see IDocumentPartitioner#documentChanged
+	 * @see IDocumentPartitioner#documentChanged(DocumentEvent)
 	 */
 	public boolean documentChanged(DocumentEvent e) {
 		IRegion region= documentChanged2(e);
@@ -190,6 +190,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	/**
 	 * Creates the minimal region containing all partition changes using the
 	 * remembered offset, end offset, and deletion offset.
+	 * 
 	 * @return the minimal region containing all the partition changes
 	 */
 	private IRegion createRegion() {
@@ -208,6 +209,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 
 	/*
 	 * @see IDocumentPartitionerExtension#documentChanged2(DocumentEvent)
+	 * @since 2.0
 	 */
 	public IRegion documentChanged2(DocumentEvent e) {
 						
@@ -366,7 +368,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	
 	
 	/*
-	 * @see IDocumentPartitioner#getContentType
+	 * @see IDocumentPartitioner#getContentType(int)
 	 */
 	public String getContentType(int offset) {
 		
@@ -378,7 +380,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	}
 	
 	/*
-	 * @see IDocumentPartitioner#getPartition
+	 * @see IDocumentPartitioner#getPartition(int)
 	 */
 	public ITypedRegion getPartition(int offset) {
 		
@@ -424,7 +426,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	}
 	
 	/*
-	 * @see IDocumentPartitioner#computePartitioning
+	 * @see IDocumentPartitioner#computePartitioning(int, int)
 	 */
 	public ITypedRegion[] computePartitioning(int offset, int length) {
 		
@@ -483,7 +485,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	}
 	
 	/*
-	 * @see IDocumentPartitioner#getLegalContentTypes
+	 * @see IDocumentPartitioner#getLegalContentTypes()
 	 */
 	public String[] getLegalContentTypes() {
 		return fLegalContentTypes;

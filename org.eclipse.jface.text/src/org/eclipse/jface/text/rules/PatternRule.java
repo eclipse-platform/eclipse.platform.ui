@@ -27,6 +27,7 @@ import org.eclipse.jface.text.Assert;
  */
 public class PatternRule implements IPredicateRule {
 	
+	/** Internal setting for the uninitialized column constraint */
 	protected static final int UNDEFINED= -1;
 
 	/** The token to be returned on success */
@@ -71,7 +72,7 @@ public class PatternRule implements IPredicateRule {
 	/**
 	 * Creates a rule for the given starting and ending sequence.
 	 * When these sequences are detected the rule will return the specified token.
-	 * Alternatively, the sequence can also be ended by the end of the line.
+	 * Alternatively, the sequence can also be ended by the end of the line or the end of the file.
 	 * Any character which follows the given escapeCharacter will be ignored.
 	 *
 	 * @param startSequence the pattern's start sequence
@@ -80,6 +81,7 @@ public class PatternRule implements IPredicateRule {
 	 * @param escapeCharacter any character following this one will be ignored
 	 * @param breaksOnEOL indicates whether the end of the line also terminates the pattern
 	 * @param breaksOnEOF indicates whether the end of the file also terminates the pattern
+	 * @since 2.1
 	 */
 	public PatternRule(String startSequence, String endSequence, IToken token, char escapeCharacter, boolean breaksOnEOL, boolean breaksOnEOF) {
 		this(startSequence, endSequence, token, escapeCharacter, breaksOnEOL);
@@ -144,7 +146,7 @@ public class PatternRule implements IPredicateRule {
 	}	
 	
 	/*
-	 * @see IRule#evaluate
+	 * @see IRule#evaluate(ICharacterScanner)
 	 */
 	public IToken evaluate(ICharacterScanner scanner) {
 		return evaluate(scanner, false);
