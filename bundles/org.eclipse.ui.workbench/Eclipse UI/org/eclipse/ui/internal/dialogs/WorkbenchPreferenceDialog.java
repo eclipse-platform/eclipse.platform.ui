@@ -48,7 +48,6 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -995,19 +994,5 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 			currentGroup.setLastSelection(item);
 		}
 	
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog#checkMatch(org.eclipse.ui.internal.dialogs.PatternFilter, java.lang.Object, org.eclipse.jface.viewers.ITreeContentProvider)
-	 */
-	protected boolean checkMatch(PatternFilter filter, Object element,
-			ITreeContentProvider contentProvider) {
-		if (element instanceof WorkbenchPreferenceGroup) {
-			WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) element;
-			Object[] children = contentProvider.getChildren(group);
-			return filter.match(group.getName())
-					|| (filter.filter(getTreeViewer(), element, children).length > 0);
-		}
-		return super.checkMatch(filter, element, contentProvider);
 	}
 }

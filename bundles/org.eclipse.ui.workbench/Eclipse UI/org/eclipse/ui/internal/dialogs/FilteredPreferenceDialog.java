@@ -73,10 +73,12 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				ITreeContentProvider contentProvider = (ITreeContentProvider) getTreeViewer()
 						.getContentProvider();
-				boolean match = false;
-				match = checkMatch(this, element, contentProvider);
 
-				return match;
+				IPreferenceNode node = (IPreferenceNode) element;
+				Object[] children = contentProvider.getChildren(node);
+				return match(node.getLabelText())
+						|| (filter(viewer, element, children).length > 0);
+
 			}
 		};
 		int styleBits = SWT.SINGLE | SWT.H_SCROLL;
@@ -150,20 +152,4 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		return leftArea;
 	}
 
-	/**
-	 * Check whether or not element or one of the children of 
-	 * element matches the criterea from the PatternFilter.
-	 * @param filter
-	 * @param element
-	 * @param contentProvider
-	 * @return <code>true</code> if one of the children match.
-	 */
-	protected boolean checkMatch(PatternFilter filter, Object element,
-			ITreeContentProvider contentProvider) {
-		IPreferenceNode node = (IPreferenceNode) element;
-		Object[] children = contentProvider.getChildren(node);
-		return filter.match(node.getLabelText())
-				|| (filter.filter(getTreeViewer(), element, children).length > 0);
-
-	}
 }
