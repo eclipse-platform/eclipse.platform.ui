@@ -61,7 +61,7 @@ public interface IWorkbenchPreferences {
 	 * should have a shortcut bar by default, and <code>false</code> if they
 	 * should not have a shortcut bar by default.
 	 * <p>
-	 * The default value for this preference is: <code>true</code> (has shortcut bar)
+	 * The default value for this preference is: <code>false</code> (does not have shortcut bar)
 	 * </p>
 	 */
 	public static String SHOULD_SHOW_SHORTCUT_BAR = "wb.show.shortcut.bar"; //$NON-NLS-1$
@@ -76,6 +76,17 @@ public interface IWorkbenchPreferences {
 	 * </p>
 	 */
 	public static String SHOULD_SHOW_STATUS_LINE = "wb.show.status.line"; //$NON-NLS-1$
+
+	/**
+	 * Workbench preference id for whether workbench windows should have a progress 
+	 * indicator by default. Boolean-valued: <code>true</code> if workbench windows 
+	 * should have a menu bar by default, and <code>false</code> if they
+	 * should not have a menu bar by default.
+	 * <p>
+	 * The default value for this preference is: <code>false</code> (does not have progress indicator)
+	 * </p>
+	 */
+	public static String SHOULD_SHOW_PROGRESS_INDICATOR = "wb.show.progress.indicator"; //$NON-NLS-1$
 
 	/**
 	 * Workbench preference id for whether the workbench should attempt to close

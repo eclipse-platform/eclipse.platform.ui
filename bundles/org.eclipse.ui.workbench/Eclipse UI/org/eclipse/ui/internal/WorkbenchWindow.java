@@ -302,9 +302,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 					sep2.setBounds(0, 0, 0, 0);
 			}
 
-			int width = BAR_SIZE;
+			int width = 0;
 			//Layout the progress indicator
-			if (showProgressIndicator()) {
+			if (getWindowConfigurer().getShowProgressIndicator()) {
+			    width = BAR_SIZE;
 				if (animationItem != null) {
 					Control progressWidget = animationItem.getControl();
 					Rectangle bounds = animationItem.getImageBounds();
@@ -2096,24 +2097,16 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	}
 
 	/**
-	 * Return whether or not to show the progress indicator.
-	 * @return boolan
-	 */
-	private boolean showProgressIndicator() {
-		return PlatformUI.getWorkbench().getPreferenceStore().getBoolean(
-			IWorkbenchConstants.SHOW_PROGRESS_INDICATOR);
-	}
-	/**
 	 * Create the progress indicator for the receiver.
 	 * @param shell	the parent shell
 	 */
 	private void createProgressIndicator(Shell shell) {
-		if (showProgressIndicator()) {
+		if (getWindowConfigurer().getShowProgressIndicator()) {
 			animationItem = new AnimationItem(this);
 			animationItem.createControl(shell);
 		}
-
 	}
+	
 	class PageList {
 		//List of pages in the order they were created;
 		private List pageList;

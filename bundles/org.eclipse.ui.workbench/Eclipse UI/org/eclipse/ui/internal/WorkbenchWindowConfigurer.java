@@ -84,6 +84,11 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	private boolean showTitleBar = true;
 
 	/**
+	 * Whether the workbench window should have a progress indicator.
+	 */
+	private boolean showProgressIndicator = true;
+	
+	/**
 	 * Table to hold arbitrary key-data settings (key type: <code>String</code>,
 	 * value type: <code>Object</code>).
 	 * @see #setData
@@ -185,6 +190,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	/* package */ void init() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		showMenuBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_MENU_BAR);
+		showProgressIndicator = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_PROGRESS_INDICATOR);
 		showShortcutBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_SHORTCUT_BAR);
 		showStatusLine = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_STATUS_LINE);
 		showTitleBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_TITLE_BAR);
@@ -329,6 +335,23 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		// @issue need to be able to reconfigure after window's controls created
 	}
 	
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public boolean getShowProgressIndicator() {
+        return showProgressIndicator;
+    }
+    
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public void setShowProgressIndicator(boolean show) {
+        showProgressIndicator = show;
+		// @issue need to be able to reconfigure after window's controls created
+    }
+    
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getData
 	 */
