@@ -354,12 +354,14 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
      * @param width The console's width
      */
     public void setWidth(int width) {
-        consoleWidth = width;
-        repairLines(0);
-        TextChangedEvent changeEvent = new TextChangedEvent(this);
-        for (Iterator iter = textChangeListeners.iterator(); iter.hasNext();) {
-            TextChangeListener element = (TextChangeListener) iter.next();
-            element.textSet(changeEvent);
+        if (width != consoleWidth) {
+            consoleWidth = width;
+            repairLines(0);
+            TextChangedEvent changeEvent = new TextChangedEvent(this);
+            for (Iterator iter = textChangeListeners.iterator(); iter.hasNext();) {
+                TextChangeListener element = (TextChangeListener) iter.next();
+                element.textSet(changeEvent);
+            }
         }
     }
 }
