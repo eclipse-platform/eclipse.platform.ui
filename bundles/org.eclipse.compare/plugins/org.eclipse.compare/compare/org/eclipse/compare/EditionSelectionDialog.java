@@ -88,19 +88,19 @@ public class EditionSelectionDialog extends Dialog {
 		private ITypedElement fItem;
 		private String fContent;
 		private IStructureCreator fStructureCreator;
+		private boolean fHasError= false;
 				
-		Pair(ITypedElement edition, ITypedElement item, IStructureCreator structureCreator) {
+		Pair(IStructureCreator structureCreator, ITypedElement edition, ITypedElement item) {
+			fStructureCreator= structureCreator;
 			fEdition= edition;
 			fItem= item;
+		}
+		
+		Pair(IStructureCreator structureCreator, ITypedElement edition) {
 			fStructureCreator= structureCreator;
-		}
-		
-		Pair(ITypedElement edition, ITypedElement item) {
-			this(edition, item, null);
-		}
-		
-		Pair(ITypedElement edition) {
-			this(edition, edition, null);
+			fEdition= edition;
+			fItem= edition;
+			fHasError= true;
 		}
 		
 		ITypedElement getEdition() {
@@ -239,7 +239,7 @@ public class EditionSelectionDialog extends Dialog {
 	 */
 	public ITypedElement selectPreviousEdition(final ITypedElement target, ITypedElement[] inputEditions, Object ppath) {
 		Assert.isNotNull(target);
-		fTargetPair= new Pair(target);
+		fTargetPair= new Pair(null, target);
 		
 		// sort input editions
 		final int count= inputEditions.length;
@@ -264,9 +264,9 @@ public class EditionSelectionDialog extends Dialog {
 		}
 			
 		if (structureCreator != null) {
-			Object item= structureCreator.locate(ppath, target);
-			if (item instanceof ITypedElement)
-				fTargetPair= new Pair(target, (ITypedElement) item, structureCreator);
+			Pair pair= createPair(structureCreator, ppath, target);
+			if (pair != null)
+				fTargetPair= pair;
 			else
 				ppath= null;	// couldn't extract item because of error
 		}
@@ -279,12 +279,9 @@ public class EditionSelectionDialog extends Dialog {
 			
 			if (structureCreator != null && ppath != null) {
 				// extract sub element from edition
-				Object item= structureCreator.locate(ppath, edition);
-				if (item instanceof ITypedElement) {	// if not empty
-					pair= new Pair(edition, (ITypedElement) item, structureCreator);
-				}
+				pair= createPair(structureCreator, ppath, edition);
 			} else {
-				pair= new Pair(edition);
+				pair= new Pair(null, edition);
 			}
 			
 			if (! fTargetPair.equals(pair)) {
@@ -310,7 +307,7 @@ public class EditionSelectionDialog extends Dialog {
 	public ITypedElement selectEdition(final ITypedElement target, ITypedElement[] inputEditions, Object ppath) {
 		
 		Assert.isNotNull(target);
-		fTargetPair= new Pair(target);
+		fTargetPair= new Pair(null, target);
 		
 		// sort input editions
 		final int count= inputEditions.length;
@@ -330,11 +327,12 @@ public class EditionSelectionDialog extends Dialog {
 		}
 
 		if (!fAddMode) {
+			// replace mode
 			
 			if (structureCreator != null) {
-				Object item= structureCreator.locate(ppath, target);
-				if (item instanceof ITypedElement)
-					fTargetPair= new Pair(target, (ITypedElement) item, structureCreator);
+				Pair pair= createPair(structureCreator, ppath, target);
+				if (pair != null)
+					fTargetPair= pair;
 				else
 					ppath= null;	// couldn't extract item because of error
 			}
@@ -364,9 +362,9 @@ public class EditionSelectionDialog extends Dialog {
 							ITypedElement edition= (ITypedElement) editions[i];
 							
 							// extract sub element from edition
-							Object item= sc.locate(path, edition);
-							if (item instanceof ITypedElement)	// if not empty
-								sendPair(new Pair(edition, (ITypedElement) item, sc));
+							Pair pair= createPair(sc, path, edition);
+							if (pair != null)
+								sendPair(pair);
 						}
 						sendPair(null);
 					}
@@ -377,7 +375,7 @@ public class EditionSelectionDialog extends Dialog {
 				
 				// from front (newest) to back (oldest)
 				for (int i= 0; i < count; i++)
-					addMemberEdition(new Pair((ITypedElement) editions[i]));
+					addMemberEdition(new Pair(null, (ITypedElement) editions[i]));
 			}
 			
 		} else {
@@ -419,7 +417,7 @@ public class EditionSelectionDialog extends Dialog {
 								for (int i2= 0; i2 < children.length; i2++) {
 									ITypedElement child= (ITypedElement) children[i2];
 									if (!current.contains(child))
-										sendPair(new Pair(edition, child, sc));
+										sendPair(new Pair(sc, edition, child));
 								}
 							}
 						}
@@ -436,6 +434,15 @@ public class EditionSelectionDialog extends Dialog {
 		return null;
 	}
 	
+	private Pair createPair(IStructureCreator sc, Object path, ITypedElement input) {
+		IStructureComparator scmp= sc.locate(path, input);
+		if (scmp == null && sc.getStructure(input) == null)	// parse error
+			return new Pair(sc, input);
+		if (scmp instanceof ITypedElement)
+			return new Pair(sc, input, (ITypedElement) scmp);
+		return null;
+	}
+
 	/**
 	 * Controls whether identical entries are shown or not (default).
 	 * This method must be called before <code>selectEdition</code>.
@@ -445,7 +452,7 @@ public class EditionSelectionDialog extends Dialog {
 	public void setHideIdenticalEntries(boolean hide) {
 		fHideIdentical= hide;
 	}
-	
+
 	/**
 	 * Controls whether workspace target is on the left (the default) or right hand side.
 	 *
@@ -881,14 +888,21 @@ public class EditionSelectionDialog extends Dialog {
 				formatKey= "dayFormat"; //$NON-NLS-1$
 			String pattern= Utilities.getString(fBundle, formatKey);
 			if (pattern != null)
-				df= MessageFormat.format(pattern, new Object[] { df });
+				df= MessageFormat.format(pattern, new String[] { df });
 			lastDay.setText(df);
 			lastDay.setData(date);
 		}
 		TreeItem ti= new TreeItem(lastDay, SWT.NONE);
 		ti.setImage(getEditionImage(edition, item));
-		ti.setText(getShortEditionLabel(edition, item, date));
-		ti.setData(new Pair(edition, item));
+		
+		String s= getShortEditionLabel(edition, item, date);
+		if (pair.fHasError) {
+			String pattern= Utilities.getString(fBundle, "parseErrorFormat"); //$NON-NLS-1$
+			s= MessageFormat.format(pattern, new String[] { s } );
+		}
+		ti.setText(s);
+		
+		ti.setData(pair);
 		if (first) {
 			fEditionTree.setSelection(new TreeItem[] {ti});
 			if (!fAddMode)
@@ -940,9 +954,11 @@ public class EditionSelectionDialog extends Dialog {
 	 */
 	private void feedInput(Widget w) {
 		Object input= w.getData();
+		boolean isOK= false;
 		if (input instanceof Pair) {
 			Pair pair= (Pair) input;
 			fSelectedItem= pair.getItem();
+			isOK= !pair.fHasError;
 			
 			ITypedElement edition= pair.getEdition();
 			String editionLabel= getEditionLabel(edition, fSelectedItem);
@@ -968,7 +984,7 @@ public class EditionSelectionDialog extends Dialog {
 			setInput(null);
 		}
 		if (fCommitButton != null)
-			fCommitButton.setEnabled(fSelectedItem != null && fTargetPair.getItem() != fSelectedItem);
+			fCommitButton.setEnabled(isOK && fSelectedItem != null && fTargetPair.getItem() != fSelectedItem);
 	}
 }
 
