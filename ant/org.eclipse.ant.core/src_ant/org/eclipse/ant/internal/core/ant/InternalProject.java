@@ -64,14 +64,6 @@ package org.eclipse.ant.internal.core.ant;
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
- 
- 
-/**********************************************************************
-Copyright (c) 2003 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.io.IOException;
 import java.io.InputStream;
