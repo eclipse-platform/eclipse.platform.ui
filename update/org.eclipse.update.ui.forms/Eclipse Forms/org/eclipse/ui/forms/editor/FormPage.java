@@ -12,7 +12,7 @@ package org.eclipse.ui.forms.editor;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.Form;
@@ -26,6 +26,7 @@ public abstract class FormPage implements IFormPage {
 	private boolean active;
 	private IEditorInput input;
 	private IEditorSite site;
+	private int index;
 	
 	public FormPage() {
 	}
@@ -88,6 +89,10 @@ public abstract class FormPage implements IFormPage {
 	public void createPartControl(Composite parent) {
 		Form form = editor.getToolkit().createForm(parent);
 		mform = new ManagedForm(form);
+	}
+	
+	public Control getPartControl() {
+		return mform.getForm();
 	}
 
 	/* (non-Javadoc)
@@ -170,5 +175,13 @@ public abstract class FormPage implements IFormPage {
 	 */
 	public Object getAdapter(Class adapter) {
 		return null;
+	}
+	
+	public void setIndex(int index) {
+		this.index = index;
+	}
+	
+	public int getIndex() {
+		return index;
 	}
 }

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.editor;
 
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.forms.IManagedForm;
 
@@ -42,4 +43,7 @@ public interface IFormPage extends IEditorPart {
  */
 	void setActive(boolean active);
 	boolean isActive();
+	Control getPartControl();
+	int getIndex();
+	void setIndex(int index);
 }
