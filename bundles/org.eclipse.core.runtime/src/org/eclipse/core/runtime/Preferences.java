@@ -1170,8 +1170,7 @@ public class Preferences {
 	 * thereby exposing the default value.
 	 * </p>
 	 * <p>
-	 * A property change event is reported if the current value of the 
-	 * property actually changes from its previous value. In the event
+	 * A property change event is always reported. In the event
 	 * object, the property name is the name of the property, and the
 	 * old and new values are either strings, or <code>null</code> 
 	 * indicating the default-default value.
@@ -1181,18 +1180,13 @@ public class Preferences {
 	 */
 	public void setToDefault(String name) {
 		Object oldPropertyValue = properties.remove(name);
-		if (oldPropertyValue == null) {
-			// nothing was explicitly changed
-			// so no change
-			return;
+		if (oldPropertyValue != null) {
+			dirty = true;
 		}
-		dirty = true;
 		String newValue = defaultProperties.getProperty(name, null);
 		// n.b. newValue == null if there is no default value
 		// can't determine correct default-default without knowing type
-		if (!oldPropertyValue.equals(newValue)) {
-			firePropertyChangeEvent(name, oldPropertyValue, newValue);
-		}
+		firePropertyChangeEvent(name, oldPropertyValue, newValue);
 	}
 
 	/**
