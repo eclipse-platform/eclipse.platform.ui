@@ -321,14 +321,7 @@ public class AboutInfo extends NewConfigurationInfo {
 			int i = 0;
 			while (found) {
 				try {
-					// Substitute $featureVersion if Applicable
-					readValue = mappingsBundle.getString(Integer.toString(i));
-					if("$featureVersion".equals(readValue)) {  //$NON-NLS-1$
-						readValue = getVersion();
-						if (readValue == null)
-							readValue = WorkbenchMessages.getString("AboutDialog.notSpecified"); //$NON-NLS-1$						
-					}
-					mappingsList.add(readValue);
+					mappingsList.add(mappingsBundle.getString(Integer.toString(i)));
 				} catch (MissingResourceException e) {
 					found = false;
 				}
