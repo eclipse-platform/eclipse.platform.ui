@@ -26,11 +26,11 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ActivityManager implements IActivityManager {

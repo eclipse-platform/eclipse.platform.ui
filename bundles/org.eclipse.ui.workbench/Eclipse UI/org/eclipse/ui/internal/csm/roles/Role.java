@@ -16,11 +16,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.roles.IRole;
 import org.eclipse.ui.roles.IRoleEvent;
 import org.eclipse.ui.roles.IRoleListener;
 import org.eclipse.ui.roles.RoleNotDefinedException;
-import org.eclipse.ui.internal.util.Util;
 
 final class Role implements IRole {
 
