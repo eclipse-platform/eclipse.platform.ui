@@ -60,8 +60,8 @@ import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
  * Clients may contribute actions to the context menu of a text console page
  * using the <code>org.eclipse.ui.popupMenus</code> extension point. The context
  * menu identifier for a text console page is the associated console's type
- * suffixed with <code>.#TextConsole</code>. When a console does not specify 
- * a type, the context menu id is <code>#TextConsole</code>.
+ * suffixed with <code>.#ContextMenu</code>. When a console does not specify 
+ * a type, the context menu id is <code>#ContextMenu</code>.
  * </p>
  * <p>
  * Clients may subclass this class.
@@ -140,11 +140,11 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		fConsole.addPropertyChangeListener(this);
 		JFaceResources.getFontRegistry().addListener(this);
 		
-		String id = "#TextConsole"; //$NON-NLS-1$
+		String id = "#ContextMenu"; //$NON-NLS-1$
 		if (getConsole().getType() != null) {
 		    id = getConsole().getType() + "." + id; //$NON-NLS-1$
 		}
-		fMenuManager= new MenuManager("#TextConsole", id);  //$NON-NLS-1$//$NON-NLS-2$
+		fMenuManager= new MenuManager("#ContextMenu", id);  //$NON-NLS-1$//$NON-NLS-2$
 		fMenuManager.setRemoveAllWhenShown(true);
 		fMenuManager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager m) {

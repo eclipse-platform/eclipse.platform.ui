@@ -2386,7 +2386,7 @@ M4 = Platform-specific fourth key
     <extension
           point="org.eclipse.ui.popupMenus">
        <viewerContribution
-             targetID="org.eclipse.debug.ui.ProcessConsoleType.#TextConsole"
+             targetID="org.eclipse.debug.ui.ProcessConsoleType.#ContextMenu"
              id="org.eclipse.debug.ui.processConsoleContextMenu">
           <action
                 label="%RemoveAllTerminatedAction.label"

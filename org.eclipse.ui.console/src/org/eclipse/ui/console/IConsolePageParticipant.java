@@ -14,10 +14,14 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
- * A console page participant contributes to the context menu and toolbar for a
- * console page. A page participant can also provide adapters for the page.
- * Participants are contributed via the
+ * A console page participant is notified of page lifecycle events such as
+ * creation, activation, deactivation and disposal. A page participant can
+ * also provide adapters for a page. Participants are contributed via the
  * <code>org.eclispe.ui.console.consolePageParticipants</code> extension point.
+ * <p>
+ * A page participant can add actions to a console's toolbar by
+ * accessing a console's action bars.  
+ * </p>
  * <p>
  * Following is an example extension definition.
  * <pre>
