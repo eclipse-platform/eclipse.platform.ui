@@ -8,7 +8,7 @@
       <documentation>
          This extension point is used to register cheat sheet content contributions. Cheat sheets appear as choices from the &quot;Help&quot; menu or from within the cheat sheet view, and are typically used to aid a user through a series of comlex tasks to accomplish an overall goal.
 &lt;p&gt;
-The cheat sheets are organized into categories which usually reflect a particular problem domain.  For instance, a Java oriented plugin may define a category called &quot;Java&quot; which is appropriate for cheat sheets that would aid a user with any of the Java tools.  The categories defined by one plug-in can be referenced by other plug-ins using the category attribute of a cheatSheet element. Uncategorized cheat sheets, as well as cheat sheets with invalid category paths, will end up in an &quot;Other&quot; category. 
+The cheat sheets are organized into categories which usually reflect a particular problem domain.  For instance, a Java oriented plug-in may define a category called &quot;Java&quot; which is appropriate for cheat sheets that would aid a user with any of the Java tools.  The categories defined by one plug-in can be referenced by other plug-ins using the category attribute of a cheatsheet element. Uncategorized cheat sheets, as well as cheat sheets with invalid category paths, will end up in an &quot;Other&quot; category. 
 &lt;p&gt;
 Cheat sheets may optionally specify a description subelement whose body should contain short text about the cheat sheet.
       </documentation>
@@ -18,8 +18,7 @@ Cheat sheets may optionally specify a description subelement whose body should c
       <complexType>
          <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="category"/>
-            <element ref="cheatSheet"/>
-            <element ref="cheatSheetListener"/>
+            <element ref="cheatsheet"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -82,13 +81,13 @@ cheat sheet selection dialog.
       </complexType>
    </element>
 
-   <element name="cheatSheet">
+   <element name="cheatsheet">
       <annotation>
          <appInfo>
             <meta.element labelAttribute="name"/>
          </appInfo>
          <documentation>
-            A cheatSheet element is put into the cheatsheetContent extension point if there is a cheat sheet to be contributed to the 
+            A cheatsheet element is put into the cheatsheetContent extension point if there is a cheat sheet to be contributed to the 
 workbench.  A cheat sheet element must specify an id, a translatable name to appear in the selection options, a category id
 to specify which category this cheat sheet will be included in, and a content file.
 The cheat sheet content file is an XML file that describes the steps and actions that the cheat sheet has.
@@ -165,14 +164,14 @@ The content file is parsed at run time by the cheat sheet framework. Based on th
          Here is a sample usage of the cheatsheetContent extension point.
 
 &lt;extension point=&quot;org.eclipse.ui.cheatsheets.cheatSheetContent&quot;&gt;
-  &lt;!-- this is a sample category.  the id can be refereced in the cheatSheet element --&gt;
+  &lt;!-- this is a sample category.  the id can be referenced in the cheatsheet element --&gt;
   &lt;!-- the name is displayed in the selection dialog and should be translatable --&gt;
   &lt;category
             name=&quot;XYZ category&quot;
             id=&quot;com.org.xyz.category&quot;&gt;
         &lt;/category&gt;
         &lt;!-- this is a sample cheat sheet.  the content file describes the cheat sheet steps and is loaded by the framework. --&gt;
-        &lt;cheatSheet
+        &lt;cheatsheet
             name=&quot;XYZ cheat sheet&quot;
             category=&quot;com.org.xyz.category&quot;
             id=&quot;com.org.xyz.cheatSheet&quot;
@@ -180,7 +179,7 @@ The content file is parsed at run time by the cheat sheet framework. Based on th
          &lt;description&gt;
            This is a descriptive bit of text for my cheat sheet description.
          &lt;/description&gt;
-        &lt;/cheatSheet&gt;
+        &lt;/cheatsheet&gt;
 &lt;/extension&gt;
       </documentation>
    </annotation>
