@@ -72,8 +72,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
  
 
@@ -812,10 +810,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
 
-	private IWorkingSetManager getWorkingSetManager() {
-		return PlatformUI.getWorkbench().getWorkingSetManager();
-	}
-
 	/**
 	 * Returns whether this dialog is currently open
 	 */
@@ -1511,13 +1505,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	/**
-	 * Show the default informational message that explains how to create a new configuration.
-	 */
-	private void setDefaultMessage() {
-		setMessage(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Select_a_type_of_configuration_to_create,_and_press___new__51")); //$NON-NLS-1$		
-	}
-	
-	/**
 	 * Returns the launch configuration selection area control.
 	 * 
 	 * @return control
@@ -1570,13 +1557,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
 	}
 		
-	/**
-	 * Returns the initial launch configuration type, or <code>null</code> if none has been set.
-	 */
-	private ILaunchConfigurationType getInitialConfigType() {
-		return fInitialConfigType;
-	}
-	
 	/**
 	 * Sets the initial launch configuration type to be used when this dialog is opened.
 	 */
