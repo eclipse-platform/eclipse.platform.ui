@@ -8,11 +8,7 @@
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.ui.progress;
-/**
- * The UIJob is a Job that runs within the UI Thread via an asyncExec.
- * 
- * @since 3.0
- */
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -23,6 +19,12 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.progress.ProgressMessages;
+
+/**
+ * The UIJob is a Job that runs within the UI Thread via an asyncExec.
+ * 
+ * @since 3.0
+ */
 public abstract class UIJob extends Job {
 	private Display cachedDisplay;
 	/**
