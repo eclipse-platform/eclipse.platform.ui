@@ -58,6 +58,10 @@ public class CVSFolderPropertiesPage extends PropertyPage {
 				} else {
 					createLabel(composite, Policy.bind("CVSFolderPropertiesPage.notManaged"), 2); //$NON-NLS-1$
 				}
+			} else if (!cvsResource.isCVSFolder()) {
+				// We have a managed folder which is not a cvs folder. 
+				// This is really an invalid state but it does happen once in a while
+				createLabel(composite, Policy.bind("CVSFolderPropertiesPage.notCVSFolder"), 2); //$NON-NLS-1$
 			} else {
 				FolderSyncInfo syncInfo = cvsResource.getFolderSyncInfo();
 				createLabel(composite, Policy.bind("CVSFolderPropertiesPage.root")); //$NON-NLS-1$
