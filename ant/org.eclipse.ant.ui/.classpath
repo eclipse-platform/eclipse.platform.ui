@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-    <classpathentry kind="src" path="src"/>
-    <classpathentry kind="src" path="src_ant"/>
     <classpathentry kind="src" path="/org.apache.ant"/>
     <classpathentry kind="src" path="/org.eclipse.ant.core"/>
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>
