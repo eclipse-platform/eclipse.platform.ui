@@ -126,13 +126,14 @@ public class RepositoryManager {
 	 */
 	public CVSTag[] getKnownVersionTags(ICVSRemoteResource resource, IProgressMonitor monitor) {
 		// Find tags in .vcm_meta file, optimization for Eclipse users
-		ICVSRemoteFile vcmMeta = getVCMMeta(resource);
-		if (vcmMeta == null) return new CVSTag[0];
-		CVSTag[] tags = getTags(vcmMeta, new NullProgressMonitor());
 		Set result = new HashSet();
-		for (int i = 0; i < tags.length; i++) {
-			if (tags[i].getType() == CVSTag.VERSION) {
-				result.add(tags[i]);
+		ICVSRemoteFile vcmMeta = getVCMMeta(resource);
+		if (vcmMeta != null) {
+			CVSTag[] tags = getTags(vcmMeta, new NullProgressMonitor());
+			for (int i = 0; i < tags.length; i++) {
+				if (tags[i].getType() == CVSTag.VERSION) {
+					result.add(tags[i]);
+				}
 			}
 		}
 		
