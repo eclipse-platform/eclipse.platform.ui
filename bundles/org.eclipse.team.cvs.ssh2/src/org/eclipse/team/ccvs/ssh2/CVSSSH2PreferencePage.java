@@ -292,6 +292,15 @@ public class CVSSSH2PreferencePage extends PreferencePage
     gd.horizontalSpan=2;
     proxyPortText.setLayoutData(gd);
     
+    proxyPortText.addModifyListener(new ModifyListener(){
+    	public void modifyText(ModifyEvent e){
+    			if(isValidPort(proxyPortText.getText())){
+    				setErrorMessage(null);
+    			}
+    	}
+    });
+
+    
     createSpacer(group, 3);
 
     enableAuth=new Button(group, SWT.CHECK);
@@ -1064,19 +1073,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	}
       }
 
-      {
-      int i=-1;
-      try {	
-      	i=Integer.parseInt(proxyPortText.getText());
-      }
-      catch (NumberFormatException ee) {
-      	setErrorMessage(Policy.bind("CVSSSH2PreferencePage.103")); //$NON-NLS-1$
+      if(!isValidPort(proxyPortText.getText())){
       	return false;
-      }
-      if((i < 0) || (i > 65535)){
-      	setErrorMessage(Policy.bind("CVSSSH2PreferencePage.104")); //$NON-NLS-1$
-      	return false;
-      }
       }
       
       IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
@@ -1097,6 +1095,21 @@ public class CVSSSH2PreferencePage extends PreferencePage
     return result;
   }
 
+  private boolean isValidPort(String port){
+  	int i=-1;
+  	try {	
+  		i=Integer.parseInt(port);
+  	}
+  	catch (NumberFormatException ee) {
+  		setErrorMessage(Policy.bind("CVSSSH2PreferencePage.103")); //$NON-NLS-1$
+  		return false;
+  	}
+  	if((i < 0) || (i > 65535)){
+  		setErrorMessage(Policy.bind("CVSSSH2PreferencePage.104")); //$NON-NLS-1$
+  		return false;
+  	}
+  	return true;
+  }
   public void performApply() {
     super.performApply();
 
@@ -1116,19 +1129,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
       }
     }
 
-    {
-    	int i=-1;
-    	try {	
-    		i=Integer.parseInt(proxyPortText.getText());
-    	}
-    	catch (NumberFormatException ee) {
-    		setErrorMessage(Policy.bind("CVSSSH2PreferencePage.103")); //$NON-NLS-1$
-    		return;
-    	}
-    	if((i < 0) || (i > 65535)){
-    		setErrorMessage(Policy.bind("CVSSSH2PreferencePage.104")); //$NON-NLS-1$
-    		return;
-    	}
+    if(!isValidPort(proxyPortText.getText())){
+    	return;
     }
     
     IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
