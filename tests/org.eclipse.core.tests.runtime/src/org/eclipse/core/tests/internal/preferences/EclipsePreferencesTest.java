@@ -1213,4 +1213,39 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			assertEquals("1.0:" + line[0], Integer.parseInt(line[1]), EclipsePreferences.getSegmentCount(line[0]));
 		}
 	}
+
+	public void test_68897() {
+		File file = getRandomLocation().toFile();
+		IPreferencesService service = Platform.getPreferencesService();
+
+		IEclipsePreferences rootPreferences = service.getRootNode();
+		Preferences pref = rootPreferences.node("/favorite");
+
+		Preferences child = pref.node("my");
+		child.put("file", "my.txt");
+		try {
+			child.flush();
+			pref.flush();
+			rootPreferences.flush();
+		} catch (BackingStoreException e) {
+			fail("0.0", e);
+		}
+		try {
+			service.exportPreferences(rootPreferences, new FileOutputStream(file), null);
+		} catch (FileNotFoundException e) {
+			fail("1.0", e);
+		} catch (CoreException e) {
+			fail("1.1", e);
+		}
+		try {
+			IExportedPreferences epref = service.readPreferences(new FileInputStream(file));
+			service.applyPreferences(epref);
+		} catch (FileNotFoundException e) {
+			fail("2.0", e);
+		} catch (CoreException e) {
+			fail("2.1", e);
+		} catch (Exception e) {
+			fail("2.2", e);
+		}
+	}
 }

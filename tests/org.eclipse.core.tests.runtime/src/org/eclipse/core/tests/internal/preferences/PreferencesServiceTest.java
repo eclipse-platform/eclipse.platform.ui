@@ -731,10 +731,6 @@ public class PreferencesServiceTest extends RuntimeTest {
 		verifier.addExpected(child2.absolutePath(), k2);
 	}
 
-	private IPath getRandomLocation() {
-		return new Path(System.getProperty("java.io.tmpdir")).append(Long.toString(System.currentTimeMillis()));
-	}
-
 	public void testValidateVersions() {
 		final char BUNDLE_VERSION_PREFIX = '@';
 		

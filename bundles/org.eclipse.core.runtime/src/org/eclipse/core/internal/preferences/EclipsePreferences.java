@@ -89,7 +89,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public void accept(IPreferenceNodeVisitor visitor) throws BackingStoreException {
 		if (!visitor.visit(this))
 			return;
-		IEclipsePreferences[] toVisit = getChildren();
+		IEclipsePreferences[] toVisit = getChildren(true);
 		for (int i = 0; i < toVisit.length; i++)
 			toVisit[i].accept(visitor);
 	}
@@ -257,7 +257,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			}
 		}
 		// recursively add the child information
-		IEclipsePreferences[] childNodes = getChildren();
+		IEclipsePreferences[] childNodes = getChildren(true);
 		for (int i = 0; i < childNodes.length; i++) {
 			EclipsePreferences child = (EclipsePreferences) childNodes[i];
 			String fullPath = addSeparator ? prefix + PATH_SEPARATOR + child.name() : child.name();
@@ -375,7 +375,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * Thread safe way to obtain a child for a given key. Returns the child
 	 * that matches the given key, or null if there is no matching child
 	 */
-	protected synchronized IEclipsePreferences getChild(String key, Plugin context) {
+	protected synchronized IEclipsePreferences getChild(String key, Plugin context, boolean create) {
 		if (children == null)
 			return null;
 		Object value = children.get(key);
@@ -383,6 +383,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			return null;
 		if (value instanceof IEclipsePreferences)
 			return (IEclipsePreferences) value;
+		// if we aren't supposed to create this node, then 
+		// just return null
+		if (!create)
+			return null;
 		value = create(this, key, context);
 		addChild(key, (IEclipsePreferences) value);
 		return (IEclipsePreferences) value;
@@ -391,11 +395,14 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	/**
 	 * Thread safe way to obtain all children of this node. Never returns null.
 	 */
-	protected synchronized IEclipsePreferences[] getChildren() {
+	protected synchronized IEclipsePreferences[] getChildren(boolean create) {
 		ArrayList result = new ArrayList();
 		String[] names = internalChildNames();
-		for (int i = 0; i < names.length; i++)
-			result.add(getChild(names[i], null));
+		for (int i = 0; i < names.length; i++) {
+			IEclipsePreferences child = getChild(names[i], null, create);
+			if (child != null)
+				result.add(child);
+		}
 		return (IEclipsePreferences[]) result.toArray(EMPTY_NODE_ARRAY);
 	}
 
@@ -520,7 +527,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		boolean added = false;
 		IEclipsePreferences child;
 		synchronized (this) {
-			child = getChild(key, context);
+			child = getChild(key, context, true);
 			if (child == null) {
 				child = create(this, key, context);
 				added = true;
@@ -696,7 +703,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 
 		int index = path.indexOf(IPath.SEPARATOR);
 		String childName = index == -1 ? path : path.substring(0, index);
-		IEclipsePreferences child = getChild(childName, null);
+		IEclipsePreferences child = getChild(childName, null, true);
 		if (child == null)
 			return false;
 		return child.nodeExists(index == -1 ? EMPTY_STRING : path.substring(index + 1));
@@ -851,9 +858,9 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		String[] keys = keys();
 		for (int i = 0; i < keys.length; i++)
 			remove(keys[i]);
-		// don't remove the scope root from the parent but
-		// remove all its children
-		if (!(parent instanceof RootPreferences)) {
+		// don't remove the global root or the scope root from the 
+		// parent but remove all its children
+		if (parent != null && !(parent instanceof RootPreferences)) {
 			// remove the node from the parent's collection and notify listeners
 			if (parent instanceof EclipsePreferences) {
 				removed = true;
@@ -863,7 +870,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				throw new BackingStoreException(message);
 			}
 		}
-		IEclipsePreferences[] childNodes = getChildren();
+		IEclipsePreferences[] childNodes = getChildren(false);
 		for (int i = 0; i < childNodes.length; i++)
 			try {
 				childNodes[i].removeNode();

@@ -16,6 +16,7 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.osgi.service.datalocation.Location;
 
 /**
  * @since 3.0
@@ -37,8 +38,11 @@ public class InstancePreferences extends EclipsePreferences {
 		// By leaving the value of baseLocation as null we still allow the users
 		// to set preferences in this scope but the values will not be persisted
 		// to disk when #flush() is called.
-		if (baseLocation == null && Platform.getInstanceLocation() != null)
-			baseLocation = InternalPlatform.getDefault().getMetaArea().getStateLocation(Platform.PI_RUNTIME);
+		if (baseLocation == null) {
+			Location instanceLocation = Platform.getInstanceLocation();
+			if (instanceLocation != null && instanceLocation.isSet())
+				baseLocation = InternalPlatform.getDefault().getMetaArea().getStateLocation(Platform.PI_RUNTIME);
+		}
 		return baseLocation;
 	}
 
@@ -93,7 +97,15 @@ public class InstancePreferences extends EclipsePreferences {
 		String bundleName = path.segment(1);
 		// the preferences file is located in the plug-in's state area at a well-known name
 		// don't need to create the directory if there are no preferences to load
-		File prefFile = InternalPlatform.getDefault().getMetaArea().getPreferenceLocation(bundleName, false).toFile();
+		File prefFile = null;
+		Location instanceLocation = Platform.getInstanceLocation();
+		if (instanceLocation != null && instanceLocation.isSet())
+			prefFile = InternalPlatform.getDefault().getMetaArea().getPreferenceLocation(bundleName, false).toFile();
+		if (prefFile == null) {
+			if (InternalPlatform.DEBUG_PREFERENCES)
+				Policy.debug("Cannot load legacy values because instance location is not set."); //$NON-NLS-1$
+			return;
+		}
 		if (!prefFile.exists()) {
 			// no preference file - that's fine
 			if (InternalPlatform.DEBUG_PREFERENCES)
