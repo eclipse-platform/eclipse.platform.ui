@@ -111,7 +111,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 	 * @param target the target that will be resumed for this action
 	 * @param breakpoint the run to line breakpoint
 	 */
-	protected void prepareSkipBreakpoints(final IBreakpoint breakpoint) {
+	private void prepareSkipBreakpoints(final IBreakpoint breakpoint) {
 		final DebugPlugin plugin= DebugPlugin.getDefault();
 		final IBreakpointManager manager = plugin.getBreakpointManager();
 		if (!manager.isEnabled() || !DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE)) {
@@ -146,6 +146,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 		manager.addBreakpointManagerListener(new IBreakpointManagerListener() {
 			public void breakpointManagerEnablementChanged(boolean enabled) {
 				plugin.removeDebugEventListener(debugEventListener);
+				manager.removeBreakpointManagerListener(this);
 			}
 		});
 	}
