@@ -17,27 +17,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Sash;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
@@ -57,18 +36,33 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Sash;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Prefence dialog for the workbench including the ability to load/save
@@ -669,57 +663,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		historyBar.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		return historyBar;
-	}
-
-	/**
-	 * Return the layout for the page container.
-	 * @return Layout
-	 */
-	private Layout getPageLayout() {
-		return new Layout() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite, int, int, boolean)
-			 */
-			protected Point computeSize(Composite composite, int wHint, int hHint,
-					boolean flushCache) {
-
-				if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
-					return new Point(wHint, hHint);
-				int x = minimumSize.x;
-				int y = minimumSize.y;
-				Control[] children = composite.getChildren();
-				for (int i = 0; i < children.length; i++) {
-					Point size = children[i].computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
-					x = Math.max(x, size.x);
-					y = Math.max(y, size.y);
-				}
-
-				x += IDialogConstants.HORIZONTAL_MARGIN * 2;
-				y += IDialogConstants.VERTICAL_MARGIN * 2;
-
-				if (wHint != SWT.DEFAULT)
-					x = wHint;
-				if (hHint != SWT.DEFAULT)
-					y = hHint;
-				return new Point(x, y);
-
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite, boolean)
-			 */
-			protected void layout(Composite composite, boolean flushCache) {
-				Rectangle rect = composite.getClientArea();
-				Control[] children = composite.getChildren();
-				for (int i = 0; i < children.length; i++) {
-					children[i].setBounds(IDialogConstants.HORIZONTAL_MARGIN,
-							IDialogConstants.VERTICAL_MARGIN, rect.width
-									- (2 * IDialogConstants.HORIZONTAL_MARGIN), rect.height
-									- (2 * IDialogConstants.VERTICAL_MARGIN));
-				}
-			}
-
-		};
 	}
 
 	/**

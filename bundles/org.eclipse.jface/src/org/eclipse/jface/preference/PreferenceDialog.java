@@ -457,8 +457,17 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 */
 	protected Composite createPageContainer(Composite parent) {
 		Composite result = new Composite(parent, SWT.NULL);
-		result.setLayout(new PageLayout());
+		result.setLayout(getPageLayout());
 		return result;
+	}
+
+	/**
+	 * Return the layout for the composite that contains
+	 * the pages.
+	 * @return PageLayout
+	 */
+	protected PageLayout getPageLayout() {
+		return new PageLayout();
 	}
 
 	/**
