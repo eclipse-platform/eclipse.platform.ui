@@ -6,6 +6,7 @@ package org.eclipse.update.internal.core;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.rmi.server.ExportException;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
@@ -62,11 +63,24 @@ public class SiteLocal implements ILocalSite, IWritable {
 	 *  the newly added configuration is teh current one
 	 */
 	public void addConfiguration(IInstallConfiguration config) {
+		if (config != null){
 		if (configurations == null)
 			configurations = new ArrayList(0);
 		configurations.add(config);
-		setCurrentConfiguration(config);
 		// FIXME: check if we have to remove a configuration
+
+		// set configuration as current		
+		if (currentConfiguration != null)
+			currentConfiguration.setCurrent(false);
+		config.setCurrent(true);
+		currentConfiguration = config;
+
+		// notify listeners
+		Object[] siteLocalListeners = listeners.getListeners();
+		for (int i = 0; i < siteLocalListeners.length; i++) {
+			((ISiteLocalChangedListener) siteLocalListeners[i]).currentInstallConfigurationChanged(config);
+		}
+		}
 	}
 	/**
 	 * initialize the configurations from the persistent model.
@@ -76,24 +90,12 @@ public class SiteLocal implements ILocalSite, IWritable {
 	 */
 	private void initialize() throws CoreException {
 
-		//if the file exists, parse it
 		try {
-
 			IPlatformConfiguration platformConfig = BootLoader2.getCurrentPlatformConfiguration();
 			location = platformConfig.getConfigurationLocation();
-			// FIXME... call VK API getConfigurationLocation which will return a URL
-			/*try {
-				File config = UpdateManagerPlugin.getPlugin().getStateLocation().toFile();
-				location = new URL("file", null, config.getAbsolutePath()+"/");
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}*/
-
 			URL configXml = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
+			//if the file exists, parse it			
 			SiteLocalParser parser = new SiteLocalParser(configXml.openStream(), this);
-
-			
-			
 		}  catch (FileNotFoundException exception) {
 			// file doesn't exist, ok, log it and continue 
 			// log no config
@@ -167,28 +169,12 @@ public class SiteLocal implements ILocalSite, IWritable {
 		}
 	}
 
-	/**
-	 * sets  a configuration as current
-	 */
-	private void setCurrentConfiguration(IInstallConfiguration configuration) {
-		if (currentConfiguration != null)
-			currentConfiguration.setCurrent(false);
-		configuration.setCurrent(true);
-		currentConfiguration = configuration;
-		//FIXME: revert
-
-		// notify listeners
-		Object[] siteLocalListeners = listeners.getListeners();
-		for (int i = 0; i < siteLocalListeners.length; i++) {
-			((ISiteLocalChangedListener) siteLocalListeners[i]).currentInstallConfigurationChanged(configuration);
-		}
-	}
-
 	/*
 	 * @see ILocalSite#importConfiguration(File)
 	 */
-	public IInstallConfiguration importConfiguration(File importFile) {
-		return null;
+	public IInstallConfiguration importConfiguration(URL importURL,String label) throws CoreException{
+		InstallConfiguration config = new InstallConfiguration(importURL,label);
+		return config;
 	}
 
 	/**

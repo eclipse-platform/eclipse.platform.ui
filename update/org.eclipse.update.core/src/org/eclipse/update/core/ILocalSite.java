@@ -62,10 +62,10 @@ public interface ILocalSite {
 	void revertTo(IInstallConfiguration configuration) throws CoreException;
 	
 	/**
-	 * Creates a configuration from a File.
+	 * Creates a configuration from a URL.
 	 * The configuration is not added to the LocalSite
 	 */
-	IInstallConfiguration importConfiguration(File importFile);
+	IInstallConfiguration importConfiguration(URL importURL,String label) throws CoreException;
 	
 	/**
 	 * creates a new currentConfiguration based on the current configuration

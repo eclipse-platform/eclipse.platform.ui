@@ -3,6 +3,7 @@ package org.eclipse.update.core;
 import java.io.File;
 import java.net.URL;
 import java.util.Date;
+import org.eclipse.core.runtime.CoreException;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -84,7 +85,7 @@ public interface IInstallConfiguration {
 	/**
 	 * Export the configuration to a file
 	 */
-	void export(File exportFile);
+	void export(File exportFile) throws CoreException;
 	
 	/**
 	 * Returns the Activities that were performed to get this InstallConfiguration.

@@ -209,7 +209,17 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	/*
 	 * @see IInstallConfiguration#export(File)
 	 */
-	public void export(File exportFile) {
+	public void export(File exportFile) throws CoreException{
+		try {
+				PrintWriter fileWriter = new PrintWriter(new FileOutputStream(exportFile));
+				Writer writer = new Writer();
+				writer.writeSite(this, fileWriter);
+				fileWriter.close();
+			} catch (FileNotFoundException e) {
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot save configration into " + exportFile.getAbsolutePath(), e);
+				throw new CoreException(status);
+			}		
 	}
 
 	/*
@@ -225,6 +235,14 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	public Date getCreationDate() {
 		return date;
 	}
+	
+	/**
+	 * Sets the date.
+	 * @param date The date to set
+	 */
+	public void setCreationDate(Date date) {
+		this.date = date;
+	}	
 
 	/*
 	 * @see IInstallConfiguration#getURL()
@@ -265,17 +283,18 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		if (location.getProtocol().equalsIgnoreCase("file")) {
 			// the location points to a file
 			File file = new File(location.getFile());
-			try {
-				PrintWriter fileWriter = new PrintWriter(new FileOutputStream(file));
-				Writer writer = new Writer();
-				writer.writeSite(this, fileWriter);
-				fileWriter.close(); 
-			} catch (FileNotFoundException e) {
-				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot save configuration into " + file.getAbsolutePath(), e);
-				throw new CoreException(status);
-			}
+			export(file);
 		}
+		
+		
+		// Write info for the next runtime
+		Iterator iterConfigurationSites = configurationSites.iterator();
+		while (iterConfigurationSites.hasNext()) {
+			IConfigurationSite element = (IConfigurationSite) iterConfigurationSites.next();
+			
+			
+		}
+		
 	}
 
 
@@ -315,12 +334,6 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		
 	}
 
-	/**
-	 * Sets the date.
-	 * @param date The date to set
-	 */
-	public void setCreationDate(Date date) {
-		this.date = date;
-	}
+
 
 }
