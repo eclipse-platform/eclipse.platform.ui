@@ -21,6 +21,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -195,8 +196,10 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	}
 
 	private Control createAppearancePage(Composite parent) {
+		Font font= parent.getFont();
 
 		Composite appearanceComposite= new Composite(parent, SWT.NONE);
+		appearanceComposite.setFont(font);
 		GridLayout layout= new GridLayout(); layout.numColumns= 2;
 		appearanceComposite.setLayout(layout);
 
@@ -217,18 +220,21 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 
 
 		Label l= new Label(appearanceComposite, SWT.LEFT );
+		l.setFont(font);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		gd.heightHint= convertHeightInCharsToPixels(1) / 2;
 		l.setLayoutData(gd);
 		
 		l= new Label(appearanceComposite, SWT.LEFT);
+		l.setFont(font);
 		l.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.appearanceOptions")); //$NON-NLS-1$
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		l.setLayoutData(gd);
 
 		Composite editorComposite= new Composite(appearanceComposite, SWT.NONE);
+		editorComposite.setFont(font);
 		layout= new GridLayout();
 		layout.numColumns= 2;
 		layout.marginHeight= 0;
@@ -239,11 +245,13 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		editorComposite.setLayoutData(gd);		
 
 		fAppearanceColorList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
+		fAppearanceColorList.setFont(font);
 		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		gd.heightHint= convertHeightInCharsToPixels(8);
 		fAppearanceColorList.setLayoutData(gd);
 						
 		Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
+		stylesComposite.setFont(font);
 		layout= new GridLayout();
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
@@ -252,6 +260,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		l= new Label(stylesComposite, SWT.LEFT);
+		l.setFont(font);
 		l.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.color")); //$NON-NLS-1$
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.BEGINNING;
@@ -259,6 +268,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 
 		fAppearanceColorEditor= new ColorEditor(stylesComposite);
 		Button foregroundColorButton= fAppearanceColorEditor.getButton();
+		foregroundColorButton.setFont(font);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		foregroundColorButton.setLayoutData(gd);
@@ -287,7 +297,9 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	
 	
 	private Control createAnnotationsPage(Composite parent) {
+		Font font= parent.getFont();
 		Composite composite= new Composite(parent, SWT.NULL);
+		composite.setFont(font);
 		GridLayout layout= new GridLayout(); layout.numColumns= 2;
 		composite.setLayout(layout);
 				
@@ -297,12 +309,14 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 //		addFiller(composite);
 				
 		Label label= new Label(composite, SWT.LEFT);
+		label.setFont(font);
 		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.annotationPresentationOptions")); //$NON-NLS-1$
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		label.setLayoutData(gd);
 
 		Composite editorComposite= new Composite(composite, SWT.NONE);
+		editorComposite.setFont(font);
 		layout= new GridLayout();
 		layout.numColumns= 2;
 		layout.marginHeight= 0;
@@ -313,11 +327,13 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		editorComposite.setLayoutData(gd);		
 
 		fAnnotationList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
+		fAnnotationList.setFont(font);
 		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		gd.heightHint= convertHeightInCharsToPixels(8);
 		fAnnotationList.setLayoutData(gd);
 						
 		Composite optionsComposite= new Composite(editorComposite, SWT.NONE);
+		optionsComposite.setFont(font);
 		layout= new GridLayout();
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
@@ -326,6 +342,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		optionsComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		fShowInTextCheckBox= new Button(optionsComposite, SWT.CHECK);
+		fShowInTextCheckBox.setFont(font);
 		fShowInTextCheckBox.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.annotations.showInText")); //$NON-NLS-1$
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
@@ -333,6 +350,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		fShowInTextCheckBox.setLayoutData(gd);
 		
 		fShowInOverviewRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
+		fShowInOverviewRulerCheckBox.setFont(font);
 		fShowInOverviewRulerCheckBox.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.annotations.showInOverviewRuler")); //$NON-NLS-1$
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
@@ -340,6 +358,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		fShowInOverviewRulerCheckBox.setLayoutData(gd);
 		
 		label= new Label(optionsComposite, SWT.LEFT);
+		label.setFont(font);
 		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.annotations.color")); //$NON-NLS-1$
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.BEGINNING;
@@ -347,6 +366,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 
 		fAnnotationForegroundColorEditor= new ColorEditor(optionsComposite);
 		Button foregroundColorButton= fAnnotationForegroundColorEditor.getButton();
+		foregroundColorButton.setFont(font);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		foregroundColorButton.setLayoutData(gd);
@@ -522,6 +542,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	private Button addCheckBox(Composite parent, String label, String key, int indentation) {		
 		Button checkBox= new Button(parent, SWT.CHECK);
 		checkBox.setText(label);
+		checkBox.setFont(parent.getFont());
 		
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= indentation;
@@ -535,14 +556,17 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	}
 	
 	private Control addTextField(Composite composite, String label, String key, int textLimit, int indentation, boolean isNumber) {
+		Font font= composite.getFont();
 		
 		Label labelControl= new Label(composite, SWT.NONE);
 		labelControl.setText(label);
+		labelControl.setFont(font);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= indentation;
 		labelControl.setLayoutData(gd);
 		
-		Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);		
+		Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);
+		textControl.setFont(font);		
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.widthHint= convertWidthInCharsToPixels(textLimit + 1);
 		textControl.setLayoutData(gd);
