@@ -326,14 +326,11 @@ public class MarkerAnnotationPreferences {
 		s= element.getAttribute("textStylePreferenceValue");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0) {
 
-			if (s.equals("SQUIGGLIES"))
-				info.setTextStyleValue(AnnotationPreference.STYLE_SQUIGGLIES);
-			else if (s.equals("BOX"))
-				info.setTextStyleValue(AnnotationPreference.STYLE_BOX);
-			else if (s.equals("UNDERLINE"))
-				info.setTextStyleValue(AnnotationPreference.STYLE_UNDERLINE);
-			else if (s.equals("IBEAM"))
-				info.setTextStyleValue(AnnotationPreference.STYLE_IBEAM);
+			if (AnnotationPreference.STYLE_BOX.equals(s)
+					|| AnnotationPreference.STYLE_IBEAM.equals(s) 
+					|| AnnotationPreference.STYLE_SQUIGGLIES.equals(s)
+					|| AnnotationPreference.STYLE_UNDERLINE.equals(s))
+				info.setTextStyleValue(s);
 			else
 				info.setTextStyleValue(AnnotationPreference.STYLE_NONE);
 				

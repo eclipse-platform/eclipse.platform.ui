@@ -53,13 +53,36 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
  * @since 2.1
  */
 public class AnnotationPreference {
-	public static final int STYLE_NONE = 0;
-	public static final int STYLE_SQUIGGLIES = 1;
-	public static final int STYLE_BOX = 2;
-	public static final int STYLE_UNDERLINE = 3;
-	public static final int STYLE_IBEAM = 4;
 	
-	/** IDs for presentation preference attributes */
+	/* String constants for style enumeration */
+	
+	/** 
+	 * Constant defining no decoration for the show in text style preference. 
+	 * @since 3.0
+	 */
+	public static final String STYLE_NONE= "NONE"; //$NON-NLS-1$
+	/** 
+	 * Constant defining squiggly decoration for the show in text style preference.
+	 * @since 3.0
+	 */
+	public static final String STYLE_SQUIGGLIES= "SQUIGGLIES"; //$NON-NLS-1$
+	/** 
+	 * Constant defining box decoration for the show in text style preference.
+	 * @since 3.0
+	 */
+	public static final String STYLE_BOX= "BOX"; //$NON-NLS-1$
+	/**
+	 * Constant defining underline decoration for the show in text style preference.
+	 * @since 3.0
+	 */
+	public static final String STYLE_UNDERLINE= "UNDERLINE"; //$NON-NLS-1$
+	/** 
+	 * Constant defining i-beam decoration for the show in text style preference.
+	 * @since 3.0
+	 */
+	public static final String STYLE_IBEAM= "IBEAM"; //$NON-NLS-1$
+	
+	/* IDs for presentation preference attributes */
 	
 	/** The image to be used for drawing in the vertical ruler. */ 
 	protected final static Object IMAGE_DESCRIPTOR= new Object();
@@ -768,20 +791,20 @@ public class AnnotationPreference {
 	 * @return the value for the decoration style or <code>null</code> if the key is undefined
 	 * @since 3.0
 	 */
-	public int getTextStyleValue() {
-		return getIntegerValue(TEXT_STYLE_PREFERENCE_VALUE);
+	public String getTextStyleValue() {
+		return getStringValue(TEXT_STYLE_PREFERENCE_VALUE);
 	}
 
 	/**
 	 * Sets the value for the text style property.
 	 * 
-	 * @param textStyle the new text decoration style
+	 * @param value the new text decoration style
 	 * @since 3.0
 	 */
-	public void setTextStyleValue(int value) {
-		if (value != STYLE_NONE && value != STYLE_BOX
-				&& value != STYLE_IBEAM && value != STYLE_SQUIGGLIES
-				&& value != STYLE_UNDERLINE)
+	public void setTextStyleValue(String value) {
+		if (!STYLE_NONE.equals(value) && !STYLE_BOX.equals(value)
+				&& !STYLE_IBEAM.equals(value) && !STYLE_SQUIGGLIES.equals(value)
+				&& !STYLE_UNDERLINE.equals(value))
 			throw new IllegalArgumentException();
 		
 		setValue(TEXT_STYLE_PREFERENCE_VALUE, value);

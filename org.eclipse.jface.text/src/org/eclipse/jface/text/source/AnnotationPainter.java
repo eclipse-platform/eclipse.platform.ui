@@ -66,6 +66,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		 * given color onto the specified gc.
 		 * 
 		 * @param gc the grahical context
+		 * @param textWidget the text widget to draw on
 		 * @param offset the offset of the line
 		 * @param length the length of the line
 		 * @param color the color of the line
@@ -171,12 +172,17 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * The squiggly painter strategy.
 	 * @since 3.0
 	 */
-	private static IDrawingStrategy fgSquigglyDrawer= new SquiggliesStrategy();
+	private static final IDrawingStrategy fgSquigglyDrawer= new SquiggliesStrategy();
+	/** 
+	 * The squigglies painter id. 
+	 * @since 3.0
+	 */
+	private static final Object SQUIGGLIES= new Object();
 	/**
 	 * The default strategy that does nothing.
 	 * @since 3.0
 	 */
-	private static IDrawingStrategy fgNullDrawer= new NullStrategy();
+	private static final IDrawingStrategy fgNullDrawer= new NullStrategy();
 	
 	/** 
 	 * The presentation information (decoration) for an annotation.  Each such
@@ -209,7 +215,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	/** The associated source viewer */
 	private ISourceViewer fSourceViewer;
 	/** The cached widget of the source viewer */
-	private StyledText textWidget;
+	private StyledText fTextWidget;
 	/** The annotation model providing the annotations to be drawn */
 	private IAnnotationModel fModel;
 	/** The annotation access */
@@ -265,10 +271,15 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private boolean fInputDocumentAboutToBeChanged;
 	/**
-	 * The map of registerd drawing strategies.
+	 * Maps annotation types to drawing strategy ids.
 	 * @since 3.0
 	 */
-	private Map fDrawingStrategies= new HashMap();
+	private Map fAnnotationType2DrawingStrategyId= new HashMap();
+	/**
+	 * Maps drawing strategy ids to drawing strategies.
+	 * @since 3.0
+	 */
+	private Map fRegisteredDrawingStrategies= new HashMap();
 
 	
 	/**
@@ -282,7 +293,10 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	public AnnotationPainter(ISourceViewer sourceViewer, IAnnotationAccess access) {
 		fSourceViewer= sourceViewer;
 		fAnnotationAccess= access;
-		textWidget= sourceViewer.getTextWidget();
+		fTextWidget= sourceViewer.getTextWidget();
+		
+		// default drawing strategies: squigglies are the only pre-3.0 drawing style,
+		fRegisteredDrawingStrategies.put(SQUIGGLIES, fgSquigglyDrawer);
 	}
 	
 	/** 
@@ -301,7 +315,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private void enablePainting() {
 		if (!fIsPainting && hasDecorations()) {
 			fIsPainting= true;
-			textWidget.addPaintListener(this);
+			fTextWidget.addPaintListener(this);
 			handleDrawRequest(null);
 		}
 	}
@@ -315,7 +329,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private void disablePainting(boolean redraw) {
 		if (fIsPainting) {
 			fIsPainting= false;
-			textWidget.removePaintListener(this);
+			fTextWidget.removePaintListener(this);
 			if (redraw && hasDecorations())
 				handleDrawRequest(null);
 		}
@@ -579,7 +593,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private IDrawingStrategy getDrawingStrategy(Annotation annotation) {
 		String type= annotation.getType();
-		IDrawingStrategy strategy = (IDrawingStrategy) fDrawingStrategies.get(type);
+		IDrawingStrategy strategy = (IDrawingStrategy) fRegisteredDrawingStrategies.get(fAnnotationType2DrawingStrategyId.get(type));
 		if (strategy != null)
 			return strategy;
 		
@@ -587,7 +601,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			IAnnotationAccessExtension ext = (IAnnotationAccessExtension) fAnnotationAccess;
 			Object[] sts = ext.getSupertypes(type);
 			for (int i = 0; i < sts.length; i++) {
-				strategy= (IDrawingStrategy) fDrawingStrategies.get(sts[i]);
+				strategy= (IDrawingStrategy) fRegisteredDrawingStrategies.get(fAnnotationType2DrawingStrategyId.get(sts[i]));
 				if (strategy != null)
 					return strategy;
 			}
@@ -775,12 +789,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @see IAnnotationModelListenerExtension#modelChanged(AnnotationModelEvent)
 	 */
 	public synchronized void modelChanged(final AnnotationModelEvent event) {
-		if (textWidget != null && !textWidget.isDisposed()) {
+		if (fTextWidget != null && !fTextWidget.isDisposed()) {
 			if (fIsSettingModel) {
 				// inside the ui thread -> no need for posting
 				updatePainting(event);
 			} else {
-				Display d= textWidget.getDisplay();
+				Display d= fTextWidget.getDisplay();
 				if (DEBUG && event != null && event.isWorldChange()) {
 					System.out.println("AP: WORLD CHANGED, stack trace follows:"); //$NON-NLS-1$
 					try {
@@ -792,7 +806,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				if (d != null) {
 					d.asyncExec(new Runnable() {
 						public void run() {
-							if (textWidget != null && !textWidget.isDisposed())
+							if (fTextWidget != null && !fTextWidget.isDisposed())
 								updatePainting(event);
 						}
 					});
@@ -822,20 +836,43 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @param annotationType the annotation type
 	 */
 	public void addAnnotationType(Object annotationType) {
-		addAnnotationType(annotationType, fgSquigglyDrawer);
+		addAnnotationType(annotationType, SQUIGGLIES);
 	}
 	
 	/**
 	 * Adds the given annotation type to the list of annotation types whose
 	 * annotations should be painted by this painter using the given drawing strategy. 
-	 * If the annotation  type is already in this list, the old drawing strategy gets replaced.
+	 * If the annotation type is already in this list, the old drawing strategy gets replaced.
+	 * 
+	 * <p>TODO This is new API and subject to change. </p>
 	 * 
 	 * @param annotationType the annotation type
-	 * @param drawingStrategy the drawing strategy that should be used for this annotation type
+	 * @param drawingStrategyID the id of the drawing strategy that should be used for this annotation type
+	 * @since 3.0
 	 */
-	public void addAnnotationType(Object annotationType, IDrawingStrategy drawingStrategy) {
+	public void addAnnotationType(Object annotationType, Object drawingStrategyID) {
 		fConfiguredAnnotationTypes.add(annotationType);
-		fDrawingStrategies.put(annotationType, drawingStrategy);
+		fAnnotationType2DrawingStrategyId.put(annotationType, drawingStrategyID);
+	}
+	
+	/**
+	 * Registers a new drawing strategy under the given ID. If there is already a
+	 * strategy registered under <code>id</code>, the old strategy gets replaced.
+	 * <p>The given id can be referenced when adding annotation types, see
+	 * {@link #addAnnotationType(Object, Object)}.</p>
+	 * 
+	 * <p>TODO This is new API and subject to change. </p>
+	 * 
+	 * @param id the identifier under which the strategy can be referenced, not <code>null</code>
+	 * @param strategy the new strategy
+	 * @since 3.0
+	 */
+	public void addDrawingStrategy(Object id, IDrawingStrategy strategy) {
+		// don't permit null as null is used to signal that an annotation type is not 
+		// registered with a specific strategy, and that its annotation hierarchy should be searched
+		if (id == null)
+			throw new IllegalArgumentException();
+		fRegisteredDrawingStrategies.put(id, strategy);
 	}
 	
 	/**
@@ -947,7 +984,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			fAllowedHighlightAnnotationTypes.clear();
 		fAllowedHighlightAnnotationTypes= null;
 		
-		textWidget= null;
+		fTextWidget= null;
 		fSourceViewer= null;
 		fAnnotationAccess= null;
 		fModel= null;
@@ -963,9 +1000,9 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private int getInclusiveTopIndexStartOffset() {
 		
-		if (textWidget != null && !textWidget.isDisposed()) {	
+		if (fTextWidget != null && !fTextWidget.isDisposed()) {	
 			int top= fSourceViewer.getTopIndex();
-			if ((textWidget.getTopPixel() % textWidget.getLineHeight()) != 0)
+			if ((fTextWidget.getTopPixel() % fTextWidget.getLineHeight()) != 0)
 				top--;
 			try {
 				IDocument document= fSourceViewer.getDocument();
@@ -981,7 +1018,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @see PaintListener#paintControl(PaintEvent)
 	 */
 	public void paintControl(PaintEvent event) {
-		if (textWidget != null)
+		if (fTextWidget != null)
 			handleDrawRequest(event.gc);
 	}
 	
@@ -992,7 +1029,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private void handleDrawRequest(GC gc) {
 		
-		if (textWidget == null) {
+		if (fTextWidget == null) {
 			// is already disposed
 			return;
 		}
@@ -1034,7 +1071,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 								// otherwise inside a line delimiter
 								IRegion widgetRange= getWidgetRange(new Position(paintStart, paintEnd - paintStart));
 								if (widgetRange != null)
-									pp.fPainter.draw(gc, textWidget, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
+									pp.fPainter.draw(gc, fTextWidget, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
 							}
 						}
 						

@@ -281,13 +281,13 @@ public class SourceViewerDecorationSupport {
 		Iterator e= fAnnotationTypeKeyMap.keySet().iterator();
 		while (e.hasNext()) {
 			Object type= e.next();
-			int style= getAnnotationDecorationType(type);
+			Object style= getAnnotationDecorationType(type);
 			if (style != AnnotationPreference.STYLE_NONE)
-				showAnnotations(type, false, style, false);
+				showAnnotations(type, false, false);
 			else
 				hideAnnotations(type, false, false);
 			if (areAnnotationsHighlighted(type))
-				showAnnotations(type, true, 0, false);
+				showAnnotations(type, true, false);
 			else
 				hideAnnotations(type, true, false);
 			
@@ -296,16 +296,20 @@ public class SourceViewerDecorationSupport {
 	}
 	
 	/**
-	 * @param type
-	 * @return
+	 * Returns the annotation decoration style used for the show in text preference for
+	 * a given annotation type.
+	 * 
+	 * @param type the annotation type being looked up
+	 * @return the decoration style for <code>type</code>
+	 * @since 3.0
 	 */
-	private int getAnnotationDecorationType(Object annotationType) {
+	private Object getAnnotationDecorationType(Object annotationType) {
 		if (areAnnotationsShown(annotationType) && fPreferenceStore != null) {
 			AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
 			if (info != null) {
 				String key= info.getTextStylePreferenceKey();
 				if (key != null)
-					return fPreferenceStore.getInt(key);
+					return fPreferenceStore.getString(key);
 				else
 					// legacy
 					return AnnotationPreference.STYLE_SQUIGGLIES;
@@ -525,9 +529,9 @@ public class SourceViewerDecorationSupport {
 			}
 			
 			if (info.getTextPreferenceKey().equals(p) || info.getTextStylePreferenceKey() != null && info.getTextStylePreferenceKey().equals(p)) {
-				int style= getAnnotationDecorationType(info.getAnnotationType());
+				Object style= getAnnotationDecorationType(info.getAnnotationType());
 				if (AnnotationPreference.STYLE_NONE != style)
-					showAnnotations(info.getAnnotationType(), false, style, true);
+					showAnnotations(info.getAnnotationType(), false, true);
 				else
 					hideAnnotations(info.getAnnotationType(), false, true);
 				return;
@@ -535,15 +539,15 @@ public class SourceViewerDecorationSupport {
 			
 			if (info.getHighlightPreferenceKey() != null && info.getHighlightPreferenceKey().equals(p)) {
 				if (areAnnotationsHighlighted(info.getAnnotationType()))
-					showAnnotations(info.getAnnotationType(), true, 0, true);
+					showAnnotations(info.getAnnotationType(), true, true);
 				else
 					hideAnnotations(info.getAnnotationType(), true, true);
 				return;
 			}
 			
-			int style= getAnnotationDecorationType(info.getAnnotationType());
+			Object style= getAnnotationDecorationType(info.getAnnotationType());
 			if (style != AnnotationPreference.STYLE_NONE)
-				showAnnotations(info.getAnnotationType(), false, style, false);
+				showAnnotations(info.getAnnotationType(), false, false);
 			else
 				hideAnnotations(info.getAnnotationType(), false, false);
 
@@ -745,10 +749,10 @@ public class SourceViewerDecorationSupport {
 	 * @param highlighting <code>true</code> if highlighting <code>false</code> if painting squiggles
 	 * @param updatePainter if <code>true</code> update the annotation painter
 	 */
-	private void showAnnotations(Object annotationType, boolean highlighting, int style, boolean updatePainter) {
+	private void showAnnotations(Object annotationType, boolean highlighting, boolean updatePainter) {
 		if (fSourceViewer instanceof ITextViewerExtension2) {
 			if (fAnnotationPainter == null) {
-				fAnnotationPainter= new AnnotationPainter(fSourceViewer, fAnnotationAccess);
+				fAnnotationPainter= createAnnotationPainter();
 				if (fSourceViewer instanceof ITextViewerExtension4)
 					((ITextViewerExtension4)fSourceViewer).addTextPresentationListener(fAnnotationPainter);
 				ITextViewerExtension2 extension= (ITextViewerExtension2) fSourceViewer;
@@ -758,25 +762,7 @@ public class SourceViewerDecorationSupport {
 			if (highlighting)
 				fAnnotationPainter.addHighlightAnnotationType(annotationType);
 			else {
-				IDrawingStrategy strategy;
-				switch (style) {
-					case AnnotationPreference.STYLE_BOX:
-						strategy= fgBoxStrategy;
-						break;
-					case AnnotationPreference.STYLE_UNDERLINE:
-						strategy= fgUnderlineStrategy;
-						break;
-					case AnnotationPreference.STYLE_SQUIGGLIES:
-						strategy= fgSquiggliesStrategy;
-						break;
-					case AnnotationPreference.STYLE_IBEAM:
-						strategy= fgIBeamStrategy;
-						break;
-					case AnnotationPreference.STYLE_NONE:
-					default:
-						strategy= fgNullStrategy;
-				}
-				fAnnotationPainter.addAnnotationType(annotationType, strategy);
+				fAnnotationPainter.addAnnotationType(annotationType, getAnnotationDecorationType(annotationType));
 			}
 			
 			if (updatePainter)
@@ -784,6 +770,24 @@ public class SourceViewerDecorationSupport {
 		}
 	}
 	
+	/**
+	 * Creates and configures the annotation painter and configures.
+	 * @return an annotation painter 
+	 * @since 3.0
+	 */
+	protected AnnotationPainter createAnnotationPainter() {
+		AnnotationPainter painter= new AnnotationPainter(fSourceViewer, fAnnotationAccess);
+		
+		// TODO add extension point for drawing strategies?
+		painter.addDrawingStrategy(AnnotationPreference.STYLE_BOX, fgBoxStrategy);
+		painter.addDrawingStrategy(AnnotationPreference.STYLE_NONE, fgNullStrategy);
+		painter.addDrawingStrategy(AnnotationPreference.STYLE_SQUIGGLIES, fgSquiggliesStrategy);
+		painter.addDrawingStrategy(AnnotationPreference.STYLE_UNDERLINE, fgUnderlineStrategy);
+		painter.addDrawingStrategy(AnnotationPreference.STYLE_IBEAM, fgIBeamStrategy);
+		
+		return painter;
+	}
+
 	/**
 	 * Updates the annotation painter.
 	 */
@@ -900,7 +904,6 @@ public class SourceViewerDecorationSupport {
 	
 	/**
 	 * Hides the annotation overview.
-	 * @param annotationType the annotation type
 	 */
 	public void hideAnnotationOverview() {
 		if (fOverviewRuler != null) {
