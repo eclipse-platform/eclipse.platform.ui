@@ -17,6 +17,22 @@ import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 
 /**
+ * A content describer for binary formats that present some 
+ * simple signature at a known, fixed offset.
+ * <p>
+ * This executable extension supports three parameters:
+ * "signature", "offset" and "required", the first one being mandatory. 
+ * If the
+ * <code>":-"</code> method is used, then the value is treated as the
+ * "signature".
+ * </p> 
+ * <p>
+ * This class is not intended to be subclassed or instantiated by clients, 
+ * only to be referenced in the "describer" configuration element of
+ * extensions to the <code>org.eclipse.core.runtime.contentTypes</code>
+ * extension-pont.
+ * </p>
+ * 
  * @since 3.0
  */
 public class BinarySignatureDescriber implements IContentDescriber, IExecutableExtension {
@@ -28,6 +44,9 @@ public class BinarySignatureDescriber implements IContentDescriber, IExecutableE
 	private int offset;
 	private boolean required = true;
 
+	/* (Intentionally not included in javadoc)
+	 * @see IContentDescriber#describe(InputStream, IContentDescription)
+	 */
 	public int describe(InputStream contents, IContentDescription description) throws IOException {
 		byte[] buffer = new byte[signature.length];
 		int notValid = required ? INVALID : INDETERMINATE;
@@ -41,10 +60,16 @@ public class BinarySignatureDescriber implements IContentDescriber, IExecutableE
 		return VALID;
 	}
 
+	/* (Intentionally not included in javadoc)
+	 * @see IContentDescriber#getSupportedOptions
+	 */
 	public QualifiedName[] getSupportedOptions() {
 		return new QualifiedName[0];
 	}
 
+	/* (Intentionally not included in javadoc)
+	 * @see IExecutableExtension#setInitializationData
+	 */
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		try {
 			if (data instanceof String)
