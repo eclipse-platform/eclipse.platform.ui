@@ -77,6 +77,8 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
   //private FileFieldEditor keyFileName;
   private Label keyCommentLabel;
   private Text keyCommentText;
+  private Label keyFingerPrintLabel;
+  private Text keyFingerPrintText;
   private Label keyPassphrase1Label;
   private Text keyPassphrase1Text;
   private Label keyPassphrase2Label;
@@ -106,6 +108,7 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
       new DirectoryFieldEditor(KEY_SSH2HOME, 
 			       "SSH2 Home", 
 			       getFieldEditorParent());
+
     addField(ssh2homeEditor);
 
     createSpacer(getFieldEditorParent(), 3);
@@ -137,6 +140,8 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
     //keyFileName.setEnabled(enable);
     publicKeylabel.setEnabled(enable);
     publicKeyText.setEnabled(enable);
+    keyFingerPrintLabel.setEnabled(enable);
+    keyFingerPrintText.setEnabled(enable);
     keyCommentLabel.setEnabled(enable);
     keyCommentText.setEnabled(enable);
     keyPassphrase1Label.setEnabled(enable);
@@ -332,6 +337,13 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
     gd.grabExcessVerticalSpace = true;
     publicKeyText.setLayoutData(gd);
 
+    keyFingerPrintLabel=new Label(group, SWT.NONE);
+    keyFingerPrintLabel.setText("Finger print");
+    keyFingerPrintText=new Text(group, SWT.SINGLE | SWT.BORDER);
+    keyFingerPrintText.setFont(group.getFont());
+    gd=new GridData(GridData.FILL_HORIZONTAL);
+    keyFingerPrintText.setLayoutData(gd);
+
     keyCommentLabel=new Label(group, SWT.NONE);
     keyCommentLabel.setText("Comment");
     keyCommentText=new Text(group, SWT.SINGLE | SWT.BORDER);
@@ -372,14 +384,28 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
 	public void widgetSelected(SelectionEvent e){
 	  JSch jsch=JSchSession.getJSch();
 	  boolean ok=true;
+	  String _type=keyTypeCombo.getText();
+
 	  try{
-	    kpair=KeyPair.genKeyPair(jsch, KeyPair.DSA);
+	    int type=0;
+	    if(_type.equals(DSA)){
+	      type=KeyPair.DSA;
+	    }
+	    else if(_type.equals(RSA)){
+	      type=KeyPair.RSA;
+	    }
+	    else{
+	      return;
+	    }
+
+	    kpair=KeyPair.genKeyPair(jsch, type);
 	    ByteArrayOutputStream out=new ByteArrayOutputStream();
-	    kpairComment="dsa-1024";
+	    kpairComment=_type+"-1024";
 	    kpair.writePublicKey(out, kpairComment);
 	    out.close();
-	    keyCommentText.setText(kpairComment);
 	    publicKeyText.setText(out.toString());
+	    keyFingerPrintText.setText(kpair.getFingerPrint());
+	    keyCommentText.setText(kpairComment);
 	    updateControls();
 	  }
 	  catch(IOException ee){
@@ -389,7 +415,7 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
 	    ok=false;
 	  }
 	  MessageBox mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_INFORMATION);
-	  mb.setMessage("DSA 1024bits key is successfully generated.");
+	  mb.setMessage(_type+" 1024bits key is successfully generated.");
 	  mb.open();
 	}
       });
@@ -417,12 +443,12 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
 	  kpair.setPassphrase(pass);
 
 	  IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
-	  String home=store.getString(KEY_SSH2HOME);
+	  String home=ssh2homeEditor.getStringValue(); 
 	  File _home=new File(home);
 
 	  if(!_home.exists()){
 	    mb=new MessageBox(getShell(),SWT.YES|SWT.NO|SWT.ICON_QUESTION);
-	    mb.setMessage(home+" does not exsit.\nAre you sure you want to create it(yes/no)?");
+	    mb.setMessage(home+" does not exsit.\nAre you sure you want to create it?");
 	    if(mb.open()==SWT.NO){
 	      return;
 	    }
@@ -433,8 +459,9 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
 
 	  FileDialog fd=new FileDialog(getShell(), SWT.SAVE);
 	  fd.setFilterPath(home);
-	  fd.setFileName("id_dsa");
-	  String file=fd.open();
+	  String file=(kpair.getKeyType()==KeyPair.RSA) ? "id_rsa" : "id_dsa";
+	  fd.setFileName(file);
+	  file=fd.open();
 	  if(file==null){ // cancel
 	    return;
 	  }
