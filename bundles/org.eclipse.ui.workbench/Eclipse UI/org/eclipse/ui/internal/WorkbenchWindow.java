@@ -1504,7 +1504,7 @@ public class WorkbenchWindow
 				IElementFactory factory =
 					WorkbenchPlugin.getDefault().getElementFactory(factoryID);
 				if (factory == null) {
-					WorkbenchPlugin.log("Unable to restore pagee - cannot instantiate input factory: " + factoryID); //$NON-NLS-1$
+					WorkbenchPlugin.log("Unable to restore page - cannot instantiate input factory: " + factoryID); //$NON-NLS-1$
 					result.add(unableToRestorePage(pageMem));
 					continue;
 				}
