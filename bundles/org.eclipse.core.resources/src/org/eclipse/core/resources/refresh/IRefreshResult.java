@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IResource;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * @since 3.0
  */
 public interface IRefreshResult {
 	/**

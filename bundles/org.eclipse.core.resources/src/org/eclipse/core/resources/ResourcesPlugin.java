@@ -192,7 +192,9 @@ public final class ResourcesPlugin extends Plugin {
 	public static final String PREF_AUTO_REFRESH = "refresh.enabled"; //$NON-NLS-1$
 
 	/**
-	 * Default refresh delay in milliseconds, (value <code>60000</code>).
+	 * Name of a preference for configuring how often the workspace performs 
+	 * auto-refresh.
+	 * @since 3.0
 	 */
 	public static final String PREF_REFRESH_POLLING_DELAY = "refresh.delay";	
 
