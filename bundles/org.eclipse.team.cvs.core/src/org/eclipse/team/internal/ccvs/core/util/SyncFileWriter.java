@@ -441,7 +441,7 @@ public class SyncFileWriter {
 	private static String readFirstLine(IFile file) throws CVSException {
 		if (! file.exists()) return null;
 		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents(true)));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents(true)), 512);
 			try {
 				String line = reader.readLine();
 				if (line == null) return ""; //$NON-NLS-1$
