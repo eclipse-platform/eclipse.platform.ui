@@ -424,7 +424,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		return configurator;
 	}
 	
-	static Bundle getBundle() {
-		return ConfigurationActivator.getBundle();
-	}
+//	static Bundle getBundle() {
+//		return ConfigurationActivator.getBundle();
+//	}
 }
