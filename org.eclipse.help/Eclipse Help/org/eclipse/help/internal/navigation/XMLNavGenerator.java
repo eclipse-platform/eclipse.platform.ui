@@ -49,7 +49,11 @@ public class XMLNavGenerator extends XMLGenerator {
 	public void visit(InfoSet infoSet) {
 		try {
 			File outputFile = new File(outputDir, NAV_XML_FILENAME);
-			out = new PrintWriter(new BufferedWriter(new FileWriter(outputFile)));
+			out =
+				new PrintWriter(
+					new OutputStreamWriter(
+						new BufferedOutputStream(new FileOutputStream(outputFile)),
+						"UTF-8"));
 
 			out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			out.println("<?xml-stylesheet href=\"tree.xsl\" type=\"text/xsl\"?>");

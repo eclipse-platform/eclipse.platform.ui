@@ -56,7 +56,7 @@ public class PersistentMap extends Hashtable {
 			bufr =
 				new BufferedReader(
 					new InputStreamReader(
-						new FileInputStream(usedfile) /* can specify encoding */));
+						new FileInputStream(usedfile), "UTF-8"));
 			loaded=parseLines(bufr);
 		} catch (IOException ioe00) {
 			Logger.logError(Resources.getString("Table", name), null);
@@ -89,8 +89,8 @@ public class PersistentMap extends Hashtable {
 			buf =
 				new PrintWriter(
 					new OutputStreamWriter(
-						new BufferedOutputStream(new FileOutputStream(tempfile))),
-					false);
+						new BufferedOutputStream(new FileOutputStream(tempfile)),
+						"UTF-8"));
 			for (Enumeration e = this.keys(); e.hasMoreElements();) {
 				String name = (String) e.nextElement();
 				buf.println(name + columnSeparator + this.get(name));
