@@ -496,11 +496,17 @@ private boolean loadAssociations() {
 
 	//Get the editors and validate each one
 	Map editorTable = new HashMap();
-	InputStreamReader reader = null;
+	Reader reader = null;
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 
 	try {
-		FileInputStream stream = new FileInputStream(workbenchStatePath.append(IWorkbenchConstants.EDITOR_FILE_NAME).toOSString());
-	 	reader = new InputStreamReader(stream, "utf-8"); //$NON-NLS-1$
+		String xmlString = store.getString(IPreferenceConstants.EDITORS);
+		if(xmlString == null || xmlString.length() == 0) {
+			FileInputStream stream = new FileInputStream(workbenchStatePath.append(IWorkbenchConstants.EDITOR_FILE_NAME).toOSString());
+			reader = new InputStreamReader(stream, "utf-8"); //$NON-NLS-1$
+		} else {
+			reader = new StringReader(xmlString);
+		}
 		XMLMemento memento = XMLMemento.createReadRoot(reader);
 		EditorDescriptor editor;
 		IMemento[] edMementos = memento.getChildren(IWorkbenchConstants.TAG_DESCRIPTOR);
@@ -548,11 +554,16 @@ private boolean loadAssociations() {
 	//Get the resource types
 	reader = null;
 	try {
-		FileInputStream stream = new FileInputStream(
-			workbenchStatePath
-				.append(IWorkbenchConstants.RESOURCE_TYPE_FILE_NAME)
-				.toOSString());
-	 	reader = new InputStreamReader(stream, "utf-8"); //$NON-NLS-1$
+		String xmlString = store.getString(IPreferenceConstants.RESOURCES);
+		if(xmlString == null || xmlString.length() == 0) {
+			FileInputStream stream = new FileInputStream(
+				workbenchStatePath
+					.append(IWorkbenchConstants.RESOURCE_TYPE_FILE_NAME)
+					.toOSString());
+		 	reader = new InputStreamReader(stream, "utf-8"); //$NON-NLS-1$
+		} else {
+			reader = new StringReader(xmlString);
+		}
 		XMLMemento memento = XMLMemento.createReadRoot(reader);
 		IMemento[] extMementos = memento.getChildren(IWorkbenchConstants.TAG_INFO);
 		for (int i = 0; i < extMementos.length; i++) {
@@ -684,6 +695,7 @@ public void saveAssociations () {
 	IPath workbenchStatePath = WorkbenchPlugin.getDefault().getStateLocation();
 	//Save the resource type descriptions
 	List editors = new ArrayList();
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	
 	XMLMemento memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_EDITORS);
 	FileEditorMapping maps[] = typeEditorMappings.userMappings();
@@ -711,12 +723,12 @@ public void saveAssociations () {
 			idMemento.putString(IWorkbenchConstants.TAG_ID,editorArray[i].getId());
 		}
 	}
-	OutputStreamWriter writer = null;
+	Writer writer = null;
 	try {
-		FileOutputStream stream = new FileOutputStream(workbenchStatePath.append(IWorkbenchConstants.RESOURCE_TYPE_FILE_NAME).toOSString());
-	 	writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
+		writer = new StringWriter();
 		memento.save(writer);
 		writer.close();
+		store.setValue(IPreferenceConstants.RESOURCES,writer.toString());
 	} catch(IOException e) {
 		try{
 			if(writer != null) writer.close();
@@ -737,10 +749,10 @@ public void saveAssociations () {
 	}
 	writer = null;
 	try {
-		FileOutputStream stream = new FileOutputStream(workbenchStatePath.append(IWorkbenchConstants.EDITOR_FILE_NAME).toOSString());
-	 	writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
+		writer = new StringWriter();
 		memento.save(writer);
 		writer.close();
+		store.setValue(IPreferenceConstants.EDITORS,writer.toString());	
 	} catch(IOException e) {
 		try{
 			if(writer != null) writer.close();

@@ -36,6 +36,10 @@ public interface IPreferenceConstants {
 
 	//Do we show tabs up or down for editors
 	public static final String EDITOR_TAB_POSITION = "EDITOR_TAB_POSITION"; //$NON-NLS-1$
+	
+	//mappings for type/extension to an editor
+	public final static String EDITORS = "editors"; //$NON-NLS-1$
+	public final static String RESOURCES = "resourcetypes"; //$NON-NLS-1$
 
 	// (int) If > 0, an editor will be reused once 'N' editors are opened.
 	public static final String REUSE_EDITORS = "REUSE_OPEN_EDITORS"; //$NON-NLS-1$

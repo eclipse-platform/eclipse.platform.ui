@@ -48,7 +48,7 @@ public interface IWorkbenchConstants {
 	public static final String DEFAULT_ACCELERATOR_CONFIGURATION_ID = "org.eclipse.ui.defaultAcceleratorConfiguration"; //$NON-NLS-1$
 	public static final String DEFAULT_ACCELERATOR_SCOPE_ID = "org.eclipse.ui.globalScope"; //$NON-NLS-1$
 	
-	//mappings for type/extension to an editor
+	//mappings for type/extension to an editor - backward compatibility only.
 	public final static String EDITOR_FILE_NAME = "editors.xml"; //$NON-NLS-1$
 	public final static String RESOURCE_TYPE_FILE_NAME = "resourcetypes.xml"; //$NON-NLS-1$
 
