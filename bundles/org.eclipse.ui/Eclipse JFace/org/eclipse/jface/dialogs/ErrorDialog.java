@@ -148,7 +148,7 @@ protected Control createDialogArea(Composite parent) {
 	((GridLayout)composite.getLayout()).numColumns = 2;
 
 	// create image
-	Image image = JFaceResources.getImageRegistry().get(DLG_IMG_ERROR);
+	Image image = getImage();
 	if (image != null) {
 		Label label = new Label(composite, 0);
 		image.setBackground(label.getBackground());
@@ -173,6 +173,19 @@ protected Control createDialogArea(Composite parent) {
 	}
 	return composite;
 }
+
+/**
+ * Returns the image to display beside the message in this dialog.
+ * <p>
+ * Subclasses may override.
+ * </p>
+ * 
+ * @return the image to display beside the message
+ */
+protected Image getImage() {
+	return JFaceResources.getImageRegistry().get(DLG_IMG_ERROR);
+}
+
 /**
  * Create this dialog's drop-down list component.
  *
