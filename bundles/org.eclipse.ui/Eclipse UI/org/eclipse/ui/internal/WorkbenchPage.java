@@ -75,7 +75,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		private IWorkbenchPart activePart;
 		private IEditorPart topEditor;
 		private ArrayList actionSets = new ArrayList();
-
+	
 		/** 
 		 * Updates the contributions given the new part as the active part.
 		 *  
@@ -90,27 +90,41 @@ public class WorkbenchPage implements IWorkbenchPage {
 				String oldId = null;
 				if (topEditor != null)
 					oldId = topEditor.getSite().getId();
-				String newId = null;
-				if (newPart != null)
-					newId = newPart.getSite().getId();
+				String newId = newPart.getSite().getId();
 				
-				// remove the  contributions of the old editor
+				// if the active part is an editor and the new editor
+				// is the same kind of editor, then we don't have to do anything
+				if (activePart == topEditor && newId.equals(oldId))
+					return;
+				
+				// remove the contributions of the old editor
+				// if it is a different kind of editor
 				if (oldId != null && !oldId.equals(newId)) 
 					deactivateContributions(topEditor, true);
-					
-				// show the contributions of the new editor
-				activateContributions(newPart, true);
-				
+
 				// if a view was the active part, disable its contributions
 				if (activePart != null && activePart != topEditor)
 					deactivateContributions(activePart, true);
+					
+				// show (and enable) the contributions of the new editor
+				// if it is a different kind of editor or if the 
+				// old active part was a view
+				if (!newId.equals(oldId) || activePart != topEditor)
+					activateContributions(newPart, true);
+				
+			} else if (newPart == null) {
+				if (activePart != null) 
+					// remove all contributions
+					deactivateContributions(activePart, true);
 			} else {
-				// new active part is a view or null
-				if (activePart != null)
+				// new part is a view
+
+			    // if old active part is a view, remove all contributions,
+			    // but if old part is an editor only disable
+				if (activePart != null) 
 					deactivateContributions(activePart, activePart instanceof IViewPart);	
 
-				if (newPart != null)
-					activateContributions(newPart, true);
+				activateContributions(newPart, true);
 			}
 
 			ArrayList newActionSets = null;
@@ -122,9 +136,14 @@ public class WorkbenchPage implements IWorkbenchPage {
 			if (!updateActionSets(newActionSets));
 				updateActionBars();
 			
-			activePart = newPart;
-			if (isNewPartAnEditor)
+			if (isNewPartAnEditor) {
 				topEditor = (IEditorPart)newPart;
+			} else if (activePart == topEditor && newPart == null) {
+				// since we removed all the contributions, we clear the top editor
+				topEditor = null;
+			}
+			
+			activePart = newPart;
 		}
 
 		/** 
@@ -319,10 +338,11 @@ public void activate(IWorkbenchPart part) {
 		activePart = part;
 	}
 }
+
 /**
- * Activates a part.  The part is given focus, the pane is hilighted and the action bars are shown.
+ * Activates a part.  The part is given focus, the pane is hilighted.
  */
-private void activatePart(final IWorkbenchPart part, final boolean switchActions, final boolean switchActionsForced) {
+private void activatePart(final IWorkbenchPart part) {
 	Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("WorkbenchPage.ErrorActivatingView")) { //$NON-NLS-1$
 		public void run() {
 			if (part != null) {
@@ -332,8 +352,6 @@ private void activatePart(final IWorkbenchPart part, final boolean switchActions
 				updateTabList(part);
 				SubActionBars bars = (SubActionBars)site.getActionBars();
 				bars.partChanged(part);
-				if (switchActions)
-					bars.activate(switchActionsForced);
 			}
 		}
 	});
@@ -597,6 +615,7 @@ public boolean closeAllEditors(boolean save) {
 	// Return true on success.
 	return true;
 }
+
 /**
  * See IWorkbenchPage#closeEditor
  */
@@ -617,7 +636,6 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	if (partWasActive)
 		setActivePart(null);
 	if (lastActiveEditor == editor) {
-		actionSwitcher.updateTopEditor(null);
 		lastActiveEditor = null;
 	}
 
@@ -776,16 +794,12 @@ private void deactivateLastEditor() {
 	actionBars.deactivate(true);
 }
 /**
- * Deactivates a part.  The pane is unhilighted and the action bars are hidden.
+ * Deactivates a part.  The pane is unhilighted.
  */
-private void deactivatePart(IWorkbenchPart part, boolean switchActions, boolean switchActionsForced) {
+private void deactivatePart(IWorkbenchPart part) {
 	if (part != null) {
 		PartSite site = (PartSite)part.getSite();
 		site.getPane().showFocus(false);
-		if (switchActions) {
-			SubActionBars bars = (SubActionBars)site.getActionBars();
-			bars.deactivate(switchActionsForced);
-		}
 	}
 }
 /**
@@ -1304,26 +1318,6 @@ private void finishInit() {
 	});
 }
 /**
- * Determine if the new active part will cause the
- * the actions to change the visibility state or
- * just change the enablement state.
- * 
- * @return boolean true to change the visibility state, or
- *	false to just changed the enablement state.
- */
-private boolean isActionSwitchForced(IWorkbenchPart newPart) {
-	if (lastActiveEditor == null)
-		return true;
-		
-	if (lastActiveEditor == newPart && activePart != null)
-		return false;
-		
-	if (newPart instanceof IViewPart)
-		return false;
-		
-	return true;
-}
-/**
  * See IWorkbenchPage.
  */
 public boolean isEditorAreaVisible() {
@@ -1400,8 +1394,6 @@ private boolean needToZoomOut(IWorkbenchPart part) {
 }
 /**
  * This method is called when the page is activated.  
- * Normally this will be called as a pair of onDeactivate and onActivate, so the caller is
- * expected to update action bars afterwards.
  */
 protected void onActivate() {
 	if (deferredMemento != null)
@@ -1420,9 +1412,12 @@ protected void onActivate() {
 	if (activePart != null) {
 		activationList.setActive(activePart);
 		
-		activatePart(activePart, true, true);
-		if (activePart instanceof IEditorPart)
+		activatePart(activePart);
+		actionSwitcher.updateActivePart(activePart);
+		if (activePart instanceof IEditorPart) {
 			lastActiveEditor = (IEditorPart) activePart;
+			actionSwitcher.updateTopEditor((IEditorPart) activePart);
+		}
 		firePartActivated(activePart);
 	} else {
 		composite.setFocus();
@@ -1430,15 +1425,14 @@ protected void onActivate() {
 }
 /**
  * This method is called when the page is deactivated.  
- * Normally this will be called as a pair of onDeactivate and onActivate, so the caller is
- * expected to update action bars afterwards.
  */
 protected void onDeactivate() {
 	if (activePart != null) {
-		deactivatePart(activePart, true, true);
+		deactivatePart(activePart);
+		actionSwitcher.updateActivePart(null);
 		firePartDeactivated(activePart);
 	}
-	deactivateLastEditor();
+	actionSwitcher.updateTopEditor(null);
 	lastActiveEditor = null;
 	if (getActivePerspective() != null)
 		getActivePerspective().onDeactivate();
@@ -1751,9 +1745,6 @@ private void restoreState(IMemento memento) {
 		if (view != null)
 			activePart = view;
 	}
-	
-	// Restore top editor
-	actionSwitcher.updateTopEditor(getEditorManager().getVisibleEditor());
 }
 /**
  * See IWorkbenchPage
@@ -1871,7 +1862,7 @@ private void setActivePart(IWorkbenchPart newPart) {
 	// Deactivate old part
 	IWorkbenchPart oldPart = activePart;
 	if (oldPart != null) {
-		deactivatePart(oldPart, false, false);
+		deactivatePart(oldPart);
 	}
 	
 	// Set active part.
@@ -1883,7 +1874,7 @@ private void setActivePart(IWorkbenchPart newPart) {
 			editorMgr.setVisibleEditor(lastActiveEditor,true);
 		}
 	}
-	activatePart(activePart, false, false);
+	activatePart(activePart);
 	
 
 	// Update actions
@@ -2491,7 +2482,7 @@ class ActivationList {
 		
 		/**
 		 * Returns the number of perspectives opened
-		 */
+		 */ 
 		public int size() {
 			return openedList.size();
 		}

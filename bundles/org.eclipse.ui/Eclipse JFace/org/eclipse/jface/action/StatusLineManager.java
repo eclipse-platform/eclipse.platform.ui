@@ -191,7 +191,7 @@ public void update(boolean force) {
 				// add new
 				IContributionItem src, dest;
 				ws= statusLine.getChildren();
-				int srcIx= 2;
+				int srcIx= 1;
 				int destIx= 0;
 				int oldChildCount = ws.length;
 				for (int i = 0; i < items.length; ++i) {
