@@ -95,7 +95,7 @@ public class CVSLightweightDecorator
 	public CVSLightweightDecorator() {
 		CVSProviderPlugin.addResourceStateChangeListener(this);
 		CVSProviderPlugin.broadcastDecoratorEnablementChanged(true /* enabled */);
-		exceptions = new ExceptionCollector(Policy.bind("CVSDecorator.exceptionMessage"), CVSUIPlugin.ID, IStatus.ERROR, CVSUIPlugin.getPlugin().getLog());
+		exceptions = new ExceptionCollector(Policy.bind("CVSDecorator.exceptionMessage"), CVSUIPlugin.ID, IStatus.ERROR, CVSUIPlugin.getPlugin().getLog()); //$NON-NLS-1$
 	}
 
 	public static boolean isDirty(final ICVSResource cvsResource) {
