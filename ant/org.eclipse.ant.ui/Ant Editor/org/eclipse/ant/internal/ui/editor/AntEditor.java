@@ -10,6 +10,7 @@
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
  * 	   IBM Corporation - bug fixes
+ * 	   John-Mason P. Shackelford - bug 40255
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor;
