@@ -164,12 +164,12 @@ public class TableRenderingCellModifier implements ICellModifier
 		}
 			
 		// calculate offset to update	
-		IMemoryBlock memory = fRendering.getMemoryBlock();
+		IMemoryBlock memoryBlk = fRendering.getMemoryBlock();
 
 		int lineOffset = Integer.valueOf(property, 16).intValue();
 		
 		// this offset is number of addressable unit from the line address
-		long offset = getOffset(memory, line.getAddress(), lineOffset);
+		BigInteger offset = getOffset(memoryBlk, line.getAddress(), lineOffset);
 		
 		// validate data
 		if (!(value instanceof String))
@@ -224,7 +224,11 @@ public class TableRenderingCellModifier implements ICellModifier
 				// return if value has not changed
 				return;
 			}
-			memory.setValue(offset, bytes);
+			
+			if (memoryBlk instanceof IMemoryBlockExtension)
+				((IMemoryBlockExtension)memoryBlk).setValue(offset, bytes);
+			else
+				memoryBlk.setValue(offset.longValue(), bytes);
 		}
 		catch (DebugException e)
 		{
@@ -238,7 +242,7 @@ public class TableRenderingCellModifier implements ICellModifier
 		
 	}
 
-	private long getOffset(IMemoryBlock memory, String lineAddress, int lineOffset) {
+	private BigInteger getOffset(IMemoryBlock memory, String lineAddress, int lineOffset) {
 		
 		BigInteger lineAddr = new BigInteger(lineAddress, 16);
 		BigInteger memoryAddr;
@@ -255,9 +259,7 @@ public class TableRenderingCellModifier implements ICellModifier
 		if (memoryAddr == null)
 			memoryAddr = new BigInteger("0"); //$NON-NLS-1$
 		
-		long offset = lineAddr.subtract(memoryAddr).longValue();
-		
-		return offset + lineOffset;
+		return lineAddr.subtract(memoryAddr).add(BigInteger.valueOf(lineOffset));
 	}
 	
 

@@ -271,7 +271,7 @@ public abstract class AbstractMemoryRendering implements IMemoryRendering{
 	/**
 	 * @return the containter hosting this memory rendering.
 	 */
-	protected IMemoryRenderingContainer getMemoryRenderingContainer()
+	public IMemoryRenderingContainer getMemoryRenderingContainer()
 	{
 		return fContainer;
 	}

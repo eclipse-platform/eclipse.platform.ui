@@ -26,17 +26,19 @@ public class TableRenderingContentInput {
 	private int fPreBuffer;					// number of lines before the top visible line
 	private int fPostBuffer;				// number of lines after thes last visible line
 	private int fDefaultBufferSize;
-	private BigInteger fStartingAddress;	// start address to the buffer
+	private BigInteger fLoadAddress;		// Top address to load at the table
 	private int fNumVisibleLines;			// number of visible lines
 	private boolean fUpdateDelta;			// should the content provider calculate delta info
 	private BigInteger fMemoryBlockBaseAddress;		// base address of the memory block when this input is set
+	private BigInteger fStartAddress;
+	private BigInteger fEndAddress;
 	
-	public TableRenderingContentInput(AbstractTableRendering rendering, int preBuffer, int postBuffer, int defaultBufferSize, BigInteger startAddress, int numOfLines, boolean updateDelta)
+	public TableRenderingContentInput(AbstractTableRendering rendering, int preBuffer, int postBuffer, int defaultBufferSize, BigInteger loadAddress, int numOfLines, boolean updateDelta)
 	{
 		fRendering = rendering;
 		fPreBuffer = preBuffer;
 		fPostBuffer = postBuffer;
-		fStartingAddress = startAddress;
+		fLoadAddress = loadAddress;
 		fNumVisibleLines = numOfLines;
 		fDefaultBufferSize = defaultBufferSize;
 		fUpdateDelta = updateDelta;
@@ -52,8 +54,8 @@ public class TableRenderingContentInput {
 	public int getPreBuffer() {
 		return fPreBuffer;
 	}
-	public BigInteger getStartingAddress() {
-		return fStartingAddress;
+	public BigInteger getLoadAddress() {
+		return fLoadAddress;
 	}
 	
 	public IMemoryBlock getMemoryBlock()
@@ -82,9 +84,9 @@ public class TableRenderingContentInput {
 	{
 		return fRendering;
 	}
-	public void setStartingAddress(BigInteger address)
+	public void setLoadAddress(BigInteger address)
 	{
-		fStartingAddress = address;
+		fLoadAddress = address;
 	}
 	public BigInteger getContentBaseAddress() {
 		return fMemoryBlockBaseAddress;
@@ -95,5 +97,55 @@ public class TableRenderingContentInput {
 			fMemoryBlockBaseAddress = ((IMemoryBlockExtension)memoryBlock).getBigBaseAddress();
 		else
 			fMemoryBlockBaseAddress = BigInteger.valueOf(memoryBlock.getStartAddress());
+	}
+	
+	public BigInteger getStartAddress()
+	{
+		if (fStartAddress == null)
+		{
+			IMemoryBlock memoryBlock = fRendering.getMemoryBlock();
+			if(memoryBlock instanceof IMemoryBlockExtension)
+			{
+				BigInteger startAddress = ((IMemoryBlockExtension)memoryBlock).getMemoryBlockStartAddress();
+				if (startAddress != null)
+					fStartAddress =  startAddress;
+			}
+			
+			if (fStartAddress == null)
+				fStartAddress =  BigInteger.valueOf(0);
+		}
+		return fStartAddress; 
+	}
+	
+	public BigInteger getEndAddress()
+	{
+		if (fEndAddress == null)
+		{
+			IMemoryBlock memoryBlock = fRendering.getMemoryBlock();
+			if(memoryBlock instanceof IMemoryBlockExtension)
+			{
+				BigInteger endAddress = ((IMemoryBlockExtension)memoryBlock).getMemoryBlockEndAddress();
+				if (endAddress != null)
+					fEndAddress = endAddress;
+				
+				if (fEndAddress == null)
+				{
+					int addressSize = ((IMemoryBlockExtension)memoryBlock).getAddressSize();
+					
+					endAddress = BigInteger.valueOf(1);
+					for (int i=0; i<addressSize*8; i++)
+					{
+						endAddress = endAddress.multiply(BigInteger.valueOf(2));
+					}
+					
+					endAddress = endAddress.subtract(BigInteger.valueOf(1));
+					fEndAddress =  endAddress;
+				}
+			}
+			
+			if (fEndAddress == null)
+				fEndAddress = BigInteger.valueOf(Integer.MAX_VALUE);
+		}
+		return fEndAddress;
 	}
 }

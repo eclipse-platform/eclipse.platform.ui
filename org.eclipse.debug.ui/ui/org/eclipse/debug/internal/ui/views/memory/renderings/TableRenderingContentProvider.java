@@ -52,6 +52,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	private BigInteger fBufferTopAddress;
 	
 	private TableRenderingContentInput fInput;
+	private BigInteger fBufferEndAddress;
 	
 	/**
 	 * @param memoryBlock
@@ -153,27 +154,29 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	 */
 	private void loadContentForExtendedMemoryBlock() throws DebugException {
 		// calculate top buffered address
-		BigInteger address = fInput.getStartingAddress();
-		if (address == null)
+		BigInteger loadAddress = fInput.getLoadAddress();
+		if (loadAddress == null)
 		{
-			address = new BigInteger("0"); //$NON-NLS-1$
+			loadAddress = new BigInteger("0"); //$NON-NLS-1$
 		}
-		BigInteger bigInt = address;
-		if (bigInt.compareTo(BigInteger.valueOf(32)) <= 0) {
-			fInput.setPreBuffer(0);
-		} else {
-			fInput.setPreBuffer(bigInt.divide(BigInteger.valueOf(32)).min(BigInteger.valueOf(fInput.getDefaultBufferSize())).intValue());
-		}
-		int addressableUnit = fInput.getMemoryRendering().getAddressableUnitPerLine();
-		address = bigInt.subtract(BigInteger.valueOf(addressableUnit*fInput.getPostBuffer()));
 		
-		if (address.compareTo(BigInteger.valueOf(0)) < 0)
-			address = BigInteger.valueOf(0);
+		BigInteger mbStart = fInput.getStartAddress();
+		BigInteger mbEnd = fInput.getEndAddress();
 		
-		int numLines = fInput.getNumVisibleLines()+fInput.getPostBuffer()+fInput.getPostBuffer();
+		int addressableUnitsPerLine = fInput.getMemoryRendering().getAddressableUnitPerLine();
+		BigInteger bufferStart = loadAddress.subtract(BigInteger.valueOf(fInput.getPreBuffer()*addressableUnitsPerLine));
+		BigInteger bufferEnd = loadAddress.add(BigInteger.valueOf(fInput.getPostBuffer()*addressableUnitsPerLine));
+		bufferEnd = bufferEnd.add(BigInteger.valueOf(fInput.getNumVisibleLines()*addressableUnitsPerLine));
 		
+		if (bufferStart.compareTo(mbStart) < 0)
+			bufferStart = mbStart;
+		
+		if (bufferEnd.compareTo(mbEnd) > 0)
+			bufferEnd = mbEnd;
+		
+		int numLines = bufferEnd.subtract(bufferStart).divide(BigInteger.valueOf(addressableUnitsPerLine)).intValue()+1;		
 		// get stoarage to fit the memory view tab size
-		getMemoryToFitTable(address, numLines, fInput.isUpdateDelta());
+		getMemoryToFitTable(bufferStart, numLines, fInput.isUpdateDelta());
 	}
 	
 	/**
@@ -235,9 +238,9 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 				extMemoryBlock = (IMemoryBlockExtension) fInput.getMemoryBlock();
 				
 				long reqNumberOfUnits = fInput.getMemoryRendering().getAddressableUnitPerLine() * numberOfLines;
-				
+						
 				memoryBuffer =	extMemoryBlock.getBytesFromAddress(startingAddress,	reqNumberOfUnits);
-				
+		
 				if(memoryBuffer == null)
 				{
 					DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.getString(UNABLE_TO_RETRIEVE_CONTENT), null));
@@ -473,8 +476,10 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			}
 			lineCache.add(newLine);
 			
+			
 			// increment row address
 			BigInteger bigInt = new BigInteger(address, 16);
+			fBufferEndAddress = bigInt;
 			int addressableUnit = fInput.getMemoryRendering().getBytesPerLine()/fInput.getMemoryRendering().getAddressableSize();
 			address = bigInt.add(BigInteger.valueOf(addressableUnit)).toString(16);
 		}
@@ -592,6 +597,11 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		return fBufferTopAddress;
 	}
 	
+	public BigInteger getBufferEndAddress()
+	{
+		return fBufferEndAddress;
+	}
+	
 	/**
 	 * Calculate address size of the given address
 	 * @param address
@@ -664,7 +674,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			BigInteger startAddress = new BigInteger(first.getAddress(), 16);
 			BigInteger lastAddress = new BigInteger(last.getAddress(), 16);
 			int addressableUnit = fInput.getMemoryRendering().getAddressableUnitPerLine();
-			lastAddress = lastAddress.add(BigInteger.valueOf(addressableUnit));
+			lastAddress = lastAddress.add(BigInteger.valueOf(addressableUnit)).subtract(BigInteger.valueOf(1));
 			
 			if (startAddress.compareTo(address) <= 0 &&
 				lastAddress.compareTo(address) >= 0)

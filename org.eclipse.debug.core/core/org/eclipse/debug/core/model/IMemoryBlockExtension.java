@@ -20,7 +20,7 @@ import org.eclipse.debug.core.DebugException;
  * When the memory block is changed, fire a CHANGE Debug Event.
  * 
  *  When firing change event, be aware of the following:
- *  - whenever a change event is fired, the content provider for Memory View / Memory Rendering
+ *  - whenever a change event is fired, the content provider for Memory View
  *    view checks to see if memory has actually changed.  
  *  - If memory has actually changed, a refresh will commence.  Changes to the memory block
  *    will be computed and will be shown with the delta icons.
@@ -49,9 +49,26 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	
 	/**
 	 * Get the base address of this memory block in BigInteger
+	 * 
 	 * @return the base address of this memory block
 	 */
 	public BigInteger getBigBaseAddress();
+	
+	/**
+	 * Get the start address of this memory block monitor.
+	 * 
+	 * @return the start address of this memory block. Return null if this value is
+	 * unknown.
+	 */
+	public BigInteger getMemoryBlockStartAddress();
+	
+	/**
+	 * Get the end address of the memory block monitor. 
+	 * 
+	 * @return the end address of this memory block.  Return null if this value is
+	 * unknown.
+	 */
+	public BigInteger getMemoryBlockEndAddress();
 	
 	/**
 	 * @return address size in number of bytes
@@ -95,9 +112,9 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	/**
 	 * Get bytes based on offset and length.  Memory at base address + offset 
 	 * should be returned.
-	 * Return an array of IMemory.  Each IMemory object represents a section of the
-	 * memory block.  The IMemory object allows debug adapters to provide more information
-	 * about a section of memory.  Refer to IMemory for details. 
+	 * Return an array of MemoryByte.  Each MemoryByte object represents a byte of the
+	 * memory block.  The MemoryByte object allows debug adapters to provide more information
+	 * about a byte.  Refer to <code> MemoryByte </code> for details.
 	 * 
 	 * @param offset
 	 * @param length is the number of units of memory to return 
@@ -111,10 +128,9 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	
 	/**
 	 * Get bytes based on a given address.  
-	 * 
-	 * Return an array of IMemory.  Each IMemory object represents a section of the
-	 * memory block.  The IMemory object allows debug adapters to provide more information
-	 * about a section of memory.  Refer to IMemory for details. 
+	 * Return an array of MemoryByte.  Each MemoryByte object represents a byte of the
+	 * memory block.  The MemoryByte object allows debug adapters to provide more information
+	 * about a byte.  Refer to <code> MemoryByte </code> for details.
 	 * 
 	 * @param address
 	 * @param length is the number of units of memory to return 
@@ -125,6 +141,26 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 */
 	public MemoryByte[] getBytesFromAddress(BigInteger address, long length) throws DebugException;	
 
+	
+	/**
+	 * Sets the value of the bytes in this memory block at the specified
+	 * offset within this memory block to the spcified bytes.
+	 * The offset is zero based.
+	 * 
+	 * @param offset the offset at which to set the new values
+	 * @param bytes the new values
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the debug target.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This memory block does not support value modification</li>
+	 * <li>The specified offset is greater than or equal to the length
+	 *   of this memory block, or the number of bytes specified goes
+	 *   beyond the end of this memory block (index of out of range)</li>
+	 * </ul>
+	 */
+	public void setValue(BigInteger offset, byte[] bytes) throws DebugException;
+	
 	/**
 	 * @return true if the platform is big endian, false otherwise
 	 */

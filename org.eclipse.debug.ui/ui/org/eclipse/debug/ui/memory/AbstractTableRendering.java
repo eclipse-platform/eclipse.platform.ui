@@ -346,14 +346,21 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				int numInBuffer = table.getItemCount();
 				if (index < 3)
 				{
-					if (fContentInput.getPreBuffer() == 0)
+					if(isAtTopLimit())
+					{
 						setTopIndex(table, index);
+					}
 					else
+					{
 						reloadTable(address, false);
+					}
 				}
 				else if ((numInBuffer-(index+getNumberOfVisibleLines())) < 3)
 				{
-					reloadTable(address, false);
+					if (!isAtBottomLimit())
+						reloadTable(address, false);
+					else
+						setTopIndex(table, index);
 				}
 			}
 		}
@@ -394,6 +401,9 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		fPageBook = new PageBook(parent, SWT.NONE);
 		createErrorPage(fPageBook);
 		createTableViewer(fPageBook);
+		
+		fTableViewer.getTable().redraw();
+		
 		return fPageBook;
 	}
 
@@ -705,9 +715,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			if (row < 3)
 			{
 				
-				// get start address
-				int preBuffer = fContentInput.getPreBuffer();
-				if (preBuffer > 0)
+				if (!isAtTopLimit())
 				{
 					refresh();
 					setCursorAtAddress(fSelectedAddress);
@@ -715,8 +723,11 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			}
 			else if (row >= fTableViewer.getTable().getItemCount() - 3)
 			{
-				refresh();
-				setCursorAtAddress(fSelectedAddress);
+				if (!isAtBottomLimit())
+				{
+					refresh();
+					setCursorAtAddress(fSelectedAddress);
+				}
 	
 			}
 		}
@@ -1691,6 +1702,20 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 					DebugException e = new DebugException(stat);
 					throw e;
 				}
+
+				BigInteger startAdd = fContentInput.getStartAddress();
+				BigInteger endAdd = fContentInput.getEndAddress();
+				
+				if (address.compareTo(startAdd) < 0 ||
+					address.compareTo(endAdd) > 0)
+				{
+					Status stat = new Status(
+					 IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(),
+					 DebugException.NOT_SUPPORTED, DebugUIMessages.getString("AbstractTableRendering.11"), null  //$NON-NLS-1$
+					);
+					DebugException e = new DebugException(stat);
+					throw e;
+				}
 				
 				fSelectedAddress = address;
 				updateSyncSelectedAddress();
@@ -1803,14 +1828,19 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 					int index = findAddressIndex(address);
 					if (index < 3)
 					{
-						if (fContentInput.getPreBuffer() == 0)
+						if (isAtTopLimit())
+						{
 							setTopIndex(table, index);
+						}
 						else
+						{
 							reloadTable(address, false);
+						}
 					}
 					else if ((numInBuffer-(index+getNumberOfVisibleLines())) < 3)
 					{
-						reloadTable(address, false);
+						if (!isAtBottomLimit())
+							reloadTable(address, false);
 					}
 				}
 				else
@@ -1831,6 +1861,47 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		}
 	}
 	
+	
+	private boolean isAtTopLimit()
+	{	
+		BigInteger startAddress = fContentInput.getStartAddress();
+		startAddress = alignDoubleWordBoundary(startAddress);
+		
+		BigInteger startBufferAddress = fContentProvider.getBufferTopAddress();
+		startBufferAddress = alignDoubleWordBoundary(startBufferAddress);
+		
+		if (startAddress.compareTo(startBufferAddress) == 0)
+			return true;
+		
+		return false;
+	}
+	
+	private boolean isAtBottomLimit()
+	{
+		BigInteger endAddress = fContentInput.getEndAddress();
+		endAddress = alignDoubleWordBoundary(endAddress);
+		
+		BigInteger endBufferAddress = fContentProvider.getBufferEndAddress();
+		endBufferAddress = alignDoubleWordBoundary(endBufferAddress);
+		
+		if (endAddress.compareTo(endBufferAddress) == 0)
+			return true;
+		
+		return false;		
+	}
+	
+	private BigInteger alignDoubleWordBoundary(BigInteger integer)
+	{
+		String str =integer.toString(16);
+		if (!str.endsWith("0")) //$NON-NLS-1$
+		{
+			str = str.substring(0, str.length() - 1);
+			str += "0"; //$NON-NLS-1$
+			integer = new BigInteger(str, 16);
+		}		
+		
+		return integer;
+	}
 	
 	private boolean needMoreLines()
 	{
@@ -1868,13 +1939,17 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			// if there are only 3 lines left at the top, refresh
 			BigInteger numTopLine = topVisibleAddress.subtract(startAddress).divide(BigInteger.valueOf(addressableUnit));
 			if (numTopLine.compareTo(BigInteger.valueOf(3)) <= 0 && (startAddress.compareTo(BigInteger.valueOf(0)) != 0))
-				return true;
+			{
+				if (!isAtTopLimit())
+					return true;
+			}
 			
 			// if there are only 3 lines left at the bottom, refresh
 			BigInteger numBottomLine = lastAddress.subtract(lastVisibleAddrss).divide(BigInteger.valueOf(addressableUnit));
 			if (numBottomLine.compareTo(BigInteger.valueOf(3)) <= 0)
 			{
-				return true;
+				if (!isAtBottomLimit())
+					return true;
 			}
 			
 			return false;
