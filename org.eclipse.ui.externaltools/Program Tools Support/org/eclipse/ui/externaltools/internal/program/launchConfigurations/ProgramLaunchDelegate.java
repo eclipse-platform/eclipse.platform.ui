@@ -19,6 +19,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
 
@@ -99,10 +100,31 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 		}
 				
 		Process p = DebugPlugin.exec(cmdLine, workingDir);
+		IProcess process = null;
 		if (p != null) {
-			DebugPlugin.newProcess(launch, p, location.toOSString());
+			process = DebugPlugin.newProcess(launch, p, location.toOSString());
 		}
 		
+		if (!ExternalToolsUtil.isBackground(configuration)) {
+			// wait for process to exit
+			while (!process.isTerminated()) {
+				try {
+					if (monitor.isCanceled()) {
+						process.terminate();
+						break;
+					}
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+				}
+			}
+			
+		}
+		
+		// refresh resources
+		if (ExternalToolsUtil.getRefreshScope(configuration) != null) {
+			BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, process, resourceContext);
+			refresher.startBackgroundRefresh();
+		}		
 	}
 	
 }
