@@ -527,7 +527,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		gd = new GridData(GridData.FILL_VERTICAL);
 		gd.horizontalSpan = 3;
 		gd.widthHint = 200;
-		gd.heightHint = 325;
+		gd.heightHint = 375;
 		tree.getControl().setLayoutData(gd);
 		tree.setContentProvider(new LaunchConfigurationContentProvider());
 		tree.setLabelProvider(DebugUITools.newDebugModelPresentation());
@@ -626,7 +626,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		TabFolder tabFolder = new TabFolder(c, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		gd.heightHint = 325;
+		gd.heightHint = 375;
 		gd.widthHint = 375;
 		tabFolder.setLayoutData(gd);
 		setTabFolder(tabFolder);
