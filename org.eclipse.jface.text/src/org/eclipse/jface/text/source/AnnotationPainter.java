@@ -943,8 +943,6 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * annotations should be painted by this painter using the given drawing strategy. 
 	 * If the annotation type is already in this list, the old drawing strategy gets replaced.
 	 * 
-	 * <p>TODO This is new API and subject to change. </p>
-	 * 
 	 * @param annotationType the annotation type
 	 * @param drawingStrategyID the id of the drawing strategy that should be used for this annotation type
 	 * @since 3.0
@@ -959,8 +957,6 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * strategy registered under <code>id</code>, the old strategy gets replaced.
 	 * <p>The given id can be referenced when adding annotation types, see
 	 * {@link #addAnnotationType(Object, Object)}.</p>
-	 * 
-	 * <p>TODO This is new API and subject to change. </p>
 	 * 
 	 * @param id the identifier under which the strategy can be referenced, not <code>null</code>
 	 * @param strategy the new strategy

@@ -1264,14 +1264,11 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 * resource hierarchy is iterated towards the workspace root to find the
 	 * first parent of <code>toCreateOrModify</code> that exists. Then the
 	 * 'create' rule for the last non-existing resource is returned.
-	 * <p> 
-	 * XXX to be made protected after 3.0
-	 * </p>
 	 * 
 	 * @param toCreateOrModify the resource to create or modify
 	 * @return the minimal scheduling rule needed to modify or create a resource
 	 */
-	private ISchedulingRule computeSchedulingRule(IResource toCreateOrModify) {
+	protected ISchedulingRule computeSchedulingRule(IResource toCreateOrModify) {
 		if (toCreateOrModify.exists())
 			return fResourceRuleFactory.modifyRule(toCreateOrModify);
 		
