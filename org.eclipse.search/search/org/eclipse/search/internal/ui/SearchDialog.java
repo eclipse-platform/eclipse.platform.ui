@@ -106,6 +106,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	private Point fMinSize;
 	private ScopePart[] fScopeParts;
 	private boolean fPageStateIgnoringScopePart;
+	Button fCustomizeButton;
 
 	public SearchDialog(Shell shell, IWorkspace workspace, ISelection selection, IEditorPart editor, String pageId) {
 		super(shell);
@@ -306,13 +307,13 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Button button= new Button(composite, SWT.NONE);
-		button.setText(SearchMessages.getString("SearchDialog.customize")); //$NON-NLS-1$
+		fCustomizeButton= new Button(composite, SWT.NONE);
+		fCustomizeButton.setText(SearchMessages.getString("SearchDialog.customize")); //$NON-NLS-1$
 		GridData gd= new GridData();
 		gd.horizontalIndent= 2 * new GridLayout().marginWidth;
-		button.setLayoutData(gd);
-		SWTUtil.setButtonDimensionHint(button);
-		button.addSelectionListener(new SelectionAdapter() {
+		fCustomizeButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(fCustomizeButton);
+		fCustomizeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleCustomizePressed();
 			}
@@ -335,8 +336,10 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			// disable auto-build during search operation
 			SearchPlugin.setAutoBuilding(false);
 		try {
+			fCustomizeButton.setEnabled(false);
 			return fCurrentPage.performAction();
 		} finally {
+			fCustomizeButton.setEnabled(true);
 			if (isAutoBuilding)
 				// enable auto-building again
 				SearchPlugin.setAutoBuilding(true);				
