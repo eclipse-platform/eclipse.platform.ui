@@ -50,7 +50,6 @@ public class AntInputHandler extends DefaultInputHandler {
 				String prompt = getPrompt(request);
 		       	String title= AntSupportMessages.getString("AntInputHandler.Ant_Input_Request_1"); //$NON-NLS-1$
 				IInputValidator validator= new IInputValidator() {
-					int hitCount= -1;
 					public String isValid(String value) {
 						request.setInput(value);
 						if (request.isInputValid()) {
