@@ -37,7 +37,7 @@ public class ToggleSiteOperation
 			return false;
 		boolean oldValue = site.isEnabled();
 		site.setEnabled(!oldValue);
-		IStatus status = UpdateUtils.getValidator().validateCurrentState();
+		IStatus status = OperationsManager.getValidator().validateCurrentState();
 		if (status != null) {
 			// revert
 			site.setEnabled(oldValue);
