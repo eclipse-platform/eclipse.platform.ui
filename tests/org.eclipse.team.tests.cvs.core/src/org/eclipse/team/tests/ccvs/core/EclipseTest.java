@@ -71,15 +71,16 @@ public class EclipseTest extends EclipseWorkspaceTest {
 
 	protected static IProgressMonitor DEFAULT_MONITOR = new NullProgressMonitor();
 	protected static final int RANDOM_CONTENT_SIZE = 3876;
-				
-	/**
-	 * Constructor for CVSBlackBoxTest.
-	 */
+	protected static String eol = System.getProperty("line.separator");
+	
 	public EclipseTest() {
 		super();
+		if (eol == null) eol = "\n";
 	}
+
 	public EclipseTest(String name) {
 		super(name);
+		if (eol == null) eol = "\n";
 	}
 
 	/*
@@ -583,7 +584,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	protected static InputStream getRandomContents(int sizeAtLeast) {
 		StringBuffer randomStuff = new StringBuffer(sizeAtLeast + 100);
 		while (randomStuff.length() < sizeAtLeast) {
-			randomStuff.append(getRandomSnippet());
+			randomStuff.append(getRandomSnippet() + eol);
 		}
 		return new ByteArrayInputStream(randomStuff.toString().getBytes());
 	}
