@@ -85,6 +85,8 @@ public class RepositoryManager {
 	private int notificationLevel = 0;
 	private Map changedRepositories = new HashMap();
 	
+	private static final int MAX_COMMENTS = 10;
+	
 	/**
 	 * Answer an array of all known remote roots.
 	 */
@@ -568,10 +570,8 @@ public class RepositoryManager {
 		final ReleaseCommentDialog dialog = new ReleaseCommentDialog(shell, resourcesToCommit, unadded); 
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				dialog.setComments(previousComments);
 				result[0] = dialog.open();
 				if (result[0] != ReleaseCommentDialog.OK) return;
-				previousComments = dialog.getComments();
 			}
 		});
 		if (result[0] != ReleaseCommentDialog.OK) return null;
@@ -839,5 +839,29 @@ public class RepositoryManager {
 			RepositoryRoot root = (RepositoryRoot) iter.next();
 			root.clearCache();
 		}
+	}
+
+	/**
+	 * Answer the list of comments that were previously used when committing.
+	 * @return String[]
+	 */
+	public String[] getPreviousComments() {
+		return previousComments;
+	}
+
+	/**
+	 * Method addComment.
+	 * @param string
+	 */
+	public void addComment(String comment) {
+		// Only add the comment if the first entry isn't the same already
+		if (previousComments.length > 0 && previousComments[0].equals(comment)) return;
+		// Insert the comment as the first element
+		String[] newComments = new String[Math.min(previousComments.length + 1, MAX_COMMENTS)];
+		newComments[0] = comment;
+		for (int i = 1; i < newComments.length; i++) {
+			newComments[i] = previousComments[i-1];
+		}
+		previousComments = newComments;
 	}
 }

@@ -115,12 +115,12 @@ public abstract class DialogArea {
 		return button;
 	}
 	
-	protected Button createButton(Composite parent, String label) {
+	protected Button createButton(Composite parent, String label, int style) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText(label);
 		// we need to explicitly set the font to the parent's font for dialogs
 		button.setFont(parent.getFont());
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		GridData data = new GridData(style);
 		data.heightHint = Dialog.convertVerticalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_WIDTH);
 		data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
@@ -162,6 +162,33 @@ public abstract class DialogArea {
 		GridData data = new GridData();
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;
+		composite.setLayoutData(data);
+		return composite;
+	}
+	
+	/**
+	 * Creates composite control and sets the default layout data.
+	 *
+	 * @param parent  the parent of the new composite
+	 * @param numColumns  the number of columns for the new composite
+	 * @return the newly-created coposite
+	 */
+	protected Composite createGrabbingComposite(Composite parent, int numColumns) {
+		Composite composite = new Composite(parent, SWT.NULL);
+		Font font = parent.getFont();
+		composite.setFont(parent.getFont());
+		
+		// GridLayout
+		GridLayout layout = new GridLayout();
+		layout.numColumns = numColumns;
+		composite.setLayout(layout);
+
+		// GridData
+		GridData data = new GridData();
+		data.verticalAlignment = GridData.FILL;
+		data.horizontalAlignment = GridData.FILL;
+		data.grabExcessHorizontalSpace = true;
+		data.grabExcessVerticalSpace = true;
 		composite.setLayoutData(data);
 		return composite;
 	}

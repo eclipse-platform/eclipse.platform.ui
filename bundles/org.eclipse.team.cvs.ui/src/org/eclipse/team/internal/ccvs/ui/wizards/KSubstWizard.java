@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -64,6 +65,10 @@ public class KSubstWizard extends Wizard {
 	private KSubstWizardSharedFilesPage sharedFilesPage;
 	private KSubstWizardDirtyFilesPage dirtyFilesPage;
 	
+	private Dialog parentDialog;
+
+	private KSubstWizardCommitCommentPage commitCommentPage;
+
 	public class KSubstChangeElement {
 		public static final int ADDED_FILE = 1;
 		public static final int CHANGED_FILE = 2;
@@ -158,7 +163,13 @@ public class KSubstWizard extends Wizard {
 		pageDescription = Policy.bind("KSubstWizardDirtyFilesPage.pageDescription"); //$NON-NLS-1$
 		dirtyFilesPage = new KSubstWizardDirtyFilesPage(pageTitle, pageTitle, substImage, false);
 		dirtyFilesPage.setDescription(pageDescription);
-		addPage(dirtyFilesPage);		
+		addPage(dirtyFilesPage);
+		
+		// add commit comment page
+		pageTitle = Policy.bind("KSubstWizardCommitCommentPage.pageTitle"); //$NON-NLS-1$
+		pageDescription = Policy.bind("KSubstWizardCommitCommentPage.pageDescription"); //$NON-NLS-1$
+		commitCommentPage = new KSubstWizardCommitCommentPage(parentDialog, pageTitle, pageTitle, substImage, pageDescription);
+		addPage(commitCommentPage);	
 	}
 
 	public IWizardPage getNextPage(IWizardPage page) {
@@ -170,11 +181,14 @@ public class KSubstWizard extends Wizard {
 			return null;
 		}
 		prepareSummaryPage();
+		if (page != commitCommentPage) return commitCommentPage;
 		return summaryPage;
 	}
 	
 	public IWizardPage getPreviousPage(IWizardPage page) {
 		if (page == summaryPage) {
+			return commitCommentPage;
+		} else if (page == commitCommentPage) {
 			if (sharedFilesPage.includeSharedFiles() && prepareDirtyFilesPage()) return dirtyFilesPage;
 			if (prepareSharedFilesPage()) return sharedFilesPage;
 			return mainPage;
@@ -223,7 +237,8 @@ public class KSubstWizard extends Wizard {
 							CVSTeamProvider provider = (CVSTeamProvider) entry.getKey();
 							Map providerFiles = (Map) entry.getValue();
 
-							IStatus status = provider.setKeywordSubstitution(providerFiles,
+							String comment = commitCommentPage.getComment();
+							IStatus status = provider.setKeywordSubstitution(providerFiles, comment,
 								Policy.subMonitorFor(monitor, workPerProvider));
 							if (status.getCode() != CVSStatus.OK) {
 								messages.add(status);
@@ -385,5 +400,13 @@ public class KSubstWizard extends Wizard {
 			}
 		}
 		return table;
+	}
+
+	/**
+	 * Method setParentDialog.
+	 * @param dialog
+	 */
+	public void setParentDialog(Dialog dialog) {
+		this.parentDialog = dialog;
 	}
 }

@@ -142,7 +142,7 @@ public class ListSelectionArea extends DialogArea {
 		data.grabExcessHorizontalSpace = true;
 		composite.setData(data);
 
-		Button selectButton = createButton(buttonComposite, Policy.bind("ListSelectionArea.selectAll")); //$NON-NLS-1$
+		Button selectButton = createButton(buttonComposite, Policy.bind("ListSelectionArea.selectAll"), GridData.HORIZONTAL_ALIGN_FILL); //$NON-NLS-1$
 
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -152,7 +152,7 @@ public class ListSelectionArea extends DialogArea {
 		selectButton.addSelectionListener(listener);
 
 
-		Button deselectButton = createButton(buttonComposite, Policy.bind("ListSelectionArea.deselectAll")); //$NON-NLS-1$
+		Button deselectButton = createButton(buttonComposite, Policy.bind("ListSelectionArea.deselectAll"), GridData.HORIZONTAL_ALIGN_FILL); //$NON-NLS-1$
 
 		listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

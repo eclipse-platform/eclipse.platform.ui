@@ -121,7 +121,7 @@ public class WorkingSetSelectionArea extends DialogArea {
 				handleMruSelection();
 			}
 		});
-		selectButton = createButton(composite, Policy.bind("WorkingSetSelectionArea.workingSetOther")); //$NON-NLS-1$
+		selectButton = createButton(composite, Policy.bind("WorkingSetSelectionArea.workingSetOther"), GridData.HORIZONTAL_ALIGN_FILL); //$NON-NLS-1$
 		selectButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				handleWorkingSetSelection();

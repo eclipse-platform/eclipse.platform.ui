@@ -30,6 +30,7 @@ public class SetKeywordSubstitutionAction extends WorkspaceAction {
 		final IResource[] resources = getSelectedResources();
 		KSubstWizard wizard = new KSubstWizard(resources, IResource.DEPTH_INFINITE, previousOption);
 		WizardDialog dialog = new ResizableWizardDialog(getShell(), wizard);
+		wizard.setParentDialog(dialog);
 		dialog.setMinimumPageSize(350, 250);
 		dialog.open();
 		previousOption = wizard.getKSubstOption();
