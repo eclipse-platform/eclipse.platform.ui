@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.debug.internal.ui.views.variables;
 
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -46,12 +47,15 @@ import org.eclipse.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewLabelDecorator;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
+import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -75,6 +79,7 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -88,9 +93,15 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -107,6 +118,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.actions.TextViewerAction;
+import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -148,6 +160,14 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			return null;
 		}
 	
+	}
+	
+	/**
+	 * Internal interface for a cursor listener. I.e. aggregation 
+	 * of mouse and key listener.
+	 * @since 3.0
+	 */
+	interface ICursorListener extends MouseListener, KeyListener {
 	}
 																		
 	/**
@@ -307,6 +327,28 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	protected static final String LOGICAL_STRUCTURE_TYPE_PREFIX = "VAR_LS_"; //$NON-NLS-1$
 	protected static final String SASH_WEIGHTS = DebugUIPlugin.getUniqueIdentifier() + ".variablesView.SASH_WEIGHTS"; //$NON-NLS-1$
 	
+	private StatusLineContributionItem fStatusLineItem;
+	private ICursorListener fCursorListener;
+	/**
+	 * Data structure for the position label value.
+	 */
+	private static class PositionLabelValue {
+		
+		public int fValue;
+		
+		public String toString() {
+			return String.valueOf(fValue);
+		}
+	}
+	/** The pattern used to show the position label in the status line. */
+	private final String fPositionLabelPattern= VariablesViewMessages.getString("VariablesView.56"); //$NON-NLS-1$
+	/** The position label value of the current line. */
+	private final PositionLabelValue fLineLabel= new PositionLabelValue();
+	/** The position label value of the current column. */
+	private final PositionLabelValue fColumnLabel= new PositionLabelValue();
+	/** The arguments for the position label pattern. */
+	private final Object[] fPositionLabelPatternArguments= new Object[] { fLineLabel, fColumnLabel };
+
 	/**
 	 * Remove myself as a selection listener
 	 * and preference change listener.
@@ -314,6 +356,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
+		getViewSite().getActionBars().getStatusLineManager().remove(fStatusLineItem);
 		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		JFaceResources.getFontRegistry().removeListener(this);
@@ -622,7 +665,10 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		});
 		
 		// add a context menu to the detail area
-		createDetailContextMenu(detailsViewer.getTextWidget());		
+		createDetailContextMenu(detailsViewer.getTextWidget());
+		
+		detailsViewer.getTextWidget().addMouseListener(getCursorListener());
+		detailsViewer.getTextWidget().addKeyListener(getCursorListener());
 	}
 	
 	/**
@@ -809,6 +855,11 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		action = new AssignValueAction(this, fDetailViewer);
 		setAction("AssignValue", action); //$NON-NLS-1$
+		
+		fStatusLineItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
+		IActionBars actionBars = getViewSite().getActionBars();
+		IStatusLineManager manager= actionBars.getStatusLineManager();
+		manager.add(fStatusLineItem);
 	} 
 	
 	private void createOrientationActions() {
@@ -1355,5 +1406,74 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	protected AbstractViewerState getViewerState() {
 		return new ViewerState(getVariablesViewer());
+	}
+	
+	/**
+	 * Returns this view's "cursor" listener to be installed on the view's
+	 * associated details viewer. This listener is listening to key and mouse button events.
+	 * It triggers the updating of the status line.
+	 * 
+	 * @return the listener
+	 */
+	private ICursorListener getCursorListener() {
+		if (fCursorListener == null) {
+			fCursorListener= new ICursorListener() {
+				
+				public void keyPressed(KeyEvent e) {
+					fStatusLineItem.setText(getCursorPosition());
+				}
+				
+				public void keyReleased(KeyEvent e) {
+				}
+				
+				public void mouseDoubleClick(MouseEvent e) {
+				}
+				
+				public void mouseDown(MouseEvent e) {
+				}
+				
+				public void mouseUp(MouseEvent e) {
+					fStatusLineItem.setText(getCursorPosition());
+				}
+			};
+		}
+		return fCursorListener;
+	}
+	
+	protected String getCursorPosition() {
+		
+		if (getDetailViewer() == null) {
+			return ""; //$NON-NLS-1$
+		}
+		
+		StyledText styledText= getDetailViewer().getTextWidget();
+		int caret= styledText.getCaretOffset();
+		IDocument document= getDetailViewer().getDocument();
+
+		if (document == null) {
+			return ""; //$NON-NLS-1$
+		}
+	
+		try {
+			
+			int line= document.getLineOfOffset(caret);
+
+			int lineOffset= document.getLineOffset(line);
+			int tabWidth= styledText.getTabs();
+			int column= 0;
+			for (int i= lineOffset; i < caret; i++)
+				if ('\t' == document.getChar(i)) {
+					column += tabWidth - (tabWidth == 0 ? 0 : column % tabWidth);
+				} else {
+					column++;
+				}
+					
+			fLineLabel.fValue= line + 1;
+			fColumnLabel.fValue= column + 1;
+			return MessageFormat.format(fPositionLabelPattern, fPositionLabelPatternArguments);
+			
+		} catch (BadLocationException x) {
+			return ""; //$NON-NLS-1$
+		}
 	}
 }
