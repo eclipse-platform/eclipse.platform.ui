@@ -107,12 +107,15 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
      * Cancels the run to line operation.
      */
     public void cancel() {
-        getDebugPlugin().removeDebugEventListener(this);
         IBreakpointManager manager = getBreakpointManager();
-        manager.removeBreakpointManagerListener(this);
-        fTarget.breakpointRemoved(fBreakpoint, null);
-        if (fAutoSkip) {
-            manager.setEnabled(true);
+        try {
+            getDebugPlugin().removeDebugEventListener(this);
+            manager.removeBreakpointManagerListener(this);
+            fTarget.breakpointRemoved(fBreakpoint, null);
+        } finally {
+            if (fAutoSkip) {
+                manager.setEnabled(true);
+            }
         }
     }
 
