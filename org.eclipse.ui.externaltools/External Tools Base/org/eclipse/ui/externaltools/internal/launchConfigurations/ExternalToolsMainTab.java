@@ -140,9 +140,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		String locationLabel = getLocationLabel();
 		group.setText(locationLabel);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;		
+		layout.numColumns = 1;	
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayout(layout);
 		group.setLayoutData(gridData);
@@ -156,6 +154,8 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		
 		Composite buttonComposite = new Composite(group, SWT.NONE);
 		layout = new GridLayout();
+		layout.marginHeight = 0;
+        layout.marginWidth = 0;   
 		layout.numColumns = 3;
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		buttonComposite.setLayout(layout);
@@ -193,8 +193,6 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		String groupName = getWorkingDirectoryLabel();
 		group.setText(groupName);
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
 		layout.numColumns = 1;
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayout(layout);
@@ -209,6 +207,8 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		
 		Composite buttonComposite = new Composite(group, SWT.NONE);
 		layout = new GridLayout();
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
 		layout.numColumns = 3;
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		buttonComposite.setLayout(layout);
@@ -247,12 +247,11 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		String groupName = ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Arguments___1"); //$NON-NLS-1$
 		group.setText(groupName); 
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
 		layout.numColumns = 1;
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		group.setLayout(layout);
 		group.setLayoutData(gridData);
+        group.setFont(parent.getFont());
 		
 		argumentField = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gridData = new GridData(GridData.FILL_BOTH);
@@ -265,6 +264,8 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		Composite composite = new Composite(group, SWT.NONE);
 		layout = new GridLayout();
 		layout.numColumns= 1;
+        layout.marginHeight= 0;
+        layout.marginWidth= 0;
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		composite.setLayout(layout);
 		composite.setLayoutData(gridData);
