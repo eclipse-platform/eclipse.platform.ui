@@ -38,7 +38,7 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 		if (window == null) {
 			return;
 		}
-		boolean proceed = MessageDialog.openQuestion(window.getShell(), "Remove All Breakpoints", "Are you sure you want to remove all breakpoints?");
+		boolean proceed = MessageDialog.openQuestion(window.getShell(), ActionMessages.getString("RemoveAllBreakpointsAction.0"), ActionMessages.getString("RemoveAllBreakpointsAction.1")); //$NON-NLS-1$ //$NON-NLS-2$
 		if (proceed) {
 			try {
 				breakpointManager.removeBreakpoints(breakpoints, true);
