@@ -121,6 +121,7 @@ public interface IHelpContextIds {
 	public static final String SHOW_IN_RESOURCE_HISTORY = PREFIX + "show_in_history_action_context"; //$NON-NLS-1$
 	public static final String SELECT_NEW_RESOURCES_ACTION = PREFIX + "select_new_action_context"; //$NON-NLS-1$
 	public static final String CONFIRM_MERGE_ACTION = PREFIX + "confirm_merge_action_context"; //$NON-NLS-1$;
+	public static final String DISCONNECT_ACTION = PREFIX + "disconnect_action_context"; //$NON-NLS-1$;
 	
 	// Team menu actions
 	public static final String TEAM_SYNCHRONIZE_ACTION = PREFIX + "team_synchronize_action_context"; //$NON-NLS-1$
