@@ -12,7 +12,7 @@ public class AntLaunchWizardPage extends WizardPage implements ICheckStateListen
 	private EclipseProject project;
 	private TargetsListLabelProvider labelProvider = new TargetsListLabelProvider();
 	private String initialTargetSelections[];
-	private Button showLog;	private Text argumentsField;
+	private Button showLog;	private Text argumentsField;	private String initialArguments;	private boolean initialDisplayLog = true;
 	
 	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 200;
 	private final static int SIZING_SELECTION_WIDGET_WIDTH = 200;
@@ -61,14 +61,14 @@ public class AntLaunchWizardPage extends WizardPage implements ICheckStateListen
 		argumentsField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		// adds a listener to tell the wizard when it can tell its container to refresh the buttons		argumentsField.addModifyListener( new ModifyListener() {			public void modifyText(ModifyEvent e) {				AntLaunchWizardPage.this.getWizard().getContainer().updateButtons();			}		});
 		
 		showLog = new Button(composite, SWT.CHECK);
-		showLog.setText(Policy.bind("wizard.displayLogLabel"));		showLog.setSelection(((AntLaunchWizard) getWizard()).getWantToShowLogOnSuccess());
+		showLog.setText(Policy.bind("wizard.displayLogLabel"));		showLog.setSelection(initialDisplayLog);
 
 		restorePreviousSelectedTargets();
 		listViewer.addCheckStateListener(this);
-		listViewer.refresh();				argumentsField.setFocus();
+		listViewer.refresh();				if (initialArguments != null)			argumentsField.setText(initialArguments);		argumentsField.setFocus();
 		setControl(composite);
 	}
-	
+		public String getArguments() {		return argumentsField.getText();	}	
 	public Vector getSelectedTargets() {
 		return (Vector)selectedTargets.clone();
 	}
@@ -96,6 +96,6 @@ public class AntLaunchWizardPage extends WizardPage implements ICheckStateListen
 
 	public void setInitialTargetSelections(String value[]) {
 		initialTargetSelections = value;
-	}		/**	 * Returns the arguments that the user may have entered to run the ant file.	 * 	 * @return String the arguments	 */	public String getArgumentsFromField() {		return argumentsField.getText();	}		/**	 * 	 */	public boolean shouldLogMessages() {		return showLog.getSelection();	}
+	}		/**	 * Returns the arguments that the user may have entered to run the ant file.	 * 	 * @return String the arguments	 */	public String getArgumentsFromField() {		return argumentsField.getText();	}	/**	 * Sets the initial contents of the arguments text field.	 */	public void setInitialArguments(String value) {		if (argumentsField != null)			argumentsField.setText(value);		initialArguments = value;	}		public void setDisplayLog(boolean value) {		if (showLog != null)			showLog.setSelection(value);		initialDisplayLog = value;	}		/**	 * 	 */	public boolean shouldLogMessages() {		return showLog.getSelection();	}
 	
 }
