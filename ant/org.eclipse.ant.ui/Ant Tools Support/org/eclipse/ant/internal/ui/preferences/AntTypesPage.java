@@ -116,9 +116,6 @@ public class AntTypesPage extends AntPage {
 	 */	
 	protected void edit(IStructuredSelection selection) {
 		Type type = (Type) selection.getFirstElement();
-		if (type == null) {
-			return;
-		}
 		String title = AntPreferencesMessages.getString("AntTypesPage.editTypeDialogTitle"); //$NON-NLS-1$
 		AddCustomDialog dialog = getCustomDialog(title);
 		dialog.setClassName(type.getClassName());

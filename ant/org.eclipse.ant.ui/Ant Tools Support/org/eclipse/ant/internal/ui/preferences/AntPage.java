@@ -156,7 +156,9 @@ public abstract class AntPage {
 		
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				edit((IStructuredSelection)event.getSelection());
+				if (!event.getSelection().isEmpty() && editButton.isEnabled()) {
+					edit((IStructuredSelection)event.getSelection());
+				}
 			}
 		});
 	}

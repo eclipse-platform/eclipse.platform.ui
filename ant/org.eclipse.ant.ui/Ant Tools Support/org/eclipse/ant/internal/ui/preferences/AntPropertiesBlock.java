@@ -165,7 +165,7 @@ public class AntPropertiesBlock {
 		propertyTableViewer= createTableViewer(top);
 		propertyTableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				if (!event.getSelection().isEmpty()) {
+				if (!event.getSelection().isEmpty() && editButton.isEnabled()) {
 					edit();
 				}
 			}

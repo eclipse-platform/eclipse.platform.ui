@@ -132,10 +132,6 @@ public class AntTasksPage extends AntPage {
 	 */	
 	protected void edit(IStructuredSelection selection) {
 		Task task= (Task)selection.getFirstElement();
-		if (task == null) {
-			return;
-		}
-		
 		String title = AntPreferencesMessages.getString("AntTasksPage.editTaskDialogTitle"); //$NON-NLS-1$
 		AddCustomDialog dialog = getCustomDialog(title);
 		dialog.setClassName(task.getClassName());
