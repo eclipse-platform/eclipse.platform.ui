@@ -455,6 +455,10 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		assertTrue(prefix + " resource should be dirty", !((ICVSFile)getCVSResource(resource)).isModified());
 	}
 	
+	protected void assertIsIgnored(IResource resource) throws TeamException {
+		assertTrue("Resource " + resource.getFullPath() + " should be ignored but isn't.", getCVSResource(resource).isIgnored());
+	}
+	
 	protected void assertValidCheckout(IProject project) {
 		// NOTE: Add code to ensure that the project was checkout out properly
 		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(project);

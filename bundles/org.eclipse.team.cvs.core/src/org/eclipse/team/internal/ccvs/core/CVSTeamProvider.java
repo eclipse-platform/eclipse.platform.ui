@@ -1286,4 +1286,11 @@ public class CVSTeamProvider extends RepositoryProvider {
 		}
 	}
 
+	/**
+	 * @see org.eclipse.team.core.RepositoryProvider#canHandleLinkedResources()
+	 */
+	public boolean canHandleLinkedResources() {
+		return true;
+	}
+
 }
