@@ -5,6 +5,8 @@
 package org.eclipse.update.ui.forms.internal.engine;
 
 import java.util.Hashtable;
+
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.update.ui.forms.internal.IHyperlinkListener;
 
 /**
@@ -16,6 +18,5 @@ public interface IHyperlinkSegment extends ITextSegment, IObjectReference {
 	
 	boolean contains(int x, int y);
 	
-	boolean isHoover();
-	void setHoover(boolean hoover);
+	public void repaint(GC gc, boolean hover);
 }

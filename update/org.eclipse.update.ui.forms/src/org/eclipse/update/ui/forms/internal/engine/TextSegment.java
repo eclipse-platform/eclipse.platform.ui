@@ -22,8 +22,28 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 	private String text;
 	protected boolean underline;
 	private boolean wrapAllowed = true;
-	private Vector areaRectangles = new Vector();
-
+	protected Vector areaRectangles = new Vector();
+	
+	class AreaRectangle {
+		Rectangle rect;
+		int from, to;
+		public AreaRectangle(Rectangle rect, int from, int to) {
+			this.rect = rect;
+			this.from = from;
+			this.to = to;
+		}
+		public boolean contains(int x, int y) {
+			return rect.contains(x, y);
+		}
+		public String getText() {
+			if (from==0 && to== -1)
+				return TextSegment.this.getText();
+			if (from >0 && to == -1)
+				return TextSegment.this.getText().substring(from);
+			return TextSegment.this.getText().substring(from, to);
+		}
+	}
+	
 	public TextSegment(String text, String fontId) {
 		this.text = cleanup(text);
 		this.fontId = fontId;
@@ -83,7 +103,7 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 
 	public boolean contains(int x, int y) {
 		for (int i = 0; i < areaRectangles.size(); i++) {
-			Rectangle ar = (Rectangle) areaRectangles.get(i);
+			AreaRectangle ar = (AreaRectangle) areaRectangles.get(i);
 			if (ar.contains(x, y))
 				return true;
 		}
@@ -208,7 +228,7 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 			}
 			Rectangle br =
 				new Rectangle(locator.x - 1, locator.y, extent.x + 2, lineHeight - descent + 3);
-			areaRectangles.add(br);
+			areaRectangles.add(new AreaRectangle(br, 0, -1));
 			if (selected) {
 				if (color != null)
 					gc.setForeground(oldColor);
@@ -267,7 +287,8 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 					if (color != null)
 						gc.setForeground(color);
 				}
-				areaRectangles.add(br);
+				areaRectangles.add(new AreaRectangle(br, saved, last));
+				
 				locator.rowHeight = Math.max(locator.rowHeight, prevExtent.y);
 				locator.resetCaret();
 				if (isSelectable()) locator.x +=1;
@@ -289,7 +310,7 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 				locator.y,
 				lastExtent.x + 2,
 				lineHeight - descent + 3);
-		areaRectangles.add(br);
+		areaRectangles.add(new AreaRectangle(br, saved, last));
 		if (underline) {
 			int lineY = locator.y + lineHeight - descent + 1;
 			gc.drawLine(locator.x, lineY, locator.x + lastExtent.x, lineY);
@@ -312,7 +333,8 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 	public void paintFocus(GC gc, Color bg, Color fg, boolean selected) {
 		if (areaRectangles==null) return;
 		for (int i=0; i<areaRectangles.size(); i++) {
-			Rectangle br = (Rectangle)areaRectangles.get(i);
+			AreaRectangle areaRectangle = (AreaRectangle)areaRectangles.get(i);
+			Rectangle br = areaRectangle.rect;
 			if (selected) {
 				gc.setBackground(bg);
 				gc.setForeground(fg);

@@ -116,6 +116,7 @@ public class FormEngine extends Canvas {
 			public void mouseExit(MouseEvent e) {
 				if (entered != null) {
 					exitLink(entered);
+					paintLinkHover(entered, false);
 					entered = null;
 					setCursor(null);
 				}
@@ -163,6 +164,7 @@ public class FormEngine extends Canvas {
 		if (segmentUnder == null) {
 			if (entered != null) {
 				exitLink(entered);
+				paintLinkHover(entered, false);
 				entered = null;
 			}
 			setCursor(null);
@@ -172,10 +174,16 @@ public class FormEngine extends Canvas {
 				if (entered == null) {
 					entered = linkUnder;
 					enterLink(linkUnder);
+					paintLinkHover(entered, true);
 					setCursor(
 						model.getHyperlinkSettings().getHyperlinkCursor());
 				}
 			} else {
+				if (entered!=null) {
+					exitLink(entered);
+					paintLinkHover(entered, false);
+					entered = null;
+				}
 				setCursor(model.getHyperlinkSettings().getTextCursor());
 			}
 		}
@@ -226,7 +234,6 @@ public class FormEngine extends Canvas {
 		HyperlinkAction action = link.getAction(objectTable);
 		if (action != null)
 			action.linkEntered(link);
-		//paintActiveLink(link, true);
 	}
 
 	private void exitLink(IHyperlinkSegment link) {
@@ -235,12 +242,23 @@ public class FormEngine extends Canvas {
 		HyperlinkAction action = link.getAction(objectTable);
 		if (action != null)
 			action.linkExited(link);
-		//paintActiveLink(link, false);
 	}
 	
-	private void paintActiveLink(IHyperlinkSegment link, boolean active) {
-		link.setHoover(active);
-		redraw();
+	private void paintLinkHover(IHyperlinkSegment link, boolean hover) {
+		GC gc = new GC(this);
+		
+		HyperlinkSettings settings = getHyperlinkSettings();
+		
+		gc.setForeground(hover?settings.getActiveForeground():settings.getForeground());
+		gc.setBackground(getBackground());
+		gc.setFont(getFont());
+		boolean selected = (link == getSelectedLink());
+		link.repaint(gc, hover);
+		if (selected) {
+			link.paintFocus(gc, getBackground(), getForeground(), false);
+			link.paintFocus(gc, getBackground(), getForeground(), true);
+		}
+		gc.dispose();
 	}
 
 	private void activateSelectedLink() {
