@@ -26,6 +26,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 public class PerspectiveBarContributionItem extends ContributionItem {
 
@@ -33,6 +35,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 
     private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
             .getPreferenceStore();
+    private IPreferenceStore apiPreferenceStore = PrefUtil.getAPIPreferenceStore();
 
     private ToolItem toolItem = null;
     private Image image;
@@ -41,7 +44,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
     private IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 
         public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-            if (IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR
+            if (IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR
                     .equals(propertyChangeEvent.getProperty())) {
                 update();
                 IContributionManager parent = getParent();
@@ -60,6 +63,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
         this.perspective = perspective;
         this.workbenchPage = workbenchPage;
         preferenceStore.addPropertyChangeListener(propertyChangeListener);
+        apiPreferenceStore.addPropertyChangeListener(propertyChangeListener);
     }
     
 	/* (non-Javadoc)
@@ -67,6 +71,8 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 	 */
 	public void dispose() {
 		super.dispose();
+        preferenceStore.removePropertyChangeListener(propertyChangeListener);
+        apiPreferenceStore.removePropertyChangeListener(propertyChangeListener);
 		if (image != null && !image.isDisposed()) {
 			image.dispose();
 			image = null;
@@ -126,8 +132,8 @@ public class PerspectiveBarContributionItem extends ContributionItem {
         if (toolItem != null && !toolItem.isDisposed()) {
             toolItem
                     .setSelection(workbenchPage.getPerspective() == perspective);
-            if (preferenceStore
-                    .getBoolean(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR))
+            if (apiPreferenceStore
+                    .getBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR))
                 toolItem.setText(shortenText(perspective.getLabel(), toolItem));
             else
                 toolItem.setText(""); //$NON-NLS-1$            

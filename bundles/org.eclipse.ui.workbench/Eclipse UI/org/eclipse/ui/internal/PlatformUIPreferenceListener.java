@@ -19,6 +19,7 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.EditorRegistry;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * The PlatformUIPreferenceListener is a class that listens to 
@@ -51,15 +52,15 @@ public class PlatformUIPreferenceListener implements IPropertyChangeListener {
 			return;
 		}
 		
-		if (IPreferenceConstants.DOCK_PERSPECTIVE_BAR
+		if (IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR
 			.equals(propertyName)) {
-			IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
+			IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 			IWorkbench workbench = PlatformUI.getWorkbench();
 			IWorkbenchWindow[] workbenchWindows = workbench.getWorkbenchWindows();
 			for (int i = 0; i < workbenchWindows.length; i++) {
 				IWorkbenchWindow window = workbenchWindows[i];
 				if (window instanceof WorkbenchWindow)
-					((WorkbenchWindow)window).dockPerspectiveBar(preferenceStore.getBoolean(IPreferenceConstants.DOCK_PERSPECTIVE_BAR));
+					((WorkbenchWindow)window).dockPerspectiveBar(apiStore.getBoolean(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
 			}
 			return;
 		}

@@ -54,6 +54,7 @@ import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -144,6 +145,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#initialize
 	 */
 	public void initialize(IWorkbenchConfigurer configurer) {
+	    // override the defaults for some of the workbench preferences
+	    IPreferenceStore uiStore = PlatformUI.getPreferenceStore();
+	    uiStore.setDefault(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR, false);
 
 	    // make sure we always save and restore workspace state
 	    configurer.setSaveAndRestore(true);

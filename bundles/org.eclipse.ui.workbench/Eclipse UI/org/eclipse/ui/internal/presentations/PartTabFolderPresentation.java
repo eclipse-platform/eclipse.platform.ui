@@ -17,11 +17,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.themes.ITheme;
 
@@ -33,14 +35,15 @@ import org.eclipse.ui.themes.ITheme;
 public class PartTabFolderPresentation extends BasicStackPresentation {
 	
 	private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
+	private IPreferenceStore apiPreferenceStore = PrefUtil.getAPIPreferenceStore();
 		
 	private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
 			if (IPreferenceConstants.VIEW_TAB_POSITION.equals(propertyChangeEvent.getProperty()) && !isDisposed()) {
 				int tabLocation = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION); 
 				getTabFolder().setTabPosition(tabLocation);
-			} else if (IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS.equals(propertyChangeEvent.getProperty()) && !isDisposed()) {
-				boolean traditionalTab = preferenceStore.getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS); 
+			} else if (IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS.equals(propertyChangeEvent.getProperty()) && !isDisposed()) {
+				boolean traditionalTab = apiPreferenceStore.getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS); 
 				setTabStyle(traditionalTab);
 			}		
 		}
@@ -52,10 +55,11 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		PaneFolder tabFolder = getTabFolder();
 		
 		preferenceStore.addPropertyChangeListener(propertyChangeListener);
+		apiPreferenceStore.addPropertyChangeListener(propertyChangeListener);
 		int tabLocation = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION); 
 		
 		tabFolder.setTabPosition(tabLocation);
-		setTabStyle(preferenceStore.getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
+		setTabStyle(apiPreferenceStore.getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
 		
 		// do not support close box on unselected tabs.
 		tabFolder.setUnselectedCloseVisible(false);
@@ -131,6 +135,7 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 	 */
 	public void dispose() {
 		preferenceStore.removePropertyChangeListener(propertyChangeListener);
+		apiPreferenceStore.removePropertyChangeListener(propertyChangeListener);
 		super.dispose();
 	}
 	

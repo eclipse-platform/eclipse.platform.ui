@@ -25,11 +25,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemePreview;
 
@@ -39,7 +41,9 @@ import org.eclipse.ui.themes.IThemePreview;
  */
 public class WorkbenchPreview implements IThemePreview {
 
-    private IPreferenceStore store;
+    private IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+    private IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+
     private boolean disposed = false;
     private CTabFolder folder;
     private ITheme theme;
@@ -62,7 +66,7 @@ public class WorkbenchPreview implements IThemePreview {
             if (!disposed) {
 				if (IPreferenceConstants.VIEW_TAB_POSITION.equals(event.getProperty())) {				 
 					setTabPosition();
-				} else if (IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS.equals(event.getProperty())) {				
+				} else if (IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS.equals(event.getProperty())) {				
 					setTabStyle();
 				}				
             }
@@ -74,7 +78,6 @@ public class WorkbenchPreview implements IThemePreview {
      */
     public void createControl(Composite parent, ITheme currentTheme) {        
         this.theme = currentTheme;
-        store = WorkbenchPlugin.getDefault().getPreferenceStore();
         folder = new CTabFolder(parent, SWT.BORDER);
         folder.setUnselectedCloseVisible(false);
         folder.setEnabled(false);
@@ -119,6 +122,7 @@ public class WorkbenchPreview implements IThemePreview {
         
         currentTheme.addPropertyChangeListener(fontAndColorListener);
         store.addPropertyChangeListener(preferenceListener);
+        apiStore.addPropertyChangeListener(preferenceListener);
         setColorsAndFonts();
         setTabPosition();
         setTabStyle();
@@ -128,7 +132,7 @@ public class WorkbenchPreview implements IThemePreview {
      * Set the tab style from preferences.
      */
     protected void setTabStyle() {
-        boolean traditionalTab = store.getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
+        boolean traditionalTab = apiStore.getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
         folder.setSimpleTab(traditionalTab);
     }
 
@@ -166,5 +170,6 @@ public class WorkbenchPreview implements IThemePreview {
         disposed = true;
         theme.removePropertyChangeListener(fontAndColorListener);
         store.removePropertyChangeListener(preferenceListener);
+        apiStore.removePropertyChangeListener(preferenceListener);
     }
 }

@@ -147,34 +147,6 @@ public interface IPreferenceConstants {
 	
 
 	/**
-	 * Workbench preference id for whether the workbench should show text 
-	 * on the perspective bar. 
-	 * 
-	 * Boolean-valued: <code>true</code>, if editors should show text on the perspective bar,
-	 * <code>false</code> otherwise.
-	 * <p>
-	 * The default value for this preference is: <code>true</code> (show text on the perspective bar)
-	 * </p>
-	 * 
-	 * @since 3.0
-	 */
-	public static String SHOW_TEXT_ON_PERSPECTIVE_BAR = "SHOW_TEXT_ON_PERSPECTIVE_BAR"; //$NON-NLS-1$	
-
-	/**
-	 * Workbench preference id for whether the workbench perspective bar should be docked in the 
-	 * main toolbar. 
-	 * 
-	 * Boolean-valued: <code>true</code>, if bar should be docked in the main toolbar,
-	 * <code>false</code> otherwise.
-	 * <p>
-	 * The default value for this preference is: <code>false</code>
-	 * </p>
-	 * 
-	 * @since 3.0
-	 */
-	public static String DOCK_PERSPECTIVE_BAR = "DOCK_PERSPECTIVE_BAR"; //$NON-NLS-1$	
-	
-	/**
 	 * Workbench preference id for whether the workbench should show multiple 
 	 * editor tabs. 
 	 * 
@@ -187,20 +159,6 @@ public interface IPreferenceConstants {
 	 * @since 3.0
 	 */
 	public static String SHOW_MULTIPLE_EDITOR_TABS = "SHOW_MULTIPLE_EDITOR_TABS"; //$NON-NLS-1$	
-	
-	/**
-	 * Workbench preference id for whether the workbench should show traditional style tabs in
-	 * editors and views.
-	 * 
-	 * Boolean-valued: <code>true</code> if editors and views should use a traditional style of tab and
-	 * <code>false</code> if editors should show new style tab (3.0 style)
-	 * <p>
-	 * The default value for this preference is: <code>true</code>
-	 * </p>
-	 * 
-	 * @since 3.0
-	 */
-	public static String SHOW_TRADITIONAL_STYLE_TABS = "SHOW_TRADITIONAL_STYLE_TABS"; //$NON-NLS-1$
 	
 	/**
 	 * Workbench preference for the current theme.

@@ -72,6 +72,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
@@ -97,6 +98,7 @@ import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * A window within the workbench.
@@ -307,7 +309,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
      */
     private List handlerSubmissions = new ArrayList();
     
-	private boolean dockPerspectiveBar = Workbench.getInstance().getPreferenceStore().getBoolean(IPreferenceConstants.DOCK_PERSPECTIVE_BAR);
+	private boolean dockPerspectiveBar = PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR);
 	private CacheWrapper perspectiveCoolBarWrapper;
 	
 	void registerActionSets(IActionSet[] actionSets) {

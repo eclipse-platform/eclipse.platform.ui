@@ -19,11 +19,13 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -39,6 +41,7 @@ public class EditorPresentation extends BasicStackPresentation {
 
     private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
             .getPreferenceStore();
+    private IPreferenceStore apiPreferenceStore = PrefUtil.getAPIPreferenceStore();
 
     private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 
@@ -49,17 +52,17 @@ public class EditorPresentation extends BasicStackPresentation {
                 int tabLocation = preferenceStore
                         .getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
                 getTabFolder().setTabPosition(tabLocation);
-            } else if (IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS
+            } else if (IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS
                     .equals(propertyChangeEvent.getProperty())
                     && !isDisposed()) {
-                boolean traditionalTab = preferenceStore
-                        .getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
+                boolean traditionalTab = apiPreferenceStore
+                        .getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
                 setTabStyle(traditionalTab);
             }
 
             boolean multiChanged = IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS
                     .equals(propertyChangeEvent.getProperty());
-            boolean styleChanged = IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS
+            boolean styleChanged = IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS
                     .equals(propertyChangeEvent.getProperty());
             PaneFolder tabFolder = getTabFolder();
 
@@ -69,8 +72,8 @@ public class EditorPresentation extends BasicStackPresentation {
                             .getBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS);
                     tabFolder.setSingleTab(!multi);
                 } else {
-                    boolean simple = preferenceStore
-                            .getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
+                    boolean simple = apiPreferenceStore
+                            .getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
                     tabFolder.setSimpleTab(simple);
                 }
 
@@ -89,13 +92,14 @@ public class EditorPresentation extends BasicStackPresentation {
         final PaneFolder tabFolder = getTabFolder();
 
         preferenceStore.addPropertyChangeListener(propertyChangeListener);
+        apiPreferenceStore.addPropertyChangeListener(propertyChangeListener);
         int tabLocation = preferenceStore
                 .getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
         tabFolder.setTabPosition(tabLocation);
         tabFolder.setSingleTab(!preferenceStore
                 .getBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
-        setTabStyle(preferenceStore
-                .getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
+        setTabStyle(apiPreferenceStore
+                .getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
         // do not support close box on unselected tabs.
         tabFolder.setUnselectedCloseVisible(true);
         // do not support icons in unselected tabs.
@@ -111,6 +115,7 @@ public class EditorPresentation extends BasicStackPresentation {
     public void dispose() {
 
         preferenceStore.removePropertyChangeListener(propertyChangeListener);
+        apiPreferenceStore.removePropertyChangeListener(propertyChangeListener);
         super.dispose();
     }
 

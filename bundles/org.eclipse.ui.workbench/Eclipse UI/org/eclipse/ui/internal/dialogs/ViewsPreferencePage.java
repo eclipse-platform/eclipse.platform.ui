@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -42,6 +43,7 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.themes.IThemeDescriptor;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
@@ -307,10 +309,12 @@ public class ViewsPreferencePage
 	 * text labels on the perspective switching bar
 	 */
 	protected void createShowTextOnPerspectiveBarPref(Composite composite) {
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+
 		showTextOnPerspectiveBar = new Button(composite, SWT.CHECK);
 		showTextOnPerspectiveBar.setText(WorkbenchMessages.getString("WorkbenchPreference.showTextOnPerspectiveBar")); //$NON-NLS-1$
 		showTextOnPerspectiveBar.setFont(composite.getFont());
-		showTextOnPerspectiveBar.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
+		showTextOnPerspectiveBar.setSelection(apiStore.getBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
 		setButtonLayoutData(showTextOnPerspectiveBar);
 	}    
     
@@ -319,10 +323,12 @@ public class ViewsPreferencePage
 	 * text labels on the perspective switching bar
 	 */
 	protected void createDockPerspectiveBarPref(Composite composite) {
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+
 		dockPerspectiveBar = new Button(composite, SWT.CHECK);
 		dockPerspectiveBar.setText(WorkbenchMessages.getString("WorkbenchPreference.dockPerspectiveBar"));  //$NON-NLS-1$
 		dockPerspectiveBar.setFont(composite.getFont());
-		dockPerspectiveBar.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.DOCK_PERSPECTIVE_BAR));
+		dockPerspectiveBar.setSelection(apiStore.getBoolean(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
 		setButtonLayoutData(dockPerspectiveBar);
 	}
 
@@ -331,10 +337,12 @@ public class ViewsPreferencePage
 	 * text labels on the perspective switching bar
 	 */
 	protected void createShowTraditionalStyleTabsPref(Composite composite) {
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+
 		showTraditionalStyleTabs = new Button(composite, SWT.CHECK);
 		showTraditionalStyleTabs.setText(WorkbenchMessages.getString("ViewsPreference.traditionalTabs")); //$NON-NLS-1$
 		showTraditionalStyleTabs.setFont(composite.getFont());
-		showTraditionalStyleTabs.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
+		showTraditionalStyleTabs.setSelection(apiStore.getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
 		setButtonLayoutData(showTraditionalStyleTabs);
 	}
 	
@@ -362,12 +370,12 @@ public class ViewsPreferencePage
 	 * The default button has been pressed. 
 	 */
 	protected void performDefaults() {
-		IPreferenceStore store =
-			WorkbenchPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = getPreferenceStore();
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
-		showTextOnPerspectiveBar.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
-		dockPerspectiveBar.setSelection(store.getDefaultBoolean(IPreferenceConstants.DOCK_PERSPECTIVE_BAR));
-		showTraditionalStyleTabs.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
+		showTextOnPerspectiveBar.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
+		dockPerspectiveBar.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
+		showTraditionalStyleTabs.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
 
 		int editorTopValue =
 			store.getDefaultInt(IPreferenceConstants.EDITOR_TAB_POSITION);
@@ -394,10 +402,11 @@ public class ViewsPreferencePage
 	 */
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
-		store.setValue(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, showTextOnPerspectiveBar.getSelection());
-		store.setValue(IPreferenceConstants.DOCK_PERSPECTIVE_BAR, dockPerspectiveBar.getSelection());
-		store.setValue(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, showTraditionalStyleTabs.getSelection());
+		apiStore.setValue(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, showTextOnPerspectiveBar.getSelection());
+		apiStore.setValue(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR, dockPerspectiveBar.getSelection());
+		apiStore.setValue(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, showTraditionalStyleTabs.getSelection());
 		
 		// store the editor tab value to setting
 		store.setValue(
