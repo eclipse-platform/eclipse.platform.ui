@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 /**
  * The common superclass for wizard import and export pages.
  * <p>
- * This class is not intended to be subclassed outside outside of the workbench.
+ * This class is not intended to be subclassed outside of the workbench.
  * </p>
  */
 public abstract class WizardDataTransferPage extends WizardPage implements
