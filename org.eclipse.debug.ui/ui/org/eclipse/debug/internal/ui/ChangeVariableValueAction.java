@@ -98,10 +98,12 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 						saveChangesAndCleanup(fVariable, activeShell);
 					} else {
 						cleanup();
+						return;
 					}
 				}
 				if (event.character == SWT.ESC) {
 					cleanup();
+					return;
 				}
 				fKeyReleased= true;
 			}
