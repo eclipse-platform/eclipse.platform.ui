@@ -15,9 +15,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.debug.ui.DefaultDebugViewContentProvider;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -27,7 +28,7 @@ import org.eclipse.jface.viewers.Viewer;
 public class LaunchViewContentProvider implements ITreeContentProvider {
 	
 	/**
-	 * Map of custom content providers keyed by debug model id.
+	 * Map of custom content providers keyed by content provider id.
 	 */
 	private Map fContentProviders;
 
@@ -96,26 +97,23 @@ public class LaunchViewContentProvider implements ITreeContentProvider {
 	 * @return the content provider to use for the given object
 	 */
 	private ITreeContentProvider getContentProvider(Object object) {
-		if (object instanceof IDebugElement) {
-			IDebugElement element = (IDebugElement) object;
-			String modelIdentifier = element.getModelIdentifier();
-			LaunchConfigurationPresentationManager manager = LaunchConfigurationPresentationManager.getDefault();
-			ITreeContentProvider provider = null;
-			if (manager.hasDebugViewContentProivder(modelIdentifier)) {
-				if (fContentProviders == null) {
-					fContentProviders = new HashMap();
-				}
-				provider = (ITreeContentProvider) fContentProviders.get(modelIdentifier);
-				if (provider == null) {
-					provider = manager.newDebugViewContentProvider(modelIdentifier);
-					if (provider != null) {
-						fContentProviders.put(modelIdentifier, provider);
-					}
+		LaunchConfigurationPresentationManager manager = LaunchConfigurationPresentationManager.getDefault();
+		String id = manager.getDebugViewContentProvderId(object);
+		ITreeContentProvider provider = null;
+		if (id != null) {
+			if (fContentProviders == null) {
+				fContentProviders = new HashMap();
+			}
+			provider = (ITreeContentProvider) fContentProviders.get(id);
+			if (provider == null) {
+				provider = manager.newDebugViewContentProvider(id);
+				if (provider != null) {
+					fContentProviders.put(id, provider);
 				}
 			}
-			if (provider != null) {
-				return provider;
-			}
+		}
+		if (provider != null) {
+			return provider;
 		}
 		return getDefaultContentProvider(); 
 	}

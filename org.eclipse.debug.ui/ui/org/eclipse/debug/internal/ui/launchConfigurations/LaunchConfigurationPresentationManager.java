@@ -16,7 +16,14 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionConverter;
+import org.eclipse.core.expressions.ExpressionTagNames;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -52,14 +59,24 @@ public class LaunchConfigurationPresentationManager {
 	private Hashtable fTabGroupExtensions;	
 	
 	/**
-	 * Collection of debug view content providers defined in 
-	 * plug-in XML. Entries are keyed by debug model identifier
-	 * (<code>String</code>) and values are configuration elements
-	 * (<code>IConfigurationElement</code>).
+	 * Collection of debug view content provider enablement expressions defined in 
+	 * plug-in XML. Entries are keyed by content provider extension id
+	 * (<code>String</code>) and values are expressions
+	 * (<code>Expression</code>).
 	 *  
 	 *  @since 3.1
 	 */
-	private Map fDebugViewContentProviders;
+	private Map fDebugViewContentProviderExpressions;
+	
+	/**
+	 * Collection of debug view content provider elements in 
+	 * plug-in XML. Entries are keyed by content provider extension id
+	 * (<code>String</code>) and values are expressions
+	 * (<code>IConfigurationElements</code>).
+	 *  
+	 *  @since 3.1
+	 */
+	private Map fDebugViewContentProviders;	
 		
 	/**
 	 * Constructs the singleton launch configuration presentation
@@ -134,14 +151,32 @@ public class LaunchConfigurationPresentationManager {
 	 * by debug model.
 	 */
 	private void initializeDebugViewContentProviderExtensions() {
+		fDebugViewContentProviderExpressions = new Hashtable();
 		fDebugViewContentProviders = new Hashtable();
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_DEBUG_VIEW_CONTENT_PROVIDERS);
 		IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement element = extensions[i];
-			if (attributeExists(element, "debugModelId")) { //$NON-NLS-1$
+			if (attributeExists(element, "id")) { //$NON-NLS-1$
 				if (attributeExists(element, "class")) { //$NON-NLS-1$
-					fDebugViewContentProviders.put(element.getAttribute("debugModelId"), element); //$NON-NLS-1$
+				    IConfigurationElement[] elements = element.getChildren(ExpressionTagNames.ENABLEMENT);
+					IConfigurationElement enablement = elements.length > 0 ? elements[0] : null; 
+					if (enablement == null) {
+					    // invalid ext
+						IExtension extension = element.getDeclaringExtension();
+						IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.STATUS_INVALID_EXTENSION_DEFINITION,
+								 MessageFormat.format("Extension {0} missing required enablement element",new String[]{extension.getUniqueIdentifier()}), null); //$NON-NLS-1$
+						DebugUIPlugin.log(status);
+					} else {
+						try {
+                            Expression expression = ExpressionConverter.getDefault().perform(enablement);
+                            fDebugViewContentProviderExpressions.put(element.getAttribute("id"), expression); //$NON-NLS-1$
+    						fDebugViewContentProviders.put(element.getAttribute("id"), element); //$NON-NLS-1$
+                        } catch (CoreException e) {
+                            DebugUIPlugin.log(e);
+                        }
+						
+					}
 				}
 			}
 		}
@@ -235,14 +270,14 @@ public class LaunchConfigurationPresentationManager {
 	}	
 	
 	/**
-	 * Returns a new content provider for the given debug model, or <code>null</code>
-	 * if none.
+	 * Returns a new content provider for the content provider with the given
+	 * id, or <code>null</code> if none.
 	 * 
-	 * @param modelId debug model identifier
+	 * @param id content provider identifier
 	 * @return a new content provider or <code>null</code>
 	 */
-	public ITreeContentProvider newDebugViewContentProvider(String modelId) {
-		IConfigurationElement element = (IConfigurationElement) fDebugViewContentProviders.get(modelId);
+	public ITreeContentProvider newDebugViewContentProvider(String id) {
+		IConfigurationElement element = (IConfigurationElement) fDebugViewContentProviders.get(id);
 		if (element != null) {
 			try {
 				Object object = element.createExecutableExtension("class"); //$NON-NLS-1$
@@ -260,17 +295,31 @@ public class LaunchConfigurationPresentationManager {
 		}
 		return null;
 	}
-
+	
 	/**
-	 * Returns whether an debug model content provider extension has been
-	 * contributed for the given model.
+	 * Returns the identifier of a debug view content provider extension applicable
+	 * to the given object, or <code>null</code> if none.
 	 * 
-	 * @param modelIdentifier
-	 * @return whether an debug model content provider extension has been
-	 * contributed for the given model
+	 * @param element element to be rendered in the debug view
+	 * @return the identifier of a debug view content provider extension applicable
+	 * to the given object, or <code>null</code> if none
 	 */
-	public boolean hasDebugViewContentProivder(String modelIdentifier) {
-		return fDebugViewContentProviders.containsKey(modelIdentifier);
+	public String getDebugViewContentProvderId(Object element) {
+	    IEvaluationContext context = new EvaluationContext(null, element);
+	    Iterator iterator = fDebugViewContentProviderExpressions.entrySet().iterator();
+	    while (iterator.hasNext()) {
+	        Map.Entry entry = (Entry) iterator.next();
+	        Expression expression = (Expression) entry.getValue();
+            try {
+                EvaluationResult result = expression.evaluate(context);
+                if (result == EvaluationResult.TRUE) {
+    	            return (String) entry.getKey();
+    	        }
+            } catch (CoreException e) {
+                DebugUIPlugin.log(e);
+            }
+	    }
+	    return null;
 	}
 }
 

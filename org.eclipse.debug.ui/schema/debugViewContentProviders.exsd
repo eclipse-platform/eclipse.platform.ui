@@ -6,9 +6,11 @@
          <meta.schema plugin="org.eclipse.debug.ui" id="debugViewContentProviders" name="Debug View Content Providers"/>
       </appInfo>
       <documentation>
-         This extension point allows a debug model to provide a custom content provider for the debug view. A default content provider is provided by the debug platform, but clients may override the default content provider to customize the presentation in the debug view.
+         This extension point allows a custom content provider to be contributed for the debug view. A default content provider is provided by the debug platform, but clients may override the default content provider to customize the presentation in the debug view based on an enablement expression. Enablement is evaluated for each element in the debug view when retrieving content for that element.
       </documentation>
    </annotation>
+
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
       <complexType>
@@ -41,13 +43,9 @@
 
    <element name="debugViewContentProvider">
       <complexType>
-         <attribute name="debugModelId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  specifies the debug model identifier this content provider is for
-               </documentation>
-            </annotation>
-         </attribute>
+         <sequence>
+            <element ref="enablement"/>
+         </sequence>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
@@ -56,6 +54,13 @@
                <appInfo>
                   <meta.attribute kind="java"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  unique identifier for this debug view content provider
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
@@ -80,18 +85,21 @@
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension point = &quot;org.eclipse.debug.ui.debugViewContentProviders&quot;&gt; 
-       &lt;debugViewContentProvider 
-           class = &quot;com.example.JavaDebugContentProvider&quot;
-           debugModelId = &quot;com.example.JavaDebugId&quot;&gt;
+       &lt;debugViewContentProvider
+           id=&quot;com.example.JavaDebugContentProviderID&quot;
+           class = &quot;com.example.JavaDebugContentProvider&quot;&gt;
+           &lt;enablement&gt;
+              &lt;adapt type=&quot;org.eclipse.jdt.debug.core.IJavaThread&quot;/&gt;
+           &lt;/enablement&gt;
        &lt;/debugViewContentProvider&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
 In the example above, the class 
 &lt;samp&gt;com.example.JavaDebugContentProvider&lt;/samp&gt; will be 
-used to retrieve children of debug elements originating 
-from the debug model identified by 
-&lt;samp&gt;com.example.JavaDebugId&lt;/samp&gt;.
+used to retrieve children of debug elements with an adapter
+of type
+&lt;samp&gt;org.eclipse.jdt.debug.core.IJavaThread&lt;/samp&gt;.
       </documentation>
    </annotation>
 
