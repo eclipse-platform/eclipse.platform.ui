@@ -376,9 +376,38 @@ public interface IPlatform {
 	 * @return an input stream
 	 */	
 	public InputStream openStream(Bundle b, IPath file, boolean localized) throws IOException;
-	
+	/**
+	 * Returns the location in the local file system of the 
+	 * plug-in state area for the given bundle.
+	 * If the plug-in state area did not exist prior to this call,
+	 * it is created.
+	 * <p>
+	 * The plug-in state area is a file directory within the
+	 * platform's metadata area where a plug-in is free to create files.
+	 * The content and structure of this area is defined by the plug-in,
+	 * and the particular plug-in is solely responsible for any files
+	 * it puts there. It is recommended for plug-in preference settings and 
+	 * other configuration parameters.
+	 * </p>
+	 *
+	 * @param bundle the bundle whose state location if returned
+	 * @return a local file system path
+	 * @since 3.0
+	 */
 	public IPath getStateLocation(Bundle bundle);
-	
+	/**
+	 * Returns the given bundle's resource bundle for the current locale. 
+	 * <p>
+	 * The resource bundle is stored as the <code>plugin.properties</code> file 
+	 * in the plug-in install directory, and contains any translatable
+	 * strings used in the plug-in manifest file (<code>plugin.xml</code>)
+	 * along with other resource strings used by the plug-in implementation.
+	 * </p>
+	 *
+	 * @return the resource bundle
+	 * @exception MissingResourceException if the resource bundle was not found
+	 * @since 3.0
+	 */
 	public ResourceBundle getResourceBundle(Bundle bundle) throws MissingResourceException;
 	/**
 	 * Returns a resource string corresponding to the given argument value.
