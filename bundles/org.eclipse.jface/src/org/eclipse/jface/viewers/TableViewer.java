@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -167,7 +167,7 @@ protected Widget doFindItem(Object element) {
  */
 protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 	if (widget instanceof TableItem) {
-		TableItem item = (TableItem) widget;
+		final TableItem item = (TableItem) widget;
 		
 		// remember element we are showing
 		if (fullMap) {
@@ -180,6 +180,8 @@ protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 		IBaseLabelProvider prov = getLabelProvider();
 		ITableLabelProvider tprov = null;
 		ILabelProvider lprov = null;
+		
+			
 		if (prov instanceof ITableLabelProvider) {
 			tprov = (ITableLabelProvider) prov;
 		}
@@ -199,8 +201,19 @@ protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 			}
 			else {
 				if (column == 0) {
-		 	    	text = lprov.getText(element);
-		    		image = lprov.getImage(element);		    	
+					if (lprov instanceof IViewerLabelProvider) {
+						IViewerLabelProvider itemProvider = (IViewerLabelProvider) lprov;
+						ViewerLabel updateLabel = new ViewerLabel(item.getText(),item.getImage());
+					
+						itemProvider.updateLabel(updateLabel, element);
+						text = updateLabel.getText();
+						image = updateLabel.getImage();		
+					
+					}
+					else{
+						text = lprov.getText(element);
+						image = lprov.getImage(element);	
+					}
 		    	}
 	    	}
 			ti.setText(column, text);

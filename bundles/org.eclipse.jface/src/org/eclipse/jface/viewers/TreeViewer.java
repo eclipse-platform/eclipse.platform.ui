@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,25 +92,35 @@ protected void addTreeListener(Control c, TreeListener listener) {
 /* (non-Javadoc)
  * Method declared in AbstractTreeViewer.
  */
-protected void doUpdateItem(Item item, Object element) {
+protected void doUpdateItem(final Item item, Object element) {
 	// update icon and label
-	ILabelProvider provider = (ILabelProvider) getLabelProvider();
-	item.setText(provider.getText(element));
-	Image image = provider.getImage(element);
-	if (item.getImage() != image) {
-		item.setImage(image);
+	IBaseLabelProvider baseProvider = getLabelProvider();
+	if (baseProvider instanceof IViewerLabelProvider) {
+		IViewerLabelProvider provider = (IViewerLabelProvider)baseProvider;
+		
+		ViewerLabel updateLabel = new ViewerLabel(item.getText(), item.getImage());
+		provider.updateLabel(updateLabel, element);
+		
+		if(updateLabel.hasNewImage())
+			item.setImage(updateLabel.getImage());
+		if(updateLabel.hasNewText())
+			item.setText(updateLabel.getText());
+		
+	} else {
+		ILabelProvider provider = (ILabelProvider)baseProvider;
+		item.setText(provider.getText(element));
+		Image image = provider.getImage(element);
+		if (item.getImage() != image) {
+			item.setImage(image);
+		}
 	}
-	if (provider instanceof IColorProvider) {
-		IColorProvider cp = (IColorProvider) provider;
+	if (baseProvider instanceof IColorProvider) {
+		IColorProvider cp = (IColorProvider) baseProvider;
 		TreeItem treeItem = (TreeItem) item;
 		treeItem.setForeground(cp.getForeground(element));
 		treeItem.setBackground(cp.getBackground(element));
 	}
-	if (provider instanceof IFontProvider) {
-	    IFontProvider fprov = (IFontProvider) provider;
-	    TreeItem treeItem = (TreeItem) item;
-	    treeItem.setFont(fprov.getFont(element));
-	}	
+	
 }
 /* (non-Javadoc)
  * Method declared in AbstractTreeViewer.

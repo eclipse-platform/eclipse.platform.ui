@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,17 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
+import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
-import org.eclipse.swt.graphics.Image;
 
 /**
  * A decorating label provider is a label provider which combines 
  * a nested label provider and an optional decorator.
  * The decorator decorates the label text and image provided by the nested label provider.
  */
-public class DecoratingLabelProvider extends LabelProvider implements ILabelProvider{
+public class DecoratingLabelProvider extends LabelProvider implements ILabelProvider,IViewerLabelProvider {
 	private ILabelProvider provider;	
 	private ILabelDecorator decorator;
 	// Need to keep our own list of listeners
@@ -151,21 +152,62 @@ public void removeListener(ILabelProviderListener listener) {
 public void setLabelDecorator(ILabelDecorator decorator) {
 	ILabelDecorator oldDecorator = this.decorator;
 	if (oldDecorator != decorator) {
-		Object[] listeners = this.listeners.getListeners();
+		Object[] listenerList = this.listeners.getListeners();
 		if (oldDecorator != null) {
-			for (int i = 0; i < listeners.length; ++i) {
-				oldDecorator.removeListener((ILabelProviderListener) listeners[i]);
+			for (int i = 0; i < listenerList.length; ++i) {
+				oldDecorator.removeListener((ILabelProviderListener) listenerList[i]);
 			}
 		}
 		this.decorator = decorator;
 		if (decorator != null) {
-			for (int i = 0; i < listeners.length; ++i) {
-				decorator.addListener((ILabelProviderListener) listeners[i]);
+			for (int i = 0; i < listenerList.length; ++i) {
+				decorator.addListener((ILabelProviderListener) listenerList[i]);
 			}
 		}
 		fireLabelProviderChanged(new LabelProviderChangedEvent(this));
 	}
 }
 
+
+
+/**
+ * Return whether the two image handles are equal.
+ * @param oldImage
+ * @param newImage
+ * @return
+ */
+private boolean equals(Image oldImage, Image newImage) {
+	return ((oldImage == null && newImage == null) ||
+		(oldImage!= null && newImage != null && oldImage.equals(newImage)));
+}
+
+
+/*
+ *  (non-Javadoc)
+ * @see org.eclipse.jface.viewers.IViewerLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel, java.lang.Object)
+ */
+public void updateLabel(ViewerLabel settings, Object element) {
+
+	ILabelDecorator currentDecorator = getLabelDecorator();
+	String oldText = settings.getText();
+	boolean decorationReady = true;
+	if (currentDecorator instanceof IDelayedLabelDecorator) {
+		IDelayedLabelDecorator delayedDecorator = (IDelayedLabelDecorator) currentDecorator;
+		if (!delayedDecorator.prepareDecoration(element,oldText)) {
+			// The decoration is not ready but has been queued for processing
+			decorationReady = false;
+		}
+	}
+	// update icon and label
+	
+	if (decorationReady || oldText == null || settings.getText().length() == 0) 
+		settings.setText(getText(element));
+	
+	Image oldImage = settings.getImage();
+	if (decorationReady || oldImage == null) {
+		settings.setImage(getImage(element));
+	}
+
+}
 
 }
