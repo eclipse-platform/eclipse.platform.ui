@@ -11,9 +11,9 @@ File Actions ..
 		- two editors
 		- two dirty editors
 		- after close all
-	Verify actions when switching between pages ( one with dirty editor, 
-		other without ).
-	Verify after all pages closed.
+	Verify actions when switching between perspectives ( one with dirty 
+		editor, other without ).
+	Verify after all perspectives closed.
 	Open many editors, close all, test MRU list.
 	Open an editor and try to print the contents.
 	
@@ -23,16 +23,15 @@ Edit Actions ..
 	Verify editors of same type reuse contributions.
 	Verify editors of different type cause contribution change.
 	Verify editor contributions are removed when editor is closed.
-	Verify edit actions are consistent when switching between pages.
+	Verify edit actions are consistent when switching between perspectives.
 
 Perspective Actions ..
 	Open = always enabled
-	Verify other actions only enabled when a page is open.
-	Verify "open new window", "open new page", and "replace with" 
-		using shift and control key options.
+	Verify other actions only enabled when a perspective is open.
+	Verify "open new window", "open perspective"
 	Verify "Save As" by modifying current persp, save as, close, reopen.
 	Verify "Reset" by modifying current persp, then reset.
-	Verify Preference page.
+	Test Workbench/Perspectives preference page.
 	Hide Editors, Show Editors
 	Hide Editors, Open new editor, verify implicit show editors.
 	
