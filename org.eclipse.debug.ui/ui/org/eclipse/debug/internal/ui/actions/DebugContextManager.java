@@ -19,6 +19,8 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.EnabledSubmission;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
@@ -39,7 +41,7 @@ public class DebugContextManager implements ILaunchesListener2 {
 	private boolean fDebugging = false;
 	
 	// debug scope submission
-	private List fDebugSubmission = Collections.singletonList(new EnabledSubmission(null, null, DEBUG_SCOPE));
+	private List fDebugSubmission = Collections.singletonList(new EnabledSubmission((Shell)null, (IWorkbenchSite)null, DEBUG_SCOPE));
 
 	// singleton
 	private static DebugContextManager contextServiceManager;

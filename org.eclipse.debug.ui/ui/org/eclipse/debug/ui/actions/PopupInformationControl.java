@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
@@ -94,7 +95,7 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	/**
 	 * Debug hover scope 
 	 */
-	private List hoverScope = Collections.singletonList(new EnabledSubmission(null, null, "org.eclipse.debug.ui.debugging.popups")); //$NON-NLS-1$
+	private List hoverScope = Collections.singletonList(new EnabledSubmission((Shell)null, (IWorkbenchSite)null, "org.eclipse.debug.ui.debugging.popups")); //$NON-NLS-1$
 	
 	/**
 	 * Default action used to close popup
