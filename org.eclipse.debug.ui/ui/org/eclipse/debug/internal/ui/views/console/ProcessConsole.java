@@ -70,18 +70,18 @@ public class ProcessConsole extends AbstractConsole implements IDebugEventSetLis
 	 * @return a name for this console
 	 */
 	protected String computeName() {	
-		ILaunchConfiguration configuration = getProcess().getLaunch().getLaunchConfiguration(); 
-		if (configuration != null) {
-			if (getProcess().isTerminated()) {
-				return MessageFormat.format(ConsoleMessages.getString("ProcessConsole.0"), new String[]{configuration.getName()}); //$NON-NLS-1$
-			} else {
-				return configuration.getName();
-			}
+		String label = null;
+		IProcess process = getProcess();
+		
+		label = process.getAttribute(IProcess.ATTR_PROCESS_LABEL);
+		if (label == null) {
+			label = process.getLabel();
 		}
-		if (getProcess().isTerminated()) {
-			return MessageFormat.format(ConsoleMessages.getString("ProcessConsole.0"), new String[]{getProcess().getLabel()}); //$NON-NLS-1$
+		
+		if (process.isTerminated()) {
+			return MessageFormat.format(ConsoleMessages.getString("ProcessConsole.0"), new String[]{label}); //$NON-NLS-1$
 		} else {
-			return getProcess().getLabel();
+			return label;
 		}
 	}
 

@@ -271,13 +271,26 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	}
 
 	/**
+	 * Fires a change event.
+	 */	
+	protected void fireChangeEvent() {
+		fireEvent(new DebugEvent(this, DebugEvent.CHANGE));
+	}
+
+	/**
 	 * @see IProcess#setAttribute(String, String)
 	 */
 	public void setAttribute(String key, String value) {
 		if (fAttributes == null) {
 			fAttributes = new HashMap(5);
 		}
+		Object origVal = fAttributes.get(key);
+		if (origVal != null && origVal.equals(value)) {
+			return; //nothing changed.
+		}
+		
 		fAttributes.put(key, value);
+		fireChangeEvent();
 	}
 	
 	/**

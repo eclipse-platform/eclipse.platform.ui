@@ -50,6 +50,13 @@ public interface IProcess extends IAdaptable, ITerminate {
 	public final static String ATTR_PROCESS_TYPE = DebugPlugin.getUniqueIdentifier() + ".ATTR_PROCESS_TYPE"; //$NON-NLS-1$		
 
 	/**
+	 * Attribute key for a common, optional, process property. The value of this
+	 * attribute can be used to set the label on the console.
+	 */
+	public final static String ATTR_PROCESS_LABEL = DebugPlugin.getUniqueIdentifier() + ".ATTR_PROCESS_LABEL"; //$NON-NLS-1$
+	
+	
+	/**
 	 * Returns a human-readable label for this process.
 	 *
 	 * @return a label for this process
