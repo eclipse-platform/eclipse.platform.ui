@@ -4,22 +4,11 @@
  */
 package org.eclipse.ui.internal;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
-
+import java.util.*;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IKeyBindingService;
-import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 
 /**
  * @version 	1.0
@@ -65,75 +54,20 @@ public class WWinKeyBindingService {
 		return result;
 	}
     private static class PartListener implements IPartListener {
-		// keys: menu items (MenuItems)
-		// values: accelerators (Accelerators)
-		private HashMap menuItemAccelerators =  new HashMap();
-    	
 	    public void partActivated(IWorkbenchPart part) {
+	    	IWorkbenchPartSite site = part.getSite();
+	    	WorkbenchWindow w = (WorkbenchWindow)site.getPage().getWorkbenchWindow();
+	    	MenuManager menuManager = w.getMenuManager();
 	    	if(part instanceof IViewPart) {
-				restoreAccelerators();
+				menuManager.updateAccelerators(true);
 	    	} else if(part instanceof IEditorPart) {
-	    		IEditorSite site = ((IEditorPart)part).getEditorSite();
-	    		KeyBindingService service = (KeyBindingService)site.getKeyBindingService();
-	    		if(service.isParticipating()) {
-	    			// remove accelerators from menu
-	    			WorkbenchWindow w = (WorkbenchWindow)site.getPage().getWorkbenchWindow();
-	    			Menu menu = w.getMenuManager().getMenu();
-//	    			menu.updateAll(true);
-					updateAccelerators(menu);
-	    		}
-	    		else {
-	    			// if the editor being activated is not a "participating" editor
-	    			restoreAccelerators();
-	    		}
+	    		KeyBindingService service = (KeyBindingService)((IEditorSite)site).getKeyBindingService();
+    			menuManager.updateAccelerators(!service.isParticipating());
 	    	}
 	    }
 	    public void partBroughtToTop(IWorkbenchPart part) {}
 	    public void partClosed(IWorkbenchPart part) {}
 	    public void partDeactivated(IWorkbenchPart part) {}  
 	    public void partOpened(IWorkbenchPart part) {}
-	    /*
-	     * Temporarily clears accelerators for all menu items in this menu,
-	     * and all it's submenus (and their submenus, etc.). Cleared accelerators may be restored by 
-	     * restoreAccelerators().
-	     */
-		private void updateAccelerators(Menu menu) {
-	    	for(int j=0;j<menu.getItemCount();j++) {
-	    		updateAccelerators(menu.getItem(j));
-	    	}    	
-	    }
-	    /*
-	     * Temporarily clears the accelerator for this menu item. If the menu item
-	     * is a menu, clears all accelerators of menu items of the menu and all its
-	     * submenus and their submenus, etc.).
-	     */
-	    private void updateAccelerators(MenuItem item) {
-	    	if(item.getMenu()!=null) {
-	    		updateAccelerators(item.getMenu());	
-	    	}
-	    	else {
-	    		//store the accelerator so it can be restored later
-	    		menuItemAccelerators.put(item, new Integer(item.getAccelerator()));
-	    		//clear the accelerator
-	    		item.setAccelerator(0);
-	    	}
-	    }
-	    /*
-	     * Restores menu item accelerators which were temporarily cleared
-	     * using clearAccelerators(Menu) or clearAccelerators(MenuItem).
-	     */
-	    private void restoreAccelerators() {
-			if (!menuItemAccelerators.isEmpty()) {
-	        	Set keySet = menuItemAccelerators.keySet();
-	    		Iterator items = keySet.iterator();
-	    		while(items.hasNext()) {
-	    			MenuItem item = (MenuItem)(items.next());
-	    			if (!item.isDisposed()) {
-	    				int i = ((Integer)(menuItemAccelerators.get(item))).intValue();
-	    				item.setAccelerator(i);	
-	    			}
-		  		}
-			}	
-	    }
     }
 }

@@ -406,14 +406,15 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Initialize the workbench AcceleratorConfiguration with the stored values.
 	 */
 	private void initializeAcceleratorConfiguration() {
-		//IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		//String id = store.getString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
-/*		String id = IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID;
-	 	id = "org.eclipse.ui.emacsAcceleratorConfiguration";
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		String id = store.getString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
+		if (id == null)
+			id = IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID;
 		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
 		acceleratorConfiguration = registry.getConfiguration(id);
-		acceleratorConfiguration.initializeScopes();
-*/	}
+		if(acceleratorConfiguration!=null)
+			acceleratorConfiguration.initializeScopes();
+	}
 	/**
 	 * Initialize the workbench fonts with the stored values.
 	 */
@@ -755,6 +756,16 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 		// Success !
 		return true;
+	}
+	/*
+	 * Sets the active accelerator configuration to be the configuration
+	 * with the given id.
+	 */
+	public void setActiveAcceleratorConfiguration(AcceleratorConfiguration config) {
+		if(config!=null) {
+			acceleratorConfiguration = config;	
+			acceleratorConfiguration.initializeScopes();
+		}
 	}
 	/**
 	 * @see IExecutableExtension

@@ -8,6 +8,8 @@ import java.util.*;
 
 import org.eclipse.core.runtime.Platform;
 
+import org.eclipse.ui.internal.IWorkbenchConstants;
+
 /**
  * Provides access to a list of accelerator configurations, a list
  * of accelerator scopes, and a list of accelerator sets.
@@ -99,6 +101,31 @@ public class AcceleratorRegistry {
 		Accelerator[] result = new Accelerator[accelarators.size()];
 		accelarators.toArray(result);
 		return result;
+	}
+	
+	/**
+	 * Returns a list of all the configurations in the registry for which
+	 * there are registered accelerator sets.
+	 */
+	public AcceleratorConfiguration[] getConfigsWithSets() {
+		List list = new ArrayList();
+		for(int i=0; i<configurations.size(); i++) {
+			AcceleratorConfiguration config = (AcceleratorConfiguration)configurations.get(i);
+			String configId = config.getId();
+			for(int j=0; j<sets.size(); j++) {
+				AcceleratorSet set = (AcceleratorSet)sets.get(j);
+				if(configId.equals(set.getConfigurationId())) {
+					list.add(config);
+					break;
+				}	
+			}
+			// temporary hack until some sets are registered with default configuration
+			if(configId.equals(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID))
+				list.add(config);
+		}
+		AcceleratorConfiguration result[] = new AcceleratorConfiguration[list.size()];
+		list.toArray(result);
+		return result;	
 	}
 	
 	public AcceleratorScope getScope(String scopeID) {
