@@ -63,28 +63,39 @@ function showNavFrame(nav)
 
 <style>
 BODY {
-	background-color:ActiveBorder;
-	font: 9pt ms sans serif,sans-serif;
+	/*background-color:ActiveBorder;*/
+	background-color:#D4D0C8;
+	background-image:url(images/eclipse_tabbackground.gif);
+	background-repeat:x;
+	/*font: 9pt ms sans serif,sans-serif;*/
+	font: 8pt Tahoma;
 	margin-width:0;
-	margin-left:5px;
+	margin-left:0px;
 	border-bottom: 2px solid #848284;
 	cursor:default;
 }
 
+TABLE
+	{
+		/*font: 9pt ms sans serif,sans-serif;*/
+		font: 8pt Tahoma;
+	}
+
 .tab {
 	top:0;
-	height:24;
-	margin:0;
+	height:22;
+	margin-top:2;
 	padding:0px 2px 0px 2px;
 	border:0;
 }
 
 .pressed {
 	top:0;
-	margin:0;
+	margin-top:1;
 	padding:0px 2px 0px 2px;
-	height:24;
+	height:22;
 	border-bottom:1px solid #ffffff;
+	border-top:1px solid #ffffff;
 }
 
 
@@ -96,10 +107,19 @@ IMG {
 
 </style>
 
-   </head>
+</head>
    
-   <body>
-	<a class="tab" id="toc" onclick="javascript:showNavFrame('toc')">Content</a><img id="tocI" src="images/rightBorder.gif" width="2" height="24"><a class="tab" id="search" onclick="javascript:showNavFrame('search')">Search</a><img id="searchI" src="images/middleBorder.gif" width="2" height="24"><a class="tab" id="links" onclick="javascript:showNavFrame('links')">Links</a><img id="linksI" src="images/noBorder.gif" width="2" height="24">
-   </body>
+<body>
+   <table cellspacing="0" cellpadding="0" border="0">
+   <tr>
+   <td><a class="tab" id="toc" onclick="javascript:showNavFrame('toc')">&nbsp;Content</a></td>
+   <td><img id="tocI" src="images/rightBorder.gif" width="2" height="22"></td>
+   <td><a class="tab" id="search" onclick="javascript:showNavFrame('search')">Search</a></td>
+   <td><img id="searchI" src="images/middleBorder.gif" width="2" height="22"></td>
+   <td><a class="tab" id="links" onclick="javascript:showNavFrame('links')">Links</a></td>
+   <td><img id="linksI" src="images/noBorder.gif" width="2" height="22"></td>
+   </tr>
+   </table>
+</body>
 </html>
 
