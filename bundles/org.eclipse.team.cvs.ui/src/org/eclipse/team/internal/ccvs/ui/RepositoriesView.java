@@ -30,6 +30,7 @@ import org.eclipse.team.internal.ccvs.ui.model.AllRootsElement;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
 import org.eclipse.team.internal.ccvs.ui.wizards.NewLocationWizard;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -52,10 +53,13 @@ public class RepositoriesView extends ViewPart {
 	// The root
 	private AllRootsElement root;
 	
-	private OpenRemoteFileAction openAction;
-	
 	// Drill down adapter
 	private DrillDownAdapter drillPart;
+	
+	// Actions
+	private Action showFoldersAction;
+	private Action showModulesAction;
+	private OpenRemoteFileAction openAction;	
 	
 	IRepositoryListener listener = new IRepositoryListener() {
 		public void repositoryAdded(ICVSRepositoryLocation root) {
@@ -135,7 +139,8 @@ public class RepositoriesView extends ViewPart {
 		getSite().registerContextMenu(menuMgr, viewer);
 	
 		// Create the local tool bar
-		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
+		IActionBars bars = getViewSite().getActionBars();
+		IToolBarManager tbm = bars.getToolBarManager();
 		drillPart.addNavigationActions(tbm);
 		tbm.add(refreshAction);
 		tbm.update(false);
@@ -147,6 +152,29 @@ public class RepositoriesView extends ViewPart {
 				handleDoubleClick(e);
 			}
 		});
+		
+		// Add module toggling to the local pull-down menu
+		IMenuManager mgr = bars.getMenuManager();
+		showFoldersAction = new Action("Show Folders") {
+			public void run() {
+				CVSUIPlugin.getPlugin().getPreferenceStore().setValue(ICVSUIConstants.PREF_SHOW_MODULES, false);
+				showModulesAction.setChecked(false);
+				viewer.refresh();
+			}
+		};
+		showModulesAction = new Action("Show Modules") {
+			public void run() {
+				CVSUIPlugin.getPlugin().getPreferenceStore().setValue(ICVSUIConstants.PREF_SHOW_MODULES, true);
+				showFoldersAction.setChecked(false);
+				viewer.refresh();
+			}
+		};
+		boolean showModules = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_MODULES);
+		showFoldersAction.setChecked(!showModules);
+		showModulesAction.setChecked(showModules);
+		mgr.add(showFoldersAction);
+		mgr.add(showModulesAction);
+		bars.updateActionBars();
 	}
 	
 	/*
@@ -205,22 +233,5 @@ public class RepositoriesView extends ViewPart {
 	 */
 	public void setFocus() {
 		viewer.getControl().setFocus();
-	}
-	
-	/**
-	 * Ask all open repositories views to refresh.
-	 */
-	public static void refreshAll() {
-		IWorkbench workbench = CVSUIPlugin.getPlugin().getWorkbench();
-		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-		for (int i = 0; i < windows.length; i++) {
-			IWorkbenchPage[] pages = windows[i].getPages();
-			for (int j = 0; j < pages.length; j++) {
-				RepositoriesView view = (RepositoriesView)pages[j].findView(VIEW_ID);
-				if (view != null) {
-					view.viewer.refresh();
-				}
-			}
-		}
 	}
 }
