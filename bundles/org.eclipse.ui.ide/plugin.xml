@@ -460,7 +460,7 @@
       		description="%command.showView.description"
       		categoryId="org.eclipse.ui.category.views"
       		id="org.eclipse.ui.views.showView">
-      		<parameter
+      		<commandParameter
       			id="org.eclipse.ui.views.showView.viewId"
       			name="%command.showView.viewIdParameter"
       			values="org.eclipse.ui.internal.ide.registry.ViewParameterValues" />
@@ -470,7 +470,7 @@
       		description="%command.showPerspective.description"
       		categoryId="org.eclipse.ui.category.perspectives"
       		id="org.eclipse.ui.perspectives.showPerspective">
-      		<parameter
+      		<commandParameter
       			id="org.eclipse.ui.perspectives.showPerspective.perspectiveId"
       			name="%command.showPerspective.perspectiveIdParameter"
       			values="org.eclipse.ui.internal.ide.registry.PerspectiveParameterValues" />
