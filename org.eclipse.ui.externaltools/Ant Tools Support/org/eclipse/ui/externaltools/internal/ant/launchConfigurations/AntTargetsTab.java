@@ -73,8 +73,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	
 	private String location= null;
 	
-	private static final String TEMP_ATTRIBUTE= "temp"; //$NON-NLS-1$
-	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -541,8 +539,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(TEMP_ATTRIBUTE, (String)null);
-		
 		String targets= null;
 		AntTargetContentProvider orderContentProvider= (AntTargetContentProvider)orderTargetsTable.getContentProvider();
 		Object[] items= orderContentProvider.getElements(null);
@@ -558,7 +554,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				return;
 			}
 		} else if (items.length == 0) {
-			configuration.setAttribute(TEMP_ATTRIBUTE, TEMP_ATTRIBUTE);
 			return;
 		}
 		
@@ -632,14 +627,14 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration launchConfig) {
-		if (allTargets == null) {
+		if (allTargets == null && getErrorMessage() != null) {
 			//error in parsing;
 			return false;
 		}
 		setErrorMessage(null);
 		setMessage(null);
 		
-		if (executeTargetsTable.getCheckedElements().length == 0) {
+		if (allTargets != null && executeTargetsTable.getCheckedElements().length == 0) {
 			setErrorMessage(AntLaunchConfigurationMessages.getString("AntTargetsTab.No_targets")); //$NON-NLS-1$
 			return false;
 		}
