@@ -364,11 +364,11 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			IPath rootPath = LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH;
 			IPath configPath = getLocation();
 			relativePath = configPath.removeFirstSegments(rootPath.segmentCount());
-			relativePath = relativePath.setDevice(null);
 		} else {
 			relativePath = getLocation();
 		}
 		
+		relativePath = relativePath.setDevice(null);
 		Document doc = new DocumentImpl();
 		Element node = doc.createElement("launchConfiguration"); //$NON-NLS-1$
 		doc.appendChild(node);
@@ -388,7 +388,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 */	
 	public IFile getFile() {
 		IContainer container= ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(getLocation().removeLastSegments(1));
-		if (container != null) {
+		if (container != null && container.exists()) {
 			return container.getFile(new Path(getLocation().lastSegment()));
 		}
 		return null;
