@@ -572,8 +572,14 @@ class NewWizardNewPage
 				// if we cant find either a category or a wizard, abort.
 				return;
 		}
-		StructuredSelection selection = new StructuredSelection(selected);
-		viewer.setSelection(selection, true);
+		
+		//work around for 62039
+		final StructuredSelection selection = new StructuredSelection(selected);
+		viewer.getControl().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				viewer.setSelection(selection, true);
+			}
+		});
 	}
 
 	/**
