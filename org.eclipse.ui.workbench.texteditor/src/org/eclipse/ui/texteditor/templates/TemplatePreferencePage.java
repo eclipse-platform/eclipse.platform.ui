@@ -643,9 +643,13 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 	private void export() {
 		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
-		TemplatePersistenceData[] templates= (TemplatePersistenceData[]) selection.toArray();
+		Object[] templates= selection.toArray();
+
+		TemplatePersistenceData[] datas= new TemplatePersistenceData[templates.length];
+		for (int i= 0; i != templates.length; i++)
+			datas[i]= (TemplatePersistenceData) templates[i];
 		
-		export(templates);
+		export(datas);
 	}
 	
 	private void export(TemplatePersistenceData[] templates) {
