@@ -57,42 +57,42 @@
    </category>
    <view
          name="%DebugView.name"
-         icon="icons/full/eview16/debug_view.gif"
+         icon="icons/full/cview16/debug_view.gif"
          category="org.eclipse.debug.ui"
          class="org.eclipse.debug.internal.ui.DebugView"
          id="org.eclipse.debug.ui.DebugView">
    </view>
    <view
          name="%ProcessesView.name"
-         icon="icons/full/eview16/process_view.gif"
+         icon="icons/full/cview16/process_view.gif"
          category="org.eclipse.debug.ui"
          class="org.eclipse.debug.internal.ui.LaunchesView"
          id="org.eclipse.debug.ui.ProcessView">
    </view>
    <view
          name="%BreakpointsView.name"
-         icon="icons/full/eview16/breakpoint_view.gif"
+         icon="icons/full/cview16/breakpoint_view.gif"
          category="org.eclipse.debug.ui"
          class="org.eclipse.debug.internal.ui.BreakpointsView"
          id="org.eclipse.debug.ui.BreakpointView">
    </view>
    <view
          name="%VariablesView.name"
-         icon="icons/full/eview16/variable_view.gif"
+         icon="icons/full/cview16/variable_view.gif"
          category="org.eclipse.debug.ui"
          class="org.eclipse.debug.internal.ui.VariablesView"
          id="org.eclipse.debug.ui.VariableView">
    </view>
    <view
          name="%InspectorView.name"
-         icon="icons/full/eview16/watchlist_view.gif"
+         icon="icons/full/cview16/watchlist_view.gif"
          category="org.eclipse.debug.ui"
          class="org.eclipse.debug.internal.ui.InspectorView"
          id="org.eclipse.debug.ui.InspectorView">
    </view>
    <view
          name="%ConsoleView.name"
-         icon="icons/full/eview16/console_view.gif"
+         icon="icons/full/cview16/console_view.gif"
          category="org.eclipse.debug.ui"
          class="org.eclipse.debug.internal.ui.ConsoleView"
          id="org.eclipse.debug.ui.ConsoleView">
