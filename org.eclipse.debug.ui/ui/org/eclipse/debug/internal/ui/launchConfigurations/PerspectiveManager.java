@@ -40,9 +40,10 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -216,62 +217,89 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
 			if (event.getKind() == DebugEvent.SUSPEND && (event.getDetail() == DebugEvent.BREAKPOINT || event.getDetail() == DebugEvent.STEP_END)) {
-				// apply event filters
-				ILaunch launch = null;
-				Object source = event.getSource();
-				if (source instanceof IDebugElement) {
-					launch = ((IDebugElement)source).getLaunch();
-				} else if (source instanceof IProcess) {
-					launch = ((IProcess)source).getLaunch();
+				doPerspectiveSwitch(event);
+				if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
+					doShowDebugView();
 				}
-				String perspectiveId = null;
-				try {
-					perspectiveId = getPerspectiveId(launch);
-				} catch (CoreException e) {
-					DebugUIPlugin.log(e);
-				}
-				// if no perspective specified, always switch to debug
-				// perspective 
-
-				// this has to be done in an asynch, such that the workbench
-				// window can be accessed
-				final String id = perspectiveId;
-				Runnable r = new Runnable() {
-					public void run() {
-						String targetId = id;
-						IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
-						if (window == null) {
-							return;
-						}
-						if (targetId == null) {
-							IWorkbenchPage page = window.getActivePage();
-							if (page != null) {
-								IViewPart part = page.findView(IDebugUIConstants.ID_DEBUG_VIEW);
-								if (part == null) {
-									targetId = IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
-								}
-							}
-						}
-						if (targetId != null) {
-							// re-open the window if minimized 
-							Shell shell= window.getShell();
-							if (shell != null) {
-								if (shell.getMinimized()) {
-									shell.setMinimized(false);
-								}
-								if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
-									shell.forceActive();
-								}
-							}				
-							switchToPerspective(targetId);
-						}
-					}
-				};
-				async(r);
 			}
 		}
-	}	
+	}
 	
+	/**
+	 * Makes the debug view visible.
+	 */
+	protected void doShowDebugView() {
+		Runnable runnable= new Runnable () {
+			public void run() {
+				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				if (window != null) {
+					IWorkbenchPage page = window.getActivePage();
+					if (page != null) {
+						try {
+							page.showView(IDebugUIConstants.ID_DEBUG_VIEW, null, IWorkbenchPage.VIEW_VISIBLE);
+						} catch (PartInitException e) {
+							DebugUIPlugin.log(e);
+						}
+					}
+				}
+			}
+		};
+		async(runnable);
+	}
+	
+	/**
+	 * Carries out perspective switching as appropriate for
+	 * the given debug event. 
+	 * 
+	 * @param event the suspend or step end event
+	 */
+	private void doPerspectiveSwitch(DebugEvent event) {
+		// apply event filters
+		ILaunch launch = null;
+		Object source = event.getSource();
+		if (source instanceof IDebugElement) {
+			launch = ((IDebugElement)source).getLaunch();
+		} else if (source instanceof IProcess) {
+			launch = ((IProcess)source).getLaunch();
+		}
+		String perspectiveId = null;
+		try {
+			perspectiveId = getPerspectiveId(launch);
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
+		}
+		// if no perspective specified, always switch to debug
+		// perspective 
+
+		// this has to be done in an asynch, such that the workbench
+		// window can be accessed
+		final String id = perspectiveId;
+		Runnable r = new Runnable() {
+			public void run() {
+				String targetId = id;
+				IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+				if (window == null) {
+					return;
+				}
+				if (targetId == null) {
+					return;
+				}
+				// re-open the window if minimized 
+				Shell shell= window.getShell();
+				if (shell != null) {
+					if (shell.getMinimized()) {
+						shell.setMinimized(false);
+					}
+					if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
+						shell.forceActive();
+					}
+				}				
+				switchToPerspective(targetId);
+			}
+		};
+		async(r);
+	}
+
 	/** 
 	 * Returns the perspective associated with the
 	 * given launch, or <code>null</code> if none.
