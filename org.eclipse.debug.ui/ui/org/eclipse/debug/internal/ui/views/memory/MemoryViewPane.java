@@ -37,7 +37,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public class MemoryViewPane extends AbstractMemoryViewPane {
 	
 	public static final String MEMORY_VIEW_PANE_ID = DebugUIPlugin.getUniqueIdentifier() + ".MemoryView.MemoryViewPane"; //$NON-NLS-1$
-	private IAction fAddMemoryBlockAction;
+	private AddMemoryBlockAction fAddMemoryBlockAction;
 	private IAction fRemoveMemoryBlockAction;
 	private IAction fResetMemoryBlockAction;
 	private IAction fCopyViewToClipboardAction;
@@ -541,6 +541,7 @@ public class MemoryViewPane extends AbstractMemoryViewPane {
 
 	public void dispose() 
 	{
+		fAddMemoryBlockAction.dispose();
 		super.dispose();
 	}
 

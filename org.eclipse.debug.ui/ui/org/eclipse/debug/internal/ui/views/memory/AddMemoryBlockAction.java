@@ -58,7 +58,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 	private static String EXPR_EVAL_FAILED = PREFIX + "expressionEvalFailed";	 //$NON-NLS-1$
 	private static String NO_MEMORY_BLOCK = PREFIX + "noMemoryBlock"; //$NON-NLS-1$
 	
-	protected ISelection currentSelection = null;
+	protected ISelection fCurrentSelection = null;
 	protected IMemoryBlock fLastMemoryBlock;
 	private boolean fAddDefaultRenderings = true;
 	protected IMemoryViewPane fViewPane;
@@ -96,7 +96,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		
 		// check to see if something is selected in the debug view since a selection event won't be generated for something selected prior to creating this action
 		ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-		currentSelection = selection;
+		fCurrentSelection = selection;
 		
 		// set up enablement based on current selection
 		setEnabled(MemoryViewUtil.isValidSelection(selection));
@@ -117,7 +117,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		
 		// check to see if something is selected in the debug view since a selection event won't be generated for something selected prior to creating this action
 		ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-		currentSelection = selection;
+		fCurrentSelection = selection;
 		setEnabled(MemoryViewUtil.isValidSelection(selection));
 		
 		DebugPlugin.getDefault().addDebugEventListener(this);
@@ -263,7 +263,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		
 		// update enablement state based on selection from Debug View
 		setEnabled(MemoryViewUtil.isValidSelection(selection));
-		currentSelection = selection;
+		fCurrentSelection = selection;
 	}
 
 	/* (non-Javadoc)
@@ -288,9 +288,9 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 				srcDT = ((IDebugElement)src).getDebugTarget();
 			}
 			
-			if (currentSelection instanceof IStructuredSelection)
+			if (fCurrentSelection instanceof IStructuredSelection)
 			{
-				Object elem = ((IStructuredSelection)currentSelection).getFirstElement();
+				Object elem = ((IStructuredSelection)fCurrentSelection).getFirstElement();
 				if (elem instanceof IDebugElement)
 				{
 					selectionDT = ((IDebugElement)elem).getDebugTarget();
@@ -367,7 +367,10 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 	}
 	
 	protected void dispose() {
+		
+		// remove listeners
 		DebugPlugin.getDefault().removeDebugEventListener(this);
+		DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 	}
 	
 	private void addDefaultRenderings(IMemoryBlock memoryBlock)

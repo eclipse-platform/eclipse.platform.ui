@@ -48,7 +48,7 @@ public class AddMemoryRenderingAction extends AddMemoryBlockAction {
 		// pop up dialog and ask what renderings to create
 		Shell shell = DebugUIPlugin.getShell();
 		
-		IDebugElement elem = getDebugElement(currentSelection);
+		IDebugElement elem = getDebugElement(fCurrentSelection);
 		
 		if (elem != null)
 		{	

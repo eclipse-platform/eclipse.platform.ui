@@ -58,7 +58,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 	private Hashtable fTabFolderForMemoryBlock = new Hashtable();
 	private Hashtable fMemoryBlockFromTabFolder = new Hashtable();
 
-	private IAction fAddMemoryBlockAction;
+	private AddMemoryRenderingAction fAddMemoryRenderingAction;
 
 	private IAction fRemoveMemoryRenderingAction;
 	private ViewPaneRenderingMgr fRenderingMgr;
@@ -1022,6 +1022,8 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 	public void dispose() {
 		super.dispose();
 		
+		fAddMemoryRenderingAction.dispose();
+		
 		fTabFolderForMemoryBlock.clear();
 		fTabFolderForMemoryBlock = null;
 		
@@ -1042,9 +1044,9 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 	public IAction[] getActions() {
 		ArrayList actions = new ArrayList();
 		
-		if (fAddMemoryBlockAction == null)
-			fAddMemoryBlockAction = new AddMemoryRenderingAction(this);
-		actions.add(fAddMemoryBlockAction);
+		if (fAddMemoryRenderingAction == null)
+			fAddMemoryRenderingAction = new AddMemoryRenderingAction(this);
+		actions.add(fAddMemoryRenderingAction);
 		
 		if (fRemoveMemoryRenderingAction == null)
 			fRemoveMemoryRenderingAction = new RemoveMemoryRenderingAction(this);

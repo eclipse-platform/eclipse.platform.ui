@@ -287,9 +287,9 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 	}
 	
 	public void dispose() {
-		
+	    getSite().getPage().removePartListener(fPartListener);
+	    
 		Enumeration enumeration = fViewPanes.elements();
-		
 		while (enumeration.hasMoreElements())
 		{
 			Object element = enumeration.nextElement();

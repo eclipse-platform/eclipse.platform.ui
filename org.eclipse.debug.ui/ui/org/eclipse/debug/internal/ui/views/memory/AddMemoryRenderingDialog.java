@@ -247,7 +247,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 				AddMemoryBlockAction action = new AddMemoryBlockAction(fViewPane, false);
 				action.run();
 				populateDialog(memoryBlock, fViewer, action.getLastMemoryBlock());
-				
+				action.dispose();
 			}}; 
 		
 		addNew.addMouseListener(fMouseListener);
