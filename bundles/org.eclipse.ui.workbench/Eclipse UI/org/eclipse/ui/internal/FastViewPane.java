@@ -190,8 +190,10 @@ public class FastViewPane {
 				
 				Point loc = DragUtil.getEventLoc(event);
 				
-				Rectangle bounds = DragUtil.getDisplayBounds(clientComposite); 
-				bounds = Geometry.getExtrudedEdge(bounds, size + SASH_SIZE, side);
+				Rectangle bounds = DragUtil.getDisplayBounds(clientComposite);
+				if (site.getState() != IStackPresentationSite.STATE_MAXIMIZED) {
+					bounds = Geometry.getExtrudedEdge(bounds, size + SASH_SIZE, side);
+				}
 				
 				if (!bounds.contains(loc)) {
 					site.setState(IStackPresentationSite.STATE_MINIMIZED);
