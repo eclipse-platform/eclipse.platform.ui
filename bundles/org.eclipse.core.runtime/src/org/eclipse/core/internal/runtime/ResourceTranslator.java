@@ -28,7 +28,7 @@ public class ResourceTranslator {
 		String key = ix == -1 ? s : s.substring(0, ix);
 		String dflt = ix == -1 ? s : s.substring(ix + 1);
 
-		if (resourceBundle == null) {
+		if (resourceBundle == null && bundle != null) {
 			try {
 				resourceBundle = getResourceBundle(bundle);
 			} catch (MissingResourceException e) {
