@@ -74,8 +74,8 @@ final class Persistence {
 	final static String PACKAGE_FULL = PACKAGE_PREFIX + '.' + PACKAGE_BASE;
 	private final static String SHIFT = "Shift"; //$NON-NLS-1$
 
-	private final static String STROKE_SEPARATOR = " "; //$NON-NLS-1$
 	final static String TAG_ACTIVE_KEY_CONFIGURATION = "activeKeyConfiguration"; //$NON-NLS-1$
+	final static String TAG_ALLOW_IN_DIALOGS = "allowInDialogs"; //$NON-NLS-1$
 	final static String TAG_CATEGORY = "category"; //$NON-NLS-1$	
 	final static String TAG_CATEGORY_ID = "categoryId"; //$NON-NLS-1$
 	final static String TAG_COMMAND = "command"; //$NON-NLS-1$	
@@ -538,6 +538,7 @@ final class Persistence {
 			try {
 				keySequence = KeySequence.getInstance(keySequenceAsString);
 			} catch (ParseException eParse) {
+			    // Let the key sequence stay as null.
 			}
 		// TODO deprecated start
 		else {
@@ -569,6 +570,9 @@ final class Persistence {
 		if (pluginIdOverride == null && pluginId == null)
 			pluginId = memento.getString("plugin"); //$NON-NLS-1$ 
 		// TODO deprecated end
+		
+		String allowInDialogsString = memento.getString(TAG_ALLOW_IN_DIALOGS);
+		boolean allowInDialogs = ("true".equals(allowInDialogsString)); //$NON-NLS-1$
 
 		return new KeySequenceBindingDefinition(
 			contextId,
@@ -577,7 +581,8 @@ final class Persistence {
 			keySequence,
 			locale,
 			platform,
-			pluginId);
+			pluginId,
+			allowInDialogs);
 	}
 
 	static List readKeySequenceBindingDefinitions(
@@ -892,5 +897,6 @@ final class Persistence {
 	}
 
 	private Persistence() {
+	    // Do nothing
 	}
 }

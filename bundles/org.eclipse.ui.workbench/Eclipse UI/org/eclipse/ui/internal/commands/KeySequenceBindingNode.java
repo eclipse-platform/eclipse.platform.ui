@@ -13,11 +13,9 @@ package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -38,6 +36,7 @@ final class KeySequenceBindingNode {
 		String pluginCommandIdInInheritedKeyConfiguration;
 		String preferenceCommandIdInFirstKeyConfiguration;
 		String preferenceCommandIdInInheritedKeyConfiguration;
+		boolean allowedInDialogs;
 
 		public int compareTo(Object object) {
 			Assignment castedObject = (Assignment) object;
@@ -101,12 +100,21 @@ final class KeySequenceBindingNode {
 											castedObject
 												.pluginCommandIdInFirstKeyConfiguration);
 
-									if (compareTo == 0)
+									if (compareTo == 0) {
 										compareTo =
 											Util.compare(
 												pluginCommandIdInInheritedKeyConfiguration,
 												castedObject
 													.pluginCommandIdInInheritedKeyConfiguration);
+										
+										if (compareTo == 0) {
+										    if (allowedInDialogs && !castedObject.allowedInDialogs) {
+										        compareTo = 1;
+										    } else if (!allowedInDialogs && castedObject.allowedInDialogs) {
+										        compareTo = -1;
+										    }
+										}
+									}
 								}
 							}
 						}
@@ -152,6 +160,7 @@ final class KeySequenceBindingNode {
 				== castedObject.pluginCommandIdInFirstKeyConfiguration;
 			equals &= pluginCommandIdInInheritedKeyConfiguration
 				== castedObject.pluginCommandIdInInheritedKeyConfiguration;
+			equals &= (allowedInDialogs == castedObject.allowedInDialogs);
 			return equals;
 		}
 	}
@@ -164,7 +173,8 @@ final class KeySequenceBindingNode {
 		int rank,
 		String platform,
 		String locale,
-		String commandId) {
+		String commandId,
+		boolean allowInDialogs) {
 		List keyStrokes = keySequence.getKeyStrokes();
 		Map root = keyStrokeNodeByKeyStrokeMap;
 		KeySequenceBindingNode keySequenceBindingNode = null;
@@ -189,7 +199,8 @@ final class KeySequenceBindingNode {
 				rank,
 				platform,
 				locale,
-				commandId);
+				commandId,
+				allowInDialogs);
 	}
 
 	static Map find(Map keyStrokeNodeByKeyStrokeMap, KeySequence keySequence) {
@@ -285,12 +296,14 @@ final class KeySequenceBindingNode {
 							while (iterator5.hasNext()) {
 								Map.Entry entry5 = (Map.Entry) iterator5.next();
 								String locale = (String) entry5.getKey();
-								Set commandIds = (Set) entry5.getValue();
-								Iterator iterator6 = commandIds.iterator();
+								Map commandIdMap = (Map) entry5.getValue();
+								Iterator iterator6 = commandIdMap.entrySet().iterator();
 
 								while (iterator6.hasNext()) {
-									String commandId =
-										(String) iterator6.next();
+									Map.Entry entry6 = (Map.Entry) iterator6.next();
+									String commandId = (String) entry6.getKey();
+									Boolean allowInDialogs = (Boolean) entry6.getValue();
+									
 									keySequenceBindingDefinitions.add(
 										new KeySequenceBindingDefinition(
 											contextId,
@@ -299,7 +312,8 @@ final class KeySequenceBindingNode {
 											keySequence,
 											locale,
 											platform,
-											null));
+											null,
+											allowInDialogs.booleanValue()));
 								}
 							}
 						}
@@ -488,6 +502,7 @@ final class KeySequenceBindingNode {
 	private Match match = null;
 
 	private KeySequenceBindingNode() {
+	    // Do nothing
 	}
 
 	private void add(
@@ -496,7 +511,8 @@ final class KeySequenceBindingNode {
 		int rank,
 		String platform,
 		String locale,
-		String commandId) {
+		String commandId,
+		boolean allowInDialogs) {
 		Map keyConfigurationMap = (Map) contextMap.get(contextId);
 
 		if (keyConfigurationMap == null) {
@@ -525,14 +541,14 @@ final class KeySequenceBindingNode {
 			platformMap.put(platform, localeMap);
 		}
 
-		Set commandIds = (Set) localeMap.get(locale);
+		Map commandIdMap = (Map) localeMap.get(locale);
 
-		if (commandIds == null) {
-			commandIds = new HashSet();
-			localeMap.put(locale, commandIds);
+		if (commandIdMap == null) {
+			commandIdMap = new HashMap();
+			localeMap.put(locale, commandIdMap);
 		}
 
-		commandIds.add(commandId);
+		commandIdMap.put(commandId, allowInDialogs ? Boolean.TRUE : Boolean.FALSE);
 	}
 
 	private void remove(
@@ -595,12 +611,12 @@ final class KeySequenceBindingNode {
 					Map localeMap = (Map) platformMap.get(platform);
 
 					if (localeMap != null) {
-						Set commandIds = (Set) localeMap.get(locale);
+						Map commandIdMap = (Map) localeMap.get(locale);
 
-						if (commandIds != null) {
-							commandIds.remove(commandId);
+						if (commandIdMap != null) {
+							commandIdMap.remove(commandId);
 
-							if (commandIds.isEmpty()) {
+							if (commandIdMap.isEmpty()) {
 								localeMap.remove(locale);
 
 								if (localeMap.isEmpty()) {
@@ -668,21 +684,25 @@ final class KeySequenceBindingNode {
 											locale < locales.length
 												&& locale < 0xFF;
 											locale++) {
-											Set commandIds =
-												(Set) localeMap.get(
+											Map commandIdMap =
+												(Map) localeMap.get(
 													locales[locale]);
 
-											if (commandIds != null) {
+											if (commandIdMap != null) {
 												String commandId =
-													commandIds.size() == 1
-														? (String) commandIds
-															.iterator()
+													commandIdMap.size() == 1
+														? (String) commandIdMap
+															.keySet().iterator()
 															.next()
 														: null;
 
 												if (assignment == null)
 													assignment =
 														new Assignment();
+												
+												if (commandIdMap.size() == 1) {
+												    assignment.allowedInDialogs = ((Boolean) commandIdMap.values().iterator().next()).booleanValue();
+												}
 
 												switch (rank) {
 													case 0 :
@@ -790,16 +810,16 @@ final class KeySequenceBindingNode {
 												&& locale < 0xFF
 												&& match == null;
 											locale++) {
-											Set commandIds =
-												(Set) localeMap.get(
+											Map commandIdMap =
+												(Map) localeMap.get(
 													locales[locale]);
 
-											if (commandIds != null)
+											if (commandIdMap != null)
 												match =
 													new Match(
-														commandIds.size() == 1
-															? (String) commandIds
-																.iterator()
+														commandIdMap.size() == 1
+															? (String) commandIdMap
+																.keySet().iterator()
 																.next()
 															: null,
 														(context << 24)
