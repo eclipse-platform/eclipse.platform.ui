@@ -119,14 +119,25 @@ class TableContentProvider implements IStructuredContentProvider {
 		 * a single incremental update to the viewer (ie: adds or removes a few items)
 		 */ 
 		public IStatus runInUIThread(IProgressMonitor monitor) {
-			if (!PlatformUI.isWorkbenchRunning()) {
-				controlExists = false;
-				return Status.CANCEL_STATUS;
+			
+			// If we can't get the lock, terminate without blocking the UI thread.
+			if (lock.getDepth() > 0) {
+				lastWorked = 0;
+				return Status.OK_STATUS;
 			}
-
-			controlExists = controlExists();
-			if (controlExists) {
-				lastWorked = updateViewer();
+			
+			lock.acquire();			
+			try {
+				if (!PlatformUI.isWorkbenchRunning()) {
+					controlExists = false;
+				} else {	
+					controlExists = controlExists();
+					if (controlExists) {
+						lastWorked = updateViewer();
+					}
+				}
+			} finally {
+				lock.release();
 			}
 			
 			return Status.OK_STATUS;
@@ -341,24 +352,24 @@ class TableContentProvider implements IStructuredContentProvider {
 				//Assert.isTrue(Display.getCurrent() == null);
 				
 				try {
+
+					int totalWork;
 					lock.acquire();
-					
-					if (sortOrder != queues.getSorter()) {
-						queues.setComparator(sortOrder);
-					}
-					int totalWork = totalWork();
-					
 					try {
+						totalWork = totalWork();
+						if (sortOrder != queues.getSorter()) {
+							queues.setComparator(sortOrder);
+						}
+					
 						SubProgressMonitor sub = new SubProgressMonitor(monitor, 0);
 						queues.refreshQueues(sub);
-						
-						uiJob.schedule();
-						// Wait for the current update job to complete before scheduling another
-						uiJob.join();
-						
 					} finally {
 						lock.release();
 					}
+					
+					uiJob.schedule();
+					// Wait for the current update job to complete before scheduling another
+					uiJob.join();					
 					
 					// Estimate how much of the remaining work we'll be doing in this update,
 					// and update the progress bar appropriately.
@@ -376,10 +387,7 @@ class TableContentProvider implements IStructuredContentProvider {
 			}
 		} finally {			
 			enableUpdatesJob.schedule();
-			try {
-				enableUpdatesJob.join();
-			} catch (InterruptedException e1) {
-			}
+			enableUpdatesJob.join();
 			
 			monitor.done();
 		}	
@@ -393,12 +401,25 @@ class TableContentProvider implements IStructuredContentProvider {
 	 * apply the pending changes.
 	 */
 	private int updateViewer() {
-		if (getViewer().getSorter() != null) {
-			getViewer().setSorter(null);
+		
+		int result;
+		
+		// Note that this method is only called when we have the lock so acquiring it here
+		// does nothing... but we re-acquire it anyway in case future refactoring causes
+		// this to be called when we don't own the lock.
+		lock.acquire();
+		try {
+			if (getViewer().getSorter() != null) {
+				getViewer().setSorter(null);
+			}
+			
+			resync();
+			
+			result = queues.nextUpdate();
+		} finally {
+			lock.release();
 		}
 		
-		resync();
-		
-		return queues.nextUpdate();
+		return result;
 	}	
 }
