@@ -254,9 +254,9 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 						monitor.beginTask(null, 100);
 						try {
 							EclipseSynchronizer.getInstance().beginOperation(Policy.subMonitorFor(monitor, 5));
-							job.run(Policy.subMonitorFor(monitor, 85));
+							job.run(Policy.subMonitorFor(monitor, 25));
 						} finally {
-							EclipseSynchronizer.getInstance().endOperation(Policy.subMonitorFor(monitor, 8));
+							EclipseSynchronizer.getInstance().endOperation(Policy.subMonitorFor(monitor, 70));
 						}
 					} catch(CVSException e) {
 						error[0] = e; 
