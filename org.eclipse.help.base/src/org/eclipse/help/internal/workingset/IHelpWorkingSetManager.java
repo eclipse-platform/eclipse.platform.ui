@@ -1,0 +1,69 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.help.internal.workingset;
+
+import java.io.*;
+
+/**
+ * The working  set manager stores help working sets. Working sets are persisted
+ * whenever one is added or removed.
+ * @since 3.0
+ */
+public interface IHelpWorkingSetManager {
+
+	public AdaptableTocsArray getRoot();
+	/**
+	 * Adds a new working set and saves it
+	 */
+	public void addWorkingSet(WorkingSet workingSet) throws IOException;
+
+	/**
+	 * Creates a new working set
+	 */
+	public WorkingSet createWorkingSet(
+		String name,
+		AdaptableHelpResource[] elements);
+
+	/**
+	 * Returns a working set by name
+	 * 
+	 */
+	public WorkingSet getWorkingSet(String name);
+
+	/**
+	 * Implements IWorkingSetManager.
+	 * 
+	 * @see org.eclipse.ui.IWorkingSetManager#getWorkingSets()
+	 */
+	public WorkingSet[] getWorkingSets();
+
+	/**
+	 * Removes specified working set
+	 */
+	public void removeWorkingSet(WorkingSet workingSet);
+
+	/**
+	 * Persists all working sets. Should only be called by the webapp working
+	 * set dialog.
+	 * 
+	 * @param changedWorkingSet the working set that has changed
+	 */
+	public void workingSetChanged(WorkingSet changedWorkingSet)
+		throws IOException;
+
+	public AdaptableToc getAdaptableToc(String href);
+
+	public AdaptableTopic getAdaptableTopic(String id);
+
+	public String getCurrentWorkingSet();
+
+	public void setCurrentWorkingSet(String workingSet);
+}
