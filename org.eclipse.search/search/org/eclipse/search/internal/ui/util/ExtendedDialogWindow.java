@@ -50,7 +50,6 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	
 	// The number of long running operation executed from the dialog.	
 	private long fActiveRunningOperations;
-	private boolean fOperationCancelableState;
 
 	// The progress monitor
 	private ProgressMonitorPart fProgressMonitorPart;
@@ -205,7 +204,6 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	 */
 	protected synchronized Object aboutToStart(boolean enableCancelButton) {
 		HashMap savedState= null;
-		fOperationCancelableState= enableCancelButton;
 		Shell shell= getShell();
 		if (shell != null) {
 			Display d= shell.getDisplay();
