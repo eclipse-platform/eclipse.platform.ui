@@ -38,5 +38,5 @@ public interface IInformationProviderExtension {
 	 * @see IInformationProvider#getInformation(ITextViewer, IRegion)
 	 * @see org.eclipse.jface.text.ITextViewer
 	 */
-	Object getElement(ITextViewer textViewer, IRegion subject);
+	Object getInformation2(ITextViewer textViewer, IRegion subject);
 }

@@ -294,9 +294,10 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		if (subject == null)
 			return;
 
-		if (provider instanceof IInformationProviderExtension)
-			setInformation(((IInformationProviderExtension)provider).getElement(fTextViewer, subject), computeArea(subject));
-		else
+		if (provider instanceof IInformationProviderExtension) {
+			IInformationProviderExtension extension= (IInformationProviderExtension) provider;
+			setInformation(extension.getInformation2(fTextViewer, subject), computeArea(subject));
+		} else
 			setInformation(provider.getInformation(fTextViewer, subject), computeArea(subject));
 	}
 	

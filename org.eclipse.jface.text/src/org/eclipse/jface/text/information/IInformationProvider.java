@@ -48,7 +48,7 @@ public interface IInformationProvider {
 	 * @param subject the text region constituting the information subject
 	 * @return the information about the subject
 	 * @see IInformationPresenter
+	 * @deprecated As of 2.1, replaced by {@link IInformationProviderExtension#getInformation2(ITextViewer, IRegion)}
 	 */
 	String getInformation(ITextViewer textViewer, IRegion subject);
 }
-
