@@ -70,6 +70,8 @@ public abstract class PartPane extends LayoutPart
 		public Sash top;
 		public Sash bottom;
 	}
+	// TODO: PaneContribution is no longer required... track down the remaining uses of PaneContribution and remove them
+	
 	/* package */ class PaneContribution extends ContributionItem {
 		public boolean isDynamic() {
 			return true;
@@ -78,12 +80,12 @@ public abstract class PartPane extends LayoutPart
 			// add view context menu items
 			final boolean isFastView = (page.getActiveFastView() == partReference);			
 			//addRestoreMenuItem(menu);
-			addMoveMenuItem(menu);
-			addSizeMenuItem(menu);			
+			//addMoveMenuItem(menu);
+			//addSizeMenuItem(menu);			
 			addFastViewMenuItem(menu,isFastView);
 			//addMaximizeMenuItem(menu);		
 			addPinEditorItem(menu);						
-			addCloseMenuItem(menu);	
+			//addCloseMenuItem(menu);	
 			addCloseOthersItem(menu);			
 		}
 	}
@@ -160,7 +162,7 @@ protected void addMoveMenuItem (Menu menu) {
 	
 }
 
-protected void addSizeMenuItem (Menu menu) {
+public void addSizeMenuItem (Menu menu) {
 	//Add size menu
 	MenuItem item = new MenuItem(menu, SWT.CASCADE);
 	item.setText(WorkbenchMessages.getString("PartPane.size")); //$NON-NLS-1$
@@ -450,12 +452,15 @@ protected abstract Sashes findSashes();
  * the keyboard to move the specified sash
  */
 protected void moveSash(final Sash sash) {
+	moveSash(sash, this);
+}
+
+public static void moveSash(final Sash sash, final LayoutPart toGetFocusWhenDone) {
 	final KeyListener listener = new KeyAdapter() {
 		public void keyPressed(KeyEvent e) {
 			if (e.character == SWT.ESC || e.character == '\r') {
-				IWorkbenchPart part = partReference.getPart(true);
-				if(part != null)
-					part.setFocus();
+				if(toGetFocusWhenDone != null)
+					toGetFocusWhenDone.setFocus();
 			}
 		}
 	};
@@ -470,7 +475,9 @@ protected void moveSash(final Sash sash) {
 		}
 	});
 	sash.setFocus();
+	
 }
+
 /**
  * Add a menu item to the Size Menu
  */
