@@ -371,7 +371,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		} catch (CoreException e) {
 			fail("0.0", e);
 		}
-		HistoryStore store = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
+		IHistoryStore store = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
 		// keep orignal
 		IWorkspaceDescription originalDescription = getWorkspace().getDescription();
 		// get another copy for changes
@@ -424,7 +424,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 			fail("2.0", e);
 		}
 		// Run 'clean' - should cause 5 of 8 states to be removed
-		store.clean();
+		store.clean(getMonitor());
 		// Restore max. number of states/file to 500
 		description.setMaxFileStates(500);
 		try {
@@ -486,7 +486,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		} catch (InterruptedException e) {
 			fail("4.1", e);
 		}
-		store.clean();
+		store.clean(getMonitor());
 		// change policies - restore to original values
 		// 1 day
 		description.setFileStateLongevity(1000 * 3600 * 24);
@@ -555,7 +555,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 			fail("5.0", e);
 		}
 		// Make sure we have ITERATIONS number of states
-		assertTrue("5.1", states.length == ITERATIONS);
+		assertEquals("5.1", ITERATIONS, states.length);
 		// Make sure that each of these states really exists in the filesystem.
 		for (int i = 0; i < states.length; i++)
 			assertTrue("5.2." + i, states[i].exists());
@@ -593,14 +593,14 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		contents = "A file with some other contents in testGetContents.";
 		ensureExistsInWorkspace(secondValidFile, contents);
 
-		HistoryStore historyStore = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
+		IHistoryStore historyStore = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
 
 		/* Simulated date -- Increment once for each edition added. */
 		long myLong = 0L;
 
 		/* Add multiple editions for one file location. */
 		for (int i = 0; i < ITERATIONS; i++, myLong++) {
-			historyStore.addState(file.getFullPath(), file.getLocation(), myLong, true);
+			historyStore.addState(file.getFullPath(), file.getLocation().toFile(), myLong, true);
 			try {
 				contents = "This file has some contents in testGetContents.";
 				InputStream is = new ByteArrayInputStream(contents.getBytes());
@@ -615,7 +615,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 
 		/* Add multiple editions for second file location. */
 		for (int i = 0; i < ITERATIONS; i++, myLong++) {
-			historyStore.addState(secondValidFile.getFullPath(), secondValidFile.getLocation(), myLong, true);
+			historyStore.addState(secondValidFile.getFullPath(), secondValidFile.getLocation().toFile(), myLong, true);
 			try {
 				contents = "A file with some other contents in testGetContents.";
 				InputStream is = new ByteArrayInputStream(contents.getBytes());
@@ -633,7 +633,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		DataInputStream inFile = null;
 		DataInputStream inContents = null;
 		IFileState[] stateArray = null;
-		stateArray = historyStore.getStates(file.getFullPath());
+		stateArray = historyStore.getStates(file.getFullPath(), getMonitor());
 		for (int i = 0; i < stateArray.length; i++, myLong++) {
 			inFile = new DataInputStream(file.getContents(false));
 			try {
@@ -645,7 +645,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 				fail("3.2." + i + " No match, files are not identical.");
 		}
 
-		stateArray = historyStore.getStates(secondValidFile.getFullPath());
+		stateArray = historyStore.getStates(secondValidFile.getFullPath(), getMonitor());
 		for (int i = 0; i < stateArray.length; i++, myLong++) {
 			inFile = new DataInputStream(secondValidFile.getContents(false));
 			try {
@@ -1754,12 +1754,13 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 	 * another test (if this file has the same name).
 	 */
 	private void wipeHistoryStore() {
-		HistoryStore store = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
+		IHistoryStore store = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
 		// Remove all the entries from the history store index.  Note that
 		// this does not cause the history store states to be removed.
-		store.removeAll();
+		store.remove(Path.ROOT, getMonitor());
 		// Now make sure all the states are really removed.
-		org.eclipse.core.internal.localstore.TestingSupport.removeGarbage(store);
+		if (store instanceof HistoryStore)
+			org.eclipse.core.internal.localstore.TestingSupport.removeGarbage((HistoryStore) store);
 	}
 
 	/*
@@ -1828,7 +1829,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		log.addLogListener(verifier);
 
 		// Test with null source and/or destination
-		HistoryStore store = ((Resource) file).getLocalManager().getHistoryStore();
+		IHistoryStore store = ((Resource) file).getLocalManager().getHistoryStore();
 		verifier.addExpected(IResourceStatus.INTERNAL_ERROR);
 		store.copyHistory(null, null);
 		try {
@@ -1931,7 +1932,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		}
 
 		// Test a valid copy of a folder
-		HistoryStore store = ((Resource) file).getLocalManager().getHistoryStore();
+		IHistoryStore store = ((Resource) file).getLocalManager().getHistoryStore();
 		store.copyHistory(folder.getFullPath(), folder2.getFullPath());
 		IFileState[] states = null;
 		try {
@@ -1993,7 +1994,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		}
 
 		// Test a valid copy of a folder
-		HistoryStore store = ((Resource) file).getLocalManager().getHistoryStore();
+		IHistoryStore store = ((Resource) file).getLocalManager().getHistoryStore();
 		store.copyHistory(project.getFullPath(), project2.getFullPath());
 		IFileState[] states = null;
 		try {
@@ -2019,7 +2020,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		IFile file = folder.getFile("myfile.txt");
 		IFile destinationFile = destinationFolder.getFile(file.getName());
 
-		HistoryStore store = ((Resource) getWorkspace().getRoot()).getLocalManager().getHistoryStore();
+		IHistoryStore store = ((Resource) getWorkspace().getRoot()).getLocalManager().getHistoryStore();
 
 		// location of the data on disk
 		IPath path = getRandomLocation();
@@ -2030,14 +2031,14 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		}
 
 		// add the data to the history store
-		store.addState(file.getFullPath(), path, System.currentTimeMillis(), true);
-		IFileState[] states = store.getStates(file.getFullPath());
+		store.addState(file.getFullPath(), path.toFile(), System.currentTimeMillis(), true);
+		IFileState[] states = store.getStates(file.getFullPath(), getMonitor());
 		assertEquals("2.0", 1, states.length);
 
 		// copy the data
 		store.copyHistory(folder.getFullPath(), destinationFolder.getFullPath());
 
-		states = store.getStates(destinationFile.getFullPath());
+		states = store.getStates(destinationFile.getFullPath(), getMonitor());
 		assertEquals("3.0", 1, states.length);
 
 		// Cleanup
@@ -2111,18 +2112,21 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		}
 	}
 
-	protected void addToHistory(String message, HistoryStore store, IPath path, InputStream input) {
+	protected void addToHistory(String message, IHistoryStore store, IPath path, InputStream input) {
 		IPath localLocation = getRandomLocation();
 		try {
 			createFileInFileSystem(localLocation, input);
 		} catch (IOException e) {
 			fail(message, e);
 		}
-		store.addState(path, localLocation, System.currentTimeMillis(), true);
+		store.addState(path, localLocation.toFile(), System.currentTimeMillis(), true);
 	}
 
 	public void testAccept() {
-		HistoryStore store = ((Resource) getWorkspace().getRoot()).getLocalManager().getHistoryStore();
+		IHistoryStore hs = ((Resource) getWorkspace().getRoot()).getLocalManager().getHistoryStore();
+		if (!(hs instanceof HistoryStore))
+			return;
+		HistoryStore store = (HistoryStore) hs;
 		IPath a = new Path("/a");
 		IPath ab = a.append("b");
 		IPath abc = ab.append("c");
@@ -2196,9 +2200,9 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 
 		// Create more states for this file with the same path
 		// and last modification time
-		HistoryStore historyStore = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
-		historyStore.addState(file.getFullPath(), file.getLocation(), lastModifiedTime, false);
-		historyStore.addState(file.getFullPath(), file.getLocation(), lastModifiedTime, false);
+		IHistoryStore historyStore = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
+		historyStore.addState(file.getFullPath(), file.getLocation().toFile(), lastModifiedTime, false);
+		historyStore.addState(file.getFullPath(), file.getLocation().toFile(), lastModifiedTime, false);
 		try {
 			states = file.getHistory(getMonitor());
 		} catch (CoreException e) {
@@ -2300,13 +2304,13 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 
 		// Create more states for this file with the same path
 		// and last modification time
-		HistoryStore historyStore = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
+		IHistoryStore historyStore = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
 		checkErrorListener myListener = new checkErrorListener();
 		String message = Policy.bind("history.tooManySimUpdates", file.getFullPath().toString(), new Date(lastModifiedTime).toString()); //$NON-NLS-1$
 		myListener.setExpectedMessage(message);
 		ResourcesPlugin.getPlugin().getLog().addLogListener(myListener);
 		for (int i = 0; i <= Byte.MAX_VALUE; i++) {
-			historyStore.addState(file.getFullPath(), file.getLocation(), lastModifiedTime, false);
+			historyStore.addState(file.getFullPath(), file.getLocation().toFile(), lastModifiedTime, false);
 		}
 		// Make sure the we did hit the error message
 		assertTrue("1.3", myListener.hasBeenTriggered());
@@ -2372,9 +2376,9 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		assertEquals("1.2", 1, states.length);
 		long lastModifiedTime = states[0].getModificationTime();
 
-		HistoryStore historyStore = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
+		IHistoryStore historyStore = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
 		for (int i = states.length; i <= Byte.MAX_VALUE; i++) {
-			historyStore.addState(file.getFullPath(), file.getLocation(), lastModifiedTime, false);
+			historyStore.addState(file.getFullPath(), file.getLocation().toFile(), lastModifiedTime, false);
 		}
 		try {
 			states = file.getHistory(getMonitor());
@@ -2440,7 +2444,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 
 		// This should cause all the counts to be shifted and the new state
 		// added at the end.
-		historyStore.addState(file.getFullPath(), file.getLocation(), lastModifiedTime, false);
+		historyStore.addState(file.getFullPath(), file.getLocation().toFile(), lastModifiedTime, false);
 		counters.clear();
 
 		try {
@@ -2511,9 +2515,9 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		assertEquals("1.2", 1, states.length);
 		long lastModifiedTime = states[0].getModificationTime();
 
-		HistoryStore historyStore = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
+		IHistoryStore historyStore = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
 		for (int i = states.length; i <= Byte.MAX_VALUE; i++) {
-			historyStore.addState(file.getFullPath(), file.getLocation(), lastModifiedTime, false);
+			historyStore.addState(file.getFullPath(), file.getLocation().toFile(), lastModifiedTime, false);
 		}
 		try {
 			states = file.getHistory(getMonitor());
@@ -2579,7 +2583,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 
 		// This should cause all the counts to be shifted and the new state
 		// added at the end.
-		historyStore.addState(file.getFullPath(), file.getLocation(), lastModifiedTime, false);
+		historyStore.addState(file.getFullPath(), file.getLocation().toFile(), lastModifiedTime, false);
 		counters.clear();
 
 		try {
@@ -2648,9 +2652,9 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		assertEquals("1.2", 1, states.length);
 		long lastModifiedTime = states[0].getModificationTime();
 
-		HistoryStore historyStore = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
+		IHistoryStore historyStore = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
 		for (int i = states.length; i <= Byte.MAX_VALUE; i++) {
-			historyStore.addState(file.getFullPath(), file.getLocation(), lastModifiedTime, false);
+			historyStore.addState(file.getFullPath(), file.getLocation().toFile(), lastModifiedTime, false);
 		}
 		try {
 			states = file.getHistory(getMonitor());
@@ -2716,7 +2720,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 
 		// This should cause all the counts to be shifted and the new state
 		// added at the end.
-		historyStore.addState(file.getFullPath(), file.getLocation(), lastModifiedTime, false);
+		historyStore.addState(file.getFullPath(), file.getLocation().toFile(), lastModifiedTime, false);
 		counters.clear();
 
 		try {

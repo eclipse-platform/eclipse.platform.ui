@@ -29,13 +29,6 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	}
 
 	/**
-	 * @see IResource#clearHistory(IProgressMonitor)
-	 */
-	public void clearHistory(IProgressMonitor monitor) throws CoreException {
-		getLocalManager().getHistoryStore().removeAll();
-	}
-
-	/**
 	 * @see IResource#delete(boolean, IProgressMonitor)
 	 */
 	public void delete(boolean force, IProgressMonitor monitor) throws CoreException {

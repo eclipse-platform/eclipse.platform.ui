@@ -15,7 +15,6 @@ import java.util.*;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.resources.File;
 import org.eclipse.core.internal.utils.Policy;
-import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -25,7 +24,7 @@ import org.eclipse.core.runtime.*;
 public class FileSystemResourceManager implements ICoreConstants, IManager {
 
 	protected Workspace workspace;
-	protected HistoryStore historyStore;
+	protected IHistoryStore historyStore;
 	protected FileSystemStore localStore;
 
 	public FileSystemResourceManager(Workspace workspace) {
@@ -216,7 +215,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		return getStore().getEncoding(localFile);
 	}
 
-	public HistoryStore getHistoryStore() {
+	public IHistoryStore getHistoryStore() {
 		return historyStore;
 	}
 
@@ -762,17 +761,17 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				}
 			}
 			// add entry to History Store.
-			UniversalUniqueIdentifier uuid = null; // uuid to locate the file on history
+			IFileState state = null; // file we just added to the history
 			if (keepHistory && localFile.exists())
 				//never move to the history store, because then the file is missing if write fails
-				uuid = historyStore.addState(target.getFullPath(), location, lastModified, false);
+				state = historyStore.addState(target.getFullPath(), location.toFile(), lastModified, false);
 			getStore().write(localFile, content, append, monitor);
 			// get the new last modified time and stash in the info
 			lastModified = CoreFileSystemLibrary.getLastModified(locationString);
 			ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
 			updateLocalSync(info, lastModified);
-			if (uuid != null)
-				CoreFileSystemLibrary.copyAttributes(historyStore.getFileFor(uuid).getAbsolutePath(), locationString, false);
+			if (state != null)
+				CoreFileSystemLibrary.copyAttributes(historyStore.getFileFor(state).getAbsolutePath(), locationString, false);
 		} finally {
 			try {
 				content.close();
@@ -798,7 +797,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			if (file.isDirectory()) {
 				String message = Policy.bind("localstore.resourceExists", target.getFullPath().toString()); //$NON-NLS-1$
 				throw new ResourceException(IResourceStatus.EXISTS_LOCAL, target.getFullPath(), message, null);
-			} 
+			}
 			if (file.exists()) {
 				String message = Policy.bind("localstore.fileExists", target.getFullPath().toString()); //$NON-NLS-1$
 				throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);

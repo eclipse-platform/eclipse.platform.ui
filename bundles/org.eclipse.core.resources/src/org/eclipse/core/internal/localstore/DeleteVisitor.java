@@ -61,7 +61,7 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 				return;
 			}
 			if (shouldKeepHistory) {
-				HistoryStore store = target.getLocalManager().getHistoryStore();
+				IHistoryStore store = target.getLocalManager().getHistoryStore();
 				store.addState(target.getFullPath(), localFile, node.getLastModified(), true);
 			}
 			delete(node.existsInWorkspace() ? target : null, localFile);

@@ -70,7 +70,7 @@ class ResourceTree implements IResourceTree {
 			if (path == null || !path.toFile().exists())
 				return;
 			long lastModified = internalComputeTimestamp(path.toOSString());
-			((Resource) file).getLocalManager().getHistoryStore().addState(file.getFullPath(), path, lastModified, false);
+			((Resource) file).getLocalManager().getHistoryStore().addState(file.getFullPath(), path.toFile(), lastModified, false);
 		} finally {
 			lock.release();
 		}

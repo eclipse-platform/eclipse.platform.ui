@@ -11,7 +11,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
-import org.eclipse.core.internal.localstore.HistoryStore;
+import org.eclipse.core.internal.localstore.IHistoryStore;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.IFileState;
@@ -23,10 +23,10 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 public class FileState extends PlatformObject implements IFileState {
 	protected long lastModified;
 	protected UniversalUniqueIdentifier uuid;
-	protected HistoryStore store;
+	protected IHistoryStore store;
 	protected IPath fullPath;
 
-	public FileState(HistoryStore store, IPath fullPath, long lastModified, UniversalUniqueIdentifier uuid) {
+	public FileState(IHistoryStore store, IPath fullPath, long lastModified, UniversalUniqueIdentifier uuid) {
 		this.store = store;
 		this.lastModified = lastModified;
 		this.uuid = uuid;

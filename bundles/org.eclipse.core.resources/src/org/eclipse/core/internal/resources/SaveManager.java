@@ -1293,7 +1293,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			String message = Policy.bind("resources.saving.0"); //$NON-NLS-1$
-			monitor.beginTask(message, 6);
+			monitor.beginTask(message, 7);
 			message = Policy.bind("resources.saveWarnings"); //$NON-NLS-1$
 			MultiStatus warnings = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.WARNING, message, null);
 			ISchedulingRule rule = project != null ? (IResource) project : workspace.getRoot();
@@ -1326,7 +1326,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 							//remove unused files
 							removeUnusedSafeTables();
 							removeUnusedTreeFiles();
-							workspace.getFileSystemManager().getHistoryStore().clean();
+							workspace.getFileSystemManager().getHistoryStore().clean(Policy.subMonitorFor(monitor, 1));
 							// write out all metainfo (e.g., workspace/project descriptions) 
 							saveMetaInfo(workspace, warnings, Policy.subMonitorFor(monitor, 1));
 							break;

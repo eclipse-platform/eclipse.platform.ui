@@ -278,8 +278,7 @@ public class File extends Resource implements IFile {
 	 * @see IFile#getHistory(IProgressMonitor)
 	 */
 	public IFileState[] getHistory(IProgressMonitor monitor) throws CoreException {
-		// FIXME: monitor is not used
-		return getLocalManager().getHistoryStore().getStates(getFullPath());
+		return getLocalManager().getHistoryStore().getStates(getFullPath(), monitor);
 	}
 
 	/* (non-Javadoc)

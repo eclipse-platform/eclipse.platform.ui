@@ -21,7 +21,7 @@ import org.eclipse.core.internal.utils.Convert;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
-public class HistoryStore {
+public class HistoryStore implements IHistoryStore {
 	protected Workspace workspace;
 	protected BlobStore blobStore;
 	IndexedStoreWrapper store;
@@ -196,17 +196,9 @@ public class HistoryStore {
 	}
 
 	/**
-	 * Add an entry to the history store for the specified resource. Return the
-	 * UUID of the blob if it was successfully added, and <code>null</code>
-	 * otherwise.
-	 *
-	 * @param key Full workspace path to resource being logged.
-	 * @param localFile Local file system file handle
-	 * @param lastModified Timestamp for resource.
-	 *
-	 * @return the uuid of the blob or <code>null</code> otherwise
+	 * @see IHistoryStore#addState(IPath, File, long, boolean)
 	 */
-	public UniversalUniqueIdentifier addState(IPath key, java.io.File localFile, long lastModified, boolean moveContents) {
+	public IFileState addState(IPath key, java.io.File localFile, long lastModified, boolean moveContents) {
 		if (Policy.DEBUG_HISTORY)
 			System.out.println("History: Adding state for key: " + key + ", file: " + localFile + ", timestamp: " + lastModified + ", size: " + localFile.length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		if (!isValid(localFile))
@@ -219,26 +211,13 @@ public class HistoryStore {
 		} catch (CoreException e) {
 			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 		}
-		return uuid;
+		return new FileState(this, key, lastModified, uuid);
 	}
 
 	/**
-	 * Add an entry to the history store for the specified resource.
-	 *
-	 * @param key Full workspace path to resource being logged.
-	 * @param localLocation Local file system path to resource.
-	 * @param lastModified Timestamp for resource.
-	 *
-	 * @return true if state added to history store and false otherwise.
+	 * @see IHistoryStore#clean(IProgressMonitor)
 	 */
-	public UniversalUniqueIdentifier addState(IPath key, IPath localLocation, long lastModified, boolean moveContents) {
-		return addState(key, localLocation.toFile(), lastModified, moveContents);
-	}
-
-	/**
-	 * Clean this store applying the current policies.
-	 */
-	public void clean() {
+	public void clean(IProgressMonitor monitor) {
 		long start = System.currentTimeMillis();
 		int entryCount = 0;
 		IWorkspaceDescription description = workspace.internalGetDescription();
@@ -301,13 +280,7 @@ public class HistoryStore {
 	}
 
 	/**
-	 * Copies the history store information from the source path given destination path.
-	 * Note that destination may already have some history store information. Also note
-	 * that this is a DEPTH_INFINITY operation. That is, history will be copied  for partial
-	 * matches of the source path.
-	 * 
-	 * @param source the path containing the original copy of the history store information
-	 * @param destination the target path for the copy
+	 * @see IHistoryStore#copyHistory(IPath, IPath)
 	 * @since  2.1
 	 */
 	public void copyHistory(final IPath source, final IPath destination) {
@@ -403,25 +376,17 @@ public class HistoryStore {
 	}
 
 	/**
-	 * Verifies existence of specified resource in the history store.
-	 *
-	 * @param target File state to be verified.
-	 * @return True if file state exists.
-	 *
+	 * @see IHistoryStore#exists(IFileState)
 	 */
 	public boolean exists(IFileState target) {
 		return blobStore.fileFor(((FileState) target).getUUID()).exists();
 	}
 
 	/**
-	 * Returns an input stream containing the file contents of the specified state.
-	 * The user is responsible for closing the returned stream.
-	 *
-	 * @param target File state for which an input stream is requested.
-	 * @return Input stream for requested file state.
+	 * @see IHistoryStore#getContents(IFileState)
 	 */
 	public InputStream getContents(IFileState target) throws CoreException {
-		if (!exists(target)) {
+		if (!target.exists()) {
 			String message = Policy.bind("history.notValid"); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 		}
@@ -429,10 +394,9 @@ public class HistoryStore {
 	}
 
 	/**
-	 * Returns an array of all states available for the specified resource path or
-	 * an empty array if none.
+	 * @see IHistoryStore#getStates(IPath, IProgressMonitor)
 	 */
-	public IFileState[] getStates(final IPath key) {
+	public IFileState[] getStates(final IPath key, IProgressMonitor monitor) {
 		final int max = workspace.internalGetDescription().getMaxFileStates();
 		final List result = new ArrayList(max);
 		IHistoryStoreVisitor visitor = new IHistoryStoreVisitor() {
@@ -452,10 +416,15 @@ public class HistoryStore {
 	}
 
 	/**
-	 * Verifies whether the specified file at the specified file system location
-	 * meets current size policies.
+	 * Return a boolean value indicating whether or not the given file
+	 * should be added to the history store based on the current history
+	 * store policies.
+	 * 
+	 * @param localFile the file to check
+	 * @return <code>true</code> if this file should be added to the history
+	 * 	store and <code>false</code> otherwise
 	 */
-	public boolean isValid(java.io.File localFile) {
+	private boolean isValid(java.io.File localFile) {
 		WorkspaceDescription description = workspace.internalGetDescription();
 		boolean result = localFile.length() <= description.getMaxFileStateSize();
 		if (Policy.DEBUG_HISTORY && !result)
@@ -490,9 +459,9 @@ public class HistoryStore {
 	}
 
 	/**
-	 * Removes all file states from this store.
+	 * Remove all the entries in the store.
 	 */
-	public void removeAll() {
+	private void removeAll() {
 		// TODO: should implement a method with a better performance
 		try {
 			IndexCursor cursor = store.getCursor();
@@ -510,10 +479,17 @@ public class HistoryStore {
 		}
 	}
 
-	public void removeAll(IResource resource) {
+	/**
+	 * @see IHistoryStore#remove(IPath, IProgressMonitor)
+	 */
+	public void remove(IPath path, IProgressMonitor monitor) {
+		if (Path.ROOT.equals(path)) {
+			removeAll();
+			return;
+		}
 		try {
 			IndexCursor cursor = store.getCursor();
-			byte[] key = Convert.toUTF8(resource.getFullPath().toString());
+			byte[] key = Convert.toUTF8(path.toString());
 			cursor.find(key);
 			while (cursor.keyMatches(key)) {
 				HistoryStoreEntry entry = HistoryStoreEntry.create(store, cursor);
@@ -522,8 +498,8 @@ public class HistoryStore {
 			cursor.close();
 			store.commit();
 		} catch (Exception e) {
-			String message = Policy.bind("history.problemsRemoving", resource.getFullPath().toString()); //$NON-NLS-1$
-			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, resource.getFullPath(), message, e);
+			String message = Policy.bind("history.problemsRemoving", path.toString()); //$NON-NLS-1$
+			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, path, message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
 	}
@@ -564,12 +540,18 @@ public class HistoryStore {
 			remove((HistoryStoreEntry) entries.get(i));
 	}
 
+	/**
+	 * @see IManager#shutdown(IProgressMonitor)
+	 */
 	public void shutdown(IProgressMonitor monitor) {
 		if (store == null)
 			return;
 		store.close();
 	}
 
+	/**
+	 * @see IManager#startup(IProgressMonitor)
+	 */
 	public void startup(IProgressMonitor monitor) {
 		// do nothing
 	}
@@ -584,21 +566,10 @@ public class HistoryStore {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 
-	public File getFileFor(UniversalUniqueIdentifier uuid) {
-		return blobStore.fileFor(uuid);
-	}
-
 	/**
-	 * Returns the paths of all files with entries in this history store at or below
-	 * the given workspace resource path to the given depth.
-	 * 
-	 * @param path full workspace path to resource
-	 * @param depth depth limit: one of <code>DEPTH_ZERO</code>, <code>DEPTH_ONE</code>
-	 *    or <code>DEPTH_INFINITE</code>
-	 * @return the set of paths for files that have at least one history entry
-	 *   (element type: <code>IPath</code>)
+	 * @see IHistoryStore#allFiles(IPath, int, IProgressMonitor)
 	 */
-	public Set allFiles(IPath path, final int depth) {
+	public Set allFiles(IPath path, final int depth, IProgressMonitor monitor) {
 		final Set allFiles = new HashSet();
 		final int pathLength = path.segmentCount();
 		class PathCollector implements IHistoryStoreVisitor {
@@ -625,5 +596,12 @@ public class HistoryStore {
 		}
 		accept(path, new PathCollector(), true);
 		return allFiles;
+	}
+
+	/**
+	 * @see IHistoryStore#getFileFor(IFileState)
+	 */
+	public File getFileFor(IFileState state) {
+		return state instanceof FileState ? blobStore.fileFor(((FileState) state).getUUID()) : null;
 	}
 }

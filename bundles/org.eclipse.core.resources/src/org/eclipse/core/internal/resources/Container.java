@@ -11,7 +11,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.*;
-import org.eclipse.core.internal.localstore.HistoryStore;
+import org.eclipse.core.internal.localstore.IHistoryStore;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.utils.WrappedRuntimeException;
 import org.eclipse.core.internal.watson.*;
@@ -214,21 +214,21 @@ public abstract class Container extends Resource implements IContainer {
 	 * @see IContainer#findDeletedMembersWithHistory(int, IProgressMonitor)
 	 */
 	public IFile[] findDeletedMembersWithHistory(int depth, IProgressMonitor monitor) throws CoreException {
-		HistoryStore historyStore = getLocalManager().getHistoryStore();
+		IHistoryStore historyStore = getLocalManager().getHistoryStore();
 		IPath basePath = getFullPath();
 		IWorkspaceRoot root = getWorkspace().getRoot();
 		Set deletedFiles = new HashSet();
 
 		if (depth == IResource.DEPTH_ZERO) {
 			// this folder might have been a file in a past life
-			if (historyStore.getStates(basePath).length > 0) {
+			if (historyStore.getStates(basePath, monitor).length > 0) {
 				IFile file = root.getFile(basePath);
 				if (!file.exists()) {
 					deletedFiles.add(file);
 				}
 			}
 		} else {
-			Set allFilePaths = historyStore.allFiles(basePath, depth);
+			Set allFilePaths = historyStore.allFiles(basePath, depth, monitor);
 			// convert IPaths to IFiles keeping only files that no longer exist
 			for (Iterator it = allFilePaths.iterator(); it.hasNext();) {
 				IPath filePath = (IPath) it.next();

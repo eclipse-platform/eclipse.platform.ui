@@ -12,11 +12,13 @@ package org.eclipse.core.tests.resources.perf;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.localstore.HistoryStore;
 import org.eclipse.core.internal.localstore.TestingSupport;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.tests.harness.CorePerformanceTest;
 
 public class BenchLocalStoreTest extends CorePerformanceTest {
@@ -128,12 +130,13 @@ public class BenchLocalStoreTest extends CorePerformanceTest {
 	 * another test (if this file has the same name).
 	 */
 	private void wipeHistoryStore() {
-		HistoryStore store = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
+		IHistoryStore store = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
 		// Remove all the entries from the history store index.  Note that
 		// this does not cause the history store states to be removed.
-		store.removeAll();
+		store.remove(Path.ROOT, getMonitor());
 		// Now make sure all the states are really removed.
-		TestingSupport.removeGarbage(store);
+		if (store instanceof HistoryStore)
+			TestingSupport.removeGarbage((HistoryStore) store);
 	}
 
 }

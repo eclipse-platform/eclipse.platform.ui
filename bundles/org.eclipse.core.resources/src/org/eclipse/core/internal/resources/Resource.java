@@ -427,7 +427,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#clearHistory(IProgressMonitor)
 	 */
 	public void clearHistory(IProgressMonitor monitor) throws CoreException {
-		getLocalManager().getHistoryStore().removeAll(this);
+		getLocalManager().getHistoryStore().remove(getFullPath(), monitor);
 	}
 
 	/*
