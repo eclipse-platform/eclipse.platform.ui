@@ -70,6 +70,9 @@ A participant is a generic component that provides access to creating a page and
                <documentation>
                   The name of the participant. This will be shown in the UI.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="persistent">
@@ -107,20 +110,20 @@ A participant is a generic component that provides access to creating a page and
          &lt;p&gt;&lt;pre&gt;
 
 &lt;extension
-	point=&quot;org.eclipse.team.ui.synchronizeParticipants&quot;&gt;
-	&lt;participant
-		name=&quot;CVS Workspace&quot;
-		icon=&quot;icons/full/cview16/server.gif&quot;         
-		class=&quot;org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant&quot;
-		id=&quot;org.eclipse.team.cvs.ui.cvsworkspace-participant&quot;&gt;
-	&lt;/participant&gt;
-	&lt;participant
-		name=&quot;CVS Merge&quot;
-		icon=&quot;icons/full/obj16/prjversions_rep.gif&quot;
-		class=&quot;org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant&quot;
-		type=&quot;dynamic&quot;
-		id=&quot;org.eclipse.team.cvs.ui.cvsmerge-participant&quot;&gt;
-	&lt;/participant&gt;
+ point=&quot;org.eclipse.team.ui.synchronizeParticipants&quot;&gt;
+ &lt;participant
+  name=&quot;CVS Workspace&quot;
+  icon=&quot;icons/full/cview16/server.gif&quot;         
+  class=&quot;org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant&quot;
+  id=&quot;org.eclipse.team.cvs.ui.cvsworkspace-participant&quot;&gt;
+ &lt;/participant&gt;
+ &lt;participant
+  name=&quot;CVS Merge&quot;
+  icon=&quot;icons/full/obj16/prjversions_rep.gif&quot;
+  class=&quot;org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant&quot;
+  type=&quot;dynamic&quot;
+  id=&quot;org.eclipse.team.cvs.ui.cvsmerge-participant&quot;&gt;
+ &lt;/participant&gt;
 &lt;/extension&gt;
 
 &lt;/pre&gt;&lt;/p&gt;

@@ -70,7 +70,7 @@
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  This extension point is internal use only
                </documentation>
             </annotation>
          </attribute>

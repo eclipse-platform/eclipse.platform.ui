@@ -199,7 +199,7 @@ public class LogListener extends CommandOutputListener {
     }
 
     protected void handleInvalidFileName(ICVSRepositoryLocation location, String badFilePath) {
-        CVSProviderPlugin.log(IStatus.WARNING, "Invalid file path '" + badFilePath + "' received from " + location.toString(), null);
+        CVSProviderPlugin.log(IStatus.WARNING, "Invalid file path '" + badFilePath + "' received from " + location.toString(), null); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /** branch tags have odd number of segments or have
