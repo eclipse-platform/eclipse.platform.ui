@@ -13,7 +13,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 /**
  * Note: This interface is yet experimental.
  * <p>
- * A launch configuration delegate performs lanuching for a
+ * A launch configuration delegate performs launching for a
  * specific type of launch configuration. A launch configuration
  * delegate is defined by the <code>delegate</code> attribute
  * of a <code>launchConfigurationType</code> extension.
@@ -43,7 +43,7 @@ public interface ILaunchConfigurationDelegate {
 	 * @param mode the mode in which to launch, one of the mode constants
 	 *  defined by this <code>ILaunchConfiguration</code> -
 	 *  <code>RUN</code> or <code>DEBUG</code>.
-	 * @return the resuling launch object, or <code>null</code> if the
+	 * @return the resulting launch object, or <code>null</code> if the
 	 *  launch is not completed.
 	 * @exception CoreException if launching fails 
 	 */
@@ -65,12 +65,11 @@ public interface ILaunchConfigurationDelegate {
 	
 	/**
 	 * Initializes the given configuration's attributes to default settings
-	 * based on the the specified object.
+	 * based on the specified object.
 	 * 
 	 * @param configuration a working copy configuration in which to
 	 *  set default attributes for launching
 	 * @param object a context from which to initialize settings
 	 */
 	public void initializeDefaults(ILaunchConfigurationWorkingCopy configuration, Object object);	
-
 }

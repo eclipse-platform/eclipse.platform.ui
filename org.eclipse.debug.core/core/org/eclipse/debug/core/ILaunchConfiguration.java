@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
  * <p>
  * A launch configuration may be shared in a repository via
  * standard VCM mechanisms, or may be stored locally, essentially
- * making the lanuch configuration private for a single user.
+ * making the launch configuration private for a single user.
  * Thus, a launch configuration may stored as a file as a resource in the
  * workspace (shared), or as a file in a project's working location
  * (private).
@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.IPath;
  * </p>
  * <p>
  * A launch configuration is modified by obtaining a working copy
- * of a launch configuraiton, modifying the working copy, and then
+ * of a launch configuration, modifying the working copy, and then
  * saving the working copy.
  * </p>
  * <p>
@@ -68,11 +68,11 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * 
 	 * @param mode the mode in which to launch, one of the mode constants
 	 *  defined by this interface - <code>RUN</code> or <code>DEBUG</code>.
-	 * @return the resuling launch object, or <code>null</code> if the
+	 * @return the resulting launch object, or <code>null</code> if the
 	 *  launch is not completed.
 	 * @exception CoreException if this method fails. Reasons include:<ul>
 	 * <li>unable to instantiate the underlying launch configuration delegate</li>
-	 * <li>the lanuch fails</code>
+	 * <li>the launch fails</code>
 	 * </ul>
 	 */
 	public ILaunch launch(String mode) throws CoreException;
@@ -105,7 +105,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *  specified mode
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li>An exception occurrs while initializing the contents of the
+	 * <li>An exception occurs while initializing the contents of the
 	 * working copy from this configurations underlying storage.</li>
 	 * </ul>
 	 */
@@ -178,7 +178,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @return the value or the default value if no value was found.
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li>An exception occurrs while retrieving the attribute from
+	 * <li>An exception occurs while retrieving the attribute from
 	 *  underlying storage.</li>
 	 * <li>An attribute with the given name exists, but does not
 	 *  have an integer value</li>
@@ -196,12 +196,12 @@ public interface ILaunchConfiguration extends IAdaptable {
 	public IProject getProject();
 	
 	/**
-	 * Returns the type of this lanuch configuration.
+	 * Returns the type of this launch configuration.
 	 * 
-	 * @return the type of this lanuch configuration
+	 * @return the type of this launch configuration
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li>An exception occurrs while initializing the contents of the
+	 * <li>An exception occurs while initializing the contents of the
 	 * working copy from this configurations underlying storage.</li>
 	 * </ul>
 	 * @see ILaunchConfigurationType
@@ -223,7 +223,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @return a working copy of this launch configuration
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li>An exception occurrs while initializing the contents of the
+	 * <li>An exception occurs while initializing the contents of the
 	 * working copy from this configurations underlying storage.</li>
 	 * </ul>
 	 */
@@ -240,12 +240,12 @@ public interface ILaunchConfiguration extends IAdaptable {
 	
 	/**
 	 * Deletes this launch configuration. This configuration's underlying
-	 * storgate is deleted. Has no effect if this configuration
+	 * storage is deleted. Has no effect if this configuration
 	 * does not exist.
 	 * 
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li>An exception occurrs while deleting this configuration's
+	 * <li>An exception occurs while deleting this configuration's
 	 *  underlying storage.</li>
 	 * </ul>
 	 */

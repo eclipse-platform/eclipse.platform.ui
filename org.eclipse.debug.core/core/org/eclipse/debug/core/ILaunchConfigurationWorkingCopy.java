@@ -48,7 +48,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * Has no effect if this configuration does not need saving.
 	 * Creates the underlying file if not yet created.
 	 * 
-	 * @exception CoreException if an exception occurrs while 
+	 * @exception CoreException if an exception occurs while 
 	 *  writing this configuration to its underlying file.
 	 */
 	public ILaunchConfiguration doSave() throws CoreException;
@@ -82,7 +82,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	/**
 	 * Initializes this configuration's attributes to default settings
 	 * for the specified object. This responsibility is handled
-	 * by the lanuch configuration delegate.
+	 * by the launch configuration delegate.
 	 * 
 	 * @param object a context from which to initialize settings in
 	 *  this launch configuration
