@@ -485,7 +485,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 		};
 	}
 
-	public void handleEvent(LifecycleEvent event) throws CoreException {
+	public void handleEvent(LifecycleEvent event) {
 		/*
 		 * We can't determine the end state for most operations because they may
 		 * fail after we receive pre-notification.  In these cases, we remember
@@ -549,14 +549,14 @@ public class AliasManager implements IManager, ILifecycleListener {
 	/* (non-Javadoc)
 	 * @see IManager#shutdown(IProgressMonitor)
 	 */
-	public void shutdown(IProgressMonitor monitor) throws CoreException {
+	public void shutdown(IProgressMonitor monitor) {
 		// do nothing
 	}
 
 	/* (non-Javadoc)
 	 * @see IManager#startup(IProgressMonitor)
 	 */
-	public void startup(IProgressMonitor monitor) throws CoreException {
+	public void startup(IProgressMonitor monitor) {
 		workspace.addLifecycleListener(this);
 		buildLocationsMap();
 		buildAliasedProjectsSet();

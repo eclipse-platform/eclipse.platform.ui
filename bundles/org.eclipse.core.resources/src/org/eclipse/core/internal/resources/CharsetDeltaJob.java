@@ -45,7 +45,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 	private final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
 	private Queue work = new Queue();
 
-	private Workspace workspace;
+	Workspace workspace;
 
 	private static final int CHARSET_DELTA_DELAY = 500;
 

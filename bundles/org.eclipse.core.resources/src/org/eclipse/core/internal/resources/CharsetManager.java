@@ -251,7 +251,7 @@ public class CharsetManager implements IManager {
 			charsetListener.shutdown();
 	}
 
-	public void startup(IProgressMonitor monitor) throws CoreException {
+	public void startup(IProgressMonitor monitor) {
 		job = new CharsetManagerJob();
 		listener = new Listener();
 		workspace.addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);

@@ -118,9 +118,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * to be automatically done at the end of the operation in which
 	 * the build occurs.
 	 */
-	protected void aboutToBuild() throws CoreException {
-		//fire a POST_CHANGE first to ensure everyone is up to date
-		//before firing PRE_BUILD
+	protected void aboutToBuild() {
+		//fire a POST_CHANGE first to ensure everyone is up to date before firing PRE_BUILD
 		broadcastChanges(IResourceChangeEvent.POST_CHANGE, true);
 		broadcastChanges(IResourceChangeEvent.PRE_BUILD, false);
 	}

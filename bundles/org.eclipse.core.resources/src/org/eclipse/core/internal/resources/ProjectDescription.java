@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -148,10 +148,10 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * Returns the link location for the given resource name. Returns null if
 	 * no such link exists.
 	 */
-	public IPath getLinkLocation(String name) {
+	public IPath getLinkLocation(String aName) {
 		if (linkDescriptions == null)
 			return null;
-		LinkDescription desc = (LinkDescription) linkDescriptions.get(name);
+		LinkDescription desc = (LinkDescription) linkDescriptions.get(aName);
 		return desc == null ? null : desc.getLocation();
 	}
 

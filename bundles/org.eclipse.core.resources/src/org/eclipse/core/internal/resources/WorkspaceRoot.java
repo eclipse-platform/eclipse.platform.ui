@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -128,10 +128,10 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 		//first check our project cache
 		Project result = (Project) projectTable.get(name);
 		if (result == null) {
-			IPath path = new Path(null, name).makeAbsolute();
+			IPath projectPath = new Path(null, name).makeAbsolute();
 			String message = "Path for project must have only one segment."; //$NON-NLS-1$
-			Assert.isLegal(path.segmentCount() == ICoreConstants.PROJECT_SEGMENT_LENGTH, message);
-			result = new Project(path, workspace);
+			Assert.isLegal(projectPath.segmentCount() == ICoreConstants.PROJECT_SEGMENT_LENGTH, message);
+			result = new Project(projectPath, workspace);
 			projectTable.put(name, result);
 		}
 		return result;
@@ -212,7 +212,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 * @deprecated Replaced by {@link #setDefaultCharset(String, IProgressMonitor)} which 
 	 * 	is a workspace operation and reports changes in resource deltas.
 	 */
-	public void setDefaultCharset(String charset) throws CoreException {
+	public void setDefaultCharset(String charset) {
 		// directly change the Resource plugin's preference for encoding
 		Preferences resourcesPreferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 		if (charset != null)
@@ -224,7 +224,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	/**
 	 * @see IResource#setLocalTimeStamp(long)
 	 */
-	public long setLocalTimeStamp(long value) throws CoreException {
+	public long setLocalTimeStamp(long value) {
 		if (value < 0)
 			throw new IllegalArgumentException("Illegal time stamp: " + value); //$NON-NLS-1$
 		//can't set local time for root
@@ -232,6 +232,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	}
 
 	/**
+	 * @deprecated
 	 * @see IResource#setReadOnly(boolean)
 	 */
 	public void setReadOnly(boolean readonly) {
@@ -249,7 +250,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	/**
 	 * @see IResource#touch(IProgressMonitor)
 	 */
-	public void touch(IProgressMonitor monitor) throws CoreException {
+	public void touch(IProgressMonitor monitor) {
 		// do nothing for the workspace root
 	}
 }

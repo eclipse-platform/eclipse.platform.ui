@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -294,10 +294,10 @@ public class NatureManager implements ILifecycleListener, IManager {
 	public String findNatureForBuilder(String builderID) {
 		if (buildersToNatures == null) {
 			buildersToNatures = new HashMap(10);
-			IProjectNatureDescriptor[] descriptors = getNatureDescriptors();
-			for (int i = 0; i < descriptors.length; i++) {
-				String natureId = descriptors[i].getNatureId();
-				String[] builders = ((ProjectNatureDescriptor) descriptors[i]).getBuilderIds();
+			IProjectNatureDescriptor[] descs = getNatureDescriptors();
+			for (int i = 0; i < descs.length; i++) {
+				String natureId = descs[i].getNatureId();
+				String[] builders = ((ProjectNatureDescriptor) descs[i]).getBuilderIds();
 				for (int j = 0; j < builders.length; j++) {
 					//FIXME: how to handle multiple natures specifying same builder
 					buildersToNatures.put(builders[j], natureId);
@@ -468,7 +468,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 		natureEnablements.put(project, enablements);
 	}
 
-	public void shutdown(IProgressMonitor monitor) throws CoreException {
+	public void shutdown(IProgressMonitor monitor) {
 		// do nothing
 	}
 
@@ -494,7 +494,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 		return (String[]) result.toArray(new String[result.size()]);
 	}
 
-	public void startup(IProgressMonitor monitor) throws CoreException {
+	public void startup(IProgressMonitor monitor) {
 		((Workspace) ResourcesPlugin.getWorkspace()).addLifecycleListener(this);
 	}
 

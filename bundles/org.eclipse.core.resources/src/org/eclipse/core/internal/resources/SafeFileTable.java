@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,11 +49,11 @@ public class SafeFileTable {
 		return result == null ? null : new Path(result);
 	}
 
-	public void map(IPath file, IPath location) {
-		if (location == null)
+	public void map(IPath file, IPath aLocation) {
+		if (aLocation == null)
 			table.remove(file);
 		else
-			table.setProperty(file.toOSString(), location.toOSString());
+			table.setProperty(file.toOSString(), aLocation.toOSString());
 	}
 
 	public void restore() throws CoreException {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,21 +36,21 @@ public class MarkerTypeDefinition {
 			// supertype
 			final String elementName = element.getName();
 			if (elementName.equalsIgnoreCase("super")) { //$NON-NLS-1$
-				String type = element.getAttribute("type"); //$NON-NLS-1$
-				if (type != null) {
+				String aType = element.getAttribute("type"); //$NON-NLS-1$
+				if (aType != null) {
 					if (types == null)
 						types = new HashSet(3);
-					types.add(type);
+					types.add(aType);
 				}
 			}
 
 			// attribute name
 			if (elementName.equalsIgnoreCase("attribute")) { //$NON-NLS-1$
-				String name = element.getAttribute("name"); //$NON-NLS-1$
-				if (name != null) {
+				String aName = element.getAttribute("name"); //$NON-NLS-1$
+				if (aName != null) {
 					if (attributes == null)
 						attributes = new HashSet(3);
-					attributes.add(name);
+					attributes.add(aName);
 				}
 			}
 
