@@ -61,7 +61,6 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
      * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
      */
     public void handleDebugEvents(DebugEvent[] events) {
-        IBreakpointManager manager = getBreakpointManager();
         for (int i = 0; i < events.length; i++) {
             DebugEvent event= events[i];
             Object source= event.getSource();
@@ -70,14 +69,6 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
                 IThread thread = (IThread) source;
                 IDebugTarget suspendee = (IDebugTarget) thread.getAdapter(IDebugTarget.class);
                 if (fTarget.equals(suspendee)) {
-                    IBreakpoint[] breakpoints = thread.getBreakpoints();
-                    for (int j = 0; j < breakpoints.length; j++) {
-                        if (breakpoints[j] == fBreakpoint) {
-                            if (fAutoSkip) {
-                                manager.setEnabled(true);
-                            }
-                        }
-                    }
                     // cleanup if the breakpoint was hit or not
                     cancel();
                 }
@@ -85,9 +76,6 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
                 if (source.equals(fTarget)) {
                     // Clean up if the debug target terminates without
                     // hitting the breakpoint.
-                    if (fAutoSkip) {
-                        manager.setEnabled(true);
-                    }
                     cancel();
                 }
             }
@@ -116,8 +104,12 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
      */
     public void cancel() {
         getDebugPlugin().removeDebugEventListener(this);
-        getBreakpointManager().removeBreakpointManagerListener(this);
+        IBreakpointManager manager = getBreakpointManager();
+        manager.removeBreakpointManagerListener(this);
         fTarget.breakpointRemoved(fBreakpoint, null);
+        if (fAutoSkip) {
+            manager.setEnabled(true);
+        }
     }
 
     /* (non-Javadoc)
