@@ -68,36 +68,5 @@ public abstract class IActionDelegateTest extends AbstractTestCase {
 	 * Returns the action delegate.  Subclasses should override.
 	 */
 	protected abstract MockActionDelegate getDelegate() throws Throwable;
-
-	/**
-	 * Runs an action identified by a label.
-	 * This is a sub-optimal way to find actions, but it works when
-	 * the id of an action contribution has no relationship to the
-	 * xml action id, as it is in 0.9.
-	 */
-	protected void runAction(IMenuManager mgr, String label) {
-		IContributionItem [] items = mgr.getItems();
-		for (int nX = 0; nX < items.length; nX ++) {
-			IContributionItem item = items[nX];
-			if (item instanceof SubContributionItem)
-				item = ((SubContributionItem)item).getInnerItem();
-			if (item instanceof ActionContributionItem) {
-				IAction action = ((ActionContributionItem)item).getAction();
-				if (label.equals(action.getText())) {
-					action.run();
-					return;
-				}
-			}
-		}
-		fail("Unable to find action: " + label);
-	}
-		
-	/**
-	 * Runs an action contribution.
-	 */
-	protected void runAction(IContributionItem item) {
-		assert(item instanceof ActionContributionItem);
-		((ActionContributionItem)item).getAction().run();
-	}
 }
 

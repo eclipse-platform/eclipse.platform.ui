@@ -1,7 +1,6 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.test.harness.util.ActionUtil;
 
 
 /**
@@ -51,9 +50,7 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 	 * @see IActionDelegateTest#runAction()
 	 */
 	protected void runAction() throws Throwable {
-		WorkbenchWindow win = (WorkbenchWindow)fWindow;
-		IMenuManager mgr = win.getMenuManager();
-		runAction(mgr, "Mock Action");
+		ActionUtil.runActionWithLabel(this, fWindow, "Mock Action");
 	}
 
 	/**

@@ -1,7 +1,7 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.ui.test.harness.util.ActionUtil;
 
 
 /**
@@ -37,7 +37,7 @@ public class IViewActionDelegateTest extends IActionDelegateTest {
 	protected void runAction() throws Throwable {
 		MockViewPart view = (MockViewPart)fPage.showView(TEST_VIEW_ID);
 		IMenuManager mgr = view.getViewSite().getActionBars().getMenuManager();
-		runAction(mgr, "Mock Action");
+		ActionUtil.runActionWithLabel(this, mgr, "Mock Action");
 	}
 
 	/**
