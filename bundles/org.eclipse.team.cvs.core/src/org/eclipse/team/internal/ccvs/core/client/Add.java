@@ -67,4 +67,23 @@ public class Add extends Command {
 			}
 		}
 	}	
+	/**
+	 * Since the arguments of the add are probably not managed, find a parent of at least
+	 * one argument that is a CVS folder.
+	 * 
+	 * @see Command#getOpenSession(ICVSResource[])
+	 */
+	protected Session getOpenSession(ICVSResource[] arguments) throws CVSException {
+		for (int i = 0; i < arguments.length; i++) {
+			ICVSResource cvsResource = arguments[i];
+			if (cvsResource.isManaged()) {
+				return super.getOpenSession(new ICVSResource[] { cvsResource });
+			} else if (cvsResource.getParent().isCVSFolder()) {
+				return super.getOpenSession(new ICVSResource[] { cvsResource.getParent() });
+			}
+		}
+		// If no approrpiate resource was found, invoke the overriden method and let it fail.
+		return super.getOpenSession(arguments);
+	}
+
 }

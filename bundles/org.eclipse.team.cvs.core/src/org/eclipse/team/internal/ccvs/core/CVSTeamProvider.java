@@ -10,6 +10,12 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
  
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,12 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -44,17 +44,6 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.core.util.PrepareForReplaceVisitor;
-import org.eclipse.team.internal.ccvs.core.util.ReplaceWithBaseVisitor;
-import org.eclipse.team.internal.core.streams.CRLFtoLFInputStream;
-import org.eclipse.team.internal.core.streams.LFtoCRLFInputStream;
-import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Commit;
 import org.eclipse.team.internal.ccvs.core.client.Session;
@@ -67,6 +56,17 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.DiffListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
+import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.util.PrepareForReplaceVisitor;
+import org.eclipse.team.internal.ccvs.core.util.ReplaceWithBaseVisitor;
+import org.eclipse.team.internal.core.streams.CRLFtoLFInputStream;
+import org.eclipse.team.internal.core.streams.LFtoCRLFInputStream;
 
 /**
  * This class acts as both the ITeamNature and the ITeamProvider instances
@@ -202,10 +202,11 @@ public class CVSTeamProvider extends RepositoryProvider {
 			try {		
 				// Auto-add parents if they are not already managed
 				IContainer parent = currentResource.getParent();
-				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(currentResource);
-				while (parent.getType() != IResource.ROOT && parent.getType() != IResource.PROJECT && ! cvsResource.getParent().isManaged()) {
-					folders.add(parent.getProjectRelativePath().toString());
+				ICVSResource cvsParentResource = CVSWorkspaceRoot.getCVSResourceFor(parent);
+				while (parent.getType() != IResource.ROOT && parent.getType() != IResource.PROJECT && ! cvsParentResource.isManaged()) {
+					folders.add(cvsParentResource);
 					parent = parent.getParent();
+					cvsParentResource = cvsParentResource.getParent();
 				}
 					
 				// Auto-add children
@@ -217,7 +218,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 							// Add the resource is its not already managed and it was either
 							// added explicitly (is equal currentResource) or is not ignored
 							if (! mResource.isManaged() && (currentResource.equals(resource) || ! mResource.isIgnored())) {
-								String name = resource.getProjectRelativePath().toString();
 								if (resource.getType() == IResource.FILE) {
 									KSubstOption ksubst = KSubstOption.fromFile((IFile) resource);
 									Set set = (Set) files.get(ksubst);
@@ -225,9 +225,9 @@ public class CVSTeamProvider extends RepositoryProvider {
 										set = new HashSet();
 										files.put(ksubst, set);
 									}
-									set.add(name);
+									set.add(mResource);
 								} else {
-									folders.add(name);
+									folders.add(mResource);
 								}
 							}
 							// Always return true and let the depth determine if children are visited
@@ -248,43 +248,44 @@ public class CVSTeamProvider extends RepositoryProvider {
 		// If an exception occured during the visit, throw it here
 		if (eHolder[0] != null)
 			throw eHolder[0];
-	
-		// XXX Do we need to add the project 
 		
 		// Add the folders, followed by files!
-		IStatus status;
-		Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
-		progress.beginTask(null, 10 + files.size() * 10 + (folders.isEmpty() ? 0 : 10));
+		progress.beginTask(null, files.size() * 10 + (folders.isEmpty() ? 0 : 10));
 		try {
-			// Opening the session takes 10 units of time
-			s.open(Policy.subMonitorFor(progress, 10));
 			if (!folders.isEmpty()) {
-				status = Command.ADD.execute(s,
-					Command.NO_GLOBAL_OPTIONS,
-					Command.NO_LOCAL_OPTIONS,
-					(String[])folders.toArray(new String[folders.size()]),
-					null,
-					Policy.subMonitorFor(progress, 10));
-				if (status.getCode() == CVSStatus.SERVER_ERROR) {
-					throw new CVSServerException(status);
-				}
+				Session.run(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true, new ICVSRunnable() {
+					public void run(IProgressMonitor monitor) throws CVSException {
+						IStatus status = Command.ADD.execute(
+							Command.NO_GLOBAL_OPTIONS,
+							Command.NO_LOCAL_OPTIONS,
+							(ICVSResource[])folders.toArray(new ICVSResource[folders.size()]),
+							null,
+							monitor);
+						if (status.getCode() == CVSStatus.SERVER_ERROR) {
+							throw new CVSServerException(status);
+						}
+					}
+				}, Policy.subMonitorFor(progress, 10));
 			}
 			for (Iterator it = files.entrySet().iterator(); it.hasNext();) {
 				Map.Entry entry = (Map.Entry) it.next();
-				KSubstOption ksubst = (KSubstOption) entry.getKey();
-				Set set = (Set) entry.getValue();
-				status = Command.ADD.execute(s,
-					Command.NO_GLOBAL_OPTIONS,
-					new LocalOption[] { ksubst },
-					(String[])set.toArray(new String[set.size()]),
-					null,
-					Policy.subMonitorFor(progress, 10));
-				if (status.getCode() == CVSStatus.SERVER_ERROR) {
-					throw new CVSServerException(status);
-				}
+				final KSubstOption ksubst = (KSubstOption) entry.getKey();
+				final Set set = (Set) entry.getValue();
+				Session.run(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true, new ICVSRunnable() {
+					public void run(IProgressMonitor monitor) throws CVSException {
+						IStatus status = Command.ADD.execute(
+							Command.NO_GLOBAL_OPTIONS,
+							new LocalOption[] { ksubst },
+							(ICVSResource[])set.toArray(new ICVSResource[set.size()]),
+							null,
+							monitor);
+						if (status.getCode() == CVSStatus.SERVER_ERROR) {
+							throw new CVSServerException(status);
+						}
+					}
+				}, Policy.subMonitorFor(progress, 10));
 			}
 		} finally {
-			s.close();
 			progress.done();
 		}
 	}

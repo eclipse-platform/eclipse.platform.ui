@@ -30,7 +30,7 @@ import org.eclipse.team.internal.core.TeamPlugin;
  * @see LocalFolder
  * @see LocalFile
  */
-abstract class EclipseResource implements ICVSResource {
+abstract class EclipseResource implements ICVSResource, Comparable {
 
 	 // The seperator that must be used when creating CVS resource paths. Never use
 	 // the platform default seperator since it is not compatible with CVS resources.
@@ -240,4 +240,13 @@ abstract class EclipseResource implements ICVSResource {
 	public void unmanage(IProgressMonitor monitor) throws CVSException {
 		EclipseSynchronizer.getInstance().deleteResourceSync(resource);
 	}
+	
+	/*
+	 * @see Comparable#compareTo(Object)
+	 */
+	public int compareTo(Object arg0) {
+		EclipseResource other = (EclipseResource)arg0;
+		return resource.getFullPath().toString().compareTo(other.resource.getFullPath().toString());
+	}
+
 }
