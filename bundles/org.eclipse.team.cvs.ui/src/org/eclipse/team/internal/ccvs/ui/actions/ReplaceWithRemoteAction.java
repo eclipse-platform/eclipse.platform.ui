@@ -6,6 +6,7 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  */
  
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -31,24 +32,21 @@ public class ReplaceWithRemoteAction extends ReplaceWithAction {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
 					// Check if any resource is dirty.
-					IResource[] resources = getSelectedResources();
-					for (int i = 0; i < resources.length; i++) {
-						IResource resource = resources[i];
+					IResource[] candidateResources = getSelectedResources();
+					List targetResources = new ArrayList();
+					for (int i = 0; i < candidateResources.length; i++) {
+						IResource resource = candidateResources[i];
 						CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource.getProject());
-						if (isDirty(resource)) {
-							// Warn the user they have local changes that will be overwritten
-							final Shell shell = getShell();
-							final boolean[] result = new boolean[] { false };
-							shell.getDisplay().syncExec(new Runnable() {
-								public void run() {
-									result[0] = MessageDialog.openQuestion(getShell(), Policy.bind("question"), Policy.bind("localChanges"));
-								}
-							});
-							if (!result[0]) return;
+						if (isDirty(resource) && getConfirmOverwrite()) {
+							if (confirmOverwrite(Policy.bind("ReplaceWithRemoteAction.localChanges", resource.getName()))) {
+								targetResources.add(resource);
+							}
+						} else {
+							targetResources.add(resource);
 						}						
 					}
 					// Do the replace
-					Hashtable table = getProviderMapping();
+					Hashtable table = getProviderMapping((IResource[])targetResources.toArray(new IResource[targetResources.size()]));
 					Set keySet = table.keySet();
 					monitor.beginTask("", keySet.size() * 1000);
 					monitor.setTaskName(Policy.bind("ReplaceWithRemoteAction.replacing"));

@@ -10,6 +10,8 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
@@ -17,13 +19,16 @@ import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.ui.actions.TeamAction;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 
 public abstract class ReplaceWithAction extends TeamAction {
+	private boolean confirmOverwrite = true;
+	
 	/**
 	 * Copied from CVSDecorationRunnable
 	 */
 	protected boolean isDirty(IResource resource) {
-		final CoreException DECORATOR_EXCEPTION = new CoreException(new Status(IStatus.OK, "id", 1, "", null));
+		final CoreException DECORATOR_EXCEPTION = new CoreException(new Status(IStatus.OK, "id", 1, "", null)); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			resource.accept(new IResourceVisitor() {
 				public boolean visit(IResource resource) throws CoreException {
@@ -73,4 +78,47 @@ public abstract class ReplaceWithAction extends TeamAction {
 		}
 		return false;
 	}	
+	
+	/**
+	 * The user is attempting to load a project that already exists in
+	 * the workspace.  Prompt the user to confirm overwrite and return
+	 * their choice.
+	 */
+	protected boolean confirmOverwrite(String msg) throws InterruptedException {
+		if (!confirmOverwrite) {
+			return true;
+		}
+		String title = Policy.bind("ReplaceWithAction.Confirm_Overwrite_3"); //$NON-NLS-1$
+		final MessageDialog dialog = 
+			new MessageDialog(shell, title, null, msg, MessageDialog.QUESTION, 
+				new String[] {
+					IDialogConstants.YES_LABEL, 
+					IDialogConstants.NO_LABEL, 
+					IDialogConstants.YES_TO_ALL_LABEL, 
+					IDialogConstants.CANCEL_LABEL}, 
+				0);
+		// run in syncExec because callback is from an operation,
+		// which is probably not running in the UI thread.
+		shell.getDisplay().syncExec(
+			new Runnable() {
+				public void run() {
+					dialog.open();
+				}
+			});
+		switch (dialog.getReturnCode()) {
+			case 0://Yes
+				return true;
+			case 1://No
+				return false;
+			case 2://Yes to all
+				confirmOverwrite = false; 
+				return true;
+			case 3://Cancel
+			default:
+				throw new InterruptedException();
+		}
+	}
+	protected boolean getConfirmOverwrite() {
+		return confirmOverwrite;
+	}
 }

@@ -268,7 +268,16 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 * @return a hashtable mapping providers to their selected resources
 	 */
 	protected Hashtable getProviderMapping() {
-		IResource[] resources = getSelectedResources();
+		return getProviderMapping(getSelectedResources());
+	}
+	/**
+	 * Convenience method that maps the given resources to their providers.
+	 * The returned Hashtable has keys which are ITeamProviders, and values
+	 * which are Lists of IResources that are shared with that provider.
+	 * 
+	 * @return a hashtable mapping providers to their resources
+	 */
+	protected Hashtable getProviderMapping(IResource[] resources) {
 		Hashtable result = new Hashtable();
 		for (int i = 0; i < resources.length; i++) {
 			ITeamProvider provider = TeamPlugin.getManager().getProvider(resources[i].getProject());
