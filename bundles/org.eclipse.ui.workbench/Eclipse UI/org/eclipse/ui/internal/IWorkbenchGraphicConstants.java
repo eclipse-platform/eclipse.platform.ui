@@ -1,9 +1,14 @@
-package org.eclipse.ui.internal;
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+package org.eclipse.ui.internal;
 
 /**
  * This class defines constants for looking up resources that are available
@@ -17,10 +22,6 @@ public interface IWorkbenchGraphicConstants {
 
 	// toolbar buttons for wizards
 
-	public final static String IMG_CTOOL_NEW_WIZ = "IMG_CTOOL_NEW_WIZ"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_NEW_WIZ_HOVER = "IMG_CTOOL_NEW_WIZ_HOVER"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_NEW_WIZ_DISABLED = "IMG_CTOOL_NEW_WIZ_DIS"; //$NON-NLS-1$
-	
 	public final static String IMG_CTOOL_IMPORT_WIZ = "IMG_CTOOL_IMPORT_WIZ"; //$NON-NLS-1$
 	public final static String IMG_CTOOL_IMPORT_WIZ_HOVER = "IMG_CTOOL_IMPORT_WIZ_HOVER"; //$NON-NLS-1$
 	public final static String IMG_CTOOL_IMPORT_WIZ_DISABLED = "IMG_CTOOL_IMPORT_WIZ_DISABLED"; //$NON-NLS-1$
@@ -54,30 +55,6 @@ public interface IWorkbenchGraphicConstants {
 	public final static String IMG_CTOOL_PRINT_EDIT_HOVER = "IMG_CTOOL_PRINT_EDIT_HOVER" ; //$NON-NLS-1$
 	public final static String IMG_CTOOL_PRINT_EDIT_DISABLED = "IMG_CTOOL_PRINT_EDIT_DISABLED" ; //$NON-NLS-1$
 
-	public final static String IMG_CTOOL_UNDO_EDIT = "IMG_CTOOL_UNDO_EDIT" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_UNDO_EDIT_HOVER = "IMG_CTOOL_UNDO_EDIT_HOVER" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_UNDO_EDIT_DISABLED = "IMG_CTOOL_UNDO_EDIT_DISABLED" ; //$NON-NLS-1$
-
-	public final static String IMG_CTOOL_REDO_EDIT = "IMG_CTOOL_REDO_EDIT" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_REDO_EDIT_HOVER = "IMG_CTOOL_REDO_EDIT_HOVER" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_REDO_EDIT_DISABLED= "IMG_CTOOL_REDO_EDIT_DISABLED" ; //$NON-NLS-1$
-
-	public final static String IMG_CTOOL_CUT_EDIT = "IMG_CTOOL_CUT_EDIT" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_CUT_EDIT_HOVER = "IMG_CTOOL_CUT_EDIT_HOVER" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_CUT_EDIT_DISABLED = "IMG_CTOOL_CUT_EDIT_DISABLED" ; //$NON-NLS-1$
-
-	public final static String IMG_CTOOL_COPY_EDIT = "IMG_CTOOL_COPY_EDIT" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_COPY_EDIT_HOVER = "IMG_CTOOL_COPY_EDIT_HOVER" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_COPY_EDIT_DISABLED = "IMG_CTOOL_COPY_EDIT_DISABLED" ; //$NON-NLS-1$
-
-	public final static String IMG_CTOOL_DELETE_EDIT = "IMG_CTOOL_DELETE_EDIT" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_DELETE_EDIT_HOVER = "IMG_CTOOL_DELETE_EDIT_HOVER" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_DELETE_EDIT_DISABLED = "IMG_CTOOL_DELETE_EDIT_DISABLED" ; //$NON-NLS-1$
-
-	public final static String IMG_CTOOL_PASTE_EDIT = "IMG_CTOOL_PASTE_EDIT" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_PASTE_EDIT_HOVER = "IMG_CTOOL_PASTE_EDIT_HOVER" ; //$NON-NLS-1$
-	public final static String IMG_CTOOL_PASTE_EDIT_DISABLED= "IMG_CTOOL_PASTE_EDIT_DISABLED" ; //$NON-NLS-1$
-
 	public final static String IMG_CTOOL_SEARCH_SRC = "IMG_CTOOL_SEARCH_SRC" ; //$NON-NLS-1$
 	public final static String IMG_CTOOL_SEARCH_SRC_HOVER = "IMG_CTOOL_SEARCH_SRC_HOVER" ; //$NON-NLS-1$
 	public final static String IMG_CTOOL_SEARCH_SRC_DISABLED = "IMG_CTOOL_SEARCH_SRC_DISABLED" ; //$NON-NLS-1$
@@ -85,14 +62,6 @@ public interface IWorkbenchGraphicConstants {
 	public final static String IMG_CTOOL_REFRESH_NAV = "IMG_CTOOL_REFRESH_NAV"; //$NON-NLS-1$
 	public final static String IMG_CTOOL_REFRESH_NAV_HOVER = "IMG_CTOOL_REFRESH_NAV_HOVER"; //$NON-NLS-1$
 	public final static String IMG_CTOOL_REFRESH_NAV_DISABLED = "IMG_CTOOL_REFRESH_NAV_DISABLED"; //$NON-NLS-1$
-
-	public final static String IMG_CTOOL_FORWARD_NAV = "IMG_CTOOL_FORWARD_NAV"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_FORWARD_NAV_HOVER = "IMG_CTOOL_FORWARD_NAV_HOVER"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_FORWARD_NAV_DISABLED = "IMG_CTOOL_FORWARD_NAV_DISABLED"; //$NON-NLS-1$
-
-	public final static String IMG_CTOOL_BACKWARD_NAV = "IMG_CTOOL_BACKWARD_NAV"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_BACKWARD_NAV_HOVER = "IMG_CTOOL_BACKWARD_NAV_HOVER"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_BACKWARD_NAV_DISABLED = "IMG_CTOOL_BACKWARD_NAV_DISABLED"; //$NON-NLS-1$
 
 	public final static String IMG_CTOOL_STOP_NAV = "IMG_CTOOL_STOP_NAV"; //$NON-NLS-1$
 	public final static String IMG_CTOOL_STOP_NAV_HOVER = "IMG_CTOOL_STOP_NAV_HOVER"; //$NON-NLS-1$

@@ -1,26 +1,35 @@
+/************************************************************************
+Copyright (c) 2002, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.actions;
 
-/**********************************************************************
-Copyright (c) 2002 IBM Corp. and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
-Contributors:
-**********************************************************************/
 import java.util.ArrayList;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.MultiStepWizardDialog;
 import org.eclipse.ui.internal.dialogs.NewProjectWizard;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.internal.registry.Capability;
+import org.eclipse.ui.internal.registry.CapabilityRegistry;
+import org.eclipse.ui.internal.registry.ICategory;
 
 /**
  * Standard action for launching the new project creation
@@ -74,9 +83,10 @@ public class CreateProjectAction extends Action {
 		super(WorkbenchMessages.getString("CreateProjectAction.text")); //$NON-NLS-1$
 		Assert.isNotNull(window);
 		this.window = window;
-		setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ));
-		setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_HOVER));
-		setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_DISABLED));
+		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
+		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
+		setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
+		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
 		setToolTipText(WorkbenchMessages.getString("CreateProjectAction.toolTip"));	 //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
 	}

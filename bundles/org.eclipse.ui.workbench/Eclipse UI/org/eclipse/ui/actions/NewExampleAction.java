@@ -1,5 +1,3 @@
-package org.eclipse.ui.actions;
-
 /************************************************************************
 Copyright (c) 2000, 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials
@@ -8,19 +6,26 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 
 Contributors:
-    IBM - Initial implementation
+	IBM - Initial implementation
 ************************************************************************/
-
-import org.eclipse.swt.widgets.Shell;
+package org.eclipse.ui.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.NewWizard;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
@@ -68,15 +73,13 @@ public class NewExampleAction extends Action {
 		super(WorkbenchMessages.getString("NewExampleAction.text")); //$NON-NLS-1$
 		Assert.isNotNull(window);
 		this.window = window;
+		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
 		setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ));
+			images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
 		setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_HOVER));
+			images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
 		setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_DISABLED));
+			images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
 		setToolTipText(WorkbenchMessages.getString("NewExampleAction.toolTip")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
 	}

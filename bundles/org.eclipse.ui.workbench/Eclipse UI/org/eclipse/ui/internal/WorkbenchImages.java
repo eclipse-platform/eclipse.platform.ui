@@ -1,9 +1,15 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -114,9 +120,9 @@ private final static void declareImages() {
 
 							
 	// toolbar buttons for wizards
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ, PATH_ETOOL+"new_wiz.gif");//$NON-NLS-1$
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_HOVER, PATH_CTOOL+"new_wiz.gif");//$NON-NLS-1$
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_DISABLED, PATH_DTOOL+"new_wiz.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_NEW_WIZARD, PATH_ETOOL+"new_wiz.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER, PATH_CTOOL+"new_wiz.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED, PATH_DTOOL+"new_wiz.gif");//$NON-NLS-1$
 
 	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR, PATH_ETOOL+"pin_editor.gif");//$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_HOVER, PATH_CTOOL+"pin_editor.gif");//$NON-NLS-1$
@@ -151,29 +157,29 @@ private final static void declareImages() {
 	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT_HOVER, PATH_CTOOL+"saveall_edit.gif");//$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT_DISABLED, PATH_DTOOL+"saveall_edit.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT, PATH_ETOOL+"undo_edit.gif");//$NON-NLS-1$
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT_HOVER, PATH_CTOOL+"undo_edit.gif");//$NON-NLS-1$
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT_DISABLED, PATH_DTOOL+"undo_edit.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_UNDO, PATH_ETOOL+"undo_edit.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_UNDO_HOVER, PATH_CTOOL+"undo_edit.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_UNDO_DISABLED, PATH_DTOOL+"undo_edit.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT, PATH_ETOOL+"redo_edit.gif");//$NON-NLS-1$
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT_HOVER, PATH_CTOOL+"redo_edit.gif");//$NON-NLS-1$
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT_DISABLED, PATH_DTOOL+"redo_edit.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_REDO, PATH_ETOOL+"redo_edit.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_REDO_HOVER, PATH_CTOOL+"redo_edit.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_REDO_DISABLED, PATH_DTOOL+"redo_edit.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT, PATH_ETOOL+"cut_edit.gif");//$NON-NLS-1$
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT_HOVER, PATH_CTOOL+"cut_edit.gif");//$NON-NLS-1$
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT_DISABLED, PATH_DTOOL+"cut_edit.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_CUT, PATH_ETOOL+"cut_edit.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_CUT_HOVER, PATH_CTOOL+"cut_edit.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_CUT_DISABLED, PATH_DTOOL+"cut_edit.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT, PATH_ETOOL+"copy_edit.gif");//$NON-NLS-1$
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT_HOVER, PATH_CTOOL+"copy_edit.gif");//$NON-NLS-1$
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT_DISABLED, PATH_DTOOL+"copy_edit.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_COPY, PATH_ETOOL+"copy_edit.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_COPY_HOVER, PATH_CTOOL+"copy_edit.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_COPY_DISABLED, PATH_DTOOL+"copy_edit.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT, PATH_ETOOL+"paste_edit.gif");//$NON-NLS-1$
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_HOVER, PATH_CTOOL+"paste_edit.gif");//$NON-NLS-1$
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_DISABLED, PATH_DTOOL+"paste_edit.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_PASTE, PATH_ETOOL+"paste_edit.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_PASTE_HOVER, PATH_CTOOL+"paste_edit.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_PASTE_DISABLED, PATH_DTOOL+"paste_edit.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT, PATH_ETOOL+"delete_edit.gif");//$NON-NLS-1$
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT_HOVER, PATH_CTOOL+"delete_edit.gif");//$NON-NLS-1$
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT_DISABLED, PATH_DTOOL+"delete_edit.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_DELETE, PATH_ETOOL+"delete_edit.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_DELETE_HOVER, PATH_CTOOL+"delete_edit.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_DELETE_DISABLED, PATH_DTOOL+"delete_edit.gif");//$NON-NLS-1$
 
 	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT, PATH_ETOOL+"print_edit.gif");//$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_HOVER, PATH_CTOOL+"print_edit.gif");//$NON-NLS-1$
@@ -191,13 +197,17 @@ private final static void declareImages() {
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_STOP_NAV_HOVER, PATH_CTOOL+"stop_nav.gif");
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_STOP_NAV_DISABLED, PATH_DTOOL+"stop_nav.gif");
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_FORWARD_NAV, PATH_CLOCALTOOL+"forward_nav.gif");//$NON-NLS-1$
-//	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_FORWARD_NAV_HOVER, PATH_CTOOL+"forward_nav.gif");
-//	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_FORWARD_NAV_DISABLED, PATH_DTOOL+"forward_nav.gif");
+	declareRegistryImage(ISharedImages.IMG_TOOL_FORWARD, PATH_ELOCALTOOL+"forward_nav.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_FORWARD_HOVER, PATH_CLOCALTOOL+"forward_nav.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_FORWARD_DISABLED, PATH_DLOCALTOOL+"forward_nav.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_BACKWARD_NAV, PATH_CLOCALTOOL+"backward_nav.gif");//$NON-NLS-1$
-//	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_BACKWARD_NAV_HOVER, PATH_CTOOL+"backward_nav.gif");
-//	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_BACKWARD_NAV_DISABLED, PATH_DTOOL+"backward_nav.gif");
+	declareRegistryImage(ISharedImages.IMG_TOOL_BACK, PATH_ELOCALTOOL+"backward_nav.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_BACK_HOVER, PATH_CLOCALTOOL+"backward_nav.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_BACK_DISABLED, PATH_DLOCALTOOL+"backward_nav.gif");//$NON-NLS-1$
+
+	declareRegistryImage(ISharedImages.IMG_TOOL_UP, PATH_ELOCALTOOL+"up_nav.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_UP_HOVER, PATH_CLOCALTOOL+"up_nav.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_TOOL_UP_DISABLED, PATH_DLOCALTOOL+"up_nav.gif");//$NON-NLS-1$
 
 	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_HOME_NAV, PATH_CLOCALTOOL+"home_nav.gif");//$NON-NLS-1$
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_HOME_NAV_HOVER, PATH_CLOCALTOOL+"home_nav.gif");

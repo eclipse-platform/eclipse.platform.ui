@@ -1,14 +1,17 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.views.framelist;
 
-/**********************************************************************
-Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
-Contributors:
-**********************************************************************/
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -24,9 +27,10 @@ public class BackAction extends FrameAction {
 	public BackAction(FrameList frameList) {
 		super(frameList);
 		setText(FrameListMessages.getString("Back.text")); //$NON-NLS-1$
-		setHoverImageDescriptor(getImageDescriptor("clcl16/backward_nav.gif")); //$NON-NLS-1$
-		setImageDescriptor(getImageDescriptor("elcl16/backward_nav.gif")); //$NON-NLS-1$
-		setDisabledImageDescriptor(getImageDescriptor("dlcl16/backward_nav.gif")); //$NON-NLS-1$
+		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
+		setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_HOVER));
+		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
+		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
 		WorkbenchHelp.setHelp(this, IFrameListHelpContextIds.BACK_ACTION);
 		update();
 	}

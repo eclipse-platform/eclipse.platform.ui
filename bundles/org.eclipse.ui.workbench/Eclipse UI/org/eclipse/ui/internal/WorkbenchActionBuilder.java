@@ -15,7 +15,6 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
@@ -30,11 +29,11 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -651,17 +650,15 @@ public class WorkbenchActionBuilder {
 		// images for this action are set in its constructor
 		keyBindingService.registerGlobalAction(newWizardAction);
 
+		ISharedImages sharedImages = workbench.getSharedImages();
 		newWizardDropDownAction =
 			new NewWizardDropDownAction(workbench, newWizardAction);
 		newWizardDropDownAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
 		newWizardDropDownAction.setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_HOVER));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
 		newWizardDropDownAction.setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_DISABLED));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
 
 		importResourcesAction = new ImportResourcesAction(workbench);
 		importResourcesAction.setImageDescriptor(
@@ -748,58 +745,43 @@ public class WorkbenchActionBuilder {
 
 		undoAction = createGlobalAction(IWorkbenchActionConstants.UNDO, "edit", true); //$NON-NLS-1$
 		undoAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_UNDO));
 		undoAction.setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT_HOVER));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_UNDO_HOVER));
 		undoAction.setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT_DISABLED));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_UNDO_DISABLED));
 
 		redoAction = createGlobalAction(IWorkbenchActionConstants.REDO, "edit", true); //$NON-NLS-1$
 		redoAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
 		redoAction.setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT_HOVER));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_REDO_HOVER));
 		redoAction.setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT_DISABLED));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_REDO_DISABLED));
 
 		cutAction = createGlobalAction(IWorkbenchActionConstants.CUT, "edit", false); //$NON-NLS-1$
 		cutAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
 		cutAction.setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT_HOVER));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_HOVER));
 		cutAction.setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT_DISABLED));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
 
 		copyAction = createGlobalAction(IWorkbenchActionConstants.COPY, "edit", false); //$NON-NLS-1$
 		copyAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		copyAction.setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT_HOVER));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));
 		copyAction.setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT_DISABLED));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
 
 		pasteAction = createGlobalAction(IWorkbenchActionConstants.PASTE, "edit", false); //$NON-NLS-1$
 		pasteAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		pasteAction.setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_HOVER));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_HOVER));
 		pasteAction.setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_DISABLED));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
 
 		printAction = createGlobalAction(IWorkbenchActionConstants.PRINT, "file", false); //$NON-NLS-1$
 		printAction.setImageDescriptor(
@@ -867,14 +849,11 @@ public class WorkbenchActionBuilder {
 		deleteAction = new RetargetAction(IWorkbenchActionConstants.DELETE, WorkbenchMessages.getString("Workbench.delete")); //$NON-NLS-1$
 		deleteAction.setToolTipText(WorkbenchMessages.getString("Workbench.deleteToolTip")); //$NON-NLS-1$
 		deleteAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 		deleteAction.setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT_HOVER));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_HOVER));
 		deleteAction.setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT_DISABLED));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 		deleteAction.enableAccelerator(false);
 		WorkbenchHelp.setHelp(
 			deleteAction,
@@ -954,18 +933,23 @@ public class WorkbenchActionBuilder {
 		closePerspAction = new ClosePerspectiveAction(window);
 		closeAllPerspsAction = new CloseAllPerspectivesAction(window);
 
-		//Must change/copy the image. It is using a local toolbar image and colored.
 		backwardHistoryAction = new NavigationHistoryAction(window, false);
 		backwardHistoryAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_BACKWARD_NAV));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
+		backwardHistoryAction.setHoverImageDescriptor(
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_HOVER));
+		backwardHistoryAction.setDisabledImageDescriptor(
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
 		backwardHistoryAction.setActionDefinitionId(backwardHistoryActionDefId);
 		keyBindingService.registerGlobalAction(backwardHistoryAction);
 
 		forwardHistoryAction = new NavigationHistoryAction(window, true);
 		forwardHistoryAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_FORWARD_NAV));
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
+		forwardHistoryAction.setHoverImageDescriptor(
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_HOVER));
+		forwardHistoryAction.setDisabledImageDescriptor(
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
 		forwardHistoryAction.setActionDefinitionId(forwardHistoryActionDefId);
 		keyBindingService.registerGlobalAction(forwardHistoryAction);
 

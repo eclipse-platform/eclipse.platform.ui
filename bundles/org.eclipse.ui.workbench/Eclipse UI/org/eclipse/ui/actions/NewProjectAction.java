@@ -1,9 +1,15 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.Action;
@@ -59,9 +65,13 @@ public NewProjectAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("NewProjectAction.text")); //$NON-NLS-1$
 	Assert.isNotNull(window);
 	this.window = window;
-	setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ));
-	setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_HOVER));
-	setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_DISABLED));
+	ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
+	setImageDescriptor(
+		images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
+	setHoverImageDescriptor(
+		images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
+	setDisabledImageDescriptor(
+		images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
 	setToolTipText(WorkbenchMessages.getString("NewProjectAction.toolTip"));	 //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
 }

@@ -1,16 +1,14 @@
-/**********************************************************************
-Copyright (c) 2000, 2003 IBM Corp. and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
+http://www.eclipse.org/legal/cpl-v10.html
+
 Contributors:
-**********************************************************************/
-
+	IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.actions;
-
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -18,17 +16,16 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.NewWizard;
@@ -62,9 +59,13 @@ public class NewWizardAction extends Action {
  */
 public NewWizardAction() {
 	super(WorkbenchMessages.getString("NewWizardAction.text")); //$NON-NLS-1$
-	setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ));
-	setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_HOVER));
-	setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_DISABLED));
+	ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
+	setImageDescriptor(
+		images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
+	setHoverImageDescriptor(
+		images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
+	setDisabledImageDescriptor(
+		images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
 	setToolTipText(WorkbenchMessages.getString("NewWizardAction.toolTip"));	 //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
 	setActionDefinitionId("org.eclipse.ui.newWizard"); //$NON-NLS-1$

@@ -1,9 +1,15 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
@@ -79,6 +85,157 @@ public interface ISharedImages {
 	 * Identifies the default image used to indicate a bookmark.
 	 */
 	public final static String IMG_OBJS_BKMRK_TSK = "IMG_OBJS_BKMRK_TSK"; //$NON-NLS-1$
+	
+	/**
+	 * Identifies the new wizard image in the enabled state.
+	 */
+	public final static String IMG_TOOL_NEW_WIZARD = "IMG_TOOL_NEW_WIZARD"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the new wizard image in the hover (colored) state.
+	 */
+	public final static String IMG_TOOL_NEW_WIZARD_HOVER = "IMG_TOOL_NEW_WIZARD_HOVER"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the new wizard image in the disabled state.
+	 */
+	public final static String IMG_TOOL_NEW_WIZARD_DISABLED = "IMG_TOOL_NEW_WIZARD_DISABLED"; //$NON-NLS-1$
+	
+	/**
+	 * Identifies the undo image in the enabled state.
+	 */
+	public final static String IMG_TOOL_UNDO = "IMG_TOOL_UNDO" ; //$NON-NLS-1$
+
+	/**
+	 * Identifies the undo image in the hover (colored) state.
+	 */
+	public final static String IMG_TOOL_UNDO_HOVER = "IMG_TOOL_UNDO_HOVER" ; //$NON-NLS-1$
+	
+	/**
+	 * Identifies the undo image in the disabled state.
+	 */
+	public final static String IMG_TOOL_UNDO_DISABLED = "IMG_TOOL_UNDO_DISABLED" ; //$NON-NLS-1$
+
+	/**
+	 * Identifies the redo image in the enabled state.
+	 */
+	public final static String IMG_TOOL_REDO = "IMG_TOOL_REDO" ; //$NON-NLS-1$
+
+	/**
+	 * Identifies the redo image in the hover (colored) state.
+	 */
+	public final static String IMG_TOOL_REDO_HOVER = "IMG_TOOL_REDO_HOVER" ; //$NON-NLS-1$
+
+	/**
+	 * Identifies the redo image in the disabled state.
+	 */
+	public final static String IMG_TOOL_REDO_DISABLED= "IMG_TOOL_REDO_DISABLED" ; //$NON-NLS-1$
+
+	/**
+	 * Identifies the cut image in the enabled state.
+	 */
+	public final static String IMG_TOOL_CUT = "IMG_TOOL_CUT" ; //$NON-NLS-1$
+
+	/**
+	 * Identifies the cut image in the hover (colored) state.
+	 */
+	public final static String IMG_TOOL_CUT_HOVER = "IMG_TOOL_CUT_HOVER" ; //$NON-NLS-1$
+
+	/**
+	 * Identifies the cut image in the disabled state.
+	 */
+	public final static String IMG_TOOL_CUT_DISABLED = "IMG_TOOL_CUT_DISABLED" ; //$NON-NLS-1$
+
+	/**
+	 * Identifies the copy image in the enabled state.
+	 */
+	public final static String IMG_TOOL_COPY = "IMG_TOOL_COPY" ; //$NON-NLS-1$
+
+	/**
+	 * Identifies the copy image in the hover (colored) state.
+	 */
+	public final static String IMG_TOOL_COPY_HOVER = "IMG_TOOL_COPY_HOVER" ; //$NON-NLS-1$
+
+	/**
+	 * Identifies the copy image in the disabled state.
+	 */
+	public final static String IMG_TOOL_COPY_DISABLED = "IMG_TOOL_COPY_DISABLED" ; //$NON-NLS-1$
+
+	/**
+	 * Identifies the paste image in the enabled state.
+	 */
+	public final static String IMG_TOOL_PASTE = "IMG_TOOL_PASTE" ; //$NON-NLS-1$
+
+	/**
+	 * Identifies the paste image in the hover (colored) state.
+	 */
+	public final static String IMG_TOOL_PASTE_HOVER = "IMG_TOOL_PASTE_HOVER" ; //$NON-NLS-1$
+
+	/**
+	 * Identifies the paste image in the disabled state.
+	 */
+	public final static String IMG_TOOL_PASTE_DISABLED= "IMG_TOOL_PASTE_DISABLED" ; //$NON-NLS-1$
+
+	/**
+	 * Identifies the delete image in the enabled state.
+	 */
+	public final static String IMG_TOOL_DELETE = "IMG_TOOL_DELETE" ; //$NON-NLS-1$
+
+	/**
+	 * Identifies the delete image in the hover (colored) state.
+	 */
+	public final static String IMG_TOOL_DELETE_HOVER = "IMG_TOOL_DELETE_HOVER" ; //$NON-NLS-1$
+
+	/**
+	 * Identifies the delete image in the disabled state.
+	 */
+	public final static String IMG_TOOL_DELETE_DISABLED = "IMG_TOOL_DELETE_DISABLED" ; //$NON-NLS-1$
+	
+	/**
+	 * Identifies the forward image in the enabled state.
+	 */
+	public final static String IMG_TOOL_FORWARD = "IMG_TOOL_FORWARD"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the forward image in the hover (colored) state.
+	 */
+	public final static String IMG_TOOL_FORWARD_HOVER = "IMG_TOOL_FORWARD_HOVER"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the forward image in the disabled state.
+	 */
+	public final static String IMG_TOOL_FORWARD_DISABLED = "IMG_TOOL_FORWARD_DISABLED"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the back image in the enabled state.
+	 */
+	public final static String IMG_TOOL_BACK = "IMG_TOOL_BACK"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the back image in the hover (colored) state.
+	 */
+	public final static String IMG_TOOL_BACK_HOVER = "IMG_TOOL_BACK_HOVER"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the back image in the disabled state.
+	 */
+	public final static String IMG_TOOL_BACK_DISABLED = "IMG_TOOL_BACK_DISABLED"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the up image in the enabled state.
+	 */
+	public final static String IMG_TOOL_UP = "IMG_TOOL_UP"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the up image in the hover (colored) state.
+	 */
+	public final static String IMG_TOOL_UP_HOVER = "IMG_TOOL_UP_HOVER"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the up image in the disabled state.
+	 */
+	public final static String IMG_TOOL_UP_DISABLED = "IMG_TOOL_UP_DISABLED"; //$NON-NLS-1$
+	
 /**
  * Retrieves the specified image from the workbench plugin's image registry.
  * Note: The returned <code>Image</code> is managed by the workbench; clients

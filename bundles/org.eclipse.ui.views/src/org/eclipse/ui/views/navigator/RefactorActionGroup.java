@@ -20,7 +20,9 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.DeleteResourceAction;
 import org.eclipse.ui.actions.TextActionHandler;
 
@@ -106,22 +108,23 @@ public class RefactorActionGroup extends ResourceNavigatorActionGroup {
 		clipboard = new Clipboard(shell.getDisplay());
 		
 		pasteAction = new PasteAction(shell, clipboard);
-		pasteAction.setDisabledImageDescriptor(getImageDescriptor("dtool16/paste_edit.gif"));//$NON-NLS-1$
-		pasteAction.setImageDescriptor(getImageDescriptor("etool16/paste_edit.gif"));//$NON-NLS-1$
-		pasteAction.setHoverImageDescriptor(getImageDescriptor("ctool16/paste_edit.gif"));//$NON-NLS-1$
+		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
+		pasteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
+		pasteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
+		pasteAction.setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_HOVER));
 				
 		copyAction = new CopyAction(shell, clipboard, pasteAction);
-		copyAction.setDisabledImageDescriptor(getImageDescriptor("dtool16/copy_edit.gif"));//$NON-NLS-1$
-		copyAction.setImageDescriptor(getImageDescriptor("etool16/copy_edit.gif"));//$NON-NLS-1$		
-		copyAction.setHoverImageDescriptor(getImageDescriptor("ctool16/copy_edit.gif"));//$NON-NLS-1$
+		copyAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
+		copyAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+		copyAction.setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));
 		
 		moveAction = new ResourceNavigatorMoveAction(shell, treeViewer);
 		renameAction = new ResourceNavigatorRenameAction(shell, treeViewer);
 		
 		deleteAction = new DeleteResourceAction(shell);
-		deleteAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/remtsk_tsk.gif"));//$NON-NLS-1$
-		deleteAction.setImageDescriptor(getImageDescriptor("elcl16/remtsk_tsk.gif"));//$NON-NLS-1$		
-		deleteAction.setHoverImageDescriptor(getImageDescriptor("clcl16/remtsk_tsk.gif"));//$NON-NLS-1$
+		deleteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
+		deleteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));		
+		deleteAction.setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_HOVER));
 	}
 
 	public void updateActionBars() {
