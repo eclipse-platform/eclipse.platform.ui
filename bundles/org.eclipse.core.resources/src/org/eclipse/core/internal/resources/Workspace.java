@@ -1838,7 +1838,7 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 		if (location.segmentCount() > 0)
 			message = Policy.bind("pathvar.undefined", location.toOSString(), location.segment(0));//$NON-NLS-1$
 		else
-			message = Policy.bind("links.relativePath", location.toOSString());//$NON-NLS-1$
+			message = Policy.bind("links.noPath");//$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED_WARNING, null, message);
 	}
 	// Iterate over each known project and ensure that the location does not
@@ -2013,7 +2013,7 @@ public IStatus validateProjectLocation(IProject context, IPath unresolvedLocatio
 		if (location.segmentCount() > 0)
 			message = Policy.bind("pathvar.undefined", location.toOSString(), location.segment(0));//$NON-NLS-1$
 		else
-			message = Policy.bind("links.relativePath", location.toOSString());//$NON-NLS-1$
+			message = Policy.bind("links.noPath");//$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED, null, message);
 	}
 	//if the location doesn't have a device, see if the OS will assign one
