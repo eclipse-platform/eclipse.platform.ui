@@ -236,6 +236,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 					firePreferenceEvent(key, oldValue, value);
 			}
 		}
+		PreferencesService.getDefault().shareStrings();
 	}
 
 	/* 
@@ -263,6 +264,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			String fullPath = addSeparator ? prefix + PATH_SEPARATOR + child.name() : child.name();
 			child.convertToProperties(result, fullPath);
 		}
+		PreferencesService.getDefault().shareStrings();
 		return result;
 	}
 

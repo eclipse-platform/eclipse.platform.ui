@@ -26,6 +26,12 @@ import org.osgi.service.prefs.Preferences;
  */
 public class PreferencesService implements IPreferencesService, IRegistryChangeListener {
 
+	/**
+	 * The interval between passes over the preference tree to canonicalize
+	 * strings.
+	 */
+	private static final long STRING_SHARING_INTERVAL = 300000;
+	
 	// cheat here and add "project" even though we really shouldn't know about it
 	// because of plug-in dependancies and it being defined in the resources plug-in
 	private static final String[] DEFAULT_DEFAULT_LOOKUP_ORDER = new String[] {"project", //$NON-NLS-1$ 
@@ -42,12 +48,16 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	private static final String ELEMENT_MODIFIER = "modifier"; //$NON-NLS-1$
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-	private static IPreferencesService instance;
+	private static PreferencesService instance;
 	static final RootPreferences root = new RootPreferences();
 	private static final Map defaultsRegistry = Collections.synchronizedMap(new HashMap());
 	private static final Map scopeRegistry = Collections.synchronizedMap(new HashMap());
 	private ListenerList modifyListeners = new ListenerList();
-
+	/**
+	 * The last time analysis was done to remove duplicate strings
+	 */
+	private long lastStringSharing = 0;
+	
 	/*
 	 * Create and return an IStatus object with ERROR severity and the
 	 * given message and exception.
@@ -67,7 +77,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	/*
 	 * Return the instance.
 	 */
-	public static IPreferencesService getDefault() {
+	public static PreferencesService getDefault() {
 		if (instance == null)
 			instance = new PreferencesService();
 		return instance;
@@ -239,7 +249,9 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 
 		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("Current list of all settings: " + ((EclipsePreferences) getRootNode()).toDeepDebugString()); //$NON-NLS-1$
-
+		//this typically causes a major change to the preference tree, so force string sharing
+		lastStringSharing = 0;
+		shareStrings();
 		return result;
 	}
 
@@ -712,6 +724,20 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			defaultsRegistry.put(registryKey, obj);
 		}
 	}
+	
+	/**
+	 * Shares all duplicate equal strings referenced by the preference service.
+	 */
+	void shareStrings() {
+		long now = System.currentTimeMillis();
+		if (now - lastStringSharing < STRING_SHARING_INTERVAL)
+			return;
+		StringPool pool = new StringPool();
+		root.shareStrings(pool);
+		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
+			System.out.println("Preference string sharing saved: " + pool.getSavedStringCount()); //$NON-NLS-1$
+		lastStringSharing = now;
+	}
 
 	public IStatus validateVersions(IPath path) {
 		final MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.INFO, Messages.preferences_validate, null);
@@ -930,7 +956,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		return (IPreferenceFilter[]) result.toArray(new IPreferenceFilter[result.size()]);
 	}
 
-	private boolean containsKeys(IEclipsePreferences root) throws BackingStoreException {
+	private boolean containsKeys(IEclipsePreferences aRoot) throws BackingStoreException {
 		final boolean result[] = new boolean[] {false};
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
 			public boolean visit(IEclipsePreferences node) throws BackingStoreException {
@@ -939,7 +965,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 				return !result[0];
 			}
 		};
-		root.accept(visitor);
+		aRoot.accept(visitor);
 		return result[0];
 	}
 
@@ -1003,6 +1029,9 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			return;
 		try {
 			internalApply(tree, filters);
+			//this typically causes a major change to the preference tree, so force string sharing
+			lastStringSharing = 0;
+			shareStrings();
 		} catch (BackingStoreException e) {
 			throw new CoreException(createStatusError(Messages.preferences_applyProblems, e));
 		}

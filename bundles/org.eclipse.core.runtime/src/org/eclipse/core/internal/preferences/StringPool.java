@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import java.util.HashMap;
  * @since 3.1
  */
 public final class StringPool {
+	private int savings;
 	private final HashMap map = new HashMap();
 
 	/**
@@ -38,9 +39,30 @@ public final class StringPool {
 		if (string == null)
 			return string;
 		Object result = map.get(string);
-		if (result != null)
+		if (result != null) {
+			if (result != string)
+				savings += 44 + 2 * string.length();
 			return (String) result;
+		}
 		map.put(string, string);
 		return string;
+	}
+
+	/**
+	 * Returns an estimate of the size in bytes that was saved by sharing strings in 
+	 * the pool.  In particular, this returns the size of all strings that were added to the
+	 * pool after an equal string had already been added.  This value can be used
+	 * to estimate the effectiveness of a string sharing operation, in order to 
+	 * determine if or when it should be performed again.
+	 * 
+	 * In some cases this does not precisely represent the number of bytes that 
+	 * were saved.  For example, say the pool already contains string S1.  Now 
+	 * string S2, which is equal to S1 but not identical, is added to the pool five 
+	 * times. This method will return the size of string S2 multiplied by the 
+	 * number of times it was added, even though the actual savings in this case
+	 * is only the size of a single copy of S2.
+	 */
+	public int getSavedStringCount() {
+		return savings;
 	}
 }
