@@ -718,9 +718,22 @@ public void restoreState(IMemento memento) {
 	if (layoutMem != null) {
 		toolBarLayout = new CoolBarLayout();
 		toolBarLayout.restoreState(layoutMem);
-	}
-	
+	}	
 	this.memento = memento;
+	// Add the visible views.
+	IMemento [] views = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
+	List errors = new ArrayList();
+	for (int x = 0; x < views.length; x ++) {
+		// Get the view details.
+		IMemento childMem = views[x];
+		String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
+
+		// Create and open the view.
+		try {
+			viewFactory.createView(viewID);
+		} catch (PartInitException e) {
+		}
+	}
 }
 
 /**
@@ -765,16 +778,12 @@ public void restoreState() {
 		String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
 
 		// Create and open the view.
-		try {
-			IViewReference ref = restoreView(childMem,viewID);
-			page.addPart(ref);
-			IViewPart view = (IViewPart)ref.getPart(true);
-			ViewSite site = (ViewSite)view.getSite();
-			ViewPane pane = (ViewPane)site.getPane();			
-			pres.replacePlaceholderWithPart(pane);
-		} catch (PartInitException e) {
-			errors.add(e.getStatus());
-		}
+		IViewReference ref = viewFactory.getView(viewID);
+		page.addPart(ref);
+		IViewPart view = (IViewPart)ref.getPart(true);
+		ViewSite site = (ViewSite)view.getSite();
+		ViewPane pane = (ViewPane)site.getPane();			
+		pres.replacePlaceholderWithPart(pane);
 	}
 
 	// Load the fast views
@@ -797,7 +806,7 @@ public void restoreState() {
 				
 			// Create and open the view.
 			try {
-				IViewReference ref = restoreView(childMem,viewID);
+				IViewReference ref = viewFactory.createView(viewID);
 				page.addPart(ref);
 				fastViews.add(ref.getPart(true));
 			} catch (PartInitException e) {
@@ -885,35 +894,6 @@ public void restoreState() {
 	Integer threshold = memento.getInteger(IWorkbenchConstants.TAG_EDITOR_REUSE_THRESHOLD);	
 	if (threshold != null && threshold.intValue() != 0)
 		setEditorReuseThreshold(threshold.intValue());	
-}
-/*
- * Create and return a new ViewPane. Return null if any error occur; 
- */
-private IViewReference restoreView(final IMemento memento,final String viewID) throws PartInitException {
-	final IViewReference ref[] = new IViewReference[1];
-	final PartInitException ex[] = new PartInitException[1];
-	Platform.run(new SafeRunnableAdapter() {
-		public void run() {
-			try {
-				IMemento stateMem = memento.getChild(IWorkbenchConstants.TAG_VIEW_STATE);
-				if (stateMem == null)
-					ref[0] = getViewFactory().createView(viewID);
-				else
-					ref[0] = getViewFactory().createView(viewID,stateMem);
-			} catch (PartInitException e) {
-				ex[0] = e;
-			}
-		}
-		public void handleException(Throwable e) {
-			//Execption is already logged.
-			String message = WorkbenchMessages.format("Perspective.exceptionRestoringView",new String[]{viewID}); //$NON-NLS-1$
-			ex[0] = new PartInitException(message);
-		}
-	});
-	if(ex[0] != null)
-		throw ex[0];
-		
-	return ref[0];
 }
 /**
  * Save the layout.
@@ -1037,12 +1017,9 @@ private void saveState(IMemento memento, PerspectiveDescriptor p,
 	int errors = 0;
 	while (enum.hasNext()) {
 		ViewPane pane = (ViewPane)enum.next();
-		IViewPart view = (IViewPart)pane.getViewReference().getPart(true);
+		IViewReference ref = pane.getViewReference();
 		IMemento viewMemento = memento.createChild(IWorkbenchConstants.TAG_VIEW);
-		viewMemento.putString(IWorkbenchConstants.TAG_ID, view.getSite().getId());
-		if (active && saveInnerViewState)
-			if(!saveView(view,viewMemento))
-				errors++;
+		viewMemento.putString(IWorkbenchConstants.TAG_ID, ref.getId());
 	}
 
 	if(fastViews.size() > 0) {
@@ -1055,9 +1032,6 @@ private void saveState(IMemento memento, PerspectiveDescriptor p,
 			viewMemento.putString(IWorkbenchConstants.TAG_ID, id);
 			float ratio = getFastViewWidthRatio(id);
 			viewMemento.putFloat(IWorkbenchConstants.TAG_RATIO, ratio);
-			if (active && saveInnerViewState)
-				if(!saveView(view,viewMemento))
-					errors++;
 		}
 	}
 	if(errors > 0) {
@@ -1079,22 +1053,6 @@ private void saveState(IMemento memento, PerspectiveDescriptor p,
 	
 	//Save editor reuse threshold	
 	memento.putInteger(IWorkbenchConstants.TAG_EDITOR_REUSE_THRESHOLD,getEditorReuseThreshold());
-}
-/**
- * Save the layout.
- */
-private boolean saveView(final IViewPart view, final IMemento memento) {
-	final boolean result[] = new boolean[1];
-	Platform.run(new SafeRunnableAdapter() {
-		public void run() {
-			view.saveState(memento.createChild(IWorkbenchConstants.TAG_VIEW_STATE));
-			result[0] = true;
-		}
-		public void handleException(Throwable e) {
-			result[0] = false;
-		}
-	});
-	return result[0];
 }
 /**
  * Sets the visible action sets. 

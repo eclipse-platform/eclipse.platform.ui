@@ -1809,6 +1809,10 @@ private void restoreState(IMemento memento) {
 	// Restore editor manager.
 	IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_EDITORS);
 	getEditorManager().restoreState(childMem);
+	
+	childMem = memento.getChild(IWorkbenchConstants.TAG_VIEWS);
+	if(childMem != null)
+		getViewFactory().restoreState(childMem);
 
 	// Get persp block.
 	childMem = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVES);
@@ -1932,6 +1936,9 @@ public void saveState(IMemento memento) {
 	IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_EDITORS);
 	editorMgr.saveState(childMem);
 
+	childMem = memento.createChild(IWorkbenchConstants.TAG_VIEWS);
+	getViewFactory().saveState(childMem);
+	
 	// Create persp block.
 	childMem = memento.createChild(IWorkbenchConstants.TAG_PERSPECTIVES);
 	if (getPerspective() != null)

@@ -1145,7 +1145,14 @@ public class EditorManager {
 			return pinned;
 		}
 		public String getTitle() {
-			return getName();
+			String result;
+			if(part != null)
+				result = part.getTitle();
+			else
+				result = getName();
+			if(result == null)
+				result = new String();
+			return result;
 		}
 		public Image getTitleImage() {
 			if(part != null)

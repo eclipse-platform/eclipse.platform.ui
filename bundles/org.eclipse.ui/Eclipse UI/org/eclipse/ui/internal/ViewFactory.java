@@ -22,6 +22,7 @@ public class ViewFactory
 	private WorkbenchPage page;
 	private IViewRegistry viewReg;
 	private ReferenceCounter counter;
+	private HashMap mementoTable = new HashMap();
 
 /**
  * ViewManager constructor comment.
@@ -41,8 +42,18 @@ public ViewFactory(WorkbenchPage page, IViewRegistry reg) {
  * disposed when releaseView is called an equal number of times
  * to getView.
  */
-public IViewReference createView(String id) throws PartInitException {
-	return createView(id,null);
+public IViewReference createView(final String id) throws PartInitException {
+	IViewDescriptor desc = viewReg.find(id);
+	if(desc == null)
+		throw new PartInitException(WorkbenchMessages.format("ViewFactory.couldNotCreate", new Object[] {id})); //$NON-NLS-1$
+	IViewReference ref = (IViewReference)counter.get(desc);
+	if (ref == null) {
+		ref = new ViewReference(id);
+		counter.put(desc,ref);
+	} else {
+		counter.addRef(desc);
+	}
+	return ref;
 }
 /**
  * Creates an instance of a view defined by id.
@@ -53,56 +64,90 @@ public IViewReference createView(String id) throws PartInitException {
  * disposed when releaseView is called an equal number of times
  * to getView.
  */
-public IViewReference createView(String id,IMemento memento) 
-	throws PartInitException 
-{
-	IViewDescriptor desc = viewReg.find(id);
-	if(desc == null)
-		throw new PartInitException(WorkbenchMessages.format("ViewFactory.couldNotCreate", new Object[] {id})); //$NON-NLS-1$
-	IViewReference ref = (IViewReference)counter.get(desc);
-	if (ref == null) {
-		ref = createView(desc,memento);
-	} else {
-		counter.addRef(desc);
-	}
-	return ref;
+private void restoreView(final IViewReference ref) throws PartInitException {
+	if(ref.getPart(false) != null)
+		return;
+	final String viewID = ref.getId();
+	final IMemento stateMem = (IMemento)mementoTable.get(viewID);
+	mementoTable.remove(viewID);
+	
+	final PartInitException ex[] = new PartInitException[1];
+	Platform.run(new SafeRunnableAdapter() {
+		public void run() {
+			try {
+				IViewDescriptor desc = viewReg.find(viewID);
+				if(desc == null)
+					throw new PartInitException(WorkbenchMessages.format("ViewFactory.couldNotCreate", new Object[] {viewID})); //$NON-NLS-1$
+
+				// Debugging
+				if (DEBUG)
+					System.out.println("Create " + desc.getLabel());//$NON-NLS-1$
+			
+				// Create the view.
+				IViewPart view = null;
+				try {
+					view = desc.createView();
+					((ViewReference)ref).setPart(view);
+				} catch (CoreException e) {
+					throw new PartInitException(WorkbenchMessages.format("ViewFactory.initException", new Object[] {desc.getID()}),e); //$NON-NLS-1$
+				}
+				
+				// Create site
+				ViewSite site = new ViewSite(view, page, desc);
+				view.init(site,stateMem);
+				if (view.getSite() != site)
+					throw new PartInitException(WorkbenchMessages.format("ViewFactory.siteException", new Object[] {desc.getID()})); //$NON-NLS-1$
+			
+				ViewPane pane = new ViewPane(ref, page);
+				site.setPane(pane);
+				site.setActionBars(new ViewActionBars(page.getActionBars(), pane));
+					
+			} catch (PartInitException e) {
+				ex[0] = e;
+			}
+		}
+		public void handleException(Throwable e) {
+			//Execption is already logged.
+			String message = WorkbenchMessages.format("Perspective.exceptionRestoringView",new String[]{viewID}); //$NON-NLS-1$
+			ex[0] = new PartInitException(message);
+		}
+	});
+	if(ex[0] != null)
+		throw ex[0];
 }
-/**
- * Create a view rec with the given type and parent. 
- */
-private ViewReference createView(IViewDescriptor desc,IMemento memento)
-	throws PartInitException
-{
-	// Debugging
-	if (DEBUG)
-		System.out.println("Create " + desc.getLabel());//$NON-NLS-1$
 
-	// Create the view.
-	IViewPart view = null;
-	try {
-		view = desc.createView();
-	} catch (CoreException e) {
-		throw new PartInitException(WorkbenchMessages.format("ViewFactory.initException", new Object[] {desc.getID()}),e); //$NON-NLS-1$
+public void saveState(IMemento memento) {
+	IViewReference refs[] = getViews();
+	for (int i = 0; i < refs.length; i++) {
+		final IMemento viewMemento = memento.createChild(IWorkbenchConstants.TAG_VIEW);
+		viewMemento.putString(IWorkbenchConstants.TAG_ID, refs[i].getId());
+		final IViewPart view = (IViewPart)refs[i].getPart(false);
+		if(view != null) {
+			final boolean result[] = new boolean[1];
+			Platform.run(new SafeRunnableAdapter() {
+				public void run() {
+					view.saveState(viewMemento.createChild(IWorkbenchConstants.TAG_VIEW_STATE));
+					result[0] = true;
+				}
+				public void handleException(Throwable e) {
+					result[0] = false;
+				}
+			});
+		} else {
+			IMemento mem = (IMemento)mementoTable.get(refs[i].getId());
+			if(mem != null) {
+				IMemento child = viewMemento.createChild(IWorkbenchConstants.TAG_VIEW_STATE);
+				child.putMemento(mem);
+			}
+		}
 	}
-	
-	// Create site
-	ViewSite site = new ViewSite(view, page, desc);
-	view.init(site,memento);
-	if (view.getSite() != site)
-		throw new PartInitException(WorkbenchMessages.format("ViewFactory.siteException", new Object[] {desc.getID()})); //$NON-NLS-1$
-
-
-	// Create pane, etc.
-	ViewReference ref = new ViewReference(view);
-	ViewPane pane = new ViewPane(ref, page);
-	site.setPane(pane);
-	site.setActionBars(new ViewActionBars(page.getActionBars(), pane));
-	
-	// Add ref to view.
-	counter.put(desc, ref);
-	
-	// Return view.
-	return ref;
+}
+public void restoreState(IMemento memento) {
+	IMemento mem[] = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
+	for (int i = 0; i < mem.length; i++) {
+		String id = mem[i].getString(IWorkbenchConstants.TAG_ID);
+		mementoTable.put(id,mem[i].getChild(IWorkbenchConstants.TAG_VIEW_STATE));
+	}
 }
 /**
  * Remove a view rec from the manager.
@@ -173,10 +218,10 @@ public void releaseView(String id) {
 private class ViewReference extends WorkbenchPartReference implements IViewReference {
 
 	private IViewPart part;
+	private String viewId;
 
-	public ViewReference(IViewPart part) {
-		this.part = part;
-		super.setPart(part);
+	public ViewReference(String id) {
+		viewId = id;
 	}
 	/**
 	 * @see IViewReference#isFastView()
@@ -184,17 +229,25 @@ private class ViewReference extends WorkbenchPartReference implements IViewRefer
 	public boolean isFastView() {
 		return ((WorkbenchPage)part.getSite().getPage()).isFastView(part);
 	}
+	public IViewPart getView(boolean restore) {
+		return (IViewPart)getPart(restore);
+	}
+	public void setPart(IViewPart part) {
+		this.part = part;
+	}
 	/**
 	 * @see IWorkbenchPartReference#getPart(boolean)
 	 */
 	public IWorkbenchPart getPart(boolean restore) {
+		if(part != null)
+			return part;
+		if(restore) {
+			try {
+				restoreView(this);
+			} catch (PartInitException e) {
+			}
+		}
 		return part;
-	}
-	/**
-	 * @see IViewReference#getView(boolean)
-	 */
-	public IViewPart getView(boolean restore) {
-		return (IViewPart)getPart(restore);
 	}
 	/**
 	 * @see IWorkbenchPartReference#getTitle()
@@ -212,7 +265,9 @@ private class ViewReference extends WorkbenchPartReference implements IViewRefer
 	 * @see IWorkbenchPartReference#getId()
 	 */	
 	public String getId() {
-		return part.getSite().getId();
+		if(part != null)
+			return part.getSite().getId();
+		return viewId;
 	}
 	public void setPane(PartPane pane) {
 		((PartSite)part.getSite()).setPane(pane);
