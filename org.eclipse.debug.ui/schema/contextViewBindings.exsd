@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.debug.ui">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.debug.ui" id="contextViewBindings" name="Context View Bindings"/>
+      </appInfo>
+      <documentation>
+         This extension point provides a mechanism for associating a view with a context identifier. When a context is activated by the Debug view, views associated with it (and also views associated with any parent contexts) are opened, closed, or activated. Contributors have the option to override the automatic open and close behavior.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="contextViewBinding" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="contextViewBinding">
+      <complexType>
+         <attribute name="contextId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the context identifier that this binding is for
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="viewId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the identifier of the view which should be associated with the specified context. When the specified context is activated in the Debug view, this view will be automatically activated.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="autoOpen" type="boolean">
+            <annotation>
+               <documentation>
+                  specifies whether the specified view should be automatically opened when the given context is activated. If unspecified, the specified view will be automatically opened.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="autoClose" type="boolean">
+            <annotation>
+               <documentation>
+                  specifies whether the specified view should be automatically closed when a context that isn&apos;t associated with the view is activated. If unspecified, the specified view will be automatically closed.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+      The following is an example of a context view binding contribution:
+&lt;pre&gt;
+&lt;extension
+      point="org.eclipse.debug.ui.contextViewBindings"&gt;
+   &lt;contextViewBinding
+         contextId="com.example.mydebugger.debugging"
+         viewId="com.example.view"
+         autoOpen="true"
+         autoClose="false"&gt;
+   &lt;/modelContextBinding&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+In the above example, when a context with the specified identifier is activated by the Debug view, the given view will be automatically opened. When a context which is bound to a different debug model is activated that isn't associated with the view, the view will not be automatically closed.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+&lt;a href=&quot;hglegal.htm&quot;&gt;
+ &lt;img SRC=&quot;ngibmcpy.gif&quot;
+   ALT=&quot;Copyright (c) 2000, 2004 IBM Corporation and others. All Rights Reserved.&quot;
+   BORDER=0 height=14 width=324&gt;&lt;/a&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+</schema>
