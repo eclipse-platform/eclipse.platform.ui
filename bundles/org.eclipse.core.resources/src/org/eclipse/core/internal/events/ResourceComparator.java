@@ -115,7 +115,7 @@ private boolean compareType(ResourceInfo oldElement, ResourceInfo newElement) {
 }
 /**
  * Returns a comparator which compares resource infos.
- * If includeMarkerDeltas is true, check for marker deltas.
+ * Does not check for marker deltas.
  */
 public static ResourceComparator getComparator() {
 	return getComparator(false);
