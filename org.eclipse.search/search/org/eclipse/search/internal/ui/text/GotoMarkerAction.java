@@ -25,6 +25,7 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
 import org.eclipse.search.ui.ISearchResultView;
@@ -66,7 +67,7 @@ class GotoMarkerAction extends Action {
 		
 		IEditorInput input= new FileEditorInput((IFile)resource);
 		String editorId= null;
-		IEditorDescriptor desc= SearchPlugin.getDefault().getWorkbench().getEditorRegistry().getDefaultEditor((IFile)resource);
+		IEditorDescriptor desc= IDE.getDefaultEditor((IFile)resource);
 		if (desc == null)
 			editorId= SearchPlugin.getDefault().getWorkbench().getEditorRegistry().getDefaultEditor().getId();
 		else
@@ -110,7 +111,7 @@ class GotoMarkerAction extends Action {
 		}
 		
 		if (editor != null) {
-			editor.gotoMarker(marker);
+			IDE.gotoMarker(editor, marker);
 		}
 	}
 
@@ -134,7 +135,7 @@ class GotoMarkerAction extends Action {
 			return;
 
 		try {
-			page.openEditor(marker, false);
+			IDE.openEditor(page, marker, false);
 		} catch (PartInitException ex) {
 			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.openEditor.title"), SearchMessages.getString("Search.Error.openEditor.message")); //$NON-NLS-2$ //$NON-NLS-1$
 			return;

@@ -45,11 +45,12 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.GlobalBuildAction;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -271,14 +272,14 @@ public class ReplaceDialog extends Dialog {
 			int openEditors= activePage.getEditorReferences().length;
 			
 			fEditor= openFile(result, activePage);
-			fEditor.gotoMarker(result);
+			IDE.gotoMarker(fEditor, result);
 			IDocumentProvider provider= fEditor.getDocumentProvider();
 			IEditorInput input = fEditor.getEditorInput();
 			fDocument= provider.getDocument(input);
 			fAnnotationModel= (AbstractMarkerAnnotationModel)provider.getAnnotationModel(input);
 			fCloseEditor= openEditors < activePage.getEditorReferences().length;
 		} else {
-			fEditor.gotoMarker(result);
+			IDE.gotoMarker(fEditor, result);
 		}
 		if (fMarkerIndex == fCurrentMarkers.size() - 1) {
 			fCurrentMarkers= null;
@@ -294,18 +295,17 @@ public class ReplaceDialog extends Dialog {
 			throw new MarkerNotPresentableException(null);
 			
 		String currentEditorId= null;
-		IEditorRegistry editorRegistry= SearchPlugin.getDefault().getWorkbench().getEditorRegistry();
-		IEditorDescriptor desc= editorRegistry.getDefaultEditor(markerFile);
+		IEditorDescriptor desc= IDE.getDefaultEditor(markerFile);
 		if (desc != null)
 			currentEditorId= desc.getId();
 		try {
-			IEditorPart result= activePage.openEditor(markerFile, "org.eclipse.ui.DefaultTextEditor", false); //$NON-NLS-1$
+			IEditorPart result= activePage.openEditor(new FileEditorInput(markerFile), "org.eclipse.ui.DefaultTextEditor", false); //$NON-NLS-1$
 			if (!(result instanceof ITextEditor))
 				throw new MarkerNotPresentableException(markerFile);
 			return (ITextEditor)result;
 		} finally {
 			if (currentEditorId != null)
-				editorRegistry.setDefaultEditor(markerFile, currentEditorId);
+				IDE.setDefaultEditor(markerFile, currentEditorId);
 		}
 	}
 
