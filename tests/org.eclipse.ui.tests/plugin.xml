@@ -33,4 +33,13 @@
 		class="org.eclipse.ui.tests.api.IWorkbenchTest"/>
 </extension>
 
+<extension 
+	point="org.eclipse.ui.perspectives">
+	<perspective
+		id="org.eclipse.ui.tests.api.EmptyPerspective"
+		name="Empty Perspective"
+		class="org.eclipse.ui.tests.api.EmptyPerspective">
+	</perspective>
+</extension>
+
 </plugin>
