@@ -100,11 +100,11 @@ public final class AntUtil {
 	}
 	
 	/**
-	 * Returns a String specifying the ant home to use for the build, or
+	 * Returns a String specifying the Ant home to use for the build, or
 	 * <code>null</code> if none is specified.
 	 *
 	 * @param configuration launch configuration
-	 * @return String specifying ant home to use, or <code>null</code>
+	 * @return String specifying Ant home to use, or <code>null</code>
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static String getAntHome(ILaunchConfiguration configuration) throws CoreException {
@@ -133,7 +133,7 @@ public final class AntUtil {
 	 * Returns the list of all targets for the Ant build file specified by
 	 * the provided IPath, or <code>null</code> if no targets found.
 	 * 
-	 * @param path the location of the ant build file to get the targets from
+	 * @param path the location of the Ant build file to get the targets from
 	 * @return a list of <code>TargetInfo</code>
 	 * 
 	 * @throws CoreException if file does not exist, IO problems, or invalid format.
@@ -148,7 +148,7 @@ public final class AntUtil {
 	 * Returns the list of all targets for the Ant build file specified by
 	 * the provided IPath, arguments and ILaunchConfiguration, or <code>null</code> if no targets found.
 	 * 
-	 * @param path the location of the ant build file to get the targets from
+	 * @param path the location of the Ant build file to get the targets from
 	 * @param arguments command line arguments for the Ant build
 	 * @param config the launch configuration for the Ant build
 	 * @return a list of <code>TargetInfo</code>
@@ -169,6 +169,8 @@ public final class AntUtil {
 		if (arguments != null && arguments.length > 0) {
 			runner.setArguments(arguments);
 		}
+		runner.setCustomClasspath(getCustomClasspath(config));
+		
 		return runner.getAvailableTargets();
 	}
 	

@@ -196,7 +196,7 @@ public class AntRunner implements IPlatformRunnable {
 		Object runner= null;
 		ClassLoader originalClassLoader= Thread.currentThread().getContextClassLoader();
 		try {
-			ClassLoader loader = AntCorePlugin.getPlugin().getNewClassLoader();
+			ClassLoader loader = getClassLoader();
 			Thread.currentThread().setContextClassLoader(loader);
 			classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
 			runner = classInternalAntRunner.newInstance();
