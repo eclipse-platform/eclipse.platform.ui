@@ -108,6 +108,10 @@ public interface IInformationControl {
 	 * 
 	 * @return whether this information control has the focus
 	 */
-	boolean isFocusControl();	
+	boolean isFocusControl();
+	
+	/**
+	 * Sets the keyboard focus to this information control.
+	 */
+	void setFocus();
 }
-

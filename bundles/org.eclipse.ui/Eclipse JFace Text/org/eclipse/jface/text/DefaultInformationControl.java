@@ -9,6 +9,8 @@ package org.eclipse.jface.text;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
@@ -82,6 +84,16 @@ public class DefaultInformationControl implements IInformationControl {
 		
 		fText.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		fText.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+		
+		fText.addKeyListener(new KeyListener() {
+			
+			public void keyPressed(KeyEvent e)  {
+				if (e.character == 0x1B) // ESC
+					fShell.dispose();
+			}
+			
+			public void keyReleased(KeyEvent e) {}
+		});
 		
 		fPresenter= presenter;
 	}
@@ -210,6 +222,13 @@ public class DefaultInformationControl implements IInformationControl {
 	 */
 	public boolean isFocusControl() {
 		return (fShell.isFocusControl() || fText.isFocusControl());
+	}
+	
+	/*
+	 * @see IInformationControl#setFocus()
+	 */
+	public void setFocus() {
+		fText.setFocus();
 	}
 }
 

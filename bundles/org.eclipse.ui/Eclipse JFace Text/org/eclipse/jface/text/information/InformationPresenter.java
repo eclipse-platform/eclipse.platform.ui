@@ -194,6 +194,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	public InformationPresenter(IInformationControlCreator creator) {
 		super(creator);
 		setCloser(new Closer());
+		takesFocusWhenVisible(true);
 	}
 	
 	/**

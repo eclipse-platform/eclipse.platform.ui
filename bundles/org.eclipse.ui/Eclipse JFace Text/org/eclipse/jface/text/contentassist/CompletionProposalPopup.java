@@ -5,6 +5,9 @@ package org.eclipse.jface.text.contentassist;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
@@ -38,16 +41,20 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private ITextViewer fViewer;
 	private ContentAssistant fContentAssistant;
 	private AdditionalInfoController fAdditionalInfoController;
-	private int fListenerCount= 0;
 
 	private PopupCloser fPopupCloser= new PopupCloser();
 	private Shell fProposalShell;
 	private Table fProposalTable;
-	private ICompletionProposal[] fProposalInput;
 	private boolean fIgnoreConsumedEvents= false;
+	
+	private ICompletionProposal[] fFilteredProposals;
+	private ICompletionProposal[] fComputedProposals;
+	private int fInvocationOffset;
+	private int fFilterOffset;
 	
 	private String fLineDelimiter= null;
 
+	
 	public CompletionProposalPopup(ContentAssistant contentAssistant, ITextViewer viewer, AdditionalInfoController infoController) {
 		fContentAssistant= contentAssistant;
 		fViewer= viewer;
@@ -59,9 +66,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 		BusyIndicator.showWhile(styledText.getDisplay(), new Runnable() {
 			public void run() {
 				
-				ICompletionProposal[] proposals= computeProposals();
 				
-				int count= (proposals == null ? 0 : proposals.length);
+				fInvocationOffset= fViewer.getSelectedRange().x;
+				fComputedProposals= computeProposals(fInvocationOffset);
+				
+				
+				int count= (fComputedProposals == null ? 0 : fComputedProposals.length);
 				if (count == 0) {
 					
 					if (!autoActivated)
@@ -71,7 +81,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					
 					if (count == 1 && !autoActivated && fContentAssistant.isAutoInserting())
 						
-						insertProposal(proposals[0], (char) 0);
+						insertProposal(fComputedProposals[0], (char) 0, fInvocationOffset);
 					
 					else {
 					
@@ -79,7 +89,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 							fLineDelimiter= styledText.getLineDelimiter();
 						
 						createProposalSelector();
-						setProposals(proposals);
+						setProposals(fComputedProposals);
 						displayProposals();
 					}
 				}
@@ -89,9 +99,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 		return getErrorMessage();
 	}
 	
-	private ICompletionProposal[] computeProposals() {
-		int pos= fViewer.getSelectedRange().x;
-		return fContentAssistant.computeCompletionProposals(fViewer, pos);
+	private ICompletionProposal[] computeProposals(int offset) {
+		return fContentAssistant.computeCompletionProposals(fViewer, offset);
 	}
 	
 	private String getErrorMessage() {
@@ -136,23 +145,23 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fPopupCloser.install(fContentAssistant, fProposalTable);
 		
 		fProposalTable.setHeaderVisible(false);
-		fContentAssistant.addToLayout(this, fProposalShell, ContentAssistant.LayoutManager.LAYOUT_PROPOSAL_SELECTOR);
+		fContentAssistant.addToLayout(this, fProposalShell, ContentAssistant.LayoutManager.LAYOUT_PROPOSAL_SELECTOR, fContentAssistant.getSelectionOffset());
 	}
 	
 	private ICompletionProposal getSelectedProposal() {
 		int i= fProposalTable.getSelectionIndex();
-		if (i < 0 || i >= fProposalInput.length)
+		if (i < 0 || i >= fFilteredProposals.length)
 			return null;
-		return fProposalInput[i];
+		return fFilteredProposals[i];
 	}
 	
 	private void insertSelectedProposal() {
 		ICompletionProposal p= getSelectedProposal();
 		if (p != null)
-			insertProposal(p, (char) 0);
+			insertProposal(p, (char) 0, fViewer.getSelectedRange().x);
 	}
 	
-	private void insertProposal(ICompletionProposal p, char trigger) {
+	private void insertProposal(ICompletionProposal p, char trigger, int offset) {
 			
 		// Turn off event consumption while the text is replaced.
 		// This is important for the case that the selection
@@ -162,7 +171,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		
 		if (p instanceof ICompletionProposalExtension) {
 			ICompletionProposalExtension e= (ICompletionProposalExtension) p;
-			e.apply(document, trigger);
+			e.apply(document, trigger, offset);
 		} else {
 			p.apply(document);
 		}
@@ -212,7 +221,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private void setProposals(ICompletionProposal[] proposals) {
 		if (Helper.okToUse(fProposalTable)) {
 
-			fProposalInput= proposals;
+			fFilteredProposals= proposals;
 
 			fProposalTable.setRedraw(false);
 			fProposalTable.removeAll();
@@ -320,9 +329,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		} else if (key == 0x1B) {
 			hide(); // Terminate on Esc
-		} else {
-			filterProposal();
 		}
+		
 		return true;
 	}
 	
@@ -376,25 +384,75 @@ class CompletionProposalPopup implements IContentAssistListener {
 				char[] triggers= t.getTriggerCharacters();
 				if (contains(triggers, trigger)) {		
 					e.doit= false;
-					insertProposal(p, trigger);
+					insertProposal(p, trigger, fViewer.getSelectedRange().x);
 					hide();
 				}
 			}
 		}
+		
+		filterProposal();
 	}
 	
+	
+	private long fInvocationCounter= 0;
+	
 	private void filterProposal() {
+		++ fInvocationCounter;
 		Control control= fViewer.getTextWidget();
-		Display d= control.getDisplay();
-		d.asyncExec(new Runnable() {
+		control.getDisplay().asyncExec(new Runnable() {
+			long fCounter= fInvocationCounter;
 			public void run() {
-				ICompletionProposal[] proposals= computeProposals();
+				
+				if (fCounter != fInvocationCounter) return;
+				
+				int offset= fViewer.getSelectedRange().x;
+				ICompletionProposal[] proposals= computeFilteredProposals(offset);
+				fFilterOffset= offset;
+				
 				if (proposals != null && proposals.length > 0)
 					setProposals(proposals);
 				else
 					hide();
 			}
 		});
+	}
+	
+	private ICompletionProposal[] computeFilteredProposals(int offset) {
+		
+		if (offset == fInvocationOffset)
+			return fComputedProposals;
+			
+		if (offset < fInvocationOffset) {
+			fInvocationOffset= offset;
+			fComputedProposals= computeProposals(fInvocationOffset);
+			return fComputedProposals;
+		}
+		
+		ICompletionProposal[] proposals= fComputedProposals;
+		if (offset > fFilterOffset)
+			proposals= fFilteredProposals;
+			
+		IDocument document= fViewer.getDocument();
+		int length= proposals.length;
+		List filtered= new ArrayList(length);
+		for (int i= 0; i < length; i++) {
+			if (proposals[i] instanceof ICompletionProposalExtension) {
+				
+				ICompletionProposalExtension p= (ICompletionProposalExtension) proposals[i];
+				if (p.isValidFor(document, offset))
+					filtered.add(p);
+					
+			} else {
+				// restore original behavior
+				fInvocationOffset= offset;
+				fComputedProposals= computeProposals(fInvocationOffset);
+				return fComputedProposals;
+			}
+		}
+		
+		ICompletionProposal[] p= new ICompletionProposal[filtered.size()];
+		filtered.toArray(p); 		
+		return p;
 	}
 }
 

@@ -6,6 +6,7 @@ package org.eclipse.jface.text.contentassist;
  */
 import java.util.Iterator;
 
+import java.util.Stack;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyleRange;
@@ -39,6 +40,16 @@ import org.eclipse.jface.text.contentassist.ContentAssistant.LayoutManager;
  * @see IContextInformationValidator
  */
 class ContextInformationPopup implements IContentAssistListener {
+	
+	
+	
+	static class ContextFrame {
+		public int fOffset;
+		public int fVisibleOffset;
+		public IContextInformation fInformation;
+		public IContextInformationValidator fValidator;
+		public IContextInformationPresenter fPresenter;
+	};
 
 	private ITextViewer fViewer;
 	private ContentAssistant fContentAssistant;
@@ -53,6 +64,9 @@ class ContextInformationPopup implements IContentAssistListener {
 	private Shell fContextInfoPopup;
 	private StyledText fContextInfoText;
 	private TextPresentation fTextPresentation;
+	
+	private Stack fContextFrameStack= new Stack();
+	
 	
 	public ContextInformationPopup(ContentAssistant contentAssistant, ITextViewer viewer) {
 		fContentAssistant= contentAssistant;
@@ -71,7 +85,7 @@ class ContextInformationPopup implements IContentAssistListener {
 				if (count == 1) {
 					
 					// Show context information directly
-					showContextInformation(contexts[0], position);
+					internalShowContextInfo(contexts[0], position);
 				
 				} else if (count > 0) {
 					// Precise context must be selected
@@ -103,25 +117,50 @@ class ContextInformationPopup implements IContentAssistListener {
 		});
 	}
 	
-	private void internalShowContextInfo(IContextInformation information, int pos) {
-		
-		IContextInformationValidator validator= fContentAssistant.getContextInformationValidator(fViewer.getDocument(), pos);
-		
-		if (validator != null) {
-			validator.install(information, fViewer, pos);
+		private void internalShowContextInfo(IContextInformation information, int offset) {
+					
+			IContextInformationValidator validator= fContentAssistant.getContextInformationValidator(fViewer.getDocument(), offset);
 			
-			IContextInformationPresenter presenter= fContentAssistant.getContextInformationPresenter(fViewer.getDocument(), pos);
-			if (presenter != null) {
-				fTextPresentation= new TextPresentation();
-				presenter.install(information, fViewer, pos);
-				presenter.updatePresentation(pos, fTextPresentation);
+			if (validator != null) {
+				ContextFrame current= new ContextFrame();
+				current.fInformation= information;
+				current.fOffset= offset;
+//				current.fVisibleOffset= offset - fViewer.getVisibleRegion().getOffset();
+				current.fVisibleOffset= fViewer.getTextWidget().getSelectionRange().x;
+				current.fValidator= validator;
+				current.fPresenter= fContentAssistant.getContextInformationPresenter(fViewer.getDocument(), offset);
+				
+				fContextFrameStack.push(current);
+				
+				internalShowContextFrame(current, fContextFrameStack.size() == 1);
 			}
-			
-			createContextInfoPopup();
-			setContextInformation(information);
-			displayContextInfoPopup();
-			
+		}
+	
+	private void internalShowContextFrame(ContextFrame frame, boolean initial) {
+		
+		frame.fValidator.install(frame.fInformation, fViewer, frame.fOffset);
+		
+		if (frame.fPresenter != null) {
+			if (fTextPresentation == null)
+				fTextPresentation= new TextPresentation();
+			frame.fPresenter.install(frame.fInformation, fViewer, frame.fOffset);
+			frame.fPresenter.updatePresentation(frame.fOffset, fTextPresentation);
+		}
+		
+		createContextInfoPopup();
+		
+		fContextInfoText.setText(frame.fInformation.getInformationDisplayString());
+		if (fTextPresentation != null) {
+			TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
+			resize();
+		}
+		
+		if (initial) {
+			fContentAssistant.addToLayout(this, fContextInfoPopup, ContentAssistant.LayoutManager.LAYOUT_CONTEXT_INFO_POPUP, frame.fVisibleOffset);
+			fContextInfoPopup.setVisible(true);
 			fContentAssistant.addContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP);
+		} else {
+			fContentAssistant.layout(ContentAssistant.LayoutManager.LAYOUT_CONTEXT_INFO_POPUP, frame.fVisibleOffset);
 		}
 	}
 	
@@ -155,12 +194,7 @@ class ContextInformationPopup implements IContentAssistListener {
 			c= display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 		fContextInfoText.setForeground(c);			
 	}
-	
-	private void setContextInformation(IContextInformation information) {
-		if (Helper.okToUse(fContextInfoText))
-			fContextInfoText.setText(information.getInformationDisplayString());
-	}
-	
+		
 	private void resize() {
 		Point size= fContextInfoText.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		size.x += 3;
@@ -171,27 +205,31 @@ class ContextInformationPopup implements IContentAssistListener {
 		fContextInfoPopup.setSize(size);
 	}
 	
-	private void displayContextInfoPopup() {
-		if (fTextPresentation != null)
-			TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
-			
-		resize();
-
-		fContentAssistant.addToLayout(this, fContextInfoPopup, ContentAssistant.LayoutManager.LAYOUT_CONTEXT_INFO_POPUP);
-		fContextInfoPopup.setVisible(true);
-	}
-
 	private void hideContextInfoPopup() {
+		
 		if (Helper.okToUse(fContextInfoPopup)) {
-			fContentAssistant.removeContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP);
 			
-			fContextInfoPopup.setVisible(false);
-			fContextInfoPopup.dispose();
-			fContextInfoPopup= null;
+			int size= fContextFrameStack.size();
+			if (size > 0) {
+				fContextFrameStack.pop();
+				-- size;
+			}
 			
-			if (fTextPresentation != null) {
-				fTextPresentation.clear();
-				fTextPresentation= null;
+			if (size > 0) {
+				ContextFrame current= (ContextFrame) fContextFrameStack.peek();
+				internalShowContextFrame(current, false);
+			} else {
+				
+				fContentAssistant.removeContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP);
+				
+				fContextInfoPopup.setVisible(false);
+				fContextInfoPopup.dispose();
+				fContextInfoPopup= null;
+				
+				if (fTextPresentation != null) {
+					fTextPresentation.clear();
+					fTextPresentation= null;
+				}
 			}
 		}
 	}
@@ -201,7 +239,7 @@ class ContextInformationPopup implements IContentAssistListener {
 			return;
 		
 		Control control= fViewer.getTextWidget();
-		fContextSelectorShell= new Shell(control.getShell(), SWT.NO_TRIM | SWT.ON_TOP);
+		fContextSelectorShell= new Shell(control.getShell(), SWT.NO_TRIM /* | SWT.ON_TOP */);
 		fContextSelectorTable= new Table(fContextSelectorShell, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 
 		fContextSelectorShell.setSize(300, fContextSelectorTable.getItemHeight() * 10);
@@ -230,7 +268,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		fPopupCloser.install(fContentAssistant, fContextSelectorTable);
 
 		fContextSelectorTable.setHeaderVisible(false);
-		fContentAssistant.addToLayout(this, fContextSelectorShell, ContentAssistant.LayoutManager.LAYOUT_CONTEXT_SELECTOR);
+		fContentAssistant.addToLayout(this, fContextSelectorShell, ContentAssistant.LayoutManager.LAYOUT_CONTEXT_SELECTOR, fContentAssistant.getSelectionOffset());
 	}
 	
 	private void insertSelectedContext() {
@@ -417,36 +455,30 @@ class ContextInformationPopup implements IContentAssistListener {
 		if (e.start != e.end && (e.text == null || e.text.length() == 0))
 			validateContextInformation();
 	}
-
+		
 	private void validateContextInformation() {
 		/*
 		 * Post the code in the event queue in order to ensure that the
 		 * action described by this verify key event has already beed executed.
 		 * Otherwise, we'd validate the context information based on the 
-		 * pre key stroke state.
+		 * pre-key-stroke state.
 		 */
 		fContextInfoPopup.getDisplay().asyncExec(new Runnable() {
-			public void run() {			
-		
-				if (Helper.okToUse(fContextInfoPopup)) {
-					
+			
+			private ContextFrame fFrame= (ContextFrame) fContextFrameStack.peek();
+			
+			public void run() {
+				if (Helper.okToUse(fContextInfoPopup) && fFrame == fContextFrameStack.peek()) {
 					IDocument doc= fViewer.getDocument();
-					int pos= fViewer.getSelectedRange().x;
-					
-					IContextInformationValidator validator= fContentAssistant.getContextInformationValidator(doc, pos);
-					if (validator == null || !validator.isContextInformationValid(pos)) {
+					int offset= fViewer.getSelectedRange().x;
+					if (fFrame.fValidator == null || !fFrame.fValidator.isContextInformationValid(offset)) {
 						hideContextInfoPopup();
-					} else {
-						IContextInformationPresenter presenter= fContentAssistant.getContextInformationPresenter(doc, pos);
-						if (presenter != null && presenter.updatePresentation(pos, fTextPresentation)) {
-							resize();
-							TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
-						}
+					} else if (fFrame.fPresenter != null && fFrame.fPresenter.updatePresentation(offset, fTextPresentation)) {
+						TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
+						resize();
 					}
 				}
 			}
 		});
 	}
 }
-
-

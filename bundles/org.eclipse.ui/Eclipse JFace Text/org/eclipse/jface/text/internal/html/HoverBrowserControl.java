@@ -48,7 +48,7 @@ public class HoverBrowserControl  implements IInformationControl {
 	 * @param parent the parent shell
 	 */
 	public HoverBrowserControl(Shell parent) {
-		fShell= new Shell(parent, SWT.NO_FOCUS | SWT.NO_TRIM | SWT.ON_TOP);
+		fShell= new Shell(parent, SWT.NO_FOCUS | SWT.NO_TRIM /*| SWT.ON_TOP*/);
 		fBrowser= new WebBrowser(fShell);
 		
 		Display display= parent.getDisplay();
@@ -163,6 +163,13 @@ public class HoverBrowserControl  implements IInformationControl {
 	 */
 	public boolean isFocusControl() {
 		return (fShell.isFocusControl() || fBrowser.getControl().isFocusControl());
+	}
+	
+	/*
+	 * @see IInformationControl#setFocus()
+	 */
+	public void setFocus() {
+		fBrowser.getControl().setFocus();
 	}
 }
 

@@ -104,6 +104,9 @@ abstract public class AbstractInformationControlManager {
 	/** The information to be presented */
 	private String fInformation;
 	
+	/** Indicates whether the information control takes focus when visible */
+	private boolean fTakesFocusWhenVisible= false;
+	
 	/** The information control */
 	private IInformationControl fInformationControl;
 	
@@ -163,6 +166,7 @@ abstract public class AbstractInformationControlManager {
 	 * <li> enforece constraints as maximal size == false
 	 * <li> layout anchor == ANCHOR_BOTTOM
 	 * <li> fallback anchors == { ANCHOR_TOP, ANCHOR_BOTTOM, ANCHOR_LEFT, ANCHOR_RIGHT }
+	 * <li> takes focus when visible == false
 	 * </ul>
 	 *
 	 * @param creator the information control creator
@@ -248,6 +252,15 @@ abstract public class AbstractInformationControlManager {
 	 */
 	public void setFallbackAnchors(Anchor[] fallbackAnchors) {
 		fFallbackAnchors= fallbackAnchors;
+	}
+	
+	/**
+	 * Tells the manager whether the information control should take focus when made visible.
+	 * 
+	 * @param takesFocus <code>true</code> if information control should take focus when made visible  
+	 */
+	public void takesFocusWhenVisible(boolean takesFocus) {
+		fTakesFocusWhenVisible= takesFocus;
 	}
 	
 	/**
@@ -566,6 +579,8 @@ abstract public class AbstractInformationControlManager {
 			hoverControl.setLocation(location);
 			
 			hoverControl.setVisible(true);
+			if (fTakesFocusWhenVisible)
+				hoverControl.setFocus();
 			
 			if (fInformationControlCloser != null)
 				fInformationControlCloser.start(subjectArea);

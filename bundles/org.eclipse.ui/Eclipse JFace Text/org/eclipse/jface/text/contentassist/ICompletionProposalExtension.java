@@ -18,12 +18,24 @@ public interface ICompletionProposalExtension {
 	
 	/**
 	 * Applies the proposed completion to the given document. The insertion
-	 * has been triggered by entering the given character.
+	 * has been triggered by entering the given character at the given offset.
+	 * This method assumes that <code>isValidFor</code> returns
+	 * <code>true</code> if called for <code>offset</code>.
 	 *
 	 * @param document the document into which to insert the proposed completion
 	 * @param trigger the trigger to apply the completion
+	 * @param offset the offset at which the trigger has been activated
 	 */
-	void apply(IDocument document, char trigger);
+	void apply(IDocument document, char trigger, int offset);
+	
+	/**
+	 * Returns whether this completion proposal is valid for the given
+	 * position in the given document.
+	 * 
+	 * @param document the document for which the proposal is tested
+	 * @param offset the offset for which the proposal is tested
+	 */
+	boolean isValidFor(IDocument document, int offset);
 	
 	/**
 	 * Returns the characters which trigger the application of this completion proposal.

@@ -27,6 +27,26 @@ import org.eclipse.ui.IStorageEditorInput;import org.eclipse.ui.IWorkbenchPart;
  * Subclasses are responsible for configuring the editor appropriately.
  * The standard text editor, <code>TextEditor</code>, is one such example.
  * </p>
+ * <p>
+ * If a subclass calls <code>setEditorContextMenuId</code> the arguments is
+ * used as the id under which the editor's context menu is registered for extensions.
+ * If no id is set, the context menu is registered under <b>[editor_id].EditorContext</b>
+ * whereby [editor_id] is replaced with the editor's part id.  If the editor is instructed to
+ * run in version 1.0 context menu registration compatibility mode, the latter form of the
+ * registration even happens if a context menu id has been set via <code>setEditorContextMenuId</code>.
+ * If no id is set while in compatibility mode, the menu is registered under 
+ * <code>DEFAULT_EDITOR_CONTEXT_MENU_ID</code>.
+ * </p>
+ * <p>
+ * If a subclass calls <code>setRulerContextMenuId</code> the arguments is
+ * used as the id under which the ruler's context menu is registered for extensions.
+ * If no id is set, the context menu is registered under <b>[editor_id].RulerContext</b>
+ * whereby [editor_id] is replaced with the editor's part id.  If the editor is instructed to
+ * run in version 1.0 context menu registration compatibility mode, the latter form of the
+ * registration even happens if a context menu id has been set via <code>setRulerContextMenuId</code>.
+ * If no id is set while in compatibility mode, the menu is registered under
+ * <code>DEFAULT_RULER_CONTEXT_MENU_ID</code>.
+ * </p>
  *
  * @see org.eclipse.ui.editors.text.TextEditor
  */
@@ -49,8 +69,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
 				}							
 				firePropertyChange(PROP_DIRTY);
-				if (!isDirty && fSourceViewer != null)
-					fSourceViewer.resetPlugins();
+//				if (!isDirty && fSourceViewer != null)
+//					fSourceViewer.resetPlugins();
 			}
 		}
 		
@@ -70,8 +90,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		public void elementContentReplaced(Object element) {
 			if (element != null && element.equals(getEditorInput())) {
 				firePropertyChange(PROP_DIRTY);
-				if (fSourceViewer != null)
-					fSourceViewer.resetPlugins();
+//				if (fSourceViewer != null)
+//					fSourceViewer.resetPlugins();
 				restoreSelection();
 			}
 		}
@@ -350,18 +370,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private boolean fOverwriting= false;
 	/** The editor's remembered text selection */
 	private ITextSelection fRememberedSelection;
+	/** Indicates whether the editor runs in 1.0 context menu registration compatibility mode */
+	private boolean fCompatibilityMode= true;
 	
 	
 	/**
-	 * Creates a new text editor. It initializes the editor and ruler context
-	 * menu id with the predefined names. If not explicitly set, this
-	 * editor uses a <code>SourceViewerConfiguration</code> to configure its
-	 * source viewer. This viewer does not have a range indicator installed.
+	 * Creates a new text editor. If not explicitly set, this editor uses
+	 * a <code>SourceViewerConfiguration</code> to configure its
+	 * source viewer. This viewer does not have a range indicator installed,
+	 * nor any menu id set. By default, the created editor runs in 1.0 context
+	 * menu registration compatibility mode.
 	 */
 	protected AbstractTextEditor() {
 		super();
-		fEditorContextMenuId= DEFAULT_EDITOR_CONTEXT_MENU_ID;
-		fRulerContextMenuId= DEFAULT_RULER_CONTEXT_MENU_ID;
+		fEditorContextMenuId= null;
+		fRulerContextMenuId= null;
 		fHelpContextId= null;
 	}
 	
@@ -499,6 +522,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected void setRulerContextMenuId(String contextMenuId) {
 		Assert.isNotNull(contextMenuId);
 		fRulerContextMenuId= contextMenuId;
+	}
+	
+	/**
+	 * Sets the context menu registration 1.0 compatibility mode. (See class
+	 * description for more details.)
+	 * 
+	 * @param compatible <code>true</code> if compatibility mode is enabled
+	 */
+	protected final void setCompatibilityMode(boolean compatible) {
+		fCompatibilityMode= compatible;
 	}
 	
 	/**
@@ -722,10 +755,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fCursorListener= new ICursorListener() {
 				
 				public void keyPressed(KeyEvent e) {
-				}
-				
-				public void keyReleased(KeyEvent e) {
-					handleCursorPositionChanged();
 					if (e.keyCode != 0) {
 						StyledText styledText= (StyledText) e.widget;
 						int action = styledText.getKeyBinding(e.keyCode | e.stateMask);
@@ -734,6 +763,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 							handleInsertModeChanged();
 						}
 					}
+				}
+				
+				public void keyReleased(KeyEvent e) {
+					handleCursorPositionChanged();
 				}
 				
 				public void mouseDoubleClick(MouseEvent e) {
@@ -821,21 +854,46 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (getHelpContextId() != null)
 			WorkbenchHelp.setHelp(styledText, new Object[] { getHelpContextId() });
 			
-		MenuManager manager= new MenuManager(fEditorContextMenuId, fEditorContextMenuId);
+		
+		String id= fEditorContextMenuId != null ?  fEditorContextMenuId : DEFAULT_EDITOR_CONTEXT_MENU_ID;
+		
+		MenuManager manager= new MenuManager(id, id);
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(getContextMenuListener());
 		fTextContextMenu= manager.createContextMenu(styledText);
 		styledText.setMenu(fTextContextMenu);
-		getSite().registerContextMenu(fEditorContextMenuId, manager, getSelectionProvider());
+		
+		if (fEditorContextMenuId != null)
+			getSite().registerContextMenu(fEditorContextMenuId, manager, getSelectionProvider());
+		else if (fCompatibilityMode)
+			getSite().registerContextMenu(DEFAULT_EDITOR_CONTEXT_MENU_ID, manager, getSelectionProvider());
+			
+		if ((fEditorContextMenuId != null && fCompatibilityMode) || fEditorContextMenuId  == null) {
+			String partId= getSite().getId();
+			if (partId != null)
+				getSite().registerContextMenu(partId + ".EditorContext", manager, getSelectionProvider());
+		}
+		
 		
 		Control ruler= fVerticalRuler.getControl();
-		manager= new MenuManager(fRulerContextMenuId, fRulerContextMenuId);
+		id= fRulerContextMenuId != null ? fRulerContextMenuId : DEFAULT_RULER_CONTEXT_MENU_ID;
+		manager= new MenuManager(id, id);
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(getContextMenuListener());		
 		fRulerContextMenu= manager.createContextMenu(ruler);
 		ruler.setMenu(fRulerContextMenu);
 		ruler.addMouseListener(getRulerMouseListener());
-		getSite().registerContextMenu(fRulerContextMenuId, manager, getSelectionProvider());
+		
+		if (fRulerContextMenuId != null)
+			getSite().registerContextMenu(fRulerContextMenuId, manager, getSelectionProvider());
+		else if (fCompatibilityMode)
+			getSite().registerContextMenu(DEFAULT_RULER_CONTEXT_MENU_ID, manager, getSelectionProvider());
+			
+		if ((fRulerContextMenuId != null && fCompatibilityMode) || fRulerContextMenuId  == null) {
+			String partId= getSite().getId();
+			if (partId != null)
+				getSite().registerContextMenu(partId + ".RulerContext", manager, getSelectionProvider());
+		}
 		
 		createActions();
 		

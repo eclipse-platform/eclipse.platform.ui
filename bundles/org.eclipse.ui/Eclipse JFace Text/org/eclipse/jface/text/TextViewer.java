@@ -1352,6 +1352,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		try {
 			
 			IDocument doc= getVisibleDocument();
+			
 			int startLine= doc.getLineOfOffset(start);
 			int endLine= doc.getLineOfOffset(end);
 			
@@ -1470,7 +1471,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				right.x= p.x;				
 		}
 		
-		return right.x - left.x;
+		return  right.x - left.x;
 	}
 	
 	/**

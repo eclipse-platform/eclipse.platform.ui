@@ -287,7 +287,7 @@ public class ContentAssistant implements IContentAssistant {
 		Shell[] fShells= new Shell[3];
 		Object[] fPopups= new Object[3];
 
-		protected void add(Object popup, Shell shell, int type) {
+		protected void add(Object popup, Shell shell, int type, int offset) {
 			Assert.isNotNull(popup);
 			Assert.isTrue(shell != null && !shell.isDisposed());
 			checkType(type);
@@ -303,7 +303,7 @@ public class ContentAssistant implements IContentAssistant {
 			if (type == LAYOUT_CONTEXT_SELECTOR || type == LAYOUT_CONTEXT_INFO_POPUP)
 				fContextType= type;
 			
-			layout(type);
+			layout(type, offset);
 			adjustListeners(type);
 		}
 	
@@ -332,7 +332,7 @@ public class ContentAssistant implements IContentAssistant {
 				case LAYOUT_CONTEXT_SELECTOR:
 					if (Helper.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 						if (fProposalPopupOrientation == PROPOSAL_STACKED)
-							layout(LAYOUT_PROPOSAL_SELECTOR);
+							layout(LAYOUT_PROPOSAL_SELECTOR, getSelectionOffset());
 						// Restore event notification to the proposal popup.
 						addContentAssistListener((IContentAssistListener) fPopups[LAYOUT_PROPOSAL_SELECTOR], PROPOSAL_SELECTOR);						
 					}
@@ -342,7 +342,7 @@ public class ContentAssistant implements IContentAssistant {
 				case LAYOUT_CONTEXT_INFO_POPUP:
 					if (Helper.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 						if (fContextInfoPopupOrientation == CONTEXT_INFO_BELOW)
-							layout(LAYOUT_PROPOSAL_SELECTOR);
+							layout(LAYOUT_PROPOSAL_SELECTOR, getSelectionOffset());
 					}
 					fContextType= LAYOUT_CONTEXT_SELECTOR;
 					break;
@@ -357,21 +357,21 @@ public class ContentAssistant implements IContentAssistant {
 			return -1;
 		}
 		
-		protected void layout(int type) {
+		protected void layout(int type, int offset) {
 			switch (type) {
 				case LAYOUT_PROPOSAL_SELECTOR:
-					layoutProposalSelector();
+					layoutProposalSelector(offset);
 					break;
 				case LAYOUT_CONTEXT_SELECTOR:
-					layoutContextSelector();
+					layoutContextSelector(offset);
 					break;
 				case LAYOUT_CONTEXT_INFO_POPUP:
-					layoutContextInfoPopup();
+					layoutContextInfoPopup(offset);
 					break;
 			}
 		}
 
-		protected void layoutProposalSelector() {
+		protected void layoutProposalSelector(int offset) {
 			if (fContextType == LAYOUT_CONTEXT_INFO_POPUP &&
 					fContextInfoPopupOrientation == CONTEXT_INFO_BELOW &&
 					Helper.okToUse(fShells[LAYOUT_CONTEXT_INFO_POPUP])) {
@@ -384,7 +384,7 @@ public class ContentAssistant implements IContentAssistant {
 				// There are no other presentations to be concerned with,
 				// so place the proposal selector beneath the cursor line.
 				Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
-				shell.setLocation(getBelowLocation(shell));
+				shell.setLocation(getBelowLocation(shell, offset));
 			} else {
 				switch (fProposalPopupOrientation) {
 					case PROPOSAL_REMOVE: {
@@ -392,13 +392,13 @@ public class ContentAssistant implements IContentAssistant {
 						// proposal selector beneath the cursor line.
 						fShells[LAYOUT_CONTEXT_SELECTOR].dispose();
 						Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
-						shell.setLocation(getBelowLocation(shell));
+						shell.setLocation(getBelowLocation(shell, offset));
 						break;
 					}
 					case PROPOSAL_OVERLAY: {
 						// Overlay the tip selector with the proposal selector.
 						Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
-						shell.setLocation(getBelowLocation(shell));
+						shell.setLocation(getBelowLocation(shell, offset));
 						break;
 					}
 					case PROPOSAL_STACKED: {
@@ -412,10 +412,10 @@ public class ContentAssistant implements IContentAssistant {
 			}
 		}
 		
-		protected void layoutContextSelector() {
+		protected void layoutContextSelector(int offset) {
 			// Always place the context selector beneath the cursor line.
 			Shell shell= fShells[LAYOUT_CONTEXT_SELECTOR];
-			shell.setLocation(getBelowLocation(shell));
+			shell.setLocation(getBelowLocation(shell, offset));
 			
 			if (Helper.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 				switch (fProposalPopupOrientation) {
@@ -439,18 +439,18 @@ public class ContentAssistant implements IContentAssistant {
 			}
 		}
 		
-		protected void layoutContextInfoPopup() {
+		protected void layoutContextInfoPopup(int offset) {
 			switch (fContextInfoPopupOrientation) {
 				case CONTEXT_INFO_ABOVE: {
 					// Place the popup above the cursor line.
 					Shell shell= fShells[LAYOUT_CONTEXT_INFO_POPUP];
-					shell.setLocation(getAboveLocation(shell));
+					shell.setLocation(getAboveLocation(shell, offset));
 					break;
 				}
 				case CONTEXT_INFO_BELOW: {
 					// Place the popup beneath the cursor line.
 					Shell parent= fShells[LAYOUT_CONTEXT_INFO_POPUP];
-					parent.setLocation(getBelowLocation(parent));
+					parent.setLocation(getBelowLocation(parent, offset));
 					if (Helper.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 						// Stack the proposal selector beneath the context info popup.
 						Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
@@ -476,10 +476,9 @@ public class ContentAssistant implements IContentAssistant {
 				location.y= displayBounds.height - shellBounds.height;
 		}
 		
-		protected Point getAboveLocation(Shell shell) {
+		protected Point getAboveLocation(Shell shell, int offset) {
 			StyledText text= fViewer.getTextWidget();
-			int start= text.getSelectionRange().x;
-			Point location= text.getLocationAtOffset(start);
+			Point location= text.getLocationAtOffset(offset);
 			location= text.toDisplay(location);
 			
 			Rectangle shellBounds= shell.getBounds();
@@ -493,10 +492,9 @@ public class ContentAssistant implements IContentAssistant {
 			return location;
 		}
 		
-		protected Point getBelowLocation(Shell shell) {
+		protected Point getBelowLocation(Shell shell, int offset) {
 			StyledText text= fViewer.getTextWidget();
-			int start= text.getSelectionRange().x;
-			Point location= text.getLocationAtOffset(start);
+			Point location= text.getLocationAtOffset(offset);
 			location= text.toDisplay(location);
 			
 			Rectangle shellBounds= shell.getBounds();
@@ -922,11 +920,24 @@ public class ContentAssistant implements IContentAssistant {
 	 * @param popup a content assist popup
 	 * @param shell the shell of the content-assist popup
 	 * @param type the type of popup
+	 * @param visibleOffset the offset at which to layout the popup relative to the offset of the viewer's visible region
 	 */
-	void addToLayout(Object popup, Shell shell, int type) {
-		fLayoutManager.add(popup, shell, type);
+	void addToLayout(Object popup, Shell shell, int type, int visibleOffset) {
+		fLayoutManager.add(popup, shell, type, visibleOffset);
 	}
-
+	
+	/**
+	 * Layouts the registered popup of the given type relative to the
+	 * given offset. The offset is relative to the offset of the viewer's visible region.
+	 * Valid types are defined by <code>LayoutManager</code>.
+	 * 
+	 * @param type the type of popup to layout
+	 * @param visibleOffset the offset at which to layout relative to the offset of the viewer's visible region
+	 */
+	void layout(int type, int visibleOffset) {
+		fLayoutManager.layout(type, visibleOffset);
+	}
+	
 	/**
 	 * Notifies the controller that a popup has lost focus.
 	 *
@@ -934,6 +945,16 @@ public class ContentAssistant implements IContentAssistant {
 	 */
 	void popupFocusLost(FocusEvent e) {
 		fCloser.focusLost(e);
+	}
+	
+	/**
+	 * Returns the offset of the selection relative to the offset of the visible region.
+	 * 
+	 * @return the offset of the selection relative to the offset of the visible region
+	 */
+	int getSelectionOffset() {
+		StyledText text= fViewer.getTextWidget();
+		return text.getSelectionRange().x;
 	}
 
 	/**
