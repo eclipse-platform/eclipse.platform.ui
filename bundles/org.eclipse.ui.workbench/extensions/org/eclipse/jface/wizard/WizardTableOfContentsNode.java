@@ -96,23 +96,14 @@ public class WizardTableOfContentsNode implements ITableOfContentsNode {
 		Image image = getImage(true);
 
 		innerComposite = new Composite(parentComposite, SWT.BORDER);
-		GridLayout innerLayout = new GridLayout();
-		innerLayout.marginHeight = 0;
-		innerLayout.marginWidth = 0;
-		innerComposite.setLayout(innerLayout);
 
 		innerComposite.setForeground(foreground);
 		innerComposite.setBackground(background);
 		int width =
 			Dialog.convertWidthInCharsToPixels(
 				fontMetrics,
-				Math.min(this.page.getTitle().length() + 2, 20));
+				Math.min(this.page.getTitle().length() + 7, 20));
 
-		int height = Dialog.convertHeightInCharsToPixels(fontMetrics, 3);
-		height += image.getBounds().height;
-		width = Math.max(width, image.getBounds().width);
-		RowData labelData = new RowData(width, height);
-		innerComposite.setLayoutData(labelData);
 
 		imageLabel = new Label(innerComposite, SWT.NULL);
 		imageLabel.setForeground(foreground);
@@ -136,6 +127,11 @@ public class WizardTableOfContentsNode implements ITableOfContentsNode {
 					| GridData.GRAB_VERTICAL
 					| GridData.HORIZONTAL_ALIGN_CENTER);
 		titleLabel.setLayoutData(titleData);
+		
+		GridLayout innerLayout = new GridLayout();
+		innerComposite.setLayout(innerLayout);
+		Point defaultSize = innerComposite.computeSize(SWT.DEFAULT,SWT.DEFAULT);
+		innerComposite.setSize(defaultSize.x,defaultSize.y);
 
 		MouseListener clickListener = new MouseListener() {
 			public void mouseDoubleClick(MouseEvent e) {

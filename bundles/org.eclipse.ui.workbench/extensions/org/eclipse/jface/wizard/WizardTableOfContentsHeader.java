@@ -1,19 +1,15 @@
 package org.eclipse.jface.wizard;
 
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialogHeader;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+
+
 
 /**
  * The WizardTableOfContents is a class that displays a series
@@ -21,7 +17,8 @@ import org.eclipse.swt.widgets.*;
  */
 public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 
-	private Composite tableComposite;
+	private ScrolledComposite tableComposite;
+	private Composite inner;
 	private ITableOfContentsNode[] nodes = new ITableOfContentsNode[0];
 	private IWizard initialWizard;
 	private ITableOfContentsNode currentNode;
@@ -47,7 +44,7 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 		}
 
 		Display display = wizard.getContainer().getShell().getDisplay();
-		addNodes(newNodes, display);
+		addNodes(newNodes, display);		
 
 	}
 	/**
@@ -64,11 +61,12 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 		Color background = getTitleBackground(display);
 
 		for (int i = 0; i < newNodes.length; i++) {
-			newNodes[i].createWidgets(tableComposite, foreground, background);
+			newNodes[i].createWidgets(inner, foreground, background);
 			mergeNodes[i + oldSize] = newNodes[i];
 		}
 		nodes = mergeNodes;
-		tableComposite.pack();
+		tableComposite.setMinWidth(inner.computeSize(SWT.DEFAULT, SWT.DEFAULT).x);
+		inner.pack();
 	}
 
 	/**
@@ -163,19 +161,25 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 		Composite parent,
 		int verticalSpacing,
 		int horizontalSpacing) {
+			
+		tableComposite = new ScrolledComposite(parent,SWT.H_SCROLL);
 
-		tableComposite = new Composite(parent, SWT.NULL);
+		inner = new Composite(tableComposite, SWT.NULL);
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
-		tableComposite.setLayout(layout);
-		tableComposite.setForeground(getTitleForeground(parent.getDisplay()));
-		tableComposite.setBackground(getTitleBackground(parent.getDisplay()));
+		inner.setLayout(layout);
+		Color foreground = getTitleForeground(parent.getDisplay());
+		Color background = getTitleBackground(parent.getDisplay());
+		inner.setForeground(foreground);
+		inner.setBackground(background);
+		tableComposite.setForeground(foreground);
+		tableComposite.setBackground(background);
 
 		//Create the nodes if the wizard has not been set.
 		if (initialWizard != null) {
 			addNodesForWizard(initialWizard);
 			currentNode = nodes[0];
 		}
-
+		
+		tableComposite.setContent(inner);
 	}
-
 }
