@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.preferences;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager.DebugActionGroup;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -31,8 +32,11 @@ public class DebugActionGroupsContentProvider implements IStructuredContentProvi
 	 * @see IStructuredContentProvider#getElements(Object)
 	 */
 	public Object[] getElements(Object element) {
-		Collection allViewActionSets =
-			DebugActionGroupsManager.getDefault().fDebugActionGroups.values();
+		Map groups= DebugActionGroupsManager.getDefault().fDebugActionGroups;
+		if (groups == null) {
+			return new Object[0];
+		}
+		Collection allViewActionSets = groups.values();
 		return allViewActionSets.toArray();
 	}
 	/**
@@ -48,8 +52,11 @@ public class DebugActionGroupsContentProvider implements IStructuredContentProvi
 	}
 
 	protected void populateTable() {
-		Collection allViewActionSets =
-			DebugActionGroupsManager.getDefault().fDebugActionGroups.values();
+		Map groups= DebugActionGroupsManager.getDefault().fDebugActionGroups;
+		if (groups == null) {
+		 	return;
+		}
+		Collection allViewActionSets =groups.values();
 		Iterator iterator = allViewActionSets.iterator();
 		while (iterator.hasNext()) {
 			DebugActionGroup set = (DebugActionGroup) iterator.next();
