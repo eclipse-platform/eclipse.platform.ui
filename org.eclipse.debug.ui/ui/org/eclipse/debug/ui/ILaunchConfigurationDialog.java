@@ -30,7 +30,7 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	/**
 	 * Return value from <code>open()</code> method of a
 	 * launch configuration dialog when a launch completed
-	 * successfully with a single click (i.e. without opening a
+	 * successfully with a single click (without opening a
 	 * launch configuration dialog).
 	 */
 	public static final int LAUNCHED_BEFORE_OPENING = 2;
