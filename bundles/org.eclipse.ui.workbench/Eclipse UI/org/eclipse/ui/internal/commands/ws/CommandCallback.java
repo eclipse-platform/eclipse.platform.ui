@@ -176,6 +176,9 @@ public final class CommandCallback implements ICallback {
     }
 
     /**
+     * Calling this method with an undefined command id will generate a log
+     * message.
+     * 
      * @see org.eclipse.jface.action.ExternalActionManager.ICallback#isActive(String)
      */
     public final boolean isActive(final String commandId) {
