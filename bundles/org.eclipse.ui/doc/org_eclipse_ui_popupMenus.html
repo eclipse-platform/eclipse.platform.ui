@@ -162,7 +162,7 @@ action.</li>
 
 <li>
 <b>label</b> - a translatable name that will be used for a pop-up menu
-item label. The label can contain JFace-encoded mnemonic and accelerator
+item label. The label can contain JFace-encoded mnemonic
 (see example).</li>
 
 <li>
@@ -247,20 +247,10 @@ delegate has been instantiated, it may control the action enable state
 directly within its
 <tt>selectionChanged</tt> method.
 <p>Action and menu labels may contain special characters that encode mnemonics
-and accelerators using the following rules:
-<ol>
-<li>
-Mnemonics are specified using the ampersand ('&amp;') character in front
+which are specified using the ampersand ('&amp;') character in front
 of a selected character in the translated text. Since ampersand is not
-allowed in XML strings, use <tt>&amp;amp;</tt> character entity.</li>
-
-<li>
-Optional accelerators are specified at the and of the name string, using
-'@' followed by the series of modifiers and the final accelerator character
-(for example, <tt>&amp;amp;Save@Ctrl+S</tt>). Accelerators with more than
-one modifier are obtained by chaining modifiers, using the '+' sign as
-the delimiter (as in <tt>@Ctrl+Shift+S</tt>).</li>
-</ol>
+allowed in XML strings, use <tt>&amp;amp;</tt> character entity.
+<p>
 If two or more actions are contributed to a menu or toolbar by a single
 extension the actions will appear in the reverse order of how they are
 listed in the plugin.xml file. This behavior is admittedly unintuitive.&nbsp;
@@ -391,12 +381,15 @@ will retrieve the filter for the selection by testing to see if it implements
 <tt>IActionFilter</tt>.&nbsp;
 If that fails, the workbench will ask for a filter through the <tt>IAdaptable</tt>
 mechanism.
+
 <p><b><i>Supplied Implementation: </i></b>The workbench view have built-in
 pop-up menus that already come loaded with a number of actions. Plug-ins
 can contribute to these menus. If a viewer has reserved slots for these
 contributions and they are made public, slot names can be used as paths.
 Otherwise, actions and submenus will be added at the end of the pop-up
 menu.
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+
+<p><a href="hglegal2002.htm"><img SRC="ngibmcpy2002.gif" ALT="Copyright IBM Corporation and others 2000, 2002." BORDER=0</a>
+
 </body>
 </html>

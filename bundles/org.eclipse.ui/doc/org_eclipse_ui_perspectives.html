@@ -46,6 +46,7 @@ this perspective.</li>
 <b>description</b> - an optional subelement whose body should contain text
 providing short description of the perspective.</li>
 </ul>
+
 <b><i>Examples:</i></b>
 <p>The following is an example of a perspective extension:
 <p><tt>&nbsp;&nbsp; &lt;extension</tt>
@@ -61,24 +62,28 @@ class="org.eclipse.ui.internal.ResourcePerspective"</tt>
 icon="icons/MyIcon.gif"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/perspective></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;/extension></tt>
+
 <p><b><i>API Information: </i></b>The value of the <tt>class</tt> attribute
 must be the fully qualified name of a class that implements <tt>org.eclipse.ui.IPerspectiveFactory</tt>.
 The class must supply the initial layout for a perspective when asked by
 the workbench.
-<p>The <tt>product.ini</tt> file is used to define the default perspective.&nbsp;
+<p>The <tt>plugin_customization.ini</tt> file is used to define the default perspective.&nbsp;
 The <i>default perspective</i> is the first perspective which appears when
 the product is launched after install.&nbsp; It is also used when the user
 opens a page or window with no specified perspective.&nbsp; The default
-perspective is defined as a property within the product.ini, as shown below.&nbsp;
+perspective is defined as a property within the plugin_customization.ini, as shown below.&nbsp;
 The user may also override this perspective from the workbench perspectives preference page.
 <p><tt>&nbsp;&nbsp;&nbsp; defaultPerspectiveId = org.eclipse.ui.resourcePerspective</tt>
 <p>The perspectives which appear in the "Open" menu are shortcuts for perspective
 selection.&nbsp; This set is defined by the active perspective itself,
 and extensions made through the <a href="org_eclipse_ui_perspectiveExtensions.html">perspectiveExtensions</a>
 extension point.
+
 <p><b><i>Supplied Implementation: </i></b>The workbench provides a "Resource
 Perspective".&nbsp; Additional perspectives may be added by plug-ins. They
 are selected using the Open submenu of the Perspective menu.
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+
+<p><a href="hglegal2002.htm"><img SRC="ngibmcpy2002.gif" ALT="Copyright IBM Corporation and others 2000, 2002." BORDER=0</a>
+
 </body>
 </html>
