@@ -105,7 +105,8 @@ public abstract class PluginAction extends Action
 				initDelegate();
 				refreshEnablement();
 			} catch (CoreException e) {
-				WorkbenchPlugin.log("Could not create action delegate.", e.getStatus()); //$NON-NLS-1$
+				String id = configElement.getAttribute(ActionDescriptor.ATT_ID);
+				WorkbenchPlugin.log("Could not create action delegate for id: " + id, e.getStatus()); //$NON-NLS-1$
 				return;
 			}
 		}
