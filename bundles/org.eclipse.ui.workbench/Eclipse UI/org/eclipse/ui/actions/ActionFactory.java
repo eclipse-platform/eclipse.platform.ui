@@ -525,6 +525,8 @@ public abstract class ActionFactory {
     /**
      * Workbench action (id "minimize"): Minimizes the active part. This
      * action maintains its enablement state.
+     * 
+     * @since 3.1
      */
     public static final ActionFactory MINIMIZE = new ActionFactory("minimize") {//$NON-NLS-1$
         /* (non-javadoc) method declared on ActionFactory */
