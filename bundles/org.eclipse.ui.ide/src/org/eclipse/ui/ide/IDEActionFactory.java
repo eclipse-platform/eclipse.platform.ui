@@ -19,6 +19,7 @@ import org.eclipse.ui.actions.ImportResourcesAction;
 import org.eclipse.ui.actions.NewWizardAction;
 import org.eclipse.ui.actions.QuickStartAction;
 import org.eclipse.ui.actions.RetargetAction;
+import org.eclipse.ui.internal.AboutAction;
 import org.eclipse.ui.internal.NewWizardDropDownAction;
 import org.eclipse.ui.internal.TipsAndTricksAction;
 import org.eclipse.ui.internal.actions.ProjectPropertyDialogAction;
@@ -59,6 +60,22 @@ public abstract class IDEActionFactory extends ActionFactory {
 		super(actionId);
 	}
 
+	/**
+	 * Workbench action: Displays the About dialog.
+	 * This action maintains its enablement state.
+	 */
+	public static final ActionFactory ABOUT = new ActionFactory("about") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ActionFactory */
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			IWorkbenchAction action = new AboutAction(window);
+			action.setId(getId());
+			return action;
+		}
+	};
+		
 	/**
 	 * IDE-specific workbench action: Add bookmark.
 	 * This action is a {@link Retarget Retarget} action with 
