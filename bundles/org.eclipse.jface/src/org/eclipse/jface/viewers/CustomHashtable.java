@@ -5,8 +5,9 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/cpl-v10.html 
  * 
- * Contributors: 
- *     IBM Corporation - initial API and implementation 
+ * Contributors:
+ *     Peter Shipton - original hashtable implementation
+ *     Nick Edgar - added element comparer support
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
