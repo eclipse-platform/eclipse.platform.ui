@@ -902,6 +902,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 					fail(" 2.0", e);
 			}
 		}
+		IContentType result = manager.findContentTypeFor("test.mytext");
+		assertNull("3.0", result);
 	}
-
 }
