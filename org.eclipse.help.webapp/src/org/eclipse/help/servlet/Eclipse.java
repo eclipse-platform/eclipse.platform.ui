@@ -17,7 +17,8 @@ import javax.servlet.ServletException;
  * Eclipse launcher
  */
 public class Eclipse {
-	private static final String HELP_APPLICATION = "org.eclipse.help.helpApplication";
+	private static final String HELP_APPLICATION =
+		"org.eclipse.help.helpApplication";
 	private Class bootLoader;
 	private Object platformRunnable;
 	private Method runMethod;
@@ -51,7 +52,7 @@ public class Eclipse {
 	 * Gets content from the named url (this could be and eclipse defined url)
 	 */
 	public URLConnection openConnection(String url) throws Exception {
-		
+
 		//System.out.println("opening connection");
 		Object[] params = new Object[1];
 		params[0] = new Object[] { "openConnection", url };
@@ -71,17 +72,18 @@ public class Eclipse {
 		if (bootLoader == null) {
 			URL baseURL =
 				new URL("file", null, context.getRealPath("/").replace('\\', '/'));
-			
+
 			// At some point, the webapp was the actual eclipse directory, so the line below worked,
 			// but now we just install eclipse elsewhere, and point the webapp to the actual help webapp
 			//String path = baseURL.getFile() + "/plugins/org.eclipse.core.boot/boot.jar";
 			File f = new File(baseURL.getFile());
 			f = f.getParentFile();
-			String path = (f.toString() + "/org.eclipse.core.boot/boot.jar").replace('\\', '/');
-			
+			String path =
+				(f.toString() + "/org.eclipse.core.boot/boot.jar").replace('\\', '/');
+
 			URL bootUrl =
 				new URL(baseURL.getProtocol(), baseURL.getHost(), baseURL.getPort(), path);
-				//System.out.println("URL for bootloader:"+bootUrl);
+			//System.out.println("URL for bootloader:"+bootUrl);
 			bootLoader =
 				new URLClassLoader(new URL[] { bootUrl }, null).loadClass(
 					"org.eclipse.core.boot.BootLoader");
@@ -94,7 +96,7 @@ public class Eclipse {
 		try {
 			// need to handle conflicts on setting url stream handlers
 			initializeHandlers();
-			
+
 			if (context.getAttribute("platformRunnable") == null) {
 				//System.out.println("getting boot loader");
 				bootLoader = getBootLoader();
@@ -109,8 +111,8 @@ public class Eclipse {
 						.getAbsolutePath();
 
 				//System.out.println("starting eclipse");
-				mStartup.invoke(bootLoader, new Object[] { null, work, new String[] {
-					}
+				mStartup
+					.invoke(bootLoader, new Object[] { null, work, new String[] { "-noupdate" }
 				});
 
 				Method mGetRunnable =
@@ -129,18 +131,18 @@ public class Eclipse {
 			throw new ServletException(e);
 		}
 	}
-	
-	private void initializeHandlers() {		
+
+	private void initializeHandlers() {
 		// register proxy handlers
 		Properties props = System.getProperties();
 		String propName = "java.protocol.handler.pkgs";
 		String pkgs = System.getProperty(propName);
 		String proxyPkgs = "org.eclipse.help.internal.proxy.protocol";
-		if (pkgs != null) 
+		if (pkgs != null)
 			pkgs = pkgs + "|" + proxyPkgs;
-		else 
+		else
 			pkgs = proxyPkgs;
-		props.put(propName,pkgs);
+		props.put(propName, pkgs);
 		System.setProperties(props);
 	}
 
