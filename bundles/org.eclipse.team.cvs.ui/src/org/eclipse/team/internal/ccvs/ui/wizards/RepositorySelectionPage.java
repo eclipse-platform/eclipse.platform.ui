@@ -5,7 +5,6 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -14,13 +13,11 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -57,7 +54,7 @@ public class RepositorySelectionPage extends CVSWizardPage {
 	}
 	protected TableViewer createTable(Composite parent, int span) {
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
-		GridData data = new GridData(GridData.FILL_BOTH);
+		GridData data = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL);
 		data.horizontalSpan = span;
 		table.setLayoutData(data);
 		TableLayout layout = new TableLayout();
@@ -74,19 +71,16 @@ public class RepositorySelectionPage extends CVSWizardPage {
 	 * @param parent  the parent of the created widgets
 	 */
 	public void createControl(Composite parent) {
-		Composite composite = createComposite(parent, 2);
+		Composite composite = createComposite(parent, 1);
 		// set F1 help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARING_SELECT_REPOSITORY_PAGE);
 		
-		Label description = new Label(composite, SWT.WRAP);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		data.widthHint = 350;
-		description.setLayoutData(data);
-		description.setText(Policy.bind("RepositorySelectionPage.description")); //$NON-NLS-1$
-
-		useExistingRepo = createRadioButton(composite, Policy.bind("RepositorySelectionPage.useExisting"), 2); //$NON-NLS-1$
-		table = createTable(composite, 2);
+		createWrappingLabel(composite, Policy.bind("RepositorySelectionPage.description"), 0 /* indent */, 1 /* columns */);
+		
+		useNewRepo = createRadioButton(composite, Policy.bind("RepositorySelectionPage.useNew"), 1); //$NON-NLS-1$
+		
+		useExistingRepo = createRadioButton(composite, Policy.bind("RepositorySelectionPage.useExisting"), 1); //$NON-NLS-1$
+		table = createTable(composite, 1);
 		table.setContentProvider(new WorkbenchContentProvider());
 		table.setLabelProvider(new WorkbenchLabelProvider());
 		table.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -95,7 +89,6 @@ public class RepositorySelectionPage extends CVSWizardPage {
 				setPageComplete(true);
 			}
 		});
-		useNewRepo = createRadioButton(composite, Policy.bind("RepositorySelectionPage.useNew"), 2); //$NON-NLS-1$
 
 		useExistingRepo.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
