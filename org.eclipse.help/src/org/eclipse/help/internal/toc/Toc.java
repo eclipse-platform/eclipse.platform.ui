@@ -31,7 +31,7 @@ public class Toc extends TocNode implements IToc, ITocElement{
 	 */
 	private List childrenTocs;
 	private DirectoryToc directoryToc;
-	/** map of all topics contained by this TOC by href.
+	/** Map of all topics contained by this TOC by href.
 	 * Description topic is not in the map.
 	 */
 	private Map topicMap = new HashMap();
@@ -113,7 +113,15 @@ public class Toc extends TocNode implements IToc, ITocElement{
 		if (href == null || href.equals(descriptionTopic.getHref())){
 			return descriptionTopic;
 		}
-
+		return getTopicNoDescr(href);
+	}
+	/**
+	 * Similar to ITopic getTopic(String) but does not match and 
+	 * return description Topic
+	 * @param href the topic's URL
+	 * @return ITopic or null
+	 */
+	private ITopic getTopicNoDescr(String href) {
 		ITopic result=getOwnedTopic(href);
 		if(result!=null){
 			return result;
@@ -122,9 +130,8 @@ public class Toc extends TocNode implements IToc, ITocElement{
 		// check inside children TOCs
 		for(Iterator it=getChildrenTocs().iterator(); it.hasNext();){
 			Toc childToc=(Toc)it.next();
-			// can call getTopic because href!=null,
-			// hence no chance of retrieving description topic for child TOC
-			result=childToc.getTopic(href);
+			// must not return description topic from children TOCs
+			result=childToc.getTopicNoDescr(href);
 			if(result!=null){
 				break;
 			}
@@ -164,7 +171,7 @@ public class Toc extends TocNode implements IToc, ITocElement{
 	 * without looking in children TOCs
 	 * <br> If the TOC contains multiple 
 	 * topics with the same href only of them (arbitrarily chosen) will 
-	 * be returned.
+	 * be returned.  TOC Descritpion topic is ignored.
 	 * @param href the topic's URL.
 	 * @return ITopic or null
 	 */
