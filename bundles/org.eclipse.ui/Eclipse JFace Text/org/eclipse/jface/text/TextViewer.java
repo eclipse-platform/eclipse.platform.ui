@@ -1983,7 +1983,12 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	 * @return the viewer's printable mode
 	 */
 	protected boolean isPrintable() {
-		return true;
+		/*
+		 * 1GK7Q10: ITPUI:WIN98 - internal error after invoking print at editor view
+		 * Changed from returning true to testing the length of the printer queue
+		 */
+		PrinterData[] printerList= Printer.getPrinterList();
+		return (printerList != null && printerList.length > 0);
 	}
 	
 	/**
