@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.TreeExpansionEvent;
 
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 import org.eclipse.search.ui.IWorkingSet;
 
@@ -100,6 +101,7 @@ class WorkingSetDialog extends InputDialog {
 		fTree.setContentProvider(new WorkbenchContentProvider());
 		fTree.setLabelProvider(new WorkbenchLabelProvider());
 		fTree.setInput(SearchPlugin.getWorkspace().getRoot());
+		fTree.setSorter(new WorkbenchViewerSorter());
 
 		GridData gd= new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
 		gd.heightHint= SIZING_SELECTION_WIDGET_HEIGHT;
