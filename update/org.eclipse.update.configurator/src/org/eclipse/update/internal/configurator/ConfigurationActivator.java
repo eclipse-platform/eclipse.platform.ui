@@ -52,6 +52,9 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	
 	//Need to store that because it is not provided by the platformConfiguration
 	private long lastTimeStamp;
+
+	// The expected states timestamp
+	private long lastStateTimeStamp;
 	
 	// Singleton
 	private static ConfigurationActivator configurator;
@@ -120,8 +123,10 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		try {
 			stream = new DataInputStream(new URL(configLocation.getURL(),NAME_SPACE+'/'+LAST_CONFIG_STAMP).openStream());
 			lastTimeStamp = stream.readLong();
+			lastStateTimeStamp = stream.readLong();
 		} catch (Exception e) {
 			lastTimeStamp = configuration.getChangeStamp() - 1;
+			lastStateTimeStamp = -1;
 		} finally {
 			if (stream != null)
 				try {
@@ -365,8 +370,10 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			
 			String configArea = configLocation.getURL().getFile();
 			lastTimeStamp = configuration.getChangeStamp();
+			lastStateTimeStamp = Platform.getPlatformAdmin().getState(false).getTimeStamp();
 			stream = new DataOutputStream(new FileOutputStream(configArea +File.separator+ NAME_SPACE+ File.separator+ LAST_CONFIG_STAMP));
 			stream.writeLong(lastTimeStamp);
+			stream.writeLong(lastStateTimeStamp);
 		} catch (Exception e) {
 			Utils.log(e.getLocalizedMessage());
 		} finally {
@@ -398,7 +405,8 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	private boolean canRunWithCachedData() {
 		return  !"true".equals(System.getProperty("osgi.checkConfiguration")) && //$NON-NLS-1$ //$NON-NLS-2$
 				System.getProperties().get("osgi.dev") == null && //$NON-NLS-1$
-				lastTimeStamp==configuration.getChangeStamp();
+				lastTimeStamp==configuration.getChangeStamp() &&
+				lastStateTimeStamp==Platform.getPlatformAdmin().getState(false).getTimeStamp();
 	}
 				
 	public static BundleContext getBundleContext() {
