@@ -239,6 +239,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 			int reparseStart= line.getOffset();
 			int partitionStart= -1;
 			String contentType= null;
+			int newLength= e.getText() == null ? 0 : e.getText().length();
 			
 			int first= d.computeIndexInCategory(fPositionCategory, reparseStart);
 			if (first > 0)	{
@@ -305,9 +306,10 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 						break;
 				}
 				
-				// if position already exists we are done
+				// if position already exists and we have scanned at least the
+				// area covered by the event, we are done
 				if (d.containsPosition(fPositionCategory, start, length)) {
-					if (lastScannedPosition > e.getOffset())
+					if (lastScannedPosition >= e.getOffset() + newLength)
 						return createRegion();
 					++ first;
 				} else {
