@@ -27,12 +27,27 @@ public abstract class BasicPerformanceTest extends UITestCase {
 
 	private PerformanceTester tester;
     private IProject testProject;
+    final private boolean tagAsGlobalSummary;
 
+    public BasicPerformanceTest(String testName) {
+    	this(testName, false);
+    }
+    
     /**
      * @param testName
      */
-    public BasicPerformanceTest(String testName) {
+    public BasicPerformanceTest(String testName, boolean tagAsGlobalSummary) {
         super(testName);
+        this.tagAsGlobalSummary = tagAsGlobalSummary;
+    }
+    
+    /**
+     * Answers whether this test should be tagged globally.
+     * 
+     * @return whether this test should be tagged globally
+     */
+    protected boolean shouldGloballyTag() {
+    	return tagAsGlobalSummary;
     }
     
 	/* (non-Javadoc)

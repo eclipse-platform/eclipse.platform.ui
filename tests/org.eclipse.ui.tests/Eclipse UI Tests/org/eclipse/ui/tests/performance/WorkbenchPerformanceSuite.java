@@ -101,7 +101,11 @@ class WorkbenchPerformanceSuite extends TestSuite {
      */
     private void addPerspectiveSwitchScenarios() {
         for (int i = 0; i < PERSPECTIVE_SWITCH_PAIRS.length; i++) {
-            addTest(new PerspectiveSwitchTest(PERSPECTIVE_SWITCH_PAIRS[i]));            
+        	//only fingerprint the first test. 
+        	//TODO this seems wrong! We should decide on an actual pair to 
+        	//fingerprint rather than just the first on in the array 
+        	//(it's not the most interesting at the moment)
+            addTest(new PerspectiveSwitchTest(PERSPECTIVE_SWITCH_PAIRS[i], i == 0));            
         }   
     }
     
@@ -112,7 +116,7 @@ class WorkbenchPerformanceSuite extends TestSuite {
     	if (PERSPECTIVE_IDS.length == 0)
     		return;
     	
-        addTest(new WindowResizeTest(new String[] {RESOURCE_PERSPID}));
+        addTest(new WindowResizeTest(new String[] {RESOURCE_PERSPID}, true));
     }
     
     /**
