@@ -32,7 +32,7 @@
 		<delete dir="${temp.folder}/ant_tasks/resources-ant.jar.bin"/>
 		<mkdir dir="${temp.folder}/ant_tasks/resources-ant.jar.bin"/>
 		<!-- compile the source code -->
-		<javac destdir="${temp.folder}/ant_tasks/resources-ant.jar.bin" failonerror="false" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../org.eclipse.core.runtime/runtime.jar;resources.jar;../org.apache.xerces/xercesImpl.jar;../org.apache.xerces/xmlParserAPIs.jar;lib/ant.jar;../org.apache.xerces/bin;lib/antsupport.jar;../org.eclipse.core.boot/boot.jar;../org.eclipse.core.runtime/bin;../org.eclipse.core.boot/bin">
+		<javac destdir="${temp.folder}/ant_tasks/resources-ant.jar.bin" failonerror="false" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../org.eclipse.core.boot/bin;../org.eclipse.core.boot/boot.jar;resources.jar;bin;../org.eclipse.core.runtime/bin;../org.eclipse.core.runtime/runtime.jar;../org.apache.xerces/bin;../org.apache.xerces/xercesImpl.jar;../org.apache.xerces/xmlParserAPIs.jar;../org.apache.ant/ant.jar;../org.eclipse.ant.core/antsupport.jar;../org.eclipse.ant.core/bin">
 			<src path="src_ant/"/>
 		</javac>
 		<!-- copy necessary resources -->
