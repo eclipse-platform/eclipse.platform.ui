@@ -294,8 +294,17 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 					throw new RuntimeException(Policy.bind("application.noIdFound")); //$NON-NLS-1$
 				IExtensionRegistry registry = InternalPlatform.getDefault().getRegistry();
 				IExtension applicationExtension = registry.getExtension(Platform.PI_RUNTIME, Platform.PT_APPLICATIONS, applicationId);
-				if (applicationExtension == null)
-					throw new RuntimeException(Policy.bind("application.notFound", applicationId)); //$NON-NLS-1$
+				if (applicationExtension == null) {
+					IExtension[] availableApps = registry.getExtensionPoint(Platform.PI_RUNTIME + '.' + Platform.PT_APPLICATIONS).getExtensions();
+					String availableAppsString = "<NONE>"; //$NON-NLS-1$
+					if (availableApps.length != 0) {
+						availableAppsString = availableApps[0].getUniqueIdentifier();
+						for (int i = 1; i < availableApps.length; i++) {
+							availableAppsString = availableAppsString + ", " + availableApps[i].getUniqueIdentifier(); //$NON-NLS-1$
+						}
+					}
+					throw new RuntimeException(Policy.bind("application.notFound", applicationId, availableAppsString)); //$NON-NLS-1$
+				}
 				IConfigurationElement[] configs = applicationExtension.getConfigurationElements();
 				if (configs.length == 0)
 					throw new RuntimeException(Policy.bind("application.invalidExtension", applicationId)); //$NON-NLS-1$
