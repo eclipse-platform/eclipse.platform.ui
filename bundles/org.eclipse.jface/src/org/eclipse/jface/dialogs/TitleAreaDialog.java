@@ -163,7 +163,7 @@ protected Control createDialogArea(Composite parent) {
  * @param parent the SWT parent for the title area widgets
  * @return Control with the highest x axis value.
  */
-private Control createTitleArea(Composite parent) {
+protected Control createTitleArea(Composite parent) {
 		
 	// add a dispose listener
 	parent.addDisposeListener(new DisposeListener() {
