@@ -3,10 +3,9 @@ package org.eclipse.ui.tests.api;
 import junit.framework.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
 
 /**
- * Tests the PlatformUI class.
+ * Tests the IPageListener class.
  */
 public class IPageListenerTest extends TestCase 
 	implements IPageListener
@@ -36,13 +35,12 @@ public class IPageListenerTest extends TestCase
 	}
 
 	/**
-	 * Verifies that open and activated events are received
-	 * when openPage is performed.
+	 * Tests the pageOpened method.
 	 */	
 	public void testPageOpened() throws Throwable {
 		// Test open page.
 		eventsReceived = 0;
-		IWorkbenchPage page = fWindow.openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
+		IWorkbenchPage page = fWindow.openPage(EmptyPerspective.PERSP_ID,
 			fWorkspace);
 		assertEquals(eventsReceived, OPEN|ACTIVATE);
 		
@@ -51,12 +49,11 @@ public class IPageListenerTest extends TestCase
 	}
 	
 	/**
-	 * Verifies that close events are received when a page
-	 * is closed.
+	 * Tests the pageClosed method.
 	 */	
 	public void testPageClosed() throws Throwable {
 		// Open page.
-		IWorkbenchPage page = fWindow.openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
+		IWorkbenchPage page = fWindow.openPage(EmptyPerspective.PERSP_ID,
 			fWorkspace);
 			
 		// Test close page.
@@ -67,16 +64,13 @@ public class IPageListenerTest extends TestCase
 	}
 	
 	/**
-	 * Verifies that activate events are received when a page
-	 * is activated.
+	 * Tests the pageActivated method.
 	 */	
 	public void testPageActivate() throws Throwable {
 		// Add pages.
-		IWorkbenchPage page1 = fWindow.openPage(
-			IWorkbenchConstants.DEFAULT_LAYOUT_ID,
+		IWorkbenchPage page1 = fWindow.openPage(EmptyPerspective.PERSP_ID,
 			fWorkspace);
-		IWorkbenchPage page2 = fWindow.openPage(
-			IWorkbenchConstants.DEFAULT_LAYOUT_ID,
+		IWorkbenchPage page2 = fWindow.openPage(EmptyPerspective.PERSP_ID,
 			fWorkspace);
 		
 		// Test activation of page 1.

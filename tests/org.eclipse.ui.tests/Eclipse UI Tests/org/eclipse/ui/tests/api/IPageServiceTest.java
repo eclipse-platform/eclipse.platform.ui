@@ -3,21 +3,21 @@ package org.eclipse.ui.tests.api;
 import junit.framework.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.internal.*;
 
 /**
- * Tests the PlatformUI class.
+ * Tests the IPageService class.
  */
 public class IPageServiceTest extends TestCase 
-	implements IPageListener
+	implements IPageListener, org.eclipse.ui.IPerspectiveListener
 {
 	private IWorkbenchWindow fWindow;
 	private IWorkspace fWorkspace;
 	
-	private int eventsReceived = 0;
-	final private int OPEN = 0x01;
-	final private int CLOSE = 0x02;
-	final private int ACTIVATE = 0x04;
+	private boolean pageEventReceived;
+	private boolean perspEventReceived;
 	
 	public IPageServiceTest(String testName) {
 		super(testName);
@@ -30,8 +30,7 @@ public class IPageServiceTest extends TestCase
 	}
 	
 	/**
-	 * Adds a page listener.  Then verifies that events are
-	 * received.
+	 * Tests the addPageListener method.
 	 */	
 	public void testAddPageListener() throws Throwable {
 		// Add listener.
@@ -39,19 +38,18 @@ public class IPageServiceTest extends TestCase
 		
 		// Open and close page.
 		// Verify events are received.
-		eventsReceived = 0;
-		IWorkbenchPage page = fWindow.openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
+		pageEventReceived = false;
+		IWorkbenchPage page = fWindow.openPage(EmptyPerspective.PERSP_ID,
 			fWorkspace);
 		page.close();
-		assert(eventsReceived != 0);
+		assert(pageEventReceived);
 		
 		// Remove listener.	
 		fWindow.removePageListener(this);		
 	}
 	
 	/**
-	 * Adds and removes a page listener.  Then verifies that no
-	 * further events are received.
+	 * Tests the removePageListener method.
 	 */
 	public void testRemovePageListener() throws Throwable {
 		// Add and remove listener.
@@ -60,26 +58,24 @@ public class IPageServiceTest extends TestCase
 		
 		// Open and close page.
 		// Verify no events are received.
-		eventsReceived = 0;
-		IWorkbenchPage page = fWindow.openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
+		pageEventReceived = false;
+		IWorkbenchPage page = fWindow.openPage(EmptyPerspective.PERSP_ID,
 			fWorkspace);
 		page.close();
-		assert(eventsReceived == 0);
+		assert(!pageEventReceived);
 	}
 	
 	/**
-	 * Adds two pages and then tests getActivePage.
+	 * Tests getActivePage.
 	 */
 	public void testGetActivePage() throws Throwable {
 		// Add page.
-		IWorkbenchPage page1 = fWindow.openPage(
-			IWorkbenchConstants.DEFAULT_LAYOUT_ID,
+		IWorkbenchPage page1 = fWindow.openPage(EmptyPerspective.PERSP_ID,
 			fWorkspace);
 		assertEquals(fWindow.getActivePage(), page1);
 		
 		// Add second page.
-		IWorkbenchPage page2 = fWindow.openPage(
-			IWorkbenchConstants.DEFAULT_LAYOUT_ID,
+		IWorkbenchPage page2 = fWindow.openPage(EmptyPerspective.PERSP_ID,
 			fWorkspace);
 		assertEquals(fWindow.getActivePage(), page2);
 		
@@ -95,24 +91,82 @@ public class IPageServiceTest extends TestCase
 	}
 	
 	/**
+	 * Tests the addPerspectiveListener method.
+	 */	
+	public void testAddPerspectiveListener() throws Throwable {
+		// Add listener.
+		fWindow.addPerspectiveListener(this);
+		
+		// Open page and change persp feature.
+		// Verify events are received.
+		perspEventReceived = false;
+		IWorkbenchPage page = fWindow.openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
+			fWorkspace);
+		page.setEditorAreaVisible(false);
+		page.setEditorAreaVisible(true);
+		page.close();
+		assert(perspEventReceived);
+		
+		// Remove listener.	
+		fWindow.removePerspectiveListener(this);		
+	}
+	
+	/**
+	 * Tests the removePerspectiveListener method.
+	 */	
+	public void testRemovePerspectiveListener() throws Throwable {
+		// Add and remove listener.
+		fWindow.addPerspectiveListener(this);
+		fWindow.removePerspectiveListener(this);		
+		
+		// Open page and change persp feature.
+		// Verify no events are received.
+		perspEventReceived = false;
+		IWorkbenchPage page = fWindow.openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
+			fWorkspace);
+		page.setEditorAreaVisible(false);
+		page.setEditorAreaVisible(true);
+		page.close();
+		assert(!perspEventReceived);
+	}
+	
+	/**
 	 * @see IPageListener#pageActivated(IWorkbenchPage)
 	 */
 	public void pageActivated(IWorkbenchPage page) {
-		eventsReceived |= ACTIVATE;
+		pageEventReceived = true;
 	}
 
 	/**
 	 * @see IPageListener#pageClosed(IWorkbenchPage)
 	 */
 	public void pageClosed(IWorkbenchPage page) {
-		eventsReceived |= CLOSE;
+		pageEventReceived = true;
 	}
 
 	/**
 	 * @see IPageListener#pageOpened(IWorkbenchPage)
 	 */
 	public void pageOpened(IWorkbenchPage page) {
-		eventsReceived |= OPEN;
+		pageEventReceived = true;
+	}
+
+	/**
+	 * @see IPerspectiveListener#perspectiveActivated(IWorkbenchPage, IPerspectiveDescriptor)
+	 */
+	public void perspectiveActivated(IWorkbenchPage page,
+		IPerspectiveDescriptor perspective) 
+	{
+		perspEventReceived = true;
+	}
+
+	/**
+	 * @see IPerspectiveListener#perspectiveChanged(IWorkbenchPage, IPerspectiveDescriptor, String)
+	 */
+	public void perspectiveChanged(IWorkbenchPage page,
+		IPerspectiveDescriptor perspective, String changeId) 
+	{
+		perspEventReceived = true;
 	}
 
 }
