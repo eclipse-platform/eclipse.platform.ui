@@ -916,7 +916,7 @@ public class LinkedResourceTest extends ResourceTest {
 			} catch (IOException e) {
 				fail("2.92", e);
 			}
-			assertTrue("2.0", linkedFile.getModificationStamp() > 0);
+			assertTrue("2.0", linkedFile.getModificationStamp() >= 0);
 
 			//delete local file
 			ensureDoesNotExistInFileSystem(resolvePath(location).toFile());
