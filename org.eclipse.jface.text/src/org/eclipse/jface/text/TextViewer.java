@@ -2546,10 +2546,10 @@ public class TextViewer extends Viewer implements
 	protected void customizeDocumentCommand(DocumentCommand command) {
 		if (fIgnoreAutoIndent)
 			return;
-		IAutoIndentStrategy s= (IAutoIndentStrategy) selectContentTypePlugin(command.offset, fAutoIndentStrategies);
-		if (s != null)
-			s.customizeDocumentCommand(getDocument(), command);
-	}
+			IAutoIndentStrategy s= (IAutoIndentStrategy) selectContentTypePlugin(command.offset, fAutoIndentStrategies);
+			if (s != null)
+				s.customizeDocumentCommand(getDocument(), command);
+		}
 	
 	/**
 	 * @see VerifyListener#verifyText
@@ -3275,7 +3275,7 @@ public class TextViewer extends Viewer implements
 	 */
 	public void changeTextPresentation(TextPresentation presentation, boolean controlRedraw) {
 				
-		if (presentation == null)
+		if (presentation == null || !redraws())
 			return;
 			
 		presentation.setResultWindow(internalGetVisibleRegion());
@@ -3493,7 +3493,10 @@ public class TextViewer extends Viewer implements
 		
 		if (fTextWidget != null && !fTextWidget.isDisposed())
 			fTextWidget.setRedraw(false);
-			
+		
+		/* 
+		 * TODO: should be removed.
+		 */
 		fireRedrawChanged();
 	}
 	
