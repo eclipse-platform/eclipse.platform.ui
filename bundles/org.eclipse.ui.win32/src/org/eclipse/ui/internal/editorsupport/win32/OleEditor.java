@@ -94,26 +94,6 @@ public class OleEditor extends EditorPart {
 
 	};
 
-	ISelectionListener selectionListener = new ISelectionListener() {
-
-		private Runnable selectionRunnable = new Runnable() {
-			public void run() {
-				oleActivate();
-			}
-		};
-
-		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-
-			if (selection instanceof IStructuredSelection) {
-				IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-				if (structuredSelection.size() == 1
-					&& structuredSelection.getFirstElement().equals(resource))
-					update(selectionRunnable);
-			}
-
-		}
-	};
-
 	private OleFrame clientFrame;
 	private OleClientSite clientSite;
 	private File source;
@@ -393,7 +373,6 @@ public class OleEditor extends EditorPart {
 		// Listen for part activation.
 		site.getPage().addPartListener(partListener);
 
-		site.getPage().addSelectionListener(selectionListener);
 	}
 	/**
 	 *	Initialize the workbench menus for proper merging
