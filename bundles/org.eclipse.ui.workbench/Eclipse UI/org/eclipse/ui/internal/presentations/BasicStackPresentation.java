@@ -277,14 +277,16 @@ public class BasicStackPresentation extends StackPresentation {
 		};
 		
 		PresentationUtil.addDragListener(tabFolder, dragListener);
-		PresentationUtil.addDragListener(titleLabel, new Listener() {
-			public void handleEvent(Event event) {
-				if (layout.isTrimOnTop()) {
-					Point localPos = new Point(event.x, event.y);
-					getSite().dragStart(titleLabel.toDisplay(localPos), false);
-				}
-			}
-		});
+		
+		// Uncomment to allow dragging from the title label
+//		PresentationUtil.addDragListener(titleLabel, new Listener() {
+//			public void handleEvent(Event event) {
+//				if (layout.isTrimOnTop()) {
+//					Point localPos = new Point(event.x, event.y);
+//					getSite().dragStart(titleLabel.toDisplay(localPos), false);
+//				}
+//			}
+//		});
 
 		titleLabel.addMouseListener(mouseListener);
 		

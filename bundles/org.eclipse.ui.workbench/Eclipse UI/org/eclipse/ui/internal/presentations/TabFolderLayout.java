@@ -126,7 +126,6 @@ public class TabFolderLayout {
 		topControls = upperRight;
 		
 		cache = new LayoutCache(upperRight);
-		//layout();
 	}
 	
 	/**
@@ -143,24 +142,21 @@ public class TabFolderLayout {
 		
 		// Determine if the controls will fit on the top
 		Rectangle trimRegion = getTitleTrimRegion();
-		Point trimSize = computeTrimSize(0, topControls.length);
+		Point trimSize = computeTrimSize(leftAligned, topControls.length - leftAligned);
 		
 		trimOnTop = trimSize.x <= trimRegion.width && trimSize.y <= trimRegion.height;
 		
+		int idx = 0;
+		int lastBottomControl = topControls.length;
+		
 		// Check if we have room for all our topRight controls on the top border
 		if (trimOnTop) {
-			
-//			if (leftAligned > 0) {
-//				trimStart = trimRegion.x;
-//			} else {
-//				trimStart = trimRegion.x + trimRegion.width - trimSize.x - bounds.x ;
-//			}
-			
-			trimStart = align(0, topControls.length, trimRegion, true) - bounds.x;
+						
+			trimStart = align(leftAligned, topControls.length - leftAligned, trimRegion, true) - bounds.x;
 
 			centerArea = clientBounds;
 			
-			return;
+			lastBottomControl = leftAligned;
 		}
 		
 		// Else we need to place the controls below the title
@@ -169,14 +165,13 @@ public class TabFolderLayout {
 		Rectangle currentRect = new Rectangle(clientBounds.x + leftMargin, clientBounds.y, 
 				clientBounds.width - leftMargin, 0);
 		
-		int idx = 0;
-		while (idx < topControls.length) {
+		while (idx < lastBottomControl) {
 			int startOfRow = idx;
 			currentRect.height = 0;
 			int rowWidth = 0;
 			
 			int rowCount = 0;
-			while (idx + rowCount < topControls.length) {
+			while (idx + rowCount < lastBottomControl) {
 				Point nextSize = cache.computeSize(idx + rowCount, SWT.DEFAULT, SWT.DEFAULT);
 				
 				rowWidth += nextSize.x;
