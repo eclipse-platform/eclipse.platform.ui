@@ -24,7 +24,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -37,7 +36,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * </p>
  * @since 2.1
  */
-public class FileLink implements IHyperlink {
+public class FileLink implements IConsoleHyperlink {
 
 	private IFile fFile;
 	private int fFileOffset;
