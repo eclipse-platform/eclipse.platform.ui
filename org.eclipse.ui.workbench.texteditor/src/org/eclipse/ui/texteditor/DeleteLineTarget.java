@@ -31,8 +31,6 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
 
-// import org.eclipse.ui..commands.Manager;
-
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 
@@ -269,9 +267,10 @@ class DeleteLineTarget {
 	 * @param document the document
 	 * @param position the offset
 	 * @param type the specification of what to delete
+	 * @param copyToClipboard <code>true</code> if the deleted line should be copied to the clipboard
 	 * @throws BadLocationException if position is not valid in the given document
 	 */
-	public void deleteLine(IDocument document, int position, int type) throws BadLocationException {
+	public void deleteLine(IDocument document, int position, int type, boolean copyToClipboard) throws BadLocationException {
 
 		IRegion deleteRegion= getDeleteRegion(document, position, type);
 		int offset= deleteRegion.getOffset();
@@ -280,7 +279,7 @@ class DeleteLineTarget {
 		if (length == 0)
 			return;
 			
-		if (appendToClipboard()) {
+		if (copyToClipboard) {
 
 			fClipboard.checkState();
 			fClipboard.append(document.get(offset, length));
@@ -294,18 +293,5 @@ class DeleteLineTarget {
 		} else {
 			document.replace(offset, length, null);
 		}
-	}
-	
-
-	/**
-	 * Returns whether the deleted line should be appended to the clipboard. This default implementation
-	 * returns <code>true</code> if the current key binding is emacs.
-	 * @return <code>true</code> if deleted line should be appended to the clipboard
-	 */
-	private boolean appendToClipboard() {
-//		Manager manager= Manager.getInstance();
-//		String configuration= manager.getKeyMachine().getKeyConfiguration();
-//		return "org.eclipse.ui.emacsAcceleratorConfiguration".equalsIgnoreCase(configuration);
-		return true;
 	}
 }

@@ -36,6 +36,8 @@ public class DeleteLineAction extends TextEditorAction {
 
 	/** The type of deletion */
 	private final int fType;
+	/** Should the deleted line be copied to the clipboard */
+	private final boolean fCopyToClipboard;
 	/** The deletion target */
 	private DeleteLineTarget fTarget;
 
@@ -47,8 +49,20 @@ public class DeleteLineAction extends TextEditorAction {
 	 * 	<code>WHOLE_LINE</code>, <code>TO_BEGINNING</code> or <code>TO_END</code>
 	 */
 	public DeleteLineAction(ResourceBundle bundle, String prefix, ITextEditor editor, int type) {
+		this(bundle, prefix, editor, type, true);
+	}
+	
+	/**
+	 * Creates a line delimiter conversion action.
+	 * 
+	 * @param editor the editor
+	 * @param type the line deletion type, must be one of
+	 * 	<code>WHOLE_LINE</code>, <code>TO_BEGINNING</code> or <code>TO_END</code>
+	 */
+	public DeleteLineAction(ResourceBundle bundle, String prefix, ITextEditor editor, int type, boolean copyToClipboard) {
 		super(bundle, prefix, editor);
-		fType= type;		
+		fType= type;	
+		fCopyToClipboard= copyToClipboard;	
 		update();
 	}
 	
@@ -111,7 +125,7 @@ public class DeleteLineAction extends TextEditorAction {
 			return;
 	
 		try {
-			fTarget.deleteLine(document, selection.getOffset(), fType);
+			fTarget.deleteLine(document, selection.getOffset(), fType, fCopyToClipboard);
 		} catch (BadLocationException e) {
 			// should not happen			
 		}

@@ -96,6 +96,13 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	static final String DELETE_LINE= "DeleteLine"; //$NON-NLS-1$
 	
 	/** 
+	 * Name of the action to cut the current line. 
+	 * Value: <code>"CutLine"</code>
+	 * @since 2.1
+	 */
+	static final String CUT_LINE= "CutLine"; //$NON-NLS-1$
+	
+	/** 
 	 * Name of the action to delete line to beginning. 
 	 * Value: <code>"DeleteLineToBeginning"</code>
 	 * @since 2.0
@@ -103,11 +110,25 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	static final String DELETE_LINE_TO_BEGINNING= "DeleteLineToBeginning"; //$NON-NLS-1$
 	
 	/** 
+	 * Name of the action to cut line to beginning. 
+	 * Value: <code>"CutLineToBeginning"</code>
+	 * @since 2.1
+	 */
+	static final String CUT_LINE_TO_BEGINNING= "CutLineToBeginning"; //$NON-NLS-1$
+	
+	/** 
 	 * Name of the action to delete line to end. 
 	 * Value: <code>"DeleteLineToEnd"</code>
 	 * @since 2.0
 	 */
 	static final String DELETE_LINE_TO_END= "DeleteLineToEnd"; //$NON-NLS-1$
+	
+	/** 
+	 * Name of the action to cut line to end. 
+	 * Value: <code>"CutLineToEnd"</code>
+	 * @since 2.1
+	 */
+	static final String CUT_LINE_TO_END= "CutLineToEnd"; //$NON-NLS-1$
 	
 	/** 
 	 * Name of the action to set the mark.

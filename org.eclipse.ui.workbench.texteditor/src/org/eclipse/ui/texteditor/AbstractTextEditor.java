@@ -3415,21 +3415,36 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE);
 		setAction(ITextEditorActionConstants.DELETE, action);
 
-		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.DeleteLine.", this, DeleteLineAction.WHOLE); //$NON-NLS-1$
+		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.DeleteLine.", this, DeleteLineAction.WHOLE, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_LINE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE_LINE);
 		setAction(ITextEditorActionConstants.DELETE_LINE, action);
 
-		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.DeleteLineToBeginning.", this, DeleteLineAction.TO_BEGINNING); //$NON-NLS-1$
+		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.CutLine.", this, DeleteLineAction.WHOLE, true); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_LINE_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CUT_LINE);
+		setAction(ITextEditorActionConstants.CUT_LINE, action);
+
+		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.DeleteLineToBeginning.", this, DeleteLineAction.TO_BEGINNING, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_LINE_TO_BEGINNING_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE_LINE_TO_BEGINNING);
 		setAction(ITextEditorActionConstants.DELETE_LINE_TO_BEGINNING, action);
 
-		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.DeleteLineToEnd.", this, DeleteLineAction.TO_END); //$NON-NLS-1$
+		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.CutLineToBeginning.", this, DeleteLineAction.TO_BEGINNING, true); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_LINE_TO_BEGINNING_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CUT_LINE_TO_BEGINNING);
+		setAction(ITextEditorActionConstants.CUT_LINE_TO_BEGINNING, action);
+
+		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.DeleteLineToEnd.", this, DeleteLineAction.TO_END, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_LINE_TO_END_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE_LINE_TO_END);
 		setAction(ITextEditorActionConstants.DELETE_LINE_TO_END, action);
 
+		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.CutLineToEnd.", this, DeleteLineAction.TO_END, true); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_LINE_TO_END_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CUT_LINE_TO_END);
+		setAction(ITextEditorActionConstants.CUT_LINE_TO_END, action);
+		
 		action= new MarkAction(EditorMessages.getResourceBundle(), "Editor.SetMark.", this, MarkAction.SET_MARK); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SET_MARK_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SET_MARK);

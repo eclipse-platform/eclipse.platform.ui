@@ -84,10 +84,24 @@ public interface IAbstractTextEditorHelpContextIds {
 
 	/**
 	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.CutLine_action_context"</code>
+	 * @since 2.1
+	 */
+	public static final String CUT_LINE_ACTION= PREFIX + ITextEditorActionConstants.CUT_LINE + ACTION_POSTFIX;
+	
+	/**
+	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.DeleteLineToBeginning_action_context"</code>
 	 * @since 2.0
 	 */
 	public static final String DELETE_LINE_TO_BEGINNING_ACTION= PREFIX + ITextEditorActionConstants.DELETE_LINE_TO_BEGINNING + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.CutLineToBeginning_action_context"</code>
+	 * @since 2.1
+	 */
+	public static final String CUT_LINE_TO_BEGINNING_ACTION= PREFIX + ITextEditorActionConstants.CUT_LINE_TO_BEGINNING + ACTION_POSTFIX;
 
 	/**
 	 * Help context id for the action.
@@ -96,6 +110,13 @@ public interface IAbstractTextEditorHelpContextIds {
 	 */
 	public static final String DELETE_LINE_TO_END_ACTION= PREFIX + ITextEditorActionConstants.DELETE_LINE_TO_END + ACTION_POSTFIX;
 
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.CutLineToEnd_action_context"</code>
+	 * @since 2.1
+	 */
+	public static final String CUT_LINE_TO_END_ACTION= PREFIX + ITextEditorActionConstants.CUT_LINE_TO_END + ACTION_POSTFIX;
+	
 	/**
 	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.SetMark_action_context"</code>

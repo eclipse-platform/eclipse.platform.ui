@@ -27,10 +27,24 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	public static final String DELETE_LINE= "org.eclipse.ui.edit.text.delete.line"; //$NON-NLS-1$
 	
 	/**
+	 * Action definition id of the edit cut line action.
+	 * Value: <code>"org.eclipse.ui.edit.text.cut.line"</code>
+	 * @since 2.1
+	 */
+	public static final String CUT_LINE= "org.eclipse.ui.edit.text.cut.line"; //$NON-NLS-1$
+	
+	/**
 	 * Action definition id of the edit delete line to beginning action.
 	 * Value: <code>"org.eclipse.ui.edit.text.delete.line.to.beginning"</code>
 	 */
 	public static final String DELETE_LINE_TO_BEGINNING= "org.eclipse.ui.edit.text.delete.line.to.beginning"; //$NON-NLS-1$
+	
+	/**
+	 * Action definition id of the edit cut line to beginning action.
+	 * Value: <code>"org.eclipse.ui.edit.text.cut.line.to.beginning"</code>
+	 * @since 2.1
+	 */
+	public static final String CUT_LINE_TO_BEGINNING= "org.eclipse.ui.edit.text.cut.line.to.beginning"; //$NON-NLS-1$
 	
 	/**
 	 * Action definition id of the edit delete line to end action.
@@ -38,6 +52,13 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 */
 	public static final String DELETE_LINE_TO_END= "org.eclipse.ui.edit.text.delete.line.to.end"; //$NON-NLS-1$
 	
+	/**
+	 * Action definition id of the edit cut line to end action.
+	 * Value: <code>"org.eclipse.ui.edit.text.cut.line.to.end"</code>
+	 * @since 2.1
+	 */
+	public static final String CUT_LINE_TO_END= "org.eclipse.ui.edit.text.cut.line.to.end"; //$NON-NLS-1$
+
 	/**
 	 * Action definition id of the edit set mark action.
 	 * Value: <code>"org.eclipse.ui.edit.text.set.mark"</code>
