@@ -110,6 +110,22 @@ public class XmlElement {
 	 * this is not complete as a result of an error.
 	 */
 	private boolean isErrorNode;
+	
+	/**
+	 * The absolute file system path of the file this element is
+	 * defined within.
+	 */
+	private String filePath;
+	
+	/**
+	 * Whether this element has been generated from an external entity definition
+	 */
+	private boolean isExternal = false;
+	
+	/**
+	 * Whether this element is the root external element generated from an external entity definition
+	 */
+	private boolean isRootExternal = false;
 
     /**
      * Creates an instance with the specified name.
@@ -256,6 +272,21 @@ public class XmlElement {
         return endingColumn;
     }
 
+	/**
+	 * Sets the absolute file system path of the file this element is defined
+	 * within.
+	 */
+	public void setFilePath(String path) {
+		this.filePath = path;
+	}
+	
+	/**
+	 * Returns the absolute file system path of the file this element is defined
+     * within.
+     */
+	public String getFilePath() {
+		return filePath;
+	}
 
     /**
      * Sets the endingColumn.
@@ -337,7 +368,7 @@ public class XmlElement {
 	 * Returns a string representation of this element.
 	 */
 	public String toString() {
-		return MessageFormat.format(AntEditorXMLMessages.getString("XmlElement.XmlElement_toString"), new String[]{name, Integer.toString(startingRow), Integer.toString(startingColumn), Integer.toString(endingRow), Integer.toString(endingColumn)});		 //$NON-NLS-1$
+		return MessageFormat.format(AntEditorXMLMessages.getString("XmlElement.XmlElement_toString"), new String[]{name, Integer.toString(startingRow), Integer.toString(startingColumn), Integer.toString(endingRow), Integer.toString(endingColumn)}); //$NON-NLS-1$
 	}
 	
 	/**
@@ -354,5 +385,34 @@ public class XmlElement {
 	 */
 	public void setIsErrorNode(boolean isErrorNode) {
 		this.isErrorNode= isErrorNode;
+	}
+	/**
+	 * Returns whether this xml element is defined in an external entity.
+	 * 
+	 * @return boolean
+	 */
+	public boolean isExternal() {
+		return isExternal;
+	}
+
+	/**
+	 * Sets whether this xml element is defined in an external entity.
+	 */
+	public void setExternal(boolean isExternal) {
+		this.isExternal = isExternal;
+	}
+	
+	/**
+	 * Sets whether this xml element is the root external entity.
+	 */
+	public void setRootExternal(boolean isExternal) {
+		this.isRootExternal = isExternal;
+	}
+	
+	/**
+	 * Returns whether this xml element is the root external entity.
+	 */
+	public boolean isRootExternal() {
+		return isRootExternal;
 	}
 }
