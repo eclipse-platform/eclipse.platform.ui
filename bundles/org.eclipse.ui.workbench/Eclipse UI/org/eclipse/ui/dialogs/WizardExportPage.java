@@ -244,68 +244,17 @@ protected void displayResourcesSelectedCount(int selectedResourceCount) {
 		resourceDetailsDescription.setText(WorkbenchMessages.format("WizardExportPage.resourceCountMessage", new Object[] {new Integer(selectedResourceCount)})); //$NON-NLS-1$
 }
 /**
- * Ensures that all resources have local contents.  Retrieves server contents 
- * for resources without local contents.
- * <p>
- * Note that this is a potentially long operation which should be used sparingly
- * (in other words, once per export operation, likely just before performance of
- * the export).
- * </p>
+ * Obsolete method. This was implemented to handle the case where ensureLocal()
+ * needed to be called but it doesn't use it any longer.
  *
  * @param resources the list of resources to ensure locality for
  * @return <code>true</code> for successful completion
+ * @deprecated Only retained for backwards compatibility.
  */
 protected boolean ensureResourcesLocal(List resources) {
-	if (resources.isEmpty())
-		return true;
-
-	final List nonLocalResources = extractNonLocalResources(resources);
-	if (nonLocalResources.isEmpty())
-		return true;
-
-	final Vector errors = new Vector();
-	
-	WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-		protected void execute(IProgressMonitor monitor) {
-			// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity issues
-			monitor.beginTask(WorkbenchMessages.getString("WizardExportPage.progressMessage"), nonLocalResources.size() * 1000); //$NON-NLS-1$
-			Iterator resourcesEnum = nonLocalResources.iterator();
-			//1FTIMQN: ITPCORE:WIN - clients required to do too much iteration work
-
-			try {
-				while (resourcesEnum.hasNext()) {
-					IResource resource = (IResource)resourcesEnum.next();
-					if (monitor.isCanceled())
-						throw new OperationCanceledException();
-				}
-			} finally {
-				monitor.done();
-			}
-		}
-	};
-
-	try {
-		getContainer().run(true, true, op);
-	} catch (InterruptedException e) {
-		return false;
-	} catch (InvocationTargetException e) {
-		WorkbenchPlugin.log(MessageFormat.format("Exception in {0}.ensureResourcesLocal(): {1}", new Object[] {getClass().getName(), e.getTargetException()}));//$NON-NLS-1$
-		MessageDialog.openError(getContainer().getShell(), WorkbenchMessages.getString("WizardExportPage.internalErrorTitle"), WorkbenchMessages.format("WizardExportPage.internalErrorMessage", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-2$ //$NON-NLS-1$
-	}
-
-	if (errors.isEmpty())
-		return true;
-
-	// If errors occurred, open an Error dialog
-	ErrorDialog.openError(getContainer().getShell(),
-		WorkbenchMessages.getString("WizardExportPage.contentRetrievalProblems"), //$NON-NLS-1$
-		null,   // no special message
-		StatusUtil.newStatus(errors,	// make a multi status
-			WorkbenchMessages.getString("WizardExportPage.contentRetrievalProblemsMessage"), //$NON-NLS-1$
-			null));
-
-	return false;
+	return true;
 }
+
 /**
  * Returns a new subcollection containing only those resources which are not 
  * local.

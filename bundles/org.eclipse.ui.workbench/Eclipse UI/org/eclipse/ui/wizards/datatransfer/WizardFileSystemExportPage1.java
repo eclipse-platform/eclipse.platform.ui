@@ -209,8 +209,6 @@ public boolean finish() {
 		return false;
 
 	List resourcesToExport = getSelectedResources();
-	if (!ensureResourcesLocal(resourcesToExport))
-		return false;
 
 	// about to invoke the operation so save our state
 	saveWidgetValues();

@@ -290,72 +290,15 @@ protected String getErrorDialogTitle(){
 	return WorkbenchMessages.getString("WizardExportPage.errorDialogTitle");
 }
 /**
- * Ensures that all resources have local contents.  Retrieves server contents 
- * for resources without local contents.
- * <p>
- * Note that this is a potentially long operation which should be used sparingly
- * (in other words, once per export operation, likely just before performance of
- * the export).
- * </p>
+ * Obsolete method. This was implemented to handle the case where ensureLocal()
+ * needed to be called but it doesn't use it any longer.
  *
- * @param resources the list of resources to ensure locality for
- * @return <code>true</code> for successful completion
+ * @deprecated Only retained for backwards compatibility.
  */
 protected boolean ensureResourcesLocal(List resources) {
-	if (resources.isEmpty())
-		return true;
-
-	final List nonLocalResources = extractNonLocalResources(resources);
-	if (nonLocalResources.isEmpty())
-		return true;
-
-	final Vector errors = new Vector();
-
-	WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-		protected void execute(IProgressMonitor monitor) {
-			monitor.beginTask(WorkbenchMessages.getString("WizardExportPage.progressMessage"), nonLocalResources.size() * 1000); //$NON-NLS-1$
-			Iterator resourcesEnum = nonLocalResources.iterator();
-			try {
-				while (resourcesEnum.hasNext()) {
-					IResource resource = (IResource) resourcesEnum.next();
-
-					if (monitor.isCanceled())
-						throw new OperationCanceledException();
-				}
-			} finally {
-				monitor.done();
-			}
-		}
-	};
-
-	try {
-		getContainer().run(true, true, op);
-	} catch (InterruptedException e) {
-		return false;
-
-	} catch (InvocationTargetException e) {
-		WorkbenchPlugin.log(e.getTargetException().getMessage());
-		MessageDialog.openError(
-			getContainer().getShell(),
-			WorkbenchMessages.getString("WizardExportPage.internalErrorTitle"), //$NON-NLS-1$
-			WorkbenchMessages.format("BuildAction.internalError", new Object[] { e.getTargetException().getMessage()})); //$NON-NLS-1$
-	}
-
-	if (errors.isEmpty())
-		return true;
-
-	// If errors occurred, open an Error dialog
-	ErrorDialog.openError(
-		getContainer().getShell(),
-		WorkbenchMessages.getString("WizardExportPage.contentRetrievalProblems"), //$NON-NLS-1$
-		null,
-		StatusUtil.newStatus(
-			errors,
-			WorkbenchMessages.getString("WizardExportPage.contentRetrievalProblemsMessage"), //$NON-NLS-1$
-			null));
-
-	return false;
+	return true;
 }
+
 /**
  * Returns a new subcollection containing only those resources which are not 
  * local.
