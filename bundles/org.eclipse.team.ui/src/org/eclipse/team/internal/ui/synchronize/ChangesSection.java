@@ -13,14 +13,12 @@ package org.eclipse.team.internal.ui.synchronize;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.*;
@@ -341,6 +339,6 @@ public class ChangesSection extends Composite {
 	}
 	
 	protected Color getBackgroundColor() {
-		return JFaceColors.getSchemeBackground(parent.getDisplay());
+		return getShell().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 	}
 }

@@ -18,10 +18,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.ui.internal.WorkbenchColors;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
@@ -87,7 +87,7 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 		if (element instanceof SynchronizeModelElement) {
 			SynchronizeModelElement node = (SynchronizeModelElement)element;
 			if(node.getProperty(SynchronizeModelElement.BUSY_PROPERTY)) {
-				return WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
+				return Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 			}
 		}
 		return null;
