@@ -102,6 +102,12 @@
    <test id="core.tests.runtime.PluginVersionIdentifierTest">
       <run class="org.eclipse.core.tests.runtime.PluginVersionIdentifierTest"/>
    </test>
+   <test id="core.tests.runtime.PreferencesTest">
+      <run class="org.eclipse.core.tests.runtime.PreferencesTest"/>
+   </test>
+   <test id="core.tests.runtime.PreferenceExportTest">
+      <run class="org.eclipse.core.tests.runtime.PreferenceExportTest"/>
+   </test>
    <test id="core.tests.runtime.ProgressMonitorWrapperTest">
       <run class="org.eclipse.core.tests.runtime.ProgressMonitorWrapperTest"/>
    </test>

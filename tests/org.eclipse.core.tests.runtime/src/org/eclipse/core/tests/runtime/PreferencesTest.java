@@ -3,32 +3,19 @@
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v0.5 
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     IBM Corporation - initial test suite
  ******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.Preferences;
+import java.io.*;
+import java.util.*;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import junit.textui.TestRunner;
+import org.eclipse.core.runtime.Preferences;
 
 /**
  * Test suite for API class org.eclipse.core.runtime.Preferences

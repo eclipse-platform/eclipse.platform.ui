@@ -34,6 +34,7 @@ public static Test suite() {
 	suite.addTest(PathTest.suite());
 	suite.addTest(PlatformTest.suite());
 	suite.addTest(PreferencesTest.suite());
+	suite.addTest(PreferenceExportTest.suite());
 	suite.addTest(org.eclipse.core.tests.internal.runtime.AllTests.suite());
 	suite.addTest(ConfigurationElementModelTest.suite());
 	suite.addTest(org.eclipse.core.tests.internal.plugins.AllTests.suite());
