@@ -77,6 +77,7 @@ public final class PlatformUI {
 	 * Block instantiation.
 	 */
 	private PlatformUI() {
+	    // do nothing
 	}
 	
 	/**
@@ -102,7 +103,7 @@ public final class PlatformUI {
 	 * @since 3.0
 	 */
 	public static boolean isWorkbenchRunning() {
-		return Workbench.getInstance() != null;
+		return Workbench.getInstance() != null  && Workbench.getInstance().isRunning();
 	}
 	
 	/**

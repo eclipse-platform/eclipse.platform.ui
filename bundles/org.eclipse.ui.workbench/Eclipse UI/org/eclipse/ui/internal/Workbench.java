@@ -1386,14 +1386,14 @@ public final class Workbench implements IWorkbench {
 						.getNamespace(), 0,
 						"startup class must implement org.eclipse.ui.IStartup", //$NON-NLS-1$
 						null);
-				WorkbenchPlugin.log("Bad extension specification", status); //$NON-NLS-1$
+				WorkbenchPlugin.log("Bad startup extension specification in plugin " + extension.getNamespace(), status); //$NON-NLS-1$
 			}
 		}
 
 		public void handleException(Throwable exception) {
 			IStatus status = new Status(IStatus.ERROR,
 					extension.getNamespace(), 0,
-					"Unable to execute early startup code for an extension", //$NON-NLS-1$
+					"Unable to execute early startup code for a startup extension in plugin " + extension.getNamespace(), //$NON-NLS-1$
 					exception);
 			WorkbenchPlugin.log("Unhandled Exception", status); //$NON-NLS-1$
 		}
@@ -2241,5 +2241,13 @@ public final class Workbench implements IWorkbench {
      */
     public IThemeManager getThemeManager() {
         return WorkbenchThemeManager.getInstance();
+    }
+
+    /**
+     * Returns <code>true</code> if the workbench is running,
+     * <code>false</code> if it has been terminated. 
+     */
+    public boolean isRunning() {
+        return !runEventLoop;
     }
 }
