@@ -277,6 +277,7 @@ private URL findNL(URL install, IPath path, Map override) {
 		}
 	if (nl == null)
 		nl = BootLoader.getNL(); // use default
+	nl = nl.replace('_', '/');
 	URL result = null;
 	boolean done = false;
 	
