@@ -35,10 +35,11 @@ import org.eclipse.debug.internal.core.StreamsProxy;
  * Clients may subclass this class. Clients that need to replace the implementation
  * of a streams proxy associatd with an <code>IProcess</code> should subclass this
  * class. Generally clients should not instantiate this class directly, but should
- * instead call <code>DebugPlugin.newProcess(...)</code>, which will instantiate the
- * process implementation referenced by the assocaited launch configuration.
+ * instead call <code>DebugPlugin.newProcess(...)</code>, which can delegate to an 
+ * <code>IProcessFactory</code> if one is referenced by the associated launch configuration.
  * </p>
  * @see org.eclipse.debug.core.model.IProcess
+ * @see org.eclipse.debug.core.IProcessFactory
  * @since 3.0
  */
 public class RuntimeProcess extends PlatformObject implements IProcess {
