@@ -266,8 +266,10 @@ public class AntRunner implements IPlatformRunnable {
 				setProgressMonitor.invoke(runner, new Object[] { monitor });
 			}
 			// add properties
-			Method addUserProperties = classInternalAntRunner.getMethod("addUserProperties", new Class[] { Map.class }); //$NON-NLS-1$
-			addUserProperties.invoke(runner, new Object[] { userProperties });
+			if (userProperties != null) {
+				Method addUserProperties = classInternalAntRunner.getMethod("addUserProperties", new Class[] { Map.class }); //$NON-NLS-1$
+				addUserProperties.invoke(runner, new Object[] { userProperties });
+			}
 			// set message output level
 			Method setMessageOutputLevel = classInternalAntRunner.getMethod("setMessageOutputLevel", new Class[] { int.class }); //$NON-NLS-1$
 			setMessageOutputLevel.invoke(runner, new Object[] { new Integer(messageOutputLevel)});
