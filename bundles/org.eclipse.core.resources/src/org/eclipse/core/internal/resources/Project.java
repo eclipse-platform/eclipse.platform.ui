@@ -26,7 +26,6 @@ protected Project(IPath path, Workspace container) {
 public void basicDelete(MultiStatus status) throws CoreException {
 	// get the location first because it will be null after we delete the
 	// project from the tree.
-	IPath path = getLocation();
 	deleteResource(false, status);
 	workspace.getMetaArea().delete(this);
 	clearHistory(null);
@@ -53,22 +52,8 @@ protected MultiStatus basicSetDescription(ProjectDescription description, boolea
 		current.setReferencedProjects(description.getReferencedProjects(true));
 		workspace.flushBuildOrder();
 	}
-
 	// the natures last as this may cause recursive calls to setDescription.
-	// Be careful not to rely on much state because (de)configuring a nature
-	// may well result in recursive calls to this method.
-	HashSet deletions = new HashSet(Arrays.asList(current.getNatureIds(false)));
-	HashSet additions = new HashSet(Arrays.asList(description.getNatureIds(false)));
-	additions.removeAll(Arrays.asList(current.getNatureIds(false)));
-	deletions.removeAll(Arrays.asList(description.getNatureIds(false)));
-	// set the list of nature ids BEFORE (de)configuration so recursive calls will
-	// not try to do the same work.
-	current.setNatureIds(description.getNatureIds(true));
-	for (Iterator i = deletions.iterator(); i.hasNext();)
-		deconfigureNature((String) i.next(), result);
-	for (Iterator i = additions.iterator(); i.hasNext();)
-		configureNature((String) i.next(), result);
-
+	workspace.getNatureManager().configureNatures(this, current, description, result);
 	return result;
 }
 /** 
@@ -214,26 +199,6 @@ public void close(boolean save, IProgressMonitor monitor) throws CoreException {
 		monitor.done();
 	}
 }
-protected void configureNature(final String natureID, final MultiStatus status) {
-	ISafeRunnable code = new ISafeRunnable() {
-		public void run() throws Exception {
-			IProjectNature nature = createNature(natureID);
-			nature.configure();
-			ProjectInfo info = (ProjectInfo) getResourceInfo(false, true);
-			info.setNature(natureID, nature);
-		}
-		public void handleException(Throwable exception) {
-			if (exception instanceof CoreException)
-				status.add(((CoreException) exception).getStatus());
-			else
-				status.add(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, getFullPath(), Policy.bind("resources.errorNature", natureID), exception));
-		}
-	};
-	if (Policy.DEBUG_NATURES) {
-		System.out.println("Configuring nature: " + natureID + " on project: " + getName());
-	}
-	Platform.run(code);
-}
 /**
  * @see IProject#copy
  */
@@ -324,63 +289,6 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
  */
 public void create(IProgressMonitor monitor) throws CoreException {
 	create(null, monitor);
-}
-/**
- * Finds the nature extension, and initializes and returns an instance.
- */
-protected IProjectNature createNature(String natureID) throws CoreException {
-	IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_NATURES, natureID);
-	if (extension == null) {
-		String message = Policy.bind("resources.natureExtension", natureID);
-		throw new ResourceException(Platform.PLUGIN_ERROR, getFullPath(), message, null);
-	}
-	IConfigurationElement[] configs = extension.getConfigurationElements();
-	if (configs.length < 1) {
-		String message = Policy.bind("resources.natureClass", natureID);
-		throw new ResourceException(Platform.PLUGIN_ERROR, getFullPath(), message, null);
-	}
-	IConfigurationElement config = configs[0];
-	if (!"runtime".equals(config.getName())) {
-		String message = Policy.bind("resources.natureFormat", natureID);
-		throw new ResourceException(Platform.PLUGIN_ERROR, getFullPath(), message, null);
-	}
-	try {
-		IProjectNature nature = (IProjectNature) config.createExecutableExtension("run");
-		nature.setProject(this);
-		return nature;
-	} catch (ClassCastException e) {
-		String message = Policy.bind("resources.natureImplement", natureID);
-		throw new ResourceException(Platform.PLUGIN_ERROR, getFullPath(), message, e);
-	}
-}
-protected void deconfigureNature(final String natureID, final MultiStatus status) {
-	final ProjectInfo info = (ProjectInfo) getResourceInfo(false, true);
-	IProjectNature existingNature = info.getNature(natureID);
-	if (existingNature == null) {
-		// if there isn't a nature then create one so we can deconfig it.
-		try {
-			existingNature = createNature(natureID);
-		} catch (CoreException e) {
-			return;
-		}
-	}
-	final IProjectNature nature = existingNature;
-	ISafeRunnable code = new ISafeRunnable() {
-		public void run() throws Exception {
-			nature.deconfigure();
-			info.setNature(natureID, null);
-		}
-		public void handleException(Throwable exception) {
-			if (exception instanceof CoreException)
-				status.add(((CoreException) exception).getStatus());
-			else
-				status.add(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, getFullPath(), Policy.bind("resources.natureDeconfig", natureID), exception));
-		}
-	};
-	if (Policy.DEBUG_NATURES) {
-		System.out.println("Deconfiguring nature: " + natureID + " on project: " + getName());
-	}
-	Platform.run(code);
 }
 /**
  * @see IResource#delete(boolean, IProgressMonitor)
@@ -481,7 +389,7 @@ public IProjectNature getNature(String natureID) throws CoreException {
 		// Not initialized yet. Does this project have the nature?
 		if (!hasNature(natureID))
 			return null;
-		nature = createNature(natureID);
+		nature = workspace.getNatureManager().createNature(this, natureID);
 		info.setNature(natureID, nature);
 	}
 	return nature;
@@ -557,6 +465,7 @@ protected boolean hasBeenSaved() {
  * @see IProject#hasNature
  */
 public boolean hasNature(String natureID) throws CoreException {
+	checkAccessible(getFlags(getResourceInfo(false, false)));
 	// use #internal method to avoid copy but still throw an
 	// exception if the resource doesn't exist.
 	IProjectDescription desc = internalGetDescription();
@@ -908,6 +817,13 @@ public boolean isLocal(int depth) {
 	return isLocal(-1, depth);
 }
 /**
+ * @see IProject#isNatureEnabled(String)
+ */
+public boolean isNatureEnabled(String natureId) throws CoreException {
+	checkAccessible(getFlags(getResourceInfo(false, false)));
+	return workspace.getNatureManager().isNatureEnabled(this, natureId);
+}
+/**
  * @see IResource#isLocal
  */
 public boolean isLocal(int flags, int depth) {
@@ -1051,6 +967,7 @@ public void setDescription(IProjectDescription description, IProgressMonitor mon
 			ResourceInfo info = getResourceInfo(false, false);
 			checkAccessible(getFlags(info));
 			workspace.beginOperation(true);
+			workspace.changing(this);
 			MultiStatus status = basicSetDescription((ProjectDescription) description, false);
 			info = getResourceInfo(false, true);
 			info.incrementContentId();
@@ -1167,4 +1084,6 @@ protected void internalChangeCase(IProjectDescription destDesc, boolean force, I
 		monitor.done();
 	}
 }
+
+
 }

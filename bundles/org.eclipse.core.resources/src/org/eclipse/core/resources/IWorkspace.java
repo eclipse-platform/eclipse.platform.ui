@@ -5,8 +5,9 @@ package org.eclipse.core.resources;
  * All Rights Reserved.
  */
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.*;
-import java.util.*;
 
 /**
  * Workspaces are the basis for Eclipse Platform resource management.  There 
@@ -356,6 +357,24 @@ public void deleteMarkers(IMarker[] markers) throws CoreException;
  * @see ISaveContext#needDelta
  */
 public void forgetSavedTree(String pluginId);
+/**
+ * Returns all nature descriptors known to this workspace.
+ * Returns an empty array if there are no installed natures.
+ *
+ * @return the nature descriptors known to this workspace
+ * @since 2.0
+ */
+public IProjectNatureDescriptor[] getNatureDescriptors(); 
+/**
+ * Returns the nature descriptor with the given unique identifier,
+ * or <code>null</code> if there is no such nature.
+ *
+ * @param natureId the nature extension identifer
+ *		(e.g. <code>"com.example.coolNature"</code>).
+ * @return the nature descriptor, or <code>null</code>
+ * @since 2.0
+ */
+public IProjectNatureDescriptor getNatureDescriptor(String natureId); 
 /**
  * Finds all dangling project references in this workspace. 
  * Projects which are not open are ignored.
@@ -791,6 +810,22 @@ public void setDescription(IWorkspaceDescription description) throws CoreExcepti
  */
 public void setWorkspaceLock(WorkspaceLock lock);
 /**
+ * Returns a copy of the given set of natures sorted in prerequisite order.  
+ * For each nature, it is guaranteed that all of its prerequisites will 
+ * preceed it in the resulting array.  
+ * 
+ * <p>Natures that are missing from the install or are involved in a 
+ * prerequisite cycle are sorted arbitrarily.  Duplicate nature IDs are 
+ * removed, so the returned array may be smaller than the original.
+ * </p>
+ * 
+ * @param natureIds a valid set of nature extension identifiers
+ * @return the set of nature Ids sorted in prerequisite order
+ * @see #validateNatureSet
+ * @since 2.0
+ */
+public String[] sortNatureSet(String[] natureIds); 
+/**
  * <b>Note:</b> This method is part of an interim API that is still under 
  * development and expected to change significantly before reaching stability. 
  * It is being made available at this early stage to solicit feedback from pioneering 
@@ -889,6 +924,30 @@ public IStatus validateEdit(IFile[] files, Object context);
  * @see IStatus#OK
  */
 public IStatus validateName(String segment, int typeMask);
+/**
+ * Validates that each of the given natures exists, and that all nature
+ * constraints are satisfied within the given set.
+ * <p>
+ * The following conditions apply to validation of a set of natures:
+ * <ul>
+ * <li> all natures in the set exist in the plug-in registry
+ * <li> all prerequisites of each nature are present in the set
+ * <li> there are no cycles in the prerequisite graph of the set
+ * <li> there are no two natures in the set that specify one-of-nature
+ * 	inclusion in the same group.
+ * <li> there are no two natures in the set with the same id
+ * </ul>
+ * </p>
+ * <p>
+ * An empty nature set is always valid.
+ * </p>
+ * @param natureIds an array of nature extension identifiers
+ * @return a status object with code <code>IStatus.OK</code> if
+ *		the given set of natures is valid, otherwise a status 
+ *		object indicating what is wrong with the set
+ * @since 2.0
+ */
+public IStatus validateNatureSet(String[] natureIds); 
 /**
  * Validates the given string as a path for a resource of the given type(s).
  * <p>

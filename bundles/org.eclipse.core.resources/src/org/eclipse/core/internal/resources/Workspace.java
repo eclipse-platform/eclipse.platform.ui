@@ -24,6 +24,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected ElementTree operationTree;		// tree at the start of the current operation
 	protected SaveManager saveManager;
 	protected BuildManager buildManager;
+	protected NatureManager natureManager;
 	protected NotificationManager notificationManager;
 	protected FileSystemResourceManager fileSystemManager;
 	protected PropertyManager propertyManager;
@@ -144,6 +145,7 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
  */
 public void changing(IProject project) throws CoreException {
 	buildManager.changing(project);
+	natureManager.changing(project);
 	notificationManager.changing(project);
 	propertyManager.changing(project);
 	markerManager.changing(project);
@@ -265,6 +267,7 @@ public void close(IProgressMonitor monitor) throws CoreException {
  */
 protected void closing(IProject project) throws CoreException {
 	buildManager.closing(project);
+	natureManager.closing(project);
 	notificationManager.closing(project);
 	propertyManager.closing(project);
 	markerManager.closing(project);
@@ -638,6 +641,7 @@ void deleteResource(IResource resource) {
  */
 protected void deleting(IProject project) throws CoreException {
 	buildManager.deleting(project);
+	natureManager.deleting(project);
 	notificationManager.deleting(project);
 	propertyManager.deleting(project);
 	markerManager.deleting(project);
@@ -849,6 +853,24 @@ public MarkerManager getMarkerManager() {
 public LocalMetaArea getMetaArea() {
 	return localMetaArea;
 }
+/**
+ * @see IWorkspace#getNatureDescriptor(String)
+ */
+public IProjectNatureDescriptor getNatureDescriptor(String natureId) {
+	return natureManager.getNatureDescriptor(natureId);
+}
+/**
+ * @see IWorkspace#getNatureDescriptors()
+ */
+public IProjectNatureDescriptor[] getNatureDescriptors() {
+	return natureManager.getNatureDescriptors();
+}
+/**
+ * Returns the nature manager for this workspace.
+ */
+protected NatureManager getNatureManager() {
+	return natureManager;
+}
 public NotificationManager getNotificationManager() {
 	return notificationManager;
 }
@@ -927,7 +949,7 @@ public boolean isAutoBuilding() {
  * Returns true if the object at the specified position has any
  * other copy in the given array.
  */
-private boolean isDuplicate(Object[] array, int position) {
+private static boolean isDuplicate(Object[] array, int position) {
 	if (array == null || position >= array.length)
 		return false;
 	for (int j = position - 1; j >= 0; j--)
@@ -1171,6 +1193,7 @@ public IStatus open(IProgressMonitor monitor) throws CoreException {
  */
 protected void opening(IProject project) throws CoreException {
 	buildManager.opening(project);
+	natureManager.opening(project);
 	notificationManager.opening(project);
 	propertyManager.opening(project);
 	markerManager.opening(project);
@@ -1328,6 +1351,12 @@ protected void shutdown(IProgressMonitor monitor) throws CoreException {
 		monitor.done();
 	}
 }
+/**
+ * @see IWorkspace#sortNatureSet(String[])
+ */
+public String[] sortNatureSet(String[] natureIds) {
+	return natureManager.sortNatureSet(natureIds);
+}
 protected void startup(IProgressMonitor monitor) throws CoreException {
 	// ensure the tree is locked during the startup notification
 	workManager = new WorkManager(this);
@@ -1336,6 +1365,7 @@ protected void startup(IProgressMonitor monitor) throws CoreException {
 	fileSystemManager.startup(monitor);
 	propertyManager = new PropertyManager(this);
 	propertyManager.startup(monitor);
+	natureManager = new NatureManager();
 	buildManager = new BuildManager(this);
 	buildManager.startup(null);
 	notificationManager = new NotificationManager(this);
@@ -1437,6 +1467,12 @@ public IStatus validateName(String segment, int type) {
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
 	return ResourceStatus.OK_STATUS;
+}
+/**
+ * @see IWorkspace#validateNatureSet(String[])
+ */
+public IStatus validateNatureSet(String[] natureIds) {
+	return natureManager.validateNatureSet(natureIds);
 }
 /**
  * @see IWorkspace#validatePath

@@ -25,10 +25,20 @@ public interface IResourceStatus extends IStatus {
 
 	/*
 	 * Status code definitions
-	 *
-	 * General constants [0-98]
-	 * Information Only [0-32]
 	 */
+
+	// General constants [0-98]
+	// Information Only [0-32]
+
+	// Warnings [33-65]
+	/** Status code constant (value 32) indicating that a given 
+	 * nature set does not satisfy its constraints.
+ 	 * Severity: warning. Category: general.
+ 	 */
+	public static final int INVALID_NATURE_SET = 35;
+
+	// Errors [66-98]
+
 	 
 	/** Status code constant (value 75) indicating that a builder failed.
  	 * Severity: error. Category: general.

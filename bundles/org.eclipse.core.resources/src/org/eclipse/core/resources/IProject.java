@@ -448,6 +448,32 @@ public IProject[] getReferencingProjects();
  */
 public boolean hasNature(String natureId) throws CoreException;
 /**
+ * Returns true if the project nature specified by the given
+ * nature extension id is enabled for this project, and false otherwise.
+ * <p>
+ * <ul>Reasons for a nature not to be enabled include:
+ * <li> The nature is not available in the install.</li>
+ * <li> The nature has not been added to this project.</li>
+ * <li> The nature has a prerequisite that is not enabled
+ * 	for this project.</li>
+ * <li> The nature specifies "one-of-nature" membership in
+ * 	a set, and there is another nature on this project belonging
+ * 	to that set.</li>
+ * <li> The prerequisites for the nature form a cycle.</li>
+ * </ul>
+ * </p>
+ * @param natureId the nature extension identifier
+ * @return <code>true</code> if the given nature is enabled for this project
+ * @exception CoreException if this method fails. Reasons include:
+ * <ul>
+ * <li> This project does not exist.</li>
+ * <li> This project is not open.</li>
+ * </ul>
+ * @since 2.0
+ * @see IWorkspace#validateNatureSet
+ */
+public boolean isNatureEnabled(String natureId) throws CoreException;
+/**
  * Returns whether this project is open.
  * <p>
  * A project must be opened before it can be manipulated.
