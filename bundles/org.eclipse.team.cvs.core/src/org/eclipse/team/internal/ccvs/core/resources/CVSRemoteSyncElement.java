@@ -278,4 +278,41 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			Synchronizer.getInstance().save(Policy.monitorFor(monitor));
 		}
 	}
+	
+	/*
+	 * Load the resource and folder sync info into the local from the remote
+	 * 
+	 * This method can be used on incoming folder additions to set the folder sync info properly
+	 * without hitting the server again. It also applies to conflicts that involves unmanaged
+	 * local resources.
+	 */
+	 public void makeInSync(IProgressMonitor monitor) throws TeamException {
+	 	
+	 	// Only work on folders
+	 	if (! isContainer()) return;
+	 		
+	 	int syncKind = getSyncKind(GRANULARITY_TIMESTAMP, monitor);
+		boolean outgoing = (syncKind & DIRECTION_MASK) == OUTGOING;
+		if (outgoing) return;
+		
+		// Only work on conflicts or incoming (additions)
+		boolean conflict = (syncKind & DIRECTION_MASK) == CONFLICTING;
+		boolean incoming = (syncKind & DIRECTION_MASK) == INCOMING;
+		
+		ICVSFolder local = (ICVSFolder)localSync.getCVSResource();
+		RemoteFolder remote = (RemoteFolder)getRemote();
+		
+		// The parent must be mananged
+		if (! local.getParent().isCVSFolder())
+			return;
+			
+		if (! local.exists()) {
+			local.mkdir();
+		}
+		
+		// Since the parent is managed, this will also set the resource syn info
+		local.setFolderSyncInfo(remote.getFolderSyncInfo());
+		Synchronizer.getInstance().save(Policy.monitorFor(monitor));
+	 }
+	 	
 }
