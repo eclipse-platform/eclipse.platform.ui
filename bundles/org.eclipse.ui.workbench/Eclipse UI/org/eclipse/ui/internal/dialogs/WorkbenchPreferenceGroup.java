@@ -205,5 +205,13 @@ public class WorkbenchPreferenceGroup {
 	public boolean isHighlighted() {
 		return highlight;
 	}
+
+	/**
+	 * Get the previously selected node.
+	 * @return Object
+	 */
+	public Object getLastNode() {
+		return pages.iterator().next();
+	}
 	
 }

@@ -46,8 +46,13 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
+	//The id of the last page that was selected
+	private static String lastGroupId = null;
+
+	ToolBar toolbar;
+
 	GroupedPreferenceLabelProvider groupedLabelProvider;
-	
+
 	/**
 	 * Creates a new preference dialog under the control of the given preference
 	 * manager.
@@ -87,20 +92,20 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		Composite top = new Composite(composite,SWT.NONE);
+
+		Composite top = new Composite(composite, SWT.NONE);
 		GridLayout topLayout = new GridLayout();
 		topLayout.makeColumnsEqualWidth = false;
 		topLayout.numColumns = 2;
 		top.setLayout(topLayout);
-		
+
 		GridData topData = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		top.setLayoutData(topData);
 
 		ToolBar toolbar = createToolBar(top);
-		
+
 		toolbar.setLayoutData(new GridData());
-		
+
 		Control searchArea = createSearchArea(top);
 		GridData searchData = new GridData(GridData.FILL_HORIZONTAL);
 		searchData.grabExcessHorizontalSpace = true;
@@ -110,12 +115,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		super.createDialogArea(composite);
 
 		applyDialogFont(composite);
-		
-		toolbar.getItem(0).setSelection(true);
-		
+
 		return composite;
 	}
-
 
 	/**
 	 * Create the search area for the receiver.
@@ -123,27 +125,28 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * @return Control The control that contains the area.
 	 */
 	private Control createSearchArea(Composite composite) {
-		
-		Composite searchArea = new Composite(composite,SWT.NONE);
-		
+
+		Composite searchArea = new Composite(composite, SWT.NONE);
+
 		GridLayout searchLayout = new GridLayout();
 		searchLayout.numColumns = 2;
 		searchLayout.marginWidth = 0;
 		searchLayout.marginHeight = 0;
 		searchLayout.makeColumnsEqualWidth = false;
 		searchArea.setLayout(searchLayout);
-		
-		final Text searchText = new Text(searchArea,SWT.BORDER);
-		
-		GridData textData = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
+
+		final Text searchText = new Text(searchArea, SWT.BORDER);
+
+		GridData textData = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL
+				| GridData.FILL_VERTICAL);
 		searchText.setLayoutData(textData);
-		
-		Button searchButton = new Button(searchArea,SWT.PUSH);
+
+		Button searchButton = new Button(searchArea, SWT.PUSH);
 		searchButton.setText(WorkbenchMessages.getString("FilteredPreferenceDialog.SearchButton")); //$NON-NLS-1$
 		GridData searchData = new GridData(GridData.END);
 		searchButton.setLayoutData(searchData);
-		
-		searchButton.addSelectionListener(new SelectionAdapter(){
+
+		searchButton.addSelectionListener(new SelectionAdapter() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
@@ -151,7 +154,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 				highlightHits(searchText.getText());
 			}
 		});
-		
+
 		return searchArea;
 	}
 
@@ -161,7 +164,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 */
 	protected void highlightHits(String text) {
 		WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) getTreeViewer().getInput();
-		
+
 		group.highlightHits(text);
 		getTreeViewer().refresh();
 	}
@@ -175,25 +178,27 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	private ToolBar createToolBar(Composite composite) {
 
 		final ILabelProvider labelProvider = getCategoryLabelProvider();
-		
-		ToolBar toolbar = new ToolBar(composite,SWT.HORIZONTAL | SWT.RIGHT);
-	
+
+		toolbar = new ToolBar(composite, SWT.HORIZONTAL | SWT.RIGHT);
+
 		WorkbenchPreferenceGroup[] groups = getGroups();
-		
+
 		for (int i = 0; i < groups.length; i++) {
 			final WorkbenchPreferenceGroup group = groups[i];
-			ToolItem newItem = new ToolItem(toolbar,SWT.RADIO);
+			ToolItem newItem = new ToolItem(toolbar, SWT.RADIO);
 			newItem.setText(group.getName());
 			newItem.setImage(group.getImage());
-			newItem.addSelectionListener(new SelectionAdapter(){
+			newItem.setData(group);
+			newItem.addSelectionListener(new SelectionAdapter() {
 				/* (non-Javadoc)
 				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 				 */
 				public void widgetSelected(SelectionEvent e) {
 					getTreeViewer().setInput(group);
+					lastGroupId = group.getId();
 				}
 			});
-			
+
 		}
 
 		return toolbar;
@@ -278,11 +283,30 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * @see org.eclipse.jface.preference.PreferenceDialog#selectSavedItem()
 	 */
 	protected void selectSavedItem() {
-		if (hasGroups()){
-			WorkbenchPreferenceGroup startGroup = getGroups()[0];
+		if (hasGroups()) {
+
+			WorkbenchPreferenceGroup startGroup = null;
+
+			if (lastGroupId != null) {
+				ToolItem[] items = toolbar.getItems();
+				for (int i = 0; i < items.length; i++) {
+					ToolItem item = items[i];
+					WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) items[i].getData();
+					if (lastGroupId.equals(group.getId())) {
+						item.setSelection(true);
+						startGroup = group;
+						break;
+					}
+				}
+			}
+			if (startGroup == null) {
+				toolbar.getItem(0).setSelection(true);
+				startGroup = getGroups()[0];
+			}
 			getTreeViewer().setInput(startGroup);
-			
-			StructuredSelection selection = new StructuredSelection(startGroup.getPreferenceNodes()[0]);
+
+			StructuredSelection selection = new StructuredSelection(
+					startGroup.getLastNode());
 			getTreeViewer().setSelection(selection);
 		}
 		super.selectSavedItem();
@@ -296,8 +320,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		return ((WorkbenchPreferenceManager) WorkbenchPlugin.getDefault().getPreferenceManager())
 				.getGroups();
 	}
-	
-	
 
 	/**
 	 * Return whether or not there are categories.
@@ -306,21 +328,21 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	private boolean hasGroups() {
 		return getGroups().length > 0;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePageContainer#updateMessage()
 	 */
 	public void updateMessage() {
-		if(getCurrentPage() != null)
+		if (getCurrentPage() != null)
 			super.updateMessage();
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePageContainer#updateTitle()
 	 */
 	public void updateTitle() {
-		if(getCurrentPage() != null)
+		if (getCurrentPage() != null)
 			super.updateTitle();
 	}
-	
-	
+
 }
