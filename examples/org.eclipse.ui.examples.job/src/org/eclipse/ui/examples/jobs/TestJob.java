@@ -57,9 +57,10 @@ public class TestJob extends Job {
 	 */
 	public IStatus run(IProgressMonitor monitor) {
 		if (failure) {
-			MultiStatus result = new MultiStatus("org.eclipse.ui.examples.jobs", 1, "This is the MultiStatus message", new RuntimeException("This is the MultiStatus exception"));
-			result.add(new Status(IStatus.ERROR, "org.eclipse.ui.examples.jobs", 1, "This is the child status message", new RuntimeException("This is the child exception")));
-			return result;
+			throw new OutOfMemoryError();
+//			MultiStatus result = new MultiStatus("org.eclipse.ui.examples.jobs", 1, "This is the MultiStatus message", new RuntimeException("This is the MultiStatus exception"));
+//			result.add(new Status(IStatus.ERROR, "org.eclipse.ui.examples.jobs", 1, "This is the child status message", new RuntimeException("This is the child exception")));
+//			return result;
 		}
 		final long sleep = 10;
 		int ticks = (int) (duration / sleep);

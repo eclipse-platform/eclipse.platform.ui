@@ -28,6 +28,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.examples.jobs.TestJob;
 import org.eclipse.ui.examples.jobs.UITestJob;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.progress.IProgressService;
 
 /**
  * A view that allows a user to create jobs of various types, and interact with
@@ -213,7 +214,7 @@ public class JobsView extends ViewPart {
 		});
 		//busy cursor while
 		Button busyWhile = new Button(body, SWT.PUSH);
-		busyWhile.setText("Progress Service"); //$NON-NLS-1$
+		busyWhile.setText("busyCursorWhile"); //$NON-NLS-1$
 		busyWhile.setToolTipText("Uses IProgressService.busyCursorWhile"); //$NON-NLS-1$
 		busyWhile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		busyWhile.addSelectionListener(new SelectionAdapter() {
@@ -223,8 +224,8 @@ public class JobsView extends ViewPart {
 		});
 		//progress monitor dialog with fork=false
 		Button noFork = new Button(body, SWT.PUSH);
-		noFork.setText("Dialog (fork==false"); //$NON-NLS-1$
-		noFork.setToolTipText("ProgressMonitorDialog.run(fork==false)"); //$NON-NLS-1$
+		noFork.setText("runInUI"); //$NON-NLS-1$
+		noFork.setToolTipText("Uses IProgressService.runInUI"); //$NON-NLS-1$
 		noFork.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		noFork.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -349,15 +350,15 @@ public class JobsView extends ViewPart {
 		try {
 			final long duration = getDuration();
 			final boolean shouldLock = lockField.getSelection();
-			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getViewSite().getShell());
-			dialog.run(false, true, new IRunnableWithProgress() {
+			IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
+			progressService.runInUI(progressService, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InterruptedException {
 					if (shouldLock)
 						doRunInWorkspace(duration, monitor);
 					else
 						doRun(duration, monitor);
 				}
-			});
+			}, ResourcesPlugin.getWorkspace().getRoot());
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
