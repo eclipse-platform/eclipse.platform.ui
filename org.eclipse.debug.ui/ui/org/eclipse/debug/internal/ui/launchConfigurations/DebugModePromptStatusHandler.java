@@ -15,13 +15,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
-
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.preferences.UserPreferencePromptDialog;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
 
@@ -49,15 +48,15 @@ public class DebugModePromptStatusHandler implements IStatusHandler {
 		
 		String pref = store.getString(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE); 
 		if (pref != null) {
-			if (pref.equals(UserPreferencePromptDialog.NEVER)) {
+			if (pref.equals(MessageDialogWithToggle.NEVER)) {
 				return new Boolean(false);
-			} else if (pref.equals(UserPreferencePromptDialog.ALWAYS)) { 
+			} else if (pref.equals(MessageDialogWithToggle.ALWAYS)) { 
 				relaunchInDebugMode(configuration);
 				return new Boolean(true);
 			}
 		}
 		
-		UserPreferencePromptDialog dialog = UserPreferencePromptDialog.openYesNoQuestion(activeShell, title, message, LaunchConfigurationsMessages.getString("DebugModePromptStatusHandler.2"), false, store, IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE); //$NON-NLS-1$
+		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoQuestion(activeShell, title, message, null, false, store, IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE); //$NON-NLS-1$
 		if (dialog.getReturnCode() == IDialogConstants.YES_ID) { 
 			relaunchInDebugMode(configuration);
 			return new Boolean(true);

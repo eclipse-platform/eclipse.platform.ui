@@ -11,11 +11,10 @@
 package org.eclipse.debug.internal.ui.preferences;
 
 import java.text.MessageFormat;
-
-import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -89,9 +88,9 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 	
 	private void createSaveBeforeLaunchEditors() {
 		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH, DebugPreferencesMessages.getString("LaunchingPreferencePage.2"), 3,  //$NON-NLS-1$
-										new String[][] {{DebugPreferencesMessages.getString("LaunchingPreferencePage.3"), AlwaysNeverDialog.ALWAYS}, //$NON-NLS-1$
-											{DebugPreferencesMessages.getString("LaunchingPreferencePage.4"), AlwaysNeverDialog.NEVER}, //$NON-NLS-1$
-											{DebugPreferencesMessages.getString("LaunchingPreferencePage.5"), AlwaysNeverDialog.PROMPT}}, //$NON-NLS-1$
+										new String[][] {{DebugPreferencesMessages.getString("LaunchingPreferencePage.3"), MessageDialogWithToggle.ALWAYS}, //$NON-NLS-1$
+											{DebugPreferencesMessages.getString("LaunchingPreferencePage.4"), MessageDialogWithToggle.NEVER}, //$NON-NLS-1$
+											{DebugPreferencesMessages.getString("LaunchingPreferencePage.5"), MessageDialogWithToggle.PROMPT}}, //$NON-NLS-1$
 										getFieldEditorParent(),
 										true));	
 	}	
@@ -99,9 +98,9 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 	private void createWaitForBuildEditor() {
 		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, 
 						DebugPreferencesMessages.getString("LaunchingPreferencePage.6"), 3,  //$NON-NLS-1$
-						new String[][] {{DebugPreferencesMessages.getString("LaunchingPreferencePage.7"), AlwaysNeverDialog.ALWAYS}, //$NON-NLS-1$
-							{DebugPreferencesMessages.getString("LaunchingPreferencePage.8"), AlwaysNeverDialog.NEVER}, //$NON-NLS-1$
-							{DebugPreferencesMessages.getString("LaunchingPreferencePage.9"), AlwaysNeverDialog.PROMPT}}, //$NON-NLS-1$
+						new String[][] {{DebugPreferencesMessages.getString("LaunchingPreferencePage.7"), MessageDialogWithToggle.ALWAYS}, //$NON-NLS-1$
+							{DebugPreferencesMessages.getString("LaunchingPreferencePage.8"), MessageDialogWithToggle.NEVER}, //$NON-NLS-1$
+							{DebugPreferencesMessages.getString("LaunchingPreferencePage.9"), MessageDialogWithToggle.PROMPT}}, //$NON-NLS-1$
 						getFieldEditorParent(),
 						true));
 	}
@@ -109,9 +108,9 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 	private void createSwitchPerspectiveEditor() {
 		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE,
 				DebugPreferencesMessages.getString("LaunchingPreferencePage.11"), 3, //$NON-NLS-1$
-				new String[][] {{DebugPreferencesMessages.getString("LaunchingPreferencePage.12"), AlwaysNeverDialog.ALWAYS}, //$NON-NLS-1$
-								{DebugPreferencesMessages.getString("LaunchingPreferencePage.13"), AlwaysNeverDialog.NEVER}, //$NON-NLS-1$
-								{DebugPreferencesMessages.getString("LaunchingPreferencePage.14"), AlwaysNeverDialog.PROMPT}}, //$NON-NLS-1$
+				new String[][] {{DebugPreferencesMessages.getString("LaunchingPreferencePage.12"), MessageDialogWithToggle.ALWAYS}, //$NON-NLS-1$
+								{DebugPreferencesMessages.getString("LaunchingPreferencePage.13"), MessageDialogWithToggle.NEVER}, //$NON-NLS-1$
+								{DebugPreferencesMessages.getString("LaunchingPreferencePage.14"), MessageDialogWithToggle.PROMPT}}, //$NON-NLS-1$
 				getFieldEditorParent(),
 				true));
 	}
@@ -119,9 +118,9 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 	private void createRelaunchInDebugMode() {
 		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE,
 				DebugPreferencesMessages.getString("LaunchingPreferencePage.15"), 3, //$NON-NLS-1$
-				new String[][] {{DebugPreferencesMessages.getString("LaunchingPreferencePage.16"), AlwaysNeverDialog.ALWAYS}, //$NON-NLS-1$
-					{DebugPreferencesMessages.getString("LaunchingPreferencePage.17"), AlwaysNeverDialog.NEVER}, //$NON-NLS-1$
-					{DebugPreferencesMessages.getString("LaunchingPreferencePage.18"), AlwaysNeverDialog.PROMPT}}, //$NON-NLS-1$
+				new String[][] {{DebugPreferencesMessages.getString("LaunchingPreferencePage.16"), MessageDialogWithToggle.ALWAYS}, //$NON-NLS-1$
+					{DebugPreferencesMessages.getString("LaunchingPreferencePage.17"), MessageDialogWithToggle.NEVER}, //$NON-NLS-1$
+					{DebugPreferencesMessages.getString("LaunchingPreferencePage.18"), MessageDialogWithToggle.PROMPT}}, //$NON-NLS-1$
 				getFieldEditorParent(),
 				true));
 	}	
@@ -129,8 +128,8 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 	private void createContinueWithCompileErrors() {
 		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR,
 				DebugPreferencesMessages.getString("LaunchingPreferencePage.21"), 2, //$NON-NLS-1$
-				new String[][] {{DebugPreferencesMessages.getString("LaunchingPreferencePage.22"), AlwaysNeverDialog.ALWAYS},  //$NON-NLS-1$
-					{DebugPreferencesMessages.getString("LaunchingPreferencePage.23"), AlwaysNeverDialog.PROMPT}},  //$NON-NLS-1$
+				new String[][] {{DebugPreferencesMessages.getString("LaunchingPreferencePage.22"), MessageDialogWithToggle.ALWAYS},  //$NON-NLS-1$
+					{DebugPreferencesMessages.getString("LaunchingPreferencePage.23"), MessageDialogWithToggle.PROMPT}},  //$NON-NLS-1$
 				getFieldEditorParent(),
 				true));
 	}

@@ -15,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -24,6 +25,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -60,7 +62,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -86,11 +88,6 @@ import org.w3c.dom.Document;
  *
  */
 public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {			
-	
-	private static final int WAIT_FOR_BUILD = 1;
-	private static final int DONT_WAIT_FOR_BUILD = 2;
-	private static final int CANCEL_LAUNCH = 3;
-									   	
 	/**
 	 * The singleton debug plugin instance
 	 */
@@ -366,19 +363,19 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	protected void initializeDefaultPreferences(IPreferenceStore prefs) {
 		//Debug PreferencePage
 		prefs.setDefault(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, true);
-		prefs.setDefault(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH, AlwaysNeverDialog.PROMPT);
+		prefs.setDefault(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH, MessageDialogWithToggle.PROMPT);
 		prefs.setDefault(IDebugUIConstants.PREF_SHOW_DEBUG_PERSPECTIVE_DEFAULT, IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
 		prefs.setDefault(IDebugUIConstants.PREF_SHOW_RUN_PERSPECTIVE_DEFAULT, IDebugUIConstants.PERSPECTIVE_NONE);
 		prefs.setDefault(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, false);
 		prefs.setDefault(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, true);
 		prefs.setDefault(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, true);
-		prefs.setDefault(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, AlwaysNeverDialog.PROMPT);
-		prefs.setDefault(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, AlwaysNeverDialog.PROMPT);
-		prefs.setDefault(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, AlwaysNeverDialog.PROMPT);
+		prefs.setDefault(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, MessageDialogWithToggle.PROMPT);
+		prefs.setDefault(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, MessageDialogWithToggle.PROMPT);
+		prefs.setDefault(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, MessageDialogWithToggle.PROMPT);
 		prefs.setDefault(IDebugUIConstants.PREF_REUSE_EDITOR, true);
 		prefs.setDefault(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, false);
-		prefs.setDefault(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, AlwaysNeverDialog.PROMPT);
-		prefs.setDefault(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, AlwaysNeverDialog.PROMPT);
+		prefs.setDefault(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, MessageDialogWithToggle.PROMPT);
+		prefs.setDefault(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.PROMPT);
 		
 		//ConsolePreferencePage
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_WRAP, false);
@@ -542,12 +539,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		boolean autobuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
 		
 		// If we're ignoring dirty editors, check if we need to build
-		if (saveDirty.equals(AlwaysNeverDialog.NEVER)) {
+		if (saveDirty.equals(MessageDialogWithToggle.NEVER)) {
 			if (buildBeforeLaunch) {
 				return doBuild();
 			}
 		} else {
-			status = saveAllEditors(saveDirty.equals(AlwaysNeverDialog.PROMPT));
+			status = saveAllEditors(saveDirty.equals(MessageDialogWithToggle.PROMPT));
 			if (status && !autobuilding && buildBeforeLaunch) {
 				status = doBuild();
 			}
@@ -751,10 +748,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 */
 	public static boolean preLaunchSave() {
 		String saveDirty = getDefault().getPreferenceStore().getString(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
-		if (saveDirty.equals(AlwaysNeverDialog.NEVER)) {
+		if (saveDirty.equals(MessageDialogWithToggle.NEVER)) {
 			return true;
 		} else {
-			return saveAllEditors(saveDirty.equals(AlwaysNeverDialog.PROMPT));
+			return saveAllEditors(saveDirty.equals(MessageDialogWithToggle.PROMPT));
 		}
 	}
 	
@@ -806,21 +803,20 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		if (jobManager.find(ResourcesPlugin.FAMILY_AUTO_BUILD).length > 0 || jobManager.find(ResourcesPlugin.FAMILY_MANUAL_BUILD).length >0) {
 			String waitForBuild = store.getString(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD);
 
-			if (waitForBuild.equals(AlwaysNeverDialog.PROMPT)) {
-				PromptDialog prompt = new PromptDialog(getShell(), DebugUIMessages.getString("DebugUIPlugin.23"), DebugUIMessages.getString("DebugUIPlugin.24"), IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, store); //$NON-NLS-1$ //$NON-NLS-2$
-				prompt.open();
+			if (waitForBuild.equals(MessageDialogWithToggle.PROMPT)) {
+				MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(getShell(), DebugUIMessages.getString("DebugUIPlugin.23"), DebugUIMessages.getString("DebugUIPlugin.24"), null, false, store, IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD); //$NON-NLS-1$ //$NON-NLS-2$
 				
-				switch (prompt.getReturnCode()) {
-					case CANCEL_LAUNCH:
+				switch (dialog.getReturnCode()) {
+					case IDialogConstants.CANCEL_ID:
 						return;
-					case DONT_WAIT_FOR_BUILD:
+					case IDialogConstants.YES_ID:
 						wait = false;
 						break;
-					case WAIT_FOR_BUILD:
+					case IDialogConstants.NO_ID:
 						wait = true;
 						break;
 				}
-			} else if (waitForBuild.equals(AlwaysNeverDialog.ALWAYS)) {
+			} else if (waitForBuild.equals(MessageDialogWithToggle.ALWAYS)) {
 				wait = true;
 			}
 		}
@@ -914,17 +910,16 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		
 		String waitPref = store.getString(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD);
 		if (wait) { // if there are build jobs running, do we wait or not??
-			if (waitPref.equals(AlwaysNeverDialog.PROMPT)) {
-				PromptDialog prompt = new PromptDialog(getShell(), DebugUIMessages.getString("DebugUIPlugin.25"), DebugUIMessages.getString("DebugUIPlugin.26"), IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, store); //$NON-NLS-1$ //$NON-NLS-2$
-				prompt.open();
+			if (waitPref.equals(MessageDialogWithToggle.PROMPT)) {
+				MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(getShell(), DebugUIMessages.getString("DebugUIPlugin.23"), DebugUIMessages.getString("DebugUIPlugin.24"), null, false, store, IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD); //$NON-NLS-1$ //$NON-NLS-2$
 				
-				switch (prompt.getReturnCode()) {
-					case CANCEL_LAUNCH:
+				switch (dialog.getReturnCode()) {
+					case IDialogConstants.CANCEL_ID:
 						return;
-					case DONT_WAIT_FOR_BUILD:
+					case IDialogConstants.YES_ID:
 						wait = false;
 						break;
-					case WAIT_FOR_BUILD:
+					case IDialogConstants.NO_ID:
 						wait = true;
 						break;
 				}
@@ -978,52 +973,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			progressService.showInDialog(workbench.getActiveWorkbenchWindow().getShell(), job); 
 		}
 		job.schedule();
-	}
-	
-	static class PromptDialog extends MessageDialog {
-		private String fPreferenceKey = null;
-		private String fResult = null;
-		private IPreferenceStore fStore = null;
-		
-		public PromptDialog(Shell parent, String title, String message, String preferenceKey, IPreferenceStore store) {
-			super(parent, title, null, message, QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, DebugUIMessages.getString("DebugUIPlugin.21"), DebugUIMessages.getString("DebugUIPlugin.22"), IDialogConstants.CANCEL_LABEL}, 0);	 //$NON-NLS-1$ //$NON-NLS-2$
-			fStore = store;
-			fPreferenceKey = preferenceKey;
-		}
-
-		protected void buttonPressed(int id) {
-			if (id == 2) { // Always
-				fResult= AlwaysNeverDialog.ALWAYS;
-			} else if (id == 3) {
-				fResult = AlwaysNeverDialog.NEVER;
-			} else {
-				fResult= AlwaysNeverDialog.PROMPT;
-			} 
-				
-			
-			if (fStore != null && fPreferenceKey != null) {
-				fStore.setValue(fPreferenceKey, fResult);
-			}
-			
-			super.buttonPressed(id);
-		}
-		
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.window.Window#getReturnCode()
-		 */
-		public int getReturnCode() {
-			int returnCode = super.getReturnCode();
-			switch(returnCode) { 
-				case 1: //NO
-				case 3: //NEVER
-					return DONT_WAIT_FOR_BUILD;
-				case 4: //CANCEL
-					return CANCEL_LAUNCH;
-				default: // YES or ALWAYS
-					return WAIT_FOR_BUILD;
-			}
-		}
 	}
 
 	/**

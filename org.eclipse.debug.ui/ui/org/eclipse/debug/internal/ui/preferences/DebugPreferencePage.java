@@ -11,11 +11,11 @@
 package org.eclipse.debug.internal.ui.preferences;
 
 
-import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -75,9 +75,9 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	private void createSwitchPerspectiveOnSuspendEditor() {
 		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND,
 				DebugPreferencesMessages.getString("DebugPreferencePage.21"), 3, //$NON-NLS-1$
-				new String[][] {{DebugPreferencesMessages.getString("DebugPreferencePage.22"), AlwaysNeverDialog.ALWAYS}, //$NON-NLS-1$
-								{DebugPreferencesMessages.getString("DebugPreferencePage.23"), AlwaysNeverDialog.NEVER}, //$NON-NLS-1$
-								{DebugPreferencesMessages.getString("DebugPreferencePage.24"), AlwaysNeverDialog.PROMPT}}, //$NON-NLS-1$
+				new String[][] {{DebugPreferencesMessages.getString("DebugPreferencePage.22"), MessageDialogWithToggle.ALWAYS}, //$NON-NLS-1$
+								{DebugPreferencesMessages.getString("DebugPreferencePage.23"), MessageDialogWithToggle.NEVER}, //$NON-NLS-1$
+								{DebugPreferencesMessages.getString("DebugPreferencePage.24"), MessageDialogWithToggle.PROMPT}}, //$NON-NLS-1$
 				getFieldEditorParent(),
 				true));
 	}

@@ -32,11 +32,12 @@ import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -428,13 +429,15 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 			return false;
 		}
 		String switchPerspective= DebugUIPlugin.getDefault().getPreferenceStore().getString(preferenceKey);
-		if (AlwaysNeverDialog.ALWAYS.equals(switchPerspective)) {
+		if (MessageDialogWithToggle.ALWAYS.equals(switchPerspective)) {
 			return true;
-		} else if (AlwaysNeverDialog.NEVER.equals(switchPerspective)) {
+		} else if (MessageDialogWithToggle.NEVER.equals(switchPerspective)) {
 			return false;
 		}
 		fPrompting= true;
-		boolean answer= AlwaysNeverDialog.openQuestion(shell, LaunchConfigurationsMessages.getString("PerspectiveManager.12"), MessageFormat.format(message, new String[] { perspectiveName }), preferenceKey, DebugUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$
+
+		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoQuestion(shell, LaunchConfigurationsMessages.getString("PerspectiveManager.12"), MessageFormat.format(message, new String[] { perspectiveName }), null, false, DebugUIPlugin.getDefault().getPreferenceStore(), preferenceKey); //$NON-NLS-1$
+		boolean answer = (dialog.getReturnCode() == IDialogConstants.YES_ID);
 		synchronized (this) {
 			fPrompting= false;
 			notifyAll();

@@ -14,12 +14,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
-import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
 
@@ -45,50 +44,19 @@ public class CompileErrorPromptStatusHandler implements IStatusHandler {
 		
 		String pref = store.getString(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
 		if (pref != null) {
-			if (pref.equals(AlwaysNeverDialog.ALWAYS)) {
+			if (pref.equals(MessageDialogWithToggle.ALWAYS)) {
 				return new Boolean(true);
 			}
 		}
 		
-		PromptDialog pd = new PromptDialog(shell, title, message, IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, store);
-		pd.open();
+		MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(shell, title, message, null, false, store, IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
 		
-		int returnValue = pd.getReturnCode();
-		if (returnValue == 0 || returnValue == 2) { //YES=0, ALWAYS=2
+		int returnValue = dialog.getReturnCode();
+		if (returnValue == IDialogConstants.OK_ID) {
 			return new Boolean(true);
-		} else { // ESC=-1, NO=1
+		} else {
 			return new Boolean(false);
 		}
 		
 	}
-
-	
-	private class PromptDialog extends MessageDialog {
-		
-		private String fPreferenceKey = null;
-		private String fResult = null;
-		private IPreferenceStore fStore = null;
-		
-		public PromptDialog(Shell parent, String title, String message, String preferenceKey, IPreferenceStore store) {
-			super(parent, title, null, message, QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, LaunchConfigurationsMessages.getString("CompileErrorPromptStatusHandler.2")},0);		// yes is the default //$NON-NLS-1$
-			fStore = store;
-			fPreferenceKey = preferenceKey;
-		}
-
-		protected void buttonPressed(int id) {
-			if (id == 2) { // Always
-				fResult= AlwaysNeverDialog.ALWAYS;
-			} else {
-				fResult= AlwaysNeverDialog.PROMPT;
-			}
-			
-			if (fStore != null && fPreferenceKey != null) {
-				fStore.setValue(fPreferenceKey, fResult);
-			}
-			
-			super.buttonPressed(id);
-		}
-	}
-
-	
 }
