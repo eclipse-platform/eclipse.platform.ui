@@ -15,6 +15,9 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+
 public class Policy {
 	protected static ResourceBundle bundle = null;
 
@@ -58,6 +61,12 @@ public class Policy {
 			return key;
 		} catch (NullPointerException e) {
 			return "!" + key + "!";  //$NON-NLS-1$  //$NON-NLS-2$
+		}
+	}
+
+	public static void checkCanceled(IProgressMonitor monitor) {
+		if (monitor != null && monitor.isCanceled()) {
+			throw new OperationCanceledException();
 		}
 	}
 

@@ -86,7 +86,7 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 		int retry = 1;
 		while (true) {
 			try {
-				session = JSchSession.getSession(location, ssh_user, "", ssh_host, ssh_port, monitor); //$NON-NLS-1$
+				session = JSchSession.getSession(location, ssh_user, "", ssh_host, ssh_port, new JSchSession.ResponsiveSocketFacory(monitor)); //$NON-NLS-1$
 				String[] list = session.getPortForwardingL();
 				String name = ":" + rhost + ":" + rport; //$NON-NLS-1$ //$NON-NLS-2$
 				boolean done = false;

@@ -833,7 +833,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
       String location=":extssh:dummy@dummy:/"; //$NON-NLS-1$
       CVSRepositoryLocation crl=CVSRepositoryLocation.fromString(location);
       IProgressMonitor pm=new org.eclipse.core.runtime.NullProgressMonitor();
-      Session session=JSchSession.getSession(crl, user, "", host, port, pm); //$NON-NLS-1$
+      Session session=JSchSession.getSession(crl, user, "", host, port, new JSchSession.ResponsiveSocketFacory(pm)); //$NON-NLS-1$
       if(session.getServerVersion().indexOf("OpenSSH")==-1){ //$NON-NLS-1$
       	setErrorMessage(Policy.bind("CVSSSH2PreferencePage.110")); //$NON-NLS-1$
     	return;

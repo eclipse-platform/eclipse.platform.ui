@@ -10,19 +10,32 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ssh2;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.IUserAuthenticator;
+import org.eclipse.team.internal.ccvs.core.IUserInfo;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
-import com.jcraft.jsch.*;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Proxy;
+import com.jcraft.jsch.ProxyHTTP;
+import com.jcraft.jsch.ProxySOCKS5;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SocketFactory;
+import com.jcraft.jsch.UIKeyboardInteractive;
+import com.jcraft.jsch.UserInfo;
 
 class JSchSession {
 	private static final int SSH_DEFAULT_PORT = 22;
@@ -34,7 +47,7 @@ class JSchSession {
 		String ssh_dir_name = ".ssh"; //$NON-NLS-1$
 		
 		// Windows doesn't like files or directories starting with a dot.
-		if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			ssh_dir_name = "ssh"; //$NON-NLS-1$
 		}
 		default_ssh_home = System.getProperty("user.home"); //$NON-NLS-1$
@@ -47,6 +60,38 @@ class JSchSession {
 
 	private static String current_ssh_home = null;
 
+	public static class SimpleSocketFactory implements SocketFactory {
+		InputStream in = null;
+		OutputStream out = null;
+		public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+			Socket socket = null;
+			socket = new Socket(host, port);
+			return socket;
+		}
+		public InputStream getInputStream(Socket socket) throws IOException {
+			if (in == null)
+				in = socket.getInputStream();
+			return in;
+		}
+		public OutputStream getOutputStream(Socket socket) throws IOException {
+			if (out == null)
+				out = socket.getOutputStream();
+			return out;
+		}
+	}
+	
+	public static class ResponsiveSocketFacory extends SimpleSocketFactory {
+		private IProgressMonitor monitor;
+		public ResponsiveSocketFacory(IProgressMonitor monitor) {
+			this.monitor = monitor;
+		}
+		public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+			Socket socket = null;
+			socket = Util.createSocket(host, port, monitor);
+			return socket;
+		}
+	}
+	
 	/**
 	 * User information delegates to the IUserAuthenticator. This allows
 	 * headless access to the connection method.
@@ -157,7 +202,7 @@ class JSchSession {
 		} 		
 	}
 	
-	static Session getSession(ICVSRepositoryLocation location, String username, String password, String hostname, int port, final IProgressMonitor monitor) throws JSchException {
+	static Session getSession(ICVSRepositoryLocation location, String username, String password, String hostname, int port, SocketFactory socketFactory) throws JSchException {
 		if (port == 0)
 			port = SSH_DEFAULT_PORT;
 
@@ -231,26 +276,7 @@ class JSchSession {
 
 				UserInfo ui = new MyUserInfo(username, location);
 				session.setUserInfo(ui);
-
-				session.setSocketFactory(new SocketFactory() {
-					InputStream in = null;
-					OutputStream out = null;
-					public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
-						Socket socket = null;
-						socket = Util.createSocket(host, port, monitor);
-						return socket;
-					}
-					public InputStream getInputStream(Socket socket) throws IOException {
-						if (in == null)
-							in = socket.getInputStream();
-						return in;
-					}
-					public OutputStream getOutputStream(Socket socket) throws IOException {
-						if (out == null)
-							out = socket.getOutputStream();
-						return out;
-					}
-				});
+				session.setSocketFactory(socketFactory);
 
 				session.connect();
 				pool.put(key, session);
