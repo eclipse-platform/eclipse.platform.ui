@@ -123,7 +123,7 @@ public Version(String versionId) {
 	
 		StringTokenizer st = new StringTokenizer(s, SEPARATOR);
 		Integer token;
-		Vector elements = new Vector(3);
+		Vector elements = new Vector(4);
 
 		while(st.hasMoreTokens()) {
 			elements.addElement(st.nextToken());
