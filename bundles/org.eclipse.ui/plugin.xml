@@ -63,12 +63,6 @@
             parentId="org.eclipse.ui.contexts.window"
             id="org.eclipse.ui.textEditorScope">
       </context>
-      <context
-            name="%context.editingJavaSource.name"
-            description="%context.editingJavaSource.description"
-            parentId="org.eclipse.ui.textEditorScope"
-            id="org.eclipse.jdt.ui.javaEditorScope">
-      </context>
       <!-- This is the root context.  Basically, all key bindings should have
            this context as their parent.  Key bindings in this context will
            apply to both windows and dialogs.
