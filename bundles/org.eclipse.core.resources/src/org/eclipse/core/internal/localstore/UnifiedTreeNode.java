@@ -16,13 +16,17 @@ public class UnifiedTreeNode implements ILocalStoreConstants {
 	protected UnifiedTree tree;
 	protected long stat;
 	protected boolean existsWorkspace;
-	//the name of the resource in the local file system, if any
+	
+	//the location of the resource in the local file system, if any
+	protected String localLocation;
 	protected String localName;
-public UnifiedTreeNode(UnifiedTree tree, IResource resource, long stat, String localName, boolean existsWorkspace) {
+	
+public UnifiedTreeNode(UnifiedTree tree, IResource resource, long stat, String localLocation, String localName, boolean existsWorkspace) {
 	this.tree = tree;
-	setResource(resource);
+	this.resource = resource;
 	this.stat = stat;
 	this.existsWorkspace = existsWorkspace;
+	this.localLocation = localLocation;
 	this.localName = localName;
 }
 public boolean existsInFileSystem() {
@@ -46,8 +50,11 @@ public long getLastModified() {
 public int getLevel() {
 	return tree.getLevel();
 }
-public IPath getLocalLocation() {
-	return tree.getLocalLocation(resource);
+/**
+ * Returns the local location of this resource.
+ */
+public String getLocalLocation() {
+	return localLocation != null ? localLocation : tree.getLocalLocation(resource);
 }
 /**
  * Gets the name of this node in the local filesystem.
@@ -83,5 +90,17 @@ public String toString() {
 }
 public void removeChildrenFromTree() throws CoreException {
 	tree.removeNodeChildrenFromQueue(this);
+}
+/**
+ * Reuses this object by assigning all new values for the fields.
+ */
+public void reuse(UnifiedTree tree, IResource resource, long stat, String localLocation, String localName, boolean existsWorkspace) {
+	this.tree = tree;
+	this.child = null;
+	this.resource = resource;
+	this.stat = stat;
+	this.existsWorkspace = existsWorkspace;
+	this.localLocation = localLocation;
+	this.localName = localName;
 }
 }

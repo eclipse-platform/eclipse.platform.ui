@@ -7,6 +7,7 @@ package org.eclipse.core.internal.localstore;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.utils.*;
 import java.util.*;
@@ -25,15 +26,18 @@ public class UnifiedTree {
 
 	/** our queue */
 	protected Queue queue;
+	
+	/** Spare node objects available for reuse */
+	protected ArrayList freeNodes = new ArrayList();
 
 	/** sorter */
 	protected Sorter sorter;
 
 	/** special node to mark the beginning of a level in the tree */
-	protected static final UnifiedTreeNode levelMarker = new UnifiedTreeNode(null, null, 0, null, false);
+	protected static final UnifiedTreeNode levelMarker = new UnifiedTreeNode(null, null, 0, null, null, false);
 
 	/** special node to mark the separation of a node's children */
-	protected static final UnifiedTreeNode childrenMarker = new UnifiedTreeNode(null, null, 0, null, false);
+	protected static final UnifiedTreeNode childrenMarker = new UnifiedTreeNode(null, null, 0, null, null, false);
 public UnifiedTree() {
 }
 /**
@@ -49,8 +53,8 @@ public void accept(IUnifiedTreeVisitor visitor, int depth) throws CoreException 
 	Assert.isNotNull(root);
 	initializeQueue();
 	level = 0;
-	while (isValidLevel(level, depth) && !queueIsEmpty()) {
-		UnifiedTreeNode node = removeElementFromQueue();
+	while (isValidLevel(level, depth) && !queue.isEmpty()) {
+		UnifiedTreeNode node = (UnifiedTreeNode)queue.remove();
 		if (isChildrenMarker(node))
 			continue;
 		if (isLevelMarker(node)) {
@@ -61,6 +65,8 @@ public void accept(IUnifiedTreeVisitor visitor, int depth) throws CoreException 
 			addNodeChildrenToQueue(node);
 		else
 			removeNodeChildrenFromQueue(node);
+		//allow reuse of the node
+		freeNodes.add(node);
 	}
 }
 protected void addChildren(UnifiedTreeNode node) throws CoreException {
@@ -71,7 +77,7 @@ protected void addChildren(UnifiedTreeNode node) throws CoreException {
 		return;
 
 	/* get the list of resources in the file system */
-	IPath parentLocalLocation = getLocalLocation(parent);
+	String parentLocalLocation = node.getLocalLocation();
 	Object[] list = getLocalList(node, parentLocalLocation);
 	int index = 0;
 
@@ -93,8 +99,9 @@ protected void addChildren(UnifiedTreeNode node) throws CoreException {
 			int comp = localName != null ? name.compareTo(localName) : -1;
 			if (comp == 0) {
 				// resource exists in workspace and file system
-				long stat = CoreFileSystemLibrary.getStat(getLocalLocation(target).toOSString());
-				child = new UnifiedTreeNode(this, target, stat, localName, true);
+				String localLocation = createChildLocation(parentLocalLocation, localName);
+				long stat = CoreFileSystemLibrary.getStat(localLocation);
+				child = createNode(target, stat, localLocation, localName, true);
 				index++;
 				next = true;
 			} else
@@ -105,7 +112,7 @@ protected void addChildren(UnifiedTreeNode node) throws CoreException {
 					next = false;
 				} else {
 					// resource exists only in the workspace
-					child = new UnifiedTreeNode(this, target, 0, null, true);
+					child = createNode(target, 0, null, null, true);
 					next = true;
 				}
 			addChildToTree(node, child);
@@ -119,7 +126,7 @@ protected void addChildren(UnifiedTreeNode node) throws CoreException {
 	if (node.getFirstChild() != null)
 		addChildrenMarker();
 }
-protected void addChildrenFromFileSystem(UnifiedTreeNode node, IPath parentLocalLocation, Object[] list, int index) throws CoreException {
+protected void addChildrenFromFileSystem(UnifiedTreeNode node, String parentLocalLocation, Object[] list, int index) throws CoreException {
 	if (list == null)
 		return;
 	for (int i = index; i < list.length; i++) {
@@ -138,37 +145,68 @@ protected void addChildToTree(UnifiedTreeNode node, UnifiedTreeNode child) {
 }
 protected void addElementToQueue(UnifiedTreeNode target) {
 	queue.add(target);
+}/**
+ * Creates a string representing the OS path for the given parent and child name.
+ */
+protected String createChildLocation(String parentLocation, String childLocation) {
+	StringBuffer buffer = new StringBuffer(parentLocation.length() + childLocation.length() + 1);
+	buffer.append(parentLocation);
+	buffer.append(java.io.File.separatorChar);
+	buffer.append(childLocation);
+	return buffer.toString();
 }
+
 protected void addNodeChildrenToQueue(UnifiedTreeNode node) throws CoreException {
 	/* if the first child is not null we already added the children */
 	if (node.getFirstChild() != null)
 		return;
 	addChildren(node);
-	if (queueIsEmpty())
+	if (queue.isEmpty())
 		return;
-	UnifiedTreeNode nextNode = getElementFromQueue();
+	//if we're about to change levels, then the children just added
+	//are the last nodes for their level, so add a level marker to the queue
+	UnifiedTreeNode nextNode = (UnifiedTreeNode)queue.peek();
 	if (isLevelMarker(nextNode))
-		addElementToQueue(nextNode);
+		addElementToQueue(levelMarker);
 }
 protected void addRootToQueue() throws CoreException {
-	long stat = CoreFileSystemLibrary.getStat(rootLocalLocation.toOSString());
-	UnifiedTreeNode node = new UnifiedTreeNode(this, root, stat, rootLocalLocation.lastSegment(), root.exists());
+	String rootLocationString = rootLocalLocation.toOSString();
+	long stat = CoreFileSystemLibrary.getStat(rootLocationString);
+	UnifiedTreeNode node = createNode(root, stat, rootLocationString, rootLocalLocation.lastSegment(), root.exists());
 	if (!node.existsInFileSystem() && !node.existsInWorkspace())
 		return;
 	addElementToQueue(node);
 }
-protected UnifiedTreeNode createChildNodeFromFileSystem(UnifiedTreeNode node, IPath parentLocalLocation, String childName) throws CoreException {
-	IPath childPath = node.getResource().getFullPath().append(childName);
-	IPath childLocalLocation = parentLocalLocation.append(childName);
-	return createNode(childPath, childLocalLocation, childName);
+protected UnifiedTreeNode createChildNodeFromFileSystem(UnifiedTreeNode parent, String parentLocalLocation, String childName) throws CoreException {
+	IPath childPath = parent.getResource().getFullPath().append(childName);
+	String location = createChildLocation(parentLocalLocation, childName);
+	long stat = CoreFileSystemLibrary.getStat(location);
+	int type = CoreFileSystemLibrary.isFile(stat) ? IResource.FILE : IResource.FOLDER;
+	IResource target = getWorkspace().newResource(childPath, type);
+	return createNode(target, stat, location, childName, false);
 }
-protected UnifiedTreeNode createNode(IPath path, IPath location, String localName) throws CoreException {
-	long stat = CoreFileSystemLibrary.getStat(location.toOSString());
-	UnifiedTreeNode node = new UnifiedTreeNode(this, null, stat, localName, false);
+protected UnifiedTreeNode createNodeFromFileSystem(IPath path, String location, String localName) throws CoreException {
+	long stat = CoreFileSystemLibrary.getStat(location);
+	UnifiedTreeNode node = createNode(null, stat, location, localName, false);
 	int type = node.isFile() ? IResource.FILE : IResource.FOLDER;
 	IResource target = getWorkspace().newResource(path, type);
 	node.setResource(target);
 	return node;
+}
+/**
+ * Factory method for creating a node for this tree.
+ */
+protected UnifiedTreeNode createNode(IResource resource, long stat, String localLocation, String localName, boolean existsWorkspace) {
+	//first check for reusable objects
+	UnifiedTreeNode node = null;
+	int size = freeNodes.size();
+	if (size > 0) {
+		node = (UnifiedTreeNode)freeNodes.remove(size-1);
+		node.reuse(this, resource, stat, localLocation, localName, existsWorkspace);
+		return node;
+	}
+	//none available, so create a new one
+	return new UnifiedTreeNode(this, resource, stat, localLocation, localName, existsWorkspace);
 }
 protected Enumeration getChildren(UnifiedTreeNode node) throws CoreException {
 	/* if first child is null we need to add node's children to queue */
@@ -197,24 +235,24 @@ protected Enumeration getChildren(UnifiedTreeNode node) throws CoreException {
 	}
 	return Collections.enumeration(result);
 }
-protected UnifiedTreeNode getElementFromQueue() {
-	return (UnifiedTreeNode) queue.peek();
+
+protected  String getLocalLocation(IResource target) {
+	int segments = target.getFullPath().matchingFirstSegments(root.getFullPath());
+	return rootLocalLocation.append(target.getFullPath().removeFirstSegments(segments)).toOSString();
 }
+
 protected int getLevel() {
 	return level;
 }
-protected Object[] getLocalList(UnifiedTreeNode node, IPath location) {
+protected Object[] getLocalList(UnifiedTreeNode node, String location) {
 	if (node.isFile())
 		return null;
-	String[] list = location.toFile().list();
+	String[] list = new java.io.File(location).list();
 	if (list == null)
 		return list;
 	return getSorter().sort(list);
 }
-protected IPath getLocalLocation(IResource target) {
-	int segments = target.getFullPath().matchingFirstSegments(root.getFullPath());
-	return rootLocalLocation.append(target.getFullPath().removeFirstSegments(segments));
-}
+
 /**
  * helper method to reduce garbage generation
  */
@@ -232,18 +270,24 @@ protected Workspace getWorkspace() {
 	return (Workspace) root.getWorkspace();
 }
 protected void initializeQueue() throws CoreException {
+	//init the queue
 	if (queue == null)
-		queue = new Queue(50, false);
+		queue = new Queue(100, false);
 	else
 		queue.reset();
+	//init the free nodes list
+	if (freeNodes == null)
+		freeNodes = new ArrayList(100);
+	else
+		freeNodes.clear();
 	addRootToQueue();
 	addElementToQueue(levelMarker);
 }
 protected boolean isChildrenMarker(UnifiedTreeNode node) {
-	return node.equals(childrenMarker);
+	return node == childrenMarker;
 }
 protected boolean isLevelMarker(UnifiedTreeNode node) {
-	return node.equals(levelMarker);
+	return node == levelMarker;
 }
 protected boolean isValidLevel(int level, int depth) {
 	switch (depth) {
@@ -256,12 +300,6 @@ protected boolean isValidLevel(int level, int depth) {
 		default:
 			return false;
 	}
-}
-protected boolean queueIsEmpty() {
-	return queue.isEmpty();
-}
-protected UnifiedTreeNode removeElementFromQueue() {
-	return (UnifiedTreeNode) queue.remove();
 }
 /**
  * Remove from the last element of the queue to the first child of the
