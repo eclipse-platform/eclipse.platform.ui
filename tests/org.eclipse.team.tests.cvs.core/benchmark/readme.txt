@@ -59,6 +59,7 @@ Deploying the Tests
              - org.eclipse.team.ui/
              - org.eclipse.team.cvs.core/
              - org.eclipse.team.cvs.ui/
+             - org.eclipse.team.tests.core/
              - org.eclipse.team.tests.cvs.core/
              - org.junit/
              ... and all of the other required Eclipse plugins ...

@@ -5,6 +5,7 @@ rem   org.eclipse.core.tests.harness
 rem   org.eclipse.team.core
 rem   org.eclipse.team.cvs.core
 rem   org.eclipse.team.cvs.ui
+rem   org.eclipse.team.tests.core
 rem   org.eclipse.team.tests.cvs.core
 rem   org.eclipse.team.ui
 rem   org.junit
