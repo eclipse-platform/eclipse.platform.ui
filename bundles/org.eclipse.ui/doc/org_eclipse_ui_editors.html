@@ -200,8 +200,10 @@ resource.</li>
 <b>symbolicFontName</b> - the symbolic name of a font. The symbolic font name must be the id of a
 defined font (see <a href="org_eclipse_ui_fontDefinitions.html"><tt>org.eclipse.ui.fontDefinitions</tt></a>).
 If this attribute is missing or invalid then the font name is the value of <tt>"org.eclipse.jface.textfont"</tt>
-in the editor's preferences store. If there is not preference store or
-the key is not defined then the JFace text font will be used. </li>
+in the editor's preferences store. If there is no preference store or
+the key is not defined then the JFace text font will be used. The editor
+implementation decides if it uses this symbolic font name to set the
+font. </li>
 
 </ul>
 
