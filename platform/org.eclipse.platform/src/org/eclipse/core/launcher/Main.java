@@ -444,18 +444,26 @@ public class Main {
 				extensionURL = new URL(installLocation.getProtocol(), installLocation.getHost(), installLocation.getPort(), path);
 
 			//Load a property file of the extension, merge its content, and in case of dev mode add the bin entries
-			Properties extensionProperties = loadProperties(constructURL(extensionURL, ECLIPSE_PROPERTIES));
-			String extensionPath = extensionProperties.getProperty(PROP_CLASSPATH);
-			if (extensionPath != null) {
-				if (inDevelopmentMode) 
-					addDevEntries(extensionURL, result);
-				String[] entries = getArrayFromList(extensionPath);
-				String qualifiedPath = ""; //$NON-NLS-1$
-				for (int j = 0; j < entries.length; j++) 
-					qualifiedPath += ", " + FILE_SCHEME + path + entries[j]; //$NON-NLS-1$
-				extensionProperties.put(PROP_CLASSPATH, qualifiedPath);
+			Properties extensionProperties = null;
+			try {
+				extensionProperties = loadProperties(constructURL(extensionURL, ECLIPSE_PROPERTIES));
+			} catch (IOException e) {
+				if (debug)
+					System.out.println("\t" + ECLIPSE_PROPERTIES + " not found"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
+			String extensionClassPath = null;
+			if (extensionProperties != null)
+				extensionClassPath = extensionProperties.getProperty(PROP_CLASSPATH);
+			else // this is a "normal" RFC 101 framework extension bundle just put the base path on the classpath
+				extensionProperties = new Properties();
+			String[] entries = extensionClassPath == null || extensionClassPath.length() == 0 ? new String[] {""} : getArrayFromList(extensionClassPath); //$NON-NLS-1$
+			String qualifiedPath = ""; //$NON-NLS-1$
+			for (int j = 0; j < entries.length; j++) 
+				qualifiedPath += ", " + FILE_SCHEME + path + entries[j]; //$NON-NLS-1$
+			extensionProperties.put(PROP_CLASSPATH, qualifiedPath);
 			mergeProperties(System.getProperties(), extensionProperties);
+			if (inDevelopmentMode) 
+				addDevEntries(extensionURL, result);
 		}
 		extensionPaths = (String[]) extensionResults.toArray(new String[extensionResults.size()]);
 	}
