@@ -40,7 +40,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 /**
  * A compare operation which can present its results in a special editor.
  * Running the compare operation and presentating the results in a compare editor
- * are combined in one interface because it allows a client to keep the implementation
+ * are combined in one class because it allows a client to keep the implementation
  * all in one place while separating it from the innards of a specific UI implementation of compare/merge.
  * <p> 
  * A <code>CompareEditorInput</code> defines methods for the following sequence steps:
@@ -121,6 +121,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	private ShowPseudoConflicts fShowPseudoConflicts;
 	
 	boolean fStructureCompareOnSingleClick= true;
+	boolean fUseOutlineView= false;
 
 	/**
 	 * Creates a <code>CompareEditorInput</code> which is initialized with the given
@@ -133,10 +134,14 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		fCompareConfiguration= configuration;
 		Assert.isNotNull(configuration);
 		
+		Object object= fCompareConfiguration.getProperty(CompareConfiguration.USE_OUTLINE_VIEW);
+		if (object instanceof Boolean)
+			fUseOutlineView= ((Boolean) object).booleanValue();
+
 		ResourceBundle bundle= CompareUIPlugin.getResourceBundle();
 		fIgnoreWhitespace= new IgnoreWhiteSpaceAction(bundle, configuration);
 		fShowPseudoConflicts= new ShowPseudoConflicts(bundle, configuration);
-		
+
 		fDirtyStateListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
 				String propertyName= e.getProperty();
@@ -363,8 +368,55 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 
 		fComposite= new Splitter(parent, SWT.VERTICAL);
 		fComposite.setData(this);
-			
-		final Splitter h= new Splitter(fComposite, SWT.HORIZONTAL);
+				
+		Splitter hSplitter= null;
+		if (!fUseOutlineView)
+			hSplitter= createHierarchy(fComposite, SWT.HORIZONTAL);
+					
+		fContentInputPane= new CompareViewerSwitchingPane(fComposite, SWT.BORDER | SWT.FLAT) {
+			protected Viewer getViewer(Viewer oldViewer, Object input) {
+				if (input instanceof ICompareInput)
+					return findContentViewer(oldViewer, (ICompareInput)input, this);
+				return null;
+			}
+		};
+		if (fFocusPane == null)
+			fFocusPane= fContentInputPane;
+		if (hSplitter != null)
+			fComposite.setVisible(hSplitter, false);
+		fComposite.setVisible(fContentInputPane, true);
+		
+		if (fStructureInputPane != null)
+			fComposite.setWeights(new int[] { 30, 70 });
+		
+		fComposite.layout();
+
+		if (fStructureInputPane != null && fInput instanceof ICompareInput) {
+			fStructureInputPane.setInput(fInput);
+			ISelection sel= fStructureInputPane.getSelection();
+			if (sel == null || sel.isEmpty())
+				feed1(sel);	// we only feed downstream viewers if the top left pane is empty
+		}
+		
+		fComposite.setData("Nav", //$NON-NLS-1$
+			new CompareViewerSwitchingPane[] {
+				fStructureInputPane,
+				fStructurePane1,
+				fStructurePane2,
+				fContentInputPane
+			}
+		);
+	
+		return fComposite;
+	}
+	
+	/**
+	 * @param parent the parent control under which the control must be created
+	 * @return the SWT control hierarchy for the compare editor
+	 * @since 3.0
+	 */
+	public Splitter createHierarchy(Composite parent, int direction) {
+		final Splitter h= new Splitter(parent, direction);
 
 		fStructureInputPane= new CompareViewerSwitchingPane(h, SWT.BORDER | SWT.FLAT, true) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
@@ -397,21 +449,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			}
 		};
 		h.setVisible(fStructurePane2, false);
-				
-		fContentInputPane= new CompareViewerSwitchingPane(fComposite, SWT.BORDER | SWT.FLAT) {
-			protected Viewer getViewer(Viewer oldViewer, Object input) {
-				if (input instanceof ICompareInput)
-					return findContentViewer(oldViewer, (ICompareInput)input, this);
-				return null;
-			}
-		};
-		fComposite.setVisible(h, false);
-		fComposite.setVisible(fContentInputPane, true);
 		
-		fComposite.setWeights(new int[] { 30, 70 });
-		
-		fComposite.layout();
-
 		// setup the wiring for top left pane
 		fStructureInputPane.addOpenListener(
 			new IOpenListener() {
@@ -468,10 +506,10 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				fContentInputPane
 			}
 		);
-	
-		return fComposite;
+
+		return h;
 	}
-	
+
 	private void feed1(final ISelection selection) {
 		BusyIndicator.showWhile(fComposite.getDisplay(),
 			new Runnable() {
