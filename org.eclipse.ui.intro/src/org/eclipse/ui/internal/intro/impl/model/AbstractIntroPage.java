@@ -10,13 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.model;
 
-import java.util.*;
+import java.util.Hashtable;
+import java.util.Vector;
 
-import org.eclipse.ui.internal.intro.impl.*;
-import org.eclipse.ui.internal.intro.impl.model.loader.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.osgi.framework.*;
-import org.w3c.dom.*;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
+import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
+import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.osgi.framework.Bundle;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Base class for all Intro pages, inlcuding HomePage. Adds page specific

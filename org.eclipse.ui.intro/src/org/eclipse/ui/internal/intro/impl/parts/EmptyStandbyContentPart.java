@@ -11,15 +11,18 @@
 package org.eclipse.ui.internal.intro.impl.parts;
 
 
-import org.eclipse.swt.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.internal.intro.impl.*;
-import org.eclipse.ui.internal.intro.impl.swt.*;
-import org.eclipse.ui.intro.*;
-import org.eclipse.ui.intro.config.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.swt.PageStyleManager;
+import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.intro.config.IStandbyContentPart;
 
 
 

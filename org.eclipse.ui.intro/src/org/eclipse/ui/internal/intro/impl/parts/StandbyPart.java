@@ -10,21 +10,33 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.parts;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.internal.intro.impl.*;
-import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.model.loader.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.eclipse.ui.intro.*;
-import org.eclipse.ui.intro.config.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.internal.intro.impl.IIntroConstants;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
+import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
+import org.eclipse.ui.internal.intro.impl.model.IntroStandbyContentPart;
+import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
+import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
+import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.intro.config.CustomizableIntroPart;
+import org.eclipse.ui.intro.config.IStandbyContentPart;
 
 /**
  * Standby part is responsible for managing and creating IStandbycontent parts.
@@ -39,7 +51,7 @@ import org.eclipse.ui.intro.config.*;
  * Intro goes out of standby content mode, and the standby content parts are not
  * shown anymore until the user explicitly asks for a part again. This is
  * accomplished through a data flag on the CustomizableIntroPart control.
- *  
+ * 
  */
 public class StandbyPart implements IIntroConstants {
 
@@ -67,14 +79,14 @@ public class StandbyPart implements IIntroConstants {
          * (non-Javadoc)
          * 
          * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite,
-         *      int, int, boolean)
+         *           int, int, boolean)
          */
         protected Point computeSize(Composite composite, int wHint, int hHint,
                 boolean flushCache) {
             Point lsize = returnLink.computeSize(SWT.DEFAULT, SWT.DEFAULT,
-                    flushCache);
+                flushCache);
             Point csize = content.computeSize(SWT.DEFAULT, SWT.DEFAULT,
-                    flushCache);
+                flushCache);
             int width = Math.max(lsize.x + 2 * HMARGIN, csize.x);
             int height = HMARGIN + lsize.y + VGAP + csize.y;
             return new Point(width, height);
@@ -84,13 +96,13 @@ public class StandbyPart implements IIntroConstants {
          * (non-Javadoc)
          * 
          * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite,
-         *      boolean)
+         *           boolean)
          */
         protected void layout(Composite composite, boolean flushCache) {
             Rectangle carea = composite.getClientArea();
             int lwidth = carea.width - HMARGIN * 2;
             Point lsize = returnLink.computeSize(lwidth, SWT.DEFAULT,
-                    flushCache);
+                flushCache);
             int x = HMARGIN;
             int y = VMARGIN;
             returnLink.setBounds(x, y, lsize.x, lsize.y);
@@ -162,7 +174,7 @@ public class StandbyPart implements IIntroConstants {
 
     /**
      * Empty content part used as backup for failures.
-     *  
+     * 
      */
     private void addEmptyPart() {
         emptyPart = new EmptyStandbyContentPart();
@@ -178,7 +190,7 @@ public class StandbyPart implements IIntroConstants {
      */
     private boolean restoreState(IMemento memento) {
         String contentPartId = memento
-                .getString(MEMENTO_STANDBY_CONTENT_PART_ID_ATT);
+            .getString(MEMENTO_STANDBY_CONTENT_PART_ID_ATT);
         if (contentPartId == null)
             return false;
         // create the cached content part. Content parts are responsible for
@@ -197,15 +209,15 @@ public class StandbyPart implements IIntroConstants {
     public boolean showContentPart(String partId, String input) {
         // Get the IntroStandbyContentPart that maps to the given partId.
         IntroStandbyContentPart standbyPartContent = ExtensionPointManager
-                .getInst().getSharedConfigExtensionsManager().getStandbyPart(
-                        partId);
+            .getInst().getSharedConfigExtensionsManager()
+            .getStandbyPart(partId);
 
         if (standbyPartContent != null) {
             String standbyContentClassName = standbyPartContent.getClassName();
             String pluginId = standbyPartContent.getPluginId();
 
             Object standbyContentObject = ModelLoaderUtil.createClassInstance(
-                    pluginId, standbyContentClassName);
+                pluginId, standbyContentClassName);
             if (standbyContentObject instanceof IStandbyContentPart) {
                 IStandbyContentPart contentPart = (IStandbyContentPart) standbyContentObject;
                 Control c = addStandbyContentPart(partId, contentPart);
@@ -246,12 +258,12 @@ public class StandbyPart implements IIntroConstants {
         ControlKey controlKey = getCachedContent(partId);
         if (controlKey == null) {
             standbyContent.init(introPart, getMemento(memento,
-                    MEMENTO_STANDBY_CONTENT_PART_TAG));
+                MEMENTO_STANDBY_CONTENT_PART_TAG));
             try {
                 standbyContent.createPartControl(content, toolkit);
             } catch (Exception e) {
                 Log.error(
-                        "Failed to create part for standby part: " + partId, e); //$NON-NLS-1$
+                    "Failed to create part for standby part: " + partId, e); //$NON-NLS-1$
                 return null;
             }
             Control control = standbyContent.getControl();
@@ -288,25 +300,31 @@ public class StandbyPart implements IIntroConstants {
     }
 
     private void updateReturnLinkLabel() {
-        AbstractIntroPage page = model.getCurrentPage();
         String linkText = IntroPlugin.getString("StandbyPart.returnToIntro"); //$NON-NLS-1$
-        String toolTip = IntroPlugin.getString("StandbyPart.returnTo") //$NON-NLS-1$
-                + " " + page.getTitle(); //$NON-NLS-1$
-
         returnLink.setText(linkText);
+        AbstractIntroPage page = model.getCurrentPage();
+        if (page == null)
+            // page will be null in static intro.
+            return;
+
+        String toolTip = IntroPlugin.getString("StandbyPart.returnTo"); //$NON-NLS-1$
+        if (page.getTitle() != null)
+            toolTip += " " + page.getTitle(); //$NON-NLS-1$
+
+
         returnLink.setToolTipText(toolTip);
     }
 
     private void doReturn() {
         // remove the flag to indicate that standbypart is no longer needed.
         ((CustomizableIntroPart) introPart).getControl().setData(
-                IIntroConstants.SHOW_STANDBY_PART, null);
+            IIntroConstants.SHOW_STANDBY_PART, null);
         IntroPlugin.setIntroStandby(false);
     }
 
     /**
      * Calls dispose on all cached IStandbyContentParts.
-     *  
+     * 
      */
     public void dispose() {
 
@@ -326,7 +344,7 @@ public class StandbyPart implements IIntroConstants {
      * conflict.
      * 
      * @param memento
-     *            the memento in which to store state information
+     *                   the memento in which to store state information
      */
     public void saveState(IMemento memento) {
         // save cached content part id.
@@ -336,14 +354,14 @@ public class StandbyPart implements IIntroConstants {
                 // do not create memento for empty standby.
                 return;
             memento.putString(MEMENTO_STANDBY_CONTENT_PART_ID_ATT,
-                    contentPartId);
+                contentPartId);
             // give standby part its own child to create a name space for
             // IStandbyPartContent contribution momentos.
             IMemento standbyContentPartMemento = memento
-                    .createChild(MEMENTO_STANDBY_CONTENT_PART_TAG);
+                .createChild(MEMENTO_STANDBY_CONTENT_PART_TAG);
             // pass new memento to correct standby part.
             IStandbyContentPart standbyContentpart = cachedControlKey
-                    .getContentPart();
+                .getContentPart();
             if (standbyContentpart != null)
                 standbyContentpart.saveState(standbyContentPartMemento);
         }

@@ -11,9 +11,9 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import org.eclipse.core.runtime.*;
-import org.osgi.framework.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.osgi.framework.Bundle;
+import org.w3c.dom.Element;
 
 /**
  * An intro Head element. Head elements are only interpreted for HTML case. They

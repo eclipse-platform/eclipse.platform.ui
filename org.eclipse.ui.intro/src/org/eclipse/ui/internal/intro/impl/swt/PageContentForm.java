@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.swt;
 
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.internal.intro.impl.*;
-import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.intro.config.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledPageBook;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.internal.intro.impl.IIntroConstants;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
+import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
+import org.eclipse.ui.intro.config.IIntroContentProviderSite;
 
 /**
  * A Composite that represents the content of an Intro Page. It is swapped in

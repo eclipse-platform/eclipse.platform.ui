@@ -11,11 +11,15 @@
 
 package org.eclipse.ui.internal.intro.impl.model.loader;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
 
-import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.eclipse.ui.intro.config.*;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
+import org.eclipse.ui.internal.intro.impl.model.IntroContentProvider;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.intro.config.IIntroContentProvider;
+import org.eclipse.ui.intro.config.IIntroContentProviderSite;
 
 /**
  * Class for handling/caching all the loaded Intro Content providers, from all

@@ -10,17 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl;
 
-import java.text.*;
-import java.util.*;
+import java.text.MessageFormat;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.model.loader.*;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
+import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.presentations.IntroLaunchBar;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.eclipse.ui.intro.*;
-import org.eclipse.ui.plugin.*;
-import org.osgi.framework.*;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 /**
  * Intro main plugin.
@@ -32,7 +33,7 @@ public class IntroPlugin extends AbstractUIPlugin {
 
     // There should always be a single instance of all these classes.
     private ResourceBundle resourceBundle;
-    
+
     // We must keep track of the launch bar so that we can
     // close it if intro is opened from the menu.
     private IntroLaunchBar launchBar;
@@ -61,7 +62,7 @@ public class IntroPlugin extends AbstractUIPlugin {
     public static String getString(String key) {
         try {
             ResourceBundle bundle = IntroPlugin.getDefault()
-                    .getResourceBundle();
+                .getResourceBundle();
             return (bundle != null ? bundle.getString(key) : key);
         } catch (MissingResourceException e) {
             Log.warning("IntroPlugin - unable to load resource bundle"); //$NON-NLS-1$
@@ -69,16 +70,16 @@ public class IntroPlugin extends AbstractUIPlugin {
             return key;
         }
     }
-    
+
     public void closeLaunchBar() {
-    	if (launchBar!=null) {
-    		launchBar.close();
-    		launchBar = null;
-    	}
+        if (launchBar != null) {
+            launchBar.close();
+            launchBar = null;
+        }
     }
-    
+
     public void setLaunchBar(IntroLaunchBar launchBar) {
-    	this.launchBar = launchBar;
+        this.launchBar = launchBar;
     }
 
     /**
@@ -114,56 +115,55 @@ public class IntroPlugin extends AbstractUIPlugin {
 
     /**
      * Returns the Intro Part.
-     *  
+     * 
      */
     public static IIntroPart getIntro() {
         IIntroPart introPart = PlatformUI.getWorkbench().getIntroManager()
-                .getIntro();
+            .getIntro();
         return introPart;
     }
 
     /**
      * Returns the Intro Part after forcing an open on it.
-     *  
+     * 
      */
     public static IIntroPart showIntro(boolean standby) {
         IIntroPart introPart = PlatformUI.getWorkbench().getIntroManager()
-                .showIntro(
-                        PlatformUI.getWorkbench().getActiveWorkbenchWindow(),
-                        standby);
+            .showIntro(PlatformUI.getWorkbench().getActiveWorkbenchWindow(),
+                standby);
         return introPart;
     }
 
     /**
      * Returns the standby state of the Intro Part. If the intro is closed,
      * retruns false.
-     *  
+     * 
      */
     public static boolean isIntroStandby() {
         return PlatformUI.getWorkbench().getIntroManager().isIntroStandby(
-                getIntro());
+            getIntro());
     }
 
     /**
      * Sets the standby state of the Intro Part. If the intro is closed, retruns
      * false.
-     *  
+     * 
      */
     public static void setIntroStandby(boolean standby) {
         PlatformUI.getWorkbench().getIntroManager().setIntroStandby(getIntro(),
-                standby);
+            standby);
     }
 
 
     /**
      * Returns the standby state of the Intro Part. If the intro is closed,
      * retruns false.
-     *  
+     * 
      */
     public static boolean closeIntro() {
-        //      Relies on Workbench.
+        // Relies on Workbench.
         return PlatformUI.getWorkbench().getIntroManager().closeIntro(
-                getIntro());
+            getIntro());
     }
 
 

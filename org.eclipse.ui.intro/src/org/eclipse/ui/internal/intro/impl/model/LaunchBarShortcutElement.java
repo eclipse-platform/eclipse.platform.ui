@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.model;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.osgi.framework.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
+import org.osgi.framework.Bundle;
+import org.w3c.dom.Element;
 
 /**
  * An Intro Config component that captures launch bar shortcut information.

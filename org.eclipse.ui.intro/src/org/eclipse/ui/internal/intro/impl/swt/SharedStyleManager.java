@@ -10,16 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.swt;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Properties;
 
-import org.eclipse.swt.graphics.*;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.osgi.framework.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
+import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.osgi.framework.Bundle;
 
 public class SharedStyleManager {
 

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.intro.config;
 
-import org.w3c.dom.*;
+import org.w3c.dom.Element;
 
 /**
  * A content provider for dynamic XHTML intro content. When an XHTML intro page

@@ -11,16 +11,22 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import java.util.*;
+import java.util.Vector;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.intro.impl.model.loader.*;
-import org.eclipse.ui.internal.intro.impl.presentations.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.eclipse.ui.intro.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
+import org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplementation;
+import org.eclipse.ui.internal.intro.impl.presentations.FormIntroPartImplementation;
+import org.eclipse.ui.internal.intro.impl.presentations.TextIntroPartImplementation;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.Util;
+import org.eclipse.ui.intro.IIntroPart;
 
 /**
  * This class models the presentation element contributed to a config extension

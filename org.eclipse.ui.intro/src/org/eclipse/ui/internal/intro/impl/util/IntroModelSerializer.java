@@ -10,10 +10,26 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.util;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
-import org.eclipse.ui.internal.intro.impl.model.*;
-import org.osgi.framework.*;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroContainer;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
+import org.eclipse.ui.internal.intro.impl.model.IntroAnchor;
+import org.eclipse.ui.internal.intro.impl.model.IntroContentProvider;
+import org.eclipse.ui.internal.intro.impl.model.IntroGroup;
+import org.eclipse.ui.internal.intro.impl.model.IntroHTML;
+import org.eclipse.ui.internal.intro.impl.model.IntroHead;
+import org.eclipse.ui.internal.intro.impl.model.IntroHomePage;
+import org.eclipse.ui.internal.intro.impl.model.IntroImage;
+import org.eclipse.ui.internal.intro.impl.model.IntroInclude;
+import org.eclipse.ui.internal.intro.impl.model.IntroLink;
+import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
+import org.eclipse.ui.internal.intro.impl.model.IntroPage;
+import org.eclipse.ui.internal.intro.impl.model.IntroPageTitle;
+import org.eclipse.ui.internal.intro.impl.model.IntroText;
+import org.osgi.framework.Bundle;
 
 /**
  * Print the model to a string buffer (only) for debugging.

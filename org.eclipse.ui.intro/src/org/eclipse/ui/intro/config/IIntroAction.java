@@ -11,9 +11,9 @@
 
 package org.eclipse.ui.intro.config;
 
-import java.util.*;
+import java.util.Properties;
 
-import org.eclipse.ui.intro.*;
+import org.eclipse.ui.intro.IIntroSite;
 
 /**
  * An Intro action. Classes that implement this interface can be used as valid

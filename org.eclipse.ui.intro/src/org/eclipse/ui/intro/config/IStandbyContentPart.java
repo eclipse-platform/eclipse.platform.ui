@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.intro.config;
 
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.intro.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.intro.IIntroPart;
 
 /**
  * An Intro standby part. It is a UI component that represents some standby

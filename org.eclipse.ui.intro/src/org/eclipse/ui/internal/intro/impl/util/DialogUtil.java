@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.util;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.intro.impl.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 
 /**
  * Utiliy class for Pop-Up dialogs. This is an NL enabled utility class (ie: you

@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.presentations;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.intro.impl.*;
-import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.eclipse.ui.intro.config.*;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation;
+import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
+import org.eclipse.ui.internal.intro.impl.util.IntroModelSerializer;
+import org.eclipse.ui.intro.config.IIntroContentProvider;
 
 /**
  * This is an Text based implementation of an Intro Part. It simply walks the

@@ -11,12 +11,16 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.net.URL;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.osgi.framework.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.StringUtil;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.Constants;
 
 /**
  * Bundle convenience methods.

@@ -11,8 +11,9 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import org.osgi.framework.*;
-import org.w3c.dom.*;
+import org.osgi.framework.Bundle;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * An intro Link. This model class is responsible for parsing and creating an

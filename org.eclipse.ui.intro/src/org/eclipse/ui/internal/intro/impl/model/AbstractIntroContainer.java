@@ -11,13 +11,15 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import java.util.*;
+import java.util.Vector;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.intro.impl.model.loader.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.osgi.framework.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.osgi.framework.Bundle;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * An intro config component that is a container, ie: it can have children.

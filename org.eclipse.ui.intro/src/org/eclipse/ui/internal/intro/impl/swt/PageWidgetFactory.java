@@ -11,16 +11,40 @@
 package org.eclipse.ui.internal.intro.impl.swt;
 
 
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.internal.intro.impl.*;
-import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.model.loader.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.eclipse.ui.intro.config.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.model.AbstractBaseIntroElement;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
+import org.eclipse.ui.internal.intro.impl.model.IntroContentProvider;
+import org.eclipse.ui.internal.intro.impl.model.IntroGroup;
+import org.eclipse.ui.internal.intro.impl.model.IntroHTML;
+import org.eclipse.ui.internal.intro.impl.model.IntroImage;
+import org.eclipse.ui.internal.intro.impl.model.IntroLink;
+import org.eclipse.ui.internal.intro.impl.model.IntroText;
+import org.eclipse.ui.internal.intro.impl.model.IntroURLParser;
+import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
+import org.eclipse.ui.internal.intro.impl.util.DialogUtil;
+import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.StringUtil;
+import org.eclipse.ui.internal.intro.impl.util.Util;
+import org.eclipse.ui.intro.config.IIntroContentProvider;
+import org.eclipse.ui.intro.config.IIntroContentProviderSite;
 
 /**
  * Factory to create all UI forms widgets for the Forms intro presentation.

@@ -11,18 +11,28 @@
 
 package org.eclipse.ui.intro.config;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.intro.impl.*;
-import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.model.loader.*;
-import org.eclipse.ui.internal.intro.impl.parts.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.eclipse.ui.intro.*;
-import org.eclipse.ui.part.*;
+import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.intro.impl.IIntroConstants;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
+import org.eclipse.ui.internal.intro.impl.model.IntroPartPresentation;
+import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
+import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
+import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
+import org.eclipse.ui.internal.intro.impl.parts.StandbyPart;
+import org.eclipse.ui.internal.intro.impl.util.DialogUtil;
+import org.eclipse.ui.intro.IIntroSite;
+import org.eclipse.ui.part.IntroPart;
 
 /**
  * A re-usable intro part that the Eclipse platform uses for its Out of the Box

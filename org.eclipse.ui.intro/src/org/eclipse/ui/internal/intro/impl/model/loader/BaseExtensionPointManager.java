@@ -11,11 +11,15 @@
 
 package org.eclipse.ui.internal.intro.impl.model.loader;
 
-import java.util.*;
+import java.util.Hashtable;
+import java.util.Vector;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.intro.impl.model.AbstractBaseIntroElement;
+import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
+import org.eclipse.ui.internal.intro.impl.util.Log;
 
 /**
  * Base class for handling Intro Extensions.

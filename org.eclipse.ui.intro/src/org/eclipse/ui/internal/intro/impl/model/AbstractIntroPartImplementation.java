@@ -11,19 +11,24 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import java.util.*;
 import java.util.List;
+import java.util.Vector;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.internal.intro.impl.*;
-import org.eclipse.ui.internal.intro.impl.model.viewer.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.eclipse.ui.intro.*;
-import org.eclipse.ui.intro.config.*;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.internal.intro.impl.IIntroConstants;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.model.viewer.IntroModelContentProvider;
+import org.eclipse.ui.internal.intro.impl.model.viewer.IntroModelLabelProvider;
+import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
+import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.intro.config.CustomizableIntroPart;
 
 /**
  * UI Implementation class that represents a Presentation Part. This class is

@@ -19,7 +19,7 @@ public interface IIntroConstants {
     String PLUGIN_ID = "org.eclipse.ui.intro"; //$NON-NLS-1$
     String PREFIX = PLUGIN_ID + "."; //$NON-NLS-1$
 
-    //  Empty Standby Content part. This is registered in this plugin,
+    // Empty Standby Content part. This is registered in this plugin,
     // through markup.
     String EMPTY_STANDBY_CONTENT_PART = "org.eclipse.ui.intro.config.emptyStandby"; //$NON-NLS-1$
 

@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
  * An intro url command registration. This model class does not appear as a

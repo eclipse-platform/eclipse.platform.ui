@@ -10,15 +10,32 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.html;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.URL;
 
-
-import org.eclipse.ui.internal.intro.impl.*;
-import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.model.loader.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.eclipse.ui.intro.config.*;
+import org.eclipse.ui.internal.intro.impl.IIntroConstants;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.model.AbstractBaseIntroElement;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
+import org.eclipse.ui.internal.intro.impl.model.BundleUtil;
+import org.eclipse.ui.internal.intro.impl.model.IntroContentProvider;
+import org.eclipse.ui.internal.intro.impl.model.IntroGroup;
+import org.eclipse.ui.internal.intro.impl.model.IntroHTML;
+import org.eclipse.ui.internal.intro.impl.model.IntroHead;
+import org.eclipse.ui.internal.intro.impl.model.IntroImage;
+import org.eclipse.ui.internal.intro.impl.model.IntroLink;
+import org.eclipse.ui.internal.intro.impl.model.IntroPageTitle;
+import org.eclipse.ui.internal.intro.impl.model.IntroText;
+import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.intro.config.IIntroContentProvider;
+import org.eclipse.ui.intro.config.IIntroContentProviderSite;
 
 public class IntroHTMLGenerator {
 

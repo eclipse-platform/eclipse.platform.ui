@@ -8,20 +8,42 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.presentations;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.browser.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.internal.intro.impl.*;
-import org.eclipse.ui.internal.intro.impl.html.*;
-import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.model.loader.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.eclipse.ui.intro.config.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.browser.ProgressListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.internal.intro.impl.IIntroConstants;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.html.HTMLCache;
+import org.eclipse.ui.internal.intro.impl.html.HTMLElement;
+import org.eclipse.ui.internal.intro.impl.html.IntroHTMLGenerator;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation;
+import org.eclipse.ui.internal.intro.impl.model.IntroContentProvider;
+import org.eclipse.ui.internal.intro.impl.model.IntroHomePage;
+import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
+import org.eclipse.ui.internal.intro.impl.model.ModelUtil;
+import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
+import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.intro.config.IIntroContentProvider;
+import org.eclipse.ui.intro.config.IIntroContentProviderSite;
+import org.eclipse.ui.intro.config.IIntroXHTMLContentProvider;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class BrowserIntroPartImplementation extends
         AbstractIntroPartImplementation implements IPropertyListener,

@@ -13,22 +13,37 @@ package org.eclipse.ui.internal.intro.impl.model;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Properties;
 
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.intro.impl.*;
-import org.eclipse.ui.internal.intro.impl.model.loader.*;
+import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.RectangleAnimation;
+import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.intro.impl.IIntroConstants;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
+import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
 import org.eclipse.ui.internal.intro.impl.parts.StandbyPart;
 import org.eclipse.ui.internal.intro.impl.presentations.IntroLaunchBar;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.eclipse.ui.intro.*;
-import org.eclipse.ui.intro.config.*;
+import org.eclipse.ui.internal.intro.impl.util.DialogUtil;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.Util;
+import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.intro.IIntroSite;
+import org.eclipse.ui.intro.config.CustomizableIntroPart;
+import org.eclipse.ui.intro.config.IIntroAction;
+import org.eclipse.ui.intro.config.IIntroURL;
+import org.eclipse.ui.intro.config.IntroURLFactory;
 
 /**
  * An intro url. An intro URL is a valid http url, with org.eclipse.ui.intro as
@@ -55,6 +70,7 @@ public class IntroURL implements IIntroURL {
     public static final String OPEN_BROWSER = "openBrowser"; //$NON-NLS-1$
     public static final String RUN_ACTION = "runAction"; //$NON-NLS-1$
     public static final String SHOW_PAGE = "showPage"; //$NON-NLS-1$
+    // public static final String SHOW_URL = "showURL"; //$NON-NLS-1$
     public static final String SHOW_MESSAGE = "showMessage"; //$NON-NLS-1$
     public static final String NAVIGATE = "navigate"; //$NON-NLS-1$
     public static final String SWITCH_TO_LAUNCH_BAR = "switchToLaunchBar"; //$NON-NLS-1$
@@ -71,6 +87,7 @@ public class IntroURL implements IIntroURL {
     public static final String KEY_MESSAGE = "message"; //$NON-NLS-1$
     public static final String KEY_URL = "url"; //$NON-NLS-1$
     public static final String KEY_DIRECTION = "direction"; //$NON-NLS-1$
+    public static final String KEY_EMBED = "embed"; //$NON-NLS-1$
 
 
     public static final String VALUE_BACKWARD = "backward"; //$NON-NLS-1$
@@ -93,7 +110,7 @@ public class IntroURL implements IIntroURL {
 
     /**
      * Executes whatever valid Intro action is embedded in this Intro URL.
-     *  
+     * 
      */
     public boolean execute() {
         final boolean[] result = new boolean[1];
@@ -120,27 +137,31 @@ public class IntroURL implements IIntroURL {
 
         else if (action.equals(SHOW_STANDBY))
             return handleStandbyState(getParameter(KEY_PART_ID),
-                    getParameter(KEY_INPUT));
+                getParameter(KEY_INPUT));
 
         else if (action.equals(SHOW_HELP))
             // display the full Help System.
             return showHelp();
 
         else if (action.equals(SHOW_HELP_TOPIC))
-            // display a Help System Topic.
-            return showHelpTopic(getParameter(KEY_ID));
+            // display a Help System Topic. It can be displayed in the Help
+            // system window, or embedded as an intro page.
+            return showHelpTopic(getParameter(KEY_ID), getParameter(KEY_EMBED));
 
         else if (action.equals(OPEN_BROWSER))
             // display url in external browser
             return openBrowser(getParameter(KEY_URL),
-                    getParameter(KEY_PLUGIN_ID));
+                getParameter(KEY_PLUGIN_ID));
+
+        // if (action.equals(SHOW_URL))
+        // display url in external browser
+        // return showURL(getParameter(KEY_ID), getParameter(KEY_PLUGIN_ID));
 
         else if (action.equals(RUN_ACTION))
             // run an Intro action. Get the pluginId and the class keys. Pass
             // the parameters and the standby state.
             return runAction(getParameter(KEY_PLUGIN_ID),
-                    getParameter(KEY_CLASS), parameters,
-                    getParameter(KEY_STANDBY));
+                getParameter(KEY_CLASS), parameters, getParameter(KEY_STANDBY));
 
         else if (action.equals(SHOW_PAGE))
             // display an Intro Page.
@@ -153,7 +174,7 @@ public class IntroURL implements IIntroURL {
             return navigate(getParameter(KEY_DIRECTION));
 
         else if (action.equals(SWITCH_TO_LAUNCH_BAR))
-        	return switchToLaunchBar();
+            return switchToLaunchBar();
         else
             return handleCustomAction();
     }
@@ -174,15 +195,15 @@ public class IntroURL implements IIntroURL {
     private boolean handleStandbyState(String partId, String input) {
         // set intro to standby mode. we know we have a customizable part.
         CustomizableIntroPart introPart = (CustomizableIntroPart) IntroPlugin
-                .getIntro();
+            .getIntro();
         if (introPart == null)
             introPart = (CustomizableIntroPart) IntroPlugin.showIntro(true);
         // store the flag to indicate that standbypart is needed.
         introPart.getControl().setData(IIntroConstants.SHOW_STANDBY_PART,
-                "true"); //$NON-NLS-1$
+            "true"); //$NON-NLS-1$
         IntroPlugin.setIntroStandby(true);
         StandbyPart standbyPart = (StandbyPart) introPart
-                .getAdapter(StandbyPart.class);
+            .getAdapter(StandbyPart.class);
 
         boolean success = standbyPart.showContentPart(partId, input);
         if (success)
@@ -219,12 +240,12 @@ public class IntroURL implements IIntroURL {
             Properties parameters, String standbyState) {
 
         Object actionObject = ModelLoaderUtil.createClassInstance(pluginId,
-                className);
+            className);
         try {
             if (actionObject instanceof IIntroAction) {
                 IIntroAction introAction = (IIntroAction) actionObject;
                 IIntroSite site = IntroPlugin.getDefault().getIntroModelRoot()
-                        .getPresentation().getIntroPart().getIntroSite();
+                    .getPresentation().getIntroPart().getIntroSite();
                 introAction.run(site, parameters);
             } else if (actionObject instanceof IAction) {
                 IAction action = (IAction) actionObject;
@@ -234,7 +255,7 @@ public class IntroURL implements IIntroURL {
                 final IActionDelegate delegate = (IActionDelegate) actionObject;
                 if (delegate instanceof IWorkbenchWindowActionDelegate)
                     ((IWorkbenchWindowActionDelegate) delegate).init(PlatformUI
-                            .getWorkbench().getActiveWorkbenchWindow());
+                        .getWorkbench().getActiveWorkbenchWindow());
                 Action proxy = new Action(this.action) {
 
                     public void run() {
@@ -259,7 +280,7 @@ public class IntroURL implements IIntroURL {
     /**
      * Open a help topic.
      */
-    private boolean showHelpTopic(String href) {
+    private boolean showHelpTopic(String href, String embed) {
         // WorkbenchHelp takes care of error handling.
         PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
         return true;
@@ -269,7 +290,7 @@ public class IntroURL implements IIntroURL {
      * Open the help system.
      */
     private boolean showHelp() {
-    	PlatformUI.getWorkbench().getHelpSystem().displayHelp();
+        PlatformUI.getWorkbench().getHelpSystem().displayHelp();
         return true;
     }
 
@@ -284,6 +305,21 @@ public class IntroURL implements IIntroURL {
         return Util.openBrowser(url);
     }
 
+
+    /**
+     * Launch external browser
+     */
+    /*
+     * private boolean showURL(String href, String pluginId) { // Resolve the
+     * url just in case we are trying to load a plugin relative // file. // href =
+     * ModelUtil.resolveURL(href, pluginId); InputStream stream =
+     * HelpSystem.getHelpContent(href); InputStreamReader isr = new
+     * InputStreamReader(stream); BufferedReader br = new BufferedReader(isr);
+     * StringBuffer buffer = new StringBuffer(); String line = null; try { while
+     * ((line = br.readLine()) != null) buffer.append(line); String test =
+     * buffer.toString(); } catch (Exception e) { return false; } return true; }
+     */
+
     private boolean showMessage(String message) {
         if (message == null)
             return false;
@@ -294,7 +330,7 @@ public class IntroURL implements IIntroURL {
                 return true;
             } catch (UnsupportedEncodingException e) {
                 DialogUtil.displayInfoMessage(null, "IntroURL.failedToDecode", //$NON-NLS-1$
-                        new Object[] { message });
+                    new Object[] { message });
                 return false;
             }
         }
@@ -312,7 +348,7 @@ public class IntroURL implements IIntroURL {
         // models. return false if failed.
         // avoid flicker.
         CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
-                .getIntro();
+            .getIntro();
         currentIntroPart.getControl().setRedraw(false);
 
         IntroModelRoot modelRoot = IntroPlugin.getDefault().getIntroModelRoot();
@@ -356,13 +392,13 @@ public class IntroURL implements IIntroURL {
         page.getChildren();
         // current kind.
         String currentPresentationKind = model.getPresentation()
-                .getImplementationKind();
+            .getImplementationKind();
         // load shared style corresponding to same presentation kind from target
         // model.
         IntroPartPresentation targetPresentation = ((IntroModelRoot) page
-                .getParent()).getPresentation();
+            .getParent()).getPresentation();
         String targetSharedStyle = targetPresentation
-                .getSharedStyle(currentPresentationKind);
+            .getSharedStyle(currentPresentationKind);
         // clone.
         AbstractIntroPage clonedPage = null;
         try {
@@ -397,7 +433,7 @@ public class IntroURL implements IIntroURL {
         while (values.hasMoreElements()) {
             IntroModelRoot model = (IntroModelRoot) values.nextElement();
             AbstractIntroPage page = (AbstractIntroPage) model.findChild(
-                    pageId, AbstractIntroElement.ABSTRACT_PAGE);
+                pageId, AbstractIntroElement.ABSTRACT_PAGE);
             if (page != null)
                 return page;
         }
@@ -413,13 +449,13 @@ public class IntroURL implements IIntroURL {
     private boolean navigate(String direction) {
         // set intro to standby mode. we know we have a customizable part.
         CustomizableIntroPart introPart = (CustomizableIntroPart) IntroPlugin
-                .getIntro();
+            .getIntro();
         if (introPart == null)
             // intro is closed. Do nothing.
             return false;
 
         IntroPartPresentation presentation = (IntroPartPresentation) introPart
-                .getAdapter(IntroPartPresentation.class);
+            .getAdapter(IntroPartPresentation.class);
 
         if (direction.equalsIgnoreCase(VALUE_BACKWARD))
             return presentation.navigateBackward();
@@ -451,10 +487,10 @@ public class IntroURL implements IIntroURL {
 
     private boolean handleCustomAction() {
         IntroURLAction command = ExtensionPointManager.getInst()
-                .getSharedConfigExtensionsManager().getCommand(action);
+            .getSharedConfigExtensionsManager().getCommand(action);
         if (command == null) {
             DialogUtil.displayInfoMessage(null, "IntroURL.badCommand", //$NON-NLS-1$
-                    new Object[] { action });
+                new Object[] { action });
             return false;
         }
 
@@ -497,28 +533,36 @@ public class IntroURL implements IIntroURL {
     }
 
     private boolean switchToLaunchBar() {
-		IIntroPart intro = PlatformUI.getWorkbench().getIntroManager().getIntro();
-		if (intro==null) return false;
-		
-		CustomizableIntroPart cpart = (CustomizableIntroPart)intro;
-		IntroModelRoot modelRoot = IntroPlugin.getDefault().getIntroModelRoot();
-		String pageId = modelRoot.getCurrentPageId();
-		Rectangle bounds = cpart.getControl().getBounds();
-		Rectangle startBounds = Geometry.toDisplay(cpart.getControl().getParent(), bounds);
-		closeIntro();
-		
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		WorkbenchWindow wwindow = (WorkbenchWindow)window;
-		LaunchBarElement launchBarElement = modelRoot.getPresentation().getLaunchBar();
-		IntroLaunchBar launchBar = new IntroLaunchBar(launchBarElement.getOrientation(), pageId, launchBarElement);
-		launchBar.createControl(window.getShell());
-		wwindow.addToTrim(launchBar.getControl(), launchBarElement.getLocation());
-		window.getShell().layout();
-		Rectangle endBounds = Geometry.toDisplay(launchBar.getControl().getParent(),
-				launchBar.getControl().getBounds());
+        IIntroPart intro = PlatformUI.getWorkbench().getIntroManager()
+            .getIntro();
+        if (intro == null)
+            return false;
 
-        RectangleAnimation animation = new RectangleAnimation(window.getShell(), startBounds, endBounds);
+        CustomizableIntroPart cpart = (CustomizableIntroPart) intro;
+        IntroModelRoot modelRoot = IntroPlugin.getDefault().getIntroModelRoot();
+        String pageId = modelRoot.getCurrentPageId();
+        Rectangle bounds = cpart.getControl().getBounds();
+        Rectangle startBounds = Geometry.toDisplay(cpart.getControl()
+            .getParent(), bounds);
+        closeIntro();
+
+        IWorkbenchWindow window = PlatformUI.getWorkbench()
+            .getActiveWorkbenchWindow();
+        WorkbenchWindow wwindow = (WorkbenchWindow) window;
+        LaunchBarElement launchBarElement = modelRoot.getPresentation()
+            .getLaunchBar();
+        IntroLaunchBar launchBar = new IntroLaunchBar(launchBarElement
+            .getOrientation(), pageId, launchBarElement);
+        launchBar.createControl(window.getShell());
+        wwindow.addToTrim(launchBar.getControl(), launchBarElement
+            .getLocation());
+        window.getShell().layout();
+        Rectangle endBounds = Geometry.toDisplay(launchBar.getControl()
+            .getParent(), launchBar.getControl().getBounds());
+
+        RectangleAnimation animation = new RectangleAnimation(
+            window.getShell(), startBounds, endBounds);
         animation.schedule();
-    	return true;
+        return true;
     }
 }

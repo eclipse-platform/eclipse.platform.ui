@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.intro.config;
 
-import java.io.*;
+import java.io.PrintWriter;
 
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * A content provider for dynamic intro content. It is initialized with the

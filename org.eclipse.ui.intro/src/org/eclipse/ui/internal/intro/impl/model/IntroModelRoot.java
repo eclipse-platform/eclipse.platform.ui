@@ -10,15 +10,22 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.model;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.util.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.intro.impl.model.loader.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.osgi.framework.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
+import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.osgi.framework.Bundle;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * The root class for the OOBE model. It loads the configuration into the

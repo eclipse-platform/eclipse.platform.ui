@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.model;
 
-import java.util.*;
+import java.util.ArrayList;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.swt.*;
-import org.osgi.framework.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.swt.SWT;
+import org.osgi.framework.Bundle;
+import org.w3c.dom.Element;
 
 /**
  * An Intro Config component that has captures launch bar information.

@@ -10,21 +10,41 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.presentations;
 
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.RectangleAnimation;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
-import org.eclipse.ui.internal.intro.impl.model.*;
+import org.eclipse.ui.internal.intro.impl.model.LaunchBarElement;
+import org.eclipse.ui.internal.intro.impl.model.LaunchBarShortcutElement;
 import org.eclipse.ui.internal.intro.impl.swt.SharedStyleManager;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
 import org.eclipse.ui.intro.IIntroPart;
-import org.eclipse.ui.intro.config.*;
+import org.eclipse.ui.intro.config.CustomizableIntroPart;
+import org.eclipse.ui.intro.config.IIntroURL;
+import org.eclipse.ui.intro.config.IntroURLFactory;
 
 
 /**

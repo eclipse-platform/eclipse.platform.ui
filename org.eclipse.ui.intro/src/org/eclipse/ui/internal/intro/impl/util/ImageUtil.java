@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.util;
 
-import java.net.*;
+import java.net.URL;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.ui.internal.intro.impl.*;
-import org.osgi.framework.*;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.intro.impl.IIntroConstants;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.osgi.framework.Bundle;
 
 /**
  * Convenience class for Images.

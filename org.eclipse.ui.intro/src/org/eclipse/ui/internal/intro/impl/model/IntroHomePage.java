@@ -11,10 +11,10 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import java.util.*;
+import java.util.Vector;
 
-import org.osgi.framework.*;
-import org.w3c.dom.*;
+import org.osgi.framework.Bundle;
+import org.w3c.dom.Element;
 
 /**
  * An Intro Home page. A home page is special because it is the page that

@@ -10,13 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.util;
 
-import java.io.*;
+import java.io.IOException;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.program.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.intro.impl.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 
 public class Util {
 

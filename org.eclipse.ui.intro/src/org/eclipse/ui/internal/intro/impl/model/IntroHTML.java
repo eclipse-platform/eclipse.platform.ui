@@ -11,9 +11,10 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.osgi.framework.*;
-import org.w3c.dom.*;
+import org.eclipse.ui.internal.intro.impl.util.Util;
+import org.osgi.framework.Bundle;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * An intro HTML element. Can have text and image as fall back. "type" attribute

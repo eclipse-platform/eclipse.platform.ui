@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.presentations;
 
-import org.eclipse.swt.browser.*;
-import org.eclipse.ui.internal.intro.impl.model.*;
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.LocationEvent;
+import org.eclipse.swt.browser.LocationListener;
+import org.eclipse.ui.internal.intro.impl.model.IntroURL;
+import org.eclipse.ui.internal.intro.impl.model.IntroURLParser;
 
 /**
  * A Location Listener that knows how to intercept OOBE action URLs. It also

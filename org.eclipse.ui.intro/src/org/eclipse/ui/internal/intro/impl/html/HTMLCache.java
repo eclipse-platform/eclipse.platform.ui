@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.html;
 
-import java.util.*;
+import java.util.Hashtable;
 
 
 /**

@@ -11,11 +11,14 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import java.util.*;
+import java.util.Vector;
 
-import org.eclipse.ui.internal.intro.impl.model.loader.*;
-import org.osgi.framework.*;
-import org.w3c.dom.*;
+import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
+import org.osgi.framework.Bundle;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * An intro container extension. If the content attribute is defined, then it is

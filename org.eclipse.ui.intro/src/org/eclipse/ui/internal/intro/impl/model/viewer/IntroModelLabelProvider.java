@@ -11,10 +11,20 @@
 
 package org.eclipse.ui.internal.intro.impl.model.viewer;
 
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
+import org.eclipse.ui.internal.intro.impl.model.IntroContentProvider;
+import org.eclipse.ui.internal.intro.impl.model.IntroExtensionContent;
+import org.eclipse.ui.internal.intro.impl.model.IntroGroup;
+import org.eclipse.ui.internal.intro.impl.model.IntroHTML;
+import org.eclipse.ui.internal.intro.impl.model.IntroImage;
+import org.eclipse.ui.internal.intro.impl.model.IntroInclude;
+import org.eclipse.ui.internal.intro.impl.model.IntroLink;
+import org.eclipse.ui.internal.intro.impl.model.IntroPartPresentation;
+import org.eclipse.ui.internal.intro.impl.model.IntroText;
+import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
 
 public class IntroModelLabelProvider extends LabelProvider {
 

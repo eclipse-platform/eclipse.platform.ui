@@ -10,23 +10,40 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.presentations;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.internal.intro.impl.*;
-import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.model.loader.*;
-import org.eclipse.ui.internal.intro.impl.swt.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.eclipse.ui.intro.config.*;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.forms.HyperlinkGroup;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.Form;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.eclipse.ui.forms.widgets.ScrolledPageBook;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation;
+import org.eclipse.ui.internal.intro.impl.model.IntroHomePage;
+import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
+import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
+import org.eclipse.ui.internal.intro.impl.swt.PageForm;
+import org.eclipse.ui.internal.intro.impl.swt.PageFormWithNavigation;
+import org.eclipse.ui.internal.intro.impl.swt.PageStyleManager;
+import org.eclipse.ui.internal.intro.impl.swt.RootPageForm;
+import org.eclipse.ui.internal.intro.impl.swt.SharedStyleManager;
+import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
+import org.eclipse.ui.internal.intro.impl.util.Util;
+import org.eclipse.ui.intro.config.CustomizableIntroPart;
+import org.eclipse.ui.intro.config.IIntroContentProvider;
+import org.eclipse.ui.intro.config.IIntroContentProviderSite;
 
 /**
  * This is a UI Forms based implementation of an Intro Part Presentation.

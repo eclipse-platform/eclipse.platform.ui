@@ -11,10 +11,12 @@
 
 package org.eclipse.ui.internal.intro.impl.model.loader;
 
-import java.util.*;
+import java.util.Hashtable;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.intro.impl.model.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.ui.internal.intro.impl.model.IntroStandbyContentPart;
+import org.eclipse.ui.internal.intro.impl.model.IntroURLAction;
 
 /**
  * Class for handling all shared Intro Config Extensions. These are StandbyPart

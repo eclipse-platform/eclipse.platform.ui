@@ -10,8 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.util;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.intro.impl.*;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.internal.intro.impl.IIntroConstants;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 
 /**
  * Utility class for logging, based on Platform logging classes. The log

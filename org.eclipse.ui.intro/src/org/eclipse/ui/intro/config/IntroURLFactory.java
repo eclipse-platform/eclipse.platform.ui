@@ -11,7 +11,8 @@
 
 package org.eclipse.ui.intro.config;
 
-import org.eclipse.ui.internal.intro.impl.model.*;
+import org.eclipse.ui.internal.intro.impl.model.IntroURL;
+import org.eclipse.ui.internal.intro.impl.model.IntroURLParser;
 
 /**
  * Factory class used to create instances of an Intro URL. Instances of intro

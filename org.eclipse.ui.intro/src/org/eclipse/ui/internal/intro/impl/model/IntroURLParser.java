@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.model;
 
-import java.net.*;
-import java.util.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Properties;
 
 /**
  * A parser that knows how to parser OOBE action URLs. If URL is a valid intro

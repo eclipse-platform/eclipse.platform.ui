@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.intro.impl.model.loader;
 
-import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
+import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
+import org.eclipse.ui.internal.intro.impl.util.Log;
 
 /**
  * Manages all Intro plugin extension points. Currently, there are two:

@@ -11,17 +11,29 @@
 
 package org.eclipse.ui.internal.intro.impl.model.loader;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.Hashtable;
 
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentType;
+import org.w3c.dom.Element;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 
 /**

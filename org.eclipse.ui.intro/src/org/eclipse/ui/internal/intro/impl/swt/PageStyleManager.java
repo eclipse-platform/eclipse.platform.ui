@@ -10,15 +10,27 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.swt;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Properties;
 
-import org.eclipse.jface.resource.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.model.loader.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.osgi.framework.*;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.internal.intro.impl.model.AbstractBaseIntroElement;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroContainer;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
+import org.eclipse.ui.internal.intro.impl.model.IntroGroup;
+import org.eclipse.ui.internal.intro.impl.model.IntroImage;
+import org.eclipse.ui.internal.intro.impl.model.IntroLink;
+import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
+import org.eclipse.ui.internal.intro.impl.model.IntroText;
+import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
+import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
+import org.osgi.framework.Bundle;
 
 public class PageStyleManager extends SharedStyleManager {
 

@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.model.loader;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.osgi.framework.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.intro.impl.model.AbstractBaseIntroElement;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroIdElement;
+import org.eclipse.ui.internal.intro.impl.model.BundleUtil;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.StringUtil;
+import org.osgi.framework.Bundle;
+import org.w3c.dom.Element;
 
 
 /**
