@@ -753,8 +753,11 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 				hadSavedDescription = workspace.getMetaArea().hasSavedProject(this);
 			workspace.beginOperation(true);
 			workspace.changing(this);
-			writeDescription(description, updateFlags);
 			MultiStatus status = basicSetDescription((ProjectDescription) description);
+			if (hadSavedDescription && !status.isOK())
+				throw new CoreException(status);
+			//write the new description to the .project file
+			writeDescription(description, updateFlags);
 			info = getResourceInfo(false, true);
 			info.incrementContentId();
 			workspace.updateModificationStamp(info);

@@ -160,7 +160,7 @@ public void configureNatures(Project project, ProjectDescription oldDescription,
 	additions.removeAll(oldNatures);
 	deletions.removeAll(newNatures);
 	//do validation of the changes.  If any single change is invalid, fail the whole operation
-	IStatus result = validateAdditions(newNatures, additions);
+	IStatus result = validateAdditions(newNatures, additions, project);
 	if (!result.isOK()) {
 		status.merge(result);
 		return;
@@ -344,6 +344,21 @@ protected boolean hasCycles(ProjectNatureDescriptor desc) {
 	return false;
 }
 /**
+ * Returns true if the given project has linked resources, and false otherwise.
+ */
+protected boolean hasLinks(IProject project) {
+	try {
+		IResource[] children = project.members();
+		for (int i = 0; i < children.length; i++)
+			if (children[i].isLinked())
+				return true;
+	} catch (CoreException e) {
+		//not possible for project to be inaccessible
+		ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+	}
+	return false;
+}
+/**
  * Checks if the two natures have overlapping "one-of-nature" set 
  * memberships.  Returns the name of one such overlap, or null if
  * there is no set overlap.
@@ -463,7 +478,8 @@ public String[] sortNatureSet(String[] natureIds) {
  * @return An OK status if all additions are valid, and an error status 
  * 	if any of the additions introduce new inconsistencies.
  */
-protected IStatus validateAdditions(HashSet newNatures, HashSet additions) {
+protected IStatus validateAdditions(HashSet newNatures, HashSet additions, IProject project) {
+	Boolean hasLinks = null;//three states: true, false, null (not yet computed)
 	//perform checks in order from least expensive to most expensive
 	for (Iterator added = additions.iterator(); added.hasNext();) {
 		String id = (String) added.next();
@@ -492,6 +508,14 @@ protected IStatus validateAdditions(HashSet newNatures, HashSet additions) {
 					return failure(Policy.bind("natures.multipleSetMembers", overlap)); //$NON-NLS-1$
 				}
 			}
+		}
+		//check for adding a nature that has linked resource veto
+		if (!desc.isLinkingAllowed()) {
+			if (hasLinks == null) {
+				hasLinks = hasLinks(project) ? Boolean.TRUE : Boolean.FALSE;
+			}
+			if (hasLinks.booleanValue())
+				return failure(Policy.bind("links.vetoNature", project.getName(), id));
 		}
 	}
 	return ResourceStatus.OK_STATUS;
