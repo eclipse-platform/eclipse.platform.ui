@@ -56,7 +56,7 @@ class DecoratorOverlayIcon extends CompositeImageDescriptor {
 		for (int i = 0; i < overlays.length; i++) {
 			ImageDescriptor overlay = overlays[i];
 			if (overlay == null)
-				break;
+				continue;
 			ImageData overlayData = overlay.getImageData();
 			switch (i) {
 				case TOP_LEFT :
