@@ -84,6 +84,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
@@ -407,6 +408,12 @@ public final class KeysPreferencePage extends PreferencePage implements
 	private Map contextUniqueNamesById;
 
 	/**
+	 * The workbench's help system. This is used to register the page with the
+	 * help system.
+	 */
+	private IWorkbenchHelpSystem helpSystem;
+
+	/**
 	 * This is the label next to the table showing the bindings matching a
 	 * particular command. The label is disabled if there isn't a selected
 	 * command identifier.
@@ -537,6 +544,11 @@ public final class KeysPreferencePage extends PreferencePage implements
 		if ((tabFolder.getItemCount() > selectedTab) && (selectedTab > 0)) {
 			tabFolder.setSelection(selectedTab);
 		}
+
+		// TODO Make this actually do something (i.e., define the help context)
+		// Link a help context to this preference page.
+		//helpSystem.setHelp(parent,
+		//		IWorkbenchHelpContextIds.KEYS_PREFERENCE_PAGE);
 
 		return tabFolder;
 	}
@@ -910,10 +922,6 @@ public final class KeysPreferencePage extends PreferencePage implements
 			}
 		});
 
-		/*
-		 * TODO WorkbenchHelp.setHelp(parent,
-		 * IHelpContextIds.WORKBENCH_KEY_PREFERENCE_PAGE);
-		 */
 		return composite;
 	}
 
@@ -1228,14 +1236,6 @@ public final class KeysPreferencePage extends PreferencePage implements
 				: null;
 	}
 
-	/**
-	 * Initializes this preference page based on the workbench. This method just
-	 * retrieves the services that it will need.
-	 * 
-	 * @param workbench
-	 *            The workbench with which this page is associated; must not be
-	 *            <code>null</code>.
-	 */
 	public final void init(final IWorkbench workbench) {
 		activityManager = workbench.getActivitySupport().getActivityManager();
 		bindingService = (IBindingService) workbench
@@ -1244,6 +1244,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 				.getService(IWorkbenchServices.COMMAND);
 		contextService = (IContextService) workbench
 				.getService(IWorkbenchServices.CONTEXT);
+
+		helpSystem = workbench.getHelpSystem();
 	}
 
 	/**
@@ -1261,10 +1263,6 @@ public final class KeysPreferencePage extends PreferencePage implements
 		return activityManager.getIdentifier(command.getId()).isEnabled();
 	}
 
-	/**
-	 * Closes the page without saving changes. This method remembers the
-	 * currently selected tab, even thought the user cancelled.
-	 */
 	public final boolean performCancel() {
 		// Save the selected tab for future reference.
 		final IPreferenceStore store = getPreferenceStore();
