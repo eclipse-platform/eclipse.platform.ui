@@ -41,11 +41,11 @@ public class ContentTypeManager implements IContentTypeManager {
 		public int compare(Object o1, Object o2) {
 			ContentType type1 = (ContentType) o1;
 			ContentType type2 = (ContentType) o2;
-			// second criteria: depth - the lower, the better
+			// first criteria: depth - the lower, the better
 			int depthCriteria = type1.getDepth() - type2.getDepth();
 			if (depthCriteria != 0)
 				return depthCriteria;
-			// first criteria: priority - the higher, the better
+			// second criteria: priority - the higher, the better
 			int priorityCriteria = type1.getPriority() - type2.getPriority();
 			if (priorityCriteria != 0)
 				return -priorityCriteria;			
