@@ -94,7 +94,7 @@
             <meta.element labelAttribute="class"/>
          </appInfo>
          <documentation>
-            This element is used to help determine the action enablement based on the current selection. Ignored if the <samp>enablement</samp> element is specified for the action.
+            This element is used to help determine the action enablement based on the current selection. Ignored if the <samp>enablement</samp> element is specified for the action. When more than one of this element is specified, it means 'one-of'.
          </documentation>
       </annotation>
       <complexType>
