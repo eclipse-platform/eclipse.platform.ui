@@ -347,7 +347,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 				if (sel.isEmpty())
 					return;
 				if (fStatusMonitor.getStatus() != null && fStatusMonitor.getStatus().matches(IStatus.ERROR)) {
-					MessageDialog.openError(fEnablementCheckbox.getShell(), TextEditorMessages.getString("SpellingConfigurationBlock.error.title"), TextEditorMessages.getString("SpellingConfigurationBlock.error.message")); //$NON-NLS-1$ //$NON-NLS-2$
+					MessageDialog.openError(viewer.getControl().getShell(), TextEditorMessages.getString("SpellingConfigurationBlock.error.title"), TextEditorMessages.getString("SpellingConfigurationBlock.error.message")); //$NON-NLS-1$ //$NON-NLS-2$
 					revertSelection();
 					return;
 				}
