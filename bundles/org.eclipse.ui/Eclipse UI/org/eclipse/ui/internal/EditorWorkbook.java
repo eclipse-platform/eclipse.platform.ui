@@ -99,6 +99,9 @@ public void createControl(Composite parent) {
 	this.parent = parent;
 	tabFolder = new CTabFolder(parent, SWT.BORDER | tabLocation);
 
+	// prevent close button and scroll buttons from taking focus
+	tabFolder.setTabList(new Control[0]);
+	
 	// redirect drop request to the workbook
 	tabFolder.setData((IPartDropTarget) this);
 

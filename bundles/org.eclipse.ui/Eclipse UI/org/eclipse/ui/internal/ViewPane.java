@@ -4,18 +4,17 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.part.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.part.WorkbenchPart;
 
 
 /**
@@ -38,58 +37,117 @@ public class ViewPane extends PartPane
 	private ToolBar isvToolBar;
 	private ToolBarManager isvToolBarMgr;
 	private MenuManager isvMenuMgr;
-	private ToolBar systemBar;
 	
-	private ToolItem pullDownButton;
-	private ToolItem pinButton;
-	private ToolItem minimizeButton;
-	private ToolItem closeButton;
-	
+	/**
+	 * Indicates whether a toolbar button is shown for the view local menu.
+	 */
+	private boolean showMenuButton = false;
 
 	/**
-	 * Tool bar manager
-	 * @private
+	 * Toolbar manager for the ISV toolbar.
 	 */
 	class PaneToolBarManager extends ToolBarManager {
 		public PaneToolBarManager(ToolBar paneToolBar) {
 			super(paneToolBar);
 		}
+		
 		protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
-			// remove/add the action bar from the view so to avoid
-			// having an empty action bar participating in the view's
-			// layout calculation (and maybe causing an empty bar to appear)
-			if (newCount < 1) {
-				if (control.getTopCenter() != null)
-					control.setTopCenter(null);
-			}
-			else {
-				toolBar.layout();
-				if (control.getTopCenter() == null)
-					control.setTopCenter(toolBar);
-			}
-			Composite parent= toolBar.getParent();
+			toolBar.layout();
+			Composite parent = toolBar.getParent();
 			parent.layout();
 			if (parent.getParent() != null)
 				parent.getParent().layout();
-		}       
+		}
+		
+		public void update(boolean force) {
+			// ensure the SystemContribution is at the end before updating
+			if (isDirty() || force) {
+				remove(systemContribution);
+				add(systemContribution);
+			}
+			super.update(force);
+		}
 	}
 
 	/**
-	 * PaneMenuManager
+	 * Menu manager for view local menu.
 	 */
-	public class PaneMenuManager extends MenuManager {
+	class PaneMenuManager extends MenuManager {
 		public PaneMenuManager() {
 			super("View Local Menu");//$NON-NLS-1$
 		}
 		protected void update(boolean force, boolean recursive) {
+			// Changes to the menu can affect whether the toolbar has a menu button.
+			// Update it if necessary.
+			if (showMenuButton != !isEmpty()) {
+				isvToolBarMgr.update(true);
+			}
 			super.update(force, recursive);
-			if (!isEmpty())
-				createPulldownButton();
-			else
-				disposePulldownButton();
 		}
 	}
 
+	/**
+	 * Contributes system actions to toolbar.
+	 */
+	class SystemContribution extends ContributionItem {
+		public boolean isDynamic() {
+			return true;
+		}
+		
+		public void fill(ToolBar toolbar, int index) {
+			showMenuButton = (isvMenuMgr != null && !isvMenuMgr.isEmpty());
+			if (showMenuButton) {
+				ToolItem pullDownButton = new ToolItem(toolbar, SWT.PUSH, index++);
+				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
+				pullDownButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
+				pullDownButton.setImage(img);
+				pullDownButton.setToolTipText(WorkbenchMessages.getString("Menu")); //$NON-NLS-1$
+				pullDownButton.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						showViewMenu((ToolItem) e.widget);
+					}
+				});
+			}
+		
+			if (isFastView()) {
+				ToolItem pinButton = new ToolItem(toolbar, SWT.PUSH, index++);
+				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW);
+				pinButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
+				pinButton.setImage(img);
+				pinButton.setToolTipText(WorkbenchMessages.getString("ViewPane.pin")); //$NON-NLS-1$
+				pinButton.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						doPin();
+					}
+				});
+		
+				ToolItem minimizeButton = new ToolItem(toolbar, SWT.PUSH, index++);
+				img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW);
+				minimizeButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
+				minimizeButton.setImage(img);
+				minimizeButton.setToolTipText(WorkbenchMessages.getString("ViewPane.minimize")); //$NON-NLS-1$
+				minimizeButton.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						doMinimize();
+					}
+				});
+			}
+			
+			ToolItem closeButton= new ToolItem(toolbar, SWT.PUSH, index++);
+			Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW);
+			closeButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
+			closeButton.setImage(img);
+			closeButton.setToolTipText(WorkbenchMessages.getString("Close")); //$NON-NLS-1$
+			closeButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					doHide();
+				}
+			});
+		}
+	}
+	
+	private SystemContribution systemContribution = new SystemContribution();
+	
 /**
  * Constructs a view pane for a view part.
  */
@@ -106,12 +164,12 @@ public void createControl(Composite parent) {
 		
 	super.createControl(parent);
 	
+	// Only include the ISV toolbar and the content in the tab list.
+	// All actions on the System toolbar should be accessible on the pane menu.
+	control.setTabList(new Control[] { isvToolBar, control.getContent() });
+	
 	Platform.run(new SafeRunnableAdapter() {
 		public void run() { 
-			// Update pin.
-			if (fast)
-				createFastButtons();
-
 			// Install the part's tools and menu
 			ViewActionBuilder builder = new ViewActionBuilder();
 			builder.readActionExtensions(getViewPart());
@@ -148,60 +206,7 @@ protected WorkbenchPart createErrorPart(WorkbenchPart oldPart) {
 	site.setPart(newPart);
 	return newPart;
 }
-/**
- * Create the pin button.
- */
-private void createFastButtons() {
-	if (pinButton == null) {
-		pinButton = new ToolItem(systemBar, SWT.PUSH, systemBar.getItemCount() - 1);
-		Image img = WorkbenchImages.getImage(
-			IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW);
-		pinButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
-		pinButton.setImage(img);
-		pinButton.setToolTipText(WorkbenchMessages.getString("ViewPane.pin")); //$NON-NLS-1$
-		pinButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				doPin();
-			}
-		});
-	}
-	if (minimizeButton == null) {
-		minimizeButton = new ToolItem(systemBar, SWT.PUSH, systemBar.getItemCount() - 1);
-		Image img = WorkbenchImages.getImage(
-			IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW);
-		minimizeButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
-		minimizeButton.setImage(img);
-		minimizeButton.setToolTipText(WorkbenchMessages.getString("ViewPane.minimize")); //$NON-NLS-1$
-		minimizeButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				doMinimize();
-			}
-		});
-	}
-}
-/**
- * Create a pulldown menu on the action bar.
- */
-private void createPulldownButton() {
-	if (systemBar == null)
-		return;
-	if (pullDownButton == null) {	
-		pullDownButton = new ToolItem(systemBar, SWT.PUSH, 0);
-		Image img = WorkbenchImages.getImage(
-			IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
-		pullDownButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
-		pullDownButton.setImage(img);
-		pullDownButton.setToolTipText(WorkbenchMessages.getString("Menu")); //$NON-NLS-1$
-		pullDownButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				showViewMenu();
-			}
-		});
-		ViewForm vf = getViewForm();
-		if (vf != null)
-			vf.layout();
-	}
-}
+
 /**
  * See LayoutPart
  */
@@ -247,7 +252,7 @@ protected void createTitleBar() {
 	// Listen to title changes.
 	getViewPart().addPropertyListener(this);
 	
-	// ISV action bar.
+	// ISV toolbar.
 	isvToolBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
 	hookFocus(isvToolBar);
 	control.setTopCenter(isvToolBar);
@@ -258,58 +263,11 @@ protected void createTitleBar() {
 				doZoom();
 		}
 	});
-	
-	// System action bar.  
-	systemBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
-	hookFocus(systemBar);
-	systemBar.addMouseListener(new MouseAdapter(){
-		public void mouseDoubleClick(MouseEvent event) {
-			// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
-			if (systemBar.getItem(new Point(event.x, event.y)) == null)
-				doZoom();
-		}
-	});
-	closeButton= new ToolItem(systemBar, SWT.PUSH);
-	Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW);
-	closeButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
-	closeButton.setImage(img);
-	closeButton.setToolTipText(WorkbenchMessages.getString("Close")); //$NON-NLS-1$
-	closeButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			doHide();
-		}
-	});
-	if (isvMenuMgr != null && !isvMenuMgr.isEmpty())
-		createPulldownButton();
-	control.setTopRight(systemBar);
+	isvToolBarMgr = new PaneToolBarManager(isvToolBar);
+	isvToolBarMgr.add(systemContribution);
 }
 /**
- * Dispose the pin button.
- */
-private void disposeFastButtons() {
-	if (pinButton != null) {
-		pinButton.dispose();
-		pinButton = null;
-	}
-	if (minimizeButton != null) {
-		minimizeButton.dispose();
-		minimizeButton = null;
-	}
-}
-/**
- * Dispose the pulldown button.
- */
-private void disposePulldownButton() {
-	if (pullDownButton != null) {
-		pullDownButton.dispose();
-		pullDownButton = null;
-		ViewForm vf = getViewForm();
-		if (vf != null)
-			vf.layout();
-	}
-}
-/**
- * @see PartPane::doHide
+ * @see PartPane#doHide
  */
 public void doHide() {
 	IWorkbenchPage page = getPart().getSite().getPage();
@@ -376,8 +334,6 @@ public Control[] getTabList() {
  * @see ViewActionBars
  */
 public ToolBarManager getToolBarManager() {
-	if (isvToolBarMgr == null)
-		isvToolBarMgr = new PaneToolBarManager(isvToolBar);
 	return isvToolBarMgr;
 }
 /**
@@ -404,11 +360,8 @@ public void propertyChanged(Object source, int propId) {
  */
 public void setFast(boolean b) {
 	fast = b;
-	if (getControl() != null) {
-		if (fast)
-			createFastButtons();
-		else
-			disposeFastButtons();
+	if (isvToolBarMgr != null) {
+		isvToolBarMgr.update(true);
 	}
 }
 /**
@@ -423,14 +376,12 @@ public void showFocus(boolean inFocus) {
 		titleLabel.setForeground(WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
 		titleLabel.update();
 		isvToolBar.setBackground(WorkbenchColors.getActiveViewGradientEnd());
-		systemBar.setBackground(WorkbenchColors.getActiveViewGradientEnd());
 	}
 	else {
 		titleLabel.setBackground(null, null);
 		titleLabel.setForeground(null);
 		titleLabel.update();
 		isvToolBar.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-		systemBar.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 	}
 }
 
@@ -488,11 +439,14 @@ protected void addMoveItems(Menu moveMenu) {
 /**
  * Show the context menu for this window.
  */
-private void showViewMenu() {
+private void showViewMenu(ToolItem item) {
+	if (isvMenuMgr == null) {
+		return;
+	}
 	Menu aMenu = isvMenuMgr.createContextMenu(getControl());
-	Point topLeft = new Point(0, 0);
-	topLeft.y += systemBar.getBounds().height;
-	topLeft = systemBar.toDisplay(topLeft);
+	Rectangle bounds = item.getBounds();
+	Point topLeft = new Point(bounds.x, bounds.y + bounds.height);
+	topLeft = isvToolBar.toDisplay(topLeft);
 	aMenu.setLocation(topLeft.x, topLeft.y);
 	aMenu.setVisible(true);
 }
