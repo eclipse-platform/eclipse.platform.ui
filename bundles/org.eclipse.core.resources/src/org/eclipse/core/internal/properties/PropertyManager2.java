@@ -120,6 +120,10 @@ public class PropertyManager2 implements IPropertyManager {
 	}
 
 	public synchronized String getProperty(IResource target, QualifiedName name) throws CoreException {
+		if (name.getQualifier() == null) {
+			String message = Messages.properties_qualifierIsNull;
+			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), message, null);
+		}
 		IPath resourcePath = target.getFullPath();
 		PropertyBucket current = (PropertyBucket) tree.getCurrent();
 		tree.loadBucketFor(resourcePath);
@@ -140,6 +144,11 @@ public class PropertyManager2 implements IPropertyManager {
 			String message = NLS.bind(Messages.properties_valueTooLong, name.getQualifier(), name.getLocalName());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, target.getFullPath(), message, null);
 		}
+		if (name.getQualifier() == null) {
+			String message = Messages.properties_qualifierIsNull;
+			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, target.getFullPath(), message, null);
+		}
+
 		IPath resourcePath = target.getFullPath();
 		tree.loadBucketFor(resourcePath);
 		PropertyBucket current = (PropertyBucket) tree.getCurrent();

@@ -231,6 +231,7 @@ public class Messages extends NLS {
 	public static String properties_couldNotReadProp;
 	public static String properties_couldNotWriteProp;
 	public static String properties_invalidPropName;
+	public static String properties_qualifierIsNull;	
 	public static String properties_readProperties;	
 	public static String properties_storeNotAvailable;
 	public static String properties_storeProblem;
