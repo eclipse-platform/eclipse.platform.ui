@@ -50,9 +50,11 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 			try { 
 				String message= null; 
 				while (fResponseReader != null) { 
-					if ((message= fResponseReader.readLine()) != null) {
-						receiveMessage(message);
-					}
+				    synchronized (RemoteAntDebugBuildListener.this) {
+				        if ((message= fResponseReader.readLine()) != null) {
+				            receiveMessage(message);
+				        }
+				    }
 				} 
 			} catch (IOException ie) { //the other end has shutdown
 				RemoteAntDebugBuildListener.this.shutDown();
