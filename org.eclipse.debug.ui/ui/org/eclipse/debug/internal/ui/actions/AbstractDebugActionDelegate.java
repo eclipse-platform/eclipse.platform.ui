@@ -290,4 +290,8 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	protected IAction getAction() {
 		return fAction;
 	}
+	
+	protected void setView(IViewPart viewPart) {
+		fViewPart = viewPart;
+	}
 }

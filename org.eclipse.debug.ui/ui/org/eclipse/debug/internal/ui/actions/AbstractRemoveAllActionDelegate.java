@@ -11,18 +11,26 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IViewPart;
 
 public abstract class AbstractRemoveAllActionDelegate extends AbstractListenerActionDelegate {
 
 	/**
 	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
-	protected void doAction(Object element) throws DebugException {
+	protected void doAction(Object element) {
 		doAction();
 		getAction().setEnabled(false);
 	}
 	
-	protected abstract void doAction() throws DebugException;
+	/**
+	 * @see IActionDelegate#run(IAction)
+	 */
+	public void run(IAction action){
+		doAction(null);
+	}
+	
+	protected abstract void doAction();
 
 	/**
 	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
@@ -92,5 +100,15 @@ public abstract class AbstractRemoveAllActionDelegate extends AbstractListenerAc
 			fInitialized = true;
 		}
 		update();
+	}
+	
+	/**
+	 * @see IViewActionDelegate#init(IViewPart)
+	 */
+	public void init(IViewPart view) {
+		setView(view);
+		setWindow(view.getViewSite().getWorkbenchWindow());
+		getPage().addPartListener(this);
+		getPage().getWorkbenchWindow().addPageListener(this);
 	}
 }
