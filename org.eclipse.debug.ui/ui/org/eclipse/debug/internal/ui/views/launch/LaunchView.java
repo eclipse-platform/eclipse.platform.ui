@@ -90,6 +90,7 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IReusableEditor;
@@ -97,6 +98,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.SelectionListenerAction;
@@ -108,7 +110,7 @@ import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener, IPageListener, IPropertyChangeListener, IResourceChangeListener, IShowInTarget, IShowInSource, IShowInTargetList {
+public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener, IPageListener, IPropertyChangeListener, IResourceChangeListener, IShowInTarget, IShowInSource, IShowInTargetList, IPartListener2 {
 	
 	public static final String ID_CONTEXT_ACTIVITY_BINDINGS = "contextActivityBindings"; //$NON-NLS-1$
 
@@ -390,7 +392,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
-		site.getPage().addPartListener(this);
+		site.getPage().addPartListener((IPartListener2) this);
 		site.getWorkbenchWindow().addPageListener(this);
 		site.getWorkbenchWindow().addPerspectiveListener(this);
 	}
@@ -400,7 +402,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
-		site.getPage().addPartListener(this);
+		site.getPage().addPartListener((IPartListener2) this);
 		site.getWorkbenchWindow().addPageListener(this);
 		site.getWorkbenchWindow().addPerspectiveListener(this);
 		if (memento == null) {
@@ -441,7 +443,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (fContextListener != null) {
 			fContextListener.dispose();
 		}
-		getSite().getPage().removePartListener(this);
+		getSite().getPage().removePartListener((IPartListener2) this);
 		getSite().getWorkbenchWindow().removePerspectiveListener(this);
 		getSite().getWorkbenchWindow().removePageListener(this);
 		
@@ -662,25 +664,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @see org.eclipse.ui.IPageListener#pageOpened(org.eclipse.ui.IWorkbenchPage)
 	 */
 	public void pageOpened(IWorkbenchPage page) {
-	}		
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partClosed(IWorkbenchPart part) {
-		if (part.equals(fEditor)) {
-			fEditor = null;
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partOpened(IWorkbenchPart part) {
-		if (part == this) {		   
-            fContextListener= new LaunchViewContextListener(LaunchView.this);
-			updateContextListener();
-		}
 	}
 	
 	/**
@@ -1380,5 +1363,66 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	public String[] getShowInTargetIds() {
 		return new String[] { IPageLayout.ID_RES_NAV };
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partClosed(IWorkbenchPartReference partRef) {
+		IWorkbenchPart part = partRef.getPart(false);
+		if (part.equals(fEditor)) {
+			fEditor = null;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partVisible(IWorkbenchPartReference partRef) {
+		IWorkbenchPart part = partRef.getPart(false);
+		if (part == this) {
+			setActive(true);
+			updateContextListener();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partOpened(IWorkbenchPartReference partRef) {
+		IWorkbenchPart part = partRef.getPart(false);
+		if (part == this) {
+            fContextListener= new LaunchViewContextListener(LaunchView.this);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partActivated(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partBroughtToTop(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partDeactivated(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partHidden(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partInputChanged(IWorkbenchPartReference partRef) {
 	}
 }
