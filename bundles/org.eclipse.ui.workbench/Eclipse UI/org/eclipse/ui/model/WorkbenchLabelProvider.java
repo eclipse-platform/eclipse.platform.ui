@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.model;
 
-import java.util.*;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Provides basic labels for adaptable objects that have the
@@ -42,11 +44,7 @@ public class WorkbenchLabelProvider extends LabelProvider {
 	public static ILabelProvider getDecoratingWorkbenchLabelProvider() {
 		return new DecoratingLabelProvider(
 			new WorkbenchLabelProvider(),
-			WorkbenchPlugin
-				.getDefault()
-				.getWorkbench()
-				.getDecoratorManager()
-				.getLabelDecorator());
+			PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator());
 	}
 	/**
 	 * Creates a new workbench label provider.
@@ -111,11 +109,13 @@ public class WorkbenchLabelProvider extends LabelProvider {
 	public final Image getImage(Object element) {
 		//obtain the base image by querying the element
 		IWorkbenchAdapter adapter = getAdapter(element);
-		if (adapter == null)
+		if (adapter == null) {
 			return null;
+		}
 		ImageDescriptor descriptor = adapter.getImageDescriptor(element);
-		if (descriptor == null)
+		if (descriptor == null) {
 			return null;
+		}
 
 		//add any annotations to the image descriptor
 		descriptor = decorateImage(descriptor, element);
@@ -137,8 +137,9 @@ public class WorkbenchLabelProvider extends LabelProvider {
 	public final String getText(Object element) {
 		//query the element for its label
 		IWorkbenchAdapter adapter = getAdapter(element);
-		if (adapter == null)
+		if (adapter == null) {
 			return ""; //$NON-NLS-1$
+		}
 		String label = adapter.getLabel(element);
 
 		//return the decorated label
