@@ -15,6 +15,9 @@ import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.jface.viewers.*;
 
 public class FederatedSearchSorter extends ViewerSorter {
+	public FederatedSearchSorter() {
+		super(ReusableHelpPart.SHARED_COLLATOR);
+	}
 	
     public int category(Object element) {
 		if (element instanceof ISearchEngineResult) {

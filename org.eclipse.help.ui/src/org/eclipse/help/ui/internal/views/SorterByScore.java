@@ -14,6 +14,9 @@ import org.eclipse.help.internal.search.SearchHit;
 import org.eclipse.jface.viewers.*;
 
 public class SorterByScore extends ViewerSorter {
+	public SorterByScore() {
+		super(ReusableHelpPart.SHARED_COLLATOR);
+	}
 	/**
 	 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,java.lang.Object,java.lang.Object)
 	 */

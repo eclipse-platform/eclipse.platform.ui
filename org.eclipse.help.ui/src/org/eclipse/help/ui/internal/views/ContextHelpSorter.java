@@ -17,6 +17,7 @@ public class ContextHelpSorter extends ViewerSorter {
 	private IContext2 context;
 	
 	public ContextHelpSorter(IContext2 context) {
+		super(ReusableHelpPart.SHARED_COLLATOR);
 		this.context = context;
 	}
 	

@@ -12,6 +12,7 @@ package org.eclipse.help.ui.internal.views;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.text.Collator;
 import java.util.*;
 
 import org.eclipse.core.runtime.Platform;
@@ -42,6 +43,8 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	public static final int SEARCH = 1 << 3;
 
 	public static final int BOOKMARKS = 1 << 4;
+	
+	public static final Collator SHARED_COLLATOR = Collator.getInstance();
 
 	private ManagedForm mform;
 
