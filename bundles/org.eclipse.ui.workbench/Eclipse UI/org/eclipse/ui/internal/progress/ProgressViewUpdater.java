@@ -82,6 +82,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 			additions.clear();
 			deletions.clear();
 			refreshes.clear();
+			updateAll = false;
 		}
 
 		void processForUpdate() {
