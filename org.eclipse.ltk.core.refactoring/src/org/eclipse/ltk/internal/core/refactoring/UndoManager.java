@@ -38,6 +38,8 @@ public class UndoManager implements IUndoManager {
 	private Stack fRedoNames;
 
 	private ListenerList fListeners;
+	// Maximum numbers of undos on the refactoring undo stack.
+	private static final int MAX_UNDO_REDOS= 6;
 	
 	private static class NullQuery implements IValidationCheckResultQuery {
 		public boolean proceed(RefactoringStatus status) {
@@ -153,6 +155,10 @@ public class UndoManager implements IUndoManager {
 		Assert.isNotNull(change, "change"); //$NON-NLS-1$
 		fUndoNames.push(refactoringName);
 		fUndoChanges.push(change);
+		if (fUndoChanges.size() > MAX_UNDO_REDOS) {
+			fUndoChanges.remove(0);
+			fUndoNames.remove(0);
+		}
 		flushRedo();
 		fireUndoStackChanged();
 	}
@@ -169,8 +175,13 @@ public class UndoManager implements IUndoManager {
 		Change change= (Change)fUndoChanges.pop();
 		if (query == null)
 			query= new NullQuery();	
-		Change redo= executeChange(result, change, query, pm);
-
+		Change redo;
+		try {
+			redo= executeChange(result, change, query, pm);
+		} catch (InterruptedException e) {
+			fUndoChanges.push(change);
+			return;
+		}
 		if (!result.hasFatalError()) {
 			if (redo != null && !fUndoNames.isEmpty()) {
 				fRedoNames.push(fUndoNames.pop());
@@ -197,8 +208,13 @@ public class UndoManager implements IUndoManager {
 		Change change= (Change)fRedoChanges.pop();
 		if (query == null)
 			query= new NullQuery();	
-		Change undo= executeChange(result, change, query, pm);
-
+		Change undo;
+		try {
+			undo= executeChange(result, change, query, pm);
+		} catch (InterruptedException e) {
+			fRedoChanges.push(change);
+			return;
+		}
 		if (!result.hasFatalError()) {
 			if (undo != null && !fRedoNames.isEmpty()) {
 				fUndoNames.push(fRedoNames.pop());
@@ -211,8 +227,9 @@ public class UndoManager implements IUndoManager {
 		}
 	}
 
-	private Change executeChange(final RefactoringStatus status, final Change change, final IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException {
+	private Change executeChange(final RefactoringStatus status, final Change change, final IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException, InterruptedException {
 		final Change[] undo= new Change[1];
+		final boolean[] interrupted= new boolean[1];
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				boolean undoInitialized= false;
@@ -224,6 +241,7 @@ public class UndoManager implements IUndoManager {
 						return;
 					}
 					if (!status.isOK() && !query.proceed(status)) {
+						interrupted[0]= true;
 						return;
 					}
 					ResourcesPlugin.getWorkspace().checkpoint(false);
@@ -264,6 +282,8 @@ public class UndoManager implements IUndoManager {
 			}
 		};
 		ResourcesPlugin.getWorkspace().run(runnable, pm);
+		if (interrupted[0])
+			throw new InterruptedException();
 		return undo[0];
 	}
 

@@ -12,10 +12,11 @@ package org.eclipse.ltk.internal.ui.refactoring;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
@@ -27,6 +28,7 @@ import org.eclipse.ltk.core.refactoring.IValidationCheckResultQuery;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.UndoManagerAdapter;
+import org.eclipse.ltk.ui.refactoring.RefactoringUI;
 
 abstract class UndoManagerAction implements IWorkbenchWindowActionDelegate {
 
@@ -44,17 +46,24 @@ abstract class UndoManagerAction implements IWorkbenchWindowActionDelegate {
 			fTitle= title;
 		}
 		public boolean proceed(RefactoringStatus status) {
-			return true;
+			final Dialog dialog= RefactoringUI.createRefactoringStatusDialog(status, fParent, fTitle, false);
+			final int[] result= new int[1];
+			Runnable r= new Runnable() {
+				public void run() {
+					result[0]= dialog.open();
+				}
+			};
+			fParent.getDisplay().syncExec(r);
+			return result[0] == IDialogConstants.OK_ID;
 		}
 		public void stopped(final RefactoringStatus status) {
-			Display display= fParent.getDisplay();
 			Runnable r= new Runnable() {
 				public void run() {
 					String message= status.getMessageMatchingSeverity(RefactoringStatus.FATAL);
 					MessageDialog.openWarning(fParent, fTitle, getFullMessage(message));
 				}
 			};
-			display.syncExec(r);
+			fParent.getDisplay().syncExec(r);
 		}
 		protected abstract String getFullMessage(String errorMessage);
 	}
