@@ -60,18 +60,18 @@ class JobListeners {
 	/**
 	 * TODO Could use an instance pool to re-use old event objects
 	 */
-	static JobChangeEvent newEvent(Job job)  {
+	static JobChangeEvent newEvent(Job job) {
 		JobChangeEvent instance = new JobChangeEvent();
 		instance.job = job;
 		return instance;
 	}
-	static JobChangeEvent newEvent(Job job, IStatus result)  {
+	static JobChangeEvent newEvent(Job job, IStatus result) {
 		JobChangeEvent instance = new JobChangeEvent();
 		instance.job = job;
 		instance.result = result;
 		return instance;
 	}
-	static JobChangeEvent newEvent(Job job, long delay)  {
+	static JobChangeEvent newEvent(Job job, long delay) {
 		JobChangeEvent instance = new JobChangeEvent();
 		instance.job = job;
 		instance.delay = delay;
@@ -91,7 +91,12 @@ class JobListeners {
 				int size = global.size();
 				for (int i = 0; i < size; i++) {
 					//note: tolerate concurrent modification
-					IJobChangeListener listener = (IJobChangeListener) global.get(i);
+					IJobChangeListener listener = null;
+					try {
+						listener = (IJobChangeListener) global.get(i);
+					} catch (ArrayIndexOutOfBoundsException e) {
+						//concurrently removed
+					}
 					if (listener != null)
 						doit.notify(listener, event);
 				}
@@ -101,7 +106,12 @@ class JobListeners {
 					size = local.size();
 					for (int i = 0; i < size; i++) {
 						//note: tolerate concurrent modification
-						IJobChangeListener listener = (IJobChangeListener) local.get(i);
+						IJobChangeListener listener = null;
+						try {
+							listener = (IJobChangeListener) local.get(i);
+						} catch (ArrayIndexOutOfBoundsException e) {
+							//concurrently removed
+						}
 						if (listener != null)
 							doit.notify(listener, event);
 					}
