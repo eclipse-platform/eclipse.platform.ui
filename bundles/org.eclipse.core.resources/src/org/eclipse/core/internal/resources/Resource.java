@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 
 public abstract class Resource extends PlatformObject implements IResource, ICoreConstants, Cloneable {
+	private static boolean loggedFailedReadOnly = false;
 	/* package */IPath path;
 	/* package */Workspace workspace;
 
@@ -1282,8 +1283,21 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 */
 	public void setReadOnly(boolean readonly) {
 		IPath location = getLocation();
-		if (location != null)
-			CoreFileSystemLibrary.setReadOnly(location.toOSString(), readonly);
+		if (location == null)
+			return;
+		if (CoreFileSystemLibrary.setReadOnly(location.toOSString(), readonly))
+			return;
+		// The call to #setReadOnly failed. Log a message but only the first time
+		// this happens.
+		if (loggedFailedReadOnly)
+			return;
+		try {
+			String message = Policy.bind("resources.readOnlyFailed", getFullPath().toString()); //$NON-NLS-1$
+			ResourceStatus status = new ResourceStatus(IStatus.INFO, getFullPath(), message);
+			ResourcesPlugin.getPlugin().getLog().log(status);
+		} finally {
+			loggedFailedReadOnly = true;
+		}
 	}
 
 	/* (non-Javadoc)
