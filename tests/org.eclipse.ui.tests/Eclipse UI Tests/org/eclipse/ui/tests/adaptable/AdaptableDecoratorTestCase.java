@@ -134,7 +134,6 @@ public class AdaptableDecoratorTestCase
 		fullDefinition.setEnabled(true);
 		lightDefinition.setEnabled(false);
 		getDecoratorManager().reset();
-		TestDecoratorContributor.contributor.refreshListeners(testFile);
 		assertTrue("Got an update", updated);
 		updated = false;
 
@@ -149,7 +148,6 @@ public class AdaptableDecoratorTestCase
 		lightDefinition.setEnabled(true);
 		fullDefinition.setEnabled(false);
 		getDecoratorManager().reset();
-		TestLightweightDecoratorContributor.contributor.refreshListeners(testFile);
 		assertTrue("Got an update", updated);
 		updated = false;
 
