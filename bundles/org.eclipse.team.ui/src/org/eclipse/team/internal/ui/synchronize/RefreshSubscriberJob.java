@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ui.synchronize;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
@@ -92,6 +93,11 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	private static final int STARTED = 1;
 	private static final int DONE = 2;
 	
+	/*
+	 * Constant used for postponement
+	 */
+	private static final IStatus POSTPONED = new Status(IStatus.CANCEL, TeamUIPlugin.ID, 0, "Scheduled refresh postponed due to conflicting operation", null);
+	
 	/**
 	 * Notification for safely notifying listeners of refresh lifecycle.
 	 */
@@ -112,6 +118,36 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 		 * @param listener
 		 */
 		protected abstract void notify(IRefreshSubscriberListener listener);
+	}
+	
+	/**
+	 * Monitor wrapper that will indicate that the job is cancelled 
+	 * if the job is blocking another.
+	 */
+	private class NonblockingProgressMonitor extends ProgressMonitorWrapper {
+		private final RefreshSubscriberJob job;
+		private long blockTime;
+		private static final int THRESHOLD = 250;
+		protected NonblockingProgressMonitor(IProgressMonitor monitor, RefreshSubscriberJob job) {
+			super(monitor);
+			this.job = job;
+		}
+		public boolean isCanceled() {
+			if (super.isCanceled()) {
+				return true;
+			}
+			if (job.shouldReschedule() && job.isBlocking()) {
+				if (blockTime == 0) {
+					blockTime = System.currentTimeMillis();
+				} else if (System.currentTimeMillis() - blockTime > THRESHOLD) {
+					// We've been blocking for too long
+					return true;
+				}
+			} else {
+				blockTime = 0;
+			}
+			return false;
+		}
 	}
 	
 	/**
@@ -137,10 +173,16 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 		addJobChangeListener(new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
 				if(shouldReschedule()) {
-					if(event.getResult().getSeverity() == IStatus.CANCEL && ! restartOnCancel) {					
+					IStatus result = event.getResult();
+					if(result.getSeverity() == IStatus.CANCEL && ! restartOnCancel) {					
 						return;
 					}
-					RefreshSubscriberJob.this.schedule(scheduleDelay);
+					long delay = scheduleDelay;
+					if (result == POSTPONED) {
+						// Restart in 5 seconds
+						delay = 5000;
+					}
+					RefreshSubscriberJob.this.schedule(delay);
 					restartOnCancel = true;
 				}
 			}
@@ -175,6 +217,13 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	 * and it will continue to refresh the other subscribers.
 	 */
 	public IStatus runInWorkspace(IProgressMonitor monitor) {
+		// Perform a pre-check for auto-build or manual build jobs
+		// when auto-refreshing
+		if (shouldReschedule() &&
+				(isJobInFamilyRunning(ResourcesPlugin.FAMILY_AUTO_BUILD)
+				|| isJobInFamilyRunning(ResourcesPlugin.FAMILY_MANUAL_BUILD))) {
+			return POSTPONED;		
+		}
 		// Only allow one refresh job at a time
 		// NOTE: It would be cleaner if this was done by a scheduling
 		// rule but at the time of writting, it is not possible due to
@@ -205,33 +254,48 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 					notifyListeners(STARTED, event);
 					// Perform the refresh		
 					monitor.setTaskName(getName());
-					subscriber.refresh(roots, IResource.DEPTH_INFINITE, monitor);					
+					NonblockingProgressMonitor wrappedMonitor = new NonblockingProgressMonitor(monitor, this);
+					subscriber.refresh(roots, IResource.DEPTH_INFINITE, wrappedMonitor);					
 				} catch(TeamException e) {
 					status.merge(e.getStatus());
 				}
+				setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keep"), Boolean.valueOf(! isJobModal()));
+				setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keepone"), Boolean.valueOf(! isJobModal()));
+				event.setStatus(status.isOK() ? calculateStatus(event) : (IStatus) status);
 			} catch(OperationCanceledException e2) {
-				subscriber.removeListener(changeListener);
-				event.setStatus(Status.CANCEL_STATUS);
-				event.setStopTime(System.currentTimeMillis());
-				notifyListeners(DONE, event);
-				return Status.CANCEL_STATUS;
+				if (monitor.isCanceled()) {
+					// The refresh was cancelled by the user
+					event.setStatus(Status.CANCEL_STATUS);
+				} else {
+					// The refresh was cancelled due to a blockage
+					event.setStatus(POSTPONED);
+				}
 			} finally {
+				event.setStopTime(System.currentTimeMillis());
+				subscriber.removeListener(changeListener);
 				monitor.done();
 			}
 			
-			setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keep"), Boolean.valueOf(! isJobModal()));
-			setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keepone"), Boolean.valueOf(! isJobModal()));
-			
 			// Post-Notify
 			event.setChanges(changeListener.getChanges());
-			event.setStopTime(System.currentTimeMillis());
-			event.setStatus(status.isOK() ? calculateStatus(event) : (IStatus) status);
 			notifyListeners(DONE, event);
-			changeListener.clear();
 			return event.getStatus();
 		}
 	}
 	
+	private boolean isJobInFamilyRunning(Object family) {
+		Job[] jobs = Platform.getJobManager().find(family);
+		if (jobs != null && jobs.length > 0) {
+			for (int i = 0; i < jobs.length; i++) {
+				Job job = jobs[i];
+				if (job.getState() != Job.NONE) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	private IStatus calculateStatus(IRefreshEvent event) {
 		StringBuffer text = new StringBuffer();
 		int code = IStatus.OK;

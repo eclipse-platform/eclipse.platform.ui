@@ -117,6 +117,7 @@ public class SubscriberRefreshSchedule {
 		} else if(job.getState() != Job.NONE){
 			stopJob();
 		}
+		job.setRefreshInterval(getRefreshInterval());
 		job.setRestartOnCancel(true);
 		job.setReschedule(true);
 		job.schedule(getRefreshInterval());			
