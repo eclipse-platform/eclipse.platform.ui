@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2002 International Business Machines Corp. and others.
+ * Copyright (c) 2002, 2003 International Business Machines Corp. and others.
  * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v0.5 
+ * are made available under the terms of the Common Public License v1.0 
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -147,7 +147,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 	private void disableClosedProjects() {
 		IProject[] projects = WorkbenchPlugin.getPluginWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
-			if (!projects[i].isOpen())
+			if (projects[i].isOpen() == false && tree.getGrayed(projects[i]) == false)
 				tree.setGrayed(projects[i], true);
 		}
 	}
@@ -355,8 +355,17 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 * 	be set.
 	 */
 	private void updateParentState(IResource child) {
-		if (child == null || child.getParent() == null || child.isAccessible() == false)
+		if (child == null || child.getParent() == null)
 			return;
+		if (child.isAccessible() == false) {
+			if (child.getType() == IResource.PROJECT) {
+				tree.setGrayChecked(child, true);
+				return;
+			}
+			else {
+				updateParentState(child.getParent());
+			}
+		}
 
 		IContainer parent = child.getParent();
 		boolean childChecked = false;

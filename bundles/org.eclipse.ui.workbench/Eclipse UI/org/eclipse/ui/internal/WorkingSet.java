@@ -1,5 +1,5 @@
 /************************************************************************
-Copyright (c) 2000, 2002 IBM Corporation and others.
+Copyright (c) 2000, 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -130,9 +130,6 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	private ArrayList getElementsArray() {
 		if (elements == null) {
 			restoreWorkingSet();
-			if (elements == null) {
-				elements = new ArrayList();
-			}
 			workingSetMemento = null;
 		}
 		return elements;
