@@ -980,6 +980,22 @@ public String getFileExtension();
  */
 public IPath getFullPath();
 /**
+ * Returns a cached value of the local time stamp on disk for this resource, or 
+ * <code>NULL_STAMP</code>  if the resource does not exist or is not local or is 
+ * not accessible.  The return value is represented as the number of milliseconds 
+ * since the epoch (00:00:00 GMT, January 1, 1970).
+ * The returned value may not be the same as the actual time stamp
+ * on disk if the file has been modified externally since the last local refresh.
+ * <p>
+ * Note that due to varying file system timing granularities, this value is not guaranteed
+ * to change every time the file is modified.  For a more reliable indication of whether
+ * the file has changed, use <code>getModificationStamp</code>.
+ * 
+ * @return a local file system time stamp, or <code>NULL_STAMP</code>.
+ * @since 3.0
+ */
+public long getLocalTimeStamp();
+/**
  * Returns the absolute path in the local file system to this resource, 
  * or <code>null</code> if no path can be determined.
  * <p>
@@ -1809,6 +1825,27 @@ public void setDerived(boolean isDerived) throws CoreException;
  * @see #isLocal
  */
 public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException;
+/**
+ * Sets the local time stamp on disk for this resource.  The time must be represented 
+ * as the number of milliseconds since the epoch (00:00:00 GMT, January 1, 1970).
+ * Returns the actual time stamp that was recorded.
+ * Due to varying file system timing granularities, the provided value may be rounded
+ * or otherwise truncated, so the actual recorded time stamp that is returned may
+ * not be the same as the supplied value.
+ * 
+ * @param value a time stamp in millseconds.
+ * @return a local file system time stamp.
+ * @exception CoreException if this method fails. Reasons include:
+ * <ul>
+ * <li> This resource does not exist.</li>
+ * <li> This resource is not local.</li>
+ * <li> This resource is not accessible.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
+ * </ul>
+ * @since 3.0
+ */
+public long setLocalTimeStamp(long value) throws CoreException;
 /**
  * Sets the value of the persistent property of this resource identified
  * by the given key. If the supplied value is <code>null</code>,

@@ -599,6 +599,21 @@ protected IResource resourceFor(IPath path, boolean files) {
 		return root.getProject(path.segment(0));
 	return files ? (IResource)root.getFile(path) : (IResource)root.getFolder(path);
 }
+/* (non-javadoc)
+ * @see IResouce.setLocalTimeStamp
+ */
+public long setLocalTimeStamp(IResource target, ResourceInfo info, long value) throws CoreException {
+	IPath location = target.getLocation();
+	if (location == null) {
+		String message = Policy.bind("localstore.locationUndefined", target.getFullPath().toString()); //$NON-NLS-1$
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
+	}
+	java.io.File localFile = location.toFile();
+	localFile.setLastModified(value);
+	long actualValue = CoreFileSystemLibrary.getLastModified(localFile.getAbsolutePath());
+	updateLocalSync(info, actualValue);
+	return actualValue;
+}
 public void shutdown(IProgressMonitor monitor) throws CoreException {
 	historyStore.shutdown(monitor);
 }
