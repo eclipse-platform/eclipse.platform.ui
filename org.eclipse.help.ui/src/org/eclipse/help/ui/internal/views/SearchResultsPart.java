@@ -15,6 +15,7 @@ import java.net.URLEncoder;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.help.internal.search.SearchHit;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.widgets.*;
@@ -79,9 +80,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		searchResults.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
-				if (href.toString().equals("_more")) //$NON-NLS-1$
-					doMoreResults(phrase);
-				else if (href.toString().equals("_cancel")) { //$NON-NLS-1$
+				if (href.toString().equals("_cancel")) { //$NON-NLS-1$
 					if (runningJob!=null) {
 						runningJob.cancel();
 						runningJob=null;
@@ -151,10 +150,10 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		buff.append("<p><span color=\""); //$NON-NLS-1$
 		buff.append(FormColors.TITLE);
 		buff.append("\">"); //$NON-NLS-1$
-		buff.append(HelpUIResources.getString("SearchResultsPart.4")); //$NON-NLS-1$
+		buff.append(HelpUIResources.getString("SearchResultsPart.progress")); //$NON-NLS-1$
 		buff.append("</span>"); //$NON-NLS-1$
 		buff.append("<a href=\"cancel\">"); //$NON-NLS-1$
-		buff.append(HelpUIResources.getString("SearchResultsPart.7")); //$NON-NLS-1$
+		buff.append(HelpUIResources.getString("SearchResultsPart.cancel")); //$NON-NLS-1$
 		buff.append("</a></p>"); //$NON-NLS-1$
 		buff.append("</form>"); //$NON-NLS-1$
 		searchResults.setText(buff.toString(), true, false);
@@ -162,26 +161,26 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		runningJob = job;
 		job.schedule();
 	}
-/*
+
 	void updateResults(String phrase, StringBuffer buff,
-			HelpSearchResult hresult) {
+			SearchHit [] hits) {
 		if (runningJob!=null) {
 			runningJob.cancel();
 		}
 		this.phrase = phrase;
 		buff.delete(0, buff.length());
-		if (hresult.getMatchCount() > 0) {
+		if (hits.length > 0) {
 			buff.append("<form>"); //$NON-NLS-1$
 			buff.append("<p><span color=\""); //$NON-NLS-1$
 			buff.append(FormColors.TITLE);
 			buff.append("\">"); //$NON-NLS-1$
 			buff.append(HelpUIResources.getString("SearchResultsPart.label")); //$NON-NLS-1$
 			buff.append("</span></p>"); //$NON-NLS-1$
-			Object[] elements = hresult.getElements();
-			resultSorter.sort(null, elements);
+			//Object[] elements = hresult.getElements();
+			//resultSorter.sort(null, elements);
 
-			for (int i = 0; i < elements.length; i++) {
-				SearchHit hit = (SearchHit) elements[i];
+			for (int i = 0; i < hits.length; i++) {
+				SearchHit hit = hits[i];
 				buff.append("<li indent=\"21\" style=\"image\" value=\""); //$NON-NLS-1$
 				buff.append(IHelpUIConstants.IMAGE_FILE_F1TOPIC);
 				buff.append("\">"); //$NON-NLS-1$
@@ -202,7 +201,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 				buff.append("</a>"); //$NON-NLS-1$
 				buff.append("</li>"); //$NON-NLS-1$
 			}
-			if (elements.length > 0) {
+			if (hits.length > 0) {
 				buff.append("<p><img href=\"");
 				buff.append(IHelpUIConstants.IMAGE_HELP_SEARCH);
 				buff.append("\"/>");
@@ -215,23 +214,6 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		} else
 			searchResults.setText("", false, false); //$NON-NLS-1$
 		parent.reflow();
-	}
-*/
-
-	private void doMoreResults(String phrase) {
-		if (parent.isInWorkbenchWindow())
-			doWorkbenchSearch(phrase);
-		else
-			doExternalSearch(phrase);
-	}
-
-	private void doWorkbenchSearch(String phrase) {
-		/*
-		SearchPart part = (SearchPart) parent
-				.findPart(IHelpUIConstants.HV_SEARCH);
-		if (part != null)
-			part.startWorkbenchSearch(phrase);
-			*/
 	}
 
 	private void doExternalSearch(String phrase) {

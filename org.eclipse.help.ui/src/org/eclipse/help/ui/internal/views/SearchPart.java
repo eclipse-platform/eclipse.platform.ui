@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.search.*;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.SWT;
@@ -46,7 +50,7 @@ public class SearchPart extends SectionPart implements IHelpPart {
 				if (e.getState()) {
 					String phrase = phraseText.getText();
 					if (phrase.length()>0)
-						doSearch(phrase);
+						startInPlaceSearch(phrase);
 				}
 			}
 		});
@@ -81,7 +85,7 @@ public class SearchPart extends SectionPart implements IHelpPart {
 				"Go", SWT.PUSH); //$NON-NLS-1$
 		goButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				doSearch(phraseText.getText());
+				startInPlaceSearch(phraseText.getText());
 			}
 		});
 		goButton.setEnabled(false);
@@ -95,7 +99,7 @@ public class SearchPart extends SectionPart implements IHelpPart {
 			public void keyReleased(KeyEvent e) {
 				if (e.character == '\r') {
 					if (goButton.isEnabled())
-						doSearch(phraseText.getText());
+						startInPlaceSearch(phraseText.getText());
 				}
 			}
 		});
@@ -134,65 +138,44 @@ public class SearchPart extends SectionPart implements IHelpPart {
 			return;
 		phraseText.setText(phrase);
 		if (getSection().isExpanded())
-			doSearch(phrase);
+			startInPlaceSearch(phrase);
 	}
 
-	private void doSearch(String phrase) {
-		/*
-		SearchQueryData data = new SearchQueryData();
-		//if (!parent.isInWorkbenchWindow()) 
-		data.setMaxHits(parent.getNumberOfInPlaceHits());
-		data.setSearchWord(phrase);
-		HelpSearchQuery query = new HelpSearchQuery(data);
-		startInPlaceSearch(phrase, query);
-		*/
-	}
-	
-/*
-	public void startWorkbenchSearch(String phrase) {
-		SearchQueryData data = new SearchQueryData();
-		data.setSearchWord(phrase);
-		HelpSearchQuery query = new HelpSearchQuery(data);
-		startWorkbenchSearch(query);
-	}
-	
-	private void startWorkbenchSearch(ISearchQuery query) {
-		NewSearchUI.activateSearchResultView();
-		NewSearchUI.runQueryInForeground(parent.getRunnableContext(), query);
-	}
-*/
-/*
-	private void startInPlaceSearch(final String phrase, final ISearchQuery query) {
-		final ISearchResult result = query.getSearchResult();
-		final StringBuffer resultBuffer = new StringBuffer();
-		result.addListener(new ISearchResultListener() {
-			public void searchResultChanged(SearchResultEvent e) {
-				final HelpSearchResult hresult = (HelpSearchResult) result;
-				getControl().getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						updateResults(phrase, resultBuffer, hresult);
-					}
-				});
-			}
-		});
+	private void startInPlaceSearch(final String phrase) {
 		Job job = new Job("Quick search") {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					return query.run(monitor);
+					performSearch(phrase, monitor);
+					return Status.OK_STATUS;
 				}
 				catch (OperationCanceledException e) {
-					return null;
+					return new Status(IStatus.ERROR, HelpUIPlugin.PLUGIN_ID, IStatus.OK, "Errors during search", e);
 				}
 			}
 		};
 		doStartSearch(job);
 	}
-	private void updateResults(String phrase, StringBuffer buffer, HelpSearchResult hresult) {
-		SearchResultsPart part = (SearchResultsPart)parent.findPart(IHelpUIConstants.HV_SEARCH_RESULT);
-		if (part!=null)
-			part.updateResults(phrase, buffer, hresult);
+	
+	private void performSearch(String phrase, IProgressMonitor monitor) {
+		SearchQuery searchQuery = new SearchQuery();
+		searchQuery.setSearchWord(phrase);
+		SearchResults localResults = new SearchResults(null, 8, Platform.getNL());
+		BaseHelpSystem.getSearchManager().search(searchQuery, localResults, monitor);
+		SearchHit [] hits = localResults.getSearchHits();
+		updateResults(phrase, new StringBuffer(), hits);
 	}
-	*/
+	
+	private void updateResults(final String phrase, final StringBuffer buffer, final SearchHit [] hits) {
+		final SearchResultsPart part = (SearchResultsPart)parent.findPart(IHelpUIConstants.HV_SEARCH_RESULT);
+		if (part!=null) {
+			phraseText.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					part.updateResults(phrase, buffer, hits);
+				}
+			});
+		}
+	}
+	
 	private void doClear() {
 		SearchResultsPart part = (SearchResultsPart)parent.findPart(IHelpUIConstants.HV_SEARCH_RESULT);
 		if (part!=null)

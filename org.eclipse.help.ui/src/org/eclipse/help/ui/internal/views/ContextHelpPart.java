@@ -221,7 +221,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 					if (part != null) {
 						buff.append("\""); //$NON-NLS-1$
 						if (part instanceof IViewPart)
-							buff.append(HelpUIResources.getString("ContextHelpPart.view", part.getSite().getRegisteredName())); //$NON-NLS-1$
+							buff.append(HelpUIResources.getString("ContextHelpPart.query.view", part.getSite().getRegisteredName())); //$NON-NLS-1$
 						buff.append("\" "); //$NON-NLS-1$
 					}
 					IPerspectiveDescriptor persp = page.getPerspective();
@@ -229,7 +229,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 						if (buff.length() > 0)
 							buff.append("OR "); //$NON-NLS-1$
 						buff.append("\""); //$NON-NLS-1$
-						buff.append(HelpUIResources.getString("ContextHelpPart.perspective", persp.getLabel())); //$NON-NLS-1$
+						buff.append(HelpUIResources.getString("ContextHelpPart.query.perspective", persp.getLabel())); //$NON-NLS-1$
 						buff.append("\""); //$NON-NLS-1$
 					}
 				}
