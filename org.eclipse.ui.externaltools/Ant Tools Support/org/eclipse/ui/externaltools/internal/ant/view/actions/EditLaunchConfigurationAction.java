@@ -41,9 +41,23 @@ public class EditLaunchConfigurationAction extends Action implements IUpdate {
 	
 	public void run() {
 		IFile file= AntUtil.getFile(projectNode.getBuildFileName());
-		List configs= AntLaunchShortcut.findExistingLaunchConfigurations(file);
-		if (configs.size() == 1) {
-			DebugUITools.openLaunchConfigurationPropertiesDialog(view.getSite().getShell(), (ILaunchConfiguration)configs.get(0), IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP);
+		ILaunchConfiguration configuration= null;
+		List configurations = AntLaunchShortcut.findExistingLaunchConfigurations(file);
+		if (configurations.isEmpty()) {
+			configuration = AntLaunchShortcut.createDefaultLaunchConfiguration(file);
+		} else {
+			if (configurations.size() == 1) {
+				configuration= (ILaunchConfiguration)configurations.get(0);
+			} else {
+				configuration= AntLaunchShortcut.chooseConfig(configurations);
+				if (configuration == null) {
+					// User cancelled selection
+					return;
+				}
+			}
+		}
+		if (configuration != null) {
+			DebugUITools.openLaunchConfigurationPropertiesDialog(view.getSite().getShell(), configuration, IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP);
 		}
 	}
 

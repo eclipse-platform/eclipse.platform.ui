@@ -201,7 +201,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 * @param file
 	 * @return default launch configuration
 	 */
-	protected ILaunchConfiguration createDefaultLaunchConfiguration(IFile file) {
+	public static ILaunchConfiguration createDefaultLaunchConfiguration(IFile file) {
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IExternalToolConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
 		StringBuffer buffer = new StringBuffer(file.getProject().getName());
@@ -271,7 +271,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 * and returns the config the user choose of <code>null</code> if the user
 	 * pressed Cancel or if the given list is empty.
 	 */
-	private ILaunchConfiguration chooseConfig(List configs) {
+	public static ILaunchConfiguration chooseConfig(List configs) {
 		if (configs.isEmpty()) {
 			return null;
 		}
