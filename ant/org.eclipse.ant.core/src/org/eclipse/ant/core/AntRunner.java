@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.ant.internal.core.AntClassLoader;
-import org.eclipse.ant.internal.core.AntCorePreferences;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.core.InternalCoreAntMessages;
 import org.eclipse.core.boot.BootLoader;
@@ -286,6 +285,10 @@ public class AntRunner implements IPlatformRunnable {
 			if (fTargets != null) {
 				Method setExecutionTargets = classInternalAntRunner.getMethod("setExecutionTargets", new Class[] { String[].class }); //$NON-NLS-1$
 				setExecutionTargets.invoke(runner, new Object[] { fTargets });
+			} else {
+				String message= InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") + "No targets specified."; 
+				IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, null);
+				throw new CoreException(status);
 			}
 			// set extra arguments
 			if (fArguments != null && fArguments.length > 0) {
@@ -308,7 +311,7 @@ public class AntRunner implements IPlatformRunnable {
 			String message = (realException.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : realException.getMessage(); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, realException));
 		} catch (Exception e) {
-			String message = (e.getMessage() == null) ? "Build Failed." : e.getMessage(); //$NON-NLS-1$
+			String message = (e.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : e.getMessage(); //$NON-NLS-1$
 			IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, e);
 			throw new CoreException(status);
 		} finally {

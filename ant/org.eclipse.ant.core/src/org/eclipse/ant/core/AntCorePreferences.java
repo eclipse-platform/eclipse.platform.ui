@@ -1,4 +1,4 @@
-package org.eclipse.ant.internal.core;
+package org.eclipse.ant.core;
 
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
@@ -18,7 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
+import org.eclipse.ant.internal.core.InternalCoreAntMessages;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ILibrary;
 import org.eclipse.core.runtime.IPath;
@@ -29,22 +30,24 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 
-public class AntCorePreferences implements IAntCoreConstants {
+public class AntCorePreferences {
 
-	protected List defaultTasks;
-	protected List defaultTypes;
-	protected List defaultURLs;
-	protected Task[] customTasks;
-	protected Type[] customTypes;
-	protected URL[] customURLs;
-	protected Map defaultObjects;
-	protected List pluginClassLoaders;
+	protected List fDefaultTasks;
+	protected List fDefaultTypes;
+	protected List fDefaultURLs;
+	protected Task[] fCustomTasks;
+	protected Type[] fCustomTypes;
+	protected URL[] fCustomURLs;
+	protected URL[] fDefaultCustomURLs;
+	
+	protected Map fDefaultObjects;
+	protected List fPluginClassLoaders;
 
 	public AntCorePreferences(Map defaultTasks, Map defaultExtraClasspath, Map defaultTypes) {
 		initializePluginClassLoaders();
-		defaultURLs = new ArrayList(20);
-		this.defaultTasks = computeDefaultTasks(defaultTasks);
-		this.defaultTypes = computeDefaultTypes(defaultTypes);
+		fDefaultURLs = new ArrayList(20);
+		fDefaultTasks = computeDefaultTasks(defaultTasks);
+		fDefaultTypes = computeDefaultTypes(defaultTypes);
 		computeDefaultExtraClasspathEntries(defaultExtraClasspath);
 		restoreCustomObjects();
 	}
@@ -52,25 +55,25 @@ public class AntCorePreferences implements IAntCoreConstants {
 	protected void restoreCustomObjects() {
 		Preferences prefs = AntCorePlugin.getPlugin().getPluginPreferences();
 		// tasks
-		String tasks = prefs.getString(PREFERENCE_TASKS);
+		String tasks = prefs.getString(IAntCoreConstants.PREFERENCE_TASKS);
 		if (tasks.equals("")) { //$NON-NLS-1$
-			customTasks = new Task[0];
+			fCustomTasks = new Task[0];
 		} else {
-			customTasks = extractTasks(prefs, getArrayFromString(tasks));
+			fCustomTasks = extractTasks(prefs, getArrayFromString(tasks));
 		}
 		// types
-		String types = prefs.getString(PREFERENCE_TYPES);
+		String types = prefs.getString(IAntCoreConstants.PREFERENCE_TYPES);
 		if (types.equals("")) {//$NON-NLS-1$
-			customTypes = new Type[0];
+			fCustomTypes = new Type[0];
 		} else {
-			customTypes = extractTypes(prefs, getArrayFromString(types));
+			fCustomTypes = extractTypes(prefs, getArrayFromString(types));
 		}
 		// urls
-		String urls = prefs.getString(PREFERENCE_URLS);
+		String urls = prefs.getString(IAntCoreConstants.PREFERENCE_URLS);
 		if (urls.equals("")) {//$NON-NLS-1$
-			customURLs = getDefaultCustomURLs();
+			fCustomURLs = getDefaultCustomURLs();
 		} else {
-			customURLs = extractURLs(prefs, getArrayFromString(urls));
+			fCustomURLs = extractURLs(getArrayFromString(urls));
 		}
 	}
 
@@ -79,7 +82,7 @@ public class AntCorePreferences implements IAntCoreConstants {
 		for (int i = 0; i < tasks.length; i++) {
 			try {
 				String taskName = tasks[i];
-				String[] values = getArrayFromString(prefs.getString(PREFIX_TASK + taskName));
+				String[] values = getArrayFromString(prefs.getString(IAntCoreConstants.PREFIX_TASK + taskName));
 				Task task = new Task();
 				task.setTaskName(taskName);
 				task.setClassName(values[0]);
@@ -99,7 +102,7 @@ public class AntCorePreferences implements IAntCoreConstants {
 		for (int i = 0; i < types.length; i++) {
 			try {
 				String typeName = types[i];
-				String[] values = getArrayFromString(prefs.getString(PREFIX_TYPE + typeName));
+				String[] values = getArrayFromString(prefs.getString(IAntCoreConstants.PREFIX_TYPE + typeName));
 				Type type = new Type();
 				type.setTypeName(typeName);
 				type.setClassName(values[0]);
@@ -114,7 +117,7 @@ public class AntCorePreferences implements IAntCoreConstants {
 		return (Type[]) result.toArray(new Type[result.size()]);
 	}
 
-	protected URL[] extractURLs(Preferences prefs, String[] urls) {
+	protected URL[] extractURLs(String[] urls) {
 		List result = new ArrayList(10);
 		for (int i = 0; i < urls.length; i++) {
 			try {
@@ -129,13 +132,16 @@ public class AntCorePreferences implements IAntCoreConstants {
 	}
 
 	public URL[] getDefaultCustomURLs() {
-		List result = new ArrayList(10);
-		IPluginDescriptor descriptor = Platform.getPlugin("org.apache.ant").getDescriptor(); //$NON-NLS-1$
-		addLibraries(descriptor, result);
-		descriptor = Platform.getPlugin("org.apache.xerces").getDescriptor(); //$NON-NLS-1$
-		addLibraries(descriptor, result);
-		addToolsJar(result);
-		return (URL[]) result.toArray(new URL[result.size()]);
+		if (fDefaultCustomURLs == null) {
+			List result = new ArrayList(10);
+			IPluginDescriptor descriptor = Platform.getPlugin("org.apache.ant").getDescriptor(); //$NON-NLS-1$
+			addLibraries(descriptor, result);
+			descriptor = Platform.getPlugin("org.apache.xerces").getDescriptor(); //$NON-NLS-1$
+			addLibraries(descriptor, result);
+			addToolsJar(result);
+			fDefaultCustomURLs= (URL[]) result.toArray(new URL[result.size()]);
+		}
+		return fDefaultCustomURLs;
 	}
 
 	protected List computeDefaultTasks(Map tasks) {
@@ -156,7 +162,7 @@ public class AntCorePreferences implements IAntCoreConstants {
 			try {
 				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
 				task.setLibrary(url);
-				defaultURLs.add(url);
+				fDefaultURLs.add(url);
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
 				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
@@ -187,7 +193,7 @@ public class AntCorePreferences implements IAntCoreConstants {
 			try {
 				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
 				type.setLibrary(url);
-				defaultURLs.add(url);
+				fDefaultURLs.add(url);
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
 				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
@@ -207,13 +213,11 @@ public class AntCorePreferences implements IAntCoreConstants {
 		for (Iterator iterator = entries.entrySet().iterator(); iterator.hasNext();) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			String library = (String) entry.getKey();
-			IConfigurationElement element =
-				(IConfigurationElement) entry.getValue();
-			IPluginDescriptor descriptor =
-				element.getDeclaringExtension().getDeclaringPluginDescriptor();
+			IConfigurationElement element =(IConfigurationElement) entry.getValue();
+			IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
 			try {
 				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
-				defaultURLs.add(url);
+				fDefaultURLs.add(url);
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
 				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
@@ -264,31 +268,31 @@ public class AntCorePreferences implements IAntCoreConstants {
 	}
 
 	protected void addPluginClassLoader(ClassLoader loader) {
-		if (!pluginClassLoaders.contains(loader)) {
-			pluginClassLoaders.add(loader);
+		if (!fPluginClassLoaders.contains(loader)) {
+			fPluginClassLoaders.add(loader);
 		}
 	}
 
 	public URL[] getURLs() {
 		List result = new ArrayList(10);
-		if (defaultURLs != null) {
-			result.addAll(defaultURLs);
+		if (fDefaultURLs != null) {
+			result.addAll(fDefaultURLs);
 		}
-		if (customURLs != null) {
-			result.addAll(Arrays.asList(customURLs));
+		if (fCustomURLs != null) {
+			result.addAll(Arrays.asList(fCustomURLs));
 		}
 		return (URL[]) result.toArray(new URL[result.size()]);
 	}
 
 	public ClassLoader[] getPluginClassLoaders() {
-		return (ClassLoader[]) pluginClassLoaders.toArray(
-			new ClassLoader[pluginClassLoaders.size()]);
+		return (ClassLoader[]) fPluginClassLoaders.toArray(
+			new ClassLoader[fPluginClassLoaders.size()]);
 	}
 
 	protected void initializePluginClassLoaders() {
-		pluginClassLoaders = new ArrayList(20);
+		fPluginClassLoaders = new ArrayList(20);
 		// ant.core should always be present
-		pluginClassLoaders.add(Platform.getPlugin(AntCorePlugin.PI_ANTCORE).getDescriptor().getPluginClassLoader());
+		fPluginClassLoaders.add(Platform.getPlugin(AntCorePlugin.PI_ANTCORE).getDescriptor().getPluginClassLoader());
 	}
 
 	/**
@@ -296,37 +300,37 @@ public class AntCorePreferences implements IAntCoreConstants {
 	 */
 	public List getTasks() {
 		List result = new ArrayList(10);
-		if (defaultTasks != null) {
-			result.addAll(defaultTasks);
+		if (fDefaultTasks != null) {
+			result.addAll(fDefaultTasks);
 		}
-		if (customTasks != null) {
-			result.addAll(Arrays.asList(customTasks));
+		if (fCustomTasks != null) {
+			result.addAll(Arrays.asList(fCustomTasks));
 		}
 		return result;
 	}
 
 	public Task[] getCustomTasks() {
-		return customTasks;
+		return fCustomTasks;
 	}
 
 	public Type[] getCustomTypes() {
-		return customTypes;
+		return fCustomTypes;
 	}
 
 	public URL[] getCustomURLs() {
-		return customURLs;
+		return fCustomURLs;
 	}
 
 	public void setCustomTasks(Task[] tasks) {
-		this.customTasks = tasks;
+		fCustomTasks = tasks;
 	}
 
 	public void setCustomTypes(Type[] types) {
-		this.customTypes = types;
+		fCustomTypes = types;
 	}
 
 	public void setCustomURLs(URL[] urls) {
-		this.customURLs = urls;
+		fCustomURLs = urls;
 	}
 
 	/**
@@ -334,11 +338,11 @@ public class AntCorePreferences implements IAntCoreConstants {
 	 */
 	public List getTypes() {
 		List result = new ArrayList(10);
-		if (defaultTypes != null) {
-			result.addAll(defaultTypes);
+		if (fDefaultTypes != null) {
+			result.addAll(fDefaultTypes);
 		}
-		if (customTypes != null) {
-			result.addAll(Arrays.asList(customTypes));
+		if (fCustomTypes != null) {
+			result.addAll(Arrays.asList(fCustomTypes));
 		}
 		return result;
 	}
@@ -347,13 +351,15 @@ public class AntCorePreferences implements IAntCoreConstants {
 	 * Convert a list of tokens into an array. The list separator has to be specified.
 	 */
 	public static String[] getArrayFromString(String list, String separator) {
-		if (list == null || list.trim().equals("")) //$NON-NLS-1$
+		if (list == null || list.trim().equals("")) { //$NON-NLS-1$
 			return new String[0];
+		}
 		ArrayList result = new ArrayList();
 		for (StringTokenizer tokens = new StringTokenizer(list, separator);tokens.hasMoreTokens();) {
 			String token = tokens.nextToken().trim();
-			if (!token.equals("")) //$NON-NLS-1$
+			if (!token.equals("")) { //$NON-NLS-1$
 				result.add(token);
+			}
 		}
 		return (String[]) result.toArray(new String[result.size()]);
 	}
@@ -373,39 +379,58 @@ public class AntCorePreferences implements IAntCoreConstants {
 	}
 
 	protected void updateTasks(Preferences prefs) {
-		if (customTasks.length == 0) {
-			prefs.setValue(PREFERENCE_TASKS, ""); //$NON-NLS-1$
+		if (fCustomTasks.length == 0) {
+			prefs.setValue(IAntCoreConstants.PREFERENCE_TASKS, ""); //$NON-NLS-1$
 			return;
 		}
 		StringBuffer tasks = new StringBuffer();
-		for (int i = 0; i < customTasks.length; i++) {
-			tasks.append(customTasks[i].getTaskName());
+		for (int i = 0; i < fCustomTasks.length; i++) {
+			tasks.append(fCustomTasks[i].getTaskName());
 			tasks.append(',');
-			prefs.setValue(PREFIX_TASK + customTasks[i].getTaskName(), customTasks[i].getClassName() + "," + customTasks[i].getLibrary().toExternalForm()); //$NON-NLS-1$
+			prefs.setValue(IAntCoreConstants.PREFIX_TASK + fCustomTasks[i].getTaskName(), fCustomTasks[i].getClassName() + "," + fCustomTasks[i].getLibrary().toExternalForm()); //$NON-NLS-1$
 		}
-		prefs.setValue(PREFERENCE_TASKS, tasks.toString());
+		prefs.setValue(IAntCoreConstants.PREFERENCE_TASKS, tasks.toString());
 	}
 
 	protected void updateTypes(Preferences prefs) {
-		if (customTypes.length == 0) {
-			prefs.setValue(PREFERENCE_TYPES, ""); //$NON-NLS-1$
+		if (fCustomTypes.length == 0) {
+			prefs.setValue(IAntCoreConstants.PREFERENCE_TYPES, ""); //$NON-NLS-1$
 			return;
 		}
 		StringBuffer types = new StringBuffer();
-		for (int i = 0; i < customTypes.length; i++) {
-			types.append(customTypes[i].getTypeName());
+		for (int i = 0; i < fCustomTypes.length; i++) {
+			types.append(fCustomTypes[i].getTypeName());
 			types.append(',');
-			prefs.setValue(PREFIX_TYPE + customTypes[i].getTypeName(), customTypes[i].getClassName() + "," + customTypes[i].getLibrary().toExternalForm()); //$NON-NLS-1$
+			prefs.setValue(IAntCoreConstants.PREFIX_TYPE + fCustomTypes[i].getTypeName(), fCustomTypes[i].getClassName() + "," + fCustomTypes[i].getLibrary().toExternalForm()); //$NON-NLS-1$
 		}
-		prefs.setValue(PREFERENCE_TYPES, types.toString());
+		prefs.setValue(IAntCoreConstants.PREFERENCE_TYPES, types.toString());
 	}
 
 	protected void updateURLs(Preferences prefs) {
+		//see if the custom URLS are just the default URLS
+		URL[] defaultUrls= getDefaultCustomURLs();
+		boolean dflt= false;
+		if (defaultUrls.length == fCustomURLs.length) {
+			dflt= true;
+			for (int i = 0; i < fCustomURLs.length; i++) {
+				if (!fCustomURLs[i].equals(defaultUrls[i])) {
+					dflt= false;
+					break;
+				}
+			}
+		}
+		if (dflt) {
+			//always want to recalculate the default custom urls
+			//to pick up any changes in the default classpath
+			prefs.setValue(IAntCoreConstants.PREFERENCE_URLS, "");
+			return;
+		}
 		StringBuffer urls = new StringBuffer();
-		for (int i = 0; i < customURLs.length; i++) {
-			urls.append(customURLs[i].toExternalForm());
+		for (int i = 0; i < fCustomURLs.length; i++) {
+			urls.append(fCustomURLs[i].toExternalForm());
 			urls.append(',');
 		}
-		prefs.setValue(PREFERENCE_URLS, urls.toString());
+		
+		prefs.setValue(IAntCoreConstants.PREFERENCE_URLS, urls.toString());
 	}
 }

@@ -90,8 +90,8 @@ import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.XmlLogger;
 import org.eclipse.ant.core.AntCorePlugin;
-import org.eclipse.ant.internal.core.Task;
-import org.eclipse.ant.internal.core.Type;
+import org.eclipse.ant.core.Task;
+import org.eclipse.ant.core.Type;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -433,8 +433,9 @@ public class InternalAntRunner {
 		PrintStream originalOut = System.out;
 		try {
 			getCurrentProject().init();
-			
-			preprocessCommandLine(argList);
+			if (argList != null) {
+				preprocessCommandLine(argList);
+			}
 			addBuildListeners(getCurrentProject());
 			
 			boolean executeScript= true;
@@ -569,8 +570,11 @@ public class InternalAntRunner {
 		
 			project.setProperty("XmlLogger.file", path.toOSString());
 		}
-		
-		event.setException(error);
+		if (error == null) {
+			logMessage(project, "BUILD SUCCESSFUL", Project.MSG_INFO);
+		} else {
+			event.setException(error);
+		}
 		for (Iterator iterator = project.getBuildListeners().iterator(); iterator.hasNext();) {
 			BuildListener listener = (BuildListener) iterator.next();
 			listener.buildFinished(event);

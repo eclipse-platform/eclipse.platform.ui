@@ -10,7 +10,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.ant.internal.core.AntCorePreferences;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -25,27 +24,27 @@ public class AntCorePlugin extends Plugin {
 	/**
 	 * The single instance of this plug-in runtime class.
 	 */
-	private static AntCorePlugin plugin;
+	private static AntCorePlugin fgPlugin;
 
 	/**
 	 * Table of Ant tasks (IConfigurationElement) added through the tasks extension point
 	 */
-	private Map taskExtensions;
+	private Map fTaskExtensions;
 
 	/**
 	 * Table of libraries (IConfigurationElement) added through the extraClasspathEntries extension point
 	 */
-	private Map extraClasspathExtensions;
+	private Map fExtraClasspathExtensions;
 
 	/**
-	 * Table of Ant ypes (IConfigurationElement) added through the types extension point
+	 * Table of Ant types (IConfigurationElement) added through the types extension point
 	 */
-	private Map typeExtensions;
+	private Map fTypeExtensions;
 
 	/**
 	 * 
 	 */
-	private AntCorePreferences preferences;
+	private AntCorePreferences fPreferences;
 
 	/**
 	 * Unique identifier constant (value <code>"org.eclipse.ant.core"</code>)
@@ -127,26 +126,26 @@ public class AntCorePlugin extends Plugin {
 	 */
 	public AntCorePlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
-		plugin = this;
+		fgPlugin = this;
 	}
 
 	/**
 	 * @see Plugin#startup
 	 */
 	public void startup() throws CoreException {
-		taskExtensions = extractExtensions(PT_TASKS, NAME);
-		typeExtensions = extractExtensions(PT_TYPES, NAME);
-		extraClasspathExtensions = extractExtensions(PT_EXTRA_CLASSPATH, LIBRARY);
+		fTaskExtensions = extractExtensions(PT_TASKS, NAME);
+		fTypeExtensions = extractExtensions(PT_TYPES, NAME);
+		fExtraClasspathExtensions = extractExtensions(PT_EXTRA_CLASSPATH, LIBRARY);
 	}
 
 	/**
 	 * @see Plugin#shutdown
 	 */
 	public void shutdown() throws CoreException {
-		if (preferences == null) {
+		if (fPreferences == null) {
 			return;
 		}
-		preferences.updatePluginPreferences();
+		fPreferences.updatePluginPreferences();
 		savePluginPreferences();
 	}
 
@@ -170,16 +169,12 @@ public class AntCorePlugin extends Plugin {
 
 	/**
 	 * Returns an object representing this plug-in's preferences.
-	 * <p>
-	 * This method is for internal use by the platform-related plug-ins.  
-	 * Clients should not call this method.
-	 * </p>
 	 */
 	public AntCorePreferences getPreferences() {
-		if (preferences == null) {
-			preferences = new AntCorePreferences(taskExtensions, extraClasspathExtensions, typeExtensions);
+		if (fPreferences == null) {
+			fPreferences = new AntCorePreferences(fTaskExtensions, fExtraClasspathExtensions, fTypeExtensions);
 		}
-		return preferences;
+		return fPreferences;
 	}
 
 	/**
@@ -188,6 +183,6 @@ public class AntCorePlugin extends Plugin {
 	 * @return the single instance of this plug-in runtime class
 	 */
 	public static AntCorePlugin getPlugin() {
-		return plugin;
+		return fgPlugin;
 	}
 }
