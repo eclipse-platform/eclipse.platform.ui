@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.team.internal.ui.ITeamUIImages;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.ui.*;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
@@ -26,7 +27,7 @@ public abstract class SubscriberParticipantWizard extends Wizard {
 	private GlobalRefreshResourceSelectionPage selectionPage;
 
 	public SubscriberParticipantWizard() {
-		setDefaultPageImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_WIZBAN_SHARE));
+		setDefaultPageImageDescriptor(TeamImages.getImageDescriptor(ITeamUIImages.IMG_WIZBAN_SHARE));
 		setNeedsProgressMonitor(false);
 	}
 	

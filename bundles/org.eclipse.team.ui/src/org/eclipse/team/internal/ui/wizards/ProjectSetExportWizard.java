@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ui.wizards;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -23,9 +24,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.*;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -39,7 +37,7 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 	}
 	
 	public void addPages() {
-		mainPage = new ExportProjectSetMainPage("projectSetMainPage", Policy.bind("ProjectSetExportWizard.Export_a_Project_Set_3"), TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_PROJECTSET_EXPORT_BANNER)); //$NON-NLS-1$ //$NON-NLS-2$
+		mainPage = new ExportProjectSetMainPage("projectSetMainPage", Policy.bind("ProjectSetExportWizard.Export_a_Project_Set_3"), TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_PROJECTSET_EXPORT_BANNER)); //$NON-NLS-1$ //$NON-NLS-2$
 		IProject[] projects = (IProject[])selection.toList().toArray(new IProject[0]);
 		mainPage.setSelectedProjects(projects);
 		mainPage.setFileName(ProjectSetImportWizard.lastFile);

@@ -23,70 +23,69 @@ import org.eclipse.ui.*;
  * @since 3.0
  */
 public abstract class SaveablePartAdapter implements ISaveableWorkbenchPart {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
 	 */
 	public void doSaveAs() {
-		// TODO Auto-generated method stub
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
-		// TODO Auto-generated method stub
 		return false;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
 	 */
 	public boolean isSaveOnCloseNeeded() {
-		// TODO Auto-generated method stub
 		return false;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#addPropertyListener(org.eclipse.ui.IPropertyListener)
 	 */
 	public void addPropertyListener(IPropertyListener listener) {
-		// TODO Auto-generated method stub
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		// TODO Auto-generated method stub
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#getSite()
 	 */
 	public IWorkbenchPartSite getSite() {
-		// TODO Auto-generated method stub
 		return null;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#getTitleToolTip()
 	 */
 	public String getTitleToolTip() {
-		// TODO Auto-generated method stub
 		return null;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#removePropertyListener(org.eclipse.ui.IPropertyListener)
 	 */
 	public void removePropertyListener(IPropertyListener listener) {
-		// TODO Auto-generated method stub
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		// TODO Auto-generated method stub
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

@@ -17,8 +17,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.internal.ui.ITeamUIImages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -50,7 +50,7 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 			return "Tree";
 		}		
 		public ImageDescriptor getImageDescriptor() {
-			return TeamImages.getImageDescriptor(ISharedImages.IMG_HIERARCHICAL);
+			return TeamImages.getImageDescriptor(ITeamUIImages.IMG_HIERARCHICAL);
 		}
 	};
 	private static final HierarchicalModelProviderDescriptor hierarchicalDescriptor = new HierarchicalModelProviderDescriptor();

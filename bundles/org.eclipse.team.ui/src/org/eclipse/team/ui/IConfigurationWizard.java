@@ -17,7 +17,9 @@ import org.eclipse.ui.IWorkbench;
 
 /**
  * IConfigurationWizard defines the interface that users of the extension
- * point org.eclipse.team.ui.configurationWizards must implement.
+ * point <code>org.eclipse.team.ui.configurationWizards</code> must implement.
+ * 
+ * @since 2.0
  */
 public interface IConfigurationWizard extends IWizard {
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.team.ui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.IAction;
@@ -35,13 +36,13 @@ import org.eclipse.ui.IWorkbenchSite;
  * If this operation is run as a job, it is registered with the job as a 
  * {@link org.eclipse.core.runtime.jobs.IJobChangeListener} and is scheduled with
  * the part of this operation if it is not <code>null</code>. 
- * Subsclasses can override the methods of this
- * interface to receive job change notificaton.
- * 
+ * Subsclasses can override the methods of this interface to receive job change notifications.
+ * </p>
  * @see org.eclipse.ui.progress.IProgressService
  * @see org.eclipse.core.runtime.Job
  * @see org.eclipse.core.runtime.ISchedulingRule
  * @see org.eclipse.core.runtime.jobs.IJobChangeListener
+ * @since 3.0
  */
 public abstract class TeamOperation extends JobChangeAdapter implements IRunnableWithProgress {
 	
@@ -50,7 +51,8 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	
 	/**
 	 * Create an team operation associated with the given part.
-	 * @param part the part the operation is associated with or <code>null</code>
+	 * @param part the part the operation is associated with or <code>null</code> if the
+	 * operation is to be run without a part.
 	 */
 	protected TeamOperation(IWorkbenchPart part) {
 		this(part, null);
@@ -77,6 +79,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 
 	/**
 	 * Return the part that is associated with this operation.
+	 * 
 	 * @return Returns the part or <code>null</code>
 	 */
 	public IWorkbenchPart getPart() {
@@ -84,7 +87,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	}
 	
 	/**
-	 * Run the operation in a context that is determined by the <code>canRunAsJob()</code>
+	 * Run the operation in a context that is determined by the {@link #canRunAsJob()}
 	 * hint. If this operation can run as a job then it will be run in a background thread.
 	 * Otherwise it will run in the foreground and block the caller.
 	 */
@@ -99,6 +102,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	 * the operation is run in the operation's context. Subclasses may
 	 * override in order to perform prechecks to determine if the operation
 	 * should run. This may include prompting the user for information, etc.
+	 * 
 	 * @return whether the operation should be run.
 	 */
 	protected boolean shouldRun() {
@@ -117,8 +121,9 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	 * rule is obtained. Sublcasses can override to in order ot obtain a
 	 * scheduling rule or can obtain schduling rules withing their operation
 	 * if finer grained schduling is desired.
+	 * 
 	 * @return the schduling rule to be obtained by this operation
-	 * or <code>null</code>
+	 * or <code>null</code>.
 	 */
 	protected ISchedulingRule getSchedulingRule() {
 		return null;
@@ -128,7 +133,8 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	 * Return whether the auto-build should be postponed until after
 	 * the operation is complete. The default is to postpone the auto-build.
 	 * subclas can override.
-	 * @return whether to postpone the auto-build while the operation is executing
+	 * 
+	 * @return whether to postpone the auto-build while the operation is executing.
 	 */
 	protected boolean isPostponeAutobuild() {
 		return true;
@@ -161,6 +167,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	/**
 	 * This method is called to allow subclasses to configure an action that could be run to show
 	 * the results of the action to the user. Default is to return null.
+	 * 
 	 * @return an action that could be run to see the results of this operation
 	 */
 	protected IAction getGotoAction() {
@@ -170,6 +177,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	/**
 	 * This method is called to allow subclasses to configure an icon to show when running this
 	 * operation.
+	 * 
 	 * @return an URL to an icon
 	 */
 	protected URL getOperationIcon() {
@@ -179,6 +187,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	/**
 	 * This method is called to allow subclasses to have the operation remain in the progress
 	 * indicator even after the job is done.
+	 * 
 	 * @return <code>true</code> to keep the operation and <code>false</code> otherwise.
 	 */
 	protected boolean getKeepOperation() {
@@ -187,6 +196,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	
 	/**
 	 * Return a shell that can be used by the operation to display dialogs, etc.
+	 * 
 	 * @return a shell
 	 */
 	protected Shell getShell() {

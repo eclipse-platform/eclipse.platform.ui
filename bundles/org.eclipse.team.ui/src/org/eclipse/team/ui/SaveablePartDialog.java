@@ -19,9 +19,10 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.Policy;
 
 /**
- * A dialog that displays a {@link org.eclipse.team.ui.SaveablePartAdapter} and
+ * A dialog that displays a {@link org.eclipse.team.ui.ISaveableWorkbenchPart} and
  * ensures that changes made to the input are saved when the dialog is closed.
  * 
+ * @see ISaveableWorkbenchPart
  * @see SaveablePartAdapter
  * @since 3.0
  */
@@ -35,8 +36,7 @@ public class SaveablePartDialog extends ResizableDialog {
 	 * is opened.
 	 * 
 	 * @param shell the parent shell or <code>null</code> to create a top level shell. 
-	 * @param title the shell's title
-	 * @param input the compare input to show in the dialog
+	 * @param input the part to show in the dialog.
 	 */
 	public SaveablePartDialog(Shell shell, ISaveableWorkbenchPart input) {
 		super(shell, null);

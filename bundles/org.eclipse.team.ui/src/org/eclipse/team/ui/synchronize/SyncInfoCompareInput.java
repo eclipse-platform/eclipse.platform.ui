@@ -26,7 +26,6 @@ import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
-import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.progress.UIJob;
@@ -130,10 +129,10 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	 */
 	public Image getTitleImage() {
 		ImageRegistry reg = TeamUIPlugin.getPlugin().getImageRegistry();
-		Image image = reg.get(ISharedImages.IMG_SYNC_VIEW);
+		Image image = reg.get(ITeamUIImages.IMG_SYNC_VIEW);
 		if (image == null) {
 			image = getImageDescriptor().createImage();
-			reg.put(ISharedImages.IMG_SYNC_VIEW, image);
+			reg.put(ITeamUIImages.IMG_SYNC_VIEW, image);
 		}
 		return image;
 	}
@@ -168,7 +167,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
 	 */
 	public ImageDescriptor getImageDescriptor() {
-		return TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_VIEW);
+		return TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_SYNC_VIEW);
 	}
 
 	/*

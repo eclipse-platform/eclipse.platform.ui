@@ -19,6 +19,7 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 
 public class SynchronizeWizardRegistry extends RegistryReader {
 
+	public static final String PT_SYNCHRONIZE_WIZARDS = "synchronizeWizards"; //$NON-NLS-1$
 	private static final String TAG_SYNCHRONIZE_WIZARD = "wizard"; //$NON-NLS-1$
 	private Map wizards = new HashMap();
 	

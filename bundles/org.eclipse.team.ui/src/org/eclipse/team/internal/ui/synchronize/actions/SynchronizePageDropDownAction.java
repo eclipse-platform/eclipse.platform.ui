@@ -57,7 +57,7 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 					dialog.open();
 				}
 			};
-			synchronizeAction.setImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_SYNC_VIEW));
+			synchronizeAction.setImageDescriptor(TeamImages.getImageDescriptor(ITeamUIImages.IMG_SYNC_VIEW));
 			setMenuCreator(this);		
 			update();
 		}

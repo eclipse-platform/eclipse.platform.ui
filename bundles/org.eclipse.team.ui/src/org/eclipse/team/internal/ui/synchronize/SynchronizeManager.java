@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.registry.*;
-import org.eclipse.team.ui.ITeamUIConstants;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 
@@ -518,9 +517,9 @@ public class SynchronizeManager implements ISynchronizeManager {
 	public void init() {
 		try {
 			// Initialize the participant registry - reads all participant extension descriptions.
-			participantRegistry.readRegistry(Platform.getPluginRegistry(), TeamUIPlugin.ID, ITeamUIConstants.PT_SYNCPARTICIPANTS);
+			participantRegistry.readRegistry(Platform.getPluginRegistry(), TeamUIPlugin.ID, SynchronizeParticipantRegistry.PT_SYNCPARTICIPANTS);
 			// Initialize the wizard registry
-			wizardRegistry.readRegistry(Platform.getPluginRegistry(), TeamUIPlugin.ID, ITeamUIConstants.PT_SYNCHRONIZE_WIZARDS);
+			wizardRegistry.readRegistry(Platform.getPluginRegistry(), TeamUIPlugin.ID, SynchronizeWizardRegistry.PT_SYNCHRONIZE_WIZARDS);
 			
 			// Instantiate and register any dynamic participants saved from a
 			// previous session.

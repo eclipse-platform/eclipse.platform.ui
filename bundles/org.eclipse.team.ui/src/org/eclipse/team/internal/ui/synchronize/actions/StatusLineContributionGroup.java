@@ -14,18 +14,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.ITeamStatus;
-import org.eclipse.team.core.synchronize.ISyncInfoSetChangeEvent;
-import org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
-import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 import org.eclipse.ui.IActionBars;
@@ -45,9 +38,9 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncInf
 	private StatusLineCLabelContribution conflicting;
 	private StatusLineCLabelContribution totalChanges;
 	
-	private Image incomingImage = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_INCOMING).createImage();
-	private Image outgoingImage = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_OUTGOING).createImage();
-	private Image conflictingImage = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING).createImage();
+	private Image incomingImage = TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_DLG_SYNC_INCOMING).createImage();
+	private Image outgoingImage = TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_DLG_SYNC_OUTGOING).createImage();
+	private Image conflictingImage = TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_DLG_SYNC_CONFLICTING).createImage();
 	
 	private ISynchronizePageConfiguration configuration;
 

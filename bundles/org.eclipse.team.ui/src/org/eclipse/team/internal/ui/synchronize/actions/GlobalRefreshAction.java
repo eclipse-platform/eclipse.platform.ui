@@ -66,7 +66,7 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 				dialog.open();
 			}
 		};
-		synchronizeAction.setImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_SYNC_VIEW));
+		synchronizeAction.setImageDescriptor(TeamImages.getImageDescriptor(ITeamUIImages.IMG_SYNC_VIEW));
 		setMenuCreator(this);
 		updateTooltipMessage();
 	}

@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.*;
@@ -32,6 +33,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	protected ConfigureProjectWizardMainPage mainPage;
 	private String pluginId = TeamUIPlugin.PLUGIN_ID;
 	
+	protected final static String PT_CONFIGURATION ="configurationWizards"; //$NON-NLS-1$
 	protected final static String TAG_WIZARD = "wizard"; //$NON-NLS-1$
 	protected final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 	protected final static String ATT_NAME = "name"; //$NON-NLS-1$
@@ -45,7 +47,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	}
 	
 	protected String getExtensionPoint() {
-		return ITeamUIConstants.PT_CONFIGURATION;
+		return PT_CONFIGURATION;
 	}
 	
 	protected String getWizardWindowTitle() {
@@ -86,7 +88,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 				return;
 			}
 		}
-		mainPage = new ConfigureProjectWizardMainPage("configurePage1", getWizardLabel(), TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_WIZBAN_SHARE), wizards); //$NON-NLS-1$
+		mainPage = new ConfigureProjectWizardMainPage("configurePage1", getWizardLabel(), TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_WIZBAN_SHARE), wizards); //$NON-NLS-1$
 		mainPage.setDescription(getWizardDescription());
 		mainPage.setProject(project);
 		mainPage.setWorkbench(workbench);

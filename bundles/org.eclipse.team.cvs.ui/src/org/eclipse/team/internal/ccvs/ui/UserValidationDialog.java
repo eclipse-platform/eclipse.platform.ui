@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.internal.ui.ITeamUIImages;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -110,7 +110,7 @@ public class UserValidationDialog extends Dialog {
 		main.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Label imageLabel = new Label(imageComposite, SWT.NONE);
-		keyLockImage = TeamImages.getImageDescriptor(ISharedImages.IMG_KEY_LOCK).createImage();
+		keyLockImage = TeamImages.getImageDescriptor(ITeamUIImages.IMG_KEY_LOCK).createImage();
 		imageLabel.setImage(keyLockImage);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		imageLabel.setLayoutData(data);

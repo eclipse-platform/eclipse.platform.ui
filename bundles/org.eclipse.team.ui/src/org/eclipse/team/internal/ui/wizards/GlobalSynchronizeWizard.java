@@ -11,14 +11,10 @@
 package org.eclipse.team.internal.ui.wizards;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.registry.SynchronizeWizardDescription;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
-import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipantReference;
@@ -38,7 +34,7 @@ public class GlobalSynchronizeWizard extends Wizard {
 
 	public GlobalSynchronizeWizard() {
 		setWindowTitle(Policy.bind("GlobalSynchronizeWizard.11")); //$NON-NLS-1$
-		setDefaultPageImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_WIZBAN_SHARE));
+		setDefaultPageImageDescriptor(TeamImages.getImageDescriptor(ITeamUIImages.IMG_WIZBAN_SHARE));
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(false);
 	}

@@ -19,6 +19,7 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 
 public class SynchronizeParticipantRegistry extends RegistryReader {
 
+	public static final String PT_SYNCPARTICIPANTS = "synchronizeParticipants"; //$NON-NLS-1$
 	private static final String TAG_SYNCPARTICIPANT = "participant"; //$NON-NLS-1$
 	private Map participants = new HashMap();
 	

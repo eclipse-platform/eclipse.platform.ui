@@ -18,8 +18,8 @@ import org.eclipse.core.resources.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.internal.ui.ITeamUIImages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -42,7 +42,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 		 * @see org.eclipse.team.ui.synchronize.SyncInfoModelElement#getImageDescriptor(java.lang.Object)
 		 */
 		public ImageDescriptor getImageDescriptor(Object object) {
-			return TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_COMPRESSED_FOLDER);
+			return TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPRESSED_FOLDER);
 		}
 	}
 	
@@ -67,7 +67,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 		 * @see org.eclipse.team.ui.synchronize.SyncInfoModelElement#getImageDescriptor(java.lang.Object)
 		 */
 		public ImageDescriptor getImageDescriptor(Object object) {
-			return TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_COMPRESSED_FOLDER);
+			return TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPRESSED_FOLDER);
 		}
 	}
 	
@@ -80,7 +80,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 			return "Compressed Folders";
 		}		
 		public ImageDescriptor getImageDescriptor() {
-			return TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_COMPRESSED_FOLDER);
+			return TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPRESSED_FOLDER);
 		}
 	};
 	private static final CompressedFolderModelProviderDescriptor compressedDescriptor = new CompressedFolderModelProviderDescriptor();
