@@ -6,7 +6,7 @@
 <!-- ======================================================================= -->
 <plugin
    name = "%Plugin.name"
-   id = "org.eclipse.ui.examples.editor"
+   id = "org.eclipse.ui.examples.multipageeditor"
    version = "0.9"
    provider-name = "Object Technology International, Inc.">
 
