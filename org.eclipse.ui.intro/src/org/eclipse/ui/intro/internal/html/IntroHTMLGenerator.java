@@ -11,7 +11,6 @@
 package org.eclipse.ui.intro.internal.html;
 import java.io.*;
 import java.net.*;
-
 import org.eclipse.ui.intro.internal.*;
 import org.eclipse.ui.intro.internal.model.*;
 import org.eclipse.ui.intro.internal.util.*;
@@ -79,6 +78,7 @@ public class IntroHTMLGenerator {
 	 *  &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
 	 *  &lt;TITLE&gt;page title &lt;/TITLE&gt;
 	 *  &lt;LINK href=&quot;style sheet&quot;&gt;
+	 *  additional head content, if specified
 	 *  &lt;/HEAD&gt;
 	 * </pre>
 	 * 
@@ -112,6 +112,31 @@ public class IntroHTMLGenerator {
 			style = pageStyles[0];
 			if (style != null)
 				head.addContent(generateLinkElement(style, indentLevel + 1));
+		}
+		// if there is additional head conent specified in an external file,
+		// include it. Additional head content can be specified at the
+		// implementation level (which would apply to ALL pages) and at the
+		// page level (which would apply only to that particular page).
+		// For the implementation's head contribution:
+		StringBuffer content = null;
+		IntroHead introHead = IntroPlugin.getDefault().getIntroModelRoot()
+				.getPresentation().getHead();
+		if (introHead != null) {
+			content = readFromFile(introHead.getSrc());
+			if (content != null)
+				head.addContent(content);
+		}
+		// For the page's head contribution:
+		// TODO: there should only be one of these at the page level, not a
+		// collection..
+		IntroHead[] htmlHeads = introPage.getHTMLHeads();
+		for (int i = 0; i < htmlHeads.length; i++) {
+			introHead = htmlHeads[i];
+			if (introHead != null) {
+				content = readFromFile(introHead.getSrc());
+				if (content != null)
+					head.addContent(content);
+			}
 		}
 		return head;
 	}
@@ -371,19 +396,38 @@ public class IntroHTMLGenerator {
 	 * @param indentLevel
 	 *            the number of indents to insert before the element when it is
 	 *            printed
-	 * @return a div HTMLElement
+	 * @return a div HTMLElement, or null if there was a problem reading from
+	 *         the file
 	 */
 	private HTMLElement generateInlineIntroHTML(IntroHTML element,
 			int indentLevel) {
-		// Create the outer div element
-		HTMLElement divElement = generateDivElement(element.getId(),
-				IIntroHTMLConstants.DIV_CLASS_INLINE_HTML, indentLevel);
-		// emit the content of the specified file inside the div element
+		StringBuffer content = readFromFile(element.getSrc());
+		if (content != null && content.length() > 0) {
+			// Create the outer div element
+			HTMLElement divElement = generateDivElement(element.getId(),
+					IIntroHTMLConstants.DIV_CLASS_INLINE_HTML, indentLevel);
+			// add the content of the specified file into the div element
+			divElement.addContent(content);
+			return divElement;
+		}
+		return null;
+	}
+	/**
+	 * Reads the content of the file referred to by the <code>src</code>
+	 * parameter and returns the content in the form of a StringBuffer
+	 * 
+	 * @param src -
+	 *            the file that contains the target conent
+	 * @return a StringBuffer containing the content in the file, or null
+	 */
+	private StringBuffer readFromFile(String src) {
+		if (src == null)
+			return null;
 		InputStream stream = null;
 		StringBuffer content = new StringBuffer();
 		BufferedReader reader = null;
 		try {
-			URL url = new URL(element.getSrc());
+			URL url = new URL(src);
 			stream = url.openStream();
 			//TODO: Do we need to worry about the encoding here? e.g.:
 			//reader = new BufferedReader(new InputStreamReader(stream,
@@ -397,7 +441,7 @@ public class IntroHTMLGenerator {
 				content.append(IIntroHTMLConstants.NEW_LINE);
 			}
 		} catch (Exception exception) {
-			Logger.logError("Error reading from file", exception);	//$NON-NLS-1$
+			Logger.logError("Error reading from file", exception); //$NON-NLS-1$
 		} finally {
 			try {
 				if (reader != null)
@@ -405,12 +449,11 @@ public class IntroHTMLGenerator {
 				if (stream != null)
 					stream.close();
 			} catch (IOException e) {
-				Logger.logError("Error closing input stream", e);	//$NON-NLS-1$
+				Logger.logError("Error closing input stream", e); //$NON-NLS-1$
+				return null;
 			}
 		}
-		if (content.length() > 0)
-			divElement.addContent(content);
-		return divElement;
+		return content;
 	}
 	/**
 	 * Generate "embedded" content from an IntroHTML. An OBJECT html element is
@@ -436,11 +479,12 @@ public class IntroHTMLGenerator {
 				IIntroHTMLConstants.ELEMENT_OBJECT, indentLevel, true);
 		objectElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_TYPE,
 				IIntroHTMLConstants.OBJECT_TYPE);
-		if(element.getId() != null)
-			objectElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ID, element.getId());
-		if(element.getSrc() != null)
-			objectElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_DATA, element
-				.getSrc());
+		if (element.getId() != null)
+			objectElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ID,
+					element.getId());
+		if (element.getSrc() != null)
+			objectElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_DATA,
+					element.getSrc());
 		// The alternative content is added in case the browser can not render
 		// the specified content
 		if (element.getText() != null) {
