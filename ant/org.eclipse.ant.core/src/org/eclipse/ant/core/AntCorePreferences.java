@@ -32,6 +32,7 @@ import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.core.InternalCoreAntMessages;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.plugins.PluginClassLoader;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ILibrary;
 import org.eclipse.core.runtime.IPath;
@@ -43,6 +44,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.variables.IDynamicVariable;
+import org.eclipse.core.variables.VariablesPlugin;
 
 
 /**
@@ -606,7 +609,21 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 */
 	public URL getToolsJarURL() {
 		IPath path = new Path(System.getProperty("java.home")); //$NON-NLS-1$
-		return getToolsJarEntry(path).getEntryURL();
+		IAntClasspathEntry entry= getToolsJarEntry(path);
+		if (entry == null) {
+			IDynamicVariable variable = VariablesPlugin.getDefault().getStringVariableManager().getDynamicVariable("env_var");
+			String javaHome= null;
+			try {
+				javaHome = variable.getValue("JAVA_HOME"); //$NON-NLS-1$
+				path= new Path(javaHome);
+				entry= getToolsJarEntry(path);
+			} catch (CoreException e) {
+			}
+		}
+		if (entry != null) {
+			return entry.getEntryURL();
+		}
+		return null;
 	}
 	
 	/**
@@ -618,7 +635,18 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 */
 	public IAntClasspathEntry getToolsJarEntry() {
 		IPath path = new Path(System.getProperty("java.home")); //$NON-NLS-1$
-		return getToolsJarEntry(path);
+		IAntClasspathEntry entry= getToolsJarEntry(path);
+		if (entry == null) {
+			IDynamicVariable variable = VariablesPlugin.getDefault().getStringVariableManager().getDynamicVariable("env_var");
+			String javaHome= null;
+			try {
+				javaHome = variable.getValue("JAVA_HOME"); //$NON-NLS-1$
+				path= new Path(javaHome);
+				entry= getToolsJarEntry(path);
+			} catch (CoreException e) {
+			}
+		}
+		return entry;
 	}
 
 	private void addLibraries(IPluginDescriptor source, List destination) {
