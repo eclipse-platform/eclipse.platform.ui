@@ -166,7 +166,7 @@ class QuickdiffConfigurationBlock {
 	 * Creates page for hover preferences.
 	 * 
 	 * @param parent the parent composite
-	 * @return the hover preference page control
+	 * @return the created child composite
 	 */
 	public Control createControl(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NONE);
@@ -175,9 +175,6 @@ class QuickdiffConfigurationBlock {
 
 		String label= fMessages.getString(fPrefix + ".quickdiff.showForNewEditors"); //$NON-NLS-1$
 		addCheckBox(composite, label, ExtendedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, 0);
-
-		label= fMessages.getString(fPrefix + ".quickdiff.showChangeRuler"); //$NON-NLS-1$
-		addCheckBox(composite, label, ExtendedTextEditorPreferenceConstants.QUICK_DIFF_SHOW_CHANGE_RULER, 0);
 
 		label= fMessages.getString(fPrefix + ".quickdiff.characterMode"); //$NON-NLS-1$
 		addCheckBox(composite, label, ExtendedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE, 0);

@@ -187,15 +187,6 @@ public class ExtendedTextEditorPreferenceConstants {
 	public static final String QUICK_DIFF_CHARACTER_MODE= "quickdiff.characterMode"; //$NON-NLS-1$
 	
 	/**
-	 * A named preference that controls whether the change ruler is shown if no
-	 * line numbers are displayed.
-	 * <p>
-	 * Value is of type <code>Boolean</code>.
-	 * @since 3.0
-	 */
-	public static final String QUICK_DIFF_SHOW_CHANGE_RULER= "quickdiff.showChangeRuler"; //$NON-NLS-1$
-	
-	/**
 	 * A named preference that controls whether custom carets are used in the
 	 * editor or not.
 	 * <p>
@@ -288,7 +279,6 @@ public class ExtendedTextEditorPreferenceConstants {
 		PreferenceConverter.setDefault(store, ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, new RGB(0, 0, 0));
 		store.setDefault(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, true);
 		store.setDefault(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE, false);
-		store.setDefault(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_SHOW_CHANGE_RULER, true);
 		store.setDefault(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER, "org.eclipse.ui.internal.texteditor.quickdiff.LastSaveReferenceProvider"); //$NON-NLS-1$
 
 		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, true);

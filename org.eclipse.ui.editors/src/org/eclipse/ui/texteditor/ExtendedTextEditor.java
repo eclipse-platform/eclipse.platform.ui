@@ -307,8 +307,11 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 			ensureChangeInfoCanBeDisplayed();
 			installChangeRulerModel();
 		}
-
-		fIsChangeInformationShown= show;
+		
+		if (getChangeColumn() != null && getChangeColumn().getModel() != null)
+			fIsChangeInformationShown= true;
+		else
+			fIsChangeInformationShown= false;
 	}
 
 	/**
@@ -316,9 +319,8 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 */
 	private void installChangeRulerModel() {
 		IChangeRulerColumn column= getChangeColumn();
-		IAnnotationModel differ= getOrCreateDiffer();
 		if (column != null)
-			column.setModel(differ);
+			column.setModel(getOrCreateDiffer());
 		IOverviewRuler ruler= getOverviewRuler();
 		if (ruler != null) {
 			ruler.addAnnotationType("org.eclipse.ui.workbench.texteditor.quickdiffChange"); //$NON-NLS-1$
@@ -452,7 +454,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 		IVerticalRuler v= getVerticalRuler();
 		if (v instanceof CompositeRuler) {
 			CompositeRuler c= (CompositeRuler) v;
-			if (show && fChangeRulerColumn == null && getPreferenceStore().getBoolean(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_SHOW_CHANGE_RULER))
+			if (show && fChangeRulerColumn == null)
 				c.addDecorator(1, createChangeRulerColumn());
 			else if (!show && fChangeRulerColumn != null) {
 				c.removeDecorator(fChangeRulerColumn);
@@ -752,11 +754,6 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 				else
 					hideLineNumberRuler();
 				return;
-			}
-			
-			if (ExtendedTextEditorPreferenceConstants.QUICK_DIFF_SHOW_CHANGE_RULER.equals(property)) {
-				if (isChangeInformationShowing())
-					showChangeRuler(getPreferenceStore().getBoolean(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_SHOW_CHANGE_RULER));
 			}
 
 			if (ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH.equals(property)) {
