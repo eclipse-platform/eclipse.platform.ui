@@ -427,6 +427,9 @@ public interface IHelpContextIds {
 
     public static final String LINKED_RESOURCE_PREFERENCE_PAGE = PREFIX
             + "linked_resource_preference_page_context"; //$NON-NLS-1$
+    
+    public static final String RESPONSIVE_UI = PREFIX
+    		+ "responsive_ui_context"; //$NON-NLS-1$
 
     // Property pages
     public static final String PROJECT_REFERENCE_PROPERTY_PAGE = PREFIX
