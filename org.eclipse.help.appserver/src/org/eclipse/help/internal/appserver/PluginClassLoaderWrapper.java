@@ -110,16 +110,18 @@ public class PluginClassLoaderWrapper extends URLClassLoader {
 	private String[] getDirectPrereqs(String pluginId) {
 		try {
 			Bundle bundle = Platform.getBundle(pluginId);
-			String header = (String) bundle.getHeaders().get(
-					Constants.REQUIRE_BUNDLE);
-			ManifestElement[] requires = ManifestElement.parseHeader(
-					Constants.REQUIRE_BUNDLE, header);
-			if (requires != null) {
-				String[] reqs = new String[requires.length];
-				for (int i = 0; i < requires.length; i++) {
-					reqs[i] = requires[i].getValue();
+			if (bundle != null) {
+				String header = (String) bundle.getHeaders().get(
+						Constants.REQUIRE_BUNDLE);
+				ManifestElement[] requires = ManifestElement.parseHeader(
+						Constants.REQUIRE_BUNDLE, header);
+				if (requires != null) {
+					String[] reqs = new String[requires.length];
+					for (int i = 0; i < requires.length; i++) {
+						reqs[i] = requires[i].getValue();
+					}
+					return reqs;
 				}
-				return reqs;
 			}
 		} catch (BundleException e) {
 		}
