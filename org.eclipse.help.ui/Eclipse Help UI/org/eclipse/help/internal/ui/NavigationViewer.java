@@ -82,8 +82,8 @@ public class NavigationViewer implements ISelectionProvider {
 				public void widgetSelected(SelectionEvent e) {
 					int index = ((Combo) e.widget).getSelectionIndex();
 					String id = (String) infoSetIds.get(index);
-					currentInfoset = HelpSystem.getNavigationManager().getInfoSet(id);
-					setInput(currentInfoset);
+					if(currentInfoset != HelpSystem.getNavigationManager().getInfoSet(id))
+						setInput(HelpSystem.getNavigationManager().getInfoSet(id));
 				}
 				public void widgetDefaultSelected(SelectionEvent e) {
 					widgetSelected(e);
@@ -141,6 +141,10 @@ public class NavigationViewer implements ISelectionProvider {
 	public void setInput(Object input) {
 		if (input instanceof InfoSet) {
 			currentInfoset = (InfoSet) input;
+
+			// set global infoset and navigation model
+			HelpSystem.getNavigationManager().setCurrentInfoSet(currentInfoset.getID());
+
 			// If more than 1 infoset, then select it from the combo box
 			if (infoSetIds.size() > 1) {
 				int index = infoSetIds.indexOf(currentInfoset.getID());
@@ -151,16 +155,14 @@ public class NavigationViewer implements ISelectionProvider {
 				infoSetsCombo.clearSelection();
 			}
 
-			// set global infoset and navigation model
-			HelpSystem.getNavigationManager().setCurrentInfoSet(currentInfoset.getID());
-
 			// show this infoset    
 			workbook.display(currentInfoset);
 
 			// update htmlViewer
 			setSelection(new StructuredSelection(currentInfoset));
+		}else{
+			workbook.display(input);
 		}
-		workbook.display(input);
 	}
 	/**
 	 * Sets the selection current selection for this selection provider.
@@ -171,3 +173,4 @@ public class NavigationViewer implements ISelectionProvider {
 		workbook.setSelection(selection);
 	}
 }
+
