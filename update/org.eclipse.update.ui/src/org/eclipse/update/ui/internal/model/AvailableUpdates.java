@@ -191,7 +191,7 @@ class SearchAdapter extends MonitorAdapter {
 	}
 	
 	private void findUpdates(IFeature feature) {
-		IURLEntry updateInfo = feature.getUpdateSiteEntry();
+		IInfo updateInfo = feature.getUpdateInfo();
 		if (updateInfo == null) return;
 		URL updateURL = updateInfo.getURL();
 		if (updateURL==null) return;
@@ -208,7 +208,7 @@ class SearchAdapter extends MonitorAdapter {
 				if (isNewerVersion(feature, candidate)) {
 					// bingo - add this
 					if (searchSite==null) {
-						searchSite = new UpdateSearchSite(updateInfo.getAnnotation(), site);
+						searchSite = new UpdateSearchSite(updateInfo.getText(), site);
 						updates.add(searchSite);
 						asyncFireObjectAdded(this, searchSite);
 					}

@@ -21,7 +21,7 @@ import org.eclipse.update.core.ICategory;
 import org.eclipse.update.core.IConfigurationSite;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IImport;
-import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.core.IInfo;
 import org.eclipse.update.core.IInstallConfiguration;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.ISite;

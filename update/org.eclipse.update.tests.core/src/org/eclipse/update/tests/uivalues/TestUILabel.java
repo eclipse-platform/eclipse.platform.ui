@@ -64,12 +64,12 @@ public class TestUILabel extends UpdateManagerTestCase {
 	 * @param info
 	 * @param text
 	 */
-	private void print(IURLEntry info, String text){
+	private void print(IInfo info, String text){
 		System.out.print("->"+text+":");
 		if (info.getURL()!=null) 
 			System.out.println("<"+info.getURL().toExternalForm()+">");
 		else 
-			System.out.println(info.getAnnotation());
+			System.out.println(info.getText());
 	}
 }
 

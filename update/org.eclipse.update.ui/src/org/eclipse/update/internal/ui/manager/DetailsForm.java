@@ -383,7 +383,7 @@ private void inputChanged(IFeature feature) {
 	String pattern = UpdateUIPlugin.getResourceString(KEY_SIZE_VALUE);
 	String format = UpdateUIPlugin.getFormattedMessage(pattern, stext);
 	sizeLabel.setText(format);
-	descriptionText.setText(feature.getDescription().getAnnotation());
+	descriptionText.setText(feature.getDescription().getText());
 	Image logoImage = loadProviderImage(feature);
 	if (logoImage==null)
 	   logoImage = providerImage;

@@ -4,10 +4,10 @@ import java.io.InputStream;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.core.INonPluginEntry;
+import org.eclipse.update.core.IDataEntry;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IImport;
-import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.core.IInfo;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.VersionedIdentifier;
@@ -51,14 +51,14 @@ public class MissingFeature implements IFeature {
 	/*
 	 * @see IFeature#getUpdateInfo()
 	 */
-	public IURLEntry getUpdateSiteEntry() {
+	public IInfo getUpdateInfo() {
 		return null;
 	}
 
 	/*
 	 * @see IFeature#getDiscoveryInfos()
 	 */
-	public IURLEntry[] getDiscoverySiteEntries() {
+	public IInfo[] getDiscoveryInfos() {
 		return null;
 	}
 
@@ -72,21 +72,21 @@ public class MissingFeature implements IFeature {
 	/*
 	 * @see IFeature#getDescription()
 	 */
-	public IURLEntry getDescription() {
+	public IInfo getDescription() {
 		return null;
 	}
 
 	/*
 	 * @see IFeature#getCopyright()
 	 */
-	public IURLEntry getCopyright() {
+	public IInfo getCopyright() {
 		return null;
 	}
 
 	/*
 	 * @see IFeature#getLicense()
 	 */
-	public IURLEntry getLicense() {
+	public IInfo getLicense() {
 		return null;
 	}
 
@@ -149,14 +149,14 @@ public class MissingFeature implements IFeature {
 	/*
 	 * @see IFeature#getDataEntries()
 	 */
-	public INonPluginEntry[] getNonPluginEntries() {
+	public IDataEntry[] getDataEntries() {
 		return null;
 	}
 
 	/*
 	 * @see IFeature#addDataEntry(IDataEntry)
 	 */
-	public void addNonPluginEntry(INonPluginEntry dataEntry) {
+	public void addDataEntry(IDataEntry dataEntry) {
 	}
 
 	/*
@@ -197,14 +197,14 @@ public class MissingFeature implements IFeature {
 	/*
 	 * @see IPluginContainer#getDownloadSize(IPluginEntry)
 	 */
-	public long getDownloadSize(IPluginEntry entry) {
+	public int getDownloadSize(IPluginEntry entry) {
 		return 0;
 	}
 
 	/*
 	 * @see IPluginContainer#getInstallSize(IPluginEntry)
 	 */
-	public long getInstallSize(IPluginEntry entry) {
+	public int getInstallSize(IPluginEntry entry) {
 		return 0;
 	}
 
