@@ -692,15 +692,13 @@ public class InternalAntRunner {
 		
 		String[] args = getArgument(commands, "-listener"); //$NON-NLS-1$
 		while (args != null) {
-			if (args != null) {
-				if (args.length == 0) {
-					throw new BuildException(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-listener_argument_1")); //$NON-NLS-1$
-				} 
-				if (buildListeners == null) {
-					buildListeners= new ArrayList(1);
-				}
-				buildListeners.add(args[0]);
+			if (args.length == 0) {
+				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-listener_argument_1")); //$NON-NLS-1$
+			} 
+			if (buildListeners == null) {
+				buildListeners= new ArrayList(1);
 			}
+			buildListeners.add(args[0]);
 			args = getArgument(commands, "-listener"); //$NON-NLS-1$
 		}
 
@@ -864,7 +862,7 @@ public class InternalAntRunner {
 					//relative to the base dir
 					path= new Path(baseDir.getAbsolutePath());
 				} 
-			}else {
+			} else {
 				//relative to the build file location
 				path= new Path(getBuildFileLocation());
 				path= path.removeLastSegments(1);
