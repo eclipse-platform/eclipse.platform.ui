@@ -12,5 +12,6 @@
     <classpathentry kind="src" path="/org.eclipse.help"/>
     <classpathentry kind="src" path="/org.eclipse.swt"/>
     <classpathentry kind="src" path="/org.eclipse.ui"/>
+    <classpathentry kind="src" path="/org.eclipse.compare"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
