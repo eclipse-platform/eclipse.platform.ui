@@ -30,6 +30,11 @@ import org.eclipse.core.runtime.*;
  */
 public interface IFeature extends IAdaptable {
 
+	// FIXME javadoc
+	public static final int STATUS_HAPPY = 0;
+	public static final int STATUS_UNHAPPY = 1;
+	public static final int STATUS_AMBIGUOUS = 2;
+
 	/**
 	 * Returns the feature identifier.
 	 * 

@@ -847,4 +847,53 @@ public class SiteLocal
 			}
 		}
 		return 0;
-	}}
+	}
+	
+	/*
+	 *  check if the Plugins of the feature are on the plugin path
+	 *  If all the plugins are on the plugin path, and the version match and there is no other version -> HAPPY
+	 *  If all the plugins are on the plugin path, and the version match and there is other version -> AMBIGUOUS
+	 *  If some of the plugins are on the plugin path, but not all -> UNHAPPY
+	 * 	Check on all ConfiguredSites
+	 */
+	public int getStatus(IFeature feature) {
+
+		// get configured plugins from configured features
+		// 
+
+		ISite currentSite = getSite();
+		IPluginEntry[] siteEntries = getSite().getPluginEntries();
+		IPluginEntry[] featuresEntries = feature.getPluginEntries();
+		IPluginEntry[] result = UpdateManagerUtils.diff(featuresEntries, siteEntries);
+		
+		// missing plugins - > UNHAPPY
+		if (result == null || (result.length != 0)) {
+			IPluginEntry[] missing = UpdateManagerUtils.diff(featuresEntries, result);
+			String listOfMissingPlugins = ""; //$NON-NLS-1$
+			for (int k = 0; k < missing.length; k++) {
+				listOfMissingPlugins =
+					"\r\nplugin:" + missing[k].getVersionedIdentifier().toString();
+				//$NON-NLS-1$
+			}
+			String id =
+				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			String featureString =
+				(feature == null) ? null : feature.getURL().toExternalForm();
+			String siteString =
+				(currentSite == null) ? null : currentSite.getURL().toExternalForm();
+			String[] values =
+				new String[] { featureString, siteString, listOfMissingPlugins };
+			IStatus status =
+				new Status(
+					IStatus.ERROR,
+					id,
+					IStatus.OK,
+					Policy.bind("ConfiguredSite.MissingPluginsBrokenFeature", values),
+					null);
+			//$NON-NLS-1$
+			UpdateManagerPlugin.getPlugin().getLog().log(status);
+			return IFeature.STATUS_UNHAPPY;
+		}
+		return IFeature.STATUS_HAPPY;
+	}
+}

@@ -4,11 +4,11 @@
 </HEAD>
 <HTML>
 <BODY>
-<H1><CENTER>Install/Update Concrete Site Type Implementation Factory</CENTER></H1>
+<H1><CENTER>Install/Update Delta Handler</CENTER></H1>
 <H2>Identifier</H2>
-org.eclipse.update.core.org.eclipse.update.core.siteTypes<H2>Description</H2>
+org.eclipse.update.core.deltaHandler<H2>Description</H2>
 [Enter description of this extension point]<H2>Markup</H2>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT extension (site-factory+)&gt;</samp>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT extension (EMPTY)&gt;</samp>
 <br><samp>&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
@@ -16,13 +16,12 @@ org.eclipse.update.core.org.eclipse.update.core.siteTypes<H2>Description</H2>
 <br><samp>&nbsp;&nbsp; &gt;</samp>
 <ul>
 <li><b>point</b> - </li><li><b>id</b> - </li><li><b>name</b> - </li></ul>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT site-factory (EMPTY)&gt;</samp>
-<br><samp>&nbsp;&nbsp; &lt;!ATTLIST site-factory</samp>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT display (EMPTY)&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST display</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp; &gt;</samp>
 <ul>
-<li><b>class</b> - fully qualified name of the factory class for the identified
-site type</li></ul>
+<li><b>class</b> - </li></ul>
 <H2>Example</H2>
 [Enter extension point usage example here.]<H2>API Information</H2>
 [Enter API information here.]<H2>Supplied Implementation</H2>
