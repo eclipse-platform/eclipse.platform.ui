@@ -247,7 +247,10 @@ public class DebugUITools {
 			ILaunch launch= (ILaunch)context;
 			IDebugTarget target= launch.getDebugTarget();
 			if (target != null) {
-				return target.getProcess();
+				IProcess process = target.getProcess();
+				if (process != null) {
+					return process;
+				}
 			}
 			IProcess[] ps = launch.getProcesses();
 			if (ps.length > 0) {
