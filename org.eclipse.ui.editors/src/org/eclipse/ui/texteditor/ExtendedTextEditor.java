@@ -27,6 +27,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
 import org.eclipse.jface.text.source.ChangeRulerColumn;
 import org.eclipse.jface.text.source.CompositeRuler;
@@ -299,7 +300,10 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 			installChangeRulerModel();
 		}
 		
-		fIsChangeInformationShown= show;
+		if (getChangeColumn() != null && getChangeColumn().getModel() != null)
+			fIsChangeInformationShown= true;
+		else
+			fIsChangeInformationShown= false;
 	}
 
 	/**
@@ -332,7 +336,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 			ruler.removeAnnotationType("org.eclipse.ui.workbench.texteditor.quickdiffDeletion"); //$NON-NLS-1$
 			ruler.update();
 		}
-		IAnnotationModel model= getOrCreateDiffer();
+		IAnnotationModel model= getDiffer();
 		if (model instanceof DocumentLineDiffer)
 			((DocumentLineDiffer) model).suspend();
 	}
@@ -367,6 +371,40 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * @return the linediffer, or <code>null</code> if none could be found or created.
 	 */
 	private IAnnotationModel getOrCreateDiffer() {
+		IAnnotationModel differ= getDiffer();
+		// create diff model if it doesn't
+		if (differ == null) {
+			IPreferenceStore store= getNewPreferenceStore();
+			if (store != null) {
+				String defaultId= store.getString(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER);
+				differ= new QuickDiff().createQuickDiffAnnotationModel(this, defaultId);
+				if (differ != null) {
+					ISourceViewer viewer= getSourceViewer();
+					if (viewer == null)
+						return null;
+						
+					IAnnotationModel m= viewer.getAnnotationModel();
+					IAnnotationModelExtension model;
+					if (m instanceof IAnnotationModelExtension)
+						model= (IAnnotationModelExtension) m;
+					else
+						return null;
+					model.addAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID, differ);
+				}
+			}
+		} else if (differ instanceof DocumentLineDiffer && !fIsChangeInformationShown)
+			((DocumentLineDiffer)differ).resume();
+		
+		return differ;
+	}
+	
+	/**
+	 * Extracts the line differ from the displayed document's annotation model. If none can be found,
+	 * <code>null</code> is returned.
+	 * 
+	 * @return the linediffer, or <code>null</code> if none could be found
+	 */
+	private IAnnotationModel getDiffer() {
 		// get annotation model extension
 		ISourceViewer viewer= getSourceViewer();
 		if (viewer == null)
@@ -380,19 +418,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 			return null;
 		
 		// get diff model if it exists already
-		IAnnotationModel differ= model.getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
-		IPreferenceStore store= getNewPreferenceStore();
-		
-		// create diff model if it doesn't
-		if (differ == null && store != null) {
-			String defaultId= store.getString(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER);
-			differ= new QuickDiff().createQuickDiffAnnotationModel(this, defaultId);
-			if (differ != null)
-				model.addAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID, differ);
-		} else if (differ instanceof DocumentLineDiffer && !fIsChangeInformationShown)
-			((DocumentLineDiffer)differ).resume();
-		
-		return differ;
+		return model.getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
 	}
 
 	/**
@@ -665,7 +691,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 						if (showAnnotation)
 							fAnnotationRulerColumn.addAnnotationType(preference.getAnnotationType());
 					}
-					fAnnotationRulerColumn.addAnnotationType(DefaultMarkerAnnotationAccess.UNKNOWN);
+					fAnnotationRulerColumn.addAnnotationType(Annotation.TYPE_UNKNOWN);
 					break;
 				}
 			}
@@ -753,7 +779,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 					Object type= pref.getAnnotationType();
 					if (type instanceof String) {
 						String annotationType= (String) type;
-						if (annotationType.startsWith("org.eclipse.ui.workbench.texteditor.quickdiff"))
+						if (annotationType.startsWith("org.eclipse.ui.workbench.texteditor.quickdiff")) //$NON-NLS-1$
 							initializeChangeRulerColumn(column);
 					}
 				}
@@ -1018,7 +1044,8 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	
 	/**
 	 * {@inheritDoc}
-	 * <p>This implementation also updates change information in the quick diff
+	 * <p>
+	 * This implementation also updates change information in the quick diff
 	 * ruler.</p>
 	 * 
 	 * @param input {@inheritDoc}
