@@ -119,12 +119,7 @@ public class UpdateMergeAction extends UpdateSyncAction {
 							localFile.setContents(remote.getContents(Policy.subMonitorFor(monitor, 100)), false /*don't force*/, true /*keep history*/, Policy.subMonitorFor(monitor, 100));
 						} else {
 							if (!localFile.getParent().exists()) {
-								IContainer parent = localFile.getParent();
-								while (!parent.exists()) {
-									IFolder folder = (IFolder)parent;
-									folder.create(false, true, null);
-									parent = parent.getParent();
-								}
+								ensureParentExists(localFile);
 							}
 							localFile.create(remote.getContents(Policy.subMonitorFor(monitor, 100)), false /*don't force*/, Policy.subMonitorFor(monitor, 100));
 						}
@@ -137,6 +132,15 @@ public class UpdateMergeAction extends UpdateSyncAction {
 			throw new CVSException(Policy.bind("UpdateMergeActionProblems_merging_remote_resources_into_workspace_1"), e); //$NON-NLS-1$
 		} catch(TeamException e) {
 			throw new CVSException(Policy.bind("UpdateMergeActionProblems_merging_remote_resources_into_workspace_2"), e); //$NON-NLS-1$
+		}
+	}
+
+	private void ensureParentExists(IResource resource) throws CoreException {
+		IContainer parent = resource.getParent();
+		if (!parent.exists()) {
+			ensureParentExists(parent);
+			IFolder folder = (IFolder)parent;
+			folder.create(false, true, null);
 		}
 	}	
 	/**
