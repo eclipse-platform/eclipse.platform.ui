@@ -9,7 +9,10 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
+import java.text.MessageFormat;
 import java.util.ArrayList;
+
+import org.eclipse.core.runtime.*;
 
 /**
  * This class represents a list of targets that an
@@ -66,12 +69,19 @@ public class AntTargetList {
 	 * Validate the default target exists within the
 	 * known target list and if not, remove it.
 	 */
-	/*package*/ boolean validateDefaultTarget() {
-		if (defaultTarget == null)
-			return true;
-		if (targets.contains(defaultTarget))
-			return true;
-		defaultTarget = null;
-		return false;
+	/*package*/ void validateDefaultTarget() throws CoreException {
+		if (defaultTarget != null) {
+			if (targets.contains(defaultTarget)) {
+				return;
+			}
+		}
+		String msg;
+		if (defaultTarget != null) {
+			msg= MessageFormat.format("Default target {0}{1}{2} does not exist in this project.", new String[]{"'", defaultTarget, "'"});
+		} else {
+			msg= "A default target must exist in the project";
+		}
+		IStatus status = new Status(IStatus.ERROR, ExternalToolsPlugin.PLUGIN_ID, 0, msg, null);
+		throw new CoreException(status);
 	}
 }

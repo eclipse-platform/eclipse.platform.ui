@@ -129,7 +129,7 @@ public final class AntUtil {
 	 * supplied IMemento, or <code>null</code> if the memento is null or
 	 * does not represent a valid Ant file.
 	 */
-	private static AntTargetList getTargetList(IMemento memento) {
+	private static AntTargetList getTargetList(IMemento memento) throws CoreException {
 		if (memento == null)
 			return null;
 		AntTargetList targets = new AntTargetList();
