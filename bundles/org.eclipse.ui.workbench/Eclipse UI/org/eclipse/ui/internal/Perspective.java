@@ -56,7 +56,6 @@ import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveExtensionReader;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.registry.StickyViewDescriptor;
-import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
