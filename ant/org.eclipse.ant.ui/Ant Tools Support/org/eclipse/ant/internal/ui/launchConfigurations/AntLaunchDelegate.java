@@ -431,7 +431,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		
 		ILaunchConfigurationWorkingCopy copy= configuration.getWorkingCopy();
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, commandLine.toString());
-		StringBuffer vmArgs= generateVMArguments();
+		StringBuffer vmArgs= generateVMArguments(copy);
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs.toString());
 		
 		launch.setSourceLocator(new ISourceLocator() {
@@ -490,8 +490,18 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		}
 	}
 	
-	private StringBuffer generateVMArguments() {
-		StringBuffer vmArgs= new StringBuffer("-Dant.home=\""); //$NON-NLS-1$
+	private StringBuffer generateVMArguments(ILaunchConfiguration config) {
+		StringBuffer vmArgs= new StringBuffer();
+		try {
+			String configArgs= config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, (String)null);
+			if (configArgs != null) {
+				vmArgs.append(configArgs);
+				vmArgs.append(' ');
+			}
+		} catch (CoreException e) {
+		}
+	
+		vmArgs.append("-Dant.home=\""); //$NON-NLS-1$
 		vmArgs.append(AntCorePlugin.getPlugin().getPreferences().getAntHome());
 		vmArgs.append("\" "); //$NON-NLS-1$
 		File antLibDir= new File(AntCorePlugin.getPlugin().getPreferences().getAntHome(), "lib"); //$NON-NLS-1$
