@@ -159,8 +159,8 @@ identifier &lt;samp&gt;com.example.ExampleLaunchConfigurationTypeIdentifier&lt;/
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the 
-interface &lt;b&gt;org.eclipse.debug.ui.ILaunchConfigurationTabGroup&lt;/b&gt;.
+         Value of the attribute &lt;code&gt;class&lt;/code&gt; must be a fully qualified name of a Java class that implements the 
+interface &lt;code&gt;org.eclipse.debug.ui.ILaunchConfigurationTabGroup&lt;/code&gt;.
       </documentation>
    </annotation>
 
@@ -169,7 +169,7 @@ interface &lt;b&gt;org.eclipse.debug.ui.ILaunchConfigurationTabGroup&lt;/b&gt;.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2000, 2003 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2004 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Common Public License v1.0 which 
 accompanies this distribution, and is available at 
