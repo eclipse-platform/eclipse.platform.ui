@@ -79,16 +79,23 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 			
 			fThread= new Thread() {
 				public void run() {
-					if (fThread != null) {
-						try {
+					
+					// http://bugs.eclipse.org/bugs/show_bug.cgi?id=17693
+					
+					try {
+						
+						if (fThread != null) {
 							String information= hover.getHoverInfo(fTextViewer, region);
 							setInformation(information, area);
-						} finally {
-							synchronized (fMutex) {
-								if (fTextViewer != null)
-									fTextViewer.removeTextListener(fStopper);
-								fThread= null;
-							}
+						} else {
+							setInformation(null, null);
+						}
+						
+					} finally {
+						synchronized (fMutex) {
+							if (fTextViewer != null)
+								fTextViewer.removeTextListener(fStopper);
+							fThread= null;
 						}
 					}
 				}
