@@ -121,9 +121,21 @@ public class AcceleratorScope {
 	 * Reset the current mode
 	 */
 	public static void resetMode(KeyBindingService service) {
-		currentMode = defaultMode;
-		if(getStatusLineManager(service)!=null)
-			getStatusLineManager(service).setMessage("");	 //$NON-NLS-1$
+		/*
+		 * Avoid clearing the status line when in the default mode.
+		 * This is a temporary fix to avoid clearing any status message
+		 * that might be from the action that was run.
+		 * 
+		 * This fix does not cover the case when we are in a different
+		 * mode and running an action. Currently we do not have API to
+		 * tell if the status line message has been modified by the action
+		 * that was run. 
+		 */
+		if (currentMode != defaultMode) {
+			currentMode = defaultMode;
+			if(getStatusLineManager(service)!=null)
+				getStatusLineManager(service).setMessage("");	 //$NON-NLS-1$
+		}
 	}
 	/**
 	 * Set the current mode and service
