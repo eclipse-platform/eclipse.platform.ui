@@ -221,6 +221,10 @@ public interface IJobManager {
 	 * thread also owns the rule at the time this method is called, then the rule will 
 	 * not be resumed until all threads have released the rule.
 	 * 
+	 * @deprecated This method is not safe and should not be used.
+	 * Suspending a scheduling rule violates the thread safety
+	 * of clients that use scheduling rules as a mutual exclusion mechanism,
+	 * and can result in concurrency problems in all clients that use the suspended rule.
 	 * @see #suspend(ISchedulingRule, IProgressMonitor)
 	 */
 	public void resume(ISchedulingRule rule);
@@ -309,6 +313,10 @@ public interface IJobManager {
 	 * execution soon afterwards. Deadlock will result if the thread responsible
 	 * for resuming the rule attempts to join a suspended job.
 	 * 
+	 * @deprecated This method is not safe and should not be used.
+	 * Suspending a scheduling rule violates the thread safety
+	 * of clients that use scheduling rules as a mutual exclusion mechanism,
+	 * and can result in concurrency problems in all clients that use the suspended rule.
 	 * @param rule The scheduling rule to suspend. Must not be <code>null</code>.
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 * reporting is not desired

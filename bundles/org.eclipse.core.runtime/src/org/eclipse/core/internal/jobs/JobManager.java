@@ -777,7 +777,8 @@ public class JobManager implements IJobManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/** (non-Javadoc)
+	 * @deprecated this method should not be used
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#resume(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 */
 	public final void resume(ISchedulingRule rule) {
@@ -1024,7 +1025,8 @@ public class JobManager implements IJobManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/** (non-Javadoc)
+	 * @deprecated this method should not be used
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#suspend(org.eclipse.core.runtime.jobs.ISchedulingRule, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public final void suspend(ISchedulingRule rule, IProgressMonitor monitor) {
