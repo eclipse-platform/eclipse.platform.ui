@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.update.internal.api.operations.*;
 import org.eclipse.update.internal.api.search.*;
@@ -66,7 +67,7 @@ public class FindUpdatesAction extends Action {
 				WizardDialog dialog = new ResizableWizardDialog(shell, wizard);
 				dialog.create();
 				dialog.getShell().setText(UpdateUI.getString("FindUpdatesAction.updates")); //$NON-NLS-1$
-				dialog.getShell().setSize(600, 500);
+				SWTUtil.setDialogSize(dialog, 600, 500);
 				if (dialog.open() == IDialogConstants.OK_ID)
 					UpdateUI.requestRestart(wizard.isRestartNeeded());				
 			}

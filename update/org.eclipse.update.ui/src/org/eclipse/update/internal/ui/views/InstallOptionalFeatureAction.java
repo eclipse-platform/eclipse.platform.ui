@@ -22,6 +22,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.update.internal.api.operations.*;
 import org.eclipse.update.internal.api.search.*;
@@ -85,7 +86,7 @@ public class InstallOptionalFeatureAction extends Action {
 		dialog.create();
 		dialog.getShell().setText(
 			UpdateUI.getString(KEY_OPTIONAL_INSTALL_TITLE));
-		dialog.getShell().setSize(600, 500);
+		SWTUtil.setDialogSize(dialog, 600, 500);
 		if (dialog.open() == IDialogConstants.OK_ID)
 			UpdateUI.requestRestart(wizard.isRestartNeeded());
 	}

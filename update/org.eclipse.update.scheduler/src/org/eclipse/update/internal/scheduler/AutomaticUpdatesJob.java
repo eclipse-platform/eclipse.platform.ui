@@ -23,6 +23,7 @@ import org.eclipse.update.core.IFeature;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.update.internal.api.operations.*;
 import org.eclipse.update.internal.api.search.*;
@@ -181,7 +182,7 @@ public class AutomaticUpdatesJob
 				wizard);
 		dialog.create();
 		dialog.getShell().setText("Updates");
-		dialog.getShell().setSize(600, 500);
+		SWTUtil.setDialogSize(dialog, 600, 500);
 		if (dialog.open() == IDialogConstants.OK_ID)
 			UpdateUI.requestRestart(wizard.isRestartNeeded());
 	}
