@@ -163,17 +163,17 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 * @param parentShell
 	 *            The parent shell, or <code>null</code> to create a top-level
 	 *            shell.
-	 * @param monitor
+	 * @param blockedMonitor
 	 *            The monitor that is currently blocked
 	 * @param reason
 	 *            A status describing why the monitor is blocked
 	 */
 	public static BlockedJobsDialog createBlockedDialog(Shell parentShell,
-			IProgressMonitor monitor, IStatus reason) {
+			IProgressMonitor blockedMonitor, IStatus reason) {
 		//use an existing dialog if available
 		if (singleton != null)
 			return singleton;
-		singleton = new BlockedJobsDialog(parentShell, monitor, reason);
+		singleton = new BlockedJobsDialog(parentShell, blockedMonitor, reason);
 		//create the job that will open the dialog after a delay.
 		WorkbenchJob dialogJob = new WorkbenchJob(WorkbenchMessages
 				.getString("EventLoopProgressMonitor.OpenDialogJobName")) { //$NON-NLS-1$
