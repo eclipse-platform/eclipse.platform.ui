@@ -77,8 +77,8 @@ protected void createButtonsForButtonBar(Composite parent) {
 protected Control createDialogArea(Composite parent) {
 	// Run super.
 	Composite composite = (Composite)super.createDialogArea(parent);
-
-	// Add perspective list.
+	
+		// Add perspective list.
 	list = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 	list.setLabelProvider(new PerspLabelProvider());
 	list.setContentProvider(new PerspContentProvider());
@@ -97,6 +97,7 @@ protected Control createDialogArea(Composite parent) {
 	spec.widthHint = LIST_WIDTH;
 	spec.heightHint = LIST_HEIGHT;
 	ctrl.setLayoutData(spec);
+	ctrl.setFont(parent.getFont());
 
 	// Return results.
 	return composite;

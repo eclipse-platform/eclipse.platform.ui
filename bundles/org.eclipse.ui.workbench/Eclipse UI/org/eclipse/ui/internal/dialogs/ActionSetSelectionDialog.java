@@ -10,6 +10,7 @@ import java.util.Iterator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -108,11 +109,12 @@ protected Control createDialogArea(Composite parent) {
 	layout.makeColumnsEqualWidth = true;
 	
 	GridData data;
+	Font font = parent.getFont();
 
 	// description
 	Label descLabel = new Label(composite, SWT.WRAP);
 	descLabel.setText(WorkbenchMessages.format("ActionSetSelection.selectLabel", new Object[] {perspective.getDesc().getLabel()})); //$NON-NLS-1$
-	descLabel.setFont(parent.getFont());
+	descLabel.setFont(font);
 	data = new GridData(GridData.FILL_HORIZONTAL);
 	data.horizontalSpan = 2;
 	descLabel.setLayoutData(data);
@@ -126,6 +128,7 @@ protected Control createDialogArea(Composite parent) {
 	actionSetGroup.setLayout(layout);
 	data = new GridData(GridData.FILL_BOTH);
 	actionSetGroup.setLayoutData(data);
+	actionSetGroup.setFont(font);
 	
 	// ...second the label
 	Label selectionLabel = new Label(actionSetGroup,SWT.NONE);
@@ -138,6 +141,7 @@ protected Control createDialogArea(Composite parent) {
 	data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
 	data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
 	actionSetViewer.getTree().setLayoutData(data);
+	actionSetViewer.getTree().setFont(font);
 	actionSetViewer.setLabelProvider(new ActionSetLabelProvider());
 	actionSetViewer.setContentProvider(new ActionSetContentProvider());
 	actionSetViewer.setInput(input);
@@ -169,10 +173,12 @@ protected Control createDialogArea(Composite parent) {
 	actionGroup.setLayout(layout);
 	data = new GridData(GridData.FILL_BOTH);
 	actionGroup.setLayoutData(data);
+	actionGroup.setFont(font);
 	
 	// ...second the label
 	actionLabel = new Label(actionGroup, SWT.NONE);
 	actionLabel.setText(WorkbenchMessages.getString("ActionSetSelection.details")); //$NON-NLS-1$
+	actionLabel.setFont(font);
 
 	// ...third the list of actions
 	Table actionTable = new Table(actionGroup, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -181,6 +187,7 @@ protected Control createDialogArea(Composite parent) {
 	data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
 	data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
 	actionTable.setLayoutData(data);
+	actionTable.setFont(font);
 
 	actionViewer = new TableViewer(actionTable);
 	actionViewer.setLabelProvider(new WorkbenchLabelProvider());
