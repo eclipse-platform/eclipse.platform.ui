@@ -329,7 +329,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 					String password = retrievePassword();
 					if (user == null) {
 						// This is possible if the cache was cleared somehow for a location with a mutable username
-						throw new CVSAuthenticationException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSRepositoryLocation.usernameRequired"))); //$NON-NLS-1$
+						throw new CVSAuthenticationException(new CVSStatus(CVSStatus.ERROR, CVSAuthenticationException.RETRY, Policy.bind("CVSRepositoryLocation.usernameRequired"))); //$NON-NLS-1$
 					}
 					if (password == null)
 						password = "";//$NON-NLS-1$ 
