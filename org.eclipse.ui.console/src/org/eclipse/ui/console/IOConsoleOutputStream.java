@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.internal.console.IOConsolePartitioner;
 
 /**
@@ -54,8 +55,8 @@ public class IOConsoleOutputStream extends OutputStream {
     private int fontStyle;
 
     private String fEncoding;
+    private String fDefaultEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
     
-
     IOConsoleOutputStream(IOConsole console) {
         this.console = console;
         this.partitioner = (IOConsolePartitioner) console.getPartitioner();
@@ -161,7 +162,11 @@ public class IOConsoleOutputStream extends OutputStream {
      * @see java.io.OutputStream#write(byte[], int, int)
      */
     public void write(byte[] b, int off, int len) throws IOException {
-        encodedWrite(new String(b, off, len, fEncoding));
+        if (fEncoding!=null && !fEncoding.equals(fDefaultEncoding)) {
+            encodedWrite(new String(b, off, len, fEncoding));
+        } else {
+            encodedWrite(new String(b, off, len));
+        }
     }
     /*
      *  (non-Javadoc)
@@ -184,9 +189,11 @@ public class IOConsoleOutputStream extends OutputStream {
      * @throws IOException if the stream is closed.
      */
     public synchronized void write(String str) throws IOException {
-        byte[] defaultBytes = str.getBytes();
-        String encoded = new String(defaultBytes, fEncoding);
-        encodedWrite(encoded);
+        if (fEncoding!=null && !fEncoding.equals(fDefaultEncoding)) {
+	        byte[] defaultBytes = str.getBytes();
+	        str = new String(defaultBytes, fEncoding);
+        }
+        encodedWrite(str);
     }
     
     private void encodedWrite(String encodedString) throws IOException {
