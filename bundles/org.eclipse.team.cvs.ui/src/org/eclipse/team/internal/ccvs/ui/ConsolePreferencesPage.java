@@ -73,6 +73,7 @@ public class ConsolePreferencesPage extends PreferencePage implements IWorkbench
 		errorColorEditor = createColorFieldEditor(ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR,
 			Policy.bind("ConsolePreferencePage.errorColor"), composite); //$NON-NLS-1$
 
+		CVSUIPlugin.getPlugin().ensureInit_PREF_CONSOLE_FONT();	
 		fontEditor = new WorkbenchChainedTextFontFieldEditor(ICVSUIConstants.PREF_CONSOLE_FONT,
 			Policy.bind("ConsolePreferencePage.font"), composite); //$NON-NLS-1$
 		fontEditor.setPreferencePage(this);

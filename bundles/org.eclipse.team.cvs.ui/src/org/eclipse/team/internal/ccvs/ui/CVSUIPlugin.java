@@ -529,6 +529,19 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		}
 	}
 	
+	/*
+	 * Ensure that the PREF_CONSOLE_FONT is in the preference store.
+	 * This method avoids initializePreferences() having to access WorkbenchChainedTextFontFieldEditor
+	 * and trip plugin startup of the text plugin.
+	 */
+	protected void ensureInit_PREF_CONSOLE_FONT() {
+		IPreferenceStore store = getPreferenceStore();
+		
+		if(! store.contains(ICVSUIConstants.PREF_CONSOLE_FONT)) {
+			WorkbenchChainedTextFontFieldEditor.startPropagate(store, ICVSUIConstants.PREF_CONSOLE_FONT);
+		}
+	}
+
 	/**
 	 * Initializes the preferences for this plugin if necessary.
 	 */
@@ -556,7 +569,6 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		PreferenceConverter.setDefault(store, ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR, new RGB(0, 0, 0));
 		PreferenceConverter.setDefault(store, ICVSUIConstants.PREF_CONSOLE_MESSAGE_COLOR, new RGB(0, 0, 255));
 		PreferenceConverter.setDefault(store, ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR, new RGB(255, 0, 0));
-		WorkbenchChainedTextFontFieldEditor.startPropagate(store, ICVSUIConstants.PREF_CONSOLE_FONT);
 		store.setDefault(ICVSUIConstants.PREF_CONSOLE_AUTO_OPEN, false);
 		
 		store.setDefault(ICVSUIConstants.PREF_FILETEXT_DECORATION, CVSDecoratorConfiguration.DEFAULT_FILETEXTFORMAT);
