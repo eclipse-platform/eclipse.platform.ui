@@ -23,7 +23,7 @@ public final class AntUIPlugin extends AbstractUIPlugin{
 	
 	public static final String PROPERTIES_MESSAGES = "org.eclipse.ant.internal.ui.messages";
 	
-	private static final String ANT_ICON_RELATIVE_PATH = "icons/basic/cview/ant_view.gif";
+	private static final String ANT_ICON_RELATIVE_PATH = "icons/full/eview16/ant_view.gif";
 	
 	/**
 	 * The single instance of this plug-in runtime class.

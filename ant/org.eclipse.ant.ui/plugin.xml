@@ -43,7 +43,7 @@
 	<view
 		id="org.eclipse.ant.ui.antconsole"
 		name="%antConsole"
-		icon="icons/basic/cview/ant_view.gif"
+		icon="icons/full/cview16/ant_view.gif"
 		category="org.eclipse.ant.ui"
 		class="org.eclipse.ant.internal.ui.AntConsole">
 	</view>
@@ -69,7 +69,7 @@
 		id="org.eclipse.ant.ui.antActionSet">
 	  	<action label="%executeAntLabel" 
 	  		pulldown="true" 
-	  		icon="icons/basic/cview/ant_view.gif" 
+	  		icon="icons/full/eview16/ant_view.gif" 
 	  		tooltip="%executeAntTooltip" 
 	  		class="org.eclipse.ant.internal.ui.AntLaunchDropDownAction" 
 	  		toolbarPath="ant" 
