@@ -187,9 +187,12 @@ public interface IWorkbenchWindowConfigurer {
 	
 	/**
 	 * Returns the menu manager for the main menu bar of the workbench window.
+	 * <p>
+	 * Note that every workbench window has a menu bar, even though it may not
+	 * be showing.
+	 * </p>
 	 * 
 	 * @return the menu manager
-	 * @issue can this return null if you specify no menu bar? looking at the code, it seems impossible
 	 */
 	public IMenuManager getMenuManager();
 		
@@ -203,10 +206,20 @@ public interface IWorkbenchWindowConfigurer {
 	 * 
 	 * @param id the id assigned to this tool bar
 	 * @return the tool bar manager for the new tool bar item
-	 * @issue TBD String ADDITIONS = "...";
-	 * @issue TBD String EDITOR_TOOLBAR_ID = "...";
 	 */
-	public IToolBarManager addToolbar(String id);
+	public IToolBarManager addToolBar(String id);
+	
+	/**
+	 * Removes the tool bar item with the given id from the tool bar of the
+	 * workbench window. Ignored if there is no tool bar item with the given id. 
+	 * <p>
+	 * Note that every workbench window has a tool bar, even though it may not
+	 * be showing.
+	 * </p>
+	 * 
+	 * @param id the tool bar id
+	 */
+	public void removeToolBar(String id);
 	
 	/**
 	 * Returns the tool bar manager for the tool bar item with the given id
@@ -220,30 +233,33 @@ public interface IWorkbenchWindowConfigurer {
 	 * @param id the id of the tool bar item
 	 * @return the tool bar manager for the tool bar item with the given id
 	 */
-	public IToolBarManager getToolbar(String id);
+	public IToolBarManager getToolBar(String id);
 
 	/**
 	 * Adds the special editor tool bar group to the tool bar of the workbench
-	 * window. The new tool bar item is added after any existing ones.
+	 * window. The new tool bar item is added after any existing ones. The id
+	 * of editor tool bar item is always 
+	 * {@link EDITOR_TOOLBAR_ID EDITOR_TOOLBAR_ID}, and consists of a canned
+	 * arrangement of buttons pre-bound to editor-specific commands.
 	 * <p>
 	 * Note that every workbench window has a tool bar, even though it may not
 	 * be showing.
 	 * </p>
 	 * 
 	 * @return the tool bar manager for the new tool bar item
+	 * @issue where is EDITOR_TOOLBAR_ID defined?
+	 * @see EDITOR_TOOLBAR_ID;
 	 */
 	public void addEditorToolbarGroup();
 	
 	/**
-     * @issue TBD
-	 */
-	public void addToolbarGroup(String groupId);
-
-	/**
 	 * Returns the status line manager of the workbench window.
+	 * <p>
+	 * Note that every workbench window has a status line, even though it may
+	 * not be showing.
+	 * </p>
 	 * 
 	 * @return the status line manager
-	 * @issue can this return null if you specify no menu bar? looking at the code, it seems impossible
 	 */
 	public IStatusLineManager getStatusLineManager();
 }
