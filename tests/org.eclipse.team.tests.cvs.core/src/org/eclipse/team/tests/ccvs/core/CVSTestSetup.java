@@ -26,6 +26,7 @@ public class CVSTestSetup extends TestSetup {
 	public static final boolean LOCAL_REPO;
 	public static final String RSH;
 	public static final int WAIT_FACTOR;
+	public static final int COMPRESSION_LEVEL;
 	
 	public static CVSRepositoryLocation repository;
 	
@@ -38,6 +39,7 @@ public class CVSTestSetup extends TestSetup {
 		RSH = System.getProperty("eclipse.cvs.rsh", "rsh");
 		LOCAL_REPO = Boolean.valueOf(System.getProperty("eclipse.cvs.localRepo", "false")).booleanValue();
 		WAIT_FACTOR = Integer.parseInt(System.getProperty("eclipse.cvs.waitFactor", "1"));
+		COMPRESSION_LEVEL = Integer.parseInt(System.getProperty("eclipse.cvs.compressionLevel", "0"));
 	}
 
 	public static void loadProperties() {
@@ -155,6 +157,7 @@ public class CVSTestSetup extends TestSetup {
 	public void setUp() throws CVSException {
 		if (repository == null)
 			repository = setupRepository(REPOSITORY_LOCATION);
+		CVSProviderPlugin.getPlugin().setCompressionLevel(COMPRESSION_LEVEL);
 	}
 
 	protected CVSRepositoryLocation setupRepository(String location) throws CVSException {
