@@ -15,10 +15,11 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Sash;
-
 import org.eclipse.ui.IPageLayout;
 
 /**
@@ -36,6 +37,45 @@ public class LayoutTreeNode extends LayoutTree {
 public LayoutTreeNode(LayoutPartSash sash) {
 	super(sash);
 }
+
+/**
+ * Traverses the tree to find the part that intersects the given point
+ * 
+ * @param toFind
+ * @return the part that intersects the given point
+ */
+public LayoutPart findPart(Point toFind) {
+	if (!children[0].isVisible()) {
+		if (!children[1].isVisible()) {
+			return null;
+		}
+		
+		return children[1].findPart(toFind);
+	} else {
+		if (!children[1].isVisible()) {
+			return children[0].findPart(toFind);
+		}
+	}
+	
+	LayoutPartSash sash = getSash();
+	
+	Rectangle bounds = sash.getBounds();
+	
+	int relativePos = Geometry.getRelativePosition(bounds, toFind);
+	
+	if(sash.isVertical()) {
+		if (toFind.x < bounds.x + (bounds.width / 2)) {
+			return children[0].findPart(toFind);
+		} 
+		return children[1].findPart(toFind);
+	} else {
+		if (toFind.y < bounds.y + (bounds.height / 2)) {
+			return children[0].findPart(toFind);
+		}
+		return children[1].findPart(toFind);
+	}
+}
+
 
 public boolean fixedHeight() {
 	return (!children[0].isVisible() || children[0].fixedHeight())

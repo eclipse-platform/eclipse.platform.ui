@@ -42,6 +42,16 @@ public LayoutPart computeRelation(ArrayList relations) {
 	return part;
 }
 
+/**
+ * Locates the part that intersects the given point
+ * 
+ * @param toFind
+ * @return
+ */
+public LayoutPart findPart(Point toFind) {
+	return part;
+}
+
 public boolean fixedHeight() {
 	return !part.resizesVertically();
 }
