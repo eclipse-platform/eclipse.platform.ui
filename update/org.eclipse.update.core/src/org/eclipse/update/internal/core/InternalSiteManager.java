@@ -65,14 +65,6 @@ public class InternalSiteManager {
 			type = (String) getSitesTypes().get(protocol);
 		}
 
-		try {
-		// encode URL if not already encoded
-		if (siteURL.toExternalForm().indexOf("%")==-1)
-			siteURL = UpdateManagerUtils.encode(siteURL);
-		} catch (MalformedURLException e){
-			throw newCoreException("Cannot encode URL:",e);
-		}
-
 		// if error
 		Exception caughtException = null;
 

@@ -31,7 +31,10 @@ public class SiteURLFactory extends BaseSiteFactory {
 			SiteURLContentProvider contentProvider = new SiteURLContentProvider(url);
 		
 			siteXML = new URL(url,Site.SITE_XML);
-			siteStream = siteXML.openStream();
+			
+			URL resolvedURL = URLEncoder.encode(siteXML);
+			siteStream = resolvedURL.openStream();
+			
 			SiteModelFactory factory = (SiteModelFactory) this;
 			site = (Site)factory.parseSite(siteStream);
 			

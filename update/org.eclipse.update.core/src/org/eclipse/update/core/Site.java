@@ -65,7 +65,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 * Saves the site into the site.xml
 	 */
 	public void save() throws CoreException {
-		File file = new File(UpdateManagerUtils.decode(getURL()) + SITE_XML);
+		File file = new File(getURL().getFile() + SITE_XML);
 		try {
 			PrintWriter fileWriter = new PrintWriter(new FileOutputStream(file));
 			Writer writer = new Writer();

@@ -33,7 +33,7 @@ public class TestExecutableInstall extends UpdateManagerTestCase {
 		localSite.install(remoteFeature,null);
 		
 		// verify
-		String site = UpdateManagerUtils.decode(localSite.getURL());
+		String site = localSite.getURL().getFile();
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry",(entries!=null && entries.length!=0));
 		String pluginName= entries[0].getVersionIdentifier().toString();

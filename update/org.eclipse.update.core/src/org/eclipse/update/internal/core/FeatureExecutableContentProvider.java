@@ -50,7 +50,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		// get the URL of the Archive file that contains the plugin entry
 		ISiteContentProvider provider = feature.getSite().getSiteContentProvider();
 		URL fileURL = provider.getArchiveReference(getArchiveID(pluginEntry));
-		result = UpdateManagerUtils.decode(fileURL);
+		result = fileURL.getFile();
 
 		// return the list of all subdirectories
 		if (!result.endsWith(File.separator))
@@ -66,8 +66,8 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	 * return the path for the DefaultFeature
 	 */
 	private String getFeaturePath() throws IOException {
-		String result = UpdateManagerUtils.decode(feature.getURL());
-		;
+		String result = feature.getURL().getFile();
+
 
 		// return the list of all subdirectories
 		if (!(result.endsWith(File.separator) || result.endsWith("/")))
@@ -170,7 +170,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 			// get the URL of the Archive file that contains the plugin entry
 			ISiteContentProvider provider = feature.getSite().getSiteContentProvider();
 			URL fileURL = provider.getArchiveReference(getArchiveID(nonPluginEntry));
-			String fileString = UpdateManagerUtils.decode(fileURL);
+			String fileString = fileURL.getFile();
 
 			File nonPluginData = new File(fileString);
 			if (!nonPluginData.exists())

@@ -161,7 +161,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 		// protocol is a file protocol		
 		if ("file".equals(url.getProtocol())) {
 			// either the URL is pointing to a directory or to a JAR file
-			File pluginDir = UpdateManagerUtils.decodeFile(url);
+			File pluginDir = new File(url.getFile());
 			if (!pluginDir.exists()) {
 				// plugin dir does not exist attmpt to add a '/' and see if it is a directory
 				if (!pluginDir.getAbsolutePath().endsWith(File.separator)) {

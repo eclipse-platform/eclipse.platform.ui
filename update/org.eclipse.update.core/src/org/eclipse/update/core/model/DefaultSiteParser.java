@@ -215,7 +215,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	 */
 	private void processFeature(Attributes attributes) {
 		FeatureReferenceModel feature = factory.createFeatureReferenceModel();
-		String urlInfo = UpdateManagerUtils.encode(attributes.getValue("url"));
+		String urlInfo = attributes.getValue("url");
 		if (urlInfo == null || urlInfo.trim().equals(""))
 			internalError("Invalid URL tag of a feature tag. Value is required.");
 		feature.setURLString(urlInfo);
@@ -248,7 +248,6 @@ public class DefaultSiteParser extends DefaultHandler {
 			if (url == null || url.trim().equals("")) {
 				internalError("The url tag of an archive is null or does not exist.");
 			} else {
-				url = UpdateManagerUtils.encode(url);
 				archive.setURLString(url);
 
 				SiteMapModel site = (SiteMapModel) objectStack.peek();
@@ -349,7 +348,15 @@ public class DefaultSiteParser extends DefaultHandler {
 
 				case STATE_DESCRIPTION :
 					stateStack.pop();
-					URLEntryModel info = (URLEntry) objectStack.pop();
+
+					String text = null;					
+					if (objectStack.peek() instanceof String) {
+						text = (String) objectStack.pop();
+					}
+										
+					URLEntryModel info = (URLEntryModel) objectStack.pop();
+					if (text!=null) info.setAnnotation(text);
+					
 					int innerState = ((Integer) stateStack.peek()).intValue();
 					switch (innerState) {
 

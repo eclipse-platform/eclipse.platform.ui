@@ -25,7 +25,7 @@ public class TestDataEntryInstall extends UpdateManagerTestCase {
 	public void testDataEntrySite() throws Exception {
 
 		//cleanup target 
-		File target = UpdateManagerUtils.decodeFile(TARGET_FILE_SITE);
+		File target = new File(TARGET_FILE_SITE.getFile());
 		UpdateManagerUtils.removeFromFileSystem(target);
 		
 		URL newURL =new File(dataPath + "dataEntrySiteTest/site.xml").toURL();
@@ -39,7 +39,7 @@ public class TestDataEntryInstall extends UpdateManagerTestCase {
 			localSite.install(remoteFeature, null);
 
 			// verify
-			String site = UpdateManagerUtils.decode(localSite.getURL());
+			String site = localSite.getURL().getFile();
 			INonPluginEntry[] entries = remoteFeature.getNonPluginEntries();
 			assertTrue("no data entry", (entries != null && entries.length != 0));
 			String pluginName = entries[0].getIdentifier().toString();

@@ -33,7 +33,7 @@ public class SiteFileContentProvider extends SiteContentProvider {
  	 * move into contentSelector, comment to provider and consumer (SiteFile)
  	 */
 	private String getFeaturePath(VersionedIdentifier featureIdentifier) {
-		String path = UpdateManagerUtils.decode(getURL());
+		String path = getURL().getFile();
 		String featurePath = path + INSTALL_FEATURE_PATH + featureIdentifier.toString();
 		return featurePath;
 	}

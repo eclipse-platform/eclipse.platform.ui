@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.eclipse.update.internal.core.URLEncoder;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
@@ -77,8 +78,10 @@ public class ContentReference {
 		if (file != null)
 			return new FileInputStream(file);
 		else if (url != null) {
-			if (connection == null)
-				connection = url.openConnection();
+			if (connection == null){
+				URL resolvedURL = URLEncoder.encode(url);
+				connection = resolvedURL.openConnection();
+			}
 			return connection.getInputStream();
 		} else
 			throw new IOException("Unable to create input stream");
@@ -130,7 +133,7 @@ public class ContentReference {
 			return file;
 			
 		if (url!=null && url.getProtocol().equals("file"))
-			return UpdateManagerUtils.decodeFile(url);
+			return new File(url.getFile());
 			
 		throw new IOException("Unable to return reference "+(url==null ? "" : url.toExternalForm())+" as file");
 	}

@@ -10,6 +10,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.DefaultSiteParser;
 import org.eclipse.update.core.model.SiteMapModel;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.SiteFileFactory;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.tests.UpdateManagerTestCase;
@@ -31,8 +32,8 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		IFeatureReference[] feature = remoteSite.getFeatureReferences();
 		ICategory[] categories = remoteSite.getCategories();
 
-		String path = UpdateManagerUtils.decode(remoteUrl);
-		String path2 = UpdateManagerUtils.decode(remoteSite.getInfoURL());
+		String path = remoteUrl.getFile();
+		String path2 = remoteSite.getInfoURL().getFile();
 		assertEquals(path + "info/siteInfo.html", path2);
 
 	}
@@ -51,7 +52,8 @@ public class TestSiteParse extends UpdateManagerTestCase {
 
 		URL remoteURL = new URL(SOURCE_FILE_SITE + "parsertests/site.xml");
 		DefaultSiteParser parser = new DefaultSiteParser(new SiteFileFactory());
-		SiteMapModel remoteSite = parser.parse(remoteURL.openStream());
+		URL resolvedURL = URLEncoder.encode(remoteURL);		
+		SiteMapModel remoteSite = parser.parse(resolvedURL.openStream());
 		remoteSite.resolve(remoteURL, null);
 
 		FeatureReferenceModel[] feature = remoteSite.getFeatureReferenceModels();
@@ -63,8 +65,30 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		assertTrue("Wrong number of archives", archives.length == 0);
 
 		String path = new URL(SOURCE_FILE_SITE + "parsertests/").getFile();
-		String path2 = UpdateManagerUtils.decode(remoteSite.getDescriptionModel().getURL());
+		String path2 = remoteSite.getDescriptionModel().getURL().getFile();
 		assertEquals(path + "index.html", path2);
+
+	}
+
+	public void testParseValid2() throws Exception {
+
+		URL remoteURL = new URL(SOURCE_FILE_SITE + "parsertests/reddot.xml");
+		DefaultSiteParser parser = new DefaultSiteParser(new SiteFileFactory());
+		URL resolvedURL = URLEncoder.encode(remoteURL);		
+		SiteMapModel remoteSite = parser.parse(resolvedURL.openStream());
+		remoteSite.resolve(remoteURL, null);
+
+		FeatureReferenceModel[] feature = remoteSite.getFeatureReferenceModels();
+		SiteCategoryModel[] categories = remoteSite.getCategoryModels();
+		ArchiveReferenceModel[] archives = remoteSite.getArchiveReferenceModels();
+
+		assertTrue("Wrong number of features", feature.length == 2);
+		assertTrue("Wrong number of categories", categories.length == 1);
+		assertTrue("Wrong number of archives", archives.length == 2);
+
+		String path = new URL(SOURCE_FILE_SITE + "parsertests/").getFile();
+		String path2 = remoteSite.getDescriptionModel().getURL().getFile();
+		assertEquals(path + "info/siteInfo.html", path2);
 
 	}
 

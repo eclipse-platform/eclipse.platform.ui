@@ -48,7 +48,7 @@ public abstract class UpdateManagerTestCase extends TestCase {
 		IPluginDescriptor dataDesc = Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.update.tests.core");
 		URL resolvedURL = Platform.resolve(dataDesc.getInstallURL());
 		URL dataURL = UpdateManagerUtils.add(DATA_PATH,resolvedURL);
-		dataPath = UpdateManagerUtils.decode(dataURL);
+		dataPath = dataURL.getFile();
 		//URL dataURL = new URL(resolvedURL.getProtocol(), resolvedURL.getHost(), resolvedURL.getPort(),dataPath);
 		String homePath = (System.getProperty("user.home")).replace(File.separatorChar,'/');
 
@@ -58,9 +58,9 @@ public abstract class UpdateManagerTestCase extends TestCase {
 		}
 
 		try {
-			String path = UpdateManagerUtils.decode(dataURL);
+			String path = dataURL.getFile();
 			SOURCE_FILE_SITE = new File(path).toURL();
-			SOURCE_HTTP_SITE = new URL("http", getHttpHost(),getHttpPort(), UpdateManagerUtils.encode(bundle.getString("HTTP_PATH_1")));
+			SOURCE_HTTP_SITE = new URL("http", getHttpHost(),getHttpPort(), bundle.getString("HTTP_PATH_1"));
 			TARGET_FILE_SITE = new URL("file",null, homePath +"/target/");
 		} catch (Exception e) {
 			fail(e.toString());

@@ -150,7 +150,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		// save the configuration
 		if (getURL().getProtocol().equalsIgnoreCase("file")) {
 			// the location points to a file
-			File file = UpdateManagerUtils.decodeFile(getURL());
+			File file = new File(getURL().getFile());
 			UpdateManagerUtils.removeFromFileSystem(file);
 		}
 	}
@@ -194,7 +194,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		// save the configuration
 		if (getURL().getProtocol().equalsIgnoreCase("file")) {
 			// the location points to a file
-			File file = UpdateManagerUtils.decodeFile(getURL());
+			File file = new File(getURL().getFile());
 			export(file);
 		}
 	}

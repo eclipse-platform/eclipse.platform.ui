@@ -43,9 +43,11 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			URL location = Platform.resolve(platformConfig.getConfigurationLocation());
 	 		configXML = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
 			site.setLocationURLString(configXML.toExternalForm());
-			site.resolve(configXML, null);	 		
+			site.resolve(configXML, null);
+				 		
 			//if the file exists, parse it			
-			new SiteLocalParser(configXML.openStream(), site);
+			URL resolvedURL = URLEncoder.encode(configXML);
+			new SiteLocalParser(resolvedURL.openStream(), site);
 		} catch (FileNotFoundException exception) {
 			// file doesn't exist, ok, log it and continue 
 			// log no config
@@ -178,7 +180,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			File file = null;
 			try {
 				URL newURL = UpdateManagerUtils.getURL(getLocationURL(), SITE_LOCAL_FILE, null);
-				file = UpdateManagerUtils.decodeFile(newURL);
+				file = new File(newURL.getFile());
 				PrintWriter fileWriter = new PrintWriter(new FileOutputStream(file));
 				Writer writer = new Writer();
 				writer.writeSite(this, fileWriter);

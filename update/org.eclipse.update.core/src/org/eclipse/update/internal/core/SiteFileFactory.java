@@ -59,17 +59,20 @@ public class SiteFileFactory extends BaseSiteFactory {
 		Site site = null;
 		URL siteXML = null;
 		InputStream siteStream = null;
-
+		SiteModelFactory factory = (SiteModelFactory) this;
+		
 		try {
 			// remove site.xml from the URL
 			url = removeSiteXML(url);
-
 			SiteFileContentProvider contentProvider = new SiteFileContentProvider(url);
 
 			try {
+				
 				siteXML = new URL(contentProvider.getURL(), Site.SITE_XML);
-				siteStream = siteXML.openStream();
-				SiteModelFactory factory = (SiteModelFactory) this;
+				
+				URL resolvedURL = URLEncoder.encode(siteXML);
+				siteStream = resolvedURL.openStream();
+				
 				site = (Site) factory.parseSite(siteStream);
 			} catch (IOException e) {
 				if (forceCreation)
@@ -116,7 +119,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 		this.url = url;
 		this.site = (Site) createSiteMapModel();
 
-		String path = UpdateManagerUtils.decode(this.url);
+		String path = this.url.getFile();
 		String pluginPath = path + Site.DEFAULT_PLUGIN_PATH;
 		String fragmentPath = path + Site.DEFAULT_FRAGMENT_PATH;
 
@@ -145,7 +148,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 */
 	private void parseExecutableFeature() throws CoreException {
 
-		String path = UpdateManagerUtils.decode(this.url);
+		String path = this.url.getFile();
 		String featurePath = path + Site.INSTALL_FEATURE_PATH;
 
 		File featureDir = new File(featurePath);
@@ -185,7 +188,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 	*/
 	private void parsePackagedFeature() throws CoreException {
 
-		String path = UpdateManagerUtils.decode(this.url);
+		String path = this.url.getFile();
 		String featurePath = path + Site.DEFAULT_FEATURE_PATH;
 
 		// FEATURES

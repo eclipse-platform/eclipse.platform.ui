@@ -26,7 +26,7 @@ public class TestSpaceInInstall extends UpdateManagerTestCase {
 
 		//cleanup target 
 		URL testURL = UpdateManagerUtils.add("test site space/",TARGET_FILE_SITE); 
-		String testPath = UpdateManagerUtils.decode(testURL);
+		String testPath = testURL.getFile();
 		File target = new File(testPath);
 		UpdateManagerUtils.removeFromFileSystem(target);
 		
@@ -50,7 +50,7 @@ public class TestSpaceInInstall extends UpdateManagerTestCase {
 			if (remoteFeature.getFeatureContentProvider() instanceof FeatureExecutableContentProvider) execFeature = true;
 
 			// verify
-			String site = UpdateManagerUtils.decode(localSite.getURL());
+			String site = localSite.getURL().getFile();
 			IPluginEntry[] entries = remoteFeature.getPluginEntries();
 			assertTrue("no plugins entry", (entries != null && entries.length != 0));
 			String pluginName = entries[0].getVersionIdentifier().toString();
@@ -104,7 +104,7 @@ public class TestSpaceInInstall extends UpdateManagerTestCase {
 			if (remoteFeature.getFeatureContentProvider() instanceof FeatureExecutableContentProvider) execFeature = true;
 
 			// verify
-			String site = UpdateManagerUtils.decode(localSite.getURL());
+			String site = localSite.getURL().getFile();			
 			IPluginEntry[] entries = remoteFeature.getPluginEntries();
 			assertTrue("no plugins entry", (entries != null && entries.length != 0));
 			String pluginName = entries[0].getVersionIdentifier().toString();

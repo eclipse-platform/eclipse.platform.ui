@@ -22,7 +22,7 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 	
 	public void testFile() throws Exception {
 		ISite fileSite = SiteManager.getSite(TARGET_FILE_SITE);
-		String site = URLDecoder.decode(fileSite.getURL().toExternalForm());		
+		String site = fileSite.getURL().toExternalForm();		
 		assertEquals(TARGET_FILE_SITE.toExternalForm(), site);
 	}
 	

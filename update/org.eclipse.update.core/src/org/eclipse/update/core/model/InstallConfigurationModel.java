@@ -15,6 +15,7 @@ import java.util.ResourceBundle;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.update.internal.core.URLEncoder;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.xml.sax.SAXException;
 
@@ -29,7 +30,8 @@ public class InstallConfigurationModel extends ModelObject {
 	 */
 	public void initialize() throws CoreException {
 		try {
-			new InstallConfigurationParser(getURL().openStream(), this);
+			URL resolvedURL = URLEncoder.encode(getURL());
+			new InstallConfigurationParser(resolvedURL.openStream(), this);
 		} catch (FileNotFoundException exception) {
 			// file doesn't exist, ok, log it and continue 
 			// log no config
