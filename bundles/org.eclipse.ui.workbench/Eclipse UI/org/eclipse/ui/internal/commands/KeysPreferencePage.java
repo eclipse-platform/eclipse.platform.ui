@@ -607,6 +607,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData.horizontalSpan = 2;		
 		gridData.widthHint = 300;
 		textKeySequence.setLayoutData(gridData);
+        textKeySequence.setMaxStrokes(4);
 		
 		textKeySequence.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {

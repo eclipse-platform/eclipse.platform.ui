@@ -137,7 +137,7 @@ public final class CommandManager implements ICommandManager {
 		List keyStrokes = keySequence.getKeyStrokes();
 		int size = keyStrokes.size();
 			
-		if (size == 0)
+		if (size == 0 || size > 4)
 			return false;
 		else 
 			for (int i = 0; i < size; i++) {

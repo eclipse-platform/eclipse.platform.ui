@@ -37,10 +37,18 @@ import org.eclipse.ui.keys.NaturalKey;
  */
 public final class KeySequenceText {
 
+	/** 
+	 * The special integer value for the maximum number of strokes indicating
+	 * that an infinite number should be allowed.
+	 */
+	public static final int INFINITE = -1;
 	/** An empty string instance for use in clearing text values. */
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+
 	/** The text of the key sequence -- containing only the complete key strokes. */
 	private KeySequence keySequence = null;
+	/** The maximum number of key strokes permitted in the sequence. */
+	private int maxStrokes = INFINITE;
 	/** The incomplete key stroke, if any. */
 	private KeyStroke temporaryStroke = null;
 	/** The text widget that is wrapped for this class. */
@@ -56,12 +64,12 @@ public final class KeySequenceText {
 	public KeySequenceText(final Composite composite) {
 		// Set up the text field.
 		text = new Text(composite, SWT.BORDER);
-		
+
 		/* TODO doug: pls. investigate. works until one backspaces to an empty text field, at which point the font gets changed somehow 
 		if ("carbon".equals(SWT.getPlatform())) {
 			// don't worry about this font name here, it is the official menu font and point size on the mac.
 			final Font font = new Font(text.getDisplay(), "Lucida Grande", 13, SWT.NORMAL); //$NON-NLS-1$
-
+		
 			text.addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
 					font.dispose();
@@ -142,18 +150,17 @@ public final class KeySequenceText {
 	}
 
 	/**
-	 * A mutator for the layout information associated with the wrapped widget.
-	 * @param layoutData The layout information; must not be <code>null</code>.
-	 */
-	public final void setLayoutData(final Object layoutData) {
-		text.setLayoutData(layoutData);
-	}
-
-	/**
+	 * <p>
 	 * A mutator for the key sequence and incomplete stroke stored within this
 	 * widget.  This does some checking to see if the incomplete stroke is 
 	 * really incomplete; if it is complete, then it is rolled into the key 
 	 * sequence.  The text and caret position are updated.
+	 * </p>
+	 * <p>
+	 * All sequences are limited to maxStrokes number of strokes in length.
+	 * If there are already that number of strokes, then it does not show
+	 * incomplete strokes, and does not keep track of them.
+	 * </p>
 	 *   
 	 * @param newKeySequence The new key sequence for this widget; may be
 	 * <code>null</code> if none.
@@ -164,16 +171,42 @@ public final class KeySequenceText {
 		// Figure out whether the stroke should be rolled in.
 		if (isComplete(incompleteStroke)) {
 			if (newKeySequence == null) {
+				// This is guaranteed to be possible by setMaxStrokes
 				keySequence = KeySequence.getInstance(incompleteStroke);
 			} else {
 				final List keyStrokes = new ArrayList(newKeySequence.getKeyStrokes());
 				keyStrokes.add(incompleteStroke);
+				if (maxStrokes != INFINITE) {
+					final int keyStrokesSize = keyStrokes.size();
+					for (int i = keyStrokesSize - 1; i >= maxStrokes; i--) {
+						keyStrokes.remove(i);
+					}
+				}
 				keySequence = KeySequence.getInstance(keyStrokes);
 			}
 			temporaryStroke = null;
 		} else {
-			keySequence = newKeySequence;
-			temporaryStroke = incompleteStroke;
+			if ((newKeySequence != null) && (maxStrokes != INFINITE)) {
+				final List untrimmedKeyStrokes = newKeySequence.getKeyStrokes();
+				final int keyStrokesSize = untrimmedKeyStrokes.size();
+				if (keyStrokesSize > maxStrokes) {
+					final List keyStrokes = new ArrayList(untrimmedKeyStrokes);
+					for (int i = keyStrokesSize - 1; i >= maxStrokes; i--) {
+						keyStrokes.remove(i);
+					}
+					keySequence = KeySequence.getInstance(keyStrokes);
+					temporaryStroke = null;
+				} else if (keyStrokesSize == maxStrokes) {
+                    keySequence = newKeySequence;
+                    temporaryStroke = null;
+                } else {
+					keySequence = newKeySequence;
+					temporaryStroke = incompleteStroke;
+				}
+			} else {
+				keySequence = newKeySequence;
+				temporaryStroke = incompleteStroke;
+			}
 		}
 
 		/* Create a dummy (and rather invalid) sequence to get localized display
@@ -195,10 +228,31 @@ public final class KeySequenceText {
 			dummySequence = KeySequence.getInstance(keyStrokes);
 		}
 
-		text.setText(/* TODO "carbon".equals(SWT.getPlatform()) ? KeySupport.formatCarbon(dummySequence) : */ dummySequence.format());
+		text.setText(/* TODO "carbon".equals(SWT.getPlatform()) ? KeySupport.formatCarbon(dummySequence) : */
+		dummySequence.format());
 
 		// Update the caret position.
 		text.setSelection(text.getText().length());
+	}
+
+	/**
+	 * A mutator for the layout information associated with the wrapped widget.
+	 * @param layoutData The layout information; must not be <code>null</code>.
+	 */
+	public final void setLayoutData(final Object layoutData) {
+		text.setLayoutData(layoutData);
+	}
+
+	/**
+	 * A mutator for the maximum number of strokes that are permitted in this
+	 * widget at one time.
+	 * @param maximumStrokes The maximum number of strokes; should be a positive
+	 * integer or <code>INFINITE</code>.
+	 */
+	public final void setMaxStrokes(final int maximumStrokes) {
+		if ((maximumStrokes > 0) || (maximumStrokes == INFINITE)) {
+			maxStrokes = maximumStrokes;
+		}
 	}
 
 	/**
