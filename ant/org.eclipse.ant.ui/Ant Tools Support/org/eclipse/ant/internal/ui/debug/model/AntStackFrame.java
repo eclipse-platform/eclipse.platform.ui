@@ -41,8 +41,11 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 		fThread = thread;
 		fLineNumber= lineNumber;
 		fName= name;
-		fFilePath= filePath;
-		fFileName= new Path(fFilePath).lastSegment();
+		setFilePath(filePath);
+	}
+	
+	protected void setId(int id) {
+		fId= id;
 	}
 	
 	/* (non-Javadoc)
@@ -73,6 +76,15 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 		return fLineNumber;
 	}
 	
+	protected void setLineNumber(int lineNumber) {
+		fLineNumber= lineNumber;
+	}
+	
+	protected void setFilePath(String filePath) {
+		fFilePath= filePath;
+		fFileName= new Path(fFilePath).lastSegment();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getCharStart()
 	 */
@@ -92,6 +104,10 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 	 */
 	public String getName() {
 		return fName;
+	}
+	
+	protected void setName(String name) {
+		fName= name;
 	}
 	
 	/* (non-Javadoc)
