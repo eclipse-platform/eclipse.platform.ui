@@ -4,12 +4,10 @@
 	<target name="build" description="Cleans, builds and refreshes">
 		<antcall target="clean"/>
 		<antcall target="lib/antrunnerlib.jar"/>
-		<antcall target="refresh"/>
 	</target>
 
 	<target name="init" depends="properties">
 		<property name="bootclasspath" value=""/>
-		<property name="plugin" value="org.eclipse.ant.ui"/>
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="build.result.folder" value="${basedir}"/>
 		<property name="win32.jar" value="${basedir}/../org.eclipse.swt.win32/ws/win32/swt.jar"/>
@@ -65,9 +63,4 @@
 		<delete file="${build.result.folder}/lib/antrunner.jar"/>
 		<delete dir="${temp.folder}"/>
 	</target>
-
-	<target name="refresh" description= "Re-synchs resources" depends="init" if="eclipse.running">
-		<eclipse.refreshLocal resource="${plugin}" depth="infinite"/>
-	</target>
-
 </project>
