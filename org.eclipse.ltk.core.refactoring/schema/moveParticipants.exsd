@@ -10,10 +10,9 @@
       </documentation>
    </annotation>
 
-<!--
-   <include schemaLocation="commonExpressionLanguage.mxsd"/>
--->
-   <element name="moveParticipants">
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.mxsd"/>
+   
+   <element name="extension">
       <complexType>
          <sequence>
             <element ref="moveParticipant" minOccurs="0" maxOccurs="unbounded"/>
@@ -25,15 +24,27 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
    <element name="moveParticipant">
       <complexType>
          <all>
-            <!--
             <element ref="enablement"/>
-            -->
          </all>
          <attribute name="id" type="string" use="required">
             <annotation>
