@@ -48,6 +48,9 @@ import java.util.Collection;
  * @since 3.0
  */
 public interface IObjectActivityManager {
+	
+	//Return the pattern for enabled for all plugins.
+	public static String ENABLED_ALL_PATTERN = "*"; //$NON-NLS-1$
 	/**
 	 * Adds a binding between object-&gt;activity. If the given activity is not
 	 * defined in the RoleManager registry then no action is taken.

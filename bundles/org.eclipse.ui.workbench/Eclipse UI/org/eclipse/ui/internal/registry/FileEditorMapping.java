@@ -82,7 +82,10 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 	   IObjectActivityManager objectManager = getObjectActivityManager();
         String pluginId = editor.getPluginID();
         if (pluginId == null) {
-            return;
+           if(editor.isInternal())
+           		return;
+           //If it is external enable it for everything
+           pluginId = IObjectActivityManager.ENABLED_ALL_PATTERN;
         }
         IObjectContributionRecord contributionRecord = objectManager.addObject(pluginId, editor.getId(), editor);
         objectManager.applyPatternBindings(contributionRecord);
