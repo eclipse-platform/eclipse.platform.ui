@@ -42,16 +42,17 @@ public class DataArea {
 	private long keyringTimeStamp;
 	private String keyringFile = null;
 	private String password = ""; //$NON-NLS-1$
+	private boolean initialized = false;
 	
 	public boolean hasInstanceData() {
 		return isInstanceDataLocationInitiliazed();
 	}
 	boolean isInstanceDataLocationInitiliazed() {
-		return location != null;
+		return location != null && initialized;
 	}
 	protected void assertLocationInitialized() throws IllegalStateException {
 		try {
-			if (location == null)
+			if (location == null || ! initialized)
 				initializeLocation();
 			if (!locationCreated)
 				createLocation();
@@ -175,6 +176,8 @@ public class DataArea {
 		//try infer the device if there isn't one (windows)
 		if (location.getDevice() == null)
 			location = new Path(location.toFile().getAbsolutePath());
+		
+		initialized = true;
 	}
 	private void createLocation() throws CoreException {
 		File file = location.toFile();

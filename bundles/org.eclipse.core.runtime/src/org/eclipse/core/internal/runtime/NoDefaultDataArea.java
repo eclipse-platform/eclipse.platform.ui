@@ -13,16 +13,16 @@ package org.eclipse.core.internal.runtime;
 import org.eclipse.core.runtime.IPath;
 
 public class NoDefaultDataArea extends DataArea {
-	private boolean locationInitialized = false;
+	private boolean locationSet = false;
 	
 	protected void assertLocationInitialized() throws IllegalStateException {
-		if (locationInitialized)
+		if (locationSet)
 			super.assertLocationInitialized();
 		else 
 			throw new IllegalStateException(Policy.bind("meta.instanceDataUnspecified"));
 	}
 	public void setInstanceDataLocation(IPath loc) throws IllegalStateException {
-		locationInitialized = true;
+		locationSet = true;
 		super.setInstanceDataLocation(loc);
 	}
 }
