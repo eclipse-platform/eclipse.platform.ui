@@ -3903,7 +3903,7 @@ public class TextViewer extends Viewer implements
 	
 	/**
 	 * Adheres to the contract of
-	 * {@link IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)}.
+	 * {@link org.eclipse.jface.text.IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)}.
 	 * 
 	 * @param startPosition the start position
 	 * @param findString the find string specification
@@ -3945,7 +3945,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Adheres to the contract of {@link IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)}.
+	 * Adheres to the contract of {@link org.eclipse.jface.text.IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)}.
 	 * 
 	 * @param startPosition the start position
 	 * @param findString the find string specification
@@ -4784,7 +4784,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Same as {@link #modelRange2WidgetRange(IRegion)} just for a {@link Position}.
+	 * Same as {@link #modelRange2WidgetRange(IRegion)} just for a {@link org.eclipse.jface.text.Position}.
 	 * 
 	 * @param modelPosition the position describing a range in the viewer's document
 	 * @return a region describing a range in the viewer's widget
