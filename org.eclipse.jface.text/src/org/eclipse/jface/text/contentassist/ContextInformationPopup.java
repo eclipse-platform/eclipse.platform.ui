@@ -18,6 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
@@ -80,6 +81,13 @@ class ContextInformationPopup implements IContentAssistListener {
 	
 	private Stack fContextFrameStack= new Stack();
 	
+	/**
+	 * Selection listener on the text widget which is active
+	 * while a context information pop up is shown.
+	 * 
+	 * @since 3.0
+	 */
+	private SelectionListener fTextWidgetSelectionListener;
 	
 	/**
 	 * Creates a new context information popup.
@@ -203,7 +211,17 @@ class ContextInformationPopup implements IContentAssistListener {
 		resize();
 				
 		if (initial) {
-			if (fContentAssistant.addContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP)) {	
+			if (fContentAssistant.addContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP)) {
+				if (fViewer.getTextWidget() != null) {
+					fTextWidgetSelectionListener= new SelectionAdapter() {
+						/*
+						 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+						 */
+						public void widgetSelected(SelectionEvent e) {
+							validateContextInformation();
+						}};
+					fViewer.getTextWidget().addSelectionListener(fTextWidgetSelectionListener);
+				}
 				fContentAssistant.addToLayout(this, fContextInfoPopup, ContentAssistant.LayoutManager.LAYOUT_CONTEXT_INFO_POPUP, frame.fVisibleOffset);
 				fContextInfoPopup.setVisible(true);
 			}
@@ -291,6 +309,10 @@ class ContextInformationPopup implements IContentAssistListener {
 			} else {
 				
 				fContentAssistant.removeContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP);
+				
+				if (fViewer.getTextWidget() != null)
+					fViewer.getTextWidget().removeSelectionListener(fTextWidgetSelectionListener);
+				fTextWidgetSelectionListener= null;
 				
 				fContextInfoPopup.setVisible(false);
 				fContextInfoPopup.dispose();
