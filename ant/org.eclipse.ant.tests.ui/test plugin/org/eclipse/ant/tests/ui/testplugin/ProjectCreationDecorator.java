@@ -61,7 +61,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 		ProjectHelper.importFilesFromDirectory(root, folder.getFullPath(), null);
 		
 		createLaunchConfiguration("echoing");
-		//createLaunchConfiguration("bad");
+		createLaunchConfiguration("bad");
 		createLaunchConfigurationForSeparateVM("echoingSepVM");
 		
 		//do not show the Ant build failed error dialog

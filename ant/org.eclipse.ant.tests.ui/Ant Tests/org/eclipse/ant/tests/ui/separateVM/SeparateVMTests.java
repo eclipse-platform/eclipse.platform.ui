@@ -39,7 +39,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
      */
     public void testSeparateVM() throws CoreException {
       	launch("echoingSepVM");
-      	assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);
+      	assertTrue("Incorrect number of messages logged for build. Should be 5. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 5);
       	assertTrue("Incorrect last message. Should start with Total time:. Message: " + ConsoleLineTracker.getMessage(4), ConsoleLineTracker.getMessage(4).startsWith("Total time:"));
     }
     
@@ -52,8 +52,11 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 		int offset= 15; //buildfile link
 		IConsoleHyperlink link= getHyperlink(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No hyperlink found at offset " + offset, link);
-		
-		offset= 91; //echo link
+		try {
+			offset= ConsoleLineTracker.getDocument().getLineOffset(2) + 10; //echo link
+		} catch (BadLocationException e) {
+			assertTrue("failed getting offset of line", false);
+		}
 		link= getHyperlink(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No hyperlink found at offset " + offset, link);
 	}
@@ -75,7 +78,11 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 		Color color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No color found at " + offset, color);
 		assertEquals(color, AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_INFO_RGB));
-		offset= 91; //echo
+		try {
+			offset= ConsoleLineTracker.getDocument().getLineOffset(2) + 10; //echo link
+		} catch (BadLocationException e) {
+			assertTrue("failed getting offset of line", false);
+		}
 		color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No color found at " + offset, color);
 		assertEquals(color, AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_WARNING_RGB));

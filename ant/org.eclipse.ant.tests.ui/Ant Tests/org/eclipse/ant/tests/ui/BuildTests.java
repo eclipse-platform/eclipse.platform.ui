@@ -59,7 +59,11 @@ public class BuildTests extends AbstractAntUIBuildTest {
 		IConsoleHyperlink link= getHyperlink(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No hyperlink found at offset " + offset, link);
 		
-		offset= 94; //echo link
+		try {
+			offset= ConsoleLineTracker.getDocument().getLineOffset(4) + 10; //echo link
+		} catch (BadLocationException e) {
+			assertTrue("failed getting offset of line", false);
+		}
 		link= getHyperlink(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No hyperlink found at offset " + offset, link);
 	}
@@ -81,7 +85,11 @@ public class BuildTests extends AbstractAntUIBuildTest {
 		Color color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No color found at " + offset, color);
 		assertEquals(color, AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_INFO_RGB));
-		offset= 83; //echo
+		try {
+			offset= ConsoleLineTracker.getDocument().getLineOffset(4) + 10; //echo
+		} catch (BadLocationException e) {
+			assertTrue("failed getting offset of line", false);
+		}
 		color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No color found at " + offset, color);
 		assertEquals(color, AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_WARNING_RGB));
