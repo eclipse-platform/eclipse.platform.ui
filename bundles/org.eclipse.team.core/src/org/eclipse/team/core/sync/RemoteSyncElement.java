@@ -271,27 +271,22 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	}
 	
 	/**
-	 * Helper method for comparisons
+	 * Helper methods for comparisons that returns true if the resource contents are the same.
+	 * 
+	 * If timestampDiff is true then the timestamps don't differ and there's no point checking the
+	 * contents.
 	 */
-	private boolean compare(int granularity, boolean timestampDiff, InputStream is1, InputStream is2) {
-		if (granularity == GRANULARITY_CONTENTS) {
-			return contentsEqual(is1, is2);
-		} else {
-			return timestampDiff;
-		}
-	}
-	
 	private boolean compare(int granularity, boolean timestampDiff, IResource e1, IRemoteResource e2) {
-		if (granularity == GRANULARITY_CONTENTS) {
-			return compare(granularity, timestampDiff, getContents(e1), getContents(e2));
+		if (!timestampDiff && (granularity == GRANULARITY_CONTENTS)) {
+			return contentsEqual(getContents(e1), getContents(e2));
 		} else {
 			return timestampDiff;
 		}
 	}
 	
 	private boolean compare(int granularity, boolean timestampDiff, IRemoteResource e1, IRemoteResource e2) {
-		if (granularity == GRANULARITY_CONTENTS) {
-			return compare(granularity, timestampDiff, getContents(e1), getContents(e2));
+		if (!timestampDiff && (granularity == GRANULARITY_CONTENTS)) {
+			return contentsEqual(getContents(e1), getContents(e2));
 		} else {
 			return timestampDiff;
 		}
@@ -309,9 +304,11 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	
 	private InputStream getContents(IRemoteResource remote) {
 		try {
-			return new BufferedInputStream(remote.getContents(new NullProgressMonitor()));
+			if (!remote.isContainer())
+				return new BufferedInputStream(remote.getContents(new NullProgressMonitor()));
+			return null;
 		} catch (TeamException exception) {
-			// The remote node has gone away.
+			// The remote node has gone away .
 			return null;	
 		}
 	}
