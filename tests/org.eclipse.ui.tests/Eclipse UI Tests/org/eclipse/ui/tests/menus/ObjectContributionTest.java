@@ -123,7 +123,7 @@ public final class ObjectContributionTest extends UITestCase {
         final IContributionItem[] items = fakeMenuManager.getItems();
         boolean found = false;
         for (int i = 0; i < items.length; i++) {
-            if ("org.eclipse.ui.tests.ObjectContributionTest.testObjectStateContentType"
+            if ("org.eclipse.ui.tests.testObjectStateContentType"
                     .equals(items[i].getId())) {
                 found = true;
                 break;

@@ -450,10 +450,10 @@
                menubarPath="org.eclipse.ui.OpenFileAction"
                id="resource action">
          </action>
+      </objectContribution>
          
       <!-- ObjectContributionTest: This is the content-type-based object contribution -->
-      </objectContribution>
-           <objectContribution
+      <objectContribution
             adaptable="true"
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="*.xml"
@@ -461,7 +461,7 @@
          <visibility>
             <objectState
                   name="contentTypeId"
-                  value="org.eclipse.ui.tests.ObjectContributionTest.testObjectStateContentType">
+                  value="org.eclipse.ui.tests.testObjectStateContentType">
             </objectState>
          </visibility>
          <action
@@ -481,7 +481,7 @@
    		
       	<!-- ObjectContributionTest: This is the content-type-based object contribution -->
 		<content-type 
-			id="ObjectContributionTest.testObjectStateContentType"
+			id="testObjectStateContentType"
 			name="Tests top-level element recognition" 	
 			base-type="org.eclipse.core.runtime.xml"
 			priority="high">
