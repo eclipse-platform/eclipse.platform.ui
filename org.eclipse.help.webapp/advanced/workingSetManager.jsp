@@ -140,7 +140,7 @@ function selectWorkingSet() {
 }
 
 function removeWorkingSet() {
-	window.location.replace("workingSetManager.jsp?operation=remove&workingSet="+escape(getWorkingSet()));
+	window.location.replace("workingSetManager.jsp?operation=remove&workingSet="+escape(getWorkingSet())+"&encoding=js");
 }
 
 var workingSetDialog;

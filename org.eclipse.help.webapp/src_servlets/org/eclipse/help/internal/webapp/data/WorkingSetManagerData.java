@@ -101,7 +101,7 @@ public class WorkingSetManagerData extends RequestData {
 
 		if (name != null && name.length() > 0) {
 
-			String oldName = request.getParameter("oldName");
+			String oldName = getDBCSParameter("oldName");
 			if (oldName == null || oldName.length() == 0)
 				oldName = name;
 			WorkingSet ws = wsmgr.getWorkingSet(oldName);
