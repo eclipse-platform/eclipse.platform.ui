@@ -788,7 +788,8 @@ public class DefaultPartPresentation extends StackPresentation {
 			idx = ((Integer)cookie).intValue();
 		} else {
 			// Select a location for newly inserted parts
-			idx = tabFolder.getItemCount();
+			// Insert at the begining
+			idx = 0;
 		}
 		
 		addPart(newPart, idx);
@@ -842,6 +843,16 @@ public class DefaultPartPresentation extends StackPresentation {
 		current = toSelect;
 		
 		if (current != null) {
+			CTabItem item = getTab(toSelect);
+			if (item != null)
+				// If the item is not currently visible, move it
+				// to the begining
+				if (!item.isShowing() && tabFolder.getItemCount() > 1)
+				{
+					removePart(toSelect);
+					addPart(toSelect, 0);
+					current = toSelect;
+				}
 			tabFolder.setSelection(indexOf(current));
 			current.setVisible(true);
 			setControlSize();		
@@ -918,7 +929,7 @@ public class DefaultPartPresentation extends StackPresentation {
 		Point localPos = tabFolder.getControl().toControl(location);
 		
 		CTabItem tabUnderPointer = tabFolder.getItem(localPos);
-		
+
 		// This drop target only deals with tabs... if we're not dragging over
 		// a tab, exit.
 		if (tabUnderPointer == null) {
@@ -928,14 +939,19 @@ public class DefaultPartPresentation extends StackPresentation {
 			// tab position.
 			if (titleArea.contains(localPos)) {
 				int dragOverIndex = tabFolder.getItemCount();
+				CTabItem lastTab = tabFolder.getItem(dragOverIndex - 1);
+
+				// Can't drag to end unless you can see the end
+				if (!lastTab.isShowing()) {
+					return null;
+				}
+				
 				if (dragStart >= 0) {
 					dragOverIndex--;
-					CTabItem  affordanceTab = tabFolder.getItem(dragOverIndex);
-					if (affordanceTab.isShowing()) {
-						return new StackDropResult(Geometry.toDisplay(tabFolder.getControl(), 
-								affordanceTab.getBounds()), 
-							new Integer(dragOverIndex));
-					}					
+
+					return new StackDropResult(Geometry.toDisplay(tabFolder.getControl(), 
+							lastTab.getBounds()), 
+						new Integer(dragOverIndex));					
 				}
 
 				// Make the drag-over rectangle look like a tab at the end of the tab region.
@@ -944,12 +960,15 @@ public class DefaultPartPresentation extends StackPresentation {
 				Rectangle dropRectangle = Geometry.toDisplay(tabFolder.getControl(), titleArea);
 		
 				dropRectangle.width = 3 * dropRectangle.height;
-				
 				return new StackDropResult(dropRectangle, new Integer(dragOverIndex));
 				
 			} else {
 				return null;
 			}
+		}
+		
+		if (!tabUnderPointer.isShowing()) {
+			return null;
 		}
 		
 		return new StackDropResult(Geometry.toDisplay(tabFolder.getControl(), tabUnderPointer.getBounds()), 
