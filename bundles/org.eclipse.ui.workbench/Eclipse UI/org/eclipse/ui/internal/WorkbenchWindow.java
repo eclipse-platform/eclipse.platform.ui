@@ -1169,6 +1169,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			//		getShell().setMinimized(true);
 		}
 
+		// restore the width of the perspective bar
+		if (perspectiveSwitcher != null) 
+			perspectiveSwitcher.restoreState(memento);
+		
 		// Restore the cool bar order by creating all the tool bar contribution items
 		// This needs to be done before pages are created to ensure proper canonical creation
 		// of cool items
@@ -1707,6 +1711,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			                        .getIntroManager()
 			                        .getIntro())).toString());
 		}				
+		
+		// save the width of the perspective bar
+		IMemento persBarMem = memento.createChild(IWorkbenchConstants.TAG_PERSPECTIVE_BAR);
+		perspectiveSwitcher.saveState(persBarMem);
 		
 		/// Save the order of the cool bar contribution items
 		if (getCoolBarManager() != null) {

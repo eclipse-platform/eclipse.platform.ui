@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.layout.CacheWrapper;
@@ -384,7 +385,7 @@ public class PerspectiveSwitcher {
 	    	apiPreferenceStore.removePropertyChangeListener(propertyChangeListener);
 	    	propertyChangeListener = null;
 	    }
-	    toolBarListener = null;
+	    toolBarListener = null;       
 	}
 
 	private void disposeChildControls() {
@@ -535,7 +536,6 @@ public class PerspectiveSwitcher {
 		ToolBar toolbar = perspectiveBar.getControl();
 		if (toolbar == null) 
 			return;
-		
 		// calculate the minimum width
 /*		int minWidth = 0;
 		if (perspectiveBar.getControl().getItemCount() > 0)
@@ -747,6 +747,37 @@ public class PerspectiveSwitcher {
                 setCoolItemSize(coolItem);
 			}
 		});
+	}
+
+	/**
+	 * Method to save the width of the perspective bar in the 
+	 */
+	public void saveState(IMemento persBarMem) {
+		// save the width of the perspective bar
+		IMemento childMem = persBarMem.createChild(IWorkbenchConstants.TAG_ITEM_SIZE);
+		childMem.putString(IWorkbenchConstants.TAG_X, Integer.toString(perspectiveCoolBar.getSize().x));
+	}
+
+	/**
+	 * Method to restore the width of the perspective bar
+	 */
+	public void restoreState(IMemento memento) {
+		if (memento == null)
+			return;
+		// restore the width of the perspective bar
+		IMemento attributes = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVE_BAR);
+		IMemento size = null;
+		if (attributes != null)
+			size = attributes.getChild(IWorkbenchConstants.TAG_ITEM_SIZE);
+		if (size != null) {
+			int width = size.getInteger(IWorkbenchConstants.TAG_X).intValue();
+			Point psize = perspectiveCoolBar.getSize();
+			psize.x = width;
+			// Get the CBanner and set the width of the right element
+			Composite banner = coolItem.getParent().getParent().getParent();
+			if (banner instanceof CBanner)
+				((CBanner)banner).setRightWidth(width);
+		}
 	}
 
 }
