@@ -128,7 +128,7 @@ public class LaunchInfo implements IInstallInfo {
 		
 		public History(URL url,String id) {
 			this.url = url;
-			this.date = id==null ? null : new Date(Long.parseLong(id,Character.MAX_RADIX));
+			this.date = id==null ? null : new Date(Long.parseLong(id));
 		}
 
 		public String toString() {
@@ -155,7 +155,7 @@ public class LaunchInfo implements IInstallInfo {
 			if (date==null)
 				return null;
 			else
-				return Long.toString(date.getTime(),Character.MAX_RADIX);
+				return Long.toString(date.getTime());
 		}
 
 		public boolean isCurrent() {
@@ -566,7 +566,7 @@ private static History[] getHistory(URL url) {
 			try {
 				if (time.length()>0) {
 					time = time.substring(1);
-					date = new Date(Long.parseLong(time,Character.MAX_RADIX));
+					date = new Date(Long.parseLong(time));
 				}
 				URL newurl = new URL(url,list[i]);
 				if (time.length()>0)
@@ -846,7 +846,7 @@ private void loadProperties(Properties props) {
 		
 		id = props.getProperty(ID,"");
 		if (id.trim().equals(""))
-			id = Long.toString((new java.util.Date()).getTime(),Character.MAX_RADIX);
+			id = Long.toString((new java.util.Date()).getTime());
 		platform = props.getProperty(PLATFORM,DEFAULT_PLATFORM);
 		app = props.getProperty(APP,DEFAULT_APP);
 		if (app.trim().equals(""))
@@ -965,7 +965,7 @@ private void processInfoChangesExisting(File dir, String info, String key) {
 	File f = new File(dir, info);
 	if (!f.exists()) 
 		return;
-	String stamp = Long.toString(f.lastModified(),Character.MAX_RADIX);
+	String stamp = Long.toString(f.lastModified());
 	if (key.startsWith(info+"."+stamp))
 		return;
 	if (DEBUG)
@@ -1017,7 +1017,7 @@ private void processInfoChangesNew(File dir, String info) {
 	loadListPropertyEntry(cfgIds,props.getProperty(INFO_CONFIGS),VersionedIdentifier.class);
 	ArrayList cmpIds = new ArrayList();
 	loadListPropertyEntry(cmpIds,props.getProperty(INFO_COMPS),VersionedIdentifier.class);
-	String stamp = Long.toString(f.lastModified(),Character.MAX_RADIX);
+	String stamp = Long.toString(f.lastModified());
 	String key = info+"."+stamp+"."+INFO_CONFIGS;
 	infoMap.put(key, cfgIds);
 	key = info+"."+stamp+"."+INFO_COMPS;
@@ -1454,12 +1454,12 @@ synchronized public void setInactive(
 private void setNewHistory() {
 	if (newHistory)
 		return;
-	nextId = Long.toString((new java.util.Date()).getTime(),Character.MAX_RADIX);
+	nextId = Long.toString((new java.util.Date()).getTime());
 	newHistory = true;
 }
 
 private void setNewId() {
-	id = Long.toString((new java.util.Date()).getTime(),Character.MAX_RADIX);
+	id = Long.toString((new java.util.Date()).getTime());
 }
 
 public void setPlugin(VersionedIdentifier plugin) {

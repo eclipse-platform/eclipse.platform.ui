@@ -236,7 +236,7 @@ private URL getURLInCache() throws IOException {
 		// attemp to cache
 		int ix = file.lastIndexOf("/");
 		tmp = file.substring(ix+1);
-		tmp = cacheLocation + filePrefix + Long.toString((new java.util.Date()).getTime(),36) + "_" + tmp;
+		tmp = cacheLocation + filePrefix + Long.toString((new java.util.Date()).getTime()) + "_" + tmp;
 		tmp = tmp.replace(File.separatorChar,'/');
 		if (isJar) {
 			tmp = PlatformURLHandler.FILE + PlatformURLHandler.PROTOCOL_SEPARATOR + tmp + PlatformURLHandler.JAR_SEPARATOR + jarEntry;
@@ -379,7 +379,7 @@ static void startup(String location) {
 		tmp += CACHE_DIR;
 		props.put(CACHE_LOCATION_PROP,tmp);
 		
-		tmp = Long.toString((new java.util.Date()).getTime(),36);
+		tmp = Long.toString((new java.util.Date()).getTime());
 		props.put(CACHE_PREFIX_PROP,tmp);
 			
 		tmp += CACHE_INDEX;
