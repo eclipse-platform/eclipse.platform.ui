@@ -27,7 +27,7 @@ class TocFileParser extends DefaultHandler {
 	protected TocBuilder builder;
 	protected FastStack elementStack;
 	protected TocFile tocFile;
-	private static SAXParserFactory factory = SAXParserFactory.newInstance();
+	static SAXParserFactory factory = SAXParserFactory.newInstance();
 	private static XMLParserPool parserPool = new XMLParserPool();
 	/**
 	 * Constructor
@@ -164,7 +164,7 @@ class TocFileParser extends DefaultHandler {
 	 */
 	static class XMLParserPool {
 		private ArrayList pool = new ArrayList();
-		private SAXParser obtainParser()
+		SAXParser obtainParser()
 			throws ParserConfigurationException, SAXException {
 			SAXParser p;
 			int free = pool.size();
@@ -175,7 +175,7 @@ class TocFileParser extends DefaultHandler {
 			}
 			return p;
 		}
-		private void releaseParser(SAXParser parser) {
+		void releaseParser(SAXParser parser) {
 			pool.add(parser);
 		}
 	}

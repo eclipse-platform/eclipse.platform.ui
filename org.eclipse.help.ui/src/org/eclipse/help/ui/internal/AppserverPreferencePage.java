@@ -27,8 +27,8 @@ import org.eclipse.ui.help.*;
 public class AppserverPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
-	private Text textServerAddr;
-	private Text textServerPort;
+	protected Text textServerAddr;
+	protected Text textServerPort;
 	/**
 	 * Creates preference page controls on demand.
 	 *

@@ -203,7 +203,7 @@ public class Eclipse extends Thread {
 	private void printCommand() {
 		System.out.println("Launch command is:");
 		for (int i = 0; i < cmdarray.length; i++) {
-			System.out.println("  " + (String) cmdarray[i]);
+			System.out.println("  " + cmdarray[i]);
 		}
 
 	}

@@ -38,10 +38,10 @@ public class UrlUtil {
 		str.getChars(0, str.length(), wordChars, 0);
 		StringBuffer jsEncoded = new StringBuffer();
 		for (int j = 0; j < wordChars.length; j++) {
-			int unicode = (int) wordChars[j];
+			int unicode = wordChars[j];
 			// to enhance readability, do not encode A-Z,a-z
-			if (((int) 'A' <= unicode && unicode <= (int) 'Z')
-				|| ((int) 'a' <= unicode && unicode <= (int) 'z')) {
+			if (('A' <= unicode && unicode <= 'Z')
+				|| ('a' <= unicode && unicode <= 'z')) {
 				jsEncoded.append(wordChars[j]);
 				continue;
 			}

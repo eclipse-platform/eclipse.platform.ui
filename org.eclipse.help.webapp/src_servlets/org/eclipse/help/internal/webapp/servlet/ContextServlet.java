@@ -24,7 +24,7 @@ import org.eclipse.help.internal.webapp.data.*;
  * http://server/help/context/plugin.id.context.id
  */
 public class ContextServlet extends HttpServlet {
-	private String locale;
+	protected String locale;
 
 	/**
 	 * Called by the server (via the <code>service</code> method) to
@@ -68,11 +68,9 @@ public class ContextServlet extends HttpServlet {
 	/**
 	 * This generates the XML file for the help navigation.
 	 */
-	private static class ContextWriter extends XMLGenerator {
-		private String locale;
+	private class ContextWriter extends XMLGenerator {
 		public ContextWriter(Writer writer, String locale) {
 			super(writer);
-			this.locale = locale;
 		}
 
 		/** 

@@ -29,9 +29,9 @@ import org.eclipse.ui.help.*;
 public class BrowsersPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
-	private Table browsersTable;
+	protected Table browsersTable;
 	private Label customBrowserPathLabel;
-	private Text customBrowserPath;
+	protected Text customBrowserPath;
 	private Button customBrowserBrowse;
 	/**
 	 * Creates preference page controls on demand.
@@ -238,7 +238,7 @@ public class BrowsersPreferencePage
 		data.verticalAlignment = GridData.BEGINNING;
 		spacer.setLayoutData(data);
 	}
-	private void setEnabledCustomBrowserPath() {
+	protected void setEnabledCustomBrowserPath() {
 		TableItem[] items = browsersTable.getItems();
 		for (int i = 0; i < items.length; i++) {
 			if (items[i].getChecked()) {

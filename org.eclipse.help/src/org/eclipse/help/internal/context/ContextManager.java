@@ -60,7 +60,7 @@ public class ContextManager {
 		int dot = contextId.lastIndexOf('.');
 		if (dot <= 0 || dot >= contextId.length() - 1) {
 			// no dot in the middle of context ID
-			return (IContext) null;
+			return null;
 		}
 		plugin = contextId.substring(0, dot);
 		id = contextId.substring(dot + 1);

@@ -151,7 +151,7 @@ public final class BaseHelpSystem {
 		} catch (Exception e) {
 			HelpBasePlugin.getDefault().getLog().log(
 				new Status(
-					Status.ERROR,
+					IStatus.ERROR,
 					HelpBasePlugin
 						.getDefault()
 						.getDescriptor()

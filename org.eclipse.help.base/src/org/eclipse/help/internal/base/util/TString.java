@@ -300,7 +300,7 @@ public class TString {
 		word.getChars(0, len, chars, 0);
 		StringBuffer encodedChars = new StringBuffer();
 		for (int j = 0; j < chars.length; j++) {
-			String charInHex = Integer.toString((int) chars[j], 16).toUpperCase();
+			String charInHex = Integer.toString(chars[j], 16).toUpperCase();
 			switch (charInHex.length()) {
 				case 1 :
 					encodedChars.append("\\u000").append(charInHex);

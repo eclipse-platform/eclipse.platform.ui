@@ -23,16 +23,16 @@ import org.eclipse.help.internal.base.*;
 public class MozillaBrowserAdapter implements IBrowser {
 	// delay that it takes mozilla to start responding
 	// to remote command after mozilla has been called
-	private static final int DELAY = 5000;
-	private long browserFullyOpenedAt = 0;
+	protected static final int DELAY = 5000;
+	protected long browserFullyOpenedAt = 0;
 	private BrowserThread lastBrowserThread = null;
 	private int x, y;
 	private int width, height;
 	private boolean setLocationPending = false;
 	private boolean setSizePending = false;
-	private String executable;
-	private String executableName;
-	private Thread uiThread;
+	protected String executable;
+	protected String executableName;
+	protected Thread uiThread;
 	/**
 	 * Constructor
 	 * @executable executable filename to launch

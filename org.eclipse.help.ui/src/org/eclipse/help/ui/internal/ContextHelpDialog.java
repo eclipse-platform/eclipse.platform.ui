@@ -33,8 +33,8 @@ public class ContextHelpDialog {
 	private Color foregroundColour = null;
 	private Color linkColour = null;
 	private static HyperlinkHandler linkManager = new HyperlinkHandler();
-	private Shell shell;
-	private String infopopText;
+	protected Shell shell;
+	protected String infopopText;
 
 	/**
 	 * Listener for hyperlink selection.
@@ -77,7 +77,7 @@ public class ContextHelpDialog {
 						"ContextHelpDialog shell deactivate listener: SWT.Deactivate called. ");
 				}
 				close();
-			};
+			}
 		});
 
 		shell.addTraverseListener(new TraverseListener() {
@@ -254,7 +254,7 @@ public class ContextHelpDialog {
 	 * Called when related link has been chosen
 	 * Opens help viewer with list of all related topics
 	 */
-	private void launchLinks(IHelpResource selectedTopic) {
+	protected void launchLinks(IHelpResource selectedTopic) {
 		close();
 		if (HelpUIPlugin.DEBUG_INFOPOP) {
 			System.out.println("ContextHelpDialog.launchLinks(): closed shell");

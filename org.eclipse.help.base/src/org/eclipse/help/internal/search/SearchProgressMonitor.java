@@ -24,10 +24,10 @@ import org.eclipse.help.internal.base.*;
 public class SearchProgressMonitor implements IProgressMonitor {
 
 	// Progress monitors, indexed by locale
-	private static Map progressMonitors = new HashMap();
+	protected static Map progressMonitors = new HashMap();
 
 	// Dummy collector for triggering a progress monitor
-	private static ISearchHitCollector dummy_collector;
+	protected static ISearchHitCollector dummy_collector;
 
 	private boolean started, done, canceled;
 	private int totalWork = IProgressMonitor.UNKNOWN;
@@ -82,7 +82,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 			return 0;
 		if (currWork >= totalWork)
 			return 100;
-		return (int) (100 * currWork / totalWork);
+		return (100 * currWork / totalWork);
 	}
 	/**
 	 * Gets the isCancelled.

@@ -23,8 +23,8 @@ import org.eclipse.swt.widgets.*;
  * A canvas holding a hyperlink label. Need this to deal with focus selection.
  */
 public class HyperlinkLabel extends Canvas{
-	private Label label;
-	private boolean hasFocus;
+	Label label;
+	boolean hasFocus;
 
 	/**
 	 * Constructor for Hyperlink.
@@ -117,7 +117,7 @@ public class HyperlinkLabel extends Canvas{
 		return label;
 	}
 	
-	private void notifyListeners(int eventType) {
+	void notifyListeners(int eventType) {
 		Event event = new Event();
 		event.type = eventType;
 		event.widget = this;

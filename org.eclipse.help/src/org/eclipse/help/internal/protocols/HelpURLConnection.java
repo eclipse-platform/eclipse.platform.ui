@@ -42,6 +42,7 @@ public class HelpURLConnection extends URLConnection {
 	// file in a plug-in
 	protected String file;
 	protected String locale;
+	private static String appserverImplPluginId;
 	/**
 	 * Constructor for HelpURLConnection
 	 */
@@ -83,13 +84,12 @@ public class HelpURLConnection extends URLConnection {
 		if (plugin == null) {
 			throw new IOException("Resource not found.");
 		}
-		// TODO fix so it compiles
-//		if (plugin
-//			.equals(
-//				AppserverPlugin.getDefault().getContributingServerPlugin())) {
-//			// Do not return documents from app server implementation plug-in
-//			throw new IOException("Resource not found.");
-//		}
+
+		if (plugin.equals(getAppserverImplPluginId())) {
+			// Do not return documents from app server implementation plug-in
+			throw new IOException("Resource not found.");
+		}
+		
 		if (getFile() == null || "".equals(getFile())) {
 			throw new IOException("Resource not found.");
 		}
@@ -257,6 +257,56 @@ public class HelpURLConnection extends URLConnection {
 	}
 	public String toString() {
 		return pluginAndFile;
+	}
+	
+	/**
+	 * Obtains ID of plugin that contributes appserver implementation.	 * 
+	 * @return plug-in ID or null
+	 */
+	private static String getAppserverImplPluginId() {
+		if (appserverImplPluginId == null) {
+
+			// This part mimics AppserverPlugin.createWebappServer()
+
+			// get the app server extension from the system plugin registry
+			IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
+			IExtensionPoint point =
+				pluginRegistry.getExtensionPoint(
+					"org.eclipse.help.appserver.server");
+			if (point != null) {
+				IExtension[] extensions = point.getExtensions();
+				if (extensions.length != 0) {
+					// We need to pick up the non-default configuration
+					IConfigurationElement[] elements =
+						extensions[0].getConfigurationElements();
+					if (elements.length == 0)
+						return null;
+					IConfigurationElement serverElement = null;
+					for (int i = 0; i < elements.length; i++) {
+						String defaultValue =
+							elements[i].getAttribute("default");
+						if (defaultValue == null
+							|| defaultValue.equals("false")) {
+							serverElement = elements[i];
+							break;
+						}
+					}
+					// if all the servers are default, then pick the first one
+					if (serverElement == null) {
+						serverElement = elements[0];
+					}
+					//
+					
+					appserverImplPluginId =
+						serverElement
+							.getDeclaringExtension()
+							.getDeclaringPluginDescriptor()
+							.getUniqueIdentifier();
+
+				}
+			}
+		}
+		return appserverImplPluginId;
 	}
 
 }

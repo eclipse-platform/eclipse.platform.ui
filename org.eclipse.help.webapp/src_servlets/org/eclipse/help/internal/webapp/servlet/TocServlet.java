@@ -72,7 +72,7 @@ public class TocServlet extends HttpServlet {
 	 */
 	private void serializeToc(String tocID, HttpServletResponse resp)
 		throws ServletException, IOException {
-		IToc toc = (IToc) HelpPlugin.getTocManager().getToc(tocID, locale);
+		IToc toc = HelpPlugin.getTocManager().getToc(tocID, locale);
 		serializeToc(toc, resp);
 	}
 	/**

@@ -293,7 +293,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		NodeList workingSets = parent.getChildNodes();
 
 		for (int i = 0; i < workingSets.getLength(); i++) {
-			if (workingSets.item(i).getNodeType() != Element.ELEMENT_NODE)
+			if (workingSets.item(i).getNodeType() != Node.ELEMENT_NODE)
 				continue;
 
 			WorkingSet workingSet =
