@@ -13,7 +13,6 @@ package org.eclipse.ant.internal.ui.preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * Preference constants used for the Ant Editor
@@ -253,7 +252,7 @@ public class AntEditorPreferenceConstants {
 	public static final String EDITOR_SHOW_SEGMENTS= "editor_show_segments"; //$NON-NLS-1$
 
 	public static void initializeDefaultValues(IPreferenceStore store) {
-		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
+		
 		store.setDefault(CODEASSIST_AUTOINSERT, true);
 		store.setDefault(CODEASSIST_USER_DEFINED_TASKS, true);
 		store.setDefault(CODEASSIST_AUTOACTIVATION, true);

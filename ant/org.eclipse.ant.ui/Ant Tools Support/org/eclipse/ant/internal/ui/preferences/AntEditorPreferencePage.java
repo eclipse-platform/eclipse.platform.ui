@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
@@ -46,17 +45,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 /*
@@ -227,14 +222,6 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	/** The keys of the overlay store. */
 	private String[][] fSyntaxColorListModel;
 	
-	private final String[][] fAppearanceColorListModel= new String[][] {
-		{AntPreferencesMessages.getString("AntEditorPreferencePage.lineNumberForegroundColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, null}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntEditorPreferencePage.currentLineHighlighColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, null}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntEditorPreferencePage.printMarginColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, null}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntEditorPreferencePage.41"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntEditorPreferencePage.42"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
-	};
-	
 	private final String[] fProblemPreferenceKeys= new String[] {
 			AntEditorPreferenceConstants.PROBLEM_CLASSPATH,
 			AntEditorPreferenceConstants.PROBLEM_PROPERTIES,
@@ -242,15 +229,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 			AntEditorPreferenceConstants.PROBLEM_TASKS
 		};
 	
-	private List fAppearanceColorList;
-	
-	private ColorEditor fAppearanceColorEditor;
-	private Button fAppearanceColorDefault;
 	private ColorEditor fSyntaxForegroundColorEditor;
-	private ColorEditor fBackgroundColorEditor;
-	private Button fBackgroundDefaultRadioButton;
-	private Button fBackgroundCustomRadioButton;
-	private Button fBackgroundColorButton;
 	private Button fBoldCheckBox;
 	private Button fItalicCheckBox;
 	
@@ -278,39 +257,10 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 				{AntPreferencesMessages.getString("AntEditorPreferencePage.Ant_editor_comments_5"), IAntEditorColorConstants.XML_COMMENT_COLOR, null}, //$NON-NLS-1$
 				{AntPreferencesMessages.getString("AntEditorPreferencePage.26"), IAntEditorColorConstants.XML_DTD_COLOR, null} //$NON-NLS-1$
 			};
-		ArrayList overlayKeys= new ArrayList();
-		
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT));
-		
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR));
-
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR));
-
-
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
-		
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
-	
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
-	
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
-	
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
+		ArrayList overlayKeys= new ArrayList();			
 		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS));
-		
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER));
-	
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER));
-		
+			
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT));
@@ -342,27 +292,6 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, mainKey + AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX));
 	}
 	
-	private void handleAppearanceColorListSelection() {	
-		int i= fAppearanceColorList.getSelectionIndex();
-		String key= fAppearanceColorListModel[i][1];
-		RGB rgb= PreferenceConverter.getColor(getOverlayStore(), key);
-		fAppearanceColorEditor.setColorValue(rgb);	
-		updateAppearanceColorWidgets(fAppearanceColorListModel[i][2]);
-	}
-	
-	private void updateAppearanceColorWidgets(String systemDefaultKey) {
-		if (systemDefaultKey == null) {
-			fAppearanceColorDefault.setSelection(false);
-			fAppearanceColorDefault.setVisible(false);
-			fAppearanceColorEditor.getButton().setEnabled(true);
-		} else {
-			boolean systemDefault= getOverlayStore().getBoolean(systemDefaultKey);
-			fAppearanceColorDefault.setSelection(systemDefault);
-			fAppearanceColorDefault.setVisible(true);
-			fAppearanceColorEditor.getButton().setEnabled(!systemDefault);
-		}
-	}
-	
 	private Control createAppearancePage(Composite parent) {
 		Font font= parent.getFont();
 
@@ -372,128 +301,12 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		layout.numColumns= 2;
 		appearanceComposite.setLayout(layout);
 
-		String labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.37"); //$NON-NLS-1$
-		String[] errorMessages= new String[]{AntPreferencesMessages.getString("AntEditorPreferencePage.38"), AntPreferencesMessages.getString("AntEditorPreferencePage.39")}; //$NON-NLS-1$ //$NON-NLS-2$
-		addTextField(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, 3, 0, errorMessages);
-		
-		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.printMarginColumn"); //$NON-NLS-1$
-		errorMessages= new String[]{AntPreferencesMessages.getString("AntEditorPreferencePage.empty_input_print_margin"), AntPreferencesMessages.getString("AntEditorPreferencePage.invalid_input_print_margin")};  //$NON-NLS-1$//$NON-NLS-2$
-		addTextField(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 3, 0, errorMessages);
-		
-		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.40"); //$NON-NLS-1$
+		String labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.40"); //$NON-NLS-1$
 		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, 1);
-		
-		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.showOverviewRuler"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, 0);
-				
-		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.showLineNumbers"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, 0);
-
-		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.highlightCurrentLine"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, 0);
-				
-		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.showPrintMargin"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, 0);
 		
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.32"); //$NON-NLS-1$
 		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, 0);
 
-		Label label= new Label(appearanceComposite, SWT.LEFT );
-		label.setFont(font);
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
-		gd.heightHint= convertHeightInCharsToPixels(1) / 2;
-		label.setLayoutData(gd);
-		
-		label= new Label(appearanceComposite, SWT.LEFT);
-		label.setFont(font);
-		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.appearanceOptions")); //$NON-NLS-1$
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
-		label.setLayoutData(gd);
-
-		Composite editorComposite= new Composite(appearanceComposite, SWT.NONE);
-		editorComposite.setFont(font);
-		layout= new GridLayout();
-		layout.numColumns= 2;
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		editorComposite.setLayout(layout);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
-		gd.horizontalSpan= 2;
-		editorComposite.setLayoutData(gd);		
-
-		fAppearanceColorList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
-		fAppearanceColorList.setFont(font);
-		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
-		gd.heightHint= convertHeightInCharsToPixels(6);
-		fAppearanceColorList.setLayoutData(gd);
-						
-		Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
-		stylesComposite.setFont(font);
-		layout= new GridLayout();
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		layout.numColumns= 2;
-		stylesComposite.setLayout(layout);
-		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		label= new Label(stylesComposite, SWT.LEFT);
-		label.setFont(font);
-		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.6")); //$NON-NLS-1$
-		gd= new GridData();
-		gd.horizontalAlignment= GridData.BEGINNING;
-		label.setLayoutData(gd);
-
-		fAppearanceColorEditor= new ColorEditor(stylesComposite);
-		Button foregroundColorButton= fAppearanceColorEditor.getButton();
-		foregroundColorButton.setFont(font);
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalAlignment= GridData.BEGINNING;
-		foregroundColorButton.setLayoutData(gd);
-
-		fAppearanceColorList.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			public void widgetSelected(SelectionEvent e) {
-				handleAppearanceColorListSelection();
-			}
-		});
-		
-		SelectionListener colorDefaultSelectionListener= new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				boolean systemDefault= fAppearanceColorDefault.getSelection();
-				fAppearanceColorEditor.getButton().setEnabled(!systemDefault);
-				
-				int i= fAppearanceColorList.getSelectionIndex();
-				String key= fAppearanceColorListModel[i][2];
-				if (key != null)
-					getOverlayStore().setValue(key, systemDefault);
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {}
-		};
-		
-		fAppearanceColorDefault= new Button(stylesComposite, SWT.CHECK);
-		fAppearanceColorDefault.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.0")); //$NON-NLS-1$
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalAlignment= GridData.BEGINNING;
-		gd.horizontalSpan= 2;
-		fAppearanceColorDefault.setLayoutData(gd);
-		fAppearanceColorDefault.setVisible(false);
-		fAppearanceColorDefault.addSelectionListener(colorDefaultSelectionListener);
-		
-		foregroundColorButton.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			public void widgetSelected(SelectionEvent e) {
-				int i= fAppearanceColorList.getSelectionIndex();
-				String key= fAppearanceColorListModel[i][1];
-				
-				PreferenceConverter.setValue(getOverlayStore(), key, fAppearanceColorEditor.getColorValue());
-			}
-		});
 		return appearanceComposite;
 	}
 			
@@ -501,7 +314,6 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		initializeDefaultColors();
 		WorkbenchHelp.setHelp(getControl(), IAntUIHelpContextIds.ANT_EDITOR_PREFERENCE_PAGE);
 		getOverlayStore().load();
 		getOverlayStore().start();
@@ -550,29 +362,6 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		addCheckBox(composite, AntPreferencesMessages.getString("AntEditorPreferencePage.25"), AntEditorPreferenceConstants.EDITOR_FOLDING_TARGETS, 0); //$NON-NLS-1$
 		return composite;
 	}
-
-	private void initializeDefaultColors() {	
-		if (!getPreferenceStore().contains(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND)) {
-			RGB rgb= getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB();
-			PreferenceConverter.setDefault(getOverlayStore(), AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, rgb);
-			PreferenceConverter.setDefault(getPreferenceStore(), AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, rgb);
-		}
-		if (!getPreferenceStore().contains(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND)) {
-			RGB rgb= getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND).getRGB();
-			PreferenceConverter.setDefault(getOverlayStore(), AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, rgb);
-			PreferenceConverter.setDefault(getPreferenceStore(), AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, rgb);
-		}
-		if (!getPreferenceStore().contains(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR)) {
-			RGB rgb= getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION).getRGB();
-			PreferenceConverter.setDefault(getOverlayStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, rgb);
-			PreferenceConverter.setDefault(getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, rgb);
-		}
-		if (!getPreferenceStore().contains(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR)) {
-			RGB rgb= getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT).getRGB();
-			PreferenceConverter.setDefault(getOverlayStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, rgb);
-			PreferenceConverter.setDefault(getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, rgb);
-		}
-	}
 	
 	private void initialize() {
 		
@@ -586,39 +375,14 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		}
 		fHighlightingColorListViewer.setInput(fHighlightingColorList);
 		fHighlightingColorListViewer.setSelection(new StructuredSelection(fHighlightingColorListViewer.getElementAt(0)));
-		
-		for (int i= 0; i < fAppearanceColorListModel.length; i++) {
-			fAppearanceColorList.add(fAppearanceColorListModel[i][0]);
-		}
-		fAppearanceColorList.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				if (fAppearanceColorList != null && !fAppearanceColorList.isDisposed()) {
-					fAppearanceColorList.select(0);
-					handleAppearanceColorListSelection();
-				}
-			}
-		});
-		
-		initializeBackgroundColorFields();
 	}
 	
-	private void initializeBackgroundColorFields() {
-		RGB rgb= PreferenceConverter.getColor(getOverlayStore(), AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
-		fBackgroundColorEditor.setColorValue(rgb);		
-		
-		boolean dflt= getOverlayStore().getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
-		fBackgroundDefaultRadioButton.setSelection(dflt);
-		fBackgroundCustomRadioButton.setSelection(!dflt);
-		fBackgroundColorButton.setEnabled(!dflt);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.preferences.AbstractAntEditorPreferencePage#handleDefaults()
 	 */
 	protected void handleDefaults() {
-		handleAppearanceColorListSelection();
 		handleSyntaxColorListSelection();
-		initializeBackgroundColorFields();
+		//initializeBackgroundColorFields();
 		restoreWorkingValuesToDefaults();
 	}
 	
@@ -627,38 +391,12 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		Composite colorComposite= new Composite(parent, SWT.NONE);
 		colorComposite.setLayout(new GridLayout());
 
-		Group backgroundComposite= new Group(colorComposite, SWT.SHADOW_ETCHED_IN);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 3;
-		backgroundComposite.setLayout(layout);
-		backgroundComposite.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.2")); //$NON-NLS-1$
-	
-		SelectionListener backgroundSelectionListener= new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {				
-				boolean custom= fBackgroundCustomRadioButton.getSelection();
-				fBackgroundColorButton.setEnabled(custom);
-				getOverlayStore().setValue(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, !custom);
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {}
-		};
-
-		fBackgroundDefaultRadioButton= new Button(backgroundComposite, SWT.RADIO | SWT.LEFT);
-		fBackgroundDefaultRadioButton.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.3")); //$NON-NLS-1$
-		fBackgroundDefaultRadioButton.addSelectionListener(backgroundSelectionListener);
-
-		fBackgroundCustomRadioButton= new Button(backgroundComposite, SWT.RADIO | SWT.LEFT);
-		fBackgroundCustomRadioButton.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.4")); //$NON-NLS-1$
-		fBackgroundCustomRadioButton.addSelectionListener(backgroundSelectionListener);
-		
-		fBackgroundColorEditor= new ColorEditor(backgroundComposite);
-		fBackgroundColorButton= fBackgroundColorEditor.getButton();
-		
 		Label label= new Label(colorComposite, SWT.LEFT);
 		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.5")); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Composite editorComposite= new Composite(colorComposite, SWT.NONE);
-		layout= new GridLayout();
+		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
@@ -731,15 +469,6 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item= getHighlightingColorListItem();
 				PreferenceConverter.setValue(getOverlayStore(), item.getColorKey(), fSyntaxForegroundColorEditor.getColorValue());
-			}
-		});
-
-		fBackgroundColorButton.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			public void widgetSelected(SelectionEvent e) {
-				PreferenceConverter.setValue(getOverlayStore(), AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, fBackgroundColorEditor.getColorValue());					
 			}
 		});
 
