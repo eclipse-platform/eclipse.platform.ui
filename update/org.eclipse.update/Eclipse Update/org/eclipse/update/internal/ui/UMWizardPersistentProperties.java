@@ -110,7 +110,7 @@ public class UMWizardPersistentProperties implements Serializable {
 		URLNamePair pairUpdate = null;
 
 		for (int i = 0; i < _vectorUpdateBookmarks.size(); ++i) {
-			pair = (URLNamePair) _vectorUpdateBookmarks.elementAt(i);
+			pairUpdate = (URLNamePair) _vectorUpdateBookmarks.elementAt(i);
 			if (pairUpdate._getName().equals(pair._getName()) && pairUpdate._getURL().equals(pair._getURL())) {
 				_vectorUpdateBookmarks.remove(pairUpdate);
 			}
