@@ -398,8 +398,11 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                                     && ((DEBUG_VERBOSE_COMMAND_ID == null) || (DEBUG_VERBOSE_COMMAND_ID
                                             .equals(commandId)))) {
                                 System.out
-                                        .println("HANDLERS >>> Resolved conflict detected for " //$NON-NLS-1$
-                                                + bestHandlerSubmission);
+                                        .println("HANDLERS >>> Resolved conflict detected between "); //$NON-NLS-1$
+                                System.out.println("HANDLERS >>>     win: " //$NON-NLS-1$
+                                        + handlerSubmission);
+                                System.out.println("HANDLERS >>>    lose: " //$NON-NLS-1$
+                                        + bestHandlerSubmission);
                             }
                             conflict = false;
                             bestHandlerSubmission = handlerSubmission;
@@ -416,8 +419,11 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                                 && ((DEBUG_VERBOSE_COMMAND_ID == null) || (DEBUG_VERBOSE_COMMAND_ID
                                         .equals(commandId)))) {
                             System.out
-                                    .println("HANDLERS >>> Resolved conflict detected for " //$NON-NLS-1$
-                                            + bestHandlerSubmission);
+                                    .println("HANDLERS >>> Resolved conflict detected between "); //$NON-NLS-1$
+                            System.out.println("HANDLERS >>>     win: " //$NON-NLS-1$
+                                    + bestHandlerSubmission);
+                            System.out.println("HANDLERS >>>    lose: " //$NON-NLS-1$
+                                    + handlerSubmission);
                         }
                     }
                 }
