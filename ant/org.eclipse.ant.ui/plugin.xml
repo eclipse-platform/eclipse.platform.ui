@@ -65,7 +65,7 @@
   
   <extension point="org.eclipse.ui.actionSets">
 	<actionSet label="%antActionSetLabel" 
-		visible="true" 
+		visible="false" 
 		id="org.eclipse.ant.ui.antActionSet">
 	  	<action label="%executeAntLabel" 
 	  		pulldown="true" 

@@ -8,10 +8,8 @@ package org.eclipse.ant.core;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.apache.tools.ant.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 /**
  * An Ant project adapted to running inside the Eclipse Platform.  Because of the class
@@ -113,6 +111,31 @@ protected void fireBuildStarted() {
 	super.fireBuildStarted();
 }
 /**
+ * Sends a target started notification to all the listeners when a top level target 
+ * has just been started.
+ */
+protected void fireTopLevelTargetStarted(Target target) {
+    BuildEvent event = new BuildEvent(target);
+    Vector buildListeners = getBuildListeners();
+    for (int i = 0; i < buildListeners.size(); i++) {
+        IAntRunnerListener listener = (IAntRunnerListener) buildListeners.elementAt(i);
+        listener.executeTargetStarted(event);
+    }
+}
+/**
+ * Sends a target finished notification to all the listeners when a top level target
+ * has just been finished.
+ */
+protected void fireTopLevelTargetFinished(Target target, Throwable exception) {
+    BuildEvent event = new BuildEvent(target);
+    event.setException(exception);
+    Vector buildListeners = getBuildListeners();
+    for (int i = 0; i < buildListeners.size(); i++) {
+        IAntRunnerListener listener = (IAntRunnerListener) buildListeners.elementAt(i);
+        listener.executeTargetFinished(event);
+    }
+}
+/**
  * Returns a string in which all <code>File.separatorChar</code>
  * characters have been replaced with the platform's path separator
  * character.
@@ -190,5 +213,22 @@ public Object internalCreateDataType(String typeName) throws BuildException {
         throw new BuildException(msg, t);
     }
 }
-    
+/**
+ * Executes a target. Notification has been added: the build listener knows that a top level
+ * target is being executed and when it is finished.
+ * 
+ * @see Project#executeTarget(String targetName)
+ */
+public void executeTarget(String targetName) throws BuildException {
+	Target targetToExecute = (Target) getTargets().get(targetName);
+    try {
+        fireTopLevelTargetStarted(targetToExecute);
+        super.executeTarget(targetName);
+        fireTopLevelTargetFinished(targetToExecute, null);
+    } catch(RuntimeException exc) {
+        fireTopLevelTargetFinished(targetToExecute, exc);
+        throw exc;
+    }
+}
+
 }

@@ -102,7 +102,7 @@ public class AntRunner implements IPlatformRunnable {
 	private Vector listeners= new Vector(5);
 
 	/** Names of classes to add as listeners to project */
-	private AntRunnerListener clientListener;
+	private IAntRunnerListener clientListener;
 
 	/**
 	 * The Ant logger class. There may be only one logger. It will have the
@@ -587,7 +587,7 @@ public Object run(Object argArray) throws Exception {
  * @param listener the client listener
  * @exception execution exceptions
  */
-public Object run(Object argArray, AntRunnerListener listener) throws Exception {
+public Object run(Object argArray, IAntRunnerListener listener) throws Exception {
 	clientListener = listener;
 	return run(argArray);
 }
