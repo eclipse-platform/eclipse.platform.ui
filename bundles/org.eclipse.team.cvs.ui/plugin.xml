@@ -229,6 +229,43 @@
                id="org.eclipse.team.ccvs.ui.unedit">
          </action>
       </objectContribution>
+            <objectContribution
+            objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
+            id="org.eclipse.team.ccvs.ui.IResourceContributions">
+         <filter
+               name="projectPersistentProperty"
+               value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
+         </filter>
+         <action
+               helpContextId="org.eclipse.team.cvs.ui.team_set_keyword_mode_action_context"
+               label="%SetKeywordSubstitutionAction.label"
+               definitionId="org.eclipse.team.cvs.ui.setKeywordSubstitution"
+               class="org.eclipse.team.internal.ccvs.ui.actions.SetKeywordSubstitutionAction"
+               tooltip="%SetKeywordSubstitutionAction.tooltip"
+               menubarPath="team.main/group3"
+               id="org.eclipse.team.cvs.ui.setKeywordSubstitution">
+         </action>
+         <action
+               helpContextId="org.eclipse.team.cvs.ui.team_create_patch_action_context"
+               label="%GenerateDiff.label"
+               definitionId="org.eclipse.team.cvs.ui.GenerateDiff"
+               class="org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction"
+               tooltip="%GenerateDiff.tooltip"
+               menubarPath="team.main/group1"
+               id="org.eclipse.team.cvs.ui.GenerateDiff">
+         </action>
+         <action
+               helpContextId="org.eclipse.team.cvs.ui.team_merge_action_context"
+               label="%MergeAction.label"
+               definitionId="org.eclipse.team.cvs.ui.merge"
+               tooltip="%MergeAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.MergeAction"
+               icon="icons/full/obj16/branches_rep.gif"
+               menubarPath="team.main/group2"
+               id="org.eclipse.team.cvs.ui.merge">
+         </action>
+      </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.mapping.ResourceMapping"
             adaptable="true"
@@ -243,31 +280,12 @@
            </adapt>
          </enablement>
          <action
-               helpContextId="org.eclipse.team.cvs.ui.team_set_keyword_mode_action_context"
-               label="%SetKeywordSubstitutionAction.label"
-               definitionId="org.eclipse.team.cvs.ui.setKeywordSubstitution"
-               class="org.eclipse.team.internal.ccvs.ui.actions.SetKeywordSubstitutionAction"
-               tooltip="%SetKeywordSubstitutionAction.tooltip"
-               menubarPath="team.main/group3"
-               id="org.eclipse.team.cvs.ui.setKeywordSubstitution">
-         </action>
-         <action
                label="%UpdateActionSwitch.label"
                definitionId="org.eclipse.team.cvs.ui.updateSwitch"
                class="org.eclipse.team.internal.ccvs.ui.actions.UpdateAction"
                tooltip="%UpdateActionSwitch.tooltip"
                menubarPath="team.main/group2"
                id="org.eclipse.team.cvs.ui.updateSwitch">
-         </action>
-         <action
-               helpContextId="org.eclipse.team.cvs.ui.team_merge_action_context"
-               label="%MergeAction.label"
-               definitionId="org.eclipse.team.cvs.ui.merge"
-               tooltip="%MergeAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.MergeAction"
-               icon="icons/full/obj16/branches_rep.gif"
-               menubarPath="team.main/group2"
-               id="org.eclipse.team.cvs.ui.merge">
          </action>
          <action
                helpContextId="org.eclipse.team.cvs.ui.team_branch_action_context"
@@ -324,15 +342,6 @@
                tooltip="%ReplaceWithAction.tooltip"
                menubarPath="replaceWithMenu/replaceWithGroup"
                id="org.eclipse.team.cvs.ui.replace">
-         </action>
-         <action
-               helpContextId="org.eclipse.team.cvs.ui.team_create_patch_action_context"
-               label="%GenerateDiff.label"
-               definitionId="org.eclipse.team.cvs.ui.GenerateDiff"
-               class="org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction"
-               tooltip="%GenerateDiff.tooltip"
-               menubarPath="team.main/group1"
-               id="org.eclipse.team.cvs.ui.GenerateDiff">
          </action>
          <action
                helpContextId="org.eclipse.team.cvs.ui.team_update_action_context"
