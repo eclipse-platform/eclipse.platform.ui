@@ -47,6 +47,7 @@ import org.eclipse.debug.internal.ui.actions.AddToFavoritesAction;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.sourcelookup.EditSourceLookupPathAction;
 import org.eclipse.debug.internal.ui.sourcelookup.LookupSourceAction;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupResult;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
@@ -725,6 +726,10 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			scheduleSourceLookup();
 		} else {
 			setStackFrame(stackFrame);
+			SourceLookupResult result = (SourceLookupResult) fResult;
+			if (result != null) {
+				result.updateArtifact(stackFrame);
+			}
 			scheduleSourceDisplay();
 		}
 	}

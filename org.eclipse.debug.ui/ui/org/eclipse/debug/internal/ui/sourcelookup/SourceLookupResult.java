@@ -112,4 +112,18 @@ public class SourceLookupResult implements ISourceLookupResult {
     protected void setEditorInput(IEditorInput input) {
         fEditorInput = input;
     }    
+	
+	/**
+	 * Updates the artifact to refer to the given artifact
+	 * if equal. For example, when a source lookup result is resued
+	 * for the same stack frame, we still need to update in case
+	 * the stack frame is not identical.
+	 * 
+	 * @param artifact new artifact state
+	 */
+	public void updateArtifact(Object artifact) {
+		if (fArtifact.equals(artifact)) {
+			fArtifact = artifact;
+		}
+	}
 }
