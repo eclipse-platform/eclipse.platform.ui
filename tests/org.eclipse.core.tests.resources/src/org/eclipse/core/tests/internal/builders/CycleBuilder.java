@@ -42,18 +42,21 @@ public class CycleBuilder extends TestBuilder {
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		if (beforeProjects != null) {
 			for (int i = 0; i < beforeProjects.length; i++) {
-				Assert.assertTrue("Missing before project: " + beforeProjects[i], isBeforeThisProject(beforeProjects[i]));
+				Assert.assertTrue("Missing before project: " + beforeProjects[i], hasBeenBuilt(beforeProjects[i]));
 			}
 		}
 		if (afterProjects != null) {
 			for (int i = 0; i < afterProjects.length; i++) {
-				Assert.assertTrue("Missing after project: " + afterProjects[i], !isBeforeThisProject(afterProjects[i]));
+				Assert.assertTrue("Missing after project: " + afterProjects[i], !hasBeenBuilt(afterProjects[i]));
 			}
 		}
 		if (rebuildsToRequest > buildCount) {
 			changeAllFiles();
 			needRebuild();
 		}
+		//ensure that subsequent builds are always incremental
+		if (buildCount > 0)
+			Assert.assertTrue("Should be incremental build", kind == IncrementalProjectBuilder.INCREMENTAL_BUILD);
 		buildCount++;
 		return null;
 	}

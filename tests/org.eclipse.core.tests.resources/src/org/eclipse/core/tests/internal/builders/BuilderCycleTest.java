@@ -62,6 +62,7 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 		}
 
 		CycleBuilder builder = CycleBuilder.getInstance();
+		builder.resetBuildCount();
 		builder.setBeforeProjects(new IProject[] {before1, before2});
 		builder.setAfterProjects(new IProject[] {after1, after2});
 		
@@ -69,6 +70,7 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 			//create a file to ensure incremental build is called
 			project.getFile("Foo.txt").create(getRandomContents(), IResource.NONE, getMonitor());
 			getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+			builder.resetBuildCount();
 			getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
 		} catch (CoreException e) {
 			fail("3.0", e);
@@ -94,6 +96,8 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
+		CycleBuilder builder = CycleBuilder.getInstance();
+		builder.resetBuildCount();
 		try {
 			getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
 		} catch (CoreException e) {
@@ -101,7 +105,6 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 		}
 
 		//don't request rebuilds and ensure we're only called once
-		CycleBuilder builder = CycleBuilder.getInstance();
 		builder.setRebuildsToRequest(0);
 		builder.resetBuildCount();
 		try {
