@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.commands.IActiveKeyConfigurationDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 final class ActiveKeyConfigurationDefinition implements IActiveKeyConfigurationDefinition {

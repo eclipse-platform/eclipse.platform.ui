@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.commands;
 
-
 /**
  * <p>
  * JAVADOC
@@ -32,5 +31,19 @@ public interface ICategory extends Comparable {
 	 * 
 	 * @return
 	 */	
-	ICategoryDefinition getCategoryDefinition();
+	String getDescription();
+		
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getId();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getName();
 }

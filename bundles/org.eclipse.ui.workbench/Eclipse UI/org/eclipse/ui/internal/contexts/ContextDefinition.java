@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.eclipse.ui.contexts.IContextDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 final class ContextDefinition implements Comparable, IContextDefinition {
@@ -95,20 +94,20 @@ final class ContextDefinition implements Comparable, IContextDefinition {
 	}
 	
 	public int compareTo(Object object) {
-		ContextDefinition contextDefintion = (ContextDefinition) object;
-		int compareTo = Util.compare(description, contextDefintion.description);
+		ContextDefinition contextDefinition = (ContextDefinition) object;
+		int compareTo = Util.compare(description, contextDefinition.description);
 		
 		if (compareTo == 0) {		
-			compareTo = id.compareTo(contextDefintion.id);			
+			compareTo = id.compareTo(contextDefinition.id);			
 		
 			if (compareTo == 0) {
-				compareTo = name.compareTo(contextDefintion.name);
+				compareTo = name.compareTo(contextDefinition.name);
 				
 				if (compareTo == 0) {
-					compareTo = Util.compare(parentId, contextDefintion.parentId);
+					compareTo = Util.compare(parentId, contextDefinition.parentId);
 
 					if (compareTo == 0)
-						compareTo = Util.compare(pluginId, contextDefintion.pluginId);								
+						compareTo = Util.compare(pluginId, contextDefinition.pluginId);								
 				}							
 			}
 		}
@@ -120,13 +119,13 @@ final class ContextDefinition implements Comparable, IContextDefinition {
 		if (!(object instanceof ContextDefinition))
 			return false;
 
-		ContextDefinition contextDefintion = (ContextDefinition) object;	
+		ContextDefinition contextDefinition = (ContextDefinition) object;	
 		boolean equals = true;
-		equals &= Util.equals(description, contextDefintion.description);
-		equals &= id.equals(contextDefintion.id);
-		equals &= name.equals(contextDefintion.name);
-		equals &= Util.equals(parentId, contextDefintion.parentId);
-		equals &= Util.equals(pluginId, contextDefintion.pluginId);
+		equals &= Util.equals(description, contextDefinition.description);
+		equals &= id.equals(contextDefinition.id);
+		equals &= name.equals(contextDefinition.name);
+		equals &= Util.equals(parentId, contextDefinition.parentId);
+		equals &= Util.equals(pluginId, contextDefinition.pluginId);
 		return equals;
 	}
 

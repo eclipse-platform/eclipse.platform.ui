@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.commands;
 
 import java.util.List;
 
-import org.eclipse.ui.commands.ICommandRegistry;
 
 interface IMutableCommandRegistry extends ICommandRegistry {
 

@@ -25,8 +25,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.ui.commands.IKeyBindingDefinition;
-import org.eclipse.ui.contexts.IContextDefinition;
+import org.eclipse.ui.internal.contexts.IContextDefinition;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 

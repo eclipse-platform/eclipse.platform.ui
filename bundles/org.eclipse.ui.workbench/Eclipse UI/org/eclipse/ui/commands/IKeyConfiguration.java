@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.commands;
 
-
 /**
  * <p>
  * JAVADOC
@@ -32,12 +31,33 @@ public interface IKeyConfiguration extends Comparable {
 	 * 
 	 * @return
 	 */	
-	boolean getActive();
+	String getDescription();
+		
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getId();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getName();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	IKeyConfigurationDefinition getKeyConfigurationDefinition();
+	String getParentId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	boolean isActive();
 }

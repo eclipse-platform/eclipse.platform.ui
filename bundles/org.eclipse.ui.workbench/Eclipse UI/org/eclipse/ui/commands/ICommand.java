@@ -13,7 +13,6 @@ package org.eclipse.ui.commands;
 
 import java.util.List;
 
-
 /**
  * <p>
  * JAVADOC
@@ -29,37 +28,14 @@ import java.util.List;
  */
 public interface ICommand extends Comparable {
 
-	/* TODO
-	IContextBinding 1:1 with IContextBindingDefinition
-		
-	IImageBinding for those IImageBindingDefinitions matching platform and locale
-		just image style, image uri, match value (for ordering)		
-		
-	getKeyBindings(); 
-		IKeyBinding for those IKeyBindingDefinitions matching active context, active command, active key configuration, platform, and locale
-		just key sequence and match value (for ordering)
-
-	getInContext();
-
-	// also solved, directly taken from above (except perhaps 'List getKeySequences', which needs to encapsulate matching order..)
-	List getKeySequences();
-	Map getImageUrisByStyle();
-	SortedSet getContextIds();
-	*/
+	// TODO getInContext(), List getKeySequences(), Map getImageUrisByStyle(), SortedSet getContextIds();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	boolean getActive();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	ICommandDefinition getCommandDefinition();
+	String getCategoryId();
 
 	/**
 	 * JAVADOC
@@ -73,6 +49,27 @@ public interface ICommand extends Comparable {
 	 * 
 	 * @return
 	 */	
+	String getDescription();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getHelpId();
+		
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getId();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
 	List getImageBindings();
 
 	/**
@@ -81,4 +78,18 @@ public interface ICommand extends Comparable {
 	 * @return
 	 */	
 	List getKeyBindings();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getName();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	boolean isActive();
 }

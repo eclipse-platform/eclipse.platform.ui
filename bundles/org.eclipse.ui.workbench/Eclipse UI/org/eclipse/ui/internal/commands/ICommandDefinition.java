@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.internal.commands;
 
 /**
  * <p>
@@ -24,12 +24,68 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface ICommandRegistryEvent {
+public interface ICommandDefinition extends Comparable {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	ICommandRegistry getCommandRegistry();
+	boolean getAllowsContextBindings();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	boolean getAllowsImageBindings();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	boolean getAllowsKeyBindings();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getCategoryId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getDescription();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getHelpId();
+		
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getId();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getName();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPluginId();
 }

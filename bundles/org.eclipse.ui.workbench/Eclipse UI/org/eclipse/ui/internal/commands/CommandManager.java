@@ -24,13 +24,9 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.commands.IAction;
 import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.ICommandDefinition;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
-import org.eclipse.ui.commands.ICommandRegistry;
-import org.eclipse.ui.commands.ICommandRegistryEvent;
-import org.eclipse.ui.commands.ICommandRegistryListener;
 import org.eclipse.ui.handles.IHandle;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.handles.Handle;
@@ -247,8 +243,8 @@ public final class CommandManager implements ICommandManager {
 		
 		while (iterator.hasNext()) {
 			ICommandDefinition commandDefinition = (ICommandDefinition) iterator.next();
-			ICommand command = new Command(activeCommandIds.contains(commandDefinition.getId()), commandDefinition, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
-			commandsById.put(commandDefinition.getId(), command);
+			ICommand command = new Command(activeCommandIds.contains(commandDefinition.getId()), commandDefinition.getCategoryId(), Collections.EMPTY_LIST, commandDefinition.getDescription(), commandDefinition.getHelpId(), commandDefinition.getId(), Collections.EMPTY_LIST, Collections.EMPTY_LIST, commandDefinition.getName());
+			commandsById.put(command.getId(), command);
 		}
 
 		SortedSet commandChanges = new TreeSet();

@@ -20,13 +20,6 @@ import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.commands.IActiveKeyConfigurationDefinition;
-import org.eclipse.ui.commands.ICategoryDefinition;
-import org.eclipse.ui.commands.ICommandDefinition;
-import org.eclipse.ui.commands.IContextBindingDefinition;
-import org.eclipse.ui.commands.IImageBindingDefinition;
-import org.eclipse.ui.commands.IKeyBindingDefinition;
-import org.eclipse.ui.commands.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;

@@ -23,13 +23,9 @@ import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.contexts.IContext;
-import org.eclipse.ui.contexts.IContextDefinition;
 import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IContextManagerEvent;
 import org.eclipse.ui.contexts.IContextManagerListener;
-import org.eclipse.ui.contexts.IContextRegistry;
-import org.eclipse.ui.contexts.IContextRegistryEvent;
-import org.eclipse.ui.contexts.IContextRegistryListener;
 import org.eclipse.ui.handles.IHandle;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.handles.Handle;
@@ -182,8 +178,8 @@ public final class ContextManager implements IContextManager {
 		
 		while (iterator.hasNext()) {
 			IContextDefinition contextDefinition = (IContextDefinition) iterator.next();
-			IContext context = new Context(activeContextIds.contains(contextDefinition.getId()), contextDefinition);		
-			contextsById.put(contextDefinition.getId(), context);
+			IContext context = new Context(activeContextIds.contains(contextDefinition.getId()), contextDefinition.getDescription(), contextDefinition.getId(), contextDefinition.getName(), contextDefinition.getParentId());		
+			contextsById.put(context.getId(), context);
 		}
 
 		SortedSet contextChanges = new TreeSet();

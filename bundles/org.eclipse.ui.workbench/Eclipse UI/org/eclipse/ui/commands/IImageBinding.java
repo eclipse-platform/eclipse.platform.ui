@@ -24,33 +24,19 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface ICategoryDefinition extends Comparable {
+public interface IImageBinding extends Comparable {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getDescription();
-		
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getId();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getName();
+	String getImageStyle();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getPluginId();
+	String getImageUri();
 }

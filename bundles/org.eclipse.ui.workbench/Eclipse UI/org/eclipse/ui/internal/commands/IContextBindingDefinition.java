@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.contexts;
+package org.eclipse.ui.internal.commands;
 
 /**
  * <p>
@@ -24,12 +24,26 @@ package org.eclipse.ui.contexts;
  * 
  * @since 3.0
  */
-public interface IContextRegistryEvent {
+public interface IContextBindingDefinition extends Comparable {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	IContextRegistry getContextRegistry();
+	String getCommandId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getContextId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPluginId();		
 }

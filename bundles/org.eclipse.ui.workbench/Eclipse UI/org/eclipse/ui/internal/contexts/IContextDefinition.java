@@ -9,9 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.contexts;
-
-import java.util.List;
+package org.eclipse.ui.internal.contexts;
 
 /**
  * <p>
@@ -26,28 +24,40 @@ import java.util.List;
  * 
  * @since 3.0
  */
-public interface IContextRegistry {
-
-	/**
-	 * Registers an IContextRegistryListener instance with this context registry.
-	 *
-	 * @param contextRegistryListener the IContextRegistryListener instance to register.
-	 * @throws NullPointerException
-	 */
-	void addContextRegistryListener(IContextRegistryListener contextRegistryListener);
+public interface IContextDefinition extends Comparable {
 
 	/**
 	 * JAVADOC
-	 *
+	 * 
 	 * @return
-	 */
-	List getContextDefinitions();
+	 */	
+	String getDescription();
+		
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getId();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getName();
 
 	/**
-	 * Unregisters an IContextRegistryListener instance with this context registry.
-	 *
-	 * @param contextRegistryListener the IContextRegistryListener instance to unregister.
-	 * @throws NullPointerException
-	 */
-	void removeContextRegistryListener(IContextRegistryListener contextRegistryListener);
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getParentId();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPluginId();
 }

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.internal.commands;
 
 /**
  * <p>
@@ -24,47 +24,33 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface IImageBindingDefinition extends Comparable {
+public interface ICategoryDefinition extends Comparable {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getCommandId();
-
+	String getDescription();
+		
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getImageStyle();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getImageUri();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getLocale();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPlatform();
+	String getId();
 	
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getPluginId();	
+	String getName();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPluginId();
 }

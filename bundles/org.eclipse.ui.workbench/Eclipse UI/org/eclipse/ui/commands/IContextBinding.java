@@ -24,14 +24,7 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface IContextBindingDefinition extends Comparable {
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getCommandId();
+public interface IContextBinding extends Comparable {
 
 	/**
 	 * JAVADOC
@@ -39,11 +32,4 @@ public interface IContextBindingDefinition extends Comparable {
 	 * @return
 	 */	
 	String getContextId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPluginId();		
 }

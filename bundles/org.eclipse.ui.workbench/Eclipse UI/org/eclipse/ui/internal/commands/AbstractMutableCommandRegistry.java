@@ -13,13 +13,6 @@ package org.eclipse.ui.internal.commands;
 
 import java.util.List;
 
-import org.eclipse.ui.commands.IActiveKeyConfigurationDefinition;
-import org.eclipse.ui.commands.ICategoryDefinition;
-import org.eclipse.ui.commands.ICommandDefinition;
-import org.eclipse.ui.commands.IContextBindingDefinition;
-import org.eclipse.ui.commands.IImageBindingDefinition;
-import org.eclipse.ui.commands.IKeyBindingDefinition;
-import org.eclipse.ui.commands.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 abstract class AbstractMutableCommandRegistry extends AbstractCommandRegistry implements IMutableCommandRegistry {

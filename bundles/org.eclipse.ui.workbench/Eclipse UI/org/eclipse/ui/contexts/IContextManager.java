@@ -62,20 +62,6 @@ public interface IContextManager {
 	 * @return
 	 */
 	SortedMap getContextsById();
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
-	IContextRegistry getPluginContextRegistry();
-	
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
-	IContextRegistry getPreferenceContextRegistry();	
 	
 	/**
 	 * Unregisters an IContextManagerListener instance with this context manager.

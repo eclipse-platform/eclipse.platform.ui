@@ -9,7 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.contexts;
+package org.eclipse.ui.commands;
+
+import org.eclipse.ui.keys.KeySequence;
 
 /**
  * <p>
@@ -24,40 +26,12 @@ package org.eclipse.ui.contexts;
  * 
  * @since 3.0
  */
-public interface IContext extends Comparable {
+public interface IKeyBinding extends Comparable {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getDescription();
-		
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getId();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getName();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getParentId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	boolean isActive();
+	KeySequence getKeySequence();
 }

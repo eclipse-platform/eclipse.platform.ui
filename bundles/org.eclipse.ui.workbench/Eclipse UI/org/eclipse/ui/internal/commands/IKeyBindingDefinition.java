@@ -9,7 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.internal.commands;
+
+import org.eclipse.ui.keys.KeySequence;
 
 /**
  * <p>
@@ -24,64 +26,50 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface ICommandDefinition extends Comparable {
+public interface IKeyBindingDefinition extends Comparable {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	boolean getAllowsContextBindings();
+	String getCommandId();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	boolean getAllowsImageBindings();
+	String getContextId();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	boolean getAllowsKeyBindings();
+	String getKeyConfigurationId();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getCategoryId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getDescription();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getHelpId();
-		
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getId();
+	KeySequence getKeySequence();
 	
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getName();
-
+	String getLocale();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPlatform();
+	
 	/**
 	 * JAVADOC
 	 * 

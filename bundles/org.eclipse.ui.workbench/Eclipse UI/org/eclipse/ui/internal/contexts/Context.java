@@ -19,7 +19,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.ui.contexts.IContext;
-import org.eclipse.ui.contexts.IContextDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 final class Context implements IContext {
@@ -33,7 +32,7 @@ final class Context implements IContext {
 		if (nameComparator == null)
 			nameComparator = new Comparator() {
 				public int compare(Object left, Object right) {
-					return Collator.getInstance().compare(((IContext) left).getContextDefinition().getName(), ((IContext) right).getContextDefinition().getName());
+					return Collator.getInstance().compare(((IContext) left).getName(), ((IContext) right).getName());
 				}	
 			};		
 		
@@ -51,7 +50,7 @@ final class Context implements IContext {
 			Object object = iterator.next();
 			Util.assertInstance(object, IContext.class);
 			IContext context = (IContext) object;
-			sortedMap.put(context.getContextDefinition().getId(), context);									
+			sortedMap.put(context.getId(), context);									
 		}			
 		
 		return sortedMap;
@@ -68,33 +67,52 @@ final class Context implements IContext {
 			Object object = iterator.next();
 			Util.assertInstance(object, IContext.class);			
 			IContext context = (IContext) object;
-			sortedMap.put(context.getContextDefinition().getName(), context);									
+			sortedMap.put(context.getName(), context);									
 		}			
 		
 		return sortedMap;
 	}
 
 	private boolean active;
-	private IContextDefinition contextDefinition;
-	
+	private String description;
+	private String id;
+	private String name;
+	private String parentId;
+	private String pluginId;
+
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private transient String string;
-
-	Context(boolean active, IContextDefinition contextDefinition) {
-		if (contextDefinition == null)
-			throw new NullPointerException();
-		
-		this.active = active;
-		this.contextDefinition = contextDefinition;
-	}
 	
+	Context(boolean active, String description, String id, String name, String parentId) {
+		if (id == null || name == null)
+			throw new NullPointerException();
+
+		this.active = active;		
+		this.description = description;
+		this.id = id;
+		this.name = name;
+		this.parentId = parentId;
+	}
+
 	public int compareTo(Object object) {
 		Context context = (Context) object;
 		int compareTo = active == false ? (context.active == true ? -1 : 0) : 1;
 		
-		if (compareTo == 0)		
-			compareTo = contextDefinition.compareTo(context.contextDefinition);
+		if (compareTo == 0) {
+			compareTo = Util.compare(description, context.description);
+		
+			if (compareTo == 0) {		
+				compareTo = id.compareTo(context.id);			
+			
+				if (compareTo == 0) {
+					compareTo = name.compareTo(context.name);
+					
+					if (compareTo == 0)
+						compareTo = Util.compare(parentId, context.parentId);		
+				}
+			}
+		}
 		
 		return compareTo;	
 	}
@@ -103,30 +121,48 @@ final class Context implements IContext {
 		if (!(object instanceof Context))
 			return false;
 
-		Context context = (Context) object;
+		Context context = (Context) object;	
 		boolean equals = true;
 		equals &= active == context.active;
-		equals &= contextDefinition.equals(context.contextDefinition);
+		equals &= Util.equals(description, context.description);
+		equals &= id.equals(context.id);
+		equals &= name.equals(context.name);
+		equals &= Util.equals(parentId, context.parentId);
 		return equals;
 	}
 
-	public boolean getActive() {
-		return active;
-	}
-
-	public IContextDefinition getContextDefinition() {
-		return contextDefinition;
+	public String getDescription() {
+		return description;	
 	}
 	
+	public String getId() {
+		return id;	
+	}
+	
+	public String getName() {
+		return name;
+	}	
+
+	public String getParentId() {
+		return parentId;
+	}
+
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + (active ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());
-			hashCode = hashCode * HASH_FACTOR + contextDefinition.hashCode();
+			hashCode = hashCode * HASH_FACTOR + (active ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());			
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
+			hashCode = hashCode * HASH_FACTOR + id.hashCode();
+			hashCode = hashCode * HASH_FACTOR + name.hashCode();
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
 			hashCodeComputed = true;
 		}
 			
 		return hashCode;		
+	}
+
+	public boolean isActive() {
+		return active;
 	}
 
 	public String toString() {
@@ -135,7 +171,13 @@ final class Context implements IContext {
 			stringBuffer.append('[');
 			stringBuffer.append(active);
 			stringBuffer.append(',');
-			stringBuffer.append(contextDefinition);
+			stringBuffer.append(description);
+			stringBuffer.append(',');
+			stringBuffer.append(id);
+			stringBuffer.append(',');
+			stringBuffer.append(name);
+			stringBuffer.append(',');
+			stringBuffer.append(parentId);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
@@ -143,3 +185,5 @@ final class Context implements IContext {
 		return string;		
 	}
 }
+
+

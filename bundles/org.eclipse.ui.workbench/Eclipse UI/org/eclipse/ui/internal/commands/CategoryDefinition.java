@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.eclipse.ui.commands.ICategoryDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 final class CategoryDefinition implements ICategoryDefinition {

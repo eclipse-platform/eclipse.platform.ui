@@ -123,20 +123,6 @@ public interface ICommandManager {
 	SortedMap getKeyConfigurationsById();
 	
 	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
-	ICommandRegistry getPluginCommandRegistry();
-	
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
-	ICommandRegistry getPreferenceCommandRegistry();		
-		
-	/**
 	 * Unregisters an ICommandManagerListener instance with this command manager.
 	 *
 	 * @param commandManagerListener the ICommandManagerListener instance to unregister.

@@ -34,18 +34,39 @@ public interface IAction {
 	void execute();
 
 	/**
-	 * TODO temporary method
-	 */	
+	 * JAVADOC
+	 * 
+	 * @param event
+	 * @throws NullPointerException
+	 */
+	// TODO temporary method	
 	void execute(Event event);
-
-	//String getDescription();
-	
-	//String getName();
-	
-	//String getHelpId();
 
 	/**
 	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	// TODO String getDescription();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	// TODO String getName();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	// TODO String getHelpId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
 	 */	
 	boolean isEnabled();
 }
