@@ -674,21 +674,17 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 */
 	protected void fillToolbar(IToolBarManager tbm) {
 		tbm.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowNextAction); //$NON-NLS-1$
-		tbm
-				.appendToGroup(IContextMenuConstants.GROUP_SHOW,
-						fShowPreviousAction); //$NON-NLS-1$
-		tbm.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES,
-				fRemoveSelectedMatches); //$NON-NLS-1$
-		tbm.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES,
-				fRemoveAllResultsAction); //$NON-NLS-1$
+		tbm.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowPreviousAction); //$NON-NLS-1$
+		tbm.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveSelectedMatches); //$NON-NLS-1$
+		tbm.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveAllResultsAction); //$NON-NLS-1$
 		IActionBars actionBars = getSite().getActionBars();
 		if (actionBars != null) {
-			actionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(),
-					fShowNextAction);
-			actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(),
-					fShowPreviousAction);
+			actionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(), fShowNextAction);
+			actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fShowPreviousAction);
+			actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), fRemoveSelectedMatches);
 		}
 	}
+	
 	private void addLayoutActions(IMenuManager menuManager) {
 		if (fFlatAction != null)
 			menuManager.add(fFlatAction);
