@@ -409,7 +409,6 @@ protected void hideEditorArea() {
 private void hideFastView(IViewPart part) {
 	// Get pane.
 	ViewPane pane = getPane(part);
-
 	// Hide the right side sash first
 	if (fastViewSash != null)
 		fastViewSash.setBounds(0, 0, 0, 0);
@@ -417,11 +416,11 @@ private void hideFastView(IViewPart part) {
 	// Slide it off screen.
 	Rectangle bounds = pane.getBounds();
 	Control ctrl = pane.getControl();
-	for (int nX = 0; nX <= bounds.width; nX += 50) {
+	int increment = bounds.width / 3;
+	for (int nX = 0; nX <= bounds.width - 2; nX += increment) {
 		ctrl.setLocation(-nX, bounds.y);
 		ctrl.getParent().update();
 	}
-
 	// Hide it completely.
 	pane.setBounds(0, 0, 0, 0);
 	pane.setFastViewSash(null);
