@@ -4,26 +4,19 @@ package org.eclipse.ui.examples.readmetool;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.ui.model.*;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.IPageSite;
-import org.eclipse.ui.part.PluginTransfer;
-import org.eclipse.ui.views.contentoutline.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.part.PluginTransfer;
+import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 /**
  * Content outline page for the readme editor.

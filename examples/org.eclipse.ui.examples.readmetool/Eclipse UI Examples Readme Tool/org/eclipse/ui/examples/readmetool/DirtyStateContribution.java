@@ -4,10 +4,11 @@ package org.eclipse.ui.examples.readmetool;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPropertyListener;
 
 /**
  * This class demonstrates the contribution of a custom control to the 

@@ -4,12 +4,12 @@ package org.eclipse.ui.examples.readmetool;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.ui.model.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-import java.util.Iterator;
 import java.util.Vector;
+
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 /**
  * This class represents a marked location in the Readme

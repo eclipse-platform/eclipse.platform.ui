@@ -5,13 +5,11 @@ package org.eclipse.ui.examples.multipageeditor;
  * All Rights Reserved.
  */
  
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorPart;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.ui.*;
 import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.jface.action.IAction;
 
 /**
  * Manages the installation/deinstallation of global actions for multi-page editors.

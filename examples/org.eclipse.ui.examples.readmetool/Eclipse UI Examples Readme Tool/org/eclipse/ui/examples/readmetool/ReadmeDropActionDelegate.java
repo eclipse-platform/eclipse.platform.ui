@@ -4,10 +4,11 @@ package org.eclipse.ui.examples.readmetool;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.ByteArrayInputStream;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.part.IDropActionDelegate;
-import java.io.ByteArrayInputStream;
 
 /**
  * Adapter for handling the dropping of readme segments into

@@ -4,12 +4,10 @@ package org.eclipse.ui.examples.readmetool;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.Display;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.eclipse.jface.resource.ImageDescriptor;
 /**
  * Convenience class for storing references to image descriptors
  * used by the readme tool.

@@ -5,14 +5,14 @@ package org.eclipse.ui.examples.readmetool;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.model.*;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 /**
  * This dialog is an example of a detached window launched
  * from an action in the desktop.

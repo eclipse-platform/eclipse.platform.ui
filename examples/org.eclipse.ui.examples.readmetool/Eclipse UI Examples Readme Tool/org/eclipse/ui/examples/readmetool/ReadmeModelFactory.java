@@ -4,12 +4,10 @@ package org.eclipse.ui.examples.readmetool;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import java.util.Enumeration;
-import java.util.Iterator;
 
 /**
  * Creates the sections used in the <code>ContentOutline</code>

@@ -4,13 +4,13 @@ package org.eclipse.ui.examples.readmetool;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.CoreException;
 import java.io.*;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * This class is a simple parser implementing the IReadmeFileParser

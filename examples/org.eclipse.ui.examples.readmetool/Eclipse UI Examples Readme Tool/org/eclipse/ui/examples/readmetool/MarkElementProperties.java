@@ -5,9 +5,6 @@ package org.eclipse.ui.examples.readmetool;
  * All Rights Reserved.
  */
 import org.eclipse.ui.views.properties.*;
-import org.eclipse.ui.views.properties.*;
-import java.util.List;
-import java.util.Vector;
 
 /**
  * This class encapsulates property sheet properties
