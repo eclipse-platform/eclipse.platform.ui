@@ -95,12 +95,16 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 		
 	public void addPages() {
 		ImageDescriptor sharingImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_SHARE);
+		boolean autoconnect = false;
 		if (doesCVSDirectoryExist()) {
 			autoconnectPage = new ConfigurationWizardAutoconnectPage("autoconnectPage", Policy.bind("SharingWizard.autoConnectTitle"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
-			autoconnectPage.setProject(project);
-			autoconnectPage.setDescription(Policy.bind("SharingWizard.autoConnectTitleDescription")); //$NON-NLS-1$
-			addPage(autoconnectPage);
-		} else {
+			if (autoconnectPage.setProject(project)) {
+				autoconnectPage.setDescription(Policy.bind("SharingWizard.autoConnectTitleDescription")); //$NON-NLS-1$
+				addPage(autoconnectPage);
+				autoconnect = true;
+			}
+		}
+		if (!autoconnect) {
 			ICVSRepositoryLocation[] locations = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryLocations();
 			if (locations.length > 0) {
 				locationPage = new RepositorySelectionPage("importPage", Policy.bind("SharingWizard.importTitle"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$

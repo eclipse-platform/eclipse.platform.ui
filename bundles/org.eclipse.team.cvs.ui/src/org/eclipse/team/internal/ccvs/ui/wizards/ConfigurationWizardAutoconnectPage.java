@@ -42,7 +42,7 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 	private boolean validate = true;
 	private FolderSyncInfo info;
 	ICVSRepositoryLocation location;
-
+	
 	public ConfigurationWizardAutoconnectPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
 	}
@@ -111,18 +111,20 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 	public boolean getValidate() {
 		return validate;
 	}
-	public void setProject(IProject project) {
+	public boolean setProject(IProject project) {
 		try {
 			ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(project);
 			info = folder.getFolderSyncInfo();
 			if (info == null) {
 				// This should never happen
 				CVSUIPlugin.openError(null, Policy.bind("ConfigurationWizardAutoconnectPage.noSyncInfo"), Policy.bind("ConfigurationWizardAutoconnectPage.noCVSDirectory"), null); //$NON-NLS-1$ //$NON-NLS-2$
-				return;
+				return false;
 			}
 			location = CVSRepositoryLocation.fromString(info.getRoot());
+			return true;
 		} catch (TeamException e) {
 			CVSUIPlugin.openError(null, null, null, e);
+			return false;
 		}
 	}
 	
