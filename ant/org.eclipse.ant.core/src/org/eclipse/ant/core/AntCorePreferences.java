@@ -320,6 +320,13 @@ public class AntCorePreferences {
 		}
 	}
 
+	/**
+	 * Returns the URL for the tools.jar associated with the "java.home"
+	 * location. May return <code>null</code> if no tools.jar is found (e.g. "java.home"
+	 * points to a JRE install).
+	 * 
+	 * @return URL tools.jar URL or <code>null</code>
+	 */
 	public URL getToolsJarURL() {
 		IPath path = new Path(System.getProperty("java.home")); //$NON-NLS-1$
 		if (path.lastSegment().equalsIgnoreCase("jre")) { //$NON-NLS-1$
@@ -379,11 +386,11 @@ public class AntCorePreferences {
 	}
 	
 	public URL[] getURLs() {
-		List result = new ArrayList(10);
+		List result = new ArrayList(20);
 		if (antURLs != null) {
 			result.addAll(Arrays.asList(antURLs));
 		}
-		if (customURLs != null) {
+		if (customURLs != null && customURLs.length > 0) {
 			result.addAll(Arrays.asList(customURLs));
 		}
 		if (extraClasspathURLs != null) {
@@ -418,10 +425,18 @@ public class AntCorePreferences {
 		return result;
 	}
 
+	/**
+	 * Returns the user defined custom tasks
+	 * @return the user defined tasks
+	 */
 	public Task[] getCustomTasks() {
 		return customTasks;
 	}
 
+	/**
+	 * Returns the user defined custom types
+	 * @return the user defined types
+	 */
 	public Type[] getCustomTypes() {
 		return customTypes;
 	}
@@ -455,10 +470,18 @@ public class AntCorePreferences {
 		return customURLs;
 	}
 
+	/**
+	 * Sets the user defined custom tasks
+	 * @param tasks
+	 */
 	public void setCustomTasks(Task[] tasks) {
 		customTasks = tasks;
 	}
 
+	/**
+	 * Sets the user defined custom types
+	 * @param tasks
+	 */
 	public void setCustomTypes(Type[] types) {
 		customTypes = types;
 	}
