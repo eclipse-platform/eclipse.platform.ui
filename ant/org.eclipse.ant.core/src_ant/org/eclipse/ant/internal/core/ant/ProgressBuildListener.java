@@ -250,6 +250,7 @@ public class ProgressBuildListener implements BuildListener {
 	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
 	 */
 	public void messageLogged(BuildEvent event) {
+		checkCanceled();
 	}
 
 	protected void checkCanceled() {
