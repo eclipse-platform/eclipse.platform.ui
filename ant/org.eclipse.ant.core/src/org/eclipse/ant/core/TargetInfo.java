@@ -80,4 +80,22 @@ public class TargetInfo {
 	public boolean isDefault() {
 		return isDefault;
 	}
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (!(obj instanceof TargetInfo)) {
+			return false;
+		}
+		TargetInfo other= (TargetInfo)obj;
+		return getName().equals(other.getName());
+	}
+
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getName().hashCode();
+	}
+
 }
