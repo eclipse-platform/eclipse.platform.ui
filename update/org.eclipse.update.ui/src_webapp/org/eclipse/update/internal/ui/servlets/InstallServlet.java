@@ -12,21 +12,23 @@ package org.eclipse.update.internal.ui.servlets;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
+import java.util.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.forms.DetailsForm;
-import org.eclipse.update.internal.ui.model.PendingChange;
-import org.eclipse.update.internal.ui.parts.SWTUtil;
+import org.eclipse.update.internal.search.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.internal.ui.wizards.*;
+import org.eclipse.update.operations.*;
+import org.eclipse.update.search.*;
 
 /**
- * @author dejan
  *
  * To change this generated comment edit the template variable "typecomment":
  * Window>Preferences>Java>Templates.
@@ -88,10 +90,14 @@ public class InstallServlet extends HttpServlet {
 			createPageError(writer, UpdateUI.getString("InstallServlet.noFeatures")); //$NON-NLS-1$
 			return;
 		}
-		if (DetailsForm.isInProgress()) {
+		if (OperationsManager.isInProgress()) {
 			ServletsUtil.createError(writer, UpdateUI.getString("InstallServlet.inProgress"), null);
 			return;
 		}
+//		if (DetailsForm.isInProgress()) {
+//			ServletsUtil.createError(writer, UpdateUI.getString("InstallServlet.inProgress"), null);
+//			return;
+//		}
 		try {
 			URL url = new URL(serverURL);
 			VersionedIdentifier[] vids =
@@ -172,61 +178,42 @@ public class InstallServlet extends HttpServlet {
 		URL siteURL,
 		VersionedIdentifier vid,
 		final boolean needLicensePage) {
+			
 		shell.forceActive();
-		IFeature feature =
-			DetailsForm.fetchFeatureFromServer(shell, siteURL, vid);
-		if (feature == null)
-			return false;
-		IFeature latestOldFeature = findLatestOldFeature(feature);
 
-		if (latestOldFeature != null) {
-			if (latestOldFeature
-				.getVersionedIdentifier()
-				.equals(feature.getVersionedIdentifier())) {
-				// Already installed.
-				ServletsUtil.createError(writer, UpdateUI.getString("InstallServlet.alreadyInstalled"), //$NON-NLS-1$
-				UpdateUI.getString("InstallServlet.alreadyHaveIt")); //$NON-NLS-1$
-				return false;
-			}
-			if (latestOldFeature
-				.getVersionedIdentifier()
-				.getVersion()
-				.isGreaterThan(feature.getVersionedIdentifier().getVersion())) {
-				ServletsUtil.createError(writer, UpdateUI.getString("InstallServlet.olderFeature"), //$NON-NLS-1$
-				UpdateUI.getString("InstallServlet.nothing2")); //$NON-NLS-1$
-				return false;
-			}
-		}
-		final PendingChange job;
+		UpdateSearchScope searchScope = new UpdateSearchScope();
+		searchScope.addSearchSite(
+			siteURL.toString(),
+			siteURL,
+			new String[0]);
 
-
-		if (latestOldFeature != null)
-			job = new PendingChange(latestOldFeature, feature);
-		else
-			job = new PendingChange(feature, PendingChange.INSTALL);
+		final UpdateSearchRequest searchRequest =
+			new UpdateSearchRequest(
+				new UnifiedSiteSearchCategory(),
+				searchScope);
+	
+		searchRequest.addFilter(new VersionedIdentifiersFilter(new VersionedIdentifier[]{vid}));
+		searchRequest.addFilter(new EnvironmentFilter());
+		searchRequest.addFilter(new BackLevelFilter());
 
 		shell.getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				DetailsForm.executeJob(shell, job, needLicensePage);
+				openWizard(shell, searchRequest);
 			}
-		});
+		});	
 		return true;
 	}
 
-	private IFeature findLatestOldFeature(IFeature feature) {
-		IFeature[] oldFeatures = UpdateUI.getInstalledFeatures(feature);
-		if (oldFeatures.length == 0)
-			return null;
 
-		IFeature latest = null;
-		for (int i = 0; i < oldFeatures.length; i++) {
-			IFeature curr = oldFeatures[i];
-			if (latest == null
-				|| curr.getVersionedIdentifier().getVersion().isGreaterThan(
-					latest.getVersionedIdentifier().getVersion())) {
-				latest = curr;
-			}
-		}
-		return latest;
+	private void openWizard(Shell shell, UpdateSearchRequest searchRequest) {
+		UnifiedInstallWizard wizard = new UnifiedInstallWizard(searchRequest);
+		WizardDialog dialog = new ResizableWizardDialog(shell, wizard);
+		dialog.create();
+//		dialog.getShell().setText(
+//			UpdateUI.getString(KEY_OPTIONAL_INSTALL_TITLE));
+		dialog.getShell().setSize(600, 500);
+		dialog.open();
+		if (wizard.isSuccessfulInstall())
+			UpdateUI.informRestartNeeded();
 	}
 }

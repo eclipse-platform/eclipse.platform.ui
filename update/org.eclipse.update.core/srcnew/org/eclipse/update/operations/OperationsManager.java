@@ -19,6 +19,8 @@ public class OperationsManager {
 	private static IOperationFactory operationFactory;
 	private static Vector listeners = new Vector();
 	private static Vector pendingOperations = new Vector();
+	
+	private static boolean inProgress;
 
 	private OperationsManager() {
 	}
@@ -117,5 +119,13 @@ public class OperationsManager {
 		}
 		return (IInstallFeatureOperation[]) list.toArray(
 			new IInstallFeatureOperation[list.size()]);
+	}
+	
+	public static synchronized void setInProgress(boolean inProgress) {
+		OperationsManager.inProgress = inProgress;
+	}
+	
+	public static synchronized boolean isInProgress() {
+		return inProgress;
 	}
 }

@@ -60,6 +60,7 @@ public class BatchInstallOperation
 //				return false;
 //		}
 		
+		OperationsManager.setInProgress(true);
 		if (monitor == null) 
 			monitor = new NullProgressMonitor();
 			
@@ -99,6 +100,7 @@ public class BatchInstallOperation
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} finally {
+			OperationsManager.setInProgress(false);
 			monitor.done();
 		}
 	}
