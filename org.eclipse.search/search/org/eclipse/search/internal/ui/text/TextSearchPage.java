@@ -4,15 +4,21 @@
  */
 package org.eclipse.search.internal.ui.text;
 
-import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import java.util.Set;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -34,31 +40,28 @@ import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
-import org.eclipse.search.internal.core.text.TextSearchScope;
-import org.eclipse.search.internal.ui.ISearchHelpContextIds;import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
-import org.eclipse.search.internal.ui.util.FileTypeEditor;
-import org.eclipse.search.internal.ui.util.RowLayouter;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.ui.IWorkingSet;
 import org.eclipse.search.ui.SearchUI;
+
+import org.eclipse.search.internal.core.text.TextSearchScope;
+import org.eclipse.search.internal.ui.ISearchHelpContextIds;
 import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
+import org.eclipse.search.internal.ui.util.FileTypeEditor;
+import org.eclipse.search.internal.ui.util.RowLayouter;
+import org.eclipse.search.internal.ui.util.SWTUtil;
 
 public class TextSearchPage extends DialogPage implements ISearchPage {
 
@@ -403,13 +406,14 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		
 		fExtensions= new Text(result, SWT.LEFT | SWT.BORDER);
 
-		// 1GF90TL: ITPJUI:ALL - Search dialog is missing a width hint
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint= convertWidthInCharsToPixels(30);
 		fExtensions.setLayoutData(gd);
 		
 		Button button= new Button(result, SWT.PUSH);
 		button.setText(SearchMessages.getString("SearchPage.browse")); //$NON-NLS-1$
+		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		SWTUtil.setButtonDimensionHint(button);
 		
 		fFileTypeEditor= new FileTypeEditor(
 			SearchPlugin.getDefault().getWorkbench().getEditorRegistry(),
