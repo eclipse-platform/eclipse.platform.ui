@@ -256,6 +256,10 @@ public class InternalAntRunner {
 	 */
 	protected void parseScript(Project project) {
 		File buildFile = new File(getBuildFileLocation());
+		if (!buildFile.exists()) {
+			throw new BuildException(MessageFormat.format("Buildfile: {0} does not exist!",
+						 new String[]{buildFile.getAbsolutePath()}));
+		}
 		ProjectHelper.configureProject(project, buildFile);
 	}
 
@@ -419,12 +423,7 @@ public class InternalAntRunner {
 	 * @exception execution exceptions
 	 */
 	public void run(Object argArray) throws Exception {
-		try {
-			run(getArrayList((String[]) argArray));
-		} catch (Exception e) {
-			printMessage(e);
-			throw e;
-		}
+		run(getArrayList((String[]) argArray));
 	}
 
 	/**
@@ -442,9 +441,18 @@ public class InternalAntRunner {
 		try {
 			getCurrentProject().init();
 			if (argList != null) {
-				preprocessCommandLine(argList);
+				executeScript= preprocessCommandLine(argList);
 			}
+			if (!executeScript) {
+				return;
+			}
+			
 			addBuildListeners(getCurrentProject());
+			System.setOut(new PrintStream(new DemuxOutputStream(getCurrentProject(), false)));
+			System.setErr(new PrintStream(new DemuxOutputStream(getCurrentProject(), true)));
+			
+			createMonitorBuildListener(getCurrentProject());
+			fireBuildStarted(getCurrentProject());
 			
 			if (argList != null) {
 				executeScript= processCommandLine(argList);
@@ -453,23 +461,17 @@ public class InternalAntRunner {
 				return;
 			}
 			
-			System.setOut(new PrintStream(new DemuxOutputStream(getCurrentProject(), false)));
-			System.setErr(new PrintStream(new DemuxOutputStream(getCurrentProject(), true)));
-			
-			createMonitorBuildListener(getCurrentProject());
-			fireBuildStarted(getCurrentProject());
-			
 			getCurrentProject().log(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Build_file__{0}_1"), new String[]{getBuildFileLocation()})); //$NON-NLS-1$
 			setProperties(getCurrentProject());
 			setTasks(getCurrentProject());
 			setTypes(getCurrentProject());
+			
 			parseScript(getCurrentProject());
 	
 			if (fProjectHelp) {
 				printHelp(getCurrentProject());
 				return;
 			}
-			
 			
 			if (fExtraArguments != null) {
 				printArguments(getCurrentProject());
@@ -694,13 +696,23 @@ public class InternalAntRunner {
 		return fgAntVersion;
 	}
 
-	protected void preprocessCommandLine(List commands) {
+	protected boolean preprocessCommandLine(List commands) {
+	
+		if (commands.remove("-help")) { //$NON-NLS-1$
+			printUsage();
+			return false;
+		}
+		
+		if (commands.remove("-version")) { //$NON-NLS-1$
+			printVersion();
+			return false;
+		}
+		
 		String[] args = getArguments(commands, "-listener"); //$NON-NLS-1$
 		if (args != null) {
 			if (fBuildListeners == null) {
 				fBuildListeners= new ArrayList(1);
 			}
-			
 			fBuildListeners.add(args[0]);
 		}
 
@@ -708,6 +720,8 @@ public class InternalAntRunner {
 		if (args != null) {
 			fLoggerClassname = args[0];
 		}
+	
+		return true;
 	}
 	
 	/**
@@ -715,15 +729,6 @@ public class InternalAntRunner {
 	 * Returns whether it is OK to run the script.
 	 */
 	protected boolean processCommandLine(List commands) {
-		// looks for flag-like commands
-		if (commands.remove("-help")) { //$NON-NLS-1$
-			printUsage();
-			return false;
-		}
-		if (commands.remove("-version")) { //$NON-NLS-1$
-			printVersion();
-			return false;
-		}
 		
 		if (commands.remove("-verbose") || commands.remove("-v")) { //$NON-NLS-1$ //$NON-NLS-2$
 			printVersion();
@@ -783,6 +788,7 @@ public class InternalAntRunner {
 			printUsage();
 			return false;
 		}
+		
 		return true;
 	}
 
