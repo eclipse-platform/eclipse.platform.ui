@@ -56,8 +56,8 @@ public interface ICVSUIConstants {
 	public final String IMG_LINK_WITH_EDITOR_ENABLED = "elcl16/synced.gif"; //$NON-NLS-1$
 	
 	// wizards
-	public final String IMG_NEWLOCATION = "wizards/newlocation_wiz.gif"; //$NON-NLS-1$
-	public final String IMG_CVSLOGO = "wizards/newconnect_wiz.gif"; //$NON-NLS-1$
+	public final String IMG_NEWLOCATION = "etool16/newlocation_wiz.gif"; //$NON-NLS-1$
+	public final String IMG_CVSLOGO = "etool16/newconnect_wiz.gif"; //$NON-NLS-1$
 	
 	// preferences
 	public final String PREF_SHOW_COMMENTS = "pref_show_comments"; //$NON-NLS-1$

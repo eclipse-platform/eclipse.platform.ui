@@ -83,7 +83,7 @@
          point="org.eclipse.team.ui.configurationWizards">
       <wizard
             name="%SharingWizard.name"
-            icon="icons/full/wizards/newconnect_wiz.gif"
+            icon="icons/full/etool16/newconnect_wiz.gif"
             class="org.eclipse.team.internal.ccvs.ui.wizards.SharingWizard"
             id="org.eclipse.team.ccvs.ui.SharingWizard">
       </wizard>
@@ -924,7 +924,7 @@
             id="org.eclipse.team.cvs.ui.repoview_actions">
          <action
                label="%CVSActionSet.newLabel"
-               icon="icons/full/wizards/newlocation_wiz.gif"
+               icon="icons/full/etool16/newlocation_wiz.gif"
                tooltip="%CVSActionSet.newTooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.NewRepositoryAction"
                toolbarPath="actions"
@@ -1006,7 +1006,7 @@
          <action
                definitionId="org.eclipse.team.cvs.ui.checkout"
                label="%CVSActionSet.checkoutLabel"
-               icon="icons/full/wizards/newconnect_wiz.gif"
+               icon="icons/full/etool16/newconnect_wiz.gif"
                tooltip="%CVSActionSet.checkoutTooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.CheckoutWizardAction"
                toolbarPath="Normal/CVS"
@@ -1058,11 +1058,14 @@
       </category>
       <wizard
       		category="org.eclipse.team.cvs.ui"
-            icon="icons/full/wizards/newconnect_wiz.gif"
+            icon="icons/full/etool16/newconnect_wiz.gif"
             name="%newProjectCheckoutWizard"
             class="org.eclipse.team.internal.ccvs.ui.wizards.CheckoutWizard"
             project="true"
             id="org.eclipse.team.cvs.ui.newProjectCheckout">
+            <description> 
+              %newProjectCheckoutWizardDescription
+          </description>
       </wizard>
    </extension>
 </plugin>
