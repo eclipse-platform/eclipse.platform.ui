@@ -182,6 +182,30 @@ public static IAdapterManager getAdapterManager() {
 	assertInitialized();
 	return adapterManager;
 }
+
+/**
+ * Augments the plugin path with extra entries.
+ */
+private static URL[] getAugmentedPluginPath(URL[] pluginPath) {
+	
+	// ISSUE: this code needs to be reworked so that the platform
+	//        does not have logical reference to plug-in-specific
+	//        function
+		
+	IPath result = metaArea.getLocation().append(PlatformMetaArea.F_PLUGIN_DATA).append("org.eclipse.scripting").append("plugin.xml");
+	String userScriptName = result.toString();
+	URL userScriptUrl = null;
+	try {
+		userScriptUrl = new URL("file",null,0,userScriptName);
+	} catch(MalformedURLException e) {
+		return pluginPath;
+	}
+		
+	URL[] newPath = new URL[pluginPath.length+1];
+	System.arraycopy(pluginPath,0,newPath,0, pluginPath.length);
+	newPath[newPath.length-1] = userScriptUrl;	
+	return newPath;
+}
 /**
  * @see Platform
  */
@@ -509,13 +533,16 @@ public synchronized static PluginRegistryModel parsePlugins(URL[] pluginPath, Fa
 	// or inside the platform).
 	if (!(InternalBootLoader.isRunning() || InternalBootLoader.isStarting()))
 		return RegistryLoader.parseRegistry(pluginPath, factory, debug);
+		
+	// augment the plugin path with any additional platform entries
+	URL[] augmentedPluginPath = getAugmentedPluginPath(pluginPath);		
 
 	// If we are running the platform, we want to conserve class loaders.  
 	// Temporarily install the xml class loader as a prerequisite of the platform class loader
 	// This allows us to find the xml classes.  Be sure to reset the prerequisites after loading.
 	PlatformClassLoader.getDefault().setImports(new DelegatingURLClassLoader[] { xmlClassLoader });
 	try {
-		return RegistryLoader.parseRegistry(pluginPath, factory, debug);
+		return RegistryLoader.parseRegistry(augmentedPluginPath, factory, debug);
 	} finally {
 		PlatformClassLoader.getDefault().setImports(null);
 	}
