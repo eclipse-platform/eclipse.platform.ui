@@ -242,4 +242,13 @@ public class TextEditor extends StatusTextEditor {
 		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, ITextEditorActionConstants.SHIFT_RIGHT);
 		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, ITextEditorActionConstants.SHIFT_LEFT);
 	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#updatePropertyDependentActions()
+	 */
+	protected void updatePropertyDependentActions() {
+		super.updatePropertyDependentActions();
+		if (fEncodingSupport != null)
+			fEncodingSupport.reset();
+	}
 }

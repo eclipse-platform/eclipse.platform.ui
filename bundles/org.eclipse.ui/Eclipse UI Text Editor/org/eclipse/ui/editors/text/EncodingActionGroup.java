@@ -118,11 +118,15 @@ public class EncodingActionGroup extends ActionGroup {
 			}
 			
 			// update enable state
-			String current= getEncoding(editor);
-			if (fIsDefault)
-				setEnabled(current != null);
-			else
-				setEnabled(!fEncoding.equals(current));
+			if (editor.isDirty()) {
+				setEnabled(false);
+			} else {
+				String current= getEncoding(editor);
+				if (fIsDefault)
+					setEnabled(current != null);
+				else
+					setEnabled(!fEncoding.equals(current));
+			}
 		}
 	};
 	
@@ -133,6 +137,14 @@ public class EncodingActionGroup extends ActionGroup {
 		
 		protected CustomEncodingAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 			super(bundle, prefix, editor);
+		}
+		
+		/*
+		 * @see IUpdate#update()
+		 */
+		public void update() {
+			ITextEditor editor= getTextEditor();
+			setEnabled(editor != null && !editor.isDirty());
 		}
 		
 		/*
