@@ -1,9 +1,11 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -35,11 +37,9 @@ import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ISourcePresentation;
 import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -52,7 +52,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorInput;
@@ -349,21 +348,13 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		setActive(page.findView(getSite().getId()) != null);
 		updateObjects();
 		showMarkerForCurrentSelection();
-		if (isActive()) {
-			asyncExec(new Runnable() {
-				public void run() {
-					updateDebugActionSetAccelerators();
-				}
-			});
-
-		}
 	}
 
 	/**
 	 * @see IPerspectiveListener#perspectiveChanged(IWorkbenchPage, IPerspectiveDescriptor, String)
 	 */
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
-			setActive(page.findView(getSite().getId()) != null);
+		setActive(page.findView(getSite().getId()) != null);
 	}
 
 	/**
@@ -383,25 +374,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	public void partClosed(IWorkbenchPart part) {
 		if (part.equals(fEditor)) {
 			fEditor = null;
-		}
-	}
-	
-	/**
-	 * Workaround for bug 9082
-	 */
-	protected void updateDebugActionSetAccelerators() {
-		IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
-		if (window instanceof ApplicationWindow) {
-			ApplicationWindow appWindow= (ApplicationWindow)window;
-			IMenuManager manager= appWindow.getMenuBarManager();
-			IContributionItem actionSetItem= manager.findUsingPath("org.eclipse.ui.run"); //$NON-NLS-1$
-			if (actionSetItem instanceof SubContributionItem) {
-				IContributionItem item= ((SubContributionItem)actionSetItem).getInnerItem();
-				if (item instanceof IMenuManager) {
-					//force the accelerators to be updated
-					((IMenuManager)item).update(true);
-				}
-			}
 		}
 	}
 
