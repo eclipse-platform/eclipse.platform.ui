@@ -55,6 +55,12 @@ public interface IPresentablePart {
 	public static final int PROP_TOOLBAR = 0x93;
 	
 	/**
+	 * The property id for highlighting the 
+	 * part if it is not in front.
+	 */
+	public static final int PROP_HIGHLIGHT_IF_BACK = 0x94;
+	
+	/**
 	 * The property id for pane menu changes
 	 */
 	public static final int PROP_PANE_MENU = 0x302;

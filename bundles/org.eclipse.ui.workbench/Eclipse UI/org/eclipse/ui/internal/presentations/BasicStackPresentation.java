@@ -374,18 +374,24 @@ public class BasicStackPresentation extends StackPresentation {
 		
 		CTabItem tab = getTab(part);
 		initTab(tab, part);
+		FontRegistry registry = 
+		    PlatformUI.getWorkbench().
+		    	getThemeManager().getCurrentTheme().
+		    		getFontRegistry();
+		
 		switch (property) {
 		 case IPresentablePart.PROP_BUSY:
-			FontRegistry registry = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getFontRegistry();
+			
 			if(part.isBusy())
 				tab.setFont(registry.getItalic(IWorkbenchThemeConstants.TAB_TEXT_FONT));
 			else{
-				if(getCurrent().equals(part))//Set bold if it does not already have focus
-					tab.setFont(registry.get(IWorkbenchThemeConstants.TAB_TEXT_FONT));
-				else
-					tab.setFont(registry.getBold(IWorkbenchThemeConstants.TAB_TEXT_FONT));
+				tab.setFont(registry.get(IWorkbenchThemeConstants.TAB_TEXT_FONT));
 			}			
 			break;
+	     case IPresentablePart.PROP_HIGHLIGHT_IF_BACK:
+	         if(!getCurrent().equals(part))//Set bold if it does currently have focus
+				tab.setFont(registry.getBold(IWorkbenchThemeConstants.TAB_TEXT_FONT));
+	     
 		 case IPresentablePart.PROP_TOOLBAR:
 		 case IPresentablePart.PROP_PANE_MENU:
 		 case IPresentablePart.PROP_TITLE:

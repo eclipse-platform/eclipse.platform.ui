@@ -269,4 +269,13 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 			updateJob.cancel();
 
     }
+    
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#warnOfContentChange()
+     */
+    public void warnOfContentChange() {
+        site.getPane().showHighlight();
+
+    }
 }

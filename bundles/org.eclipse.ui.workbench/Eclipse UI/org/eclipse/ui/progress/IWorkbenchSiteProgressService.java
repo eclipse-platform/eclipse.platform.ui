@@ -77,4 +77,12 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 */
 	public void showBusyForFamily(Object family);
 	
+	/**
+	 * Warn that the content of the receiver has 
+	 * changed. The method of this is determined by
+	 * how the presentation shows this. 
+	 * @see IPresentablePart.PROP_HIGHLIGHT_IF_BACK
+	 */
+	public void warnOfContentChange();
+	
 }

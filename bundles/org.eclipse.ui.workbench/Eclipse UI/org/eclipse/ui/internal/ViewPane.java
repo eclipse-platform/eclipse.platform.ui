@@ -14,12 +14,7 @@ package org.eclipse.ui.internal;
 **********************************************************************/
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.util.SafeRunnable;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -31,15 +26,24 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.util.SafeRunnable;
+
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.presentations.IPresentablePart;
+
+import org.eclipse.ui.internal.dnd.DragUtil;
 
 /**
  * Provides support for a title bar where the
@@ -667,5 +671,13 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	public boolean isBusy() {
 		return busy;
 	}
+	
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.PartPane#showHighlight()
+     */
+    public void showHighlight() {
+        presentableAdapter.firePropertyChange(IPresentablePart.PROP_HIGHLIGHT_IF_BACK);
+    }
 	
 }

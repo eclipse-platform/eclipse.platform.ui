@@ -744,14 +744,13 @@ public abstract class MarkerView extends TableView {
 			}
 		}
 	}
-	
-	
+    
     /* (non-Javadoc)
-     * @see org.eclipse.ui.part.ViewPart#init(org.eclipse.ui.IViewSite)
+     * @see org.eclipse.ui.part.WorkbenchPart#showBusy(boolean)
      */
-    public void init(IViewSite site) throws PartInitException {
-        // XXX Auto-generated method stub
-        super.init(site);
+    public void showBusy(boolean busy) {
+        super.showBusy(busy);
+        getProgressService().warnOfContentChange();
     }
 	
 }

@@ -40,6 +40,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.part.WorkbenchPart;
+import org.eclipse.ui.presentations.IPresentablePart;
 
 
 /**
@@ -454,6 +455,16 @@ protected void doDock() {
  */
 public void setBusy(boolean isBusy) {
 	//Do nothing by default
+}
+
+/**
+ * Show a highlight for the receiver if it is 
+ * not currently the part in the front of its
+ * presentation.
+ *
+ */
+public void showHighlight(){
+    //No nothing by default
 }
 
 }
