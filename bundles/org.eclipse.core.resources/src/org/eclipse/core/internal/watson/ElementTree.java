@@ -409,7 +409,7 @@ protected void elementNotFound(IPath key) {
 public static int findOldest(ElementTree[] trees) {
 
 	/* first put all the trees in a hashtable */
-	Hashtable candidates = new Hashtable((int) (trees.length * 1.5 + 1));
+	HashMap candidates = new HashMap((int) (trees.length * 1.5 + 1));
 	for (int i = 0; i < trees.length; i++) {
 		candidates.put(trees[i], trees[i]);
 	}
@@ -418,7 +418,7 @@ public static int findOldest(ElementTree[] trees) {
 	ElementTree oldestSoFar = null;
 	while (candidates.size() > 0) {
 		/* get a new candidate */
-		ElementTree current = (ElementTree) candidates.elements().nextElement();
+		ElementTree current = (ElementTree) candidates.values().iterator().next();
 
 		/* remove this candidate from the table */
 		candidates.remove(current);

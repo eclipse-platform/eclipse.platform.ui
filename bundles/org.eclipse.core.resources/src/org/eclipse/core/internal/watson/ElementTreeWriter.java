@@ -91,14 +91,14 @@ protected ElementTree[] sortTrees(ElementTree[] trees, DataOutput output) throws
 	int[] order = new int[numTrees];
 
 	/* first build a table of ElementTree -> Vector of Integers(indices in trees array) */
-	Hashtable table = new Hashtable(numTrees * 2 + 1);
+	HashMap table = new HashMap(numTrees * 2 + 1);
 	for (int i = 0; i < trees.length; i++) {
-		Vector indices = (Vector) table.get(trees[i]);
+		List indices = (List) table.get(trees[i]);
 		if (indices == null) {
-			indices = new Vector();
+			indices = new ArrayList();
 			table.put(trees[i], indices);
 		}
-		indices.addElement(new Integer(i));
+		indices.add(new Integer(i));
 	}
 
 	/* find the oldest tree (a descendent of all other trees) */
@@ -111,8 +111,8 @@ protected ElementTree[] sortTrees(ElementTree[] trees, DataOutput output) throws
 	int i = numTrees-1;
 	while (i >= 0) {
 		/* add all instances of the current oldest tree to the sorted list */
-		Vector indices = (Vector) table.remove(oldest);
-		for (Enumeration e = indices.elements(); e.hasMoreElements();) {
+		List indices = (List) table.remove(oldest);
+		for (Enumeration e = Collections.enumeration(indices); e.hasMoreElements();) {
 			Integer next = (Integer) e.nextElement();
 			sorted[i] = oldest;
 			order[i] = next.intValue();
