@@ -104,6 +104,39 @@ public final class IDEActionFactory {
 	};
 
 	/**
+	 * IDE-specific workbench action: Incremental build.
+	 * This action maintains its enablement state.
+	 */
+	public static final ActionFactory BUILD = new ActionFactory("build") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ActionFactory */
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			return new GlobalBuildAction(window, IncrementalProjectBuilder.INCREMENTAL_BUILD);
+		}
+	};
+
+	/**
+	 * IDE-specific workbench action: Incremental build.
+	 * This action is a {@link Retarget Retarget} action with 
+	 * id "buildProject". This action maintains its enablement state.
+	 */
+	public static final ActionFactory BUILD_PROJECT = new ActionFactory("buildProject") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ActionFactory */
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.getString("Workbench.buildProject")); //$NON-NLS-1$
+			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.buildProject.ToolTip")); //$NON-NLS-1$
+			window.getPartService().addPartListener(action);
+			action.setActionDefinitionId("org.eclipse.ui.project.buildProject"); //$NON-NLS-1$
+			return action;
+		}
+	};
+	
+	/**
 	 * IDE-specific workbench action: Close project.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "closeProject". This action maintains its enablement state.

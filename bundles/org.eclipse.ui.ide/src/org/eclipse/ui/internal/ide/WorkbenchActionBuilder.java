@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Preferences;
+
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -33,7 +36,6 @@ import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.ide.IDEActionFactory;
-import org.eclipse.ui.ide.IDEContributionItemFactory;
 import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.EditorWorkbook;
 import org.eclipse.ui.internal.EditorsDropDownAction;
@@ -119,12 +121,14 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction exportResourcesAction;
 
 	private IWorkbenchAction rebuildAllAction; // Full build
+	private IWorkbenchAction buildAllAction; // Incremental build
 	private IWorkbenchAction quickStartAction;
 	private IWorkbenchAction tipsAndTricksAction;
 	
 	// IDE-specific retarget actions
 	private IWorkbenchAction addBookmarkAction;
 	private IWorkbenchAction addTaskAction;
+	private IWorkbenchAction buildProjectAction;
 	private IWorkbenchAction rebuildProjectAction;
 	private IWorkbenchAction openProjectAction;
 	private IWorkbenchAction closeProjectAction;
@@ -136,6 +140,7 @@ public final class WorkbenchActionBuilder {
 	// @issue class is workbench internal
 	private StatusLineContributionItem statusLineItem;
 	
+	private Preferences.IPropertyChangeListener prefListener;
 	
 	/**
 	 * Constructs a new action builder which contributes actions
@@ -170,6 +175,7 @@ public final class WorkbenchActionBuilder {
 				enableActions(pg != null && pg.getPerspective() != null);
 			}
 			public void pageOpened(IWorkbenchPage page) {
+				// do nothing
 			}
 		});
 
@@ -178,8 +184,32 @@ public final class WorkbenchActionBuilder {
 				enableActions(true);
 			}
 			public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
+				// do nothing
 			}
 		});
+		
+		prefListener = new Preferences.IPropertyChangeListener() {
+			public void propertyChange(Preferences.PropertyChangeEvent event) {
+				if (event.getProperty().equals(ResourcesPlugin.PREF_AUTO_BUILDING)) {
+					final boolean autoBuild = ResourcesPlugin.getWorkspace().isAutoBuilding();
+					if (window.getShell() != null && !window.getShell().isDisposed()) {
+						// this property change notification could be from a non-ui thread
+						window.getShell().getDisplay().syncExec(new Runnable() {
+							public void run() {
+								if (autoBuild) {
+									removeManualIncrementalBuildAction();
+								}
+								else {
+									addManualIncrementalBuildAction();
+								}
+							}
+						});
+					}
+				}
+			}
+		};
+		ResourcesPlugin.getPlugin().getPluginPreferences().addPropertyChangeListener(prefListener);
+		
 	}
 
 	/**
@@ -209,6 +239,10 @@ public final class WorkbenchActionBuilder {
 		makeActions(windowConfigurer, actionBarConfigurer);
 		populateMenuBar(actionBarConfigurer);
 		populateCoolBar(actionBarConfigurer);
+		boolean autoBuild = ResourcesPlugin.getWorkspace().isAutoBuilding();
+		if (!autoBuild) {
+			addManualIncrementalBuildAction();
+		}
 		populateStatusLine(actionBarConfigurer);
 		hookListeners();
 	}
@@ -231,9 +265,6 @@ public final class WorkbenchActionBuilder {
 		tBarMgr.add(printAction);
 		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.PRINT_EXT, false);
 		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.BUILD_GROUP, true);
-		IContributionItem item = IDEContributionItemFactory.BUILD.create(getWindow());
-		registerGlobalAction(((ActionContributionItem) item).getAction());
-		tBarMgr.add(item);
 		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.BUILD_EXT, false);
 		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.MB_ADDITIONS, true);
 
@@ -399,17 +430,7 @@ public final class WorkbenchActionBuilder {
 		menu.add(closeProjectAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.OPEN_EXT));
 		menu.add(new Separator());
-
-		IContributionItem item = IDEContributionItemFactory.BUILD_PROJECT.create(getWindow());
-		registerGlobalAction(((ActionContributionItem)item).getAction());
-		menu.add(item);
-		
 		menu.add(rebuildProjectAction);
-
-		item = IDEContributionItemFactory.BUILD.create(getWindow());
-		registerGlobalAction(((ActionContributionItem)item).getAction());
-		menu.add(item);
-
 		menu.add(rebuildAllAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
 		menu.add(new Separator());
@@ -529,6 +550,10 @@ public final class WorkbenchActionBuilder {
 	 */
 	public void dispose() {
 		actionBarConfigurer.getStatusLineManager().remove(statusLineItem);
+		if (prefListener != null) {
+			ResourcesPlugin.getPlugin().getPluginPreferences().removePropertyChangeListener(
+				prefListener);
+		}
 	}
 
 	void updateModeLine(final String text) {
@@ -594,6 +619,9 @@ public final class WorkbenchActionBuilder {
 		
 		rebuildAllAction = IDEActionFactory.REBUILD_ALL.create(getWindow());
 		registerGlobalAction(rebuildAllAction);
+
+		buildAllAction = IDEActionFactory.BUILD.create(getWindow());
+		registerGlobalAction(buildAllAction);
 
 		saveAction = ActionFactory.SAVE.create(getWindow());
 		registerGlobalAction(saveAction);
@@ -783,6 +811,9 @@ public final class WorkbenchActionBuilder {
 				IDEInternalWorkbenchImages.IMG_CTOOL_PREVIOUS_NAV));
 		registerGlobalAction(previousAction);
 
+		buildProjectAction = IDEActionFactory.BUILD_PROJECT.create(getWindow());
+		registerGlobalAction(buildProjectAction);
+		
 		rebuildProjectAction = IDEActionFactory.REBUILD_PROJECT.create(getWindow());
 		registerGlobalAction(rebuildProjectAction);
 
@@ -814,5 +845,60 @@ public final class WorkbenchActionBuilder {
 	
 	private void registerGlobalAction(IAction action) {
 		actionBarConfigurer.registerGlobalAction(action);
+	}
+	
+	/**
+	 * Add the manual incremental build action
+	 * to both the menu bar and the tool bar.
+	 */
+	private void addManualIncrementalBuildAction() {
+		IMenuManager menubar = actionBarConfigurer.getMenuManager();
+		IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
+		if (manager != null) {
+			try {
+				manager.insertBefore(IWorkbenchActionConstants.REBUILD_PROJECT, buildProjectAction);
+				manager.insertBefore(IWorkbenchActionConstants.REBUILD_ALL, buildAllAction);
+			} catch (IllegalArgumentException e) {
+				// action not found!
+			}
+			manager.update(false);
+		}
+		IToolBarManager tBarMgr =
+			actionBarConfigurer.getToolBar(IWorkbenchActionConstants.TOOLBAR_FILE);
+		if (tBarMgr == null) {
+			// error if this happens, file toolbar assumed to always exist
+			IDEWorkbenchPlugin.log("File toolbar is missing"); //$NON-NLS-1$
+			return;
+		}
+		tBarMgr.appendToGroup(IWorkbenchActionConstants.BUILD_GROUP, buildAllAction);
+		tBarMgr.update(false);
+	}
+	
+	/**
+	 * Remove the manual incremental build action
+	 * from both the menu bar and the tool bar.
+	 */
+	private void removeManualIncrementalBuildAction() {
+		IMenuManager menubar = actionBarConfigurer.getMenuManager();
+		IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
+		if (manager != null) {
+			try {
+				manager.remove(IWorkbenchActionConstants.BUILD);
+				manager.remove(IWorkbenchActionConstants.BUILD_PROJECT);
+			} catch (IllegalArgumentException e) {
+				// action was not in menu
+			}
+			manager.update(false);
+		}
+		IToolBarManager tBarMgr =
+			actionBarConfigurer.getToolBar(IWorkbenchActionConstants.TOOLBAR_FILE);
+		if (tBarMgr != null) {
+			try {
+				tBarMgr.remove(IWorkbenchActionConstants.BUILD);
+				tBarMgr.update(false);
+			} catch (IllegalArgumentException e) {
+				// action was not in toolbar
+			}
+		}
 	}
 }
