@@ -133,6 +133,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 			Rectangle rect = composite.getClientArea();
 			Control [] children = composite.getChildren();
 			for (int i= 0; i < children.length; i++) {
+				children[i].pack();
 				children[i].setSize(rect.width, rect.height);
 			}
 		}
