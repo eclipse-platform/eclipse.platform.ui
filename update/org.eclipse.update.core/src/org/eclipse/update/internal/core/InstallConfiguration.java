@@ -4,17 +4,15 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 import java.util.ArrayList;
+import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IInstallConfiguration;
-import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.*;
 
 public class InstallConfiguration implements IInstallConfiguration {
 	
 	private boolean isCurrent;
-	private ArrayList installSites = new ArrayList();
-	private ArrayList linkedSites = new ArrayList();
+	private List installSites = new ArrayList();
+	private List linkedSites = new ArrayList();
 	
 	/*
 	 * default constructor. Create

@@ -4,26 +4,27 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
- 
+
 import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
- 
- /**
-  *
-  * 
-  */
- 
-public class FeatureReference implements IFeatureReference {
-	
-	private URL url;
-	
-	private ISite site;
-	
-	private String featureType;
 
+/**
+ *
+ * 
+ */
+
+public class FeatureReference implements IFeatureReference {
+
+	private URL url;
+
+	private ISite site;
+
+	private String featureType;
+	
+	private Feature feature;
 
 	/**
 	 * category String; From teh XML file
@@ -34,12 +35,11 @@ public class FeatureReference implements IFeatureReference {
 	 * category : delegate to teh site
 	 */
 	private List categories;
-	
 
 	/**
 	 * Constructor
 	 */
-	public FeatureReference(ISite site,URL url){
+	public FeatureReference(ISite site, URL url) {
 		super();
 		this.site = site;
 		this.url = url;
@@ -54,10 +54,10 @@ public class FeatureReference implements IFeatureReference {
 	 * 
 	 * @return the URL identifying feature in the Site.
 	 */
-	public URL getURL(){
+	public URL getURL() {
 		return url;
 	}
-	
+
 	/**
 	 * Returns the array of categories the feature belong to.
 	 * 
@@ -75,7 +75,7 @@ public class FeatureReference implements IFeatureReference {
 			if (categoriesAsString != null && !categoriesAsString.isEmpty()) {
 				Iterator iter = categoriesAsString.iterator();
 				while (iter.hasNext()) {
-					categories.add( ((Site)site).getCategory((String) iter.next()));
+					categories.add(((Site) site).getCategory((String) iter.next()));
 				}
 			}
 		}
@@ -89,37 +89,35 @@ public class FeatureReference implements IFeatureReference {
 		return result;
 	}
 
-	
 	/**
 	 * Returns the feature this reference points to
 	 *  @return teh feature on teh Site
 	 */
 	public IFeature getFeature() throws CoreException {
-		
-		Feature feature = null;
-		
-		if (featureType == null || featureType.equals("")) {
+
+		if (feature == null) {
+			if (featureType == null || featureType.equals("")) {
 				// ask the Site for the default type 
 				feature = (Feature) ((Site) site).getDefaultFeature(url);
 				feature.initializeFeature();
-		} else {
+			} else {
 				Assert.isTrue(false, "Not implemented Yet... do not use 'type' in the feature tag of site.xml");
 				//FIXME: manages creation of feature...
 			}
-		
+		}
 		return feature;
 	}
-	
-	
+
 	/**
 	 * Gets the categoryString
 	 * @return Returns a String
 	 */
 	private List getCategoryString() {
-		if (categoryString == null) categoryString = new ArrayList(0);
+		if (categoryString == null)
+			categoryString = new ArrayList(0);
 		return categoryString;
 	}
-	
+
 	/**
 	 * Adds a categoryString
 	 * @param categoryString The categoryString to add
@@ -129,7 +127,7 @@ public class FeatureReference implements IFeatureReference {
 			this.categoryString = new ArrayList(0);
 		this.categoryString.add(categoryString);
 	}
-	
+
 	/**
 	 * Sets the categoryString
 	 * @param categoryString The categoryString to set
@@ -150,5 +148,3 @@ public class FeatureReference implements IFeatureReference {
 	}
 
 }
-
-

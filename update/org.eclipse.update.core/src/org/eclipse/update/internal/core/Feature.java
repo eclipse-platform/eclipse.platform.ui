@@ -625,6 +625,7 @@ public abstract class Feature implements IFeature {
 	public void initializeFeature() throws CoreException {
 		InputStream featureStream = null;
 		try {
+			isInitialized=true;
 			featureStream = getInputStreamFor(FEATURE_XML);
 			new FeatureParser(featureStream, this);
 		} catch (IOException e) {
