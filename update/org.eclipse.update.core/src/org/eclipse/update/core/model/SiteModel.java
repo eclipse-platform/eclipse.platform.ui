@@ -14,6 +14,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.model.*;
 
 /**
@@ -42,6 +43,7 @@ public class SiteModel extends ModelObject {
 	private List /* of URLEntryModel */ mirrors;
 	private String locationURLString;
 	private URL locationURL;
+	private String mirrorsURLString;
 	private ConfiguredSiteModel configuredSiteModel;
 
 	/**
@@ -367,6 +369,10 @@ public class SiteModel extends ModelObject {
 
 		resolveReference(getDescriptionModel(), base, bundleURL);
 		resolveListReference(getCategoryModels(), base, bundleURL);
+		
+		URL url = resolveURL(base, bundleURL, mirrorsURLString);
+		if (url != null)
+			mirrorsURLString = url.toString();
 	}
 
 	/**
@@ -398,10 +404,15 @@ public class SiteModel extends ModelObject {
 	 */
 	public URLEntryModel[] getMirrorSiteEntryModels() {
 		//delayedResolve(); no delay;
+		if ( mirrors == null || mirrors.size() == 0) 
+			// see if we can get mirrors from the provided url
+			if (mirrorsURLString != null) 
+				doSetMirrorSiteEntryModels(DefaultSiteParser.getMirrors(mirrorsURLString, new SiteURLFactory()));
+				
 		if (mirrors == null || mirrors.size() == 0)
 			return new URLEntryModel[0];
-
-		return (URLEntryModel[]) mirrors.toArray(arrayTypeFor(mirrors));
+		else
+			return (URLEntryModel[]) mirrors.toArray(arrayTypeFor(mirrors));
 	}
 	
 	/**
@@ -413,9 +424,27 @@ public class SiteModel extends ModelObject {
 	 */
 	public void setMirrorSiteEntryModels(URLEntryModel[] mirrors) {
 		assertIsWriteable();
+		doSetMirrorSiteEntryModels(mirrors);
+	}
+	
+	private void doSetMirrorSiteEntryModels(URLEntryModel[] mirrors) {
 		if (mirrors == null || mirrors.length == 0)
 			this.mirrors = null;
 		else
 			this.mirrors = new ArrayList(Arrays.asList(mirrors));
+	}
+	
+	/**
+	 * Sets the mirrors url. Mirror sites will then be obtained from this mirror url later.
+	 * This method is complementary to setMirrorsiteEntryModels(), and only one of these 
+	 * methods should be called.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param mirrors additional update site mirrors
+	 * @since 3.1
+	 */
+	public void setMirrorsURLString(String mirrorsURL) {
+		assertIsWriteable();
+		this.mirrorsURLString = mirrorsURL;
 	}
 }

@@ -474,8 +474,11 @@ public class DefaultSiteParser extends DefaultHandler {
 		// get mirrors, if any
 		String mirrorsURL = attributes.getValue("mirrorsURL"); //$NON-NLS-1$
 		if (mirrorsURL != null && mirrorsURL.trim().length() > 0) {
-			URLEntryModel[] mirrors = getMirrors(mirrorsURL);
-			site.setMirrorSiteEntryModels(mirrors);
+			URLEntryModel[] mirrors = getMirrors(mirrorsURL, factory);
+			if (mirrors != null)
+				site.setMirrorSiteEntryModels(mirrors);
+			else 
+				site.setMirrorsURLString(mirrorsURL);
 		}
 		
 		objectStack.push(site);
@@ -625,7 +628,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	/*
 	 * 
 	 */
-	private void debug(String s) {
+	private static void debug(String s) {
 		UpdateCore.debug("DefaultSiteParser" + s); //$NON-NLS-1$
 	}
 
@@ -731,7 +734,8 @@ public class DefaultSiteParser extends DefaultHandler {
 		return Character.isWhitespace(str.charAt(str.length() - 1));
 	}
 	
-	private URLEntryModel[] getMirrors(String mirrorsURL) {
+	static URLEntryModel[] getMirrors(String mirrorsURL, SiteModelFactory factory) {
+	    
 		try {
 		    DocumentBuilderFactory domFactory = 
 		    DocumentBuilderFactory.newInstance();
@@ -755,7 +759,14 @@ public class DefaultSiteParser extends DefaultHandler {
 		    return mirrors;
 		}
 		catch (Exception e) {
-			UpdateCore.log(Policy.bind("DefaultSiteParser.mirrors"), e);
+		    // log if absolute url
+		    if (mirrorsURL != null &&
+		    		(mirrorsURL.startsWith("http://")
+					|| mirrorsURL.startsWith("https://")
+					|| mirrorsURL.startsWith("file://")
+					|| mirrorsURL.startsWith("ftp://")
+					|| mirrorsURL.startsWith("jar://")))
+		    	UpdateCore.log(Policy.bind("DefaultSiteParser.mirrors"), e);
 			return null;
 		}
 	}
