@@ -84,6 +84,8 @@ public interface ICheatSheetResource {
 	public static final String ERROR_RUNNING_ACTION = "%ERROR_RUNNING_ACTION"; //$NON-NLS-1$
 	public static final String ERROR_INVALID_CHEATSHEET_ID = "%ERROR_INVALID_CHEATSHEET_ID"; //$NON-NLS-1$
 	public static final String ERROR_CHEATSHEET_DOESNOT_EXIST = "%ERROR_CHEATSHEET_DOESNOT_EXIST"; //$NON-NLS-1$
+	public static final String ERROR_APPLYING_STATE_DATA = "%ERROR_APPLYING_STATE_DATA"; //$NON-NLS-1$
+	public static final String ERROR_APPLYING_STATE_DATA_LOG = "%ERROR_APPLYING_STATE_DATA_LOG"; //$NON-NLS-1$
 	public static final String INITIAL_VIEW_DIRECTIONS = "%INITIAL_VIEW_DIRECTIONS"; //$NON-NLS-1$
 
 	// ErrorPage

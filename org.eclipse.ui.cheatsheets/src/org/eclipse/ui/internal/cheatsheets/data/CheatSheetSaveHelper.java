@@ -38,7 +38,7 @@ public class CheatSheetSaveHelper {
 		savePath = Platform.getPluginStateLocation(CheatSheetPlugin.getPlugin());
 	}
 
-	private Properties createProperties(int currentItemNum, ViewItem[] items, boolean buttonIsDown, ArrayList expandRestoreStates, String csID) {
+	private Properties createProperties(int currentItemNum, ArrayList items, boolean buttonIsDown, ArrayList expandRestoreStates, String csID) {
 		Properties props = new Properties();
 		Hashtable subcompletedTable = new Hashtable(10);
 		Hashtable subskippedTable = new Hashtable(10);
@@ -56,8 +56,8 @@ public class CheatSheetSaveHelper {
 			expandRestoreStates = new ArrayList();
 
 		//Assemble lists of expanded items and completed items.
-		for (int i = 0; i < items.length; i++) {
-			ViewItem item = items[i];
+		for (int i = 0; i < items.size(); i++) {
+			ViewItem item = (ViewItem)items.get(i);
 			if (item.isCompleted()) {
 				completedList.add(Integer.toString(i));
 			}
@@ -132,12 +132,16 @@ public class CheatSheetSaveHelper {
 		return returnList;
 	}
 
+	public Path getStateFile(String csID) {
+		return new Path(savePath.append(csID+".xml").toOSString()); //$NON-NLS-1$
+	}
+
 	public Properties loadState(String csID) {
 		Properties returnProps = null;
 		Hashtable subskipped = null;
 		Hashtable subcompleted = null;
 
-		Path filePath = new Path(savePath.append(csID+".xml").toOSString()); //$NON-NLS-1$
+		Path filePath = getStateFile(csID);
 		Document doc = null;
 		URL readURL = null;
 
@@ -260,7 +264,7 @@ public class CheatSheetSaveHelper {
 			csID = (String) properties.get(IParserTags.ID);
 			String number = (String) properties.get(IParserTags.CURRENT);
 
-			Path filePath = new Path(savePath.append(csID+".xml").toOSString()); //$NON-NLS-1$
+			Path filePath = getStateFile(csID);
 
 			ArrayList completedList = (ArrayList) properties.get(IParserTags.COMPLETED);
 			ArrayList expandedList = (ArrayList) properties.get(IParserTags.EXPANDED);
@@ -351,7 +355,7 @@ public class CheatSheetSaveHelper {
 		}
 	}
 
-	public void saveState(int currentItemNum, ViewItem[] items, boolean buttonIsDown, ArrayList expandRestoreStates, String csID, CheatSheetManager csm) {
+	public void saveState(int currentItemNum, ArrayList items, boolean buttonIsDown, ArrayList expandRestoreStates, String csID, CheatSheetManager csm) {
 		Properties properties = createProperties(currentItemNum, items, buttonIsDown, expandRestoreStates, csID);
 		saveState(properties, csm);
 	}

@@ -43,8 +43,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	private CheatSheetManager manager;
 	private CheatSheetSaveHelper saveHelper;
 
-	private Properties savedProps = null;
-
 	private CheatSheetExpandRestoreAction expandRestoreAction;
 
 	//ITEMS
@@ -244,162 +242,188 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		return false;
 	}
 
-	private void checkSavedState() {
-		Properties props = null;
-		if (savedProps == null) {
-			props = saveHelper.loadState(currentID);
-		} else {
-			props = savedProps;
-		}
-
-		// There is a bug which causes the background of the buttons to
-		// remain white, even though the color is set. So instead of calling
-		// clearBackgrounds() only the following line should be needed. D'oh!
-		// ((ViewItem) viewItemList.get(0)).setOriginalColor();
-		clearBackgrounds();
-
-		if (props == null) {
-			getViewItemAtIndex(0).setAsCurrentActiveItem();
-			/* LP-item event */
-			// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, items[0]);
-			return;
-		}
-
-		boolean buttonIsDown = (Integer.parseInt((String) props.get(IParserTags.BUTTON)) == 0) ? false : true;
-		int itemNum = Integer.parseInt((String) props.get(IParserTags.CURRENT));
-		ArrayList completedStatesList = (ArrayList) props.get(IParserTags.COMPLETED);
-		ArrayList expandedStatesList = (ArrayList) props.get(IParserTags.EXPANDED);
-		expandRestoreList = (ArrayList) props.get(IParserTags.EXPANDRESTORE);
-		String cid = (String) props.get(IParserTags.ID);
-		Hashtable completedSubItems = (Hashtable) props.get(IParserTags.SUBITEMCOMPLETED);
-		Hashtable skippedSubItems = (Hashtable) props.get(IParserTags.SUBITEMSKIPPED);
-		Hashtable csmData = (Hashtable) props.get(IParserTags.MANAGERDATA);
-
-		ArrayList completedSubItemsItemList = new ArrayList();
-		ArrayList skippedSubItemsItemList = new ArrayList();
-
-		Enumeration e = completedSubItems.keys();
-		while (e.hasMoreElements())
-			completedSubItemsItemList.add(e.nextElement());
-
-		Enumeration e2 = skippedSubItems.keys();
-		while (e2.hasMoreElements())
-			skippedSubItemsItemList.add(e2.nextElement());
-
-		if (cid != null)
-			currentID = cid;
-
-		getManager().setData(csmData);
-
-		if (itemNum >= 0) {
-			currentItemNum = itemNum;
-			
-			currentItem = getViewItemAtIndex(itemNum);
-
-			CheatSheetStopWatch.startStopWatch("CheatSheetViewer.checkSavedState()"); //$NON-NLS-1$
-			for (int i = 0; i < viewItemList.size(); i++) {
-
-				ViewItem item = getViewItemAtIndex(i);
-				if (i > 0 && item.item.isDynamic() && i <= currentItemNum) {
-					 item.handleButtons();
-					 item.setOriginalColor();
-				}
-
-				if (completedStatesList.contains(Integer.toString(i))) {
-					item.setComplete();
-					item.setRestartImage();
-				} else {
-					if (i < currentItemNum) {
-						item.setSkipped();
-					}
-				}
-				if (expandedStatesList.contains(Integer.toString(i))) {
-					if (i <= currentItemNum) {
-						item.setButtonsExpanded();
-					} else {
-						item.setButtonsCollapsed();
-					}
-					item.setExpanded();
-				} else {
-					item.setCollapsed();
-					if (i > currentItemNum) {
-						item.setButtonsCollapsed();
-					} else {
-						item.setButtonsExpanded();
-					}
-				}
-				if (expandRestoreList.contains(Integer.toString(i))) {
-					item.setCollapsed();
-				}
-				if (completedSubItemsItemList.contains(Integer.toString(i))) {
-					String subItemNumbers = (String) completedSubItems.get(Integer.toString(i));
-					StringTokenizer st = new StringTokenizer(subItemNumbers, ","); //$NON-NLS-1$
-					if (item instanceof CoreItem) {
-						CoreItem coreitemws = (CoreItem) item;
-						while (st.hasMoreTokens()) {
-							String token = st.nextToken();
-							((SubItemCompositeHolder) coreitemws.getListOfSubItemCompositeHolders().get(Integer.parseInt(token))).setCompleted(true);
-							((SubItemCompositeHolder) coreitemws.getListOfSubItemCompositeHolders().get(Integer.parseInt(token))).getIconLabel().setImage((item).getCompleteImage());
-							ArrayList l = coreitemws.getListOfSubItemCompositeHolders();
-							SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(Integer.parseInt(token));
-							if (s != null && s.getStartButton() != null) {
-								s.getStartButton().setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART));
-								s.getStartButton().redraw();
-							}
-
-						}
-					}
-				}
-				if (skippedSubItemsItemList.contains(Integer.toString(i))) {
-					String subItemNumbers = (String) skippedSubItems.get(Integer.toString(i));
-					StringTokenizer st = new StringTokenizer(subItemNumbers, ","); //$NON-NLS-1$
-					if (item instanceof CoreItem) {
-						CoreItem coreitemws = (CoreItem) item;
-						while (st.hasMoreTokens()) {
-							String token = st.nextToken();
-							((SubItemCompositeHolder) coreitemws.getListOfSubItemCompositeHolders().get(Integer.parseInt(token))).setSkipped(true);
-							((SubItemCompositeHolder) coreitemws.getListOfSubItemCompositeHolders().get(Integer.parseInt(token))).getIconLabel().setImage((item).getSkipImage());
-						}
-					}
-				}
-				CheatSheetStopWatch.printLapTime("CheatSheetViewer.checkSavedState()", "Time in CheatSheetViewer.checkSavedState() after loop #"+i+": "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private boolean checkSavedState() {
+		try {
+			Properties props = saveHelper.loadState(currentID);
+	
+			// There is a bug which causes the background of the buttons to
+			// remain white, even though the color is set. So instead of calling
+			// clearBackgrounds() only the following line should be needed. D'oh!
+			// ((ViewItem) viewItemList.get(0)).setOriginalColor();
+			clearBackgrounds();
+	
+			if (props == null) {
+				getViewItemAtIndex(0).setAsCurrentActiveItem();
+				/* LP-item event */
+				// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, items[0]);
+				return true;
 			}
-			CheatSheetStopWatch.printLapTime("CheatSheetViewer.checkSavedState()", "Time in CheatSheetViewer.checkSavedState() after loop: "); //$NON-NLS-1$ //$NON-NLS-2$
-
-			if (buttonIsDown) {
-				if(expandRestoreAction != null)
-					expandRestoreAction.setCollapsed(true);
-				saveCurrentSheet();
-			}
-			
-			// If the last item is the current one and it is complete then
-			// we should collapse the last item and set the focus on intro.
-			// For all other cases, set the current item as the active item.
-			if(viewItemList.size()-1 == itemNum && currentItem.isCompleted()) {
-				currentItem.setCollapsed();
-				getViewItemAtIndex(0).getMainItemComposite().setFocus();
+	
+			boolean buttonIsDown = (Integer.parseInt((String) props.get(IParserTags.BUTTON)) == 0) ? false : true;
+			int itemNum = Integer.parseInt((String) props.get(IParserTags.CURRENT));
+			ArrayList completedStatesList = (ArrayList) props.get(IParserTags.COMPLETED);
+			ArrayList expandedStatesList = (ArrayList) props.get(IParserTags.EXPANDED);
+			expandRestoreList = (ArrayList) props.get(IParserTags.EXPANDRESTORE);
+			String cid = (String) props.get(IParserTags.ID);
+			Hashtable completedSubItems = (Hashtable) props.get(IParserTags.SUBITEMCOMPLETED);
+			Hashtable skippedSubItems = (Hashtable) props.get(IParserTags.SUBITEMSKIPPED);
+			Hashtable csmData = (Hashtable) props.get(IParserTags.MANAGERDATA);
+	
+			ArrayList completedSubItemsItemList = new ArrayList();
+			ArrayList skippedSubItemsItemList = new ArrayList();
+	
+			Enumeration e = completedSubItems.keys();
+			while (e.hasMoreElements())
+				completedSubItemsItemList.add(e.nextElement());
+	
+			Enumeration e2 = skippedSubItems.keys();
+			while (e2.hasMoreElements())
+				skippedSubItemsItemList.add(e2.nextElement());
+	
+			if (cid != null)
+				currentID = cid;
+	
+			getManager().setData(csmData);
+	
+			if (itemNum >= 0) {
+				currentItemNum = itemNum;
 				
-				// The cheat sheet has been restored but is also completed so fire both events
-				getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_RESTORED);
-				getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_COMPLETED);
-			} else {
-				currentItem.setAsCurrentActiveItem();
-
-				// If the intro item is completed, than the cheat sheet has been restored.
-				if(getViewItemAtIndex(0).isCompleted())
+				currentItem = getViewItemAtIndex(itemNum);
+	
+				CheatSheetStopWatch.startStopWatch("CheatSheetViewer.checkSavedState()"); //$NON-NLS-1$
+				for (int i = 0; i < viewItemList.size(); i++) {
+	
+					ViewItem item = getViewItemAtIndex(i);
+					if (i > 0 && item.item.isDynamic() && i <= currentItemNum) {
+						 item.handleButtons();
+						 item.setOriginalColor();
+					}
+	
+					if (completedStatesList.contains(Integer.toString(i))) {
+						item.setComplete();
+						item.setRestartImage();
+					} else {
+						if (i < currentItemNum) {
+							item.setSkipped();
+						}
+					}
+					if (expandedStatesList.contains(Integer.toString(i))) {
+						if (i <= currentItemNum) {
+							item.setButtonsExpanded();
+						} else {
+							item.setButtonsCollapsed();
+						}
+						item.setExpanded();
+					} else {
+						item.setCollapsed();
+						if (i > currentItemNum) {
+							item.setButtonsCollapsed();
+						} else {
+							item.setButtonsExpanded();
+						}
+					}
+					if (expandRestoreList.contains(Integer.toString(i))) {
+						item.setCollapsed();
+					}
+					if (completedSubItemsItemList.contains(Integer.toString(i))) {
+						String subItemNumbers = (String) completedSubItems.get(Integer.toString(i));
+						StringTokenizer st = new StringTokenizer(subItemNumbers, ","); //$NON-NLS-1$
+						if (item instanceof CoreItem) {
+							CoreItem coreitemws = (CoreItem) item;
+							while (st.hasMoreTokens()) {
+								String token = st.nextToken();
+								((SubItemCompositeHolder) coreitemws.getListOfSubItemCompositeHolders().get(Integer.parseInt(token))).setCompleted(true);
+								((SubItemCompositeHolder) coreitemws.getListOfSubItemCompositeHolders().get(Integer.parseInt(token))).getIconLabel().setImage(item.getCompleteImage());
+								ArrayList l = coreitemws.getListOfSubItemCompositeHolders();
+								SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(Integer.parseInt(token));
+								if (s != null && s.getStartButton() != null) {
+									s.getStartButton().setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART));
+									s.getStartButton().setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.RESTART_TASK_TOOLTIP));
+								}
+	
+							}
+						}
+					}
+					if (skippedSubItemsItemList.contains(Integer.toString(i))) {
+						String subItemNumbers = (String) skippedSubItems.get(Integer.toString(i));
+						StringTokenizer st = new StringTokenizer(subItemNumbers, ","); //$NON-NLS-1$
+						if (item instanceof CoreItem) {
+							CoreItem coreitemws = (CoreItem) item;
+							while (st.hasMoreTokens()) {
+								String token = st.nextToken();
+								((SubItemCompositeHolder) coreitemws.getListOfSubItemCompositeHolders().get(Integer.parseInt(token))).setSkipped(true);
+								((SubItemCompositeHolder) coreitemws.getListOfSubItemCompositeHolders().get(Integer.parseInt(token))).getIconLabel().setImage(item.getSkipImage());
+							}
+						}
+					}
+					CheatSheetStopWatch.printLapTime("CheatSheetViewer.checkSavedState()", "Time in CheatSheetViewer.checkSavedState() after loop #"+i+": "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
+				CheatSheetStopWatch.printLapTime("CheatSheetViewer.checkSavedState()", "Time in CheatSheetViewer.checkSavedState() after loop: "); //$NON-NLS-1$ //$NON-NLS-2$
+	
+				if (buttonIsDown) {
+					if(expandRestoreAction != null)
+						expandRestoreAction.setCollapsed(true);
+					saveCurrentSheet();
+				}
+				
+				// If the last item is the current one and it is complete then
+				// we should collapse the last item and set the focus on intro.
+				// For all other cases, set the current item as the active item.
+				if(viewItemList.size()-1 == itemNum && currentItem.isCompleted()) {
+					currentItem.setCollapsed();
+					getViewItemAtIndex(0).getMainItemComposite().setFocus();
+					
+					// The cheat sheet has been restored but is also completed so fire both events
 					getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_RESTORED);
+					getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_COMPLETED);
+				} else {
+					currentItem.setAsCurrentActiveItem();
+	
+					// If the intro item is completed, than the cheat sheet has been restored.
+					if(getViewItemAtIndex(0).isCompleted())
+						getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_RESTORED);
+				}
+	
+				/* LP-item event */
+				// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, currentItem);
+			} else {
+				getViewItemAtIndex(0).setAsCurrentActiveItem();
+				/* LP-item event */
+				// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, items[0]);
 			}
+	
+			FormToolkit.ensureVisible(currentItem.getMainItemComposite());
+			return true;
+		} catch(Exception e) {
+			// An exception while restoring the saved state data usually only occurs if
+			// the cheat sheet has been modified since this previous execution. This most
+			// often occurs during development of cheat sheets and as such an end user is
+			// not as likely to encounter this.
+			
+			// Log the exception
+			String stateFile = saveHelper.getStateFile(currentID).toOSString();
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_APPLYING_STATE_DATA_LOG, new Object[] {stateFile, currentID});
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
+			CheatSheetPlugin.getPlugin().getLog().log(status);
 
-			/* LP-item event */
-			// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, currentItem);
-		} else {
-			getViewItemAtIndex(0).setAsCurrentActiveItem();
-			/* LP-item event */
-			// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, items[0]);
+			// Set the currentID to null so it is not saved during internalDispose()
+			currentID = null;
+
+			internalDispose();
+
+			// Reinitialize a few variables because there is no currentItem or cheatSheetPage now
+			contentURL = null;
+			currentItem = null;
+			currentItemNum = -1;
+			cheatSheetPage = null;
+			expandRestoreList = new ArrayList();
+			viewItemList = new ArrayList();
+			
+			// Create the errorpage to show the user
+			createErrorPage(CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_APPLYING_STATE_DATA));
+
+			return false;
 		}
-
-		FormToolkit.ensureVisible(currentItem.getMainItemComposite());
-		savedProps = null;
 	}
 
 	private void clearBackgrounds() {
@@ -439,6 +463,17 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			ViewItem item = (ViewItem) iter.next();
 			item.setButtonsCollapsed();
 		}
+	}
+
+	private void createErrorPage(String message) {
+		if(message != null) {
+			errorPage = new ErrorPage(message);
+		} else {
+			errorPage = new ErrorPage();
+		}
+		errorPage.createPart(control);
+		hascontent = true;
+		control.layout(true);
 	}
 
 	/**
@@ -552,10 +587,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		return manager;
 	}
 
-	private ViewItem[] getViewItemArray() {
-		return (ViewItem[]) viewItemList.toArray(new ViewItem[viewItemList.size()]);
-	}
-
 	private ViewItem getViewItemAtIndex(int index) {
 		return (ViewItem) viewItemList.get(index);
 	}
@@ -591,13 +622,10 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			// Exception thrown during parsing.
 			// Something is wrong with the Cheat sheet content file at the xml level.
 			if(invalidCheatSheetId) {
-				errorPage = new ErrorPage(CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CHEATSHEET_DOESNOT_EXIST));
+				createErrorPage(CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CHEATSHEET_DOESNOT_EXIST));
 			} else {
-				errorPage = new ErrorPage();
+				createErrorPage(null);
 			}
-			errorPage.createPart(control);
-			hascontent = true;
-			control.layout(true);
 			return;
 		}
 
@@ -611,7 +639,12 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		getNewManager().fireEvent(ICheatSheetEvent.CHEATSHEET_OPENED);
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after fireEvent() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 
-		checkSavedState();
+		if(!checkSavedState()) {
+			// An error occurred when apply the saved state data.
+			control.setRedraw(true);
+			control.layout();
+			return;
+		}
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after checkSavedState() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 
 		cheatSheetPage.initialized();
@@ -706,6 +739,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 					ArrayList l = coreItem.getListOfSubItemCompositeHolders();
 					SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(subItemIndex);
 					s.getStartButton().setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART));
+					s.getStartButton().setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.RESTART_TASK_TOOLTIP));
 					advanceSubItem(link, true, subItemIndex);
 					saveCurrentSheet();
 				}
@@ -724,7 +758,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			boolean expandRestoreActionState = false;
 			if(expandRestoreAction != null)
 				expandRestoreActionState = expandRestoreAction.isCollapsed();			
-			saveHelper.saveState(currentItemNum, getViewItemArray(), expandRestoreActionState, expandRestoreList, currentID, getManager());
+			saveHelper.saveState(currentItemNum, viewItemList, expandRestoreActionState, expandRestoreList, currentID, getManager());
 		}
 	}
 
@@ -740,11 +774,11 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		}
 
 		// Set the current content to new content
-		this.contentElement = element;
+		contentElement = element;
 
 		if (element == null) {
 			currentID = null;
-			this.contentURL = null;
+			contentURL = null;
 		} else {
 			currentID = element.getID();
 	
@@ -757,7 +791,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 					// do nothing
 				}
 			if (bundle != null) {
-				this.contentURL = Platform.find(bundle, new Path("$nl$").append(element.getContentFile())); //$NON-NLS-1$
+				contentURL = Platform.find(bundle, new Path("$nl$").append(element.getContentFile())); //$NON-NLS-1$
 			}
 	
 			if (contentURL == null) {
@@ -765,7 +799,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 				try {
 					checker = new URL(element.getContentFile());
 					if (checker.getProtocol().equalsIgnoreCase("http")) { //$NON-NLS-1$
-						this.contentURL = checker;
+						contentURL = checker;
 					}
 				} catch (MalformedURLException mue) {
 				}
