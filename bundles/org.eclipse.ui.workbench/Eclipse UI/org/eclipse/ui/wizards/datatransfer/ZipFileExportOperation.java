@@ -97,13 +97,13 @@ class ZipFileExportOperation implements IRunnableWithProgress {
 	 *  @return int
 	 *  @param resource org.eclipse.core.resources.IResource
 	 */
-	protected int countChildrenOf(IResource resource) throws CoreException {
-		if (resource.getType() == IResource.FILE)
+	protected int countChildrenOf(IResource checkResource) throws CoreException {
+		if (checkResource.getType() == IResource.FILE)
 			return 1;
 
 		int count = 0;
-		if (resource.isAccessible()) {
-			IResource[] children = ((IContainer) resource).members();
+		if (checkResource.isAccessible()) {
+			IResource[] children = ((IContainer) checkResource).members();
 			for (int i = 0; i < children.length; i++)
 				count += countChildrenOf(children[i]);
 		}
