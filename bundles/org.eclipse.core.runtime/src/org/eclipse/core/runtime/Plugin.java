@@ -338,7 +338,7 @@ public abstract class Plugin implements BundleActivator {
 		try {
 			preferences.flush();
 		} catch (BackingStoreException e) {
-			String message = "Exception flushing preferences to file-system: " + e.getMessage();
+			String message = Policy.bind("preferences.saveProblems"); //$NON-NLS-1$
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
 			InternalPlatform.getDefault().log(status);
 		}
@@ -367,6 +367,11 @@ public abstract class Plugin implements BundleActivator {
 	}
 
 	/**
+	 * This method has been added as a hook for the Platform into the 
+	 * preferences mechanism to allow for the initialization of default 
+	 * preference values. It cannot be over-ridden by subclasses and 
+	 * should not be called by clients.
+	 * 
 	 * TODO @deprecated
 	 * @since 3.0
 	 */
