@@ -83,12 +83,17 @@ class FindReplaceDialog extends Dialog {
 		public void shellActivated(ShellEvent e) {
 			fActiveShell= (Shell)e.widget;
 			updateButtonState();
+			
+			if (fGiveFocusToFindField && getShell() == fActiveShell && okToUse(fFindField))
+				fFindField.setFocus();
+
 		}
 				
 		/*
 		 * @see ShellListener#shellDeactivated(ShellEvent)
 		 */
 		public void shellDeactivated(ShellEvent e) {
+			fGiveFocusToFindField= false;
 			
 			storeSettings();
 
@@ -211,6 +216,12 @@ class FindReplaceDialog extends Dialog {
 	 * @since 3.0
 	 */
 	private Color fProposalPopupForegroundColor;
+	/**
+	 * <code>true</code> if the find field should receive focus the next time
+	 * the dialog is activated, <code>false</code> otherwise.
+	 * @since 3.0
+	 */
+	private boolean fGiveFocusToFindField= true;
 
 	
 	/**
@@ -1564,7 +1575,7 @@ class FindReplaceDialog extends Dialog {
 	/**
 	 * Updates this dialog because of a different target.
 	 * @param target the new target
-	 * @param isTargetEditable <code>true</code> if the new target can be modifed
+	 * @param isTargetEditable <code>true</code> if the new target can be modified
 	 * @param initializeFindString <code>true</code> if the find string of this dialog should be initialized based on the viewer's selection
 	 * @since 2.0
 	 */
@@ -1603,8 +1614,10 @@ class FindReplaceDialog extends Dialog {
 		if (okToUse(fReplaceLabel)) {
 			fReplaceLabel.setEnabled(isEditable());
 			fReplaceField.setEnabled(isEditable());
-			if (initializeFindString)
+			if (initializeFindString) {
 				initFindStringFromSelection();
+				fGiveFocusToFindField= true;
+			}
 			initIncrementalBaseLocation();
 			updateButtonState();
 		}
