@@ -43,7 +43,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.team.internal.core.*;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.StringMatcher;
-import org.omg.CORBA.UNKNOWN;
 
 /**
  * The Team class provides a global point of reference for the global ignore set
@@ -362,7 +361,7 @@ public final class Team {
 				readTextState(dis);
 				dis.close();
 			} catch (IOException ex) {
-				// Throw an exception here
+				TeamPlugin.log(Status.ERROR, ex.getMessage(), ex);
 			}
 		}
 		// Read values contributed by plugins
@@ -383,14 +382,16 @@ public final class Team {
 			writeTextState(dos);
 			dos.close();
 			if (stateFile.exists() && !stateFile.delete()) {
-				// Throw an exception here
+				TeamPlugin.log(Status.ERROR, Policy.bind("Team.Could_not_delete_state_file_1"), null); //$NON-NLS-1$
+				return;
 			}
 			boolean renamed = tempFile.renameTo(stateFile);
 			if (!renamed) {
-				// Throw an exception here
+				TeamPlugin.log(Status.ERROR, Policy.bind("Team.Could_not_rename_state_file_2"), null); //$NON-NLS-1$
+				return;
 			}
 		} catch (Exception e) {
-			// Throw an exception here
+			TeamPlugin.log(Status.ERROR, e.getMessage(), e);
 		}
 	}
 	
