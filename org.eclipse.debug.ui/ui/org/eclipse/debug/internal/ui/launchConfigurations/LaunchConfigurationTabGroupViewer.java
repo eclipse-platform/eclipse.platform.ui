@@ -454,34 +454,36 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		fInput = input;
 		Runnable r = new Runnable() {
 			public void run() {
-				if (fInput instanceof ILaunchConfiguration) {
-					ILaunchConfiguration configuration = (ILaunchConfiguration)fInput;
-					setOriginal(configuration);
-					try {
+				try {
+					if (fInput instanceof ILaunchConfiguration) {
+						ILaunchConfiguration configuration = (ILaunchConfiguration)fInput;
+						setOriginal(configuration);
 						setWorkingCopy(configuration.getWorkingCopy());
-					} catch (CoreException e) {
-						errorDialog(e);
-					}
-					displayInstanceTabs();
-				} else if (fInput instanceof ILaunchConfigurationType) {
-					ILaunchConfiguration configuration = getSharedTypeConfig((ILaunchConfigurationType)fInput);
-					setOriginal(configuration);
-					try {
+						displayInstanceTabs();
+					} else if (fInput instanceof ILaunchConfigurationType) {
+						ILaunchConfiguration configuration = getSharedTypeConfig((ILaunchConfigurationType)fInput);
+						setOriginal(configuration);
 						setWorkingCopy(configuration.getWorkingCopy());
-					} catch (CoreException e) {
-						errorDialog(e);
+						displaySharedTabs();
+					} else {
+						setNoInput();
 					}
-					displaySharedTabs();
-				} else {
-					setOriginal(null);
-					setWorkingCopy(null);
-					getVisibleArea().setVisible(false);
-					disposeExistingTabs();
+					setRedraw(true);
+				} catch (CoreException ce) {
+					errorDialog(ce);
+					setNoInput();
+					setRedraw(true);
 				}
-				setRedraw(true);
 			}
 		};
 		BusyIndicator.showWhile(getShell().getDisplay(), r);
+	}
+	
+	private void setNoInput() {
+		setOriginal(null);
+		setWorkingCopy(null);
+		getVisibleArea().setVisible(false);
+		disposeExistingTabs();				
 	}
 	
 	private void setRedraw(boolean b) {
@@ -1226,37 +1228,28 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * @param type launch configuration type
 	 * @return launch configuration
 	 */
-	protected ILaunchConfiguration getSharedTypeConfig(ILaunchConfigurationType type) {
+	protected ILaunchConfiguration getSharedTypeConfig(ILaunchConfigurationType type) throws CoreException {
 		String id = type.getIdentifier();
 		String name = id + ".SHARED_INFO"; //$NON-NLS-1$
 		ILaunchConfiguration shared = null;
-		ILaunchConfiguration[] configurations;
-		try {
-			configurations = getLaunchManager().getLaunchConfigurations(type);
-			for (int i = 0; i < configurations.length; i++) {
-				ILaunchConfiguration configuration = configurations[i];
-				if (configuration.getName().equals(name)) {
-					shared = configuration;
-					break;
-				}
+		ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations(type);
+		for (int i = 0; i < configurations.length; i++) {
+			ILaunchConfiguration configuration = configurations[i];
+			if (configuration.getName().equals(name)) {
+				shared = configuration;
+				break;
 			}
-		} catch (CoreException e) {
-			DebugUIPlugin.log(e);
 		}
+		
 		if (shared == null) {
 			// create a new shared config
 			ILaunchConfigurationWorkingCopy workingCopy;
-			try {
-				workingCopy = type.newInstance(null, name);
-				workingCopy.setAttribute(IDebugUIConstants.ATTR_PRIVATE, true);
-				// null entries indicate default settings
-				// save
-				shared = workingCopy.doSave();
-			} catch (CoreException e) {
-				DebugUIPlugin.log(e);
-			}
+			workingCopy = type.newInstance(null, name);
+			workingCopy.setAttribute(IDebugUIConstants.ATTR_PRIVATE, true);
+			// null entries indicate default settings
+			// save
+			shared = workingCopy.doSave();
 		}
 		return shared;
-
 	}
 }
