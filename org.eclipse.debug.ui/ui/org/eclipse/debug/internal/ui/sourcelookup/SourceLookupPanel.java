@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     QNX Software Systems - Mikhail Khodjaiants - Bug 89748
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
@@ -378,9 +379,13 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	
 	protected boolean isDefault(ILaunchConfiguration configuration) {
 		ISourceContainer[] current = getEntries();
-		return current.length == 1 && current[0] instanceof DefaultSourceContainer;
+		return !isFindDuplicates() && current.length == 1 && current[0] instanceof DefaultSourceContainer;
 	}
-	
+
+	private boolean isFindDuplicates() {
+		return fDuplicatesButton.getSelection();
+	}
+
 	/**
 	 * Returns the entries visible in the viewer
 	 */
