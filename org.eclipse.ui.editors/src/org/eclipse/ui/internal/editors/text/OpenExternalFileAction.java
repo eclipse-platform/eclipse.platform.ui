@@ -155,7 +155,7 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 	
 	private IFile getWorkspaceFile(File file) {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		IPath location= new Path(file.getAbsolutePath());
+		IPath location= Path.fromOSString(file.getAbsolutePath());
 		IFile[] files= workspace.getRoot().findFilesForLocation(location);
 		if (files == null || files.length == 0)
 			return null;

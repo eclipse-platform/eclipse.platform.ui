@@ -123,12 +123,12 @@ public class ContributionTemplateStore extends TemplateStore {
 		String file= element.getAttributeAsIs(FILE);
 		if (file != null) {
 			Bundle plugin = Platform.getBundle(element.getDeclaringExtension().getNamespace());
-			URL url= Platform.find(plugin, new Path(file));
+			URL url= Platform.find(plugin, Path.fromOSString(file));
 			if (url != null) {
 				ResourceBundle bundle= null;
 				String translations= element.getAttributeAsIs(TRANSLATIONS);
 				if (translations != null) {
-					URL bundleURL= Platform.find(plugin, new Path(translations));
+					URL bundleURL= Platform.find(plugin, Path.fromOSString(translations));
 					if (url != null) {
 						bundle= new PropertyResourceBundle(bundleURL.openStream());
 					}

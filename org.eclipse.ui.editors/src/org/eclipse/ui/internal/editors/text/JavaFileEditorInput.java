@@ -124,7 +124,7 @@ public class JavaFileEditorInput implements IEditorInput, ILocationProvider {
 	public IPath getPath(Object element) {
 		if (element instanceof JavaFileEditorInput) {
 			JavaFileEditorInput input= (JavaFileEditorInput) element;
-			return new Path(input.fFile.getAbsolutePath());
+			return Path.fromOSString(input.fFile.getAbsolutePath());
 		}
 		return null;
 	}

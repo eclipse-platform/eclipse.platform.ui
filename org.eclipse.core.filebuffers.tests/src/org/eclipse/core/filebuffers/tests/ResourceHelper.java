@@ -84,8 +84,8 @@ public class ResourceHelper {
 		}
 	}
 	
-	public static IFolder createFolder(String folderPath) throws CoreException {
-		ContainerGenerator generator= new ContainerGenerator(ResourcesPlugin.getWorkspace(), new Path(folderPath));
+	public static IFolder createFolder(String portableFolderPath) throws CoreException {
+		ContainerGenerator generator= new ContainerGenerator(ResourcesPlugin.getWorkspace(), new Path(portableFolderPath));
 		IContainer container= generator.generateContainer(NULL_MONITOR);
 		if (container instanceof IFolder)
 			return (IFolder) container;

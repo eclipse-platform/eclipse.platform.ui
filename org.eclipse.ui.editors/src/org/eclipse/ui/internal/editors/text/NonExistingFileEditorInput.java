@@ -89,7 +89,7 @@ public class NonExistingFileEditorInput implements IEditorInput, ILocationProvid
 	public IPath getPath(Object element) {
 		if (element instanceof NonExistingFileEditorInput) {
 			NonExistingFileEditorInput input= (NonExistingFileEditorInput) element;
-			return new Path(input.fFile.getAbsolutePath());
+			return Path.fromOSString(input.fFile.getAbsolutePath());
 		}
 		return null;
 	}

@@ -32,13 +32,13 @@ public class ContainerGenerator {
 	private IContainer fContainer;
 	private IWorkspace fWorkspace;
 
-	public ContainerGenerator(IWorkspace workspace, IPath containerPath) {
+	public ContainerGenerator(IWorkspace workspace, IPath portableContainerPath) {
 		fWorkspace= workspace;
-		fContainerFullPath = containerPath;
+		fContainerFullPath = portableContainerPath;
 	}
 
 	private IFolder createFolder(IFolder folderHandle, IProgressMonitor monitor) throws CoreException {
-		folderHandle.create(false, true, monitor);	
+		folderHandle.create(false, true, monitor);
 		if (monitor.isCanceled())
 			throw new OperationCanceledException();
 		return folderHandle;
