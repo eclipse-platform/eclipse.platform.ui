@@ -18,7 +18,8 @@ import java.util.TreeMap;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
@@ -37,10 +38,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
-
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -48,15 +45,9 @@ import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.CommandException;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.commands.NoSuchAttributeException;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.ParseException;
-import org.eclipse.ui.keys.SWTKeySupport;
-
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -65,13 +56,18 @@ import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.ParseException;
+import org.eclipse.ui.keys.SWTKeySupport;
 
 /**
  * <p>
- * Controls the keyboard input into the workbench key binding architecture.
- * This allows key events to be programmatically pushed into the key binding
+ * Controls the keyboard input into the workbench key binding architecture. This
+ * allows key events to be programmatically pushed into the key binding
  * architecture -- potentially triggering the execution of commands. It is used
- * by the <code>Workbench</code> to listen for events on the <code>Display</code>.
+ * by the <code>Workbench</code> to listen for events on the
+ * <code>Display</code>.
  * </p>
  * <p>
  * This class is not designed to be thread-safe. It is assumed that all access
@@ -129,10 +125,10 @@ public final class WorkbenchKeyboard {
      * first such key stroke is always the exactly matching key stroke.
      * 
      * @param event
-     *            The event from which the key strokes should be generated;
-     *            must not be <code>null</code>.
-     * @return The set of nearly matching key strokes. It is never <code>null</code>,
-     *         but may be empty.
+     *            The event from which the key strokes should be generated; must
+     *            not be <code>null</code>.
+     * @return The set of nearly matching key strokes. It is never
+     *         <code>null</code>, but may be empty.
      */
     public static List generatePossibleKeyStrokes(Event event) {
         final List keyStrokes = new ArrayList(3);
@@ -207,8 +203,8 @@ public final class WorkbenchKeyboard {
      * @param keyStrokes
      *            The key stroke in which to look for out-of-order keys; must
      *            not be <code>null</code>.
-     * @return <code>true</code> if the key is an out-of-order key; <code>false</code>
-     *         otherwise.
+     * @return <code>true</code> if the key is an out-of-order key;
+     *         <code>false</code> otherwise.
      */
     private static boolean isOutOfOrderKey(List keyStrokes) {
         // Compare to see if one of the possible key strokes is out of order.
@@ -358,8 +354,8 @@ public final class WorkbenchKeyboard {
     /**
      * Verifies that the active workbench window is the same as the workbench
      * window associated with the state. This is used to verify that the state
-     * is properly reset as focus changes. When they are not the same, the
-     * state is reset and associated with the newly activated window.
+     * is properly reset as focus changes. When they are not the same, the state
+     * is reset and associated with the newly activated window.
      * 
      * @param window
      *            The activated window; must not be <code>null</code>.
@@ -378,7 +374,7 @@ public final class WorkbenchKeyboard {
     private void closeMultiKeyAssistShell() {
         if ((multiKeyAssistShell != null)
                 && (!multiKeyAssistShell.isDisposed())) {
-        	workbench.getContextSupport().unregisterShell(multiKeyAssistShell);
+            workbench.getContextSupport().unregisterShell(multiKeyAssistShell);
             multiKeyAssistShell.close();
             multiKeyAssistShell.dispose();
             multiKeyAssistShell = null;
@@ -395,9 +391,14 @@ public final class WorkbenchKeyboard {
      */
     private static boolean isEnabled(ICommand command) {
         try {
-            return Boolean.TRUE.equals(command.getAttributeValue("enabled")); //$NON-NLS-1$
-        } catch (NoSuchAttributeException eNoSuchAttribute) {
-            return true;
+            Map attributeValuesByName = command.getAttributeValuesByName();
+
+            if (attributeValuesByName.containsKey("enabled")
+                    && !Boolean.TRUE.equals(attributeValuesByName
+                            .get("enabled")))
+                return false;
+            else
+                return true;
         } catch (NotHandledException eNotHandled) {
             return false;
         }
@@ -410,8 +411,8 @@ public final class WorkbenchKeyboard {
      * logged. When this method completes, the key binding state is reset.
      * 
      * @param commandId
-     *            The identifier for the command that should be executed;
-     *            should not be <code>null</code>.
+     *            The identifier for the command that should be executed; should
+     *            not be <code>null</code>.
      * @param event
      *            The event triggering the execution. This is needed for
      *            backwards compatability and might be removed in the future.
@@ -447,14 +448,24 @@ public final class WorkbenchKeyboard {
                 System.out.println("KEYS >>>     not enabled"); //$NON-NLS-1$
             } else {
                 try {
+                    Map attributeValuesByName = command
+                            .getAttributeValuesByName();
+
                     System.out
                             .println("KEYS >>>     value for 'id' attribute = " //$NON-NLS-1$
-                                    + command.getAttributeValue("id")); //$NON-NLS-1$
+                                    + attributeValuesByName.get("id")); //$NON-NLS-1$
                     System.out
                             .println("KEYS >>>     value for 'enabled' attribute = " //$NON-NLS-1$
-                                    + command.getAttributeValue("enabled")); //$NON-NLS-1$
-                } catch (CommandException eCommand) {
-                    System.out.println(eCommand);
+                                    + attributeValuesByName.get("enabled")); //$NON-NLS-1$
+
+                    if (attributeValuesByName.containsKey("enabled")
+                            && !Boolean.TRUE.equals(attributeValuesByName
+                                    .get("enabled")))
+                        return false;
+                    else
+                        return true;
+                } catch (NotHandledException eNotHandled) {
+                    System.out.println(eNotHandled);
                 }
             }
         }
@@ -510,7 +521,8 @@ public final class WorkbenchKeyboard {
                             .addVerifyKeyListener(new OutOfOrderVerifyListener(
                                     new OutOfOrderListener(this)));
                 } else {
-                    widget.addListener(SWT.KeyDown, new OutOfOrderListener(this));
+                    widget.addListener(SWT.KeyDown,
+                            new OutOfOrderListener(this));
                 }
             }
 
@@ -527,8 +539,8 @@ public final class WorkbenchKeyboard {
     }
 
     /**
-     * An accessor for the filter that processes key down and traverse events
-     * on the display.
+     * An accessor for the filter that processes key down and traverse events on
+     * the display.
      * 
      * @return The global key down and traverse filter; never <code>null</code>.
      */
@@ -542,7 +554,8 @@ public final class WorkbenchKeyboard {
      * returned.
      * 
      * @param keySequence
-     *            The key sequence to check for a match; must never be <code>null</code>.
+     *            The key sequence to check for a match; must never be
+     *            <code>null</code>.
      * @return The command identifier for the perfectly matching command;
      *         <code>null</code> if no command matches.
      */
@@ -558,7 +571,8 @@ public final class WorkbenchKeyboard {
      * they have typed.
      * 
      * @param sequence
-     *            The new key sequence for the state; should not be <code>null</code>.
+     *            The new key sequence for the state; should not be
+     *            <code>null</code>.
      */
     private void incrementState(KeySequence sequence) {
         // Record the starting time.
@@ -595,8 +609,8 @@ public final class WorkbenchKeyboard {
      * @param keySequence
      *            The key sequence to check for a partial match; must never be
      *            <code>null</code>.
-     * @return <code>true</code> if there is a partial match; <code>false</code>
-     *         otherwise.
+     * @return <code>true</code> if there is a partial match;
+     *         <code>false</code> otherwise.
      */
     private boolean isPartialMatch(KeySequence keySequence) {
         return commandManager.isPartialMatch(keySequence);
@@ -609,8 +623,8 @@ public final class WorkbenchKeyboard {
      * @param keySequence
      *            The key sequence to check for a perfect match; must never be
      *            <code>null</code>.
-     * @return <code>true</code> if there is a perfect match; <code>false</code>
-     *         otherwise.
+     * @return <code>true</code> if there is a perfect match;
+     *         <code>false</code> otherwise.
      */
     private boolean isPerfectMatch(KeySequence keySequence) {
         return commandManager.isPerfectMatch(keySequence);
@@ -627,7 +641,8 @@ public final class WorkbenchKeyboard {
         Throwable exception = (nestedException == null) ? e : nestedException;
         String message = Util.translateString(RESOURCE_BUNDLE,
                 "ExecutionError.Message"); //$NON-NLS-1$
-        String title = Util.translateString(RESOURCE_BUNDLE, "ExecutionError.Title"); //$NON-NLS-1$
+        String title = Util.translateString(RESOURCE_BUNDLE,
+                "ExecutionError.Title"); //$NON-NLS-1$
         String exceptionMessage = exception.getMessage();
         if (exceptionMessage == null) {
             exceptionMessage = message;
@@ -641,8 +656,9 @@ public final class WorkbenchKeyboard {
 
     /**
      * Opens a <code>Shell</code> to assist the user in completing a
-     * multi-stroke key binding. After this method completes, <code>multiKeyAssistShell</code>
-     * should point at the newly opened window.
+     * multi-stroke key binding. After this method completes,
+     * <code>multiKeyAssistShell</code> should point at the newly opened
+     * window.
      * 
      * @param display
      *            The display on which the shell should be opened; must not be
@@ -795,14 +811,15 @@ public final class WorkbenchKeyboard {
         });
 
         // Open the shell.
-        workbench.getContextSupport().registerShell(multiKeyAssistShell, IWorkbenchContextSupport.TYPE_NONE);
+        workbench.getContextSupport().registerShell(multiKeyAssistShell,
+                IWorkbenchContextSupport.TYPE_NONE);
         multiKeyAssistShell.open();
     }
 
     /**
      * Processes a key press with respect to the key binding architecture. This
-     * updates the mode of the command manager, and runs the current handler
-     * for the command that matches the key sequence, if any.
+     * updates the mode of the command manager, and runs the current handler for
+     * the command that matches the key sequence, if any.
      * 
      * @param potentialKeyStrokes
      *            The key strokes that could potentially match, in the order of
@@ -817,16 +834,17 @@ public final class WorkbenchKeyboard {
      *             log the message, display a dialog, or ignore this exception
      *             entirely.
      */
-    public boolean press(List potentialKeyStrokes, Event event) throws CommandException {
+    public boolean press(List potentialKeyStrokes, Event event)
+            throws CommandException {
         // TODO remove event parameter once key-modified actions are removed
         if (DEBUG && DEBUG_VERBOSE) {
             System.out
                     .println("KEYS >>> WorkbenchKeyboard.press(potentialKeyStrokes = " //$NON-NLS-1$
                             + potentialKeyStrokes + ")"); //$NON-NLS-1$
         }
-        
-        /* 
-         * TODO Kludge.  A partial workaround for Bug 56231.  This should be
+
+        /*
+         * TODO Kludge. A partial workaround for Bug 56231. This should be
          * removed once SWT fixes Bug 56231 such that activation works properly
          * on all platforms.
          */
@@ -838,11 +856,13 @@ public final class WorkbenchKeyboard {
             } else {
                 shell = Display.getCurrent().getActiveShell();
             }
-            
-            ((WorkbenchCommandSupport) workbench.getCommandSupport()).processHandlerSubmissions(false, shell);
-            ((WorkbenchContextSupport) workbench.getContextSupport()).processEnabledSubmissions(false, shell);
+
+            ((WorkbenchCommandSupport) workbench.getCommandSupport())
+                    .processHandlerSubmissions(false, shell);
+            ((WorkbenchContextSupport) workbench.getContextSupport())
+                    .processEnabledSubmissions(false, shell);
         }
-        
+
         KeySequence sequenceBeforeKeyStroke = state.getCurrentSequence();
         for (Iterator iterator = potentialKeyStrokes.iterator(); iterator
                 .hasNext();) {
@@ -874,10 +894,10 @@ public final class WorkbenchKeyboard {
 
     /**
      * <p>
-     * Actually performs the processing of the key event by interacting with
-     * the <code>ICommandManager</code>. If work is carried out, then the
-     * event is stopped here (i.e., <code>event.doit = false</code>). It
-     * does not do any processing if there are no matching key strokes.
+     * Actually performs the processing of the key event by interacting with the
+     * <code>ICommandManager</code>. If work is carried out, then the event
+     * is stopped here (i.e., <code>event.doit = false</code>). It does not
+     * do any processing if there are no matching key strokes.
      * </p>
      * <p>
      * If the active <code>Shell</code> is not the same as the one to which
@@ -918,8 +938,8 @@ public final class WorkbenchKeyboard {
     }
 
     /**
-     * Resets the state, and cancels any running timers. If there is a <code>Shell</code>
-     * currently open, then it closes it.
+     * Resets the state, and cancels any running timers. If there is a
+     * <code>Shell</code> currently open, then it closes it.
      */
     private void resetState() {
         startTime = Long.MAX_VALUE;

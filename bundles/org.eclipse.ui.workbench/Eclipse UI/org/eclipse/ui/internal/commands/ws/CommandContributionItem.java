@@ -39,7 +39,6 @@ import org.eclipse.ui.commands.CommandEvent;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandListener;
 import org.eclipse.ui.commands.IImageBinding;
-import org.eclipse.ui.commands.NoSuchAttributeException;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -740,9 +739,13 @@ public class CommandContributionItem
 
 	private static boolean isEnabled(ICommand command) {
 	    try {
-	        return Boolean.TRUE.equals(command.getAttributeValue("enabled")); //$NON-NLS-1$
-	    } catch (NoSuchAttributeException eNoSuchAttribute) {
-	        return true;
+	        Map attributeValuesByName = command.getAttributeValuesByName();
+
+	        if (attributeValuesByName.containsKey("enabled")
+	                && !Boolean.TRUE.equals(attributeValuesByName.get("enabled")))
+	            return false;
+	        else
+	            return true;
 	    } catch (NotHandledException eNotHandled) {		        
 	        return false;
 	    } 

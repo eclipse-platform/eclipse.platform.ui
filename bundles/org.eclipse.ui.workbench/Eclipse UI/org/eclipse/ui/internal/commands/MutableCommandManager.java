@@ -912,9 +912,10 @@ public final class MutableCommandManager implements IMutableCommandManager {
         if (contextBindingsChanged || categoryIdChanged || definedChanged
                 || descriptionChanged || imageBindingsChanged
                 || keySequenceBindingsChanged || nameChanged)
-            return new CommandEvent(command, contextBindingsChanged, categoryIdChanged, false, // TODO
-                    definedChanged, descriptionChanged, imageBindingsChanged,
-                    keySequenceBindingsChanged, nameChanged, Collections.EMPTY_SET); // TODO
+            return new CommandEvent(command, false /* TODO */,
+                    contextBindingsChanged, categoryIdChanged, definedChanged,
+                    descriptionChanged, imageBindingsChanged,
+                    keySequenceBindingsChanged, nameChanged, null); // TODO
         else
             return null;
     }

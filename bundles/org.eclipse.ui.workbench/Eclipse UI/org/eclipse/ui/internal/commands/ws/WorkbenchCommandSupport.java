@@ -35,7 +35,6 @@ import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IMutableCommandManager;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-import org.eclipse.ui.commands.NoSuchAttributeException;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.HandlerProxy;
@@ -182,18 +181,14 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
         while (handlerItr.hasNext()) {
             final HandlerProxy proxy = (HandlerProxy) handlerItr.next();
-            try {
-                final String commandId = (String) proxy
-                        .getAttributeValue(HandlerProxy.ATTRIBUTE_ID);
-                final Integer priority = (Integer) proxy
-                        .getAttributeValue(HandlerProxy.ATTRIBUTE_PRIORITY);
-                // TODO trace back and remove field 'priority'. no longer used..
-                final HandlerSubmission submission = new HandlerSubmission(
-                        null, null, null, commandId, proxy, Priority.LOW /* priority.intValue() */);
-                submissions.add(submission);
-            } catch (final NoSuchAttributeException e) {
-                // This submission can't be created. Nothing to do.
-            }
+            final String commandId = (String) proxy
+                    .getAttributeValue(HandlerProxy.ATTRIBUTE_ID);
+            final Integer priority = (Integer) proxy
+                    .getAttributeValue(HandlerProxy.ATTRIBUTE_PRIORITY);
+            // TODO trace back and remove field 'priority'. no longer used..
+            final HandlerSubmission submission = new HandlerSubmission(
+                    null, null, null, commandId, proxy, Priority.LOW /* priority.intValue() */);
+            submissions.add(submission);
         }
 
         if (!submissions.isEmpty()) {

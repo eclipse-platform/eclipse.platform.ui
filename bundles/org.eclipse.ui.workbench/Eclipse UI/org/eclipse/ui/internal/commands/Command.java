@@ -250,7 +250,7 @@ final class Command implements ICommand {
     }
 
     public boolean isHandled() {
-        if (handler != null) return false;
+        if (handler == null) return false;
 
         Map attributeValuesByName = handler.getAttributeValuesByName();
 
