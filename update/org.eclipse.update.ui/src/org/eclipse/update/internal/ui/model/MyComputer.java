@@ -95,16 +95,27 @@ public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
 				return;
 			DriveSearchSettings ds = settings.getDriveSettings(drive.getPath());
 			if (ds.isChecked()) {
-				collectSites(drive, sites, ds, monitor);
+				collectSites(drive, true, sites, ds, monitor);
 			}
 		}
 	}
 
 	private void collectSites(
 		File dir,
+		boolean root,
 		Vector sites,
 		DriveSearchSettings driveSettings,
 		IProgressMonitor monitor) {
+			
+		if (root) {
+			// See if the root itself is the site.
+			SiteBookmark rootSite = MyComputerDirectory.createSite(dir, true);
+			if (rootSite!=null) {
+				sites.add(rootSite);
+				return;
+			}
+		}
+
 		File[] children = dir.listFiles();
 		if (children == null)
 			return;
@@ -115,13 +126,13 @@ public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
 				return;
 			if (child.isDirectory()) {
 				monitor.subTask(child.getPath());
-				SiteBookmark bookmark = MyComputerDirectory.createSite(child);
+				SiteBookmark bookmark = MyComputerDirectory.createSite(child, false);
 				if (bookmark != null) {
 					ISite site = bookmark.getSite(false, null);
 					if (site != null)
 						sites.add(bookmark);
 				} else
-					collectSites(child, sites, driveSettings, monitor);
+					collectSites(child, false, sites, driveSettings, monitor);
 			}
 		}
 	}

@@ -14,5 +14,5 @@ import org.eclipse.update.configuration.*;
  */
 public interface IConfiguredSiteContext {
 	public IInstallConfiguration getInstallConfiguration();
-	public IConfiguredSite getConfigurationSite();
+	public IConfiguredSite getConfiguredSite();
 }

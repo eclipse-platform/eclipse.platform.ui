@@ -37,8 +37,24 @@ public class ConfiguredFeatureAdapter
 		this.updated = updated;
 	}
 
-	public IConfiguredSite getConfigurationSite() {
-		return adapter.getConfigurationSite();
+	public boolean equals(Object object) {
+		if (object == null)
+			return false;
+		if (object == this)
+			return true;
+		if (object instanceof ConfiguredFeatureAdapter) {
+			try {
+				ConfiguredFeatureAdapter ad = (ConfiguredFeatureAdapter) object;
+				return ad.getConfiguredSite().equals(getConfiguredSite())
+					&& ad.getFeature(null).equals(getFeature(null));
+			} catch (CoreException e) {
+			}
+		}
+		return false;
+	}
+
+	public IConfiguredSite getConfiguredSite() {
+		return adapter.getConfiguredSite();
 	}
 	public IInstallConfiguration getInstallConfiguration() {
 		return adapter.getInstallConfiguration();
@@ -46,7 +62,7 @@ public class ConfiguredFeatureAdapter
 	public boolean isConfigured() {
 		return configured;
 	}
-	
+
 	public boolean isUpdated() {
 		return updated;
 	}
@@ -56,30 +72,43 @@ public class ConfiguredFeatureAdapter
 				getFeature(null).getIncludedFeatureReferences();
 			ConfiguredFeatureAdapter[] result =
 				new ConfiguredFeatureAdapter[included.length];
-			if (monitor==null) monitor = new NullProgressMonitor();
+			if (monitor == null)
+				monitor = new NullProgressMonitor();
 			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
 			subMonitor.beginTask("", included.length);
 
 			for (int i = 0; i < included.length; i++) {
 				IIncludedFeatureReference fref = included[i];
 				IFeature feature;
-				boolean childConfigured=configured;
+				boolean childConfigured = configured;
 				boolean updated = false;
 				try {
-					feature = fref.getFeature(!configured, getConfigurationSite(), new SubProgressMonitor(subMonitor, 1));
-					childConfigured = adapter.getConfigurationSite().isConfigured(feature);
+					feature =
+						fref.getFeature(
+							!configured,
+							getConfiguredSite(),
+							new SubProgressMonitor(subMonitor, 1));
+					childConfigured =
+						adapter.getConfiguredSite().isConfigured(feature);
 					///*
-					PluginVersionIdentifier refpid = fref.getVersionedIdentifier().getVersion();
-					PluginVersionIdentifier fpid = feature.getVersionedIdentifier().getVersion();
+					PluginVersionIdentifier refpid =
+						fref.getVersionedIdentifier().getVersion();
+					PluginVersionIdentifier fpid =
+						feature.getVersionedIdentifier().getVersion();
 					updated = !refpid.equals(fpid);
 					//*/
 				} catch (CoreException e) {
 					feature = new MissingFeature(getFeature(null), fref);
 					childConfigured = false;
 				}
-				
+
 				result[i] =
-					new ConfiguredFeatureAdapter(adapter, feature, childConfigured, updated, fref.isOptional());
+					new ConfiguredFeatureAdapter(
+						adapter,
+						feature,
+						childConfigured,
+						updated,
+						fref.isOptional());
 				result[i].setIncluded(true);
 			}
 			return result;

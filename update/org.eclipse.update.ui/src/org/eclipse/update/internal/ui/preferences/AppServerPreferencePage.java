@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.jface.dialogs.Dialog;
 
 /**
  * Insert the type's description here.
@@ -81,6 +82,11 @@ public class AppServerPreferencePage
 		addField(encodeURLs);
 		masterField.setSlave(encodeURLs);
 	}
+	
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		Dialog.applyDialogFont(getControl());
+	}	
 
 	protected void initialize() {
 		super.initialize();

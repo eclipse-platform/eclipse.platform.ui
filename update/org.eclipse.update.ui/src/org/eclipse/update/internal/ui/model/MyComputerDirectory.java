@@ -91,13 +91,24 @@ public class MyComputerDirectory
 					children = new Object[0];
 					return;
 				}
+				
+				if (volume!=null) {
+					// This is volume.
+					// Test if the volume itself is a site
+					SiteBookmark rootSite = createSite(getFile(), true);
+					if (rootSite != null) {
+						children = new Object[1];
+						children[0] = rootSite;
+						return;
+					}
+				}
 
 				children = new Object[files.length];
 				for (int i = 0; i < files.length; i++) {
 					File file = files[i];
 
 					if (file.isDirectory()) {
-						SiteBookmark site = createSite(file);
+						SiteBookmark site = createSite(file, false);
 						if (site != null)
 							children[i] = site;
 						else if (ExtensionRoot.isExtensionRoot(file)) {
@@ -119,14 +130,15 @@ public class MyComputerDirectory
 		return children;
 	}
 
-	static SiteBookmark createSite(File file) {
+	static SiteBookmark createSite(File file, boolean root) {
 		try {
 			File siteXML = new File(file, "site.xml");
 			if (siteXML.exists() == false)
 				return null;
 			URL url =
 				new URL("file:" + file.getAbsolutePath() + File.separator);
-			SiteBookmark site = new SiteBookmark(file.getName(), url, false);
+			String siteName = root?file.getAbsolutePath():file.getName();
+			SiteBookmark site = new SiteBookmark(siteName, url, false);
 			site.setType(SiteBookmark.LOCAL);
 			return site;
 		} catch (Exception e) {

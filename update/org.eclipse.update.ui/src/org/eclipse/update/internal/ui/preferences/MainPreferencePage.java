@@ -13,6 +13,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.jface.dialogs.Dialog;
 
 /**
  * Insert the type's description here.
@@ -131,6 +132,12 @@ public class MainPreferencePage
 		createHttpProxy(getFieldEditorParent(),2);
 		
 	}
+	
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		Dialog.applyDialogFont(getControl());
+	}	
+	
 	protected void createSpacer(Composite composite, int columnSpan) {
 		Label label = new Label(composite, SWT.NONE);
 		GridData gd = new GridData();

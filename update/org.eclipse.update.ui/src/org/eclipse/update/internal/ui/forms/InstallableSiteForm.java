@@ -103,7 +103,7 @@ public class InstallableSiteForm extends PropertyWebForm {
 
 	public void expandTo(Object obj) {
 		if (obj instanceof IConfiguredSiteAdapter) {
-			inputChanged(((IConfiguredSiteAdapter) obj).getConfigurationSite());
+			inputChanged(((IConfiguredSiteAdapter) obj).getConfiguredSite());
 		}
 	}
 

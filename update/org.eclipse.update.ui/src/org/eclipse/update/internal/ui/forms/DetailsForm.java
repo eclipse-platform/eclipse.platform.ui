@@ -572,8 +572,7 @@ public class DetailsForm extends PropertyWebForm {
 		String format = null;
 		if (size != -1) {
 			String stext = Long.toString(size);
-			String pattern = UpdateUI.getString(KEY_SIZE_VALUE);
-			format = UpdateUI.getFormattedMessage(pattern, stext);
+			format = UpdateUI.getFormattedMessage(KEY_SIZE_VALUE, stext);
 		} else {
 			format = UpdateUI.getString(KEY_UNKNOWN_SIZE_VALUE);
 		}
@@ -583,10 +582,9 @@ public class DetailsForm extends PropertyWebForm {
 		if (estimate >= 0 && size != -1) {
 			String hours = Long.toString(estimate / 3600000);
 			String minutes = Long.toString(estimate % 3600000);
-			String pattern = UpdateUI.getString(KEY_ESTIMATE_VALUE);
 			estimateFormat =
 				UpdateUI.getFormattedMessage(
-					pattern,
+					KEY_ESTIMATE_VALUE,
 					new String[] { hours, minutes });
 		} else {
 			estimateFormat = UpdateUI.getString(KEY_UNKNOWN_ESTIMATE_VALUE);
@@ -673,7 +671,7 @@ public class DetailsForm extends PropertyWebForm {
 				(IConfiguredSiteContext) currentAdapter;
 			if (!context.getInstallConfiguration().isCurrent())
 				return false;
-			if (context.getConfigurationSite().isEnabled() == false)
+			if (context.getConfiguredSite().isEnabled() == false)
 				return false;
 		}
 
@@ -792,7 +790,7 @@ public class DetailsForm extends PropertyWebForm {
 		if (currentAdapter instanceof IConfiguredSiteContext) {
 			IConfiguredSiteContext context =
 				(IConfiguredSiteContext) currentAdapter;
-			IConfiguredSite csite = context.getConfigurationSite();
+			IConfiguredSite csite = context.getConfiguredSite();
 			IFeatureReference fref =
 				csite.getSite().getFeatureReference(currentFeature);
 			IFeatureReference[] cfeatures = csite.getConfiguredFeatures();

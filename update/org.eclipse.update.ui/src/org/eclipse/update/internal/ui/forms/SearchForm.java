@@ -110,10 +110,9 @@ public class SearchForm extends UpdateWebForm {
 			updateButtonText();
 			searchButton.setEnabled(true);
 			Date date = new Date();
-			String pattern = UpdateUI.getString(KEY_LAST_SEARCH);
 			String text =
 				UpdateUI.getFormattedMessage(
-					pattern,
+					KEY_LAST_SEARCH,
 					Utilities.format(date));
 			infoLabel.setText(text);
 			infoLabel.getParent().layout();
