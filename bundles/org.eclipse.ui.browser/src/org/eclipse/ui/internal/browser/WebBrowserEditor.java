@@ -184,7 +184,7 @@ public class WebBrowserEditor extends EditorPart {
 				site.getWorkbenchWindow().getActivePage().bringToTop(this);
 			}
 			
-			setPartName(url.getFile());
+			setPartName(path.lastSegment());
 			setTitleToolTip(url.getFile());
 
 			Image oldImage = image;
