@@ -241,7 +241,6 @@ public interface ITextViewer {
 	/**
 	 * Resets the region of this viewer's document which is visible in the presentation.
 	 * Afterwards, the whole document is presented again.
-	 * @deprecated use <code>ITextViewerExtension5</code> instead
 	 */
 	void resetVisibleRegion();
 	
@@ -251,7 +250,6 @@ public interface ITextViewer {
 	 * if the document has been modified since then.
 	 *
 	 * @return this viewer's current visible region
-	 * @deprecated use <code>ITextViewerExtension5</code> instead
 	 */
 	IRegion getVisibleRegion();
 	
@@ -261,7 +259,6 @@ public interface ITextViewer {
 	 * @param offset the offset
 	 * @param length the length
 	 * @return <code>true</code> if the specified range overlaps with the visible region
-	 * @deprecated use <code>ITextViewerExtension5</code> instead
 	 */
 	boolean overlapsWithVisibleRegion(int offset, int length);	
 	
