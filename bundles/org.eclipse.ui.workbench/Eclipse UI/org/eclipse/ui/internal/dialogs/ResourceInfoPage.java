@@ -51,6 +51,8 @@ public class ResourceInfoPage extends PropertyPage {
 	private static String LINKED_FOLDER_LABEL = WorkbenchMessages.getString("ResourceInfo.linkedFolder"); //$NON-NLS-1$
 	private static String UNKNOWN_LABEL = WorkbenchMessages.getString("ResourceInfo.unknown"); //$NON-NLS-1$
 	private static String NOT_LOCAL_TEXT = WorkbenchMessages.getString("ResourceInfo.notLocal"); //$NON-NLS-1$
+	private static String MISSING_PATH_VARIABLE_TEXT = WorkbenchMessages.getString("ResourceInfo.missingPathVariable"); //$NON-NLS-1$
+	private static String NOT_EXIST_TEXT = WorkbenchMessages.getString("ResourceInfo.notExist"); //$NON-NLS-1$
 	private static String PATH_TITLE = WorkbenchMessages.getString("ResourceInfo.path"); //$NON-NLS-1$
 	private static String TIMESTAMP_TITLE = WorkbenchMessages.getString("ResourceInfo.lastModified"); //$NON-NLS-1$
 
@@ -132,7 +134,7 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 		sizeTitle.setFont(font);
 		
 		Text sizeValue = new Text(basicInfoComposite, SWT.LEFT | SWT.READ_ONLY);
-		sizeValue.setText(MessageFormat.format(BYTES_LABEL, new Object[] {getSizeString((IFile) resource)}));
+		sizeValue.setText(getSizeString((IFile) resource));
 		gd = new GridData();
 		gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
 		gd.grabExcessHorizontalSpace = true;
@@ -272,11 +274,18 @@ private void createStateGroup(Composite parent, IResource resource) {
  * @param IResource - the resource to query
  */
 private String getDateStringValue(IResource resource) {
-
 	if (!resource.isLocal(IResource.DEPTH_ZERO))
 		return NOT_LOCAL_TEXT;
+		
+	IPath location = resource.getLocation();
+	if (location == null) {
+		if (resource.isLinked())
+			return MISSING_PATH_VARIABLE_TEXT;
+				
+		return NOT_EXIST_TEXT;
+	}
 	else {
-		File localFile = resource.getLocation().toFile();
+		File localFile = location.toFile();
 		DateFormat format = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM);
 		return format.format(new Date(localFile.lastModified()));
 	}
@@ -285,13 +294,18 @@ private String getDateStringValue(IResource resource) {
  * Get the location of a resource
  */
 private String getLocationText(IResource resource) {
-	//Location can be null if the resource is not local
+	if (!resource.isLocal(IResource.DEPTH_ZERO))
+		return NOT_LOCAL_TEXT;
+
 	IPath location = resource.getLocation();
-	if (location != null) {
-		return location.toOSString();
+	if (location == null) {
+		if (resource.isLinked())
+			return MISSING_PATH_VARIABLE_TEXT;
+				
+		return NOT_EXIST_TEXT;
 	}
 	else {
-		return NOT_LOCAL_TEXT;
+		return location.toOSString();
 	}
 }
 /**
@@ -300,9 +314,19 @@ private String getLocationText(IResource resource) {
 private String getSizeString(IFile file) {
 	if (!file.isLocal(IResource.DEPTH_ZERO))
 		return NOT_LOCAL_TEXT;
+
+	IPath location = file.getLocation();
+	if (location == null) {
+		if (file.isLinked())
+			return MISSING_PATH_VARIABLE_TEXT;
+				
+		return NOT_EXIST_TEXT;
+	}
 	else {
-		File localFile = file.getLocation().toFile();
-		return Long.toString(localFile.length());
+		File localFile = location.toFile();
+		String bytesString = Long.toString(localFile.length());
+		
+		return MessageFormat.format(BYTES_LABEL, new Object[] {bytesString});
 	}
 }
 /**
