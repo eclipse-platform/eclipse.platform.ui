@@ -34,26 +34,21 @@ class AnimationManager {
 
 	private static final String RUNNING_ICON = "running.gif"; //$NON-NLS-1$
 	private static final String BACKGROUND_ICON = "back.gif"; //$NON-NLS-1$
-	private static final String ERROR_ICON = "error.gif"; //$NON-NLS-1$
 
 	private static AnimationManager singleton;
 
 	private ImageData[] animatedData;
 	private ImageData[] disabledData;
-	private ImageData[] errorData;
 
 	private static String DISABLED_IMAGE_NAME = "ANIMATION_DISABLED_IMAGE"; //$NON-NLS-1$
 	private static String ANIMATED_IMAGE_NAME = "ANIMATION_ANIMATED_IMAGE"; //$NON-NLS-1$
-	private static String ERROR_IMAGE_NAME = "ANIMATION_ERROR_IMAGE"; //$NON-NLS-1$
 
 	Color background;
 
 	private ImageLoader runLoader = new ImageLoader();
-	private ImageLoader errorLoader = new ImageLoader();
 	boolean animated = false;
 	Job animateJob;
 	Job clearJob;
-	boolean showingError = false;
 	private IJobProgressManagerListener listener;
 
 	List items = Collections.synchronizedList(new ArrayList());
@@ -73,7 +68,6 @@ class AnimationManager {
 		try {
 			URL runningRoot = new URL(iconsRoot, RUNNING_ICON);
 			URL backRoot = new URL(iconsRoot, BACKGROUND_ICON);
-			URL errorRoot = new URL(iconsRoot, ERROR_ICON);
 
 			animatedData = manager.getImageData(runningRoot, runLoader);
 			if (animatedData != null)
@@ -86,14 +80,6 @@ class AnimationManager {
 				JFaceResources.getImageRegistry().put(
 					DISABLED_IMAGE_NAME,
 					manager.getImage(disabledData[0]));
-
-			errorData = manager.getImageData(errorRoot, errorLoader);
-			if (errorData != null)
-				JFaceResources.getImageRegistry().put(
-					ERROR_IMAGE_NAME,
-					manager.getImage(errorData[0]));
-
-			manager.getImageData(backRoot, errorLoader);
 
 			listener = getProgressListener();
 			ProgressManager.getInstance().addListener(listener);
@@ -126,10 +112,7 @@ class AnimationManager {
 	 */
 	ImageData[] getImageData() {
 		if (animated) {
-			if (showingError)
-				return errorData;
-			else
-				return animatedData;
+			return animatedData;
 		} else
 			return disabledData;
 	}
@@ -141,10 +124,7 @@ class AnimationManager {
 	Image getImage() {
 
 		if (animated) {
-			if (showingError)
-				return JFaceResources.getImageRegistry().get(ERROR_IMAGE_NAME);
-			else
-				return JFaceResources.getImageRegistry().get(ANIMATED_IMAGE_NAME);
+			return JFaceResources.getImageRegistry().get(ANIMATED_IMAGE_NAME);
 		} else
 			return JFaceResources.getImageRegistry().get(DISABLED_IMAGE_NAME);
 	}
@@ -169,8 +149,6 @@ class AnimationManager {
 			if (isAnimated() && imageDataArray.length > 1) {
 				getAnimateJob().schedule();
 			}
-		} else{//Not showing an error if there is no animation
-			showingError = false;
 		}
 	}
 
@@ -193,13 +171,12 @@ class AnimationManager {
 
 		if (items.size() == 0)
 			return;
-		
-		if(!PlatformUI.isWorkbenchRunning())
+
+		if (!PlatformUI.isWorkbenchRunning())
 			return;
 
 		AnimationItem[] animationItems = getAnimationItems();
 
-		boolean startErrorState = showingError;
 		Display display = PlatformUI.getWorkbench().getDisplay();
 
 		ImageData[] imageDataArray = getImageData();
@@ -242,9 +219,7 @@ class AnimationManager {
 				imageData.height);
 
 			if (loader.repeatCount > 0) {
-				while (isAnimated()
-					&& !monitor.isCanceled()
-					&& (startErrorState == showingError)) {
+				while (isAnimated() && !monitor.isCanceled()) {
 
 					if (display.isDisposed()) {
 						monitor.setCanceled(true);
@@ -382,15 +357,12 @@ class AnimationManager {
 			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refresh(org.eclipse.ui.internal.progress.JobInfo)
 			 */
 			public void refresh(JobInfo info) {
-				if (info.getErrorStatus() != null)
-					showingError = true;
-				else {
-					int state = info.getJob().getState();
-					if (state == Job.RUNNING)
-						add(info);
-					else
-						remove(info);
-				}
+
+				int state = info.getJob().getState();
+				if (state == Job.RUNNING)
+					add(info);
+				else
+					remove(info);
 			}
 
 			/* (non-Javadoc)
@@ -398,7 +370,6 @@ class AnimationManager {
 			 */
 			public void refreshAll() {
 				ProgressManager manager = ProgressManager.getInstance();
-				showingError = manager.hasErrorsDisplayed();
 				jobs.clear();
 				setAnimated(false);
 				JobInfo[] currentInfos = manager.getJobInfos(showsDebug());
@@ -451,11 +422,8 @@ class AnimationManager {
 			private boolean isNotTracked(JobInfo info) {
 
 				//We always track errors
-				if (info.getErrorStatus() == null) {
-					Job job = info.getJob();
-					return job.getState() != Job.RUNNING || job == clearJob || job == animateJob;
-				} else
-					return false;
+				Job job = info.getJob();
+				return job.getState() != Job.RUNNING || job == clearJob || job == animateJob;
 			}
 		};
 	}
@@ -474,7 +442,7 @@ class AnimationManager {
 						return ProgressManagerUtil.exceptionStatus(exception);
 					}
 				}
-				
+
 				/* (non-Javadoc)
 				 * @see org.eclipse.core.runtime.jobs.Job#shouldSchedule()
 				 */
@@ -489,7 +457,7 @@ class AnimationManager {
 				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 				 */
 				public void done(IJobChangeEvent event) {
-					
+
 					//Only schedule the job if we are showing anything
 					if (isAnimated() && items.size() > 0)
 						animateJob.schedule();
@@ -532,10 +500,7 @@ class AnimationManager {
 	 * @return ImageLoader
 	 */
 	ImageLoader getLoader() {
-		if (showingError)
-			return errorLoader;
-		else
-			return runLoader;
+		return runLoader;
 	}
 
 }

@@ -43,11 +43,6 @@ class ProgressTreeViewer extends TreeViewer {
 
 	private void updateColors(TreeItem treeItem, JobInfo info) {
 
-		if (info.getErrorStatus() != null) {
-			treeItem.setForeground(JFaceColors.getErrorText(treeItem.getDisplay()));
-			return;
-		}
-
 		if (info.getJob().getState() != Job.RUNNING) {
 			treeItem.setForeground(JFaceColors.getActiveHyperlinkText(treeItem.getDisplay()));
 			return;
