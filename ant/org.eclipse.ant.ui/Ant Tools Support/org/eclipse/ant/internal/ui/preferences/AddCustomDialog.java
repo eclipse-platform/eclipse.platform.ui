@@ -434,7 +434,7 @@ public class AddCustomDialog extends StatusDialog {
 			updateStatus(status);
 		} catch (CoreException e) {
 			StatusInfo status= new StatusInfo();
-			status.setError("Specified zip file could not be resolved");
+			status.setError(AntPreferencesMessages.getString("AddCustomDialog.13")); //$NON-NLS-1$
 			updateStatus(status);
 		}
 
