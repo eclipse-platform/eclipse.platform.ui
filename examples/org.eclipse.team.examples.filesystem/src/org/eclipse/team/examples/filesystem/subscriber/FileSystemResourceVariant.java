@@ -74,7 +74,7 @@ public class FileSystemResourceVariant extends CachedResourceVariant {
 		} catch (IOException e) {
 			// Failed for some reason. Try the absolute path.
 			FileSystemPlugin.log(new Status(IStatus.ERROR, FileSystemPlugin.ID, 0, 
-					"Failed to obtain canonical path for " + ioFile.getAbsolutePath(), e));
+					"Failed to obtain canonical path for " + ioFile.getAbsolutePath(), e)); //$NON-NLS-1$
 			return ioFile.getAbsolutePath();
 		}
 	}
@@ -144,7 +144,7 @@ public class FileSystemResourceVariant extends CachedResourceVariant {
 		try {
 			return new BufferedInputStream(new FileInputStream(ioFile));
 		} catch (FileNotFoundException e) {
-			throw new TeamException("Failed to fetch contents for " + getFilePath(), e);
+			throw new TeamException("Failed to fetch contents for " + getFilePath(), e); //$NON-NLS-1$
 		}
 	}
 }

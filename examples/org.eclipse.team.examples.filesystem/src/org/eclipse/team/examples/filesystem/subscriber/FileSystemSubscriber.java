@@ -83,7 +83,7 @@ public class FileSystemSubscriber extends ThreeWaySubscriber {
 	 * @see org.eclipse.team.core.subscribers.Subscriber#getName()
 	 */
 	public String getName() {
-		return "File System Example";
+		return "File System Example"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
