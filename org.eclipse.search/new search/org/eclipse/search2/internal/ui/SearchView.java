@@ -20,26 +20,20 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Tree;
+
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.SearchPluginImages;
-import org.eclipse.search.ui.IContextMenuConstants;
-import org.eclipse.search.ui.IQueryListener;
-import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.ISearchResult;
-import org.eclipse.search.ui.ISearchResultPage;
-import org.eclipse.search.ui.ISearchResultViewPart;
-import org.eclipse.search2.internal.ui.text.AnnotationManagers;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Tree;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewSite;
@@ -58,6 +52,17 @@ import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
+
+import org.eclipse.search.ui.IContextMenuConstants;
+import org.eclipse.search.ui.IQueryListener;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.ISearchResultPage;
+import org.eclipse.search.ui.ISearchResultViewPart;
+
+import org.eclipse.search.internal.ui.SearchPlugin;
+
+import org.eclipse.search2.internal.ui.text.AnnotationManagers;
 
 public class SearchView extends PageBookView implements ISearchResultViewPart, IQueryListener {
 	private static final String MEMENTO_TYPE= "view"; //$NON-NLS-1$
@@ -188,7 +193,6 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		super();
 		fPartsToPages= new HashMap();
 		fPagesToParts= new HashMap();
-		setTitleImage(SearchPluginImages.get(SearchPluginImages.T_VIEW));
 		fSearchViewPageService= new SearchPageRegistry("org.eclipse.search.searchResultViewPages", "searchResultClass", "id"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		fSearchViewStates= new HashMap();
 	}
