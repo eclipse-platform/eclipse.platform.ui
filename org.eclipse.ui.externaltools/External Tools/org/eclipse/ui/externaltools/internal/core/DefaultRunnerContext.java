@@ -84,7 +84,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 	 */
 	public String getExpandedLocation() {
 		if (expandedLocation == null)
-			expandedLocation = expandVariables(tool.getLocation());
+			expandedLocation = expandVariables(tool.getLocation(), false);
 		return expandedLocation;
 	}
 
@@ -93,7 +93,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 	 */
 	public String getExpandedArguments() {
 		if (expandedArguments == null)
-			expandedArguments = expandVariables(tool.getArguments());
+			expandedArguments = expandVariables(tool.getArguments(), true);
 		return expandedArguments;
 	}
 
@@ -102,7 +102,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 	 */
 	public String getExpandedWorkingDirectory() {
 		if (expandedDirectory == null)
-			expandedDirectory = expandVariables(tool.getWorkingDirectory());
+			expandedDirectory = expandVariables(tool.getWorkingDirectory(), false);
 		return expandedDirectory;
 	}
 	
@@ -117,7 +117,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 	/**
 	 * Expands the variables found in the text.
 	 */
-	private String expandVariables(String text) {
+	private String expandVariables(String text, boolean addQuotes) {
 		StringBuffer buffer = new StringBuffer();
 		
 		int start = 0;
@@ -142,7 +142,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 			}
 
 			if (varDef.name != null)			
-				expandVariable(varDef, buffer);
+				expandVariable(varDef, buffer, addQuotes);
 		}
 		
 		return buffer.toString();
@@ -151,7 +151,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 	/**
 	 * Expands the variable
 	 */
-	private void expandVariable(ToolUtil.VariableDefinition varDef, StringBuffer buf) {
+	private void expandVariable(ToolUtil.VariableDefinition varDef, StringBuffer buf, boolean addQuotes) {
 		if (tool.VAR_ANT_TARGET.equals(varDef.name)) {
 			if (varDef.argument != null && varDef.argument.length() > 0)
 				antTargets.add(varDef.argument);
@@ -164,23 +164,21 @@ public final class DefaultRunnerContext implements IRunnerContext {
 				location = ToolUtil.getLocationFromFullPath(varDef.argument);
 			else
 				location = Platform.getLocation().toOSString();
-			if (location != null)
-				buf.append(location);
+			appendVariable(location, buf, addQuotes);
 			return;
 		}
 		
 		if (tool.VAR_PROJECT_LOC.equals(varDef.name)) {
-			IPath location = null;
+			String location = null;
 			if (varDef.argument != null && varDef.argument.length() > 0) {
 				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
 				if (member != null)
-					location = member.getProject().getLocation();
+					location = member.getProject().getLocation().toOSString();
 			} else {
 				if (currentProject != null)
-					location = currentProject.getLocation();
+					location = currentProject.getLocation().toOSString();
 			}
-			if (location != null)
-				buf.append(location.toOSString());
+			appendVariable(location, buf, addQuotes);
 			return;
 		}
 		
@@ -192,8 +190,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 				if (selectedResource != null)
 					location = selectedResource.getLocation().toOSString();
 			}
-			if (location != null)
-				buf.append(location);
+			appendVariable(location, buf, addQuotes);
 			return;			
 		}
 		
@@ -207,23 +204,21 @@ public final class DefaultRunnerContext implements IRunnerContext {
 				if (selectedResource != null)
 					location = selectedResource.getParent().getLocation().toOSString();
 			}
-			if (location != null)
-				buf.append(location);
+			appendVariable(location, buf, addQuotes);
 			return;			
 		}
 		
 		if (tool.VAR_PROJECT_PATH.equals(varDef.name)) {
-			IPath fullPath = null;
+			String fullPath = null;
 			if (varDef.argument != null && varDef.argument.length() > 0) {
 				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
 				if (member != null)
-					fullPath = member.getProject().getFullPath();
+					fullPath = member.getProject().getFullPath().toString();
 			} else {
 				if (currentProject != null)
-					fullPath = currentProject.getFullPath();
+					fullPath = currentProject.getFullPath().toString();
 			}
-			if (fullPath != null)
-				buf.append(fullPath.toString());
+			appendVariable(fullPath, buf, addQuotes);
 			return;
 		}
 		
@@ -237,8 +232,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 				if (selectedResource != null)
 					fullPath = selectedResource.getFullPath().toString();
 			}
-			if (fullPath != null)
-				buf.append(fullPath);
+			appendVariable(fullPath, buf, addQuotes);
 			return;			
 		}
 		
@@ -252,8 +246,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 				if (selectedResource != null)
 					fullPath = selectedResource.getParent().getFullPath().toString();
 			}
-			if (fullPath != null)
-				buf.append(fullPath);
+			appendVariable(fullPath, buf, addQuotes);
 			return;			
 		}
 		
@@ -267,8 +260,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 				if (currentProject != null)
 					name = currentProject.getName();
 			}
-			if (name != null)
-				buf.append(name);
+			appendVariable(name, buf, addQuotes);
 			return;
 		}
 		
@@ -282,8 +274,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 				if (selectedResource != null)
 					name = selectedResource.getName();
 			}
-			if (name != null)
-				buf.append(name);
+			appendVariable(name, buf, addQuotes);
 			return;			
 		}
 		
@@ -297,9 +288,27 @@ public final class DefaultRunnerContext implements IRunnerContext {
 				if (selectedResource != null)
 					name = selectedResource.getParent().getName();
 			}
-			if (name != null)
-				buf.append(name);
+			appendVariable(name, buf, addQuotes);
 			return;			
+		}
+	}
+
+	/**
+	 * Helper method to add the given variable string to the given
+	 * string buffer if the string is not null. Adds enclosing quotation
+	 * marks if addQuotes is true.
+	 * 
+	 * @param var the variable string to be added
+	 * @param buf the string buffer to which the string will be added
+	 * @parman addQuotes whether or not to add enclosing quotation marks
+	 */
+	private void appendVariable(String var, StringBuffer buf, boolean addQuotes) {
+		if (var != null) {
+			if (addQuotes)
+				buf.append("\""); //$NON-NLS-1$
+			buf.append(var);
+			if (addQuotes)
+				buf.append("\""); //$NON-NLS-1$			
 		}
 	}
 	
