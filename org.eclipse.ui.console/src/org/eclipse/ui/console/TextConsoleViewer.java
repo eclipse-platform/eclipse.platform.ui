@@ -121,8 +121,11 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
      */
     public void setTabWidth(int tabWidth) {
         StyledText styledText = getTextWidget();
-        styledText.setTabs(tabWidth);
-        styledText.redraw();
+        int oldWidth = styledText.getTabs();
+        if (tabWidth != oldWidth) {
+            styledText.setTabs(tabWidth);
+            styledText.redraw();
+        }
     }
 
     /**
@@ -132,8 +135,14 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
      */
     public void setFont(Font font) {
         StyledText styledText = getTextWidget();
-        styledText.setFont(font);
-        styledText.redraw();
+        Font oldFont = styledText.getFont(); 
+        if (oldFont == font) {
+            return;
+        }
+        if (font == null || !(font.equals(oldFont))) {
+            styledText.setFont(font);
+            styledText.redraw();
+        }
     }
 
     /**
@@ -588,14 +597,16 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
      * @param consoleWidth fixed characater width of the console, or -1 
      */
     public void setConsoleWidth(int width) {
-        consoleWidth = width;
-        ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-            public void run() {
-                if (documentAdapter != null) {
-                    documentAdapter.setWidth(consoleWidth);
+        if (consoleWidth != width) {
+            consoleWidth = width;
+            ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
+                public void run() {
+                    if (documentAdapter != null) {
+                        documentAdapter.setWidth(consoleWidth);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     /*
