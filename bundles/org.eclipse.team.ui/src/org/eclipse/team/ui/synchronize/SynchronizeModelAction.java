@@ -12,15 +12,9 @@ package org.eclipse.team.ui.synchronize;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -32,12 +26,8 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
-import org.eclipse.ui.internal.EditorManager;
+import org.eclipse.ui.ide.IDE;
 
 /**
  * This action provides utilities for performing operations on selections that
@@ -234,44 +224,6 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 	 * @return boolean false if the operation was cancelled.
 	 */
 	public final boolean saveAllEditors(boolean confirm) {
-		final boolean finalConfirm = confirm;
-		final boolean[] result = new boolean[1];
-		result[0] = true;
-
-		Platform.run(new SafeRunnable("Error") { //$NON-NLS-1$
-			public void run() {
-				IResource[] resources = Utils.getResources(getFilteredDiffElements());
-				if (resources.length == 0) return;
-				List dirtyEditors = getDirtyFileEditors(Arrays.asList(resources));
-				if (dirtyEditors.size() > 0) {
-					IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-					if (w == null && PlatformUI.getWorkbench().getWorkbenchWindowCount() > 0)
-						w = PlatformUI.getWorkbench().getWorkbenchWindows()[0];
-					result[0] = EditorManager.saveAll(dirtyEditors, finalConfirm, w);
-				}
-			}
-		});
-		return result[0];
-	}
-	
-	/* private */ List getDirtyFileEditors(Collection resources) {
-	    ArrayList dirtyFileEditors = new ArrayList();
-	    IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-	    for (int i = 0; i < windows.length; i++) {
-            IWorkbenchWindow window = windows[i];
-            IWorkbenchPage[] pages = window.getPages();
-            for (int j = 0; j < pages.length; j++) {
-                IWorkbenchPage page = pages[j];
-                IEditorPart[] dirtyEditors = page.getDirtyEditors();
-                for (int k = 0; k < dirtyEditors.length; k++) {
-                    IEditorPart part = dirtyEditors[k];
-                    IFile file = (IFile) part.getEditorInput().getAdapter(IFile.class);
-                    if (file != null && resources.contains(file)) {
-                    	dirtyFileEditors.add(part);
-                    }
-                }
-            }
-        }
-	    return dirtyFileEditors;
+		return IDE.saveAllEditors(Utils.getResources(getFilteredDiffElements()), confirm);
 	}
 }
