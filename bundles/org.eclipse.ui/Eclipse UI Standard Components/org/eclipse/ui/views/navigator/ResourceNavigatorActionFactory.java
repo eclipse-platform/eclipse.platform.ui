@@ -37,7 +37,7 @@ public class ResourceNavigatorActionFactory extends ActionFactory {
 		openActionFactory =
 			new OpenActionFactory(navigatorPart.getSite(), shell);
 		refactorFactory =
-			new RefactorActionFactory(navigatorPart.getTreeViewer());
+			new RefactorActionFactory(navigatorPart.getTreeViewer(), navigatorPart.getSite());
 		workbenchFactory =
 			new WorkbenchStateActionFactory(
 				navigatorPart.getResourceViewer().getControl());

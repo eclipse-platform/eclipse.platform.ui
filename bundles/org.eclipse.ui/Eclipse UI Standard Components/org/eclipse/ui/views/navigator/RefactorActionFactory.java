@@ -35,14 +35,18 @@ public class RefactorActionFactory
 	protected MoveProjectAction moveProjectAction;
 	protected AddBookmarkAction addBookmarkAction;
 
+	protected IWorkbenchPartSite partSite;
 	protected TreeViewer treeViewer;
 
 	/**
-	 * Create a new instance of the receiver using a 
-	 * TreeViewer.
-	 * @param viewer TreeViewer
+	 * Creates a new instance of the receiver using a 
+	 * tree viewer and a workbench part site.
+	 * 
+	 * @param viewer the tree viewer
+	 * @param site the workbench part site
 	 */
-	public RefactorActionFactory(TreeViewer viewer) {
+	public RefactorActionFactory(TreeViewer viewer, IWorkbenchPartSite site) {
+		partSite = site;
 		treeViewer = viewer;
 	}
 
