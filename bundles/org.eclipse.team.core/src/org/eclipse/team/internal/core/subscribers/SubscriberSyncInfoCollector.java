@@ -36,16 +36,6 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 	private SubscriberEventHandler eventHandler;
 	private Subscriber subscriber;
 	private IResource[] roots;
-
-	/**
-	 * Create a collector on the subscriber that collects out-of-sync resources
-	 * for all roots of the subscriber. The <code>start()</code> method must be called after creation
-	 * to prime the collector's sync sets.
-	 * @param subscriber the Subscriber
-	 */
-	public SubscriberSyncInfoCollector(Subscriber subscriber) {
-		this(subscriber, null /* use the subscriber roots */);
-	}
 	
 	/**
 	 * Create a collector that collects out-of-sync resources that are children of
