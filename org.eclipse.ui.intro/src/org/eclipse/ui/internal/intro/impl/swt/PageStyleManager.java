@@ -6,7 +6,7 @@
  * 
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.ui.internal.intro.impl.parts;
+package org.eclipse.ui.internal.intro.impl.swt;
 
 import java.util.*;
 

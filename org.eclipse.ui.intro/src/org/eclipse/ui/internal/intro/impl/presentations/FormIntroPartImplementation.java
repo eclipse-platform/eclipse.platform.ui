@@ -20,7 +20,7 @@ import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.parts.*;
+import org.eclipse.ui.internal.intro.impl.swt.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 
 /**
@@ -56,7 +56,7 @@ public class FormIntroPartImplementation extends
         public void run() {
             IntroHomePage rootPage = getModelRoot().getHomePage();
             if (rootPage.isDynamic())
-                    getModelRoot().setCurrentPageId(rootPage.getId());
+                getModelRoot().setCurrentPageId(rootPage.getId());
         }
     };
 
@@ -82,7 +82,7 @@ public class FormIntroPartImplementation extends
         Form mainForm = toolkit.createForm(container);
         Color fg = sharedStyleManager.getColor(toolkit, "title.fg"); //$NON-NLS-1$
         if (fg != null)
-                mainForm.setForeground(fg);
+            mainForm.setForeground(fg);
         // Image bgImage = sharedStyleManager.getImage("title.image", null,
         // null); //$NON-NLS-1$
         // if (bgImage != null) {
@@ -148,15 +148,15 @@ public class FormIntroPartImplementation extends
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
             String pageId = getModelRoot().getCurrentPageId();
             if (pageId == null | pageId.equals("")) //$NON-NLS-1$
-                    // If page ID was not set properly. exit.
-                    return;
+                // If page ID was not set properly. exit.
+                return;
 
             String rootPageId = getModelRoot().getHomePage().getId();
 
             // if we are showing a regular intro page, set the page id to the
             // static PageForm id.
             if (!pageId.equals(rootPageId))
-                    pageId = PageForm.PAGE_FORM_ID;
+                pageId = PageForm.PAGE_FORM_ID;
 
             mainPageBook.showPage(pageId);
         }

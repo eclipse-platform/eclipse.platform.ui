@@ -7,7 +7,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.intro.impl.parts;
+package org.eclipse.ui.internal.intro.impl.swt;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
@@ -59,7 +59,7 @@ public class RootPageForm implements IIntroConstants {
                 boolean flushCache) {
             int innerWHint = wHint;
             if (wHint != SWT.DEFAULT)
-                    innerWHint -= LABEL_MARGIN_WIDTH + LABEL_MARGIN_WIDTH;
+                innerWHint -= LABEL_MARGIN_WIDTH + LABEL_MARGIN_WIDTH;
             Control[] children = composite.getChildren();
             Point s1 = children[0].computeSize(SWT.DEFAULT, SWT.DEFAULT);
             Point s2 = children[1].computeSize(innerWHint, SWT.DEFAULT);
@@ -184,8 +184,7 @@ public class RootPageForm implements IIntroConstants {
         // create the links composite in the center of the root page.
         createRootPageLinks(rootPageStyleManager, pageComposite);
 
-        // create description label for links description. Instance var for
-        // reuse.
+        // create description label for links description.
         descriptionLabel = createHoverLabel(rootPageStyleManager, pageComposite);
 
         // Clear memory. No need for style manager any more.
@@ -275,7 +274,7 @@ public class RootPageForm implements IIntroConstants {
         Label label = toolkit.createLabel(body, "", SWT.WRAP); //$NON-NLS-1$
         Color fg = styleManager.getColor(toolkit, "hover-text.fg"); //$NON-NLS-1$
         if (fg == null)
-                fg = toolkit.getColors().getColor(FormColors.TITLE);
+            fg = toolkit.getColors().getColor(FormColors.TITLE);
         label.setForeground(fg);
         label.setAlignment(SWT.CENTER);
         label.setFont(DEFAULT_FONT);
