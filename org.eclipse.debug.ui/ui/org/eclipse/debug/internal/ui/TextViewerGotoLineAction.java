@@ -9,10 +9,11 @@ import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 
-public class ConsoleGotoLineAction extends ConsoleViewerAction {
+public class TextViewerGotoLineAction extends TextViewerAction {
 
 	/**
 	 * Validates whether the text found in the input field of the
@@ -36,21 +37,21 @@ public class ConsoleGotoLineAction extends ConsoleViewerAction {
 	};
 
 	protected int fLastLine;
-	protected ConsoleViewer fConsoleViewer;
+	protected ITextViewer fTextViewer;
 	
 	/**
 	 * Constructs a goto line action for the console using the provided resource bundle
 	 */
-	public ConsoleGotoLineAction(ConsoleViewer viewer) {
+	public TextViewerGotoLineAction(ConsoleViewer viewer) {
 		super(viewer, -1);
-		fConsoleViewer= viewer;
+		fTextViewer= viewer;
 		setText(DebugUIMessages.getString("ConsoleGotoLineAction.Go_to_&Line...@Ctrl+L_4")); //$NON-NLS-1$
 		setToolTipText(DebugUIMessages.getString("ConsoleGotoLineAction.Go_to_Line_5")); //$NON-NLS-1$
 		setDescription(DebugUIMessages.getString("ConsoleGotoLineAction.Go_to_Line_6"));		 //$NON-NLS-1$
 	}
 	
 	/**
-	 * @see ConsoleViewerAction#update()
+	 * @see TextViewerAction#update()
 	 */
 	public void update() {
 	}
@@ -60,12 +61,12 @@ public class ConsoleGotoLineAction extends ConsoleViewerAction {
 	 */
 	protected void gotoLine(int line) {
 
-		IDocument document= fConsoleViewer.getDocument();
+		IDocument document= fTextViewer.getDocument();
 		try {
 			int start= document.getLineOffset(line);
 			int length= document.getLineLength(line);
-			fConsoleViewer.getTextWidget().setSelection(start, start + length);
-			fConsoleViewer.revealRange(start, length);
+			fTextViewer.getTextWidget().setSelection(start, start + length);
+			fTextViewer.revealRange(start, length);
 		} catch (BadLocationException x) {
 			DebugUIPlugin.logError(x);
 		}
@@ -76,10 +77,10 @@ public class ConsoleGotoLineAction extends ConsoleViewerAction {
 	 */
 	public void run() {
 		try {
-			Point selection= fConsoleViewer.getTextWidget().getSelection();
-			IDocument document= fConsoleViewer.getDocument();
+			Point selection= fTextViewer.getTextWidget().getSelection();
+			IDocument document= fTextViewer.getDocument();
 			fLastLine= document.getLineOfOffset(document.getLength()) + 1;
-			int startLine= selection == null ? 1 : fConsoleViewer.getTextWidget().getLineAtOffset(selection.x) + 1;
+			int startLine= selection == null ? 1 : fTextViewer.getTextWidget().getLineAtOffset(selection.x) + 1;
 			String title= DebugUIMessages.getString("ConsoleGotoLineAction.Go_to_Line_7"); //$NON-NLS-1$
 			String message= DebugUIMessages.getString("ConsoleGotoLineAction.Enter_line_number__8"); //$NON-NLS-1$
 			String value= Integer.toString(startLine);

@@ -137,16 +137,16 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 		// (e.g., Ctrl-C, Ctrl-V), we *must* set a global action handler for
 		// each action		
 		IActionBars actionBars= getViewSite().getActionBars();
-		ConsoleViewerAction action= new ConsoleViewerAction(fConsoleViewer, fConsoleViewer.CUT);
+		TextViewerAction action= new TextViewerAction(fConsoleViewer, fConsoleViewer.CUT);
 		action.configureAction(DebugUIMessages.getString("ConsoleView.Cu&t@Ctrl+X_3"), DebugUIMessages.getString("ConsoleView.Cut_4"), DebugUIMessages.getString("ConsoleView.Cut_5")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 		setGlobalAction(actionBars, ITextEditorActionConstants.CUT, action);
-		action= new ConsoleViewerAction(fConsoleViewer, fConsoleViewer.COPY);
+		action= new TextViewerAction(fConsoleViewer, fConsoleViewer.COPY);
 		action.configureAction(DebugUIMessages.getString("ConsoleView.&Copy@Ctrl+C_6"), DebugUIMessages.getString("ConsoleView.Copy_7"), DebugUIMessages.getString("ConsoleView.Copy_8")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 		setGlobalAction(actionBars, ITextEditorActionConstants.COPY, action);
-		action= new ConsoleViewerAction(fConsoleViewer, fConsoleViewer.PASTE);
+		action= new TextViewerAction(fConsoleViewer, fConsoleViewer.PASTE);
 		action.configureAction(DebugUIMessages.getString("ConsoleView.&Paste@Ctrl+V_9"), DebugUIMessages.getString("ConsoleView.Paste_10"), DebugUIMessages.getString("ConsoleView.Paste_Clipboard_Text_11")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 		setGlobalAction(actionBars, ITextEditorActionConstants.PASTE, action);
-		action= new ConsoleViewerAction(fConsoleViewer, fConsoleViewer.SELECT_ALL);
+		action= new TextViewerAction(fConsoleViewer, fConsoleViewer.SELECT_ALL);
 		action.configureAction(DebugUIMessages.getString("ConsoleView.Select_&All@Ctrl+A_12"), DebugUIMessages.getString("ConsoleView.Select_All_13"), DebugUIMessages.getString("ConsoleView.Select_All_14")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 		setGlobalAction(actionBars, ITextEditorActionConstants.SELECT_ALL, action);
 		
@@ -154,7 +154,7 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.DebugUIMessages"); //$NON-NLS-1$
 		setGlobalAction(actionBars, ITextEditorActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this));				 //$NON-NLS-1$
 	
-		action= new ConsoleGotoLineAction(fConsoleViewer);
+		action= new TextViewerGotoLineAction(fConsoleViewer);
 		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, action);				
 		actionBars.updateActionBars();
 		

@@ -7,14 +7,15 @@ package org.eclipse.debug.internal.ui;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.texteditor.IUpdate;
 
-public class ConsoleViewerAction extends Action implements IUpdate {
+public class TextViewerAction extends Action implements IUpdate {
 
 	private int fOperationCode= -1;
 	private ITextOperationTarget fOperationTarget;
 
-	public ConsoleViewerAction(ConsoleViewer viewer, int operationCode) {
+	public TextViewerAction(ITextViewer viewer, int operationCode) {
 		fOperationCode= operationCode;
 		fOperationTarget= viewer.getTextOperationTarget();
 		update();
