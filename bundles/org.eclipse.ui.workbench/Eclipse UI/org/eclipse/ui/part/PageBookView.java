@@ -657,7 +657,7 @@ public void setFocus() {
 	if (activeRec == null)
 		book.setFocus();
 	else
-		activeRec.page.getControl().setFocus();
+		activeRec.page.setFocus();
 }
 
 /**
