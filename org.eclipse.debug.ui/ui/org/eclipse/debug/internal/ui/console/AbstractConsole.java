@@ -17,8 +17,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
-import org.eclipse.ui.IPropertyListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
 
 /**
  * Common function for consoles.
@@ -80,8 +82,8 @@ public abstract class AbstractConsole implements IConsole {
 	 */
 	class PropertyNotifier implements ISafeRunnable {
 		
-		private IPropertyListener fListener;
-		private int fProperty;
+		private IPropertyChangeListener fListener;
+		private PropertyChangeEvent fEvent;
 		
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
@@ -95,7 +97,7 @@ public abstract class AbstractConsole implements IConsole {
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
 		public void run() throws Exception {
-			fListener.propertyChanged(AbstractConsole.this, fProperty);
+			fListener.propertyChange(fEvent);
 		}
 
 		/**
@@ -103,14 +105,14 @@ public abstract class AbstractConsole implements IConsole {
 		 * 
 		 * @param property the property that has changed
 		 */
-		public void notify(int property) {
+		public void notify(PropertyChangeEvent event) {
 			if (fListeners == null) {
 				return;
 			}
-			fProperty = property;
+			fEvent = event;
 			Object[] copiedListeners= fListeners.getListeners();
 			for (int i= 0; i < copiedListeners.length; i++) {
-				fListener = (IPropertyListener)copiedListeners[i];
+				fListener = (IPropertyChangeListener)copiedListeners[i];
 				Platform.run(this);
 			}	
 			fListener = null;			
@@ -143,8 +145,9 @@ public abstract class AbstractConsole implements IConsole {
 	 * @param name the new name
 	 */
 	protected void setName(String name) {
+		String old = fName;
 		fName = name;
-		firePropertyChange(IConsole.PROP_NAME);
+		firePropertyChange(this, IBasicPropertyConstants.P_TEXT, old, name);
 	}
 	
 	/* (non-Javadoc)
@@ -161,14 +164,15 @@ public abstract class AbstractConsole implements IConsole {
 	 * @param imageDescriptor the new image descriptor
 	 */
 	protected void setImageDescriptor(ImageDescriptor imageDescriptor) {
+		ImageDescriptor old = fImageDescriptor;
 		fImageDescriptor =imageDescriptor;
-		firePropertyChange(IConsole.PROP_IMAGE);
+		firePropertyChange(this, IBasicPropertyConstants.P_IMAGE, old, imageDescriptor);
 	}	
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsole#addPropertyListener(org.eclipse.ui.IPropertyListener)
+	 * @see org.eclipse.debug.internal.ui.console.IConsole#addPropertyChangeListener(IPropertyChangeListener)
 	 */
-	public void addPropertyListener(IPropertyListener listener) {
+	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		if (fListeners == null) {
 			fListeners = new ListenerList();
 		}
@@ -176,9 +180,9 @@ public abstract class AbstractConsole implements IConsole {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsole#removePropertyListener(org.eclipse.ui.IPropertyListener)
+	 * @see org.eclipse.debug.internal.ui.console.IConsole#removePropertyChangeListener(IPropertyChangeListener)
 	 */
-	public void removePropertyListener(IPropertyListener listener) {
+	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		if (fListeners != null) {
 			fListeners.remove(listener);
 		}
@@ -187,14 +191,17 @@ public abstract class AbstractConsole implements IConsole {
 	/**
 	 * Notify all listeners that the given property has changed.
 	 * 
-	 * @param property property identifier
+	 * @param source the object on which a property has changed 
+	 * @param property identifier of the property that has changed
+	 * @param oldValue the old value of the property, or <code>null</code>
+	 * @param newValue the new value of the property, or <code>null</code>
 	 */
-	protected void firePropertyChange(int property) {
+	protected void firePropertyChange(Object source, String property, Object oldValue, Object newValue) {
 		if (fListeners == null) {
 			return;
 		}
 		PropertyNotifier notifier = new PropertyNotifier();
-		notifier.notify(property);
+		notifier.notify(new PropertyChangeEvent(source, property, oldValue, newValue));
 	}
 	
 	/**

@@ -32,6 +32,8 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
@@ -43,7 +45,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
@@ -59,7 +60,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  * 
  * @since 3.0
  */
-public class MessageConsolePage implements IPageBookViewPage, IAdaptable, IPropertyListener {
+public class MessageConsolePage implements IPageBookViewPage, IAdaptable, IPropertyChangeListener {
 
 	//page site
 	private IPageSite fSite = null;
@@ -136,14 +137,15 @@ public class MessageConsolePage implements IPageBookViewPage, IAdaptable, IPrope
 		
 		fViewer.getSelectionProvider().addSelectionChangedListener(fTextListener);
 		setFont(getConsole().getFont());
-		getConsole().addPropertyListener(this);
+		getConsole().addPropertyChangeListener(this);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
-	public void propertyChanged(Object source, int propId) {
-		if (source.equals(getConsole()) && propId == MessageConsole.PROP_FONT) {
+	public void propertyChange(PropertyChangeEvent event) {
+		Object source = event.getSource();
+		if (source.equals(getConsole()) && event.getProperty().equals(MessageConsole.P_FONT)) {
 			setFont(getConsole().getFont());	
 		}
 	}
@@ -153,7 +155,7 @@ public class MessageConsolePage implements IPageBookViewPage, IAdaptable, IPrope
 	 * @see org.eclipse.ui.part.IPage#dispose()
 	 */
 	public void dispose() {
-		getConsole().removePropertyListener(this);
+		getConsole().removePropertyChangeListener(this);
 		fViewer.getSelectionProvider().removeSelectionChangedListener(fTextListener);
 		
 		if (fMenu != null && !fMenu.isDisposed()) {

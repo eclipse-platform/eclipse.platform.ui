@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.console;
 
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocument;
@@ -33,13 +34,12 @@ public class MessageConsole extends AbstractConsole {
 	/**
 	 * Property constant indicating the font of this console has changed. 
 	 */
-	public static final int PROP_FONT = 100;
+	public static final String P_FONT = DebugUIPlugin.getUniqueIdentifier() + ".P_FONT"; //$NON-NLS-1$
 	
 	/**
 	 * Property constant indicating the color of a stream has changed. 
 	 */
-	public static final int PROP_STREAM_COLOR = 101;	
-	
+	public static final String P_STREAM_COLOR = DebugUIPlugin.getUniqueIdentifier()  + ".P_STREAM_COLOR";	 //$NON-NLS-1$
 	
 	// document partitioner
 	private MessageConsolePartitioner fPartitioner = null;
@@ -69,8 +69,9 @@ public class MessageConsole extends AbstractConsole {
 	 * @param font font
 	 */
 	public void setFont(Font font) {
+		Font old = fFont;
 		fFont = font;
-		firePropertyChange(PROP_FONT);
+		firePropertyChange(this, P_FONT, old, font);
 	}
 	
 	/**

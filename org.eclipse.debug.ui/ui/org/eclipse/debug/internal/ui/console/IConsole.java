@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.console;
 
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IPropertyListener;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
@@ -24,17 +25,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * @since 3.0
  */
 public interface IConsole {
-	
-	/**
-	 * Property constant indicating the name of a console has changed.
-	 */
-	public static final int PROP_NAME = 1;
-	
-	/**
-	 * Property constant constant indicating the image of a console has changed.
-	 */
-	public static final int PROP_IMAGE = 2;
-	
+		
 	/**
 	 * Returns the name of this console.
 	 * 
@@ -64,18 +55,21 @@ public interface IConsole {
 	 * Adds a listener for changes to properties of this console.
 	 * Has no effect if an identical listener is already registered.
 	 * <p>
-	 * The supported property ids are as follows:
+	 * The changes supported by the console view are as follows:
 	 * <ul>
-	 *   <li><code>PROP_NAME</code> - indicates the name
+	 *   <li><code>IBasicPropertyConstants.P_TEXT</code> - indicates the name
 	 *      of a console has changed</li>
-	 * 	 <li><code>PROP_IMAGE</code> - indicates the image
+	 * 	 <li><code>IBasicPropertyConstants.P_IMAGE</code> - indicates the image
 	 *      of a console has changed</li>
 	 * </ul>
 	 * </p>
+	 * <p>
+	 * Clients may define additional properties as required.
+	 * </p>
 	 *
-	 * @param listener a property listener
+	 * @param listener a property change listener
 	 */
-	public void addPropertyListener(IPropertyListener listener);
+	public void addPropertyChangeListener(IPropertyChangeListener listener);
 	
 	/**
 	 * Removes the given property listener from this console page.
@@ -83,6 +77,6 @@ public interface IConsole {
 	 * 
 	 * @param listener a property listener
 	 */
-	public void removePropertyListener(IPropertyListener listener);	
+	public void removePropertyChangeListener(IPropertyChangeListener listener);	
 
 }

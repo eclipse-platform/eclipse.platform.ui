@@ -93,17 +93,6 @@ public class MessageConsoleViewer extends TextViewer implements LineStyleListene
 	}
 
 	/**
-	 * Clears the contents of the current document.
-	 */
-	public void clearDocument() {
-		IDocument doc= getDocument();
-		if (doc != null) {
-			doc.set(""); //$NON-NLS-1$
-		}
-		selectionChanged(0, 0);
-	}
-
-	/**
 	 * @see ITextViewer#setDocument(IDocument)
 	 */
 	public void setDocument(IDocument doc) {

@@ -21,10 +21,12 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
@@ -36,7 +38,7 @@ import org.eclipse.ui.part.PageBook;
  * 
  * @since 3.0
  */
-public class ConsoleView extends AbstractDebugView implements IConsoleView, IConsoleListener, IPropertyListener {
+public class ConsoleView extends AbstractDebugView implements IConsoleView, IConsoleListener, IPropertyChangeListener {
 	
 	/**
 	 * Whether this console is pinned.
@@ -77,10 +79,11 @@ public class ConsoleView extends AbstractDebugView implements IConsoleView, ICon
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
-	public void propertyChanged(Object source, int propId) {
-		if (source instanceof IConsole && propId == IConsole.PROP_NAME) {
+	public void propertyChange(PropertyChangeEvent event) {
+		Object source = event.getSource();
+		if (source instanceof IConsole && event.getProperty().equals(IBasicPropertyConstants.P_TEXT)) {
 			if (source.equals(getConsole())) {
 				updateTitle();
 			}
@@ -146,7 +149,7 @@ public class ConsoleView extends AbstractDebugView implements IConsoleView, ICon
 		pageRecord.dispose();
 		
 		IConsole console = (IConsole)fPartToConsole.get(part);
-		console.removePropertyListener(this);
+		console.removePropertyChangeListener(this);
 				
 		// empty cross-reference cache
 		fPartToConsole.remove(part);
@@ -165,7 +168,7 @@ public class ConsoleView extends AbstractDebugView implements IConsoleView, ICon
 		IPageBookViewPage page = console.createPage(this);
 		initPage(page);
 		page.createControl(getPageBook());
-		console.addPropertyListener(this);
+		console.addPropertyChangeListener(this);
 		PageRec rec = new PageRec(dummyPart, page);
 		return rec;
 	}

@@ -68,8 +68,9 @@ public class MessageConsoleStream {
 	 * @param color color of this message stream, possibly <code>null</code>
 	 */
 	public void setColor(Color color) {
+		Color old = fColor;
 		fColor = color;
-		fConsole.firePropertyChange(MessageConsole.PROP_STREAM_COLOR);
+		fConsole.firePropertyChange(this, MessageConsole.P_STREAM_COLOR, old, color);
 	}
 	
 	/**
