@@ -119,43 +119,7 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 	 * This will only occur for selections containing a single existing breakpoint.
 	 */
 	public void openMarkerForCurrentSelection() {
-		IStructuredSelection selection= (IStructuredSelection) fViewer.getSelection();
-		if (selection.size() != 1) {
-			//Single selection only
-			return;
-		}
-		//Get the selected marker
-		IMarker breakpoint= (IMarker) selection.getFirstElement();
-		if (!breakpoint.exists()) {
-			return;
-		}
-		IWorkbenchWindow dwindow= getSite().getWorkbenchWindow();
-		IWorkbenchPage page= dwindow.getActivePage();
-		if (page == null) {
-			return;
-		}
-		
-		openEditorForBreakpoint(breakpoint, page);
-	}
-	
-	/**
-	 * Open an editor for the breakpoint.  
-	 */	
-	protected void openEditorForBreakpoint(IMarker marker, IWorkbenchPage page) {
-		IBreakpoint breakpoint= getBreakpointManager().getBreakpoint(marker);
-		String id= breakpoint.getModelIdentifier();
-		IDebugModelPresentation presentation= getPresentation(id);
-		IEditorInput input= presentation.getEditorInput(marker);
-		String editorId= presentation.getEditorId(input, marker);
-		if (input != null) {
-			try {
-				IEditorPart editor;
-				editor= page.openEditor(input, editorId);
-				editor.gotoMarker(marker);
-			} catch (PartInitException e) {
-				DebugUIUtils.logError(e);
-			}
-		}		
+		fOpenMarkerAction.run();
 	}
 
 	/**
