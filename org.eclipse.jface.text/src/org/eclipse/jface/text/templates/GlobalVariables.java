@@ -1,0 +1,178 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids: sdavids@gmx.de - see bug 25376
+ *******************************************************************************/
+package org.eclipse.jface.text.templates;
+
+import java.text.DateFormat;
+import java.util.Calendar;
+
+
+/**
+ * Global variables which are available in any context.
+ * 
+ * @since 3.0
+ */
+public class GlobalVariables {
+
+	/**
+	 * The cursor variable determines the cursor placement after template edition.
+	 */
+	public static class Cursor extends SimpleTemplateVariable {
+		
+		/** Name of the cursor variable, value= {@value} */
+		public static final String NAME= "cursor"; //$NON-NLS-1$
+		
+		/**
+		 * Creates a new cursor variable
+		 */
+		public Cursor() {
+			super(NAME, TemplateMessages.getString("GlobalVariables.variable.description.cursor")); //$NON-NLS-1$
+			setResolved(true);
+			setEvaluationString(""); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * The word selection variable determines templates that work on a full
+	 * lines selection.
+	 */
+	public static class WordSelection extends SimpleTemplateVariable {
+		
+		/** Name of the word selection variable, value= {@value} */
+		public static final String NAME= "word_selection"; //$NON-NLS-1$
+		
+		/**
+		 * Creates a new word selection variable
+		 */
+		public WordSelection() {
+			super(NAME, TemplateMessages.getString("GlobalVariables.variable.description.selectedWord")); //$NON-NLS-1$
+			setResolved(true);
+		}
+		public String resolve(TemplateContext context) {
+			String selection= context.getVariable("selection"); //$NON-NLS-1$
+			if (selection == null)
+				return ""; //$NON-NLS-1$
+			else
+				return selection;
+		}		
+	}
+
+	/**
+	 * The line selection variable determines templates that work on selected
+	 * lines.
+	 */
+	public static class LineSelection extends SimpleTemplateVariable {
+		
+		/** Name of the line selection variable, value= {@value} */
+		public static final String NAME= "line_selection"; //$NON-NLS-1$
+		
+		/**
+		 * Creates a new line selection variable
+		 */
+		public LineSelection() {
+			super(NAME, TemplateMessages.getString("GlobalVariables.variable.description.selectedLines")); //$NON-NLS-1$
+			setResolved(true);
+		}
+		public String resolve(TemplateContext context) {
+			String selection= context.getVariable("selection"); //$NON-NLS-1$
+			if (selection == null)
+				return ""; //$NON-NLS-1$
+			else
+				return selection;
+		}		
+	}
+
+	/**
+	 * The dollar variable inserts an escaped dollar symbol.
+	 */
+	public static class Dollar extends SimpleTemplateVariable {
+		/**
+		 * Creates a new dollar variable
+		 */
+		public Dollar() {
+			super("dollar", TemplateMessages.getString("GlobalVariables.variable.description.dollar")); //$NON-NLS-1$ //$NON-NLS-2$
+			setEvaluationString("$"); //$NON-NLS-1$
+			setResolved(true);
+		}
+	}
+
+	/**
+	 * The date variable evaluates to the current date.
+	 */
+	public static class Date extends SimpleTemplateVariable {
+		/**
+		 * Creates a new date variable
+		 */
+		public Date() {
+			super("date", TemplateMessages.getString("GlobalVariables.variable.description.date")); //$NON-NLS-1$ //$NON-NLS-2$
+			setResolved(true);
+		}
+		public String resolve(TemplateContext context) {
+			return DateFormat.getDateInstance().format(new java.util.Date());
+		}
+	}		
+
+	/**
+	 * The year variable evaluates to the current year.
+	 */
+	public static class Year extends SimpleTemplateVariable {
+		/**
+		 * Creates a new year variable
+		 */
+		public Year() {
+			super("year", TemplateMessages.getString("GlobalVariables.variable.description.year")); //$NON-NLS-1$ //$NON-NLS-2$
+			setResolved(true);
+		}
+		public String resolve(TemplateContext context) {
+			return Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
+		}
+	}
+	
+	/**
+	 * The time variable evaluates to the current time.
+	 */
+	public static class Time extends SimpleTemplateVariable {
+		/**
+		 * Creates a new time variable
+		 */
+		public Time() {
+			super("time", TemplateMessages.getString("GlobalVariables.variable.description.time")); //$NON-NLS-1$ //$NON-NLS-2$
+			setResolved(true);
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 */
+		public String resolve(TemplateContext context) {
+			return DateFormat.getTimeInstance().format(new java.util.Date());
+		}
+	}
+
+	/**
+	 * The user variable evaluates to the current user.
+	 */
+	public static class User extends SimpleTemplateVariable {
+		/**
+		 * Creates a new user name variable
+		 */
+		public User() {
+			super("user", TemplateMessages.getString("GlobalVariables.variable.description.user")); //$NON-NLS-1$ //$NON-NLS-2$
+			setResolved(true);
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 */
+		public String resolve(TemplateContext context) {
+			return System.getProperty("user.name"); //$NON-NLS-1$
+		}	
+	}
+}
