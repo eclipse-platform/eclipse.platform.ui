@@ -17,13 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.IPreferencePage;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.window.Window;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
@@ -33,10 +27,18 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.IPreferencePage;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
+
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -155,12 +157,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		return dialog;
 	}
 
-	/**
-	 * The preference page history.
-	 * 
-	 * @since 3.1
-	 */
-	private PreferencePageHistory history;
 
 	/**
 	 * Creates a new preference dialog under the control of the given preference
@@ -177,14 +173,9 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 				"There cannot be two preference dialogs at once in the workbench."); //$NON-NLS-1$
 		instance = this;
 
-		history = getHistory();
 	}
 
-	private PreferencePageHistory getHistory() {
-		// TODO get a workbench-global history to keep it over sessions.
-		return new PreferencePageHistory(this);
-	}
-
+	
 	/*
 	 * (non-Javadoc) Method declared on Dialog.
 	 */
@@ -229,9 +220,8 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		Label l = new Label(parent, SWT.NONE);
 		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Control historyControl = history.createHistoryControls(parent);
-		historyControl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-
+		addExtraEntries(parent);
+		
 		l = new Label(parent, SWT.NONE);
 		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -240,6 +230,17 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		layout.makeColumnsEqualWidth = false;
 
 		super.createButtonsForButtonBar(parent);
+	}
+
+	/**
+	 * Add any extra buttons.
+	 */
+	private void addExtraEntries(Composite parent) {
+		if(hasGroups())
+			return;
+		Control historyControl = getHistory().createHistoryControls(parent);
+		historyControl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+
 	}
 
 	/**
@@ -400,32 +401,5 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		return super.getCurrentPage();
 	}
 
-	/**
-	 * Selects the current page based on the given preference page identifier.
-	 * If no node can be found, then nothing will change.
-	 * 
-	 * @param preferencePageId
-	 *            The preference page identifier to select; should not be
-	 *            <code>null</code>.
-	 */
-	public final void setCurrentPageId(final String preferencePageId) {
-		final IPreferenceNode node = findNodeMatching(preferencePageId);
-		if (node != null) {
-			getTreeViewer().setSelection(new StructuredSelection(node));
-			showPage(node);
-		}
-	}
-
-	/*
-	 * @see org.eclipse.jface.preference.PreferenceDialog#showPage(org.eclipse.jface.preference.IPreferenceNode)
-	 * @since 3.1
-	 */
-	protected boolean showPage(IPreferenceNode node) {
-		final boolean success = super.showPage(node);
-		if (success) {
-			history.addHistoryEntry(new PreferenceHistoryEntry(node.getId(), node.getLabelText(),
-					null));
-		}
-		return success;
-	}
+	
 }

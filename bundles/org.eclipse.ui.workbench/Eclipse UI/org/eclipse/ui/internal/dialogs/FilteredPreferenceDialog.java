@@ -9,14 +9,22 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
@@ -27,6 +35,8 @@ import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceLabelProvider;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -36,7 +46,9 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -52,11 +64,32 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	//The id of the last page that was selected
 	private static String lastGroupId = null;
 
+	private static String SEARCH_ICON = "org.eclipse.ui.internal.dialogs.SEARCH_ICON";//$NON-NLS-1$
+
+	private static String LOOK_ICON = "org.eclipse.ui.internal.dialogs.LOOK_ICON";//$NON-NLS-1$
+
+	private Point minimumSize = new Point(400, 400);
+
+	/**
+	 * The preference page history.
+	 * 
+	 * @since 3.1
+	 */
+	private PreferencePageHistory history;
+
 	ToolBar toolbar;
 
 	GroupedPreferenceLabelProvider groupedLabelProvider;
 
 	private WorkbenchPreferenceGroup currentGroup;
+
+	static {
+		ImageDescriptor descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
+				PlatformUI.PLUGIN_ID, "icons/full/obj16/search.gif"); //$NON-NLS-1$
+		if (descriptor != null) {
+			JFaceResources.getImageRegistry().put(SEARCH_ICON, descriptor);
+		}
+	}
 
 	/**
 	 * Creates a new preference dialog under the control of the given preference
@@ -69,6 +102,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 */
 	public FilteredPreferenceDialog(Shell parentShell, PreferenceManager manager) {
 		super(parentShell, manager);
+		history = createHistory();
 	}
 
 	/*
@@ -98,30 +132,57 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		Composite top = new Composite(composite, SWT.NONE);
-		GridLayout topLayout = new GridLayout();
-		topLayout.makeColumnsEqualWidth = false;
-		topLayout.numColumns = 2;
-		top.setLayout(topLayout);
+		ToolBar toolbar = createToolBar(composite);
 
-		GridData topData = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-		top.setLayoutData(topData);
+		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
+		data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
+		toolbar.setLayoutData(data);
 
-		ToolBar toolbar = createToolBar(top);
-
-		toolbar.setLayoutData(new GridData());
-
-		Control searchArea = createSearchArea(top);
-		GridData searchData = new GridData(GridData.FILL_HORIZONTAL);
-		searchData.grabExcessHorizontalSpace = true;
-		searchData.verticalAlignment = SWT.BOTTOM;
-		searchArea.setLayoutData(searchData);
-
-		super.createDialogArea(composite);
+		createDialogContents(composite);
 
 		applyDialogFont(composite);
 
 		return composite;
+	}
+
+	/**
+	 * Create the contents area of the dialog
+	 * @param composite
+	 */
+	private void createDialogContents(Composite parent) {
+
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		layout.numColumns = 3;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		applyDialogFont(composite);
+		composite.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+
+		Control treeControl = createTreeAreaContents(composite);
+		createSash(composite, treeControl);
+
+		Composite pageAreaComposite = new Composite(composite, SWT.NONE);
+		pageAreaComposite.setBackground(composite.getDisplay().getSystemColor(
+				SWT.COLOR_LIST_BACKGROUND));
+
+		pageAreaComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridLayout pageAreaLayout = new GridLayout(1, true);
+		pageAreaComposite.setLayout(pageAreaLayout);
+
+		// Build the Page container
+		setPageContainer(createPageContainer(pageAreaComposite));
+		getPageContainer().setLayoutData(new GridData(GridData.FILL_BOTH));
+		// Build the separator line
+		Label separator = new Label(pageAreaComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		separator.setLayoutData(gd);
+
 	}
 
 	/**
@@ -132,6 +193,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	private Control createSearchArea(Composite composite) {
 
 		Composite searchArea = new Composite(composite, SWT.NONE);
+		searchArea.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		GridLayout searchLayout = new GridLayout();
 		searchLayout.numColumns = 2;
@@ -147,7 +209,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		searchText.setLayoutData(textData);
 
 		Button searchButton = new Button(searchArea, SWT.PUSH);
-		searchButton.setText(WorkbenchMessages.getString("FilteredPreferenceDialog.SearchButton")); //$NON-NLS-1$
+		searchButton.setImage(JFaceResources.getImage(SEARCH_ICON));
+		searchButton.setToolTipText(WorkbenchMessages
+				.getString("FilteredPreferenceDialog.SearchToolTip")); //$NON-NLS-1$
 		GridData searchData = new GridData(GridData.END);
 		searchButton.setLayoutData(searchData);
 
@@ -161,6 +225,147 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		});
 
 		return searchArea;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeAreaContents(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createTreeAreaContents(Composite parent) {
+
+		if (hasGroups()) {
+			Composite leftArea = new Composite(parent, SWT.NONE);
+			leftArea.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+
+			GridLayout leftLayout = new GridLayout();
+			leftLayout.numColumns = 1;
+			leftLayout.marginWidth = 0;
+			leftLayout.marginHeight = 0;
+
+			leftArea.setLayout(leftLayout);
+
+			Control searchArea = createSearchArea(leftArea);
+			GridData searchData = new GridData(GridData.FILL_HORIZONTAL);
+			searchData.grabExcessHorizontalSpace = true;
+			searchData.verticalAlignment = SWT.BOTTOM;
+			searchArea.setLayoutData(searchData);
+
+			//Build the tree an put it into the composite.
+			TreeViewer viewer = createTreeViewer(leftArea);
+			setTreeViewer(viewer);
+
+			viewer.setInput(getPreferenceManager());
+			updateTreeFont(JFaceResources.getDialogFont());
+			GridData viewerData = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
+			viewer.getControl().setLayoutData(viewerData);
+
+			layoutTreeAreaControl(leftArea);
+
+			return leftArea;
+		}
+		return super.createTreeAreaContents(parent);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferenceDialog#createSash(org.eclipse.swt.widgets.Composite, org.eclipse.swt.widgets.Control)
+	 */
+	protected Sash createSash(Composite composite, Control rightControl) {
+		if (hasGroups()) {
+			Sash sash = super.createSash(composite, rightControl);
+			sash.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+			return sash;
+		}
+		return super.createSash(composite, rightControl);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferenceDialog#createPageContainer(org.eclipse.swt.widgets.Composite)
+	 */
+	public Composite createPageContainer(Composite parent) {
+
+		if (!hasGroups())
+			return super.createPageContainer(parent);
+
+		Color background = parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+
+		CTabFolder parentFolder = new CTabFolder(parent, SWT.BORDER);
+
+		CTabItem pageArea = new CTabItem(parentFolder, SWT.BORDER);
+
+		parentFolder.setSelectionForeground(parent.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+		parentFolder.setSelectionBackground(parent.getDisplay().getSystemColor(
+				SWT.COLOR_WIDGET_BACKGROUND));
+		parentFolder.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+
+		pageArea.setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
+
+		parentFolder.setTopRight(getContainerToolBar(parentFolder), SWT.RIGHT);
+		parentFolder.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
+				| GridData.GRAB_VERTICAL));
+		parentFolder.setSimple(false);
+		// 	Message label
+		setMessageArea(new TabbedDialogMessageArea(pageArea));
+
+		Control historyBar = history.createHistoryControls(parentFolder);
+		parentFolder.setTopRight(historyBar, SWT.RIGHT);
+		historyBar.setBackground(background);
+
+		Composite result = new Composite(parentFolder, SWT.NULL);
+		result.setLayout(getPageLayout());
+		pageArea.setControl(result);
+		parentFolder.setSelection(0);
+		return result;
+	}
+
+	/**
+	 * Return the layout for the page container.
+	 * @return
+	 */
+	private Layout getPageLayout() {
+		return new Layout() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite, int, int, boolean)
+			 */
+			protected Point computeSize(Composite composite, int wHint, int hHint,
+					boolean flushCache) {
+
+				if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
+					return new Point(wHint, hHint);
+				int x = minimumSize.x;
+				int y = minimumSize.y;
+				Control[] children = composite.getChildren();
+				for (int i = 0; i < children.length; i++) {
+					Point size = children[i].computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
+					x = Math.max(x, size.x);
+					y = Math.max(y, size.y);
+				}
+				if (wHint != SWT.DEFAULT)
+					x = wHint;
+				if (hHint != SWT.DEFAULT)
+					y = hHint;
+				return new Point(x, y);
+
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite, boolean)
+			 */
+			protected void layout(Composite composite, boolean flushCache) {
+				Rectangle rect = composite.getClientArea();
+				Control[] children = composite.getChildren();
+				for (int i = 0; i < children.length; i++) {
+					children[i].setSize(rect.width, rect.height);
+				}
+			}
+
+		};
+	}
+
+	/**
+	 * Get the toolbar for the container
+	 * @return Control
+	 */
+	private Control getContainerToolBar(Composite parentFolder) {
+		return history.createHistoryControls(parentFolder);
 	}
 
 	/**
@@ -182,9 +387,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 */
 	private ToolBar createToolBar(Composite composite) {
 
-		final ILabelProvider labelProvider = getCategoryLabelProvider();
-
-		toolbar = new ToolBar(composite, SWT.HORIZONTAL | SWT.RIGHT);
+		toolbar = new ToolBar(composite, SWT.HORIZONTAL | SWT.CENTER | SWT.FLAT);
+		toolbar.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		composite.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		WorkbenchPreferenceGroup[] groups = getGroups();
 
@@ -266,8 +471,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 				 */
 				public void selectionChanged(SelectionChangedEvent event) {
 					if (event.getSelection() instanceof IStructuredSelection) {
-						IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-						if(selection.isEmpty())
+						IStructuredSelection selection = (IStructuredSelection) event
+								.getSelection();
+						if (selection.isEmpty())
 							return;
 						Object item = selection.getFirstElement();
 						currentGroup.setLastSelection(item);
@@ -322,8 +528,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 				startGroup = getGroups()[0];
 			}
 			groupSelected(startGroup);
-		}
-		else
+		} else
 			super.selectSavedItem();
 	}
 
@@ -340,24 +545,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * Return whether or not there are categories.
 	 * @return boolean
 	 */
-	private boolean hasGroups() {
+	protected boolean hasGroups() {
 		return getGroups().length > 0;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferencePageContainer#updateMessage()
-	 */
-	public void updateMessage() {
-		if (getCurrentPage() != null)
-			super.updateMessage();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferencePageContainer#updateTitle()
-	 */
-	public void updateTitle() {
-		if (getCurrentPage() != null)
-			super.updateTitle();
 	}
 
 	/**
@@ -365,29 +554,76 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * @param group
 	 */
 	private void groupSelected(final WorkbenchPreferenceGroup group) {
-		
+
 		lastGroupId = group.getId();
 		currentGroup = group;
-		
+
 		getTreeViewer().setInput(group);
 		Object selection = group.getLastSelection();
 		if (selection == null)
 			selection = group.getGroupsAndNodes()[0];
 		getTreeViewer().setSelection(new StructuredSelection(selection), true);
 	}
-	
+
 	/**
 	 * Set the search results of the receiver to be filteredIds.
 	 * @param filteredIds
 	 */
 	protected void setSearchResults(String[] filteredIds) {
-		
+
 		WorkbenchPreferenceGroup[] groups = getGroups();
 		for (int i = 0; i < groups.length; i++) {
 			WorkbenchPreferenceGroup group = groups[i];
 			group.highlightIds(filteredIds);
 		}
-		
+
 	}
 
+	/*
+	 * @see org.eclipse.jface.preference.PreferenceDialog#showPage(org.eclipse.jface.preference.IPreferenceNode)
+	 * @since 3.1
+	 */
+	protected boolean showPage(IPreferenceNode node) {
+		final boolean success = super.showPage(node);
+		if (success) {
+			history.addHistoryEntry(new PreferenceHistoryEntry(node.getId(), node.getLabelText(),
+					null));
+		}
+		return success;
+	}
+
+	//Create a preference page history
+	protected PreferencePageHistory createHistory() {
+		return new PreferencePageHistory(this);
+	}
+
+	/**
+	 * Selects the current page based on the given preference page identifier.
+	 * If no node can be found, then nothing will change.
+	 * 
+	 * @param preferencePageId
+	 *            The preference page identifier to select; should not be
+	 *            <code>null</code>.
+	 */
+	public final void setCurrentPageId(final String preferencePageId) {
+		final IPreferenceNode node = findNodeMatching(preferencePageId);
+		if (node != null) {
+			getTreeViewer().setSelection(new StructuredSelection(node));
+			showPage(node);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferenceDialog#updateMessage()
+	 */
+	public void updateMessage() {
+		//Do nothing for now
+	}
+	/**
+	 * Return the history for the receiver.
+	 * @return Returns the history.
+	 */
+	protected PreferencePageHistory getHistory() {
+		return this.history;
+	}
 }
