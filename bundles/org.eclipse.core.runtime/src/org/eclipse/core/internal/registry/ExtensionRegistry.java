@@ -478,6 +478,7 @@ public class ExtensionRegistry implements IExtensionRegistry {
 
 	private void link(ExtensionPoint extPoint, int[] extensions) {
 		extPoint.setRawChildren(extensions);
+		registryObjects.add(extPoint, true);
 	}
 
 	/*
