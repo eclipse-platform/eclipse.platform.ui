@@ -84,6 +84,29 @@ public Image createImage() {
  * @return a new image or null if the image could not be created
  */
 public Image createImage(boolean returnMissingImageOnError) {
+	return createImage(returnMissingImageOnError, Display.getCurrent());	
+}
+/**
+ * Creates and returns a new SWT image for this image descriptor.
+ *
+ * @param device the device on which to create the image
+ * @return a new image or null if the image could not be created
+ * @since 2.0
+ */
+public Image createImage(Device device) {
+	return createImage(true, device);
+}
+/**
+ * Creates and returns a new SWT image for this image descriptor.
+ * Note that if returnMissingImageOnError is true a default image
+ * is returned
+ *
+ * @param returnMissingImageOnError The flag that determines if a default image is returned on error
+ * @param device the device on which to create the image
+ * @return a new image or null if the image could not be created
+ * @since 2.0
+ */
+public Image createImage(boolean returnMissingImageOnError, Device device) {
 
 	ImageData data = getImageData();
 	if (data == null) {
@@ -102,13 +125,13 @@ public Image createImage(boolean returnMissingImageOnError) {
 	try {
 		if (data.transparentPixel >= 0) {
 			ImageData maskData = data.getTransparencyMask();
-			return new Image(Display.getCurrent(), data, maskData);
+			return new Image(device, data, maskData);
 		}
-		return new Image(Display.getCurrent(), data);
+		return new Image(device, data);
 	} catch (SWTException exception) {
 		if (returnMissingImageOnError) {
 			try {
-				return new Image(Display.getCurrent(), DEFAULT_IMAGE_DATA);
+				return new Image(device, DEFAULT_IMAGE_DATA);
 			} catch (SWTException nextException) {
 				return null;
 			}
