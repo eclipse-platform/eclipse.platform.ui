@@ -181,9 +181,11 @@ public class JobManager implements IJobManager {
 					return true;
 				case Job.RUNNING :
 					//cannot cancel a job that has already started (as opposed to ABOUT_TO_RUN)
-					if (job.internalGetState() == Job.RUNNING)
+					if (job.internalGetState() == Job.RUNNING) {
 						monitor = job.getProgressMonitor();
-					break;
+						break;
+					}
+					//fall through for ABOUT_TO_RUN case
 				default:
 					changeState(job, Job.NONE);
 			}
