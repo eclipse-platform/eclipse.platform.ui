@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -581,21 +581,27 @@ public class AntClasspathBlock {
 
 	private File validateAntHome(String path) {
 		File rootDir = null;
+		boolean invalid= true;
 		if (path.length() > 0) {
-			rootDir = new File(path, "lib"); //$NON-NLS-1$
-			if (!rootDir.exists()) {
-				container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.Specified_ANT_HOME_does_not_contain_a___lib___directory_7")); //$NON-NLS-1$
-				setValidated();
-				return null;
+			rootDir= new File(path, "lib"); //$NON-NLS-1$
+			File parentDir= rootDir.getParentFile();
+			if (parentDir == null || !parentDir.exists()) {
+				container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.56")); //$NON-NLS-1$
+			} else if (!rootDir.exists()) {
+				container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.7")); //$NON-NLS-1$
+			} else {
+				invalid= false;
 			}
-		} else {
-			setValidated();
-			container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.Specified_ANT_HOME_does_not_contain_a___lib___directory_7")); //$NON-NLS-1$
-			return null;
+		} else {			
+			container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.7")); //$NON-NLS-1$
 		}
-
-		container.setErrorMessage(null);
-		return rootDir;
+		if (invalid) {
+			setValidated();
+			return null;
+		} else {
+			container.setErrorMessage(null);
+			return rootDir;
+		}
 	}
 	
 	private void browseAntHome() {
