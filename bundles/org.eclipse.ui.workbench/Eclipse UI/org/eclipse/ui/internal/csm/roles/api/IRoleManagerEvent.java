@@ -32,6 +32,7 @@ package org.eclipse.ui.internal.csm.roles.api;
  * </p>
  * 
  * @since 3.0
+ * @see IRoleManager
  * @see IRoleManagerListener#roleManagerChanged
  */
 public interface IRoleManagerEvent {

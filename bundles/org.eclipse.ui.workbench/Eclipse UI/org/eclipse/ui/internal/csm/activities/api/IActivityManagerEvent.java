@@ -32,6 +32,7 @@ package org.eclipse.ui.internal.csm.activities.api;
  * </p>
  * 
  * @since 3.0
+ * @see IActivityManager
  * @see IActivityManagerListener#activityManagerChanged
  */
 public interface IActivityManagerEvent {
