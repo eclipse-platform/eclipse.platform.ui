@@ -143,12 +143,7 @@ public class UpdateCommand extends ScriptedCommand {
 		private ArrayList operations = new ArrayList();
 
 		public void accept(IFeature feature) {
-//			if (feature
-//				.getVersionedIdentifier()
-//				.getIdentifier()
-//				.equals(featureId) ||
-//				UpdateUtils.isPatch()) {
-		
+	
 			IInstallFeatureOperation op =
 				OperationsManager.getOperationFactory().createInstallOperation(
 					config,
@@ -166,8 +161,6 @@ public class UpdateCommand extends ScriptedCommand {
 
 			op.setTargetSite(site);
 			operations.add(op);
-			
-//			}
 		}
 		public IInstallFeatureOperation[] getOperations() {
 			IInstallFeatureOperation[] opsArray = new IInstallFeatureOperation[operations.size()];
