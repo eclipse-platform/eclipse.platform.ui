@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.presentations;
 
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
@@ -40,7 +39,7 @@ public abstract class StackPresentation {
 	    Assert.isNotNull(stackSite);
 	    site = stackSite;
 	}
-
+	
 	/**
 	 * Returns the presentation site (not null).
 	 */
@@ -99,15 +98,6 @@ public abstract class StackPresentation {
 	public abstract void setVisible(boolean isVisible);
 	
 	/**
-	 * Returns the system menu manager. The workbench will insert global
-	 * action contributions into this menu manager. 
-	 * 
-	 * @return the menu manager that this presentation uses to display
-	 * system actions. Not null.
-	 */
-	public abstract IMenuManager getSystemMenuManager();
-	
-	/**
 	 * Sets the state of the presentation. That is, notifies the presentation
 	 * that is has been minimized, maximized, or restored. Note that this method
 	 * is the only way that a presentation is allowed to change its state.
@@ -156,7 +146,7 @@ public abstract class StackPresentation {
 	 * @param toSelect the new active part (not null)
 	 */
 	public abstract void selectPart(IPresentablePart toSelect);
-	
+		
 	/**
 	 * This method is invoked whenever a part is dragged over the stack's control.
 	 * It returns a StackDropResult if and only if the part may be dropped in this
@@ -176,7 +166,7 @@ public abstract class StackPresentation {
 	public abstract void showSystemMenu();
 
 	/**
-	 * 
+	 * Instructs the presentation to display the pane menu 
 	 */
 	public abstract void showPaneMenu();
 
