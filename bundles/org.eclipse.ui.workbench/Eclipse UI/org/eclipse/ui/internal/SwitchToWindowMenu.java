@@ -4,13 +4,11 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.*;
 
 /**
  * A dynamic menu item to switch to other opened workbench windows.
@@ -20,6 +18,13 @@ public class SwitchToWindowMenu extends ContributionItem {
 	
 	private WorkbenchWindow workbenchWindow;
 	private boolean showSeparator;
+	private boolean dirty = true;
+	private IMenuListener menuListener = new IMenuListener() {
+		public void menuAboutToShow(IMenuManager manager) {
+			manager.markDirty();
+			dirty = true;
+		}
+	};
 	
 	/**
 	 * Creates a new instance of this class.
@@ -61,13 +66,20 @@ public class SwitchToWindowMenu extends ContributionItem {
 	 * opened workbench windows.
 	 */
 	public void fill(Menu menu, int index) {
+		
 		// Get workbench windows.
 		IWorkbench workbench = workbenchWindow.getWorkbench();
 		IWorkbenchWindow[] array = workbench.getWorkbenchWindows();
 		// avoid showing the separator and list for 0 or 1 items
 		if (array.length < 2)
 			return;
-			
+
+		if(getParent() instanceof MenuManager)
+			((MenuManager)getParent()).addMenuListener(menuListener);
+		
+		if(!dirty)
+			return;
+						
 		// Add separator.
 		if (showSeparator) {
 			new MenuItem(menu, SWT.SEPARATOR, index);
@@ -99,8 +111,14 @@ public class SwitchToWindowMenu extends ContributionItem {
 				}
 			}
 		}
+		dirty = false;
 	}
-	
+	/**
+	 * Overridden to always return true and force dynamic menu building.
+	 */
+	public boolean isDirty() {
+		return dirty;
+	}	
 	/**
 	 * Overridden to always return true and force dynamic menu building.
 	 */

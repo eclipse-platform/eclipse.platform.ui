@@ -295,10 +295,12 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.file"), IWorkbenchActionConstants.M_FILE); //$NON-NLS-1$
 		menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_START));
 		{
+			this.newWizardMenu = new NewWizardMenu(window);
 			MenuManager newMenu = new MenuManager(WorkbenchMessages.getString("Workbench.new")); //$NON-NLS-1$
+			newMenu.add(this.newWizardMenu);
 			menu.add(newMenu);
-			this.newWizardMenu = new NewWizardMenu(newMenu, window, true);
 		}
+
 		menu.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
 		menu.add(new Separator());
 		
@@ -464,9 +466,10 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			menu.add(changePerspMenuMgr);
 		}
 		{
-			MenuManager subMenu = new MenuManager(WorkbenchMessages.getString("Workbench.showView")); //$NON-NLS-1$
-			menu.add(subMenu);
-			new ShowViewMenu(subMenu, window, true);
+			MenuManager showViewMenuMgr = new MenuManager(WorkbenchMessages.getString("Workbench.showView")); //$NON-NLS-1$
+			ShowViewMenu showViewMenu = new ShowViewMenu(window);
+			showViewMenuMgr.add(showViewMenu);
+			menu.add(showViewMenuMgr);			
 		}
 		IContributionManager manager = window.getCoolBarManager();
 		if (usingMenuReorg) {

@@ -415,14 +415,25 @@ private void handleWidgetSelection(Event e) {
 public int hashCode() {
 	return action.hashCode();
 }
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
+public boolean isEnabled() {
+	return action != null && action.isEnabled();
+}
 /**
  * The action item implementation of this <code>IContributionItem</code>
  * method returns <code>true</code> for menu items and <code>false</code>
  * for everything else.
  */
 public boolean isDynamic() {
-	//actions in menus are always dynamic
-	return widget instanceof MenuItem;
+	if(widget instanceof MenuItem) {
+		//Optimization. Only recreate the item is the check style has changed. 
+		boolean itemIsCheck = (widget.getStyle() & SWT.CHECK) != 0;
+		boolean actionIsCheck = getAction() != null && getAction().getStyle() == IAction.AS_CHECK_BOX;
+		return itemIsCheck != actionIsCheck;
+	}
+	return false;
 }
 /**
  * Returns <code>true</code> if this item is allowed to enable,
@@ -491,39 +502,41 @@ public void update(String propertyName) {
 			
 			// We only install an accelerator if the menu item doesn't
 			// belong to a context menu (right mouse button menu).
-			if (textChanged && isContextMenu) {
-				String text = action.getText();
-				if (text != null) {
-					text = Action.removeAcceleratorText(text);
-					mi.setText(text);
-				}
-			} else {
-				String text = null;
-				IContributionManagerOverrides overrides = null;
-				if(getParent() != null)
-					overrides = getParent().getOverrides();
-				if(overrides != null)
-					text = getParent().getOverrides().getText(this);
-				if(text == null)
-					text = action.getText();
-				if (text != null) {
-					String label = Action.removeAcceleratorText(text);
-					String accText = null;
-					Integer acc = null;
-					if(overrides != null) {
-					 	accText = overrides.getAcceleratorText(this);
-					 	acc = overrides.getAccelerator(this);
+			if (textChanged) {
+				if(isContextMenu) {
+					String text = action.getText();
+					if (text != null) {
+						text = Action.removeAcceleratorText(text);
+						mi.setText(text);
 					}
-					if((accText == null) && (label.length() + 1 < text.length()))
-						accText = text.substring(label.length() + 1);
-					if(acc == null)
-						acc = new Integer(action.getAccelerator());
-					if (acc.intValue() >= 0)
-						mi.setAccelerator(acc.intValue());
-					if(accText == null)
-						mi.setText(label);
-					else
-						mi.setText(label + '\t' + accText);
+				} else {
+					String text = null;
+					IContributionManagerOverrides overrides = null;
+					if(getParent() != null)
+						overrides = getParent().getOverrides();
+					if(overrides != null)
+						text = getParent().getOverrides().getText(this);
+					if(text == null)
+						text = action.getText();
+					if (text != null) {
+						String label = Action.removeAcceleratorText(text);
+						String accText = null;
+						Integer acc = null;
+						if(overrides != null) {
+						 	accText = overrides.getAcceleratorText(this);
+						 	acc = overrides.getAccelerator(this);
+						}
+						if((accText == null) && (label.length() + 1 < text.length()))
+							accText = text.substring(label.length() + 1);
+						if(acc == null)
+							acc = new Integer(action.getAccelerator());
+						if (acc.intValue() >= 0)
+							mi.setAccelerator(acc.intValue());
+						if(accText == null)
+							mi.setText(label);
+						else
+							mi.setText(label + '\t' + accText);
+					}
 				}
 			}
 			if (imageChanged) {

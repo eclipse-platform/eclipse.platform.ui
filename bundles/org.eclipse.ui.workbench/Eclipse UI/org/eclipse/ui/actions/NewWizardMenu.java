@@ -4,26 +4,37 @@ package org.eclipse.ui.actions;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.*;
-
+ 
 import org.eclipse.jface.action.*;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
+import java.util.*;
+import java.util.List;
 
 /**
  * A <code>NewWizardMenu</code> is used to populate a menu manager with
  * New Wizard actions.  The visible actions are determined by user preference
  * from the Perspective Customize dialog.
  */
-public class NewWizardMenu extends ShortcutMenu {
+public class NewWizardMenu extends ContributionItem {
 	private Action showDlgAction = new NewWizardAction();
 	private Action newProjectAction;
 	private Map actions = new HashMap(21);
 	private NewWizardsRegistryReader reader = new NewWizardsRegistryReader();
 	private boolean enabled = true;
+	private IWorkbenchWindow window;
+	
+	private boolean dirty = true;
+	private IMenuListener menuListener = new IMenuListener() {
+		public void menuAboutToShow(IMenuManager manager) {
+			manager.markDirty();
+			dirty = true;
+		}
+	};	
 /**
  * Create a new wizard shortcut menu.  
  * <p>
@@ -41,16 +52,21 @@ public class NewWizardMenu extends ShortcutMenu {
  * 		the window
  */
 public NewWizardMenu(IMenuManager innerMgr, IWorkbenchWindow window, boolean register) {
-	super(innerMgr, window, register);
+	this(window);
 	newProjectAction = new NewProjectAction(window);
-	fillMenu(); // Must be done after constructor to ensure field initialization.
+	fillMenu(innerMgr); // Must be done after constructor to ensure field initialization.
+}
+
+public NewWizardMenu(IWorkbenchWindow window) {
+	super();
+	this.window = window;
+	newProjectAction = new NewProjectAction(window);
 }
 /* (non-Javadoc)
  * Fills the menu with New Wizards.
  */
-protected void fillMenu() {
+private void fillMenu(IContributionManager innerMgr) {
 	// Remove all.
-	IMenuManager innerMgr = getMenuManager();
 	innerMgr.removeAll();
 
 	if (this.enabled) {
@@ -60,7 +76,7 @@ protected void fillMenu() {
 
 		// Get visible actions.
 		List actions = null;
-		IWorkbenchPage page = getWindow().getActivePage();
+		IWorkbenchPage page = window.getActivePage();
 		if (page != null)
 			actions = ((WorkbenchPage) page).getNewWizardActionIds();
 		if (actions != null) {
@@ -87,11 +103,29 @@ private IAction getAction(String id) {
 	if (action == null) {
 		WorkbenchWizardElement element = reader.findWizard(id);
 		if (element != null) {
-			action = new NewWizardShortcutAction(getWindow().getWorkbench(), element);
+			action = new NewWizardShortcutAction(window.getWorkbench(), element);
 			actions.put(id, action);
 		}
 	}
 	return action;
+}
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
+public boolean isEnabled() {
+	return enabled;
+}
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
+public boolean isDynamic() {
+	return true;
+}
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
+public boolean isDirty() {
+	return dirty;
 }
 /**
  * Sets the enabled state of the receiver.
@@ -101,6 +135,34 @@ private IAction getAction(String id) {
  */
 public void setEnabled(boolean enabledValue) {
 	this.enabled = enabledValue;
-	updateMenu();
 }
+/**
+ * Removes all listeners from the containing workbench window.
+ * <p>
+ * This method should only be called if the shortcut menu is created
+ * with <code>register = true</code>.
+ * </p>
+ * 
+ * @deprecated
+ */
+public void deregisterListeners() {}
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
+public void fill(Menu menu, int index) {
+	if(getParent() instanceof MenuManager)
+		((MenuManager)getParent()).addMenuListener(menuListener);
+			
+	if(!dirty)
+		return;
+	
+	MenuManager manager = new MenuManager();
+	fillMenu(manager);
+	IContributionItem items[] = manager.getItems();
+	for (int i = 0; i < items.length; i++) {
+		items[i].fill(menu,index++);
+	}
+	dirty = false;
+}
+
 }

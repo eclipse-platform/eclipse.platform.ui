@@ -10,22 +10,25 @@ import java.util.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.window.Window;
-
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
-import org.eclipse.ui.internal.registry.IViewRegistry;
+import org.eclipse.ui.internal.registry.*;
 
 /**
  * A <code>ShowViewMenu</code> is used to populate a menu manager with
  * Show View actions.  The visible views are determined by user preference
  * from the Perspective Customize dialog. 
  */
-public class ShowViewMenu extends ShortcutMenu implements IPartListener {
+public class ShowViewMenu extends ContributionItem {
+	
+	private IWorkbenchWindow window;
+	private IMenuManager innerMgr;	
 	
 	private Comparator actionComparator = new Comparator() {
-		Collator collator = Collator.getInstance();
 		public int compare(Object o1, Object o2) {
+			if(collator == null)
+		 		collator = Collator.getInstance();		
 			IAction a1 = (IAction) o1;
 			IAction a2 = (IAction) o2;
 			return collator.compare(a1.getText(), a2.getText());
@@ -43,6 +46,16 @@ public class ShowViewMenu extends ShortcutMenu implements IPartListener {
 
 	//Maps pages to a list of opened views
 	private Map openedViews = new HashMap();
+	
+	private boolean dirty = true;
+	private IMenuListener menuListener = new IMenuListener() {
+		public void menuAboutToShow(IMenuManager manager) {
+			manager.markDirty();
+			dirty = true;
+		}
+	};
+	
+	private static Collator collator;	
 
 	/**
 	 * Create a show view menu.
@@ -60,24 +73,32 @@ public class ShowViewMenu extends ShortcutMenu implements IPartListener {
 	 * @param register if <code>true</code> the menu listens to perspective changes in
 	 * 		the window
 	 */
-	public ShowViewMenu(
-		IMenuManager innerMgr,
-		IWorkbenchWindow window,
-		boolean register) {
-		super(innerMgr, window, register);
-		fillMenu(); // Must be done after constructor to ensure field initialization.
+	public ShowViewMenu(IWorkbenchWindow window) {
+		this.window = window;
+	}
+	
+	/**
+	 * Overridden to always return true and force dynamic menu building.
+	 */
+	public boolean isDirty() {
+		return dirty;
+	}	
+	/**
+	 * Overridden to always return true and force dynamic menu building.
+	 */
+	public boolean isDynamic() {
+		return true;
 	}
 	
 	/* (non-Javadoc)
 	 * Fills the menu with views.
 	 */
-	protected void fillMenu() {
+	private void fillMenu(IMenuManager innerMgr) {
 		// Remove all.
-		IMenuManager innerMgr = getMenuManager();
 		innerMgr.removeAll();
 
 		// If no page disable all.
-		IWorkbenchPage page = getWindow().getActivePage();
+		IWorkbenchPage page = window.getActivePage();
 		if (page == null)
 			return;
 
@@ -133,7 +154,7 @@ public class ShowViewMenu extends ShortcutMenu implements IPartListener {
 			IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
 			IViewDescriptor desc = reg.find(id);
 			if (desc != null) {
-				action = new ShowViewAction(getWindow(), desc);
+				action = new ShowViewAction(window, desc);
 				actions.put(id, action);
 			}
 		}
@@ -144,7 +165,6 @@ public class ShowViewMenu extends ShortcutMenu implements IPartListener {
 	 * Opens the view selection dialog.
 	 */
 	private void showOther() {
-		IWorkbenchWindow window = getWindow();
 		IWorkbenchPage page = window.getActivePage();
 		if (page == null)
 			return;
@@ -178,44 +198,21 @@ public class ShowViewMenu extends ShortcutMenu implements IPartListener {
 		}
 		return parts;
 	}
+	
+public void fill(Menu menu, int index) {
+	if(getParent() instanceof MenuManager)
+		((MenuManager)getParent()).addMenuListener(menuListener);
 
-	public void partActivated(IWorkbenchPart part) {
-	}
-	
-	public void partBroughtToTop(IWorkbenchPart part) {
-	}
-	
-	public void partClosed(IWorkbenchPart part) {
-	}
-	
-	public void partDeactivated(IWorkbenchPart part) {
-	}
+	if(!dirty)
+		return;
 
-	public void partOpened(IWorkbenchPart part) {
-		if (part instanceof IViewPart) {
-			String id = ((IViewPart) part).getSite().getId();
-			ArrayList parts = getParts(part.getSite().getPage());
-			if (parts.indexOf(id) < 0) {
-				parts.add(id);
-				updateMenu();
-			}
-		}
+	MenuManager manager = new MenuManager();
+	fillMenu(manager);
+	IContributionItem items[] = manager.getItems();
+	for (int i = 0; i < items.length; i++) {
+		items[i].fill(menu,index++);
 	}
-	public void pageClosed(IWorkbenchPage page) {
-		openedViews.remove(page);
-		super.pageClosed(page);
-	}
+	dirty = false;
+}
 	
-	public void pageOpened(IWorkbenchPage page) {
-		ArrayList parts = getParts(page); // adds an entry to openedViews
-		IViewReference[] views = page.getViewReferences();
-		for (int i = 0; i < views.length; i++) {
-			String id = views[i].getId();
-			if (parts.indexOf(id) < 0)
-				parts.add(id);
-		}
-		page.addPartListener(this);
-		super.pageOpened(page);
-	}
-
 }

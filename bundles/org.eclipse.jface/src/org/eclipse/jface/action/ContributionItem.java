@@ -80,6 +80,20 @@ public IContributionManager getParent() {
  * The default implementation of this <code>IContributionItem</code>
  * method returns <code>false</code>. Subclasses may override.
  */
+public boolean isDirty() {
+	return isDynamic();
+}
+/**
+ * The default implementation of this <code>IContributionItem</code>
+ * method returns <code>true</code>. Subclasses may override.
+ */
+public boolean isEnabled() {
+	return true;
+}
+/**
+ * The default implementation of this <code>IContributionItem</code>
+ * method returns <code>false</code>. Subclasses may override.
+ */
 public boolean isDynamic() {
 	return false;
 }

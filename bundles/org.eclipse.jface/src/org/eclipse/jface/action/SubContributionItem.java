@@ -68,6 +68,18 @@ public IContributionItem getInnerItem() {
 /* (non-Javadoc)
  * Method declared on IContributionItem.
  */
+public boolean isEnabled() {
+	return innerItem.isEnabled();
+}
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
+public boolean isDirty() {
+	return innerItem.isDirty();
+}
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
 public boolean isDynamic() {
 	return innerItem.isDynamic();
 }
