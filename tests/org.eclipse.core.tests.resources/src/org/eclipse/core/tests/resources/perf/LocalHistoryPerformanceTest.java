@@ -14,6 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.tests.internal.localstore.HistoryStoreTest;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
@@ -22,6 +23,8 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * @since 3.1
  */
 public class LocalHistoryPerformanceTest extends ResourceTest {
+
+	private IWorkspaceDescription original;
 
 	public static Test suite() {
 		//		TestSuite suite = new TestSuite(LocalHistoryPerformanceTest.class.getName());
@@ -62,16 +65,6 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		}
 	}
 
-	private void restoreDescription(String failureMessage, IWorkspaceDescription toRestore) {
-		if (toRestore == null)
-			return;
-		try {
-			getWorkspace().setDescription(toRestore);
-		} catch (CoreException e) {
-			fail(failureMessage, e);
-		}
-	}
-
 	private IWorkspaceDescription setMaxFileStates(String failureMessage, int maxFileStates) {
 		IWorkspaceDescription currentDescription = getWorkspace().getDescription();
 		IWorkspaceDescription testDescription = getWorkspace().getDescription();
@@ -84,63 +77,64 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		return currentDescription;
 	}
 
+	protected void setUp() throws Exception {
+		super.setUp();
+		original = getWorkspace().getDescription();
+	}
+
+	protected void tearDown() throws Exception {
+		getWorkspace().setDescription(original);
+		super.tearDown();
+		HistoryStoreTest.wipeHistoryStore(getMonitor());
+	}
+
 	public void testAddState() {
-		IWorkspaceDescription savedDescription = setMaxFileStates("0.01", 100);
-		try {
-			final IFile file = getWorkspace().getRoot().getProject("proj1").getFile("file.txt");
-			new CorePerformanceTest() {
+		setMaxFileStates("0.01", 100);
+		final IFile file = getWorkspace().getRoot().getProject("proj1").getFile("file.txt");
+		new CorePerformanceTest() {
 
-				protected void operation() {
-					try {
-						file.setContents(getRandomContents(), IResource.KEEP_HISTORY, getMonitor());
-					} catch (CoreException e) {
-						fail("", e);
-					}
+			protected void operation() {
+				try {
+					file.setContents(getRandomContents(), IResource.KEEP_HISTORY, getMonitor());
+				} catch (CoreException e) {
+					fail("", e);
 				}
+			}
 
-				protected void setup() {
-					ensureExistsInWorkspace(file, getRandomContents());
-				}
+			protected void setup() {
+				ensureExistsInWorkspace(file, getRandomContents());
+			}
 
-				protected void teardown() {
-					try {
-						file.clearHistory(getMonitor());
-						file.delete(IResource.FORCE, getMonitor());
-					} catch (CoreException e) {
-						fail("1.0", e);
-					}
+			protected void teardown() {
+				try {
+					file.clearHistory(getMonitor());
+					file.delete(IResource.FORCE, getMonitor());
+				} catch (CoreException e) {
+					fail("1.0", e);
 				}
-			}.run(LocalHistoryPerformanceTest.this, 10, 30);
-		} finally {
-			restoreDescription("99.9", savedDescription);
-		}
+			}
+		}.run(LocalHistoryPerformanceTest.this, 10, 30);
 	}
 
 	private void testClearHistory(final int filesPerFolder, final int statesPerFile) {
-		IProject project = null;
-		IWorkspaceDescription savedDescription = setMaxFileStates("0.01", 100);
-		try {
-			project = getWorkspace().getRoot().getProject("proj1");
-			final IFolder base = project.getFolder("base");
-			ensureDoesNotExistInWorkspace(base);
-			new CorePerformanceTest() {
+		IProject project = getWorkspace().getRoot().getProject("proj1");
+		final IFolder base = project.getFolder("base");
+		ensureDoesNotExistInWorkspace(base);
+		new CorePerformanceTest() {
 
-				protected void operation() {
-					try {
-						base.clearHistory(getMonitor());
-					} catch (CoreException e) {
-						fail("", e);
-					}
+			protected void operation() {
+				try {
+					base.clearHistory(getMonitor());
+				} catch (CoreException e) {
+					fail("", e);
 				}
+			}
 
-				protected void setup() {
-					createTree(base, filesPerFolder, statesPerFile);
-					ensureDoesNotExistInWorkspace(base);
-				}
-			}.run(this, 4, 3);
-		} finally {
-			restoreDescription("99.9", savedDescription);
-		}
+			protected void setup() {
+				createTree(base, filesPerFolder, statesPerFile);
+				ensureDoesNotExistInWorkspace(base);
+			}
+		}.run(this, 4, 3);
 	}
 
 	public void testClearHistory100x4() {
@@ -156,29 +150,23 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 	}
 
 	private void testCopyHistory(int filesPerFolder, int statesPerFile) {
-		IProject project = null;
-		IWorkspaceDescription savedDescription = setMaxFileStates("0.01", 100);
-		try {
-			project = getWorkspace().getRoot().getProject("proj1");
-			IFolder base = project.getFolder("base");
-			createTree(base, filesPerFolder, statesPerFile);
-			// need a final reference so the inner class can see it
-			final IProject[] tmpProject = new IProject[] {project};
-			new CorePerformanceTest() {
-				protected void operation() {
-					try {
-						String newProjectName = getUniqueString();
-						IProject newProject = getWorkspace().getRoot().getProject(newProjectName);
-						tmpProject[0].copy(newProject.getFullPath(), true, getMonitor());
-						tmpProject[0] = newProject;
-					} catch (CoreException e) {
-						fail("", e);
-					}
+		IProject project = getWorkspace().getRoot().getProject("proj1");
+		IFolder base = project.getFolder("base");
+		createTree(base, filesPerFolder, statesPerFile);
+		// need a final reference so the inner class can see it
+		final IProject[] tmpProject = new IProject[] {project};
+		new CorePerformanceTest() {
+			protected void operation() {
+				try {
+					String newProjectName = getUniqueString();
+					IProject newProject = getWorkspace().getRoot().getProject(newProjectName);
+					tmpProject[0].copy(newProject.getFullPath(), true, getMonitor());
+					tmpProject[0] = newProject;
+				} catch (CoreException e) {
+					fail("", e);
 				}
-			}.run(this, 10, 1);
-		} finally {
-			restoreDescription("99.9", savedDescription);
-		}
+			}
+		}.run(this, 10, 1);
 	}
 
 	public void testCopyHistory100x4() {
@@ -194,27 +182,21 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 	}
 
 	private void testGetDeletedMembers(int filesPerFolder, int statesPerFile) {
-		IProject project = null;
-		IWorkspaceDescription savedDescription = setMaxFileStates("0.01", 100);
-		try {
-			project = getWorkspace().getRoot().getProject("proj1");
-			IFolder base = project.getFolder("base");
-			createTree(base, filesPerFolder, statesPerFile);
-			ensureDoesNotExistInWorkspace(base);
-			// need a final reference so the inner class can see it
-			final IProject tmpProject = project;
-			new CorePerformanceTest() {
-				protected void operation() {
-					try {
-						tmpProject.findDeletedMembersWithHistory(IResource.DEPTH_INFINITE, getMonitor());
-					} catch (CoreException e) {
-						fail("", e);
-					}
+		IProject project = getWorkspace().getRoot().getProject("proj1");
+		IFolder base = project.getFolder("base");
+		createTree(base, filesPerFolder, statesPerFile);
+		ensureDoesNotExistInWorkspace(base);
+		// need a final reference so the inner class can see it
+		final IProject tmpProject = project;
+		new CorePerformanceTest() {
+			protected void operation() {
+				try {
+					tmpProject.findDeletedMembersWithHistory(IResource.DEPTH_INFINITE, getMonitor());
+				} catch (CoreException e) {
+					fail("", e);
 				}
-			}.run(this, 2, 5);
-		} finally {
-			restoreDescription("99.9", savedDescription);
-		}
+			}
+		}.run(this, 2, 5);
 	}
 
 	public void testGetDeletedMembers100x4() {
@@ -230,30 +212,23 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 	}
 
 	public void testGetHistory() {
-		IProject project = null;
-		IWorkspaceDescription savedDescription = setMaxFileStates("0.01", 100);
+		IProject project = getWorkspace().getRoot().getProject("proj1");
+		final IFile file = project.getFile("file.txt");
+		ensureExistsInWorkspace(file, getRandomContents());
 		try {
-			project = getWorkspace().getRoot().getProject("proj1");
-			final IFile file = project.getFile("file.txt");
-			ensureExistsInWorkspace(file, getRandomContents());
-			try {
-				for (int i = 0; i < 100; i++)
-					file.setContents(getRandomContents(), IResource.KEEP_HISTORY, getMonitor());
-			} catch (CoreException ce) {
-				fail("0.5", ce);
-			}
-			new CorePerformanceTest() {
-				protected void operation() {
-					try {
-						file.getHistory(getMonitor());
-					} catch (CoreException e) {
-						fail("", e);
-					}
-				}
-			}.run(this, 1, 150);
-		} finally {
-			restoreDescription("99.9", savedDescription);
+			for (int i = 0; i < 100; i++)
+				file.setContents(getRandomContents(), IResource.KEEP_HISTORY, getMonitor());
+		} catch (CoreException ce) {
+			fail("0.5", ce);
 		}
+		new CorePerformanceTest() {
+			protected void operation() {
+				try {
+					file.getHistory(getMonitor());
+				} catch (CoreException e) {
+					fail("", e);
+				}
+			}
+		}.run(this, 1, 150);
 	}
-
 }
