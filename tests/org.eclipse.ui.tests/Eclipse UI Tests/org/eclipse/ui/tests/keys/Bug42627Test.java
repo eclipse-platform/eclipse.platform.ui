@@ -11,18 +11,9 @@
 
 package org.eclipse.ui.tests.keys;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ILogListener;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.EditorSite;
 import org.eclipse.ui.tests.util.UITestCase;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * Tests Bug 42627
@@ -31,15 +22,27 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  */
 public class Bug42627Test extends UITestCase {
 
-	private boolean logged;
+	// TODO See if this is needed for anything.
+	//	private class DummyView extends ViewPart {
+	//		public void createPartControl(Composite composite) {
+	//			// Do nothing
+	//		}
+	//		
+	//		public void setFocus() {
+	//			// Do nothing
+	//		}
+	//	}
 
-	/*
-	 * @see TestCase#setUp()
+	/**
+	 * A dummy implementation of an <code>Action</code>.
+	 * 
+	 * @since 3.0
 	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-		logged = false;
+	private class DummyAction extends Action {
+		// Nothing to implement
 	}
+
+	private boolean logged;
 
 	/**
 	 * Constructor for Bug42627Test.
@@ -49,6 +52,14 @@ public class Bug42627Test extends UITestCase {
 	 */
 	public Bug42627Test(String name) {
 		super(name);
+	}
+
+	/*
+	 * @see TestCase#setUp()
+	 */
+	protected void setUp() throws Exception {
+		super.setUp();
+		logged = false;
 	}
 
 	/**
@@ -76,25 +87,5 @@ public class Bug42627Test extends UITestCase {
 //		window.getShell().setFocus();
 //		while (Display.getCurrent().readAndDispatch());
 //		assertTrue("Nothing has been logged", logged); //$NON-NLS-1$
-	}
-
-	// TODO See if this is needed for anything.
-	//	private class DummyView extends ViewPart {
-	//		public void createPartControl(Composite composite) {
-	//			// Do nothing
-	//		}
-	//		
-	//		public void setFocus() {
-	//			// Do nothing
-	//		}
-	//	}
-
-	/**
-	 * A dummy implementation of an <code>Action</code>.
-	 * 
-	 * @since 3.0
-	 */
-	private class DummyAction extends Action {
-		// Nothing to implement
 	}
 }
