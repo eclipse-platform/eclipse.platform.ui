@@ -104,6 +104,7 @@ public final class CustomizableIntroPart extends IntroPart {
         }
 
         // REVISIT: make sure this is handled better.
+        //TODO need to NL this
         if (model == null || !model.hasValidConfig())
             DialogUtil.displayErrorMessage(site.getShell(),
                     "Could not find a valid configuration for Intro Part: " //$NON-NLS-1$
