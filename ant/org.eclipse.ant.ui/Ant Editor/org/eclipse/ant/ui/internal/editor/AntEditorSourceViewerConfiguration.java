@@ -14,6 +14,19 @@
 
 package org.eclipse.ant.ui.internal.editor;
 
+import org.eclipse.ant.ui.internal.editor.derived.HTMLTextPresenter;
+import org.eclipse.ant.ui.internal.editor.text.AntEditorPartitionScanner;
+import org.eclipse.ant.ui.internal.editor.text.AntEditorProcInstrScanner;
+import org.eclipse.ant.ui.internal.editor.text.AntEditorTagScanner;
+import org.eclipse.ant.ui.internal.editor.text.IAntEditorColorConstants;
+import org.eclipse.ant.ui.internal.editor.text.NonRuleBasedDamagerRepairer;
+import org.eclipse.ant.ui.internal.editor.text.NotifyingReconciler;
+import org.eclipse.ant.ui.internal.editor.text.XMLAnnotationHover;
+import org.eclipse.ant.ui.internal.editor.text.XMLReconcilingStrategy;
+import org.eclipse.ant.ui.internal.editor.text.XMLTextHover;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
+import org.eclipse.ant.ui.internal.model.ColorManager;
+import org.eclipse.ant.ui.internal.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -37,20 +50,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.ant.ui.internal.editor.derived.HTMLTextPresenter;
-import org.eclipse.ant.ui.internal.editor.text.XMLAnnotationHover;
-import org.eclipse.ant.ui.internal.editor.text.XMLTextHover;
-import org.eclipse.ant.ui.internal.editor.text.NonRuleBasedDamagerRepairer;
-import org.eclipse.ant.ui.internal.editor.text.IAntEditorColorConstants;
-import org.eclipse.ant.ui.internal.editor.text.NotifyingReconciler;
-import org.eclipse.ant.ui.internal.editor.text.AntEditorPartitionScanner;
-import org.eclipse.ant.ui.internal.editor.text.AntEditorProcInstrScanner;
-import org.eclipse.ant.ui.internal.editor.text.AntEditorTagScanner;
-import org.eclipse.ant.ui.internal.editor.text.XMLReconcilingStrategy;
-import org.eclipse.ant.ui.internal.model.AntUIPlugin;
-import org.eclipse.ant.ui.internal.model.ColorManager;
-import org.eclipse.ant.ui.internal.preferences.AntEditorPreferenceConstants;
 
 /**
  * The source viewer configuration for the Ant Editor.
@@ -114,10 +113,6 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 
         return contentAssistant;
     }
-    
-	protected IContentAssistant getContentAssistant() {
-	   return contentAssistant;
-   }
 
     protected IInformationControlCreator getInformationControlCreator(final boolean cutDown) {
         return new IInformationControlCreator() {
@@ -259,6 +254,18 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT.equals(p)) {
 			boolean enabled= store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT);
 			contentAssistant.enableAutoInsert(enabled);
+		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS.equals(p)) {
+			changeContentAssistProcessor(store);
 		}
+	}
+	
+	private void changeContentAssistProcessor(IPreferenceStore store) {
+		String triggers= store.getString(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS);
+		if (triggers != null) {
+			AntEditorCompletionProcessor cp= (AntEditorCompletionProcessor)contentAssistant.getContentAssistProcessor(IDocument.DEFAULT_CONTENT_TYPE);
+			if (cp != null) {
+				cp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
+			}
+		}		
 	}
 }
