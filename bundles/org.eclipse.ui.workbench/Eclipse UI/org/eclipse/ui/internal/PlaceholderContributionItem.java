@@ -31,7 +31,7 @@ public final class PlaceholderContributionItem implements IContributionItem {
      * 
      */
     public PlaceholderContributionItem(String identifier) {
-        id = id;
+        id = identifier;
     }
 
     /* (non-Javadoc)
