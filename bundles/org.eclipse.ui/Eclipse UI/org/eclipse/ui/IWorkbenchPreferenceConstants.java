@@ -28,9 +28,6 @@ public interface IWorkbenchPreferenceConstants {
 	 * OPEN_PERSPECTIVE_REPLACE</code>.
 	 * </p>
 	 * 
-	 * @deprecated How a perspective is opened is dependent on user's current
-	 * 		context instead of one global preference.  Callers should use
-	 * 		IWorkbench.showPerspective methods.
 	 */
 	public static final String OPEN_NEW_PERSPECTIVE = "OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
 	
@@ -71,8 +68,6 @@ public interface IWorkbenchPreferenceConstants {
 	 * by <code>OPEN_PERSPECTIVE_WINDOW, OPEN_PERSPECTIVE_PAGE, 
 	 * OPEN_PERSPECTIVE_REPLACE and NO_NEW_PERSPECTIVE</code>.
 	 * </p>
-	 * @deprecated Opening a perspective on project creation is now handled
-	 * 		by the New Project & Capabilities wizard.
 	 */
 	public static final String PROJECT_OPEN_NEW_PERSPECTIVE =
 		"PROJECT_OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
@@ -80,10 +75,6 @@ public interface IWorkbenchPreferenceConstants {
 	/**
 	 * A preference value indicating that an action should open a new 
 	 * perspective in a new window.
-	 * 
-	 * @deprecated How a perspective is opened is dependent on user's current
-	 * 		context instead of one global preference.  Callers should use
-	 * 		IWorkbench.showPerspective methods.
 	 */
 	public static final String OPEN_PERSPECTIVE_WINDOW = "OPEN_PERSPECTIVE_WINDOW"; //$NON-NLS-1$
 	
@@ -91,9 +82,8 @@ public interface IWorkbenchPreferenceConstants {
 	 * A preference value indicating that an action should open a new 
 	 * perspective in a new page.
 	 * 
-	 * @deprecated How a perspective is opened is dependent on user's current
-	 * 		context instead of one global preference.  Callers should use
-	 * 		IWorkbench.showPerspective methods.
+	 * @deprecated Opening a Perspective in a new page is no longer
+	 * supported functionality as of 2.0.
 	 */
 	public static final String OPEN_PERSPECTIVE_PAGE = "OPEN_PERSPECTIVE_PAGE"; //$NON-NLS-1$
 	
@@ -101,9 +91,6 @@ public interface IWorkbenchPreferenceConstants {
 	 * A preference value indicating that an action should open a new 
 	 * perspective by replacing the current perspective.
 	 * 
-	 * @deprecated How a perspective is opened is dependent on user's current
-	 * 		context instead of one global preference.  Callers should use
-	 * 		IWorkbench.showPerspective methods.
 	 */
 	public static final String OPEN_PERSPECTIVE_REPLACE =
 		"OPEN_PERSPECTIVE_REPLACE"; //$NON-NLS-1$
@@ -112,8 +99,6 @@ public interface IWorkbenchPreferenceConstants {
 	 * A preference value indicating that an action should not open a 
 	 * new perspective.
 	 * 
-	 * @deprecated Opening a perspective on project creation is now handled
-	 * 		by the New Project & Capabilities wizard.
 	 */
 	public static final String NO_NEW_PERSPECTIVE = "NO_NEW_PERSPECTIVE"; //$NON-NLS-1$
 
