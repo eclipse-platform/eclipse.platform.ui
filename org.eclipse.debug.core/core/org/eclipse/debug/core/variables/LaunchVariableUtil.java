@@ -424,7 +424,7 @@ public class LaunchVariableUtil {
 		return null;
 	}
 	
-	public static IStatus newErrorStatus(String message, Throwable exception) {
+	private static IStatus newErrorStatus(String message, Throwable exception) {
 		return new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, exception);
 	}
 
