@@ -6,6 +6,8 @@ package org.eclipse.update.core;
 
 import java.net.URL;
 
+import org.eclipse.core.runtime.IAdaptable;
+
 /**
  * Install handler entry.
  * Associates an optional custom install handler with the feature.
@@ -19,7 +21,7 @@ import java.net.URL;
  * @see org.eclipse.update.core.IInstallHandler
  * @since 2.0
  */
-public interface IInstallHandlerEntry {
+public interface IInstallHandlerEntry extends IAdaptable {
 
 	/**
 	 * Returns optional URL used for browser-triggered installation handling.

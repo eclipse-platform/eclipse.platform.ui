@@ -6,6 +6,8 @@ package org.eclipse.update.core;
 
 import java.net.URL;
 
+import org.eclipse.core.runtime.IAdaptable;
+
 /**
  * Site archive interface.
  * Site archive is a representation of a packaged archive (file) located
@@ -20,7 +22,7 @@ import java.net.URL;
  * @see org.eclipse.update.core.ArchiveReference
  * @since 2.0
  */
-public interface IArchiveReference {
+public interface IArchiveReference extends IAdaptable {
 
 	/** 
 	 * 

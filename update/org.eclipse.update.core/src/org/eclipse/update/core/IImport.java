@@ -1,8 +1,11 @@
 package org.eclipse.update.core;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * Plug-in dependency entry.
@@ -17,7 +20,7 @@ package org.eclipse.update.core;
  * @see org.eclipse.update.core.Import
  * @since 2.0
  */
-public interface IImport {
+public interface IImport extends IAdaptable {
 
 	/**
 	 * No matching rule specified 

@@ -4,6 +4,8 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.IAdaptable;
+
 /**
  * Non-plug-in entry defines an arbitrary non-plug-in data file packaged
  * as part of a feature. Non-plug-in entries are not interpreted by the
@@ -22,7 +24,7 @@ package org.eclipse.update.core;
  * @see org.eclipse.update.core.FeatureContentProvider
  * @since 2.0
  */
-public interface INonPluginEntry {
+public interface INonPluginEntry extends IAdaptable {
 
 	/** 
 	 * Returns the identifier of this data entry. 

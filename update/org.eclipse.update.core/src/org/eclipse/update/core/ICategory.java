@@ -4,6 +4,8 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.IAdaptable;
+
 /**
  * Feature category definition.
  * A site can organize its features into categories. Categories
@@ -20,7 +22,7 @@ package org.eclipse.update.core;
  * @see org.eclipse.update.core.Category
  * @since 2.0
  */
-public interface ICategory {
+public interface ICategory  extends IAdaptable{
 
 	/** 
 	 * Retrieve the name of the category. The name can be a simple

@@ -4,6 +4,8 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.IAdaptable;
+
 /**
  * Plug-in entry defines a packaging reference from a feature to a plug-in.
  * It indicates that the referenced plug-in is to be considered as
@@ -20,8 +22,8 @@ package org.eclipse.update.core;
  * @see org.eclipse.update.core.FeatureContentProvider
  * @since 2.0
  */
-public interface IPluginEntry {
-			
+public interface IPluginEntry extends IAdaptable {
+
 	/** 
 	 * Returns the identifier of this plugin entry
 	 * 
@@ -29,7 +31,7 @@ public interface IPluginEntry {
 	 * @since 2.0 
 	 */
 	public VersionedIdentifier getVersionedIdentifier();
-	
+
 	/**
 	 * Returns an indication whethyer this entry represents a fragment.
 	 * 
@@ -122,7 +124,7 @@ public interface IPluginEntry {
 	 * @since 2.0 
 	 */
 	public String getNL();
-	
+
 	/** 
 	 * Sets the identifier of this plugin entry. 
 	 * This is typically performed as part of the plug-in entry creation
@@ -134,4 +136,3 @@ public interface IPluginEntry {
 	public void setVersionedIdentifier(VersionedIdentifier identifier);
 
 }
-

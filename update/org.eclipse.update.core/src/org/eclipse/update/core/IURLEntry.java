@@ -5,11 +5,13 @@ package org.eclipse.update.core;
  */
 import java.net.URL;
 
+import org.eclipse.core.runtime.IAdaptable;
+
 /**
  * Interface for information objects that can have a short description as a text
  * and a long one in a URL.
  */
-public interface IURLEntry {
+public interface IURLEntry extends IAdaptable {
 	
 	/** 
 	 * Returns the short description of the URLEntry object,

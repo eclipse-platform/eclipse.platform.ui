@@ -28,6 +28,9 @@ private static final String KEY_OTHER_DESCRIPTION= "SiteCategory.other.descripti
 				public URL getURL() {
 					return null;
 				}
+				public Object getAdapter(Class clazz) {
+					return null;
+				}
 			};
 		}
 		public String getName() {
@@ -38,6 +41,9 @@ private static final String KEY_OTHER_DESCRIPTION= "SiteCategory.other.descripti
 		}
 		public IURLEntry getDescription() {
 			return entry;
+		}
+		public Object getAdapter(Class clazz) {
+			return null;
 		}
 	}
 	

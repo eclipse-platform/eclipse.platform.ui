@@ -7,6 +7,7 @@ package org.eclipse.update.core;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 /**
  * Feature reference.
  * A reference to a feature on a particular update site.
@@ -18,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
  * @see org.eclipse.update.core.FeatureReference
  * @since 2.0
  */
-public interface IFeatureReference {
+public interface IFeatureReference extends IAdaptable {
 
 	/**
 	 * Returns the referenced feature URL.
