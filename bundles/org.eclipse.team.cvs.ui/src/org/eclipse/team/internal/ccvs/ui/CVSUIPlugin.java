@@ -154,6 +154,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * @see Plugin#startup()
 	 */
 	public void startup() throws CoreException {
+		super.startup();
 		Policy.localize("org.eclipse.team.internal.ccvs.ui.messages");
 		CVSProviderPlugin.getProvider().setPrintStream(new PrintStream(new ConsoleOutputStream()));
 
@@ -176,6 +177,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * @see Plugin#shutdown()
 	 */
 	public void shutdown() throws CoreException {
+		super.shutdown();
 		try {
 			repositoryManager.shutdown();
 		} catch (TeamException e) {
