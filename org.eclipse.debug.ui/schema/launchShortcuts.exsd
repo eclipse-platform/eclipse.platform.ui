@@ -6,7 +6,7 @@
       <meta.schema plugin="org.eclipse.debug.ui" id="launchShortcuts" name="Launch Shortcuts"/>
    </appInfo>
    <documentation>
-      This extension point provides support for selective sensitive launching.  Extensions register a shortcut which
+      This extension point provides support for selection sensitive launching.  Extensions register a shortcut which
 appears in the run and/or debug cascade menus to launch the workbench selection or active editor.
    </documentation>
 </annotation>
@@ -92,6 +92,16 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
                </appInfo>
             </annotation>
          </attribute>
+          <attribute name="category" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  specifies the launch configuration type category this shortcut is applicable for. When unspecified, the category is null (default).
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -118,13 +128,13 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
 &lt;pre&gt;
  &lt;extension point="org.eclipse.debug.ui.launchShortcuts"&gt;
   &lt;shortcut
-   id="com.example.ExampleLaunchShortcutId"
-   modes="run,debug"
-   class="com.example.ExampleLaunchShortcutImpl"
-   label="Example Launch Shortcut"
-   icon="icons/examples.gif"&gt;
-   &lt;perspective id="org.eclipse.jdt.ui.JavaPerspective"/&gt;
-   &lt;perspective id="org.eclipse.debug.ui.DebugPerspective"/&gt;
+     id="com.example.ExampleLaunchShortcutId"
+     modes="run,debug"
+     class="com.example.ExampleLaunchShortcutImpl"
+     label="Example Launch Shortcut"
+     icon="icons/examples.gif"&gt;
+     &lt;perspective id="org.eclipse.jdt.ui.JavaPerspective"/&gt;
+     &lt;perspective id="org.eclipse.debug.ui.DebugPerspective"/&gt;
   &lt;/shortcut&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
@@ -135,24 +145,16 @@ In the above example, a launch shortcut will be shown in the run and debug casca
       </documentation>
    </annotation>
 
-   <annotation>
+ <annotation>
       <appInfo>
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the 
+interface &lt;b&gt;org.eclipse.debug.ui.ILaunchShortcut&lt;/b&gt;.
       </documentation>
    </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         [Enter information about supplied implementation of this extension point.]
-      </documentation>
-   </annotation>
-
+   
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
