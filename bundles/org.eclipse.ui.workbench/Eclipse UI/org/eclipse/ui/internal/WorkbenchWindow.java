@@ -2530,7 +2530,30 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 getConstrainedShellBounds(new Rectangle(location.x, location.y,
                         size.x, size.y)));
     }
-
+    
+    /*
+     * Unlike dialogs, the position of the workbench window is set by the user
+     * and persisted across sessions. If the user wants to put the window
+     * offscreen or spanning multiple monitors, let them (bug 74762)
+     */
+    protected Rectangle getConstrainedShellBounds(Rectangle preferredSize) {
+        return preferredSize;
+    }
+    
+    /*
+     * Unlike dialogs, the position of the workbench window is set by the user
+     * and persisted across sessions. If the user wants to put the window
+     * offscreen or spanning multiple monitors, let them (bug 74762)
+     */
+    protected Point getInitialLocation(Point size) {
+        Shell shell = getShell();
+        if (shell != null) {
+            return shell.getLocation();
+        }
+        
+        return super.getInitialLocation(size);
+    }
+    
     /**
      * The <code>WorkbenchWindow</code> implementation of this method
      * delegates to the window configurer.
