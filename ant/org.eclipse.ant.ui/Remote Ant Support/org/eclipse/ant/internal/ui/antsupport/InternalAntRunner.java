@@ -74,7 +74,6 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -165,33 +164,6 @@ public class InternalAntRunner {
     
     public static void main(String[] args) {
 		new InternalAntRunner().run(getArrayList(args));
-	}
-
-	/**
-	 * Adds a build listener.
-	 * 
-	 * @param buildListener a build listener
-	 */
-	public void addBuildListeners(List classNames) {
-		if (buildListeners == null) {
-			buildListeners = new ArrayList(classNames.size());
-		}
-		buildListeners.addAll(classNames);
-	}
-
-	/**
-	 * Adds a build logger.
-	 */
-	public void addBuildLogger(String className) {
-		loggerClassname = className;
-	}
-	
-	/**
-	 * Adds user property files.
-	 * @since 2.1
-	 */
-	public void addPropertyFiles(String[] additionalPropertyFiles) {
-		propertyFiles.addAll(Arrays.asList(additionalPropertyFiles));
 	}
 
 	private void addBuildListeners(Project project) {
@@ -410,12 +382,8 @@ public class InternalAntRunner {
 			}
 		} catch (AntSecurityException e) {
 			//expected
-		} catch (RuntimeException e) {
+		} catch (Throwable e) {
 			error = e;
-			throw e;
-		} catch (Error e) {
-			error = e;
-			throw e;
 		} finally {
 			System.setErr(originalErr);
 			System.setOut(originalOut);
@@ -547,20 +515,11 @@ public class InternalAntRunner {
 	 * 
 	 * @param buildFileLocation the file system location of the build file
 	 */
-	public void setBuildFileLocation(String buildFileLocation) {
+	private void setBuildFileLocation(String buildFileLocation) {
 		this.buildFileLocation = buildFileLocation;
 		if (getCurrentProject() != null) {
 			getCurrentProject().setUserProperty("ant.file", buildFileLocation); //$NON-NLS-1$
 		}
-	}
-	
-	/**
-	 * Sets the input handler class name.
-	 * 
-	 * @param inputHandlerClassname the name of the class to use for the input handler
-	 */
-	public void setInputHandler(String inputHandlerClassname) {
-		this.inputHandlerClassname= inputHandlerClassname;
 	}
 
 	private String getBuildFileLocation() {
@@ -573,27 +532,10 @@ public class InternalAntRunner {
 	/**
 	 * Sets the message output level. Use -1 for none.
 	 */
-	public void setMessageOutputLevel(int level) {
+	private void setMessageOutputLevel(int level) {
 		messageOutputLevel = level;
 		if (buildLogger != null) {
 			buildLogger.setMessageOutputLevel(level);
-		}
-	}
-
-	/**
-	 * Sets the extra user arguments
-	 */
-	public void setArguments(String[] args) {
-		extraArguments = args;
-	}
-
-	/**
-	 * Sets the execution targets.
-	 */
-	public void setExecutionTargets(String[] executionTargets) {
-		targets = new Vector(executionTargets.length);
-		for (int i = 0; i < executionTargets.length; i++) {
-			targets.add(executionTargets[i]);
 		}
 	}
 	
@@ -1084,13 +1026,6 @@ public class InternalAntRunner {
 
 	private void setCurrentProject(Project currentProject) {
 		this.currentProject = currentProject;
-	}
-	
-	public String getBuildExceptionErrorMessage(Throwable t) {
-		if (t instanceof BuildException) {
-			return t.toString();
-		}
-		return null;
 	}
 	
 	/**
