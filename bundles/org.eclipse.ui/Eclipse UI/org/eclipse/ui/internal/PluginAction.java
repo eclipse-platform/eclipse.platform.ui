@@ -13,6 +13,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.*;
 
 /**
@@ -174,6 +175,13 @@ public abstract class PluginAction extends Action
 	 * Runs the action.
 	 */
 	public void run() {
+		runWithEvent(null);
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on IActionDelegate2.
+	 */
+	public void runWithEvent(Event event) {
 		// this message dialog is problematic.
 		if (delegate == null) {
 			// High noon to load the delegate.
@@ -184,12 +192,17 @@ public abstract class PluginAction extends Action
 						Display.getDefault().getActiveShell(),
 						WorkbenchMessages.getString("Information"),
 				//$NON-NLS-1$
-				WorkbenchMessages.getString("PluginActino.operationNotAvailableMessage"));
+				WorkbenchMessages.getString("PluginAction.operationNotAvailableMessage"));
 				//$NON-NLS-1$
 				return;
 			}
 		}
-		delegate.run(this);
+		if (event != null && delegate instanceof IActionDelegate2) {
+			((IActionDelegate2) delegate).run(this, event);
+		}
+		else {
+			delegate.run(this);
+		}
 	}
 	
 	/**
