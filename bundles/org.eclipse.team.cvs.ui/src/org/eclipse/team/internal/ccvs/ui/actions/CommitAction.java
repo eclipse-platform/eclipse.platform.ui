@@ -166,7 +166,7 @@ public class CommitAction extends WorkspaceAction {
 			// enable commit for any non-ignored resources
 			if (resource.getType()!=IResource.PROJECT&&cvsResource.isIgnored()) return false;
 		}
-		return true;
+		return super.isEnabled();
 	}
 	
 	/**

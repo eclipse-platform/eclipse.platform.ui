@@ -32,10 +32,5 @@ public class MergeAction extends WorkspaceAction {
 			}
 		});
 	}
-	/*
-	 * @see TeamAction#isEnabled()
-	 */
-	protected boolean isEnabled() throws TeamException {
-		return isSelectionNonOverlapping();
-	}
+
 }

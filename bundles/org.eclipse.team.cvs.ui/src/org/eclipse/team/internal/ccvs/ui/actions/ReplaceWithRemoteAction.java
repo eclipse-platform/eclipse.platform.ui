@@ -84,7 +84,7 @@ public class ReplaceWithRemoteAction extends WorkspaceAction {
 				}
 			}
 		}
-		return true;
+		return super.isEnabled();
 	}
 	/**
 	 * Note: This method is designed to be overridden by test cases.

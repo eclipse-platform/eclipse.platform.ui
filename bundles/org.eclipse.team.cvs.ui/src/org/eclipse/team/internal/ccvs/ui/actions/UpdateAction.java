@@ -86,7 +86,7 @@ public class UpdateAction extends WorkspaceAction {
 				if (!cvsResource.isManaged() || info.isAdded()) return false;
 			}
 		}
-		return true;
+		return super.isEnabled();
 	}
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()

@@ -39,7 +39,9 @@ import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.AvoidableMessageDialog;
 import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
@@ -375,7 +377,43 @@ abstract public class CVSAction extends TeamAction {
 		}
 		return new ICVSRemoteFolder[0];
 	}
-	
+
+	/**
+	 * Returns the selected remote resources
+	 */
+	protected ICVSRemoteResource[] getSelectedRemoteResources() {
+		ArrayList resources = null;
+		if (!selection.isEmpty()) {
+			resources = new ArrayList();
+			Iterator elements = ((IStructuredSelection)selection).iterator();
+			while (elements.hasNext()) {
+				Object next = elements.next();
+				if (next instanceof ICVSRemoteResource) {
+					resources.add(next);
+					continue;
+				}
+				if (next instanceof ILogEntry) {
+					resources.add(((ILogEntry)next).getRemoteFile());
+					continue;
+				}
+				if (next instanceof IAdaptable) {
+					IAdaptable a = (IAdaptable) next;
+					Object adapter = a.getAdapter(ICVSRemoteResource.class);
+					if (adapter instanceof ICVSRemoteResource) {
+						resources.add(adapter);
+						continue;
+					}
+				}
+			}
+		}
+		if (resources != null && !resources.isEmpty()) {
+			ICVSRemoteResource[] result = new ICVSRemoteResource[resources.size()];
+			resources.toArray(result);
+			return result;
+		}
+		return new ICVSRemoteResource[0];
+	}
+		
 	/**
 	 * A helper prompt condition for prompting for CVS dirty state.
 	 */

@@ -34,7 +34,7 @@ public class IgnoreAction extends WorkspaceAction {
 			if (cvsResource.isManaged()) return false;
 			if (cvsResource.isIgnored()) return false;
 		}
-		return true;
+		return super.isEnabled();
 	}
 	
 	protected void execute(final IAction action) throws InvocationTargetException, InterruptedException {

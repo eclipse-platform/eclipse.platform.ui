@@ -54,7 +54,7 @@ public class SyncAction extends WorkspaceAction {
 				if (!cvsResource.getParent().isCVSFolder()) return false;
 			}
 		}
-		return true;
+		return super.isEnabled();
 	}
 	protected SyncCompareInput getCompareInput(IResource[] resources) {
 		return new CVSSyncCompareInput(resources);

@@ -193,4 +193,10 @@ public abstract class WorkspaceAction extends CVSAction {
 		return true;
 	}
 
+	/*
+	 * @see TeamAction#isEnabled()
+	 */
+	protected boolean isEnabled() throws TeamException {
+		return isSelectionNonOverlapping();
+	}
 }

@@ -123,10 +123,6 @@ public class ReplaceWithTagAction extends WorkspaceAction {
 		}, true /* cancelable */, this.PROGRESS_DIALOG);
 	}
 	
-	protected boolean isEnabled() throws TeamException {		
-		return isSelectionNonOverlapping();
-	}
-	
 	protected boolean equalTags(CVSTag tag1, CVSTag tag2) {
 		if (tag1 == null) tag1 = CVSTag.DEFAULT;
 		if (tag2 == null) tag2 = CVSTag.DEFAULT;

@@ -127,13 +127,6 @@ public class BranchAction extends WorkspaceAction {
 		}, true /* cancelable */, this.PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 	
-	/*
-	 * @see TeamAction#isEnabled()
-	 */
-	protected boolean isEnabled() throws TeamException {
-		return isSelectionNonOverlapping();
-	}
-	
 	/**
 	 * Answers <code>true</code> if all resources in the array have a sticky tag
 	 */

@@ -146,7 +146,7 @@ public class TagAction extends WorkspaceAction {
 				if(info==null || info.isAdded()) return false;
 			}
 		}
-		return true;
+		return super.isEnabled();
 	}
 
 	/**

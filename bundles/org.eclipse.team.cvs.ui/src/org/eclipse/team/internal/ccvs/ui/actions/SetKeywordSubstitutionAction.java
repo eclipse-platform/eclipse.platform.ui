@@ -59,6 +59,6 @@ public class SetKeywordSubstitutionAction extends WorkspaceAction {
 				if (! cvsResource.isManaged()) return false;
 			}
 		}
-		return true;
+		return super.isEnabled();
 	}
 }
