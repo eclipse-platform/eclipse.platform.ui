@@ -57,11 +57,9 @@ public class WWinPartService implements IPartService {
 			listeners2.firePartOpened(ref);	
 		}
 		public void partHidden(IWorkbenchPartReference ref) {
-			IWorkbenchPart part = ref.getPart(false);
 			listeners2.firePartHidden(ref);	
 		}
 		public void partVisible(IWorkbenchPartReference ref) {
-			IWorkbenchPart part = ref.getPart(false);
 			listeners2.firePartVisible(ref);	
 		}
 	};

@@ -1022,7 +1022,6 @@ private void disposePerspective(Perspective persp) {
 		
 		//If the part is no longer reference then dispose it.
 		boolean exists = viewFactory.hasView(ref.getId());
-		IViewPart view = (IViewPart)ref.getPart(false);
 		if (!exists) {
 			firePartClosed(ref);
 			activationList.remove(ref);
