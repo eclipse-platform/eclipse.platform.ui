@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.cheatsheets.data;
 
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.*;
 
 import javax.xml.parsers.*;
 
@@ -59,6 +59,96 @@ public class CheatSheetParser {
 			//TODO do something better here
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Converts any characters required to escaped by an XML parser to 
+	 * their escaped counterpart.
+	 * 
+	 * Characters			XML escaped counterpart
+	 * <			->		&lt;
+	 * >			->		&gt;
+	 * &			->		&amp;
+	 * '			->		&apos;
+	 * "			->		&quot;
+	 *
+	 * Tags that will be ignored <b>, </b> and <br/>.
+	 *
+	 * @param text the string buffer to have its characters escaped
+	 * @return string buffer with any of the characters requiring XML escaping escaped
+	 */
+	private StringBuffer escapeXMLCharacters(StringBuffer text) {
+		// Set the maximum length of the tags to ignore
+		final int MAXIMUM_TAG_LENGTH = 5;
+		
+		// Keep a local variable for the orignal string's length
+		int length = text.length();
+		
+		// Create the buffer to store the resulting string
+		StringBuffer result = new StringBuffer(length);
+		
+		// Loop for the characters of the original string
+		for(int i=0; i<length; i++) {
+			// Grab the next character and determine how to handle it
+			char c = text.charAt(i);
+			switch (c) {
+				case '<': {
+					// We have a less than, grab the maximum tag length of characters
+					// or the remaining characters which follow and determine if it
+					// is the start of a tag to ignore.
+					String tmp = ""; //$NON-NLS-1$
+					if(i+MAXIMUM_TAG_LENGTH < length)
+						tmp = text.substring(i, i+MAXIMUM_TAG_LENGTH).toLowerCase();
+					else {
+						tmp = text.substring(i, length).toLowerCase();
+					}
+					if(tmp.startsWith("<b>") || tmp.startsWith("</b>") || tmp.startsWith("<br/>")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						// We have a tag to ignore so just emit the character
+						result.append(c);
+					} else {
+						// We have detemined that it is just a less than
+						// so emit the XML escaped counterpart
+						result.append("&lt;"); //$NON-NLS-1$
+					}
+					break; }
+				case '>': {
+					// We have a greater than, grab the maximum tag length of characters
+					// or the starting characters which come before and determine if it
+					// is the end of a tag to ignore.
+					String tmp = ""; //$NON-NLS-1$
+					if(i>=MAXIMUM_TAG_LENGTH) {
+						tmp = text.substring(i-MAXIMUM_TAG_LENGTH, i+1).toLowerCase();
+					} else {
+						tmp = text.substring(0, i+1).toLowerCase();
+					}
+					if(tmp.endsWith("<b>") || tmp.endsWith("</b>") || tmp.endsWith("<br/>")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						// We have a tag to ignore so just emit the character
+						result.append(c);
+					} else {
+						// We have detemined that it is just a greater than
+						// so emit the XML escaped counterpart
+						result.append("&gt;"); //$NON-NLS-1$
+					}
+					break; }
+				case '&':
+					// We have an ampersand so emit the XML escaped counterpart
+					result.append("&amp;"); //$NON-NLS-1$
+					break;
+				case '\'':
+					// We have an apostrophe so emit the XML escaped counterpart
+					result.append("&apos;"); //$NON-NLS-1$
+					break;
+				case '"':
+					// We have a quote so emit the XML escaped counterpart
+					result.append("&quot;"); //$NON-NLS-1$
+					break;
+				default:
+					// We have a character that does not require escaping
+					result.append(c);
+					break;
+			}
+		}
+		return result;
 	}
 
 	private Node findNode(Node startNode, String nodeName) {
@@ -235,6 +325,7 @@ public class CheatSheetParser {
 			}
 
 			if(containsMarkup) {
+				text = escapeXMLCharacters(text);
 				text.insert(0, IParserTags.FORM_START_TAG);
 				text.append(IParserTags.FORM_END_TAG);
 			}
