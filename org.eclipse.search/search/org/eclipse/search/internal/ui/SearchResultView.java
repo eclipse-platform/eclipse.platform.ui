@@ -175,11 +175,11 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	 * Implements method from ISearchResultView
 	 */
 	public void searchStarted(
-				String					pageId,
+				IActionGroupFactory		groupFactory,
 				String					singularLabel,
 				String					pluralLabelPattern,
 				ImageDescriptor			imageDescriptor,
-				IActionGroupFactory		groupFactory,
+				String					pageId,
 				ILabelProvider			labelProvider,
 				IAction					gotoAction,
 				IGroupByKeyComputer		groupByKeyComputer,

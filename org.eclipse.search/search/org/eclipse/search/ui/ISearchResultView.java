@@ -37,7 +37,8 @@ public interface ISearchResultView extends IViewPart {
 	 * If every match should show up in the search result view then the match
 	 * itself can be used as key.	 
 	 *
-	 * @param	pageId					the id of the search page which started the search
+ 	 * @param	groupFactory			the action group factory
+  	 *								  		or <code>null</code> if no factory is provided.
  	 * @param	singularLabel			the label to be used for this search occurrence
  	 * 									  if there is one match
 	 *									  or <code>null</code> if the pluralLabelPattern should be used
@@ -46,8 +47,7 @@ public interface ISearchResultView extends IViewPart {
  	 * 									  This string may contain {0} which will be replace by the match count
  	 * @param	imageDescriptor			the image descriptor to be used for this search occurrence,
 	 *									  or <code>null</code> if this search should not have an image
- 	 * @param	groupFactory			the action group factory
-  	 *								  		or <code>null</code> if no factory is provided.
+	 * @param	pageId					the id of the search page which started the search
 	 * @param	labelProvider			the label provider used by this search result view
   	 *									  or <code>null</code> if the default provider should be used.
 	 *									  The default label provider shows the resource name and the corresponding image.
@@ -59,11 +59,11 @@ public interface ISearchResultView extends IViewPart {
  	 * @since 2.0
 	 */
 	public void searchStarted(
-				String					pageId,
+				IActionGroupFactory		groupFactory,
 				String					singularLabel,
 				String					pluralLabelPattern,
 				ImageDescriptor			imageDescriptor,
-				IActionGroupFactory		groupFactory,
+				String					pageId,
 				ILabelProvider			labelProvider,
 				IAction					gotoAction,
 				IGroupByKeyComputer		groupByKeyComputer,
