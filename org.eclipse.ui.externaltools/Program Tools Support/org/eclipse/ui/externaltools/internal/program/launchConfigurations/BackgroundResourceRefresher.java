@@ -12,6 +12,10 @@ package org.eclipse.ui.externaltools.internal.program.launchConfigurations;
 
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -24,7 +28,7 @@ import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
  * Refreshes resources as specified by a launch configuration, when 
  * an associated process terminates.
  */
-public class BackgroundResourceRefresher implements IDebugEventSetListener, Runnable  {
+public class BackgroundResourceRefresher implements IDebugEventSetListener  {
 
 	private ILaunchConfiguration fConfiguration;
 	private IProcess fProcess;
@@ -64,22 +68,20 @@ public class BackgroundResourceRefresher implements IDebugEventSetListener, Runn
 	}
 	
 	/**
-	 * Submits a runnable to do the refresh
+	 * Submits a job to do the refresh
 	 */
 	protected void refresh() {
-		ExternalToolsPlugin.getStandardDisplay().asyncExec(this);
-	}
-	
-	/** 
-	 * Refreshes the resources.
-	 * 
-	 * @see java.lang.Runnable#run()
-	 */
-	public void run() {
-		try {
-			RefreshTab.refreshResources(fConfiguration, null);
-		} catch (CoreException e) {
-			ExternalToolsPlugin.getDefault().log(e);
-		}		
+		Job job= new Job(ExternalToolsProgramMessages.getString("BackgroundResourceRefresher.0")) { //$NON-NLS-1$
+			public IStatus run(IProgressMonitor monitor) {
+				try {
+					RefreshTab.refreshResources(fConfiguration, monitor);
+				} catch (CoreException e) {
+					ExternalToolsPlugin.getDefault().log(e);
+					return e.getStatus();
+				}	
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 }
