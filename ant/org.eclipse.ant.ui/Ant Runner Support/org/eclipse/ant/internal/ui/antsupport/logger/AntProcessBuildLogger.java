@@ -16,7 +16,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
@@ -28,6 +27,7 @@ import org.eclipse.ant.internal.ui.launchConfigurations.AntProcess;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntStreamMonitor;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntStreamsProxy;
 import org.eclipse.ant.internal.ui.launchConfigurations.TaskLinkManager;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.text.IRegion;
@@ -219,7 +219,9 @@ public class AntProcessBuildLogger extends NullBuildLogger {
         }
 		fHandledException= null;
 		fBuildFileParent= null;
-		logMessage(getTimeString(System.currentTimeMillis() - fStartTime), event, fMessageOutputLevel);
+		if (!(event.getException() instanceof OperationCanceledException)) {
+			logMessage(getTimeString(System.currentTimeMillis() - fStartTime), event, fMessageOutputLevel);
+		}
 		fProcess= null;
 		event.getProject().removeBuildListener(this);
 	}

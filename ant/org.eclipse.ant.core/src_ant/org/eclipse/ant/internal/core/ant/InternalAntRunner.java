@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
-
 import org.apache.tools.ant.AntTypeDefinition;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
@@ -53,8 +52,9 @@ import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.core.Type;
-import org.eclipse.ant.internal.core.AntCoreUtil;
 import org.eclipse.ant.internal.core.AbstractEclipseBuildLogger;
+import org.eclipse.ant.internal.core.AntCoreUtil;
+import org.eclipse.ant.internal.core.AntSecurityManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -64,6 +64,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.osgi.framework.Bundle;
 
 /**
  * Eclipse application entry point into Ant. Derived from the original Ant Main class
@@ -661,7 +662,7 @@ public class InternalAntRunner {
 			if (extraArguments != null) {
 				printArguments(getCurrentProject());
 			}
-			System.setSecurityManager(new AntSecurityManager(originalSM));
+			System.setSecurityManager(new AntSecurityManager(originalSM, Thread.currentThread()));
 			
 			if (targets == null) {
                 targets= new Vector(1);
@@ -691,7 +692,10 @@ public class InternalAntRunner {
 				System.setSecurityManager(originalSM);
 			}
 			
-			if (!projectHelp) {				
+			if (!projectHelp) {		
+				if (AntCorePlugin.getPlugin().getBundle().getState() != Bundle.ACTIVE) {
+					return;
+				}
 				fireBuildFinished(getCurrentProject(), error);
 			}
 						
