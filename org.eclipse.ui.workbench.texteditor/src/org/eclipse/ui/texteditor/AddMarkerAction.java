@@ -6,8 +6,27 @@ package org.eclipse.ui.texteditor;
  */
 
 
-import java.util.HashMap;import java.util.Map;import java.util.ResourceBundle;import org.eclipse.core.resources.IResource;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IAdaptable;import org.eclipse.core.runtime.Platform;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.dialogs.ErrorDialog;import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;import org.eclipse.jface.text.BadLocationException;import org.eclipse.jface.text.IDocument;import org.eclipse.jface.text.ITextSelection;import org.eclipse.jface.window.Window;import org.eclipse.ui.IEditorInput;import org.eclipse.ui.PlatformUI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.window.Window;
+
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.PlatformUI;
 
 
 

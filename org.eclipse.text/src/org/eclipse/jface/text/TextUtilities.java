@@ -196,7 +196,10 @@ public class TextUtilities {
 	 * The document events being merged must all refer to the same document, to which
 	 * the document changes have been already applied.
 	 * 
-	 * @param documentEvents the list of document events to merge	 * @return returns the merged document event	 * @throws BadLocationException might be thrown if document is not in the correct state with respect to document events	 */
+	 * @param documentEvents the list of document events to merge
+	 * @return returns the merged document event
+	 * @throws BadLocationException might be thrown if document is not in the correct state with respect to document events
+	 */
 	public static DocumentEvent mergeProcessedDocumentEvents(List documentEvents) throws BadLocationException {
 
 		if (documentEvents.size() == 0)

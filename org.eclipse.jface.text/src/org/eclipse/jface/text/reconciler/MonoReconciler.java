@@ -33,7 +33,8 @@ import org.eclipse.jface.text.Region;
  * @since 2.0
  */
 public class MonoReconciler extends AbstractReconciler {
-		
+	
+	
 	/** The reconciling strategy */
 	private IReconcilingStrategy fStrategy;
 	

@@ -12,7 +12,19 @@ Contributors:
 package org.eclipse.ui.texteditor;
 
 
-import java.util.ResourceBundle;import org.eclipse.swt.events.DisposeEvent;import org.eclipse.swt.events.DisposeListener;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.text.IFindReplaceTarget;import org.eclipse.ui.IPartListener;import org.eclipse.ui.IPartService;import org.eclipse.ui.IWorkbenchPart;import org.eclipse.ui.IWorkbenchPartSite;import org.eclipse.ui.IWorkbenchWindow;
+import java.util.ResourceBundle;
+
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.text.IFindReplaceTarget;
+
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
 
 
 /**

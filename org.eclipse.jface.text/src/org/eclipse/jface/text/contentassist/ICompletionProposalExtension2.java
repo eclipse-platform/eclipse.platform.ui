@@ -24,7 +24,8 @@ import org.eclipse.jface.text.ITextViewer;
  * <li> handling of trigger characters with modifiers
  * <li> visual indication for selection of a proposal
  * </ul>
- *  * @since 2.1
+ * 
+ * @since 2.1
  */
 public interface ICompletionProposalExtension2 {
 	
@@ -62,7 +63,12 @@ public interface ICompletionProposalExtension2 {
 	 * If the document event was <code>null</code>, only the caret offset was changed, but not the document.
 	 *
 	 * This method deprecates ICompletionProposalExtension.isValidFor(IDocument, int)
-	 * 	 * @param document the document	 * @param offset the caret offset	 * @param event the document event, may be <code>null</code>	 * @return boolean	 */
+	 * 
+	 * @param document the document
+	 * @param offset the caret offset
+	 * @param event the document event, may be <code>null</code>
+	 * @return boolean
+	 */
 	boolean validate(IDocument document, int offset, DocumentEvent event);
 	
 }

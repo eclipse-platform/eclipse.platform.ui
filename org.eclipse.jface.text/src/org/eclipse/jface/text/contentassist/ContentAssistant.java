@@ -1203,7 +1203,8 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	
 	/**
 	 * Callback to signal this content assistant that the presentation of the possible completions has been stopped.
-	 * @since 2.1 	 */
+	 * @since 2.1 
+	 */
 	protected void possibleCompletionsClosed() {
 	}
 	

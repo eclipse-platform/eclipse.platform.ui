@@ -59,19 +59,22 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 	public boolean isDeleted(Object element) {
 		return false;
 	}
-	/**
+
+	/**
 	 * @see AbstractDocumentProvider#getSynchronizationStamp(Object)
 	 */
 	public long getSynchronizationStamp(Object element) {
 		return 0;
 	}
-	/**
+
+	/**
 	 * @see AbstractDocumentProvider#getModificationStamp(Object)
 	 */
 	public long getModificationStamp(Object element) {
 		return 0;
 	}
-	/**
+
+	/**
 	 * @see AbstractDocumentProvider#doSaveDocument(IProgressMonitor, Object, IDocument, boolean)
 	 */
 	protected void doSaveDocument(
@@ -81,7 +84,8 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 		boolean arg3)
 		throws CoreException {
 	}
-	/**
+
+	/**
 	 * @see AbstractDocumentProvider#createDocument(Object)
 	 */
 	protected IDocument createDocument(Object element) throws CoreException {
@@ -89,7 +93,8 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 		doc.set(createDiagnostics());
 		return doc;
 	}
-	/**
+
+	/**
 	 * @see AbstractDocumentProvider#createAnnotationModel(Object)
 	 */
 	protected IAnnotationModel createAnnotationModel(Object element)
@@ -99,7 +104,8 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 
 	/*
 	 * Returns a <code>String</code> of diagnostics information.
-	 */ 	private String createDiagnostics() {
+	 */ 
+	private String createDiagnostics() {
 		StringWriter out = new StringWriter();
 		PrintWriter writer = new PrintWriter(out);
 		appendTimestamp(writer);

@@ -679,7 +679,11 @@ public final class ProjectionDocument extends AbstractDocument {
 
 	/**
 	 * Convenience method for hiding the specified region of the document.
-	 * 	 * @param document	 * @param offsetInParent	 * @param lengthInParent	 */
+	 * 
+	 * @param document
+	 * @param offsetInParent
+	 * @param lengthInParent
+	 */
 	public void hide(int offsetInParent, int lengthInParent) {
 		
 		IDocument parent= getParentDocument();

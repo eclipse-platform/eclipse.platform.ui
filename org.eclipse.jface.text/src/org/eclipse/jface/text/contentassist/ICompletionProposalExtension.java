@@ -23,7 +23,8 @@ import org.eclipse.jface.text.IDocument;
  * <li> completion proposal validation for a given offset
  * <li> freely positionable context information
  * </ul>
- *  * @since 2.0
+ * 
+ * @since 2.0
  */
 public interface ICompletionProposalExtension {
 	

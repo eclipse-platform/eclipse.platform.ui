@@ -96,7 +96,8 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	};
 	
 	/**
-	 * Handles all the mouse interaction in this line number ruler column.	 */
+	 * Handles all the mouse interaction in this line number ruler column.
+	 */
 	class MouseHandler implements MouseListener, MouseMoveListener, MouseTrackListener {
 		
 		private IRegion fStartLine;

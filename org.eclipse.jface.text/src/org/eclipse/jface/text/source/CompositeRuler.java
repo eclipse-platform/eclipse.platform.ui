@@ -521,7 +521,9 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 	}
 	
 	/**
-	 * Constructs a new composite ruler with the given gap between its columns.	 * @param gap	 */
+	 * Constructs a new composite ruler with the given gap between its columns.
+	 * @param gap
+	 */
 	public CompositeRuler(int gap) {
 		fGap= gap;
 	}

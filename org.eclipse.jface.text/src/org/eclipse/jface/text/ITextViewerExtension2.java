@@ -65,7 +65,8 @@ public interface ITextViewerExtension2 {
 	/**
 	 * Returns the currently displayed text hover if any, <code>null</code>
 	 * otherwise.
-	 * @since 2.1	 */
+	 * @since 2.1
+	 */
 	ITextHover getCurrentTextHover();
 	
 	/**

@@ -10,7 +10,8 @@ Contributors:
 **********************************************************************/
 
 package org.eclipse.jface.text.contentassist;
-
+
+
 import java.util.Stack;
 
 import org.eclipse.swt.SWT;

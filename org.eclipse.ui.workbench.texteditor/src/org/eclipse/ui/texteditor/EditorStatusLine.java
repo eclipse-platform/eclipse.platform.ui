@@ -68,13 +68,15 @@ class EditorStatusLine implements IEditorStatusLine {
 	}
 
 	/**
-	 * Returns the selection provider.	 */	
+	 * Returns the selection provider.
+	 */	
 	public ISelectionProvider getSelectionProvider() {
 		return fSelectionProvider;	
 	}
 
 	/*
-	 * @see org.eclipse.ui.texteditor.IStatusLine#setMessage(boolean, String, Image)	 */
+	 * @see org.eclipse.ui.texteditor.IStatusLine#setMessage(boolean, String, Image)
+	 */
 	public void setMessage(boolean error, String message, Image image) {
 
 		if (error)
