@@ -176,7 +176,10 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	}
 	
 	public String getDescription() {
-		return element.getAttribute(ATT_DESCRIPTION);
+		String description = element.getAttribute(ATT_DESCRIPTION);
+		if (description == null)
+			description = ""; //$NON-NLS-1$
+		return description;
 	}
 	
 	/**
