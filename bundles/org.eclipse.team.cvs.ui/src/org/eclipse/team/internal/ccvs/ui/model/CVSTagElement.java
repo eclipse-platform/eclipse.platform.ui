@@ -27,6 +27,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.FetchMembersOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.FetchMembersOperation.RemoteFolderFilter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
 public class CVSTagElement extends CVSModelElement implements IDeferredWorkbenchAdapter {
@@ -103,6 +104,11 @@ public class CVSTagElement extends CVSModelElement implements IDeferredWorkbench
 				RemoteFolder folder = new RemoteFolder(null, root, ICVSRemoteFolder.REPOSITORY_ROOT_FOLDER_NAME, tag);
 				monitor.beginTask(Policy.bind("RemoteFolderElement.fetchingRemoteChildren", root.toString()), 100); //$NON-NLS-1$
 				FetchMembersOperation operation = new FetchMembersOperation(null, folder, collector);
+				operation.setFilter(new RemoteFolderFilter() {
+					public ICVSRemoteResource[] filter(ICVSRemoteFolder[] folders) {
+						return CVSUIPlugin.getPlugin().getRepositoryManager().filterResources(getWorkingSet(), folders);
+					}
+				});
 				operation.run(Policy.subMonitorFor(monitor, 100));
 			} catch (InvocationTargetException e) {
 				CVSUIPlugin.log(CVSException.wrapException(e));

@@ -36,6 +36,13 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 public class FetchMembersOperation extends RemoteOperation {
 
 	private IElementCollector collector;
+	private RemoteFolderFilter filter = new RemoteFolderFilter();
+	
+	public static class RemoteFolderFilter {
+		public ICVSRemoteResource[] filter(ICVSRemoteFolder[] folders) {
+			return folders;
+		}
+	}
 	
 	public class InternalRemoteFolderMemberFetcher extends RemoteFolderMemberFetcher {
 		int sendIncrement = 100;
@@ -68,7 +75,7 @@ public class FetchMembersOperation extends RemoteOperation {
 		}
 		private void sendFolders() {
 			updateParentFolderChildren();
-			collector.add((Object[]) unsent.toArray(new Object[unsent.size()]), getProgressMonitor());
+			collector.add(filter.filter((ICVSRemoteFolder[]) unsent.toArray(new ICVSRemoteFolder[unsent.size()])), getProgressMonitor());
 			unsent.clear();
 		}
 		private void sendFiles() {
@@ -127,6 +134,14 @@ public class FetchMembersOperation extends RemoteOperation {
 
 	private ICVSRemoteFolder getRemoteFolder() {
 		return (ICVSRemoteFolder)getRemoteResources()[0];
+	}
+
+	public RemoteFolderFilter getFilter() {
+		return filter;
+	}
+
+	public void setFilter(RemoteFolderFilter filter) {
+		this.filter = filter;
 	}
 
 }
