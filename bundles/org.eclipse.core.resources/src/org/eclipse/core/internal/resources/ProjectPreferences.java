@@ -27,6 +27,8 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class ProjectPreferences extends EclipsePreferences {
 
+	private static final String PREFS_FILE_EXTENSION = "prefs"; //$NON-NLS-1$
+	
 	protected boolean isLoading = false;
 
 	// cache
@@ -59,7 +61,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		if (projectName == null || qualifier == null)
 			return null;
 		IPath path = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName).getLocation();
-		return path == null ? null : path.append(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).append(DEFAULT_PREFERENCES_FILENAME);
+		return path == null ? null : path.append(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).addFileExtension(PREFS_FILE_EXTENSION);
 	}
 
 	/*
