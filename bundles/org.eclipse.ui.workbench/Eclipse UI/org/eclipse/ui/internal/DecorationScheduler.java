@@ -81,8 +81,9 @@ public class DecorationScheduler implements IResourceChangeListener {
 		if (decoration == null) {
 			queueForDecoration(element, adaptedElement);
 			return text;
-		} else
+		} else{
 			return decoration.decorateWithText(text);
+		}
 	}
 	/**
 	 * Queue the element and its adapted value if it has not been
@@ -96,7 +97,7 @@ public class DecorationScheduler implements IResourceChangeListener {
 		Object adaptedElement) {
 
 		//Lazily create the thread that calculates the decoration for a resource
-		if (decoratorUpdateThread == null){
+		if (decoratorUpdateThread == null) {
 			createDecoratorThread();
 			decoratorUpdateThread.start();
 		}
@@ -149,6 +150,10 @@ public class DecorationScheduler implements IResourceChangeListener {
 	 * @param decorationResults
 	 */
 	public void decorated(final Object[] elements) {
+		
+		//No need to send a message for nothing
+		if(elements.length == 0)
+			return;
 
 		//Don't bother if we are shutdown now
 		if (!shutdown) {
@@ -157,7 +162,7 @@ public class DecorationScheduler implements IResourceChangeListener {
 					decoratorManager.labelProviderChanged(
 						new LabelProviderChangedEvent(
 							decoratorManager,
-							elements));
+							elements));					
 					resultCache.clear();
 				}
 			});
@@ -265,29 +270,35 @@ public class DecorationScheduler implements IResourceChangeListener {
 						return;
 					}
 
-					LinkedList prefixes = new LinkedList();
-					LinkedList suffixes = new LinkedList();
+					//Don't decorate if there is already a pending result
+					if (!resultCache.containsKey(reference.getElement())) {
 
-					decoratorManager
-						.getLightweightManager()
-						.getPrefixAndSuffix(
-						reference.getElement(),
-						reference.getAdaptedElement(),
-						prefixes,
-						suffixes);
+						LinkedList prefixes = new LinkedList();
+						LinkedList suffixes = new LinkedList();
 
-					ImageDescriptor[] descriptors =
-						decoratorManager.getLightweightManager().findOverlays(
+						decoratorManager
+							.getLightweightManager()
+							.getPrefixAndSuffix(
 							reference.getElement(),
-							reference.getAdaptedElement());
+							reference.getAdaptedElement(),
+							prefixes,
+							suffixes);
 
-					if (prefixes.size() > 0 || descriptors != null) {
-						DecorationResult result =
-							new DecorationResult(
-								prefixes,
-								suffixes,
-								descriptors);
-						resultCache.put(reference.getElement(), result);
+						ImageDescriptor[] descriptors =
+							decoratorManager
+								.getLightweightManager()
+								.findOverlays(
+								reference.getElement(),
+								reference.getAdaptedElement());
+
+						if (prefixes.size() > 0 || descriptors != null) {
+							DecorationResult result =
+								new DecorationResult(
+									prefixes,
+									suffixes,
+									descriptors);
+							resultCache.put(reference.getElement(), result);
+						}
 					}
 
 					// notify that decoration is ready
@@ -299,5 +310,6 @@ public class DecorationScheduler implements IResourceChangeListener {
 		};
 
 		decoratorUpdateThread = new Thread(decorationRunnable, "Decoration");
+		decoratorUpdateThread.setPriority(Thread.MIN_PRIORITY);
 	}
 }
