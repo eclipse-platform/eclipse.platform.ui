@@ -50,10 +50,4 @@ public class TaskLineTracker implements IConsoleLineTracker {
 		TaskLinkManager.dispose(fConsole.getProcess());
 		fConsole = null;
 	}
-
-	/**
-	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#streamClosed()
-	 */
-	public void consoleClosed() {
-	}
 }

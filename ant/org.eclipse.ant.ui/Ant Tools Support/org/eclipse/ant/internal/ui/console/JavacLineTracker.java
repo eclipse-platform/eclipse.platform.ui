@@ -160,10 +160,4 @@ public class JavacLineTracker implements IConsoleLineTracker {
 		fConsole = null;
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#streamClosed()
-	 */
-	public void consoleClosed() {
-	}
-
 }
