@@ -12,11 +12,11 @@ package org.eclipse.core.internal.plugins;
 
 import java.net.URL;
 import org.eclipse.core.internal.model.RegistryLoader;
-import org.eclipse.core.internal.plugins.events.PluginEventDispatcher;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.Factory;
 import org.eclipse.core.runtime.model.PluginRegistryModel;
-import org.osgi.framework.*;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 
 public class InternalPlatform {
 	private static IPluginRegistry registry = null;
@@ -24,15 +24,11 @@ public class InternalPlatform {
 	public static IPluginRegistry getPluginRegistry() {
 		if (registry == null) {
 			registry = new PluginRegistry();
-			RegistryAdapters.registerFactories();
 		}
 		return registry;
 	}
-	public static void addPluginListener(IPluginListener pluginListener) {
-		PluginEventDispatcher.getInstance().addListener(pluginListener);
-	}
-	public static void removePluginListener(IPluginListener pluginListener) {
-		PluginEventDispatcher.getInstance().removeListener(pluginListener);
+	public static IPluginDescriptor getPluginDescriptor(String pluginId) {
+		return getPluginRegistry().getPluginDescriptor(pluginId);
 	}
 	public static void installPlugins(URL[] installURLs) throws CoreException {
 		String message = Policy.bind("platform.errorInstalling"); //$NON-NLS-1$

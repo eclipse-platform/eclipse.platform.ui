@@ -13,11 +13,16 @@ package org.eclipse.core.internal.plugins;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.eclipse.core.internal.registry.Extension;
-import org.eclipse.core.internal.registry.ExtensionPoint;
+
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.registry.IExtensionRegistry;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.osgi.framework.Bundle;
 
 //TODO 1: this class must be made thread safe (query methods must be sync'd as well)
@@ -27,52 +32,40 @@ public class PluginRegistry implements IPluginRegistry {
 
 	private HashMap descriptors = new HashMap();
 
-	public IExtensionRegistry getExtensionRegistry() {
-		return extRegistry;
-	}
 	public PluginRegistry() {
 		extRegistry = InternalPlatform.getDefault().getRegistry();
 	}
 
 	public IConfigurationElement[] getConfigurationElementsFor(String uniqueId) {
-		return Utils.convertConfigurationElements(extRegistry.getConfigurationElementsFor(uniqueId));
+		return extRegistry.getConfigurationElementsFor(uniqueId);
 	}
 
 	public IConfigurationElement[] getConfigurationElementsFor(String pluginId, String pointId) {
-		return Utils.convertConfigurationElements(extRegistry.getConfigurationElementsFor(pluginId, pointId));
+		return extRegistry.getConfigurationElementsFor(pluginId, pointId);
 	}
 
 	public IConfigurationElement[] getConfigurationElementsFor(String pluginId, String pointId, String extensionId) {
-		return Utils.convertConfigurationElements(extRegistry.getConfigurationElementsFor(pluginId, pointId, extensionId));
+		return extRegistry.getConfigurationElementsFor(pluginId, pointId, extensionId);
 	}
 
 	public IExtension getExtension(String xptUniqueId, String extUniqueId) {
-		Extension extModel = (Extension) extRegistry.getExtension(xptUniqueId, extUniqueId);
-		if (extModel == null)
-			return null;
-		return (IExtension) extModel.getAdapter(org.eclipse.core.internal.plugins.Extension.class);
+		return extRegistry.getExtension(xptUniqueId, extUniqueId);
 	}
 
 	public IExtension getExtension(String pluginId, String xptSimpleId, String extId) {
-		Extension extModel = (Extension) extRegistry.getExtension(pluginId, xptSimpleId, extId);
-		if (extModel == null)
-			return null;
-		return (IExtension) extModel.getAdapter(org.eclipse.core.internal.plugins.Extension.class);
+		return extRegistry.getExtension(pluginId, xptSimpleId, extId);
 	}
 
 	public IExtensionPoint getExtensionPoint(String xptUniqueId) {
-		return (IExtensionPoint) ((ExtensionPoint) extRegistry.getExtensionPoint(xptUniqueId)).getAdapter(org.eclipse.core.internal.plugins.ExtensionPoint.class);
+		return extRegistry.getExtensionPoint(xptUniqueId);
 	}
 
 	public IExtensionPoint getExtensionPoint(String plugin, String xpt) {
-		ExtensionPoint extPoint = ((ExtensionPoint) extRegistry.getExtensionPoint(plugin, xpt));
-		if (extPoint == null)
-			return null;
-		return (IExtensionPoint) extPoint.getAdapter(org.eclipse.core.internal.plugins.ExtensionPoint.class);
+		return extRegistry.getExtensionPoint(plugin, xpt);
 	}
 
 	public IExtensionPoint[] getExtensionPoints() {
-		return Utils.convertExtensionPoints(extRegistry.getExtensionPoints());
+		return extRegistry.getExtensionPoints();
 	}
 
 	public synchronized IPluginDescriptor getPluginDescriptor(String plugin) {

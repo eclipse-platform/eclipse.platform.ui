@@ -3,7 +3,10 @@
 	<classpathentry kind="src" path="src-boot"/>
 	<classpathentry kind="src" path="src-runtime"/>
 	<classpathentry kind="src" path="src-model"/>
-	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry exported="true" kind="src" path="/org.eclipse.osgi.util"/>
+	<classpathentry exported="true" kind="src" path="/org.eclipse.osgi"/>
+	<classpathentry kind="src" path="/org.eclipse.update.configurator"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="src" path="/org.eclipse.core.runtime"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

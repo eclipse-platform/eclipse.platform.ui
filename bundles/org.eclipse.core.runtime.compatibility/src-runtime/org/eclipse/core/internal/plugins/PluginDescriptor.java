@@ -25,7 +25,6 @@ import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.compatibility.PluginActivator;
 import org.osgi.framework.*;
 
 public class PluginDescriptor implements IPluginDescriptor {
@@ -39,54 +38,19 @@ public class PluginDescriptor implements IPluginDescriptor {
 	private boolean bundleNotFound = false; // marker to prevent unnecessary lookups
 	private Object[] cachedClasspath = null; // cached value of class loader's classpath
 	private org.osgi.framework.Bundle bundleOsgi;
-	private PluginActivator activator;
-
+	
 	static final String PLUGIN_URL = PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + PlatformURLPluginConnection.PLUGIN + "/"; //$NON-NLS-1$ //$NON-NLS-2$
+
 	// constants
 	static final String VERSION_SEPARATOR = "_"; //$NON-NLS-1$
+
 	private static final String DEFAULT_BUNDLE_NAME = "plugin"; //$NON-NLS-1$
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
-	// Places to look for library files 
-	private static String[] WS_JAR_VARIANTS = buildWSVariants();
-	private static String[] OS_JAR_VARIANTS = buildOSVariants();
-	private static String[] NL_JAR_VARIANTS = buildNLVariants(BootLoader.getNL());
-	private static String[] JAR_VARIANTS = buildVanillaVariants();
+
 	private PluginClassLoader classLoader;
 
-	private static String[] buildWSVariants() {
-		ArrayList result = new ArrayList();
-		result.add("ws/" + BootLoader.getWS()); //$NON-NLS-1$
-		result.add(""); //$NON-NLS-1$
-		return (String[]) result.toArray(new String[result.size()]);
-	}
-	private static String[] buildOSVariants() {
-		ArrayList result = new ArrayList();
-		result.add("os/" + BootLoader.getOS() + "/" + BootLoader.getOSArch()); //$NON-NLS-1$ //$NON-NLS-2$
-		result.add("os/" + BootLoader.getOS()); //$NON-NLS-1$
-		result.add(""); //$NON-NLS-1$
-		return (String[]) result.toArray(new String[result.size()]);
-	}
-	private static String[] buildNLVariants(String nl) {
-		ArrayList result = new ArrayList();
-		IPath base = new Path("nl"); //$NON-NLS-1$
-		IPath path = new Path(nl.replace('_', '/'));
-		while (path.segmentCount() > 0) {
-			result.add(base.append(path).toString());
-			// for backwards compatibility only, don't replace the slashes
-			if (path.segmentCount() > 1)
-				result.add(base.append(path.toString().replace('/', '_')).toString());
-			path = path.removeLastSegments(1);
-		}
-
-		return (String[]) result.toArray(new String[result.size()]);
-	}
-	private static String[] buildVanillaVariants() {
-		return new String[]{""}; //$NON-NLS-1$
-	}
-
 	synchronized public void doPluginDeactivation() {
-		pluginObject.setPluginActivator(null);
 		pluginObject = null;
 		active = false;
 		activePending = false;
@@ -122,29 +86,20 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 * @see IPluginDescriptor
 	 */
 	public IExtensionPoint getExtensionPoint(String extensionPointId) {
-		org.eclipse.core.internal.registry.ExtensionPoint xpt = ((org.eclipse.core.internal.registry.ExtensionPoint) org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getRegistry().getExtensionPoint(getId(), extensionPointId));
-		if (xpt == null)
-			return null;
-		return (IExtensionPoint) xpt.getAdapter(org.eclipse.core.internal.plugins.ExtensionPoint.class);
+		return InternalPlatform.getDefault().getRegistry().getExtensionPoint(getId(), extensionPointId);
 	}
 	/**
 	 * @see IPluginDescriptor
 	 */
 	public IExtensionPoint[] getExtensionPoints() {
-		org.eclipse.core.runtime.registry.IExtensionPoint[] xpts = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getRegistry().getExtensionPoints(getId());
-		if (xpts.length == 0)
-			return new IExtensionPoint[0];
-		return Utils.convertExtensionPoints(xpts);
+		return InternalPlatform.getDefault().getRegistry().getExtensionPoints(getId());
 	}
 
 	/**
 	 * @see IPluginDescriptor
 	 */
 	public IExtension[] getExtensions() {
-		org.eclipse.core.runtime.registry.IExtension[] exts = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getRegistry().getExtensions(getId());
-		if (exts.length == 0)
-			return new IExtension[0];
-		return Utils.convertExtensions(exts);
+		return org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getRegistry().getExtensions(getId());
 	}
 
 	/**
@@ -460,189 +415,13 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 * @see IPluginDescriptor
 	 */
 	public final URL find(IPath path) {
-		return find(path, null);
+		return FindSupport.find(bundleOsgi, path);
 	}
 	/**
 	 * @see IPluginDescriptor
 	 */
 	public final URL find(IPath path, Map override) {
-		if (path == null)
-			return null;
-
-		URL install = getInstallURLInternal();
-		URL result = null;
-
-		// Check for the empty or root case first
-		if (path.isEmpty() || path.isRoot()) {
-			// Watch for the root case.  It will produce a new
-			// URL which is only the root directory (and not the
-			// root of this plugin).	
-			result = findInPlugin(Path.EMPTY);
-			if (result == null)
-				result = findInFragments(Path.EMPTY);
-			return result;
-		}
-
-		// Now check for paths without variable substitution
-		String first = path.segment(0);
-		if (first.charAt(0) != '$') {
-			result = findInPlugin(path);
-			if (result == null)
-				result = findInFragments(path);
-			return result;
-		}
-
-		// Worry about variable substitution
-		IPath rest = path.removeFirstSegments(1);
-		if (first.equalsIgnoreCase("$nl$")) //$NON-NLS-1$
-			return findNL(install, rest, override);
-		if (first.equalsIgnoreCase("$os$")) //$NON-NLS-1$
-			return findOS(install, rest, override);
-		if (first.equalsIgnoreCase("$ws$")) //$NON-NLS-1$
-			return findWS(install, rest, override);
-		if (first.equalsIgnoreCase("$files$")) //$NON-NLS-1$
-			return null;
-
-		return null;
-	}
-
-	private URL findOS(URL install, IPath path, Map override) {
-		String os = null;
-		if (override != null)
-			try {
-				// check for override
-				os = (String) override.get("$os$"); //$NON-NLS-1$
-			} catch (ClassCastException e) {
-				// just in case
-			}
-		if (os == null)
-			// use default
-			os = BootLoader.getOS();
-		if (os.length() == 0)
-			return null;
-
-		// Now do the same for osarch
-		String osArch = null;
-		if (override != null)
-			try {
-				// check for override
-				osArch = (String) override.get("$arch$"); //$NON-NLS-1$
-			} catch (ClassCastException e) {
-				// just in case
-			}
-		if (osArch == null)
-			// use default
-			osArch = BootLoader.getOSArch();
-		if (osArch.length() == 0)
-			return null;
-
-		URL result = null;
-		IPath base = new Path("os").append(os).append(osArch); //$NON-NLS-1$
-		// Keep doing this until all you have left is "os" as a path
-		while (base.segmentCount() != 1) {
-			IPath filePath = base.append(path);
-			result = findInPlugin(filePath);
-			if (result != null)
-				return result;
-			result = findInFragments(filePath);
-			if (result != null)
-				return result;
-			base = base.removeLastSegments(1);
-		}
-		// If we get to this point, we haven't found it yet.
-		// Look in the plugin and fragment root directories
-		result = findInPlugin(path);
-		if (result != null)
-			return result;
-		return findInFragments(path);
-	}
-
-	private URL findWS(URL install, IPath path, Map override) {
-		String ws = null;
-		if (override != null)
-			try {
-				// check for override
-				ws = (String) override.get("$ws$"); //$NON-NLS-1$
-			} catch (ClassCastException e) {
-				// just in case
-			}
-		if (ws == null)
-			// use default
-			ws = BootLoader.getWS();
-		IPath filePath = new Path("ws").append(ws).append(path); //$NON-NLS-1$
-		// We know that there is only one segment to the ws path
-		// e.g. ws/win32	
-		URL result = findInPlugin(filePath);
-		if (result != null)
-			return result;
-		result = findInFragments(filePath);
-		if (result != null)
-			return result;
-		// If we get to this point, we haven't found it yet.
-		// Look in the plugin and fragment root directories
-		result = findInPlugin(path);
-		if (result != null)
-			return result;
-		return findInFragments(path);
-	}
-
-	private URL findNL(URL install, IPath path, Map override) {
-		String nl = null;
-		String[] nlVariants = null;
-		if (override != null)
-			try {
-				// check for override
-				nl = (String) override.get("$nl$"); //$NON-NLS-1$
-			} catch (ClassCastException e) {
-				// just in case
-			}
-		nlVariants = nl == null ? NL_JAR_VARIANTS : buildNLVariants(nl);
-		if (nl != null && nl.length() == 0)
-			return null;
-
-		URL result = null;
-		for (int i = 0; i < nlVariants.length; i++) {
-			IPath filePath = new Path(nlVariants[i]).append(path);
-			result = findInPlugin(filePath);
-			if (result != null)
-				return result;
-			result = findInFragments(filePath);
-			if (result != null)
-				return result;
-		}
-		// If we get to this point, we haven't found it yet.
-		// Look in the plugin and fragment root directories
-		result = findInPlugin(path);
-		if (result != null)
-			return result;
-		return findInFragments(path);
-	}
-
-	private URL findInPlugin(IPath filePath) {
-		try {
-			return bundleOsgi.getEntry(filePath.toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	private URL findInFragments(IPath filePath) {
-		Bundle[] fragments = bundleOsgi.getFragments();
-		if (fragments == null)
-			return null;
-
-		URL fileURL = null;
-		int i = 0;
-		while (i < fragments.length && fileURL == null) {
-			try {
-				fileURL = fragments[i].getEntry(filePath.toString());
-			} catch (IOException e) {
-				//ignore
-			}
-			i++;
-		}
-		return fileURL;
+		return FindSupport.find(bundleOsgi, path, override);
 	}
 
 	/**
@@ -687,7 +466,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 			} finally {
 				pluginActivationExit(errorExit);
 			}	
-	}
+}
 
 	private String getPluginClass() {
 		return (String) bundleOsgi.getHeaders().get("Plugin-class");
@@ -732,50 +511,12 @@ public class PluginDescriptor implements IPluginDescriptor {
 			throwException(errorMsg, e);
 		}
 	}
-	//XXX Consider removing this method - no known clients
-	public void start() throws CoreException {
-		// run startup()
-		final String message = Policy.bind("plugin.startupProblems", getId()); //$NON-NLS-1$
-		final MultiStatus multiStatus = new MultiStatus(Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, null);
-
-		if (!multiStatus.isOK())
-			throw new CoreException(multiStatus);
-
-		ISafeRunnable code = new ISafeRunnable() {
-			public void run() throws Exception {
-				pluginObject.startup();
-			}
-			public void handleException(Throwable e) {
-				multiStatus.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, e));
-				try {
-					pluginObject.shutdown();
-				} catch (Exception ex) {
-					// Ignore exceptions during shutdown. Since startup failed we are probably
-					// in a weird state anyway.
-				}
-			}
-		};
-		InternalPlatform.getDefault().run(code);
-	}
 
 	public PluginDescriptor(org.osgi.framework.Bundle b) {
 		bundleOsgi = b;
+		if( (b.getState() & Bundle.ACTIVE) != 0 )
+			active = true;
 	}
-
-	/**
-	 * @param activator
-	 */
-	public void setPluginActivator(PluginActivator activator) {
-		this.activator = activator;
-	}
-
-	/**
-	 * @return
-	 */
-	public PluginActivator getActivator() {
-		return activator;
-	}
-
 	public boolean isLegacy() {
 		return new Boolean((String) bundleOsgi.getHeaders().get("Legacy")).booleanValue();
 	}
@@ -786,5 +527,9 @@ public class PluginDescriptor implements IPluginDescriptor {
 	/** @see PluginModel#getLocation() */
 	public String getLocation() {
 		return getInstallURLInternal().toExternalForm();
+	}
+	
+	public void setPlugin(Plugin object) { 
+		pluginObject = object;
 	}
 }

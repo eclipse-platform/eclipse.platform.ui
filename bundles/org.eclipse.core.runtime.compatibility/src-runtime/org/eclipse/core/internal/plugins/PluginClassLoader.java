@@ -17,8 +17,6 @@ import java.util.Vector;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.ILibrary;
-import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 
