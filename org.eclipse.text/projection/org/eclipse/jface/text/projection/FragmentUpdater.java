@@ -11,9 +11,11 @@
 
 package org.eclipse.jface.text.projection;
 
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 
 
@@ -96,5 +98,41 @@ public class FragmentUpdater extends DefaultPositionUpdater {
 			else
 				fPosition.offset += fReplaceLength;
 		}
+	}
+	
+	/**
+	 * Returns whether this updater considers any position affected by the given
+	 * document event. A position is affected if either the offset or the length
+	 * of the position is modified but the position is not just shifted.
+	 * 
+	 * @param event the event
+	 * @return <code>true</code> if there is any affected position,
+	 *         <code>false</code> otherwise
+	 */
+	public boolean affectsPositions(DocumentEvent event) {
+		IDocument document= event.getDocument();
+		try {
+			
+			int index= document.computeIndexInCategory(getCategory(), event.getOffset());
+			Position[] fragments= document.getPositions(getCategory());
+			
+			if (0 < index) {
+				Position fragment= fragments[index - 1];
+				if (fragment.overlapsWith(event.getOffset(), event.getLength()))
+					return true;
+				if (fragment.offset + fragment.length == event.getOffset())
+					return index == fragments.length;
+			}
+			
+			if (index < fragments.length) {
+				Position fragment= fragments[index];
+				return fragment.overlapsWith(event.getOffset(), event.getLength());
+			}
+		
+		} catch (BadLocationException x) {
+		} catch (BadPositionCategoryException x) {
+		}
+		
+		return false;		
 	}
 }

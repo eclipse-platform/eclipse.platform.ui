@@ -64,6 +64,8 @@ public class ProjectionDocument extends AbstractDocument {
 	private boolean fIsAutoExpanding= false;
 	/** The position updater for the segments */
 	private SegmentUpdater fSegmentUpdater;
+	/** The position updater for the fragments */
+	private FragmentUpdater fFragmentsUpdater;
 	/** The projection mapping */
 	private ProjectionMapping fMapping;
 	
@@ -72,9 +74,10 @@ public class ProjectionDocument extends AbstractDocument {
 	 *
 	 * @param masterDocument the master document
 	 * @param fragmentsCategory the document position category managing the master's fragments
+	 * @param fragmentUpdater the fragment position updater of the master document
 	 * @param segmentsCategory the document position category managing the segments
 	 */
-	public ProjectionDocument(IDocument masterDocument, String fragmentsCategory, String segmentsCategory) {
+	public ProjectionDocument(IDocument masterDocument, String fragmentsCategory, FragmentUpdater fragmentUpdater, String segmentsCategory) {
 		super();
 		
 		fMasterDocument= masterDocument;
@@ -82,6 +85,7 @@ public class ProjectionDocument extends AbstractDocument {
 			fMasterDocumentExtension= (IDocumentExtension) fMasterDocument;
 		
 		fFragmentsCategory= fragmentsCategory;
+		fFragmentsUpdater= fragmentUpdater;
 		fSegmentsCategory= segmentsCategory;
 		fMapping= new ProjectionMapping(masterDocument, fragmentsCategory, this, segmentsCategory);
 		
@@ -466,6 +470,9 @@ public class ProjectionDocument extends AbstractDocument {
 		IRegion imageRegion= fMapping.toExactImageRegion(new Region(masterEvent.getOffset(), masterEvent.getLength()));
 		if (imageRegion != null)
 			return new ProjectionDocumentEvent(this, imageRegion.getOffset(), imageRegion.getLength(), masterEvent.getText(), masterEvent);
+		else {
+			
+		}
 		return null;
 	}
 	
@@ -479,12 +486,9 @@ public class ProjectionDocument extends AbstractDocument {
 	 */
 	private boolean adaptProjectionToMasterChange(DocumentEvent masterEvent) throws BadLocationException {
 		if (!fIsUpdating || fIsAutoExpanding) {
-			IRegion region= new Region(masterEvent.getOffset(), masterEvent.getLength());
-			IRegion exactImage= fMapping.toExactImageRegion(region);
-			IRegion image= fMapping.toImageRegion(region);
-			if (exactImage == null && image != null) {
+			if (fFragmentsUpdater.affectsPositions(masterEvent)) {
 				addMasterDocumentRange(masterEvent.getOffset(), masterEvent.getLength());
-				return true;
+				return true;				
 			}
 		}
 		return false;

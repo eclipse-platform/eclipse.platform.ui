@@ -136,9 +136,10 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 				return;
 			}
 			
-			if (myStart <= yoursStart)
-				fPosition.length += fReplaceLength;
-			else { // yoursStart < myStart
+			if (myStart <= yoursStart) {
+				if (yoursStart < myEnd || fLength == 0)
+					fPosition.length += fReplaceLength;
+			} else { // yoursStart < myStart
 				if (isAutoExpanding) {
 					fPosition.offset= yoursStart;
 					fPosition.length += (myStart - yoursStart + fReplaceLength);
