@@ -103,7 +103,7 @@ public class KnownHosts {
 			w.write(Character.LINE_SEPARATOR);
 			w.write(hostname + " " + key_bits.toString(10) + " " + e.toString(10) + " " + n.toString(10)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			w.close();
-			String message = Policy.bind("Client.addedHostKey", hostname); //$NON-NLS-1$
+			String message = Policy.bind("Client.addedHostKey", new String[] {hostname, defaultFilename()}); //$NON-NLS-1$
 			IStatus status = new Status(IStatus.INFO, SSHPlugin.ID, IStatus.OK, message, null);
 			SSHPlugin.getPlugin().getLog().log(status);
 		} catch (IOException ex) {
