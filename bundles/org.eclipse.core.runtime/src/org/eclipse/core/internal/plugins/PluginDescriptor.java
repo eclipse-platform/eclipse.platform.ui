@@ -796,13 +796,13 @@ private boolean pluginActivationEnter() throws CoreException {
 	return true;
 }
 private void pluginActivationExit(boolean errorExit) {
-	// we are done with with activation
-	activePending = false;
 	if (errorExit) {
 		active = false;
 		deactivated = true;
 	} else
 		active = true;
+	// we are done with the activation
+	activePending = false;
 }
 private String getFragmentLocation(PluginFragmentModel fragment) {
 	if (usePlatformURLs)
