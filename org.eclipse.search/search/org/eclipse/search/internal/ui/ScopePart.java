@@ -353,11 +353,19 @@ public class ScopePart {
 				setSelectedScope(WORKSPACE_SCOPE);
 			return false;
 		} else {
-			// test if selected working set has been removed
-			if (!Arrays.asList(PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets()).contains(fWorkingSets)) {
-				fWorkingSetText.setText(""); //$NON-NLS-1$
-				fWorkingSets= null;
-				updateSearchPageContainerActionPerformedEnablement();
+			if (fWorkingSets != null) {
+				// test if selected working set has been removed
+				int i= 0;
+				while (i < fWorkingSets.length) {
+					if (PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(fWorkingSets[i].getName()) == null)
+						break;
+					i++;	
+				}
+				if (i < fWorkingSets.length) {
+					fWorkingSetText.setText(""); //$NON-NLS-1$
+					fWorkingSets= null;
+					updateSearchPageContainerActionPerformedEnablement();
+				}
 			}
 		}
 		return false;
