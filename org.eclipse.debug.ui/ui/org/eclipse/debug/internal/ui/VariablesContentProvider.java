@@ -11,6 +11,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -36,19 +37,28 @@ public class VariablesContentProvider extends BasicContentProvider implements ID
 	 * @see BasicContentProvider#doGetChildren(Object)
 	 */
 	protected Object[] doGetChildren(Object parent) {
-		Object[] children= null;
-		try {
-			if (parent instanceof IStackFrame) {
-				children = ((IStackFrame)parent).getVariables();
-			} else if (parent instanceof IVariable) {
-				children = ((IVariable)parent).getValue().getVariables();
+		if (parent instanceof IDebugElement) {
+			IDebugElement de= (IDebugElement)parent;
+			Object[] children= null;
+			try {
+				int elementType= de.getElementType();
+				if (elementType == de.STACK_FRAME) {
+					IStackFrame sf= (IStackFrame)parent;
+					if (sf.isSuspended()) {
+						children = sf.getVariables();
+					}
+				} else if (elementType == de.VARIABLE) {
+					children = ((IVariable)parent).getValue().getVariables();
+				}
+				if (children != null) {
+					for (int i = 0; i < children.length; i++) {
+						fParentCache.put(children[i], parent);
+					}
+					return children;
+				}
+			} catch (DebugException e) {
+				DebugUIPlugin.logError(e);
 			}
-			for (int i = 0; i < children.length; i++) {
-				fParentCache.put(children[i], parent);
-			}
-			return children;
-		} catch (DebugException de) {
-			DebugUIPlugin.logError(de);
 		}
 		return new Object[0];
 	}
