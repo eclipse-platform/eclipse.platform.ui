@@ -54,6 +54,7 @@ public NewWizardAction() {
 	setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_DISABLED));
 	setToolTipText(WorkbenchMessages.getString("NewWizardAction.toolTip"));	 //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
+	setActionDefinitionId("org.eclipse.ui.newWizard"); //$NON-NLS-1$
 }
 /**
  * Returns the id of the category of wizards to show

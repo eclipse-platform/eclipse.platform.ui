@@ -79,6 +79,11 @@
    <extension
          point="org.eclipse.ui.actionDefinitions">
       <actionDefinition
+            name="%ActionDefinition.newWizard.name"
+            description="%ActionDefinition.newWizard.description"
+            id="org.eclipse.ui.newWizard">
+      </actionDefinition>
+      <actionDefinition
             name="%ActionDefinition.close.name"
             description="%ActionDefinition.close.description"
             id="org.eclipse.ui.file.close">
@@ -644,6 +649,10 @@
       <acceleratorSet
             scopeId="org.eclipse.ui.globalScope"
             configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+         <accelerator
+               key="Ctrl+N"
+               id="org.eclipse.ui.newWizard">
+         </accelerator>
          <accelerator
                key="Ctrl+F4"
                id="org.eclipse.ui.file.close">

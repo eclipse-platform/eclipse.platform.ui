@@ -685,6 +685,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 
 		newWizardAction = new NewWizardAction();
 		// images for this action are set in its constructor
+		keyBindingService.registerGlobalAction(newWizardAction);
 
 		newWizardDropDownAction = new NewWizardDropDownAction(workbench, newWizardAction);
 		newWizardDropDownAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ));
