@@ -4,11 +4,13 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
 import java.util.*;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * This manager is used to populate a popup menu manager with actions
@@ -47,8 +49,7 @@ private List computeCombinedOrder(Class inputClass) {
  * provided viewer into the provided popup menu.
  */
 public boolean contributeObjectActions(IWorkbenchPart part, IMenuManager popupMenu, 
-	ISelectionProvider selProv) 
-{
+	ISelectionProvider selProv) {
 	// Get a structured selection.	
 	ISelection selection = selProv.getSelection();
 	if ((selection == null) || !(selection instanceof IStructuredSelection))
@@ -56,39 +57,55 @@ public boolean contributeObjectActions(IWorkbenchPart part, IMenuManager popupMe
 	IStructuredSelection ssel = (IStructuredSelection) selection;
 		
 	// Convert the selection into an element vector.
-	List result = new ArrayList();
+	List elements = new ArrayList();
 	Iterator enum = ssel.iterator();
 	while (enum.hasNext()) {
 		Object obj = enum.next();
-		result.add(obj);
+		elements.add(obj);
 	}
 
 	// Calculate the common class.
-	Class commonClass = getCommonClass(result);
+	Class commonClass = getCommonClass(elements);
+	
 	if (commonClass == null)
 		return false;
-
-	// Get the contribution list.
-	result = super.getContributors(commonClass);
-	if (result == null)
-		return false;
+	
+	
+	//Get the resource class. It will be null if any of the
+	//elements are resources themselves or do not adapt to
+	//IResource.
+	
+	Class resourceClass = getCommonResourceClass(elements);
+	
+	List contributors = getContributors(commonClass);
+	
+	if (contributors == null)
+		contributors = new ArrayList();
+	
+	//If there is a resource class add it in
+	if(resourceClass != null){
+		List resourceContributors = getContributors(resourceClass);
+		if(resourceContributors != null)
+			contributors.addAll(resourceContributors);
+	}	
 
 	// Do the contributions.  Add menus first, then actions
 	boolean actualContributions = false;
-	for (int i = 0; i < result.size(); i++) {
-		IObjectActionContributor contributor = (IObjectActionContributor) result.get(i);
+	for (int i = 0; i < contributors.size(); i++) {
+		IObjectActionContributor contributor = (IObjectActionContributor) contributors.get(i);
 		if (!isApplicableTo(ssel, contributor)) continue;
 		if (contributor.contributeObjectMenus(popupMenu, selProv))
 			actualContributions = true;
 	}
-	for (int i = 0; i < result.size(); i++) {
-		IObjectActionContributor contributor = (IObjectActionContributor) result.get(i);
+	for (int i = 0; i < contributors.size(); i++) {
+		IObjectActionContributor contributor = (IObjectActionContributor) contributors.get(i);
 		if (!isApplicableTo(ssel, contributor)) continue;
 		if (contributor.contributeObjectActions(part, popupMenu, selProv))
 			actualContributions = true;
 	}
 	return actualContributions;
 }
+	
 /**
  * Returns the common denominator class for
  * two input classes.
@@ -131,6 +148,8 @@ private Class getCommonClass(List objects) {
 	}
 	return commonClass;
 }
+
+
 /**
  * Returns the shared instance of this manager.
  */
@@ -147,4 +166,69 @@ private void loadContributors() {
 	ObjectActionContributorReader reader = new ObjectActionContributorReader();
 	reader.readPopupContributors(this);
 }
+
+/**
+ * Returns all the contributors registered against
+ * the given object class and the resource class that
+ * it has an Adaptable for.
+ */
+protected List getContributors(Class objectClass, Class resourceClass) {
+	
+	// If there's a cache look for the object class.
+	if (lookup!=null) {
+		List result = (ArrayList) lookup.get(objectClass);
+		if (result != null)
+		   return result;
+	}
+	
+	// Class not found.  Build the result set for classes and interfaces.
+	List result = addContributorsFor(objectClass);
+	
+	
+	//Get the resource actions. 
+	
+	result.addAll(addContributorsFor(resourceClass));
+	
+	if (result.size()==0) 
+		return null;
+
+	// Store the result set in the cache.
+	if (lookup==null)
+	   lookup = new HashMap();
+	lookup.put(objectClass, result);
+	
+	return result;
+}
+	
+
+/**
+ * Returns the common denominator resource class for the given
+ * collection of objects.
+ * Do not return a resource class if the objects are resources
+ * themselves so as to prevent double registration of actions.
+ */
+private Class getCommonResourceClass(List objects) {
+	if (objects == null || objects.size()==0)
+		return null;
+		
+	List testList = new ArrayList();
+	
+	for (int i = 0; i < objects.size(); i++) {
+		Object object = objects.get(i);
+		//Leave the resources out of this
+		if(!(object instanceof IResource) && object instanceof IAdaptable){
+			Object resource = ((IAdaptable) object).getAdapter(IResource.class);
+			if(resource == null)
+				return null;
+			else
+				testList.add(resource);
+		}
+		else
+			return null;
+	}
+		
+	return getCommonClass(testList);
+}
+
+
 }
