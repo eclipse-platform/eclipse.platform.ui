@@ -780,4 +780,14 @@
     </page>    
 </extension>
 
+<extension point="org.eclipse.ui.fontDefinitions"> 
+   <fontDefinition 
+		label="%ConsoleFontDefinition.label" 
+		id="org.eclipse.debug.ui.ConsoleFont" 
+		defaultsTo="org.eclipse.jface.textfont">
+        <description>
+			%ConsoleFontDefinition.description
+		</description>
+	</fontDefinition> 
+   </extension> 
 </plugin>

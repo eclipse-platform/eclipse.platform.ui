@@ -11,8 +11,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.console.IConsoleColorProvider;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -39,19 +38,12 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 public class ConsoleViewer extends TextViewer implements IPropertyChangeListener, MouseTrackListener, MouseMoveListener, MouseListener, PaintListener, LineStyleListener {
-
-	/**
-	 * Font used in the underlying text widget
-	 */
-	protected Font fFont;
 	
 	/**
 	 * Hand cursor
@@ -120,10 +112,9 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		getTextWidget().setDoubleClickEnabled(true);
 		
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
-		IPreferenceStore pstore= DebugUIPlugin.getDefault().getPreferenceStore();
-		FontData data= PreferenceConverter.getFontData(pstore, IDebugPreferenceConstants.CONSOLE_FONT);
-		fFont= new Font(getControl().getDisplay(), data);
-		getTextWidget().setFont(fFont);
+		JFaceResources.getFontRegistry().addListener(this);
+
+		getTextWidget().setFont(JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT));
 		getTextWidget().addMouseTrackListener(this);
 		getTextWidget().addPaintListener(this);
 		getTextWidget().addLineStyleListener(this);
@@ -215,12 +206,8 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		if (!propertyName.equals(IDebugPreferenceConstants.CONSOLE_FONT)) {
 			return;
 		}
-		IPreferenceStore pstore= DebugUIPlugin.getDefault().getPreferenceStore();
-		FontData fontData= PreferenceConverter.getFontData(pstore, IDebugPreferenceConstants.CONSOLE_FONT);
-		Font temp= fFont;
-		fFont= new Font(getControl().getDisplay(), fontData);
-		getTextWidget().setFont(fFont);
-		temp.dispose();
+		
+		getTextWidget().setFont(JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT));
 	}
 	
 	/**
@@ -239,7 +226,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 			fTextCursor.dispose();
 		}
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
-		fFont.dispose();
+		JFaceResources.getFontRegistry().removeListener(this);
 	}
 	
 	/**
