@@ -239,7 +239,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			updateCommandsAndContexts();
 		}
 	};
-				
+		
 	private IWindowListener windowListener = new IWindowListener() {
 		public void windowActivated(IWorkbenchWindow workbenchWindow) {
 			updateCommandsAndContexts();
@@ -353,11 +353,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		SortedMap commandHandlersById = new TreeMap();
 		commandHandlersById.putAll(getCommandHandlerService().getCommandHandlersById());
 		
-		if (activeWorkbenchPageCommandHandlerService != null)
-			commandHandlersById.putAll(activeWorkbenchPageCommandHandlerService.getCommandHandlersById());
+		if (this.activeWorkbenchPageCommandHandlerService != null)
+			commandHandlersById.putAll(this.activeWorkbenchPageCommandHandlerService.getCommandHandlersById());
 
-		if (activeWorkbenchPartCommandHandlerService != null)
-			commandHandlersById.putAll(activeWorkbenchPartCommandHandlerService.getCommandHandlersById());
+		if (this.activeWorkbenchPartCommandHandlerService != null)
+			commandHandlersById.putAll(this.activeWorkbenchPartCommandHandlerService.getCommandHandlersById());
 			
 		((CommandManager) getCommandManager()).setCommandHandlersById(commandHandlersById);
 
@@ -386,10 +386,10 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		SortedSet activeContextIds = new TreeSet();
 		activeContextIds.addAll(getContextActivationService().getActiveContextIds());
 		
-		if (activeWorkbenchPageContextActivationService != null)
+		if (this.activeWorkbenchPageContextActivationService != null)
 			activeContextIds.addAll(this.activeWorkbenchPageContextActivationService.getActiveContextIds());
 
-		if (activeWorkbenchPartContextActivationService != null)
+		if (this.activeWorkbenchPartContextActivationService != null)
 			activeContextIds.addAll(this.activeWorkbenchPartContextActivationService.getActiveContextIds());
 			
 		((ContextManager) getContextManager()).setActiveContextIds(activeContextIds);
