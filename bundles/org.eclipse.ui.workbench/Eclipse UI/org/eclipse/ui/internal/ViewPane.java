@@ -248,6 +248,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		} else {
 			//isvToolBar.setLayoutData(new GridData(GridData.FILL_BOTH));
 		}
+		
+		isvToolBar.addListener(SWT.Activate, this);
  	}
 	
     public void dispose() {
