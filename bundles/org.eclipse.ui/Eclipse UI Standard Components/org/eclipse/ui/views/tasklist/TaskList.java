@@ -1160,7 +1160,7 @@ void updateTitle() {
 		setTitle(viewName);
 	}
 	else {
-		String title = TaskListMessages.format("TaskList.titleFmt", new Object[] { viewName, summary });
+		String title = TaskListMessages.format("TaskList.titleFmt", new Object[] { viewName, summary }); //$NON-NLS-1$
 		setTitle(title);
 	}
 }
