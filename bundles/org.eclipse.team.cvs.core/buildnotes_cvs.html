@@ -154,6 +154,30 @@ ul
 <h1 style=""> </h1>
 
 <h1 style="">Eclipse Platform Build Notes &#8211; CVS Support</h1>
+<p class="MsoNormal">CVS build I20021008 Oct 8, 2002</p>
+               
+<p class="MsoNormal">Build submission for Integration Build 20021008</p>
+               
+<h2>What's new in this build</h2>
+ 
+<p>Several improvements related to support of CVS modules have been added. 
+<ul>
+<li>"Checkout Into..."
+can be used from the CVS Repositories view to check out a folder into an existing project.</li>
+<li>Folders, such as those loaded using "Checkout Into...", can be disconnected from CVS control
+from the folder's CVS properties page, allowing the folder to be removed from a local project 
+without resulting in outgoing deletions.</li>
+<li>A project shared with CVS can now be configured to not fetch absent directories on update
+(i.e. previously, "cvs update" was always performed with "-d". Now a project can be configured
+to perform updates without "-d").
+</ul>
+</p>
+
+<p>Also, "Tag with Existing" can now be performed in the resource history view.</p>
+<p>Numerous other bugs are fixed. As always, you can check in Bugzilla.<br>
+ </p>
+ 
+<h1 style="">Eclipse Platform Build Notes &#8211; CVS Support</h1>
 <p class="MsoNormal">CVS build I20020917 Sept 17, 2002</p>
                
 <p class="MsoNormal">Build submission for Integration Build 20020917</p>
