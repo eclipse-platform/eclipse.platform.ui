@@ -251,4 +251,14 @@ public class LocalFolder extends LocalResource implements ICVSFolder {
 	public void unmanage() throws CVSException {
 		CVSProviderPlugin.getSynchronizer().deleteFolderSync(ioResource, new NullProgressMonitor());
 	}
+	
+	/*
+	 * @see ICVSResource#isIgnored()
+	 */
+	public boolean isIgnored() {
+		if(isCVSFolder()) {
+			return false;
+		}		
+		return super.isIgnored();
+	}
 }

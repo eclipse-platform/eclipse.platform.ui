@@ -100,20 +100,30 @@ public abstract class LocalResource implements ICVSResource {
 	 * @see ICVSResource#isIgnored()
 	 */
 	public boolean isIgnored() {
-		// check both the global patterns, the default ignores, and cvs ignore files				
+		// a managed resource is never ignored
+		if(isManaged()) {
+			return false;
+		}
+		
+		// initialize matcher with global ignores and basic CVS ignore patterns
 		IIgnoreInfo[] ignorePatterns = TeamPlugin.getManager().getGlobalIgnore();
-		FileNameMatcher matcher = new FileNameMatcher(SyncFileUtil.PREDEFINED_IGNORE_PATTERNS);
+		FileNameMatcher matcher = new FileNameMatcher(SyncFileUtil.BASIC_IGNORE_PATTERNS);
 		for (int i = 0; i < ignorePatterns.length; i++) {
 			IIgnoreInfo info = ignorePatterns[i];
 			if(info.getEnabled()) {
 				matcher.register(info.getPattern(), "true");
 			}
 		}
+		
+		// 1. check CVS default patterns and global ignores
 		boolean ignored = matcher.match(ioResource.getName());
+		
+		// 2. check .cvsignore file
 		if(!ignored) {
 			ignored = CVSProviderPlugin.getSynchronizer().isIgnored(ioResource);		
 		}
 		
+		// 3. check the parent
 		if(!ignored) {
 			ICVSFolder parent = getParent();
 			if(((LocalResource)parent).getLocalFile()==null) return false;

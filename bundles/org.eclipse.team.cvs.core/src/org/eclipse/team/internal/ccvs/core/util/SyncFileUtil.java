@@ -53,9 +53,11 @@ public class SyncFileUtil {
 	public static final String[] PREDEFINED_IGNORE_PATTERNS = {
 		"CVS", ".#*", "#*", ",*", "_$*", "*~", "*$", "*.a", "*.bak", "*.BAK",  //$NON-NLS-1$ 
 		"*.elc", "*.exe", "*.ln", "*.o", "*.obj", "*.olb", "*.old", "*.orig", "*.rej", "*.so", //$NON-NLS-1$ 
-		"*.Z", ".del-*", ".make.state", ".nse_depinfo", "core", "CVS", "CVS.adm", //$NON-NLS-1$ 
+		"*.Z", ".del-*", ".make.state", ".nse_depinfo", "CVS.adm", //$NON-NLS-1$ 
 		"cvslog.*", "RCS", "RCSLOG", "SCCS", "tags", "TAGS"}; //$NON-NLS-1$
-
+		
+	// file and folder patterns that are ignored by default by the CVS server on import.
+	public static final String[] BASIC_IGNORE_PATTERNS = {"CVS", ".#*"}; //$NON-NLS-1$
 
 	/**
 	 * Reads the CVS/Entry and CVS/Permissions files for the given folder. If the folder does not have a 
