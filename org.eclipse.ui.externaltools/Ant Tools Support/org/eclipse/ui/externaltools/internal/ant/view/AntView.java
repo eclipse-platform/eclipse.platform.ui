@@ -633,7 +633,9 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * viewer.
 	 */
 	public void activateSelectedTargets() {
-		setViewOrientation(VERTICAL_ORIENTATION);
+		if (sashForm.getMaximizedControl() != null) { //SINGLE ORIENTATION
+			setViewOrientation(VERTICAL_ORIENTATION);
+		}
 		TreeItem[] items = projectViewer.getTree().getSelection();
 		for (int i = 0; i < items.length; i++) {
 			Object data = items[i].getData();
