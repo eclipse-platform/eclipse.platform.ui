@@ -139,19 +139,22 @@ public class WorkbenchWindow
 		protected void layout(Composite composite, boolean flushCache) {
 			Rectangle clientArea = composite.getClientArea();
 
-			//Layout top seperator
-			Point sep1Size =
-				getSeperator1().computeSize(
-					SWT.DEFAULT,
-					SWT.DEFAULT,
-					flushCache);
-			getSeperator1().setBounds(
-				clientArea.x,
-				clientArea.y,
-				clientArea.width,
-				sep1Size.y);
-			clientArea.y += sep1Size.y;
-			clientArea.height -= sep1Size.y;
+			//Null on carbon
+			if(getSeperator1() != null){
+				//Layout top seperator
+				Point sep1Size =
+					getSeperator1().computeSize(
+						SWT.DEFAULT,
+						SWT.DEFAULT,
+						flushCache);
+				getSeperator1().setBounds(
+					clientArea.x,
+					clientArea.y,
+					clientArea.width,
+					sep1Size.y);
+				clientArea.y += sep1Size.y;
+				clientArea.height -= sep1Size.y;
+			}
 
 			int toolBarWidth = clientArea.width;
 			//Layout the progress indicator
