@@ -159,7 +159,7 @@ public class AntCorePreferences implements IAntCoreConstants {
 				defaultURLs.add(url);
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e);
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			}
