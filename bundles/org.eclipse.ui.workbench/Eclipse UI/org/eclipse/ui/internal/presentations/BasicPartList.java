@@ -81,6 +81,10 @@ public class BasicPartList extends AbstractTableInformationControl {
 
         public String getText(Object element) {
             IPresentablePart presentablePart = (IPresentablePart) element;
+            if (presentablePart.isDirty()) {
+                return DefaultTabItem.DIRTY_PREFIX + presentablePart.getName();
+            }
+            
             return presentablePart.getName();
         }
 
