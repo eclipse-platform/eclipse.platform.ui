@@ -3,7 +3,7 @@
 <!-- Eclipse Update Manager Plugin -->
 
 <plugin
-    id          = "org.eclipse.update.internal.ui"
+    id          = "org.eclipse.update"
     name        = "Eclipse Update Manager Plugin"
     version     = "1.0"
     vendor-name = "IBM"
