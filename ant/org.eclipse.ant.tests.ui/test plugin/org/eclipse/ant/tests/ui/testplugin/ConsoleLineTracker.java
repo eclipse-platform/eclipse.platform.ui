@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.debug.ui.console.IConsole;
-import org.eclipse.debug.ui.console.IConsoleLineTracker;
+import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
 import org.eclipse.jdt.internal.debug.core.model.ITimeoutListener;
 import org.eclipse.jdt.internal.debug.core.model.Timer;
 import org.eclipse.jface.text.BadLocationException;
@@ -25,11 +25,13 @@ import org.eclipse.jface.text.IRegion;
  * Simple console line tracker extension point that collects the lines
  * appended to the console. 
  */
-public class ConsoleLineTracker implements IConsoleLineTracker {
+public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	
 	private static IConsole console;
 	private static List lines= new ArrayList(); 
 	private static Timer timer= new Timer();
+	
+	private static boolean consoleClosed= false;
 	
 	private static ITimeoutListener timeoutListener= new ITimeoutListener() {
 		/* (non-Javadoc)
@@ -58,6 +60,7 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 		ConsoleLineTracker.console= c;
 		lines= new ArrayList();
 		timer.stop();
+		consoleClosed= false;
 	}
 
 	/**
@@ -105,18 +108,27 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 	}
 	
 	public static void waitForConsole() {
+		if (consoleClosed) {
+			return;
+		}
 		try {
 			synchronized (lines) {
-				lines.wait(2000);
+				lines.wait(20000);
 			}
 		} catch (InterruptedException ie) {
-			System.err.println("Interrupted waiting for console");
 		}
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#streamClosed()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.console.IConsoleLineTrackerExtension#consoleClosed()
 	 */
 	public void consoleClosed() {
+		consoleClosed= true;
+		if (timer.isStarted()) {
+			timer.stop();
+		}
+		synchronized (lines) {
+			lines.notifyAll();
+		}
 	}
 }
