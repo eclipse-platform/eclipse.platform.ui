@@ -210,6 +210,8 @@ public final class PaneFolder {
         // Initialize tab folder
         {
             tabFolder = new CTabFolder(parent, flags);
+            
+            tabFolder.setMRUVisible(true);
 
             // Create a proxy control to measure the title area of the tab folder
             titleAreaProxy = new Composite(tabFolder, SWT.NO_BACKGROUND);
