@@ -73,12 +73,10 @@ public void accept(IResourceDeltaVisitor visitor, int memberFlags) throws CoreEx
 	//recurse over children
 	for (int i = 0; i < children.length; i++) {
 		IResourceDelta childDelta = children[i];
-		IResource child = childDelta.getResource();
 		// quietly exclude team-private members unless explicitly included
 		if ((memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) != 0
-		     || !child.isTeamPrivateMember()) {
+		     || !((ResourceDelta)childDelta).isTeamPrivate())
 			childDelta.accept(visitor, memberFlags);
-		}
 	}
 }
 
@@ -206,7 +204,7 @@ public IResourceDelta[] getAffectedChildren(int kindMask, int memberFlags) {
 			continue;
 		}
 		if ((memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) == 0
-		    && children[i].getResource().isTeamPrivateMember()) {
+		    && ((ResourceDelta)children[i]).isTeamPrivate()) {
 			// child has is a team-private member which are not included
 			continue;
 		}
@@ -336,6 +334,18 @@ public IResource getResource() {
 public boolean hasAffectedChildren() {
 	return children.length > 0;
 }
+/**
+ * Returns true if this delta represents a team private member, and false
+ * otherwise.
+ */
+protected boolean isTeamPrivate() {
+	//use old info for removals, and new info for added or changed
+	if ((status & (REMOVED | REMOVED_PHANTOM)) != 0)
+		return ResourceInfo.isSet(oldInfo.getFlags(), ICoreConstants.M_TEAM_PRIVATE_MEMBER);
+	else
+		return ResourceInfo.isSet(newInfo.getFlags(), ICoreConstants.M_TEAM_PRIVATE_MEMBER);
+}
+	
 protected void setChildren(IResourceDelta[] children) {
 	this.children = children;
 }
@@ -473,6 +483,8 @@ public void writeDebugString(StringBuffer buffer) {
 		prev = true;
 	}
 	buffer.append("}"); //$NON-NLS-1$
+	if (isTeamPrivate())
+		buffer.append(" (team private)");
 }
 public void writeMarkerDebugString(StringBuffer buffer) {
 	buffer.append("["); //$NON-NLS-1$
