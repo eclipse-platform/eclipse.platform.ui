@@ -23,6 +23,7 @@ public abstract class NavigationLocation implements INavigationLocation {
 	
 	private IWorkbenchPage page;
 	private IEditorInput input;
+	private String text;
 	
 	/**
 	 * Constructs a NavigationLocation with its editor part.
@@ -30,6 +31,7 @@ public abstract class NavigationLocation implements INavigationLocation {
 	protected NavigationLocation(IEditorPart editorPart) {
 		this.page = editorPart.getSite().getPage();
 		this.input = editorPart.getEditorInput();
+		this.text = editorPart.getTitle();
 	}
 	/** 
 	 * Returns the part that the receiver holds the location for.
@@ -45,6 +47,13 @@ public abstract class NavigationLocation implements INavigationLocation {
 	 */
 	public Object getInput() {
 		return input;
+	}
+	/*
+	 * (non-Javadoc)
+	 * Method declared on INavigationLocation.
+	 */
+	public String getText() {
+		return text;
 	}
 	/*
 	 * (non-Javadoc)
@@ -67,4 +76,11 @@ public abstract class NavigationLocation implements INavigationLocation {
 	public void releaseState() {
 		input = null;
 	}	
+	/*
+	 * (non-Javadoc)
+	 * Method declared on INavigationLocation.
+	 */
+	public void setText(String text) {
+		this.text = text;
+	}
 }

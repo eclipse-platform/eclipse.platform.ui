@@ -9,17 +9,9 @@ Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
 package org.eclipse.ui;
-
-
-
-
 /**
  * 2.1 - WORK_IN_PROGRESS. Do not use.
  */
-
-
-
-
 /**
  * Represents the context marked for the user in the navigation history.
  * 
@@ -64,10 +56,26 @@ public interface INavigationLocation {
 	 * 	 * @return Object the input	 */
 	public Object getInput();
 	/**
-	 * Sets the location's input.
+	 * Returns the display name for this location.  This name is used in the
+	 * navigation history list.
 	 * 
-	 * Should not be called by clients.	 * @param input the editor input.	 */
+	 * @return String the display text
+	 */
+	public String getText();
+	/**
+	 * Sets the location's input.
+	 *
+	 * Should not be called by clients.
+	 * @param input the editor input.
+	 */
 	public void setInput(Object input);
+	/**
+	 * Sets the display name for this location.  This name is used in the
+	 * navigation history list. 
+	 *
+	 * @return String the display text
+	 */
+	public void setText(String text);
 	/**
 	 * The message <code>update</code> is sent to the active location before
 	 * another location becomes active.
