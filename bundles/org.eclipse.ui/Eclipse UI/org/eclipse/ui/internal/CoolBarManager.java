@@ -666,10 +666,10 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 					coolBar.setLocked(true);
 				}
 
-				coolBar.setRedraw(true);
 				if (changed) {
 					relayout();
 				}
+				coolBar.setRedraw(true);
 			}
 		}
 	}
