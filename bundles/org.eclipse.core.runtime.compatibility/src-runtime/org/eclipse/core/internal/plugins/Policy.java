@@ -12,6 +12,7 @@ package org.eclipse.core.internal.plugins;
 
 import java.text.MessageFormat;
 import java.util.*;
+import org.eclipse.core.runtime.*;
 
 public class Policy {
 	private static String bundleName = "org.eclipse.core.internal.plugins.messages"; //$NON-NLS-1$
@@ -47,6 +48,14 @@ public class Policy {
 
 	/**
 	 * Lookup the message with the given ID in this catalog and bind its
+	 * substitution locations with the given strings.
+	 */
+	public static String bind(String id, String binding1, String binding2) {
+		return bind(id, new String[] {binding1, binding2});
+	}
+
+	/**
+	 * Lookup the message with the given ID in this catalog and bind its
 	 * substitution locations with the given string values.
 	 */
 	public static String bind(String id, String[] bindings) {
@@ -63,6 +72,28 @@ public class Policy {
 		if (bindings == null)
 			return message;
 		return MessageFormat.format(message, bindings);
+	}
+
+	public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
+		if (monitor == null)
+			return new NullProgressMonitor();
+		return monitor;
+	}
+
+	public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks) {
+		if (monitor == null)
+			return new NullProgressMonitor();
+		if (monitor instanceof NullProgressMonitor)
+			return monitor;
+		return new SubProgressMonitor(monitor, ticks);
+	}
+
+	public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks, int style) {
+		if (monitor == null)
+			return new NullProgressMonitor();
+		if (monitor instanceof NullProgressMonitor)
+			return monitor;
+		return new SubProgressMonitor(monitor, ticks, style);
 	}
 
 	/**

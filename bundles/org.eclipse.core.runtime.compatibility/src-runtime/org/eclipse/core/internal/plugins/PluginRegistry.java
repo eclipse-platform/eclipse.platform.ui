@@ -175,6 +175,12 @@ public class PluginRegistry implements IPluginRegistry {
 		return (IPluginDescriptor[]) pds.toArray(result);
 	}
 
+	void logError(IStatus status) {
+		InternalPlatform.getDefault().log(status);
+		if (InternalPlatform.DEBUG)
+			System.out.println(status.getMessage());
+	}
+
 	public class RegistryListener implements BundleListener {
 		public void bundleChanged(BundleEvent event) {
 			if (descriptors == null)

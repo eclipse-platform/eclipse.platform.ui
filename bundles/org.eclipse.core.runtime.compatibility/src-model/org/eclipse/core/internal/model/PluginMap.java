@@ -24,6 +24,10 @@ public class PluginMap {
 	private int size;
 	private boolean replaceDuplicates;
 
+	public PluginMap(Map pluginModels) {
+		this(pluginModels, true, false);
+	}
+
 	public PluginMap(Map pluginModels, boolean preserveOrder, boolean replaceDuplicates) {
 		this.map = pluginModels;
 		this.preserveOrder = preserveOrder;
