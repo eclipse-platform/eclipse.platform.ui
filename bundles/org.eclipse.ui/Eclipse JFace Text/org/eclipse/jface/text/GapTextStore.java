@@ -237,7 +237,7 @@ public class GapTextStore implements ITextStore {
 	 * Returns the start index of the gap managed by this text store.
 	 * For internal use only.
 	 *
-	 * @returns the start index of the gap managed by this text store
+	 * @return the start index of the gap managed by this text store
 	 */
 	protected int getGapStartIndex() {
 		return fGapStart;
@@ -247,7 +247,7 @@ public class GapTextStore implements ITextStore {
 	 * Returns the end index of the gap managed by this text store.
 	 * For internal use only.
 	 *
-	 * @returns the end index of the gap managed by this text store
+	 * @return the end index of the gap managed by this text store
 	 */
 	protected int getGapEndIndex() {
 		return fGapEnd;

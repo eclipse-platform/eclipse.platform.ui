@@ -40,8 +40,7 @@ import org.eclipse.jface.text.ITextViewer;
  * will result in the information being displayed in a secondary
  * window.
  *
- * @see IContentAssistProposal
- * @see IAdditionalInfoPopup
+ * @see org.eclipse.jface.text.contentassist.ICompletionProposal
  */
 class CompletionProposalPopup implements IContentAssistListener {
 	
@@ -290,7 +289,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	}
 	
 	/**
-	 *Returns whether this popup is active, i.e. the propsal selector is visible.
+	 *Returns whether this popup is active. It is active if the propsal selector is visible.
 	 * @return <code>true</code> if this popup is active
 	 */
 	public boolean isActive() {

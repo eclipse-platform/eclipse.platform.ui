@@ -50,8 +50,8 @@ public class GotoLineAction extends TextEditorAction {
 
 	/**
 	 * Validates whether the text found in the input field of the
-	 * dialog forms a valid line number, i.e. one to which can be 
-	 * jumped.
+	 * dialog forms a valid line number. A number is valid if it is 
+	 * one to which can be jumped.
 	 */
 	class NumberValidator implements IInputValidator {
 		

@@ -12,8 +12,8 @@ Contributors:
 package org.eclipse.ui.texteditor;
 
 /**
- * Defines the definitions ids for the text editor actions, 
- * i.e. navigation, selection, and modification.
+ * Defines the definitions ids for the text editor actions. These actions are
+ * navigation, selection, and modification actions.
  * @since 2.0
  */
 public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefinitionIds {

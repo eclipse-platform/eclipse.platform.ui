@@ -776,7 +776,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	}
 	
 	/**
-	 * Sets the proposal popups' orientation
+	 * Sets the proposal popups' orientation.
 	 * The following values may be used:
 	 * <ul>
 	 *   <li>PROPOSAL_OVERLAY<p>
@@ -798,7 +798,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	}
 	
 	/**
-	 * Sets the context information popup's orientation
+	 * Sets the context information popup's orientation.
 	 * The following values may be used:
 	 * <ul>
 	 *   <li>CONTEXT_ABOVE<p>

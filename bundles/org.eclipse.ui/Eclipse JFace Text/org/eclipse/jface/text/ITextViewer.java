@@ -415,7 +415,7 @@ public interface ITextViewer {
 	
 	/**
 	 * Returns the document offset of the lower right 
-	 * corner of this viewer's viewport, i.e. the visible character
+	 * corner of this viewer's viewport. This is the visible character
 	 * with the highest character position. If the content of this viewer
 	 * is shorter, the position of the last character of the content is returned.
 	 *

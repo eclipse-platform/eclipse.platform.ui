@@ -23,7 +23,7 @@ interface IContentAssistListener extends IEventConsumer {
 	 * Verifies the key event.
 	 *
 	 * @return <code>true</code> if processing should be continued by additional listeners
-	 * @see VerifyKeyListener#verifyKey
+	 * @see org.eclipse.swt.custom.VerifyKeyListener#verifyKey
 	 */
 	public boolean verifyKey(VerifyEvent event);
 }

@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 
 /**
+ * A document provider maps between domain elements and documents.
  * A document provider has the following responsibilities:
  * <ul>
  * <li> create an annotation model of a domain model element

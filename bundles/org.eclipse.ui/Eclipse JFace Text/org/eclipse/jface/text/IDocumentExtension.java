@@ -65,7 +65,7 @@ public interface IDocumentExtension {
 	void resumePostNotificationProcessing();
 	
 	/**
-	 * Tells the document that it is about to be sequentially rewritten, i.e. a
+	 * Tells the document that it is about to be sequentially rewritten. That is a
 	 * sequence of non-overlapping replace operations will be performed on it. The
 	 * <code>normalize</code> flag indicates whether the rewrite is preformed from
 	 * the start of the document to its end or from an arbitrary start offset.

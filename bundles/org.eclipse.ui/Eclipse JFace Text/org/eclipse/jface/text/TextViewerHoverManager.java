@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Display;
 
 
 /**
- * This manager controls the layout, content, visibility, etc. of an information
+ * This manager controls the layout, content, and visibility of an information
  * control in reaction to mouse hover events issued by the text widget of a
  * text viewer. It overrides <code>computeInformation</code>, so that the
  * computation is performed in a dedicated background thread. This implies

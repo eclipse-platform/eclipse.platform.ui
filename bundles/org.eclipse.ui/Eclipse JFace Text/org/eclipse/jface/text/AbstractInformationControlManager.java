@@ -58,8 +58,7 @@ abstract public class AbstractInformationControlManager {
 		public void setSubjectControl(Control subject);
 		
 		/**
-		 * Sets the closer's information control, i.e. the one to close
-		 * if necessary. <p>
+		 * Sets the closer's information control, the one to close if necessary. <p>
 		 * Must be called before <code>start</code>. May again be called 
 		 * between <code>start</code> and <code>stop</code>.
 		 * 

@@ -44,7 +44,7 @@ public interface IFindReplaceTarget {
 	/**
 	 * Returns the currently selected characters as a string.
 	 *
-	 * @ return the currently selected characters
+	 * @return the currently selected characters
 	 */
 	String getSelectionText();
 	

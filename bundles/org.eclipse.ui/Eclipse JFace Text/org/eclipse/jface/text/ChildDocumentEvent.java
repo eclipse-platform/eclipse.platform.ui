@@ -6,9 +6,8 @@ package org.eclipse.jface.text;
  */
 
 /**
- * A child document event represents an absolute document event, i. e.
- * one which has been issued by the parent document, as a child-relative
- * document event. It also carries the original event.
+ * A child document event represents a parent document event as a
+ * child-relative document event. It also carries the original event.
  */
 class ChildDocumentEvent extends DocumentEvent {
 	

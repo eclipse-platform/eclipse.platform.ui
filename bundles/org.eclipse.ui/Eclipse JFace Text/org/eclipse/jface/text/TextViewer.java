@@ -585,7 +585,7 @@ public class TextViewer extends Viewer implements
 		
 		/**
 		 * Uninstalls this range.
-		 * @see #install();
+		 * @see #install()
 		 */
 		public void uninstall() {
 			
@@ -3019,7 +3019,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * @see IFindReplaceTarget#findAndSelectInRange(int, String, boolean, boolean, boolean, int, int)
+	 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
 	 * @since 2.0
 	 */
 	private int findAndSelectInRange(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, int rangeOffset, int rangeLength) {

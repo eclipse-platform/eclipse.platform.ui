@@ -169,7 +169,7 @@ public class InfoForm {
 		fScrolledComposite.redraw();
 	}
 
-	/**
+	/*
 	 * @see org.eclipse.update.ui.forms.internal.FormWidgetFactory#createComposite(Composite)
 	 */
 	private Composite createComposite(Composite parent) {
@@ -178,7 +178,7 @@ public class InfoForm {
 		return composite;
 	}
 
-	/**
+	/*
 	 * @see org.eclipse.update.ui.forms.internal.FormWidgetFactory#createCompositeSeparator(Composite)
 	 */
 	private Composite createCompositeSeparator(Composite parent) {
@@ -187,7 +187,7 @@ public class InfoForm {
 		return composite;
 	}
 		
-	/**
+	/*
 	 * @see org.eclipse.update.ui.forms.internal.FormWidgetFactory#createLabel(Composite, String)
 	 */
 	private Label createLabel(Composite parent, String text) {
@@ -199,7 +199,7 @@ public class InfoForm {
 		return label;
 	}
 
-	/**
+	/*
 	 * @see org.eclipse.update.ui.forms.internal.FormWidgetFactory#createHeader(Composite, String)
 	 */
 	private Label createHeader(Composite parent, String text) {
@@ -212,7 +212,7 @@ public class InfoForm {
 		return label;
 	}
 
-	/**
+	/*
 	 * @see org.eclipse.update.ui.forms.internal.FormWidgetFactory#createBanner(Composite, String)
 	 */
 	private Label createBanner(Composite parent, String text) {

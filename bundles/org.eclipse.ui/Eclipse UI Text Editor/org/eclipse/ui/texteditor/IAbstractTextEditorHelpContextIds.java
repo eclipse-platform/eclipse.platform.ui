@@ -24,7 +24,7 @@ import org.eclipse.ui.PlatformUI;
 public interface IAbstractTextEditorHelpContextIds {
 	
 	/** 
-	 * The string with which action, dialog, etc. ids are prefixed to construct help context ids. 
+	 * The string with which all other defined ids are prefixed to construct help context ids. 
 	 * Value: <code>"org.eclipse.ui."</code>
 	 */
 	public static final String PREFIX= PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$

@@ -62,7 +62,7 @@ public interface IAnnotationModel {
 	void connect(IDocument document);
 	 
 	/**
-	 * Disconnects this model from a document, i.e. document changes no longer matter.
+	 * Disconnects this model from a document. After that, document changes no longer matter.
 	 * An annotation model may only be disconnected from a document to which it has been
 	 * connected before. If the model reference counts the connections to a document,
 	 * the connection to the document may only be terminated if the reference count does

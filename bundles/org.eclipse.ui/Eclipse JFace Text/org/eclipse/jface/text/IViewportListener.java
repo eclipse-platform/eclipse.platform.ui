@@ -8,8 +8,8 @@ package org.eclipse.jface.text;
 
 /**
  * Registered with a text viewer, viewport listeners are
- * informed about changes of text viewer's viewport, i.e. that 
- * portion of the viewer's document that is visible in the viewer. <p>
+ * informed about changes of a text viewer's viewport. The view port is that 
+ * portion of the viewer's document which is visible in the viewer. <p>
  * Clients may implement this interface.
  *
  * @see ITextViewer 

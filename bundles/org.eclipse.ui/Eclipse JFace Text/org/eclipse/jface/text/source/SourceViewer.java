@@ -139,7 +139,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	 *
 	 * @param parent the parent of the viewer's control
 	 * @param ruler the vertical ruler used by this source viewer
-	 * @patam styles the SWT style bits
+	 * @param styles the SWT style bits
 	 */
 	public SourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		super();

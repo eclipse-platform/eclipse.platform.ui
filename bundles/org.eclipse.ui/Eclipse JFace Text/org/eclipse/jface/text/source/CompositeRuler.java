@@ -553,7 +553,7 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 	}
 	
 	/**
-	 * Relayouts the text viewer, i.e. this also causes this ruler to get
+	 * Relayouts the text viewer. This also causes this ruler to get
 	 * relayouted.
 	 */
 	private void layoutTextViewer() {

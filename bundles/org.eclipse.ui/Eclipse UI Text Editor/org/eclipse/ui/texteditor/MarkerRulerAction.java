@@ -270,7 +270,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	/**
 	 * Returns all markers which include the ruler's line of activity.
 	 *
-	 * @returns all markers which include the ruler's line of activity
+	 * @return all markers which include the ruler's line of activity
 	 */
 	protected List getMarkers() {
 

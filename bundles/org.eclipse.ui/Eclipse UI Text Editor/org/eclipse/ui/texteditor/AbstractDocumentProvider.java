@@ -127,6 +127,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		
 	
 	/** 
+	 * Enables a certain behavior.
 	 * Indicates whether this provider should behave as described in
 	 * use case 5 of http://bugs.eclipse.org/bugs/show_bug.cgi?id=10806.
 	 * Current value: <code>false</code>
@@ -135,6 +136,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	static final protected boolean PR10806_UC5_ENABLED= false;
 	
 	/**
+	 * Enables a certain behavior.
 	 * Indicates whether this provider should behave as described in
 	 * http://bugs.eclipse.org/bugs/show_bug.cgi?id=14469
 	 * Notes: This contradicts <code>PR10806_UC5_ENABLED</code>.
@@ -169,8 +171,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	}
 	
 	/**
-	 * Creates a textual representation for the given element, i.e. the
-	 * document for the given element.<p>
+	 * Creates the document for the given element.<p>
 	 * Subclasses must implement this method.
 	 *
 	 * @param element the element

@@ -25,7 +25,7 @@ import org.eclipse.jface.util.Assert;
 
 
 /**
- * This manager controls the layout, content, visibility, etc. of an information
+ * This manager controls the layout, content, and visibility of an information
  * control in reaction to mouse hover events issued by the vertical ruler of a
  * source viewer.
  * @since 2.0
