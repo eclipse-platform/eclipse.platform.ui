@@ -61,7 +61,7 @@ import org.eclipse.ui.internal.util.StatusLineContributionItem;
  * Adds actions to a workbench window.
  */
 public final class WorkbenchActionBuilder {
-    private IWorkbenchWindow window;
+    private final IWorkbenchWindow window;
 
     /** 
      * A convience variable and method so that the actionConfigurer doesn't need to
@@ -237,6 +237,12 @@ public final class WorkbenchActionBuilder {
     private IPerspectiveListener perspectiveListener;
 
     private IResourceChangeListener resourceListener;
+    
+    /**
+     * Indicates if the action builder has been disposed
+     */
+    private boolean isDisposed = false;
+    
     /**
      * Constructs a new action builder which contributes actions
      * to the given window.
@@ -1044,6 +1050,7 @@ public final class WorkbenchActionBuilder {
      * Called when the window is closed.
      */
     public void dispose() {
+    	isDisposed = true;
         actionBarConfigurer.getStatusLineManager().remove(statusLineItem);
         if (pageListener != null) {
             window.removePageListener(pageListener);
@@ -1560,6 +1567,9 @@ public final class WorkbenchActionBuilder {
         // this can be triggered by property or resource change notifications
         Runnable update = new Runnable() {
             public void run() {
+                Shell shell = window.getShell();
+                if (isDisposed || shell == null || shell.isDisposed())
+                	return;
 		    	IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				IProject[] projects = workspace.getRoot().getProjects();
 		    	boolean enabled = BuildUtilities.isEnabled(projects, IncrementalProjectBuilder.INCREMENTAL_BUILD);
