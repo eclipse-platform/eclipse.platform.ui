@@ -283,7 +283,7 @@ public class CVSMoveDeleteHook implements IMoveDeleteHook {
 		
 		return deleteFile(tree, file, null, updateFlags, 
 			Policy.bind("CVSMoveDeleteHook.deleteFileTitle"), //$NON-NLS-1$
-			Policy.bind("CVSMoveDeleteHook.deleteFileMessage", file.getName()), //$NON-NLS-1$
+			Policy.bind("CVSMoveDeleteHook.deleteFileMessage", file.getFullPath().toString()), //$NON-NLS-1$
 			monitor);
 	}
 
@@ -298,7 +298,7 @@ public class CVSMoveDeleteHook implements IMoveDeleteHook {
 		
 		return deleteFolder(tree, folder, null, updateFlags,
 			Policy.bind("CVSMoveDeleteHook.deleteFolderTitle"), //$NON-NLS-1$
-			Policy.bind("CVSMoveDeleteHook.deleteFolderMessage", folder.getName()), //$NON-NLS-1$
+			Policy.bind("CVSMoveDeleteHook.deleteFolderMessage", folder.getFullPath().toString()), //$NON-NLS-1$
 			monitor);
 	}
 
@@ -327,7 +327,7 @@ public class CVSMoveDeleteHook implements IMoveDeleteHook {
 			
 		return deleteFile(tree, source, destination, updateFlags,
 			Policy.bind("CVSMoveDeleteHook.moveFileTitle"), //$NON-NLS-1$
-			Policy.bind("CVSMoveDeleteHook.moveFileMessage", source.getName()), //$NON-NLS-1$
+			Policy.bind("CVSMoveDeleteHook.moveFileMessage", source.getFullPath().toString()), //$NON-NLS-1$
 			monitor);
 	}
 
@@ -343,7 +343,7 @@ public class CVSMoveDeleteHook implements IMoveDeleteHook {
 			
 		return deleteFolder(tree, source, destination, updateFlags,
 			Policy.bind("CVSMoveDeleteHook.moveFolderTitle"), //$NON-NLS-1$
-			Policy.bind("CVSMoveDeleteHook.moveFolderMessage", source.getName()), //$NON-NLS-1$
+			Policy.bind("CVSMoveDeleteHook.moveFolderMessage", source.getFullPath().toString()), //$NON-NLS-1$
 			monitor);
 	}
 
