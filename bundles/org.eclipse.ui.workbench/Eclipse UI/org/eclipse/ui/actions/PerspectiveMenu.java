@@ -210,9 +210,10 @@ public abstract class PerspectiveMenu extends ContributionItem {
 		if (page == null)
 			return list;
 
-		ArrayList ids = new ArrayList(((WorkbenchPage) page).getPerspectiveActionIds());
+		ArrayList ids = ((WorkbenchPage) page).getPerspectiveActionIds();
 		if (ids == null)
 			return list;
+		ids = new ArrayList(ids);
 
         IObjectActivityManager activityManager = window.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
         if (activityManager != null) {
