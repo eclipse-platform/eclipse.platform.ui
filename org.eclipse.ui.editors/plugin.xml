@@ -243,6 +243,11 @@
             class="org.eclipse.ui.internal.editors.text.AccessibilityPreferencePage"
             id="org.eclipse.ui.editors.preferencePages.Accessibility">
       </page>
+      <page
+            name="%PreferencePages.Spelling"
+            class="org.eclipse.ui.internal.editors.text.SpellingPreferencePage"
+            category="org.eclipse.ui.preferencePages.GeneralTextEditor"
+            id="org.eclipse.ui.editors.preferencePages.Spelling"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors.documentProviders">
