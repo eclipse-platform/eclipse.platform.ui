@@ -2,15 +2,15 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.search">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.search" id="searchResultSorters" name="Result Sorters"/>
-   </appInfo>
-   <documentation>
-      This extension point allows a plug-in to contribute 
-search result sorters to the search result view's Sort 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.search" id="searchResultSorters" name="Result Sorters"/>
+      </appInfo>
+      <documentation>
+         This extension point allows a plug-in to contribute 
+search result sorters to the search result view&apos;s Sort 
 context menu.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -59,7 +59,7 @@ context menu.
             <annotation>
                <documentation>
                   the ID of a registered search page for which the 
-sorter will be activated. "*" activates the sorter 
+sorter will be activated. &quot;*&quot; activates the sorter 
 for all pages.
                </documentation>
             </annotation>
@@ -68,7 +68,7 @@ for all pages.
             <annotation>
                <documentation>
                   a translatable label that will be used as the 
-menu item's label.
+menu item&apos;s label.
                </documentation>
             </annotation>
          </attribute>
@@ -76,7 +76,7 @@ menu item's label.
             <annotation>
                <documentation>
                   a translatable text that will be used as the menu
-item's tool tip . If omitted, the menu item will 
+item&apos;s tool tip . If omitted, the menu item will 
 have no tool tip.
                </documentation>
             </annotation>
@@ -114,14 +114,14 @@ the menu entry will only contain a label.
          The following is an example of a search page extension definition: 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.search.searchResultSorters"&gt; 
+   &lt;extension point=&quot;org.eclipse.search.searchResultSorters&quot;&gt; 
     &lt;sorter 
-        id="org.eclipse.search.internal.ui.FileNameSorter" 
-        pageId="*" 
-        label="%FileNameSorter.label" 
-        tooltip="%FilenNameSorter.tooltip" 
-        icon="icons/full/ecl16/search_sort.gif" 
-        class="org.eclipse.search.internal.ui.FileNameSorter"&gt; 
+        id=&quot;org.eclipse.search.internal.ui.FileNameSorter&quot; 
+        pageId=&quot;*&quot; 
+        label=&quot;%FileNameSorter.label&quot; 
+        tooltip=&quot;%FilenNameSorter.tooltip&quot; 
+        icon=&quot;icons/full/ecl16/search_sort.gif&quot; 
+        class=&quot;org.eclipse.search.internal.ui.FileNameSorter&quot;&gt; 
     &lt;/sorter&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -154,10 +154,10 @@ the matches by the resource name.
       </appInfo>
       <documentation>
          &lt;p&gt;
-&lt;a href="hglegal.htm"&gt;
-	&lt;img	SRC="ngibmcpy.gif"
-			ALT="Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved."
-			BORDER=0 height=14 width=324/&gt;&lt;/a&gt;
+&lt;a href=&quot;hglegal.htm&quot;&gt;
+ &lt;img SRC=&quot;ngibmcpy.gif&quot;
+   ALT=&quot;Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved.&quot;
+   BORDER=0 height=14 width=324&gt;&lt;/a&gt;
 &lt;/p&gt;
       </documentation>
    </annotation>
