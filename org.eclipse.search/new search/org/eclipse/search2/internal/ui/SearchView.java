@@ -236,11 +236,12 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		ISearchResultPage page= null;
 		if (search != null) {
 			page= fSearchViewPageService.getExtensionObject(search, ISearchResultPage.class);
-			String format= SearchMessages.getString("SearchView.error.noResultPage"); //$NON-NLS-1$
-			String message= MessageFormat.format(format, new Object[] { search.getClass().getName() });
-			SearchPlugin.log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, message, null));
-			if (page == null)
+			if (page == null) {
+				String format= SearchMessages.getString("SearchView.error.noResultPage"); //$NON-NLS-1$
+				String message= MessageFormat.format(format, new Object[] { search.getClass().getName() });
+				SearchPlugin.log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, message, null));
 				return;
+			}
 		}
 
 		// detach the previous page.
