@@ -32,6 +32,12 @@ class ImplicitJobs {
 		private ISchedulingRule[] ruleStack;
 		protected boolean running = false;
 		private int top;
+		/**
+		 * Set to true if this thread job is running in a thread that did
+		 * not own a rule already.  This means it needs to acquire the
+		 * rule during beginRule, and must release the rule during endRule.
+		 */
+		protected boolean acquireRule = false;
 		ThreadJob(ISchedulingRule rule) {
 			super("Implicit job"); //$NON-NLS-1$
 			setSystem(true);
@@ -100,6 +106,7 @@ class ImplicitJobs {
 					while (!running) {
 						if (monitor.isCanceled()) {
 							//cancel the running job
+							stopWait = true;
 							running = !cancel();
 							throw new OperationCanceledException();
 						}
@@ -147,7 +154,7 @@ class ImplicitJobs {
 		}
 		public void recycle() {
 			//clear and reset all fields
-			running = queued = false;
+			running = queued = acquireRule = false;
 			setRule(null);
 			setThread(null);
 			if (ruleStack.length != 2)
@@ -157,7 +164,7 @@ class ImplicitJobs {
 			top = -1;
 		}
 		private void reportBlocked(IProgressMonitor monitor, InternalJob blockingJob) {
-			manager.getLockManager().addLockWaitThread(Thread.currentThread(), ruleStack[top]);
+			manager.getLockManager().addLockWaitThread(Thread.currentThread(), getRule());
 			if (!(monitor instanceof IProgressMonitorWithBlocking))
 				return;
 			String msg = (blockingJob == null || blockingJob instanceof ThreadJob)
@@ -167,10 +174,11 @@ class ImplicitJobs {
 			((IProgressMonitorWithBlocking)monitor).setBlocked(reason);
 		}
 		private void reportUnblocked(IProgressMonitor monitor, boolean stopWait) {
-			if(monitor.isCanceled() || stopWait)
-				manager.getLockManager().removeLockWaitThread(Thread.currentThread(), ruleStack[top]);
-			else {
-				manager.getLockManager().addLockThread(Thread.currentThread(), ruleStack[top]);
+			if(stopWait) {
+				//tell lock manager that this thread gave up waiting
+				manager.getLockManager().removeLockWaitThread(Thread.currentThread(), getRule());
+			} else {
+				manager.getLockManager().addLockThread(Thread.currentThread(), getRule());
 				//need to reaquire any locks that were suspended while this thread was blocked on the rule
 				manager.getLockManager().resumeSuspendedLocks(Thread.currentThread());
 			}
@@ -204,7 +212,6 @@ class ImplicitJobs {
 	 * @see IJobManager#beginRule 
 	 */
 	void begin(ISchedulingRule rule, IProgressMonitor monitor) {
-		boolean join = false;
 		ThreadJob threadJob;
 		synchronized (this) {
 			Thread currentThread = Thread.currentThread();
@@ -219,15 +226,19 @@ class ImplicitJobs {
 					threadJob = newThreadJob(realJob.getRule());
 				else {
 					threadJob = newThreadJob(rule);
-					join = true;
+					threadJob.acquireRule = true;
 				}
 				threadJob.setThread(currentThread);
 				threadJobs.put(currentThread, threadJob);
+				threadJob.push(rule);
+			} else {
+				//nested rule, just push on stack and return
+				threadJob.push(rule);
+				return;
 			}
-			threadJob.push(rule);
 		}
 		//join the thread job outside sync block
-		if (join) {
+		if (threadJob.acquireRule) {
 			if (!manager.runNow(threadJob))
 				threadJob.joinRun(monitor);
 			else {
@@ -248,15 +259,13 @@ class ImplicitJobs {
 		else if (threadJob.pop(rule)) {
 			//clean up when last rule scope exits
 			threadJobs.remove(currentThread);
-			if (threadJob.running) {
-				//if this job had a rule, then we are essentially releasing a lock
-				if (threadJob.getRule() != null)
-					manager.getLockManager().removeLockThread(Thread.currentThread(), threadJob.getRule());
-				else
-					manager.getLockManager().removeLockThread(Thread.currentThread(), rule);
-				
+			//if this job had a rule, then we are essentially releasing a lock
+			//note it is safe to do this even if the acquire was aborted
+			if (threadJob.acquireRule)
+				manager.getLockManager().removeLockThread(Thread.currentThread(), threadJob.getRule());
+			//if the job was started, we need to notify job manager to end it
+			if (threadJob.running) 
 				manager.endJob(threadJob, Status.OK_STATUS, threadJob.queued);
-			}
 			recycle(threadJob);
 		}
 	}
@@ -274,6 +283,7 @@ class ImplicitJobs {
 		if (jobCache != null) {
 			ThreadJob job = jobCache;
 			job.setRule(rule);
+			job.acquireRule = job.running = false;
 			jobCache = null;
 			return job;
 		}
