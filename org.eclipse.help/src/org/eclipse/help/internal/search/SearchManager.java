@@ -95,7 +95,8 @@ public class SearchManager {
 			String plugin = i == -1 ? "" : url.substring(1, i);
 			if (addedPlugins.contains(plugin))
 				try {
-					addedDocs.add(new URL("help:" + url + "?lang=" + index.getLocale()));
+					addedDocs.add(
+						new URL("help:" + url + "?lang=" + index.getLocale()));
 				} catch (MalformedURLException mue) {
 				}
 		}
@@ -113,14 +114,17 @@ public class SearchManager {
 		// get the list of indexed docs. This is a hashtable  (url, plugin)
 		HelpProperties indexedDocs = index.getIndexedDocs();
 		ArrayList removedDocs = new ArrayList(indexedDocs.size());
-		for (Iterator docs = indexedDocs.keySet().iterator(); docs.hasNext();) {
+		for (Iterator docs = indexedDocs.keySet().iterator();
+			docs.hasNext();
+			) {
 			String url = (String) docs.next();
 			// Assume the url is /pluginID/path_to_topic.html
 			int i = url.indexOf('/', 1);
 			String plugin = i == -1 ? "" : url.substring(1, i);
 			if (removedPlugins.contains(plugin))
 				try {
-					removedDocs.add(new URL("help:" + url + "?lang=" + index.getLocale()));
+					removedDocs.add(
+						new URL("help:" + url + "?lang=" + index.getLocale()));
 				} catch (MalformedURLException mue) {
 				}
 		}
@@ -173,11 +177,13 @@ public class SearchManager {
 					return;
 				}
 				if (Logger.DEBUG)
-					Logger.logDebugMessage("Search Manager", "indexing " + index.getLocale());
+					Logger.logDebugMessage(
+						"Search Manager",
+						"indexing " + index.getLocale());
 				// Perform indexing
 				try {
 					PluginVersionInfo versions = index.getDocPlugins();
-					if (versions == null){
+					if (versions == null) {
 						pm.beginTask("", 1);
 						pm.worked(1);
 						pm.done();
@@ -195,7 +201,7 @@ public class SearchManager {
 					throw oce;
 				}
 			}
-		} finally{
+		} finally {
 			progressDistrib.removeMonitor(pm);
 		}
 	}
@@ -236,5 +242,13 @@ public class SearchManager {
 		ITopic[] subtopics = topic.getSubtopics();
 		for (int i = 0; i < subtopics.length; i++)
 			add(subtopics[i], hrefs);
+	}
+	/**
+	 * Closes all indexes.
+	 */
+	public void close() {
+		for (Iterator it = indexes.values().iterator(); it.hasNext();) {
+			((SearchIndex) it.next()).close();
+		}
 	}
 }

@@ -36,6 +36,7 @@ public class SearchIndex {
 	private File analyzerVersionFile;
 	private File inconsistencyFile;
 	private HTMLDocParser parser;
+	private IndexSearcher searcher;
 	/**
 	 * Constructor.
 	 * @param locale the locale this index uses
@@ -254,11 +255,11 @@ public class SearchIndex {
 					searchQuery.isFieldSearch());
 			String highlightTerms = queryBuilder.gethighlightTerms();
 			if (luceneQuery != null) {
-				Searcher searcher =
-					new IndexSearcher(indexDir.getAbsolutePath());
+				if (searcher == null) {
+					openSearcher();
+				}
 				Hits hits = searcher.search(luceneQuery);
 				collector.addHits(hits, highlightTerms);
-				searcher.close();
 			}
 		} catch (Exception e) {
 			Logger.logError(
@@ -404,6 +405,24 @@ public class SearchIndex {
 		}
 		// charset not specified, use default
 		return null;
+	}
+	public synchronized void openSearcher() throws IOException {
+		if (searcher == null) {
+			searcher = new IndexSearcher(indexDir.getAbsolutePath());
+		}
+	}
+	/**
+	 * Closes IndexReader used by Searcher.
+	 * Should be called on platform shutdown,
+	 * when no more reading from index is performed.
+	 */
+	public void close() {
+		if (searcher != null) {
+			try {
+				searcher.close();
+			} catch (IOException ioe) {
+			}
+		}
 	}
 
 }

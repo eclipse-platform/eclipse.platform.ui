@@ -88,7 +88,8 @@ public final class HelpSystem {
 		if (getInstance().workingSetManagers == null) {
 			getInstance().workingSetManagers = new HashMap();
 		}
-		WorkingSetManager wsmgr = (WorkingSetManager)getInstance().workingSetManagers.get(locale);
+		WorkingSetManager wsmgr =
+			(WorkingSetManager) getInstance().workingSetManagers.get(locale);
 		if (wsmgr == null) {
 			wsmgr = new WorkingSetManager(locale);
 			getInstance().workingSetManagers.put(locale, wsmgr);
@@ -107,7 +108,10 @@ public final class HelpSystem {
 	 *   this plug-in 
 	 */
 	public static void shutdown() throws CoreException {
-		Logger.logInfo(Resources.getString("I003"));
+		Logger.logInfo("Help System shutting down");
+		if (getInstance().searchManager != null) {
+			getInstance().searchManager.close();
+		}
 		Logger.shutdown();
 	}
 	/**
@@ -129,12 +133,12 @@ public final class HelpSystem {
 					Resources.getString("E005"),
 					e));
 		}
-		Logger.logInfo(Resources.getString("I002"));
+		Logger.logInfo("Help System started.");
 	}
 	public static boolean ensureWebappRunning() {
 		if (!getInstance().webappStarted) {
 			getInstance().webappStarted = true;
-			if (getMode()!=MODE_WORKBENCH) {
+			if (getMode() != MODE_WORKBENCH) {
 				// start the help control web app
 				AppServer.add("helpControl", "org.eclipse.help.webapp", "");
 			}
