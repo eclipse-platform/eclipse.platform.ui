@@ -513,11 +513,11 @@
                id="org.eclipse.ui.navigate.up">
          </accelerator>         
          <accelerator
-               key="Ctrl+.||Ctrl+&gt;"
+               key="Ctrl+."
                id="org.eclipse.ui.navigate.next">
          </accelerator>
          <accelerator
-               key="Ctrl+,||Ctrl+&lt;"
+               key="Ctrl+,"
                id="org.eclipse.ui.navigate.previous">
          </accelerator>
                            
@@ -892,11 +892,11 @@
                id="org.eclipse.ui.navigate.up">
          </accelerator> 
          <accelerator
-               key="Ctrl+.||Ctrl+&gt;"
+               key="Ctrl+."
                id="org.eclipse.ui.navigate.next">
          </accelerator>
          <accelerator
-               key="Ctrl+,||Ctrl+&lt;"
+               key="Ctrl+,"
                id="org.eclipse.ui.navigate.previous">
          </accelerator>
                                     
