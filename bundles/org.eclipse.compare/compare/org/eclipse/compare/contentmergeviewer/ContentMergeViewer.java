@@ -537,7 +537,11 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		if (input != oldInput)
 			internalRefresh(input);
 	}
-		
+	
+	public void setConfirmSave(boolean enable) {
+		fConfirmSave= enable;
+	}
+	
 	/* (non Javadoc)
 	 * see Viewer.refresh
 	 */

@@ -53,7 +53,6 @@ public class CompareConfiguration {
 	private static boolean fLeftIsLocal= true;
 
 	static {
-		// PR 1GEHGTZ: ITPVCM:ALL - Compare with Version reverses additions/deletions
 		if (fLeftIsLocal) {
 			fgImages[Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/del_ov.gif"); //$NON-NLS-1$
 			fgImages[Differencer.LEFT + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/r_inadd_ov.gif"); //$NON-NLS-1$
@@ -81,7 +80,6 @@ public class CompareConfiguration {
 		fgImages[Differencer.CONFLICTING + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/confadd_ov.gif"); //$NON-NLS-1$
 		fgImages[Differencer.CONFLICTING + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/confdel_ov.gif"); //$NON-NLS-1$
 		fgImages[Differencer.CONFLICTING + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/confchg_ov.gif"); //$NON-NLS-1$
-		// end PR 1GEHGTZ
 		
 //		ImageDescriptor tmp= fgImages[Differencer.ADDITION];
 //		fgImages[Differencer.ADDITION]= fgImages[Differencer.DELETION];
@@ -107,7 +105,7 @@ public class CompareConfiguration {
 	public CompareConfiguration() {
 		
 		setProperty("LEFT_IS_LOCAL", new Boolean(fLeftIsLocal)); //$NON-NLS-1$
-
+		
 		IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
 		if (ps != null) {
 			boolean b= ps.getBoolean(ComparePreferencePage.INITIALLY_SHOW_ANCESTOR_PANE);

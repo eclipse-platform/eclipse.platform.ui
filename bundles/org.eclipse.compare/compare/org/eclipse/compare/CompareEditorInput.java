@@ -29,9 +29,9 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 
+import org.eclipse.compare.contentmergeviewer.ContentMergeViewer;
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.*;
-import org.eclipse.compare.*;
 
 
 /**
@@ -696,6 +696,13 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		if (pane != null) {
 			Viewer v= pane.getViewer();
 			if (v != null) {
+				
+				// since we have already asked the user whether he wants to save
+				// changes, we disable the confirmation alert in
+				// ContentMergeViewer.inputChanged
+				if (v instanceof ContentMergeViewer)
+					((ContentMergeViewer)v).setConfirmSave(false);
+
 				Object input= pane.getInput();
 				v.setInput(input);
 			}
