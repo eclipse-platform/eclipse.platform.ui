@@ -315,6 +315,9 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	 * @param memento the memento containing the persisted view IDs
 	 */
 	public void init(IMemento memento) {
+		if (memento == null) {
+			return;
+		}
 		initViewCollection(memento, ATTR_OPENED_VIEWS, openedViewIds);
 		initViewCollection(memento, ATTR_VIEWS_TO_NOT_OPEN, viewIdsToNotOpen);
 	}
