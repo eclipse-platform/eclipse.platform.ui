@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.Stack;
 
 import org.apache.tools.ant.AntTypeDefinition;
@@ -39,7 +38,6 @@ import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.TaskAdapter;
 import org.apache.tools.ant.UnknownElement;
-import org.apache.tools.ant.taskdefs.Definer;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Property;
@@ -93,7 +91,6 @@ public class AntModel implements IAntModel {
 	private final Object fDirtyLock= new Object();
 	private boolean fIsDirty= true;
 	private File fEditedFile= null;	
-	private Set fNamesOfOldDefiningNodes;
    
     private ClassLoader fLocalClassLoader= null;
     
@@ -114,6 +111,9 @@ public class AntModel implements IAntModel {
     
 	private Map fDefinersToText;
     private Map fPreviousDefinersToText;
+    private Map fDefinerNodeIdentifierToDefinedTasks;
+    private Map fTaskNameToDefiningNode;
+    private Map fCurrentNodeIdentifiers;
 	
 	public AntModel(IDocument document, IProblemRequestor problemRequestor, LocationProvider locationProvider) {
 		init(document, problemRequestor, locationProvider);
@@ -248,6 +248,7 @@ public class AntModel implements IAntModel {
 		fTaskNodes= new ArrayList();
 		fNodeBeingResolved= null;
 		fLastNode= null;
+        fCurrentNodeIdentifiers= null;
 		
 		fNonStructuralNodes= new ArrayList(1);
         if (fDefinersToText != null) {
@@ -1254,29 +1255,25 @@ public class AntModel implements IAntModel {
 		}
 		return null;
 	}
-
-	/**
-     * Provides the set of names of the defining nodes that existed from the previous
-     * parse of the build file.
-     */
-	public void setNamesOfOldDefiningNodes(Set set) {
-		fNamesOfOldDefiningNodes= set;
-	}
 	
 	/**
      * Removes any type definitions that no longer exist in the buildfile
      */
 	private void reconcileTaskAndTypes() {
-		if (fNamesOfOldDefiningNodes == null) {
+		if (fCurrentNodeIdentifiers == null) {
 			return;
 		}
-		Iterator iter= fNamesOfOldDefiningNodes.iterator();
+        Iterator iter= fDefinerNodeIdentifierToDefinedTasks.keySet().iterator();
 		while (iter.hasNext()) {
-			String nodeLabel = (String) iter.next();
-			if (fProjectNode.getDefininingTaskNode(nodeLabel) == null) {
+			String key = (String) iter.next();
+			if (fCurrentNodeIdentifiers.get(key) == null) {
 				ComponentHelper helper= ComponentHelper.getComponentHelper(fProjectNode.getProject());
-				helper.getAntTypeTable().remove(nodeLabel);
-				iter.remove();
+                List tasks= (List) fDefinerNodeIdentifierToDefinedTasks.get(key);
+                Iterator iterator= tasks.iterator();
+                while (iterator.hasNext()) {
+                    String taskName = (String) iterator.next();
+                    helper.getAntTypeTable().remove(taskName);    
+                }
 			}
 		}
 	}
@@ -1486,15 +1483,10 @@ public class AntModel implements IAntModel {
     public void setDefiningTaskNodeText(AntDefiningTaskNode node) {
         if (fDefinersToText == null) {
             fDefinersToText= new HashMap();
+            fCurrentNodeIdentifiers= new HashMap();
         }
-        Definer definer= (Definer)node.getRealTask();
-        Object key= definer.getName();
-        if (key == null) {
-            key= definer.getResource();
-            if (key == null) {
-                key= definer.getFile();
-            }
-        }
+        
+        Object key= node.getIdentifier();
         String nodeText= null;
         if (fPreviousDefinersToText != null) {
             nodeText= (String) fPreviousDefinersToText.get(key);
@@ -1502,11 +1494,48 @@ public class AntModel implements IAntModel {
         String newNodeText= getText(node.getOffset(), node.getLength());
         if (nodeText != null) {
             if (nodeText.equals(newNodeText)) {
-                node.needsToBeConfigured(false);
+                node.setNeedsToBeConfigured(false);
             }
         }
         if (newNodeText != null) {
             fDefinersToText.put(key, newNodeText);
         }
+        fCurrentNodeIdentifiers.put(key, key);
+    }
+    
+    protected void removeDefiningTaskNodeInfo(AntDefiningTaskNode node) {
+        Object identifier= node.getIdentifier();
+        if (identifier != null) {
+            fCurrentNodeIdentifiers.remove(identifier);
+            fDefinersToText.remove(identifier);
+        }
+    }
+    
+    protected void addDefinedTasks(List newTasks, AntDefiningTaskNode node) {
+        if (fTaskNameToDefiningNode == null) {
+            fTaskNameToDefiningNode= new HashMap();
+            fDefinerNodeIdentifierToDefinedTasks= new HashMap();
+        }
+
+        Object identifier= node.getIdentifier();
+        if (identifier == null) {
+            return;
+        }
+        if (newTasks.isEmpty()) {
+            fCurrentNodeIdentifiers.remove(identifier);
+        }
+        Iterator iter= newTasks.iterator();
+        while (iter.hasNext()) {
+            String name = (String) iter.next();
+            fTaskNameToDefiningNode.put(name, node);
+            fDefinerNodeIdentifierToDefinedTasks.put(identifier, newTasks);
+        }
+    }
+    
+    public AntDefiningTaskNode getDefininingTaskNode(String nodeName) {
+        if (fTaskNameToDefiningNode != null) {
+            return (AntDefiningTaskNode)fTaskNameToDefiningNode.get(nodeName);
+        }
+        return null;
     }
 }

@@ -14,10 +14,16 @@ package org.eclipse.ant.internal.ui.model;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.ComponentHelper;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
+import org.apache.tools.ant.taskdefs.Definer;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.internal.ui.AntUIImages;
@@ -55,10 +61,22 @@ public class AntDefiningTaskNode extends AntTaskNode {
 		boolean enabled= store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_USER_DEFINED_TASKS);
 		if (enabled) {
 			try {
+                ComponentHelper helper= ComponentHelper.getComponentHelper(getProjectNode().getProject());
+                Hashtable old= new Hashtable(helper.getAntTypeTable());
 				getTask().maybeConfigure();
 				getTask().execute();
+                Iterator newNames= helper.getAntTypeTable().keySet().iterator();
+                List defined= new ArrayList();
+                while (newNames.hasNext()) {
+                    String name = (String) newNames.next();
+                    if (old.get(name) == null) {
+                        defined.add(name);
+                    }    
+                }
+                ((AntModel) getAntModel()).addDefinedTasks(defined, this);
 				return false;
 			} catch (BuildException be) {
+                ((AntModel)getAntModel()).removeDefiningTaskNodeInfo(this);
 				handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_CLASSPATH);
 			}
 		}
@@ -73,6 +91,24 @@ public class AntDefiningTaskNode extends AntTaskNode {
 		}
 		return task;
 	}
+    
+    protected Object getIdentifier() {
+        Object key= null;
+        Task task= (Task) getRealTask();
+        if (task instanceof Definer) {
+            Definer definer= (Definer) task;
+            key= definer.getName();
+            if (key == null) {
+                key= definer.getResource();
+                if (key == null) {
+                    key= definer.getFile();
+                }
+            }
+        } else {
+            key= getLabel();
+        }
+        return key;
+    }
 	
 	/*
 	 * Sets the Java class path in org.apache.tools.ant.types.Path
@@ -110,14 +146,6 @@ public class AntDefiningTaskNode extends AntTaskNode {
 		org.apache.tools.ant.types.Path.systemClasspath= systemClasspath;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#setParent(org.eclipse.ant.internal.ui.editor.model.AntElementNode)
-	 */
-	protected void setParent(AntElementNode node) {
-		super.setParent(node);
-		getProjectNode().addDefiningTaskNode(this);
-	}
-	
 	public boolean collapseProjection() {
 		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();		
 		if (store.getBoolean(AntEditorPreferenceConstants.EDITOR_FOLDING_DEFINING)) {
@@ -134,7 +162,7 @@ public class AntDefiningTaskNode extends AntTaskNode {
        getAntModel().setDefiningTaskNodeText(this);
     }
 
-    protected void needsToBeConfigured(boolean configure) {
+    protected void setNeedsToBeConfigured(boolean configure) {
        fNeedsToBeConfigured= configure;
     }
 }

@@ -616,8 +616,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 
     private void addMacroDefAttributeProposals(String taskName, String prefix, List proposals) {
     	currentProposalMode= PROPOSAL_MODE_ATTRIBUTE_PROPOSAL;
-		AntProjectNode projectNode= antModel.getProjectNode();
-		AntDefiningTaskNode node= projectNode.getDefininingTaskNode(taskName);
+		AntDefiningTaskNode node= antModel.getDefininingTaskNode(taskName);
 		Object task= node.getRealTask();
 		if (!(task instanceof MacroDef)) {
 			return;
@@ -650,8 +649,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     
     private void addMacroDefElementProposals(String taskName, String prefix, List proposals) {
     	currentProposalMode= PROPOSAL_MODE_ATTRIBUTE_PROPOSAL;
-		AntProjectNode projectNode= antModel.getProjectNode();
-		AntDefiningTaskNode node= projectNode.getDefininingTaskNode(taskName);
+		AntDefiningTaskNode node= antModel.getDefininingTaskNode(taskName);
 		Object task= node.getRealTask();
 		if (!(task instanceof MacroDef)) {
 			return;
@@ -1245,7 +1243,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
                     return PROPOSAL_MODE_ATTRIBUTE_PROPOSAL;
                 }
             }                
-        } else if(stringToPrefix.charAt(stringToPrefix.length()-1) == '"' || trimmedString.charAt(trimmedString.length()-1) == ',') {
+        } else if(stringToPrefix.charAt(stringToPrefix.length() - 1) == '"' || trimmedString.charAt(trimmedString.length() - 1) == ',') {
 			// Attribute value proposal
         	currentTaskString= getTaskStringFromDocumentStringToPrefix(trimmedString);
             if (currentTaskString != null && isKnownElement(currentTaskString)) {

@@ -11,9 +11,6 @@
 
 package org.eclipse.ant.internal.ui.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.tools.ant.Project;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -25,7 +22,6 @@ public class AntProjectNode extends AntElementNode {
 
 	protected AntModelProject fProject;
 	protected IAntModel fModel;
-	private Map fNameToDefiningNode;
 	protected String fLabel;
 	
 	public AntProjectNode(AntModelProject project, IAntModel antModel) {
@@ -76,36 +72,10 @@ public class AntProjectNode extends AntElementNode {
 	public void reset() {
 		super.reset();
 		fProject.reset();
-		if (fNameToDefiningNode != null && getAntModel() instanceof AntModel) {
-			((AntModel)getAntModel()).setNamesOfOldDefiningNodes(fNameToDefiningNode.keySet());
-		}
-		fNameToDefiningNode= null;
 		setProblemSeverity(AntModelProblem.NO_PROBLEM);
 		setProblemMessage(null);
         fOffset= -1;
         fLength= -1;
-	}
-	
-	protected void addDefiningTaskNode(AntDefiningTaskNode node) {
-		if (fNameToDefiningNode == null) {
-			fNameToDefiningNode= new HashMap();
-		}
-		String label= node.getLabel();
-		if (label.equalsIgnoreCase("macrodef") //$NON-NLS-1$
-        		|| label.equalsIgnoreCase("presetdef") //$NON-NLS-1$
-				|| label.equalsIgnoreCase("typedef") //$NON-NLS-1$
-				|| label.equalsIgnoreCase("taskdef")) { //$NON-NLS-1$
-			//only add user defined names
-			return;
-		}
-		fNameToDefiningNode.put(node.getLabel(), node);
-	}
-	
-	public AntDefiningTaskNode getDefininingTaskNode(String nodeName) {
-		if (fNameToDefiningNode != null) {
-			return (AntDefiningTaskNode)fNameToDefiningNode.get(nodeName);
-		}
-		return null;
 	}
 	
 	public String getDescription() {
