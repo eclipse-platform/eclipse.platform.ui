@@ -70,28 +70,29 @@ public class Eclipse {
 	 */
 	private Class getBootLoader() throws Exception {
 		if (bootLoader == null) {
-			URL baseURL =
-				new URL(
-					"file",
-					null,
-					context.getRealPath("/").replace('\\', '/'));
+			String installDirName =
+				context.getInitParameter("ECLIPSE_HOME");
 
-			// At some point, the webapp was the actual eclipse directory, so the line below worked,
-			// but now we just install eclipse elsewhere, and point the webapp to the actual help webapp
-			//String path = baseURL.getFile() + "/plugins/org.eclipse.core.boot/boot.jar";
-			File f = new File(baseURL.getFile());
-			String path = searchForBoot(f.getParentFile());
-		
-			URL bootUrl =
-				new URL(
-					baseURL.getProtocol(),
-					baseURL.getHost(),
-					baseURL.getPort(),
-					path);
+			File pluginsDir;
+			if (installDirName == null || "".equals(installDirName)) {
+				URL baseURL =
+					new URL(
+						"file",
+						null,
+						context.getRealPath("/").replace('\\', '/'));
+				pluginsDir = new File(baseURL.getFile()).getParentFile();
+			} else {
+				URL baseURL =
+					new URL("file", null, installDirName.replace('\\', '/'));
+				pluginsDir = new File(baseURL.getFile(), "plugins");
+			}
+			String path = searchForBoot(pluginsDir);
+			URL bootUrl = new URL("file", null, path);
 			//System.out.println("URL for bootloader:" + bootUrl);
 
 			bootLoader =
-				new URLClassLoader(new URL[] { bootUrl }, null).loadClass(BOOTLOADER);
+				new URLClassLoader(new URL[] { bootUrl }, null).loadClass(
+					BOOTLOADER);
 		}
 		return bootLoader;
 	}
