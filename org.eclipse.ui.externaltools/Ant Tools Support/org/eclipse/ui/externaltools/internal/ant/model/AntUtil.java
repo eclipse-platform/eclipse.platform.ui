@@ -146,6 +146,34 @@ public final class AntUtil {
 	}
 	
 	/**
+	 * Returns the list of all targets for the Ant build file specified by
+	 * the provided IPath, arguments and ILaunchConfiguration, or <code>null</code> if no targets found.
+	 * 
+	 * @param path the location of the ant build file to get the targets from
+	 * @param arguments command line arguments for the Ant build
+	 * @param config the launch configuration for the Ant build
+	 * @return a list of <code>TargetInfo</code>
+	 * 
+	 * @throws CoreException if file does not exist, IO problems, or invalid format.
+	 */
+	public static TargetInfo[] getTargets(String path, String[] arguments, ILaunchConfiguration config) throws CoreException {
+		Map properties=getProperties(config);
+		String[] propertyFiles= getPropertyFiles(config);
+		AntRunner runner = new AntRunner();
+		runner.setBuildFileLocation(path);
+		if (properties != null){
+			runner.addUserProperties(properties);
+		}
+		if (propertyFiles != null && propertyFiles.length > 0) {
+			runner.setPropertyFiles(propertyFiles);
+		}
+		if (arguments != null && arguments.length > 0) {
+			runner.setArguments(arguments);
+		}
+		return runner.getAvailableTargets();
+	}
+	
+	/**
 	 * Returns the list of urls that define the custom classpath for the Ant
 	 * build , or <code>null</code> if the global classpath is to be used.
 	 *

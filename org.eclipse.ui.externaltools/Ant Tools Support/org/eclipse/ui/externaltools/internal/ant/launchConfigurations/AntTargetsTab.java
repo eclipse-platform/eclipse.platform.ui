@@ -49,6 +49,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
@@ -69,6 +70,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	private Label fSelectionCountLabel = null;
 	private Text fTargetOrderText = null;
 	private Button fOrderButton = null;
+	
+	private ILaunchConfiguration fLaunchConfiguration;
 	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -233,7 +236,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			String expandedLocation = ToolUtil.expandFileLocation(fLocation, ExpandVariableContext.EMPTY_CONTEXT, status);
 			if (expandedLocation != null && status.isOK()) {
 				try {
-					fAllTargets = AntUtil.getTargets(expandedLocation);
+					String[] arguments = ExternalToolsUtil.getArguments(fLaunchConfiguration, ExpandVariableContext.EMPTY_CONTEXT);
+					fAllTargets = AntUtil.getTargets(expandedLocation, arguments, fLaunchConfiguration);
 				} catch (CoreException ce) {
 					setErrorMessage(ce.getMessage());
 					fAllTargets= null;
@@ -273,6 +277,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		fLaunchConfiguration= configuration;
 		setErrorMessage(null);
 		setMessage(null);
 		String configTargets= null;
