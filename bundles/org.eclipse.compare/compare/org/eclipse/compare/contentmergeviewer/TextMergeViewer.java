@@ -1089,18 +1089,20 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		final ScrollBar sb1= st1.getHorizontalBar();
 		sb1.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				int max= sb1.getMaximum()-sb1.getThumb();
-				double v= 0.0;
-				if (max > 0)
-					v= (float)sb1.getSelection() / (float)max;
-				if (st2.isVisible()) {
-					ScrollBar sb2= st2.getHorizontalBar();
-					st2.setHorizontalPixel((int)((sb2.getMaximum()-sb2.getThumb()) * v));
-				}
-				if (st3.isVisible()) {
-					ScrollBar sb3= st3.getHorizontalBar();
-					st3.setHorizontalPixel((int)((sb3.getMaximum()-sb3.getThumb()) * v));
-				}
+			    if (fSynchronizedScrolling) {
+					int max= sb1.getMaximum()-sb1.getThumb();
+					double v= 0.0;
+					if (max > 0)
+						v= (float)sb1.getSelection() / (float)max;
+					if (st2.isVisible()) {
+						ScrollBar sb2= st2.getHorizontalBar();
+						st2.setHorizontalPixel((int)((sb2.getMaximum()-sb2.getThumb()) * v));
+					}
+					if (st3.isVisible()) {
+						ScrollBar sb3= st3.getHorizontalBar();
+						st3.setHorizontalPixel((int)((sb3.getMaximum()-sb3.getThumb()) * v));
+					}
+			    }
 			}
 		});
 	}
@@ -1334,7 +1336,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fCanvas= c;
 		}
 		public void mouseMove(MouseEvent e) {
-			if (!fIsDown && showResolveUI() && handleMouseMoveOverCenter(fCanvas, e.x, e.y))
+			if (!fIsDown && fUseSingleLine && showResolveUI() && handleMouseMoveOverCenter(fCanvas, e.x, e.y))
 				return;
 			super.mouseMove(e);
 		}
@@ -1351,9 +1353,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					paintCenter(this, gc);
 				}
 			};
-			if (!fUseResolveUI) {
-				new Resizer(canvas, HORIZONTAL);
-			} else {
+			if (fUseResolveUI) {
 				
 				new HoverResizer(canvas, HORIZONTAL);
 								
@@ -1374,6 +1374,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 						}
 					}
 				);				
+			} else {
+				new Resizer(canvas, HORIZONTAL);
 			}
 			
 			return canvas;
@@ -3296,7 +3298,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					}
 				}
 				
-				if (showResolveUI && diff.isUnresolvedIncomingOrConflicting()) {
+				if (fUseSingleLine && showResolveUI && diff.isUnresolvedIncomingOrConflicting()) {
 					// draw resolve state
 					int cx= (w-RESOLVE_SIZE)/2;
 					int cy= ((ly+lh/2) + (ry+rh/2) - RESOLVE_SIZE)/2;
