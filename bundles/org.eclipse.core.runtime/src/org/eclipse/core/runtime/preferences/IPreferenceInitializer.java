@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.runtime;
+package org.eclipse.core.runtime.preferences;
 
 /**
  * Interface used to aid in default preference value customization.
@@ -20,7 +20,7 @@ package org.eclipse.core.runtime;
  * </p>
  * @since 3.0
  */
-public interface IPreferenceCustomization {
+public interface IPreferenceInitializer {
 
 	/**
 	 * 

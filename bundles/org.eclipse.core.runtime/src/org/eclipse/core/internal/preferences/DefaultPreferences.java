@@ -16,8 +16,7 @@ import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.DefaultScope;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.*;
 import org.osgi.framework.Bundle;
 
 /**
@@ -26,7 +25,7 @@ import org.osgi.framework.Bundle;
 public class DefaultPreferences extends EclipsePreferences {
 	// cache which nodes have been loaded from disk
 	private static Set loadedNodes = new HashSet();
-	private static final String ELEMENT_CUSTOMIZATION = "customization"; //$NON-NLS-1$
+	private static final String ELEMENT_INITIALIZER = "initializer"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
 
 	public static final String PRODUCT_KEY = "org.eclipse.core.runtime.preferences.customization"; //$NON-NLS-1$
@@ -112,18 +111,18 @@ public class DefaultPreferences extends EclipsePreferences {
 		}
 	}
 
-	private void runCustomizer(IConfigurationElement element) {
-		IPreferenceCustomization customizer = null;
+	private void runInitializer(IConfigurationElement element) {
+		IPreferenceInitializer initializer = null;
 		try {
-			customizer = (IPreferenceCustomization) element.createExecutableExtension(ATTRIBUTE_CLASS);
+			initializer = (IPreferenceInitializer) element.createExecutableExtension(ATTRIBUTE_CLASS);
 		} catch (ClassCastException e) {
-			String message = "Extension not of type IPluginCustomizer";
+			String message = "Extension not of type IPreferenceInitializer";
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
 			log(status);
 		} catch (CoreException e) {
 			log(e.getStatus());
 		}
-		customizer.initializeDefaultPreferences();
+		initializer.initializeDefaultPreferences();
 	}
 
 	/*
@@ -147,11 +146,11 @@ public class DefaultPreferences extends EclipsePreferences {
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			for (int j = 0; j < elements.length; j++)
-				if (ELEMENT_CUSTOMIZATION.equals(elements[j].getName())) {
+				if (ELEMENT_INITIALIZER.equals(elements[j].getName())) {
 					if (name().equals(elements[j].getDeclaringExtension().getNamespace())) {
 						if (InternalPlatform.DEBUG_PREFERENCES)
 							Policy.debug("Running default preference customization as defined by: " + elements[j].getDeclaringExtension().getDeclaringPluginDescriptor()); //$NON-NLS-1$
-						runCustomizer(elements[j]);
+						runInitializer(elements[j]);
 						return;
 					}
 				}
