@@ -149,7 +149,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 					ensurePositionCategoryInstalled(document, env);
 					Position pos= new Position(offsets[0] + start, length);
 					document.addPosition(getCategory(), pos);
-					proposals[j]= new EnhancedCompletionProposal(values[j], pos, length);
+					proposals[j]= new PositionBasedCompletionProposal(values[j], pos, length);
 				}
 				
 				for (int j= 0; j != offsets.length; j++)
