@@ -43,9 +43,6 @@ public class AntPropertyNode extends AntTaskNode {
          	fValue= attributes.getValue(IAntEditorConstants.ATTR_VALUE);
          }
          setLabel(label);
-         //set the property in the project
-         task.maybeConfigure();
-         task.execute();
 	}
 	
 	public String getValue() {
@@ -57,5 +54,11 @@ public class AntPropertyNode extends AntTaskNode {
 	 */
 	protected ImageDescriptor getBaseImageDescriptor() {
 		return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_PROPERTY);
+	}
+	
+	public void configure() {
+		 //set the property in the project
+        getTask().maybeConfigure();
+        getTask().execute();
 	}
 }
