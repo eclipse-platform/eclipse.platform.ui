@@ -26,7 +26,7 @@ public interface ISaveablePart {
 	/**
 	 * The property id for <code>isDirty</code>.
 	 */
-	public static final int PROP_DIRTY = 0x101;
+	public static final int PROP_DIRTY = WorkbenchPartConstants.PROP_DIRTY;
 
 	/**
 	 * Saves the contents of this part.

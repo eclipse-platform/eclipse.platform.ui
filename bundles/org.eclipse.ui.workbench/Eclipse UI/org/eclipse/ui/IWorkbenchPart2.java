@@ -21,7 +21,7 @@ package org.eclipse.ui;
 public interface IWorkbenchPart2 extends IWorkbenchPart {
 	/**
      * Returns the name of this part. If this value changes the part must fire a
-     * property listener event with {@link IWorkbenchPart#PROP_NAME}.
+     * property listener event with {@link WorkbenchPartConstants#PROP_PART_NAME}.
      * 
      * @return the name of this view, or the empty string if the name is being managed
      * by the workbench (not <code>null</code>)
@@ -31,10 +31,10 @@ public interface IWorkbenchPart2 extends IWorkbenchPart {
 	/**
      * Returns the status text of this view. An empty string indicates no status
      * text. If this value changes the part must fire a property listener event
-     * with {@link IWorkbenchPart#PROP_STATUS_TEXT}.
+     * with {@link WorkbenchPartConstants#PROP_CONTENT_DESCRIPTION}.
      * 
      * @return the status text of this view (not <code>null</code>)
      */
-	public String getStatusText();
+	public String getContentDescription();
 	
 }

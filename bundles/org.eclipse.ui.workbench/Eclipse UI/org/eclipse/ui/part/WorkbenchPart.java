@@ -24,6 +24,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchPartConstants;
 import org.eclipse.ui.internal.ReferenceCounter;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.misc.Assert;
@@ -241,6 +242,8 @@ protected void setSite(IWorkbenchPartSite site) {
 /**
  * Sets or clears the title of this part.
  *
+ * @deprecated new code should use setPartName and setContentDescription instead
+ *
  * @param title the title, or <code>null</code> to clear
  */
 protected void setTitle(String title) {
@@ -315,7 +318,7 @@ protected void setPartName(String partName) {
 	if(Util.equals(this.partName, partName))
 		return;
 	this.partName = partName;
-	firePropertyChange(IWorkbenchPart.PROP_NAME);
+	firePropertyChange(WorkbenchPartConstants.PROP_PART_NAME);
 }
 
 /* (non-Javadoc)
@@ -323,29 +326,28 @@ protected void setPartName(String partName) {
  * 
  * @since 3.0
  */
-public String getStatusText() {
+public String getContentDescription() {
     return statusText;
 }
 
 /**
  * Sets the status text for this part. The status text is typically
- * a short string describing the current contents of the part. If
- * set to the empty string, the workbench will provide a (possibly empty)
- * status message for this part.
+ * a short string describing the current contents of the part. If parts
+ * use the setTitle method, their content description may be set automatically.
  *
  * @param statusText the status text, or the empty string indicating
  * that the workbench should manage the status message for this part
  * 
  * @since 3.0
  */
-protected void setStatusText(String statusText) {
+protected void setContentDescription(String statusText) {
 	Assert.isNotNull(statusText);
      
 	//Do not send changes if they are the same
 	if(Util.equals(this.statusText, statusText))
 		return;
 	this.statusText = statusText;
-	firePropertyChange(IWorkbenchPart.PROP_STATUS_TEXT);
+	firePropertyChange(WorkbenchPartConstants.PROP_CONTENT_DESCRIPTION);
 }
 
 }
