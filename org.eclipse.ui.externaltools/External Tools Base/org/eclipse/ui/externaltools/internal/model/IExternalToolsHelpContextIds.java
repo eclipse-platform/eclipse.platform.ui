@@ -69,5 +69,5 @@ public interface IExternalToolsHelpContextIds {
 	
 	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_BUILDER_TAB = PREFIX + "builders_tab_context"; //$NON-NLS-1$
 	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB = PREFIX + "main_tab_context"; //$NON-NLS-1$
-	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_REFRESH_TAB = PREFIX + "refresh_tab_context";
+	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_REFRESH_TAB = PREFIX + "refresh_tab_context"; //$NON-NLS-1$
 }
