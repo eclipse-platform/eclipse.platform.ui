@@ -100,6 +100,8 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 				
 		if (fOffset == fEnd)
 			shiftBuffer(fEnd);
+		else if (fOffset > fEnd)
+			shiftBuffer(fOffset);
 			
 		return fBuffer[fOffset++ - fStart];			
 	}
