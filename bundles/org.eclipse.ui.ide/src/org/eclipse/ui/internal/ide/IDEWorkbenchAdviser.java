@@ -172,23 +172,6 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			}
 		}
 
-		// anti-deadlocking code
-		boolean avoidDeadlock = true;
-		for (int i = 0; i < cmdLineArgs.length; i++) {
-			if (cmdLineArgs[i].equalsIgnoreCase("-allowDeadlock")) //$NON-NLS-1$
-				avoidDeadlock = false;
-		}
-		if (avoidDeadlock) {
-			try {
-				Display display = Display.getCurrent();
-				UIWorkspaceLock uiLock = new UIWorkspaceLock(IDEWorkbenchPlugin.getPluginWorkspace(), display);
-				ResourcesPlugin.getWorkspace().setWorkspaceLock(uiLock);
-				display.setSynchronizer(new UISynchronizer(display, uiLock));
-			} catch (CoreException e) {
-				IDEWorkbenchPlugin.log("Failed to setup workspace lock.", e.getStatus()); //$NON-NLS-1$
-			}
-		}
-		
 		// register shared images
 		declareWorkbenchImages();
 	}
