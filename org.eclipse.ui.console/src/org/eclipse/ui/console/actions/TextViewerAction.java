@@ -28,6 +28,13 @@ public class TextViewerAction extends Action implements IUpdate {
 	private int fOperationCode= -1;
 	private ITextOperationTarget fOperationTarget;
 
+	/**
+	 * Constructs a new action in the given text viewer with
+	 * the specified operation code.
+	 * 
+	 * @param viewer
+	 * @param operationCode
+	 */
 	public TextViewerAction(ITextViewer viewer, int operationCode) {
 		fOperationCode= operationCode;
 		fOperationTarget= viewer.getTextOperationTarget();
@@ -62,6 +69,13 @@ public class TextViewerAction extends Action implements IUpdate {
 		}
 	}
 	
+	/**
+	 * Configures this action with a label, tool tip, and description.
+	 * 
+	 * @param text action label
+	 * @param toolTipText action tool tip
+	 * @param description action description
+	 */
 	public void configureAction(String text, String toolTipText, String description) {
 		setText(text);
 		setToolTipText(toolTipText);
