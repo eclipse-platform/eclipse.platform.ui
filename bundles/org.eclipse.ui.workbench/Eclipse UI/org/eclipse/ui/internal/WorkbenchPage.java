@@ -2736,7 +2736,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	protected void resetToolBarLayout() {
 		window.getCoolBarManager().resetLayout();
-		//@issue: Reset Layout
 	}
 	/**
 	 * Sets the active working set for the workbench page. Notifies property

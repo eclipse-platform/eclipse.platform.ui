@@ -14,7 +14,9 @@ import org.eclipse.jface.action.ICoolBarManager;
 
 /**
  * Interface extention to <code>IActionBars</code> that provides an additional
- * cool bar manager. 
+ * cool bar manager.
+ * 
+ * @since 3.0 
  */
 public interface IActionBars2 extends IActionBars {
 

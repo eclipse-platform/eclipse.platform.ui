@@ -230,6 +230,8 @@ public class ActionSetActionBars extends SubActionBars2 {
 	 * @param itemId the target item id.
 	 * @param mgr the contribution manager.
 	 * @return the contribution item that the given items should be returned after.
+	 * 
+	 * @since 3.0
 	 */
 	private IContributionItem findAlphabeticalOrder(String startId, String itemId, IContributionManager mgr) {
 		IContributionItem[] items = mgr.getItems();

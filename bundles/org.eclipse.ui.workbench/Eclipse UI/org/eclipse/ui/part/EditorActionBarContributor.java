@@ -91,7 +91,9 @@ public void contributeToToolBar(IToolBarManager toolBarManager) {
  * this contribution. There can only be conributions from a cool bar or a tool bar.
  * </p>
  *
- * @param coolBarManager the manager that controls the workbench cool bar
+ * @param coolBarManager the manager that controls the workbench cool bar.
+ * 
+ * @since 3.0
  */
 public void contributeToCoolBar(ICoolBarManager coolBarManager) {
 }

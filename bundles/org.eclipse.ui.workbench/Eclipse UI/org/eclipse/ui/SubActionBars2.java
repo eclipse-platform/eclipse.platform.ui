@@ -16,6 +16,8 @@ import org.eclipse.jface.action.SubCoolBarManager;
 /**
  * A implementation of the extended <code>IActionBars2</code> interface. This sub class
  * provides a sub cool bar manager for plugins to contribute multiple cool items.
+ * 
+ * @since 3.0
  */
 public class SubActionBars2 extends SubActionBars implements IActionBars2 {
 	private SubCoolBarManager coolBarMgr = null;

@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.application;
 
-import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.ICoolBarManager;
 
 /**

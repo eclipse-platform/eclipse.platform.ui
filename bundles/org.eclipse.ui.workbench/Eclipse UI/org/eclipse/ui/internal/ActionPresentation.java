@@ -165,12 +165,6 @@ public void setActionSets(IActionSetDescriptor [] newArray) {
 	}
 }
 
-public void setInvisibleActionSets(IActionSetDescriptor [] newArray) {
-	List invisibleActionSets = Arrays.asList(newArray);
-	List oldList = copyActionSets();
-	
-	
-}
 /**
  */
 public IActionSet[] getActionSets() {
