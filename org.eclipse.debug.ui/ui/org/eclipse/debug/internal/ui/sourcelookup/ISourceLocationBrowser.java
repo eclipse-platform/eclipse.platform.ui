@@ -17,6 +17,9 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * User interface used to create a new source container. Contributed via
  * a source container presentation extension.
+ * <p>
+ * THIS INTERFACE IS EXPERIMENTAL AND SUBJECT TO CHANGE
+ * </p>
  * 
  * TODO: issue - should we use a wizard instead of a dialog for this? 
  *
