@@ -213,6 +213,13 @@ public class EditorCoolBar {
 				listComposite = null;
 			}
 		});
+		parent.addControlListener(new ControlAdapter() {
+			public void controlResized(ControlEvent e) {
+				if (listComposite != null) {
+					closeEditorList();
+				}
+			}
+		});
 		
 		Control editorListControl = editorList.createControl(listComposite);
 				
@@ -272,8 +279,6 @@ public class EditorCoolBar {
 		dropDownComposite.setLayout(gridLayout);
 
 		dropDownLabel = new CLabel(dropDownComposite, SWT.NONE);
-		dropDownLabel.addKeyListener(new KeyAdapter() {
-		});
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);	
  		dropDownLabel.setLayoutData(gd);
  		
@@ -288,6 +293,8 @@ public class EditorCoolBar {
 		
 		dropDownLabel.addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
+				if(activateVisibleEditor())
+					return; 
 				xAnchor = e.x;
 				yAnchor = e.y;				
 				singleClick = true;
@@ -388,6 +395,7 @@ public class EditorCoolBar {
 		// closed.  Don't want the editorList open the second time ...
 		dropDownButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				activateVisibleEditor();
 				if (!editorListLostFocusByButton) {
 					openEditorList();
 				} else {
@@ -463,6 +471,17 @@ public class EditorCoolBar {
 	public CLabel getDragControl() {
 		return dropDownLabel;
 	}
+	private boolean activateVisibleEditor() {
+		if(workbook.getVisibleEditor() != null) {
+			WorkbenchPage page = workbook.getVisibleEditor().getPage();
+			IWorkbenchPart part = workbook.getVisibleEditor().getEditorReference().getPart(false);
+			if(part != null && page.getActivePart() != part) {
+				page.activate(part);
+				return true;
+			}
+		}
+		return false;
+	}
 	private boolean hasMovedEnough(MouseEvent e) {
 		int dx= e.x - xAnchor;
 		int dy= e.y - yAnchor;
@@ -523,6 +542,13 @@ public class EditorCoolBar {
 		shortcutListComposite.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				shortcutListComposite = null;
+			}
+		});
+		parent.addControlListener(new ControlAdapter() {
+			public void controlResized(ControlEvent e) {
+				if (shortcutListComposite != null) {
+					closeShortcutList();
+				}
 			}
 		});
 		
