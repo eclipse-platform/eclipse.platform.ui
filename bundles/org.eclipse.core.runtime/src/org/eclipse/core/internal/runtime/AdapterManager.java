@@ -17,13 +17,13 @@ import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IAdapterFactory;
 
 /**
- * This class is a default implementation of <code>IExtenderManager</code>.
+ * This class is a default implementation of <code>IAdapterManager</code>.
  * It provides fast lookup of property values with the following semantics:
  * <ul>
- * <li> At most one extender will be invoked per property lookup
- * <li> If multiple installed extenders provide the same property, only 
+ * <li> At most one adapter will be invoked per property lookup
+ * <li> If multiple installed adapters provide the same property, only 
  *		the first found in the search order is said to <i>define</i> the property 
- *		as it is the only extender which will be invoked..
+ *		as it is the only adapter which will be invoked..
  * <li> The search order from a class with the definition<br>
  *			<code>class X extends Y implements A, B</code><br>
  *		is as follows:
