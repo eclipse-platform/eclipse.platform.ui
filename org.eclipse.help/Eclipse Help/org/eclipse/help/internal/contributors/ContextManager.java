@@ -22,14 +22,6 @@ public interface ContextManager {
 	 */
 	public IContext getContext(String contextId);
 	/**
-	 * Get contributions of some type, like contexts, topics, actions
-	 * or views from a specified plugin.
-	 * @return java.util.Iterator
-	 * @param typeName java.lang.String
-	 * @param pluginId java.lang.String
-	 */
-	public Iterator getContributionsOfType(String pluginId, String typeName);
-	/**
 	 * Finds the context description to display, given
 	 * a an ordered list of (nested) context objects.
 	 */

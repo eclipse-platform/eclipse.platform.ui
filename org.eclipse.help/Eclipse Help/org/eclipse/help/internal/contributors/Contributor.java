@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 public interface Contributor {
 	public static final String NAME_ATTR = "name";
 	public static final String ID_ATTR = "id";
+	public static final String PLUGIN_ATTR = "plugin";
 
 	/**
 	 */

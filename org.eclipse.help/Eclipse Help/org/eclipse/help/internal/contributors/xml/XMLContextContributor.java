@@ -155,7 +155,7 @@ public class XMLContextContributor
 	 * @return String
 	 */
 	public String getType() {
-		return ContextContributor.MAP_ELEM;
+		return ContextContributor.CONTEXTS_ELEM;
 	}
 	/**
 	 */

@@ -23,45 +23,17 @@ import org.eclipse.help.internal.util.*;
  */
 public class HelpContextManager implements ContextManager {
 	/** contexts are indexed by each plugin */
-	Map pluginsContexts = new Hashtable(/*of Map of Context*/);
+	Map pluginsContexts = new HashMap(/*of Map of Context indexed by plugin*/);
+	
+	/** Context contributors */
+	Map contextContributors = new HashMap(/* of List of Contributors index by plugin */);
+	
 	/**
 	 * HelpContextManager constructor.
 	 */
 	public HelpContextManager() {
 		super();
-	}
-	private void addMap(String plugin, Element map) {
-		/*
-		if (map == null) return;
-		
-		Map pluginContexts = (Map)pluginsContexts.get(plugin);
-		if (pluginContexts == null)
-		{
-			pluginContexts = new Hashtable();
-			pluginsContexts.put(plugin, pluginContexts);
-		}
-		
-		NodeList children = map.getChildNodes();
-		for (int i=0; i<children.getLength(); i++)
-		{
-			Node child = children.item(i);
-			if (child.getNodeType() != Node.ELEMENT_NODE) continue;
-			Element contextElement = (Element)child;
-			String id = contextElement.getAttribute(ContextContributor.ID_ATTR);
-			// Try merging an existing context with the same id
-			// with the new one. If none exists, just add it.
-			Context oldContext = (Context)pluginContexts.get(id);
-			if (oldContext == null)
-			{
-				Context newContext = new Context(contextElement);
-				pluginContexts.put(id, newContext);
-			}
-			else
-			{
-				oldContext.merge(contextElement);
-			}
-		}
-		*/
+		createContextContributors();
 	}
 	/**
 	 * Finds the context, given context ID.
@@ -88,56 +60,7 @@ public class HelpContextManager implements ContextManager {
 		return (IContext) contexts.get(id);
 
 	}
-	/**
-	 * Get contributions of some type, like contexts, topics, actions
-	 * or views from a specified plugin. If no contributors are found, or
-	 * if errors are encountered, return an empty Iterator. 
-	 * @return java.util.Iterator
-	 * @param typeName java.lang.String
-	 * @param pluginId java.lang.String
-	 */
-	public Iterator getContributionsOfType(String pluginId, String typeName) {
-		List typedContributors = new ArrayList();
 
-		try {
-			// Get the help contributions for this plugin
-			IPluginDescriptor plugin =
-				Platform.getPluginRegistry().getPluginDescriptor(pluginId);
-			IExtension[] extensions = plugin.getExtensions();
-			IExtension helpContributions = null;
-			// Loop through all the contributions and find the help ones.
-			// Then, get the one specified by the typeName
-			for (int i = 0; extensions != null && i < extensions.length; i++) {
-				if (!ContextManager
-					.CONTEXT_EXTENSION
-					.equals(extensions[i].getExtensionPointUniqueIdentifier()))
-					continue;
-
-				helpContributions = extensions[i];
-				IConfigurationElement[] pluginContributions =
-					helpContributions.getConfigurationElements();
-				for (int j = 0; j < pluginContributions.length; j++) {
-					if (pluginContributions[j].getName().equals(typeName)) {
-						Contributor contributor =
-							ContributorFactory.getFactory().createContributor(
-								plugin,
-								pluginContributions[j]);
-						if (contributor != null)
-							typedContributors.add(contributor);
-					}
-				}
-			}
-			return typedContributors.iterator();
-		} catch (Exception e) {
-			// log failure.
-			String msg = Resources.getString("E011", pluginId);
-			Logger.logError(msg, e);
-			// this puts an empty Map in the pluginsContexts HashMap, which forces
-			// looking into nested Context objects.  
-			return typedContributors.iterator();
-		}
-
-	}
 	/**
 	 * Finds the context to display (text and related topics), given
 	 * a an ordered list of (nested) context objects
@@ -166,24 +89,7 @@ public class HelpContextManager implements ContextManager {
 		if (!(context instanceof String))
 			return null;
 
-		String contextId = (String) context;
-		String plugin = contextId;
-		String id = contextId;
-		int dot = contextId.lastIndexOf('.');
-		if (dot != -1) {
-			plugin = contextId.substring(0, dot);
-			id = contextId.substring(dot + 1);
-		}
-
-		Map contexts = (Map) pluginsContexts.get(plugin);
-		if (contexts == null) {
-			// parse the xml context contribution files and load the context
-			// defintion (NOTE: the side-effect is that all the contexts defined
-			// by this plugin get loaded)
-			contexts = loadContext(plugin);
-		}
-
-		IContext contextNode = (IContext) contexts.get(id);
+		IContext contextNode = getContext((String)context);
 		if (contextNode != null)
 			return contextNode.getText();
 		else
@@ -264,23 +170,7 @@ public class HelpContextManager implements ContextManager {
 		if (!(context instanceof String))
 			return null;
 
-		String contextId = (String) context;
-		String plugin = contextId;
-		String id = contextId;
-		int dot = contextId.lastIndexOf('.');
-		if (dot != -1) {
-			plugin = contextId.substring(0, dot);
-			id = contextId.substring(dot + 1);
-		}
-
-		Map contexts = (Map) pluginsContexts.get(plugin);
-		if (contexts == null) {
-			// parse the xml context contribution files and load the context
-			// defintion (NOTE: the side-effect is that all the contexts defined
-			// by this plugin get loaded)
-			contexts = loadContext(plugin);
-		}
-		IContext contextNode = (IContext) contexts.get(id);
+		IContext contextNode = getContext((String)context);
 		if (contextNode != null)
 			return contextNode.getRelatedTopics();
 		else
@@ -292,20 +182,29 @@ public class HelpContextManager implements ContextManager {
 	 * Finds the context to display (text and related topics), given
 	 * a an ordered list of (nested) context objects
 	 */
-	private Map loadContext(String plugin) {
+	private synchronized Map loadContext(String plugin) {
 		Map contexts = (Map) pluginsContexts.get(plugin);
 		if (contexts == null) {
-			// read the context info from the XML contributions
-			Iterator contextsContributors =
-				getContributionsOfType(plugin, ContextContributor.CONTEXTS_ELEM);
 			contexts = new HashMap();
 			pluginsContexts.put(plugin, contexts);
+			
+			// read the context info from the XML contributions
+			List contributors = (List)contextContributors.get(plugin);
+			if (contributors == null) 
+			{
+				// log failure.
+				String msg = Resources.getString("E011", plugin);
+				Logger.logInfo(msg);
+				return contexts;
+			}
+					
 			// iterator over all contexts contributors and add all the contexts
-			// defined by this plugin
+			// defined for this plugin
 			// NOTE: if performance is a problem, this can be improved by a better
 			//       use of the SAX parser
-			while (contextsContributors.hasNext()) {
-				Contributor contextContributor = (Contributor) contextsContributors.next();
+			for (Iterator contextContributors=contributors.iterator(); contextContributors.hasNext(); ) 
+			{
+				Contributor contextContributor = (Contributor) contextContributors.next();
 				Contribution contrib = contextContributor.getContribution();
 
 				// contrib could be null if there was an error parsing the manifest file!
@@ -326,4 +225,42 @@ public class HelpContextManager implements ContextManager {
 		}
 		return contexts;
 	}
+	
+	/**
+	 * Creates the list of context contributors 
+	 */
+	private void createContextContributors() {
+		// read extension point and retrieve all context contributions
+		IExtensionPoint xpt =
+			Platform.getPluginRegistry().getExtensionPoint(CONTEXT_EXTENSION);
+		if (xpt == null)
+			return; // no contributions...
+
+		IExtension[] extensions = xpt.getExtensions();
+		for (int i = 0; i < extensions.length; i++) {
+			IPluginDescriptor plugin = extensions[i].getDeclaringPluginDescriptor();
+			IConfigurationElement[] contextContributions =
+				extensions[i].getConfigurationElements();
+			for (int j = 0; j < contextContributions.length; j++) {
+				Contributor contributor = ContributorFactory.getFactory().createContributor(plugin, contextContributions[j]);
+				if (contributor != null) 
+				{
+					// add this contributors to the map of contributors
+					// and index it by the plugin id specified.
+					// Use the current plugin if none is specified
+					String contextPlugin = contextContributions[j].getAttribute(Contributor.PLUGIN_ATTR);
+					if (contextPlugin == null || contextPlugin.length() == 0)
+						contextPlugin = plugin.getUniqueIdentifier();
+					List contributors = (List)contextContributors.get(contextPlugin);
+					if (contributors == null)
+					{
+						contributors = new ArrayList();
+						contextContributors.put(contextPlugin, contributors);
+					}
+					contributors.add(contributor);
+				}
+			}
+		}
+	}
+	
 }

@@ -17,7 +17,6 @@ public interface ContextContributor extends Contributor {
 
 	// Only for DESC_TXT_BOLD property, lets use the properties file
 	// since ID writers get exposed to this field.
-	public static final String MAP_ELEM = "map";
 	public static final String CONTEXT_ELEM = "context";
 	public static final String CONTEXTS_ELEM = "contexts";
 	public static final String DESC_ELEM = "description";

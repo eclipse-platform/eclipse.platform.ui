@@ -52,7 +52,7 @@ public class HelpContributionManager implements ContributionManager {
 		IExtension[] extensions = xpt.getExtensions();
 		//// (1) For now, we keep track of all the plugins with contributions
 		/// including those without manifest
-		contributingPlugins = new Vector(extensions.length);
+		contributingPlugins = new ArrayList(extensions.length);
 
 		for (int i = 0; i < extensions.length; i++) {
 			IPluginDescriptor plugin = extensions[i].getDeclaringPluginDescriptor();
