@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -896,44 +897,16 @@ public final class Workbench implements IWorkbench {
 		//Iterate through the definitions and initialize thier
 		//defaults in the preference store.
 		ColorDefinition[] definitions = ColorDefinition.getDefinitions();
-		ArrayList colorsToSet = new ArrayList();
+		
+		// sort the definitions by dependant ordering so that we process 
+		// ancestors before children.		
+		ColorDefinition [] copyOfDefinitions = new ColorDefinition[definitions.length];
+		System.arraycopy(definitions, 0, copyOfDefinitions, 0, definitions.length);
+		Arrays.sort(copyOfDefinitions, ColorDefinition.HIERARCHY_COMPARATOR);
 
-		for (int i = 0; i < definitions.length; i++) {
-			ColorDefinition definition = definitions[i];
+		for (int i = 0; i < copyOfDefinitions.length; i++) {
+			ColorDefinition definition = copyOfDefinitions[i];
 			installColor(definition, registry, store);
-		}
-
-		// post-process the defaults to allow for out-of-order specification.
-		for (int i = 0; i < definitions.length; i++) {
-			ColorDefinition definition = definitions[i];
-			String defaultsTo = definition.getDefaultsTo();
-			if (defaultsTo != null
-				&& PreferenceConverter.getDefaultColor(store, definition.getId())
-					== PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
-				PreferenceConverter.setDefault(
-					store,
-					definition.getId(),
-					PreferenceConverter.getColor(store, defaultsTo));
-
-				//If there is no value in the registry pass though the mapping
-				if (!registry.hasValueFor(definition.getId())) {
-					colorsToSet.add(definition);
-				}
-			}
-		}
-
-		/*
-		 * Now that all of the colors have been initialized anything that is
-		 * still at its defaults and has a defaults to needs to have its value
-		 * set in the registry. Post process to be sure that all of the colors
-		 * have the correct setting before there is an update.
-		 */
-		Iterator updateIterator = colorsToSet.iterator();
-		while (updateIterator.hasNext()) {
-			ColorDefinition update = (ColorDefinition) updateIterator.next();
-			RGB rgb = registry.getRGB(update.getDefaultsTo());
-			if (rgb != null) // dont add colors whos dependencies are missing.
-				registry.put(update.getId(), rgb);
 		}
 	}
 
@@ -951,18 +924,30 @@ public final class Workbench implements IWorkbench {
 		ColorDefinition definition,
 		ColorRegistry registry,
 		IPreferenceStore store) {
-		RGB color = PreferenceConverter.getColor(store, definition.getId());
+				
+		String id = definition.getId();
+		RGB color = PreferenceConverter.getColor(store, id);
 		if (color == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
 			// process RGB if no good value is set.
 			color = StringConverter.asRGB(definition.getValue(), null);
 
-			if (color != null) {
-				PreferenceConverter.setDefault(store, definition.getId(), color);
-			}
+			if (color != null) 
+				PreferenceConverter.setDefault(
+						store, 
+						id, 
+						color);
+			else { // we have a default value.  Get it.
+				color = PreferenceConverter.getColor(store, definition.getDefaultsTo());
+				if (color != null) 
+					PreferenceConverter.setDefault(
+							store, 
+							id, 
+							color);
+				}
 		}
 
 		if (color != null) {
-			registry.put(definition.getId(), color);
+			registry.put(id, color);
 		}
 	}
 
@@ -984,6 +969,10 @@ public final class Workbench implements IWorkbench {
 
 	/*
 	 * Initializes the workbench fonts with the stored values.
+	 * 
+	 * TODO: Investigate fix for Bug 45943.  Because of how the font values are 
+	 * loaded, the provided fix may be adequate but it proved insufficient for 
+	 * the color registry.  
 	 */
 	private void initializeFonts() {
 		IPreferenceStore store = getPreferenceStore();
@@ -1030,8 +1019,9 @@ public final class Workbench implements IWorkbench {
 	/*
 	 * Installs the given font in the font registry.
 	 * 
-	 * @param fontKey the font key @param registry the font registry @param
-	 * store the preference store from which to obtain font data
+	 * @param fontKey the font key 
+	 * @param registry the font registry 
+	 * @param store the preference store from which to obtain font data
 	 */
 	private void installFont(String fontKey, FontRegistry registry, IPreferenceStore store) {
 		if (store.isDefault(fontKey))
