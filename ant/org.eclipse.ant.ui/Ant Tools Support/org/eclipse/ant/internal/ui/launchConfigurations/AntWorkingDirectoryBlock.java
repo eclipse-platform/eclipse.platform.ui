@@ -97,7 +97,6 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 	}
 
 	public void setEnabled(boolean enabled) {
-		fWorkingDirLabel.setEnabled(enabled);
 		fUseDefaultWorkingDirButton.setEnabled(enabled);
 		if(!isDefaultWorkingDirectory() && enabled) {
 			boolean local = isLocalWorkingDirectory();
