@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * are made available under the terms of the Common Public License v1.0 which
+ * accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  * IBM - Initial API and implementation
@@ -24,7 +24,22 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	protected Workspace workspace;
 	protected Properties masterTable;
 	protected ElementTree lastSnap;
+	/**
+	 * The number of non-trivial operations since the last snapshot.
+	 */
 	protected int operationCount = 0;
+	
+	/**
+	 * The number of empty (non-changing) operations since the last snapshot.
+	 */
+	protected int noopCount = 0;
+
+	/**
+	 * The number of empty operations that are equivalent to a single non-
+	 * trivial operation.
+	 */
+	protected static final int NO_OP_THRESHOLD = 20;
+
 	protected boolean snapshotRequested;
 	
 
@@ -881,7 +896,7 @@ public void shutdown(IProgressMonitor monitor) {
  * Encapsulates rules for determining when a snapshot is needed.
  * This should be called at the end of every top level operation.
  */
-public void snapshotIfNeeded() throws CoreException {
+public void snapshotIfNeeded(boolean hasTreeChanges) throws CoreException {
 	if (!workspace.internalGetDescription().isSnapshotEnabled() && !snapshotRequested)
 		return;
 	if (snapshotRequested || operationCount >= workspace.internalGetDescription().getOperationsPerSnapshot()) {
@@ -898,15 +913,23 @@ public void snapshotIfNeeded() throws CoreException {
 			EventStats.endSnapshot();
 		}
 	} else {
-		operationCount++;
-		long interval = workspace.internalGetDescription().getSnapshotInterval();
-		if (snapshotRunnable == null && interval > 0) {
-			if (ResourcesPlugin.getPlugin().isDebugging()) {
-				System.out.println("Starting snapshot delay thread"); //$NON-NLS-1$
+		if (hasTreeChanges) {
+			operationCount++;
+			long interval = workspace.internalGetDescription().getSnapshotInterval();
+			if (snapshotRunnable == null && interval > 0) {
+				if (ResourcesPlugin.getPlugin().isDebugging()) {
+					System.out.println("Starting snapshot delay thread"); //$NON-NLS-1$
+				}
+				snapshotRunnable = new DelayedSnapshotRunnable(this, interval);
+				Thread t = new Thread(snapshotRunnable, "Snapshot"); //$NON-NLS-1$
+				t.start();
 			}
-			snapshotRunnable = new DelayedSnapshotRunnable(this, interval);
-			Thread t = new Thread(snapshotRunnable, "Snapshot"); //$NON-NLS-1$
-			t.start();
+		} else {
+			//increment the operation count if we've had a sufficient number of no-ops
+			if (++noopCount > NO_OP_THRESHOLD) {
+				operationCount++;
+				noopCount = 0;
+			}
 		}
 	}
 }

@@ -908,8 +908,9 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 			CoreException signal = null;
 			monitor = Policy.monitorFor(monitor);
 			monitor.subTask(MSG_RESOURCES_UPDATING); //$NON-NLS-1$
+			boolean hasTreeChanges = ElementTree.hasChanges(tree, operationTree, ResourceComparator.getComparator(false), true);
 			broadcastChanges(tree, IResourceChangeEvent.PRE_AUTO_BUILD, false, false, Policy.monitorFor(null));
-			if (isAutoBuilding() && shouldBuild()) {
+			if (isAutoBuilding() && shouldBuild(hasTreeChanges)) {
 				try {
 					getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, monitor);
 				} catch (OperationCanceledException e) {
@@ -923,7 +924,7 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 			getMarkerManager().resetMarkerDeltas();
 			// Perform a snapshot if we are sufficiently out of date.  Be sure to make the tree immutable first
 			tree.immutable();
-			saveManager.snapshotIfNeeded();
+			saveManager.snapshotIfNeeded(hasTreeChanges);
 			//make sure the monitor subtask message is cleared.
 			monitor.subTask(""); //$NON-NLS-1$
 			if (cancel != null)
@@ -1685,13 +1686,13 @@ public void setWorkspaceLock(WorkspaceLock lock) {
 	workManager.setWorkspaceLock(lock);
 }
 
-private boolean shouldBuild() throws CoreException {
+private boolean shouldBuild(boolean hasTreeChanges) throws CoreException {
 	//check if workspace description changes necessitate a build
 	if (forceBuild) {
 		forceBuild = false;
 		return true;
 	}
-	return getWorkManager().shouldBuild() && ElementTree.hasChanges(tree, operationTree, ResourceComparator.getComparator(false), true);
+	return hasTreeChanges && getWorkManager().shouldBuild();
 }
 protected void shutdown(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
