@@ -33,6 +33,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -104,10 +105,17 @@ public class PerformanceView extends ViewPart {
 		viewer.getTable().setLayout(tableLayout);
 
 		for (int i = 0; i < columnHeaders.length; i++) {
+			final int index = i;
 			tableLayout.addColumnData(columnLayouts[i]);
 			TableColumn column = new TableColumn(viewer.getTable(), SWT.NONE, i);
 			column.setResizable(true);
 			column.setText(columnHeaders[i]);
+			column.addSelectionListener(new SelectionAdapter(){
+				public void widgetSelected(org.eclipse.swt.events.SelectionEvent e){
+					viewer.setSorter(new EventsSorter(index));
+					viewer.refresh();
+				}
+			});
 		}
 
 		performanceListener = createPerformanceListener();
