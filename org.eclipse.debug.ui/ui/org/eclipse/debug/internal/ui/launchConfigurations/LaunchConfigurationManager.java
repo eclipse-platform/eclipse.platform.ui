@@ -27,8 +27,8 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
-import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -137,7 +137,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		return false;
 	}
 	
-	public void shutdown() throws CoreException {
+	public void shutdown() {
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(this);
 		if (fLaunchHistories != null) {
@@ -227,8 +227,8 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		}
 	}
 
-	protected String getHistoryAsXML() throws IOException, CoreException {
-		Document doc = new DocumentImpl();
+	protected String getHistoryAsXML() throws CoreException, ParserConfigurationException, TransformerException, IOException {
+		Document doc = DebugUIPlugin.getDocument();
 		Element historyRootElement = doc.createElement(HISTORY_ROOT_NODE); 
 		doc.appendChild(historyRootElement);
 		
@@ -269,7 +269,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	 * Write out an XML file indicating the entries on the run & debug history lists and
 	 * the most recent launch.
 	 */
-	protected void persistLaunchHistory() throws IOException, CoreException {
+	protected void persistLaunchHistory() throws IOException, CoreException, TransformerException, ParserConfigurationException {
 		if (fRestoring) {
 			return;
 		}

@@ -13,14 +13,18 @@ package org.eclipse.debug.internal.ui;
  
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 
-import org.apache.xml.serialize.Method;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.Serializer;
-import org.apache.xml.serialize.SerializerFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -587,20 +591,29 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * @param doc document to serialize
 	 * @return the document as a string
 	 */
-	public static String serializeDocument(Document doc) throws IOException {
+	public static String serializeDocument(Document doc) throws TransformerException, IOException {
 		ByteArrayOutputStream s= new ByteArrayOutputStream();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting(true);
-		format.setLineSeparator(System.getProperty("line.separator"));  //$NON-NLS-1$
 		
-		Serializer serializer =
-			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
-				new OutputStreamWriter(s, "UTF8"), //$NON-NLS-1$
-				format);
-		serializer.asDOMSerializer().serialize(doc);
-		return s.toString("UTF8"); //$NON-NLS-1$		
-	}	
+		TransformerFactory factory= TransformerFactory.newInstance();
+		Transformer transformer= factory.newTransformer();
+		DOMSource source= new DOMSource(doc);
+		StreamResult outputTarget= new StreamResult(s);
+		transformer.transform(source, outputTarget);
+		
+		return s.toString("UTF8"); //$NON-NLS-1$			
+	}
+	
+	public static Document getDocument() throws ParserConfigurationException {
+		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
 
+		dfactory.setNamespaceAware(true);
+		dfactory.setValidating(true);
+
+		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
+		Document doc =docBuilder.newDocument();
+		return doc;
+	}
+	
 	/**
 	 * Determines and returns the selection in the specified window.  If nothing is
 	 * actually selected, look for an active editor.

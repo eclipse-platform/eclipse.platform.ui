@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -118,6 +121,10 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e);
 			} catch (IOException e) {
+				DebugUIPlugin.log(e);
+			} catch (ParserConfigurationException e) {
+				DebugUIPlugin.log(e);
+			} catch (TransformerException e) {
 				DebugUIPlugin.log(e);
 			}
 		}

@@ -21,8 +21,8 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
-import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
@@ -343,6 +343,10 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 			DebugUIPlugin.getDefault().savePluginPreferences();				
 		} catch (IOException e) {
 			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus(LaunchConfigurationsMessages.getString("PerspectiveManager.9"), e)); //$NON-NLS-1$
+		} catch (ParserConfigurationException e) {
+			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus(LaunchConfigurationsMessages.getString("PerspectiveManager.9"), e)); //$NON-NLS-1$
+		} catch (TransformerException e) {
+			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus(LaunchConfigurationsMessages.getString("PerspectiveManager.9"), e)); //$NON-NLS-1$
 		}
 	}
 	
@@ -378,11 +382,13 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 * Generates XML for the user specified perspective settings.
 	 *  
 	 * @return XML
-	 * @exception CoreException if unable to generate the XML
+	 * @exception IOException if unable to generate the XML
+     * @exception TransformerException if unable to generate the XML
+     * @exception ParserConfigurationException if unable to generate the XML
 	 */
-	private String generatePerspectiveXML() throws IOException {
+	private String generatePerspectiveXML() throws ParserConfigurationException, TransformerException, IOException {
 		
-		Document doc = new DocumentImpl();
+		Document doc = DebugUIPlugin.getDocument();
 		Element configRootElement = doc.createElement(ELEMENT_PERSPECTIVES);
 		doc.appendChild(configRootElement);
 		
