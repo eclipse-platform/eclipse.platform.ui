@@ -1,20 +1,22 @@
 package org.eclipse.debug.internal.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2002.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointListener;
+import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewPart;
 
-public class SelectAllBreakpointsAction extends SelectAllAction implements IBreakpointListener {
+public class SelectAllBreakpointsAction extends SelectAllAction implements IBreakpointsListener {
 
 	protected void update() {
 		getAction().setEnabled(
@@ -38,24 +40,24 @@ public class SelectAllBreakpointsAction extends SelectAllAction implements IBrea
 	}
 
 	/**
-	 * @see IBreakpointListener#breakpointAdded(IBreakpoint)
+	 * @see IBreakpointsListener#breakpointsAdded(IBreakpoint[])breakpointAdded(IBreakpoint)
 	 */
-	public void breakpointAdded(IBreakpoint breakpoint) {
+	public void breakpointsAdded(IBreakpoint[] breakpoints) {
 		if (getAction() != null && !getAction().isEnabled()) {
 			update();
 		}
 	}
 
 	/**
-	 * @see IBreakpointListener#breakpointChanged(IBreakpoint, IMarkerDelta)
+	 * @see IBreakpointsListener#breakpointsChanged(IBreakpoint[], IMarkerDelta[])breakpointChanged(IBreakpoint, IMarkerDelta)
 	 */
-	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
+	public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 	}
 
 	/**
-     * @see IBreakpointListener#breakpointRemoved(IBreakpoint, IMarkerDelta)
+     * @see IBreakpointsListener#breakpointsRemoved(IBreakpoint[], IMarkerDelta[])
 	 */
-	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
+	public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 		if (getAction() != null) {
 			update();
 		}

@@ -1,9 +1,11 @@
 package org.eclipse.debug.internal.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +13,8 @@ import java.util.List;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.IDebugView;
@@ -25,7 +27,7 @@ import org.eclipse.ui.IViewPart;
  * Removes all terminated/detached launches from the
  * active debug view.
  */
-public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate implements ILaunchListener {
+public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate implements ILaunchesListener {
 
 	/**
 	 * @see ListenerActionDelegate#doHandleDebugEvent(DebugEvent)
@@ -133,21 +135,21 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 	}
 	
 	/**
-	 * @see ILaunchListener#launchAdded(ILaunch)
+	 * @see ILaunchesListener#launchesAdded(ILaunch[])
 	 */
-	public void launchAdded(ILaunch launch) {
+	public void launchesAdded(ILaunch[] launches) {
 	}
 
 	/**
-	 * @see ILaunchListener#launchChanged(ILaunch)
+	 * @see ILaunchesListener#launchesChanged(ILaunch[])
 	 */
-	public void launchChanged(ILaunch launch) {
+	public void launchesChanged(ILaunch[] launches) {
 	}
 
 	/**
-	 * @see ILaunchListener#launchRemoved(ILaunch)
+	 * @see ILaunchesListener#launchesRemoved(ILaunch[])
 	 */
-	public void launchRemoved(ILaunch launch) {
+	public void launchesRemoved(ILaunch[] launches) {
 		if (getAction().isEnabled()) {
 			update();
 		}

@@ -10,8 +10,8 @@ http://www.eclipse.org/legal/cpl-v10.html
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.ui.IViewPart;
@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * Removes all breakpoints from the source (markers) and remove all
  * breakpoints from processes
  */
-public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate implements IBreakpointListener {
+public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate implements IBreakpointsListener {
 
 	protected void doAction() {
 		IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
@@ -42,24 +42,24 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 	}	
 	
 	/**
-	 * @see IBreakpointListener#breakpointAdded(IBreakpoint)
+	 * @see IBreakpointsListener#breakpointsAdded(IBreakpoint[])
 	 */
-	public void breakpointAdded(IBreakpoint breakpoint) {
+	public void breakpointsAdded(IBreakpoint[] breakpoints) {
 		if (getAction() != null && !getAction().isEnabled()){
 			update();
 		}
 	}
 
 	/**
-	 * @see IBreakpointListener#breakpointChanged(IBreakpoint, IMarkerDelta)
+	 * @see IBreakpointsListener#breakpointsChanged(IBreakpoint[], IMarkerDelta[])
 	 */
-	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
+	public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 	}
 
 	/**
-	 * @see IBreakpointListener#breakpointRemoved(IBreakpoint, IMarkerDelta)
+	 * @see IBreakpointsListener#breakpointsRemoved(IBreakpoint[], IMarkerDelta[])breakpointRemoved(IBreakpoint, IMarkerDelta)
 	 */
-	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
+	public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 		if (getAction() != null) {
 			update();
 		}
