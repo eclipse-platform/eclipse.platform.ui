@@ -20,18 +20,8 @@
 
 /* need this one for Mozilla */
 HTML { 
-	width:100%;
-	height:100%;
 	margin:0px;
 	padding:0px;
-	border:0px;
-<%
-if (data.isIE()) {
-%>
-	border-bottom:1px solid ThreeDShadow;
-<%
-}
-%>
 }
  
 BODY {
@@ -42,17 +32,7 @@ BODY {
 	font-weight:bold;
 }
 
-#tdborder {
-	border-top:1px solid <%=prefs.getViewBackground()%>;
-	border-left:1px solid <%=prefs.getViewBackground()%>;
-<%
-if (data.isMozilla()) { 
-%>
-	border-bottom:1px solid ThreeDShadow;
-<%
-}
-%> 
-}
+
 td.button {
 <%
 if (data.isIE()) {
@@ -85,6 +65,8 @@ if (data.isMozilla()) {
 	width:20px;
 	height:20px;
 	border:1px solid <%=prefs.getToolbarBackground()%>;
+	writing-mode:tb-rl;
+	vertical-align:middle;
 }
 
 .button a:hover { 
@@ -94,8 +76,41 @@ if (data.isMozilla()) {
 	border-bottom:1px solid ButtonShadow;
 }
 
+#container {
+	border-left:1px solid ThreeDHighlight;
+	border-bottom:1px solid ThreeDShadow;
+<%
+if (data.isIE()) {
+%> 
+	border-top:1px solid ThreeDHighlight;
+<%
+}else if (data.isMozilla()){
+%>
+	border-top:2px groove ThreeDHighlight;
+	height:27px;
+<%
+}
+%>
+}
+
 </style>
 
+<%
+if (data.isMozilla() && "contents".equals(request.getParameter("view"))) { 
+%>
+<style type="text/css">
+
+/* need this one for Mozilla */
+HTML { 
+	margin:0px;
+	padding:0px;
+	border-right:2px solid ThreeDShadow;
+}
+
+</style>
+<%
+}
+%>
 <script language="JavaScript">
 
 var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
@@ -183,28 +198,15 @@ if(buttons.length > 0){
 <%
 }
 %>
-	<div id="textLayer" style="position:absolute; z-index:1; left:0; top:0; height:100%; width:100%;">
-		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100%" style="padding-left:5px;">
-			<tr>
-				<td nowrap style="font: <%=prefs.getToolbarFont()%>">
-					<div id="titleText">&nbsp;<%=data.getTitle()%>
-					</div>
-				</td>
-			</tr>
-		</table>
-	</div>
 
-	<div id="borderLayer" style="position:absolute; z-index:2; left:0; top:0; height:100%; width:100%; ">
-		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100% ">
-			<tr>
-				<td id="tdborder">
-					&nbsp;
-				</td>
-			</tr>
-		</table>
-	</div>
-	
-	<div id="iconLayer" style="position:absolute; z-index:3; left:0; top:0; height:100%; width:100%;">
+<table id="container" width="100%" border="0" cellspacing="0" cellpadding="0" height="100%" style='padding-left:<%=data.isIE()?"5px":"8px"%>;'>
+
+	<tr>
+		<td nowrap style="font: <%=prefs.getToolbarFont()%>" valign="middle">
+			<div id="titleText">&nbsp;<%=data.getTitle()%>
+			</div>
+		</td>
+		<td>
 		<table width="100%" border="0" cellspacing="1" cellpadding="0" height="100%">
 			<tr>
 				<td align="right">
@@ -219,16 +221,16 @@ if(buttons.length > 0){
 <%
 		} else {
 %>
-						<td align="middle" class="button">
+						<td align="middle" class="button" height=18>
 							<a href="javascript:<%=buttons[i].getAction()%>('b<%=i%>');" 
 							   onmouseover="window.status='<%=buttons[i].getTooltip()%>';document.getElementById('<%=buttons[i].getName()%>').src=<%=buttons[i].getName()%>.src;return true;" 
 							   onmouseout="window.status='';document.getElementById('<%=buttons[i].getName()%>').src=e_<%=buttons[i].getName()%>.src;"
 							   id="b<%=i%>">
 							   <img src="<%=buttons[i].getImage()%>" 
-							        alt='<%=buttons[i].getTooltip()%>' 
-							        border="0"
-							        style="float: left;"
-							        id="<%=buttons[i].getName()%>">
+									alt='<%=buttons[i].getTooltip()%>' 
+									border="0"
+									style="float: left;"
+									id="<%=buttons[i].getName()%>">
 							</a>
 						</td>
 <%
@@ -240,7 +242,9 @@ if(buttons.length > 0){
 				</td>
 			</tr>
 		</table> 
-	</div>	
+		</td>
+	</tr>
+</table>
 
     <iframe name="liveHelpFrame" style="visibility:hidden" tabindex="-1" frameborder="no" width="0" height="0" scrolling="no">
     </iframe>

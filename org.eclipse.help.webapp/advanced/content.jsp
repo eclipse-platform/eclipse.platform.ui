@@ -2,7 +2,7 @@
  (c) Copyright IBM Corp. 2000, 2002.
  All Rights Reserved.
 --%>
-<%@ include file="header.jsp"%>
+<%@ include file="fheader.jsp"%>
 
 <% 
 	LayoutData data = new LayoutData(application,request);
@@ -20,9 +20,7 @@
 if (data.isMozilla()) {
 %>
 HTML {
-	border-top:1px solid ThreeDShadow;
 	border-left:1px solid ThreeDShadow;
-
 	background:<%=prefs.getToolbarBackground()%>;
 }
 <% 
@@ -42,7 +40,7 @@ FRAMESET {
 </head>
 
 
-<frameset  rows="24,*"  frameborder="0" framespacing="0" border=0 spacing=0>
+<frameset  rows='<%=data.isIE()?"24,*":"27,*"%>'  frameborder="0" framespacing="0" border=0 spacing=0>
 	<frame name="ToolbarFrame" src='<%="contentToolbar.jsp"+data.getQuery()%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
 	<frame name="ContentViewFrame" src='<%=data.getContentURL()%>'  marginwidth="10" marginheight="0" frameborder="0" >
 </frameset>

@@ -14,6 +14,7 @@
 %>
 <jsp:include page="toolbar.jsp">
 	<jsp:param name="script" value="contentActions.js"/>
+	<jsp:param name="view" value="contents"/>
 	
 	<jsp:param name="name"     value="back"/>
 	<jsp:param name="tooltip"  value='back_tip'/>
@@ -50,6 +51,8 @@
 	} else {
 %>
 <jsp:include page="toolbar.jsp">
+	<jsp:param name="view" value="contents"/>
+
 	<jsp:param name="name"     value="back"/>
 	<jsp:param name="tooltip"  value='back_tip'/>
 	<jsp:param name="image"    value='back.gif'/>
@@ -79,14 +82,4 @@
 
 <%
 	}
-
-if (data.isMozilla()) {
 %>
-<style type="text/css">
-#tdborder {
-	border-right:2px ridge Window; 
-}
-</style>
-<%
-}
-%> 

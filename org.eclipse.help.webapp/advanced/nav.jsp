@@ -20,9 +20,7 @@
 if (data.isMozilla()) {
 %>
 HTML {
-	border-top:1px solid ThreeDShadow;
 	border-left:1px solid ThreeDShadow;
-
 	background:<%=prefs.getToolbarBackground()%>;
 }
 <% 
@@ -145,7 +143,7 @@ function restoreNavigation(errorMessage)
 </script>
 </head>
 
-<frameset onload="showView('<%=data.getVisibleView()%>')" id="navFrameset" rows="*,22"  framespacing="0" border="0"  frameborder="0" scrolling="no">
+<frameset onload="showView('<%=data.getVisibleView()%>')" id="navFrameset" rows='<%=data.isIE()?"*,22":"*,25"%>'  framespacing="0" border="0"  frameborder="0" scrolling="no">
    <frame name="ViewsFrame" src='<%="views.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
    <frame name="TabsFrame" src='<%="tabs.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
 </frameset>
