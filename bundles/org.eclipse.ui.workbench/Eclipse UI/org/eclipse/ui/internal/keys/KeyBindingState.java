@@ -173,7 +173,7 @@ class KeyBindingState {
 	 */
 	void setCurrentSequence(KeySequence sequence) {
 		List keyStrokes = sequence.getKeyStrokes();
-		if ((keyStrokes.size() > 2) && (isFirstStrokeModified(keyStrokes))) {
+		if ((keyStrokes.size() > 2) || (isFirstStrokeModified(keyStrokes))) {
 			safeToReset = false;
 		}
 		currentSequence = sequence;
