@@ -514,6 +514,7 @@ public static IPlatformRunnable loaderGetRunnable(String pluginId, String classN
  */
 public static void loaderShutdown() {
 	assertInitialized();
+	writeVersion();
 	registry.shutdown(null);
 	clearLockFile();
 	if (DEBUG_PLUGINS && DEBUG_PLUGINS_DUMP != null) {
@@ -586,6 +587,75 @@ public static void loaderStartup(URL[] pluginPath, String locationString, Proper
 	if (!problems.isOK())
 		getRuntimePlugin().getLog().log(problems);
 	loadKeyring();
+}
+/** 
+ * Write out the version of the Runtime plug-in into a known file. If the file
+ * already exists then merge with its current contents.
+ * <p>
+ * It is very important that this code be run after the plug-in registry has
+ * been initialized.
+ */
+private static void writeVersion() {
+	File versionFile = metaArea.getVersionPath().toFile();
+	Properties settings = new Properties();
+
+	// if a file already exists then load the current settings
+	if (versionFile.exists()) {
+		InputStream input = null;
+		try {
+			input = new BufferedInputStream(new FileInputStream(versionFile));
+			settings.load(input);
+		} catch (FileNotFoundException e) {
+			// shouldn't happen because of the java.io.File.exists() check above
+		} catch (IOException e) {
+			// Return here rather than continue. If we continue then we run the risk
+			// of overwriting the file later and losing any already existing values
+			// that we don't know about.
+			log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, Policy.bind("meta.readVersion", versionFile.toString()), e)); //$NON-NLS-1$
+			return;
+		} finally {
+			if (input != null)
+				try {
+					input.close();
+				} catch (IOException e) {
+					// ignore
+				}
+		}
+	}
+
+	// Add this check to ensure that we don't get an NPE if we mistakenly call this
+	// method before the plug-in registry has been initialized.	
+	if (registry == null)
+		return;
+
+	IPluginDescriptor plugin = registry.getPluginDescriptor(Platform.PI_RUNTIME);
+	if (plugin == null) {
+		// log a message saying that we couldn't find the runtime plug-in.
+		// this shouldn't happen.
+		log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, Policy.bind("meta.noRuntime"), null)); //$NON-NLS-1$
+		return;
+	}
+
+	// add our plug-in version to the file
+	settings.put(plugin.getUniqueIdentifier(), plugin.getVersionIdentifier().toString());
+
+	// write the file to disk
+	OutputStream output = null;
+	try {
+		output = new BufferedOutputStream(new FileOutputStream(versionFile));
+		settings.store(output, null);
+	} catch (IOException e) {
+		// Fail silently. Not a catastrophe if we can't write the version file. We don't
+		// want to fail execution.
+		log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, Policy.bind("meta.writeVersion", versionFile.toString()), e)); //$NON-NLS-1$
+	} finally {
+		if (output != null)
+			try {
+				output.close();
+			} catch (IOException e) {
+				// ignore
+			}
+	}
 }
 /**
  * Opens the password database (if any) initally provided to the platform at startup.

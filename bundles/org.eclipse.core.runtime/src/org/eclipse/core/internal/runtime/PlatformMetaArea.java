@@ -1,11 +1,11 @@
-/*******************************************************************************
+/**********************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
+ * Contributors: 
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
@@ -29,6 +29,7 @@ public class PlatformMetaArea {
 	/* package */ static final String F_OPTIONS = ".options";	 //$NON-NLS-1$
 	/* package */ static final String F_KEYRING = ".keyring"; //$NON-NLS-1$
 	/* package */ static final String F_LOCK_FILE = ".lock"; //$NON-NLS-1$
+	/* package */ static final String F_VERSION = "version.ini"; //$NON-NLS-1$
 	/**
 	 * Internal name of the preference storage file (value
 	 * <code>"pref_store.ini"</code>) in this plug-in's (read-write) state area.
@@ -114,6 +115,12 @@ public IPath getPluginStateLocation(IPluginDescriptor descriptor) {
  */
 public IPath getRegistryPath() {
 	return getLocation().append(F_REGISTRY);
+}
+/**
+ * Return the path to the version.ini file.
+ */
+public IPath getVersionPath() {
+	return getLocation().append(F_VERSION);
 }
 /**
  * 
