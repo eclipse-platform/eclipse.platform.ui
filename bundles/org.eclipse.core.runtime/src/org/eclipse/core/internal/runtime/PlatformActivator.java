@@ -56,7 +56,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		acquireURLConverterService();
 		acquireFrameworkLogService();
 		acquirePackageAdminService();
-		registerResourceFinder();
+		registerEntryLocator();
 		startInternalPlatform();
 		startRegistry(runtimeContext);
 		installPlatformURLSupport();
@@ -134,7 +134,8 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	}
 
 	private long computeRegistryStamp() {
-		if (!"true".equalsIgnoreCase(System.getProperty("osgi.checkConfiguration"))) //$NON-NLS-1$  TODO In the config.ini this variable shoudl be set to false
+		// If the chack config prop is false or not set then exit
+		if (!"true".equalsIgnoreCase(System.getProperty(InternalPlatform.PROP_CHECK_CONFIG))) //$NON-NLS-1$  
 			return 0;
 		Bundle[] allBundles = context.getBundles();
 		long result = 0;
@@ -291,7 +292,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		context.registerService(ParameterizedRunnable.class.getName(), work, properties);
 	}
 
-	private void registerResourceFinder() {
+	private void registerEntryLocator() {
 		EntryLocator systemResources = new EntryLocator() {
 			public URL getProperties(String basename, Locale locale) {
 				IPath propertiesPath = new Path("$nl$/" + basename.replace('.', '/') + ".properties"); //$NON-NLS-1$ //$NON-NLS-2$

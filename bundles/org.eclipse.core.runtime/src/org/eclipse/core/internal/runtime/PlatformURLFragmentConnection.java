@@ -47,7 +47,7 @@ public class PlatformURLFragmentConnection extends PlatformURLConnection {
 		target = InternalPlatform.getDefault().getBundle(id);
 		if (target == null)
 			throw new IOException(Policy.bind("url.resolveFragment", url.toString())); //$NON-NLS-1$
-		URL result = target.getEntry("");
+		URL result = target.getEntry("/"); //$NON-NLS-1$
 		if (ix == -1 || (ix + 1) >= spec.length())
 			return result;
 		else
