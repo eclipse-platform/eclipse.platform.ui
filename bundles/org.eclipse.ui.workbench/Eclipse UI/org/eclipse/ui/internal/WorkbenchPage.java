@@ -2580,7 +2580,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	 * Sets the active part.
 	 */
 	private void setActivePart(IWorkbenchPart newPart) {
-	    System.err.println("setActivePart: " + newPart);
 		// Optimize it.
 		if (activePart == newPart)
 			return;
