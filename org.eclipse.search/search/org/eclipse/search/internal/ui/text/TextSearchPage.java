@@ -162,19 +162,16 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	 * An existing entry will be updated.
 	 */
 	private SearchPatternData getPatternData() {
-		String fileNamePatterns= fExtensions.getText();
+		Set fileTypes= fFileTypeEditor.getFileTypes();
 		SearchPatternData match= null;
-		int i= 0;
-		int size= fgPreviousSearchPatterns.size();
-		String[] previousFileNamePatterns= getPreviousExtensions();
-		while (i < size) {
-			if (fileNamePatterns.equals(previousFileNamePatterns[i]))
+		int i= fgPreviousSearchPatterns.size() -1;
+		while (i >= 0) {
+			match= (SearchPatternData)fgPreviousSearchPatterns.get(i);
+			if (fileTypes.equals(match.fileNamePatterns))
 				break;
-			i++;
+			i--;
 		};
-		if (i < size) {
-			int pos= size - i - 1;
-			match= (SearchPatternData)fgPreviousSearchPatterns.get(pos);
+		if (i >= 0) {
 			match.ignoreCase= ignoreCase();
 			match.textPattern= getPattern();
 			match.fileNamePatterns= getExtensions();
