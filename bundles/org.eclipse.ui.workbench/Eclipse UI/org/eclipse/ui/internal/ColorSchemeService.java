@@ -19,7 +19,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.presentations.BasicStackPresentation;
@@ -34,45 +33,6 @@ import org.eclipse.ui.themes.IThemeManager;
 public class ColorSchemeService {
 
     private static final String LISTENER_KEY = "org.eclipse.ui.internal.ColorSchemeService"; //$NON-NLS-1$
-    
-    public static void setViewColors(final Control control) {
-	    ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
-	    if (control.getData(LISTENER_KEY) == null) {
-	        final IPropertyChangeListener listener = new IPropertyChangeListener() {
-
-                /* (non-Javadoc)
-                 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-                 */
-                public void propertyChange(PropertyChangeEvent event) {
-                    
-                    String property = event.getProperty();
-                    if (property.equals(IThemeManager.CHANGE_CURRENT_THEME) 
-                            || property.equals(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END)) {
-                        setViewColors(control);                        
-                    }
-                }	            
-	        };
-	        control.setData(LISTENER_KEY, listener);
-	        control.addDisposeListener(new DisposeListener() {
-
-                /* (non-Javadoc)
-                 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-                 */
-                public void widgetDisposed(DisposeEvent e) {
-                    PlatformUI
-                    .getWorkbench()
-                    .getThemeManager()
-                    .removePropertyChangeListener(listener);
-                    control.setData(LISTENER_KEY, null);
-                }});
-	        
-	        PlatformUI
-	        .getWorkbench()
-	        .getThemeManager()
-	        .addPropertyChangeListener(listener);	
-	    }
-	    control.setBackground(theme.getColorRegistry().get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END));
-    }
     
 	public static void setTabAttributes(BasicStackPresentation presentation, final PaneFolder control) {
 	    if (presentation == null)  // the reference to the presentation was lost by the listener
@@ -135,9 +95,6 @@ public class ColorSchemeService {
         // Note: This is currently being overridden in PartTabFolderPresentation
         vertical = theme.getBoolean(IWorkbenchThemeConstants.INACTIVE_TAB_VERTICAL);
 	        
-
-        presentation.setBackgroundColor(c[1]);
-
         if (presentation.isActive()) {                
 			control.setSelectionForeground(colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR));
 			c[0] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);

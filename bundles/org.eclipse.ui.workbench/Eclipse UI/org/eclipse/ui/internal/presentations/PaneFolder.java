@@ -74,7 +74,6 @@ public final class PaneFolder {
 	private int tabPosition;
 
 	private boolean putTrimOnTop = true;
-	private int trimStart = 0;
 		
 	/**
 	 * List of PaneFolderButtonListener
@@ -90,12 +89,6 @@ public final class PaneFolder {
 	 */
 	private int mousedownState = -1;
 
-	// Background colours
-	// TODO: Initialize these to sensible (non-null!) defaults
-	private Color backgroundGradientStart;
-	private Color backgroundGradientEnd;
-	private Color background;
-	
 	// CTabFolder listener
 	private CTabFolder2Adapter expandListener = new CTabFolder2Adapter() {
 		public void minimize(CTabFolderEvent event) {
@@ -194,7 +187,6 @@ public final class PaneFolder {
 				viewFormTopCenterProxy.setTarget(topCenterCache);
 				viewForm.setTopCenter(viewFormTopCenterProxy.getControl());
 			}
-			topCenter.setBackground(putTrimOnTop ? backgroundGradientEnd : background );
 		} else {
 			if (!putTrimOnTop) {
 				viewForm.setTopCenter(null);
@@ -214,7 +206,6 @@ public final class PaneFolder {
 				viewFormTopRightProxy.setTarget(topRightCache);
 				viewForm.setTopRight(viewFormTopRightProxy.getControl());
 			}
-			topRight.setBackground(putTrimOnTop ? backgroundGradientEnd : background );
 		} else {
 			if (!putTrimOnTop) {
 				viewForm.setTopRight(null);
@@ -234,7 +225,6 @@ public final class PaneFolder {
 			if (topLeft != null) {
 				viewFormTopLeftProxy.setTarget(topLeftCache);
 				viewForm.setTopLeft(viewFormTopLeftProxy.getControl());
-				topLeft.setBackground(background);
 			} else {
 				viewFormTopLeftProxy.setTarget(null);
 				viewForm.setTopLeft(null);
@@ -249,9 +239,7 @@ public final class PaneFolder {
 			topRightCache.flush();
 			topCenterCache.flush();
 		}
-		
-		Rectangle currentBounds = tabFolder.getBounds();
-		
+				
 		// HACK: Force the tab folder to do a layout, since it doesn't always
 		// resize its title area each time setBounds is called.
 		tabFolder.setTopRight(titleAreaProxy, SWT.FILL);
@@ -282,8 +270,6 @@ public final class PaneFolder {
 				viewFormTopRightProxy.setTarget(null);
 				viewForm.setTopCenter(null);
 				viewForm.setTopRight(null);
-				
-				updateTrimColours();
 			}
 
 			Rectangle topRightArea = new Rectangle (titleArea.x + titleArea.width - topRightSize.x, 
@@ -296,8 +282,6 @@ public final class PaneFolder {
 			if (topCenter != null) {
 				Rectangle topCenterArea = new Rectangle(topRightArea.x - topCenterSize.x,
 						titleArea.y + (titleArea.height - topCenterSize.y) / 2, topCenterSize.x, topCenterSize.y);
-				
-				trimStart = topCenterArea.x - titleArea.x;
 				
 				Rectangle localCoords = Geometry.toControl(topCenter.getParent(), topCenterArea); 
 				
@@ -314,8 +298,6 @@ public final class PaneFolder {
 					viewFormTopRightProxy.setTarget(topRightCache);
 					viewForm.setTopRight(viewFormTopRightProxy.getControl());
 				}
-				
-				updateTrimColours();
 			}
 		}
 		
@@ -323,8 +305,6 @@ public final class PaneFolder {
 		viewFormTopRightProxy.layout();
 		viewFormTopLeftProxy.layout();
 		viewFormTopCenterProxy.layout();
-		
-		updateBackgroundColor();
 	}
 	
 	/**
@@ -430,55 +410,6 @@ public final class PaneFolder {
 		return tabFolder == null || tabFolder.isDisposed();
 	}
 	
-	/**
-	 * Use this method instead of setting the background colours directly on the CTabFolder.
-	 * This will cause the correct colours to be applied to the tab folder 
-	 * 
-	 * @param gradientStart
-	 * @param gradientEnd
-	 * @param background
-	 */
-	public void setBackground(Color background) {
-		this.background = background;
-		updateBackgroundColor();
-		
-		updateTrimColours();
-		
-		if (topLeftCache.getControl() != null) {
-			topLeftCache.getControl().setBackground(background);
-		}
-	}
-	
-	/**
-	 * Update the colours of the trim widgets based on whether they are
-	 * currently in the title bar or below it.
-	 */
-	protected void updateTrimColours() {
-		Color background = getBackground();
-		
-		if (topCenterCache.getControl() != null) {
-			topCenterCache.getControl().setBackground(background);
-		}
-		if (topRightCache.getControl() != null) {
-			topRightCache.getControl().setBackground(background);
-		}
-	}
-
-	public Color getBackground() {
-		return background;
-	}
-	
-	/**
-	 * Causes the current background colours to be reapplied to the underlying CTabFolder. This
-	 * should be invoked whenever the colours change or when the toolbars may have been resized
-	 * or repositioned, since the gradient percentage is computed as a function of the toolbar
-	 * position.
-	 */
-	protected void updateBackgroundColor() {	
-		tabFolder.setBackground(background);
-		viewForm.setBackground(background);
-	}
-
 	public CTabItem createItem(int style, int index) {
 		return new CTabItem(tabFolder, style, index);
 	}

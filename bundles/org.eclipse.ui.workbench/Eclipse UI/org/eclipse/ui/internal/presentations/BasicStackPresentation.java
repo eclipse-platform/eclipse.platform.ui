@@ -738,19 +738,6 @@ public class BasicStackPresentation extends StackPresentation {
 		return part.getToolBar();
 	}
 	
-	/**
-	 * Use this method instead of setting the background colours directly on the CTabFolder.
-	 * This will cause the correct colours to be applied to the tab folder 
-	 * 
-	 * @param gradientStart
-	 * @param gradientEnd
-	 * @param background
-	 */
-	public void setBackgroundColor(Color background) {
-		getTabFolder().setBackground(background);
-		//updateTrimColours(background);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.presentations.StackPresentation#showSystemMenu()
 	 */

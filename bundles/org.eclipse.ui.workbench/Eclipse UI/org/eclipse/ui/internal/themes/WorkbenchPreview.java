@@ -150,11 +150,6 @@ public class WorkbenchPreview implements IThemePreview {
         Color [] colors = new Color[2];
         colors[0] = theme.getColorRegistry().get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START);
         colors[1] = theme.getColorRegistry().get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END);
-        folder.setBackground(colors[1]);
-        toolBar.setBackground(colors[1]);
-        viewMessage.setBackground(colors[1]);
-        viewForm.setBackground(colors[1]);
-        
         colors[0] = theme.getColorRegistry().get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
         colors[1] = theme.getColorRegistry().get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
         folder.setSelectionBackground(colors, new int [] {theme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT)}, theme.getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL));

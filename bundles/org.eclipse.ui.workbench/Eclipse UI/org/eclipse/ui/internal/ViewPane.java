@@ -274,10 +274,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 				isvToolBarMgr.add(isvItems[i]);
 			}
 		}
-        // only do this once for the non-floating toolbar case.  Otherwise update colors
-		// whenever updating the tab colors
-		ColorSchemeService.setViewColors(parentControl);
-	}
+ 	}
 	
     public void dispose() {
 		super.dispose();
