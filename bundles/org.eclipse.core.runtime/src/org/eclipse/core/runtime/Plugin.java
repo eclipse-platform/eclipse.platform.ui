@@ -397,6 +397,11 @@ public abstract class Plugin implements BundleActivator {
 	 * Returns whether this plug-in is in debug mode.
 	 * By default plug-ins are not in debug mode.  A plug-in can put itself
 	 * into debug mode or the user can set an execution option to do so.
+	 * <p>
+	 * Note that the plug-in's debug flag is initialized when the 
+	 * plug-in is started. The result of calling this method before the plug-in
+	 * is unspecified.
+	 * </p>
 	 *
 	 * @return whether this plug-in is in debug mode
 	 */
@@ -444,8 +449,13 @@ public abstract class Plugin implements BundleActivator {
 	 * Sets whether this plug-in is in debug mode.
 	 * By default plug-ins are not in debug mode.  A plug-in can put itself
 	 * into debug mode or the user can set a debug option to do so.
+	 * <p>
+	 * Note that the plug-in's debug flag is initialized when the 
+	 * plug-in is started. The result of calling this method before the plug-in
+	 * is unspecified.
+	 * </p>
 	 *
-	 * @param value whether or not this plugi-in is in debug mode
+	 * @param value whether or not this plug-in is in debug mode
 	 */
 	public void setDebugging(boolean value) {
 		debug = value;
