@@ -23,7 +23,7 @@ public abstract class InternalWorkspaceJob extends Job {
 
 	public InternalWorkspaceJob(String name) {
 		super(name);
-		this.workspace = (Workspace)ResourcesPlugin.getWorkspace();
+		this.workspace = (Workspace) ResourcesPlugin.getWorkspace();
 	}
 	public IStatus run(IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
@@ -34,8 +34,7 @@ public abstract class InternalWorkspaceJob extends Job {
 				workspace.prepareOperation(null);
 				workspace.beginOperation(true);
 				depth = workspace.getWorkManager().beginUnprotected();
-				runInWorkspace(Policy.subMonitorFor(monitor, Policy.opWork, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-				return Status.OK_STATUS;
+				return runInWorkspace(Policy.subMonitorFor(monitor, Policy.opWork, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
 				return Status.CANCEL_STATUS;
