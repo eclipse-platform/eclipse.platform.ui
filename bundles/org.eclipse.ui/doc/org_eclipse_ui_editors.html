@@ -11,7 +11,7 @@
 Internal and External Editors</h1></center>
 <b><i>Identifier: </i></b>org.eclipse.ui.editors
 <p><b><i>Description</i>: </b>This extension point is used to add new editors
-to the workench.&nbsp; An editor is a visual component within a workbench
+to the workbench.&nbsp; An editor is a visual component within a workbench
 page. It is typically used to edit or browse a document or input object.&nbsp;
 To open an editor, the user will typically invoke "Open" on an <tt>IFile</tt>.&nbsp;
 When this action is performed the workbench registry is consulted to determine
@@ -89,7 +89,7 @@ should also be defined.</li>
 
 <li>
 <b>command</b> - a command to run in order to launch an external editor.
-The executatble command must be located on the system path or in the plugins
+The executable command must be located on the system path or in the plug-in's
 directory. Attributes <tt>class,</tt> <tt>command</tt> and <tt>launcher</tt>
 are mutually exclusive.</li>
 
@@ -146,8 +146,7 @@ of the editor type.
 type.&nbsp; For instance, there may be one or more open Java editors.&nbsp;
 To avoid the creation of duplicate actions and action images the editor
 concept has been split into two.&nbsp; An <tt>IEditorActionBarContributor</tt>
-is responsable for the creation of actions.&nbsp; The editor is responsable
-for action implementation.&nbsp; Furthermore, the contributor is shared
+is responsible for the creation of actions.&nbsp; The editor is responsible for action implementation.&nbsp; Furthermore, the contributor is shared
 by each open editor.&nbsp; As a result of this design there is only one
 set of actions for one or more open editors.
 <p>The contributor will add new actions to the workbench menu and toolbar
