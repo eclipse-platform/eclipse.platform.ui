@@ -23,9 +23,7 @@ public class UpdateMergeAction extends UpdateSyncAction {
 	}
 	protected Command.LocalOption[] getLocalOptions(Command.LocalOption[] baseOptions) {
 		List list = new ArrayList();
-
 		list.addAll(Arrays.asList(baseOptions));
-		
 		CVSTag startTag = ((MergeEditorInput)getDiffModel()).getStartTag();
 		CVSTag endTag = ((MergeEditorInput)getDiffModel()).getEndTag();
 
