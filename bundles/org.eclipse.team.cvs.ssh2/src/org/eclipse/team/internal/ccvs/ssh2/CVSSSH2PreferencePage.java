@@ -9,7 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
     Atsuhiko Yamanaka, JCraft,Inc. - initial API and implementation.
 **********************************************************************/
-package org.eclipse.team.ccvs.ssh2;
+package org.eclipse.team.internal.ccvs.ssh2;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -25,6 +25,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.ssh2.Policy;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -45,7 +46,6 @@ import com.jcraft.jsch.KeyPair;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
-import org.eclipse.team.ccvs.ssh2.Policy;
 
 public class CVSSSH2PreferencePage extends PreferencePage
   implements IWorkbenchPreferencePage {

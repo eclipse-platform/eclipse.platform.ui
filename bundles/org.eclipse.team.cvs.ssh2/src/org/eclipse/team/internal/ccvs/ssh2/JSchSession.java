@@ -8,7 +8,7 @@
  * Contributors: Atsuhiko Yamanaka, JCraft,Inc. - initial API and
  * implementation.
  ******************************************************************************/
-package org.eclipse.team.ccvs.ssh2;
+package org.eclipse.team.internal.ccvs.ssh2;
 
 import java.io.*;
 import java.net.Socket;
