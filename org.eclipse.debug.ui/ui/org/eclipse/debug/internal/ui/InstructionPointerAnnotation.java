@@ -41,14 +41,6 @@ public class InstructionPointerAnnotation extends DefaultAnnotation {
 	private boolean fTopStackFrame;
 
 	/**
-	 * The layer at which to draw the instruction pointer annotation.  The instruction pointer
-	 * should be rendered on top of any other type of annotation or marker.
-	 * 
-	 * @see org.eclipse.jface.text.source.Annotation
-	 */
-	private static final int INSTRUCTION_POINTER_ANNOTATION_LAYER = 6;
-
-	/**
 	 * Construct an instruction pointer annotation for the given stack frame.
 	 * 
 	 * @param stackFrame frame to create an instruction pointer annotation for
@@ -60,7 +52,6 @@ public class InstructionPointerAnnotation extends DefaultAnnotation {
 						 isTopFrame ? DebugUIMessages.getString("InstructionPointerAnnotation.0") : DebugUIMessages.getString("InstructionPointerAnnotation.1")); //$NON-NLS-1$ //$NON-NLS-2$
 		fTopStackFrame = isTopFrame;
 		fStackFrame = stackFrame;
-		setLayer(INSTRUCTION_POINTER_ANNOTATION_LAYER);
 	}
 
 	/**
