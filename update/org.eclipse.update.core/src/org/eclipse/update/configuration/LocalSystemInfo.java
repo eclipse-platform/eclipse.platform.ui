@@ -7,6 +7,8 @@ package org.eclipse.update.configuration;
  
 import java.io.File;
 import java.util.ArrayList;
+
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
  
 /**
  * Utility class providing local file system information.
@@ -68,6 +70,10 @@ public class LocalSystemInfo {
 			System.loadLibrary("update");
 			hasNatives = true;
 		} catch (UnsatisfiedLinkError e) {
+			//DEBUG
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
+				UpdateManagerPlugin.getPlugin().debug("Unable to load native library 'update'.");
+			}
 			hasNatives = false;
 		}
 	}
