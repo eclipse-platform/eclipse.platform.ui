@@ -53,7 +53,7 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 	/**
 	 * The schedule delay used when rescheduling a completed job 
 	 */
-	/* internal use only */ static long scheduleDelay = 20000; //5 /* minutes */ * (60 * 1000); 
+	/* internal use only */ static long scheduleDelay = 20000; 
 	
 	/**
 	 * Time the job was run last in milliseconds.
@@ -148,7 +148,7 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 		return subscriber;
 	}
 	
-	protected long getScheduleDelay() {
+	public long getScheduleDelay() {
 		return scheduleDelay;
 	}
 	

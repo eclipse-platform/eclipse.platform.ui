@@ -206,15 +206,14 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 		getPreferenceStore().addPropertyChangeListener(this);
 		
 		// startup auto-refresh job if necessary
-		refreshJob = new RefreshSubscriberInputJob(Policy.bind("ScheduledSyncViewRefresh.taskName")); //$NON-NLS-1$		
+		refreshJob = new RefreshSubscriberInputJob(Policy.bind("ScheduledSyncViewRefresh.taskName")); //$NON-NLS-1$
 		refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY) * 60);
 		if(getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC)) {
 			refreshJob.setRestartOnCancel(true);
 			refreshJob.setReschedule(true);
-			// start once the platform has started and stabilized
-			refreshJob.schedule(20000 /* 20 seconds */);
+			refreshJob.schedule(refreshJob.getScheduleDelay());
 		}
-		((SynchronizeManager)TeamUI.getSynchronizeManager()).initialize();
+		((SynchronizeManager)TeamUI.getSynchronizeManager()).init();
 	}
 	
 	/* (non-Javadoc)
@@ -223,6 +222,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	public void shutdown() throws CoreException {
 		super.shutdown();
 		disposeImages();
+		((SynchronizeManager)TeamUI.getSynchronizeManager()).dispose();
 	}
 
 	/**
@@ -438,7 +438,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 			if(value) {
 				refreshJob.setRestartOnCancel(true);
 				refreshJob.setReschedule(true);
-				refreshJob.schedule();				
+				refreshJob.schedule(refreshJob.getRefreshInterval() * 1000);				
 			} else {				
 				refreshJob.setRestartOnCancel(false /* don't restart the job */);
 				refreshJob.setReschedule(false);

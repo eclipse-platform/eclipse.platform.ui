@@ -18,7 +18,6 @@ import org.eclipse.team.internal.ui.jobs.RefreshSubscriberInputJob;
 import org.eclipse.team.internal.ui.synchronize.actions.RefreshAction;
 import org.eclipse.team.internal.ui.synchronize.sets.SubscriberInput;
 import org.eclipse.ui.*;
-import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
@@ -140,20 +139,10 @@ public abstract class TeamSubscriberParticipant extends AbstractSynchronizeParti
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.AbstractSynchronizeViewPage#dispose()
 	 */
-	protected void dispose() {
-		super.dispose();
+	public void dispose() {
 		RefreshSubscriberInputJob refreshJob = TeamUIPlugin.getPlugin().getRefreshJob();
 		refreshJob.removeSubscriberInput(input);		
 		input.dispose();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.sync.AbstractSynchronizeViewPage#init()
-	 */
-	protected void init() {
-		super.init();
-		RefreshSubscriberInputJob refreshJob = TeamUIPlugin.getPlugin().getRefreshJob();
-		refreshJob.addSubscriberInput(input);
 	}
 	
 	/*
@@ -171,9 +160,9 @@ public abstract class TeamSubscriberParticipant extends AbstractSynchronizeParti
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#restoreState(org.eclipse.ui.IMemento)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
 	 */
-	public void restoreState(IMemento memento) throws PartInitException {
+	public void init(IMemento memento) throws PartInitException {
 		if(memento != null) {
 			IMemento settings = memento.getChild(CTX_SUBSCRIBER_PARTICIPANT_SETTINGS);
 			if(settings != null) {

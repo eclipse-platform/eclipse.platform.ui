@@ -37,11 +37,11 @@ public class TeamSynchronizingPerspective implements IPerspectiveFactory {
 		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.file"); //$NON-NLS-1$
 
 		// Add "show views".
+		layout.addShowViewShortcut(SynchronizeView.VIEW_ID);
 		layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
 		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
 		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
 		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
-		layout.addShowViewShortcut(SynchronizeView.VIEW_ID);
 		
 		layout.addActionSet("org.eclipse.team.ui.actionSet"); //$NON-NLS-1$
 	}
@@ -53,8 +53,6 @@ public class TeamSynchronizingPerspective implements IPerspectiveFactory {
 		String editorArea = layout.getEditorArea();
 		IFolderLayout top = layout.createFolder("top", IPageLayout.LEFT, 0.25f, editorArea);	//$NON-NLS-1$
 		top.addView(SynchronizeView.VIEW_ID);
-		top.addView(IPageLayout.ID_RES_NAV);
-		top.addView(IPageLayout.ID_OUTLINE);
 		layout.setEditorAreaVisible(true);
 	}
 }

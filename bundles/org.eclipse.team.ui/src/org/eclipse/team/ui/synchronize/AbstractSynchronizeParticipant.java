@@ -16,9 +16,11 @@ import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.registry.SynchronizeParticipantDescriptor;
 import org.eclipse.team.ui.TeamImages;
-import org.eclipse.team.ui.TeamUI;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PartInitException;
 
 /**
  * AbstractSynchronizeParticipant is the abstract base class for all
@@ -38,42 +40,6 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	protected IConfigurationElement configElement;
 
 	/**
-	 * Used to notify this participant of lifecycle methods <code>init()</code>
-	 * and <code>dispose()</code>.
-	 */
-	class Lifecycle implements ISynchronizeParticipantListener {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.console.IConsoleListener#consolesAdded(org.eclipse.ui.console.IConsole[])
-		 */
-		public void participantsAdded(ISynchronizeParticipant[] consoles) {
-			for (int i = 0; i < consoles.length; i++) {
-				ISynchronizeParticipant console = consoles[i];
-				if (console == AbstractSynchronizeParticipant.this) {
-					init();
-				}
-			}
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.console.IConsoleListener#consolesRemoved(org.eclipse.ui.console.IConsole[])
-		 */
-		public void participantsRemoved(ISynchronizeParticipant[] consoles) {
-			for (int i = 0; i < consoles.length; i++) {
-				ISynchronizeParticipant console = consoles[i];
-				if (console == AbstractSynchronizeParticipant.this) {
-					TeamUI.getSynchronizeManager().removeSynchronizeParticipantListener(this);
-					dispose();
-				}
-			}
-		}
-	}
-
-	/**
 	 * Notifies listeners of property changes, handling any exceptions
 	 */
 	class PropertyNotifier implements ISafeRunnable {
@@ -85,13 +51,7 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			// TODO:
-			//IStatus status = new Status(IStatus.ERROR,
-			// ConsolePlugin.getUniqueIdentifier(),
-			// IConsoleConstants.INTERNAL_ERROR,
-			// ConsoleMessages.getString("AbstractConsole.0"), exception);
-			// //$NON-NLS-1$
-			//ConsolePlugin.log(status);
+			TeamUIPlugin.log(IStatus.ERROR, Policy.bind("AbstractSynchronizeParticipant.5"), exception); //$NON-NLS-1$
 		}
 
 		/**
@@ -122,7 +82,6 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	}
 
 	public AbstractSynchronizeParticipant() {
-		TeamUI.getSynchronizeManager().addSynchronizeParticipantListener(new Lifecycle());
 	}
 
 	/*
@@ -241,20 +200,6 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 		fName = name;
 		firePropertyChange(this, IBasicPropertyConstants.P_TEXT, old, name);
 	}
-
-	/**
-	 * Called when this console is added to the console manager. Default
-	 * implementation does nothing. Subclasses may override.
-	 */
-	protected void init() {
-	}
-
-	/**
-	 * Called when this console is removed from the console manager. Default
-	 * implementation does nothing. Subclasses may override.
-	 */
-	protected void dispose() {
-	}
 	
 	/**
 	 * Sets the image descriptor for this console to the specified value and
@@ -267,5 +212,17 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 		ImageDescriptor old = fImageDescriptor;
 		fImageDescriptor = imageDescriptor;
 		firePropertyChange(this, IBasicPropertyConstants.P_IMAGE, old, imageDescriptor);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
+	 */
+	public void init(IMemento memento) throws PartInitException {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#saveState(org.eclipse.ui.IMemento)
+	 */
+	public void saveState(IMemento memento) {
 	}
 }

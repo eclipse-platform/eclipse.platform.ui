@@ -39,14 +39,14 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	 * synchronize participant.
 	 */
 	public String getId();
-
+	
 	/**
 	 * Returns the name of this synchronize participant.
 	 * 
 	 * @return the name of this synchronize participant
 	 */
 	public String getName();
-
+	
 	/**
 	 * Returns an image descriptor for this synchronize participant, or <code>null</code>
 	 * if none.
@@ -55,7 +55,7 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	 * if none
 	 */
 	public ImageDescriptor getImageDescriptor();
-
+	
 	/**
 	 * Creates and returns a new page for this synchronize participant. The
 	 * page is displayed for this synchronize participant in the given
@@ -66,31 +66,46 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	 * participant
 	 */
 	public IPageBookViewPage createPage(ISynchronizeView view);
-
+	
 	/**
 	 * Initializes this participant with the given participant state.  
 	 * A memento is passed to the participant which contains a snapshot 
 	 * of the participants state from a previous session.
 	 * <p>
 	 * This method is automatically called by the team plugin shortly after
-	 * synchronize view construction. It marks the start of the views's
+	 * participant construction. It marks the start of the views's
 	 * lifecycle. Clients must not call this method.
 	 * </p> 
-	 * @param view the synchronize view reconstructing this participant
 	 * @param memento the participant state or <code>null</code> if there 
 	 * is no previous saved state
 	 * @exception PartInitException if this participant was not initialized 
 	 * successfully
 	 */
-	public void restoreState(IMemento memento) throws PartInitException;
-
+	public void init(IMemento memento) throws PartInitException;
+	
+	/**
+	 * Disposes of this synchronize participant. This is the last method called 
+	 * on the <code>ISynchronizeParticipant</code>. It marks the end of the
+	 * participants lifecycle. 
+	 * </p>
+	 * <p>
+	 * Within this method a participant may release any resources, fonts, images, etc. 
+	 * held by this part.  It is also very important to deregister all listeners.
+	 * </p>
+	 * <p>
+	 * Clients should not call this method (the synchronize manager calls this 
+	 * method at appropriate times).
+	 * </p>
+	 */
+	public void dispose();
+	
 	/**
 	 * Saves the participants object state within the memento. This state
-	 * will be available when the participant is restored.
+	 * will be available when the participant is restored via <code>init</code>.
 	 * @param memento a memento to receive the object state
 	 */
 	public void saveState(IMemento memento);
-
+	
 	/**
 	 * Adds a listener for changes to properties of this synchronize
 	 * participant. Has no effect if an identical listener is already
@@ -109,7 +124,7 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	 * @param listener a property change listener
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener);
-
+	
 	/**
 	 * Removes the given property listener from this synchronize participant.
 	 * Has no effect if an identical listener is not alread registered.
