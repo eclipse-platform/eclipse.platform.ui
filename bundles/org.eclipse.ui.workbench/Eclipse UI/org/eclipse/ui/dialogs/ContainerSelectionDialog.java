@@ -45,7 +45,7 @@ import org.eclipse.ui.internal.misc.ContainerSelectionGroup;
  */
 public class ContainerSelectionDialog extends SelectionDialog {
 	// the widget group;
-	private ContainerSelectionGroup group;
+	ContainerSelectionGroup group;
 
 	// the root resource to populate the viewer with
 	private IContainer initialSelection;
@@ -54,10 +54,10 @@ public class ContainerSelectionDialog extends SelectionDialog {
 	private boolean allowNewContainerName = true;
 
 	// the validation message
-	private Label statusMessage;
+	Label statusMessage;
 
 	//for validating the selection
-	private ISelectionValidator validator;
+	ISelectionValidator validator;
 
 	// show closed projects by default
 	private boolean showClosedProjects = true;
@@ -102,7 +102,7 @@ public class ContainerSelectionDialog extends SelectionDialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		// create composite 
-		Composite dialogArea = (Composite) super.createDialogArea(parent);
+		Composite area = (Composite) super.createDialogArea(parent);
 
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {
@@ -126,7 +126,7 @@ public class ContainerSelectionDialog extends SelectionDialog {
 		// container selection group
 		group =
 			new ContainerSelectionGroup(
-				dialogArea,
+				area,
 				listener,
 				allowNewContainerName,
 				getMessage(),
