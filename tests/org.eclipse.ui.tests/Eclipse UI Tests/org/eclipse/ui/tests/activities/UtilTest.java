@@ -155,8 +155,7 @@ public class UtilTest extends TestCase {
 		Set ids = WorkbenchActivityHelper.getEnabledCategories(ID5);
 		assertEquals(1, ids.size());
 		assertTrue(ids.contains(ID4));
-	}
-	
+	}	
 	
 	/**
 	 * Asserts that if you disable cat 1 then cat 3 would also be disabled (they
@@ -210,6 +209,48 @@ public class UtilTest extends TestCase {
 	}
 	
 	/**
+	 * Asserts that the enabled category count for activity 1 is 2 (cat 1 and 3).
+	 */
+	public void testCategoryCount1_A() {
+		enableAll();
+		Set ids = WorkbenchActivityHelper.getEnabledCategoriesForActivity(ID1);
+		assertEquals(2, ids.size());
+		assertTrue(ids.contains(ID1));
+		assertTrue(ids.contains(ID3));
+	}
+	
+	/**
+	 * Asserts that the enabled category count for activity 2 is 1 (cat 2).
+	 */
+	public void testCategoryCount2_A() {
+		enableAll();
+		Set ids = WorkbenchActivityHelper.getEnabledCategoriesForActivity(ID2);
+		assertEquals(1, ids.size());
+		assertTrue(ids.contains(ID2));
+	}
+	
+	/**
+	 * Asserts that the enabled category count for activity 4 is 2 (cat 4 and 5).
+	 */
+	public void testCategoryCount4_A() {
+		enableAll();
+		Set ids = WorkbenchActivityHelper.getEnabledCategoriesForActivity(ID4);
+		assertEquals(2, ids.size());
+		assertTrue(ids.contains(ID4));
+		assertTrue(ids.contains(ID5));
+	}
+	
+	/**
+	 * Asserts that the enabled category count for activity 5 is 1 (cat 5).
+	 */
+	public void testCategoryCount5_A() {
+		enableAll();
+		Set ids = WorkbenchActivityHelper.getEnabledCategoriesForActivity(ID5);
+		assertEquals(1, ids.size());
+		assertTrue(ids.contains(ID5));
+	}
+	
+	/**
 	 * Enable all test activities.
 	 */
 	private void enableAll() {
@@ -220,7 +261,6 @@ public class UtilTest extends TestCase {
 		set.add(ID5);
 		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(
 				set);
-		
 	}
 
 	/* (non-Javadoc)

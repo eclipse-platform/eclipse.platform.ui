@@ -328,6 +328,53 @@ public final class WorkbenchActivityHelper {
 		return otherDisabledCategories;
 	}
 	
+	/**
+	 * Return the set of enabled categories. An enabled category is one in which
+	 * all contained activities are enabled.
+	 * 
+	 * @return the set of enabled categories.
+	 * @since 3.1
+	 */
+	public static Set getEnabledCategories() {
+		IActivityManager manager = PlatformUI.getWorkbench()
+				.getActivitySupport().getActivityManager();
+
+		Set enabledActivities = manager.getEnabledActivityIds();
+		Set definedCategoryIds = manager.getDefinedCategoryIds();
+		Set enabledCategories = new HashSet();
+		for (Iterator i = definedCategoryIds.iterator(); i.hasNext();) {
+			String categoryId = (String) i.next();
+			Set activityIds = getActivityIdsForCategory(manager
+					.getCategory(categoryId));
+			if (enabledActivities.containsAll(activityIds))
+				enabledCategories.add(categoryId);
+		}
+		return enabledCategories;
+	}
+	
+	/**
+	 * Return the number of enabled categories that this activity belongs to.
+	 * 
+	 * @param activityId
+	 *            the activity id to query on
+	 * @return the set of enabled category ids that this activity belongs to
+	 * @since 3.1
+	 */
+	public static Set getEnabledCategoriesForActivity(String activityId) {
+		IActivityManager manager = PlatformUI.getWorkbench()
+				.getActivitySupport().getActivityManager();
+
+		Set enabledCategoriesForActivity = new HashSet();
+		Set enabledCategories = getEnabledCategories();
+		for (Iterator i = enabledCategories.iterator(); i.hasNext();) {
+			String categoryId = (String) i.next();
+			if (getActivityIdsForCategory(manager.getCategory(categoryId))
+					.contains(activityId))
+				enabledCategoriesForActivity.add(categoryId);
+		}
+		return enabledCategoriesForActivity;
+	}
+	
     /**
      * Not intended to be instantiated.
      */
