@@ -83,6 +83,8 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 
 	class ModelListener implements IUpdateModelChangedListener {
 		public void objectChanged(Object object, String property) {
+			treeViewer.refresh();
+			checkItems();
 		}
 
 		public void objectsAdded(Object parent, Object[] children) {
@@ -100,6 +102,7 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 	private CheckboxTreeViewer treeViewer;
 	private Button addSiteButton;
 	private Button addLocalButton;
+	private Button editButton;
 	private Button removeButton;
 	private SearchRunner2 searchRunner;
 	private UnifiedSearchCategory category;
@@ -172,6 +175,17 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 		addLocalButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleAddLocal();
+			}
+		});
+		
+		editButton = new Button(buttonContainer, SWT.PUSH);
+		editButton.setText("&Edit...");
+		editButton.setEnabled(false);
+		editButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		SWTUtil.setButtonDimensionHint(editButton);
+		editButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleEdit();
 			}
 		});
 
@@ -247,16 +261,24 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 				UpdateModel updateModel = UpdateUI.getDefault().getUpdateModel();
 				IStructuredSelection ssel =
 					(IStructuredSelection) treeViewer.getSelection();
-				for (Iterator iter = ssel.iterator(); iter.hasNext();) {
-					SiteBookmark bookmark = (SiteBookmark) iter.next();
-					if (!bookmark.isReadOnly()) {
-						updateModel.removeBookmark(bookmark);
-					}
+				SiteBookmark bookmark = (SiteBookmark) ssel.getFirstElement();
+				if (!bookmark.isReadOnly()) {
+					updateModel.removeBookmark(bookmark);
 				}
 			}
 		});
 	}
 
+	private void handleEdit() {
+		IStructuredSelection ssel =
+			(IStructuredSelection) treeViewer.getSelection();
+		SiteBookmark bookmark = (SiteBookmark) ssel.getFirstElement();		
+		EditSiteDialog dialog = new EditSiteDialog(getShell(), bookmark);
+		dialog.create();
+		dialog.getShell().setText("Edit Update Site");
+		dialog.open();		
+	}
+	
 	private void handleSiteChecked(SiteBookmark bookmark, boolean checked) {
 		bookmark.setSelected(checked);
 		updateBookmarkGrayState(bookmark, checked);
@@ -319,25 +341,14 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 	}
 
 	private void handleSelectionChanged(IStructuredSelection ssel) {
-		boolean canDelete = false;
-
-		if (ssel.size() > 0) {
-			canDelete = true;
-			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
-				Object item = iter.next();
-				if (item instanceof SiteBookmark) {
-					if (((SiteBookmark) item).isReadOnly()) {
-						canDelete = false;
-						break;
-					}
-				}
-				if (item instanceof SiteCategory) {
-					canDelete = false;
-					break;
-				}
-			}
+		boolean enable = false;
+		Object item = ssel.getFirstElement();
+		if (item instanceof SiteBookmark) {
+			enable = !((SiteBookmark)item).isReadOnly();
 		}
-		removeButton.setEnabled(canDelete);
+		editButton.setEnabled(enable);
+		removeButton.setEnabled(enable);
+
 	}
 
 	private void updateSearchObject() {

@@ -33,8 +33,8 @@ import org.eclipse.update.internal.ui.model.UpdateModel;
  */
 public class NewSiteDialog extends Dialog {
 	
-	private Text name;
-	private Text url;
+	protected Text name;
+	protected Text url;
 	private Button okButton;
 	/**
 	 * @param parentShell
@@ -83,7 +83,6 @@ public class NewSiteDialog extends Dialog {
 		label.setText("URL: ");
 		
 		url = new Text(composite, SWT.BORDER);
-		url.setText("http://");
 		url.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		url.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -91,11 +90,21 @@ public class NewSiteDialog extends Dialog {
 			}
 		});
 		
+		initializeFields();
 		Dialog.applyDialogFont(composite);
 		return composite;
 	}
 	
+	protected void initializeFields() {
+		url.setText("http://");
+	}
+	
 	protected void okPressed() {
+		update();
+		super.okPressed();
+	}
+
+	protected void update() {
 		try {
 			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 			SiteBookmark bookmark = new SiteBookmark(name.getText(), new URL(url.getText()), false);
@@ -104,11 +113,12 @@ public class NewSiteDialog extends Dialog {
 			model.saveBookmarks();
 		} catch (MalformedURLException e) {
 		}
-		super.okPressed();
 	}
-
 	
 	private void verifyComplete() {
+		if (okButton == null)
+			return;
+			
 		if (name.getText().trim().length() == 0 || url.getText().trim().length() == 0) {
 			okButton.setEnabled(false);
 			return;
