@@ -31,5 +31,5 @@ public interface IContextServiceListener {
 	 * 
 	 * @param contextServiceEvent
 	 */	
-	void contextServiceChanged(ContextServiceEvent contextServiceEvent);
+	void contextServiceChanged(IContextServiceEvent contextServiceEvent);
 }

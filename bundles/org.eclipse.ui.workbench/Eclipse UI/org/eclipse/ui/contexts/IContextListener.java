@@ -31,5 +31,5 @@ public interface IContextListener {
 	 * 
 	 * @param contextEvent
 	 */	
-	void contextChanged(ContextEvent contextEvent);
+	void contextChanged(IContextEvent contextEvent);
 }

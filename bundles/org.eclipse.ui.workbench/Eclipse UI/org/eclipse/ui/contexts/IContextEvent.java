@@ -16,7 +16,7 @@ package org.eclipse.ui.contexts;
  * TODO javadoc
  * </p>
  * <p>
- * This interface is not intended to be extended by clients.
+ * This interface is not intended to be implemented or extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -24,12 +24,12 @@ package org.eclipse.ui.contexts;
  * 
  * @since 3.0
  */
-public interface IContextManagerListener {
+public interface IContextEvent {
 
 	/**
 	 * TODO javadoc
 	 * 
-	 * @param contextManagerEvent
-	 */
-	void contextManagerChanged(IContextManagerEvent contextManagerEvent);
+	 * @return
+	 */	
+	IContext getContext();
 }

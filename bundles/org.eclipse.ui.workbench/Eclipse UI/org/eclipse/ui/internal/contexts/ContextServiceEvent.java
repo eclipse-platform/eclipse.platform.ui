@@ -9,9 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.contexts;
+package org.eclipse.ui.internal.contexts;
 
-import org.eclipse.ui.internal.commands.util.Util;
+import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.contexts.IContextServiceEvent;
 
 /**
  * <p>
@@ -26,45 +27,46 @@ import org.eclipse.ui.internal.commands.util.Util;
  * 
  * @since 3.0
  */
-public class ContextManagerEvent {
+public class ContextServiceEvent 
+	implements IContextServiceEvent {
 
-	private IContextManager contextManager;
+	private IContextService contextService;
 
 	/**
 	 * TODO javadoc
 	 * 
-	 * @param contextManager
+	 * @param contextService
 	 * @throws IllegalArgumentException
 	 */	
-	public ContextManagerEvent(IContextManager contextManager)
+	public ContextServiceEvent(IContextService contextService)
 		throws IllegalArgumentException {		
 		super();
 		
-		if (contextManager == null)
+		if (contextService == null)
 			throw new IllegalArgumentException();
 		
-		this.contextManager = contextManager;
+		this.contextService = contextService;
 	}
 
 	/**
 	 * TODO javadoc
 	 * 
 	 * @param object
-	 */		
+	 */
 	public boolean equals(Object object) {
-		if (!(object instanceof ContextManagerEvent))
+		if (!(object instanceof ContextServiceEvent))
 			return false;
 
-		ContextManagerEvent contextManagerEvent = (ContextManagerEvent) object;	
-		return Util.equals(contextManager, contextManagerEvent.contextManager);
+		ContextServiceEvent contextServiceEvent = (ContextServiceEvent) object;	
+		return contextService.equals(contextServiceEvent.contextService);
 	}
-	
+
 	/**
 	 * TODO javadoc
 	 * 
 	 * @return
 	 */		
-	public IContextManager getContextManager() {
-		return contextManager;
+	public IContextService getContextService() {
+		return contextService;
 	}
 }

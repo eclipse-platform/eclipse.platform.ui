@@ -47,8 +47,8 @@ import org.eclipse.ui.commands.HandlerServiceEvent;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IHandlerService;
 import org.eclipse.ui.commands.IHandlerServiceListener;
-import org.eclipse.ui.contexts.ContextServiceEvent;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.contexts.IContextServiceEvent;
 import org.eclipse.ui.contexts.IContextServiceListener;
 import org.eclipse.ui.internal.AcceleratorMenu;
 import org.eclipse.ui.internal.IWorkbenchConstants;
@@ -69,7 +69,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 	private final StatusLineContributionItem modeContributionItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
 
 	private final IContextServiceListener contextServiceListener = new IContextServiceListener() {
-		public void contextServiceChanged(ContextServiceEvent contextServiceEvent) {
+		public void contextServiceChanged(IContextServiceEvent contextServiceEvent) {
 			ContextAndHandlerManager.this.contextServiceChanged();
 		}
 	};	
