@@ -452,7 +452,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	}
 	
 	/**
-	 * Intitializes the given document with the given stream using the given encoding.
+	 * Initializes the given document with the given stream using the given encoding.
 	 *
 	 * @param document the document to be initialized
 	 * @param contentStream the stream which delivers the document content
