@@ -139,6 +139,10 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 		}
 	}
 
+	public String getTitleArgument() {
+		return fTitleArgument;
+	}
+
 	/**
 	 * Returns <code>true</code> if no viewer is installed or if the current viewer
 	 * is a <code>NullViewer</code>.
