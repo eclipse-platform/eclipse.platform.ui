@@ -365,6 +365,131 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @return the SWT control hierarchy for the compare editor
 	 */
 	public Control createContents(Composite parent) {
+	
+		fComposite= new Splitter(parent, SWT.VERTICAL);
+		fComposite.setData(this);
+			
+		final Splitter h= new Splitter(fComposite, SWT.HORIZONTAL);
+	
+		fStructureInputPane= new CompareViewerSwitchingPane(h, SWT.BORDER | SWT.FLAT, true) {
+			protected Viewer getViewer(Viewer oldViewer, Object input) {
+				if (input instanceof DiffNode) {
+					DiffNode dn= (DiffNode) input;
+					if (dn.hasChildren())
+						return createDiffViewer(this);
+				}
+				if (input instanceof ICompareInput)
+					return findStructureViewer(oldViewer, (ICompareInput)input, this);
+				return null;
+			}
+		};
+		fFocusPane= fStructureInputPane;
+		
+		fStructurePane1= new CompareViewerSwitchingPane(h, SWT.BORDER | SWT.FLAT, true) {
+			protected Viewer getViewer(Viewer oldViewer, Object input) {
+				if (input instanceof ICompareInput)
+					return findStructureViewer(oldViewer, (ICompareInput)input, this);
+				return null;
+			}
+		};
+		h.setVisible(fStructurePane1, false);
+		
+		fStructurePane2= new CompareViewerSwitchingPane(h, SWT.BORDER | SWT.FLAT, true) {
+			protected Viewer getViewer(Viewer oldViewer, Object input) {
+				if (input instanceof ICompareInput)
+					return findStructureViewer(oldViewer, (ICompareInput)input, this);
+				return null;
+			}
+		};
+		h.setVisible(fStructurePane2, false);
+				
+		fContentInputPane= new CompareViewerSwitchingPane(fComposite, SWT.BORDER | SWT.FLAT) {
+			protected Viewer getViewer(Viewer oldViewer, Object input) {
+				if (input instanceof ICompareInput)
+					return findContentViewer(oldViewer, (ICompareInput)input, this);
+				return null;
+			}
+		};
+		fComposite.setVisible(h, false);
+		fComposite.setVisible(fContentInputPane, true);
+		
+		fComposite.setWeights(new int[] { 30, 70 });
+		
+		fComposite.layout();
+	
+		// setup the wiring for top left pane
+		fStructureInputPane.addOpenListener(
+			new IOpenListener() {
+				public void open(OpenEvent oe) {
+					feed1(oe.getSelection());
+				}
+			}
+		);
+		fStructureInputPane.addSelectionChangedListener(
+			new ISelectionChangedListener() {
+				public void selectionChanged(SelectionChangedEvent e) {
+					ISelection s= e.getSelection();
+					if (s == null || s.isEmpty())
+						feed1(s);
+				}
+			}
+		);
+		fStructureInputPane.addDoubleClickListener(
+			new IDoubleClickListener() {
+				public void doubleClick(DoubleClickEvent event) {
+					feedDefault1(event.getSelection());
+				}
+			}
+		);
+		
+		fStructurePane1.addSelectionChangedListener(
+			new ISelectionChangedListener() {
+				public void selectionChanged(SelectionChangedEvent e) {
+					feed2(e.getSelection());
+				}
+			}
+		);
+	
+		fStructurePane2.addSelectionChangedListener(
+			new ISelectionChangedListener() {
+				public void selectionChanged(SelectionChangedEvent e) {
+					feed3(e.getSelection());
+				}
+			}
+		);		
+	
+		if (fInput instanceof ICompareInput) {
+			fStructureInputPane.setInput(fInput);
+			ISelection sel= fStructureInputPane.getSelection();
+			if (sel == null || sel.isEmpty())
+				feed1(sel);	// we only feed downstream viewers if the top left pane is empty
+		}
+		
+		fComposite.setData("Nav", //$NON-NLS-1$
+			new CompareViewerSwitchingPane[] {
+				fStructureInputPane,
+				fStructurePane1,
+				fStructurePane2,
+				fContentInputPane
+			}
+		);
+	
+		return fComposite;
+	}
+
+	/**
+	 * Create the SWT controls that are used to display the result of the compare operation.
+	 * Creates the SWT Controls and sets up the wiring between the individual panes.
+	 * This implementation creates all four panes but makes only the necessary ones visible.
+	 * Finally it feeds the compare result into the top left structure viewer
+	 * and the content viewer.
+	 * <p>
+	 * Subclasses may override if they need to change the layout or wiring between panes.
+	 *
+	 * @param parent the parent control under which the control must be created
+	 * @return the SWT control hierarchy for the compare editor
+	 */
+	public Control createContents2(Composite parent) {
 
 		fComposite= new Splitter(parent, SWT.VERTICAL);
 		fComposite.setData(this);
