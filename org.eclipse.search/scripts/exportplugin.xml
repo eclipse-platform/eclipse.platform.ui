@@ -1,4 +1,4 @@
-<project name="org.eclipse.search" default="export" basedir=".">
+<project name="org.eclipse.search" default="export" basedir="..">
 	<target name="init">
 		<tstamp/>
 		<property name="destdir" value="../../plugin-export" />
@@ -24,5 +24,8 @@
 		<copy todir="${dest}/icons">
 			<fileset dir="icons" />
 		</copy>
+		<zip zipfile="${dest}/searchsrc.zip">
+		    <fileset dir="Eclipse Search" />
+  		</zip>				
 	</target>
 </project>
