@@ -98,8 +98,8 @@ public final class KeySequence implements Comparable {
 	/**
 	 * Gets an instance of <code>KeySequence</code> given a single key stroke.
 	 * 
-	 * @param keyStrokes a key strokes. Must not be <code>null</code>.
-	 * @return a key sequence.
+	 * @param  keyStroke a single key stroke. Must not be <code>null</code>.
+	 * @return           a key sequence.
 	 */	
 	public static KeySequence getInstance(KeyStroke keyStroke) {
 		return new KeySequence(Collections.singletonList(keyStroke));
@@ -109,10 +109,10 @@ public final class KeySequence implements Comparable {
 	 * Gets an instance of <code>KeySequence</code> given an array of key 
 	 * strokes.
 	 * 
-	 * @param keyStrokes the array of key strokes. This array may be empty, but
-	 *                   it must not be <code>null</code>. This array must not
-	 *                   contain <code>null</code> elements.
-	 * @return a key sequence.
+	 * @param  keyStrokes the array of key strokes. This array may be empty, but
+	 *                    it must not be <code>null</code>. This array must not
+	 *                    contain <code>null</code> elements.
+	 * @return            a key sequence.
 	 */
 	public static KeySequence getInstance(KeyStroke[] keyStrokes) {
 		return new KeySequence(Arrays.asList(keyStrokes));
@@ -122,11 +122,11 @@ public final class KeySequence implements Comparable {
 	 * Gets an instance of <code>KeySequence</code> given a list of key 
 	 * strokes.
 	 * 
-	 * @param keyStrokes the list of key strokes. This list may be empty, but
-	 *        			 it must not be <code>null</code>. If this list is not 
-	 * 					 empty, it must only contain instances of 
-	 * 					 <code>KeyStroke</code>.
-	 * @return a key sequence.
+	 * @param  keyStrokes the list of key strokes. This list may be empty, but
+	 *        			  it must not be <code>null</code>. If this list is not 
+	 * 					  empty, it must only contain instances of 
+	 * 					  <code>KeyStroke</code>.
+	 * @return            a key sequence.
 	 */
 	public static KeySequence getInstance(List keyStrokes) {
 		return new KeySequence(keyStrokes);
@@ -136,8 +136,8 @@ public final class KeySequence implements Comparable {
 	 * Gets an instance of <code>KeySequence</code> by parsing a given a formal
 	 * string representation. 
 	 * 
-	 * @param string the formal string representation to parse.
-	 * @return a key sequence.
+	 * @param  string         the formal string representation to parse.
+	 * @return                a key sequence.
 	 * @throws ParseException if the given formal string representation could
 	 * 						  not be parsed to a valid key sequence.
 	 */
@@ -192,8 +192,9 @@ public final class KeySequence implements Comparable {
 	 * strokes.
 	 * 
 	 * @param keyStrokes the list of key strokes. This list may be empty, but
-	 *        it must not be <code>null</code>. If this list is not empty, it 
-	 *        must only contain instances of <code>KeyStroke</code>.
+	 *                   it must not be <code>null</code>. If this list is not 
+	 * 					 empty, it must only contain instances of 
+	 * 					 <code>KeyStroke</code>.
 	 */
 	private KeySequence(List keyStrokes) {
 		this.keyStrokes = Util.safeCopy(keyStrokes, KeyStroke.class);
@@ -284,11 +285,11 @@ public final class KeySequence implements Comparable {
 	 * list of key strokes of the given key sequence start with the list of key 
 	 * strokes of this key sequence.
 	 * 
-	 * @param keySequence a key sequence. Must not be <code>null</code>.
-	 * @param equals 	  whether or not an identical key sequence should be 
-	 *                    considered a child.
-	 * @return <code>true</code>, iff the given key sequence is a child of this
-	 * 		   key sequence.
+	 * @param  keySequence a key sequence. Must not be <code>null</code>.
+	 * @param  equals 	   whether or not an identical key sequence should be 
+	 *                     considered a child.
+	 * @return 			   <code>true</code>, iff the given key sequence is a 
+	 * 					   child of this key sequence.
 	 */
 	public boolean isChildOf(KeySequence keySequence, boolean equals) {
 		if (keySequence == null)
@@ -312,7 +313,7 @@ public final class KeySequence implements Comparable {
 	 * 
 	 * @return The formal string representation for this key sequence. 
 	 *         Guaranteed not to be <code>null</code>. 
-	 * @see java.lang.Object#toString()
+	 * @see    java.lang.Object#toString()
 	 */
 	public String toString() {
 		if (string == null) {	

@@ -214,10 +214,10 @@ public final class CharacterKey extends NaturalKey {
 	 * on character. Typically, this name is a string of one-character in 
 	 * length equal to the character that this instance represents.
 	 * 
-	 * @param character	The character that the resultant 
-	 * 					<code>CharacterKey</code> instance is to represent.
-	 * @return An instance of <code>CharacterKey</code> representing the 
-	 * 		   character.
+	 * @param  character the character that the resultant 
+	 * 					 <code>CharacterKey</code> instance is to represent.
+	 * @return 			 an instance of <code>CharacterKey</code> representing 
+	 * 					 the character.
 	 */	
 	public static CharacterKey getInstance(char character) {
 		String name;
@@ -285,8 +285,8 @@ public final class CharacterKey extends NaturalKey {
 	 * Constructs an instance of <code>CharacterKey</code> given a unicode 
 	 * character and a name. 
 	 * 
-	 * @param character	The unicode character this object represents.
-	 * @param name 		The name of the key, must not be null.
+	 * @param character	the unicode character this object represents.
+	 * @param name 		the name of the key, must not be null.
 	 */		
 	private CharacterKey(char character, String name) {
 		super(name);
@@ -315,7 +315,7 @@ public final class CharacterKey extends NaturalKey {
 	/**
 	 * Gets the character that this object represents.
 	 * 
-	 * @return The character that this object represents.
+	 * @return the character that this object represents.
 	 */
 	public char getCharacter() {
 		return character;

@@ -76,9 +76,10 @@ public final class KeyStroke implements Comparable {
 		/**
 		 * Calculates a rank for a given modifier key.
 		 * 
-		 * @param modifierKey the modifier key to rank.
-		 * @return the rank of this modifier key. This is a non-negative number
-		 *         where a lower number suggests a higher rank.
+		 * @param  modifierKey the modifier key to rank.
+		 * @return 			   the rank of this modifier key. This is a 
+		 * 					   non-negative number where a lower number suggests 
+		 *                     a higher rank.
 		 */
 		private int rank(ModifierKey modifierKey) {
 			String platform = SWT.getPlatform();
@@ -231,8 +232,9 @@ public final class KeyStroke implements Comparable {
 	/**
 	 * Gets an instance of <code>KeyStroke</code> given a natural key. 
 	 * 
-	 * @param naturalKey the natural key. May be <code>null</code>.
-	 * @return a key stroke. This key stroke will have no modifier keys. 
+	 * @param  naturalKey the natural key. May be <code>null</code>.
+	 * @return 		      a key stroke. This key stroke will have no modifier 
+	 * 					  keys. 
 	 */	
 	public static KeyStroke getInstance(NaturalKey naturalKey) {
 		return new KeyStroke(Util.EMPTY_SORTED_SET, naturalKey);
@@ -242,9 +244,9 @@ public final class KeyStroke implements Comparable {
 	 * Gets an instance of <code>KeyStroke</code> given a single modifier key
 	 * and a natural key.
 	 * 
-	 * @param modifierKey a modifier key. Must not be <code>null</code>.
-	 * @param naturalKey  the natural key. May be <code>null</code>.
-	 * @return a key stroke.
+	 * @param  modifierKey a modifier key. Must not be <code>null</code>.
+	 * @param  naturalKey  the natural key. May be <code>null</code>.
+	 * @return 			   a key stroke.
 	 */	
 	public static KeyStroke getInstance(ModifierKey modifierKey, NaturalKey naturalKey) {
 		if (modifierKey == null)
@@ -257,12 +259,12 @@ public final class KeyStroke implements Comparable {
 	 * Gets an instance of <code>KeyStroke</code> given an array of modifier 
 	 * keys and a natural key.
 	 * 
-	 * @param modifierKeys the array of modifier keys. This array may be empty, 
-	 *                     but it must not be <code>null</code>. If this array 
-	 *                     is not empty, it must not contain <code>null</code> 
-	 *                     elements. 
-	 * @param naturalKey   the natural key. May be <code>null</code>.
-	 * @return a key stroke.
+	 * @param  modifierKeys the array of modifier keys. This array may be empty, 
+	 *                      but it must not be <code>null</code>. If this array 
+	 *                      is not empty, it must not contain <code>null</code> 
+	 *                      elements. 
+	 * @param  naturalKey   the natural key. May be <code>null</code>.
+	 * @return 			    a key stroke.
 	 */	
 	public static KeyStroke getInstance(ModifierKey[] modifierKeys, NaturalKey naturalKey) {
 		Util.assertInstance(modifierKeys, ModifierKey.class);		
@@ -273,12 +275,12 @@ public final class KeyStroke implements Comparable {
 	 * Gets an instance of <code>KeyStroke</code> given a set of modifier 
 	 * keys and a natural key.
 	 * 
-	 * @param modifierKeys the set of modifier keys. This set may be empty, but
-	 *        			   it must not be <code>null</code>. If this set is not 
-	 * 					   empty, it must only contain instances of 
-	 *                     <code>ModifierKey</code>.
-	 * @param naturalKey   the natural key. May be <code>null</code>.
-	 * @return a key stroke.
+	 * @param  modifierKeys the set of modifier keys. This set may be empty, but
+	 *        			    it must not be <code>null</code>. If this set is not 
+	 * 					    empty, it must only contain instances of 
+	 *                      <code>ModifierKey</code>.
+	 * @param  naturalKey   the natural key. May be <code>null</code>.
+	 * @return              a key stroke.
 	 */	
 	public static KeyStroke getInstance(SortedSet modifierKeys, NaturalKey naturalKey) {
 		return new KeyStroke(modifierKeys, naturalKey);
@@ -288,7 +290,7 @@ public final class KeyStroke implements Comparable {
 	 * Gets an instance of <code>KeyStroke</code> by parsing a given a formal
 	 * string representation. 
 	 * 
-	 * @param string the formal string representation to parse.
+	 * @param  string         the formal string representation to parse.
 	 * @return a key stroke.
 	 * @throws ParseException if the given formal string representation could
 	 * 						  not be parsed to a valid key stroke.
@@ -382,9 +384,10 @@ public final class KeyStroke implements Comparable {
 	 * keys and a natural key.
 	 * 
 	 * @param modifierKeys the set of modifier keys. This set may be empty, but
-	 *        it must not be <code>null</code>. If this set is not empty, it 
-	 *        must only contain instances of <code>ModifierKey</code>.
-	 * @param naturalKey the natural key. May be <code>null</code>.
+	 *                     it must not be <code>null</code>. If this set is not 
+	 * 					   empty, it must only contain instances of 
+	 * 					   <code>ModifierKey</code>.
+	 * @param naturalKey   the natural key. May be <code>null</code>.
 	 */
 	private KeyStroke(SortedSet modifierKeys, NaturalKey naturalKey) {
 		this.modifierKeys = Util.safeCopy(modifierKeys, ModifierKey.class);
@@ -496,7 +499,7 @@ public final class KeyStroke implements Comparable {
 	 * 
 	 * @return The formal string representation for this key stroke. Guaranteed 
 	 * 		   not to be <code>null</code>. 
-	 * @see java.lang.Object#toString()
+	 * @see    java.lang.Object#toString()
 	 */
 	public String toString() {
 		if (string == null) {
