@@ -13,20 +13,29 @@
 
 package org.eclipse.ui.dialogs;
 
-import org.eclipse.ui.help.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.misc.CheckboxTreeAndListGroup;
-import org.eclipse.ui.model.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import java.util.ArrayList;
-import java.util.Iterator;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
  * A standard file selection dialog which solicits a list of files from the user.
@@ -51,7 +60,7 @@ public class FileSelectionDialog extends SelectionDialog {
 	private FileSystemElement root;
 
 	// the visual selection widget group
-	private CheckboxTreeAndListGroup selectionGroup;
+	CheckboxTreeAndListGroup selectionGroup;
 
 	// expand all items in the tree view on dialog open
 	private boolean expandAllOnOpen = false;
@@ -81,7 +90,6 @@ public FileSelectionDialog(Shell parentShell, FileSystemElement fileSystemElemen
  * @param composite org.eclipse.swt.widgets.Composite
  */
 private void addSelectionButtons(Composite composite) {
-	Font font = composite.getFont();
 	
 	Composite buttonComposite = new Composite(composite,SWT.RIGHT);
 	GridLayout layout = new GridLayout();
@@ -91,7 +99,6 @@ private void addSelectionButtons(Composite composite) {
 	composite.setData(data);
 
 	Button selectButton = new Button(buttonComposite,SWT.PUSH);
-	selectButton.setFont(font);
 	selectButton.setText(SELECT_ALL_TITLE);
 	SelectionListener listener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -101,7 +108,6 @@ private void addSelectionButtons(Composite composite) {
 	selectButton.addSelectionListener(listener);
 
 	Button deselectButton = new Button(buttonComposite,SWT.PUSH);
-	deselectButton.setFont(font);
 	deselectButton.setText(DESELECT_ALL_TITLE);
 	listener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
