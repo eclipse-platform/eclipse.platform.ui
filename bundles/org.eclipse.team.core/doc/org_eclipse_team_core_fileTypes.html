@@ -1,0 +1,45 @@
+<!doctype html public "-//w3c//dtd html 4.0//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Eclipse Team Core Extension Point: File Types</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<center>
+<h1>
+File Types</h1></center>
+<b><i>Identifier: </i></b>org.eclipse.team.core.fileTypes
+<p><b><i>Description: </i></b>This extension point is used to register
+information about whether particular file types should be considered
+to contain text or binary data. This information is important to some
+repository providers as it affects how the data is stored, compared and
+transmitted.
+<p>Providers may provide an extension for this extension point. No code
+beyond the XML extension declaration is required.
+<p><b><i>Configuration Markup:</i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT fileTypes EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST fileTypes</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extension&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+
+<ul>
+<li><b>extension -</b> the file extension being identified by this contribution.</li>
+<li><b>type -</b> one of either "text" or "binary", identifying the contents of files matching the value of extension.</li>
+</ul>
+
+<b><i>Examples:</i></b>
+<p>Following is an example of a fileTypes extension:
+<p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.team.core.fileTypes"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;fileTypes</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extension="txt"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; type="text"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/fileTypes></tt>
+<br><tt>&nbsp;&nbsp; &lt;/extension></tt>
+
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+</body>
+</html>
