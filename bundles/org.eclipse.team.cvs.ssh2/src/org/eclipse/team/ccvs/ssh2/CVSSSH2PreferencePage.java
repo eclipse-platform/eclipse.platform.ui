@@ -41,6 +41,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
   public static String KEY_PROXY_PASS="CVSSSH2PreferencePage.PROXY_PASS";
   public static String KEY_SSH2HOME="CVSSSH2PreferencePage.SSH2HOME";
   public static String KEY_KEYFILE="CVSSSH2PreferencePage.KEYFILE";
+  public static String KEY_PRIVATEKEY="CVSSSH2PreferencePage.PRIVATEKEY";
   
   // Temporary preference for using ssh2 instead of ssh1
   public static String KEY_USE_SSH2="CVSSSH2PreferencePage.SSH2_USE_SSH2";
@@ -49,30 +50,37 @@ public class CVSSSH2PreferencePage extends PreferencePage
   static String HTTP="HTTP";
   private static String HTTP_DEFAULT_PORT="80";
   private static String SOCKS5_DEFAULT_PORT="1080";
+  private static String privatekeys="id_dsa,id_rsa";
 
   static String DSA="DSA";
   static String RSA="RSA";
 
-  private DirectoryFieldEditor ssh2homeEditor;
+//  private DirectoryFieldEditor ssh2homeEditor;
 
+  private Label ssh2HomeLabel;
   private Label proxyTypeLabel;
   private Label proxyHostLabel;
   private Label proxyPortLabel;
   private Label proxyUserLabel;
   private Label proxyPassLabel;
+  private Label privateKeyLabel;
   private Combo proxyTypeCombo;
+  private Text ssh2HomeText;
   private Text proxyHostText;
   private Text proxyPortText;
   private Text proxyUserText;
   private Text proxyPassText;
+  private Text privateKeyText;
   private Button enableProxy;
   private Button enableAuth;
   private Button enableSSH2;
+  private Button privateKeyAdd;
   private boolean useProxy;
   private boolean useAuth;
 
   private Label keyTypeLabel;
   private Combo keyTypeCombo;
+  private Button ssh2HomeBrowse;
   private Button keyGenerate;
   private Button keyLoad;
   private Button saveKeyPair;
@@ -90,6 +98,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
   private String kpairComment;
 
   public CVSSSH2PreferencePage() {
+//    super(GRID);
     IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
     setPreferenceStore(store);
     setDescription("CVSSSH2 Settings:");
@@ -140,12 +149,87 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
     createSpacer(group, 3);
 
-    ssh2homeEditor=
-      new DirectoryFieldEditor(KEY_SSH2HOME, 
-			       "SSH2 Home", 
-			       group);
+    ssh2HomeLabel=new Label(group, SWT.NONE);
+    ssh2HomeLabel.setText("SSH2 Home");
 
-    //addField(ssh2homeEditor);
+    ssh2HomeText=new Text(group, SWT.SINGLE | SWT.BORDER);
+    ssh2HomeText.setFont(group.getFont());
+    gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=1;
+    ssh2HomeText.setLayoutData(gd);
+
+    ssh2HomeBrowse=new Button(group, SWT.NULL);
+    ssh2HomeBrowse.setText("Browse...");
+    gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
+    gd.horizontalSpan=1;
+    ssh2HomeBrowse.setLayoutData(gd);
+
+
+    createSpacer(group, 3);
+
+    privateKeyLabel=new Label(group, SWT.NONE);
+    privateKeyLabel.setText("Private key");
+
+    privateKeyText=new Text(group, SWT.SINGLE | SWT.BORDER);
+    privateKeyText.setFont(group.getFont());
+    gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=1;
+    privateKeyText.setLayoutData(gd);
+
+    privateKeyAdd=new Button(group, SWT.NULL);
+    privateKeyAdd.setText("Add...");
+    gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
+    gd.horizontalSpan=1;
+    privateKeyAdd.setLayoutData(gd);
+
+    ssh2HomeBrowse.addSelectionListener(new SelectionAdapter(){
+	public void widgetSelected(SelectionEvent e){
+	  String home=ssh2HomeText.getText();
+
+	  if(!new File(home).exists()){
+	    while(true){
+	      int foo=home.lastIndexOf(java.io.File.separator, home.length());
+	      if(foo==-1)break;
+	      home=home.substring(0, foo);
+	      if(new File(home).exists())break;
+	    }
+	  }
+
+	  DirectoryDialog dd=new DirectoryDialog(getShell());
+	  dd.setFilterPath(home);
+	  dd.setMessage("SSH Home");
+	  String dir=dd.open();
+	  if(dir==null){ // cancel
+	    return;
+	  }
+	  ssh2HomeText.setText(dir);
+	}
+      });
+
+    privateKeyAdd.addSelectionListener(new SelectionAdapter(){
+	public void widgetSelected(SelectionEvent e){
+	  String home=ssh2HomeText.getText();
+
+	  FileDialog fd=new FileDialog(getShell(), SWT.OPEN|SWT.MULTI);
+	  fd.setFilterPath(home);
+	  Object o=fd.open();
+	  if(o==null){ // cancel
+	    return;
+	  }
+	  String[] files=fd.getFileNames();
+	  String keys=privateKeyText.getText();
+	  String dir=fd.getFilterPath();
+	  if(dir.equals(home)){dir="";}
+	  else{dir+=java.io.File.separator;}
+
+	  for(int i=0; i<files.length; i++){
+	    String foo=files[i];
+	    keys=keys+","+dir+foo;
+	  }
+	  privateKeyText.setText(keys);
+	}
+      });
+
     return group;
   }
 
@@ -404,7 +488,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  kpair.setPassphrase(pass);
 
 	  IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
-	  String home=ssh2homeEditor.getStringValue(); 
+	  String home=ssh2HomeText.getText();
+
 	  File _home=new File(home);
 
 	  if(!_home.exists()){
@@ -502,6 +587,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
   public static void initDefaults(IPreferenceStore store) {
     setDefault(store, KEY_SSH2HOME, JSchSession.default_ssh_home);
+    setDefault(store, KEY_PRIVATEKEY, privatekeys);
     setDefault(store, KEY_PROXY_TYPE, HTTP);
     setDefault(store, KEY_PROXY_PORT, HTTP_DEFAULT_PORT);
     setDefault(store, KEY_PROXY_AUTH, "false");
@@ -518,7 +604,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
   private void initControls(){
     IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
-    ssh2homeEditor.setStringValue(store.getString(KEY_SSH2HOME));
+    ssh2HomeText.setText(store.getString(KEY_SSH2HOME));
+    privateKeyText.setText(store.getString(KEY_PRIVATEKEY));
     enableSSH2.setSelection(store.getBoolean(KEY_USE_SSH2));
     useProxy=store.getString(KEY_PROXY).equals("true");
     enableProxy.setSelection(useProxy);
@@ -788,7 +875,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  kpair.setPassphrase(pass);
 
 	  IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
-	  String home=ssh2homeEditor.getStringValue(); 
+	  String home=ssh2HomeText.getText();
+
 	  File _home=new File(home);
 
 	  if(!_home.exists()){
@@ -846,8 +934,25 @@ public class CVSSSH2PreferencePage extends PreferencePage
   public boolean performOk() {
     boolean result=super.performOk();
     if(result){
+
+      String home=ssh2HomeText.getText();
+      File _home=new File(home);
+      if(!_home.exists()){
+	MessageBox mb=new MessageBox(getShell(),SWT.YES|SWT.NO|SWT.ICON_QUESTION);
+	mb.setMessage(home+" does not exsit.\nAre you sure you want to create it?");
+	if(mb.open()==SWT.YES){
+	  if(!(_home.mkdirs())){
+	  mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_ERROR);
+	  mb.setMessage("Failed to create "+home);
+	  mb.open();
+	  return false;
+	  }
+	}
+      }
+
       IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
-      store.setValue(KEY_SSH2HOME, ssh2homeEditor.getStringValue());
+      store.setValue(KEY_SSH2HOME, home);
+      store.setValue(KEY_PRIVATEKEY, privateKeyText.getText());
       store.setValue(KEY_PROXY, enableProxy.getSelection());
       store.setValue(KEY_PROXY_TYPE, proxyTypeCombo.getText());
       store.setValue(KEY_PROXY_HOST, proxyHostText.getText());
@@ -865,8 +970,24 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
   public void performApply() {
     super.performApply();
+
+    String home=ssh2HomeText.getText();
+    File _home=new File(home);
+    if(!_home.exists()){
+      MessageBox mb=new MessageBox(getShell(),SWT.YES|SWT.NO|SWT.ICON_QUESTION);
+      mb.setMessage(home+" does not exsit.\nAre you sure you want to create it?");
+      if(mb.open()==SWT.YES){
+	if(!(_home.mkdirs())){
+	  mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_ERROR);
+	  mb.setMessage("Failed to create "+home);
+	  mb.open();
+	}
+      }
+    }
+
     IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
-    store.setValue(KEY_SSH2HOME, ssh2homeEditor.getStringValue());
+    store.setValue(KEY_SSH2HOME, ssh2HomeText.getText());
+    store.setValue(KEY_PRIVATEKEY, privateKeyText.getText());
     store.setValue(KEY_PROXY, enableProxy.getSelection());
     store.setValue(KEY_PROXY_TYPE, proxyTypeCombo.getText());
     store.setValue(KEY_PROXY_HOST, proxyHostText.getText());

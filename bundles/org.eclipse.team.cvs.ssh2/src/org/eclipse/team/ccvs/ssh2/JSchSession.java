@@ -134,15 +134,17 @@ class JSchSession {
 				ssh_home = default_ssh_home;
 
 			try {
-				java.io.File file;
-				file = new java.io.File(ssh_home, "id_dsa"); //$NON-NLS-1$
-				if (file.exists())
-					jsch.addIdentity(file.getPath());
-				file = new java.io.File(ssh_home, "id_rsa"); //$NON-NLS-1$
-				if (file.exists())
-					jsch.addIdentity(file.getPath());
-				file = new java.io.File(ssh_home, "known_hosts"); //$NON-NLS-1$
-				jsch.setKnownHosts(file.getPath());
+			  java.io.File file;
+			  file=new java.io.File(ssh_home, "known_hosts");
+			  jsch.setKnownHosts(file.getPath());
+
+			  String pkeys=store.getString(CVSSSH2PreferencePage.KEY_PRIVATEKEY);
+			  String[] pkey=pkeys.split(",");
+			  for(int i=0; i<pkey.length;i++){
+			    file = new java.io.File(ssh_home, pkey[i]);
+			    if (file.exists())
+			      jsch.addIdentity(file.getPath());
+			  }
 			} catch (Exception e) {
 			}
 		}
