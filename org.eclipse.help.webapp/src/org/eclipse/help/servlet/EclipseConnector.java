@@ -19,14 +19,13 @@ public class EclipseConnector {
 	private static IFilter[] noFilters = new IFilter[0];
 	private static CSSFilter cssFilter = new CSSFilter();
 	private static IFilter[] basicFilters = new IFilter[] { cssFilter };
-	private static final String errorPageBegin = 
-		"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n"+
-	    "<html><head>\n" +
-	  	"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n" +
-	  	"</head>\n"+
-		"<body><p>\n";
+	private static final String errorPageBegin =
+		"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n"
+			+ "<html><head>\n"
+			+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n"
+			+ "</head>\n"
+			+ "<body><p>\n";
 	private static final String errorPageEnd = "</p></body></html>";
-	
 
 	/**
 	 * Constructor.
@@ -48,17 +47,32 @@ public class EclipseConnector {
 		throws IOException {
 
 		try {
+
 			String url = getURL(req);
 			if (url == null)
 				return;
+			if (url.toLowerCase().startsWith("file:/")) {
+				int i = url.indexOf('?');
+				if (i != -1)
+					url = url.substring(0, i);
+				if (!UrlUtil.validate(url, req, context))
+					return;
+			}
+
 			URLConnection con = openConnection(url, req);
 			resp.setContentType(con.getContentType());
 			resp.setHeader(
 				"Cache-Control",
-				"max-age=" + (con.getExpiration() - System.currentTimeMillis()));
+				"max-age="
+					+ (con.getExpiration() - System.currentTimeMillis()));
 			InputStream is = con.getInputStream();
-			if (is == null) {
-				String error = errorPageBegin + WebappResources.getString("noTopic", req) + errorPageEnd;
+			if (is == null
+				&& (url.toLowerCase().endsWith("htm")
+					|| url.toLowerCase().endsWith("html"))) {
+				String error =
+					errorPageBegin
+						+ WebappResources.getString("noTopic", req)
+						+ errorPageEnd;
 				is = new ByteArrayInputStream(error.getBytes("UTF8"));
 			}
 			OutputStream os = resp.getOutputStream();
@@ -73,7 +87,8 @@ public class EclipseConnector {
 				for (int i = 0; i < filters.length; i++) {
 					tempBuffer = filters[i].filter(tempBuffer);
 				}
-				ByteArrayInputStream tempIn = new ByteArrayInputStream(tempBuffer);
+				ByteArrayInputStream tempIn =
+					new ByteArrayInputStream(tempBuffer);
 				transferContent(tempIn, os);
 			}
 			os.flush();
@@ -91,7 +106,8 @@ public class EclipseConnector {
 		throws IOException {
 		try {
 			// Prepare the input stream for reading
-			BufferedInputStream dataStream = new BufferedInputStream(inputStream);
+			BufferedInputStream dataStream =
+				new BufferedInputStream(inputStream);
 
 			// Create a fixed sized buffer for reading.
 			// We could create one with the size of availabe data...
@@ -111,7 +127,9 @@ public class EclipseConnector {
 	/**
 	 * Gets content from the named url (this could be and eclipse defined url)
 	 */
-	private URLConnection openConnection(String url, HttpServletRequest request)
+	private URLConnection openConnection(
+		String url,
+		HttpServletRequest request)
 		throws Exception {
 		//System.out.println("help content for: " + url);
 
@@ -144,7 +162,9 @@ public class EclipseConnector {
 	private String getURL(HttpServletRequest req) {
 		String query = "";
 		boolean firstParam = true;
-		for (Enumeration params = req.getParameterNames(); params.hasMoreElements();) {
+		for (Enumeration params = req.getParameterNames();
+			params.hasMoreElements();
+			) {
 			String param = (String) params.nextElement();
 			String[] values = req.getParameterValues(param);
 			if (values == null)
@@ -179,14 +199,17 @@ public class EclipseConnector {
 				if (UrlUtil.getRequestParameter(req, "resultof") != null)
 					return new IFilter[] {
 						cssFilter,
-						new HighlightFilter(UrlUtil.getRequestParameter(req, "resultof"))};
+						new HighlightFilter(
+							UrlUtil.getRequestParameter(req, "resultof"))};
 				else
 					return basicFilters;
 			} else
 				return noFilters;
 		} else {
 			if (UrlUtil.getRequestParameter(req, "resultof") != null)
-				return new IFilter[] { new HighlightFilter(UrlUtil.getRequestParameter(req, "resultof"))};
+				return new IFilter[] {
+					new HighlightFilter(
+						UrlUtil.getRequestParameter(req, "resultof"))};
 			else
 				return noFilters;
 		}

@@ -4,7 +4,9 @@
  */
 package org.eclipse.help.servlet;
 import java.io.*;
+import java.net.*;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 public class UrlUtil {
@@ -213,4 +215,32 @@ public class UrlUtil {
 		return jsEncoded.toString();
 	}
 
+	/**
+	 * Validates a file:// URL by ensuring the file is only accessed 
+	 * from a local installation.
+	 */
+	public static boolean validate (String fileURL, HttpServletRequest req, ServletContext context)
+	{
+		// first check if we are running outside the workbench
+		if (context.getAttribute("org.eclipse.help.servlet.eclipse") != null)
+			return false;
+		
+		// check that the request IP is a local IP
+		String reqIP = req.getRemoteAddr();
+		if ("127.0.0.1".equals(reqIP))
+			return true;
+		
+		try {
+			String hostname = InetAddress.getLocalHost().getHostName();
+			InetAddress[] addr = InetAddress.getAllByName(hostname);
+			for (int i = 0; i < addr.length; i++) {
+				// test all addresses retrieved from the local machine
+				if (addr[i].getHostAddress().equals(reqIP))
+					return true;
+			}
+		} catch (IOException ioe) {
+			return false;
+		}
+		return false;
+	}
 }

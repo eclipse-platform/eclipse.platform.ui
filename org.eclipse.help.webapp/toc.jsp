@@ -144,6 +144,8 @@ parent.parent.showBookshelfIcon(false);
 	String tocDescription = tocElement.getAttribute("topic");
 	if (tocDescription == null || tocDescription.length() == 0)
 		tocDescription = "about:blank";
+	else if (tocDescription.startsWith("file:/"))
+		tocDescription = "content/" + tocDescription;
 	else
 		tocDescription = "content/help:" + tocDescription;
 
@@ -194,6 +196,8 @@ parent.parent.showBookshelfIcon(false);
 			href = "about:blank";
 		else if (href != null && href.length() > 0 && href.charAt(0) == '/')
 			href = "content/help:" + href;
+		else if (href != null && href.length() > 0 && href.startsWith("file:/"))
+			href = "content/" + href;
 	
 		// use <nobr> for IE5.0 only. Mozilla and IE5.5 work fine with nowrap css
 		if (hasNodes) {

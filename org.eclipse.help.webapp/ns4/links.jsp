@@ -116,6 +116,9 @@ if(request.getParameter("contextId")!=null)
 			// external href
 			if (href.charAt(0) == '/')
 				href = "content/help:" + href;
+			else if (href.startsWith("file:/"))
+				href = "content/" + href;
+				
 			if (href.indexOf('?') == -1)
 				href +="?toc="+URLEncoder.encode(topic.getAttribute("toc"));
 			else
@@ -149,6 +152,8 @@ if(request.getParameter("contextId")!=null)
 String topic = request.getParameter("topic");
 if (topic != null && topic.startsWith("/"))
 	topic = request.getContextPath() + "/content/help:" + topic;
+else if (topic != null && topic.startsWith("file:/"))
+	topic = request.getContextPath() + "/content/" + topic;
 %>
 
 <script language="JavaScript">

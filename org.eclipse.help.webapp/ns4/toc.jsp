@@ -148,6 +148,8 @@ if (parent.parent.temp){
 	String tocDescription = tocElement.getAttribute("topic");
 	if (tocDescription == null || tocDescription.length() == 0)
 		tocDescription = "javascript: void 0;";
+	else if (tocDescription.startsWith("file:/"))
+		tocDescription = "content/" + tocDescription;
 	else
 		tocDescription = "content/help:" + tocDescription;
 

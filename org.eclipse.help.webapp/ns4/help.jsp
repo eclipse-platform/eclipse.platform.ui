@@ -63,10 +63,12 @@
 	if(request.getParameter("topic")!=null)
 	{
 		String topic = request.getParameter("topic");
-		if (topic.startsWith("/"))
-		{	
+		if (topic.startsWith("/")){	
 			topic = request.getContextPath() + "/content/help:" + topic;
+		} else if (topic.startsWith("file:/")){
+			topic = request.getContextPath() + "/content/" + topic;
 		}
+		
 		srcMainFrame=topic;
 	}
 %>
