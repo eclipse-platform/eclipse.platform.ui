@@ -118,8 +118,16 @@ public abstract class RefactoringWizard extends Wizard {
 	 * preview page should be fully expanded.
 	 */
 	public static final int PREVIEW_EXPAND_FIRST_NODE= 1 << 5;
+
+	/**
+	 * Flag indicating that the dialog representing the refactoring
+	 * status to the user will not contain a back button. The flag
+	 * is ignored if the flag (@link #WIZARD_BASED_USER_INTERFACE}
+	 * is specified.
+	 */
+	public static final int NO_BACK_BUTTON_ON_STATUS_DIALOG= 1 << 6;
 	
-	private static final int LAST= 1 << 6;
+	private static final int LAST= 1 << 7;
 	
 	private int fFlags;
 	private Refactoring fRefactoring;
@@ -653,6 +661,17 @@ public abstract class RefactoringWizard extends Wizard {
 		Assert.isNotNull(api);
 		fPreviewShown= shown;
 		getContainer().updateButtons();
+	}
+	
+	/**
+	 * Note: This method is for internal use only. Clients are not allowed to call this method.
+	 * 
+	 * @param api internal instance to avoid access from external clients
+	 * @return whether to show a back button or not
+	 */
+	public final boolean internalShowBackButtonOnStatusDialog(InternalAPI api) {
+		Assert.isNotNull(api);
+		return (fFlags & NO_BACK_BUTTON_ON_STATUS_DIALOG) == 0;
 	}
 	
 	//---- Helper methods to check style bits --------------------------------------------

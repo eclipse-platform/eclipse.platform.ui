@@ -98,7 +98,7 @@ public class RefactoringStatusDialog extends Dialog {
 		} else {
 			if (fBackButton)
 				createButton(parent, IDialogConstants.BACK_ID, IDialogConstants.BACK_LABEL, true); //$NON-NLS-1$
-			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, fBackButton ? false : true);
 		}
 	}
 }

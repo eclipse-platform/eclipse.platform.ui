@@ -448,7 +448,8 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	}
 	
 	private boolean showErrorDialog(ErrorWizardPage page) {
-		RefactoringStatusDialog dialog= new RefactoringStatusDialog(getShell(), page, true);
+		RefactoringStatusDialog dialog= new RefactoringStatusDialog(getShell(), page, 
+			fWizard.internalShowBackButtonOnStatusDialog(InternalAPI.INSTANCE));
 		switch (dialog.open()) {
 			case IDialogConstants.OK_ID:
 				return true;
