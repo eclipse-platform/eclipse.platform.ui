@@ -134,6 +134,8 @@ class EditTemplateDialog extends StatusDialog {
 	private ContextTypeRegistry fContextTypeRegistry; 
 	
 	private final TemplateVariableProcessor fTemplateProcessor= new TemplateVariableProcessor();
+
+	private Template fNewTemplate;
 		
 	/**
 	 * Creates a new dialog.
@@ -538,6 +540,11 @@ class EditTemplateDialog extends StatusDialog {
  		}
 		updateStatus(status);
 	}
+	
+	protected void okPressed() {
+		fNewTemplate= new Template(fNameText.getText(), fDescriptionText.getText(), getContextId(fContextCombo.getText()), fPatternEditor.getDocument().get());
+		super.okPressed();
+	}
 
 	/**
 	 * Returns the created template.
@@ -546,7 +553,7 @@ class EditTemplateDialog extends StatusDialog {
 	 * @since 3.1
 	 */
 	public Template getTemplate() {
-		return new Template(fNameText.getText(), fDescriptionText.getText(), getContextId(fContextCombo.getText()), fPatternEditor.getDocument().get());
+		return fNewTemplate;
 	}
 
 }
