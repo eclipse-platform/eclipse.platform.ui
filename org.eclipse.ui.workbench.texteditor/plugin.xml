@@ -38,12 +38,6 @@
             command="org.eclipse.ui.edit.text.gotoLastEditPosition"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
-      <keyBinding
-            string="Ctrl+Q"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.ui.edit.text.gotoLastEditPosition"
-            configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
    </extension>
    
 <!-- action sets -->
