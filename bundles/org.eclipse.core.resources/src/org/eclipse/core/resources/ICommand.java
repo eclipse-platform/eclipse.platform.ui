@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,28 +44,28 @@ public interface ICommand {
 	public String getBuilderName();
 
 	/**
-	 * Returns whether this build command responds to the given trigger.
+	 * Returns whether this build command responds to the given kind of build.
 	 * <p>
-	 * By default, build commands respond to all build triggers.
+	 * By default, build commands respond to all kinds of builds.
 	 * 
-	 * @param trigger One of the <tt>*_BUILD</code> constants defined
+	 * @param kind One of the <tt>*_BUILD</code> constants defined
 	 * on <code>IncrementalProjectBuilder</code>
 	 * @return <code>true</code> if this build command responds to the specified
-	 * trigger, and <code>false</code> otherwise.
+	 * kind of build, and <code>false</code> otherwise.
 	 * @see #setBuilding(int, boolean)
 	 * @since 3.1
 	 */
-	public boolean isBuilding(int trigger);
+	public boolean isBuilding(int kind);
 
 	/**
-	 * Returns whether this command allows configuring of what triggers
+	 * Returns whether this command allows configuring of what kinds of builds
 	 * it responds to.  By default, commands are only configurable
 	 * if the corresponding builder defines the <code>isConfigurable</code>
 	 * attribute in its builder extension declaration. A command that is not 
-	 * configurable will always respond to all build triggers.
+	 * configurable will always respond to all kinds of builds.
 	 * 
 	 * @return <code>true</code> If this command allows configuration of
-	 * its triggers, and <code>false</code> otherwise.
+	 * what kinds of builds it responds to, and <code>false</code> otherwise.
 	 * @see #setBuilding(int, boolean)
 	 * @since 3.1
 	 */
@@ -106,23 +106,23 @@ public interface ICommand {
 	public void setBuilderName(String builderName);
 
 	/**
-	 * Specifies whether this build command responds to the provided trigger.
+	 * Specifies whether this build command responds to the provided kind of build.
 	 * <p>
-	 * When a command is configured to not respond to a given trigger, the
-	 * builder instance will not be called when a build with that trigger is initiated.
+	 * When a command is configured to not respond to a given kind of build, the
+	 * builder instance will not be called when a build of that kind is initiated.
 	 * <p>
 	 * This method has no effect if this build command does not allow its
-	 * build triggers to be configured.
+	 * build kinds to be configured.
 	 * 
-	 * @param trigger One of the <tt>*_BUILD</code> constants defined
+	 * @param kind One of the <tt>*_BUILD</code> constants defined
 	 * on <code>IncrementalProjectBuilder</code>
 	 * @param value <code>true</code> if this build command responds to the 
-	 * specified trigger, and <code>false</code> otherwise.
+	 * specified kind of build, and <code>false</code> otherwise.
 	 * @see #isBuilding(int)
 	 * @see #isConfigurable()
 	 * @see IWorkspace#build(int, IProgressMonitor)
 	 * @see IProject#build(int, IProgressMonitor)
 	 * @since 3.1
 	 */
-	public void setBuilding(int trigger, boolean value);
+	public void setBuilding(int kind, boolean value);
 }
