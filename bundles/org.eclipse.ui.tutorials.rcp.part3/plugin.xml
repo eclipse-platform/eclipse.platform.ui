@@ -7,7 +7,7 @@
    provider-name="%providerName">
 
    <runtime>
-      <library name="rcptutorial3.jar">
+      <library name="part3.jar">
          <export name="*"/>
       </library>
    </runtime>
