@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Event;
  * 
  * @since 3.0
  */
-public interface ICommandDelegate {
+public interface IAction {
 
 	/**
 	 * Registers an IPropertyListener instance with this property.

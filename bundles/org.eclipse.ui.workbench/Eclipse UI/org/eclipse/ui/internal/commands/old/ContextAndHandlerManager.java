@@ -41,7 +41,6 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.commands.ICommandDelegate;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
@@ -165,11 +164,11 @@ public class ContextAndHandlerManager implements IContextResolver {
 
 		if (childSequenceMapForMode.isEmpty()) {
 			clear();			
-			ICommandDelegate commandDelegate = (ICommandDelegate) ((CommandManager) commandManager).getCommandDelegatesById().get((String) sequenceMapForMode.get(childMode));
+			org.eclipse.ui.commands.IAction action = (org.eclipse.ui.commands.IAction) ((CommandManager) commandManager).getActionsById().get((String) sequenceMapForMode.get(childMode));
 			
-			if (commandDelegate != null && commandDelegate.isEnabled())
+			if (action != null && action.isEnabled())
 				try {			
-					commandDelegate.execute(event);
+					action.execute(event);
 				} catch (Exception e) {
 					// TODO
 				}
@@ -209,9 +208,9 @@ public class ContextAndHandlerManager implements IContextResolver {
 			String command = (String) entry.getValue();		
 
 			if (sequence.isChildOf(mode, false)) {
-				ICommandDelegate commandDelegate = (ICommandDelegate) ((CommandManager) commandManager).getCommandDelegatesById().get(command);
+				org.eclipse.ui.commands.IAction action = (org.eclipse.ui.commands.IAction) ((CommandManager) commandManager).getActionsById().get(command);
 				
-				if (commandDelegate != null)
+				if (action != null)
 					strokeSetForMode.add(sequence.getStrokes().get(size));	
 			}
 		}

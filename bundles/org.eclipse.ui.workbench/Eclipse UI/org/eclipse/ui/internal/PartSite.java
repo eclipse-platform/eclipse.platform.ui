@@ -28,9 +28,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
-import org.eclipse.ui.commands.ICommandDelegateService;
+import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.contexts.IContextActivationService;
-import org.eclipse.ui.internal.commands.CommandDelegateService;
+import org.eclipse.ui.internal.commands.ActionService;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
 
 /**
@@ -67,7 +67,7 @@ public class PartSite implements IWorkbenchPartSite {
 	private KeyBindingService keyBindingService;
 	private ArrayList menuExtenders;
 	
-	private ICommandDelegateService handlerService;
+	private IActionService handlerService;
 		
 	/**
 	 * EditorContainer constructor comment.
@@ -79,13 +79,13 @@ public class PartSite implements IWorkbenchPartSite {
 		extensionName = "Unknown Name"; //$NON-NLS-1$
 	}
 
-	private ICommandDelegateService commandDelegateService;
+	private IActionService actionService;
 
-	public ICommandDelegateService getCommandDelegateService() {
-		if (commandDelegateService == null) 
-			commandDelegateService = new CommandDelegateService();
+	public IActionService getActionService() {
+		if (actionService == null) 
+			actionService = new ActionService();
 		
-		return commandDelegateService;
+		return actionService;
 	}
 	
 	private IContextActivationService contextActivationService;	
@@ -265,7 +265,7 @@ public class PartSite implements IWorkbenchPartSite {
 	 */
 	public IKeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(getCommandDelegateService(), getContextActivationService());
+			keyBindingService = new KeyBindingService(getActionService(), getContextActivationService());
 			
 			if (this instanceof EditorSite) {
 				EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor) ((EditorSite) this).getExtensionActionBarContributor();

@@ -16,7 +16,7 @@ package org.eclipse.ui.commands;
  * JAVADOC
  * </p>
  * <p>
- * This interface is not intended to be extended by clients.
+ * This interface is not intended to be extended or implemented by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -24,12 +24,12 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface ICommandDelegateServiceListener {
+public interface IActionServiceEvent {
 
 	/**
 	 * JAVADOC
 	 * 
-	 * @param commandDelegateServiceEvent
+	 * @return
 	 */	
-	void commandDelegateServiceChanged(ICommandDelegateServiceEvent commandDelegateServiceEvent);
+	IActionService getActionService();
 }

@@ -416,15 +416,15 @@ public class WorkbenchWindow
 		};
 	}
 
-	private SortedMap commandDelegatesForActionSets = new TreeMap();
-	private SortedMap commandDelegatesForGlobalActions = new TreeMap(); 
+	private SortedMap actionsForActionSets = new TreeMap();
+	private SortedMap actionsForGlobalActions = new TreeMap(); 
 
-	SortedMap getCommandDelegatesForActionSets() {
-		return commandDelegatesForActionSets;
+	SortedMap getActionsForActionSets() {
+		return actionsForActionSets;
 	}
 	
-	SortedMap getCommandDelegatesForGlobalActions() {
-		return commandDelegatesForGlobalActions;
+	SortedMap getActionsForGlobalActions() {
+		return actionsForGlobalActions;
 	}
 
 	void updateContextAndHandlerManager() {
@@ -433,7 +433,7 @@ public class WorkbenchWindow
 	}
 
 	void registerActionSets(IActionSet[] actionSets) {
-		commandDelegatesForActionSets.clear();
+		actionsForActionSets.clear();
 		
 		for (int i = 0; i < actionSets.length; i++) {
 			if (actionSets[i] instanceof PluginActionSet) {
@@ -446,7 +446,7 @@ public class WorkbenchWindow
 					String command = pluginAction.getActionDefinitionId();
 
 					if (command != null)
-						commandDelegatesForActionSets.put(command, new ActionHandler(pluginAction));
+						actionsForActionSets.put(command, new ActionHandler(pluginAction));
 				}
 			}
 		}
@@ -458,7 +458,7 @@ public class WorkbenchWindow
 		String command = globalAction.getActionDefinitionId();
 
 		if (command != null)
-			commandDelegatesForGlobalActions.put(command, new ActionHandler(globalAction));
+			actionsForGlobalActions.put(command, new ActionHandler(globalAction));
 
 		workbench.updateCommandsAndContexts();
 	}
@@ -1179,7 +1179,7 @@ public class WorkbenchWindow
 	 */
 	public KeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(workbench.getCommandDelegateService(), workbench.getContextActivationService());
+			keyBindingService = new KeyBindingService(workbench.getActionService(), workbench.getContextActivationService());
 			updateActiveActions();
 		}
 

@@ -16,17 +16,17 @@ import java.util.List;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IKeyBindingService;
-import org.eclipse.ui.commands.ICommandDelegateService;
+import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.internal.commands.old.ActionHandler;
 
 final class KeyBindingService implements IKeyBindingService {
 	
-	private ICommandDelegateService commandDelegateService;
+	private IActionService commandDelegateService;
 	private IContextActivationService contextActivationService;
 	private List scopes = new ArrayList();
 		
-	KeyBindingService(ICommandDelegateService commandDelegateService, IContextActivationService contextActivationService) {
+	KeyBindingService(IActionService commandDelegateService, IContextActivationService contextActivationService) {
 		super();
 		this.contextActivationService = contextActivationService;
 		this.commandDelegateService = commandDelegateService;	
@@ -52,13 +52,13 @@ final class KeyBindingService implements IKeyBindingService {
     	String command = action.getActionDefinitionId();
 
 		if (command != null)
-			commandDelegateService.addCommandDelegate(command, new ActionHandler(action));		
+			commandDelegateService.addAction(command, new ActionHandler(action));		
     }
     
 	public void unregisterAction(IAction action) {   		
     	String command = action.getActionDefinitionId();
 
 		if (command != null)
-			commandDelegateService.removeCommandDelegate(command);
+			commandDelegateService.removeAction(command);
     }	
 }

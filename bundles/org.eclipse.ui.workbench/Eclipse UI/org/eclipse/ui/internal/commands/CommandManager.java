@@ -24,7 +24,7 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandDefinition;
-import org.eclipse.ui.commands.ICommandDelegate;
+import org.eclipse.ui.commands.IAction;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
@@ -53,7 +53,7 @@ public final class CommandManager implements ICommandManager {
 	private String activeLocale = Util.ZERO_LENGTH_STRING;
 	private String activePlatform = Util.ZERO_LENGTH_STRING;	
 	private ICommandManagerEvent commandManagerEvent;
-	private SortedMap commandDelegatesById = new TreeMap();	
+	private SortedMap actionsById = new TreeMap();	
 	private List commandManagerListeners;
 	private SortedMap commandHandlesById = new TreeMap();
 	private SortedMap commandsById = new TreeMap();
@@ -97,6 +97,10 @@ public final class CommandManager implements ICommandManager {
 			commandManagerListeners.add(commandManagerListener);
 	}
 
+	public SortedMap getActionsById() {
+		return Collections.unmodifiableSortedMap(actionsById);
+	}
+
 	public SortedSet getActiveCommandIds() {
 		return Collections.unmodifiableSortedSet(activeCommandIds);
 	}
@@ -115,10 +119,6 @@ public final class CommandManager implements ICommandManager {
 	
 	public String getActivePlatform() {
 		return activePlatform;
-	}
-
-	public SortedMap getCommandDelegatesById() {
-		return Collections.unmodifiableSortedMap(commandDelegatesById);
 	}
 
 	public SortedMap getCategoriesById() {
@@ -179,6 +179,16 @@ public final class CommandManager implements ICommandManager {
 		}
 	}
 
+	public void setActionsById(SortedMap actionsById)
+		throws IllegalArgumentException {
+		actionsById = Util.safeCopy(actionsById, String.class, IAction.class);	
+	
+		if (!Util.equals(actionsById, this.actionsById)) {	
+			this.actionsById = actionsById;	
+			fireCommandManagerChanged();
+		}
+	}
+
 	public void setActiveCommandIds(SortedSet activeCommandIds) {
 		activeCommandIds = Util.safeCopy(activeCommandIds, String.class);
 		
@@ -197,16 +207,6 @@ public final class CommandManager implements ICommandManager {
 		}
 	}
 
-	public void setCommandDelegatesById(SortedMap commandDelegatesById)
-		throws IllegalArgumentException {
-		commandDelegatesById = Util.safeCopy(commandDelegatesById, String.class, ICommandDelegate.class);	
-	
-		if (!Util.equals(commandDelegatesById, this.commandDelegatesById)) {	
-			this.commandDelegatesById = commandDelegatesById;	
-			fireCommandManagerChanged();
-		}
-	}
-	
 	private void fireCommandManagerChanged() {
 		if (commandManagerListeners != null) {
 			// TODO copying to avoid ConcurrentModificationException

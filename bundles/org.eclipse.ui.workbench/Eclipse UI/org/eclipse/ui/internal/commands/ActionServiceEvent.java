@@ -11,21 +11,21 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.commands.ICommandDelegateService;
-import org.eclipse.ui.commands.ICommandDelegateServiceEvent;
+import org.eclipse.ui.commands.IActionService;
+import org.eclipse.ui.commands.IActionServiceEvent;
 
-final class CommandDelegateServiceEvent implements ICommandDelegateServiceEvent {
+final class ActionServiceEvent implements IActionServiceEvent {
 
-	private ICommandDelegateService commandDelegateService;
+	private IActionService actionService;
 
-	CommandDelegateServiceEvent(ICommandDelegateService commandDelegateService) {
-		if (commandDelegateService == null)
+	ActionServiceEvent(IActionService actionService) {
+		if (actionService == null)
 			throw new NullPointerException();
 		
-		this.commandDelegateService = commandDelegateService;
+		this.actionService = actionService;
 	}
 
-	public ICommandDelegateService getCommandDelegateService() {
-		return commandDelegateService;
+	public IActionService getActionService() {
+		return actionService;
 	}
 }

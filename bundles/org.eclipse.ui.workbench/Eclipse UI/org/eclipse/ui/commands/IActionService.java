@@ -26,31 +26,31 @@ import java.util.SortedMap;
  * 
  * @since 3.0
  */
-public interface ICommandDelegateService {
+public interface IActionService {
 
 	/**
 	 * JAVADOC
 	 *
 	 * @param commandId
-	 * @param commandDelegate
+	 * @param action
 	 * @throws NullPointerException
 	 */	
-	void addCommandDelegate(String commandId, ICommandDelegate commandDelegate);
+	void addAction(String commandId, IAction action);
 
 	/**
-	 * Registers an ICommandDelegateServiceListener instance with this command delegate service.
+	 * Registers an IActionServiceListener instance with this action service.
 	 *
-	 * @param commandDelegateServiceListener the ICommandDelegateServiceListener instance to register.
+	 * @param actionServiceListener the IActionServiceListener instance to register.
 	 * @throws NullPointerException
 	 */	
-	void addCommandDelegateServiceListener(ICommandDelegateServiceListener commandDelegateServiceListener);
+	void addActionServiceListener(IActionServiceListener actionServiceListener);
 		
 	/**
 	 * JAVADOC
 	 *
 	 * @return
 	 */
-	SortedMap getCommandDelegatesById();
+	SortedMap getActionsById();
 
 	/**
 	 * JAVADOC
@@ -58,13 +58,13 @@ public interface ICommandDelegateService {
 	 * @param commandId
 	 * @throws NullPointerException
 	 */	
-	void removeCommandDelegate(String commandId);
+	void removeAction(String commandId);
 	
 	/**
-	 * Unregisters an ICommandDelegateServiceListener instance with this command delegate services.
+	 * Unregisters an IActionServiceListener instance with this action service.
 	 *
-	 * @param commandDelegateServiceListener the ICommandDelegateServiceListener instance to unregister.
+	 * @param actionServiceListener the IActionServiceListener instance to unregister.
 	 * @throws NullPointerException
 	 */
-	void removeCommandDelegateServiceListener(ICommandDelegateServiceListener commandDelegateServiceListener);
+	void removeActionServiceListener(IActionServiceListener actionServiceListener);
 }
