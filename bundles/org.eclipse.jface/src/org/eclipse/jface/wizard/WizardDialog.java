@@ -729,8 +729,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 		restoreEnableState(finishButton, state, "finish"); //$NON-NLS-1$
 		restoreEnableState(cancelButton, state, "cancel"); //$NON-NLS-1$
 		restoreEnableState(helpButton, state, "help"); //$NON-NLS-1$
-		ControlEnableState pageState = (ControlEnableState) state.get("page"); //$NON-NLS-1$
-		pageState.restore();
+		Object pageValue = state.get("page"); //$NON-NLS-1$
+		if(pageValue != null)//page may never have been created
+			((ControlEnableState) pageValue).restore();
 	}
 	/* (non-Javadoc)
 	 * Method declared on IRunnableContext.
@@ -792,7 +793,8 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 		saveEnableStateAndSet(finishButton, savedState, "finish", false); //$NON-NLS-1$
 		saveEnableStateAndSet(cancelButton, savedState, "cancel", keepCancelEnabled); //$NON-NLS-1$
 		saveEnableStateAndSet(helpButton, savedState, "help", false); //$NON-NLS-1$
-		savedState.put("page", ControlEnableState.disable(currentPage.getControl())); //$NON-NLS-1$
+		if(currentPage != null)
+			savedState.put("page", ControlEnableState.disable(currentPage.getControl())); //$NON-NLS-1$
 		return savedState;
 	}
 	/**
@@ -899,6 +901,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 		//Update for the new page ina busy cursor if possible
 		if (getContents() == null)
 			updateForPage(page);
+		
 		else {
 			final IWizardPage finalPage = page;
 			BusyIndicator.showWhile(getContents().getDisplay(), new Runnable() {
@@ -930,7 +933,8 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 		IWizardPage oldPage = currentPage;
 		currentPage = page;
 		currentPage.setVisible(true);
-		oldPage.setVisible(false);
+		if(oldPage != null)
+			oldPage.setVisible(false);
 		// update the dialog controls
 		update();
 	}
@@ -1031,6 +1035,10 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 	 * Method declared on IWizardContainer.
 	 */
 	public void updateMessage() {
+		
+		if(currentPage == null)
+			return;
+		
 		pageMessage = currentPage.getMessage();
 		if (pageMessage != null && currentPage instanceof IMessageProvider)
 			pageMessageType = ((IMessageProvider) currentPage).getMessageType();
@@ -1118,11 +1126,14 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 	 * Method declared on IWizardContainer.
 	 */
 	public void updateTitleBar() {
-		String s = currentPage.getTitle();
+		String s = null;
+		if(currentPage != null)
+			s = currentPage.getTitle();
 		if (s == null)
 			s = ""; //$NON-NLS-1$
 		setTitle(s);
-		setTitleImage(currentPage.getImage());
+		if(currentPage != null)
+			setTitleImage(currentPage.getImage());
 		updateDescriptionMessage();
 		updateMessage();
 	}

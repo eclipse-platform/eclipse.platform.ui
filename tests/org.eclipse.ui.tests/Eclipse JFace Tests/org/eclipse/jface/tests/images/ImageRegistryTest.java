@@ -34,10 +34,15 @@ public class ImageRegistryTest extends TestCase {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
 		
 		Image result = reg.get((String)null);
-		assertTrue(result == null);
+		assertTrue("Registry should handle null", result == null);
 	}
 	
-	public void testGetString() {		
+	public void testGetString() {
+		
+		// note, we must touch the class to ensure the static initialer runs
+		// so the image registry is up to date
+		Class clazz = Dialog.class;
+		
 		String[] imageNames = new String[] {
 				Dialog.DLG_IMG_ERROR,
 				Dialog.DLG_IMG_INFO,
@@ -53,7 +58,7 @@ public class ImageRegistryTest extends TestCase {
 		for (int i = 0; i < imageNames.length; i++) {
 			String imageName = imageNames[i];
 			Image image1 = reg.get(imageName);
-			assertTrue(image1 != null);
+			assertTrue("Returned null image", image1 != null);
 		}
 		
 	}
