@@ -117,12 +117,10 @@ protected Control createContents(Composite parent) {
 	linkButton.setText(WorkbenchMessages.getString("WorkbenchPreference.linkNavigator")); //$NON-NLS-1$
 	
 	activateSelectionOnClickButton = new Button(composite, SWT.CHECK);
-	activateSelectionOnClickButton.setText("Activate selection on single click");
-	//activateSelectionOnClickButton.setText(WorkbenchMessages.getString("WorkbenchPreference.activateSelectionOnClick")); //$NON-NLS-1$
+	activateSelectionOnClickButton.setText(WorkbenchMessages.getString("WorkbenchPreference.activateSelectionOnClick")); //$NON-NLS-1$
 	
 	reuseEditorsButton = new Button(composite, SWT.CHECK);
-	reuseEditorsButton.setText("Reuse open editors");
-	//reuseEditorsIfSavedButton.setText(WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsButton")); //$NON-NLS-1$
+	reuseEditorsButton.setText(WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsButton")); //$NON-NLS-1$
 
 	createSpace(composite);
 

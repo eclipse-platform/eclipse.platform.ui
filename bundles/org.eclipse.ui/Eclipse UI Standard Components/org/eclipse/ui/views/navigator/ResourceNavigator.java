@@ -481,10 +481,6 @@ String getToolTipText(Object element) {
 void handleDoubleClick(DoubleClickEvent event) {
 	IStructuredSelection s = (IStructuredSelection)event.getSelection();
 	Object element = s.getFirstElement();
-//	if (element instanceof IFile) {
-//		runOpenFileAction(s);
-//	}
-//	else {
 	if (!(element instanceof IFile)) {
 		// 1GBZIA0: ITPUI:WIN2000 - Double-clicking in navigator should expand/collapse containers
 		if (viewer.isExpandable(element)) {
@@ -492,7 +488,6 @@ void handleDoubleClick(DoubleClickEvent event) {
 		}
 	}
 }
-
 /**
  * Handles selection activated events in viewer.
  * Opens editor if file double-clicked.
@@ -501,14 +496,10 @@ void handleSelectionActivated(SelectionActivatedEvent event) {
 	IStructuredSelection s = (IStructuredSelection)event.getSelection();
 	Object element = s.getFirstElement();
 	if (element instanceof IFile)
-		runOpenFileAction(s);
+		openFileAction.selectionChanged(s);
+		openFileAction.run();
 }
-/**
- */
-void runOpenFileAction(IStructuredSelection s) {
-	openFileAction.selectionChanged(s);
-	openFileAction.run();
-}
+
 /**
  * Handles key events in viewer.
  */
@@ -612,9 +603,9 @@ boolean isLinkingEnabled() {
 /**
  * Links to editor (if option enabled)
  */
-boolean linkToEditor(IStructuredSelection selection) {
+void linkToEditor(IStructuredSelection selection) {
 	if (!isLinkingEnabled())
-		return false;
+		return;
 
 	Object obj = selection.getFirstElement();
 	if (obj instanceof IFile && selection.size() == 1) {
@@ -626,11 +617,10 @@ boolean linkToEditor(IStructuredSelection selection) {
 			IEditorInput input = editor.getEditorInput();
 			if (input instanceof IFileEditorInput && file.equals(((IFileEditorInput)input).getFile())) {
 				page.bringToTop(editor);
-				return true;
+				return;
 			}
 		}
 	}
-	return false;
 }
 /**
  *	Create self's action objects

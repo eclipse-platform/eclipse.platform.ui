@@ -10,9 +10,8 @@ public class ReuseEditorAction extends ActiveEditorAction {
  * Constructor for ReuseEditorAction
  */
 protected ReuseEditorAction(IWorkbenchWindow window) {
-//	super(WorkbenchMessages.getString("ReuseEditorAction.text"), window); //$NON-NLS-1$
-	super("Reuse Editor", window); //$NON-NLS-1$	
-//	setToolTipText(WorkbenchMessages.getString("ReuseEditorAction.toolTip")); //$NON-NLS-1$
+	super(WorkbenchMessages.getString("ReuseEditorAction.text"), window); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("ReuseEditorAction.toolTip")); //$NON-NLS-1$
 	setId("org.eclipse.ui.internal.ReuseEditorAction"); //$NON-NLS-1$
 //	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SAVE_ACTION});
 }

@@ -20,7 +20,7 @@ import org.eclipse.jface.action.IAction;
  * </p>
  * <p>
  * During workbench startup these mementos are read from the file and the
- * <code>init</code> method is called.
+ * <code>restoreState</code> method is called.
  *
  * @see IMemento
  * @see IViewActionDelegate

@@ -15,10 +15,11 @@ import java.util.EventObject;
  */
 public class SelectionActivatedEvent extends EventObject {
 
-	/**
-	 * The selection.
-	 */
-	protected ISelection selection;
+/**
+ * The selection.
+ */
+protected ISelection selection;
+
 /**
  * Creates a new event for the given source and selection.
  *

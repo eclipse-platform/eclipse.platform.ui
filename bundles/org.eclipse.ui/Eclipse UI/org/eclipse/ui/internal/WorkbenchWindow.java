@@ -980,7 +980,6 @@ public void updateShortcut(IWorkbenchPage page) {
  * Updates the window title.
  */
 private void updateTitle() {
-
 	String title = workbench.getProductInfo().getName();
 	if (activePage != null) {
 		IPerspectiveDescriptor persp = activePage.getPerspective();

@@ -530,8 +530,8 @@ public IViewPart showView(String viewId) throws PartInitException;
  */
 public boolean getReuseEditors();
 /**
- * Set whether editors should be reused in this
- * page or not overwriting the global workbench preference
+ * Set whether or not editors should be reused in this
+ * page overwriting the global workbench preference
  * "Reuse editors".
  */
 public void setReuseEditors(boolean reuse);

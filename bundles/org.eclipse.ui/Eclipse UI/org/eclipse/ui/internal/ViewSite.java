@@ -18,7 +18,6 @@ import java.util.*;
 public class ViewSite extends PartSite
 	implements IViewSite
 {
-	
 /**
  * ViewSite constructor comment.
  */
@@ -32,5 +31,4 @@ public ViewSite(IViewPart view, WorkbenchPage persp, IViewDescriptor desc,IMemen
 public IViewPart getViewPart() {
 	return (IViewPart)getPart();
 }
-
 }

@@ -33,7 +33,6 @@ public void init(IConfigurationElement actionElement, String runAttribute, IView
 	init(actionElement, runAttribute);
 	registerSelectionListener(viewPart);
 }
-
 /**
  * Creates an instance of the delegate class as defined on
  * the configuration element. It will also initialize

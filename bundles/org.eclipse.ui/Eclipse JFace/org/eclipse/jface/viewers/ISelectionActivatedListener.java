@@ -6,13 +6,13 @@ package org.eclipse.jface.viewers;
  */
 
 /**
- * A listener which is notified of double-click events on viewers.
+ * A listener which is notified of selection-activated events on viewers.
  */
 public interface ISelectionActivatedListener {
 /**
- * Notifies of a double click.
+ * Notifies of a selection activated.
  *
- * @param event event object describing the double-click
+ * @param event event object describing the selection-activated
  */
 public void selectionActivated(SelectionActivatedEvent event);
 }

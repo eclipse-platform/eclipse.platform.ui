@@ -506,7 +506,6 @@ protected void handleSelect(SelectionEvent event) {
 		if(activateSelectionOnClick)
 			fireSelectionActivated(new SelectionActivatedEvent(this, getSelection()));
 	}
-	
 }
 /**
  * Returns whether this viewer has any filters.

@@ -251,7 +251,6 @@ public IEditorPart openEditor(String editorID, IEditorInput input)
 	}
 	return openEditor(desc, input);
 }
-
 /*
  * @see IWorkbenchPage.
  */
@@ -284,7 +283,6 @@ public IEditorPart openEditor(IFileEditorInput input,boolean setVisible)
 	desc = (EditorDescriptor)getEditorRegistry().getDefaultEditor();
 	return openEditor(desc, input);
 }
-
 /*
  *
  */
@@ -327,11 +325,14 @@ private IReusableEditor findReusableEditor(EditorDescriptor desc) {
 	//	return null;
 	MessageDialog dialog = new MessageDialog(
 		window.getShell(),
-		"Reusing dirty editor", 
+		WorkbenchMessages.getString("EditorManager.reuseEditorDialogTitle"),
 		null,	// accept the default window icon
-		dirtyEditor.getEditorInput().getName() + " has being modified. Save changes?", 
+		WorkbenchMessages.format("EditorManager.saveChangesQuestion", new String[]{dirtyEditor.getEditorInput().getName()}),
 		MessageDialog.QUESTION, 
-		new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,"Open new editor"}, 
+		new String[] {
+			IDialogConstants.YES_LABEL,
+			IDialogConstants.NO_LABEL,
+			WorkbenchMessages.getString("EditorManager.openNewEditorLabel")}, 
 		0);
 	int result = dialog.open();
 	if(result == 0) { //YES

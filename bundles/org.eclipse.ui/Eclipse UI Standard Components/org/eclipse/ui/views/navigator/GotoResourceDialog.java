@@ -130,7 +130,6 @@ protected Control createDialogArea(Composite parent) {
 	l.setLayoutData(data);
 	
 	folderNames = new Table(dialogArea,SWT.SINGLE|SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL);
-//	data = new GridData(GridData.FILL_HORIZONTAL);
 	data = new GridData(GridData.FILL_BOTH);
 	data.widthHint = 250;
 	data.heightHint = 3 * folderNames.getItemHeight();

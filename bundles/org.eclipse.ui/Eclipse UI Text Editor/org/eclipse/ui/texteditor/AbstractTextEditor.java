@@ -419,7 +419,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	private boolean fReuseEditor = true;
 	
-	
 	/**
 	 * Creates a new text editor. It initializes the editor and ruler context
 	 * menu id with the predefined names. If not explicitly set, this
