@@ -359,7 +359,7 @@ public class TeamManager implements ITeamManager {
 	
 	private void readState() throws TeamException {
 		// read saved repositories list and ignore list from disk, only if the file exists
-		IPath pluginStateLocation = TeamPlugin.getPlugin().getStateLocation();
+		IPath pluginStateLocation = TeamPlugin.getPlugin().getStateLocation().append(GLOBALIGNORE_FILE);
 		File f = pluginStateLocation.toFile();
 		if(f.exists()) {
 			try {
