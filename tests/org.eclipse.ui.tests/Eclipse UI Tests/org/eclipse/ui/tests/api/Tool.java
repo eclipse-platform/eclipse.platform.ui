@@ -15,7 +15,6 @@ public class Tool {
 		ACTIVATED = 0x04,
 		CHANGED = 0x08;
 
-	public static String TextEditorID = "org.eclipse.ui.DefaultTextEditor";	
 	public static String WBE = "WorkbenchException";
 
 	public static String FakeID =

@@ -6,8 +6,9 @@ import org.eclipse.ui.*;
 
 public class MockEditorPart extends MockWorkbenchPart implements IEditorPart {
 
-	public static final String ID1 = "org.eclipse.ui.tests.api.MockEditorPart";
-	public static final String ID2 = ID1 + "2";
+	private static final String BASE = "org.eclipse.ui.tests.api.MockEditorPart";
+	public static final String ID1 = BASE + "1";
+	public static final String ID2 = BASE + "2";
 
 	private IEditorInput input;
 	private boolean dirty = false;

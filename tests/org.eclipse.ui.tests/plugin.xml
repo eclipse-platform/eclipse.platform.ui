@@ -74,16 +74,16 @@
 
 <extension
     point = "org.eclipse.ui.editors">
-    <editor id ="org.eclipse.ui.tests.api.MockEditorPart"
+    <editor id ="org.eclipse.ui.tests.api.MockEditorPart1"
       name="Mock Editor 1"
       extensions="mock1"
-      icon="icons\view.gif"
+      icon="icons\mockeditorpart1.gif"
       class="org.eclipse.ui.tests.api.MockEditorPart">
     </editor>
      <editor id ="org.eclipse.ui.tests.api.MockEditorPart2"
       name="Mock Editor 2"
       extensions="mock2"
-      icon="icons\view.gif"
+      icon="icons\mockeditorpart2.gif"
       class="org.eclipse.ui.tests.api.MockEditorPart">
     </editor>
 </extension>
