@@ -22,8 +22,6 @@ import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 
 import org.eclipse.text.edits.DeleteEdit;
-import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.text.edits.TextEdit;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentRewriteSessionType;
@@ -49,7 +47,7 @@ public class RemoveTrailingWhitespaceOperation extends TextFileBufferOperation {
 	/*
 	 * @see org.eclipse.core.internal.filebuffers.textmanipulation.TextFileBufferOperation#computeTextEdit(org.eclipse.core.filebuffers.ITextFileBuffer, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected TextEdit computeTextEdit(ITextFileBuffer fileBuffer, IProgressMonitor progressMonitor) throws CoreException {
+	protected MultiTextEditWithProgress computeTextEdit(ITextFileBuffer fileBuffer, IProgressMonitor progressMonitor) throws CoreException {
 		IDocument document= fileBuffer.getDocument();
 		int lineCount= document.getNumberOfLines();
 		
@@ -57,7 +55,7 @@ public class RemoveTrailingWhitespaceOperation extends TextFileBufferOperation {
 		progressMonitor.beginTask("generating changes", lineCount);
 		try {
 			
-			MultiTextEdit multiEdit= new MultiTextEdit();
+			MultiTextEditWithProgress multiEdit= new MultiTextEditWithProgress("applying changes");
 			
 			for (int i= 0; i < lineCount; i++) {
 				if (progressMonitor.isCanceled())

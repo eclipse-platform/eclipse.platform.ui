@@ -13,12 +13,13 @@ package org.eclipse.core.filebuffers.manipulation;
 import java.util.Map;
 
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
+import org.eclipse.core.internal.filebuffers.Progress;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
@@ -55,7 +56,7 @@ public abstract class TextFileBufferOperation implements IFileBufferOperation {
 	 * @throws CoreException in case the computation failed
 	 * @throws OperationCanceledException in case the progress monitor has been set to canceled
 	 */
-	protected abstract TextEdit computeTextEdit(ITextFileBuffer textFileBuffer, IProgressMonitor progressMonitor) throws CoreException, OperationCanceledException;
+	protected abstract MultiTextEditWithProgress computeTextEdit(ITextFileBuffer textFileBuffer, IProgressMonitor progressMonitor) throws CoreException, OperationCanceledException;
 	
 	/**
 	 * Returns the rewrite session type that corresponds to the text edit sequence.
@@ -91,21 +92,22 @@ public abstract class TextFileBufferOperation implements IFileBufferOperation {
 		
 		if (fileBuffer instanceof ITextFileBuffer) {
 			ITextFileBuffer textFileBuffer= (ITextFileBuffer) fileBuffer;
-			progressMonitor.beginTask(getOperationName(), 100);
+			IPath path= textFileBuffer.getLocation();
+			String taskName= path == null ? getOperationName() : path.lastSegment();
+			progressMonitor= Progress.getMonitor(progressMonitor);
+			progressMonitor.beginTask(taskName, 100);
 			try {
-				SubProgressMonitor subMonitor= new SubProgressMonitor(progressMonitor, 50);
-				TextEdit edit= computeTextEdit(textFileBuffer, subMonitor);
+				IProgressMonitor subMonitor= Progress.getSubMonitor(progressMonitor, 10);
+				MultiTextEditWithProgress edit= computeTextEdit(textFileBuffer, subMonitor);
 				subMonitor.done();
 				if (edit != null) {
-					startRewriteSession(textFileBuffer);
-					Object stateData= preProcess(textFileBuffer);
+					Object stateData= startRewriteSession(textFileBuffer);
 					try {
-						subMonitor= new SubProgressMonitor(progressMonitor, 50);
+						subMonitor= Progress.getSubMonitor(progressMonitor, 90);
 						applyTextEdit(textFileBuffer, edit, subMonitor);
 						subMonitor.done();
 					} finally {
-						postProcess(textFileBuffer, stateData);
-						stopRewriteSession(textFileBuffer);
+						stopRewriteSession(textFileBuffer, stateData);
 					}
 				}
 			} finally {
@@ -113,46 +115,35 @@ public abstract class TextFileBufferOperation implements IFileBufferOperation {
 			}
 		}
 	}
-	
-	private Object preProcess(ITextFileBuffer fileBuffer) {
-		IDocument document= fileBuffer.getDocument();
-		return TextUtilities.removeDocumentPartitioners(document);
-	}
-	
-	private void postProcess(ITextFileBuffer fileBuffer, Object stateData) {
-		IDocument document= fileBuffer.getDocument();
-		if (stateData instanceof Map)
-			TextUtilities.addDocumentPartitioners(document, (Map) stateData);			
-	}
-	
-	private void startRewriteSession(ITextFileBuffer fileBuffer) {
+		
+	private Object startRewriteSession(ITextFileBuffer fileBuffer) {
+		Object stateData= null;
+		
 		IDocument document= fileBuffer.getDocument();
 		if (document instanceof IDocumentExtension4) {
 			IDocumentExtension4 extension= (IDocumentExtension4) document;
 			fDocumentRewriteSession= extension.startRewriteSession(getDocumentRewriteSessionType());
-		}
+		} else
+			stateData= TextUtilities.removeDocumentPartitioners(document);
+		
+		return stateData;
 	}
 	
-	private void stopRewriteSession(ITextFileBuffer fileBuffer) {
+	private void stopRewriteSession(ITextFileBuffer fileBuffer, Object stateData) {
 		IDocument document= fileBuffer.getDocument();
 		if (document instanceof IDocumentExtension4) {
 			IDocumentExtension4 extension= (IDocumentExtension4) document;
 			extension.stopRewriteSession(fDocumentRewriteSession);
 			fDocumentRewriteSession= null;
-		}
+		} else if (stateData instanceof Map)
+			TextUtilities.addDocumentPartitioners(document, (Map) stateData);		
 	}
 	
-	private void applyTextEdit(ITextFileBuffer fileBuffer, TextEdit textEdit, IProgressMonitor progressMonitor) throws CoreException, OperationCanceledException {
-		progressMonitor.beginTask("applying changes", 1);
+	private void applyTextEdit(ITextFileBuffer fileBuffer, MultiTextEditWithProgress textEdit, IProgressMonitor progressMonitor) throws CoreException, OperationCanceledException {
 		try {
-			
-			textEdit.apply(fileBuffer.getDocument(), TextEdit.NONE);
-			
+			textEdit.apply(fileBuffer.getDocument(), TextEdit.NONE, progressMonitor);
 		} catch (BadLocationException x) {
 			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CONTENT_CHANGE_FAILED, "", x)); //$NON-NLS-1$
-		} finally {
-			progressMonitor.done();
 		}
 	}
-
 }
