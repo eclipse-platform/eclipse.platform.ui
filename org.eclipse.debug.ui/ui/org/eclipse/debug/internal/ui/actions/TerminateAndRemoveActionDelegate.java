@@ -21,7 +21,7 @@ import org.eclipse.jface.action.IAction;
 public class TerminateAndRemoveActionDelegate extends ControlActionDelegate {
 
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#initializeForOwner(ControlAction)
 	 */
 	public void initializeForOwner(ControlAction controlAction) {		
 		super.initializeForOwner(controlAction);
@@ -29,28 +29,30 @@ public class TerminateAndRemoveActionDelegate extends ControlActionDelegate {
 	}
 	
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object element) throws DebugException {
-		ITerminate terminate= (ITerminate)element;
-		if (!terminate.isTerminated()) {
-			terminate.terminate();
-		}		
-		
-		ILaunch launch= null;
-		if (element instanceof ILaunch) {
-			launch= (ILaunch) element;
-		} else if (element instanceof IDebugElement) {
-			launch= ((IDebugElement) element).getLaunch();
-		} else if (element instanceof IProcess) {
-			launch= ((IProcess) element).getLaunch();
+		try {
+			ITerminate terminate= (ITerminate)element;
+			if (!terminate.isTerminated()) {
+				terminate.terminate();
+			}		
+		} finally {
+			ILaunch launch= null;
+			if (element instanceof ILaunch) {
+				launch= (ILaunch) element;
+			} else if (element instanceof IDebugElement) {
+				launch= ((IDebugElement) element).getLaunch();
+			} else if (element instanceof IProcess) {
+				launch= ((IProcess) element).getLaunch();
+			}
+			ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
+			lManager.removeLaunch(launch);
 		}
-		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
-		lManager.removeLaunch(launch);
 	}
 
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
 	public boolean isEnabledFor(Object element) {
 		if (element instanceof ITerminate) {
@@ -62,12 +64,15 @@ public class TerminateAndRemoveActionDelegate extends ControlActionDelegate {
 		return false;
 	}	
 	
+	/**
+	 * @see ControlActionDelegate#getHelpContextId()
+	 */
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.TERMINATE_AND_REMOVE_ACTION;
 	}
 
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#setActionImages(IAction)
 	 */
 	protected void setActionImages(IAction action) {
 		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_TERMINATE_AND_REMOVE));
