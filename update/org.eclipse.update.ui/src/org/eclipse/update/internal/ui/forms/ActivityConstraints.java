@@ -88,7 +88,7 @@ public class ActivityConstraints {
 	/*
 	 * Called by UI before processing a delta
 	 */
-	public static IStatus validateSessionDelta(ISessionDelta delta) {
+	public static IStatus validateSessionDelta(ISessionDelta delta, IFeatureReference [] deltaRefs) {
 		// check initial state
 		ArrayList beforeStatus = new ArrayList();
 		validateInitialState(beforeStatus);
@@ -97,7 +97,7 @@ public class ActivityConstraints {
 		ArrayList status = new ArrayList();
 		switch (delta.getType()) {
 			case ISessionDelta.ENABLE :
-				validateDeltaConfigure(delta, status);
+				validateDeltaConfigure(delta, deltaRefs, status);
 				break;
 		}
 
@@ -286,9 +286,10 @@ public class ActivityConstraints {
 	 */
 	private static void validateDeltaConfigure(
 		ISessionDelta delta,
+		IFeatureReference [] deltaRefs,
 		ArrayList status) {
 		try {
-			ArrayList features = computeFeaturesAfterDelta(delta);
+			ArrayList features = computeFeaturesAfterDelta(delta, deltaRefs);
 			checkConstraints(features, status);
 
 		} catch (CoreException e) {
@@ -609,7 +610,7 @@ public class ActivityConstraints {
 			IConfiguredSite csite = csites[i];
 			IFeatureReference[] features = csite.getConfiguredFeatures();
 			for (int j = 0; j < features.length; j++) {
-				list.add(features[j].getFeature());
+				list.add(features[j].getFeature(null));
 			}
 		}
 		return list;
@@ -619,13 +620,12 @@ public class ActivityConstraints {
 	 * Compute a list of features that will be configured after applying the
 	 * specified delta
 	 */
-	private static ArrayList computeFeaturesAfterDelta(ISessionDelta delta)
+	private static ArrayList computeFeaturesAfterDelta(ISessionDelta delta, IFeatureReference [] deltaRefs)
 		throws CoreException {
 
-		IFeatureReference[] deltaRefs;
-		if (delta == null)
+		if (delta == null || deltaRefs == null)
 			deltaRefs = new IFeatureReference[0];
-		else
+		else if (deltaRefs==null)
 			deltaRefs = delta.getFeatureReferences();
 
 		ArrayList features = new ArrayList(); // cumulative results list
@@ -642,7 +642,7 @@ public class ActivityConstraints {
 			IFeatureReference[] crefs = csite.getConfiguredFeatures();
 			for (int j = 0; crefs != null && j < crefs.length; j++) {
 				IFeatureReference cref = crefs[j];
-				IFeature cfeature = cref.getFeature();
+				IFeature cfeature = cref.getFeature(null);
 				siteFeatures.add(cfeature);
 			}
 
@@ -650,7 +650,7 @@ public class ActivityConstraints {
 			for (int j = 0; j < deltaRefs.length; j++) {
 				ISite deltaSite = deltaRefs[j].getSite();
 				if (deltaSite.equals(csite.getSite())) {
-					IFeature dfeature = deltaRefs[j].getFeature();
+					IFeature dfeature = deltaRefs[j].getFeature(null);
 					if (!siteFeatures.contains(dfeature)) // don't add dups
 						siteFeatures.add(dfeature);
 				}

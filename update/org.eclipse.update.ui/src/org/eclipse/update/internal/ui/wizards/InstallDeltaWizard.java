@@ -1,12 +1,14 @@
 package org.eclipse.update.internal.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.parts.SWTUtil;
 
@@ -40,13 +42,13 @@ public class InstallDeltaWizard
 	 * @see IWizard#performFinish()
 	 */
 	public boolean performFinish() {
-		final ISessionDelta[] selectedDeltas = page.getSelectedDeltas();
-		final ISessionDelta[] removedDeltas = page.getRemovedDeltas();
+		final DeltaAdapter[] adapters = page.getDeltaAdapters();
+
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
 				try {
-					doFinish(selectedDeltas, removedDeltas, monitor);
+					doFinish(adapters, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -64,26 +66,43 @@ public class InstallDeltaWizard
 		}
 		return true;
 	}
+	
+	private void analyzeAdapters(DeltaAdapter[] adapters, ArrayList selected, ArrayList removed) {
+		for (int i=0; i<adapters.length; i++) {
+			DeltaAdapter adapter = adapters[i];
+			if (adapter.isRemoved())
+				removed.add(adapter);
+			else if (adapter.isSelected())
+				selected.add(adapter);
+		}
+	}
 
 	private void doFinish(
-		ISessionDelta[] selectedDeltas,
-		ISessionDelta[] removedDeltas,
+		DeltaAdapter [] adapters,
 		IProgressMonitor monitor)
 		throws CoreException {
+			
+		ArrayList selectedDeltas = new ArrayList();
+		ArrayList removedDeltas = new ArrayList();
+		analyzeAdapters(adapters, selectedDeltas, removedDeltas);
+			
 		monitor.beginTask(
 			UpdateUI.getResourceString(KEY_PROCESSING),
-			selectedDeltas.length + removedDeltas.length);
+			selectedDeltas.size() + removedDeltas.size());
 		processed = 0;
-		for (int i = 0; i < removedDeltas.length; i++) {
-			ISessionDelta delta = removedDeltas[i];
+		for (int i = 0; i < removedDeltas.size(); i++) {
+			DeltaAdapter adapter = (DeltaAdapter)removedDeltas.get(i);
+			ISessionDelta delta = adapter.getDelta();
 			delta.delete();
 			monitor.worked(1);
 			if (monitor.isCanceled())
 				return;
 		}
-		for (int i = 0; i < selectedDeltas.length; i++) {
-			ISessionDelta delta = selectedDeltas[i];
-			delta.process(monitor);
+		for (int i = 0; i < selectedDeltas.size(); i++) {
+			DeltaAdapter adapter = (DeltaAdapter)selectedDeltas.get(i);
+			ISessionDelta delta = adapter.getDelta();
+			IFeatureReference [] refs = delta.getFeatureReferences();
+			delta.process(refs, monitor);
 			monitor.worked(1);
 			processed++;
 			if (monitor.isCanceled())

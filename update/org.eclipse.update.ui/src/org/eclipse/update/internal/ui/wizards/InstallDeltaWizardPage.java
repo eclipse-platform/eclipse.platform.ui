@@ -2,7 +2,7 @@ package org.eclipse.update.internal.ui.wizards;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
@@ -13,10 +13,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.ISessionDelta;
-import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.forms.ActivityConstraints;
-import org.eclipse.update.internal.ui.model.MissingFeature;
 import org.eclipse.update.internal.ui.parts.*;
 
 /**
@@ -29,69 +26,52 @@ public class InstallDeltaWizardPage extends WizardPage {
 	private static final String KEY_LABEL = "InstallDeltaWizard.label";
 	private static final String KEY_DELETE = "InstallDeltaWizard.delete";
 	private static final String KEY_ERRORS = "InstallDeltaWizard.errors";
+	private static final String KEY_MESSAGE = "InstallDeltaWizard.message";
 	private CheckboxTreeViewer deltaViewer;
 	private Button deleteButton;
 	private Button errorsButton;
-	private Hashtable features;
-	private ArrayList removed = new ArrayList();
-	private Hashtable statusTable;
-
-	class DeltaFeature {
-		IFeature feature;
-		ISessionDelta delta;
-		public DeltaFeature(ISessionDelta delta, IFeature feature) {
-			this.feature = feature;
-			this.delta = delta;
-		}
-		public String toString() {
-			return feature.getLabel()
-				+ " ("
-				+ feature.getVersionedIdentifier().getVersion().toString()
-				+ ")";
-		}
-	}
+	private ArrayList features = new ArrayList();
 
 	class DeltaContentProvider
 		extends DefaultContentProvider
 		implements ITreeContentProvider {
 		public boolean hasChildren(Object parent) {
-			if (parent instanceof ISessionDelta)
+			if (parent instanceof DeltaAdapter)
 				return true;
 			return false;
 		}
 		public Object[] getChildren(Object parent) {
-			if (parent instanceof ISessionDelta) {
-				return (Object[]) features.get(parent);
+			if (parent instanceof DeltaAdapter) {
+				return ((DeltaAdapter) parent).getFeatures();
 			}
 			return new Object[0];
 		}
 		public Object getParent(Object child) {
-			if (child instanceof DeltaFeature) {
-				return ((DeltaFeature) child).delta;
+			if (child instanceof DeltaFeatureAdapter) {
+				return ((DeltaFeatureAdapter) child).getDeltaAdapter();
 			}
 			return null;
 		}
 		public Object[] getElements(Object input) {
-			return deltas;
+			return features.toArray();
 		}
 	}
 
 	class DeltaLabelProvider extends LabelProvider {
-		public String getText(Object obj) {
-			if (obj instanceof ISessionDelta) {
-				return Utilities.format(((ISessionDelta) obj).getDate());
-			}
-			return super.getText(obj);
-		}
 		public Image getImage(Object obj) {
-			if (obj instanceof ISessionDelta) {
-				int flags = 0; 
-				if (statusTable.get(obj) != null)
+			if (obj instanceof DeltaAdapter) {
+				int flags = 0;
+				DeltaAdapter adapter = (DeltaAdapter) obj;
+				if (adapter.getStatus() != null)
 					flags = UpdateLabelProvider.F_ERROR;
-				return UpdateUI.getDefault().getLabelProvider().get(UpdateUIImages.DESC_UPDATES_OBJ, flags);
+				return UpdateUI.getDefault().getLabelProvider().get(
+					UpdateUIImages.DESC_UPDATES_OBJ,
+					flags);
 			}
-			if (obj instanceof DeltaFeature)
-				return UpdateUI.getDefault().getLabelProvider().get(UpdateUIImages.DESC_FEATURE_OBJ);
+			if (obj instanceof DeltaFeatureAdapter) {
+				return UpdateUI.getDefault().getLabelProvider().get(
+					UpdateUIImages.DESC_FEATURE_OBJ);
+			}
 			return super.getImage(obj);
 		}
 	}
@@ -106,7 +86,6 @@ public class InstallDeltaWizardPage extends WizardPage {
 		setTitle(UpdateUI.getResourceString(KEY_TITLE));
 		setDescription(UpdateUI.getResourceString(KEY_DESC));
 		UpdateUI.getDefault().getLabelProvider().connect(this);
-		initializeStatusTable();
 	}
 
 	public void dispose() {
@@ -115,27 +94,11 @@ public class InstallDeltaWizardPage extends WizardPage {
 	}
 
 	private void initializeFeatures() {
-		features = new Hashtable();
+		features = new ArrayList();
 		for (int i = 0; i < deltas.length; i++) {
 			ISessionDelta delta = deltas[i];
-			IFeatureReference[] references = delta.getFeatureReferences();
-			Object[] dfeatures = new Object[references.length];
-			for (int j = 0; j < references.length; j++) {
-				IFeatureReference reference = references[j];
-				DeltaFeature dfeature = null;
-				try {
-					IFeature feature = reference.getFeature();
-					dfeature = new DeltaFeature(delta, feature);
-				} catch (CoreException e) {
-					IFeature feature =
-						new MissingFeature(
-							reference.getSite(),
-							reference.getURL());
-					dfeature = new DeltaFeature(delta, feature);
-				}
-				dfeatures[j] = dfeature;
-			}
-			features.put(delta, dfeatures);
+			DeltaAdapter adapter = new DeltaAdapter(delta);
+			features.add(adapter);
 		}
 	}
 
@@ -168,8 +131,8 @@ public class InstallDeltaWizardPage extends WizardPage {
 		});
 		deltaViewer.addFilter(new ViewerFilter() {
 			public boolean select(Viewer viewer, Object parent, Object child) {
-				if (child instanceof ISessionDelta) {
-					return !removed.contains(child);
+				if (child instanceof DeltaAdapter) {
+					return !((DeltaAdapter) child).isRemoved();
 				}
 				return true;
 			}
@@ -214,9 +177,10 @@ public class InstallDeltaWizardPage extends WizardPage {
 
 		initializeFeatures();
 		deltaViewer.setInput(this);
-		setFeaturesGray();
 		dialogChanged();
-		WorkbenchHelp.setHelp(container, "org.eclipse.update.ui.InstallDeltaWizardPage");
+		WorkbenchHelp.setHelp(
+			container,
+			"org.eclipse.update.ui.InstallDeltaWizardPage");
 		setControl(container);
 	}
 
@@ -226,15 +190,14 @@ public class InstallDeltaWizardPage extends WizardPage {
 
 		if (selection.size() == 1) {
 			Object obj = selection.getFirstElement();
-			if (obj instanceof ISessionDelta) {
-				IStatus status = (IStatus) statusTable.get(obj);
-				enableShowErrors = status != null;
+			if (obj instanceof DeltaAdapter) {
+				enableShowErrors = !((DeltaAdapter) obj).isValid();
 			}
 		}
 		if (enableDelete) {
 			for (Iterator iter = selection.iterator(); iter.hasNext();) {
 				Object obj = iter.next();
-				if (!(obj instanceof ISessionDelta)) {
+				if (!(obj instanceof DeltaAdapter)) {
 					enableDelete = false;
 					break;
 				}
@@ -249,10 +212,8 @@ public class InstallDeltaWizardPage extends WizardPage {
 			(IStructuredSelection) deltaViewer.getSelection();
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
-			if (obj instanceof ISessionDelta) {
-				if (!removed.contains(obj)) {
-					removed.add(obj);
-				}
+			if (obj instanceof DeltaAdapter) {
+				((DeltaAdapter) obj).setRemoved(true);
 			}
 		}
 		deltaViewer.refresh();
@@ -262,8 +223,8 @@ public class InstallDeltaWizardPage extends WizardPage {
 	private void handleShowErrors() {
 		IStructuredSelection sel =
 			(IStructuredSelection) deltaViewer.getSelection();
-		ISessionDelta delta = (ISessionDelta) sel.getFirstElement();
-		IStatus status = (IStatus) statusTable.get(delta);
+		DeltaAdapter adapter = (DeltaAdapter) sel.getFirstElement();
+		IStatus status = adapter.getStatus();
 
 		if (status != null) {
 			ErrorDialog.openError(getShell(), null, null, status);
@@ -271,73 +232,66 @@ public class InstallDeltaWizardPage extends WizardPage {
 		}
 	}
 
-	private void setFeaturesGray() {
-		if (features == null)
-			return;
-		ArrayList grayed = new ArrayList();
-		for (Enumeration enum = features.elements(); enum.hasMoreElements();) {
-			Object[] dfeatures = (Object[]) enum.nextElement();
-			for (int i = 0; i < dfeatures.length; i++) {
-				grayed.add(dfeatures[i]);
-			}
-		}
-		for (int i = 0; i < deltas.length; i++) {
-			ISessionDelta delta = deltas[i];
-			IStatus status = (IStatus) statusTable.get(delta);
-			if (status != null)
-				grayed.add(deltas[i]);
-		}
-		deltaViewer.setGrayedElements(grayed.toArray());
-	}
-
-	private void initializeStatusTable() {
-		statusTable = new Hashtable();
-		for (int i = 0; i < deltas.length; i++) {
-			ISessionDelta delta = deltas[i];
-			IStatus status = ActivityConstraints.validateSessionDelta(delta);
-			if (status != null)
-				statusTable.put(delta, status);
-		}
-	}
-
 	private void handleCheckStateChanged(Object obj, boolean checked) {
-		if (obj instanceof DeltaFeature) {
-			// do not allow it
-			deltaViewer.setChecked(obj, !checked);
-		} else if (obj instanceof ISessionDelta) {
-			ISessionDelta delta = (ISessionDelta) obj;
-			IStatus status = (IStatus) statusTable.get(delta);
-			if (status != null) {
-				// delta with errors - do not allow it
-				deltaViewer.setChecked(obj, !checked);
-				return;
-			}
-
-			Object[] dfeatures = (Object[]) features.get(obj);
-			for (int i = 0; i < dfeatures.length; i++) {
-				deltaViewer.setChecked(dfeatures[i], checked);
-			}
-			dialogChanged();
+		if (obj instanceof DeltaFeatureAdapter) {
+			DeltaFeatureAdapter dfeature = (DeltaFeatureAdapter) obj;
+			dfeature.setSelected(checked);
+			DeltaAdapter adapter = dfeature.getDeltaAdapter();
+			deltaViewer.setGrayed(adapter, adapter.isMixedSelection());
+			deltaViewer.setChecked(adapter, adapter.getSelectionCount() > 0);
+			adapter.resetStatus();
+			deltaViewer.update(adapter, null);
+		} else if (obj instanceof DeltaAdapter) {
+			DeltaAdapter adapter = (DeltaAdapter) obj;
+			adapter.setSelected(checked);
+			deltaViewer.setGrayed(adapter, false);
+			computeCheckedElements();
 		}
+		dialogChanged();
 	}
+
+	private void computeCheckedElements() {
+		ArrayList checked = new ArrayList();
+		for (int i = 0; i < features.size(); i++) {
+			DeltaAdapter adapter = (DeltaAdapter) features.get(i);
+			if (adapter.isRemoved())
+				continue;
+			if (adapter.isSelected()) {
+				checked.add(adapter);
+				DeltaFeatureAdapter df[] = adapter.getFeatures();
+				for (int j = 0; j < df.length; j++) {
+					if (df[j].isSelected())
+						checked.add(df[j]);
+				}
+			}
+		}
+		deltaViewer.setCheckedElements(checked.toArray());
+	}
+
 	private void dialogChanged() {
-		ISessionDelta[] deltas = getSelectedDeltas();
-		setPageComplete(deltas.length > 0 || removed.size() > 0);
+		int nremoved = 0;
+		int nselected = 0;
+		int errors = 0;
+
+		for (int i = 0; i < features.size(); i++) {
+			DeltaAdapter adapter = (DeltaAdapter) features.get(i);
+			if (adapter.isRemoved())
+				nremoved++;
+			else if (adapter.isSelected()) {
+				nselected++;
+				if (adapter.getStatus() != null)
+					errors++;
+			}
+		}
+		setPageComplete(errors == 0 && (nremoved > 0 || nselected > 0));
+		String message = null;
+		if (errors > 0)
+			message = UpdateUI.getResourceString(KEY_MESSAGE);
+		setErrorMessage(message);
 	}
 
-	public ISessionDelta[] getRemovedDeltas() {
-		return (ISessionDelta[]) removed.toArray(
-			new ISessionDelta[removed.size()]);
-	}
-	public ISessionDelta[] getSelectedDeltas() {
-		Object[] checked = deltaViewer.getCheckedElements();
-		ArrayList selected = new ArrayList();
-		for (int i = 0; i < checked.length; i++) {
-			Object obj = checked[i];
-			if (obj instanceof ISessionDelta)
-				selected.add(obj);
-		}
-		return (ISessionDelta[]) selected.toArray(
-			new ISessionDelta[selected.size()]);
+	public DeltaAdapter[] getDeltaAdapters() {
+		return (DeltaAdapter[]) features.toArray(
+			new DeltaAdapter[features.size()]);
 	}
 }
