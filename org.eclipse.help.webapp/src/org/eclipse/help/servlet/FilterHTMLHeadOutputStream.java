@@ -1,3 +1,8 @@
+/*
+ * (c) Copyright IBM Corp. 2000, 2002.
+ * All Rights Reserved.
+ */
+
 package org.eclipse.help.servlet;
 
 import java.io.*;
