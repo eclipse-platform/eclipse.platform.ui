@@ -13,6 +13,7 @@ package org.eclipse.ant.internal.ui.views;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.views.elements.ProjectNode;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 
@@ -38,10 +39,14 @@ public class AntViewDropAdapter extends DropTargetAdapter {
 	public void drop(DropTargetEvent event) {
 		Object data = event.data;
 		if (data instanceof String[]) {
-			String[] strings = (String[]) data;
-			for (int i = 0; i < strings.length; i++) {
-				processString(strings[i]);
-			}
+			final String[] strings = (String[]) data;
+			BusyIndicator.showWhile(null, new Runnable() {
+				public void run() {
+					for (int i = 0; i < strings.length; i++) {
+						processString(strings[i]);
+					}
+				}
+			});
 		}
 	}
 	
