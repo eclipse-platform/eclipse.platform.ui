@@ -32,7 +32,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.variables.ILaunchVariableConstants;
+import org.eclipse.debug.core.variables.ILaunchVariableManager;
 import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.DebugUITools;
@@ -217,7 +217,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		try {
 			ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, name);
 			StringBuffer buf = new StringBuffer();
-			LaunchVariableUtil.buildVariableTag(ILaunchVariableConstants.VAR_WORKSPACE_LOC, file.getFullPath().toString(), buf);
+			LaunchVariableUtil.buildVariableTag(ILaunchVariableManager.VAR_WORKSPACE_LOC, file.getFullPath().toString(), buf);
 			workingCopy.setAttribute(IExternalToolConstants.ATTR_LOCATION, buf.toString());
 			
 			// set default for common settings
