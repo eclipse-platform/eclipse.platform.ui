@@ -1,0 +1,43 @@
+<!doctype html public "-//w3c//dtd html 4.0//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Eclipse Team Core Extension Point: Ignore</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<center>
+<h1>
+Ignore</h1></center>
+<b><i>Identifier: </i></b>org.eclipse.team.core.ignore
+<p><b><i>Description: </i></b>This extension point is used to register
+information about whether particular resources should be ignored; that
+is, excluded from version configuration management operations.
+<p>Providers may provide an extension for this extension point. No code
+beyond the XML extension declaration is required.
+<p><b><i>Configuration Markup:</i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT ignore EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST ignore</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pattern&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enabled&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+
+<ul>
+<li><b>pattern -</b> the pattern against which resources will be compared.</li>
+<li><b>enabled -</b> one of "true" or "false", determines whether this ignore pattern is enabled.</li>
+</ul>
+
+<b><i>Examples:</i></b>
+<p>Following is an example of an ignore extension:
+<p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.team.core.ignore"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ignore</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pattern="*.class"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enabled="true"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/ignore></tt>
+<br><tt>&nbsp;&nbsp; &lt;/extension></tt>
+
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+</body>
+</html>
