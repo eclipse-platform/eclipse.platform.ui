@@ -21,10 +21,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.window.ColorSchemeService;
-import org.eclipse.jface.window.Window;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.CTabFolderCloseAdapter;
@@ -40,12 +37,21 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.window.ColorSchemeService;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
+
+import org.eclipse.ui.internal.dnd.AbstractDragSource;
+import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
-import org.eclipse.ui.progress.UIJob;
 
 public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWorkbenchDragSource {
 	private static int tabLocation = -1; // Initialized in constructor.
@@ -53,7 +59,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	private CTabFolder2 tabFolder;
 	private Map mapTabToPart = new HashMap();
 	private LayoutPart current;
-	private Map mapPartToDragMonitor = new HashMap();
 	private boolean assignFocusOnSelection = true;
 
 	// inactiveCurrent is only used when restoring the persisted state of
@@ -61,7 +66,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	private LayoutPart inactiveCurrent;
 	private Composite parent;
 	private boolean active = false;
-
+	
 	// listen for mouse down on tab to set focus.
 	private MouseListener mouseListener = new MouseAdapter() {
 
@@ -119,7 +124,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	/**
 	 * Add a part at an index.
 	 */
-	public void add(String name, int index, LayoutPart part) {
+	public void add(String name, int index, LayoutPart part) {		
 		if (active && !(part instanceof PartPlaceholder)) {
 			CTabItem2 tab = createPartTab(part, name, index);
 			index = tabFolder.indexOf(tab);
@@ -272,7 +277,26 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 				//remove(item);
 			}
 		});
+		
+		DragUtil.addDragSource(tabFolder, new AbstractDragSource() {
 
+			public Object getDraggedItem(Point position) {
+				Point localPos = tabFolder.toControl(position);
+				CTabItem2 tabUnderPointer = tabFolder.getItem(localPos);
+				
+				if (tabUnderPointer == null) {
+					return null;
+				}
+				
+				return mapTabToPart.get(tabUnderPointer);
+			}
+
+			public Rectangle getDragRectangle(Object draggedItem) {
+				return DragUtil.getDisplayBounds(tabFolder);
+			}
+			
+		});
+		
 		// enable for drag & drop target
 		tabFolder.setData(this);
 
@@ -322,10 +346,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		}
 
 		mapTabToPart.put(tabItem, part);
-
+		
 		part.createControl(this.parent);
 		part.setContainer(this);
-
+		
 		// Because the container's allow border api
 		// is dependent on the number of tabs it has,
 		// reset the container so the parts can update.
@@ -338,36 +362,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		return tabItem;
 	}
 
-	/**
-	 * Remove the ability to d&d using the tab
-	 *
-	 * See PerspectivePresentation
-	 */
-
-	public void disableDrag(IWorkbenchDragSource dragSource) {
-		disableDrag(dragSource.getPart());
-	}
-	/**
-	 * Remove the ability to d&d using the tab
-	 *
-	 * See PerspectivePresentation
-	 */
-	private void disableDrag(LayoutPart part) {
-		PartDragDrop partDragDrop = (PartDragDrop) mapPartToDragMonitor.get(part);
-		if (partDragDrop != null) {
-			partDragDrop.dispose();
-			mapPartToDragMonitor.remove(part);
-		}
-
-		// remove d&d on folder when no tabs left
-		//	if (mapPartToDragMonitor.size() == 1) {
-		//		partDragDrop = (PartDragDrop)mapPartToDragMonitor.get(this);
-		//		if (partDragDrop != null) {
-		//			partDragDrop.dispose();
-		//			mapPartToDragMonitor.remove(this);
-		//		}
-		//	}
-	}
 	/**
 	 * See LayoutPart#dispose
 	 */
@@ -399,7 +393,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 			info.tabText = item.getText();
 			info.part = part;
 			newInvisibleChildren[tabFolder.indexOf(item)] = info;
-			disableDrag(part);
 		}
 
 		invisibleChildren = newInvisibleChildren;
@@ -412,47 +405,20 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 
 		mapTabToPart.clear();
 
-		if (tabFolder != null)
+		if (tabFolder != null) {
 			tabFolder.dispose();
+		}
 		tabFolder = null;
 
 		active = false;
 	}
-	/**
-	 * Enable the view pane to be d&d via its tab
-	 *
-	 * See PerspectivePresentation::enableDrag
-	 */
-	public void enableDrag(IWorkbenchDragSource dragSource, IPartDropListener listener) {
 
-		LayoutPart part = dragSource.getPart();
-
-		// make sure its not already registered
-		if (mapPartToDragMonitor.containsKey(part))
-			return;
-
-		CTabItem2 tab = getTab(part);
-		if (tab == null)
-			return;
-
-		CTabPartDragDrop tabDragDrop = new CTabPartDragDrop(dragSource, this.tabFolder, tab);
-		mapPartToDragMonitor.put(part, tabDragDrop);
-		tabDragDrop.addDropListener(listener);
-
-		// register d&d on empty tab area the first time thru
-		if (mapPartToDragMonitor.size() == 1) {
-			tabDragDrop = new CTabPartDragDrop(this, this.tabFolder, null);
-			mapPartToDragMonitor.put(this, tabDragDrop);
-			tabDragDrop.addDropListener(listener);
-		}
-	}
 	/**
 	 * Open the tracker to allow the user to move
 	 * the specified part using keyboard.
 	 */
 	public void openTracker(LayoutPart part) {
-		CTabPartDragDrop dnd = (CTabPartDragDrop) mapPartToDragMonitor.get(part);
-		dnd.openTracker();
+		DragUtil.performDrag(part, DragUtil.getDisplayBounds(part.getControl()));
 	}
 	/**
 	 * Gets the presentation bounds.
@@ -566,8 +532,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	/**
 	 * See IVisualContainer#remove
 	 */
-	public void remove(LayoutPart child) {
-
+	public void remove(LayoutPart child) {		
 		if (active && !(child instanceof PartPlaceholder)) {
 
 			Iterator keys = mapTabToPart.keySet().iterator();
@@ -588,10 +553,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		}
 	}
 	private void removeTab(CTabItem2 tab) {
-		// disable any d&d based on this tab
-		LayoutPart part = (LayoutPart) mapTabToPart.get(tab);
-		if (part != null)
-			disableDrag(part);
 
 		// remove the tab now
 		// Note, that disposing of the tab causes the
@@ -671,10 +632,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 
 		// map it now before events start coming in...	
 		mapTabToPart.put(newTab, pane);
-
-		// update the drag & drop
-		CTabPartDragDrop partDragDrop = (CTabPartDragDrop) mapPartToDragMonitor.get(pane);
-		partDragDrop.setTab(newTab);
 
 		// dispose of the old tab and remove it
 		String sourceLabel = sourceTab.getText();

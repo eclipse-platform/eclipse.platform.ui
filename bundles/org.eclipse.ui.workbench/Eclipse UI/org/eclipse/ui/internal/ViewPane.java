@@ -14,12 +14,7 @@ package org.eclipse.ui.internal;
 **********************************************************************/
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.util.SafeRunnable;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.events.MouseAdapter;
@@ -38,6 +33,14 @@ import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.util.SafeRunnable;
+
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -45,6 +48,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.part.WorkbenchPart;
+
+import org.eclipse.ui.internal.dnd.AbstractDragSource;
+import org.eclipse.ui.internal.dnd.DragUtil;
 
 /**
  * Provides support for a title bar where the
@@ -206,6 +212,22 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		} else {
 			control.setTabList(new Control[] { viewToolBar, control.getContent()});
 		}
+
+		DragUtil.addDragSource(control, new AbstractDragSource() {
+			
+			public Object getDraggedItem(Point position) {
+				return ViewPane.this;
+			}
+
+			public void dragStarted(Object draggedItem) {
+				getPage().getActivePerspective().setActiveFastView(null, 0);
+			}
+
+			public Rectangle getDragRectangle(Object draggedItem) {
+				return DragUtil.getDisplayBounds(control);
+			}
+			
+		});
 	}
 
 	protected void createChildControl() {
@@ -321,7 +343,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		});
 		viewToolBarMgr = new PaneToolBarManager(viewToolBar);
 		viewToolBarMgr.add(systemContribution);
-
+		
 		// ISV toolbar.
 		//isvToolBarShell = new Shell(control.getShell(), SWT.ON_TOP | SWT.NO_TRIM | SWT.NO_FOCUS);
 		//isvToolBarShell.setBackground(new Color(isvToolBarShell.getDisplay(), 255, 255, 255));

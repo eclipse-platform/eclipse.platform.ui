@@ -56,7 +56,6 @@ public class DetachedWindow extends Window   {
 		if (shell != null)
 			part.reparent(shell);
 		folder.add(part);
-		folder.enableDrag(part, listener);
 	}
 	public boolean belongsToWorkbenchPage(IWorkbenchPage workbenchPage) {
 		return (this.page == workbenchPage);

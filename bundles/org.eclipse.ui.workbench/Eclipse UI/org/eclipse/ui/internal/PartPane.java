@@ -14,6 +14,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
+
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
 import org.eclipse.swt.SWT;
@@ -295,13 +296,6 @@ public int getMinimumHeight() {
 	
 	// account for the borders
 	topHeight = control.computeTrim(0, 0, 0, topHeight).height;
-	
-	/* add +1 for highlight line. ViewForm adds this *inside* client area
-	 * even though it's arguably an inset; see ViewForm.layout for details.
-	 */
-	if (top) {
-		//topHeight += 1;
-	}
 	
 	return topHeight;
 }

@@ -495,7 +495,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 		}
 
 		// Notify listeners.
-		window.getFastViewBar().update(true);
 		window.firePerspectiveChanged(
 			this,
 			getPerspective(),
@@ -726,8 +725,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 				this,
 				getPerspective(),
 				CHANGE_VIEW_SHOW);
-			// Just in case view was fast.
-			window.getFastViewBar().update(true);
 			
 		}
 		return view;
@@ -1729,9 +1726,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 		// Notify interested listeners
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_HIDE);
 
-		// Just in case view was fast.
-		window.getFastViewBar().update(true);
-
 		//if it was the last part, close the perspective
 		lastPartClosePerspective();
 	}
@@ -2136,7 +2130,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 		persp.removeFastView(ref);
 
 		// Notify listeners.
-		window.getFastViewBar().update(true);
 		window.firePerspectiveChanged(
 			this,
 			getPerspective(),

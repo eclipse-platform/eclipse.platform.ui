@@ -17,14 +17,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.window.ColorSchemeService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.CTabFolderAdapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
-import org.eclipse.swt.custom.CTabFolderExpandListener;
 import org.eclipse.swt.custom.CTabFolderListListener;
 import org.eclipse.swt.custom.CTabItem2;
 import org.eclipse.swt.custom.ViewForm;
@@ -56,7 +52,16 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.window.ColorSchemeService;
+
 import org.eclipse.ui.IEditorReference;
+
+import org.eclipse.ui.internal.dnd.AbstractDragSource;
+import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.dnd.IDragSource;
 
 public class TabbedEditorWorkbook extends EditorWorkbook {
 
@@ -99,7 +104,6 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 	private CTabItem2 createTab(EditorPane editorPane, int index) {
 		CTabItem2 tab = new CTabItem2(tabFolder, SWT.NONE, index);
 		mapTabToEditor.put(tab, editorPane);
-		enableDrag(editorPane);
 		updateEditorTab((IEditorReference) editorPane.getPartReference());
 		if (tabFolder.getItemCount() == 1) {
 			if (tabFolder.getTopRight() != null) {
@@ -365,6 +369,26 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 
 		// Set the tab width
 		tabFolder.MIN_TAB_WIDTH = preferenceStore.getInt(IPreferenceConstants.EDITOR_TAB_WIDTH);
+
+		DragUtil.addDragSource(tabFolder, new AbstractDragSource() {
+
+			public Object getDraggedItem(Point position) {
+				Point localPos = tabFolder.toControl(position);
+				CTabItem2 tabUnderPointer = tabFolder.getItem(localPos);
+				
+				if (tabUnderPointer == null) {
+					return null;
+				}
+				
+				return mapTabToEditor.get(tabUnderPointer);
+			}
+
+			public Rectangle getDragRectangle(Object draggedItem) {
+				return DragUtil.getDisplayBounds(((LayoutPart)draggedItem).getControl());
+			}
+			
+		});
+		
 	}
 
 	/**
@@ -507,13 +531,6 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 				tabFolder,
 				tabFolder.toDisplay(new Point(bounds.x, bounds.height)));
 		}
-	}
-
-	protected void checkEnableDrag() {
-		// When first editor added, also enable workbook for
-		// D&D - this avoids dragging the initial empty workbook
-		if (tabFolder != null && tabFolder.getItemCount() == 1)
-			enableDrag(this);
 	}
 
 	protected void disposePresentation() {
@@ -768,7 +785,6 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		boolean wasVisible = (tabFolder.getSelection() == sourceTab);
 
 		// Remove old tab.
-		disableDrag(pane);
 		removeTab(sourceTab);
 
 		// Create the new tab at the specified index
@@ -777,8 +793,6 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 			newTab = createTab(pane);
 		else
 			newTab = createTab(pane, newIndex);
-		CTabPartDragDrop partDragDrop = (CTabPartDragDrop) getDragSource(pane);
-		partDragDrop.setTab(newTab);
 
 		// update order of editors.
 
@@ -799,18 +813,5 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.EditorWorkbook#createDragSource(org.eclipse.ui.internal.EditorPane)
-	 */
-	protected PartDragDrop createDragSource(IWorkbenchDragSource dragSource) {
-
-		if (dragSource.getType() != IWorkbenchDragDropPart.EDITOR)
-			return null;
-
-		return new CTabPartDragDrop(dragSource, this.tabFolder, getTab(dragSource.getPart()));
-
-	}
-	
-	
 
 }

@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
@@ -28,10 +27,14 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import org.eclipse.jface.resource.JFaceColors;
+
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
+
+import org.eclipse.ui.internal.dnd.DragUtil;
 
 /**
  * Represents a tab folder of editors. This layout part
@@ -51,8 +54,6 @@ public abstract class EditorWorkbook
 	private int activeState = INACTIVE;
 	private boolean isZoomed = false;
 	private Map mapPartToDragMonitor = new HashMap();
-
-	
 
 	/**
 	 * Factory method for editor workbooks.
@@ -153,14 +154,7 @@ public abstract class EditorWorkbook
 		updateEditorTab(editorRef);
 		editorRef.addPropertyListener(this);
 
-		checkEnableDrag();
 	}
-
-	/**
-	 * Checks whether drag should be enabled for the workbook as a whole,
-	 * and if so enables it, otherwise disables it.
-	 */
-	protected abstract void checkEnableDrag();
 
 	/**
 	 * Creates the presentation item for the given editor.
@@ -333,10 +327,7 @@ public abstract class EditorWorkbook
 	 * the specified part using keyboard.
 	 */
 	public void openTracker(LayoutPart part) {
-		PartDragDrop dnd = getDragSource(part);
-		if (dnd != null) {
-			dnd.openTracker();
-		}
+		DragUtil.performDrag(part, DragUtil.getDisplayBounds(part.getControl()));
 	}
 
 	/**
@@ -425,12 +416,6 @@ public abstract class EditorWorkbook
 	private void removeListeners(EditorPane editor) {
 		if (editor == null)
 			return;
-
-		disableDrag(editor);
-
-		// When last editor removed, also disable workbook for
-		// D&D - this avoids dragging the initial empty workbook
-		checkEnableDrag();
 
 		editor.getPartReference().removePropertyListener(this);
 	}
@@ -616,30 +601,6 @@ public abstract class EditorWorkbook
 	 */
 	protected List getEditorList() {
 		return editors;
-	}
-
-	protected void enableDrag(IWorkbenchDragSource dragSource) {
-		
-		LayoutPart part = dragSource.getPart();
-		PartDragDrop dragDrop = createDragSource(dragSource);
-		if (dragDrop != null) {
-			mapPartToDragMonitor.put(part, dragDrop);
-			dragDrop.addDropListener(getEditorArea().getPartDropListener());
-		}
-	}
-
-	protected abstract PartDragDrop createDragSource(IWorkbenchDragSource part);
-
-	protected void disableDrag(LayoutPart part) {
-		PartDragDrop partDragDrop = (PartDragDrop) mapPartToDragMonitor.get(part);
-		if (partDragDrop != null) {
-			partDragDrop.dispose();
-			mapPartToDragMonitor.remove(part);
-		}
-	}
-
-	protected PartDragDrop getDragSource(LayoutPart part) {
-		return (PartDragDrop) mapPartToDragMonitor.get(part);
 	}
 
 	/* (non-Javadoc)

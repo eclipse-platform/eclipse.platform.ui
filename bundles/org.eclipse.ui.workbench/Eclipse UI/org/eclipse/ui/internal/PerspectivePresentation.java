@@ -14,14 +14,11 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.window.Window;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -29,10 +26,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPartReference;
+
+import org.eclipse.ui.internal.dnd.CompatibilityDragTarget;
+import org.eclipse.ui.internal.dnd.DragUtil;
 
 /**
  * A perspective presentation is a collection of parts with a layout. Each part
@@ -55,16 +59,12 @@ public class PerspectivePresentation {
 	private boolean detachable = false;
 
 	private boolean active = false;
-	// Flag used during drag and drop to specify if a fast
-	// view was active when the drag started.
-	private boolean wasFastViewActive = false;
-
-	private Map dragParts = new HashMap();
 	// key is the LayoutPart object, value is the PartDragDrop object
 	private IPartDropListener partDropListener;
 
 	private static final int MIN_DETACH_WIDTH = 150;
 	private static final int MIN_DETACH_HEIGHT = 250;
+	private CompatibilityDragTarget dragTarget;
 
 	/**
 	 * Constructs a new object.
@@ -92,15 +92,16 @@ public class PerspectivePresentation {
 			testChild.dispose();
 		}
 
-
 		this.partDropListener = new IPartDropListener() {
 			public void dragOver(PartDropEvent e) {
 				onPartDragOver(e);
-			};
+			}
 			public void drop(PartDropEvent e) {
 				onPartDrop(e);
-			};
+			}
 		};
+		
+		dragTarget = new CompatibilityDragTarget(partDropListener, IWorkbenchDragDropPart.VIEW);
 	}
 	
 	/**
@@ -220,8 +221,6 @@ public class PerspectivePresentation {
 		}
 
 		// enable direct manipulation
-		if (part instanceof ViewPane)
-			enableDrag((ViewPane) part);
 		enableDrop(part);
 	}
 	/**
@@ -317,8 +316,7 @@ public class PerspectivePresentation {
 	 * keyboard.
 	 */
 	public void openTracker(ViewPane pane) {
-		PartDragDrop dnd = (PartDragDrop) dragParts.get(pane);
-		dnd.openTracker();
+		DragUtil.performDrag(pane, DragUtil.getDisplayBounds(pane.getControl()));
 	}
 	/**
 	 * Answer a list of the view panes.
@@ -667,7 +665,6 @@ public class PerspectivePresentation {
 		part.setFocus();
 
 		// enable direct manipulation
-		enableDrag(pane);
 		enableDrop(part);
 	}
 
@@ -675,39 +672,9 @@ public class PerspectivePresentation {
 	 * disableDragging.
 	 */
 	private void disableAllDrag() {
-
-		// release Drag parts
-		Iterator enum = dragParts.values().iterator();
-		while (enum.hasNext()) {
-			PartDragDrop part = (PartDragDrop) enum.next();
-
-			// remove d&d to start from the view's tab if in a folder
-			ILayoutContainer container = part.getSourcePart().getContainer();
-			if (container instanceof PartTabFolder)
-				 ((PartTabFolder) container).disableDrag(part.getSourcePart());
-
-			part.dispose();
-		}
-
-		dragParts.clear();
+		DragUtil.removeDragTarget(null, dragTarget);		
 	}
-	/**
-	 * disableDragging.
-	 */
-	/* package */
-	void disableDrag(ViewPane part) {
-		// remove view from the drag sources
-		if (dragParts.containsKey(part)) {
-			PartDragDrop partDragDrop = (PartDragDrop) dragParts.get(part);
-			partDragDrop.dispose();
-			dragParts.remove(part);
-		}
 
-		// remove d&d to start from the view's tab if in a folder
-		ILayoutContainer container = part.getContainer();
-		if (container instanceof PartTabFolder)
-			 ((PartTabFolder) container).disableDrag(part);
-	}
 	/**
 	 * Dispose all sashs used in this perspective.
 	 */
@@ -718,23 +685,7 @@ public class PerspectivePresentation {
 	 * enableDragging.
 	 */
 	private void enableAllDrag() {
-
-		Vector draggableParts = new Vector();
-		collectDragParts(draggableParts, mainLayout.getChildren());
-
-		for (int i = 0, length = detachedWindowList.size(); i < length; i++) {
-			DetachedWindow window = (DetachedWindow) detachedWindowList.get(i);
-			collectDragParts(draggableParts, window.getChildren());
-		}
-
-		Enumeration enum = draggableParts.elements();
-		while (enum.hasMoreElements()) {
-			IWorkbenchDragSource part =
-				(IWorkbenchDragSource) enum.nextElement();
-			if (part.getType() == IWorkbenchDragDropPart.VIEW)
-				enableDrag(part);
-		}
-
+		DragUtil.addDragTarget(null, dragTarget);
 	}
 	/**
 	 * enableDragging.
@@ -755,24 +706,7 @@ public class PerspectivePresentation {
 			enableDrop(part);
 		}
 	}
-	/**
-	 * enableDrag
-	 */
-	/* package */
-	void enableDrag(IWorkbenchDragSource part) {
-		// allow d&d to start from the view's title bar
-		Control control = part.getControl();
-		if (control != null) {
-			PartDragDrop dragSource = new PartDragDrop(part, control);
-			dragSource.addDropListener(partDropListener);
-			dragParts.put(part, dragSource);
-		}
 
-		// allow d&d to start from the view's tab if in a folder
-		ILayoutContainer container = part.getContainer();
-		if (container instanceof PartTabFolder)
-			 ((PartTabFolder) container).enableDrag(part, partDropListener);
-	}
 	private void enableDrop(LayoutPart part) {
 		Control control = part.getControl();
 		if (control != null)
@@ -909,11 +843,11 @@ public class PerspectivePresentation {
 			RootLayoutContainer sashContainer =
 				(RootLayoutContainer) newContainer;
 			int relativePosition = IPageLayout.LEFT;
-			if (position == PartDragDrop.RIGHT)
+			if (position == DragCursors.RIGHT)
 				relativePosition = IPageLayout.RIGHT;
-			else if (position == PartDragDrop.TOP)
+			else if (position == DragCursors.TOP)
 				relativePosition = IPageLayout.TOP;
-			else if (position == PartDragDrop.BOTTOM)
+			else if (position == DragCursors.BOTTOM)
 				relativePosition = IPageLayout.BOTTOM;
 
 			// folder part from detach window is special
@@ -936,10 +870,7 @@ public class PerspectivePresentation {
 					for (int i = 0; i < children.length; i++) {
 						derefPart(children[i]);
 						folder.add(children[i]);
-						if (children[i] instanceof ViewPane)
-							folder.enableDrag(
-								(ViewPane) children[i],
-								partDropListener);
+
 					}
 					if (visiblePart != null) {
 						bringPartToTop(visiblePart);
@@ -966,7 +897,6 @@ public class PerspectivePresentation {
 					(float) 0.5,
 					relativePart);
 				folder.add(part);
-				folder.enableDrag((ViewPane) part, partDropListener);
 			} else {
 				//Move the part to its new position but keep its bounds if
 				// possible.
@@ -987,60 +917,14 @@ public class PerspectivePresentation {
 	/* package */
 	void onPartDragOver(PartDropEvent e) {
 
-		// If a fast view is active, and the dragged element is the active
-		// fast view or an icon for a fast view, minimize the active fast
-		// view when the drag begins. This is to allow it to be dropped
-		// somewhere that the active fast view was covering.
-		Perspective persp = page.getActivePerspective();
-		if (persp.getActiveFastView() != null) {
-			if (e.dragSource instanceof ViewPane) {
-				IViewReference ref =
-					(IViewReference) ((ViewPane) e.dragSource)
-						.getPartReference();
-				if (ref == persp.getActiveFastView()) {
-					persp.setActiveFastView(null, 0);
-				}
-			} else if (e.dragSource instanceof ShortcutBarPart) {
-				if (persp.getActiveFastView() != null) {
-					WorkbenchWindow window =
-						(WorkbenchWindow) page.getWorkbenchWindow();
-					ToolItem icon = window.getFastViewDND().getDraggedItem();
-					IViewReference ref =
-						(IViewReference) icon.getData(
-							ShowFastViewContribution.FAST_VIEW);
-					// If the dragged element is an icon for the active
-					// fast view, remove it instantly. It will be reactivated
-					// if the icon is dropped somewhere invalid.
-					if (ref == persp.getActiveFastView())
-						persp.setActiveFastView(null, 0);
-					// If the dragged element is an icon for a different
-					// fast view, scroll the active fast view off the page,
-					// just like any other instance when the active fast
-					// view loses focus.
-					else
-						persp.setActiveFastView(null);
-					// slide the fast view off the page.
-					// Set flag to tell that a fast view was active when the
-					// drag began.
-					wasFastViewActive = true;
-				}
-			}
-		}
-
-		// Handle the case of an icon being dragged.
-		if (e.dragSource instanceof ShortcutBarPart) {
-			onFastViewIconDrag(e);
-			return;
-		}
-
 		/*
 		 * Note, any drop that is considered invalid for stack or move, will be
 		 * set as OFF_SCREEN causing either a new detach window to be created
 		 * or it the source was a detach window, a location move.
 		 */
-		int offScreenPosition = PartDragDrop.OFFSCREEN;
+		int offScreenPosition = DragCursors.OFFSCREEN;
 		if (!detachable)
-			offScreenPosition = PartDragDrop.INVALID;
+			offScreenPosition = DragCursors.INVALID;
 
 		// If source and target are in different windows reject.
 		if (e.dragSource != null && e.dropTarget != null) {
@@ -1052,27 +936,9 @@ public class PerspectivePresentation {
 			}
 		}
 
-		// If drop target is short cut bar force center.
-		if (e.dropTarget instanceof ShortcutBarPart) {
-			// If the drag source is a fast view, the shortcut bar is
-			// invalid drop target.
-			if (e.dragSource instanceof ViewPane) {
-				IViewReference ref =
-					(IViewReference) ((ViewPane) e.dragSource)
-						.getPartReference();
-				if (isFastView(ref)) {
-					e.dropTarget = null;
-					e.relativePosition = PartDragDrop.INVALID;
-					return;
-				}
-			}
-			e.relativePosition = PartDragDrop.CENTER;
-			return;
-		}
-
 		// If drop target is editor area exclude center.
 		if (e.dropTarget instanceof EditorArea) {
-			if (e.relativePosition == PartDragDrop.CENTER) {
+			if (e.relativePosition == DragCursors.CENTER) {
 				e.dropTarget = null;
 				e.relativePosition = offScreenPosition;
 				return;
@@ -1081,10 +947,10 @@ public class PerspectivePresentation {
 		}
 
 		// If drop target is offscreen ..
-		if (e.relativePosition == PartDragDrop.OFFSCREEN) {
+		if (e.relativePosition == DragCursors.OFFSCREEN) {
 			// If detaching is not supported then exclude.
 			if (!detachable) {
-				e.relativePosition = PartDragDrop.INVALID;
+				e.relativePosition = DragCursors.INVALID;
 				return;
 			}
 
@@ -1095,15 +961,15 @@ public class PerspectivePresentation {
 			Window window = e.dragSource.getWindow();
 			if (window instanceof DetachedWindow) {
 				if (e.dragSource instanceof PartTabFolder) {
-					//If we are dragging the folder around just move the window
-					e.relativePosition = PartDragDrop.OFFSCREEN;
+					// there is only one tab folder in a detach window
+					e.relativePosition = DragCursors.OFFSCREEN;
 					return;
 				}
 				ILayoutContainer container = e.dragSource.getContainer();
 				if (container instanceof PartTabFolder) {
 					if (((PartTabFolder) container).getItemCount() == 1) {
 						// only 1 view in folder.
-						e.relativePosition = PartDragDrop.INVALID;
+						e.relativePosition = DragCursors.OFFSCREEN;
 						return;
 					}
 				}
@@ -1115,7 +981,7 @@ public class PerspectivePresentation {
 
 		// If drop target is not registered object then reject.
 		if (e.dropTarget == null
-			&& e.relativePosition != PartDragDrop.OFFSCREEN) {
+			&& e.relativePosition != DragCursors.OFFSCREEN) {
 			e.dropTarget = null;
 			e.relativePosition = offScreenPosition;
 			return;
@@ -1133,21 +999,21 @@ public class PerspectivePresentation {
 		if (e.dragSource instanceof ViewPane) {
 			if (e.dragSource == e.dropTarget) {
 				// Reject stack onto same view
-				if (e.relativePosition == PartDragDrop.CENTER) {
+				if (e.relativePosition == DragCursors.CENTER) {
 					e.dropTarget = null;
-					e.relativePosition = PartDragDrop.INVALID;
+					e.relativePosition = DragCursors.INVALID;
 					return;
 				}
 				// Reject attach & detach to ourself
 				ILayoutContainer container = e.dragSource.getContainer();
 				if (!(container instanceof PartTabFolder)) {
 					e.dropTarget = null;
-					e.relativePosition = PartDragDrop.INVALID;
+					e.relativePosition = DragCursors.INVALID;
 					return;
 				}
 				if (((PartTabFolder) container).getItemCount() == 1) {
 					e.dropTarget = null;
-					e.relativePosition = PartDragDrop.INVALID;
+					e.relativePosition = DragCursors.INVALID;
 					return;
 				}
 			}
@@ -1157,7 +1023,7 @@ public class PerspectivePresentation {
 				// Reject stack/detach/attach to ourself
 				if (((PartTabFolder) e.dropTarget).getItemCount() == 1) {
 					e.dropTarget = null;
-					e.relativePosition = PartDragDrop.INVALID;
+					e.relativePosition = DragCursors.INVALID;
 					return;
 				}
 			}
@@ -1165,7 +1031,7 @@ public class PerspectivePresentation {
 			// If target is detached window force stacking.
 			Window window = e.dropTarget.getWindow();
 			if (window instanceof DetachedWindow) {
-				e.relativePosition = PartDragDrop.CENTER;
+				e.relativePosition = DragCursors.CENTER;
 				return;
 			}
 
@@ -1178,7 +1044,7 @@ public class PerspectivePresentation {
 			// Reject stack in same tab folder
 			if (e.dragSource == e.dropTarget) {
 				e.dropTarget = null;
-				e.relativePosition = PartDragDrop.INVALID;
+				e.relativePosition = DragCursors.INVALID;
 				return;
 			}
 
@@ -1186,7 +1052,7 @@ public class PerspectivePresentation {
 			if (e.dropTarget instanceof ViewPane) {
 				if (e.dropTarget.getContainer() == e.dragSource) {
 					e.dropTarget = null;
-					e.relativePosition = PartDragDrop.INVALID;
+					e.relativePosition = DragCursors.INVALID;
 					return;
 				}
 			}
@@ -1194,7 +1060,7 @@ public class PerspectivePresentation {
 			// If target is detached window force stacking.
 			Window window = e.dropTarget.getWindow();
 			if (window instanceof DetachedWindow) {
-				e.relativePosition = PartDragDrop.CENTER;
+				e.relativePosition = DragCursors.CENTER;
 				return;
 			}
 
@@ -1206,34 +1072,7 @@ public class PerspectivePresentation {
 		e.dropTarget = null;
 		e.relativePosition = offScreenPosition;
 	}
-	/**
-	 * A fast view icon is the dragged element.
-	 */
-	private void onFastViewIconDrag(PartDropEvent e) {
-		// If the drop target is not a view, folder, or the
-		// editor area, we can not drop.
-		if (!(e.dropTarget instanceof ViewPane
-			|| e.dropTarget instanceof PartTabFolder
-			|| e.dropTarget instanceof EditorArea
-			|| e.dropTarget instanceof ShortcutBarPart)) {
-			e.dropTarget = null;
-			e.relativePosition = PartDragDrop.INVALID;
-		}
-		// If the drop target is the editor area, we can not drop
-		// in the center.
-		if (e.dropTarget instanceof EditorArea
-			&& e.relativePosition == PartDragDrop.CENTER) {
-			e.dropTarget = null;
-			e.relativePosition = PartDragDrop.INVALID;
-		}
-		// If the drop target is the shortcut bar, we can
-		// only drop in the middle
-		if (e.dropTarget instanceof ShortcutBarPart
-			&& !(e.relativePosition == PartDragDrop.CENTER)) {
-			e.dropTarget = null;
-			e.relativePosition = PartDragDrop.INVALID;
-		}
-	}
+
 	/**
 	 * Notification sent when drop happens. Only views and tab folders were
 	 * allowed to participate.
@@ -1243,75 +1082,16 @@ public class PerspectivePresentation {
 		// If invalid drop position ignore the drop (except for possibly
 		// reactivating previous
 		// active fast view.
-		if (e.relativePosition == PartDragDrop.INVALID) {
-			Perspective persp = page.getActivePerspective();
-			if (e.dragSource instanceof ViewPane) {
-				IViewReference ref =
-					(IViewReference) ((ViewPane) (e.dragSource))
-						.getPartReference();
-				// If the view is a fast view, then it must have been the
-				// active fast view.
-				// Make it the active fast view again if it is dropped
-				// somewhere invalid.
-				if (isFastView(ref))
-					persp.setActiveFastView(ref);
-			} else if (e.dragSource instanceof ShortcutBarPart) {
-				WorkbenchWindow window =
-					(WorkbenchWindow) page.getWorkbenchWindow();
-				ToolItem icon = window.getFastViewDND().getDraggedItem();
-				IViewReference ref =
-					(IViewReference) icon.getData(
-						ShowFastViewContribution.FAST_VIEW);
-				// If the icon being dropped is the icon for a fast view that
-				// was active when
-				// the drag began, reactivate the fast view when the icon is
-				// dropped somewhere invalid.
-				if (ref == persp.getPreviousActiveFastView()
-					&& wasFastViewActive)
-					persp.setActiveFastView(ref);
-			}
-			// Reset the flag that determines if a fast view was active when
-			// the drag began
-			wasFastViewActive = false;
+		if (e.relativePosition == DragCursors.INVALID) {
 			return;
 		}
-
-		// Reset the flag that determines if a fast view was active when the
-		// drag began
-		wasFastViewActive = false;
-
-		// If the drag source is a fast view, make it a regular view
-		// when it is dropped somewhere valid.
+		
 		if (e.dragSource instanceof ViewPane) {
-			IViewReference ref =
-				(IViewReference) ((ViewPane) (e.dragSource)).getPartReference();
-			if (isFastView(ref)) {
-				page.removeFastView(ref);
-			}
+			page.removeFastView(((ViewPane) e.dragSource).getViewReference());
 		}
-
-		// If the dragged element is a fast view icon, set the dragSource to be
-		// the
-		// view represented by the icon before it is dropped into the page
-		// layout,
-		// and remove the view from the fast view list.
-		if (e.dragSource instanceof ShortcutBarPart
-			&& !(e.dropTarget instanceof ShortcutBarPart)) {
-			WorkbenchWindow window =
-				(WorkbenchWindow) page.getWorkbenchWindow();
-			ToolItem icon = window.getFastViewDND().getDraggedItem();
-			IViewReference ref =
-				(IViewReference) icon.getData(
-					ShowFastViewContribution.FAST_VIEW);
-			//Make sure the view is restored.
-			if (ref.getPart(true) == null)
-				return;
-			e.dragSource = ((WorkbenchPartReference) ref).getPane();
-			page.removeFastView(ref);
-		}
-
+		
 		switch (e.relativePosition) {
-			case PartDragDrop.OFFSCREEN :
+			case DragCursors.OFFSCREEN :
 
 				Window window = e.dragSource.getWindow();
 				if (window instanceof DetachedWindow) {
@@ -1337,46 +1117,10 @@ public class PerspectivePresentation {
 				// do a normal part detach
 				detach(e.dragSource, e.x, e.y);
 				break;
-			case PartDragDrop.CENTER :
+			case DragCursors.CENTER :
 				// If layout is modified always zoom out.
 				if (isZoomed())
 					zoomOut();
-				if (e.dropTarget instanceof ShortcutBarPart) {
-					if (e.dragSource instanceof ShortcutBarPart)
-						/*
-						 * fast view is beig dragged, move it to the new
-						 * position PR 6988
-						 */
-						moveFastView(
-							(ShortcutBarPart) e.dragSource,
-							new Point(e.cursorX, e.cursorY));
-					else {
-						//First create the fast view
-						makeFast(e.dragSource);
-						//Then move it to the intended position. PR 6988
-						if (e.dragSource instanceof ViewPane) {
-							ViewPane pane = (ViewPane) e.dragSource;
-							/*
-							 * Convert the point to its display-relative
-							 * coordinates, then back to the toolbar-relative
-							 * coordinates.
-							 */
-							Point point =
-								pane.getControl().toDisplay(
-									new Point(e.cursorX, e.cursorY));
-							Point destination =
-								((ShortcutBarPart) e.dropTarget)
-									.getControl()
-									.toControl(
-									point);
-							reorderFastViews(
-								(ShortcutBarPart) e.dropTarget,
-								((ViewPane) e.dragSource).getViewReference(),
-								destination);
-						}
-					}
-					break;
-				}
 				if (e.dragSource instanceof ViewPane
 					&& e.dropTarget instanceof PartTabFolder) {
 					if (e.dragSource.getContainer() == e.dropTarget) {
@@ -1389,73 +1133,16 @@ public class PerspectivePresentation {
 				}
 				stack(e.dragSource, e.dropTarget);
 				break;
-			case PartDragDrop.LEFT :
-			case PartDragDrop.RIGHT :
-			case PartDragDrop.TOP :
-			case PartDragDrop.BOTTOM :
+			case DragCursors.LEFT :
+			case DragCursors.RIGHT :
+			case DragCursors.TOP :
+			case DragCursors.BOTTOM :
 				// If layout is modified always zoom out.
 				if (isZoomed())
 					zoomOut();
 				movePart(e.dragSource, e.relativePosition, e.dropTarget);
 				break;
 		}
-	}
-	/**
-	 * Method moveFastView.
-	 * 
-	 * @param shortcutBarPart
-	 * @param x
-	 * @param y
-	 */
-	private void moveFastView(ShortcutBarPart shortcutBarPart, Point point) {
-
-		// Get the fast view that is being dragged
-		WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
-		ToolItem draggedItem = window.getFastViewDND().getDraggedItem();
-		IViewReference draggedView =
-			(IViewReference) draggedItem.getData(
-				ShowFastViewContribution.FAST_VIEW);
-
-		//move the fast view to the new position
-		reorderFastViews(shortcutBarPart, draggedView, point);
-	}
-	/**
-	 * Method reorderFastViews.
-	 * 
-	 * @param shortcutBarPart
-	 * @param draggedView
-	 * @param x
-	 * @param y
-	 */
-	private void reorderFastViews(
-		ShortcutBarPart shortcutBarPart,
-		IViewReference draggedView,
-		Point point) {
-
-		IViewReference destinationView = null;
-		boolean placeAtEnd = true;
-
-		// Get the fast view that it is being dragged to
-		ToolBar bar = (ToolBar) shortcutBarPart.getControl();
-		//get the ToolItem the cursor is over
-		ToolItem destItem = bar.getItem(point);
-
-		//determine where to place the view
-		if (destItem != null) {
-			//user is over a toolitem, either fast or perspecitve
-			destinationView =
-				(IViewReference) destItem.getData(
-					ShowFastViewContribution.FAST_VIEW);
-			placeAtEnd = false;
-		}
-		page.getActivePerspective().moveFastView(
-			draggedView,
-			destinationView,
-			placeAtEnd);
-
-		//refresh the menu to show the change
-		((WorkbenchWindow) page.getWorkbenchWindow()).getFastViewBar().update(
-			true);
 	}
 
 	/**
@@ -1494,12 +1181,8 @@ public class PerspectivePresentation {
 		if (isZoomed())
 			zoomOut();
 
-		// Disable drag.
-		if (part instanceof ViewPane)
-			disableDrag((ViewPane) part);
-
 		// Reparent the part back to the main window
-		Composite parent = (Composite) mainLayout.getParent();
+		Composite parent = mainLayout.getParent();
 		part.reparent(parent);
 
 		// Replace part with a placeholder
@@ -1715,16 +1398,12 @@ public class PerspectivePresentation {
 
 			// Add part to existing folder
 			folder.add(newPart);
-			folder.enableDrag(newPart, partDropListener);
 		} else if (newContainer instanceof RootLayoutContainer) {
 			// Create a new folder and add both items
 			PartTabFolder folder = new PartTabFolder();
 			((RootLayoutContainer) newContainer).replace(refPart, folder);
 			folder.add(refPart);
 			folder.add(newPart);
-			if (refPart instanceof ViewPane)
-				folder.enableDrag((ViewPane) refPart, partDropListener);
-			folder.enableDrag(newPart, partDropListener);
 		}
 	}
 	/**
