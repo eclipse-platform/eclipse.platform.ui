@@ -134,16 +134,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private Button fSaveButton;	
 	
 	/**
-	 * The 'launch' button
-	 */
-	private Button fLaunchButton;
-	
-	/**
-	 * The 'cancel' button
-	 */
-	private Button fCancelButton;
-	
-	/**
 	 * The text widget displaying the name of the
 	 * launch configuration under edit
 	 */
@@ -295,14 +285,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	/**
 	 * A launch configuration dialog overrides this method
 	 * to create a custom set of buttons in the button bar.
-	 * This dialog has 'Save & Launch', 'Launch', and 'Cancel'
+	 * This dialog has 'Launch' and 'Cancel'
 	 * buttons.
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		setLaunchButton(createButton(parent, ID_LAUNCH_BUTTON, getLaunchButtonText(), true));
-		setCancelButton(createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false));
+		createButton(parent, ID_LAUNCH_BUTTON, getLaunchButtonText(), true);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 	
 	/**
@@ -1114,32 +1104,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		} else {
  			setSelectedTreeObject(null);
  		}
- 	}
- 	
- 	/**
- 	 * Sets the 'launch' button.
- 	 * 
- 	 * @param button the 'launch' button.
- 	 */	
- 	private void setLaunchButton(Button button) {
- 		fLaunchButton = button;
- 	} 	
- 	
- 	/**
- 	 * Returns the 'launch' button
- 	 * 
- 	 * @return the 'launch' button
- 	 */
- 	protected Button getLaunchButton() {
- 		return fLaunchButton;
- 	} 	
- 	
- 	protected void setCancelButton(Button button) {
- 		fCancelButton = button;
- 	}
- 	
- 	protected Button getCancelButton() {
- 		return fCancelButton;
  	}
  	
  	protected void setProgressMonitorPart(ProgressMonitorPart part) {
@@ -1958,8 +1922,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			Control focusControl = getShell().getDisplay().getFocusControl();
 			if (focusControl != null && focusControl.getShell() != getShell())
 				focusControl = null;
-				
-			getCancelButton().removeSelectionListener(fCancelListener);
+			
+			Button cancelButton= getButton(IDialogConstants.CANCEL_ID);
+			cancelButton.removeSelectionListener(fCancelListener);
 			
 			// Set the busy cursor to all shells.
 			Display d = getShell().getDisplay();
@@ -1968,7 +1933,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 					
 			// Set the arrow cursor to the cancel component.
 			arrowCursor= new Cursor(d, SWT.CURSOR_ARROW);
-			getCancelButton().setCursor(arrowCursor);
+			cancelButton.setCursor(arrowCursor);
 	
 			// Deactivate shell
 			savedState = saveUIState(enableCancelButton);
@@ -1976,7 +1941,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				savedState.put(FOCUS_CONTROL, focusControl);
 				
 			// Attach the progress monitor part to the cancel button
-			getProgressMonitorPart().attachToCancelComponent(getCancelButton());
+			getProgressMonitorPart().attachToCancelComponent(cancelButton);
 			getProgressMonitorPart().setVisible(true);
 		}
 		return savedState;
@@ -1993,14 +1958,15 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	private void stopped(Object savedState) {
 		if (getShell() != null) {
-			getProgressMonitorPart().setVisible(false);	
-			getProgressMonitorPart().removeFromCancelComponent(getCancelButton());
+			getProgressMonitorPart().setVisible(false);
+			Button cancelButton= getButton(IDialogConstants.CANCEL_ID);
+			getProgressMonitorPart().removeFromCancelComponent(getButton(IDialogConstants.CANCEL_ID));
 			Map state = (Map)savedState;
 			restoreUIState(state);
-			getCancelButton().addSelectionListener(fCancelListener);
+			cancelButton.addSelectionListener(fCancelListener);
 	
 			setDisplayCursor(null);	
-			getCancelButton().setCursor(null);
+			cancelButton.setCursor(null);
 			waitCursor.dispose();
 			waitCursor = null;
 			arrowCursor.dispose();
@@ -2029,8 +1995,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		saveEnableStateAndSet(getDeleteButton(), savedState, "delete", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getCopyButton(), savedState, "copy", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getSaveButton(), savedState, "save", false);//$NON-NLS-1$
-		saveEnableStateAndSet(getCancelButton(), savedState, "cancel", keepCancelEnabled);//$NON-NLS-1$
-		saveEnableStateAndSet(getLaunchButton(), savedState, "launch", false);//$NON-NLS-1$
+		saveEnableStateAndSet(getButton(IDialogConstants.CANCEL_ID), savedState, "cancel", keepCancelEnabled);//$NON-NLS-1$
+		saveEnableStateAndSet(getButton(ID_LAUNCH_BUTTON), savedState, "launch", false);//$NON-NLS-1$
 		TabItem selectedTab = getTabFolder().getItem(getTabFolder().getSelectionIndex());
 		savedState.put("tab", ControlEnableState.disable(selectedTab.getControl()));//$NON-NLS-1$
 		return savedState;
@@ -2068,8 +2034,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		restoreEnableState(getDeleteButton(), state, "delete");//$NON-NLS-1$
 		restoreEnableState(getCopyButton(), state, "copy");//$NON-NLS-1$
 		restoreEnableState(getSaveButton(), state, "save");//$NON-NLS-1$
-		restoreEnableState(getCancelButton(), state, "cancel");//$NON-NLS-1$
-		restoreEnableState(getLaunchButton(), state, "launch");//$NON-NLS-1$
+		restoreEnableState(getButton(IDialogConstants.CANCEL_ID), state, "cancel");//$NON-NLS-1$
+		restoreEnableState(getButton(ID_LAUNCH_BUTTON), state, "launch");//$NON-NLS-1$
 		ControlEnableState tabState = (ControlEnableState) state.get("tab");//$NON-NLS-1$
 		tabState.restore();
 	}
@@ -2110,7 +2076,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		if (fActiveRunningOperations <= 0) {
 			super.cancelPressed();
 		} else {
-			getCancelButton().setEnabled(false);
+			getButton(IDialogConstants.CANCEL_ID).setEnabled(false);
 		}
 	}
 
@@ -2212,7 +2178,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 
 		if (sel.isEmpty()) {
 			getSaveButton().setEnabled(false);
-			getLaunchButton().setEnabled(false);
+			getButton(ID_LAUNCH_BUTTON).setEnabled(false);
 		} else {
 			// save and launch buttons
 			ILaunchConfigurationTab tab = getActiveTab();
@@ -2224,7 +2190,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			}
 			if (tab != null) {
 				getSaveButton().setEnabled(verified && tab.isValid());
-				getLaunchButton().setEnabled(canLaunch());		
+				getButton(ID_LAUNCH_BUTTON).setEnabled(canLaunch());		
 			}
 		}
 	}
@@ -2414,5 +2380,3 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		fInitialConfigType = configType;
 	}
 }
-
-
