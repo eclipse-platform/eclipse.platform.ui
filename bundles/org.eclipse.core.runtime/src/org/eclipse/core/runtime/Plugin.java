@@ -17,7 +17,6 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.preferences.PreferenceForwarder;
 import org.eclipse.core.internal.runtime.*;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.framework.*;
 import org.osgi.service.prefs.BackingStoreException;
