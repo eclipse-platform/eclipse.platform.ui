@@ -104,7 +104,7 @@ public final class KeySequenceText {
 					} else if (hasSelection()) {
 						// There is a selection that needs to be replaced.
 						index = deleteSelection(keyStrokes, stroke.isComplete());
-						if (stroke.isComplete()) {
+						if ((stroke.isComplete()) || (!hasSelection()) || (index >= keyStrokes.size())) {
 							insertStrokeAt(keyStrokes, stroke, index);
 							index = -1;
 						}
@@ -120,6 +120,9 @@ public final class KeySequenceText {
 							insertStrokeAt(keyStrokes, stroke, keyStrokes.size());
 							index = -1;
 						} else {
+							/* I'm just getting the index here.  No actual 
+							 * deletion should occur.
+							 */
 							index = deleteSelection(keyStrokes, stroke.isComplete());
 							if (stroke.isComplete()) {
 								insertStrokeAt(keyStrokes, stroke, index);
