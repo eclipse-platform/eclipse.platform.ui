@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.editor;
 import java.util.Vector;
-
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.IManagedForm;
@@ -24,8 +24,16 @@ import org.eclipse.ui.part.*;
  * not cause the page control to be created. Page control is created when an
  * attempt is made to select the page in question. This allows editors with
  * several tabs and complex pages to open quickly.
+ * <p>
+ * Subclasses should extend this class and implement <code>addPages</code>
+ * method. One of the two <code>addPage</code> methods should be called to
+ * contribute pages to the editor. One adds complete (standalone) editors as
+ * nested tabs. These editors will be created right away and will be hooked so
+ * that key bindings, selection service etc. is compatible with the one for the
+ * standalone case. The other method adds classes that implement
+ * <code>IFormPage</code> interface. These pages will be created lazily and
+ * they will share the common key binding and selection service.
  * 
- * TODO (dejan) - spell out subclass contract
  * @since 3.0
  */
 public abstract class FormEditor extends MultiPageEditorPart {
@@ -33,13 +41,56 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	protected Vector pages;
 	private IEditorPart sourcePage;
 	private int currentPage = -1;
+	private static class FormEditorSelectionProvider
+			extends
+				MultiPageSelectionProvider {
+		private ISelection globalSelection;
+		/**
+		 * @param multiPageEditor
+		 */
+		public FormEditorSelectionProvider(FormEditor formEditor) {
+			super(formEditor);
+		}
+		public ISelection getSelection() {
+			IEditorPart activeEditor = ((FormEditor) getMultiPageEditor())
+					.getActiveEditor();
+			if (activeEditor != null) {
+				ISelectionProvider selectionProvider = activeEditor.getSite()
+						.getSelectionProvider();
+				if (selectionProvider != null)
+					return selectionProvider.getSelection();
+			}
+			return globalSelection;
+		}
+		/*
+		 * (non-Javadoc) Method declared on <code> ISelectionProvider </code> .
+		 */
+		public void setSelection(ISelection selection) {
+			IEditorPart activeEditor = ((FormEditor) getMultiPageEditor())
+					.getActiveEditor();
+			if (activeEditor != null) {
+				ISelectionProvider selectionProvider = activeEditor.getSite()
+						.getSelectionProvider();
+				if (selectionProvider != null)
+					selectionProvider.setSelection(selection);
+			} else {
+				this.globalSelection = selection;
+				fireSelectionChanged(new SelectionChangedEvent(this,
+						globalSelection));
+			}
+		}
+	}
 	/**
 	 * The constructor.
 	 */
 	public FormEditor() {
 		pages = new Vector();
 	}
-	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+	/**
+	 * Overrides super to plug in a different selection provider.
+	 */
+	public void init(IEditorSite site, IEditorInput input)
+			throws PartInitException {
 		setSite(site);
 		setInput(input);
 		site.setSelectionProvider(new FormEditorSelectionProvider(this));
@@ -53,6 +104,13 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		toolkit = createToolkit(getContainer().getDisplay());
 		addPages();
 	}
+	/**
+	 * Creates the form toolkit.
+	 * 
+	 * @param display
+	 *            the display to use when creating the toolkit
+	 * @return the newly created toolkit instance
+	 */
 	protected FormToolkit createToolkit(Display display) {
 		return new FormToolkit(display);
 	}
@@ -72,6 +130,9 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		configurePage(i, page);
 		return i;
 	}
+	/**
+	 * Adds the complete editor part to the multi-page editor.
+	 */
 	public int addPage(IEditorPart editor, IEditorInput input)
 			throws PartInitException {
 		int index = super.addPage(editor, input);
@@ -80,17 +141,30 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		}
 		return index;
 	}
-	protected void configurePage(int index, IFormPage page) throws PartInitException {
+	/**
+	 * Configures the form page.
+	 * 
+	 * @param index
+	 *            the page index
+	 * @param page
+	 *            the page to configure
+	 * @throws PartInitException
+	 *             if there are problems in configuring the page
+	 */
+	protected void configurePage(int index, IFormPage page)
+			throws PartInitException {
 		setPageText(index, page.getTitle());
 		//setPageImage(index, page.getTitleImage());
 		page.setIndex(index);
 		registerPage(page);
 	}
-
+	/**
+	 * Called to indicate that the editor has been made dirty or the changes
+	 * have been saved.
+	 */
 	public void editorDirtyStateChanged() {
 		firePropertyChange(PROP_DIRTY);
 	}
-	
 	/**
 	 * Disposes the pages and the toolkit after disposing the editor itself.
 	 * Subclasses must call 'super' when reimplementing the method.
@@ -101,7 +175,8 @@ public abstract class FormEditor extends MultiPageEditorPart {
 			IFormPage page = (IFormPage) pages.get(i);
 			// don't dispose source pages because they will
 			// be disposed as nested editors by the superclass
-			if (!page.isEditor()) page.dispose();
+			if (!page.isEditor())
+				page.dispose();
 		}
 		pages = null;
 		toolkit.dispose();
@@ -115,8 +190,10 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	public FormToolkit getToolkit() {
 		return toolkit;
 	}
-	/*
-	 * Widens visibility for access by MultiPageKeyBindingEditorSite
+	/**
+	 * Widens the visibility of the method in the superclass.
+	 * 
+	 * @return the active nested editor
 	 */
 	public IEditorPart getActiveEditor() {
 		return super.getActiveEditor();
@@ -125,13 +202,15 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 * Returns the current page index. The value is identical to the value of
 	 * 'getActivePage()' except during the page switch, when this method still
 	 * has the old active page index.
-	 * <p>Another important difference is during the editor closing. When
-	 * the tab folder is disposed, 'getActivePage()' will return -1,
-	 * while this method will still return the last active page.
+	 * <p>
+	 * Another important difference is during the editor closing. When the tab
+	 * folder is disposed, 'getActivePage()' will return -1, while this method
+	 * will still return the last active page.
 	 * 
 	 * @see #getActivePage
 	 * 
-	 * @return the currently selected page or -1 if no page is currently selected
+	 * @return the currently selected page or -1 if no page is currently
+	 *         selected
 	 */
 	protected int getCurrentPage() {
 		return currentPage;
@@ -149,16 +228,14 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		}
 		// fix for windows handles
 		int oldPage = getCurrentPage();
-		
 		if (oldPage != -1 && pages.size() > oldPage
 				&& pages.get(oldPage) instanceof IFormPage) {
 			// Commit old page before activating the new one
-			IFormPage oldFormPage = (IFormPage)pages.get(oldPage);
+			IFormPage oldFormPage = (IFormPage) pages.get(oldPage);
 			IManagedForm mform = oldFormPage.getManagedForm();
-			if (mform!=null) 
+			if (mform != null)
 				mform.commit(false);
 		}
-
 		if (pages.size() > newPageIndex
 				&& pages.get(newPageIndex) instanceof IFormPage)
 			((IFormPage) pages.get(newPageIndex)).setActive(true);
@@ -174,7 +251,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 * 
 	 * @param pageId
 	 *            the id of the page to switch to
-	 * @return page that was set active or <samp>null</samp> if not found.
+	 * @return page that was set active or <samp>null </samp> if not found.
 	 */
 	public IFormPage setActivePage(String pageId) {
 		for (int i = 0; i < pages.size(); i++) {
@@ -209,7 +286,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 *            the id of the page to switch to
 	 * @param pageInput
 	 *            the page input
-	 * @return page that was set active or <samp>null</samp> if not found.
+	 * @return page that was set active or <samp>null </samp> if not found.
 	 */
 	public IFormPage setActivePage(String pageId, Object pageInput) {
 		IFormPage page = setActivePage(pageId);
@@ -221,18 +298,19 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		return page;
 	}
 	/**
-	 * Iterates through the pages calling similar method until
-	 * a page is found that contains the desired page input.
+	 * Iterates through the pages calling similar method until a page is found
+	 * that contains the desired page input.
 	 * 
-	 * @param pageInput the object to select and reveal
-	 * @return the page that accepted the request or <code>null</code>
-	 * if no page has the desired object.
+	 * @param pageInput
+	 *            the object to select and reveal
+	 * @return the page that accepted the request or <code>null</code> if no
+	 *         page has the desired object.
 	 * 
 	 * @see #setActivePage
 	 */
 	public IFormPage selectReveal(Object pageInput) {
-		for (int i=0; i<pages.size(); i++) {
-			IFormPage page = (IFormPage)pages.get(i);
+		for (int i = 0; i < pages.size(); i++) {
+			IFormPage page = (IFormPage) pages.get(i);
 			if (page.selectReveal(pageInput))
 				return page;
 		}
@@ -275,13 +353,6 @@ public abstract class FormEditor extends MultiPageEditorPart {
 					.setActivePage(getEditor(pageIndex));
 		}
 	}
-	private void registerPage(IFormPage page) throws PartInitException {
-		if (!pages.contains(page))
-			pages.add(page);
-		if (page.isEditor() == false) {
-			page.init(getEditorSite(), getEditorInput());
-		}
-	}
 	/**
 	 * Closes the editor programmatically.
 	 * 
@@ -298,5 +369,12 @@ public abstract class FormEditor extends MultiPageEditorPart {
 				}
 			}
 		});
+	}
+	private void registerPage(IFormPage page) throws PartInitException {
+		if (!pages.contains(page))
+			pages.add(page);
+		if (page.isEditor() == false) {
+			page.init(getEditorSite(), getEditorInput());
+		}
 	}
 }

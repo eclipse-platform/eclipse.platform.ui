@@ -18,16 +18,19 @@ import org.eclipse.ui.forms.IManagedForm;
  * several assumptions:
  * <ul>
  * <li>The form page has a managed form</li>
- * <li>The form page has a unique Id</li>
+ * <li>The form page has a unique id</li>
  * <li>The form page can be GUI but can also wrap a complete
  * editor class (in that case, it should return <code>true</code>
- * from isEditor()).</li>
+ * from <code>isEditor()</code> method).</li>
  * <li>The form page is lazy i.e. understands that 
  * its part control will be created at the last possible
- * moment</li>.
+ * moment.</li>.
  * </ul>
  * <p>Existing editors can be wrapped by implementing
  * this interface. In this case, 'isEditor' should return <code>true</code>.
+ * A common editor to wrap in <code>TextEditor</code> that is
+ * often added to show the raw source code of the file open into
+ * the multi-page editor.
  * 
  * @since 3.0
  */
@@ -105,10 +108,12 @@ public interface IFormPage extends IEditorPart {
 	/**
 	 * A hint to bring the provided object into focus. If the object is in a
 	 * tree or table control, select it. If it is shown on a scrollable page,
-	 * ensure that it is visible.
+	 * ensure that it is visible. If the object is not presented in 
+	 * the page, <code>false</code> should be returned to allow another
+	 * page to try.
 	 * 
 	 * @param object
-	 *            object to bring into focus
+	 *            object to select and reveal
 	 * @return <code>true</code> if the request was successful, <code>false</code>
 	 *         otherwise.
 	 */

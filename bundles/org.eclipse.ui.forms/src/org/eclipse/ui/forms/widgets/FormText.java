@@ -93,8 +93,7 @@ import org.eclipse.ui.forms.internal.widgets.*;
  * fully each time. Instead, combine the control in a composite with other
  * controls and let SWT take care of the dirty regions.
  * </p>
- * 
- * TODO (dejan) - spell out subclass contract
+ * <p>Although the class is not marked final,
  * @see FormToolkit
  * @see TableWrapLayout
  * @since 3.0
