@@ -30,10 +30,10 @@ public class ProjectPreferences extends EclipsePreferences {
 
 	protected boolean isLoading = false;
 	// cache
-	private int segmentCount = 0;
+	private int segmentCount;
 	private String qualifier;
 	private IProject project;
-	private EclipsePreferences loadLevel;
+	private IEclipsePreferences loadLevel;
 	private IFile file;
 	// cache which nodes have been loaded from disk
 	private static Set loadedNodes = new HashSet();
@@ -53,17 +53,19 @@ public class ProjectPreferences extends EclipsePreferences {
 	private ProjectPreferences(IEclipsePreferences parent, String name) {
 		super(parent, name);
 		// cache the segment count
-		IPath path = new Path(absolutePath());
-		segmentCount = path.segmentCount();
+		String path = absolutePath();
+		segmentCount = getSegmentCount(path);
 		if (segmentCount < 2)
 			return;
+
 		// cache the project name
-		String scope = path.segment(0);
-		if (ProjectScope.SCOPE.equals(scope))
-			project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.segment(1));
+		String projectName = getSegment(path, 1);
+		if (projectName != null)
+			project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+
 		// cache the qualifier
 		if (segmentCount > 2)
-			qualifier = path.segment(2);
+			qualifier = getSegment(path, 2);
 	}
 
 	/*
