@@ -1138,6 +1138,9 @@ public IStatus validateEdit(IFile[] files, Object context);
  * <li> must have a project as its immediate parent</li>
  * <li> project natures and the team hook may disallow linked resources on
  * projects they are associated with</li>
+ * <li> the global workspace preference to disable linking, 
+ * <code>ResourcesPlugin.PREF_DISABLE_LINKING</code> must not be set to 
+ * &quot;true&quot;</li>.
  * </ul>
  * </p>
  * <p>
@@ -1157,6 +1160,7 @@ public IStatus validateEdit(IFile[] files, Object context);
  * 	status object with severity <code>IStatus.WARNING</code> or 
  * 	<code>IStatus.ERROR</code> indicating what is wrong with the string
  * @see IStatus#OK
+ * @see ResourcesPlugin#PREF_DISABLE_LINKING
  * @since 2.1
  */
 public IStatus validateLinkLocation(IResource resource, IPath location);
