@@ -22,6 +22,8 @@ import org.eclipse.swt.graphics.*;
 public class OverlayIcon extends CompositeImageDescriptor {
 	// the base image
 	private Image base;
+	// the base as a descriptor
+	private ImageDescriptor descriptorBase;
 	// the overlay images
 	private ImageDescriptor[] overlays;
 	// the size
@@ -34,6 +36,9 @@ public class OverlayIcon extends CompositeImageDescriptor {
 	public static final int BOTTOM_LEFT = 2;
 	public static final int BOTTOM_RIGHT = 3;
 	
+	public static final int DEFAULT_WIDTH= 22;
+	public static final int DEFAULT_HEIGHT= 16;
+	
 	/**
 	 * OverlayIcon constructor.
 	 * 
@@ -44,6 +49,23 @@ public class OverlayIcon extends CompositeImageDescriptor {
 	 */
 	public OverlayIcon(Image base, ImageDescriptor[] overlays, int[] locations, Point size) {
 		this.base = base;
+		this.descriptorBase = null;
+		this.overlays = overlays;
+		this.locations = locations;
+		this.size = size;
+	}
+	
+	/**
+	 * OverlayIcon constructor.
+	 * 
+	 * @param base the base image
+	 * @param overlays the overlay images
+	 * @param locations the location of each image
+	 * @param size the size
+	 */
+	public OverlayIcon(ImageDescriptor descriptorBase, ImageDescriptor[] overlays, int[] locations, Point size) {
+		this.descriptorBase = descriptorBase;
+		this.base = null;
 		this.overlays = overlays;
 		this.locations = locations;
 		this.size = size;
@@ -87,7 +109,14 @@ public class OverlayIcon extends CompositeImageDescriptor {
 
 
 	protected void drawCompositeImage(int width, int height) {
-		drawImage(base.getImageData(), 0, 0);
+		if(descriptorBase != null) {
+			ImageData bg;
+			if (descriptorBase == null || (bg= descriptorBase.getImageData()) == null)
+				bg= DEFAULT_IMAGE_DATA;
+			drawImage(bg, 0, 0);
+		} else {
+			drawImage(base.getImageData(), 0, 0);
+		}
 		drawOverlays(overlays, locations);
 	}
 

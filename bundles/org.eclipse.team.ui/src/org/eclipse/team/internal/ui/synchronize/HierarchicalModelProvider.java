@@ -116,16 +116,8 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 		IResource local = info.getLocal();
 
 		if(diffNode instanceof SyncInfoModelElement) {
-			boolean wasConflict = isConflicting(diffNode);
-			// The update preserves any of the additional sync info bits
 			((SyncInfoModelElement)diffNode).update(info);
-			boolean isConflict = isConflicting(diffNode);
-			updateLabel(diffNode);
-			if (wasConflict && !isConflict) {
-				setParentConflict(diffNode, false);
-			} else if (!wasConflict && isConflict) {
-				setParentConflict(diffNode, true);
-			}
+			calculateProperties(diffNode, false);
 		} else {
 			removeFromViewer(local);
 			addResources(new IResource[] {local});

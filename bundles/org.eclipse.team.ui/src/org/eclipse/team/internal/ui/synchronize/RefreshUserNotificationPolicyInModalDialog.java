@@ -76,7 +76,9 @@ public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubsc
 		for (int i = 0; i < resources.length; i++) {
 			SyncInfo info = participant.getSubscriberSyncInfoCollector().getSubscriberSyncInfoSet().getSyncInfo(resources[i]);
 			if (info != null) {
-				CompareUI.openCompareEditor(new SyncInfoCompareInput(event.getSubscriber().getName(), info));
+				SyncInfoCompareInput input = new SyncInfoCompareInput(event.getSubscriber().getName(), info);
+				CompareUI.openCompareEditor(input);
+				input.setCompareEditor(TeamUIPlugin.getActivePage().getActiveEditor());
 			}
 		}
 	}

@@ -80,15 +80,11 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 				DiffNode syncNode = (DiffNode) element;
 				int kind = syncNode.getKind();
 				Image decoratedImage;
-				decoratedImage = getCompareImage(base, kind);
-				if (syncNode.hasChildren()) {
-					// The reason we still overlay the compare image is to
-					// ensure that the image width for all images shown in the viewer
-					// are consistent.
-					return propagateConflicts(decoratedImage, syncNode);
-				} else {
-					return decoratedImage;
-				}
+				decoratedImage = getCompareImage(base, kind);				
+				// The reason we still overlay the compare image is to
+				// ensure that the image width for all images shown in the viewer
+				// are consistent.
+				return propagateConflicts(decoratedImage, syncNode);				
 			}
 		}
 		return base;
@@ -129,10 +125,31 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 	private Image propagateConflicts(Image base, DiffNode element) {
 		// if the folder is already conflicting then don't bother propagating
 		// the conflict
+		List overlays = new ArrayList();
+		List locations = new ArrayList();
+		
 		int kind = element.getKind();
 		if ((kind & SyncInfo.DIRECTION_MASK) != SyncInfo.CONFLICTING) {
 			if (hasDecendantConflicts(element)) {
-				ImageDescriptor overlay = new OverlayIcon(base, new ImageDescriptor[]{TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_CONFLICT_OVR)}, new int[]{OverlayIcon.BOTTOM_LEFT}, new Point(base.getBounds().width, base.getBounds().height));
+				overlays.add(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_CONFLICT_OVR));
+				locations.add(new Integer(OverlayIcon.BOTTOM_RIGHT));
+			}
+		}
+			if(hasErrorMarker(element)) {
+				overlays.add(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_ERROR_OVR));
+				locations.add(new Integer(OverlayIcon.BOTTOM_LEFT));
+			} else if(hasWarningMarker(element)) {
+				overlays.add(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_WARNING_OVR));
+				locations.add(new Integer(OverlayIcon.BOTTOM_LEFT));
+			}
+			
+			if(! overlays.isEmpty()) {
+				ImageDescriptor[] overlayImages = (ImageDescriptor[]) overlays.toArray(new ImageDescriptor[overlays.size()]);
+				int[] locationInts = new int[locations.size()];
+				for (int i = 0; i < locations.size(); i++) {
+						locationInts[i] =((Integer) locations.get(i)).intValue();
+				}
+				ImageDescriptor overlay = new OverlayIcon(base, overlayImages, locationInts, new Point(base.getBounds().width, base.getBounds().height));
 				if (fgImageCache == null) {
 					fgImageCache = new HashMap(10);
 				}
@@ -143,7 +160,7 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 				}
 				return conflictDecoratedImage;
 			}
-		}
+		
 		return base;
 	}
 	
@@ -154,6 +171,28 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 	private boolean hasDecendantConflicts(DiffNode node) {
 		if(node instanceof ISynchronizeModelElement) {
 			return ((ISynchronizeModelElement)node).getProperty(ISynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY);
+		}
+		return false;
+	}
+	
+	/**
+	 * Return whether this diff node has descendant conflicts in the view in which it appears.
+	 * @return whether the node has descendant conflicts
+	 */
+	private boolean hasErrorMarker(DiffNode node) {
+		if(node instanceof ISynchronizeModelElement) {
+			return ((ISynchronizeModelElement)node).getProperty(ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY);
+		}
+		return false;
+	}
+	
+	/**
+	 * Return whether this diff node has descendant conflicts in the view in which it appears.
+	 * @return whether the node has descendant conflicts
+	 */
+	private boolean hasWarningMarker(DiffNode node) {
+		if(node instanceof ISynchronizeModelElement) {
+			return ((ISynchronizeModelElement)node).getProperty(ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY);
 		}
 		return false;
 	}

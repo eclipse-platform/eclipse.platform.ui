@@ -22,6 +22,8 @@ public interface ISynchronizeModelElement extends IDiffContainer, ITypedElement,
 
 	public static final String BUSY_PROPERTY = TeamUIPlugin.ID + ".busy"; //$NON-NLS-1$
 	public static final String PROPAGATED_CONFLICT_PROPERTY = TeamUIPlugin.ID + ".conflict"; //$NON-NLS-1$
+	public static final String PROPAGATED_ERROR_MARKER_PROPERTY = TeamUIPlugin.ID + ".error"; //$NON-NLS-1$
+	public static final String PROPAGATED_WARNING_MARKER_PROPERTY = TeamUIPlugin.ID + ".warning"; //$NON-NLS-1$
 
 	public abstract void addPropertyChangeListener(IPropertyChangeListener listener);
 

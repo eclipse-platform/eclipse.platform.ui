@@ -29,8 +29,10 @@ public abstract class SynchronizeModelElement extends DiffNode implements IAdapt
 	/*
 	 * Internal flags bits for stroing properties in the flags variable
 	 */
-	private static final int BUSY_FLAG = 1;
-	private static final int PROPAGATED_CONFLICT_FLAG = 2;
+	private static final int BUSY_FLAG = 0x01;
+	private static final int PROPAGATED_CONFLICT_FLAG = 0x02;
+	private static final int PROPAGATED_ERROR_FLAG = 0x04;
+	private static final int PROPAGATED_WARNING_FLAG =0x08;
 
 	// Instance variable containing the flags for this node
 	private int flags;
@@ -153,6 +155,10 @@ public abstract class SynchronizeModelElement extends DiffNode implements IAdapt
 			return BUSY_FLAG;
 		} else if (propertyName == PROPAGATED_CONFLICT_PROPERTY) {
 			return PROPAGATED_CONFLICT_FLAG;
+		} else if(propertyName == PROPAGATED_ERROR_MARKER_PROPERTY) {
+			return PROPAGATED_ERROR_FLAG;
+		} else if(propertyName == PROPAGATED_WARNING_MARKER_PROPERTY) {
+			return PROPAGATED_WARNING_FLAG;
 		}
 		return 0;
 	}

@@ -66,7 +66,9 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 						IResource file = resources[0];
 						SyncInfo info = participant.getSubscriberSyncInfoCollector().getSubscriberSyncInfoSet().getSyncInfo(file);
 						if(info != null) {
-							CompareUI.openCompareEditor(new SyncInfoCompareInput(participant.getName(), info));
+							SyncInfoCompareInput input = new SyncInfoCompareInput(participant.getName(), info);
+							CompareUI.openCompareEditor(input);
+							input.setCompareEditor(TeamUIPlugin.getActivePage().getActiveEditor());
 							prompt = false;
 						}
 					}

@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -45,7 +46,7 @@ import org.eclipse.ui.progress.UIJob;
  * @see CompressedFoldersModelProvider
  * @since 3.0
  */
-public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeListener, ISynchronizeModelProvider {
+public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeListener, ISynchronizeModelProvider, IResourceChangeListener {
 
 	// Flasg to indicate if tree control should be updated while
 	// building the model.
@@ -345,9 +346,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	protected void removeFromViewer(IResource resource) {
 		ISynchronizeModelElement node = getModelObject(resource);
 		if (node == null) return;
-		if (isConflicting(node)) {
-			setParentConflict(node, false);
-		}
+		calculateProperties(node, true);
 		clearModelObjects(node);
 		if (canUpdateViewer()) {
 			doRemove(node);
@@ -383,9 +382,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	protected void addToViewer(ISynchronizeModelElement node) {
 		associateDiffNode(node);
 		node.addPropertyChangeListener(listener);
-		if (isConflicting(node)) {
-			setParentConflict(node, true);
-		}
+		calculateProperties(node, false);
 		if (canUpdateViewer()) {
 			doAdd((SynchronizeModelElement)node.getParent(), node);
 		}
@@ -439,8 +436,39 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 		}
 	}
 
-	protected void setParentConflict(ISynchronizeModelElement diffNode, boolean value) {
-		diffNode.setPropertyToRoot(ISynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY, value);
+	protected void calculateProperties(ISynchronizeModelElement element, boolean clear) {
+		element.setPropertyToRoot(ISynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY, isConflicting(element));
+		IResource resource = element.getResource();
+		if(resource != null) {
+			try {
+				boolean error = false;
+				boolean warning = false;
+				if(! clear) {
+					IMarker[] markers = resource.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+					for (int i = 0; i < markers.length; i++) {
+						IMarker marker = markers[i];
+						Integer severity = (Integer)marker.getAttribute(IMarker.SEVERITY);
+						if(severity.intValue() == IMarker.SEVERITY_ERROR) {
+							error = true; 
+							break;
+						} else if(severity.intValue() == IMarker.SEVERITY_WARNING) {
+							warning = true;
+						}
+					}
+				}
+				element.setPropertyToRoot(ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY, error);
+				if(! error) {
+					element.setPropertyToRoot(ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY, warning);
+				}
+			} catch (CoreException e) {
+				TeamUIPlugin.log(e);
+			}
+		}
+		updateParentLabels(element);
+	}
+	
+	protected void setPropertyToRoot(ISynchronizeModelElement diffNode, String propertyName, boolean value) {
+		diffNode.setPropertyToRoot(propertyName, value);
 		updateParentLabels(diffNode);
 	}
 
@@ -450,5 +478,45 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 			diffNode = (ISynchronizeModelElement)diffNode.getParent();
 			updateLabel(diffNode);
 		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+	 */
+	public void resourceChanged(final IResourceChangeEvent event) {
+		final Control ctrl = getViewer().getControl();
+		if (ctrl != null && !ctrl.isDisposed()) {
+			ctrl.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					if (!ctrl.isDisposed()) {
+						BusyIndicator.showWhile(ctrl.getDisplay(), new Runnable() {
+							public void run() {
+								String[] markerTypes = getMarkerTypes();
+								boolean refreshNeeded = false;
+								for (int idx = 0; idx < markerTypes.length; idx++) {
+									IMarkerDelta[] markerDeltas = event.findMarkerDeltas(markerTypes[idx], true);
+									List changes = new ArrayList(markerDeltas.length);
+									for (int i = 0; idx < markerDeltas.length; idx++) {
+										IMarkerDelta delta = markerDeltas[i];
+										int kind = delta.getKind();
+											ISynchronizeModelElement element = getModelObject(delta.getResource());
+											if(element != null) {
+												calculateProperties(element, false);
+											}
+									}
+								}
+								firePendingLabelUpdates();
+							}
+						});
+					}
+				}
+			});
+		}
+	}
+	
+	
+	protected String[] getMarkerTypes() {
+		return new String[] {IMarker.PROBLEM};
 	}
 }
