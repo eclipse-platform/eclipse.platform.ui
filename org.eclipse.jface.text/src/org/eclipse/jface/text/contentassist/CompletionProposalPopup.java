@@ -337,7 +337,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private ICompletionProposal getSelectedProposal() {
 		int i= fProposalTable.getSelectionIndex();
-		if (i < 0 || i >= fFilteredProposals.length)
+		if (fFilteredProposals == null || i < 0 || i >= fFilteredProposals.length)
 			return null;
 		return fFilteredProposals[i];
 	}
