@@ -2,9 +2,9 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.ui.internal.browser;
+package org.eclipse.help.internal.browser;
 
-import org.eclipse.help.ui.browser.*;
+import org.eclipse.help.browser.*;
 
 /**
  * Produces Custom Browser

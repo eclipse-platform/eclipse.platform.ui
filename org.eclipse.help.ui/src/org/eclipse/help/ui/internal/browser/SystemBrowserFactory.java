@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.ui.internal.browser;
-import org.eclipse.help.ui.browser.*;
+import org.eclipse.help.browser.*;
 public class SystemBrowserFactory implements IBrowserFactory {
 	/**
 	 * Constructor.

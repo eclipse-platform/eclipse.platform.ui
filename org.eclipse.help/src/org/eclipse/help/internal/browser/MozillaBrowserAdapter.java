@@ -2,15 +2,16 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.ui.internal.browser;
+package org.eclipse.help.internal.browser;
 import java.io.*;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.util.Logger;
-import org.eclipse.help.ui.browser.IBrowser;
-import org.eclipse.help.ui.internal.WorkbenchHelpPlugin;
-import org.eclipse.help.ui.internal.util.*;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.help.browser.IBrowser;
+
 /**
  * Browser adapter for browsers supporting
  * -remote openURL command line option
@@ -93,7 +94,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 		setSizePending = true;
 	}
 	private synchronized String createPositioningURL(String url) {
-		IPath pluginPath = WorkbenchHelpPlugin.getDefault().getStateLocation();
+		IPath pluginPath = HelpPlugin.getDefault().getStateLocation();
 		File outFile =
 			pluginPath
 				.append("mozillaPositon")
@@ -144,22 +145,12 @@ public class MozillaBrowserAdapter implements IBrowser {
 				return pr.exitValue();
 			} catch (InterruptedException e) {
 			} catch (IOException e) {
-				Logger.logError(
-					WorkbenchResources.getString(
+				String msg =
+					Resources.getString(
 						"MozillaBrowserAdapter.executeFailed",
-						executableName),
-					e);
-				try {
-					Display.findDisplay(uiThread).asyncExec(new Runnable() {
-						public void run() {
-							ErrorUtil.displayErrorDialog(
-								WorkbenchResources.getString(
-									"MozillaBrowserAdapter.executeFailed",
-									executableName));
-						}
-					});
-				} catch (Exception e2) {
-				}
+						executableName);
+				Logger.logError(msg, e);
+				HelpSystem.getDefaultErrorUtil().displayError(msg, uiThread);	
 				// return success so second command does not execute
 				return 0;
 			}

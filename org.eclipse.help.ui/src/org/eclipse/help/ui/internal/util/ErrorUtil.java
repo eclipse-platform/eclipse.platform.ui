@@ -5,12 +5,26 @@ package org.eclipse.help.ui.internal.util;
  */
 import org.eclipse.help.internal.util.*;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 /**
  * Utiliy class for common error displaying tasks.
  */
-public class ErrorUtil {
+public class ErrorUtil implements IErrorUtil {
+	public void displayError(String msg) {
+		displayErrorDialog(msg);
+	}
+
+	public void displayError(final String msg, Thread uiThread) {
+		try {
+			Display.findDisplay(uiThread).asyncExec(new Runnable() {
+				public void run() {
+					displayErrorDialog(msg);
+				}
+			});
+		} catch (Exception e2) {
+		}
+	}
 	/**
 	 * Immidiately displays error dialog with a given string,
 	 * also logs the error using Logger.logError().

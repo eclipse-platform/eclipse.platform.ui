@@ -2,12 +2,11 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.ui.internal.browser;
+package org.eclipse.help.internal.browser;
 
-import org.eclipse.help.internal.util.Logger;
-import org.eclipse.help.ui.browser.IBrowser;
-import org.eclipse.help.ui.internal.WorkbenchHelpPlugin;
-import org.eclipse.help.ui.internal.util.*;
+import org.eclipse.help.internal.util.*;
+import org.eclipse.help.browser.IBrowser;
+import org.eclipse.help.internal.HelpPlugin;
 
 /**
  * 
@@ -31,9 +30,9 @@ public class CustomBrowser implements IBrowser {
 	/**
 	 * @see org.eclipse.help.ui.browser.IBrowser#displayURL(java.lang.String)
 	 */
-	public void displayURL(String url) {
+	public void displayURL(String url) throws Exception{
 		String path =
-			WorkbenchHelpPlugin.getDefault().getPluginPreferences().getString(
+			HelpPlugin.getDefault().getPluginPreferences().getString(
 				CustomBrowser.CUSTOM_BROWSER_PATH_KEY);
 		try {
 			Process pr = Runtime.getRuntime().exec(new String[] { path, url });
@@ -45,13 +44,12 @@ public class CustomBrowser implements IBrowser {
 			errConsumer.start();
 		} catch (Exception e) {
 			Logger.logError(
-				WorkbenchResources.getString(
+				Resources.getString(
 					"CustomBrowser.errorLaunching",
 					url,
 					path),
 				e);
-			ErrorUtil.displayErrorDialog(
-				WorkbenchResources.getString(
+			throw new Exception(Resources.getString(
 					"CustomBrowser.errorLaunching",
 					url,
 					path));

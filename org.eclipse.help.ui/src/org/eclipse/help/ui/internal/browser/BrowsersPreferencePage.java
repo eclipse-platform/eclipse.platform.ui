@@ -3,18 +3,19 @@ package org.eclipse.help.ui.internal.browser;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.browser.*;
 import org.eclipse.help.ui.internal.*;
-import org.eclipse.help.ui.internal.util.WorkbenchResources;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.swt.SWT;
+import org.eclipse.help.ui.internal.util.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.preference.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.help.*;
 
 /**
  * Preference page for selecting default web browser.

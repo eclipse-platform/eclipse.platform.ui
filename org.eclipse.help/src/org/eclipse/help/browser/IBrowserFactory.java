@@ -2,12 +2,12 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.ui.browser;
+package org.eclipse.help.browser;
 /**
  * Implementators of org.eclipse.help.ui.browsers
  * extension points must provide implementation of this
  * interface.
- * @deprecated Use the org.eclipse.help.browser.IBrowserFactory instead.
+ * @since 2.0
  */
 public interface IBrowserFactory {
 	/**

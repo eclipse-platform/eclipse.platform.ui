@@ -2,8 +2,10 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.ui.internal.browser.solaris;
-import org.eclipse.help.ui.browser.*;
+package org.eclipse.help.internal.browser.solaris;
+
+import org.eclipse.help.browser.*;
+
 public class NetscapeFactory implements IBrowserFactory {
 	private NetscapeBrowserAdapter browserInstance = null;
 	/**

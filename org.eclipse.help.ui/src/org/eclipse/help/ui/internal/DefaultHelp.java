@@ -108,10 +108,7 @@ public class DefaultHelp implements IHelp {
 	 */
 	public void displayHelpResource(String href) {
 		// check if this is a toc
-		IToc toc =
-			HelpSystem.getTocManager().getToc(
-				href,
-				BootLoader.getNL());
+		IToc toc = HelpSystem.getTocManager().getToc(href, BootLoader.getNL());
 		if (toc != null)
 			displayHelpResource(toc);
 		else if (
@@ -212,20 +209,23 @@ public class DefaultHelp implements IHelp {
 		if (!HelpSystem.ensureWebappRunning())
 			return;
 
-		// may want to display an error message
-		if (helpURL == null || helpURL.length() == 0) {
-			WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(
-				getBaseURL());
-		} else if (
-			helpURL.startsWith("tab=")
-				|| helpURL.startsWith("toc=")
-				|| helpURL.startsWith("topic=")
-				|| helpURL.startsWith("contextId=")) {
-			WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(
-				getBaseURL() + "?" + helpURL);
-		} else {
-			WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(
-				helpURL);
+		try {
+			if (helpURL == null || helpURL.length() == 0) {
+				WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(
+					getBaseURL());
+			} else if (
+				helpURL.startsWith("tab=")
+					|| helpURL.startsWith("toc=")
+					|| helpURL.startsWith("topic=")
+					|| helpURL.startsWith("contextId=")) {
+				WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(
+					getBaseURL() + "?" + helpURL);
+			} else {
+				WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(
+					helpURL);
+			}
+		} catch (Exception e) {
+			ErrorUtil.displayErrorDialog(e.getMessage());
 		}
 	}
 	/**

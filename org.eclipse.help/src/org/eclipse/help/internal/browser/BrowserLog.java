@@ -2,13 +2,13 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.ui.internal.util;
+package org.eclipse.help.internal.browser;
 
 import java.io.*;
 import java.text.*;
 import java.util.Date;
 
-import org.eclipse.help.ui.internal.WorkbenchHelpPlugin;
+import org.eclipse.help.internal.HelpPlugin;
 
 /**
  * Log for messages output by external browser processes.
@@ -26,7 +26,7 @@ public class BrowserLog {
 		try {
 			newSession = true;
 			logFileName =
-				WorkbenchHelpPlugin
+				HelpPlugin
 					.getDefault()
 					.getStateLocation()
 					.append("browser.log")

@@ -2,11 +2,11 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.ui.browser;
+package org.eclipse.help.browser;
 /**
  * Represents a web browser that can be used
  * by clients to display documents for the given URLs.
- * @deprecated Use the org.eclipse.help.browser.IBrowser instead.
+ * @since 2.0
  */
 public interface IBrowser {
 	/**
@@ -25,7 +25,7 @@ public interface IBrowser {
 	 * This method starts the browser if necessary.
 	 * @param url the URL to display in the browser
 	 */
-	public void displayURL(String url);
+	public void displayURL(String url) throws Exception;
 	/**
 	 * Queries the browser if setLocation
 	 * method is supported.

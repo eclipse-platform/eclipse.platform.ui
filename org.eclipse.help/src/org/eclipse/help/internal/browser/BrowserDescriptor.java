@@ -2,9 +2,10 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.ui.internal.browser;
-import org.eclipse.help.ui.browser.IBrowserFactory;
-class BrowserDescriptor {
+package org.eclipse.help.internal.browser;
+import org.eclipse.help.browser.IBrowserFactory;
+
+public class BrowserDescriptor {
 	private String browserID;
 	private String browserLabel;
 	private IBrowserFactory factory;

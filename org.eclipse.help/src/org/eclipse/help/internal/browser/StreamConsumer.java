@@ -1,11 +1,12 @@
-package org.eclipse.help.ui.internal.util;
+package org.eclipse.help.internal.browser;
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.io.*;
 
-import org.eclipse.help.internal.util.Logger;
+import org.eclipse.help.internal.util.*;
+
 /**
  * Used to receive output from processes
  */
@@ -24,7 +25,7 @@ public class StreamConsumer extends Thread {
 			}
 			bReader.close();
 		} catch (IOException ioe) {
-			Logger.logError(WorkbenchResources.getString("WE025"), ioe);
+			Logger.logError(Resources.getString("WE001"), ioe);
 		}
 	}
 }

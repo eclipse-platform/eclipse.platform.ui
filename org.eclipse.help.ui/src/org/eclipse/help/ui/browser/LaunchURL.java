@@ -5,11 +5,13 @@
 package org.eclipse.help.ui.browser;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.ui.internal.browser.BrowserManager;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.program.Program;
+import org.eclipse.help.browser.IBrowser;
+import org.eclipse.help.internal.browser.*;
+import org.eclipse.help.ui.internal.util.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.program.*;
 import org.eclipse.ui.*;
 
 /**
@@ -71,7 +73,11 @@ public class LaunchURL
 			Program.launch(url);
 		} else {
 			IBrowser browser = BrowserManager.getInstance().createBrowser();
-			browser.displayURL(url);
+			try{
+				browser.displayURL(url);
+			} catch(Exception e) {
+				ErrorUtil.displayErrorDialog(e.getMessage());
+			}
 		}
 	}
 

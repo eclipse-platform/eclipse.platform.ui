@@ -2,9 +2,9 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.ui.internal.browser;
+package org.eclipse.help.internal.browser;
 
-import org.eclipse.help.ui.browser.IBrowser;
+import org.eclipse.help.browser.IBrowser;
 
 /**
  * Wrapper for individual browsers
@@ -30,23 +30,23 @@ public class DefaultBrowser implements IBrowser {
 		this.browserAdapterId = browserAdapterId;
 	}
 	/**
-	 * @see org.eclipse.help.ui.browser.IBrowser#close()
+	 * @see org.eclipse.help.browser.IBrowser#close()
 	 */
 	public void close() {
 		browserAdapter.close();
 	}
 
 	/**
-	 * @see org.eclipse.help.ui.browser.IBrowser#isCloseSupported()
+	 * @see org.eclipse.help.browser.IBrowser#isCloseSupported()
 	 */
 	public boolean isCloseSupported() {
 		return browserAdapter.isCloseSupported();
 	}
 
 	/**
-	 * @see org.eclipse.help.ui.browser.IBrowser#displayURL(java.lang.String)
+	 * @see org.eclipse.help.browser.IBrowser#displayURL(java.lang.String)
 	 */
-	public void displayURL(String url) {
+	public void displayURL(String url) throws Exception {
 		checkDefaultAdapter();
 		if (newBrowserAdapter != null) {
 			browserAdapter.close();
@@ -67,7 +67,7 @@ public class DefaultBrowser implements IBrowser {
 	}
 
 	/**
-	 * @see org.eclipse.help.ui.browser.IBrowser#isSetLocationSupported()
+	 * @see org.eclipse.help.browser.IBrowser#isSetLocationSupported()
 	 */
 	public boolean isSetLocationSupported() {
 		checkDefaultAdapter();
@@ -80,7 +80,7 @@ public class DefaultBrowser implements IBrowser {
 	}
 
 	/**
-	 * @see org.eclipse.help.ui.browser.IBrowser#isSetSizeSupported()
+	 * @see org.eclipse.help.browser.IBrowser#isSetSizeSupported()
 	 */
 	public boolean isSetSizeSupported() {
 		checkDefaultAdapter();
@@ -93,7 +93,7 @@ public class DefaultBrowser implements IBrowser {
 	}
 
 	/**
-	 * @see org.eclipse.help.ui.browser.IBrowser#setLocation(int, int)
+	 * @see org.eclipse.help.browser.IBrowser#setLocation(int, int)
 	 */
 	public void setLocation(int x, int y) {
 		checkDefaultAdapter();
@@ -104,7 +104,7 @@ public class DefaultBrowser implements IBrowser {
 	}
 
 	/**
-	 * @see org.eclipse.help.ui.browser.IBrowser#setSize(int, int)
+	 * @see org.eclipse.help.browser.IBrowser#setSize(int, int)
 	 */
 	public void setSize(int width, int height) {
 		checkDefaultAdapter();

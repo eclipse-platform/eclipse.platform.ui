@@ -18,12 +18,14 @@
       <import plugin="org.eclipse.help.appserver"/>
    </requires>
 
-
+<!-- Extension points -->
    <extension-point id="contexts" name="%contexts_extension_point_name" schema="schema/contexts.mxsd"/>
    <extension-point id="luceneAnalyzer" name="%lucene_analyzer" schema="schema/luceneAnalyzer.mxsd"/>
    <extension-point id="support" name="%support_extension_point_name" schema="schema/support.mxsd"/>
    <extension-point id="toc" name="%toc_extension_point_name" schema="schema/toc.mxsd"/>
    <extension-point id="webapp" name="%webapp_extension_point_name" schema="schema/webapp.mxsd"/>
+   <extension-point id="browser" name="%browser_extension_point_name" schema="schema/browser.mxsd"/>
+
 
 <!--  Help URL protocols -->
    <extension
@@ -88,5 +90,99 @@
             class="org.apache.lucene.analysis.de.GermanAnalyzer">
       </analyzer>
    </extension>
-
+<!-- Web Browsers -->
+   <extension
+         point="org.eclipse.help.browser">
+      <browser
+            name="%mozilla_adapter"
+            id="org.eclipse.help.mozillaLinux">
+         <factoryclass
+               class="org.eclipse.help.internal.browser.MozillaFactory">
+            <parameter
+                  name="executable"
+                  value="mozilla">
+            </parameter>
+            <parameter
+                  name="executableName"
+                  value="%mozilla">
+            </parameter>
+            <parameter
+                  name="os"
+                  value="Linux">
+            </parameter>
+         </factoryclass>
+      </browser>
+      <browser
+            name="%netscape_adapter"
+            id="org.eclipse.help.netscapeLinux">
+         <factoryclass
+               class="org.eclipse.help.internal.browser.MozillaFactory">
+            <parameter
+                  name="executable"
+                  value="netscape">
+            </parameter>
+            <parameter
+                  name="executableName"
+                  value="%netscape">
+            </parameter>
+            <parameter
+                  name="os"
+                  value="Linux">
+            </parameter>
+         </factoryclass>
+      </browser>
+      <browser
+            name="%netscape_adapter"
+            id="org.eclipse.help.netscapeAIX">
+         <factoryclass
+               class="org.eclipse.help.internal.browser.MozillaFactory">
+            <parameter
+                  name="executable"
+                  value="netscape">
+            </parameter>
+            <parameter
+                  name="executableName"
+                  value="%netscape">
+            </parameter>
+            <parameter
+                  name="os"
+                  value="AIX">
+            </parameter>
+         </factoryclass>
+      </browser>
+      <browser
+            name="%netscape_adapter"
+            id="org.eclipse.help.netscapeHPUX">
+         <factoryclass
+               class="org.eclipse.help.internal.browser.MozillaFactory">
+            <parameter
+                  name="executable"
+                  value="netscape">
+            </parameter>
+            <parameter
+                  name="executableName"
+                  value="%netscape">
+            </parameter>
+            <parameter
+                  name="os"
+                  value="HP">
+            </parameter>
+         </factoryclass>
+      </browser>
+      <browser
+            factoryclass="org.eclipse.help.internal.browser.solaris.NetscapeFactory"
+            name="%netscape_adapter"
+            id="org.eclipse.help.netscapeSolaris">
+      </browser>
+      <browser
+            factoryclass="org.eclipse.help.internal.browser.macosx.DefaultBrowserFactory"
+            name="%defaultBrowser"
+            id="org.eclipse.help.defaultBrowserMacOSX">
+      </browser>
+      <browser
+            factoryclass="org.eclipse.help.internal.browser.CustomBrowserFactory"
+            name="%custom_browser"
+            id="org.eclipse.help.custombrowser">
+      </browser>
+   </extension>
 </plugin>

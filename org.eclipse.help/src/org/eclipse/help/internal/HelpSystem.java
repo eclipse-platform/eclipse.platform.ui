@@ -41,6 +41,8 @@ public final class HelpSystem {
 	protected HashMap workingSetManagers;
 	private int mode = MODE_WORKBENCH;
 	private boolean webappStarted = false;
+	private IErrorUtil defaultErrorMessenger;
+
 	private boolean webappRunning = false;
 	/**
 	 * HelpSystem constructor comment.
@@ -123,6 +125,16 @@ public final class HelpSystem {
 	 */
 	public static void startup() {
 		try {
+			setDefaultErrorUtil(new IErrorUtil() {
+				public void displayError(String msg) {
+					System.out.println(msg);
+				}
+
+				public void displayError(String msg, Thread uiThread) {
+					System.out.println(msg);
+				}
+
+			});
 			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
 			Logger.setDebugLevel(prefs.getInt(LOG_LEVEL_KEY));
 		} catch (Exception e) {
@@ -187,6 +199,22 @@ public final class HelpSystem {
 	}
 
 	/**
+	 * Sets the error messenger
+	 */
+	public static void setDefaultErrorUtil(IErrorUtil em) {
+		getInstance().defaultErrorMessenger = em;
+	}
+	
+	/**
+	 * Returns the default error messenger. When no UI is present, all
+	 * errors are sent to System.out.
+	 * @return IErrorMessenger
+	 */
+	public static IErrorUtil getDefaultErrorUtil() {
+		return getInstance().defaultErrorMessenger;
+	}
+	
+	/**
 	 * Returns the plugin id that defines the help webapp
 	 */
 	private static String getWebappPlugin() {
@@ -220,7 +248,7 @@ public final class HelpSystem {
 						.getUniqueIdentifier();
 			}
 		}
-		
+
 		// if all fails
 		return "org.eclipse.help.webapp";
 	}

@@ -20,10 +20,6 @@
       <import plugin="org.eclipse.ui"/>
    </requires>
 
-
-<!-- Extension points -->
-   <extension-point id="browser" name="%browser_extention_point_name" schema="schema/browser.mxsd"/>
-
 <!-- Default Help UI  -->
    <extension
          point="org.eclipse.help.support">
@@ -97,102 +93,11 @@
    </extension>
 <!-- Web Browsers -->
    <extension
-         point="org.eclipse.help.ui.browser">
-      <browser
-            name="%mozilla_adapter"
-            id="org.eclipse.help.ui.mozillaLinux">
-         <factoryclass
-               class="org.eclipse.help.ui.internal.browser.MozillaFactory">
-            <parameter
-                  name="executable"
-                  value="mozilla">
-            </parameter>
-            <parameter
-                  name="executableName"
-                  value="%mozilla">
-            </parameter>
-            <parameter
-                  name="os"
-                  value="Linux">
-            </parameter>
-         </factoryclass>
-      </browser>
-      <browser
-            name="%netscape_adapter"
-            id="org.eclipse.help.ui.netscapeLinux">
-         <factoryclass
-               class="org.eclipse.help.ui.internal.browser.MozillaFactory">
-            <parameter
-                  name="executable"
-                  value="netscape">
-            </parameter>
-            <parameter
-                  name="executableName"
-                  value="%netscape">
-            </parameter>
-            <parameter
-                  name="os"
-                  value="Linux">
-            </parameter>
-         </factoryclass>
-      </browser>
-      <browser
-            name="%netscape_adapter"
-            id="org.eclipse.help.ui.netscapeAIX">
-         <factoryclass
-               class="org.eclipse.help.ui.internal.browser.MozillaFactory">
-            <parameter
-                  name="executable"
-                  value="netscape">
-            </parameter>
-            <parameter
-                  name="executableName"
-                  value="%netscape">
-            </parameter>
-            <parameter
-                  name="os"
-                  value="AIX">
-            </parameter>
-         </factoryclass>
-      </browser>
-      <browser
-            name="%netscape_adapter"
-            id="org.eclipse.help.ui.netscapeHPUX">
-         <factoryclass
-               class="org.eclipse.help.ui.internal.browser.MozillaFactory">
-            <parameter
-                  name="executable"
-                  value="netscape">
-            </parameter>
-            <parameter
-                  name="executableName"
-                  value="%netscape">
-            </parameter>
-            <parameter
-                  name="os"
-                  value="HP">
-            </parameter>
-         </factoryclass>
-      </browser>
-      <browser
-            factoryclass="org.eclipse.help.ui.internal.browser.solaris.NetscapeFactory"
-            name="%netscape_adapter"
-            id="org.eclipse.help.ui.netscapeSolaris">
-      </browser>
-      <browser
-            factoryclass="org.eclipse.help.ui.internal.browser.macosx.DefaultBrowserFactory"
-            name="%defaultBrowser"
-            id="org.eclipse.help.ui.defaultBrowserMacOSX">
-      </browser>
+         point="org.eclipse.help.browser">
       <browser
             factoryclass="org.eclipse.help.ui.internal.browser.SystemBrowserFactory"
             name="%system_browser"
             id="org.eclipse.help.ui.systembrowser">
-      </browser>
-      <browser
-            factoryclass="org.eclipse.help.ui.internal.browser.CustomBrowserFactory"
-            name="%custom_browser"
-            id="org.eclipse.help.ui.custombrowser">
       </browser>
    </extension>
 <!-- Search Page -->

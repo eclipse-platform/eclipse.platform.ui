@@ -2,13 +2,15 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.ui.internal.browser.solaris;
+package org.eclipse.help.internal.browser.solaris;
 import java.io.IOException;
 
+import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.browser.*;
+import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.util.Logger;
-import org.eclipse.help.ui.browser.IBrowser;
-import org.eclipse.help.ui.internal.util.*;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.help.browser.IBrowser;
+
 public class NetscapeBrowserAdapter implements IBrowser {
 	// delay that it takes the browser to start responding
 	// to remote command after browser command has been called
@@ -101,20 +103,10 @@ public class NetscapeBrowserAdapter implements IBrowser {
 			pr.waitFor();
 		} catch (InterruptedException e) {
 		} catch (IOException e) {
-			Logger.logError(
-				WorkbenchResources.getString(
-					"NetscapeBrowserAdapter.executeFailed"),
-				e);
-			try {
-				Display.findDisplay(uiThread).asyncExec(new Runnable() {
-					public void run() {
-						ErrorUtil.displayErrorDialog(
-							WorkbenchResources.getString(
-								"NetscapeBrowserAdapter.executeFailed"));
-					}
-				});
-			} catch (Exception e2) {
-			}
+			String msg =
+				Resources.getString("NetscapeBrowserAdapter.executeFailed");
+			Logger.logError(msg, e);
+			HelpSystem.getDefaultErrorUtil().displayError(msg, uiThread);
 		} finally {
 			opened = false;
 		}

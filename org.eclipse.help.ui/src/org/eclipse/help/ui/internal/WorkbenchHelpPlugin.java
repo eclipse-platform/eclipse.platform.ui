@@ -6,8 +6,9 @@ package org.eclipse.help.ui.internal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.appserver.WebappManager;
-import org.eclipse.help.ui.browser.IBrowser;
-import org.eclipse.help.ui.internal.browser.BrowserManager;
+import org.eclipse.help.browser.IBrowser;
+import org.eclipse.help.internal.browser.BrowserManager;
+import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.help.ui.internal.workingset.HelpWorkingSetSynchronizer;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -59,6 +60,7 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	 * Called by Platform after loading the plugin
 	 */
 	public void startup() {
+		HelpSystem.setDefaultErrorUtil(new ErrorUtil());
 		if (HelpSystem.getMode() == HelpSystem.MODE_WORKBENCH) {
 			// register the working set listener to keep the ui and the help working sets in sych
 			workingSetListener = new HelpWorkingSetSynchronizer();

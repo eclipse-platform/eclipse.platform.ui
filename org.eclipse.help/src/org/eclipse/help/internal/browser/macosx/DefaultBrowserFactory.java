@@ -4,9 +4,9 @@
  * 
  * Andre Weinand, OTI - Initial version
  */
-package org.eclipse.help.ui.internal.browser.macosx;
+package org.eclipse.help.internal.browser.macosx;
 
-import org.eclipse.help.ui.browser.*;
+import org.eclipse.help.browser.*;
 
 
 public class DefaultBrowserFactory implements IBrowserFactory {

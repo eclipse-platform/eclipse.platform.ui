@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.ui.internal.browser;
-import org.eclipse.help.ui.browser.IBrowser;
+import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.swt.program.Program;
 /**
