@@ -23,6 +23,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginPrerequisite;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
@@ -46,20 +60,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginPrerequisite;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -106,7 +106,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 
-import org.eclipse.ui.*;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
@@ -114,6 +113,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.INavigationLocation;
 import org.eclipse.ui.INavigationLocationProvider;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IReusableEditor;
@@ -771,11 +771,167 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	};
 
 	/**
+	 * This action implements smart end.
+	 * Instead of going to the end of a line it does the following:
+	 * - if smart home/end is enabled and the caret is before the line's last non-whitespace and then the caret is moved directly after it 
+	 * - if the caret is after last non-whitespace the caret is moved at the end of the line
+	 * - if the caret is at the end of the line the caret is moved directly after the line's last non-whitespace character
+	 *  @since 2.1
+	 */
+	private class LineEndAction extends TextNavigationAction {
+
+		private boolean fDoSelect;
+		
+		public LineEndAction(StyledText textWidget, boolean doSelect) {
+			super(textWidget, ST.LINE_END);
+			fDoSelect= doSelect;
+		}
+		
+		/*
+		 * @see org.eclipse.jface.action.IAction#run()
+		 */
+		public void run() {
+			boolean isSmartHomeEndEnabled= false;
+			IPreferenceStore store= getPreferenceStore();
+			if (store != null)
+				isSmartHomeEndEnabled= store.getBoolean(AbstractTextEditor.PREFERENCE_NAVIGATION_SMART_HOME_END);
+
+			StyledText st= getSourceViewer().getTextWidget();
+			if (st == null || st.isDisposed())
+				return;
+			int caretOffset= st.getCaretOffset();
+			int lineNumber= st.getLineAtOffset(caretOffset);
+			int lineOffset= st.getOffsetAtLine(lineNumber);
+			
+			int lineLength;
+			try {
+				int caretOffsetInDocument= caretOffset + getSourceViewer().getVisibleRegion().getOffset();
+				lineLength= getSourceViewer().getDocument().getLineInformationOfOffset(caretOffsetInDocument).getLength();
+			} catch (BadLocationException ex) {
+				return;
+			}
+			int lineEndOffset= lineOffset + lineLength;	
+			
+			String line= ""; //$NON-NLS-1$
+			if (lineLength > 0)
+				line= st.getText(lineOffset, lineOffset + lineLength - 1);
+			int i= lineLength - 1;
+			while (i > 0 && Character.isWhitespace(line.charAt(i))) {
+				i--;
+			}
+			i++;
+
+			// Remember current selection
+			Point oldSelection= st.getSelection();
+
+			// Compute new caret position
+			int newCaretOffset= -1;
+			if (caretOffset == lineEndOffset)
+				// from end of line to end of text
+				newCaretOffset= lineOffset + i;
+			else if (isSmartHomeEndEnabled && caretOffset - lineOffset < i)
+				// to end of text
+				newCaretOffset= lineOffset + i;
+			else if (caretOffset < lineEndOffset)
+				// to end of line
+				newCaretOffset= lineEndOffset;
+
+			if (newCaretOffset == -1)
+				// do nothing
+				return;
+
+			st.setCaretOffset(newCaretOffset);
+			if (fDoSelect) {
+				int start= Math.min(oldSelection.x, caretOffset);
+				st.setSelection(start, newCaretOffset);
+			}
+			st.showSelection();
+		}
+	};
+
+	/**
+	 * This action implements smart home.
+	 * Instead of going to the start of a line it does the following:
+	 * - if smart home/end is enabled and the caret is after the line's first non-whitespace then the caret is moved directly before it
+	 * - if the caret is before the line's first non-whitespace the caret is moved to the beginning of the line 
+	 * - if the caret is at the beginning of the line the caret is moved directly before the line's first non-whitespace character
+	 *  @since 2.1
+	 */
+	private class LineStartAction extends TextNavigationAction {
+		
+		private boolean fDoSelect;
+		
+		public LineStartAction(StyledText textWidget, boolean doSelect) {
+			super(textWidget, ST.LINE_START);
+			fDoSelect= doSelect;
+		}
+		
+		/*
+		 * @see org.eclipse.jface.action.IAction#run()
+		 */
+		public void run() {
+			boolean isSmartHomeEndEnabled= false;
+			IPreferenceStore store= getPreferenceStore();
+			if (store != null)
+				isSmartHomeEndEnabled= store.getBoolean(AbstractTextEditor.PREFERENCE_NAVIGATION_SMART_HOME_END);
+
+			StyledText st= getSourceViewer().getTextWidget();
+			if (st == null || st.isDisposed())
+				return;
+		
+			int caretOffset= st.getCaretOffset();
+			int lineNumber= st.getLineAtOffset(caretOffset);
+			int lineOffset= st.getOffsetAtLine(lineNumber);
+			
+			int lineLength;
+			try {
+				int caretOffsetInDocument= caretOffset + getSourceViewer().getVisibleRegion().getOffset();
+				lineLength= getSourceViewer().getDocument().getLineInformationOfOffset(caretOffsetInDocument).getLength();
+			} catch (BadLocationException ex) {
+				return;
+			}
+			
+			String line= ""; //$NON-NLS-1$
+			if (lineLength > 0)
+				line= st.getText(lineOffset, lineOffset + lineLength - 1);
+			int i= 0;
+			while (i < lineLength && Character.isWhitespace(line.charAt(i)))
+				i++;
+
+			// Remember current selection
+			Point oldSelection= st.getSelection();
+
+			// Compute new caret position
+			int newCaretOffset= -1;
+			if (caretOffset == lineOffset)
+				// from start to beginning of text
+				newCaretOffset= lineOffset + i;
+			else if (isSmartHomeEndEnabled && caretOffset - lineOffset > i)
+				// to beginning of text
+				newCaretOffset= lineOffset + i;
+			else if (caretOffset > lineOffset)
+				// to beginning if line
+				newCaretOffset= lineOffset;
+
+			if (newCaretOffset == -1)
+				// do nothing
+				return;
+
+			st.setCaretOffset(newCaretOffset);
+			if (fDoSelect) {
+				int end= Math.max(oldSelection.y, caretOffset);
+				st.setSelectionRange(end, newCaretOffset - end);
+			}
+			st.showSelection();
+		}
+
+	};
+
+	/**
 	 * Internal action to show the editor's ruler context menu (accessibility).
 	 * @since 2.0
 	 */		
 	class ShowRulerContextMenuAction extends Action {
-
 		/*
 		 * @see IAction#run()
 		 */
@@ -871,6 +1027,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.0
 	 */
 	public final static String PREFERENCE_COLOR_FIND_SCOPE= "AbstractTextEditor.Color.FindScope"; //$NON-NLS-1$	
+	/** 
+	 * Key used to look up smart home/end preference
+	 * Value: <code>AbstractTextEditor.Navigation.SmartHomeEnd</code>
+	 * @since 2.1
+	 */
+	public final static String PREFERENCE_NAVIGATION_SMART_HOME_END= "AbstractTextEditor.Navigation.SmartHomeEnd"; //$NON-NLS-1$	
+
 	
 	/** Menu id for the editor context menu. */
 	public final static String DEFAULT_EDITOR_CONTEXT_MENU_ID= "#EditorContext"; //$NON-NLS-1$
@@ -2808,6 +2971,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action= new ScrollLinesAction(1);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SCROLL_LINE_DOWN);
 		setAction(ITextEditorActionDefinitionIds.SCROLL_LINE_DOWN, action);
+
+		action= new LineEndAction(textWidget, false);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_END);
+		setAction(ITextEditorActionDefinitionIds.LINE_END, action);
+
+		action= new LineStartAction(textWidget, false);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_START);
+		setAction(ITextEditorActionDefinitionIds.LINE_START, action);
+
+		action= new LineEndAction(textWidget, true);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SELECT_LINE_END);
+		setAction(ITextEditorActionDefinitionIds.SELECT_LINE_END, action);
+
+		action= new LineStartAction(textWidget, true);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SELECT_LINE_START);
+		setAction(ITextEditorActionDefinitionIds.SELECT_LINE_START, action);
 	}
 
 	/**
@@ -2941,7 +3120,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.ADD_BOOKMARK);
 		setAction(ITextEditorActionConstants.BOOKMARK, action);
 
-// FIXME: need another way to contribute this action		
+// FIXME: need another way to contribute this action
 //		action= new AddTaskAction(EditorMessages.getResourceBundle(), "Editor.AddTask.", this); //$NON-NLS-1$
 //		action.setHelpContextId(IAbstractTextEditorHelpContextIds.ADD_TASK_ACTION);
 //		action.setActionDefinitionId(ITextEditorActionDefinitionIds.ADD_TASK);
