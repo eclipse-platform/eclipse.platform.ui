@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
+import org.eclipse.compare.CompareUI;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.IPreferencePageContainer;
 import org.eclipse.swt.SWT;
@@ -73,7 +74,7 @@ public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
         if (container instanceof IWorkbenchPreferenceContainer) {
             IWorkbenchPreferenceContainer workbenchContainer = (IWorkbenchPreferenceContainer) container;
             new PreferenceLinkArea(getFieldEditorParent(), SWT.BORDER,
-                    "org.eclipse.compare.internal.ComparePreferencePage", Policy.bind("ComparePreferencePage.6"), //$NON-NLS-1$ //$NON-NLS-2$
+                    CompareUI.PREFERENCE_PAGE_ID, Policy.bind("ComparePreferencePage.6"), //$NON-NLS-1$ //$NON-NLS-2$
                     workbenchContainer, null); 
         }
     }
