@@ -12,8 +12,12 @@ package org.eclipse.help.ui.internal;
 
 import org.eclipse.help.*;
 import org.eclipse.help.internal.base.*;
+import org.eclipse.help.ui.internal.views.*;
 import org.eclipse.help.ui.internal.views.HelpView;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.PlatformUI;
@@ -33,6 +37,7 @@ import org.eclipse.ui.intro.IIntroPart;
  */
 public class DefaultHelpUI extends AbstractHelpUI {
 	private ContextHelpDialog f1Dialog = null;
+	private ContextHelpWindow f1Window = null;
 
 	private static final String HELP_VIEW_ID = "org.eclipse.help.ui.HelpView"; //$NON-NLS-1$
 
@@ -63,7 +68,8 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	
 	public void search(final String expression) {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (window != null && isActiveShell(window)) {
+		Shell activeShell = getActiveShell();
+		if (window != null && isActiveShell(activeShell, window)) {
 			IIntroManager introMng = PlatformUI.getWorkbench().getIntroManager();
 			IIntroPart intro = introMng.getIntro();
 			if (intro!=null && !introMng.isIntroStandby(intro))
@@ -115,7 +121,8 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			return;
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
-		if (window != null && isActiveShell(window)) {
+		Shell activeShell = getActiveShell();
+		if (window != null && isActiveShell(activeShell, window)) {
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
 				try {
@@ -134,13 +141,24 @@ public class DefaultHelpUI extends AbstractHelpUI {
 				}
 			}
 		}
+		// check the dialog
+		if (activeShell!=null) {
+			Object data = activeShell.getData();
+			if (data instanceof Window) {
+				displayContextAsHelpPane(activeShell, context);
+				return;
+			}
+		}
 		displayContextAsInfopop(context, x, y);
 	}
-
-	private boolean isActiveShell(IWorkbenchWindow window) {
-		// Test if the active shell belongs to this window
+	
+	private Shell getActiveShell() {
 		Display display = PlatformUI.getWorkbench().getDisplay();
-		Shell activeShell = display.getActiveShell();
+		return display.getActiveShell();
+	}
+
+	private boolean isActiveShell(Shell activeShell, IWorkbenchWindow window) {
+		// Test if the active shell belongs to this window
 		return activeShell != null && activeShell.equals(window.getShell());
 	}
 
@@ -151,6 +169,30 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			return;
 		f1Dialog = new ContextHelpDialog(context, x, y);
 		f1Dialog.open();
+	}
+	
+	private void displayContextAsHelpPane(Shell activeShell, IContext context) {
+		Control c = activeShell.getDisplay().getFocusControl();		
+		if (f1Window!=null) {
+			if (f1Window.getShell().getParent().equals(activeShell)) {
+				f1Window.update(context, c);
+				return;
+			}
+		}
+		Rectangle pbounds = activeShell.getBounds();
+		f1Window = new ContextHelpWindow(activeShell);
+		f1Window.create();
+		Shell helpShell = f1Window.getShell();
+		helpShell.setText("Help");
+		helpShell.setSize(300, pbounds.height);
+		f1Window.syncHelpBounds();
+		f1Window.update(context, c);
+		helpShell.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				f1Window = null;
+			}
+		});
+		helpShell.open();
 	}
 
 	/**
@@ -168,13 +210,8 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		// Use external when modal window is displayed
 		Display display = Display.getCurrent();
 		if (display != null) {
-			Shell activeShell = display.getActiveShell();
-			if (activeShell != null) {
-				if ((activeShell.getStyle() & (SWT.APPLICATION_MODAL
-						| SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL)) > 0) {
-					return true;
-				}
-			}
+			if (insideModalParent(display))
+				return true;
 		}
 		// Use external when no help frames are to be displayed, otherwise no
 		// navigation buttons.
@@ -182,6 +219,21 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			if (url.indexOf("?noframes=true") > 0 //$NON-NLS-1$
 					|| url.indexOf("&noframes=true") > 0) { //$NON-NLS-1$
 				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean insideModalParent(Display display) {
+		Shell activeShell = display.getActiveShell();
+		if (activeShell != null) {
+			Shell shell = activeShell;
+			
+			while (shell!=null) {
+				if ((shell.getStyle() & (SWT.APPLICATION_MODAL
+					| SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL)) > 0)
+					return true;
+				shell = (Shell)shell.getParent();
 			}
 		}
 		return false;

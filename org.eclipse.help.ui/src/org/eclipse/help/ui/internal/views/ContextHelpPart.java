@@ -23,6 +23,9 @@ import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.IPreferencePageContainer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -239,7 +242,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			if (data instanceof IWizardContainer) {
 				IWizardContainer wc = (IWizardContainer) data;
 				buff.append("\""); //$NON-NLS-1$
-				buff.append(wc.getCurrentPage().getName());
+				buff.append(wc.getCurrentPage().getTitle());
 				buff.append("\" OR \""); //$NON-NLS-1$
 				buff.append(wc.getCurrentPage().getWizard().getWindowTitle());
 				buff.append("\""); //$NON-NLS-1$
@@ -264,6 +267,10 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 						buff.append("\""); //$NON-NLS-1$
 					}
 				}
+				break;
+			} else if (data instanceof Window) {
+				Window w = (Window)data;
+				buff.append(w.getShell().getText());
 				break;
 			}
 			parent = parent.getParent();

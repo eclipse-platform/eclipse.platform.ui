@@ -320,8 +320,11 @@ public class ReusableHelpPart implements IHelpUIConstants {
 				else
 					bars.deactivate();
 				bars.updateActionBars();
-			} else
+			} else {
 				((SubToolBarManager) toolBarManager).setVisible(visible);
+				ReusableHelpPart.this.toolBarManager.update(true);
+				getControl().getParent().layout();
+			}
 		}
 
 		private void hookGlobalAction(String id, IHelpPart part) {
