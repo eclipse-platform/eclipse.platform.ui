@@ -121,6 +121,14 @@ public final class HelpSystem {
 		if (getInstance().searchManager != null) {
 			getInstance().searchManager.close();
 		}
+		// stop the web apps
+		WebappManager.stop("help");
+		if (getMode() != MODE_WORKBENCH)
+			WebappManager.stop("helpControl");
+			
+		// close any browsers created
+		BrowserManager.getInstance().closeAll();
+		
 		Logger.shutdown();
 	}
 	/**
