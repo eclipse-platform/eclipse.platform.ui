@@ -9,7 +9,6 @@
 
    <runtime>
       <library name="webapp.jar">
-         <packages prefixes="org.eclipse.help.internal.webapp"/>
       </library>
    </runtime>
    <requires>

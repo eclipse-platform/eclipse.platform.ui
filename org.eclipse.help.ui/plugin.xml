@@ -10,7 +10,6 @@
    <runtime>
       <library name="helpui.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.help.ui"/>
       </library>
    </runtime>
    <requires>

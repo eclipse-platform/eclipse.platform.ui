@@ -10,7 +10,6 @@
    <runtime>
       <library name="helpbase.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.help"/>
       </library>
    </runtime>
    <requires>
