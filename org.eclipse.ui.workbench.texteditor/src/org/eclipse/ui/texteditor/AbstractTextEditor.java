@@ -23,7 +23,6 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -3574,46 +3573,42 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.0
 	 */
 	private IAction findContributedAction(String actionID) {
-		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, "editorActions"); //$NON-NLS-1$
-		if (extensionPoint != null) {
-			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();			
+		List actions= new ArrayList();
+		IConfigurationElement[] elements= Platform.getExtensionRegistry().getConfigurationElementsFor(PlatformUI.PLUGIN_ID, "editorActions"); //$NON-NLS-1$
+		for (int i= 0; i < elements.length; i++) {
+			IConfigurationElement element= elements[i];				
+			if (TAG_CONTRIBUTION_TYPE.equals(element.getName())) {
+				if (!getSite().getId().equals(element.getAttribute("targetID"))) //$NON-NLS-1$
+					continue;
 
-			List actions= new ArrayList();
-			for (int i= 0; i < elements.length; i++) {
-				IConfigurationElement element= elements[i];				
-				if (TAG_CONTRIBUTION_TYPE.equals(element.getName())) {
-					if (!getSite().getId().equals(element.getAttribute("targetID"))) //$NON-NLS-1$
-						continue;
-
-					IConfigurationElement[] children= element.getChildren("action"); //$NON-NLS-1$
-					for (int j= 0; j < children.length; j++) {
-						IConfigurationElement child= children[j];
-						if (actionID.equals(child.getAttribute("actionID"))) //$NON-NLS-1$
-							actions.add(child);
-					}
+				IConfigurationElement[] children= element.getChildren("action"); //$NON-NLS-1$
+				for (int j= 0; j < children.length; j++) {
+					IConfigurationElement child= children[j];
+					if (actionID.equals(child.getAttribute("actionID"))) //$NON-NLS-1$
+						actions.add(child);
 				}
 			}
-			int actionSize= actions.size();
-			if (actionSize > 0) {
-				IConfigurationElement element;
-				if (actionSize > 1) {
-					IConfigurationElement[] actionArray= (IConfigurationElement[])actions.toArray(new IConfigurationElement[actionSize]);
-					ConfigurationElementSorter sorter= new ConfigurationElementSorter() {
-						/**
-						 * {@inheritDoc}
-						 */
-						public IConfigurationElement getConfigurationElement(Object object) {
-							return (IConfigurationElement)object;
-						}
-					};
-					sorter.sort(actionArray);
-					element= actionArray[0];
-				} else
-					element= (IConfigurationElement)actions.get(0);
-				
-				String defId = element.getAttribute(ActionDescriptor.ATT_DEFINITION_ID);
-				return new EditorPluginAction(element, "class", this, defId, IAction.AS_UNSPECIFIED); //$NON-NLS-1$			
-			}
+		}
+		int actionSize= actions.size();
+		if (actionSize > 0) {
+			IConfigurationElement element;
+			if (actionSize > 1) {
+				IConfigurationElement[] actionArray= (IConfigurationElement[])actions.toArray(new IConfigurationElement[actionSize]);
+				ConfigurationElementSorter sorter= new ConfigurationElementSorter() {
+					/**
+					 * {@inheritDoc}
+					 */
+					public IConfigurationElement getConfigurationElement(Object object) {
+						return (IConfigurationElement)object;
+					}
+				};
+				sorter.sort(actionArray);
+				element= actionArray[0];
+			} else
+				element= (IConfigurationElement)actions.get(0);
+			
+			String defId = element.getAttribute(ActionDescriptor.ATT_DEFINITION_ID);
+			return new EditorPluginAction(element, "class", this, defId, IAction.AS_UNSPECIFIED); //$NON-NLS-1$			
 		}
 		
 		return null;
