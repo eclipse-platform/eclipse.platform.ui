@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.text.AbstractDocument;
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultLineTracker;
@@ -225,6 +224,16 @@ public class ProjectionDocument extends AbstractDocument {
 					left= fragment;
 			}
 			
+			int offsetInSlave= 0;
+			if (index > 0) {
+				Fragment fragment= (Fragment) fragments[index - 1];
+				Segment segment= fragment.segment;
+				offsetInSlave= segment.getOffset() + segment.getLength();
+			}
+			
+			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, offsetInSlave, 0, fMasterDocument.get(offsetInMaster, lengthInMaster));
+			super.fireDocumentAboutToBeChanged(event);
+
 			// check for neighboring fragment
 			if (left != null && right != null) {
 				
@@ -253,11 +262,6 @@ public class ProjectionDocument extends AbstractDocument {
 				segment.markForStretch();
 			}
 			
-			int offsetInSlave= fMapping.toImageOffset(offsetInMaster);
-			Assert.isTrue(offsetInSlave != -1);
-			
-			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, offsetInSlave, 0, fMasterDocument.get(offsetInMaster, lengthInMaster));
-			super.fireDocumentAboutToBeChanged(event);
 			getTracker().replace(event.getOffset(), event.getLength(), event.getText());
 			super.fireDocumentChanged(event);
 			
@@ -307,6 +311,9 @@ public class ProjectionDocument extends AbstractDocument {
 			if (fragment == null)
 				throw new IllegalArgumentException();
 			
+			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, imageRegion.getOffset(), imageRegion.getLength(), null);
+			super.fireDocumentAboutToBeChanged(event);
+			
 			if (fragment.getOffset() == offsetInMaster) {
 				fragment.setOffset(offsetInMaster + lengthInMaster);
 				fragment.setLength(fragment.getLength() - lengthInMaster);
@@ -338,8 +345,6 @@ public class ProjectionDocument extends AbstractDocument {
 				fragment.segment.setLength(imageRegion.getOffset() - fragment.segment.getOffset());
 			}
 			
-			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, imageRegion.getOffset(), imageRegion.getLength(), null);
-			super.fireDocumentAboutToBeChanged(event);
 			getTracker().replace(event.getOffset(), event.getLength(), event.getText());
 			super.fireDocumentChanged(event);
 			
@@ -716,7 +721,8 @@ public class ProjectionDocument extends AbstractDocument {
 	public void replaceMasterDocumentRanges(int offsetInMaster, int lengthInMaster) throws BadLocationException {
 		try {
 			
-			int previousLength= fMapping.getImageLength();
+			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, 0, fMapping.getImageLength(), fMasterDocument.get(offsetInMaster, lengthInMaster));
+			super.fireDocumentAboutToBeChanged(event);
 			
 			Position[] fragments= getFragments();
 			for (int i= 0; i < fragments.length; i++) {
@@ -731,11 +737,7 @@ public class ProjectionDocument extends AbstractDocument {
 			fragment.segment= segment;
 			fMasterDocument.addPosition(fFragmentsCategory, fragment);
 			addPosition(fSegmentsCategory, segment);
-//			segment.setLength(lengthInMaster);
 			
-			
-			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, 0, previousLength, fMasterDocument.get(offsetInMaster, lengthInMaster));
-			super.fireDocumentAboutToBeChanged(event);
 			getTracker().set(fMasterDocument.get(offsetInMaster, lengthInMaster));
 			super.fireDocumentChanged(event);
 			
