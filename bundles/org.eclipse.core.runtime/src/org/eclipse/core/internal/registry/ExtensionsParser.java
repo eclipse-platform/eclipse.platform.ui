@@ -17,14 +17,19 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
-import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
+/*
+ * This class is NOT thread safe. Clients must ensure at most one thread
+ * operates on instances of this class at a time. 
+ */
 public class ExtensionsParser extends DefaultHandler {
 	// Introduced for backward compatibility
 	private final static String NO_EXTENSION_MUNGING = "eclipse.noExtensionMunging"; //$NON-NLS-1$ //System property
 	private static Map extensionPointMap;
+	private static ServiceTracker parserFactoryTracker;
 	static {
 		initializeExtensionPointMap();
 	}
@@ -67,7 +72,6 @@ public class ExtensionsParser extends DefaultHandler {
 	// populating in this plugin descriptor
 	private Stack objectStack = new Stack();
 
-	private ServiceReference parserReference;
 	private String schemaVersion = null;
 
 	// A status for holding results.
@@ -126,9 +130,9 @@ public class ExtensionsParser extends DefaultHandler {
 
 	private Locator locator = null;
 
-	public ExtensionsParser(MultiStatus status) {
-		super();
-		this.status = status;
+	public ExtensionsParser() {
+		parserFactoryTracker = new ServiceTracker(InternalPlatform.getDefault().getBundleContext(), SAXParserFactory.class.getName(), null);
+		parserFactoryTracker.open();
 	}
 
 	/**
@@ -346,27 +350,17 @@ public class ExtensionsParser extends DefaultHandler {
 		error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, PARSE_PROBLEM, msg, ex));
 	}
 
-	private SAXParserFactory acquireXMLParsing() {
-		parserReference = InternalPlatform.getDefault().getBundleContext().getServiceReference("javax.xml.parsers.SAXParserFactory"); //$NON-NLS-1$
-		if (parserReference == null)
-			return null;
-		return (SAXParserFactory) InternalPlatform.getDefault().getBundleContext().getService(parserReference);
-	}
-
-	private void releaseXMLParsing() {
-		if (parserReference != null)
-			InternalPlatform.getDefault().getBundleContext().ungetService(parserReference);
-	}
-
-	public Namespace parseManifest(InputSource in, String manifestType, String manifestName, ResourceBundle bundle) throws SAXException, IOException {
+	public Namespace parseManifest(MultiStatus status, InputSource in, String manifestType, String manifestName, ResourceBundle bundle) throws ParserConfigurationException, SAXException, IOException {
+		this.status = status;
 		long start = 0;
 		this.resources = bundle;
 		if (InternalPlatform.DEBUG)
 			start = System.currentTimeMillis();
 
-		SAXParserFactory factory = acquireXMLParsing();
+		SAXParserFactory factory = (SAXParserFactory) parserFactoryTracker.getService();
+
 		if (factory == null)
-			return null; //TODO We should log a warning
+			throw new SAXException(Policy.bind("parse.xmlParserNotAvailable")); //$NON-NLS-1$
 
 		try {
 			if (manifestType == null)
@@ -377,24 +371,16 @@ public class ExtensionsParser extends DefaultHandler {
 			locationName = in.getSystemId();
 			if (locationName == null)
 				locationName = manifestName;
+			factory.setNamespaceAware(true);
 			try {
-				factory.setNamespaceAware(true);
-				try {
-					factory.setFeature("http://xml.org/sax/features/string-interning", true); //$NON-NLS-1$
-				} catch (SAXException se) {
-					// ignore; we can still operate without string-interning
-				}
-				factory.setValidating(false);
-				factory.newSAXParser().parse(in, this);
-			} catch (ParserConfigurationException e) {
-				// TODO Auto-generated catch block
-				// If this happens seems like we should throw an exception.
-				e.printStackTrace();
+				factory.setFeature("http://xml.org/sax/features/string-interning", true); //$NON-NLS-1$
+			} catch (SAXException se) {
+				// ignore; we can still operate without string-interning
 			}
-
+			factory.setValidating(false);
+			factory.newSAXParser().parse(in, this);
 			return (Namespace) objectStack.pop();
 		} finally {
-			releaseXMLParsing();
 			if (InternalPlatform.DEBUG) {
 				cumulativeTime = cumulativeTime + (System.currentTimeMillis() - start);
 				InternalPlatform.getDefault().setOption("org.eclipse.core.runtime/registry/parsing/timing/value", Long.toString(cumulativeTime)); //$NON-NLS-1$
@@ -589,15 +575,6 @@ public class ExtensionsParser extends DefaultHandler {
 	 */
 	public void error(IStatus error) {
 		status.add(error);
-	}
-
-	/**
-	 * Returns all of the status objects logged thus far by this factory.
-	 *
-	 * @return a multi-status containing all of the logged status objects
-	 */
-	public MultiStatus getStatus() {
-		return status;
 	}
 
 	private String translate(String key) {

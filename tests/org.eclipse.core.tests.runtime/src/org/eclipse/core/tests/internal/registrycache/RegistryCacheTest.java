@@ -11,6 +11,7 @@
 package org.eclipse.core.tests.internal.registrycache;
 
 import java.io.*;
+import javax.xml.parsers.ParserConfigurationException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.registry.*;
@@ -76,14 +77,15 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 		}
 	}
 
-	private Namespace parseManifest(String symbolicName, Reader input) throws IOException, SAXException {
-		ExtensionsParser parser = new ExtensionsParser(new MultiStatus(Platform.PI_RUNTIME, 0, "", null));
-		Namespace result = parser.parseManifest(new InputSource(input), ExtensionsParser.PLUGIN, "plugin.xml", null);
+	private Namespace parseManifest(String symbolicName, Reader input) throws IOException, SAXException, ParserConfigurationException {
+		ExtensionsParser parser = new ExtensionsParser();
+		MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, 0, "", null);
+		Namespace result = parser.parseManifest(problems, new InputSource(input), ExtensionsParser.PLUGIN, "plugin.xml", null);
 		result.setUniqueIdentifier(symbolicName);
 		return result;
 	}
 
-	private Namespace parseManifest(String symbolicName, String manifest) throws IOException, SAXException {
+	private Namespace parseManifest(String symbolicName, String manifest) throws IOException, SAXException, ParserConfigurationException {
 		return parseManifest(symbolicName, new StringReader(manifest));
 	}
 

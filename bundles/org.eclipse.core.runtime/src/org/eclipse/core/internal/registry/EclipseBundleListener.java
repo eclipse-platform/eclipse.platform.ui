@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.osgi.framework.*;
@@ -35,9 +36,11 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 	private static final String FRAGMENT_MANIFEST = "fragment.xml"; //$NON-NLS-1$	
 
 	private ExtensionRegistry registry;
+	private ExtensionsParser parser;
 
 	public EclipseBundleListener(ExtensionRegistry registry) {
 		this.registry = registry;
+		this.parser = new ExtensionsParser();
 	}
 
 	public void bundleChanged(BundleEvent event) {
@@ -134,7 +137,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 			} catch (MissingResourceException e) {
 				//Ignore the exception
 			}
-			Namespace bundleModel = new ExtensionsParser(problems).parseManifest(new InputSource(is), manifestType, manifestName, b);
+			Namespace bundleModel = parser.parseManifest(problems, new InputSource(is), manifestType, manifestName, b);
 			bundleModel.setUniqueIdentifier(bundle.getSymbolicName());
 			bundleModel.setBundle(bundle);
 			if (isFragment) {
@@ -145,13 +148,14 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 			if (problems.getSeverity() != IStatus.OK)
 				InternalPlatform.getDefault().log(problems);
 			return bundleModel;
+		} catch (ParserConfigurationException e) {
+			logParsingError(bundle, e);
+			return null;
 		} catch (SAXException e) {
-			// TODO: need to log this
-			e.printStackTrace();
+			logParsingError(bundle, e);
 			return null;
 		} catch (IOException e) {
-			// TODO: need to log this
-			e.printStackTrace();
+			logParsingError(bundle, e);
 			return null;
 		} finally {
 			try {
@@ -160,6 +164,11 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 				// nothing to do
 			}
 		}
+	}
+
+	private void logParsingError(Bundle bundle, Exception e) {
+		String message = Policy.bind("parse.failedParsingManifest", bundle.getLocation()); //$NON-NLS-1$
+		InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, e));
 	}
 
 }
