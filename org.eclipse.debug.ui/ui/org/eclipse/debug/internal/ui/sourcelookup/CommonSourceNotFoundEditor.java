@@ -423,7 +423,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	protected void closeEditor()
 	{
 		final IEditorPart editor = this;
-		DebugUIPlugin.getShell().getDisplay().syncExec(
+		DebugUIPlugin.getStandardDisplay().syncExec(
 				new Runnable() {
 					public void run() {											
 						DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().closeEditor(editor,false);										
