@@ -17,10 +17,11 @@ import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.parts.SWTUtil;
 
 public class LicensePage extends WizardPage {
-private static final String KEY_TITLE = "InstallWizard.LicensePage.title";
-private static final String KEY_DESC = "InstallWizard.LicensePage.desc";
-private static final String KEY_ACCEPT = "InstallWizard.LicensePage.accept";
-private static final String KEY_DECLINE = "InstallWizard.LicensePage.decline";
+	private static final String KEY_TITLE = "InstallWizard.LicensePage.title";
+	private static final String KEY_DESC = "InstallWizard.LicensePage.desc";
+	private static final String KEY_ACCEPT = "InstallWizard.LicensePage.accept";
+	private static final String KEY_DECLINE =
+		"InstallWizard.LicensePage.decline";
 
 	private PendingChange job;
 	/**
@@ -41,37 +42,35 @@ private static final String KEY_DECLINE = "InstallWizard.LicensePage.decline";
 		Composite client = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		client.setLayout(layout);
-		Text text = new Text(client, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-		
+		Text text =
+			new Text(
+				client,
+				SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		text.setLayoutData(gd);
 		text.setText(job.getFeature().getLicense().getAnnotation());
-		
+
 		Composite buttonContainer = new Composite(client, SWT.NULL);
 		layout = new GridLayout();
-		layout.numColumns = 2;
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		buttonContainer.setLayout(layout);
 		buttonContainer.setLayoutData(gd);
-		
-		final Button button1 = new Button(buttonContainer, SWT.PUSH);
-		button1.setText(UpdateUIPlugin.getResourceString(KEY_ACCEPT));
-		button1.addSelectionListener(new SelectionAdapter() {
+
+		final Button acceptButton = new Button(buttonContainer, SWT.RADIO);
+		acceptButton.setText(UpdateUIPlugin.getResourceString(KEY_ACCEPT));
+		acceptButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				button1.setEnabled(false);
-				setPageComplete(true);
+				setPageComplete(acceptButton.getSelection());
 			}
 		});
-		SWTUtil.setButtonDimensionHint(button1);
-		final Button button2 = new Button(buttonContainer, SWT.PUSH);
-		button2.setText(UpdateUIPlugin.getResourceString(KEY_DECLINE));
-		button2.addSelectionListener(new SelectionAdapter() {
+		Button declineButton = new Button(buttonContainer, SWT.RADIO);
+		declineButton.setText(UpdateUIPlugin.getResourceString(KEY_DECLINE));
+		declineButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				InstallWizardDialog dialog = (InstallWizardDialog)getWizard().getContainer();
-				dialog.cancel();
+				setPageComplete(acceptButton.getSelection());
 			}
 		});
-		SWTUtil.setButtonDimensionHint(button2);
 		setControl(client);
 	}
 }

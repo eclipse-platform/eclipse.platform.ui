@@ -152,7 +152,7 @@ public class UpdatesView
 
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof UpdateModel) {
-				return getBookmarks((UpdateModel) parent);
+				return getRootElements((UpdateModel) parent);
 			}
 			if (parent instanceof BookmarkFolder) {
 				return ((BookmarkFolder) parent).getChildren(parent);
@@ -704,12 +704,13 @@ public class UpdatesView
 			message);
 	}
 
-	private Object[] getBookmarks(UpdateModel model) {
+	private Object[] getRootElements(UpdateModel model) {
 		NamedModelObject[] bookmarks = model.getBookmarks();
 		Object[] array = new Object[3 + bookmarks.length];
-		array[0] = new MyComputer();
-		array[1] = new DiscoveryFolder();
-		array[2] = updateSearchObject;
+
+		array[0] = new DiscoveryFolder();
+		array[1] = updateSearchObject;
+		array[2] = new MyComputer();
 		for (int i = 3; i < array.length; i++) {
 			array[i] = bookmarks[i - 3];
 		}
