@@ -510,7 +510,11 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 			result[resultLength - 1]= lastRegion;
 		} else {
 			// merge first and last
-			result[0]= getIntersectingRegion(result[0], lastRegion);
+			IRegion intersection= getIntersectingRegion(result[0], lastRegion);
+			if (intersection == null)
+				result= new IRegion[0];
+			else
+				result[0]= intersection;
 		}
 		
 		return result;
@@ -562,7 +566,10 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 			result[resultLength - 1]= lastRegion;
 		} else {
 			// merge first and last
-			result[0]= getIntersectingRegion(result[0], lastRegion);
+			IRegion intersection= getIntersectingRegion(result[0], lastRegion);
+			if (intersection == null)
+				return null;
+			result[0]= intersection;
 		}
 		
 		return result;
@@ -606,7 +613,10 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 			result[resultLength - 1]= lastRegion;
 		} else {
 			// merge first and last
-			result[0]= getIntersectingRegion(result[0], lastRegion);
+			IRegion intersection= getIntersectingRegion(result[0], lastRegion);
+			if (intersection == null)
+				return null;
+			result[0]= intersection;
 		}
 		
 		return result;
