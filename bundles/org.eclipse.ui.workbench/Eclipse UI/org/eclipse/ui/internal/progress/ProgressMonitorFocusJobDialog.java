@@ -118,6 +118,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	}
 	/**
 	 * Returns a listener that will close the dialog when the job completes.
+	 * @return IJobChangeListener
 	 */
 	private IJobChangeListener createCloseListener() {
 		return new JobChangeAdapter() {
@@ -370,6 +371,10 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 				//now open the progress dialog if nothing else is
 				if(ProgressManagerUtil.rescheduleIfModalShellOpen(this))
 					return Status.CANCEL_STATUS;
+
+				//Do not bother if the parent is disposed
+				if(getParentShell() != null && getParentShell().isDisposed())
+					return Status.CANCEL_STATUS;;
 				
 				open();
 				// add a listener that will close the dialog when the job completes.
