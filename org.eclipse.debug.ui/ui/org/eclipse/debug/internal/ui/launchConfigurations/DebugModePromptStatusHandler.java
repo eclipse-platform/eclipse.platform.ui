@@ -57,7 +57,7 @@ public class DebugModePromptStatusHandler implements IStatusHandler {
 			}
 		}
 		
-		UserPreferencePromptDialog dialog = UserPreferencePromptDialog.openYesNoQuestion(activeShell, title, message, "Don't ask me again", false, store, IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE);
+		UserPreferencePromptDialog dialog = UserPreferencePromptDialog.openYesNoQuestion(activeShell, title, message, LaunchConfigurationsMessages.getString("DebugModePromptStatusHandler.2"), false, store, IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE); //$NON-NLS-1$
 		if (dialog.getReturnCode() == IDialogConstants.OK_ID) { 
 			relaunchInDebugMode(configuration);
 			return new Boolean(true);
