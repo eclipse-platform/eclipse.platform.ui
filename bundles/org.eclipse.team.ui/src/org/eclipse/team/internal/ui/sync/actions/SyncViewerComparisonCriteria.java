@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.SWT;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ComparisonCriteria;
 import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
@@ -39,7 +38,7 @@ public class SyncViewerComparisonCriteria extends SyncViewerActionGroup {
 	class ComparisonCriteriaAction extends Action {
 		private ComparisonCriteria criteria;
 		public ComparisonCriteriaAction(ComparisonCriteria criteria) {
-			super(criteria.getName(), SWT.RADIO);
+			super(criteria.getName(), Action.AS_RADIO_BUTTON);
 			this.criteria = criteria;
 		}
 		public void run() {

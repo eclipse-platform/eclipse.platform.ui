@@ -11,23 +11,24 @@
 package org.eclipse.team.internal.ui.sync.actions;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
-import org.eclipse.ui.actions.ActionContext;
 
 class CancelSubscription extends Action {
-	private final SyncViewerActions actions;
+	private TeamSubscriber subscriber;
 	
-	public CancelSubscription(SyncViewerActions actions) {
-		this.actions = actions;
+	public CancelSubscription(TeamSubscriber s) {
+		this.subscriber = s;
 		Utils.initAction(this, "action.cancelSubscriber."); //$NON-NLS-1$
 		// don't enable until necessary
 		setEnabled(false);
 	}
 	
 	public void run() {
-		ActionContext context = actions.getContext();
-		SubscriberInput input = (SubscriberInput)context.getInput();
-		input.getSubscriber().cancel();
+		subscriber.cancel();
+	}
+
+	public void setSubscriber(TeamSubscriber subscriber) {
+		this.subscriber = subscriber;
 	}
 }

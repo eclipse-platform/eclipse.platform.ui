@@ -773,11 +773,13 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	}
 
 	private void fireSafePropertyChange(final int property) {
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {		
-				firePropertyChange(property);
-			}
-		});
+		if(! viewer.getControl().isDisposed()) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {		
+					firePropertyChange(property);
+				}
+			});
+		}
 	}
 	
 	public void setSelection(TeamSubscriber subscriber, IResource[] resources, int viewType) {

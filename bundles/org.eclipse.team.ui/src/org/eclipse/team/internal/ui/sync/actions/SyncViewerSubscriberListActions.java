@@ -16,7 +16,7 @@ import java.util.Map;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
 import org.eclipse.ui.actions.ActionContext;
@@ -29,6 +29,7 @@ public class SyncViewerSubscriberListActions extends SyncViewerActionGroup {
 	// {QualifiedName:subscriber id -> SubscriberInput}
 	private Map actions = new HashMap();
 	private SubscriberInput activeInput = null;
+	private CancelSubscription cancelAction;
 
 	/**
 	 * Action for filtering by change type.
@@ -36,7 +37,7 @@ public class SyncViewerSubscriberListActions extends SyncViewerActionGroup {
 	class SwitchSubscriberAction extends Action {
 		private SubscriberInput input;
 		public SwitchSubscriberAction(SubscriberInput input) {
-			super(input.getSubscriber().getName(), SWT.RADIO);
+			super(input.getSubscriber().getName(), Action.AS_RADIO_BUTTON);
 			this.input = input;
 		}
 		public void run() {
@@ -82,6 +83,11 @@ public class SyncViewerSubscriberListActions extends SyncViewerActionGroup {
 					activeInput = input;
 				}
 			}
+			cancelAction.setEnabled(input.getSubscriber().isCancellable());
+			cancelAction.setSubscriber(input.getSubscriber());
+		} else {
+			if(cancelAction != null)
+				cancelAction.setEnabled(false);
 		}
 	}
 
@@ -98,6 +104,10 @@ public class SyncViewerSubscriberListActions extends SyncViewerActionGroup {
 				SwitchSubscriberAction action = (SwitchSubscriberAction) it.next();
 				menu.add(action);				
 			}
+			if(cancelAction != null) {
+				menu.add(new Separator());
+				menu.add(cancelAction);
+			}
 		}
 	}
 	
@@ -112,6 +122,9 @@ public class SyncViewerSubscriberListActions extends SyncViewerActionGroup {
 		if(enableFirstContext) {
 			activate(action);
 		}			
+		if(cancelAction == null) {
+			cancelAction = new CancelSubscription(input.getSubscriber());
+		}
 	}
 	
 	/* 
@@ -123,6 +136,10 @@ public class SyncViewerSubscriberListActions extends SyncViewerActionGroup {
 			for (Iterator it = actions.values().iterator(); it.hasNext();) {
 				SwitchSubscriberAction action = (SwitchSubscriberAction) it.next();
 				dropDown.add(action);				
+			}
+			if(cancelAction != null) {
+				dropDown.add(new Separator());
+				dropDown.add(cancelAction);
 			}
 		}
 	 }

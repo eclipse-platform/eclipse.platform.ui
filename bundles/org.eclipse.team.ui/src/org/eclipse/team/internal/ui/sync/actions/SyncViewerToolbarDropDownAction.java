@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ui.sync.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Control;
@@ -77,6 +78,10 @@ public class SyncViewerToolbarDropDownAction extends Action implements IMenuCrea
 	 
 	public void add(Action action) {
 		ActionContributionItem item= new ActionContributionItem(action);
+		item.fill(getMenu(), -1);		
+	}
+	
+	public void add(ContributionItem item) {
 		item.fill(getMenu(), -1);		
 	}
 	

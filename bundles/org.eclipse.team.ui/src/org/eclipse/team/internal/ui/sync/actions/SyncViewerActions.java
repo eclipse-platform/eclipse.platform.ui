@@ -66,7 +66,6 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	private Action toggleViewerType;
 	private Action open;
 	private ExpandAllAction expandAll;
-	private CancelSubscription cancelSubscription;
 	private SelectAllAction selectAllAction;
 	
 	/* (non-Javadoc)
@@ -119,7 +118,6 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		
 		
 		expandAll = new ExpandAllAction(this);
-		cancelSubscription = new CancelSubscription(this);
 		
 		IKeyBindingService kbs = getSyncView().getSite().getKeyBindingService();
 		a= new Action() {
@@ -189,8 +187,6 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		IMenuManager dropDownMenu = actionBars.getMenuManager();
 		workingSetGroup.fillActionBars(actionBars);
 		dropDownMenu.add(new SyncViewerShowPreferencesAction(getSyncView().getSite().getShell()));
-		dropDownMenu.add(cancelSubscription);
-		
 	}
 
 	/* (non-Javadoc)
@@ -258,11 +254,6 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	protected void initializeActions() {
 		SubscriberInput input = getSubscriberContext();
 		refreshSelectionAction.setEnabled(input != null);
-		if(input == null) {
-			cancelSubscription.setEnabled(false);
-		} else {
-			cancelSubscription.setEnabled(input.getSubscriber().isCancellable());
-		}
 		// This is invoked before the subscriber input is initialized
 		if (input.getWorkingSet() == null) {
 			// set the input to use the last selected working set

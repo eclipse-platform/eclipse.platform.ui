@@ -74,11 +74,12 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 	 * @see org.eclipse.team.ccvs.syncviews.views.ISyncSetChangedListener#syncSetChanged(org.eclipse.team.ccvs.syncviews.views.SyncSetChangedEvent)
 	 */
 	public void syncSetChanged(final SyncSetChangedEvent event) {
-		Control ctrl = viewer.getControl();
+		final Control ctrl = viewer.getControl();
 		if (ctrl != null && !ctrl.isDisposed()) {
 			ctrl.getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					handleSyncSetChanges(event);
+					if(! ctrl.isDisposed())
+						handleSyncSetChanges(event);
 				}
 			});
 		}
