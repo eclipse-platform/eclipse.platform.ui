@@ -2030,9 +2030,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
   			width2-= BIRDS_EYE_VIEW_WIDTH;
   			
 		Rectangle trim= fLeft.getTextWidget().computeTrim(0, 0, 0, 0);
-		int scrollbarHeight= trim.height;
-		if (fIsCarbon)
-			scrollbarHeight-= 3;	// get rid of the focus ring
+		int scrollbarHeight= trim.height + trim.x;
 
 		Composite composite= (Composite) getControl();
 
@@ -2062,10 +2060,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		int scrollbarWidth= 0;
 		if (fSynchronizedScrolling && fScrollCanvas != null) {
-			//scrollbarWidth= fScrollCanvas.computeTrim(0, 0, 0, 0).width;
-			scrollbarWidth= fLeft.getTextWidget().computeTrim(0, 0, 0, 0).width;
-			if (fIsCarbon)
-				scrollbarWidth-= 6;	// get rid of the focus ring
+			trim= fLeft.getTextWidget().computeTrim(0, 0, 0, 0);
+			scrollbarWidth= trim.width + 2*trim.x;
 		}
 		int rightTextWidth= width2-scrollbarWidth;
 		if (fRightCanvas != null)
