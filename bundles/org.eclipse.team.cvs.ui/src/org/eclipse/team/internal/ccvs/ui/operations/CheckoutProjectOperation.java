@@ -136,6 +136,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		// Open a connection session to the repository
 		final Session session = new Session(repository, root);
 		pm.beginTask(null, 100);
+		Policy.checkCanceled(pm);
 		session.open(Policy.subMonitorFor(pm, 5), false /* read-only */);
 		try {
 			
@@ -187,7 +188,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		}
 		pm.beginTask(taskName, 100);
 		pm.setTaskName(taskName);
-		
+		Policy.checkCanceled(pm);
 		try {
 			// Scrub the local contents if requested
 			if (performScrubProjects()) {
@@ -259,6 +260,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		if (project == null) {
 			
 			// Fetch the module expansions
+			Policy.checkCanceled(pm);
 			IStatus status = Request.EXPAND_MODULES.execute(session, new String[] {moduleName}, pm);
 			if (status.getCode() == CVSStatus.SERVER_ERROR) {
 				collectStatus(status);
@@ -309,6 +311,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		}
 		for (int i=0;i<projects.length;i++) {
 			IProject project = projects[i];
+			Policy.checkCanceled(monitor);
 			if (needsPromptForOverwrite(project) && !promptToOverwrite(remoteFolder, project)) {
 				Policy.cancelOperation();
 			}
@@ -332,6 +335,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			// We do not want to delete the project to avoid a project deletion delta
 			// We do not want to delete the .project to avoid core exceptions
 			IResource[] children = project.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+			Policy.checkCanceled(monitor);
 			monitor.beginTask(null, children.length * 100);
 			monitor.subTask(Policy.bind("CheckoutOperation.scrubbingProject", project.getName())); //$NON-NLS-1$	
 			try {
