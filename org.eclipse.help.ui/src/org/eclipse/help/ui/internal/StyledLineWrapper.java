@@ -14,8 +14,11 @@ import java.util.*;
 import org.eclipse.help.internal.context.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
+import org.eclipse.swt.graphics.*;
 
 public class StyledLineWrapper implements StyledTextContent {
+	private Drawable drawable;
+
 	/** Lines after splitting */
 	private ArrayList lines = new ArrayList();
 
@@ -28,13 +31,17 @@ public class StyledLineWrapper implements StyledTextContent {
 	/** Line breaker */
 	private static BreakIterator lineBreaker = BreakIterator.getLineInstance();
 
-	/** Beyond this length, lines should wrap */
-	public final static int MAX_LINE_LENGTH = 72;
+	/** Beyond this length (pixels), lines should wrap */
+	public final static int DEFAULT_WIDTH = 350;
+
+	public int maxWidth;
 
 	/**
 	 * Constructor
 	 */
-	public StyledLineWrapper(String text) {
+	public StyledLineWrapper(String text, Drawable drawable, int minWidth) {
+		this.drawable = drawable;
+		maxWidth = Math.max(DEFAULT_WIDTH, minWidth);
 		if (text == null || text.length() == 0)
 			text = " "; // use one blank space //$NON-NLS-1$
 		setText(text);
@@ -199,10 +206,11 @@ public class StyledLineWrapper implements StyledTextContent {
 			}
 		}
 		// Break long lines
+		GC gc = new GC(drawable);
 		for (int i = 0; i < lines.size(); i++) {
 			String line = (String) lines.get(i);
 			while (line.length() > 0) {
-				int linebreak = getLineBreak(line);
+				int linebreak = getLineBreak(line, gc);
 				if (linebreak == 0 || linebreak == line.length())
 					break;
 				String newline = line.substring(0, linebreak);
@@ -212,6 +220,7 @@ public class StyledLineWrapper implements StyledTextContent {
 				lines.add(++i, line);
 			}
 		}
+		gc.dispose();
 	}
 
 	/**
@@ -224,14 +233,19 @@ public class StyledLineWrapper implements StyledTextContent {
 	/**
 	 * Finds a good line breaking point
 	 */
-	private static int getLineBreak(String line) {
+	private int getLineBreak(String line, GC gc) {
 		lineBreaker.setText(line);
 		int lastGoodIndex = 0;
 		int currentIndex = lineBreaker.first();
-		while (currentIndex < MAX_LINE_LENGTH
-				&& currentIndex != BreakIterator.DONE) {
+		int width = gc.textExtent(line.substring(0, currentIndex)).x;
+		while (width < maxWidth && currentIndex != BreakIterator.DONE) {
 			lastGoodIndex = currentIndex;
 			currentIndex = lineBreaker.next();
+			if (currentIndex == BreakIterator.DONE) {
+				break;
+			} else {
+				width = gc.textExtent(line.substring(0, currentIndex)).x;
+			}
 		}
 		return lastGoodIndex;
 	}

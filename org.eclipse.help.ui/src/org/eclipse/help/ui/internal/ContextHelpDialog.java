@@ -220,7 +220,9 @@ public class ContextHelpDialog {
 		text.setBackground(backgroundColour);
 		text.setForeground(foregroundColour);
 		text.setFont(parent.getFont());
-		StyledLineWrapper content = new StyledLineWrapper(styledText);
+		int linkWidth = getLinksWidth(text);
+		StyledLineWrapper content = new StyledLineWrapper(styledText, text,
+				linkWidth + 70);
 		text.setContent(content);
 		text.setStyleRanges(content.getStyles());
 
@@ -228,6 +230,26 @@ public class ContextHelpDialog {
 		initAccessible(text);
 
 		return text;
+	}
+
+	/**
+	 * Measures the longest label of related links
+	 * 
+	 * @param text
+	 * @return
+	 */
+	private int getLinksWidth(Description text) {
+		int linkWidth = 0;
+		IHelpResource relatedTopics[] = context.getRelatedTopics();
+		if (relatedTopics != null) {
+			GC gc = new GC(text);
+			for (int i = 0; i < relatedTopics.length; i++) {
+				linkWidth = Math.max(linkWidth, gc.textExtent(relatedTopics[i]
+						.getLabel()).x);
+			}
+			gc.dispose();
+		}
+		return linkWidth;
 	}
 
 	private Control createLink(Composite parent, IHelpResource topic) {
