@@ -487,7 +487,7 @@ public String[] fragmentLibrarySetup() {
 	pluginRuntime[0].setName("runtime.jar");
 	String[] exportString = { "*" };
 	pluginRuntime[0].setExports(exportString);
-	pluginRuntime[0].setType("source");
+	pluginRuntime[0].setType("code");
 	pluginRuntime[1].setName("xerces.jar");
 	fragment.setRuntime(pluginRuntime);
 
@@ -1066,7 +1066,7 @@ public String[] librarySetup() {
 	pluginRuntime[0].setName("runtime.jar");
 	String[] exportString = { "*" };
 	pluginRuntime[0].setExports(exportString);
-	pluginRuntime[0].setType("source");
+	pluginRuntime[0].setType("code");
 	pluginRuntime[1].setName("xerces.jar");
 	plugin.setRuntime(pluginRuntime);
 

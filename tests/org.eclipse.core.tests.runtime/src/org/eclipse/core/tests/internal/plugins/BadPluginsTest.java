@@ -100,6 +100,7 @@ public void badAttributes() {
 		"badRequiresImport3AttributesTest",
 		"badLibrary1AttributesTest",
 		"badLibrary2AttributesTest",
+		"badLibrary3AttributesTest",
 		"badFragment2AttributesTest", 
 	};
 	String[] errorMessages = {
@@ -112,6 +113,7 @@ public void badAttributes() {
 		"incompatible is not a valid value for the attribute \"match\".   Use \"perfect\", \"equivalent\", \"compatible\" or \"greaterOrEqual\".",
 		"Unknown attribute badAttribute for element library ignored.",
 		"Unknown attribute badExportAttribute for element library ignored.",
+		"Unknown library type source for library lib1.jar.",
 		"nothing is not a valid value for the attribute \"match\".   Use \"perfect\", \"equivalent\", \"compatible\" or \"greaterOrEqual\".",
 	};
 	
