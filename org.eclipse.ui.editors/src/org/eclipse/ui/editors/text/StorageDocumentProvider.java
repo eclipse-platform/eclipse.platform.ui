@@ -36,11 +36,6 @@ import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 
-
-
-/**
- * StorageDocumentProvider.java
- */
 /**
  * Shareable document provider specialized for <code>IStorage</code>s.
  */
@@ -60,13 +55,13 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 */
 	protected class StorageInfo extends ElementInfo {
 		
-		/** The flag representing the cached state whether the storage is modifiable */
+		/** The flag representing the cached state whether the storage is modifiable. */
 		public boolean fIsModifiable= false;
-		/** The flag representing the cached state whether the storage is read-only */
+		/** The flag representing the cached state whether the storage is read-only. */
 		public boolean fIsReadOnly= true;
-		/** The flag representing the need to update the cached flag  */
+		/** The flag representing the need to update the cached flag.  */
 		public boolean fUpdateCache= true;
-		/** The encoding used to create the document from the storage or <code>null</code> for workbench encoding */
+		/** The encoding used to create the document from the storage or <code>null</code> for workbench encoding. */
 		public String fEncoding;
 		
 		/**
@@ -83,6 +78,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	
 	/**
 	 * Creates a new document provider.
+	 * 
 	 * @since 2.0
 	 */
 	public StorageDocumentProvider() {
@@ -152,7 +148,6 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 * @param editorInput the input from which to derive the content of the document
 	 * @return <code>true</code> if the document content could be set, <code>false</code> otherwise
 	 * @exception CoreException if the given editor input cannot be accessed
-	 * 
 	 * @deprecated use the encoding based version instead
 	 * @since 2.0
 	 */
@@ -244,7 +239,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	
 	/**
 	 * Defines the standard procedure to handle <code>CoreExceptions</code>. Exceptions
-	 * are written to the plugin log.
+	 * are written to the plug-in log.
 	 *
 	 * @param exception the exception to be logged
 	 * @param message the message to be logged
@@ -345,7 +340,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		return ResourcesPlugin.getEncoding();
 	}
 	
-	/* 
+	/*
 	 * @see IStorageDocumentProvider#getEncoding(Object)
 	 * @since 2.0
 	 */
@@ -379,8 +374,9 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	}
 
 	/**
-	 * Gets the persited encoding.
+	 * Returns the persited encoding for the given element.
 	 * 
+	 * @param element the element for which to get the persisted encoding
 	 * @since 2.1
 	 */
 	protected String getPersistedEncoding(Object element) {
@@ -389,8 +385,10 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	}
 
 	/**
-	 * Persists the current encoding.
+	 * Persists the given encoding for the given element.
 	 * 
+	 * @param element the element for which to store the persisted encoding
+	 * @param encoding the encoding
 	 * @since 2.1
 	 */
 	protected void persistEncoding(Object element, String encoding) throws CoreException {

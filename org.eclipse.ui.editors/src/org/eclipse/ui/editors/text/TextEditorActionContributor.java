@@ -24,9 +24,11 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 
 /**
- * Manages the installation and deinstallation of global actions for the default text editor. <p>
+ * Manages the installation and deinstallation of global actions for the default text editor.
+ * <p>
  * If instantiated and used as-is, this contributor connects global actions and adds actions
- * for line delimiter conversion and encoding support. <p>
+ * for line delimiter conversion and encoding support.</p>
+ * 
  * @since 2.0
  */
 public class TextEditorActionContributor extends BasicTextEditorActionContributor {
@@ -59,6 +61,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	/**
 	 * Internally sets the active editor to the actions provided by this contributor.
 	 * Cannot be overridden by subclasses.
+	 * 
 	 * @param part the editor
 	 */
 	private void doSetActiveEditor(IEditorPart part) {
@@ -77,7 +80,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	}
 	
 	/*
-	 * @see IEditorActionBarContributor#setActiveEditor(IEditorPart)
+	 * @see IEditorActionBarContributor#setActiveEditor(org.eclipse.ui.IEditorPart)
 	 */
 	public void setActiveEditor(IEditorPart part) {
 		super.setActiveEditor(part);
@@ -85,7 +88,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	}
 	
 	/*
-	 * @see IEditorActionBarContributor#init(IActionBars)
+	 * @see EditorActionBarContributor#init(org.eclipse.ui.IActionBars)
 	 */
 	public void init(IActionBars bars) {
 		super.init(bars);
