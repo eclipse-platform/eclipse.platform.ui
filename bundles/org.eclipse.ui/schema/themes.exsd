@@ -18,6 +18,7 @@
             <element ref="fontDefinition" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="themeElementCategory" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="data" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="categoryPresentationBinding" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -491,6 +492,30 @@ Only one of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;colorFactory&lt;/code&
                <documentation>
                   the font value.  This is in the form: &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;-&lt;it&gt;style&lt;/it&gt;-&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; where &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;&lt;/code&gt; is the name of a font, &lt;code&gt;&lt;it&gt;style&lt;/it&gt;&lt;/code&gt; is a font style (one of &lt;code&gt;&quot;regular&quot;&lt;/code&gt;, &lt;code&gt;&quot;bold&quot;&lt;/code&gt;, &lt;code&gt;&quot;italic&quot;&lt;/code&gt;, or &lt;code&gt;&quot;bold italic&quot;&lt;/code&gt;) and &lt;code&gt;&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; is an integer representing the font height.&lt;/p&gt;
 &lt;p&gt;Example: &lt;code&gt;Times New Roman-bold-36&lt;/code&gt;.&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="categoryPresentationBinding">
+      <annotation>
+         <documentation>
+            This element allows a category to be bound to a specific presentation as described by the &lt;code&gt;org.eclipse.ui.presentationFactory&lt;/code&gt; extension point.  If a category has any presentation bindings then it (and it&apos;s children) is only configurable by the user if it is bound to the active presentation.  This is useful for removing unused items from user consideration.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="categoryId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="presentationId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>

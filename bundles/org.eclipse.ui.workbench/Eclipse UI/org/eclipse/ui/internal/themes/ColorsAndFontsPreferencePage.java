@@ -66,6 +66,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.FilteredTree;
@@ -125,8 +126,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		    if (categoryId != null) {
 			    ThemeElementCategory [] categories = registry.getCategories();
 			    for (int i = 0; i < categories.length; i++) {
-	                if (categoryId.equals(categories[i].getParentId()))
-	                    list.add(categories[i]);
+	                if (categoryId.equals(categories[i].getParentId())) {
+	                    Set bindings = themeRegistry.getPresentationsBindingsFor(categories[i]);
+	                    if (bindings == null || bindings.contains(workbench.getPresentationId()))
+	                        list.add(categories[i]);
+	                }
 	            }
 		    }
 		    {
@@ -230,8 +234,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
             list.addAll(Arrays.asList(uncatChildren));
             ThemeElementCategory [] categories = ((IThemeRegistry)inputElement).getCategories();
             for (int i = 0; i < categories.length; i++) {
-                if (categories[i].getParentId() == null)
-                    list.add(categories[i]);
+                if (categories[i].getParentId() == null) {                    
+                    Set bindings = themeRegistry.getPresentationsBindingsFor(categories[i]);
+                    if (bindings == null || bindings.contains(workbench.getPresentationId()))
+                        list.add(categories[i]);
+                }
             }
             return list.toArray(new Object [list.size()]);
         }
@@ -541,7 +548,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
     private IPropertyChangeListener themeChangeListener;
 
-    private IWorkbench workbench;
+    private Workbench workbench;
     
     private FilteredTree tree;
     
@@ -1097,7 +1104,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench aWorkbench) {
-	    this.workbench = aWorkbench;
+	    this.workbench = (Workbench)aWorkbench;
 		setPreferenceStore(aWorkbench.getPreferenceStore());
 		
 		final IThemeManager themeManager = aWorkbench.getThemeManager();

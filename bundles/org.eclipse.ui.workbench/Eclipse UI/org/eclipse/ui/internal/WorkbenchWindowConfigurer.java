@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ICoolBarManager;
@@ -31,9 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchPreferences;
@@ -545,16 +542,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
      * factory default presentation factory is used.
      */
     private AbstractPresentationFactory createDefaultPresentationFactory() {
-	    String factoryId = Platform.getPreferencesService().getString(
-                PlatformUI.PLUGIN_ID,
-                IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID, "", //$NON-NLS-1$
-                null);
-	    
-        // Workaround for bug 58975 - New preference mechanism does not properly initialize defaults
-        // Ensure that the UI plugin has started too.
-	    if (factoryId == null || factoryId.equals("")) {  //$NON-NLS-1$
-			factoryId = "org.eclipse.ui.presentations.default"; //$NON-NLS-1$
-	    }
+        String factoryId = ((Workbench)window.getWorkbench()).getPresentationId(); 
         
 	    if (factoryId != null && factoryId.length() > 0) {
 	        AbstractPresentationFactory factory = WorkbenchPlugin.getDefault().getPresentationFactory(factoryId);

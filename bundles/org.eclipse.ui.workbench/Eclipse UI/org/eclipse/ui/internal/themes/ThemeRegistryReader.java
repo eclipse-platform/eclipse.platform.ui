@@ -36,7 +36,8 @@ import org.eclipse.ui.themes.IColorFactory;
  */
 public class ThemeRegistryReader extends RegistryReader {
 	public static final String ATT_CATEGORYID = "categoryId"; //$NON-NLS-1$
-    public static String ATT_CLASS = "class"; //$NON-NLS-1$
+	public static final String ATT_PRESENTATIONID = "presentationId"; //$NON-NLS-1$
+    public static final String ATT_CLASS = "class"; //$NON-NLS-1$
 	public static final String ATT_DEFAULTS_TO = "defaultsTo"; //$NON-NLS-1$
 	public static final String ATT_ID = "id"; //$NON-NLS-1$
 	public static final String ATT_PARENT_ID = "parentId"; //$NON-NLS-1$
@@ -54,6 +55,8 @@ public class ThemeRegistryReader extends RegistryReader {
 	 */
 	private final static ResourceBundle RESOURCE_BUNDLE =
 		ResourceBundle.getBundle(ThemeRegistryReader.class.getName());
+
+	public static final String TAG_CATEGORYPRESENTATIONBINDING = "categoryPresentationBinding"; //$NON-NLS-1$
 	public static final String TAG_CATEGORYDEFINITION = "themeElementCategory"; //$NON-NLS-1$
 	public static final String TAG_COLORDEFINITION = "colorDefinition"; //$NON-NLS-1$
 	public static final String TAG_COLOROVERRIDE = "colorOverride"; //$NON-NLS-1$    
@@ -338,7 +341,13 @@ public class ThemeRegistryReader extends RegistryReader {
 	            }
 			}
 			return true;
-	    }        
+	    }    
+        else if (elementName.equals(TAG_CATEGORYPRESENTATIONBINDING)) {
+            String categoryId = element.getAttribute(ATT_CATEGORYID);
+            String presentationId = element.getAttribute(ATT_PRESENTATIONID);
+            themeRegistry.addCategoryPresentationBinding(categoryId, presentationId);
+            return true;
+        }
 		
 		return false;
 	}

@@ -64,6 +64,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -1885,4 +1886,24 @@ public final class Workbench implements IWorkbench {
     public boolean isRunning() {
         return runEventLoop;
     }
+
+    /**
+     * Return the presentation ID specified by the preference or the default ID if undefined.
+     * 
+     * @return the presentation ID
+     * @see IWorkbenchPreferenceConstants#PRESENTATION_FACTORY_ID
+     */
+    public String getPresentationId() {
+	    String factoryId = Platform.getPreferencesService().getString(
+                PlatformUI.PLUGIN_ID,
+                IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID, "", //$NON-NLS-1$
+                null);
+	    
+        // Workaround for bug 58975 - New preference mechanism does not properly initialize defaults
+        // Ensure that the UI plugin has started too.
+	    if (factoryId == null || factoryId.equals("")) {  //$NON-NLS-1$
+			factoryId = "org.eclipse.ui.presentations.default"; //$NON-NLS-1$
+	    }
+	    return factoryId;
+	}
 }

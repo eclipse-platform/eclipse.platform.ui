@@ -1057,7 +1057,29 @@
    </extension>
    <extension
          point="org.eclipse.ui.themes">
+         
+      <!-- do not add to this category!  This is bound to the default presentation and will disappear if another presentation is used. -->
+	  <themeElementCategory
+            class="org.eclipse.ui.internal.themes.WorkbenchPreview"
+            label="%Presentation.default"
+            id="org.eclipse.ui.presentation.default">
+            <description>
+            	%Presentation.default.desc
+            </description>            
+      </themeElementCategory>
+      <themeElementCategory
+            label="%Presentation.misc"
+            id="org.eclipse.ui.workbenchMisc">
+            <description>
+            	%Presentation.misc.desc
+            </description>
+      </themeElementCategory>      
+      <categoryPresentationBinding
+      		categoryId="org.eclipse.ui.presentation.default"
+      		presentationId="org.eclipse.ui.presentations.default" />         
+      		
       <fontDefinition
+      		categoryId="org.eclipse.ui.workbenchMisc"
             label="%FontsPreference.BannerFontLabel"
             id="org.eclipse.jface.bannerfont">
          <description>
@@ -1065,6 +1087,7 @@
          </description>
       </fontDefinition>
       <fontDefinition
+      		categoryId="org.eclipse.ui.workbenchMisc"      
             label="%FontsPreference.DialogFontLabel"
             id="org.eclipse.jface.dialogfont">
          <description>
@@ -1072,6 +1095,7 @@
          </description>
       </fontDefinition>
       <fontDefinition
+      		categoryId="org.eclipse.ui.workbenchMisc"      
             label="%FontsPreference.HeaderFontLabel"
             id="org.eclipse.jface.headerfont">
          <description>
@@ -1079,6 +1103,7 @@
          </description>
       </fontDefinition>
       <fontDefinition
+      		categoryId="org.eclipse.ui.workbenchMisc"      
             label="%FontsPreference.TextFontLabel"
             id="org.eclipse.jface.textfont">
          <description>
@@ -1087,7 +1112,7 @@
       </fontDefinition>
       <fontDefinition
             label="%FontsPreference.TitleFont"
-            categoryId="org.eclipse.ui.workbenchMisc"
+            categoryId="org.eclipse.ui.presentation.default"
             id="org.eclipse.ui.workbench.TAB_TEXT_FONT">
          <description>
             %FontsPreference.TitleFontDescription
@@ -1095,17 +1120,12 @@
       </fontDefinition>
       <fontDefinition
             label="%FontsPreference.ViewMessageFont"
-            categoryId="org.eclipse.ui.workbenchMisc"
+            categoryId="org.eclipse.ui.presentation.default"
             id="org.eclipse.ui.workbench.VIEW_MESSAGE_TEXT_FONT">
          <description>
             %FontsPreference.ViewMessageFontDescription
          </description>
       </fontDefinition>            
-      <themeElementCategory
-            class="org.eclipse.ui.internal.themes.WorkbenchPreview"
-            label="%Presentation.misc.workbench"
-            id="org.eclipse.ui.workbenchMisc">
-      </themeElementCategory>
       <colorDefinition
             label="%Color.errorText"
             categoryId="org.eclipse.ui.workbenchMisc"
@@ -1138,7 +1158,7 @@
       <colorDefinition
             label="%Color.activeTabText"
             value="COLOR_TITLE_FOREGROUND"
-            categoryId="org.eclipse.ui.workbenchMisc"
+            categoryId="org.eclipse.ui.presentation.default"
             id="org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR">
          <description>
             %Color.activeTabTextDesc
@@ -1146,7 +1166,7 @@
       </colorDefinition>
       <colorDefinition
             label="%Color.activeTabBGEnd"
-            categoryId="org.eclipse.ui.workbenchMisc"
+            categoryId="org.eclipse.ui.presentation.default"
             id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_END">
          <colorFactory
                plugin="org.eclipse.ui"
@@ -1166,7 +1186,7 @@
       </colorDefinition>
       <colorDefinition
             label="%Color.activeTabBGStart"            
-            categoryId="org.eclipse.ui.workbenchMisc"
+            categoryId="org.eclipse.ui.presentation.default"
             value="COLOR_TITLE_BACKGROUND"
             id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_START">
           <description>
@@ -1175,10 +1195,10 @@
 
       <!-- Inactive Tab Colors -->
       </colorDefinition>
-            <colorDefinition
+      <colorDefinition
             label="%Color.inactiveTabText"
             value="COLOR_WIDGET_FOREGROUND"
-            categoryId="org.eclipse.ui.workbenchMisc"
+            categoryId="org.eclipse.ui.presentation.default"
             id="org.eclipse.ui.workbench.INACTIVE_TAB_TEXT_COLOR">
          <description>
             %Color.inactiveTabTextDesc
@@ -1186,7 +1206,7 @@
       </colorDefinition>
       <colorDefinition
             label="%Color.inactiveTabBGStart"
-            categoryId="org.eclipse.ui.workbenchMisc"
+            categoryId="org.eclipse.ui.presentation.default"
             value="COLOR_WHITE"
             id="org.eclipse.ui.workbench.INACTIVE_TAB_BG_START">
          <description>
@@ -1195,7 +1215,7 @@
       </colorDefinition>
       <colorDefinition
             label="%Color.inactiveTabBGEnd"
-            categoryId="org.eclipse.ui.workbenchMisc"
+            categoryId="org.eclipse.ui.presentation.default"
             value="COLOR_WIDGET_BACKGROUND"
             id="org.eclipse.ui.workbench.INACTIVE_TAB_BG_END">
          <description>

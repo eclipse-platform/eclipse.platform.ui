@@ -14,8 +14,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.ui.themes.IThemeManager;
 
@@ -32,6 +34,11 @@ public class ThemeRegistry implements IThemeRegistry {
 	private List fonts;
 	private List categories;
 	private Map dataMap;
+	
+	/**
+	 * Map from String (categoryId) -> Set (presentationIds)
+	 */
+	private Map categoryBindingMap;
 
 	/**
 	 * Create a new ThemeRegistry.
@@ -42,6 +49,7 @@ public class ThemeRegistry implements IThemeRegistry {
 		fonts = new ArrayList();
 		categories = new ArrayList();
 		dataMap = new HashMap();
+		categoryBindingMap = new HashMap();
 	}
 
 	/**
@@ -246,5 +254,28 @@ public class ThemeRegistry implements IThemeRegistry {
      */
     public void addData(Map otherData) {
         dataMap.putAll(otherData);
+    }
+    
+    /**
+     * Add a category presentation binding.  The given category will only be 
+     * availible if the given presentation is active.
+     * 
+     * @param categoryId the category id
+     * @param presentationId the presentation id
+     */
+    public void addCategoryPresentationBinding(String categoryId, String presentationId) {
+        Set presentations = (Set) categoryBindingMap.get(categoryId);
+        if (presentations == null) {
+            presentations = new HashSet();
+            categoryBindingMap.put(categoryId, presentations);
+        }
+        presentations.add(presentationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.themes.IThemeRegistry#getPresentationsBindingsFor(org.eclipse.ui.internal.themes.ThemeElementCategory)
+     */
+    public Set getPresentationsBindingsFor(ThemeElementCategory category) {
+        return (Set) categoryBindingMap.get(category.getId());
     }
 }

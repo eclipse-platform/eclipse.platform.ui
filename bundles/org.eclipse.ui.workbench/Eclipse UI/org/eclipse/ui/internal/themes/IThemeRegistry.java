@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.themes;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -194,4 +195,12 @@ public interface IThemeRegistry {
 	 * @return the data map
 	 */
 	public Map getData();
+	
+	/**
+	 * Return the set of category presentation bindings.
+	 * 
+	 * @param category the category to test
+	 * @return the set of bindings or <code>null</code> if this category has no bindings
+	 */
+	public Set getPresentationsBindingsFor(ThemeElementCategory category);
 }
