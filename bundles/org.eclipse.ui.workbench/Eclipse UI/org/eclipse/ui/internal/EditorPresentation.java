@@ -201,7 +201,8 @@ public class EditorPresentation {
 
 	public void moveEditor(IEditorPart part, int position) {
 		EditorPane pane = (EditorPane) ((EditorSite) part.getSite()).getPane();
-		pane.getWorkbook().reorderTab(pane, position);
+		//TODO commented this out during presentations works
+		//pane.getWorkbook().reorderTab(pane, position);
 	}
 	/**
 	 * Move a part from one position to another.
@@ -237,7 +238,7 @@ public class EditorPresentation {
 			sashContainer.add(part, relativePosition, (float) 0.5, relativePart.getPart());
 			((EditorWorkbook) part).becomeActiveWorkbook(true);
 		} else {
-			EditorWorkbook newWorkbook = EditorWorkbook.newEditorWorkbook(editorArea);
+			EditorWorkbook newWorkbook = EditorWorkbook.newEditorWorkbook(editorArea, page);
 			sashContainer.add(newWorkbook, relativePosition, (float) 0.5, relativePart.getPart());
 			newWorkbook.add(part);
 			newWorkbook.becomeActiveWorkbook(true);
@@ -336,7 +337,8 @@ private void onPartDrop(PartDropEvent e) {
 			if (e.dragSource instanceof EditorPane) {
 				EditorWorkbook sourceWorkbook = ((EditorPane)e.dragSource).getWorkbook();
 				if (sourceWorkbook == e.dropTarget) {
-					sourceWorkbook.reorderTab((EditorPane)e.dragSource, e.cursorX, e.cursorY);
+					//TODO commented this out during presentations works
+					// sourceWorkbook.reorderTab((EditorPane)e.dragSource, e.cursorX, e.cursorY);
 					break;
 				}
 			}

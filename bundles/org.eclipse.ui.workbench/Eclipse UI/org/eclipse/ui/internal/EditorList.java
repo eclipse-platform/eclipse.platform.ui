@@ -25,7 +25,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class EditorList {
 	private WorkbenchWindow window;
-	private TabbedEditorWorkbook workbook;
+	private EditorWorkbook workbook;
 	private Table editorsTable;
 	private static List editorListViews = new ArrayList();
 	private List elements = new ArrayList();
@@ -135,7 +135,7 @@ public class EditorList {
 		}				
 	};
 
-public EditorList(IWorkbenchWindow window, TabbedEditorWorkbook workbook) {
+public EditorList(IWorkbenchWindow window, EditorWorkbook workbook) {
 	this.window = (WorkbenchWindow) window;
 	this.workbook = workbook;
 	
@@ -619,7 +619,8 @@ private class FullNameAction extends Action {
 		int[] indices = editorsTable.getSelectionIndices();
 		updateItems();
 		if (dropDown) {
-			workbook.resizeEditorList();
+			//TODO commented out for presentation work
+			//workbook.resizeEditorList();
 		}
 		editorsTable.setSelection(indices);
 		notifyEditorListViews();
@@ -697,7 +698,8 @@ private class SetScopeAction extends Action {
 		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.EDITORLIST_SELECTION_SCOPE, this.whichScope);
 		updateItems();
 		if (dropDown) {
-			workbook.resizeEditorList();
+			//TODO commented out for presentation work
+			//workbook.resizeEditorList();
 		}
 		notifyEditorListViews();
 	}

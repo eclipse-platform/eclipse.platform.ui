@@ -29,11 +29,13 @@ public class PresentationUtil {
 	private final static String LISTENER_ID = PresentationUtil.class.getName() + ".dragListener"; //$NON-NLS-1$
 	private static Event dragEvent;
 	
+	/* not used
 	private static Listener dragListener = new Listener() {
 		public void handleEvent(Event event) {
 			dragEvent = event;
 		}
 	};
+	*/
 		
 	/**
 	 * Returns whether the mouse has moved enough to warrant

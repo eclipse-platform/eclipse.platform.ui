@@ -93,17 +93,12 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 	 */
 	private void updateGradient() {
 		Color fgColor;
-		Color[] bgColors;
-		int[] bgPercents;
-		
-		
 		ITheme currentTheme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
         FontRegistry fontRegistry = currentTheme.getFontRegistry();	    
-
 		ColorRegistry colorRegistry = currentTheme.getColorRegistry();
-		GradientRegistry gradientRegistry = currentTheme.getGradientRegistry();
-		
+		GradientRegistry gradientRegistry = currentTheme.getGradientRegistry();	
 		Gradient gradient = null;
+		
         if (isActive()){
 	        fgColor = colorRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_COLOR);
 	        gradient = gradientRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_BG_GRADIENT);
@@ -113,6 +108,7 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 	        gradient = gradientRegistry.get(IWorkbenchPresentationConstants.INACTIVE_TAB_BG_GRADIENT);
 	        getTabFolder().setFont(fontRegistry.get(IWorkbenchPresentationConstants.INACTIVE_TAB_TEXT_FONT)); //$NON-NLS-1$
 		}		
+        
 		drawGradient(fgColor, gradient);	
 	}
 	

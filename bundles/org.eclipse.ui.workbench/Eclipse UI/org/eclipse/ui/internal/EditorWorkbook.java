@@ -1,4 +1,3 @@
-
 /******************************************************************************* 
  * Copyright (c) 2000, 2003 IBM Corporation and others. 
  * All rights reserved. This program and the accompanying materials! 
@@ -15,88 +14,219 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.Gradient;
-import org.eclipse.jface.resource.GradientRegistry;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.themes.ITheme;
-import org.eclipse.ui.themes.IThemeManager;
+import org.eclipse.ui.internal.dnd.IDragOverListener;
+import org.eclipse.ui.internal.dnd.IDropTarget;
+import org.eclipse.ui.internal.presentations.EditorStackPresentation;
+import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.presentations.IStackPresentationSite;
+import org.eclipse.ui.presentations.StackDropResult;
+import org.eclipse.ui.presentations.StackPresentation;
 
 /**
  * Represents a tab folder of editors. This layout part
  * container only accepts EditorPane parts.
  */
-public abstract class EditorWorkbook
+public class EditorWorkbook
 	extends LayoutPart
-	implements ILayoutContainer, IPropertyListener, IWorkbenchDragSource {
-	private static final int INACTIVE = 0;
-	private static final int ACTIVE_FOCUS = 1;
-	private static final int ACTIVE_NOFOCUS = 2;
+	implements ILayoutContainer, IWorkbenchDragSource {
 
-	private EditorArea editorArea;
-	private List editors = new ArrayList();
-	private EditorPane visibleEditor;
-	protected Composite parent;
-	private int activeState = INACTIVE;
-	private boolean isZoomed = false;
-	private Map mapPartToDragMonitor = new HashMap();
+    private EditorArea editorArea;
 
 	/**
 	 * Factory method for editor workbooks.
 	 */
-	public static EditorWorkbook newEditorWorkbook(EditorArea editorArea) {
-		return new TabbedEditorWorkbook(editorArea);
+	public static EditorWorkbook newEditorWorkbook(EditorArea editorArea, WorkbenchPage page) {
+		return new EditorWorkbook(editorArea, page);
 	}
 
-	/**
-	 * Constructs a new EditorWorkbook.
-	 */
-	protected EditorWorkbook(EditorArea editorArea) {
-		super("editor workbook"); //$NON-NLS-1$
-		this.editorArea = editorArea;
-		// Each workbook has a unique ID so
-		// relative positioning is unambiguous.
-		setID(this.toString());
+	private WorkbenchPage page;
+	private PartPane.PaneContribution paneContribution;
 
-	}
-	/**
-	 * See ILayoutContainer::add
-	 *
-	 * Note: the workbook currently only accepts
-	 * editor parts.
-	 */
-	public void add(LayoutPart part) {
-		if (part instanceof EditorPane) {
-			EditorPane editorPane = (EditorPane) part;
-			editors.add(editorPane);
-			editorPane.setWorkbook(this);
-			editorPane.setZoomed(isZoomed);
-			if (getControl() != null) {
-				createItem(editorPane);
-				createPage(editorPane);
-				setVisibleEditor(editorPane);
+	private DefaultStackPresentationSite presentationSite = new DefaultStackPresentationSite() {
+		public void selectPart(IPresentablePart toSelect) {			
+			presentationSelectionChanged(toSelect);
+		}
+		
+		public void setPresentation(StackPresentation newPresentation) {
+			super.setPresentation(newPresentation);
+			
+			updateSystemMenu();
+		}
+		
+		public void setState(int newState) {
+			EditorWorkbook.this.setState(newState);
+		}
+		
+		public void dragStart(IPresentablePart beingDragged, Point initialLocation, boolean keyboard) {
+			LayoutPart pane = getPaneFor(beingDragged);
+			
+			if (pane != null) {			
+				DragUtil.performDrag(pane, 
+						Geometry.toDisplay(getParent(), getPresentation().getControl().getBounds()),
+						initialLocation, true);
 			}
 		}
+		
+		public void close(IPresentablePart part) {
+			EditorWorkbook.this.close(part);
+		}
+		
+		public boolean isClosable(IPresentablePart part) {
+			return true;
+			
+//			Perspective perspective = page.getActivePerspective();
+//			
+//			if (perspective == null) {
+//				// Shouldn't happen -- can't have a PartTabFolder without a perspective
+//				return false;
+//			}
+//			
+//			EditorPane pane = (EditorPane)getPaneFor(part);
+//			
+//			if (pane == null) {
+//				// Shouldn't happen -- this should only be called for ViewPanes that are already in the tab folder
+//				return false;
+//			}
+//			
+//			return !perspective.isFixedView(pane.getEditorReference());
+		}
+			
+		public boolean isMovable(IPresentablePart part) {
+			return isClosable(part);
+		}
+	};
+
+	// inactiveCurrent is only used when restoring the persisted state of
+	// perspective on startup.
+	private LayoutPart current;
+	private LayoutPart inactiveCurrent;
+	private boolean active = false;
+	private int flags;		
+	private List children = new ArrayList(3);
+	
+	/**
+	 * EditorWorkbook constructor comment.
+	 */
+	public EditorWorkbook(EditorArea editorArea, WorkbenchPage page) {
+		this(editorArea, page, SWT.MAX);
 	}
+	
+	/**
+	 * Returns the current presentable part, or null if there is no current selection
+	 * 
+	 * @return the current presentable part, or null if there is no current selection
+	 */
+	/* not used
+	private IPresentablePart getCurrentPresentablePart() {
+		if (current != null) {
+			return current.getPresentablePart();
+		}
+		
+		return null;
+	}
+	*/
+	
+	private void presentationSelectionChanged(IPresentablePart newSelection) {
+		setSelection(getLayoutPart(newSelection));
+	}
+	
+	/**
+	 * @param part
+	 */
+	protected void close(IPresentablePart part) {
+		if (!presentationSite.isClosable(part)) {
+			return;
+		}
+		
+		LayoutPart layoutPart = getPaneFor(part);
+		
+		if (layoutPart != null && layoutPart instanceof EditorPane) {
+			EditorPane editorPane = (EditorPane) layoutPart;
+			
+			//getPresentation().removePart(part);
+			editorPane.doHide();
+		}
+	}
+
+	private LayoutPart getPaneFor(IPresentablePart part) {
+		Iterator iter = children.iterator();
+		while (iter.hasNext()) {
+			LayoutPart next = (LayoutPart) iter.next();
+			
+			if (next.getPresentablePart() == part) {
+				return next;
+			}
+		}
+		
+		return null;
+	}
+	
+	public EditorWorkbook(EditorArea editorArea, WorkbenchPage page, int flags) {
+		super("editor workbook"); //$NON-NLS-1$
+		this.editorArea = editorArea;
+		setID(this.toString());
+		// Each folder has a unique ID so relative positioning is unambiguous.		
+		// save off a ref to the page
+		//@issue is it okay to do this??
+		//I think so since a PartTabFolder is
+		//not used on more than one page.
+		this.page = page;
+		this.flags = flags;
+	}
+	
+	/**
+	 * Add a part at a particular position
+	 */	
+	private void add(LayoutPart newChild, int idx) {
+		IPresentablePart position = getPresentablePartAtIndex(idx);
+		LayoutPart targetPart = getPaneFor(position);
+		int childIdx = children.indexOf(targetPart);
+		
+		if (childIdx == -1) {
+			children.add(newChild);
+		} else {
+			children.add(idx, newChild);
+		}
+		
+		if (active) {
+			showPart(newChild, position);
+		}
+	}
+
+	/**
+	 * See IVisualContainer#add
+	 */
+	public void add(LayoutPart child) {
+		
+		children.add(child);
+		if (active) {
+			showPart(child, null);
+		}
+		
+		// TODO added this. necessary?
+		((EditorPane) child).setWorkbook(this);
+	}
+	
 	/**
 	 * See ILayoutContainer::allowBorder
 	 *
@@ -104,265 +234,215 @@ public abstract class EditorWorkbook
 	 * folder so no need for one from the parts.
 	 */
 	public boolean allowsBorder() {
+		// @issue need to support old look even if a theme is set (i.e. show border
+		//   even when only one item) -- separate theme attribute, or derive this
+		//   from existing attributes?
+		// @issue this says to show the border only if there are no items, but 
+		//   in this case the folder should not be visible anyway
+//		if (tabThemeDescriptor != null)
+//			return (mapTabToPart.size() < 1);
+//		return mapTabToPart.size() <= 1;
 		return false;
 	}
-	public void becomeActiveWorkbook(boolean hasFocus) {
-		EditorArea area = getEditorArea();
-		if (area != null)
-			area.setActiveWorkbook(this, hasFocus);
-	}
 
+	/**
+	 * Returns the layout part for the given presentable part
+	 * 
+	 * @param toFind
+	 * @return
+	 */
+	private LayoutPart getLayoutPart(IPresentablePart toFind) {
+		Iterator iter = children.iterator();
+		while (iter.hasNext()) {
+			LayoutPart next = (LayoutPart)iter.next();
+			
+			if (next.getPresentablePart() == toFind) {
+				return next;
+			}
+		}
+		
+		return null;
+	}
+	
+	private IPresentablePart getPresentablePartAtIndex(int idx) {
+		List presentableParts = getPresentableParts();
+		
+		if (idx >= 0 && idx < presentableParts.size()) {
+			return (IPresentablePart)presentableParts.get(idx);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Returns a list of IPresentablePart
+	 * 
+	 * @return
+	 */
+	private List getPresentableParts() {
+		List result = new ArrayList(children.size());
+		
+		Iterator iter = children.iterator();
+		while (iter.hasNext()) {
+			LayoutPart part = (LayoutPart)iter.next();
+			
+			IPresentablePart presentablePart = part.getPresentablePart();
+
+			if (presentablePart != null) {
+				result.add(presentablePart);
+			}			
+		}
+		
+		return result;
+	}
+	
 	public void createControl(Composite parent) {
 
-		if (getControl() != null)
+		if (presentationSite.getPresentation() != null)
 			return;
+	
+		// The following line should be redirected to a factory in order to 
+		// support pluggable look-and-feel.
+		presentationSite.setPresentation(new EditorStackPresentation(parent, 
+				presentationSite, flags /*, page.getTheme()*/));
+
+		active = true;
 		
-		
-		final IPropertyChangeListener listener = new IPropertyChangeListener() {
-
-            /* (non-Javadoc)
-             * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-             */
-            public void propertyChange(PropertyChangeEvent event) {
-                // refresh if we've switched themes or one of our colors of interest have changed.
-                if (event.getProperty().equals(IThemeManager.CHANGE_CURRENT_THEME)
-                	|| event.getProperty().equals(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_COLOR)
-                	|| event.getProperty().equals(IWorkbenchPresentationConstants.INACTIVE_TAB_TEXT_COLOR)
-                	|| event.getProperty().equals(IWorkbenchPresentationConstants.ACTIVE_TAB_BG_GRADIENT)
-                	|| event.getProperty().equals(IWorkbenchPresentationConstants.INACTIVE_TAB_BG_GRADIENT)) {
-                    drawGradient();
-                }
-            }};
-        
-            
-        PlatformUI
-			.getWorkbench()
-			.getThemeManager()
-			.addPropertyChangeListener(listener);
-
-        parent.addDisposeListener(new DisposeListener() {
-
-            /* (non-Javadoc)
-             * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-             */
-            public void widgetDisposed(DisposeEvent e) {
-                PlatformUI
-    			.getWorkbench()
-    			.getThemeManager()
-    			.removePropertyChangeListener(listener);
-         }});
-		this.parent = parent;
-
-		createPresentation(parent);
-
-		// Enable drop target data
-		enableDrop(this);
-
-		// Create items.
-		Iterator enum = editors.iterator();
-		while (enum.hasNext()) {
-			EditorPane pane = (EditorPane) enum.next();
-			createItem(pane);
-			createPage(pane);
+		// Add all visible children to the presentation
+		Iterator iter = children.iterator();
+		while (iter.hasNext()) {
+			LayoutPart part = (LayoutPart)iter.next();
+			
+			showPart(part, null);
 		}
+		
+		// Set current page.
+		if (getItemCount() > 0) {
+			int newPage = 0;
+			if (current != null)
+				newPage = indexOf(current);
+			setSelection(newPage);
+		}
+		
+		Control ctrl = getPresentation().getControl();
+		
+		// Add a drop target that lets us drag views directly to a particular tab
+		DragUtil.addDragTarget(ctrl, new IDragOverListener() {
 
-		// Set active tab.
-		if (visibleEditor != null)
-			setVisibleEditor(visibleEditor);
-		else if (getItemCount() > 0)
-			setVisibleEditor((EditorPane) editors.get(0));
+			public IDropTarget drag(Control currentControl, final Object draggedObject, 
+					Point position, Rectangle dragRectangle) {
+				
+				if (!(draggedObject instanceof EditorPane)) {
+					return null;
+				}
+				
+				final EditorPane pane = (EditorPane)draggedObject;
+				
+				// Don't allow views to be dragged between windows
+				if (pane.getWorkbenchWindow() != getWorkbenchWindow()) {
+					return null;
+				}
+
+				final StackDropResult dropResult = getPresentation().dragOver(currentControl, position);
+				
+				if (dropResult == null) {
+					return null;
+				}
+				
+				IPresentablePart draggedControl = getPresentablePartAtIndex(dropResult.getDropIndex());
+				
+				// If we're dragging a pane over itself do nothing
+				if (draggedControl == pane.getPresentablePart()) {
+					return null;
+				}
+								
+				return new IDropTarget() {
+
+					public void drop() {
+ 						
+						// Don't worry about reparenting the view if we're simply
+						// rearranging tabs within this folder
+						if (pane.getContainer() != EditorWorkbook.this) {
+							page.getActivePerspective().getPresentation().derefPart(pane);
+							pane.reparent(getParent());
+						} else {
+							remove(pane);
+						}
+						
+						add(pane, dropResult.getDropIndex());
+						setSelection(pane);	
+						pane.setFocus();
+					}
+
+					public Cursor getCursor() {
+						return DragCursors.getCursor(DragCursors.CENTER);
+					}
+
+					public Rectangle getSnapRectangle() {
+						return dropResult.getSnapRectangle();
+					}
+				};
+			}
+			
+		});
+
+		ctrl.setData(this);
 	}
-
-	protected abstract void createPresentation(Composite parent);
-
+	
 	/**
-	 * Show a title label menu for this pane.
-	 */
-	public abstract void showPaneMenu();
-
-	/**
-	 * Create a page and tab for an editor.
-	 */
-	private void createPage(EditorPane editorPane) {
-		editorPane.createControl(parent);
-		editorPane.setContainer(this);
-		enableDrop(editorPane);
-		// Update tab to be in-sync after creation of
-		// pane's control since prop listener was not on
-		IEditorReference editorRef = editorPane.getEditorReference();
-		updateEditorTab(editorRef);
-		editorRef.addPropertyListener(this);
-
-	}
-
-	/**
-	 * Creates the presentation item for the given editor.
+	 * Makes the given part visible in the presentation
 	 * 
-	 * @return the item representing the editor
+	 * @param presentablePart
 	 */
-	protected abstract Object createItem(EditorPane editorPane);
+	private void showPart(LayoutPart part, IPresentablePart position) {
+		
+		part.setContainer(this);
+		
+		IPresentablePart presentablePart = part.getPresentablePart();
+		
+		if (presentablePart == null) {
+			return;
+		}
+		
+		part.createControl(getParent());
+		part.setContainer(this);
+		part.moveAbove(getPresentation().getControl());
+		
+		presentationSite.getPresentation().addPart(presentablePart, position);
+		
+		if (current == null) {
+			setSelection(part);
+		}
+	}
 
 	/**
 	 * See LayoutPart#dispose
 	 */
 	public void dispose() {
-		if (getControl() == null)
+
+		if (!active)
 			return;
 
-		for (int i = 0; i < editors.size(); i++) {
-			removeListeners((EditorPane) editors.get(i));
+		StackPresentation presentation = presentationSite.getPresentation();
+		
+		presentationSite.dispose();
+		
+		Iterator iter = children.iterator();
+		while (iter.hasNext()) {
+			LayoutPart next = (LayoutPart)iter.next();
+			
+			next.setContainer(null);
 		}
-		editors.clear();
 
-		// Reset the visible editor so that no references are made to it.
-		setVisibleEditor(null);
-
-		disposePresentation();
+		active = false;
+		
+		updateSystemMenu();
 	}
 
-	/**
-	 * Disposes the presentation of the editors.
-	 */
-	protected abstract void disposePresentation();
-
-	/**
-	 * Zooms in on the active page in this workbook.
-	 */
-	protected void doZoom() {
-		if (visibleEditor == null)
-			return;
-		visibleEditor.getPage().toggleZoom(visibleEditor.getPartReference());
-	}
-
-	/**
-	 * Draws the applicable gradient on the active item.
-	 */
-	public void drawGradient() {
-		Color fgColor = null;
-		
-		Gradient bgGradient = null;
-		
-		ITheme currentTheme = getWorkbenchWindow().getWorkbench().getThemeManager().getCurrentTheme();
-        ColorRegistry colorRegistry = currentTheme.getColorRegistry();
-		GradientRegistry gradientRegistry = currentTheme.getGradientRegistry();
-
-		
-		switch (activeState) {
-			case ACTIVE_FOCUS :
-				fgColor = colorRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_COLOR);
-				bgGradient = gradientRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_BG_GRADIENT);
-				break;
-			case ACTIVE_NOFOCUS :
-			case INACTIVE :
-				fgColor = colorRegistry.get(IWorkbenchPresentationConstants.INACTIVE_TAB_TEXT_COLOR);
-				bgGradient = gradientRegistry.get(IWorkbenchPresentationConstants.INACTIVE_TAB_BG_GRADIENT);
-				break;
-			default :
-			    // hmm.
-		}
-		drawGradient(fgColor, bgGradient, activeState == ACTIVE_FOCUS);
+	private StackPresentation getPresentation() {
+		return presentationSite.getPresentation();
 	}
 	
-	protected abstract void drawGradient(Color fgColor, Gradient gradient, boolean activeState);
-
-	/**
-	 * enableDrop
-	 */
-	private void enableDrop(LayoutPart part) {
-		Control control = part.getControl();
-		if (control != null)
-			control.setData(this); // Use workbook as drop target, not part itself.
-	}
-	/**
-	 * Gets the presentation bounds.
-	 */
-	public Rectangle getBounds() {
-		if (getControl() == null)
-			return new Rectangle(0, 0, 0, 0);
-		return getControl().getBounds();
-	}
-
-	/**
-	 * See ILayoutContainer::getChildren
-	 */
-	public LayoutPart[] getChildren() {
-		int nSize = editors.size();
-		LayoutPart[] children = new LayoutPart[nSize];
-		editors.toArray(children);
-		return children;
-	}
-	/**
-	 * Get the part control.  This method may return null.
-	 */
-	public abstract Control getControl();
-
-	/**
-	 * Return the editor area to which this editor
-	 * workbook belongs to.
-	 */
-	public EditorArea getEditorArea() {
-		return editorArea;
-	}
-	/**
-	 * Answer the number of children.
-	 */
-	public int getItemCount() {
-		return editors.size();
-	}
-
-	/**
-	 * Return the composite used to parent all
-	 * editors within this workbook.
-	 */
-	public Composite getParent() {
-		return this.parent;
-	}
-
-	/**
-	 * Returns the tab list to use when this workbook is active.
-	 * Includes the active editor and its tab, in the appropriate order.
-	 */
-	public abstract Control[] getTabList();
-
-	/**
-	 * Makes sure the visible editor's item is visible.
-	 */
-	public abstract void showVisibleEditor();
-
-	/**
-	 * Returns the visible child.
-	 */
-	public EditorPane getVisibleEditor() {
-		return visibleEditor;
-	}
-	/**
-	 * Returns true if this editor workbook is the
-	 * active one within the editor area.
-	 */
-	public boolean isActiveWorkbook() {
-		return getEditorArea().isActiveWorkbook(this);
-	}
-	/**
-	 * See LayoutPart
-	 */
-	public boolean isDragAllowed(Point p) {
-		if (isZoomed) {
-			return false;
-		} else if (getEditorArea().getEditorWorkbookCount() == 1) {
-			return false;
-		} else if (visibleEditor != null) {
-			if (!isDragAllowed(visibleEditor, p))
-				return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Returns <code>true</code> if, as far as the workbook is concerned,
-	 * a drag is allowed when the user clicks down at the given point.
-	 */
-	public abstract boolean isDragAllowed(EditorPane pane, Point p);
-
 	/**
 	 * Open the tracker to allow the user to move
 	 * the specified part using keyboard.
@@ -370,287 +450,628 @@ public abstract class EditorWorkbook
 	public void openTracker(LayoutPart part) {
 		DragUtil.performDrag(part, DragUtil.getDisplayBounds(part.getControl()));
 	}
+	
+	/**
+	 * Gets the presentation bounds.
+	 */
+	public Rectangle getBounds() {
+		if (getPresentation() == null) {
+			return new Rectangle(0,0,0,0);
+		}
+		
+		return getPresentation().getControl().getBounds();		
+	}
+
+	// getMinimumHeight() added by cagatayk@acm.org 
+	/**
+	 * @see LayoutPart#getMinimumHeight()
+	 */
+	public int getMinimumHeight() {		
+		if (getPresentation() == null) {
+			return 0;
+		}
+		
+		return getPresentation().computeMinimumSize().y;
+	}
 
 	/**
-	 * Listen for notifications from the editor part
-	 * that its title has change or it's dirty, and
-	 * update the corresponding tab
-	 *
-	 * @see IPropertyListener
+	 * See IVisualContainer#getChildren
 	 */
-	public void propertyChanged(Object source, int property) {
-		if (property == IEditorPart.PROP_DIRTY || property == IWorkbenchPart.PROP_TITLE) {
-			if (source instanceof IEditorPart) {
-				updateEditorTab((IEditorPart) source);
-			}
-		}
+	public LayoutPart[] getChildren() {
+		return (LayoutPart[]) children.toArray(new LayoutPart[children.size()]);
 	}
+	
+	public Control getControl() {
+		StackPresentation presentation = getPresentation();
+		
+		if (presentation == null) {
+			return null;
+		}
+		
+		return presentation.getControl();
+	}
+	
 	/**
-	 * See ILayoutContainer::remove
-	 *
-	 * Note: workbook only handles editor parts.
+	 * Answer the number of children.
+	 */
+	public int getItemCount() {
+		if (active) {
+			return getPresentableParts().size();
+		}
+		
+		return children.size();
+	}
+	
+	/**
+	 * Get the parent control.
+	 */
+	public Composite getParent() {
+		return getControl().getParent();
+	}
+	
+	public int getSelection() {
+		if (!active)
+			return 0;
+		
+		return indexOf(current);
+	}
+
+	/**
+	 * Returns the visible child.
+	 */
+	public LayoutPart getVisiblePart() {
+		if (current == null)
+			return inactiveCurrent;
+		return current;
+	}
+	
+	public int indexOf(LayoutPart item) {
+		return indexOf(item.getPresentablePart());
+	}
+	
+	private int indexOf(IPresentablePart part) {
+		int result = getPresentableParts().indexOf(part);
+		
+		if (result < 0) {
+			result = 0;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * See IVisualContainer#remove
 	 */
 	public void remove(LayoutPart child) {
-		if (!(child instanceof EditorPane)) {
-			return;
+		IPresentablePart presentablePart = child.getPresentablePart();
+
+		if (presentablePart != null) {
+			StackPresentation presentation = presentationSite.getPresentation();
+			
+			if (presentation != null)
+			    presentation.removePart(presentablePart);
 		}
-		EditorPane editorPane = (EditorPane) child;
+		
+		children.remove(child);
 
-		int index = editors.indexOf(editorPane);
-		if (index == -1) {
-			return;
-		}
-
-		// Dereference the old editor.  
-		// This must be done before "show" to get accurate decorations.
-		editors.remove(editorPane);
-		removeListeners(editorPane);
-
-		// Show new editor
-		if (visibleEditor == editorPane) {
-			EditorPane nextEditor = null;
-			int maxIndex = editors.size() - 1;
-			if (maxIndex >= 0) {
-				index = Math.min(index, maxIndex);
-				nextEditor = (EditorPane) editors.get(index);
-			}
-			if (getControl() != null) {
-				disposeItem(editorPane);
-				editorPane.setContainer(null);
-			}
-			setVisibleEditor(nextEditor);
-		} else if (getControl() != null) {
-			disposeItem(editorPane);
-			editorPane.setContainer(null);
-		}
-	}
-
-	/**
-	 * Removes the presentation item for the given editor. 
-	 */
-	protected abstract void disposeItem(EditorPane editorPane);
-
-	/**
-	 * Removes all editors from the workbook, disposing any presentation items,
-	 * and unhooking all listeners.  The editors themselves are not disposed.
-	 */
-	public void removeAll() {
-		// Show empty space.
-		setVisibleEditor(null);
-
-		for (Iterator i = editors.iterator(); i.hasNext();) {
-			EditorPane child = (EditorPane) i.next();
-			removeListeners(child);
-		}
-		if (getControl() != null) {
-			disposeAllItems();
-		}
-		for (Iterator i = editors.iterator(); i.hasNext();) {
-			EditorPane child = (EditorPane) i.next();
+		if (active) {
 			child.setContainer(null);
 		}
-		editors.clear();
+		
+		updateContainerVisibleTab();
 	}
-
-	protected abstract void disposeAllItems();
-
-	private void removeListeners(EditorPane editor) {
-		if (editor == null)
+	
+	
+		/**
+	 * Reparent a part. Also reparent visible children...
+	 */
+	public void reparent(Composite newParent) {
+		if (!newParent.isReparentable())
 			return;
 
-		editor.getPartReference().removePropertyListener(this);
-	}
+		Control control = getControl();
+		if ((control == null) || (control.getParent() == newParent))
+			return;
 
-	/**
-	 * Reorder the tab representing the specified pane.
-	 * If a tab exists under the specified x,y location,
-	 * then move the tab before it, otherwise place it
-	 * as the last tab.
-	 */
-	public abstract void reorderTab(EditorPane pane, int x, int y);
+		super.reparent(newParent);
 
-	/**
-	 * Move the specified editor to the a new position. 
-	 * Move to the end if <code>newIndex</code> is less then
-	 * zero.
-	 */
-	public abstract void reorderTab(EditorPane pane, int newIndex);
-
-	/**
-	 * See ILayoutContainer::replace
-	 *
-	 * Note: this is not currently supported
-	 */
-	public void replace(LayoutPart oldPart, LayoutPart newPart) {
+		Iterator iter = children.iterator();
+		while (iter.hasNext()) {
+			LayoutPart next = (LayoutPart)iter.next();
+			next.reparent(newParent);
+		}		
 	}
 	/**
-	 * Sets the gradient state of the active tab
+	 * See IVisualContainer#replace
 	 */
-	private void setActiveState(int state) {
-		if (activeState != state) {
-			activeState = state;
-			drawGradient();
+	public void replace(LayoutPart oldChild, LayoutPart newChild) {	
+		IPresentablePart oldPart = oldChild.getPresentablePart();
+		IPresentablePart newPart = newChild.getPresentablePart();
+		
+		int idx = children.indexOf(oldChild);
+		children.add(idx, newChild);
+		
+		if (active) {				
+			showPart(newChild, oldPart);
+		}
+		
+		if (oldChild == inactiveCurrent) {
+			setSelection(newChild);
+			inactiveCurrent = null;
+		}
+		
+		remove(oldChild);
+
+	}
+	
+	/**
+	 * @see IPersistable
+	 */
+	public IStatus restoreState(IMemento memento) {
+		// Read the active tab.
+		String activeTabID = memento.getString(IWorkbenchConstants.TAG_ACTIVE_PAGE_ID);
+		
+		// Read the page elements.
+		IMemento[] children = memento.getChildren(IWorkbenchConstants.TAG_PAGE);
+		if (children != null) {
+			// Loop through the page elements.
+			for (int i = 0; i < children.length; i++) {
+				// Get the info details.
+				IMemento childMem = children[i];
+				String partID = childMem.getString(IWorkbenchConstants.TAG_CONTENT);
+				String tabText = childMem.getString(IWorkbenchConstants.TAG_LABEL);
+
+				IEditorDescriptor descriptor = (IEditorDescriptor)WorkbenchPlugin.getDefault().
+					getEditorRegistry().findEditor(partID);
+			
+				if (descriptor != null) {
+					tabText = descriptor.getLabel();
+				}
+
+				// Create the part.
+				LayoutPart part = new PartPlaceholder(partID);
+				add(part);
+				//1FUN70C: ITPUI:WIN - Shouldn't set Container when not active
+				//part.setContainer(this);
+				if (partID.equals(activeTabID)) {
+					// Mark this as the active part.
+					inactiveCurrent = part;
+				}
+			}
+		}
+		
+		Integer expanded = memento.getInteger(IWorkbenchConstants.TAG_EXPANDED);
+		setState((expanded == null || expanded.intValue() != IStackPresentationSite.STATE_MINIMIZED) ? 
+				IStackPresentationSite.STATE_RESTORED : IStackPresentationSite.STATE_MINIMIZED);
+		
+		return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+	}
+	/**
+	 * @see IPersistable
+	 */
+	public IStatus saveState(IMemento memento) {
+
+		// Save the active tab.
+		if (current != null)
+			memento.putString(IWorkbenchConstants.TAG_ACTIVE_PAGE_ID, current.getID());
+
+		Iterator iter = children.iterator();
+		while(iter.hasNext()) {
+			LayoutPart next = (LayoutPart)iter.next();
+
+			IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_PAGE);
+			
+			IPresentablePart part = next.getPresentablePart();
+			String tabText = "LabelNotFound"; //$NON-NLS-1$ 
+			if (part != null) {
+				tabText = part.getName();
+			}
+			childMem.putString(IWorkbenchConstants.TAG_LABEL, tabText);
+			childMem.putString(IWorkbenchConstants.TAG_CONTENT, next.getID());
+		}
+				
+		memento.putInteger(IWorkbenchConstants.TAG_EXPANDED, (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) ? 
+				IStackPresentationSite.STATE_MINIMIZED : IStackPresentationSite.STATE_RESTORED);
+		
+		return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+	}
+	
+	private void hidePart(LayoutPart part) {
+		IPresentablePart presentablePart = part.getPresentablePart();
+		
+		if (presentablePart == null) {
+			return;
+		}
+		
+		getPresentation().removePart(presentablePart);
+		if (active) {
+			part.setContainer(null);
 		}
 	}
+	
 	/**
 	 * Sets the presentation bounds.
 	 */
 	public void setBounds(Rectangle r) {
-		if (getControl() != null) {
-			getControl().setBounds(r);
-			setControlSize();
+		if (getPresentation() != null) {
+			getPresentation().setBounds(r);
 		}
 	}
-	/**
-	 * Sets the parent for this part.
-	 */
-	public void setContainer(ILayoutContainer container) {
-		super.setContainer(container);
-	}
-
-	/**
-	 * Set the size of a page in the folder.
-	 */
-	protected abstract void setControlSize();
-
-	public void setVisibleEditor(EditorPane comp) {
-
-		if (getControl() == null) {
-			visibleEditor = comp;
+	
+	public void setSelection(int index) {
+		if (!active)
 			return;
-		}
 
-		if (comp != null) {
-			//Make sure the EditorPart is created.
-			Object part = comp.getPartReference().getPart(true);
-			if (part == null)
-				comp = null;
-		}
-
-		// Hide old part. Be sure that it is not in the middle of closing
-		if (visibleEditor != null && visibleEditor != comp) {
-			visibleEditor.setVisible(false);
-		}
-
-		// Show new part.
-		visibleEditor = comp;
-		if (visibleEditor != null) {
-			setVisibleItem(visibleEditor);
-			setControlSize();
-			if (visibleEditor != null) {
-				visibleEditor.setVisible(true);
+		setSelection(getLayoutPart((IPresentablePart)getPresentableParts().get(index)));	
+	}
+	
+	private void setSelection(LayoutPart part) {
+	    // TODO stefan: ok that i comment this out?
+//		if (current == part) {
+//			return;
+//		}
+	    
+		current = part;
+		
+		updateSystemMenu();
+		
+		if (part != null) {
+			IPresentablePart presentablePart = part.getPresentablePart();
+			StackPresentation presentation = getPresentation();
+			
+			if (presentablePart != null && presentation != null) {
+				presentation.selectPart(presentablePart);
 			}
-			becomeActiveWorkbook(activeState == ACTIVE_FOCUS);
 		}
 	}
 
-	protected abstract void setVisibleItem(EditorPane editorPane);
-
-	public void tabFocusHide() {
-		if (getControl() == null)
-			return;
-
-		if (isActiveWorkbook())
-			setActiveState(ACTIVE_NOFOCUS);
-		else
-			setActiveState(INACTIVE);
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWorkbenchDropTarget#addDropTargets(java.util.Collection)
+	 */
+	public void addDropTargets(Collection result) {
+		addDropTargets(result, this);
 	}
 
-	public void tabFocusShow(boolean hasFocus) {
-		if (getControl() == null)
-			return;
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWorkbenchDragSource#getType()
+	 */
+	public int getType() {
+		return EDITOR;
+	}
 
-		if (hasFocus)
-			setActiveState(ACTIVE_FOCUS);
-		else
-			setActiveState(ACTIVE_NOFOCUS);
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWorkbenchDragSource#isDragAllowed(org.eclipse.swt.graphics.Point)
+	 */
+	public boolean isDragAllowed(Point point) {
+		return true;
+		
+//		if (isZoomed) {
+//		return false;
+//	} else if (getEditorArea().getEditorWorkbookCount() == 1) {
+//		return false;
+//	} else if (visibleEditor != null) {
+//		if (!isDragAllowed(visibleEditor, p))
+//			return true;
+//	}
+//	return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWorkbenchDropTarget#targetPartFor(org.eclipse.ui.internal.IWorkbenchDragSource)
 	 */
 	public LayoutPart targetPartFor(IWorkbenchDragSource dragSource) {
+		return this;
+	}
 
-		if (dragSource.getType() == EDITOR)
-			return this;
-		else
-			return getEditorArea();
+	/**
+	 * Set the active appearence on the tab folder.
+	 * @param active
+	 */
+	public void setActive(boolean activeState) {
+		if (activeState) {
+			if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) {
+				setState(IStackPresentationSite.STATE_RESTORED);
+			}
+			if (page.isZoomed()) {
+				presentationSite.setPresentationState(IStackPresentationSite.STATE_MAXIMIZED);
+			}
+		}
 		
+		getPresentation().setActive(activeState);
 	}
 
-	// TODO: can one of the updateEditorTab methods be removed?
-
+//	/**
+//	 * Replace the image on the tab with the supplied image.
+//	 * @param part PartPane
+//	 * @param image Image
+//	 */
+//	private void updateImage(final PartPane part, final Image image){
+//		final CTabItem item = getTab(part);
+//		if(item != null){
+//			UIJob updateJob = new UIJob("Tab Update"){ //$NON-NLS-1$
+//				/* (non-Javadoc)
+//				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+//				 */
+//				public IStatus runInUIThread(IProgressMonitor monitor) {
+//					part.setImage(item,image);
+//					return Status.OK_STATUS;
+//				}
+//			};
+//			updateJob.setSystem(true);
+//			updateJob.schedule();
+//		}
+//	}
+	
 	/**
-	 * Update the tab for an editor.  This is typically called
-	 * by a site when the tab title changes.
+	 * Indicate busy state in the supplied partPane.
+	 * @param partPane PartPane.
 	 */
-	public void updateEditorTab(IEditorPart part) {
-		EditorPane pane = (EditorPane) ((EditorSite) part.getSite()).getPane();
-		updateItem(pane);
-	}
-
-	/**
-	 * Update the tab for an editor.  This is typically called
-	 * by a site when the tab title changes.
-	 */
-	public void updateEditorTab(IEditorReference ref) {
-		EditorPane pane = (EditorPane) ((WorkbenchPartReference) ref).getPane();
-		updateItem(pane);
-	}
-
-	protected abstract void updateItem(EditorPane editorPane);
-
-	/**
-	 * Zoom in on the active part.
-	 */
-	public void zoomIn() {
-		if (isZoomed)
-			return;
-		isZoomed = true;
-
-		// Mark its editors as zoomed in
-		Iterator iterator = editors.iterator();
-		while (iterator.hasNext())
-			 ((EditorPane) iterator.next()).setZoomed(true);
-	}
-	/**
-	 * Zoom out and show all editors.
-	 */
-	public void zoomOut() {
-		if (!isZoomed)
-			return;
-		isZoomed = false;
-
-		// Mark its editors as zoomed out
-		Iterator iterator = editors.iterator();
-		while (iterator.hasNext())
-			 ((EditorPane) iterator.next()).setZoomed(false);
-	}
-	/**
-	 * Returns the collection of editors.
-	 */
-	public EditorPane[] getEditors() {
-		EditorPane[] children = new EditorPane[editors.size()];
-		editors.toArray(children);
-		return children;
-	}
-
-	/**
-	 * Returns the actual list of editors.
-	 * Subclasses occasionally need to adjust the order of items in this list,
-	 * but normally should not add or remove items from the list.
-	 */
-	protected List getEditorList() {
-		return editors;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.IWorkbenchDropTarget#getType()
-	 */
-	public int getType() {
-		return EDITOR;
+	public void showBusy(PartPane partPane, boolean busy) {
+//		updateTab(
+//			partPane,
+//			JFaceResources.getImage(ProgressManager.BUSY_OVERLAY_KEY));
 	}
 	
+//	/**
+//	 * Restore the part to the default.
+//	 * @param partPane PartPane
+//	 */
+//	public void clearBusy(PartPane partPane) {
+//		//updateTab(partPane,partPane.getPartReference().getTitleImage());
+//	}
+	
+//	/**
+//	 * Replace the image on the tab with the supplied image.
+//	 * @param part PartPane
+//	 * @param image Image
+//	 */
+//	private void updateTab(PartPane part, final Image image){
+//		final CTabItem item = getTab(part);
+//		if(item != null){
+//			UIJob updateJob = new UIJob("Tab Update"){ //$NON-NLS-1$
+//				/* (non-Javadoc)
+//				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+//				 */
+//				public IStatus runInUIThread(IProgressMonitor monitor) {
+//					item.setImage(image);
+//					return Status.OK_STATUS;
+//				}
+//			};
+//			updateJob.setSystem(true);
+//			updateJob.schedule();
+//		}
+//			
+//	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.LayoutPart#setContainer(org.eclipse.ui.internal.ILayoutContainer)
+	 */
+	public void setContainer(ILayoutContainer container) {
+		
+		super.setContainer(container);
+
+		if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
+			if (!page.isZoomed()) {
+				setState(IStackPresentationSite.STATE_RESTORED);
+			}
+		}
+
+		/* TODO prepresentation did this:
+		if (!mouseDownListenerAdded && getEditorArea() != null && tabFolder != null) {
+			tabFolder.addListener(SWT.MouseDown, getEditorArea().getMouseDownListener());
+			mouseDownListenerAdded = true;
+		}
+		*/
+	}
+
+	private void setState(int newState) {
+		if (newState == presentationSite.getState()) {
+			return;
+		}
+		
+		int oldState = presentationSite.getState();
+		
+		if (current != null) {
+			if (newState == IStackPresentationSite.STATE_MAXIMIZED) {
+				((PartPane) current).doZoom();
+			} else {
+				presentationSite.setPresentationState(newState);
+				
+				WorkbenchPage page = ((PartPane) current).getPage();
+				if (page.isZoomed()) {
+					page.zoomOut();
+				}
+			
+				updateControlBounds();
+				
+				if (oldState == IStackPresentationSite.STATE_MINIMIZED) {
+					forceLayout();
+				}
+			}
+		}
+		
+		if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) {
+			// TODO what do i do for editors?
+			page.refreshActiveView();
+		}
+	}
+	
+	public void setZoomed(boolean isZoomed) {
+		if (isZoomed) {
+			presentationSite.setPresentationState(IStackPresentationSite.STATE_MAXIMIZED);
+		}
+	}
+	
+	private void updateControlBounds() {
+		Rectangle bounds = getPresentation().getControl().getBounds();
+		int minimumHeight = getMinimumHeight();
+		
+		if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED && bounds.height != minimumHeight) {
+			bounds.width = getMinimumWidth();
+			bounds.height = minimumHeight;	
+			getPresentation().setBounds(bounds);
+			
+			forceLayout();
+		}
+	}
+	
+	/**
+	 * Forces the layout to be recomputed for all parts
+	 */
+	private void forceLayout() {
+		PartSashContainer cont = (PartSashContainer) getContainer();
+		if (cont != null) {
+			LayoutTree tree = cont.getLayoutTree(); 
+			tree.setBounds(getParent().getClientArea());
+		}
+	}
+	
+	public void findSashes(LayoutPart part, ViewPane.Sashes sashes) {
+		ILayoutContainer container = getContainer();
+		
+		if (container != null) {
+			container.findSashes(this, sashes);
+		}
+	}
+	
+	/**
+	 * Update the container to show the correct visible tab based on the
+	 * activation list.
+	 * 
+	 * @param org.eclipse.ui.internal.ILayoutContainer
+	 */
+	private void updateContainerVisibleTab() {
+		LayoutPart[] parts = getChildren();
+		if (parts.length < 1)
+			return;
+
+		PartPane selPart = null;
+		int topIndex = 0;
+		IWorkbenchPartReference sortedPartsArray[] = page.getSortedParts();
+		List sortedParts = Arrays.asList(sortedPartsArray);
+		for (int i = 0; i < parts.length; i++) {
+			if (parts[i] instanceof PartPane) {
+				IWorkbenchPartReference part =
+					((PartPane) parts[i]).getPartReference();
+				int index = sortedParts.indexOf(part);
+				if (index >= topIndex) {
+					topIndex = index;
+					selPart = (PartPane) parts[i];
+				}
+			}
+		}
+
+		setSelection(selPart);
+	}
+	
+	public boolean resizesVertically() {
+		return presentationSite.getState() != IStackPresentationSite.STATE_MINIMIZED;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ILayoutContainer#allowsAutoFocus()
+	 */
+	public boolean allowsAutoFocus() {
+		// TODO: prepresentation method simply returned true;
+		
+		if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) {
+			return false;
+		}
+		
+		ILayoutContainer parent = getContainer();
+		
+		if (parent != null && ! parent.allowsAutoFocus()) {
+			return false;
+		}
+		
+		return true;
+	}
+		
+	private void updateSystemMenu() {
+		
+		StackPresentation presentation = getPresentation();
+		
+		if (presentation == null) {
+			if (paneContribution != null) {
+				paneContribution.dispose();
+				paneContribution = null;
+			}
+			return;
+		}
+		
+		IMenuManager systemMenuManager = presentation.getSystemMenuManager();
+		if (paneContribution != null) {
+			systemMenuManager.remove(paneContribution);
+			paneContribution.dispose();
+			paneContribution = null;
+		}
+		
+		if (current != null && current instanceof PartPane) {
+			paneContribution = ((PartPane) EditorWorkbook.this.current).createPaneContribution(); 
+			systemMenuManager.add(paneContribution);
+		}
+	}
+
+
+	
+	
+	public Control[] getTabList() {
+		return new Control[0];
+	}
+
+	public void removeAll() {
+		for (int i = 0; i < children.size(); i++)
+			remove((EditorPane) children.get(i));
+	}
+
+	public boolean isActiveWorkbook() {
+		EditorArea area = getEditorArea();
+		
+		if (area != null)
+		    return area.isActiveWorkbook(this);
+		else
+		    return false;
+	}	
+	
+	public void becomeActiveWorkbook(boolean hasFocus) {
+		EditorArea area = getEditorArea();
+		
+		if (area != null)
+			area.setActiveWorkbook(this, hasFocus);
+	}	
+	
+	public void tabFocusHide() {
+		if (getControl() == null)
+			return;
+
+		setActive(isActiveWorkbook());
+	}
+
+	public void tabFocusShow(boolean hasFocus) {
+		if (getControl() == null)
+			return;
+
+		setActive(hasFocus);
+	}
+	
+	public EditorPane[] getEditors() {
+		return (EditorPane[]) children.toArray(new EditorPane[children.size()]);
+	}
+
+	public EditorArea getEditorArea() {
+		return editorArea;
+	}
+	
+	public EditorPane getVisibleEditor() {
+	    return (EditorPane) getVisiblePart();
+	}
+	
+	public void setVisibleEditor(EditorPane editorPane) {
+	    setSelection(editorPane);
+	}
+	
+	public void showVisibleEditor() {
+	}
+
 	/**
 	 * Retained for compatibility with ide.
 	 * @deprecated Do not call this.

@@ -132,6 +132,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	 * 
 	 * @return the current presentable part, or null if there is no current selection
 	 */
+	/* not used
 	private IPresentablePart getCurrentPresentablePart() {
 		if (current != null) {
 			return current.getPresentablePart();
@@ -139,6 +140,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		
 		return null;
 	}
+	*/
 	
 	private void presentationSelectionChanged(IPresentablePart newSelection) {
 		setSelection(getLayoutPart(newSelection));
@@ -705,9 +707,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	}
 	
 	private void setSelection(LayoutPart part) {
-		if (current == part) {
-			return;
-		}
+	    // TODO stefan: ok that i comment this out?
+//		if (current == part) {
+//			return;
+//		}
 		
 		current = part;
 		

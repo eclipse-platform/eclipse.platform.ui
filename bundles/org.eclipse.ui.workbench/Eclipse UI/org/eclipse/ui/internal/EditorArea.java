@@ -80,7 +80,7 @@ protected void childRemoved(LayoutPart child) {
 	}
 }
 protected EditorWorkbook createDefaultWorkbook() {
-	EditorWorkbook newWorkbook = EditorWorkbook.newEditorWorkbook(this);
+	EditorWorkbook newWorkbook = EditorWorkbook.newEditorWorkbook(this, page);
 	newWorkbook.setID(DEFAULT_WORKBOOK_ID);
 	add(newWorkbook);
 	return newWorkbook;
@@ -242,7 +242,7 @@ public IStatus restoreState(IMemento memento) {
 		}
 
 		// Create the part.
-		EditorWorkbook workbook = EditorWorkbook.newEditorWorkbook(this);
+		EditorWorkbook workbook = EditorWorkbook.newEditorWorkbook(this, page);
 		workbook.setID(partID);
 		// 1FUN70C: ITPUI:WIN - Shouldn't set Container when not active
 		workbook.setContainer(this);

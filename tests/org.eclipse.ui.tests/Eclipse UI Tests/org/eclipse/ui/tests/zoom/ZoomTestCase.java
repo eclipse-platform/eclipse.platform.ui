@@ -74,7 +74,7 @@ public class ZoomTestCase extends UITestCase {
 	protected void differentWorkbookSetUp() {
 		EditorPane pane = (EditorPane)((PartSite)editor1.getSite()).getPane();
 		EditorArea area = pane.getWorkbook().getEditorArea();
-		EditorWorkbook workbook = EditorWorkbook.newEditorWorkbook(area);
+		EditorWorkbook workbook = EditorWorkbook.newEditorWorkbook(area, page);
 
 		area.add(workbook, IPageLayout.BOTTOM, (float) 0.5, pane.getWorkbook());
 		workbook.add(pane);

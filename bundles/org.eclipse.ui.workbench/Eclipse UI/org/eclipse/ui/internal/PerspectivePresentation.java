@@ -1431,7 +1431,7 @@ public class PerspectivePresentation {
 			EditorArea ea = wb.getEditorArea();
 			mainLayout.zoomIn(ea);
 			ea.zoomIn(wb);
-			wb.zoomIn();
+			wb.setZoomed(true);
 			pane.setZoomed(true);
 			parentWidget.setRedraw(true);
 		}
@@ -1467,7 +1467,7 @@ public class PerspectivePresentation {
 			parentWidget.setRedraw(false);
 			EditorWorkbook wb = ((EditorPane) pane).getWorkbook();
 			EditorArea ea = wb.getEditorArea();
-			wb.zoomOut();
+			wb.setZoomed(false);
 			ea.zoomOut();
 			mainLayout.zoomOut();
 			pane.setZoomed(false);

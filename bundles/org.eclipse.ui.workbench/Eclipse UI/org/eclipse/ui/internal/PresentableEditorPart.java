@@ -12,18 +12,18 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
  * @since 3.0
  */
-public class PresentableViewPart implements IPresentablePart {
+public class PresentableEditorPart implements IPresentablePart {
 	
-	private ViewPane pane;
+	private EditorPane pane;
 	
-	public PresentableViewPart(ViewPane pane) {
+	public PresentableEditorPart(EditorPane pane) {
 		this.pane = pane;
 	}
 	
@@ -33,8 +33,8 @@ public class PresentableViewPart implements IPresentablePart {
 	}
 	*/
 	
-	private IViewReference getViewReference() {
-		return pane.getViewReference();
+	private IEditorReference getEditorReference() {
+		return pane.getEditorReference();
 	}
 	
 	/* (non-Javadoc)
@@ -62,7 +62,7 @@ public class PresentableViewPart implements IPresentablePart {
 	 * @see org.eclipse.ui.internal.skins.IPresentablePart#addPropertyListener(org.eclipse.ui.IPropertyListener)
 	 */
 	public void addPropertyListener(IPropertyListener listener) {
-		getViewReference().addPropertyListener(listener);
+		getEditorReference().addPropertyListener(listener);
 	}
 	
 	/* (non-Javadoc)
@@ -78,26 +78,26 @@ public class PresentableViewPart implements IPresentablePart {
 	 * @see org.eclipse.ui.internal.skins.IPresentablePart#getTitle()
 	 */
 	public String getTitle() {
-		return getViewReference().getTitle();
+		return getEditorReference().getTitle();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.skins.IPresentablePart#getTitleImage()
 	 */
 	public Image getTitleImage() {
-		return getViewReference().getTitleImage();
+		return getEditorReference().getTitleImage();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.skins.IPresentablePart#getTitleToolTip()
 	 */
 	public String getTitleToolTip() {
-		return getViewReference().getTitleToolTip();
+		return getEditorReference().getTitleToolTip();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.skins.IPresentablePart#isDirty()
 	 */
 	public boolean isDirty() {
-		return false;
+		return getEditorReference().isDirty();
 	}
 }

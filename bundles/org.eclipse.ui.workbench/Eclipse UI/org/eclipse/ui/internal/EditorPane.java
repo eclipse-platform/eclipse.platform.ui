@@ -16,16 +16,26 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.WorkbenchPart;
+import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
  * An EditorPane is a subclass of PartPane offering extended
  * behavior for workbench editors.
  */
 public class EditorPane extends PartPane {
+	private PresentableEditorPart presentableAdapter = new PresentableEditorPart(this);	
+	
 	private EditorWorkbook workbook;
 
 /**
@@ -129,7 +139,7 @@ public EditorWorkbook getWorkbook() {
 public boolean isDragAllowed(Point p) {
 	// See also similar restrictions in addMoveItems method
 	
-	if (workbook.isDragAllowed(this, p))
+	if (workbook.isDragAllowed(/*this,*/p))
 		return false;
 		
 	int wbCount = workbook.getEditorArea().getEditorWorkbookCount();
@@ -162,14 +172,14 @@ public void setWorkbook(EditorWorkbook editorWorkbook) {
  * Method declared on PartPane.
  */
 /* package */ void shellActivated() {
-	this.workbook.drawGradient();
+	//this.workbook.drawGradient();
 }
 
 /* (non-Javadoc)
  * Method declared on PartPane.
  */
 /* package */ void shellDeactivated() {
-	this.workbook.drawGradient();
+	//this.workbook.drawGradient();
 }
 /**
  * Indicate focus in part.
@@ -273,13 +283,13 @@ protected Sashes findSashes() {
  * Update the title attributes for the pane.
  */
 public void updateTitles() {
-	workbook.updateEditorTab(getEditorReference());
+//	  TODO commented during presentation refactor 	workbook.updateEditorTab(getEditorReference());
 }
 /**
  * Show a title label menu for this pane.
  */
 public void showPaneMenu() {
-	workbook.showPaneMenu();
+	// TODO how to show pane menu of presentation? workbook.showPaneMenu();
 }
 /**
  * Show the context menu for this part.
@@ -299,4 +309,10 @@ public int getType() {
 	return EDITOR;
 }
 
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.LayoutPart#getPresentablePart()
+ */
+public IPresentablePart getPresentablePart() {
+	return presentableAdapter;
+}
 }

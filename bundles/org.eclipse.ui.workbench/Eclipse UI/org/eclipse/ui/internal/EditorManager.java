@@ -797,7 +797,7 @@ public class EditorManager {
 					editorPresentation.setActiveEditorWorkbookFromID(workbookID);
 					openInternalEditor(ref, desc, editorInput, false);
 					ref.getPane().createChildControl();
-					((EditorPane)ref.getPane()).getWorkbook().updateEditorTab(ref);
+					// TODO commented during presentation refactor ((EditorPane)ref.getPane()).getWorkbook().updateEditorTab(ref);
 				} catch (PartInitException e) {
 					WorkbenchPlugin.log("Exception creating editor: " + e.getMessage()); //$NON-NLS-1$
 					result[0] = unableToCreateEditor(ref, e);				
