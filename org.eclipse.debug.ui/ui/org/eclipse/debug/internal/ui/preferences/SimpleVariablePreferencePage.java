@@ -11,6 +11,8 @@
 package org.eclipse.debug.internal.ui.preferences;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.variables.ILaunchVariableManager;
@@ -70,6 +72,8 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	protected Button envAddButton;
 	protected Button envEditButton;
 	protected Button envRemoveButton;
+	
+	protected SimpleVariableContentProvider variableContentProvider= new SimpleVariableContentProvider();
 	 
 	protected static String[] variableTableColumnProperties= {
 		"variable", //$NON-NLS-1$
@@ -83,8 +87,6 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		new ColumnWeightData(50),
 		new ColumnWeightData(50)
 	};
-	
-	private ISimpleLaunchVariable[] originalVariableState= new ISimpleLaunchVariable[0];
 	
 	public SimpleVariablePreferencePage() {
 		setDescription(DebugPreferencesMessages.getString("SimpleVariablePreferencePage.5")); //$NON-NLS-1$
@@ -100,7 +102,6 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
-		originalVariableState= getVariableManager().getSimpleVariables();
 		Font font= parent.getFont();
 		//The main composite
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -144,7 +145,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		table.setFont(font);
 		gridData = new GridData(GridData.FILL_BOTH);
 		variableTable.getControl().setLayoutData(gridData);
-		variableTable.setContentProvider(new SimpleVariableContentProvider());
+		variableTable.setContentProvider(variableContentProvider);
 		variableTable.setColumnProperties(variableTableColumnProperties);
 		variableTable.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -235,7 +236,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		if (name.length() > 0) {
 			ISimpleLaunchVariable variable= DebugPlugin.getDefault().getLaunchVariableManager().newSimpleVariable(name, null, null);
 			if (editVariable(variable)) {
-				getVariableManager().addSimpleVariables(new ISimpleLaunchVariable[] {variable});
+				variableContentProvider.addVariable(variable);
 				variableTable.refresh();
 			}
 		}
@@ -272,7 +273,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	private void handleRemoveButtonPressed() {
 		IStructuredSelection selection= (IStructuredSelection) variableTable.getSelection();
 		ISimpleLaunchVariable[] variables= (ISimpleLaunchVariable[]) selection.toList().toArray(new ISimpleLaunchVariable[0]);
-		getVariableManager().removeSimpleVariables(variables); 
+		variableContentProvider.removeVariables(variables); 
 		variableTable.refresh();
 	}
 	
@@ -293,9 +294,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	 * Revert to the previously saved state.
 	 */
 	public boolean performCancel() {
-		ILaunchVariableManager manager= getVariableManager();
-		manager.removeSimpleVariables(manager.getSimpleVariables());
-		manager.addSimpleVariables(originalVariableState);
+		variableContentProvider.discardChanges();
 		return super.performCancel();
 	}
 
@@ -303,8 +302,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	 * Clear the variables.
 	 */
 	protected void performDefaults() {
-		ILaunchVariableManager manager= getVariableManager();
-		manager.removeSimpleVariables(manager.getSimpleVariables());
+		variableContentProvider.discardChanges();
 		variableTable.refresh();
 		super.performDefaults();
 	}
@@ -313,7 +311,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	 * Sets the saved state for reversion.
 	 */
 	public boolean performOk() {
-		originalVariableState= getVariableManager().getSimpleVariables();
+		variableContentProvider.saveChanges();
 		return super.performOk();
 	}
 
@@ -327,18 +325,25 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	}
 	
 	private class SimpleVariableContentProvider implements IStructuredContentProvider {
+		/**
+		 * The content provider stores a copy of the variables for use during editing.
+		 * The edited variables are saved to the launch manager when saveChanges()
+		 * is called.
+		 */
+		private List editedVariables= new ArrayList();
+		private ILaunchVariableManager variableManager;
+		
 		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof ILaunchVariableManager) {
-				return ((ILaunchVariableManager) inputElement).getSimpleVariables();
-			}
-			return null;
+			return editedVariables.toArray();
 		}
 		public void dispose() {
 		}
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			if (newInput == null){
+			if (newInput == null || !(newInput instanceof ILaunchVariableManager)){
 				return;
 			}
+			variableManager= (ILaunchVariableManager) newInput;
+			discardChanges();
 			if (viewer instanceof TableViewer){
 				((TableViewer)viewer).setSorter(new ViewerSorter() {
 					public int compare(Viewer viewer, Object e1, Object e2) {
@@ -352,6 +357,39 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 					}
 				});
 			}
+		}
+		public void addVariable(ISimpleLaunchVariable variable) {
+			editedVariables.add(variable);
+		}
+		public void removeVariables(ISimpleLaunchVariable[] variables) {
+			for (int i= 0; i < variables.length; i++) {
+				editedVariables.remove(variables[i]);
+			}
+		}
+		/**
+		 * Discards the edited variable state and restores the variables from the
+		 * variable manager.
+		 */
+		public void discardChanges() {
+			if (variableManager == null) {
+				return;
+			}
+			editedVariables.clear();
+			ISimpleLaunchVariable[] simpleVariables= variableManager.getSimpleVariables();
+			for (int i = 0; i < simpleVariables.length; i++) {
+				ISimpleLaunchVariable variable= simpleVariables[i];
+				editedVariables.add(variableManager.newSimpleVariable(variable.getName(), variable.getValue(), variable.getDescription()));
+			}
+		}
+		/**
+		 * Saves the edited variable state to the variable manager.
+		 */
+		public void saveChanges() {
+			if (variableManager == null) {
+				return;
+			}
+			variableManager.removeSimpleVariables(variableManager.getSimpleVariables());
+			variableManager.addSimpleVariables((ISimpleLaunchVariable[]) editedVariables.toArray(new ISimpleLaunchVariable[0]));
 		}
 	}
 	
