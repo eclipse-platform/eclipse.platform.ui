@@ -152,7 +152,9 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			// if the privatre marker doesn't already exist create it
 			configSite.createPrivateSiteMarker();
 		}
-
+		// configure all features as enable
+		configure(configSite);
+		
 		return configSite;
 	}
 
@@ -161,48 +163,49 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
 	 */
 	public IConfiguredSite createLinkedConfiguredSite(File file) throws CoreException {
-		if (isDuplicateSite(file))
-			throw Utilities.newCoreException(UpdateUtils.getFormattedMessage("InstallConfiguration.location.exists", file.getPath()),null);
-		
-		ISite site = InternalSiteManager.createSite(file);
-
-		//create a config site around the site
-		// even if the site == null
-		BaseSiteLocalFactory factory = new BaseSiteLocalFactory();
-		ConfiguredSite configSite = (ConfiguredSite) factory.createConfigurationSiteModel((SiteModel) site, getDefaultPolicy());
-
-		if (!configSite.isExtensionSite()) {
-			String msg = Policy.bind("InstallConfiguration.NotAnExtensionSite");
-			throw Utilities.newCoreException(msg, null);
-		}
-
-		if (configSite.isNativelyLinked()) {
-			throw Utilities.newCoreException("InstallConfiguration.AlreadyNativelyLinked", null);
-		}
-
-		if (site != null) {
-			configSite.setPlatformURLString(site.getURL().toExternalForm());
-
-			// obtain the list of plugins
-			IPlatformConfiguration runtimeConfiguration = ConfiguratorUtils.getCurrentPlatformConfiguration();
-			ConfigurationPolicy configurationPolicy = configSite.getConfigurationPolicy();
-			String[] pluginPath = new String[0];
-			if (configurationPolicy.getPolicy() == IPlatformConfiguration.ISitePolicy.USER_INCLUDE)
-				pluginPath = configurationPolicy.getPluginPath(site);
-
-			// create new Site in configuration
-			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
-
-			// change runtime
-			IPlatformConfiguration.ISiteEntry siteEntry = runtimeConfiguration.createSiteEntry(site.getURL(), sitePolicy);
-			runtimeConfiguration.configureSite(siteEntry);
-
-		}
-
-		// configure all features as enable
-		configure(configSite);
-
-		return configSite;
+		return createConfiguredSite(file);
+//		if (isDuplicateSite(file))
+//			throw Utilities.newCoreException(UpdateUtils.getFormattedMessage("InstallConfiguration.location.exists", file.getPath()),null);
+//		
+//		ISite site = InternalSiteManager.createSite(file);
+//
+//		//create a config site around the site
+//		// even if the site == null
+//		BaseSiteLocalFactory factory = new BaseSiteLocalFactory();
+//		ConfiguredSite configSite = (ConfiguredSite) factory.createConfigurationSiteModel((SiteModel) site, getDefaultPolicy());
+//
+//		if (!configSite.isExtensionSite()) {
+//			String msg = Policy.bind("InstallConfiguration.NotAnExtensionSite");
+//			throw Utilities.newCoreException(msg, null);
+//		}
+//
+//		if (configSite.isNativelyLinked()) {
+//			throw Utilities.newCoreException("InstallConfiguration.AlreadyNativelyLinked", null);
+//		}
+//
+//		if (site != null) {
+//			configSite.setPlatformURLString(site.getURL().toExternalForm());
+//
+//			// obtain the list of plugins
+//			IPlatformConfiguration runtimeConfiguration = ConfiguratorUtils.getCurrentPlatformConfiguration();
+//			ConfigurationPolicy configurationPolicy = configSite.getConfigurationPolicy();
+//			String[] pluginPath = new String[0];
+//			if (configurationPolicy.getPolicy() == IPlatformConfiguration.ISitePolicy.USER_INCLUDE)
+//				pluginPath = configurationPolicy.getPluginPath(site);
+//
+//			// create new Site in configuration
+//			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
+//
+//			// change runtime
+//			IPlatformConfiguration.ISiteEntry siteEntry = runtimeConfiguration.createSiteEntry(site.getURL(), sitePolicy);
+//			runtimeConfiguration.configureSite(siteEntry);
+//
+//		}
+//
+//		// configure all features as enable
+//		configure(configSite);
+//
+//		return configSite;
 	}
 
 	/*
