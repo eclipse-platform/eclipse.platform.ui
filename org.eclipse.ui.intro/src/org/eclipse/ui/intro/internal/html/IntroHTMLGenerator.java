@@ -189,9 +189,9 @@ public class IntroHTMLGenerator {
 			pageContentDiv.addContent(pageHeader);
 		}
 		// Add any children of the page, in the order they are defined
-		IntroElement[] children = introPage.getChildren();
+		AbstractIntroElement[] children = introPage.getChildren();
 		for (int i = 0; i < children.length; i++) {
-			IntroElement child = children[i];
+		    AbstractIntroElement child = children[i];
 			// use indentLevel + 2 here, since this element is contained within
 			// the pageContentDiv
 			HTMLElement childElement = generateIntroElement(child,
@@ -212,20 +212,20 @@ public class IntroHTMLGenerator {
 	 *            printed
 	 * @return an HTMLElement
 	 */
-	private HTMLElement generateIntroElement(IntroElement element,
+	private HTMLElement generateIntroElement(AbstractIntroElement element,
 			int indentLevel) {
 		if (element == null)
 			return null;
 		switch (element.getType()) {
-			case IntroElement.DIV :
+			case AbstractIntroElement.DIV :
 				return generateIntroDiv((IntroDiv) element, indentLevel);
-			case IntroElement.LINK :
+			case AbstractIntroElement.LINK :
 				return generateIntroLink((IntroLink) element, indentLevel);
-			case IntroElement.HTML :
+			case AbstractIntroElement.HTML :
 				return generateIntroHTML((IntroHTML) element, indentLevel);
-			case IntroElement.IMAGE :
+			case AbstractIntroElement.IMAGE :
 				return generateIntroImage((IntroImage) element, indentLevel);
-			case IntroElement.TEXT :
+			case AbstractIntroElement.TEXT :
 				return generateIntroText((IntroText) element, indentLevel);
 			default :
 				return null;
@@ -261,9 +261,9 @@ public class IntroHTMLGenerator {
 			divElement.addContent(divLabel);
 		}
 		// Add any children of the div, in the order they are defined
-		IntroElement[] children = element.getChildren();
+		AbstractIntroElement[] children = element.getChildren();
 		for (int i = 0; i < children.length; i++) {
-			IntroElement child = children[i];
+		    AbstractIntroElement child = children[i];
 			HTMLElement childElement = generateIntroElement(child,
 					indentLevel + 1);
 			if (childElement != null)
