@@ -48,10 +48,7 @@ public class VariablesContentProvider extends BasicContentProvider implements ID
 			}
 			return children;
 		} catch (DebugException de) {
-			// XXX: temp fix for bug 6518 - do not log the error
-			// (most often, the thread has resumed underneath us
-			// and we can no longer retrieve variables or values
-			//DebugUIPlugin.logError(de);
+			DebugUIPlugin.logError(de);
 		}
 		return new Object[0];
 	}
@@ -79,7 +76,7 @@ public class VariablesContentProvider extends BasicContentProvider implements ID
 		// not update (bug 6518)
 		Object input = fViewer.getInput();
 		if (input instanceof IStackFrame) {
-			if (!((IStackFrame)input).getThread().isSuspended()) {
+			if (!((IStackFrame)input).isSuspended()) {
 				return;
 			}
 		}
