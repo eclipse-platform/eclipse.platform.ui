@@ -11,7 +11,6 @@
 package org.eclipse.update.standalone;
 import java.util.*;
 
-
 public class CmdLineArgs {
 	private HashMap options = new HashMap();
 	public CmdLineArgs(String[] args) {
@@ -46,11 +45,13 @@ public class CmdLineArgs {
 	private boolean isValidCommand(String cmd) {
 		return cmd.equals("install")
 			|| cmd.equals("enable")
-			|| cmd.equals("disable");
+			|| cmd.equals("disable")
+			|| cmd.equals("search")
+			|| cmd.equals("update");
 	}
 
 	public ScriptedCommand getCommand() {
-		String cmd = (String)options.get("-command");
+		String cmd = (String) options.get("-command");
 		if (cmd.equals("install"))
 			return new InstallCommand(
 				(String) options.get("-featureId"),
@@ -58,19 +59,25 @@ public class CmdLineArgs {
 				(String) options.get("-from"),
 				(String) options.get("-to"));
 		else if (cmd.equals("enable"))
-		return new EnableCommand(
-			(String) options.get("-featureId"),
-			(String) options.get("-version"),
-			(String) options.get("-from"),
-			(String) options.get("-to"));
-		else if (cmd.equals("disable")) 
-		return new DisableCommand(
-			(String) options.get("-featureId"),
-			(String) options.get("-version"),
-			(String) options.get("-from"),
-			(String) options.get("-to"));
-		else
-			return null;
+			return new EnableCommand(
+				(String) options.get("-featureId"),
+				(String) options.get("-version"),
+				(String) options.get("-to"));
+		else if (cmd.equals("disable"))
+			return new DisableCommand(
+				(String) options.get("-featureId"),
+				(String) options.get("-version"),
+				(String) options.get("-to"));
+		else if (cmd.equals("search"))
+			return new SearchCommand(
+				(String) options.get("-from"));
+		else if (cmd.equals("update"))
+			return new UpdateCommand(
+				(String) options.get("-featureId"),
+				(String) options.get("-version"),
+				(String) options.get("-from"),
+				(String) options.get("-to"));		
+		return null;
 	}
-	
+
 }

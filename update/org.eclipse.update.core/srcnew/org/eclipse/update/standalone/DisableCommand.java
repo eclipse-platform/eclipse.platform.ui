@@ -27,7 +27,6 @@ public  class DisableCommand extends ScriptedCommand {
 	public DisableCommand(
 		String featureId,
 		String version,
-		String fromSite,
 		String toSite) {
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();

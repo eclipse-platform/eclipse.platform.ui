@@ -27,7 +27,6 @@ public  class EnableCommand extends ScriptedCommand {
 	public EnableCommand(
 		String featureId,
 		String version,
-		String fromSite,
 		String toSite) {
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();
