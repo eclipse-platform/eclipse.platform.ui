@@ -66,18 +66,20 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 		menuManager.add(clearWorkingSetAction);
 		menuManager.add(editWorkingSetAction);
 		menuManager.add(new Separator(id));
-		addMruContribution(menuManager);
+		updateMruContribution(menuManager);
 	};
 	
-	private void addMruContribution(IMenuManager menuManager) {
-		if(item != null) {
-			menuManager.remove(item);
-		}
+	private void updateMruContribution(IMenuManager menuManager) {
 		IWorkingSet[] sets = PlatformUI.getWorkbench().getWorkingSetManager().getRecentWorkingSets();
 		if(sets.length > 0) {
-			item = new WorkingSetMenuContributionItem(id, this);
-			menuManager.prependToGroup(id, item);
+			if(item == null) {
+				item = new WorkingSetMenuContributionItem(id, this);
+				menuManager.prependToGroup(id, item);
+			}
 		} else {
+			if(item != null) {
+				menuManager.remove(item);
+			}
 			item = null;
 		}
 	}
@@ -119,7 +121,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 		// Trick to get dynamic menu contribution for most-recent list to
 		// be updated. These are action contributions and must be added/removed
 		// before the menu is shown.
-		addMruContribution(bars.getMenuManager());
-		bars.updateActionBars();
+		updateMruContribution(bars.getMenuManager());
+		//bars.updateActionBars();
 	}	
 }

@@ -69,6 +69,7 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
 						IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
 						actionGroup.setWorkingSet(workingSet);
 						manager.addRecentWorkingSet(workingSet);
+						System.out.println(((MenuItem)e.widget).getText() + ": selected working set is: " + workingSet.getName());
 					}
 				});
 			}
