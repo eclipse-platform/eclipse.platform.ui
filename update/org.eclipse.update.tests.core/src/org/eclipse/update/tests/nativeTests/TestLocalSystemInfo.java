@@ -8,13 +8,13 @@ import java.io.File;
 import org.eclipse.update.configuration.LocalSystemInfo;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
-public class TestLocalSystemInfo  {
+public class TestLocalSystemInfo extends UpdateManagerTestCase {
 
 	/**
 	 * Test the natives
 	 */
 	public TestLocalSystemInfo(String arg0) {
-		//super(arg0);
+		super(arg0);
 	}
 
 	public void testNative() throws Exception {
@@ -30,7 +30,7 @@ public class TestLocalSystemInfo  {
 			
 			File root = new File(a[i]);
 			String label = system.getLabel(root);
-			if (label==null) label="NO LABEL";			
+			if (label==null) label="NO LABEL";
 			int type = system.getType(root);
 			long size = system.getFreeSpace(root);
 			System.out.println(" ->:"+label+":"+getType(type)+":"+getSize(size));
@@ -59,14 +59,5 @@ public class TestLocalSystemInfo  {
 		
 		long kb = size/(1024*1024);
 		return new String(size+" ("+kb+"MB)");
-	}
-	
-	public static void main(String args[]){
-		TestLocalSystemInfo test = new TestLocalSystemInfo("");
-		try {
-			test.testNative();
-		} catch (Exception e){
-			e.printStackTrace();
-		}
 	}
 }
