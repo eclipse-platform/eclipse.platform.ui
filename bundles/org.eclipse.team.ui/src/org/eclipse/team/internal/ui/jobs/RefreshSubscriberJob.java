@@ -75,6 +75,9 @@ public class RefreshSubscriberJob extends Job {
 			}
 			return false;
 		}
+		public boolean contains(ISchedulingRule rule) {
+			return isConflicting(rule);
+		}
 	}
 	
 	public RefreshSubscriberJob(String name, IResource[] resources, TeamSubscriber subscriber) {

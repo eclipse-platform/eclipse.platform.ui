@@ -27,4 +27,7 @@ public class BatchSimilarSchedulingRule implements ISchedulingRule {
 		}
 		return false;
 	}
+	public boolean contains(ISchedulingRule rule) {		
+		return isConflicting(rule);
+	}
 }
