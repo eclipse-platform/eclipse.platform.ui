@@ -33,7 +33,6 @@ import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.model.LocationProvider;
-import org.eclipse.ant.internal.ui.model.AntModelCore;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -454,7 +453,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		if (doc == null) {
 			return null;
 		}
-		AntModel model= new AntModel(AntModelCore.getDefault(), doc, null, new LocationProvider(null) {
+		AntModel model= new AntModel(doc, null, new LocationProvider(null) {
 			/* (non-Javadoc)
 			 * @see org.eclipse.ant.internal.ui.editor.outline.ILocationProvider#getLocation()
 			 */

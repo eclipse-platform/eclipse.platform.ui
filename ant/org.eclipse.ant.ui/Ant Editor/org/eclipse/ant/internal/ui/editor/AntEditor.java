@@ -28,9 +28,9 @@ import org.eclipse.ant.internal.ui.editor.text.IReconcilingParticipant;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntModelChangeEvent;
+import org.eclipse.ant.internal.ui.model.AntModelCore;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.IAntModelListener;
-import org.eclipse.ant.internal.ui.model.AntModelCore;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -344,7 +344,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
     public AntEditor() {
         super();
 		setSourceViewerConfiguration(new AntEditorSourceViewerConfiguration(this));
-		setDocumentProvider(new AntEditorDocumentProvider(AntModelCore.getDefault()));
+		setDocumentProvider(new AntEditorDocumentProvider());
 		AntModelCore.getDefault().addAntModelListener(fAntModelListener);
 		
 		if (isFoldingEnabled()) {

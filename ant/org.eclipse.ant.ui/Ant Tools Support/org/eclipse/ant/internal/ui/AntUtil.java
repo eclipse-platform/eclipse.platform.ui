@@ -38,7 +38,6 @@ import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.LocationProvider;
-import org.eclipse.ant.internal.ui.model.AntModelCore;
 import org.eclipse.ant.internal.ui.views.AntView;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -263,7 +262,7 @@ public final class AntUtil {
 		if (doc == null) {
 			return null;
 		}
-		AntModel model= new AntModel(AntModelCore.getDefault(), doc, null, new LocationProvider(null) {
+		AntModel model= new AntModel(doc, null, new LocationProvider(null) {
 			/* (non-Javadoc)
 			 * @see org.eclipse.ant.internal.ui.editor.outline.ILocationProvider#getLocation()
 			 */

@@ -27,7 +27,6 @@ import junit.framework.TestCase;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntModel;
-import org.eclipse.ant.internal.ui.model.AntModelCore;
 import org.eclipse.ant.tests.ui.editor.support.TestLocationProvider;
 import org.eclipse.ant.tests.ui.editor.support.TestProblemRequestor;
 import org.eclipse.core.resources.IFile;
@@ -132,7 +131,7 @@ public abstract class AbstractAntUITest extends TestCase {
 		
 	protected AntModel getAntModel(String fileName) {
 		currentDocument= getDocument(fileName);
-		AntModel model= new AntModel(AntModelCore.getDefault(), currentDocument, new TestProblemRequestor(), new TestLocationProvider(getBuildFile(fileName)));
+		AntModel model= new AntModel(currentDocument, new TestProblemRequestor(), new TestLocationProvider(getBuildFile(fileName)));
 		model.reconcile();
 		return model;
 	}
