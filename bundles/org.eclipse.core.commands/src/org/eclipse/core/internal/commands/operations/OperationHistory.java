@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.commands.operations.internal;
+package org.eclipse.core.internal.commands.operations;
 
 import java.util.ArrayList;
 import java.util.Iterator;

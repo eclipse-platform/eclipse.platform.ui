@@ -20,7 +20,7 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.LinearUndoEnforcer;
 import org.eclipse.core.commands.operations.ObjectOperationContext;
 import org.eclipse.core.commands.operations.OperationStatus;
-import org.eclipse.core.commands.operations.internal.OperationHistory;
+import org.eclipse.core.internal.commands.operations.OperationHistory;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 

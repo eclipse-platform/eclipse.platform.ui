@@ -15,7 +15,7 @@ import org.eclipse.core.commands.operations.ContextConsultingOperationApprover;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.LinearUndoEnforcer;
 import org.eclipse.core.commands.operations.OperationContext;
-import org.eclipse.core.commands.operations.internal.OperationHistory;
+import org.eclipse.core.internal.commands.operations.OperationHistory;
 import org.eclipse.ui.internal.WorkbenchOperationContext;
 
 /**
