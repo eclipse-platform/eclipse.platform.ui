@@ -1148,6 +1148,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				config = parser.parse(tempURL); 
 				if (config == null)
 					throw new Exception();
+				else
+					config.setDirty(true); // force saving to platform.xml
 			} catch (Exception e2) {
 				try {
 					// check the backup
@@ -1167,6 +1169,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					}
 					if (config == null)
 						throw originalException; // we tried, but no config here ...
+					else
+						config.setDirty(true); // force saving to platform.xml
 				} catch (IOException e3) {
 					throw originalException; // we tried, but no config here ...
 				}

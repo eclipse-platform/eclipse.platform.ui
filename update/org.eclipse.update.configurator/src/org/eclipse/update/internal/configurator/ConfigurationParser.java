@@ -60,7 +60,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 			configURL = url;
 			if ("file".equals(url.getProtocol())) {
 				File inputFile = new File(url.getFile());
-				if (!inputFile.exists())
+				if (!inputFile.exists() || !inputFile.canRead())
 					return null;
 				input = new FileInputStream(inputFile);
 			} else 
