@@ -988,14 +988,11 @@ public class DetailsForm extends PropertyWebForm {
 		if (selection) {
 			int mode = getCurrentJobType();
 			PendingChange job = createPendingChange(mode);
-			model.addPendingChange(job);
-			/*
-			IWorkbenchPage page = UpdateUI.getActivePage();
-			IViewPart view = page.findView(UpdatePerspective.ID_ITEMS);
-			if (view != null) {
-				page.bringToTop(view);
+			if (!checkEnabledDuplicates(job)) {
+				addButton.setSelection(false);
+				return;
 			}
-			*/
+			model.addPendingChange(job);
 		} else {
 			PendingChange job = model.findRelatedPendingChange(currentFeature);
 			if (job != null)
@@ -1122,6 +1119,9 @@ public class DetailsForm extends PropertyWebForm {
 				validationStatus);
 			return;
 		}
+		if (!checkEnabledDuplicates(job))
+			return;
+
 		if (job.getJobType() == PendingChange.UNCONFIGURE
 			&& job.getFeature().isPatch()) {
 			unconfigurePatch(shell, job.getFeature());
@@ -1316,5 +1316,33 @@ public class DetailsForm extends PropertyWebForm {
 		} else {
 			return new PendingChange(currentFeature, type);
 		}
+	}
+
+	private static boolean checkEnabledDuplicates(PendingChange job) {
+		if (job.getJobType() != PendingChange.CONFIGURE)
+			return true;
+		IFeature[] installedEnabledFeatures =
+			UpdateUI.getInstalledFeatures(job.getFeature(), true);
+		if (installedEnabledFeatures.length == 0)
+			return true;
+
+		String title =
+			UpdateUI.getString("FeaturePage.duplicatesEnabled.title");
+		String message =
+			UpdateUI.getString("FeaturePage.duplicatesEnabled.message");
+			MessageDialog dialog =
+				new MessageDialog(
+					UpdateUI.getActiveWorkbenchShell(),
+					title,
+					null,
+		// accept the default window icon
+	message,
+		MessageDialog.WARNING,
+		new String[] {
+			IDialogConstants.OK_LABEL,
+			IDialogConstants.CANCEL_LABEL },
+		0);
+		// OK is the default
+		return dialog.open() == 0;
 	}
 }
