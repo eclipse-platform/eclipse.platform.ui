@@ -129,7 +129,7 @@ public class RepositoryManager {
 			for (Iterator it = filesToRefresh.iterator(); it.hasNext();) {
 				String relativePath = (String)it.next();
 				ICVSFile file = null;
-				if(project instanceof ICVSRemoteFolder) {
+				if (project instanceof ICVSRemoteFolder) {
 					// There should be a better way of doing this.
 					ICVSRemoteFolder parentFolder = location.getRemoteFolder(new Path(project.getName()).append(relativePath).removeLastSegments(1).toString(), CVSTag.DEFAULT);
 					ICVSResource[] resources = parentFolder.fetchChildren(null);
@@ -141,7 +141,7 @@ public class RepositoryManager {
 				} else {
 					file = project.getFile(relativePath);
 				}
-				if(file!=null) {
+				if (file != null) {
 					tags.addAll(Arrays.asList(fetchDefinedTagsFor(file, project, location)));
 				}
 			}
@@ -151,22 +151,22 @@ public class RepositoryManager {
 			List versions = new ArrayList();
 			for (Iterator it = tags.iterator(); it.hasNext();) {
 				CVSTag element = (CVSTag) it.next();
-				if(element.getType()==CVSTag.BRANCH) {
+				if (element.getType() == CVSTag.BRANCH) {
 					branches.add(element);
 				} else {
 					versions.add(element);
 				}
 			}
 			
-			// XXX Back HACK for optimizing refresing of repo view
+			// Hack for optimizing refreshing of repo view
 			notifyRepoView = false;
 			addBranchTags(project, (CVSTag[]) branches.toArray(new CVSTag[branches.size()]));
-			if(notify) {
+			if (notify) {
 				notifyRepoView = true;
 			}
 			addVersionTags(project, (CVSTag[]) versions.toArray(new CVSTag[versions.size()]));
 			notifyRepoView = true;
-		} catch(CVSException e) {
+		} catch (CVSException e) {
 			throw new TeamException(e.getStatus());
 		}
 	}
@@ -241,8 +241,7 @@ public class RepositoryManager {
 	 * remote ancestor of the resource that is a direct child of the remote root
 	 */
 	public void addVersionTags(ICVSResource resource, CVSTag[] tags) {
-		try {
-			
+		try {		
 			// Make sure there is a version tag table for the location
 			ICVSRepositoryLocation location = getRepositoryLocationFor(resource);
 			Hashtable table = (Hashtable)versionTags.get(location);
@@ -258,7 +257,7 @@ public class RepositoryManager {
 			} else {
 				parent = resource.getParent();
 			}
-			if ( ! parent.isCVSFolder()) return;
+			if (!parent.isCVSFolder()) return;
 			String name = new Path(parent.getFolderSyncInfo().getRepository()).segment(0);
 			
 			// Make sure there is a table for the ancestor that holds the tags
@@ -728,12 +727,12 @@ public class RepositoryManager {
 			} else {
 				folder = resource.getParent();
 			}
-			if(folder.isCVSFolder()) {
+			if (folder.isCVSFolder()) {
 				ICVSRepositoryLocation location = CVSProvider.getInstance().getRepository(folder.getFolderSyncInfo().getRoot());
 				return location;
 			}
 			return null;
-		} catch(CVSException e) {
+		} catch (CVSException e) {
 			CVSUIPlugin.log(e.getStatus());
 			return null;
 		}
@@ -743,7 +742,7 @@ public class RepositoryManager {
 	 * Fetches and caches the tags found on the provided remote file.
 	 */
 	private CVSTag[] fetchDefinedTagsFor(ICVSFile file, ICVSFolder project, ICVSRepositoryLocation location) throws TeamException {
-		if(file != null && file.exists()) {
+		if (file != null && file.exists()) {
 			return getTags(file, null);
 		}
 		return new CVSTag[0];

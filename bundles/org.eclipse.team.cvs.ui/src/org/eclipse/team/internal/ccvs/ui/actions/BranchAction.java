@@ -49,7 +49,7 @@ public class BranchAction extends TeamAction {
 			if (provider == null) return false;
 			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 			if (resource.getType() == IResource.PROJECT && ((ICVSFolder)cvsResource).isCVSFolder()) return true;
-			if ( ! cvsResource.isManaged()) return false;
+			if (!cvsResource.isManaged()) return false;
 		}
 		return true;
 	}

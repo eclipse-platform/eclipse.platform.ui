@@ -63,7 +63,7 @@ public class TagAction extends TeamAction {
 					}
 					
 					// if the resource does not exist in the workbench or on the file system, stop searching.
-					if(!resource.exists()) {
+					if (!resource.exists()) {
 						return false;
 					}
 
@@ -160,7 +160,7 @@ public class TagAction extends TeamAction {
 		}, Policy.bind("TagAction.tagProblemsMessage"), this.PROGRESS_DIALOG); //$NON-NLS-1$
 		
 		// Check for any status messages and display them
-		if ( ! messages.isEmpty()) {
+		if (!messages.isEmpty()) {
 			boolean error = false;
 			MultiStatus combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, Policy.bind("TagAction.tagProblemsMessage"), null); //$NON-NLS-1$
 			for (int i = 0; i < messages.size(); i++) {

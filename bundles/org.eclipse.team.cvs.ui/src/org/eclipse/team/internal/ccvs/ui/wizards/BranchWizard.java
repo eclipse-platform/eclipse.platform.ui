@@ -85,7 +85,7 @@ public class BranchWizard extends Wizard {
 									if (providerResources[i].getType() != IResource.PROJECT) {
 										ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
 										CVSTag parentTag = cvsResource.getParent().getFolderSyncInfo().getTag();
-										if ( ! equalTags(branchTag, parentTag)) {
+										if (!equalTags(branchTag, parentTag)) {
 											final Shell shell = getShell();
 											final boolean[] result = new boolean[] { false };
 											shell.getDisplay().syncExec(new Runnable() {
@@ -95,7 +95,6 @@ public class BranchWizard extends Wizard {
 											});
 											if (!result[0]) return;
 											// Only ask once!
-											// XXX Should we ask once per provider or only once overall?
 											break;
 										}
 									}
@@ -105,8 +104,7 @@ public class BranchWizard extends Wizard {
 				
 							ICVSRepositoryLocation root = provider.getCVSWorkspaceRoot().getRemoteLocation();
 							try {
-								// XXX This check is dangerous if you allow branching at the resource level
-								if(!areAllResourcesSticky(resources)) {													
+								if (!areAllResourcesSticky(resources)) {													
 									// version everything in workspace with the root version tag specified in dialog
 									provider.makeBranch(providerResources, rootVersionTag, branchTag, update, true, subMonitor);
 								} else {
