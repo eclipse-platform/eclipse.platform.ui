@@ -70,6 +70,8 @@ public class FilteredTree extends Composite {
             public void keyReleased(KeyEvent e) {
                 patternFilter.setPattern(filterField.getText());
                 treeViewer.refresh(false);
+                if(filterField.getText().length() > 0)
+                	treeViewer.expandAll();
             }
         });
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
