@@ -68,7 +68,7 @@ protected IStatus doCopy(IProgressMonitor monitor, final IResource source, final
 			//delete the destination
 			IResource oldResource = source.getWorkspace().getRoot().findMember(destination);
 			if (oldResource.exists()) {
-				oldResource.delete(true, null);
+				oldResource.delete(IResource.KEEP_HISTORY | IResource.FORCE, null);
 			}
 		}
 		if (copy) {

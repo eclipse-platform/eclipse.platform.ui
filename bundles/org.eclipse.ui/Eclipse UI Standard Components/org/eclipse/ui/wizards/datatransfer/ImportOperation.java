@@ -168,7 +168,7 @@ IContainer createContainersFor(IPath path) throws CoreException {
  */
 void deleteResource(IResource resource) {
 	try {
-		resource.delete(false,null);
+		resource.delete(IResource.KEEP_HISTORY, null);
 	} catch (CoreException e) {
 		errorTable.add(e.getStatus());
 	}
