@@ -127,7 +127,9 @@ public class OrderedLock implements ILock, ISchedulingRule {
 		return false;
 	}
 	/**
-	 * Returns null if acquired and a Semaphore object otherwise.
+	 * Returns null if acquired and a Semaphore object otherwise. If a
+	 * waiting semaphore already exists for this thread, it will be returned, 
+	 * otherwise a new semaphore will be created, enqueued, and returned.
 	 */
 	private synchronized Semaphore createSemaphore() {
 		return attempt() ? null : enqueue(new Semaphore(Thread.currentThread()));
@@ -148,6 +150,12 @@ public class OrderedLock implements ILock, ISchedulingRule {
 			manager.addLockThread(currentOperationThread, this);
 			return true;
 		}
+		//Make sure the semaphore is in the queue before we start waiting
+		//It might have been removed from the queue while servicing syncExecs
+		//This is will return our existing semaphore if it is still in the queue
+		semaphore = createSemaphore();
+		if (semaphore == null)
+			return true;
 		manager.addLockWaitThread(Thread.currentThread(), this);
 		try {
 			success = semaphore.acquire(delay);
