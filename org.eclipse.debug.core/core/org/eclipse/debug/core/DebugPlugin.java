@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.core.BreakpointManager;
+import org.eclipse.debug.internal.core.ExpressionManager;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.core.Launcher;
 import org.eclipse.debug.internal.core.ListenerList;
@@ -77,6 +78,11 @@ public class DebugPlugin extends Plugin {
 	 * The singleton breakpoint manager.
 	 */
 	private BreakpointManager fBreakpointManager;
+	
+	/**
+	 * The singleton expression manager.
+	 */
+	private ExpressionManager fExpressionManager;	
 
 	/**
 	 * The singleton launch manager.
@@ -194,7 +200,7 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.0
 	 */
 	public IExpressionManager getExpressionManager() {
-		return null;
+		return fExpressionManager;
 	}	
 
 	/**
@@ -259,6 +265,7 @@ public class DebugPlugin extends Plugin {
 	public void startup() throws CoreException {
 		fLaunchManager= new LaunchManager();
 		fBreakpointManager= new BreakpointManager();
+		fExpressionManager = new ExpressionManager();
 		createLaunchers();	
 		fBreakpointManager.startup();
 		fLaunchManager.startup();

@@ -168,7 +168,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	public IBreakpoint[] getBreakpoints() {
 		Vector breakpoints= getBreakpoints0();
-		Breakpoint[] temp= new Breakpoint[breakpoints.size()];
+		IBreakpoint[] temp= new IBreakpoint[breakpoints.size()];
 		breakpoints.copyInto(temp);
 		return temp;
 	}
