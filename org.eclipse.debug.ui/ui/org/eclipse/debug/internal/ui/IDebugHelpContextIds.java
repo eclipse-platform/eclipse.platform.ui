@@ -67,5 +67,9 @@ public interface IDebugHelpContextIds {
 
 	// Wizards
 	public static final String LAUNCH_WIZARD = PREFIX + "launch_wizard_context"; //$NON-NLS-1$
+
+	// Dialogs
+	public static final String LAUNCH_CONFIGURATION_DIALOG = PREFIX + "launch_configuration_dialog"; //$NON-NLS-1$
+	
 }
 

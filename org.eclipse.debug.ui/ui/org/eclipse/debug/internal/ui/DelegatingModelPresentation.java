@@ -143,6 +143,8 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 			} else if (item instanceof ILaunchConfigurationType) {
 				String configTypeID = ((ILaunchConfigurationType)item).getIdentifier();
 				return DebugUITools.getImage(configTypeID);
+			} else if (item instanceof ILaunchConfiguration) {
+				return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_LAUNCH_CONFIGURATION);
 			} else if (item instanceof IAdaptable) {
 				IWorkbenchAdapter de= (IWorkbenchAdapter) ((IAdaptable) item).getAdapter(IWorkbenchAdapter.class);
 				if (de != null) {

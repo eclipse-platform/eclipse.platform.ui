@@ -325,6 +325,9 @@ public interface IDebugUIConstants {
 	/** Expression image identifier. */
 	public static final String IMG_OBJS_EXPRESSION= "IMG_OBJS_EXPRESSION"; //$NON-NLS-1$
 	
+	/** Launch configuration image identifier. */
+	public static final String IMG_OBJS_LAUNCH_CONFIGURATION= "IMG_OBJS_LAUNCH_CONFIGURATION"; //$NON-NLS-1$
+	
 	// wizard banners
 	/** Debug wizard banner image identifier. */
 	public static final String IMG_WIZBAN_DEBUG= "IMG_WIZBAN_DEBUG"; //$NON-NLS-1$

@@ -150,12 +150,11 @@ public class DebugPluginImages {
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_OS_PROCESS, OBJECT + "osprc_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_OS_PROCESS_TERMINATED, OBJECT + "osprct_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_EXPRESSION, OBJECT + "expression_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_OBJS_LAUNCH_CONFIGURATION, OBJECT + "launch_config.gif"); //$NON-NLS-1$
 		
 		//Wizard Banners
 		declareRegistryImage(IDebugUIConstants.IMG_WIZBAN_DEBUG, WIZBAN + "debug_wiz.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_WIZBAN_RUN, WIZBAN + "run_wiz.gif"); //$NON-NLS-1$
-		declareRegistryImage(IDebugUIConstants.IMG_WIZBAN_OK, WIZBAN + "ok_wiz.gif"); //$NON-NLS-1$
-		declareRegistryImage(IDebugUIConstants.IMG_WIZBAN_FAIL, WIZBAN + "fail_wiz.gif"); //$NON-NLS-1$
 		
 		// launchers
 		ILauncher[] launchers = DebugPlugin.getDefault().getLaunchManager().getLaunchers();

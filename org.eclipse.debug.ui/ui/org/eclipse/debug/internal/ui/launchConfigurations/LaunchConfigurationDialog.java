@@ -21,13 +21,14 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -55,13 +56,15 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * The dialog used to edit and launch launch configurations.
  */
-public class LaunchConfigurationDialog extends Dialog implements ISelectionChangedListener, 
-																	 ILaunchConfigurationListener,
-																	 ILaunchConfigurationDialog {
+public class LaunchConfigurationDialog extends TitleAreaDialog 
+										implements ISelectionChangedListener, 
+													ILaunchConfigurationListener, 
+													ILaunchConfigurationDialog {
 	
 	/**
 	 * The tree of launch configurations
@@ -106,26 +109,6 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * The 'launch' button
 	 */
 	private Button fLaunchButton;
-	
-	/**
-	 * Background color for everything in the 'wizard' banner area at the top of the dialog
-	 */
-	private Color fBannerBackground;
-	
-	/**
-	 * Image for the launch mode
-	 */
-	private Label fModeLabel;
-	
-	/**
-	 * The status area message
-	 */
-	private Label fMessageLabel;
-	
-	/**
-	 * The status area image
-	 */
-	private Label fStatusImageLabel;
 	
 	/**
 	 * The text widget displaying the name of the
@@ -291,38 +274,38 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 */
 	protected Control createDialogArea(Composite parent) {
 		GridData gd;
-		Composite composite = (Composite)super.createDialogArea(parent);
-		GridLayout topLevelLayout = (GridLayout) composite.getLayout();
-		topLevelLayout.numColumns = 2;
-		topLevelLayout.marginHeight = 0;
-		topLevelLayout.marginWidth = 0;
+		Composite dialogComp = (Composite)super.createDialogArea(parent);
+		Composite topComp = new Composite(dialogComp, SWT.NONE);
+		GridLayout topLayout = new GridLayout();
+		topLayout.numColumns = 2;
+		topLayout.marginHeight = 5;
+		topLayout.marginWidth = 0;
+		topComp.setLayout(topLayout);
 
-		// Build the launch configuration banner area
-		// and put it into the composite.
-		Composite launchConfigBannerArea = createLaunchConfigurationBannerArea(composite);		
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		launchConfigBannerArea.setLayoutData(gd);
-		
+		// Set the things that TitleAreaDialog takes care of
+		setTitle("Create, manage and run launch configurations");
+		setMessage("Ready to launch");
+		setModeLabelState();
+
 		// Build the launch configuration selection area
 		// and put it into the composite.
-		Composite launchConfigSelectionArea = createLaunchConfigurationSelectionArea(composite);
+		Composite launchConfigSelectionArea = createLaunchConfigurationSelectionArea(topComp);
 		gd = new GridData(GridData.FILL_VERTICAL);
 		launchConfigSelectionArea.setLayoutData(gd);
 	
 		// Build the launch configuration edit area
 		// and put it into the composite.
-		Composite launchConfigEditArea = createLaunchConfigurationEditArea(composite);
+		Composite launchConfigEditArea = createLaunchConfigurationEditArea(topComp);
 		gd = new GridData(GridData.FILL_BOTH);
 		launchConfigEditArea.setLayoutData(gd);
 			
 		// Build the separator line
-		Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
+		Label separator = new Label(topComp, SWT.HORIZONTAL | SWT.SEPARATOR);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		separator.setLayoutData(gd);
 		
-		return composite;
+		return dialogComp;
 	}
 	
 	/**
@@ -417,7 +400,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		} else {
 			image = DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_RUN);
 		}
-		fModeLabel.setImage(image);
+		setTitleImage(image);
 	}
 	
 	/**
@@ -448,7 +431,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		ILaunchConfigurationWorkingCopy workingCopy = getWorkingCopy();
 		if (workingCopy == null) {
 			setWorkingCopyVerifyState(false);
-			setStatusStartingFromScratchMessage();
+			setErrorMessage(null);
 			setEnableStateEditButtons();
 			return;
 		}
@@ -461,14 +444,14 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		} catch (CoreException ce) {
 			setWorkingCopyVerifyState(false);
 			String message = ce.getStatus().getMessage();
-			setStatusErrorMessage(message);
+			setErrorMessage(message);
 			setEnableStateEditButtons();
 			return;
 		}	
 		
 		// Otherwise the verify was successful, update status area and internal state 	
 		setWorkingCopyVerifyState(true);
-		setStatusOKMessage();
+		setErrorMessage(null);
 		setEnableStateEditButtons();
 	}
 	
@@ -516,31 +499,6 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 			getWorkingCopy().rename(getNameTextWidget().getText());
 			refreshStatus();
 		}
-	}
-	
-	protected void setStatusErrorMessage(String message) {
-		setStatusMessage(message);
-		getStatusImageLabel().setImage(DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_FAIL));
-		getStatusImageLabel().setVisible(true);
-	}
-	
-	protected void setStatusOKMessage() {
-		setStatusMessage(LAUNCH_STATUS_OK_MESSAGE);
-		getStatusImageLabel().setImage(DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_OK));
-		getStatusImageLabel().setVisible(true);
-	}
-	
-	protected void setStatusStartingFromScratchMessage() {
-		setStatusMessage(LAUNCH_STATUS_STARTING_FROM_SCRATCH_MESSAGE);
-		getStatusImageLabel().setImage(DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_OK));		
-		getStatusImageLabel().setVisible(false);
-	}
-	
-	/**
-	 * Convenience method to set text on the banner area status label.
-	 */
-	protected void setStatusMessage(String message) {
-		getMessageLabel().setText(message);
 	}
 	
 	protected Display getDisplay() {
@@ -689,58 +647,16 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	}	
 	
 	/**
-	 * Creates the launch configuration banner area of the dialog.
-	 * This area displays radio buttons for the launch mode, as well
-	 * as a label for communicating errors to the user.
-	 * 
-	 * @return the composite used for the launch configuration banner area
-	 */ 
-	protected Composite createLaunchConfigurationBannerArea(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NONE);
-		GridLayout topLayout = new GridLayout();
-		topLayout.marginHeight = 0;
-		topLayout.marginWidth = 0;
-		topLayout.numColumns = 3;
-		comp.setLayout(topLayout);
-		comp.setBackground(getBannerBackground());
-		GridData gd;
-		
-		Composite statusImageComp = new Composite(comp, SWT.NONE);
-		statusImageComp.setBackground(getBannerBackground());
-		GridLayout statusImageLayout = new GridLayout();
-		statusImageLayout.marginHeight = 0;
-		statusImageLayout.marginWidth = 0;
-		statusImageComp.setLayout(statusImageLayout);
-		
-		setStatusImageLabel(new Label(statusImageComp, SWT.NONE));
-		getStatusImageLabel().setAlignment(SWT.RIGHT);
-		getStatusImageLabel().setBackground(getBannerBackground());
-		// This is necessary so that the 'status image label' gets sized properly
-		// but doesn't appear yet
-		getStatusImageLabel().setImage(DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_OK));
-		getStatusImageLabel().setVisible(false);
-		
-		setMessageLabel(new Label(comp, SWT.NONE));
-		getMessageLabel().setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
-		getMessageLabel().setBackground(getBannerBackground());
-		getMessageLabel().setAlignment(SWT.LEFT);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		getMessageLabel().setLayoutData(gd);
-		
-		fModeLabel = new Label(comp, SWT.NONE);
-		setModeLabelState();
-		
-		return comp;
-	}
-
-	/**
-	 * Sets the title for the dialog.
+	 * Sets the title for the dialog and establishes the help context.
 	 * 
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell);
 	 */
-	protected void configureShell(Shell newShell) {
-		super.configureShell(newShell);
-		newShell.setText("Launch Configurations");
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		shell.setText("Launch Configurations");
+		WorkbenchHelp.setHelp(
+			shell,
+			new Object[] { IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG });
 	}
 	
 	/**
@@ -1043,52 +959,6 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
  		return fCopyButton;
  	} 	
  	
- 	/**
- 	 * Sets the 'message' label.
- 	 * 
- 	 * @param label the 'message' label.
- 	 */	
-	protected void setMessageLabel(Label label) {
-		fMessageLabel = label;
-	}
-	
- 	/**
- 	 * Returns the 'message' label
- 	 * 
- 	 * @return the 'message' label
- 	 */
-	protected Label getMessageLabel() {
-		return fMessageLabel;
-	}
-	
- 	/**
- 	 * Sets the 'status image' label.
- 	 * 
- 	 * @param label the 'status image' label.
- 	 */	
-	protected void setStatusImageLabel(Label label) {
-		fStatusImageLabel = label;
-	}
-	
- 	/**
- 	 * Returns the 'status image' label
- 	 * 
- 	 * @return the 'status image' label
- 	 */
-	protected Label getStatusImageLabel() {
-		return fStatusImageLabel;
-	}
-	
-	/**
-	 * Return the banner background color using a lazy fetching policy
-	 */
-	protected Color getBannerBackground() {
-		if (fBannerBackground == null) {
-			fBannerBackground = getDisplay().getSystemColor(SWT.COLOR_WHITE);
-		}
-		return fBannerBackground;
-	}
-	
  	/**
  	 * Sets the configuration to display/edit.
  	 * Updates the tab folder to contain the appropriate pages.
