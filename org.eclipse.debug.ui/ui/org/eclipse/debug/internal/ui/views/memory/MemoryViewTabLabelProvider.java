@@ -11,9 +11,10 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
+
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.swt.graphics.Color;
 
@@ -22,8 +23,6 @@ import org.eclipse.swt.graphics.Color;
  */
 public class MemoryViewTabLabelProvider
 	extends AbstractTableViewTabLabelProvider implements IColorProvider{
-
-	private static final String UNBUFFERED_LINE_COLOR = IDebugUIConstants.PLUGIN_ID + ".MemoryViewLineColor"; //$NON-NLS-1$
 	
 	/**
 	 * Constructor for MemoryViewLabelProvider
@@ -65,10 +64,7 @@ public class MemoryViewTabLabelProvider
 			}
 			return label;
 		}
-		else
-		{
-			return label;
-		}
+		return label;
 	}
 
 	/* (non-Javadoc)
@@ -79,10 +75,10 @@ public class MemoryViewTabLabelProvider
 		{
 			MemoryViewLine line = (MemoryViewLine)element;
 			
-			if (line.isMonitored)
+			if (line.isMonitored) {
 				return null;
-			else
-				return JFaceResources.getColorRegistry().get(UNBUFFERED_LINE_COLOR);
+			}
+			return DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.MEMORY_VIEW_UNBUFFERED_LINE_COLOR);
 		}
 		return null;
 	}

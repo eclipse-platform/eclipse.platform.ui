@@ -1895,41 +1895,6 @@
             %MemoryViewTableFontDefinition.description
          </description>
       </fontDefinition>
-		<colorDefinition
-			label="%standardErrorColor.label"
-            value="COLOR_RED"
-            categoryId= "org.eclipse.debug.ui.presentation"
-            id="org.eclipse.debug.ui.errorColor">
-            <description>%standardErrorColor.description</description> 
-		</colorDefinition>
-		<colorDefinition
-            label="%standardOutColor.label"
-            value="COLOR_BLUE"
-			categoryId= "org.eclipse.debug.ui.presentation"
-            id="org.eclipse.debug.ui.outColor">
-            <description>%standardOutColor.description</description> 
-		</colorDefinition>
-		<colorDefinition
-            label="%standardInColor.label"
-            value="0,200,125"
-			categoryId= "org.eclipse.debug.ui.presentation"
-            id="org.eclipse.debug.ui.inColor">
-            <description>%standardInColor.description</description>             
-		</colorDefinition>
-		<colorDefinition
-            label="%changedVariableColor.label"
-            value="COLOR_RED"
-			categoryId= "org.eclipse.debug.ui.presentation"
-            id="org.eclipse.debug.ui.changedVariableColor">
-            <description>%changedVariableColor.description</description>             
-		</colorDefinition>  
-		<colorDefinition
-			label="%MemoryViewUnbufferredLines"
-            value="114,119,129"
-            categoryId= "org.eclipse.debug.ui.presentation"
-            id="org.eclipse.debug.ui.MemoryViewLineColor">
-            <description>%memoryViewUnbufferedLines.description</description> 
-		</colorDefinition>		
    </extension>
 <!-- raw hex rendering for Memory View -->
    <extension

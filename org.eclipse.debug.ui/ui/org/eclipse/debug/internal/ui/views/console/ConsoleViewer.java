@@ -113,7 +113,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		JFaceResources.getFontRegistry().addListener(this);
-		JFaceResources.getColorRegistry().addListener(this);
+
 		getTextWidget().setFont(JFaceResources.getFont(IConsoleConstants.CONSOLE_FONT));
 		getTextWidget().addMouseTrackListener(this);
 		getTextWidget().addPaintListener(this);
@@ -213,7 +213,6 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		}
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		JFaceResources.getFontRegistry().removeListener(this);
-		JFaceResources.getColorRegistry().removeListener(this);
 	}
 	
 	/**

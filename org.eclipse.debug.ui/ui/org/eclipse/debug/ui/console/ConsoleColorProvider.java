@@ -13,9 +13,9 @@ package org.eclipse.debug.ui.console;
 
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Color;
 
 /**
@@ -63,13 +63,13 @@ public class ConsoleColorProvider implements IConsoleColorProvider {
 	 */
 	public Color getColor(String streamIdentifer) {
 		if (IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM.equals(streamIdentifer)) {
-			return JFaceResources.getColorRegistry().get(IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR);
+			return DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR);
 		}
 		if (IDebugUIConstants.ID_STANDARD_ERROR_STREAM.equals(streamIdentifer)) {
-			return JFaceResources.getColorRegistry().get(IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR);
+			return DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR);
 		}		
 		if (IDebugUIConstants.ID_STANDARD_INPUT_STREAM.equals(streamIdentifer)) {
-			return JFaceResources.getColorRegistry().get(IDebugPreferenceConstants.CONSOLE_SYS_IN_COLOR);
+			return DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_IN_COLOR);
 		}		
 		return null;
 	}

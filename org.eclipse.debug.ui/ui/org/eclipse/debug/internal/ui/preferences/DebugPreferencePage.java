@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.preferences;
 
-
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
@@ -64,6 +64,10 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		createSpacer(getFieldEditorParent(), 2);
 		
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, DebugPreferencesMessages.getString("DebugPreferencePage.25"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		
+		createSpacer(getFieldEditorParent(), 2);
+		ColorFieldEditor mem= new ColorFieldEditor(IDebugPreferenceConstants.MEMORY_VIEW_UNBUFFERED_LINE_COLOR, DebugPreferencesMessages.getString("DebugPreferencePage.0"), getFieldEditorParent()); //$NON-NLS-1$
+		addField(mem);
 	}
 
 	/**
@@ -98,4 +102,3 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		return ok;
 	}			
 }
-

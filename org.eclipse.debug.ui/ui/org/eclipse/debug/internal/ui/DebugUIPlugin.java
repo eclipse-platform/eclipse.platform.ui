@@ -64,12 +64,15 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
@@ -269,25 +272,22 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		Bundle bundle = Platform.getBundle(element.getDeclaringExtension().getNamespace());
 		if (bundle.getState() == Bundle.ACTIVE) {
 			return element.createExecutableExtension(classAttribute);
-		} else {
-			final Object [] ret = new Object[1];
-			final CoreException [] exc = new CoreException[1];
-			BusyIndicator.showWhile(null, new Runnable() {
-				public void run() {
-					try {
-						ret[0] = element.createExecutableExtension(classAttribute);
-					} catch (CoreException e) {
-						exc[0] = e;
-					}
+		} 
+		final Object [] ret = new Object[1];
+		final CoreException [] exc = new CoreException[1];
+		BusyIndicator.showWhile(null, new Runnable() {
+			public void run() {
+				try {
+					ret[0] = element.createExecutableExtension(classAttribute);
+				} catch (CoreException e) {
+					exc[0] = e;
 				}
-			});
-			if (exc[0] != null) {
-				throw exc[0];
 			}
-			else {
-				return ret[0];
-			}
+		});
+		if (exc[0] != null) {
+			throw exc[0];
 		}
+		return ret[0];
 	}	
 	
 	protected ImageRegistry createImageRegistry() {
@@ -311,6 +311,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			if (fStepFilterManager != null) {
 				fStepFilterManager.shutdown();
 			}
+			
+			ColorManager.getDefault().dispose();
 			
 			if (fgPresentation != null) {
 				fgPresentation.dispose();
@@ -383,11 +385,18 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_HIGH_WATER_MARK, 100000);
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH, 8);
 		
+		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR, new RGB(0, 0, 255));
+		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_IN_COLOR, new RGB(0, 200, 125));
+		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR, new RGB(255, 0, 0));
+		
+		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.MEMORY_VIEW_UNBUFFERED_LINE_COLOR, new RGB(114, 119, 129));
+		
 		//LaunchHistoryPreferencePage
 		prefs.setDefault(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, 10);
 		
 		//VariableViewsPreferencePage
 		prefs.setDefault(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
+		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CHANGED_VARIABLE_COLOR, new RGB(255, 0, 0));
 		prefs.setDefault(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP, false);
 		
 		//Registers View
@@ -585,6 +594,18 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		}
 		return display;		
 	}	
+	
+	/**
+	 * Returns the a color based on the type of output.
+	 * Valid types:
+	 * <li>CONSOLE_SYS_OUT_RGB</li>
+	 * <li>CONSOLE_SYS_ERR_RGB</li>
+	 * <li>CONSOLE_SYS_IN_RGB</li>
+	 * <li>CHANGED_VARIABLE_RGB</li>
+	 */
+	public static Color getPreferenceColor(String type) {
+		return ColorManager.getDefault().getColor(PreferenceConverter.getColor(getDefault().getPreferenceStore(), type));
+	}
 
 	/**
 	 * Returns the console document manager. The manager will be created lazily on 
@@ -745,9 +766,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		String saveDirty = getDefault().getPreferenceStore().getString(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
 		if (saveDirty.equals(MessageDialogWithToggle.NEVER)) {
 			return true;
-		} else {
-			return saveAllEditors(saveDirty.equals(MessageDialogWithToggle.PROMPT));
-		}
+		} 
+		return saveAllEditors(saveDirty.equals(MessageDialogWithToggle.PROMPT));
 	}
 	
 	/**
@@ -769,11 +789,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		if (!autobuilding && buildBeforeLaunch) {
 			monitor.beginTask(message, 200);
 			return configuration.launch(mode, monitor, true);	
-		} else {
-			subMonitor = monitor;
-			subMonitor.beginTask(message, 100);
-			return configuration.launch(mode, subMonitor); 
-		}
+		} 
+		subMonitor = monitor;
+		subMonitor.beginTask(message, 100);
+		return configuration.launch(mode, subMonitor); 
 	}
 	
 	/**
