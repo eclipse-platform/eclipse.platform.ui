@@ -16,8 +16,10 @@ import java.util.Set;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
 /**
@@ -38,6 +40,23 @@ class ActivityPersistanceHelper {
     private static ActivityPersistanceHelper singleton;
 
     /**
+     * The listener that responds to changes in the <code>IActivityManager</code>
+     */
+    private final IActivityManagerListener activityManagerListener = new IActivityManagerListener() {
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.eclipse.ui.activities.IActivityManagerListener#activityManagerChanged(org.eclipse.ui.activities.ActivityManagerEvent)
+         */
+        public void activityManagerChanged(
+                ActivityManagerEvent activityManagerEvent) {
+            if (activityManagerEvent.haveEnabledActivityIdsChanged())
+                saveEnabledStates();
+        }
+    };
+
+    /**
      * Get the singleton instance of this class.
      * 
      * @return the singleton instance of this class.
@@ -55,8 +74,33 @@ class ActivityPersistanceHelper {
      */
     private ActivityPersistanceHelper() {
         loadEnabledStates();
+        hookActivityListener();
     }
 
+    /**
+     * Hook the listener that will respond to any activity state changes.
+     */
+    private void hookActivityListener() {
+        IWorkbenchActivitySupport support = PlatformUI.getWorkbench()
+                .getActivitySupport();
+
+        IActivityManager activityManager = support.getActivityManager();
+
+        activityManager.addActivityManagerListener(activityManagerListener);
+    }
+
+    /**
+     * Hook the listener that will respond to any activity state changes.
+     */
+    private void unhookActivityListener() {
+        IWorkbenchActivitySupport support = PlatformUI.getWorkbench()
+                .getActivitySupport();
+
+        IActivityManager activityManager = support.getActivityManager();
+
+        activityManager.removeActivityManagerListener(activityManagerListener);        
+    }
+    
     /**
      * Create the preference key for the activity.
      * 
@@ -99,7 +143,7 @@ class ActivityPersistanceHelper {
     /**
      * Save the enabled states in the preference store.
      */
-    private void saveEnabledStates() {
+    protected void saveEnabledStates() {
         IPreferenceStore store = WorkbenchPlugin.getDefault()
                 .getPreferenceStore();
 
@@ -121,6 +165,7 @@ class ActivityPersistanceHelper {
      * Save the enabled state of all activities.
      */
     public void shutdown() {
-        saveEnabledStates();
+        unhookActivityListener();
+        saveEnabledStates();        
     }
 }

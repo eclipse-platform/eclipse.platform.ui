@@ -31,5 +31,6 @@ public class ActivitiesTestSuite extends TestSuite {
         addTest(new TestSuite(StaticTest.class));
         addTest(new TestSuite(DynamicTest.class));
         addTest(new TestSuite(PersistanceTest.class));
+        addTest(new TestSuite(ActivityPreferenceTest.class));
     }
 }
