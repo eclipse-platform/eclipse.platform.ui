@@ -239,7 +239,7 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(project, new String[] {".", "changed.txt", "folder1/", "folder1/a.txt"}, true);
 		commitResources(project, new String[] {"folder1/a.txt"});
 		assertModificationState(project, new String[] {".", "changed.txt"}, true);
-		getProvider(project).get(new IResource[] {project.getFile("changed.txt")}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		replace(new IResource[] {project.getFile("changed.txt")}, null, true);
 		assertModificationState(project, null, true);
 	}
 
@@ -255,7 +255,7 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(project, new String[] {".", "changed.txt"}, true);
 		project.getFile("changed.txt").delete(false, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "changed.txt"}, true);
-		getProvider(project).get(new IResource[] {project.getFile("changed.txt")}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		replace(new IResource[] {project.getFile("changed.txt")}, null, true);
 		assertModificationState(project, null, true);
 		// modify, delete and commit a file
 		setContentsAndEnsureModified(project.getFile("changed.txt"));
@@ -455,7 +455,7 @@ public class IsModifiedTests extends EclipseTest {
 		// recreate folders and files
 		project.getFolder("folder1").create(false, true, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/deleted.txt", "folder1/a.txt"}, true);
-		getProvider(project).get(new IResource[] {project.getFile("folder1/deleted.txt"), project.getFile("folder1/a.txt")}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		replace(new IResource[] {project.getFile("folder1/deleted.txt"), project.getFile("folder1/a.txt")}, null, true);
 		assertModificationState(project, null, true);
 		
 		// delete a shared folder with files

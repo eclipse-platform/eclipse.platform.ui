@@ -1194,4 +1194,14 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.IN_SYNC, /* conflicting deletions are handled automatically */
 				SyncInfo.IN_SYNC});
 	}
+	
+	public void testOverrideAndUpdateOutgoingAddition() throws TeamException, CoreException {
+		// Create a test project (which commits it as well)
+		IProject project = createProject(new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		IFolder newFolder = project.getFolder("newFolder");
+		newFolder.create(false, true, null);
+		IFile newFile = newFolder.getFile("newFile");
+		overrideAndUpdate(project, new String[] {"newFolder", "newFolder/newFile"}, true);
+		assertDoesNotExistInFileSystem(newFolder);
+	}
 }

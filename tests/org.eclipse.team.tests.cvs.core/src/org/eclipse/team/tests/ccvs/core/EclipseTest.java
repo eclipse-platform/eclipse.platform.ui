@@ -62,6 +62,7 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
+import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.ccvs.ui.operations.CVSOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.CheckoutSingleProjectOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
@@ -210,6 +211,17 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		}	
 		getProvider(container).update(resources, options, null, true /*createBackups*/, DEFAULT_MONITOR);
 		return resources;
+	}
+	
+	
+	protected void replace(IContainer container, String[] hierarchy, CVSTag tag, boolean recurse) throws CoreException {
+		IResource[] resources = getResources(container, hierarchy);
+		replace(resources, tag, recurse);
+	}
+	
+	protected void replace(IResource[] resources, CVSTag tag, boolean recurse) throws CoreException {
+		ReplaceOperation op = new ReplaceOperation(null, resources, tag, recurse);
+		executeHeadless(op);
 	}
 	
 	public void updateProject(IProject project, CVSTag tag, boolean ignoreLocalChanges) throws TeamException {

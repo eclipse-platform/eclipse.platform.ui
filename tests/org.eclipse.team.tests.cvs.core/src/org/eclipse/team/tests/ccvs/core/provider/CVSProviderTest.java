@@ -267,7 +267,7 @@ public class CVSProviderTest extends EclipseTest {
 		setContentsAndEnsureModified(copy.getFile("changed.txt"));
 
 		// get the remote conetns
-		getProvider(copy).get(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		replace(new IResource[] {copy}, null, true);
 		assertEquals(project, copy);
 	}
 	

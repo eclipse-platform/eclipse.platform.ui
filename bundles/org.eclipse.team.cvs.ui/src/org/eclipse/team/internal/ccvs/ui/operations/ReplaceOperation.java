@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
@@ -70,6 +71,15 @@ public class ReplaceOperation extends UpdateOperation {
 		throws CVSException, InterruptedException {
 			
 			monitor.beginTask(null, 100);
+			// Accumulate the managed resources from the list of provided resources
+			List managedResources = new ArrayList();
+			for (int i = 0; i < resources.length; i++) {
+				ICVSResource resource = resources[i];
+				if (resource.isManaged() || 
+						(resource.isFolder() && ((ICVSFolder)resource).isCVSFolder())) {
+					managedResources.add(resource);
+				}
+			}
 			try {
 				new PrepareForReplaceVisitor().visitResources(
 					provider.getProject(), 
@@ -77,9 +87,14 @@ public class ReplaceOperation extends UpdateOperation {
 					"CVSTeamProvider.scrubbingResource", // TODO: This is a key in CVS core! //$NON-NLS-1$
 					recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO, 
 					Policy.subMonitorFor(monitor, 30)); //$NON-NLS-1$
-									
-				// Perform an update, ignoring any local file modifications
-				return super.executeCommand(session, provider, resources, monitor);
+				
+				// Only perform the remote command if some of the resources being replaced were managed
+				if (managedResources.isEmpty()) {
+					return OK;
+				} else {
+					// Perform an update, ignoring any local file modifications
+					return super.executeCommand(session, provider, resources, Policy.subMonitorFor(monitor, 70));
+				}
 			} finally {
 				monitor.done();
 			}

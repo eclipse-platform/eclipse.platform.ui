@@ -10,74 +10,25 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
  
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFileModificationValidator;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Commit;
-import org.eclipse.team.internal.ccvs.core.client.Diff;
-import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.core.client.listeners.AdminKSubstListener;
-import org.eclipse.team.internal.ccvs.core.client.listeners.DiffListener;
-import org.eclipse.team.internal.ccvs.core.client.listeners.EditorsListener;
-import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
-import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
-import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.core.util.MoveDeleteHook;
-import org.eclipse.team.internal.ccvs.core.util.PrepareForReplaceVisitor;
-import org.eclipse.team.internal.ccvs.core.util.ReplaceWithBaseVisitor;
-import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
-import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
+import org.eclipse.team.internal.ccvs.core.resources.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.util.*;
 import org.eclipse.team.internal.core.streams.CRLFtoLFInputStream;
 import org.eclipse.team.internal.core.streams.LFtoCRLFInputStream;
 
@@ -624,48 +575,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 				fileReader.close();
 			} catch (IOException e1) {
 			}
-		}
-	}
-
-	/**
-	 * Replace the local version of the provided resources with the remote using "cvs update -C ..."
-	 * 
-	 * @see ITeamProvider#get(IResource[], int, IProgressMonitor)
-	 */
-	public void get(IResource[] resources, final int depth, IProgressMonitor progress) throws TeamException {
-		get(resources, depth, null, progress);
-	}
-	
-	public void get(final IResource[] resources, final int depth, final CVSTag tag, IProgressMonitor progress) throws TeamException {
-			
-		// Handle the retrival of the base in a special way
-		if (tag != null && tag.equals(CVSTag.BASE)) {
-			new ReplaceWithBaseVisitor().replaceWithBase(getProject(), resources, depth, progress);
-			return;
-		}
-
-		//	Make a connection before preparing for the replace to avoid deletion of resources before a failed connection
-		progress.beginTask(null, 100);
-		Session session = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */);
-		session.open(Policy.subMonitorFor(progress,10), false /* read-only */);
-		try {
-				ICVSResource[] cvsResources = new ICVSResource[resources.length];
-				for (int i = 0; i < cvsResources.length; i++) {
-					cvsResources[i] = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
-				}
-			new PrepareForReplaceVisitor().visitResources(getProject(), cvsResources, "CVSTeamProvider.scrubbingResource", depth, Policy.subMonitorFor(progress, 20)); //$NON-NLS-1$
-			
-			List options = new ArrayList();
-			options.add(Update.IGNORE_LOCAL_CHANGES);
-			if(depth != IResource.DEPTH_INFINITE) {
-				options.add(Command.DO_NOT_RECURSE);
-			}
-			LocalOption[] commandOptions = (LocalOption[]) options.toArray(new LocalOption[options.size()]);
-			
-			update(session, resources, commandOptions, tag, true /*createBackups*/, Policy.subMonitorFor(progress, 70));
-		} finally {
-			session.close();
-			progress.done();
 		}
 	}
 	

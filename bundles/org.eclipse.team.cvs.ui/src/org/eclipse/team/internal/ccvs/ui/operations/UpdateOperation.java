@@ -36,8 +36,15 @@ public class UpdateOperation extends SingleCommandOperation {
 	CVSTag tag;
 	
 	/**
+	 * Create an UpdateOperation that will perform on update on the given resources
+	 * using the given local option. If a tag is provided, it will be added to the 
+	 * local options using the appropriate argument (-r or -D). If the tag is <code>null</code>
+	 * then the tag will be omitted from the local options and the tags on the local resources
+	 * will be used.
 	 * @param shell
 	 * @param resources
+	 * @param options
+	 * @param tag
 	 */
 	public UpdateOperation(Shell shell, IResource[] resources, LocalOption[] options, CVSTag tag) {
 		super(shell, resources, options);

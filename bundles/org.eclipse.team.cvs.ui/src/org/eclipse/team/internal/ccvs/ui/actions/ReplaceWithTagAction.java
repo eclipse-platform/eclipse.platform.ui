@@ -11,26 +11,17 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
  
 import java.lang.reflect.InvocationTargetException;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
 
 /**
  * Action for replace with tag.
@@ -42,7 +33,7 @@ public class ReplaceWithTagAction extends WorkspaceAction {
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		
 		// Setup the holders
-		final IResource[] resource = new IResource[] {null};
+		final IResource[][] resources = new IResource[][] {null};
 		final CVSTag[] tag = new CVSTag[] {null};
 		final boolean[] recurse = new boolean[] {true};
 		
@@ -50,23 +41,22 @@ public class ReplaceWithTagAction extends WorkspaceAction {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				
-				IResource[] resources;
 				try {
-					resources =
+					resources[0] =
 						checkOverwriteOfDirtyResources(
 							getSelectedResources(),
 							null /* no progress just a busy cursor for now */);
 				} catch (CVSException e) {
 					throw new InvocationTargetException(e);
 				} 
-				if(resources.length == 0) {
+				if(resources[0].length == 0) {
 					// nothing to do
 					return;
 				}
 				// show the tags for the projects of the selected resources
-				IProject[] projects = new IProject[resources.length];
-				for (int i = 0; i < resources.length; i++) {
-					projects[i] = resources[i].getProject();
+				IProject[] projects = new IProject[resources[0].length];
+				for (int i = 0; i < resources[0].length; i++) {
+					projects[i] = resources[0][i].getProject();
 				}
 				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), projects, 
 					Policy.bind("ReplaceWithTagAction.message"), //$NON-NLS-1$
@@ -84,7 +74,7 @@ public class ReplaceWithTagAction extends WorkspaceAction {
 				// For non-projects determine if the tag being loaded is the same as the resource's parent
 				// If it's not, warn the user that they will have strange sync behavior
 				try {
-					if(!CVSAction.checkForMixingTags(getShell(), resources, tag[0])) {
+					if(!CVSAction.checkForMixingTags(getShell(), resources[0], tag[0])) {
 						tag[0] = null;
 						return;
 					}
@@ -94,39 +84,16 @@ public class ReplaceWithTagAction extends WorkspaceAction {
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);			 //$NON-NLS-1$
 		
-		if (tag[0] == null) return;
+		if (resources[0] == null || resources[0].length == 0 || tag[0] == null) return;
 		
-		// Display a progress dialog while replacing
-		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
-				try {
-					int depth = recurse[0] ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE;
-					Hashtable table = getProviderMapping();
-					Set keySet = table.keySet();
-					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
-					monitor.setTaskName(Policy.bind("ReplaceWithTagAction.replacing", tag[0].getName())); //$NON-NLS-1$
-					Iterator iterator = keySet.iterator();
-					while (iterator.hasNext()) {
-						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
-						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-						List list = (List)table.get(provider);
-						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						provider.get(providerResources, depth, tag[0], Policy.subMonitorFor(monitor, 100));
-					}
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
-			}
-		}, true /* cancelable */, PROGRESS_DIALOG);
+		try {
+			// Peform the replace in the background
+			new ReplaceOperation(getShell(), resources[0], tag[0], recurse[0]).run();
+		} catch (CVSException e) {
+			throw new InvocationTargetException(e);
+		}
 	}
 	
-	protected boolean equalTags(CVSTag tag1, CVSTag tag2) {
-		if (tag1 == null) tag1 = CVSTag.DEFAULT;
-		if (tag2 == null) tag2 = CVSTag.DEFAULT;
-		return tag1.equals(tag2);
-	}
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
