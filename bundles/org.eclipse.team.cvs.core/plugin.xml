@@ -54,6 +54,8 @@
  	<!-- *************** Resource patterns ignored by CVS **************** -->
  	<extension point="org.eclipse.team.core.ignore">
 		<ignore pattern = ".#*" selected = "true"/>
+		<!-- *** Temporary. This will be removed in favour of a light JDT-Team plug-in *** -->
+		<ignore pattern = "*.class" selected = "true"/>
 	</extension>
  
 </plugin>
