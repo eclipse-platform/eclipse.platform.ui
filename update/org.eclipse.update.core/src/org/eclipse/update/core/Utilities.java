@@ -289,6 +289,9 @@ public class Utilities {
 	 * @since 2.0
 	 */
 	public static void shutdown() {
+		if (dirRoot == null)
+			return;
+			
 		File temp = new File(dirRoot); // temp directory root for this run
 		cleanupTemp(temp);
 		temp.delete();
