@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
@@ -44,7 +46,7 @@ public class NewWizardsRegistryReader extends WizardsRegistryReader {
 
     private ArrayList deferCategories = null;
 
-    private ArrayList deferPrimary;
+    private Set deferPrimary;
 
     // constants
     public final static String BASE_CATEGORY = "Base";//$NON-NLS-1$
@@ -417,7 +419,7 @@ public class NewWizardsRegistryReader extends WizardsRegistryReader {
             return true;
         } else if (element.getName().equals(TAG_PRIMARYWIZARD)) {
             if (deferPrimary == null)
-                deferPrimary = new ArrayList(50);
+                deferPrimary = new HashSet();
             deferPrimary.add(element.getAttribute(ATT_ID));
 
             return true;

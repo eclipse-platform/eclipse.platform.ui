@@ -1789,4 +1789,16 @@
             name="org.eclipse.ui.tests.PerformancePerspective"
             id="org.eclipse.ui.tests.performancePerspective"/>
    </extension>
+   <!-- part of test for bug 75118 -->
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <primaryWizard id="org.eclipse.ui.wizards.new.project"/>
+      <primaryWizard id="org.eclipse.ui.wizards.new.project"/>
+      <primaryWizard id="org.eclipse.ui.wizards.new.project"/>
+      <primaryWizard id="org.eclipse.ui.wizards.new.project"/>
+      <primaryWizard id="org.eclipse.ui.wizards.new.project"/>
+      <primaryWizard id="org.eclipse.ui.wizards.new.project"/>
+      <primaryWizard id="org.eclipse.ui.wizards.new.project"/>
+      <primaryWizard id="org.eclipse.ui.wizards.new.project"/>
+   </extension>
 </plugin>            
