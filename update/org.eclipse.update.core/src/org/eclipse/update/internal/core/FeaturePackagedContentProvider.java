@@ -17,9 +17,8 @@ import org.eclipse.update.core.*;
  */
 public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 
-	private JarFile currentOpenJarFile = null;
-
-	private URL rootURL;
+	private ContentReference localManifest = null;
+	private ContentReference[] localFeatureFiles = new ContentReference[0];
 
 	public static final String JAR_EXTENSION = ".jar";
 
@@ -78,24 +77,32 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 	 */
 	public ContentReference getFeatureManifestReference() throws CoreException {
 
+		// check to see if we already have local copy of the manifest
+		if (localManifest != null)
+			return localManifest;
+			
 		ContentReference result = null;
-		ContentReference[] featureContentReference =getFeatureEntryArchiveReferences();		
-		try {			
-			JarContentReference featureJarReference = (JarContentReference)asLocalReference(featureContentReference[0],null);
-			// we need to unpack locally for browser references to be resolved correctly
+		ContentReference[] featureArchiveReference = getFeatureEntryArchiveReferences();		
+		try {
+			// force feature archive to local. This content provider always assumes exactly 1 archive file (index [0])		
+			JarContentReference featureJarReference = (JarContentReference)asLocalReference(featureArchiveReference[0],null);
+			
+			// we need to unpack archive locally for UI browser references to be resolved correctly
 			FeatureContentProvider.ContentSelector sel = new FeatureContentProvider.ContentSelector();
-			ContentReference[] featureReferences = unpack(featureJarReference, sel, null);
+			localFeatureFiles = unpack(featureJarReference, sel, null); // unpack and cache references
 			result = null;
-			for (int i=0; featureReferences!=null && i<featureReferences.length; i++) {
-				if (featureReferences[i].getIdentifier().equals(Feature.FEATURE_XML)) {
-					result = featureReferences[i];
+			for (int i=0; i<localFeatureFiles.length; i++) {
+				// find the manifest in the unpacked feature files
+				if (localFeatureFiles[i].getIdentifier().equals(Feature.FEATURE_XML)) {
+					result = localFeatureFiles[i];
+					localManifest = result; // cache reference to manifest
 					break;
 				}
 			}
 			if (result == null)
-				throw  newCoreException("Error retrieving manifest file in  feature :" + featureContentReference[0].getIdentifier(), null);
+				throw newCoreException("Error retrieving manifest file in  feature :" + featureArchiveReference[0].getIdentifier(), null);
 		} catch (IOException e){
-			throw  newCoreException("Error retrieving manifest file in  feature :" + featureContentReference[0].getIdentifier(), e);
+			throw newCoreException("Error retrieving manifest file in  feature :" + featureArchiveReference[0].getIdentifier(), e);
 		}
 		return result;
 	}
@@ -172,15 +179,10 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 	 */
 	public ContentReference[] getFeatureEntryContentReferences() throws CoreException {
 		
-		ContentReference[] references = new ContentReference[0];		
-		try {
-			ContentReference result = null;
-			ContentReference[] featureContentReference = getFeatureEntryArchiveReferences();		
-			references = peek((JarContentReference)featureContentReference[0],contentSelector,null);
-		} catch (IOException e){
-			throw newCoreException( "Error retrieving feature Entry Archive Reference :" + feature.getURL().toExternalForm(), e);
-		}	
-		return references;
+		return localFeatureFiles; // return cached feature references
+		// Note: assumes this content provider is always called first to
+		//       get the feature manifest. This forces the feature files
+		//       to be unpacked and caches the references
 	}
 
 	/*
