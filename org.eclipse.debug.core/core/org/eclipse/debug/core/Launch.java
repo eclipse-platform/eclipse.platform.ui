@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
@@ -39,7 +40,7 @@ import org.eclipse.debug.internal.core.LaunchManager;
  * @see ILaunchManager
  */
 
-public class Launch extends PlatformObject implements ILaunch {
+public class Launch extends PlatformObject implements ILaunch, IDisconnect {
 	
 	/**
 	 * The debug targets associated with this
@@ -400,4 +401,34 @@ public class Launch extends PlatformObject implements ILaunch {
 	public boolean hasChildren() {
 		return getProcesses0().size() > 0 || (getDebugTargets0().size() > 0);
 	}
+	
+	/**
+	 * @see org.eclipse.debug.core.model.IDisconnect#canDisconnect()
+	 */
+	public boolean canDisconnect() {
+		if (getDebugTargets0().size() == 1) {
+			return getDebugTarget().canDisconnect();
+		}
+		return false;
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.IDisconnect#disconnect()
+	 */
+	public void disconnect() throws DebugException {
+		if (getDebugTargets0().size() == 1) {
+			getDebugTarget().disconnect();
+		}
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.IDisconnect#isDisconnected()
+	 */
+	public boolean isDisconnected() {
+		if (getDebugTargets0().size() == 1) {
+			getDebugTarget().isDisconnected();
+		}
+		return false;
+	}
+
 }
