@@ -14,14 +14,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -38,7 +35,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  */
 public final class PerspectiveLabelProvider
 		extends LabelProvider
-		implements ITableLabelProvider, IColorProvider {
+		implements ITableLabelProvider {
 	
 	/**
 	 * List of all Image objects this label provider is responsible for.
@@ -138,21 +135,4 @@ public final class PerspectiveLabelProvider
 	public final String getColumnText(Object element, int columnIndex) {
 		return getText(element);
 	}
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-     */
-    public Color getForeground(Object element) {
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-     */
-    public Color getBackground(Object element) {
-        if (WorkbenchActivityHelper.filterItem(element)) {
-            return WorkbenchActivityHelper.getFilterColor();
-        }
-        return null;
-    }
 }

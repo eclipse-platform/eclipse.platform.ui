@@ -14,19 +14,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
 
-public class ViewLabelProvider extends LabelProvider implements IColorProvider {
+public class ViewLabelProvider extends LabelProvider {
 	private HashMap images;
 Image cacheImage(ImageDescriptor desc) {
 	if (images == null)
@@ -74,20 +71,5 @@ public String getText(Object element) {
 	else if (element instanceof IViewDescriptor)
 		label = ((ViewDescriptor)element).getLabel();
 	return DialogUtil.removeAccel(label);
-}
-/* (non-Javadoc)
- * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
- */
-public Color getForeground(Object element) {
-    return null;
-}
-/* (non-Javadoc)
- * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
- */
-public Color getBackground(Object element) {
-    if (element instanceof ViewDescriptor && WorkbenchActivityHelper.filterItem(element)) {
-        return WorkbenchActivityHelper.getFilterColor();
-    }
-    return null;
 }
 }

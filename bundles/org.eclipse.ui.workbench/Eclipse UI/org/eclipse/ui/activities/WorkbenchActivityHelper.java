@@ -15,14 +15,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 
 /**
  * A utility class that contains helpful methods for interacting with the
@@ -147,23 +143,7 @@ public final class WorkbenchActivityHelper {
         newSet.addAll(identifier.getActivityIds());
         activitySupport.setEnabledActivityIds(newSet);	    
 	}
-	
-    /**
-     * @return the <code>RGB</code> that should be used to highlight filtered 
-     * contributions.
-     */
-    public static RGB getFilterRGB() {
-    	return JFaceResources.getColorRegistry().getRGB(IWorkbenchConstants.COLOR_HIGHLIGHT);
-    }
-	
-    /**
-     * @return the <code>Color</code> that should be used to highlight filtered 
-     * contributions.
-     */
-    public static Color getFilterColor() {
-        return JFaceResources.getColorRegistry().get(IWorkbenchConstants.COLOR_HIGHLIGHT);
-    }	
-	
+		
 	/**
 	 * Answers whether the provided object should be filtered from the UI based
 	 * on activity state. Returns false except when the object is an instance
@@ -199,7 +179,7 @@ public final class WorkbenchActivityHelper {
 	 *         activity categories).
 	 */
 	public static final boolean isFiltering() {
-		return !PlatformUI.getWorkbench().getActivitySupport().getActivityManager().getDefinedCategoryIds().isEmpty();
+		return !PlatformUI.getWorkbench().getActivitySupport().getActivityManager().getDefinedActivityIds().isEmpty();
 	}
 
 	 /**

@@ -21,10 +21,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.SelectionEnabler;
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
@@ -261,17 +259,6 @@ public class WorkbenchWizardElement
 				.getUniqueIdentifier()
 			: null;
 	}
-	
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getBackground(java.lang.Object)
-     */
-    public RGB getBackground(Object element) {
-        if (WorkbenchActivityHelper.filterItem(element)) {
-            return WorkbenchActivityHelper.getFilterRGB();
-        }
-        return null;
-    }
-    
     
     /**
      * Return the description image for this wizard.

@@ -421,17 +421,5 @@
             id="org.eclipse.ui.propertypages.info.file">
       </page>
    </extension>
-   <extension
-         point="org.eclipse.ui.themes">
-      <colorDefinition
-            label="%Colors.highlight"
-            value="COLOR_WIDGET_LIGHT_SHADOW"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            id="org.eclipse.ui.highlight">
-         <description>
-            %Colors.highlight.desc
-         </description>
-      </colorDefinition>
-   </extension>
 
 </plugin>
