@@ -91,7 +91,6 @@ public class AntImageDescriptor extends CompositeImageDescriptor {
 	 */
 	protected void drawOverlays() {
 		int flags= getFlags();
-		int x= 0;
 		int y= 0;
 		ImageData data= null;
 		if ((flags & IMPORTED) != 0) {
@@ -99,12 +98,10 @@ public class AntImageDescriptor extends CompositeImageDescriptor {
 			drawImage(data, 0, 0);
 		}
 		if ((flags & HAS_ERRORS) != 0) {
-			x= getSize().x;
 			y= getSize().y;
 			data= AntUIImages.getImageDescriptor(IAntUIConstants.IMG_OVR_ERROR).getImageData();
-			x -= data.width;
 			y -= data.height;
-			drawImage(data, x, y);
+			drawImage(data, 0, y);
 		}
 	}
 	
