@@ -292,7 +292,7 @@ private boolean isValidContainer() {
 		return false;
 		
 	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
-	IFolder linkHandle = createFolderHandle("a");
+	IFolder linkHandle = createFolderHandle("a");	//$NON-NLS-1$
 	IStatus status = workspace.validateLinkLocation(linkHandle,	Path.EMPTY);
 	
 	if (status.getCode() == IResourceStatus.LINKING_NOT_ALLOWED)
