@@ -24,7 +24,7 @@ package org.eclipse.ui;
  * there is only 1 set of actions for 1 or more open editors.
  * </p><p>
  * The relationship between editor and contributor is defined by
- * the <code>org.eclipse.ui.editorss</code> extension point in the plugin registry.  
+ * the <code>org.eclipse.ui.editors</code> extension point in the plugin registry.  
  * For each extension an editor class and a contributor class must be defined. 
  * </p><p>
  * This interface should not be implemented directly. An implementation of this 
