@@ -549,7 +549,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			try {
 				configs[i].getType();
 			} catch (CoreException e) {
-				IPath path = configs[i].getLocation();
 				configs[i].delete();
 				DebugPlugin.log(e.getStatus());
 			}

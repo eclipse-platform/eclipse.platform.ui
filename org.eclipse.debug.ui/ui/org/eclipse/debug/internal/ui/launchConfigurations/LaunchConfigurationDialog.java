@@ -1523,7 +1523,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			String newName = generateUniqueNameFrom(selectedConfig.getName());
 			try {
 				ILaunchConfigurationWorkingCopy newWorkingCopy = selectedConfig.copy(newName);
-				ILaunchConfigurationType configType = newWorkingCopy.getType();
 				setLaunchConfiguration(newWorkingCopy, false);
 				doSave();
 			} catch (CoreException ce) {				
