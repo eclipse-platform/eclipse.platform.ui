@@ -123,9 +123,6 @@ public class SearchPage extends NavigationPage {
 			new XMLSearchContributor(resultsAsXMLString);
 		HelpContribution root = (HelpContribution) searchContributor.getContribution();
 
-		//SearchElement root =
-		//  new SearchElement(WorkbenchResources.getString("Search_results"), null);
-
 		if (root == null || !root.getChildren().hasNext()) {
 			root.addChild(
 				new SearchElement(WorkbenchResources.getString("No_results_found"), "org.eclipse.help/" + Resources.getString("noresults.html")));
@@ -162,8 +159,6 @@ public class SearchPage extends NavigationPage {
 				//Inserting results rows here
 				int maxRange = Math.min(resultsBackup.size(), resultsEnd);
 				for (int i = r * RESULT_GROUP_SIZE; i < maxRange; i++) {
-					//SearchElement doc = (SearchElement)documents.get(i);
-					//SearchElement child = new SearchElement(doc.getLabel(), doc.getHref());
 					Contribution child = (Contribution) resultsBackup.get(i);
 					resultsGroup.addChild(child);
 				}
@@ -277,7 +272,6 @@ public class SearchPage extends NavigationPage {
 
 		// Create the button that launchs the search
 		searchButton = new Button(searchPart, SWT.PUSH);
-		//searchButton.setText("Go");
 		searchButton.setImage(imgRegistry.get(IMAGE_GO));
 		//searchButton.setFocus();
 

@@ -296,26 +296,6 @@ public class WebBrowser implements OleListener, IBrowser {
 			case (DocumentComplete) :
 				varResult = event.arguments[0];
 				return;
-				/*
-					case (BeforeNavigate2) :
-						varResult = eventInfo[1];
-						String url = varResult.getString();
-						if (url.indexOf("test1") != -1)
-						{
-							Stop();
-							Navigate(url);
-							Variant  out = new Variant(true);
-							eventInfo[6] = out;
-						}
-						return;
-				*/
-
-				/*
-					case NewWindow2:
-					   System.out.println("NEw window : " + eventInfo.length);
-					   eventInfo[1] = new Variant(true);
-						return;
-				*/
 		}
 		//throw new OleError(OLE.ERROR_NOT_IMPLEMENTED);
 	}

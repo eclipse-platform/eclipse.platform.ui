@@ -37,10 +37,8 @@ public class HTMLHelpViewer implements ISelectionChangedListener {
 	 */
 	protected Control createControl(Composite parent)
 		throws HelpWorkbenchException {
-		//Object in= getInput();
+
 		Contribution url = null;
-		//if (in instanceof Contribution)
-		//url = (Contribution)in;
 
 		String factoryClass = "org.eclipse.help.internal.ui.win32.BrowserFactory";
 		try {

@@ -23,7 +23,6 @@ public class WorkbenchResources {
 	private static URL imageURL;
 
 	static {
-		//      System.out.println("WorkbenchResource: " + "HelpWorkbench_" + Locale.getDefault().toString());
 		resBundle = ResourceBundle.getBundle("HelpWorkbench", Locale.getDefault());
 		try {
 			imageURL =
