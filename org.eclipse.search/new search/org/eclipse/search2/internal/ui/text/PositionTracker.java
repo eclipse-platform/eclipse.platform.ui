@@ -119,7 +119,11 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 	}
 
 	private void trackPosition(AbstractTextSearchResult result, ITextFileBuffer fb, Match match) {
-		Position position= new Position(match.getOffset(), match.getLength());
+		int offset = match.getOffset();
+		int length = match.getLength();
+		if (offset < 0 || length < 0)
+			return;
+		Position position= new Position(offset, length);
 		try {
 			fb.getDocument().addPosition(position);
 			fMatchesToSearchResults.put(match, result);
@@ -261,8 +265,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 				Position pos= (Position) fMatchesToPositions.get(match);
 				if (pos != null) {
 					if (pos.isDeleted()) {
-						AbstractTextSearchResult result= (AbstractTextSearchResult) fMatchesToSearchResults.get(match);
-						result.removeMatch(match);
+						untrackPosition(textBuffer, match);
 					} else {
 						match.setOffset(pos.getOffset());
 						match.setLength(pos.getLength());
