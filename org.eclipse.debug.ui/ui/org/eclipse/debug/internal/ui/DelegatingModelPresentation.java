@@ -25,6 +25,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
@@ -55,6 +56,18 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 * A table of label providers keyed by debug model identifiers.
 	 */
 	private HashMap fLabelProviders= new HashMap(5);
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#removeDecorations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IThread)
+	 */
+	public void removeDecorations(IEditorPart editorPart, IThread thread) {
+		IDebugModelPresentation presentation = getConfiguredPresentation(thread);
+		if (presentation != null) {
+			if (presentation instanceof IDebugEditorPresentation) {
+				((IDebugEditorPresentation)presentation).removeDecorations(editorPart, thread);
+			}
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#decorateEditor(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)

@@ -17,6 +17,7 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -57,6 +58,16 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	 */
 	protected ListenerList fListeners= new ListenerList(5);	
 		
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#removeDecorations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IThread)
+	 */
+	public void removeDecorations(IEditorPart editorPart, IThread thread) {
+		IDebugModelPresentation presentation = getPresentation();
+		if (presentation instanceof IDebugEditorPresentation) {
+			((IDebugEditorPresentation)presentation).removeDecorations(editorPart, thread);
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#decorateEditor(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
 	 */

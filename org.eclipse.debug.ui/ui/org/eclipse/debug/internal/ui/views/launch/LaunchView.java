@@ -58,7 +58,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -675,7 +674,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				// perform the select and reveal ourselves
 				if (lineNumber >= 0 || charStart >= 0) {
 					if (editor instanceof ITextEditor) {
-						selectAndReveal((ITextEditor)editor, lineNumber, charStart, charEnd);
+						selectAndReveal((ITextEditor)editor, lineNumber, charStart, charEnd, stackFrame.getThread());
 					} else {
 						IMarker marker= getInstructionPointer(lineNumber, charStart, charEnd);
 						if (marker != null) {
@@ -707,6 +706,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	private void decorateEditor(IEditorPart editor, IStackFrame stackFrame) {
 		if (fEditorPresentation != null) {
 			fEditorPresentation.decorateEditor(editor, stackFrame);
+			Decoration decoration = new StandardDecoration(fEditorPresentation, editor, stackFrame.getThread());
+			DecorationManager.addDecoration(decoration);
 		}
 	}
 
@@ -728,10 +729,14 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	/**
 	 * Highlights the given line or character range in the given editor
 	 */
-	private void selectAndReveal(ITextEditor editor, int lineNumber, int charStart, int charEnd) {
+	private void selectAndReveal(ITextEditor editor, int lineNumber, int charStart, int charEnd, IThread thread) {
 		lineNumber--; // Document line numbers are 0-based. Debug line numbers are 1-based.
 		if (charStart > 0 && charEnd > charStart) {
-			editor.selectAndReveal(charStart, charEnd - charStart);
+			int length = charEnd - charStart;
+			editor.selectAndReveal(charStart, length);
+			// add decoration
+			Decoration decoration = new TextEditorSelection(editor, lineNumber, charStart, length, thread);
+			DecorationManager.addDecoration(decoration);
 			return;
 		}
 		int offset= -1;
@@ -744,6 +749,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			IMarker marker= getInstructionPointer(lineNumber, charStart, charEnd);
 			if (marker != null) {
 				editor.gotoMarker(marker);
+				// add decoration
+				Decoration decoration = new MarkerTextSelection(editor, lineNumber, thread);
+				DecorationManager.addDecoration(decoration);
 			}			
 			return;
 		}
@@ -754,6 +762,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 		length= region.getLength();
 		editor.selectAndReveal(offset, length);
+		// add decoration
+		Decoration decoration = new TextEditorSelection(editor, lineNumber, offset, length, thread);
+		DecorationManager.addDecoration(decoration);
 	}
 	
 	/**
@@ -874,74 +885,17 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	}
 
 	/**
-	 * Deselects any source in the active editor that was 'programmatically' selected by
-	 * the debugger.
+	 * Deselects any source decorations associated with the given thread or
+	 * debug target.
+	 * 
+	 * @param source thread or debug target
 	 */
-	public void clearSourceSelection() {		
-		cleanup();
-		
-		// Get the active editor
-		IEditorPart editor= getSite().getPage().getActiveEditor();
-		if (!(editor instanceof ITextEditor)) {
-			return;
+	public void clearSourceSelection(Object source) {		
+		if (source instanceof IThread) {
+			DecorationManager.removeDecorations((IThread)source);	
+		} else if (source instanceof IDebugTarget) {
+			DecorationManager.removeDecorations((IDebugTarget)source);
 		}
-		ITextEditor textEditor= (ITextEditor)editor;
-		
-		// Get the current text selection in the editor.  If there is none, 
-		// then there's nothing to do
-		ITextSelection textSelection= (ITextSelection)textEditor.getSelectionProvider().getSelection();
-		if (textSelection.isEmpty()) {
-			return;
-		}
-		int startChar= textSelection.getOffset();
-		int endChar= startChar + textSelection.getLength() - 1;
-		int startLine= textSelection.getStartLine();
-		
-		// Check to see if the current selection looks the same as the last 'programmatic'
-		// selection.  If not, it must be a user selection, which
-		// we leave alone.  In practice, we can leave alone any user selections on other lines,
-		// but if the user makes a selection on the same line as the last programmatic selection,
-		// it will get cleared.
-		if (fLastCharStart == -1) {
-			// subtract 1 since editor is 0-based
-			if (fLastLine - 1 != startLine) {
-				return;
-			}
-		} else {
-			if ((fLastCharStart != startChar) || (fLastCharEnd != endChar)) {
-				return;			     
-			}
-		}
-		
-		ITextSelection nullSelection= getNullSelection(startLine, startChar);
-		textEditor.getSelectionProvider().setSelection(nullSelection);		
-	}
-
-	/**
-	 * Creates and returns an ITextSelection that is a zero-length selection located at the
-	 * start line and start char.
-	 */
-	protected ITextSelection getNullSelection(final int startLine, final int startChar) {
-		return new ITextSelection() {
-			public int getStartLine() {
-				return startLine;
-			}
-			public int getEndLine() {
-				return startLine;
-			}
-			public int getOffset() {
-				return startChar;
-			}
-			public String getText() {
-				return ""; //$NON-NLS-1$
-			}
-			public int getLength() {
-				return 0;
-			}
-			public boolean isEmpty() {
-				return true;
-			}
-		};
 	}
 	
 	/**

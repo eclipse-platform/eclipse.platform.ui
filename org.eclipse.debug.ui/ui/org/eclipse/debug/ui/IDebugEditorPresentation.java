@@ -11,6 +11,7 @@
 package org.eclipse.debug.ui;
 
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorPart;
 
@@ -45,6 +46,16 @@ public interface IDebugEditorPresentation {
 	 * @return whether this presentation has performed the select and reveal
 	 */
 	public boolean selectAndReveal(IEditorPart editorPart, IStackFrame frame);
+	
+	/**
+	 * Removes any debug related decorations in the given editor. This method is
+	 * called when the debugger clears the source selection in an editor opened
+	 * by the debugger when a debug session is resumed or terminated.
+	 *   
+	 * @param editorPart an editor that was decorated 
+	 * @param thread the thread the editor was decorated for
+	 */
+	public void removeDecorations(IEditorPart editorPart, IThread thread);
 	
 	/**
 	 * Provides this editor presentation with an opportunity to decorate the given

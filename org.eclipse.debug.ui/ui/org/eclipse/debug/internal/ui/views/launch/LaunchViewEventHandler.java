@@ -30,7 +30,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 
@@ -89,7 +88,9 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 						fThreadTimer.getTimedOutThreads().remove(source);
 						remove(source);
 					} else {
-						clearSourceSelection(null);
+						if (source instanceof IDebugTarget) {
+							clearSourceSelection((IDebugTarget)source);
+						}
 						Object parent = ((ITreeContentProvider)getTreeViewer().getContentProvider()).getParent(source);
 						refresh(parent);
 					}
@@ -127,6 +128,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	protected void doHandleResumeEvent(DebugEvent event, Object source) {
 		if (!event.isEvaluation()) {
 			removeInstructionPointerAnnotations(source);
+			clearSourceSelection(source);
 		}
 		if (event.isEvaluation() || event.isStepStart()) {
 			// Do not update for step starts and evaluation
@@ -137,7 +139,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			}
 			return;
 		}	
-		clearSourceSelection(null);
 		refresh(source);
 		if (source instanceof IThread) {
 			selectAndReveal(source);
@@ -155,7 +156,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	protected void updateRunningThread(IThread thread) {
 		labelChanged(thread);
 		getLaunchViewer().updateStackFrameIcons(thread);
-		getLaunchView().clearSourceSelection();
+		getLaunchView().clearSourceSelection(thread);
 		// fire selection change to update actions
 		getLaunchViewer().setSelection(getLaunchViewer().getSelection());
 	}
@@ -261,27 +262,11 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	/**
 	 * Clear the selection in the editor - must be called in UI thread
 	 */
-	private void clearSourceSelection(IThread thread) {
+	private void clearSourceSelection(Object source) {
 		if (getViewer() != null) {
-			if (thread != null) {
-				IStructuredSelection selection= (IStructuredSelection)getLaunchViewer().getSelection();
-				Object element= selection.getFirstElement();
-				if (element instanceof IStackFrame) {
-					IStackFrame stackFrame = (IStackFrame) element;
-					if (!stackFrame.getThread().equals(thread)) {
-						//do not clear the source selection
-						//a thread has terminated that is not the
-						//parent of the currently selected stack frame
-						return;
-					}
-				} else {
-					return;
-				}
-			}
-		
-			getLaunchView().clearSourceSelection();
+			getLaunchView().clearSourceSelection(source);
 		}
-	}
+	}	
 
 	/**
 	 * Returns this event handler's launch viewer
