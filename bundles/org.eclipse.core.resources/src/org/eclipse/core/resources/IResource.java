@@ -222,10 +222,6 @@ public void clearHistory(IProgressMonitor monitor) throws CoreException;
  * this ensures files in the file system cannot be accidentally
  * overwritten.
  * </p>
- * <p>
- * This method synchronizes the source and destination resources (
- * and their descendents) with the local file system.
- * </p>
  * <p> 
  * This operation changes resources; these changes will be reported
  * in a subsequent resource change event that will include 
@@ -294,10 +290,6 @@ public void copy(IProjectDescription destination, boolean force, IProgressMonito
  * workspace would be out of sync with the local file system; 
  * this ensures files in the file system cannot be accidentally
  * overwritten.
- * </p>
- * <p>
- * This method synchronizes the source and destination resources (
- * and their descendents) with the local file system.
  * </p>
  * <p> 
  * This operation changes resources; these changes will be reported
@@ -373,9 +365,6 @@ public IMarker createMarker(String type) throws CoreException;
  * Deleting a non-project resource which has sync information 
  * converts the resource to a phantom and retains the sync information for
  * future use.
- * </p>
- * <p>
- * This method synchronizes this resource with the local file system.
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
@@ -853,9 +842,6 @@ public boolean isReadOnly();
  * markers.
  * </p>
  * <p>
- * This method synchronizes this resource with the local file system.
- * </p>
- * <p>
  * This method changes resources; these changes will be reported
  * in a subsequent resource change event that will include 
  * an indication that the resource has been removed from its parent
@@ -928,9 +914,6 @@ public void move(IProjectDescription destination, boolean force, boolean keepHis
  * When a resource moves, its session and persistent properties move
  * with it. Likewise for all the other attributes of the resource including
  * markers.
- * </p>
- * <p>
- * This method synchronizes this resource with the local file system.
  * </p>
  * <p>
  * This method changes resources; these changes will be reported

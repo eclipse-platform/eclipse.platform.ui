@@ -169,10 +169,6 @@ public void close(IProgressMonitor monitor) throws CoreException;
  * this ensures files in the file system cannot be accidentally
  * overwritten.
  * </p>
- * <p>
- * This method synchronizes the source and destination resources 
- * (and their descendents) with the local file system.
- * </p>
  * <p> 
  * This operation changes resources; these changes will be reported
  * in a subsequent resource change event that will include 
@@ -486,9 +482,6 @@ public boolean isOpen();
  * If the name in the given description is the same as this project's name and
  * the location is different, then the project contents will be moved to the new
  * location and this project's description will be set to be the given description. 
- * </p>
- * <p>
- * This method synchronizes this resource with the local file system.
  * </p>
  * <p>
  * This method changes resources; these changes will be reported

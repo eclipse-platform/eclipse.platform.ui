@@ -53,9 +53,6 @@ public interface IFile extends IResource, IStorage, IAdaptable {
  * the local history.
  * </p>
  * <p>
- * This method synchronizes this resource with the local file system.
- * </p>
- * <p>
  * This method changes resources; these changes will be reported
  * in a subsequent resource change event, including an indication 
  * that this file's content have been changed.
@@ -99,9 +96,6 @@ public void appendContents(InputStream source, boolean force, boolean keepHistor
  * However, if <code>true</code> is specified, this method will 
  * attempt to write a corresponding file in the local file system, 
  * overwriting any existing one if need be.
- * </p>
- * <p>
- * This method synchronizes this resource with the local file system.
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
@@ -314,9 +308,6 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
  * Properties are not recorded in the local history.
  * </p>
  * <p>
- * This method synchronizes this resource with the local file system.
- * </p>
- * <p>
  * This method changes resources; these changes will be reported
  * in a subsequent resource change event, including an indication 
  * that this file's content have been changed.
@@ -363,9 +354,6 @@ public void setContents(InputStream source, boolean force, boolean keepHistory, 
  * The <code>keepHistory</code> parameter indicates whether or not a copy of
  * this resource should be stored in the workspace's local history. 
  * Properties are not recorded in the local history.
- * </p>
- * <p>
- * This method synchronizes this resource with the local file system.
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
