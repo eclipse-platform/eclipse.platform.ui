@@ -330,9 +330,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			fireUpdate(remove, null, REMOVED);
 			IWorkspaceRunnable r = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor montitor) throws CoreException {
-					Iterator iter = remove.iterator();
-					while (iter.hasNext()) {
-						IBreakpoint breakpoint = (IBreakpoint)iter.next();
+					Iterator innerIter = remove.iterator();
+					while (innerIter.hasNext()) {
+						IBreakpoint breakpoint = (IBreakpoint)innerIter.next();
 						if (delete) {
 							breakpoint.delete();
 						} else {
