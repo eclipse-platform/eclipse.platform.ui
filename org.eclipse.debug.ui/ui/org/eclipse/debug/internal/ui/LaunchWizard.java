@@ -138,6 +138,9 @@ public class LaunchWizard extends Wizard {
 	 * or <code>null</code> if there is no single project associated with the selection.
 	 */
 	protected IProject getProject() {
+		if (fSelection == null) {
+			return null;
+		}
 		IProject project= null;
 		Iterator elements= fSelection.iterator();
 		while (elements.hasNext()) {
