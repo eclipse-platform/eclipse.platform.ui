@@ -42,4 +42,10 @@ public interface IDEInternalPreferences {
 
 	// (boolean) Whether or not to display the Welcome dialog on startup.
 	public static final String WELCOME_DIALOG = "WELCOME_DIALOG"; //$NON-NLS-1$
+
+	/**
+	 * Temporary 3.0.2 preference for determining whether natures should act as
+	 * activity trigger points.
+	 */
+	public static final String NATURES_ARE_TRIGGER_POINTS = "NATURES_ARE_TRIGGER_POINTS"; //$NON-NLS-1$
 }

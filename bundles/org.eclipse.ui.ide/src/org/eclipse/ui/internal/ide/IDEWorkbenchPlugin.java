@@ -243,6 +243,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, true);
 		store.setDefault(IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE, IDEInternalPreferences.PSPM_PROMPT);
 		store.setDefault(IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
+		store.setDefault(IDEInternalPreferences.NATURES_ARE_TRIGGER_POINTS, true);
 	}
 
 	/**

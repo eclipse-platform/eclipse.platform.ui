@@ -27,6 +27,7 @@ public class ActivitiesTestSuite extends TestSuite {
 	public ActivitiesTestSuite() {
 		addTest(new TestSuite(StaticTest.class));
 		addTest(new TestSuite(DynamicTest.class));
-		addTest(new TestSuite(PersistanceTest.class));		
+		addTest(new TestSuite(PersistanceTest.class));
+		addTest(new TestSuite(NatureTests.class));
 	}
 }

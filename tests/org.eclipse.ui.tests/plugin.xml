@@ -1396,6 +1396,12 @@
             requiredActivityId="org.eclipse.activity7"
             activityId="org.eclipse.activity1">
       </activityRequirementBinding>
+      <activity
+            id="anotherJavaActivity"
+            name="anotherJavaActivity"/>
+      <activityPatternBinding
+            activityId="anotherJavaActivity"
+            pattern="org\.eclipse\.jdt\.core/javanature"/>
    </extension>
    <extension
          point="org.eclipse.ui.themes">

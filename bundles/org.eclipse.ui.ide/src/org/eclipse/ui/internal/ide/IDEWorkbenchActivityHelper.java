@@ -167,7 +167,9 @@ public class IDEWorkbenchActivityHelper {
      * @param workbenchActivitySupport the activity support
      */
     protected void processProject(IProject project, IWorkbenchActivitySupport workbenchActivitySupport) throws CoreException {
-        if (!project.isOpen())
+        if (!areNaturesTriggerPoints())
+			return;
+		if (!project.isOpen())
             return;
         IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
         String[] ids = project.getDescription().getNatureIds();
@@ -191,6 +193,17 @@ public class IDEWorkbenchActivityHelper {
         if (changed)
             workbenchActivitySupport.setEnabledActivityIds(activities);
     }
+	
+	/**
+	 * Answers whether natures should be considered trigger points.
+	 * 
+	 * @return whether natures should be considered trigger points.
+	 * @since 3.0.2
+	 */
+	private boolean areNaturesTriggerPoints() {
+		return IDEWorkbenchPlugin.getDefault().getPluginPreferences()
+				.getBoolean(IDEInternalPreferences.NATURES_ARE_TRIGGER_POINTS);
+	}
 
     /**
      * Unhooks the <code>IResourceChangeListener</code>.
