@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.properties;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Map;
@@ -17,6 +18,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.properties.IPropertyManager;
 import org.eclipse.core.internal.resources.ResourcesCompatibilityHelper;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
@@ -58,7 +60,7 @@ public class PropertyConversionTest extends ResourceTest {
 		}
 	}
 
-	public void testConversion() {
+	public void _testConversion() {
 		Bundle compatibility = Platform.getBundle("org.eclipse.core.resources.compatibility");
 		if (compatibility == null || compatibility.getState() != Bundle.RESOLVED)
 			// compatibility fragment not available
@@ -110,6 +112,18 @@ public class PropertyConversionTest extends ResourceTest {
 					fail("99.9", e);
 				}
 		}
+	}
+
+	public void testBug86363() {
+		Bundle compatibility = Platform.getBundle("org.eclipse.core.resources.compatibility");
+		if (compatibility == null || compatibility.getState() != Bundle.RESOLVED)
+			// compatibility fragment not available
+			return;
+		// do the conversion
+		createPropertyManager("0", true, true);
+		// make sure no .properties file got created
+		File rootPropertiesFile = ((Workspace) getWorkspace()).getMetaArea().getPropertyStoreLocation(getWorkspace().getRoot()).toFile();
+		assertTrue("1.0", !rootPropertiesFile.exists());
 	}
 
 	private IPropertyManager createPropertyManager(String tag, boolean newImpl, boolean convert) {

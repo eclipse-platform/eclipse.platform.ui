@@ -69,7 +69,7 @@ public class PropertyStoreConverter {
 			workspace.getRoot().accept(new IResourceVisitor() {
 				public boolean visit(org.eclipse.core.resources.IResource resource) throws CoreException {
 					ConversionVisitor propertyConverter = new ConversionVisitor(resource.getFullPath(), destination.getTree());
-					PropertyStore store = source.getPropertyStore(resource);
+					PropertyStore store = source.getPropertyStore(resource, false);
 					if (store == null)
 						return true;
 					store.recordsDeepMatching(new ResourceName("", resource.getProjectRelativePath()), propertyConverter); //$NON-NLS-1$

@@ -171,12 +171,16 @@ public class PropertyManager implements IManager, ILifecycleListener, IPropertyM
 		return new ResourceName("", target.getProjectRelativePath()); //$NON-NLS-1$
 	}
 
+	PropertyStore getPropertyStore(IResource target) throws CoreException {
+		return getPropertyStore(target, true);
+	}
+
 	/**
 	 * Returns the property store to use when storing a property for the 
 	 * given resource.  
 	 * @throws CoreException if the store could not be obtained for any reason.
 	 */
-	PropertyStore getPropertyStore(IResource target) throws CoreException {
+	PropertyStore getPropertyStore(IResource target, boolean createIfNeeded) throws CoreException {
 		try {
 			Resource host = getPropertyHost(target);
 			ResourceInfo info = host.getResourceInfo(false, false);
@@ -186,7 +190,7 @@ public class PropertyManager implements IManager, ILifecycleListener, IPropertyM
 			}
 			PropertyStore store = (PropertyStore) info.getPropertyStore();
 			if (store == null)
-				store = openPropertyStore(host);
+				store = openPropertyStore(host, createIfNeeded);
 			return store;
 		} catch (Exception e) {
 			if (e instanceof CoreException)
@@ -221,11 +225,13 @@ public class PropertyManager implements IManager, ILifecycleListener, IPropertyM
 			closePropertyStore(event.resource);
 	}
 
-	private PropertyStore openPropertyStore(IResource target) {
+	private PropertyStore openPropertyStore(IResource target, boolean createIfNeeded) {
 		int type = target.getType();
 		Assert.isTrue(type != IResource.FILE && type != IResource.FOLDER);
 		IPath location = workspace.getMetaArea().getPropertyStoreLocation(target);
 		java.io.File storeFile = location.toFile();
+		if (!createIfNeeded && !storeFile.isFile())
+			return null;
 		storeFile.getParentFile().mkdirs();
 		PropertyStore store = new PropertyStore(location);
 		setPropertyStore(target, store);
