@@ -186,8 +186,8 @@
       <editor
             name="%Editors.WelcomeEditor"
             icon="icons/full/obj16/welcome_editor.gif"
-            class="org.eclipse.ui.internal.ide.dialogs.WelcomeEditor"
             contributorClass="org.eclipse.ui.internal.ide.dialogs.WelcomeEditorActionContributor"
+            class="org.eclipse.ui.internal.ide.dialogs.WelcomeEditor"
             id="org.eclipse.ui.internal.ide.dialogs.WelcomeEditor">
       </editor>
    </extension>
@@ -231,8 +231,8 @@
                label="%GoToResourceAction.label"
                hoverIcon="icons/full/clcl16/gotoobj_tsk.gif"
                icon="icons/full/elcl16/gotoobj_tsk.gif"
-               menubarPath="navigate/goTo/"
                retarget="true"
+               menubarPath="navigate/goTo/"
                disabledIcon="icons/full/dlcl16/gotoobj_tsk.gif"
                id="goToResource">
          </action>
@@ -250,11 +250,11 @@
          point="org.eclipse.ui.decorators">
       <decorator
             lightweight="true"
-            adaptable="true"
             quadrant="BOTTOM_RIGHT"
+            adaptable="true"
             label="%DecoratorLinkedResource.label"
-            class="org.eclipse.ui.internal.ide.LinkedResourceDecorator"
             state="true"
+            class="org.eclipse.ui.internal.ide.LinkedResourceDecorator"
             id="org.eclipse.ui.LinkedResourceDecorator">
          <description>
             %DecoratorLinkedResource.description
@@ -405,15 +405,15 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            adaptable="true"
             objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
             name="%PropertyPages.project.reference"
             class="org.eclipse.ui.internal.ide.dialogs.ProjectReferencePage"
             id="org.eclipse.ui.propertypages.project.reference">
       </page>
       <page
-            adaptable="true"
             objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
             name="%PropertyPages.info.file"
             class="org.eclipse.ui.internal.ide.dialogs.ResourceInfoPage"
             id="org.eclipse.ui.propertypages.info.file">
@@ -422,9 +422,12 @@
    <extension
          point="org.eclipse.ui.colorDefinitions">
       <colorDefinition
-            label="%Colors.activity.highlight"
+            label="%Colors.highlight"
             value="COLOR_WIDGET_LIGHT_SHADOW"
-            id="org.eclipse.ui.activityHighlight">
+            id="org.eclipse.ui.highlight">
+         <description>
+            %Colors.highlight.desc
+         </description>
       </colorDefinition>
    </extension>
 

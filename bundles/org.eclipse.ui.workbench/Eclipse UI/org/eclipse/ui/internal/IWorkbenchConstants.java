@@ -189,5 +189,5 @@ public interface IWorkbenchConstants {
 	public static final String TAG_FIXED = "fixed";//$NON-NLS-1$
 	
 	//Colors
-	public static final String COLOR_ACTIVITY_HIGHLIGHT = "org.eclipse.ui.activityHighlight"; //$NON-NLS-1$
+	public static final String COLOR_HIGHLIGHT = "org.eclipse.ui.highlight"; //$NON-NLS-1$
 }

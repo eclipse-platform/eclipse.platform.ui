@@ -45,7 +45,7 @@ public final class WorkbenchActivityHelper {
      * contributions.
      */
     public static RGB getFilterRGB() {
-    	return JFaceResources.getColorRegistry().getRGB(IWorkbenchConstants.COLOR_ACTIVITY_HIGHLIGHT);
+    	return JFaceResources.getColorRegistry().getRGB(IWorkbenchConstants.COLOR_HIGHLIGHT);
     }
 	
 
@@ -54,7 +54,7 @@ public final class WorkbenchActivityHelper {
      * contributions.
      */
     public static Color getFilterColor() {
-        return JFaceResources.getColorRegistry().get(IWorkbenchConstants.COLOR_ACTIVITY_HIGHLIGHT);
+        return JFaceResources.getColorRegistry().get(IWorkbenchConstants.COLOR_HIGHLIGHT);
     }	
 	
 	/**
