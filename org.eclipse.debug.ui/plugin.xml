@@ -39,7 +39,6 @@
    <extension-point id="launchShortcuts" name="%LaunchShortcutsName" schema="schema/launchShortcuts.exsd"/>
    <extension-point id="stringVariablePresentations" name="%StringVariablePresentationsName"/>
    <extension-point id="sourceContainerPresentations" name="%SourceContainerPresentationsName" schema="schema/sourceContainerPresentations.exsd"/>
-	
 
 <!-- Extensions -->
    <extension
@@ -51,7 +50,7 @@
             id="org.eclipse.debug.ui.DebugPerspective">
       </perspective>
    </extension>
-      <extension
+   <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="org.eclipse.debug.ui.DebugPerspective">
@@ -296,8 +295,8 @@
                menubarPath="org.eclipse.ui.run/relaunchGroup">
          </action>
          <action
-               toolbarPath="debug"
                id="org.eclipse.debug.internal.ui.actions.RunDropDownAction"
+               toolbarPath="debug"
                hoverIcon="icons/full/ctool16/run_exc.gif"
                class="org.eclipse.debug.internal.ui.actions.RunToolbarAction"
                disabledIcon="icons/full/dtool16/run_exc.gif"
@@ -331,8 +330,8 @@
                id="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction">
          </action>
          <action
-               toolbarPath="debug"
                id="org.eclipse.debug.internal.ui.actions.DebugDropDownAction"
+               toolbarPath="debug"
                hoverIcon="icons/full/ctool16/debug_exc.gif"
                class="org.eclipse.debug.internal.ui.actions.DebugToolbarAction"
                disabledIcon="icons/full/dtool16/debug_exc.gif"
@@ -361,8 +360,8 @@
             </separator>
          </menu>
          <action
-               toolbarPath="org.eclipse.debug.ui.launchActionSet/debug"
                id="org.eclipse.debug.internal.ui.actions.ProfileDropDownAction"
+               toolbarPath="org.eclipse.debug.ui.launchActionSet/debug"
                hoverIcon="icons/full/ctool16/profile_exc.gif"
                class="org.eclipse.debug.internal.ui.actions.ProfileToolbarAction"
                disabledIcon="icons/full/dtool16/profile_exc.gif"
@@ -455,30 +454,30 @@
             </selection>
          </action>
          <action
-               toolbarPath="threadGroup"
                id="org.eclipse.debug.ui.debugview.toolbar.suspend"
+               toolbarPath="threadGroup"
                hoverIcon="icons/full/clcl16/suspend_co.gif"
                class="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
                disabledIcon="icons/full/dlcl16/suspend_co.gif"
                enablesFor="1"
                icon="icons/full/elcl16/suspend_co.gif"
-               helpContextId="suspend_action_context"
                label="%SuspendAction.label"
+               helpContextId="suspend_action_context"
                tooltip="%SuspendAction.tooltip">
             <selection
                   class="org.eclipse.debug.core.model.ISuspendResume">
             </selection>
          </action>
          <action
-               toolbarPath="threadGroup"
                id="org.eclipse.debug.ui.debugview.toolbar.resume"
+               toolbarPath="threadGroup"
                hoverIcon="icons/full/clcl16/resume_co.gif"
                class="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
                disabledIcon="icons/full/dlcl16/resume_co.gif"
                enablesFor="1"
                icon="icons/full/elcl16/resume_co.gif"
-               helpContextId="resume_action_context"
                label="%ResumeAction.label"
+               helpContextId="resume_action_context"
                tooltip="%ResumeAction.tooltip">
             <selection
                   class="org.eclipse.debug.core.model.ISuspendResume">
@@ -486,60 +485,60 @@
          </action>
 <!-- Step Group -->
          <action
-               toolbarPath="stepReturnGroup"
                id="org.eclipse.debug.ui.debugview.toolbar.stepReturn"
+               toolbarPath="stepReturnGroup"
                hoverIcon="icons/full/clcl16/stepreturn_co.gif"
                class="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
                disabledIcon="icons/full/dlcl16/stepreturn_co.gif"
                enablesFor="1"
                icon="icons/full/elcl16/stepreturn_co.gif"
-               helpContextId="step_return_action_context"
                label="%StepReturnAction.label"
+               helpContextId="step_return_action_context"
                tooltip="%StepReturnAction.tooltip">
             <selection
                   class="org.eclipse.debug.core.model.IStep">
             </selection>
          </action>
          <action
-               toolbarPath="stepOverGroup"
                id="org.eclipse.debug.ui.debugview.toolbar.stepOver"
+               toolbarPath="stepOverGroup"
                hoverIcon="icons/full/clcl16/stepover_co.gif"
                class="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
                disabledIcon="icons/full/dlcl16/stepover_co.gif"
                enablesFor="1"
                icon="icons/full/elcl16/stepover_co.gif"
-               helpContextId="step_over_action_context"
                label="%StepOverAction.label"
+               helpContextId="step_over_action_context"
                tooltip="%StepOverAction.tooltip">
             <selection
                   class="org.eclipse.debug.core.model.IStep">
             </selection>
          </action>
          <action
-               toolbarPath="stepIntoGroup"
                id="org.eclipse.debug.ui.debugview.toolbar.stepInto"
+               toolbarPath="stepIntoGroup"
                hoverIcon="icons/full/clcl16/stepinto_co.gif"
                class="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
                disabledIcon="icons/full/dlcl16/stepinto_co.gif"
                enablesFor="1"
                icon="icons/full/elcl16/stepinto_co.gif"
-               helpContextId="step_into_action_context"
                label="%StepIntoAction.label"
+               helpContextId="step_into_action_context"
                tooltip="%StepIntoAction.tooltip">
             <selection
                   class="org.eclipse.debug.core.model.IStep">
             </selection>
          </action>
          <action
-               toolbarPath="stepIntoGroup"
                id="org.eclipse.debug.ui.debugview.toolbar.stepWithFilters"
+               toolbarPath="stepIntoGroup"
                hoverIcon="icons/full/clcl16/stepbystep_co.gif"
                class="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
                disabledIcon="icons/full/dlcl16/stepbystep_co.gif"
                enablesFor="1"
                icon="icons/full/elcl16/stepbystep_co.gif"
-               helpContextId="step_with_filters_action_context"
                label="%StepWithFiltersAction.label"
+               helpContextId="step_with_filters_action_context"
                tooltip="%StepWithFiltersAction.tooltip">
             <selection
                   class="org.eclipse.debug.core.model.IStep">
@@ -582,10 +581,10 @@
             id="org.eclipse.debug.ui.variableView.toolbar">
          <action
                label="%DetailPaneWordWrapAction.label"
-               helpContextId="detail_pane_word_wrap_action_context"
-               tooltip="%DetailPaneWordWrapAction.tooltip"
                style="toggle"
+               helpContextId="detail_pane_word_wrap_action_context"
                class="org.eclipse.debug.internal.ui.views.variables.DetailPaneWordWrapAction"
+               tooltip="%DetailPaneWordWrapAction.tooltip"
                menubarPath="viewActions"
                id="org.eclipse.debug.ui.variableViewActions.toolbar.detailPaneWordWrap">
          </action>
@@ -624,9 +623,9 @@
          <action
                label="%DetailPaneWordWrapAction.label"
                helpContextId="detail_pane_word_wrap_action_context"
-               tooltip="%DetailPaneWordWrapAction.tooltip"
-               state="false"
                class="org.eclipse.debug.internal.ui.views.variables.DetailPaneWordWrapAction"
+               state="false"
+               tooltip="%DetailPaneWordWrapAction.tooltip"
                menubarPath="viewActions"
                id="org.eclipse.debug.ui.expresssionsView.toolbar.detailPaneWordWrap">
          </action>
@@ -648,8 +647,8 @@
          <action
                label="%convertToWatchExpressionAction.label"
                helpContextId="convert_to_watch_expression_context"
-               tooltip="%convertToWatchExpressionAction.tooltip"
                class="org.eclipse.debug.internal.ui.actions.ConvertToWatchExpressionAction"
+               tooltip="%convertToWatchExpressionAction.tooltip"
                menubarPath="additions"
                enablesFor="*"
                id="org.eclipse.debug.ui.actions.ConvertToWatchExpression">
@@ -674,8 +673,8 @@
          <action
                label="%editWatchExpressionAction.label"
                helpContextId="edit_watch_expression_context"
-               tooltip="%editWatchExpressionAction.tooltip"
                class="org.eclipse.debug.internal.ui.actions.EditWatchExpressionAction"
+               tooltip="%editWatchExpressionAction.tooltip"
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.debug.ui.watchExpressionActions.EditWatchExpression">
@@ -687,8 +686,8 @@
          <action
                label="%enableWatchExpressionAction.label"
                helpContextId="enable_watch_expression_context"
-               tooltip="%enableWatchExpressionAction.tooltip"
                class="org.eclipse.debug.internal.ui.actions.EnableWatchExpressionAction"
+               tooltip="%enableWatchExpressionAction.tooltip"
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.debug.ui.watchExpressionActions.EnableWatchExpression">
@@ -700,8 +699,8 @@
          <action
                label="%disableWatchExpressionAction.label"
                helpContextId="disable_watch_expression_context"
-               tooltip="%disableWatchExpressionAction.tooltip"
                class="org.eclipse.debug.internal.ui.actions.DisableWatchExpressionAction"
+               tooltip="%disableWatchExpressionAction.tooltip"
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.debug.ui.watchExpressionActions.DisableWatchExpression">
@@ -713,8 +712,8 @@
          <action
                label="%reevaluateWatchExpressionAction.label"
                helpContextId="reevaluate_watch_expression_context"
-               tooltip="%reevaluateWatchExpressionAction.tooltip"
                class="org.eclipse.debug.internal.ui.actions.ReevaluateWatchExpressionAction"
+               tooltip="%reevaluateWatchExpressionAction.tooltip"
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.debug.ui.watchExpressionActions.ReevaluateWatchExpression">
@@ -727,8 +726,8 @@
                label="%addWatchExpressionAction.label"
                icon="icons/full/ctool16/watch_exp.gif"
                helpContextId="add_watch_expression_context"
-               tooltip="%addWatchExpressionAction.tooltip"
                class="org.eclipse.debug.internal.ui.actions.AddWatchExpressionAction"
+               tooltip="%addWatchExpressionAction.tooltip"
                menubarPath="additions"
                id="org.eclipse.debug.ui.expressionViewActions.AddWatchExpression">
          </action>
@@ -1034,16 +1033,16 @@
       <editor
             name="%NoSourceFoundEditor.name"
             icon="./icons/full/obj16/stckframe_obj.gif"
-            contributorClass="org.eclipse.ui.part.EditorActionBarContributor"
             class="org.eclipse.debug.internal.ui.views.launch.SourceNotFoundEditor"
+            contributorClass="org.eclipse.ui.part.EditorActionBarContributor"
             id="org.eclipse.debug.ui.NoSourceFoundEditor">
       </editor>
    </extension>
    <extension
          point="org.eclipse.debug.core.statusHandlers">
       <statusHandler
-            plugin="org.eclipse.debug.core"
             code="115"
+            plugin="org.eclipse.debug.core"
             class="org.eclipse.debug.internal.ui.WorkingDirectoryStatusHandler"
             id="org.eclipse.debug.ui.statusHandler.workingDirectory">
       </statusHandler>
@@ -1108,8 +1107,8 @@
       </category>
       <command
             name="%ActionDefinition.stepWithFilters.name"
-            description="%ActionDefinition.stepWithFilters.description"
             category="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.stepWithFilters.description"
             id="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate">
       </command>
       <keyBinding
@@ -1120,8 +1119,8 @@
       </keyBinding>
       <command
             name="%ActionDefinition.stepInto.name"
-            description="%ActionDefinition.stepInto.description"
             category="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.stepInto.description"
             id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate">
       </command>
       <keyBinding
@@ -1132,8 +1131,8 @@
       </keyBinding>
       <command
             name="%ActionDefinition.stepOver.name"
-            description="%ActionDefinition.stepOver.description"
             category="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.stepOver.description"
             id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate">
       </command>
       <keyBinding
@@ -1144,8 +1143,8 @@
       </keyBinding>
       <command
             name="%ActionDefinition.stepReturn.name"
-            description="%ActionDefinition.stepReturn.description"
             category="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.stepReturn.description"
             id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate">
       </command>
       <keyBinding
@@ -1156,8 +1155,8 @@
       </keyBinding>
       <command
             name="%ActionDefinition.resume.name"
-            description="%ActionDefinition.resume.description"
             category="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.resume.description"
             id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate">
       </command>
       <keyBinding
@@ -1168,8 +1167,8 @@
       </keyBinding>
       <command
             name="%ActionDefinition.terminate.name"
-            description="%ActionDefinition.terminate.description"
             category="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.terminate.description"
             id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate">
       </command>
       <keyBinding
@@ -1180,8 +1179,8 @@
       </keyBinding>
       <command
             name="%ActionDefinition.suspend.name"
-            description="%ActionDefinition.suspend.description"
             category="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.suspend.description"
             id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate">
       </command>
       <keyBinding
@@ -1192,8 +1191,8 @@
       </keyBinding>
       <command
             name="%ActionDefinition.openProfile.name"
-            description="%ActionDefinition.openProfile.description"
             category="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.openProfile.description"
             id="org.eclipse.debug.internal.ui.actions.OpenProfileConfigurations">
       </command>
       <keyBinding
@@ -1204,8 +1203,8 @@
       </keyBinding>
       <command
             name="%ActionDefinition.openRun.name"
-            description="%ActionDefinition.openRun.description"
             category="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.openRun.description"
             id="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations">
       </command>
       <keyBinding
@@ -1216,8 +1215,8 @@
       </keyBinding>
       <command
             name="%ActionDefinition.openDebug.name"
-            description="%ActionDefinition.openDebug.description"
             category="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.openDebug.description"
             id="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations">
       </command>
       <keyBinding
@@ -1228,8 +1227,8 @@
       </keyBinding>
       <command
             name="%ActionDefinition.debugLast.name"
-            description="%ActionDefinition.debugLast.description"
             category="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.debugLast.description"
             id="org.eclipse.debug.internal.ui.actions.DebugLastAction">
       </command>
       <keyBinding
@@ -1240,8 +1239,8 @@
       </keyBinding>
       <command
             name="%ActionDefinition.runLast.name"
-            description="%ActionDefinition.runLast.description"
             category="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.runLast.description"
             id="org.eclipse.debug.internal.ui.actions.RunLastAction">
       </command>
       <keyBinding
@@ -1252,8 +1251,8 @@
       </keyBinding>
       <command
             name="%ActionDefinition.profileLast.name"
-            description="%ActionDefinition.profileLast.description"
             category="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.profileLast.description"
             id="org.eclipse.debug.internal.ui.actions.ProfileLastAction">
       </command>
       <keyBinding
@@ -1263,7 +1262,8 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
-   <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+   <extension
+         point="org.eclipse.ui.editors.markerAnnotationSpecification">
       <specification
             colorPreferenceValue="0,0,255"
             annotationType="org.eclipse.debug.core.breakpoint"
@@ -1271,8 +1271,8 @@
             overviewRulerPreferenceValue="true"
             markerType="org.eclipse.debug.core.breakpointMarker"
             presentationLayer="3"
-            textPreferenceValue="false"
             label="%BreakpointMarkerPreference.label"
+            textPreferenceValue="false"
             textPreferenceKey="breakpointIndication"
             markerSeverity="0"
             overviewRulerPreferenceKey="breakpointIndicationInOverviewRuler">
@@ -1280,37 +1280,37 @@
       <specification
             colorPreferenceValue="217,255,226"
             annotationType="org.eclipse.debug.core.currentIP"
-            colorPreferenceKey="currentIPColor"
-            verticalRulerPreferenceKey="currentIPVerticalRuler"
             verticalRulerPreferenceValue="true"
-            overviewRulerPreferenceKey="currentIPOverviewRuler"
+            colorPreferenceKey="currentIPColor"
+            markerType="org.eclipse.debug.ui.instructionPointer.current"
             overviewRulerPreferenceValue="true"
             highlightPreferenceKey="currentIPHighlight"
-            highlightPreferenceValue="true"
-            markerType="org.eclipse.debug.ui.instructionPointer.current"
             presentationLayer="6"
-            textPreferenceValue="false"
+            highlightPreferenceValue="true"
             label="%debugCurrentInstructionPointer"
+            textPreferenceValue="false"
             textPreferenceKey="currentIPIndication"
-            markerSeverity="0">
-      </specification>      
+            verticalRulerPreferenceKey="currentIPVerticalRuler"
+            markerSeverity="0"
+            overviewRulerPreferenceKey="currentIPOverviewRuler">
+      </specification>
       <specification
             colorPreferenceValue="217,255,226"
             annotationType="org.eclipse.debug.core.secondaryIP"
-            colorPreferenceKey="secondaryIPColor"
-            verticalRulerPreferenceKey="secondaryIPVerticalRuler"
             verticalRulerPreferenceValue="true"
-            overviewRulerPreferenceKey="secondaryIPOverviewRuler"
+            colorPreferenceKey="secondaryIPColor"
+            markerType="org.eclipse.debug.ui.instructionPointer.secondary"
             overviewRulerPreferenceValue="true"
             highlightPreferenceKey="secondaryIPHighlight"
-            highlightPreferenceValue="true"
-            markerType="org.eclipse.debug.ui.instructionPointer.secondary"
             presentationLayer="6"
-            textPreferenceValue="false"
+            highlightPreferenceValue="true"
             label="%debugCallStack"
+            textPreferenceValue="false"
             textPreferenceKey="secondaryIPIndication"
-            markerSeverity="0">
-      </specification>      
+            verticalRulerPreferenceKey="secondaryIPVerticalRuler"
+            markerSeverity="0"
+            overviewRulerPreferenceKey="secondaryIPOverviewRuler">
+      </specification>
    </extension>
 <!-- Dynamic (String Substitution) Variables -->
    <extension
@@ -1379,6 +1379,11 @@
             name="folder_prompt"
             description="%folder_prompt.description"
             resolver="org.eclipse.debug.internal.ui.stringsubstitution.FolderPrompt">
+      </variable>
+      <variable
+            name="selected_text"
+            description="%selected_text.description"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.SelectedTextResolver">
       </variable>
    </extension>
 <!-- String Variable Presentations -->

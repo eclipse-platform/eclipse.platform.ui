@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.stringsubstitution;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
@@ -35,6 +36,7 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	private static SelectedResourceManager fgDefault;
 	
 	private IResource fSelectedResource = null;
+	private ITextSelection fSelectedText = null;
 	
 	private SelectedResourceManager() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
@@ -124,6 +126,9 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 		if (selectedResource != null) {
 			fSelectedResource = selectedResource;
 		}
+		
+		if (selection instanceof ITextSelection)
+			fSelectedText = (ITextSelection)selection;
 	}
 	
 	/**
@@ -135,5 +140,15 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	 */
 	public IResource getSelectedResource() {
 		return fSelectedResource;
+	}
+	
+	/**
+	 * Returns the current text selection, or <code>null</code> if
+	 * none.
+	 * 
+	 * @return the current text selection or <code>null</code>
+	 */
+	public ITextSelection getSelectedText() {
+		return fSelectedText;
 	}
 }
