@@ -135,6 +135,9 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see ILaunchConfiguration#launch(String, IProgressMonitor)
 	 */
 	public ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException {
+		// bug 28245 - force the delegate to load in case it is interested in launch notifications
+		getDelegate();
+		
 		ILaunch launch = new Launch(this, mode, null);
 		getLaunchManager().addLaunch(launch);
 		if (monitor == null) {
