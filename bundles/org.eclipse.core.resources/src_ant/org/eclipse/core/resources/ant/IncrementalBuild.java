@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.core.resources.ant;
 
 import java.util.Hashtable;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.core.AntCorePlugin;
@@ -22,8 +21,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * Ant task which runs the platform's incremental build facilities.
  * 
- * @see IProject#build
- * @see IWorkspace#build
+ * @see IProject#build(int, IProgressMonitor)
+ * @see IWorkspace#build(int, IProgressMonitor)
  */
 public class IncrementalBuild extends Task {
 	private String builder;
@@ -69,11 +68,11 @@ public void execute() throws BuildException {
 		if (project == null) {
 			ResourcesPlugin.getWorkspace().build(kind, monitor);
 		} else {
-			IProject target = ResourcesPlugin.getWorkspace().getRoot().getProject(project);
+			IProject targetProject = ResourcesPlugin.getWorkspace().getRoot().getProject(project);
 			if (builder == null)
-				target.build(kind, monitor);
+				targetProject.build(kind, monitor);
 			else
-				target.build(kind, builder, null, monitor);
+				targetProject.build(kind, builder, null, monitor);
 		}
 	} catch (CoreException e) {
 		throw new BuildException(e);
@@ -92,7 +91,7 @@ public void setBuilder(String value) {
  * of <code>IncrementalBuild.KIND_FULL</code>, <code>IncrementalBuild.KIND_AUTO</code>,
  * <code>IncrementalBuild.KIND_INCR</code>.
  * 
- * @param kind the receiver's kind attribute
+ * @param value the receiver's kind attribute
  */
 public void setKind(String value) {
 	if (IncrementalBuild.KIND_FULL.equalsIgnoreCase(value))

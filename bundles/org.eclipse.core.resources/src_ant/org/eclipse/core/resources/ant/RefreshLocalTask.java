@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.core.resources.ant;
 
 import java.util.Hashtable;
-
 import org.apache.tools.ant.*;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.core.resources.*;
@@ -20,7 +19,7 @@ import org.eclipse.core.runtime.*;
 /**
  * An Ant task which refreshes the Eclipse Platform's view of the local filesystem.
  * 
- * @see IResource#refreshLocal
+ * @see IResource#refreshLocal(int, IProgressMonitor)
  */
 public class RefreshLocalTask extends Task {
 	/**

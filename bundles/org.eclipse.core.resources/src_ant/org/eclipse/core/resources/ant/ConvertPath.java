@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.core.resources.ant;
 
 import java.io.File;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Path;
@@ -65,9 +64,7 @@ public ConvertPath() {
  * @exception BuildException thrown if a problem occurs during execution.
  */
 public void execute() throws BuildException {
-	
 	validateAttributes();
-	
 	if (fileSystemPath == null) 
 		// here, resourcePath is not null
 		convertResourcePathToFileSystemPath(resourcePath);
@@ -79,7 +76,6 @@ protected void convertFileSystemPathToResourcePath(IPath path) {
 	IResource resource = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(path);
 	if (resource == null)
 		throw new BuildException(Policy.bind("exception.noProjectMatchThePath", fileSystemPath.toOSString())); //$NON-NLS-1$
-	
 	if (property != null)
 		project.setUserProperty(property, resource.getFullPath().toString());
 	if (pathID != null) {
@@ -110,7 +106,7 @@ protected void convertResourcePathToFileSystemPath(IPath path) {
 /**
  * Sets the file system path.
  * 
- * @param the file corresponding to the path supplied by the user
+ * @param value the file corresponding to the path supplied by the user
  */
 public void setFileSystemPath(File value) {
 	if (resourcePath != null)
@@ -121,7 +117,7 @@ public void setFileSystemPath(File value) {
 /**
  * Sets the resource path.
  * 
- * @param the path	
+ * @param value the path	
  */
 public void setResourcePath(String value) {
 	if (fileSystemPath != null)
@@ -132,7 +128,7 @@ public void setResourcePath(String value) {
 /**
  * Sets the name of the property where the result may stored.
  * 
- * @param the name of the property		
+ * @param value the name of the property		
  */
 public void setProperty(String value) {
 	property = value;
@@ -142,7 +138,7 @@ public void setProperty(String value) {
 /**
  * Sets the id for the path where the result may be stored
  * 
- * @param the id of the path
+ * @param value the id of the path
  */
 public void setPathId(String value) {
 	pathID = value;
@@ -165,5 +161,4 @@ protected void validateAttributes() throws BuildException {
 	if (resourcePath == null && fileSystemPath == null)
 		throw new BuildException(Policy.bind("exception.mustHaveOneAttribute")); //$NON-NLS-1$
 }
-
 }

@@ -12,7 +12,6 @@ package org.eclipse.core.resources.ant;
 
 import java.text.MessageFormat;
 import java.util.*;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
