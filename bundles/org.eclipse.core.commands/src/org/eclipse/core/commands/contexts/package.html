@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Package-level Javadoc</title>
+<link rel="stylesheet" href="http://dev.eclipse.org/default_style.css"
+	type="text/css">
+</head>
+<body style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0)">
+Application programming interfaces for contexts.
+<h2>Package Specification</h2>
+<p>
+This package provides API and implementation classes to define abstract
+representations of application state.  These representations of application
+state can be used as an abstraction of the event-listener model -- where
+different sections of code do not (or cannot) refer to each directly.
+</p>
+<p>
+This package is designed so that its elements can be public and dynamic.  That
+is, elements in this package can appear and disappear over the life of the
+application.
+</p>
+<h3>Context</h3>
+<p>
+A context is an answer to the question, "When?"  For example, there might be a
+context called "server running".  When the server is running, then that context
+would be active.  If a program module other than the server wants to test for
+this, they can simply check to see if the context is active.  This allows the
+two program modules to be decoupled from each other.  In fact, a different
+server module could be dropped in place of the first.
+</p>
+<p>
+Contexts are managed by an instance of <code>ContextManager</code>.  In fact, a
+context cannot be constructed directly.  Contexts are constructed using the
+method <code>ContextManager.getContext(String)</code>.  This ensures that there
+is only ever one context with a given identifier ever associated with a context
+manager.
+</p>
+<p>
+When a context is first constructed, it is undefined.  An undefined context is
+one that is carrying no information except for an id.  Attempts to interact
+with a context that is undefined will result in a 
+<code>NotDefinedException</code>.  Through this mechanism, it is possible for
+clients to hold references to contexts, and still have those contexts
+"disappear" (i.e., become undefined).  This is particularly useful in a system
+built around dynamic components (e.g., plug-ins).
+</p>
+<p>
+It is also possible to attach listeners to both contexts and context managers.
+A listener on a context manager will be notified if the list of defined
+contexts changes.
+</p>
+<h4>Examples</h4>
+<blockquote><pre><code>
+	ContextManager manager = new ContextManager();
+	Context context = manager.getContext("contextId");
+	context.define("name", "description", null);
+</code></pre></blockquote>
+<p>
+This example shows how to create a context from scratch -- with no existing
+manager.
+</p>
+<blockquote><pre><code>
+	context.undefine();
+	context = null;
+</code></pre></blockquote>
+<p>
+If you wish to get rid of the context, then you simply undefine it.  This
+will send notification to the appropriate listeners, and future attempts to
+access it will fail.  If you are the only one holding on to the context, then
+it will be garbage collected.  However, if other people still have a reference
+to the context, then the stub will remain until they respond to the change.
+</p>
+<blockquote><pre><code>
+	String name;
+	try {
+		name = context.getName();
+	} catch (NotDefinedException e) {
+		// Clean-up my reference to the context.
+		context = null;
+		return;
+	}
+</code></pre></blockquote>
+<p>
+This shows one way of dealing with contexts.  Instead of listening for
+changes to the contexts, you can simply listen for the exceptions to be thrown.
+When a <code>NotDefinedException</code> is thrown, you can clean up your own
+code.  How you clean up is application dependent.  In this case, the reference
+is cleared and we return from the method.
+</p>
+<blockquote><pre><code>
+	try {
+		String name = context.getName();
+		
+		// Do all your work in the block.
+		
+	} catch (NotDefinedException e) {
+		// Ignore, or possibly throw an error
+	}
+	
+	...
+	
+	public contextChanged(ContextEvent e) {
+		if (e.hasDefinedChanged()) {
+			context.removeListener(this);
+			context = null;
+		}
+	}
+</code></pre></blockquote>
+<p>
+Another way is to attach a listener, and then simply ignore the exceptions.
+When the context becomes undefined, you will be notified.  This gives your the
+opportunity to unhook your listener and release your reference.
+</p>
+<blockquote><pre><code>
+	ContextManager manager = new ContextManager();
+	Context parent = manager.getContext("parentId");
+	parent.define("name", "description", null);
+	Context child = manager.getContext("childId");
+	child.define("name", "description", "parentId");
+</code></pre></blockquote>
+<p>
+Contexts can be related to each other with a parent-child relationship.  How
+your application deals with this is up to you.  In the case of the keyboard
+shortcuts in Eclipse, this is used to allow behaviour attributed to child
+contexts to override behaviour attributed to parent contexts.
+</p>
+</body>
+</html>

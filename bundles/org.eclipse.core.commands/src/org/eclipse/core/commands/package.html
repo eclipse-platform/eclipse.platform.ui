@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Package-level Javadoc</title>
+<link rel="stylesheet" href="http://dev.eclipse.org/default_style.css"
+	type="text/css">
+</head>
+<body style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0)">
+Application programming interfaces for commands and handlers. 
+<h2>Package Specification</h2>
+<p>
+This package provides API and implementation classes to define abstract
+pieces of functionality.  These pieces of functionality are intended to
+provide a common way for plug-ins and the user interface to communicate
+potential behaviour.
+</p>
+<p>
+This package is designed so that its elements can be public and dynamic.  That
+is, elements in this package can appear and disappear over the life of the
+application.
+</p>
+<h3>Command</h3>
+<p>
+A command is an abstract representation for some semantic behaviour.  For
+example, there might be a "copy" command.  How this command actually
+behaves might be dependent on what state your application is in.  It is not
+the actual implementation of that behaviour, and it is not the visual
+representation of that behaviour.
+</p>
+<p>
+Commands are managed by an instance of <code>CommandManager</code>.  In fact, a
+command cannot be constructed directly.  Commands are constructed using the
+method <code>CommandManager.getCommand(String)</code>.  This ensures that there
+is only ever one command with a given identifier ever associated with a command.  
+manager.
+</p>
+<p>
+When a command is first constructed, it is undefined.  An undefined command is
+one that is carrying no information except for an id.  Attempts to interact
+with a command that is undefined will result in a 
+<code>NotDefinedException</code>.  Through this mechanism, it is possible for
+clients to hold references to commands, and still have those commands
+"disappear" (i.e., become undefined).  This is particularly useful in a system
+built around dynamic components (e.g., plug-ins).
+<p>
+Commands can be grouped into categories.  These categories are arbitrary
+groupings, and have no defined behaviour.  These categories might be used in a
+user interface for breaking up a large list of commands into semantically
+similar commands -- making the list easier to navigate.
+</p>
+<p>
+It is also possible to attach listeners to both commands and command managers.
+A listener on a command manager will be notified if the list of defined
+commands or categories changes.
+</p>
+<h4>Examples</h4>
+<blockquote><pre><code>
+	CommandManager manager = new CommandManager();
+	Category category = manager.getCategory("categoryId");
+	category.define("name", "description");
+	Command command = manager.getCommand("commandId");
+	command.define("name", "description", category);
+</code></pre></blockquote>
+<p>This example shows how to create a command from scratch -- with no existing
+manager or categories.</p>
+<blockquote><pre><code>
+	command.undefine();
+	command = null;
+	category.undefine();
+	category = null;
+</code></pre></blockquote>
+<p>If you wish to get rid of the command, then you simply undefine it.  This
+will send notification to the appropriate listeners, and future attempts to
+access it will fail.  If you are the only one holding on to the command, then
+it will be garbage collected.  However, if other people still have a reference
+to the command, then the stub will remain until they respond to the change.</p>
+<blockquote><pre><code>
+	String name;
+	try {
+		name = command.getName();
+	} catch (NotDefinedException e) {
+		// Clean-up my reference to the command.
+		command = null;
+		return;
+	}
+</code></pre></blockquote>
+<p>This shows one way of dealing with commands.  Instead of listening for
+changes to the command, you can simply listen for the exceptions to be thrown.
+When a <code>NotDefinedException</code> is thrown, you can clean up your own
+code.  How you clean up is application dependent.  In this case, the reference
+is cleared and we return from the method.</p>
+<blockquote><pre><code>
+	try {
+		String name = command.getName();
+		
+		// Do all your work in the block.
+		
+	} catch (NotDefinedException e) {
+		// Ignore, or possibly throw an error
+	}
+	
+	...
+	
+	public commandChanged(CommandEvent e) {
+		if (e.hasDefinedChanged()) {
+			command.removeListener(this);
+			command = null;
+		}
+	}
+</code></pre></blockquote>
+<p>Another way is to attach a listener, and then simply ignore the exceptions.
+When the command becomes undefined, you will be notified.  This gives your the
+opportunity to unhook your listener and release your reference.</p>
+
+<h3>Handler</h3>
+<p>
+A handler is the behaviour of a command at a particular point in time.  This is
+the piece that will actually interact with your application model.  For every
+command, there can be zero or more possible handlers.  However, at any one
+time, there is either one handler (i.e., handled) or no handler (i.e.,
+unhandled).
+</p>
+<p>
+Handlers must implement <code>IHandler</code>.  However, there is a convenient
+abstract class, <code>AbstractHandler</code> which provides default behaviour
+for some of the methods in the interface.  It is recommended that developers
+subclass <code>AbstractHandler</code>.
+</p>
+<p>
+Beside functional behaviour, a handler carries with it a map of attribute
+values.  This is a completely optionaly way of carrying extra data.  In the
+case of the <code>AbstractHandler</code>, this map is empty.  Some attributes
+have well defined meanings.  These attributes are defined in
+<code>IHandlerAttributes</code>.
+</p>
+<p>
+Like commands, handlers can have listeners attached to them.  Listeners will be
+notified when the attributes of the handler change.
+</p>
+<p>
+When a handler executes, it is passed an event object
+(<code>ExecutionEvent</code>) that carries with it some pieces of information.
+First of all, it contains the parameters for execution.  Parameters are simple
+key-value pairs that are intended to modify the execution in some way.  The
+event also carries with it a collection of contexts that were active at the
+time of execution.  The event also carries two untyped objects: the triggering
+event and the current application state.  In the case of a graphical tool, the
+triggering event is likely to be the underlying widget toolkit event.  The 
+application state might contain information like widget focus information.  In
+your own application, feel free to use whichever of these event attributes that
+fit your application.
+</p>
+<h4>Examples</h4>
+<blockquote><pre><code>
+	IHandler myHandler = createHandler();
+	command.setHandler(myHandler);
+	
+	ExecutionEvent e = new ExecutionEvent(parameters,contexts,trigger,state);
+	try {
+		command.execute(e);
+	} catch (ExecutionException ex) {
+		// Notify the user, log the problem, etc.
+	}
+</code></pre></blockquote>
+</body>
+</html>
