@@ -60,7 +60,7 @@ public class CVSProviderTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(CVSProviderTest.class);
 		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new CVSProviderTest("testReadOnly"));
+		//return new CVSTestSetup(new CVSProviderTest("testMoveHandling"));
 	}
 	
 	public void testAdd() throws TeamException, CoreException {
@@ -138,8 +138,8 @@ public class CVSProviderTest extends EclipseTest {
 		ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project.getFolder("folder1"));
 		assertTrue("Deleted folder not in proper state", ! folder.exists() && folder.isManaged());
 		folder = CVSWorkspaceRoot.getCVSFolderFor(project.getFolder("moved"));
-		assertTrue("Deleted folder should not be managed", ! folder.isManaged());
-		assertTrue("Deleted folder should not be a CVS folder", ! folder.isCVSFolder());
+		assertTrue("Moved folder should not be managed", ! folder.isManaged());
+		assertTrue("Moved folder should not be a CVS folder", ! folder.isCVSFolder());
 	}
 	
 	public void testUpdate() throws TeamException, CoreException, IOException {
