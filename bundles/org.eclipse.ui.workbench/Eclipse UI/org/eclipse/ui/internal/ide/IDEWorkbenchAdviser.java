@@ -60,8 +60,6 @@ import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.UISynchronizer;
-import org.eclipse.ui.internal.UIWorkspaceLock;
 import org.eclipse.ui.internal.WorkbenchActionBuilder;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -157,10 +155,8 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		if (avoidDeadlock) {
 			try {
 				Display display = Display.getCurrent();
-				// @issue UIWorkspaceLock should be in IDE-specific package
 				UIWorkspaceLock uiLock = new UIWorkspaceLock(WorkbenchPlugin.getPluginWorkspace(), display);
 				ResourcesPlugin.getWorkspace().setWorkspaceLock(uiLock);
-				// @issue UISynchronizer should be in IDE-specific package
 				display.setSynchronizer(new UISynchronizer(display, uiLock));
 			} catch (CoreException e) {
 				IDEWorkbenchPlugin.log("Failed to setup workspace lock.", e.getStatus()); //$NON-NLS-1$

@@ -8,12 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal;
+package org.eclipse.ui.internal.ide;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.WorkspaceLock;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.internal.Semaphore;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 public class UIWorkspaceLock extends WorkspaceLock {
 	protected Display display;

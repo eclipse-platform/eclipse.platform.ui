@@ -8,10 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal;
+package org.eclipse.ui.internal.ide;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Synchronizer;
+import org.eclipse.ui.internal.Semaphore;
+import org.eclipse.ui.internal.ide.*;
 
 public class UISynchronizer extends Synchronizer {
 	protected UIWorkspaceLock uiLock;
