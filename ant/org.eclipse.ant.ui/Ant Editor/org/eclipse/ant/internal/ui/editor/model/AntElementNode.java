@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ant.internal.ui.editor.AntEditorException;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.editor.outline.IProblem;
 import org.eclipse.ant.internal.ui.editor.outline.XMLProblem;
@@ -196,13 +195,8 @@ public class AntElementNode {
      * <P>
      * The specified element will have this assigned as its parent.
      * 
-     * @throws AntEditorException if the specified child element allready
-     * has a parent.
      */
     public void addChildNode(AntElementNode childElement) {
-        if(childElement.getParentNode() != null) {
-            throw new AntEditorException(MessageFormat.format(AntModelMessages.getString("XmlElement.XmlElement_cannot_be_added_as_a_child"), new String[]{childElement.toString(), childElement.getParentNode().toString()})); //$NON-NLS-1$
-        }
         childElement.parent = this;
         if (childNodes == null) {
         	childNodes= new ArrayList();
