@@ -141,6 +141,13 @@ public abstract class AbstractUIPlugin extends Plugin {
     private ImageRegistry imageRegistry = null;
 
     /**
+     * The bundle listener used for kicking off refreshPluginActions().
+     * 
+     * @since 3.1
+     */
+    private BundleListener bundleListener;
+    
+    /**
      * Internal implementation of a JFace preference store atop a core runtime
      * preference store.
      * 
@@ -547,7 +554,7 @@ public abstract class AbstractUIPlugin extends Plugin {
     protected ImageRegistry createImageRegistry() {
         return new ImageRegistry(Display.getDefault());
     }
-
+    
     /**
      * Returns the dialog settings for this UI plug-in.
      * The dialog settings is used to hold persistent state data for the various
@@ -901,28 +908,24 @@ public abstract class AbstractUIPlugin extends Plugin {
      */
     public void start(BundleContext context) throws Exception {
         super.start(context);
-        // Should only attempt refreshPluginActions() when the bundle
-        // has been fully started.  Otherwise action delegates
+        // Should only attempt refreshPluginActions() once the bundle
+        // has been fully started.  Otherwise, action delegates
         // can be created while in the process of creating 
-        // a triggering action delegate.  Also, if the start throws
-        // an exception, the bundle will be shut down.  We don't
-        // want to have created any delegates if this happens.
+        // a triggering action delegate (if UI events are processed during startup).  
+        // Also, if the start throws an exception, the bundle will be shut down.  
+        // We don't want to have created any delegates if this happens.
         // See bug 63324 for more details.
-        final BundleContext finalContext = context;
-        context.addBundleListener(new BundleListener() {
+        bundleListener = new BundleListener() {
             public void bundleChanged(BundleEvent event) {
-                if (event.getBundle() == finalContext.getBundle()) {
-                    switch (event.getType()) {
-                    	case BundleEvent.STARTED:
-                    	    refreshPluginActions();
-                    		// fall through
-                    	case BundleEvent.STOPPED:
-                    	    finalContext.removeBundleListener(this);
-                    		break;
+                if (event.getBundle() == getBundle()) {
+                    if (event.getType() == BundleEvent.STARTED) {
+                        refreshPluginActions();
                     }
                 }
             }
-        });
+        };
+        context.addBundleListener(bundleListener);
+        // bundleListener is removed in stop(BundleContext)
     }
 
     /**
@@ -938,6 +941,9 @@ public abstract class AbstractUIPlugin extends Plugin {
      */
     public void stop(BundleContext context) throws Exception {
         try {
+            if (bundleListener != null) {
+                context.removeBundleListener(bundleListener);
+            }
             saveDialogSettings();
             savePreferenceStore();
             preferenceStore = null;
