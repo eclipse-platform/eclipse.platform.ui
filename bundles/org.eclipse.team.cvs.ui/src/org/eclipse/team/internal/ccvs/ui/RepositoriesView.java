@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -64,6 +65,7 @@ public class RepositoriesView extends ViewPart {
 	IRepositoryListener listener = new IRepositoryListener() {
 		public void repositoryAdded(ICVSRepositoryLocation root) {
 			refresh();
+			viewer.setSelection(new StructuredSelection(root));
 		}
 		public void repositoryRemoved(ICVSRepositoryLocation root) {
 			refresh();
