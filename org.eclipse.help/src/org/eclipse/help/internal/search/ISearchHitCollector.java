@@ -7,9 +7,9 @@ package org.eclipse.help.internal.search;
 import org.apache.lucene.search.Hits;
 
 /**
- * Search result.  The search engine adds hits to it.
+ * Search hit coollector.  The search engine adds hits to it.
  */
-public interface ISearchResultCollector {
+public interface ISearchHitCollector {
 	/**
 	 * Adds hits to the result
 	 * @param Hits hits

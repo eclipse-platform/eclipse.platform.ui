@@ -205,9 +205,7 @@ public class SearchIndex {
 	 * @return - an array of document ids. 
 	 * Later, we can extend this to return more data (rank, # of occs, etc.)
 	 */
-	public void search(
-		ISearchQuery searchQuery,
-		ISearchResultCollector collector) {
+	public void search(ISearchQuery searchQuery, ISearchHitCollector collector) {
 		try {
 			QueryBuilder queryBuilder =
 				new QueryBuilder(searchQuery.getSearchWord(), analyzerDescriptor.getAnalyzer());

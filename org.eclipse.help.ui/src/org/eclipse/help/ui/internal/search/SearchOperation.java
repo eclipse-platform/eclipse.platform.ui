@@ -65,8 +65,8 @@ public class SearchOperation extends WorkspaceModifyOperation {
 					scope.add(((IToc) it.next()).getHref());
 				}
 			}
-			SearchResultCollector results =
-				new SearchResultCollector(scope, queryData.getMaxHits(), queryData.getLocale());
+			SearchResults results =
+				new SearchResults(scope, queryData.getMaxHits(), queryData.getLocale());
 			HelpSystem.getSearchManager().search(queryData, results, monitor);
 			displayResults(results.getSearchHits());
 		} catch (Exception e) {

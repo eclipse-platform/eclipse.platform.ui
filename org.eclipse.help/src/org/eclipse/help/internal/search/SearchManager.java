@@ -18,11 +18,12 @@ import org.eclipse.help.internal.util.*;
  * Manages indexing and search for all infosets
  */
 public class SearchManager {
-	// Search indexes, indexed (no pun!) by locale
-	private HashMap indexes = new HashMap();
-	// Caches analyzer descriptors for each locale
-	private HashMap analyzerDescriptors = new HashMap();
-	private ProgressDirstributor progresDistrib = new ProgressDirstributor();
+	/** Search indexes, indexed (no pun!) by locale */
+	private Map indexes = new HashMap();
+	/** Caches analyzer descriptors for each locale */
+	private Map analyzerDescriptors = new HashMap();
+	/** Progress Distributors indexed by index */
+	private Map progressDistibutors = new HashMap();
 	/**
 	 * Constructs a Search manager.
 	 */
@@ -37,6 +38,16 @@ public class SearchManager {
 				indexes.put(locale, index);
 			}
 			return (SearchIndex) index;
+		}
+	}
+	private ProgressDistributor getProgressDistributor(SearchIndex index) {
+		synchronized (progressDistibutors) {
+			Object distributor = progressDistibutors.get(index);
+			if (distributor == null) {
+				distributor = new ProgressDistributor();
+				progressDistibutors.put(index, distributor);
+			}
+			return (ProgressDistributor) distributor;
 		}
 	}
 	/**
@@ -183,7 +194,7 @@ public class SearchManager {
 	 */
 	public void search(
 		ISearchQuery searchQuery,
-		ISearchResultCollector collector,
+		ISearchHitCollector collector,
 		IProgressMonitor pm) {
 		SearchIndex index = getIndex(searchQuery.getLocale());
 		try {
@@ -213,7 +224,8 @@ public class SearchManager {
 	 */
 	private void updateIndex(IProgressMonitor pm, SearchIndex index)
 		throws OperationCanceledException, IndexingOperation.IndexingException {
-		progresDistrib.addMonitor(pm);
+		ProgressDistributor progressDistrib = getProgressDistributor(index);
+		progressDistrib.addMonitor(pm);
 		synchronized (this) {
 			if (!isIndexingNeeded(index)) {
 				pm.beginTask("", 1);
@@ -232,13 +244,13 @@ public class SearchManager {
 				Collection addedDocs = getAddedDocuments(index);
 				IndexingOperation indexer =
 					new IndexingOperation(index, removedDocs, addedDocs);
-				indexer.execute(progresDistrib);
+				indexer.execute(progressDistrib);
 			} catch (OperationCanceledException oce) {
 				Logger.logWarning(Resources.getString("Search_cancelled"));
 				throw oce;
 			}
 		}
-		progresDistrib.removeMonitor(pm);
+		progressDistrib.removeMonitor(pm);
 	}
 	private boolean isIndexable(String url) {
 		String fileName = url.toLowerCase();

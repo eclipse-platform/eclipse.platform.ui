@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * Distributes progress information from this monitor
  * to multiple monitors.
  */
-public class ProgressDirstributor implements IProgressMonitor {
+public class ProgressDistributor implements IProgressMonitor {
 	private int totalWork = -1;
 	private int worked = 0;
 	private boolean done = false;

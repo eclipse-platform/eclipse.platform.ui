@@ -16,7 +16,7 @@ import org.eclipse.help.internal.util.URLCoder;
  * Search result collector.
  * Performs filtering and collects hits into an array of SearchHit
  */
-public class SearchResultCollector implements ISearchResultCollector {
+public class SearchResults implements ISearchHitCollector {
 	private Collection scope;
 	private int maxHits;
 	private String locale;
@@ -25,7 +25,7 @@ public class SearchResultCollector implements ISearchResultCollector {
 	 * Constructor
 	 * @param scope collection of book names to search in, null means entire world
 	 */
-	public SearchResultCollector(Collection scope, int maxHits, String locale) {
+	public SearchResults(Collection scope, int maxHits, String locale) {
 		this.scope = scope;
 		this.maxHits = maxHits;
 		this.locale = locale;
@@ -87,7 +87,7 @@ public class SearchResultCollector implements ISearchResultCollector {
 	 * Finds a topic in a bookshelf
 	 * or within a scope if specified
 	 */
-	protected IToc findTocForTopic(String href) {
+	public IToc findTocForTopic(String href) {
 		IToc[] tocs = HelpSystem.getTocManager().getTocs(locale);
 		for (int i = 0; i < tocs.length; i++) {
 			if (scope != null)

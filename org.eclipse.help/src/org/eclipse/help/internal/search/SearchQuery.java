@@ -2,17 +2,21 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.internal.protocols;
+package org.eclipse.help.internal.search;
 
 import java.util.*;
 
-import org.eclipse.help.internal.search.ISearchQuery;
 import org.eclipse.help.internal.util.URLCoder;
-
+/**
+ * SearchQuery is an implementation of ISearchQuery,
+ * where query paramters are obtained from
+ * URL query string
+ */
 public class SearchQuery implements ISearchQuery {
 	private Map terms;
 	/**
-	 * Creates search query for the specifed query string
+	 * Creates Isearch query from the specified
+	 * URL query string
 	 */
 	public SearchQuery(String query) {
 		parseQuery(query);
