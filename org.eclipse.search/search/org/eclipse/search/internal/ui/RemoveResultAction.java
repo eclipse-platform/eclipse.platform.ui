@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.ui.ISearchResultViewEntry;
+import org.eclipse.swt.custom.BusyIndicator;
 
 class RemoveResultAction extends Action {
 
@@ -36,13 +37,18 @@ class RemoveResultAction extends Action {
 	}
 	
 	public void run() {
-		IMarker[] markers= getMarkers(fSelectionProvider.getSelection());
-		if (markers != null)
-			try {
-				SearchPlugin.getWorkspace().deleteMarkers(markers);
-			} catch (CoreException ex) {
-				ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.deleteMarkers.title"), SearchMessages.getString("Search.Error.deleteMarkers.message")); //$NON-NLS-2$ //$NON-NLS-1$
-			}
+		final IMarker[] markers= getMarkers(fSelectionProvider.getSelection());
+		if (markers != null) {
+			BusyIndicator.showWhile(SearchPlugin.getActiveWorkbenchShell().getDisplay(), new Runnable() {
+				public void run() {
+					try {					
+						SearchPlugin.getWorkspace().deleteMarkers(markers);
+					} catch (CoreException ex) {
+						ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.deleteMarkers.title"), SearchMessages.getString("Search.Error.deleteMarkers.message")); //$NON-NLS-2$ //$NON-NLS-1$
+					}
+				}
+			});
+		}
 	}
 	
 	private IMarker[] getMarkers(ISelection s) {

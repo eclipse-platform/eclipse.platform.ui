@@ -52,14 +52,5 @@ class RemoveMatchAction extends Action {
 				return new IMarker[] {marker};
 		}
 		return null;
-		/*
-		Iterator iter= selection.iterator();
-		for(int i= 0; iter.hasNext(); i++) {
-			ISearchResultViewEntry entry= (ISearchResultViewEntry)iter.next();
-			result[i]= entry.getSelectedMarker();
-		}
-		return result;
-		*/
-		
 	}
 }

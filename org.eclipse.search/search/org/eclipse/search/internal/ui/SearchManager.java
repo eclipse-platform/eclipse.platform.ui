@@ -333,8 +333,19 @@ public class SearchManager implements IResourceChangeListener {
 			return;
 
 		int deltasLength= markerDeltas.length;
-		for (int i=0; i < deltasLength; i++)
-			handleSearchMarkerChanged(markerDeltas[i]);
+		
+		if (deltasLength > 0) {
+			Iterator iter= fListeners.iterator();
+			while (iter.hasNext())
+				((SearchResultViewer)iter.next()).getControl().setRedraw(false);
+		
+			for (int i=0; i < deltasLength; i++)
+				handleSearchMarkerChanged(markerDeltas[i]);
+
+			iter= fListeners.iterator();
+			while (iter.hasNext())
+				((SearchResultViewer)iter.next()).getControl().setRedraw(true);
+		}
 	}
 
 	private void handleSearchMarkerChanged(IMarkerDelta markerDelta) {
