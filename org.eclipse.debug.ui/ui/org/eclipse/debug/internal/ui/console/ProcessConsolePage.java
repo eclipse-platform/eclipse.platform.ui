@@ -465,11 +465,15 @@ public class ProcessConsolePage implements IConsolePage, ISelectionListener, IAd
 			if (event.getSource().equals(getProcess())) {
 				Runnable r = new Runnable() {
 					public void run() {
-						fTerminate.update();
-						fireTitleChanged();				
+						if (isAvailable()) {
+							fTerminate.update();
+							fireTitleChanged();
+						}				
 					}
-				};				
-				getControl().getDisplay().asyncExec(r);
+				};
+				if (isAvailable()) {				
+					getControl().getDisplay().asyncExec(r);
+				}
 			}
 		}
 	}
@@ -486,7 +490,13 @@ public class ProcessConsolePage implements IConsolePage, ISelectionListener, IAd
 		
 	}
 
-	
-
+	/**
+	 * Returns whether this page's controls are available.
+	 * 
+	 * @return whether this page's controls are available
+	 */
+	protected boolean isAvailable() {
+		return getControl() != null;
+	}
 		
 }
