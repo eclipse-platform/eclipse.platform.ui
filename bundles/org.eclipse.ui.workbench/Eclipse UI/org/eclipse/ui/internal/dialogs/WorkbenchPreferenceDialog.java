@@ -197,8 +197,8 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * Handle a request to save preferences
 	 */
 	protected void savePressed() {
-
 		new PreferencesExportDialog(getShell()).open();
+		close();
 	}
 
 	/**

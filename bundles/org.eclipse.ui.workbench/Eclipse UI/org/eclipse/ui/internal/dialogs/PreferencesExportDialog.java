@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -30,6 +31,8 @@ import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -46,8 +49,11 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerSorter;
 
@@ -66,7 +72,7 @@ public class PreferencesExportDialog extends Dialog {
 	CheckboxTreeViewer viewer;
 
 	Combo outputLocationCombo;
-
+	
 	//Minimum dialog width (in dialog units)
 	private static final int MIN_DIALOG_WIDTH = 350;
 
@@ -108,14 +114,19 @@ public class PreferencesExportDialog extends Dialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
-protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(Composite parent) {
 		Control outerArea = super.createDialogArea(parent);
 
 		createOutputSelectionArea((Composite) outerArea);
 
+		Label title = new Label((Composite) outerArea, SWT.NONE);
+		title.setText(WorkbenchMessages.getString("PreferencesExportDialog.PreferencesListLabel")); //$NON-NLS-1$
+
 		viewer = new CheckboxTreeViewer((Composite) outerArea);
 
-		viewer.setContentProvider(new PreferencesContentProvider());
+		final PreferencesContentProvider contentProvider = new PreferencesContentProvider();
+
+		viewer.setContentProvider(contentProvider);
 
 		viewer.setLabelProvider(new LabelProvider() {
 
@@ -130,9 +141,11 @@ protected Control createDialogArea(Composite parent) {
 				// we are at the scope level
 				if (node.parent().parent() == null) {
 					if (node.name().equals(InstanceScope.SCOPE))
-						return WorkbenchMessages.getString("PreferencesExportDialog.WorkspaceScope"); //$NON-NLS-1$
+						return WorkbenchMessages
+								.getString("PreferencesExportDialog.WorkspaceScope"); //$NON-NLS-1$
 					else if (node.name().equals(ConfigurationScope.SCOPE))
-						return WorkbenchMessages.getString("PreferencesExportDialog.ConfigurationScope"); //$NON-NLS-1$
+						return WorkbenchMessages
+								.getString("PreferencesExportDialog.ConfigurationScope"); //$NON-NLS-1$
 					return node.name();
 				}
 
@@ -141,7 +154,7 @@ protected Control createDialogArea(Composite parent) {
 				Plugin plugin = Platform.getPlugin(result);
 				if (plugin != null)
 					return WorkbenchMessages.format("PreferencesExportDialog.PluginLabel", //$NON-NLS-1$
-							new String [] {plugin.getDescriptor().getLabel(), node.name()});
+							new String[] { plugin.getDescriptor().getLabel(), node.name() });
 				return node.name();
 			}
 
@@ -151,11 +164,80 @@ protected Control createDialogArea(Composite parent) {
 			 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 			 */
 			public Image getImage(Object obj) {
-				return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+				return PlatformUI.getWorkbench().getSharedImages().getImage(
+						ISharedImages.IMG_OBJ_FOLDER);
 			}
 		});
 
 		viewer.setSorter(new ViewerSorter());
+
+		viewer.addCheckStateListener(new ICheckStateListener() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
+			 */
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				Object element = event.getElement();
+				boolean state = event.getChecked();
+
+				Object parentElement = contentProvider.getParent(element);
+				if (parentElement != null) {
+					determineCheckedState(parentElement, state);
+				}
+
+				Object[] children = contentProvider.getChildren(element);
+				for (int i = 0; i < children.length; i++) {
+					viewer.setChecked(children[i], state);
+				}
+
+			}
+
+			/**
+			 * Determine the checked state of parentElement based on it's children
+			 * and the state change that just occured.
+			 * @param parentElement
+			 * @param childState The state change on the child that triggered this
+			 * update.
+			 */
+			private void determineCheckedState(Object parentElement, boolean childState) {
+
+				Object[] children = contentProvider.getChildren(parentElement);
+
+				if (childState) {//If the child is checked see if we gray or black check
+					if (checkState(children, false)) {
+						viewer.setGrayChecked(parentElement, false);
+						viewer.setChecked(parentElement, true);
+						return;
+					}
+
+				}
+				//Deselected so see if it is white checked.
+				else if (checkState(children, true)) {
+					viewer.setGrayChecked(parentElement, false);
+					viewer.setChecked(parentElement, false);
+					return;
+				}
+
+				viewer.setGrayChecked(parentElement, true);
+
+			}
+
+			/**
+			 * Return whether or not any of the childrens check state
+			 * equals fail state.
+			 * @param children
+			 * @param failState the check condition that returns a false
+			 * @return boolean <code>true</code> if none of the check states
+			 * equal the fail state
+			 */
+			private boolean checkState(Object[] children, boolean failState) {
+				for (int i = 0; i < children.length; i++) {
+					Object object = children[i];
+					if (viewer.getChecked(object) == failState)
+						return false;
+				}
+				return true;
+			}
+		});
 		viewer.setInput(Platform.getPreferencesService().getRootNode());
 
 		GridData data = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
@@ -164,6 +246,7 @@ protected Control createDialogArea(Composite parent) {
 		return outerArea;
 
 	}
+
 	/**
 	 * Create the output file location.
 	 * 
@@ -194,6 +277,14 @@ protected Control createDialogArea(Composite parent) {
 		}
 
 		outputLocationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		outputLocationCombo.addKeyListener(new KeyAdapter() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
+			 */
+			public void keyReleased(KeyEvent e) {
+				enableOKButton(outputLocationCombo.getText().length() > 0);
+			}
+		});
 
 		// destination browse button
 		Button destinationBrowseButton = new Button(outputArea, SWT.PUSH);
@@ -214,6 +305,7 @@ protected Control createDialogArea(Composite parent) {
 
 				if (selectedDirectoryName != null) {
 					outputLocationCombo.setText(selectedDirectoryName);
+					getButton(IDialogConstants.OK_ID).setEnabled(true);
 				}
 			}
 		});
@@ -228,8 +320,9 @@ protected Control createDialogArea(Composite parent) {
 	 */
 	protected Point getInitialSize() {
 		Point shellSize = super.getInitialSize();
-		return new Point(Math.max(convertHorizontalDLUsToPixels(MIN_DIALOG_WIDTH), shellSize.x),
-				Math.max(convertVerticalDLUsToPixels(MIN_DIALOG_HEIGHT), shellSize.y));
+		return new Point(Math.max(convertHorizontalDLUsToPixels(MIN_DIALOG_WIDTH * 5 / 4),
+				shellSize.x), Math.max(convertVerticalDLUsToPixels(MIN_DIALOG_HEIGHT * 3 / 2),
+				shellSize.y));
 	}
 
 	/*
@@ -240,9 +333,15 @@ protected Control createDialogArea(Composite parent) {
 	protected void okPressed() {
 
 		Object[] selections = viewer.getCheckedElements();
-		IEclipsePreferences[] preferences = new IEclipsePreferences[selections.length];
-
-		System.arraycopy(selections, 0, preferences, 0, selections.length);
+		
+		ArrayList blackChecked = new ArrayList();
+		for (int i = 0; i < selections.length; i++) {
+			if(!viewer.getGrayed(selections[i]))//Only add the black checked ones
+				blackChecked.add(selections[i]);
+			
+		}
+		IEclipsePreferences[] preferences = new IEclipsePreferences[blackChecked.size()];
+		blackChecked.toArray(preferences);		
 
 		String outputPath = getOutputFileName();
 		exportPreferences(new Path(outputPath), preferences);
@@ -331,6 +430,22 @@ protected Control createDialogArea(Composite parent) {
 		ErrorDialog.openError(getShell(), WorkbenchMessages
 				.getString("PreferencesExportDialog.ErrorDialogTitle"), //$NON-NLS-1$
 				WorkbenchMessages.getString("PreferencesExportDialog.ErrorDialogMessage"), status); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
+		enableOKButton(outputLocationCombo.getSelectionIndex() > -1);
+	}
+
+	/**
+	 * Enable or disable the OK button based on state
+	 * @param state
+	 */
+	private void enableOKButton(boolean state) {
+		getButton(IDialogConstants.OK_ID).setEnabled(state);
 	}
 
 }
