@@ -20,13 +20,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.BuildAction;
@@ -56,10 +55,10 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
 			ActionFactory.REFRESH.getId(),
 			refreshAction);
 		actionBars.setGlobalActionHandler(
-			IDEActionFactory.BUILD.getId(),
+			IDEActionFactory.BUILD_PROJECT.getId(),
 			buildAction);
 		actionBars.setGlobalActionHandler(
-				IDEActionFactory.BUILD_PROJECT.getId(),
+				IDEActionFactory.REBUILD_PROJECT.getId(),
 			rebuildAction);
 		actionBars.setGlobalActionHandler(
 			IDEActionFactory.OPEN_PROJECT.getId(),

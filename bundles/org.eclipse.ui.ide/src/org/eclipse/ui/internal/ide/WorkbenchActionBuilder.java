@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.ide;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Preferences;
-
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -32,6 +31,7 @@ import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.actions.NewWizardMenu;
@@ -40,6 +40,7 @@ import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
+import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IIDEActionConstants;
 
@@ -47,6 +48,7 @@ import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.EditorWorkbook;
 import org.eclipse.ui.internal.EditorsDropDownAction;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.actions.BuildSetMenu;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 
 /**
@@ -54,6 +56,8 @@ import org.eclipse.ui.internal.util.StatusLineContributionItem;
  */
 public final class WorkbenchActionBuilder {
 
+	//temporary flag to add back rebuild actions
+	public static boolean INCLUDE_REBUILD_ACTIONS = false;
 
 	private IWorkbenchWindow window;
 
@@ -129,14 +133,16 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction exportResourcesAction;
 
 	private IWorkbenchAction rebuildAllAction; // Full build
-	private IWorkbenchAction buildAllAction; // Incremental build
+	IWorkbenchAction buildAllAction; // Incremental build
+	private IWorkbenchAction cleanAction;
+	MenuManager buildWorkingSetMenu;
 	private IWorkbenchAction quickStartAction;
 	private IWorkbenchAction tipsAndTricksAction;
 	
 	// IDE-specific retarget actions
 	private IWorkbenchAction addBookmarkAction;
 	private IWorkbenchAction addTaskAction;
-	private IWorkbenchAction buildProjectAction;
+	IWorkbenchAction buildProjectAction;
 	private IWorkbenchAction rebuildProjectAction;
 	private IWorkbenchAction openProjectAction;
 	private IWorkbenchAction closeProjectAction;
@@ -206,12 +212,7 @@ public final class WorkbenchActionBuilder {
 						// this property change notification could be from a non-ui thread
 						window.getShell().getDisplay().syncExec(new Runnable() {
 							public void run() {
-								if (autoBuild) {
-									removeManualIncrementalBuildAction();
-								}
-								else {
-									addManualIncrementalBuildAction();
-								}
+								updateBuildActions(autoBuild);
 							}
 						});
 					}
@@ -249,10 +250,7 @@ public final class WorkbenchActionBuilder {
 		makeActions(windowConfigurer, actionBarConfigurer);
 		populateMenuBar(actionBarConfigurer);
 		populateCoolBar(actionBarConfigurer);
-		boolean autoBuild = ResourcesPlugin.getWorkspace().isAutoBuilding();
-		if (!autoBuild) {
-			addManualIncrementalBuildAction();
-		}
+		updateBuildActions(ResourcesPlugin.getWorkspace().isAutoBuilding());
 		populateStatusLine(actionBarConfigurer);
 		hookListeners();
 	}
@@ -471,8 +469,14 @@ public final class WorkbenchActionBuilder {
 		menu.add(closeProjectAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.OPEN_EXT));
 		menu.add(new Separator());
-		menu.add(rebuildProjectAction);
-		menu.add(rebuildAllAction);
+		menu.add(buildAllAction);
+		menu.add(buildProjectAction);
+		addWorkingSetBuildActions(menu);
+		menu.add(cleanAction);
+		if (INCLUDE_REBUILD_ACTIONS) {
+			menu.add(rebuildProjectAction);
+			menu.add(rebuildAllAction);
+		}
 		menu.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
 		menu.add(new Separator());
 
@@ -542,6 +546,16 @@ public final class WorkbenchActionBuilder {
 	/**
 	 * Adds the keyboard navigation submenu to the specified menu.
 	 */
+	private void addWorkingSetBuildActions(MenuManager menu) {
+		buildWorkingSetMenu= new MenuManager(IDEWorkbenchMessages.getString("Workbench.buildSet")); //$NON-NLS-1$
+		IContributionItem workingSetBuilds = new BuildSetMenu(window, actionBarConfigurer);
+		buildWorkingSetMenu.add(workingSetBuilds);
+		menu.add(buildWorkingSetMenu);
+	}
+	
+	/**
+	 * Adds the keyboard navigation submenu to the specified menu.
+	 */
 	private void addKeyboardShortcuts(MenuManager menu) {
 		MenuManager subMenu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.shortcuts"), "shortcuts"); //$NON-NLS-1$ //$NON-NLS-2$
 		menu.add(subMenu);
@@ -562,6 +576,37 @@ public final class WorkbenchActionBuilder {
 		subMenu.add(new Separator());
 		subMenu.add(nextPerspectiveAction);
 		subMenu.add(prevPerspectiveAction);
+	}
+	/**
+	 * Temporary backwards compatibility support for re-enabling the rebuild actions.
+	 * To be removed before 3.0
+	 */
+	public static void setIncludeRebuildActions(boolean include) {
+		//TODO remove before 3.0
+		INCLUDE_REBUILD_ACTIONS = include;
+		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+		for (int i = 0; i < windows.length; i++) {
+			IWorkbenchWindowConfigurer configurer = IDEWorkbenchAdvisor.getAdvisor().getWorkbenchConfigurer().getWindowConfigurer(windows[i]);
+			WorkbenchActionBuilder builder = (WorkbenchActionBuilder)configurer.getData("ActionBuilder"); //$NON-NLS-1$
+			builder.doSetIncludeRebuildActions(include);
+		}
+	}
+	void doSetIncludeRebuildActions(boolean include) {
+		IMenuManager menubar = actionBarConfigurer.getMenuManager();
+		IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
+		if (manager == null)
+			return;
+		try {
+			if (include) {
+				manager.insertAfter(IDEActionFactory.BUILD_PROJECT.getId(), rebuildProjectAction);
+				manager.insertAfter(IDEActionFactory.BUILD.getId(), rebuildAllAction);
+			} else {
+				manager.remove(IDEActionFactory.REBUILD_ALL.getId());
+				manager.remove(IDEActionFactory.REBUILD_PROJECT.getId());
+			}
+		} catch (IllegalArgumentException e) {
+		}
+		manager.update(false);
 	}
 
 	/**
@@ -897,6 +942,7 @@ public final class WorkbenchActionBuilder {
 		importResourcesAction.dispose();
 		exportResourcesAction.dispose();
 		rebuildAllAction.dispose();
+		cleanAction.dispose();
 		buildAllAction.dispose();
 		if (quickStartAction != null) {
 			quickStartAction.dispose();
@@ -974,6 +1020,9 @@ public final class WorkbenchActionBuilder {
 
 		buildAllAction = IDEActionFactory.BUILD.create(getWindow());
 		registerGlobalAction(buildAllAction);
+
+		cleanAction = IDEActionFactory.BUILD_CLEAN.create(getWindow());
+		registerGlobalAction(cleanAction);
 
 		saveAction = ActionFactory.SAVE.create(getWindow());
 		registerGlobalAction(saveAction);
@@ -1208,22 +1257,15 @@ public final class WorkbenchActionBuilder {
 	}
 	
 	/**
-	 * Add the manual incremental build action
-	 * to both the menu bar and the tool bar.
+	 * Update the build actions on the toolbar and menu bar based on the 
+	 * current state of autobuild
 	 */
-	private void addManualIncrementalBuildAction() {
-		IMenuManager menubar = actionBarConfigurer.getMenuManager();
-		IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
-		if (manager != null) {
-			try {
-				manager.insertBefore(IDEActionFactory.REBUILD_PROJECT.getId(), buildProjectAction);
-				manager.insertBefore(IDEActionFactory.REBUILD_ALL.getId(), buildAllAction);
-			} catch (IllegalArgumentException e) {
-				// action not found!
-			}
-			manager.update(false);
-		}
-		
+	void updateBuildActions(boolean autoBuilding) {
+		//update menu bar actions in project menu
+		buildAllAction.setEnabled(!autoBuilding);
+		buildProjectAction.setEnabled(!autoBuilding);
+
+		//update the cool bar build button
 		ICoolBarManager coolBarManager = actionBarConfigurer.getCoolBarManager();
 		IContributionItem cbItem = coolBarManager.find(IWorkbenchActionConstants.TOOLBAR_FILE);
 		if (!(cbItem instanceof ToolBarContributionItem)) {
@@ -1238,50 +1280,15 @@ public final class WorkbenchActionBuilder {
 			IDEWorkbenchPlugin.log("File toolbar is missing"); //$NON-NLS-1$
 			return;
 		}
-		
-		toolBarManager.appendToGroup(IWorkbenchActionConstants.BUILD_GROUP, buildAllAction);
-		toolBarManager.update(false);
-		toolBarItem.update(ICoolBarManager.SIZE);
-	}
-	
-	/**
-	 * Remove the manual incremental build action
-	 * from both the menu bar and the tool bar.
-	 */
-	private void removeManualIncrementalBuildAction() {
-		IMenuManager menubar = actionBarConfigurer.getMenuManager();
-		IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
-		if (manager != null) {
-			try {
-				manager.remove(IDEActionFactory.BUILD.getId());
-				manager.remove(IDEActionFactory.BUILD_PROJECT.getId());
-			} catch (IllegalArgumentException e) {
-				// action was not in menu
-			}
-			manager.update(false);
-		}
-		
-		ICoolBarManager coolBarManager = actionBarConfigurer.getCoolBarManager();
-		IContributionItem cbItem = coolBarManager.find(IWorkbenchActionConstants.TOOLBAR_FILE);
-		if (!(cbItem instanceof ToolBarContributionItem)) {
-			// This should not happen
-			IDEWorkbenchPlugin.log("File toolbar contribution item is missing"); //$NON-NLS-1$
-			return;
-		}
-		ToolBarContributionItem toolBarItem = (ToolBarContributionItem)cbItem;
-		IToolBarManager toolBarManager = toolBarItem.getToolBarManager();
-		if (toolBarManager == null) {
-			// error if this happens, file toolbar assumed to always exist
-			IDEWorkbenchPlugin.log("File toolbar is missing"); //$NON-NLS-1$
-			return;
-		}
-		
-		// Remove build item
-		if (buildAllAction != null) {
+		//add the build button if autobuild is on, and remove it otherwise
+		if (!autoBuilding) {
+			toolBarManager.appendToGroup(IWorkbenchActionConstants.BUILD_GROUP, buildAllAction);
+			toolBarManager.update(false);
+			toolBarItem.update(ICoolBarManager.SIZE);
+		} else if (buildAllAction != null) {
 			toolBarManager.remove(buildAllAction.getId());
 			toolBarManager.update(false);
 			toolBarItem.update(ICoolBarManager.SIZE);
 		}
-		
 	}
 }

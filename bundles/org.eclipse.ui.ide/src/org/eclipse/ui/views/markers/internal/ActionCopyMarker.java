@@ -130,7 +130,7 @@ public class ActionCopyMarker extends SelectionProviderAction {
 					Messages.getString("Error"), //$NON-NLS-1$
 					null,
 					e.getStatus());
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		
 		StringBuffer report = new StringBuffer();

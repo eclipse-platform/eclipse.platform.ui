@@ -80,8 +80,8 @@ public class ChooseWorkspaceData {
 	 */
 	public String getInitialDefault() {
 		if (initialDefault == null)
-			initialDefault = System.getProperty("user.dir")
-					+ File.separator + "workspace";
+			initialDefault = System.getProperty("user.dir") //$NON-NLS-1$
+					+ File.separator + "workspace"; //$NON-NLS-1$
 		return initialDefault;
 	}
 
@@ -149,7 +149,7 @@ public class ChooseWorkspaceData {
 			//		</recentWorkspaces>
 			//	</launchWorkspaceData>
 
-			XMLMemento memento = XMLMemento.createWriteRoot("launchWorkspaceData");
+			XMLMemento memento = XMLMemento.createWriteRoot("launchWorkspaceData"); //$NON-NLS-1$
 
 			memento.createChild(XML.PROTOCOL)
 				   .putInteger(XML.VERSION, PERS_ENCODING_VERSION);

@@ -11,17 +11,16 @@
 package org.eclipse.ui.ide;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.actions.QuickStartAction;
 import org.eclipse.ui.actions.RetargetAction;
-
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.NewWizardDropDownAction;
 import org.eclipse.ui.internal.ide.TipsAndTricksAction;
 import org.eclipse.ui.internal.ide.actions.AboutAction;
+import org.eclipse.ui.internal.ide.actions.BuildCleanAction;
 import org.eclipse.ui.internal.ide.actions.ProjectPropertyDialogAction;
 
 /**
@@ -116,6 +115,22 @@ public final class IDEActionFactory {
 			return new GlobalBuildAction(window, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 		}
 	};
+
+	/**
+	 * IDE-specific workbench action: Build clean
+	 * This action maintains its enablement state.
+	 */
+	public static final ActionFactory BUILD_CLEAN = new ActionFactory("buildClean") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ActionFactory */
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			return new BuildCleanAction(window);
+		}
+	};
+
+
 
 	/**
 	 * IDE-specific workbench action: Incremental build.

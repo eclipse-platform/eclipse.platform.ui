@@ -50,7 +50,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class TaskView extends MarkerView {
 
-	private static final String COMPLETION = "completion";
+	private static final String COMPLETION = "completion"; //$NON-NLS-1$
 	private final static ColumnLayoutData[] DEFAULT_COLUMN_LAYOUTS = { 
 		new ColumnPixelData(19, false),
 		new ColumnPixelData(19, false),

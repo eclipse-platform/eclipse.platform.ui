@@ -14,6 +14,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 
+import org.eclipse.jface.preference.PreferencePage;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -29,11 +31,9 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.preference.PreferencePage;
-
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.internal.ide.WorkbenchActionBuilder;
 
 /**
  * Temporary "Work in Progress" PreferencePage for Job control
@@ -52,6 +52,8 @@ public class WorkInProgressPreferencePage
 
 	private Button autoRefreshButton;
 	private Text pollingRefreshText;
+	
+	Button buildPreference;
 
 	/*
 	 * (non-Javadoc)
@@ -59,10 +61,21 @@ public class WorkInProgressPreferencePage
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
+		createBuildControls(parent);
 		createMachineSpeedControls(parent);
 		createRefreshControls(parent);
-
 		return parent;
+	}
+
+	private void createBuildControls(Composite parent) {
+		buildPreference = new Button(parent, SWT.CHECK);
+		buildPreference.setText("Temporarily restore 2.1 rebuild actions"); //$NON-NLS-1$
+		buildPreference.setSelection(WorkbenchActionBuilder.INCLUDE_REBUILD_ACTIONS);
+		buildPreference.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				WorkbenchActionBuilder.setIncludeRebuildActions(buildPreference.getSelection());
+			}
+		});
 	}
 
 	/**

@@ -10,23 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
+import java.util.*;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.internal.ide.IDEInternalPreferences;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.*;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.ide.*;
 
 /**
  * Standard actions for full and incremental builds of the selected project(s).
@@ -80,6 +74,22 @@ public BuildAction(Shell shell, int type) {
 	}
 		
 	this.buildType = type;
+}
+/**
+ * Adds the given project and all of its prerequisities, transitively,
+ * to the provided set.
+ */
+private void addAllProjects(IProject project, HashSet projects) {
+	if (project == null || !project.isAccessible() || projects.contains(project))
+		return;
+	projects.add(project);
+	try {
+		IProject[] preReqs = project.getReferencedProjects();
+		for (int i = 0; i < preReqs.length; i++)
+			addAllProjects(preReqs[i], projects);
+	} catch (CoreException e) {
+		//ignore inaccessible projects
+	}
 }
 
 /* (non-Javadoc)
@@ -177,37 +187,35 @@ public static boolean isSaveAllSet() {
  * any projects in cycles are eliminated.
  */
 List pruneResources(List resourceCollection) {
+	//recursively compute project prerequisites
+	HashSet toBuild = new HashSet();
+	for (Iterator it = resourceCollection.iterator(); it.hasNext();)
+		addAllProjects((IProject)it.next(), toBuild);
+
 	// Optimize...
-	if (resourceCollection.size() < 2)
+	if (toBuild.size() < 2)
 		return resourceCollection;
 
 	// Try the workspace's description build order if specified
 	String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription().getBuildOrder();
 	if (orderedNames != null) {
-		List orderedProjects = new ArrayList(resourceCollection.size());
-		//Projects may not be in the build order but should be built if selected
-		List unorderedProjects = new ArrayList(resourceCollection.size());
-		unorderedProjects.addAll(resourceCollection);
-	
+		List orderedProjects = new ArrayList(toBuild.size());
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		for (int i = 0; i < orderedNames.length; i++) {
-			String projectName = orderedNames[i];
-			for (int j = 0; j < resourceCollection.size(); j++) {
-				IProject project = (IProject) resourceCollection.get(j);
-				if (project.getName().equals(projectName)) {
-					orderedProjects.add(project);
-					unorderedProjects.remove(project);
-					break;
-				}
+			IProject handle = root.getProject(orderedNames[i]);
+			if (toBuild.contains(handle)) {
+				orderedProjects.add(handle);
+				toBuild.remove(handle);
 			}
 		}
 		//Add anything not specified before we return
-		orderedProjects.addAll(unorderedProjects);
+		orderedProjects.addAll(toBuild);
 		return orderedProjects;
 	}
 
 	// Try the project prerequisite order then
-	IProject[] projects = new IProject[resourceCollection.size()];
-	projects = (IProject[]) resourceCollection.toArray(projects);
+	IProject[] projects = new IProject[toBuild.size()];
+	projects = (IProject[]) toBuild.toArray(projects);
 	IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(projects);
 	ArrayList orderedProjects = new ArrayList();
 	orderedProjects.addAll(Arrays.asList(po.projects));
@@ -269,6 +277,7 @@ boolean shouldPerformResourcePruning() {
  */
 protected boolean updateSelection(IStructuredSelection s) {
 	projectsToBuild = null;
-	return super.updateSelection(s) && getProjectsToBuild().size() > 0;
+	return !ResourcesPlugin.getWorkspace().isAutoBuilding() && 
+		super.updateSelection(s) && getProjectsToBuild().size() > 0;
 }
 }

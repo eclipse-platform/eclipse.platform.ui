@@ -474,6 +474,18 @@
             id="org.eclipse.ui.project.rebuildAll">
       </command>
       <command
+            name="%command.buildLast.name"
+            description="%command.buildLast.description"
+            categoryId="org.eclipse.ui.category.project"
+            id="org.eclipse.ui.project.buildLast">
+      </command>
+      <command
+            name="%command.buildClean.name"
+            description="%command.buildClean.description"
+            categoryId="org.eclipse.ui.category.project"
+            id="org.eclipse.ui.internal.newbuild.buildClean">
+      </command>
+      <command
             name="%command.projectProperties.name"
             description="%command.projectProperties.description"
             categoryId="org.eclipse.ui.category.project"
