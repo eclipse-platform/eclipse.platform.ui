@@ -539,6 +539,7 @@ public void initialCheckListItem(Object element) {
 	//As this is not done from the UI then set the box for updating from the selection to false 
 	listItemChecked(element, true, false);
 	grayUpdateHierarchy(parent);
+	selectAndReveal(parent);
 }
 /**
  *	Set the initial checked state of the passed element to true,
@@ -546,7 +547,15 @@ public void initialCheckListItem(Object element) {
  */
 public void initialCheckTreeItem(Object element) {
 	treeItemChecked(element, true);
+	selectAndReveal(element);
 }
+
+private void selectAndReveal(Object treeElement){
+	treeViewer.reveal(treeElement);
+	IStructuredSelection selection = new StructuredSelection(treeElement);
+	treeViewer.setSelection(selection);
+}
+	
 /**
  *	Initialize this group's viewers after they have been laid out.
  */
