@@ -38,6 +38,8 @@ public class AntViewLabelProvider implements ILabelProvider {
 			TargetNode target= (TargetNode) element;
 			if (target.isErrorNode()) {
 				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ERROR);
+			} else if (target.equals(target.getProject().getDefaultTarget())){
+				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_DEFAULT_TARGET);
 			} else {
 				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_TARGET);
 			}
