@@ -136,7 +136,8 @@ public class ImageHyperlink extends Hyperlink {
 		redraw();
 		super.handleActivate(e);
 		state &= ~ACTIVE;
-		redraw();
+		if (!isDisposed()) 
+			redraw();
 	}
 	/**
 	 * Returns active image.
