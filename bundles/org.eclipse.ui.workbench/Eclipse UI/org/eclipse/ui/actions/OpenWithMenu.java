@@ -5,6 +5,7 @@ package org.eclipse.ui.actions;
  * All Rights Reserved.
  */
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import org.eclipse.core.resources.IFile;
@@ -166,12 +167,19 @@ public void fill(Menu menu, int index) {
 	
 	Object[] editors = sorter.sort(registry.getEditors(file));
 	boolean defaultFound = false;
+	
+	//Check that we don't add it twice. This is possible
+	//if the same editor goes to two mappings.
+	ArrayList alreadyMapped= new ArrayList();
 
 	for (int i = 0; i < editors.length; i++) {
 		IEditorDescriptor editor = (IEditorDescriptor) editors[i];
-		createMenuItem(menu, editor, preferredEditor);
-		if (defaultEditor != null && editor.getId().equals(defaultEditor.getId()))
-			defaultFound = true;
+		if(!alreadyMapped.contains(editor)){
+			createMenuItem(menu, editor, preferredEditor);
+			if (defaultEditor != null && editor.getId().equals(defaultEditor.getId()))
+				defaultFound = true;
+			alreadyMapped.add(editor);
+		}		
 	}
 
 	// Only add a separator if there is something to separate
