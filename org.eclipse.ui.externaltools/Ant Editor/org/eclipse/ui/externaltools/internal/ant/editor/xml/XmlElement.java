@@ -450,7 +450,7 @@ public class XmlElement implements IAdaptable {
 		if (fElementIdentifier == null) {
 			StringBuffer buffer= escape(new StringBuffer(getName() != null ? getName() : ""), '\\', "$/[]\\"); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append('$');
-			buffer.append(escape(new StringBuffer(getDisplayName() != null ? getDisplayName() : ""), '\\', "$/[]\\")); //$NON-NLS-1$ //$NON-NLS-2$
+			buffer.append(escape(new StringBuffer(getDisplayName() != null ? getDisplayName() : ""), '\\', "$/[]\\").toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			fElementIdentifier= buffer.toString();
 		}
