@@ -72,6 +72,9 @@ public class ExternalToolsImages {
 		// Objects
 		declareRegistryImage(IExternalToolConstants.IMG_TAB_MAIN, OBJECT + "main_tab.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolConstants.IMG_TAB_OPTIONS, OBJECT + "options_tab.gif"); //$NON-NLS-1$
+		
+		//ANT object
+		declareRegistryImage(IExternalToolConstants.IMG_TAB_ANT_TARGETS, LOCALTOOL + "ant_tsk_check.gif"); //$NON-NLS-1$
 	}
 
 	/**
