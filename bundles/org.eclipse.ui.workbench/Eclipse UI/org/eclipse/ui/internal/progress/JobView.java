@@ -34,8 +34,6 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class JobView extends ViewPart implements IViewPart {
 
-	static final String PROPERTY_PREFIX= NewProgressViewer.PROPERTY_PREFIX;
-
 	NewProgressViewer viewer;
 	Action cancelAction;
 	Action clearAllAction;
