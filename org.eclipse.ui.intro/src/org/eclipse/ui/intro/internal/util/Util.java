@@ -61,7 +61,8 @@ public class Util {
         // this translates to giving null to this dialog which is handled by
         // Eclipse by displaying the detyailed message directly.
         if (e instanceof CoreException) {
-            if (parent == null) parent = DialogUtil.getActiveShell();
+            if (parent == null)
+                parent = DialogUtil.getActiveShell();
             DialogUtil.displayCoreErrorDialog(parent, errorId,
                     (CoreException) e);
 
@@ -69,8 +70,10 @@ public class Util {
         }
         // any other exception, use MessageDialog.
         // if errorID is null, use error message.
-        if (errorId == null) errorId = e.getMessage();
-        if (parent == null) parent = DialogUtil.getActiveShell();
+        if (errorId == null)
+            errorId = e.getMessage();
+        if (parent == null)
+            parent = DialogUtil.getActiveShell();
         DialogUtil.displayErrorMessage(parent, errorId, e);
     }
 
@@ -151,7 +154,7 @@ public class Util {
                 //SWT.MouseMove,
                 SWT.MouseEnter, SWT.MouseExit, SWT.MouseHover, SWT.FocusIn,
                 SWT.FocusOut, SWT.KeyDown, SWT.KeyUp, SWT.Traverse, SWT.Show,
-                SWT.Hide };
+                SWT.Hide};
         for (int i = 0; i < allEvents.length; i++) {
             control.addListener(allEvents[i], listener);
         }
@@ -205,8 +208,8 @@ public class Util {
                             // no browser already opened. Launch new one.
                             p = doOpenBrowser(localHref, false);
                             if (p == null)
-                            // failed to launch new browser.
-                                    throw new Exception();
+                                // failed to launch new browser.
+                                throw new Exception();
                         }
                     } catch (Exception e) {
                         openBrowserError(display, e);
@@ -226,9 +229,10 @@ public class Util {
                         // command failed
                         p = null;
                     }
-                    if (p != null) {
+                    if (p != null && remote) {
                         int exitCode = p.waitFor();
-                        if (exitCode == 0) return p;
+                        if (exitCode == 0)
+                            return p;
                     }
 
                     // netscape failed. Try mozilla.
@@ -240,9 +244,10 @@ public class Util {
                         // command failed
                         p = null;
                     }
-                    if (p != null) {
+                    if (p != null && remote) {
                         int exitCode = p.waitFor();
-                        if (exitCode == 0) return p;
+                        if (exitCode == 0)
+                            return p;
                     }
 
                     // all failed. return null
