@@ -248,6 +248,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Fire window closed event.
 	 */
 	protected void fireWindowClosed(IWorkbenchWindow window) {
+		if (activatedWindow == window) {
+			// Do not hang onto it so it can be GC'ed
+			activatedWindow = null;
+		}
+					
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
 			((IWindowListener) list[i]).windowClosed(window);
