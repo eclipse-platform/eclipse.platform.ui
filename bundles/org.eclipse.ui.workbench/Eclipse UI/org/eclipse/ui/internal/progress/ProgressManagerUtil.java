@@ -30,12 +30,12 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.BundleUtility;
+import org.eclipse.ui.progress.IProgressConstants;
 /**
  * The ProgressUtil is a class that contains static utility methods used for the
  * progress API.
  */
 public class ProgressManagerUtil {
-	private static String PROGRESS_VIEW_ID = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 	/**
 	 * A constant used by the progress support to determine if an operation is
 	 * too short to show progress.
@@ -99,7 +99,7 @@ public class ProgressManagerUtil {
 		if (page == null)
 			return;
 		try {
-			page.showView(PROGRESS_VIEW_ID);
+			page.showView(IProgressConstants.PROGRESS_VIEW_ID);
 		} catch (PartInitException exception) {
 			logException(exception);
 		}
@@ -113,7 +113,7 @@ public class ProgressManagerUtil {
 	 */
 	static boolean missingProgressView(WorkbenchWindow window) {
 		return WorkbenchPlugin.getDefault().getViewRegistry().find(
-				PROGRESS_VIEW_ID) == null;
+				IProgressConstants.PROGRESS_VIEW_ID) == null;
 	}
 	/**
 	 * Shorten the given text <code>t</code> so that its length doesn't exceed

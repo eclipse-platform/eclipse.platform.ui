@@ -86,4 +86,9 @@ public interface IProgressConstants {
 	 * @see org.eclipse.ui.progress.IProgressService
 	 **/
 	public static final QualifiedName ICON_PROPERTY = new QualifiedName(PROPERTY_PREFIX, "icon"); //$NON-NLS-1$
+	
+	/**
+	 * Constant for the progress view id.
+	 */
+	public static String PROGRESS_VIEW_ID = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 }
