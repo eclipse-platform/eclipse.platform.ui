@@ -45,7 +45,10 @@ public class CompareWithRemoteAction extends CompareWithTagAction {
 			FolderSyncInfo folderInfo = ((ICVSFolder)cvsResource).getFolderSyncInfo();
 			if (folderInfo!=null) {
 				tag = folderInfo.getTag();
-			}
+				if(tag == null) {
+					tag = CVSTag.DEFAULT;
+				}
+			} 
 		} else {
 			ResourceSyncInfo info = cvsResource.getSyncInfo();
 			if (info != null) {					
