@@ -922,7 +922,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		if (mng!=null) {
 			String label = e.getLabel();
 			String href = (String)e.getHref();
-			if (href.startsWith("__"))
+			if (href!=null && href.startsWith("__"))
 				href = null;
 			if (href!=null)
 				href = href.replaceAll("&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -955,7 +955,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	}
 
 	void handleLinkExited(HyperlinkEvent e) {
-		IStatusLineManager mng = getStatusLineManager();
+		IStatusLineManager mng = getRoot(getStatusLineManager());
 		if (mng!=null)
 			mng.setMessage(null);
 	}

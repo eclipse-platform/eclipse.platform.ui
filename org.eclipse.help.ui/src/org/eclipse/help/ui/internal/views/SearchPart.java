@@ -149,6 +149,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		searchWordText.setLayoutData(td);
 		// Pattern combo
 		searchWordCombo = new Combo(container, SWT.SINGLE | SWT.BORDER);
+		toolkit.adapt(searchWordCombo, true, true);
 		td = new TableWrapData(TableWrapData.FILL_GRAB);
 		td.maxWidth = 100;
 		searchWordCombo.setLayoutData(td);
