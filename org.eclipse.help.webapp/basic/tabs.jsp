@@ -80,7 +80,7 @@ function resynch()
 <!--
 document.write("<td nowrap><b><a  href='javascript:parent.parent.TabsFrame.resynch();' >"); 
 document.write("<img alt=\"\" title=\"<%=ServletResources.getString("Synch", request)%>\" src=\"images/synch_toc_nav.gif\" border=0>");
-document.write("<%=ServletResources.getString("Synch", request)%></a>&nbsp;</b></td>");
+document.write("<%=ServletResources.getString("shortSynch", request)%></a>&nbsp;</b></td>");
 //-->
 </SCRIPT>
 
