@@ -98,6 +98,7 @@ public final class RestartableJob {
 		};
 		
 		theJob.setPriority(Job.DECORATE);
+		theJob.setSystem(true);
 	}
 	
 	/**
