@@ -812,6 +812,13 @@ public final class Workbench implements IWorkbench {
 				return acceleratorText;
 			}
 
+			public boolean isAcceleratorInUse(int accelerator) {
+				KeySequence keySequence =
+				KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
+				return commandManager.isPerfectMatch(keySequence)
+				|| commandManager.isPartialMatch(keySequence);
+			}
+
 			public final boolean isActive(final String commandId) {
 				if (commandId != null) {
 					final ICommand command = commandManager.getCommand(commandId);
