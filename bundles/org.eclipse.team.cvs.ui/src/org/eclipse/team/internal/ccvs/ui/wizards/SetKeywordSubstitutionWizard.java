@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
