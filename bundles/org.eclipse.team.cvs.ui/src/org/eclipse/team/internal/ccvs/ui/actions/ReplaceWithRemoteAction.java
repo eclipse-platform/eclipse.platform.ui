@@ -51,7 +51,7 @@ public class ReplaceWithRemoteAction extends WorkspaceAction {
 		}, true /* cancelable */, PROGRESS_DIALOG);
 	}
 	
-	private void performReplace(IResource[] resources, IProgressMonitor monitor) throws TeamException {
+	protected void performReplace(IResource[] resources, IProgressMonitor monitor) throws TeamException {
 		try {
 			Hashtable table = getProviderMapping(resources);
 			Set keySet = table.keySet();
