@@ -3,7 +3,7 @@
 <fragment
    id="org.eclipse.ui.win32"
    name="%Win32Fragment.fragmentName"
-   version="3.0.0"
+   version="3.0.1"
    provider-name="%Plugin.providerName"
    plugin-id="org.eclipse.ui.ide"
    plugin-version="3.0.0">
