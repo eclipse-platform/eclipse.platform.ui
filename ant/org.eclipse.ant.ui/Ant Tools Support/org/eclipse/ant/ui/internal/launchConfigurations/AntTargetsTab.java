@@ -57,7 +57,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.ToolUtil;
-import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
+import org.eclipse.ui.externaltools.internal.model.VariableContextManager;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AntTargetsTab extends AbstractLaunchConfigurationTab {
@@ -240,10 +240,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		if (fAllTargets == null) {
 			setErrorMessage(null);
 			MultiStatus status = new MultiStatus(IAntUIConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
-			String expandedLocation = ToolUtil.expandFileLocation(fLocation, ExpandVariableContext.EMPTY_CONTEXT, status);
+			String expandedLocation = ToolUtil.expandFileLocation(fLocation, VariableContextManager.getDefault().getVariableContext(), status);
 			if (expandedLocation != null && status.isOK()) {
 				try {
-					String[] arguments = ExternalToolsUtil.getArguments(fLaunchConfiguration, ExpandVariableContext.EMPTY_CONTEXT);
+					String[] arguments = ExternalToolsUtil.getArguments(fLaunchConfiguration, VariableContextManager.getDefault().getVariableContext());
 					fAllTargets = AntUtil.getTargets(expandedLocation, arguments, fLaunchConfiguration);
 				} catch (CoreException ce) {
 					IStatus exceptionStatus= ce.getStatus();
