@@ -18,8 +18,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.PaintEvent;
@@ -28,6 +26,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -181,36 +181,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * Implementation of <code>IRegion</code> that can be reused
 	 * by setting the offset and the length. 
 	 */
-	private static class ReusableRegion implements IRegion {
-		
-		private int fOffset;
-		private int fLength;
-
-		/*
-		 * @see org.eclipse.jface.text.IRegion#getLength()
-		 */
-		public int getLength() {
-			return fLength;
-		}
-
-		/*
-		 * @see org.eclipse.jface.text.IRegion#getOffset()
-		 */
-		public int getOffset() {
-			return fOffset;
-		}
-		
-		/**
-		 * Updates this region.
-		 * 
-		 * @param offset the new offset
-		 * @param length the new length
-		 */
-		public void update(int offset, int length) {
-			fOffset= offset;
-			fLength= length;
-		}
-	}
+	private static class ReusableRegion extends Position implements IRegion {}
 	
 	/**
 	 * Tells whether this class is in debug mode.
@@ -1253,7 +1224,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 							int paintLength= Math.min(lineOffset + document.getLineLength(i) - delimiterLength, p.getOffset() + p.getLength()) - paintStart;
 							if (paintLength >= 0 && overlapsWith(paintStart, paintLength, vOffset, vLength)) {
 								// otherwise inside a line delimiter
-								range.update(paintStart, paintLength);
+								range.setOffset(paintStart);
+								range.setLength(paintLength);
 								IRegion widgetRange= getWidgetRange(range);
 								if (widgetRange != null)
 									pp.fPainter.draw(a, gc, fTextWidget, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);

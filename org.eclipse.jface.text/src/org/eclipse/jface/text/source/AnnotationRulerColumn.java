@@ -94,36 +94,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * Implementation of <code>IRegion</code> that can be reused
 	 * by setting the offset and the length. 
 	 */
-	private static class ReusableRegion implements IRegion {
-		
-		private int fOffset;
-		private int fLength;
-
-		/*
-		 * @see org.eclipse.jface.text.IRegion#getLength()
-		 */
-		public int getLength() {
-			return fLength;
-		}
-
-		/*
-		 * @see org.eclipse.jface.text.IRegion#getOffset()
-		 */
-		public int getOffset() {
-			return fOffset;
-		}
-		
-		/**
-		 * Updates this region.
-		 * 
-		 * @param offset the new offset
-		 * @param length the new length
-		 */
-		public void update(int offset, int length) {
-			fOffset= offset;
-			fLength= length;
-		}
-	}
+	private static class ReusableRegion extends Position implements IRegion {}
 	
 	/**
 	 * Pair of an annotation and their associated position. Used inside the paint method
@@ -775,7 +746,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 				if (lay != layer)	// wrong layer: skip annotation
 					continue;
 
-				range.update(position.getOffset(), position.getLength());
+				range.setOffset(position.getOffset());
+				range.setLength(position.getLength());
 				IRegion widgetRegion= extension.modelRange2WidgetRange(range);
 				if (widgetRegion == null)
 					continue;
