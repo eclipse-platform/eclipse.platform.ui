@@ -61,10 +61,18 @@ public interface ISessionDelta extends IAdaptable {
 	/**
 	 * Process all the feature references of the 
 	 * Session Delta. 
+	 * Removes the Session Delta from the file system after processing it.
 	 * 
 	 * @param progressMonitor the progress monitor
 	 * @throws CoreException if an error occurs. 
 	 * @since 2.0 
 	 */
 	public void process(IProgressMonitor progressMonitor) throws CoreException;
+	
+	/**
+	 * Removes the Session Delta from the file system without processing it.
+	 * 
+	 * @since 2.0 
+	 */
+	public void delete();	
 }

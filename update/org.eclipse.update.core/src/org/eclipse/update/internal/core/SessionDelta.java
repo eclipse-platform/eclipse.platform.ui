@@ -30,6 +30,7 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 	private List featureReferences;
 	private File file;
 	private int process;
+	private boolean deleted = false;
 
 	/**
 	 * Constructor for SessionDelta.
@@ -37,6 +38,7 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 	public SessionDelta() {
 		super();
 		process=ENABLE;
+		deleted = false;
 	}
 
 	/**
@@ -113,15 +115,28 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 			}
 		}
 
+		delete();
+		saveLocalSite();
+	}
+
+	/*
+	 * 
+	 */
+	public void delete(){
+		if (deleted){
+			UpdateManagerPlugin.warn("Attempt to delete an already deleted session delta:"+file);
+			return;
+		}
+		
 		// remove the file from the file system
 		if (file != null){
 			UpdateManagerUtils.removeFromFileSystem(file);
 			UpdateManagerPlugin.warn("Removing SessionDelta:"+file);
 		} else {
 			UpdateManagerPlugin.warn("Unable to remove SessionDelta. File is null");
-		}
-			
-		saveLocalSite();
+		}	
+		
+		deleted = true;	
 	}
 
 	/**
