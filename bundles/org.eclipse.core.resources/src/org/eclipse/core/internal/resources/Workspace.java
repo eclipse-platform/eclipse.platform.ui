@@ -79,7 +79,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected boolean crashed = false;
 public Workspace() {
 	super();
-	Policy.relocalize();
 	localMetaArea = new LocalMetaArea();
 	tree = new ElementTree();
 	/* tree should only be modified during operations */
