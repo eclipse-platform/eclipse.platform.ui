@@ -33,7 +33,7 @@ public class SampleEditorFormPage extends WizardPage {
 		toolkit.createLabel(container, "Project name");
 		TableWrapData td;
 		projectText = toolkit.createText(container, "");
-		td = new TableWrapData(TableWrapData.FILL_GRAB);
+		td = new TableWrapData(TableWrapData.FILL);
 		projectText.setLayoutData(td);
 		
 		addSpacer(container, toolkit, 2);
@@ -56,7 +56,7 @@ public class SampleEditorFormPage extends WizardPage {
 		dirLabel = toolkit.createLabel(client, "Directory:");
 		dirText = toolkit.createText(client, "");
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 200;
+		//gd.widthHint = 200;
 		dirText.setLayoutData(gd);
 		dirButton = toolkit.createButton(client, "Browse...", SWT.PUSH);
 		
@@ -120,6 +120,7 @@ public class SampleEditorFormPage extends WizardPage {
 		l.setLayoutData(gd);
 
 		setControl(container);
+		container.setData("__adapted__", Boolean.TRUE);
 		WorkbenchHelp.setHelp(container,"org.eclipse.pde.doc.user."+
 				"new_project_structure_page");		
 	}
