@@ -49,6 +49,7 @@ public class WWinPluginAction extends PluginAction
 			WWinPluginAction action = (WWinPluginAction)iter.next();
 			if ((action.getDelegate() == null) && action.isOkToCreateDelegate())
 				action.createDelegate();
+				action.refreshSelection();
 		}
 		staticActionList.trimToSize();
 	}
@@ -78,7 +79,6 @@ public class WWinPluginAction extends PluginAction
 			IWorkbenchWindowActionDelegate winDelegate =
 				(IWorkbenchWindowActionDelegate) delegate;
 			winDelegate.init(window);
-//			refreshSelection();
 			return delegate;
 		} else {
 			WorkbenchPlugin.log(

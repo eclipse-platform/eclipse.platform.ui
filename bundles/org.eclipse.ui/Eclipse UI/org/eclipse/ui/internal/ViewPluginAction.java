@@ -36,7 +36,6 @@ protected IActionDelegate createDelegate() {
    if (delegate instanceof IViewActionDelegate) {
 	   IViewActionDelegate viewDelegate = (IViewActionDelegate)delegate;
 	   viewDelegate.init(viewPart);
-//	   refreshSelection(viewPart);
    }
    else {
 	  WorkbenchPlugin.log("Action should implement IViewActionDelegate: "+getText());//$NON-NLS-1$
