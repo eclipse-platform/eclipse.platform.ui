@@ -55,7 +55,7 @@ public class UserValidationDialog extends Dialog {
 		super.configureShell(newShell);
 		newShell.setText(Policy.bind("UserValidationDialog.required")); //$NON-NLS-1$
 		// set F1 help
-		//WorkbenchHelp.setHelp(newShell, new Object[] {ICVSHelpContextIds.USER_VALIDATION_DIALOG});	
+		WorkbenchHelp.setHelp(newShell, IHelpContextIds.USER_VALIDATION_DIALOG);	
 	}
 	/**
 	 * @see Window#create

@@ -25,10 +25,29 @@
    	</context>
    
    	<context  id="tag_configuration_refreshaction" >
-      <description>This will fetch branch and version tags from the files that have been configured to be automatically searched for tags. If tags that you expected to see don't appear, try changing the list of files to examined via the tag configuration dialog.
-      </description>
+      <description>This will fetch branch and version tags from the files that have been configured to be automatically searched for tags. If tags that you expected to see don't appear, try changing the list of files to examined via the tag configuration dialog.</description>
    	</context>
-   	
+
+ 	<!-- ********************************** -->
+ 	<!-- Dialogs					        -->
+ 	<!-- ********************************** -->
+ 	
+ 	<context id="release_comment_dialog_context">
+       <description>Enter a comment to describe the contents of this release.</description>
+    <!-- Below copied from old VCM
+       <topic label="%context_ref_vcm_releasing" href="tasks/tasks-114.htm" />
+    -->
+    </context>
+   	<context id="user_validation_dialog_context">
+      <description>In this dialog, enter the appropriate information to log in to the repository.
+      </description> 
+    <!-- Below copied from old VCM
+      <topic label="%context_ref_vcm_repositories_concept" href="concepts/concepts-27c.htm" /> 
+      <topic label="%context_ref_vcm_create_repository_location" href="tasks/tasks-92.htm" /> 
+      <topic label="%context_ref_vcm_repositories_reference" href="reference/ref-47.htm" />
+    -->
+    </context>
+    
  	<!-- ********************************** -->
  	<!-- Preference Pages 					-->
  	<!-- ********************************** -->
