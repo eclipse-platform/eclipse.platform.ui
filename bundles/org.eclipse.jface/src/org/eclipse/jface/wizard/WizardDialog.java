@@ -729,8 +729,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 		restoreEnableState(finishButton, state, "finish"); //$NON-NLS-1$
 		restoreEnableState(cancelButton, state, "cancel"); //$NON-NLS-1$
 		restoreEnableState(helpButton, state, "help"); //$NON-NLS-1$
-		ControlEnableState pageState = (ControlEnableState) state.get("page"); //$NON-NLS-1$
-		pageState.restore();
+		Object pageValue = state.get("page"); //$NON-NLS-1$
+		if(pageValue != null)//page may never have been created
+			((ControlEnableState) pageValue).restore();
 	}
 	/* (non-Javadoc)
 	 * Method declared on IRunnableContext.
@@ -792,7 +793,8 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 		saveEnableStateAndSet(finishButton, savedState, "finish", false); //$NON-NLS-1$
 		saveEnableStateAndSet(cancelButton, savedState, "cancel", keepCancelEnabled); //$NON-NLS-1$
 		saveEnableStateAndSet(helpButton, savedState, "help", false); //$NON-NLS-1$
-		savedState.put("page", ControlEnableState.disable(currentPage.getControl())); //$NON-NLS-1$
+		if(currentPage != null)
+			savedState.put("page", ControlEnableState.disable(currentPage.getControl())); //$NON-NLS-1$
 		return savedState;
 	}
 	/**
