@@ -73,6 +73,7 @@ public class EditionAction implements IActionDelegate {
 	private String fBundleName;
 	private boolean fReplaceMode;
 	protected boolean fPrevious= false;
+	protected String fHelpContextId;
 	
 	EditionAction(boolean replaceMode, String bundleName) {
 		fReplaceMode= replaceMode;
@@ -130,6 +131,8 @@ public class EditionAction implements IActionDelegate {
 		d.setEditionTitleArgument(file.getName());
 		d.setEditionTitleImage(CompareUIPlugin.getImage(file));
 		//d.setHideIdenticalEntries(false);
+		if (fHelpContextId != null)
+			d.setHelpContextId(fHelpContextId);
 		
 		if (fReplaceMode) {
 			

@@ -12,6 +12,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -33,6 +34,7 @@ public abstract class ResizableDialog extends Dialog {
 	protected ResourceBundle fBundle;
 	private Rectangle fNewBounds;
 	private IDialogSettings fSettings;
+	private String fContextId;
 
 
 	public ResizableDialog(Shell parent, ResourceBundle bundle) {
@@ -42,6 +44,19 @@ public abstract class ResizableDialog extends Dialog {
 		fBundle= bundle;
 		
 		fSettings= CompareUIPlugin.getDefault().getDialogSettings();
+	}
+	
+	public void setHelpContextId(String contextId) {
+		fContextId= contextId;
+	}
+
+	/*
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		if (fContextId != null)
+			WorkbenchHelp.setHelp(newShell, fContextId);
 	}
 	
 	protected Point getInitialSize() {

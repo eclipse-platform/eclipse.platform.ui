@@ -10,7 +10,8 @@ package org.eclipse.compare.internal;
 public class ReplaceWithPreviousEditionAction extends EditionAction {
 		
 	public ReplaceWithPreviousEditionAction() {
-		super(true, "org.eclipse.compare.internal.ReplaceWithEditionAction"); //$NON-NLS-1$
+		super(true,
+			"org.eclipse.compare.internal.ReplaceWithEditionAction");	//$NON-NLS-1$
 		fPrevious= true;
 	}
 }

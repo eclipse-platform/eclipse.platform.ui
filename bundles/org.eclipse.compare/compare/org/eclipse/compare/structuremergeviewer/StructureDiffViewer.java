@@ -8,7 +8,6 @@ package org.eclipse.compare.structuremergeviewer;
 
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.*;
-
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.compare.*;

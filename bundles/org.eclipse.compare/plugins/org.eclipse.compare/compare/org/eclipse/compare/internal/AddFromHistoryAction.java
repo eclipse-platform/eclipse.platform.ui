@@ -66,8 +66,10 @@ public class AddFromHistoryAction implements IActionDelegate {
 					return;
 				}
 		
-				if (dialog == null)
+				if (dialog == null) {
 					dialog= new AddFromHistoryDialog(parentShell, bundle);
+					dialog.setHelpContextId(ICompareContextIds.ADD_FROM_HISTORY_DIALOG);
+				}
 					
 				if (dialog.select(container, states)) {		
 							

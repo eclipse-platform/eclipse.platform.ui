@@ -12,17 +12,20 @@ import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 
@@ -38,6 +41,7 @@ public class CompareDialog extends ResizableDialog implements IPropertyChangeLis
 		Assert.isNotNull(input);
 		fCompareEditorInput= input;
 		fCompareEditorInput.addPropertyChangeListener(this);
+		setHelpContextId(ICompareContextIds.COMPARE_DIALOG);
 	}
 	
 	public boolean close() {

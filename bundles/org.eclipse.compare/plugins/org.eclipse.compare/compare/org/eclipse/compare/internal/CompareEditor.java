@@ -15,6 +15,7 @@ import org.eclipse.jface.util.*;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.EditorPart;
 
 import org.eclipse.core.resources.IMarker;
@@ -76,8 +77,10 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 		parent.setData(this);
 		
 		IEditorInput input= getEditorInput();
-		if (input instanceof CompareEditorInput)
-			((CompareEditorInput) input).createContents(parent);
+		if (input instanceof CompareEditorInput) {
+			Control c= ((CompareEditorInput) input).createContents(parent);
+			WorkbenchHelp.setHelp(c, ICompareContextIds.COMPARE_EDITOR);
+		}
 	}
 	
 	/*

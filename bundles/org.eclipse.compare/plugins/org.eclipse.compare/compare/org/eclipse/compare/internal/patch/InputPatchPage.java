@@ -23,6 +23,7 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.model.*;
 
+import org.eclipse.compare.internal.ICompareContextIds;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -37,9 +38,6 @@ import org.eclipse.core.runtime.*;
 	private final static String PAGE_NAME= "PatchWizardPage1"; //$NON-NLS-1$
 	private final static String STORE_PATCH_FILES_ID= PAGE_NAME + ".PATCH_FILES";	//$NON-NLS-1$
 	private final static String STORE_USE_CLIPBOARD_ID= PAGE_NAME + ".USE_CLIPBOARD";	//$NON-NLS-1$
-
-	// help IDs
-	private final static String PATCH_HELP_CONTEXT_ID= "PatchWizardHelpId";	//$NON-NLS-1$
 	
 	private boolean fShowError= false;
 	
@@ -93,7 +91,7 @@ import org.eclipse.core.runtime.*;
 		updateWidgetEnablements();
 		//updatePageCompletion();
 		
-		WorkbenchHelp.setHelp(composite, PATCH_HELP_CONTEXT_ID);
+		WorkbenchHelp.setHelp(composite, ICompareContextIds.PATCH_INPUT_WIZARD_PAGE);
 	}
 	
 	/* (non-JavaDoc)

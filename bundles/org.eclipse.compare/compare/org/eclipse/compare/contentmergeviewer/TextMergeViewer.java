@@ -46,9 +46,11 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.ICompareContextIds;
 import org.eclipse.compare.internal.MergeSourceViewer;
 import org.eclipse.compare.internal.BufferedCanvas;
 import org.eclipse.compare.internal.Utilities;
@@ -883,6 +885,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 * Clients must not call or override this method.
 	 */
 	protected void createControls(Composite composite) {
+		
+		WorkbenchHelp.setHelp(composite, ICompareContextIds.TEXT_MERGE_VIEW);
 		
 		// 1st row
 		if (fMarginWidth > 0) {

@@ -18,6 +18,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
@@ -30,6 +31,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.DiffImage;
+import org.eclipse.compare.internal.ICompareContextIds;
 import org.eclipse.compare.internal.TimeoutContext;
 import org.eclipse.compare.structuremergeviewer.*;
 
@@ -161,6 +163,8 @@ import org.eclipse.compare.structuremergeviewer.*;
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
+		WorkbenchHelp.setHelp(composite, ICompareContextIds.PATCH_PREVIEW_WIZARD_PAGE);		
+
 		setControl(composite);
 		
 		buildPatchOptionsGroup(composite);
@@ -222,8 +226,6 @@ import org.eclipse.compare.structuremergeviewer.*;
 		
 		// creating tree's content
 		buildTree();
-
-		// WorkbenchHelp.setHelp(composite, new DialogPageContextComputer(this, PATCH_HELP_CONTEXT_ID));								
 	}
 	
 	/**

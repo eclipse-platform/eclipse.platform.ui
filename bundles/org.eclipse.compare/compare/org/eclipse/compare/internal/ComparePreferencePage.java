@@ -21,7 +21,6 @@ import org.eclipse.jface.util.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
@@ -195,6 +194,8 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	 */
 	protected Control createContents(Composite parent) {
 		
+		WorkbenchHelp.setHelp(parent, ICompareContextIds.COMPARE_PREFERENCE_PAGE);
+		
 		fOverlayStore.load();
 		fOverlayStore.start();
 		
@@ -213,8 +214,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		item.setControl(createTextComparePage(folder));
 		
 		initializeFields();
-		
-		WorkbenchHelp.setHelp(parent, IHelpContextIds.COMPARE_VIEWERS_PREFERENCE_PAGE);
 		
 		return folder;
 	}

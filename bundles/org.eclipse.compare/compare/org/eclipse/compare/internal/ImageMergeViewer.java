@@ -15,6 +15,7 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -38,6 +39,9 @@ public class ImageMergeViewer extends ContentMergeViewer {
 			
 	public ImageMergeViewer(Composite parent, int styles, CompareConfiguration mp) {
 		super(styles, ResourceBundle.getBundle(BUNDLE_NAME), mp);
+
+		WorkbenchHelp.setHelp(parent, ICompareContextIds.IMAGE_COMPARE_VIEW);
+
 		buildControl(parent);
 		String title= Utilities.getString(getResourceBundle(), "title"); //$NON-NLS-1$
 		getControl().setData(CompareUI.COMPARE_VIEWER_TITLE, title);

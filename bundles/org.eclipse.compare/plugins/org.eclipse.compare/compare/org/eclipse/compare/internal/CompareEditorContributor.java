@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 import org.eclipse.jface.action.*;
 
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.EditorActionBarContributor;
 
 import org.eclipse.compare.*;
@@ -30,11 +31,21 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 
 	public CompareEditorContributor() {
 		ResourceBundle bundle= CompareUIPlugin.getResourceBundle();
+		
 		fIgnoreWhitespace= new IgnoreWhiteSpaceAction(bundle, null);
+		WorkbenchHelp.setHelp(fIgnoreWhitespace, ICompareContextIds.IGNORE_WHITESPACE_ACTION);
+		
 		fNext= new NavigationAction(bundle, true);
+		WorkbenchHelp.setHelp(fNext, ICompareContextIds.GLOBAL_NEXT_DIFF_ACTION);
+		
 		fPrevious= new NavigationAction(bundle, false);
+		WorkbenchHelp.setHelp(fPrevious, ICompareContextIds.GLOBAL_PREVIOUS_DIFF_ACTION);
+		
 		fToolbarNext= new NavigationAction(bundle, true);
+		WorkbenchHelp.setHelp(fToolbarNext,ICompareContextIds.NEXT_DIFF_ACTION);
+		
 		fToolbarPrevious= new NavigationAction(bundle, false);
+		WorkbenchHelp.setHelp(fToolbarPrevious, ICompareContextIds.PREVIOUS_DIFF_ACTION);
 	}
 
 	/*

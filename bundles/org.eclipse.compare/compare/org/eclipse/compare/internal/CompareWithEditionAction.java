@@ -10,6 +10,7 @@ public class CompareWithEditionAction extends EditionAction {
 	
 	public CompareWithEditionAction() {
 		super(false, "org.eclipse.compare.internal.CompareWithEditionAction"); //$NON-NLS-1$
+		this.fHelpContextId= ICompareContextIds.COMPARE_WITH_EDITION_DIALOG;
 	}
 }
 
