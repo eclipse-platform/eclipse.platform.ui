@@ -30,6 +30,7 @@ public class DeleteRefactoring extends ProcessorBasedRefactoring {
 	 * @param processor the delete processor
 	 */
 	public DeleteRefactoring(DeleteProcessor processor) {
+		super(processor);
 		Assert.isNotNull(processor);
 		fProcessor= processor;
 	}

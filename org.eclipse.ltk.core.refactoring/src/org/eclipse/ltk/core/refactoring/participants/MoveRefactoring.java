@@ -31,6 +31,7 @@ public class MoveRefactoring extends ProcessorBasedRefactoring {
 	 * @param processor the move processor
 	 */
 	public MoveRefactoring(MoveProcessor processor) {
+		super(processor);
 		Assert.isNotNull(processor);
 		fProcessor= processor; 
 	}

@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.TextEditCopier;
@@ -262,6 +263,24 @@ public abstract class TextChange extends Change {
 	public TextEditChangeGroup[] getTextEditChangeGroups() {
 		return (TextEditChangeGroup[])fTextEditChangeGroups.toArray(new TextEditChangeGroup[fTextEditChangeGroups.size()]);
 	}
+	
+	/**
+	 * Adds the given edit to the edit tree. The edit is added as a top
+	 * level edit.
+	 * 
+	 * @param edit the text edit to add
+	 * 
+	 * @throws MalformedTreeException if the edit can't be added. Reason
+	 *  is that is overlaps with an already existing edit
+	 *  
+	 * @since 3.1
+	 */
+	public void addEdit(TextEdit edit) throws MalformedTreeException {
+		Assert.isTrue(fEdit != null, "root must exist to add an edit"); //$NON-NLS-1$
+		fEdit.addChild(edit);
+	}
+	
+	//---- Document management -----------------------------------------------
 	
 	/**
 	 * Acquires a reference to the document to be changed by this text

@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.PlatformObject;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
 
@@ -30,11 +31,14 @@ import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
  * <p>
  * The change created from a participant <em>MUST</em> not conflict with any changes
  * provided by other participants or the refactoring itself. To ensure this a participant
- * is only allowed to manipulate resources belonging to its domain. For example a rename type 
- * participant updating launch configuration is only allowed to update launch configurations.
- * It is not allowed to manipulate any Java resources or any other resources not belonging to
- * its domain. If a change conflicts with another change during execution then the participant
- * who created the change will be disabled for the rest of the eclipse session.
+ * is only allowed to manipulate resources belonging to its domain. As of 3.1 this got
+ * relaxed for textual resources. A participant can now change a textual resource already
+ * manipulated by the processor as long as both are manipulating different regions in the
+ * file (see {@link #createChange(IProgressMonitor)} and {@link #getTextChange(Object)}). 
+ * For example a rename type participant updating launch configuration is only allowed to 
+ * update launch configurations or shared textual resources. If a change conflicts with 
+ * another change during execution then the participant who created the change will be 
+ * disabled for the rest of the eclipse session.
  * </p>
  * <p>
  * A refactoring participant can not assume that all resources are saved before any 
@@ -154,6 +158,15 @@ public abstract class RefactoringParticipant extends PlatformObject {
 	 * be carried out and the participant will be disabled for the rest of the
 	 * eclipse session.
 	 * </p>
+	 * <p>
+	 * As of 3.1 a participant can manipulate text resource already manipulated by
+	 * the processor as long as the textual manipulations don't conflict (e.g.
+	 * the participant manipulates a different region of the text resource).
+	 * The method must not return those changes in its change tree since the change 
+	 * is already part of another change tree. If the participant only manipulates 
+	 * shared changes then it has to return an instance of {@link UsedSharedChange} 
+	 * instead. A shared text change can be access via the method {@link #getTextChange(Object)}. 
+	 * </p>
 	 * 
 	 * @param pm a progress monitor to report progress
 	 * 
@@ -165,6 +178,24 @@ public abstract class RefactoringParticipant extends PlatformObject {
 	 */
 	public abstract Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException;
 
+	/**
+	 * Returns the text change for the given element or <code>null</code>
+	 * if a text change doesn't exist. This method only returns a valid
+	 * result during change creation. Outside of change creation always
+	 * <code>null</code> is returned.
+	 * 
+	 * @param element the element to be modified for which a text change
+	 *  is requested
+	 *  
+	 * @return the text change or <code>null</code> if no text change exists
+	 *  for the element
+	 *  
+	 *  @since 3.1
+	 */
+	public TextChange getTextChange(Object element) {
+		return getProcessor().getRefactoring().getTextChange(element);
+	}
+	
 	//---- helper method ----------------------------------------------------
 	
 	/* package */ void setDescriptor(ParticipantDescriptor descriptor) {

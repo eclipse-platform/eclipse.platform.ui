@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.PlatformObject;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
  * An abstract base class defining the protocol between a refactoring and
@@ -52,6 +53,33 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  */
 public abstract class RefactoringProcessor extends PlatformObject {
 
+	private ProcessorBasedRefactoring fRefactoring;
+	
+	/**
+	 * Set the owning refactoring.
+	 * 
+	 * @param refactoring the refactoring
+	 *
+	 * @since 3.1
+	 */
+	/* package */ void setRefactoring(ProcessorBasedRefactoring refactoring) {
+		Assert.isTrue(fRefactoring == null, "The refactoring can only be set once"); //$NON-NLS-1$
+		Assert.isNotNull(refactoring);
+		fRefactoring= refactoring;
+	}
+	
+	/**
+	 * Returns the associated refactoring. Returns <code>null</code> if the 
+	 * processor isn't associated with a refactoring yet.
+	 * 
+	 * @return the associated refactoring
+	 *
+	 * @since 3.1
+	 */
+	public ProcessorBasedRefactoring getRefactoring() {
+		return fRefactoring;
+	}
+	
 	/**
 	 * Returns an array containing the elements to be refactored. The concrete
 	 * type of the elements depend on the concrete refactoring processor. For

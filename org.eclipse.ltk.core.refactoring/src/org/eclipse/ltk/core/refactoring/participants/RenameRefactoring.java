@@ -31,6 +31,7 @@ public class RenameRefactoring extends ProcessorBasedRefactoring {
 	 * @param processor the rename processor
 	 */
 	public RenameRefactoring(RenameProcessor processor) {
+		super(processor);
 		Assert.isNotNull(processor);
 		fProcessor= processor;
 	}

@@ -21,10 +21,14 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
+import org.eclipse.core.resources.IFile;
+
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.TextChange;
+import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
@@ -42,6 +46,8 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	
 	private RefactoringParticipant[] fParticipants;
 	private SharableParticipants fSharedParticipants= new SharableParticipants();
+	
+	private Map/*<Object, TextChange>*/ fTextChangeMap;
 	
 	private static final RefactoringParticipant[] EMPTY_PARTICIPANTS= new RefactoringParticipant[0];
 
@@ -65,8 +71,21 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	
 	/**
 	 * Creates a new processor based refactoring.
+	 * 
+	 * @deprecated use {@link #ProcessorBasedRefactoring(RefactoringProcessor)} instead
 	 */
 	protected ProcessorBasedRefactoring() {
+	}
+	
+	/**
+	 * Creates a new processor based refactoring.
+	 * 
+	 * @param processor the refactoring's main processor
+	 *
+	 * @since 3.1
+	 */
+	protected ProcessorBasedRefactoring(RefactoringProcessor processor) {
+		processor.setRefactoring(this);
 	}
 	
 	/**
@@ -175,15 +194,19 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		if (pm.isCanceled())
 			throw new OperationCanceledException();
 		
+		fTextChangeMap= new HashMap();
+		addToTextChangeMap(processorChange);
+		
 		List changes= new ArrayList();
 		Map participantMap= new HashMap();
 		for (int i= 0; i < fParticipants.length; i++) {
 			final RefactoringParticipant participant= fParticipants[i];
 			try {
 				Change change= participant.createChange(new SubProgressMonitor(pm, 1));
-				if (change != null) {
+				if (change != null && !(change instanceof UsedSharedChange)) {
 					changes.add(change);
 					participantMap.put(change, participant);
+					addToTextChangeMap(change);
 				}
 			} catch (CoreException e) {
 				disableParticipant(participant, e);
@@ -195,6 +218,9 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 			if (pm.isCanceled())
 				throw new OperationCanceledException();
 		}
+		
+		fTextChangeMap= null;
+		
 		Change postChange= getProcessor().postCreateChange(
 			(Change[])changes.toArray(new Change[changes.size()]), 
 			new SubProgressMonitor(pm, 1));
@@ -206,6 +232,26 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		if (postChange != null)
 			result.add(postChange);
 		return result;
+	}
+	
+	/**
+	 * Returns the text change for the given element or <code>null</code>
+	 * if a text change doesn't exist. This method only returns a valid
+	 * result during change creation. Outside of change creation always
+	 * <code>null</code> is returned.
+	 * 
+	 * @param element the element to be modified for which a text change
+	 *  is requested
+	 *  
+	 * @return the text change or <code>null</code> if no text change exists
+	 *  for the element
+	 *
+	 * @since 3.1
+	 */
+	public TextChange getTextChange(Object element) {
+		if (fTextChangeMap == null)
+			return null;
+		return (TextChange)fTextChangeMap.get(element);
 	}
 	
 	/**
@@ -252,5 +298,25 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		ParticipantDescriptor descriptor= participant.getDescriptor();
 		descriptor.disable();
 		RefactoringCorePlugin.logRemovedParticipant(descriptor, e);
+	}
+	
+	private void addToTextChangeMap(Change change) {
+		if (change instanceof TextChange) {
+			Object element= ((TextChange)change).getModifiedElement();
+			if (element != null) {
+				fTextChangeMap.put(element, change);
+			}
+			// check if we have a subclass of TextFileChange. If so also put the change
+			// under the file resource into the hash table if possible.
+			if (change instanceof TextFileChange && !change.getClass().equals(TextFileChange.class)) {
+				IFile file= ((TextFileChange)change).getFile();
+				fTextChangeMap.put(file, change);
+			}
+		} else if (change instanceof CompositeChange) {
+			Change[] children= ((CompositeChange)change).getChildren();
+			for (int i= 0; i < children.length; i++) {
+				addToTextChangeMap(children[i]);
+			}
+		}
 	}
 }

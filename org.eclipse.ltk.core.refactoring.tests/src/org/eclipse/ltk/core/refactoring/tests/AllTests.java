@@ -19,8 +19,8 @@ public class AllTests {
 	
 	public static Test suite() {
 		TestSuite suite= new TestSuite("All LTK Refactoring Core Tests"); //$NON-NLS-1$
-		suite.addTestSuite(EmptySuite.class);
 		suite.addTestSuite(FailingParticipantTests.class);
+		suite.addTestSuite(SharedTextChangeTest.class);
 		return suite;
 	}
 }
