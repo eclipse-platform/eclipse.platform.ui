@@ -87,7 +87,6 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 		if (CVSUIPlugin.getPlugin().getPluginPreferences().getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS)) {
 			setSyncInfoFilter(contentComparison);
 		}
-		CVSUIPlugin.getPlugin().getPluginPreferences().addPropertyChangeListener(this);
 		try {
 			ISynchronizeParticipantDescriptor descriptor = TeamUI.getSynchronizeManager().getParticipantDescriptor(CVSCompareSubscriber.ID);
 			setInitializationData(descriptor);
@@ -96,6 +95,7 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 		} catch (CoreException e) {
 			CVSUIPlugin.log(e);
 		}
+		CVSUIPlugin.getPlugin().getPluginPreferences().addPropertyChangeListener(this);
 	}
 	
 	/* (non-Javadoc)
