@@ -30,7 +30,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 public class GetAction extends FileSystemAction {
 
 	public void run(IAction action) {
-		run(new WorkspaceModifyOperation() {
+		run(new WorkspaceModifyOperation(null) {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
 					Map table = getRepositoryProviderMapping();

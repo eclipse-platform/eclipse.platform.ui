@@ -36,6 +36,7 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.ConfigurationWizardMainPage;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialogWithProjects;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -370,7 +371,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 				}
 			}
 			final boolean[] result = new boolean[] { false };
-			new ProgressMonitorDialog(getShell()).run(false, false, new WorkspaceModifyOperation() {
+			PlatformUI.getWorkbench().getProgressService().run(false, false, new WorkspaceModifyOperation(null) {
 				public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						// Create a new repository location with the new information

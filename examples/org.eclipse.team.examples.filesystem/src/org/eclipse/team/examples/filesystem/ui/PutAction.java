@@ -33,7 +33,7 @@ public class PutAction extends FileSystemAction {
 	 * Method declared on IActionDelegate.
 	 */
 	public void run(IAction action) {
-		run(new WorkspaceModifyOperation() {
+		run(new WorkspaceModifyOperation(null) {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
 					Map table = getRepositoryProviderMapping();

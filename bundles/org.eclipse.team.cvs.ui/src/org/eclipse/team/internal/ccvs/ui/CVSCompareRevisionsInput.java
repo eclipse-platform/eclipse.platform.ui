@@ -256,7 +256,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput implements ISav
 		getRevisionAction = new Action(Policy.bind("HistoryView.getRevisionAction"), null) { //$NON-NLS-1$
 			public void run() {
 				try {
-					new ProgressMonitorDialog(shell).run(false, true, new WorkspaceModifyOperation() {
+					new ProgressMonitorDialog(shell).run(false, true, new WorkspaceModifyOperation(null) {
 						protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
 							if (selection.size() != 1) return;

@@ -55,7 +55,7 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 		
 		final boolean[] result = new boolean[] {false};
 		try {
-			getContainer().run(true, true, new WorkspaceModifyOperation() {
+			getContainer().run(true, true, new WorkspaceModifyOperation(null) {
 				public void execute(IProgressMonitor monitor) throws InvocationTargetException {
 					InputStreamReader reader = null;
 					try {
