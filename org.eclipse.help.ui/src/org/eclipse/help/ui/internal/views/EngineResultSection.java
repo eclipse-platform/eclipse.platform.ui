@@ -15,32 +15,17 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.search.ISearchEngineResult;
-import org.eclipse.help.ui.internal.HelpUIPlugin;
-import org.eclipse.help.ui.internal.HelpUIResources;
-import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.forms.FormColors;
-import org.eclipse.ui.forms.events.ExpansionEvent;
+import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.events.IExpansionListener;
-import org.eclipse.ui.forms.widgets.FormText;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ImageHyperlink;
-import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
 import org.osgi.framework.Bundle;
 
@@ -93,6 +78,7 @@ public class EngineResultSection {
 				| Section.TWISTIE | Section.EXPANDED);
 		// section.marginHeight = 10;
 		container = toolkit.createComposite(section);
+		//container.setBackground(container.getDisplay().getSystemColor(SWT.COLOR_CYAN));
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.topMargin = 0;
 		layout.bottomMargin = 0;
@@ -137,7 +123,7 @@ public class EngineResultSection {
 				.getWorkbench().getSharedImages().getImage(
 						ISharedImages.IMG_TOOL_BACK));
 		searchResults.setImage(desc.getId(), desc.getIconImage());
-		searchResults.addHyperlinkListener(new HyperlinkAdapter() {
+		searchResults.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
 				if ("nw:".equals(href)) { //$NON-NLS-1$
@@ -146,6 +132,14 @@ public class EngineResultSection {
 					showProgressView();
 				} else
 					part.doOpenLink(e.getHref());
+			}
+
+			public void linkEntered(HyperlinkEvent e) {
+				part.parent.handleLinkEntered(e);
+			}
+
+			public void linkExited(HyperlinkEvent e) {
+				part.parent.handleLinkExited(e);
 			}
 		});
 		initializeText();
@@ -223,9 +217,6 @@ public class EngineResultSection {
 
 	void updateResults(boolean reflow) {
 		updateSectionTitle();
-		/*
-		 * if (!section.isExpanded()) { needsUpdating=true; return; }
-		 */
 		ISearchEngineResult[] results = (ISearchEngineResult[]) hits
 				.toArray(new ISearchEngineResult[hits.size()]);
 		if (part.getShowCategories())
@@ -361,6 +352,8 @@ public class EngineResultSection {
 			if (prevLink != null) {
 				prevLink.getParent().setMenu(null);
 				prevLink.getParent().dispose();
+				prevLink = null;
+				nextLink = null;
 			}
 		}
 	}

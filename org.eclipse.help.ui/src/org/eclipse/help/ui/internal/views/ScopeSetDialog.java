@@ -246,7 +246,7 @@ public class ScopeSetDialog extends ListDialog {
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
 		if (set!=null) {
 			PreferenceManager manager = new ScopePreferenceManager(engineDescriptors, set);
-			PreferenceDialog dialog = new PreferenceDialog(getShell(), manager);
+			PreferenceDialog dialog = new ScopePreferenceDialog(getShell(), manager);
 			dialog.setPreferenceStore(set.getPreferenceStore());
 			dialog.open();
 		}
@@ -266,7 +266,7 @@ public class ScopeSetDialog extends ListDialog {
 	private void scheduleOperation(PendingOperation op) {
 		if (operations==null)
 			operations = new ArrayList();
-		operations.add(op);		
+		operations.add(op);
 	}
 	
 	private void updateButtons() {

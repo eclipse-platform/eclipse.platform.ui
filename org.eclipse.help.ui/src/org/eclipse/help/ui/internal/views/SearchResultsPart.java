@@ -34,7 +34,7 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
-	private ReusableHelpPart parent;
+	ReusableHelpPart parent;
 
 	private Composite separator;
 

@@ -11,6 +11,7 @@
 
 package org.eclipse.help.ui.internal.search;
 
+import java.util.*;
 import java.util.ArrayList;
 
 import org.eclipse.help.internal.base.*;
@@ -42,8 +43,8 @@ public class LocalHelpPage extends RootScopePage {
     /* (non-Javadoc)
      * @see org.eclipse.help.ui.ISearchScopePage#init(java.lang.String, java.lang.String)
      */
-    public void init(String engineId, String scopeSetName) {
-        super.init(engineId, scopeSetName);
+    public void init(String engineId, String scopeSetName, Dictionary parameters) {
+        super.init(engineId, scopeSetName, parameters);
         if (scopeSetName != null)
             workingSet = BaseHelpSystem.getWorkingSetManager().getWorkingSet(scopeSetName);
     }
@@ -151,7 +152,7 @@ public class LocalHelpPage extends RootScopePage {
 
     private void initializeCheckedState() {
     	IPreferenceStore store = getPreferenceStore();
-    	capabilityFiltering.setSelection(store.getBoolean(LocalSearchScopeFactory.CAPABILITY_FILTERING));
+    	capabilityFiltering.setSelection(store.getBoolean(getEngineId()+"."+LocalSearchScopeFactory.P_CAPABILITY_FILTERING));
         if (workingSet == null)
             return;
 
@@ -267,8 +268,8 @@ public class LocalHelpPage extends RootScopePage {
         else 
             BaseHelpSystem.getWorkingSetManager().removeWorkingSet(getWorkingSet());
         
-        getPreferenceStore().setValue(LocalSearchScopeFactory.WORKING_SET, getScopeSetName());
-        getPreferenceStore().setValue(LocalSearchScopeFactory.CAPABILITY_FILTERING, 
+        getPreferenceStore().setValue(getEngineId()+"."+LocalSearchScopeFactory.P_WORKING_SET, getScopeSetName());
+        getPreferenceStore().setValue(getEngineId()+"."+LocalSearchScopeFactory.P_CAPABILITY_FILTERING, 
         		capabilityFiltering.getSelection());
         return super.performOk();
     }

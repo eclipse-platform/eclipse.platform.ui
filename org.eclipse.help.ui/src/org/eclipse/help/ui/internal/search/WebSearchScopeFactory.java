@@ -10,24 +10,31 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.search;
 
+import java.util.Dictionary;
+
 import org.eclipse.help.search.ISearchScope;
 import org.eclipse.help.ui.ISearchScopeFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
- * Factory for creating scope objects for the google engine
+ * Factory for creating scope objects for the generic web search engine
  */
-public class GoogleScopeFactory implements ISearchScopeFactory {
-    private final static String ENGINE_ID = "org.eclipse.help.ui.google";
+public class WebSearchScopeFactory implements ISearchScopeFactory {
+	public final static String P_URL = "url";
     
     /* (non-Javadoc)
      * @see org.eclipse.help.ui.ISearchScopeFactory#createSearchScope(org.eclipse.jface.preference.IPreferenceStore)
      */
-    public ISearchScope createSearchScope(IPreferenceStore store) {
-        String type = store.getString(ENGINE_ID);
-        if (type == null || !type.equals(Google.NEWS))
-            type = Google.WEB;
-        return new Google.Scope(type);
+    public ISearchScope createSearchScope(IPreferenceStore store, String engineId, Dictionary parameters) {
+        String urlTemplate = getProperty(store, engineId, parameters);
+        return new WebSearch.Scope(urlTemplate);
     }
-
+    
+    private String getProperty(IPreferenceStore store, String engineId, Dictionary parameters) {
+    	// try the store first
+    	String value = store.getString(engineId+"."+P_URL);
+    	if (value!=null && value.length()>0) return value;
+    	// try the parameters
+    	return (String)parameters.get(P_URL);
+    }
 }

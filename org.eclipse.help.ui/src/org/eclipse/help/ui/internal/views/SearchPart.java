@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
+import java.util.*;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
@@ -290,19 +291,41 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		engineDescriptors = new ArrayList();
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(ENGINE_EXP_ID);
+		Hashtable engineTypes = loadEngineTypes(elements);		
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equals("engine")) { //$NON-NLS-1$
-				EngineDescriptor desc = loadEngine(element, container, toolkit);
-				engineDescriptors.add(desc);
+				EngineDescriptor desc = new EngineDescriptor(element);
+				String engineId = desc.getEngineId();
+				if (engineId!=null) {
+					EngineTypeDescriptor etdesc = (EngineTypeDescriptor)engineTypes.get(engineId);
+					if (etdesc!=null) {
+						desc.setEngineType(etdesc);
+						loadEngine(desc, container, toolkit);
+						engineDescriptors.add(desc);
+					}
+				}
 			}
 		}
 		updateMasters(scopeSetManager.getActiveSet());
 	}
+	
+	private Hashtable loadEngineTypes(IConfigurationElement [] elements) {
+		Hashtable result = new Hashtable();
+		for (int i=0; i<elements.length; i++) {
+			IConfigurationElement element = elements[i];
+			if (element.getName().equals("engineType")) { //$NON-NLS-1$
+				EngineTypeDescriptor etdesc = new EngineTypeDescriptor(element);
+				String id = etdesc.getId();
+				if (id!=null)
+					result.put(etdesc.getId(), etdesc);
+			}
+		}
+		return result;
+	}
 
-	private EngineDescriptor loadEngine(IConfigurationElement element,
+	private EngineDescriptor loadEngine(final EngineDescriptor edesc,
 			Composite container, FormToolkit toolkit) {
-		final EngineDescriptor edesc = new EngineDescriptor(element);
 		Label ilabel = toolkit.createLabel(container, null);
 		ilabel.setImage(edesc.getIconImage());
 		final Button master = toolkit.createButton(container, edesc.getLabel(),
@@ -375,7 +398,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		ScopeSet set = scopeSetManager.getActiveSet();
 		PreferenceManager manager = new ScopePreferenceManager(
 				engineDescriptors, set);
-		PreferenceDialog dialog = new PreferenceDialog(container.getShell(),
+		PreferenceDialog dialog = new ScopePreferenceDialog(container.getShell(),
 				manager);
 		dialog.setPreferenceStore(set.getPreferenceStore());
 		dialog.open();

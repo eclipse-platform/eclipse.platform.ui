@@ -90,9 +90,8 @@
    </extension>
    <extension
          point="org.eclipse.help.ui.searchEngine">
-      <engine
+      <engineType
             scopeFactory="org.eclipse.help.ui.internal.search.LocalSearchScopeFactory"
-            enabled="true"
             label="%LocalHelp.label"
             class="org.eclipse.help.internal.search.federated.LocalHelp"
             icon="icons/etool16/search_menu.gif"
@@ -101,31 +100,46 @@
          <description>
             %LocalHelp.desc
          </description>
-      </engine>
-      <engine
-            scopeFactory="org.eclipse.help.ui.internal.search.GoogleScopeFactory"
-            enabled="true"
-            label="%Google.label"
-            class="org.eclipse.help.ui.internal.search.Google"
+      </engineType>
+      <engineType
+            scopeFactory="org.eclipse.help.ui.internal.search.WebSearchScopeFactory"
+            label="%WebSearch.label"
+            class="org.eclipse.help.ui.internal.search.WebSearch"
             icon="icons/etool16/external_browser.gif"
-            id="org.eclipse.help.ui.google"
-            pageClass="org.eclipse.help.ui.internal.search.GooglePage">
+            id="org.eclipse.help.ui.web"
+            pageClass="org.eclipse.help.ui.internal.search.WebSearchPage">
          <description>
-            %Google.desc
+            %WebSearch.desc
          </description>
-         
+      </engineType>
+      <engine
+            id="org.eclipse.help.ui.localSearch"
+            engineTypeId="org.eclipse.help.ui.localSearch"
+            enabled="true">
       </engine>
       <engine
-            scopeFactory="org.eclipse.help.ui.internal.search.EclipseOrgScopeFactory"
-            enabled="true"
-            label="%Eclipse.label"
-            class="org.eclipse.help.ui.internal.search.EclipseOrg"
-            icon="icons/etool16/eclipse.gif"
-            id="org.eclipse.help.ui.eclipseorg"
-            pageClass="org.eclipse.help.ui.internal.search.EclipseOrgPage">
-         <description>
-            %Eclipse.desc
-         </description>
+            id="org.eclipse.help.ui.web.Google"
+      		engineTypeId="org.eclipse.help.ui.web"
+      		label="%Google.label">
+      		<description>
+	      		%Google.desc
+      		</description>
+      		<param 
+      			name="url" 
+      			value="http://www.google.ca/search?hl=en&amp;q={expression}&amp;btnG=Google+Search&amp;meta=">
+      		</param>
       </engine>
-   </extension>
+      <engine
+            id="org.eclipse.help.ui.web.Eclipse"
+      		engineTypeId="org.eclipse.help.ui.web"
+      		label="%Eclipse.label">
+      		<description>
+	      		%Eclipse.desc
+      		</description>
+      		<param 
+      			name="url" 
+      			value="http://eclipse.org/search/search.cgi?q={expression}&amp;ul=&amp;ps=20&amp;m=all">
+      		</param>
+      </engine>
+    </extension>
 </plugin>

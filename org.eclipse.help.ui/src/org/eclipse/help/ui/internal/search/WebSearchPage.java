@@ -1,0 +1,107 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.help.ui.internal.search;
+
+import org.eclipse.help.ui.RootScopePage;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+
+/**
+ * Web serch participant in the federated search.
+ */
+public class WebSearchPage extends RootScopePage {
+	private Text urlText;
+
+	/**
+	 * Default constructor.
+	 */
+	public WebSearchPage() {
+	}
+
+	protected Control createScopeContents(Composite parent) {
+		Font font = parent.getFont();
+		initializeDialogUnits(parent);
+
+		Composite composite = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+
+		Label label = new Label(composite, SWT.NULL);
+		label.setText("&URL template:");
+		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		label.setLayoutData(gd);
+		urlText = new Text(composite, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL
+				| SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = 64;
+		gd.widthHint = 200;
+		urlText.setLayoutData(gd);
+		urlText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				validate();
+			}
+		});
+		updateControls();
+		return composite;
+	}
+
+	protected void initializeDefaults(IPreferenceStore store) {
+		super.initializeDefaults(store);
+		String template = (String) getParameters().get(
+				WebSearchScopeFactory.P_URL);
+		if (template != null)
+			store
+					.setDefault(getStoreKey(WebSearchScopeFactory.P_URL),
+							template);
+	}
+
+	protected void performDefaults() {
+		getPreferenceStore().setToDefault(
+				getStoreKey(WebSearchScopeFactory.P_URL));
+		updateControls();
+		super.performDefaults();
+	}
+
+	private void updateControls() {
+		String template = getPreferenceStore().getString(
+				getStoreKey(WebSearchScopeFactory.P_URL));
+		urlText.setText(template != null ? template : "");
+		validate();
+	}
+
+	private void validate() {
+		String text = urlText.getText();
+		setValid(text.length() > 0);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
+	 */
+	public boolean performOk() {
+		String urlTemplate = urlText.getText();
+		getPreferenceStore().setValue(getStoreKey(WebSearchScopeFactory.P_URL),
+				urlTemplate);
+		return super.performOk();
+	}
+
+	private String getStoreKey(String key) {
+		return getEngineId() + "." + key;
+	}
+}

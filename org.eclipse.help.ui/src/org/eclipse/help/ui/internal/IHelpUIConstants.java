@@ -60,8 +60,12 @@ public interface IHelpUIConstants {
 	static final String ATT_ICON = "icon";//$NON-NLS-1$
 	static final String ATT_CLASS = "class";//$NON-NLS-1$
 	static final String ATT_ENABLED = "enabled";
+	static final String ATT_REMOVABLE = "removable"; //$NON-NLS-1$	
 	static final String ATT_PAGE_CLASS = "pageClass";//$NON-NLS-1$
 	static final String ATT_CATEGORY = "category";//$NON-NLS-1$
 	static final String EL_DESC = "description"; //$NON-NLS-1$
-	static final String ATT_SCOPE_FACTORY = "scopeFactory";
+	static final String ATT_SCOPE_FACTORY = "scopeFactory";//$NON-NLS-1$
+	static final String ATT_ENGINE_TYPE_ID = "engineTypeId";
+	static final String ATT_NAME = "name";//$NON-NLS-1$
+	static final String ATT_VALUE = "value";//$NON-NLS-1$
 }

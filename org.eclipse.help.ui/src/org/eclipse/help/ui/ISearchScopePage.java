@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.ui;
 
+import java.util.Dictionary;
+
 import org.eclipse.jface.preference.IPreferencePage;
 
 /**
@@ -25,6 +27,9 @@ public interface ISearchScopePage extends IPreferencePage {
  * that owns this scope page
  * @param scopeSetName the name of the current scope set
  * that is used to group data shown in this page
+ * @param parameters optional parameters passed to the
+ * concrete instance of the search engine type in order
+ * to configure it
  */
-	void init(String engineId, String scopeSetName);
+	void init(String engineId, String scopeSetName, Dictionary parameters);
 }

@@ -13,12 +13,15 @@ Search engines can simply compose a URL and fire only one hit containing that UR
 &lt;p&gt;Regardless of the search mechanism, engines can provide various search scope settings using JFace preference pages. These pages are shown when &apos;Advanced Settings&apos; link is followed from the Help view. In addition to root preference pages defined with the engine, additional preference sub-pages can be plugged in for more advanced settings.
 &lt;p&gt;Scope settings are loaded and stored using &lt;code&gt;IPreferenceStore&lt;/code&gt; objects. Scope settings for all engines are grouped together under a named &lt;b&gt;scope set&lt;/b&gt;. When first opened, default scope set (Default) is created, but users can define more scope sets and flip between them.
 &lt;p&gt;Since federated search support is part of &lt;code&gt;org.eclipse.help.base&lt;/code&gt;, a factory is needed to create search scope objects from the data in the preference store. Clients that plug in scope preference pages are required to plug in a scope factory as well.
+&lt;p&gt;Engines defined in this extension point do not show up in the UI by default. What is shown there is a concrete &lt;b&gt;instance&lt;/b&gt;
+of a search engine that can be individually modified. Products can preconfigure the system with a number of instances of the registered engine types, possibly parametrized to perform in a desired way. In addition, users can add their own instances of the registered engines and configure them to their liking.
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
+            <element ref="engineType" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="engine" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -48,11 +51,14 @@ Search engines can simply compose a URL and fire only one hit containing that UR
       </complexType>
    </element>
 
-   <element name="engine">
+   <element name="engineType">
       <annotation>
          <appInfo>
             <meta.element labelAttribute="label" icon="icon"/>
          </appInfo>
+         <documentation>
+            defines a particular type of a search engine. Search engine type can be used to create concrete engine instances either by the user or pre-loaded by the product. In order to be useful, engine types must be configurable so that a number of engines can be created using a single engine type.
+         </documentation>
       </annotation>
       <complexType>
          <sequence>
@@ -62,14 +68,14 @@ Search engines can simply compose a URL and fire only one hit containing that UR
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique name of the search engine
+                  a unique name of the search engine type
                </documentation>
             </annotation>
          </attribute>
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
-                  a translatable name of the search engine
+                  a translatable name of the search engine type
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -79,7 +85,7 @@ Search engines can simply compose a URL and fire only one hit containing that UR
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  a 16x16 image that will be used to visually represent this engine
+                  a 16x16 image that will be used to visually represent this engine type
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -104,13 +110,6 @@ Search engines can simply compose a URL and fire only one hit containing that UR
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.help.ui.RootScopePage"/>
                </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="enabled" type="boolean">
-            <annotation>
-               <documentation>
-                  if &lt;code&gt;true&lt;/code&gt;, the engine will initially be enabled. Users can override this value in the UI.
-               </documentation>
             </annotation>
          </attribute>
          <attribute name="scopeFactory" type="string">
@@ -150,14 +149,14 @@ Search engines can simply compose a URL and fire only one hit containing that UR
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a unique identifier of this page
                </documentation>
             </annotation>
          </attribute>
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a translatable name of this page
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -184,24 +183,83 @@ Search engines can simply compose a URL and fire only one hit containing that UR
       </complexType>
    </element>
 
-   <element name="engineProductBinding">
+   <element name="engine">
       <annotation>
          <documentation>
-            Specifies a binding between a product and a search engine. These bindings determine which engine is appropriate for the current product (as defined by org.eclipse.core.runtime.Platform.getProduct()).
+            Specifies a concrete instance of a particular search engine type. Instance must be bound to the product in order to show up when that product is active. Engine can have its own label and description. If not specified, the one on the engine type will be used. Finally, each engine type defines a valid set of parameters that can be passed to it to configure it. Engines can specify values of these parameters.
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="productId" type="string" use="required">
+         <sequence>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+            <element ref="param" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="productId" type="string">
             <annotation>
                <documentation>
-                  the identifier of the product
+                  used to determine which engine is appropriate for the current product (as defined by &lt;code&gt;org.eclipse.core.runtime.Platform.getProduct()&lt;/code&gt;). If not specified, the engine will appear for all the products.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="engineId" type="string" use="required">
+         <attribute name="engineTypeId" type="string" use="required">
             <annotation>
                <documentation>
-                  the engine identifier
+                  the unique identifier of a valid seach engine type
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="enabled" type="boolean">
+            <annotation>
+               <documentation>
+                  if &lt;code&gt;true&lt;/code&gt;, the engine will initially be enabled. Users can override this value in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  an optional label for this engine. If not specified, the name of the engine type will be used
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique identifier of this engine
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="removable" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  if &lt;code&gt;true&lt;/code&gt;, users will be allowed to remove this engine from the search scope preferences. Otherwise, they will be able to disable it but not to remove it. By default, engine contributed via the extension point are not removable, while engines created by the user in the UI are.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="param">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of the parameter
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the value of the parameter
                </documentation>
             </annotation>
          </attribute>

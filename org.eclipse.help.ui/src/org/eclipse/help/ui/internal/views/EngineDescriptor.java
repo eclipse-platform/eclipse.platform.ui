@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import org.eclipse.core.runtime.*;
+import java.util.*;
+
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.help.search.*;
-import org.eclipse.help.ui.*;
-import org.eclipse.help.ui.internal.*;
+import org.eclipse.help.ui.RootScopePage;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
@@ -22,115 +24,106 @@ import org.eclipse.swt.graphics.Image;
  * Descriptor for a federated search engine participant.
  */
 public class EngineDescriptor {
-	private IConfigurationElement config;
-	private Image image;
+	public static final String P_MASTER = "__enabled__";
 	private ISearchEngine engine;
-	private ISearchScopeFactory factory;
+	private IConfigurationElement config;
+	private EngineTypeDescriptor etdesc;
+	private Hashtable parameters;
 	/**
 	 * 
 	 */
 	public EngineDescriptor(IConfigurationElement config) {
 		this.config = config;
 	}
+	public void setEngineType(EngineTypeDescriptor etdesc) {
+		this.etdesc = etdesc;
+	}
 	public IConfigurationElement getConfig() {
 		return config;
 	}
-	public IConfigurationElement [] getPages() {
-		return config.getChildren("subpage"); //$NON-NLS-1$
-	}
 	
 	public String getLabel() {
-		return config.getAttribute(IHelpUIConstants.ATT_LABEL);		
+		String label = config.getAttribute(IHelpUIConstants.ATT_LABEL);
+		if (label==null)
+			label = etdesc.getLabel();
+		return label;
 	}
 	public String getId() {
 		return config.getAttribute(IHelpUIConstants.ATT_ID);
 	}
+	
+	public String getEngineId() {
+		return config.getAttribute(IHelpUIConstants.ATT_ENGINE_TYPE_ID);
+	}
+
 	public boolean isEnabled() {
 		String enabled = config.getAttribute(IHelpUIConstants.ATT_ENABLED);
 		if (enabled!=null)
 			return enabled.equals("true"); //$NON-NLS-1$
 		return false;
 	}
-	public Image getIconImage() {
-		if (image!=null)
-			return image;
-		String icon = config.getAttribute(IHelpUIConstants.ATT_ICON);
-		if (icon!=null) {
-			String bundleId = config.getNamespace();
-			HelpUIResources.getImageDescriptor(bundleId, icon);
-			return HelpUIResources.getImage(icon);
-		}
-		else
-			image = HelpUIResources.getImage(IHelpUIConstants.IMAGE_HELP_SEARCH);
-		return image;
+	public boolean isRemovable() {
+		String removable = config.getAttribute(IHelpUIConstants.ATT_REMOVABLE);
+		if (removable!=null)
+			return removable.equals("true"); //$NON-NLS-1$
+		return false;
+		
 	}
+	
+	public Image getIconImage() {
+		return etdesc.getIconImage();
+	}
+	
 	public String getDescription() {
 		String desc = null;
 		IConfigurationElement [] children = config.getChildren(IHelpUIConstants.EL_DESC);
-		if (children.length==1) 
+		if (children.length==1)
 			desc = children[0].getValue();
+		if (desc==null)
+			return etdesc.getDescription();
 		return desc;
+	}	
+	
+	public IConfigurationElement [] getPages() {
+		return etdesc.getPages();
 	}
+	
 	public ImageDescriptor getImageDescriptor() {
-		ImageDescriptor desc=null;
-		String icon = config.getAttribute(IHelpUIConstants.ATT_ICON);
-		if (icon!=null)
-			desc = HelpUIResources.getImageDescriptor(icon);
-		else
-			desc = HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_HELP_SEARCH);
-		return desc;
+		return etdesc.getImageDescriptor();
 	}
+	
 	public RootScopePage createRootPage(String scopeSetName) {
-		try {
-			Object obj = config.createExecutableExtension(IHelpUIConstants.ATT_PAGE_CLASS);
-			if (obj instanceof RootScopePage) {
-				RootScopePage page = (RootScopePage)obj;
-				page.init(getId(), scopeSetName);
-				return page;
-			}
-			else
-				return null;
+		RootScopePage page = etdesc.createRootPage(scopeSetName);
+		if (page!=null) {
+			Dictionary parameters = getParameters();
+			page.init(getId(), scopeSetName, parameters);
 		}
-		catch (CoreException e) {
-			return null;
-		}
+		return page;
 	}
+
+	public Dictionary getParameters() {
+		if (parameters!=null) return parameters;
+		parameters = new Hashtable();
+		parameters.put(P_MASTER, isEnabled()?Boolean.TRUE:Boolean.FALSE);
+		IConfigurationElement[] params = config.getChildren("param");
+		for (int i=0; i<params.length; i++) {
+			IConfigurationElement param = params[i];
+			String name = param.getAttribute(IHelpUIConstants.ATT_NAME);
+			String value = param.getAttribute(IHelpUIConstants.ATT_VALUE);
+			if (name!=null && value!=null)
+				parameters.put(name, value);
+		}
+		return parameters;
+	}
+	
 	public ISearchEngine getEngine() {
 		if (engine==null) {
-			String eclass = config.getAttribute(IHelpUIConstants.ATT_CLASS);
-			if (eclass!=null) {
-				try {
-					Object obj = config.createExecutableExtension(IHelpUIConstants.ATT_CLASS);
-					if (obj instanceof ISearchEngine) {
-						engine = (ISearchEngine)obj;
-					}
-				}
-				catch (CoreException e) {
-					HelpUIPlugin.logWarning("Engine " + eclass + " cannot be instantiated"); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			}
+			engine = etdesc.createEngine();
 		}
 		return engine;
 	}
 	
 	public ISearchScope createSearchScope(IPreferenceStore store) {
-		if (factory==null) {
-			String fclass = config.getAttribute(IHelpUIConstants.ATT_SCOPE_FACTORY);
-			if (fclass!=null) {
-				try {
-					Object obj = config.createExecutableExtension(IHelpUIConstants.ATT_SCOPE_FACTORY);
-					if (obj instanceof ISearchScopeFactory) {
-						factory = (ISearchScopeFactory)obj;
-					}
-				}
-				catch (CoreException e) {
-                    HelpUIPlugin.logWarning("Scope factory " + fclass + " cannot be instantiated"); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			}
-		}
-		if (factory!=null)
-			return factory.createSearchScope(store);
-		else
-			return null;
+		return etdesc.createSearchScope(store, getId(), getParameters());
 	}
 }

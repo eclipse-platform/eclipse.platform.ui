@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.ui;
 
+import java.util.Dictionary;
+
 import org.eclipse.help.search.ISearchScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -26,11 +28,24 @@ import org.eclipse.jface.preference.IPreferenceStore;
 public interface ISearchScopeFactory {
 	/**
 	 * Returns a new search scope object created from the data in the preference
-	 * store.
+	 * store. Factories should be prepared to compute default values if they are
+	 * missing from the preference store. This can happen before users open
+	 * scope preference pages for the first time.
+	 * <p>
+	 * In cases where conflicting values can be found in the preference store
+	 * and parameters, preference store should win i.e. parameters should be
+	 * treated as default values only.
 	 * 
 	 * @param store
 	 *            the preference store that holds the scope data
+	 * @param parameters
+	 *            configuration parameters provided in the engine extension
+	 *            point. They should be used as default values but preference
+	 *            store values should be given precedance.
+	 * @param engineId
+	 *            identifier of the engine instance that needs the scope object.
 	 * @return the new search scope object
 	 */
-	ISearchScope createSearchScope(IPreferenceStore store);
+	ISearchScope createSearchScope(IPreferenceStore store, String engineId,
+			Dictionary parameters);
 }

@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.help.ui;
 
+import java.util.Dictionary;
+
+import org.eclipse.help.ui.internal.views.*;
 import org.eclipse.help.ui.internal.views.ScopeSet;
+import org.eclipse.jface.preference.*;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -33,6 +37,8 @@ public abstract class RootScopePage extends PreferencePage implements
 
 	private String scopeSetName;
 
+	private Dictionary parameters;
+
 	private Button masterButton;
 
 	private Control scopeContents;
@@ -49,9 +55,10 @@ public abstract class RootScopePage extends PreferencePage implements
 	 * @param engineId
 	 * @param scopeSetName
 	 */
-	public void init(String engineId, String scopeSetName) {
+	public void init(String engineId, String scopeSetName, Dictionary parameters) {
 		this.engineId = engineId;
 		this.scopeSetName = scopeSetName;
+		this.parameters = parameters;
 	}
 
 	/**
@@ -64,6 +71,7 @@ public abstract class RootScopePage extends PreferencePage implements
 	 * @return the page client control
 	 */
 	protected final Control createContents(Composite parent) {
+		initializeDefaults(getPreferenceStore());
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
@@ -80,7 +88,7 @@ public abstract class RootScopePage extends PreferencePage implements
 		scopeContents = createScopeContents(container);
 		if (scopeContents != null)
 			scopeContents.setLayoutData(new GridData(GridData.FILL_BOTH));
-		masterValueChanged(masterValue);
+		updateControls();
 		return container;
 	}
 
@@ -118,6 +126,15 @@ public abstract class RootScopePage extends PreferencePage implements
 	}
 
 	/**
+	 * Returns the parameters of the engine associated with this page.
+	 * 
+	 * @return the engine parameters
+	 */
+	protected Dictionary getParameters() {
+		return parameters;
+	}
+
+	/**
 	 * Tests whether the search engine has been selected to participate in the
 	 * search.
 	 * 
@@ -141,6 +158,39 @@ public abstract class RootScopePage extends PreferencePage implements
 		getPreferenceStore().setValue(ScopeSet.getMasterKey(engineId),
 				masterButton.getSelection());
 		return true;
+	}
+
+	/**
+	 * Sets the value of the master switch to the initial value from the
+	 * extension. Subclasses may override but must call 'super'.
+	 * 
+	 */
+	protected void performDefaults() {
+		getPreferenceStore().setToDefault(ScopeSet.getMasterKey(engineId));
+		updateControls();
+		super.performDefaults();
+	}
+	
+	private void updateControls() {
+		boolean value = getPreferenceStore().getBoolean(ScopeSet.getMasterKey(engineId));
+		boolean cvalue = masterButton.getSelection();
+		if (value!=cvalue) {
+			masterButton.setSelection(value);
+			masterValueChanged(value);
+		}
+	}
+
+	/**
+	 * Initializes default values of the store to be
+	 * used when the user presses 'Defaults' button. Subclasses
+	 * may override but must call 'super'.
+	 * 
+	 * @param store the preference store
+	 */
+	
+	protected void initializeDefaults(IPreferenceStore store) {
+		Boolean value = (Boolean)getParameters().get(EngineDescriptor.P_MASTER);
+		store.setDefault(ScopeSet.getMasterKey(engineId), value.booleanValue());
 	}
 
 	/**

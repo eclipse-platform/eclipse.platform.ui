@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.search;
 
+import java.util.Dictionary;
+
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.federated.LocalHelpScope;
 import org.eclipse.help.internal.workingset.WorkingSet;
@@ -21,19 +23,18 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * Creates the scope for local search using the help working sets
  */
 public class LocalSearchScopeFactory implements ISearchScopeFactory {
-    public final static String ENGINE_ID = "org.eclipse.help.ui.localSearch";
-    public final static String WORKING_SET = ENGINE_ID + ".workingSet";
-    public final static String CAPABILITY_FILTERING = ENGINE_ID + ".capabilityFiltering"; 
+    public final static String P_WORKING_SET = "workingSet";
+    public final static String P_CAPABILITY_FILTERING = "capabilityFiltering"; 
     
     /* (non-Javadoc)
      * @see org.eclipse.help.ui.ISearchScopeFactory#createSearchScope(org.eclipse.jface.preference.IPreferenceStore)
      */
-    public ISearchScope createSearchScope(IPreferenceStore store) {
-        String name = store.getString(WORKING_SET);
+    public ISearchScope createSearchScope(IPreferenceStore store, String engineId, Dictionary parameters) {
+        String name = store.getString(engineId+"."+P_WORKING_SET);
         WorkingSet workingSet = null;
         if (name != null)
             workingSet = BaseHelpSystem.getWorkingSetManager().getWorkingSet(name);
-        boolean capabilityFiltering = store.getBoolean(CAPABILITY_FILTERING);
+        boolean capabilityFiltering = store.getBoolean(engineId+"."+P_CAPABILITY_FILTERING);
         return new LocalHelpScope(workingSet, !capabilityFiltering);
     }
 }

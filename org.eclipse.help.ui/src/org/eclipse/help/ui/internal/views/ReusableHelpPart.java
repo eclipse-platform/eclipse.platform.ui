@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.*;
 
 public class ReusableHelpPart implements IHelpUIConstants {
@@ -891,5 +892,19 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	}
 	public void setNumberOfInPlaceHits(int numberOfInPlaceHits) {
 		this.numberOfInPlaceHits = numberOfInPlaceHits;
+	}
+	void handleLinkEntered(HyperlinkEvent e) {
+		IStatusLineManager mng = getStatusLineManager();
+		if (mng!=null) {
+			String href = (String)e.getHref();
+			href = href.replaceAll("&", "&&");
+			mng.setMessage(href);
+		}
+	}
+
+	void handleLinkExited(HyperlinkEvent e) {
+		IStatusLineManager mng = getStatusLineManager();
+		if (mng!=null)
+			mng.setMessage(null);
 	}
 }
