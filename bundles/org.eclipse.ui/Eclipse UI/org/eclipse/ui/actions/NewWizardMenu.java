@@ -22,6 +22,7 @@ import java.util.*;
 public class NewWizardMenu extends ShortcutMenu {
 	private Action showDlgAction = new NewWizardAction();
 	private Action newProjectAction;
+	private Action createProjectAction;
 	private Map actions = new HashMap(21);
 	private NewWizardsRegistryReader reader = new NewWizardsRegistryReader();
 	private boolean enabled = true;
@@ -43,7 +44,8 @@ public class NewWizardMenu extends ShortcutMenu {
  */
 public NewWizardMenu(IMenuManager innerMgr, IWorkbenchWindow window, boolean register) {
 	super(innerMgr, window, register);
-	this.newProjectAction = new NewProjectAction(window);
+	createProjectAction = new CreateProjectAction(window);
+	newProjectAction = new NewProjectAction(window);
 	fillMenu(); // Must be done after constructor to ensure field initialization.
 }
 /* (non-Javadoc)
@@ -56,6 +58,7 @@ protected void fillMenu() {
 
 	if (this.enabled) {
 		// Add new project ..
+		innerMgr.add(createProjectAction);
 		innerMgr.add(newProjectAction);
 		innerMgr.add(new Separator());
 

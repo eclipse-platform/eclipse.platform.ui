@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.registry.Capability;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
+import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -25,7 +26,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  */
 public class ProjectCapabilitySelectionGroup {
 	// Initial number of visible capabilities in the list.
-	private static final int PROJECT_LIST_MULTIPLIER = 30;
+	private static final int PROJECT_LIST_MULTIPLIER = 25;
 
 	private CapabilityRegistry registry;
 	private Capability[] initialCapabilities;
@@ -88,7 +89,8 @@ public class ProjectCapabilitySelectionGroup {
 		listViewer.setLabelProvider(new WorkbenchLabelProvider());
 		listViewer.setContentProvider(new WorkbenchContentProvider());
 		listViewer.setInput(registry);
-		listViewer.setCheckedElements(initialCapabilities);
+		if (initialCapabilities != null)
+			listViewer.setCheckedElements(initialCapabilities);
 
 		// Add a label to identify the text field of capability's description
 		Label descLabel = new Label(composite, SWT.LEFT);
@@ -501,6 +503,15 @@ public class ProjectCapabilitySelectionGroup {
 		return checkStateListener;
 	}
 
+	/**
+	 * Sets the initial category selection. Ignored if the
+	 * createContents method has not been called yet.
+	 */
+	public void setInitialSelectedCategories(Category[] categories) {
+		if (categories != null) {
+		}
+	}
+	
 	/**
 	 * Set the current listener interested when the check
 	 * state of a capability actually changes.

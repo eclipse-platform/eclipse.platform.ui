@@ -6,6 +6,8 @@ package org.eclipse.ui.internal.registry;
  */
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.IProjectNatureDescriptor;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -30,7 +32,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 public class Capability extends WorkbenchAdapter implements IAdaptable {
 	private static final String ATT_ID = "id";
-	private static final String ATT_NAME = "name";
 	private static final String ATT_ICON = "icon";
 	private static final String ATT_NATURE_ID = "natureId";
 	private static final String ATT_CATEGORY = "category";
@@ -39,7 +40,7 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	
 	private String id;
 	private String natureId;
-	private String name;
+	private IProjectNatureDescriptor natureDescriptor;
 	private ImageDescriptor icon;
 	private IConfigurationElement element;
 	private ArrayList handleUIs;
@@ -51,22 +52,17 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	 * @param configElement the <code>IConfigurationElement<code> containing
 	 * 		the attributes
 	 * @param reader the <code>CapabilityRegistryReader<code> used to log missing attributes
-	 * @throws a <code>WorkbenchException</code> if the ID or label is <code>null</code
+	 * @throws a <code>WorkbenchException</code> if the ID, nature, or wizard is <code>null</code>
 	 */
 	public Capability(IConfigurationElement configElement, CapabilityRegistryReader reader)
 		throws WorkbenchException
 	{
 		boolean missingAttribute = false;
 		String attr_id = configElement.getAttribute(ATT_ID);
-		String attr_name = configElement.getAttribute(ATT_NAME);
 		String attr_nature = configElement.getAttribute(ATT_NATURE_ID);
 			
 		if (attr_id == null) {
 			reader.logMissingAttribute(configElement, ATT_ID);
-			missingAttribute = true;
-		}
-		if (attr_name == null) {
-			reader.logMissingAttribute(configElement, ATT_NAME);
 			missingAttribute = true;
 		}
 		if (attr_nature == null) {
@@ -82,7 +78,6 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 			throw new WorkbenchException("Missing required category attribute"); //$NON-NLS-1$
 
 		id = attr_id;
-		name = attr_name;
 		natureId = attr_nature;
 		element = configElement;
 	}
@@ -105,11 +100,11 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	 * Method declared on IWorkbenchAdapter.
 	 */
 	public String getLabel(Object o) {
-		return name;
+		return getNatureDescriptor().getLabel();
 	}
 	
 	public String getName() {
-		return name;
+		return getNatureDescriptor().getLabel();
 	}
 	
 	public ImageDescriptor getIconDescriptor() {
@@ -119,6 +114,13 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 			icon = WorkbenchImages.getImageDescriptorFromExtension(extension, location);
 		}
 		return icon;
+	}
+	
+	public IProjectNatureDescriptor getNatureDescriptor() {
+		if (natureDescriptor == null)
+			natureDescriptor = ResourcesPlugin.getWorkspace().getNatureDescriptor(natureId);
+			
+		return natureDescriptor;
 	}
 	
 	public String getNatureId() {

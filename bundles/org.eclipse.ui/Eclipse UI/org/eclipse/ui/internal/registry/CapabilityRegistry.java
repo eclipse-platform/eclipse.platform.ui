@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNatureDescriptor;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
@@ -93,6 +92,29 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 		return results;
 	}
 	
+	/**
+	 * Finds the category for each specified identifier.
+	 * Any <code>null</code> entries in the resulting array
+	 * are for identifiers to which no category exist.
+	 */
+	public Category[] findCategories(String[] ids) {
+		int count = categories.size();
+		Category[] results = new Category[ids.length];
+		
+		for (int i = 0; i < ids.length; i++) {
+			String id = ids[i];
+			for (int j = 0; j < count; j++) {
+				Category cat = (Category) categories.get(j);
+				if (cat.getId().equals(id)) {
+					results[i] = cat;
+					break;
+				}
+			}
+		}
+		
+		return results;
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on IAdaptable.
 	 */
@@ -122,8 +144,7 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	 * of the specified capability.
 	 */
 	public String[] getPrerequisiteIds(Capability capability) {
-		IProjectNatureDescriptor desc;
-		desc = ResourcesPlugin.getWorkspace().getNatureDescriptor(capability.getNatureId());
+		IProjectNatureDescriptor desc = capability.getNatureDescriptor();
 		if (desc == null)
 			return EMPTY_ID_LIST;
 			
