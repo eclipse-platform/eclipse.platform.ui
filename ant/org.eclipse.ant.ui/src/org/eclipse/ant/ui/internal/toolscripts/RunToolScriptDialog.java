@@ -6,7 +6,7 @@ package org.eclipse.ant.ui.internal.toolscripts;
 
 import org.eclipse.ant.core.toolscripts.ExternalToolScript;
 import org.eclipse.ant.core.toolscripts.ToolScript;
-import org.eclipse.ant.ui.internal.AntUIPlugin;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
