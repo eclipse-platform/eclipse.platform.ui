@@ -110,5 +110,38 @@ public void testBug25662() {
 		folder.setReadOnly(false);
 	}
 }
+/**
+ * Tests setting local timestamp of project description file
+ */
+public void testBug43936() {
+	IProject project = getWorkspace().getRoot().getProject("MyProject");
+	IFile descFile = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
+	ensureExistsInWorkspace(project, true);
+	assertTrue("1.0", descFile.exists());
+	
+	IProjectDescription desc = null;
+	try {
+		desc = project.getDescription();
+	} catch (CoreException e) {
+		fail("1.99", e);
+	}
+	//change the local file timestamp
+	long newTime = System.currentTimeMillis()+10000;
+	long actualTime = 0;
+	try {
+		descFile.setLocalTimeStamp(newTime);
+	} catch (CoreException e1) {
+		fail("2.99", e1);
+	}
+	
+	assertTrue("2.0", descFile.isSynchronized(IResource.DEPTH_ZERO));
+	
+	try {
+		//try setting the description -- shouldn't fail
+		project.setDescription(desc, getMonitor());
+	} catch (CoreException e2) {
+		fail("3.99", e2);
+	}
+}
 }
 
