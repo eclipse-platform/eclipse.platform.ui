@@ -45,20 +45,22 @@ public class ToggleDefaultGroupAction extends AbstractBreakpointsViewAction {
         fSelectedSet = null;
         if (sel instanceof IStructuredSelection) {
             IStructuredSelection selection = (IStructuredSelection) sel;
-            Object firstElement = selection.getFirstElement();
-            if (firstElement instanceof BreakpointContainer) {
-                BreakpointContainer container = (BreakpointContainer) firstElement;
-                if (container.getCategory() instanceof WorkingSetCategory) {
-                    WorkingSetCategory category = (WorkingSetCategory)container.getCategory();
-                    if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(category.getWorkingSet().getId())) {
-                        IWorkingSet set = category.getWorkingSet();
-                        action.setEnabled(true);
-                        boolean isDefault = set == BreakpointSetOrganizer.getDefaultWorkingSet();
-                        action.setChecked(isDefault);
-                        fSelectedSet = set;
-                        return;
-                    }
-                }
+            if (selection.size() == 1) {
+	            Object firstElement = selection.getFirstElement();
+	            if (firstElement instanceof BreakpointContainer) {
+	                BreakpointContainer container = (BreakpointContainer) firstElement;
+	                if (container.getCategory() instanceof WorkingSetCategory) {
+	                    WorkingSetCategory category = (WorkingSetCategory)container.getCategory();
+	                    if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(category.getWorkingSet().getId())) {
+	                        IWorkingSet set = category.getWorkingSet();
+	                        action.setEnabled(true);
+	                        boolean isDefault = set == BreakpointSetOrganizer.getDefaultWorkingSet();
+	                        action.setChecked(isDefault);
+	                        fSelectedSet = set;
+	                        return;
+	                    }
+	                }
+	            }
             }
         }
         action.setEnabled(false);
