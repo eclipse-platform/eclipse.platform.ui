@@ -20,7 +20,7 @@ import java.util.*;
 public class HelpBaseResources {
 	private static ResourceBundle resBundle;
 	static {
-		resBundle = ResourceBundle.getBundle("org.eclipse.help.internal.base.helpbase", Locale.getDefault());
+		resBundle = ResourceBundle.getBundle(HelpBaseResources.class.getName());
 	}
 	/**
 	 * Resources constructor.

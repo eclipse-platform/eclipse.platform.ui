@@ -127,8 +127,6 @@ public class HelpDisplay {
 	 */
 	private void displayHelpURL(String helpURL) {
 		if (!BaseHelpSystem.ensureWebappRunning()) {
-			BaseHelpSystem.getDefaultErrorUtil().displayError(
-				HelpBaseResources.getString("E043"));
 			return;
 		}
 
