@@ -654,9 +654,9 @@ public final class WorkbenchKeyboard {
         }
         IStatus status = new Status(IStatus.ERROR,
                 WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
+        WorkbenchPlugin.log(message, status);
         ErrorDialog.openError(workbench.getActiveWorkbenchWindow().getShell(),
                 title, message, status);
-        WorkbenchPlugin.log(message, status);
     }
 
     /**
