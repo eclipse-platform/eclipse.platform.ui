@@ -275,7 +275,7 @@ public void run() {
 	} catch (InvocationTargetException e) {
 		// we catch CoreException in execute(), but unexpected runtime exceptions or errors may still occur
 		String msg = WorkbenchMessages.format("WorkspaceAction.logTitle", new Object[] {getClass().getName(), e.getTargetException()}); //$NON-NLS-1$
-		WorkbenchPlugin.log(msg,StatusUtil.newStatus(IStatus.ERROR, null, msg, e.getTargetException())); 
+		WorkbenchPlugin.log(msg,StatusUtil.newStatus(IStatus.ERROR, msg, e.getTargetException())); 
 		displayError(e.getTargetException().getMessage());
 	}
 

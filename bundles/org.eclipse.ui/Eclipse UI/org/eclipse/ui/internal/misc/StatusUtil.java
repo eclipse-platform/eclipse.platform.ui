@@ -6,7 +6,6 @@ package org.eclipse.ui.internal.misc;
  */
 import org.eclipse.core.runtime.*;
 import java.util.*;
-import org.eclipse.core.internal.resources.ResourceStatus; // illegal ref
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -48,25 +47,15 @@ protected static List flatten(IStatus aStatus) {
  * This method must not be called outside the workbench.
  *
  * Utility method for creating status.
- *
- * This method will be removed in the future when kernel includes
- * support for creating status.
- * See 1FTKIAP: ITPCORE:ALL - Status/MultiStatus API
- *
- * Ultimately callers should be able to build their own multi status
- * and add to it rather than building a collection of status then converting it.
- * See 1FTQDWJ: ITPCORE:ALL - API - Status/MultiStatus - should able to add to a multi status
  */
 protected static IStatus newStatus(
 		IStatus[] stati, 
-		IPath path, 
 		String message, 
 		Throwable exception) {
 
 	Assert.isTrue(message != null);
 	Assert.isTrue(message.trim().length() != 0);
 
-	//1FTKIAP: ITPCORE:ALL - Status/MultiStatus API
 	return new MultiStatus(WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, 
 		stati, message, exception);
 }
@@ -74,58 +63,39 @@ protected static IStatus newStatus(
  * This method must not be called outside the workbench.
  *
  * Utility method for creating status.
- *
- * This method will be removed in the future when kernel includes
- * support for creating status.
- * See 1FTKIAP: ITPCORE:ALL - Status/MultiStatus API
  */
 public static IStatus newStatus(
-	int code, 
-	IPath path, 
+	int severity, 
 	String message, 
 	Throwable exception) {
 
 	Assert.isTrue(message != null);
 	Assert.isTrue(message.trim().length() != 0);
 
-	//1FTKIAP: ITPCORE:ALL - Status/MultiStatus API
-	return new ResourceStatus(code, path, message, exception);
+	return new Status(severity, WorkbenchPlugin.PI_WORKBENCH, severity, message, exception);
 }
 /**
  * This method must not be called outside the workbench.
  *
  * Utility method for creating status.
- *
- * This method will be removed in the future when kernel includes
- * support for creating status.
- * See 1FTKIAP: ITPCORE:ALL - Status/MultiStatus API
- *
- * Ultimately callers should be able to build their own multi status
- * and add to it rather than building a collection of status then converting it.
- * See 1FTQDWJ: ITPCORE:ALL - API - Status/MultiStatus - should able to add to a multi status
  */
 public static IStatus newStatus(
-		List vector, 
-		IPath path, 
+		List children, 
 		String message, 
 		Throwable exception) {
-
-	//1FTKIAP: ITPCORE:ALL - Status/MultiStatus API
 	
 	List flatStatusCollection = new ArrayList();
-	Iterator statusEnum = vector.iterator();
-	while (statusEnum.hasNext()) {
-		IStatus currentStatus = (IStatus)statusEnum.next();
-		Iterator childrenEnum = flatten(currentStatus).iterator();
-		while (childrenEnum.hasNext())
-			flatStatusCollection.add(childrenEnum.next());
+	Iterator iter = children.iterator();
+	while (iter.hasNext()) {
+		IStatus currentStatus = (IStatus)iter.next();
+		Iterator childrenIter = flatten(currentStatus).iterator();
+		while (childrenIter.hasNext())
+			flatStatusCollection.add(childrenIter.next());
 	}
 
 	int flatStatusCollectionSize = flatStatusCollection.size();
-	IStatus[] stati = new IStatus[flatStatusCollectionSize];
-	for (int i = 0; i < flatStatusCollectionSize; i++)
-		stati[i] = (IStatus)flatStatusCollection.get(i);
-
-	return newStatus(stati, path, message, exception);
+	IStatus[] stati = new IStatus[flatStatusCollection.size()];
+	flatStatusCollection.toArray(stati);
+	return newStatus(stati, message, exception);
 }
 }

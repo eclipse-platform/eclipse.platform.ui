@@ -301,7 +301,6 @@ protected boolean ensureResourcesLocal(List resources) {
 		WorkbenchMessages.getString("WizardExportPage.contentRetrievalProblems"), //$NON-NLS-1$
 		null,   // no special message
 		StatusUtil.newStatus(errors,	// make a multi status
-			null,
 			WorkbenchMessages.getString("WizardExportPage.contentRetrievalProblemsMessage"), //$NON-NLS-1$
 			null));
 

@@ -468,7 +468,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 */
 
 	public static void log(String message) {
-		getDefault().getLog().log(StatusUtil.newStatus(Status.ERROR, null, message, null));
+		getDefault().getLog().log(StatusUtil.newStatus(Status.ERROR, message, null));
 		System.err.println(message);
 		//1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
 	}
@@ -505,7 +505,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		//1FTUHE0: ITPCORE:ALL - API - Status & logging - loss of semantic info
 
 		if (message != null) {
-			getDefault().getLog().log(StatusUtil.newStatus(IStatus.ERROR, null, message, null));
+			getDefault().getLog().log(StatusUtil.newStatus(IStatus.ERROR, message, null));
 			System.err.println(message + "\nReason:"); //$NON-NLS-1$
 		}
 

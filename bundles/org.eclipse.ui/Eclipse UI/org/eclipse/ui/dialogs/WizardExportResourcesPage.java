@@ -340,7 +340,6 @@ protected boolean ensureResourcesLocal(List resources) {
 		null,
 		StatusUtil.newStatus(
 			errors,
-			null,
 			WorkbenchMessages.getString("WizardExportPage.contentRetrievalProblemsMessage"), //$NON-NLS-1$
 			null));
 

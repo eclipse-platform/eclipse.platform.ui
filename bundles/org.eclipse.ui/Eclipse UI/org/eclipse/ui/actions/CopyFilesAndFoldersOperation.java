@@ -127,7 +127,7 @@ public class CopyFilesAndFoldersOperation {
 			return;
 		} catch (InvocationTargetException e) {
 			// CoreExceptions are collected above, but unexpected runtime exceptions and errors may still occur.
-			Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(StatusUtil.newStatus(IStatus.ERROR, null, MessageFormat.format("Exception in {0}.performCopy(): {1}", new Object[] { getClass().getName(), e.getTargetException()}), //$NON-NLS-1$
+			Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(StatusUtil.newStatus(IStatus.ERROR, MessageFormat.format("Exception in {0}.performCopy(): {1}", new Object[] { getClass().getName(), e.getTargetException()}), //$NON-NLS-1$
 			null));
 			displayError(WorkbenchMessages.format("CopyFilesAndFoldersOperation.internalError", new Object[] { e.getTargetException().getMessage()})); //$NON-NLS-1$
 		}
@@ -177,7 +177,7 @@ public class CopyFilesAndFoldersOperation {
 			return;
 		} catch (InvocationTargetException e) {
 			// CoreExceptions are collected above, but unexpected runtime exceptions and errors may still occur.
-			Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(StatusUtil.newStatus(IStatus.ERROR, null, MessageFormat.format("Exception in {0}.performCopy(): {1}", new Object[] { getClass().getName(), e.getTargetException()}), //$NON-NLS-1$
+			Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(StatusUtil.newStatus(IStatus.ERROR, MessageFormat.format("Exception in {0}.performCopy(): {1}", new Object[] { getClass().getName(), e.getTargetException()}), //$NON-NLS-1$
 			null));
 			displayError(WorkbenchMessages.format("CopyFilesAndFoldersOperation.internalError", new Object[] { e.getTargetException().getMessage()})); //$NON-NLS-1$
 		}
@@ -273,7 +273,7 @@ public class CopyFilesAndFoldersOperation {
 				});
 			} else {
 				// CoreExceptions are handled above, but unexpected runtime exceptions and errors may still occur.
-				Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(StatusUtil.newStatus(IStatus.ERROR, null, MessageFormat.format("Exception in {0}.performFileImport(): {1}", new Object[] { getClass().getName(), e.getTargetException()}), //$NON-NLS-1$
+				Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(StatusUtil.newStatus(IStatus.ERROR, MessageFormat.format("Exception in {0}.performFileImport(): {1}", new Object[] { getClass().getName(), e.getTargetException()}), //$NON-NLS-1$
 				null));
 				displayError(WorkbenchMessages.format("CopyFilesAndFoldersOperation.internalError", new Object[] { e.getTargetException().getMessage()})); //$NON-NLS-1$
 			}
