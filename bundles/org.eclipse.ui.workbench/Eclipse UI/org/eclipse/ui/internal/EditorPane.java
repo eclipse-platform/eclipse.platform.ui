@@ -10,23 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.presentations.StackPresentation;
 
 /**
@@ -43,60 +35,6 @@ public class EditorPane extends PartPane {
             EditorStack workbook) {
         super(ref, page);
         this.workbook = workbook;
-    }
-
-    protected IWorkbenchPart createErrorPart(IWorkbenchPart oldPart) {
-        class ErrorEditorPart extends EditorPart {
-            private Text text;
-
-            public void doSave(IProgressMonitor monitor) {
-            }
-
-            public void doSaveAs() {
-            }
-
-            public void init(IEditorSite site, IEditorInput input) {
-                setSite(site);
-                setInput(input);
-            }
-
-            public boolean isDirty() {
-                return false;
-            }
-
-            public boolean isSaveAsAllowed() {
-                return false;
-            }
-
-            public void createPartControl(Composite parent) {
-                text = new Text(parent, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
-                text.setForeground(JFaceColors.getErrorText(text.getDisplay()));
-                text.setBackground(text.getDisplay().getSystemColor(
-                        SWT.COLOR_WIDGET_BACKGROUND));
-                text.setText(WorkbenchMessages.EditorPane_errorMessage);
-            }
-
-            public void setFocus() {
-                if (text != null)
-                    text.setFocus();
-            }
-
-            protected void setPartName(String title) {
-                super.setPartName(title);
-            }
-
-            protected void setTitleToolTip(String text) {
-                super.setTitleToolTip(text);
-            }
-        }
-        IEditorPart oldEditorPart = (IEditorPart) oldPart;
-        EditorSite oldEditorSite = (EditorSite) oldEditorPart.getEditorSite();
-        ErrorEditorPart newPart = new ErrorEditorPart();
-        newPart.setPartName(oldPart.getTitle());
-        newPart.setTitleToolTip(oldPart.getTitleToolTip());
-        oldEditorSite.setPart(newPart);
-        newPart.init(oldEditorSite, oldEditorPart.getEditorInput());
-        return newPart;
     }
 
     /**
