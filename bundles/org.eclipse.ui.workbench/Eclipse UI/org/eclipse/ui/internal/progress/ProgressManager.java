@@ -779,6 +779,7 @@ public class ProgressManager extends ProgressProvider
 					dialog.setOpenOnRun(false);
 					setUserInterfaceActive(false);
 					dialog.run(true, true, runnable);
+					setUserInterfaceActive(true);
 				} catch (InvocationTargetException e) {
 					invokes[0] = e;
 				} catch (InterruptedException e) {
