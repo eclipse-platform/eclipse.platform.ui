@@ -285,6 +285,7 @@ protected void performDefaults() {
 	 * 	openFloatButton.setSelection(value == IPreferenceConstants.OVM_FLOAT);
 	 */
 	 
+	WorkbenchPlugin.getDefault().savePluginPreferences(); 
 	super.performDefaults();
 }
 /**

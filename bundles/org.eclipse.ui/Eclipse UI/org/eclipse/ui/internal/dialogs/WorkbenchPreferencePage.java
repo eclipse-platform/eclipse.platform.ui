@@ -388,6 +388,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		recentFilesEditor.store();
 
 //		acceleratorPerformOk(store);
+
+		WorkbenchPlugin.getDefault().savePluginPreferences();
 		return true;
 	}
 	

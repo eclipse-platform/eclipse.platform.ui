@@ -367,6 +367,8 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 			ResourcesPlugin.getPlugin().getPluginPreferences().setValue(ResourcesPlugin.PREF_ENCODING, enc);
 		}
 		
+		WorkbenchPlugin.getDefault().savePluginPreferences();
+		ResourcesPlugin.getPlugin().savePluginPreferences();
 		return true;
 	}	
 }

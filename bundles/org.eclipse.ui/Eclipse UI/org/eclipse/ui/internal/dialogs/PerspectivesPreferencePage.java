@@ -361,6 +361,7 @@ public boolean performOk() {
 	// store the open view mode to setting
 	store.setValue(IPreferenceConstants.OPEN_VIEW_MODE, openViewMode);
 
+	WorkbenchPlugin.getDefault().savePluginPreferences();
 	return true;
 }
 /**
