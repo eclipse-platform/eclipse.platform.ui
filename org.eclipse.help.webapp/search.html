@@ -4,31 +4,22 @@
 
 <script language="JavaScript">
 
-var args = parent.parent.parseQueryString();
-
-
-function onloadHandler()
-{
-	// load frames
-	frames["QueryFrame"].location = "search_query.jsp" + getFrameInputParameters();
-	frames["ResultsFrame"].location = "search_results.jsp" + getFrameInputParameters();
-}
-
-
-/**
- * Returns the input source for a frame
- */
-function getFrameInputParameters()
-{
-	var query="";
-	if(args && args["searchWord"])
+	function onloadHandler()
 	{
-		// TODO pass the locale correctly
-		query=query+"?searchWord="+args["searchWord"]; //+"&lang=en_US";
+		// load frames
+		frames["QueryFrame"].location = "search_query.jsp" + getQuery();
+		frames["ResultsFrame"].location = "search_results.jsp" + getQuery();
 	}
-	return query;
-}
 
+	/**
+	 * Returns the input source for a frame
+	 */
+	function getQuery()
+	{
+	    var longquery = window.location.href.split("?");
+	    if (longquery.length <= 1) return "";
+	    return "?" + longquery[1];
+	}
 
 </script>
 

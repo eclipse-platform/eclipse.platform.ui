@@ -130,11 +130,11 @@ public class DefaultHelp implements IHelp
 	/**
 	 * Display help to search view for given query
 	 * and selected topic.
-	 * @param query user search query
+	 * @param query search query in URL format key=value&key=value
 	 * @param topic selected from the search results
 	 */
-	public void displaySearch(String query, String topic) {
-		if (query == null || topic == null)
+	public void displaySearch(String searchQuery, String topic) {
+		if (searchQuery == null || topic == null)
 			return;
 		if (!AppServer.isRunning())
 			return; // may want to display an error message
@@ -143,8 +143,8 @@ public class DefaultHelp implements IHelp
 				+ AppServer.getHost()
 				+ ":"
 				+ AppServer.getPort()
-				+ "/help?tab=search&searchWord="
-				+ URLCoder.encode(query)
+				+ "/help?tab=search&"
+				+ searchQuery
 				+ "&topic="
 				+ URLEncoder.encode(createTopicURL(topic));
 		WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);

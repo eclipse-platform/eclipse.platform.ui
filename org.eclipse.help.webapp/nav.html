@@ -87,41 +87,34 @@ function getFrameInput(nav)
 	switch(nav)
 	{
 	case "toc":
-		// load frames
-		var tocUrl="";
-
 		if(args && args["toc"])
-		{
-			tocUrl="toc.jsp?toc="+args["toc"];
-			if(args["topic"])
-				return tocUrl+"&topic="+args["topic"];
-			return tocUrl;
-		}
+			return "toc.jsp" + getQuery();
 		else
-			return "tocs.jsp";
-			
+			return "tocs.jsp";		
 		break;
 		
 	case "search":
-		
-		if(args && args["query"])
-			return "search.html?query="+args["query"];
-		else
-			return "search.html";
-			
+		return "search.html" + getQuery();
 		break;
 		
 	case "links":
-		if(args && args["contextId"])
-			return "links.jsp?contextId="+args["contextId"] + "&topic="+args["topic"];
-		else
-			return "about:blank";
+			return "links.jsp" + getQuery();
 		break;
 		
 	default:
 		return "about:blank";
 		break;
 	}
+}
+
+/**
+ * Returns the input source for a frame
+ */
+function getQuery()
+{
+    var longquery = window.location.href.split("?");
+    if (longquery.length <= 1) return "";
+    return "?" + longquery[1];
 }
 
 function showBookshelf()

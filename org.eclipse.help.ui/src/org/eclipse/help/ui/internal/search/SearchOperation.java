@@ -110,7 +110,7 @@ public class SearchOperation extends WorkspaceModifyOperation {
 						IHelp ihelp = WorkbenchHelp.getHelpSupport();
 						if (ihelp instanceof DefaultHelp)
 							((DefaultHelp) ihelp).displaySearch(
-								queryData.getSearchWord(),
+								queryData.toURLQuery(),
 								(String) entry.getSelectedMarker().getAttribute(
 									IHelpUIConstants.HIT_MARKER_ATTR_HREF));
 					} catch (Exception e) {
