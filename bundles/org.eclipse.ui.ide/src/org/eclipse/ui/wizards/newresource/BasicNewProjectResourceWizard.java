@@ -382,6 +382,9 @@ public static void updatePerspective(IConfigurationElement configElement) {
 	
 	// Map perspective id to descriptor.
 	IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
+	
+	// leave this code in - the perspective of a given project may map to 
+	// activities other than those that the wizard itself maps to.
 	IPerspectiveDescriptor finalPersp = reg.findPerspectiveWithId(finalPerspId);
 	if (finalPersp != null && finalPersp instanceof IPluginContribution) {
         IPluginContribution contribution = (IPluginContribution) finalPersp;

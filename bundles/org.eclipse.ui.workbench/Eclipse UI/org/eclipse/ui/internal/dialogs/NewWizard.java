@@ -10,21 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-
-import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.activities.IIdentifier;
-import org.eclipse.ui.activities.IWorkbenchActivitySupport;
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
-
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -116,20 +106,6 @@ public class NewWizard extends Wizard {
 	public boolean performFinish() {
 		//save our selection state
 		mainPage.saveWidgetValues();
-
-		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
-		IActivityManager activityManager = support.getActivityManager();
-		if (mainPage.getSelectedNode() instanceof IPluginContribution) {
-			IIdentifier identifier =
-				activityManager.getIdentifier(
-					WorkbenchActivityHelper.createUnifiedId(
-						(IPluginContribution) mainPage.getSelectedNode()));
-			Set activities = new HashSet(activityManager.getEnabledActivityIds());
-			if (activities.addAll(identifier.getActivityIds())) {
-				support.setEnabledActivityIds(activities);
-			}
-		}
-
 		return true;
 	}
 	
