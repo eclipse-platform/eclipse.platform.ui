@@ -989,7 +989,8 @@ public class DefaultPartPresentation extends StackPresentation {
 		// add to the end if the bounds are 0 - the isShowing/getBounds logic
 		// below does not work when opening an initial perspective because no 
 		// items are showing (the folders bounds are set to 0)
-		if (!tabFolder.getControl().isVisible() || tabFolder.getControl().getBounds().width <= 0)
+		// Items on GTK wont have a width of 0 - so use 1
+		if (!tabFolder.getControl().isVisible() || tabFolder.getControl().getBounds().width <= 1)
 			return idx;
 		for (int i = 0; i < idx; i++) {
 			CTabItem item = tabFolder.getItem(i);
