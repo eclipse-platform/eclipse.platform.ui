@@ -168,6 +168,10 @@ protected boolean updateSelection(IStructuredSelection selection) {
 		if (!currentResource.getParent().equals(firstParent)) {
 			return false;
 		}
+		// resource location must exist
+		if (currentResource.getLocation() == null) {
+			return false;
+		}
 	}
 	
 	return true;
