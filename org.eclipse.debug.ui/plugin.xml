@@ -23,7 +23,6 @@
 
 <!-- Extension points -->
 <extension-point id="debugModelPresentations" name="%DebugModelPresentationExtensionName"/>
-<extension-point id="breakpointPropertyAdapters" name="%BreakpointPropertyAdapterName"/>
 <extension-point id="launchConfigurationTabs" name="%LaunchConfigurationTabExtensionName"/>
 <extension-point id="launchConfigurationTypeImages" name="%LaunchConfigurationTypeImageExtensionName"/>
 

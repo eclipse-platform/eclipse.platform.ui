@@ -396,10 +396,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		PerspectiveManager.getDefault().startup();
 		
 		IAdapterManager manager= Platform.getAdapterManager();
-		// Create & register the adapter factory that will dispense objects that 
-		// know about the properties that different breakpoint types support
-		manager.registerAdapters(new BreakpointPropertiesAdapterFactory(), IBreakpoint.class);
-		
 		manager.registerAdapters(new DebugUIPropertiesAdapterFactory(), IDebugElement.class);
 		manager.registerAdapters(new DebugUIPropertiesAdapterFactory(), IProcess.class);
 	}
