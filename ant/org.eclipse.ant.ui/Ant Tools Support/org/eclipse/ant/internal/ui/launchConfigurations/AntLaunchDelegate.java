@@ -160,19 +160,19 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Launching_{0}_1"), new String[] {configuration.getName()}), 10); //$NON-NLS-1$
 			runInSeparateVM(configuration, launch, monitor, idStamp, port, commandLine, captureOutput);
 		} else {
-			runInSameVM(configuration, launch, monitor, location, idStamp, runner, commandLine);
+			runInSameVM(configuration, launch, monitor, location, idStamp, runner, commandLine, captureOutput);
 		}
 		
 		monitor.done();	
 	}
 	
-	private void runInSameVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, IPath location, String idStamp, AntRunner runner, StringBuffer commandLine) throws CoreException {
+	private void runInSameVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, IPath location, String idStamp, AntRunner runner, StringBuffer commandLine, boolean captureOutput) throws CoreException {
 		Map attributes= new HashMap(2);
 		attributes.put(IProcess.ATTR_PROCESS_TYPE, IAntLaunchConfigurationConstants.ID_ANT_PROCESS_TYPE);
 		attributes.put(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
 				
 		final AntProcess process = new AntProcess(location.toOSString(), launch, attributes);
-		setProcessAttributes(process, idStamp, commandLine);
+		setProcessAttributes(process, idStamp, commandLine, captureOutput);
 		
 		if (CommonTab.isLaunchInBackground(configuration)) {
 			final AntRunner finalRunner= runner;
@@ -270,7 +270,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		}
 	}
 
-	private void setProcessAttributes(IProcess process, String idStamp, StringBuffer commandLine) {
+	private void setProcessAttributes(IProcess process, String idStamp, StringBuffer commandLine, boolean captureOutput) {
 		// link the process to its build logger via a timestamp
 		process.setAttribute(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
 		
@@ -278,7 +278,9 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		if (commandLine != null) {
 			process.setAttribute(IProcess.ATTR_CMDLINE, commandLine.toString());
 		}
-		TaskLinkManager.registerAntBuild(process);
+		if (captureOutput) {
+			TaskLinkManager.registerAntBuild(process);
+		}
 	}
 
 	private StringBuffer generateCommandLine(IPath location, String[] arguments, Map userProperties, String[] propertyFiles, String[] targets, String antHome, String basedir, boolean separateVM, boolean captureOutput) {
@@ -441,7 +443,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		delegate.launch(copy, ILaunchManager.RUN_MODE, launch, subMonitor);
 		final IProcess[] processes= launch.getProcesses();
 		for (int i = 0; i < processes.length; i++) {
-			setProcessAttributes(processes[i], idStamp, null);
+			setProcessAttributes(processes[i], idStamp, null, captureOutput);
 		}
 
 		if (CommonTab.isLaunchInBackground(configuration)) {
