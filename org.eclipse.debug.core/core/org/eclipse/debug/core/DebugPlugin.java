@@ -462,13 +462,34 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.1
 	 */
 	public static Process exec(String[] cmdLine, File workingDirectory) throws CoreException {
+		return exec(cmdLine, workingDirectory, null);
+	}
+
+	/**
+	 * Convenience method that performs a runtime exec on the given command line
+	 * in the context of the specified working directory, and returns the
+	 * resulting process. If the current runtime does not support the
+	 * specification of a working directory, the status handler for error code
+	 * <code>ERR_WORKING_DIRECTORY_NOT_SUPPORTED</code> is queried to see if the
+	 * exec should be re-executed without specifying a working directory.
+	 * 
+	 * @param cmdLine the command line
+	 * @param workingDirectory the working directory, or <code>null</code>
+	 * @param envp the environment variables set in the process, or <code>null</code>
+	 * @return the resulting process or <code>null</code> if the exec is
+	 *  cancelled
+	 * @see Runtime
+	 * 
+	 * @since 2.2
+	 */
+	public static Process exec(String[] cmdLine, File workingDirectory, String[] envp) throws CoreException {
 		Process p= null;
 		try {
 
 			if (workingDirectory == null) {
-				p= Runtime.getRuntime().exec(cmdLine, null);
+				p= Runtime.getRuntime().exec(cmdLine, envp);
 			} else {
-				p= Runtime.getRuntime().exec(cmdLine, null, workingDirectory);
+				p= Runtime.getRuntime().exec(cmdLine, envp, workingDirectory);
 			}
 		} catch (IOException e) {
 				if (p != null) {
