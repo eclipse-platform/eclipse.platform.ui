@@ -3,6 +3,7 @@ package org.eclipse.team.tests.ccvs.core.provider;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import junit.framework.Test;
@@ -15,6 +16,7 @@ import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
@@ -41,10 +43,38 @@ public class CVSProviderTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(CVSProviderTest.class);
 		//return new CVSTestSetup(suite);
-		return new CVSTestSetup(new CVSProviderTest("testGet"));
+		return new CVSTestSetup(new CVSProviderTest("testAdd"));
 	}
 	
-	public void testAddAndDelete() throws TeamException, CoreException {
+	public void testAdd() throws TeamException, CoreException {
+		
+		// Test add with cvsignores
+		IProject project = createProject("testAdd", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
+		IFile file = project.getFile(".cvsignore");
+		file.create(new ByteArrayInputStream("ignored.txt".getBytes()), false, null);
+		file = project.getFile("ignored.txt");
+		file.create(new ByteArrayInputStream("some text".getBytes()), false, null);
+		file = project.getFile("notignored.txt");
+		file.create(new ByteArrayInputStream("some more text".getBytes()), false, null);
+		file = project.getFile("folder1/.cvsignore");
+		file.create(new ByteArrayInputStream("ignored.txt".getBytes()), false, null);
+		file = project.getFile("folder1/ignored.txt");
+		file.create(new ByteArrayInputStream("some text".getBytes()), false, null);
+		file = project.getFile("folder1/notignored.txt");
+		file.create(new ByteArrayInputStream("some more text".getBytes()), false, null);
+		
+		getProvider(project).add(new IResource[] {project}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		
+		assertTrue( ! Session.getManagedResource(project.getFile("ignored.txt")).isManaged());
+		assertTrue( ! Session.getManagedResource(project.getFile("folder1/ignored.txt")).isManaged());
+		
+		assertTrue(Session.getManagedResource(project.getFile("notignored.txt")).isManaged());
+		assertTrue(Session.getManagedResource(project.getFile("folder1/notignored.txt")).isManaged());
+		assertTrue(Session.getManagedResource(project.getFile(".cvsignore")).isManaged());
+		assertTrue(Session.getManagedResource(project.getFile("folder1/.cvsignore")).isManaged());
+	}
+	
+	public void testDelete() throws TeamException, CoreException {
 		// Not supported yet
 	}
 	

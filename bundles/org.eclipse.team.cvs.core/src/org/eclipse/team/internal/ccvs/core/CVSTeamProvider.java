@@ -192,15 +192,16 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		final Set binaryfiles = new HashSet(resources.length);
 		final IFileTypeRegistry registry = TeamPlugin.getFileTypeRegistry();
 		final TeamException[] eHolder = new TeamException[1];
-		boolean addProject = false;
 		for (int i=0; i<resources.length; i++) {
 			
+			final IResource currentResource = resources[i];
+			
 			// Throw an exception if the resource is not a child of the receiver
-			checkIsChild(resources[i]);
+			checkIsChild(currentResource);
 			
 			try {		
 				// Auto-add parents if they are not already managed
-				IContainer parent = resources[i].getParent();
+				IContainer parent = currentResource.getParent();
 				// XXX Need to consider workspace root
 				
 				while (parent.getType() != IResource.ROOT && ! isManaged(parent)) {
@@ -208,14 +209,14 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 					parent = parent.getParent();
 				}
 					
-				if (resources[i].equals(project))
-					addProject = true;
-					
 				// Auto-add children
-				resources[i].accept(new IResourceVisitor() {
+				currentResource.accept(new IResourceVisitor() {
 					public boolean visit(IResource resource) {
 						try {
-							if (!isManaged(resource)) {
+							ICVSResource mResource = (ICVSResource)Session.getManagedResource(resource);
+							// Add the resource is its not already managed and it was either
+							// added explicitly (is equal currentResource) or is not ignored
+							if (! isManaged(resource) && (currentResource.equals(resource) || ! mResource.isIgnored())) {
 								String name = resource.getFullPath().removeFirstSegments(1).toString();
 								if (resource.getType() == IResource.FILE) {
 									String extension = resource.getFileExtension();
