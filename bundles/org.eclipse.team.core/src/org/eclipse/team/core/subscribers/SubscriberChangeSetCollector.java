@@ -427,10 +427,12 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
                 String string = childNames[i];
                 Preferences childPrefs = prefs.node(string);
                 ActiveChangeSet set = createSet(string, childPrefs);
-            	if (defaultSet == null && defaultSetTitle != null && set.getTitle().equals(defaultSetTitle)) {
-            	    defaultSet = set;
-            	}
-            	add(set);
+                if (!set.isEmpty()) {
+	            	if (defaultSet == null && defaultSetTitle != null && set.getTitle().equals(defaultSetTitle)) {
+	            	    defaultSet = set;
+	            	}
+	            	add(set);
+                }
             }
         } catch (BackingStoreException e) {
             TeamPlugin.log(IStatus.ERROR, Policy.bind("SubscriberChangeSetCollector.4", getSubscriber().getName()), e); //$NON-NLS-1$
