@@ -626,10 +626,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * Create the widgetry for the details viewer.
 	 */
 	protected void createDetailsViewer() {
-		ViewForm viewForm = new ViewForm(getSashForm(), SWT.FLAT);
-			
 		// Create & configure a SourceViewer
-		SourceViewer detailsViewer= new SourceViewer(viewForm, null, SWT.V_SCROLL | SWT.H_SCROLL);
+		SourceViewer detailsViewer= new SourceViewer(getSashForm(), null, SWT.V_SCROLL | SWT.H_SCROLL);
 		setDetailViewer(detailsViewer);
 		detailsViewer.setDocument(getDetailDocument());
 		detailsViewer.getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));
@@ -638,7 +636,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		Control control = detailsViewer.getControl();
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		control.setLayoutData(gd);
-		viewForm.setContent(control);
 		
 		detailsViewer.getSelectionProvider().addSelectionChangedListener(getDetailSelectionChangedListener());
 		detailsViewer.getControl().addFocusListener(new FocusAdapter() {
