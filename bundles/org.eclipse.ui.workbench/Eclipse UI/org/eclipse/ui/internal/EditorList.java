@@ -39,8 +39,7 @@ public class EditorList {
 	private SelectionAction selectAllAction;
 	private FullNameAction fullNameAction;
 	private SortAction nameSortAction;
-	private SortAction MRUSortAction;
-//	private SortAction tabOrderSortAction;	
+	private SortAction MRUSortAction;	
 	private SetScopeAction windowScopeAction;
 	private SetScopeAction pageScopeAction;
 	private SetScopeAction tabGroupScopeAction;
@@ -60,7 +59,6 @@ public class EditorList {
 
 	private static final int NAME_SORT = 0;
 	private static final int MRU_SORT = 1;
-//	private static final int TAB_ORDER_SORT = 2;
 
 	private static final int SET_WINDOW_SCOPE = 0;
 	private static final int SET_PAGE_SCOPE = 1;
@@ -96,7 +94,6 @@ public class EditorList {
 	private IPartListener partListener = new IPartListener() {
 		private void updateEditorList(IWorkbenchPart part) {
 			if (part instanceof IEditorPart) { 
-				updateItems();
 				notifyEditorListViews();
 			}
 		}
@@ -151,7 +148,6 @@ public EditorList(IWorkbenchWindow window, EditorWorkbook workbook) {
 	fullNameAction = new FullNameAction();
 	nameSortAction = new SortAction(NAME_SORT);
 	MRUSortAction = new SortAction(MRU_SORT);
-//	tabOrderSortAction = new SortAction(TAB_ORDER_SORT);
 	windowScopeAction = new SetScopeAction(SET_WINDOW_SCOPE);
 	pageScopeAction = new SetScopeAction(SET_PAGE_SCOPE);
 	tabGroupScopeAction = new SetScopeAction(SET_TAB_GROUP_SCOPE);		
@@ -237,9 +233,7 @@ public int getItemCount() {
 private void notifyEditorListViews() {
 	for (Iterator iterator = editorListViews.iterator(); iterator.hasNext();) {
 		EditorList editorList = (EditorList) iterator.next();
-		if (editorList != this) {
-			editorList.updateItems();
-		}
+		editorList.updateItems();
 	}
 }
 
@@ -273,7 +267,6 @@ private void setCheckedMenuItems() {
 	fullNameAction.setChecked(displayFullPath);
 	nameSortAction.setChecked(EditorList.sortOrder==NAME_SORT);
 	MRUSortAction.setChecked(EditorList.sortOrder==MRU_SORT);
-//	tabOrderSortAction.setChecked(EditorList.sortOrder==TAB_ORDER_SORT);
 	windowScopeAction.setChecked(EditorList.listScope==SET_WINDOW_SCOPE);
 	pageScopeAction.setChecked(EditorList.listScope==SET_PAGE_SCOPE);
 	if (dropDown) {
@@ -323,10 +316,6 @@ private void sort() {
 		// TODO: Not in MRU if multiple windows open.  Within each window
 		// group they are in order, but not overall
 		break;
-//	case TAB_ORDER_SORT:
-//		// The elements are already in tab order (not really, if
-//		// you re-arrange them then ...
-//		break;
 	default:
 		break;
 	}
@@ -406,7 +395,6 @@ private void fillContextMenu(IMenuManager menuMgr) {
 	MenuManager sortMenuMgr = new MenuManager(WorkbenchMessages.getString("EditorList.SortBy.text")); //$NON-NLS-1$
 	sortMenuMgr.add(nameSortAction);
 	sortMenuMgr.add(MRUSortAction);
-//	sortMenuMgr.add(tabOrderSortAction);
 	
 	// ApplyTo SubMenu
 	MenuManager applyToMenuMgr = new MenuManager(WorkbenchMessages.getString("EditorList.ApplyTo.text")); //$NON-NLS-1$
@@ -456,8 +444,7 @@ private class SaveAction extends Action {
 		
 		if (dirtyEditorList != null) {
 			EditorManager.saveAll(dirtyEditorList, false, window);
-		}							
-//		notifyEditorListViews();
+		}
 		destroyControl();
 	}
 }
@@ -492,7 +479,6 @@ private class CloseAction extends Action {
 			editorRef[i].close();
 		}
 		
-		updateItems();
 		notifyEditorListViews();
 		destroyControl();
 	}
@@ -626,10 +612,6 @@ private class SortAction extends Action {
 			setText(WorkbenchMessages.getString("EditorList.SortByMostRecentlyUsed.text")); //$NON-NLS-1$
 			setToolTipText(WorkbenchMessages.getString("EditorList.SortByMostRecentlyUsed.toolTip")); //$NON-NLS-1$
 			break;
-//		case TAB_ORDER_SORT:
-//			setText(WorkbenchMessages.getString("EditorList.SortByTabOrder.text")); //$NON-NLS-1$
-//			setToolTipText(WorkbenchMessages.getString("EditorList.SortByTabOrder.toolTip")); //$NON-NLS-1$
-//			break;
 		default:
 			break;
 		}
@@ -713,9 +695,6 @@ private class Adapter implements Comparable {
 
 	// file name without any dirty indication, used for sorting
 	String[] getText() {
-//		if(text != null) {
-//			return text;
-//		}
 		text = new String[2];
 		text[0] = editorRef.getTitle();
 		text[1] = editorRef.getTitleToolTip();
@@ -723,9 +702,6 @@ private class Adapter implements Comparable {
 	}
 	// file name with dirty indication, used for displaying
 	String[] getDisplayText() {
-//		if(displayText != null) {
-//			return displayText;
-//		}
 		displayText = new String[2];
 
 		if(editorRef.isDirty()) {
