@@ -166,7 +166,11 @@
 		<property name="precompile.java.folder" value="${precompile.temp.folder}/java"/>
 		<property name="precompile.classes.folder" value="${precompile.temp.folder}/classes"/>
 		<property name="tomcat.home" value="d:\jakarta-tomcat-4.0.4"/>
-		<path id="jasper.classpath" >  
+		<path id="jasper.classpath" > 
+			<pathelement location="../org.eclipse.help/help.jar"/>
+			<pathelement location="../org.eclipse.help/bin"/> 
+			<pathelement location="../org.eclipse.core.runtime/runtime.jar"/> 
+			<pathelement location="../org.eclipse.core.runtime/bin"/>
 			<pathelement location="${basedir}/WEB-INF/classes"/>
 			<pathelement location="${basedir}/WEB-INF/lib/webapp.jar" />
 			<pathelement location="${tomcat.home}/common/lib/xerces.jar"/>
