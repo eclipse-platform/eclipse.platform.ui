@@ -1,13 +1,12 @@
 package org.eclipse.help.internal.ui.util;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.util.Logger;
-import org.eclipse.help.internal.ui.*;
-import org.eclipse.help.internal.util.HelpPreferences;
-import org.eclipse.jface.preference.*;
+import org.eclipse.help.internal.ui.IHelpUIConstants;
+import org.eclipse.help.internal.util.*;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -31,6 +30,7 @@ public class HelpPreferencePage
 	private Text textBrowserPath; // on linux only
 	private Button radioButtonLocalServerAutomatic;
 	private Button radioButtonLocalServerManual;
+	private Text textInfocenterURL;
 	/**
 	 * Creates an new checkbox instance and sets the default
 	 * layout data.
@@ -77,15 +77,24 @@ public class HelpPreferencePage
 	 */
 	protected Control createContents(Composite parent) {
 		WorkbenchHelp.setHelp(parent, new String[] { IHelpUIConstants.PREF_PAGE });
+		/* Infoceter URL */
+		Composite composite_tab0 = createComposite(parent, 1);
+		createLabel(
+			composite_tab0,
+			WorkbenchResources.getString("Infocenter_location"),
+			1);
+		Composite infocenterAddressComposite = createComposite(composite_tab0, 2);
+		createLabel(
+			infocenterAddressComposite,
+			WorkbenchResources.getString("Infocenter_URL"),
+			1);
+		textInfocenterURL = createTextField(infocenterAddressComposite);
 		/* Browser Path */
 		if (!System.getProperty("os.name").startsWith("Win")) {
 			Composite composite_textField2 = createComposite(parent, 2);
 			WorkbenchHelp.setHelp(
 				composite_textField2,
-				new String[] {
-					IHelpUIConstants.BROWSER_PATH,
-					IHelpUIConstants.PREF_PAGE});
-
+				new String[] { IHelpUIConstants.BROWSER_PATH, IHelpUIConstants.PREF_PAGE });
 			Label label_textField =
 				createLabel(
 					composite_textField2,
@@ -278,6 +287,8 @@ public class HelpPreferencePage
 		labelServerPort.setEnabled(false);
 		textServerAddr.setEnabled(false);
 		textServerPort.setEnabled(false);
+		textInfocenterURL.setText(
+			store.getDefaultString(HelpPreferences.INFOCENTER_URL_KEY));
 		int serverConfigChoice =
 			store.getDefaultInt(HelpPreferences.LOCAL_SERVER_CONFIG);
 		switch (serverConfigChoice) {
@@ -328,6 +339,7 @@ public class HelpPreferencePage
 		labelServerPort.setEnabled(false);
 		textServerAddr.setEnabled(false);
 		textServerPort.setEnabled(false);
+		textInfocenterURL.setText(store.getString(HelpPreferences.INFOCENTER_URL_KEY));
 		int serverConfigChoice = store.getInt(HelpPreferences.LOCAL_SERVER_CONFIG);
 		switch (serverConfigChoice) {
 			case 0 :
@@ -385,6 +397,7 @@ public class HelpPreferencePage
 	private void storeValues() {
 		// use the old preferences object
 		HelpPreferences store = HelpSystem.getPreferences();
+		store.setValue(HelpPreferences.INFOCENTER_URL_KEY, textInfocenterURL.getText());
 		int choice = 0;
 		if (radioButtonLocalServerManual.getSelection())
 			choice = 1;
@@ -399,7 +412,6 @@ public class HelpPreferencePage
 		else if (radioButtonDebug.getSelection())
 			choice = 2;
 		store.setValue(HelpPreferences.LOG_LEVEL_KEY, choice);
-
 		if (!System.getProperty("os.name").startsWith("Win")) {
 			store.setValue(HelpPreferences.BROWSER_PATH_KEY, textBrowserPath.getText());
 		}
