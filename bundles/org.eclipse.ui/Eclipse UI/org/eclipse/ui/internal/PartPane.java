@@ -96,7 +96,6 @@ public void createControl(Composite parent) {
 	
 	// When the pane or any child gains focus, notify the workbench.
 	control.addListener(SWT.Activate, this);
-	control.addListener(SWT.ChildMouseDown, this);
 	hookFocus(control);
 	hookFocus(content);
 }
@@ -113,7 +112,6 @@ public void dispose() {
 
 	if ((control != null) && (!control.isDisposed())) {
 		control.removeListener(SWT.Activate, this);
-		control.removeListener(SWT.ChildMouseDown, this);
 		control.dispose();
 		control = null;
 	}
@@ -173,7 +171,7 @@ protected ViewForm getViewForm() {
  * @see Listener
  */
 public void handleEvent(Event event) {
-	if (event.type == SWT.Activate || event.type == SWT.ChildMouseDown)
+	if (event.type == SWT.Activate)
 		requestActivation();
 }
 /**
