@@ -23,6 +23,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginPrerequisite;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
@@ -48,20 +62,22 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginPrerequisite;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -89,23 +105,6 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.VerticalRuler;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -489,7 +488,25 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			handlePreferenceStoreChanged(event);
 		}
 	};
-	
+
+	/**
+	 * Internal property change listener for handling workbench font changes.
+	 */
+	class FontPropertyChangeListener implements IPropertyChangeListener {
+		/*
+		 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+		 */
+		public void propertyChange(PropertyChangeEvent event) {
+			if (fSourceViewer == null)
+				return;
+				
+			String property= event.getProperty();
+			
+			if (getFontPropertyPreferenceKey().equals(property))
+				initializeViewerFont(fSourceViewer);
+		}
+	};
+
 	/**
 	 * Internal key verify listener for triggering action activation codes.
 	 */
@@ -1055,7 +1072,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	
 	
-	/** Key used to look up font preference */
+	/**
+	 * Key used to look up font preference
+	 * Value: <code>"org.eclipse.jface.textfont"</code>
+	 * 
+	 * @deprecated As of 2.1, replaced by {@link JFaceResources#TEXT_FONT}
+	 */
 	public final static String PREFERENCE_FONT= JFaceResources.TEXT_FONT;
 	/** 
 	 * Key used to look up foreground color preference
@@ -1188,8 +1210,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/** The editor's selection provider */
 	private SelectionProvider fSelectionProvider= new SelectionProvider();
 	/** The editor's font */
-	private Font fFont;
-	/** 
+	private Font fFont;	/** 
 	 * The editor's foreground color
 	 * @since 2.0
 	 */
@@ -1257,6 +1278,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private ITextListener fTextListener= new TextListener();
 	/** The editor's property change listener */
 	private IPropertyChangeListener fPropertyChangeListener= new PropertyChangeListener();
+	/** The editor's font properties change listener */
+	private IPropertyChangeListener fFontPropertyChangeListener= new FontPropertyChangeListener();
 	
 	/** 
 	 * The editor's activation listener
@@ -1950,6 +1973,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		createActions();
 		
 		initializeSourceViewer(getEditorInput());
+		
+		JFaceResources.getFontRegistry().addListener(fFontPropertyChangeListener);
 	}
 	
 	/**
@@ -1959,32 +1984,36 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.0
 	 */
 	private void initializeViewerFont(ISourceViewer viewer) {
-		
-		IPreferenceStore store= getPreferenceStore();
-		if (store != null) {
+
+		boolean isSharedFont= true;
+		Font font= null;
+		String symbolicFontName= getSymbolicFontName();
+
+		if (symbolicFontName != null)
+			font= JFaceResources.getFont(symbolicFontName);
+		else if (fPreferenceStore != null) {
+			// Backward compatibility
+			if (fPreferenceStore.contains(JFaceResources.TEXT_FONT) && !fPreferenceStore.isDefault(JFaceResources.TEXT_FONT)) {
+				FontData data= PreferenceConverter.getFontData(fPreferenceStore, JFaceResources.TEXT_FONT);
 			
-			FontData data= null;
-			
-			if (store.contains(PREFERENCE_FONT) && !store.isDefault(PREFERENCE_FONT))
-				data= PreferenceConverter.getFontData(store, PREFERENCE_FONT);
-			else
-				data= PreferenceConverter.getDefaultFontData(store, PREFERENCE_FONT);
-			
-			if (data != null) {
-				
-				Font font= new Font(viewer.getTextWidget().getDisplay(), data);
-				setFont(viewer, font);
-				
-				if (fFont != null)
-					fFont.dispose();
-					
-				fFont= font;
-				return;
+				if (data != null) {
+					isSharedFont= false;
+					font= new Font(viewer.getTextWidget().getDisplay(), data);
+				}
 			}
 		}
+		if (font == null)
+			font= JFaceResources.getTextFont();
+
+		setFont(viewer, font);
 		
-		// if all the preferences failed
-		setFont(viewer, JFaceResources.getTextFont());
+		if (fFont != null) {
+			fFont.dispose();
+			fFont= null;
+		}
+
+		if (!isSharedFont)
+			fFont= font;
 	}
 	
 	/**
@@ -2308,10 +2337,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fTitleImage.dispose();
 			fTitleImage= null;
 		}
-		
+
 		if (fFont != null) {
 			fFont.dispose();
 			fFont= null;
+		}
+
+		if (fFontPropertyChangeListener != null) {
+			JFaceResources.getFontRegistry().removeListener(fFontPropertyChangeListener);
+			fFontPropertyChangeListener= null;
 		}
 		
 		if (fPropertyChangeListener != null) {
@@ -2415,6 +2449,35 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
 		return false;
 	}
+
+	/**
+	 * Returns the symbolic font name for this
+	 * editor as defined in XML
+	 * 
+	 * @return a String with the symbolic font name or <code>null</code> if none is defined
+	 * @since 2.1
+	 */
+	private String getSymbolicFontName() {
+		if (getConfigurationElement() != null)
+			return getConfigurationElement().getAttribute("symbolicFontName"); //$NON-NLS-1$
+		else
+			return null;
+	}
+
+	/**
+	 * Returns the property preference key for the editor font
+	 * 
+	 * @return a String with the key
+	 * @since 2.1
+	 */
+	private String getFontPropertyPreferenceKey() {
+		String symbolicFontName= getSymbolicFontName();
+
+		if (symbolicFontName != null)
+			return symbolicFontName;
+		else
+		 	return JFaceResources.TEXT_FONT;
+	}
 	
 	/**
 	 * Handles a property change event describing a change
@@ -2430,9 +2493,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 		String property= event.getProperty();
 		
-		if (PREFERENCE_FONT.equals(property)) {
-			initializeViewerFont(fSourceViewer);
-
+		if (getFontPropertyPreferenceKey().equals(property)) {
+			// There is a separate handler for font preference changes
+			return;
 		} else if (PREFERENCE_COLOR_FOREGROUND.equals(property) || PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT.equals(property) ||
 			PREFERENCE_COLOR_BACKGROUND.equals(property) ||	PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property))
 		{
