@@ -98,4 +98,11 @@ public class TargetInfo {
 		return getName().hashCode();
 	}
 
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return getName();
+	}
+
 }
