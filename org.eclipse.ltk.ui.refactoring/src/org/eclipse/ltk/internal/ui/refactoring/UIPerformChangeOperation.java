@@ -46,43 +46,48 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 	}
 	
 	protected void executeChange(final IProgressMonitor pm) throws CoreException {
-		IRewriteTarget[] targets= null;
-		try {
-			targets= getRewriteTargets();
-			beginCompoundChange(targets);
-			final Button cancel= getCancelButton();
-			if (fDisplay != null && !fDisplay.isDisposed()) {
-				final CoreException[] exception= new CoreException[1]; 
-				Runnable r= new Runnable() {
-					public void run() {
-						try {
-							boolean enabled= true;
-							if (cancel != null && !cancel.isDisposed()) {
-								enabled= cancel.isEnabled();
-								cancel.setEnabled(false);
-							}
-							try {
-								UIPerformChangeOperation.super.executeChange(pm);
-							} finally {
-								if (cancel != null && !cancel.isDisposed()) {
-									cancel.setEnabled(enabled);
-								}
-							}
-							
-						} catch (CoreException e) {
-							exception[0]= e;
+		if (fDisplay != null && !fDisplay.isDisposed()) {
+			final CoreException[] exception= new CoreException[1]; 
+			Runnable r= new Runnable() {
+				public void run() {
+					IRewriteTarget[] targets= null;
+					try {
+						final Button cancel= getCancelButton();
+						targets= getRewriteTargets();
+						beginCompoundChange(targets);
+						boolean enabled= true;
+						if (cancel != null && !cancel.isDisposed()) {
+							enabled= cancel.isEnabled();
+							cancel.setEnabled(false);
 						}
+						try {
+							UIPerformChangeOperation.super.executeChange(pm);
+						} finally {
+							if (cancel != null && !cancel.isDisposed()) {
+								cancel.setEnabled(enabled);
+							}
+						}
+					} catch (CoreException e) {
+						exception[0]= e;
+					} finally {
+						if (targets != null)
+							endCompoundChange(targets);
 					}
-				};
-				fDisplay.syncExec(r);
-				if (exception[0] != null)
-					throw new CoreException(exception[0].getStatus());
-			} else {
+				}
+			};
+			fDisplay.syncExec(r);
+			if (exception[0] != null)
+				throw new CoreException(exception[0].getStatus());
+		} else {
+			IRewriteTarget[] targets= null;
+			try {
+				targets= getRewriteTargets();
+				beginCompoundChange(targets);
 				super.executeChange(pm);
+			} finally {
+				if (targets != null)
+					endCompoundChange(targets);
 			}
-		} finally {
-			if (targets != null)
-				endCompoundChange(targets);
 		}
 	}
 
