@@ -391,7 +391,7 @@ public class Main {
 				// just try to build a URL. In either case, if we fail, use string as something to tack
 				// on the end of the base.
 				URL url = null;
-				if (string.startsWith("file:"))
+				if (string.startsWith("file:")) //$NON-NLS-1$
 					url = new File(string.substring(5)).toURL();
 				else
 					url = new URL(string);
@@ -578,9 +578,9 @@ public class Main {
 
 	private static URL adjustTrailingSlash(URL url, boolean trailingSlash) throws MalformedURLException {
 		String file = url.getFile();
-		if (trailingSlash == (file.endsWith("/")))
+		if (trailingSlash == (file.endsWith("/"))) //$NON-NLS-1$
 			return url;
-		file = trailingSlash ? file + "/" : file.substring(0, file.length() - 1);
+		file = trailingSlash ? file + "/" : file.substring(0, file.length() - 1); //$NON-NLS-1$
 		return new URL(url.getProtocol(), url.getHost(), file);
 	}
 
@@ -628,7 +628,7 @@ public class Main {
 
 		URL install = getInstallLocation();
 		// TODO a little dangerous here.  Basically we have to assume that it is a file URL.
-		if (install.getProtocol().equals("file")) {
+		if (install.getProtocol().equals("file")) { //$NON-NLS-1$
 			File installDir = new File(install.getFile());
 			if (installDir.canWrite())
 				return installDir.getAbsolutePath() + File.separator + CONFIG_DIR;
