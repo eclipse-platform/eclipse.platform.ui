@@ -50,9 +50,17 @@ public class AssociatedWindow extends Window {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setTransparent(70);
+		newShell.setTransparent(getTransparencyValue());
 		this.associate(newShell);
 		newShell.setBackground(newShell.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+	}
+
+	/**
+	 * Return the value for the transparency for the receiver.
+	 * @return int
+	 */
+	protected int getTransparencyValue() {
+		return 70;
 	}
 
 	/**
@@ -71,19 +79,8 @@ public class AssociatedWindow extends Window {
 		itemLocation.y += shellPosition.y;
 		
 		
-		Point size;
-		//If there are no contents just set the location
-		if(getContents() == null)
-			size =  shellToMove.getSize();
-		else
-			size = getContents().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Point size  =  shellToMove.getSize();
 		
-		size.x += 5;
-		size.y += 5;
-		if(size.x > 500)
-			size.x = 500;
-		shellToMove.setSize(size);
-
 		Point windowLocation = new Point(itemLocation.x - size.x, itemLocation.y );
 		
 		shellToMove.setLocation(windowLocation);
