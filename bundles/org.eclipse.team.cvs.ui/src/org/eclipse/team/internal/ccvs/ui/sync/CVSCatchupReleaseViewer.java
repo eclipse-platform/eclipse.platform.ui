@@ -361,7 +361,8 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 						ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
 					}
 				}
-				refresh();				
+				refresh();
+				diffModel.updateStatusLine();
 			}
 			 
 			public boolean isEnabled() {

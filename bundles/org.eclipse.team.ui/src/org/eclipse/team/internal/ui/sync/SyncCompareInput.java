@@ -371,7 +371,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 	/**
 	 * Updates the status line.
 	 */
-	protected void updateStatusLine() {
+	public void updateStatusLine() {
 		if (viewSite != null && !shell.isDisposed()) {
 			Runnable update = new Runnable() {
 				public void run() {
