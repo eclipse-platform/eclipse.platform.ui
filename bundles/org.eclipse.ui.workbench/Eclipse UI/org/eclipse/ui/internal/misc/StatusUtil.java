@@ -69,10 +69,15 @@ public static IStatus newStatus(
 	String message, 
 	Throwable exception) {
 
-	Assert.isTrue(message != null);
-	Assert.isTrue(message.trim().length() != 0);
+	String statusMessage = message;
+	if(message == null || message.trim().length() == 0){
+		if(exception.getMessage() == null)
+			statusMessage = exception.toString();
+		else
+			statusMessage = exception.getMessage();
+	}
 
-	return new Status(severity, WorkbenchPlugin.PI_WORKBENCH, severity, message, exception);
+	return new Status(severity, WorkbenchPlugin.PI_WORKBENCH, severity, statusMessage, exception);
 }
 /**
  * This method must not be called outside the workbench.

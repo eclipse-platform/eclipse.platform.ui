@@ -77,11 +77,15 @@ public static IStatus newStatus(
 	String message, 
 	Throwable exception) {
 
-	if (message == null || message.trim().length() == 0) {
-		throw new IllegalArgumentException();
+	String statusMessage = message;
+	if(message == null || message.trim().length() == 0){
+		if(exception.getMessage() == null)
+			statusMessage = exception.toString();
+		else
+			statusMessage = exception.getMessage();
 	}
 
-	return new Status(severity, IDEWorkbenchPlugin.IDE_WORKBENCH, severity, message, exception);
+	return new Status(severity, IDEWorkbenchPlugin.IDE_WORKBENCH, severity, statusMessage, exception);
 }
 /**
  * This method must not be called outside the workbench.
