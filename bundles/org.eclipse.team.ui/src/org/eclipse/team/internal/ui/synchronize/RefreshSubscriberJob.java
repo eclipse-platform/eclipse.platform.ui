@@ -123,13 +123,13 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	 * @param subscriber
 	 */
 	public RefreshSubscriberJob(SubscriberParticipant participant, String jobName, String taskName, IResource[] resources, IRefreshSubscriberListener listener) {
-		super(jobName);
+		super(taskName);
 		Assert.isNotNull(resources);
 		Assert.isNotNull(participant);
 		Assert.isNotNull(resources);
 		this.resources = resources;
 		this.participant = participant;
-		this.taskName = taskName;
+		this.taskName = jobName;
 		setPriority(Job.DECORATE);
 		setRefreshInterval(3600 /* 1 hour */);
 		
@@ -203,7 +203,8 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 					subscriber.addListener(changeListener);
 					// Pre-Notify
 					notifyListeners(STARTED, event);
-					// Perform the refresh										
+					// Perform the refresh		
+					monitor.setTaskName(getName());
 					subscriber.refresh(roots, IResource.DEPTH_INFINITE, monitor);					
 				} catch(TeamException e) {
 					status.merge(e.getStatus());
@@ -248,15 +249,15 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 				if (changes.length > 0) {
 				// New changes found
 					String numNewChanges = Integer.toString(event.getChanges().length);
-					text.append(Policy.bind("RefreshCompleteDialog.5a", new Object[]{numNewChanges, participant.getName(), outgoing, incoming, conflicting})); //$NON-NLS-1$
+					text.append(Policy.bind("RefreshCompleteDialog.5a", new Object[]{getName(), numNewChanges})); //$NON-NLS-1$
 				} else {
 				// Refreshed resources contain changes
-					text.append(Policy.bind("RefreshCompleteDialog.5", new Object[]{new Integer(numChanges), outgoing, incoming, conflicting})); //$NON-NLS-1$
+					text.append(Policy.bind("RefreshCompleteDialog.5", new Object[]{getName(), new Integer(numChanges)})); //$NON-NLS-1$
 				}
 			} else {
 				// No changes found
 				code = IRefreshEvent.STATUS_NO_CHANGES;
-				text.append(Policy.bind("RefreshCompleteDialog.6")); //$NON-NLS-1$
+				text.append(Policy.bind("RefreshCompleteDialog.6", getName())); //$NON-NLS-1$
 			}
 			return new Status(IStatus.OK, TeamUIPlugin.ID, code, text.toString(), null);
 		}
