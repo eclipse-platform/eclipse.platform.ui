@@ -1939,19 +1939,19 @@
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+,"
-            scope="org.eclipse.ui.textEditorScope"
-            command="org.eclipse.ui.edit.text.goto.textStart"
-            configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            string="Esc ,"
+            string="Alt+Shift+&lt;"
             scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.textStart"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Esc &lt;"
+            scope="org.eclipse.ui.textEditorScope"
+            command="org.eclipse.ui.edit.text.goto.textStart"
+            configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            string="Esc Shift+&lt;"
             scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.textStart"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
@@ -1969,13 +1969,7 @@
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+."
-            scope="org.eclipse.ui.textEditorScope"
-            command="org.eclipse.ui.edit.text.goto.textEnd"
-            configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            string="Esc ."
+            string="Alt+Shift+&gt;"
             scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.textEnd"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
@@ -1987,11 +1981,17 @@
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
+            string="Esc Shift+&gt;"
+            scope="org.eclipse.ui.textEditorScope"
+            command="org.eclipse.ui.edit.text.goto.textEnd"
+            configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
             string="Ctrl+X ]"
             scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.textEnd"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>      
+      </keyBinding>
       <keyBinding
             string="Alt+Z"
             scope="org.eclipse.ui.textEditorScope"
