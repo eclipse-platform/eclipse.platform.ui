@@ -251,6 +251,28 @@ public String[] extensionSetup() {
 	localXMLFiles[0] = fs.toString();
 	return localXMLFiles;
 }
+public static void assertEquals(String message, ConfigurationElementModel one, ConfigurationElementModel two) {
+	assertEquals(message + "(name)", one.getName(), two.getName());
+	assertEquals(message + "(value)", one.getValue(), two.getValue());
+}
+public static void assertEquals(String message, ConfigurationPropertyModel one, ConfigurationPropertyModel two) {
+	assertEquals(message + "(name)", one.getName(), two.getName());
+	assertEquals(message + "(value)", one.getValue(), two.getValue());
+}
+public static void assertEquals(String message, ConfigurationPropertyModel[] one, ConfigurationPropertyModel[] two) {
+	assertEquals(message, one.length, two.length);
+	for (int i=0; i<one.length; i++) {
+		boolean found = false;
+		for (int j=0; !found && j<two.length; j++) {
+			if (one[i].getName().equals(two[j].getName())) {
+				assertEquals(message, one[i], two[j]);
+				found = true;
+			}
+		}
+		if (!found)
+			assertTrue(message, false);
+	}
+}
 /*  extensionTest
  *  Tests to ensure we create extension entries and populate them correctly.
  *  Note that this test will NOT ensure that we correctly link related extensions
@@ -347,28 +369,15 @@ public void extensionTest() {
 
 	// Now check the first property group (off the 'category' subelement)
 	// Note there is no read-only version of a configuration property
+	// There should be 2 properties:  id and name
 	ConfigurationPropertyModel[] properties = subElements[0].getProperties();
 	ConfigurationProperty[] originalProperties = (ConfigurationProperty[]) originalSubElements[0].getProperties();
-
-	// There should be 2 properties:  id and name
-	assertNotNull("10.1 Property Group 1 null", properties);
-	assertEquals("10.2 Number of properties", properties.length, 2);
-	assertEquals("10.3 Property Group 1 - name", properties[0].getName(), originalProperties[0].getName());
-	assertEquals("10.4 Property Group 1 - value", properties[0].getValue(), originalProperties[0].getValue());
-	assertEquals("10.5 Property Group 1 - name", properties[1].getName(), originalProperties[1].getName());
-	assertEquals("10.6 Property Group 1 - value", properties[1].getValue(), originalProperties[1].getValue());
+	assertEquals("10.1", originalProperties, properties);
 
 	// Check the second property group (off the 'wizard' subelement)
 	properties = subElements[1].getProperties();
 	originalProperties = (ConfigurationProperty[]) originalSubElements[1].getProperties();
-	assertNotNull("11.1 Property Group 2 null", properties);
-	assertEquals("11.2 Number of properties", properties.length, 3);
-	assertEquals("11.3 Property Group 2 - name", properties[0].getName(), originalProperties[0].getName());
-	assertEquals("11.4 Property Group 2 - value", properties[0].getValue(), originalProperties[0].getValue());
-	assertEquals("11.5 Property Group 2 - name", properties[1].getName(), originalProperties[1].getName());
-	assertEquals("11.6 Property Group 2 - value", properties[1].getValue(), originalProperties[1].getValue());
-	assertEquals("11.7 Property Group 2 - name", properties[2].getName(), originalProperties[2].getName());
-	assertEquals("11.8 Property Group 2 - value", properties[2].getValue(), originalProperties[2].getValue());
+	assertEquals("11.1", originalProperties, properties);
 
 	// The 'wizard' subelement has 2 subelements that hang off it:  description and selection
 	ConfigurationElementModel[] subElements2 = subElements[1].getSubElements();
@@ -390,10 +399,7 @@ public void extensionTest() {
 	// The last of the second level subelements (selection) has a single property
 	properties = subElements2[1].getProperties();
 	originalProperties = (ConfigurationProperty[]) originalSubElements2[1].getProperties();
-	assertNotNull("14.1 Property Group 3 null", properties);
-	assertEquals("14.2 Number of properties", properties.length, 1);
-	assertEquals("14.3 Property Group 3 - name", properties[0].getName(), originalProperties[0].getName());
-	assertEquals("14.4 Property Group 3 - value", properties[0].getValue(), originalProperties[0].getValue());
+	assertEquals("14.1", originalProperties, properties);
 
 	factory = null;
 }
