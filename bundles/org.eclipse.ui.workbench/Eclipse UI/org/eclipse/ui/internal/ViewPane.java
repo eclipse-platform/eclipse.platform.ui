@@ -590,6 +590,16 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		hideToolBarShell();
 		//	drawGradient();
 	}
+	
+	/**
+	 * Set the active border.
+	 * @param active
+	 */
+	void setActive(boolean active){
+		if(getContainer() instanceof PartTabFolder){
+			((PartTabFolder) getContainer()).setBorderVisible(active);
+		}
+	}
 
 	/**
 	 * Indicate focus in part.
@@ -606,6 +616,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			showToolBarShell();
 		else
 			hideToolBarShell();
+		setActive(inFocus);
 
 	}
 
