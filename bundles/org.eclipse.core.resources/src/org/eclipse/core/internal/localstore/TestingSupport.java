@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
-import org.eclipse.core.internal.resources.Workspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 
 /**
