@@ -52,7 +52,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 * See the superclass constructor for info on the other parameters.
 	 * 
 	 * @param toggleMessage the message for the toggle control, or <code>null</code> 
-	 *   for the default message ("Don't show me this message again").
+	 *   for the default message ("Do not show this message again").
 	 * @param toggleState the initial state for the toggle 
 	 * 
 	 */
