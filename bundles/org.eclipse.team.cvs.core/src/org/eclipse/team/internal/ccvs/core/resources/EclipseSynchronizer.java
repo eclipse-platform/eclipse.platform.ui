@@ -1016,12 +1016,17 @@ public class EclipseSynchronizer {
 	 * XXX If there was a previous notify entry for the resource, it is replaced. This is
 	 * probably not the proper behavior (see EclipseFile).
 	 * 
+	 * A value of null for info indicates that any entry for the given
+	 * resource is to be removed from the Notify file.
+	 * 
 	 * @param resource
 	 * @param info
 	 */
 	public void setNotifyInfo(IResource resource, NotifyInfo info) throws CVSException {
 		NotifyInfo[] infos = SyncFileWriter.readAllNotifyInfo(resource.getParent());
 		if (infos == null) {
+			// if the file is empty and we are removing an entry, just return;
+			if (info == null) return;
 			infos = new NotifyInfo[] { info };
 		} else {
 			Map infoMap = new HashMap();
@@ -1029,7 +1034,14 @@ public class EclipseSynchronizer {
 				NotifyInfo notifyInfo = infos[i];
 				infoMap.put(infos[i].getName(), infos[i]);
 			}
-			infoMap.put(info.getName(), info);
+			if (info == null) {
+				// if the info is null, remove the entry
+				infoMap.remove(resource.getName());
+			} else {
+				// add the new entry to the list
+				infoMap.put(info.getName(), info);
+			}
+			
 			NotifyInfo[] newInfos = new NotifyInfo[infoMap.size()];
 			int i = 0;
 			for (Iterator iter = infoMap.values().iterator(); iter.hasNext();) {
