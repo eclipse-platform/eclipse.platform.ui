@@ -10,9 +10,13 @@ Contributors:
 **********************************************************************/
 package org.eclipse.ui.editors.text;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -39,8 +43,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -62,6 +68,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.UISynchronizationContext;
 import org.eclipse.ui.internal.editors.text.WorkspaceOperationRunner;
+import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -678,14 +685,15 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	}
 	
 	protected void createFileFromDocument(IProgressMonitor monitor, IFile file, IDocument document) throws CoreException {
+		String encoding= getCharsetForNewFile(file, document);
 		try {
 			monitor.beginTask(TextEditorMessages.getString("TextFileDocumentProvider.beginTask.saving"), 2000); //$NON-NLS-1$
-			InputStream stream= new ByteArrayInputStream(document.get().getBytes(getDefaultEncoding()));
+			InputStream stream= new ByteArrayInputStream(document.get().getBytes(encoding));
 			ContainerGenerator generator = new ContainerGenerator(file.getWorkspace(), file.getParent().getFullPath());
 			generator.generateContainer(new SubProgressMonitor(monitor, 1000));
 			file.create(stream, false, new SubProgressMonitor(monitor, 1000));
 		} catch (UnsupportedEncodingException x) {
-			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
+			String message= TextEditorMessages.getFormattedString("Editor.error.unsupported_encoding.message_arg", encoding); //$NON-NLS-1$
 			IStatus s= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, message, x);
 			throw new CoreException(s);
 		} finally {
@@ -693,6 +701,72 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		}
 	}
 	
+	private String getCharsetForNewFile(IFile targetFile, IDocument document) {
+		// User-defined encoding has first priority
+		String encoding;
+		try {
+			encoding= targetFile.getCharset(false);
+		} catch (CoreException ex) {
+			encoding= null;
+		}
+		if (encoding != null)
+			return encoding;
+		
+		// Probe content
+		Reader reader= new BufferedReader(new StringReader(document.get()));
+		try {
+			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
+			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, targetFile.getName(), options);
+			encoding= getCharset(description);
+			if (encoding != null)
+				return encoding;
+		} catch (IOException ex) {
+			// continue with next strategy
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException ex) {
+				TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "TextFileDocumentProvider.getCharsetForNewFile(...): Could not close reader", ex)); //$NON-NLS-1$
+			}
+		}
+		
+		// Use parent chain
+		try {
+			return targetFile.getParent().getDefaultCharset();
+		} catch (CoreException ex) {
+			// Use global default
+			return ResourcesPlugin.getEncoding();
+		}
+	}
+
+	/**
+	 * Helper method which computes the encoding out of the given description.
+	 * <p>
+	 * XXX:
+	 * This method should be provided by Platform Core
+	 * see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=64342
+	 * </p>
+	 * 
+	 * @param description the content description
+	 * @return the encoding
+	 * @see org.eclipse.core.resources.IFile#getCharset()
+	 */
+	private String getCharset(IContentDescription description) {
+		if (description == null)
+			return null;
+		byte[] bom= (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
+		if (bom != null)
+			if (bom == IContentDescription.BOM_UTF_8)
+				return "UTF-8"; //$NON-NLS-1$
+			else if (bom == IContentDescription.BOM_UTF_16BE || bom == IContentDescription.BOM_UTF_16LE)
+				// UTF-16 will properly detect the BOM
+				return "UTF-16"; //$NON-NLS-1$
+			else {
+				// unknown BOM... ignore it				
+			}
+		return (String)description.getProperty(IContentDescription.CHARSET);
+	}
+
 	/*
 	 * @see org.eclipse.ui.texteditor.IDocumentProvider#getModificationStamp(java.lang.Object)
 	 */

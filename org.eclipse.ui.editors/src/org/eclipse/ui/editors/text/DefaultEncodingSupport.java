@@ -103,24 +103,19 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	protected void setEncoding(String encoding, boolean overwrite) {
 		IDocumentProvider p= fTextEditor.getDocumentProvider();
 		if (p instanceof IStorageDocumentProvider) {
-			IEditorInput input= fTextEditor.getEditorInput();
+			final IEditorInput input= fTextEditor.getEditorInput();
 			IStorageDocumentProvider provider= (IStorageDocumentProvider)p;
 			String current= provider.getEncoding(input);
-			String defaultEncoding= provider.getDefaultEncoding();
-
-			if (current != null && current.equals(defaultEncoding))
-				provider.setEncoding(input, encoding);
-
-			else if (!fTextEditor.isDirty()) {
+			if (!fTextEditor.isDirty()) {
 				String internal= encoding == null ? "" : encoding; //$NON-NLS-1$
 				boolean apply= (overwrite || current == null) && !internal.equals(current);
 				if (apply) {
-					provider.setEncoding(fTextEditor.getEditorInput(), encoding);
+					provider.setEncoding(input, encoding);
 					Runnable encodingSetter=
 						new Runnable() {
 							   public void run() {
 								   fTextEditor.doRevertToSaved();
-								   fTextEditor.updatePartControl(fTextEditor.getEditorInput());
+								   fTextEditor.updatePartControl(input);
 							   }
 						};
 					Display display= fTextEditor.getSite().getShell().getDisplay();
@@ -224,7 +219,7 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 			
 			if (t instanceof UnsupportedEncodingException) {
 				if (encoding != null)
-					return MessageFormat.format(TextEditorMessages.getString("Editor.error.unsupported_encoding.message_arg"), new Object[] { encoding }); //$NON-NLS-1$
+					return TextEditorMessages.getFormattedString("Editor.error.unsupported_encoding.message_arg", encoding); //$NON-NLS-1$
 				return TextEditorMessages.getString("Editor.error.unsupported_encoding.message"); //$NON-NLS-1$
 			}
 		}

@@ -12,9 +12,13 @@
 package org.eclipse.ui.editors.text;
 
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -31,9 +35,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 import org.eclipse.swt.widgets.Display;
@@ -49,10 +55,11 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerGenerator;
+import org.eclipse.ui.internal.editors.text.WorkspaceOperationRunner;
+import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
-import org.eclipse.ui.internal.editors.text.*;
 
 
 
@@ -79,7 +86,6 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @since 3.0
 	 */
 	private IResourceRuleFactory fResourceRuleFactory;
-
 	
 	/**
 	 * Runnable encapsulating an element state change. This runnable ensures 
@@ -284,6 +290,16 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		public FileSynchronizer fFileSynchronizer;
 		/** The time stamp at which this provider changed the file. */
 		public long fModificationStamp= IResource.NULL_STAMP;
+		/**
+		 * BOM if encoding is UTF-8.
+		 * <p>
+		 * XXX:
+		 * This is a workaround for a corresponding bug in Java readers and writer,
+		 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+		 * </p>
+		 * @since 3.0
+		 */
+		private byte[] UTF8BOM;
 		
 		/**
 		 * Creates and returns a new file info.
@@ -330,7 +346,27 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput, String encoding) throws CoreException {
 		if (editorInput instanceof IFileEditorInput) {
 			IFile file= ((IFileEditorInput) editorInput).getFile();
-			setDocumentContent(document, file.getContents(false), encoding);
+			InputStream contentStream= file.getContents(false);
+			
+			FileInfo info= (FileInfo)getElementInfo(editorInput);
+
+			/*
+			 * XXX:
+			 * This is a workaround for a corresponding bug in Java readers and writer,
+			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+			 * </p>
+			 */
+			if (info != null && info.UTF8BOM != null) {
+				try {
+					contentStream.read();
+					contentStream.read();
+					contentStream.read();
+				} catch (IOException e) {
+					// ignore if we cannot remove BOM
+				}
+			}
+
+			setDocumentContent(document, contentStream, encoding);
 			return true;
 		}
 		return super.setDocumentContent(document, editorInput, encoding);
@@ -462,18 +498,30 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		if (element instanceof IFileEditorInput) {
 			
 			IFileEditorInput input= (IFileEditorInput) element;
-			
+			String encoding= null;
 			try {
-			
-			String encoding= getEncoding(input);
-			if (encoding == null)
-				encoding= getDefaultEncoding();
-			InputStream stream= new ByteArrayInputStream(document.get().getBytes(encoding));
-			IFile file= input.getFile();
+				FileInfo info= (FileInfo) getElementInfo(element);
+				IFile file= input.getFile();
+				boolean hasUTF8BOM= info != null && info.UTF8BOM != null;
+				encoding= getCharsetForNewFile(file, document, hasUTF8BOM);
+
+				byte[] bytes= document.get().getBytes(encoding);
+				
+				/*
+				 * XXX:
+				 * This is a workaround for a corresponding bug in Java readers and writer,
+				 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+				 */
+				if (hasUTF8BOM) {
+					byte[] bytesWithBOM= new byte[bytes.length + 3];
+					System.arraycopy(info.UTF8BOM, 0, bytesWithBOM, 0, 3);
+					System.arraycopy(bytes, 0, bytesWithBOM, 3, bytes.length);
+					bytes= bytesWithBOM;
+				}
+				
+				InputStream stream= new ByteArrayInputStream(bytes);
 									
 				if (file.exists()) {
-					
-					FileInfo info= (FileInfo) getElementInfo(element);
 					
 					if (info != null && !overwrite)
 						checkSynchronizationState(info.fModificationStamp, file);
@@ -515,8 +563,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 					}
 				}
 				
-			} catch (IOException x) {
-				String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
+			} catch (UnsupportedEncodingException x) {
+				String message= TextEditorMessages.getFormattedString("Editor.error.unsupported_encoding.message_arg", encoding); //$NON-NLS-1$
 				IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, x);
 				throw new CoreException(s);
 			}
@@ -525,7 +573,76 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			super.doSaveDocument(monitor, element, document, overwrite);
 		}
 	}
-	
+
+	private String getCharsetForNewFile(IFile targetFile, IDocument document, boolean hasUTF8BOM) {
+		// User-defined encoding has first priority
+		String encoding;
+		try {
+			encoding= targetFile.getCharset(false);
+		} catch (CoreException ex) {
+			encoding= null;
+		}
+		if (encoding != null)
+			return encoding;
+		
+		// Probe content
+		Reader reader= new BufferedReader(new StringReader(document.get()));
+		try {
+			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
+			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, targetFile.getName(), options);
+			encoding= getCharset(description);
+			if (encoding != null)
+				return encoding;
+			else if (hasUTF8BOM)
+				return "UTF-8"; //$NON-NLS-1$
+		} catch (IOException ex) {
+			// continue with next strategy
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException ex) {
+				TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "TextFileDocumentProvider.getCharsetForNewFile(...): Could not close reader", ex)); //$NON-NLS-1$
+			}
+		}
+		
+		// Use parent chain
+		try {
+			return targetFile.getParent().getDefaultCharset();
+		} catch (CoreException ex) {
+			// Use global default
+			return ResourcesPlugin.getEncoding();
+		}
+	}
+
+	/**
+	 * Helper method which computes the encoding out of the given description.
+	 * <p>
+	 * XXX:
+	 * This method should be provided by Platform Core
+	 * see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=64342
+	 * </p>
+	 * 
+	 * @param description the content description
+	 * @return the encoding
+	 * @see org.eclipse.core.resources.IFile#getCharset()
+	 * @since 3.0
+	 */
+	private String getCharset(IContentDescription description) {
+		if (description == null)
+			return null;
+		byte[] bom= (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
+		if (bom != null)
+			if (bom == IContentDescription.BOM_UTF_8)
+				return "UTF-8"; //$NON-NLS-1$
+			else if (bom == IContentDescription.BOM_UTF_16BE || bom == IContentDescription.BOM_UTF_16LE)
+				// UTF-16 will properly detect the BOM
+				return "UTF-16"; //$NON-NLS-1$
+			else {
+				// unknown BOM... ignore it				
+			}
+		return (String)description.getProperty(IContentDescription.CHARSET);
+	}
+
 	/*
 	 * @see AbstractDocumentProvider#createElementInfo(Object)
 	 */
@@ -793,12 +910,14 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 						file.setCharset(encoding);
 						// if successful delete old property
 						file.setPersistentProperty(ENCODING_KEY, null);
+						readUTF8BOM(file, encoding, element);
 					} catch (CoreException ex) {
 						handleCoreException(ex, TextEditorMessages.getString("FileDocumentProvider.getPersistedEncoding")); //$NON-NLS-1$
 					}
 				} else {
 					try {
 						encoding= file.getCharset();
+						readUTF8BOM(file, encoding, element);
 					} catch (CoreException e) {
 						encoding= null;
 					}
@@ -821,8 +940,16 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput editorInput= (IFileEditorInput)element;
 			IFile file= editorInput.getFile();
-			if (file != null)
+			if (file != null) {
 				file.setCharset(encoding);
+				StorageInfo info= (StorageInfo)getElementInfo(element);
+				if (info != null) {
+					if (encoding == null)
+						info.fEncoding= file.getCharset();
+				}
+				readUTF8BOM(file, encoding, element);
+			}
+			
 		}
 	}
 	
@@ -890,6 +1017,35 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			return fResourceRuleFactory.validateEditRule(new IResource[] { input.getFile() });
 		} else {
 			return null;
+		}
+	}
+
+	/**
+	 * Reads the file's UTF-8 BOM if any and stores it.
+	 * <p>
+	 * XXX:
+	 * This is a workaround for a corresponding bug in Java readers and writer,
+	 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+	 * </p>
+	 *
+	 * @throws CoreException if reading the BOM fails 
+	 * @since 3.0
+	 */
+	protected void readUTF8BOM(IFile file, String encoding, Object element) throws CoreException {
+
+		if (element instanceof IFileEditorInput) {
+			FileInfo info= (FileInfo)getElementInfo(element);
+			if (info == null)
+				return;
+			
+			if ("UTF-8".equals(encoding)) { //$NON-NLS-1$
+				IContentDescription description= file.getContentDescription();
+				if (description != null) {
+					info.UTF8BOM= (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
+					if (info.UTF8BOM != null && info.UTF8BOM != IContentDescription.BOM_UTF_8)
+						throw new CoreException(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "Wrong byte order mark for UTF-8 encoding", null));
+				}
+			}
 		}
 	}
 }
