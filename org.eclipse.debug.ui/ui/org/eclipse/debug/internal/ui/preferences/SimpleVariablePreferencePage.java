@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -325,6 +326,22 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		public void dispose() {
 		}
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			if (newInput == null){
+				return;
+			}
+			if (viewer instanceof TableViewer){
+				((TableViewer)viewer).setSorter(new ViewerSorter() {
+					public int compare(Viewer viewer, Object e1, Object e2) {
+						if (e1 == null) {
+							return -1;
+						} else if (e2 == null) {
+							return 1;
+						} else {
+							return ((SimpleLaunchVariable)e1).getName().compareTo(((SimpleLaunchVariable)e2).getName());
+						}
+					}
+				});
+			}
 		}
 	}
 	
