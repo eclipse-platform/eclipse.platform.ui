@@ -262,7 +262,9 @@ public class JobManager implements IJobManager {
 		pool.shutdown();
 	}
 	/**
-	 * Indicates that a job was running, and has now finished.
+	 * Indicates that a job was running, and has now finished.  Note that this method 
+	 * can be called under OutOfMemoryError conditions and thus must be paranoid 
+	 * about allocating objects.
 	 */
 	protected void endJob(InternalJob job, IStatus result, boolean notify) {
 		InternalJob blocked = null;
@@ -277,9 +279,9 @@ public class JobManager implements IJobManager {
 			if (JobManager.DEBUG && notify)
 				JobManager.debug("Ending job: " + job); //$NON-NLS-1$
 			job.setResult(result);
-			changeState(job, Job.NONE);
 			job.setMonitor(null);
 			job.setThread(null);
+			changeState(job, Job.NONE);
 			blocked = job.previous();
 			job.setPrevious(null);
 
@@ -338,16 +340,21 @@ public class JobManager implements IJobManager {
 	 * Returns the thread that owns the rule that is blocking this job from running, or 
 	 * null if there is none.
 	 */
-	public Thread getBlockingThread(InternalJob job) {
+	protected Thread getBlockingThread(InternalJob job) {
+		Thread result = null;
 		synchronized (lock) {
-			if (job.internalGetState() != InternalJob.BLOCKED)
-				return null;
-			//if this job is blocked, then the head of the queue is the job that is blocking it
-			InternalJob next = job.next();
-			while (next.next() != null)
-				next = next.next();
-			return next == null ? null : next.getThread();
+			if (job.internalGetState() == InternalJob.BLOCKED) {
+				//if this job is blocked, then the head of the queue is the job that is blocking it
+				InternalJob next = job.next();
+				while (next.next() != null)
+					next = next.next();
+				result = next == null ? null : next.getThread();
+			}
 		}
+		//if nobody is blocking this job, kick start the system by creating another worker
+		if (result == null)
+			pool.jobQueued(job);
+		return result;
 	}
 	public LockManager getLockManager() {
 		return lockManager;

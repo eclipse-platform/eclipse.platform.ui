@@ -69,15 +69,16 @@ public class Worker extends Thread {
 				} finally {
 					//clear interrupted state for this thread
 					Thread.interrupted();
+					pool.endJob(currentJob, result);
 					if ((result.getSeverity() & (IStatus.ERROR | IStatus.WARNING)) != 0)
 						log(result);
-					pool.endJob(currentJob, result);
 					currentJob = null;
 				}
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
+			currentJob = null;
 			pool.endWorker(this);
 		}
 	}

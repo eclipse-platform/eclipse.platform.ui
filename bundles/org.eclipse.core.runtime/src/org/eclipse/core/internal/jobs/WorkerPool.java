@@ -9,8 +9,6 @@
  **********************************************************************/
 package org.eclipse.core.internal.jobs;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -26,10 +24,25 @@ import org.eclipse.core.runtime.jobs.Job;
  * turn use locks.
  */
 class WorkerPool {
+	/**
+	 * There will always be at least MIN_THREADS workers in the pool.
+	 */
 	private static final int MIN_THREADS = 1;
 	private static final int MAX_THREADS = 25;
+	/**
+	 * Threads not used by their best before timestamp are destroyed. 
+	 */
+	private static final int BEST_BEFORE = 60000;
+	
 	private boolean running = false;
-	private ArrayList threads = new ArrayList();
+	/**
+	 * The living set of workers in this pool.
+	 */
+	private Worker[] threads = new Worker[10];
+	/**
+	 * The number of workers in the threads array
+	 */
+	private int numThreads = 0;
 	/**
 	 * The number of threads that are currently sleeping 
 	 */
@@ -39,10 +52,6 @@ class WorkerPool {
 	 * thread is just doing house cleaning (notifying listeners, etc).
 	 */
 	private int busyThreads = 0;
-	/**
-	 * Threads not used by their best before timestamp are destroyed. 
-	 */
-	private static final int BEST_BEFORE = 60000;
 
 	private JobManager manager;
 
@@ -50,17 +59,41 @@ class WorkerPool {
 		this.manager = manager;
 		running = true;
 	}
+	/**
+	 * Adds a worker to the list of workers.
+	 */
+	private synchronized void add(Worker worker) {
+		int size = threads.length;
+		if (numThreads+1 > size) {
+			Worker[] newThreads = new Worker[2*size];
+			System.arraycopy(threads, 0, newThreads, 0, size);
+			threads = newThreads;
+		}
+		threads[numThreads++] = worker;
+	}
 	private synchronized void decrementBusyThreads() {
 		busyThreads--;
 	}
+
+	/**
+	 * Signals the end of a job.  Note that this method can be called under
+	 * OutOfMemoryError conditions and thus must be paranoid about allocating objects.
+	 */
 	protected void endJob(InternalJob job, IStatus result) {
 		decrementBusyThreads();
-		manager.endJob(job, result, true);
-		//remove any locks this thread may be owning
-		manager.getLockManager().removeAllLocks(Thread.currentThread());
+		try {
+			manager.endJob(job, result, true);
+		} finally {
+			//remove any locks this thread may be owning
+			manager.getLockManager().removeAllLocks(Thread.currentThread());
+		}
 	}
+	/**
+	 * Signals the death of a worker thread.  Note that this method can be called under
+	 * OutOfMemoryError conditions and thus must be paranoid about allocating objects.
+	 */
 	protected synchronized void endWorker(Worker worker) {
-		if (threads.remove(worker) && JobManager.DEBUG)
+		if (remove(worker) && JobManager.DEBUG)
 			JobManager.debug("worker removed from pool: " + worker); //$NON-NLS-1$
 	}
 	private synchronized void incrementBusyThreads() {
@@ -78,12 +111,12 @@ class WorkerPool {
 			notify();
 			return;
 		}
-		int threadCount = threads.size();
+		int threadCount = numThreads;
 		//create a thread if all threads are busy and we're under the max size
 		//if the job is high priority, we start a thread no matter what
 		if (busyThreads >= threadCount && (threadCount < MAX_THREADS || (job != null && job.getPriority() == Job.INTERACTIVE))) {
 			Worker worker = new Worker(this);
-			threads.add(worker);
+			add(worker);
 			if (JobManager.DEBUG)
 				JobManager.debug("worker added to pool: " + worker); //$NON-NLS-1$
 			worker.start();
@@ -92,6 +125,20 @@ class WorkerPool {
 			String msg = "The job manager has stopped allocating worker threads because too many background tasks are running.";//$NON-NLS-1$
 			InternalPlatform.log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, null));
 		}
+	}
+	/**
+	 * Remove a worker thread from our list.
+	 * @return true if a worker was removed, and false otherwise.
+	 */
+	private boolean remove(Worker worker) {
+		for (int i = 0; i < threads.length; i++) {
+			if (threads[i] == worker) {
+				System.arraycopy(threads, i+1, threads, i, numThreads - i - 1);
+				threads[--numThreads] = null;
+				return true;
+			}
+		}
+		return false;
 	}
 	protected synchronized void shutdown() {
 		running = false;
@@ -119,7 +166,7 @@ class WorkerPool {
 	protected InternalJob startJob(Worker worker) {
 		//if we're above capacity, kill the thread
 		synchronized (this) {
-			if (!running || threads.size() > MAX_THREADS) {
+			if (!running || numThreads > MAX_THREADS) {
 				//must remove the worker immediately to prevent all threads from expiring
 				endWorker(worker);
 				return null;
@@ -136,7 +183,7 @@ class WorkerPool {
 			//if we were already idle, and there are still no new jobs, then
 			// the thread can expire
 			synchronized (this) {
-				if (job == null && (System.currentTimeMillis() - idleStart > BEST_BEFORE) && (threads.size() - busyThreads) > MIN_THREADS) {
+				if (job == null && (System.currentTimeMillis() - idleStart > BEST_BEFORE) && (numThreads - busyThreads) > MIN_THREADS) {
 					//must remove the worker immediately to prevent all threads from expiring
 					endWorker(worker);
 					return null;
