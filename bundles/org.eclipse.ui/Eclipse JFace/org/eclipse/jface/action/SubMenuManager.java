@@ -83,26 +83,35 @@ public IMenuManager findMenuUsingPath(String path) {
 	IContributionItem item = findUsingPath(path);
 	if (item instanceof IMenuManager) {
 		IMenuManager menu = (IMenuManager)item;
-		IMenuManager wrapper = getWrapper(menu);
-		if (wrapper == null) {
-			wrapper = wrapMenu(menu);
-			putWrapper(menu, wrapper);
-		}
-		return wrapper;
+		return getWrapper(menu);
 	}
 	return null;
 }
 /* (non-Javadoc)
  * Method declared on IMenuManager.
+ *
+ * Returns the item passed to us, not the wrapper.
+ *
+ * We use use the same algorithm as MenuManager.findUsingPath, but unwrap
+ * submenus along so that SubMenuManagers are visible.
  */
 public IContributionItem findUsingPath(String path) {
-	IContributionItem item = parentMgr.findUsingPath(path);
-	if (item instanceof SubContributionItem) {
-		return ((SubContributionItem)item).getInnerItem();
-	} else {
-		return item;
+	String id = path;
+	String rest = null;
+	int separator = path.indexOf('/');
+	if (separator != -1) {
+		id = path.substring(0, separator);
+		rest = path.substring(separator + 1);
 	}
+	IContributionItem item = find(id); // unwraps item
+	if (rest != null && item instanceof IMenuManager) {
+		IMenuManager menu = (IMenuManager) item;
+		item = menu.findUsingPath(rest);
+		item = unwrap(item);
+	}
+	return item;
 }
+
 /* (non-Javadoc)
  * Method declared on IMenuManager.
  */
@@ -126,9 +135,15 @@ public boolean getRemoveAllWhenShown() {
  * @return the menu wrapper
  */
 private IMenuManager getWrapper(IMenuManager mgr) {
-	if (mapMenuToWrapper == null)
-		return null;
-	return (IMenuManager)mapMenuToWrapper.get(mgr);
+	if (mapMenuToWrapper == null) {
+		mapMenuToWrapper = new HashMap(4);
+	}
+	SubMenuManager wrapper = (SubMenuManager) mapMenuToWrapper.get(mgr);
+	if (wrapper == null) {
+		wrapper = wrapMenu(mgr);
+		mapMenuToWrapper.put(mgr, wrapper);
+	}
+	return wrapper;
 }
 /* (non-Javadoc)
  * Method declared on IMenuManager.
@@ -153,22 +168,6 @@ public boolean isGroupMarker() {
  */
 public boolean isSeparator() {
 	return parentMgr.isSeparator();
-}
-/**
- * Stores a menu wrapper for a menu manager.
- * <p>
- * The sub menus within this menu are wrapped within a <code>SubMenuManager</code> to
- * monitor additions and removals.  If the visibility of this menu is modified
- * the visibility of the sub menus is also modified.
- * <p>
- *
- * @param mgr a submenu of this menu
- * @param wrap a wrapper for the submenu of this menu
- */
-private void putWrapper(IMenuManager mgr, IMenuManager wrap) {
-	if (mapMenuToWrapper == null)
-		mapMenuToWrapper = new HashMap(4);
-	mapMenuToWrapper.put(mgr, wrap);
 }
 /**
  * Remove all contribution items.
@@ -245,4 +244,24 @@ protected SubMenuManager wrapMenu(IMenuManager menu) {
 	mgr.setVisible(isVisible());
 	return mgr;
 }
+
+/**
+ * Unwrap an item or menu manager.
+ */
+protected IContributionItem unwrap(IContributionItem item) {
+	// Remove any wrappers around the item contribution
+	while (true) {
+		if (item instanceof SubContributionItem) {
+			item = ((SubContributionItem)item).getInnerItem();
+		}
+		else if (item instanceof SubMenuManager) {
+			item = ((SubMenuManager)item).parentMgr;
+		}
+		else {
+			break;
+		}
+	}
+	return item;
+}
+
 }

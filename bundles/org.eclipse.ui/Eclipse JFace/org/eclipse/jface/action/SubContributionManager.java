@@ -70,12 +70,19 @@ public void appendToGroup(String groupName, IContributionItem item) {
 }
 /* (non-Javadoc)
  * Method declared on IContributionManager.
+ *
+ * Returns the item passed to us, not the wrapper.
  */
 public IContributionItem find(String id) {
-	return parentMgr.find(id);
+	IContributionItem item = parentMgr.find(id);
+	// Return the item passed to us, not the wrapper.
+	item = unwrap(item);
+	return item;
 }
 /* (non-Javadoc)
  * Method declared on IContributionManager.
+ *
+ * Returns the items passed to us, not the wrappers.
  */
 public IContributionItem[] getItems() {
 	IContributionItem[] result = new IContributionItem[mapItemToWrapper.size()];
@@ -257,5 +264,15 @@ public void setVisible(boolean visible) {
  */
 protected SubContributionItem wrap(IContributionItem item) {
 	return new SubContributionItem(item);
+}
+
+/**
+ * Unwrap a contribution item.
+ */
+protected IContributionItem unwrap(IContributionItem item) {
+	while (item instanceof SubContributionItem) {
+		item = ((SubContributionItem)item).getInnerItem();
+	} 
+	return item;
 }
 }
