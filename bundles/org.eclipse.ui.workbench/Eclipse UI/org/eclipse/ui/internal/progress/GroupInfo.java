@@ -7,11 +7,12 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * 		Michael Fraenkel <fraenkel@us.ibm.com> - Fix for bug 60698 -
+ * 			[Progress] ConcurrentModificationException in NewProgressViewer.
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -29,14 +30,18 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 	double total = -1;
 	double currentWork;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getParent()
 	 */
 	Object getParent() {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#hasChildren()
 	 */
 	boolean hasChildren() {
@@ -46,7 +51,9 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getChildren()
 	 */
 	Object[] getChildren() {
@@ -55,45 +62,55 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
 	 */
 	String getDisplayString() {
 		if (total < 0)
 			return taskName;
-		else {
-			String[] messageValues = new String[2];
-			messageValues[0] = taskName;
-			messageValues[1] = String.valueOf(getPercentDone());
-			return ProgressMessages.format("JobInfo.NoTaskNameDoneMessage", messageValues); //$NON-NLS-1$
-		}
+		String[] messageValues = new String[2];
+		messageValues[0] = taskName;
+		messageValues[1] = String.valueOf(getPercentDone());
+		return ProgressMessages.format(
+				"JobInfo.NoTaskNameDoneMessage", messageValues); //$NON-NLS-1$
 
 	}
 
 	/**
 	 * Return an integer representing the amount of work completed.
+	 * 
 	 * @return int
 	 */
 	int getPercentDone() {
 		return (int) (currentWork * 100 / total);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isJobInfo()
 	 */
 	boolean isJobInfo() {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public int compareTo(Object arg0) {
-		return getDisplayString().compareTo(((JobTreeElement) arg0).getDisplayString());
+		return getDisplayString().compareTo(
+				((JobTreeElement) arg0).getDisplayString());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String,
+	 *      int)
 	 */
 	public void beginTask(String name, int totalWork) {
 		taskName = name;
@@ -105,7 +122,9 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 	 */
 	public void done() {
@@ -116,17 +135,21 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
 	 */
 	public void internalWorked(double work) {
-		synchronized(lock){
+		synchronized (lock) {
 			currentWork += work;
 		}
-		
+
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
 	 */
 	public boolean isCanceled() {
@@ -134,14 +157,18 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
 	 */
 	public void setCanceled(boolean value) {
 		cancel();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
 	 */
 	public void setTaskName(String name) {
@@ -152,14 +179,18 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
 	 */
 	public void subTask(String name) {
 		//Not interesting for this monitor
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
 	 */
 	public void worked(int work) {
@@ -168,12 +199,13 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/**
 	 * Remove the job from the list of jobs.
+	 * 
 	 * @param job
 	 */
 	void removeJobInfo(final JobInfo job) {
 		synchronized (lock) {
 			infos.remove(job);
-			if(infos.isEmpty()){
+			if (infos.isEmpty()) {
 				done();
 			}
 		}
@@ -181,6 +213,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/**
 	 * Remove the job from the list of jobs.
+	 * 
 	 * @param job
 	 */
 	void addJobInfo(final JobInfo job) {
@@ -188,25 +221,31 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 			infos.add(job);
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isActive()
 	 */
 	boolean isActive() {
 		return isActive;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#cancel()
 	 */
 	public void cancel() {
-		Iterator listIterator = infos.iterator();
-		while(listIterator.hasNext()){
-			((JobInfo) listIterator.next()).cancel();
+		Object[] jobInfos = getChildren();
+		for (int i = 0; i < jobInfos.length; i++) {
+			((JobInfo) jobInfos[i]).cancel();
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isCancellable()
 	 */
 	public boolean isCancellable() {
