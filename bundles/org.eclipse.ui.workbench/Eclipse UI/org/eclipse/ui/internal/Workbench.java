@@ -855,6 +855,8 @@ public final class Workbench implements IWorkbench {
                     }
                 });
 
+        addWindowListener(windowListener);
+        
         // end the initialization of the activity, command, and context
         // managers
 
@@ -916,8 +918,10 @@ public final class Workbench implements IWorkbench {
 		forceOpenPerspective();
 
 		isStarting = false;
+		
 		workbenchCommandSupport.setProcessingHandlerSubmissions(true);
 		workbenchContextSupport.setProcessingEnabledSubmissions(true);
+		
 		return true;
 	}
 
@@ -1996,7 +2000,25 @@ public final class Workbench implements IWorkbench {
             getCommandSupport().getCommandManager().setActiveContextIds(
                     getContextSupport().getContextManager()
                             .getEnabledContextIds());
-            updateActiveWorkbenchWindowMenuManager(false);
+        }
+    };
+
+    private final IWindowListener windowListener = new IWindowListener() {
+
+        public void windowActivated(IWorkbenchWindow window) {
+            updateActiveWorkbenchWindowMenuManager(true);
+        }
+
+        public void windowClosed(IWorkbenchWindow window) {
+            updateActiveWorkbenchWindowMenuManager(true);
+        }
+
+        public void windowDeactivated(IWorkbenchWindow window) {
+            updateActiveWorkbenchWindowMenuManager(true);
+        }
+
+        public void windowOpened(IWorkbenchWindow window) {
+            updateActiveWorkbenchWindowMenuManager(true);
         }
     };
 
