@@ -100,10 +100,10 @@ public static boolean isFolder(long stat) {
 	return isSet(stat, STAT_VALID) && isSet(stat, STAT_FOLDER);
 }
 public static boolean isReadOnly(String fileName) {
-	if (hasNatives) 
-		return isSet(getStat(fileName), STAT_READ_ONLY);
-	// inlined (no native) implementation
-	return !(new File(fileName).canWrite());
+	// Use the same implementation whether or not we are using
+	// the natives. If the file doesn't exist then getStat() will return 0
+	// and this method will return false.
+	return isSet(getStat(fileName), STAT_READ_ONLY);
 }
 public static boolean isReadOnly(long stat) {
 	return isSet(stat, STAT_READ_ONLY);
