@@ -1419,7 +1419,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			try {
 				UIStats.start(UIStats.RESTORE_WORKBENCH, "WorkbenchPageFactory"); //$NON-NLS-1$
 				IElementFactory factory =
-					WorkbenchPlugin.getDefault().getElementFactory(factoryID);
+					PlatformUI.getWorkbench().getElementFactory(factoryID);
 				if (factory == null) {
 					WorkbenchPlugin.log("Unable to restore pagee - cannot instantiate input factory: " + factoryID); //$NON-NLS-1$
 					result.add(unableToRestorePage(pageMem));

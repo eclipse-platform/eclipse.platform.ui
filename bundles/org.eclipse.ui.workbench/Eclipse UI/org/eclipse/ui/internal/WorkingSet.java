@@ -196,7 +196,7 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 				WorkbenchPlugin.log("Unable to restore working set item - no factory ID."); //$NON-NLS-1$
 				continue;
 			}
-			IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
+			IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
 			if (factory == null) {
 				WorkbenchPlugin.log("Unable to restore working set item - cannot instantiate factory: " + factoryID); //$NON-NLS-1$
 				continue;

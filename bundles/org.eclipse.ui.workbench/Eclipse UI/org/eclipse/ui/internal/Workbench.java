@@ -76,6 +76,7 @@ import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
@@ -2112,4 +2113,14 @@ public final class Workbench implements IWorkbench, IContextResolver {
 	public IAdaptable getDefaultWindowInput() {
 		return getAdviser().getDefaultWindowInput();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench
+	 * @since 3.0
+	 */
+	public IElementFactory getElementFactory(String factoryId) {
+		Assert.isNotNull(factoryId);
+		return WorkbenchPlugin.getDefault().getElementFactory(factoryId);
+	}
+
 }

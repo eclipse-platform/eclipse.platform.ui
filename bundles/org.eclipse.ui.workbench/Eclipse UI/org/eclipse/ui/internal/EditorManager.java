@@ -852,7 +852,7 @@ public class EditorManager {
 				String label = ref.getName() != null ? ref.getName() : factoryID;
 				try {
 					UIStats.start(UIStats.CREATE_PART_INPUT,label);
-					IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
+					IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
 					if (factory == null) {
 						WorkbenchPlugin.log("Unable to restore editor - cannot instantiate input element factory: " + factoryID); //$NON-NLS-1$
 						result[0] = unableToCreateEditor(editorMem,null);

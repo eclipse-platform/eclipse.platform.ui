@@ -25,9 +25,9 @@ import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The <code>EditorInputTransfer</code> class is used to transfer an
@@ -216,7 +216,7 @@ public class EditorInputTransfer extends ByteArrayTransfer {
 		// Restore the editor input
 		XMLMemento memento = XMLMemento.createReadRoot(reader);
 		
-		IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryId);
+		IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryId);
 		
 		if (factory != null) {
 			IAdaptable adaptable = factory.createElement(memento);

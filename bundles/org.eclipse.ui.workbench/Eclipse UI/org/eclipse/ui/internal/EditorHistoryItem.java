@@ -157,7 +157,7 @@ public IStatus restoreState() {
 		WorkbenchPlugin.log("Unable to restore mru list - no input factory ID.");//$NON-NLS-1$
 		return result;
 	}
-	IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryId);
+	IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryId);
 	if (factory == null) {
 		return result;
 	}

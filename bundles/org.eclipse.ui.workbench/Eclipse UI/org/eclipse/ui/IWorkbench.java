@@ -315,5 +315,15 @@ public IDecoratorManager getDecoratorManager();
  */
 public boolean saveAllEditors(boolean confirm);
 
+/**
+ * Returns the element factory with the given id.
+
+ * @param factoryId the id of the element factory
+ * @return the elment factory, or <code>null</code> if none
+ * @see IElementFactory
+ * @since 3.0
+ */
+public IElementFactory getElementFactory(String factoryId);
+
 //IContextActivationService getContextActivationService();
 }
