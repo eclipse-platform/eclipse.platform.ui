@@ -16,7 +16,6 @@
 <stringAttribute key="configLocation" value=""/>
 <booleanAttribute key="clearws" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.core.tests.runtime.AutomatedTests"/>
-<stringAttribute key="location1" value="d:\work\workspaces\runtime-test-workspace"/>
 <stringAttribute key="templateConfig" value=""/>
 <booleanAttribute key="default" value="true"/>
 <stringAttribute key="vmargs" value=""/>
@@ -29,5 +28,5 @@
 <stringAttribute key="org.eclipse.jdt.junit.TESTNAME" value=""/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.eclipse.core.tests.runtime"/>
 <booleanAttribute key="askclear" value="false"/>
-<stringAttribute key="location0" value="d:\work\workspaces\runtime-test-workspace"/>
+<stringAttribute key="location0" value="c:\temp\runtime-test-workspace"/>
 </launchConfiguration>
