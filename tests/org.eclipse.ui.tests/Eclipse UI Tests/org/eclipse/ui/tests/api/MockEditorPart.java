@@ -103,6 +103,7 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart,
      * @see IEditorPart#isSaveAsAllowed()
      */
     public boolean isSaveAsAllowed() {
+        callTrace.add("isSaveAsAllowed");
         return false;
     }
 

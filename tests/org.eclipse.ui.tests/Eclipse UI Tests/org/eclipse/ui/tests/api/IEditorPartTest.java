@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.tests.util.CallHistory;
 import org.eclipse.ui.tests.util.FileUtil;
 
 /**
@@ -46,7 +47,26 @@ public class IEditorPartTest extends IWorkbenchPartTest {
      */
     protected void closePart(IWorkbenchPage page, MockPart part)
             throws Throwable {
-        page.closeEditor((IEditorPart) part, false);
+        page.closeEditor((IEditorPart) part, true);
     }
+    
+    /**
+     * Tests that the editor is closed without saving if isSaveOnCloseNeeded()
+     * returns false.
+     * @see ISaveable#isSaveOnCloseNeeded()
+     */
+    public void testOpenAndCloseSaveNotNeeded() throws Throwable {
+        // Open a part.
+        MockEditorPart part = (MockEditorPart) openPart(fPage);
+        part.setDirty(true);
+        part.setSaveNeeded(false);
+        closePart(fPage, part);
+        
+        CallHistory history = part.getCallHistory();
+        assertTrue(history.verifyOrder(new String[] { "init",
+                "createPartControl", "setFocus", "isSaveOnCloseNeeded", "dispose" }));
+        assertFalse(history.contains("doSave"));
+    }
+    
 }
 

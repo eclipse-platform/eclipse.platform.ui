@@ -12,6 +12,7 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.tests.util.CallHistory;
 
 /**
  * This is a test for IViewPart.  Since IViewPart is an
@@ -41,5 +42,24 @@ public class IViewPartTest extends IWorkbenchPartTest {
             throws Throwable {
         page.hideView((IViewPart) part);
     }
+    
+    /**
+     * Tests that the view is closed without saving if isSaveOnCloseNeeded()
+     * returns false.
+     * @see ISaveable#isSaveOnCloseNeeded()
+     */
+    public void testOpenAndCloseSaveNotNeeded() throws Throwable {
+        // Open a part.
+        SaveableMockViewPart part = (SaveableMockViewPart) fPage.showView(SaveableMockViewPart.ID);
+        part.setDirty(true);
+        part.setSaveNeeded(false);
+        closePart(fPage, part);
+        
+        CallHistory history = part.getCallHistory();
+        assertTrue(history.verifyOrder(new String[] { "init",
+                "createPartControl", "setFocus", "isSaveOnCloseNeeded", "dispose" }));
+        assertFalse(history.contains("doSave"));
+    }
+
 }
 

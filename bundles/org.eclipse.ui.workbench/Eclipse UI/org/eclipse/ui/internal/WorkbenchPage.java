@@ -980,7 +980,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 IEditorPart refPart = reference.getEditor(false);
                 if (refPart != null) {
                     for (int j = 0; j < dirty.length; j++) {
-                        if (refPart.equals(dirty[j])) {
+                        if (refPart.equals(dirty[j]) && refPart.isSaveOnCloseNeeded()) {
                             intersect.add(refPart);
                             break;
                         }
@@ -1067,8 +1067,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             return false;
 
         // Save part.
-        if (save && !getEditorManager().saveEditor(editor, true))
-            return false;
+        if (save && editor.isSaveOnCloseNeeded()) {
+            if (!getEditorManager().saveEditor(editor, true)) {
+                return false;
+            }
+        }
 
         boolean partWasVisible = (editor == getActiveEditor());
         IEditorReference ref = (IEditorReference) getReference(editor);

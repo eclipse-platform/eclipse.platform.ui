@@ -26,6 +26,10 @@ public class SaveableMockViewPart extends MockViewPart implements
 
 	private boolean isDirty = false;
 
+    private boolean saveAsAllowed = false;
+
+    private boolean saveNeeded = false;
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -53,7 +57,7 @@ public class SaveableMockViewPart extends MockViewPart implements
 	 */
 	public boolean isSaveAsAllowed() {
 		callTrace.add("isSaveAsAllowed" );
-		return false;
+		return saveAsAllowed ;
 	}
 
 	/* (non-Javadoc)
@@ -61,10 +65,18 @@ public class SaveableMockViewPart extends MockViewPart implements
 	 */
 	public boolean isSaveOnCloseNeeded() {
 		callTrace.add("isSaveOnCloseNeeded" );
-		return false;
+		return saveNeeded;
 	}
 
 	public void setDirty(boolean isDirty) {
 		this.isDirty = isDirty;
 	}
+    
+    public void setSaveAsAllowed(boolean isSaveAsAllowed) {
+        this.saveAsAllowed = isSaveAsAllowed;
+    }
+    
+    public void setSaveNeeded(boolean isSaveOnCloseNeeded) {
+        this.saveNeeded = isSaveOnCloseNeeded;
+    }
 }
