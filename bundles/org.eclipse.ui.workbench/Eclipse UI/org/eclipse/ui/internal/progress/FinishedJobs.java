@@ -1,6 +1,8 @@
 package org.eclipse.ui.internal.progress;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
@@ -36,6 +38,7 @@ class FinishedJobs {
     private IJobProgressManagerListener listener;
     private HashSet keptjobinfos = new HashSet();
     private long timeStamp;
+    private HashMap finishedTime= new HashMap();
 
     
     static synchronized FinishedJobs getInstance() {
@@ -122,7 +125,7 @@ class FinishedJobs {
         JobTreeElement[] toBeRemoved= findJobsToRemove(info);        
         if (toBeRemoved != null) {
             for (int i = 0; i < toBeRemoved.length; i++) {
-				remove(null, toBeRemoved[i]);
+				remove(toBeRemoved[i]);
             }
         }    	
     }
@@ -138,10 +141,15 @@ class FinishedJobs {
         synchronized (keptjobinfos) {
             if (!keptjobinfos.contains(info)) {
                 keptjobinfos.add(info);
+                
+                long now= System.currentTimeMillis();
+            	finishedTime.put(info, new Long(now));
 
                 Object parent = info.getParent();
-                if (parent != null && !keptjobinfos.contains(parent))
+                if (parent != null && !keptjobinfos.contains(parent)) {
                 	keptjobinfos.add(parent);
+                	finishedTime.put(parent, new Long(now));
+                }
   
 //            	toBeRemoved= findJobsToRemove(info);
 
@@ -239,13 +247,14 @@ class FinishedJobs {
 		        	if (element == info && !keptjobinfos.contains(tinfo)) {		        		
 		        		toBeRemoved= findJobsToRemove(element);
 		                keptjobinfos.add(tinfo);
+		                finishedTime.put(tinfo, new Long(System.currentTimeMillis()));
 		                timeStamp++;
 		            }
 	        	}
 	        	
 	            if (toBeRemoved != null) {
 	                for (int i = 0; i < toBeRemoved.length; i++) {
-	    				remove(null, toBeRemoved[i]);
+	    				remove(toBeRemoved[i]);
 	                }
 	            }    	
 
@@ -260,11 +269,12 @@ class FinishedJobs {
         }
     }
 
-    void remove(KeptJobsListener sender, JobTreeElement jte) {
+    void remove(JobTreeElement jte) {
         boolean fire = false;
    	
         synchronized (keptjobinfos) {
 	        if (keptjobinfos.remove(jte)) {
+	        	finishedTime.remove(jte);
 	        	disposeAction(jte);
 	            if (NewProgressViewer.DEBUG) System.err.println("FinishedJobs: sucessfully removed job"); //$NON-NLS-1$
 	
@@ -276,6 +286,7 @@ class FinishedJobs {
 	                	if (parent == jte || parent.getParent() == jte) {
 	                		if (keptjobinfos.remove(jtes[i]))
 	                			disposeAction(jtes[i]);
+	                		finishedTime.remove(jtes[i]);
 	                	}
 	                }
 	            }
@@ -288,8 +299,7 @@ class FinishedJobs {
 	        Object l[] = listeners.getListeners();
 	        for (int i = 0; i < l.length; i++) {
 	            KeptJobsListener jv = (KeptJobsListener) l[i];
-	            if (jv != sender)
-	            	jv.removed(jte);
+	            jv.removed(jte);
 	        }
         }
     }
@@ -311,5 +321,12 @@ class FinishedJobs {
 
     public long getTimeStamp() {
         return timeStamp;
+    }
+    
+    public Date getFinishDate(JobTreeElement jte) {
+    	Object o= finishedTime.get(jte);
+    	if (o instanceof Long)
+    		return new Date(((Long)o).longValue());
+    	return null;
     }
 }
