@@ -1,4 +1,11 @@
-<%@ page import="java.util.Locale" contentType="text/html; charset=UTF-8"%>
+<%@ page import="java.util.Locale,org.eclipse.help.servlet.*" contentType="text/html; charset=UTF-8"%>
+
+<% 
+	// calls the utility class to initialize the application
+	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
+	
+%>
+
 <%
 	String agent=request.getHeader("User-Agent").toLowerCase(Locale.US);
 	boolean ie   = (agent.indexOf("msie") != -1);
@@ -14,7 +21,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <body onload='window.location.replace("<%=ie||mozilla?"":"ns4/"%>help.jsp<%=request.getQueryString()!=null?"?"+request.getQueryString():""%>")'>
-</body>
 
+<NOSCRIPT>
+<h2><%=WebappResources.getString("JavaScript_disabled", request)%></h2>
+</NOSCRIPT>
+
+</body>
 
 </html>
