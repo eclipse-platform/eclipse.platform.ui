@@ -21,14 +21,14 @@
 
 	<extension point="org.eclipse.ui.popupMenus"> 
 		<viewerContribution 
-			id="org.eclipse.ui.views.bookmarkexplorer.editbookmarkaction.bookmarkexplorer"
-			targetID="org.eclipse.ui.views.BookmarkNavigator">
+			id="org.eclipse.ui.views.tasklist.newbookmarkaction"
+			targetID="org.eclipse.ui.views.TaskList">
 			<action
-				id="org.eclipse.ui.views.bookmarkexplorer.editbookmarkaction"
-				label="Properties"
+				id="org.eclipse.ui.views.tasklist.newbookmarkaction.action"
+				label="%CreateBookmark.text"
 				menubarPath="additions"
 				enablesFor="1" 
-				class="org.eclipse.ui.views.bookmarkexplorer.EditBookmarkAction"> 
+				class="org.eclipse.ui.views.bookmarkexplorer.NewBookmarkAction"> 
 				<enablement>
 					<and>
 						<objectState

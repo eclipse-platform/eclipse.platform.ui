@@ -18,6 +18,9 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
+/**
+ * Provides labels for the bookmark navigator table
+ */
 class BookmarkLabelProvider
 	extends LabelProvider
 	implements ITableLabelProvider {

@@ -1,15 +1,15 @@
-package org.eclipse.ui.views.tasklist;
-
 /**********************************************************************
-Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
+http://www.eclipse.org/legal/cpl-v10.html
+
 Contributors:
-  Cagatay Kavukcuoglu <cagatayk@acm.org> - Filter for markers in same project
+	IBM Corporation - Initial implementation
 **********************************************************************/
+
+package org.eclipse.ui.views.tasklist;
 
 import java.util.*;
 

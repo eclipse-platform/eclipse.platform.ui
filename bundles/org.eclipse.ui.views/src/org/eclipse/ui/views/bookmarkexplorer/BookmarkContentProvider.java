@@ -19,7 +19,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Control;
 
-
+/**
+ * Provides content for the bookmark navigator
+ */ 
 class BookmarkContentProvider implements IStructuredContentProvider, IResourceChangeListener, IBasicPropertyConstants {
 	
 	private BookmarkNavigator bookmarksView;

@@ -27,7 +27,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * 
  * @since 2.0
  */
-/* package */ class ResolveMarkerAction extends TaskAction {
+class ResolveMarkerAction extends TaskAction {
+
 	/**
 	 * Creates the action.
 	 */

@@ -1,9 +1,15 @@
-package org.eclipse.ui.views.tasklist;
+/************************************************************************
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
+package org.eclipse.ui.views.tasklist;
 
 import java.util.List;
 
@@ -20,7 +26,7 @@ import org.eclipse.ui.part.MarkerTransfer;
 /**
  * Copies a task to the clipboard.
  */
-/*package*/ class CopyTaskAction extends TaskAction {
+class CopyTaskAction extends TaskAction {
 	/**
 	 * Creates the action.
 	 */

@@ -24,9 +24,7 @@ import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineLayoutData;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -296,10 +294,8 @@ public class WWinKeyBindingService {
 	   	int[] accelerators = new int[strokeSetForMode.size()];
 		int i = 0;
 			   	
-	   	while (iterator.hasNext()) {
-	   		Stroke stroke = (Stroke) iterator.next();
-	   		accelerators[i++] = stroke.getValue();	   		
-	   	}
+	   	while (iterator.hasNext())
+	   		accelerators[i++] = ((Stroke) iterator.next()).getValue();	   		
 
 		if (acceleratorMenu == null || acceleratorMenu.isDisposed()) {		
 			Menu parent = window.getShell().getMenuBar();
@@ -311,10 +307,7 @@ public class WWinKeyBindingService {
 			parent = parentItem.getMenu();
 			acceleratorMenu = new AcceleratorMenu(parent);
 		}
-		
-		if (acceleratorMenu == null)
-			return;
-		
+
 		acceleratorMenu.setAccelerators(accelerators);		
 		acceleratorMenu.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
