@@ -29,7 +29,7 @@ public void convertToPhantom() throws CoreException {
 	if (isPhantom())
 		return;
 	super.convertToPhantom();
-	IResource[] members = members(true);
+	IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 	for (int i = 0; i < members.length; i++)
 		 ((Resource) members[i]).convertToPhantom();
 }
@@ -75,7 +75,7 @@ protected void fixupAfterMoveSource() throws CoreException {
 		return;
 	}
 	super.fixupAfterMoveSource();
-	IResource[] members = members(true);
+	IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 	for (int i = 0; i < members.length; i++)
 		 ((Resource) members[i]).fixupAfterMoveSource();
 }

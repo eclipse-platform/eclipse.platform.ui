@@ -438,6 +438,7 @@ public IStatus copy(IResource[] resources, IPath destination, boolean force, IPr
 }
 
 protected void copyTree(IResource source, IPath destination, int depth, boolean phantom, boolean overwrite) throws CoreException {
+	// FIXME: change this method signature to use the int updateFlags rather than the booleans.
 
 	// retrieve the resource at the destination if there is one (phantoms included).
 	// if there isn't one, then create a new handle based on the type that we are
@@ -478,7 +479,9 @@ protected void copyTree(IResource source, IPath destination, int depth, boolean 
 		return;
 	if (depth == IResource.DEPTH_ONE)
 		depth = IResource.DEPTH_ZERO;
-	IResource[] children = ((IContainer) source).members(phantom);
+	int flags = phantom ? IContainer.INCLUDE_PHANTOMS : IResource.NONE;
+	flags |= IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS;
+	IResource[] children = ((IContainer) source).members(flags);
 	for (int i = 0; i < children.length; i++) {
 		IResource child = children[i];
 		IPath childPath = destination.append(child.getName());
