@@ -98,10 +98,9 @@ public class BookmarkUtil {
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				if (child.getNodeName().equals("site")) { //$NON-NLS-1$
 					object = createSite(child);
-
 				} else if (child.getNodeName().equals("folder")) { //$NON-NLS-1$
 					object = createFolder(child);
-				}
+				} 
 			}
 			if (object != null) {
 				if (folder != null) {
@@ -143,17 +142,36 @@ public class BookmarkUtil {
 			}
 			bookmark.setIgnoredCategories((String[]) array.toArray(new String[array.size()]));
 		}
+		// read description
+		NodeList children = child.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node node = children.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				bookmark.setDescription(createDescription(node));
+				break;
+			}
+		}
 		return bookmark;
 	}
 
+	private static String createDescription(Node child) {
+		String description = "";
+		NodeList children = child.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node node = children.item(i);
+			if (node.getNodeType() == Node.TEXT_NODE) 
+				description += node.getNodeValue();
+		}
+		return description;
+	}
+
+		
 	private static BookmarkFolder createFolder(Node child) {
 		BookmarkFolder folder = new BookmarkFolder();
 		String name = getAttribute(child, "name"); //$NON-NLS-1$
 		folder.setName(name);
-		if (child.hasChildNodes()) {
-			NodeList children = child.getChildNodes();
-			processChildren(children, folder, null);
-		}
+		if (child.hasChildNodes())
+			processChildren(child.getChildNodes(), folder, null);
 		return folder;
 	}
 
@@ -209,7 +227,15 @@ public class BookmarkUtil {
 			writer.print(indent + "<site name=\"" + name + "\" url=\"" + url + "\" web=\"" + web + "\" selected=\"" + sel + "\" local=\"" + local + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			if (wign.length() > 0)
 				writer.print(" ignored-categories=\""+wign.toString()+"\""); //$NON-NLS-1$ //$NON-NLS-2$
-			writer.println("/>"); //$NON-NLS-1$
+			if (bookmark.getDescription() != null) {
+				writer.println(">"); //$NON-NLS-1$
+				writer.print(indent+"  <description>"); //$NON-NLS-1$
+				writer.print(bookmark.getDescription());
+				writer.println("</description>"); //$NON-NLS-1$
+				writer.println(indent +"</site>"); //$NON-NLS-1$
+			} else {
+				writer.println("/>"); //$NON-NLS-1$
+			}
 		} else if (obj instanceof BookmarkFolder) {
 			BookmarkFolder folder = (BookmarkFolder) obj;
 			String name = folder.getName();

@@ -25,6 +25,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.update.core.*;
@@ -252,6 +253,9 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		descLabel = new ScrolledFormText(client, true);
 		descLabel.setText("");
 		descLabel.setBackground(parent.getBackground());
+		HyperlinkSettings settings = new HyperlinkSettings(parent.getDisplay());
+		descLabel.getFormText().setHyperlinkSettings(settings);
+		
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalSpan = 1;
 		descLabel.setLayoutData(gd);
@@ -512,22 +516,21 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	private void handleSelectionChanged(IStructuredSelection ssel) {
 		boolean enable = false;
 		Object item = ssel.getFirstElement();
-		IURLEntry descEntry = null;
+		String description = null;
 		if (item instanceof SiteBookmark) {
 			enable = !((SiteBookmark) item).isReadOnly();
-			//descEntry = ((SiteBookmark)item).getSite(null).getDescription();
+			description = ((SiteBookmark)item).getDescription();
 		} else if (item instanceof SiteCategory) {
-			descEntry = ((SiteCategory)item).getCategory().getDescription();
+			IURLEntry descEntry = ((SiteCategory)item).getCategory().getDescription();
+			if (descEntry != null)
+				description = descEntry.getAnnotation();
 		}
 		editButton.setEnabled(enable);
 		removeButton.setEnabled(enable);
-		
-		String desc = null;
-		if (descEntry != null)
-			desc = descEntry.getAnnotation();
-		if (desc == null)
-			desc = ""; //$NON-NLS-1$
-		descLabel.setText(desc);
+
+		if (description == null)
+			description = ""; //$NON-NLS-1$
+		descLabel.setText(description);
 	}
 
 	private void updateSearchRequest() {

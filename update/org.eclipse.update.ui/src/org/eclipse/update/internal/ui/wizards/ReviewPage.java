@@ -26,6 +26,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.update.core.*;
@@ -522,6 +523,9 @@ public class ReviewPage
 		descLabel = new ScrolledFormText(sform, true);
 		descLabel.setText("");
 		descLabel.setBackground(parent.getBackground());
+		HyperlinkSettings settings = new HyperlinkSettings(parent.getDisplay());
+		descLabel.getFormText().setHyperlinkSettings(settings);
+		
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalSpan = 1;
 		descLabel.setLayoutData(gd);

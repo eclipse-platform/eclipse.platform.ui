@@ -32,6 +32,7 @@ public class SiteBookmark extends NamedModelObject
 	private boolean readOnly = false;
 	private boolean local = false;
 	private boolean unavailable = false;
+	private String description;
 
 	public SiteBookmark() {
 	}
@@ -160,6 +161,11 @@ public class SiteBookmark extends NamedModelObject
 		}
 		if (otherCategory.getChildCount()>0)
 		   catalog.add(otherCategory);
+		
+		// set the site description
+		IURLEntry descURL = site.getDescription();
+		if (descURL != null)
+			description = descURL.getAnnotation();
 	}
 
 	public Object [] getCatalog(boolean withCategories, IProgressMonitor monitor) {
@@ -227,6 +233,7 @@ public class SiteBookmark extends NamedModelObject
 		}
 		return null;
 	}
+	
 	/**
 	 * @see ISiteAdapter#getLabel()
 	 */
@@ -248,5 +255,24 @@ public class SiteBookmark extends NamedModelObject
 	
 	public boolean isLocal() {
 		return local;
+	}
+
+	/**
+	 * @param description The description to set.
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * @return Returns the description.
+	 */
+	public String getDescription() {
+		if (description == null && isSiteConnected()) {
+			IURLEntry descURL = site.getDescription();
+			if (descURL != null)
+				description = descURL.getAnnotation();
+		}
+		return description;
 	}
 }
