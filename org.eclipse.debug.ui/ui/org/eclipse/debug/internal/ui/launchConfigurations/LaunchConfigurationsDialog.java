@@ -1834,7 +1834,18 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		super.initializeBounds();
 		initializeSashForm();
 		ensureSelectionAreaWidth();
-		resize();		
+		resize();			
+	}
+
+	/**
+	 * @see org.eclipse.jface.window.Window#create()
+	 */
+	public void create() {
+		super.create();
+		// bug 27011
+		if (getTabViewer().getInput() == null) {
+			getTabViewer().inputChanged(null);
+		}			
 	}
 
 }
