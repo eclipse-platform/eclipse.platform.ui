@@ -23,12 +23,16 @@ import org.eclipse.swt.events.MouseListener;
 
 
 /**
- * Standard implementation of {@link org.eclipse.jface.text.IUndoManager}.<p> It registers with
- * the connected text viewer as text input listener and document listener and
- * logs all changes. It also monitors mouse and keyboard activities in order to
- * partition the stream of text changes into undo-able edit commands.
+ * Standard implementation of {@link org.eclipse.jface.text.IUndoManager}.
+ * <p>
+ * It registers with the connected text viewer as text input listener and
+ * document listener and logs all changes. It also monitors mouse and keyboard
+ * activities in order to partition the stream of text changes into undo-able
+ * edit commands.
+ * </p>
  * <p>
  * This class is not intended to be subclassed.
+ * </p>
  * 
  * @see org.eclipse.jface.text.ITextViewer
  * @see org.eclipse.jface.text.ITextInputListener
@@ -450,20 +454,34 @@ public class DefaultUndoManager implements IUndoManager {
 		setMaximalUndoLevel(undoLevel);
 	}
 	
+	/**
+	 * Returns whether this undo manager is connected to a text viewer.
+	 * 
+	 * @return <code>true</code> if connected, <code>false</code> otherwise
+	 */
+	private boolean isConnected() {
+		return fTextViewer != null;
+	}
+	
 	/*
 	 * @see IUndoManager#beginCompoundChange
 	 */
 	public void beginCompoundChange() {
-		fFoldingIntoCompoundChange= true;
-		commit();
+		if (isConnected()) {
+			fFoldingIntoCompoundChange= true;
+			commit();
+		}
 	}
 	
+
 	/*
 	 * @see IUndoManager#endCompoundChange
 	 */
 	public void endCompoundChange() {
-		fFoldingIntoCompoundChange= false;
-		commit();
+		if (isConnected()) {
+			fFoldingIntoCompoundChange= false;
+			commit();
+		}
 	}
 		
 	/**
@@ -736,7 +754,7 @@ public class DefaultUndoManager implements IUndoManager {
 	 * @see org.eclipse.jface.text.IUndoManager#connect(org.eclipse.jface.text.ITextViewer)
 	 */
 	public void connect(ITextViewer textViewer) {
-		if (fTextViewer == null) {
+		if (fTextViewer == null && textViewer != null) {
 			fTextViewer= textViewer;	
 			fCommandStack= new ArrayList();
 			fCurrent= new TextCommand();
@@ -749,7 +767,7 @@ public class DefaultUndoManager implements IUndoManager {
 	 * @see org.eclipse.jface.text.IUndoManager#disconnect()
 	 */
 	public void disconnect() {
-		if (fTextViewer != null) {
+		if (isConnected()) {
 			
 			removeListeners();
 			
@@ -768,16 +786,18 @@ public class DefaultUndoManager implements IUndoManager {
 	 * @see org.eclipse.jface.text.IUndoManager#reset()
 	 */
 	public void reset() {
-		if (fCommandStack != null)
-			fCommandStack.clear();
-		fCommandCounter= -1;
-		if (fCurrent != null)
-			fCurrent.reinitialize();
-		fFoldingIntoCompoundChange= false;
-		fInserting= false;
-		fOverwriting= false;
-		fTextBuffer.setLength(0);
-		fPreservedTextBuffer.setLength(0);		
+		if (isConnected()) {
+			if (fCommandStack != null)
+				fCommandStack.clear();
+			fCommandCounter= -1;
+			if (fCurrent != null)
+				fCurrent.reinitialize();
+			fFoldingIntoCompoundChange= false;
+			fInserting= false;
+			fOverwriting= false;
+			fTextBuffer.setLength(0);
+			fPreservedTextBuffer.setLength(0);
+		}
 	}
 	
 	/*
@@ -806,7 +826,7 @@ public class DefaultUndoManager implements IUndoManager {
 	 * @see org.eclipse.jface.text.IUndoManager#redo()
 	 */
 	public void redo() {
-		if (redoable()) {
+		if (isConnected() && redoable()) {
 			commit();
 			internalRedo();
 		}
@@ -816,7 +836,7 @@ public class DefaultUndoManager implements IUndoManager {
 	 * @see org.eclipse.jface.text.IUndoManager#undo()
 	 */
 	public void undo() {
-		if (undoable()) {
+		if (isConnected() && undoable()) {
 			fFoldingIntoCompoundChange= false;
 			commit();
 			internalUndo();
