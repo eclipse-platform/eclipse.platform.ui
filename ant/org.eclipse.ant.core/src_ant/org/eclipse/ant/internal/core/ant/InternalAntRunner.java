@@ -183,7 +183,7 @@ protected void addBuildListeners(Project project) {
 
 protected void setProperties(Project project) {
 	project.setUserProperty(PROPERTY_ECLIPSE_RUNNING, "true");
-    project.setUserProperty("ant.file" , buildFileLocation);
+    project.setUserProperty("ant.file" , getBuildFileLocation());
 	project.setUserProperty("ant.version", getAntVersion());
     if (userProperties == null)
     	return;
@@ -229,7 +229,7 @@ protected void setTypes(Project project) {
  * the given project.
  */
 protected void parseScript(Project project) {
-	File buildFile = new File(buildFileLocation);
+	File buildFile = new File(getBuildFileLocation());
 	ProjectHelper.configureProject(project, buildFile);
 }
 
@@ -246,7 +246,7 @@ public void run() {
 	try {
         System.setOut(new PrintStream(new DemuxOutputStream(project, false)));
         System.setErr(new PrintStream(new DemuxOutputStream(project, true)));
-		project.log(Policy.bind("label.buildFile", buildFileLocation));
+		project.log(Policy.bind("label.buildFile", getBuildFileLocation()));
         fireBuildStarted(project);
 		project.init();
 		addBuildListeners(project);
@@ -477,6 +477,12 @@ protected void logMessage(Project project, String message, int priority) {
  */
 public void setBuildFileLocation(String buildFileLocation) {
 	this.buildFileLocation = buildFileLocation;
+}
+
+protected String getBuildFileLocation() {
+	if (buildFileLocation == null)
+		buildFileLocation = new File("build.xml").getAbsolutePath();
+	return buildFileLocation;
 }
 
 /**
