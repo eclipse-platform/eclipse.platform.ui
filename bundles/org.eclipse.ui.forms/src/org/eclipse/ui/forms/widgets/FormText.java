@@ -458,6 +458,7 @@ public class FormText extends Canvas {
 			else
 				model.parseRegularText(text, expandURLs);
 			loading = false;
+			layout();
 	}
 	/**
 	 * Sets the contents of the stream. Optionally, URLs in untagged text
@@ -473,6 +474,7 @@ public class FormText extends Canvas {
 	public void setContents(InputStream is, boolean expandURLs) {
 			model.parseInputStream(is, expandURLs);
 			loading = false;
+			layout();
 	}
 	/**
 	 * Sets the focus to the first hyperlink, or the widget itself if there are
