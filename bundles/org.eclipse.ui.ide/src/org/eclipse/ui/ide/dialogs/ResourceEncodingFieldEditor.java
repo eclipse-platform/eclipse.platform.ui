@@ -27,6 +27,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.ide.IDEEncoding;
 
@@ -89,6 +92,23 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 
 		if (hasSameEncoding(encoding))
 			return;
+
+		String descriptionCharset = getCharsetFromDescription();
+		if (descriptionCharset != null && !(descriptionCharset.equals(encoding))) {
+
+			MessageDialog dialog = new MessageDialog(
+					getPreferencePage().getShell(),
+					IDEWorkbenchMessages
+							.getString("ResourceEncodingFieldEditor.EncodingConflictTitle"), //$NON-NLS-1$
+					null,
+					IDEWorkbenchMessages
+							.format(
+									"ResourceEncodingFieldEditor.EncodingConflictMessage", new String[] { encoding, descriptionCharset }), //$NON-NLS-1$
+					MessageDialog.WARNING, new String[] { IDialogConstants.YES_LABEL,
+							IDialogConstants.NO_LABEL }, 0); // yes is the default
+			if (dialog.open() > 0)
+				return;
+		}
 
 		if (encoding.equals(getDefaultEnc()))
 			encoding = null;
@@ -154,10 +174,8 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 		if (resource instanceof IWorkspaceRoot)
 			return super.findDefaultEncoding();
 
-		String defaultCharset = null;
-		IContentDescription description = getContentDescription();
-		if (description != null)
-			defaultCharset = description.getCharset();
+		String defaultCharset = getCharsetFromDescription();
+		defaultCharset = getCharsetFromDescription();
 
 		if (defaultCharset != null && defaultCharset.length() > 0)
 			return defaultCharset;
@@ -167,11 +185,22 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 		} catch (CoreException exception) {
 			//If there is an exception try again
 		}
-		
+
 		if (defaultCharset != null && defaultCharset.length() > 0)
 			return defaultCharset;
 
 		return super.findDefaultEncoding();
+	}
+
+	/**
+	 * Get the charset from the content description if there is one.
+	 * @return String or <code>null</code>.
+	 */
+	private String getCharsetFromDescription() {
+		IContentDescription description = getContentDescription();
+		if (description != null)
+			return description.getCharset();
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -237,4 +266,5 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 		}
 		return null;
 	}
+
 }
