@@ -68,12 +68,10 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 	}	
 
 	/**
-	 * Clear the variables immediately upon resume.
+	 * Clear cached variable expansion state
 	 */
 	protected void doHandleResumeEvent(DebugEvent event) {
 		if (!event.isStepStart() && !event.isEvaluation()) {
-			// Clear existing variables from the view
-			getVariablesView().setViewerInput(StructuredSelection.EMPTY);
 			// clear variable expansion state
 			getVariablesView().clearExpandedVariables(event.getSource());
 		}
