@@ -31,7 +31,7 @@ public class Model implements IModel {
 	protected IAtom fLeaf;
 	protected boolean fMixed;
 	
-	protected static IModel[] fEmptyContents = new IModel[0];
+	protected static final IModel[] fEmptyContents = new IModel[0];
 	
 	public Model(int kind) {
 		fKind = kind;
