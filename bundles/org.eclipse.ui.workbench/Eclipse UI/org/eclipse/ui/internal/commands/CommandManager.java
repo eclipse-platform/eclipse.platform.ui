@@ -55,7 +55,8 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	private SortedMap actionsById = new TreeMap();	
-	private List activeContextIds = new ArrayList();
+	private SortedSet activeCommandIds = new TreeSet();
+	private SortedSet activeContextIds = new TreeSet();
 	private String activeKeyConfigurationId = Util.ZERO_LENGTH_STRING;
 	private String activeLocale = Util.ZERO_LENGTH_STRING;
 	private String activePlatform = Util.ZERO_LENGTH_STRING;	
@@ -67,6 +68,7 @@ public final class CommandManager implements ICommandManager {
 	private SortedMap commandsById = new TreeMap();	
 	private SortedMap contextBindingsByCommandId = new TreeMap();
 	private SortedMap imageBindingsByCommandId = new TreeMap();
+	private KeyBindingMachine keyBindingMachine = new KeyBindingMachine();	
 	private SortedMap keyBindingsByCommandId = new TreeMap();
 	private SortedMap keyConfigurationDefinitionsById = new TreeMap();
 	private SortedMap keyConfigurationsById = new TreeMap();	
@@ -114,8 +116,12 @@ public final class CommandManager implements ICommandManager {
 		return Collections.unmodifiableSortedMap(actionsById);
 	}
 
-	public List getActiveContextIds() {
-		return Collections.unmodifiableList(activeContextIds);
+	public SortedSet getActiveCommandIds() {
+		return Collections.unmodifiableSortedSet(activeCommandIds);
+	}
+
+	public SortedSet getActiveContextIds() {
+		return Collections.unmodifiableSortedSet(activeContextIds);
 	}
 
 	public String getActiveKeyConfigurationId() {		
@@ -209,8 +215,7 @@ public final class CommandManager implements ICommandManager {
 		}
 	}
 
-	public void setActiveContextIds(List activeContextIds) {
-		/*
+	public void setActiveCommandIds(SortedSet activeCommandIds) {
 		activeCommandIds = Util.safeCopy(activeCommandIds, String.class);
 		SortedSet commandChanges = new TreeSet();
 		Util.diff(activeCommandIds, this.activeCommandIds, commandChanges, commandChanges);
@@ -222,8 +227,9 @@ public final class CommandManager implements ICommandManager {
 			fireCommandManagerChanged();
 			notifyCommands(commandChanges);
 		}
-		*/
-	
+	}
+
+	public void setActiveContextIds(SortedSet activeContextIds) {
 		activeContextIds = Util.safeCopy(activeContextIds, String.class);
 		
 		if (!activeContextIds.equals(this.activeContextIds)) {
@@ -388,19 +394,19 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	private void updateCommand(Command command) {
-		// TODO: command.setActive(activeCommandIds.contains(command.getId()));
-		// TODO: command.setInContext(false);
+		command.setActive(activeCommandIds.contains(command.getId()));
 		ICommandDefinition commandDefinition = (ICommandDefinition) commandDefinitionsById.get(command.getId());
 		command.setCategoryId(commandDefinition != null ? commandDefinition.getCategoryId() : null);
-		List contextBindings = (List) contextBindingsByCommandId.get(command.getId());
-		command.setContextBindings(contextBindings != null ? contextBindings : Collections.EMPTY_LIST);
+		SortedSet contextBindings = (SortedSet) contextBindingsByCommandId.get(command.getId());
+		command.setContextBindingSet(contextBindings != null ? contextBindings : Util.EMPTY_SORTED_SET);
 		command.setDefined(commandDefinition != null);
 		command.setDescription(commandDefinition != null ? commandDefinition.getDescription() : null);
 		command.setHelpId(commandDefinition != null ? commandDefinition.getHelpId() : null);
-		List imageBindings = (List) imageBindingsByCommandId.get(command.getId());
-		command.setImageBindings(imageBindings != null ? imageBindings : Collections.EMPTY_LIST);
-		List keyBindings = (List) keyBindingsByCommandId.get(command.getId());
-		command.setKeyBindings(keyBindings != null ? keyBindings : Collections.EMPTY_LIST);
+		SortedSet imageBindings = (SortedSet) imageBindingsByCommandId.get(command.getId());
+		command.setImageBindingSet(imageBindings != null ? imageBindings : Util.EMPTY_SORTED_SET);
+		// TODO: command.setInContext(false);
+		SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(command.getId());
+		command.setKeyBindingSet(keyBindings != null ? keyBindings : Util.EMPTY_SORTED_SET);
 		command.setName(commandDefinition != null ? commandDefinition.getName() : Util.ZERO_LENGTH_STRING);
 	}
 
