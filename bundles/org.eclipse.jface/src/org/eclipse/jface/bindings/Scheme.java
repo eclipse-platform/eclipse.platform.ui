@@ -39,7 +39,7 @@ import org.eclipse.jface.util.Util;
  * being thrown.
  * </p>
  * <p>
- * This interface is not intended to be extended or implemented by clients.
+ * This class is not intended to be extended by clients.
  * </p>
  * 
  * @since 3.1

@@ -41,7 +41,7 @@ import org.eclipse.core.internal.commands.util.Util;
  * thrown.
  * </p>
  * <p>
- * This interface is not intended to be extended or implemented by clients.
+ * This class is not intended to be extended by clients.
  * </p>
  * 
  * @since 3.1
