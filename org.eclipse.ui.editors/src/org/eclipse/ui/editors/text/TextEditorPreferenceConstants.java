@@ -160,6 +160,7 @@ public class TextEditorPreferenceConstants {
 	 * 
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 3.0
 	 */
 	public static final String QUICK_DIFF_CHANGED_COLOR= "quickdiff.colors.changed"; //$NON-NLS-1$
 
@@ -172,6 +173,7 @@ public class TextEditorPreferenceConstants {
 	 * 
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 3.0
 	 */
 	public static final String QUICK_DIFF_ADDED_COLOR= "quickdiff.colors.added"; //$NON-NLS-1$
 
@@ -184,6 +186,7 @@ public class TextEditorPreferenceConstants {
 	 * 
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 3.0
 	 */
 	public static final String QUICK_DIFF_DELETED_COLOR= "quickdiff.colors.deleted"; //$NON-NLS-1$
 
@@ -191,6 +194,7 @@ public class TextEditorPreferenceConstants {
 	 * A named preference that controls whether quick diff colors are shown on the line number bar.
 	 * <p>
 	 * Value is of type <code>boolean</code>.
+	 * @since 3.0
 	 */
 	public static final String QUICK_DIFF_ALWAYS_ON= "quickdiff.quickDiff"; //$NON-NLS-1$
 	
@@ -198,6 +202,7 @@ public class TextEditorPreferenceConstants {
 	 * A named preference that controls the default quick diff reference provider.
 	 * <p>
 	 * Value is of type <code>String</code>.
+	 * @since 3.0
 	 */
 	public static final String QUICK_DIFF_DEFAULT_PROVIDER= "quickdiff.defaultProvider"; //$NON-NLS-1$
 	
