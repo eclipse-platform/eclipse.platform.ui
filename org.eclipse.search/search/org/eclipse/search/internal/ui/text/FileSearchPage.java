@@ -15,6 +15,7 @@ import java.util.HashMap;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
@@ -30,11 +31,13 @@ import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 
@@ -42,7 +45,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * @author Thomas Mäder
  *
  */
-public class FileSearchPage extends AbstractTextSearchViewPage {
+public class FileSearchPage extends AbstractTextSearchViewPage implements IAdaptable {
 	private static final String KEY_SORTING= "org.eclipse.search.resultpage.sorting"; //$NON-NLS-1$
 
 	private ActionGroup fActionGroup;
@@ -54,6 +57,12 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 	private EditorOpener fEditorOpener= new EditorOpener();
 
 		
+	private static final String[] SHOW_IN_TARGETS= new String[] { IPageLayout.ID_RES_NAV };
+	private  static final IShowInTargetList SHOW_IN_TARGET_LIST= new IShowInTargetList() {
+		public String[] getShowInTargetIds() {
+			return SHOW_IN_TARGETS;
+		}
+	};
 	public FileSearchPage() {
 		fSortByNameAction= new SortAction(SearchMessages.getString("FileSearchPage.sort_name.label"), this, FileLabelProvider.SHOW_LABEL_PATH); //$NON-NLS-1$
 		fSortByPathAction= new SortAction(SearchMessages.getString("FileSearchPage.sort_path.label"), this, FileLabelProvider.SHOW_PATH_LABEL); //$NON-NLS-1$
@@ -184,4 +193,12 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 		super.saveState(memento);
 		memento.putInteger(KEY_SORTING, fCurrentSortOrder);
 	}
+	
+	public Object getAdapter(Class adapter) {
+		if (IShowInTargetList.class.equals(adapter)) {
+			return SHOW_IN_TARGET_LIST;
+		}
+		return null;
+	}
+
 }
