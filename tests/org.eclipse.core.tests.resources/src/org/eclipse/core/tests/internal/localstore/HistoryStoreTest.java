@@ -88,7 +88,7 @@ public HistoryStoreTest(String name) {
 }
 public static Test suite() {
 //	TestSuite suite = new TestSuite();
-//	suite.addTest(new HistoryStoreTest("testBug28238"));
+//	suite.addTest(new HistoryStoreTest("testCopyHistoryFile"));
 //	return suite;
 	return new TestSuite(HistoryStoreTest.class);
 }
@@ -1735,12 +1735,7 @@ public void testCopyHistoryFile() {
 	String[] contents = {"content0", "content1", "content2", "content3", "content4"};
 	// create common objects
 	IProject project = getWorkspace().getRoot().getProject("TestCopyHistoryProject");
-	try {
-		project.create(getMonitor());
-		project.open(getMonitor());
-	} catch (CoreException e) {
-		fail("0.0", e);
-	}
+	ensureExistsInWorkspace(project, true);
 
 	IFolder folder = project.getFolder("folder1");
 	IFile file = folder.getFile("file1.txt");
@@ -1749,8 +1744,23 @@ public void testCopyHistoryFile() {
 		// Setup folder1 and file1.txt with some local history
 		folder.create(true, true, getMonitor());
 		file.create(getContents(contents[0]), true, getMonitor());
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			fail("0.0", e);
+		}
 		file.setContents(getContents(contents[1]), true, true, getMonitor());
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			fail("0.1", e);
+		}
 		file.setContents(getContents(contents[2]), true, true, getMonitor());
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			fail("0.2", e);
+		}
 		IFileState[] states = file.getHistory(getMonitor());
 		assertEquals("1.0", 2, states.length);
 		assertTrue("1.1", compareContent(getContents(contents[1]), states[0].getContents()));
@@ -1830,12 +1840,7 @@ public void testCopyHistoryFolder() {
 	String[] contents = {"content0", "content1", "content2", "content3", "content4"};
 	// create common objects
 	IProject project = getWorkspace().getRoot().getProject("TestCopyHistoryProject");
-	try {
-		project.create(getMonitor());
-		project.open(getMonitor());
-	} catch (CoreException e) {
-		fail("0.0", e);
-	}
+	ensureExistsInWorkspace(project, true);
 
 	IFolder folder = project.getFolder("folder1");
 	IFolder folder2 = project.getFolder("folder2");
@@ -1845,8 +1850,23 @@ public void testCopyHistoryFolder() {
 		// Setup folder1 and file1.txt with some local history
 		folder.create(true, true, getMonitor());
 		file.create(getContents(contents[0]), true, getMonitor());
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			fail("0.0", e);
+		}
 		file.setContents(getContents(contents[1]), true, true, getMonitor());
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			fail("0.1", e);
+		}
 		file.setContents(getContents(contents[2]), true, true, getMonitor());
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			fail("0.2", e);
+		}
 		IFileState[] states = file.getHistory(getMonitor());
 		assertEquals("1.0", 2, states.length);
 		assertTrue("1.1", compareContent(getContents(contents[1]), states[0].getContents()));
@@ -1881,14 +1901,7 @@ public void testCopyHistoryProject() {
 	// create common objects
 	IProject project = getWorkspace().getRoot().getProject("TestCopyHistoryProject");
 	IProject project2 = getWorkspace().getRoot().getProject("TestCopyHistoryProject2");
-	try {
-		project.create(getMonitor());
-		project.open(getMonitor());
-		project2.create(getMonitor());
-		project2.open(getMonitor());
-	} catch (CoreException e) {
-		fail("0.0", e);
-	}
+	ensureExistsInWorkspace(new IResource[] {project, project2}, true);
 
 	IFolder folder = project.getFolder("folder1");
 	IFolder folder2 = project2.getFolder("folder1");
@@ -1898,8 +1911,23 @@ public void testCopyHistoryProject() {
 		// Setup folder1 and file1.txt with some local history
 		folder.create(true, true, getMonitor());
 		file.create(getContents(contents[0]), true, getMonitor());
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			fail("0.0", e);
+		}
 		file.setContents(getContents(contents[1]), true, true, getMonitor());
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			fail("0.1", e);
+		}
 		file.setContents(getContents(contents[2]), true, true, getMonitor());
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			fail("0.2", e);
+		}
 		IFileState[] states = file.getHistory(getMonitor());
 		assertEquals("1.0", 2, states.length);
 		assertTrue("1.1", compareContent(getContents(contents[1]), states[0].getContents()));
