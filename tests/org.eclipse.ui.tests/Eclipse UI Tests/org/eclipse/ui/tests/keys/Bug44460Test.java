@@ -30,6 +30,7 @@ import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchActivitiesCommandsAndRoles;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.tests.util.UITestCase;
 
@@ -90,9 +91,9 @@ public class Bug44460Test extends UITestCase {
 		ctrlShiftT.stateMask = SWT.SHIFT | SWT.CTRL;
 		ctrlShiftT.character = 'T';
 		ctrlShiftT.keyCode = 't';
-		Set keyStrokes = Workbench.generatePossibleKeyStrokes(ctrlShiftT);
+		Set keyStrokes = WorkbenchActivitiesCommandsAndRoles.generatePossibleKeyStrokes(ctrlShiftT);
 		Workbench workbench = (Workbench) window.getWorkbench();
-		workbench.press(keyStrokes, null);
+		workbench.workbenchActivitiesCommandsAndRoles.press(keyStrokes, null);
 
 		// Test that only two child shells are open (default).
 		Shell windowShell = window.getShell();

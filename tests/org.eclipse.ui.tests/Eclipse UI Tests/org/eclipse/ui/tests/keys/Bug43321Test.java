@@ -67,7 +67,7 @@ public class Bug43321Test extends UITestCase {
 		Set keyStrokes = new HashSet();
 		keyStrokes.add(KeyStroke.getInstance("CTRL+C")); //$NON-NLS-1$
 		Event event = new Event();
-		((Workbench) window.getWorkbench()).press(keyStrokes, event);
+		((Workbench) window.getWorkbench()).workbenchActivitiesCommandsAndRoles.press(keyStrokes, event);
 
 		// Get the menu item we've just selected.
 		IAction action = editor.getEditorSite().getActionBars().getGlobalActionHandler(IWorkbenchActionConstants.COPY);
