@@ -416,6 +416,15 @@
             description="%category.project.description"
             id="org.eclipse.ui.category.project">
       </category>
+      <category
+            name="%category.perspective.name"
+            description="%category.perspective.description"
+            id="org.eclipse.ui.category.perspectives" />
+      <command
+      		name="%Perspective.resourcePerspective"
+      		description="%command.openResourcePerspective.description"
+      		categoryId="org.eclipse.ui.category.perspectives"
+      		id="org.eclipse.ui.resourcePerspective" />
       <command
             name="%Views.Problem"
             description="%command.showProblemsView.description"
