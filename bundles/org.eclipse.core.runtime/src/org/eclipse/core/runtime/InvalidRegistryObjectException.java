@@ -28,10 +28,12 @@ public class InvalidRegistryObjectException extends RuntimeException {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private static final String MESSAGE = "Invalid registry object"; //$NON-NLS-1$
+	
 	/**
 	 * Creates a new exception instance with null as its detail message.
 	 */
 	public InvalidRegistryObjectException() {
-		//Do nothing
+		super(MESSAGE);
 	}
 }
