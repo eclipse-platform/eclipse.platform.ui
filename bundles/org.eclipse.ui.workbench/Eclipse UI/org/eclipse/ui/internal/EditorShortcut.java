@@ -98,6 +98,9 @@ public class EditorShortcut {
 	public String getTitle(){
 		return title;
 	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
 	/**
 	 * @see IWorkbenchPart#getTitleImage
 	 */	
@@ -192,7 +195,8 @@ public class EditorShortcut {
 		mem.putString(IWorkbenchConstants.TAG_FACTORY_ID,factoryId);
 		
 		if(memento != null) {
-			mem.putMemento(memento);
+			IMemento childMem = mem.createChild(IWorkbenchConstants.TAG_INPUT);
+			childMem.putMemento(memento);
 		} else if(input != null) {
 			IMemento childMem = mem.createChild(IWorkbenchConstants.TAG_INPUT);
 			IPersistableElement persistable = input.getPersistable();

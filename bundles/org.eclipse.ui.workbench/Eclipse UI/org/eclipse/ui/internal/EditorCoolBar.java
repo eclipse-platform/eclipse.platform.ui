@@ -572,9 +572,12 @@ public class EditorCoolBar {
 		 * Performs the save.
 		 */
 		public void run() {
-			for (int i = 0; i < toolItems.length; i++) {			
-				// how get the new name?
+			for (int i = 0; i < toolItems.length; i++) {
+				EditorShortcut shortcut = (EditorShortcut) toolItems[i].getData();
+				//infw
+				shortcut.setTitle("NewName");			
 				toolItems[i].setText("NewName");
+				
 			}
 		}
 	}
