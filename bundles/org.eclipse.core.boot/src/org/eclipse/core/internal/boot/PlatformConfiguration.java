@@ -172,7 +172,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			this.resolvedURL = this.url;
 			if (url.getProtocol().equals(PlatformURLHandler.PROTOCOL)) {
 				try {
-					resolvedURL = ((PlatformURLConnection)url.openConnection()).getResolvedURL();
+					resolvedURL = resolvePlatformURL(url); // 19536
 				} catch(IOException e) {
 					// will use the baseline URL ...
 				}
@@ -2778,7 +2778,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		else if (protocol.equals(PlatformURLHandler.PROTOCOL)) {
 			URL resolved = null;
 			try {
-				resolved = ((PlatformURLConnection)url.openConnection()).getResolvedURL();
+				resolved = resolvePlatformURL(url); // 19536
 			} catch(IOException e) {
 				return false; // we tried but failed to resolve the platform URL
 			}
@@ -2795,7 +2795,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		else if (protocol.equals(PlatformURLHandler.PROTOCOL)) {
 			URL resolved = null;
 			try {
-				resolved = ((PlatformURLConnection)url.openConnection()).getResolvedURL();
+				resolved = resolvePlatformURL(url); // 19536
 				if (resolved.getProtocol().equals("file")) //$NON-NLS-1$
 					path = resolved.getFile();
 			} catch(IOException e) {
@@ -2808,6 +2808,21 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			if (dir != null)
 				dir.mkdirs();
 		}
+	}
+	
+	private static URL resolvePlatformURL(URL url) throws IOException {
+		// 19536
+		if (url.getProtocol().equals(PlatformURLHandler.PROTOCOL)) {
+			URLConnection connection = url.openConnection();
+			if (connection instanceof PlatformURLConnection) {
+				url = ((PlatformURLConnection)connection).getResolvedURL();
+			} else {
+//				connection = new PlatformURLBaseConnection(url);
+//				url = ((PlatformURLConnection)connection).getResolvedURL();
+				url = InternalBootLoader.getInstallURL();
+			}
+		}
+		return url;
 	}
 
 	private static void debug(String s) {
