@@ -107,15 +107,17 @@ public abstract class FeatureContentProvider
 			OutputStream os = null;
 			localFile = Utilities.createLocalFile(getWorkingDirectory(), key, null /*name*/);			
 			boolean sucess = false;
+			
+			if (monitor != null) {
+				monitor.saveState();
+				monitor.setTaskName(Policy.bind("FeatureContentProvider.Downloading"));
+				//$NON-NLS-1$
+				monitor.subTask(ref.getIdentifier() + " "); //$NON-NLS-1$
+				monitor.setTotalCount(ref.getInputSize());
+				monitor.showCopyDetails(true);
+			}
+			
 			try {
-				if (monitor != null) {
-					monitor.saveState();
-					monitor.setTaskName(Policy.bind("FeatureContentProvider.Downloading"));
-					//$NON-NLS-1$
-					monitor.subTask(ref.getIdentifier() + " "); //$NON-NLS-1$
-					monitor.setTotalCount(ref.getInputSize());
-					monitor.showCopyDetails(true);
-				}
 				is = ref.getInputStream();
 				os = new FileOutputStream(localFile);
 				Utilities.copy(is, os, monitor);

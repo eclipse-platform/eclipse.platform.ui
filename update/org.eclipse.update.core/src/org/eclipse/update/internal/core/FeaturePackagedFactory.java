@@ -53,19 +53,10 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 			feature.resolve(baseUrl, getResourceBundle(baseUrl));
 			feature.markReadOnly();			
 			
-/*		} catch (IOException e) {
-			// if we cannot find the feature or the feature.xml...
-			// We should not stop the execution 
-			// but we must Log it all the time, not only when debugging...
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "IOException opening the 'feature.xml' stream in the feature archive:"  + url.toExternalForm(), e); //$NON-NLS-1$
-			UpdateManagerPlugin.getPlugin().getLog().log(status);*/
+		}  catch (CoreException e){
+			throw e;
 		} catch (Exception e) { 
-			// other errors, we stop execution
-			if (e instanceof CoreException) {
-				throw (CoreException)e;
-			};
-			throw Utilities.newCoreException(Policy.bind("FeatureFactory.ParsingError", url.toExternalForm()), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("FeatureFactory.CreatingError", url.toExternalForm()), e); //$NON-NLS-1$
 		}finally {
 			try {
 				featureStream.close();

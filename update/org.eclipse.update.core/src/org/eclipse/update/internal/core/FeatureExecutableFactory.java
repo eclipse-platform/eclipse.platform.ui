@@ -10,6 +10,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.FeatureModel;
+import org.xml.sax.SAXException;
 
 /**
  * FeatureFactory for Executable Features
@@ -38,7 +39,7 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 
 			URL nonResolvedURL =
 				contentProvider.getFeatureManifestReference(null /*IProgressMonitor*/
-			).asURL();
+			).asURL(); 
 			URL resolvedURL = URLEncoder.encode(nonResolvedURL);
 			featureStream = resolvedURL.openStream();
 
@@ -50,28 +51,11 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 
 			feature.resolve(url, getResourceBundle(url));
 			feature.markReadOnly();
-		} /*catch (IOException e) {
-			// if we cannot find the feature or the feature.xml...
-			// We should not stop the execution 
-			// but we must Log it all the time, not only when debugging...
-			String id =
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status =
-				new Status(
-					IStatus.WARNING,
-					id,
-					IStatus.OK,
-					"IOException opening the 'feature.xml' stream in the feature archive:"
-						+ url.toExternalForm(),
-					e);
-			//$NON-NLS-1$
-			UpdateManagerPlugin.getPlugin().getLog().log(status);
-			feature=null;
-		}*/ catch (Exception e) {
-			//catch (SAXException e) parseFeature
-			//catch (ParsingException)  parseFeature
+		} catch (CoreException e){
+			throw e;
+		} catch (Exception e){
 			throw Utilities.newCoreException(
-				Policy.bind("FeatureFactory.ParsingError", url.toExternalForm()),
+				Policy.bind("FeatureFactory.CreatingError", url.toExternalForm()),
 				e);
 			//$NON-NLS-1$
 		} finally {
