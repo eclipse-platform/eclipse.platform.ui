@@ -195,7 +195,7 @@
          </description>
          <selection class="org.eclipse.core.resources.IProject"/>
       </wizard>
-      <wizard
+<!--      <wizard
          id="org.eclipse.team.ui.TargetSiteImportWizard"
          name="%TargetSiteImportWizard.name"
          class="org.eclipse.team.internal.ui.target.TargetSiteImportWizard">
@@ -203,7 +203,7 @@
             %TargetSiteImportWizard.description
          </description>
          <selection class="org.eclipse.team.internal.ui.target.SiteElement"/>
-      </wizard>
+      </wizard> -->
    </extension> 
 
 <!-- ****************** Export Wizards ********************* -->
@@ -219,7 +219,7 @@
          </description>
          <selection class="org.eclipse.core.resources.IProject"/>
       </wizard>
-      <wizard
+<!--      <wizard
          id="org.eclipse.team.ui.target.TargetSiteExportWizard"
          name="%TargetSiteExportWizard.name"
          class="org.eclipse.team.internal.ui.target.TargetSiteExportWizard">
@@ -227,9 +227,9 @@
             %TargetSiteExportWizard.description
          </description>
          <selection class="org.eclipse.team.internal.ui.target.SiteElement"/>
-      </wizard>
+      </wizard> -->
    </extension> 
-   
+
 <!-- ***************** Perspective Extensions ********************** -->
 	<extension point="org.eclipse.ui.perspectiveExtensions">
         <perspectiveExtension
