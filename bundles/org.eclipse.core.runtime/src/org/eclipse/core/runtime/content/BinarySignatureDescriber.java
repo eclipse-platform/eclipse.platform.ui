@@ -27,6 +27,20 @@ import org.eclipse.core.runtime.*;
  * "signature".
  * </p> 
  * <p>
+ * The "signature" parameter is a sequence of hex codes, one for each byte in 
+ * the signature. For example, "CA FE BA BE" would be a signature for Java
+ * class files.
+ * </p>
+ * <p>
+ * The "offset" parameter is an integer indicating the offset where the 
+ * signature's first byte is found. 
+ * </p>
+ * <p>
+ * The "required" parameter is a boolean (default is " true") indicating whether 
+ * the absence of a signature should deem the contents validity status as 
+ * IContentDescriber.INVALID or IContentDescriber.INDETERMINATE.  
+ * </p>
+ * <p>
  * This class is not intended to be subclassed or instantiated by clients, 
  * only to be referenced in the "describer" configuration element of
  * extensions to the <code>org.eclipse.core.runtime.contentTypes</code>
@@ -37,11 +51,15 @@ import org.eclipse.core.runtime.*;
  */
 public final class BinarySignatureDescriber implements IContentDescriber, IExecutableExtension {
 	private final static String SIGNATURE = "signature"; //$NON-NLS-1$
+
 	private final static String OFFSET = "offset"; //$NON-NLS-1$
+
 	private static final Object REQUIRED = "required"; //$NON-NLS-1$
 
 	private byte[] signature;
+
 	private int offset;
+
 	private boolean required = true;
 
 	/* (Intentionally not included in javadoc)
@@ -87,7 +105,7 @@ public final class BinarySignatureDescriber implements IContentDescriber, IExecu
 					required = Boolean.valueOf((String) parameters.get(REQUIRED)).booleanValue();
 			}
 		} catch (NumberFormatException nfe) {
-			String message = Policy.bind("content.badInitializationData", XMLRootElementContentDescriber.class.getName()); //$NON-NLS-1$
+			String message = Policy.bind("content.badInitializationData", BinarySignatureDescriber.class.getName()); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, nfe));
 		}
 	}
@@ -96,7 +114,7 @@ public final class BinarySignatureDescriber implements IContentDescriber, IExecu
 		List bytes = new ArrayList();
 		StringTokenizer tokenizer = new StringTokenizer(data, " \t\n\r\f,"); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens())
-			bytes.add(new Byte(Byte.parseByte(tokenizer.nextToken().trim(), 16)));
+			bytes.add(new Byte((byte) Integer.parseInt(tokenizer.nextToken().trim(), 16)));
 		byte[] signature = new byte[bytes.size()];
 		for (int i = 0; i < signature.length; i++)
 			signature[i] = ((Byte) bytes.get(i)).byteValue();
