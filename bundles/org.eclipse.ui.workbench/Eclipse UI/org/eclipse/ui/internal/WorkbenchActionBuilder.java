@@ -890,26 +890,38 @@ public class WorkbenchActionBuilder {
 		nextEditorAction = new CycleEditorAction(window, true);
 		nextEditorAction.setActionDefinitionId(nextEditorActionDefId);
 		keyBindingService.registerGlobalAction(nextEditorAction);
+		nextEditorAction.commandForward = nextEditorActionDefId;
+		nextEditorAction.commandBackward = prevEditorActionDefId;
 
 		prevEditorAction = new CycleEditorAction(window, false);
 		prevEditorAction.setActionDefinitionId(prevEditorActionDefId);
 		keyBindingService.registerGlobalAction(prevEditorAction);
+		prevEditorAction.commandForward = nextEditorActionDefId;
+		prevEditorAction.commandBackward = prevEditorActionDefId;
 
 		nextPartAction = new CyclePartAction(window, true);
 		nextPartAction.setActionDefinitionId(nextPartActionDefId);
 		keyBindingService.registerGlobalAction(nextPartAction);
+		nextPartAction.commandForward = nextPartActionDefId;
+		nextPartAction.commandBackward = prevPartActionDefId;
 
 		prevPartAction = new CyclePartAction(window, false);
 		prevPartAction.setActionDefinitionId(prevPartActionDefId);
 		keyBindingService.registerGlobalAction(prevPartAction);
+		prevPartAction.commandForward = nextPartActionDefId;
+		prevPartAction.commandBackward = prevPartActionDefId;
 
 		nextPerspectiveAction = new CyclePerspectiveAction(window, true);
 		nextPerspectiveAction.setActionDefinitionId(nextPerspectiveActionDefId);
 		keyBindingService.registerGlobalAction(nextPerspectiveAction);
+		nextPerspectiveAction.commandForward = nextPerspectiveActionDefId;
+		nextPerspectiveAction.commandBackward = prevPerspectiveActionDefId;
 
 		prevPerspectiveAction = new CyclePerspectiveAction(window, false);
 		prevPerspectiveAction.setActionDefinitionId(prevPerspectiveActionDefId);
 		keyBindingService.registerGlobalAction(prevPerspectiveAction);
+		prevPerspectiveAction.commandForward = nextPerspectiveActionDefId;
+		prevPerspectiveAction.commandBackward = prevPerspectiveActionDefId;
 
 		activateEditorAction = new ActivateEditorAction(window);
 		activateEditorAction.setActionDefinitionId(activateEditorActionDefId);

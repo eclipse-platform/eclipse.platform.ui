@@ -56,7 +56,7 @@ public class Manager {
 		Sequence sequence = getGestureMachine().getFirstSequenceForCommand(command);
 		
 		if (sequence != null)
-			text = GestureSupport.formatSequence(sequence);
+			text = GestureSupport.formatSequence(sequence, true);
 			
 		return text != null ? text : Util.ZERO_LENGTH_STRING;
 	}

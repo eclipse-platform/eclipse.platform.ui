@@ -117,7 +117,11 @@ public final class KeySupport {
 		return stringBuffer.toString();
 	}
 
-	public static String formatStroke(Stroke stroke, boolean localize) {
+	public static String formatStroke(Stroke stroke, boolean localize)
+		throws IllegalArgumentException {
+		if (stroke == null)
+			throw new IllegalArgumentException();		
+			
 		StringBuffer stringBuffer = new StringBuffer();
 		int value = stroke.getValue();
 		

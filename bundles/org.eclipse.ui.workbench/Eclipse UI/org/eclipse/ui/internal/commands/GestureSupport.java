@@ -14,18 +14,26 @@ package org.eclipse.ui.internal.commands;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
 public final class GestureSupport {
 
-	public final static Stroke EAST = Stroke.create(6);  
-	public final static Stroke NORTH = Stroke.create(8);
-	public final static Stroke SOUTH = Stroke.create(2);
-	public final static Stroke WEST = Stroke.create(4);
+	private final static ResourceBundle resourceBundle = ResourceBundle.getBundle(GestureSupport.class.getName());
 
+	private final static String DOWN = "2"; //$NON-NLS-1$
+	private final static String LEFT = "4"; //$NON-NLS-1$
+	private final static String RIGHT = "6"; //$NON-NLS-1$
 	private final static String STROKE_SEPARATOR = " "; //$NON-NLS-1$
-	
-	public static String formatSequence(Sequence sequence)
+	private final static String UNKNOWN = "?"; //$NON-NLS-1$
+	private final static String UP = "8"; //$NON-NLS-1$
+
+	public final static Stroke STROKE_DOWN = Stroke.create(2);
+	public final static Stroke STROKE_LEFT = Stroke.create(4);
+	public final static Stroke STROKE_RIGHT = Stroke.create(6);  
+	public final static Stroke STROKE_UP = Stroke.create(8);
+
+	public static String formatSequence(Sequence sequence, boolean localize)
 		throws IllegalArgumentException {
 		if (sequence == null)
 			throw new IllegalArgumentException();
@@ -38,15 +46,28 @@ public final class GestureSupport {
 			if (i != 0)
 				stringBuffer.append(STROKE_SEPARATOR);
 
-			stringBuffer.append(formatStroke((Stroke) iterator.next()));
+			stringBuffer.append(formatStroke((Stroke) iterator.next(), localize));
 			i++;
 		}
 
 		return stringBuffer.toString();
 	}
 
-	public static String formatStroke(Stroke stroke) {
-		return Util.ZERO_LENGTH_STRING; //TODO
+	public static String formatStroke(Stroke stroke, boolean localize)
+		throws IllegalArgumentException {
+		if (stroke == null)
+			throw new IllegalArgumentException();
+
+		if (STROKE_DOWN.equals(stroke))
+			return localize ? Util.getString(resourceBundle, DOWN) : DOWN;
+		else if (STROKE_LEFT.equals(stroke))
+			return localize ? Util.getString(resourceBundle, LEFT) : LEFT;
+		else if (STROKE_RIGHT.equals(stroke))
+			return localize ? Util.getString(resourceBundle, RIGHT) : RIGHT;
+		else if (STROKE_UP.equals(stroke))
+			return localize ? Util.getString(resourceBundle, UP) : UP;
+		else 
+			return localize ? Util.getString(resourceBundle, UNKNOWN) : UNKNOWN;	
 	}
 	
 	public static Sequence parseSequence(String string)
@@ -68,8 +89,16 @@ public final class GestureSupport {
 		if (string == null)
 			throw new IllegalArgumentException();
 		
-		int value = 0; // TODO
-		return Stroke.create(value);
+		if (DOWN.equals(string))
+			return STROKE_DOWN;
+		else if (LEFT.equals(string))
+			return STROKE_LEFT;
+		else if (RIGHT.equals(string))
+			return STROKE_RIGHT;
+		else if (UP.equals(string))
+			return STROKE_UP;
+		else 
+			return Stroke.create(0); // TODO
 	}
 
 	public static Sequence recognize(Point[] points, int sensitivity) {
@@ -93,14 +122,14 @@ public final class GestureSupport {
 			int dy = (y1 - y0) / sensitivity;
 
 			if ((dx != 0) || (dy != 0)) {
-				if (dx > 0 && !EAST.equals(stroke)) {
-					strokes.add(stroke = EAST);
-				} else if (dx < 0 && !WEST.equals(stroke)) {
-					strokes.add(stroke = WEST);
-				} else if (dy > 0 && !SOUTH.equals(stroke)) {
-					strokes.add(stroke = SOUTH);
-				} else if (dy < 0 && !NORTH.equals(stroke)) {
-					strokes.add(stroke = NORTH);
+				if (dx > 0 && !STROKE_RIGHT.equals(stroke)) {
+					strokes.add(stroke = STROKE_RIGHT);
+				} else if (dx < 0 && !STROKE_LEFT.equals(stroke)) {
+					strokes.add(stroke = STROKE_LEFT);
+				} else if (dy > 0 && !STROKE_DOWN.equals(stroke)) {
+					strokes.add(stroke = STROKE_DOWN);
+				} else if (dy < 0 && !STROKE_UP.equals(stroke)) {
+					strokes.add(stroke = STROKE_UP);
 				}
 
 				x0 = x1;
