@@ -10,60 +10,62 @@
  *******************************************************************************/
 package org.eclipse.core.internal.plugins;
 
-import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.runtime.IPluginPrerequisite;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.Constants;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.service.resolver.Version;
 
-//TODO Some methods in this class needs to be refined.
 public class PluginPrerequisite implements IPluginPrerequisite {
-	private Bundle prereq = null;
+	private BundleSpecification prereq = null;
 
-	public PluginPrerequisite(Bundle b) {
-		Assert.isNotNull(b);
+	public PluginPrerequisite(BundleSpecification b) {
 		prereq = b;
 	}
 
 	public PluginVersionIdentifier getResolvedVersionIdentifier() {
-		String version = (String) prereq.getHeaders().get(Constants.BUNDLE_VERSION);
-		return version == null ? null : new PluginVersionIdentifier(version);	
+		Version actualVersion = prereq.getActualVersion();
+		if (actualVersion==null)
+			return null;
+		return new PluginVersionIdentifier(actualVersion.toString());	
 	}
 
 	public String getUniqueIdentifier() {
-		return prereq.getSymbolicName();
+		return prereq.getName();
 	}
 
 	public PluginVersionIdentifier getVersionIdentifier() {
-		return getResolvedVersionIdentifier();
+		Version specifiedVersion = prereq.getVersionSpecification();
+		if (specifiedVersion == null)
+			return null;
+		return new PluginVersionIdentifier(specifiedVersion.toString());
 	}
 
 	public boolean isExported() {
-		return true;
+		return prereq.isExported();
 	}
 
 	public boolean isMatchedAsGreaterOrEqual() {
-		return false;
+		return prereq.getMatchingRule()==BundleSpecification.GREATER_EQUAL_MATCH;
 	}
 
 	public boolean isMatchedAsCompatible() {
-		return false;
+		return prereq.getMatchingRule()==BundleSpecification.MAJOR_MATCH || prereq.getMatchingRule()==BundleSpecification.NO_MATCH;
 	}
 
 	public boolean isMatchedAsEquivalent() {
-		return true;
+		return prereq.getMatchingRule()==BundleSpecification.MINOR_MATCH;
 	}
 
 	public boolean isMatchedAsPerfect() {
-		return false;
+		return prereq.getMatchingRule()==BundleSpecification.QUALIFIER_MATCH;
 	}
 
 	public boolean isMatchedAsExact() {
-		return false;
+		return isMatchedAsEquivalent();
 	}
 
 	public boolean isOptional() {
-		return false;
+		return prereq.isOptional();
 	}
 
 }
