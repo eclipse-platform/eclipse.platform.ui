@@ -967,17 +967,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             return;
         }
 
-		/*
-		 * Bug 69900. If we don't initialize the part before we update the
-		 * current selection pointers, then it will be possible for plug-ins to
-		 * see partially initialized data (e.g., by calling
-		 * WorkbenchPage.getActiveEditor()).
-		 */
-		if (part instanceof PartPane) {
-			PartPane pane = (PartPane) part;
-			pane.getPartReference().getPart(true);
-		}
-
         current = part;
 
         if (!isDisposed()) {
