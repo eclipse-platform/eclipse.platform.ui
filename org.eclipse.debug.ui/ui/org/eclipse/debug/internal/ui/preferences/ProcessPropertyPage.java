@@ -38,10 +38,6 @@ public class ProcessPropertyPage extends PropertyPage {
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite ancestor) {
-					
-		WorkbenchHelp.setHelp(
-			ancestor,
-			IDebugHelpContextIds.PROCESS_PROPERTY_PAGE);
 
 		Font font = ancestor.getFont();
 		noDefaultAndApplyButton();
@@ -80,4 +76,15 @@ public class ProcessPropertyPage extends PropertyPage {
 				l.setText(cmdLine);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(
+			getControl(),
+			IDebugHelpContextIds.PROCESS_PROPERTY_PAGE);
+	}
+
 }
