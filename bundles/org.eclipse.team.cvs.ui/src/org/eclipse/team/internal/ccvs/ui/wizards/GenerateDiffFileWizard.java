@@ -701,6 +701,17 @@ public class GenerateDiffFileWizard extends Wizard {
         }
         
         /**
+         * Error: the file isn't writable.
+         */
+        if (!file.canWrite()) {
+            final String title= Policy.bind("GenerateCVSDiff.1"); //$NON-NLS-1$
+            final String msg= Policy.bind("GenerateCVSDiff.2"); //$NON-NLS-1$
+            final MessageDialog dialog= new MessageDialog(getShell(), title, null, msg, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0);
+            dialog.open();
+            return false;
+        }
+        
+        /**
          * Perform diff operation.
          */
         try {
