@@ -12,8 +12,8 @@ package org.eclipse.core.resources;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.osgi.service.prefs.Preferences;
 
 /**
  * Object representing the project scope in the Eclipse preferences
@@ -57,12 +57,12 @@ public final class ProjectScope implements IScopeContext {
 	/*
 	 * @see org.eclipse.core.runtime.IScopeContext#getNode(java.lang.String)
 	 */
-	public Preferences getNode(String qualifier) {
+	public IEclipsePreferences getNode(String qualifier) {
 		if (qualifier == null)
 			throw new IllegalArgumentException();
 		if (context == null)
 			return null;
-		return Platform.getPreferencesService().getRootNode().node(SCOPE).node(context.getName()).node(qualifier);
+		return (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(SCOPE).node(context.getName()).node(qualifier);
 	}
 
 	/*
