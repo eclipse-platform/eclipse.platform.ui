@@ -63,9 +63,13 @@ public class RepositoriesView extends ViewPart {
 	private Action refreshAction;
 	
 	IRepositoryListener listener = new IRepositoryListener() {
-		public void repositoryAdded(ICVSRepositoryLocation root) {
-			refresh();
-			viewer.setSelection(new StructuredSelection(root));
+		public void repositoryAdded(final ICVSRepositoryLocation root) {
+			viewer.getControl().getDisplay().syncExec(new Runnable() {
+				public void run() {
+					viewer.refresh();
+					viewer.setSelection(new StructuredSelection(root));
+				}
+			});
 		}
 		public void repositoryRemoved(ICVSRepositoryLocation root) {
 			refresh();
