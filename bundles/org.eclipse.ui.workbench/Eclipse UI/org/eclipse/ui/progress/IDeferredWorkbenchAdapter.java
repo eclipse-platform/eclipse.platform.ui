@@ -56,7 +56,8 @@ public interface IDeferredWorkbenchAdapter extends IWorkbenchAdapter {
 	/**
 	 * Returns the rule used to schedule the deferred fetching of children for this adapter.
 	 * 
+	 * @param object the object whose children are being fetched
 	 * @return ISchedulingRule the scheduling rule 
 	 */
-	public ISchedulingRule getRule();
+	public ISchedulingRule getRule(Object object);
 }

@@ -11,7 +11,11 @@
 
 package org.eclipse.ui.progress;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
@@ -21,6 +25,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.progress.PendingUpdateAdapter;
 import org.eclipse.ui.internal.progress.ProgressMessages;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * The DeferredContentManager is a class that helps an ITreeContentProvider
@@ -100,7 +105,7 @@ public class DeferredTreeContentManager {
 			return (IDeferredWorkbenchAdapter) adapter;
 
 	}
-
+	
 	/**
 	 * Starts a job and creates a collector for fetching the children of this deferred adapter. If children
 	 * are waiting to be retrieve for this parent already, that job is cancelled and another is started.
@@ -145,9 +150,7 @@ public class DeferredTreeContentManager {
 			 * if the parent is refreshed.
 			 */
 			public boolean belongsTo(Object family) {
-				if (parent.equals(family))
-					return true;
-				return checkParent(family);
+				return isParent(family, parent);
 			}
 
 			/**
@@ -155,13 +158,31 @@ public class DeferredTreeContentManager {
 			 * parent used in this job.
 			 * @return boolean
 			 */
-			private boolean checkParent(Object element) {
-				Object elementParent = adapter.getParent(element);
+			private boolean isParent(Object family, Object child) {
+				if (family.equals(child))
+					return true;
+				IWorkbenchAdapter workbenchAdapter = getWorkbenchAdapter(child);
+				if (workbenchAdapter == null)
+					return false;
+				Object elementParent = workbenchAdapter.getParent(child);
 				if (elementParent == null)
 					return false;
-				if (elementParent.equals(element))
-					return true;
-				return checkParent(elementParent);
+				return isParent(family, elementParent);
+			}
+			
+			/**
+			 * Get the workbench adapter for the element. 
+			 */
+			private IWorkbenchAdapter getWorkbenchAdapter(Object element) {
+				if (element instanceof IWorkbenchAdapter)
+					return (IWorkbenchAdapter) element;
+				if (!(element instanceof IAdaptable))
+					return null;
+				Object workbenchAdapter = ((IAdaptable) element).getAdapter(IWorkbenchAdapter.class);
+				if (workbenchAdapter == null)
+					return null;
+				else
+					return (IWorkbenchAdapter) workbenchAdapter;
 			}
 		};
 		job.addJobChangeListener(new JobChangeAdapter() {
@@ -173,7 +194,7 @@ public class DeferredTreeContentManager {
 			}
 
 		});
-		job.setRule(adapter.getRule());
+		job.setRule(adapter.getRule(parent));
 		job.schedule();
 	}
 
@@ -240,5 +261,14 @@ public class DeferredTreeContentManager {
 		clearJob.setSystem(true);
 		clearJob.schedule();
 
+	}
+	
+	/** 
+	 * Cancel all jobs that are fetching content for the given parent or
+	 * any of its children.
+	 * @param parent
+	 */
+	public void cancel(Object parent) {
+		Platform.getJobManager().cancel(parent);
 	}
 }
