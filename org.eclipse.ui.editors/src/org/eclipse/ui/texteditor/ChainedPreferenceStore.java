@@ -419,13 +419,14 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		
 		if (visibleStore == null) {
 			// no visible store
-			Assert.isTrue(newValue == null);
 			if (oldValue != null)
 				// removal in child, last in chain -> removal in this chained preference store
 				firePropertyChangeEvent(event);
 		} else if (visibleStore == childPreferenceStore) {
 			// event from visible store
-			Assert.isNotNull(newValue);
+			if (newValue == null)
+				// fall back to string property
+				newValue= visibleStore.getString(property);
 			if (oldValue != null) {
 				// change in child, visible store -> change in this chained preference store
 				firePropertyChangeEvent(event);
@@ -470,7 +471,12 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 			
 			if (eventBeforeVisibleStore) {
 				// removal in child, before visible store
-				Assert.isTrue(newValue == null);
+				
+				/*
+				 * The original event's new value can be non-null (removed assertion).
+				 * see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=69419
+				 */
+				
 				newValue= getOtherValue(property, visibleStore, oldValue);
 				if (!newValue.equals(oldValue))
 					// removal in child, before visible store, different old value -> change in this chained preference store
@@ -505,10 +511,9 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 			otherValue= new Integer(store.getInt(property));
 		else if (thisValue instanceof Long)
 			otherValue= new Long(store.getLong(property));
-		else if (thisValue instanceof String)
-			otherValue= store.getString(property);
 		else
-			throw new IllegalArgumentException();
+			// String case and fallback
+			otherValue= store.getString(property);
 		return otherValue;
 	}
 

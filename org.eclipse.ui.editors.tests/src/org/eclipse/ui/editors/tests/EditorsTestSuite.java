@@ -23,6 +23,8 @@ public class EditorsTestSuite extends TestSuite {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for org.eclipse.ui.editors"); //$NON-NLS-1$
 		
+		suite.addTest(ChainedPreferenceStoreTest.suite());
+		
 		return suite;
 	}
 }
