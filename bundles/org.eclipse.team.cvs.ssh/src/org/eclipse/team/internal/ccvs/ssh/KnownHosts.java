@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,9 @@ public class KnownHosts {
 	 * <code>known_hosts</code> does not exist, assume we are connecting
 	 * to the authentic server, add the key, and return true.
 	 * @param e key exponent
-	 * @param n key modulus	 * @return boolean whether the key is correct	 */
+	 * @param n key modulus
+	 * @return boolean whether the key is correct
+	 */
 	public boolean verifyKey(String hostname, byte[] host_key_bits, BigInteger e, BigInteger n) {
 		FileReader f;
 		BigInteger nbits = new BigInteger(1, host_key_bits);
@@ -100,7 +102,8 @@ public class KnownHosts {
 	
 	/*
 	 * Append the host key information to known_hosts.
-	 * Always assume the file exists.	 */
+	 * Always assume the file exists.
+	 */
 	void addHost(String hostname, BigInteger key_bits, BigInteger e, BigInteger n) {
 		try {
 			FileWriter w = new FileWriter(defaultFilename(), true);
@@ -116,7 +119,8 @@ public class KnownHosts {
 	
 	/*
 	 * Create the known_hosts file in the default location.
-	 * Fail if the file can not be created (issue a warning in the log).	 */
+	 * Fail if the file can not be created (issue a warning in the log).
+	 */
 	void createHostFile() {
 		try {
 			File file = new File(defaultFilename());
