@@ -205,9 +205,13 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		}
 		// delete any markers that are not to be restored
 		if (!delete.isEmpty()) {
+            final IMarker[] delMarkers = (IMarker[])delete.toArray(new IMarker[delete.size()]);
 			IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor pm) throws CoreException {
-					ResourcesPlugin.getWorkspace().deleteMarkers((IMarker[])delete.toArray(new IMarker[delete.size()]));
+                    for (int i = 0; i < delMarkers.length; i++) {
+                        IMarker marker = delMarkers[i];
+                        marker.delete();
+                    }
 				}
 			};
 			new BreakpointManagerJob(wr).schedule();
@@ -582,7 +586,10 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				// delete moved markers
 				IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
 					public void run(IProgressMonitor monitor) throws CoreException {
-						getWorkspace().deleteMarkers((IMarker[])fMoved.toArray(new IMarker[fMoved.size()]));
+                        IMarker[] markers = (IMarker[])fMoved.toArray(new IMarker[fMoved.size()]);
+						for (int i = 0; i < markers.length; i++) {
+                            markers[i].delete();
+                        }
 					}
 				};
 				try {
