@@ -6,6 +6,7 @@
 package org.eclipse.ui.texteditor;
 
 import java.text.MessageFormat;
+import java.util.Stack;
 
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.text.IFindReplaceTarget;
@@ -53,6 +54,16 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	private boolean fFound;	
 	/** A flag indicating listeners are installed. */
 	private boolean fInstalled;
+	/** The current find stack */
+	private Stack fSessionStack;
+	/** A constant representing a find-next operation */
+	private static final Object NEXT = new Object();
+	/** A constant representing a find-previous operation */
+	private static final Object PREVIOUS = new Object();
+	/** A constant representing adding a character to the find pattern */
+	private static final Object CHAR = new Object();
+	/** A constant representing a wrap operation */
+	private static final Object WRAPPED = new Object();
 
 	/**
 	 * Creates an instance of an incremental find target.
@@ -112,13 +123,15 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 */
 	public void beginSession() {
 		fFindString.setLength(0);
+		fSessionStack = new Stack();
 		fCasePosition= -1;		
 		fBasePosition= fTarget.getSelection().x;
 		fCurrentIndex= fBasePosition;
 		fFound= true;
 		
 		install();
-		performFindNext(true, fBasePosition);
+		performFindNext(true, fBasePosition, false, false);
+		updateStatus(fFound);
 		
 		if (fTarget instanceof IFindReplaceTargetExtension)
 			((IFindReplaceTargetExtension) fTarget).beginSession();			
@@ -195,8 +208,8 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		
 		fInstalled= false;
 	}
-	
-	private void performFindNext(boolean forward, int position) {
+
+	private boolean performFindNext(boolean forward, int position, boolean wrapSearch, boolean takeBack) {
 		String string= fFindString.toString();
 
 		int index;
@@ -211,53 +224,66 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			if (!forward)
 				position--;
 
-			index= findIndex(string, position, forward, fCasePosition != -1, true);
+			index= findIndex(string, position, forward, fCasePosition != -1, wrapSearch, takeBack);
 		}
 
-		if (index == -1) {
-			if (fFound) {
-				// beep once
-				fFound= false;
-				StyledText text= fTextViewer.getTextWidget();
-				if (text != null && !text.isDisposed())
-					text.getDisplay().beep();
-			}
-			
+		boolean found = (index != -1);
+		if (found) fCurrentIndex = index;
+
+		return found;
+	}
+
+	private void updateStatus(boolean found) {
+		if (fSessionStack == null) return;
+
+		String string= fFindString.toString();
+		String prefix = ""; //$NON-NLS-1$
+		if (fSessionStack.search(WRAPPED) != -1) {
+			prefix = EditorMessages.getString("Editor.FindIncremental.wrapped"); //$NON-NLS-1$
+		}
+		if (!found) {
 			String pattern= EditorMessages.getString("Editor.FindIncremental.not_found.pattern"); //$NON-NLS-1$
-			statusError(MessageFormat.format(pattern, new Object[] { string }));
+			statusError(MessageFormat.format(pattern, new Object[] { prefix, string }));
 
 		} else {
-			fFound= true;
-			fCurrentIndex= index;
 			String pattern= EditorMessages.getString("Editor.FindIncremental.found.pattern"); //$NON-NLS-1$
-			statusMessage(MessageFormat.format(pattern, new Object[] { string }));
+			statusMessage(MessageFormat.format(pattern, new Object[] { prefix, string }));
 		}
 	}
 
-	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch) {
+	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean takeBack) {
 
 		if (fTarget == null)
 			return -1;	
 
-		if (forwardSearch) {
-			if (wrapSearch) {
-				int index= fTarget.findAndSelect(startPosition, findString, true, caseSensitive, false);
-				if (index == -1)
-					index= fTarget.findAndSelect(-1, findString, true, caseSensitive, false);
-				return index;
-			}
-			return fTarget.findAndSelect(startPosition, findString, true, caseSensitive, false);
-		}
+		int startIndex = (forwardSearch) ? startPosition : startPosition - 1;
+		int index= fTarget.findAndSelect(startIndex, findString, forwardSearch, caseSensitive, false);
 
-		// backward
-		if (wrapSearch) {
-			int index= fTarget.findAndSelect(startPosition - 1, findString, false, caseSensitive, false);
-			if (index == -1) {
-				index= fTarget.findAndSelect(-1, findString, false, caseSensitive, false);
-			}
+		if (index != -1) {
+			fFound = true;
 			return index;
 		}
-		return fTarget.findAndSelect(startPosition - 1, findString, false, caseSensitive, false);
+
+		if (fFound) {
+			// beep once
+			StyledText text= fTextViewer.getTextWidget();
+			if (!takeBack && text != null && !text.isDisposed())
+				text.getDisplay().beep();
+		}
+
+		if (!wrapSearch || (fFound && !takeBack)) {
+			fFound = false;
+			return index;
+		}				
+
+		index = fTarget.findAndSelect(-1, findString, forwardSearch, caseSensitive, false);
+		fFound = (index != -1);
+		if (!takeBack && fFound) wrap();
+		return index;
+	}
+
+	private void wrap() {
+		fSessionStack.push(WRAPPED);
 	}
 
 	/*
@@ -267,6 +293,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		if (!event.doit)
 			return;
 
+		boolean found = fFound;
 		if (event.character == 0) {
 	
 			switch (event.keyCode) {
@@ -285,13 +312,15 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			
 			// find next
 			case SWT.ARROW_DOWN:
-				performFindNext(true, fTarget.getSelection().x + fTarget.getSelection().y);
+				if (performFindNext(true, fTarget.getSelection().x + fTarget.getSelection().y, true, false))
+					fSessionStack.push(NEXT);
 				event.doit= false;
 				break;
 	
 			// find previous
 			case SWT.ARROW_UP:
-				performFindNext(false, fTarget.getSelection().x);
+				if (performFindNext(false, fTarget.getSelection().x, true, false))
+					fSessionStack.push(PREVIOUS);
 
 				if (fCurrentIndex != -1 && fCurrentIndex < fBasePosition)
 					fBasePosition= fCurrentIndex;				
@@ -316,21 +345,30 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			case 0x08:
 			case 0x7F:
 				{
-					int length= fFindString.length();
-					if (length == 0) {
-						fTextViewer.getTextWidget().getDisplay().beep();
+					if (fSessionStack.empty()) {
+						StyledText text= fTextViewer.getTextWidget();
+						if (text != null && !text.isDisposed())
+							text.getDisplay().beep();
 						event.doit= false;
 						break;
-
-					} else {
-						fFindString.replace(length - 1, length, ""); //$NON-NLS-1$
 					}
-	
-					if (fCasePosition == fFindString.length())
-						fCasePosition= -1;
-	
-					performFindNext(true, fBasePosition);
-	
+					
+					Object last = popSessionStack();
+					while (!fSessionStack.empty() && fSessionStack.peek() == WRAPPED)
+						popSessionStack();
+
+					// Last event repeated a search						
+					if (last == PREVIOUS) {
+						performFindNext(true, fTarget.getSelection().x + fTarget.getSelection().y, true, true);
+					} else if (last == NEXT) {
+						performFindNext(false, fTarget.getSelection().x, true, true);
+
+						if (fCurrentIndex != -1 && fCurrentIndex < fBasePosition)
+							fBasePosition= fCurrentIndex;				
+					} else if (last == CHAR) {
+						// Last event added a character
+						performFindNext(true, fBasePosition, true, true);
+					}
 					event.doit= false;
 				}
 				break;		
@@ -338,22 +376,38 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			default:
 				if (event.stateMask == 0 || event.stateMask == SWT.SHIFT) {
 
-					char character= event.character;
-					if (fCasePosition == -1 && Character.isUpperCase(character) && Character.toLowerCase(character) != character)
-						fCasePosition= fFindString.length();
-
-					fFindString.append(character);
-					performFindNext(true, fBasePosition);
+					pushChar(event.character);
+					performFindNext(true, fBasePosition, false, false);
 					event.doit= false;
 				}
 				break;
 			}		
 		}
+		updateStatus(fFound);
+	}
+
+	private void pushChar(char character) {
+		if (fCasePosition == -1 && Character.isUpperCase(character) && Character.toLowerCase(character) != character)
+			fCasePosition= fFindString.length();
+		fFindString.append(character);
+		fSessionStack.push(CHAR);
+	}
+
+	private Object popSessionStack() {
+		Object o = fSessionStack.pop();
+		if (o == CHAR) {
+			int newLength = fFindString.length() -1;
+			fFindString.deleteCharAt(newLength);
+			if (fCasePosition == newLength)
+				fCasePosition= -1;
+		}
+		return o;
 	}
 
 	private void leave() {
 		statusClear();
 		uninstall();				
+		fSessionStack = null;
 	}
 
 	/*
