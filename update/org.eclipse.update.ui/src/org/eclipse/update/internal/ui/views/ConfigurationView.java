@@ -10,6 +10,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.DrillDownAdapter;
@@ -686,26 +687,22 @@ public class ConfigurationView
 						 * @see IInstallConfigurationChangedListener#installSiteAdded(ISite)
 						 */
 	public void installSiteAdded(IConfiguredSite csite) {
-		//viewer.add(getLocalSite(), csite);
-		viewer.refresh(getLocalSite());
+		asyncRefresh();
 	} /**
 						 * @see IInstallConfigurationChangedListener#installSiteRemoved(ISite)
 						 */
 	public void installSiteRemoved(IConfiguredSite site) {
-		//viewer.remove(site);
-		viewer.refresh(getLocalSite());
+		asyncRefresh();
 	} /**
 						 * @see IConfiguredSiteChangedListener#featureInstalled(IFeature)
 						 */
 	public void featureInstalled(IFeature feature) {
-		//viewer.add(feature.getSite(), feature);
-		viewer.refresh();
+		asyncRefresh();
 	} /**
 						 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
 						 */
 	public void featureRemoved(IFeature feature) {
-		//viewer.remove(feature);
-		viewer.refresh();
+		asyncRefresh();
 	} /**
 						 * @see IConfiguredSiteChangedListener#featureUConfigured(IFeature)
 						 */
@@ -717,11 +714,22 @@ public class ConfigurationView
 	public void featureUnconfigured(IFeature feature) {
 	};
 	public void currentInstallConfigurationChanged(IInstallConfiguration configuration) {
-		viewer.refresh();
+		asyncRefresh();
 	}
 
 	public void installConfigurationRemoved(IInstallConfiguration configuration) {
-		viewer.refresh();
+		asyncRefresh();
 	}
+	
+	private void asyncRefresh() {
+		Control control = viewer.getControl();
+		if (control.isDisposed()) return;
+		control.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				viewer.refresh();
+			}
+		});
+	}
+			
 
 }
