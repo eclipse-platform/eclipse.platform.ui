@@ -477,6 +477,10 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 					XmlElement element= (XmlElement)selected;
 					if (element.isExternal()) {
 						String path = getElementPath(element);
+						if (path.length() == 0) {
+							return false;
+						}
+						
 						XmlElement parent= element.getParentNode();
 						while (parent != null) {
 							String parentPath= getElementPath(parent);

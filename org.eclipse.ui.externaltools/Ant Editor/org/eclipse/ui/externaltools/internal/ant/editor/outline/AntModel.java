@@ -212,11 +212,16 @@ public class AntModel {
 		rootElement.setIsErrorNode(true);		
 	
 		XmlElement errorNode= new XmlElement(e.getMessage());
-		errorNode.setFilePath(element.getFilePath());
+		errorNode.setFilePath(""); //$NON-NLS-1$
 		errorNode.setExternal(element.isExternal());
 		errorNode.setIsErrorNode(true);
 		element.setIsErrorNode(true);
 		element.addChildNode(errorNode);
+		XmlElement parent= element.getParentNode();
+		while (parent != null && parent != rootElement) {
+			parent.setIsErrorNode(true);
+			parent= parent.getParentNode();
+		}
 		return rootElement;
 	}
 	
