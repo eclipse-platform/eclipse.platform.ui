@@ -69,6 +69,9 @@ public final class InternalBootLoader {
 	// While we recognize the SunOS operating system, we change
 	// this internally to be Solaris.
 	private static final String INTERNAL_OS_SUNOS = "SunOS";
+	// While we recognize the i386 architecture, we change
+	// this internally to be x86.
+	private static final String INTERNAL_ARCH_I386 = "i386";
 
 	/** 
 	 * Execution options for the Runtime plug-in.  They are defined here because
@@ -816,6 +819,7 @@ public static void setupOptions() {
 private static void setupSystemContext() {
 	if (nl == null)
 		nl = Locale.getDefault().toString();
+
 	if (os == null) {
 		String name = System.getProperty("os.name");
 		for (int i = 0; i < OS_LIST.length; i++)
@@ -823,8 +827,9 @@ private static void setupSystemContext() {
 				os = OS_LIST[i];
 		// EXCEPTION: All mappings of SunOS convert to Solaris
 		if (os == null)
-			os = name.equals(INTERNAL_OS_SUNOS) ? BootLoader.OS_SOLARIS : BootLoader.OS_UNKNOWN;
+			os = name.equalsIgnoreCase(INTERNAL_OS_SUNOS) ? BootLoader.OS_SOLARIS : BootLoader.OS_UNKNOWN;
 	}
+
 	if (ws == null)
 		// setup default values for known OSes if nothing was specified
 		if (os.equals(BootLoader.OS_WIN32))
@@ -834,8 +839,12 @@ private static void setupSystemContext() {
 				ws = BootLoader.WS_MOTIF;
 			else
 				ws = BootLoader.WS_UNKNOWN;
-	if (arch == null)
-		arch = System.getProperty("os.arch");		
+
+	if (arch == null) {
+		String name = System.getProperty("os.arch");
+		// Map i386 architecture to x86
+		arch = name.equalsIgnoreCase(INTERNAL_ARCH_I386) ? BootLoader.ARCH_X86 : name;
+	}
 }
 /**
  * @see BootLoader

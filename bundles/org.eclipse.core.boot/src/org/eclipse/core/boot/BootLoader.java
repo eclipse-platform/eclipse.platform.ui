@@ -77,6 +77,12 @@ public final class BootLoader {
 	public static final String OS_UNKNOWN = "unknown";
 
 	/**
+	 * Constant string (value "x86") indicating the platform is running on an
+	 * x86-based architecture.
+	 */
+	public static final String ARCH_X86 = "x86";
+
+	/**
 	 * Constant string (value "win32") indicating the platform is running on a
 	 * machine using the Windows windowing system.
 	 */
