@@ -639,6 +639,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		//detail specific actions
 		
 		TextViewerAction textAction= new TextViewerAction(getDetailViewer(), ISourceViewer.CONTENTASSIST_PROPOSALS);
+		textAction.setActionDefinitionId("org.eclipse.jdt.ui.edit.text.java.content.assist.proposals");
 		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.Co&ntent_Assist_3"), "",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		textAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ELCL_CONTENT_ASSIST));
 		textAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CONTENT_ASSIST));
@@ -647,7 +648,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		// XXX: hook the "Java" content assist action - this is a hack to get content
 		// assist to work with the retargetable content assist action in the java UI
-		getViewSite().getActionBars().setGlobalActionHandler("org.eclipse.jdt.ui.actions.ContentAssist", textAction); //$NON-NLS-1$
+		getSite().getKeyBindingService().registerAction(textAction);
 		// Also hook CTRL-Space in case the java UI is not loaded/available
 		addVerifyKeyListener();
 		
