@@ -158,7 +158,7 @@ public class PluginVersionInfo extends HelpProperties {
 	 * @return true if plugins and versions match
 	 */
 	private boolean compare(String versions, String oldVersions) {
-		Map versionMap = new Hashtable();
+		Map versionMap = new HashMap();
 		for (StringTokenizer t =
 			new StringTokenizer(versions, SEPARATOR, false);
 			t.hasMoreTokens();
@@ -168,7 +168,7 @@ public class PluginVersionInfo extends HelpProperties {
 				versionMap.put(pluginOrFragment, t.nextToken());
 			}
 		}
-		Map oldVersionMap = new Hashtable();
+		Map oldVersionMap = new HashMap();
 		for (StringTokenizer t =
 			new StringTokenizer(oldVersions, SEPARATOR, false);
 			t.hasMoreTokens();
