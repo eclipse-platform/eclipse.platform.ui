@@ -157,7 +157,7 @@
             id="org.eclipse.jdt.ui.wizards.NewInterfaceCreationWizard">
       </primaryWizard>
       <primaryWizard
-            id="org.eclipse.pde.ui.NewSchemaFileWizard">
+            id="org.eclipse.pde.ui.NewProductConfigurationWizard">
       </primaryWizard>
    </extension>
 
