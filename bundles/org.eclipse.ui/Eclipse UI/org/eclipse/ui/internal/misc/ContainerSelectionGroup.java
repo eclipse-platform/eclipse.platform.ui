@@ -45,8 +45,8 @@ public class ContainerSelectionGroup extends Composite {
 	private static final String DEFAULT_MSG_SELECT_ONLY = WorkbenchMessages.getString("ContainerGroup.selectFolder"); //$NON-NLS-1$
 
 	// sizing constants
-	private static final int SIZING_SELECTION_PANE_HEIGHT = 200;
-	private static final int SIZING_SELECTION_PANE_WIDTH = 200;
+	private static final int SIZING_SELECTION_PANE_WIDTH = 320;
+	private static final int SIZING_SELECTION_PANE_HEIGHT = 300;
 /**
  * Creates a new instance of the widget.
  *
