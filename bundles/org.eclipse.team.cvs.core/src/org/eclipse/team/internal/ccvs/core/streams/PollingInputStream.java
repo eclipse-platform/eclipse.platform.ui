@@ -17,6 +17,8 @@ import java.io.InterruptedIOException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
@@ -58,15 +60,23 @@ public class PollingInputStream extends FilterInputStream {
 	 */
 	public void close() throws IOException {
 		int attempts = 0;
-		for (;;) {
-			try {
-				in.close();
-				return;
-			} catch (InterruptedIOException e) {
-				if (monitor.isCanceled()) throw new OperationCanceledException();
-				if (++attempts == numAttempts)
-					throw new InterruptedIOException(Policy.bind("PollingInputStream.closeTimeout")); //$NON-NLS-1$
-				if (DEBUG) System.out.println("close retry=" + attempts); //$NON-NLS-1$
+		try {
+			readPendingInput();
+		} catch (IOException e) {
+			// We shouldn't get an exception when we're getting the available input.
+			// If we do, just log it so we can close.
+			CVSProviderPlugin.log(CVSException.wrapException(e).getStatus());
+		} finally {
+			for (;;) {
+				try {
+					in.close();
+					return;
+				} catch (InterruptedIOException e) {
+					if (monitor.isCanceled()) throw new OperationCanceledException();
+					if (++attempts == numAttempts)
+						throw new InterruptedIOException(Policy.bind("PollingInputStream.closeTimeout")); //$NON-NLS-1$
+					if (DEBUG) System.out.println("close retry=" + attempts); //$NON-NLS-1$
+				}
 			}
 		}
 	}
@@ -134,5 +144,19 @@ public class PollingInputStream extends FilterInputStream {
 				if (DEBUG) System.out.println("read retry=" + attempts); //$NON-NLS-1$
 			}
 		}
+	}
+	
+	/**
+	 * Reads any pending input from the input stream so that
+	 * the stream can savely be closed.
+	 */
+	protected void readPendingInput() throws IOException {
+		byte[] buffer= new byte[2048];
+		while (true) {
+			int available = in.available();
+			if (available < 1) break;
+			if (available > buffer.length) available = buffer.length;
+			if (in.read(buffer, 0, available) < 1) break;
+		}	
 	}
 }

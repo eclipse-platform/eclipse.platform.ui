@@ -143,7 +143,7 @@ public class PollingOutputStream extends FilterOutputStream {
 	public void close() throws IOException {
 		int attempts = numAttempts - 1; // fail fast if flush() does times out
  		try {
- 			flush();
+ 			out.flush();
 			attempts = 0;
  		} finally {
 			for (;;) {

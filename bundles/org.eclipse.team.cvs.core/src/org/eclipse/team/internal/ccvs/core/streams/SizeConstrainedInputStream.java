@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 
+import org.eclipse.core.runtime.OperationCanceledException;
+
 /**
  * Simulates a stream that represents only a portion of the underlying stream.
  * Will report EOF when this portion has been fully read and prevent further reads.
@@ -52,6 +54,10 @@ public class SizeConstrainedInputStream extends FilterInputStream {
 			if (discardOnClose) {
 				while (bytesRemaining != 0 && skip(bytesRemaining) != 0);
 			}
+		} catch (OperationCanceledException e) {
+			// The receiver is likely wrapping a PollingInputStream which could throw 
+			// an OperationCanceledException on a skip.
+			// Since we're closing, just ignore the cancel and let the caller check the monitor
 		} finally {
 			bytesRemaining = 0;
 		}

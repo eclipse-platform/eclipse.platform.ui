@@ -63,19 +63,12 @@ public class Connection {
 		if (!isEstablished())
 			return;
 		try {
-			// Perhaps it should be left to the connection to deal with reading pending input!
-			readPendingInput();
-		} catch (CVSException e) {
-			// Ignore this exception since we don't care about it (i.e. we're closing)
+			serverConnection.close();
+		} catch (IOException ex) {
+			throw new CVSCommunicationException(Policy.bind("Connection.cannotClose"), ex);//$NON-NLS-1$
 		} finally {
-			try {
-				serverConnection.close();
-			} catch (IOException ex) {
-				throw new CVSCommunicationException(Policy.bind("Connection.cannotClose"), ex);//$NON-NLS-1$
-			} finally {
-				fResponseStream = null;
-				fIsEstablished = false;
-			}
+			fResponseStream = null;
+			fIsEstablished = false;
 		}
 	}
 	/**
@@ -155,47 +148,21 @@ public class Connection {
 		}
 	}
 	
-static String readLine(InputStream in) throws IOException {
-	byte[] buffer = new byte[256];
-	int index = 0;
-	int r;
-	while ((r = in.read()) != -1) {
-		if (r == NEWLINE)
-			break;
-		buffer = append(buffer, index++, (byte) r);
+	static String readLine(InputStream in) throws IOException {
+		byte[] buffer = new byte[256];
+		int index = 0;
+		int r;
+		while ((r = in.read()) != -1) {
+			if (r == NEWLINE)
+				break;
+			buffer = append(buffer, index++, (byte) r);
+		}
+		String result = new String(buffer, 0, index);
+		if (Policy.DEBUG_CVS_PROTOCOL)
+			System.out.println(result);
+		return result;
 	}
-	String result = new String(buffer, 0, index);
-	if (Policy.DEBUG_CVS_PROTOCOL)
-		System.out.println(result);
-	return result;
-}
 
-	/**
-	 * Reads any pending input from the response stream so that
-	 * the stream can savely be closed.
-	 */
-	protected void readPendingInput() throws CVSException {
-		byte[] buffer= new byte[2048];
-		InputStream in= getInputStream();
-		OutputStream out= getOutputStream();
-		try {
-			while (true) {
-				int available = in.available();
-				if (available < 1) break;
-				if (available > buffer.length) available = buffer.length;
-				if (in.read(buffer, 0, available) < 1) break;
-			}
-			out.flush();
-			while (true) {
-				int available = in.available();
-				if (available < 1) break;
-				if (available > buffer.length) available = buffer.length;
-				if (in.read(buffer, 0, available) < 1) break;
-			}
-		} catch (IOException e) {
-			throw new CVSCommunicationException(e);
-		}	
-	}
 	//---- Helper to send strings to the server ----------------------------
 	
 	/**
