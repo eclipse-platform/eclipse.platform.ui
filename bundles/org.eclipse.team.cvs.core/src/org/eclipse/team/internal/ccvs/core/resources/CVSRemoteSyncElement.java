@@ -7,12 +7,14 @@ package org.eclipse.team.internal.ccvs.core.resources;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.core.sync.RemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Session;
@@ -265,24 +267,32 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 		boolean outgoing = (syncKind & DIRECTION_MASK) == OUTGOING;
 		if (outgoing) return;
 		
-		// Only work on conflicts or incoming (additions)
-		boolean conflict = (syncKind & DIRECTION_MASK) == CONFLICTING;
-		boolean incoming = (syncKind & DIRECTION_MASK) == INCOMING;
-		
 		ICVSFolder local = (ICVSFolder)localSync.getCVSResource();
 		RemoteFolder remote = (RemoteFolder)getRemote();
 		
-		// The parent must be mananged
+		// The parent must be managed
 		if (! local.getParent().isCVSFolder())
 			return;
 			
 		if (! local.exists()) {
 			local.mkdir();
+		} else {
+			// must not be a managed folder.
+			if(local.isManaged() || local.isCVSFolder()) {
+				throw new CVSException(IStatus.ERROR, 0, "Error making a remote folder in sync with the server. The local folder is already managed.");
+			}
+			// can only makesync on non-project folders, on top level folders use checkout instead.
+			if(local.getParent() == null || !local.getParent().isCVSFolder()) {
+				throw new CVSException(IStatus.ERROR, 0, "Error making a remote folder in sync with the server. The local folder's parent is not a cvs folder.");
+			}
 		}
 		
-		// Since the parent is managed, this will also set the resource syn info
-		local.setFolderSyncInfo(remote.getFolderSyncInfo());
+		// Since the parent is managed, this will also set the resource sync info. It is
+		// impossible for an incoming folder addition to map to another location in the
+		// repo, so we assume that using the parent's folder sync as a basis is safe.		
+		FolderSyncInfo remoteInfo = remote.getFolderSyncInfo();
+		FolderSyncInfo localInfo = local.getParent().getFolderSyncInfo();
+		local.setFolderSyncInfo(new FolderSyncInfo(remoteInfo.getRepository(), remoteInfo.getRoot(), localInfo.getTag(), localInfo.getIsStatic()));
 		Synchronizer.getInstance().save(Policy.monitorFor(monitor));
 	 }
-	 	
 }
