@@ -57,12 +57,12 @@ public class EditorList {
 	private static final int INVERT_SELECTION = 1;
 	private static final int SELECT_CLEAN = 2;
 
-	private static final int NAME_SORT = 0;
-	private static final int MRU_SORT = 1;
+	private static final int NAME_SORT = IPreferenceConstants.EDITOR_LIST_NAME_SORT;
+	private static final int MRU_SORT = IPreferenceConstants.EDITOR_LIST_MRU_SORT;
 
-	private static final int SET_WINDOW_SCOPE = 0;
-	private static final int SET_PAGE_SCOPE = 1;
-	private static final int SET_TAB_GROUP_SCOPE = 2;
+	private static final int SET_WINDOW_SCOPE = IPreferenceConstants.EDITOR_LIST_SET_WINDOW_SCOPE;
+	private static final int SET_PAGE_SCOPE = IPreferenceConstants.EDITOR_LIST_SET_PAGE_SCOPE;
+	private static final int SET_TAB_GROUP_SCOPE = IPreferenceConstants.EDITOR_LIST_SET_TAB_GROUP_SCOPE;
 	
 	private static final String editorListData = "editorListData";
 	
@@ -98,20 +98,23 @@ public class EditorList {
 				notifyEditorListViews();
 			}
 		}
+		// select in navigator
 		public void partBroughtToTop(IWorkbenchPart part) {
 			updateEditorList(part);
 		}
+		// select tabs, open editor
 		public void partActivated(IWorkbenchPart part) {
 			updateEditorList(part);
 		}
+		// closeAll
 		public void partClosed(IWorkbenchPart part) {
 			updateEditorList(part);
 		}
+		// delete
 		public void partDeactivated(IWorkbenchPart part) {
 			updateEditorList(part);
 		}
 		public void partOpened(IWorkbenchPart part) {
-			updateEditorList(part);
 		}
 	};
 
@@ -246,7 +249,6 @@ private void handleSelectionEvent(boolean mouseEvent) {
 		boolean enableSaveAction = false;					
 		for (int i = 0; i < selection.length; i++) {
 			Adapter editor = (Adapter)selection[i].getData(editorListData);
-			Object element = editor.editorRef.getPart(false);
 			if (editor.isDirty()) {
 				enableSaveAction = true;
 				break;
@@ -279,9 +281,7 @@ private void setCheckedMenuItems() {
 		if (listScope == SET_TAB_GROUP_SCOPE) {
 			pageScopeAction.setChecked(true);
 		}
-	}
-//	tabOrderSortAction.setEnabled(EditorList.listScope == SET_TAB_GROUP_SCOPE);
-	
+	}	
 }
 
 /**
@@ -566,7 +566,6 @@ private class SelectionAction extends Action {
 				break;
 		}
 		handleSelectionEvent(false);
-		notifyEditorListViews();
 	}
 }
 

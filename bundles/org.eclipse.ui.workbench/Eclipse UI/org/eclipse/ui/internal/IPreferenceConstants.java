@@ -114,5 +114,11 @@ public interface IPreferenceConstants {
 	
 	// EditorList preferences
 	public static final String EDITOR_LIST_SELECTION_SCOPE = "EDITOR_LIST_SELECTION_SCOPE";
-	public static final String EDITOR_LIST_SORT_CRITERIA = "EDITOR_LIST_SORT_CRITERIA";	
+	public static final int EDITOR_LIST_SET_WINDOW_SCOPE = 0;
+	public static final int EDITOR_LIST_SET_PAGE_SCOPE = 1;
+	public static final int EDITOR_LIST_SET_TAB_GROUP_SCOPE = 2;
+
+	public static final String EDITOR_LIST_SORT_CRITERIA = "EDITOR_LIST_SORT_CRITERIA";
+	public static final int EDITOR_LIST_NAME_SORT = 0;
+	public static final int EDITOR_LIST_MRU_SORT = 1;	
 }

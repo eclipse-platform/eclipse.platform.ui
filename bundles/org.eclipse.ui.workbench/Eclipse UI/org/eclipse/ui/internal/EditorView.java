@@ -12,7 +12,6 @@ Contributors:
 package org.eclipse.ui.internal;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.part.ViewPart;
@@ -32,7 +31,7 @@ public EditorView() {
 public void createPartControl(Composite parent) {
 	IWorkbenchWindow window = getSite().getPage().getWorkbenchWindow();
 	editorList = new EditorList(window, null);
-	Control editorListControl = editorList.createControl(parent);
+	editorList.createControl(parent);
 }
 
 /* (non-Javadoc)

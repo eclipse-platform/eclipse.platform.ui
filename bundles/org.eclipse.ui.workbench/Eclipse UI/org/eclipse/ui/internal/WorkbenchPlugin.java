@@ -390,6 +390,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_EMBED);
 		store.setDefault(IPreferenceConstants.OPEN_PERSP_MODE, IPreferenceConstants.OPM_ACTIVE_PAGE);
 		store.setDefault(IPreferenceConstants.ENABLED_DECORATORS, ""); //$NON-NLS-1$
+		store.setDefault(IPreferenceConstants.EDITOR_LIST_SELECTION_SCOPE, IPreferenceConstants.EDITOR_LIST_SET_PAGE_SCOPE); // Current Window
+		store.setDefault(IPreferenceConstants.EDITOR_LIST_SORT_CRITERIA, IPreferenceConstants.EDITOR_LIST_NAME_SORT); // Name Sort
 
 		// Set the default configuration for the key binding service
 		store.setDefault(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID);
