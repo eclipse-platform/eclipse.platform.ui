@@ -183,5 +183,10 @@ public interface IExternalToolConstants {
 	 * is enabled. The default value is <code>true</code>, which indicates
 	 * that the configuration will be executed as appropriate by the builder.
 	 */
-	public static final String ATTR_BUILDER_ENABLED = PLUGIN_ID + ".ATTR_BUILDER_ENABLED"; //$NON-NLS-1$	
+	public static final String ATTR_BUILDER_ENABLED = PLUGIN_ID + ".ATTR_BUILDER_ENABLED"; //$NON-NLS-1$
+	
+	/**
+	 * Status code indicating an unexpected internal error.
+	 */
+	public static final int ERR_INTERNAL_ERROR = 150;		
 }
