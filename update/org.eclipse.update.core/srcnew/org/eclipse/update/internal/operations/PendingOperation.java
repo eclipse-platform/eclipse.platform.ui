@@ -15,37 +15,23 @@ import org.eclipse.update.core.*;
 
 
 public class PendingOperation {
-	public static final int INSTALL = 0x1;
-	public static final int UNINSTALL = 0x2;
-	public static final int CONFIGURE = 0x3;
-	public static final int UNCONFIGURE = 0x4;
-	
+
 	protected IFeature feature;
 	protected IFeature oldFeature;
 	protected IInstallConfiguration config;
 	protected IConfiguredSite targetSite;
 	
-	private int jobType;
 	private boolean optionalDelta;
 	private boolean processed;
 	
 	public PendingOperation(IFeature feature) {
-		this(feature, INSTALL);
+		this(null, null, feature);
 	}
 	
-	public PendingOperation(IFeature feature, int jobType) {
-		this(null, null, feature, jobType);
-	}
-	
-	public PendingOperation(IInstallConfiguration config, IConfiguredSite targetSite, IFeature feature, int jobType) {
+	public PendingOperation(IInstallConfiguration config, IConfiguredSite targetSite, IFeature feature) {
 		this.feature = feature;
-		this.jobType = jobType;
 		this.config = config;
 		this.targetSite = targetSite;
-	}
-
-	public int getJobType() {
-		return jobType;
 	}
 	
 	public IFeature getFeature() {

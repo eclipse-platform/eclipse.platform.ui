@@ -400,21 +400,19 @@ public class UpdateManager {
 		PendingOperation job)
 		throws CoreException {
 		ILocalSite localSite = SiteManager.getLocalSite();
-		if (job != null && job.getJobType() == PendingOperation.INSTALL) {
-			if (job.getFeature().isPatch()) {
-				// Installing a patch - preserve the current configuration
-				IInstallConfiguration cconfig =
-					localSite.getCurrentConfiguration();
-				IInstallConfiguration savedConfig =
-					localSite.addToPreservedConfigurations(cconfig);
-				VersionedIdentifier vid =
-					job.getFeature().getVersionedIdentifier();
-				String key = "@" + vid.getIdentifier() + "_" + vid.getVersion();
-				String newLabel =
-					getFormattedMessage(KEY_SAVED_CONFIG, key);
-				savedConfig.setLabel(newLabel);
-				getOperationsManager().fireObjectChanged(savedConfig, null);
-			}
+		if (job != null && job.getFeature().isPatch()) {
+			// Installing a patch - preserve the current configuration
+			IInstallConfiguration cconfig =
+				localSite.getCurrentConfiguration();
+			IInstallConfiguration savedConfig =
+				localSite.addToPreservedConfigurations(cconfig);
+			VersionedIdentifier vid =
+				job.getFeature().getVersionedIdentifier();
+			String key = "@" + vid.getIdentifier() + "_" + vid.getVersion();
+			String newLabel =
+				getFormattedMessage(KEY_SAVED_CONFIG, key);
+			savedConfig.setLabel(newLabel);
+			getOperationsManager().fireObjectChanged(savedConfig, null);
 		}
 		localSite.addConfiguration(config);
 	}

@@ -145,8 +145,6 @@ public class OperationsManager implements IAdaptable, IOperationFactory {
 
 	public static boolean hasSelectedJobsWithLicenses(PendingOperation[] jobs) {
 		for (int i = 0; i < jobs.length; i++) {
-			if (jobs[i].getJobType() != PendingOperation.INSTALL)
-				continue;
 			if (UpdateManager.hasLicense(jobs[i]))
 				return true;
 		}
@@ -155,17 +153,7 @@ public class OperationsManager implements IAdaptable, IOperationFactory {
 
 	public static boolean hasSelectedJobsWithOptionalFeatures(PendingOperation[] jobs) {
 		for (int i = 0; i < jobs.length; i++) {
-			if (jobs[i].getJobType() != PendingOperation.INSTALL)
-				continue;
 			if (UpdateManager.hasOptionalFeatures(jobs[i].getFeature()))
-				return true;
-		}
-		return false;
-	}
-
-	public static boolean hasSelectedInstallJobs(PendingOperation[] jobs) {
-		for (int i = 0; i < jobs.length; i++) {
-			if (jobs[i].getJobType() == PendingOperation.INSTALL)
 				return true;
 		}
 		return false;
@@ -174,8 +162,6 @@ public class OperationsManager implements IAdaptable, IOperationFactory {
 	public static PendingOperation[] getSelectedJobsWithLicenses(PendingOperation[] jobs) {
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < jobs.length; i++) {
-			if (jobs[i].getJobType() != PendingOperation.INSTALL)
-				continue;
 			if (UpdateManager.hasLicense(jobs[i]))
 				list.add(jobs[i]);
 		}
@@ -186,23 +172,10 @@ public class OperationsManager implements IAdaptable, IOperationFactory {
 	public static PendingOperation[] getSelectedJobsWithOptionalFeatures(PendingOperation[] jobs) {
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < jobs.length; i++) {
-			if (jobs[i].getJobType() != PendingOperation.INSTALL)
-				continue;
 			if (UpdateManager.hasOptionalFeatures(jobs[i].getFeature()))
 				list.add(jobs[i]);
 		}
 		return (PendingOperation[]) list.toArray(
 			new PendingOperation[list.size()]);
 	}
-
-	public static PendingOperation[] getSelectedInstallJobs(PendingOperation[] jobs) {
-		ArrayList list = new ArrayList();
-		for (int i = 0; i < jobs.length; i++) {
-			if (jobs[i].getJobType() == PendingOperation.INSTALL)
-				list.add(jobs[i]);
-		}
-		return (PendingOperation[]) list.toArray(
-			new PendingOperation[list.size()]);
-	}
-
 }

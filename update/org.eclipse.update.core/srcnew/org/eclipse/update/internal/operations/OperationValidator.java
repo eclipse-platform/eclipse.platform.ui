@@ -328,7 +328,6 @@ public class OperationValidator implements IOperationValidator{
 			ArrayList tmpStatus = new ArrayList();
 			for (int i = 0; i < jobs.length; i++) {
 				PendingOperation job = jobs[i];
-				int mode = job.getJobType();
 
 				IFeature newFeature = job.getFeature();
 				IFeature oldFeature = job.getOldFeature();
@@ -341,32 +340,11 @@ public class OperationValidator implements IOperationValidator{
 							UpdateManager.getString(KEY_EXCLUSIVE)));
 					continue;
 				}
-				if (mode == PendingOperation.UNCONFIGURE
-					&& validateUnconfigurePatch(newFeature, status))
-					continue;
-				switch (mode) {
-					case PendingOperation.INSTALL :
-						features =
-							computeFeaturesAfterOperation(
-								features,
-								newFeature,
-								oldFeature);
-						break;
-					case PendingOperation.CONFIGURE :
-						features =
-							computeFeaturesAfterOperation(
-								features,
-								newFeature,
-								null);
-						break;
-					case PendingOperation.UNCONFIGURE :
-						features =
-							computeFeaturesAfterOperation(
-								features,
-								null,
-								newFeature);
-						break;
-				}
+				features =
+					computeFeaturesAfterOperation(
+						features,
+						newFeature,
+						oldFeature);
 			}
 			if (nexclusives > 0)
 				return;
@@ -378,32 +356,15 @@ public class OperationValidator implements IOperationValidator{
 			features = savedFeatures;
 			for (int i = 0; i < jobs.length; i++) {
 				PendingOperation job = jobs[i];
-				int mode = job.getJobType();
 				IFeature newFeature = job.getFeature();
 				IFeature oldFeature = job.getOldFeature();
-				switch (mode) {
-					case PendingOperation.INSTALL :
-						features =
-							computeFeaturesAfterOperation(
-								features,
-								newFeature,
-								oldFeature);
-						break;
-					case PendingOperation.CONFIGURE :
-						features =
-							computeFeaturesAfterOperation(
-								features,
-								newFeature,
-								null);
-						break;
-					case PendingOperation.UNCONFIGURE :
-						features =
-							computeFeaturesAfterOperation(
-								features,
-								null,
-								newFeature);
-						break;
-				}
+
+				features =
+					computeFeaturesAfterOperation(
+						features,
+						newFeature,
+						oldFeature);
+					
 				checkConstraints(features, status);
 				if (status.size() > 0) {
 					IStatus conflict =

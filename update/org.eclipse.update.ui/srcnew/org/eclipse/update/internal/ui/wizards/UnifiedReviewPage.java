@@ -114,8 +114,6 @@ public class UnifiedReviewPage
 			return !isContained((PendingOperation) child);
 		}
 		private boolean isContained(PendingOperation job) {
-			if (job.getJobType() != PendingOperation.INSTALL)
-				return false;
 			VersionedIdentifier vid = job.getFeature().getVersionedIdentifier();
 
 			for (int i = 0; i < jobs.size(); i++) {

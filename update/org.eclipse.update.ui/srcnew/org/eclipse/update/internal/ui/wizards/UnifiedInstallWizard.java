@@ -171,8 +171,7 @@ public class UnifiedInstallWizard
 				reviewPage.getSelectedJobs());
 		}
 		if (page.equals(targetPage)) {
-			return OperationsManager.hasSelectedInstallJobs(
-				reviewPage.getSelectedJobs());
+			return reviewPage.getSelectedJobs().length > 0;
 		}
 		return true;
 	}
@@ -223,9 +222,7 @@ public class UnifiedInstallWizard
 			optionalFeaturesPage.setJobs(optionalJobs);
 		}
 		if (targetPage != null) {
-			PendingOperation[] installJobs =
-				OperationsManager.getSelectedInstallJobs(
-					reviewPage.getSelectedJobs());
+			PendingOperation[] installJobs = reviewPage.getSelectedJobs();
 			targetPage.setJobs(installJobs);
 		}
 	}
