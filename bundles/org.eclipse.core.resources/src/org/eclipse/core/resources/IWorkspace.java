@@ -55,7 +55,7 @@ public interface IWorkspace extends IAdaptable {
  * This method is equivalent to:
  * <pre>
  *     addResourceChangeListener(listener, 
- *         IResouceChangeEvent.PRE_CLOSE | IResouceChangeEvent.PRE_DELETE | IResouceChangeEvent.POST_CHANGE);
+ *         IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.POST_CHANGE);
  * </pre>
  * </p>
  * 
