@@ -80,12 +80,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	private Composite fViewerControl;
 	
 	/**
-	 * Composite area containing all this viewer's controls, which can be
-	 * hidden/shown.
-	 */
-	private Composite fViewerArea;
-	
-	/**
 	 * Name text widget
 	 */
 	private Text fNameWidget;
@@ -169,27 +163,19 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	private void createControl(Composite parent) {
 		fViewerControl = new Composite(parent, SWT.NONE);
 		GridLayout outerCompLayout = new GridLayout();
-		outerCompLayout.numColumns = 1;
+		outerCompLayout.numColumns = 2;
 		outerCompLayout.marginHeight = 0;
-		outerCompLayout.marginWidth = 0;
+		outerCompLayout.marginWidth = 5;
 		fViewerControl.setLayout(outerCompLayout);
-
-		Composite comp = new Composite(fViewerControl, SWT.NONE);
-		setViewerArea(comp);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight = 0;
-		layout.marginWidth = 5;
-		comp.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		comp.setLayoutData(gd);
+		fViewerControl.setLayoutData(gd);
 
-		Label nameLabel = new Label(comp, SWT.HORIZONTAL | SWT.LEFT);
+		Label nameLabel = new Label(fViewerControl, SWT.HORIZONTAL | SWT.LEFT);
 		nameLabel.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Name__16")); //$NON-NLS-1$
 		gd = new GridData(GridData.BEGINNING);
 		nameLabel.setLayoutData(gd);
 
-		Text nameText = new Text(comp, SWT.SINGLE | SWT.BORDER);
+		Text nameText = new Text(fViewerControl, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		nameText.setLayoutData(gd);
 		setNameWidget(nameText);
@@ -202,12 +188,12 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			}
 		);
 
-		Label spacer = new Label(comp, SWT.NONE);
+		Label spacer = new Label(fViewerControl, SWT.NONE);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
 
-		fTabComposite = new Composite(comp, SWT.NONE);
+		fTabComposite = new Composite(fViewerControl, SWT.NONE);
 		GridLayout outerTabCompositeLayout = new GridLayout();
 		outerTabCompositeLayout.marginHeight = 0;
 		outerTabCompositeLayout.marginWidth = 0;
@@ -228,7 +214,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			}
 		});
 
-		Composite buttonComp = new Composite(comp, SWT.NONE);
+		Composite buttonComp = new Composite(fViewerControl, SWT.NONE);
 		GridLayout buttonCompLayout = new GridLayout();
 		buttonCompLayout.numColumns = 2;
 		buttonComp.setLayout(buttonCompLayout);
@@ -328,24 +314,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			refreshStatus();
 		}
 	}	
-		
-	/**
-	 * Sets the control that contains all of this viewer's controls which can be
-	 * hidden/shown.
-	 * 
-	 * @param comp
-	 */
-	private void setViewerArea(Composite comp) {
-		fViewerArea = comp;
-	}
-	
-	/**
-	 * Returns the control that contains all of this viewer's controls which can
-	 * be hidden/shown.
-	 */	
-	protected Composite getViewerArea() {
-		return fViewerArea;
-	}
 
 	/**
 	 * @see org.eclipse.jface.viewers.Viewer#getControl()
@@ -455,7 +423,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		} else {
 			setOriginal(null);
 			setWorkingCopy(null);
-			getViewerArea().setVisible(false);
+			getControl().setVisible(false);
 			disposeExistingTabs();
 		}
 	}
@@ -500,6 +468,10 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 
 		// Turn off initializing flag to update message
 		setInitializingTabs(false);
+		
+		if (!getControl().isVisible()) {
+			getControl().setVisible(true);
+		}
 
 		refreshStatus();		
 	}
@@ -516,7 +488,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		}
 
 		// Avoid flicker
-		getViewerArea().setVisible(false);
+		getControl().setRedraw(false);
 
 		// Dispose the current tabs
 		disposeExistingTabs();
@@ -551,7 +523,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		
 		setTabGroup(group);
 		setTabType(configType);
-		getViewerArea().setVisible(true);
+		getControl().setRedraw(true);
 	}	
 	
 	/**
