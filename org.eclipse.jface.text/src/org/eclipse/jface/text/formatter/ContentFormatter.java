@@ -120,7 +120,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 		/**
 		 * Manipulates the length of the referenced position.
 		 * 
-		 * @param the new length of the referenced position
+		 * @param length the new length of the referenced position
 		 */
 		protected void setLength(int length) {
 			fPosition.setLength(length);
@@ -399,6 +399,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * the process, and the termination of the formatting session.
 	 * 
 	 * @param region the document region to be formatted
+	 * @since 3.0
 	 */
 	private void formatPartitions(IRegion region) {
 		
@@ -425,6 +426,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * the termination of the formatting session.
 	 * 
 	 * @param region the region to be formatted
+	 * @since 3.0
 	 */
 	private void formatRegion(IRegion region) {
 		
@@ -448,6 +450,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * @param region the region for which the partitioning must be determined
 	 * @return the partitioning of the specified region
 	 * @exception BadLocationException of region is invalid in the document
+	 * @since 3.0
 	 */
 	private TypedPosition[] getPartitioning(IRegion region) throws BadLocationException {
 		
@@ -486,6 +489,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * the partition's content type.
 	 *
 	 * @param ranges the partitioning of the document region to be formatted
+	 * @since 3.0
 	 */
 	private void format(TypedPosition[] ranges) {
 		for (int i= 0; i < ranges.length; i++) {
@@ -508,6 +512,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * 
 	 * @param strategy the strategy to be used
 	 * @param region the region to be formatted
+	 * @since 3.0
 	 */
 	private void format(IFormattingStrategy strategy, TypedPosition region) {
 		try {
@@ -553,6 +558,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 		
 	/**
 	 * Installs those updaters which the formatter needs to keep track of the partitions.
+	 * @since 3.0
 	 */
 	private void addPartitioningUpdater() {
 		fPartitioningUpdater= new NonDeletingPositionUpdater(PARTITIONING);
@@ -562,6 +568,8 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	
 	/**
 	 * Removes the formatter's internal position updater and category.
+	 *
+	 * @since 3.0
 	 */
 	private void removePartitioningUpdater() {
 		
@@ -621,6 +629,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 *
 	 * @param offset the offset of the document region to be formatted
 	 * @param length the length of the document to be formatted
+	 * @since 3.0
 	 */
 	private void determinePositionsToUpdate(int offset, int length) {
 		
@@ -662,6 +671,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * @param offset the offset of the document region to be formatted
 	 * @param length the length of the document to be formatted
 	 * @return all character positions of the interleaving positions
+	 * @since 3.0
 	 */
 	private int[] getAffectedPositions(int offset, int length) {
 		
@@ -784,6 +794,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * @param offset the offset
 	 * @return <code>true</code> if offset is the beginning of a line
 	 * @exception BadLocationException if offset is invalid in document
+	 * @since 3.0
 	 */
 	private boolean isLineStart(int offset) throws BadLocationException {
 		int start= fDocument.getLineOfOffset(offset);

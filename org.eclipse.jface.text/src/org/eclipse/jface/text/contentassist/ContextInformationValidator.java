@@ -55,6 +55,10 @@ public final class ContextInformationValidator implements IContextInformationVal
 		fViewer= viewer;
 	}
 
+	/*
+	 * @see org.eclipse.jface.text.contentassist.IContextInformationValidatorExtension#install(org.eclipse.jface.text.contentassist.IContextInformation, org.eclipse.jface.text.contentassist.IContentAssistSubject, int)
+	 * @since 3.0
+	 */
 	public void install(IContextInformation contextInformation, IContentAssistSubject contentAssistSubject, int position) {
 		fContextInformation= contextInformation;
 		fContentAssistSubject= contentAssistSubject;

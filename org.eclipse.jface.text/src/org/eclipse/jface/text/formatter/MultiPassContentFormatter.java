@@ -107,8 +107,8 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	/**
 	 * Creates a new content formatter.
 	 * 
-	 * @param partitioning The document partitioning for this formatter
-	 * @param default The default content type
+	 * @param partitioning the document partitioning for this formatter
+	 * @param type the default content type
 	 */
 	public MultiPassContentFormatter(final String partitioning, final String type) {
 		fPartitioning= partitioning;

@@ -49,8 +49,6 @@ public interface IInformationPresenter {
 	/**
 	 * Shows information related to the cursor position of the text viewer
 	 * this information presenter is installed on.
-	 *
-	 * @return an optional error message if 
 	 */
 	void showInformation();
 	

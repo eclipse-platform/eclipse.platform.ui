@@ -20,7 +20,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * <code>IFormattingStrategyExtension</code>.
  * 
  * @see IFormattingStrategyExtension
- * @see IFormattingContextProperties
  * @since 3.0
  */
 public interface IFormattingContext {
@@ -115,7 +114,7 @@ public interface IFormattingContext {
 	 * Stores the preferences from a map to a preference store.
 	 * <p>
 	 * Note that the preference keys returned by
-	 * {@link getPreferenceKeys()} must not be used in the preference store.
+	 * {@link #getPreferenceKeys()} must not be used in the preference store.
 	 * Otherwise the preferences are overwritten.
 	 * </p>
 	 * 
@@ -141,7 +140,7 @@ public interface IFormattingContext {
 	 * Retrieves the preferences from a preference store in a map.
 	 * <p>
 	 * Note that the preference keys returned by
-	 * {@link getPreferenceKeys()} must not be used in the map. Otherwise the
+	 * {@link #getPreferenceKeys()} must not be used in the map. Otherwise the
 	 * preferences are overwritten.
 	 * </p>
 	 * 
