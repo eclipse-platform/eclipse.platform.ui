@@ -22,7 +22,7 @@
    </library>
 </runtime>
 
-<extension-point id="configurationWizards" name="%configurationWizards"/>
+<extension-point id="configurationWizards" name="%configurationWizards" schema="schema/configurationWizards.mxsd"/>
 <extension-point id="targetConfigWizards" name="%targetWizards"/>
 
 <!-- **************** PREFERENCES ******************* -->

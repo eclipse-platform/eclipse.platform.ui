@@ -18,9 +18,9 @@
    </library>
 </runtime>
 
-<extension-point id="fileTypes" name="%FileTypesRegistry"/>
-<extension-point id="ignore" name="%GlobalIgnoreRegistry"/>
-<extension-point id="projectSets" name="%TeamProjectSets"/>
+<extension-point id="fileTypes" name="%FileTypesRegistry" schema="schema/fileTypes.mxsd"/>
+<extension-point id="ignore" name="%GlobalIgnoreRegistry" schema="schema/ignore.mxsd"/>
+<extension-point id="projectSets" name="%TeamProjectSets" schema="schema/projectSets.mxsd"/>
 <extension-point id="repository" name="%Repository"/>
 <extension-point id="targets" name="%Targets"/>
 
