@@ -28,14 +28,17 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	}
 
 	public Object[] getElements(Object inputElement) {
-		return (Object[]) elements.toArray(new Object[elements.size()]);
+		if (elements.isEmpty()) {
+			return new Object[0];
+		} else {
+			return (Object[]) elements.toArray(new Object[elements.size()]);
+		}
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = (TableViewer) viewer;
 		elements.clear();
-		if (newInput != null) {
-			
+		if (newInput != null && ((Object[])newInput).length != 0) {
 			elements.addAll(Arrays.asList((Object[])newInput));
 		}
 	}

@@ -365,19 +365,19 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		setErrorMessage(null);
 		setMessage(null);
 		String configTargets= null;
-		try {
-			configTargets= configuration.getAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, (String)null);
-		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log("Error reading configuration", ce);
-		}
-		
 		String newLocation= null;
 		try {
+			configTargets= configuration.getAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, (String)null);
 			newLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
 		} catch (CoreException ce) {
 			ExternalToolsPlugin.getDefault().log("Error reading configuration", ce);
 		}
+		
+		runDefaultTargetButton.setText("Run default target");
+		
 		if (newLocation == null) {
+			allTargets= null;
+			location= newLocation;
 			executeTargetsTable.setInput(new TargetInfo[0]);
 			return; 
 		}
@@ -385,26 +385,47 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		if (!newLocation.equals(location)) {
 			allTargets= null;
 			location= newLocation;
-			runDefaultTargetButton.setText("Run default target");
 		}
 		
 		runDefaultTargetButton.setSelection(configTargets == null);
-		allowSelectTargets(configTargets != null, false);
-		TargetInfo[] infos= getTargets();
-		if (infos == null) {
+		
+		TargetInfo[] allInfos= getTargets();
+		if (allInfos == null) {
 			executeTargetsTable.setInput(new TargetInfo[0]);
+			allowSelectTargets(configTargets != null, false);
 			return; 
 		}
 		String[] targetNames= AntUtil.parseRunTargets(configTargets);
 		if (targetNames.length == 0) {
 			executeTargetsTable.setInput(new TargetInfo[0]);
+			allowSelectTargets(configTargets != null, false);
 			return;
 		}
 		
 		TargetInfo[] targetInfos= new TargetInfo[targetNames.length];
+
+		int found = initializeTargetInfos(allInfos, targetNames, targetInfos);
+
+		if (found != targetNames.length) {
+			executeTargetsTable.setInput(new TargetInfo[0]);
+			allowSelectTargets(!runDefaultTargetButton.getSelection(), true);
+		} else {
+			executeTargetsTable.setInput(targetInfos);
+			allowSelectTargets(configTargets != null, false);
+		}
+		
+		if (defaultTarget != null) {
+			((AntTargetLabelProvider)executeTargetsTable.getLabelProvider()).setDefaultTargetName(defaultTarget.getName());
+		} else {
+			((AntTargetLabelProvider)executeTargetsTable.getLabelProvider()).setDefaultTargetName(null);
+		}
+	}
+	
+	private int initializeTargetInfos(TargetInfo[] allInfos, String[] targetNames, TargetInfo[] targetInfos) {
 		int found= 0;
-		for (int i = 0; i < infos.length; i++) {
-			TargetInfo info = infos[i];
+		TargetInfo info;
+		for (int i = 0; i < allInfos.length; i++) {
+			info = allInfos[i];
 			for (int j = 0; j < targetNames.length; j++) {
 				String name = targetNames[j];
 				if (info.getName().equals(name)) {
@@ -416,19 +437,14 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				break;
 			}
 		}
-
-		if (targetInfos.length > 0) {
-			executeTargetsTable.setInput(targetInfos);
-		}
-		if (defaultTarget != null) {
-			((AntTargetLabelProvider)executeTargetsTable.getLabelProvider()).setDefaultTargetName(defaultTarget.getName());
-		}
+		return found;
 	}
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		String targets= null;
 		if (!runDefaultTargetButton.getSelection()) {
 			Object[] items= getContentProvider().getElements(null);
 			StringBuffer buff= new StringBuffer();
@@ -437,10 +453,12 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				buff.append(item.getName());
 				buff.append(',');
 			}
-			configuration.setAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, buff.toString());
-		} else {
-			configuration.setAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, (String)null);
-		}
+			if (buff.length() > 0) {
+				targets= buff.toString();
+			} 
+		} 
+
+		configuration.setAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, targets);
 	}
 
 	/**
