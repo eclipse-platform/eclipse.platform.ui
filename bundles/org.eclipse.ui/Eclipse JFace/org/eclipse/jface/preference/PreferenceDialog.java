@@ -462,13 +462,38 @@ public IPreferenceStore getPreferenceStore() {
 	return preferenceStore;
 }
 /**
- * Notifies that the user has pressed the Save button and no page has vetoed.
+ * Save the values specified in the pages.
  * <p>
- * The default implementation of this framework method does nothing.
- * Subclasses should override to save the preferences.
+ * The default implementation of this framework method saves all
+ * pages of type <code>PreferencePage</code> (if their store needs saving
+ * and is a <code>PreferenceStore</code>).
+ * </p>
+ * <p>
+ * Subclasses may override.
  * </p>
  */
 protected void handleSave() {
+	Iterator nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER).iterator();
+	while (nodes.hasNext()) {
+		IPreferenceNode node = (IPreferenceNode) nodes.next();
+		IPreferencePage page = node.getPage();
+		if (page instanceof PreferencePage) {
+			// Save now in case tbe workbench does not shutdown cleanly
+			IPreferenceStore store =  ((PreferencePage)page).getPreferenceStore();	
+			if (store != null 
+				&& store.needsSaving()
+				&& store instanceof PreferenceStore) {
+					try {
+						((PreferenceStore)store).save();
+					} catch(IOException e) {
+						MessageDialog.openError(
+							getShell(), 
+							JFaceResources.getString("PreferenceDialog.saveErrorTitle"), //$NON-NLS-1$
+							JFaceResources.format("PreferenceDialog.saveErrorMessage", new Object[] {page.getTitle(), e.getMessage()})); //$NON-NLS-2$ //$NON-NLS-1$
+					}
+			}
+		}
+	}
 }
 /**
  * Notifies that the window's close button was pressed, 
@@ -525,20 +550,6 @@ protected void okPressed() {
 		if (page != null) {
 			if(!page.performOk())
 				return;
-			if (page instanceof PreferencePage) {
-				// Save now in case tbe workbench does not shutdown cleanly
-				IPreferenceStore store =  ((PreferencePage)page).getPreferenceStore();	
-				if (store != null 
-					&& store.needsSaving()
-					&& store instanceof PreferenceStore) {
-						try {
-							((PreferenceStore)store).save();
-						} catch(IOException e) {
-							// Just ignore this exception.
-							// We will try again on workbench shutdown.
-						}
-				}
-			}
 		}
 	}
 
