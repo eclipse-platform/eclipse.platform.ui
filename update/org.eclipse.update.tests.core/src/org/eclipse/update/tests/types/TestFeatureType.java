@@ -58,7 +58,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 		IFeatureFactory factory = factories.getFactory(getDefaultExecutableFeatureType());
 		
 		ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
-		URL featureURL = new URL(SOURCE_FILE_SITE,"install/features/feature3/");
+		URL featureURL = new URL(SOURCE_FILE_SITE,Site.DEFAULT_INSTALLED_FEATURE_PATH+"feature3/");
 		
 		IFeature anotherFeature = factory.createFeature(featureURL,site);
 		

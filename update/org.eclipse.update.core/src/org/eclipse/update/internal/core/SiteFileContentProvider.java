@@ -18,7 +18,6 @@ public class SiteFileContentProvider extends SiteContentProvider {
 	
 	private String path;
 	
-	public static final String INSTALL_FEATURE_PATH = "install/features/";	 //$NON-NLS-1$
 	public static final String SITE_TYPE = "org.eclipse.update.core.file";	 //$NON-NLS-1$
 
 	/**
@@ -35,7 +34,7 @@ public class SiteFileContentProvider extends SiteContentProvider {
  	 */
 	private String getFeaturePath(VersionedIdentifier featureIdentifier) {
 		String path = getURL().getFile();
-		String featurePath = path + INSTALL_FEATURE_PATH + featureIdentifier.toString();
+		String featurePath = path + Site.DEFAULT_INSTALLED_FEATURE_PATH + featureIdentifier.toString();
 		return featurePath;
 	}
 

@@ -32,7 +32,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 		if (remoteFeature == null){
 
 		ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
-		URL url = UpdateManagerUtils.getURL(site.getURL(),"install/features/feature3/",null);
+		URL url = UpdateManagerUtils.getURL(site.getURL(),Site.DEFAULT_INSTALLED_FEATURE_PATH+"feature3/",null);
 		FeatureReference ref = new FeatureReference();
 		ref.setSite(site);
 		ref.setURL(url);
@@ -75,7 +75,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	 * @see IFeature#testSite()
 	 */
 	public void testSite() throws MalformedURLException, CoreException{
-		String ident1 = "install/features/feature3/";		
+		String ident1 = Site.DEFAULT_INSTALLED_FEATURE_PATH+"feature3/";		
 
 			ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
 			

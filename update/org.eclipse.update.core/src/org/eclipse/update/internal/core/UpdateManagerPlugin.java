@@ -68,6 +68,7 @@ public class UpdateManagerPlugin extends Plugin {
 	public void startup() throws CoreException {
 		super.startup();
 
+		Policy.localize("org.eclipse.update.internal.core.messages"); //$NON-NLS-1$
 		DEBUG = getBooleanDebugOption("org.eclipse.update.core/debug", false); //$NON-NLS-1$
 
 		if (DEBUG) {
