@@ -281,4 +281,54 @@ public class WorkbenchPreferenceGroup {
 		}
 		return null;
 	}
+
+	/**
+	 * Add any page ids that match the filteredIds
+	 * to the list of highlights.
+	 * @param filteredIds
+	 */
+	public void highlightIds(String[] filteredIds) {
+		for (int i = 0; i < filteredIds.length; i++) {
+			checkId(filteredIds[i]);
+		}
+		
+	}
+
+	/**
+	 * Check the passed id to see if it matches
+	 * any of the receivers pages.
+	 * @param id
+	 */
+	private void checkId(String id) {
+		Iterator pagesIterator = pages.iterator();
+		while(pagesIterator.hasNext()){
+			WorkbenchPreferenceNode next = (WorkbenchPreferenceNode) pagesIterator.next();
+			checkHighlightNode(id, next);
+		}
+		
+		Iterator childIterator = childGroups.iterator();
+		while(childIterator.hasNext()){
+			WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) childIterator.next();
+			group.checkId(id);
+		}
+	}
+
+	/**
+	 * Check if the node matches id and needs to be highlighted.
+	 * @param id
+	 * @param node
+	 * @return <code>true</code> if a match is found
+	 */
+	private boolean checkHighlightNode(String id, IPreferenceNode node) {
+		if(node.getId().equals(id)){
+			((WorkbenchPreferenceNode) node).setHighlighted(true);
+			return true;
+		}
+		IPreferenceNode[] subNodes = node.getSubNodes();
+		for (int i = 0; i < subNodes.length; i++) {
+			if(checkHighlightNode(id,subNodes[i]))
+				return true;			
+		}
+		return false;
+	}
 }

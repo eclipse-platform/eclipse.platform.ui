@@ -375,5 +375,19 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			selection = group.getGroupsAndNodes()[0];
 		getTreeViewer().setSelection(new StructuredSelection(selection), true);
 	}
+	
+	/**
+	 * Set the search results of the receiver to be filteredIds.
+	 * @param filteredIds
+	 */
+	protected void setSearchResults(String[] filteredIds) {
+		
+		WorkbenchPreferenceGroup[] groups = getGroups();
+		for (int i = 0; i < groups.length; i++) {
+			WorkbenchPreferenceGroup group = groups[i];
+			group.highlightIds(filteredIds);
+		}
+		
+	}
 
 }
