@@ -866,12 +866,17 @@ public class EclipseTest extends EclipseWorkspaceTest {
 				ensureDoesNotExistInWorkspace(projects);
 			} catch (AssertionFailedError e) {
 				// The delete failed. Write the active jobs to stdout
-				System.out.println("Jobs active at time of deletion failure:"); //$NON-NLS-1$
+				System.out.println("Jobs active at time of deletion failure: "); //$NON-NLS-1$
+				if (allJobs.length == 0) {
+					System.out.println("None"); //$NON-NLS-1$
+				}
 				for (int i = 0; i < allJobs.length; i++) {
 					Job job = allJobs[i];
 					System.out.println(job.getName());
 				}
-				throw e;
+				if (CVSTestSetup.FAIL_IF_EXCEPTION_LOGGED) {
+					throw e;
+				}
 			}
 		} else {
 			super.ensureDoesNotExistInWorkspace(resource);
