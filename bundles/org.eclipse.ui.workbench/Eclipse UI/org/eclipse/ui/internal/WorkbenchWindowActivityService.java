@@ -7,10 +7,12 @@ import java.util.Set;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.AbstractActivityService;
 import org.eclipse.ui.activities.ActivityServiceEvent;
 import org.eclipse.ui.activities.ActivityServiceFactory;
@@ -19,24 +21,6 @@ import org.eclipse.ui.activities.IActivityServiceListener;
 import org.eclipse.ui.activities.ICompoundActivityService;
 
 final class WorkbenchWindowActivityService extends AbstractActivityService {
-
-	private IInternalPerspectiveListener internalPerspectiveListener = new IInternalPerspectiveListener() {
-		public void perspectiveActivated(IWorkbenchPage workbenchPage, IPerspectiveDescriptor perspectiveDescriptor) {
-			update();
-		}
-
-		public void perspectiveChanged(IWorkbenchPage workbenchPage, IPerspectiveDescriptor perspectiveDescriptor, String changeId) {
-			update();
-		}
-
-		public void perspectiveClosed(IWorkbenchPage workbenchPage, IPerspectiveDescriptor perspective) {
-			update();
-		}
-
-		public void perspectiveOpened(IWorkbenchPage workbenchPage, IPerspectiveDescriptor perspective) {
-			update();
-		}
-	};
 
 	private IPageListener pageListener = new IPageListener() {
 		public void pageActivated(IWorkbenchPage workbenchPage) {
@@ -74,14 +58,24 @@ final class WorkbenchWindowActivityService extends AbstractActivityService {
 		}
 	};
 
+	private IPerspectiveListener perspectiveListener = new IPerspectiveListener() {
+		public void perspectiveActivated(IWorkbenchPage workbenchPage, IPerspectiveDescriptor perspectiveDescriptor) {
+			update();
+		}
+
+		public void perspectiveChanged(IWorkbenchPage workbenchPage, IPerspectiveDescriptor perspectiveDescriptor, String changeId) {
+			update();
+		}
+	};	
+	
 	private ICompoundActivityService compoundActivityService = ActivityServiceFactory.getCompoundActivityService();
 	private boolean started;
 	private IWorkbench workbench;
 	private IActivityService workbenchPageCompoundActivityService;
 	private IActivityService workbenchPartSiteMutableActivityService;
-	private WorkbenchWindow workbenchWindow;
+	private IWorkbenchWindow workbenchWindow;
 
-	WorkbenchWindowActivityService(WorkbenchWindow workbenchWindow) {
+	WorkbenchWindowActivityService(IWorkbenchWindow workbenchWindow) {
 		if (workbenchWindow == null)
 			throw new NullPointerException();
 
@@ -115,8 +109,8 @@ final class WorkbenchWindowActivityService extends AbstractActivityService {
 			started = true;
 			compoundActivityService.addActivityService(workbench.getCompoundActivityService());
 			workbenchWindow.addPageListener(pageListener);
+			workbenchWindow.addPerspectiveListener(perspectiveListener);
 			workbenchWindow.getPartService().addPartListener(partListener);
-			workbenchWindow.getPerspectiveService().addPerspectiveListener(internalPerspectiveListener);
 			update();
 		}
 	}
@@ -126,8 +120,8 @@ final class WorkbenchWindowActivityService extends AbstractActivityService {
 			started = false;
 			compoundActivityService.removeActivityService(workbench.getCompoundActivityService());
 			workbenchWindow.removePageListener(pageListener);
+			workbenchWindow.removePerspectiveListener(perspectiveListener);
 			workbenchWindow.getPartService().removePartListener(partListener);
-			workbenchWindow.getPerspectiveService().removePerspectiveListener(internalPerspectiveListener);
 			update();
 		}
 	}

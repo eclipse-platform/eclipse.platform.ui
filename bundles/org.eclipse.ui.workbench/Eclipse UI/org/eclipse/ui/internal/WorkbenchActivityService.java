@@ -41,7 +41,7 @@ final class WorkbenchActivityService extends AbstractActivityService {
 	private IWorkbench workbench;
 	private Set workbenchWindows = Collections.EMPTY_SET;
 
-	WorkbenchActivityService(Workbench workbench) {
+	WorkbenchActivityService(IWorkbench workbench) {
 		if (workbench == null)
 			throw new NullPointerException();
 
