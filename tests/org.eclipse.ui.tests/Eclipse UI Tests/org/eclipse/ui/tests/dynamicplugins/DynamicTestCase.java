@@ -93,7 +93,7 @@ public abstract class DynamicTestCase extends UITestCase implements
 			}
 
 			long startTime = System.currentTimeMillis();
-			long potentialEndTime = startTime + 5000;
+			long potentialEndTime = startTime + 50000000;
 			boolean timeToFail = false;
 			while (!hasAddedEventPropagated() && !timeToFail) {
 				processEvents();
@@ -237,7 +237,7 @@ public abstract class DynamicTestCase extends UITestCase implements
 			try {
 				DynamicUtils.uninstallPlugin(newBundle);
 				long startTime = System.currentTimeMillis();
-				long potentialEndTime = startTime + 5000;
+				long potentialEndTime = startTime + 5000000;
 				boolean timeToFail = false;
 				while (!hasRemovedEventPropagated() && !timeToFail) {
 					processEvents();

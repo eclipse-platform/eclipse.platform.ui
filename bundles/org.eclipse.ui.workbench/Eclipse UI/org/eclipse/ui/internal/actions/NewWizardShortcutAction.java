@@ -28,14 +28,14 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
+import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
  * Opens a specific new wizard. 
  */
 public class NewWizardShortcutAction extends Action implements
         IPluginContribution {
-    private WorkbenchWizardElement wizardElement;
+    private IWizardDescriptor wizardElement;
 
     private IWorkbenchWindow window;
 
@@ -43,15 +43,15 @@ public class NewWizardShortcutAction extends Action implements
      * Create an instance of this class.
      *
      * @param window the workbench window in which this action will appear
-     * @param element a wizard element
+     * @param wizardDesc a wizard element
      */
     public NewWizardShortcutAction(IWorkbenchWindow window,
-            WorkbenchWizardElement element) {
-        super(element.getLabel(element));
-        setToolTipText(element.getDescription());
-        setImageDescriptor(element.getImageDescriptor());
+            IWizardDescriptor wizardDesc) {
+        super(wizardDesc.getLabel());
+        setToolTipText(wizardDesc.getDescription());
+        setImageDescriptor(wizardDesc.getImageDescriptor());
         setId(ActionFactory.NEW.getId());
-        wizardElement = element;
+        wizardElement = wizardDesc;
         this.window = window;
     }
 
@@ -63,7 +63,7 @@ public class NewWizardShortcutAction extends Action implements
 
         INewWizard wizard;
         try {
-            wizard = (INewWizard) wizardElement.createExecutableExtension();
+            wizard = (INewWizard) wizardElement.createWizard();
         } catch (CoreException e) {
             ErrorDialog.openError(window.getShell(), WorkbenchMessages
                     .getString("NewWizardShortcutAction.errorTitle"), //$NON-NLS-1$
@@ -107,13 +107,30 @@ public class NewWizardShortcutAction extends Action implements
      * @see org.eclipse.ui.IPluginContribution#getLocalId()
      */
     public String getLocalId() {
-        return wizardElement.getLocalId();
+    	IPluginContribution contribution = getPluginContribution();
+    	if (contribution != null)
+    		return contribution.getLocalId();
+    	return wizardElement.getId();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPluginContribution#getPluginId()
      */
     public String getPluginId() {
-        return wizardElement.getPluginId();
+    	IPluginContribution contribution = getPluginContribution();
+    	if (contribution != null)
+    		return contribution.getPluginId();
+    	return null;
     }
+    
+    /**
+     * Return the plugin contribution associated with the wizard.
+     * 
+     * @return the contribution or <code>null</code>
+     * @since 3.1
+     */
+    private IPluginContribution getPluginContribution() {
+		return (IPluginContribution) wizardElement
+				.getAdapter(IPluginContribution.class);
+	}
 }

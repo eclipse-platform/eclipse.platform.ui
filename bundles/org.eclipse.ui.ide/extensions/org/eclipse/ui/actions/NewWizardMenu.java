@@ -19,7 +19,7 @@ import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
+import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
  * A <code>NewWizardMenu</code> augments <code>BaseNewWizardMenu</code> with IDE-specific
@@ -112,7 +112,7 @@ public class NewWizardMenu extends BaseNewWizardMenu {
      * @return boolean
      */
     private boolean hasExamples() {
-        return registryHasCategory(NewWizardsRegistryReader.FULL_EXAMPLES_WIZARD_CATEGORY);
+        return registryHasCategory(WizardsRegistryReader.FULL_EXAMPLES_WIZARD_CATEGORY);
     }
 
     /* (non-Javadoc)

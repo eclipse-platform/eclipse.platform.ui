@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.model;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -132,6 +133,18 @@ public class AdaptableList extends WorkbenchAdapter implements IAdaptable {
     public Object[] getChildren() {
         return children.toArray();
     }
+    
+    /**
+     * Return the elements in this list in an array of the given type.
+     * 
+     * @param type the type of the array to create
+     * @return the elements in the list
+     * @since 3.1
+     */
+    public Object[] getTypedChildren(Class type) {
+		return children.toArray((Object[]) Array.newInstance(type, children
+				.size()));
+	}
 
     /* (non-javadoc)
      * For debugging purposes only.

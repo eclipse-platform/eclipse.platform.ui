@@ -11,19 +11,21 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.model.AdaptableList;
+import org.eclipse.ui.wizards.IWizardCategory;
 
 /**
  * The export wizard allows the user to choose which nested export wizard to run.
@@ -50,8 +52,7 @@ public class ExportWizard extends Wizard {
         protected IWizardNode createWizardNode(WorkbenchWizardElement element) {
             return new WorkbenchWizardNode(this, element) {
                 public IWorkbenchWizard createWizard() throws CoreException {
-                    return (IWorkbenchWizard) wizardElement
-                            .createExecutableExtension();
+                    return wizardElement.createWizard();
                 }
             };
         }
@@ -70,9 +71,17 @@ public class ExportWizard extends Wizard {
      * Returns the export wizards that are available for invocation.
      */
     protected AdaptableList getAvailableExportWizards() {
-        return new WizardsRegistryReader(IWorkbenchConstants.PL_EXPORT)
-                .getWizards();
-    }
+       	// TODO: exports are still flat - we need to get at the flat list. All
+		// wizards will be in the "other" category.
+		IWizardCategory root = WorkbenchPlugin.getDefault()
+				.getExportWizardRegistry().getRootCategory();
+		WizardCollectionElement otherCategory = (WizardCollectionElement) root
+				.findCategory(new Path(
+						WizardsRegistryReader.UNCATEGORIZED_WIZARD_CATEGORY));
+		if (otherCategory == null)
+			return new AdaptableList();
+		return otherCategory.getWizardAdaptableList();    
+	}
 
     /**
      * Initializes the wizard.

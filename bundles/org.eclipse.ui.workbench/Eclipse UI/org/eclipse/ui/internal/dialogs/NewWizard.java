@@ -18,7 +18,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.wizards.IWizardCategory;
+import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
  * The new wizard is responsible for allowing the user to choose which new
@@ -42,13 +44,11 @@ public class NewWizard extends Wizard {
      * Create the wizard pages
      */
     public void addPages() {
-        NewWizardsRegistryReader rdr = new NewWizardsRegistryReader(
-                projectsOnly);
-        WizardCollectionElement wizards = rdr.getWizardElements();
-        WorkbenchWizardElement[] primary = rdr.getPrimaryWizards();
+        IWizardCategory root = WorkbenchPlugin.getDefault().getNewWizardRegistry().getRootCategory();
+        IWizardDescriptor [] primary = WorkbenchPlugin.getDefault().getNewWizardRegistry().getPrimaryWizards();
 
         if (categoryId != null) {
-            WizardCollectionElement categories = wizards;
+            IWizardCategory categories = root;
             StringTokenizer familyTokenizer = new StringTokenizer(categoryId,
                     CATEGORY_SEPARATOR);
             while (familyTokenizer.hasMoreElements()) {
@@ -58,11 +58,11 @@ public class NewWizard extends Wizard {
                     break;
             }
             if (categories != null)
-                wizards = categories;
+                root = categories;
         }
 
-        mainPage = new NewWizardSelectionPage(this.workbench, this.selection,
-                wizards, primary);
+        mainPage = new NewWizardSelectionPage(workbench, selection, root,
+				primary, projectsOnly);
         addPage(mainPage);
     }
 
@@ -80,11 +80,11 @@ public class NewWizard extends Wizard {
     /**
      * Returns the child collection element for the given id
      */
-    private WizardCollectionElement getChildWithID(
-            WizardCollectionElement parent, String id) {
-        Object[] children = parent.getChildren(null);
+    private IWizardCategory getChildWithID(
+            IWizardCategory parent, String id) {
+        IWizardCategory [] children = parent.getCategories();
         for (int i = 0; i < children.length; ++i) {
-            WizardCollectionElement currentChild = (WizardCollectionElement) children[i];
+        	IWizardCategory currentChild = children[i];
             if (currentChild.getId().equals(id))
                 return currentChild;
         }
@@ -93,6 +93,8 @@ public class NewWizard extends Wizard {
 
     /**
      * Lazily create the wizards pages
+     * @param aWorkbench the workbench
+     * @param currentSelection the current selection
      */
     public void init(IWorkbench aWorkbench,
             IStructuredSelection currentSelection) {
@@ -125,7 +127,7 @@ public class NewWizard extends Wizard {
      * show all categories. If no entries can be found with this id then all
      * categories are shown.
      * 
-     * @param id. String or <code>null</code>.
+     * @param id may be <code>null</code>.
      */
     public void setCategoryId(String id) {
         categoryId = id;
@@ -134,6 +136,7 @@ public class NewWizard extends Wizard {
     /**
      * Sets the projects only flag. If <code>true</code> only projects will
      * be shown in this wizard.
+     * @param b if only projects should be shown
      */
     public void setProjectsOnly(boolean b) {
         projectsOnly = b;

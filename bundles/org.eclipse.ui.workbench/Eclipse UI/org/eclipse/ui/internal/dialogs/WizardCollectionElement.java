@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -20,8 +21,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.wizards.IWizardCategory;
+import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
  * Instances of this class are a collection of WizardCollectionElements,
@@ -29,7 +33,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * elements. Instances also store a list of wizards.
  */
 public class WizardCollectionElement extends AdaptableList implements
-        IPluginContribution {
+        IPluginContribution, IWizardCategory {
     private String id;
 
     private String pluginId;
@@ -40,12 +44,15 @@ public class WizardCollectionElement extends AdaptableList implements
 
     private AdaptableList wizards = new AdaptableList();
 
+	private IConfigurationElement configElement;
+
     /**
      * Creates a new <code>WizardCollectionElement</code>. Parent can be
      * null.
-     * 
-     * @param name
-     *            java.lang.String
+     * @param id the id
+     * @param pluginId the plugin
+     * @param name the name
+     * @param parent the parent
      */
     public WizardCollectionElement(String id, String pluginId, String name,
             WizardCollectionElement parent) {
@@ -56,6 +63,20 @@ public class WizardCollectionElement extends AdaptableList implements
     }
 
     /**
+     * Creates a new <code>WizardCollectionElement</code>. Parent can be
+     * null.
+     * 
+     * @param element
+     * @param parent
+     * @since 3.1
+     */
+    public WizardCollectionElement(IConfigurationElement element, WizardCollectionElement parent) {
+		configElement = element;
+		id = configElement.getAttribute(WizardsRegistryReader.ATT_ID); 
+		this.parent = parent;
+	}
+
+	/**
      * Adds a wizard collection to this collection.
      */
     public AdaptableList add(IAdaptable a) {
@@ -66,8 +87,20 @@ public class WizardCollectionElement extends AdaptableList implements
         }
         return this;
     }
-
+    
+    
     /**
+     * Remove a wizard from this collection.
+     */
+    public void remove(IAdaptable a) {
+        if (a instanceof WorkbenchWizardElement) {
+            wizards.remove(a);
+        } else {
+            super.remove(a);
+        }		
+	}
+
+	/**
      * Returns the wizard collection child object corresponding to the passed
      * path (relative to this object), or <code>null</code> if such an object
      * could not be found.
@@ -81,7 +114,7 @@ public class WizardCollectionElement extends AdaptableList implements
         String searchString = searchPath.segment(0);
         for (int i = 0; i < children.length; ++i) {
             WizardCollectionElement currentCategory = (WizardCollectionElement) children[i];
-            if (currentCategory.getLabel(null).equals(searchString)) {
+            if (currentCategory.getId().equals(searchString)) {
                 if (searchPath.segmentCount() == 1)
                     return currentCategory;
 
@@ -120,12 +153,16 @@ public class WizardCollectionElement extends AdaptableList implements
     /**
      * Returns this collection's associated wizard object corresponding to the
      * passed id, or <code>null</code> if such an object could not be found.
+     * 
+     * @param searchId the id to search on
+     * @param recursive whether to search recursivly
+     * @return the element
      */
     public WorkbenchWizardElement findWizard(String searchId, boolean recursive) {
         Object[] wizards = getWizards();
         for (int i = 0; i < wizards.length; ++i) {
             WorkbenchWizardElement currentWizard = (WorkbenchWizardElement) wizards[i];
-            if (currentWizard.getID().equals(searchId))
+            if (currentWizard.getId().equals(searchId))
                 return currentWizard;
         }
         if (!recursive)
@@ -163,7 +200,8 @@ public class WizardCollectionElement extends AdaptableList implements
      * Returns the label for this collection.
      */
     public String getLabel(Object o) {
-        return name;
+    	return configElement != null ? configElement
+				.getAttribute(WizardsRegistryReader.ATT_NAME) : name;
     }
 
     /**
@@ -173,42 +211,43 @@ public class WizardCollectionElement extends AdaptableList implements
         return parent;
     }
 
-    /**
-     * Returns a path representing this collection's ancestor chain.
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.wizards.IWizardCategory#getPath()
      */
     public IPath getPath() {
         if (parent == null)
             return new Path(""); //$NON-NLS-1$
 
-        return parent.getPath().append(name);
+        return parent.getPath().append(getId());
     }
 
-    /**
-     * Returns this collection element's associated collection of wizards.
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.wizards.IWizardCategory#getWizards()
      */
-    public Object[] getWizards() {
-        return wizards.getChildren();
+    public IWizardDescriptor [] getWizards() {
+		return (IWizardDescriptor[]) wizards
+				.getTypedChildren(IWizardDescriptor.class);
+	}
+    
+    /**
+     * Return the wizards.
+     * 
+     * @return the wizards
+     * @since 3.1
+     */
+    public WorkbenchWizardElement [] getWorkbenchWizardElements() {
+    	return (WorkbenchWizardElement[]) wizards
+				.getTypedChildren(WorkbenchWizardElement.class);
     }
 
     /**
      * Returns true if this element has no children and no wizards.
+     * 
+     * @return whether it is empty
      */
     public boolean isEmpty() {
         return size() == 0 && wizards.size() == 0;
-    }
-
-    /**
-     * Sets this collection's unique id.
-     */
-    public void setId(java.lang.String newId) {
-        id = newId;
-    }
-
-    /**
-     * Sets the collection of wizards associated with this collection element.
-     */
-    public void setWizards(AdaptableList value) {
-        wizards = value;
     }
 
     /**
@@ -235,15 +274,6 @@ public class WizardCollectionElement extends AdaptableList implements
     /*
      * (non-Javadoc)
      * 
-     * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
-     */
-    public boolean fromPlugin() {
-        return pluginId != null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
      */
     public String getLocalId() {
@@ -256,6 +286,82 @@ public class WizardCollectionElement extends AdaptableList implements
      * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
      */
     public String getPluginId() {
-        return pluginId;
+        return configElement != null ? configElement.getNamespace() : pluginId;
     }
+    
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.wizards.IWizardCategory#getParent()
+     */
+    public IWizardCategory getParent() {
+		return parent;
+	}
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.wizards.IWizardCategory#getCategories()
+     */
+    public IWizardCategory[] getCategories() {		
+		return (IWizardCategory []) getTypedChildren(IWizardCategory.class);
+	}
+    
+    /**
+     * Return the collection elements.
+     * 
+     * @return the collection elements
+     * @since 3.1
+     */
+    public WizardCollectionElement [] getCollectionElements() {
+    	return (WizardCollectionElement[]) getTypedChildren(WizardCollectionElement.class);
+    }
+    
+    /**
+     * Return the raw adapted list of wizards.
+     * 
+     * @return the list of wizards
+     * @since 3.1
+     */
+    public AdaptableList getWizardAdaptableList() {
+    	return wizards;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.wizards.IWizardCategory#getLabel()
+     */
+    public String getLabel() {
+		return getLabel(this);
+	}
+    
+    /**
+     * Return the configuration element.
+     * 
+     * @return the configuration element
+     * @since 3.1
+     */
+    public IConfigurationElement getConfigurationElement() {
+    	return configElement;
+    }
+
+    /**
+     * Return the parent collection element.
+     * 
+     * @return the parent
+     * @since 3.1
+     */
+	public WizardCollectionElement getParentCollection() {
+		return parent;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.wizards.IWizardCategory#findWizard(java.lang.String)
+	 */
+	public IWizardDescriptor findWizard(String id) {
+		return findWizard(id, true);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.wizards.IWizardCategory#findCategory(org.eclipse.core.runtime.IPath)
+	 */
+	public IWizardCategory findCategory(IPath path) {
+		return findChildCollection(path);
+	}
 }

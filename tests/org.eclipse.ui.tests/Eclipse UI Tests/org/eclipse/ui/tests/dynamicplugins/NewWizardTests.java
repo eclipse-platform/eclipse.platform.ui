@@ -11,8 +11,9 @@
 package org.eclipse.ui.tests.dynamicplugins;
 
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
-import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.wizards.IWizardRegistry;
+import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
  * @since 3.1
@@ -29,29 +30,28 @@ public class NewWizardTests extends DynamicTestCase {
 	}
 	
 	public void testNewWizardProperties() {
-		NewWizardsRegistryReader reader = new NewWizardsRegistryReader();
-		assertNull(reader.findWizard(WIZARD_ID));
+		IWizardRegistry registry = WorkbenchPlugin.getDefault().getNewWizardRegistry();
+		assertNull(registry.findWizard(WIZARD_ID));
 		getBundle();
-		reader = new NewWizardsRegistryReader();
-		WorkbenchWizardElement wizard = reader.findWizard(WIZARD_ID);
+		IWizardDescriptor wizard = registry.findWizard(WIZARD_ID);
 		assertNotNull(wizard);
 		testNewWizardProperties(wizard);
 		removeBundle();
-		reader = new NewWizardsRegistryReader();
-		assertNull(reader.findWizard(WIZARD_ID));
+		assertNull(registry.findWizard(WIZARD_ID));
 		try {
 			testNewWizardProperties(wizard);
 			fail();
 		}
 		catch (RuntimeException e) {
+			//no-op
 		}
 	}
 	
 	/**
 	 * @param wizard
 	 */
-	private void testNewWizardProperties(WorkbenchWizardElement wizard) {
-		assertNotNull(wizard.getID());
+	private void testNewWizardProperties(IWizardDescriptor wizard) {
+		assertNotNull(wizard.getId());
 		assertNotNull(wizard.getDescription());
 		assertNotNull(wizard.getHelpHref());
 		assertNotNull(wizard.getDescriptionImage());

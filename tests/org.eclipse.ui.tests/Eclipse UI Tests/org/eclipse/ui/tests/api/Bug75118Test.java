@@ -16,8 +16,10 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
-import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
+import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
  * @since 3.1
@@ -39,7 +41,8 @@ public class Bug75118Test extends TestCase {
 	}
 
 	public void testWizards() {
-		NewWizardsRegistryReader reader = new NewWizardsRegistryReader();
+		WizardsRegistryReader reader = new WizardsRegistryReader(
+				PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_NEW);
 		WorkbenchWizardElement [] primaryWizards = reader.getPrimaryWizards();
 		Set wizardSet = new HashSet(Arrays.asList(primaryWizards));
 		

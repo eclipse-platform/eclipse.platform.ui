@@ -193,7 +193,7 @@ public abstract class WorkbenchWizardListSelectionPage extends
             WorkbenchWizardElement selectedWizard = (WorkbenchWizardElement) sel
                     .getFirstElement();
             getDialogSettings().put(STORE_SELECTED_WIZARD_ID,
-                    selectedWizard.getID());
+                    selectedWizard.getId());
         }
     }
 

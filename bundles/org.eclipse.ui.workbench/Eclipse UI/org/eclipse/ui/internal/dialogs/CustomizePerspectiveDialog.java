@@ -102,10 +102,10 @@ import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
-import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.wizards.IWizardCategory;
 
 /*******************************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
@@ -640,7 +640,7 @@ public class CustomizePerspectiveDialog extends Dialog {
                 for (int i = 0; i < checkedItems.size(); i++) {
                     WorkbenchWizardElement item = (WorkbenchWizardElement) checkedItems
                             .get(i);
-                    ids.add(item.getID());
+                    ids.add(item.getId());
                 }
             }
             for (int i = 0; i < children.size(); i++) {
@@ -684,7 +684,7 @@ public class CustomizePerspectiveDialog extends Dialog {
                 } else if (id == ID_VIEW) {
                     itemId = ((IViewDescriptor) item).getId();
                 } else if (id == ID_WIZARD) {
-                    itemId = ((WorkbenchWizardElement) item).getID();
+                    itemId = ((WorkbenchWizardElement) item).getId();
                 }
                 if (menuItemId.equals(itemId))
                     return item;
@@ -1547,21 +1547,20 @@ public class CustomizePerspectiveDialog extends Dialog {
     }
 
     private void initializeShortCutMenu(ShortcutMenu menu,
-            WizardCollectionElement element, List activeIds) {
+    		IWizardCategory  element, List activeIds) {
         ShortcutMenu category = new ShortcutMenu(menu, element.getId(), element
-                .getLabel(element));
+                .getLabel());
         Object[] wizards = element.getWizards();
         for (int i = 0; i < wizards.length; i++) {
             WorkbenchWizardElement wizard = (WorkbenchWizardElement) wizards[i];
             category.addItem(wizard);
-            if (activeIds.contains(wizard.getID()))
+            if (activeIds.contains(wizard.getId()))
                 category.addCheckedItem(wizard);
         }
         // @issue should not pass in null
-        Object[] children = element.getChildren(null);
+        IWizardCategory [] children = element.getCategories();
         for (int i = 0; i < children.length; i++) {
-            initializeShortCutMenu(category,
-                    (WizardCollectionElement) children[i], activeIds);
+            initializeShortCutMenu(category, children[i], activeIds);
         }
     }
 
@@ -1573,14 +1572,13 @@ public class CustomizePerspectiveDialog extends Dialog {
             ShortcutMenu wizardMenu = new ShortcutMenu(rootMenu,
                     ShortcutMenu.ID_WIZARD, WorkbenchMessages
                             .getString("ActionSetDialogInput.wizardCategory")); //$NON-NLS-1$
-            NewWizardsRegistryReader rdr = new NewWizardsRegistryReader();
-            WizardCollectionElement wizardCollection = rdr.getWizardElements();
+            
+            IWizardCategory wizardCollection = WorkbenchPlugin.getDefault().getNewWizardRegistry().getRootCategory();
 
-            // @issue should not pass in null
-            Object[] wizardCategories = wizardCollection.getChildren(null);
+            IWizardCategory [] wizardCategories = wizardCollection.getCategories();
             activeIds = Arrays.asList(perspective.getNewWizardShortcuts());
             for (int i = 0; i < wizardCategories.length; i++) {
-                WizardCollectionElement element = (WizardCollectionElement) wizardCategories[i];
+                IWizardCategory element = wizardCategories[i];
                 if (WorkbenchActivityHelper.filterItem(element))
                     continue;
                 initializeShortCutMenu(wizardMenu, element, activeIds);

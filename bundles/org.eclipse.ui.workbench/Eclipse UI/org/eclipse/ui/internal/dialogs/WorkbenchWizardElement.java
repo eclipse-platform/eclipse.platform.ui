@@ -22,22 +22,24 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter2;
 import org.eclipse.ui.model.WorkbenchAdapter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.wizards.IWizardCategory;
+import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
  * Instances represent registered wizards.
  */
 public class WorkbenchWizardElement extends WorkbenchAdapter implements
-        IAdaptable, IPluginContribution {
+        IAdaptable, IPluginContribution, IWizardDescriptor {
     private String id;
     
     private ImageDescriptor imageDescriptor;
@@ -47,12 +49,24 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
     private IConfigurationElement configurationElement;
 
     private ImageDescriptor descriptionImage;
+    
+    private WizardCollectionElement parentCategory;
+    
+	/**
+	 * TODO: DO we need to  make this API?
+	 */
+	public static final String TAG_PROJECT = "project"; //$NON-NLS-1$
 
+	private static final String [] EMPTY_TAGS = new String[0];
+
+	private static final String [] PROJECT_TAGS = new String[] {TAG_PROJECT};
+
+    
     /**
      * Create a new instance of this class
      * 
-     * @param name
-     *            java.lang.String
+     * @param configurationElement
+     * @since 3.1
      */
     public WorkbenchWizardElement(IConfigurationElement configurationElement) {
         this.configurationElement = configurationElement;
@@ -97,6 +111,8 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      * Create an the instance of the object described by the configuration
      * element. That is, create the instance of the class the isv supplied in
      * the extension point.
+     * @return the new object
+     * @throws CoreException 
      */
     public Object createExecutableExtension() throws CoreException {
         return WorkbenchPlugin.createExtension(configurationElement,
@@ -112,6 +128,12 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
         if (adapter == IWorkbenchAdapter.class
                 || adapter == IWorkbenchAdapter2.class) {
             return this;
+        }
+        else if (adapter == IPluginContribution.class) {
+        	return this;
+        }
+        else if (adapter == IConfigurationElement.class) {
+        	return configurationElement;
         }
         return Platform.getAdapterManager().getAdapter(this, adapter);
     }
@@ -130,15 +152,6 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      */
     public String getDescription() {
         return RegistryReader.getDescription(configurationElement);
-    }
-
-    /**
-     * Answer the id as specified in the extension.
-     * 
-     * @return java.lang.String
-     */
-    public String getID() {
-        return id;
     }
 
     /**
@@ -223,7 +236,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      * @see org.eclipse.ui.IPluginContribution#getLocalId()
      */
     public String getLocalId() {
-        return getID();
+        return getId();
     }
 
     /* (non-Javadoc)
@@ -234,30 +247,92 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
                 .getDeclaringExtension().getNamespace() : null;
     }
 
-    /**
-     * Return the description image for this wizard.
-     * 
-     * @return the description image for this wizard
-     * @since 3.0
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.wizards.INewWizardDescriptor#getDescriptionImage()
      */
     public ImageDescriptor getDescriptionImage() {
     	if (descriptionImage == null) {
-    		String descImage = configurationElement.getAttribute(NewWizardsRegistryReader.ATT_DESCRIPTION_IMAGE);
+    		String descImage = configurationElement.getAttribute(WizardsRegistryReader.ATT_DESCRIPTION_IMAGE);
     		if (descImage == null)
     			return null;
             descriptionImage = AbstractUIPlugin.imageDescriptorFromPlugin(
-                    configurationElement.getNamespace(), descImage);;
+                    configurationElement.getNamespace(), descImage);
     	}
         return descriptionImage;
     }
 
-    /**
-     * Return the help system href for this wizard.
-     * 
-     * @return the help system href for this wizard
-     * @since 3.0
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.wizards.INewWizardDescriptor#getHelpHref()
      */
     public String getHelpHref() {
-        return configurationElement.getAttribute(NewWizardsRegistryReader.ATT_HELP_HREF);
+        return configurationElement.getAttribute(WizardsRegistryReader.ATT_HELP_HREF);
     }
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.wizards.INewWizardDescriptor#createWizard()
+	 */
+	public IWorkbenchWizard createWizard() throws CoreException {
+		return (IWorkbenchWizard) createExecutableExtension();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPartDescriptor#getId()
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPartDescriptor#getLabel()
+	 */
+	public String getLabel() {		
+		return getLabel(this);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.wizards.INewWizardDescriptor#getCategory()
+	 */
+	public IWizardCategory getCategory() {
+		return (IWizardCategory) getParent(this);
+	}
+	
+	/**
+	 * Return the collection.
+	 * 
+	 * @return the collection
+	 * @since 3.1
+	 */
+	public WizardCollectionElement getCollectionElement() {
+		return (WizardCollectionElement) getParent(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.wizards.IWizardDescriptor#getTags()
+	 */
+	public String [] getTags() {
+ 
+        String flag = configurationElement.getAttribute(WizardsRegistryReader.ATT_PROJECT);
+        if (Boolean.valueOf(flag).booleanValue()) {
+        	return PROJECT_TAGS;
+        }
+        
+        return EMPTY_TAGS;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
+	 */
+	public Object getParent(Object object) {
+		return parentCategory;
+	}
+
+	/**
+	 * Set the parent category.
+	 * 
+	 * @param parent the parent category
+	 * @since 3.1
+	 */
+	public void setParent(WizardCollectionElement parent) {
+		parentCategory = parent;
+	}
 }

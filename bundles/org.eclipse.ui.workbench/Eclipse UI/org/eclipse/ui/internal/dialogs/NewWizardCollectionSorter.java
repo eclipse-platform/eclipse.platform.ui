@@ -16,7 +16,7 @@ import java.text.Collator;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
+import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
@@ -65,19 +65,19 @@ class NewWizardCollectionSorter extends ViewerSorter {
 
         // Be sure that the examples category is at the end of the wizard categories
         if (name2
-                .equalsIgnoreCase(NewWizardsRegistryReader.EXAMPLES_WIZARD_CATEGORY))
+                .equalsIgnoreCase(WizardsRegistryReader.EXAMPLES_WIZARD_CATEGORY))
             return -1;
 
         if (name1
-                .equalsIgnoreCase(NewWizardsRegistryReader.EXAMPLES_WIZARD_CATEGORY))
+                .equalsIgnoreCase(WizardsRegistryReader.EXAMPLES_WIZARD_CATEGORY))
             return 1;
 
         // note that this must be checked for name2 before name1 because if they're
         // BOTH equal to BASE_CATEGORY then we want to answer false by convention
-        if (name2.equalsIgnoreCase(NewWizardsRegistryReader.BASE_CATEGORY))
+        if (name2.equalsIgnoreCase(WizardsRegistryReader.BASE_CATEGORY))
             return 1;
 
-        if (name1.equalsIgnoreCase(NewWizardsRegistryReader.BASE_CATEGORY))
+        if (name1.equalsIgnoreCase(WizardsRegistryReader.BASE_CATEGORY))
             return -1;
 
         return collator.compare(name1, name2);

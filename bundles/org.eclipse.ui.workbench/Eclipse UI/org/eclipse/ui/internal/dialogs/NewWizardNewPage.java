@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.IWizardContainer2;
 import org.eclipse.swt.SWT;
@@ -49,7 +50,6 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.INewWizard;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -58,6 +58,8 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.wizards.IWizardCategory;
+import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
  * New wizard selection tab that allows the user to select a registered 'New'
@@ -65,34 +67,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  */
 class NewWizardNewPage implements ISelectionChangedListener,
         IDoubleClickListener {
-
-    //	private static final class RootElementProxy
-    //		extends WorkbenchAdapter
-    //		implements IAdaptable {
-    //		private WizardCollectionElement[] elements;
-    //
-    //		public RootElementProxy(WizardCollectionElement element) {
-    //			super();
-    //			//If the element has no wizard then it is an empty category
-    //			//and we should collapse
-    //			if (element.getWizards().length == 0) {
-    //				Object[] children = element.getChildren(null);
-    //				elements = new WizardCollectionElement[children.length];
-    //				System.arraycopy(children, 0, elements, 0, elements.length);
-    //			} else
-    //				elements = new WizardCollectionElement[] { element };
-    //		}
-    //
-    //		public Object getAdapter(Class adapter) {
-    //			if (adapter == IWorkbenchAdapter.class)
-    //				return this;
-    //			return null;
-    //		}
-    //
-    //		public Object[] getChildren(Object o) {
-    //			return elements;
-    //		}
-    //	}
 
     // id constants
     private static final String DIALOG_SETTING_SECTION_NAME = "NewWizardSelectionPage."; //$NON-NLS-1$
@@ -118,9 +92,9 @@ class NewWizardNewPage implements ISelectionChangedListener,
 
     private Button showAllCheck;
 
-    private WizardCollectionElement wizardCategories;
+    private IWizardCategory wizardCategories;
 
-    private WorkbenchWizardElement[] primaryWizards;
+    private IWizardDescriptor [] primaryWizards;
 
     private ToolItem helpButton;
 
@@ -130,21 +104,30 @@ class NewWizardNewPage implements ISelectionChangedListener,
 
     private Map imageTable = new HashMap();
 
-    private WorkbenchWizardElement selectedElement;
+    private IWizardDescriptor selectedElement;
 
     private NewWizardActivityFilter filter = new NewWizardActivityFilter();
 
     private boolean needShowAll;
 
+	private boolean projectsOnly;
+
+	private ViewerFilter projectFilter = new WizardTagFilter(new String[] {WorkbenchWizardElement.TAG_PROJECT});
+
     /**
      * Create an instance of this class
+     * @param mainPage 
+     * @param wizardCategories 
+     * @param primaryWizards 
+     * @param projectsOnly 
      */
     public NewWizardNewPage(NewWizardSelectionPage mainPage,
-            IWorkbench aWorkbench, WizardCollectionElement wizardCategories,
-            WorkbenchWizardElement[] primaryWizards) {
+			IWizardCategory wizardCategories,
+			IWizardDescriptor[] primaryWizards, boolean projectsOnly) {
         this.page = mainPage;
         this.wizardCategories = wizardCategories;
         this.primaryWizards = primaryWizards;
+        this.projectsOnly = projectsOnly;
 
         trimPrimaryWizards();
 
@@ -164,17 +147,17 @@ class NewWizardNewPage implements ISelectionChangedListener,
      * @param category the wizard category
      * @return whether all of the wizards in the category are enabled via activity filtering
      */
-    private boolean allActivityEnabled(WizardCollectionElement category) {
-        Object[] wizards = category.getWizards();
+    private boolean allActivityEnabled(IWizardCategory category) {
+        IWizardDescriptor [] wizards = category.getWizards();
         for (int i = 0; i < wizards.length; i++) {
-            WorkbenchWizardElement wizard = (WorkbenchWizardElement) wizards[i];
+            IWizardDescriptor wizard = wizards[i];
             if (WorkbenchActivityHelper.filterItem(wizard))
                 return false;
         }
 
-        Object[] children = category.getChildren();
+        IWizardCategory [] children = category.getCategories();
         for (int i = 0; i < children.length; i++) {
-            if (!allActivityEnabled((WizardCollectionElement) children[i]))
+            if (!allActivityEnabled(children[i]))
                 return false;
         }
 
@@ -191,7 +174,7 @@ class NewWizardNewPage implements ISelectionChangedListener,
             return;//No categories so nothing to trim
 
         for (int i = 0; i < primaryWizards.length; i++) {
-            if (wizardCategories.findWizard(primaryWizards[i].getID(), true) != null)
+            if (wizardCategories.findWizard(primaryWizards[i].getId()) != null)
                 newPrimaryWizards.add(primaryWizards[i]);
         }
 
@@ -203,17 +186,17 @@ class NewWizardNewPage implements ISelectionChangedListener,
      * @param category the wizard category
      * @return whether all wizards in the category are considered primary
      */
-    private boolean allPrimary(WizardCollectionElement category) {
-        Object[] wizards = category.getWizards();
+    private boolean allPrimary(IWizardCategory category) {
+        IWizardDescriptor [] wizards = category.getWizards();
         for (int i = 0; i < wizards.length; i++) {
-            WorkbenchWizardElement wizard = (WorkbenchWizardElement) wizards[i];
+        	IWizardDescriptor wizard = wizards[i];
             if (!isPrimary(wizard))
                 return false;
         }
 
-        Object[] children = category.getChildren();
+        IWizardCategory [] children = category.getCategories();
         for (int i = 0; i < children.length; i++) {
-            if (!allPrimary((WizardCollectionElement) children[i]))
+            if (!allPrimary(children[i]))
                 return false;
         }
 
@@ -224,7 +207,7 @@ class NewWizardNewPage implements ISelectionChangedListener,
      * @param wizard
      * @return whether the given wizard is primary
      */
-    private boolean isPrimary(WorkbenchWizardElement wizard) {
+    private boolean isPrimary(IWizardDescriptor wizard) {
         for (int j = 0; j < primaryWizards.length; j++) {
             if (primaryWizards[j].equals(wizard))
                 return true;
@@ -353,8 +336,8 @@ class NewWizardNewPage implements ISelectionChangedListener,
         boolean expandTop = false;
 
         if (wizardCategories != null) {
-            if (wizardCategories.getParent(wizardCategories) == null) {
-                Object[] children = wizardCategories.getChildren();
+            if (wizardCategories.getParent() == null) {
+                IWizardCategory [] children = wizardCategories.getCategories();
                 for (int i = 0; i < children.length; i++) {
                     inputArray.add(children[i]);
                 }
@@ -394,6 +377,9 @@ class NewWizardNewPage implements ISelectionChangedListener,
         });
         
         viewer.addFilter(filter);
+        
+        if (projectsOnly) 
+        	viewer.addFilter(projectFilter);
 
         data = new GridData(GridData.FILL_BOTH);
         data.horizontalSpan = 2;
@@ -432,6 +418,9 @@ class NewWizardNewPage implements ISelectionChangedListener,
                     try {
                         if (showAll) {
                             viewer.resetFilters();
+                            if (projectsOnly) 
+                            	viewer.addFilter(projectFilter);
+
                             // restore the expanded elements that were present
                             // in the last show all state but not in the 'no
                             // show all' state.
@@ -446,6 +435,8 @@ class NewWizardNewPage implements ISelectionChangedListener,
                             viewer.setExpandedElements(expanded);
                         } else {
                             viewer.addFilter(filter);
+                            if (projectsOnly) 
+                            	viewer.addFilter(projectFilter);
                         }
                         viewer.refresh(false);
 
@@ -517,8 +508,8 @@ class NewWizardNewPage implements ISelectionChangedListener,
 
         if (wizardCategories != null) {
             for (int i = 0; i < expandedCategoryPaths.length; i++) {
-                WizardCollectionElement category = wizardCategories
-                        .findChildCollection(new Path(expandedCategoryPaths[i]));
+                IWizardCategory category = wizardCategories
+                        .findCategory(new Path(expandedCategoryPaths[i]));
                 if (category != null) // ie.- it still exists
                     categoriesToExpand.add(category);
             }
@@ -562,7 +553,7 @@ class NewWizardNewPage implements ISelectionChangedListener,
      * The user selected either new wizard category(s) or wizard element(s).
      * Proceed accordingly.
      * 
-     * @param newSelection ISelection
+     * @param selectionEvent ISelection
      */
     public void selectionChanged(SelectionChangedEvent selectionEvent) {
         page.setErrorMessage(null);
@@ -571,10 +562,10 @@ class NewWizardNewPage implements ISelectionChangedListener,
         Object selectedObject = getSingleSelection((IStructuredSelection) selectionEvent
                 .getSelection());
 
-        if (selectedObject instanceof WorkbenchWizardElement) {
+        if (selectedObject instanceof IWizardDescriptor) {
             if (selectedObject == selectedElement)
                 return;
-            updateWizardSelection((WorkbenchWizardElement) selectedObject);
+            updateWizardSelection((IWizardDescriptor) selectedObject);
         } else {
             selectedElement = null;
             page.selectWizardNode(null);
@@ -595,11 +586,11 @@ class NewWizardNewPage implements ISelectionChangedListener,
         if (wizardCategories == null)
             return;
 
-        Object selected = wizardCategories.findChildCollection(new Path(
+        Object selected = wizardCategories.findCategory(new Path(
                 selectedId));
 
         if (selected == null) {
-            selected = wizardCategories.findWizard(selectedId, true);
+            selected = wizardCategories.findWizard(selectedId);
 
             if (selected == null)
                 // if we cant find either a category or a wizard, abort.
@@ -633,9 +624,9 @@ class NewWizardNewPage implements ISelectionChangedListener,
         Object[] expandedElements = viewer.getExpandedElements();
         List expandedElementPaths = new ArrayList(expandedElements.length);
         for (int i = 0; i < expandedElements.length; ++i) {
-            if (expandedElements[i] instanceof WizardCollectionElement)
+            if (expandedElements[i] instanceof IWizardCategory)
                 expandedElementPaths
-                        .add(((WizardCollectionElement) expandedElements[i])
+                        .add(((IWizardCategory) expandedElements[i])
                                 .getPath().toString());
         }
         settings.put(STORE_EXPANDED_CATEGORIES_ID,
@@ -652,14 +643,14 @@ class NewWizardNewPage implements ISelectionChangedListener,
                 .getSelection());
 
         if (selected != null) {
-            if (selected instanceof WizardCollectionElement)
+            if (selected instanceof IWizardCategory)
                 settings.put(STORE_SELECTED_ID,
-                        ((WizardCollectionElement) selected).getPath()
+                        ((IWizardCategory) selected).getPath()
                                 .toString());
             else
                 // else its a wizard
                 settings.put(STORE_SELECTED_ID,
-                        ((WorkbenchWizardElement) selected).getID());
+                        ((IWizardDescriptor) selected).getId());
         }
     }
 
@@ -669,7 +660,7 @@ class NewWizardNewPage implements ISelectionChangedListener,
      * @param selectedObject the new wizard
      * @since 3.0
      */
-    private void updateDescription(WorkbenchWizardElement selectedObject) {
+    private void updateDescription(IWizardDescriptor selectedObject) {
         String string = ""; //$NON-NLS-1$
         if (selectedObject != null)
             string = selectedObject.getDescription();
@@ -720,7 +711,7 @@ class NewWizardNewPage implements ISelectionChangedListener,
      * @param selectedObject the wizard to test
      * @return whether the given wizard has an associated image
      */
-    private boolean hasImage(WorkbenchWizardElement selectedObject) {
+    private boolean hasImage(IWizardDescriptor selectedObject) {
         if (selectedObject == null)
             return false;
 
@@ -733,7 +724,7 @@ class NewWizardNewPage implements ISelectionChangedListener,
     /**
      * @param selectedObject
      */
-    private void updateWizardSelection(WorkbenchWizardElement selectedObject) {
+    private void updateWizardSelection(IWizardDescriptor selectedObject) {
         selectedElement = selectedObject;
         WorkbenchWizardNode selectedNode;
         if (selectedWizards.containsKey(selectedObject)) {
@@ -742,8 +733,7 @@ class NewWizardNewPage implements ISelectionChangedListener,
         } else {
             selectedNode = new WorkbenchWizardNode(page, selectedObject) {
                 public IWorkbenchWizard createWizard() throws CoreException {
-                    return (INewWizard) wizardElement
-                            .createExecutableExtension();
+                    return (INewWizard) wizardElement.createWizard();
                 }
             };
             selectedWizards.put(selectedObject, selectedNode);

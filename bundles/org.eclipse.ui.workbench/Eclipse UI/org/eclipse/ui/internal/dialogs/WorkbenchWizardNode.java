@@ -25,6 +25,7 @@ import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
  * A wizard node represents a "potential" wizard. Wizard nodes
@@ -42,15 +43,18 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
 
     protected IWizard wizard;
 
-    protected WorkbenchWizardElement wizardElement;
+    protected IWizardDescriptor wizardElement;
 
     /**
      * Creates a <code>WorkbenchWizardNode</code> that holds onto a wizard
      * element.  The wizard element provides information on how to create
      * the wizard supplied by the ISV's extension.
+     * 
+     * @param aWizardPage the wizard page
+     * @param element the wizard descriptor
      */
     public WorkbenchWizardNode(WorkbenchWizardSelectionPage aWizardPage,
-            WorkbenchWizardElement element) {
+    		IWizardDescriptor element) {
         super();
         this.parentWizardPage = aWizardPage;
         this.wizardElement = element;
@@ -59,6 +63,9 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
     /**
      * Returns the wizard represented by this wizard node.  <b>Subclasses</b>
      * must override this method.
+     * 
+     * @return the wizard object
+     * @throws CoreException 
      */
     public abstract IWorkbenchWizard createWizard() throws CoreException;
 
@@ -87,14 +94,22 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
      * @see org.eclipse.ui.IPluginContribution#getLocalId()
      */
     public String getLocalId() {
-        return wizardElement.getLocalId();
+    	IPluginContribution contribution = (IPluginContribution) wizardElement
+				.getAdapter(IPluginContribution.class);
+		if (contribution != null)
+			return contribution.getLocalId();
+		return wizardElement.getId();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPluginContribution#getPluginId()
      */
     public String getPluginId() {
-        return wizardElement.getPluginId();
+       	IPluginContribution contribution = (IPluginContribution) wizardElement
+				.getAdapter(IPluginContribution.class);
+		if (contribution != null)
+			return contribution.getLocalId();
+		return null;
     }
 
     /* (non-Javadoc)
@@ -116,11 +131,10 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
                              * Add the exception details to status is one happens.
                              */
                             public void handleException(Throwable e) {
+                               	IPluginContribution contribution = (IPluginContribution) wizardElement.getAdapter(IPluginContribution.class);
                                 statuses[0] = new Status(
                                         IStatus.ERROR,
-                                        wizardElement.getConfigurationElement()
-                                                .getDeclaringExtension()
-                                                .getUniqueIdentifier(),
+                                        contribution != null ? contribution.getPluginId() : null,
                                         IStatus.OK,
                                         e.getMessage() == null ? "" : e.getMessage(), //$NON-NLS-1$,
                                         e);
@@ -164,8 +178,10 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
 
     /**
      * Returns the wizard element.
+     * 
+     * @return the wizard descriptor
      */
-    public WorkbenchWizardElement getWizardElement() {
+    public IWizardDescriptor getWizardElement() {
         return wizardElement;
     }
 

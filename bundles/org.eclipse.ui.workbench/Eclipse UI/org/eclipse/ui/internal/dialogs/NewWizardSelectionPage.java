@@ -17,6 +17,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.wizards.IWizardCategory;
+import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
  *	New wizard selection tab that allows the user to either select a
@@ -28,31 +30,35 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  *  is currently aware of activity categories.
  */
 class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
-    private WizardCollectionElement wizardCategories;
+    private IWizardCategory wizardCategories;
 
     // widgets
     private NewWizardNewPage newResourcePage;
 
-    private WorkbenchWizardElement[] primaryWizards;
+    private IWizardDescriptor [] primaryWizards;
 
+	private boolean projectsOnly;
+    
     /**
-     *	Create an instance of this class
+     * Create an instance of this class.
      *
-     * @param aWorkbench the workbench
-     * @param currentSelection the current selection
-     * @param elements the wizard elements
+     * @param workbench the workbench
+     * @param selection the current selection
+     * @param root the wizard root element
      * @param primary the primary wizard elements
+     * @param projectsOnly if only projects should be shown
      */
-    public NewWizardSelectionPage(IWorkbench aWorkbench,
-            IStructuredSelection currentSelection,
-            WizardCollectionElement elements, WorkbenchWizardElement[] primary) {
-        // override what superclass does with elements
-        super("newWizardSelectionPage", aWorkbench, currentSelection, null);//$NON-NLS-1$
+    public NewWizardSelectionPage(IWorkbench workbench,
+			IStructuredSelection selection, IWizardCategory root,
+			IWizardDescriptor[] primary, boolean projectsOnly) {
+        super("newWizardSelectionPage", workbench, selection, null);//$NON-NLS-1$
+        
         setTitle(WorkbenchMessages
                 .getString("NewWizardSelectionPage.description")); //$NON-NLS-1$
-        wizardCategories = elements;
+        wizardCategories = root;
         primaryWizards = primary;
-    }
+        this.projectsOnly = projectsOnly;
+	}
 
     /**
      * Makes the next page visible.
@@ -66,8 +72,8 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
      */
     public void createControl(Composite parent) {
         IDialogSettings settings = getDialogSettings();
-        newResourcePage = new NewWizardNewPage(this, this.workbench,
-                wizardCategories, primaryWizards);
+        newResourcePage = new NewWizardNewPage(this, wizardCategories,
+				primaryWizards, projectsOnly);
         newResourcePage.setDialogSettings(settings);
 
         Control control = newResourcePage.createControl(parent);

@@ -50,10 +50,14 @@ import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistryReader;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.internal.util.SWTResourceUtil;
+import org.eclipse.ui.internal.wizards.ExportWizardRegistry;
+import org.eclipse.ui.internal.wizards.ImportWizardRegistry;
+import org.eclipse.ui.internal.wizards.NewWizardRegistry;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.operations.WorkbenchOperationSupport;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
+import org.eclipse.ui.wizards.IWizardRegistry;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -753,5 +757,35 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         	operationSupport = null;
         }
         SWTResourceUtil.shutdown();
+    } 
+    
+    /**
+     * Return the new wizard registry.
+     * 
+     * @return the new wizard registry
+     * @since 3.1
+     */
+    public IWizardRegistry getNewWizardRegistry() {
+    	return NewWizardRegistry.getInstance();
+    }
+    
+    /**
+     * Return the import wizard registry.
+     * 
+     * @return the import wizard registry
+     * @since 3.1
+     */
+    public IWizardRegistry getImportWizardRegistry() {
+    	return ImportWizardRegistry.getInstance();
+    }
+    
+    /**
+     * Return the export wizard registry.
+     * 
+     * @return the export wizard registry
+     * @since 3.1
+     */
+    public IWizardRegistry getExportWizardRegistry() {
+    	return ExportWizardRegistry.getInstance();
     }
 }

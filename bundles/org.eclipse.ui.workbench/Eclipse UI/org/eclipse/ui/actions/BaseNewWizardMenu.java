@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
@@ -31,10 +32,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.actions.NewWizardShortcutAction;
-import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
-import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
+import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
  * A <code>BaseNewWizardMenu</code> is used to populate a menu manager with
@@ -68,10 +69,6 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
         }
     };
 
-    // TODO should not create a new registry reader for each new wizard menu;
-    // it's expensive. See bug 80560.
-    private NewWizardsRegistryReader reader = new NewWizardsRegistryReader();
-
     /**
      * TODO: should this be done with an addition listener?
      */
@@ -83,7 +80,6 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
             if (getParent() != null) {
                 getParent().markDirty();
             }
-            reader = new NewWizardsRegistryReader();
         }
 
     };
@@ -169,15 +165,18 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
         // so that image caching in ActionContributionItem works.
         IAction action = (IAction) actions.get(id);
         if (action == null) {
-            WorkbenchWizardElement element = reader.findWizard(id);
-            if (element != null) {
-                action = new NewWizardShortcutAction(workbenchWindow, element);
-                actions.put(id, action);
-				workbenchWindow.getExtensionTracker().registerObject(
-						element.getConfigurationElement()
-								.getDeclaringExtension(), action,
-						IExtensionTracker.REF_WEAK);
-				// XXX: When does the action get unregistered?
+            IWizardDescriptor wizardDesc = WorkbenchPlugin.getDefault()
+					.getNewWizardRegistry().findWizard(id);
+            if (wizardDesc != null) {
+                action = new NewWizardShortcutAction(workbenchWindow,
+						wizardDesc);
+				actions.put(id, action);
+				IConfigurationElement element = (IConfigurationElement) wizardDesc
+						.getAdapter(IConfigurationElement.class);
+				if (element != null)
+					workbenchWindow.getExtensionTracker().registerObject(
+							element.getDeclaringExtension(), action,
+							IExtensionTracker.REF_WEAK);
             }
         }
         return action;
@@ -245,8 +244,8 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
      *         given identifier, <code>false</code> otherwise
      */
     protected boolean registryHasCategory(String categoryId) {
-        return reader.getWizardElements().findCategory(categoryId) != null;
-
+    	return WorkbenchPlugin.getDefault().getNewWizardRegistry()
+				.findCategory(categoryId) != null;
     }
 
     /**

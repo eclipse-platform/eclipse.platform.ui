@@ -25,7 +25,7 @@ import org.eclipse.ui.internal.dialogs.NewWizard;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
-import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
+import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
  * Standard action for launching the create project selection
@@ -90,7 +90,7 @@ public class NewExampleAction extends Action {
         IWorkbench workbench = PlatformUI.getWorkbench();
         NewWizard wizard = new NewWizard();
         wizard
-                .setCategoryId(NewWizardsRegistryReader.FULL_EXAMPLES_WIZARD_CATEGORY);
+                .setCategoryId(WizardsRegistryReader.FULL_EXAMPLES_WIZARD_CATEGORY);
 
         ISelection selection = window.getSelectionService().getSelection();
         IStructuredSelection selectionToPass = StructuredSelection.EMPTY;
