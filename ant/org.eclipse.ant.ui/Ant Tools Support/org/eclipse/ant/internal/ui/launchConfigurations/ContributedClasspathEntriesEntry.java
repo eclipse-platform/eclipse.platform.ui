@@ -67,23 +67,53 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 		boolean separateVM= (null != configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null));
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		IAntClasspathEntry[] antClasspathEntries = prefs.getContributedClasspathEntries();
-		List rtes = new ArrayList(antClasspathEntries.length);
+		IAntClasspathEntry[] userEntries = prefs.getAdditionalClasspathEntries();
+		List rtes = new ArrayList(antClasspathEntries.length + userEntries.length);
 		for (int i = 0; i < antClasspathEntries.length; i++) {
 			IAntClasspathEntry entry = antClasspathEntries[i];
 			if (!separateVM || (separateVM && !entry.isEclipseRuntimeRequired())) {
 				rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(entry.getEntryURL().getPath())));
 			}
 		}
-		// add tools.jar
+		for (int i = 0; i < userEntries.length; i++) {
+			IAntClasspathEntry entry = userEntries[i];
+			String path = entry.getEntryURL().getPath();
+			if (path.endsWith("tools.jar")) { //$NON-NLS-1$
+				// replace with dynamically resolved tools.jar based on
+				// the JRE being used
+				IRuntimeClasspathEntry tools = getToolsJar(configuration);
+				if (tools == null) {
+					// user the global entry
+					rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(path)));
+				} else {
+					rtes.add(tools);
+				}
+			} else {
+				rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(path)));
+			}
+		}
+		return (IRuntimeClasspathEntry[]) rtes.toArray(new IRuntimeClasspathEntry[rtes.size()]);
+	}
+	
+	/**
+	 * Returns the tools.jar to use for this launch configuration, or <code>null</code>
+	 * if none.
+	 * 
+	 * @param configuration configuration to resolve a tools.jar for
+	 * @return associated tools.jar archive, or <code>null</code>
+	 * @throws CoreException
+	 */
+	private IRuntimeClasspathEntry getToolsJar(ILaunchConfiguration configuration) throws CoreException {
 		IVMInstall install = JavaRuntime.computeVMInstall(configuration);
 		if (install != null) {
 			IAntClasspathEntry entry = AntCorePlugin.getPlugin().getPreferences().getToolsJarEntry(new Path(install.getInstallLocation().getAbsolutePath()));
 			if (entry != null) {
-				rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(entry.getEntryURL().getPath())));
+				return JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(entry.getEntryURL().getPath()));
 			}
-		}		
-		return (IRuntimeClasspathEntry[]) rtes.toArray(new IRuntimeClasspathEntry[rtes.size()]);
+		}
+		return null;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#getName()
 	 */
