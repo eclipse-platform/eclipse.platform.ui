@@ -207,7 +207,14 @@ public void showPaneMenu() {
 		visibleEditor.showPaneMenu(tabFolder,new Point(bounds.x,bounds.height),false);
 	}
 }
-
+/**
+ * Returns true if the mouse pointer is over the
+ * image of the tab's label
+ */
+/*package*/ boolean overImage(EditorPane pane, int x) {
+	CTabItem item = getTab(pane);
+	return overImage(item, x);
+}
 /*
  * Return true if <code>x</code> is over the label image.
  */
@@ -468,9 +475,10 @@ public boolean isActiveWorkbook() {
 public boolean isDragAllowed(Point p) {
 	if (isZoomed) {
 		return false;
+	} else if (getEditorArea().getEditorWorkbookCount() == 1) {
+		return false;
 	} else if (visibleEditor != null) {
-		CTabItem item = getTab(visibleEditor);
-		if(!overImage(item,p.x))
+		if(!overImage(visibleEditor, p.x))
 			return true;
 	}
 	return false;

@@ -22,7 +22,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.PartPane.Sashes;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.part.WorkbenchPart;
 
@@ -225,7 +224,10 @@ protected WorkbenchPart createErrorPart(WorkbenchPart oldPart) {
  * See LayoutPart
  */
 public boolean isDragAllowed(Point p) {
-	return !overImage(p.x) && super.isDragAllowed(p);
+	// See also similar restrictions in addMoveItems method
+	// No need to worry about fast views as they do not
+	// register for D&D operations
+	return !overImage(p.x) && !isZoomed();
 }
 /*
  * Return true if <code>x</code> is over the label image.
@@ -511,6 +513,9 @@ protected void addFastViewMenuItem(Menu parent,boolean isFastView) {
  * Add the View and Tab Group items to the Move menu.
  */
 protected void addMoveItems(Menu moveMenu) {
+	// See also similar restrictions in isDragAllowed method.
+	// No need to worry about mouse cursor over image, just
+	// fast views.
 	boolean moveAllowed = !isZoomed() && !isFastView();
 	
 	// Add move view only menu item

@@ -2163,7 +2163,7 @@ public void updateTitle(IWorkbenchPart part) {
 /**
  * Zooms out a zoomed in part.
  */
-private void zoomOut() {
+/*package*/ void zoomOut() {
 	Perspective persp = getActivePerspective();
 	if (persp != null)
 		persp.getPresentation().zoomOut();

@@ -222,15 +222,6 @@ public void handleEvent(Event event) {
 		requestActivation();
 }
 /**
- * See LayoutPart
- */
-public boolean isDragAllowed(Point p) {
-	if (isZoomed())
-		return false;
-	else
-		return true;
-}
-/**
  * Returns true if this part is visible.  A part is visible if it has a control.
  */
 public boolean isVisible() {

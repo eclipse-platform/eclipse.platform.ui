@@ -96,7 +96,17 @@ public EditorWorkbook getWorkbook() {
  * See LayoutPart
  */
 public boolean isDragAllowed(Point p) {
-	return workbook.isDragAllowed(p) && super.isDragAllowed(p);
+	// See also similar restrictions in addMoveItems method
+	
+	if (workbook.overImage(this, p.x))
+		return false;
+		
+	int wbCount = workbook.getEditorArea().getEditorWorkbookCount();
+	int editorCount = workbook.getItemCount();
+	if (isZoomed())
+		return editorCount > 1;
+	else
+		return editorCount > 1 || wbCount > 1;
 }
 
 /**
@@ -106,8 +116,8 @@ public boolean isDragAllowed(Point p) {
 protected void requestActivation() {
 	// By clearing the active workbook if its not the one
 	// associated with the editor, we reduce draw flicker
-	if (!getWorkbook().isActiveWorkbook())
-		getWorkbook().getEditorArea().setActiveWorkbook(null, false);
+	if (!workbook.isActiveWorkbook())
+		workbook.getEditorArea().setActiveWorkbook(null, false);
 		
 	super.requestActivation();
 }
@@ -143,26 +153,35 @@ public void showFocus(boolean inFocus) {
  * Add the Editor and Tab Group items to the Move menu.
  */
 protected void addMoveItems(Menu moveMenu) {
+	// See also similar restrictions in isDragAllowed method
+	// No need to worry about mouse cursor over image.
+	
+	int wbCount = workbook.getEditorArea().getEditorWorkbookCount();
+	int editorCount = workbook.getItemCount();
+	
 	MenuItem item = new MenuItem(moveMenu, SWT.NONE);
 	item.setText(WorkbenchMessages.getString("EditorPane.moveEditor")); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			ILayoutContainer container = getContainer();
-			if (container instanceof EditorWorkbook)
-				((EditorWorkbook)container).openTracker(EditorPane.this);
+			workbook.openTracker(EditorPane.this);
 		}
 	});
-	item.setEnabled(!isZoomed());
+	if (isZoomed())
+		item.setEnabled(editorCount > 1);
+	else
+		item.setEnabled(editorCount > 1 || wbCount > 1);
+	
 	item = new MenuItem(moveMenu, SWT.NONE);
 	item.setText(WorkbenchMessages.getString("EditorPane.moveFolder")); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			ILayoutContainer container = getContainer();
-			if (container instanceof EditorWorkbook)
-				((EditorWorkbook)container).openTracker((EditorWorkbook)container);
+			workbook.openTracker(getWorkbook());
 		}
 	});
-	item.setEnabled(!isZoomed() && (getContainer() instanceof EditorWorkbook));
+	if (isZoomed())
+		item.setEnabled(false);
+	else
+		item.setEnabled(wbCount > 1);
 }
 /**
  * Set the action to pin/unpin an editor. 
@@ -204,7 +223,7 @@ protected Sashes findSashes() {
  * Update the title attributes for the pane.
  */
 public void updateTitles() {
-	getWorkbook().updateEditorTab(getEditorPart());
+	workbook.updateEditorTab(getEditorPart());
 }
 /**
  * Show a title label menu for this pane.

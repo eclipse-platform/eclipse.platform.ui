@@ -272,6 +272,8 @@ private void onPartDrop(PartDropEvent e) {
 		case PartDragDrop.RIGHT:
 		case PartDragDrop.TOP:
 		case PartDragDrop.BOTTOM:
+			if (page.isZoomed())
+				page.zoomOut();
 			movePart(e.dragSource, e.relativePosition, (EditorWorkbook)e.dropTarget);
 			break;
 	}

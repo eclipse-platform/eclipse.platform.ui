@@ -127,6 +127,12 @@ public ArrayList getEditorWorkbooks() {
 	return (ArrayList)editorWorkbooks.clone();
 }
 /**
+ * Return the all the editor workbooks.
+ */
+public int getEditorWorkbookCount() {
+	return editorWorkbooks.size();
+}
+/**
  * Return the interested listener of d&d events.
  */
 public IPartDropListener getPartDropListener() {
