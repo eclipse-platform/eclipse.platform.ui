@@ -89,6 +89,7 @@ public class ActionSetActionBars extends SubActionBars2 {
                 PluginActionCoolBarContributionItem actionSetItem = (PluginActionCoolBarContributionItem) item;
                 if (actionSetItem.getActionSetId().equals(actionSetId)) {
                     coolItemToolBarMgr.remove(item);
+                    item.dispose();
                 }
             } else {
                 // leave separators and group markers intact, doing
@@ -103,6 +104,7 @@ public class ActionSetActionBars extends SubActionBars2 {
             ToolBarManager parent = (ToolBarManager) item.getParent();
             if (parent != null) {
                 parent.remove(item);
+                item.dispose();
             }
         }
         toolBarContributionItem = null;

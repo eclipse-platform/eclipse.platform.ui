@@ -157,9 +157,11 @@ public void readFromRegistry() {
 	assocReader.readRegistry(Platform.getExtensionRegistry(), this);
 }
 //for dynamic UI
-public void addCache(String actionSetId, Object cache) {
-	mapCacheToActionSets.put(actionSetId, cache);
-}
+// Commented out because the cache is broken -- it does not understand multiple windows.
+// See bug 66374.
+//public void addCache(String actionSetId, Object cache) {
+//	mapCacheToActionSets.put(actionSetId, cache);
+//}
 
 //for dynamic UI
 public Object removeCache(String actionSetId) {

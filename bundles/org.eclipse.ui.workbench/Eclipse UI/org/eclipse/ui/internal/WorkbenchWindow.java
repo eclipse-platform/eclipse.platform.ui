@@ -980,10 +980,34 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		try {
 			// Clear the action sets, fix for bug 27416.
 			actionPresentation.clearActionSets();
+
+            // Remove the handler submissions. Bug 64024.
+            final IWorkbench workbench = getWorkbench();
+            final IWorkbenchCommandSupport commandSupport = workbench
+                    .getCommandSupport();
+            commandSupport.removeHandlerSubmissions(handlerSubmissions);
+            final Iterator submissionItr = handlerSubmissions.iterator();
+            while (submissionItr.hasNext()) {
+                final HandlerSubmission submission = (HandlerSubmission) submissionItr
+                        .next();
+                submission.getHandler().dispose();
+            }
+            handlerSubmissions.clear();
+            actionSetHandlersByCommandId.clear();
+            globalActionHandlersByCommandId.clear();
+
+            // Remove the enabled submissions. Bug 64024.
+            final IWorkbenchContextSupport contextSupport = workbench
+                    .getContextSupport();
+            contextSupport.unregisterShell(getShell());
+			
 			closeAllPages();
 			// let the application do further deconfiguration
 			getAdvisor().postWindowClose(getWindowConfigurer());
 			getWorkbenchImpl().fireWindowClosed(this);
+            
+            // Null out the progress region.  Bug 64024.
+            progressRegion = null;
 		} finally {
 			result = super.close();
 		}

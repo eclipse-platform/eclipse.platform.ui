@@ -130,6 +130,8 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction tipsAndTricksAction;
 	private QuickMenuAction showInQuickMenu;
 	private QuickMenuAction newQuickMenu;
+	private IWorkbenchAction introAction;
+
 	
 	// IDE-specific retarget actions
 	private IWorkbenchAction addBookmarkAction;
@@ -141,6 +143,7 @@ public final class WorkbenchActionBuilder {
 	// contribution items
 	// @issue should obtain from ContributionItemFactory
 	private NewWizardMenu newWizardMenu;
+	private IContributionItem pinEditorContributionItem;
 	
 	// @issue class is workbench internal
 	private StatusLineContributionItem statusLineItem;
@@ -150,7 +153,9 @@ public final class WorkbenchActionBuilder {
 	// preference change
 	private IPropertyChangeListener propPrefListener;
 
-	private IWorkbenchAction introAction;
+    private IPageListener pageListener;
+
+    private IPerspectiveListener perspectiveListener;
 
 	
 	/**
@@ -175,9 +180,7 @@ public final class WorkbenchActionBuilder {
 	 */
 	private void hookListeners() {
 
-		// Listen to workbench page lifecycle methods to enable
-		// and disable the perspective menu items as needed.
-		getWindow().addPageListener(new IPageListener() {
+		pageListener = new IPageListener() {
 			public void pageActivated(IWorkbenchPage page) {
 				enableActions(page.getPerspective() != null);
 			}
@@ -188,16 +191,18 @@ public final class WorkbenchActionBuilder {
 			public void pageOpened(IWorkbenchPage page) {
 				// do nothing
 			}
-		});
+		};
+        getWindow().addPageListener(pageListener);
 
-		getWindow().addPerspectiveListener(new IPerspectiveListener() {
+		perspectiveListener = new IPerspectiveListener() {
 			public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 				enableActions(true);
 			}
 			public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 				// do nothing
 			}
-		});
+		};
+        getWindow().addPerspectiveListener(perspectiveListener);
 		
 		prefListener = new Preferences.IPropertyChangeListener() {
 			public void propertyChange(Preferences.PropertyChangeEvent event) {
@@ -319,7 +324,7 @@ public final class WorkbenchActionBuilder {
 			navToolBar.add(backwardHistoryAction);
 			navToolBar.add(forwardHistoryAction);
 			navToolBar.add(new Separator(IWorkbenchActionConstants.PIN_GROUP));
-			navToolBar.add(ContributionItemFactory.PIN_EDITOR.create(getWindow()));
+			navToolBar.add(pinEditorContributionItem);
 			
 			// Add to the cool bar manager
 			cbManager.add(new ToolBarContributionItem(navToolBar,IWorkbenchActionConstants.TOOLBAR_NAVIGATE));
@@ -358,7 +363,10 @@ public final class WorkbenchActionBuilder {
 			MenuManager newMenu = new MenuManager(newText, newId) {
 				public String getMenuText() {
 					String result= super.getMenuText();
-					String shortCut= newQuickMenu.getShortCutString();
+					String shortCut = null;
+					if (newQuickMenu != null) {
+					    shortCut = newQuickMenu.getShortCutString();
+					}
 					if (shortCut == null)
 						return result;
 					return result + "\t" + shortCut; //$NON-NLS-1$
@@ -872,12 +880,22 @@ public final class WorkbenchActionBuilder {
 	 */
 	public void dispose() {
 		actionBarConfigurer.getStatusLineManager().remove(statusLineItem);
+		if (pageListener != null) {
+		    window.removePageListener(pageListener);
+		    pageListener = null;
+		}
+		if (perspectiveListener == null) {
+		    window.removePerspectiveListener(perspectiveListener);
+		    perspectiveListener = null;
+		}
 		if (prefListener != null) {
 			ResourcesPlugin.getPlugin().getPluginPreferences().removePropertyChangeListener(
 				prefListener);
+			prefListener = null;
 		}
 		if (propPrefListener != null) {
 			WorkbenchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(propPrefListener);
+			propPrefListener = null;
 		}
 		closeAction.dispose();
 		closeAllAction.dispose();
@@ -952,9 +970,91 @@ public final class WorkbenchActionBuilder {
 		buildProjectAction.dispose();
 		openProjectAction.dispose();
 		closeProjectAction.dispose();
+		pinEditorContributionItem.dispose();
+		if (introAction != null) {
+		    introAction.dispose();
+		}
 		
 		showInQuickMenu.dispose();
 		newQuickMenu.dispose();
+		
+		// null out actions to make leak debugging easier
+		closeAction = null;
+		closeAllAction = null;
+		closeAllSavedAction = null;
+		saveAction = null;
+		saveAllAction = null;
+		helpContentsAction = null;
+		aboutAction = null;
+		openPreferencesAction = null;
+		saveAsAction = null;
+		hideShowEditorAction = null;
+		savePerspectiveAction = null;
+		resetPerspectiveAction = null;
+		editActionSetAction = null;
+		closePerspAction = null;
+		lockToolBarAction = null;
+		closeAllPerspsAction = null;
+		showViewMenuAction = null;
+		showPartPaneMenuAction = null;
+		nextPartAction = null;
+		prevPartAction = null;
+		nextEditorAction = null;
+		prevEditorAction = null;
+		nextPerspectiveAction = null;
+		prevPerspectiveAction = null;
+		activateEditorAction = null;
+		maximizePartAction = null;
+		workbenchEditorsAction = null;
+		workbookEditorsAction = null;
+		backwardHistoryAction = null;
+		forwardHistoryAction = null;
+		undoAction = null;
+		redoAction = null;
+		cutAction = null;
+		copyAction = null;
+		pasteAction = null;
+		deleteAction = null;
+		selectAllAction = null;
+		findAction = null;
+		printAction = null;
+		revertAction = null;
+		refreshAction = null;
+		propertiesAction = null;
+		quitAction = null;
+		moveAction = null;
+		renameAction = null;
+		goIntoAction = null;
+		backAction = null;
+		forwardAction = null;
+		upAction = null;
+		nextAction = null;
+		previousAction = null;
+		openWorkspaceAction = null;
+		projectPropertyDialogAction = null;
+		newWizardAction = null;
+		newWizardDropDownAction = null;
+		importResourcesAction = null;
+		exportResourcesAction = null;
+		buildAllAction = null;
+		cleanAction = null;
+		toggleAutoBuildAction = null;
+		buildWorkingSetMenu = null;
+		quickStartAction = null;
+		tipsAndTricksAction = null;
+		showInQuickMenu = null;
+		newQuickMenu = null;
+		addBookmarkAction = null;
+		addTaskAction = null;
+		buildProjectAction = null;
+		openProjectAction = null;
+		closeProjectAction = null;
+		newWizardMenu = null;
+		pinEditorContributionItem = null;
+		statusLineItem = null;
+		prefListener = null;
+		propPrefListener = null;
+		introAction = null;
 	}
 
 	void updateModeLine(final String text) {
@@ -1239,7 +1339,8 @@ public final class WorkbenchActionBuilder {
 			}
 		};
 		registerGlobalAction(newQuickMenu);
-		
+	
+		pinEditorContributionItem = ContributionItemFactory.PIN_EDITOR.create(getWindow());
 	}
 
 	private void setCurrentActionBarConfigurer(IActionBarConfigurer actionBarConfigurer)

@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -97,7 +99,11 @@ public abstract class AnimationItem {
 				//Do nothing
 			}
 		});
-		
+		animationItem.addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent e) {
+                AnimationManager.getInstance().removeItem(AnimationItem.this);
+            }
+        });
 		AnimationManager.getInstance().addItem(this);
 	}
 	

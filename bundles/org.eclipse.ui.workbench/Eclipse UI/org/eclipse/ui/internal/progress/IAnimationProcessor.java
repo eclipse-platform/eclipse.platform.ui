@@ -26,6 +26,12 @@ interface IAnimationProcessor {
 	void addItem(AnimationItem item);
 	
 	/**
+	 * Remove an item from the list of the items we are updating.
+	 * @param item
+	 */	
+	void removeItem(AnimationItem item);
+
+	/**
 	 * Return whether or not the receiver has any items.
 	 * @return
 	 */

@@ -59,6 +59,7 @@ public void dispose() {
 		WWinPluginAction action = (WWinPluginAction)iter.next();
 		action.dispose();
 	}
+	pluginActions.clear();
 	bars = null;
 }
 /**

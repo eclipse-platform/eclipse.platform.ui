@@ -213,7 +213,10 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 		
 		if (cache != null) {
 			// for dynamic UI - save cache for future removal lf actionset extensions
-			WorkbenchPlugin.getDefault().getActionSetRegistry().addCache(set.getDesc().getId(), cache);
+//        Don't call addCache -- it's broken, and is only used for dynamic plugin removal,
+//        which the workbench doesn't currently support.
+//        See bug 66374 for more details.
+//			WorkbenchPlugin.getDefault().getActionSetRegistry().addCache(set.getDesc().getId(), cache);
 			for (int i = 0; i < cache.size(); i++) {
 				ActionSetContribution contribution = (ActionSetContribution)cache.get(i);
 				contribution.contribute(actionSet.getBars(), true, true);

@@ -75,7 +75,16 @@ class ProgressAnimationProcessor implements IAnimationProcessor {
 	public void addItem(AnimationItem item) {
 		Assert.isTrue(item instanceof ProgressAnimationItem);
 		items.add(item);
+	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.progress.IAnimationProcessor#removeItem(org.eclipse.ui.internal.progress.AnimationItem)
+	 */
+	public void removeItem(AnimationItem item) {
+		Assert.isTrue(item instanceof ProgressAnimationItem);
+		items.remove(item);
 	}
 
 	/*

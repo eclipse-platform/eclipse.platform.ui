@@ -88,6 +88,7 @@ public class NewWizardDropDownAction
 			dropDownMenuMgr.dispose();
 			dropDownMenuMgr = null;
 		}
+		workbenchWindow = null;
 	}
 	/**
 	 * getMenu method comment.

@@ -270,10 +270,22 @@ public boolean close() {
 		return false;
 		
 	if (super.close()) {
-		menuBarManager = null;
-		toolBarManager = null;
-		statusLineManager = null;
-		coolBarManager = null;
+	    if (menuBarManager != null) {
+	        menuBarManager.dispose();
+	        menuBarManager = null;
+	    }
+	    if (toolBarManager != null) {
+	        toolBarManager.dispose();
+	        toolBarManager = null;
+	    }
+	    if (statusLineManager != null) {
+	        statusLineManager.dispose();
+	        statusLineManager = null;
+	    }
+	    if (coolBarManager != null) {
+	        coolBarManager.dispose();
+	        coolBarManager = null;
+	    }
 		return true;
 	}
 	return false;
