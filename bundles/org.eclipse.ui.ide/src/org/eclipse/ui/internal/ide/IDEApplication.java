@@ -20,7 +20,7 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.boot.IPlatformRunnable;
+import org.eclipse.core.runtime.IPlatformRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
@@ -40,7 +40,7 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @since 3.0
  */
-public final class IDEApplication implements IPlatformRunnable, IExecutableExtension {
+public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
 
 	private static final String METADATA_FOLDER = ".metadata"; //$NON-NLS-1$
 	private static final String VERSION_FILENAME = "version.ini"; //$NON-NLS-1$
@@ -69,8 +69,7 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 	 * @see org.eclipse.core.boot.IPlatformRunnable#run(java.lang.Object)
 	 */
 	public Object run(Object args) throws Exception {
-		// create and startup the display for the workbench
-		Display display = PlatformUI.createDisplay();
+		Display display = createDisplay();
 
 		try {
 			Shell shell = new Shell(display, SWT.ON_TOP);
@@ -112,6 +111,15 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 			if (display != null)
 				display.dispose();
 		}
+	}
+
+	/**
+	 * Creates the display used by the application.
+	 * 
+	 * @return the display used by the application
+	 */
+	protected Display createDisplay() {
+		return PlatformUI.createDisplay();
 	}
 
 	/* (non-Javadoc)
