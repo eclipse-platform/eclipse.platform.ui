@@ -165,19 +165,37 @@ public class PlatformTest extends RuntimeTest {
 	public void testRunnable() {
 		final Vector exceptions = new Vector();
 
+		final List collected = new ArrayList();
+
+		// add a log listener to ensure that we report using the right plug-in id
+		ILogListener logListener = new ILogListener() {
+			public void logging(IStatus status, String plugin) {
+				collected.add(status);
+			}
+		};
+		Platform.addLogListener(logListener);
+
+		final Exception exception = new Exception("PlatformTest.testRunnable: this exception is thrown on purpose as part of the test.");
 		ISafeRunnable runnable = new ISafeRunnable() {
 			public void handleException(Throwable exception) {
 				exceptions.addElement(exception);
 			}
 
 			public void run() throws Exception {
-				throw new Exception("PlatformTest.testRunnable: this exception is thrown on purpose as part of the test.");
+				throw exception;
 			}
 		};
 
 		Platform.run(runnable);
 
+		Platform.removeLogListener(logListener);
+
 		assertEquals("1.0", exceptions.size(), 1);
+		assertEquals("1.1", exception, exceptions.firstElement());
+
+		// ensures the status object produced has the right plug-in id (bug 83614)
+		assertEquals("2.0", collected.size(), 1);
+		assertEquals("2.1", RuntimeTest.PI_RUNTIME_TESTS, ((IStatus) collected.get(0)).getPlugin());
 	}
 
 }

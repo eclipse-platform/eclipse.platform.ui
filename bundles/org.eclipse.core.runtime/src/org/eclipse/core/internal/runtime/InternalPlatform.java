@@ -675,6 +675,10 @@ public final class InternalPlatform {
 	private void handleException(ISafeRunnable code, Throwable e) {
 		if (!(e instanceof OperationCanceledException)) {
 			String pluginId = Platform.PI_RUNTIME;
+			// try to obtain the correct plug-in id for the bundle providing the safe runnable 
+			Bundle source = packageAdmin.getBundle(code.getClass());
+			if (source != null && source.getSymbolicName() != null)
+				pluginId = source.getSymbolicName();
 			String message = NLS.bind(Messages.meta_pluginProblems, pluginId);
 			IStatus status;
 			if (e instanceof CoreException) {
@@ -729,9 +733,9 @@ public final class InternalPlatform {
 		// load the resource bundle and set the fields
 		final Field[] fields = clazz.getDeclaredFields();
 		MessageResourceBundle.load(bundleName, clazz.getClassLoader(), fields);
-		
+
 		// iterate over the fields in the class to make sure that there aren't any empty ones
-		final int MOD_EXPECTED = Modifier.PUBLIC | Modifier.STATIC ;
+		final int MOD_EXPECTED = Modifier.PUBLIC | Modifier.STATIC;
 		final int MOD_MASK = MOD_EXPECTED | Modifier.FINAL;
 		final int numFields = fields.length;
 		for (int i = 0; i < numFields; i++) {
