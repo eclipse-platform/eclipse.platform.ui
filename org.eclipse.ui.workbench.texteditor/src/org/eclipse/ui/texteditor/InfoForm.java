@@ -194,6 +194,9 @@ public class InfoForm {
 	 */
 	private Label createLabel(Composite parent, String text) {
 		Label label = new Label(parent, SWT.NONE);
+		GridData data= new GridData(GridData.FILL_HORIZONTAL);
+		label.setLayoutData(data);
+
 		if (text != null)
 			label.setText(text);
 		label.setBackground(fBackgroundColor);
@@ -206,6 +209,9 @@ public class InfoForm {
 	 */
 	private Label createHeader(Composite parent, String text) {
 		Label label = new Label(parent, SWT.NONE);
+		GridData data= new GridData(GridData.FILL_HORIZONTAL);
+		label.setLayoutData(data);
+
 		if (text != null)
 			label.setText(text);
 		label.setBackground(fBackgroundColor);
