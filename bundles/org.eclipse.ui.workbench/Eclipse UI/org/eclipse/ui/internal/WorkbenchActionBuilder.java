@@ -652,7 +652,7 @@ public class WorkbenchActionBuilder {
 
 		ISharedImages sharedImages = workbench.getSharedImages();
 		newWizardDropDownAction =
-			new NewWizardDropDownAction(workbench, newWizardAction);
+			new NewWizardDropDownAction(window, newWizardAction);
 		newWizardDropDownAction.setImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
 		newWizardDropDownAction.setHoverImageDescriptor(
