@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.5 [en] (Win98; I) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.73 [en] (Win98; U) [Netscape]">
    <title>Help System extension points: Contexts</title>
 </head>
 <body link="#0000FF" vlink="#800080">
@@ -59,9 +59,25 @@ label="Help Related Topic 2"/></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/context></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;/contexts></tt>
 <br>&nbsp;
+<h4>
+Externalizing Strings</h4>
+Context manifest files externalize their strings by replacing the string
+with a key (e.g. %fooWidget) and creating an entry in the context.properties
+file of the form:
+<br>&nbsp;&nbsp;&nbsp; fooWidget = “Builds the project ”
+<br>The related topic labels are externalized using a similar approach.
+To externalize &lt;topic href="fooHelp.html" label="Building Projects">,
+replace its label with a key %buildingProjects . The topic will look like:
+<br>&nbsp;&nbsp;&nbsp; &lt;topic href="fooHelp.html" label="%buildingProjects">
+<br>Create an entry in the context.properties file containing the entry:
+<br>&nbsp;&nbsp;&nbsp; buildingProjects = Building Projects
+<br>The help system will use context.properties when looking up strings
+externalized by our context help contributions.
+<br>&nbsp;
 <p><b><i>API Information</i>: </b>No code is required to use this extension
 point. All that is needed is to supply the appropriate manifest file(s)
 mentioned in the <tt>plugin.xml</tt> file.
+<br>&nbsp;
 <p><b><i>Supplied Implementation: </i></b>The optional default implementation
 of the help system UI supplied with the Eclipse platform fully supports
 the <tt>contexts</tt> extension point.

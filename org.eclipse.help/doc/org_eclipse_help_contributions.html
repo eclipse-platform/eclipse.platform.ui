@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.51 [en] (WinNT; U) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.73 [en] (Win98; U) [Netscape]">
    <title>Help System extension points: Contributions</title>
 </head>
 <body link="#0000FF" vlink="#800080">
@@ -59,15 +59,15 @@ manifest file)<b>:</b></i>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topic label CDATA #REQUIRED ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topic href&nbsp; CDATA #IMPLIED
 ></tt>
-<br><tt>&nbsp;&nbsp;&nbsp; <font color="#000000">&lt;!ATTLIST topic insert-constraint
-(child | first-child | last-child | prev-sib | next-sib) "child"></font></tt>
-<p><i><b>Configuration Markup for Infosets </b>(this is what goes into
-the infoset manifest file)<b>:</b></i>
+<p><b><i>Configuration Markup for Infosets </i></b><i>(this is what goes
+into the infoset manifest file)<b>:</b></i>
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT infoset (infoview)*&nbsp; ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST infoset&nbsp; id&nbsp; ID&nbsp;
 #REQUIRED ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST infoset&nbsp; label&nbsp; CDATA&nbsp;
 #REQUIRED ></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST infoset&nbsp; href&nbsp; CDATA
+#IMPLIED ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST infoset&nbsp; standalone&nbsp;
 (false|true) false&nbsp; #IMPLIED ></tt>
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT infoview EMPTY></tt>
@@ -89,7 +89,7 @@ false #IMPLIED ></tt>
 <p>In general, a plug-in that needs to provide online help will define
 its own topics manifests and the necessary actions manifests to wire the
 topics to the correct place. In the end, the help system is configured
-to be launched as some actions, and the id of the views manifest will be
+to be launched as some actions, and the id of the information set can be
 used to do so.
 <p>There are four types of XML elements a plug-in can use: the topic, the
 infoset, the actions, and the insert elements.
@@ -100,14 +100,14 @@ or can be listed as a flat list. A topics manifest is viewed as a data
 source for further topics interleaving and organization into an integrated
 web, with different view perspectives.&nbsp; In addition, topics can be
 acted upon by specifying their id's, but one can also act on a group of
-topics by specifying the id of the topics element that contains them.&nbsp;
+topics by specifying the id of the containing topics or topic element.&nbsp;
 Later when wiring topics to views or other topics, the structure defined
 in the topics manifest is maintained (subject to alterations done by insert
 actions).
 <p>The topic element is the workhorse of the navigation structure. There
 are three typical uses for the topic element:
-<p>1.&nbsp; To provide a link to a documentation file - often an HTML file
-in some doc.zip.
+<p>1.&nbsp; To provide a link to a documentation file - usually an HTML
+file.
 <br>2.&nbsp; To act as a container for other topics, either in the same
 manifest or another.
 <br>3.&nbsp; To provide an insertion point for other topics, either in
@@ -139,9 +139,7 @@ point, the topic must have an id attribute.
 <br>&nbsp;
 <p><b>The infoset element</b>
 <p><font color="#000000">An information set is an entry point into a documentation
-web: a collection of all the online documentation that can be displayed
-by the help viewer when launched. It can be thought of as a collection
-of views.</font>
+web.&nbsp; It can be thought of as a collection of views.</font>
 <p><font color="#000000">Views are intended to provide high level semantic
 groupings within a documentation web. They are defined using the </font><tt>infoview
 </tt><font color="#000000">element
@@ -152,10 +150,7 @@ the mechanism for defining them.</font>
 <p><font color="#000000">For example, there can be a "task view" defined
 which is a merge of all the topics from a "how to do something" perspective.
 Another view, a "component view", can also be defined which is a topics
-tree displaying all components and their documentation. In the current
-implementation of the help system a "search view" is always added to the
-list of views. This view enables the user to access help topics by querying
-for a word/phrase.</font>
+tree displaying all components and their documentation.</font>
 <p>The infoview element represents a container for topics that can be "shared"
 across plug-ins.&nbsp; It is a perspective on the entire documentation.
 There may be times when a number of different plug-ins contribute to the
@@ -214,12 +209,12 @@ be inserted in multiple infoviews. This means, that if a parent topic,
 and thus, its subtree, is inserted into an infoset, none of its children
 can be reinserted in the same infoview. Basically, insertion creates indivisible
 partitions for a specific infoview.
-<p>Alternative insertion options are provided, when previous ones could
-not be performed. The nested insert subelements of the insert element provide
-these alternatives. This can be thought of as a "fall-back" mechanism where
-if an insert action fails, the nested insert action will be executed. Once
-the first choice insertion point has been satisfied, the other alternative
-insertion points are ignored.
+<p>Alternative insertion options are provided, and would be executed when
+previous ones could not be performed. The nested insert subelements of
+the insert element provide these alternatives. This can be thought of as
+a "fall-back" mechanism where if an insert action fails, the nested insert
+action will be executed. Once the first choice insertion point has been
+satisfied, the other alternative insertion points are ignored.
 <br>&nbsp;
 <p><b><i>Examples:</i></b>
 <p>The following is an example of using the <tt>contributions</tt> extension
@@ -312,49 +307,42 @@ hierarchy :
 <br>&nbsp;</blockquote>
 Here is the resulting documentation hierarchy in the Eclipse Workbench
 :
-<br>&nbsp;
 <p><img SRC="HelpSample.JPG" height=431 width=803>
 <br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
-<blockquote>&nbsp;</blockquote>
-
 <h4>
 Non-integrated components</h4>
-There is a variation in the default handling of contributions to allow
-for "non-integrated" components. Here is a simple scenario: an ISV creates
-a component that includes some documentation. The component can be installed
-by anybody using eclipse, including some larger products that have their
-own infosets. The ISV may or may not know in advance who are the potential
-users of his component. In that case, he wants to ensure that the documentation
-for the component can be accessed, no matter how the component is integrated.
-If there are well-known infosets in some products, the ISV can target its
-documentation for wiring into those infosets. In that case the default
-infoset provided by the component should not be shown. If there are no
-well-known infosets that the component can be wired into (because they
-have not been installed or they simply do not exist), then the component
-documentation should be shown in the default infoset provided with the
-component.
-<p>To support this non-integrated or loosely integrated documentation,
-a plugin can define an infoset and associated actions and set their <b>standalone</b>
-attribute to true. This has the effect of executing the inserts only when
-those topics have never been contributed anywhere else and only display
-the infoset if it is not empty. In other words, this behaves as: "if this
-is an independent plugin, and there are no topics contributed to some well-known
-infoset, then insert the documentation into a standalone info set". Empty
-standalone infosets are not shown. This really says that if the topics
-contributed by the plugin are inserted into well known infosets, then the
-standalone actions did not insert anything in the standalone infoset, so
-just ignore this empty infoset.
-<br>Setting standalone attributes on actions and infosets is useful when
-providing a "Catch all" scenario, when documentation cannot be contributed
-to a well-known infoset but the plugin documentation should still appear
+One can expect a plug-in to sometimes be installed by itself, and in other
+cases it will be installed as part of a larger component or product. When
+is is a free floating plug-in it should be ensured that the infoset is
+visible. When the topics are integrated into a larger web it probably doesn’t
+make sense for a standalone book to show up anymore. To support this non-integrated
+or loosely integrated documentation, a plug-in can define an infoset and
+associated actions and set their standalone attribute to true. This has
+an effect of executing the insert actions only when those topics have never
+been contributed anywhere else, and only display the infoset if it is not
+empty.&nbsp; Setting standalone attributes on actions and infosets is useful
+when providing a "Catch all" scenario, when documentation cannot be contributed
+to a well-known infoset but the plug-in documentation should still appear
 somewhere.
+<h4>
+Externalizing Strings</h4>
+Plugin.xml files externalize their strings by replacing the string with
+a key (e.g. %pluginName) and creating an entry in the plugin.properties
+file of the form:
+<br>&nbsp;&nbsp;&nbsp; pluginName = “Online Help Sample Plugin”
+<br>The contribution XML files are externalized using a similar approach.
+To externalize &lt;topic id="plainTasks" label="Plain Stuff">, replace
+its label with a key %plainStuff . The topic will look like:
+<br>&nbsp;&nbsp;&nbsp; &lt;topic id="plainTasks" label="%plainStuff">
+<br>Create an entry in the doc.properties file containing the entry:
+<br>&nbsp;&nbsp;&nbsp; plainStuff = Plain Stuff
+<br>The help system will use doc.properties when looking up strings externalized
+by our online help contributions.
 <br>&nbsp;
 <p><b><i>API Information</i>:<font color="#CC0000"> </font></b>No code
 is required to use this extension point. All that is needed is to supply
 the appropriate manifest files mentioned in the <tt>plugin.xml</tt> file.
+<br>&nbsp;
 <p><i><b>Supplied Implementation:</b> </i>The optional default implementation
 of the help system UI supplied with the Eclipse platform fully supports
 the <tt>contributions</tt> extension point.
