@@ -428,4 +428,9 @@ public interface IDebugUIConstants {
 	 * Status indicating an invalid extension definition.
 	 */
 	public static final int STATUS_INVALID_EXTENSION_DEFINITION = 100;
+	
+	/**
+	 * Status code indicating an unexpected internal error.
+	 */
+	public static final int INTERNAL_ERROR = 120;			
 }
