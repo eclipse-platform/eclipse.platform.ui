@@ -206,13 +206,16 @@ public class WatchExpression implements IWatchExpression {
 		watchExpressionChanged();
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.model.IWatchExpression#hasError()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IErrorReportingExpression#hasErrors()
 	 */
 	public boolean hasErrors() {
 		return fResult != null && fResult.hasErrors();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IErrorReportingExpression#getErrorMessages()
+	 */
 	public String[] getErrorMessages() {
 		if (fResult == null) {
 			return new String[0];

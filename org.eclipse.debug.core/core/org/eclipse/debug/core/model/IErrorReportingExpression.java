@@ -13,6 +13,8 @@ package org.eclipse.debug.core.model;
 /**
  * An expression that can report errors which occurred during the
  * expression's evaluation.
+ * 
+ * @since 3.0
  */
 public interface IErrorReportingExpression extends IExpression {
 	/**
