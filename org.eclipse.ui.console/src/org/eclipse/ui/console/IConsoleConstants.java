@@ -137,12 +137,6 @@ public interface IConsoleConstants {
 	 */
 	public static final String P_CONSOLE_OUTPUT_COMPLETE = ConsolePlugin.getUniqueIdentifier() + ".P_CONSOLE_STREAMS_CLOSED"; //$NON-NLS-1$
 	
-	/**
-	 * Property constant indicating that the auto scrolling should be turned on (or off)
-	 * 
-	 * @since 3.1
-	 */
-	public static final String P_AUTO_SCROLL = ConsolePlugin.getUniqueIdentifier() + ".P_AUTO_SCROLL"; //$NON-NLS-1$
 
     /**
      * The default tab size

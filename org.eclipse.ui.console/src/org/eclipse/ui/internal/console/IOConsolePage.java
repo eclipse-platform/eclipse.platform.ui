@@ -16,7 +16,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleView;
-import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.console.TextConsolePage;
 import org.eclipse.ui.console.TextConsoleViewer;
@@ -41,10 +40,7 @@ public class IOConsolePage extends TextConsolePage {
         fPropertyChangeListener = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
                 String property = event.getProperty();
-                if (property.equals(IConsoleConstants.P_AUTO_SCROLL)) {
-                    IOConsole ioconsole = (IOConsole) getConsole();
-                    setAutoScroll(ioconsole.getAutoScroll());
-                } else if (property.equals(IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE)) {
+                if (property.equals(IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE)) {
                     setReadOnly();
                 }
             }
@@ -98,7 +94,7 @@ public class IOConsolePage extends TextConsolePage {
      */
     protected void createActions() {
         super.createActions();
-        fScrollLockAction = new ScrollLockAction((IOConsole) getConsole());
+        fScrollLockAction = new ScrollLockAction(getConsoleView());
         setAutoScroll(!fScrollLockAction.isChecked());
     }
 

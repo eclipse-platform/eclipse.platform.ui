@@ -23,8 +23,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -54,6 +56,7 @@ public class ConsoleManager implements IConsoleManager {
 	 * List of registered consoles
 	 */
 	private List fConsoles = new ArrayList(10); 
+
 	
 	// change notification constants
 	private final static int ADDED = 1;
@@ -225,25 +228,36 @@ public class ConsoleManager implements IConsoleManager {
 	            if (window != null) {
 	                IWorkbenchPage page= window.getActivePage();
 	                if (page != null) {
-	                    IViewPart consoleView= page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
-	                    if (consoleView == null) {
-	                        try {
-	                            consoleView = page.showView(IConsoleConstants.ID_CONSOLE_VIEW, null, IWorkbenchPage.VIEW_CREATE);
-	                        } catch (PartInitException pie) {
-	                            ConsolePlugin.log(pie);
-	                        }
-	                    } 
-	                    boolean bringToTop = shouldBringToTop(console, consoleView);
-	                    if (bringToTop) {
-	                        page.bringToTop(consoleView);
-	                    }
-	                    
-	                    if (consoleView instanceof IConsoleView) {
-	                        ((IConsoleView)consoleView).display(console);
-	                    }
+                        IViewReference[] viewReferences = page.getViewReferences();
+                        for (int i = 0; i < viewReferences.length; i++) {
+                            IViewReference viewRef = viewReferences[i];
+                            if (viewRef == null) {
+                                continue;
+                            }
+                            if(IConsoleConstants.ID_CONSOLE_VIEW.equals(viewRef.getId())) {
+                                IWorkbenchPart part = viewRef.getPart(false);
+                                IConsoleView consoleView = null;
+                                if (part == null) {
+                                    try {
+                                        consoleView = (IConsoleView) page.showView(IConsoleConstants.ID_CONSOLE_VIEW, null, IWorkbenchPage.VIEW_CREATE);
+                                    } catch (PartInitException pie) {
+                                        ConsolePlugin.log(pie);
+                                    }
+                                } else if (!(part instanceof IConsoleView)) {
+                                    continue;
+                                } else {
+                                    consoleView = (IConsoleView) part;
+                                }
+                                boolean bringToTop = shouldBringToTop(console, consoleView);
+                                if (bringToTop) {
+                                    page.bringToTop(consoleView);
+                                }
+                                consoleView.display(console);        
+                            }
+                        }
 	                }
-	            }
-	        }
+                }
+            }
 	    });
 	}	
 	
@@ -358,4 +372,5 @@ public class ConsoleManager implements IConsoleManager {
         }
         return (ConsoleFactoryExtension[]) fConsoleFactoryExtensions.toArray(new ConsoleFactoryExtension[0]);
     }
+
 }

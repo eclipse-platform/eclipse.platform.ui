@@ -54,13 +54,7 @@ public abstract class TextConsole extends AbstractConsole {
     /** 
 	 * The font used by this console
 	 */
-    private Font fFont;
-    /**
-     * Whether the console srolls to show the end of text as output
-     * is appended.
-     */
-    private boolean fAutoScroll;
-    
+    private Font fFont;    
     /**
      * The Console's regular expression pattern matcher
      */
@@ -235,26 +229,13 @@ public abstract class TextConsole extends AbstractConsole {
 	 * output is appened to the console.
 	 * 
 	 * @param scroll whether this console scrolls automatically
+     * 
+     * @deprecated Since a console can now exist in more than one ConsoleView in the same
+     *      perspective, autoscroll can not be set on the console itself. It would not be 
+     *      desirable to change the state of scroll lock in every console view.
+     *      This method will be deleted before 3.1.
 	 */
 	public void setAutoScroll(boolean scroll) {
-	    if (scroll != fAutoScroll) {
-	        fAutoScroll = scroll;
-	        ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-	            public void run() {
-	                firePropertyChange(TextConsole.this, IConsoleConstants.P_AUTO_SCROLL, new Boolean(!fAutoScroll), new Boolean(fAutoScroll));
-	            }
-	        });
-	    }
-	}
-	
-	/**
-	 * Returns whether this console scrolls automatically to show the end of text as
-	 * output is appened to the console.
-	 * 
-	 * @return whether this console scrolls automatically
-	 */	
-	public boolean getAutoScroll() {
-	    return fAutoScroll;
 	}
 	
     /**

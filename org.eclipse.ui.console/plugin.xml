@@ -27,10 +27,11 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            name="%ConsoleView.name"
+            allowMultiple="true"
+            class="org.eclipse.ui.internal.console.ConsoleView"
             icon="icons/full/cview16/console_view.gif"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.console.ConsoleView"
+            name="%ConsoleView.name"
             id="org.eclipse.ui.console.ConsoleView">
       </view>
    </extension>
@@ -64,6 +65,12 @@ M4 = Platform-specific fourth key
              class="org.eclipse.ui.internal.console.ConsoleTypePropertyTester"
              properties="consoleTypeTest"
              id="org.eclipse.ui.console.ConsoleTypePropertyTester"/>
+    </extension>
+    <extension
+          point="org.eclipse.ui.console.consoleFactories">
+       <consoleFactory
+             label="%consoleViewConsoleFactory.name"
+             class="org.eclipse.ui.console.actions.ConsoleViewConsoleFactory"/>
     </extension>
 
 </plugin>

@@ -62,5 +62,17 @@ public interface IConsoleView extends IViewPart {
 	 * @param console the console that has changed
 	 */
 	public void warnOfContentChange(IConsole console);	
+    
+    /**
+     * Sets the scroll lock state of the currently active console.
+     * @param scrollLock <code>true</code> to turn scroll lock on, otherwise <code>false</code>
+     */
+    public void setScrollLock(boolean scrollLock);
+    
+    /**
+     * Returns the scroll lock state of the currently active console
+     * @return <code>true</code> if scroll lock is on, <code>false</code> otherwise
+     */
+    public boolean getScrollLock();
 
 }

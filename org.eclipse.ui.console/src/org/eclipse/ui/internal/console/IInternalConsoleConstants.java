@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
-import org.eclipse.ui.console.ConsolePlugin;
- 
 public interface IInternalConsoleConstants {
-    public static final String PREF_CONSOLE_SCROLL_LOCK = ConsolePlugin.getUniqueIdentifier() + ".PREF_CONSOLE_LOCK"; //$NON-NLS-1$
     
 	// tool images
 	public static final String IMG_LCL_PIN = "IMG_LCL_PIN"; //$NON-NLS-1$

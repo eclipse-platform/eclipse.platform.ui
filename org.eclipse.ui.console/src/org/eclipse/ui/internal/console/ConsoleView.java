@@ -87,6 +87,8 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	
 	private OpenConsoleAction fOpenConsoleAction = null;
 
+    private boolean fScrollLock;
+
 	private boolean isAvailable() {
 		return getPageBook() != null && !getPageBook().isDisposed();
 	}
@@ -150,6 +152,10 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 			if (fPinAction != null) {
 				fPinAction.update();
 			}
+            IPage page = getCurrentPage();
+            if (page instanceof IOConsolePage) {
+                ((IOConsolePage)page).setAutoScroll(!fScrollLock);
+            }
 		}
 	}
 	
@@ -575,5 +581,24 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 */
 	public void partInputChanged(IWorkbenchPartReference partRef) {		
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.IConsoleView#setScrollLock(boolean)
+     */
+    public void setScrollLock(boolean scrollLock) {
+        fScrollLock = scrollLock;
+
+        IPage page = getCurrentPage();
+        if (page instanceof IOConsolePage) {
+            ((IOConsolePage)page).setAutoScroll(!scrollLock);
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.IConsoleView#getScrollLock()
+     */
+    public boolean getScrollLock() {
+        return fScrollLock;
+    }
     
 }
