@@ -26,7 +26,7 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 /**
  * Manages the installation and deinstallation of global actions for the default text editor. <p>
  * If instantiated and used as-is, this contributor connects global actions and adds actions
- * for line delimiter conversion and encpding support. <p>
+ * for line delimiter conversion and encoding support. <p>
  * @since 2.0
  */
 public class TextEditorActionContributor extends BasicTextEditorActionContributor {
