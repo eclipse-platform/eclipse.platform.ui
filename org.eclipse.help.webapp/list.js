@@ -75,14 +75,13 @@ function highlightTopic(topic)
   var a = getDivNode(topic); 
   if (a != null)
   {
-  	   if (oldActive && oldActive != a) {
+  	   if (oldActive && oldActive != a) 
     		oldActive.className="list";
     		
   		a.className = "active";
   		a.firstChild.blur();
 
-  	}
-  	oldActive = a;
+  		oldActive = a;
   }
 }
 
