@@ -22,4 +22,9 @@
         <url-pattern>/content/*</url-pattern>
     </servlet-mapping>
     
+    <servlet-mapping>
+        <servlet-name>content</servlet-name>
+        <url-pattern>/ns4/content/*</url-pattern>
+    </servlet-mapping>
+    
 </web-app>
