@@ -12,13 +12,15 @@
 
 package org.eclipse.ant.ui.internal.antsupport.logger;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
 import java.text.MessageFormat;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
 import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.ant.ui.internal.antsupport.AntSupportMessages;
 import org.eclipse.ant.ui.internal.launchConfigurations.AntProcess;
@@ -33,6 +35,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 	
 /**
@@ -79,40 +82,62 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		StringBuffer fullMessage= new StringBuffer(System.getProperty("line.separator")); //$NON-NLS-1$
 		
 		if (event.getTask() != null && !fEmacsMode) {
-			getAdornedMessage(event, fullMessage);
+			adornMessage(event, fullMessage);
+		} else {
+			fullMessage.append(message);
 		}
-		fullMessage.append(message);
 		message= fullMessage.toString();
 		
 		monitor.append(message);
 		logMessageToLogFile(message, priority);
-		
 	}
 
 	/**
 	 * Builds a right justified task prefix for the given build event, placing it
-	 * in the given string buffer. Creates a hyperlink for the task prefix. 
+	 * in the given string buffer. Creates the hyperlinks for the task prefix. 
 	 *  
 	 * @param event build event
 	 * @param fullMessage buffer to place task prefix in
 	 */
-	private void getAdornedMessage(BuildEvent event, StringBuffer fullMessage) {
+	private void adornMessage(BuildEvent event, StringBuffer fullMessage) {
 		String name = event.getTask().getTaskName();
 		if (name == null) {
 			name = "null"; //$NON-NLS-1$
 		}
+		Location location = event.getTask().getLocation();
 		int size = IAntUIConstants.LEFT_COLUMN_SIZE - (name.length() + 3);
 		for (int i = 0; i < size; i++) {
 			fullMessage.append(' ');
 		}
-		fullMessage.append('[');
-		fullMessage.append(name);
-		fullMessage.append("] "); //$NON-NLS-1$
+		StringBuffer label= new StringBuffer();
+		label.append('[');
+		label.append(name);
+		label.append("] "); //$NON-NLS-1$
+		
 		int offset = Math.max(size, 0) + 1;
 		int length = IAntUIConstants.LEFT_COLUMN_SIZE - size - 3;
-		IConsoleHyperlink taskLink = getTaskLink(event);
-		if (taskLink != null) {
-			TaskLinkManager.addTaskHyperlink(getAntProcess(null), taskLink, new Region(offset, length), name);
+		
+		try {
+			BufferedReader r = new BufferedReader(new StringReader(event.getMessage()));
+			String line = r.readLine();
+			IRegion region= new Region(offset, length);
+			appendAndLink(fullMessage, name, location, label, region, line);
+			line = r.readLine();
+			while (line != null) {
+				fullMessage.append(System.getProperty("line.separator")); //$NON-NLS-1$
+				appendAndLink(fullMessage, name, location, label, region, line);
+				line = r.readLine();
+			}
+		} catch (IOException e) {
+			fullMessage.append(label).append(event.getMessage());
+		}
+	}
+	
+	private void appendAndLink(StringBuffer fullMessage, String name, Location location, StringBuffer label, IRegion region, String line) {
+		fullMessage.append(label);
+		fullMessage.append(line);
+		if (location != null) {
+			TaskLinkManager.addTaskHyperlink(getAntProcess(null), getTaskLink(location), region, name);
 		}
 	}
 
@@ -160,13 +185,9 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	 * 
 	 * @return hyper link, or <code>null</code>
 	 */
-	private IConsoleHyperlink getTaskLink(BuildEvent event) {
-		Task task = event.getTask();
-		if (task != null) {
-			Location location = task.getLocation();
-			if (location != null) {
-				return AntUtil.getTaskLink(location.toString(), fBuildFileParent);
-			}
+	private IConsoleHyperlink getTaskLink(Location location) {
+		if (location != null) {
+			return AntUtil.getTaskLink(location.toString(), fBuildFileParent);
 		}
 		return null;
 	}	

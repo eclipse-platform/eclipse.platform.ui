@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,6 +23,7 @@ import java.util.List;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.DefaultLogger;
+import org.apache.tools.ant.Location;
 
 /**
  * Parts adapted from org.eclipse.jdt.internal.junit.runner.RemoteTestRunner
@@ -252,11 +254,22 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 
 	private void processEvent(BuildEvent event) {
 		if (event.getTask() != null & !emacsMode) {
-			StringBuffer message= new StringBuffer(MessageIds.TASK);
-			message.append(event.getTask().getTaskName());
-			message.append(',');
-			message.append(event.getTask().getLocation());
-			sendMessage(message.toString());
+			try {
+				BufferedReader r = new BufferedReader(new StringReader(event.getMessage()));
+				String line = r.readLine();
+				StringBuffer message= null;
+				String taskName= event.getTask().getTaskName();
+				Location location= event.getTask().getLocation();
+				while (line != null) {
+					message= new StringBuffer(MessageIds.TASK);
+					message.append(taskName);
+					message.append(',');
+					message.append(location);
+					sendMessage(message.toString());
+					line = r.readLine();
+				}
+			} catch (IOException e) {
+			}
 		}
 	}
 }
