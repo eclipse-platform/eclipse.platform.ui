@@ -3,6 +3,7 @@
 <% 
 	// calls the utility class to initialize the application
 	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
+	
 %>
 
 <% 
@@ -44,6 +45,10 @@
 </head>
 
 <body onload="onloadHandler('<%=label%>')">
+
+	<ul><li class='bookshelf'>
+    <a target='_self' href='tocs.jsp'><nobr>Bookshelf</nobr></a>
+    </li></ul>
 
 <%
 	// Generate the tree
