@@ -2,15 +2,15 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.team.core">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.team.core" id="ignore" name="Ignore"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to register information about whether particular resources should be ignored;
+      <appInfo>
+         <meta.schema plugin="org.eclipse.team.core" id="ignore" name="Ignore"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to register information about whether particular resources should be ignored;
 that is, excluded from version configuration management operations.
 Providers may provide an extension for this extension point.  No code beyond the XML extension declaration is required.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -53,7 +53,7 @@ Providers may provide an extension for this extension point.  No code beyond the
          <attribute name="enabled" type="boolean" use="required">
             <annotation>
                <documentation>
-                  one of "true" or "false", determines whether this ignore pattern is enabled.
+                  one of &quot;true&quot; or &quot;false&quot;, determines whether this ignore pattern is enabled.
                </documentation>
             </annotation>
          </attribute>
@@ -69,9 +69,9 @@ Providers may provide an extension for this extension point.  No code beyond the
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.team.core.ignore"&gt;
-		&lt;ignore pattern="*.class" enabled="true"/&gt;
-	&lt;/extension&gt;
+ &lt;extension point=&quot;org.eclipse.team.core.ignore&quot;&gt;
+  &lt;ignore pattern=&quot;*.class&quot; enabled=&quot;true&quot;/&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>
@@ -100,7 +100,8 @@ Providers may provide an extension for this extension point.  No code beyond the
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2002 IBM Corporation and others.
+All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 

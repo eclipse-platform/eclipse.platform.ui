@@ -21,7 +21,7 @@
 <extension-point id="fileTypes" name="%FileTypesRegistry" schema="schema/fileTypes.mxsd"/>
 <extension-point id="ignore" name="%GlobalIgnoreRegistry" schema="schema/ignore.mxsd"/>
 <extension-point id="projectSets" name="%TeamProjectSets" schema="schema/projectSets.mxsd"/>
-<extension-point id="repository" name="%Repository"/>
+<extension-point id="repository" name="%Repository" schema="schema/repository.mxsd"/>
 <extension-point id="targets" name="%Targets"/>
 
 <!-- Define common known file types -->

@@ -2,18 +2,18 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.team.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.team.ui" id="configurationWizards" name="Configuration Wizards"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to register a method for configuration of a project.
+      <appInfo>
+         <meta.schema plugin="org.eclipse.team.ui" id="configurationWizards" name="Configuration Wizards"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to register a method for configuration of a project.
 Configuration involves the association of a project with a team provider, including all information necessary to initialize
 that team provider, including such things as username, password, and any relevant information necessary to locate the provider.
 &lt;p&gt;
 Providers may provide an extension for this extension point, and an implementation of &lt;samp&gt;org.eclipse.team.ui.IConfigurationWizard&lt;/samp&gt;
 which gathers the necessary information and configures the projects.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -54,7 +54,7 @@ which gathers the necessary information and configures the projects.
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  The name of the configuration type as it should appear in the configuration wizard.  Examples are "CVS", "WebDAV".
+                  The name of the configuration type as it should appear in the configuration wizard.  Examples are &quot;CVS&quot;, &quot;WebDAV&quot;.
                </documentation>
             </annotation>
          </attribute>
@@ -97,12 +97,12 @@ which gathers the necessary information and configures the projects.
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point="org.eclipse.team.ui.configurationWizard"&gt;
+ &lt;extension point=&quot;org.eclipse.team.ui.configurationWizard&quot;&gt;
   &lt;wizard 
-   name="WebDAV"
-   icon="webdav.gif"
-   class="com.xyz.DAVDecorator"
-   id="com.xyz.dav"&gt;
+   name=&quot;WebDAV&quot;
+   icon=&quot;webdav.gif&quot;
+   class=&quot;com.xyz.DAVDecorator&quot;
+   id=&quot;com.xyz.dav&quot;&gt;
   &lt;/wizard&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
@@ -134,7 +134,8 @@ This interface supports configuration of a wizard given a workbench and a projec
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2002 IBM Corporation and others.
+All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 
