@@ -91,6 +91,14 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	}
 	
 	/* (non-Javadoc)
+	 * Method declared on IWizardPage
+	 */
+	public boolean canFlipToNextPage() {
+		// Already know there is a next page...
+		return isPageComplete();
+	}
+
+	/* (non-Javadoc)
 	 * Method declared on IDialogPage.
 	 */
 	public void createControl(Composite parent) {
@@ -236,7 +244,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	 * @return the project location path, its anticipated initial value, or <code>null</code>
 	 *   if no project location path is known
 	 */
-	public IPath getLocationPath() {
+	/* package */ IPath getLocationPath() {
 		if (useDefaults)
 			return initialLocationFieldValue;
 
@@ -252,7 +260,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	 *
 	 * @return the new project resource handle
 	 */
-	public IProject getProjectHandle() {
+	/* package */ IProject getProjectHandle() {
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectName());
 	}
 	
@@ -263,7 +271,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	 * @return the project name, its anticipated initial value, or <code>null</code>
 	 *   if no project name is known
 	 */
-	public String getProjectName() {
+	/* package */ String getProjectName() {
 		if (projectNameField == null)
 			return initialProjectFieldValue;
 
@@ -325,7 +333,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	 * 
 	 * @param name initial project name for this page
 	 */
-	public void setInitialProjectName(String name) {
+	/* package */ void setInitialProjectName(String name) {
 		if (name == null)
 			initialProjectFieldValue = null;
 		else

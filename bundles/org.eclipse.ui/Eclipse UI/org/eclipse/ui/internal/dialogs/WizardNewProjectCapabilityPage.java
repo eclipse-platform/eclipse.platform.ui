@@ -42,8 +42,16 @@ public class WizardNewProjectCapabilityPage extends WizardPage {
 	 *
 	 * @param pageName the name of this page
 	 */
-	protected WizardNewProjectCapabilityPage(String pageName) {
+	public WizardNewProjectCapabilityPage(String pageName) {
 		super(pageName);
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on IWizardPage
+	 */
+	public boolean canFlipToNextPage() {
+		// Already know there is a next page...
+		return isPageComplete();
 	}
 
 	/* (non-Javadoc)
@@ -64,11 +72,22 @@ public class WizardNewProjectCapabilityPage extends WizardPage {
 	}
 	
 	/**
+	 * Returns the collection of capabilities selected
+	 * by the user. The collection is not in prerequisite
+	 * order.
+	 * 
+	 * @return array of selected capabilities
+	 */
+	/* package */ Capability[] getSelectedCapabilities() {
+		return capabilityGroup.getSelectedCapabilities();
+	}
+	
+	/**
 	 * Sets the initial categories to be selected.
 	 * 
 	 * @param categories initial categories to select
 	 */
-	public void setInitialSelectedCategories(Category[] categories) {
+	/* package */ void setInitialSelectedCategories(Category[] categories) {
 		initialSelectedCategories = categories;
 	}
 	
@@ -77,7 +96,7 @@ public class WizardNewProjectCapabilityPage extends WizardPage {
 	 * 
 	 * @param capabilities initial project capabilities to select
 	 */
-	public void setInitialProjectCapabilities(Capability[] capabilities) {
+	/* package */ void setInitialProjectCapabilities(Capability[] capabilities) {
 		initialProjectCapabilities = capabilities;
 	}
 }

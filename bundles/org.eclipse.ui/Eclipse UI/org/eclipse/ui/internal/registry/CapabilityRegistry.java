@@ -5,14 +5,18 @@ package org.eclipse.ui.internal.registry;
  */
  
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNatureDescriptor;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -208,18 +212,25 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	public void load() {
 		CapabilityRegistryReader reader = new CapabilityRegistryReader();
 		reader.read(Platform.getPluginRegistry(), this);
-		mapCapabilitiesToCategories();
+		mapCapabilities();
 	}
 	
 	/**
-	 * Adds each capability in the registry to a particular category.
+	 * Maps each capability in the registry to a particular category.
 	 * The category is defined in xml. If the capability's category is
 	 * not found, then the capability is added to the "misc" category.
+	 * <p>
+	 * Maps each capability in the registry to a particular nature
+	 * id.
 	 */
-	/* package */ void mapCapabilitiesToCategories() {
+	/* package */ void mapCapabilities() {
+		natureToCapability = new HashMap();
+		
 		Iterator enum = capabilities.iterator();
 		while (enum.hasNext()) {
 			Capability cap = (Capability) enum.next();
+			
+			// Map to category
 			Category cat = null;
 			String catPath = cap.getCategoryPath();
 			if (catPath != null)
@@ -233,6 +244,60 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 				}
 				miscCategory.addElement(cap);
 			}
+			
+			// Map to nature id
+			natureToCapability.put(cap.getNatureId(), cap);
 		}
+	}
+
+	/**
+	 * Removes from the capability collection all capabilities
+	 * whose UI is handle by another capability in the collection.
+	 * The provided collection must be in proper prerequisite order.
+	 * 
+	 * @param capabilities the capabilities to be pruned
+	 * @return a collection of capabilities pruned
+	 */
+	public Capability[] pruneCapabilities(Capability[] capabilities) {
+		ArrayList ids = new ArrayList(capabilities.length);
+		for (int i = 0; i < capabilities.length; i++)
+			ids.add(capabilities[i].getId());
+		
+		for (int i = 0; i < capabilities.length; i++) {
+			ArrayList handleIds = capabilities[i].getHandleUIs();
+			if (handleIds != null)
+				ids.removeAll(handleIds);
+		}
+
+		String[] results = new String[ids.size()];
+		ids.toArray(results);
+		return findCapabilities(results);
+	}
+	
+	/**
+	 * Checks that the collection is valid. If so, the collection is
+	 * ordered based on prerequisite.
+	 * 
+	 * @param capabilities the capabilities to be checked and ordered
+	 * @return a status object with code <code>IStatus.OK</code> if
+	 *		the given set of natures is valid, otherwise a status 
+	 *		object indicating what is wrong with the set. Also, the
+	 * 		collection of capabilities specified is ordered based on
+	 * 		prerequisite.
+	 */
+	public IStatus validateCapabilities(Capability[] capabilities) {
+		String natures[] = new String[capabilities.length];
+		for (int i = 0; i < capabilities.length; i++)
+			natures[i] = capabilities[i].getNatureId();
+		
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IStatus status = workspace.validateNatureSet(natures);
+		if (status.isOK()) {
+			natures = workspace.sortNatureSet(natures);
+			for (int i = 0; i < natures.length; i++)
+				capabilities[i] = (Capability)natureToCapability.get(natures[i]);
+		}
+
+		return status;
 	}
 }

@@ -1,11 +1,10 @@
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.ui.internal.registry.Capability;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.ui.internal.registry.Capability;
 
 /**
  * Represents a capability install step in a multi-step
@@ -19,8 +18,8 @@ public class InstallCapabilityStep extends WizardStep {
 	 * 
 	 * @param capability the capability to install
 	 */
-	public InstallCapabilityStep(Capability capability) {
-		super();
+	public InstallCapabilityStep(int number, Capability capability) {
+		super(number);
 		this.capability = capability;
 	}
 

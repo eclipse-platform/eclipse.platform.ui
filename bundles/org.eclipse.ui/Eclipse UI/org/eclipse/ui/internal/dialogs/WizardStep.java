@@ -9,11 +9,16 @@ package org.eclipse.ui.internal.dialogs;
  * Represents a step in a multi-step wizard.
  */
 public abstract class WizardStep {
+	private int number;
+	
 	/**
 	 * Creates a wizard step.
+	 * 
+	 * @param number the step number
 	 */
-	public WizardStep() {
+	public WizardStep(int number) {
 		super();
+		this.number = number;
 	}
 
 	/**
@@ -31,4 +36,13 @@ public abstract class WizardStep {
 	 * @return String the details of this step
 	 */
 	abstract public String getDetails();
+	
+	/**
+	 * Returns the step's number.
+	 * 
+	 * @return int the step's number
+	 */
+	public int getNumber() {
+		return number;
+	}
 }

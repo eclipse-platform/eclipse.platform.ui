@@ -4,7 +4,6 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -19,8 +18,8 @@ public class CreateProjectStep extends WizardStep {
 	 * 
 	 * @param page the wizard page containing the new project name
 	 */
-	public CreateProjectStep(WizardNewProjectCreationPage page) {
-		super();
+	public CreateProjectStep(int number, WizardNewProjectCreationPage page) {
+		super(number);
 		this.page = page;
 	}
 

@@ -8,13 +8,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectNatureDescriptor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.Capability;
+import org.eclipse.ui.internal.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
@@ -95,6 +99,25 @@ public class NewProjectWizard extends BasicNewResourceWizard {
 	}
 
 	/**
+	 * Builds the collection of steps to create and install
+	 * the chosen capabilities
+	 */
+	private void buildSteps() {
+		Capability[] caps = capabilityPage.getSelectedCapabilities();
+		CapabilityRegistry reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
+		IStatus status = reg.validateCapabilities(caps);
+		if (status.isOK()) {
+			Capability[] results = reg.pruneCapabilities(caps);
+			WizardStep[] steps = new WizardStep[results.length + 1];
+			steps[0] = new CreateProjectStep(1, creationPage);
+			for (int i = 0; i < results.length; i++)
+				steps[i+1] = new InstallCapabilityStep(i+2, results[i]);
+			reviewPage.setSteps(steps);
+		} else {
+		}
+	}
+	
+	/**
 	 * Returns the newly created project.
 	 *
 	 * @return the created project, or <code>null</code>
@@ -102,6 +125,15 @@ public class NewProjectWizard extends BasicNewResourceWizard {
 	 */
 	public IProject getNewProject() {
 		return newProject;
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on IWizard.
+	 */
+	public IWizardPage getNextPage(IWizardPage page) {
+		if (page == capabilityPage)
+			buildSteps();
+		return super.getNextPage(page);
 	}
 
 	/* (non-Javadoc)

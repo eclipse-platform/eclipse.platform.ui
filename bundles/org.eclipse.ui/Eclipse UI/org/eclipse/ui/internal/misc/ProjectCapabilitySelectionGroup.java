@@ -40,14 +40,6 @@ public class ProjectCapabilitySelectionGroup {
 	// user before being required by other capabilities.
 	private HashMap dependents = new HashMap();
 	
-	// Contains the features that the user has selected to
-	// be added and deleted. The features are in prerequisite
-	// order already. The structure is a collection of
-	// prerequisite levels. Each level is a collection of features.
-	private ArrayList featuresToAdd;
-	private ArrayList featuresToRemove;
-	
-	
 	/**
 	 * Creates a new instance of the <code>ProjectCapabilitySelectionGroup</code>
 	 * 
@@ -187,8 +179,6 @@ public class ProjectCapabilitySelectionGroup {
 	 */
 	private void capabilitiesModified() {
 		modified = true;
-		featuresToAdd = null;
-		featuresToRemove = null;
 	}
 	
 	/**
@@ -444,55 +434,19 @@ public class ProjectCapabilitySelectionGroup {
 	}
 	
 	/**
-	 * Return the collection of capabilities
-	 * that the user wants to add. The capability are in
-	 * proper order (i.e. prerequisite is before
-	 * any of its dependents).
+	 * Returns the collection of capabilities selected
+	 * by the user. The collection is not in prerequisite
+	 * order.
 	 * 
-	 * @return array of ordered capabilities to add
+	 * @return array of selected capabilities
 	 */
-	public Capability[] getCapabilitiesToAdd() {
-//		buildFeatureChangesCache();
-//		
-//		ArrayList results = new ArrayList();
-//		for (int i = 0; i < featuresToAdd.size(); i++) {
-//			ArrayList level = (ArrayList) featuresToAdd.get(i);
-//			results.addAll(level);
-//		}
-//		
-//		ProjectFeatureDescriptor[] features;
-//		features = new ProjectFeatureDescriptor[results.size()];
-//		return (ProjectFeatureDescriptor[]) results.toArray(features);
-		return new Capability[0];
+	public Capability[] getSelectedCapabilities() {
+		Object[] elements = listViewer.getCheckedElements();
+		Capability[] capabilities = new Capability[elements.length];
+		System.arraycopy(elements, 0, capabilities, 0, elements.length);
+		return capabilities;
 	}
 
-	/**
-	 * Return the collection of capabilities
-	 * that the user wants to remove. The capabilities are in
-	 * proper order (i.e. dependent is before
-	 * any of its prerequisites).
-	 * 
-	 * @return array of ordered capabilities to remove
-	 */
-	public Capability[] getCapabilitiesToRemove() {
-//		buildFeatureChangesCache();
-//		
-//		ArrayList results = new ArrayList();
-//		for (int i = 0; i < featuresToRemove.size(); i++) {
-//			ArrayList level = (ArrayList) featuresToRemove.get(i);
-//			results.addAll(level);
-//		}
-//		
-//		ProjectFeatureDescriptor[] features;
-//		features = new ProjectFeatureDescriptor[results.size()];
-//		// Add from last to first for proper order (dependents before prerequisites)
-//		for (int i = results.size() - 1, j = 0; i >= 0; i--, j++)
-//			features[j] = (ProjectFeatureDescriptor)results.get(i);
-//			
-//		return features;
-		return new Capability[0];
-	}
-	
 	/**
 	 * Return the current listener interested when the check
 	 * state of a capability actually changes.
