@@ -223,7 +223,7 @@ public class EditorActionBars extends SubActionBars2 {
                         && (foundItem instanceof PlaceholderContributionItem)) {
                     PlaceholderContributionItem placeholder = (PlaceholderContributionItem) foundItem;
                     toolBarContributionItem = placeholder
-                            .createToolBarContributionItem(coolItemToolBarMgr);
+                            .createToolBarContributionItem((ToolBarManager) coolItemToolBarMgr);
                     // Restore from a placeholder
                     ((ContributionManager) coolBarManager).replaceItem(type,
                             toolBarContributionItem);

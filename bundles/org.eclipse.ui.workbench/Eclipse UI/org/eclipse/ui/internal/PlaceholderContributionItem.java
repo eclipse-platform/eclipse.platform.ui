@@ -11,15 +11,14 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.ToolBarContributionItem;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
-
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.ToolBarContributionItem;
 
 /**
  * A contribution item that is intended to hold the place of a tool bar
@@ -81,12 +80,12 @@ final class PlaceholderContributionItem implements IContributionItem {
      * 
      * @param manager
      *            The manager for which the contribution item should be
-     *            created; should not be <code>null</code>
+     *            created; must not be <code>null</code>
      * @return A new tool bar contribution item equivalent to the contribution
      *         item this placeholder was intended to replace; never <code>null</code>.
      */
     ToolBarContributionItem createToolBarContributionItem(
-            final IToolBarManager manager) {
+            final ToolBarManager manager) {
         ToolBarContributionItem toolBarContributionItem = new ToolBarContributionItem(
                 manager, id);
         toolBarContributionItem.setCurrentHeight(storedHeight);
