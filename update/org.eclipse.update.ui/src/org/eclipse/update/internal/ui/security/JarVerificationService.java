@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.security.JarVerifier;
 import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.preferences.MainPreferencePage;
 /**
  *
  */
@@ -79,6 +80,8 @@ public class JarVerificationService implements IVerificationListener {
 	 * 
 	 */
 	public int prompt(final IVerificationResult verificationResult){
+		if (MainPreferencePage.getCheckDigitalSignature()==false) 
+			return CHOICE_INSTALL_TRUST_ALWAYS;
 
 		if (verificationResult.alreadySeen()) return CHOICE_INSTALL_TRUST_ALWAYS;
 

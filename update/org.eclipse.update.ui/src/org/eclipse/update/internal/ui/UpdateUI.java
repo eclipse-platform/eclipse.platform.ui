@@ -422,6 +422,7 @@ public class UpdateUI extends AbstractUIPlugin {
 	 * @param store the preference store to fill
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
+		store.setDefault(MainPreferencePage.P_CHECK_SIGNATURE, true);		
 		store.setDefault(MainPreferencePage.P_HISTORY_SIZE, 50);
 		store.setDefault(MainPreferencePage.P_BROWSER, MainPreferencePage.EMBEDDED_VALUE);
 		store.setDefault(MainPreferencePage.P_UPDATE_VERSIONS, MainPreferencePage.EQUIVALENT_VALUE);
