@@ -77,7 +77,7 @@ public class NewExtensionLocationAction extends Action {
 		File dir = root.getInstallableDirectory();
 		try {
 			IInstallConfiguration config =
-				InstallWizard.createInstallConfiguration();
+				UpdateManager.createInstallConfiguration();
 			if (UnifiedTargetPage
 				.addConfiguredSite(UpdateUI.getActiveWorkbenchShell(), config, dir, true)
 				!= null) {

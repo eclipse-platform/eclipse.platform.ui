@@ -9,21 +9,21 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.security;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.resource.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.core.IVerificationResult;
-import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.wizards.BannerPage;
+import org.eclipse.ui.help.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.wizards.*;
 
 /**
  * 
  */
-public class JarVerificationPage extends BannerPage {
+public class JarVerificationPage extends UnifiedBannerPage {
 
 	private IVerificationResult _VerificationResult = null;
 	private String _fileName = null;

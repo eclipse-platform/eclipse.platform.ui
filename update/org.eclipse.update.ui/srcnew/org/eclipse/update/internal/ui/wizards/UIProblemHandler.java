@@ -10,22 +10,21 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.update.configuration.IProblemHandler;
+import org.eclipse.update.internal.ui.UpdateUI;
 
-public class NewWizard extends Wizard {
-	protected BaseNewWizardPage page;
+/**
+ *
+ */
+public class UIProblemHandler implements IProblemHandler {
+	private static final String KEY_TITLE = "Revert.ProblemDialog.title";
 
-	public NewWizard(BaseNewWizardPage page, ImageDescriptor descriptor) {
-		this.page = page;
-		setDefaultPageImageDescriptor(descriptor);
-	}
-	
-	public void addPages() {
-		addPage(page);
-	}
-
-	public boolean performFinish() {
-		return page.finish();
+	/*
+	 * @see IProblemHandler#reportProblem(String)
+	 */
+	public boolean reportProblem(String problemText) {
+		String title = UpdateUI.getString(KEY_TITLE);
+		return MessageDialog.openQuestion(UpdateUI.getActiveWorkbenchShell(), title, problemText);
 	}
 }

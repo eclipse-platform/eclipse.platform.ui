@@ -97,8 +97,6 @@ public class BookmarkUtil {
 
 				} else if (child.getNodeName().equals("folder")) {
 					object = createFolder(child);
-				} else if (child.getNodeName().equals("search")) {
-					object = createSearch(child);
 				}
 			}
 			if (object != null) {
@@ -155,29 +153,7 @@ public class BookmarkUtil {
 		}
 		return folder;
 	}
-	private static SearchObject createSearch(Node child) {
-		String name = getAttribute(child, "name");
-		String categoryId = getAttribute(child, "category");
-		String fixed = getAttribute(child, "fixed");
-		boolean fixedCategory = fixed.equals("true");
-		SearchCategoryDescriptor desc =
-			SearchCategoryRegistryReader.getDefault().getDescriptor(categoryId);
-		SearchObject search = new SearchObject(name, desc, fixedCategory);
-		if (child.hasChildNodes()) {
-			NodeList children = child.getChildNodes();
-			Hashtable settings = search.getSettings();
-			for (int i = 0; i < children.getLength(); i++) {
-				Node param = children.item(i);
-				if (param.getNodeType() == Node.ELEMENT_NODE
-					&& param.getNodeName().equals("param")) {
-					String key = getAttribute(param, "name");
-					String value = getAttribute(param, "value");
-					settings.put(key, value);
-				}
-			}
-		}
-		return search;
-	}
+
 	public static void store(String fileName, Vector bookmarks) {
 		try {
 			FileOutputStream fos = new FileOutputStream(fileName);

@@ -12,9 +12,9 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.IFeatureAdapter;
 import org.eclipse.update.internal.ui.parts.SWTUtil;
-import org.eclipse.update.internal.ui.views.DetailsView;
 
 /**
  * @see PropertyPage
@@ -61,7 +61,7 @@ public class FeatureCopyrightPropertyPage extends PropertyPage implements IWorkb
 					button.addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
 							String urlName = url.getProtocol() + ":" + url.getFile();
-							DetailsView.showURL(urlName, false);
+							UpdateUI.showURL(urlName, false);
 						}
 					});
 				}

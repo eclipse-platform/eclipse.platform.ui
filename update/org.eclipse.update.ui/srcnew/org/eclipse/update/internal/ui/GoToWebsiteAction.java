@@ -4,7 +4,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.update.internal.ui.model.SiteBookmark;
-import org.eclipse.update.internal.ui.views.DetailsView;
 
 
 public class GoToWebsiteAction extends Action {
@@ -32,7 +31,7 @@ public class GoToWebsiteAction extends Action {
 	}
 	
 	private void showURL(String url) {
-		DetailsView.showURL(url, false);
+		UpdateUI.showURL(url, false);
 	}
 
 }

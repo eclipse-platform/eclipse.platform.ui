@@ -11,29 +11,33 @@
 package org.eclipse.update.internal.ui;
 
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.appserver.WebappManager;
+import org.eclipse.help.browser.*;
+import org.eclipse.help.internal.appserver.*;
+import org.eclipse.help.internal.browser.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.jface.preference.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.program.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.plugin.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.model.SiteLocalModel;
-import org.eclipse.update.internal.ui.forms.UpdateAdapterFactory;
+import org.eclipse.update.internal.model.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.AboutInfo;
 import org.eclipse.update.internal.ui.preferences.*;
-import org.eclipse.update.internal.ui.security.UpdateManagerAuthenticator;
+import org.eclipse.update.internal.ui.security.*;
+import org.eclipse.update.internal.ui.views.*;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -433,4 +437,48 @@ public class UpdateUI extends AbstractUIPlugin {
 		store.setDefault(AppServerPreferencePage.P_ENCODE_URLS, true);
 		UpdateColors.setDefaults(store);
 	}
+	
+	public static boolean showURL(String url) {
+		return showURL(url, true);
+	}
+
+	public static boolean showURL(String url, boolean considerEmbedded) {
+		boolean useEmbedded = false;
+		boolean focusGrabbed = false;
+		boolean win32 = SWT.getPlatform().equals("win32");
+		
+		url = WebInstallHandler.getEncodedURLName(url);
+		if (win32 && considerEmbedded) {
+			useEmbedded = MainPreferencePage.getUseEmbeddedBrowser();
+		}
+		if (useEmbedded) {
+			IWorkbenchPage page = UpdateUI.getActivePage();
+			try {
+				//IViewPart part = page.findView(UpdatePerspective.ID_BROWSER);
+				//if (part == null) {
+					IViewPart part = page.showView(UpdatePerspective.ID_BROWSER);
+					focusGrabbed = true;
+				//} else
+					//page.bringToTop(part);
+				((IEmbeddedWebBrowser) part).openTo(url);
+			} catch (PartInitException e) {
+				UpdateUI.logException(e);
+			}
+		} else {
+			if (win32) {
+				Program.launch(url);
+			} else {
+				// defect 11483
+				IBrowser browser = BrowserManager.getInstance().createBrowser();
+				try {
+					browser.displayURL(url);
+				}
+				catch (Exception e) {
+					UpdateUI.logException(e);
+				}
+			}
+		}
+		return focusGrabbed;
+	}
+
 }

@@ -560,7 +560,7 @@ public class UnifiedReviewPage
 			.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
 				String urlName = getMoreInfoURL(selectedJob);
-				DetailsView.showURL(urlName, false);
+				UpdateUI.showURL(urlName, false);
 			}
 		});
 	}

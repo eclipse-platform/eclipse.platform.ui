@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.internal.ui.forms;
+package org.eclipse.update.internal.ui;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.update.internal.ui.model.*;

@@ -23,9 +23,6 @@
       <import plugin="org.eclipse.help"/>
    </requires>
 
-
-   <extension-point id="searchCategory" name="%searchCategory.name" schema="schema/searchCategory.exsd"/>
-
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
@@ -109,36 +106,7 @@
             id="org.eclipse.update.ui.currentConfigActivities">
       </page>
    </extension>
-   <extension
-         point="org.eclipse.update.ui.searchCategory">
-      <search
-            name="%searchCategories.updates"
-            icon="icons/full/obj16/usearch_obj.gif"
-            class="org.eclipse.update.internal.ui.search.UpdatesSearchCategory"
-            id="org.eclipse.update.ui.updates">
-         <description>
-            %searchCategories.updates.desc
-         </description>
-      </search>
-      <search
-            name="%searchCategories.expression"
-            icon="icons/full/obj16/tsearch_obj.gif"
-            class="org.eclipse.update.internal.ui.search.ExpressionSearchCategory"
-            id="org.eclipse.update.ui.expression">
-         <description>
-            %searchCategories.expression.desc
-         </description>
-      </search>
-      <search
-            name="%searchCategories.plugin"
-            icon="icons/full/obj16/psearch_obj.gif"
-            class="org.eclipse.update.internal.ui.search.PluginsSearchCategory"
-            id="org.eclipse.update.ui.plugins">
-         <description>
-            %searchCategories.plugin.desc
-         </description>
-      </search>
-   </extension>
+
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
