@@ -132,7 +132,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 			else
 				 newActionSets = calculateActionSets(newPart, topEditor);
 				 
-			if (!updateActionSets(newActionSets));
+			if (!updateActionSets(newActionSets))
 				updateActionBars();
 			
 			if (isNewPartAnEditor) {
@@ -175,7 +175,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 				activateContributions(newEditor, false);
 							
 			ArrayList newActionSets = calculateActionSets(activePart, newEditor);
-			if (!updateActionSets(newActionSets));
+			if (!updateActionSets(newActionSets))
 				updateActionBars();
 				
 			topEditor = newEditor;	
