@@ -67,7 +67,7 @@ public class RepositorySorter extends ViewerSorter {
 			ICVSRemoteFolder f1 = (ICVSRemoteFolder)o1;
 			ICVSRemoteFolder f2 = (ICVSRemoteFolder)o2;
 			if (f1.getName().equals(f2.getName())) {
-				return f2.getTag().compareTo(f1.getTag());
+				return compare(f1, f2);
 			}
 		}
 		
@@ -76,6 +76,17 @@ public class RepositorySorter extends ViewerSorter {
 		}
 		
 		return super.compare(viewer, o1, o2);
+	}
+
+	/*
+	 * Compare to remote folders whose names are the same.
+	 */
+	private int compare(ICVSRemoteFolder f1, ICVSRemoteFolder f2) {
+		CVSTag tag1 = f1.getTag();
+		CVSTag tag2 = f2.getTag();
+		if (tag1 == null) return 1;
+		if (tag2 == null) return -1;
+		return tag2.compareTo(tag1);
 	}
 }
 
