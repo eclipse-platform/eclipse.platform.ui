@@ -369,7 +369,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	/**
 	 * Sets the contexts in the context selector to the given set.
 	 * 
-	 * @param contexts teh possible contexts
+	 * @param contexts the possible contexts
 	 */
 	private void setContexts(IContextInformation[] contexts) {
 		if (Helper.okToUse(fContextSelectorTable)) {
@@ -421,6 +421,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	
 	/**
 	 *Returns whether the context selector has the focus.
+	 *
 	 * @return <code>true</code> if teh context selector has the focus
 	 */
 	public boolean hasFocus() {

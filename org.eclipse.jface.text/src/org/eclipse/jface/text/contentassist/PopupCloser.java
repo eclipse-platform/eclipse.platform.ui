@@ -23,16 +23,26 @@ import org.eclipse.swt.widgets.Table;
 /**
  * A generic closer class used to monitor various
  * interface events in order to determine whether
- * a content assist should be terminated and all
+ * a content assistant should be terminated and all
  * associated windows be closed.
  */
 class PopupCloser implements FocusListener, SelectionListener {
 	
+	/** The content assistant to be monitored */
 	private ContentAssistant fContentAssistant;
+	/** The table of a selector popup opened by the content assistant */
 	private Table fTable;
+	/** The scrollbar of the table for the selector popup */
 	private ScrollBar fScrollbar;
+	/** Indicates whether the scrollbar thumb has been grabed */
 	private boolean fScrollbarClicked= false;
 	
+	/**
+	 * Installs this closer on the given table opened by the given content assistant.
+	 * 
+	 * @param contentAssistant the content assistant
+	 * @param table the table to be tracked
+	 */
 	public void install(ContentAssistant contentAssistant, Table table) {
 		fContentAssistant= contentAssistant;
 		fTable= table;
@@ -44,6 +54,9 @@ class PopupCloser implements FocusListener, SelectionListener {
 		}
 	}
 	
+	/**
+	 * Uninstalls this closer if previously installed.
+	 */
 	public void uninstall() {
 		if (Helper.okToUse(fTable)) {
 			fTable.removeFocusListener(this);
@@ -52,19 +65,29 @@ class PopupCloser implements FocusListener, SelectionListener {
 		}
 	}
 	
-	// SelectionListener
+	/*
+	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+	 */
 	public void widgetSelected(SelectionEvent e) {
 		fScrollbarClicked= true;
 	}
 	
+	/*
+	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
+	 */
 	public void widgetDefaultSelected(SelectionEvent e) {
 		fScrollbarClicked= true;
 	}
 	
-	// FocusListener
+	/*
+	 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
+	 */
 	public void focusGained(FocusEvent e) {
 	}
 	
+	/*
+	 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
+	 */
 	public void focusLost(final FocusEvent e) {
 		fScrollbarClicked= false;
 		Display d= fTable.getDisplay();

@@ -27,13 +27,21 @@ import org.eclipse.jface.text.IDocument;
  */
 public final class CompletionProposal implements ICompletionProposal {
 	
+	/** The string to be displayed in the completion proposal popup */
 	private String fDisplayString;
+	/** The replacement string */
 	private String fReplacementString;
+	/** The replacement offset */
 	private int fReplacementOffset;
+	/** The replacement length */
 	private int fReplacementLength;
+	/** The cursor position after this proposal has been applied */
 	private int fCursorPosition;
+	/** The image to be displayed in the completion proposal popup */
 	private Image fImage;
+	/** The context information of this proposal */
 	private IContextInformation fContextInformation;
+	/** The additional info of this proposal */
 	private String fAdditionalProposalInfo;
 
 	/**
@@ -78,7 +86,7 @@ public final class CompletionProposal implements ICompletionProposal {
 	}
 
 	/*
-	 * @see ICompletionProposal#apply
+	 * @see ICompletionProposal#apply(IDocument)
 	 */
 	public void apply(IDocument document) {
 		try {
@@ -89,7 +97,7 @@ public final class CompletionProposal implements ICompletionProposal {
 	}
 	
 	/*
-	 * @see ICompletionProposal#getSelection
+	 * @see ICompletionProposal#getSelection(IDocument)
 	 */
 	public Point getSelection(IDocument document) {
 		return new Point(fReplacementOffset + fCursorPosition, 0);

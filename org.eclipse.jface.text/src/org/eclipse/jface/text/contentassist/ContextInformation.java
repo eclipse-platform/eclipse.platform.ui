@@ -23,8 +23,11 @@ import org.eclipse.jface.text.Assert;
  */
 public final class ContextInformation implements IContextInformation {
 	
+	/** The name of the context */
 	private String fContextDisplayString;
+	/** The information to be displayed */
 	private String fInformationDisplayString;
+	/** The image to be displayed */
 	private Image fImage;
 
 	/**
@@ -55,7 +58,7 @@ public final class ContextInformation implements IContextInformation {
 	}
 
 	/*
-	 * @see IContextInformation#equals
+	 * @see IContextInformation#equals(Object)
 	 */
 	public boolean equals(Object object) {
 		if (object instanceof IContextInformation) {

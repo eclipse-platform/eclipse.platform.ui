@@ -52,32 +52,46 @@ import org.eclipse.jface.text.TextUtilities;
  * window.
  *
  * @see org.eclipse.jface.text.contentassist.ICompletionProposal
+ * @see org.eclipse.jface.text.contentassist.AdditionalInfoController
  */
 class CompletionProposalPopup implements IContentAssistListener {
 	
+	/** The associated text viewer */
 	private ITextViewer fViewer;
+	/** The associated content assistant */
 	private ContentAssistant fContentAssistant;
+	/** The used additional info controller */
 	private AdditionalInfoController fAdditionalInfoController;
-
+	/** The closing strategy for this completion proposal popup */
 	private PopupCloser fPopupCloser= new PopupCloser();
+	/** The popup shell */
 	private Shell fProposalShell;
+	/** The proposal table */
 	private Table fProposalTable;
+	/** Indicates whether a completion proposal is being inserted */
 	private boolean fInserting= false;
+	/** The key listener to control navigation */
 	private KeyListener fKeyListener;
+	/** List of document events used for filtering proposals */
 	private List fDocumentEvents= new ArrayList();
+	/** Listener filling the document event queue */
 	private IDocumentListener fDocumentListener= new IDocumentListener() {
 		public void documentAboutToBeChanged(DocumentEvent event) {}
 		public void documentChanged(DocumentEvent event) {
 			fDocumentEvents.add(event);
 		}
 	};
-	
+	/** Reentrance count for <code>filterProposals</code> */
 	private long fInvocationCounter= 0;
+	/** The filter list of proposals */
 	private ICompletionProposal[] fFilteredProposals;
+	/** The computed list of proposals */
 	private ICompletionProposal[] fComputedProposals;
+	/** The offset for which the proposals have been computed */
 	private int fInvocationOffset;
+	/** The offset for which the computed proposaks have been filtered */
 	private int fFilterOffset;
-	
+	/** The default line delimiter of the viewer's widget */
 	private String fLineDelimiter;
 
 	
@@ -277,7 +291,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 		
 	/**
 	 * Takes the selected proposal and applies it.
-	 * @since 2.0
+	 * 
+	 * @param stateMask the state mask
+	 * @since 2.1
 	 */
 	private void selectProposalWithMask(int stateMask) {
 		ICompletionProposal p= getSelectedProposal();
@@ -293,7 +309,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @param p the completion proposal
 	 * @param trigger the trigger character
 	 * @param offset the offset
-	 * 
 	 * @since 2.1
 	 */
 	private void insertProposal(ICompletionProposal p, char trigger, int stateMask, int offset) {
@@ -354,6 +369,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	
 	/**
 	 * Returns whether this popup has the focus.
+	 * 
 	 * @return <code>true</code> if the popup has the focus
 	 */
 	public boolean hasFocus() {
@@ -404,6 +420,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	
 	/**
 	 *Returns whether this popup is active. It is active if the propsal selector is visible.
+	 *
 	 * @return <code>true</code> if this popup is active
 	 */
 	public boolean isActive() {
@@ -450,6 +467,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	
 	/**
 	 * Returns the graphical location at which this popup should be made visible.
+	 * 
 	 * @return the location of this popup
 	 */
 	private Point getLocation() {
@@ -582,7 +600,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * the selection to the additional info controller.
 	 * 
 	 * @param index the index in the list
-	 * @since 2.0
+	 * @param smartToggle <code>true</code> if the smart toogle key has been pressed
+	 * @since 2.1
 	 */
 	private void selectProposal(int index, boolean smartToggle) {
 

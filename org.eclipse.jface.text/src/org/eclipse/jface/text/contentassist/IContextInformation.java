@@ -55,7 +55,7 @@ public interface IContextInformation {
 	 * equal if there information display strings and their context display strings 
 	 * are equal.
 	 *
-	 * @see Object#equals
+	 * @see Object#equals(Object)
 	 */
 	boolean equals(Object object);	
 }
