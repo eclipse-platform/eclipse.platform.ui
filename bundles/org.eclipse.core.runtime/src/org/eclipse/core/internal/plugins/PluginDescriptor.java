@@ -751,7 +751,7 @@ private boolean addLibraryNL(String base, String spec, String[] filters, String 
 	String nl = BootLoader.getNL();
 	boolean added = false;
 	while (!added && nl.length() > 0) {
-		String location = new Path("nl/" + nl).append(spec).toString();
+		String location = new Path("nl/" + nl).append(spec).addTrailingSeparator().toString();
 		added = addLibrary(base, location, filters, type, hasJarSpec, result);
 		int i = nl.lastIndexOf('_');
 		if (i < 0)
