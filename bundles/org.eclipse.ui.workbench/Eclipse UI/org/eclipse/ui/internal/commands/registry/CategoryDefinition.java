@@ -27,7 +27,7 @@ public final class CategoryDefinition implements ICategoryDefinition {
 
 	private static Comparator nameComparator;
 	
-	public static Comparator nameComparator() {
+	static Comparator nameComparator() {
 		if (nameComparator == null)
 			nameComparator = new Comparator() {
 				public int compare(Object left, Object right) {
@@ -55,7 +55,7 @@ public final class CategoryDefinition implements ICategoryDefinition {
 		return sortedMap;
 	}
 
-	public static SortedMap sortedMapByName(List categories) {
+	static SortedMap sortedMapByName(List categories) {
 		if (categories == null)
 			throw new NullPointerException();
 

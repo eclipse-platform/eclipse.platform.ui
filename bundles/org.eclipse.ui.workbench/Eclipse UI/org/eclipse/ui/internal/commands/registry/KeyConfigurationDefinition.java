@@ -27,7 +27,7 @@ public final class KeyConfigurationDefinition implements IKeyConfigurationDefini
 
 	private static Comparator nameComparator;
 	
-	public static Comparator nameComparator() {
+	static Comparator nameComparator() {
 		if (nameComparator == null)
 			nameComparator = new Comparator() {
 				public int compare(Object left, Object right) {
@@ -55,7 +55,7 @@ public final class KeyConfigurationDefinition implements IKeyConfigurationDefini
 		return sortedMap;
 	}
 
-	public static SortedMap sortedMapByName(List keyConfigurations) {
+	static SortedMap sortedMapByName(List keyConfigurations) {
 		if (keyConfigurations == null)
 			throw new NullPointerException();
 

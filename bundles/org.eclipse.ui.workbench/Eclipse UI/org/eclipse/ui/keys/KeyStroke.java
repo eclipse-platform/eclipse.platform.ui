@@ -225,7 +225,7 @@ public final class KeyStroke implements Comparable {
 
 		this.modifierKeys = Util.safeCopy(modifierKeys, ModifierKey.class);
 		this.naturalKey = naturalKey;		
-		this.modifierKeysAsArray = (ModifierKey[]) this.modifierKeys.toArray(new ModifierKey[modifierKeys.size()]);
+		this.modifierKeysAsArray = (ModifierKey[]) this.modifierKeys.toArray(new ModifierKey[this.modifierKeys.size()]);
 	}
 
 	public int compareTo(Object object) {

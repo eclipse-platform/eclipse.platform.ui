@@ -27,7 +27,7 @@ public final class CommandDefinition implements ICommandDefinition {
 
 	private static Comparator nameComparator;
 	
-	public static Comparator nameComparator() {
+	static Comparator nameComparator() {
 		if (nameComparator == null)
 			nameComparator = new Comparator() {
 				public int compare(Object left, Object right) {
@@ -55,7 +55,7 @@ public final class CommandDefinition implements ICommandDefinition {
 		return sortedMap;
 	}
 
-	public static SortedMap sortedMapByName(List commands) {
+	static SortedMap sortedMapByName(List commands) {
 		if (commands == null)
 			throw new NullPointerException();
 

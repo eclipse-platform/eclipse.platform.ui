@@ -396,16 +396,16 @@ public final class CommandManager implements ICommandManager {
 		command.setActive(activeCommandIds.contains(command.getId()));
 		ICommandDefinition commandDefinition = (ICommandDefinition) commandDefinitionsById.get(command.getId());
 		command.setCategoryId(commandDefinition != null ? commandDefinition.getCategoryId() : null);
-		List contextBindings = (List) contextBindingsByCommandId.get(command.getId());
-		command.setContextBindings(contextBindings != null ? contextBindings : Collections.EMPTY_LIST);
+		SortedSet contextBindings = (SortedSet) contextBindingsByCommandId.get(command.getId());
+		command.setContextBindingSet(contextBindings != null ? contextBindings : Util.EMPTY_SORTED_SET);
 		command.setDefined(commandDefinition != null);
 		command.setDescription(commandDefinition != null ? commandDefinition.getDescription() : null);
 		command.setHelpId(commandDefinition != null ? commandDefinition.getHelpId() : null);
-		List imageBindings = (List) imageBindingsByCommandId.get(command.getId());
-		command.setImageBindings(imageBindings != null ? imageBindings : Collections.EMPTY_LIST);
+		SortedSet imageBindings = (SortedSet) imageBindingsByCommandId.get(command.getId());
+		command.setImageBindingSet(imageBindings != null ? imageBindings : Util.EMPTY_SORTED_SET);
 		// TODO: command.setInContext(false);
-		List keyBindings = (List) keyBindingsByCommandId.get(command.getId());
-		command.setKeyBindings(keyBindings != null ? keyBindings : Collections.EMPTY_LIST);
+		SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(command.getId());
+		command.setKeyBindingSet(keyBindings != null ? keyBindings : Util.EMPTY_SORTED_SET);
 		command.setName(commandDefinition != null ? commandDefinition.getName() : Util.ZERO_LENGTH_STRING);
 	}
 
