@@ -27,8 +27,6 @@ public final class ProjectScope implements IScopeContext {
 	public static final String SCOPE = "project"; //$NON-NLS-1$
 
 	private IProject context;
-	// cached value
-	private IPath parentLocation;
 
 	/**
 	 * Create and return a new project scope for the given project.
@@ -58,13 +56,10 @@ public final class ProjectScope implements IScopeContext {
 	 * @see org.eclipse.core.runtime.preferences.IScopeContext#getParentLocation()
 	 */
 	public IPath getLocation() {
-		if (parentLocation == null) {
-			if ((context == null) || !(context instanceof IResource))
-				return null;
-			IProject project = ((IResource) context).getProject();
-			parentLocation = project.getLocation();
-		}
-		return parentLocation;
+		if ((context == null) || !(context instanceof IResource))
+			return null;
+		IProject project = ((IResource) context).getProject();
+		return project.getLocation();
 	}
 
 	/*
