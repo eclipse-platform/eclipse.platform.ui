@@ -104,7 +104,7 @@ public class FileSearchQuery implements ISearchQuery {
 		return MessageFormat.format(format, args);
 	}
 
-	private String quote(String searchString) {
+	public static String quote(String searchString) {
 		searchString= searchString.replaceAll("\\{", "'{'"); //$NON-NLS-1$ //$NON-NLS-2$
 		return searchString.replaceAll("\\}", "'}'"); //$NON-NLS-1$ //$NON-NLS-2$
 		

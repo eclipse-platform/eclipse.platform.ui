@@ -14,24 +14,30 @@ import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
+import org.eclipse.search.internal.ui.util.ComboFieldEditor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-
-import org.eclipse.search.internal.ui.util.ComboFieldEditor;
 
 /*
  * The page for setting the Search preferences.
@@ -45,10 +51,14 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	public static final String DEFAULT_PERSPECTIVE= "org.eclipse.search.defaultPerspective"; //$NON-NLS-1$
 	private static final String NO_DEFAULT_PERSPECTIVE= "org.eclipse.search.defaultPerspective.none"; //$NON-NLS-1$
 	public static final String BRING_VIEW_TO_FRONT= "org.eclipse.search.bringToFront"; //$NON-NLS-1$
+	public static final String LIMIT_TABLE_TO= "org.eclipse.search.limitTableTo"; //$NON-NLS-1$
+	public static final String LIMIT_TABLE= "org.eclipse.search.limitTable"; //$NON-NLS-1$
 	
 	private ColorFieldEditor fColorEditor;
 	private BooleanFieldEditor fEmphasizedCheckbox;
 	private BooleanFieldEditor fIgnorePotentialMatchesCheckbox;
+	private Button fLimitTable;
+	private Text fLimitTableValue;
 
 
 	private static class PerspectiveDescriptorComparator implements Comparator {
@@ -80,46 +90,10 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		store.setDefault(REUSE_EDITOR, false);
 		store.setDefault(BRING_VIEW_TO_FRONT, true);
 		store.setDefault(DEFAULT_PERSPECTIVE, NO_DEFAULT_PERSPECTIVE);
+		store.setDefault(LIMIT_TABLE_TO, 200);
+		store.setDefault(LIMIT_TABLE, false);
 	}
 
-	public static boolean isEditorReused() {
-		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(REUSE_EDITOR);
-	}
-	
-	public static boolean isViewBroughtToFront() {
-		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(BRING_VIEW_TO_FRONT);
-		
-	}
-
-	public static String getDefaultPerspectiveId() {
-		handleDeletedPerspectives();
-		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
-		String id= store.getString(DEFAULT_PERSPECTIVE);
-		if (id == null || id.length() == 0 || id.equals(NO_DEFAULT_PERSPECTIVE))
-			return null;
-		else if (PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(id) == null) {
-			store.putValue(DEFAULT_PERSPECTIVE, id);
-			return null;
-		}
-		return id;
-	}
-
-	public static boolean arePotentialMatchesIgnored() {
-		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(IGNORE_POTENTIAL_MATCHES);
-	}
-
-	public static boolean arePotentialMatchesEmphasized() {
-		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(EMPHASIZE_POTENTIAL_MATCHES);
-	}
-
-	public static RGB getPotentialMatchForegroundColor() {
-		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
-		return PreferenceConverter.getColor(store, POTENTIAL_MATCH_FG_COLOR);
-	}
 
 	public void createControl(Composite parent) {
 		super.createControl(parent);
@@ -159,7 +133,9 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 			getFieldEditorParent()
         );
 		addField(fColorEditor);
-
+		
+		createTableLimit();
+		
 		fEmphasizedCheckbox.setEnabled(!arePotentialMatchesIgnored(), getFieldEditorParent());
 		fColorEditor.setEnabled(!arePotentialMatchesIgnored() && arePotentialMatchesEmphasized(), getFieldEditorParent());
 
@@ -173,15 +149,62 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		addField(comboEditor);
 	}
 
+	private void createTableLimit() {
+		Composite parent= new Composite(getFieldEditorParent(), SWT.NONE);
+		GridLayout gl= new GridLayout();
+		gl.numColumns= 2;
+		gl.marginWidth= 0;
+		gl.marginHeight= 0;
+		parent.setLayout(gl);
+		GridData gd= new GridData();
+		gd.horizontalSpan= 2;
+		parent.setLayoutData(gd);
+		
+		fLimitTable= new Button(parent, SWT.CHECK);
+		fLimitTable.setText(SearchMessages.getString("SearchPreferencePage.limit.label")); //$NON-NLS-1$
+		fLimitTable.setLayoutData(new GridData());
+		
+		fLimitTableValue= new Text(parent, SWT.BORDER);
+		gd= new GridData();
+		gd.widthHint= convertWidthInCharsToPixels(6);
+		fLimitTableValue.setLayoutData(gd);
+
+		fLimitTable.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLimitValueEnablement();
+			}
+
+		});
+		
+		fLimitTableValue.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				validateText();
+			}
+		});
+		initLimit();
+	}
+
+	protected void validateText() {
+		String text= fLimitTableValue.getText();
+		int value= -1;
+		try {
+			value= Integer.valueOf(text).intValue();
+		} catch (NumberFormatException e) {
+			
+		}
+		if (fLimitTable.getSelection() && value <= 0)
+			setErrorMessage(SearchMessages.getString("SearchPreferencePage.limit.error")); //$NON-NLS-1$
+		else 
+			setErrorMessage(null);
+	}
+
 	public void setVisible(boolean state) {
 		handleDeletedPerspectives();
 		super.setVisible(state);
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
-		boolean arePotentialMatchesIgnored= fIgnorePotentialMatchesCheckbox.getBooleanValue();
-		fEmphasizedCheckbox.setEnabled(!arePotentialMatchesIgnored, getFieldEditorParent());
-		fColorEditor.setEnabled(!arePotentialMatchesIgnored && fEmphasizedCheckbox.getBooleanValue(), getFieldEditorParent());
+		updateFieldEnablement();
 	}
 
 	public void init(IWorkbench workbench) {
@@ -189,11 +212,47 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 
 	protected void performDefaults() {
 		super.performDefaults();
+		IPreferenceStore preferenceStore= getPreferenceStore();
+		if (preferenceStore != null) {
+			boolean limit= preferenceStore.getDefaultBoolean(LIMIT_TABLE);
+			int count= preferenceStore.getDefaultInt(LIMIT_TABLE_TO);
+			fLimitTable.setSelection(limit);
+			fLimitTableValue.setText(String.valueOf(count));
+		}
+		updateFieldEnablement();
+	}
+	
+	private void initLimit() {
+		IPreferenceStore preferenceStore= getPreferenceStore();
+		if (preferenceStore != null) {
+			boolean limit= preferenceStore.getBoolean(LIMIT_TABLE);
+			int count= preferenceStore.getInt(LIMIT_TABLE_TO);
+			fLimitTable.setSelection(limit);
+			fLimitTableValue.setText(String.valueOf(count));
+		}
+		updateLimitValueEnablement();
+	}
+	
+	public boolean performOk() {
+		IPreferenceStore preferenceStore= SearchPlugin.getDefault().getPreferenceStore();
+		if (preferenceStore != null) {
+			preferenceStore.setValue(LIMIT_TABLE, fLimitTable.getSelection());
+			preferenceStore.setValue(LIMIT_TABLE_TO, Integer.valueOf(fLimitTableValue.getText()).intValue());
+		}
+		return super.performOk();
+	}
+
+	private void updateFieldEnablement() {
 		boolean arePotentialMatchesIgnored= fIgnorePotentialMatchesCheckbox.getBooleanValue();		
 		fEmphasizedCheckbox.setEnabled(!arePotentialMatchesIgnored, getFieldEditorParent());
 		fColorEditor.setEnabled(!arePotentialMatchesIgnored && fEmphasizedCheckbox.getBooleanValue(), getFieldEditorParent());
+		updateLimitValueEnablement();
+		validateText();
 	}
 
+	private void updateLimitValueEnablement() {
+		fLimitTableValue.setEnabled(fLimitTable.getSelection());
+	}
 	/**
 	 * Return a 2-dimensional array of perspective names and ids.
 	 */
@@ -221,4 +280,55 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 			store.putValue(DEFAULT_PERSPECTIVE, NO_DEFAULT_PERSPECTIVE);
 		}
 	}
+	
+	
+	// Accessors to preference values
+	public static String getDefaultPerspectiveId() {
+		handleDeletedPerspectives();
+		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
+		String id= store.getString(DEFAULT_PERSPECTIVE);
+		if (id == null || id.length() == 0 || id.equals(NO_DEFAULT_PERSPECTIVE))
+			return null;
+		else if (PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(id) == null) {
+			store.putValue(DEFAULT_PERSPECTIVE, id);
+			return null;
+		}
+		return id;
+	}
+
+	public static int getTableLimit() {
+		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
+		return store.getInt(LIMIT_TABLE_TO);
+	}
+
+	public static boolean isTableLimited() {
+		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
+		return store.getBoolean(LIMIT_TABLE);
+	}
+
+	public static boolean isEditorReused() {
+		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
+		return store.getBoolean(REUSE_EDITOR);
+	}
+	
+	public static boolean isViewBroughtToFront() {
+		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
+		return store.getBoolean(BRING_VIEW_TO_FRONT);
+	}
+
+	public static boolean arePotentialMatchesIgnored() {
+		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
+		return store.getBoolean(IGNORE_POTENTIAL_MATCHES);
+	}
+
+	public static boolean arePotentialMatchesEmphasized() {
+		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
+		return store.getBoolean(EMPHASIZE_POTENTIAL_MATCHES);
+	}
+
+	public static RGB getPotentialMatchForegroundColor() {
+		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
+		return PreferenceConverter.getColor(store, POTENTIAL_MATCH_FG_COLOR);
+	}
+
 }

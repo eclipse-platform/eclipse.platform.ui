@@ -13,19 +13,25 @@ package org.eclipse.search.internal.ui.text;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.search.internal.ui.SearchPreferencePage;
 
 public class FileTableContentProvider extends FileContentProvider implements IStructuredContentProvider {
-	private TableViewer fTableViewer;
+	private FileSearchPage fPage;
 
-	/**
-	 * @param viewer	
-	 */
-	public FileTableContentProvider(TableViewer viewer) {
-		fTableViewer= viewer;
+	public FileTableContentProvider(FileSearchPage page) {
+		fPage= page;
 	}
 	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof FileSearchResult)
-			return ((FileSearchResult)inputElement).getElements();
+		if (inputElement instanceof FileSearchResult) {
+			Object[] elements= ((FileSearchResult)inputElement).getElements();
+			int tableLimit= SearchPreferencePage.getTableLimit();
+			if (SearchPreferencePage.isTableLimited() && elements.length > tableLimit) {
+				Object[] shownElements= new Object[tableLimit];
+				System.arraycopy(elements, 0, shownElements, 0, tableLimit);
+				return shownElements;
+			}
+			return elements;
+		}
 		return EMPTY_ARR;
 	}
 	
@@ -36,18 +42,25 @@ public class FileTableContentProvider extends FileContentProvider implements ISt
 	}
 	
 	public void elementsChanged(Object[] updatedElements) {
+		TableViewer viewer= getViewer();
+		boolean tableLimited= SearchPreferencePage.isTableLimited();
 		for (int i= 0; i < updatedElements.length; i++) {
 			if (fResult.getMatchCount(updatedElements[i]) > 0) {
-				if (fTableViewer.testFindItem(updatedElements[i]) != null)
-					fTableViewer.update(updatedElements[i], null);
-				else
-					fTableViewer.add(updatedElements[i]);
+				if (viewer.testFindItem(updatedElements[i]) != null)
+					viewer.update(updatedElements[i], null);
+				else {
+					if (!tableLimited || viewer.getTable().getItemCount() < SearchPreferencePage.getTableLimit())
+						viewer.add(updatedElements[i]);
+				}
 			} else
-				fTableViewer.remove(updatedElements[i]);
+				viewer.remove(updatedElements[i]);
 		}
 	}
 
+	private TableViewer getViewer() {
+		return (TableViewer) fPage.getViewer();
+	}
 	public void clear() {
-		fTableViewer.refresh();
+		getViewer().refresh();
 	}
 }

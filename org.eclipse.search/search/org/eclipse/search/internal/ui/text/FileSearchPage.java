@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.core.resources.IFile;
@@ -18,15 +19,21 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchPreferencePage;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.ui.IEditorPart;
@@ -42,9 +49,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 
 /**
- * @author Thomas Mäder
- *
- */
+*/
 public class FileSearchPage extends AbstractTextSearchViewPage implements IAdaptable {
 	private static final String KEY_SORTING= "org.eclipse.search.resultpage.sorting"; //$NON-NLS-1$
 
@@ -63,10 +68,22 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			return SHOW_IN_TARGETS;
 		}
 	};
+
+	private IPropertyChangeListener fPropertyChangeListener;
 	public FileSearchPage() {
 		fSortByNameAction= new SortAction(SearchMessages.getString("FileSearchPage.sort_name.label"), this, FileLabelProvider.SHOW_LABEL_PATH); //$NON-NLS-1$
 		fSortByPathAction= new SortAction(SearchMessages.getString("FileSearchPage.sort_path.label"), this, FileLabelProvider.SHOW_PATH_LABEL); //$NON-NLS-1$
-	}
+
+		fPropertyChangeListener= new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (SearchPreferencePage.LIMIT_TABLE.equals(event.getProperty()) || SearchPreferencePage.LIMIT_TABLE_TO.equals(event.getProperty()))
+					if (getViewer() instanceof TableViewer)
+						getViewer().refresh();
+			}
+		};
+		SearchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPropertyChangeListener);
+		
+}
 	
 	public StructuredViewer getViewer() {
 		return super.getViewer();
@@ -75,7 +92,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	protected void configureTableViewer(TableViewer viewer) {
 		viewer.setUseHashlookup(true);
 		viewer.setLabelProvider(new DecoratingLabelProvider(new FileLabelProvider(this, FileLabelProvider.SHOW_LABEL), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
-		viewer.setContentProvider(new FileTableContentProvider(viewer));
+		viewer.setContentProvider(new FileTableContentProvider(this));
 		setSortOrder(fCurrentSortOrder);
 		fContentProvider= (FileContentProvider) viewer.getContentProvider();
 	}
@@ -150,6 +167,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	
 	public void dispose() {
 		fActionGroup.dispose();
+		SearchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyChangeListener);
 		super.dispose();
 	}
 
@@ -199,6 +217,25 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			return SHOW_IN_TARGET_LIST;
 		}
 		return null;
+	}
+	
+	public String getLabel() {
+		String label= super.getLabel();
+		StructuredViewer viewer= getViewer();
+		if (viewer instanceof TableViewer) {
+			TableViewer tv= (TableViewer) viewer;
+
+			AbstractTextSearchResult result= getInput();
+			if (result != null) {
+				int itemCount= ((IStructuredContentProvider) tv.getContentProvider()).getElements(getInput()).length;
+				int fileCount= getInput().getElements().length;
+				if (itemCount < fileCount) {
+					String format= SearchMessages.getString("FileSearchPage.limited.format"); //$NON-NLS-1$
+					return MessageFormat.format(format, new Object[]{FileSearchQuery.quote(label), new Integer(itemCount), new Integer(fileCount)});
+				}
+			}
+		}
+		return label;
 	}
 
 }

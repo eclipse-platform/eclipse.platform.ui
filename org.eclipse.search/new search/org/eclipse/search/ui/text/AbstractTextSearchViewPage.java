@@ -642,6 +642,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		Menu menu = fMenu.createContextMenu(fViewer.getControl());
 		fViewer.getControl().setMenu(menu);
 		updateLayoutActions();
+		getViewPart().updateLabel();
 	}
 
 	/**
