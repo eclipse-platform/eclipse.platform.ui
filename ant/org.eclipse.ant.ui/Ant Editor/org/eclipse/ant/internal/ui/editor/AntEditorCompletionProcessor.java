@@ -621,14 +621,14 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 			replacementOffset--;
 			replacementLength++;
 		}
-		int cursorPosition;
+		int proposalCursorPosition;
 		if (hasNestedElements) {
-			cursorPosition= elementName.length() + 2 + additionalProposalOffset;
+			proposalCursorPosition= elementName.length() + 2 + additionalProposalOffset;
 		} else {
-			cursorPosition= elementName.length() + 1 + additionalProposalOffset;
+			proposalCursorPosition= elementName.length() + 1 + additionalProposalOffset;
 		}
 		return new AntCompletionProposal(replacementString, replacementOffset, 
-			replacementLength, cursorPosition, proposalImage, elementName, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
+			replacementLength, proposalCursorPosition, proposalImage, elementName, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
 	}
 
 	/**
