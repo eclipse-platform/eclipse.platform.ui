@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.views.launch;
 
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -52,7 +53,11 @@ public class TextEditorSelection extends Decoration {
 	public void remove() {
 		// Get the current text selection in the editor.  If there is none, 
 		// then there's nothing to do
-		ITextSelection textSelection= (ITextSelection)fEditor.getSelectionProvider().getSelection();
+		ISelectionProvider provider = fEditor.getSelectionProvider();
+		if (provider == null) {
+			return;
+		}
+		ITextSelection textSelection= (ITextSelection)provider.getSelection();
 		if (textSelection.isEmpty()) {
 			return;
 		}
