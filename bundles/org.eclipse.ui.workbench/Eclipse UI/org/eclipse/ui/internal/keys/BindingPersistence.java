@@ -819,6 +819,7 @@ public final class BindingPersistence {
 						final IStatus status = new Status(IStatus.WARNING,
 								WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
 						warningsToLog.add(status);
+						continue;
 					}
 				}
 
