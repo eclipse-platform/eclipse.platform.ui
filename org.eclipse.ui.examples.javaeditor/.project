@@ -3,10 +3,10 @@
 	<name>org.eclipse.ui.examples.javaeditor</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.ui</project>
-		<project>org.eclipse.core.runtime</project>
-		<project>org.eclipse.swt</project>
+		<project>org.eclipse.core.boot</project>
 		<project>org.eclipse.core.resources</project>
+		<project>org.eclipse.core.runtime</project>
+		<project>org.eclipse.ui</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

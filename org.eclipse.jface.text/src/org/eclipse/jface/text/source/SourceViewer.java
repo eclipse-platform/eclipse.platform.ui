@@ -423,7 +423,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 				IDocument document= getDocument();
 				
 				Position p= new Position(s.x, s.y);
-				IRegion r= (s.y == 0) ? getVisibleRegion() : new Region(s.x, s.y);
+				IRegion r= (s.y == 0) ? getModelCoverage() : new Region(s.x, s.y);
 
 				try {
 					setRedraw(false); 

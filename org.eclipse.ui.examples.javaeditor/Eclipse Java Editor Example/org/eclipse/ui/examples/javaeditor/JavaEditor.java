@@ -1,16 +1,25 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.examples.javaeditor;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.text.source.ISourceViewer;
+
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.editors.text.ProjectionTextEditor;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -18,7 +27,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 /**
  * Java specific text editor.
  */
-public class JavaEditor extends TextEditor {
+public class JavaEditor extends ProjectionTextEditor {
 
 	/** The outline page */
 	private JavaContentOutlinePage fOutlinePage;

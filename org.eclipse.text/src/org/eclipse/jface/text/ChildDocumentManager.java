@@ -1,10 +1,15 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
 
 
 
@@ -19,7 +24,7 @@ package org.eclipse.jface.text;
  *
  * For internal use only.
  */
-public final class ChildDocumentManager implements IDocumentListener {
+public final class ChildDocumentManager implements IDocumentListener, ISlaveDocumentManager {
 	
 	
 	/** 
@@ -210,47 +215,45 @@ public final class ChildDocumentManager implements IDocumentListener {
 		return fChildPositionUpdater;
 	}
 	
-	/**
-	 * Creates and returns a new child document for the specified range of the given parent document.
-	 * The created child document is initialized with a child document partitioner.
-	 *
-	 * @param parent the parent document
-	 * @param offset the offset of the parent document range
-	 * @param length the length of the parent document range
-	 * @exception BadLocationException if the specified range is invalid in the parent document
+	 /* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ISlaveDocumentManager#createSlaveDocument(org.eclipse.jface.text.IDocument)
 	 */
-	 public ChildDocument createChildDocument(IDocument parent, int offset, int length) throws BadLocationException {
-	 	
-		if (!parent.containsPositionCategory(CHILDDOCUMENTS)) {
-			parent.addPositionCategory(CHILDDOCUMENTS);
-			parent.addPositionUpdater(getChildPositionUpdater());
-			parent.addDocumentListener(this);
+	public IDocument createSlaveDocument(IDocument master)  {
+
+		if (!master.containsPositionCategory(CHILDDOCUMENTS)) {
+			master.addPositionCategory(CHILDDOCUMENTS);
+			master.addPositionUpdater(getChildPositionUpdater());
+			master.addDocumentListener(this);
 		}
-		
-		ChildPosition pos= new ChildPosition(parent, offset, length);
+
+		ChildPosition pos= new ChildPosition(master, 0, 0);
 		try {
-			parent.addPosition(CHILDDOCUMENTS, pos);
+			master.addPosition(CHILDDOCUMENTS, pos);
 		} catch (BadPositionCategoryException x) {
 			// cannot happen
+		} catch (BadLocationException x) {
+			// (0, 0) is OK
 		}
-		
-		ChildDocument child= new ChildDocument(parent, pos);
+
+		ChildDocument child= new ChildDocument(master, pos);
 		IDocumentPartitioner partitioner= new ChildPartitioner();
 		child.setDocumentPartitioner(partitioner);
 		partitioner.connect(child);
-		
+
 		pos.fChildDocument= child;
 		
 		return child;
 	}
 	
-	/**
-	 * Disconnects the given child document from it's parent document and frees 
-	 * all resources which are no longer needed.
-	 *
-	 * @param childDocument the child document to be freed
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ISlaveDocumentManager#freeSlaveDocument(org.eclipse.jface.text.IDocument)
 	 */
-	public void freeChildDocument(ChildDocument childDocument) {
+	public void freeSlaveDocument(IDocument slave) {
+		
+		if (! (slave instanceof ChildDocument))
+			return;
+			
+		ChildDocument childDocument= (ChildDocument) slave;
 		
 		childDocument.getDocumentPartitioner().disconnect();
 		
@@ -268,6 +271,31 @@ public final class ChildDocumentManager implements IDocumentListener {
 		} catch (BadPositionCategoryException x) {
 			// cannot happen
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ISlaveDocumentManager#createMasterSlaveMapping(org.eclipse.jface.text.IDocument)
+	 */
+	public IDocumentInformationMapping createMasterSlaveMapping(IDocument slave) {
+		if (slave instanceof ChildDocument)
+			return new ParentChildMapping((ChildDocument) slave);
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ISlaveDocumentManager#getMasterDocument(org.eclipse.jface.text.IDocument)
+	 */
+	public IDocument getMasterDocument(IDocument slave) {
+		if (slave instanceof ChildDocument)
+			return ((ChildDocument) slave).getParentDocument();
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ISlaveDocumentManager#isSlaveDocument(org.eclipse.jface.text.IDocument)
+	 */
+	public boolean isSlaveDocument(IDocument document) {
+		return (document instanceof ChildDocument);
 	}
 	
 	/**

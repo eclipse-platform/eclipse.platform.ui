@@ -75,9 +75,9 @@ import org.eclipse.jface.viewers.Viewer;
  * @see ITextViewer
  */  
 public class TextViewer extends Viewer implements 
-		ITextViewer, ITextViewerExtension, ITextViewerExtension2, 
-		ITextOperationTarget, ITextOperationTargetExtension,
-		IWidgetTokenOwner {
+					ITextViewer, ITextViewerExtension, ITextViewerExtension2,
+					ITextOperationTarget, ITextOperationTargetExtension,
+					IWidgetTokenOwner {
 	
 	/** Internal flag to indicate the debug state. */
 	public static boolean TRACE_ERRORS= false;
@@ -551,8 +551,7 @@ public class TextViewer extends Viewer implements
 			/* Don't use cached line information because of patched redrawing events. */
 			
 			if (fTextWidget != null) {
-				int offset= event.lineOffset + TextViewer.this.getVisibleRegionOffset();
-				
+				int offset= widgetOffset2ModelOffset(event.lineOffset);
 				if (fPosition.includes(offset))
 					event.lineBackground= fHighlightColor;
 			}
@@ -615,8 +614,10 @@ public class TextViewer extends Viewer implements
 		 * Paints the highlighting of this range.
 		 */
 		private void paint() {
-			int offset= fPosition.getOffset() - TextViewer.this.getVisibleRegionOffset();
-			int length= fPosition.getLength();
+
+			IRegion widgetRegion= modelRange2WidgetRange(fPosition);
+			int offset= widgetRegion.getOffset();
+			int length= widgetRegion.getLength();
 
 			int count= fTextWidget.getCharCount();
 			if (offset + length >= count) {
@@ -712,27 +713,24 @@ public class TextViewer extends Viewer implements
 		 */
 		public Point getSelection() {
 			Point point= TextViewer.this.getSelectedRange();
-			point.x -= TextViewer.this.getVisibleRegionOffset();
-			return point;
+			return modelSelection2WidgetSelection(point);
 		}
 		
 		/*
 		 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
 		 */
 		public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord) {
-			if (offset != -1)
-				offset += TextViewer.this.getVisibleRegionOffset();
 
+			int modelOffset= offset == -1 ? -1 : widgetOffset2ModelOffset(offset);
+			
 			if (fRange != null) {
 				IRegion range= fRange.getRange();
-				offset= TextViewer.this.findAndSelectInRange(offset, findString, searchForward, caseSensitive, wholeWord, range.getOffset(), range.getLength());
+				modelOffset= TextViewer.this.findAndSelectInRange(modelOffset, findString, searchForward, caseSensitive, wholeWord, range.getOffset(), range.getLength());
 			} else {
-				offset= TextViewer.this.findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord);
+				modelOffset= TextViewer.this.findAndSelect(modelOffset, findString, searchForward, caseSensitive, wholeWord);
 			}
 
-			if (offset != -1)
-				offset -= TextViewer.this.getVisibleRegionOffset();
-
+			offset= modelOffset == -1 ? -1 : modelOffset2WidgetOffset(modelOffset);
 			return offset;
 		}
 		
@@ -800,8 +798,8 @@ public class TextViewer extends Viewer implements
 		 * @see IFindReplaceTargetExtension#setSelection(int, int)
 		 * @since 2.0
 		 */
-		public void setSelection(int offset, int length) {
-			TextViewer.this.setSelectedRange(offset /*+ TextViewer.this.getVisibleRegionOffset()*/, length);
+		public void setSelection(int modelOffset, int modelLength) {
+			TextViewer.this.setSelectedRange(modelOffset, modelLength);
 		}
 
 		/*
@@ -967,8 +965,8 @@ public class TextViewer extends Viewer implements
 	private IDocument fVisibleDocument;
 	/** The viewer's document adapter */
 	private IDocumentAdapter fDocumentAdapter;
-	/** The child document manager */
-	private ChildDocumentManager fChildDocumentManager;
+	/** The slave document manager */
+	private ISlaveDocumentManager fSlaveDocumentManager;
 	/** The text viewer's double click strategies connector */
 	private TextDoubleClickStrategyConnector fDoubleClickStrategyConnector;
 	/** 
@@ -1065,6 +1063,12 @@ public class TextViewer extends Viewer implements
 	protected IEventConsumer fEventConsumer;
 	/** Indicates whether the viewer's text presentation should be replaced are modified. */
 	protected boolean fReplaceTextPresentation= false;
+	
+	/**
+	 * The mapping between model and visible document.
+	 * @since 2.1
+	 */
+	protected IDocumentInformationMapping fInformationMapping;
 	
 	
 	//---- Construction and disposal ------------------
@@ -1243,23 +1247,25 @@ public class TextViewer extends Viewer implements
 			fTextHoverManager= null;
 		}
 		
-		if (fDocumentListener != null)
+		if (fDocumentListener !=null) {
+			if (fVisibleDocument != null)
+				fVisibleDocument.removeDocumentListener(fDocumentListener);
 			fDocumentListener= null;
-		
-		if (fVisibleDocument instanceof ChildDocument) {
-			ChildDocument child = (ChildDocument) fVisibleDocument;
-			child.removeDocumentListener(fDocumentListener);
-			getChildDocumentManager().freeChildDocument(child);
 		}
-		
+
 		if (fDocumentAdapter != null) {
 			fDocumentAdapter.setDocument(null);
 			fDocumentAdapter= null;
 		}
 		
+		if (fSlaveDocumentManager != null) {
+			if (fVisibleDocument != null)
+				fSlaveDocumentManager.freeSlaveDocument(fVisibleDocument);
+			fSlaveDocumentManager= null;
+		}
+		
 		fVisibleDocument= null;
 		fDocument= null;
-		fChildDocumentManager= null;
 		fScroller= null;
 	}
 	
@@ -1541,8 +1547,7 @@ public class TextViewer extends Viewer implements
 		
 		if (fTextWidget != null) {
 			Point p= fTextWidget.getSelectionRange();
-			int offset= getVisibleRegionOffset();			
-			return new Point(p.x + offset, p.y);
+			return widgetSelection2ModelSelection(p);
 		}
 		
 		return new Point(-1, -1);
@@ -1562,48 +1567,15 @@ public class TextViewer extends Viewer implements
 		if (fTextWidget == null)
 			return;
 			
-		IDocument document= getVisibleDocument();
-		if (document == null)
-			return;
+		IRegion widgetSelection= modelRange2WidgetRange(new Region(selectionOffset, selectionLength));
+		if (widgetSelection != null) {
 			
-		int offset= selectionOffset;
-		int length= selectionLength;
-		if (selectionLength < 0) {
-			offset= selectionOffset + selectionLength;
-			length= -selectionLength;
-		}
-		
-		int end= offset + length;
-			
-		if (document instanceof ChildDocument) {
-			Position p= ((ChildDocument) document).getParentDocumentRange();
-			if (p.overlapsWith(offset, length)) {
-				
-				if (offset < p.getOffset())
-					offset= p.getOffset();
-				offset -= p.getOffset();	
-				
-				int e= p.getOffset() + p.getLength();
-				if (end > e)
-					end= e;
-				end -= p.getOffset();
-				
-			} else
-				return; 
-		}			
-		
-		length= end - offset;
-		
-		int[] selectionRange= new int[] { offset, length };
-		validateSelectionRange(selectionRange);
-		if (selectionRange[0] >= 0 && selectionRange[1] >= 0) {
-			
-			if (selectionLength < 0)
-				fTextWidget.setSelectionRange(selectionRange[0] + selectionRange[1], -selectionRange[1]);
-			else
+			int[] selectionRange= new int[] { widgetSelection.getOffset(), widgetSelection.getLength() };
+			validateSelectionRange(selectionRange);
+			if (selectionRange[0] >= 0) {
 				fTextWidget.setSelectionRange(selectionRange[0], selectionRange[1]);
-			
-			selectionChanged(selectionRange[0], selectionRange[1]);
+				selectionChanged(selectionRange[0], selectionRange[1]);
+			}
 		}
 	}
 	
@@ -1629,6 +1601,10 @@ public class TextViewer extends Viewer implements
 		int offset= selectionRange[0];
 		int length= selectionRange[1];
 		
+		if (length < 0) {
+			length= - length;
+			offset -= length;
+		}
 		
 		if (offset <0)
 			offset= 0;
@@ -1670,8 +1646,13 @@ public class TextViewer extends Viewer implements
 			return;
 		}
 		
-		selectionRange[0]= offset;
-		selectionRange[1]= length;
+		if (selectionRange[1] < 0) {
+			selectionRange[0]= offset + length;
+			selectionRange[1]= -length;
+		} else {
+			selectionRange[0]= offset;
+			selectionRange[1]= length;
+		}
 	}
 
 	/*
@@ -1712,7 +1693,8 @@ public class TextViewer extends Viewer implements
 	 */
 	protected void selectionChanged(int offset, int length) {
 		if (redraws()) {
-			ISelection selection= new TextSelection(getDocument(), getVisibleRegionOffset() + offset, length);
+			IRegion r= widgetRange2ModelRange(new Region(offset, length));
+			ISelection selection= r != null ? new TextSelection(getDocument(), r.getOffset(), r.getLength()) : TextSelection.emptySelection();
 			SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
 			fireSelectionChanged(event);
 		}
@@ -1727,8 +1709,13 @@ public class TextViewer extends Viewer implements
 	 */
 	protected void markChanged(int offset, int length) {
 		if (redraws()) {
-			if (offset != -1)
-				offset += getVisibleRegionOffset();
+			
+			if (offset != -1) {
+				IRegion r= widgetRange2ModelRange(new Region(offset, length));
+				offset= r.getOffset();
+				length= r.getLength();
+			}
+			
 			ISelection selection= new MarkSelection(getDocument(), offset, length);
 			SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
 			fireSelectionChanged(event);
@@ -1771,8 +1758,8 @@ public class TextViewer extends Viewer implements
 		if (fTextListeners != null) {
 			
 			DocumentEvent event= cmd.event;
-			if (event instanceof ChildDocumentEvent)
-				event= ((ChildDocumentEvent) event).getParentEvent();
+			if (event instanceof SlaveDocumentEvent)
+				event= ((SlaveDocumentEvent) event).getMasterEvent();
 				
 			TextEvent e= new TextEvent(cmd.start, cmd.length, cmd.text, cmd.preservedText, event, redraws());
 			for (int i= 0; i < fTextListeners.size(); i++) {
@@ -1897,10 +1884,11 @@ public class TextViewer extends Viewer implements
 		fDocument= document;
 		
 		try {
-			int line= fDocument.getLineOfOffset(visibleRegionOffset);
-			int offset= fDocument.getLineOffset(line);
-			int length= (visibleRegionOffset - offset) + visibleRegionLength;
-			setVisibleDocument(getChildDocumentManager().createChildDocument(fDocument, offset, length));
+			
+			IDocument visibleDocument= createSlaveDocument(document);
+			updateVisibleDocument(visibleDocument, visibleRegionOffset, visibleRegionLength);
+			setVisibleDocument(visibleDocument);
+		
 		} catch (BadLocationException x) {
 			throw new IllegalArgumentException(JFaceTextMessages.getString("TextViewer.error.invalid_visible_region_1")); //$NON-NLS-1$
 		}
@@ -1909,7 +1897,36 @@ public class TextViewer extends Viewer implements
 		
 		fireInputDocumentChanged(oldDocument, fDocument);
 		fReplaceTextPresentation= false;
-	}		
+	}
+	
+	protected IDocument createSlaveDocument(IDocument document) {
+		ISlaveDocumentManager manager= getSlaveDocumentManager();
+		if (manager != null) {
+			if (manager.isSlaveDocument(document))
+				return document;
+			return manager.createSlaveDocument(document);
+		}
+		return document;
+	}
+	
+	protected boolean  updateVisibleDocument(IDocument visibleDocument, int visibleRegionOffset, int visibleRegionLength) throws BadLocationException {
+		if (visibleDocument instanceof ChildDocument) {
+			ChildDocument childDocument= (ChildDocument) visibleDocument;
+
+			IDocument document= childDocument.getParentDocument();
+			int line= document.getLineOfOffset(visibleRegionOffset);
+			int offset= document.getLineOffset(line);
+			int length= (visibleRegionOffset - offset) + visibleRegionLength;
+			
+			Position parentRange= childDocument.getParentDocumentRange();
+			if (offset != parentRange.getOffset() || length != parentRange.getLength()) {
+				childDocument.setParentDocumentRange(offset, length);
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	
 	//---- Viewports	
 	
@@ -2010,21 +2027,9 @@ public class TextViewer extends Viewer implements
 		if (fTextWidget != null) {
 			
 			int top= fTextWidget.getTopIndex();
-			
-			int offset= getVisibleRegionOffset();
-			if (offset > 0) {
-				try {
-					top += getDocument().getLineOfOffset(offset);
-				} catch (BadLocationException x) {
-					if (TRACE_ERRORS)
-						System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.getTopIndex")); //$NON-NLS-1$
-					return -1;
+			return widgetlLine2ModelLine(top);
 				}
-			}
 			
-			return top;
-		}
-					
 		return -1;
 	}
 		
@@ -2035,31 +2040,13 @@ public class TextViewer extends Viewer implements
 		
 		if (fTextWidget != null) {
 			
-			int offset= getVisibleRegionOffset();
-			if (offset > 0) {
-				try {
-					index -= getDocument().getLineOfOffset(offset);
-				} catch (BadLocationException x) {
-					if (TRACE_ERRORS)
-						System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.setTopIndex_1")); //$NON-NLS-1$
-					return;
-				}
-			}
+			int widgetLine= modelLine2WidgetLine(index);
+			if (widgetLine == -1)
+				widgetLine= getClosestWidgetLineForModelLine(index);
 			
-			if (index >= 0) {
-				
-				int lines= getVisibleLinesInViewport();
-				if (lines > -1 ) {					
-					IDocument d= getVisibleDocument();
-					int last= d.getNumberOfLines() - lines;
-					if (last > 0 && index  > last)
-						index= last;
-					
-					fTextWidget.setTopIndex(index);
+			if (widgetLine > -1) {
+				fTextWidget.setTopIndex(widgetLine);
 					updateViewportListeners(INTERNAL);
-				
-				} else
-					fTextWidget.setTopIndex(index);
 			}
 		}
 	}
@@ -2087,17 +2074,20 @@ public class TextViewer extends Viewer implements
 		if (fTextWidget == null)
 			return -1;
 		
-		IRegion r= getVisibleRegion();
+		IRegion coverage= getModelCoverage();
 		
 		try {
 			
 			IDocument d= getDocument();
-			int startLine= d.getLineOfOffset(r.getOffset());
-			int endLine= d.getLineOfOffset(r.getOffset()  + r.getLength() - 1);
+			int startLine= d.getLineOfOffset(coverage.getOffset());
+			int endLine= d.getLineOfOffset(coverage.getOffset()  + coverage.getLength() - 1);
 			int lines= getVisibleLinesInViewport();
 			
-			if (startLine + lines < endLine)
-				return getTopIndex() + lines - 1;
+			if (startLine + lines < endLine) {
+				int widgetTopIndex= fTextWidget.getTopIndex();
+				int widgetBottomIndex= widgetTopIndex + lines -1;
+				return widgetlLine2ModelLine(widgetBottomIndex);
+			}
 				
 			return endLine;
 			
@@ -2118,7 +2108,7 @@ public class TextViewer extends Viewer implements
 			int top= fTextWidget.getTopIndex();
 			try {
 				top= getVisibleDocument().getLineOffset(top);
-				return top + getVisibleRegionOffset();
+				return widgetlLine2ModelLine(top);
 			} catch (BadLocationException ex) {
 				if (TRACE_ERRORS)
 					System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.getTopIndexStartOffset")); //$NON-NLS-1$
@@ -2137,9 +2127,9 @@ public class TextViewer extends Viewer implements
 			IRegion line= getDocument().getLineInformation(getBottomIndex());
 			int bottomEndOffset= line.getOffset() + line.getLength() - 1;
 			
-			IRegion region= getVisibleRegion();
-			int visibleRegionEndOffset=  region.getOffset() + region.getLength() - 1;
-			return visibleRegionEndOffset < bottomEndOffset ? visibleRegionEndOffset : bottomEndOffset;
+			IRegion coverage= getModelCoverage();
+			int coverageEndOffset=  coverage.getOffset() + coverage.getLength() - 1;
+			return Math.min(coverageEndOffset, bottomEndOffset);
 				
 		} catch (BadLocationException ex) {
 			if (TRACE_ERRORS)
@@ -2156,39 +2146,15 @@ public class TextViewer extends Viewer implements
 		if (fTextWidget == null || !redraws())
 			return;
 			
-		if (length < 0) {
-			start += length;
-			length= -length;
-		}
-		
-		int end= start + length;
-
-		IDocument document= getVisibleDocument();
-		if (document == null)
-			return;
-			
-		Position p= (document instanceof ChildDocument)
-			? ((ChildDocument) document).getParentDocumentRange()
-			: new Position(0, document.getLength());
-			
-		if (p.overlapsWith(start, length)) {
-				
-			if (start < p.getOffset())
-				start= p.getOffset();
-			start -= p.getOffset();	
-				
-			int e= p.getOffset() + p.getLength();				
-			if (end > e)
-				end= e;
-			end -= p.getOffset();
-				
+		IRegion modelRange= new Region(start, length);
+		IRegion widgetRange= modelRange2WidgetRange(modelRange);
+		if (widgetRange != null) {
+			internalRevealRange(widgetRange.getOffset(), widgetRange.getOffset() + widgetRange.getLength());				
 		} else {
-			// http://dev.eclipse.org/bugs/show_bug.cgi?id=15159
-			start= start < p.getOffset() ? 0 : p.getLength();
-			end= start;
+			IRegion coverage= getModelCoverage();
+			int cursor= start < coverage.getOffset() ? 0 : getVisibleDocument().getLength();
+			internalRevealRange(cursor, cursor);
 		}
-		
-		internalRevealRange(start, end);
 	}
 	
 	/**
@@ -2348,14 +2314,22 @@ public class TextViewer extends Viewer implements
 	//---- visible range support
 	
 	/**
-	 * Returns the child document manager
+	 * Returns the slave document manager
 	 *
-	 * @return the child document manager
+	 * @return the slave document manager
 	 */
-	private ChildDocumentManager getChildDocumentManager() {
-		if (fChildDocumentManager == null)
-			fChildDocumentManager= new ChildDocumentManager();
-		return fChildDocumentManager;
+	protected ISlaveDocumentManager getSlaveDocumentManager() {
+		if (fSlaveDocumentManager == null)
+			fSlaveDocumentManager= createSlaveDocumentManager();
+		return fSlaveDocumentManager;
+	}
+	
+	/**
+	 * Creates a new slave document manager.
+	 * @return ISlaveDocumentManager
+	 */
+	protected ISlaveDocumentManager createSlaveDocumentManager() {
+		return new ChildDocumentManager();
 	}
 	
 	/*
@@ -2374,25 +2348,14 @@ public class TextViewer extends Viewer implements
 	public final void invalidateTextPresentation(int offset, int length) {
 		if (fVisibleDocument != null) {
 			
-			IRegion visibleRegion= getVisibleRegion();
+			IRegion widgetRange= modelRange2WidgetRange(new Region(offset, length));
 			
-			int delta= visibleRegion.getOffset() - offset;
-			if (delta > 0) {
-				offset= visibleRegion.getOffset();
-				length -= delta;
-			}
-			offset -= visibleRegion.getOffset();	
-			
-			delta= (offset + length) - (visibleRegion.getOffset() + visibleRegion.getLength());
-			if (delta > 0)
-				length -= delta;
-				
 			fWidgetCommand.event= null;
-			fWidgetCommand.start= offset;
-			fWidgetCommand.length= length;
+			fWidgetCommand.start= widgetRange.getOffset();
+			fWidgetCommand.length= widgetRange.getLength();
 			
 			try {
-				fWidgetCommand.text= fVisibleDocument.get(offset, length);
+				fWidgetCommand.text= fVisibleDocument.get(widgetRange.getOffset(), widgetRange.getLength());
 				updateTextListeners(fWidgetCommand);
 			} catch (BadLocationException x) {
 				// can not happen because of previous checking
@@ -2426,18 +2389,24 @@ public class TextViewer extends Viewer implements
 	 *
 	 * @param document the visible document
 	 */
-	private void setVisibleDocument(IDocument document) {
+	protected void setVisibleDocument(IDocument document) {
 		
 		if (fVisibleDocument != null && fDocumentListener != null)
 			fVisibleDocument.removeDocumentListener(fDocumentListener);
 		
 		fVisibleDocument= document;
+		initializeDocumentInformationMapping(fVisibleDocument);
 		
 		initializeWidgetContents();
 		resetPlugins();
 		
 		if (fVisibleDocument != null && fDocumentListener != null)
 			fVisibleDocument.addDocumentListener(fDocumentListener);
+	}
+	
+	protected void initializeDocumentInformationMapping(IDocument visibleDocument) {
+		ISlaveDocumentManager manager= getSlaveDocumentManager();
+		fInformationMapping= manager == null ? null : manager.createMasterSlaveMapping(visibleDocument);
 	}
 	
 	/**
@@ -2454,7 +2423,7 @@ public class TextViewer extends Viewer implements
 	 *
 	 * @return the offset of the visible region
 	 */
-	protected int getVisibleRegionOffset() {
+	protected int _getVisibleRegionOffset() {
 		
 		IDocument document= getVisibleDocument();
 		if (document instanceof ChildDocument) {
@@ -2478,56 +2447,6 @@ public class TextViewer extends Viewer implements
 		
 		return new Region(0, document == null ? 0 : document.getLength());
 	}
-		
-	/*
-	 * @see ITextViewer#setVisibleRegion
-	 */
-	public void setVisibleRegion(int start, int length) {
-		
-		IRegion region= getVisibleRegion();
-		if (start == region.getOffset() && length == region.getLength()) {
-			// nothing to change
-			return;
-		}
-		
-		ChildDocument child= null;
-		IDocument parent= getVisibleDocument();
-		
-		if (parent instanceof ChildDocument) {
-			child= (ChildDocument) parent;
-			parent= child.getParentDocument();
-		}
-		
-		try {
-			
-			int line= parent.getLineOfOffset(start);
-			int offset= parent.getLineOffset(line);
-			length += (start - offset);
-			
-			if (child != null) {
-				child.setParentDocumentRange(offset, length);
-			} else {
-				child= getChildDocumentManager().createChildDocument(parent, offset, length);
-			}
-			
-			setVisibleDocument(child);
-							
-		} catch (BadLocationException x) {
-			throw new IllegalArgumentException(JFaceTextMessages.getString("TextViewer.error.invalid_visible_region_2")); //$NON-NLS-1$
-		}
-	}
-				
-	/*
-	 * @see ITextViewer#resetVisibleRegion
-	 */
-	public void resetVisibleRegion() {
-		IDocument document= getVisibleDocument();
-		if (document instanceof ChildDocument) {			
-			ChildDocument child = (ChildDocument) document;
-			setVisibleDocument(child.getParentDocument());
-			getChildDocumentManager().freeChildDocument(child);
-		}
-	}
 	
 	/*
 	 * @see ITextViewer#overlapsWithVisibleRegion
@@ -2543,7 +2462,41 @@ public class TextViewer extends Viewer implements
 		}
 		return false;
 	}
+	
+	/*
+	 * @see ITextViewer#setVisibleRegion
+	 */
+	public void setVisibleRegion(int start, int length) {
 		
+		IRegion region= getVisibleRegion();
+		if (start == region.getOffset() && length == region.getLength()) {
+			// nothing to change
+			return;
+		}
+		
+		try {
+			IDocument visibleDocument= createSlaveDocument(getVisibleDocument());
+			if (updateVisibleDocument(visibleDocument, start, length))
+				setVisibleDocument(visibleDocument);
+		} catch (BadLocationException x) {
+			throw new IllegalArgumentException(JFaceTextMessages.getString("TextViewer.error.invalid_visible_region_2")); //$NON-NLS-1$
+		}
+	}
+				
+	/*
+	 * @see ITextViewer#resetVisibleRegion
+	 */
+	public void resetVisibleRegion() {
+		ISlaveDocumentManager manager= getSlaveDocumentManager();
+		if (manager != null) {
+			IDocument slave= getVisibleDocument();
+			IDocument master= manager.getMasterDocument(slave);
+			if (master != null) {
+				setVisibleDocument(master);
+				manager.freeSlaveDocument(slave);
+			}
+		}
+	}
 	
 	
 	//--------------------------------------
@@ -2639,20 +2592,20 @@ public class TextViewer extends Viewer implements
 				return;
 		}
 		
-		int offset= getVisibleRegionOffset();
-		fDocumentCommand.setEvent(e, offset);
+		IRegion modelRange= event2ModelRange(e);
+		fDocumentCommand.setEvent(e, modelRange);
 		customizeDocumentCommand(fDocumentCommand);
-		if (!fDocumentCommand.fillEvent(e, offset)) {
+		if (!fDocumentCommand.fillEvent(e, modelRange)) {
 			try {
 				fVerifyListener.forward(false);
 				fDocumentCommand.execute(getDocument());
 				if (fTextWidget != null) {
-					int caretOffset= fDocumentCommand.caretOffset;
+					int documentCaret= fDocumentCommand.caretOffset;
 					// old behaviour of document command
-					if (caretOffset == -1)
-						caretOffset= fDocumentCommand.offset + (fDocumentCommand.text == null ? 0 : fDocumentCommand.text.length());
-					caretOffset -= getVisibleRegionOffset();
-					fTextWidget.setCaretOffset(caretOffset);
+					if (documentCaret == -1)
+						documentCaret= fDocumentCommand.offset + (fDocumentCommand.text == null ? 0 : fDocumentCommand.text.length());
+					int widgetCaret= modelOffset2WidgetOffset(documentCaret);
+					fTextWidget.setCaretOffset(widgetCaret);
 				}
 			} catch (BadLocationException x) {
 				if (TRACE_ERRORS)
@@ -2671,19 +2624,11 @@ public class TextViewer extends Viewer implements
 	 * @return <code>true</code> if the marked region of this viewer is empty, otherwise <code>false</code>
 	 */
 	private boolean isMarkedRegionEmpty() {
-
-		if (fTextWidget == null)
-			return true;
-
-		IRegion region= getVisibleRegion();
-		int offset= region.getOffset();
-		int length= region.getLength();
-
 		return
+			fTextWidget == null ||
 			fMarkPosition == null ||
 			fMarkPosition.isDeleted() ||
-			fMarkPosition.offset < offset ||
-			fMarkPosition.offset > offset + length;
+			modelRange2WidgetRange(fMarkPosition) == null;
 	}
 
 	/*
@@ -2765,9 +2710,10 @@ public class TextViewer extends Viewer implements
 			case DELETE:
 				deleteText();
 				break;
-			case SELECT_ALL:
-				setSelectedRange(getVisibleRegionOffset(), getVisibleDocument().getLength());
+			case SELECT_ALL: {
+				setSelectedRange(0, getDocument().getLength());
 				break;
+			}
 			case SHIFT_RIGHT:
 				shift(false, true, false);
 				break;
@@ -2808,21 +2754,15 @@ public class TextViewer extends Viewer implements
 		if (fTextWidget == null)
 			return;
 
-		IRegion region= getVisibleRegion();
-		int offset= region.getOffset();
-		int length= region.getLength();
-
-		if (fMarkPosition == null || fMarkPosition.isDeleted() ||
-			fMarkPosition.offset < offset || fMarkPosition.offset > offset + length)
+		if (fMarkPosition == null || fMarkPosition.isDeleted() || modelRange2WidgetRange(fMarkPosition) == null)
 			return;
 					
-		int markOffset= fMarkPosition.offset - offset;
-		
+		int widgetMarkOffset= modelOffset2WidgetOffset(fMarkPosition.offset);
 		Point selection= fTextWidget.getSelection();		
-		if (selection.x <= markOffset)
-			fTextWidget.setSelection(selection.x, markOffset);
+		if (selection.x <= widgetMarkOffset)
+			fTextWidget.setSelection(selection.x, widgetMarkOffset);
 		else
-			fTextWidget.setSelection(markOffset, selection.x);
+			fTextWidget.setSelection(widgetMarkOffset, selection.x);
 
 		if (delete) {
 			fTextWidget.cut();			
@@ -3207,19 +3147,23 @@ public class TextViewer extends Viewer implements
 			return -1;
 			
 		try {
-			int offset= (startPosition == -1 ? startPosition : startPosition - getVisibleRegionOffset());
-			int pos= getVisibleDocument().search(offset, findString, forwardSearch, caseSensitive, wholeWord);
-			if (pos > -1) {
+			
+			int widgetOffset= (startPosition == -1 ? startPosition : modelOffset2WidgetOffset(startPosition));
+			int widgetPos= getVisibleDocument().search(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord);
+			if (widgetPos > -1) {
+				
 				int length= findString.length();
 				if (redraws()) {
-					fTextWidget.setSelectionRange(pos, length);
-					internalRevealRange(pos, pos + length);
-					selectionChanged(pos, length);
+					fTextWidget.setSelectionRange(widgetPos, length);
+					internalRevealRange(widgetPos, widgetPos + length);
+					selectionChanged(widgetPos, length);
 				} else {
-					setSelectedRange(pos + getVisibleRegionOffset(), length);
+					setSelectedRange(widgetOffset2ModelOffset(widgetPos), length);
 				}
+				
+				return widgetOffset2ModelOffset(widgetPos);
 			}
-			return pos + getVisibleRegionOffset();
+			
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
 				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.findAndSelect")); //$NON-NLS-1$
@@ -3237,32 +3181,41 @@ public class TextViewer extends Viewer implements
 			return -1;
 			
 		try {
-			int offset;
-			if (forwardSearch && (startPosition == -1 || startPosition < rangeOffset)) {
-				offset= rangeOffset;
-			} else if (!forwardSearch && (startPosition == -1 || startPosition > rangeOffset + rangeLength)) {
-				offset= rangeOffset + rangeLength;
-			} else {
-				offset= startPosition;
-			}
-			offset -= getVisibleRegionOffset();
 			
-			int pos= getVisibleDocument().search(offset, findString, forwardSearch, caseSensitive, wholeWord);
-
-			int length =  findString.length();
-			if (pos != -1 && (pos + getVisibleRegionOffset() < rangeOffset || pos + getVisibleRegionOffset() + length > rangeOffset + rangeLength))
-				pos= -1;
-
-			if (pos > -1) {
-				if (redraws()) {
-					fTextWidget.setSelectionRange(pos, length);
-					internalRevealRange(pos, pos + length);
-					selectionChanged(pos, length);
-				} else {
-					setSelectedRange(pos + getVisibleRegionOffset(), length);
-				}
+			int modelOffset;
+			if (forwardSearch && (startPosition == -1 || startPosition < rangeOffset)) {
+				modelOffset= rangeOffset;
+			} else if (!forwardSearch && (startPosition == -1 || startPosition > rangeOffset + rangeLength)) {
+				modelOffset= rangeOffset + rangeLength;
+			} else {
+				modelOffset= startPosition;
 			}
-			return pos + getVisibleRegionOffset();
+			
+			int widgetOffset= modelOffset2WidgetOffset(modelOffset);
+			if (widgetOffset == -1)
+				return -1;
+
+			int widgetPos= getVisibleDocument().search(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord);
+			int modelPos= widgetPos == -1 ? -1 : widgetOffset2ModelOffset(widgetPos);
+			
+			int length =  findString.length();
+			if (widgetPos != -1 && (modelPos < rangeOffset || modelPos + length > rangeOffset + rangeLength))
+				widgetPos= -1;
+
+			if (widgetPos > -1) {
+				
+				if (redraws()) {
+					fTextWidget.setSelectionRange(widgetPos, length);
+					internalRevealRange(widgetPos, widgetPos + length);
+					selectionChanged(widgetPos, length);
+				} else {
+					setSelectedRange(modelPos, length);
+				}
+			
+				return modelPos;
+			}
+			
+			
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
 				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.findAndSelect")); //$NON-NLS-1$
@@ -3296,10 +3249,17 @@ public class TextViewer extends Viewer implements
 			s.start= start;
 			s.length= length;
 			
-			fTextWidget.setStyleRange(s);
-			
-			if (controlRedraw)
-				fTextWidget.setRedraw(true);
+			s= modelStyleRange2WidgetStyleRange(s);
+			if (s != null) {
+				
+				if (controlRedraw)
+					fTextWidget.setRedraw(false); 
+					
+				fTextWidget.setStyleRange(s);
+				
+				if (controlRedraw)
+					fTextWidget.setRedraw(true);
+			}
 		}
 	}
 	
@@ -3313,24 +3273,59 @@ public class TextViewer extends Viewer implements
 		StyleRange range= presentation.getDefaultStyleRange();
 		if (range != null) {
 			
-			fTextWidget.setStyleRange(range);
+			range= modelStyleRange2WidgetStyleRange(range);
+			if (range != null)
+				fTextWidget.setStyleRange(range);
+			
 			Iterator e= presentation.getNonDefaultStyleRangeIterator();
 			while (e.hasNext()) {
 				range= (StyleRange) e.next();
-				fTextWidget.setStyleRange(range);
+				range= modelStyleRange2WidgetStyleRange(range);
+				if (range != null)
+					fTextWidget.setStyleRange(range);
 			}
 		
 		} else {
 			
-			IRegion coverage= presentation.getCoverage();
-			if (coverage != null) {
-				Iterator e= presentation.getAllStyleRangeIterator();
-				StyleRange[] ranges= new StyleRange[presentation.getDenumerableRanges()];
-				for (int i= 0; i < ranges.length; i++)
-					ranges[i]= (StyleRange) e.next();
-					
-				fTextWidget.replaceStyleRanges(coverage.getOffset(), coverage.getLength(), ranges);
+			List list= new ArrayList();
+			Iterator e= presentation.getAllStyleRangeIterator();
+			while (e.hasNext()) {
+				range= (StyleRange) e.next();
+				range= modelStyleRange2WidgetStyleRange(range);
+				if (range != null)
+					list.add(range);
 			}
+					
+			if (!list.isEmpty()) {
+				StyleRange[] ranges= new StyleRange[list.size()];
+				list.toArray(ranges);
+				IRegion region= modelRange2WidgetRange(presentation.getCoverage());
+				fTextWidget.replaceStyleRanges(region.getOffset(), region.getLength(), ranges);
+			}
+		}
+	}
+	
+	/**
+	 * Applies the given presentation to the given text widget. Helper method.
+	 *
+	 * @param presentation the style information
+	 * @since 2.1
+	 */
+	private void applyTextPresentation(TextPresentation presentation) {
+	
+		List list= new ArrayList();
+		Iterator e= presentation.getAllStyleRangeIterator();
+		while (e.hasNext()) {
+			StyleRange range= (StyleRange) e.next();
+			range= modelStyleRange2WidgetStyleRange(range);
+			if (range != null)
+				list.add(range);
+		}
+	
+		if (!list.isEmpty()) {
+			StyleRange[] ranges= new StyleRange[list.size()];
+			list.toArray(ranges);
+			fTextWidget.setStyleRanges(ranges);
 		}
 	}
 	
@@ -3340,7 +3335,7 @@ public class TextViewer extends Viewer implements
 	 *
 	 * @return the viewer's visible region if smaller than input document, otherwise <code>null</code>
 	 */
-	protected IRegion internalGetVisibleRegion() {
+	protected IRegion _internalGetVisibleRegion() {
 		
 		IDocument document= getVisibleDocument();
 		if (document instanceof ChildDocument) {
@@ -3359,7 +3354,6 @@ public class TextViewer extends Viewer implements
 		if (presentation == null || !redraws())
 			return;
 			
-		presentation.setResultWindow(internalGetVisibleRegion());
 		if (presentation.isEmpty() || fTextWidget == null)
 			return;
 					
@@ -3367,7 +3361,7 @@ public class TextViewer extends Viewer implements
 			fTextWidget.setRedraw(false);
 		
 		if (fReplaceTextPresentation)
-			TextPresentation.applyTextPresentation(presentation, fTextWidget);
+			applyTextPresentation(presentation);
 		else
 			addPresentation(presentation);
 		
@@ -3483,7 +3477,7 @@ public class TextViewer extends Viewer implements
 				fMarkPosition.undelete();
 			}
 
-			markChanged(fMarkPosition.offset - getVisibleRegionOffset(), 0);
+			markChanged(modelOffset2WidgetOffset(fMarkPosition.offset), 0);
 		}		
 	}
 
@@ -3574,11 +3568,6 @@ public class TextViewer extends Viewer implements
 		
 		if (fTextWidget != null && !fTextWidget.isDisposed())
 			fTextWidget.setRedraw(false);
-		
-		/* 
-		 * TODO: should be removed.
-		 */
-		fireRedrawChanged();
 	}
 	
 	/*
@@ -3659,4 +3648,192 @@ public class TextViewer extends Viewer implements
 		return fTextHoverManager.getHoverEventLocation();
 	}
 
+
+	// ----------------------------------- conversions -------------------------------------------------------			
+		
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextViewerExtension3#modelLine2WidgetLine(int)
+	 */
+	public int modelLine2WidgetLine(int modelLine) {
+		if (fInformationMapping == null)
+			return modelLine;
+		
+		try {
+			return fInformationMapping.toImageLine(modelLine);
+		} catch (BadLocationException x) {
+	}
+
+		return -1;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextViewerExtension3#modelOffset2WidgetOffset(int)
+	 */
+	public int modelOffset2WidgetOffset(int modelOffset) {
+		if (fInformationMapping == null)
+			return modelOffset;
+			
+		try {
+			return fInformationMapping.toImageOffset(modelOffset);
+		} catch (BadLocationException x) {    
+		}
+
+		return -1;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextViewerExtension3#modelRange2WidgetRange(org.eclipse.jface.text.IRegion)
+	 */
+	public IRegion modelRange2WidgetRange(IRegion modelRange) {
+		if (fInformationMapping == null)
+			return modelRange;
+			
+		try {
+			return fInformationMapping.toImageRegion(modelRange);
+		} catch (BadLocationException x) {
+		}
+		
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextViewerExtension3#widgetlLine2ModelLine(int)
+	 */
+	public int widgetlLine2ModelLine(int widgetLine) {
+		if (fInformationMapping == null)
+			return widgetLine;
+		
+		try {
+			return fInformationMapping.toOriginLine(widgetLine);
+		} catch (BadLocationException x) {
+		}
+		
+		return -1;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextViewerExtension3#widgetOffset2ModelOffset(int)
+	 */
+	public int widgetOffset2ModelOffset(int widgetOffset) {
+		if (fInformationMapping == null)
+			return widgetOffset;
+			
+		try {
+			return fInformationMapping.toOriginOffset(widgetOffset);
+		} catch (BadLocationException x) {    
+			if (widgetOffset == getVisibleDocument().getLength()) {
+				IRegion coverage= fInformationMapping.getCoverage();
+				return coverage.getOffset() + coverage.getLength();
+			}
+		}
+		
+		return -1;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextViewerExtension3#widgetRange2ModelRange(org.eclipse.jface.text.IRegion)
+	 */
+	public IRegion widgetRange2ModelRange(IRegion widgetRange) {
+		if (fInformationMapping == null)
+			return widgetRange;
+			
+		try {
+			return fInformationMapping.toOriginRegion(widgetRange);
+		} catch (BadLocationException x) {
+			int modelOffset= widgetOffset2ModelOffset(widgetRange.getOffset());
+			if (modelOffset > -1) {
+				int modelEndOffset= widgetOffset2ModelOffset(widgetRange.getOffset() + widgetRange.getLength());
+				if (modelEndOffset > -1)
+					return new Region(modelOffset, modelEndOffset - modelOffset);
+			}
+		}
+		
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextViewerExtension3#getModelCoverage()
+	 */
+	public IRegion getModelCoverage() {
+		if (fInformationMapping == null) {
+			IDocument document= getDocument();
+			if (document == null)
+				return null;
+			return new Region(0, document.getLength());
+		}
+
+		return fInformationMapping.getCoverage();
+	}
+
+	protected int getClosestWidgetLineForModelLine(int modelLine) {
+		if (fInformationMapping == null)
+			return modelLine;
+			
+		try {
+			return fInformationMapping.toClosestImageLine(modelLine);
+		} catch (BadLocationException x) {
+		}
+		
+		return -1;
+	}
+	
+	protected StyleRange modelStyleRange2WidgetStyleRange(StyleRange range) {
+		IRegion region= modelRange2WidgetRange(new Region(range.start, range.length));
+		if (region != null) {
+			StyleRange result= (StyleRange) range.clone();
+			result.start= region.getOffset();
+			result.length= region.getLength();
+			return result;
+		}
+		return null;
+	}
+	
+	protected IRegion modelRange2WidgetRange(Position modelPosition) {
+		return modelRange2WidgetRange(new Region(modelPosition.getOffset(), modelPosition.getLength()));
+	}
+	
+	protected IRegion event2ModelRange(VerifyEvent event) {
+
+		Region region= null;
+		if (event.start <= event.end)
+			region= new Region(event.start, event.end - event.start);
+		else
+			region= new Region(event.end, event.start - event.end);
+
+		return widgetRange2ModelRange(region);
+	}
+	
+	protected Point widgetSelection2ModelSelection(Point widgetSelection) {
+		IRegion region= new Region(widgetSelection.x, widgetSelection.y);
+		region= widgetRange2ModelRange(region);
+		return region == null ? null : new Point(region.getOffset(), region.getLength());
+	}
+		
+	protected Point modelSelection2WidgetSelection(Point modelSelection) {
+		if (fInformationMapping == null)
+			return modelSelection;
+
+		try {
+			IRegion region= new Region(modelSelection.x, modelSelection.y);
+			region= fInformationMapping.toImageRegion(region);
+			return new Point(region.getOffset(), region.getLength());
+		} catch (BadLocationException x) {
+		}
+
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextViewerExtension3#widgetLineOfWidgetOffset(int)
+	 */
+	public int widgetLineOfWidgetOffset(int widgetOffset) {
+		IDocument document= getVisibleDocument();
+		if (document != null) {
+			try {
+				return document.getLineOfOffset(widgetOffset);
+			} catch (BadLocationException e) {
+			}
+		}
+		return -1;
+	}
 }

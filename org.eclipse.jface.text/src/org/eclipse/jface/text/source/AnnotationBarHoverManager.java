@@ -20,6 +20,8 @@ import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewerExtension3;
+
 import org.eclipse.jface.util.Assert;
 
 
@@ -73,14 +75,18 @@ class AnnotationBarHoverManager extends AbstractHoverInformationControlManager {
 	}
 	
 	/**
-	 * Returns for a given absolute line number the corresponding line
-	 * number relative to the viewer's visible region.
-	 *
+	 * Returns for the widget line number for the given document line number.
+	 * 
 	 * @param line the absolute line number
 	 * @return the line number relative to the viewer's visible region
 	 * @throws BadLocationException if <code>line</code> is not valid in the viewer's document
 	 */
-	private int getRelativeLineNumber(int line) throws BadLocationException {
+	private int getWidgetLineNumber(int line) throws BadLocationException {
+		if (fSourceViewer instanceof ITextViewerExtension3) {
+			ITextViewerExtension3 extension= (ITextViewerExtension3) fSourceViewer;
+			return extension.modelLine2WidgetLine(line);
+		}
+		
 		IRegion region= fSourceViewer.getVisibleRegion();
 		int firstLine= fSourceViewer.getDocument().getLineOfOffset(region.getOffset());
 		return line - firstLine;
@@ -96,7 +102,7 @@ class AnnotationBarHoverManager extends AbstractHoverInformationControlManager {
 		try {
 			StyledText text= fSourceViewer.getTextWidget();
 			int lineHeight= text.getLineHeight();
-			int y= getRelativeLineNumber(line) * lineHeight - text.getTopPixel();
+			int y= getWidgetLineNumber(line) * lineHeight - text.getTopPixel();
 			Point size= fVerticalRuler.getControl().getSize();
 			return new Rectangle(0, y, size.x, lineHeight);
 		} catch (BadLocationException x) {

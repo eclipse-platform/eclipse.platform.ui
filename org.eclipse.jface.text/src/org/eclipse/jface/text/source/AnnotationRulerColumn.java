@@ -37,8 +37,10 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension3;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
 
 
@@ -97,7 +99,21 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	private InternalListener fInternalListener= new InternalListener();
 	/** The width of this vertical ruler */
 	private int fWidth;
+	/** Switch for enabling/disabling the setModel method. */
+	private boolean fAllowSetModel= true;
 	
+	
+	/**
+	 * Constructs this column with the given width.
+	 *
+	 * @param width the width of the vertical ruler
+	 */
+	public AnnotationRulerColumn(IAnnotationModel model, int width) {
+		fWidth= width;
+		fAllowSetModel= false;
+		fModel= model;
+		fModel.addAnnotationModelListener(fInternalListener);
+	}
 	
 	/**
 	 * Constructs this column with the given width.
@@ -158,6 +174,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 			
 			public void mouseDoubleClick(MouseEvent event) {
 				fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
+				mouseDoubleClicked(fParentRuler.getLineOfLastMouseButtonActivity());
 			}
 		});
 		
@@ -167,6 +184,9 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 		}
 		
 		return fCanvas;
+	}
+	
+	protected void mouseDoubleClicked(int rulerLine) {
 	}
 	
 	/**
@@ -214,7 +234,11 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 		try {
 			gc.setBackground(fCanvas.getBackground());
 			gc.fillRectangle(0, 0, size.x, size.y);
-			doPaint(gc);
+			
+			if (fCachedTextViewer instanceof ITextViewerExtension3)
+				doPaint1(gc);
+			else
+				doPaint(gc);
 		} finally {
 			gc.dispose();
 		}
@@ -331,6 +355,64 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 		}
 	}
 	
+	protected void doPaint1(GC gc) {
+
+		if (fModel == null || fCachedTextViewer == null)
+			return;
+
+		ITextViewerExtension3 extension= (ITextViewerExtension3) fCachedTextViewer;
+
+		fScrollPos= fCachedTextWidget.getTopPixel();
+		int lineheight= fCachedTextWidget.getLineHeight();
+		Point dimension= fCanvas.getSize();
+		int shift= fCachedTextViewer.getTopInset();
+
+		// draw Annotations
+		Rectangle r= new Rectangle(0, 0, 0, 0);
+		int maxLayer= 1;	// loop at least once thru layers.
+
+		for (int layer= 0; layer < maxLayer; layer++) {
+			Iterator iter= fModel.getAnnotationIterator();
+			while (iter.hasNext()) {
+
+				Annotation annotation= (Annotation) iter.next();
+
+				int lay= annotation.getLayer();
+				maxLayer= Math.max(maxLayer, lay+1);	// dynamically update layer maximum
+				if (lay != layer)	// wrong layer: skip annotation
+					continue;
+
+				Position position= fModel.getPosition(annotation);
+				if (position == null)
+					continue;
+
+				IRegion widgetRegion= extension.modelRange2WidgetRange(new Region(position.getOffset(), position.getLength()));
+				if (widgetRegion == null)
+					continue;
+
+				int startLine= extension.widgetLineOfWidgetOffset(widgetRegion.getOffset());
+				if (startLine == -1)
+					continue;
+
+				int endLine= extension.widgetLineOfWidgetOffset(widgetRegion.getOffset() + Math.max(widgetRegion.getLength() -1, 0));
+				if (endLine == -1)
+					continue;
+
+				r.x= 0;
+				r.y= (startLine * lineheight) - fScrollPos + shift;
+				r.width= dimension.x;
+				int lines= endLine - startLine;
+				if (lines < 0)
+					lines= -lines;
+				r.height= (lines+1) * lineheight;
+
+				if (r.y < dimension.y)  // annotation within visible area
+					annotation.paint(gc, fCanvas, r);
+			}
+		}
+	}
+
+	
 	/**
 	 * Post a redraw request for thid column into the UI thread.
 	 */
@@ -362,7 +444,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	 * @see IVerticalRulerColumn#setModel
 	 */
 	public void setModel(IAnnotationModel model) {
-		if (model != fModel) {
+		if (fAllowSetModel && model != fModel) {
 			
 			if (fModel != null)
 				fModel.removeAnnotationModelListener(fInternalListener);
@@ -380,5 +462,13 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	 * @see IVerticalRulerColumn#setFont(Font)
 	 */
 	public void setFont(Font font) {
+	}
+	
+	protected ITextViewer getCachedTextViewer() {
+		return fCachedTextViewer;
+	}
+	
+	protected IAnnotationModel getModel() {
+		return fModel;
 	}
 }

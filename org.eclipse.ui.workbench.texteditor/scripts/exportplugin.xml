@@ -23,6 +23,7 @@
 		<copy file="plugin.properties" todir="${dest}"/>
 		<zip zipfile="${dest}/texteditorsrc.jar">
 		    <fileset dir="src" />
+		    <fileset dir="icons"/>
   		</zip>				
 	</target>
 

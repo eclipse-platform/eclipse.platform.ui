@@ -41,6 +41,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
+import org.eclipse.jface.text.ITextViewerExtension3;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.TextEvent;
 
@@ -512,7 +513,12 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 		try {
 			gc.setBackground(getBackground(fCanvas.getDisplay()));
 			gc.fillRectangle(0, 0, size.x, size.y);
-			doPaint(gc);
+			
+			if (fCachedTextViewer instanceof ITextViewerExtension3)
+				doPaint1(gc);
+			else
+				doPaint(gc);
+				
 		} finally {
 			gc.dispose();
 		}
@@ -581,6 +587,67 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 			String s= Integer.toString(line + 1);
 			int indentation= fIndentation[s.length()];
 			gc.drawString(nf.format(line + 1), indentation, y);
+		}
+	}
+	
+	private void doPaint1(GC gc) {
+
+		if (fCachedTextViewer == null)
+			return;
+
+		ITextViewerExtension3 extension= (ITextViewerExtension3) fCachedTextViewer;
+
+		int firstLine= 0;
+
+
+		int widgetTopLine= fCachedTextWidget.getTopIndex();
+		if (widgetTopLine > 0)
+			-- widgetTopLine;
+
+		int topLine= extension.widgetlLine2ModelLine(widgetTopLine);
+		int bottomLine= fCachedTextViewer.getBottomIndex();
+		if (bottomLine >= 0)
+			++ bottomLine;
+
+		try {
+
+			IRegion region= extension.getModelCoverage();
+			IDocument doc= fCachedTextViewer.getDocument();
+
+			firstLine= doc.getLineOfOffset(region.getOffset());
+			if (firstLine > topLine || topLine == -1)
+				topLine= firstLine;
+
+			int lastLine= doc.getLineOfOffset(region.getOffset() + region.getLength());
+			if (lastLine < bottomLine || bottomLine == -1)
+				bottomLine= lastLine;
+
+		} catch (BadLocationException x) {
+			return;
+		}
+
+		fSensitiveToTextChanges= bottomLine - topLine < getVisibleLinesInViewport();
+
+		int lineheight= fCachedTextWidget.getLineHeight();
+		fScrollPos= fCachedTextWidget.getTopPixel();
+		int canvasheight= fCanvas.getSize().y;
+
+		NumberFormat nf= NumberFormat.getInstance();
+
+		int y= (widgetTopLine * lineheight) - fScrollPos + fCachedTextViewer.getTopInset();
+		for (int modelLine= topLine; modelLine <= bottomLine; modelLine++) {
+
+			if (y >= canvasheight)
+				break;
+
+			int widgetLine= extension.modelLine2WidgetLine(modelLine);
+			if (widgetLine == -1)
+				continue;
+
+			String s= Integer.toString(modelLine + 1);
+			int indentation= fIndentation[s.length()];
+			gc.drawString(nf.format(modelLine + 1), indentation, y);
+			y+= lineheight;
 		}
 	}
 	

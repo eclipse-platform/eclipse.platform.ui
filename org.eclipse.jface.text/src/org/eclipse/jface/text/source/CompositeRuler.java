@@ -47,6 +47,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
+import org.eclipse.jface.text.ITextViewerExtension3;
 
 
 /**
@@ -693,15 +694,24 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 			return -1;
 			
 		StyledText text= fTextViewer.getTextWidget();
-		int line= ((y_coordinate + text.getTopPixel()) / text.getLineHeight());				
+		int line= ((y_coordinate + text.getTopPixel()) / text.getLineHeight());
+		return widgetLine2ModelLine(fTextViewer, line);
+	}
+		
+	protected final static int widgetLine2ModelLine(ITextViewer viewer, int widgetLine) {
+
+		if (viewer instanceof ITextViewerExtension3) {
+			ITextViewerExtension3 extension= (ITextViewerExtension3) viewer;
+			return extension.widgetlLine2ModelLine(widgetLine);
+		}
+
 		try {
-			IRegion r= fTextViewer.getVisibleRegion();
-			IDocument d= fTextViewer.getDocument(); 
-			line += d.getLineOfOffset(r.getOffset());
+			IRegion r= viewer.getVisibleRegion();
+			IDocument d= viewer.getDocument();
+			return widgetLine += d.getLineOfOffset(r.getOffset());
 		} catch (BadLocationException x) {
 		}
-		
-		return line;
+		return widgetLine;
 	}
 	
 	/**

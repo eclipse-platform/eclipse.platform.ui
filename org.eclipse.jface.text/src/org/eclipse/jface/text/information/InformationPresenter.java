@@ -37,9 +37,11 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension3;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.IWidgetTokenKeeper;
 import org.eclipse.jface.text.IWidgetTokenOwner;
+import org.eclipse.jface.text.Region;
 
 import org.eclipse.jface.util.Assert;
  
@@ -308,13 +310,12 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	 * @return the graphical extend of the given region
 	 */
 	private Rectangle computeArea(IRegion region) {
+				
+		IRegion widgetRegion= modelRange2WidgetRange(region);
+		int start= widgetRegion.getOffset();
+		int end= widgetRegion.getOffset() + widgetRegion.getLength();
 		
 		StyledText styledText= fTextViewer.getTextWidget();
-		
-		IRegion visible= fTextViewer.getVisibleRegion();
-		int start= region.getOffset() - visible.getOffset();
-		int end= start + region.getLength();
-		
 		Point upperLeft= styledText.getLocationAtOffset(start);
 		Point lowerRight= new Point(upperLeft.x, upperLeft.y);
 		
@@ -343,6 +344,26 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		int width= lowerRight.x - upperLeft.x;
 		int height= lowerRight.y - upperLeft.y;
 		return new Rectangle(upperLeft.x, upperLeft.y, width, height);
+	}
+	
+	/**
+	 * Method modelRange2WidgetRange.
+	 * @param region
+	 * @return IRegion
+	 */
+	private IRegion modelRange2WidgetRange(IRegion region) {
+		if (fTextViewer instanceof ITextViewerExtension3) {
+			ITextViewerExtension3 extension= (ITextViewerExtension3) fTextViewer;
+			return extension.modelRange2WidgetRange(region);
+		}
+
+		IRegion visibleRegion= fTextViewer.getVisibleRegion();
+		int start= region.getOffset() - visibleRegion.getOffset();
+		int end= start + region.getLength();
+		if (end > visibleRegion.getLength())
+			end= visibleRegion.getLength();
+
+		return new Region(start, end - start);
 	}
 	
 	/*

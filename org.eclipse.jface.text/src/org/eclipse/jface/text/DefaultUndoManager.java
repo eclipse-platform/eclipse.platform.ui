@@ -89,14 +89,10 @@ public class DefaultUndoManager implements IUndoManager {
 		 * @param text the text widget to be modified
 		 */
 		protected void undo(StyledText text) {
-			
 			undoTextChange(text);
-			
-			int length= fPreservedText == null ? 0 : fPreservedText.length();
-			IRegion visible= fTextViewer.getVisibleRegion();
-			int offset= fStart + visible.getOffset();
-			fTextViewer.setSelectedRange(offset, length);
-			fTextViewer.revealRange(offset, length);
+			IRegion modelRange= widgetRange2ModelRange(fStart, fPreservedText == null ? 0 : fPreservedText.length());
+			fTextViewer.setSelectedRange(modelRange.getOffset(), modelRange.getLength());
+			fTextViewer.revealRange(modelRange.getOffset(), modelRange.getLength());
 		}
 		
 		/**
@@ -116,14 +112,20 @@ public class DefaultUndoManager implements IUndoManager {
 		 * @param text the text widget to be modified
 		 */
 		protected void redo(StyledText text) {
-			
 			redoTextChange(text);
+			IRegion modelRange= widgetRange2ModelRange(fStart, fText == null ? 0 : fText.length());
+			fTextViewer.setSelectedRange(modelRange.getOffset(), modelRange.getLength());
+			fTextViewer.revealRange(modelRange.getOffset(), modelRange.getLength());
+		}
+		
+		protected IRegion widgetRange2ModelRange(int offset, int length) {
+			if (fTextViewer instanceof ITextViewerExtension3) {
+				ITextViewerExtension3 extension= (ITextViewerExtension3) fTextViewer;
+				return extension.widgetRange2ModelRange(new Region(offset, length));
+			}
 			
-			int length= fText == null ? 0 : fText.length();
 			IRegion visible= fTextViewer.getVisibleRegion();
-			int offset= fStart + visible.getOffset();
-			fTextViewer.setSelectedRange(offset, length);
-			fTextViewer.revealRange(offset, length);
+			return new Region(offset + visible.getOffset(), length);
 		}
 		
 		/**

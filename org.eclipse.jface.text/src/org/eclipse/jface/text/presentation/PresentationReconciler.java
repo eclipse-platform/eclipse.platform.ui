@@ -28,6 +28,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension3;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
@@ -175,13 +176,12 @@ public class PresentationReconciler implements IPresentationReconciler {
 			 		IDocument d= fViewer.getDocument();
 			 		processDamage(new Region(0, d.getLength()), d);
 		 		} else {
-			 		IRegion visible= fViewer.getVisibleRegion();
-			 		IRegion region= new Region(e.getOffset() + visible.getOffset(), e.getLength());
+					IRegion region= widgetRegion2ModelRegion(e);
 			 		processDamage(region, fViewer.getDocument());
 		 		}
 		 		
 		 	} else {
-			 	
+		 		
 			 	IRegion damage= getDamage(de);
 				if (damage != null)
 					processDamage(damage, de.getDocument());
@@ -189,6 +189,17 @@ public class PresentationReconciler implements IPresentationReconciler {
 		 	
 			fDocumentPartitioningChanged= false;
 			fChangedDocumentPartitions= null;
+		}
+		
+		protected IRegion widgetRegion2ModelRegion(TextEvent e) {
+			if (fViewer instanceof ITextViewerExtension3) {
+				ITextViewerExtension3 extension= (ITextViewerExtension3) fViewer;
+				return extension.widgetRange2ModelRange(new Region(e.getOffset(), e.getLength()));
+			}
+			
+			IRegion visible= fViewer.getVisibleRegion();
+			IRegion region= new Region(e.getOffset() + visible.getOffset(), e.getLength());
+			return region;
 		}
 	};
 	

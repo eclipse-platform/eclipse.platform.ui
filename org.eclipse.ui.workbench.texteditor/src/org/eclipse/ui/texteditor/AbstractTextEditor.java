@@ -23,65 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginPrerequisite;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IFindReplaceTarget;
-import org.eclipse.jface.text.IFindReplaceTargetExtension;
-import org.eclipse.jface.text.IMarkRegionTarget;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.IRewriteTarget;
-import org.eclipse.jface.text.ITextInputListener;
-import org.eclipse.jface.text.ITextListener;
-import org.eclipse.jface.text.ITextOperationTarget;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.ITextViewerExtension;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.TextEvent;
-import org.eclipse.jface.text.TextSelection;
-import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.IVerticalRulerExtension;
-import org.eclipse.jface.text.source.IVerticalRulerInfo;
-import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.jface.text.source.VerticalRuler;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
@@ -106,6 +47,68 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginPrerequisite;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.IFindReplaceTargetExtension;
+import org.eclipse.jface.text.IMarkRegionTarget;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.IRewriteTarget;
+import org.eclipse.jface.text.ITextInputListener;
+import org.eclipse.jface.text.ITextListener;
+import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.ITextViewerExtension;
+import org.eclipse.jface.text.ITextViewerExtension3;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.IVerticalRulerExtension;
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.text.source.VerticalRuler;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
@@ -205,8 +208,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				 */
 				public void verifyText(VerifyEvent e) {
 					if (! validateEditorInputState())
-						e.doit= false;
-				}
+							e.doit= false;
+					}
 			};
 		
 		/**
@@ -520,8 +523,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					}
 				}
 			}
-			if (fKeyBindingService.processKey(event))
-				event.doit= false;
 		}
 		
 		/**
@@ -540,7 +541,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				}
 				
 				fKeyBindingService= getEditorSite().getKeyBindingService();
-				fKeyBindingService.enable(true);
 				fIsInstalled= true;
 			}
 		}
@@ -823,7 +823,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			int lineLength;
 			try {
-				int caretOffsetInDocument= caretOffset + getSourceViewer().getVisibleRegion().getOffset();
+				int caretOffsetInDocument= widgetOffset2ModelOffset(getSourceViewer(), caretOffset);
 				lineLength= getSourceViewer().getDocument().getLineInformationOfOffset(caretOffsetInDocument).getLength();
 			} catch (BadLocationException ex) {
 				return;
@@ -838,7 +838,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				i--;
 			}
 			i++;
-  
+
 			// Remember current selection
 			Point oldSelection= st.getSelection();
 
@@ -911,7 +911,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			int lineLength;
 			try {
-				int caretOffsetInDocument= caretOffset + getSourceViewer().getVisibleRegion().getOffset();
+				int caretOffsetInDocument= widgetOffset2ModelOffset(getSourceViewer(), caretOffset);
 				lineLength= getSourceViewer().getDocument().getLineInformationOfOffset(caretOffsetInDocument).getLength();
 			} catch (BadLocationException ex) {
 				return;
@@ -923,7 +923,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			int i= 0;
 			while (i < lineLength && Character.isWhitespace(line.charAt(i)))
 				i++;
-			
+
 			// Remember current selection
 			Point oldSelection= st.getSelection();
 
@@ -2254,7 +2254,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				fSourceViewer.removeTextListener(fTextListener);
 				fTextListener= null;
 			}
-
+			
 			fTextInputListener= null;			
 			fSelectionProvider= null;
 			fSourceViewer= null;
@@ -2579,25 +2579,25 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (! (provider instanceof IDocumentProviderExtension))
 			return;
 			
-		IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
-
-		boolean wasReadOnly= isEditorInputReadOnly();
-
+			IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
+				
+				boolean wasReadOnly= isEditorInputReadOnly();
+				
 		try {
-			extension.validateState(input, getSite().getShell());
-			
+				extension.validateState(input, getSite().getShell());
+				
 		} catch (CoreException exception) {
 
 			// for backward compatibility only
 			if (exception instanceof ValidateStateException) {
 				if (fSourceViewer != null)
 					fSourceViewer.setEditable(isEditable());
-
+					
 				if (wasReadOnly != isEditorInputReadOnly())
-					updateStateDependentActions();				
+					updateStateDependentActions();
 			}
-			
-			ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
+									
+				ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
 			log.log(exception.getStatus());
 
 			Shell shell= getSite().getShell();
@@ -2606,14 +2606,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			ErrorDialog.openError(shell, title, msg, exception.getStatus());
 
 			return;
-		}
+			}
 
 		if (fSourceViewer != null)
 			fSourceViewer.setEditable(isEditable());
 
 		if (wasReadOnly != isEditorInputReadOnly())
 			updateStateDependentActions();
-	}
+		}
 
 	/*
 	 * @see org.eclipse.ui.texteditor.ITextEditorExtension2.validateEditorInputState()
@@ -2630,7 +2630,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		} finally {
 			viewer.removeTextInputListener(fTextInputListener);
-		}
+	}
 	}
 	
 	/**
@@ -3574,11 +3574,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return;
 			
 		if (fShowHighlightRangeOnly) {
-			if (moveCursor) {
-				IRegion visibleRegion= fSourceViewer.getVisibleRegion();
-				if (start != visibleRegion.getOffset() || length != visibleRegion.getLength())
-					fSourceViewer.setVisibleRegion(start, length);
-			}
+			if (moveCursor)
+				fSourceViewer.setVisibleRegion(start, length);
 		} else {
 			IRegion rangeIndication= fSourceViewer.getRangeIndication();
 			if (rangeIndication == null || start != rangeIndication.getOffset() || length != rangeIndication.getLength())
@@ -3594,7 +3591,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return null;
 			
 		if (fShowHighlightRangeOnly)
-			return fSourceViewer.getVisibleRegion();
+			return getCoverage(fSourceViewer);
 			
 		return fSourceViewer.getRangeIndication();
 	}
@@ -3624,7 +3621,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fSourceViewer == null)
 			return;
 		
-		if (!fSourceViewer.overlapsWithVisibleRegion(offset, length))
+		if (!isVisible(fSourceViewer, offset, length))
 			fSourceViewer.resetVisibleRegion();
 	}
 	
@@ -3812,9 +3809,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return fErrorLabel;
 		
 		StyledText styledText= fSourceViewer.getTextWidget();
-		
-		int offset= fSourceViewer.getVisibleRegion().getOffset();
-		int caret= offset + styledText.getCaretOffset();
+		int caret= widgetOffset2ModelOffset(fSourceViewer, styledText.getCaretOffset());
 		IDocument document= fSourceViewer.getDocument();
 
 		if (document == null)
@@ -3854,7 +3849,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		return true;
 	}
-
+	
 	/*
 	 * @see ITextEditorExtension2#isEditorInputModifiable()
 	 * @since 2.1
@@ -3895,5 +3890,29 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected boolean canHandleMove(IEditorInput originalElement, IEditorInput movedElement) {
 		return true;
 	}
-
+	
+	protected final static int widgetOffset2ModelOffset(ISourceViewer viewer, int widgetOffset) {
+		if (viewer instanceof ITextViewerExtension3) {
+			ITextViewerExtension3 extension= (ITextViewerExtension3) viewer;
+			return extension.widgetOffset2ModelOffset(widgetOffset);
+		}
+		return widgetOffset + viewer.getVisibleRegion().getOffset();
+	}
+	
+	protected final static IRegion getCoverage(ISourceViewer viewer) {
+		if (viewer instanceof ITextViewerExtension3) {
+			ITextViewerExtension3 extension= (ITextViewerExtension3) viewer;
+			return extension.getModelCoverage();
+		}
+		return viewer.getVisibleRegion();
+	}
+	
+	protected final static boolean isVisible(ISourceViewer viewer, int offset, int length) {
+		if (viewer instanceof ITextViewerExtension3) {
+			ITextViewerExtension3 extension= (ITextViewerExtension3) viewer;
+			IRegion overlap= extension.modelRange2WidgetRange(new Region(offset, length));
+			return overlap != null;
+		}
+		return viewer.overlapsWithVisibleRegion(offset, length);
+	}
 }

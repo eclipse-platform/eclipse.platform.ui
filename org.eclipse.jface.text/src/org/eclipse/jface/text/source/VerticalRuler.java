@@ -32,8 +32,10 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension3;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
 
 
@@ -201,7 +203,12 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		try {
 			gc.setBackground(fCanvas.getBackground());
 			gc.fillRectangle(0, 0, size.x, size.y);
-			doPaint(gc);
+			
+			if (fTextViewer instanceof ITextViewerExtension3)
+				doPaint1(gc);
+			else
+				doPaint(gc);
+				
 		} finally {
 			gc.dispose();
 		}
@@ -238,7 +245,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	 * 
 	 * @param gc  the gc to draw into
 	 */
-	private void doPaint(GC gc) {
+	protected void doPaint(GC gc) {
 	
 		if (fModel == null || fTextViewer == null)
 			return;
@@ -317,6 +324,64 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 					
 				} catch (BadLocationException e) {
 				}
+			}
+		}
+	}
+	
+	protected void doPaint1(GC gc) {
+
+		if (fModel == null || fTextViewer == null)
+			return;
+
+		ITextViewerExtension3 extension= (ITextViewerExtension3) fTextViewer;
+		StyledText textWidget= fTextViewer.getTextWidget();
+		
+		fScrollPos= textWidget.getTopPixel();
+		int lineheight= textWidget.getLineHeight();
+		Point dimension= fCanvas.getSize();
+		int shift= fTextViewer.getTopInset();
+
+		// draw Annotations
+		Rectangle r= new Rectangle(0, 0, 0, 0);
+		int maxLayer= 1;	// loop at least once thru layers.
+
+		for (int layer= 0; layer < maxLayer; layer++) {
+			Iterator iter= fModel.getAnnotationIterator();
+			while (iter.hasNext()) {
+
+				Annotation annotation= (Annotation) iter.next();
+
+				int lay= annotation.getLayer();
+				maxLayer= Math.max(maxLayer, lay+1);	// dynamically update layer maximum
+				if (lay != layer)	// wrong layer: skip annotation
+					continue;
+
+				Position position= fModel.getPosition(annotation);
+				if (position == null)
+					continue;
+
+				IRegion widgetRegion= extension.modelRange2WidgetRange(new Region(position.getOffset(), position.getLength()));
+				if (widgetRegion == null)
+					continue;
+
+				int startLine= extension.widgetLineOfWidgetOffset(widgetRegion.getOffset());
+				if (startLine == -1)
+					continue;
+
+				int endLine= extension.widgetLineOfWidgetOffset(widgetRegion.getOffset() + Math.max(widgetRegion.getLength() -1, 0));
+				if (endLine == -1)
+					continue;
+
+				r.x= 0;
+				r.y= (startLine * lineheight) - fScrollPos + shift;
+				r.width= dimension.x;
+				int lines= endLine - startLine;
+				if (lines < 0)
+					lines= -lines;
+				r.height= (lines+1) * lineheight;
+
+				if (r.y < dimension.y)  // annotation within visible area
+					annotation.paint(gc, fCanvas, r);
 			}
 		}
 	}
@@ -401,15 +466,24 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 			return -1;
 			
 		StyledText text= fTextViewer.getTextWidget();
-		int line= ((y_coordinate + fScrollPos) / text.getLineHeight());				
-		try {
-			IRegion r= fTextViewer.getVisibleRegion();
-			IDocument d= fTextViewer.getDocument(); 
-			line += d.getLineOfOffset(r.getOffset());
-		} catch (BadLocationException x) {
+		int line= ((y_coordinate + fScrollPos) / text.getLineHeight());
+		return widgetLine2ModelLine(fTextViewer, line);
+	}
+	
+	protected final static int widgetLine2ModelLine(ITextViewer viewer, int widgetLine) {
+		
+		if (viewer instanceof ITextViewerExtension3) {
+			ITextViewerExtension3 extension= (ITextViewerExtension3) viewer;
+			return extension.widgetlLine2ModelLine(widgetLine);
 		}
 		
-		return line;
+		try {
+			IRegion r= viewer.getVisibleRegion();
+			IDocument d= viewer.getDocument();
+			return widgetLine += d.getLineOfOffset(r.getOffset());
+		} catch (BadLocationException x) {
+		}
+		return widgetLine;
 	}
 	
 	/*

@@ -24,6 +24,7 @@
 		<zip zipfile="${dest}/editorssrc.zip">
 		    <fileset dir="src" />
 		    <fileset dir="extensions" />
+		    <fileset dir="projection"/>
   		</zip>				
 	</target>
 </project>

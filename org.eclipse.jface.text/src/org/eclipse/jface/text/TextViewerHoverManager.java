@@ -174,14 +174,18 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 */
 	private int computeOffsetAtLocation(int x, int y) {
 		
-		StyledText styledText= fTextViewer.getTextWidget();
-		IDocument document= fTextViewer.getVisibleDocument();
-		
-		if (document == null)
-			return -1;		
-		
 		try {
-			return styledText.getOffsetAtLocation(new Point(x, y)) + fTextViewer.getVisibleRegionOffset();
+			
+			StyledText styledText= fTextViewer.getTextWidget();
+			int widgetOffset= styledText.getOffsetAtLocation(new Point(x, y));
+			
+			if (fTextViewer instanceof ITextViewerExtension3) {
+				ITextViewerExtension3 extension= (ITextViewerExtension3) fTextViewer;
+				return extension.widgetOffset2ModelOffset(widgetOffset);
+			}
+			
+			return widgetOffset + fTextViewer._getVisibleRegionOffset();
+
 		} catch (IllegalArgumentException e) {
 			return -1;	
 		}
@@ -195,14 +199,11 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 */
 	private Rectangle computeArea(IRegion region) {
 				
+		IRegion widgetRegion= modelRange2WidgetRange(region);
+		int start= widgetRegion.getOffset();
+		int end= widgetRegion.getOffset() + widgetRegion.getLength();
+				
 		StyledText styledText= fTextViewer.getTextWidget();
-		
-		IRegion visibleRegion= fTextViewer.getVisibleRegion();
-		int start= region.getOffset() - visibleRegion.getOffset();
-		int end= start + region.getLength();
-		if (end > visibleRegion.getLength())
-			end= visibleRegion.getLength();
-		
 		Point upperLeft= styledText.getLocationAtOffset(start);
 		Point lowerRight= new Point(upperLeft.x, upperLeft.y);
 		
@@ -229,6 +230,26 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		int width= lowerRight.x - upperLeft.x;
 		int height= lowerRight.y - upperLeft.y;
 		return new Rectangle(upperLeft.x, upperLeft.y, width, height);
+	}
+	
+	/**
+	 * Method modelRange2WidgetRange.
+	 * @param region
+	 * @return IRegion
+	 */
+	private IRegion modelRange2WidgetRange(IRegion region) {
+		if (fTextViewer instanceof ITextViewerExtension3) {
+			ITextViewerExtension3 extension= (ITextViewerExtension3) fTextViewer;
+			return extension.modelRange2WidgetRange(region);
+		}
+		
+		IRegion visibleRegion= fTextViewer.getVisibleRegion();
+		int start= region.getOffset() - visibleRegion.getOffset();
+		int end= start + region.getLength();
+		if (end > visibleRegion.getLength())
+			end= visibleRegion.getLength();
+			
+		return new Region(start, end - start);
 	}
 	
 	/*

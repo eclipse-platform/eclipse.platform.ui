@@ -102,7 +102,6 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			return;
 		}
 
-		// TODO: reverse searches should put the caret at the start of the selection, instead of the end
 		text.setSelectionRange(searchResult.selection, searchResult.length);
 		text.showSelection();
 

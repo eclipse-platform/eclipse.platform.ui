@@ -19,6 +19,7 @@ import org.eclipse.jface.text.IMarkRegionTarget;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
+import org.eclipse.jface.text.ITextViewerExtension3;
 
 /**
  * Default implementation of <code>IMarkRegionTarget</code> using <code>ITextViewer</code>
@@ -85,11 +86,7 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 			return;
 		}
 
-		IRegion region= fViewer.getVisibleRegion();
-		int offset= region.getOffset();
-		int length= region.getLength();
-
-		if (markPosition < offset || markPosition > offset + length) {
+		if (!isVisible(fViewer, markPosition)) {
 			fStatusLine.setErrorMessage("mark not in visible region");
 			fStatusLine.setMessage(""); //$NON-NLS-1$
 			return;
@@ -104,4 +101,15 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 		fStatusLine.setErrorMessage(""); //$NON-NLS-1$
 		fStatusLine.setMessage(EditorMessages.getString("Editor.mark.status.message.mark.swapped")); //$NON-NLS-1$
 	}
-}	
+	
+	protected final static boolean isVisible(ITextViewer viewer, int offset) {
+		if (viewer instanceof ITextViewerExtension3) {
+			ITextViewerExtension3 extension= (ITextViewerExtension3) viewer;
+			return extension.modelOffset2WidgetOffset(offset) >= 0;
+		} else {
+			IRegion region= viewer.getVisibleRegion();
+			int vOffset= region.getOffset();
+			return (vOffset <= offset &&  offset <= vOffset + region.getLength());
+		}
+	}
+}

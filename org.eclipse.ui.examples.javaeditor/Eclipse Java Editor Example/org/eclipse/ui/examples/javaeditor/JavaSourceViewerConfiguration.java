@@ -1,19 +1,40 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.examples.javaeditor;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
-import org.eclipse.jface.text.*;
+import org.eclipse.swt.graphics.RGB;
+
+import org.eclipse.jface.text.DefaultAutoIndentStrategy;
+import org.eclipse.jface.text.IAutoIndentStrategy;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextDoubleClickStrategy;
+import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
-import org.eclipse.jface.text.rules.*;
-import org.eclipse.jface.text.source.*;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.examples.javaeditor.java.*;
+import org.eclipse.jface.text.rules.BufferedRuleBasedScanner;
+import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
+import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.source.IAnnotationHover;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
+
+import org.eclipse.ui.examples.javaeditor.java.JavaAutoIndentStrategy;
+import org.eclipse.ui.examples.javaeditor.java.JavaCompletionProcessor;
+import org.eclipse.ui.examples.javaeditor.java.JavaDoubleClickSelector;
+import org.eclipse.ui.examples.javaeditor.java.JavaPartitionScanner;
 import org.eclipse.ui.examples.javaeditor.javadoc.JavaDocCompletionProcessor;
 import org.eclipse.ui.examples.javaeditor.util.JavaColorProvider;
 
@@ -71,8 +92,8 @@ public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
 
 		assistant.enableAutoActivation(true);
 		assistant.setAutoActivationDelay(500);
-		assistant.setProposalPopupOrientation(assistant.PROPOSAL_OVERLAY);
-		assistant.setContextInformationPopupOrientation(assistant.CONTEXT_INFO_ABOVE);
+		assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
+		assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
 		assistant.setContextInformationPopupBackground(JavaEditorEnvironment.getJavaColorProvider().getColor(new RGB(150, 150, 0)));
 
 		return assistant;
@@ -111,11 +132,11 @@ public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		
-		dr= new DefaultDamagerRepairer(new SingleTokenScanner(new TextAttribute(provider.getColor(provider.JAVADOC_DEFAULT))));
+		dr= new DefaultDamagerRepairer(new SingleTokenScanner(new TextAttribute(provider.getColor(JavaColorProvider.JAVADOC_DEFAULT))));
 		reconciler.setDamager(dr, JavaPartitionScanner.JAVA_DOC);
 		reconciler.setRepairer(dr, JavaPartitionScanner.JAVA_DOC);
 
-		dr= new DefaultDamagerRepairer(new SingleTokenScanner(new TextAttribute(provider.getColor(provider.MULTI_LINE_COMMENT))));
+		dr= new DefaultDamagerRepairer(new SingleTokenScanner(new TextAttribute(provider.getColor(JavaColorProvider.MULTI_LINE_COMMENT))));
 		reconciler.setDamager(dr, JavaPartitionScanner.JAVA_MULTILINE_COMMENT);
 		reconciler.setRepairer(dr, JavaPartitionScanner.JAVA_MULTILINE_COMMENT);
 

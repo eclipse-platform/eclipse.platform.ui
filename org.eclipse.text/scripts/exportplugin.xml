@@ -23,6 +23,7 @@
 		<copy file="plugin.properties" todir="${dest}"/>
 		<zip zipfile="${dest}/textsrc.zip">
 		    <fileset dir="src" />
+		    <fileset dir="projection"/>
   		</zip>				
 	</target>
 </project>

@@ -250,24 +250,16 @@ public class DocumentCommand {
 	 * Translates a verify event into a document replace command using the given offset.
 	 *
 	 * @param event the event to be translated
-	 * @param offset the offset used for the translation
+	 * @param modelRange the event range as model range
 	 */
-	void setEvent(VerifyEvent event, int offset) {
+	void setEvent(VerifyEvent event, IRegion modelRange) {
 		
 		doit= true;
+		text= event.text;
 		
-		text=  event.text;
-		
-		this.offset= event.start;
-		length= event.end - event.start;
-				
-		if (length < 0) {
-			this.offset += length;
-			length= -length;
-		}
-		
-		this.offset += offset;
-		
+		offset= modelRange.getOffset();
+		length= modelRange.getLength();
+			
 		owner= null;
 		caretOffset= -1;
 		fCommands.clear();
@@ -279,15 +271,12 @@ public class DocumentCommand {
 	 * covers the same range as the verify event considering the given offset.
 	 *
 	 * @param event the event to be changed
-	 * @param offset to be considered for range comparison
+	 * @param modelRange to be considered for range comparison
 	 * @return <code>true</code> if this command and the event cover the same range
 	 */
-	boolean fillEvent(VerifyEvent event, int offset) {
-
-		int start= this.offset - offset;
-		
+	boolean fillEvent(VerifyEvent event, IRegion modelRange) {
 		event.text= text;
-		event.doit= (start == event.start && start + length == event.end) && doit;
+		event.doit= (offset == modelRange.getOffset() && length == modelRange.getLength());
 		return event.doit;
 	}
 

@@ -177,7 +177,7 @@ public final class ChildDocument extends AbstractDocument {
 		if (offset + length > fRange.getLength())
 			length= fRange.getLength() - offset;
 			
-		return new ChildDocumentEvent(this, offset, length, e.fText, e); 
+		return new SlaveDocumentEvent(this, offset, length, e.fText, e); 
 	}
 	
 	/**

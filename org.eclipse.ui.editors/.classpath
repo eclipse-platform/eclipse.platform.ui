@@ -2,6 +2,7 @@
 <classpath>
     <classpathentry kind="src" path="src/"/>
     <classpathentry kind="src" path="extensions"/>
+    <classpathentry kind="src" path="projection"/>
     <classpathentry kind="src" path="/org.eclipse.text"/>
     <classpathentry kind="src" path="/org.eclipse.jface"/>
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>
