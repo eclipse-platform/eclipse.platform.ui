@@ -142,9 +142,8 @@ public class TocManager {
 	}
 
 	/**
-	 * Reads product.ini to determine toc ordering. It works in current drivers,
-	 * but will not if location/name of product.ini change. Return the list of
-	 * href's.
+	 * Reads preferences to determine toc ordering.
+	 * @return the list of TOC href's.
 	 */
 	private ArrayList getPreferredTocOrder() {
 		ArrayList orderedTocs = new ArrayList();
@@ -167,6 +166,29 @@ public class TocManager {
 	}
 
 	/**
+	 * Reads preferences to determine TOCs to be ignored.
+	 * @return the list of TOC href's.
+	 */
+	private Collection getIgnoredTocs() {
+		HashSet ignored = new HashSet();
+		try {
+			Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
+			String preferredTocs = pref.getString(HelpPlugin.IGNORED_TOCS_KEY);
+			if (preferredTocs != null) {
+				StringTokenizer suggestdOrderedInfosets = new StringTokenizer(
+						preferredTocs, " ;,"); //$NON-NLS-1$
+
+				while (suggestdOrderedInfosets.hasMoreElements()) {
+					ignored.add(suggestdOrderedInfosets.nextElement());
+				}
+			}
+		} catch (Exception e) {
+			HelpPlugin.logError(
+					"Problems occurred reading plug-in preferences.", e); //$NON-NLS-1$
+		}
+		return ignored;
+	}
+	/**
 	 * Returns the toc from a list of IToc by identifying it with its (unique)
 	 * href.
 	 */
@@ -185,6 +207,7 @@ public class TocManager {
 	protected Collection getContributedTocFiles(String locale) {
 		contributingPlugins = new HashSet();
 		Collection contributedTocFiles = new ArrayList();
+		Collection ignored = getIgnoredTocs();
 		// find extension point
 		IExtensionPoint xpt = Platform.getExtensionRegistry()
 				.getExtensionPoint(HelpPlugin.PLUGIN_ID, TOC_XP_NAME);
@@ -201,14 +224,16 @@ public class TocManager {
 				if (configElements[j].getName().equals(TOC_XP_NAME)) {
 					String pluginId = configElements[j].getNamespace();
 					String href = configElements[j].getAttribute("file"); //$NON-NLS-1$
+					if (href == null
+							|| ignored.contains("/" + pluginId + "/" + href)) { //$NON-NLS-1$ //$NON-NLS-2$
+						continue;
+					}
 					boolean isPrimary = "true".equals( //$NON-NLS-1$
 							configElements[j].getAttribute("primary")); //$NON-NLS-1$
 					String extraDir = configElements[j]
 							.getAttribute("extradir"); //$NON-NLS-1$
-					if (href != null) {
-						contributedTocFiles.add(new TocFile(pluginId, href,
-								isPrimary, locale, extraDir));
-					}
+					contributedTocFiles.add(new TocFile(pluginId, href,
+							isPrimary, locale, extraDir));
 				}
 		}
 		return contributedTocFiles;
