@@ -7,7 +7,6 @@ package org.eclipse.search.internal.ui;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -39,13 +38,10 @@ import org.eclipse.search.ui.SearchUI;
  */
 public class SearchPlugin extends AbstractUIPlugin {
 	
-	private static final String RESOURCE_BUNDLE= "org.eclipse.search.internal.ui.SearchPluginResources";
-	
-	public static final String SEARCH_PAGE_EXTENSION_POINT= "searchPages";
-	public static final String SORTER_EXTENSION_POINT= "searchResultSorters";
+	public static final String SEARCH_PAGE_EXTENSION_POINT= "searchPages"; //$NON-NLS-1$
+	public static final String SORTER_EXTENSION_POINT= "searchResultSorters"; //$NON-NLS-1$
 	
 	private static SearchPlugin fgSearchPlugin;
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 		
 	private List fPageDescriptors;
 	private List fSorterDescriptors;
@@ -135,22 +131,6 @@ public class SearchPlugin extends AbstractUIPlugin {
 		return ResourcesPlugin.getWorkspace();
 	}
 	/**
-	 * Returns the search plugin's resource bundle.
-	 * 
-	 * @deprecated Use a dedicated static resource bundle accessor class
-	 */
-	public static String getResourceString(String key) {
-		return fgResourceBundle.getString(key);
-	}
-	/**
-	 * Gets the Java UI resource bundle
-	 * 
-	 * @deprecated Use a dedicated static resource bundle accessor class
-	 */
-	public static ResourceBundle getResourceBundle() {
-		return fgResourceBundle;
-	}	
-	/**
 	 * Activates the search result view in the active page.
 	 * This call has no effect, if the search result view is
 	 * already activated.
@@ -161,7 +141,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 		try {
 			return (getActivePage().showView(SearchUI.SEARCH_RESULT_VIEW_ID) != null);
 		} catch (PartInitException ex) {
-			ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.openResultView.");
+			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.openResultView.title"), SearchMessages.getString("Search.Error.openResultView.message")); //$NON-NLS-2$ //$NON-NLS-1$
 			return false;
 		}	
 	}
@@ -184,7 +164,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 			getDefault().getWorkspace().setDescription(workspaceDesc);
 		}
 		catch (CoreException ex) {
-			ExceptionHandler.handle(ex, fgResourceBundle, "Search.Error.setDescription.");
+			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.setDescription.title"), SearchMessages.getString("Search.Error.setDescription.message")); //$NON-NLS-2$ //$NON-NLS-1$
 		}
 	}
 	/**

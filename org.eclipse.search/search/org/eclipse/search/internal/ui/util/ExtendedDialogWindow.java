@@ -32,6 +32,7 @@ import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchMessages;
 
 
 public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableContext {
@@ -41,7 +42,7 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	private Button fSearchButton;
 	
 	private MessageLine fMessageLine;
-	private String fPerformActionLabel= JFaceResources.getString("finish");
+	private String fPerformActionLabel= JFaceResources.getString("finish"); //$NON-NLS-1$
 	
 	// The number of long running operation executed from the dialog.	
 	private long fActiveRunningOperations;
@@ -51,7 +52,7 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	private ProgressMonitorPart fProgressMonitorPart;
 	private MessageDialog fWindowClosingDialog;
 	private static int PROGRESS_INDICATOR_HEIGHT= 12;
-	private static final String FOCUS_CONTROL= "focusControl";
+	private static final String FOCUS_CONTROL= "focusControl"; //$NON-NLS-1$
 	private Cursor fWaitCursor;
 	private Cursor fArrowCursor;
 
@@ -108,7 +109,7 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 
 		fMessageLine= new MessageLine(composite);
 		fMessageLine.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fMessageLine.setMessage("");
+		fMessageLine.setMessage(""); //$NON-NLS-1$
 
 		return super.createButtonBar(composite);
 	}
@@ -312,9 +313,9 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	//---- UI state save and restoring ---------------------------------------------
 	
 	private void restoreUIState(HashMap state) {
-		restoreEnableState(fCancelButton, state, "cancel");
-		restoreEnableState(fSearchButton, state, "search");
-		ControlEnableState pageState= (ControlEnableState)state.get("tabForm");
+		restoreEnableState(fCancelButton, state, "cancel"); //$NON-NLS-1$
+		restoreEnableState(fSearchButton, state, "search"); //$NON-NLS-1$
+		ControlEnableState pageState= (ControlEnableState)state.get("tabForm"); //$NON-NLS-1$
 		pageState.restore();
 	}
 	
@@ -332,9 +333,9 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	
 	private HashMap saveUIState(boolean keepCancelEnabled) {
 		HashMap savedState= new HashMap(10);
-		saveEnableStateAndSet(fCancelButton, savedState, "cancel", keepCancelEnabled);
-		saveEnableStateAndSet(fSearchButton, savedState, "search", false);
-		savedState.put("tabForm", ControlEnableState.disable(fContents));
+		saveEnableStateAndSet(fCancelButton, savedState, "cancel", keepCancelEnabled); //$NON-NLS-1$
+		saveEnableStateAndSet(fSearchButton, savedState, "search", false); //$NON-NLS-1$
+		savedState.put("tabForm", ControlEnableState.disable(fContents)); //$NON-NLS-1$
 		
 		return savedState;
 	}
@@ -374,9 +375,9 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 		MessageDialog result= 
 			new MessageDialog(
 				getShell(),
-				SearchPlugin.getResourceString("SearchDialogClosingDialog.title"), 
+				SearchMessages.getString("SearchDialogClosingDialog.title"),  //$NON-NLS-1$
 				null, 
-				SearchPlugin.getResourceString("SearchDialogClosingDialog.message"), 
+				SearchMessages.getString("SearchDialogClosingDialog.message"),  //$NON-NLS-1$
 				MessageDialog.QUESTION, 
 				new String[] {IDialogConstants.OK_LABEL}, 
 				0); 

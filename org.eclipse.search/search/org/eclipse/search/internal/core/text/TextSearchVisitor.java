@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -16,6 +17,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -26,6 +28,7 @@ import org.eclipse.search.internal.core.ISearchScope;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.StringMatcher;
 import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search.internal.ui.SearchMessages;
 
 /**
  * The visitor that does the actual work.
@@ -56,7 +59,7 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 		if (options != null)
 			fOptions= options;
 		else
-			fOptions= "";	
+			fOptions= "";	 //$NON-NLS-1$
 		
 
 		fProgressMonitor= collector.getProgressMonitor();
@@ -109,12 +112,14 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 					reader.close();
 			}
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, SearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, SearchPlugin.getResourceString("TextSearchVisitor.error") + " " + file.getFullPath(), e));
+			String message= SearchMessages.getString("TextSearchVisitor.error"); //$NON-NLS-1$
+			message= MessageFormat.format(message, new IPath[] {file.getFullPath()});
+			throw new CoreException(new Status(IStatus.ERROR, SearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
 		}
 		finally {
 			fProgressMonitor.worked(1);
 			if (fProgressMonitor.isCanceled())
-				throw new OperationCanceledException(SearchPlugin.getResourceString("TextSearchVisitor.canceled"));
+				throw new OperationCanceledException(SearchMessages.getString("TextSearchVisitor.canceled")); //$NON-NLS-1$
 		}		
 		return true;
 	}

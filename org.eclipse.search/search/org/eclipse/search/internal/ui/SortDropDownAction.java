@@ -26,11 +26,11 @@ class SortDropDownAction extends Action implements IMenuCreator {
 	private String fCheckedId;
 
 	public SortDropDownAction(SearchResultViewer viewer) {
-		super(SearchPlugin.getResourceString("SortDropDownAction.label"));
+		super(SearchMessages.getString("SortDropDownAction.label")); //$NON-NLS-1$
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_SORT);
 		fViewer= viewer;
-		fCheckedId= "";
-		setToolTipText(SearchPlugin.getResourceString("SortDropDownAction.tooltip"));
+		fCheckedId= ""; //$NON-NLS-1$
+		setToolTipText(SearchMessages.getString("SortDropDownAction.tooltip")); //$NON-NLS-1$
 		setMenuCreator(this);
 	}
 
@@ -53,7 +53,7 @@ class SortDropDownAction extends Action implements IMenuCreator {
 		Iterator iter= SearchPlugin.getDefault().getSorterDescriptors().iterator();
 		while (iter.hasNext()) {
 			final SorterDescriptor sorterDesc= (SorterDescriptor) iter.next();
-			if (!sorterDesc.getPageId().equals(fPageId) && !sorterDesc.getPageId().equals("*"))
+			if (!sorterDesc.getPageId().equals(fPageId) && !sorterDesc.getPageId().equals("*")) //$NON-NLS-1$
 				continue;
 			final ViewerSorter sorter= sorterDesc.createObject();
 			if (sorter != null) {

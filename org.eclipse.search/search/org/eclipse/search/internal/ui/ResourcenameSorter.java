@@ -24,9 +24,9 @@ public class ResourcenameSorter extends ViewerSorter {
 		if (e2 instanceof ISearchResultViewEntry)
 			name2= ((ISearchResultViewEntry)e2).getResource().getName();
 		if (name1 == null)
-			name1= "";
+			name1= ""; //$NON-NLS-1$
 		if (name2 == null)
-			name2= "";
+			name2= ""; //$NON-NLS-1$
 		return name1.toLowerCase().compareTo(name2.toLowerCase());
 	}
 	/*

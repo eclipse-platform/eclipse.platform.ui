@@ -15,16 +15,16 @@ import org.eclipse.search.ui.SearchUI;
 class RemoveAllResultsAction extends Action {
 
 	public RemoveAllResultsAction() {
-		super(SearchPlugin.getResourceString("SearchResultView.removeAllResults.text"));
+		super(SearchMessages.getString("SearchResultView.removeAllResults.text")); //$NON-NLS-1$
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM_ALL);
-		setToolTipText(SearchPlugin.getResourceString("SearchResultView.removeAllResults.tooltip"));
+		setToolTipText(SearchMessages.getString("SearchResultView.removeAllResults.tooltip")); //$NON-NLS-1$
 	}
 	
 	public void run() {
 		try {
 			SearchPlugin.getWorkspace().getRoot().deleteMarkers(SearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
 		} catch (CoreException ex) {
-			ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.deleteMarkers.");
+			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.deleteMarkers.title"), SearchMessages.getString("Search.Error.deleteMarkers.message")); //$NON-NLS-2$ //$NON-NLS-1$
 		}
 	}
 }

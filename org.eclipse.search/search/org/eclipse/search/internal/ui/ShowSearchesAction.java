@@ -25,7 +25,7 @@ class ShowSearchesAction extends Action {
 	private static final LabelProvider fgLabelProvider= new LabelProvider() {
 		public String getText(Object element) {
 			if (!(element instanceof ShowSearchAction))
-				return "";
+				return ""; //$NON-NLS-1$
 			return ((ShowSearchAction)element).getText();
 		}
 		public Image getImage(Object element) {
@@ -39,8 +39,8 @@ class ShowSearchesAction extends Action {
 	 *	Create a new instance of this class
 	 */
 	public ShowSearchesAction() {
-		super(SearchPlugin.getResourceString("ShowOtherSearchesAction.label"));
-		setToolTipText(SearchPlugin.getResourceString("ShowOtherSearchesAction.tooltip"));
+		super(SearchMessages.getString("ShowOtherSearchesAction.label")); //$NON-NLS-1$
+		setToolTipText(SearchMessages.getString("ShowOtherSearchesAction.tooltip")); //$NON-NLS-1$
 	}
 	/*
 	 * Overrides method from Action
@@ -75,12 +75,12 @@ class ShowSearchesAction extends Action {
 		String title;
 		String message;
 		if (showAll) {
-			title= SearchPlugin.getResourceString("PreviousSearchesDialog.title");
-			message= SearchPlugin.getResourceString("PreviousSearchesDialog.message");
+			title= SearchMessages.getString("PreviousSearchesDialog.title"); //$NON-NLS-1$
+			message= SearchMessages.getString("PreviousSearchesDialog.message"); //$NON-NLS-1$
 		}
 		else {
-			title= SearchPlugin.getResourceString("OtherSearchesDialog.title");
-			message= SearchPlugin.getResourceString("OtherSearchesDialog.message");
+			title= SearchMessages.getString("OtherSearchesDialog.title"); //$NON-NLS-1$
+			message= SearchMessages.getString("OtherSearchesDialog.message"); //$NON-NLS-1$
 		}		
 		ListDialog dlg= new ListDialog(SearchPlugin.getActiveWorkbenchShell(),input, title, message, new SearchResultContentProvider(), fgLabelProvider);
 		if (selectedAction != null) {

@@ -5,15 +5,12 @@
 package org.eclipse.search.internal.ui.text;
 
 import org.eclipse.core.resources.IFile;import org.eclipse.core.resources.IMarker;import org.eclipse.core.resources.IResource;import org.eclipse.jface.action.Action;import org.eclipse.jface.viewers.ISelection;import org.eclipse.jface.viewers.IStructuredSelection;import org.eclipse.ui.IEditorDescriptor;import org.eclipse.ui.IEditorInput;import org.eclipse.ui.IEditorPart;import org.eclipse.ui.IWorkbenchPage;import org.eclipse.ui.PartInitException;import org.eclipse.ui.part.FileEditorInput;import org.eclipse.search.internal.ui.SearchPlugin;import org.eclipse.search.internal.ui.util.ExceptionHandler;import org.eclipse.search.ui.ISearchResultView;import org.eclipse.search.ui.ISearchResultViewEntry;import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search.internal.ui.SearchMessages;
 
 class GotoMarkerAction extends Action {
 
 	private IEditorPart fEditor;
 
-	public GotoMarkerAction() {
-		super(SearchPlugin.getResourceString("SearchResultView.gotoMarker.text"));
-	}
-	
 	public void run() {
 		ISearchResultView view= SearchUI.getSearchResultView();		
 		ISelection selection= view.getSelection();
@@ -55,7 +52,7 @@ class GotoMarkerAction extends Action {
 			try {
 				editor= page.openEditor(input, editorId, false);
 			} catch (PartInitException ex) {
-				ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.openEditor.");
+				ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.openEditor.title"), SearchMessages.getString("Search.Error.openEditor.message")); //$NON-NLS-2$ //$NON-NLS-1$
 				return;
 			}
 

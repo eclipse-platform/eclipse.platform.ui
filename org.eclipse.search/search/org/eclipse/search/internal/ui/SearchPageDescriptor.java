@@ -31,14 +31,14 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
  */
 class SearchPageDescriptor implements Comparable {
 
-	public final static String PAGE_TAG= "page";
-	private final static String ID_ATTRIBUTE= "id";
-	private final static String ICON_ATTRIBUTE= "icon";
-	private final static String CLASS_ATTRIBUTE= "class";
-	private final static String LABEL_ATTRIBUTE= "label";
-	private final static String SIZE_ATTRIBUTE= "sizeHint";
-	private final static String TAB_POSITION_ATTRIBUTE= "tabPosition";
-	private final static String EXTENSIONS_ATTRIBUTE= "extensions";
+	public final static String PAGE_TAG= "page"; //$NON-NLS-1$
+	private final static String ID_ATTRIBUTE= "id"; //$NON-NLS-1$
+	private final static String ICON_ATTRIBUTE= "icon"; //$NON-NLS-1$
+	private final static String CLASS_ATTRIBUTE= "class"; //$NON-NLS-1$
+	private final static String LABEL_ATTRIBUTE= "label"; //$NON-NLS-1$
+	private final static String SIZE_ATTRIBUTE= "sizeHint"; //$NON-NLS-1$
+	private final static String TAB_POSITION_ATTRIBUTE= "tabPosition"; //$NON-NLS-1$
+	private final static String EXTENSIONS_ATTRIBUTE= "extensions"; //$NON-NLS-1$
 	
 	public final static Point UNKNOWN_SIZE= new Point(SWT.DEFAULT, SWT.DEFAULT);
 	
@@ -72,9 +72,9 @@ class SearchPageDescriptor implements Comparable {
 		try {
 			result= (ISearchPage)fElement.createExecutableExtension(CLASS_ATTRIBUTE);
 		} catch (CoreException ex) {
-			ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.createSearchPage.");
+			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.createSearchPage.title"), SearchMessages.getString("Search.Error.createSearchPage.message")); //$NON-NLS-2$ //$NON-NLS-1$
 		} catch (ClassCastException ex) {
-			ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.createSearchPage.");
+			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.createSearchPage.title"), SearchMessages.getString("Search.Error.createSearchPage.message")); //$NON-NLS-2$ //$NON-NLS-1$
 			return null;
 		}
 		if (result != null) {
@@ -103,7 +103,7 @@ class SearchPageDescriptor implements Comparable {
 		try {
 			url= new URL(fElement.getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL(), imageName);
 		} catch (java.net.MalformedURLException ex) {
-			ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.createSearchPage.");
+			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.createSearchPage.title"), SearchMessages.getString("Search.Error.createSearchPage.message")); //$NON-NLS-2$ //$NON-NLS-1$
 			return null;
 		}
 		return ImageDescriptor.createFromURL(url);
@@ -136,7 +136,7 @@ class SearchPageDescriptor implements Comparable {
 			try {
 				position= Integer.parseInt(str);
 		} catch (NumberFormatException ex) {
-			ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.createSearchPage.");
+			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.createSearchPage.title"), SearchMessages.getString("Search.Error.createSearchPage.message")); //$NON-NLS-2$ //$NON-NLS-1$
 			// position is Integer.MAX_VALUE;
 		}
 		return position;
@@ -198,14 +198,14 @@ class SearchPageDescriptor implements Comparable {
 	private void readExtensionScorePairs() {
 		fExtensionScorePairs= new ArrayList(3);
 		String content= fElement.getAttribute(EXTENSIONS_ATTRIBUTE);
-		StringTokenizer tokenizer= new StringTokenizer(content, ",");
+		StringTokenizer tokenizer= new StringTokenizer(content, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreElements()) {
 			String token= tokenizer.nextToken().trim();
 			int pos= token.indexOf(':');
 			if (pos != -1) {
 				String extension= token.substring(0, pos);
 				int score= StringConverter.asInt(token.substring(pos+1), ISearchPageScoreComputer.UNKNOWN);
-				if (extension.equals("*")) {
+				if (extension.equals("*")) { //$NON-NLS-1$
 					fWildcardScore= score;
 				} else {
 					fExtensionScorePairs.add(new ExtensionScorePair(extension, score));

@@ -26,6 +26,7 @@ import org.eclipse.ui.dialogs.FileEditorMappingLabelProvider;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchMessages;
 
 public class FileTypeEditor extends SelectionAdapter implements DisposeListener, SelectionListener {
 	
@@ -33,7 +34,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 	private Button fBrowseButton;
 	private IEditorRegistry fResourceEditorRegistry;
 
-	private static final String TYPE_DELIMITER= ",";
+	private static final String TYPE_DELIMITER= ","; //$NON-NLS-1$
 
 	public FileTypeEditor(IEditorRegistry registry, Text textField, Button browseButton) {
 		fResourceEditorRegistry= registry;
@@ -44,7 +45,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 		fBrowseButton.addDisposeListener(this);
 		fBrowseButton.addSelectionListener(this);
 		
-		if (fTextField.getText().equals("*"))
+		if (fTextField.getText().equals("*")) //$NON-NLS-1$
 			setFileTypes(getRegisteredFileExtensions());
 	}
 	
@@ -71,14 +72,14 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 	 */
 	public List getFileTypes() {
 		List result= new ArrayList();
-		if (fTextField.getText().equals("*"))
+		if (fTextField.getText().equals("*")) //$NON-NLS-1$
 			return getRegisteredFileExtensions();
 		else {
 			StringTokenizer tokenizer= new StringTokenizer(fTextField.getText(), TYPE_DELIMITER);
 
 			while (tokenizer.hasMoreTokens()) {
 				String currentExtension= tokenizer.nextToken().trim();
-				if (!currentExtension.equals(""))
+				if (!currentExtension.equals("")) //$NON-NLS-1$
 					result.add(currentExtension);
 			}
 		}
@@ -114,7 +115,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 		while (typesIter.hasNext()) {
 			result.append(typesIter.next());
 			result.append(TYPE_DELIMITER);
-			result.append(" ");
+			result.append(" "); //$NON-NLS-1$
 		}
 
 		fTextField.setText(result.toString());
@@ -125,7 +126,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 		ArrayList noClassMappings= new ArrayList(editorMappings.length);
 		for (int i= 0; i < editorMappings.length; i++) {
 			IFileEditorMapping currentMapping= editorMappings[i];
-			if (!currentMapping.getExtension().equals("class")) // See 1G7A6PP
+			if (!currentMapping.getExtension().equals("class")) // See 1G7A6PP //$NON-NLS-1$
 				noClassMappings.add(currentMapping);
 		}
 		return (IFileEditorMapping[])noClassMappings.toArray(new IFileEditorMapping[noClassMappings.size()]);
@@ -149,10 +150,10 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 			editorMappings, 
 			FileEditorMappingContentProvider.INSTANCE, 
 			FileEditorMappingLabelProvider.INSTANCE, 
-			SearchPlugin.getResourceString("ListSelectionDialog.message"));
+			SearchMessages.getString("ListSelectionDialog.message")); //$NON-NLS-1$
 
 		dialog.setInitialSelections(initialSelections.toArray());
-		dialog.setTitle(SearchPlugin.getResourceString("ListSelectionDialog.title"));
+		dialog.setTitle(SearchMessages.getString("ListSelectionDialog.title")); //$NON-NLS-1$
 		if (dialog.open() == dialog.OK) {
 			Object[] dialogResult= dialog.getResult();
 			int length= dialogResult.length;

@@ -11,9 +11,9 @@ class ShowPreviousResultAction extends Action {
 	private SearchResultViewer fViewer;
 
 	public ShowPreviousResultAction(SearchResultViewer viewer) {
-		super(SearchPlugin.getResourceString("SearchResultView.showPrev.text"));
+		super(SearchMessages.getString("SearchResultView.showPrev.text")); //$NON-NLS-1$
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_PREV);
-		setToolTipText(SearchPlugin.getResourceString("SearchResultView.showPrev.tooltip"));
+		setToolTipText(SearchMessages.getString("SearchResultView.showPrev.tooltip")); //$NON-NLS-1$
 		fViewer= viewer;
 	}
 	

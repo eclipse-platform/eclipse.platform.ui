@@ -52,10 +52,11 @@ import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search.internal.ui.SearchMessages;
 
 public class TextSearchPage extends DialogPage implements ISearchPage {
 
-	public static final String EXTENSION_POINT_ID= "org.eclipse.search.internal.ui.text.TextSearchPage";
+	public static final String EXTENSION_POINT_ID= "org.eclipse.search.internal.ui.text.TextSearchPage"; //$NON-NLS-1$
 
 	private static List fgPreviousSearchPatterns= new ArrayList(20);
 
@@ -105,7 +106,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		try {			
 			context.run(true, true, op);
 		} catch (InvocationTargetException ex) {
-			ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.search.");
+			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.search.title"),SearchMessages.getString("Search.Error.search.message")); //$NON-NLS-2$ //$NON-NLS-1$
 			return false;
 		} catch (InterruptedException e) {
 			return false;
@@ -158,7 +159,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	private String getSearchOptions() {
 		StringBuffer result= new StringBuffer();
 		if (!ignoreCase())
-			result.append("i");
+			result.append("i"); //$NON-NLS-1$
 		return result.toString();	
 	}
 	
@@ -169,7 +170,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	private List getExtensions() {
 		List extensions= fFileTypeEditor.getFileTypes();
 		String editorExtension= getExtensionFromEditor();
-		if (editorExtension != null && editorExtension.equals(""))
+		if (editorExtension != null && editorExtension.equals("")) //$NON-NLS-1$
 			extensions.add(null);
 		return extensions;
 	}
@@ -210,7 +211,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		
 		// Search Expression
 		Group group= new Group(result, SWT.NONE);
-		group.setText(SearchPlugin.getResourceString("SearchPage.expression.label"));
+		group.setText(SearchMessages.getString("SearchPage.expression.label")); //$NON-NLS-1$
 		layout= new GridLayout();
 		layout.numColumns= 2;
 		group.setLayout(layout);
@@ -246,9 +247,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		layouter.perform( new Control[] { fPattern }, 0);
 		
 		label= new Label(group, SWT.LEFT);
-		label.setText(SearchPlugin.getResourceString("SearchPage.expression.pattern"));
+		label.setText(SearchMessages.getString("SearchPage.expression.pattern")); //$NON-NLS-1$
 		fIgnoreCase= new Button(group, SWT.CHECK);
-		fIgnoreCase.setText(SearchPlugin.getResourceString("SearchPage.caseSensitive"));
+		fIgnoreCase.setText(SearchMessages.getString("SearchPage.caseSensitive")); //$NON-NLS-1$
 		gd= new GridData(); gd.horizontalAlignment= gd.END;
 		fIgnoreCase.setLayoutData(gd);
 		layouter.perform( new Control[] {label, fIgnoreCase}, -1);
@@ -268,7 +269,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		if (selection == null || selection.isEmpty())
 			return;
 		
-		String text= "";	
+		String text= "";	 //$NON-NLS-1$
 		if (selection instanceof ITextSelection) {
 			ITextSelection textSelection= (ITextSelection)getSelection();
 			text= textSelection.getText();
@@ -283,8 +284,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				try {
 					text= (String)marker.getAttribute(SearchUI.LINE);
 				} catch (CoreException ex) {
-					ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.markerAttributeAccess.");
-					text= "";
+					ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.markerAttributeAccess.title"), SearchMessages.getString("Search.Error.markerAttributeAccess.message")); //$NON-NLS-2$ //$NON-NLS-1$
+					text= ""; //$NON-NLS-1$
 				}
 			} else if (item instanceof IAdaptable) {
 				IWorkbenchAdapter element= (IWorkbenchAdapter)((IAdaptable)item).getAdapter(IWorkbenchAdapter.class);
@@ -296,22 +297,22 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	}
 	
 	private String insertEscapeChars(String text) {
-		if (text == null || text.equals(""))
-			return "";
+		if (text == null || text.equals("")) //$NON-NLS-1$
+			return ""; //$NON-NLS-1$
 		StringBuffer sbIn= new StringBuffer(text);
 		BufferedReader reader= new BufferedReader(new StringReader(text));
 		int lengthOfFirstLine= 0;
 		try {
 			lengthOfFirstLine= reader.readLine().length();
 		} catch (IOException ex) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		StringBuffer sbOut= new StringBuffer(lengthOfFirstLine + 5);
 		int i= 0;
 		while (i < lengthOfFirstLine) {
 			char ch= sbIn.charAt(i);
 			if (ch == '*' || ch == '?' || ch == '\\')
-				sbOut.append("\\");
+				sbOut.append("\\"); //$NON-NLS-1$
 			sbOut.append(ch);
 			i= i+1;
 		};
@@ -325,7 +326,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 			if (elem instanceof IFileEditorInput) {
 				String extension= ((IFileEditorInput)elem).getFile().getFileExtension();
 				if (extension == null)
-					extension= "";
+					extension= ""; //$NON-NLS-1$
 				return extension;
 			}
 		}
@@ -340,7 +341,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		result.setLayout(layout);
 		
 		Label label= new Label(result, SWT.LEFT);
-		label.setText(SearchPlugin.getResourceString("SearchPage.extensions"));
+		label.setText(SearchMessages.getString("SearchPage.extensions")); //$NON-NLS-1$
 		
 		fExtensions= new Text(result, SWT.LEFT | SWT.BORDER);
 
@@ -354,10 +355,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 			fExtensions.setText(extension);
 		else
 			// use all registered extensions
-			fExtensions.setText("*");
+			fExtensions.setText("*"); //$NON-NLS-1$
 		
 		Button button= new Button(result, SWT.PUSH);
-		button.setText(SearchPlugin.getResourceString("SearchPage.browse"));
+		button.setText(SearchMessages.getString("SearchPage.browse")); //$NON-NLS-1$
 		
 		fFileTypeEditor= new FileTypeEditor(
 			SearchPlugin.getDefault().getWorkbench().getEditorRegistry(),

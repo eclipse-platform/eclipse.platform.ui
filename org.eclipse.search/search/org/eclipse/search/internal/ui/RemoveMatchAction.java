@@ -22,9 +22,9 @@ class RemoveMatchAction extends Action {
 	private ISelectionProvider fSelectionProvider;
 
 	public RemoveMatchAction(ISelectionProvider provider) {
-		super(SearchPlugin.getResourceString("SearchResultView.removeMatch.text"));
+		super(SearchMessages.getString("SearchResultView.removeMatch.text")); //$NON-NLS-1$
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM);
-		setToolTipText(SearchPlugin.getResourceString("SearchResultView.removeMatch.tooltip"));
+		setToolTipText(SearchMessages.getString("SearchResultView.removeMatch.tooltip")); //$NON-NLS-1$
 		fSelectionProvider= provider;
 	}
 	
@@ -34,7 +34,7 @@ class RemoveMatchAction extends Action {
 			try {
 				SearchPlugin.getWorkspace().deleteMarkers(markers);
 			} catch (CoreException ex) {
-				ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.deleteMarkers.");
+				ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.deleteMarkers.title"), SearchMessages.getString("Search.Error.deleteMarkers.message")); //$NON-NLS-2$ //$NON-NLS-1$
 			}
 	}
 	

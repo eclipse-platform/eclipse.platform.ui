@@ -15,10 +15,11 @@ import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search.internal.ui.SearchMessages;
 
 public class TextSearchResultCollector implements ITextSearchResultCollector {
 	
-	private static final String SPACE_MATCHES= " " + SearchPlugin.getResourceString("SearchResultCollector.matches");
+	private static final String SPACE_MATCHES= " " + SearchMessages.getString("SearchResultCollector.matches"); //$NON-NLS-2$ //$NON-NLS-1$
 
 	private IProgressMonitor fMonitor;
 	private ISearchResultView fView;
@@ -78,7 +79,7 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 	 */
 	public void done() {
 		if (!getProgressMonitor().isCanceled())
-			getProgressMonitor().setTaskName(SearchPlugin.getResourceString("SearchResultCollector.done") + ": " + fMatchCount + SPACE_MATCHES + "   ");
+			getProgressMonitor().setTaskName(SearchMessages.getString("SearchResultCollector.done") + ": " + fMatchCount + SPACE_MATCHES + "   "); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 		if (fView != null)
 			fView.searchFinished();
 			

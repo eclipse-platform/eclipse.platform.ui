@@ -9,8 +9,8 @@ import org.eclipse.jface.action.Action;
 class SearchAgainAction extends Action {
 
 	public SearchAgainAction() {
-		super(SearchPlugin.getResourceString("SearchResultView.searchAgain.text"));
-		setToolTipText(SearchPlugin.getResourceString("SearchResultView.searchAgain.tooltip"));
+		super(SearchMessages.getString("SearchResultView.searchAgain.text")); //$NON-NLS-1$
+		setToolTipText(SearchMessages.getString("SearchResultView.searchAgain.tooltip")); //$NON-NLS-1$
 	}
 	
 	public void run() {

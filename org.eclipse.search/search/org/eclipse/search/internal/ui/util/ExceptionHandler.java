@@ -7,17 +7,15 @@ package org.eclipse.search.internal.ui.util;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.SearchUI;
@@ -33,38 +31,13 @@ import org.eclipse.search.ui.SearchUI;
 public class ExceptionHandler {
 
 	private static ExceptionHandler fgInstance= new ExceptionHandler();
-	
-	/**
-	 * Shows an error dialog for exceptions that contain an <code>IStatus</code>.
-	 * This method appends "title" and "message" to the given resource prefix to fetch the
-	 * title and message parameters for the error dialog.
-	 * Example: resourcePrefix= "org.eclipse.search.ui.error." -> "org.eclipse.search.ui.error.title".
-	 * 
-	 * @deprecated Use handle(Throwable, String, String) instead
-	 */
-	public static boolean handle(Throwable t, ResourceBundle bundle, String resourcePrefix) {
-		return handle(t, SearchPlugin.getActiveWorkbenchShell(), bundle, resourcePrefix); 
-	}
-	
-	/**
-	 * Shows an error dialog for exceptions that contain an <code>IStatus</code>.
-	 * This method appends "title" and "message" to the given resource prefix to fetch the
-	 * title and message parameters for the error dialog.
-	 * Example: resourcePrefix= "org.eclipse.search.ui.error." -> "org.eclipse.search.ui.error.title".
-	 * 
-	 * @deprecated Use handle(Throwable, Shell, String, String) instead 
-	 */
-	public static boolean handle(Throwable t, Shell shell, ResourceBundle bundle, String resourcePrefix) {
-		return handle(t, shell, getResourceString(bundle, resourcePrefix+"title"), getResourceString(bundle, resourcePrefix+"message")); 
-	}
-	
+
 	/**
 	 * Shows an error dialog for exceptions that contain an <code>IStatus</code>.
 	 */
 	public static boolean handle(Throwable t, String title, String message) {
 		return handle(t, SearchPlugin.getActiveWorkbenchShell(), title, message);	
 	}
-	
 	/**
 	 * Shows an error dialog for exceptions that contain an <code>IStatus</code>.
 	 */
@@ -72,17 +45,6 @@ public class ExceptionHandler {
 		if (fgInstance == null)
 			return false;
 		return fgInstance.perform(t, shell, title, message);	
-	}
-	
-	/**
-	 * Logs the given exception using the platforms logging mechanism.
-	 * This method appends "message" to the given resource prefix to fetch the
-	 * message parameter for logging.
-	 * 
-	 * @deprecated Use log(Throwable, String) instead
-	 */
-	public static void log(Throwable t, ResourceBundle bundle, String prefix) {
-		log(t, getResourceString(bundle, prefix+"message")); 
 	}
 	/**
 	 * Logs the given exception using the platforms logging mechanism.
@@ -124,8 +86,6 @@ public class ExceptionHandler {
 		}
 		return false;	
 	}
-
-
 	/**
 	 * Shows the error in a message dialog
 	 */
@@ -133,7 +93,7 @@ public class ExceptionHandler {
 		StringWriter msg= new StringWriter();
 		if (message != null) {
 			msg.write(message);
-			msg.write("\n\n");
+			msg.write("\n\n"); //$NON-NLS-1$
 		}
 		if (t.getMessage() == null || t.getMessage().length() == 0)
 			msg.write(t.toString());
@@ -141,7 +101,6 @@ public class ExceptionHandler {
 			msg.write(t.getMessage());
 		MessageDialog.openError(shell, title, msg.toString());			
 	}
-	
 	/**
 	 * Shows a dialog containing the stack trace of the exception
 	 */
@@ -149,13 +108,5 @@ public class ExceptionHandler {
 		StringWriter writer= new StringWriter();
 		t.printStackTrace(new PrintWriter(writer));
 		MessageDialog.openError(shell, title, writer.toString());
-	}	
-		
-	private static String getResourceString(ResourceBundle bundle, String key) {
-		try {
-			return bundle.getString(key);
-		} catch (MissingResourceException e) {
-			return key;
-		}
 	}	
 }

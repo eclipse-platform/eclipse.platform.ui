@@ -27,25 +27,25 @@ public final class SearchUI {
 	/**
 	 * Search Plug-in Id (value <code>"org.eclipse.search"</code>).
 	 */
-	public static final String PLUGIN_ID= "org.eclipse.search";
+	public static final String PLUGIN_ID= "org.eclipse.search"; //$NON-NLS-1$
 	/** 
 	 * Search marker type (value <code>"org.eclipse.search.searchmarker"</code>).
 	 *
 	 * @see org.eclipse.core.resources.IMarker
 	 */ 
-	public static final String SEARCH_MARKER=  PLUGIN_ID + ".searchmarker";
+	public static final String SEARCH_MARKER=  PLUGIN_ID + ".searchmarker"; //$NON-NLS-1$
 	/** 
 	 * Line marker attribute (value <code>"line"</code>)
 	 * The value of the marker attribute is the line which contains the text search match.
 	 *
 	 * @see org.eclipse.core.resources.IMarker#getAttribute
 	 */
-	public static final String LINE= "line";
+	public static final String LINE= "line"; //$NON-NLS-1$
 	/** 
 	 * Id of the search result view
 	 * (value <code>"org.eclipse.search.SearchResultView"</code>).
 	 */
-	public static final String SEARCH_RESULT_VIEW_ID= PLUGIN_ID + ".SearchResultView";
+	public static final String SEARCH_RESULT_VIEW_ID= PLUGIN_ID + ".SearchResultView"; //$NON-NLS-1$
 	/**
 	 * Activates the search result view in the active page of the
 	 * active workbench window. This call has no effect (but returns <code>true</code>

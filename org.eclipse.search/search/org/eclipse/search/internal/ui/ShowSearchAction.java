@@ -16,7 +16,6 @@ class ShowSearchAction extends Action {
 	 *	Create a new instance of this class
 	 */
 	public ShowSearchAction(Search search) {
-		super("");
 		fSearch= search;
 		String desc= search.getShortDescription();
 		setText(desc);

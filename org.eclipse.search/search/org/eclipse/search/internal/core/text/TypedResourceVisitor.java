@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.search.internal.ui.SearchMessages;
 
 public class TypedResourceVisitor implements IResourceVisitor {
 
@@ -24,7 +25,7 @@ public class TypedResourceVisitor implements IResourceVisitor {
 			case IResource.PROJECT:
 				return visitProject((IProject)resource);
 			default:
-				Assert.isTrue(false, "Unknown resource type");
+				Assert.isTrue(false, SearchMessages.getString("TypedResourceVisitor.unknownResourceType")); //$NON-NLS-1$
 		}
 		return false;
 	}

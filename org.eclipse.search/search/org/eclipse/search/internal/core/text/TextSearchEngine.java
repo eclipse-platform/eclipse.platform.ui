@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.search.internal.core.ISearchScope;
+import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 
 public class TextSearchEngine {
@@ -42,7 +43,7 @@ public class TextSearchEngine {
 		if (!openProjects.isEmpty()) {
 			int amountOfWork= (new AmountOfWorkCalculator()).process(openProjects, scope);		
 			try {
-				monitor.beginTask(SearchPlugin.getResourceString("TextSearchEngine.scanning"), amountOfWork);
+				monitor.beginTask(SearchMessages.getString("TextSearchEngine.scanning"), amountOfWork); //$NON-NLS-1$
 				collector.aboutToStart();
 				TextSearchVisitor visitor= new TextSearchVisitor(pattern, options,
 					scope, collector);

@@ -20,13 +20,13 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
  */
 class SorterDescriptor {
 
-	public final static String SORTER_TAG= "sorter";
-	private final static String ID_ATTRIBUTE= "id";
-	private final static String PAGE_ID_ATTRIBUTE= "pageId";
-	private final static String ICON_ATTRIBUTE= "icon";
-	private final static String CLASS_ATTRIBUTE= "class";
-	private final static String LABEL_ATTRIBUTE= "label";
-	private final static String TOOLTIP_ATTRIBUTE= "tooltip";
+	public final static String SORTER_TAG= "sorter"; //$NON-NLS-1$
+	private final static String ID_ATTRIBUTE= "id"; //$NON-NLS-1$
+	private final static String PAGE_ID_ATTRIBUTE= "pageId"; //$NON-NLS-1$
+	private final static String ICON_ATTRIBUTE= "icon"; //$NON-NLS-1$
+	private final static String CLASS_ATTRIBUTE= "class"; //$NON-NLS-1$
+	private final static String LABEL_ATTRIBUTE= "label"; //$NON-NLS-1$
+	private final static String TOOLTIP_ATTRIBUTE= "tooltip"; //$NON-NLS-1$
 	
 	private IConfigurationElement fElement;
 	
@@ -44,10 +44,10 @@ class SorterDescriptor {
 		try {
 			return (ViewerSorter)fElement.createExecutableExtension(CLASS_ATTRIBUTE);
 		} catch (CoreException ex) {
-			ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.createSorter.");			
+			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.createSorter.title"), SearchMessages.getString("Search.Error.createSorter.message")); //$NON-NLS-2$ //$NON-NLS-1$
 			return null;
 		} catch (ClassCastException ex) {
-			ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.createSorter.");			
+			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.createSorter.title"), SearchMessages.getString("Search.Error.createSorter.message")); //$NON-NLS-2$ //$NON-NLS-1$
 			return null;
 		}
 	}
@@ -72,7 +72,7 @@ class SorterDescriptor {
 		try {
 			url= new URL(fElement.getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL(), imageName);
 		} catch (java.net.MalformedURLException ex) {
-			ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.createSorter.");			
+			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.createSorter.title"), SearchMessages.getString("Search.Error.createSorter.message")); //$NON-NLS-2$ //$NON-NLS-1$
 			return null;
 		}
 		return ImageDescriptor.createFromURL(url);

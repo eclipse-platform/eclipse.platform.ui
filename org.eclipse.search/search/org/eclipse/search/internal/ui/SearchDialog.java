@@ -86,7 +86,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		super(shell);
 		Assert.isNotNull(workspace);
 		fWorkspace= workspace;
-		setPerformActionLabel(SearchPlugin.getResourceString("SearchDialog.performAction"));
+		setPerformActionLabel(SearchMessages.getString("SearchDialog.performAction")); //$NON-NLS-1$
 		fSelection= selection;
 		fEditorPart= editor;
 		fDescriptors= SearchPlugin.getDefault().getSearchPageDescriptors();
@@ -97,7 +97,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText(SearchPlugin.getResourceString("SearchDialog.title"));
+		shell.setText(SearchMessages.getString("SearchDialog.title")); //$NON-NLS-1$
 		shell.setImage(SearchPluginImages.get(SearchPluginImages.IMG_TOOL_SEARCH));
 		// added for 1GEUK2L: ITPJUI:WIN2000 - No help context for search pages
 		WorkbenchHelp.setHelp(shell, new Object[] { ISearchHelpContextIds.SEARCH_DIALOG });		
@@ -131,7 +131,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		
 		if (numPages == 0) {
 			Label label= new Label(parent, SWT.CENTER | SWT.WRAP);
-			label.setText(SearchPlugin.getResourceString("SearchDialog.noSearchExtension"));
+			label.setText(SearchMessages.getString("SearchDialog.noSearchExtension")); //$NON-NLS-1$
 			return label;
 		}
 		

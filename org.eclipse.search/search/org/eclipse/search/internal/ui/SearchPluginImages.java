@@ -24,43 +24,43 @@ public class SearchPluginImages {
 
 	static {
 		try {
-			fgIconLocation= new URL(SearchPlugin.getDefault().getDescriptor().getInstallURL(), "icons/");
+			fgIconLocation= new URL(SearchPlugin.getDefault().getDescriptor().getInstallURL(), "icons/"); //$NON-NLS-1$
 		} catch (MalformedURLException ex) {
-			ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.incorrectIconLocation.");
+			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.incorrectIconLocation.title"), SearchMessages.getString("Search.Error.incorrectIconLocation.message")); //$NON-NLS-2$ //$NON-NLS-1$
 		}
 	}
 
 	// The plugin registry
 	private final static ImageRegistry PLUGIN_REGISTRY= SearchPlugin.getDefault().getImageRegistry();
 
-	private static final String T= "full/";
+	private static final String T= "full/"; //$NON-NLS-1$
 
-	public static final String T_OBJ= T + "obj16/";
-	public static final String T_WIZBAN= T + "wizban/";
-	public static final String T_LCL= "lcl16/";
-	public static final String T_TOOL= "tool16/";
-	public static final String T_VIEW= "view16/";
+	public static final String T_OBJ= T + "obj16/"; //$NON-NLS-1$
+	public static final String T_WIZBAN= T + "wizban/"; //$NON-NLS-1$
+	public static final String T_LCL= "lcl16/"; //$NON-NLS-1$
+	public static final String T_TOOL= "tool16/"; //$NON-NLS-1$
+	public static final String T_VIEW= "view16/"; //$NON-NLS-1$
 
-	private static final String NAME_PREFIX= "org.eclipse.search.ui.";
+	private static final String NAME_PREFIX= "org.eclipse.search.ui."; //$NON-NLS-1$
 	private static final int    NAME_PREFIX_LENGTH= NAME_PREFIX.length();
 
 	// Define image names
-	public static final String IMG_TOOL_SEARCH= NAME_PREFIX + "search.gif";
+	public static final String IMG_TOOL_SEARCH= NAME_PREFIX + "search.gif"; //$NON-NLS-1$
 
-	public static final String IMG_LCL_SEARCH_STOP= NAME_PREFIX + "search_stop.gif";
-	public static final String IMG_LCL_SEARCH_REM= NAME_PREFIX + "search_rem.gif";
-	public static final String IMG_LCL_SEARCH_REM_ALL= NAME_PREFIX + "search_remall.gif";
-	public static final String IMG_LCL_SEARCH_NEXT= NAME_PREFIX + "search_next.gif";
-	public static final String IMG_LCL_SEARCH_PREV= NAME_PREFIX + "search_prev.gif";
-	public static final String IMG_LCL_SEARCH_GOTO= NAME_PREFIX + "search_goto.gif";
-	public static final String IMG_LCL_SEARCH_SORT= NAME_PREFIX + "search_sortmatch.gif";
-	public static final String IMG_LCL_SEARCH_HISTORY= NAME_PREFIX + "search_history.gif";
+	public static final String IMG_LCL_SEARCH_STOP= NAME_PREFIX + "search_stop.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_REM= NAME_PREFIX + "search_rem.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_REM_ALL= NAME_PREFIX + "search_remall.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_NEXT= NAME_PREFIX + "search_next.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_PREV= NAME_PREFIX + "search_prev.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_GOTO= NAME_PREFIX + "search_goto.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_SORT= NAME_PREFIX + "search_sortmatch.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_HISTORY= NAME_PREFIX + "search_history.gif"; //$NON-NLS-1$
 
-	public static final String IMG_VIEW_SEARCHRES= NAME_PREFIX + "searchres.gif";
+	public static final String IMG_VIEW_SEARCHRES= NAME_PREFIX + "searchres.gif"; //$NON-NLS-1$
 
-	public static final String IMG_OBJ_TSEARCH= NAME_PREFIX + "tsearch_obj.gif";
-	public static final String IMG_OBJ_TSEARCH_DPDN= NAME_PREFIX + "tsearch_dpdn_obj.gif";
-	public static final String IMG_OBJ_SEARCHMARKER= NAME_PREFIX + "searchm_obj.gif";
+	public static final String IMG_OBJ_TSEARCH= NAME_PREFIX + "tsearch_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJ_TSEARCH_DPDN= NAME_PREFIX + "tsearch_dpdn_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJ_SEARCHMARKER= NAME_PREFIX + "searchm_obj.gif"; //$NON-NLS-1$
 
 	
 	
@@ -89,7 +89,7 @@ public class SearchPluginImages {
 		try {
 			return new URL(fgIconLocation, buffer.toString());
 		} catch (MalformedURLException ex) {
-			ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.incorrectIconLocation.");
+			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.incorrectIconLocation.title"), SearchMessages.getString("Search.Error.incorrectIconLocation.message")); //$NON-NLS-2$ //$NON-NLS-1$
 			return null;
 		}
 	}
@@ -99,8 +99,8 @@ public class SearchPluginImages {
 	 */	
 	public static void setImageDescriptors(IAction action, String type, String relPath) {
 		relPath= relPath.substring(NAME_PREFIX_LENGTH);
-		action.setDisabledImageDescriptor(create(T + "d" + type, relPath));
-		action.setHoverImageDescriptor(create(T + "c" + type, relPath));
-		action.setImageDescriptor(create(T + "e" + type, relPath));
+		action.setDisabledImageDescriptor(create(T + "d" + type, relPath)); //$NON-NLS-1$
+		action.setHoverImageDescriptor(create(T + "c" + type, relPath)); //$NON-NLS-1$
+		action.setImageDescriptor(create(T + "e" + type, relPath)); //$NON-NLS-1$
 	}
 }

@@ -46,6 +46,8 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
  */
 class SearchResultViewer extends TableViewer {
 	
+	private static final String MATCHES_POSTFIX= " " + SearchMessages.getString("SearchResultView.matches") + ")"; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+
 	private SearchResultView fOuterPart;
 	private boolean fFirstTime= true;
 	private ShowNextResultAction fShowNextResultAction;
@@ -106,7 +108,7 @@ class SearchResultViewer extends TableViewer {
 					fGotoMarkerAction.setEnabled(hasSingleSelection);
 					fRemoveMatchAction.setEnabled(hasSingleSelection);
 					fMarkerToShow= -1;
-					String location= "";
+					String location= ""; //$NON-NLS-1$
 					if (hasSingleSelection) {
 						ISearchResultViewEntry entry= (ISearchResultViewEntry)getTable().getItem(getTable().getSelectionIndex()).getData();
 						IPath path= entry.getResource().getFullPath();
@@ -124,7 +126,7 @@ class SearchResultViewer extends TableViewer {
 			}
 		});
 		
-		MenuManager menuMgr= new MenuManager("#PopUp");
+		MenuManager menuMgr= new MenuManager("#PopUp"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(
 			new IMenuListener() {
@@ -375,9 +377,9 @@ class SearchResultViewer extends TableViewer {
 	protected void updateTitle() {
 		int count= SearchManager.getDefault().getCurrentItemCount();
 		boolean hasCurrentSearch= SearchManager.getDefault().getCurrentSearch() != null;
-		String title= SearchPlugin.getResourceString("SearchResultView.title");
+		String title= SearchMessages.getString("SearchResultView.title"); //$NON-NLS-1$
 		if (count > 0 || hasCurrentSearch)
-		title= title + " (" + count + " " + SearchPlugin.getResourceString("SearchResultView.matches") + ")";
+		title= title + " (" + count + MATCHES_POSTFIX; //$NON-NLS-1$
 		if (!title.equals(fOuterPart.getTitle()))
 			fOuterPart.setTitle(title);
 		String toolTip= null;

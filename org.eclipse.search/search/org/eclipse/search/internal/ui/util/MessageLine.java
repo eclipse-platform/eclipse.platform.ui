@@ -125,7 +125,7 @@ public class MessageLine extends CLabel {
 	public void setMessage(String message) {
 		fMessageText= message;
 		if (message == null)
-			message= "";
+			message= ""; //$NON-NLS-1$
 		if (fErrorText == null) {
 			setForeground(fDefaultColor);
 			setText(message);

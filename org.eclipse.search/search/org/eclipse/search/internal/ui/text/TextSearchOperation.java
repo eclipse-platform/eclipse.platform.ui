@@ -14,6 +14,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 import org.eclipse.search.internal.core.ISearchScope;
 import org.eclipse.search.internal.core.text.TextSearchEngine;
+import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
 
@@ -54,7 +55,7 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 	}	
 	
 	String getDescription() {
-		return "\"" + fPattern + "\"" + SearchPlugin.getResourceString("TextSearchOperation.descriptionPostfix");
+		return "\"" + fPattern + "\"" + SearchMessages.getString("TextSearchOperation.descriptionPostfix"); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 	}
 	
 	ImageDescriptor getImageDescriptor() {

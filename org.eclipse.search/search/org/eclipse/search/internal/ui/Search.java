@@ -8,7 +8,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import org.eclipse.swt.widgets.Shell;
 
@@ -56,10 +55,10 @@ class Search extends Object {
 	 */
 	String getFullDescription() {
 		if (fDescription == null)
-			return "";
+			return ""; //$NON-NLS-1$
 
 		String text= fDescription;
-		int i= fDescription.lastIndexOf("{0}");
+		int i= fDescription.lastIndexOf("{0}"); //$NON-NLS-1$
 		if (i != -1) {
 			// replace "{0}" with the match count
 			int count= getItemCount();
@@ -81,19 +80,19 @@ class Search extends Object {
 	 */
 	String getShortDescription() {
 		if (fDescription == null)
-			return "";
+			return ""; //$NON-NLS-1$
 
 		String text= fDescription;
-		int i= fDescription.lastIndexOf("{0}");
+		int i= fDescription.lastIndexOf("{0}"); //$NON-NLS-1$
 		if (i != -1) {
 			// replace "{0}" with the match count
 			int count= getItemCount();
 			// minimize length infront of " - " to 20 and add ...
 			if (i > 20 + 3) {
 				if (fDescription.indexOf('"') == 0 && fDescription.indexOf('"', 1) == i - 4)
-					text= fDescription.substring(0, 21) + "\"... - ";
+					text= fDescription.substring(0, 21) + "\"... - "; //$NON-NLS-1$
 				else
-					text= fDescription.substring(0, 20) + "... - ";
+					text= fDescription.substring(0, 20) + "... - "; //$NON-NLS-1$
 			}
 			else
 				text= fDescription.substring(0, i);
@@ -107,7 +106,7 @@ class Search extends Object {
 		else {
 			// minimize length to 30 and add ...
 			if (fDescription.length() > 30)
-				text= fDescription.substring(0, 30) + "... ";
+				text= fDescription.substring(0, 30) + "... "; //$NON-NLS-1$
 		}
 		return text;
 	}
@@ -139,7 +138,6 @@ class Search extends Object {
 		if (fOperation == null)
 			return;
 		Shell shell= SearchPlugin.getActiveWorkbenchShell();
-		ResourceBundle bundle= SearchPlugin.getResourceBundle();
 		IWorkspaceDescription workspaceDesc= SearchPlugin.getWorkspace().getDescription();
 		boolean isAutoBuilding= workspaceDesc.isAutoBuilding();
 		if (isAutoBuilding)
@@ -148,7 +146,7 @@ class Search extends Object {
 		try {
 			new ProgressMonitorDialog(shell).run(true, true, fOperation);
 		} catch (InvocationTargetException ex) {
-			ExceptionHandler.handle(ex, shell, bundle, "Search.Error.search.");
+			ExceptionHandler.handle(ex, shell, SearchMessages.getString("Search.Error.search.title"), SearchMessages.getString("Search.Error.search.message")); //$NON-NLS-2$ //$NON-NLS-1$
 		} catch(InterruptedException e) {
 		} finally {
 			if (isAutoBuilding)

@@ -11,9 +11,9 @@ class ShowNextResultAction extends Action {
 	private SearchResultViewer fViewer;
 
 	public ShowNextResultAction(SearchResultViewer viewer) {
-		super(SearchPlugin.getResourceString("SearchResultView.showNext.text"));
+		super(SearchMessages.getString("SearchResultView.showNext.text")); //$NON-NLS-1$
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_NEXT);
-		setToolTipText(SearchPlugin.getResourceString("SearchResultView.showNext.tooltip"));
+		setToolTipText(SearchMessages.getString("SearchResultView.showNext.tooltip")); //$NON-NLS-1$
 		fViewer= viewer;
 	}
 	

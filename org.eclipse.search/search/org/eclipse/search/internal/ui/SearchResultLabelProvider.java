@@ -21,13 +21,13 @@ class SearchResultLabelProvider extends LabelProvider implements ILabelProvider 
 		
 		public String getText(Object element) {
 			if (!(element instanceof ISearchResultViewEntry))
-				return "";
+				return ""; //$NON-NLS-1$
 			
 			IResource resource= ((ISearchResultViewEntry) element).getResource();
 
 			// PR 1G47GDO
 			if (resource == null)
-				return SearchPlugin.getResourceString("SearchResultView.removed_resource");
+				return SearchMessages.getString("SearchResultView.removed_resource"); //$NON-NLS-1$
 		
 			return ((IResource)resource).getLocation().lastSegment();
 		}
@@ -39,6 +39,7 @@ class SearchResultLabelProvider extends LabelProvider implements ILabelProvider 
 
 
 	private static final FileLabelProvider DEFAULT_LABEL_PROVIDER= new FileLabelProvider();
+	private static final String MATCHES_POSTFIX= " " + SearchMessages.getString("SearchResultView.matches") + ")"; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 	private static ILabelProvider fgLabelProvider= DEFAULT_LABEL_PROVIDER;
 	
 	public ILabelProvider getLabelProvider() {
@@ -55,9 +56,9 @@ class SearchResultLabelProvider extends LabelProvider implements ILabelProvider 
 		StringBuffer text= new StringBuffer(fgLabelProvider.getText(rowElement));
 		int count= ((ISearchResultViewEntry)rowElement).getMatchCount();
 		if (count > 1) {
-			text.append(" (");
+			text.append(" ("); //$NON-NLS-1$
 			text.append(count);
-			text.append(" matches)");
+			text.append(MATCHES_POSTFIX);
 		}
 		return text.toString();			
 	}
