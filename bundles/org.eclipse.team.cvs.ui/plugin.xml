@@ -867,6 +867,55 @@
             description="%CVSActionSet.checkoutTooltip"
             id="org.eclipse.team.cvs.ui.checkout">
       </command>
+   <!-- View Commands -->
+      <command
+            name="%ViewCommand.repositoriesView.name"
+            description="%ViewCommand.repositoriesView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.team.ccvs.ui.RepositoriesView">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.team.ccvs.ui.RepositoriesView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ViewCommand.historyView.name"
+            description="%ViewCommand.historyView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.team.ccvs.ui.HistoryView">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.team.ccvs.ui.HistoryView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ViewCommand.editorsView.name"
+            description="%ViewCommand.editorsView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.team.ccvs.ui.EditorsView">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.team.ccvs.ui.EditorsView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ViewCommand.annotateView.name"
+            description="%ViewCommand.annotateView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.team.ccvs.ui.AnnotateView">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.team.ccvs.ui.AnnotateView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
    </extension>
 <!-- ********** Font Definitions ************** -->
    <extension

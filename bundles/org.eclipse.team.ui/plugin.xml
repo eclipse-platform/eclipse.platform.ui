@@ -222,6 +222,32 @@
             command="org.eclipse.team.ui.synchronizeAll"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <command
+            name="%ViewCommand.synchronizeView.name"
+            description="%ViewCommand.synchronizeView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.team.sync.views.SynchronizeView">
+      </command>
+      <keyBinding
+            string="Alt+Shift+Q Y"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.team.sync.views.SynchronizeView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            platform="carbon"
+            string="Alt+Shift+Q Y"
+            scope="org.eclipse.ui.globalScope"
+            command=""
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            platform="carbon"
+            string="Command+Alt+Q Y"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.team.sync.views.SynchronizeView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
    </extension>
 <!-- action sets -->
    <extension
