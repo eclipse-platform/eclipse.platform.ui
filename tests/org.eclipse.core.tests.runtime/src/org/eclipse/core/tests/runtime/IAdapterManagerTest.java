@@ -22,15 +22,19 @@ public class IAdapterManagerTest extends TestCase {
 	private static final String TEST_ADAPTABLE = "org.eclipse.core.tests.runtime.TestAdaptable";
 	private static final String TEST_ADAPTER = "org.eclipse.core.tests.runtime.TestAdapter";
 	private IAdapterManager manager;
+
 	public IAdapterManagerTest(String name) {
 		super(name);
 	}
+
 	public IAdapterManagerTest() {
-		super ("");
+		super("");
 	}
+
 	protected void setUp() throws Exception {
 		manager = Platform.getAdapterManager();
 	}
+
 	/**
 	 * Tests API method IAdapterManager.hasAdapter.
 	 */
@@ -38,13 +42,13 @@ public class IAdapterManagerTest extends TestCase {
 		TestAdaptable adaptable = new TestAdaptable();
 		//request non-existing adaptable
 		assertTrue("1.0", !manager.hasAdapter("", NON_EXISTING));
-		
+
 		//request adapter that is in XML but has no registered factory
 		assertTrue("1.1", manager.hasAdapter(adaptable, TEST_ADAPTER));
 
 		//request adapter that is not in XML
 		assertTrue("1.2", !manager.hasAdapter(adaptable, "java.lang.String"));
-		
+
 		//register an adapter factory that maps adaptables to strings
 		IAdapterFactory fac = new IAdapterFactory() {
 			public Object getAdapter(Object adaptableObject, Class adapterType) {
@@ -52,6 +56,7 @@ public class IAdapterManagerTest extends TestCase {
 					return adaptableObject.toString();
 				return null;
 			}
+
 			public Class[] getAdapterList() {
 				return new Class[] {String.class};
 			}
@@ -63,10 +68,11 @@ public class IAdapterManagerTest extends TestCase {
 		} finally {
 			manager.unregisterAdapters(fac, TestAdaptable.class);
 		}
-		
+
 		//request adapter that was unloaded
 		assertTrue("1.4", !manager.hasAdapter(adaptable, "java.lang.String"));
-	}	
+	}
+
 	/**
 	 * Tests API method IAdapterManager.getAdapter.
 	 */
@@ -74,14 +80,14 @@ public class IAdapterManagerTest extends TestCase {
 		TestAdaptable adaptable = new TestAdaptable();
 		//request non-existing adaptable
 		assertNull("1.0", manager.getAdapter("", NON_EXISTING));
-		
+
 		//request adapter that is in XML but has no registered factory
 		Object result = manager.getAdapter(adaptable, TEST_ADAPTER);
 		assertTrue("1.1", result instanceof TestAdapter);
 
 		//request adapter that is not in XML
 		assertNull("1.2", manager.getAdapter(adaptable, "java.lang.String"));
-		
+
 		//register an adapter factory that maps adaptables to strings
 		IAdapterFactory fac = new IAdapterFactory() {
 			public Object getAdapter(Object adaptableObject, Class adapterType) {
@@ -89,6 +95,7 @@ public class IAdapterManagerTest extends TestCase {
 					return adaptableObject.toString();
 				return null;
 			}
+
 			public Class[] getAdapterList() {
 				return new Class[] {String.class};
 			}
@@ -103,21 +110,23 @@ public class IAdapterManagerTest extends TestCase {
 		}
 		//request adapter that was unloaded
 		assertNull("1.4", manager.getAdapter(adaptable, "java.lang.String"));
-	}	/**
+	}
+
+	/**
 	 * Tests API method IAdapterManager.loadAdapter.
 	 */
 	public void testLoadAdapter() {
 		TestAdaptable adaptable = new TestAdaptable();
 		//request non-existing adaptable
 		assertNull("1.0", manager.loadAdapter("", NON_EXISTING));
-		
+
 		//request adapter that is in XML but has no registered factory
 		Object result = manager.loadAdapter(adaptable, TEST_ADAPTER);
 		assertTrue("1.1", result instanceof TestAdapter);
 
 		//request adapter that is not in XML
 		assertNull("1.2", manager.loadAdapter(adaptable, "java.lang.String"));
-		
+
 		//register an adapter factory that maps adaptables to strings
 		IAdapterFactory fac = new IAdapterFactory() {
 			public Object getAdapter(Object adaptableObject, Class adapterType) {
@@ -125,6 +134,7 @@ public class IAdapterManagerTest extends TestCase {
 					return adaptableObject.toString();
 				return null;
 			}
+
 			public Class[] getAdapterList() {
 				return new Class[] {String.class};
 			}

@@ -13,16 +13,18 @@ package org.eclipse.core.tests.internal.registrycache;
 import junit.framework.*;
 
 public class AllTests extends TestCase {
-public AllTests() {
-	super(null);
-}
-public AllTests(String name) {
-	super(name);
-}
-public static Test suite() {
-	TestSuite suite = new TestSuite(AllTests.class.getName());
-	suite.addTest(RegistryCacheTest.suite());
-	suite.addTest(LazyRegistryCacheTest.suite());
-	return suite;
-}
+	public AllTests() {
+		super(null);
+	}
+
+	public AllTests(String name) {
+		super(name);
+	}
+
+	public static Test suite() {
+		TestSuite suite = new TestSuite(AllTests.class.getName());
+		suite.addTest(RegistryCacheTest.suite());
+		suite.addTest(LazyRegistryCacheTest.suite());
+		return suite;
+	}
 }

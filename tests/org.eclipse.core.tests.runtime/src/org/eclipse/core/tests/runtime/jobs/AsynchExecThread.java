@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -27,8 +27,8 @@ public class AsynchExecThread extends Thread {
 	private String jobName;
 	private int[] status;
 	private int index;
-	
-	public AsynchExecThread(IProgressMonitor current, Job job, int ticks, int tickLength, String jobName, int [] status, int index) {
+
+	public AsynchExecThread(IProgressMonitor current, Job job, int ticks, int tickLength, String jobName, int[] status, int index) {
 		this.current = current;
 		this.job = job;
 		this.ticks = ticks;
@@ -37,25 +37,26 @@ public class AsynchExecThread extends Thread {
 		this.status = status;
 		this.index = index;
 	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
 		//wait until the main testing method allows this thread to run
 		TestBarrier.waitForStatus(status, index, TestBarrier.STATUS_WAIT_FOR_RUN);
-		
+
 		//set the current thread as the execution thread
 		job.setThread(Thread.currentThread());
-		
+
 		status[index] = TestBarrier.STATUS_RUNNING;
-		
+
 		//wait until this job is allowed to run by the tester
 		TestBarrier.waitForStatus(status, index, TestBarrier.STATUS_WAIT_FOR_DONE);
-		
+
 		//must have positive work
 		current.beginTask(jobName, ticks <= 0 ? 1 : ticks);
 		try {
-			
+
 			for (int i = 0; i < ticks; i++) {
 				current.subTask("Tick: " + i);
 				if (current.isCanceled()) {
@@ -66,7 +67,7 @@ public class AsynchExecThread extends Thread {
 					//Thread.yield();
 					Thread.sleep(tickLength);
 				} catch (InterruptedException e) {
-				
+
 				}
 				current.worked(1);
 			}
@@ -78,6 +79,5 @@ public class AsynchExecThread extends Thread {
 			job.done(Status.OK_STATUS);
 		}
 	}
-	
 
 }

@@ -9,11 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
+
 import junit.framework.*;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import org.eclipse.core.internal.registry.*;
 import org.eclipse.core.runtime.*;
+
 /**
  * Tests the notification mechanism for registry changes.    
  */
@@ -21,20 +23,24 @@ public class IRegistryChangeEventTest extends TestCase {
 	public IRegistryChangeEventTest(String name) {
 		super(name);
 	}
+
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
+
 	/**
 	 * Allows test cases to wait for event notification so they can make assertions on the event.  
 	 */
 	class RegistryChangeListener implements IRegistryChangeListener {
 		private IRegistryChangeEvent event;
+
 		public synchronized void registryChanged(IRegistryChangeEvent newEvent) {
 			if (this.event != null)
 				return;
 			this.event = newEvent;
 			notify();
 		}
+
 		public synchronized IRegistryChangeEvent waitSignal(long timeout) {
 			IRegistryChangeEvent result = event;
 			if (event != null) {
@@ -51,6 +57,7 @@ public class IRegistryChangeEventTest extends TestCase {
 			return result;
 		}
 	}
+
 	public void testAddSinglePluginWithExtensionAndExtensionPoint() {
 		ExtensionRegistry registry = new ExtensionRegistry(new ExtensionLinker());
 		final BundleModel pluginA = new BundleModel();
@@ -60,9 +67,9 @@ public class IRegistryChangeEventTest extends TestCase {
 		final Extension ext1 = new Extension();
 		ext1.setExtensionPointIdentifier("a.xp1");
 		ext1.setSimpleIdentifier("ext1");
-		pluginA.setExtensionPoints(new ExtensionPoint[]{xp1});
+		pluginA.setExtensionPoints(new ExtensionPoint[] {xp1});
 		xp1.setParent(pluginA);
-		pluginA.setExtensions(new Extension[]{ext1});
+		pluginA.setExtensions(new Extension[] {ext1});
 		ext1.setParent(pluginA);
 		RegistryChangeListener listener = new RegistryChangeListener();
 		try {
@@ -81,20 +88,21 @@ public class IRegistryChangeEventTest extends TestCase {
 			registry.removeRegistryChangeListener(listener);
 		}
 	}
+
 	public void testAddTwoPluginsExtensionPointProviderFirst() {
 		ExtensionRegistry registry = new ExtensionRegistry(new ExtensionLinker());
 		final BundleModel pluginA = new BundleModel();
 		pluginA.setUniqueIdentifier("a");
 		final ExtensionPoint xp1 = new ExtensionPoint();
 		xp1.setSimpleIdentifier("xp1");
-		pluginA.setExtensionPoints(new ExtensionPoint[]{xp1});
+		pluginA.setExtensionPoints(new ExtensionPoint[] {xp1});
 		xp1.setParent(pluginA);
 		final BundleModel pluginB = new BundleModel();
 		pluginB.setUniqueIdentifier("b");
 		final Extension ext1 = new Extension();
 		ext1.setExtensionPointIdentifier("a.xp1");
 		ext1.setSimpleIdentifier("ext1");
-		pluginB.setExtensions(new Extension[]{ext1});
+		pluginB.setExtensions(new Extension[] {ext1});
 		ext1.setParent(pluginB);
 		RegistryChangeListener listener = new RegistryChangeListener();
 		try {
@@ -116,20 +124,21 @@ public class IRegistryChangeEventTest extends TestCase {
 			registry.removeRegistryChangeListener(listener);
 		}
 	}
+
 	public void testAddTwoPluginsExtensionProviderFirst() {
 		ExtensionRegistry registry = new ExtensionRegistry(new ExtensionLinker());
 		final BundleModel pluginA = new BundleModel();
 		pluginA.setUniqueIdentifier("a");
 		final ExtensionPoint xp1 = new ExtensionPoint();
 		xp1.setSimpleIdentifier("xp1");
-		pluginA.setExtensionPoints(new ExtensionPoint[]{xp1});
+		pluginA.setExtensionPoints(new ExtensionPoint[] {xp1});
 		xp1.setParent(pluginA);
 		final BundleModel pluginB = new BundleModel();
 		pluginB.setUniqueIdentifier("b");
 		final Extension ext1 = new Extension();
 		ext1.setExtensionPointIdentifier("a.xp1");
 		ext1.setSimpleIdentifier("ext1");
-		pluginB.setExtensions(new Extension[]{ext1});
+		pluginB.setExtensions(new Extension[] {ext1});
 		ext1.setParent(pluginB);
 		RegistryChangeListener listener = new RegistryChangeListener();
 		try {
@@ -151,6 +160,7 @@ public class IRegistryChangeEventTest extends TestCase {
 			registry.removeRegistryChangeListener(listener);
 		}
 	}
+
 	public void testRemoveSinglePluginWithExtensionAndExtensionPoint() {
 		ExtensionRegistry registry = new ExtensionRegistry(new ExtensionLinker());
 		final BundleModel pluginA = new BundleModel();
@@ -160,9 +170,9 @@ public class IRegistryChangeEventTest extends TestCase {
 		final Extension ext1 = new Extension();
 		ext1.setExtensionPointIdentifier("a.xp1");
 		ext1.setSimpleIdentifier("ext1");
-		pluginA.setExtensionPoints(new ExtensionPoint[]{xp1});
+		pluginA.setExtensionPoints(new ExtensionPoint[] {xp1});
 		xp1.setParent(pluginA);
-		pluginA.setExtensions(new Extension[]{ext1});
+		pluginA.setExtensions(new Extension[] {ext1});
 		ext1.setParent(pluginA);
 		RegistryChangeListener listener = new RegistryChangeListener();
 		registry.add(pluginA);
@@ -182,20 +192,21 @@ public class IRegistryChangeEventTest extends TestCase {
 			registry.removeRegistryChangeListener(listener);
 		}
 	}
+
 	public void testRemoveTwoPluginsExtensionProviderFirst() {
 		ExtensionRegistry registry = new ExtensionRegistry(new ExtensionLinker());
 		final BundleModel pluginA = new BundleModel();
 		pluginA.setUniqueIdentifier("a");
 		final ExtensionPoint xp1 = new ExtensionPoint();
 		xp1.setSimpleIdentifier("xp1");
-		pluginA.setExtensionPoints(new ExtensionPoint[]{xp1});
+		pluginA.setExtensionPoints(new ExtensionPoint[] {xp1});
 		xp1.setParent(pluginA);
 		final BundleModel pluginB = new BundleModel();
 		pluginB.setUniqueIdentifier("b");
 		final Extension ext1 = new Extension();
 		ext1.setExtensionPointIdentifier("a.xp1");
 		ext1.setSimpleIdentifier("ext1");
-		pluginB.setExtensions(new Extension[]{ext1});
+		pluginB.setExtensions(new Extension[] {ext1});
 		ext1.setParent(pluginB);
 		RegistryChangeListener listener = new RegistryChangeListener();
 		registry.add(pluginA);
@@ -219,20 +230,21 @@ public class IRegistryChangeEventTest extends TestCase {
 			registry.removeRegistryChangeListener(listener);
 		}
 	}
+
 	public void testRemoveTwoPluginsExtensionPointProviderFirst() {
 		ExtensionRegistry registry = new ExtensionRegistry(new ExtensionLinker());
 		final BundleModel pluginA = new BundleModel();
 		pluginA.setUniqueIdentifier("a");
 		final ExtensionPoint xp1 = new ExtensionPoint();
 		xp1.setSimpleIdentifier("xp1");
-		pluginA.setExtensionPoints(new ExtensionPoint[]{xp1});
+		pluginA.setExtensionPoints(new ExtensionPoint[] {xp1});
 		xp1.setParent(pluginA);
 		final BundleModel pluginB = new BundleModel();
 		pluginB.setUniqueIdentifier("b");
 		final Extension ext1 = new Extension();
 		ext1.setExtensionPointIdentifier("a.xp1");
 		ext1.setSimpleIdentifier("ext1");
-		pluginB.setExtensions(new Extension[]{ext1});
+		pluginB.setExtensions(new Extension[] {ext1});
 		ext1.setParent(pluginB);
 		RegistryChangeListener listener = new RegistryChangeListener();
 		registry.add(pluginA);
@@ -256,6 +268,7 @@ public class IRegistryChangeEventTest extends TestCase {
 			registry.removeRegistryChangeListener(listener);
 		}
 	}
+
 	public static Test suite() {
 		return new TestSuite(IRegistryChangeEventTest.class);
 	}

@@ -19,6 +19,7 @@ public class TestAdapterFactory extends Assert implements IAdapterFactory {
 		assertTrue("Request for wrong adapter", adaptableObject instanceof TestAdaptable);
 		return new TestAdapter();
 	}
+
 	public Class[] getAdapterList() {
 		return new Class[] {TestAdapter.class};
 	}

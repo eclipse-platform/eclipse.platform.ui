@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,12 @@ package org.eclipse.core.tests.internal.runtimetests;
 import org.eclipse.core.runtime.*;
 
 public class SampleNPB extends Plugin {
-		
-public SampleNPB (IPluginDescriptor descriptor) {
-	super(descriptor);
-}
 
-public String getSampleString() {
-	return ("A sample string from class sampleNPB");
-}
+	public SampleNPB(IPluginDescriptor descriptor) {
+		super(descriptor);
+	}
+
+	public String getSampleString() {
+		return ("A sample string from class sampleNPB");
+	}
 }

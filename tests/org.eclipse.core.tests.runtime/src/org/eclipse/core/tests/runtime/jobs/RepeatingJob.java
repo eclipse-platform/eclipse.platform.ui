@@ -23,27 +23,33 @@ public class RepeatingJob extends Job {
 	int runCount = 0;
 	private static final int DELAY = 20;
 	private Object myFamily;
+
 	public RepeatingJob(String name, int repeats) {
 		super(name);
 		this.repeats = repeats;
 	}
+
 	public boolean belongsTo(Object family) {
 		return family == myFamily;
 	}
+
 	/**
 	 * Returns the number of times this job has executed.
 	 */
 	public int getRunCount() {
 		return runCount;
 	}
+
 	protected IStatus run(IProgressMonitor monitor) {
 		runCount++;
 		schedule(DELAY);
 		return Status.OK_STATUS;
 	}
+
 	public void setFamily(Object family) {
 		this.myFamily = family;
 	}
+
 	public boolean shouldRun() {
 		return runCount < repeats;
 	}

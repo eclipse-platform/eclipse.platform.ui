@@ -17,12 +17,14 @@ import org.eclipse.core.runtime.content.IContentDescription;
 
 public class SampleBinaryDescriber implements IContentDescriber {
 	public final static String TAG = "SAMPLE_BINARY_TAG";
+
 	public int describe(InputStream contents, IContentDescription description, int optionsMask) throws IOException {
 		byte[] buffer = new byte[TAG.length()];
 		if (contents.read(buffer) != buffer.length)
 			return INVALID;
-		return (new String(buffer).equals(TAG)) ? VALID : INVALID; 
+		return (new String(buffer).equals(TAG)) ? VALID : INVALID;
 	}
+
 	public int getSupportedOptions() {
 		return 0;
 	}

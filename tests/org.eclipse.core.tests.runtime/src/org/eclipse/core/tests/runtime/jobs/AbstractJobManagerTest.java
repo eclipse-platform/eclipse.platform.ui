@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -26,9 +26,11 @@ public class AbstractJobManagerTest extends TestCase {
 	public AbstractJobManagerTest() {
 		super();
 	}
+
 	public AbstractJobManagerTest(String name) {
 		super(name);
 	}
+
 	/**
 	 * Fails the test due to the given exception.
 	 * @param message
@@ -45,13 +47,15 @@ public class AbstractJobManagerTest extends TestCase {
 		}
 		fail(message + ": " + e);
 	}
+
 	protected void indent(OutputStream output, int indent) {
-		for (int i=0; i<indent; i++)
+		for (int i = 0; i < indent; i++)
 			try {
 				output.write("\t".getBytes());
-			} catch(IOException e) {
+			} catch (IOException e) {
 			}
 	}
+
 	protected void write(IStatus status, int indent) {
 		PrintStream output = System.out;
 		indent(output, indent);
@@ -73,12 +77,14 @@ public class AbstractJobManagerTest extends TestCase {
 			}
 		}
 	}
+
 	protected void setUp() throws Exception {
 		super.setUp();
 		manager = JobManager.getInstance();
 		progressProvider = new FussyProgressProvider();
 		manager.setProgressProvider(progressProvider);
 	}
+
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		progressProvider.sanityCheck();

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -24,15 +24,18 @@ public class JobQueueTest extends TestCase {
 			super("Entry");
 			setPriority(value);
 		}
+
 		protected IStatus run(IProgressMonitor monitor) {
 			return Status.OK_STATUS;
 		}
 	}
+
 	private JobQueue queue;
 
 	public JobQueueTest(String name) {
 		super(name);
 	}
+
 	protected void setUp() throws Exception {
 		super.setUp();
 		this.queue = new JobQueue(false);
@@ -41,6 +44,7 @@ public class JobQueueTest extends TestCase {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
+
 	public void testEqualValues() {
 		//if several equal values are entered, they should come out in FIFO order
 		final int NUM_ENTRIES = 10;
@@ -54,6 +58,7 @@ public class JobQueueTest extends TestCase {
 			assertEquals("2.0." + i, entries[i], queue.dequeue());
 		}
 	}
+
 	public void testBasic() {
 		Entry[] entries = createEntries();
 		assertTrue("1.0", queue.isEmpty());
@@ -65,7 +70,7 @@ public class JobQueueTest extends TestCase {
 		}
 		for (int i = 0; i < entries.length; i++) {
 			queue.remove(entries[i]);
-			if (i+1 < entries.length)
+			if (i + 1 < entries.length)
 				assertTrue("1.4." + i, queue.peek() != null);
 		}
 		assertTrue("2.0", queue.isEmpty());
@@ -85,17 +90,6 @@ public class JobQueueTest extends TestCase {
 	}
 
 	private Entry[] createEntries() {
-		return new Entry[] {
-			new Entry(Job.INTERACTIVE),
-			new Entry(Job.BUILD),
-			new Entry(Job.INTERACTIVE),
-			new Entry(Job.SHORT),
-			new Entry(Job.DECORATE),
-			new Entry(Job.LONG),
-			new Entry(Job.SHORT),
-			new Entry(Job.BUILD),
-			new Entry(Job.LONG),
-			new Entry(Job.DECORATE),
-		};
+		return new Entry[] {new Entry(Job.INTERACTIVE), new Entry(Job.BUILD), new Entry(Job.INTERACTIVE), new Entry(Job.SHORT), new Entry(Job.DECORATE), new Entry(Job.LONG), new Entry(Job.SHORT), new Entry(Job.BUILD), new Entry(Job.LONG), new Entry(Job.DECORATE),};
 	}
 }

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -18,15 +18,15 @@ import org.eclipse.core.tests.harness.*;
  * A job that executes asynchronously on a separate thread
  */
 class AsynchTestJob extends Job {
-	private int [] status;
+	private int[] status;
 	private int index;
-	
-	public AsynchTestJob(String name, int [] status, int index) {
+
+	public AsynchTestJob(String name, int[] status, int index) {
 		super(name);
 		this.status = status;
 		this.index = index;
 	}
-			
+
 	public IStatus run(IProgressMonitor monitor) {
 		status[index] = TestBarrier.STATUS_RUNNING;
 		AsynchExecThread t = new AsynchExecThread(monitor, this, 100, 10, getName(), status, index);
@@ -35,5 +35,5 @@ class AsynchTestJob extends Job {
 		status[index] = TestBarrier.STATUS_WAIT_FOR_START;
 		return Job.ASYNC_FINISH;
 	}
-		
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,9 +21,11 @@ public class PreferenceExportTest extends RuntimeTest {
 	public static Test suite() {
 		return new TestSuite(PreferenceExportTest.class);
 	}
+
 	public PreferenceExportTest() {
 		super("");
 	}
+
 	/**
 	 * Constructor for PreferenceExportTest.
 	 * @param name
@@ -31,6 +33,7 @@ public class PreferenceExportTest extends RuntimeTest {
 	public PreferenceExportTest(String name) {
 		super(name);
 	}
+
 	protected void tearDown() throws Exception {
 		super.tearDown();
 
@@ -47,6 +50,7 @@ public class PreferenceExportTest extends RuntimeTest {
 		}
 		testPlugin.savePluginPreferences();
 	}
+
 	/**
 	 * Tests exporting a preference that is different from the default value, but the same
 	 * as the default-default value.  See bug 31458.
@@ -99,6 +103,7 @@ public class PreferenceExportTest extends RuntimeTest {
 			exportPath.toFile().delete();
 		}
 	}
+
 	/**
 	 * Tests that identity tests on preference keys after
 	 * export/import will still work. This is to safeguard

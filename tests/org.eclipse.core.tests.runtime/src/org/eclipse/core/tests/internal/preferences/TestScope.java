@@ -22,6 +22,7 @@ import org.osgi.service.prefs.BackingStoreException;
 public class TestScope extends EclipsePreferences implements IScopeContext {
 
 	public static final String SCOPE = "test"; //$NON-NLS-1$
+
 	public TestScope() {
 		super(null, null);
 	}
@@ -52,11 +53,10 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 		return new TestScope(nodeParent, nodeName);
 	}
 
-
 	public boolean isDirty() {
 		return dirty;
 	}
-	
+
 	/**
 	 * Recursively mark all nodes in this hierarchy as clean
 	 *
@@ -74,11 +74,11 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 			// shouldn't happen
 		}
 	}
-	
+
 	void setDirty(boolean value) {
 		dirty = value;
 	}
-	
+
 	public void sync() {
 		// don't store the values but a side effect is that the nodes
 		// are marked as not dirty.

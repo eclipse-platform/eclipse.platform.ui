@@ -95,9 +95,9 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	public static Test suite() {
 		// all test methods are named "test..."
 		return new TestSuite(EclipsePreferencesTest.class);
-//				TestSuite suite = new TestSuite();
-//				suite.addTest(new EclipsePreferencesTest("testBytes"));
-//				return suite;
+		//				TestSuite suite = new TestSuite();
+		//				suite.addTest(new EclipsePreferencesTest("testBytes"));
+		//				return suite;
 	}
 
 	private String getUniqueString() {
@@ -294,11 +294,11 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	private byte[][] getByteValues() {
 		ArrayList result = new ArrayList();
 		result.add(new byte[0]);
-		result.add(new byte[]{127});
-		result.add(new byte[]{-128});
-		result.add(new byte[]{0});
-		result.add(new byte[]{5});
-		result.add(new byte[]{-23});
+		result.add(new byte[] {127});
+		result.add(new byte[] {-128});
+		result.add(new byte[] {0});
+		result.add(new byte[] {5});
+		result.add(new byte[] {-23});
 		return (byte[][]) result.toArray(new byte[result.size()][]);
 	}
 
@@ -306,7 +306,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		String qualifier = getUniqueString();
 		Preferences prefs = getScopeRoot().node(qualifier);
 		final String key = "key1";
-		final byte[] defaultValue = new byte[]{42};
+		final byte[] defaultValue = new byte[] {42};
 		final byte[][] values = getByteValues();
 
 		try {
@@ -317,7 +317,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			// try for each value in the set
 			for (int i = 0; i < values.length; i++) {
 				byte[] v1 = values[i];
-				byte[] v2 = new byte[]{54};
+				byte[] v2 = new byte[] {54};
 				prefs.putByteArray(key, v1);
 				assertEquals("1.2." + i, v1, prefs.getByteArray(key, defaultValue));
 				prefs.putByteArray(key, v2);
@@ -633,7 +633,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	}
 
 	public void testKeys() {
-		String[] keys = new String[]{"foo", "bar", "quux"};
+		String[] keys = new String[] {"foo", "bar", "quux"};
 		Preferences node = getScopeRoot().node(getUniqueString());
 
 		// ensure nothing exists to begin with
@@ -691,7 +691,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	}
 
 	public void testChildrenNames() {
-		String[] childrenNames = new String[]{"foo", "bar", "quux"};
+		String[] childrenNames = new String[] {"foo", "bar", "quux"};
 		Preferences node = getScopeRoot().node(getUniqueString());
 		String[] result = null;
 
@@ -718,7 +718,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	public void testNodeExists() {
 		Preferences parent = null;
 		Preferences node = Platform.getPreferencesService().getRootNode();
-		String[] childrenNames = new String[]{"foo", "bar", "quux"};
+		String[] childrenNames = new String[] {"foo", "bar", "quux"};
 		String fake = "fake";
 
 		// check the root node
@@ -786,8 +786,8 @@ public class EclipsePreferencesTest extends RuntimeTest {
 
 	public void testClear() {
 		Preferences node = getScopeRoot().node(getUniqueString());
-		String[] keys = new String[]{"foo", "bar", "quux"};
-		String[] values = new String[]{getUniqueString(), getUniqueString(), getUniqueString()};
+		String[] keys = new String[] {"foo", "bar", "quux"};
+		String[] values = new String[] {getUniqueString(), getUniqueString(), getUniqueString()};
 
 		// none to start with
 		try {
@@ -835,7 +835,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		node = node.node(name);
 		assertEquals("3.0", expected.toString(), node.absolutePath());
 	}
-	
+
 	public void testAccept() {
 		IEclipsePreferences scopeRoot = getScopeRoot();
 		ArrayList expected = new ArrayList();
@@ -856,7 +856,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		}
 		expected.add(scopeRoot.absolutePath());
 		assertEquals("0.1", expected.toArray(new String[0]), actual.toArray(new String[0]));
-		
+
 		// make sure the root and all scopes are visited
 		expected.clear();
 		actual.clear();
@@ -868,13 +868,13 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		expected.add(Path.ROOT.toString());
 		try {
 			String[] scopes = Platform.getPreferencesService().getRootNode().childrenNames();
-			for (int i=0; i<scopes.length; i++)
+			for (int i = 0; i < scopes.length; i++)
 				expected.add('/' + scopes[i]);
 		} catch (BackingStoreException e) {
 			fail("1.100", e);
 		}
-		for (Iterator i=expected.iterator(); i.hasNext(); ) {
-			String path = (String) i.next(); 
+		for (Iterator i = expected.iterator(); i.hasNext();) {
+			String path = (String) i.next();
 			assertTrue("1.0 (" + actual + ", " + path + ")", actual.contains(path));
 		}
 	}

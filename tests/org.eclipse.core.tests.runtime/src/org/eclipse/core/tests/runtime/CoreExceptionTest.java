@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,32 +17,30 @@ import junit.framework.*;
  * Test cases for the Path class.
  */
 public class CoreExceptionTest extends RuntimeTest {
-/**
- * Need a zero argument constructor to satisfy the test harness.
- * This constructor should not do any real work nor should it be
- * called by user code.
- */
-public CoreExceptionTest() {
-	super(null);
-}
-public CoreExceptionTest(String name) {
-	super(name);
-}
-public static Test suite() {
-	return new TestSuite(CoreExceptionTest.class);
-}
-public void testCoreException() {
-	final String MESSAGE_STRING = "An exception has occurred";
-	IStatus status = new Status(
-		IStatus.ERROR,
-		"org.eclipse.core.tests.runtime",
-		31415,
-		MESSAGE_STRING,
-		new NumberFormatException());
-		
-	CoreException e = new CoreException(status);
-	
-	assertEquals("1.0",status,e.getStatus());
-	assertEquals("1.1",MESSAGE_STRING,e.getMessage());
-}
+	/**
+	 * Need a zero argument constructor to satisfy the test harness.
+	 * This constructor should not do any real work nor should it be
+	 * called by user code.
+	 */
+	public CoreExceptionTest() {
+		super(null);
+	}
+
+	public CoreExceptionTest(String name) {
+		super(name);
+	}
+
+	public static Test suite() {
+		return new TestSuite(CoreExceptionTest.class);
+	}
+
+	public void testCoreException() {
+		final String MESSAGE_STRING = "An exception has occurred";
+		IStatus status = new Status(IStatus.ERROR, "org.eclipse.core.tests.runtime", 31415, MESSAGE_STRING, new NumberFormatException());
+
+		CoreException e = new CoreException(status);
+
+		assertEquals("1.0", status, e.getStatus());
+		assertEquals("1.1", MESSAGE_STRING, e.getMessage());
+	}
 }

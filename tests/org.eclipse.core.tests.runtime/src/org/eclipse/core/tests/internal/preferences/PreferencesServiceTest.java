@@ -106,7 +106,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		// ensure that the node isn't dirty (has been saved after the import)
 		assertTrue("5.2", test instanceof TestScope);
 		assertTrue("5.3", !((TestScope) test).isDirty());
-	
+
 		// clear all
 		try {
 			test.clear();
@@ -158,12 +158,12 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 	public void testLookupOrder() {
 		IPreferencesService service = Platform.getPreferencesService();
-		String[] defaultOrder = new String[]{"project", //$NON-NLS-1$ 
+		String[] defaultOrder = new String[] {"project", //$NON-NLS-1$ 
 				InstanceScope.SCOPE, //
 				ConfigurationScope.SCOPE, //
 				DefaultScope.SCOPE};
-		String[] fullOrder = new String[]{"a", "b", "c"};
-		String[] nullKeyOrder = new String[]{"e", "f", "g"};
+		String[] fullOrder = new String[] {"a", "b", "c"};
+		String[] nullKeyOrder = new String[] {"e", "f", "g"};
 		String qualifier = getRandomString();
 		String key = getRandomString();
 
@@ -175,7 +175,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 			// expected
 		}
 		try {
-			service.setDefaultLookupOrder(qualifier, key, new String[]{"a", null, "b"});
+			service.setDefaultLookupOrder(qualifier, key, new String[] {"a", null, "b"});
 			fail("0.1");
 		} catch (IllegalArgumentException e) {
 			// expected
@@ -260,7 +260,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		assertNull("10", actual);
 
 		// nothing set - service searching
-		actual = service.get(key, null, new Preferences[]{node});
+		actual = service.get(key, null, new Preferences[] {node});
 		assertNull("2.0", actual);
 
 		// set value
@@ -272,7 +272,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		assertEquals("3.1", expected, actual);
 
 		// value is set - service searching
-		actual = service.get(key, null, new Preferences[]{node});
+		actual = service.get(key, null, new Preferences[] {node});
 		assertNotNull("4.0", actual);
 		assertEquals("4.1", expected, actual);
 
@@ -281,7 +281,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		assertNull("5.0", actual);
 
 		// skip over null nodes
-		actual = service.get(key, null, new Preferences[]{null, node});
+		actual = service.get(key, null, new Preferences[] {null, node});
 		assertNotNull("6.0", actual);
 		assertEquals("6.1", expected, actual);
 
@@ -294,19 +294,19 @@ public class PreferencesServiceTest extends RuntimeTest {
 		assertEquals("7.1", defaultValue, actual);
 
 		// pass in both nodes
-		actual = service.get(key, null, new Preferences[]{node, defaultNode});
+		actual = service.get(key, null, new Preferences[] {node, defaultNode});
 		assertNotNull("8.0", actual);
 		assertEquals("8.1", expected, actual);
 		// skip nulls
-		actual = service.get(key, null, new Preferences[]{null, node, null, defaultNode, null});
+		actual = service.get(key, null, new Preferences[] {null, node, null, defaultNode, null});
 		assertNotNull("8.2", actual);
 		assertEquals("8.3", expected, actual);
 		// reverse the order
-		actual = service.get(key, null, new Preferences[]{defaultNode, node});
+		actual = service.get(key, null, new Preferences[] {defaultNode, node});
 		assertNotNull("8.4", actual);
 		assertEquals("8.5", defaultValue, actual);
 		// skip nulls
-		actual = service.get(key, null, new Preferences[]{null, null, defaultNode, null, node, null});
+		actual = service.get(key, null, new Preferences[] {null, null, defaultNode, null, node, null});
 		assertNotNull("8.6", actual);
 		assertEquals("8.7", defaultValue, actual);
 	}
@@ -327,12 +327,12 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 		ArrayList list = new ArrayList();
 		list.add(null);
-		list.add(new IScopeContext[]{});
-		list.add(new IScopeContext[]{null});
-		list.add(new IScopeContext[]{new TestScope()});
-		list.add(new IScopeContext[]{new TestScope(), new DefaultScope()});
-		list.add(new IScopeContext[]{new DefaultScope(), new TestScope()});
-		list.add(new IScopeContext[]{new DefaultScope()});
+		list.add(new IScopeContext[] {});
+		list.add(new IScopeContext[] {null});
+		list.add(new IScopeContext[] {new TestScope()});
+		list.add(new IScopeContext[] {new TestScope(), new DefaultScope()});
+		list.add(new IScopeContext[] {new DefaultScope(), new TestScope()});
+		list.add(new IScopeContext[] {new DefaultScope()});
 		IScopeContext[][] contexts = (IScopeContext[][]) list.toArray(new IScopeContext[list.size()][]);
 
 		// nothing is set
@@ -368,7 +368,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		}
 
 		// set the lookup order for qualifier/null
-		String[] setOrder = new String[]{TestScope.SCOPE, DefaultScope.SCOPE};
+		String[] setOrder = new String[] {TestScope.SCOPE, DefaultScope.SCOPE};
 		service.setDefaultLookupOrder(qualifier, null, setOrder);
 		String[] order = service.getLookupOrder(qualifier, null);
 		assertNotNull("6.0", order);
@@ -382,7 +382,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		}
 
 		// set the order to be the reverse for the qualifier/key
-		setOrder = new String[]{DefaultScope.SCOPE, TestScope.SCOPE};
+		setOrder = new String[] {DefaultScope.SCOPE, TestScope.SCOPE};
 		service.setDefaultLookupOrder(qualifier, key, setOrder);
 		order = service.getLookupOrder(qualifier, key);
 		assertNotNull("8.0", order);

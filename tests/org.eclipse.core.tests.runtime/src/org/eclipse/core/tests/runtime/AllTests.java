@@ -13,36 +13,38 @@ package org.eclipse.core.tests.runtime;
 import junit.framework.*;
 
 public class AllTests extends TestCase {
-/**
- * AllTests constructor comment.
- * @param name java.lang.String
- */
-public AllTests() {
-	super(null);
-}
-/**
- * AllTests constructor comment.
- * @param name java.lang.String
- */
-public AllTests(String name) {
-	super(name);
-}
-public static Test suite() {
-	TestSuite suite = new TestSuite();
-	suite.addTest(PathTest.suite());
-	suite.addTest(PlatformTest.suite());
-	suite.addTest(PreferencesTest.suite());
-	suite.addTest(PreferenceExportTest.suite());
-	suite.addTest(org.eclipse.core.tests.internal.runtime.AllTests.suite());
-	suite.addTest(org.eclipse.core.tests.runtime.model.ConfigurationElementModelTest.suite());
-	suite.addTest(IRegistryChangeEventTest.suite());
-//	suite.addTest(org.eclipse.core.tests.internal.plugins.AllTests.suite());
-	suite.addTest(org.eclipse.core.tests.internal.registrycache.AllTests.suite());
-	suite.addTest(org.eclipse.core.tests.runtime.jobs.AllTests.suite());
-	suite.addTest(org.eclipse.core.tests.internal.preferences.AllTests.suite());
-	suite.addTest(PreferenceForwarderTest.suite());
-	suite.addTest(org.eclipse.core.tests.internal.osgi.AllTests.suite());
-	suite.addTest(org.eclipse.core.tests.runtime.content.AllTests.suite());	
-	return suite;
-}
+	/**
+	 * AllTests constructor comment.
+	 * @param name java.lang.String
+	 */
+	public AllTests() {
+		super(null);
+	}
+
+	/**
+	 * AllTests constructor comment.
+	 * @param name java.lang.String
+	 */
+	public AllTests(String name) {
+		super(name);
+	}
+
+	public static Test suite() {
+		TestSuite suite = new TestSuite();
+		suite.addTest(PathTest.suite());
+		suite.addTest(PlatformTest.suite());
+		suite.addTest(PreferencesTest.suite());
+		suite.addTest(PreferenceExportTest.suite());
+		suite.addTest(org.eclipse.core.tests.internal.runtime.AllTests.suite());
+		suite.addTest(org.eclipse.core.tests.runtime.model.ConfigurationElementModelTest.suite());
+		suite.addTest(IRegistryChangeEventTest.suite());
+		//	suite.addTest(org.eclipse.core.tests.internal.plugins.AllTests.suite());
+		suite.addTest(org.eclipse.core.tests.internal.registrycache.AllTests.suite());
+		suite.addTest(org.eclipse.core.tests.runtime.jobs.AllTests.suite());
+		suite.addTest(org.eclipse.core.tests.internal.preferences.AllTests.suite());
+		suite.addTest(PreferenceForwarderTest.suite());
+		suite.addTest(org.eclipse.core.tests.internal.osgi.AllTests.suite());
+		suite.addTest(org.eclipse.core.tests.runtime.content.AllTests.suite());
+		return suite;
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,11 +14,11 @@ import org.eclipse.core.runtime.*;
 
 public class SampleE extends Plugin {
 
-public SampleE (IPluginDescriptor descriptor) {
-	super(descriptor);
-}
+	public SampleE(IPluginDescriptor descriptor) {
+		super(descriptor);
+	}
 
-public String getSampleString() {
-	return ("A sample string from class sampleE");
-}
+	public String getSampleString() {
+		return ("A sample string from class sampleE");
+	}
 }

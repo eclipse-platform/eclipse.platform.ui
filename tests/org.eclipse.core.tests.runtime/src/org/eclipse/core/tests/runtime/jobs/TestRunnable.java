@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -18,6 +18,7 @@ public class TestRunnable implements Runnable {
 	private Random random = new Random();
 	private boolean alive;
 	private boolean done;
+
 	/**
 	 * This runnable will randomly acquire the given lock for
 	 * random periods of time, in the given order
@@ -27,9 +28,11 @@ public class TestRunnable implements Runnable {
 		this.alive = true;
 		done = false;
 	}
+
 	public void kill() {
 		alive = false;
 	}
+
 	public void run() {
 		while (alive) {
 			try {
@@ -50,9 +53,9 @@ public class TestRunnable implements Runnable {
 		}
 		done = true;
 	}
-	
+
 	public void isDone() {
-		while(!done) {
+		while (!done) {
 			try {
 				Thread.yield();
 				Thread.sleep(100);

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -18,12 +18,15 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 public class IdentityRule implements ISchedulingRule {
 	private static int nextRule = 0;
 	private final int ruleNumber = nextRule++;
+
 	public boolean contains(ISchedulingRule rule) {
 		return rule == this;
 	}
+
 	public boolean isConflicting(ISchedulingRule rule) {
 		return rule == this;
 	}
+
 	public String toString() {
 		return "IdentityRule(" + ruleNumber + ")";
 	}

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -27,6 +27,7 @@ public class ReadWriteMonitor {
 	 * >0 : reading (number of concurrent readers)
 	 */
 	private int status = 0;
+
 	public ReadWriteMonitor(ILock lock) {
 		this.lock = lock;
 	}
@@ -44,13 +45,15 @@ public class ReadWriteMonitor {
 					lock.acquire(Long.MAX_VALUE);
 					setStatus(1);
 					break;
-				} catch (InterruptedException e) {}
+				} catch (InterruptedException e) {
+				}
 			}
 			blockedThreads.remove(Thread.currentThread());
 		}
 		//interrupt other threads so all readers can proceed
 		interruptBlockedThreads();
 	}
+
 	/**
 	 * Only one writer at a time is allowed to perform
 	 * Blocking only when already writing or reading.
@@ -62,10 +65,12 @@ public class ReadWriteMonitor {
 				lock.acquire(Long.MAX_VALUE);
 				setStatus(-1);
 				break;
-			} catch (InterruptedException e) {}
+			} catch (InterruptedException e) {
+			}
 		}
 		blockedThreads.remove(Thread.currentThread());
 	}
+
 	/**
 	 * Synchronized to ensure field value is reconciled.
 	 */
@@ -83,6 +88,7 @@ public class ReadWriteMonitor {
 			interruptBlockedThreads();
 		}
 	}
+
 	/**
 	 * When writing is over, all readers and possible
 	 * writers are granted permission to restart concurrently
@@ -93,6 +99,7 @@ public class ReadWriteMonitor {
 		lock.release();
 		interruptBlockedThreads();
 	}
+
 	/**
 	 * Atomic exitWrite/enterRead: Allows to keep monitor in between
 	 * exit write and next enter read.
@@ -111,6 +118,7 @@ public class ReadWriteMonitor {
 		status = 1;
 		interruptBlockedThreads();
 	}
+
 	/**
 	 * Increment the reader count if it is safe to do so.
 	 */
@@ -120,11 +128,12 @@ public class ReadWriteMonitor {
 		status++;
 		return true;
 	}
+
 	/**
 	 * Wake up all waiting threads so they can compete for the counter again.
 	 */
 	private void interruptBlockedThreads() {
 		for (Iterator it = blockedThreads.iterator(); it.hasNext();)
-			 ((Thread) it.next()).interrupt();
+			((Thread) it.next()).interrupt();
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,11 @@ class InputStreamURLConnection extends URLConnection {
 	public InputStreamURLConnection(URL url) {
 		super(url);
 	}
+
 	public void connect() {
 		// no-op since our info is in a registry in memory
 	}
+
 	public InputStream getInputStream() {
 		return InputStreamRegistry.get(url);
 	}

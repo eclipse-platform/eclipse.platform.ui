@@ -29,9 +29,11 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	private final static String BOM_UTF_16_BE = "\u00FE\u00FF";
 	private final static String BOM_UTF_16_LE = "\u00FF\u00FE";
 	private final static String BOM_UTF_8 = "\u00EF\u00BB\u00BF";
+
 	public IContentTypeManagerTest(String name) {
 		super(name);
 	}
+
 	public void testRegistry() {
 		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType textContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + '.' + "text");
@@ -63,16 +65,18 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		IContentType[] binaryTypes = contentTypeManager.findContentTypesFor("foo.samplebin");
 		assertEquals("7.0", 1, binaryTypes.length);
 		assertEquals("7.1", binaryContentType, binaryTypes[0]);
-		IContentType myText = contentTypeManager.getContentType(PI_RUNTIME_TESTS +  ".mytext");
+		IContentType myText = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".mytext");
 		assertNotNull("8.0", myText);
-		assertEquals("8.1", "BAR", myText.getDefaultCharset());		
+		assertEquals("8.1", "BAR", myText.getDefaultCharset());
 	}
+
 	private boolean contains(Object[] array, Object element) {
 		for (int i = 0; i < array.length; i++)
 			if (array[i].equals(element))
 				return true;
 		return false;
 	}
+
 	/**
 	 * @see IContentTypeManager#getContentTypeFor
 	 */
@@ -82,12 +86,13 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		IContentType appropriate = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
 		IContentType appropriateSpecific1 = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".xml-based-different-extension");
 		IContentType appropriateSpecific2 = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".xml-based-specific-name");
-		assertNull("1.0", contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[]{inappropriate}));
-		assertEquals("2.0", appropriate, contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[]{inappropriate, appropriate}));
-		assertEquals("3.0", appropriateSpecific1, contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[]{inappropriate, appropriate, appropriateSpecific1}));
-		assertEquals("3.1", appropriateSpecific2, contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[]{inappropriate, appropriate, appropriateSpecific2}));
-		assertNull("4.0", contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[]{inappropriate, appropriate, appropriateSpecific1, appropriateSpecific2}));
+		assertNull("1.0", contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate}));
+		assertEquals("2.0", appropriate, contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate}));
+		assertEquals("3.0", appropriateSpecific1, contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate, appropriateSpecific1}));
+		assertEquals("3.1", appropriateSpecific2, contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate, appropriateSpecific2}));
+		assertNull("4.0", contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate, appropriateSpecific1, appropriateSpecific2}));
 	}
+
 	public void testContentDescription() throws IOException {
 		IContentTypeManager contentTypeManager = (LocalContentTypeManager) LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType xmlType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
@@ -120,12 +125,15 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertNotNull("6.0", description);
 		assertEquals("6.1", sampleBinary, description.getContentType());
 	}
+
 	public InputStream getInputStream(String contents, String encoding) throws UnsupportedEncodingException {
 		return new ByteArrayInputStream(contents.getBytes(encoding));
 	}
+
 	public InputStream getInputStream(String contents) throws UnsupportedEncodingException {
 		return new ByteArrayInputStream(contents.getBytes());
 	}
+
 	/**
 	 * This test shows how we deal with orphan content types (content types
 	 * whose base types are missing): orphan types are considered invalid and do 
@@ -144,6 +152,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertEquals("2.1", 1, contentTypeManager.findContentTypesFor("foo.orphan").length);
 		assertEquals("2.2", 1, contentTypeManager.findContentTypesFor("orphan.orphan").length);
 	}
+
 	/**
 	 * The fooBar content type is associated with the "foo.bar" file name and 
 	 * the "bar" file extension (what is bogus, anyway). This test ensures it 
@@ -159,6 +168,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertEquals("2.1", 1, fooBarAssociated.length);
 		assertEquals("2.2", fooBarType, fooBarAssociated[0]);
 	}
+
 	public void testIsKindOf() {
 		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType textContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + '.' + "text");
@@ -175,9 +185,10 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertTrue("4.0", !xmlBasedDifferentExtensionContentType.isKindOf(xmlBasedSpecificNameContentType));
 		assertTrue("5.0", !binaryContentType.isKindOf(textContentType));
 	}
+
 	public void testFindContentType() throws Exception {
 		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
-		IContentType textContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + '.' + "text");		
+		IContentType textContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + '.' + "text");
 		IContentType[] selected;
 		selected = contentTypeManager.findContentTypesFor(getInputStream("Just a test"), "file.txt");
 		assertEquals("1.0", 1, selected.length);
@@ -187,12 +198,14 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertEquals("2.0", 1, selected.length);
 		assertEquals("2.1", xmlContentType, selected[0]);
 		selected = contentTypeManager.findContentTypesFor(getInputStream(XML_UTF_8, "UTF-8"), null);
-		assertTrue("3.0", contains(selected, xmlContentType));		
+		assertTrue("3.0", contains(selected, xmlContentType));
 	}
+
 	private boolean isText(IContentTypeManager manager, IContentType candidate) {
 		IContentType text = manager.getContentType(IContentTypeManager.CT_TEXT);
 		return candidate.isKindOf(text);
 	}
+
 	public static Test suite() {
 		return new TestSuite(IContentTypeManagerTest.class);
 	}

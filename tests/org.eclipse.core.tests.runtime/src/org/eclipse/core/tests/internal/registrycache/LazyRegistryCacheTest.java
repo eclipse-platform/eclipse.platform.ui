@@ -22,9 +22,11 @@ public class LazyRegistryCacheTest extends RegistryCacheTest {
 	public LazyRegistryCacheTest(String name) {
 		super(name);
 	}
+
 	protected RegistryCacheReader createRegistryReader(File cacheFile) {
 		return new RegistryCacheReader(cacheFile, new Factory(new MultiStatus(IPlatform.PI_RUNTIME, 0, "", null)), true);
 	}
+
 	public static Test suite() {
 		return new TestSuite(LazyRegistryCacheTest.class);
 	}

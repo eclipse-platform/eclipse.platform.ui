@@ -20,6 +20,7 @@ public class AllTests extends TestCase {
 	public AllTests() {
 		super(null);
 	}
+
 	/**
 	 * AllTests constructor comment.
 	 * @param name java.lang.String
@@ -27,11 +28,12 @@ public class AllTests extends TestCase {
 	public AllTests(String name) {
 		super(name);
 	}
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
 		suite.addTest(PlatformAdminTest.suite());
 		suite.addTest(StateResolverTest.suite());
 		return suite;
 	}
-	
+
 }

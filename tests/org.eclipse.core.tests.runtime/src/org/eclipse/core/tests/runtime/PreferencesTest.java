@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,9 +71,9 @@ public class PreferencesTest extends RuntimeTest {
 	public static Test suite() {
 		// all test methods are named "test..."
 		return new TestSuite(PreferencesTest.class);
-//		TestSuite suite = new TestSuite();
-//		suite.addTest(new PreferencesTest("testListeners2"));
-//		return suite;
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new PreferencesTest("testListeners2"));
+		//		return suite;
 	}
 
 	/*
@@ -367,7 +367,7 @@ public class PreferencesTest extends RuntimeTest {
 		assertEquals("1.6", false, ps.contains("b"));
 		ps.setToDefault("a");
 		assertEquals("1.7", true, ps.contains("a"));
-		
+
 		// bug 51309 - if a default-default value is stored
 		// as a default it is still a part of #contains
 		assertTrue("2.0", !ps.contains("c"));
@@ -449,24 +449,24 @@ public class PreferencesTest extends RuntimeTest {
 		ps.setDefault(key, 1);
 		ps.setValue(key, 2);
 		assertEquals("1.0", "[a:I1->I2]", tracer.log.toString());
-		
+
 		// real value to another real value
 		tracer.log.setLength(0);
 		ps.setValue(key, 3);
 		assertEquals("1.1", "[a:I2->I3]", tracer.log.toString());
-		
+
 		// back to the default
 		tracer.log.setLength(0);
 		ps.setToDefault(key);
 		// TODO strings are reported because we don't know the type
 		assertEquals("1.2", "[a:S3->S1]", tracer.log.toString());
-		
+
 		// remove the default and then add a real value
 		tracer.log.setLength(0);
 		ps.setDefault(key, 0);
 		ps.setValue(key, 2);
 		assertEquals("1.3", "[a:I0->I2]", tracer.log.toString());
-		
+
 		// then remove the value
 		tracer.log.setLength(0);
 		ps.setValue(key, ps.getDefaultInt(key));

@@ -21,9 +21,11 @@ public class StateResolverTest extends AbstractStateTest {
 	public static Test suite() {
 		return new TestSuite(StateResolverTest.class);
 	}
+
 	public StateResolverTest(String name) {
 		super(name);
 	}
+
 	/**
 	 * Tests adding 3 new bundles to an already resolved state and then
 	 * resolving only one of the bundles. The result should be all 3 added
@@ -76,7 +78,7 @@ public class StateResolverTest extends AbstractStateTest {
 		} catch (BundleException e) {
 			fail("Failed to create BundleDescription: " + e.getMessage());
 		}
-		delta = state.resolve(new BundleDescription[]{state.getBundle(1)});
+		delta = state.resolve(new BundleDescription[] {state.getBundle(1)});
 		deltas = delta.getChanges();
 		assertEquals("1.0", 3, deltas.length);
 		Map deltasMap = new HashMap();
@@ -89,6 +91,7 @@ public class StateResolverTest extends AbstractStateTest {
 		assertEquals("2.2", (BundleDelta.RESOLVED | BundleDelta.ADDED), ((BundleDelta) deltasMap.get(new Long(2))).getType());
 		assertEquals("2.3", (BundleDelta.RESOLVED | BundleDelta.ADDED), ((BundleDelta) deltasMap.get(new Long(3))).getType());
 	}
+
 	public void testBasicResolution() throws BundleException {
 		State state = buildSimpleState();
 		StateDelta delta = state.resolve();
@@ -116,6 +119,7 @@ public class StateResolverTest extends AbstractStateTest {
 		assertFullyResolved("5.2", b2);
 		assertFullyUnresolved("5.3", b3);
 	}
+
 	public void testComplexResolution() throws BundleException {
 		State state = buildComplexState();
 		StateDelta delta = state.resolve();
@@ -155,20 +159,22 @@ public class StateResolverTest extends AbstractStateTest {
 		assertFullyResolved("5.5", b5);
 		assertFullyResolved("5.6", b6);
 	}
+
 	public void testDependentBundles() throws BundleException {
 		State state = buildComplexState();
 		state.resolve();
 		BundleDescription[] dependent;
-		dependent = platformAdmin.getStateHelper().getDependentBundles(new BundleDescription[]{state.getBundle(2)});
+		dependent = platformAdmin.getStateHelper().getDependentBundles(new BundleDescription[] {state.getBundle(2)});
 		assertEquals("1.0", 1, dependent.length);
 		assertEquals("1.1", state.getBundle(2), dependent[0]);
-		dependent = platformAdmin.getStateHelper().getDependentBundles(new BundleDescription[]{state.getBundle(1)});
+		dependent = platformAdmin.getStateHelper().getDependentBundles(new BundleDescription[] {state.getBundle(1)});
 		assertEquals("2.0", 4, dependent.length);
 		assertContains("2.1", dependent, state.getBundle(1));
 		assertContains("2.2", dependent, state.getBundle(2));
 		assertContains("2.3", dependent, state.getBundle(4));
 		assertContains("2.4", dependent, state.getBundle(6));
 	}
+
 	public void testLinkageChange() throws BundleException {
 		State state = buildEmptyState();
 		// don't add b1 for now
@@ -218,6 +224,7 @@ public class StateResolverTest extends AbstractStateTest {
 		assertFullyResolved("10.2", b2);
 		assertFullyResolved("10.3", b3);
 	}
+
 	public void testReinstall() throws BundleException {
 		State state = buildComplexState();
 		StateDelta delta = state.resolve();
@@ -237,6 +244,7 @@ public class StateResolverTest extends AbstractStateTest {
 		assertEquals("4.0", 1, delta.getChanges(BundleDelta.RESOLVED, true).length);
 		assertEquals("4.1", 6, delta.getChanges(BundleDelta.RESOLVED, true)[0].getBundle().getBundleId());
 	}
+
 	public void testRemoval() throws BundleException {
 		String B1_LOCATION = "org.eclipse.b";
 		final String B1_MANIFEST = "Bundle-SymbolicName: org.eclipse.b1\n" + "Bundle-Version: 1.0\n";
@@ -257,6 +265,7 @@ public class StateResolverTest extends AbstractStateTest {
 		assertEquals("2.1", b1, changes[0].getBundle());
 		assertEquals("2.2", BundleDelta.REMOVED | BundleDelta.UNRESOLVED, changes[0].getType());
 	}
+
 	public void testRemoveAndAdd() throws BundleException {
 		String B_LOCATION = "org.eclipse.b";
 		final String B_MANIFEST = "Bundle-SymbolicName: org.eclipse.b\n" + "Bundle-Version: 1.0\n";
@@ -280,6 +289,7 @@ public class StateResolverTest extends AbstractStateTest {
 		assertEquals("2.3", 1, delta.getChanges(BundleDelta.RESOLVED | BundleDelta.ADDED, true).length);
 		assertEquals("2.3", b2, delta.getChanges(BundleDelta.RESOLVED | BundleDelta.ADDED, true)[0].getBundle());
 	}
+
 	public void testRemovalResolve() throws BundleException {
 		State state = buildInitialState();
 		StateDelta delta = state.resolve();
@@ -346,6 +356,7 @@ public class StateResolverTest extends AbstractStateTest {
 		assertEquals("3.1", false, b2.isResolved());
 		assertEquals("3.2", false, b3.isResolved());
 	}
+
 	/**
 	 * Tests adding 3 new bundles to an already resolved state and then
 	 * resolving only one of the bundles. The result should be all 3 added
@@ -399,7 +410,7 @@ public class StateResolverTest extends AbstractStateTest {
 		} catch (BundleException e) {
 			fail("Failed to create BundleDescription: " + e.getMessage());
 		}
-		delta = state.resolve(new BundleDescription[]{state.getBundle(1)});
+		delta = state.resolve(new BundleDescription[] {state.getBundle(1)});
 		deltas = delta.getChanges();
 		assertEquals("1.0", 3, deltas.length);
 		Map deltasMap = new HashMap();
@@ -411,12 +422,13 @@ public class StateResolverTest extends AbstractStateTest {
 		assertEquals("2.1", (BundleDelta.RESOLVED | BundleDelta.ADDED), ((BundleDelta) deltasMap.get(new Long(1))).getType());
 		assertEquals("2.2", (BundleDelta.RESOLVED | BundleDelta.ADDED), ((BundleDelta) deltasMap.get(new Long(2))).getType());
 		assertEquals("2.3", (BundleDelta.RESOLVED | BundleDelta.ADDED), ((BundleDelta) deltasMap.get(new Long(3))).getType());
-		delta = state.resolve(new BundleDescription[]{state.getBundle(1)});
+		delta = state.resolve(new BundleDescription[] {state.getBundle(1)});
 		deltas = delta.getChanges();
 		assertEquals("3.0", 1, deltas.length);
 		assertEquals("3.1", 1, deltas[0].getBundle().getBundleId());
 		assertEquals("3.2", BundleDelta.RESOLVED, deltas[0].getType());
 	}
+
 	public void testUpdate() throws BundleException {
 		State state = buildEmptyState();
 		String B1_LOCATION = "org.eclipse.b";

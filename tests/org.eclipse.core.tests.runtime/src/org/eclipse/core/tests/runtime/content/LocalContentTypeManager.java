@@ -18,23 +18,28 @@ public class LocalContentTypeManager extends ContentTypeManager {
 	public LocalContentTypeManager() {
 		// to increase visibility
 	}
+
 	public void addContentType(IContentType contentType) {
 		super.addContentType(contentType);
 		reorganize();
 	}
+
 	public IContentType createContentType(String namespace, String simpleId, String name, String[] fileExtensions, String[] fileNames, String baseTypeId, String defaultCharset) {
 		return ContentType.createContentType(this, namespace, simpleId, name, (byte) 0, fileExtensions, fileNames, baseTypeId, defaultCharset, null);
 	}
+
 	protected ContentTypeBuilder createBuilder() {
 		return new LocalContentTypeBuilder(this);
 	}
+
 	// to increase visibility
 	public void startup() {
 		super.startup();
 	}
+
 	public static IContentTypeManager getLocalContentTypeManager() {
 		LocalContentTypeManager contentTypeManager = new LocalContentTypeManager();
 		contentTypeManager.startup();
 		return contentTypeManager;
-	}	
+	}
 }

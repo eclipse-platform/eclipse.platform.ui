@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -22,16 +22,19 @@ import org.eclipse.core.tests.harness.FussyProgressMonitor;
  */
 public class FussyProgressProvider extends ProgressProvider {
 	private ArrayList monitors = new ArrayList();
+
 	public IProgressMonitor createMonitor(Job job) {
 		IProgressMonitor result = new FussyProgressMonitor();
 		monitors.add(result);
 		return result;
 	}
+
 	public void sanityCheck() {
 		for (Iterator it = monitors.iterator(); it.hasNext();) {
 			((FussyProgressMonitor) it.next()).sanityCheck();
 		}
 	}
+
 	public IProgressMonitor getDefaultMonitor() {
 		return createMonitor(null);
 	}

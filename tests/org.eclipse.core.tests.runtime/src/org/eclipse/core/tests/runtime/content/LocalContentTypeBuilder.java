@@ -22,6 +22,7 @@ public class LocalContentTypeBuilder extends ContentTypeBuilder {
 	public LocalContentTypeBuilder(ContentTypeManager catalog) {
 		super(catalog);
 	}
+
 	/**
 	 * To make testiing easier, ensures only content types / content interpreters contributed 
 	 * by runtime and runtime.tests will be added to the catalog.

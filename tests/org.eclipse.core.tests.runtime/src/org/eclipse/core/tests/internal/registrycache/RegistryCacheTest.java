@@ -24,12 +24,15 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 	private static final String BUNDLE_A_WITH_EXTENSION_POINT = "<plugin id=\"bundleA\"><extension-point id=\"xp1\"/></plugin>";
 	private static final String BUNDLE_A_WITH_EXTENSION_AND_EXTENSION_POINT = "<plugin id=\"bundleA\"><extension-point id=\"xp1\"/><extension point=\"bundleA.xp1\"><cfg1 property=\"value\"><cfg11/></cfg1><cfg2/></extension></plugin>";
 	protected ExtensionRegistry registry;
+
 	public RegistryCacheTest(String name) {
 		super(name);
 	}
+
 	protected void setUp() throws Exception {
 		registry = new ExtensionRegistry(new ExtensionLinker());
 	}
+
 	/**
 	 * A single plugin declaring an extension point and an extension to it.
 	 */
@@ -47,9 +50,11 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 			ensureDoesNotExistInFileSystem(cacheFile);
 		}
 	}
+
 	protected RegistryCacheReader createRegistryReader(File cacheFile) {
 		return new RegistryCacheReader(cacheFile, new Factory(new MultiStatus(IPlatform.PI_RUNTIME, 0, "", null)), false);
 	}
+
 	/**
 	 * Two plugins, one declaring an extension point and the other, an extension.
 	 */
@@ -70,13 +75,16 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 			ensureDoesNotExistInFileSystem(cacheFile);
 		}
 	}
+
 	private BundleModel parseManifest(Reader input) throws IOException, SAXException {
 		ExtensionsParser parser = new ExtensionsParser(new Factory(new MultiStatus(IPlatform.PI_RUNTIME, 0, "", null)));
 		return parser.parseManifest(new InputSource(input), ExtensionsParser.PLUGIN);
 	}
+
 	private BundleModel parseManifest(String manifest) throws IOException, SAXException {
 		return parseManifest(new StringReader(manifest));
 	}
+
 	private void assertEquals(ExtensionRegistry reg1, ExtensionRegistry reg2) {
 		assertTrue("registry.1", (reg1 == null && reg2 == null) || (reg1 != null && reg2 != null));
 		if (reg1 == null)
@@ -89,6 +97,7 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 		for (int i = 0; i < reg2elementIds.length; i++)
 			assertEquals((BundleModel) reg1.getElement(reg1elementIds[i]), (BundleModel) reg2.getElement(reg2elementIds[i]));
 	}
+
 	private void assertEquals(BundleModel bundle1, BundleModel bundle2) {
 		//check basic attributes
 		assertEquals("bundle.1", bundle1.getName(), bundle2.getName());
@@ -107,6 +116,7 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 		for (int i = 0; i < bundle2Exts.length; i++)
 			assertEquals(bundle1Exts[i], bundle2Exts[i]);
 	}
+
 	private void assertEquals(IExtensionPoint xp1, IExtensionPoint xp2) {
 		assertEquals("extension point.1", xp1.getLabel(), xp2.getLabel());
 		assertEquals("extension point.2", xp1.getSimpleIdentifier(), xp2.getSimpleIdentifier());
@@ -117,6 +127,7 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 		for (int i = 0; i < xp2Extensions.length; i++)
 			assertEquals(xp1Extensions[i], xp2Extensions[i]);
 	}
+
 	private void assertEquals(IExtension ext1, IExtension ext2) {
 		Extension originalExtension = (Extension) ext1;
 		Extension cachedExtension = (Extension) ext2;
@@ -133,6 +144,7 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 		for (int i = 0; i < originalLength; i++)
 			assertEquals((ConfigurationElement) originalSubElements[i], (ConfigurationElement) cachedSubElements[i]);
 	}
+
 	private void assertEquals(ConfigurationElement originalConfigurationElement, ConfigurationElement cachedConfigurationElement) {
 		assertEquals("config element.1", originalConfigurationElement.getName(), cachedConfigurationElement.getName());
 		assertTrue("config element.2", originalConfigurationElement.isReadOnly() == cachedConfigurationElement.isReadOnly());
@@ -154,11 +166,13 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 		for (int i = 0; i < originalLength; i++)
 			assertEquals(originalProperties[i], cachedProperties[i]);
 	}
+
 	private void assertEquals(ConfigurationProperty originalConfigurationProperty, ConfigurationProperty cachedConfigurationProperty) {
 		assertEquals("config property.1", originalConfigurationProperty.getName(), cachedConfigurationProperty.getName());
 		assertTrue("config property.2", originalConfigurationProperty.isReadOnly() == cachedConfigurationProperty.isReadOnly());
 		assertEquals("config property.3", originalConfigurationProperty.getValue(), cachedConfigurationProperty.getValue());
 	}
+
 	public static Test suite() {
 		return new TestSuite(RegistryCacheTest.class);
 	}

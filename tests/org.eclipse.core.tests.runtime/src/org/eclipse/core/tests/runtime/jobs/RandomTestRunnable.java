@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -18,7 +18,7 @@ public class RandomTestRunnable extends Thread {
 	private Random random = new Random();
 	private boolean alive;
 	private boolean needRandomization;
-	
+
 	/**
 	 * This runnable will randomly acquire the given locks for
 	 * random periods of time, in the given order, or in random order (if specified)
@@ -26,19 +26,21 @@ public class RandomTestRunnable extends Thread {
 	public RandomTestRunnable(ILock[] locks, String name, boolean addRandomness) {
 		super(name);
 		this.locks = new ILock[locks.length];
-		for(int i = 0; i < locks.length; i++) {
+		for (int i = 0; i < locks.length; i++) {
 			this.locks[i] = locks[i];
 		}
 		this.alive = true;
 		this.needRandomization = addRandomness;
 	}
+
 	public void kill() {
 		alive = false;
 	}
+
 	public void run() {
 		while (alive) {
-			if(needRandomization) {
-				for(int i = 0; i < locks.length; i++) {
+			if (needRandomization) {
+				for (int i = 0; i < locks.length; i++) {
 					int nextFlip = random.nextInt(locks.length);
 					ILock temp = locks[i];
 					locks[i] = locks[nextFlip];
@@ -58,5 +60,5 @@ public class RandomTestRunnable extends Thread {
 			}
 		}
 	}
-			
+
 }
