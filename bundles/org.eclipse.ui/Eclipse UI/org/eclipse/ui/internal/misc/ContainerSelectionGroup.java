@@ -136,7 +136,6 @@ public void createContents(String message) {
 		containerNameField = new Text(this, SWT.SINGLE | SWT.BORDER);
 		containerNameField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		containerNameField.addListener(SWT.Modify, listener);
-		containerNameField.setFont(this.getFont());
 	}
 	else {
 		// filler...
@@ -159,7 +158,6 @@ protected void createTreeViewer() {
 	spec.widthHint = SIZING_SELECTION_PANE_WIDTH;
 	spec.heightHint = SIZING_SELECTION_PANE_HEIGHT;
 	drillDown.setLayoutData(spec);
-	drillDown.setFont(this.getFont());
 
 	// Create tree viewer inside drill down.
 	treeViewer = new TreeViewer(drillDown, SWT.NONE);
@@ -192,7 +190,6 @@ protected void createTreeViewer() {
 
 	// This has to be done after the viewer has been laid out
 	treeViewer.setInput(ResourcesPlugin.getWorkspace());
-	treeViewer.getTree().setFont(this.getFont());
 }
 /**
  * Returns the currently entered container name.

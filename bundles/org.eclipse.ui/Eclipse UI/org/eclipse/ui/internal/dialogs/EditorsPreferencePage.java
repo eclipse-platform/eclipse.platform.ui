@@ -18,7 +18,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -62,7 +61,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		layout.marginHeight = 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-		composite.setFont(parent.getFont());
 
 		WorkbenchPreferencePage.createSpace(composite);
 		createEditorHistoryGroup(composite);
@@ -130,8 +128,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	}
 		
 	private void createEncodingGroup(Composite parent) {
-		
-		Font font = parent.getFont();
 		Group group = new Group(parent, SWT.NONE);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayoutData(data);
@@ -139,7 +135,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		layout.numColumns = 2;
 		group.setLayout(layout);
 		group.setText(WorkbenchMessages.getString("WorkbenchPreference.encoding")); //$NON-NLS-1$
-		group.setFont(font);
 		
 		SelectionAdapter buttonListener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -155,17 +150,14 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		data.horizontalSpan = 2;
 		defaultEncodingButton.setLayoutData(data);
 		defaultEncodingButton.addSelectionListener(buttonListener);
-		defaultEncodingButton.setFont(font);
 		
 		otherEncodingButton = new Button(group, SWT.RADIO);
 		otherEncodingButton.setText(WorkbenchMessages.getString("WorkbenchPreference.otherEncoding")); //$NON-NLS-1$
 		otherEncodingButton.addSelectionListener(buttonListener);
-		otherEncodingButton.setFont(font);
 		
 		encodingCombo = new Combo(group, SWT.NONE);
 		data = new GridData();
 		data.widthHint = convertWidthInCharsToPixels(15);
-		encodingCombo.setFont(font);
 		encodingCombo.setLayoutData(data);
 		encodingCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -245,9 +237,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	 * accelerator configuration.
 	 */
 	protected void createAcceleratorConfigurationGroup(Composite composite, String label) {
-		
-		Font font = composite.getFont();
-		
 		Composite groupComposite = new Composite(composite, SWT.LEFT);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -258,7 +247,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		gd.horizontalAlignment = gd.FILL;
 		gd.grabExcessHorizontalSpace = true;
 		groupComposite.setLayoutData(gd);
-		groupComposite.setFont(font);
 		
 		Label configLabel = WorkbenchPreferencePage.createLabel(groupComposite, label);
 		accelConfigCombo = WorkbenchPreferencePage.createCombo(groupComposite);
@@ -314,9 +302,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	 * Create a composite that contains entry fields specifying editor reuse preferences.
 	 */
 	private void createEditorReuseGroup(Composite composite) {
-		
-		Font font = composite.getFont();
-		
 		editorReuseGroup = new Composite(composite, SWT.LEFT);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -324,15 +309,13 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		GridData gd = new GridData();
 		gd.horizontalAlignment = gd.FILL;
 		gd.grabExcessHorizontalSpace = true;
-		editorReuseGroup.setLayoutData(gd);	
-		editorReuseGroup.setFont(font);	
+		editorReuseGroup.setLayoutData(gd);		
 		
 		reuseEditors = new Button(editorReuseGroup, SWT.CHECK);
 		reuseEditors.setText(WorkbenchMessages.getString("WorkbenchPreference.reuseEditors")); //$NON-NLS-1$
 		GridData reuseEditorsData = new GridData();
 		reuseEditorsData.horizontalSpan = layout.numColumns;
 		reuseEditors.setLayoutData(reuseEditorsData);
-		reuseEditors.setFont(font);
 		
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		reuseEditors.setSelection(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
@@ -373,7 +356,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		gd.horizontalAlignment = gd.FILL;
 		gd.grabExcessHorizontalSpace = true;
 		groupComposite.setLayoutData(gd);	
-		groupComposite.setFont(composite.getFont());
 		
 		recentFilesEditor = new IntegerFieldEditor(IPreferenceConstants.RECENT_FILES, WorkbenchMessages.getString("WorkbenchPreference.recentFiles"), groupComposite); //$NON-NLS-1$
 

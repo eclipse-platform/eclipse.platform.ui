@@ -99,15 +99,12 @@ public class FontPreferencePage
 	public Control createContents(Composite parent) {
 		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.FONT_PREFERENCE_PAGE);
 
-		Font defaultFont = parent.getFont();
-		
 		Composite mainColumn = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		layout.makeColumnsEqualWidth = true;
-		mainColumn.setFont(defaultFont);
 		mainColumn.setLayout(layout);
 
 		createFontList(mainColumn);
@@ -121,7 +118,6 @@ public class FontPreferencePage
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.grabExcessHorizontalSpace = true;
 		previewColumn.setLayoutData(data);
-		previewColumn.setFont(defaultFont);
 
 		createPreviewControl(previewColumn);
 		createValueControl(previewColumn);
@@ -134,7 +130,6 @@ public class FontPreferencePage
 		buttonColumn.setLayout(layout);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		buttonColumn.setLayoutData(data);
-		buttonColumn.setFont(defaultFont);
 		
 		createUseDefaultsControl(
 			buttonColumn,
@@ -155,9 +150,6 @@ public class FontPreferencePage
 	 * Create the list of possible fonts.
 	 */
 	private void createFontList(Composite firstColumn) {
-		
-		Font font = firstColumn.getFont();
-		
 		Composite parent = new Composite(firstColumn, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
@@ -169,13 +161,11 @@ public class FontPreferencePage
 		
 		Label label = new Label(parent, SWT.LEFT);
 		label.setText(WorkbenchMessages.getString("FontsPreference.fonts")); //$NON-NLS-1$
-		label.setFont(font);
 		
 		fontList = new List(parent, SWT.BORDER);
 		data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
 		data.grabExcessHorizontalSpace = true;
 		fontList.setLayoutData(data);
-		fontList.setFont(font);
 
 		fontList.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
@@ -235,8 +225,6 @@ public class FontPreferencePage
 
 		changeFontButton.setText(changeButtonLabel); //$NON-NLS-1$
 		setButtonLayoutData(changeFontButton);
-		changeFontButton.setFont(parent.getFont());
-		setButtonLayoutData(changeFontButton);
 		
 		changeFontButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
@@ -270,7 +258,6 @@ public class FontPreferencePage
 
 		useDefaultsButton = new Button(parent, SWT.PUSH | SWT.CENTER);
 		useDefaultsButton.setText(useSystemLabel); //$NON-NLS-1$
-		useDefaultsButton.setFont(parent.getFont());
 		setButtonLayoutData(useDefaultsButton);
 		
 		useDefaultsButton.addSelectionListener(new SelectionAdapter() {
@@ -293,7 +280,6 @@ public class FontPreferencePage
 	private void createPreviewControl(Composite parent) {
 		Label label = new Label(parent, SWT.LEFT);
 		label.setText(WorkbenchMessages.getString("FontsPreference.preview")); //$NON-NLS-1$
-		label.setFont(parent.getFont());
 
 		previewer = new DefaultPreviewer(parent);
 		Control control = previewer.getControl();
@@ -316,8 +302,6 @@ public class FontPreferencePage
 				valueControl = null;
 			}
 		});
-		
-		valueControl.setFont(parent.getFont());
 
 		GridData gd =
 			new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_CENTER);
@@ -355,10 +339,6 @@ public class FontPreferencePage
 		namesToIds.put(
 			WorkbenchMessages.getString("FontsPreference.HeaderFont"), //$NON-NLS-1$
 			JFaceResources.HEADER_FONT);
-			
-		namesToIds.put(
-			WorkbenchMessages.getString("FontsPreference.DialogFont"), //$NON-NLS-1$
-			JFaceResources.DIALOG_FONT);
 
 		//Now set up the fonts
 
@@ -374,10 +354,6 @@ public class FontPreferencePage
 		idsToFontData.put(
 			JFaceResources.HEADER_FONT,
 			(JFaceResources.getHeaderFont().getFontData()));
-			
-		idsToFontData.put(
-			JFaceResources.DIALOG_FONT,
-			(JFaceResources.getDialogFont().getFontData()));
 
 	}
 
@@ -435,4 +411,19 @@ public class FontPreferencePage
 		return super.performOk();
 	}
 	
+	/**
+	 * Return the GridData that sets the height of the
+	 * button to maintain the Eclipse look and feel.
+	 * Set the text before this method is called so that
+	 * the width calculation takes it into account.
+	 */
+	
+	private void setButtonLayoutData(Button button){
+		GridData data = new GridData();
+		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		button.setLayoutData(data);
+	}
+
 }

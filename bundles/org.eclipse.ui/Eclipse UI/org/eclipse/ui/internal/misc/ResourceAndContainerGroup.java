@@ -16,14 +16,12 @@ package org.eclipse.ui.internal.misc;
  */
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.core.runtime.*;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * Workbench-level composite for resource and container specification by the user.
@@ -110,8 +108,6 @@ public boolean areAllValuesValid() {
  * @param parent org.eclipse.swt.widgets.Composite
  */
 protected void createContents(Composite parent,String resourceLabelString) {
-	
-	Font font = parent.getFont();	
 	// server name group
 	Composite composite = new Composite(parent,SWT.NONE);
 	GridLayout layout = new GridLayout();
@@ -119,7 +115,6 @@ protected void createContents(Composite parent,String resourceLabelString) {
 	layout.marginHeight = 0;
 	composite.setLayout(layout);
 	composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-	composite.setFont(font);
 
 	// container group
 	containerGroup = new ContainerSelectionGroup(composite, this, true, null,showClosedProjects);
@@ -132,11 +127,10 @@ protected void createContents(Composite parent,String resourceLabelString) {
 	nameGroup.setLayout(layout);
 	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	nameGroup.setLayoutData(data);
-	nameGroup.setFont(font);
 
 	Label label = new Label(nameGroup,SWT.NONE);
 	label.setText(resourceLabelString);
-	label.setFont(font);
+	label.setFont(parent.getFont());
 
 	// resource name entry field
 	resourceNameField = new Text(nameGroup,SWT.BORDER);
@@ -144,7 +138,6 @@ protected void createContents(Composite parent,String resourceLabelString) {
 	data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 	resourceNameField.setLayoutData(data);
-	resourceNameField.setFont(font);
 
 	validateControls();
 }

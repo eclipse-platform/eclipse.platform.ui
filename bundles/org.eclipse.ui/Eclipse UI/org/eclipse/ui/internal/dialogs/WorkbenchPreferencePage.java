@@ -13,7 +13,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -78,8 +77,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 *	@param parent org.eclipse.swt.widgets.Composite
 	 */
 	protected Control createContents(Composite parent) {
-		
-		Font font = parent.getFont();
 
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_PREFERENCE_PAGE);
 
@@ -89,27 +86,18 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		layout.marginHeight = 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-		composite.setFont(font);
 
 		autoBuildButton = new Button(composite, SWT.CHECK);
 		autoBuildButton.setText(WorkbenchMessages.getString("WorkbenchPreference.autobuild")); //$NON-NLS-1$
-		autoBuildButton.setFont(font);
-		setButtonLayoutData(autoBuildButton);
 
 		autoSaveAllButton = new Button(composite, SWT.CHECK);
 		autoSaveAllButton.setText(WorkbenchMessages.getString("WorkbenchPreference.savePriorToBuilding")); //$NON-NLS-1$
-		autoSaveAllButton.setFont(font);
-		setButtonLayoutData(autoSaveAllButton);
 
 		linkButton = new Button(composite, SWT.CHECK);
 		linkButton.setText(WorkbenchMessages.getString("WorkbenchPreference.linkNavigator")); //$NON-NLS-1$
-		linkButton.setFont(font);
-		setButtonLayoutData(linkButton);
 
 		refreshButton = new Button(composite, SWT.CHECK);
 		refreshButton.setText(WorkbenchMessages.getString("WorkbenchPreference.refreshButton")); //$NON-NLS-1$
-		refreshButton.setFont(font);
-		setButtonLayoutData(refreshButton);
 
 		createSpace(composite);
 		createSaveIntervalGroup(composite);
@@ -129,15 +117,12 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	
 	private void createSingleClickGroup(Composite composite) {
 		
-		Font font = composite.getFont();
-		
 		Group buttonComposite = new Group(composite, SWT.LEFT);
 		GridLayout layout = new GridLayout();
 		buttonComposite.setLayout(layout);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		buttonComposite.setLayoutData(data);
 		buttonComposite.setText(WorkbenchMessages.getString("WorkInProgressPreference.openMode")); //$NON-NLS-1$
-		buttonComposite.setFont(font);
 		
 
 		String label = WorkbenchMessages.getString("WorkInProgressPreference.doubleClick"); //$NON-NLS-1$	
@@ -161,7 +146,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		label = WorkbenchMessages.getString("WorkInProgressPreference.singleClick_SelectOnHover"); //$NON-NLS-1$				
 		selectOnHoverButton = new Button(buttonComposite, SWT.CHECK | SWT.LEFT);
 		selectOnHoverButton.setText(label);
-		selectOnHoverButton.setFont(font);
 		selectOnHoverButton.setEnabled(openOnSingleClick);
 		selectOnHoverButton.setSelection(selectOnHover);
 		selectOnHoverButton.addSelectionListener(new SelectionAdapter() {
@@ -179,7 +163,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		openAfterDelayButton.setText(label);
 		openAfterDelayButton.setEnabled(openOnSingleClick);
 		openAfterDelayButton.setSelection(openAfterDelay);
-		openAfterDelayButton.setFont(font);
 		openAfterDelayButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				openAfterDelay = openAfterDelayButton.getSelection();
@@ -191,7 +174,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		
 		Label note = new Label(buttonComposite, SWT.NONE);
 		note.setText(WorkbenchMessages.getString("WorkInProgressPreference.noEffectOnAllViews")); //$NON-NLS-1$
-		note.setFont(font);
 	}
 	
 	private void selectClickMode(boolean singleClick) {
@@ -211,7 +193,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		gd.horizontalAlignment = gd.FILL;
 		gd.grabExcessHorizontalSpace = true;
 		groupComposite.setLayoutData(gd);	
-		groupComposite.setFont(composite.getFont());
 		
 		saveInterval = new IntegerFieldEditor(IPreferenceConstants.SAVE_INTERVAL, WorkbenchMessages.getString("WorkbenchPreference.saveInterval"), groupComposite); //$NON-NLS-1$
 
@@ -245,7 +226,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	protected static Button createRadioButton(Composite parent, String label) {
 		Button button = new Button(parent, SWT.RADIO | SWT.LEFT);
 		button.setText(label);
-		button.setFont(parent.getFont());
+		GridData data = new GridData();
+		button.setLayoutData(data);
 		return button;
 	}
 	/**
@@ -259,7 +241,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		combo.setLayoutData(data);
-		combo.setFont(parent.getFont());
 		return combo;
 	}
 	/**
@@ -273,7 +254,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	protected static Label createLabel(Composite parent, String text) {
 		Label label = new Label(parent, SWT.LEFT);
 		label.setText(text);
-		label.setFont(parent.getFont());
 		GridData data = new GridData();
 		data.horizontalSpan = 1;
 		data.horizontalAlignment = GridData.FILL;

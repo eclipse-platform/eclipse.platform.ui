@@ -17,7 +17,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import java.util.*;
@@ -70,14 +69,11 @@ public void activate() {
  *	@param parent org.eclipse.swt.widgets.Composite
  */
 protected Control createControl(Composite parent) {
-	
-	Font wizardFont = parent.getFont();
 	// top level group
 	Composite outerContainer = new Composite(parent,SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
 	outerContainer.setLayout(layout);
-	outerContainer.setFont(wizardFont);
 	outerContainer.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 				
@@ -94,7 +90,6 @@ protected Control createControl(Composite parent) {
 	categoryTreeViewer.setSorter(NewWizardCollectionSorter.INSTANCE);
 	categoryTreeViewer.addSelectionChangedListener(this);
 	categoryTreeViewer.setInput(wizardCategories);
-	tree.setFont(wizardFont);
 
 	// wizard actions pane...create SWT table directly to
 	// get single selection mode instead of multi selection.
@@ -108,7 +103,6 @@ protected Control createControl(Composite parent) {
 	wizardSelectionViewer.setLabelProvider(new WorkbenchLabelProvider());
 	wizardSelectionViewer.addSelectionChangedListener(this);
 	wizardSelectionViewer.addDoubleClickListener(this);
-	table.setFont(wizardFont);
 
 	restoreWidgetValues();
 	if (!categoryTreeViewer.getSelection().isEmpty())

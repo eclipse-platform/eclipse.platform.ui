@@ -5,21 +5,17 @@ package org.eclipse.ui.dialogs;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.*;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.swt.events.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.ui.model.*;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 
 /**
  * Standard project reference page for a wizard that creates a 
@@ -55,19 +51,14 @@ public WizardNewProjectReferencePage(String pageName) {
  * Method declared on IDialogPage.
  */
 public void createControl(Composite parent) {
-	
-	Font font = parent.getFont();
-	
 	Composite composite = new Composite(parent, SWT.NONE);
 	composite.setLayout(new GridLayout());
 	composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	composite.setFont(font);
 
 	WorkbenchHelp.setHelp(composite, IHelpContextIds.NEW_PROJECT_REFERENCE_WIZARD_PAGE);
 	
 	Label referenceLabel = new Label(composite, SWT.NONE);
 	referenceLabel.setText(REFERENCED_PROJECTS_TITLE);
-	referenceLabel.setFont(font);
 
 	referenceProjectsViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
 	GridData data = new GridData();

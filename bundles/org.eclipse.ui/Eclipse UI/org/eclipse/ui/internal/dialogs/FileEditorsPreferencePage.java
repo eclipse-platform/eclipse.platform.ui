@@ -106,7 +106,6 @@ public void addResourceType(String newName, String newExtension) {
 protected Control createContents(Composite parent) {
 	imagesToDispose = new ArrayList();
 	editorsToImages = new HashMap(50);
-	Font font = parent.getFont();
 
 	// define container & its gridding
 	Composite pageComponent = new Composite(parent, SWT.NULL);
@@ -119,7 +118,6 @@ protected Control createContents(Composite parent) {
 	data.verticalAlignment = GridData.FILL;
 	data.horizontalAlignment = GridData.FILL;
 	pageComponent.setLayoutData(data);
-	pageComponent.setFont(font);
 
 	//layout the contents
 
@@ -130,7 +128,6 @@ protected Control createContents(Composite parent) {
 	data.horizontalAlignment = GridData.FILL;
 	data.horizontalSpan = 2;
 	label.setLayoutData(data);
-	label.setFont(font);
 
 	resourceTypeTable = new Table(pageComponent, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION);
 	resourceTypeTable.addListener(SWT.Selection, this);
@@ -138,7 +135,6 @@ protected Control createContents(Composite parent) {
 	data = new GridData(GridData.FILL_BOTH);
 	data.heightHint = resourceTypeTable.getItemHeight()*12;
 	resourceTypeTable.setLayoutData(data);
-	resourceTypeTable.setFont(font);
 
 	Composite groupComponent= new Composite(pageComponent, SWT.NULL);
 	GridLayout groupLayout = new GridLayout();
@@ -149,21 +145,26 @@ protected Control createContents(Composite parent) {
 	data.verticalAlignment = GridData.FILL;
 	data.horizontalAlignment = GridData.FILL;
 	groupComponent.setLayoutData(data);
-	groupComponent.setFont(font);
 	
 	addResourceTypeButton = new Button(groupComponent, SWT.PUSH);
 	addResourceTypeButton.setText(WorkbenchMessages.getString("FileEditorPreference.add")); //$NON-NLS-1$
 	addResourceTypeButton.addListener(SWT.Selection, this);
+	data = new GridData();
+	data.horizontalAlignment = GridData.FILL;
+	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, addResourceTypeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	addResourceTypeButton.setLayoutData(data);
-	addResourceTypeButton.setFont(font);
-	setButtonLayoutData(addResourceTypeButton);
-	
 	
 	removeResourceTypeButton = new Button(groupComponent, SWT.PUSH);
 	removeResourceTypeButton.setText(WorkbenchMessages.getString("FileEditorPreference.remove")); //$NON-NLS-1$
 	removeResourceTypeButton.addListener(SWT.Selection, this);
-	removeResourceTypeButton.setFont(font);
-	setButtonLayoutData(removeResourceTypeButton);
+	data = new GridData();
+	data.horizontalAlignment = GridData.FILL;
+	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+	widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, removeResourceTypeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+	removeResourceTypeButton.setLayoutData(data);
 	
 	//Spacer
 	label = new Label(pageComponent, SWT.LEFT);
@@ -179,7 +180,6 @@ protected Control createContents(Composite parent) {
 	data.horizontalAlignment = GridData.FILL;
 	data.horizontalSpan = 2;
 	editorLabel.setLayoutData(data);
-	editorLabel.setFont(font);
 
 	editorTable = new Table(pageComponent, SWT.SINGLE | SWT.BORDER);
 	editorTable.addListener(SWT.Selection, this);
@@ -187,7 +187,6 @@ protected Control createContents(Composite parent) {
 	data = new GridData(GridData.FILL_BOTH);
 	data.heightHint = editorTable.getItemHeight()*7;
 	editorTable.setLayoutData(data);
-	editorTable.setFont(font);
 	
 	groupComponent = new Composite(pageComponent, SWT.NULL);
 	groupLayout = new GridLayout();
@@ -198,26 +197,36 @@ protected Control createContents(Composite parent) {
 	data.verticalAlignment = GridData.FILL;
 	data.horizontalAlignment = GridData.FILL;
 	groupComponent.setLayoutData(data);
-	groupComponent.setFont(font);
 	
 	addEditorButton = new Button(groupComponent, SWT.PUSH);
 	addEditorButton.setText(WorkbenchMessages.getString("FileEditorPreference.addEditor")); //$NON-NLS-1$
 	addEditorButton.addListener(SWT.Selection, this);
+	data = new GridData();
+	data.horizontalAlignment = GridData.FILL;
+	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+	widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, addEditorButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	addEditorButton.setLayoutData(data);
-	addEditorButton.setFont(font);
-	setButtonLayoutData(addEditorButton);
 	
 	removeEditorButton = new Button(groupComponent, SWT.PUSH);
 	removeEditorButton.setText(WorkbenchMessages.getString("FileEditorPreference.removeEditor")); //$NON-NLS-1$
 	removeEditorButton.addListener(SWT.Selection, this);
-	removeEditorButton.setFont(font);
-	setButtonLayoutData(removeEditorButton);
+	data = new GridData();
+	data.horizontalAlignment = GridData.FILL;
+	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+	widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, removeEditorButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+	removeEditorButton.setLayoutData(data);
 	
 	defaultEditorButton= new Button(groupComponent, SWT.PUSH);
 	defaultEditorButton.setText(WorkbenchMessages.getString("FileEditorPreference.default")); //$NON-NLS-1$
 	defaultEditorButton.addListener(SWT.Selection, this);
-	defaultEditorButton.setFont(font);
-	setButtonLayoutData(defaultEditorButton);
+	data = new GridData();
+	data.horizontalAlignment = GridData.FILL;
+	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+	widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, defaultEditorButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+	defaultEditorButton.setLayoutData(data);
 
 	fillResourceTypeTable();
 	if (resourceTypeTable.getItemCount() > 0) {

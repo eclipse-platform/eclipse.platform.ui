@@ -12,7 +12,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -62,7 +61,6 @@ private Group createButtonGroup(Composite composite, String title) {
 
 	Group buttonComposite = new Group(composite, SWT.LEFT);
 	buttonComposite.setText(title);
-	buttonComposite.setFont(composite.getFont());
 	GridLayout layout = new GridLayout();
 	buttonComposite.setLayout(layout);
 	GridData data =
@@ -84,8 +82,6 @@ private Group createButtonGroup(Composite composite, String title) {
  * @return the new control
  */
 protected Control createContents(Composite parent) {
-	
-	Font font = parent.getFont();
 
 	WorkbenchHelp.setHelp(parent, IHelpContextIds.VIEWS_PREFERENCE_PAGE);
 
@@ -96,7 +92,6 @@ protected Control createContents(Composite parent) {
 	Composite composite = new Composite(parent, SWT.NONE);
 	composite.setLayoutData(
 		new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-	composite.setFont(font);
 
 	GridLayout layout = new GridLayout();
 	layout.marginWidth = 0;
@@ -116,7 +111,6 @@ protected Control createContents(Composite parent) {
 	messageComposite.setLayout(messageLayout);
 	messageComposite.setLayoutData(
 		new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-	messageComposite.setFont(font);
 
 	final Label noteLabel = new Label(messageComposite,SWT.BOLD);
 	noteLabel.setText(NOTE_LABEL);
@@ -140,14 +134,12 @@ protected Control createContents(Composite parent) {
 	
 	Label messageLabel = new Label(messageComposite,SWT.NONE);
 	messageLabel.setText(APPLY_MESSAGE);
-	messageLabel.setFont(font);
 
 	Label spacer = new Label(composite, SWT.NONE);
 	
 	Group colorComposite = new Group(composite,SWT.NONE);
 	colorComposite.setLayout(new GridLayout());
 	colorComposite.setText(WorkbenchMessages.getString("ViewsPreference.ColorsTitle")); //$NON-NLS-1$
-	colorComposite.setFont(font);
 				
 	GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
 	data.horizontalSpan = 2;
@@ -156,7 +148,6 @@ protected Control createContents(Composite parent) {
 	//Add in an intermediate composite to allow for spacing
 	Composite spacingComposite = new Composite(colorComposite,SWT.NONE);
 	spacingComposite.setLayout(new GridLayout());
-	spacingComposite.setFont(font);
 	
 	errorColorEditor = new ColorFieldEditor(
 			JFacePreferences.ERROR_COLOR,
@@ -191,14 +182,11 @@ protected Control createContents(Composite parent) {
  */
 private void createEditorTabButtonGroup(Composite composite) {
 	
-	Font font = composite.getFont();
-	
 	Group buttonComposite = createButtonGroup(composite,EDITORS_TITLE);
 
 	this.editorTopButton = new Button(buttonComposite, SWT.RADIO);
 	this.editorTopButton.setText(EDITORS_TOP_TITLE);
 	this.editorTopButton.setSelection(this.editorAlignment == SWT.TOP);
-	this.editorTopButton.setFont(font);
 
 	this.editorTopButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -215,7 +203,6 @@ private void createEditorTabButtonGroup(Composite composite) {
 	this.editorBottomButton = new Button(buttonComposite, SWT.RADIO);
 	this.editorBottomButton.setText(EDITORS_BOTTOM_TITLE);
 	this.editorBottomButton.setSelection(this.editorAlignment == SWT.BOTTOM);
-	this.editorBottomButton.setFont(font);
 
 	this.editorBottomButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -231,16 +218,12 @@ private void createEditorTabButtonGroup(Composite composite) {
  * @param store IPreferenceStore
  */
 private void createViewTabButtonGroup(Composite composite) {
-	
-	Font font = composite.getFont();
 
 	Group buttonComposite = createButtonGroup(composite,VIEWS_TITLE);
-	buttonComposite.setFont(font);
 
 	this.viewTopButton = new Button(buttonComposite, SWT.RADIO);
 	this.viewTopButton.setText(VIEWS_TOP_TITLE);
 	this.viewTopButton.setSelection(this.viewAlignment == SWT.TOP);
-	this.viewTopButton.setFont(font);
 
 	this.viewTopButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -251,8 +234,7 @@ private void createViewTabButtonGroup(Composite composite) {
 	this.viewBottomButton = new Button(buttonComposite, SWT.RADIO);
 	this.viewBottomButton.setText(VIEWS_BOTTOM_TITLE);
 	this.viewBottomButton.setSelection(this.viewAlignment == SWT.BOTTOM);
-	this.viewBottomButton.setFont(font);
-	
+
 	this.viewBottomButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			viewAlignment = SWT.BOTTOM;

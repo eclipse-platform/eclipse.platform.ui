@@ -125,7 +125,6 @@ protected void createOptionsGroupButtons(Group optionsGroup) {
 protected Label createPlainLabel(Composite parent, String text) {
 	Label label = new Label(parent, SWT.NONE);
 	label.setText(text);
-	label.setFont(parent.getFont());
 	GridData data = new GridData();
 	data.verticalAlignment = GridData.FILL;
 	data.horizontalAlignment = GridData.FILL;
@@ -344,7 +343,7 @@ protected void createOptionsGroup(Composite parent) {
 	optionsGroup.setLayout(layout);
 	optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 	optionsGroup.setText(WorkbenchMessages.getString("WizardExportPage.options")); //$NON-NLS-1$
-	optionsGroup.setFont(parent.getFont());
+	
 
 	createOptionsGroupButtons(optionsGroup);
 	
