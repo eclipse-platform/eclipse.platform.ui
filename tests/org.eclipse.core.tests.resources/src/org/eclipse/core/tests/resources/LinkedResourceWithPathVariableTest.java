@@ -359,6 +359,16 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 			fail("5.0", e);
 		}
 		
+		//renaming the project shallow is ok
+		try {
+			IProject project = testFolder.getProject();
+			IProjectDescription desc = project.getDescription();
+			desc.setName("moveDest");
+			project.move(desc, IResource.SHALLOW | IResource.FORCE, getMonitor());
+		} catch (CoreException e) {
+			fail("6.0");
+		}
+		
 		//delete should suceed
 		try {
 			testFile.delete(IResource.NONE, getMonitor());
