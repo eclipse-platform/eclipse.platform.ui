@@ -285,11 +285,12 @@ protected void handleTableSelectionChanged() {
  */
 protected Image imageForProgram(String commandLine) {
 	Image image = antImage;
-	int firstSpace = commandLine.indexOf(' ');
-	String name = firstSpace > 0 ? commandLine.substring(0, firstSpace) : commandLine;
-	int lastDot = name.lastIndexOf('.');
-	name = name.substring(lastDot+1);
-	Program program = Program.findProgram(name);
+//	int firstSpace = commandLine.indexOf(' ');
+//	String name = firstSpace > 0 ? commandLine.substring(0, firstSpace) : commandLine;
+//	int lastDot = name.lastIndexOf('.');
+//	name = name.substring(lastDot+1);
+//	Program program = Program.findProgram(name);
+	Program program = Program.findProgram(".bat");
 	if (program != null) {
 		ImageData data = program.getImageData();
 		if (data != null) {

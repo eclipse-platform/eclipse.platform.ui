@@ -10,4 +10,11 @@ import org.eclipse.jface.wizard.Wizard;
  * Common superclass for other tool script wizards
  */
 public abstract class AbstractToolScriptWizard extends Wizard {
+/**
+ * Constructor for AbstractToolScriptWizard.
+ */
+protected AbstractToolScriptWizard() {
+	super();
+}
+
 }

@@ -9,6 +9,7 @@ import org.eclipse.ant.core.toolscripts.ToolScript;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -26,6 +27,18 @@ public class RunToolScriptDialog extends Dialog {
  */
 protected RunToolScriptDialog(Shell parentShell) {
 	super(parentShell);
+}
+/**
+ * @see Dialog#buttonPressed(int)
+ */
+protected void buttonPressed(int buttonId) {
+	if (buttonId == USE_WIZARD_ID) {
+		GlobalToolScriptWizard wizard = new GlobalToolScriptWizard();
+		WizardDialog dialog = new WizardDialog(getShell(), wizard);
+		dialog.open();
+	} else {
+		super.buttonPressed(buttonId);
+	}
 }
 /**
  * @see Dialog#createButtonsForButtonBar(Composite)
@@ -80,5 +93,7 @@ protected void okPressed() {
 	AntUIPlugin.getPlugin().addToCommandHistory(commandLine);
 	super.okPressed();
 }
+
+
 
 }
