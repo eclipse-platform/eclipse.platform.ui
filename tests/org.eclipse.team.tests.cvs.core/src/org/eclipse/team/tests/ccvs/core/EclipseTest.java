@@ -874,7 +874,7 @@ public class EclipseTest extends ResourceTest {
         waitForDecorator();
 	}
 
-    private static void waitForDecorator() {
+    protected static void waitForDecorator() {
         // Wait for the decorator job
         Job[] decorators = Platform.getJobManager().find(DecoratorManager.FAMILY_DECORATE);
         for (int i = 0; i < decorators.length; i++) {
