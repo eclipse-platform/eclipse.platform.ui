@@ -1,0 +1,42 @@
+/*******************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.ui.internal.part.services;
+
+import org.eclipse.core.components.ComponentException;
+import org.eclipse.core.components.ComponentFactory;
+import org.eclipse.core.components.ComponentHandle;
+import org.eclipse.core.components.IServiceProvider;
+import org.eclipse.core.components.NonDisposingHandle;
+import org.eclipse.ui.IWorkbenchPage;
+
+/**
+ * Factory for the default IPartFactory instance.  
+ * 
+ * @since 3.1
+ */
+public class PartFactoryFactory extends ComponentFactory {
+    public PartFactoryFactory() {
+        
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.core.component.ComponentAdapter#createInstance(org.eclipse.core.component.IContainer)
+     */
+    public ComponentHandle createHandle(IServiceProvider availableServices) throws ComponentException {
+        IWorkbenchPage page;
+        try {
+            page = (IWorkbenchPage)availableServices.getService(IWorkbenchPage.class);
+        } catch (ComponentException e) {
+            throw new ComponentException(PartFactoryFactory.class, e);
+        }
+        return new NonDisposingHandle(page.getPartFactory());
+    }
+}

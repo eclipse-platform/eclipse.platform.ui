@@ -39,7 +39,7 @@ import org.eclipse.ui.contexts.EnabledSubmission;
  * 
  * @since 2.0
  */
-final class KeyBindingService implements INestableKeyBindingService {
+public final class KeyBindingService implements INestableKeyBindingService {
 
     /**
      * The currently active nested service, if any. If there are no nested
@@ -116,7 +116,7 @@ final class KeyBindingService implements INestableKeyBindingService {
      *            The site for which this service will be responsible; should
      *            not be <code>null</code>.
      */
-    KeyBindingService(IWorkbenchPartSite workbenchPartSite) {
+    public KeyBindingService(IWorkbenchPartSite workbenchPartSite) {
         this(workbenchPartSite, null);
     }
 

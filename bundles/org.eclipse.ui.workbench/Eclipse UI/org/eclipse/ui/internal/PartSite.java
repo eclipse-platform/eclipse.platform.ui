@@ -15,10 +15,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.components.ComponentException;
+import org.eclipse.core.components.ComponentFactory;
+import org.eclipse.core.components.ComponentHandle;
+import org.eclipse.core.components.FactoryMap;
+import org.eclipse.core.components.IServiceProvider;
+import org.eclipse.core.components.NonDisposingHandle;
+import org.eclipse.core.components.ServiceFactory;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IKeyBindingService;
@@ -28,8 +38,10 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.internal.part.multiplexer.SiteServices;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
+import org.osgi.framework.Bundle;
 
 /**
  * <code>PartSite</code> is the general implementation for an
@@ -52,7 +64,6 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
  * </ol>
  */
 public class PartSite implements IWorkbenchPartSite {
-
     private IWorkbenchPartReference partReference;
 
     private IWorkbenchPart part;
@@ -79,6 +90,16 @@ public class PartSite implements IWorkbenchPartSite {
 
     private WorkbenchSiteProgressService progressService;
 
+    private SiteServices serviceContainer; 
+    
+    private IAdaptable hardcodedServices = new IAdaptable() {
+
+        public Object getAdapter(Class adapter) {
+            return protectedGetAdapter(adapter);
+        }
+        
+    };
+    
     /**
      * EditorContainer constructor comment.
      */
@@ -108,6 +129,9 @@ public class PartSite implements IWorkbenchPartSite {
         if (progressService != null)
             progressService.dispose();
 
+        if (serviceContainer != null) {
+            serviceContainer.dispose();
+        }
     }
 
     /**
@@ -370,11 +394,67 @@ public class PartSite implements IWorkbenchPartSite {
      * @param adapter
      * @return
      */
-    public Object getAdapter(Class adapter) {
-        if (IWorkbenchSiteProgressService.class.equals(adapter))
+    public final Object getAdapter(Class adapter) {
+        
+        if (IWorkbenchSiteProgressService.class == adapter) {
             return getSiteProgressService();
-        else
-            return null;
+        }
+        try {
+        	IServiceProvider container = getServiceContainer();
+
+        	return container.getService(adapter);
+        } catch (ComponentException e) {
+            WorkbenchPlugin.getDefault().getLog().log(e.getStatus());
+        }
+        
+        return null;
+    }
+    
+    /**
+     * @since 3.1 
+     *
+     * @return
+     */
+    private SiteServices getServiceContainer() {
+        if (serviceContainer != null) {
+            return serviceContainer;
+        }
+                
+        ServiceFactory context = new FactoryMap()
+            .addInstance(hardcodedServices)
+            .map(Composite.class, new ComponentFactory() {
+                /* (non-Javadoc)
+                 * @see org.eclipse.core.components.ComponentFactory#getHandle(org.eclipse.core.components.IComponentProvider)
+                 */
+                public ComponentHandle createHandle(
+                        IServiceProvider availableServices)
+                        throws ComponentException {
+                    
+                    Composite control = (Composite)getPane().getControl();
+                    if (control != null) {
+                        return new NonDisposingHandle(control);
+                    }
+                    
+                    throw new ComponentException(Composite.class, 
+                            Messages.getString("PartSite.needsWidgetsError"), null); //$NON-NLS-1$
+                } 
+            });
+        serviceContainer = new SiteServices(context);
+        return serviceContainer;
+    }
+
+    protected Object protectedGetAdapter(Class adapter) {
+        if (adapter.isInstance(this)) {
+            return this;
+        }
+        if (adapter == IWorkbenchPage.class) {
+            return getPage();
+        }
+        if (adapter == Bundle.class) {
+            return Platform.getBundle(getPluginId());
+        }
+
+        return null;
     }
 
     /**

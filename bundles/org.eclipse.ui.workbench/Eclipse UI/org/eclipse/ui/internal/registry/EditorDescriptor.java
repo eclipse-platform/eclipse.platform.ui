@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.ISharedImages;
@@ -27,6 +28,8 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
+import org.eclipse.ui.internal.part.NewEditorToOldWrapper;
+import org.eclipse.ui.part.services.IPartDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -76,6 +79,28 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
     private transient IConfigurationElement configurationElement;
 
+    private IPartDescriptor partInfo = new IPartDescriptor() {
+		public String getId() {
+			return id;
+		}
+
+		public String getLabel() {
+			return editorName;
+		}
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.workbench.services.IPartDescriptor#getImage()
+         */
+        public ImageDescriptor getImage() {
+            if (imageDesc != null) {
+                return imageDesc;
+            }
+            
+            return ImageDescriptor.getMissingImageDescriptor();
+        }
+    };
+
+    
 	public static final String ATT_CLASS = "class";//$NON-NLS-1$
 
 	public static final String ATT_NAME = "name";//$NON-NLS-1$
@@ -215,6 +240,18 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      */
     public IConfigurationElement getConfigurationElement() {
         return configurationElement;
+    }
+        
+    public IEditorPart createEditor() throws CoreException {
+        Class editorClass = getConfigurationElement().loadExtensionClass(ATT_CLASS);
+        
+        if (IEditorPart.class.isAssignableFrom(editorClass)) {
+            return (IEditorPart)WorkbenchPlugin.createExtension(getConfigurationElement(), ATT_CLASS);
+        } 
+        else {
+            NewEditorToOldWrapper adapter = new NewEditorToOldWrapper(getPartDescriptor());
+            return adapter;
+        }
     }
 
     /**
@@ -569,5 +606,14 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      */
     public String getPluginId() {
         return getPluginID();
+    }
+
+    /**
+     * @since 3.1 
+     *
+     * @return
+     */
+    public IPartDescriptor getPartDescriptor() {
+        return partInfo;
     }
 }

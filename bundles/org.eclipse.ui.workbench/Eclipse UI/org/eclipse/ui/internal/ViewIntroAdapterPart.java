@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.intro.IntroMessages;
 import org.eclipse.ui.intro.IIntroPart;
@@ -45,19 +46,22 @@ public final class ViewIntroAdapterPart extends ViewPart {
      * Adds a listener that toggles standby state if the view pane is zoomed. 
      */
     private void addPaneListener() {
-        ((PartSite) getSite()).getPane().addPropertyChangeListener(
-                new IPropertyChangeListener() {
-                    public void propertyChange(PropertyChangeEvent event) {
-                        if (handleZoomEvents) {
-                            if (event.getProperty()
-                                    .equals(PartPane.PROP_ZOOMED)) {
-                                boolean standby = !((Boolean) event
-                                        .getNewValue()).booleanValue();
-                                setStandby(standby);
+        IWorkbenchPartSite site = getSite();
+        if (site instanceof PartSite) {            
+            ((PartSite) site).getPane().addPropertyChangeListener(
+                    new IPropertyChangeListener() {
+                        public void propertyChange(PropertyChangeEvent event) {
+                            if (handleZoomEvents) {
+                                if (event.getProperty()
+                                        .equals(PartPane.PROP_ZOOMED)) {
+                                    boolean standby = !((Boolean) event
+                                            .getNewValue()).booleanValue();
+                                    setStandby(standby);
+                                }
                             }
                         }
-                    }
-                });
+                    });
+        }
     }
 
     /**

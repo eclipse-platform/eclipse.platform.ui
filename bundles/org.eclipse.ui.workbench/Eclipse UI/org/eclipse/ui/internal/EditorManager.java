@@ -908,8 +908,7 @@ public class EditorManager implements IExtensionRemovalHandler {
         final Throwable ex[] = new Throwable[1];
         Platform.run(new SafeRunnable() {
             public void run() throws CoreException {
-                editor[0] = (IEditorPart) WorkbenchPlugin.createExtension(desc
-                        .getConfigurationElement(), "class"); //$NON-NLS-1$
+                editor[0] = desc.createEditor();
             }
 
             public void handleException(Throwable e) {

@@ -315,7 +315,6 @@ public class SubActionBars implements IActionBars {
 
         if (toolBarMgr != null)
             toolBarMgr.setVisible(set);
-
     }
 
     /**

@@ -1,0 +1,50 @@
+/*******************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.ui.internal.part.services;
+
+import org.eclipse.core.components.ComponentFactory;
+import org.eclipse.core.components.ComponentHandle;
+import org.eclipse.core.components.CustomHandle;
+import org.eclipse.core.components.IServiceProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
+/**
+ * @since 3.1
+ */
+public class DefaultCompositeFactory extends ComponentFactory {
+
+    private final static class CompositeHandle extends CustomHandle {
+        
+        public CompositeHandle(Composite toWrap) {
+            super(toWrap);
+        }
+        
+        public void dispose() {
+            ((Composite)getInstance()).dispose();
+        }
+
+    };
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.core.component.ComponentAdapter#createInstance(org.eclipse.core.component.IContainer)
+     */
+    public ComponentHandle createHandle(IServiceProvider availableServices) {
+        Shell result = new Shell(Display.getCurrent(), SWT.NONE);
+        result.setLayout(new FillLayout());
+        result.open();
+        return new CompositeHandle(result);
+    }
+
+}

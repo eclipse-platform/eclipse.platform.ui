@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
+import org.eclipse.ui.part.interfaces.IPersistable;
+
 /**
  * A view is a visual component within a workbench page.  It is typically used to
  * navigate a hierarchy of information (like the workspace), open an editor,  
@@ -40,7 +42,7 @@ package org.eclipse.ui;
  * @see IWorkbenchPage#showView
  * @see org.eclipse.ui.part.ViewPart
  */
-public interface IViewPart extends IWorkbenchPart {
+public interface IViewPart extends IWorkbenchPart, IPersistable {
     /**
      * Returns the site for this view. 
      * This method is equivalent to <code>(IViewSite) getSite()</code>.

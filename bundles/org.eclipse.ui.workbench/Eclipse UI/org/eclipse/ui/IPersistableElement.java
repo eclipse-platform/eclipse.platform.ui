@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
+import org.eclipse.ui.part.interfaces.IPersistable;
+
 /**
  * Interface for asking an object to store its state in a memento.
  * <p>
@@ -35,24 +37,6 @@ package org.eclipse.ui;
  * @see org.eclipse.ui.IMemento
  * @see org.eclipse.ui.IElementFactory
  */
-public interface IPersistableElement {
-    /**
-     * Returns the id of the element factory which should be used to re-create this
-     * object.
-     * <p>
-     * Factory ids are declared in extensions to the standard extension point
-     * <code>"org.eclipse.ui.elementFactories"</code>.
-     * </p>
-     * 
-     * @return the element factory id
-     * @see IElementFactory
-     */
-    public String getFactoryId();
+public interface IPersistableElement extends IPersistable, IPersistableFactoryIdentifier {
 
-    /**
-     * Saves the state of the object in the given memento.
-     *
-     * @param memento the storage area for object's state
-     */
-    public void saveState(IMemento memento);
 }

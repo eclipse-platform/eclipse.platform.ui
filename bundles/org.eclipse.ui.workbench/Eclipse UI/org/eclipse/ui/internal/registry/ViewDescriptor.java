@@ -26,6 +26,8 @@ import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.part.NewViewToOldWrapper;
+import org.eclipse.ui.part.services.IPartDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.IViewDescriptor;
 
@@ -59,6 +61,23 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 
     private float fastViewWidthRatio;
 
+    private IPartDescriptor viewInfo = new IPartDescriptor() {
+		public String getId() {
+			return id;
+		}
+
+		public String getLabel() {
+			return ViewDescriptor.this.getLabel();
+		}
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.workbench.services.IPartDescriptor#getImage()
+         */
+        public ImageDescriptor getImage() {
+            return getImageDescriptor();
+        }
+    };
+    
     /**
      * Create a new <code>ViewDescriptor</code> for an extension.
      * 
@@ -72,6 +91,10 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
         registerShowViewHandler();
     }
 
+    public IPartDescriptor getPartDescriptor() {
+    	return viewInfo;
+    }
+    
     /**
      * Register the show view handler.
      *
@@ -90,8 +113,14 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
      * @see org.eclipse.ui.internal.registry.IViewDescriptor#createView()
      */
     public IViewPart createView() throws CoreException {
-        Object obj = WorkbenchPlugin.createExtension(configElement, ATT_CLASS);
-        return (IViewPart) obj;
+        Class viewClass = configElement.loadExtensionClass(ATT_CLASS);
+        
+        if (IViewPart.class.isAssignableFrom(viewClass)) {
+            return (IViewPart)WorkbenchPlugin.createExtension(getConfigurationElement(), ATT_CLASS);
+        } else {
+            NewViewToOldWrapper adapter = new NewViewToOldWrapper(getPartDescriptor());
+            return adapter;
+        }
     }
 
     /* (non-Javadoc)

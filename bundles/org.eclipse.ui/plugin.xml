@@ -18,6 +18,7 @@
       <import plugin="org.eclipse.swt" export="true"/>
       <import plugin="org.eclipse.jface" export="true"/>
       <import plugin="org.eclipse.ui.workbench" export="true"/>
+      <import plugin="org.eclipse.core.components" export="true"/>
    </requires>
 
 
@@ -1407,5 +1408,176 @@
             id="org.eclipse.ui.internal.presentations.defaultpresentation.NativePresentationFactory"/>
    </extension>
    -->
+   
+   <!-- site services -->
+   <extension
+         point="org.eclipse.core.components.services">
+      
+      <!-- scope for user-defined services on a site -->
+      <scope id="org.eclipse.ui.site">
+            <requiresInterface id="org.eclipse.swt.widgets.Composite"/>
+	        <requiresInterface id="org.eclipse.ui.IWorkbenchPage"/>
+      		<requiresScope id="org.eclipse.core.components.plugin"/>
+      </scope>
+
+      
+      <!-- scope for user-defined services on a site capable of multiplexing (all components must implement INestedComponent) -->
+      <scope id="org.eclipse.ui.site.multiplexer">
+      		<requiresScope id="org.eclipse.ui.site"/>
+      		<requiresInterface id="org.eclipse.ui.internal.part.multiplexer.ISharedContext"/>
+      </scope>
+      
+      <!-- scope for user-defined adapters on a part -->
+      <scope id="org.eclipse.ui.part">
+      		<requiresScope id="org.eclipse.ui.site"/>
+      </scope>
+
+	  <!-- scope for part adapters capable of delegation (all components may optionally implement IDelegatingComponent) -->
+	  <scope id="org.eclipse.ui.part.delegator">
+	  		<requiresScope id="org.eclipse.ui.part"/>
+	  		<requiresInterface id="org.eclipse.ui.internal.part.multiplexer.IDelegatingContext"/>
+	  </scope>
+      
+      <component
+            singleton="true"
+            scope="org.eclipse.ui.site"
+            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.internal.part.services.NullNameableService"
+            interface="org.eclipse.ui.part.services.INameable"/>
+      <component
+            singleton="true"
+            scope="org.eclipse.ui.site"
+            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.internal.part.services.NullSecondaryId"
+            interface="org.eclipse.ui.part.services.ISecondaryId"/>
+      <component
+            singleton="false"
+            scope="org.eclipse.ui.site"
+            interface="org.eclipse.jface.resource.ResourceManager"
+            class="org.eclipse.ui.internal.part.services.ResourceManagerFactory"/>
+      <component
+            singleton="true"
+            scope="org.eclipse.ui.site"
+            interface="org.eclipse.ui.part.services.IDirtyHandler"
+            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.internal.part.services.NullDirtyHandler"/>      
+            
+      <component
+            singleton="false"
+            scope="org.eclipse.ui.site"
+            interface="org.eclipse.ui.part.services.IUserMessages"
+            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.internal.part.services.DefaultMessageDialogs">
+      </component>
+      
+      <!--
+      <component
+      		singleton="true"
+            scope="org.eclipse.ui.site"
+      		interface="org.eclipse.ui.IActionBars"
+      		class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.internal.part.services.NullActionBars"/>
+	  -->
+      <component
+            singleton="true"
+            scope="org.eclipse.ui.site"
+            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.internal.part.services.NullSavedState"
+            interface="org.eclipse.ui.part.services.ISavedState"/>
+
+      <component
+            class="org.eclipse.ui.internal.part.services.PartFactoryFactory"
+            interface="org.eclipse.ui.part.services.IWorkbenchPartFactory"
+            scope="org.eclipse.ui.site"
+            singleton="false"/>
+            
+      <component
+            singleton="false"
+            scope="org.eclipse.ui.site"
+            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.internal.part.PartPropertyProvider"
+            interface="org.eclipse.ui.internal.part.IPartPropertyProvider">
+      </component>
+            
+      <component
+      		scope="org.eclipse.ui.site"
+            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.internal.part.services.NullPartDescriptor"
+            interface="org.eclipse.ui.part.services.IPartDescriptor"
+            singleton="true"/>
+            
+      <component
+            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.internal.part.services.NullEditorInput"
+            interface="org.eclipse.ui.IEditorInput"
+            scope="org.eclipse.ui.site"
+            singleton="true"/>
+            
+      <component
+            interface="org.eclipse.ui.part.services.ISelectionHandler"
+            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.internal.part.services.NullSelectionHandler"
+            scope="org.eclipse.ui.site"
+            singleton="true"/>
+   </extension>
+   
+   <!-- part services -->
+   <extension
+         point="org.eclipse.core.components.services">
+
+      <component
+            singleton="false"
+            scope="org.eclipse.ui.part"
+            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.internal.part.PartPropertyProvider"
+            interface="org.eclipse.ui.internal.part.IPartPropertyProvider">
+      </component>
+
+	  <component
+            singleton="true"
+            scope="org.eclipse.ui.part"
+            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.internal.part.NullFocusable"
+            interface="org.eclipse.ui.part.interfaces.IFocusable"/>
+
+      <component
+            singleton="true"
+            scope="org.eclipse.ui.part"
+            interface="org.eclipse.ui.part.interfaces.IPersistable"
+            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.internal.part.NullPersistable"/>
+         
+   </extension>
+
+   <!-- delegating services -->
+   <extension point="org.eclipse.core.components.services">
+   		<component
+   			scope="org.eclipse.ui.part.delegator"
+   			interface="org.eclipse.ui.part.interfaces.IFocusable"
+   			class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.internal.part.DelegatingFocusable">
+  		</component>
+   </extension>
+
+   <!-- multiplexer services -->
+   <extension
+         point="org.eclipse.core.components.services">
+
+	  <component
+            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.internal.part.services.ChildNameable"
+            interface="org.eclipse.ui.part.services.INameable"
+            singleton="false"
+            scope="org.eclipse.ui.site.multiplexer"/>
+      <!--
+	  <component
+            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.internal.part.services.ChildActionBars"
+            interface="org.eclipse.ui.IActionBars"
+            singleton="false"
+            scope="org.eclipse.ui.site.multiplexer"/>
+            -->
+      <component
+            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.internal.part.services.ChildSelectionHandler"
+            interface="org.eclipse.ui.part.services.ISelectionHandler"
+            singleton="false"
+            scope="org.eclipse.ui.site.multiplexer"/>
+   </extension>
+
+   <!-- plugin services -->
+   <extension
+         point="org.eclipse.core.components.services">
+
+      <component
+            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.internal.part.services.PluginResources"
+            scope="org.eclipse.core.components.plugin"
+            interface="org.eclipse.ui.part.services.IPluginResources"
+            singleton="false"/>
+   </extension>
+   
    
 </plugin>

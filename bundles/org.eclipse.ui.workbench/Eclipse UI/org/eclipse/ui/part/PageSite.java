@@ -22,7 +22,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.internal.PopupMenuExtender;
-import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.internal.misc.Assert;
 
 /**
@@ -127,7 +126,7 @@ public class PageSite implements IPageSite {
         // Each page holds onto its own menu extenders so they
         // can be properly disposed of.
         menuExtenders.add(new PopupMenuExtender(menuID, menuMgr, selProvider,
-                ((ViewSite) parentSite).getPart()));
+                parentSite.getPart()));
     }
 
     /* (non-Javadoc)

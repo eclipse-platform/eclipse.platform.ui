@@ -116,4 +116,13 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
      * @since 2.1
      */
     public IKeyBindingService getKeyBindingService();
+    
+    /**
+     * Returns the part associated with this site 
+     * 
+     * @since 3.1 
+     *
+     * @return the part associated with this site
+     */
+    public IWorkbenchPart getPart(); 
 }

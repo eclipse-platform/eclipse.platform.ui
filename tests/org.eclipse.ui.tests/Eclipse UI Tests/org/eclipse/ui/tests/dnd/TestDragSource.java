@@ -19,8 +19,7 @@ import org.eclipse.ui.internal.dnd.TestDropLocation;
  * @since 3.0
  */
 public abstract class TestDragSource {
-    private WorkbenchPage page = (WorkbenchPage) ((WorkbenchWindow) PlatformUI
-            .getWorkbench().getActiveWorkbenchWindow()).getActivePage();
+    private WorkbenchPage page;
 
     public abstract String toString();
 
@@ -31,6 +30,10 @@ public abstract class TestDragSource {
     }
 
     public WorkbenchPage getPage() {
+        if (page == null) {
+            page = (WorkbenchPage) ((WorkbenchWindow) PlatformUI
+                    .getWorkbench().getActiveWorkbenchWindow()).getActivePage();
+        }
         return page;
     }
 }

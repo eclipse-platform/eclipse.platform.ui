@@ -27,6 +27,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -381,6 +382,13 @@ public class MultiPageEditorSite implements IEditorSite {
      */
     public Object getAdapter(Class adapter) {
         return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPartSite#getPart()
+     */
+    public IWorkbenchPart getPart() {
+        return editor;
     }
 
 }

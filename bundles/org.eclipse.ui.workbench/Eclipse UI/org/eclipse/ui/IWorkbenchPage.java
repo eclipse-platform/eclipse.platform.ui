@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.internal.ICompatibleWorkbenchPage;
+import org.eclipse.ui.part.services.IWorkbenchPartFactory;
 
 /**
  * A workbench page consists of an arrangement of views and editors intended to
@@ -757,7 +758,16 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
      * @since 2.1
      */
     public INavigationHistory getNavigationHistory();
-
+    
+    /**
+     * Returns a factory that can be used to construct views and editors.
+     * 
+     * @since 3.1 
+     *
+     * @return a factory that can be used to construct views and editors
+     */
+    public IWorkbenchPartFactory getPartFactory();
+    
     /**
      * Returns an array of IViewParts that are stacked with the given part.
      * 
@@ -846,6 +856,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
      * @since 3.1            
      */
     public void closeAllPerspectives(boolean saveEditors, boolean closePage);
+
     
     /**
 	 * <p>
