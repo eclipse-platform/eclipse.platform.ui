@@ -24,6 +24,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.registry.SynchronizeWizardDescription;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
@@ -40,6 +41,8 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
  * @since 3.0
  */
 public class GlobalRefreshWizardSelectionPage extends WizardPage implements IDoubleClickListener, ISelectionChangedListener {
+    
+    private final static String DEFAULT_SELECTION= TeamUIPlugin.ID + "GlobalRefreshWizardSelectionPage.default_selection";
 
 	private TableViewer fViewer;
 	private IWizard wizard;
@@ -97,7 +100,21 @@ public class GlobalRefreshWizardSelectionPage extends WizardPage implements IDou
 		}
 	}
 	
-	/* (non-Javadoc)
+	/**
+     * Save the page settings into the dialog settings
+     */
+    public void savePageSettings() {
+        if (fViewer.getControl().isDisposed()) 
+	        return;
+	    
+	    final IStructuredSelection selection= (IStructuredSelection)fViewer.getSelection();
+	    final Object selected= selection.getFirstElement();
+	    if (!(selected instanceof SynchronizeWizardDescription))
+	        return;
+	    getDialogSettings().put(DEFAULT_SELECTION, ((SynchronizeWizardDescription)selected).getId());
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent2) {
@@ -116,11 +133,39 @@ public class GlobalRefreshWizardSelectionPage extends WizardPage implements IDou
 		fViewer.setSorter(new ResourceSorter(ResourceSorter.NAME));
 		fViewer.setInput(TeamUI.getSynchronizeManager());
 		fViewer.addSelectionChangedListener(this);
+		
+		final SynchronizeWizardDescription selected= getDefaultSelection();
+		if (selected != null) {
+		    fViewer.setSelection(new StructuredSelection(selected)); 
+		} else {
+		    final Object object= fViewer.getElementAt(0);
+		    if (object != null)
+		        fViewer.setSelection(new StructuredSelection(object));
+		}
 		fViewer.getTable().setFocus();
 		Dialog.applyDialogFont(parent2);
 	}
 	
-	public void doubleClick(DoubleClickEvent event) {
+	private SynchronizeWizardDescription getDefaultSelection() {
+	    
+        if (!(TeamUI.getSynchronizeManager() instanceof SynchronizeManager))
+            return null;
+
+        final String defaultSelection= getDialogSettings().get(DEFAULT_SELECTION);
+        if (defaultSelection == null) 
+            return null;
+        
+        final SynchronizeManager syncManager= (SynchronizeManager)TeamUI.getSynchronizeManager(); 
+        final SynchronizeWizardDescription [] wizards= syncManager.getWizardDescriptors();
+        for (int i = 0; i < wizards.length; i++) {
+            if (defaultSelection.equals(wizards[i].getId())) {
+                return wizards[i];
+            }
+        }
+        return null;
+    }
+
+    public void doubleClick(DoubleClickEvent event) {
 		selectionChanged(
 			new SelectionChangedEvent(
 				event.getViewer(),
