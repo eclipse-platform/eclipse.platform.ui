@@ -41,11 +41,17 @@ public boolean acquire() throws InterruptedException {
 	if (semaphore == null)
 		return true;
 	if (Workspace.DEBUG)
-		System.out.println("Operation waiting to be executed... :-/");
-	semaphore.acquire();
+		System.out.println("[" + Thread.currentThread() + "] Operation waiting to be executed... :-/");
+	try {
+		semaphore.acquire();
+	} catch (InterruptedException e) {
+		if (Workspace.DEBUG)
+			System.out.println("[" + Thread.currentThread() + "] Operation interrupted while waiting... :-|");
+		throw e;
+	}	
 	workManager.updateCurrentOperation();
 	if (Workspace.DEBUG)
-		System.out.println("Operation started... :-)");
+		System.out.println("[" + Thread.currentThread() + "] Operation started... :-)");
 	return true;
 }
 protected Thread getCurrentOperationThread() {
