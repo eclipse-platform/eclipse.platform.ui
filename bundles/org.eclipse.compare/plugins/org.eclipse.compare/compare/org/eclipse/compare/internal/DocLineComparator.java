@@ -74,9 +74,13 @@ public class DocLineComparator implements IRangeComparator {
 	 * @return the contents of the specified line range as a String
 	 */
 	public String extract(int start, int length) {
+		if (length == 0)
+			return "";
 		if (fLength > 0) {
-			if (fLineCount == 1)
+			//if (fLineCount == 1)
+			if (length == 1)
 				return extract(start);
+				
 			int startPos= getTokenStart(start);
 			int endPos= getTokenStart(start + length);
 			try {

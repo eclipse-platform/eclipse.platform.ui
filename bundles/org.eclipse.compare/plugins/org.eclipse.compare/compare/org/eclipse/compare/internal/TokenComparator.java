@@ -4,8 +4,6 @@
  */
 package org.eclipse.compare.internal;
 
-import java.util.StringTokenizer;
-
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.compare.contentmergeviewer.ITokenComparator;
 
@@ -34,24 +32,39 @@ public class TokenComparator implements ITokenComparator {
 		else
 			fText= ""; //$NON-NLS-1$
 		
-		fStarts= new int[fText.length()];
-		fLengths= new int[fText.length()];
+		int length= fText.length();
+		fStarts= new int[length];	// pessimistic assumption!
+		fLengths= new int[length];
 		fCount= 0;
 		
-		StringTokenizer tokenizer= new StringTokenizer(fText, " \t\n\r", true); //$NON-NLS-1$
-		
-		for (int pos= 0; tokenizer.hasMoreElements();) {
-			fStarts[fCount]= pos;
-			String s= tokenizer.nextToken();
-			int l= 0;
-			if (s != null)
-				l= s.length();
-			pos += l;
-			fLengths[fCount]= l;
-			fCount++;
+		char lastCategory= 0;	// 0: no category
+		for (int i= 0; i < length; i++) {
+			char c= fText.charAt(i);
+			
+			char category= '?';	// unspecified category
+			if (Character.isWhitespace(c))
+				category= ' ';	// white space category
+			else if (Character.isDigit(c))
+				category= '0';	// digits
+			else if (Character.isLetter(c))
+				category= 'a';	// letters
+			
+			if (category != lastCategory) {
+				// start a new token
+				fStarts[fCount++]= i;
+				lastCategory= category;
+			}
+			fLengths[fCount-1]++;
 		}
+		
+//		System.out.println("Tokens:");
+//		for (int j= 0; j < fCount; j++) {
+//			int s= fStarts[j];
+//			int e= s+fLengths[j];
+//			System.out.println("  <" + fText.substring(s, e) + ">");
+//		}
 	}
-
+	
 	/**
 	 * Creates a <code>TokenComparator</code> for the given string.
 	 *
@@ -90,29 +103,6 @@ public class TokenComparator implements ITokenComparator {
 		return 0;
 	}
 		
-	/**
-	 * Returns the content of tokens in the specified range as a String.
-	 * If the number of token is 0 the empty string ("") is returned.
-	 *
-	 * @param start index of first token
-	 * @param length number of tokens
-	 * @return the contents of the specified token range as a String
-	 */
-//	public String extract(int start, int length) {
-//		int startPos= fStarts[start];
-//		int endPos= 0;
-//		if (length > 0) {
-//			int e= start + length-1;
-//			endPos= fStarts[e] + fLengths[e];
-//		} else {
-//			endPos= fStarts[start];
-//		}
-//		//int endPos= getTokenStart(start + length);
-//		if (endPos >= fText.length())
-//			return fText.substring(startPos);
-//		return fText.substring(startPos, endPos);
-//	}
-
 	/**
 	 * Returns <code>true</code> if a token given by the first index
 	 * matches a token specified by the other <code>IRangeComparator</code> and index.
@@ -164,7 +154,7 @@ public class TokenComparator implements ITokenComparator {
 //	public static void main(String args[]) {
 //		//String in= "private static boolean isWhitespace(char c) {";
 //		//String in= "for (int j= 0; j < l-1; j++) {";
-//		String in= "for do";
+//		String in= "for do    i= 123; i++";
 //		TokenComparator tc= new TokenComparator(in, false);
 //		
 //		System.out.println("n: " + tc.getRangeCount());

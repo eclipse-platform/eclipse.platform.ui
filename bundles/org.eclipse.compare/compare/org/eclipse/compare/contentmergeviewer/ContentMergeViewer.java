@@ -690,6 +690,10 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		return 3;
 	}
 	
+	/* package */ boolean getAncestorEnabled() {
+		return fAncestorEnabled;
+	}
+	
 	/* package */ Control createCenter(Composite parent) {
 		Sash sash= new Sash(parent, SWT.VERTICAL);
 		new Resizer(sash, HORIZONTAL);

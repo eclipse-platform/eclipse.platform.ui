@@ -1243,7 +1243,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		for (int i= 0; i < e.length; i++) {
 			RangeDifference es= e[i];
 			int kind= es.kind();
-			if (kind != RangeDifference.NOCHANGE && kind != RangeDifference.ANCESTOR) {
+			if (kind != RangeDifference.NOCHANGE) {
 				
 				int ancestorStart2= ancestorStart;
 				int ancestorEnd2= ancestorStart;
@@ -1954,43 +1954,52 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	//---- Navigating and resolving Diffs
 	
-	/**
-	 */
 	private boolean navigate(boolean down, boolean wrap, boolean deep) {
 
 		Diff diff= null;
-		if (fChangeDiffs != null) {
-			MergeSourceViewer part= fFocusPart;
-			if (part == null)
-				part= fRight;
+		
+		for (;;) {
 			
-			if (part != null) {
-				Point s= part.getSelectedRange();
-				if (down)
-					diff= findNext(part, fChangeDiffs, s.x, s.x+s.y, deep);
-				else
-					diff= findPrev(part, fChangeDiffs, s.x, s.x+s.y, deep);					
-			}		
-		}
-	
-		if (diff == null) {
-			if (wrap) {
-				Control c= getControl();
-				if (Utilities.okToUse(c))
-					c.getDisplay().beep();
-				if (DEAD_STEP)
-					return true;
-				if (fChangeDiffs.size() > 0) {
+			if (fChangeDiffs != null) {
+				MergeSourceViewer part= fFocusPart;
+				if (part == null)
+					part= fRight;
+				
+				if (part != null) {
+					Point s= part.getSelectedRange();
 					if (down)
-						diff= (Diff) fChangeDiffs.get(0);
+						diff= findNext(part, fChangeDiffs, s.x, s.x+s.y, deep);
 					else
-						diff= (Diff) fChangeDiffs.get(fChangeDiffs.size()-1);
-				}
-			} else
-				return true;
-		}
+						diff= findPrev(part, fChangeDiffs, s.x, s.x+s.y, deep);					
+				}		
+			}
+		
+			if (diff == null) {
+				if (wrap) {
+					Control c= getControl();
+					if (Utilities.okToUse(c))
+						c.getDisplay().beep();
+					if (DEAD_STEP)
+						return true;
+					if (fChangeDiffs.size() > 0) {
+						if (down)
+							diff= (Diff) fChangeDiffs.get(0);
+						else
+							diff= (Diff) fChangeDiffs.get(fChangeDiffs.size()-1);
+					}
+				} else
+					return true;
+			}
 			
-		setCurrentDiff(diff, true);
+			setCurrentDiff(diff, true);
+			
+			if (diff != null && diff.fDirection == RangeDifference.ANCESTOR
+									&& !getAncestorEnabled())
+				continue;
+				
+			break;
+		}
+
 		return false;
 	}	
 		
@@ -2017,13 +2026,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			Position p= diff.getPosition(tp);
 			if (p != null) {
 				int startOffset= p.getOffset();
-				if (end <= startOffset)
+				if (end < startOffset)  // <=
 					return diff;
 				if (deep && diff.fDiffs != null) {
 					Diff d= null;
 					int endOffset= startOffset + p.getLength();
-					if (start == startOffset && end == endOffset) {
-						d= findNext(tp, diff.fDiffs, start, start, deep);
+					if (start == startOffset && (end == endOffset || end == endOffset-1)) {
+						d= findNext(tp, diff.fDiffs, start-1, start-1, deep);
 					} else if (end < endOffset) {
 						d= findNext(tp, diff.fDiffs, start, end, deep);
 					}
