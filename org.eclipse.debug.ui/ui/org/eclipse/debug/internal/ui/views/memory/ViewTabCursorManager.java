@@ -100,22 +100,21 @@ public class ViewTabCursorManager
 
 		private void handleTableMouseEvent(MouseEvent e) {
 			// figure out new cursor position based on here the mouse is pointing
-			TableItem[] selections = fTableViewer.getTable().getSelection();
+			TableItem[] tableItems = fTableViewer.getTable().getItems();
 			TableItem selectedRow = null;
 			int colNum = -1;
+			int numCol = fTableViewer.getColumnProperties().length;
 			
-			if (selections.length > 0)
+			for (int j=0; j<tableItems.length; j++)
 			{
-				selectedRow = selections[0];
-				
-				int numCol = fTableViewer.getColumnProperties().length;
-				
+				TableItem item = tableItems[j];
 				for (int i=0; i<numCol; i++)
 				{
-					Rectangle bound = selectedRow.getBounds(i);
+					Rectangle bound = item.getBounds(i);
 					if (bound.contains(e.x, e.y))
 					{
 						colNum = i;
+						selectedRow = item;
 						break;
 					}
 				}
@@ -739,8 +738,10 @@ public class ViewTabCursorManager
 		this.fRow = row;
 		this.fCol = col;
 
+		MemoryViewUtil.linuxWorkAround(fTable);
 		fTableCursor.setSelection(row, col);
-
+		MemoryViewUtil.linuxWorkAround(fTable);
+		
 		if (showCursor)
 			showCursor();
 	}

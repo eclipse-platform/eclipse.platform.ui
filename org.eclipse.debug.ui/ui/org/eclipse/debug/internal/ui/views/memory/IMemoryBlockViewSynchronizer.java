@@ -71,11 +71,12 @@ public interface IMemoryBlockViewSynchronizer
 	 * A change event will be fired if the value provided is different from the
 	 * value stored in the synchronizer.  Otherwise, no change event will be
 	 * fired.
+	 * @param eventSrc
 	 * @param memoryBlock
 	 * @param propertyId
 	 * @param value
 	 */
-	public void setSynchronizedProperty(IMemoryBlock memoryBlock, String propertyId, Object value);
+	public void setSynchronizedProperty(Object eventSrc, IMemoryBlock memoryBlock, String propertyId, Object value);
 	
 	/**
 	 * Get the property from the synchronizer for a memory block

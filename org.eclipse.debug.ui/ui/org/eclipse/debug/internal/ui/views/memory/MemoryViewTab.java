@@ -114,12 +114,15 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	
 	private int fBytePerLine;								// number of bytes per line: 16
 	private int fColumnSize;								// number of bytes per column:  1,2,4,8
+	private int fAddressibleSize;
 	
 	// font change listener
 	private FontChangeListener fFontChangeListener;
 	private TabFolderDisposeListener fTabFolderDisposeListener;
 	
 	private boolean fUpdateTabLabel = true;
+	
+	private EventHandleLock fEvtHandleLock = new EventHandleLock(); 
 
 	private static final int[] ignoreEvents =
 	{
@@ -158,7 +161,36 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		SWT.CTRL,
 		SWT.ALT
 	};
-	private int fAddressibleSize;
+	
+	private class EventHandleLock
+	{
+		Object fOwner;
+		
+		public boolean acquireLock(Object client)
+		{
+			if (fOwner == null)
+			{
+				fOwner = client;
+				return true;
+			}
+			return false;
+		}
+		
+		public boolean releaseLock(Object client)
+		{
+			if (fOwner == client)
+			{
+				fOwner = null;
+				return true;
+			}
+			return false;
+		}
+		
+		public boolean isLocked()
+		{
+			return (fOwner != null);
+		}
+	}
 	
 	private final class TabFolderDisposeListener implements DisposeListener
 	{
@@ -218,7 +250,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 
 		if (fTableViewer != null)
 		{	
-			fTableViewer.getTable().setTopIndex(TABLE_PREBUFFER);
+			setTopIndex(fTableViewer.getTable(),  TABLE_PREBUFFER);
 		}
 		
 		addViewTabToSynchronizer();
@@ -255,6 +287,13 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 				displayError(e);				
 			}
 		}
+		
+		if (!isDisplayingError())
+		{
+			updateSyncColSize();
+			updateSyncTopAddress(true);
+			updateSyncSelectedAddress(true);
+		}
 	}
 	
 	private void addViewTabToSynchronizer()
@@ -289,15 +328,22 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 */
 	private void updateSyncSelectedAddress(boolean update) {
 		
+		if (!fTabCreated)
+			return;
+		
 		if (update)
-			getMemoryBlockViewSynchronizer().setSynchronizedProperty(getMemoryBlock(), IMemoryViewConstants.PROPERTY_SELECTED_ADDRESS, fSelectedAddress);
+			getMemoryBlockViewSynchronizer().setSynchronizedProperty(this, getMemoryBlock(), IMemoryViewConstants.PROPERTY_SELECTED_ADDRESS, fSelectedAddress);
 	}
 
 	/**
 	 * update column size in synchronizer
 	 */
 	private void updateSyncColSize() {
-		getMemoryBlockViewSynchronizer().setSynchronizedProperty(getMemoryBlock(), IMemoryViewConstants.PROPERTY_COL_SIZE, new Integer(fColumnSize));
+		
+		if (!fTabCreated)
+			return;
+		
+		getMemoryBlockViewSynchronizer().setSynchronizedProperty(this, getMemoryBlock(), IMemoryViewConstants.PROPERTY_COL_SIZE, new Integer(fColumnSize));
 	}
 	
 	/**
@@ -305,9 +351,12 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 */
 	protected void updateSyncTopAddress(boolean updateToSynchronizer) {
 		
+		if (!fTabCreated)
+			return;
+		
 		if (updateToSynchronizer)
 		{
-			getMemoryBlockViewSynchronizer().setSynchronizedProperty(getMemoryBlock(), IMemoryViewConstants.PROPERTY_TOP_ADDRESS, getTopVisibleAddress());
+			getMemoryBlockViewSynchronizer().setSynchronizedProperty(this, getMemoryBlock(), IMemoryViewConstants.PROPERTY_TOP_ADDRESS, getTopVisibleAddress());
 		}
 	}
 
@@ -436,7 +485,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	private Control createFolderPage(AbstractMemoryRenderer renderer) {
 		
 		contentProvider = new MemoryViewContentProvider(fMemoryBlock, fTabItem);
-		fTableViewer= new TableViewer(fTabItem.getParent(),  SWT.FULL_SELECTION | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.HIDE_SELECTION | SWT.BORDER);
+		fTableViewer= new TableViewer(fTabItem.getParent(),   SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.HIDE_SELECTION | SWT.BORDER);
 		fTableViewer.setContentProvider(contentProvider);		
 		
 		if (renderer != null)
@@ -726,14 +775,14 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 */
 	private void refreshTableViewer() {
 		
-		int i = fTableViewer.getTable().getTopIndex();
+		int i = getTopVisibleIndex(fTableViewer.getTable());
 		
 		// refresh if the view is already created
 		fTableViewer.refresh();
 		
 		// if top index has changed, restore it
-		if (i != fTableViewer.getTable().getTopIndex())
-			fTableViewer.getTable().setTopIndex(i);
+		if (i != getTopVisibleIndex(fTableViewer.getTable()))
+			setTopIndex(fTableViewer.getTable(),  i);
 	}
 
 	private void setColumnHeadings()
@@ -902,19 +951,26 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 */
 	protected void updateTableSelection()
 	{
+		
+		MemoryViewUtil.linuxWorkAround(fTableViewer.getTable());
+		
 		// do not update selection if address is out of range
 		// otherwise, screws up top index
 		if (isAddressOutOfRange(fSelectedAddress))
 			return;
 		
 		int index = findAddressIndex(getTopVisibleAddress());
-
 		// update table selection
 		fTableViewer.getTable().setSelection(fCursorManager.fRow);
+	
+		
+		MemoryViewUtil.linuxWorkAround(fTableViewer.getTable());
 		
 		// if top index has changed, restore
-		if (fTableViewer.getTable().getTopIndex() != index)
-			fTableViewer.getTable().setTopIndex(index);
+		if (getTopVisibleIndex(fTableViewer.getTable()) != index)
+			setTopIndex(fTableViewer.getTable(),  index);
+		
+		MemoryViewUtil.linuxWorkAround(fTableViewer.getTable());
 	}
 	
 	/**
@@ -1015,6 +1071,10 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 						case SWT.PAGE_DOWN :
 						case SWT.ARROW_DOWN :
 						case SWT.ARROW_RIGHT:
+							
+							if (!fEvtHandleLock.acquireLock(this))
+								return;
+							
 							// If blocking an extended memory block,
 							// check to see if additional memory needs to be obtained.
 							if (fMemoryBlock instanceof IMemoryBlockExtension)
@@ -1032,6 +1092,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 									updateSyncSelectedAddress(true);
 									
 									fCursorManager.setCursorFocus();
+									fEvtHandleLock.releaseLock(this);
 									break;
 								}
 								//if we are approaching the limits of the currently loaded memory, reload the table
@@ -1044,6 +1105,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 										if (topAddress.equals(BigInteger.valueOf(0)))
 										{
 											// do not reload if we are already at zero
+											fEvtHandleLock.releaseLock(this);
 											break;
 										}
 										reloadTable(BigInteger.valueOf(0), false);
@@ -1077,7 +1139,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 									// when it is selected
 								}
 						}
-
+							fEvtHandleLock.releaseLock(this);
 							break;
 						default :
 							
@@ -1112,7 +1174,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			return BigInteger.valueOf(0);
 
 		Table table = fTableViewer.getTable();
-		int topIndex = table.getTopIndex();
+		int topIndex = getTopVisibleIndex(table);
 
 		if (topIndex < 1) { topIndex = 0; }
 
@@ -1131,7 +1193,6 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			}
 			
 			BigInteger bigInt = new BigInteger(calculatedAddress, 16);
-			
 			return bigInt;
 		}
 		return BigInteger.valueOf(0);
@@ -1171,7 +1232,6 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			numLines = getNumberOfVisibleLines()+TABLE_PREBUFFER+TABLE_POSTBUFFER;
 		}
 
-
 		// tell content provider to get memory and refresh
 		contentProvider.getMemoryToFitTable(topBufferAddress, numLines, updateDelta);
 		contentProvider.forceRefresh();
@@ -1183,7 +1243,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			
 			if (topIdx != -1)
 			{
-				table.setTopIndex(topIdx);
+				setTopIndex(table, topIdx);
 			}
 			
 			// TODO:  Revisit this part again
@@ -1203,8 +1263,10 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 				
 				if (newIdx != topIdx  && topIdx != -1)
 				{	
-					table.setTopIndex(topIdx);
+					setTopIndex(table, topIdx);
 				}
+				
+				MemoryViewUtil.linuxWorkAround(table);
 							
 				if (isAddressVisible(fSelectedAddress))
 				{
@@ -1223,6 +1285,8 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		
 		// try to display the table every time it's reloaded
 		displayTable();
+		
+		MemoryViewUtil.linuxWorkAround(fTableViewer.getTable());
 	}
 	
 	private int findAddressIndex(BigInteger address)
@@ -1283,19 +1347,22 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		// setting cursor selection or table selection changes
 		// the top index of the table... and may mess up top index in the talbe
 		// save up old top index
-		int oldTop = fTableViewer.getTable().getTopIndex();
+		int oldTop = getTopVisibleIndex(fTableViewer.getTable());
 		
 		// update cursor position and table selection
 		fCursorManager.updateCursorPosition(row, col, isAddressVisible(fSelectedAddress));
 		updateTableSelection();
 
 		// reset top index to make sure the table is not moved
-		fTableViewer.getTable().setTopIndex(oldTop);
+		if (!MemoryViewUtil.isLinuxGTK())
+			setTopIndex(fTableViewer.getTable(),  oldTop);
 		
 		if (isAddressVisible(fSelectedAddress))
 		{	
 			fCursorManager.showCursor();
-			fTableViewer.getTable().deselectAll();
+			
+			if (!MemoryViewUtil.isLinuxGTK())
+				fTableViewer.getTable().deselectAll();
 		}
 		else
 			fCursorManager.hideCursor();
@@ -1423,7 +1490,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 				if (table.isDisposed())
 					return;
 				
-				int topIndex = table.getTopIndex();
+				int topIndex = getTopVisibleIndex(table);
 				if (topIndex < 0)
 				{
 					return;
@@ -1468,14 +1535,18 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 					// since the position may change
 					
 					updateCursorPosition();
-					fTableViewer.getTable().deselectAll();
+
+					// this is commented out to reduce the amount
+					// of flashing happening on Linux GTK
+					if (!MemoryViewUtil.isLinuxGTK())
+						fTableViewer.getTable().deselectAll();
 					
 					if (!getTopVisibleAddress().equals(oldTopAddress))
 					{	
 						int i = findAddressIndex(oldTopAddress);
 						
 						if (i != -1)
-							fTableViewer.getTable().setTopIndex(i);
+							setTopIndex(fTableViewer.getTable(),  i);
 					}
 				}
 				
@@ -1488,8 +1559,14 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 * Handle scrollling and reload table if necessary
 	 * @param event
 	 */
-	private void handleScrollBarSelection(SelectionEvent event)
-	{	
+	private synchronized void handleScrollBarSelection(SelectionEvent event)
+	{
+		if (fEvtHandleLock.isLocked())
+			return;
+		
+		if (!fTabCreated)
+			return;
+		
 		if (!(fMemoryBlock instanceof IMemoryBlockExtension))
 		{
 			// if not instance of extended memory block
@@ -1503,7 +1580,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		
 		// Must run on UI Thread asynchronously
 		// Otherwise, another event could have been recevied before the reload is completed
-		Display.getDefault().asyncExec(new Runnable()
+		Display.getDefault().syncExec(new Runnable()
 		{
 			public void run()
 			{
@@ -1511,6 +1588,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 				{
 					switch (evt.detail)
 					{
+						case 0:
 						case SWT.DRAG :
 						case SWT.END :
 						case SWT.PAGE_DOWN :
@@ -1518,6 +1596,10 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 						case SWT.HOME :
 						case SWT.PAGE_UP :
 						case SWT.ARROW_UP :
+							
+							if (!fEvtHandleLock.acquireLock(this))
+								return;
+							
 							if (fMemoryBlock instanceof IMemoryBlockExtension)
 							{
 								updateSyncTopAddress(true);
@@ -1525,12 +1607,14 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 								if (needMoreLines())
 								{
 									BigInteger topAddress = getTopVisibleAddress();
+									
 									//if we're near 0, just go there immediately (hard stop at 0, don't try to scroll/wrap)
 									if (topAddress.compareTo(BigInteger.valueOf(96)) <= 0)
 									{
 										if (topAddress.equals(BigInteger.valueOf(0)))
 										{
 											// do not reload if we are already at zero
+											fEvtHandleLock.releaseLock(this);
 											break;
 										}
 										reloadTable(BigInteger.valueOf(0), false);
@@ -1548,6 +1632,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 								updateCursorPosition();
 								fCursorManager.setCursorFocus();
 							}
+							fEvtHandleLock.releaseLock(this);
 							break;
 						default:
 							break;
@@ -1819,7 +1904,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 				// go to top of the table 
 				BigInteger address = BigInteger.valueOf(mem.getStartAddress());
 				setSelectedAddress(address, true);
-				getTableViewer().getTable().setTopIndex(0);
+				setTopIndex(fTableViewer.getTable(),  0);
 				updateCursorPosition();
 				updateTableSelection();
 				setCursorFocus();
@@ -1938,17 +2023,17 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 */
 	public void setFont(Font font)
 	{	
-		int oldIdx = fTableViewer.getTable().getTopIndex();
+		int oldIdx = getTopVisibleIndex(fTableViewer.getTable());
 		
 		// BUG in table, if font is changed when table is not starting
 		// from the top, causes table gridline to be misaligned.
-		fTableViewer.getTable().setTopIndex(0);
+		setTopIndex(fTableViewer.getTable(),  0);
 		
 		// set font
 		fTableViewer.getTable().setFont(font);
 		fCursorManager.setFont(font);
 		
-		fTableViewer.getTable().setTopIndex(oldIdx);
+		setTopIndex(fTableViewer.getTable(),  oldIdx);
 		
 		packColumns();
 		
@@ -2012,6 +2097,9 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			return;
 		}
 		
+		if (!fEvtHandleLock.acquireLock(this))
+			return;
+		
 		try
 		{
 			if (!fSelectedAddress.equals(address))
@@ -2034,6 +2122,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		{
 			displayError(e);
 		}
+		fEvtHandleLock.releaseLock(this);
 	}
 	
 	/**
@@ -2046,6 +2135,9 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		{
 			// do not handle event if view tab is disabled
 			if (!isEnabled())
+				return;
+			
+			if (!fEvtHandleLock.acquireLock(this))
 				return;
 			
 			if (!address.equals(getTopVisibleAddress()))
@@ -2074,7 +2166,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 						if (index >= 3 && table.getItemCount() - (index+getNumberOfVisibleLines()) >= 3)
 						{
 							// update cursor position
-							table.setTopIndex(index);
+							setTopIndex(table, index);
 							
 							if (!isAddressVisible(fSelectedAddress))
 							{
@@ -2084,7 +2176,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 							{
 								updateCursorPosition();
 								updateTableSelection();
-								table.setTopIndex(index);
+								setTopIndex(table,  index);
 								
 								// BUG 64831:  to get around SWT problem with
 								// the table cursor not painted properly after
@@ -2127,7 +2219,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 					
 					if (index >= 0)
 					{
-						table.setTopIndex(index);
+						setTopIndex(table,  index);
 								
 						if (!isAddressVisible(fSelectedAddress))
 						{
@@ -2137,7 +2229,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 						{
 							updateCursorPosition();
 							updateTableSelection();
-							table.setTopIndex(index);
+							setTopIndex(table,  index);
 							
 							// BUG 64831:  to get around SWT problem with
 							// the table cursor not painted properly after
@@ -2153,6 +2245,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		{
 			displayError(e);
 		}
+		fEvtHandleLock.releaseLock(this);
 	}
 	
 	/**
@@ -2238,9 +2331,12 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ISynchronizedMemoryBlockView#propertyChanged(java.lang.String, java.lang.Object)
 	 */
-	public void propertyChanged(String propertyName, Object value)
+	public void propertyChanged(Object evtSrc, String propertyName, Object value)
 	{	
 		if (isDisplayingError())
+			return;
+		
+		if (evtSrc == this)
 			return;
 		
 		if (propertyName.equals(IMemoryViewConstants.PROPERTY_SELECTED_ADDRESS) && value instanceof BigInteger)
@@ -2441,6 +2537,29 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		// an error and if it's enabled
 		if (!isDisplayingError() && enabled && fEnabled)
 			synchronize();
+	}
+	
+	private static int getTopVisibleIndex(Table table)
+	{
+		MemoryViewUtil.linuxWorkAround(table);
+		int index = table.getTopIndex();
+		
+		TableItem item = table.getItem(index);
+		
+		MemoryViewUtil.linuxWorkAround(table);
+		while (item.getBounds(0).y < 0)
+		{
+			index++;
+			item = table.getItem(index);
+		}
+		
+		return index;
+	}
+	
+	private static void  setTopIndex(Table table, int index)
+	{
+		MemoryViewUtil.linuxWorkAround(table);
+		table.setTopIndex(index);
 	}
 }	
 

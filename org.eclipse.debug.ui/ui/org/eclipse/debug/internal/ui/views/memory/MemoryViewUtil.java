@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IMemoryBlockManager;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -20,6 +21,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 
 /**
  * Util class for Memory View
@@ -97,4 +99,24 @@ public class MemoryViewUtil {
 	{
 		return DebugPlugin.getDefault().getMemoryBlockManager();
 	}
+
+
+	static void linuxWorkAround(Table table)
+	{
+		if (table == null)
+			return;
+		
+		if (table.isDisposed())
+			return;
+		
+		if(isLinuxGTK())
+			while(table.getDisplay().readAndDispatch()){}
+	}
+	
+	static boolean isLinuxGTK()
+	{
+		String ws = Platform.getWS();
+		return ws.equals(Platform.WS_GTK);
+	}
+	
 }

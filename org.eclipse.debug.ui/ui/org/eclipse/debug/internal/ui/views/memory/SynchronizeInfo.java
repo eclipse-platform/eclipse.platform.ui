@@ -49,12 +49,14 @@ public class SynchronizeInfo
 		ISynchronizedMemoryBlockView fView;
 		String fPropertyId;
 		Object fValue;
+		Object fSrc;
 		
-		PropertyChangeNotifier(ISynchronizedMemoryBlockView view, String propertyId, Object value)
+		PropertyChangeNotifier(ISynchronizedMemoryBlockView view, String propertyId, Object value, Object eventSrc)
 		{
 			fView = view;
 			fPropertyId = propertyId;
 			fValue = value;
+			fSrc = eventSrc;
 		}
 		
 		/* (non-Javadoc)
@@ -68,7 +70,7 @@ public class SynchronizeInfo
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
 		public void run() throws Exception {
-			fView.propertyChanged(fPropertyId, fValue);
+			fView.propertyChanged(fSrc, fPropertyId, fValue);
 		}
 	}
 	
@@ -202,7 +204,7 @@ public class SynchronizeInfo
 	 * Fire property change events
 	 * @param propertyId
 	 */
-	public void firePropertyChanged(final String propertyId)
+	public void firePropertyChanged(final Object evtSrc, final String propertyId)
 	{
 		if (!DebugUIPlugin.getDefault().getMemoryBlockViewSynchronizer().isEnabled())
 			return;
@@ -230,7 +232,7 @@ public class SynchronizeInfo
 						
 						// if view is enabled and if it's a valid property
 						if (view.isEnabled() && listener.isValidProperty(propertyId)){
-							PropertyChangeNotifier notifier = new PropertyChangeNotifier(view, propertyId, value);
+							PropertyChangeNotifier notifier = new PropertyChangeNotifier(view, propertyId, value, evtSrc);
 							Platform.run(notifier);	
 						}
 					}

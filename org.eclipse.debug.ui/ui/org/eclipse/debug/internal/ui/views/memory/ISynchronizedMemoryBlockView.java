@@ -33,7 +33,7 @@ public interface ISynchronizedMemoryBlockView
 	 * @param propertyId
 	 * @param value
 	 */
-	public void propertyChanged(String propertyId, Object value);
+	public void propertyChanged(Object eventSrc, String propertyId, Object value);
 	
 	/**
 	 * Return the value of a property.  Return null if the property

@@ -110,7 +110,7 @@ public class MemoryBlockViewSynchronizer implements IMemoryBlockViewSynchronizer
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IMemoryBlockViewSynchronizer#setSynchronizedProperty(org.eclipse.debug.ui.ISynchronizedMemoryBlockView, java.lang.String, java.lang.Object)
 	 */
-	public void setSynchronizedProperty(IMemoryBlock memoryBlock, String propertyId, Object value)
+	public void setSynchronizedProperty(Object eventSrc, IMemoryBlock memoryBlock, String propertyId, Object value)
 	{
 		// find the synchronize info object for the memory block
 		SynchronizeInfo info = (SynchronizeInfo)fSynchronizeInfo.get(memoryBlock);
@@ -130,7 +130,7 @@ public class MemoryBlockViewSynchronizer implements IMemoryBlockViewSynchronizer
 			// if the value has never been added to the info object
 			// set the property and fire a change event
 			info.setProperty(propertyId, value);
-			info.firePropertyChanged(propertyId);
+			info.firePropertyChanged(eventSrc, propertyId);
 			return;
 		}
 		else if (!oldValue.equals(value))
@@ -138,7 +138,7 @@ public class MemoryBlockViewSynchronizer implements IMemoryBlockViewSynchronizer
 			// if the value has changed
 			// set the property and fire a change event
 			info.setProperty(propertyId, value);
-			info.firePropertyChanged(propertyId);
+			info.firePropertyChanged(eventSrc, propertyId);
 		}
 	}
 

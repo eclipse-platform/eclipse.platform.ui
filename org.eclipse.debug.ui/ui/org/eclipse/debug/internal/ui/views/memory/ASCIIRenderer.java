@@ -49,7 +49,7 @@ public class ASCIIRenderer extends AbstractTextRenderer{
 		byte[] bytes =  super.getBytes(renderingId, address, currentValues, data);
 		
 		// undo the replacement of 1's to 0's.
-		for (int i=0; i<bytes.length; i++)
+		for (int i=0; i<bytes.length && i < currentValues.length; i++)
 		{
 			if (bytes[i] == 1 && currentValues[i].getValue() == 0)
 			{
