@@ -13,18 +13,26 @@ import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * IWorkbenchPartProgressService is an IProgressService that adds API for 
- * context sensitive jobs.
+ * jobs that change the state in a PartSite while they are being 
+ * run.
+ * 
+ * WorkbenchParts may access an instance of IWorkbenchSiteProgressService
+ * by calling
+ * <code>getSite.getAdapter(IWorkbenchSiteProgressService.class);</code>
  * 
  * This interface is not intended to be implemented by client
  * plug-ins.
  * 
+ * @see WorkbenchPart.getJobChangeListener()
  * @since 3.0
  */
 public interface IWorkbenchSiteProgressService extends IProgressService {
 	
 	/**
-	 * Schedule the job in the progress service. Ask the pane and the view
-	 * part for job listeners and add them if required.
+	 * Jobs scheduled with this method will cause the part's presentation 
+	 * to be changed to indicate that the part is busy and in a transient 
+	 * state until the job completes. Parts can also add customized busy 
+	 * indication by overriding <code>WorkbenchPart.getJobChangeListener</code>.
 	 * @param job. The job to schedule
 	 * @param delay. The delay in scheduling.
 	 * @see Job.schedule(long)
@@ -32,15 +40,18 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	public void schedule(Job job, long delay);
 	
 	/**
-	 * Schedule the job in the progress service. Ask the pane and the view
-	 * part for job listeners and add them if required.
+	 * Jobs scheduled with this method will cause the part's presentation 
+	 * to be changed to indicate that the part is busy and in a transient 
+	 * state until the job completes. Parts can also add customized busy 
+	 * indication by overriding <code>WorkbenchPart.getJobChangeListener</code>.
 	 * @param job. The job to schedule
 	 * @see Job.schedule()
 	 */
 	public void schedule(Job job);
 	
 	/**
-	 * Use the half busy cursor in this part during the job.
+	 * Use the half busy cursor in this part during the execution
+	 * of this job.
 	 * @param job
 	 */
 	public void useHalfBusyCursor(Job job);

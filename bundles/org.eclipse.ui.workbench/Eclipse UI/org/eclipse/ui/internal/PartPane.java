@@ -283,26 +283,20 @@ public int getMinimumHeight() {
 	if (control == null || control.isDisposed())
 		return super.getMinimumHeight();
 	
-	// don't assume every future part will have top controls
-	boolean top = false;
-	
 	/* compute title bar height; this should be done by computeTrim 
 	 * to correctly handle seperate top center.
 	 */
 	int leftHeight = 0;
 	if (control.getTopLeft() != null && !control.getTopLeft().isDisposed()) {
 		leftHeight = control.getTopLeft().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-		top = true;
 	}
 	int centerHeight = 0;
 	if (control.getTopCenter() != null && !control.getTopCenter().isDisposed()) {
 		centerHeight = control.getTopCenter().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-		top=true;
 	}
 	int rightHeight = 0;
 	if (control.getTopRight() != null && !control.getTopRight().isDisposed()) {
 		rightHeight = control.getTopRight().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-		top = true;
 	}
 	
 	int topHeight = Math.max(leftHeight, Math.max(centerHeight, rightHeight));
@@ -547,7 +541,7 @@ protected void doDock() {
  * Return an IJobChangeListener for jobs run in this pane.
  * @return IJobChangeListener or <code>null</code>.
  */
-public IJobChangeListener getJobChangeListener(){
+IJobChangeListener getJobChangeListener(){
 	return new JobChangeAdapter(){
 		
 		/**
@@ -556,8 +550,8 @@ public IJobChangeListener getJobChangeListener(){
 		 * @return PartTabFolder or null.
 		 */
 		private PartTabFolder getFolder(){
-			ILayoutContainer container = getContainer();
-			if(container instanceof PartTabFolder)
+			ILayoutContainer layoutContainer = getContainer();
+			if(layoutContainer instanceof PartTabFolder)
 				return (PartTabFolder) container;
 			else
 				return null;

@@ -275,10 +275,13 @@ protected void setTitleToolTip(String text) {
 }
 /**
  * Return an IJobChangeListener for jobs that have been
- * designated as running in this part.
+ * designated as running in this part in the IWorkbenchPartProgressService
+ * for the PartSite.
  * @return IJobChangeListener or <code>null</code>.
+ * @see IWorkbenchSiteProgressService
+ * @since 3.0
  */
-public IJobChangeListener getJobChangeListener(){
+protected IJobChangeListener getJobChangeListener(){
 	return null;
 }
 
