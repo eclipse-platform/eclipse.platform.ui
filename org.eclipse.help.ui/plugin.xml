@@ -1,183 +1,143 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- ========================================================== -->
-<!-- This is a Default implementation of the Eclipse Workbench  -->
-<!-- Help System. It uses the extension points defined by       -->
-<!-- the base help system (id="org.eclipse.help").          -->
+<!-- Help System UI plugin                                      -->
 <!-- ========================================================== -->
 
 <plugin
-   name = "%help_system_plugin_name"
-   id = "org.eclipse.help.ui"
-   version = "2.0"
-   provider-name = "International Business Machines Corp."
-   class="org.eclipse.help.internal.ui.WorkbenchHelpPlugin">
+	name = "%help_system_plugin_name"
+	id = "org.eclipse.help.ui"
+	version = "2.0"
+	provider-name = "International Business Machines Corp."
+	class="org.eclipse.help.internal.ui.WorkbenchHelpPlugin">
 
-   <requires>
-	<import plugin="org.eclipse.core.runtime"/>	
-	<import plugin="org.eclipse.ui"/>
-	<import plugin="org.eclipse.help"/>
-	<import plugin="org.apache.xerces"/>
-	<import plugin="org.eclipse.core.resources"/>
-    <import plugin="org.eclipse.search"/>
-   </requires>
+	<requires>
+		<import plugin="org.apache.xerces"/>
+		<import plugin="org.eclipse.core.resources"/>
+		<import plugin="org.eclipse.core.runtime"/>	
+		<import plugin="org.eclipse.help"/>
+    	<import plugin="org.eclipse.search"/>
+		<import plugin="org.eclipse.ui"/>
+	</requires>
 
+	<runtime>
+		<library name="helpworkbench.jar">
+			<export name="*"/>
+		</library>
+	</runtime>
 
-   <runtime>
-      <library name="helpworkbench.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-
-
-   <!-- ========================================================================== -->
-   <!-- Internal configuration for this plugin                                     -->
-   <!-- ========================================================================== -->
-   <!-- The Help System  --> 
-   <!-- ================ -->
-   <extension point="org.eclipse.help.support">
-      <config class="org.eclipse.help.internal.ui.DefaultHelp"/>
-   </extension>
-
-   <!-- Help system preference page -->
-   <!-- =========================== -->
-   <extension
-      point = "org.eclipse.ui.preferencePages">
-       <page id="org.eclipse.help.workbench.preferencePages.Page1"
-	      class="org.eclipse.help.internal.ui.util.HelpPreferencePage"
-            name="%help_preferences_page_name">
-       </page>
-   </extension>
-
-
-   <!-- Context Help contribution for this plugin  --> 
-   <!-- ========================================== -->
-   <extension point="org.eclipse.help.contexts"> 
-      <contexts file="contexts.xml"/> 
-   </extension>
-  
-   <!-- Define the help menu action set -->
-   <!-- =============================== -->
-   <extension point="org.eclipse.ui.actionSets">
-     <actionSet
-          id="org.eclipse.help.internal.ui.HelpActionSet"
-          label="%help"
-          visible="true">
-
-          <action id="org.eclipse.help.internal.ui.HelpAction"
-                  menubarPath="help/helpEnd"
-                  label="%helpcontents"
-                  class="org.eclipse.help.internal.ui.HelpContentsAction"
-                  icon="icons/view.gif"
-                  tooltip="%openhelpcontents"/>
-             
-     </actionSet>
- </extension>
-
-   <!-- Define the help menu action set -->
-   <!-- =============================== -->
-   <extension point="org.eclipse.ui.actionSets">
-     <actionSet
-          id="org.eclipse.help.internal.ui.HelpActionInfocenter"
-          label="Help Information Center"
-          visible="false">
-
-          <action id="org.eclipse.help.internal.ui.InfocenterAction"
-                  menubarPath="help/helpEnd"
-                  label="%infocenter"
-                  class="org.eclipse.help.internal.ui.InfocenterAction"
-                  icon="icons/infocenter.gif"
-                  tooltip="%openinfocenter"/>
-             
-     </actionSet>
- </extension>
-
-   
-    <!-- =========================================================================== -->
-	<!-- Extension point: org.eclipse.help.ui.browser                                -->
-	<!-- Purpose: Extension point for registering web browser                        -->
-	<!--          by an individual plugin                                            -->
-	<!-- Extension Implementation: must provide implementation of                    -->
-	<!-- IBrowser and IBrowserFactory.                                               -->
-	<!-- Sample usage:                                                               -->
-	<!--   <extension point="org.eclipse.help.ui.browser">                           -->
-	<!--	  	<browser id="org.eclipse.myPackage.myBrowserID"                      -->
-	<!--         	factoryclass="org.eclipse.myPackage.MyBrowserFactory"            -->
-	<!--            name="Browser X" />                                              --> 
-	<!--   </extension>                                                              -->
-	<!-- =========================================================================== -->
+	<!-- Extension points -->
 	<extension-point id="browser" name="%browser_extention_point_name"/>
-   
-	<!-- =========================================================================== -->
-	<!-- Internet Explorer on Windows Browser                                        -->
+
+	<!-- Default Help UI  -->
+   	<extension point="org.eclipse.help.support">
+		<config class="org.eclipse.help.internal.ui.DefaultHelp"/>
+	</extension>
+
+	<!-- Preference pages -->
+	<extension
+		point = "org.eclipse.ui.preferencePages">
+		<page id="org.eclipse.help.workbench.preferencePages.Page1"
+			class="org.eclipse.help.internal.ui.util.HelpPreferencePage"
+			name="%help_preferences_page_name">
+		</page>
+	</extension>
+	<extension
+		point = "org.eclipse.ui.preferencePages">
+		<page id="org.eclipse.help.ui.browsersPreferancePage"
+			name="%browsers_preferences_page_name"
+			class="org.eclipse.help.ui.internal.browser.BrowsersPreferencePage"
+			category="org.eclipse.help.workbench.preferencePages.Page1">
+		</page>
+	</extension>
+
+	<!-- Context Help contribution --> 
+	<extension point="org.eclipse.help.contexts"> 
+		<contexts file="contexts.xml"/> 
+	</extension>
+  
+	<!-- Action Sets -->
+	<extension point="org.eclipse.ui.actionSets">
+		<actionSet
+			id="org.eclipse.help.internal.ui.HelpActionSet"
+			label="%help"
+			visible="true">
+			
+			<action id="org.eclipse.help.internal.ui.HelpAction"
+				menubarPath="help/helpEnd"
+				label="%helpcontents"
+				class="org.eclipse.help.internal.ui.HelpContentsAction"
+				icon="icons/view.gif"
+				tooltip="%openhelpcontents"/>
+				
+		</actionSet>
+	</extension>
+	<extension point="org.eclipse.ui.actionSets">
+		<actionSet
+			id="org.eclipse.help.internal.ui.HelpActionInfocenter"
+			label="Help Information Center"
+			visible="false">
+
+			<action id="org.eclipse.help.internal.ui.InfocenterAction"
+				menubarPath="help/helpEnd"
+				label="%infocenter"
+				class="org.eclipse.help.internal.ui.InfocenterAction"
+				icon="icons/infocenter.gif"
+				tooltip="%openinfocenter"/>
+
+		</actionSet>
+	</extension>
+
+	<!-- WebBrowsers -->
 	<extension point="org.eclipse.help.ui.browser">
 		<browser id="org.eclipse.help.ui.iexplorer"
 			factoryclass="org.eclipse.help.ui.internal.browser.win32.IEFactory"
 			name="%internet_explorer" />
 	</extension>
-
-	<!-- =========================================================================== -->
-	<!-- Mozilla on Linux Browser                                            -->
 	<extension point="org.eclipse.help.ui.browser">
 		<browser id="org.eclipse.help.ui.mozillaLinux"
 			factoryclass="org.eclipse.help.ui.internal.browser.linux.MozillaFactory"
 			name="%mozilla" />
 	</extension>
-
-	<!-- =========================================================================== -->
-	<!-- Netscape on Solaris Browser                                            -->
 	<extension point="org.eclipse.help.ui.browser">
 		<browser id="org.eclipse.help.ui.netscapeSolaris"
 			factoryclass="org.eclipse.help.ui.internal.browser.solaris.NetscapeFactory"
 			name="%netscape4" />
 	</extension>
-
-	<!-- =========================================================================== -->
-	<!-- Netscape on AIX Browser                                            -->
 	<extension point="org.eclipse.help.ui.browser">
 		<browser id="org.eclipse.help.ui.netscapeAIX"
 			factoryclass="org.eclipse.help.ui.internal.browser.aix.NetscapeFactory"
 			name="%netscape4" />
 	</extension>
 
-   <!-- Browsers preference page -->
-   <!-- =========================== -->
-   <extension
-      point = "org.eclipse.ui.preferencePages">
-       <page id="org.eclipse.help.ui.browsersPreferancePage"
-	      name="%browsers_preferences_page_name"
-	      class="org.eclipse.help.ui.internal.browser.BrowsersPreferencePage"
-          category="org.eclipse.help.workbench.preferencePages.Page1">
-       </page>
-   </extension>
-
-   <extension point="org.eclipse.search.searchPages">
-      <page label="%help_search_page"
-   	     class="org.eclipse.help.ui.internal.search.HelpSearchPage"
- 	     icon="icons/searchview.gif" 
-         id="org.eclipse.help.ui.searchPage">
-      </page>
-   </extension>
+	<!-- Search Page -->
+	<extension point="org.eclipse.search.searchPages">
+	<page label="%help_search_page"
+		class="org.eclipse.help.ui.internal.search.HelpSearchPage"
+		id="org.eclipse.help.ui.searchPage">
+		icon="icons/searchview.gif" 
+		</page>
+	</extension>
    
-   <extension id="helpsearchhit"
-      point="org.eclipse.core.resources.markers"
-      name="%helpsearchhitname">
-      <super type="org.eclipse.search.searchmarker"/>
-      <attribute name="href"/>
-      <attribute name="label"/>   
-      <attribute name="resultfof"/>
-      <attribute name="order"/>
-   </extension>
+	<!-- Markers -->
+	<extension point="org.eclipse.core.resources.markers"
+		id="helpsearchhit"
+		name="%helpsearchhitname">
+		<super type="org.eclipse.search.searchmarker"/>
+		<attribute name="href"/>
+		<attribute name="label"/>   
+		<attribute name="resultfof"/>
+		<attribute name="order"/>
+	</extension>
    
-   <extension point="org.eclipse.search.searchResultSorters"> 
-    <sorter 
-        id="org.eclipse.help.ui.helpsearchhitsorter" 
-        pageId="org.eclipse.help.ui.searchPage" 
-        label="%helpsearchhitsorter.label" 
-        tooltip="%helpsearchhitsorter.tooltip" 
-        icon="icons/search_sortmatch.gif" 
-        class="org.eclipse.help.ui.internal.search.HelpSearchSorter"> 
-    </sorter> 
-   </extension> 
+	<extension point="org.eclipse.search.searchResultSorters"> 
+		<sorter id="org.eclipse.help.ui.helpsearchhitsorter" 
+			pageId="org.eclipse.help.ui.searchPage" 
+			label="%helpsearchhitsorter.label" 
+			tooltip="%helpsearchhitsorter.tooltip" 
+			icon="icons/search_sortmatch.gif" 
+			class="org.eclipse.help.ui.internal.search.HelpSearchSorter"> 
+		</sorter> 
+	</extension> 
 
 </plugin>

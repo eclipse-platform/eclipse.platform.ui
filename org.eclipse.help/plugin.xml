@@ -1,85 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- ================================================= -->
-<!-- This is the plugin for user assistance (help).    -->
-<!-- It defines the extension points for help          -->
-<!-- contributions and the help support.               -->
+<!-- Help System plugin                                -->
 <!-- ================================================= -->
 
 <plugin
-   name = "%help_plugin_name"
-   id = "org.eclipse.help"
-   version = "2.0"
-   provider-name = "International Business Machines Corp."
-   class="org.eclipse.help.internal.HelpPlugin">
+	name = "%help_plugin_name"
+	id = "org.eclipse.help"
+	version = "2.0"
+	provider-name = "International Business Machines Corp."
+	class="org.eclipse.help.internal.HelpPlugin">
 
-   <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.apache.xerces"/>
-      <import plugin="org.apache.lucene"/>
-   </requires>
+	<requires>
+		<import plugin="org.apache.lucene"/>
+		<import plugin="org.apache.xerces"/>
+		<import plugin="org.eclipse.core.runtime"/>
+	</requires>
 
-   <runtime>
-      <library name="help.jar">
-        <export name="*"/>
-      </library>
-   </runtime>
+	<runtime>
+		<library name="help.jar">
+			<export name="*"/>
+		</library>
+	</runtime>
 
-   <!-- ========================================================================== -->
-   <!-- Extension point: org.eclipse.help.toc                                      -->
-   <!-- Purpose: Extension point for registering documentation tables of           -->
-   <!--          contents by individual plugins                                    -->
-   <!-- Extension Implementation: must provide one or more table of contents       -->
-   <!--           files describing table of contents for documentation             -->
-   <!-- Sample usage:                                                              -->
-   <!--   <extension point="org.eclipse.help.toc">                                 -->
-   <!--	  	<toc file="infoToc.xml"/>                                              -->
-   <!--   </extension>                                                             -->
-   <!-- ========================================================================== -->
-   <extension-point id="toc" name="%toc_extention_point_name"/>
-
-
-   <!-- ========================================================================== -->
-   <!-- Extension point: org.eclipse.help.support                              -->
-   <!-- Purpose: Extension point for configuring a help system.                    -->
-   <!--          Only one help system can be registered to the platform.           -->
-   <!-- Extension Implementation: must implement org.eclipse.help.IHelp        -->
-   <!-- Sample usage:                                                              -->
-   <!--   <extension point="org.eclipse.help.support">                         -->
-   <!--       	<config class="com.xyzCompany.xyzIHelpImpl"/>                      -->
-   <!--   </extension>                                                             -->
-   <!-- ========================================================================== -->
-   <extension-point id="support" name="%support_extention_point_name"/>
-
-
-   <!-- ========================================================================== -->
-   <!-- Extension point: org.eclipse.help.contexts                             -->
-   <!-- Purpose: Extension point for registering context help contributions        -->
-   <!--          by individual plugins                                             -->
-   <!-- Extension Implementation: must provide one or more manifests files for     -->
-   <!--                           context help descriptions and links              -->
-   <!-- Sample usage:                                                              -->
-   <!--   <extension point="org.eclipse.help.contexts">                        -->
-   <!--       	<contexts file="xyzContexts.xml"/>                                 -->
-   <!--   </extension>                                                             -->
-   <!-- ========================================================================== -->
-   <extension-point id="contexts" name="%contexts_extention_point_name"/>
-
-   <!-- ========================================================================== -->
-   <!--   </extension>                                                             -->
-   <!--       	<config class="com.xyzCompany.xyzAppServerImpl"/>                   -->
-   <!--   <extension point="org.eclipse.help.app-server">                          -->
-   <!-- Sample usage:                                                              -->
-   <!-- Extension Implementation: must implement org.eclipse.help.IAppServer       -->
-   <!--          Only one app server can be registered to the platform.            -->
-   <!-- Purpose: Extension point for configuring an app server (servlet engine).   -->
-   <!-- Extension point: org.eclipse.help.app-server                               -->
-   <!-- ========================================================================== -->
-   <extension-point id="app-server" name="%app_server" />
+	<!-- Extension points -->
+	<extension-point id="app-server" name="%app_server" />
+	<extension-point id="contexts" name="%contexts_extention_point_name"/>
+	<extension-point id="luceneAnalyzer" name="%lucene_analyzer" />
+	<extension-point id="prebuiltIndex" name="%prebuilt_index" />
+	<extension-point id="support" name="%support_extention_point_name"/>
+	<extension-point id="toc" name="%toc_extention_point_name"/>
    
-   <!-- ========================================================================== -->
-   <!--  Help URL protocols                                                        -->
-   <!-- ========================================================================== -->
+	<!--  Help URL protocols -->
 	<extension point="org.eclipse.core.runtime.urlHandlers"> 
 		<handler protocol="help" class="org.eclipse.help.internal.protocols.URLHandler"/> 
 		<handler protocol="search" class="org.eclipse.help.internal.protocols.URLHandler"/> 
@@ -87,39 +39,20 @@
 		<handler protocol="livehelp" class="org.eclipse.help.internal.protocols.URLHandler"/> 
 	</extension> 
 	
-	<!-- For remote install, run this application -->
-	<!-- ======================================== -->
-	<extension id="helpApplication" point="org.eclipse.core.runtime.applications">
+	<!-- Stand-alone help application -->
+	<extension point="org.eclipse.core.runtime.applications" id="helpApplication">
 		<application> 
 			<run class="org.eclipse.help.internal.HelpApplication">
 			</run>
 		</application>
 	</extension>
 
-   <!-- ================================================================ -->
-   <!-- Declares an extension point for pre-built indexes                -->
-   <!-- ================================================================ -->
-   <extension-point id="prebuiltIndex" name="%prebuilt_index" />
-
-	<!-- ================================================================ -->
-	<!-- Declares an extension point for Lucene Text Analyzers            -->
-	<!-- ================================================================ -->
-	<extension-point id="luceneAnalyzer" name="%lucene_analyzer" />
-
-	<!-- ================ -->
-	<!-- English Analyzer -->
-	<!-- ================ -->
-	<extension id="org.eclipse.help.Analyzer_en" point="org.eclipse.help.luceneAnalyzer">
+	<!-- Text Analyzers for search -->
+	<extension point="org.eclipse.help.luceneAnalyzer" id="org.eclipse.help.Analyzer_en">
 		<analyzer locale="en" class="org.eclipse.help.internal.search.Analyzer_en" />
 	</extension>
-	
-	<!-- =============== -->
-	<!-- German Analyzer  -->
-	<!-- =============== -->
-	<extension id="org.eclipse.help.Analyzer_de" point="org.eclipse.help.luceneAnalyzer">
+	<extension point="org.eclipse.help.luceneAnalyzer" id="org.eclipse.help.Analyzer_de">
 		<analyzer locale="de" class="org.apache.lucene.analysis.de.GermanAnalyzer" />
-	</extension>
-   
-   
+	</extension>   
       
 </plugin>
