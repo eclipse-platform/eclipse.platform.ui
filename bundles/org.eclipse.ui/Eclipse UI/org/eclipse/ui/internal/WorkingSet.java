@@ -24,7 +24,7 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	private static final String FACTORY_ID = "org.eclipse.ui.internal.WorkingSetFactory";//$NON-NLS-1$
 	
 	private String name;
-	private IAdaptable[] elements;
+	private ArrayList elements;
 	private String editPageId;
 	private ListenerList propertyChangeListeners = new ListenerList();
 
@@ -59,7 +59,17 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	 * 	false otherwise
 	 */
 	public boolean equals(Object object) {
-		return (object instanceof IWorkingSet) && ((IWorkingSet) object).getName().equals(getName());
+		if (this == object) {
+			return true;
+		}
+		if (object instanceof WorkingSet) {
+			WorkingSet workingSet = (WorkingSet) object;
+			String objectPageId = workingSet.getEditPageId();
+			String pageId = getEditPageId();
+			boolean pageIdEqual = (objectPageId == null && pageId == null) || (objectPageId != null && objectPageId.equals(pageId));
+			return workingSet.getName().equals(getName()) && workingSet.elements.equals(elements) && pageIdEqual;
+		}
+		return false;
 	}
 	/**
 	 * Notify property change listeners about a working set change.
@@ -119,10 +129,7 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	 * @see org.eclipse.ui.IWorkingSet#getElements()
 	 */
 	public IAdaptable[] getElements() {
-		IAdaptable[] result = new IAdaptable[elements.length];
-		System.arraycopy(elements, 0, result, 0, elements.length);
-
-		return result;
+		return (IAdaptable[]) elements.toArray(new IAdaptable[elements.size()]);
 	}
 	/**
 	 * Implements IPersistableElement
@@ -138,7 +145,12 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	 * @return the hash code.
 	 */
 	public int hashCode() {
-		return name.hashCode() & elements.hashCode();
+		int hashCode = name.hashCode() & elements.hashCode();
+		
+		if (editPageId != null) {
+			hashCode &= editPageId.hashCode();
+		}
+		return hashCode;
 	}
 	/** 
 	 * Implements IWorkingSet
@@ -160,14 +172,16 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	public void saveState(IMemento memento) {
 		memento.putString(IWorkbenchConstants.TAG_NAME, name);
 		memento.putString(IWorkbenchConstants.TAG_EDIT_PAGE_ID, editPageId);
-		for (int i = 0; i < elements.length; i++) {
-			IPersistableElement persistable = (IPersistableElement) elements[i].getAdapter(IPersistableElement.class);
+		Iterator iterator = elements.iterator();
+		while (iterator.hasNext()) {
+			IAdaptable adaptable = (IAdaptable) iterator.next();
+			IPersistableElement persistable = (IPersistableElement) adaptable.getAdapter(IPersistableElement.class);
 			if (persistable != null) {
 				IMemento itemMemento = memento.createChild(IWorkbenchConstants.TAG_ITEM);
 				
 				itemMemento.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
 				persistable.saveState(itemMemento);
-			}
+			}	
 		}
 	}
 	/** 
@@ -176,7 +190,7 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	 * @see org.eclipse.ui.IWorkingSet#setElements(IAdaptable[])
 	 */
 	public void setElements(IAdaptable[] newElements) {
-		IAdaptable[] oldElements = elements;
+		IAdaptable[] oldElements = getElements();
 		
 		internalSetElements(newElements);
 		WorkingSetManager workingSetManager = (WorkingSetManager) WorkbenchPlugin.getDefault().getWorkingSetManager();	
@@ -190,11 +204,13 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	 * @param elements the elements to store a copy of in the 
 	 * 	receiver.
 	 */
-	private void internalSetElements(IAdaptable[] elements) {
-		Assert.isNotNull(elements, "Working set elements array must not be null"); //$NON-NLS-1$
+	private void internalSetElements(IAdaptable[] newElements) {
+		Assert.isNotNull(newElements, "Working set elements array must not be null"); //$NON-NLS-1$
 		
-		this.elements = new IAdaptable[elements.length];
-		System.arraycopy(elements, 0, this.elements, 0, elements.length);
+		elements = new ArrayList(newElements.length);
+		for (int i = 0; i < newElements.length; i++) {
+			elements.add(newElements[i]);
+		}
 	}
 	/**
 	 * Sets the id of the working set page that was used to 
