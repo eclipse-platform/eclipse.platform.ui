@@ -56,6 +56,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.actions.ClearOutputAction;
@@ -174,18 +175,18 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 			return;
 		}
 		if (doc.isReadOnly()) {
-			menu.add((IAction)fGlobalActions.get(IWorkbenchActionConstants.COPY));
-			menu.add((IAction)fGlobalActions.get(IWorkbenchActionConstants.SELECT_ALL));						
+			menu.add((IAction)fGlobalActions.get(ActionFactory.COPY.getId()));
+			menu.add((IAction)fGlobalActions.get(ActionFactory.SELECT_ALL.getId()));						
 		} else {
-			updateAction(IWorkbenchActionConstants.PASTE);
-			menu.add((IAction)fGlobalActions.get(IWorkbenchActionConstants.CUT));
-			menu.add((IAction)fGlobalActions.get(IWorkbenchActionConstants.COPY));
-			menu.add((IAction)fGlobalActions.get(IWorkbenchActionConstants.PASTE));
-			menu.add((IAction)fGlobalActions.get(IWorkbenchActionConstants.SELECT_ALL));
+			updateAction(ActionFactory.PASTE.getId());
+			menu.add((IAction)fGlobalActions.get(ActionFactory.CUT.getId()));
+			menu.add((IAction)fGlobalActions.get(ActionFactory.COPY.getId()));
+			menu.add((IAction)fGlobalActions.get(ActionFactory.PASTE.getId()));
+			menu.add((IAction)fGlobalActions.get(ActionFactory.SELECT_ALL.getId()));
 		}
 
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
-		menu.add((IAction)fGlobalActions.get(IWorkbenchActionConstants.FIND));
+		menu.add((IAction)fGlobalActions.get(ActionFactory.FIND.getId()));
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE));
 		fFollowLinkAction.setEnabled(fFollowLinkAction.getHyperLink() != null);
 		menu.add(fFollowLinkAction);
@@ -261,26 +262,26 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
 		action.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
 		action.setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT_HOVER));
-		setGlobalAction(actionBars, IWorkbenchActionConstants.CUT, action);
+		setGlobalAction(actionBars, ActionFactory.CUT.getId(), action);
 		action= new TextViewerAction(getConsoleViewer(), ITextOperationTarget.COPY);
 		action.configureAction(DebugUIViewsMessages.getString("ConsoleView.&Copy@Ctrl+C_6"), DebugUIViewsMessages.getString("ConsoleView.Copy_7"), DebugUIViewsMessages.getString("ConsoleView.Copy_7")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		action.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
 		action.setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));		
-		setGlobalAction(actionBars, IWorkbenchActionConstants.COPY, action);
+		setGlobalAction(actionBars, ActionFactory.COPY.getId(), action);
 		action= new TextViewerAction(getConsoleViewer(), ITextOperationTarget.PASTE);
 		action.configureAction(DebugUIViewsMessages.getString("ConsoleView.&Paste@Ctrl+V_9"), DebugUIViewsMessages.getString("ConsoleView.Paste_10"), DebugUIViewsMessages.getString("ConsoleView.Paste_Clipboard_Text_11")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		action.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
 		action.setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_HOVER));		
-		setGlobalAction(actionBars, IWorkbenchActionConstants.PASTE, action);
+		setGlobalAction(actionBars, ActionFactory.PASTE.getId(), action);
 		action= new TextViewerAction(getConsoleViewer(), ITextOperationTarget.SELECT_ALL);
 		action.configureAction(DebugUIViewsMessages.getString("ConsoleView.Select_&All@Ctrl+A_12"), DebugUIViewsMessages.getString("ConsoleView.Select_All"), DebugUIViewsMessages.getString("ConsoleView.Select_All")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-		setGlobalAction(actionBars, IWorkbenchActionConstants.SELECT_ALL, action);
+		setGlobalAction(actionBars, ActionFactory.SELECT_ALL.getId(), action);
 		
 		//XXX Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.DebugUIViewsMessages"); //$NON-NLS-1$
-		setGlobalAction(actionBars, IWorkbenchActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", getConsoleView())); //$NON-NLS-1$
+		setGlobalAction(actionBars, ActionFactory.FIND.getId(), new FindReplaceAction(bundle, "find_replace_action.", getConsoleView())); //$NON-NLS-1$
 	
 		action= new TextViewerGotoLineAction(getConsoleViewer());
 		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, action);
@@ -312,10 +313,10 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 		fTerminate = new ConsoleTerminateAction(getConsole());
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		
-		fSelectionActions.add(IWorkbenchActionConstants.CUT);
-		fSelectionActions.add(IWorkbenchActionConstants.COPY);
-		fSelectionActions.add(IWorkbenchActionConstants.PASTE);
-		fSelectionActions.add(IWorkbenchActionConstants.FIND);
+		fSelectionActions.add(ActionFactory.CUT.getId());
+		fSelectionActions.add(ActionFactory.COPY.getId());
+		fSelectionActions.add(ActionFactory.PASTE.getId());
+		fSelectionActions.add(ActionFactory.FIND.getId());
 	}
 	
 	protected void updateSelectionDependentActions() {
@@ -472,7 +473,7 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 	 */
 	public void textChanged(TextEvent event) {
 		// update the find replace action if the document length is > 0
-		IUpdate findReplace = (IUpdate)fGlobalActions.get(IWorkbenchActionConstants.FIND);
+		IUpdate findReplace = (IUpdate)fGlobalActions.get(ActionFactory.FIND.getId());
 		if (findReplace != null) {
 			findReplace.update();
 		}

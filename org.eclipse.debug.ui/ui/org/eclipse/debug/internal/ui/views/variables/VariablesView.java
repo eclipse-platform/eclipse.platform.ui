@@ -97,6 +97,7 @@ import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.actions.TextViewerAction;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -318,8 +319,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	protected static final String DETAIL_SELECT_ALL_ACTION = SELECT_ALL_ACTION + ".Detail"; //$NON-NLS-1$
 	protected static final String VARIABLES_SELECT_ALL_ACTION=  SELECT_ALL_ACTION + ".Variables"; //$NON-NLS-1$
 	
-	protected static final String DETAIL_COPY_ACTION = IWorkbenchActionConstants.COPY + ".Detail"; //$NON-NLS-1$
-	protected static final String VARIABLES_COPY_ACTION=  IWorkbenchActionConstants.COPY + ".Variables"; //$NON-NLS-1$
+	protected static final String DETAIL_COPY_ACTION = ActionFactory.COPY.getId() + ".Detail"; //$NON-NLS-1$
+	protected static final String VARIABLES_COPY_ACTION=  ActionFactory.COPY.getId() + ".Variables"; //$NON-NLS-1$
 
 	protected static final String LOGICAL_STRUCTURE_TYPE_PREFIX = "VAR_LS_"; //$NON-NLS-1$
 	
@@ -784,20 +785,20 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.CUT);
 		textAction.configureAction(VariablesViewMessages.getString("VariablesView.Cu&t_11"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		setAction(IWorkbenchActionConstants.CUT, textAction);
+		setAction(ActionFactory.CUT.getId(), textAction);
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.PASTE);
 		textAction.configureAction(VariablesViewMessages.getString("VariablesView.&Paste_14"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		setAction(IWorkbenchActionConstants.PASTE, textAction);
+		setAction(ActionFactory.PASTE.getId(), textAction);
 		
 		//XXX Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages"); //$NON-NLS-1$
-		setAction(IWorkbenchActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this));	 //$NON-NLS-1$
+		setAction(ActionFactory.FIND.getId(), new FindReplaceAction(bundle, "find_replace_action.", this));	 //$NON-NLS-1$
 		
-		fSelectionActions.add(IWorkbenchActionConstants.COPY);
-		fSelectionActions.add(IWorkbenchActionConstants.CUT);
-		fSelectionActions.add(IWorkbenchActionConstants.PASTE);
-		updateAction(IWorkbenchActionConstants.FIND);
+		fSelectionActions.add(ActionFactory.COPY.getId());
+		fSelectionActions.add(ActionFactory.CUT.getId());
+		fSelectionActions.add(ActionFactory.PASTE.getId());
+		updateAction(ActionFactory.FIND.getId());
 					
 		// set initial content here, as viewer has to be set
 		setInitialContent();
@@ -863,12 +864,12 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));		
 		menu.add(getAction("ContentAssist")); //$NON-NLS-1$
 		menu.add(new Separator());
-		menu.add(getAction(IWorkbenchActionConstants.CUT));
-		menu.add(getAction(IWorkbenchActionConstants.COPY + ".Detail")); //$NON-NLS-1$
-		menu.add(getAction(IWorkbenchActionConstants.PASTE));
+		menu.add(getAction(ActionFactory.CUT.getId()));
+		menu.add(getAction(ActionFactory.COPY.getId() + ".Detail")); //$NON-NLS-1$
+		menu.add(getAction(ActionFactory.PASTE.getId()));
 		menu.add(getAction(DETAIL_SELECT_ALL_ACTION));
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
-		menu.add(getAction(IWorkbenchActionConstants.FIND));
+		menu.add(getAction(ActionFactory.FIND.getId()));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
@@ -1036,7 +1037,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 				public void documentAboutToBeChanged(DocumentEvent event) {
 				}
 				public void documentChanged(DocumentEvent event) {
-					updateAction(IWorkbenchActionConstants.FIND);
+					updateAction(ActionFactory.FIND.getId());
 				}
 			};
 		}

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
 <plugin
    id="org.eclipse.debug.ui"
    name="%pluginName"
@@ -19,6 +20,10 @@
       <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ui.editors"/>
    </requires>
 
 
@@ -623,11 +628,11 @@
             objectClass="org.eclipse.debug.core.model.IExpression"
             id="org.eclipse.debug.ui.ExpressionActions">
          <visibility>
-	         <not>
-         		<objectClass
-         			name="org.eclipse.debug.core.model.IWatchExpression">
-         		</objectClass>
-         	</not>
+            <not>
+               <objectClass
+                     name="org.eclipse.debug.core.model.IWatchExpression">
+               </objectClass>
+            </not>
          </visibility>
          <action
                label="%convertToWatchExpressionAction.label"
@@ -991,22 +996,6 @@
                id="org.eclipse.debug.ui.actions.SelectAllExpressionsAction">
          </action>
       </viewerContribution>
-<!-- Contributions to Console View popup menu -->
-      <viewerContribution
-            targetID="org.eclipse.ui.console.ConsoleView"
-            id="org.eclipse.ui.console.ConsoleView.popupMenu">
-         <action
-               label="%TerminateAction.label"
-               icon="icons/full/clcl16/terminate_co.gif"
-               helpContextId="console_terminate_action_context"
-               class="org.eclipse.debug.internal.ui.actions.ConsoleTerminateActionDelegate"
-               menubarPath="additions"
-               id="org.eclipse.debug.ui.consoleView.popupMenu.terminate">
-            <selection
-                  class="org.eclipse.debug.core.model.ITerminate">
-            </selection>
-         </action>
-      </viewerContribution>
    </extension>
    <extension
          id="instructionPointer"
@@ -1263,95 +1252,91 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
-   
    <extension
-	     point="org.eclipse.ui.workbench.texteditor.markerAnnotationSpecification">
-	     <specification
-	      		annotationType="org.eclipse.debug.core.breakpoint"
-	            label="%BreakpointMarkerPreference.label"
-	            markerSeverity="0"
-	            markerType="org.eclipse.debug.core.breakpointMarker"
-	            textPreferenceKey="breakpointIndication"
-	            textPreferenceValue="false"
-	            overviewRulerPreferenceKey="breakpointIndicationInOverviewRuler"
-	            overviewRulerPreferenceValue="true"
-	            colorPreferenceKey="breakpointIndicationColor"
-	            colorPreferenceValue="0,0,255"
-	            presentationLayer="3">
-	     </specification>
-	</extension>
-
-	
-<!-- Dynamic (String Substitution) Variables -->	
+         point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      <specification
+            colorPreferenceValue="0,0,255"
+            annotationType="org.eclipse.debug.core.breakpoint"
+            colorPreferenceKey="breakpointIndicationColor"
+            overviewRulerPreferenceValue="true"
+            markerType="org.eclipse.debug.core.breakpointMarker"
+            presentationLayer="3"
+            textPreferenceValue="false"
+            label="%BreakpointMarkerPreference.label"
+            textPreferenceKey="breakpointIndication"
+            markerSeverity="0"
+            overviewRulerPreferenceKey="breakpointIndicationInOverviewRuler">
+      </specification>
+   </extension>
+<!-- Dynamic (String Substitution) Variables -->
    <extension
          point="org.eclipse.core.variables.dynamicVariables">
       <variable
             name="workspace_loc"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.WorkspaceResolver"
-            description="%workspace_loc.description">
+            description="%workspace_loc.description"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.WorkspaceResolver">
       </variable>
       <variable
             name="project_loc"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ProjectResolver"
-            description="%project_loc.description">
+            description="%project_loc.description"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ProjectResolver">
       </variable>
       <variable
             name="project_path"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ProjectResolver"
-            description="%project_path.description">
+            description="%project_path.description"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ProjectResolver">
       </variable>
       <variable
             name="project_name"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ProjectResolver"
-            description="%project_name.description">
+            description="%project_name.description"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ProjectResolver">
       </variable>
       <variable
             name="resource_loc"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ResourceResolver"
-            description="%resource_loc.description">
+            description="%resource_loc.description"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ResourceResolver">
       </variable>
       <variable
             name="resource_path"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ResourceResolver"
-            description="%resource_path.description">
+            description="%resource_path.description"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ResourceResolver">
       </variable>
       <variable
             name="resource_name"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ResourceResolver"
-            description="%resource_name.description">
+            description="%resource_name.description"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ResourceResolver">
       </variable>
       <variable
             name="container_loc"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ContainerResolver"
-            description="%container_loc.description">
+            description="%container_loc.description"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ContainerResolver">
       </variable>
       <variable
             name="container_path"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ContainerResolver"
-            description="%container_path.description">
+            description="%container_path.description"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ContainerResolver">
       </variable>
       <variable
             name="container_name"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ContainerResolver"
-            description="%container_name.description">
+            description="%container_name.description"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ContainerResolver">
       </variable>
       <variable
             name="string_prompt"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.StringPrompt"
-            description="%string_prompt.description">
+            description="%string_prompt.description"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.StringPrompt">
       </variable>
       <variable
             name="file_prompt"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.FilePrompt"
-            description="%file_prompt.description">
+            description="%file_prompt.description"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.FilePrompt">
       </variable>
       <variable
             name="folder_prompt"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.FolderPrompt"
-            description="%folder_prompt.description">
-      </variable>      
-   </extension>	
-
+            description="%folder_prompt.description"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.FolderPrompt">
+      </variable>
+   </extension>
 <!-- String Variable Presentations -->
    <extension
          point="org.eclipse.debug.ui.stringVariablePresentations">
@@ -1366,10 +1351,9 @@
       <variablePresentation
             argumentSelector="org.eclipse.debug.internal.ui.stringsubstitution.ResourceSelector"
             variableName="resource_name">
-      </variablePresentation>      
+      </variablePresentation>
    </extension>
-   
-<!-- Launch Config Comparators -->	   
+<!-- Launch Config Comparators -->
    <extension
          point="org.eclipse.debug.core.launchConfigurationComparators">
       <launchConfigurationComparator
@@ -1378,7 +1362,6 @@
             id="org.eclipse.debug.ui.workingSetComparator">
       </launchConfigurationComparator>
    </extension>
-   
 <!-- Roles and Activities -->
    <extension
          point="org.eclipse.ui.activities">
@@ -1394,7 +1377,7 @@
       </patternBinding>
    </extension>
    <extension
-         point="org.eclipse.ui.roles"> 
+         point="org.eclipse.ui.roles">
       <activityBinding
             activityId="org.eclipse.debugging"
             roleId="org.eclipse.roles.javaRole">

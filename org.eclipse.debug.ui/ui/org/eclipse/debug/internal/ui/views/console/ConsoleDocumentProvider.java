@@ -16,8 +16,12 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.console.ConsoleColorProvider;
 import org.eclipse.debug.ui.console.IConsoleColorProvider;
+
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
+
+import org.eclipse.ui.editors.text.WorkspaceOperationRunner;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 
 /**
@@ -25,6 +29,12 @@ import org.eclipse.ui.texteditor.AbstractDocumentProvider;
  * which is connected to the streams proxy of the associated process.
  */
 public class ConsoleDocumentProvider extends AbstractDocumentProvider {
+	
+	/** 
+	 * The runnable context for that provider.
+	 * @since 3.0
+	 */
+	private WorkspaceOperationRunner fOperationRunner;
 
 	/**
 	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#createDocument(java.lang.Object)
@@ -106,5 +116,15 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 	 */
 	private ConsoleDocumentManager getConsoleDocumentManager() {
 		return DebugUIPlugin.getDefault().getConsoleDocumentManager();
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getOperationRunner(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IRunnableContext getOperationRunner(IProgressMonitor monitor) {
+		if (fOperationRunner == null)
+			fOperationRunner = new WorkspaceOperationRunner();
+		fOperationRunner.setProgressMonitor(monitor);
+		return fOperationRunner;
 	}
 }

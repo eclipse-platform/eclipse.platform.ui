@@ -21,6 +21,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -69,7 +70,7 @@ public class FileLink implements IConsoleHyperlink {
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
 				try {
-					IEditorPart editorPart = page.openEditor(fFile, fEditorId, false);
+					IEditorPart editorPart = page.openEditor(new FileEditorInput(fFile), fEditorId, false);
 					if (fFileLineNumber > 0 && editorPart instanceof ITextEditor) {
 						ITextEditor textEditor = (ITextEditor)editorPart;
 						IEditorInput input = editorPart.getEditorInput();

@@ -96,6 +96,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.IShowInTargetList;
@@ -700,7 +701,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 					} else {
 						IMarker marker= getInstructionPointer(lineNumber, charStart, charEnd);
 						if (marker != null) {
-							editor.gotoMarker(marker);
+							IDE.gotoMarker(editor, marker);
 						}
 					}
 				}
@@ -767,7 +768,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			lineNumber++;
 			IMarker marker= getInstructionPointer(lineNumber, charStart, charEnd);
 			if (marker != null) {
-				editor.gotoMarker(marker);
+				IDE.gotoMarker(editor, marker);
 				// add decoration
 				Decoration decoration = new MarkerTextSelection(editor, lineNumber, thread);
 				DecorationManager.addDecoration(decoration);

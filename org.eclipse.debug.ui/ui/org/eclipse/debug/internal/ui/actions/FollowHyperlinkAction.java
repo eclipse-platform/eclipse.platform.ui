@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.IDE;
 
 /**
  * Follows a hyperlink in the console
@@ -33,7 +34,7 @@ public class FollowHyperlinkAction extends SelectionProviderAction {
 		super(selectionProvider, ActionMessages.getString("FollowHyperlinkAction.&Open_Link_1")); //$NON-NLS-1$
 		setToolTipText(ActionMessages.getString("FollowHyperlinkAction.Follow_the_selected_hyperlink._2")); //$NON-NLS-1$
 		ISharedImages images= DebugUIPlugin.getDefault().getWorkbench().getSharedImages();
-		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_OPEN_MARKER));
+		setImageDescriptor(images.getImageDescriptor(IDE.SharedImages.IMG_OPEN_MARKER));
 		WorkbenchHelp.setHelp(
 			this,
 			IDebugHelpContextIds.FOLLOW_CONSOLE_HYPERLINK_ACTION);
