@@ -354,7 +354,12 @@ public class LaunchConfigurationInfo {
 		} else {
 			ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(id);
 			if (type == null) {
-				throw getInvalidFormatDebugException();
+				String message= MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Launch_configuration_type_id___{0}___does_not_exist._nPossible_causes__n_tMissing_specification_of_a_launch_type_(missing_plugin)_n_tIncorrect_launch_configuration_XML_1"), new Object[]{id}); //$NON-NLS-1$
+				throw new DebugException(
+						new Status(
+						 Status.ERROR, DebugPlugin.getUniqueIdentifier(),
+						 DebugException.REQUEST_FAILED, message, null)
+					);
 			}
 			setType(type);
 		}
