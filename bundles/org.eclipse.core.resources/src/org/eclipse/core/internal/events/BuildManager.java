@@ -327,7 +327,7 @@ protected IncrementalProjectBuilder getBuilder(String builderName, IProject proj
 	result = initializeBuilder(builderName, project);
 	builders.put(builderName, result);
 	((InternalBuilder) result).setProject(project);
-	result.startupOnInitialize();
+	((InternalBuilder) result).startupOnInitialize();
 	return result;
 }
 /**
