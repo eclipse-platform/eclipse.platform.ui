@@ -8,6 +8,7 @@ public class TestRunnable implements Runnable {
 	private ILock[] locks;
 	private Random random = new Random();
 	private boolean alive;
+	private boolean done;
 	/**
 	 * This runnable will randomly acquire the given lock for
 	 * random periods of time, in the given order
@@ -15,6 +16,7 @@ public class TestRunnable implements Runnable {
 	public TestRunnable(ILock[] locks) {
 		this.locks = locks;
 		this.alive = true;
+		done = false;
 	}
 	public void kill() {
 		alive = false;
@@ -35,6 +37,18 @@ public class TestRunnable implements Runnable {
 			//release all locks
 			for (int i = locks.length; --i >= 0;) {
 				locks[i].release();
+			}
+		}
+		done = true;
+	}
+	
+	public void isDone() {
+		while(!done) {
+			try {
+				Thread.yield();
+				Thread.sleep(100);
+				Thread.yield();
+			} catch (InterruptedException e) {
 			}
 		}
 	}

@@ -48,6 +48,11 @@ public class OrderedLockTest extends TestCase {
 		} catch (InterruptedException e) {
 		}
 		kill(allRunnables);
+		for(int i = 0; i < allRunnables.size(); i++) {
+			((TestRunnable)allRunnables.get(i)).isDone();
+		}
+		//the underlying array has to be empty
+		assertTrue("Locks not removed from graph.", manager.isEmpty());
 	}
 	public void testSimple() {
 		ArrayList allRunnables = new ArrayList();
@@ -63,6 +68,11 @@ public class OrderedLockTest extends TestCase {
 		} catch (InterruptedException e) {
 		}
 		kill(allRunnables);
+		for(int i = 0; i < allRunnables.size(); i++) {
+			((TestRunnable)allRunnables.get(i)).isDone();
+		}
+		//the underlying array has to be empty
+		assertTrue("Locks not removed from graph.", manager.isEmpty());
 	}
 	
 	/**
@@ -122,6 +132,8 @@ public class OrderedLockTest extends TestCase {
 		//let the first thread die
 		alive[0] = false;
 		StatusChecker.waitForStatus(status, StatusChecker.STATUS_DONE);
+		//the underlying array has to be empty
+		assertTrue("Locks not removed from graph.", manager.isEmpty());
 	}
 	
 	/**
@@ -199,6 +211,9 @@ public class OrderedLockTest extends TestCase {
 		
 		//now wait for the second runnable to get the lock, and have the assertion pass
 		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_DONE, 100);
+		
+		//the underlying array has to be empty
+		assertTrue("Locks not removed from graph.", manager.isEmpty());
 	}
 	
 	private void start(ArrayList allRunnables) {

@@ -9,20 +9,18 @@
  **********************************************************************/
 package org.eclipse.core.internal.jobs;
 
-import java.util.*;
-
-import org.eclipse.core.internal.runtime.Assert;
+import java.util.HashMap;
+import java.util.Stack;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.LockListener;
 
-/**
- * Manages a set of locks and ensures that deadlock never occurs.
- */
 public class LockManager {
+
 	/**
 	 * This class captures the state of suspended locks.  Locks are suspended if
-	 * a thread tries to acquire locks out of order.
+	 * deadlock is detected.
 	 */
-	public static class LockState {
+	private static class LockState {
 		private int depth;
 		private OrderedLock lock;
 		/**
@@ -31,19 +29,19 @@ public class LockManager {
 		protected static LockState suspend(OrderedLock lock) {
 			LockState state = new LockState();
 			state.lock = lock;
-			state.depth = lock.doRelease();
+			state.depth = lock.forceRelease();
 			return state;
 		}
 		/**
 		 * Re-acquires a suspended lock and reverts to the correct lock depth.
 		 */
-		protected void resume() {
+		public void resume() {
 			//spin until the lock is successfully acquired
 			//NOTE: spinning here allows the UI thread to service pending syncExecs
 			//if the UI thread is waiting to acquire a lock.
 			while (true) {
 				try {
-					if (lock.doAcquire(lock.createSemaphore(), Long.MAX_VALUE))
+					if (lock.acquire(Long.MAX_VALUE))
 						break;
 				} catch (InterruptedException e) {
 				}
@@ -51,14 +49,21 @@ public class LockManager {
 			lock.setDepth(depth);
 		}
 	}
+	//the lock listener for this lock manager
 	private LockListener lockListener;
-	private final ArrayList locks = new ArrayList();
-	/**
-	 * Set of threads that currently own locks.  Maps Thread->int[], where the
-	 * integer array is always size one, and its value stores the number of locks
-	 * currently owned by this thread.
+	/* 
+	 * The internal data structure that stores all the relationships 
+	 * between the locks and the threads that own them.
 	 */
-	private final Map lockThreads = new HashMap(20);
+	private DeadlockDetector locks = new DeadlockDetector();
+	/* 
+	 * Stores thread - stack pairs where every entry in the stack is an array 
+	 * of locks that were suspended while the thread was aquiring more locks
+	 * (a stack is needed because when a thread tries to reaquire suspended locks,
+	 * it can cause deadlock, and some locks it owns can be suspended again)
+	 */
+	private HashMap suspendedLocks = new HashMap();
+
 	public LockManager() {
 	}
 	/* (non-Javadoc)
@@ -77,80 +82,103 @@ public class LockManager {
 		return false;
 	}
 	/**
-	 * This thread has just acquired a lock.  Add to the locking thread set if necessary,
-	 * and increment the lock counter for this thread.
+	 * This thread has just acquired a lock.  Update graph.
 	 */
-	synchronized void addLockThread(Thread thread) {
-		int[] value = (int[]) lockThreads.get(thread);
-		if (value == null) {
-			value = new int[] {0};
-			lockThreads.put(thread, value);
+	void addLockThread(Thread thread, ISchedulingRule lock) {
+		synchronized (locks) {
+			locks.lockAcquired(thread, lock);
 		}
-		value[0]++;
 	}
+	/**
+	 * This thread has just been refused a lock.  Update graph and check for deadlock.
+	 */
+	void addLockWaitThread(Thread thread, ISchedulingRule lock) {
+		synchronized (locks) {
+			locks.lockWaitStart(thread, lock);
+			if (locks.isDeadlocked()) {
+				locks.reportDeadlock(thread, lock);
+				Thread candidate = locks.resolutionCandidate(thread, lock);
+				ISchedulingRule[] toSuspend = locks.contestedLocksForThread(candidate);
+				LockState[] suspended = new LockState[toSuspend.length];
+				for (int i = 0; i < toSuspend.length; i++) {
+					locks.setToWait(candidate, toSuspend[i]);
+					suspended[i] = LockState.suspend((OrderedLock) toSuspend[i]);
+				}
+				synchronized (suspendedLocks) {
+					Stack prevLocks = (Stack) suspendedLocks.get(candidate);
+					if (prevLocks == null)
+						prevLocks = new Stack();
+
+					prevLocks.push(suspended);
+					suspendedLocks.put(candidate, prevLocks);
+				}
+				locks.deadlockSolved();
+			}
+		}
+	}
+	/**
+	 * Returns true IFF the underlying graph is empty.
+	 * Used in debugging.
+	 */
+	public boolean isEmpty() {
+		return locks.isEmpty();
+	}
+	/**
+	 * Returns true IFF this thread either owns, or is waiting for, any locks.
+	 */
+	public boolean isLockOwner() {
+		synchronized (locks) {
+			return locks.contains(Thread.currentThread());
+		}
+	}
+	/**
+	 * Creates and returns a new lock.
+	 */
 	public synchronized OrderedLock newLock() {
 		OrderedLock result = new OrderedLock(this);
-		locks.add(result);
 		return result;
 	}
 	/**
-	 * This thread has just relinquised a lock.  Decrement the lock counter
-	 * for this thread, and remove from the locking thread set if necessary.
+	 * Releases all the acquires that were called on the given rule. Needs to be called only once.
 	 */
-	synchronized void removeLockThread(Thread thread) {
-		int[] value = (int[]) lockThreads.get(thread);
-		if (value == null)
-			Assert.isNotNull(value, "Removing lock thread that didn't own a lock"); //$NON-NLS-1$
-		if (--value[0] <= 0)
-			lockThreads.remove(thread);
+	void removeLockCompletely(Thread thread, ISchedulingRule rule) {
+		synchronized (locks) {
+			locks.lockReleasedCompletely(thread, rule);
+		}
+	}
+	/**
+	 * This thread has just released a lock.  Update graph.
+	 */
+	void removeLockThread(Thread thread, ISchedulingRule lock) {
+		synchronized (locks) {
+			locks.lockReleased(thread, lock);
+		}
+	}
+	/**
+	 * This thread has just stopped waiting for a lock. Update graph.
+	 */
+	void removeLockWaitThread(Thread thread, ISchedulingRule lock) {
+		synchronized (locks) {
+			locks.lockWaitStop(thread, lock);
+		}
+	}
+	/**
+	 * Returns all the locks that were suspended while this thread was waiting to acquire another lock.
+	 */
+	void resumeSuspendedLocks(Thread owner) {
+		LockState[] toResume;
+		synchronized (suspendedLocks) {
+			Stack prevLocks = (Stack) suspendedLocks.get(owner);
+			if (prevLocks == null)
+				return;
+			toResume = (LockState[]) prevLocks.pop();
+			if (prevLocks.empty())
+				suspendedLocks.remove(owner);
+		}
+		for (int i = 0; i < toResume.length; i++)
+			toResume[i].resume();
 	}
 	public void setLockListener(LockListener listener) {
 		this.lockListener = listener;
-	}
-	/**
-	 * The current thread is attempting to acquire the given lock.
-	 * If this thread holds any locks greater than the given lock,
-	 * release them, and build a list of locks that need to be
-	 * acquired, in ascending order.  This ensures deadlock
-	 * can never occur because locks are always acquired in
-	 * ascending order.
-	 * @return the list of locks that need to be acquired, or null if
-	 * no other locks need to be acquired
-	 */
-	public synchronized LockState[] suspendGreaterLocks(OrderedLock toLock) {
-		Thread currentThread = Thread.currentThread();
-		//find the given lock in the lock list
-		int lockCount = locks.size();
-		int i = locks.indexOf(toLock);
-		if (i == -1) {
-			//we didn't find the given lock
-			Assert.isTrue(false, "OrderedLock not found: " + toLock); //$NON-NLS-1$
-			return null;
-		}
-		//gather all locks greater than the requested lock
-		i++;
-		ArrayList toAcquire = null;
-		for (; i < lockCount; i++) {
-			OrderedLock lock = (OrderedLock) locks.get(i);
-			if (lock.getCurrentOperationThread() == currentThread) {
-				if (toAcquire == null)
-					toAcquire = new ArrayList();
-				//release this lock so contending threads can access it, and remember old depth
-				toAcquire.add(LockState.suspend(lock));
-			}
-		}
-		if (toAcquire == null)
-			return null;
-		return (LockState[]) toAcquire.toArray(new LockState[toAcquire.size()]);
-	}
-	public synchronized boolean isLockOwner() {
-		return lockThreads.containsKey(Thread.currentThread());
-	}
-	/**
-	 * This thread is known to be in an idle state, so it cannot possibly be owning any
-	 * locks.  Flush any locks that this thread might have acquired that were never released.
-	 */
-	synchronized void removeAllLocks(Thread thread) {
-		lockThreads.remove(thread);
 	}
 }

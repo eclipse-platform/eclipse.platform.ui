@@ -525,13 +525,11 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		
 		//wait for the job to start
 		StatusChecker.waitForStatus(status, StatusChecker.STATUS_RUNNING);
-		
 		//give the job a chance to enter the wait loop
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
 		}
-		
 		//cancel the monitor
 		monitor.setCanceled(true);
 		

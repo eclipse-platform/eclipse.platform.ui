@@ -90,6 +90,7 @@ class ImplicitJobs {
 			//check if there is a blocking thread before trying to schedule
 			InternalJob blockingJob = manager.findBlockingJob(this);
 			Thread blocker = blockingJob == null ? null : blockingJob.getThread();
+			boolean stopWait = false;
 			//lock listener decided to grant immediate access
 			if (!manager.getLockManager().aboutToWait(blocker)) {
 				try {
@@ -103,15 +104,17 @@ class ImplicitJobs {
 							throw new OperationCanceledException();
 						}
 						blocker = manager.getBlockingThread(this);
-						if (manager.getLockManager().aboutToWait(blocker))
+						if (manager.getLockManager().aboutToWait(blocker)) {
+							stopWait = true;
 							break;
+						}
 						try {
 							wait(250);
 						} catch (InterruptedException e) {
 						}
 					}
 				} finally {
-					reportUnblocked(monitor);
+					reportUnblocked(monitor, stopWait);
 				}
 			}
 			manager.getLockManager().aboutToRelease();
@@ -154,6 +157,7 @@ class ImplicitJobs {
 			top = -1;
 		}
 		private void reportBlocked(IProgressMonitor monitor, InternalJob blockingJob) {
+			manager.getLockManager().addLockWaitThread(Thread.currentThread(), ruleStack[top]);
 			if (!(monitor instanceof IProgressMonitorWithBlocking))
 				return;
 			String msg = (blockingJob == null || blockingJob instanceof ThreadJob)
@@ -162,7 +166,14 @@ class ImplicitJobs {
 			IStatus reason = new Status(IStatus.INFO, Platform.PI_RUNTIME, 1, msg, null);
 			((IProgressMonitorWithBlocking)monitor).setBlocked(reason);
 		}
-		private void reportUnblocked(IProgressMonitor monitor) {
+		private void reportUnblocked(IProgressMonitor monitor, boolean stopWait) {
+			if(monitor.isCanceled() || stopWait)
+				manager.getLockManager().removeLockWaitThread(Thread.currentThread(), ruleStack[top]);
+			else {
+				manager.getLockManager().addLockThread(Thread.currentThread(), ruleStack[top]);
+				//need to reaquire any locks that were suspended while this thread was blocked on the rule
+				manager.getLockManager().resumeSuspendedLocks(Thread.currentThread());
+			}
 			if (!(monitor instanceof IProgressMonitorWithBlocking))
 				return;
 			((IProgressMonitorWithBlocking)monitor).clearBlocked();
@@ -209,9 +220,6 @@ class ImplicitJobs {
 				else {
 					threadJob = newThreadJob(rule);
 					join = true;
-					//if this job has a rule, then we are essentially acquiring a lock
-					if (rule != null)
-						manager.getLockManager().addLockThread(currentThread);
 				}
 				threadJob.setThread(currentThread);
 				threadJobs.put(currentThread, threadJob);
@@ -219,9 +227,14 @@ class ImplicitJobs {
 			threadJob.push(rule);
 		}
 		//join the thread job outside sync block
-		if (join)
+		if (join) {
 			if (!manager.runNow(threadJob))
 				threadJob.joinRun(monitor);
+			else {
+				//no need to reaquire any locks because the thread did not wait to get this lock
+				manager.getLockManager().addLockThread(Thread.currentThread(), rule);
+			}
+		}
 	}
 
 	/* (Non-javadoc) 
@@ -236,10 +249,13 @@ class ImplicitJobs {
 			//clean up when last rule scope exits
 			threadJobs.remove(currentThread);
 			if (threadJob.running) {
-				manager.endJob(threadJob, Status.OK_STATUS, threadJob.queued);
 				//if this job had a rule, then we are essentially releasing a lock
 				if (threadJob.getRule() != null)
-					manager.getLockManager().removeLockThread(Thread.currentThread());
+					manager.getLockManager().removeLockThread(Thread.currentThread(), threadJob.getRule());
+				else
+					manager.getLockManager().removeLockThread(Thread.currentThread(), rule);
+				
+				manager.endJob(threadJob, Status.OK_STATUS, threadJob.queued);
 			}
 			recycle(threadJob);
 		}

@@ -27,6 +27,7 @@ class AsynchTestJob extends Job {
 	}
 			
 	public IStatus run(IProgressMonitor monitor) {
+		status[index] = StatusChecker.STATUS_RUNNING;
 		AsynchExecThread t = new AsynchExecThread(monitor, this, 100, 10, getName(), status, index);
 		StatusChecker.waitForStatus(status, index, StatusChecker.STATUS_START, 100);
 		t.start();

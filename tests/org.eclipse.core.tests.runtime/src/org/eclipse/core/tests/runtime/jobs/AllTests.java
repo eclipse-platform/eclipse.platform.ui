@@ -28,6 +28,7 @@ public class AllTests extends TestCase {
 		suite.addTestSuite(OrderedLockTest.class);
 		suite.addTestSuite(BeginEndRuleTest.class);
 		suite.addTestSuite(JobTest.class);
+		suite.addTestSuite(DeadlockDetectionTest.class);
 		return suite;
 	}
 }

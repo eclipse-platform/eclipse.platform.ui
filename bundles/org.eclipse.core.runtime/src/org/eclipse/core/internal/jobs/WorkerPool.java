@@ -81,12 +81,13 @@ class WorkerPool {
 	 */
 	protected void endJob(InternalJob job, IStatus result) {
 		decrementBusyThreads();
-		try {
-			manager.endJob(job, result, true);
-		} finally {
-			//remove any locks this thread may be owning
-			manager.getLockManager().removeAllLocks(Thread.currentThread());
+		//need to end rule in graph before ending job so that 2 threads
+		//do not become the owners of the same rule in the graph
+		if((job.getRule() != null) && !(job instanceof ImplicitJobs.ThreadJob)) {
+			//remove any locks this thread may be owning on that rule
+			manager.getLockManager().removeLockCompletely(Thread.currentThread(), job.getRule());
 		}
+		manager.endJob(job, result, true);
 	}
 	/**
 	 * Signals the death of a worker thread.  Note that this method can be called under
@@ -193,8 +194,11 @@ class WorkerPool {
 		if (job != null) {
 			incrementBusyThreads();
 			//if this job has a rule, then we are essentially acquiring a lock
-			if (job.getRule() != null)
-				manager.getLockManager().addLockThread(Thread.currentThread());
+			if((job.getRule() != null) && !(job instanceof ImplicitJobs.ThreadJob)) {
+				manager.getLockManager().addLockThread(Thread.currentThread(), job.getRule());
+				//need to reaquire any locks that were suspended while this thread was waiting to get the rule
+				manager.getLockManager().resumeSuspendedLocks(Thread.currentThread());
+			}
 			//see if we need to wake another worker
 			if (manager.sleepHint() <= 0)
 				jobQueued(null);

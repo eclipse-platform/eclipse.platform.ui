@@ -1,0 +1,477 @@
+/*******************************************************************************
+ * Copyright (c) 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.core.internal.jobs;
+
+import java.util.ArrayList;
+
+import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+
+class DeadlockDetector {
+	//state variables in the graph
+	private static int WAITING_FOR_LOCK = -10;
+	private static int NO_STATE = 0;
+	//matrix of relationships between threads and locks
+	private int[][] graph = new int[0][0];
+	//whether the graph needs to be resized
+	private boolean resize = false;
+	//whether deadlock exists between the threads that are in the graph
+	private boolean deadlockExists = false;
+	//index is column in adjacency matrix for the lock
+	private final ArrayList locks = new ArrayList();
+	//index is row in adjacency matrix for the thread
+	private final ArrayList lockThreads = new ArrayList();
+		
+	DeadlockDetector() {
+	}
+	/**
+	 * Add the thread that owns the given lock to the list of threads
+	 * that are waiting for some action. 
+	 * (these threads cannot continue until the lock they are waiting for is free)
+	 */
+	private boolean addWaitingThread(int[] waitingThreads, int column) {
+		boolean found = false;
+		int index = -1;
+		//find the thread that owns the lock with the given index
+		//(go through all the threads in the graph as a type of error checking)
+		for(int i = 0; i < graph.length; i++) {
+			if(graph[i][column] > NO_STATE) {
+				Assert.isTrue(!found, "The lock " + locks.get(column).toString() + " is owned by 2 threads.");
+				found = true;
+				index = i;
+			}
+		}
+		//matrix could be in an unsynchronized state so a lock could be unowned (index of -1)
+		if(index < NO_STATE)
+			return false;
+		if(waitingThreads[index] > NO_STATE)
+			deadlockExists = true;
+		waitingThreads[index] = 1;
+		return true;
+	}
+	/**
+	 * Get the thread that owns the lock this thread is waiting for.
+	 */
+	private Thread blockingThread(Thread current) {
+		ISchedulingRule lock = (ISchedulingRule)getWaitingLock(current);
+		return getThreadOwningLock(lock);
+	}
+	/**
+	 * Check that the addition of a waiting thread did not pruduce deadlock.
+	 * If deadlock is detected, the deadlockExists variable is set to true. 
+	 */
+	private void checkWaitCycles(int[] waitingThreads, int column) {
+		if(!addWaitingThread(waitingThreads, column))
+			return;
+		if(deadlockExists)
+			return;
+		
+		for(int i = 0; i < graph.length; i++) {
+			if(graph[i][column] > NO_STATE) {
+				for(int j = 0; j < graph[i].length; j++) {
+					if(graph[i][j] == WAITING_FOR_LOCK) {
+						checkWaitCycles(waitingThreads, j);
+					}
+					if(deadlockExists)
+						break;
+				}
+			}
+		}
+	}
+	/**
+	 * Returns true IFF the matrix contains a row for the given thread.
+	 * (meaning the given thread either owns locks or is waiting for locks)
+	 */
+	boolean contains(Thread t) {
+		return lockThreads.contains(t);
+	}
+	/** 
+	 * Returns an array of contested locks that are owned by the given thread.
+	 * Contested locks are locks that are owned by this thread, but have other threads waiting for them.
+	 */
+	ISchedulingRule[] contestedLocksForThread(Thread owner) {
+		int threadIndex = indexOf(owner);
+		ArrayList ownedLocks = new ArrayList(1);
+		
+		for(int j = 0; j < graph[threadIndex].length; j++) {
+			if((graph[threadIndex][j] >  NO_STATE) && (locks.get(j) instanceof ILock))  // && (isWaitedFor((ISchedulingRule)locks.get(j))))
+				ownedLocks.add(locks.get(j));
+		}
+		Assert.isLegal(ownedLocks.size() > 0, "A thread with no contested locks caused deadlock.");
+		return (ISchedulingRule[])ownedLocks.toArray(new ISchedulingRule[ownedLocks.size()]);
+	}
+	/**
+	 * Reset the deadlock exists variable.
+	 */
+	void deadlockSolved() {
+		deadlockExists = false;
+	}
+	/**
+	 * Returns all the locks owned by the given thread
+	 */
+	private Object[] getOwnedLocks(Thread current) {
+		ArrayList ownedLocks = new ArrayList(1);
+		int index = indexOf(current);
+		
+		for(int j = 0; j < graph[index].length; j++) {
+			if(graph[index][j] > NO_STATE)
+				ownedLocks.add(locks.get(j));
+		}
+		Assert.isLegal(ownedLocks.size() > 0, "A thread with no locks is part of a deadlock.");
+		return ownedLocks.toArray();
+	}
+	/**
+	 * Returns the thread that owns the given lock.
+	 */
+	private Thread getThreadOwningLock(ISchedulingRule lock) {
+		int index = indexOf(lock);
+		
+		for(int i = 0; i < graph.length; i++) {
+			if(graph[i][index] > NO_STATE)
+				return (Thread)lockThreads.get(i);
+		}
+		toDebugString();
+		throw new IllegalStateException("Lock " + lock + " is involved in deadlock but is not owned by any thread.");
+	}
+	/**
+	 * Returns the true index of the lock in the array.
+	 * Uses the ISchedulingRule.isConflicting relationship.
+	 */
+	private int getTrueLockIndex(ISchedulingRule lock) {
+		for(int i = 0; i < locks.size(); i++) {
+			ISchedulingRule present = (ISchedulingRule)locks.get(i);
+			if(present.isConflicting(lock))
+				return i;
+		}
+		return -1;
+	}
+	/**
+	 * Returns the lock the given thread is waiting for.
+	 */
+	private Object getWaitingLock(Thread current) {
+		int index = indexOf(current);
+		
+		for(int j = 0; j < graph[index].length; j++) {
+			if(graph[index][j] == WAITING_FOR_LOCK)
+				return locks.get(j);
+		}
+		throw new IllegalStateException("Thread " + current.getName() + " is involved in deadlock but is not waiting for any lock.");
+	}
+	/**
+	 * Returns the index of the given lock in the lock array.
+	 * If the lock is not present in the array, it is added to the end.
+	 */
+	private int indexOf(ISchedulingRule lock) {
+		int index = getTrueLockIndex(lock);
+		if(index < 0) {
+			locks.add(lock);
+			resize = true;
+			index = locks.size()-1;
+		}
+		return index;
+	}
+	/**
+	 * Returns the index of the given thread in the thread array.
+	 * If the thread is not present in the array, it is added to the end.
+	 */
+	private int indexOf(Thread owner) {
+		int index = lockThreads.indexOf(owner);
+		if(index < 0) {
+			lockThreads.add(owner);
+			resize = true;
+			index = lockThreads.size()-1;
+		}
+		return index;
+	}
+	/**
+	 * Returns true IFF deadlock exists
+	 */
+	boolean isDeadlocked() {
+		return deadlockExists;
+	}
+	/**
+	 * Returns true if the adjacency matrix is empty.
+	 */
+	boolean isEmpty() {
+		return (locks.size() == 0) && (lockThreads.size() == 0) && (graph.length == 0); 
+	}
+	/**
+	 * The given lock was aquired by the given thread.
+	 */
+	void lockAcquired(Thread owner, ISchedulingRule lock) {
+		int lockIndex = indexOf(lock);
+		int threadIndex = indexOf(owner);
+		if(resize)
+			resizeGraph();		
+
+		if(!(lock instanceof ILock)) {
+			locks.remove(lockIndex);
+			locks.add(lockIndex, lock);
+		}
+		if(graph[threadIndex][lockIndex] == WAITING_FOR_LOCK)
+			graph[threadIndex][lockIndex] = 1;
+		else
+			graph[threadIndex][lockIndex]++;
+	}
+	/**
+	 * The given lock was released by the given thread. Update the graph.
+	 */
+	void lockReleased(Thread owner, ISchedulingRule lock) {
+		if(!lockThreads.contains(owner)) {
+			if(lock instanceof ILock)
+				Assert.isTrue(false, "Lock " + lock + " has already been released by thread " + owner.getName());
+			return;
+		}
+		if(!locks.contains(lock)) {
+			if(lock instanceof ILock) 
+				Assert.isTrue(false, "Thread " + owner.getName() + " has already released lock " + lock);
+			return;
+		}
+		int lockIndex = indexOf(lock);
+		int threadIndex = indexOf(owner);
+		
+		//if this lock was suspended, set it to NO_STATE
+		if(graph[threadIndex][lockIndex] == WAITING_FOR_LOCK) {
+			graph[threadIndex][lockIndex] = NO_STATE;
+			return;
+		}
+		graph[threadIndex][lockIndex]--;
+		Assert.isTrue(graph[threadIndex][lockIndex] > -1, "More releases than acquires for thread " + owner.getName() + " and lock " + lock);
+		if(graph[threadIndex][lockIndex] == NO_STATE)
+			removeExtraRows(threadIndex, lockIndex);
+	}
+	/**
+	 * The given scheduling rule is no longer used because the job that invoked it is done
+	 * Release this rule regardless of how many times it was acquired.
+	 */
+	void lockReleasedCompletely(Thread owner, ISchedulingRule rule) {
+		//need to make sure that the given thread was not already removed from the graph
+		//and that the given rule (not a rule that conflicts with it) was not removed either
+		if(!lockThreads.contains(owner)) 
+			Assert.isTrue(false, "Lock " + rule + " was already released by thread " + owner.getName());
+		
+		if(!locks.contains(rule)) 
+			Assert.isTrue(false, "Thread " + owner.getName() + " already released lock " + rule);
+				
+		int lockIndex = indexOf(rule);
+		int threadIndex = indexOf(owner);
+		//set this lock to NO_STATE
+		graph[threadIndex][lockIndex] = NO_STATE;
+		removeExtraRows(threadIndex, lockIndex);
+	}
+	/**
+	 * The given thread could not get the given lock and is waiting for it. Update the graph.
+	 */
+	void lockWaitStart(Thread client, ISchedulingRule lock) {
+		setToWait(client, lock);
+		int lockIndex = indexOf(lock);
+		int [] temp = new int[lockThreads.size()];
+		for(int i = 0; i < temp.length; i++) {
+			temp[i] = 0;
+		}
+		checkWaitCycles(temp, lockIndex);
+		temp = null;
+	}
+	/**
+	 * The given thread has stopped waiting for the given lock. Update the graph.
+	 */
+	void lockWaitStop(Thread owner, ISchedulingRule lock) {
+		if(!lockThreads.contains(owner)) 
+			Assert.isTrue(false, "Thread " + owner.getName() + " was already removed.");
+		
+		if(!locks.contains(lock)) 
+			Assert.isTrue(false, "Lock " + lock + " was already removed.");
+				
+		int lockIndex = indexOf(lock);
+		int threadIndex = indexOf(owner);
+		Assert.isTrue(graph[threadIndex][lockIndex] == WAITING_FOR_LOCK, "Thread " + owner.getName() + " was not waiting for lock " + lock.toString() + " so it could not time out.");
+		graph[threadIndex][lockIndex] = NO_STATE;
+		removeExtraRows(threadIndex, lockIndex);
+	}
+	/**
+	 * Return true IFF this thread owns rule locks
+	 * (ie. implicit locks which cannot be suspended)
+	 */
+	private boolean ownsRuleLocks(Thread owner) {
+		int index = indexOf(owner);
+		
+		for(int j = 0; j < graph[index].length; j++) {
+			if(graph[index][j] > NO_STATE) {
+				Object lock = locks.get(j);
+				if(!(lock instanceof ILock))
+					return true;
+			}
+		}
+		return false;
+	}
+	/**
+	 * The matrix has been simplified. 
+	 * Check if any unnecessary rows or columns can be removed.
+	 */
+	private void removeExtraRows(int row, int column) {
+		boolean rowEmpty = true;
+		boolean colEmpty = true;
+		for(int j = 0; j < graph[row].length; j++) {
+			if(graph[row][j] != NO_STATE) {
+				rowEmpty = false;
+				break;
+			}
+		}
+		
+		for(int i = 0; i < graph.length; i++) {
+			if(graph[i][column] != NO_STATE) {
+				colEmpty = false;
+				break;
+			}
+		}
+		if((!colEmpty)&&(!rowEmpty))
+			return;
+			
+		if(rowEmpty)
+			lockThreads.remove(row);
+		else
+			row = lockThreads.size();
+		if(colEmpty)
+			locks.remove(column);
+		else
+			column = locks.size();
+
+		int [][] temp = new int[lockThreads.size()][locks.size()];
+		for(int i = 0; i < row; i++) {
+			for(int j = 0; j < column; j++) {
+				temp[i][j] = graph[i][j];
+			}
+		}
+		
+		for(int i = row; i < temp.length; i++) {
+			for(int j = 0; j < temp[i].length; j++) {
+				temp[i][j] = graph[i+1][j];
+			}
+		}
+		
+		for(int i = 0; i < temp.length; i++) {
+			for(int j = column; j < temp[i].length; j++) {
+				temp[i][j] = graph[i][j+1];
+			}
+		}
+		
+		for(int i = row; i < temp.length; i++) {
+			for(int j = column; j < temp[i].length; j++) {
+				temp[i][j] = graph[i+1][j+1];
+			}
+		}
+		graph = null;
+		graph = temp;
+	}
+	/**
+	 * Adds a 'deadlock detected' message to the log with a stack trace.
+	 */
+	void reportDeadlock(Thread thread, ISchedulingRule lock) {
+		ArrayList deadlockedThreads = new ArrayList(2);
+		deadlockedThreads.add(thread);
+		Thread owner = getThreadOwningLock(lock);
+		while(!deadlockedThreads.contains(owner)) {
+			deadlockedThreads.add(owner);
+			ISchedulingRule waitingLock = (ISchedulingRule)getWaitingLock(owner);
+			owner = getThreadOwningLock(waitingLock);
+		}
+		String msg = "Deadlock was detected between several processes.";
+		MultiStatus main = new MultiStatus(Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, msg, new IllegalStateException("Deadlock detected."));
+		for(int i = 0; i < deadlockedThreads.size(); i++) {
+			Thread current = (Thread)deadlockedThreads.get(i);
+			Object[] ownedLocks = getOwnedLocks(current);
+			Object waitLock = getWaitingLock(current);
+			String state = "Thread " + current.getName() + " has locks: ";
+			for(int j = 0; j < ownedLocks.length; j++) {
+				state += ownedLocks[j];
+				state += (j < ownedLocks.length - 1) ? ", " : " ";
+			}
+			state += "and is waiting for lock " + waitLock;
+			Status child = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, state, null);
+			main.add(child);
+		}
+		InternalPlatform.log(main);
+	}
+	/**
+	 * The number of threads/locks in the graph has changed.
+	 * Update the underlying matrix.
+	 */
+	private void resizeGraph() {
+		int[][] tempGraph = new int[lockThreads.size()][locks.size()];
+		for(int i = 0; i < graph.length; i++) {
+			for(int j = 0; j < graph[i].length; j++) {
+				tempGraph[i][j] = graph[i][j];
+			}
+		}
+		
+		for(int i = 0; i < tempGraph.length; i++) {
+			for(int j = (graph.length==0? 0:graph[0].length); j < tempGraph[i].length; j++) {
+				tempGraph[i][j] = NO_STATE;
+			}
+		}
+
+		for(int i = graph.length; i < tempGraph.length; i++) {
+			for(int j = 0; j < tempGraph[i].length; j++) {
+				tempGraph[i][j] = NO_STATE;
+			}
+		}
+		graph = null;
+		graph = tempGraph;
+		resize = false;
+	}
+	/**
+	 * Get the thread whose locks can be suspended. 
+	 * (ie. all locks it owns are actual locks and not rules)
+	 * If not found, return the given thread.
+	 */
+	Thread resolutionCandidate(Thread thread, ISchedulingRule lock) {
+		Thread candidate = thread;
+		for(int i = 0; i < lockThreads.size(); i++) {
+			if(!ownsRuleLocks(candidate))
+				return candidate;
+			candidate = blockingThread(candidate);
+		}
+		return thread;
+	}
+	/**
+	 * The given thread is waiting for the given lock. Update the graph.  
+	 */
+	void setToWait(Thread owner, ISchedulingRule lock) {
+		int lockIndex = indexOf(lock);
+		int threadIndex = indexOf(owner);
+		if(resize)
+			resizeGraph();
+		
+		graph[threadIndex][lockIndex] = WAITING_FOR_LOCK;
+	}
+	/**
+	 * Prints out the current matrix to standard output.
+	 * Only used for debugging.
+	 */
+	public void toDebugString() {
+		System.out.println(" :: ");
+		for(int j = 0; j < locks.size(); j++) {
+			System.out.print(" " + locks.get(j) + ",");
+		}
+		System.out.println("");
+		for(int i = 0; i < graph.length; i++) {
+			System.out.print(" " + ((Thread)lockThreads.get(i)).getName() + " : ");
+			for(int j = 0; j < graph[i].length; j++) {
+				System.out.print(" " + graph[i][j] + ",");
+			}
+			System.out.println("");
+		}
+		System.out.println("-------");
+	}
+}
