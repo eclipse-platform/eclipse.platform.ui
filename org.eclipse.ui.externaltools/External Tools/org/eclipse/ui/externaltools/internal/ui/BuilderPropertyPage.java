@@ -391,7 +391,11 @@ public final class BuilderPropertyPage extends PropertyPage {
 		} else {
 			// Get the human-readable name of the builder
 			IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, 	ResourcesPlugin.PT_BUILDERS, builderID);
-			String builderName = extension.getLabel();
+			String builderName;
+			if (extension != null)
+				builderName = extension.getLabel();
+			else
+				builderName = ToolMessages.format("BuilderPropertyPage.missingBuilder", new Object[] {builderID}); //$NON-NLS-1$
 			item.setText(builderName);
 			item.setImage(builderImage);
 		}
