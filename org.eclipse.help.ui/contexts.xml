@@ -14,9 +14,8 @@ This infopop opened because you pressed F1 while an infopop was already open.</d
 
 <!-- Preference page for help browsers -->
    <context  id="prefPageBrowsers" >
-      <description>如果先前已经登录到 ClearQuest 数据库，则不必通过登录向导就可以再次登录。单击 Eclipse 按钮栏上的<b>登录</b>按钮，然后在“登录”窗口输入密码。窗口会预先填入先前会话的信息，包括供应者位置和用户名。要登录到不同的数据库，请使用“登录”按钮旁边的向下箭头选择正确的位置。如果选择“记住密码”选项，那么下一次不输入任何内容就可以登录 ClearQuest 会话。</description>
+      <description>Allows selecting a web browser.  The selected web browser will be the default browser used to display help contents.</description>
 	  <topic label="Preferences Dialog" href="/org.eclipse.platform.doc.user/reference/ref-72.htm"/>
- 	  <topic label="Preferences Dialog" href="/org.eclipse.platform.doc.user/reference/ref-72.htm"/>
    </context>
 
 <!-- Path to custom browser on preference page for help browsers -->
