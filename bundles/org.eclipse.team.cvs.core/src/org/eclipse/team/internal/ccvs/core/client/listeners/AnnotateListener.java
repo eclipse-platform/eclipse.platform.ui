@@ -96,4 +96,26 @@ public class AnnotateListener extends CommandOutputListener {
 		}
 		return super.errorLine(line, location, commandRoot, monitor);
 	}
+
+	/**
+	 * Set the contents of the listener to the provided contents.
+	 * This is done if the contents fetched by the annotate command
+	 * has a charater set that may have been mangled by the transfer
+	 * @param remoteContents the actual contens of the file
+	 */
+	public void setContents(InputStream remoteContents) {
+		try {
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			byte[] buffer = new byte[1024];
+			int n = remoteContents.read(buffer);
+			while (n != -1) {
+				stream.write(buffer, 0, n);
+				n = remoteContents.read(buffer);
+			}
+			aStream = stream;
+		} catch (IOException e) {
+			// Log and continue
+			CVSProviderPlugin.log(CVSException.wrapException(e));
+		}
+	}
 }

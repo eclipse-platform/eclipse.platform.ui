@@ -10,14 +10,18 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
 
+import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.AnnotateListener;
@@ -27,8 +31,10 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.AnnotateView;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.ui.*;
 
 public class ShowAnnotationAction extends WorkspaceAction {
@@ -64,7 +70,17 @@ public class ShowAnnotationAction extends WorkspaceAction {
 		// Run the CVS Annotate action with a progress monitor
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				fetchAnnotation(listener, cvsResource, revision, monitor);
+				monitor.beginTask(null, 100);
+				fetchAnnotation(listener, cvsResource, revision, Policy.subMonitorFor(monitor, 80));
+				try {
+					if (hasCharset(cvsResource, listener.getContents())) {
+						listener.setContents(getRemoteContents(cvsResource, Policy.subMonitorFor(monitor, 20)));
+					}
+				} catch (CoreException e) {
+					// Log and continue, using the original fetched contents
+					CVSUIPlugin.log(e);
+				}
+				monitor.done();
 			}
 		}, true, PROGRESS_DIALOG);
 
@@ -88,6 +104,15 @@ public class ShowAnnotationAction extends WorkspaceAction {
 			view.showAnnotations(cvsResource, listener.getCvsAnnotateBlocks(), listener.getContents());
 		} catch (PartInitException e1) {
 			handle(e1);
+		}
+	}
+
+	protected boolean hasCharset(ICVSResource cvsResource, InputStream contents) {
+		try {
+			return TeamPlugin.getCharset(cvsResource.getName(), contents) != null;
+		} catch (IOException e) {
+			// Assume that the contents do have a charset
+			return true;
 		}
 	}
 
@@ -140,6 +165,18 @@ public class ShowAnnotationAction extends WorkspaceAction {
 		}
 	}
 
+	private InputStream getRemoteContents(ICVSResource resource, IProgressMonitor monitor) throws CoreException {
+		ICVSRemoteResource remote = CVSWorkspaceRoot.getRemoteResourceFor(resource);
+		if (remote == null) {
+			return new ByteArrayInputStream(new byte[0]);
+		}
+		IStorage storage = ((IResourceVariant)remote).getStorage(monitor);
+		if (storage == null) {
+			return new ByteArrayInputStream(new byte[0]);
+		}
+		return storage.getContents();
+	}
+	
 	/**
 	 * Ony enabled for single resource selection
 	 */
