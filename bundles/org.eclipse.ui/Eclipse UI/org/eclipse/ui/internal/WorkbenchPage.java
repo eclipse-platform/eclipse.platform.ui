@@ -504,9 +504,6 @@ private void busyResetPerspective() {
  * @param persp identifies the new perspective.
  */
 private void busySetPerspective(IPerspectiveDescriptor desc) {
-	// If zoomed unzoom.
-	if (isZoomed())
-		zoomOut();
 
 	// Create new layout.
 	PerspectiveDescriptor realDesc = (PerspectiveDescriptor)desc;
