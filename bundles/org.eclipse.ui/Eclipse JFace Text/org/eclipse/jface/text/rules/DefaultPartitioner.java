@@ -217,7 +217,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 			Position[] category= d.getPositions(CONTENT_TYPES_CATEGORY);			
 			IRegion line= d.getLineInformationOfOffset(e.getOffset());
 			int reparseStart= line.getOffset();
-			int partitionStart= 0;
+			int partitionStart= -1;
 			String contentType= null;
 			
 			int first= d.computeIndexInCategory(CONTENT_TYPES_CATEGORY, reparseStart);
