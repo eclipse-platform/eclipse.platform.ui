@@ -53,11 +53,6 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	 * Re-launches the given configuration in the specified mode.
 	 */
 	public static void relaunch(ILaunchConfiguration config, String mode) {
-		// This is necessary until support for the old-style (launcher-based) form
-		// of launching is removed
-		if (config == null) {
-			return;
-		}
 		try {
 			config.launch(mode, null);		
 		} catch (CoreException ce) {
@@ -70,7 +65,6 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	 */
 	public boolean isEnabledFor(Object element) {
 		ILaunch launch= null;
-		
 		if (element instanceof ILaunch) {
 			launch= (ILaunch)element;
 		} else if (element instanceof IDebugElement) {
@@ -79,19 +73,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 			launch= ((IProcess)element).getLaunch();
 		}
 		
-		if (launch == null) {
-			return false;
-		}
-		if (launch.getLaunchConfiguration() == null) {
-			// old launcher support
-			return false;
-		} else {
-			// new launch configuration support
-			//relaunch is based on the launch history which is either
-			//in the new or old mode.  Currently relaunch does not work for
-			//launch configuration.
-			return false;
-		}	
+		return launch != null;
 	}
 			
 	/**
