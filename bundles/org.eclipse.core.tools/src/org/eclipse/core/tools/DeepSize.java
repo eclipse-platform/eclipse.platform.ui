@@ -52,36 +52,17 @@ public class DeepSize {
 		}
 	}
 
-	public static final int HEADER_SIZE = 8;
-	public static final int OBJECT_HEADER_SIZE = HEADER_SIZE;
 	public static final int ARRAY_HEADER_SIZE = 12;
+
+	public static final int HEADER_SIZE = 8;
+	static final HashSet ignoreSet = new HashSet();
+	public static final int OBJECT_HEADER_SIZE = HEADER_SIZE;
 	public static final int POINTER_SIZE = 4;
+	int byteSize;
+	final Map counts = new HashMap();
 
 	Set ignoreTypeNames = null;
-	static final HashSet ignoreSet = new HashSet();
 	final Map sizes = new HashMap();
-	final Map counts = new HashMap();
-	int byteSize;
-
-	void setIgnoreTypeNames(Set ignore) {
-		ignoreTypeNames = ignore;
-	}
-
-	public void deepSize(Object o) {
-		byteSize += sizeOf(o);
-	}
-
-	public int getSize() {
-		return byteSize;
-	}
-
-	public Map getSizes() {
-		return sizes;
-	}
-
-	public Map getCounts() {
-		return counts;
-	}
 
 	/**
 	 * Adds an object to the ignore set. Returns true if the object
@@ -89,6 +70,28 @@ public class DeepSize {
 	 */
 	public static boolean ignore(Object o) {
 		return !ignoreSet.add(new ObjectWrapper(o));
+	}
+
+	public static void reset() {
+		ignoreSet.clear();
+	}
+
+	private void count(Class c, int size) {
+		Object accumulatedSizes = sizes.get(c);
+		int existingSize = (accumulatedSizes == null) ? 0 : ((Integer) accumulatedSizes).intValue();
+		sizes.put(c, new Integer(existingSize + size));
+
+		Object accumulatedCounts = counts.get(c);
+		int existingCount = (accumulatedCounts == null) ? 0 : ((Integer) accumulatedCounts).intValue();
+		counts.put(c, new Integer(existingCount + 1));
+	}
+
+	public void deepSize(Object o) {
+		byteSize += sizeOf(o);
+	}
+
+	public Map getCounts() {
+		return counts;
 	}
 
 	Set getDefaultIgnoreTypeNames() {
@@ -100,14 +103,29 @@ public class DeepSize {
 		return ignored;
 	}
 
-	private void count(Class c, int size) {
-		Object accumulatedSizes = sizes.get(c);
-		int existingSize = (accumulatedSizes == null) ? 0 : ((Integer) accumulatedSizes).intValue();
-		sizes.put(c, new Integer(existingSize + size));
+	private Object getFieldObject(Field f, Object o) {
+		try {
+			f.setAccessible(true);
+			return f.get(o);
+		} catch (IllegalAccessException e) {
+			throw new Error(e.toString());
+		}
+	}
 
-		Object accumulatedCounts = counts.get(c);
-		int existingCount = (accumulatedCounts == null) ? 0 : ((Integer) accumulatedCounts).intValue();
-		counts.put(c, new Integer(existingCount + 1));
+	public int getSize() {
+		return byteSize;
+	}
+
+	public Map getSizes() {
+		return sizes;
+	}
+
+	private boolean isStaticField(Field f) {
+		return (Modifier.STATIC & f.getModifiers()) != 0;
+	}
+
+	void setIgnoreTypeNames(Set ignore) {
+		ignoreTypeNames = ignore;
 	}
 
 	private boolean shouldIgnoreType(Class clazz) {
@@ -131,46 +149,6 @@ public class DeepSize {
 		if (shouldIgnoreType(clazz))
 			return 0;
 		return clazz.isArray() ? sizeOfArray(clazz, o) : sizeOfObject(clazz, o);
-	}
-
-	private int sizeOfObject(Class type, Object o) {
-
-		int internalSize = 0; // size of referenced objects
-		int shallowSize = OBJECT_HEADER_SIZE;
-		Class clazz = type;
-		while (clazz != null) {
-			Field[] fields = clazz.getDeclaredFields();
-			for (int i = 0; i < fields.length; i++) {
-				Field f = fields[i];
-				if (!isStaticField(f)) {
-					Class fieldType = f.getType();
-					if (fieldType.isPrimitive()) {
-						shallowSize += sizeOfPrimitiveField(fieldType);
-					} else {
-						shallowSize += POINTER_SIZE;
-						internalSize += sizeOf(getFieldObject(f, o));
-					}
-				}
-			}
-			clazz = clazz.getSuperclass();
-		}
-		count(type, shallowSize);
-		return shallowSize + internalSize;
-
-	}
-
-	private int sizeOfPrimitiveField(Class type) {
-		if (type == long.class || type == double.class)
-			return 8;
-		return 4;
-	}
-
-	public static void reset() {
-		ignoreSet.clear();
-	}
-
-	private boolean isStaticField(Field f) {
-		return (Modifier.STATIC & f.getModifiers()) != 0;
 	}
 
 	private int sizeOfArray(Class type, Object array) {
@@ -210,13 +188,36 @@ public class DeepSize {
 
 	}
 
-	private Object getFieldObject(Field f, Object o) {
-		try {
-			f.setAccessible(true);
-			return f.get(o);
-		} catch (IllegalAccessException e) {
-			throw new Error(e.toString());
+	private int sizeOfObject(Class type, Object o) {
+
+		int internalSize = 0; // size of referenced objects
+		int shallowSize = OBJECT_HEADER_SIZE;
+		Class clazz = type;
+		while (clazz != null) {
+			Field[] fields = clazz.getDeclaredFields();
+			for (int i = 0; i < fields.length; i++) {
+				Field f = fields[i];
+				if (!isStaticField(f)) {
+					Class fieldType = f.getType();
+					if (fieldType.isPrimitive()) {
+						shallowSize += sizeOfPrimitiveField(fieldType);
+					} else {
+						shallowSize += POINTER_SIZE;
+						internalSize += sizeOf(getFieldObject(f, o));
+					}
+				}
+			}
+			clazz = clazz.getSuperclass();
 		}
+		count(type, shallowSize);
+		return shallowSize + internalSize;
+
+	}
+
+	private int sizeOfPrimitiveField(Class type) {
+		if (type == long.class || type == double.class)
+			return 8;
+		return 4;
 	}
 
 }
