@@ -16,12 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -31,6 +27,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 
 import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -346,10 +346,9 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			return fExplicitEncoding;
 		
 		// Probe content
-		Reader reader= new BufferedReader(new StringReader(fDocument.get()));
 		try {
 			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
-			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, fFile.getName(), options);
+			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(new DocumentInputStream(fDocument), fFile.getName(), options);
 			if (description != null) {
 				String encoding= description.getCharset();
 				if (encoding != null)
@@ -357,12 +356,6 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			} 
 		} catch (IOException ex) {
 			// try next strategy
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException ex) {
-				FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("ResourceTextFileBuffer.error.closeReader"), ex)); //$NON-NLS-1$
-			}
 		}
 		
 		// Use file's encoding if the file has a BOM

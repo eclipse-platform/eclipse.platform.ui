@@ -21,10 +21,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
-import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -33,6 +31,8 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
+
+import org.eclipse.core.resources.IResourceStatus;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
@@ -458,10 +458,9 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 
 		if (fFile != null) {
 			// Probe content
-			Reader reader= new BufferedReader(new StringReader(fDocument.get()));
 			try {
 				QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
-				IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, fFile.getName(), options);
+				IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(new DocumentInputStream(fDocument), fFile.getName(), options);
 				if (description != null) {
 					String encoding= description.getCharset();
 					if (encoding != null)
@@ -469,12 +468,6 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 				}
 			} catch (IOException ex) {
 				// try next strategy
-			} finally {
-				try {
-					reader.close();
-				} catch (IOException ex) {
-					FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("ResourceTextFileBuffer.error.closeReader"), ex)); //$NON-NLS-1$
-				}
 			}
 		}
 		

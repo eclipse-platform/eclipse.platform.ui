@@ -10,13 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -30,11 +27,7 @@ import java.util.NoSuchElementException;
 import org.osgi.framework.Bundle;
 
 import org.eclipse.core.internal.filebuffers.ContainerGenerator;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceRuleFactory;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ILog;
@@ -49,6 +42,12 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IFileBuffer;
@@ -69,7 +68,6 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.UISynchronizationContext;
 import org.eclipse.ui.internal.editors.text.WorkspaceOperationRunner;
-import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -811,10 +809,9 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			return encoding;
 		
 		// Probe content
-		Reader reader= new BufferedReader(new StringReader(document.get()));
 		try {
 			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
-			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, targetFile.getName(), options);
+			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(new DocumentInputStream(document), targetFile.getName(), options);
 			if (description != null) {
 				encoding= description.getCharset();
 				if (encoding != null)
@@ -822,12 +819,6 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			}
 		} catch (IOException ex) {
 			// continue with next strategy
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException ex) {
-				TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "TextFileDocumentProvider.getCharsetForNewFile(...): Could not close reader", ex)); //$NON-NLS-1$
-			}
 		}
 		
 		// Use parent chain
