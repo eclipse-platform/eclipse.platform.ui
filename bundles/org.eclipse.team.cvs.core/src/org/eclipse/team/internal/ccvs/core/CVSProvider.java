@@ -449,7 +449,7 @@ public class CVSProvider implements ICVSProvider {
 		ICVSFolder folder = (ICVSFolder)Session.getManagedResource(project);
 		FolderSyncInfo folderInfo = folder.getFolderSyncInfo();
 		if ( ! info.equals(folderInfo)) {
-			throw new CVSException(new CVSStatus(CVSStatus.ERROR, "Provided CVS information does not match that on disk"));
+			throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSProvider.infoMismatch", project.getName())));//$NON-NLS-1$
 		}
 		
 		// Ensure that the provided location is managed
@@ -483,7 +483,7 @@ public class CVSProvider implements ICVSProvider {
 		try {
 			getInstance().loadState();
 		} catch (TeamException e) {
-			Util.logError("Error loading state", e);
+			Util.logError(Policy.bind("CVSProvider.errorSaving"), e);//$NON-NLS-1$
 		}
 	}
 	
@@ -491,7 +491,7 @@ public class CVSProvider implements ICVSProvider {
 		try {
 			getInstance().saveState();
 		} catch (TeamException e) {
-			Util.logError("Error saving state", e);
+			Util.logError(Policy.bind("CVSProvider.errorLoading"), e);//$NON-NLS-1$
 		}
 	}
 	

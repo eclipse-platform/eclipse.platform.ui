@@ -23,7 +23,7 @@ import org.eclipse.team.ccvs.core.*;
  */
 public class PServerConnection implements IServerConnection {
 
-	protected static final String SLEEP_PROPERTY = "cvs.pserver.wait";
+	protected static final String SLEEP_PROPERTY = "cvs.pserver.wait";//$NON-NLS-1$
 	protected static final String milliseconds = System.getProperty(SLEEP_PROPERTY);
 	
 	public static final char NEWLINE= 0xA;
@@ -33,8 +33,8 @@ public class PServerConnection implements IServerConnection {
 	
 	/** error line indicators */
 	private static final char ERROR_CHAR = 'E';
-	private static final String ERROR_MESSAGE = "error 0";
-	private static final String NO_SUCH_USER = "no such user";
+	private static final String ERROR_MESSAGE = "error 0";//$NON-NLS-1$
+	private static final String NO_SUCH_USER = "no such user";//$NON-NLS-1$
 	
 	private static final char[] SCRAMBLING_TABLE=new char[] {
 	0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
@@ -56,10 +56,10 @@ public class PServerConnection implements IServerConnection {
 	};
 
 	/** Communication strings */
-	private static final String BEGIN= "BEGIN AUTH REQUEST";
-	private static final String END=   "END AUTH REQUEST";
-	private static final String LOGIN_OK= "I LOVE YOU";
-	private static final String LOGIN_FAILED= "I HATE YOU";
+	private static final String BEGIN= "BEGIN AUTH REQUEST";//$NON-NLS-1$
+	private static final String END=   "END AUTH REQUEST";//$NON-NLS-1$
+	private static final String LOGIN_OK= "I LOVE YOU";//$NON-NLS-1$
+	private static final String LOGIN_FAILED= "I HATE YOU";//$NON-NLS-1$
 	
 	private String password;
 	private ICVSRepositoryLocation cvsroot;
@@ -87,7 +87,7 @@ public class PServerConnection implements IServerConnection {
 		// CVS plugin's bad behavior with connections.
 		sleepIfPropertyIsSet();
 		
-		monitor.subTask("Authenticating over pserver");
+		monitor.subTask(Policy.bind("PServerConnection.authenticating"));//$NON-NLS-1$
 		monitor.worked(1);
 		
 		fSocket = createSocket();
@@ -155,10 +155,10 @@ public class PServerConnection implements IServerConnection {
 			
 		// Otherwise, determine the type of error
 		if (line.length() == 0)
-			throw new IOException(Policy.bind("PServerConnection.noResponse"));
+			throw new IOException(Policy.bind("PServerConnection.noResponse"));//$NON-NLS-1$
 		if (LOGIN_FAILED.equals(line))
-			throw new CVSAuthenticationException(cvsroot.getLocation(), Policy.bind("PServerConnection.loginRefused"));
-		String message = "";
+			throw new CVSAuthenticationException(cvsroot.getLocation(), Policy.bind("PServerConnection.loginRefused"));//$NON-NLS-1$
+		String message = "";//$NON-NLS-1$
 		// Skip any E messages for now
 		while (line.charAt(0) == ERROR_CHAR) {
 			// message += line.substring(1) + " ";
@@ -170,8 +170,8 @@ public class PServerConnection implements IServerConnection {
 		else
 			message += line;
 		if (message.indexOf(NO_SUCH_USER) != -1)
-			throw new CVSAuthenticationException(cvsroot.getLocation(), Policy.bind("PServerConnection.invalidUser", new Object[] {message}));
-		throw new IOException(Policy.bind("PServerConnection.connectionRefused", new Object[] { message }));
+			throw new CVSAuthenticationException(cvsroot.getLocation(), Policy.bind("PServerConnection.invalidUser", new Object[] {message}));//$NON-NLS-1$
+		throw new IOException(Policy.bind("PServerConnection.connectionRefused", new Object[] { message }));//$NON-NLS-1$
 	}
 	/*
 	 * Called if there are exceptions when connecting.
@@ -210,7 +210,7 @@ public class PServerConnection implements IServerConnection {
 			result= new Socket(cvsroot.getHost(), port);
 		} catch (InterruptedIOException e) {
 			// If we get this exception, chances are the host is not responding
-			throw new InterruptedIOException(Policy.bind("PServerConnection.socket", new Object[] {cvsroot.getHost()}));
+			throw new InterruptedIOException(Policy.bind("PServerConnection.socket", new Object[] {cvsroot.getHost()}));//$NON-NLS-1$
 		}
 		result.setSoTimeout(cvsroot.getTimeout() * 1000);
 		return result;
@@ -225,12 +225,12 @@ public class PServerConnection implements IServerConnection {
 				throwInValidCharacter();
 			out[i]= SCRAMBLING_TABLE[value];			
 		}
-		return "A" + new String(out);
+		return "A" + new String(out);//$NON-NLS-1$
 	}
 	
 	private void throwInValidCharacter() throws CVSAuthenticationException {
 		throw new CVSAuthenticationException(cvsroot.getLocation(), 
-			Policy.bind("PServerConnection.invalidChars"));
+			Policy.bind("PServerConnection.invalidChars"));//$NON-NLS-1$
 	}
 
 	/**

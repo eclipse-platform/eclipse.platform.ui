@@ -84,7 +84,7 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 	 * @see ILogEntry#isDeletion()
 	 */
 	public boolean isDeletion() {
-		return getState().equals("dead"); // $NON-NLS-1$
+		return getState().equals("dead"); //$NON-NLS-1$
 	}
 
 }

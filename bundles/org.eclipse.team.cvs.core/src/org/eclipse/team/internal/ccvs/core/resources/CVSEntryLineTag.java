@@ -40,12 +40,12 @@ public class CVSEntryLineTag extends CVSTag {
 	
 	public String toEntryLineFormat(boolean useSamePrefixForBranchAndTag) {
 		if (type == BRANCH || (type == VERSION && useSamePrefixForBranchAndTag))
-			return "T" + name;
+			return "T" + name;//$NON-NLS-1$
 		else if (type == VERSION)
-			return "N" + name;
+			return "N" + name;//$NON-NLS-1$
 		else if (type == DATE)
-			return "D" + name;
-		return "";
+			return "D" + name;//$NON-NLS-1$
+		return "";//$NON-NLS-1$
 	}
 	
 	public boolean equals(Object obj) {

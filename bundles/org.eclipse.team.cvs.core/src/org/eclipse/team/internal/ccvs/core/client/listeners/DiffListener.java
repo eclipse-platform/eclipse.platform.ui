@@ -23,7 +23,7 @@ public class DiffListener implements ICommandOutputListener {
 	
 	public IStatus messageLine(String line, ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
-		if (! line.startsWith("cvs server:")) {
+		if (! line.startsWith("cvs server:")) { //$NON-NLS-1$
 			patchStream.println(line);
 		}
 		return OK;
@@ -33,7 +33,7 @@ public class DiffListener implements ICommandOutputListener {
 		IProgressMonitor monitor) {
 		// ignore these errors for now - this is used only with the diff
 		// request and the errors can be safely ignored.
-		if(! line.startsWith("cvs server:")) {
+		if(! line.startsWith("cvs server:")) {//$NON-NLS-1$
 			return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, line);
 		}
 		return OK;

@@ -781,7 +781,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	public boolean setConnectionInfo(IResource resource, String methodName, IUserInfo userInfo, IProgressMonitor monitor) throws TeamException {
 		checkIsChild(resource);
 		try {
-			monitor.beginTask("Setting Connection Info", 100);
+			monitor.beginTask(Policy.bind("CVSTeamProvider.connectionInfo", project.getName()), 100); //$NON-NLS-1$
 			
 			if (!CVSRepositoryLocation.validateConnectionMethod(methodName))
 				return false;
@@ -826,7 +826,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 				
 		try {
 			// 256 ticks gives us a maximum of 1024 which seems reasonable for folders is a project
-			monitor.beginTask("Updating folder sync info", 256);
+			monitor.beginTask(Policy.bind("CVSTeamProvider.folderInfo", project.getName()), 256);  //$NON-NLS-1$
 			
 			// Visit all the children folders in order to set the root in the folder sync info
 			managedProject.accept(new ICVSResourceVisitor() {
@@ -835,7 +835,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 					monitor.worked(1);
 					FolderSyncInfo info = folder.getFolderSyncInfo();
 					if (info != null) {
-						monitor.subTask("Updating " + info.getRepository());
+						monitor.subTask(Policy.bind("CVSTeamProvider.updatingFolder", info.getRepository())); //$NON-NLS-1$
 						folder.setFolderSyncInfo(new FolderSyncInfo(info.getRepository(), root, info.getTag(), info.getIsStatic()));
 						folder.acceptChildren(this);
 					}
@@ -855,7 +855,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		Assert.isNotNull(tag);
 		
 		if(tag.getType() != CVSTag.VERSION && tag.getType() != CVSTag.BRANCH) {
-			throw new TeamException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.tagNotVersionOrBranchError")));
+			throw new TeamException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.tagNotVersionOrBranchError"))); //$NON-NLS-1$
 		}
 						
 		// Build the local options

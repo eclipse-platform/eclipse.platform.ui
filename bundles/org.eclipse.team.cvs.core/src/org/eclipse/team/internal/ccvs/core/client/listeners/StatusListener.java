@@ -54,16 +54,16 @@ public class StatusListener implements ICommandOutputListener {
 	}
 
 	public IStatus errorLine(String line, ICVSFolder commandRoot, IProgressMonitor monitor) {
-		if (line.startsWith("cvs server: conflict:")) {
+		if (line.startsWith("cvs server: conflict:")) {//$NON-NLS-1$
 			// We get this because we made up an entry line to send to the server
 			// Therefore, we make this a warning!!!
 			return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, line);
 		}
-		if (line.startsWith("cvs server: Examining")) {
+		if (line.startsWith("cvs server: Examining")) {//$NON-NLS-1$
 			isFolder = true;
 			return OK;
 		}
-		if (isFolder && line.startsWith("cvs [server aborted]: could not chdir to")) {
+		if (isFolder && line.startsWith("cvs [server aborted]: could not chdir to")) {//$NON-NLS-1$
 			String folderPath = line.substring(41, line.indexOf(':', 42));
 			// Pass null to listener indicating that the resource exists but does not have a revision number
 			// (i.e. the resource is a folder)

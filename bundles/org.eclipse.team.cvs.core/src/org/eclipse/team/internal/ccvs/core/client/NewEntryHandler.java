@@ -17,7 +17,7 @@ public class NewEntryHandler extends ResponseHandler {
 	 * @see ResponseHandler#getResponseID()
 	 */
 	public String getResponseID() {
-		return "New-entry";
+		return "New-entry"; //$NON-NLS-1$
 	}
 
 	/*

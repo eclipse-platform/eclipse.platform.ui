@@ -35,8 +35,8 @@ import org.eclipse.team.internal.ccvs.core.Policy;
  */
 public class Connection {
 	private static final boolean DEBUG =
-		(System.getProperty("eclipse.cvs.debug") == null) ? false : 
-		(new Boolean(System.getProperty("eclipse.cvs.debug")).booleanValue());
+		(System.getProperty("eclipse.cvs.debug") == null) ? false : //$NON-NLS-1$
+		(new Boolean(System.getProperty("eclipse.cvs.debug")).booleanValue());//$NON-NLS-1$
 	private static final byte NEWLINE= 0xA;
 	
 	private IServerConnection serverConnection;
@@ -71,7 +71,7 @@ public class Connection {
 			readPendingInput();
 			serverConnection.close();
 		} catch (IOException ex) {
-			throw new CVSCommunicationException(Policy.bind("Connection.cannotClose"), ex);
+			throw new CVSCommunicationException(Policy.bind("Connection.cannotClose"), ex);//$NON-NLS-1$
 		} finally {
 			fResponseStream= null;
 			fIsEstablished= false;
@@ -137,7 +137,7 @@ public class Connection {
 	 */
 	public String readLine() throws CVSException {
 		if (!isEstablished())
-			throw new CVSCommunicationException(Policy.bind("Connection.readUnestablishedConnection"));
+			throw new CVSCommunicationException(Policy.bind("Connection.readUnestablishedConnection"));//$NON-NLS-1$
 		try {
 			InputStream in = getInputStream();
 			int index = 0;
@@ -215,10 +215,10 @@ static String readLine(InputStream in) throws IOException {
 	 */
 	void write(String s, boolean newline) throws CVSException {
 		if (!isEstablished())
-			throw new CVSCommunicationException(Policy.bind("Connection.writeUnestablishedConnection"));
+			throw new CVSCommunicationException(Policy.bind("Connection.writeUnestablishedConnection"));//$NON-NLS-1$
 			
 		if (DEBUG)
-			System.out.print(s + (newline ? "\n" : ""));
+			System.out.print(s + (newline ? "\n" : ""));//$NON-NLS-1$ //$NON-NLS-2$ 
 	
 		try {
 			OutputStream out= getOutputStream();

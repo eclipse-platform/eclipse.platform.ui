@@ -294,7 +294,7 @@ public abstract class Command {
 			if (resources[i].isFolder()) folder = (ICVSFolder) resources[i];
 			else folder = resources[i].getParent();
 			if (! folder.isCVSFolder()) {
-				throw new CVSException("Argument " + folder.getName() + "is not managed");
+				throw new CVSException(Policy.bind("Command.argumentNotManaged", folder.getName()));//$NON-NLS-1$
 			}
 		}
 	}
@@ -308,7 +308,7 @@ public abstract class Command {
 	private void reloadSyncInfo(ICVSResource[] resources, IProgressMonitor monitor) throws CVSException {
 		try {
 			monitor = Policy.monitorFor(monitor);
-			monitor.beginTask("", 100 * resources.length);
+			monitor.beginTask(Policy.bind("Command.loadingSyncInfo"), 100 * resources.length);//$NON-NLS-1$
 			for (int i = 0; i < resources.length; i++) {
 				if(resources[i] instanceof LocalResource && resources[i].exists()) {
 					CVSProviderPlugin.getSynchronizer().reload(((LocalResource)resources[i]).getLocalFile(), Policy.subMonitorFor(monitor, 100));				
@@ -328,7 +328,7 @@ public abstract class Command {
 	private void saveSyncInfo(ICVSResource[] resources, IProgressMonitor monitor) throws CVSException {
 		try {
 			monitor = Policy.monitorFor(monitor);
-			monitor.beginTask("", 100 * resources.length);
+			monitor.beginTask(Policy.bind("Command.savingSyncInfo"), 100 * resources.length);//$NON-NLS-1$
 			for (int i = 0; i < resources.length; i++) {
 				if(resources[i] instanceof LocalResource) {
 					CVSProviderPlugin.getSynchronizer().save(((LocalResource)resources[i]).getLocalFile(), Policy.subMonitorFor(monitor, 100));				
@@ -627,8 +627,7 @@ public abstract class Command {
 				return new LocalOption("-D", tag.getName()); //$NON-NLS-1$
 			default:
 				// tag must not be HEAD
-				throw new IllegalArgumentException("Sticky tag not " +
-					"valid for trunk (HEAD).");
+				throw new IllegalArgumentException(Policy.bind("Command.invalidTag")); //$NON-NLS-1$
 		}
 	}
 

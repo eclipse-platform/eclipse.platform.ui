@@ -259,11 +259,14 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 	 * @see ICVSSynchronizer#getResourceSync(File)
 	 */
 	public ResourceSyncInfo getResourceSync(File file) throws CVSException {
-		LocalFolder parent = new LocalFolder(file.getParentFile());
-		if(parent.exists() && parent.isCVSFolder()) {
-			CacheData data = (CacheData)resourceSyncCache.get(file, null);
-			if(data!=null) {
-				return (ResourceSyncInfo)data.getData();
+		File parentFile = file.getParentFile();
+		if (parentFile != null) {
+			LocalFolder parent = new LocalFolder(parentFile);
+			if(parent.exists() && parent.isCVSFolder()) {
+				CacheData data = (CacheData)resourceSyncCache.get(file, null);
+				if(data!=null) {
+					return (ResourceSyncInfo)data.getData();
+				}
 			}
 		}
 		return null;

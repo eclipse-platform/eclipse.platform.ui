@@ -40,7 +40,7 @@ public class CVSCommunicationException extends CVSException {
 	public static String getMessageFor(Throwable throwable) {
 		String message = Policy.bind(throwable.getClass().getName(), new Object[] {throwable.getMessage()});
 		if (message.equals(throwable.getClass().getName()))
-			message = Policy.bind("CVSCommunicationException.io", new Object[] {throwable.toString()}); 
+			message = Policy.bind("CVSCommunicationException.io", new Object[] {throwable.toString()}); //$NON-NLS-1$ 
 		return message;
 	}
 }

@@ -50,9 +50,9 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
  * caller to CLOSE it before moving on.
  */
 public class Session {
-	public static final String CURRENT_LOCAL_FOLDER = ".";
-	public static final String CURRENT_REMOTE_FOLDER = "";
-	public static final String SERVER_SEPARATOR = "/";
+	public static final String CURRENT_LOCAL_FOLDER = "."; //$NON-NLS-1$
+	public static final String CURRENT_REMOTE_FOLDER = ""; //$NON-NLS-1$
+	public static final String SERVER_SEPARATOR = "/"; //$NON-NLS-1$
 
 	// default file transfer buffer size (in bytes)
 	private static int TRANSFER_BUFFER_SIZE = 8192;
@@ -62,7 +62,7 @@ public class Session {
 
 	// the platform's line termination sequence
 	private static final byte[] PLATFORM_NEWLINE_BYTES =
-		System.getProperty("line.separator").getBytes(); // at least one byte long
+		System.getProperty("line.separator").getBytes();  //$NON-NLS-1$ // at least one byte long
 	// the server's line termination sequence
 	private static final int SERVER_NEWLINE_BYTE = 0x0a; // exactly one byte long
 	private static final byte[] SERVER_NEWLINE_BYTES = new byte[] { SERVER_NEWLINE_BYTE };
@@ -120,7 +120,7 @@ public class Session {
 		connection = location.openConnection(monitor);
 		
 		// tell the server the names of the responses we can handle
-		connection.writeLine("Valid-responses " + Command.makeResponseList());
+		connection.writeLine("Valid-responses " + Command.makeResponseList()); //$NON-NLS-1$
 
 		// ask for the set of valid requests
 		boolean saveOutputToConsole = outputToConsole;
@@ -130,7 +130,7 @@ public class Session {
 		outputToConsole = saveOutputToConsole;
 
 		// set the root directory on the server for this connection
-		connection.writeLine("Root " + getRepositoryRoot());
+		connection.writeLine("Root " + getRepositoryRoot()); //$NON-NLS-1$
 	}		
 	
 	/**
@@ -153,7 +153,7 @@ public class Session {
 	 */
 	public boolean isValidRequest(String request) {
 		return (validRequests == null) ||
-			(validRequests.indexOf(" " + request + " ") != -1);
+			(validRequests.indexOf(" " + request + " ") != -1); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -243,13 +243,13 @@ public class Session {
 	 * @param arg the argument to send
 	 */
 	public void sendArgument(String arg) throws CVSException {
-		connection.write("Argument ");
+		connection.write("Argument "); //$NON-NLS-1$
 		int oldPos = 0;
 		for (;;) {
 			int pos = arg.indexOf('\n', oldPos);
 			if (pos == -1) break;
 			connection.writeLine(arg.substring(oldPos, pos));
-			connection.write("Argumentx ");
+			connection.write("Argumentx "); //$NON-NLS-1$
 			oldPos = pos + 1;
 		}
 		connection.writeLine(arg.substring(oldPos));
@@ -289,8 +289,8 @@ public class Session {
 	 */
 	public void sendIsModified(ICVSFile file, boolean isBinary, IProgressMonitor monitor)
 		throws CVSException {
-		if (isValidRequest("Is-modified")) {
-			connection.writeLine("Is-modified " + file.getName());
+		if (isValidRequest("Is-modified")) { //$NON-NLS-1$
+			connection.writeLine("Is-modified " + file.getName()); //$NON-NLS-1$
 		} else {
 			sendModified(file, isBinary, monitor);
 		}
@@ -305,7 +305,7 @@ public class Session {
 	 * </p>
 	 */
 	public void sendStaticDirectory() throws CVSException {
-		connection.writeLine("Static-directory");
+		connection.writeLine("Static-directory"); //$NON-NLS-1$
 	}
 
 	/**
@@ -324,7 +324,7 @@ public class Session {
 	 * </p>
 	 */
 	public void sendConstructedDirectory(String localDir) throws CVSException {
-		sendDirectory(localDir, getRepositoryRoot() + "/" + localDir);
+		sendDirectory(localDir, getRepositoryRoot() + "/" + localDir); //$NON-NLS-1$
 	}
 
 	/**
@@ -339,8 +339,8 @@ public class Session {
 	 * @param remoteDir the path of the remote directory relative to repositoryRoot
 	 */
 	public void sendDirectory(String localDir, String remoteDir) throws CVSException {
-		if (localDir.length() == 0) localDir = ".";
-		connection.writeLine("Directory " + localDir);
+		if (localDir.length() == 0) localDir = "."; //$NON-NLS-1$
+		connection.writeLine("Directory " + localDir); //$NON-NLS-1$
 		connection.writeLine(remoteDir);
 	}
 
@@ -348,7 +348,7 @@ public class Session {
 	 * Sends a Directory request for the localRoot.
 	 */
 	public void sendLocalRootDirectory() throws CVSException {
-		sendDirectory(".", localRoot.getRemoteLocation(localRoot));
+		sendDirectory(".", localRoot.getRemoteLocation(localRoot)); //$NON-NLS-1$
 	}
 
 	/**
@@ -359,7 +359,7 @@ public class Session {
 	 * @see #sendConstructedDirectory
 	 */
 	public void sendConstructedRootDirectory() throws CVSException {
-		sendConstructedDirectory("");
+		sendConstructedDirectory(""); //$NON-NLS-1$
 	}
 
 	/**
@@ -376,7 +376,7 @@ public class Session {
 	 * @param entryLine the formatted entry line of the managed file.
 	 */
 	public void sendEntry(String entryLine) throws CVSException {
-		connection.writeLine("Entry " + entryLine);
+		connection.writeLine("Entry " + entryLine); //$NON-NLS-1$
 	}
 
 	/**
@@ -389,7 +389,7 @@ public class Session {
 	 * @param option the global option to send
 	 */
 	public void sendGlobalOption(String option) throws CVSException {
-		connection.writeLine("Global_option " + option);
+		connection.writeLine("Global_option " + option); //$NON-NLS-1$
 	}
 
 	/**
@@ -405,7 +405,7 @@ public class Session {
 	 * @param file the file that was not modified
 	 */
 	public void sendUnchanged(ICVSFile file) throws CVSException {
-		connection.writeLine("Unchanged " + file.getName());
+		connection.writeLine("Unchanged " + file.getName()); //$NON-NLS-1$
 	}
 	
 	/**
@@ -423,7 +423,7 @@ public class Session {
 	 * @param resource the local file or folder
 	 */
 	public void sendQuestionable(ICVSResource resource) throws CVSException {
-		connection.writeLine("Questionable " + resource.getName());
+		connection.writeLine("Questionable " + resource.getName()); //$NON-NLS-1$
 	}
 
 	/**
@@ -436,7 +436,7 @@ public class Session {
 	 * @param tag the sticky tag associated with the directory
 	 */
 	public void sendSticky(String tag) throws CVSException {
-		connection.writeLine("Sticky " + tag);
+		connection.writeLine("Sticky " + tag); //$NON-NLS-1$
 	}
 
 	/**
@@ -462,7 +462,7 @@ public class Session {
 	 */
 	public void sendModified(ICVSFile file, boolean isBinary, IProgressMonitor monitor)
 		throws CVSException {
-		connection.writeLine("Modified " + file.getName());
+		connection.writeLine("Modified " + file.getName()); //$NON-NLS-1$
 		ResourceSyncInfo info = file.getSyncInfo();
 		if (info != null && info.getPermissions() != null) {
 			connection.writeLine(info.getPermissions());
@@ -496,8 +496,8 @@ public class Session {
 	public void sendFile(ICVSFile file, boolean isBinary, IProgressMonitor monitor)
 		throws CVSException {
 		// update progress monitor
-		String title = Policy.bind("LocalFile.sending", new Object[]{ file.getName() });
-		monitor.subTask(Policy.bind("LocalFile.transferNoSize", title));
+		String title = Policy.bind("Session.sending", new Object[]{ file.getName() }); //$NON-NLS-1$
+		monitor.subTask(Policy.bind("Session.transferNoSize", title)); //$NON-NLS-1$
 		// obtain an input stream for the file and its size
 		long size = file.getSize();
 		InputStream in = file.getInputStream();
@@ -532,7 +532,7 @@ public class Session {
 							read = in.read(fileContents, pos, fsize - pos);
 							if (read == -1) {
 								// file ended prematurely
-								throw new IOException("Read finished prematurely");
+								throw new IOException(Policy.bind("Session.readError"));//$NON-NLS-1$
 							}
 						}
 					} finally {
@@ -589,14 +589,14 @@ public class Session {
 	public void receiveFile(ICVSFile file, boolean isBinary, IProgressMonitor monitor)
 	throws CVSException {
 		// update progress monitor
-		String title = Policy.bind("LocalFile.receiving", new Object[]{ file.getName() });
-		monitor.subTask(Policy.bind("LocalFile.transferNoSize", title));
+		String title = Policy.bind("Session.receiving", new Object[]{ file.getName() }); //$NON-NLS-1$
+		monitor.subTask(Policy.bind("Session.transferNoSize", title)); //$NON-NLS-1$
 		// get the file size from the server
 		long size;
 		try {
 			size = Long.parseLong(readLine(), 10);
 		} catch (NumberFormatException e) {
-			throw new CVSException("Malformed file transmission received", e);
+			throw new CVSException(Policy.bind("Session.badInt"), e); //$NON-NLS-1$
 		}
 		// obtain an output stream for the file
 		OutputStream out = file.getOutputStream();
@@ -655,7 +655,7 @@ public class Session {
 				int read = in.read(buffer, 0, (int) Math.min(wfirst, size - totalRead));
 				if (read == -1) {
 					// file ended prematurely
-					throw new IOException("Read finished prematurely");
+					throw new IOException(Policy.bind("Session.readError")); //$NON-NLS-1$
 				}
 				totalRead += read;
 				if (newlineOut == null) {
@@ -688,7 +688,7 @@ public class Session {
 				}
 				// update progress monitor
 				if (totalRead > nextProgressThresh) {
-					monitor.subTask(Policy.bind("LocalFile.transfer",
+					monitor.subTask(Policy.bind("Session.transfer", //$NON-NLS-1$
 							new Object[] { title, new Long(totalRead / 1024), ksize}));
 					monitor.worked(read);
 					nextProgressThresh = totalRead + TRANSFER_PROGRESS_INCREMENT;
@@ -739,7 +739,7 @@ public class Session {
 	 * requests for this session.
 	 */
 	void setValidRequests(String validRequests) {
-		this.validRequests = " " + validRequests + " ";
+		this.validRequests = " " + validRequests + " "; //$NON-NLS-1$  //$NON-NLS-2$
 	}
 
 	boolean isOutputToConsole() {

@@ -13,6 +13,7 @@ import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.internal.IgnoreInfo;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
 import org.eclipse.team.internal.ccvs.core.util.FileUtil;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileUtil;
@@ -40,6 +41,7 @@ public abstract class LocalResource implements ICVSResource {
 	 * A local handle 
 	 */
 	public LocalResource(File ioResource) {
+		Assert.isNotNull(ioResource);
 		this.ioResource = ioResource;
 	}
 	
@@ -86,7 +88,9 @@ public abstract class LocalResource implements ICVSResource {
 	 * @see ICVSResource#getParent()
 	 */
 	public ICVSFolder getParent() {
-		return new LocalFolder(ioResource.getParentFile());
+		File parentFile = ioResource.getParentFile();
+		if (parentFile == null) return null;
+		return new LocalFolder(parentFile);
 	}
 
 	/**
@@ -126,7 +130,7 @@ public abstract class LocalResource implements ICVSResource {
 		// 3. check the parent
 		if(!ignored) {
 			ICVSFolder parent = getParent();
-			if(((LocalResource)parent).getLocalFile()==null) return false;
+			if(parent==null) return false;
 			return parent.isIgnored();
 		} else {
 			return ignored;

@@ -84,7 +84,7 @@ public class ModuleExpansion {
 	private List getExpansionsFor(String module, Map moduleMappings, int depth) throws CVSException {
 		if (depth > moduleMappings.size()) {
 			// Indicate that a circular reference exists
-			throw new CVSException(Policy.bind("ModuleExpansion.circular", module));
+			throw new CVSException(Policy.bind("ModuleExpansion.circular", module));//$NON-NLS-1$
 		}
 		Object mappings = moduleMappings.get(module);
 		if (mappings == null) {

@@ -18,7 +18,7 @@ public class CVSAuthenticationException extends CVSException {
 	 */
 	public CVSAuthenticationException(String detail) {
 		super(
-			Policy.bind("CVSAuthenticationException.detail", new Object[] { detail }),
+			Policy.bind("CVSAuthenticationException.detail", new Object[] { detail }), //$NON-NLS-1$ 
 			null,
 			null);
 	}
@@ -48,7 +48,7 @@ public class CVSAuthenticationException extends CVSException {
 	 */
 	public CVSAuthenticationException(String cvsroot, Throwable throwable) {
 		super(
-			Policy.bind("CVSAuthenticationException.normal", new Object[] { cvsroot }),
+			Policy.bind("CVSAuthenticationException.normal", new Object[] { cvsroot }),//$NON-NLS-1$ 
 			null,
 			null);
 	}

@@ -162,7 +162,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 				}
 				Assert.isTrue(local.exists());
 				// XXX We need to create the proper sync info
-				info =  new ResourceSyncInfo(local.getName(), ResourceSyncInfo.ADDED_REVISION, "dummy timestamp", CVSProvider.isText(local.getName())?"":"-kb", local.getParent().getFolderSyncInfo().getTag(), null);
+				info =  new ResourceSyncInfo(local.getName(), ResourceSyncInfo.ADDED_REVISION, ResourceSyncInfo.DUMMY_TIMESTAMP, CVSProvider.isText(local.getName())?"":"-kb", local.getParent().getFolderSyncInfo().getTag(), null);
 				revision = info.getRevision();
 			} else {
 				Assert.isNotNull(info);
@@ -179,7 +179,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			if (local.exists()) {
 				// We could have an incoming change or deletion
 				if (remote == null) {
-					info =  new ResourceSyncInfo(local.getName(), ResourceSyncInfo.ADDED_REVISION, "dummy timestamp", CVSProvider.isText(local.getName())?"":"-kb", local.getParent().getFolderSyncInfo().getTag(), null);
+					info =  new ResourceSyncInfo(local.getName(), ResourceSyncInfo.ADDED_REVISION, ResourceSyncInfo.DUMMY_TIMESTAMP, CVSProvider.isText(local.getName())?"":"-kb", local.getParent().getFolderSyncInfo().getTag(), null);
 					revision = info.getRevision();
 				} else {
 					info = remote.getSyncInfo();

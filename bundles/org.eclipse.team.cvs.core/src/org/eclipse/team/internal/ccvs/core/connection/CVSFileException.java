@@ -30,6 +30,6 @@ public class CVSFileException extends CVSException {
 	 *  exception.
 	 */
 	public CVSFileException(IPath path, Throwable throwable) {
-		super(Policy.bind("CVSFileException.io"), path, throwable);
+		super(Policy.bind("CVSFileException.io"), path, throwable);//$NON-NLS-1$ 
 	}
 }
