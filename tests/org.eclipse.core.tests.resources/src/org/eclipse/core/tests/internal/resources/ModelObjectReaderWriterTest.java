@@ -287,6 +287,113 @@ private void compareLinks (int errorTag, HashMap links, HashMap links2) {
 		assertTrue(errorTag + ".6." + x, value.getLocation().equals(value2.getLocation()));
 	}
 }
+public void testInvalidProjectDescription1() throws Throwable {
+	String invalidProjectDescription = 
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+		"<homeDescription>\n" +
+		"	<name>abc</name>\n" +
+		"	<comment></comment>\n" +
+		"	<projects>\n" +
+		"	</projects>\n" +
+		"	<buildSpec>\n" +
+		"		<buildCommand>\n" +
+		"			<name>org.eclipse.jdt.core.javabuilder</name>\n" +
+		"			<arguments>\n" +
+		"			</arguments>\n" +
+		"		</buildCommand>\n" +
+		"	</buildSpec>\n" +
+		"	<natures>\n" +
+		"	<nature>org.eclipse.jdt.core.javanature</nature>\n" +
+		"	</natures>\n" +
+		"	<linkedResources>\n" +
+		"		<link>\n" +
+		"			<name>newLink</name>\n" +
+		"			<type>2</type>\n" +
+		"			<location>d:/abc/def</location>\n" +
+		"		</link>\n" +
+		"	</linkedResources>\n" +
+		"</homeDescription>";
+
+	IPath root = getWorkspace().getRoot().getLocation();
+	IPath location = root.append("ModelObjectReaderWriterTest.txt");
+	ProjectDescriptionReader reader = new ProjectDescriptionReader();
+	// Write out the project description file
+	ensureDoesNotExistInFileSystem(location.toFile());
+	ByteArrayOutputStream fs;
+	fs = new ByteArrayOutputStream();
+	InputStream stream = new ByteArrayInputStream(invalidProjectDescription.getBytes());
+	createFileInFileSystem(location, stream);
+	ProjectDescription projDesc = reader.read(location);
+	ensureDoesNotExistInFileSystem(location.toFile());
+	
+	assertNull ("1.0", projDesc);		
+}
+public void testInvalidProjectDescription2() throws Throwable {
+	String invalidProjectDescription = 
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+		"<projectDescription>\n" +
+		"	<bogusname>abc</bogusname>\n" +
+		"</projectDescription>";
+
+	IPath root = getWorkspace().getRoot().getLocation();
+	IPath location = root.append("ModelObjectReaderWriterTest.txt");
+	ProjectDescriptionReader reader = new ProjectDescriptionReader();
+	// Write out the project description file
+	ensureDoesNotExistInFileSystem(location.toFile());
+	ByteArrayOutputStream fs;
+	fs = new ByteArrayOutputStream();
+	InputStream stream = new ByteArrayInputStream(invalidProjectDescription.getBytes());
+	createFileInFileSystem(location, stream);
+	ProjectDescription projDesc = reader.read(location);
+	ensureDoesNotExistInFileSystem(location.toFile());
+	
+	assertNotNull ("2.0", projDesc);
+	assertNull("2.1", projDesc.getName());
+	assertEquals("2.2", 0, projDesc.getComment().length());
+	assertNull("2.3", projDesc.getLocation());
+	assertEquals("2.4", new IProject[0], projDesc.getReferencedProjects());
+	assertEquals("2.5", new String[0], projDesc.getNatureIds());
+	assertEquals("2.6", new ICommand[0], projDesc.getBuildSpec());
+	assertNull("2.7", projDesc.getLinks());
+}
+public void testInvalidProjectDescription3() throws Throwable {
+	String invalidProjectDescription = 
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+		"<projectDescription>\n" +
+		"	<name>abc</name>\n" +
+		"	<comment></comment>\n" +
+		"	<projects>\n" +
+		"	</projects>\n" +
+		"	<buildSpec>\n" +
+		"		<badBuildCommand>\n" +
+		"			<name>org.eclipse.jdt.core.javabuilder</name>\n" +
+		"			<arguments>\n" +
+		"			</arguments>\n" +
+		"		</badBuildCommand>\n" +
+		"	</buildSpec>\n" +
+		"</projectDescription>";
+
+	IPath root = getWorkspace().getRoot().getLocation();
+	IPath location = root.append("ModelObjectReaderWriterTest.txt");
+	ProjectDescriptionReader reader = new ProjectDescriptionReader();
+	// Write out the project description file
+	ensureDoesNotExistInFileSystem(location.toFile());
+	ByteArrayOutputStream fs;
+	fs = new ByteArrayOutputStream();
+	InputStream stream = new ByteArrayInputStream(invalidProjectDescription.getBytes());
+	createFileInFileSystem(location, stream);
+	ProjectDescription projDesc = reader.read(location);
+	ensureDoesNotExistInFileSystem(location.toFile());
+	
+	assertNotNull ("3.0", projDesc);
+	assertTrue("3.1", projDesc.getName().equals("abc"));
+	assertEquals("3.2", 0, projDesc.getComment().length());
+	assertNull("3.3", projDesc.getLocation());
+	assertEquals("3.4", new IProject[0], projDesc.getReferencedProjects());
+	assertEquals("3.5", new String[0], projDesc.getNatureIds());
+	assertEquals("3.6", new ICommand[0], projDesc.getBuildSpec());
+	assertNull("3.7", projDesc.getLinks());
+}
 public void testMultipleProjectDescriptions() throws Throwable {
 	URL whereToLook = null;
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.resources");
