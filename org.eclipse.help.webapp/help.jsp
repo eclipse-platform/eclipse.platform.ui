@@ -9,6 +9,7 @@
 	 String  ContentStr = WebappResources.getString("Content", request);
 	 String  SearchStr = WebappResources.getString("SearchResults", request);
 	 String  LinksStr = WebappResources.getString("Links", request);
+	 String  BookmarksStr = WebappResources.getString("Bookmarks", request);
 	
 	// Load the preferences
 	String banner = null;
@@ -96,6 +97,7 @@
 	titleArray["toc"] = "<%=ContentStr%>";
 	titleArray["search"] = "<%=SearchStr%>";
 	titleArray["links"] = "<%=LinksStr%>";
+	titleArray["bookmarks"] = "<%=BookmarksStr%>";
 	
 	// Global for the help home page
 	var help_home = "<%=help_home%>";

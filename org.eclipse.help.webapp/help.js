@@ -34,6 +34,8 @@ function onloadFrameset()
 	NavFrame.document.getElementById("search").src = "search_results.jsp" + getQuery();
 	if (NavFrame.document.getElementById("links"))
 		NavFrame.document.getElementById("links").src = "links.jsp" + getQuery();
+	if (NavFrame.document.getElementById("bookmarks"))
+		NavFrame.document.getElementById("bookmarks").src = "bookmarks.jsp" + getQuery();
 		
 	// show the appropriate tab
 	var tab = "toc";

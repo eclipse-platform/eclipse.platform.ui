@@ -68,13 +68,21 @@ function goForward(button) {
 	if (isIE) button.blur();
 }
 
+/*
 function showBookshelf(button)
 {
 	parent.NavFrame.switchTab("toc");
 	parent.NavFrame.showBookshelf();
 	if (isIE) button.blur();
 }
+*/
 
+function bookmarkPage(button)
+{
+	parent.switchTab("bookmarks");
+	parent.NavFrame.bookmarks.addBookmark(parent.parent.MainFrame.location.href);
+	if (isIE) button.blur();
+}
 
 function toggleNav(button)
 {
@@ -163,7 +171,9 @@ function setTitle(label)
 					<a href="#" onclick="goForward(this);" onmouseover="window.status='<%=WebappResources.getString("forward_tip", request)%>';return true;" onmouseout="window.status='';"><img src="images/forward.gif" alt='<%=WebappResources.getString("forward_tip", request)%>' border="0" name="forward"></a>
 				</td>
 				<td align="middle" valign="middle" width="9">
+				<!--
 					<img width="1" height=18 src="images/tool_separator.gif" alt='' border="0">
+				-->
 				</td>
 				<td id="hide_nav" align="middle" width="22">
 					<a href="#" onclick="toggleNav(this);" onmouseover="window.status='<%=WebappResources.getString("Toggle", request)%>';return true;" onmouseout="window.status='';"><img src="images/hide_nav.gif" alt='<%=WebappResources.getString("Toggle", request)%>' border="0" name="hide_nav"></a>
@@ -171,6 +181,10 @@ function setTitle(label)
 				<td align="middle" width="22">
 					<a  href="#" onclick="resynch(this);" onmouseover="window.status= '<%=WebappResources.getString("Synch", request)%>'; return true;" onmouseout="window.status='';"><img src="images/synch_toc_nav.gif" alt='<%=WebappResources.getString("Synch", request)%>' border="0" name="sync_nav"></a>
 				</td>
+				<td id="bookmark" align="middle" width="22">
+					<a href="#" onclick="bookmarkPage(this)" onmouseover="window.status='<%=WebappResources.getString("BookmarkPage", request)%>';return true;" onmouseout="window.status='';"><img src="images/bookmark_obj.gif" alt='<%=WebappResources.getString("BookmarkPage", request)%>' border="0" name="bookmark"></a>
+				</td>
+
 				<td align="middle" width="22">
 					<a  href="#" onclick="printContent(this);" onmouseover="window.status='<%=WebappResources.getString("Print", request)%>' ;return true;"  onmouseout="window.status='';"><img  src="images/print_edit.gif" alt='<%=WebappResources.getString("Print", request)%>' border="0" name="print"></a>
 				</td>
