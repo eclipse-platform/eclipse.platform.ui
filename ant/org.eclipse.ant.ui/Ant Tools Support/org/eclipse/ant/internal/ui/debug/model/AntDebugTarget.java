@@ -104,10 +104,10 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	public String getName() throws DebugException {
 		if (fName == null) {
 			try {
-				fName = getLaunch().getLaunchConfiguration().getAttribute(IExternalToolConstants.ATTR_LOCATION, "Ant Build");
+				fName= getLaunch().getLaunchConfiguration().getAttribute(IExternalToolConstants.ATTR_LOCATION, DebugModelMessages.getString("AntDebugTarget.0")); //$NON-NLS-1$
 				fName= StringVariableManager.getDefault().performStringSubstitution(fName);
 			} catch (CoreException e) {
-				fName = "Ant Build";
+				fName = DebugModelMessages.getString("AntDebugTarget.0"); //$NON-NLS-1$
 			}
 		}
 		return fName;

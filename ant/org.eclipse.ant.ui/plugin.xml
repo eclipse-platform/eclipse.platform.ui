@@ -646,7 +646,7 @@ M4 = Platform-specific fourth key -->
     <extension
          point="org.eclipse.debug.ui.debugModelPresentations">
       <debugModelPresentation
-            class="org.eclipse.ant.internal.ui.debug.ui.AntDebugModelPresentation"
+            class="org.eclipse.ant.internal.ui.debug.model.AntDebugModelPresentation"
             id="org.eclipse.ant.ui.debug">
       </debugModelPresentation>
    </extension>

@@ -9,13 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ant.internal.ui.debug.ui;
+package org.eclipse.ant.internal.ui.debug.model;
 
 import java.text.MessageFormat;
 
-import org.eclipse.ant.internal.ui.debug.model.AntProperty;
-import org.eclipse.ant.internal.ui.debug.model.AntStackFrame;
-import org.eclipse.ant.internal.ui.debug.model.AntThread;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.debug.core.DebugException;
@@ -59,11 +56,11 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 				int lineNumber= frame.getLineNumber();
 				String lineNumberString= null;
 				if (lineNumber == 0) {
-				    lineNumberString= "<not available>";
+				    lineNumberString= DebugModelMessages.getString("AntDebugModelPresentation.0"); //$NON-NLS-1$
 				} else {
 				    lineNumberString= Integer.toString(lineNumber);
 				}
-				text.append(MessageFormat.format(" line: {0}", new String[]{lineNumberString}));
+				text.append(MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.1"), new String[]{lineNumberString})); //$NON-NLS-1$
 				return text.toString();
 			}
 		} else if (element instanceof AntThread) {
@@ -79,10 +76,10 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 						IMarker marker= breakpoint.getMarker();
 						String fileName= marker.getResource().getFullPath().lastSegment();
 						String lineNumber= Integer.toString(marker.getAttribute(IMarker.LINE_NUMBER, -1));
-						String breakpointString= MessageFormat.format("(breakpoint at line {0} in {1})", new String[]{lineNumber, fileName});
-						text.append(MessageFormat.format(" (Suspended {0})", new String[]{breakpointString}));
+						String breakpointString= MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.2"), new String[]{lineNumber, fileName}); //$NON-NLS-1$
+						text.append(MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.3"), new String[]{breakpointString})); //$NON-NLS-1$
 					} else {
-						text.append(" (Suspended)");
+						text.append(DebugModelMessages.getString("AntDebugModelPresentation.4")); //$NON-NLS-1$
 					}
 					
 				}
