@@ -95,10 +95,10 @@ protected FontFieldEditor() {
  * @param parent the parent of the field editor's control
  */
 public FontFieldEditor(String name, String labelText, String previewText, Composite parent) {
-	init(name, labelText);
+	this(name,labelText,parent);
 	Assert.isNotNull(previewText);
 	previewer = new DefaultPreviewer(previewText, parent);
-	createControl(parent);
+	
 }
 /**
  * Creates a font field editor without a preview.
