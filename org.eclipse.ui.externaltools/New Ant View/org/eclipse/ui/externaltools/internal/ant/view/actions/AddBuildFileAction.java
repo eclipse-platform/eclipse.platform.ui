@@ -7,11 +7,9 @@ http://www.eclipse.org/legal/cpl-v10.html
 package org.eclipse.ui.externaltools.internal.ant.view.actions;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
@@ -35,18 +33,13 @@ public class AddBuildFileAction extends Action {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		ResourceSelectionDialog dialog;
-		dialog = new ResourceSelectionDialog(Display.getCurrent().getActiveShell(), ResourcesPlugin.getWorkspace().getRoot(), "Select a build file");
+		BuildFileSelectionDialog dialog = new BuildFileSelectionDialog(Display.getCurrent().getActiveShell(), ResourcesPlugin.getWorkspace().getRoot(), "Select a build file");
 		dialog.open();
-		Object[] results = dialog.getResult();
-		if (results == null || results.length < 1) {
+		IFile file= dialog.getResult();
+		if (file == null) {
 			return;
 		}
-		IResource resource = (IResource)results[0];
-		if (resource.getType() != IResource.FILE) {
-			return;
-		}
-		ProjectNode project= new ProjectNode(((IFile)resource).getLocation().toString());
+		ProjectNode project= new ProjectNode(file.getLocation().toString());
 		view.addProject(project);
 	}
 
