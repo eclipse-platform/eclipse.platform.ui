@@ -25,7 +25,6 @@ import org.osgi.service.prefs.BackingStoreException;
 public class InstancePreferences extends EclipsePreferences {
 
 	private static final String DEFAULT_PREFERENCES_FILENAME = "prefs.ini"; //$NON-NLS-1$
-	private static final String OLD_EXTENSION = ".old"; //$NON-NLS-1$
 
 	// cached values
 	private String qualifier;
@@ -146,12 +145,11 @@ public class InstancePreferences extends EclipsePreferences {
 			}
 		}
 
-		// Rename the old file so we don't try and load it next time. 
-		File destFile = new File(prefFile.getAbsolutePath() + OLD_EXTENSION + '.' + System.currentTimeMillis());
-		if (!prefFile.renameTo(destFile))
+		// Delete the old file so we don't try and load it next time. 
+		if (!prefFile.delete())
 			//Only print out message in failure case if we are debugging.
 			if (InternalPlatform.DEBUG_PREFERENCES)
-				Policy.debug("Unable to rename legacy preferences file: " + prefFile + " -> " + destFile); //$NON-NLS-1$ //$NON-NLS-2$
+				Policy.debug("Unable to delete legacy preferences file: " + prefFile); //$NON-NLS-1$
 
 		loadLegacyPreM9();
 	}
