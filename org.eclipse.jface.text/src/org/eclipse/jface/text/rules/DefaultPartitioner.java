@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,15 +36,16 @@ import org.eclipse.jface.text.TypedRegion;
 
 
 /**
- * A standard implementation of a document partitioner.
- * It uses a partition token scanner to scan the document and to determine
- * the document's partitioning. The tokens returned by the
- * scanner are supposed to return the partition type
- * as their data. The partitioner remembers the document's partitions
- * in the document itself rather than maintaining its own data structure.
- *
+ * A standard implementation of a document partitioner. It uses a partition
+ * token scanner to scan the document and to determine the document's
+ * partitioning. The tokens returned by the scanner are supposed to return the
+ * partition type as their data. The partitioner remembers the document's
+ * partitions in the document itself rather than maintaining its own data
+ * structure.
+ * 
  * @see IPartitionTokenScanner
  * @since 2.0
+ * @deprecated as of 3.1 use {@link org.eclipse.jface.text.rules.FastPartitioner} instead
  */
 public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension, IDocumentPartitionerExtension2, IDocumentPartitionerExtension3 {
 	

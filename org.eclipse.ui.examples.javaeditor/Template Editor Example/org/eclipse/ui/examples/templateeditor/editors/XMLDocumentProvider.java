@@ -13,7 +13,7 @@ package org.eclipse.ui.examples.templateeditor.editors;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 
 public class XMLDocumentProvider extends FileDocumentProvider {
@@ -22,7 +22,7 @@ public class XMLDocumentProvider extends FileDocumentProvider {
 		IDocument document = super.createDocument(element);
 		if (document != null) {
 			IDocumentPartitioner partitioner =
-				new DefaultPartitioner(
+				new FastPartitioner(
 					new XMLPartitionScanner(),
 					new String[] {
 						XMLPartitionScanner.XML_TAG,

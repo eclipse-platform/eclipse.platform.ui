@@ -20,6 +20,16 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <br>
 <br>
 <br>
+========== Eclipse Build Input February 1st 2005 ==========<br>
+<pre>
+- added FastPartitioner, replacing DefaultPartitioner which is deprecated.
+  FastPartitioner has the same interface as DefaultPartitioner, but internally
+  caches the partitioning positions set on the document to avoid multiple array
+  creations. Current users of DefaultPartitioner are encouraged to migrate to
+  FastPartitioner; subclasses of DefaultPartitioner that do not modify the positions 
+  will work when subclassing FastPartioner as well, those that do will need to call
+  clearPositionCache() when positions are modified.
+</pre>
 ========== Eclipse Build Input January 25th 2005 ==========<br>
 <pre>
 - added Hippie (emacs style) Completion, contributed by Genady Beryozkin. The action (bound to Alt+/ per default)

@@ -16,7 +16,7 @@ import junit.framework.TestCase;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITypedRegion;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.IPredicateRule;
 import org.eclipse.jface.text.rules.IToken;
@@ -34,7 +34,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 	private static final String DEFAULT= IDocument.DEFAULT_CONTENT_TYPE;
 	
 	private IDocument fDoc;
-	private DefaultPartitioner fPartitioner;
+	private FastPartitioner fPartitioner;
 
 	public void setUp() {
 		fDoc= new Document();
@@ -46,7 +46,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 
 			}
 		};
-		fPartitioner= new DefaultPartitioner(scanner, new String[] { DEFAULT, COMMENT });
+		fPartitioner= new FastPartitioner(scanner, new String[] { DEFAULT, COMMENT });
 		fDoc.setDocumentPartitioner(fPartitioner);
 		fPartitioner.connect(fDoc);
 	}
