@@ -225,7 +225,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, name);
 			workingCopy.setAttribute(IExternalToolConstants.ATTR_LOCATION,
 				VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", file.getFullPath().toString())); //$NON-NLS-1$
-			
+			workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
 			// set default for common settings
 			CommonTab tab = new CommonTab();
 			tab.setDefaults(workingCopy);
