@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public class AntPropertyNode extends AntTaskNode {
          	}
          } else {
          	fValue= attributes.getValue(IAntModelConstants.ATTR_VALUE);
-         }
+         } 
          setBaseLabel(label);
 	}
 	
@@ -102,8 +102,8 @@ public class AntPropertyNode extends AntTaskNode {
             handleBuildException(new BuildException(AntModelMessages.getString("AntPropertyNode.0")), AntEditorPreferenceConstants.PROBLEM_PROPERTIES); //$NON-NLS-1$
         } catch (AntSecurityException se) {
 			//either a system exit or setting of system property was attempted
-            handleBuildException(new BuildException("Security exception"), AntEditorPreferenceConstants.PROBLEM_PROPERTIES);
-		} finally {
+            handleBuildException(new BuildException(AntModelMessages.getString("AntPropertyNode.1")), AntEditorPreferenceConstants.PROBLEM_SECURITY); //$NON-NLS-1$
+        } finally {
 			getProjectNode().setCurrentConfiguringProperty(null);
 		}
 		return false;

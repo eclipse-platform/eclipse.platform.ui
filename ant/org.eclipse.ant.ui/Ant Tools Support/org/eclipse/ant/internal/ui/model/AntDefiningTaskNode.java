@@ -107,7 +107,7 @@ public class AntDefiningTaskNode extends AntTaskNode {
             } catch (AntSecurityException se) {
 				//either a system exit or setting of system property was attempted
             	((AntModel)getAntModel()).removeDefiningTaskNodeInfo(this);
-                handleBuildException(new BuildException("Security exception"), AntEditorPreferenceConstants.PROBLEM_CLASSPATH);
+                handleBuildException(new BuildException(AntModelMessages.getString("AntDefiningTaskNode.1")), AntEditorPreferenceConstants.PROBLEM_SECURITY); //$NON-NLS-1$
 			}
 		}
 		return false;

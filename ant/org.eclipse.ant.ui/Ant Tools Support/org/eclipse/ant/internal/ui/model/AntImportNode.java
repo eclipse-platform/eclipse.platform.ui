@@ -15,6 +15,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.ant.internal.ui.AntUIImages;
+import org.eclipse.ant.internal.ui.AntUIModelMessages;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor;
@@ -74,7 +75,7 @@ public class AntImportNode extends AntTaskNode {
 			handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_IMPORTS);
 		} catch (AntSecurityException se) {
 			//either a system exit or setting of system property was attempted
-            handleBuildException(new BuildException("Security exception"), AntEditorPreferenceConstants.PROBLEM_IMPORTS);
+            handleBuildException(new BuildException(AntUIModelMessages.getString("AntImportNode.0")), AntEditorPreferenceConstants.PROBLEM_SECURITY); //$NON-NLS-1$
 		}
 		return false;
 	}

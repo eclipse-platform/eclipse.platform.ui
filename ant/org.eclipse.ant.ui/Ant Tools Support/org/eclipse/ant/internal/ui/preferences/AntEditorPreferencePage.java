@@ -231,7 +231,8 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 			AntEditorPreferenceConstants.PROBLEM_CLASSPATH,
 			AntEditorPreferenceConstants.PROBLEM_PROPERTIES,
 			AntEditorPreferenceConstants.PROBLEM_IMPORTS,
-			AntEditorPreferenceConstants.PROBLEM_TASKS
+			AntEditorPreferenceConstants.PROBLEM_TASKS,
+            AntEditorPreferenceConstants.PROBLEM_SECURITY
 		};
 	
 	private ColorEditor fSyntaxForegroundColorEditor;
@@ -587,6 +588,9 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 
 		label= AntPreferencesMessages.getString("AntEditorPreferencePage.17"); //$NON-NLS-1$
 		addComboBox(othersComposite, label, AntEditorPreferenceConstants.PROBLEM_IMPORTS, errorWarningIgnore, errorWarningIgnoreLabels, 0);
+        
+        label= AntPreferencesMessages.getString("AntEditorPreferencePage.27"); //$NON-NLS-1$
+        addComboBox(othersComposite, label, AntEditorPreferenceConstants.PROBLEM_SECURITY, errorWarningIgnore, errorWarningIgnoreLabels, 0);
 		
 		return othersComposite;
 	}

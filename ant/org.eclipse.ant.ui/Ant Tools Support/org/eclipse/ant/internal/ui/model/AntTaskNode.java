@@ -15,6 +15,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.ant.internal.ui.AntUIImages;
+import org.eclipse.ant.internal.ui.AntUIModelMessages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -120,7 +121,7 @@ public class AntTaskNode extends AntElementNode {
 				handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_TASKS);
 			} catch (AntSecurityException se) {
 				//either a system exit or setting of system property was attempted
-				handleBuildException(new BuildException("Security problem"), AntEditorPreferenceConstants.PROBLEM_TASKS);
+				handleBuildException(new BuildException(AntUIModelMessages.getString("AntTaskNode.0")), AntEditorPreferenceConstants.PROBLEM_SECURITY); //$NON-NLS-1$
 			}
 		}
 		return false;
