@@ -20,6 +20,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.*;
@@ -62,11 +63,13 @@ public class NewLocationWizard extends Wizard {
 	 */
 	public boolean performFinish() {
 		final ICVSRepositoryLocation[] location = new ICVSRepositoryLocation[] { null };
+		boolean keepLocation = false;
 		try {
 			// Create a handle to a repository location
 			location[0] = mainPage.getLocation();
 			// Add the location quitely so we can validate
 			location[0] = KnownRepositories.getInstance().addRepository(location[0], false /* don't tell anybody */);
+			
 			if (mainPage.getValidate()) {
 				try {
 					new ProgressMonitorDialog(getShell()).run(true, true, new IRunnableWithProgress() {
@@ -78,18 +81,22 @@ public class NewLocationWizard extends Wizard {
 							}
 						}
 					});
+					keepLocation = true;
 				} catch (InterruptedException e) {
-					return false;
+					// Cancelled by user. Fall through to dispose of location
 				} catch (InvocationTargetException e) {
 					Throwable t = e.getTargetException();
 					if (t instanceof TeamException) {
 						throw (TeamException)t;
+					} else if (t instanceof Exception) {
+						throw CVSException.wrapException((Exception)t);
+					} else {
+						throw CVSException.wrapException(e);
 					}
-					// Ignoe other exceptions but log them just in case.
-					CVSUIPlugin.log(IStatus.ERROR, e.getMessage(), e.getTargetException());
 				}
+			} else {
+				keepLocation = true;
 			}
-			KnownRepositories.getInstance().addRepository(location[0], true /* let the world know */);
 		} catch (TeamException e) {
 			if (location[0] == null) {
 				// Exception creating the root, we cannot continue
@@ -102,22 +109,20 @@ public class NewLocationWizard extends Wizard {
 					error = error.getChildren()[0];
 				}
 					
-				boolean keep = false;
 				if (error.isMultiStatus()) {
 					CVSUIPlugin.openError(getContainer().getShell(), Policy.bind("NewLocationWizard.validationFailedTitle"), null, e); //$NON-NLS-1$
 				} else {
-					keep = MessageDialog.openQuestion(getContainer().getShell(),
+					keepLocation = MessageDialog.openQuestion(getContainer().getShell(),
 						Policy.bind("NewLocationWizard.validationFailedTitle"), //$NON-NLS-1$
 						Policy.bind("NewLocationWizard.validationFailedText", new Object[] {error.getMessage()})); //$NON-NLS-1$
 				}
-				if (keep) {
-					KnownRepositories.getInstance().addRepository(location[0], true /* let the world know */);
-				} else {
-					KnownRepositories.getInstance().disposeRepository(location[0]);
-				}
-				return keep;
 			}
 		}
-		return true;	
+		if (keepLocation) {
+			KnownRepositories.getInstance().addRepository(location[0], true /* let the world know */);
+		} else {
+			KnownRepositories.getInstance().disposeRepository(location[0]);
+		}
+		return keepLocation;	
 	}
 }

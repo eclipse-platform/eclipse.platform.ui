@@ -91,17 +91,14 @@ public class KnownRepositories {
 	public ICVSRepositoryLocation addRepository(final ICVSRepositoryLocation repository, boolean broadcast) {
 		// Check the cache for an equivalent instance and if there is one, just update the cache
 		CVSRepositoryLocation existingLocation = internalGetRepository(repository.getLocation());
-		if (existingLocation != null) {
-			// Cache the password in case it has changed
-			((CVSRepositoryLocation)repository).updateCache();
-		} else {
+		if (existingLocation == null) {
 			// Store the location and cache the password
 			store((CVSRepositoryLocation)repository);
-			((CVSRepositoryLocation)repository).updateCache();
 			existingLocation = (CVSRepositoryLocation)repository;
 		}
 		// Notify no matter what since it may not have been broadcast before
 		if (broadcast) {
+			((CVSRepositoryLocation)repository).updateCache();
 			fireNotification(new Notification() {
 				public void notify(ICVSListener listener) {
 					listener.repositoryAdded(repository);
