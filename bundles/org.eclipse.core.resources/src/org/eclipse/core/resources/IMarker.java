@@ -370,6 +370,11 @@ public String getType() throws CoreException;
 public boolean isSubtypeOf(String superType) throws CoreException;
 /**
  * Sets the integer-valued attribute with the given name.  
+ * <p>
+ * This method changes resources; these changes will be reported
+ * in a subsequent resource change event, including an indication 
+ * that this marker has been modified.
+ * </p>
  *
  * @param attributeName the name of the attribute
  * @param value the value
@@ -384,6 +389,11 @@ public void setAttribute(String attributeName, int value) throws CoreException;
  * an instance of one of the following classes: 
  * <code>String</code>, <code>Integer</code>, or <code>Boolean</code>.
  * If the value is <code>null</code>, the attribute is considered to be undefined.
+ * <p>
+ * This method changes resources; these changes will be reported
+ * in a subsequent resource change event, including an indication 
+ * that this marker has been modified.
+ * </p>
  *
  * @param attributeName the name of the attribute
  * @param value the value, or <code>null</code> if the attribute is to be undefined
@@ -395,6 +405,11 @@ public void setAttribute(String attributeName, int value) throws CoreException;
 public void setAttribute(String attributeName, Object value) throws CoreException;
 /**
  * Sets the boolean-valued attribute with the given name.  
+ * <p>
+ * This method changes resources; these changes will be reported
+ * in a subsequent resource change event, including an indication 
+ * that this marker has been modified.
+ * </p>
  *
  * @param attributeName the name of the attribute
  * @param value the value
@@ -411,6 +426,11 @@ public void setAttribute(String attributeName, boolean value) throws CoreExcepti
  * <code>Integer</code>, or <code>Boolean</code>.
  * If a value is <code>null</code>, the new value of the 
  * attribute is considered to be undefined.
+ * <p>
+ * This method changes resources; these changes will be reported
+ * in a subsequent resource change event, including an indication 
+ * that this marker has been modified.
+ * </p>
  *
  * @param attributeNames an array of attribute names
  * @param values an array of attribute values
@@ -427,6 +447,11 @@ public void setAttributes(String[] attributeNames, Object[] values) throws CoreE
  * Attributes previously set on the marker but not included in the given map
  * are considered to be removals. Setting the given map to be <code>null</code>
  * is equivalent to removing all marker attributes.
+ * <p>
+ * This method changes resources; these changes will be reported
+ * in a subsequent resource change event, including an indication 
+ * that this marker has been modified.
+ * </p>
  *
  * @param attributes a map of attribute names to attribute values 
  *		(key type : <code>String</code> value type : <code>String</code>, 
