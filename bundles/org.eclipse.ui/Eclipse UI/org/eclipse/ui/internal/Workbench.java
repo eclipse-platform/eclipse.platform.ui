@@ -1213,12 +1213,17 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (win != null) {
 			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 			int mode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
+			IWorkbenchPage page = win.getActiveWorkbenchPage();
+			IPerspectiveDescriptor persp = null;
+			if (page != null)
+				persp = page.getPerspective();
 			
-			if (IPreferenceConstants.OPM_NEW_WINDOW == mode) {
+			// Only open a new window if user preference is set and the window
+			// has an active perspective.
+			if (IPreferenceConstants.OPM_NEW_WINDOW == mode && persp != null) {
 				IWorkbenchWindow newWindow = openWorkbenchWindow(perspectiveId, input);
 				return newWindow.getActivePage();
 			} else {
-				IWorkbenchPage page = win.getActiveWorkbenchPage();
 				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
 				if (desc == null)
 					throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
@@ -1297,20 +1302,42 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		// If the specified window has the same requested input but not the requested
 		// perspective, then the window is given focus and the perspective is opened and shown
 		// on condition that the user preference is not to open perspectives in a new window.
-		if (inputSameAsWindow) {
+		win = (WorkbenchWindow) window;
+		if (inputSameAsWindow && win != null) {
 			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 			int mode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
 			
 			if (IPreferenceConstants.OPM_NEW_WINDOW != mode) {
-				WorkbenchPage page = win.getActiveWorkbenchPage();
-				if (page != null) {
-					IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
-					if (desc == null)
-						throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
-					win.getShell().open();
+				IWorkbenchPage page = win.getActiveWorkbenchPage();
+				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
+				if (desc == null)
+					throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
+				win.getShell().open();
+				if (page == null)
+					page = win.openPage(perspectiveId, input);
+				else
 					page.setPerspective(desc);
-					return page;
-				}
+				return page;
+			}
+		}
+
+		// If the specified window has no active perspective, then open the
+		// requested perspective and show the specified window.
+		if (win != null) {
+			IWorkbenchPage page = win.getActiveWorkbenchPage();
+			IPerspectiveDescriptor persp = null;
+			if (page != null)
+				persp = page.getPerspective();
+			if (persp == null) {
+				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
+				if (desc == null)
+					throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
+				win.getShell().open();
+				if (page == null)
+					page = win.openPage(perspectiveId, input);
+				else
+					page.setPerspective(desc);
+				return page;
 			}
 		}
 		
