@@ -286,15 +286,16 @@ public class EditorManager {
 		if(name == null || persistable == null)
 			return null;
 		String id = persistable.getFactoryId();
-		if(id == null)
+		if (id == null)
 			return null;
 		for (int i = 0; i < editors.length; i++) { 
-			Editor e = (Editor)editors[i];
-			if(name.equals(e.getName()) && id.equals(e.getFactoryId())) {
-				IEditorPart editor = e.getEditor(true);
-				if(editor != null) {
-					if(input.equals(editor.getEditorInput()))
-						return editor;
+			Editor e = (Editor) editors[i];
+			if (e.getPart(false) == null) {
+				if(name.equals(e.getName()) && id.equals(e.getFactoryId())) {
+					IEditorInput restoredInput = e.getRestoredInput();
+					if (input.equals(restoredInput)) {
+						return e.getEditor(true);
+					}
 				}
 			}	
 		}
@@ -756,62 +757,29 @@ public class EditorManager {
 		});
 		return result;
 	}
-	public IStatus restoreEditor(final Editor ref,final IMemento editorMem) {
+	public IStatus restoreEditor(final Editor ref) {
 		final IStatus result[] = new IStatus[1];
 		BusyIndicator.showWhile(
 			Display.getCurrent(),
 			new Runnable() {
 				public void run() {
-					result[0] = busyRestoreEditor(ref,editorMem);
+					result[0] = busyRestoreEditor(ref);
 				}
 			});
 		return result[0];
 	}
-	public IStatus busyRestoreEditor(final Editor ref,final IMemento editorMem) {
+	public IStatus busyRestoreEditor(final Editor ref) {
 		final IStatus result[] = new IStatus[1];
 		Platform.run(new SafeRunnable() {
 			public void run() {
-				// Get the input factory.
-				IMemento inputMem = editorMem.getChild(IWorkbenchConstants.TAG_INPUT);
-				String factoryID = null;
-				if (inputMem != null) {
-					factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
-				}
-				if (factoryID == null) {
-					WorkbenchPlugin.log("Unable to restore editor - no input factory ID."); //$NON-NLS-1$
-					result[0] = unableToCreateEditor(editorMem, null);
+				IEditorInput editorInput = ref.getRestoredInput();
+				if (editorInput == null) {
+					result[0] = unableToCreateEditor(ref, null);
 					return;
 				}
-				IAdaptable input;
-				String label = ref.getName() != null ? ref.getName() : factoryID;
-				try {
-					UIStats.start(UIStats.CREATE_PART_INPUT,label);
-					IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
-					if (factory == null) {
-						WorkbenchPlugin.log("Unable to restore editor - cannot instantiate input element factory: " + factoryID); //$NON-NLS-1$
-						result[0] = unableToCreateEditor(editorMem,null);
-						return;
-					}
-	
-					// Get the input element.
-					input = factory.createElement(inputMem);
-					if (input == null) {
-						WorkbenchPlugin.log("Unable to restore editor - createElement returned null for input element factory: " + factoryID); //$NON-NLS-1$
-						result[0] = unableToCreateEditor(editorMem,null);
-						return;
-					}
-				} finally {
-					UIStats.end(UIStats.CREATE_PART_INPUT,label);
-				}
-				if (!(input instanceof IEditorInput)) {
-					WorkbenchPlugin.log("Unable to restore editor - createElement result is not an IEditorInput for input element factory: " + factoryID); //$NON-NLS-1$
-					result[0] = unableToCreateEditor(editorMem,null);
-					return;
-				}
-				IEditorInput editorInput = (IEditorInput) input;
 
 				// Get the editor descriptor.
-				String editorID = editorMem.getString(IWorkbenchConstants.TAG_ID);
+				String editorID = ref.getId();
 				EditorDescriptor desc = null;
 				if (editorID != null) {
 					IEditorRegistry reg = WorkbenchPlugin.getDefault().getEditorRegistry();
@@ -819,24 +787,24 @@ public class EditorManager {
 				}
 				if (desc == null) {
 					WorkbenchPlugin.log("Unable to restore editor - no editor descriptor for id: " + editorID); //$NON-NLS-1$
-					result[0] = unableToCreateEditor(editorMem, null);
+					result[0] = unableToCreateEditor(ref, null);
 					return;
 				}
 				
 				// Open the editor.
 				try {
-					String workbookID = editorMem.getString(IWorkbenchConstants.TAG_WORKBOOK);
+					String workbookID = ref.getMemento().getString(IWorkbenchConstants.TAG_WORKBOOK);
 					editorPresentation.setActiveEditorWorkbookFromID(workbookID);
 					openInternalEditor(ref, desc, editorInput, false);
 					ref.getPane().createChildControl();
 					((EditorPane)ref.getPane()).getWorkbook().updateEditorTab(ref);
 				} catch (PartInitException e) {
 					WorkbenchPlugin.log("Exception creating editor: " + e.getMessage()); //$NON-NLS-1$
-					result[0] = unableToCreateEditor(editorMem, e);				
+					result[0] = unableToCreateEditor(ref, e);				
 				}
 			}
 			public void handleException(Throwable e) {
-				result[0] = unableToCreateEditor(editorMem, e);
+				result[0] = unableToCreateEditor(ref, e);
 			}
 		});
 		if(result[0] != null)
@@ -847,11 +815,10 @@ public class EditorManager {
 	/**
 	 *  Returns an error status to be displayed when unable to create an editor.
 	 */
-	private IStatus unableToCreateEditor(IMemento editorMem,Throwable t) {
-		String name = editorMem.getString(IWorkbenchConstants.TAG_NAME);
+	private IStatus unableToCreateEditor(Editor ref,Throwable t) {
 		return new Status(
 			IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
-			WorkbenchMessages.format("EditorManager.unableToCreateEditor",new String[]{name}),t); //$NON-NLS-1$
+			WorkbenchMessages.format("EditorManager.unableToCreateEditor",new String[]{ref.getName()}),t); //$NON-NLS-1$
 	}
 	/**
 	 * Runs a progress monitor operation.
@@ -1080,7 +1047,7 @@ public class EditorManager {
 	public boolean setVisibleEditor(IEditorReference newEd, boolean setFocus) {
 		return editorPresentation.setVisibleEditor(newEd, setFocus);
 	}
-	
+
 	private IPathEditorInput getPathEditorInput(IEditorInput input) {
 		if (input instanceof IPathEditorInput) {
 			return (IPathEditorInput) input;
@@ -1096,19 +1063,45 @@ public class EditorManager {
 		private String name;
 		private String factoryId;
 		private boolean pinned = false;
-		
-		Editor(String id,IMemento memento,String name,String title,String tooltip,ImageDescriptor desc,String factoryId,boolean pinned) {
-			init(id,title,tooltip,desc);
-			this.editorMemento = memento;
-			this.name = name;
-			this.factoryId = factoryId;
-			this.pinned = pinned;			
-			//make it backward compatible.
-			if(this.name == null)
-				this.name = title;
-		}
+		private IEditorInput restoredInput;
+
+		/**
+		 * Constructs a new editor reference for use by editors being newly opened.
+		 */
 		Editor() {
 			// do nothing
+		}
+		
+		/**
+		 * Constructs a new editor reference for use by editors being restored from a memento.
+		 */
+		Editor(IMemento memento) {
+			this.editorMemento = memento;
+			String id = memento.getString(IWorkbenchConstants.TAG_ID);
+			String title = memento.getString(IWorkbenchConstants.TAG_TITLE);
+			String tooltip = memento.getString(IWorkbenchConstants.TAG_TOOLTIP);
+			if (tooltip == null) {
+				tooltip = ""; //$NON-NLS-1$
+			}
+			// Get the editor descriptor.
+			EditorDescriptor desc = null;
+			if (id != null) {
+				IEditorRegistry reg = WorkbenchPlugin.getDefault().getEditorRegistry();
+				desc = (EditorDescriptor) reg.findEditor(id);
+			}
+			// desc may be null if id is null or desc is not found, but findImage below handles this
+			String location = memento.getString(IWorkbenchConstants.TAG_PATH);	
+			IPath path = location == null ? null : new Path(location);
+			ImageDescriptor iDesc = findImage(desc, path);
+			init(id, title, tooltip, iDesc);
+			
+			this.name = memento.getString(IWorkbenchConstants.TAG_NAME);
+			this.pinned = "true".equals(memento.getString(IWorkbenchConstants.TAG_PINNED));  //$NON-NLS-1$
+
+			IMemento inputMem = memento.getChild(IWorkbenchConstants.TAG_INPUT);
+			if (inputMem != null) {
+				this.factoryId = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+			}
 		}
 
 		public String getFactoryId() {
@@ -1140,7 +1133,7 @@ public class EditorManager {
 			if(!restore || editorMemento == null)
 				return null;
 			
-			IStatus status = restoreEditor(this,editorMemento);
+			IStatus status = restoreEditor(this);
 			Workbench workbench = (Workbench)window.getWorkbench();
 			if(status.getSeverity() == IStatus.ERROR) {
 				editorMemento = null;
@@ -1165,8 +1158,11 @@ public class EditorManager {
 			editorMemento = null;
 			name = null;
 			factoryId = null;
+			restoredInput = null;
 		}
-			
+		void setName(String name) {
+			this.name = name;
+		}
 		public void setPart(IWorkbenchPart part) {
 			super.setPart(part);
 			if(part == null)
@@ -1199,17 +1195,61 @@ public class EditorManager {
 			super.dispose();
 			editorMemento = null;
 		}
+		public IEditorInput getRestoredInput() {
+			if (restoredInput != null) {
+				return restoredInput;
+			}
+			
+			// Get the input factory.
+			IMemento editorMem = getMemento();
+			if (editorMem == null) {
+				return null;
+			}
+			IMemento inputMem = editorMem.getChild(IWorkbenchConstants.TAG_INPUT);
+			String factoryID = null;
+			if (inputMem != null) {
+				factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+			}
+			if (factoryID == null) {
+				WorkbenchPlugin.log("Unable to restore editor - no input factory ID."); //$NON-NLS-1$
+				return null;
+			}
+			IAdaptable input;
+			String label = getName() != null ? getName() : factoryID;
+			try {
+				UIStats.start(UIStats.CREATE_PART_INPUT,label);
+				IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
+				if (factory == null) {
+					WorkbenchPlugin.log("Unable to restore editor - cannot instantiate input element factory: " + factoryID); //$NON-NLS-1$
+					return null;
+				}
+	
+				// Get the input element.
+				input = factory.createElement(inputMem);
+				if (input == null) {
+					WorkbenchPlugin.log("Unable to restore editor - createElement returned null for input element factory: " + factoryID); //$NON-NLS-1$
+					return null;
+				}
+			} finally {
+				UIStats.end(UIStats.CREATE_PART_INPUT,label);
+			}
+			if (!(input instanceof IEditorInput)) {
+				WorkbenchPlugin.log("Unable to restore editor - createElement result is not an IEditorInput for input element factory: " + factoryID); //$NON-NLS-1$
+				return null;
+			}
+			restoredInput = (IEditorInput) input;
+			return restoredInput;
+		}
 	}
 	protected void restoreEditorState(IMemento editorMem, ArrayList visibleEditors,
 			IEditorPart[] activeEditor, ArrayList errorWorkbooks, MultiStatus result) {
 		String strFocus = editorMem.getString(IWorkbenchConstants.TAG_FOCUS);
 		boolean visibleEditor = "true".equals(strFocus); //$NON-NLS-1$
-		if(visibleEditor) {
-			Editor e = new Editor();
-			e.setPinned("true".equals(editorMem.getString(IWorkbenchConstants.TAG_PINNED))); //$NON-NLS-1$
+		Editor e = new Editor(editorMem);
+		if (visibleEditor) {
 			visibleEditors.add(e);
 			page.addPart(e);
-			result.add(restoreEditor(e,editorMem));
+			result.add(restoreEditor(e));
 			IEditorPart editor = (IEditorPart)e.getPart(true);
 			if(editor != null) {
 				String strActivePart = editorMem.getString(IWorkbenchConstants.TAG_ACTIVE_PART);
@@ -1221,22 +1261,13 @@ public class EditorManager {
 				errorWorkbooks.add(editorMem.getString(IWorkbenchConstants.TAG_WORKBOOK));
 			}
 		} else {
-			String editorTitle = editorMem.getString(IWorkbenchConstants.TAG_TITLE);
-			String editorName = editorMem.getString(IWorkbenchConstants.TAG_NAME);
-			String editorID = editorMem.getString(IWorkbenchConstants.TAG_ID);
-			boolean pinned = "true".equals(editorMem.getString(IWorkbenchConstants.TAG_PINNED)); //$NON-NLS-1$
-			IMemento inputMem = editorMem.getChild(IWorkbenchConstants.TAG_INPUT);
-			String factoryID = null;
-			if(inputMem != null)
-				factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
-			if (factoryID == null)
+			if (e.getFactoryId() == null) {
 				WorkbenchPlugin.log("Unable to restore editor - no input factory ID."); //$NON-NLS-1$
+			}
 			
-			if(editorTitle == null) { //backward compatible format of workbench.xml
-				Editor e = new Editor();
-				e.setPinned("true".equals(editorMem.getString(IWorkbenchConstants.TAG_PINNED))); //$NON-NLS-1$
-				result.add(restoreEditor(e,editorMem));
-				IEditorPart editor = (IEditorPart)e.getPart(true);
+			if (e.getTitle() == null) { //backward compatible format of workbench.xml
+				result.add(restoreEditor(e));
+				IEditorPart editor = (IEditorPart) e.getPart(true);
 				if(editor == null) {
 					page.closeEditor(e,false);
 					visibleEditors.remove(e);
@@ -1244,27 +1275,14 @@ public class EditorManager {
 				}
 				page.addPart(e);
 			} else {
+				//make it backward compatible.
+				if (e.getName() == null) {
+					e.setName(e.getTitle());
+				}
 				//if the editor is not visible, ensure it is put in the correct workbook. PR 24091
 				String workbookID = editorMem.getString(IWorkbenchConstants.TAG_WORKBOOK);
 				editorPresentation.setActiveEditorWorkbookFromID(workbookID);
 				
-				// Get the editor descriptor.
-				EditorDescriptor desc = null;
-				if (editorID != null) {
-					IEditorRegistry reg = WorkbenchPlugin.getDefault().getEditorRegistry();
-					desc = (EditorDescriptor) reg.findEditor(editorID);
-				}
-				String location = editorMem.getString(IWorkbenchConstants.TAG_PATH);	
-				IPath path = null;
-				if (location != null) {
-					path = new Path(location);
-				}
-				ImageDescriptor iDesc = findImage(desc, path);
-				
-				String tooltip = editorMem.getString(IWorkbenchConstants.TAG_TOOLTIP);
-				if(tooltip == null) tooltip = ""; //$NON-NLS-1$
-				
-				Editor e = new Editor(editorID,editorMem,editorName,editorTitle,tooltip,iDesc,factoryID,pinned);
 				page.addPart(e);
 				try {
 					createEditorTab(e,null,null,false);
