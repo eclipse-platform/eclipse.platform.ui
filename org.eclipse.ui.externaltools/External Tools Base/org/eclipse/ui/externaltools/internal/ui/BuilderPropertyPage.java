@@ -34,7 +34,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -344,14 +343,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 */	
 	private void handleCopyButtonPressed() {
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationType types[]= manager.getLaunchConfigurationTypes();
-		List toolTypes= new ArrayList(); 
-		for (int i = 0; i < types.length; i++) {
-			ILaunchConfigurationType type = types[i];
-			if (IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_CATEGORY.equals(type.getCategory())) {
-				toolTypes.add(type);
-			}
-		}
+		List toolTypes= getConfigurationTypes(IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_CATEGORY);
 		List configurations= new ArrayList();
 		Iterator iter= toolTypes.iterator();
 		while (iter.hasNext()) {
@@ -372,27 +364,32 @@ public final class BuilderPropertyPage extends PropertyPage {
 		}
 		Object results[]= dialog.getResult();
 		ILaunchConfiguration config= (ILaunchConfiguration) results[0];
-		Map attributes= null;
-		try {
-			attributes= config.getAttributes();
-		} catch (CoreException e) {
-			handleException(e);
-			return;
-		}
-		String newName= config.getName() + " [Builder]";
-		newName= manager.generateUniqueLaunchConfigurationNameFrom(newName);
 		ILaunchConfiguration newConfig= null;
 		try {
-			ILaunchConfigurationType newType= getConfigurationDuplicationType(config);
-			ILaunchConfigurationWorkingCopy newWorkingCopy= newType.newInstance(getBuilderFolder(), newName);
-			newWorkingCopy.setAttributes(attributes);
-			newConfig= newWorkingCopy.doSave();
+			newConfig= duplicateConfiguration(config);
 		} catch (CoreException e) {
 			handleException(e);
 			return;
 		}
 		userHasMadeChanges= true;
 		addConfig(newConfig, true);
+	}
+	
+	/**
+	 * Returns a duplicate of the given configuration. The new configuration
+	 * will be of the same type as the given configuration or of the duplication
+	 * type registered for the given configuration via the extension point
+	 * IExternalToolConstants.EXTENSION_POINT_CONFIGURATION_DUPLICATION_MAPS.
+	 */
+	private ILaunchConfiguration duplicateConfiguration(ILaunchConfiguration config) throws CoreException {
+		Map attributes= null;
+		attributes= config.getAttributes();
+		String newName= config.getName() + " [Builder]";
+		newName= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(newName);
+		ILaunchConfigurationType newType= getConfigurationDuplicationType(config);
+		ILaunchConfigurationWorkingCopy newWorkingCopy= newType.newInstance(getBuilderFolder(), newName);
+		newWorkingCopy.setAttributes(attributes);
+		return newWorkingCopy.doSave();
 	}
 	
 	/**
@@ -470,19 +467,19 @@ public final class BuilderPropertyPage extends PropertyPage {
 		}
 	}
 	
+	/**
+	 * Prompts the user to choose a launch configuration type to create and
+	 * returns the type the user selected or <code>null</code> if the user
+	 * cancelled.
+	 * 
+	 * @return the configuration type selected by the user or <code>null</code>
+	 * if the user cancelled.
+	 */
 	private ILaunchConfigurationType promptForConfigurationType() {
-		ILaunchConfigurationType types[] = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
-		String category = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP).getCategory();
-		List externalToolsTypes = new ArrayList();
-		for (int i = 0; i < types.length; i++) {
-			ILaunchConfigurationType configurationType = types[i];
-			if (category.equals(configurationType.getCategory())) {
-				externalToolsTypes.add(configurationType);
-			}
-		}
+		List externalToolTypes= getConfigurationTypes(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP);
 
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), debugModelPresentation);
-		dialog.setElements(externalToolsTypes.toArray());
+		dialog.setElements(externalToolTypes.toArray());
 		dialog.setMultipleSelection(false);
 		dialog.setTitle("Choose configuration type");
 		dialog.setMessage("Choose an external tool type to create");
@@ -492,6 +489,21 @@ public final class BuilderPropertyPage extends PropertyPage {
 			return null;
 		}
 		return (ILaunchConfigurationType) result[0];
+	}
+	
+	/**
+	 * Returns the launch configuration types of the given category
+	 */
+	private List getConfigurationTypes(String category) {
+		ILaunchConfigurationType types[] = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
+		List externalToolTypes = new ArrayList();
+		for (int i = 0; i < types.length; i++) {
+			ILaunchConfigurationType configurationType = types[i];
+			if (category.equals(configurationType.getCategory())) {
+				externalToolTypes.add(configurationType);
+			}
+		}
+		return externalToolTypes;
 	}
 	
 	/**
