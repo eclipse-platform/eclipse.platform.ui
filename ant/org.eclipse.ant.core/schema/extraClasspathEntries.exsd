@@ -57,9 +57,7 @@ JAR is also added to the classpath.
          <attribute name="headless" type="boolean">
             <annotation>
                <documentation>
-                  indicates whether this extra classpath entry is suitable for use in a &quot;headless&quot; Ant environment. If running headless and the attribute is &quot;false&quot;, 
-                  this entry will not be added to the Ant classpath. As well, the plugin class loader will not be added as a parent classloader to the Ant classloader.
-                  The implied value is true, when not specified.
+                  indicates whether this extra classpath entry is suitable for use in a &quot;headless&quot; Ant environment. If running headless and the attribute is &lt;code&gt;false&lt;/code&gt;, this entry will not be added to the Ant classpath. As well, the plugin class loader will not be added as a parent classloader to the Ant classloader. The implied value is &lt;code&gt;true&lt;/code&gt;, when not specified.
                </documentation>
             </annotation>
          </attribute>

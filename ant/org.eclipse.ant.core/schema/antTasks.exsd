@@ -67,7 +67,7 @@ request that the declaring plug-in load the specified class.
                <documentation>
                   the fully qualified name of a Java class implementing 
 the task.  Generally this class must be a subclass of
-&lt;samp&gt;org.apache.tools.ant.Task&lt;/samp&gt;.
+&lt;code&gt;org.apache.tools.ant.Task&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.apache.tools.ant.Task"/>

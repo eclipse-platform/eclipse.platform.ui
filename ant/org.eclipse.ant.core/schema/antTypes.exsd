@@ -68,7 +68,7 @@ plug-in load the specified class.
                <documentation>
                   the fully qualified name of a Java class implementing 
 the datatype.  Generally this class must be a subclass of
-&lt;samp&gt;org.apache.tools.ant.types.DataType&lt;/samp&gt;.
+&lt;code&gt;org.apache.tools.ant.types.DataType&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.apache.tools.ant.types.DataType"/>
@@ -78,8 +78,7 @@ the datatype.  Generally this class must be a subclass of
          <attribute name="library" type="string" use="required">
             <annotation>
                <documentation>
-                  a path relative to the plug-in install location
-for the library containing the type.
+                  a path relative to the plug-in install location for the library containing the type.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -89,16 +88,14 @@ for the library containing the type.
          <attribute name="headless" type="boolean">
             <annotation>
                <documentation>
-                  indicates whether this type is suitable for use in a &quot;headless&quot; Ant environment. If running headless and the attribute is &quot;false&quot;, 
-                  the type will not be loaded or defined. As well, the plugin class loader will not be added as a parent classloader to the Ant classloader.
-                  The implied value is true, when not specified.
+                  indicates whether this type is suitable for use in a &quot;headless&quot; Ant environment. If running headless and the attribute is &lt;code&gt;false&lt;/code&gt;, the type will not be loaded or defined. As well, the plugin class loader will not be added as a parent classloader to the Ant classloader. The implied value is &lt;code&gt;true&lt;/code&gt;, when not specified.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="eclipseRuntime" type="boolean">
             <annotation>
                <documentation>
-                  indicates whether this type requires an Eclipse runtime (i.e. must be run in the same VM as Eclipse). The implied value is true, when not specified.
+                  indicates whether this type requires an Eclipse runtime (i.e. must be run in the same VM as Eclipse). The implied value is &lt;code&gt;true&lt;/code&gt;, when not specified.
                </documentation>
             </annotation>
          </attribute>
