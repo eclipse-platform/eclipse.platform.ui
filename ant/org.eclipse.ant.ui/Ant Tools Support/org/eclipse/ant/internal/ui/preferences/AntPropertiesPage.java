@@ -81,7 +81,7 @@ public class AntPropertiesPage implements IAntBlockContainer {
 		List allProperties= AntCorePlugin.getPlugin().getPreferences().getDefaultProperties();
 		allProperties.addAll(Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getCustomProperties()));
 		antPropertiesBlock.setPropertiesInput((Property[]) allProperties.toArray(new Property[allProperties.size()]));
-		antPropertiesBlock.setPropertyFilesInput(AntCorePlugin.getPlugin().getPreferences().getCustomPropertyFiles());
+		antPropertiesBlock.setPropertyFilesInput(AntCorePlugin.getPlugin().getPreferences().getCustomPropertyFiles(false));
 		antPropertiesBlock.update();
 	}
 	

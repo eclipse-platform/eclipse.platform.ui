@@ -12,7 +12,6 @@
 package org.eclipse.ant.core;
 
 import java.io.File;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -26,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import org.eclipse.ant.internal.core.AntClasspathEntry;
 import org.eclipse.ant.internal.core.AntObject;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
@@ -1006,12 +1004,37 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	/**
+	 * Returns the custom property files specified for Ant builds performing any required 
+	 * string substition if indicated.
+	 * 
+	 * @param preformStringSubstition whether or not to perform the string subsitution on the property file strings
+	 * @return the property files defined for Ant builds.
+	 * @since 3.0
+	 */
+	public String[] getCustomPropertyFiles(boolean performStringSubstition) {
+		if (!performStringSubstition || customPropertyFiles == null || customPropertyFiles.length == 0) {
+			return customPropertyFiles;
+		}
+		List files= new ArrayList(customPropertyFiles.length);
+		for (int i = 0; i < customPropertyFiles.length; i++) {
+			String filename= customPropertyFiles[i];
+			 try {
+				filename = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(filename);
+				files.add(filename);
+			} catch (CoreException e) {
+				AntCorePlugin.log(e);
+			}
+		}
+		return (String[])files.toArray(new String[files.size()]);
+	}
+	
+	/**
 	 * Returns the custom property files specified for Ant builds.
 	 * 
 	 * @return the property files defined for Ant builds.
 	 */
 	public String[] getCustomPropertyFiles() {
-		return customPropertyFiles;
+		return getCustomPropertyFiles(true);
 	}
 	
 	/**

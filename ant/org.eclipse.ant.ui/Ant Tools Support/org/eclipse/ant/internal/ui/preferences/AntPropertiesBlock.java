@@ -436,7 +436,7 @@ public class AntPropertiesBlock {
 			AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 			List properties= prefs.getProperties();
 			propertyTableViewer.setInput(properties);
-			fileTableViewer.setInput(prefs.getCustomPropertyFiles());
+			fileTableViewer.setInput(prefs.getCustomPropertyFiles(false));
 		}
 	}
 	
