@@ -227,7 +227,8 @@ public class SiteStatusAnalyzer {
 			featurePluginID = featurePlugins[i].getVersionedIdentifier();
 			boolean found = false;
 			
-			Bundle[] bundles = pkgAdmin.getBundles(featurePluginID.getIdentifier(), featurePluginID.getVersion().toString(), Constants.VERSION_MATCH_QUALIFIER);
+			String singleVersionRange = '[' + featurePluginID.getVersion().toString() + ',' + featurePluginID.getVersion().toString() + ']';
+			Bundle[] bundles = pkgAdmin.getBundles(featurePluginID.getIdentifier(), singleVersionRange);
 			if (bundles != null && bundles.length == 1) {
 				found = true;
 				continue;
@@ -235,7 +236,7 @@ public class SiteStatusAnalyzer {
 			
 			// Check if there is another feature with this plugin (but different version)
 			// log it
-			bundles = pkgAdmin.getBundles(featurePluginID.getIdentifier(), null, null);
+			bundles = pkgAdmin.getBundles(featurePluginID.getIdentifier(), null);
 			for (int j=0; bundles != null && j<bundles.length; j++ ) {
 				String bundleVersion = (String)bundles[j].getHeaders().get(Constants.BUNDLE_VERSION);
 				IFeature feature = getFeatureForId(new VersionedIdentifier(bundles[j].getSymbolicName(), bundleVersion ));

@@ -934,13 +934,8 @@ public static class Writer {
 	 * @param bundle the bundle to get fragments for
 	 */
 	public static FragmentEntry[] getFragments(Bundle bundle) {
-		
 		PackageAdmin pkgAdmin = UpdateCore.getPlugin().getPackageAdmin();
-		Bundle[] bundles = pkgAdmin.getBundles(bundle.getSymbolicName(), (String) bundle.getHeaders().get(Constants.BUNDLE_VERSION), Constants.VERSION_MATCH_QUALIFIER);
-		if (bundles == null || bundles.length == 0)
-			return noFragments;
-
-		Bundle[] fragmentBundles = pkgAdmin.getFragments(bundles[0]);
+		Bundle[] fragmentBundles = pkgAdmin.getFragments(bundle);
 		if (fragmentBundles == null) 
 			return noFragments;
 		
