@@ -84,7 +84,7 @@ public class ResourceLocator {
 					HelpPlugin.logError(
 						Resources.getString(
 							"E044",
-							elements[j].getAttribute("class")),
+							plugin.getUniqueIdentifier()),
 						ce);
 				}
 			}
