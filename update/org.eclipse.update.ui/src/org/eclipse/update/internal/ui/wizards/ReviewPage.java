@@ -737,24 +737,24 @@ public class ReviewPage
 	}
 
 	class StatusDialog extends ErrorDialog {
-		Button detailsButton;
+//		Button detailsButton;
 		public StatusDialog() {
 			super(UpdateUI.getActiveWorkbenchShell(), UpdateUI
 					.getString("InstallWizard.ReviewPage.invalid.short"), null,
 					validationStatus, IStatus.OK | IStatus.INFO
 							| IStatus.WARNING | IStatus.ERROR);
 		}
-		protected Button createButton(
-				Composite parent,
-				int id,
-				String label,
-				boolean defaultButton) {
-			Button b = super.createButton(parent, id, label, defaultButton);
-			if(IDialogConstants.DETAILS_ID == id){
-				detailsButton = b;
-			}
-			return b;
-		}
+//		protected Button createButton(
+//				Composite parent,
+//				int id,
+//				String label,
+//				boolean defaultButton) {
+//			Button b = super.createButton(parent, id, label, defaultButton);
+//			if(IDialogConstants.DETAILS_ID == id){
+//				detailsButton = b;
+//			}
+//			return b;
+//		}
 		public void create() {
 			super.create();
 			buttonPressed(IDialogConstants.DETAILS_ID);
