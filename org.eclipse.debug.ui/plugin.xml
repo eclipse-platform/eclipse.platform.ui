@@ -17,7 +17,7 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.variables"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.ui.console" export="true"/>
+      <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.jface.text"/>
