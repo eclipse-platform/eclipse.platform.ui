@@ -1,0 +1,321 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title></title>
+</head>
+ <body>
+ 
+<h1>Towards a more responsive Eclipse UI</h1>
+ 
+<font size="-1">Last modified: June 2, 2003</font> 
+<p>Eclipse is well known as a powerful integrated development environment,
+but it is perceived by users as sometimes being unwieldy or unresponsive
+to work with. The goal of this work is to uncover the underlying causes of
+the unresponsiveness and provide Eclipse developers with the tools they need
+to focus on making their code responsive.  </p>
+ 
+<p>To begin with, it is important to note that, responsiveness is not the
+same as performance, and to some extent they are contradictory:</p>
+ 
+<p>The <i>performance</i> of an application is a measure of how much work
+it can do in a given length of time. For example, the Eclipse Platform can
+operate on thousands of files per minute on a typical desktop system. One
+way to achieve high performance is to ensure that all available resources 
+are dedicated to each task until it is complete. Since most modern window
+systems require applications to regularly call system code to keep their
+user interfaces active, dedicating all processing resources to a non-user-interface
+task will cause the user interface to become unresponsive.</p>
+ 
+<p>The <i>responsiveness</i> of an application is a measure of how often
+its user interface is in a state where the user can interact with it, how
+often those interactions can trigger new tasks being initiated, and how often
+the information the user interface is displaying accurately reflects the state
+of the system it is modeling. Implementing a responsive system will require
+the system resources to be split across multiple concurrent tasks, so although
+the user will typically be more productive, the time it takes the system
+to complete a particular task will be longer (i.e. Its performance on <u>that
+task</u> will be lower).</p>
+ 
+<p>In order to increase the responsiveness of the Eclipse Platform we will
+be looking at the following two areas:</p>
+ 
+<ol>
+ 	<li>
+    <p>all of the user interface "features" of the 	Eclipse Platform will
+be investigated to remove any inherent 	limitations which prevent them from
+being used in a responsive 	fashion. We have not begun work on this aspect
+of the problem, so it 	is difficult to provide any definitive examples. However,
+some 	likely candidates for investigation, at least, would be:</p>
+ </li>
+</ol>
+<ul>
+ 	<li>
+    <p>the startup sequence, since the time between when the user 	starts
+the application and when they can start working is very 	important to their
+perception of its responsiveness.</p>
+ 	</li>
+  <li>
+    <p>SWT widgets like the Table, Tree, and List whose API make it 	difficult
+to code in an "on demand" style where the 	contents are requested by the
+widget when they are required for 	display, rather than up front by the application.</p>
+ 	</li>
+  <li>
+    <p>the Java text editor, which takes significantly longer to get 	to
+the point where the contents can be edited than the simple text 	editor.</p>
+ </li>
+</ul>
+ 
+<ol start="2">
+ 	<li>
+    <p>certain operations like builds and searches which currently 	run synchronously
+and block the user (at the UI) from doing other 	work until they are completed
+will be modified to run asynchronously 	in the background. Implementing this
+requires an improved 	concurrency architecture. The remainder of this document
+describes 	the work which has been done so far in that area.</p>
+ </li>
+</ol>
+ 
+<h2>Overview of current problems</h2>
+ 
+<ul>
+ <li> Use of modal progress dialogs is pervasive in the UI, preventing the
+user from doing any other work (or even browsing) while long running tasks
+are processing. </li>
+ <li> Very long running operations only update the UI once at the very end.
+For example, when searching, no search results are available for viewing
+until the entire search is complete.  When importing or checking out large
+projects, the project doesn't appear in the UI until every file in the project
+has been created. </li>
+ <li> Many components have their own mechanism for managing background activity.
+ Examples include: search indexing, UI decoration, Java editor reconciling,
+and workspace snapshot. Each component should not have to roll their own
+concurrency architecture for off-loading work into background threads. </li>
+ <li>The current workspace lock is heavy handed.  There is a single write
+lock for the entire  workspace, and it is generally acquired for significant
+periods of time.  This can block other processes for several minutes.  When
+the lock is acquired, no other threads can modify the workspace in any way. 
+  </li>
+ <li> The workspace locking mechanism is currently tied to the mechanism
+for batching workspace changes.  We widely advertise that compound workspace
+changes should be done within an IWorkspaceRunnable.  The workspace is always
+locked for the duration of the IWorkspaceRunnable even if it is not making
+changes to the workspace. </li>
+ <li> Various plugins have their own locking mechanisms.  Since plugins don't
+always know about each other, these locks can conflict in unforeseeable ways,
+making Eclipse prone to deadlock. </li>
+ 
+  <p> </p>
+</ul>
+  
+<h2>Proposed solutions</h2>
+ 
+<h3>Job scheduling mechanism</h3>
+ 
+<p> Platform core (runtime plugin) will introduce a new job manager API for
+background work.  This API will allow clients to: </p>
+<ul>
+ <li> Schedule <i>Job</i> instances, units of runnable background activity.
+Jobs can be scheduled either for immediate execution, or execution after
+some specified delay.  The platform will maintain a queue for waiting jobs,
+and will manage a pool of worker threads for running the jobs. </li>
+ <li> Specify job scheduling priority, as well as explicit dependencies between
+jobs (Job A must run after Job B but before Job C, etc). </li>
+ <li> Specify job scheduling rules, which will allow implicit constraints
+to be created between jobs that don't know about each other.  For example,
+a Job can say: "While I'm running, I require exclusive access to resource
+X.  Don't run me until it's safe to do so, and don't run any other jobs that
+might conflict with me until I'm done".  The constraint system will be generic
+at the level of the job scheduling API, but other plugins can introduce standard
+constraints that apply to their components. </li>
+ <li> Query, cancel and change priority of jobs that are waiting to run.  This
+allows clients to cancel jobs that have become irrelevant before they had
+a chance to run. (Example: cancel pending indexing or decoration jobs on
+a project when the project is deleted). </li>
+ <li> Group jobs into families, and query, cancel, and manage entire job
+families as a unit. </li>
+ <li> Register for notification when jobs are scheduled, started, finished,
+canceled, etc.  Clients can register for notification on a single job, or
+on all jobs. </li>
+ <li> Provide a mechanism to allow jobs to carry their work over to another
+ thread and finish asynchronously.  This is needed to allow jobs to asyncExec
+ into the UI, but maintain scheduling rules and avoid notifiying listeners until
+ the async block has returned.
+ </li>
+ <li> Add listeners to be hooked to the progress monitor callbacks of the
+running jobs.  This allows the UI to report progress on jobs that would otherwise
+have no way of connecting with the UI (such as indexing or snapshot jobs). 
+  </li>
+ 
+</ul>
+ 
+<p> This scheduling mechanism will replace most (if not all) existing background
+thread mechanisms in the SDK.  This includes: editor reconcilers, UI decoration, 
+search and Java indexing, workspace snapshot, and various threads used in the launch/debug
+framework: JDI thread for communicating with the VM, threads for monitoring
+input and output streams, debug view update thread, and the thread waiting
+ for VM termination. </p>
+ 
+<p> Also, the scheduling facility will make it easier for more components
+to off-load work into background threads, in order to free up the UI thread
+for responding to the user.  This includes all jobs that currently run in
+the context of a modal progress indicator, but also other processing work
+that currently executes in the UI.  Examples of activity that can be offloaded
+into jobs: decorating editors (marker ruler, overview ruler), type hierarchy
+computation, structure compare in compare editors, auto-refresh with file
+system, etc.  </p>
+   
+<h3>New UI look and feel for long running activity</h3>
+ 
+<p> Long running operations will generally be run without a modal progress indicator 
+  by scheduling them with the core job manager API.   Most jobs currently using a
+  modal progress dialog will switch to this new non-modal way of running.
+  The platform UI will provide a view from which users can see the list of waiting and 
+  running background jobs, along with their current progress. This is a view rather than 
+  a dialog so the user can continue to manipulate the UI while background jobs are 
+  running. This view will likely take the form of a tree so that expanding a job will
+  give more detailed progress information.  The UI will also provide some ubiquitous 
+  feedback device (much like the page loading indicator in popular web browsers or the 
+  Macintosh user interface), that will indicate when background activity is happening. 
+ </p>
+<p>Users will be able to cancel any background activity from the progress view. 
+  Users will also be able to pause, resume, or fast forward (increase priority 
+  of) any waiting job. Since we can never know which of several background jobs 
+  the user is most anxious to complete, this puts some power in the user's hands 
+  to influence the order of execution of waiting background jobs.</p>
+
+<p>
+  The platform UI will introduce a special job called a UI job, which is simply a job that 
+  needs to be run in the UI Thread. We define this type of job as a convenience for those 
+  who do not want to keep looking for a Display to asyncExec in.  Casting UI work
+  as jobs will allow the framework to control scheduling based on priority and user 
+  defined scheduling rules.  Note that although UI jobs should generally be brief
+  in duration, they may require locks and thus the framework must have a strategy
+  for avoiding deadlock when the UI thread is waiting for a lock.
+ 
+<h3>Minimize use of long term workspace locks</h3>
+ 
+<p> We will actively discourage clients from acquiring the workspace lock
+for indefinite periods of time.  <code>IWorkspaceRunnable</code> is the current
+mechanism that allows clients to lock the workspace for the duration of a
+runnable.  This API will be deprecated.   Clients that require exclusive
+access to portions of the workspace should  schedule background jobs with
+appropriate scheduling rules.  Scheduling rules can  specify smaller portions
+of the workspace, allowing clients to "lock" only the resources  they need.
+Longer running workspace API methods will be broken up as much as  possible
+to avoid locking the workspace for extended periods.  Clients that do not 
+run as jobs, or that run as jobs without the appropriate scheduling rules,
+will have to be tolerant of concurrent modifications to the workspace. </p>
+  
+<h3>New resource change notification and autobuild strategy</h3>
+ 
+<p> The current mechanism for batching resource changes and auto-building
+is based on the <code>IWorkspaceRunnable</code> API.  This approach has two
+problems: </p>
+<ol>
+ <li> Clients sometimes forget to use it, which results in severe performance
+problems because notifications and auto-builds happen more often than necessary. 
+  </li>
+ <li> This can become too coarse-grained for long running operations.  If
+the user begins an operation that will take several minutes, it would be
+nice to perform some incremental updates (notifications) while the operation
+is still running. </li>
+ 
+</ol>
+ 
+<p></p>
+ 
+<p> The resources plugin will adopt new heuristics for when builds and notifications 
+should happen.  These heuristics will likely require some fine-tuning and
+may need to be customizable, but generally: </p>
+<ul>
+ <li>Resource change notifications will always start within a bounded  period
+after the workspace has changed (such as five seconds). This will ensure notifications
+occur periodically during long operations. </li>
+ <li> Notification will begin immediately if there have been no workspace
+changing jobs in the job queue for a short period (such as 500 milliseconds).
+ This ensures timely  user feedback when background activity has stopped.
+ There will be a lower bound on the frequency of notifications to prevent
+listeners from hogging the CPU. </li>
+ <li>There will be API for forcing an immediate notification if clients know
+it is either necessary or desirable for a notification to occur.  (actually,
+this mechanism  has existed since Eclipse 1.0 in the method <code>IWorkspace.checkpoint</code>). 
+UI actions will use this for indicating when a user action has completed.
+ Other clients that absolutely depend on the results of notifications can
+also use this mechanism  (for example clients that depend on the java model
+being up to date). </li>
+ <li> Autobuilds will begin (if needed) when the work queue has been idle
+for a sufficient period of time (such as 1 second).  If a background job
+that requires write access to the workspace is scheduled before autobuild
+completes, then auto-build will be canceled automatically.  Existing builders
+will need to improve their cancelation behaviour so that a minimal amount
+of work is lost. </li>
+ <li> There will still be a mechanism to allow users or API clients to force
+a build to occur, and these explicit builds will not be canceled automatically
+by conflicting background activity. </li>
+ <li> Both builders and listeners could adapt automatically if they start
+interfering with ongoing work by increasing their wait period. This would
+allow builders and listeners to adapt to changes in activity levels. </li>
+ 
+</ul>
+ 
+<p></p>
+ 
+<p> Unless explicitly requested, builds and resource change listeners will
+always be run  asynchronously in a different thread from the one that initiated
+the change.  This will improve the responsiveness of workspace changing operations
+that are initiated from the UI thread. </p>
+ 
+<h3>Centralized locking mechanism</h3>
+ 
+<p> Platform core (runtime plugin) will introduce a smart locking facility.
+ Clients that  require exclusive access to a code region should use these
+locks as a replacement for  Java object monitors in code that may interact
+with other locks.  This will allow the platform to detect and break potential
+deadlocks.  Note that these locks are orthogonal to the job scheduling rules
+described earlier.  Job scheduling rules typically ensure that only non conflicting
+jobs are running, but cannot guarantee protection from malicious or incorrect
+code. </p>
+  These locks will have the following features: 
+<ul>
+ <li>They will be reentrant.  A single thread can acquire a given lock more
+than once, and it will only be released when the number of acquires equals
+the number of releases. </li>
+ <li>They will automatically manage interaction with the SWT synchronizer
+to avoid  deadlocking in the face of a syncExec.  I.e., if the UI thread
+tries to acquire a lock, and another thread holding that lock tries to perform
+a syncExec, the UI thread will service the syncExec work and then continue
+to wait for the lock. </li>
+ <li>They will avoid deadlocking with each other.  I.e., if thread A acquires
+lock 1, then waits on lock 2, while thread B acquires lock 2 and waits on
+lock 1, deadlock would normally ensue.  The platform locking facility will
+employ a release and wait protocol to ensure that threads waiting for locks
+do not block other threads. </li>
+ 
+</ul>
+   
+<h2>Milestone targets</h2>
+ 
+<ul>
+ <li> M1: Core runtime job manager API defined and implemented.  UI API defined
+with reference implementation.  Prototype UI implementation of progress view
+and progress animation. All components should begin looking into thread safety
+issues with their API. </li>
+ <li>M2: In a branch, a significant subset of the Eclipse platform converted
+to use the new mechanisms. Ongoing work in all components to become thread 
+safe and to port existing components to job manager API (reconciler, indexer,
+decorator, debug events). </li>
+ <li> M3: all platform work moved from branch to HEAD at beginning of M3
+cycle.  Goal for end of M3 is some level of stability across entire SDK
+in new concurrent world.  All  component API must be thread safe. </li>
+ 
+</ul>
+<p>
+ This schedule is aggressive but the intent is to wrap up platform work by
+end of M3.  This allows plenty of time to shake out threading bugs and allow
+other components to stabilize by M4. 
+</p>
+
+(Plan item bug reference: <a
+ href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=36957">36957</a>)<br>
+</body>
+</html>

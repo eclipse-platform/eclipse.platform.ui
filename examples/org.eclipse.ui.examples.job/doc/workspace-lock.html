@@ -1,0 +1,232 @@
+<html>
+<head>
+</head>
+<body>
+<h1>Workspace lock granularity</h1>
+<h2>The problem</h2>
+<ul>
+<li>The current workspace lock is heavy handed.  There is a single write lock for the entire 
+workspace, and it is generally acquired for significant periods of time.  This can block
+other processes for several minutes.  When the lock is acquired, no other threads
+can write to the workspace in any way. The write lock does not interfere with workspace
+readers, which are always allowed to proceed.
+</li>
+<p>
+<li>
+Processes often don't know in advance whether writes are necessary, so often the 
+lock is acquired for long periods even when no writing occurs (for example on searches).
+</li>
+<p>
+<li>
+The workspace locking mechanism is currently tied to the mechanism for batching
+workspace changes.  We widely advertise that compound workspace changes should
+be done within an IWorkspaceRunnable.  The workspace is always locked for the
+duration of the IWorkspaceRunnable even if it is not making changes to the workspace.
+</li>
+<p>
+<li>
+In the absence of other sync mechanisms, other clients use the workspace lock
+for working with operations that don't necessarily even operate on resources.
+</li>
+<p>
+<li>
+To avoid deadlock, many clients acquire the workspace lock "just in case", before
+acquiring their own private lock mechanism.
+</li>
+<p>
+<li>
+Although this problem is most evident with the workspace lock, there are other
+heavy-handed locks in Eclipse with which the same issues appear (the CVS lock is
+another example).
+</li>
+</ul>
+
+<h2>Proposed Solution</h2>
+<p>
+The current workspace lock is very coarse-grained both in how long the lock is held,
+and the scope of the resources that are locked by it.  To achieve better concurrency
+in the workspace, we need to attack the lock's physical granularity, its temporal
+granularity, or some combination of the two.
+</p>
+<p>
+We can improve the lock's temporal granularity by removing any public, general way 
+of locking for an arbitrary period of time. I.e., we make the simple change of not 
+acquiring the lock for IWorkspaceRunnables. (or even better, deprecate IWorkspaceRunnable entirely).
+</p>
+<p>
+Internally, the workspace would continue to use a single lock in critical regions to ensure
+the integrity of individual API calls.  However, a systematic effort would be made to
+break down the duration of locking within those calls, where possible.  For example,
+a best-effort copy method does not need to lock the workspace for its entire duration,
+but only for each unit of work where a new resource is created at the destination.
+</p>
+<p>
+The underlying design rule is to prevent an atomic operation from locking
+the workspace for a long period of time.  Without the presence of long term locks, 
+long running concurrent operations will interleave their access to the workspace, 
+enabling several workspace-modifying operations to run at the same time.
+</p>
+<p>
+This solution is optimistic. It assumes that concurrent writes to the same set 
+of resources in a conflicting manner are relatively rare. One could in fact go further, and
+say that if concurrent operations are modifying the same resources at the same time,
+then it is either a user or programming error, and the concurrent tasks should just fail.
+Serves them right for trying to do contradictory things on the same set of resources.
+</p>
+<p>
+However, this philosophy is not acceptable without a very strong visual indication
+to the user of what is happening and when it will be finished.  I.e., if we had a progress
+dialog saying, "Resource X is being modified, and I will let you know when I'm done",
+then it might be acceptable to blame the user if they start a conflicting task before
+it finishes.  Some of the drawbacks of this approach are:
+<ol style="a">
+<li>The dialog is a distraction to the user in the cases where the user
+doesn't care when the task ends and is not waiting for its result</li>
+<li>This interaction style puts the onus on the user to avoid making mistakes.  </li>
+<li>In many cases the user doesn't know what resources are modified by a given 
+operation. I.e., it is unrealistic to assume that users can compute the intersection
+between the set of resources that all current background threads may modify
+and the set of resources that might be modified by another task they are thinking
+of starting.</li>
+<li>The penalty to the user for making a mistake can be severe.  For example,
+if the user starts a CVS commit operation, and then, thinking the commit is about done,
+decides to delete the project, they will be unhappy if the deletion started before
+the commit finished.</li>
+</ol>
+<p>
+So, how do we schedule concurrent jobs in a way that prevents conflicts without
+employing a single long term lock? We can introduce a scheme where
+jobs can specify in advance whether they need exclusive access to a resource.
+That is, each job can optionally supply a <i>scheduling rule</i> that is used by
+the job scheduler when making decisions about which jobs to run.  The API for these 
+rules would look something like this:
+<pre>
+public interface ISchedulingRule {
+	public boolean isConflicting(ISchedulingRule);
+}
+</pre>
+<p>
+While these rules would remain generic at the job scheduling level, the workspace
+can introduce some standard rules.  For example, a rule could request an array
+of resources, or the entire workspace.  In this way, finer-grained portions of the workspace
+can be effectively locked by a job.
+</p>
+<p>
+The contract on these rules would be as follows: the job scheduling mechanism 
+guarantees that a job won't be started if there is a job currently running that conflicts
+with its scheduling rule.  This scheduling rule would be orthogonal to any locking 
+mechanism, thus avoiding some of the problems discussed earlier with regard
+to pre-specification of locks. We still need to revisit our previous objections to
+pre-specified locks to see how they apply to scheduling rules:
+<ul>
+<li>Scheduling performance. The scheduling rules need to be resolved every time
+a job is to be run.  It is true that this will still impose an overhead on scheduling.
+Most of the time, however, there will be few or no jobs running so very little rule
+analysis is needed.  As the number of concurrent operations grows, the cost will
+increase.  However, this has the nice property that it is fast most of the time, and 
+only starts to slow down in the uncommon case where the system is already very busy anyway.
+</li>
+<li>How to know what rules to use?  In some cases it is hard to predict what resources
+will be changed by a given unit of work.  When third party API is called, there is often
+no contract saying what will be touched.  This is still an issue.  In the worst case,
+clients will err on the side of caution and specify that the entire workspace is needed.
+We will need to educate users to specify rules carefully, and if necessary to break
+jobs up into separate units with different rules.  We will introduce a way of creating
+composite jobs that will be run in a specific order, but each job can have its
+own scheduling rules.
+</li>
+<li>How to enforce that rules are followed?  The proposal is that we don't enforce
+anything.  That is, a job can request arbitrary locks regardless of what rules were
+stated.  To avoid deadlock, lock ordering with release and wait (described earlier)
+will be used.  The theory is that if jobs are well behaved and specify their rules
+correctly, deadlock will be rare, so release and wait will rarely be necessary.  To put
+it another way, the penalty for not specifying your rules correctly is that you might
+have some locks taken away from you when you don't expect it.  This is a much
+more palatable failure mode than throwing an exception, for example.
+</li>
+<li>Pre-allocation can be wasteful if resources are only actually needed for a short
+period of time.  This is still a potential problem with scheduling rules.  Job writers
+will have to take this into consideration when designing jobs and their rules.  If a 
+job only needs access to a resource briefly at the end of a long operation, it can
+be coded as two jobs with different rules.  This is an area where scheduling rules
+introduce a new complication that clients need to be aware of.
+</li>
+</ul>
+<p>
+Scheduling rules may not be necessary at all in cases where contention is not likely,
+or where the job is written in such a way that concurrent changes are tolerated.
+if clients are confident that no contention is likely, they don't need to specify any
+rules.  A good example for this is search.  Search may create search result markers
+on arbitrary resources.  However, search could be implemented to not have
+any scheduling rules, and it could be tolerant of concurrent changes and deletion.
+Since it only creates search markers, it doesn't care if those markers are changed
+or deleted after they are created.  Thus it is possible that search can be implemented without
+using any scheduling rules at all, even though it may potentially make modifications
+to an arbitrary set of resources.  Another example of this is CVS metadata files.  Since
+the CVS client is the only one that ever views or modifies the CVS metadata files,
+it may not need to create a scheduling rule for them.
+</p>
+<p>
+Finally, when there is contention between jobs, we need a
+mechanism for giving more value to jobs initiated by users versus background jobs 
+that the user is not waiting on results for.  Each job belongs to a priority class that
+can be used to manage this interaction.  User initiated jobs belong to the INTERACTIVE
+priority class. To avoid blocking interactive jobs for unacceptable periods of time, we
+can employ various policies to ensure the job gets run, such as:
+<ul>
+<li>Only start non-interactive jobs when NO interactive jobs are running</li>
+<li>If an interactive job is waiting to be run, and its rule conflicts with a currently
+running non-interactive job, the non-interactive job may be canceled to let the interactive
+job proceed.</li>
+<li>If an interactive job is waiting on a lock held by a non-interactive job, 
+the non-interactive job may be canceled to let the interactive job proceed.</li>
+</ul>
+
+<h3>Locking issues</h3>
+<h4>Is the UI thread allowed to acquire locks?</h4>
+<b>Reasons for "No":</b><br>
+<p>
+Clearly there is a deadlock risk due to the interaction with syncExec.
+We can handle this risk in the same way that we handle it in Eclipse 2.1.  By ensuring
+the core locking mechanism and the SWT synchronizer are aware of each other, we
+can avoid potential deadlocks by servicing syncExecs in the UI thread in the case
+where the UI thread is waiting on an acquired lock.  
+</p>
+<p>
+Not allowing locks in the UI thread would also help improve UI responsiveness.  
+If the UI thread is waiting on a lock, it cannot be processing the event queue, and thus
+the UI will fail to paint.
+</p>
+<p>
+If we don't allow locks in the UI thread, then we can easily add the extra restriction
+that locks must be acquired from within the context of currently running jobs.  This
+would give us a story for cleaning up misbehaving locks.  I.e., if someone acquires
+a lock but fails to release it, we can release it automatically when the job completes.
+</p>
+<b>Reasons for "Yes":</b><br>
+<p>
+The main drawback is that this would be unweildy to program with.  Some operations
+that acquire locks may actually be very fast.  Forcing the UI to fork a 
+job every time a lock is needed may be overkill in many cases.  If third party code is 
+called from the UI, the caller may not know if locks will be acquired deep down in the 
+call stack.  To be defensive, the UI would have to fork jobs whenever third party
+code is called.
+</p>
+<p>
+Another problem is how this rule would be enforced.  Throwing an exception when
+the UI thread attempts to acquire a lock would result in unacceptable runtime errors.
+</p>
+<h4>Do we expose locks?</h4>
+<p>
+Do we allow third party clients to directly acquire, for example, the workspace lock?
+The answer to this question must be "No", if we don't have the restriction that jobs
+be acquired within running jobs.  Otherwise, we would have no way of cleaning up
+locks that clients acquire but fail to release.  Is this acceptable?  Do we know of 
+any cases where clients will need to acquire the workspace lock, given that we have
+a system of rules to prevent conflicting jobs from running concurrently?
+</p>
+
+
+
+</body>	
+</html>
