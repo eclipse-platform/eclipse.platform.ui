@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ import org.eclipse.ui.IEditorPart;
 
 
 /**
- * Proxy to a launch shortcut extention
+ * Proxy to a launch shortcut extension
  */
 public class LaunchShortcutExtension implements ILaunchShortcut {
 	
@@ -93,6 +93,16 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 	}
 	
 	/**
+	 * Returns the name filter of this shortcut or <code>null</code>
+	 * 
+	 * @return the name filter of this shortcut, or <code>null</code> if not
+	 *  specified
+	 */
+	public String getNameFilter() {
+		return getConfigurationElement().getAttribute("nameFilter"); //$NON-NLS-1$
+	}
+	
+	/**
 	 * Returns the contextual launch label of this shortcut
 	 * 
 	 * @return the contextual label of this shortcut, or <code>null</code> if not
@@ -116,7 +126,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 				return p.secondAsString();
 			}
 		}
-		return "no label";
+		return LaunchConfigurationsMessages.getString("LaunchShortcutExtension.21"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -143,6 +153,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 		}
 		return fLaunchFilter;
 	}
+	
 	/**
 	 * Returns all of the filter elements of this shortcut as a List of String Pairs.
 	 * 

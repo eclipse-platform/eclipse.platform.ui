@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.Pair;
+import org.eclipse.debug.internal.ui.StringMatcher;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.ui.ILaunchFilter;
@@ -44,10 +45,10 @@ import org.eclipse.ui.help.WorkbenchHelp;
 /**
  * An action delegate that builds a context menu with applicable launch shortcuts.
  * <p>
- * This class can be contributed as pop-up menu extension action. When envolked,
+ * This class can be contributed as pop-up menu extension action. When envoked,
  * it becomes a sub-menu that dynamically builds a list of applicable shortcuts
  * for the current selection (ISelection in the workspace). The LaunchShortCut
- * extension is consulted to obtain the list of registered short cuts. Each short
+ * extension is consulted to obtain the list of registered shortcuts. Each short
  * cut may have optional information to support a context menu action. The extra
  * information includes a "filterClass", a list of "contextLabel"s, and a list of
  * "filter" elements. ContextLabels allow custom labels to appear for any mode
@@ -205,13 +206,24 @@ public class ContextualLaunchObjectActionDelegate
  	 * @return true if this shortcut should appear in the contextual launch menu
 	 */
 	private boolean isApplicable(LaunchShortcutExtension ext) {
-		// boolean hasMode = ext.getModes().contains(getMode(launchGroupIdentifier));
-		// return false if there isn't a filter class or there are no filters specified by the shortcut
+		String nameFilterPattern = ext.getNameFilter();
+		boolean nameMatches = false;
+		if (nameFilterPattern != null) {
+			StringMatcher sm = new StringMatcher(nameFilterPattern, true, false);
+			nameMatches = sm.match(fSelection.getName());
+			if (!nameMatches) {
+				// return now to avoid loading the filterClass
+				return false;
+			}
+		}
+
 		// Only loaded plugins will be used, so the launchFilter is null if the filterClass is not loaded
 		ILaunchFilter launchFilter = getFilterClassIfLoaded(ext);
 		if (launchFilter == null) {
-			return false;
+			// no launch filter available, just use nameMatches (see bug# 51420)
+			return nameMatches;
 		}
+
 		List filters = ext.getFilters();
 		if (filters.isEmpty()) {
 			return false;

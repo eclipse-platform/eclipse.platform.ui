@@ -125,6 +125,13 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="nameFilter" type="string">
+            <annotation>
+               <documentation>
+                  An expression (* and ? wildcards supported), matched against the name of a selected resource. A match allows this launch shortcut to appear in the contextual launch popup menu for the selected resource, unless one of the filters fails in filterClass. If the filterClass is not yet loaded (lazy plugin), the result of the nameFilter test will decide inclusion in the context menu.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
