@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<plugin
+  name = "AntUI"
+  id="org.eclipse.ant.internal.ui"
+  version = "0.0"
+  vendor-name = "IBM"
+  class="org.eclipse.ant.internal.ui.AntUIPlugin">
+
+  <requires>
+    <import plugin="org.eclipse.ui"/>
+    <import plugin="org.eclipse.core.resources"/>
+    <import plugin="org.eclipse.ant.core"/>
+  </requires>
+
+  <runtime>
+    <library name="antui.jar">  
+      <export name = "*"/>
+    </library> 
+  </runtime>
+
+  <extension point="org.eclipse.ui.popupMenus">
+	<objectContribution
+		id="org.eclipse.ant.internal.ui.RunAnt"
+		objectClass="org.eclipse.core.resources.IResource"
+		nameFilter="*.xml">
+		<action
+			id="RunAnt"
+			label="Run Ant"
+			tooltip="Run Ant with the selected build file"
+			menubarPath="additions"
+			enablesFor="1"
+			class="org.eclipse.ant.internal.ui.RunAntActionDelegate">
+		</action>
+	</objectContribution>			
+  </extension>
+
+</plugin>
