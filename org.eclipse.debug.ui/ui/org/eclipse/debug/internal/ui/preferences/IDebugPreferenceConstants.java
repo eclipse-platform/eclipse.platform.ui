@@ -94,7 +94,7 @@ public interface IDebugPreferenceConstants {
 	/**
 	 * The maximum size of the launch history list
 	 */
-	public static int MAX_LAUNCH_HISTORY_SIZE= 15;
+	public static int MAX_LAUNCH_HISTORY_SIZE= 20;
 }
 
 
