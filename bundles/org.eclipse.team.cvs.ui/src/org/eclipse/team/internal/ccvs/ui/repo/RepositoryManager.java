@@ -866,16 +866,6 @@ public class RepositoryManager {
 	}
 	
 	/**
-	 * This method is invoked whenever the refresh button in the
-	 * RepositoriesView is pressed.
-	 */
-	void clearCaches() {
-		for (Iterator iter = repositoryRoots.values().iterator(); iter.hasNext();) {
-			RepositoryRoot root = (RepositoryRoot) iter.next();
-			root.clearCache();
-		}
-	}
-	/**
 	 * Method setLabel.
 	 * @param location
 	 * @param label
