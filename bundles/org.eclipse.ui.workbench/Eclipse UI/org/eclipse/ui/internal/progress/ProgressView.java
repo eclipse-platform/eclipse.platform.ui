@@ -136,10 +136,10 @@ public class ProgressView extends ViewPart implements IViewPart {
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
 			public void run() {
-				ProgressContentProvider provider = (ProgressContentProvider) viewer.getContentProvider();
-				provider.debug = !provider.debug;
-				setChecked(provider.debug);
-				provider.refreshAll();
+				ProgressViewUpdater updater = ProgressViewUpdater.getSingleton();
+				updater.debug = !updater.debug;
+				setChecked(updater.debug);
+				updater.refreshAll();
 			}
 
 		});

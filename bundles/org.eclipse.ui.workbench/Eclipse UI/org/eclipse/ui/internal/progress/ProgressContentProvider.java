@@ -10,109 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import java.util.*;
-
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.progress.UIJob;
 
 /**
  * The ProgressContentProvider is the content provider used for classes that
  * listen to the progress changes.
  */
-public class ProgressContentProvider implements ITreeContentProvider, IJobProgressManagerListener {
-
-	/**
-	 * The UpdatesInfo is a private class for keeping track of the updates
-	 * required.
-	 */
-	private class UpdatesInfo {
-
-		Collection additions = new HashSet();
-		Collection deletions = new HashSet();
-		Collection refreshes = new HashSet();
-		boolean updateAll = false;
-
-		private UpdatesInfo() {
-		}
-
-		/**
-		 * Add an add update
-		 * 
-		 * @param addition
-		 */
-		void add(JobInfo addition) {
-			additions.add(addition);
-		}
-
-		/**
-		 * Add a remove update
-		 * 
-		 * @param addition
-		 */
-		void remove(JobInfo removal) {
-			deletions.add(removal);
-		}
-		/**
-		 * Add a refresh update
-		 * 
-		 * @param addition
-		 */
-		void refresh(JobInfo refresh) {
-			refreshes.add(refresh);
-		}
-		/**
-		 * Reset the caches after completion of an update.
-		 */
-		void reset() {
-			additions.clear();
-			deletions.clear();
-			refreshes.clear();
-		}
-
-		void processForUpdate() {
-			HashSet staleAdditions = new HashSet();
-
-			Iterator additionsIterator = additions.iterator();
-			while (additionsIterator.hasNext()) {
-				JobInfo next = (JobInfo) additionsIterator.next();
-				if (deletions.contains(next) || next.getJob().getState() == Job.NONE)
-					staleAdditions.add(next);
-			}
-
-			additions.removeAll(staleAdditions);
-
-			HashSet obsoleteRefresh = new HashSet();
-			Iterator refreshIterator = refreshes.iterator();
-			while (refreshIterator.hasNext()) {
-				JobInfo next = (JobInfo) refreshIterator.next();
-				if (deletions.contains(next) || additions.contains(next))
-					obsoleteRefresh.add(next);
-				if (next.getJob().getState() == Job.NONE){
-					//If it is done then delete it
-					obsoleteRefresh.add(next);
-					deletions.add(next);
-				}
-			}
-			
-			refreshes.removeAll(obsoleteRefresh);			
-
-		}
-	}
+public class ProgressContentProvider implements ITreeContentProvider {
 
 	ProgressTreeViewer viewer;
-	Job updateJob;
-	UpdatesInfo currentInfo = new UpdatesInfo();
-	Object updateLock = new Object();
-	boolean debug = false;
-	private Collection filteredJobs = Collections.synchronizedList(new ArrayList());
 
 	public ProgressContentProvider(ProgressTreeViewer mainViewer) {
 		viewer = mainViewer;
-		ProgressManager.getInstance().addListener(this);
-		createUpdateJob();
+		ProgressViewUpdater.getSingleton().addContentProvider(this);
 	}
 	/*
 	 * (non-Javadoc) @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
@@ -146,17 +57,7 @@ public class ProgressContentProvider implements ITreeContentProvider, IJobProgre
 	 */
 	public Object[] getElements(Object inputElement) {
 
-		JobInfo[] infos = ProgressManager.getInstance().getJobInfos();
-		ArrayList result = new ArrayList();
-		for (int i = 0; i < infos.length; i++) {
-			if (isNonDisplayableJob(infos[i].getJob()))
-				addToFiltered(infos[i].getJob());
-			else
-				result.add(infos[i]);
-		}
-		JobInfo[] resultArray = new JobInfo[result.size()];
-		result.toArray(resultArray);
-		return resultArray;
+		return ProgressViewUpdater.getSingleton().filterInfos(ProgressManager.getInstance().getJobInfos());
 
 	}
 
@@ -164,7 +65,7 @@ public class ProgressContentProvider implements ITreeContentProvider, IJobProgre
 	 * (non-Javadoc) @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
-		ProgressManager.getInstance().removeListener(this);
+		ProgressViewUpdater.getSingleton().removeContentProvider(this);
 	}
 
 	/*
@@ -173,175 +74,5 @@ public class ProgressContentProvider implements ITreeContentProvider, IJobProgre
 	 */
 	public void inputChanged(Viewer updateViewer, Object oldInput, Object newInput) {
 	}
-	/*
-	 * (non-Javadoc) @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refresh(org.eclipse.ui.internal.progress.JobInfo)
-	 */
-	public void refresh(JobInfo info) {
 
-		if (isNonDisplayableJob(info.getJob()))
-			return;
-
-		synchronized (updateLock) {
-			//If we never displayed this job then add it instead.
-			if (isFiltered(info.getJob())) {
-				add(info);
-				removeFromFiltered(info.getJob());
-			} else
-				currentInfo.refresh(info);
-		}
-		//Add in a 100ms delay so as to keep priority low
-		updateJob.schedule(100);
-
-	}
-
-	/*
-	 * (non-Javadoc) @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshAll()
-	 */
-	public void refreshAll() {
-
-		filteredJobs.clear();
-		synchronized (updateLock) {
-			currentInfo.updateAll = true;
-		}
-
-		//Add in a 100ms delay so as to keep priority low
-		updateJob.schedule(100);
-
-	}
-
-	/*
-	 * (non-Javadoc) @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#add(org.eclipse.ui.internal.progress.JobInfo)
-	 */
-	public void add(JobInfo info) {
-
-		if (isNonDisplayableJob(info.getJob()))
-			addToFiltered(info.getJob());
-		else {
-			synchronized (updateLock) {
-				currentInfo.add(info);
-			}
-			updateJob.schedule(100);
-		}
-
-	}
-
-	/*
-	 * (non-Javadoc) @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#remove(org.eclipse.ui.internal.progress.JobInfo)
-	 */
-	public void remove(JobInfo info) {
-
-		removeFromFiltered(info.getJob());
-		if (isNonDisplayableJob(info.getJob()))
-			return;
-		synchronized (updateLock) {
-			currentInfo.remove(info);
-		}
-		updateJob.schedule(100);
-	}
-
-	/*
-	 * (non-Javadoc) @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#showsDebug()
-	 */
-	public boolean showsDebug() {
-		return true;
-	}
-
-	/**
-	 * Return whether or not this job is currently displayable.
-	 * 
-	 * @param job
-	 * @param debug
-	 *           If the listener is in debug mode.
-	 * @return
-	 */
-	boolean isNonDisplayableJob(Job job) {
-
-		//	Never display the update job
-		if (job == updateJob)
-			return true;
-
-		if (debug) //Always display in debug mode
-			return false;
-		else
-			return job.isSystem() || job.getState() == Job.SLEEPING;
-	}
-
-	/**
-	 * Create the update job that handles the updatesInfo.
-	 */
-	private void createUpdateJob() {
-			updateJob = new UIJob(ProgressMessages.getString("ProgressContentProvider.UpdateProgressJob")) {//$NON-NLS-1$
-	/*
-	 * (non-Javadoc) @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-
-				if (viewer.getControl().isDisposed())
-					return Status.CANCEL_STATUS;
-
-				if (currentInfo.updateAll)
-					viewer.refresh(true);
-				else {
-					//Lock while getting local copies of the caches.
-					Object[] updateItems;
-					Object[] additionItems;
-					Object[] deletionItems;
-					synchronized (updateLock) {
-						currentInfo.processForUpdate();
-						
-						updateItems = currentInfo.refreshes.toArray();
-						additionItems = currentInfo.additions.toArray();
-						deletionItems = currentInfo.deletions.toArray();
-
-					}
-
-					for (int i = 0; i < updateItems.length; i++) {
-						viewer.refresh(updateItems[i], true);
-					}
-					viewer.add(viewer.getInput(), additionItems);
-
-					viewer.remove(deletionItems);
-				}
-
-				synchronized (updateLock) {
-					currentInfo.reset();
-				}
-
-				return Status.OK_STATUS;
-
-			}
-
-		};
-		updateJob.setSystem(true);
-		updateJob.setPriority(Job.DECORATE);
-
-	}
-
-	/**
-	 * Add job to the list of filtered jobs.
-	 * 
-	 * @param job
-	 */
-	void addToFiltered(Job job) {
-		filteredJobs.add(job);
-	}
-
-	/**
-	 * Remove job from the list of fitlered jobs.
-	 * 
-	 * @param job
-	 */
-	void removeFromFiltered(Job job) {
-		filteredJobs.remove(job);
-	}
-
-	/**
-	 * Return whether or not the job is currently filtered.
-	 * 
-	 * @param job
-	 * @return
-	 */
-	boolean isFiltered(Job job) {
-		return filteredJobs.contains(job);
-	}
 }
