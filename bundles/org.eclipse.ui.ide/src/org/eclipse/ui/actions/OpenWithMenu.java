@@ -180,7 +180,7 @@ public void fill(Menu menu, int index) {
 	}
 
 	IEditorDescriptor defaultEditor = registry.findEditor(IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID); // may be null
-	IEditorDescriptor preferredEditor = registry.getDefaultEditor(file.getName()); // may be null
+	IEditorDescriptor preferredEditor = IDE.getDefaultEditor(file); // may be null
 	
 	Object[] editors = registry.getEditors(file.getName());
 	Collections.sort(Arrays.asList(editors), comparer);
@@ -274,7 +274,7 @@ private void openEditor(IEditorDescriptor editor) {
  */
 private void createDefaultMenuItem(Menu menu, final IFile file) {
 	final MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
-	menuItem.setSelection(registry.getDefaultEditor(file.getName()) == null);
+	menuItem.setSelection(IDE.getDefaultEditor(file) == null);
 	menuItem.setText(IDEWorkbenchMessages.getString("DefaultEditorDescription.name")); //$NON-NLS-1$
 	
 	Listener listener = new Listener() {
@@ -282,7 +282,7 @@ private void createDefaultMenuItem(Menu menu, final IFile file) {
 			switch (event.type) {
 				case SWT.Selection:
 					if(menuItem.getSelection()) {
-						registry.setDefaultEditor(file.getName(), null);
+						IDE.setDefaultEditor(file, null);
 						try{
 							IDE.openEditor(page, file, true);
 						} catch (PartInitException e) {
