@@ -103,7 +103,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String INIT_DEFAULT_PLUGIN_ID = "feature.default.plugin.id"; //$NON-NLS-1$
 	private static final String INIT_DEFAULT_FEATURE_APPLICATION = "feature.default.application"; //$NON-NLS-1$
 	private static final String DEFAULT_FEATURE_ID = "org.eclipse.platform"; //$NON-NLS-1$
-	private static final String DEFAULT_FEATURE_APPLICATION = "org.eclipse.ui.workbench"; //$NON-NLS-1$
+	private static final String DEFAULT_FEATURE_APPLICATION = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 
 	private static final String CFG_VERSION = "version"; //$NON-NLS-1$
 	private static final String CFG_TRANSIENT = "transient"; //$NON-NLS-1$
