@@ -97,28 +97,6 @@ public interface IStructureCreator {
 	String getContents(Object node, boolean ignoreWhitespace);
 
 	/**
-	 * Returns whether this structure creator supports tree rewriting.
-	 * The <code>StructureDiffViewer</code> uses this method to determine
-	 * whether to enable a "smart" button in the UI and whether to call
-	 * the <code>rewriteTree</code> method.
-	 *
-	 * @return <code>true</code> if this structure creator supports tree rewriting
-	 */
-	boolean canRewriteTree();
-	
-	/**
- 	 * Rewrites the tree.
- 	 * This method is only called if <code>canRewriteTree</code>
- 	 * returns <code>true</code>, and only after the difference engine has constructed the diff tree.
-	 * Implementation of this method may perform tree rewriting such as merging 
-	 * separate but related diff elements into a single node.
-	 *
-	 * @param differencer the differencing engine which was used to construct the diff tree
-	 * @param root the root of the tree returned from the differencing engine
-	 */
-	void rewriteTree(Differencer differencer, IDiffContainer root);
-	
-	/**
 	 * FIXME: need better name?
 	 * Called whenever a copy operation has been performed on a tree node.
 	 *

@@ -5,15 +5,9 @@
 package org.eclipse.compare.structuremergeviewer;
 
 import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.*;
 
-import org.eclipse.jface.util.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.*;
@@ -35,9 +29,7 @@ import org.eclipse.compare.internal.*;
  * @see ICompareInput
  */
 public class StructureDiffViewer extends DiffTreeViewer {
-	
-	private static final String SMART= "SMART"; //$NON-NLS-1$
-	
+		
 	private Differencer fDifferencer;
 	private boolean fThreeWay= false;
 	
@@ -51,7 +43,6 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	
 	private IStructureCreator fStructureCreator;
 	private IDiffContainer fRoot;
-	private ActionContributionItem fSmartActionItem;
 	private IContentChangeListener fContentChangedListener;
 	private ICompareInputChangeListener fThreeWayInputChangedListener;
 	private CompareViewerSwitchingPane fParent;
@@ -112,18 +103,9 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	public void setStructureCreator(IStructureCreator structureCreator) {
 		if (fStructureCreator != structureCreator) {
 			fStructureCreator= structureCreator;
-			
 			Control tree= getControl();
 			if (tree != null && !tree.isDisposed())
 				tree.setData(CompareUI.COMPARE_VIEWER_TITLE, getTitle());
-			
-			if (fStructureCreator != null && fSmartActionItem != null) {
-				IAction a= fSmartActionItem.getAction();
-				if (a != null)
-					//setSmartButtonVisible(fStructureCreator.canRewriteTree());
-					a.setEnabled(fStructureCreator.canRewriteTree());
-				// FIXME: if there is an input we should create the trees!
-			}
 		}
 	}
 	
@@ -193,7 +175,6 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			t= input.getAncestor();
 			
 		fThreeWay= (t != null);
-		setSmartButtonVisible(fThreeWay);
 		
 		if (t != fAncestorInput) {
 			if (fAncestorInput instanceof IContentChangeNotifier)
@@ -242,23 +223,6 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			diff();
 	}
 	
-	private void setSmartButtonVisible(boolean visible) {
-		if (fSmartActionItem == null)
-			return;
-		Control c= getControl();
-		if (c == null && c.isDisposed())
-			return;
-			
-		fSmartActionItem.setVisible(visible);
-		ToolBarManager tbm= CompareViewerPane.getToolBarManager(c.getParent());
-		if (tbm != null) {
-			tbm.update(true);
-			ToolBar tb= tbm.getControl();
-			if (!tb.isDisposed())
-				tb.getParent().layout(true);
-		}
-	}
-
 	/**
 	 * Calls <code>diff</code> whenever the byte contents changes.
 	 */
@@ -292,7 +256,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	/**
 	 * Runs the difference engine and refreshes the tree.
 	 */
-	private void diff() {
+	protected void diff() {
 		
 		preDiffHook(fAncestorStructure, fLeftStructure, fRightStructure);
 							
@@ -324,18 +288,17 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			if (fRoot == null || fRoot.getChildren().length == 0) {
 				message= CompareMessages.getString("StructureDiffViewer.NoStructuralDifferences");	//$NON-NLS-1$
 			} else {
-				if (fStructureCreator.canRewriteTree()) {
-					boolean smart= Utilities.getBoolean(getCompareConfiguration(), SMART, false);
-					if (smart && fRoot != null)
-						fStructureCreator.rewriteTree(fDifferencer, fRoot);
-				}
+				postDiffHook(fDifferencer, fRoot);
 			}
-			
 		}
 		if (fParent != null)
 			fParent.setTitleArgument(message);
 			
 		refresh(getRoot());
+	}
+	
+	protected void postDiffHook(Differencer differencer, IDiffContainer root) {
+		// we do nothing here
 	}
 	
 	/**
@@ -360,30 +323,12 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	 */
 	protected void propertyChange(PropertyChangeEvent event) {
 		String key= event.getProperty();
-		if (key.equals(CompareConfiguration.IGNORE_WHITESPACE) || key.equals(SMART))
+		if (key.equals(CompareConfiguration.IGNORE_WHITESPACE))
 			diff();
 		else
 			super.propertyChange(event);
 	}
-	
-	/**
-	 * Overriden to create a "smart" button in the viewer's pane control bar.
-	 * <p>
-	 * Clients can override this method and are free to decide whether they want to call
-	 * the inherited method.
-	 *
-	 * @param toolbarManager the toolbar manager for which to add the buttons
-	 */
-	protected void createToolItems(ToolBarManager toolBarManager) {
 		
-		super.createToolItems(toolBarManager);
-		
-		IAction a= new ChangePropertyAction(getBundle(), getCompareConfiguration(), "action.Smart.", SMART); //$NON-NLS-1$
-		fSmartActionItem= new ActionContributionItem(a);
-		fSmartActionItem.setVisible(fThreeWay);
-		toolBarManager.appendToGroup("modes", fSmartActionItem); //$NON-NLS-1$
-	}
-	
 	/**
 	 * Overridden to call the <code>save</code> method on the structure creator after
 	 * nodes have been copied from one side to the other side of an input object.
