@@ -20,6 +20,7 @@ import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -29,19 +30,15 @@ import org.eclipse.swt.widgets.*;
  * Local Help participant in the federated search.
  */
 public class LocalHelpPage extends RootScopePage{
-//    
-//    // In 3.0 this class moved to org.eclipse.help.ide plug-in
-//    // but user might have help working sets created in 2.1, with page ID from
-//    // help.ui plug-in
-//    public final static String PAGE_ID = HelpUIPlugin.PLUGIN_ID
-//            + ".HelpWorkingSetPage"; //$NON-NLS-1$
+
     public final static String PAGE_TITLE = HelpUIResources
             .getString("WorkingSetPageTitle"); //$NON-NLS-1$
     public final static String PAGE_DESCRIPTION = HelpUIResources
             .getString("WorkingSetPageDescription"); //$NON-NLS-1$
 
-//    private Text workingSetName;
-    CheckboxTreeViewer tree;
+    private Button searchAll;
+    private Button searchSelected;
+    private CheckboxTreeViewer tree;
     private ITreeContentProvider treeContentProvider;
     private ILabelProvider elementLabelProvider;
     private boolean firstCheck;
@@ -52,6 +49,8 @@ public class LocalHelpPage extends RootScopePage{
      */
     public void init(String engineId, String scopeSetName) {
         super.init(engineId, scopeSetName);
+        if (scopeSetName != null)
+            workingSet = BaseHelpSystem.getWorkingSetManager().getWorkingSet(scopeSetName);
     }
     /**
      * Default constructor.
@@ -71,31 +70,38 @@ public class LocalHelpPage extends RootScopePage{
         Composite composite = new Composite(parent, SWT.NULL);
         composite.setLayout(new GridLayout());
         composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-//        setControl(composite);
 
-//        Label label = new Label(composite, SWT.WRAP);
-//        label.setFont(font);
-//        label.setText(HelpUIResources.getString("WorkingSetName")); //$NON-NLS-1$
-//        GridData gd = new GridData(GridData.GRAB_HORIZONTAL
-//                | GridData.HORIZONTAL_ALIGN_FILL
-//                | GridData.VERTICAL_ALIGN_CENTER);
-//        label.setLayoutData(gd);
-//
-//        workingSetName = new Text(composite, SWT.SINGLE | SWT.BORDER);
-//        workingSetName.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
-//                | GridData.HORIZONTAL_ALIGN_FILL));
-//        workingSetName.addModifyListener(new ModifyListener() {
-//            public void modifyText(ModifyEvent e) {
-//                validateInput();
-//            }
-//        });
-//        workingSetName.setFocus();
-//        workingSetName.setFont(font);
-
+        searchAll = new Button(composite, SWT.RADIO);
+        searchAll.setText(HelpUIResources.getString("selectAll")); //$NON-NLS-1$
+        GridData gd = new GridData();
+//        gd.horizontalSpan = 3;
+        searchAll.setLayoutData(gd);
+        searchAll.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                tree.getTree().setEnabled(false);
+//                searchQueryData.setBookFiltering(false);
+            }
+        });
+        
+        searchSelected = new Button(composite, SWT.RADIO);
+        searchSelected.setText(HelpUIResources.getString("selectWorkingSet")); //$NON-NLS-1$
+        gd = new GridData();
+//        gd.horizontalSpan = 3;
+        searchSelected.setLayoutData(gd);
+        searchSelected.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                tree.getTree().setEnabled(true);
+//              searchQueryData.setBookFiltering(false);
+            }
+        });
+      
+        if (workingSet == null)
+            searchAll.setSelection(true);
+        
         Label label = new Label(composite, SWT.WRAP);
         label.setFont(font);
         label.setText(HelpUIResources.getString("WorkingSetContent")); //$NON-NLS-1$
-        GridData gd = new GridData(GridData.GRAB_HORIZONTAL
+        gd = new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.HORIZONTAL_ALIGN_FILL
                 | GridData.VERTICAL_ALIGN_CENTER);
         label.setLayoutData(gd);
@@ -138,6 +144,7 @@ public class LocalHelpPage extends RootScopePage{
                             });
             }
         });
+        tree.getTree().setEnabled(workingSet != null);
 
 //        if (workingSet != null) {
 //            workingSetName.setText(workingSet.getName());
