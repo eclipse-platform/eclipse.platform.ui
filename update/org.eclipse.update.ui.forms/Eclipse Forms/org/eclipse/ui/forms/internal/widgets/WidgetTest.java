@@ -49,16 +49,11 @@ public class WidgetTest {
 	}
 
 	private static Form createForm1(Composite parent, FormToolkit toolkit) {
-		Form form = new Form(parent);
-		form.setExpandHorizontal(true);
-		form.setExpandVertical(true);
+		Form form = toolkit.createForm(parent);
 		form.setText("Wrapped Form");
 		URL bdURL = WidgetTest.class.getResource("form_banner.gif");
 		ImageDescriptor bd = ImageDescriptor.createFromURL(bdURL);
 		form.setBackgroundImage(bd.createImage());
-		form.setBackground(toolkit.getColors().getBackground());
-		form.setForeground(toolkit.getColors().getForeground());
-		form.setFont(JFaceResources.getHeaderFont());
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.leftMargin = 0;
 		layout.rightMargin = 0;
@@ -92,16 +87,11 @@ public class WidgetTest {
 	}
 	
 	private static Form createForm2(Composite parent, FormToolkit toolkit) {
-		Form form = new Form(parent);
-		form.setExpandHorizontal(true);
-		form.setExpandVertical(true);
+		Form form = toolkit.createForm(parent);
 		form.setText("Jelly Form");
 		URL bdURL = WidgetTest.class.getResource("form_banner.gif");
 		ImageDescriptor bd = ImageDescriptor.createFromURL(bdURL);
 		form.setBackgroundImage(bd.createImage());
-		form.setBackground(toolkit.getColors().getBackground());
-		form.setForeground(toolkit.getColors().getForeground());
-		form.setFont(JFaceResources.getHeaderFont());
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		form.getBody().setLayout(layout);

@@ -264,6 +264,7 @@ public class FormToolkit {
 		label.setForeground(colors.getBorderColor());
 		return label;
 	}
+	
 	public Table createTable(Composite parent, int style) {
 		Table table = new Table(parent, style);
 		table.setBackground(colors.getBackground());
@@ -274,6 +275,7 @@ public class FormToolkit {
 	public Text createText(Composite parent, String value) {
 		return createText(parent, value, SWT.SINGLE);
 	}
+	
 	public Text createText(Composite parent, String value, int style) {
 		Text text = new Text(parent, style);
 		if (value != null)
@@ -290,6 +292,17 @@ public class FormToolkit {
 		hookDeleteListener(tree);
 		return tree;
 	}
+
+	public Form createForm(Composite parent) {
+		Form form = new Form(parent);
+		form.setExpandHorizontal(true);
+		form.setExpandVertical(true);
+		form.setBackground(colors.getBackground());
+		form.setForeground(colors.getColor(FormColors.TITLE));
+		form.setFont(JFaceResources.getHeaderFont());
+		return form;
+	}
+
 /*
 	private void deleteKeyPressed(Widget widget) {
 		if (!(widget instanceof Control))

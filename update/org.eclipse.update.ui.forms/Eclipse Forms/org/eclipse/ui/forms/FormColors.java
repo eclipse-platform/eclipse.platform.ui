@@ -59,7 +59,7 @@ public class FormColors {
 	protected void initializeColors() {
 		createColor(BORDER, 195, 191, 179);
 		createColor(SEPARATOR, 152, 170, 203);
-		createColor(TITLE, 0x48, 0x70, 0x98);
+		createColor(TITLE, 102, 120, 153);
 	}
 
 	/**
