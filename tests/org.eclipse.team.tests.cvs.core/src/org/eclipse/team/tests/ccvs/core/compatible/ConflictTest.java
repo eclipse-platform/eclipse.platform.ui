@@ -68,4 +68,22 @@ public class ConflictTest extends JUnitTestCase {
 		env2.appendToFile("proj2/f1/c.txt", new String[] { "That's allright" });
 		env2.execute("ci",new String[]{"-m","TestMessage"},new String[]{"proj2"},"");
 	}
+	
+	public void testMergedUpdate() throws Exception {
+		// Download content in two locations
+		env1.execute("co",EMPTY_ARGS,new String[]{"proj2"},"");
+		env2.execute("co",EMPTY_ARGS,new String[]{"proj2"},"");
+		
+		// change the file in both directories in a different way so that 
+		// can be merged without conflicts
+		env1.prefixToFile("proj2/f1/c.txt", new String[] { "AppendIt at top" });
+		env2.appendToFile("proj2/f1/c.txt", new String[] { "AppendIt at bottom" });
+		
+		// commit changes of the first
+		env1.execute("ci",new String[]{"-m","TestMessage"},new String[]{"proj2"},"");
+		
+		// changes should be merged
+		env2.execute("update",EMPTY_ARGS,new String[]{"proj2"},"");
+		env2.execute("ci",new String[]{"-m","TestMessage"},new String[]{"proj2"},"");	
+	}
 }

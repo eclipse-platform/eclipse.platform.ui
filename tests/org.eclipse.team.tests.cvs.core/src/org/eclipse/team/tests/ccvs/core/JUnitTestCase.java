@@ -184,12 +184,30 @@ public abstract class JUnitTestCase extends TestCase {
 		throws IOException, CoreException {
 		String[] oldContents = readFromFile(file);
 		String[] newContents;
-		if (contents != null) {
+		if (oldContents == null) {
 			newContents = contents;
 		} else {
 			newContents = new String[oldContents.length + contents.length];
 			System.arraycopy(oldContents, 0, newContents, 0, oldContents.length);
 			System.arraycopy(contents, 0, newContents, oldContents.length, contents.length);
+		}
+		writeToFile(file, newContents);
+	}
+	
+	/**
+	 * Pre-Append text files to file from an array of strings, create new file if it
+	 * does not exist yet.
+	 */
+	protected static void prefixToFile(IFile file, String[] contents)
+		throws IOException, CoreException {
+		String[] oldContents = readFromFile(file);
+		String[] newContents;
+		if (oldContents == null) {
+			newContents = contents;
+		} else {
+			newContents = new String[oldContents.length + contents.length];
+			System.arraycopy(contents, 0, newContents, 0, contents.length);
+			System.arraycopy(oldContents, 0, newContents, contents.length, oldContents.length);
 		}
 		writeToFile(file, newContents);
 	}
