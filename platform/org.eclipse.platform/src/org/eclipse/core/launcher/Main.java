@@ -161,11 +161,17 @@ public class Main {
 	private static final String CFG_EOF = "eof"; //$NON-NLS-1$
 
 	// log file handling
-	protected static final String STARTUP = "!STARTUP ";//$NON-NLS-1$
+	protected static final String SESSION = "!SESSION"; //$NON-NLS-1$
+	protected static final String ENTRY = "!ENTRY"; //$NON-NLS-1$
+	protected static final String MESSAGE = "!MESSAGE"; //$NON-NLS-1$
+	protected static final String STACK = "!STACK"; //$NON-NLS-1$
+	protected static final int ERROR = 4;
+	protected static final String PLUGIN_ID = "org.eclipse.core.launcher"; //$NON-NLS-1$
 	protected static final String logFileName = ".metadata" + File.separator + ".log";//$NON-NLS-1$ //$NON-NLS-2$
 	protected static File logFile = null;
 	protected static BufferedWriter log = null;
 	protected static String[] arguments;
+	protected static boolean newSession = true;
 
 /**
  * Executes the launch.
@@ -1116,10 +1122,13 @@ private static synchronized void log(Object obj) {
 	try {
 		openLogFile();
 		try {
-			try {
-				write(STARTUP + new SimpleDateFormat().format(new Date()));
-			} catch (Exception e) {
-				write(STARTUP);
+			if (newSession) {
+				log.write(SESSION);
+				log.write(' ');
+				for (int i=SESSION.length(); i<78; i++)
+					log.write('-');
+				log.newLine();
+				newSession = false;
 			}
 			write(obj);
 		} finally {
@@ -1153,8 +1162,26 @@ private static void write(Object obj) throws IOException {
 	if (obj == null)
 		return;
 	if (obj instanceof Throwable) {
+		log.write(STACK);
+		log.newLine();
 		((Throwable) obj).printStackTrace(new PrintWriter(log));
 	} else {
+		log.write(ENTRY);
+		log.write(' ');
+		log.write(PLUGIN_ID);
+		log.write(' ');
+		log.write(String.valueOf(ERROR));
+		log.write(' ');
+		log.write(String.valueOf(0));
+		log.write(' ');
+		try {
+				log.write(new SimpleDateFormat().format(new Date()));
+			} catch (Exception e) {
+				// continue if we can't write out the date
+			}
+		log.newLine();
+		log.write(MESSAGE);
+		log.write(' ');
 		log.write(String.valueOf(obj));
 	}
 	log.newLine();
