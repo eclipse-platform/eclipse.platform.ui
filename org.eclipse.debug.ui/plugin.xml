@@ -1260,15 +1260,15 @@
 		point="org.eclipse.debug.ui.launchVariableComponents">
 		<component
 			variableName="resource_path"
-            componentClass="org.eclipse.debug.internal.ui.launchVariables.SpecificFileResourceComponent">
+            componentClass="org.eclipse.debug.internal.ui.launchVariables.ResourceComponent">
 		</component>
 		<component
 			variableName="resource_loc"
-            componentClass="org.eclipse.debug.internal.ui.launchVariables.SpecificFileResourceComponent">
+            componentClass="org.eclipse.debug.internal.ui.launchVariables.ResourceComponent">
 		</component>
 		<component
 			variableName="resource_name"
-            componentClass="org.eclipse.debug.internal.ui.launchVariables.SpecificFileResourceComponent">
+            componentClass="org.eclipse.debug.internal.ui.launchVariables.ResourceComponent">
 		</component>
 		<component
 			variableName="resource"
