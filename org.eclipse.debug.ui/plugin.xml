@@ -1123,6 +1123,18 @@
          </action>
       <!-- Step Group -->
          <action
+               label="%DropToFrameAction.label"
+               icon="icons/full/elcl16/drop_to_frame.gif"
+               helpContextId="drop_to_frame_action_context"
+               class="org.eclipse.debug.internal.ui.actions.DropToFrameActionDelegate"
+               menubarPath="stepReturnGroup"
+               enablesFor="1"
+               id="org.eclipse.debug.ui.debugview.popupMenu.dropToFrame">
+            <selection
+                  class="org.eclipse.debug.core.model.IDropToFrame">
+            </selection>
+         </action>      
+         <action
                label="%StepReturnAction.label"
                icon="icons/full/elcl16/stepreturn_co.gif"
                helpContextId="step_return_action_context"
@@ -1159,18 +1171,6 @@
                id="org.eclipse.debug.ui.debugview.popupMenu.stepInto">
             <selection
                   class="org.eclipse.debug.core.model.IStep">
-            </selection>
-         </action>
-         <action
-               label="%DropToFrameAction.label"
-               icon="icons/full/elcl16/drop_to_frame.gif"
-               helpContextId="drop_to_frame_action_context"
-               class="org.eclipse.debug.internal.ui.actions.DropToFrameActionDelegate"
-               menubarPath="emptyStepGroup"
-               enablesFor="1"
-               id="org.eclipse.debug.ui.debugview.popupMenu.dropToFrame">
-            <selection
-                  class="org.eclipse.debug.core.model.IDropToFrame">
             </selection>
          </action>
       <!-- Render Group -->  
