@@ -1008,10 +1008,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		if (toolsMgr instanceof CoolBarManager) {
 			CoolBarManager cBarMgr = (CoolBarManager)toolsMgr;
 			CoolBarContributionItem coolBarItem = (CoolBarContributionItem)cBarMgr.find(pinEditorGroup); //$NON-NLS-1$
-			pinEditorAction.setVisible(false);
-			IContributionManager toolBarMgr = (IContributionManager)coolBarItem.getToolBarManager();
-			toolBarMgr.remove(pinEditorAction.getId());
-			cBarMgr.remove(coolBarItem);
+			coolBarItem.dispose();
 		} else {
 			pinEditorAction.setVisible(false);
 			toolsMgr.remove(pinEditorAction.getId());
