@@ -4,9 +4,6 @@
  */
 package org.eclipse.search.internal.ui;
 
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 
@@ -15,6 +12,7 @@ import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -38,25 +36,13 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		}
 	}
 
-	/*
-	 * XXX: Need to subclass due to bug 18182: BooleanFieldEditor gets out of synch after restoring defaults
-	 */
-	private class BooleanEditor extends BooleanFieldEditor {
-		public BooleanEditor(String name, String labelText, Composite parent) {
-			super(name, labelText, parent);
-		}		
-		void addSelectionListener(SelectionListener listener) {
-			getChangeControl(getFieldEditorParent()).addSelectionListener(listener);
-		}
-	}
-
 
 	public static final String EMPHASIZE_POTENTIAL_MATCHES= "org.eclipse.search.potentialMatch.emphasize"; //$NON-NLS-1$
 	public static final String POTENTIAL_MATCH_FG_COLOR= "org.eclipse.search.potentialMatch.fgColor"; //$NON-NLS-1$
 	public static final String REUSE_EDITOR= "org.eclipse.search.reuseEditor"; //$NON-NLS-1$
 
 	private ColorEditor fColorEditor;
-	private BooleanEditor fEmphasizedCheckbox;
+	private BooleanFieldEditor fEmphasizedCheckbox;
 	private Composite fParent;
 
 	public SearchPreferencePage() {
@@ -101,16 +87,11 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
         );
 		addField(boolEditor);
 
-		fEmphasizedCheckbox= new BooleanEditor(
+		fEmphasizedCheckbox= new BooleanFieldEditor(
 			EMPHASIZE_POTENTIAL_MATCHES,
 			SearchMessages.getString("SearchPreferencePage.emphasizePotentialMatches"), //$NON-NLS-1$
 			parent);
 		addField(fEmphasizedCheckbox);
-		fEmphasizedCheckbox.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				fColorEditor.setEnabled(fEmphasizedCheckbox.getBooleanValue());
-			}
-		});
 
 		fColorEditor= new ColorEditor(
 			POTENTIAL_MATCH_FG_COLOR,
@@ -119,6 +100,10 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
         );
 		addField(fColorEditor);
 		fColorEditor.setEnabled(arePotentialMatchesEmphasized());
+	}
+
+	public void propertyChange(PropertyChangeEvent event) {
+		fColorEditor.setEnabled(fEmphasizedCheckbox.getBooleanValue());
 	}
 
 	public void init(IWorkbench workbench) {
