@@ -33,9 +33,8 @@ public class MockEditorMatchingStrategy implements IEditorMatchingStrategy {
             String name = inputFile.getName();
             if (name.equals("plugin.xml") || name.equals("MANIFEST.MF") || name.equals("build.properties")) {
                 try {
-                    IEditorInput editorInput = editorRef.getEditorInput();
-                    IFile editorFile = ResourceUtil.getFile(editorInput);
-                    return inputFile.getProject().equals(editorFile.getProject());
+                    IFile editorFile = ResourceUtil.getFile(editorRef.getEditorInput());
+                    return editorFile != null && inputFile.getProject().equals(editorFile.getProject());
                 } catch (PartInitException e) {
                     e.printStackTrace();
                     return false;
