@@ -80,6 +80,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				Utils.debug("no eclipse.product, setting it and returning");
 				System.setProperty(ECLIPSE_PRODUCT, product);
 			}
+			platform.registerBundleGroupProvider(this);
 			return;
 		}
 
