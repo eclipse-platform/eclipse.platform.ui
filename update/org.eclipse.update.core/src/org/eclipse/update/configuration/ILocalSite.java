@@ -13,7 +13,12 @@ import org.eclipse.update.core.IFeature;
  * configuration and the configuration history. A local site
  * manages the number of configuration histories kept. It also allows
  * specific configuration histories to be saved.
- * 
+ * <p>
+ * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p> 
  * @since 2.0
  */
 public interface ILocalSite extends IAdaptable {
@@ -23,6 +28,12 @@ public interface ILocalSite extends IAdaptable {
 	 * 
 	 * @return current configuration
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	IInstallConfiguration getCurrentConfiguration();
 
@@ -31,6 +42,12 @@ public interface ILocalSite extends IAdaptable {
 	 * 
 	 * @return an array of configurations, or an empty array.
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public IInstallConfiguration[] getConfigurationHistory();
 
@@ -45,6 +62,12 @@ public interface ILocalSite extends IAdaptable {
 	 * @param handler problem handler
 	 * @exception CoreException
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void revertTo(
 		IInstallConfiguration configuration,
@@ -60,6 +83,12 @@ public interface ILocalSite extends IAdaptable {
 	 * @return cloned configuration
 	 * @exception CoreException
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public IInstallConfiguration cloneCurrentConfiguration() throws CoreException;
 
@@ -69,6 +98,12 @@ public interface ILocalSite extends IAdaptable {
 	 * 
 	 * @param config the configuration
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void addConfiguration(IInstallConfiguration config);
 
@@ -77,6 +112,12 @@ public interface ILocalSite extends IAdaptable {
 	 * 
 	 * @exception CoreException
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void save() throws CoreException;
 
@@ -86,6 +127,12 @@ public interface ILocalSite extends IAdaptable {
 	 * 
 	 * @return number of past configurations to keep as history
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public int getMaximumHistoryCount();
 
@@ -94,6 +141,12 @@ public interface ILocalSite extends IAdaptable {
 	 * 
 	 * @param history number of configuration to keep
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void setMaximumHistoryCount(int history);
 
@@ -102,6 +155,12 @@ public interface ILocalSite extends IAdaptable {
 	 * 
 	 * @param listener the listener
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void addLocalSiteChangedListener(ILocalSiteChangedListener listener);
 
@@ -110,6 +169,12 @@ public interface ILocalSite extends IAdaptable {
 	 * 
 	 * @param listener the listener
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void removeLocalSiteChangedListener(ILocalSiteChangedListener listener);
 
@@ -121,6 +186,12 @@ public interface ILocalSite extends IAdaptable {
 	 * @param configuration the configuration to save
 	 * @exception CoreException
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void addToPreservedConfigurations(IInstallConfiguration configuration)
 		throws CoreException;
@@ -131,6 +202,12 @@ public interface ILocalSite extends IAdaptable {
 	 * 
 	 * @param configuration the configuration to remove
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void removeFromPreservedConfigurations(IInstallConfiguration configuration);
 
@@ -139,6 +216,12 @@ public interface ILocalSite extends IAdaptable {
 	 * 
 	 * @return an array of configurations, or an empty array.
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public IInstallConfiguration[] getPreservedConfigurations();
 	
@@ -166,6 +249,12 @@ public interface ILocalSite extends IAdaptable {
 	 * @return the state of the feature
 	 * @exception CoreException
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public IStatus getFeatureStatus(IFeature feature) throws CoreException ;	
 }

@@ -16,6 +16,13 @@ import org.eclipse.core.runtime.IAdaptable;
  * in time. Maintains a record of the specific activities that resulted
  * in this configuration. Current installation configuration is
  * the configuration the platform was started with.
+ * <p>
+ * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
+ * @since 2.0
  */
 public interface IInstallConfiguration extends IAdaptable {
 
@@ -25,6 +32,12 @@ public interface IInstallConfiguration extends IAdaptable {
 	 * @return <code>true</code> if this is the current configuration,
 	 * <code>false</code> otherwise
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public boolean isCurrent();
 
@@ -33,6 +46,12 @@ public interface IInstallConfiguration extends IAdaptable {
 	 * 
 	 * @return an array of configured sites, or an empty array.
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public IConfiguredSite[] getConfiguredSites();
 
@@ -45,6 +64,12 @@ public interface IInstallConfiguration extends IAdaptable {
 	 * @return new site
 	 * @exception CoreException
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public IConfiguredSite createConfiguredSite(File directory)
 		throws CoreException;
@@ -61,6 +86,12 @@ public interface IInstallConfiguration extends IAdaptable {
 	 * @return new linked site
 	 * @exception CoreException
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public IConfiguredSite createLinkedConfiguredSite(File directory)
 		throws CoreException;
@@ -70,6 +101,12 @@ public interface IInstallConfiguration extends IAdaptable {
 	 * 
 	 * @param site new site
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void addConfiguredSite(IConfiguredSite site);
 
@@ -78,6 +115,12 @@ public interface IInstallConfiguration extends IAdaptable {
 	 * 
 	 * @param site site to remove
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void removeConfiguredSite(IConfiguredSite site);
 
@@ -86,6 +129,12 @@ public interface IInstallConfiguration extends IAdaptable {
 	 * 
 	 * @param listener the listener
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void addInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener);
 
@@ -94,6 +143,12 @@ public interface IInstallConfiguration extends IAdaptable {
 	 * 
 	 * @param listener the listener
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void removeInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener);
 
@@ -103,6 +158,12 @@ public interface IInstallConfiguration extends IAdaptable {
 	 * 
 	 * @return an array of activities
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public IActivity[] getActivities();
 
@@ -111,6 +172,12 @@ public interface IInstallConfiguration extends IAdaptable {
 	 * 
 	 * @return create date
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public Date getCreationDate();
 
@@ -121,6 +188,12 @@ public interface IInstallConfiguration extends IAdaptable {
 	 * explicitly set, a default label is generated based on the creation
 	 * date
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public String getLabel();
 
@@ -129,6 +202,12 @@ public interface IInstallConfiguration extends IAdaptable {
 	 * 
 	 * @param label the label
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void setLabel(String label);
 

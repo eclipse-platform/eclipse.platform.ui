@@ -14,6 +14,12 @@ import org.eclipse.core.runtime.IAdaptable;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * <p>
+ * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
  * @see org.eclipse.update.configuration.LocalSystemInfo
  * @since 2.0
  */
@@ -30,6 +36,12 @@ public interface IVolume extends IAdaptable {
 	 * of Kbyte), or an indication the size is not known 
 	 * @see LocalSystemInfo#SIZE_UNKNOWN
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public long getFreeSpace();
 	
@@ -39,6 +51,12 @@ public interface IVolume extends IAdaptable {
 	 * @return volume label (as string), or <code>null</code> if
 	 * the label cannot be determined.
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public String getLabel();
 	
@@ -55,6 +73,12 @@ public interface IVolume extends IAdaptable {
 	 * @see LocalSystemInfo#VOLUME_FLOPPY_3
 	 * @see LocalSystemInfo#VOLUME_FLOPPY_5
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public int getType();
 	
@@ -63,6 +87,12 @@ public interface IVolume extends IAdaptable {
 	 * Returns the path that represents the mount point of the volume.
 	 * @return mount point file
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public File getFile();
 }

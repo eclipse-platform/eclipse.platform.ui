@@ -16,7 +16,13 @@ import org.eclipse.update.internal.core.Volume;
  * The class attempts to load a native library implementation
  * of its methods. If successful, the method calls are delegated
  * to the native implementation. Otherwise a default non-native
- * implementation is used. 
+ * implementation is used.  * 
+ * <p>
+ * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
  * @see ILocalSystemInfoListener
  * @since 2.0
  */
@@ -27,6 +33,12 @@ public class LocalSystemInfo {
 	 * 
 	 * @see LocalSystemInfo#getFreeSpace(File)
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final long SIZE_UNKNOWN = -1;
 	
@@ -35,6 +47,12 @@ public class LocalSystemInfo {
 	 * 
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int VOLUME_UNKNOWN = -1;
 	
@@ -43,6 +61,12 @@ public class LocalSystemInfo {
 	 * 
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int VOLUME_INVALID_PATH = -2;
 	
@@ -51,6 +75,12 @@ public class LocalSystemInfo {
 	 * 
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int VOLUME_REMOVABLE = 1;
 	
@@ -59,6 +89,12 @@ public class LocalSystemInfo {
 	 * 
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int VOLUME_FIXED = 2;
 	
@@ -67,6 +103,12 @@ public class LocalSystemInfo {
 	 * 
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int VOLUME_REMOTE = 3;
 	
@@ -75,6 +117,12 @@ public class LocalSystemInfo {
 	 * 
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int VOLUME_CDROM = 4;	
 	
@@ -83,6 +131,12 @@ public class LocalSystemInfo {
 	 * 
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int VOLUME_RAMDISK = 5;	
 
@@ -91,6 +145,12 @@ public class LocalSystemInfo {
 	 * 
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int VOLUME_FLOPPY_5 = 6;	
 	
@@ -99,6 +159,12 @@ public class LocalSystemInfo {
 	 * 
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int VOLUME_FLOPPY_3 = 7;
 	
@@ -108,6 +174,12 @@ public class LocalSystemInfo {
 	 * @see LocalSystemInfo#addInfoListener(File)
 	 * @see LocalSystemInfo#removeInfoListener(File)
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int VOLUME_ADDED = 0;
 			
@@ -117,6 +189,12 @@ public class LocalSystemInfo {
 	 * @see LocalSystemInfo#addInfoListener(File)
 	 * @see LocalSystemInfo#removeInfoListener(File)
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int VOLUME_REMOVED = 1;
 
@@ -126,6 +204,12 @@ public class LocalSystemInfo {
 	 * @see LocalSystemInfo#addInfoListener(File)
 	 * @see LocalSystemInfo#removeInfoListener(File)
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int VOLUME_CHANGED = 2;
 
@@ -155,6 +239,12 @@ public class LocalSystemInfo {
 	 * of Kbyte), or an indication the size is not known 
 	 * @see LocalSystemInfo#SIZE_UNKNOWN
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static long getFreeSpace(File path) {
 		if (hasNatives) {
@@ -173,6 +263,12 @@ public class LocalSystemInfo {
 	 * @return array of volume representing mount
 	 * points, or <code>null</code> if none found
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static IVolume[] getVolumes() {
 		String[] mountPoints = listMountPoints();
@@ -217,6 +313,12 @@ public class LocalSystemInfo {
 	 * mount structure.
 	 * @param listener change listener
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static void addInfoListener(ILocalSystemInfoListener listener) {
 		if (!listeners.contains(listener))
@@ -227,6 +329,12 @@ public class LocalSystemInfo {
 	 * Remove local system change listener
 	 * @param listener change listener
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static void removeInfoListener(ILocalSystemInfoListener listener) {
 		listeners.remove(listener);
@@ -242,6 +350,12 @@ public class LocalSystemInfo {
 	 * @see LocalSystemInfo#VOLUME_ADDED
 	 * @see LocalSystemInfo#VOLUME_REMOVED
 	 * @see LocalSystemInfo#VOLUME_CHANGED
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static void fireSystemInfoChanged(IVolume volume, int changeType) {
 		for (int i=0; i< listeners.size(); i++) {

@@ -15,6 +15,12 @@ import org.eclipse.core.runtime.IAdaptable;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * <p>
+ * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
  * @see org.eclipse.update.configuration.IInstallConfiguration
  * @since 2.0
  */
@@ -24,6 +30,12 @@ public interface IActivity extends IAdaptable {
 	 * Indicates feature installation action
 	 * 
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int ACTION_FEATURE_INSTALL = 1;
 
@@ -31,6 +43,12 @@ public interface IActivity extends IAdaptable {
 	 * Indicates feature removal (uninstallation) action
 	 * 
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int ACTION_FEATURE_REMOVE = 2;
 
@@ -38,6 +56,12 @@ public interface IActivity extends IAdaptable {
 	 * Indicates an addition of a site to a configuration
 	 * 
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int ACTION_SITE_INSTALL = 3;
 
@@ -45,6 +69,12 @@ public interface IActivity extends IAdaptable {
 	 * Indicates removal of a site from a configuration
 	 * 
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int ACTION_SITE_REMOVE = 4;
 
@@ -52,6 +82,12 @@ public interface IActivity extends IAdaptable {
 	 * Indicates feature unconfiguration action
 	 * 
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int ACTION_UNCONFIGURE = 5;
 
@@ -59,6 +95,12 @@ public interface IActivity extends IAdaptable {
 	 * Indicates feature configuration action
 	 * 
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int ACTION_CONFIGURE = 6;
 
@@ -66,6 +108,12 @@ public interface IActivity extends IAdaptable {
 	 * Indicates reverting to a prior configuration state
 	 * 
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int ACTION_REVERT = 7;
 
@@ -74,6 +122,12 @@ public interface IActivity extends IAdaptable {
 	 * installation directory
 	 * 
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int ACTION_RECONCILIATION = 8;
 
@@ -81,6 +135,12 @@ public interface IActivity extends IAdaptable {
 	 * Indicates adding the configuration to a preserved state
 	 * 
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int ACTION_ADD_PRESERVED = 9;
 	
@@ -88,6 +148,12 @@ public interface IActivity extends IAdaptable {
 	 * Indicates the action completed cussessfully
 	 * 
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int STATUS_OK = 0;
 
@@ -95,6 +161,12 @@ public interface IActivity extends IAdaptable {
 	 * Indicates the action did not complete successfully
 	 * 
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final int STATUS_NOK = 1;
 
@@ -111,6 +183,12 @@ public interface IActivity extends IAdaptable {
 	 * @see #ACTION_RECONCILIATION
 	 * @return action code, as defined in this interface
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public int getAction();
 
@@ -119,6 +197,12 @@ public interface IActivity extends IAdaptable {
 	 * 
 	 * @return diplayable label for action
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public String getLabel();
 
@@ -127,6 +211,12 @@ public interface IActivity extends IAdaptable {
 	 * 
 	 * @return activity date
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public Date getDate();
 
@@ -137,6 +227,12 @@ public interface IActivity extends IAdaptable {
 	 * @see #STATUS_NOK
 	 * @return completion status, as defined in this interface
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public int getStatus();
 
@@ -146,6 +242,12 @@ public interface IActivity extends IAdaptable {
 	 * 
 	 * @return installation configuration
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public IInstallConfiguration getInstallConfiguration();
 }

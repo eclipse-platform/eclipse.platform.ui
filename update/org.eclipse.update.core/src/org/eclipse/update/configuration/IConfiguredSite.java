@@ -12,7 +12,12 @@ import org.eclipse.update.core.*;
  * Represents an installation site "filtered" by configuration information.
  * Configured site is the target of the feature update operations (install
  * feature, remove feature, configure feature, unconfigure feature).
- * 
+ * <p>
+ * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
  * @since 2.0
  */
 public interface IConfiguredSite extends IAdaptable {
@@ -22,6 +27,12 @@ public interface IConfiguredSite extends IAdaptable {
 	 * 
 	 * @return the underlying site 
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public ISite getSite();
 
@@ -37,6 +48,12 @@ public interface IConfiguredSite extends IAdaptable {
 	 * @see IStatus
 	 * @return an IStatus
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public IStatus verifyUpdatableStatus();
 
@@ -49,6 +66,12 @@ public interface IConfiguredSite extends IAdaptable {
 	 * @return <code>true</code> if the site can be updated, 
 	 * <code>false</code> otherwise
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public boolean isUpdatable();
 
@@ -61,6 +84,12 @@ public interface IConfiguredSite extends IAdaptable {
 	 * @exception InstallAbortedException when the user cancels the install
 	 * @exception CoreException
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public IFeatureReference install(
 		IFeature feature,
@@ -74,6 +103,12 @@ public interface IConfiguredSite extends IAdaptable {
 	 * @param feature feature to remove
 	 * @param monitor progress monitor, or <code>null</code>
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void remove(IFeature feature, IProgressMonitor monitor)
 		throws CoreException;
@@ -89,8 +124,14 @@ public interface IConfiguredSite extends IAdaptable {
 	 * broken.
 	 * 
 	 * @param feature the feature
-	 * @return teh status for this feature on this configured site
+	 * @return the status for this feature on this configured site
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public IStatus getBrokenStatus(IFeature feature);
 
@@ -101,6 +142,12 @@ public interface IConfiguredSite extends IAdaptable {
 	 * @return <code>true</code> if the feature is configured,
 	 * <code>false</code> otherwise
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public boolean isConfigured(IFeature feature);
 
@@ -110,6 +157,12 @@ public interface IConfiguredSite extends IAdaptable {
 	 * 
 	 * @param feature the feature
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void configure(IFeature feature) throws CoreException;
 
@@ -119,6 +172,12 @@ public interface IConfiguredSite extends IAdaptable {
 	 * 
 	 * @param feature the feature
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public boolean unconfigure(IFeature feature) throws CoreException;
 
@@ -127,6 +186,12 @@ public interface IConfiguredSite extends IAdaptable {
 	 * 
 	 * @return an array of feature references, or an empty array.
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public IFeatureReference[] getConfiguredFeatures();
 
@@ -139,6 +204,12 @@ public interface IConfiguredSite extends IAdaptable {
 	 * @see ISite#getFeatureReferences()
 	 * @return an array of feature references, or an empty array.
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public IFeatureReference[] getFeatureReferences();
 
@@ -147,6 +218,12 @@ public interface IConfiguredSite extends IAdaptable {
 	 * 
 	 * @return install configuration object
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public IInstallConfiguration getInstallConfiguration();
 
@@ -155,6 +232,12 @@ public interface IConfiguredSite extends IAdaptable {
 	 * 
 	 * @param listener the listener to add
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void addConfiguredSiteChangedListener(IConfiguredSiteChangedListener listener);
 	
@@ -163,6 +246,12 @@ public interface IConfiguredSite extends IAdaptable {
 	 * 
 	 * @param listener the listener to remove
 	 * @since 2.0 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void removeConfiguredSiteChangedListener(IConfiguredSiteChangedListener listener);
 
@@ -172,6 +261,12 @@ public interface IConfiguredSite extends IAdaptable {
 	 * @return <code>true</code> if the site is an extension site,
 	 * <code>false</code> otherwise
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public boolean isExtensionSite();
 
@@ -181,6 +276,12 @@ public interface IConfiguredSite extends IAdaptable {
 	 * @return <code>true</code> if the site is a product site,
 	 * <code>false</code> otherwise
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public boolean isProductSite();
 
@@ -192,6 +293,12 @@ public interface IConfiguredSite extends IAdaptable {
 	 * @return <code>true</code> if the site is a private site,
 	 * <code>false</code> otherwise
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */	
 	public boolean isPrivateSite();
 	
@@ -202,6 +309,12 @@ public interface IConfiguredSite extends IAdaptable {
 	 * @return <code>true</code> if the site is a natively linked site,
 	 * <code>false</code> otherwise
 	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */	
 	public boolean isNativelyLinked() throws CoreException;
 }
