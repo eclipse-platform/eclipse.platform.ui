@@ -87,7 +87,7 @@ public class AntFoldingStructureProvider {
 	
 			Set currentRegions= new HashSet();
 			AntProjectNode node= antModel.getProjectNode();
-			if (node == null) {
+			if (node == null || node.getOffset() == -1 || node.getLength() == -1) {
 				return;
 			}
 			List root= new ArrayList(2);

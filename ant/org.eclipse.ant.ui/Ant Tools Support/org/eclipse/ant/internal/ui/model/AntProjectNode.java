@@ -82,6 +82,8 @@ public class AntProjectNode extends AntElementNode {
 		fNameToDefiningNodeMap= null;
 		setProblemSeverity(AntModelProblem.NO_PROBLEM);
 		setProblemMessage(null);
+        fOffset= -1;
+        fLength= -1;
 	}
 	
 	public void addDefiningTaskNode(AntDefiningTaskNode node) {
