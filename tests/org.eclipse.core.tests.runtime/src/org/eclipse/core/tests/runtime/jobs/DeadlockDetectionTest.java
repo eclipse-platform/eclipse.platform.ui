@@ -821,7 +821,8 @@ public class DeadlockDetectionTest extends TestCase {
 				status[3] = TestBarrier.STATUS_RUNNING;
 			}
 			//timeout if the two jobs don't start within a reasonable time
-			assertTrue("Timeout waiting for job to end", (System.currentTimeMillis()-waitStart) < 30000);
+			long elapsed  = System.currentTimeMillis()-waitStart;
+			assertTrue("Timeout waiting for job to end: " + elapsed, elapsed < 30000);
 		}
 		//wait until all jobs are done
 		for (int i = 0; i < jobs.length; i++) 
