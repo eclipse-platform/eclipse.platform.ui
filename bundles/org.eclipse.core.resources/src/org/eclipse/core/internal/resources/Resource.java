@@ -718,7 +718,6 @@ public void move(IProjectDescription destDesc, boolean force, boolean keepHistor
 			// delete the source
 			delete(force, keepHistory, Policy.subMonitorFor(monitor, Policy.opWork * 30 / 100));
 
-			// FIXME: what about rollbacks?
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;

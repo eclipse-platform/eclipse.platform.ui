@@ -128,12 +128,12 @@ public void checkAccessible(int flags) throws CoreException {
 /**
  * Checks validity of the given project description.
  */
-protected void checkDescription(IProjectDescription desc) throws CoreException {
+protected void checkDescription(IProject project, IProjectDescription desc) throws CoreException {
 	if (desc.getLocation() == null)
 		return;
 	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, "Invalid project description.", null);
 	status.merge(workspace.validateName(desc.getName(), IResource.PROJECT));
-	status.merge(workspace.validateProjectLocation(this, desc.getLocation()));
+	status.merge(workspace.validateProjectLocation(project, desc.getLocation()));
 	if (!status.isOK())
 		throw new ResourceException(status);
 }
@@ -243,10 +243,10 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
 		internalCopyToFolder(destination, force, monitor);
 	}
 }
-protected void copyMetaArea(IProject source, IProject destination) throws CoreException {
+protected void copyMetaArea(IProject source, IProject destination, IProgressMonitor monitor) throws CoreException {
 	java.io.File oldMetaArea = workspace.getMetaArea().getLocationFor(source).toFile();
 	java.io.File newMetaArea = workspace.getMetaArea().getLocationFor(destination).toFile();
-	getLocalManager().getStore().copy(oldMetaArea, newMetaArea, IResource.DEPTH_INFINITE, null);
+	getLocalManager().getStore().copy(oldMetaArea, newMetaArea, IResource.DEPTH_INFINITE, monitor);
 }
 /**
  * @see IProject#create
@@ -261,7 +261,7 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
 			ProjectInfo info = (ProjectInfo) getResourceInfo(false, false);
 			checkDoesNotExist(getFlags(info), true);
 			if (description != null)
-				checkDescription(description);
+				checkDescription(this, description);
 
 			workspace.beginOperation(true);
 			workspace.createResource(this, false);
@@ -556,8 +556,8 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 			// The following assert method throws CoreExceptions as stated in the IProject.copy API
 			// and assert for programming errors. See checkCopyRequirements for more information.
 			assertCopyRequirements(destPath, IResource.PROJECT);
-			checkDescription(destDesc);
 			Project destProject = (Project) workspace.getRoot().getProject(destName);
+			checkDescription(destProject, destDesc);
 			IProjectDescription sourceDesc = internalGetDescription();
 			workspace.changing(this);
 
@@ -568,26 +568,39 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 			getPropertyManager().closePropertyStore(this);
 
 			// copy the meta area for the project
-			copyMetaArea(this, destProject);
+			copyMetaArea(this, destProject, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
 
 			// copy just the project and not its children yet (tree node, properties)
-			internalCopyProjectOnly(destProject, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
+			internalCopyProjectOnly(destProject, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
 
 			// set the description
 			destProject.internalSetDescription(destDesc, false);
 
-			// Workaround for 1FW1IFY: ITPCORE:ALL - Builders not fixed up on project rename
-			ProjectInfo info = (ProjectInfo) workspace.getResourceInfo(destProject.getFullPath(), false, false);
-			info.setBuilders(null);
-
+			// write out the project info to the meta area. its already been
+			// copied over from the source but we want to ensure the .prj file
+			// contains the correct info
+			try {
+				getLocalManager().write(destProject, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
+			} catch (CoreException e) {
+				try {
+					destProject.delete(force, null);
+				} catch (CoreException e2) {
+					// ignore and rethrow the exception that got us here
+				}
+				throw e;
+			}
+			
 			// call super.copy for each child
 			IResource[] children = members();
 			for (int i = 0; i < children.length; i++)
 				children[i].copy(destProject.getFullPath().append(children[i].getName()), force, Policy.subMonitorFor(monitor, Policy.opWork * 50 / 100 / children.length));
 
+			// fix the builders for the new project (they currently point to the source)
+			workspace.getBuildManager().fixBuildersFor(destProject);
+
 			// refresh local
 			monitor.subTask(Policy.bind("syncTree", null));
-			getLocalManager().refresh(destProject, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
+			getLocalManager().refresh(destProject, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
@@ -669,89 +682,67 @@ protected void internalMove(IProjectDescription destDesc, boolean force, IProgre
 			// The following assert method throws CoreExceptions as stated in the IProject.move API
 			// and assert for programming errors. See checkMoveRequirements for more information.
 			assertMoveRequirements(destPath, IResource.PROJECT);
-			checkDescription(destDesc);
 			Project destProject = (Project) workspace.getRoot().getProject(destName);
+			checkDescription(destProject, destDesc);
 			IProjectDescription sourceDesc = internalGetDescription();
 			workspace.changing(this);
 
 			workspace.beginOperation(true);
 			getLocalManager().refresh(this, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 
-			int rollbackLevel = 0;
+			// close the property store
+			getPropertyManager().closePropertyStore(this);
+
+			// rename the meta area
+			copyMetaArea(this, destProject, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
+
+			// copy just the project and not its children (copies project tree node, properties)
+			internalCopyProjectOnly(destProject, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
+
+			// set the description
+			destProject.internalSetDescription(destDesc, false);
+
+			// Fix for 1FVU2FV: ITPCORE:WINNT - WALKBACK - Renaming project does not update project natures
+			// Remove session property for active project natures, causing them to be reactivated.
+			// Leave persistent property (list of nature IDs) alone.
+			ProjectInfo info = (ProjectInfo) workspace.getResourceInfo(destProject.getFullPath(), false, true);
+			// FIXME: should we be deconfiguring natures here? why do we clear it at all
+			info.clearNatures();
+
+			// write out the project info to the meta area. its already been
+			// copied over from the source but we want to ensure the .prj file
+			// contains the correct info
 			try {
-
-				// close the property store
-				getPropertyManager().closePropertyStore(this);
-
-				// rename the meta area
-				renameMetaArea(this, destProject, force, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
-				rollbackLevel++; // 1
-
-				// copy just the project and not its children (copies project tree node, properties)
-				internalCopyProjectOnly(destProject, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
-				rollbackLevel++; // 2
-
-				// set the description
-				destProject.internalSetDescription(destDesc, false);
-
-				// Fix for 1FVU2FV: ITPCORE:WINNT - WALKBACK - Renaming project does not update project natures
-				// Remove session property for active project natures, causing them to be reactivated.
-				// Leave persistent property (list of nature IDs) alone.
-				ProjectInfo info = (ProjectInfo) workspace.getResourceInfo(destProject.getFullPath(), false, true);
-				// FIXME: should we be deconfiguring natures here? why do we clear it at all
-				info.clearNatures();
-
-				// Workaround for 1FW1IFY: ITPCORE:ALL - Builders not fixed up on project rename
-				workspace.getBuildManager().renamedProject(destProject);
-				rollbackLevel++; // 3
-
-				// call super.move for each child
-				IResource[] children = members();
-				for (int i = 0; i < children.length; i++)
-					children[i].move(destProject.getFullPath().append(children[i].getName()), force, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
-				rollbackLevel++; // 4
-
-				// delete the source
-				delete(true, force, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
-				rollbackLevel++; // 5
-
-				// tell the marker manager that we moved so the marker deltas are ok
-				monitor.subTask("Creating marker deltas.");
-				getMarkerManager().moved(this, destProject, IResource.DEPTH_ZERO);
-				monitor.worked(Policy.opWork * 10 / 100);
-
+				getLocalManager().write(destProject, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 			} catch (CoreException e) {
-				switch (rollbackLevel) {
-					case 5 :
-						// try and move everything back to the source
-					case 4 :
-						// project member deletion should be taken care of by super.move
-					case 3:
-						// ensure the builders reference the correct projects
-						workspace.getBuildManager().renamedProject(this);
-					case 2 :
-						// rename the meta area back to the original
-						try {
-							renameMetaArea(destProject, this, force, null);
-						} catch (CoreException e2) {
-							// ignore this exception and rethrow the one that got us here
-						}
-					case 1 :
-						// delete the destination
-						try {
-							destProject.delete(true, force, null);
-						} catch (CoreException e2) {
-							// ignore this exception and rethrow the one that got us here
-						}
-						break;
+				try {
+					destProject.delete(force, null);
+				} catch (CoreException e2) {
+					// ignore and rethrow the exception that got us here
 				}
 				throw e;
 			}
 
+			// call super.move for each child
+			IResource[] children = members();
+			for (int i = 0; i < children.length; i++)
+				children[i].move(destProject.getFullPath().append(children[i].getName()), force, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
+
+			// fix up the builders for the project (they currently point to the source)
+			workspace.getBuildManager().fixBuildersFor(destProject);
+
+			// delete the source
+			delete(true, force, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
+
+			// tell the marker manager that we moved so the marker deltas are ok
+			monitor.subTask("Creating marker deltas.");
+			getMarkerManager().moved(this, destProject, IResource.DEPTH_ZERO);
+			monitor.worked(Policy.opWork * 10 / 100);
+
 			monitor.subTask(Policy.bind("syncTree", null));
 			workspace.flushBuildOrder();
 			// refresh local
-			getLocalManager().refresh(destProject, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
+			getLocalManager().refresh(destProject, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
@@ -778,44 +769,21 @@ protected void internalMoveToFolder(IPath destPath, boolean force, IProgressMoni
 			workspace.beginOperation(true);
 			getLocalManager().refresh(this, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 
-			int rollbackLevel = 0;
-			try {
-				// copy just the project and not its children
-				internalCopyProjectOnly(destFolder, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
-				rollbackLevel++; // 1
+			// copy just the project and not its children
+			internalCopyProjectOnly(destFolder, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 
-				// call super.move for each child
-				IResource[] children = members();
-				for (int i = 0; i < children.length; i++)
-					children[i].move(destFolder.getFullPath().append(children[i].getName()), force, Policy.subMonitorFor(monitor, Policy.opWork * 30 / 100 / children.length));
-				rollbackLevel++; // 2
+			// call super.move for each child
+			IResource[] children = members();
+			for (int i = 0; i < children.length; i++)
+				children[i].move(destFolder.getFullPath().append(children[i].getName()), force, Policy.subMonitorFor(monitor, Policy.opWork * 30 / 100 / children.length));
 
-				// delete the source
-				delete(true, force, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
-				rollbackLevel++; // 3
+			// delete the source
+			delete(true, force, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 
-				// tell the marker manager that we moved so the marker deltas are ok
-				monitor.subTask("Creating marker deltas.");
-				getMarkerManager().moved(this, destFolder, IResource.DEPTH_ZERO);
-				monitor.worked(Policy.opWork * 10 / 100);
-
-			} catch (CoreException e) {
-				switch (rollbackLevel) {
-					case 3 :
-						// re-create the source
-					case 2 :
-						// rollback for the children should be handled by super.move
-					case 1 :
-						// delete the destination
-						try {
-							destFolder.delete(force, null);
-						} catch (CoreException e2) {
-							// ignore the exception and re-throw the one that got us here
-						}
-						break;
-				}
-				throw e;
-			}
+			// tell the marker manager that we moved so the marker deltas are ok
+			monitor.subTask("Creating marker deltas.");
+			getMarkerManager().moved(this, destFolder, IResource.DEPTH_ZERO);
+			monitor.worked(Policy.opWork * 10 / 100);
 
 			monitor.subTask(Policy.bind("syncTree", null));
 			workspace.flushBuildOrder();
@@ -978,16 +946,7 @@ private void pseudoOpen() throws CoreException {
 	workspace.getSaveManager().restore(this, null);
 }
 
-protected void renameMetaArea(IProject source, IProject destination, boolean force, IProgressMonitor monitor) throws CoreException {
-	java.io.File oldMetaArea = workspace.getMetaArea().getLocationFor(source).toFile();
-	java.io.File newMetaArea = workspace.getMetaArea().getLocationFor(destination).toFile();
-	try {
-		((Project) source).getLocalManager().getStore().move(oldMetaArea, newMetaArea, force, monitor);
-	} catch (CoreException e) {
-		String message = Policy.bind("renameMeta", new String[] { getFullPath().toString()});
-		throw new ResourceException(IResourceStatus.ERROR, getFullPath(), message, e);
-	}
-}
+
 /**
  * @see IProject
  */
