@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -290,7 +291,7 @@ public class RemoteFolderTreeBuilder {
 		Policy.checkCanceled(monitor);
 		
 		// Add the remote folder to the remote folder lookup table (used to update file revisions)
-		remoteFolderTable.put(remote.getFolderSyncInfo().getRemoteLocation(), remote);
+		remoteFolderTable.put(new Path(remote.getFolderSyncInfo().getRemoteLocation()), remote);
 		
 		// Create a map to contain the created children
 		Map children = new HashMap();
@@ -427,7 +428,7 @@ public class RemoteFolderTreeBuilder {
 		// Create an listener that will accumulate new and removed files and folders
 		final List newChildDirectories = new ArrayList();
 		IUpdateMessageListener listener = new IUpdateMessageListener() {
-			public void directoryInformation(IPath path, boolean newDirectory) {
+			public void directoryInformation(ICVSFolder root, IPath path, boolean newDirectory) {
 				if (newDirectory) {
 					// Record new directory with parent so it can be retrieved when building the parent
 					recordDelta(path, FOLDER, Update.STATE_NONE);
@@ -436,7 +437,7 @@ public class RemoteFolderTreeBuilder {
 					newChildDirectories.add(path.toString());
 				}
 			}
-			public void directoryDoesNotExist(IPath path) {
+			public void directoryDoesNotExist(ICVSFolder root, IPath path) {
 				// Record removed directory with parent so it can be removed when building the parent
 				if (path.isEmpty()) {
 					projectDoesNotExist = true;
@@ -445,7 +446,7 @@ public class RemoteFolderTreeBuilder {
 					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", path.toString())); //$NON-NLS-1$
 				}
 			}
-			public void fileInformation(int type, String filename) {
+			public void fileInformation(int type, ICVSFolder root, String filename) {
 				// Cases that do not require action are:
 				//	case 'A' :  = A locally added file that does not exists remotely
 				//	case '?' :  = A local file that has not been added and does not exists remotely
@@ -470,7 +471,7 @@ public class RemoteFolderTreeBuilder {
 								break;
 				}	
 			}
-			public void fileDoesNotExist(String filename) {
+			public void fileDoesNotExist(ICVSFolder root, String filename) {
 				recordDelta(new Path(filename), DELETED, Update.STATE_NONE);
 				monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", filename)); //$NON-NLS-1$
 			}
@@ -496,7 +497,7 @@ public class RemoteFolderTreeBuilder {
 		
 		// Create an listener that will accumulate new files and folders
 		IUpdateMessageListener listener = new IUpdateMessageListener() {
-			public void directoryInformation(IPath path, boolean newDirectory) {
+			public void directoryInformation(ICVSFolder root, IPath path, boolean newDirectory) {
 				if (newDirectory) {
 					// Record new directory with parent so it can be retrieved when building the parent
 					// NOTE: Check path prefix
@@ -504,15 +505,15 @@ public class RemoteFolderTreeBuilder {
 					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", path.toString())); //$NON-NLS-1$
 				}
 			}
-			public void directoryDoesNotExist(IPath path) {
+			public void directoryDoesNotExist(ICVSFolder root, IPath path) {
 			}
-			public void fileInformation(int type, String filename) {
+			public void fileInformation(int type, ICVSFolder root, String filename) {
 				// NOTE: Check path prefix
 				changedFiles.add(filename);
 				recordDelta(new Path(filename), ADDED, type);
 				monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", filename)); //$NON-NLS-1$
 			}
-			public void fileDoesNotExist(String filename) {
+			public void fileDoesNotExist(ICVSFolder root, String filename) {
 			}
 		};
 
@@ -549,17 +550,15 @@ public class RemoteFolderTreeBuilder {
 	private void fetchFileRevisions(Session session, String[] fileNames, final IProgressMonitor monitor) throws CVSException {
 		
 		// Create a listener for receiving the revision info
-		final int[] count = new int[] {0};
 		final Map revisions = new HashMap();
+		final List exceptions = new ArrayList();
 		IStatusListener listener = new IStatusListener() {
-			public void fileStatus(IPath path, String remoteRevision) {
+			public void fileStatus(ICVSFolder root, IPath path, String remoteRevision) {
 				try {
 					updateRevision(path, remoteRevision);
 					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingRevision", path.toString())); //$NON-NLS-1$
-					count[0]++;
 				} catch (CVSException e) {
-					// The count will be off which will trigger another exception
-					CVSProviderPlugin.log(e);
+					exceptions.add(e);
 				}
 			}
 		};
@@ -575,11 +574,18 @@ public class RemoteFolderTreeBuilder {
 			throw new CVSServerException(status);
 		}
 		
-		// XXX we can't make this check because it may be valid to call this method
-		// without any file names (e.g. fileNames array empty) which would run the
-		// status on all files.
-		//if (count[0] != fileNames.length)
-		//	throw new CVSException(Policy.bind("RemoteFolder.errorFetchingRevisions"));
+		// Report any exceptions that occured fecthing the revisions
+		if ( ! exceptions.isEmpty()) {
+			if (exceptions.size() == 1) {
+				throw (CVSException)exceptions.get(0);
+			} else {
+				MultiStatus multi = new MultiStatus(CVSProviderPlugin.ID, 0, Policy.bind("RemoteFolder.errorFetchingRevisions"), null); //$NON-NLS-1$
+				for (int i = 0; i < exceptions.size(); i++) {
+					multi.merge(((CVSException)exceptions.get(i)).getStatus());
+				}
+				throw new CVSException(multi);
+			}
+		}
 	}
 
 	private boolean pruneEmptyDirectories() {
@@ -605,7 +611,7 @@ public class RemoteFolderTreeBuilder {
 	}
 	
 	private void updateRevision(IPath path, String revision) throws CVSException {
-		RemoteFolderTree folder = (RemoteFolderTree)remoteFolderTable.get(path.removeLastSegments(1).toString());
+		RemoteFolderTree folder = (RemoteFolderTree)remoteFolderTable.get(path.removeLastSegments(1));
 		if (folder == null) {
 			throw new CVSException(Policy.bind("RemoteFolderTreeBuilder.missingParent", path.toString(), revision));//$NON-NLS-1$
 		}
