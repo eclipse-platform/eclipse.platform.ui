@@ -33,17 +33,7 @@ public class HelpServer extends Thread {
 			this.port = ssocket.getLocalPort();
 		} catch (Exception e1) {
 			ssocket = null;
-			if (port != 0 )
-				// try again with port 0 (system selects port)
-				try
-				{
-					ssocket = new ServerSocket(port); 
-					this.port = ssocket.getLocalPort();
-				} catch (Exception e2) {
-					ssocket = null;
-					Logger.logError(e1.getMessage(), e2);
-					return;
-				}
+			Logger.logError(e1.getMessage(), e1);
 		}
 		//catch (UnknownHostException e)
 		//{
@@ -140,6 +130,8 @@ public class HelpServer extends Thread {
 			// Here we loop indefinitely, just waiting for 
 			// clients to connect
 			while (true) {
+				if(ssocket==null)
+					return;
 				// accept() does not return until a client 
 				// requests a connection.
 				Socket sock = ssocket.accept();
@@ -192,6 +184,7 @@ public class HelpServer extends Thread {
 		// restart the server
 		_this.close();
 		_this = null;
+		yield();
 		_this = instance();
 			
 	}
