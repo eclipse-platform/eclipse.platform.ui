@@ -17,17 +17,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.ControlEnableState;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.operation.ModalContext;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.wizard.ProgressMonitorPart;
-import org.eclipse.search.internal.ui.SearchMessages;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
@@ -38,6 +28,18 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.dialogs.ControlEnableState;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.wizard.ProgressMonitorPart;
+
+import org.eclipse.search.internal.ui.SearchMessages;
 
 
 public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableContext {
