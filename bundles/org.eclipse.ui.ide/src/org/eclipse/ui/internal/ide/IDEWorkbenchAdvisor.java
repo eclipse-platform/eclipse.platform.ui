@@ -1016,6 +1016,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 				IDEWorkbenchPlugin.log("Fail to open remaining welcome editors.", e.getStatus()); //$NON-NLS-1$
 			}
 		}
+		// save any preferences changes caused by the above actions
+		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
     }
 
     /**

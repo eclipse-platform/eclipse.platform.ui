@@ -129,7 +129,8 @@ public class WorkbenchThemeManager implements IThemeManager {
 		        oldTheme.removePropertyChangeListener(currentThemeListener);
 		    currentTheme.addPropertyChangeListener(currentThemeListener);	
 		    
-			PlatformUI.getWorkbench().getPreferenceStore().setValue(IPreferenceConstants.CURRENT_THEME_ID, id == null ? "" : id); //$NON-NLS-1$	       
+			WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.CURRENT_THEME_ID, id == null ? "" : id); //$NON-NLS-1$
+			WorkbenchPlugin.getDefault().savePluginPreferences();
 	    }	    
     }
     
