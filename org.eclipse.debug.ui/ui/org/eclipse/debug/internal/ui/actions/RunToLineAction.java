@@ -156,9 +156,7 @@ public class RunToLineAction implements IWorkbenchWindowActionDelegate, IPartLis
 			return;
 		}
 		if (partTarget != null && targetElement != null) {
-			if (targetElement.isSuspended()) {
-				action.setEnabled(true);
-			}
+			action.setEnabled(targetElement.isSuspended());
 		} else {
 			action.setEnabled(false);
 		}
