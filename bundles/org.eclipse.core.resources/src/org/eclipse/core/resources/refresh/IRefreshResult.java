@@ -43,5 +43,5 @@ public interface IRefreshResult {
 	 * 
 	 * @param resource the resource to refresh
 	 */
-	void refresh(IResource resources);
+	void refresh(IResource resource);
 }
