@@ -528,6 +528,8 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			featureEntries.put(feature.getFeatureIdentifier(), feature);
 			pluginsChangeStamp = 0;
 		}
+		if (feature instanceof FeatureEntry)
+			((FeatureEntry)feature).setSite(this);
 	}
 	
 	public FeatureEntry[] getFeatureEntries() {

@@ -32,7 +32,7 @@ public class AllBrandingTests extends UpdateManagerTestCase {
 		TestSuite suite = new TestSuite();
 		suite.setName("Branding Tests");
 
-		suite.addTest(new TestSuite(PrimaryFeatureTest.class));	
+		suite.addTest(new TestSuite(BundleProviderTest.class));	
 		suite.addTest(new TestSuite(ProductTest.class));	
 
 		return suite;

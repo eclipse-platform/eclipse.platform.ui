@@ -40,8 +40,10 @@ public class FeatureEntry
 	private boolean primary;
 	private String pluginIdentifier;
 	private String url;
+	private String description;
 	private ArrayList plugins;
 	private AboutInfo branding;
+	private SiteEntry site;
 
 	public FeatureEntry(String id, String version, String pluginIdentifier, String pluginVersion, boolean primary, String application, URL[] root) {
 		if (id == null)
@@ -59,6 +61,20 @@ public class FeatureEntry
 		this(id, version, id, pluginVersion, primary, application, root);
 	}
 
+	public void setSite(SiteEntry site) {
+		this.site = site;
+	}
+	
+	public SiteEntry getSite() {
+		return this.site;
+	}
+	
+	public void addPlugin(PluginEntry plugin) {
+		if (plugins == null)
+			plugins = new ArrayList();
+		plugins.add(plugin);
+	}
+	
 	/**
 	 * Sets the url string (relative to the site url)
 	 * @param url
@@ -163,9 +179,19 @@ public class FeatureEntry
 	public Bundle[] getBundles() {
 		if (plugins == null) {
 			plugins = new ArrayList();
+			FullFeatureParser parser = new FullFeatureParser(this);
+			parser.parse();
 		}
 		
-		return new Bundle[0];
+		ArrayList bundles = new ArrayList(plugins.size());
+		for (int i=0; i<plugins.size(); i++) {
+			PluginEntry plugin = (PluginEntry)plugins.get(i);
+			// get the highest version for the plugin
+			Bundle bundle = Platform.getBundle(plugin.getPluginIdentifier());
+			if (bundle != null)
+				bundles.add(bundle);
+		}
+		return (Bundle[])bundles.toArray(new Bundle[bundles.size()]);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IBundleGroup#getDescription()

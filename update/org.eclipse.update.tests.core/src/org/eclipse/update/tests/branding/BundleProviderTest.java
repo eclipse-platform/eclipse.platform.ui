@@ -14,10 +14,11 @@ package org.eclipse.update.tests.branding;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.internal.configurator.branding.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
+import org.osgi.framework.*;
 
-public class PrimaryFeatureTest extends UpdateManagerTestCase {
+public class BundleProviderTest extends UpdateManagerTestCase {
 
-	public PrimaryFeatureTest(String testcase){
+	public BundleProviderTest(String testcase){
 		super(testcase);
 	}
 
@@ -36,8 +37,12 @@ public class PrimaryFeatureTest extends UpdateManagerTestCase {
 						"featureImage:" + bundleGroups[j].getProperty(IBundleGroupConstants.FEATURE_IMAGE) + "\n" +
 						"tips and tricks:" + bundleGroups[j].getProperty(IBundleGroupConstants.TIPS_AND_TRICKS_HREF) + "\n" +
 						"welcomePage:" + bundleGroups[j].getProperty(IBundleGroupConstants.WELCOME_PAGE) + "\n" +
-						"welcomePerspective:" + bundleGroups[j].getProperty(IBundleGroupConstants.WELCOME_PERSPECTIVE) + "\n");
-				System.out.println("bundles:"+bundleGroups[j].getBundles());
+						"welcomePerspective:" + bundleGroups[j].getProperty(IBundleGroupConstants.WELCOME_PERSPECTIVE));
+				System.out.println("bundles:");
+				Bundle[] bundles = bundleGroups[j].getBundles();
+				for (int b=0; b<bundles.length; b++)
+					System.out.println(bundles[b].getSymbolicName());
+				System.out.println();
 			}
 		}
 	}

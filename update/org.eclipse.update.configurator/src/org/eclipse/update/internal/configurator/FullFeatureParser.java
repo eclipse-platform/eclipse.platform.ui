@@ -20,16 +20,13 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
 /**
- * Default feature parser.
- * Parses the feature manifest file as defined by the platform.
- * 
- * @since 3.0
+ * A more complete feature parser. It adds the plugins listed to the feature.
  */
-public class FeatureParser extends DefaultHandler {
+public class FullFeatureParser extends DefaultHandler implements IConfigurationConstants{
 
-	private SAXParser parser;
-	private FeatureEntry feature;
-	private URL url;
+	protected SAXParser parser;
+	protected FeatureEntry feature;
+	protected URL url;
 
 	private final static SAXParserFactory parserFactory =
 		SAXParserFactory.newInstance();
@@ -37,8 +34,9 @@ public class FeatureParser extends DefaultHandler {
 	/**
 	 * Constructs a feature parser.
 	 */
-	public FeatureParser() {
+	public FullFeatureParser(FeatureEntry feature) {
 		super();
+		this.feature = feature;
 		try {
 			parserFactory.setNamespaceAware(true);
 			this.parser = parserFactory.newSAXParser();
@@ -49,13 +47,14 @@ public class FeatureParser extends DefaultHandler {
 		}
 	}
 	/**
-	 * Parses the specified url and constructs a feature
 	 */
-	public FeatureEntry parse(URL featureURL){
+	public void parse(){
 		InputStream in = null;
 		try {
-			this.url = featureURL;
-			in = featureURL.openStream();
+			if (feature.getSite() == null)
+				return;
+			this.url = new URL(feature.getSite().getResolvedURL(), feature.getURL() + FEATURE_XML);
+			in = url.openStream();
 			parser.parse(new InputSource(in), this);
 		} catch (SAXException e) {;
 		} catch (IOException e) {
@@ -67,7 +66,6 @@ public class FeatureParser extends DefaultHandler {
 					Utils.log(e1.getLocalizedMessage());
 				}
 		}
-		return feature;
 	}
 
 	/**
@@ -80,10 +78,8 @@ public class FeatureParser extends DefaultHandler {
 		Utils.debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName);
 		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-		if ("feature".equals(localName)) {
-			processFeature(attributes);
-			// stop parsing now
-			throw new SAXException("");
+		if ("plugin".equals(localName)) {
+			processPlugin(attributes);
 		} else {
 		}
 		
@@ -92,7 +88,7 @@ public class FeatureParser extends DefaultHandler {
 	/*
 	 * Process feature information
 	 */
-	private void processFeature(Attributes attributes) {
+	private void processPlugin(Attributes attributes) {
 
 		// identifier and version
 		String id = attributes.getValue("id"); //$NON-NLS-1$
@@ -105,30 +101,19 @@ public class FeatureParser extends DefaultHandler {
 		} else {
 //			String label = attributes.getValue("label"); //$NON-NLS-1$
 //			String provider = attributes.getValue("provider-name"); //$NON-NLS-1$
-//			String imageURL = attributes.getValue("image"); //$NON-NLS-1$
 			String os = attributes.getValue("os"); //$NON-NLS-1$
 			String ws = attributes.getValue("ws"); //$NON-NLS-1$
 			String nl = attributes.getValue("nl"); //$NON-NLS-1$
 			String arch = attributes.getValue("arch"); //$NON-NLS-1$
 			if (!Utils.isValidEnvironment(os, ws, arch))
 				return;
-//			String exclusive = attributes.getValue("exclusive"); //$NON-NLS-1$
-//			String affinity = attributes.getValue("colocation-affinity"); //$NON-NLS-1$
 
-			String primary = attributes.getValue("primary"); //$NON-NLS-1$
-			boolean isPrimary = "true".equals(primary);
-			String application = attributes.getValue("application"); //$NON-NLS-1$
-			String plugin = attributes.getValue("plugin");
+			PluginEntry plugin = new PluginEntry();
+			plugin.setPluginIdentifier(id);
+			plugin.setPluginVersion(ver);
+			feature.addPlugin(plugin);
 
-			//TODO rootURLs
-			feature = new FeatureEntry(id, ver, plugin, "", isPrimary, application, null );
-			if ("file".equals(url.getProtocol())) {
-				File f = new File(url.getFile().replace('/', File.separatorChar));
-				feature.setURL("features" + "/" + f.getParentFile().getName() + "/");// + f.getName());
-			} else {
-				feature.setURL(url.toExternalForm());
-			}
-
+			
 			Utils.
 				debug("End process DefaultFeature tag: id:" +id + " ver:" +ver + " url:" + feature.getURL()); 	
 		}
