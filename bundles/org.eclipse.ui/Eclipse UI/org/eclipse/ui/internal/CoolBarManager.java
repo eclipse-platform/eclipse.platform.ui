@@ -468,7 +468,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			int index = layout.items.indexOf(item.getId());
 			if (index != -1) {
 				// index = new visual position, i = current visual position 
-				// and i must be original visual position
+				// itemOrder[index] must be original visual/creation position
 				itemOrder[index] = currentItemOrder[i];
 				itemSizes[index] = layout.itemSizes[index];
 			} else {
@@ -486,10 +486,21 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 					itemSizes[i] = coolItem.getSize();
 					break;
 				} else if (i == index) {
-					// index of new item is already used. move items up one
+					// index of new item is already used. move items up one,
+					boolean increment = false;
+					for (int j = 0; j <itemOrder.length; j++) {
+						if (itemOrder[j] == index) {
+							increment = true;
+							break;
+						}
+					}
 					System.arraycopy(itemOrder, i, itemOrder, i + 1, itemOrder.length - i - 1);
-					for (int j=i+1; j<itemOrder.length; j++) {
-						itemOrder[j]++;
+					if (increment) {
+						for (int j=i+1; j<itemOrder.length; j++) {
+							if (itemOrder[j] != -1) {
+								itemOrder[j]++;
+							}
+						}
 					}
 					System.arraycopy(itemSizes, i, itemSizes, i + 1, itemSizes.length - i - 1);
 					itemOrder[i] = index;
@@ -564,15 +575,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			if (index != -1) {
 				wrapIndices[j] = index;
 				j++;
-			} else {
-				// wrap item no longer exists, wrap on the next visual item 
-				int visualIndex = layout.itemWrapIndices[i];
-				int nextIndex = visualIndex + 1;
-				if (nextIndex < itemSizes.length) {
-					wrapIndices[j] = nextIndex;
-					j++;
-				}
-			}
+			} 
 		}
 		int[] itemWraps = new int[j];
 		System.arraycopy(wrapIndices, 0, itemWraps, 0, j);
