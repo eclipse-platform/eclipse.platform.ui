@@ -21,5 +21,13 @@ package org.eclipse.ui.dialogs;
  * 
  * @deprecated moved to org.eclipse.ui.part
  */
-public interface IShowInTarget extends org.eclipse.ui.part.IShowInTarget {
+public interface IShowInTarget {
+    /**
+     * Shows the given context in this target.
+     *
+     * @param context the context to show
+     * @return <code>true</code> if the context could be shown,
+     *   <code>false</code> otherwise
+     */
+    public boolean show(ShowInContext context);
 }

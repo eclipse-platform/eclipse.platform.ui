@@ -21,5 +21,13 @@ package org.eclipse.ui.dialogs;
  * 
  * @deprecated moved to org.eclipse.ui.part
  */
-public interface IShowInSource extends org.eclipse.ui.part.IShowInSource {
+public interface IShowInSource {
+	/**
+	 * Returns the context to show, or <code>null</code> if there is 
+	 * currently no valid context to show.
+	 * 
+	 * @return the context to show, or <code>null</code>
+	 */
+    public ShowInContext getShowInContext();
+
 }
