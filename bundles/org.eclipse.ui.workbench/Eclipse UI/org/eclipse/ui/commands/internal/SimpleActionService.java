@@ -16,7 +16,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.internal.commands.Util;
 
 public final class SimpleActionService extends AbstractActionService {
 	

@@ -12,6 +12,7 @@
 package org.eclipse.ui.commands.internal;
 
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.StatusLineLayoutData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -53,16 +54,18 @@ class StatusLineContributionItem extends ContributionItem {
 		if (this.text.length() == 0) {
 			if (isVisible()) {
 				setVisible(false);
+				IContributionManager contributionManager = getParent();
 				
-				if (getParent() != null)
-					getParent().update(true);
+				if (contributionManager != null)
+					contributionManager.update(true);
 			}
 		} else {
 			if (!isVisible()) {
 				setVisible(true);
-
-				if (getParent() != null)
-					getParent().update(true);	
+				IContributionManager contributionManager = getParent();
+				
+				if (contributionManager != null)
+					contributionManager.update(true);
 			}
 		}
 	}

@@ -47,19 +47,9 @@ import org.eclipse.ui.commands.IActionServiceListener;
 import org.eclipse.ui.commands.IContextService;
 import org.eclipse.ui.commands.IContextServiceListener;
 import org.eclipse.ui.internal.AcceleratorMenu;
-import org.eclipse.ui.internal.CoolBarManager;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.commands.ContextBinding;
-import org.eclipse.ui.internal.commands.CoreRegistry;
-import org.eclipse.ui.internal.commands.KeySupport;
-import org.eclipse.ui.internal.commands.LocalRegistry;
-import org.eclipse.ui.internal.commands.Manager;
-import org.eclipse.ui.internal.commands.PreferenceRegistry;
-import org.eclipse.ui.internal.commands.Sequence;
-import org.eclipse.ui.internal.commands.SequenceMachine;
-import org.eclipse.ui.internal.commands.Stroke;
 
 public class ActionAndContextManager implements IContextResolver {
 
