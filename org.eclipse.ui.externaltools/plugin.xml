@@ -4,7 +4,7 @@
    name="%Plugin.name"
    version="2.1.0"
    provider-name="%Plugin.providerName"
-   class="org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin">
+   class="org.eclipse.ui.externaltools.internal.core.ExternalToolsPlugin">
 
    <runtime>
       <library name="externaltools.jar">
@@ -20,305 +20,15 @@
 
 
 <!-- extension point definitions -->
-	<extension-point id="toolTypes" name="%ExtPoint.toolTypes"/>
-	<extension-point id="argumentVariables" name="%ExtPoint.argumentVariables"/>
-	<extension-point id="directoryVariables" name="%ExtPoint.directoryVariables"/>
-	<extension-point id="fileVariables" name="%ExtPoint.fileVariables"/>
-	<extension-point id="refreshVariables" name="%ExtPoint.refreshVariables"/>
 
 <!-- Extensions -->
-	<extension point="org.eclipse.ui.externaltools.toolTypes">
-		<toolType
-			id="programType"
-			name="%ToolType.programName"
-			description="%ToolType.programDescription"
-			icon="icons/full/obj16/ttype_program.gif"
-			runnerClass="org.eclipse.ui.externaltools.internal.program.model.ProgramRunner">
-		</toolType>
-		<toolType
-			id="antBuildType"
-			name="%ToolType.antBuildName"
-			description="%ToolType.antBuildDescription"
-			icon="icons/full/obj16/ttype_ant.gif"
-			runnerClass="org.eclipse.ui.externaltools.internal.ant.model.AntFileRunner">
-		</toolType>
-	</extension>
-
-	<extension point="org.eclipse.ui.newWizards"> 
-		<category 
-			id="org.eclipse.ui.externaltools.newWizards"
-			name="%CategoryNewWizard.externalTools">
-		</category> 
-		<wizard 
-			id="org.eclipse.ui.externaltools.ProgramNewWizard" 
-			name="%NewWizard.programName" 
-			category="org.eclipse.ui.externaltools.newWizards" 
-			icon="icons/full/obj16/ttype_program.gif" 
-			class="org.eclipse.ui.externaltools.internal.program.dialog.ProgramExternalToolNewWizard"> 
-			<description> 
-				%NewWizard.programDescription 
-			</description> 
-		</wizard> 
-		<wizard 
-			id="org.eclipse.ui.externaltools.AntBuildNewWizard" 
-			name="%NewWizard.antBuildName" 
-			category="org.eclipse.ui.externaltools.newWizards" 
-			icon="icons/full/obj16/ttype_ant.gif" 
-			class="org.eclipse.ui.externaltools.internal.ant.dialog.AntExternalToolNewWizard"> 
-			<description> 
-				%NewWizard.antBuildDescription 
-			</description> 
-		</wizard> 
-	</extension> 
-
-	<extension point="org.eclipse.ui.externaltools.fileVariables">
-		<variable
-			tag="workspace_loc"
-			description="Expands to the workspace root's absolute file system path."
-			expanderClass="org.eclipse.ui.externaltools.variable.WorkspaceExpander">
-		</variable>
-		<variable
-			tag="resource_loc"
-			description="Expands to the resource's absolute file system path."
-			componentClass="org.eclipse.ui.externaltools.variable.SpecificFileResourceComponent"
-			expanderClass="org.eclipse.ui.externaltools.variable.ResourceExpander">
-		</variable>
-	</extension>
-	
-	<extension point="org.eclipse.ui.externaltools.argumentVariables">
-		<variable
-			tag="workspace_loc"
-			description="Expands to the workspace root's absolute file system path."
-			expanderClass="org.eclipse.ui.externaltools.variable.WorkspaceExpander">
-		</variable>
-		<variable
-			tag="project_loc"
-			description="Expands to the selected resource's project absolute file system path."
-			expanderClass="org.eclipse.ui.externaltools.variable.ResourceProjectExpander">
-		</variable>
-		<variable
-			tag="project_path"
-			description="Expands to the full path, relative to the workspace root, of the selected project"
-			expanderClass="org.eclipse.ui.externaltools.variable.ProjectExpander">
-		</variable>
-		<variable
-			tag="project_name"
-			description="Expands to the name of the selected project"
-			expanderClass="org.eclipse.ui.externaltools.variable.ProjectNameExpander">
-		</variable>
-		<variable
-			tag="resource_loc"
-			description="Expands to the resource's absolute file system path."
-			componentClass="org.eclipse.ui.externaltools.variable.SpecificFileResourceComponent"
-			expanderClass="org.eclipse.ui.externaltools.variable.ResourceExpander">
-		</variable>
-		<variable
-			tag="resource_loc"
-			description="Expands to the resource's path relative to the workspace root."
-			componentClass="org.eclipse.ui.externaltools.variable.SpecificFileResourceComponent"
-			expanderClass="org.eclipse.ui.externaltools.variable.ResourceExpander">
-		</variable>
-		<variable
-			tag="container_loc"
-			description="Expands to the selected resource's containing folder absolute file system path."
-			expanderClass="org.eclipse.ui.externaltools.variable.ResourceContainerExpander">
-		</variable>
-		<variable
-			tag="build_type"
-			description="Expands to the type of build"
-			expanderClass="org.eclipse.ui.externaltools.variable.BuildTypeExpander">
-		</variable>
-	</extension>
-
-	<extension point="org.eclipse.ui.externaltools.directoryVariables">
-		<variable
-			tag="workspace_loc"
-			description="Expands to the workspace root's absolute file system path."
-			expanderClass="org.eclipse.ui.externaltools.variable.WorkspaceExpander">
-		</variable>
-		<variable
-			tag="project_loc"
-			description="Expands to the selected resource's project absolute file system path."
-			expanderClass="org.eclipse.ui.externaltools.variable.ResourceProjectExpander">
-		</variable>
-		<variable
-			tag="container_loc"
-			description="Expands to the selected resource's containing folder absolute file system path."
-			expanderClass="org.eclipse.ui.externaltools.variable.ResourceContainerExpander">
-		</variable>
-		<variable
-			tag="resource_loc"
-			description="Expands to a resource's absolute file system path."
-			componentClass="org.eclipse.ui.externaltools.variable.SpecificFolderResourceComponent"
-			expanderClass="org.eclipse.ui.externaltools.variable.ResourceExpander">
-		</variable>
-	</extension>
-
-	<extension point="org.eclipse.ui.externaltools.refreshVariables">
-		<variable
-			tag="workspace"
-			description="Expands to the workspace root."
-			expanderClass="org.eclipse.ui.externaltools.variable.WorkspaceExpander">
-		</variable>
-		<variable
-			tag="project"
-			description="Expands to the project of the selected resource."
-			expanderClass="org.eclipse.ui.externaltools.variable.ResourceProjectExpander">
-		</variable>
-		<variable
-			tag="container"
-			description="Expands to the folder containing the selected resource."
-			expanderClass="org.eclipse.ui.externaltools.variable.ResourceContainerExpander">
-		</variable>
-		<variable
-			tag="resource"
-			description="Expands to a resource."
-			componentClass="org.eclipse.ui.externaltools.variable.ResourceComponent"
-			expanderClass="org.eclipse.ui.externaltools.variable.ResourceExpander">
-		</variable>
-		<variable
-			tag="working_set"
-			description="Expands to the group of resources in a working set."
-			expanderClass="org.eclipse.ui.externaltools.variable.WorkingSetExpander">
-		</variable>
-	</extension>
-
-	<extension point="org.eclipse.ui.actionSets">
-		<actionSet
-			id="org.eclipse.ui.externaltools.ExternalToolsSet"
-			label="%ActionSet.externalTools"
-			visible="true">
-			<menu id="org.eclipse.ui.run" 
-				label="%Menu.run" 
-				path="additions"> 
-				<separator name="ExternalToolsGroup"/> 
-			</menu> 
-			<action
-				id="org.eclipse.ui.externaltools.ExternalToolMenuDelegate"
-				label="%Action.externalTools"
-				menubarPath="org.eclipse.ui.run/ExternalToolsGroup"
-				toolbarPath="Normal/additions"
-				disabledIcon="icons/full/dtool16/external_tools.gif"
-				icon="icons/full/etool16/external_tools.gif"
-				hoverIcon="icons/full/ctool16/external_tools.gif"
-				tooltip="%Action.externalToolsTip"
-				pulldown="true"
-				class="org.eclipse.ui.externaltools.internal.menu.ExternalToolMenuDelegate">
-			</action>
-		</actionSet>
-	</extension>
-
-	<extension point="org.eclipse.ui.propertyPages">
-		<page
-			id="org.eclipse.ui.externaltools.propertypages.ProgramMainPropertyPage"
-			objectClass="org.eclipse.ui.externaltools.model.ExternalTool"
-			adaptable="false"
-			name="%PropertyPage.main"
-			class="org.eclipse.ui.externaltools.dialog.ExternalToolMainGroupPropertyPage">
-			<filter name="type" value="programType"/> 
-		</page>
-		<page
-			id="org.eclipse.ui.externaltools.propertypages.ProgramOptionPropertyPage"
-			objectClass="org.eclipse.ui.externaltools.model.ExternalTool"
-			adaptable="false"
-			name="%PropertyPage.option"
-			class="org.eclipse.ui.externaltools.dialog.ExternalToolOptionGroupPropertyPage">
-			<filter name="type" value="programType"/> 
-		</page>
-		<page
-			id="org.eclipse.ui.externaltools.propertypages.ProgramRefreshPropertyPage"
-			objectClass="org.eclipse.ui.externaltools.model.ExternalTool"
-			adaptable="false"
-			name="%PropertyPage.refresh"
-			class="org.eclipse.ui.externaltools.dialog.ExternalToolRefreshGroupPropertyPage">
-			<filter name="type" value="programType"/> 
-		</page>
-
-		<page
-			id="org.eclipse.ui.externaltools.propertypages.AntMainPropertyPage"
-			objectClass="org.eclipse.ui.externaltools.model.ExternalTool"
-			adaptable="false"
-			name="%PropertyPage.main"
-			class="org.eclipse.ui.externaltools.dialog.ExternalToolMainGroupPropertyPage">
-			<filter name="type" value="antBuildType"/> 
-		</page>
-		<page
-			id="org.eclipse.ui.externaltools.propertypages.AntTargetsPropertyPage"
-			objectClass="org.eclipse.ui.externaltools.model.ExternalTool"
-			adaptable="false"
-			name="%PropertyPage.antTargets"
-			class="org.eclipse.ui.externaltools.internal.ant.dialog.AntTargetsGroupPropertyPage">
-			<filter name="type" value="antBuildType"/> 
-		</page>
-		<page
-			id="org.eclipse.ui.externaltools.propertypages.AntOptionPropertyPage"
-			objectClass="org.eclipse.ui.externaltools.model.ExternalTool"
-			adaptable="false"
-			name="%PropertyPage.option"
-			class="org.eclipse.ui.externaltools.dialog.ExternalToolOptionGroupPropertyPage">
-			<filter name="type" value="antBuildType"/> 
-		</page>
-		<page
-			id="org.eclipse.ui.externaltools.propertypages.AntRefreshPropertyPage"
-			objectClass="org.eclipse.ui.externaltools.model.ExternalTool"
-			adaptable="false"
-			name="%PropertyPage.refresh"
-			class="org.eclipse.ui.externaltools.dialog.ExternalToolRefreshGroupPropertyPage">
-			<filter name="type" value="antBuildType"/> 
-		</page>
-	</extension>
-
-	<extension point="org.eclipse.ui.views">
-		<category 
-			id="org.eclipse.ui.externaltools.views"
-			name="%CategoryView.externalTools">
-		</category>
-		<view
-			id="org.eclipse.ui.externaltools.ExternalToolView"
-	  		name="%View.externalToolView"
-			icon="icons/full/cview16/external_tools.gif"
-			fastViewWidthRatio="0.30"
-			category="org.eclipse.ui.externaltools.views"
-			class="org.eclipse.ui.externaltools.internal.view.ExternalToolView">
-		</view>
-		<view
-			id="org.eclipse.ui.externaltools.LogConsoleView"
-	  		name="%View.logConsole"
-			icon="icons/full/cview16/log_console_view.gif"
-			fastViewWidthRatio="0.75"
-			category="org.eclipse.ui.externaltools.views"
-			class="org.eclipse.ui.externaltools.internal.ui.LogConsoleView">
-		</view>
-	</extension>
-
-	<extension point="org.eclipse.ui.preferencePages">
-		<page 
-			id="org.eclipse.ui.externaltools.AntPreferencePage" 
-			name="%PreferencePage.antPreferences"
-			class="org.eclipse.ui.externaltools.internal.ant.dialog.AntPreferencePage"
-			category="org.eclipse.ui.externaltools.ToolsPreferencePage">
-		</page>
-	</extension>
-
 	<extension point="org.eclipse.core.resources.builders"
 		id="ExternalToolBuilder"
 		name="%Builder.externalTools">
 		<builder> 
-			<run class="org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder"/> 
+			<run class="org.eclipse.ui.externaltools.internal.core.ExternalToolsBuilder"/> 
 		</builder> 
 	</extension>
-
-    <extension point="org.eclipse.ant.core.extraClasspathEntries">
-     	<extraClasspathEntry
-         	library="lib/antrunner.jar">
-      	</extraClasspathEntry>
-    </extension>
-
-<!-- Old Stuff -->
-<!-- Old Stuff -->
-<!-- Old Stuff -->
-<!-- Old Stuff -->
-<!-- Old Stuff -->
 
 	<extension point="org.eclipse.ui.popupMenus">
 		<objectContribution
@@ -335,6 +45,31 @@
 				class="org.eclipse.ui.externaltools.internal.ui.AntRunActionDelegate">
 			</action>
 		</objectContribution>			
+	</extension>
+
+	<extension point="org.eclipse.ui.actionSets">
+		<actionSet
+			id="org.eclipse.ui.externaltools.ExternalToolsSet"
+			label="%ActionSet.externalTools"
+			visible="true">
+			<menu id="org.eclipse.ui.run" 
+				label="%Menu.run" 
+				path="additions"> 
+				<separator name="ExternalToolsGroup"/> 
+			</menu> 
+			<action
+				id="org.eclipse.ui.externaltools.ExternalToolAction"
+				label="%Action.externalTools"
+				menubarPath="org.eclipse.ui.run/ExternalToolsGroup"
+				toolbarPath="Normal/additions"
+				disabledIcon="icons/full/dtool16/external_tools.gif"
+				icon="icons/full/etool16/external_tools.gif"
+				hoverIcon="icons/full/ctool16/external_tools.gif"
+				tooltip="%Action.externalToolsTip"
+				pulldown="true"
+				class="org.eclipse.ui.externaltools.internal.ui.ExternalToolsAction">
+			</action>
+		</actionSet>
 	</extension>
 
 	<extension point="org.eclipse.ui.propertyPages">
@@ -354,6 +89,34 @@
 			name="%PreferencePage.toolsPreferences"
 			class="org.eclipse.ui.externaltools.internal.ui.ToolsPreferencePage">
 		</page>
+		<page 
+			id="org.eclipse.ui.externaltools.AntPreferencePage" 
+			name="%PreferencePage.antPreferences"
+			class="org.eclipse.ui.externaltools.internal.ui.AntPreferencePage"
+			category="org.eclipse.ui.externaltools.ToolsPreferencePage">
+		</page>
 	</extension>
+
+	<extension point="org.eclipse.ui.views">
+		<category 
+			id="org.eclipse.ui.externaltools.views"
+			name="%Category.externalTools">
+		</category>
+		<view
+			id="org.eclipse.ui.externaltools.LogConsoleView"
+	  		name="%View.logConsole"
+			icon="icons/full/cview16/log_console_view.gif"
+			fastViewWidthRatio="0.75"
+			category="org.eclipse.ui.externaltools.views"
+			class="org.eclipse.ui.externaltools.internal.ui.LogConsoleView">
+		</view>
+	</extension>
+
+    <extension point="org.eclipse.ant.core.extraClasspathEntries">
+     	<extraClasspathEntry
+         	library="lib/antbuilder.jar">
+      	</extraClasspathEntry>
+    </extension>
+
 
 </plugin>
