@@ -85,11 +85,13 @@
       </appInfo>
       <documentation>
          The following is an example of a presentationFactory extension:
-
+&lt;pre&gt;
   &lt;extension point=&quot;org.eclipse.ui.presentationFactories&quot;&gt;
      &lt;factory
         class=&quot;org.eclipse.ui.workbench.ExampleWorkbenchPresentationFactory&quot;/&gt;
   &lt;/extension&gt;
+  &lt;/pre&gt;
+  
       </documentation>
    </annotation>
 
