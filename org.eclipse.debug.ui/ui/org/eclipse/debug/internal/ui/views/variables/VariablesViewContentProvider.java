@@ -118,6 +118,9 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	 * @throws DebugException
 	 */
 	protected IVariable[] getValueChildren(IDebugElement parent, IValue value) throws DebugException {
+		if (value == null) {
+			return null;
+		}
 		IValue logicalValue = getLogicalValue(value);
 		if (logicalValue instanceof IIndexedValue) {
 			IIndexedValue indexedValue = (IIndexedValue)logicalValue;
