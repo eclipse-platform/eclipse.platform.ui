@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.roles;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The Role is a set of information about the current static
  * working state.
@@ -38,12 +41,15 @@ class Role {
 	 * @param set boolean
 	 */
 	public void setEnabled(boolean set) {
-		for (int i = 0; i < activityIds.length; i++) {
-			Activity activity = RoleManager.getInstance().getActivity(activityIds[i]);
-			if (activity != null)
-				activity.setEnabled(set);
-
-		}
+        if (activityIds.length > 0) {    
+            List activityList = new ArrayList(activityIds.length);           		
+            for (int i = 0; i < activityIds.length; i++) {
+    			Activity activity = RoleManager.getInstance().getActivity(activityIds[i]);
+    			if (activity != null)
+                    activityList.add(activity);    
+    		}
+            RoleManager.getInstance().setEnabled((Activity[]) activityList.toArray(new Activity[activityList.size()]), set);
+        }
 	}
 
 	/**

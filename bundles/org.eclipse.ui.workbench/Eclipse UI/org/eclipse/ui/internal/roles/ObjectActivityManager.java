@@ -24,12 +24,17 @@ import java.util.Map.Entry;
  * point contributions), id-&gt;activity mappings, and a means of filtering the
  * object registry based on the currently enabled activities.
  * 
- * This functionality is currently implemented via calculating the filtered set
- * at every call.  When the ContextManager can provide incremental change 
- * infomation in its events we can calculate the up-to-date list in the 
- * background. 
+ * This functionality is currently implemented by calculating the filtered set
+ * only when activity changes dictate that the cache is invalid.  In a stable
+ * system (one in which activities of interest are not enabling and disabling 
+ * themselves with any great rate and in which new objects and bindings are not 
+ * being added often) then this calculation should need to be performed 
+ * infrequently.
+ * 
+ * TBD: It'd be possible for us to calculate the up-to-date list in a background
+ * Job... is it worth the effort?
  */
-public class ObjectActivityManager {
+public class ObjectActivityManager implements IActivityListener{
 
     /**
      * The map of all known managers.
@@ -67,6 +72,18 @@ public class ObjectActivityManager {
      * Map of id-&gt;object.
      */
     private Map fObjectMap = new HashMap();
+    
+    /**
+     * The cache of currently active objects.  This is also the synchronization
+     * lock for all cache operations.
+     */
+    private Set fActiveObjects = new HashSet(17);
+    
+    /**
+     * Whether the active objects set is stale due to Activity enablement 
+     * changes or object/binding additions.
+     */
+    private boolean fDirty = true;
 
     /**
      * Create an instance with the given id.
@@ -82,6 +99,16 @@ public class ObjectActivityManager {
     }
     
     /**
+     * Changes in activity status impact the cache of enabled objects.  Mark the 
+     * object cache as being dirty.
+     * 
+     * @see org.eclipse.ui.internal.roles.IActivityListener#activityChanged(org.eclipse.ui.internal.roles.ActivityEvent)
+     */
+    public void activityChanged(ActivityEvent event) {
+        invalidateCache();      
+    }    
+    
+    /**
      * Adds a binding between object-&gt;activity.  If the given activity is not
      * defined in the RoleManager registry then no action is taken.
      * TBD: should the binding be added if the object doesnt exist?
@@ -94,12 +121,18 @@ public class ObjectActivityManager {
             throw new IllegalArgumentException();
         }    
         
-        if (RoleManager.getInstance().getActivity(activityId) == null) {
+        Activity activity = RoleManager.getInstance().getActivity(activityId); 
+        if (activity == null) {
             return;
-        }
+        }               
             
         Set bindings = getActivityIdsFor(record, true);
-        bindings.add(activityId);
+        if (bindings.add(activityId)) {
+            // if we havn't already bound this activity do so and invalidate the
+            // cache
+            activity.addListener(this);
+            invalidateCache();
+        }
     }
 
     /**
@@ -113,7 +146,14 @@ public class ObjectActivityManager {
         if (record == null || o == null) {
             throw new IllegalArgumentException();
         }
-        fObjectMap.put(record, o);
+
+        Object oldObject = fObjectMap.put(record, o);
+
+        if (oldObject != o) {
+            // dirty the cache if the old entry is not the same as the new one.
+            // TBD: would .equals() be more appropriate?
+            invalidateCache();
+        }            
     }
     
     /**
@@ -140,35 +180,42 @@ public class ObjectActivityManager {
      * @return
      */
     public Set getActiveObjects() {
-        if (RoleManager.getInstance().isFiltering()) {
-            Set activeObjects = new HashSet(17);      
-            Set activeActivities = getActivityIds();
-            for (Iterator iter = fObjectMap.entrySet().iterator(); iter.hasNext();) {
-                Map.Entry entry = (Entry) iter.next();
-                ObjectContributionRecord record = (ObjectContributionRecord) entry.getKey();
-                Set activitiesForId = getActivityIdsFor(record, false);
-                if (activitiesForId == null) {
-                    activeObjects.add(entry.getValue());
-                }
-                else {
-                    Set activitiesForIdCopy = new HashSet(activitiesForId);                
-                    activitiesForIdCopy.retainAll(activeActivities);
-                    if (!activitiesForIdCopy.isEmpty()) {
-                        activeObjects.add(entry.getValue());
+        synchronized (fActiveObjects) {
+            if (RoleManager.getInstance().isFiltering()) {
+                if (fDirty) {
+                    fActiveObjects.clear();      
+                    Set activeActivities = getActivityIds();
+                    for (Iterator iter = fObjectMap.entrySet().iterator(); iter.hasNext();) {
+                        Map.Entry entry = (Entry) iter.next();
+                        ObjectContributionRecord record = (ObjectContributionRecord) entry.getKey();
+                        Set activitiesForId = getActivityIdsFor(record, false);
+                        if (activitiesForId == null) {
+                            fActiveObjects.add(entry.getValue());
+                        }
+                        else {
+                            Set activitiesForIdCopy = new HashSet(activitiesForId);                
+                            activitiesForIdCopy.retainAll(activeActivities);
+                            if (!activitiesForIdCopy.isEmpty()) {
+                                fActiveObjects.add(entry.getValue());
+                            }
+                        }
                     }
+                    
+                    fDirty = false;
                 }
+                return fActiveObjects;
             }
-            
-            return activeObjects;
-        }
-        else {
-            return new HashSet(fObjectMap.values());            
+            else {
+                // TBD: this logic can probably be moved into the caching logic.  
+                return new HashSet(fObjectMap.values());            
+            }
         }
     }
 
     /**
      * Return the list of enabled activities as provided by the RoleManager.
-     * 
+     * TBD: is it worth caching this info?  We can do it with the help of 
+     * activityChanged(ActivityEvent).
      * @return
      */
     private Set getActivityIds() {
@@ -218,6 +265,15 @@ public class ObjectActivityManager {
     Set getObjectIds() {
         return Collections.unmodifiableSet(fObjectMap.keySet());
     }
+
+    /**
+     * Mark the cache for recalculation.
+     */
+    private void invalidateCache() {
+        synchronized (fActiveObjects) {   
+            fDirty = true;
+        }
+    }
     
     /**
      * Remove all bindings that map to the given id.  This does not impact the 
@@ -232,9 +288,7 @@ public class ObjectActivityManager {
     }
     
 	/**
-     * Clear both the id-&gt;object and id-&gt;list&lt;activity&gt; mappings.
-     * 
-     * TBD : should remove be supported?
+     * Clear both the id-&gt;object and id-&gt;list&lt;activity&gt; mappings. 
      */
     public void removeAll() {
         removeAllObjectMap();
@@ -242,33 +296,48 @@ public class ObjectActivityManager {
     }
 
     /**
-     * Clear the id-&gt;list&lt;activity&gt; map. 
-     * 
-     * TBD : should remove be supported?
+     * Clear the id-&gt;list&lt;activity&gt; map and deregister our 
+     * ActivityListeners
      */
     public void removeAllActivityMap() {
-        fActivityMap.clear();        
+        for (Iterator i = fActivityMap.values().iterator(); i.hasNext(); ) {
+            String activityId = (String) i.next();
+            Activity activity = RoleManager.getInstance().getActivity(activityId);
+            if (activity != null) {
+                // clean up our listener
+                activity.removeListener(this);
+            }
+        }
+        fActivityMap.clear();
+        
+        // dirty the cache 
+        invalidateCache();     
     }
 
-    /**
+	/**
      * Clear the id-&gt;object map.
      * 
-     * TBD: should remove be supported?
      */
     public void removeAllObjectMap() {
-       fObjectMap.clear();      
+        fObjectMap.clear();
+
+        // dirty the cache    
+        invalidateCache();           
     }
     
     /**
      * Remove the object with the given id.  This does not impact the 
      * id-&gt;list&lt;activity&gt; mappings.
      * 
-     * TBD: should remove be supported?
-     * 
      * @param id the id of the object to remove.  
      */
     public void removeObject(String id) {
-        fObjectMap.remove(id);
+        synchronized (fActiveObjects) {
+            if (fActiveObjects.contains(fObjectMap.remove(id))) {
+                // the cache contained the given object so invalidate it
+                invalidateCache();          
+            }
+        }
     }
     
     /**

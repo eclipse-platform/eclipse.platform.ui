@@ -17,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -44,7 +45,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * RoleManager is the type that defines and filters based on role. */
-public class RoleManager {
+public class RoleManager implements IActivityListener {
 
 	private static RoleManager singleton;
 	private boolean filterRoles = true;
@@ -60,6 +61,23 @@ public class RoleManager {
 	private static String ROLES_FILE = "roles.xml"; //$NON-NLS-1$
 	private static String FILTERING_ENABLED = "filterRoles"; //$NON-NLS-1$
 
+	private RecentActivityManager recentActivities;
+
+	/**
+	 * Set of IActivityManagerListeners */
+	private Set listeners = new HashSet();
+
+	/**
+	 * Utility for firing off batched ActivityEvents in an
+	 * ActivityManagerEvent. Managed by ThreadLocal in order to make the
+	 * calculator threadsafe.
+	 */
+	private final ThreadLocal deltaCalcs = new ThreadLocal() {
+		protected synchronized Object initialValue() {
+			return new ActivityDeltaCalculator(RoleManager.this);
+		}
+	};
+
 	public static RoleManager getInstance() {
 		if (singleton == null)
 			singleton = new RoleManager();
@@ -71,7 +89,75 @@ public class RoleManager {
 	public static void shutdown() {
 		if (singleton == null)
 			return;
-		WorkbenchPlugin.getPluginWorkspace().removeResourceChangeListener(singleton.listener);
+
+		if (singleton.listener != null) {
+			WorkbenchPlugin.getPluginWorkspace().removeResourceChangeListener(
+				singleton.listener);
+		}
+
+		if (singleton.getRecentActivityManager() != null) {
+			singleton.getRecentActivityManager().shutdown();
+		}
+	}
+
+	/**
+	 * @return the recent activities manager */
+	public RecentActivityManager getRecentActivityManager() {
+		return recentActivities;
+	}
+
+	/**
+	 * 
+	 * @param listener */
+	public void addActivityManagerListener(IActivityManagerListener listener) {
+		synchronized (listeners) {
+			listeners.add(listener);
+		}
+	}
+
+	/**
+	 * Fire the given event to all listeners.
+	 * 
+	 * @param event
+	 */
+	void fireActivityManagerEvent(ActivityManagerEvent event) {
+		if (event == null) {
+			return;
+		}
+		Set listenersCopy;
+		synchronized (listeners) {
+			listenersCopy = new HashSet(listeners);
+		}
+
+		for (Iterator i = listenersCopy.iterator(); i.hasNext();) {
+			IActivityManagerListener listener =
+				(IActivityManagerListener) i.next();
+			listener.activityManagerChanged(event);
+		}
+	}
+
+	/**
+	 * 
+	 * @param listener */
+	public void removeActivityManagerListener(IActivityManagerListener listener) {
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
+	}
+
+	/**
+	 * Fired whenever one of it's child Activities changes its enablement.
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.roles.IActivityListener#activityChanged(org.eclipse.ui.internal.roles.ActivityEvent)
+	 */
+	public void activityChanged(ActivityEvent event) {
+		ActivityDeltaCalculator deltaCalculator = getDeltaCalculator();
+		boolean newSession = deltaCalculator.startDeltaSession();
+		deltaCalculator.addActivity(event.getActivity());
+		if (newSession) {
+			fireActivityManagerEvent(deltaCalculator.endDeltaSession());
+		}
 	}
 
 	/**
@@ -83,12 +169,16 @@ public class RoleManager {
 	public void applyPatternBindings(ObjectActivityManager manager) {
 		Set keys = manager.getObjectIds();
 		for (Iterator i = keys.iterator(); i.hasNext();) {
-			ObjectContributionRecord record = (ObjectContributionRecord) i.next();
+			ObjectContributionRecord record =
+				(ObjectContributionRecord) i.next();
 			String objectKey = record.toString();
-			for (Iterator j = patternBindings.entrySet().iterator(); j.hasNext();) {
+			for (Iterator j = patternBindings.entrySet().iterator();
+				j.hasNext();
+				) {
 				Map.Entry patternEntry = (Map.Entry) j.next();
 				if (objectKey.matches((String) patternEntry.getKey())) {
-					Collection activityIds = (Collection) patternEntry.getValue();
+					Collection activityIds =
+						(Collection) patternEntry.getValue();
 					for (Iterator k = activityIds.iterator(); k.hasNext();) {
 						String activityId = (String) k.next();
 						if (getActivity(activityId) != null) {
@@ -108,11 +198,22 @@ public class RoleManager {
 	 * @return boolean true if successful
 	 */
 	private boolean readRoles() {
-		IPlatformConfiguration config = BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration config =
+			BootLoader.getCurrentPlatformConfiguration();
 		String id = config.getPrimaryFeatureIdentifier();
-		IPlatformConfiguration.IFeatureEntry entry = config.findConfiguredFeatureEntry(id);
+		if (id == null)
+			return false;
+		IPlatformConfiguration.IFeatureEntry entry =
+			config.findConfiguredFeatureEntry(id);
 		String plugInId = entry.getFeaturePluginIdentifier();
-		IPluginDescriptor desc = Platform.getPluginRegistry().getPluginDescriptor(plugInId);
+		if (plugInId == null)
+			return false;
+
+		IPluginDescriptor desc =
+			Platform.getPluginRegistry().getPluginDescriptor(plugInId);
+		if (desc == null)
+			return false;
+
 		URL location = desc.getInstallURL();
 		try {
 			location = new URL(location, ROLES_FILE);
@@ -129,8 +230,10 @@ public class RoleManager {
 			}
 			FileReader reader = new FileReader(xmlDefinition);
 			XMLMemento memento = XMLMemento.createReadRoot(reader);
-			Activity[] activityArray = RoleParser.readActivityDefinitions(memento);
+			Activity[] activityArray =
+				RoleParser.readActivityDefinitions(memento);
 			for (int i = 0; i < activityArray.length; i++) {
+				activityArray[i].addListener(this);
 				activities.put(activityArray[i].getId(), activityArray[i]);
 			}
 
@@ -167,17 +270,20 @@ public class RoleManager {
 
 	private RoleManager() {
 		if (readRoles()) {
+			// recent activities expire after an hour - create this irre
+			recentActivities = new RecentActivityManager(this, 3600000L);
 			loadEnabledStates();
 			listener = getChangeListener();
-			WorkbenchPlugin.getPluginWorkspace().addResourceChangeListener(listener);
+			WorkbenchPlugin.getPluginWorkspace().addResourceChangeListener(
+				listener);
 		}
-
 	}
 
 	/**
 	 * Loads the enabled states from the preference store. */
 	void loadEnabledStates() {
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store =
+			WorkbenchPlugin.getDefault().getPreferenceStore();
 
 		//Do not set it if the store is not set so as to
 		//allow for switching off and on of roles
@@ -194,7 +300,8 @@ public class RoleManager {
 	/**
 	 * Save the enabled states in he preference store. */
 	void saveEnabledStates() {
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store =
+			WorkbenchPlugin.getDefault().getPreferenceStore();
 		store.setValue(PREFIX + FILTERING_ENABLED, isFiltering());
 
 		Iterator values = activities.values().iterator();
@@ -232,9 +339,11 @@ public class RoleManager {
 		while (bindingsPatterns.hasMoreElements()) {
 			String next = (String) bindingsPatterns.nextElement();
 			if (id.matches(next)) {
-				Iterator activityIds = ((Collection) patternBindings.get(next)).iterator();
+				Iterator activityIds =
+					((Collection) patternBindings.get(next)).iterator();
 				while (activityIds.hasNext()) {
-					Activity activity = getActivity((String) activityIds.next());
+					Activity activity =
+						getActivity((String) activityIds.next());
 					if (activity != null)
 						return activity.isEnabled();
 				}
@@ -273,6 +382,26 @@ public class RoleManager {
 	}
 
 	/**
+	 * Set the enablement (in a batch) of the given activities. By the time the
+	 * method has returned there will have been an ActivityManagerEvent fired
+	 * that describes the sum of the changes.
+	 * 
+	 * @param activities
+	 * @param enabled
+	 */
+	public void setEnabled(Activity[] activities, boolean enabled) {
+		ActivityDeltaCalculator deltaCalculator = getDeltaCalculator();
+		boolean newSession = deltaCalculator.startDeltaSession();
+		for (int i = 0; i < activities.length; i++) {
+			activities[i].setEnabled(enabled);
+		}
+
+		if (newSession) {
+			fireActivityManagerEvent(deltaCalculator.endDeltaSession());
+		}
+	}
+
+	/**
 	 * Return the activity with id equal to activityId. Return <code>null</code>
 	 * if not found.
 	 * 
@@ -300,7 +429,8 @@ public class RoleManager {
 		while (patternIterator.hasNext()) {
 			String next = (String) patternIterator.next();
 			if (id.matches(next)) {
-				Iterator mappingIds = ((Collection) patternBindings.get(next)).iterator();
+				Iterator mappingIds =
+					((Collection) patternBindings.get(next)).iterator();
 				while (mappingIds.hasNext()) {
 					String mappingId = (String) mappingIds.next();
 					Activity activity = getActivity(mappingId);
@@ -310,13 +440,18 @@ public class RoleManager {
 
 			}
 		}
-
 	}
 
 	/**
 	 * @return the set of Activity objects. */
 	Collection getActivities() {
 		return activities.values();
+	}
+
+	/**
+	 * @return a delta calculator usable by the calling thread. */
+	private ActivityDeltaCalculator getDeltaCalculator() {
+		return (ActivityDeltaCalculator) deltaCalcs.get();
 	}
 
 	private IResourceChangeListener getChangeListener() {
@@ -328,18 +463,25 @@ public class RoleManager {
 			public void resourceChanged(IResourceChangeEvent event) {
 
 				IResourceDelta mainDelta = event.getDelta();
+
+				if (mainDelta == null)
+					return;
 				//Has the root changed?
 				if (mainDelta.getKind() == IResourceDelta.CHANGED
 					&& mainDelta.getResource().getType() == IResource.ROOT) {
 
 					try {
-						IResourceDelta[] children = mainDelta.getAffectedChildren();
+						IResourceDelta[] children =
+							mainDelta.getAffectedChildren();
 						for (int i = 0; i < children.length; i++) {
 							IResourceDelta delta = children[i];
-							if (delta.getResource().getType() == IResource.PROJECT
+							if (delta.getResource().getType()
+								== IResource.PROJECT
 								&& delta.getKind() == IResourceDelta.ADDED) {
-								IProject project = (IProject) delta.getResource();
-								String[] ids = project.getDescription().getNatureIds();
+								IProject project =
+									(IProject) delta.getResource();
+								String[] ids =
+									project.getDescription().getNatureIds();
 								for (int j = 0; j < ids.length; j++) {
 									enableActivities(ids[j]);
 								}
