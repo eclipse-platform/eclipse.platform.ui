@@ -141,6 +141,7 @@ public class WebBookmarksDialog extends Dialog {
 		});
 
 		createButtons(container);
+		Dialog.applyDialogFont(container);
 		return container;
 	}
 	
