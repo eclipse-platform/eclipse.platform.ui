@@ -42,7 +42,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 * that. But then if they try and call #setValue using the same key it will throw
 	 * an exception. We may want to revisit this behaviour in the future.
 	 * 
-	 * @see org.eclipse.core.resources.IPathVariableManager#getValue
+	 * @see org.eclipse.core.resources.IPathVariableManager#getValue(String)
 	 */
 	public IPath getValue(String varName) {
 		String key = getKeyForName(varName);
@@ -51,7 +51,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	}
 
 	/**
-	 * @see org.eclipse.core.resources.IPathVariableManager#setValue
+	 * @see org.eclipse.core.resources.IPathVariableManager#setValue(String, IPath)
 	 */
 	public void setValue(String varName, IPath newValue) throws CoreException {
 		checkIsValidName(varName);
@@ -174,14 +174,14 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	}
 
 	/**
-	 * @see org.eclipse.core.resources.IPathVariableManager#isDefined
+	 * @see org.eclipse.core.resources.IPathVariableManager#isDefined(String)
 	 */
 	public boolean isDefined(String varName) {
 		return getValue(varName) != null;
 	}
 
 	/**
-	 * @see org.eclipse.core.resources.IPathVariableManager#validateName
+	 * @see org.eclipse.core.resources.IPathVariableManager#validateName(String)
 	 */
 	public IStatus validateName(String name) {
 		String message = null;
@@ -206,7 +206,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		return Status.OK_STATUS;
 	}
 	/**
-	 * @see IPathVariableManager#validateValue
+	 * @see IPathVariableManager#validateValue(IPath)
 	 */
 	public IStatus validateValue(IPath value) {
 		if (value != null && (!value.isValidPath(value.toString()) || !value.isAbsolute())) {
@@ -225,7 +225,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 			throw new CoreException(status);
 	}
 	/**
-	 * @see org.eclipse.core.internal.resources.IManager#startup
+	 * @see org.eclipse.core.internal.resources.IManager#startup(IProgressMonitor)
 	 */
 	public void startup(IProgressMonitor monitor) throws CoreException {
 		// since we are accessing the preference store directly, we don't
@@ -233,7 +233,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	}
 
 	/**
-	 * @see org.eclipse.core.internal.resources.IManager#shutdown
+	 * @see org.eclipse.core.internal.resources.IManager#shutdown(IProgressMonitor)
 	 */
 	public void shutdown(IProgressMonitor monitor) throws CoreException {
 		// The preferences for this plug-in are saved in the Plugin.shutdown
