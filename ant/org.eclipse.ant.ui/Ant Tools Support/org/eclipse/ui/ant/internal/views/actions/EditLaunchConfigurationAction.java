@@ -108,8 +108,8 @@ public class EditLaunchConfigurationAction extends Action implements IUpdate {
 					}
 				}
 				if (data instanceof ProjectNode) {
-					ProjectNode projectNode= (ProjectNode) data;
-					if(projectNode.isErrorNode()) {
+					ProjectNode dataProjectNode= (ProjectNode) data;
+					if(dataProjectNode.isErrorNode()) {
 						enabled= false;
 						break;
 					}

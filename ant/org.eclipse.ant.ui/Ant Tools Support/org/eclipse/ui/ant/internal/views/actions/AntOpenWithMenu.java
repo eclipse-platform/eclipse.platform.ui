@@ -165,15 +165,15 @@ public class AntOpenWithMenu extends ContributionItem {
 	 * Fills the menu with perspective items.
 	 */
 	public void fill(Menu menu, int index) {
-		IFile file = getFileResource();
-		if (file == null) {
+		IFile fileResource = getFileResource();
+		if (fileResource == null) {
 			return;
 		}
 
 		IEditorDescriptor defaultEditor = registry.getDefaultEditor(); // should not be null
-		IEditorDescriptor preferredEditor = registry.getDefaultEditor(file); // may be null
+		IEditorDescriptor preferredEditor = registry.getDefaultEditor(fileResource); // may be null
 		
-		Object[] editors= registry.getEditors(file);
+		Object[] editors= registry.getEditors(fileResource);
 		Arrays.sort(editors, new Comparator() {
 			/**
 			 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
@@ -224,7 +224,7 @@ public class AntOpenWithMenu extends ContributionItem {
 		// Add system editor.
 		IEditorDescriptor descriptor = registry.findEditor(SYSTEM_EDITOR_ID);
 		createMenuItem(menu, descriptor, preferredEditor);
-		createDefaultMenuItem(menu, file);
+		createDefaultMenuItem(menu, fileResource);
 	}
 
 	/**
@@ -253,15 +253,15 @@ public class AntOpenWithMenu extends ContributionItem {
 	 * @param editor the editor descriptor, or null for the system editor
 	 */
 	private void openEditor(IEditorDescriptor editor) {
-		IFile file = getFileResource();
+		IFile fileResource = getFileResource();
 		try {
 			if (editor == null) {
-				page.openSystemEditor(file);
+				page.openSystemEditor(fileResource);
 			} else {
-				page.openEditor(file, editor.getId());
+				page.openEditor(fileResource, editor.getId());
 			}
 		} catch (PartInitException e) {
-			ExternalToolsPlugin.getDefault().log(MessageFormat.format(AntViewActionMessages.getString("AntViewOpenWithMenu.Editor_failed"), new String[]{file.getLocation().toOSString()}), e); //$NON-NLS-1$
+			ExternalToolsPlugin.getDefault().log(MessageFormat.format(AntViewActionMessages.getString("AntViewOpenWithMenu.Editor_failed"), new String[]{fileResource.getLocation().toOSString()}), e); //$NON-NLS-1$
 		}
 	}
 
@@ -272,9 +272,9 @@ public class AntOpenWithMenu extends ContributionItem {
 	 * @param file the file being edited
 	 * @param registry the editor registry
 	 */
-	private void createDefaultMenuItem(Menu menu, final IFile file) {
+	private void createDefaultMenuItem(Menu menu, final IFile fileResource) {
 		final MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
-		menuItem.setSelection(registry.getDefaultEditor(file) == null);
+		menuItem.setSelection(registry.getDefaultEditor(fileResource) == null);
 		menuItem.setText(AntViewActionMessages.getString("AntViewOpenWithMenu.Default_Editor_4")); //$NON-NLS-1$
 
 		Listener listener = new Listener() {
@@ -282,11 +282,11 @@ public class AntOpenWithMenu extends ContributionItem {
 				switch (event.type) {
 					case SWT.Selection :
 						if (menuItem.getSelection()) {
-							registry.setDefaultEditor(file, null);
+							registry.setDefaultEditor(fileResource, null);
 							try {
-								page.openEditor(file);
+								page.openEditor(fileResource);
 							} catch (PartInitException e) {
-								ExternalToolsPlugin.getDefault().log(MessageFormat.format(AntViewActionMessages.getString("AntViewOpenWithMenu.Editor_failed"), new String[]{file.getLocation().toOSString()}), e); //$NON-NLS-1$
+								ExternalToolsPlugin.getDefault().log(MessageFormat.format(AntViewActionMessages.getString("AntViewOpenWithMenu.Editor_failed"), new String[]{fileResource.getLocation().toOSString()}), e); //$NON-NLS-1$
 							}
 						}
 						break;
