@@ -47,6 +47,7 @@ import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
+	protected final static String FIRST_EDIT = "editedByExternalToolsMainTab"; //$NON-NLS-1$
 
 	protected Text locationField;
 	protected Text workDirectoryField;
@@ -61,6 +62,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	protected SelectionAdapter selectionAdapter;
 	
 	protected boolean fInitializing= false;
+	protected boolean firstEdit = false;
 	
 	/**
 	 * A listener to update for text modification and widget selection.
@@ -266,6 +268,11 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		try {
+			firstEdit = configuration.getAttribute(FIRST_EDIT, true);
+		} catch (CoreException e) {
+			// assume false...
+		}
 		fInitializing= true;
 		updateLocation(configuration);
 		updateWorkingDirectory(configuration);
@@ -328,6 +335,10 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		} else {
 			configuration.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments);
 		}
+		
+		if (firstEdit) {
+			configuration.setAttribute(FIRST_EDIT, false);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -368,13 +379,17 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		
 		
 		File file = new File(location);
-		if (!file.exists() && isDirty()) { // The file does not exist.
-			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_location_does_not_exist_19")); //$NON-NLS-1$
-			return false;
+		if (!file.exists()) { // The file does not exist.
+			if (!firstEdit) {
+				setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_location_does_not_exist_19")); //$NON-NLS-1$
+				return false;
+			}
 		}
-		if (!file.isFile() && isDirty()) {
-			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_location_specified_is_not_a_file_20")); //$NON-NLS-1$
-			return false;
+		if (!file.isFile()) {
+			if (!firstEdit) {
+				setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_location_specified_is_not_a_file_20")); //$NON-NLS-1$
+				return false;
+			}
 		}
 		return true;
 	}
