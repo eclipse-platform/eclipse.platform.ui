@@ -65,6 +65,7 @@ public class HelpApplication implements IPlatformRunnable
 	 */
 	private Boolean displayContext(String contextId, Integer X, Integer Y)
 	{
+		//System.out.println("display Context in facade " + contextId + X + Y);
 		if (helpSupport == null)
 			initializeHelpSupport();
 
@@ -135,6 +136,7 @@ public class HelpApplication implements IPlatformRunnable
 			return null;
 			
 		String command = (String) argsArray[0];
+
 		if ("openConnection".equals(command))
 		{
 			if ((argsArray.length == 2) && (argsArray[1] instanceof String))
@@ -148,7 +150,7 @@ public class HelpApplication implements IPlatformRunnable
 		else if ("displayContext".equals(command))
 		{
 			if ((argsArray.length== 4)	)
-				return displayContext((String) argsArray[1], (Integer) argsArray[2], (Integer) argsArray[4]);
+				return displayContext((String) argsArray[1], (Integer) argsArray[2], (Integer) argsArray[3]);
 		}
 		return null;
 	}
