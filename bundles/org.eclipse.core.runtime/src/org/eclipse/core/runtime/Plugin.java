@@ -773,7 +773,7 @@ public void shutdown() throws CoreException {
  * strongly recommended that this method avoid synchronized blocks or other thread locking mechanisms,
  * as this would lead to deadlock vulnerability.
  * </p>
- * <b>Cliens must never explicitly call this method.</b>
+ * <b>Clients must never explicitly call this method.</b>
  *
  * @exception CoreException if this plug-in did not start up properly
  */
