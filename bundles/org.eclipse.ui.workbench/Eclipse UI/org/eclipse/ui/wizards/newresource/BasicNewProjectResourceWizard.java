@@ -359,7 +359,7 @@ public class BasicNewProjectResourceWizard
 		IPerspectiveDescriptor finalPersp = reg.findPerspectiveWithId(finalPerspId);
 		if (finalPersp == null) {
 			//Enable the role if required.
-			if (RoleManager.getInstance().filterRoles) {
+			if (RoleManager.getInstance().isFiltering()) {
 				RoleManager.getInstance().enableRoles(finalPerspId);
 				finalPersp = reg.findPerspectiveWithId(finalPerspId);
 			}

@@ -216,7 +216,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
 		RoleManager manager = RoleManager.getInstance();
 		for (int i = 0; i < ids.size(); i++) {
 			String perspID = (String) ids.get(i);
-			if(manager.filterRoles && !manager.isEnabledId(perspID))
+			if(manager.isFiltering() && !manager.isEnabledId(perspID))
 				continue;
 			IPerspectiveDescriptor desc = reg.findPerspectiveWithId(perspID);
 			if (desc != null && !list.contains(desc))

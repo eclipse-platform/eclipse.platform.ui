@@ -223,7 +223,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 	 * @return List
 	 */
 	private List filteredEditors() {
-		if(!RoleManager.getInstance().filterRoles)
+		if(!RoleManager.getInstance().isFiltering())
 			return editors;
 			
 		ArrayList filtered = new ArrayList();

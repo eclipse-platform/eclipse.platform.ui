@@ -10,8 +10,23 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.roles;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -21,56 +36,77 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class RoleManager {
 
 	private static RoleManager singleton;
-	public boolean filterRoles = false;
+	private boolean filterRoles = true;
 
 	private Role[] roles;
 
-	//The patterns for the mappings
-
-	public static String JDT_PATTERN = "org.eclipse.jdt.*";
-	public static String DEBUG_PATTERN = "org.eclipse.debug.*";
-	public static String PDE_PATTERN = "org.eclipse.pde.*";
-	public static String TEAM_PATTERN = "org.eclipse.team.*";
-	public static String ANT_PATTERN = "org.eclipse.ant.*";
-	public static String EXTERNAL_TOOLS_PATTERN = "org.eclipse.ui.externaltools";
-
 	// Prefix for all role preferences
 	private static String PREFIX = "UIRoles."; //$NON-NLS-1$
+	private static String ROLES_FILE = "roles.xml"; //$NON-NLS-1$
 
 	public static RoleManager getInstance() {
 		if (singleton == null)
 			singleton = new RoleManager();
+
 		return singleton;
 
 	}
 
-	private RoleManager() {
-		createDefaultRoles();
+	/**
+	 * Read the roles from the primary feature. If there is no
+	 * roles file then disable filter roles and leave. Otherwise
+	 * read the contents of the file and define the roles 
+	 * for the workbench.
+	 * @return boolean true if successful
+	 */
+	private boolean readRoles() {
+		IPlatformConfiguration config = BootLoader.getCurrentPlatformConfiguration();
+		String id = config.getPrimaryFeatureIdentifier();
+		IPlatformConfiguration.IFeatureEntry entry = config.findConfiguredFeatureEntry(id);
+		String plugInId = entry.getFeaturePluginIdentifier();
+		IPluginDescriptor desc = Platform.getPluginRegistry().getPluginDescriptor(plugInId);
+		URL location = desc.getInstallURL();
+		try {
+			location = new URL(location, ROLES_FILE);
+		} catch (MalformedURLException e) {
+			reportError(e);
+			return false;
+		}
+		try {
+			location = Platform.asLocalURL(location);
+			FileReader reader = new FileReader(location.getFile());
+			XMLMemento memento = XMLMemento.createReadRoot(reader);
+			roles = RoleParser.readRoleDefinitions(memento);
+
+		} catch (IOException e) {
+			reportError(e);
+			return false;
+		} catch (WorkbenchException e) {
+			reportError(e);
+			return false;
+		}
+		return true;
 	}
 
 	/**
-	 * Create the hardcoded roles for the reciever.
-	 * NOTE: These will be replaced by a proper sdk based
-	 * extension system.
-	 *
+	 * Report the Exception to the log and turn off the filtering.
+	 * @param e
 	 */
-	private void createDefaultRoles() {
-		roles = new Role[4];
-		roles[0] =
-			new Role(
-				"Java Role",
-				"org.eclipse.roles.javaRole",
-				new String[] { JDT_PATTERN, DEBUG_PATTERN });
-		roles[1] = new Role("PDE Role", "org.eclipse.roles.pdeRole", new String[] { PDE_PATTERN });
-		roles[2] =
-			new Role("Team Role", "org.eclipse.roles.teamRole", new String[] { TEAM_PATTERN });
-		roles[3] =
-			new Role(
-				"External Tools Role",
-				"org.eclipse.roles.externalToolsRole",
-				new String[] { EXTERNAL_TOOLS_PATTERN, ANT_PATTERN });
+	private void reportError(Exception e) {
+		IStatus error =
+			new Status(
+				IStatus.ERROR,
+				PlatformUI.PLUGIN_ID,
+				IStatus.ERROR,
+				e.getLocalizedMessage(),
+				e);
+		WorkbenchPlugin.getDefault().getLog().log(error);
+		filterRoles = false;
+	}
 
-		loadEnabledStates();
+	private RoleManager() {
+		if (readRoles())
+			loadEnabledStates();
 	}
 
 	/**
@@ -141,6 +177,15 @@ public class RoleManager {
 	 */
 	public Role[] getRoles() {
 		return roles;
+	}
+
+	/**
+	 * Return whether or not the filtering is currently
+	 * enabled.
+	 * @return
+	 */
+	public boolean isFiltering() {
+		return filterRoles;
 	}
 
 }
