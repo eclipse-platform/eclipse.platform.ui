@@ -206,14 +206,17 @@ public class PerspectiveRegistry extends RegistryManager implements IPerspective
 	 */
 	public void deletePerspective(IPerspectiveDescriptor in) {
 		PerspectiveDescriptor desc = (PerspectiveDescriptor) in;
-		perspToRemove.add(desc.getId());
-		remove(desc.getPluginId());
-		desc.deleteCustomDefinition();
-		verifyDefaultPerspective();
-		cleanRegistry();
+		// Don't delete predefined perspectives
+		if (!desc.isPredefined()) {
+			perspToRemove.add(desc.getId());
+			remove(desc.getPluginId(), desc);
+			desc.deleteCustomDefinition();
+			verifyDefaultPerspective();
+			cleanRegistry();
+		}
 	}
 	/**
-	 * Removes the custom definition of a perspective from the preference sotre
+	 * Removes the custom definition of a perspective from the preference store
 	 * @param perspectiveDescriptor
 	 */
 	/* package */

@@ -181,6 +181,17 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 			element.changeState(REGISTRY_CACHE_STATE_DELETED);
 	}
 	
+	public void remove(String pluginId, Object object) {
+		if (pluginId == null)
+			pluginId = INTERNAL_REGISTRY_ADDITION;
+		RegistryElement element = (RegistryElement)cache.get(pluginId);
+		if (element != null) {
+			// Find the registry element that contains this object and
+			// remove only that one.
+			ArrayList realObjects = element.getRealObjects();
+			realObjects.remove(object);
+		}
+	}
 	/**
 	 * Actually go through and remove any elements from the registry that
 	 * are flagged for removal.  This assumes that any processing required
