@@ -167,6 +167,7 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 								EclipseSynchronizer.getInstance().prepareForMoveDelete(destination, Policy.subMonitorFor(monitor, 20));
 							}
 							tree.standardMoveFile(source, destination, updateFlags, Policy.subMonitorFor(monitor, 30));
+							EclipseSynchronizer.getInstance().fileMoved(destination);
 						}
 					} finally {
 						monitor.done();
@@ -265,7 +266,7 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 	 * @param file
 	 * @return boolean
 	 */
-	private boolean checkOutFiles(IResourceTree tree, IFile[] files, IProgressMonitor monitor) {
+	/* private */ boolean checkOutFiles(IResourceTree tree, IFile[] files, IProgressMonitor monitor) {
 		// Ensure that the file is "checked out" (i.e. not read-only
 		IFileModificationValidator validator = getFileModificationValidator(files);
 		if (validator instanceof ICVSFileModificationValidator) {

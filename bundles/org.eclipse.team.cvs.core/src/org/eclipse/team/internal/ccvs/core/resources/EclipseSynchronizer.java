@@ -1540,5 +1540,16 @@ public class EclipseSynchronizer implements IFlushOperation {
 			if (rule != null) endBatching(rule, null);
 		}
 	}
+
+	/**
+	 * React to a file that was just moved by the move/delete hook.
+	 * @param file the file that was moved (at its new location)
+	 */
+	public void fileMoved(IFile file) throws CVSException {
+		if (!isWithinActiveOperationScope(file)) {
+			sessionPropertyCache.purgeCache(file.getParent(), false /*don't flush children*/);
+		}
+		
+	}
 	
 }
