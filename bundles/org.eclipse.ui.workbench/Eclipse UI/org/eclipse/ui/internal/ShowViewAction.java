@@ -63,7 +63,7 @@ public class ShowViewAction extends Action implements IPluginContribution {
 	 */
 	public boolean fromPlugin() {
 		return desc instanceof IPluginContribution
-			&& ((IPluginContribution) desc).fromPlugin();
+			&& ((IPluginContribution) desc).getPluginId() != null;
 	}
 
 	/*

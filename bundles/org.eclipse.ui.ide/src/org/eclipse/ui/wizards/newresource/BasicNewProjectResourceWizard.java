@@ -386,7 +386,7 @@ public static void updatePerspective(IConfigurationElement configElement) {
     // @issue IPluginContribution and WorkbenchActivityHelper are internal
 	if (finalPersp != null && finalPersp instanceof IPluginContribution) {
         IPluginContribution contribution = (IPluginContribution) finalPersp;
-        if (contribution.fromPlugin()) {            
+        if (contribution.getPluginId() != null) {            
             IIdentifier identifier = PlatformUI
                 .getWorkbench()
                 .getActivityManager()

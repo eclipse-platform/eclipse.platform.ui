@@ -36,7 +36,7 @@ public final class WorkbenchActivityHelper {
 	 * @return the unified id.
 	 */
 	public static final String createUnifiedId(IPluginContribution contribution) {
-		if (contribution.fromPlugin())
+		if (contribution.getPluginId() != null)
 			return contribution.getPluginId() + '/' + contribution.getLocalId();
 		return contribution.getLocalId();
 	}
@@ -55,7 +55,7 @@ public final class WorkbenchActivityHelper {
 	public static final boolean filterItem(Object object) {
 		if (object instanceof IPluginContribution) {
 			IPluginContribution contribution = (IPluginContribution) object;
-			if (contribution.fromPlugin()) {
+			if (contribution.getPluginId() != null) {
 				IIdentifier identifier =
 					PlatformUI
 						.getWorkbench()

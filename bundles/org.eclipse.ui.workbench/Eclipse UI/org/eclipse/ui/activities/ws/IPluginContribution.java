@@ -23,11 +23,6 @@ package org.eclipse.ui.activities.ws;
 public interface IPluginContribution {
 
 	/**
-	 * @return whether or not this contribution originated from a plugin.
-	 */
-	public boolean fromPlugin();
-
-	/**
 	 * @return the local id of the contribution. Must not be <code>null</code>.
 	 *         This should correspond to the extension-specific identifier for
 	 *         a given contribution.
@@ -35,8 +30,8 @@ public interface IPluginContribution {
 	public String getLocalId();
 
 	/**
-	 * @return the id of the originating plugin. Must not be <code>null</code>
-	 *         if <code>fromPlugin</code> returns <code>true</code>.
+	 * @return the id of the originating plugin. Can be <code>null</code> if
+	 *         this contribution did not originate from a plugin.
 	 */
 	public String getPluginId();
 }
