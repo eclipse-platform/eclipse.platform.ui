@@ -31,6 +31,7 @@ import org.eclipse.ui.internal.*;
  * </p><p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * @deprecated  See IWorkbench.showPerspective methods.
  */
 public class OpenPerspectiveMenu extends PerspectiveMenu {
 	private IAdaptable pageInput;

@@ -13,68 +13,97 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
 
 /**
- * A dynamic menu item which supports to switch to other Windows.
+ * A dynamic menu item to switch to other opened workbench windows.
  */
 public class SwitchToWindowMenu extends ContributionItem {
-	private WorkbenchWindow fWindow;
-	private boolean showSeparator;	
-/**
- * Create a SwitchToMenuItem.
- * The argument window is used to retrieve the WindowManager
- * which maintains the list of all browsers.
- */
-public SwitchToWindowMenu(WorkbenchWindow window, boolean showSeparator) {
-	super("Switch To Window");//$NON-NLS-1$
-	fWindow = window;
-	this.showSeparator = showSeparator;
-}
-/**
- * Fills the given menu with
- * menu items for all windows.
- */
-public void fill(Menu menu, int index) {
-	// Get workbench windows.
-	Workbench workbench = (Workbench) fWindow.getWorkbench();
-	IWorkbenchWindow [] array = workbench.getWorkbenchWindows();
-
-	// If only 1 window return.
-	if (array.length <= 1)
-		return;
-
-	// Add separator.
-	if (showSeparator) {
-		new MenuItem(menu, SWT.SEPARATOR, index);
-		++ index;
+	private static final int MAX_TEXT_LENGTH = 40;
+	
+	private WorkbenchWindow workbenchWindow;
+	private boolean showSeparator;
+	
+	/**
+	 * Creates a new instance of this class.
+	 * 
+	 * @param window the workbench window this action applies to
+	 * @param showSeparator whether to add a separator in the menu
+	 */
+	public SwitchToWindowMenu(WorkbenchWindow window, boolean showSeparator) {
+		super("Switch To Window"); //$NON-NLS-1$
+		this.workbenchWindow = window;
+		this.showSeparator = showSeparator;
 	}
+	
+	/**
+	 * Returns the text for a window. This may be truncated to fit
+	 * within the MAX_TEXT_LENGTH.
+	 */
+	private String calcText(int number, IWorkbenchWindow window) {
+		String suffix = window.getShell().getText();
+		if (suffix == null)
+			return null;
+			
+		StringBuffer sb = new StringBuffer();
+		if (number < 10)
+			sb.append('&');
+		sb.append(number);
+		sb.append(' ');
+		if (suffix.length() <= MAX_TEXT_LENGTH) {
+			sb.append(suffix);
+		} else {
+			sb.append(suffix.substring(0, MAX_TEXT_LENGTH));
+			sb.append("..."); //$NON-NLS-1$
+		}
+		return sb.toString();
+	}
+	
+	/**
+	 * Fills the given menu with menu items for all
+	 * opened workbench windows.
+	 */
+	public void fill(Menu menu, int index) {
+		// Get workbench windows.
+		IWorkbench workbench = workbenchWindow.getWorkbench();
+		IWorkbenchWindow[] array = workbench.getWorkbenchWindows();
+		if (array.length < 1)
+			return;
+			
+		// Add separator.
+		if (showSeparator) {
+			new MenuItem(menu, SWT.SEPARATOR, index);
+			++index;
+		}
 
-	// Add one item for each window.
-	for (int i = 0; i < array.length; i++) {
-		final IWorkbenchWindow window = array[i];
-		// can encounter disposed shells if this update is in response to a shell closing
-		if (!window.getShell().isDisposed()) {
-			String name = window.getShell().getText();
-			if (name != null) {
-				MenuItem mi = new MenuItem(menu, SWT.RADIO, index);
-				++ index;
-				mi.setText(name);
-				mi.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						Shell windowShell = window.getShell();
-						if(windowShell.getMinimized())
-							windowShell.setMinimized(false);
-						windowShell.forceFocus();
-						windowShell.moveAbove(null);
-					}
-				});
-				mi.setSelection(window == fWindow);
+		// Add one item for each window.
+		int count = 1;
+		for (int i = 0; i < array.length; i++) {
+			final IWorkbenchWindow window = array[i];
+			// can encounter disposed shells if this update is in response to a shell closing
+			if (!window.getShell().isDisposed()) {
+				String name = calcText(count, window);
+				if (name != null) {
+					MenuItem mi = new MenuItem(menu, SWT.RADIO, index);
+					index++;
+					count++;
+					mi.setText(name);
+					mi.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent e) {
+							Shell windowShell = window.getShell();
+							if (windowShell.getMinimized())
+								windowShell.setMinimized(false);
+							windowShell.forceFocus();
+							windowShell.moveAbove(null);
+						}
+					});
+					mi.setSelection(window == workbenchWindow);
+				}
 			}
 		}
 	}
-}
-/**
- * Overridden to always return true and force dynamic menu building.
- */
-public boolean isDynamic() {
-	return true;
-}
+	
+	/**
+	 * Overridden to always return true and force dynamic menu building.
+	 */
+	public boolean isDynamic() {
+		return true;
+	}
 }

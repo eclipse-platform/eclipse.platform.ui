@@ -34,6 +34,7 @@ import java.util.*;
  * </p><p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * @deprecated See IWorkbench.showPerspective methods.
  */
 public class OpenNewWindowMenu extends PerspectiveMenu {
 	private IAdaptable pageInput;
