@@ -210,7 +210,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * detected, will wait the indicated delay interval before
 	 * activating the content assistant.
 	 */
-	class AutoAssistListener extends KeyAdapter implements KeyListener, Runnable {
+	class AutoAssistListener extends KeyAdapter implements KeyListener, Runnable, VerifyKeyListener {
 		
 		private Thread fThread;
 		private boolean fIsReset= false;
@@ -301,7 +301,14 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			else
 				start(showStyle);
 		}
-				
+
+		/*
+		 * @see org.eclipse.swt.custom.VerifyKeyListener#verifyKey(org.eclipse.swt.events.VerifyEvent)
+		 */
+		public void verifyKey(VerifyEvent event) {
+			keyPressed(event);
+		}
+		
 		protected void showAssist(final int showStyle) {
 			Display d= fContentAssistSubjectAdapter.getControl().getDisplay();
 			if (d != null) {
@@ -602,8 +609,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 * Each listener is allowed to indicate that the event has been
 		 * handled and should not be further processed.
 		 *
-		 * @param event the verify event
-		 * @see VerifyKeyListener#verifyKey
+		 * @param e the verify event
+		 * @see VerifyKeyListener#verifyKey(org.eclipse.swt.events.VerifyEvent)
 		 */
 		public void verifyKey(VerifyEvent e) {
 			IContentAssistListener[] listeners= (IContentAssistListener[]) fListeners.clone();
@@ -798,11 +805,17 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			
 			if ((fContentAssistSubjectAdapter != null) && fAutoAssistListener == null) {
 				fAutoAssistListener= new AutoAssistListener();
-				fContentAssistSubjectAdapter.addKeyListener(fAutoAssistListener);
+				if (fContentAssistSubjectAdapter.supportsVerifyKeyListener())
+					fContentAssistSubjectAdapter.appendVerifyKeyListener(fAutoAssistListener);
+				else
+					fContentAssistSubjectAdapter.addKeyListener(fAutoAssistListener);
 			}
 			
 		} else if (fAutoAssistListener != null) {
-			fContentAssistSubjectAdapter.removeKeyListener(fAutoAssistListener);
+			if (fContentAssistSubjectAdapter.supportsVerifyKeyListener())
+				fContentAssistSubjectAdapter.removeVerifyKeyListener(fAutoAssistListener);
+			else
+				fContentAssistSubjectAdapter.removeKeyListener(fAutoAssistListener);
 			fAutoAssistListener= null;
 		}
 	}
