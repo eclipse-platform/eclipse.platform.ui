@@ -94,8 +94,8 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.1
 	 */
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
-		if (sourceViewer == null)
-			return null;
+		if (sourceViewer == null || fPreferenceStore == null)
+			return super.getHyperlinkDetectors(sourceViewer);
 		
 		if (!fPreferenceStore.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED))
 			return null;
@@ -110,6 +110,9 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.1
 	 */
 	public int getHyperlinkStateMask(ISourceViewer sourceViewer) {
+		if (fPreferenceStore == null)
+			return super.getHyperlinkStateMask(sourceViewer);
+
 		String modifiers= fPreferenceStore.getString(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER);
 		int modifierMask= computeStateMask(modifiers);
 		if (modifierMask == -1) {
@@ -124,6 +127,9 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.1
 	 */
 	public IHyperlinkPresenter getHyperlinkPresenter(ISourceViewer sourceViewer) {
+		if (fPreferenceStore == null)
+			return super.getHyperlinkPresenter(sourceViewer);
+		
 		return new DefaultHyperlinkPresenter(fPreferenceStore);
 	}
 	
