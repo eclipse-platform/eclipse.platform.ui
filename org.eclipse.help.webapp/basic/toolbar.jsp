@@ -17,7 +17,7 @@
 <title><%=ServletResources.getString("Toolbar", request)%></title>
 </head>
  
-<body bgcolor="<%=prefs.getBasicToolbarBackground()%>" text="<%=prefs.getBasicToolbarFont()%>">
+<body bgcolor="<%=prefs.getBasicToolbarBackground()%>">
 <%
 	String title=data.getTitle();
 	// search view is not called "advanced view"

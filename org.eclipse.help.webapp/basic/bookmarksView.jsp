@@ -22,7 +22,7 @@
 </head>
 
 
-<body bgcolor="<%=prefs.getBasicViewBackground()%>" text="<%=prefs.getBasicViewFont()%>">
+<body bgcolor="<%=prefs.getBasicViewBackground()%>">
  
 <table border="0" cellpadding="0" cellspacing="0">
 

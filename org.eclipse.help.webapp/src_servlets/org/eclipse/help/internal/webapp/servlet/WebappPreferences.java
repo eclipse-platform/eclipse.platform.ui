@@ -61,10 +61,6 @@ public class WebappPreferences {
 		return prefs.getString("advanced.toolbarFont");
 	}
 
-	public String getBasicToolbarFont() {
-		return prefs.getString("basic.toolbarFont");
-	}
-
 	public String getViewBackground() {
 		return prefs.getString("advanced.viewBackground");
 	}
@@ -77,7 +73,4 @@ public class WebappPreferences {
 		return prefs.getString("advanced.viewFont");
 	}
 
-	public String getBasicViewFont() {
-		return prefs.getString("basic.viewFont");
-	}
 }

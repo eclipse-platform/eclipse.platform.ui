@@ -21,7 +21,7 @@
 </head>
 
 
-<body bgcolor="<%=prefs.getBasicViewBackground()%>" text="<%=prefs.getBasicViewFont()%>">
+<body bgcolor="<%=prefs.getBasicViewBackground()%>">
  
 <%
 if(!data.isLinksRequest()) {
