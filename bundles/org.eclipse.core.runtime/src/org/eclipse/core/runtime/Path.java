@@ -146,7 +146,18 @@ public class Path implements IPath, Cloneable {
 	 * @see #isValidPath(String)
 	 */
 	public Path(String fullPath) {
-		this(null, fullPath);
+		String devicePart = null;
+		if (WINDOWS) {
+			//convert backslash to forward slash
+			fullPath = fullPath.indexOf('\\') == -1 ? fullPath : fullPath.replace('\\', SEPARATOR);
+			//extract device
+			int i = fullPath.indexOf(DEVICE_SEPARATOR);
+			if (i != -1) {
+				devicePart = fullPath.substring(0, i + 1);
+				fullPath = fullPath.substring(i + 1, fullPath.length());
+			}
+		}
+		initialize(devicePart, fullPath);
 	}
 
 	/** 
@@ -167,15 +178,6 @@ public class Path implements IPath, Cloneable {
 		if (WINDOWS) {
 			//convert backslash to forward slash
 			path = path.indexOf('\\') == -1 ? path : path.replace('\\', SEPARATOR);
-			//extract device
-			int i = path.indexOf(DEVICE_SEPARATOR);
-			if (i != -1) {
-				// if the specified device is null then set it to
-				// be whatever is defined in the path string
-				if (device == null)
-					device = path.substring(0, i + 1);
-				path = path.substring(i + 1, path.length());
-			}
 		}
 		initialize(device, path);
 	}
@@ -269,11 +271,6 @@ public class Path implements IPath, Cloneable {
 			newSegments[myLen] = tail;
 			return new Path(device, newSegments, separators & ~HAS_TRAILING);
 		}
-		if (this.isEmpty())
-			return new Path(device, tail).makeRelative();
-		if (this.isRoot())
-			return new Path(device, tail).makeAbsolute();
-
 		//go with easy implementation
 		return append(new Path(tail));
 	}
