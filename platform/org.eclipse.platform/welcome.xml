@@ -25,7 +25,7 @@ additionally be converted into a Fast View by dragging it to the shortcut bar (a
 far left of the window). </item> 
 
 <item><b>Learn more </b>
-To learn more you can browse the <topic id="/org.eclipse.platform.doc.user/toc.xml">Workbench User Guide</topic> or the <topic id="/org.eclipse.jdt.doc.user/toc.xml">Java Development User Guide</topic>.</item>
+To learn more you can browse the <topic id="/org.eclipse.platform.doc.user/toc.xml">Workbench User Guide</topic>.</item>
 
 
 </welcomePage>
