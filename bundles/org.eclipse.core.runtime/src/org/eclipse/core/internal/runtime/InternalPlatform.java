@@ -17,8 +17,6 @@ import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.internal.content.ContentTypeManager;
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.internal.preferences.PreferencesService;
-import org.eclipse.core.internal.registry.BundleModel;
-import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.IJobManager;
@@ -45,7 +43,7 @@ public final class InternalPlatform implements IPlatform {
 	private ServiceTracker instanceLocation = null;
 	private ServiceTracker configurationLocation = null;
 	private ServiceTracker installLocation = null;
-	private ServiceTracker debugTracker;
+	private ServiceTracker debugTracker= null;
 	private DebugOptions options = null;
 
 	private static IAdapterManager adapterManager;
@@ -155,7 +153,7 @@ public final class InternalPlatform implements IPlatform {
 	public static final String PROP_NL = "osgi.nl"; //$NON-NLS-1$
 	public static final String PROP_ARCH = "osgi.arch"; //$NON-NLS-1$
 	public static final String PROP_ADAPTOR = "osgi.adaptor"; //$NON-NLS-1$
-	public static final String PROP_SYSPATH= "osgi.syspath"; //$NON-NLS-1$
+	public static final String PROP_SYSPATH= "osgi.syspath";  //$NON-NLS-1$
 
 	/**
 	 * Private constructor to block instance creation.
@@ -375,6 +373,7 @@ public final class InternalPlatform implements IPlatform {
 	public void start(BundleContext context) {
 		this.context = context;
 		initializeLocationTrackers();
+		ResourceTranslator.start();
 		endOfInitializationHandler = getSplashHandler();	//TODO the call to getSplashHandler could be done into endSplash(). Then we could remove the variable
 		processCommandLine(infoService.getNonFrameworkArgs());
 		debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
@@ -415,6 +414,7 @@ public final class InternalPlatform implements IPlatform {
 		//shutdown all running jobs
 		JobManager.shutdown();
 		debugTracker.close();
+		ResourceTranslator.stop();
 		initialized = false;
 	}
 
@@ -861,9 +861,13 @@ public final class InternalPlatform implements IPlatform {
 	}
 	public boolean isFragment(Bundle bundle) {
 		return packageAdmin.isFragment(bundle);
-	}	public Bundle[] getHosts(Bundle bundle) {
+	}	
+	
+	public Bundle[] getHosts(Bundle bundle) {
 		return packageAdmin.getHosts(bundle);
-	}	public Bundle[] getFragments(Bundle bundle) {
+	}	
+	
+	public Bundle[] getFragments(Bundle bundle) {
 		return packageAdmin.getFragments(bundle);
 	}
 	
@@ -1030,17 +1034,15 @@ public final class InternalPlatform implements IPlatform {
 	public IPath getStateLocation(Bundle bundle) {
 		return getStateLocation(bundle, true);
 	}
-	public ResourceBundle getResourceBundle(Bundle bundle) throws MissingResourceException {
-		BundleModel model = (BundleModel) ((ExtensionRegistry) getRegistry()).getElement(bundle.getSymbolicName());
-		return model != null ? model.getResourceBundle() : null ;
+
+	public ResourceBundle getResourceBundle(Bundle bundle) {
+		return ResourceTranslator.getResourceBundle(bundle);
 	}
 	public String getResourceString(Bundle bundle, String value) {
-		BundleModel model = (BundleModel) ((ExtensionRegistry) getRegistry()).getElement(bundle.getSymbolicName());
-		return model != null ? model.getResourceString(value) : value;
+		return ResourceTranslator.getResourceString(bundle, value);
 	}
 	public String getResourceString(Bundle bundle, String value, ResourceBundle resourceBundle) {
-		BundleModel model =  (BundleModel) ((ExtensionRegistry) getRegistry()).getElement(bundle.getSymbolicName());
-		return model != null ? model.getResourceString(value, resourceBundle) : value;
+		return ResourceTranslator.getResourceString(bundle, value, resourceBundle);
 	}
 	public String getOSArch() {
 		return System.getProperty(PROP_ARCH);
@@ -1146,5 +1148,5 @@ public final class InternalPlatform implements IPlatform {
 	}
 	public void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
 		groupProviders.remove(provider);		
-	}	
+	}
 }

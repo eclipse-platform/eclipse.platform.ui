@@ -211,6 +211,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		environmentServiceReference = null;
 	}
 
+	//TODO Can't this code and the one from *ServiceReleased be somehow merged
 	private void urlServiceReleased(ServiceReference reference) {
 		if (urlServiceReference == null)
 			return;
