@@ -157,7 +157,7 @@ public class SectionForm extends AbstractSectionForm implements PaintListener {
 
 	public void propertyChange(PropertyChangeEvent event) {
 		titleFont = JFaceResources.getHeaderFont();
-		if (control != null) {
+		if (control != null && !control.isDisposed()) {
 			control.layout(true);
 			control.redraw();
 		}
