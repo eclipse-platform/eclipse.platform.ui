@@ -631,7 +631,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 			element.setStartingRow(line);
 			element.setStartingColumn(column);
 		} catch (BadLocationException e) {
-			ExternalToolsPlugin.getDefault().log(e);
+			//ignore as the parser may be out of sync with the document during reconciliation
 		}
 	}
 
@@ -681,7 +681,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 			element.setEndingRow(line);
 			element.setEndingColumn(column);
 		} catch (BadLocationException e) {
-			ExternalToolsPlugin.getDefault().log(e);
+			//ignore as the parser may be out of sync with the document during reconciliation
 		}
 	}
 
@@ -729,7 +729,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 			element.setEndingColumn(endColumn);
 			element.setLength(endColumn - startColumn);
 		} catch (BadLocationException e) {
-			ExternalToolsPlugin.getDefault().log(e);
+			//ignore as the parser may be out of sync with the document during reconciliation
 		}		
 	}
 
@@ -786,7 +786,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 				element.setEndingColumn(column);
 			}
 		} catch (BadLocationException ble) {
-			ExternalToolsPlugin.getDefault().log(ble);
+			//ignore as the parser may be out of sync with the document during reconciliation
 		}
 	}
 
