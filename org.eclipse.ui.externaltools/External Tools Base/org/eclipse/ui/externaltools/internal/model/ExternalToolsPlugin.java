@@ -29,7 +29,7 @@ import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariableRegist
 import org.eclipse.ui.externaltools.internal.registry.RefreshScopeVariableRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyColorConstants;
+import org.eclipse.ui.externaltools.internal.ant.editor.text.IAntEditorColorConstants;
 
 /**
  * External tools plug-in class
@@ -144,11 +144,11 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_DEBUG_RGB, new RGB(0, 0, 0)); // black
 		
 		// Planty color preferences
-		PreferenceConverter.setDefault(prefs, PlantyColorConstants.P_DEFAULT, PlantyColorConstants.DEFAULT);
-		PreferenceConverter.setDefault(prefs, PlantyColorConstants.P_PROC_INSTR, PlantyColorConstants.PROC_INSTR);
-		PreferenceConverter.setDefault(prefs, PlantyColorConstants.P_STRING, PlantyColorConstants.STRING);
-		PreferenceConverter.setDefault(prefs, PlantyColorConstants.P_TAG, PlantyColorConstants.TAG);
-		PreferenceConverter.setDefault(prefs, PlantyColorConstants.P_XML_COMMENT, PlantyColorConstants.XML_COMMENT);
+		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_DEFAULT, IAntEditorColorConstants.DEFAULT);
+		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_PROC_INSTR, IAntEditorColorConstants.PROC_INSTR);
+		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_STRING, IAntEditorColorConstants.STRING);
+		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_TAG, IAntEditorColorConstants.TAG);
+		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_XML_COMMENT, IAntEditorColorConstants.XML_COMMENT);
 	}
 
 	/**
