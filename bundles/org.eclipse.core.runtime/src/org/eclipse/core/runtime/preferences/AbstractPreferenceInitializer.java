@@ -38,6 +38,10 @@ public abstract class AbstractPreferenceInitializer {
 	 *			}
 	 * </pre>
 	 * <p>
+	 * <em>Note: Clients should only set default preference values for their
+	 * own bundle.</em>
+	 * </p>
+	 * <p>
 	 * <em>Note:</em> Clients should not call this method. It will be called
 	 * automatically by the preference initializer when the appropriate default
 	 * preference node is accessed.
