@@ -10,12 +10,16 @@ var navVisible = true;
 	
 function goBack(button) {
 	parent.history.back();
-	if (isIE && button) button.blur();
+	if (isIE && button && document.getElementById(button)){
+		document.getElementById(button).blur();
+	}
 }
 
 function goForward(button) {
 	parent.history.forward();
-	if (isIE && button) button.blur();
+	if (isIE && button && document.getElementById(button)){
+		document.getElementById(button).blur();
+	}
 }
 
 
@@ -43,8 +47,9 @@ function bookmarkPage(button)
 		/********** HARD CODED VIEW NAME *************/
 		parent.parent.NavFrame.ViewsFrame.bookmarks.ViewFrame.location.replace("bookmarksView.jsp?operation=add&bookmark="+url+"&title="+escape(title));
 	}catch (e) {}
-	if (isIE && button) button.blur();
-
+	if (isIE && button && document.getElementById(button)){
+		document.getElementById(button).blur();
+	}
 }
 
 function resynch(button)
@@ -61,14 +66,18 @@ function resynch(button)
 	catch(e)
 	{
 	}
-	if (isIE && button) button.blur();
+	if (isIE && button && document.getElementById(button)){
+		document.getElementById(button).blur();
+	}
 }
 
 function printContent(button)
 {
 	parent.ContentViewFrame.focus();
 	print();
-	if (isIE && button) button.blur();
+	if (isIE && button && document.getElementById(button)){
+		document.getElementById(button).blur();
+	}
 }
 
 function setTitle(label)
