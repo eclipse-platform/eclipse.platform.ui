@@ -213,7 +213,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
                 fSubTask = "";//$NON-NLS-1$
             else
                 fSubTask = name;
-            subTaskLabel.setText(fSubTask);
+            subTaskLabel.setText(shortenText(fSubTask,subTaskLabel));
             if (!forked)
                 subTaskLabel.update();
         }
@@ -263,7 +263,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
      *            IStatus that gives the details
      */
     protected void updateForSetBlocked(IStatus reason) {
-        setMessage(shortenText(reason.getMessage(), messageLabel));
+        setMessage(reason.getMessage());
         imageLabel.setImage(getImage());
     }
 
@@ -580,7 +580,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
         message = messageString == null ? "" : messageString; //$NON-NLS-1$
         if (messageLabel == null || messageLabel.isDisposed())
             return;
-        messageLabel.setText(message);
+        messageLabel.setText(shortenText(message,messageLabel));
     }
 
     /**
