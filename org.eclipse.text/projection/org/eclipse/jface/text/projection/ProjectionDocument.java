@@ -780,10 +780,13 @@ public class ProjectionDocument extends AbstractDocument {
 	private int computeAnchor(DocumentEvent event) {
 		if (event instanceof ProjectionDocumentEvent) {
 			ProjectionDocumentEvent slave= (ProjectionDocumentEvent) event;
-			if (ProjectionDocumentEvent.CONTENT_CHANGE == slave.getChangeType()) {
+			Object changeType= slave.getChangeType();
+			if (ProjectionDocumentEvent.CONTENT_CHANGE == changeType) {
 				DocumentEvent master= slave.getMasterEvent();
 				if (master != null)
 					return master.getOffset();
+			} else if (ProjectionDocumentEvent.PROJECTION_CHANGE == changeType) {
+				return slave.getMasterOffset();
 			}
 		}
 		return -1;
