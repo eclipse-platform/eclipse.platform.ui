@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+
+<template 
+	context="org.eclipse.ant.ui.templateContextType.XML" 
+	description="%ant.tasks.javac.desc" 
+	id="org.eclipse.ant.ui.templates.javac1" 
+	name="%ant.tasks.javac.name">&lt;javac srcdir=&quot;${src}&quot;
+         destdir=&quot;${dst}&quot;
+         classpath=&quot;${jarfile}&quot;
+         debug=&quot;${on}&quot;
+/&gt;${cursor}</template>
+
+<template 
+	context="org.eclipse.ant.ui.templateContextType.XML" 
+	description="%filesetTemplate.description" 
+	id="org.eclipse.ant.ui.templates.fileset1" 
+	name="fileset">&lt;fileset dir=&quot;${dir}&quot;&gt;
+		&lt;include name=&quot;${pattern}&quot; /&gt;
+	&lt;/fileset&gt;
+</template>
+
+<template 
+	context="org.eclipse.ant.ui.templateContextType.XML" 
+	description="%propertyTemplate.description" 
+	id="org.eclipse.ant.ui.templates.property1" 
+	name="property">&lt;property name=&quot;${name}&quot; value=&quot;${value}&quot;/&gt;
+</template>
+
+</templates>

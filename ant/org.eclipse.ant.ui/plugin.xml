@@ -34,8 +34,6 @@
       <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.jdt.core"/>
    </requires>
-
-   <extension-point id="antTemplates" name="%templatesName" schema="schema/antTemplates.exsd"/>
    
    <extension
          point="org.eclipse.ui.editors">
@@ -450,22 +448,34 @@
 		</colorDefinition>
    </extension>
    
-    <extension
-      	 point="org.eclipse.ant.ui.antTemplates">
-      <antTemplate
-            name="fileset"
-            description="%filesetTemplate.description"
-            pattern="&lt;fileset dir=&quot;${dir}&quot;&gt;
-		&lt;include name=&quot;${pattern}&quot; /&gt;
-	&lt;/fileset&gt;
-">
-      </antTemplate>
-       <antTemplate
-            name="property"
-            description="%propertyTemplate.description"
-            pattern="&lt;property name=&quot;${name}&quot; value=&quot;${value}&quot;/&gt;">
-      </antTemplate>
-    </extension>
+   <extension
+         point="org.eclipse.ui.editors.templates">
+      <contextType
+            name="%xml.contextType.name"
+            class="org.eclipse.ant.internal.ui.editor.templates.XMLContextType"
+            id="org.eclipse.ant.ui.templateContextType.XML">
+      </contextType>
+      <resolver
+            name="%ant.resolvers.src"
+            type="src"
+            icon="templates/resolver.gif"
+            description="%ant.resolvers.src.description"
+            contextTypeId="org.eclipse.ant.ui.templateContextType.XML"
+            class="org.eclipse.ant.internal.ui.editor.templates.AntVariableResolver">
+      </resolver>
+      <resolver
+            name="%ant.resolvers.dst"
+            type="dst"
+            icon="templates/resolver.gif"
+            description="%ant.resolvers.dst.description"
+            contextTypeId="org.eclipse.ant.ui.templateContextType.XML"
+            class="org.eclipse.ant.internal.ui.editor.templates.AntVariableResolver">
+      </resolver>
+      <include
+      		file="templates/ant.xml"
+      		translations="templates/ant.properties">
+      </include>
+   </extension>
     
 	<extension id="buildFileProblem" name="%Ant.marker.label" point="org.eclipse.core.resources.markers">
   		<super type="org.eclipse.core.resources.problemmarker" /> 

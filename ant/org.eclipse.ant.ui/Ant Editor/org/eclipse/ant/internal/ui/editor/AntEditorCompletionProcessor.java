@@ -21,8 +21,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -56,6 +54,8 @@ import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
+import org.eclipse.ant.internal.ui.editor.templates.AntTemplateAccess;
+import org.eclipse.ant.internal.ui.editor.templates.XMLContextType;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
@@ -64,17 +64,14 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.eclipse.jface.text.templates.DocumentTemplateContext;
+import org.eclipse.jface.text.templates.ContextType;
 import org.eclipse.jface.text.templates.Template;
-import org.eclipse.jface.text.templates.TemplateContext;
-import org.eclipse.jface.text.templates.TemplateProposal;
+import org.eclipse.jface.text.templates.TemplateCompletionProcessor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.part.FileEditorInput;
@@ -83,9 +80,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * The text completion processor for the Ant Editor.
+ * The completion processor for the Ant Editor.
  */
-public class AntEditorCompletionProcessor implements IContentAssistProcessor {       
+public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor implements IContentAssistProcessor  {       
  
  	private Comparator proposalComparator= new Comparator() {
 		public int compare(Object o1, Object o2) {
@@ -205,14 +202,36 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     }
     
 	/**
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
-	 */
-	public ICompletionProposal[] computeCompletionProposals(ITextViewer refViewer, int documentOffset) {
-		this.viewer = refViewer;
-		return determineProposals();
-	}
+     * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
+     */
+	public ICompletionProposal[] computeCompletionProposals(
+            ITextViewer refViewer, int documentOffset) {
+        
+        this.viewer = refViewer;
+        
+        return mergeProposals(super.computeCompletionProposals(refViewer,
+                documentOffset), determineProposals());
+    }
 	
 	/**
+     * @param proposals1
+     * @param proposals2
+     * @return
+     */
+    private ICompletionProposal[] mergeProposals(
+            ICompletionProposal[] proposals1, ICompletionProposal[] proposals2) {
+
+        ICompletionProposal[] combinedProposals = new ICompletionProposal[proposals1.length
+                + proposals2.length];
+                
+		System.arraycopy(proposals1,0,combinedProposals,0,proposals1.length);
+		System.arraycopy(proposals2,0,combinedProposals,proposals1.length,proposals2.length);		                
+
+		Arrays.sort(combinedProposals,proposalComparator);
+        return combinedProposals;
+    }
+
+    /**
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeContextInformation(ITextViewer, int)
 	 */
 	public IContextInformation[] computeContextInformation(ITextViewer refViewer, int documentOffset) {
@@ -657,7 +676,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         // think of a usecase for templates other than tasks at the moment, but
         // since users can add templates via the preferences we may need to 
         // rethink this.
-        proposals.addAll(getTemplateProposals(document, prefix));
+        // proposals.addAll(getTemplateProposals(document, prefix));
         
         return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
    }
@@ -674,34 +693,6 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 		}
 	}
     
-    /*
-     * @return a collection of
-     *         {@link org.eclipse.jface.text.templates.TemplateProposal}s
-     */
-    protected Collection getTemplateProposals(IDocument document, String prefix) {
-   
-        Point selection = viewer.getSelectedRange();
-        IRegion selectedRegion = new Region(selection.x - (prefix.length() + 1), selection.y + prefix.length() + 1);
-        if (selectedRegion.getOffset() == -1) {
-        	return Collections.EMPTY_LIST;
-        }
-        TemplateContext templateContext = new DocumentTemplateContext(
-                AntTemplates.CONTEXT, document, selectedRegion.getOffset(), selectedRegion.getLength()); //$NON-NLS-1$
-
-       Template[] templates= AntTemplates.getAntTemplates();
-       List proposals = new ArrayList(templates.length);
-       TemplateProposal templateProposal;
-       for (int i = 0; i < templates.length; i++) {
-			Template template = templates[i];
-			if (prefix.length() == 0 || template.getName().toLowerCase().startsWith(prefix)) {
-				 templateProposal = new TemplateProposal(template, templateContext, selectedRegion, AntUIImages.getImage(IAntUIConstants.IMG_TEMPLATE_PROPOSAL));
-				 proposals.add(templateProposal);
-			}
-		}
-       
-        return proposals;
-    }
-
     private ICompletionProposal newCompletionProposal(IDocument document, String aPrefix, String elementName) {
 		additionalProposalOffset= 0;
 		Image proposalImage = AntUIImages.getImage(IAntUIConstants.IMG_TASK_PROPOSAL);
@@ -1314,4 +1305,60 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 	public void setCompletionProposalAutoActivationCharacters(char[] activationSet) {
 		autoActivationChars= activationSet;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#extractPrefix(org.eclipse.jface.text.ITextViewer, int)
+	 */
+	protected String extractPrefix(ITextViewer textViewer, int offset) {
+		IDocument document= textViewer.getDocument();
+		int i= offset;
+		if (i > document.getLength())
+			return ""; //$NON-NLS-1$
+		
+		try {
+			while (i > 0) {
+				char ch= document.getChar(i - 1);
+				if (ch != '<' && !Character.isJavaIdentifierPart(ch))
+					break;
+				i--;
+			}
+	
+			return document.get(i, offset - i);
+		} catch (BadLocationException e) {
+			return ""; //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * Cut out angular brackets for relevance sorting, since the template name
+	 * does not contain the brackets.
+	 */
+	protected int getRelevance(Template template, String prefix) {
+		if (prefix.startsWith("<")) //$NON-NLS-1$
+			prefix= prefix.substring(1);
+		if (template.getName().startsWith(prefix))
+			return 90; 
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getTemplates(java.lang.String)
+	 */
+	protected Template[] getTemplates(String contextTypeId) {
+		return AntTemplateAccess.getDefault().getTemplateStore().getTemplates();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getContextType(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
+	 */
+	protected ContextType getContextType(ITextViewer textViewer, IRegion region) {
+		return AntTemplateAccess.getDefault().getContextTypeRegistry().getContextType(XMLContextType.XML_CONTEXT_TYPE);
+	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getImage(org.eclipse.jface.text.templates.Template)
+     */
+    protected Image getImage(Template template) {
+        return AntUIImages.getImage(IAntUIConstants.IMG_TEMPLATE_PROPOSAL);
+    }
 }
