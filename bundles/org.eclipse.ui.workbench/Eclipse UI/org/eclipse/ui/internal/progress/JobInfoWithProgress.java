@@ -48,7 +48,7 @@ public class JobInfoWithProgress extends JobInfo {
 		String[] messageValues = new String[2];
 		messageValues[0] = super.getDisplayString();
 		messageValues[1] = String.valueOf(done);
-		return ProgressMessages.format("JobInfo.DoneMessage",messageValues);
+		return ProgressMessages.format("JobInfo.DoneMessage",messageValues); //$NON-NLS-1$
 		
 	}
 
