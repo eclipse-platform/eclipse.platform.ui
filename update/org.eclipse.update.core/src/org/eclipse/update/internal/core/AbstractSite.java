@@ -97,7 +97,7 @@ public abstract class AbstractSite implements ISite {
 	 * @see ISite#install(IFeature, IProgressMonitor)
 	 */
 	public void install(IFeature sourceFeature, IProgressMonitor monitor) throws CoreException {
-		// should start UOW and manage Progress Monitor
+		// should start Unit Of Work and manage Progress Monitor
 		AbstractFeature localFeature = createExecutableFeature(sourceFeature);
 		sourceFeature.install(localFeature);
 		this.addFeature(localFeature);
@@ -133,10 +133,23 @@ public abstract class AbstractSite implements ISite {
 	protected abstract void storeFeatureInfo(VersionedIdentifier featureIdentifier,String contentKey,InputStream inStream) throws CoreException ;
 
 	/**
-	 *
+	 * return the URL of the streamKey inside the feature
 	 */
 	public abstract URL getURL  (	IFeature sourceFeature,	String streamKey) throws CoreException;
-
+	/**
+	 * returns the default prefered feature for this site
+	 */
+	public abstract IFeature getDefaultFeature(URL featureURL);
+
+	/**
+	 * returns true if we need to optimize the install by copying the 
+	 * archives in teh TEMP directory prior to install
+	 * Default is true
+	 */
+	public boolean optimize(){
+		return true;
+	}
+
 	/**
 	 * Gets the siteURL
 	 * @return Returns a URL

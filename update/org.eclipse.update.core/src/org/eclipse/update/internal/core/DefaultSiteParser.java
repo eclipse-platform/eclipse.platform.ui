@@ -157,7 +157,8 @@ public class DefaultSiteParser extends DefaultHandler {
 			// the type of the feature
 			String type = attributes.getValue("type");
 			if (type == null || type.equals("")) {
-				feature = new DefaultPackagedFeature(url, site);
+				// ask the Site for teh default type 
+				feature = (AbstractFeature) ((AbstractSite)site).getDefaultFeature(url);
 			} else {
 				Assert.isTrue(
 					false,

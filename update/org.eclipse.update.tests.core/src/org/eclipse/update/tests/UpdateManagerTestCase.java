@@ -120,7 +120,7 @@ public abstract class UpdateManagerTestCase extends TestCase {
 			return;
 		if (file.isDirectory()) {
 			String[] files = file.list();
-			if (files != null) // be carefule since file.list() can return null
+			if (files != null) // be careful since file.list() can return null
 				for (int i = 0; i < files.length; ++i)
 					removeFromFileSystem(new File(file, files[i]));
 		}

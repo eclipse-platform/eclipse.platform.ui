@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.IFeature;
 
 public class URLSite extends AbstractSite {
 
@@ -110,5 +111,12 @@ public class URLSite extends AbstractSite {
 		//FIXME: should not be called should it ?
 	}
 
+	/*
+	 * @see AbstractSite#getDefaultFeature(URL)
+	 */
+	public IFeature getDefaultFeature(URL featureURL) {
+		return new DefaultPackagedFeature(featureURL,this);
+	}
+
 }
 

@@ -516,25 +516,27 @@ public abstract class AbstractFeature implements IFeature {
 
 			// optmization, may be private to implementation
 			// copy *blobs/content references/archives/bundles* in TEMP space
-			if (archiveIDToInstall != null) {
-				for (int i = 0; i < archiveIDToInstall.length; i++) {
+			if (((AbstractSite)getSite()).optimize()){
+				if (archiveIDToInstall != null) {
+					for (int i = 0; i < archiveIDToInstall.length; i++) {
 						// the name of teh file in teh temp directory
 						// should be the regular plugins/id_ver as the Temp site is OUR site
 						URL sourceURL =	((AbstractSite) getSite()).getURL(this, archiveIDToInstall[i]);
 						String newFile = AbstractSite.DEFAULT_PLUGIN_PATH + archiveIDToInstall[i];
 						UpdateManagerUtils.resolveAsLocal(sourceURL,newFile);
+					}
 				}
-			}
-			// the site of this feature now becomes the TEMP directory
-			// FIXME: make sure there is no osther issue
-			// like asking for stuff that hasn't been copied
-			// or reusing this feature
-			// of having an un-manageable temp site
+
+				// the site of this feature now becomes the TEMP directory
+				// FIXME: make sure there is no osther issue
+				// like asking for stuff that hasn't been copied
+				// or reusing this feature
+				// of having an un-manageable temp site
 
-			// transfer the possible mapping to the temp site
-			tempSite.setArchives(getSite().getArchives());
-			this.setSite(tempSite);
-
+				// transfer the possible mapping to the temp site
+				tempSite.setArchives(getSite().getArchives());
+				this.setSite(tempSite);
+			}
 			// obtain the list of *Streamable Storage Unit*
 			// from the archive
 			if (pluginsToInstall != null) {

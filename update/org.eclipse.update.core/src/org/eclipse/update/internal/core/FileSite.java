@@ -62,7 +62,7 @@ public class FileSite extends URLSite {
 		String featurePath = getURL().getPath() + INSTALL_FEATURE_PATH + featureIdentifier.toString();
    		featurePath += featurePath.endsWith(File.separator)?contentKey:File.separator+contentKey;			
 		try {
-			UpdateManagerUtils.copyToLocal(inStream, featurePath + File.separator + contentKey);
+			UpdateManagerUtils.copyToLocal(inStream, featurePath);
 		} catch (IOException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error creating file:"+featurePath,e);
@@ -75,6 +75,21 @@ public class FileSite extends URLSite {
 			}
 		}
 
+	}
+	
+	/*
+	 * @see AbstractSite#getDefaultFeature(URL)
+	 */
+	public IFeature getDefaultFeature(URL featureURL) {
+		return new DefaultExecutableFeature(featureURL,this);
+	}
+
+	/**
+	 * We do not need to optimize the download
+	 * As the archives are already available on the file system
+	 */
+	public boolean optimize(){
+		return false;
 	}
 
 }

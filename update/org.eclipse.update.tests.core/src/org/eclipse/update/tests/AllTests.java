@@ -7,6 +7,7 @@ import junit.framework.*;
 import org.eclipse.update.tests.api.AllAPITests;
 import org.eclipse.update.tests.parser.AllParserTests;
 import org.eclipse.update.tests.regularInstall.AllRegularInstallTests;
+import org.eclipse.update.tests.uivalues.AllCoreUITests;
 
 public class AllTests extends TestCase {
 public AllTests(String name) {
@@ -18,6 +19,7 @@ public static Test suite() {
 	suite.addTest(AllRegularInstallTests.suite());
 	suite.addTest(AllAPITests.suite());	
 	suite.addTest(AllParserTests.suite());
+	suite.addTest(AllCoreUITests.suite());
 	return suite;
 }
 }
