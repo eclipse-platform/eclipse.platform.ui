@@ -12,6 +12,7 @@ package org.eclipse.ui.forms.editor;
 
 import java.util.Vector;
 
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.IManagedForm;
@@ -51,7 +52,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 * 
 	 * @see #addPages
 	 */
-	protected final void createPages() {
+	protected void createPages() {
 		toolkit = createToolkit(getContainer().getDisplay());
 		addPages();
 	}
@@ -62,7 +63,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 
 	/**
 	 * Subclass should implement this method to add pages to the editor using
-	 * 'addPage(IFormPage)' method. @addPage
+	 * 'addPage(IFormPage)' method. 
 	 */
 	protected abstract void addPages();
 
@@ -182,6 +183,20 @@ public abstract class FormEditor extends MultiPageEditorPart {
 				setActivePage(i);
 				return page;
 			}
+		}
+		return null;
+	}
+/**
+ * Finds the page instance that has the provided id.
+ * @param pageId the id of the page to find 
+ * @return page with the matching id or <code>null</code> if 
+ * not found.
+ */
+	public IFormPage findPage(String pageId) {
+		for (int i = 0; i < pages.size(); i++) {
+			IFormPage page = (IFormPage) pages.get(i);
+			if (page.getId().equals(pageId))
+				return page;
 		}
 		return null;
 	}

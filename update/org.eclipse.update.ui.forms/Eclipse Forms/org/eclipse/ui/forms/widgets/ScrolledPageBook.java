@@ -34,6 +34,7 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 		setContent(pageBook);
 		pages = new Hashtable();
 		setExpandHorizontal(true);
+		setExpandVertical(true);
 	}
 	public Point computeSize (int wHint, int hHint, boolean changed) {
 		Rectangle trim = computeTrim (0, 0, 10, 10);

@@ -9,11 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms;
-
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
-
 /**
  * Section part implements IFormPart interface based on the Section widget.
  * 
@@ -22,7 +20,6 @@ import org.eclipse.ui.forms.widgets.*;
 public class SectionPart implements IFormPart {
 	private IManagedForm managedForm;
 	private Section section;
-
 	/**
 	 * Creates a new section part based on the provided section.
 	 * 
@@ -33,17 +30,15 @@ public class SectionPart implements IFormPart {
 		this.section = section;
 		initialize();
 	}
-	
 	public SectionPart(Composite parent, FormToolkit toolkit, int style) {
 		this(toolkit.createSection(parent, style));
 	}
-	
 	/**
 	 * Initializes the section.
 	 */
-
 	protected void initialize() {
-		if ((section.getExpansionStyle() & Section.NONE) == 0) {
+		if ((section.getExpansionStyle() & Section.TWISTIE) != 0
+				|| (section.getExpansionStyle() & Section.TREE_NODE) != 0) {
 			section.addExpansionListener(new ExpansionAdapter() {
 				public void expansionStateChanging(ExpansionEvent e) {
 					SectionPart.this.expansionStateChanging(e.getState());
@@ -54,7 +49,6 @@ public class SectionPart implements IFormPart {
 			});
 		}
 	}
-
 	/**
 	 * Returns the section widget used in this part.
 	 * 
@@ -63,14 +57,11 @@ public class SectionPart implements IFormPart {
 	public Section getSection() {
 		return section;
 	}
-
 	protected void expansionStateChanging(boolean expanding) {
 	}
-
 	protected void expansionStateChanged(boolean expanded) {
 		managedForm.getForm().reflow(false);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -79,7 +70,6 @@ public class SectionPart implements IFormPart {
 	public void initialize(IManagedForm form) {
 		this.managedForm = form;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -87,7 +77,6 @@ public class SectionPart implements IFormPart {
 	 */
 	public void dispose() {
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -95,7 +84,6 @@ public class SectionPart implements IFormPart {
 	 */
 	public void commit(boolean onSave) {
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -103,7 +91,6 @@ public class SectionPart implements IFormPart {
 	 */
 	public void setFormInput(Object input) {
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -114,7 +101,6 @@ public class SectionPart implements IFormPart {
 		if (client != null)
 			client.setFocus();
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -122,7 +108,6 @@ public class SectionPart implements IFormPart {
 	 */
 	public void refresh() {
 	}
-
 	public boolean isDirty() {
 		return false;
 	}

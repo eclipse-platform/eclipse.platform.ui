@@ -9,17 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
+
+import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.internal.widgets.FormsResources;
 
 /**
  * Form is a control that is capable of scrolling its content. It renders the
@@ -48,9 +44,11 @@ import org.eclipse.swt.widgets.Listener;
 public class Form extends SharedScrolledComposite {
 	private int TITLE_HMARGIN = 10;
 	private int TITLE_VMARGIN = 5;
+	private int TITLE_GAP = 5;
 	private Image backgroundImage;
 	private String text;
 	private Composite body;
+	private ToolBarManager toolBarManager;
 	
 	private class ContentComposite extends Composite {
 		public ContentComposite(Composite parent, int style) {
@@ -98,9 +96,19 @@ public class Form extends SharedScrolledComposite {
 					height = extent.y;
 				}
 				gc.dispose();
-				height += TITLE_VMARGIN * 2;
-				width += TITLE_HMARGIN * 2;
 			}
+			if (toolBarManager!=null) {
+				ToolBar toolBar = toolBarManager.getControl();
+				if (toolBar!=null) {
+					Point tbsize = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					if (width!=0) 
+						width += TITLE_GAP;
+					width += tbsize.x;
+					height = Math.max(height, tbsize.y);
+				}
+			}
+			if (height!=0) height += TITLE_VMARGIN * 2;
+			if (width!=0) width += TITLE_HMARGIN * 2;
 			int ihHint = hHint;
 			if (ihHint>0 && ihHint!=SWT.DEFAULT)
 				ihHint -= height;
@@ -118,17 +126,33 @@ public class Form extends SharedScrolledComposite {
 		protected void layout(Composite composite, boolean flushCache) {
 			Rectangle carea = composite.getClientArea();
 			int height = 0;
+			Point tbsize=null;
+			
+			int twidth = carea.width - TITLE_HMARGIN * 2;
+			if (toolBarManager!=null) {
+				ToolBar toolBar = toolBarManager.getControl();
+				if (toolBar!=null) {
+					tbsize = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					toolBar.setBounds(carea.width-1-TITLE_HMARGIN-tbsize.x, TITLE_VMARGIN, tbsize.x, tbsize.y);
+					height = tbsize.y;
+				}
+			}
+
+			if (tbsize!=null) {
+				twidth -= tbsize.x - TITLE_GAP; 
+			}
 			if (text != null) {
 				GC gc = new GC(composite);
 				gc.setFont(getFont());
-				height
-					+= FormUtil.computeWrapSize(
+				height = FormUtil.computeWrapSize(
 						gc,
 						text,
-						carea.width - TITLE_HMARGIN * 2).y;
+						twidth).y;
 				gc.dispose();
-				height += TITLE_VMARGIN * 2;
+				if (tbsize!=null)
+					height = Math.max(tbsize.y, height);
 			}
+			if (height>0) height += TITLE_VMARGIN * 2;			
 			body.setBounds(0, height, carea.width, carea.height - height);
 		}
 	}
@@ -176,6 +200,8 @@ public class Form extends SharedScrolledComposite {
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
 		body.setBackground(bg);
+		if (toolBarManager!=null)
+			toolBarManager.getControl().setBackground(bg);
 	}
 /**
  * The form sets the content widget. This method should not be called by 
@@ -214,6 +240,31 @@ public class Form extends SharedScrolledComposite {
 	public void setBackgroundImage(Image backgroundImage) {
 		this.backgroundImage = backgroundImage;
 		redraw();
+	}
+	
+	/**
+	 * Returns the tool bar manager that is used to 
+	 * manage tool items in the form title area.
+	 * @return form tool bar manager
+	 */
+	
+	public IToolBarManager getToolBarManager() {
+		if (toolBarManager==null) {
+			toolBarManager = new ToolBarManager(SWT.FLAT);
+			ToolBar toolbar = toolBarManager.createControl((Composite)getContent());
+			toolbar.setBackground(getBackground());
+			toolbar.setForeground(getForeground());
+			toolbar.setCursor(FormsResources.getHandCursor());
+			getContent().addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					if (toolBarManager!=null) {
+						toolBarManager.dispose();
+						toolBarManager = null;
+					}
+				}
+			});
+		}
+		return toolBarManager;
 	}
 
 	/**
