@@ -451,6 +451,7 @@ public static void setValue(IPreferenceStore store, String name, RGB value) {
 	if (oldValue == null || !oldValue.equals(value)) {
 		store.putValue(name, StringConverter.asString(value));
 		store.firePropertyChangeEvent(name, oldValue, value);
+		JFaceColors.clearColor(name);
 	}
 }
 }

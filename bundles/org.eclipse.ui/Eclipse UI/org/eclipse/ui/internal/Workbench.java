@@ -1056,7 +1056,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * shutdown the application.
 	 */
 	private void shutdown() {
-		WorkbenchColors.shutdown();
+		WorkbenchColors.shutdown();		
+		JFaceColors.disposeColors();
 	}
 	/*
 	 * Answer true if the state file is good.
