@@ -86,10 +86,10 @@ public class EditionAction implements IActionDelegate {
 		for (int i= 0; i < states.length; i++)
 			editions[i+1]= new HistoryItem(base, states[i]);
 
+		EditionSelectionDialog d= new EditionSelectionDialog(parentShell, bundle);
+		d.setHideIdenticalEntries(false);
+		
 		if (fReplaceMode) {
-			EditionSelectionDialog d= new EditionSelectionDialog(parentShell, bundle);
-			d.setHideIdenticalEntries(false);
-
 			final ITypedElement ti= d.selectEdition(base, editions, null);			
 			if (ti instanceof IStreamContentAccessor) {
 								
@@ -121,8 +121,7 @@ public class EditionAction implements IActionDelegate {
 				}
 			}
 		} else {
-			CompareWithEditionDialog d= new CompareWithEditionDialog(parentShell, bundle);
-			d.setHideIdenticalEntries(false);
+			d.setCompareMode(true);
 
 			d.selectEdition(base, editions, null);			
 		}

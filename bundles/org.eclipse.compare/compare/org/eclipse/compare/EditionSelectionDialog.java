@@ -49,8 +49,8 @@ import org.eclipse.compare.*;
 /**
  * A dialog where one input element can be compared against
  * a list of historic variants (editions) of the same input element.
- * The dialog can be used to implement functions like "Replace with Version" or
- * "Replace with Edition" on workbench resources.
+ * The dialog can be used to implement functions like "Compare/Replace with Version" or
+ * "Compare/Replace from Local History" on workspace resources.
  * <p>
  * In addition it is possible to specify a subsection of the input element
  * (e.g. a method in a Java source file) by means of a "path".
@@ -58,7 +58,7 @@ import org.eclipse.compare.*;
  * with the corresponding subsection in the list of editions.
  * Only those editions are shown where the subsection differs from the same subsection in
  * another edition thereby minimizing the number of presented variants.
- * This functionality can be used to implement "Replace with Method Edition"
+ * This functionality can be used to implement "Replace from Local History"
  * for the Java language.
  * <p>
  * Subsections of an input element are determined by first finding an
@@ -148,15 +148,17 @@ public class EditionSelectionDialog extends Dialog {
 	}
 	
 	// Configuration options
+	private CompareConfiguration fCompareConfiguration;
 	/** use a side-by-side compare viewer */
 	private boolean fCompare= true;
 	/** show target on right hand side */
 	private boolean fTargetIsRight= false;
 	/** hide entries which have identical content */
 	private boolean fHideIdentical= true;
-	/** replace mode */
-	private boolean fReplaceMode= true;
-	private CompareConfiguration fCompareConfiguration;	
+	/** add mode if true, otherwise replace mode */
+	private boolean fAddMode= false;
+	/** compare mode if true, otherwise replace/add mode */
+	private boolean fCompareMode= false;
 	
 	/**
 	 * Maps from members to their corresponding editions.
@@ -257,7 +259,7 @@ public class EditionSelectionDialog extends Dialog {
 				structureCreator= scd.createStructureCreator();
 		}
 
-		if (fReplaceMode) {
+		if (!fAddMode) {
 			
 			if (structureCreator != null) {
 				Object item= structureCreator.locate(ppath, target);
@@ -384,13 +386,23 @@ public class EditionSelectionDialog extends Dialog {
 	}
 		
 	/**
-	 * Controls whether the EditionSelectionDialog is in 'replace' mode
-	 * or 'add' mode. 
+	 * Controls whether the EditionSelectionDialog is in 'add' mode
+	 * or 'replace' mode (the default).
 	 *
 	 * @param addMode if true dialog is in 'add' mode.
 	 */
 	public void setAddMode(boolean addMode) {
-		fReplaceMode= !addMode;
+		fAddMode= addMode;
+	}
+	
+	/**
+	 * Controls whether the EditionSelectionDialog is in 'compare' mode
+	 * or 'add/replace' (the default) mode. 
+	 *
+	 * @param addMode if true dialog is in 'add' mode.
+	 */
+	public void setCompareMode(boolean compareMode) {
+		fCompareMode= compareMode;
 	}
 	
 	/**
@@ -444,13 +456,52 @@ public class EditionSelectionDialog extends Dialog {
 	protected String getEditionLabel(ITypedElement selectedEdition, ITypedElement item) {
 		String label= Utilities.getString(fBundle, "editionLabel"); //$NON-NLS-1$
 
+		String date= "";	//$NON-NLS-1$
 		if (selectedEdition instanceof IModificationDate) {
 			long modDate= ((IModificationDate)selectedEdition).getModificationDate();
-			String date= DateFormat.getDateTimeInstance().format(new Date(modDate));
-			label= MessageFormat.format(label, new Object[] { date });
+			date= DateFormat.getDateTimeInstance().format(new Date(modDate));
 		}
+		
+		String type= "";
+		if (selectedEdition instanceof ResourceNode)
+			type= "Workspace File";
+		else if (selectedEdition instanceof HistoryItem)
+			type= "Local History";
 
-		return label;
+		return MessageFormat.format(label, new Object[] { date, type });
+	}
+	
+	protected String getShortEditionLabel(ITypedElement edition, ITypedElement item, Date date) {
+		String t= DateFormat.getTimeInstance().format(date);
+		if (edition instanceof ResourceNode)
+			t= t + " (Workspace File)";
+		else if (edition instanceof HistoryItem)
+			t= t;
+		else
+			t= t + " (Editor Buffer)";
+		return t;
+	}
+	
+ 	/**
+ 	 * Returns an image for identifying the edition side of a compare viewer.
+ 	 * This implementation extracts the value for the key "editionLabel" from the resource bundle
+ 	 * and passes it as the format argument to <code>MessageFormat.format</code>.
+ 	 * The single format argument for <code>MessageFormat.format</code> ("{0}" in the format string)
+ 	 * is the formatted modification date of the given input element.
+ 	 * <p>
+	 * Subclasses may override to create their own label.
+	 * </p>
+	 *
+	 * @param selectedEdition the selected edition for which a label must be returned
+ 	 * @param item if a path has been specified in <code>selectEdition</code> a sub element of the given selectedEdition; otherwise the same as selectedEdition
+ 	 * @return a label the edition side of a compare viewer
+  	 */
+	protected Image getEditionImage(ITypedElement selectedEdition, ITypedElement item) {
+		if (selectedEdition instanceof ResourceNode)
+			return selectedEdition.getImage();
+		if (selectedEdition instanceof HistoryItem)
+			return fTimeImage;
+		return null;
 	}
 	
 	/* (non Javadoc)
@@ -497,13 +548,8 @@ public class EditionSelectionDialog extends Dialog {
 			}
 		);
 		
-		if (fReplaceMode) {
-			fEditionPane= new CompareViewerPane(vsplitter, SWT.BORDER | SWT.FLAT);
-			
-			String titleFormat= Utilities.getString(fBundle, "treeTitleFormat"); //$NON-NLS-1$
-			String title= MessageFormat.format(titleFormat, new Object[] { fTargetPair.getItem().getName() });
-			fEditionPane.setText(title);
-		} else {
+		if (fAddMode) {
+			// we need two panes: the left for the elements, the right one for the editions
 			Splitter hsplitter= new Splitter(vsplitter,  SWT.HORIZONTAL);
 			
 			fMemberPane= new CompareViewerPane(hsplitter, SWT.BORDER | SWT.FLAT);
@@ -520,6 +566,13 @@ public class EditionSelectionDialog extends Dialog {
 			fMemberPane.setContent(fMemberTable);
 			
 			fEditionPane= new CompareViewerPane(hsplitter, SWT.BORDER | SWT.FLAT);
+		} else {
+			// only a single pane showing the editions
+			fEditionPane= new CompareViewerPane(vsplitter, SWT.BORDER | SWT.FLAT);
+			
+			String titleFormat= Utilities.getString(fBundle, "treeTitleFormat"); //$NON-NLS-1$
+			String title= MessageFormat.format(titleFormat, new Object[] { fTargetPair.getItem().getName() });
+			fEditionPane.setText(title);
 		}
 		
 		fEditionTree= new Tree(fEditionPane, SWT.H_SCROLL + SWT.V_SCROLL);
@@ -556,9 +609,25 @@ public class EditionSelectionDialog extends Dialog {
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		String buttonLabel= Utilities.getString(fBundle, "buttonLabel", IDialogConstants.OK_LABEL); //$NON-NLS-1$
-		fCommitButton= createButton(parent, IDialogConstants.OK_ID, buttonLabel, true);
-		fCommitButton.setEnabled(false);
-		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		if (fCompareMode) {
+			// only a 'Done' button
+			createButton(parent, IDialogConstants.CANCEL_ID, buttonLabel, false);
+		} else {
+			// a 'Cancel' and a 'Add/Replace' button
+			fCommitButton= createButton(parent, IDialogConstants.OK_ID, buttonLabel, true);
+			fCommitButton.setEnabled(false);
+			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		}
+	}
+
+	/**
+	 * Overidden to disable dismiss on double click in compare mode.
+	 */
+	protected void okPressed() {
+		if (fCompareMode)
+			;	// don't dismiss dialog
+		else
+			super.okPressed();
 	}
 
 	//---- private stuff ----------------------------------------------------------------------------------------
@@ -676,7 +745,7 @@ public class EditionSelectionDialog extends Dialog {
 		}
 		editions.add(pair);
 		
-		if (fReplaceMode || editions == fCurrentEditions)
+		if (!fAddMode || editions == fCurrentEditions)
 			addEdition(pair);
 	}
 	
@@ -735,17 +804,12 @@ public class EditionSelectionDialog extends Dialog {
 			lastDay.setData(date);
 		}
 		TreeItem ti= new TreeItem(lastDay, SWT.NONE);
-		ti.setImage(fTimeImage);
-		
-		String t= DateFormat.getTimeInstance().format(date);
-		if (item instanceof ResourceNode)
-			t= t + " (Workspace)";
-		
-		ti.setText(t);
+		ti.setImage(getEditionImage(edition, item));
+		ti.setText(getShortEditionLabel(edition, item, date));
 		ti.setData(new Pair(edition, item));
 		if (first) {
 			fEditionTree.setSelection(new TreeItem[] {ti});
-			if (fReplaceMode)
+			if (!fAddMode)
 				fEditionTree.setFocus();
 			feedInput(ti);
 		}
@@ -767,7 +831,7 @@ public class EditionSelectionDialog extends Dialog {
 				String pattern= Utilities.getString(fBundle, "treeTitleFormat"); //$NON-NLS-1$
 				String title= MessageFormat.format(pattern, new Object[] { ((Item)w).getText() });
 				fEditionPane.setText(title);
-				
+								
 				Iterator iter= editions.iterator();
 				while (iter.hasNext()) {
 					Object item= iter.next();
@@ -798,17 +862,22 @@ public class EditionSelectionDialog extends Dialog {
 			Pair pair= (Pair) input;
 			fSelectedItem= pair.getItem();
 			
-			String editionLabel= getEditionLabel(pair.getEdition(), fSelectedItem);
+			ITypedElement edition= pair.getEdition();
+			String editionLabel= getEditionLabel(edition, fSelectedItem);
+			Image editionImage= getEditionImage(edition, fSelectedItem);
 			
-			if (!fReplaceMode) {
+			if (fAddMode) {
 				setInput(fSelectedItem);
 				fContentPane.setText(editionLabel);
+				fContentPane.setImage(editionImage);
 			} else {
 				if (fTargetIsRight) {
 					fCompareConfiguration.setLeftLabel(editionLabel);
+					fCompareConfiguration.setLeftImage(editionImage);
 					setInput(new DiffNode(fSelectedItem, fTargetPair.getItem()));
 				} else {
 					fCompareConfiguration.setRightLabel(editionLabel);
+					fCompareConfiguration.setRightImage(editionImage);
 					setInput(new DiffNode(fTargetPair.getItem(), fSelectedItem));
 				}
 			}
