@@ -1450,8 +1450,7 @@ private boolean needToZoomOut(IWorkbenchPart part) {
 	// part is an editor
 	if (part instanceof IEditorPart) {
 		if(getActivePart() instanceof IViewPart) {
-			if(!isFastView((IViewPart)getActivePart()))
-				return true;
+			return true;
 		}
 		EditorSite site = (EditorSite)part.getSite();
 		EditorPane pane = (EditorPane)site.getPane();
@@ -2203,6 +2202,9 @@ private IViewPart showView(final String viewID, final boolean activate)
 public void toggleFastView(IViewPart part) {
 	Perspective persp = getActivePerspective();
 	if (persp != null) {
+		if (part == persp.getActiveFastView()) {
+			zoomOut();
+		}				
 		persp.toggleFastView(part);
 		// if the fast view has been deactivated
 		if (part != persp.getActiveFastView()) {
@@ -2219,25 +2221,21 @@ public void toggleZoom(IWorkbenchPart part) {
 	if (persp == null)
 		return;
 
-	 PartPane pane = ((PartSite)(part.getSite())).getPane();
-	 
 	/*
 	 * Detached window no longer supported - remove when confirmed
 	 *
+	 * PartPane pane = ((PartSite)(part.getSite())).getPane();
 	 * // If target part is detached ignore.
 	 * if (pane.getWindow() instanceof DetachedWindow) 
 	 * 	return;
 	 */
 	 
-	if (part instanceof IViewPart && isFastView((IViewPart)part))
-		return;
-		
 	// Update zoom status.
 	if (isZoomed()) {
 		zoomOut();
 		return;
 	} else {
-		persp.getPresentation().zoomIn(pane);
+		persp.getPresentation().zoomIn(part);
 		activate(part);
 	}
 }

@@ -31,7 +31,7 @@ public class PerspectivePresentation {
 	private WorkbenchPage page;
 	private Composite parentWidget;
 	private RootLayoutContainer mainLayout;
-	private LayoutPart zoomPart;
+	private IWorkbenchPart zoomPart;
 	/*
 	 * Detached window no longer supported - remove when confirmed
 	 *
@@ -796,7 +796,7 @@ public RootLayoutContainer getLayout() {
  * workbench.
  * </p>
  */
-/*package*/ LayoutPart getZoomPart() {
+/*package*/ IWorkbenchPart getZoomPart() {
 	return zoomPart;
 }
 /**
@@ -1287,8 +1287,10 @@ public boolean partChangeAffectsZoom(PartPane pane) {
 		return false;
 	if(isFastView(pane.getPartReference().getPart(true)))
 		return false;
-	if(pane instanceof EditorPane && getZoomPart() instanceof EditorPane) {
-		if(((EditorPane)pane).getWorkbook().equals(((EditorPane)getZoomPart()).getWorkbook()))
+
+	PartPane zoomPane = ((PartSite)zoomPart.getSite()).getPane();
+	if(pane instanceof EditorPane && zoomPane instanceof EditorPane) {
+		if(((EditorPane)pane).getWorkbook().equals(((EditorPane)zoomPane).getWorkbook()))
 			return false;
 	}
 
@@ -1554,30 +1556,36 @@ private void updateContainerVisibleTab(ILayoutContainer container) {
 /**
  * Zoom in on a particular layout part.
  */
-public void zoomIn(LayoutPart part) {
+public void zoomIn(IWorkbenchPart part) {
+	PartPane pane = ((PartSite)(part.getSite())).getPane();
+
 	// Save zoom part.
 	zoomPart = part;
 
 	// If view ..
-	if (part instanceof ViewPane) {
+	if (pane instanceof ViewPane) {
 		parentWidget.setRedraw(false);
-		mainLayout.zoomIn(part);
-		((PartPane)zoomPart).setZoomed(true);
+		Perspective persp = page.getActivePerspective();
+		if (persp != null && part instanceof IViewPart && page.isFastView((IViewPart)part)) {
+			persp.hideFastViewSash();
+		}
+		mainLayout.zoomIn(pane);
+		pane.setZoomed(true);
 		parentWidget.setRedraw(true);
 	}
 
 	// If editor ..
-	else if (part instanceof EditorPane) {
+	else if (pane instanceof EditorPane) {
 		parentWidget.setRedraw(false);
-		EditorWorkbook wb = ((EditorPane)part).getWorkbook();
+		EditorWorkbook wb = ((EditorPane)pane).getWorkbook();
 		EditorArea ea = wb.getEditorArea();
 		mainLayout.zoomIn(ea);
 		ea.zoomIn(wb);
 		wb.zoomIn();
-		((PartPane)zoomPart).setZoomed(true);
+		pane.setZoomed(true);
 		parentWidget.setRedraw(true);
 	}
-	
+
 	// Otherwise.
 	else {
 		zoomPart = null;
@@ -1592,23 +1600,28 @@ public void zoomOut() {
 	if (zoomPart == null)
 		return;
 
+	PartPane pane = ((PartSite)(zoomPart.getSite())).getPane();
 	// If view ..
-	if (zoomPart instanceof ViewPane) {
+	if (pane instanceof ViewPane) {
 		parentWidget.setRedraw(false);
 		mainLayout.zoomOut();
-		((PartPane)zoomPart).setZoomed(false);
+		pane.setZoomed(false);
+		Perspective persp = page.getActivePerspective();
+		if (persp != null && zoomPart instanceof IViewPart && page.isFastView((IViewPart)zoomPart)) {
+			persp.showFastView((IViewPart)zoomPart);
+		}
 		parentWidget.setRedraw(true);
 	}
 	
 	// If editor.
-	else if (zoomPart instanceof EditorPane) {
+	else if (pane instanceof EditorPane) {
 		parentWidget.setRedraw(false);
-		EditorWorkbook wb = ((EditorPane)zoomPart).getWorkbook();
+		EditorWorkbook wb = ((EditorPane)pane).getWorkbook();
 		EditorArea ea = wb.getEditorArea();
 		wb.zoomOut();
 		ea.zoomOut();
 		mainLayout.zoomOut();
-		((PartPane)zoomPart).setZoomed(false);
+		pane.setZoomed(false);
 		parentWidget.setRedraw(true);
 	}
 

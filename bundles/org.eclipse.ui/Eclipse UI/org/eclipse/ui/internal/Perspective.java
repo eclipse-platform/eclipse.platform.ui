@@ -69,13 +69,15 @@ public class Perspective
 		public void handleEvent(Event event) {
 			if (event.type == SWT.Resize && activeFastView != null) {
 				ViewPane pane = getPane(activeFastView);
-				Rectangle bounds = pane.getBounds();
-				bounds.height = Math.max(0, getClientComposite().getSize().y);
-				float ratio = getFastViewWidthRatio(pane.getID());
-				bounds.width = Math.max(0, (int)((float)(getClientComposite().getSize().x) * ratio));
-				pane.setBounds(bounds);
-				fastViewSash.setBounds(bounds.width - SASH_SIZE, bounds.y, SASH_SIZE, bounds.height - SASH_SIZE);
-				fastViewSash.moveAbove(null);
+				if (pane.isZoomed() == false) {
+					Rectangle bounds = pane.getBounds();
+					bounds.height = Math.max(0, getClientComposite().getSize().y);
+					float ratio = getFastViewWidthRatio(pane.getID());
+					bounds.width = Math.max(0, (int)((float)(getClientComposite().getSize().x) * ratio));
+					pane.setBounds(bounds);
+					fastViewSash.setBounds(bounds.width - SASH_SIZE, bounds.y, SASH_SIZE, bounds.height - SASH_SIZE);
+					fastViewSash.moveAbove(null);
+				}
 			}
 		}
 	};
@@ -511,6 +513,13 @@ private void hideFastView(IViewPart part, int steps) {
 	pane.setBounds(0, 0, 0, 0);
 	pane.setFastViewSash(null);
 	ctrl.setEnabled(false); // Remove focus support.
+}
+/**
+ * Hides the fast view sash for zooming in a fast view.
+ */
+void hideFastViewSash() {
+	if (fastViewSash != null)
+		fastViewSash.setBounds(0, 0, 0, 0);
 }
 /**
  * See IWorkbenchPage
@@ -1199,7 +1208,7 @@ protected void showEditorArea() {
 /**
  * Shows a fast view.
  */
-private void showFastView(IViewPart part) {
+void showFastView(IViewPart part) {
 	// Get pane.
 	ViewPane pane = getPane(part);
 
