@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -38,13 +40,6 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	private static final int[] DEFAULT_BUILD_TYPES= new int[] {
 									IncrementalProjectBuilder.INCREMENTAL_BUILD,
 									IncrementalProjectBuilder.FULL_BUILD};
-
-	/**
-	 * Creates an uninitialized external tool builder.
-	 */
-	public ExternalToolBuilder() {
-		super();
-	}
 	
 	/* (non-Javadoc)
 	 * Method declared on IncrementalProjectBuilder.
@@ -65,15 +60,37 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 		if (!runTool) {
 			return null;
 		}
-		monitor.subTask(MessageFormat.format(ExternalToolsModelMessages.getString("ExternalToolBuilder.Running_{0}..._1"), new String[]{config.getName()})); //$NON-NLS-1$
-		VariableContextManager.getDefault().buildStarted(getProject(), kind);
-		config.launch(ILaunchManager.RUN_MODE, monitor);
-		VariableContextManager.getDefault().buildEnded();
-		forgetLastBuiltState();
+		
+		IResource[] resources= ExternalToolsUtil.getResourcesForScope(config, ExternalToolsUtil.getVariableContext(), monitor);
+		boolean buildForChange= true;
+		if (resources != null && resources.length > 0) {
+			buildForChange= buildScopeIndicatesBuild(resources);
+		}
+		
+		if (buildForChange) {
+			monitor.subTask(MessageFormat.format(ExternalToolsModelMessages.getString("ExternalToolBuilder.Running_{0}..._1"), new String[]{config.getName()})); //$NON-NLS-1$
+			VariableContextManager.getDefault().buildStarted(getProject(), kind);
+			config.launch(ILaunchManager.RUN_MODE, monitor);
+			VariableContextManager.getDefault().buildEnded();
+			forgetLastBuiltState();
+		}
 				
 		return null;
 	}
 	
+	private boolean buildScopeIndicatesBuild(IResource[] resources) {
+		IResourceDelta delta = getDelta(getProject());
+		if (delta != null) {
+			for (int i = 0; i < resources.length; i++) {
+				IResourceDelta change= delta.findMember(resources[i].getProjectRelativePath());
+				if (change != null) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Converts the build types string into an array of
 	 * build kinds.

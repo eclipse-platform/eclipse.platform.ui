@@ -170,7 +170,7 @@ public class ExternalToolsUtil {
 	 * 
 	 * @param configuration launch configuration
 	 * @param context context used to expand variables
-	 * @return an absolute path to a direcoty in the local file system, or
+	 * @return an absolute path to a directory in the local file system, or
 	 * <code>null</code> if unspecified
 	 * @throws CoreException if unable to retrieve the associated launch
 	 * configuration attribute, if unable to resolve any variables, or if the
@@ -258,37 +258,20 @@ public class ExternalToolsUtil {
 	 * @throws CoreException if an exception occurrs while refreshing resources
 	 */
 	public static void refreshResources(ILaunchConfiguration configuration, ExpandVariableContext context, IProgressMonitor monitor) throws CoreException {
-		String scope = getRefreshScope(configuration);
-		if (scope == null) {
+		IResource[] resources= getResourcesForScope(configuration, context, monitor);
+		if (resources == null || resources.length == 0){
 			return;
 		}
-
-		ToolUtil.VariableDefinition varDef = ToolUtil.extractVariableTag(scope, 0);
-		if (varDef.start == -1 || varDef.end == -1 || varDef.name == null) {
-			String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidRefreshVarFormat"), new Object[] { configuration.getName()}); //$NON-NLS-1$
-			abort(msg, null, 0);
-		}
-
-		RefreshScopeVariableRegistry registry = ExternalToolsPlugin.getDefault().getRefreshVariableRegistry();
-		ExternalToolVariable variable = registry.getVariable(varDef.name);
-		if (variable == null) {
-			String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.noRefreshVarNamed"), new Object[] { configuration.getName(), varDef.name }); //$NON-NLS-1$
-			abort(msg, null, 0);
-		}
-
 		int depth = IResource.DEPTH_ONE;
 		if (isRefreshRecursive(configuration))
 			depth = IResource.DEPTH_INFINITE;
 
-		if (monitor.isCanceled())
+		if (monitor.isCanceled()) {
 			return;
-
-		IResource[] resources = variable.getExpander().getResources(varDef.name, varDef.argument, context);
-		if (resources == null || resources.length == 0)
-			return;
+		}
 
 		monitor.beginTask(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.refreshResources"), //$NON-NLS-1$
-		resources.length);
+			resources.length);
 
 		MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Exception(s)_occurred_during_refresh._2"), null); //$NON-NLS-1$
 		for (int i = 0; i < resources.length; i++) {
@@ -308,6 +291,40 @@ public class ExternalToolsUtil {
 		if (!status.isOK()) {
 			throw new CoreException(status);
 		}
+	}
+	
+	/**
+	 * Returns the collection of resources as specified by the given launch configuration.
+	 * 
+	 * @param configuration launch configuration
+	 * @param context context used to expand variables
+	 * @param monitor progress monitor
+	 * @throws CoreException if an exception occurs while refreshing resources
+	 */
+	public static IResource[] getResourcesForScope(ILaunchConfiguration configuration, ExpandVariableContext context, IProgressMonitor monitor) throws CoreException {
+		String scope = getRefreshScope(configuration);
+		if (scope == null) {
+			return null;
+		}
+
+		ToolUtil.VariableDefinition varDef = ToolUtil.extractVariableTag(scope, 0);
+		if (varDef.start == -1 || varDef.end == -1 || varDef.name == null) {
+			String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidRefreshVarFormat"), new Object[] { configuration.getName()}); //$NON-NLS-1$
+			abort(msg, null, 0);
+		}
+
+		RefreshScopeVariableRegistry registry = ExternalToolsPlugin.getDefault().getRefreshVariableRegistry();
+		ExternalToolVariable variable = registry.getVariable(varDef.name);
+		if (variable == null) {
+			String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.noRefreshVarNamed"), new Object[] { configuration.getName(), varDef.name }); //$NON-NLS-1$
+			abort(msg, null, 0);
+		}
+
+		if (monitor.isCanceled()) {
+			return null;
+		}
+
+		return variable.getExpander().getResources(varDef.name, varDef.argument, context);
 	}
 
 	/**
