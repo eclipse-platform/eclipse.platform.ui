@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,23 +33,22 @@ import org.eclipse.swt.widgets.Display;
  * Weak references of equivalent image descriptors are mapped to the same array
  * of images (where equivalent descriptors are <code>equals(Object)</code>).
  * 
- * This cache makes no guarantees on how long the cleaning process will take, or
- * when exactly it will occur.
- * 
- * Upon request of a disabled or gray image, the normal image will be created as
- * well (if it was not already in the cache) in order to create the disabled or
- * gray version of the image.
+ * It is recommended to use this class as a singleton, since it creates a thread
+ * for cleaning out images.
  * 
  * It is the responsibility of the user to ensure that the image descriptors are
  * kept around as long as the images are needed. The users of this cache should
  * not explicitly dispose the images.
  * 
- * It is recommended to use this class as a singleton, since it creates a thread
- * for cleaning out images.
+ * Upon request of a disabled or gray image, the normal image will be created as
+ * well (if it was not already in the cache) in order to create the disabled or
+ * gray version of the image.
+ * 
+ * This cache makes no guarantees on how long the cleaning process will take, or
+ * when exactly it will occur.
+ * 
  * 
  * This class may be instantiated; it is not intended to be subclassed.
- * 
- * NOTE: This API is experimental and is subject to change, including removal.
  * 
  * @since 3.1
  */
@@ -116,7 +116,7 @@ public final class ImageCache {
 
 		/**
 		 * Clear the weak references in this equivalence set.
-		 *  
+		 * 
 		 */
 		public void clear() {
 			ImageCacheWeakReference currentReference = null;
@@ -339,6 +339,8 @@ public final class ImageCache {
 		 */
 		private final ReferenceQueue referenceQueue;
 
+		private final StaleImages staleImages;
+
 		/**
 		 * Constructs a new instance of <code>ReferenceCleanerThread</code>.
 		 * 
@@ -348,23 +350,14 @@ public final class ImageCache {
 		 *            Map of equivalence sets to ImageMapEntry (Image[3],
 		 *            EquivalenceSet).
 		 */
-		private ReferenceCleanerThread(final ReferenceQueue referenceQueue,
-				final Map map) {
+		private ReferenceCleanerThread(final ImageCache imageCache) {
 			super("Reference Cleaner: " + ++threads); //$NON-NLS-1$
 
-			if (referenceQueue == null) {
-				throw new NullPointerException(
-						"The reference queue should not be null.");//$NON-NLS-1$
-			}
-
-			if (map == null) {
-				throw new NullPointerException("The map should not be null.");//$NON-NLS-1$
-			}
-
+			this.referenceQueue = imageCache.imageReferenceQueue;
+			this.imageMap = imageCache.imageMap;
 			this.endMarker = new ImageCacheWeakReference(referenceQueue,
 					referenceQueue);
-			this.referenceQueue = referenceQueue;
-			this.imageMap = map;
+			this.staleImages = imageCache.staleImages;
 		}
 
 		/**
@@ -378,6 +371,7 @@ public final class ImageCache {
 				final ImageCacheWeakReference currentReference) {
 			EquivalenceSet currentSet = null;
 			Set keySet = imageMap.keySet();
+			Image[] images = null;
 
 			// Ensure that the image map is locked until the removal of the
 			// reference has finished
@@ -391,34 +385,31 @@ public final class ImageCache {
 					if (removed) {
 						// Clean up needed since the set is now empty
 						if (currentSet.getSize() == 0) {
-							final Image[] images = ((ImageMapEntry) imageMap
+							images = ((ImageMapEntry) imageMap
 									.remove(currentSet)).getImages();
 							if (images == null) {
 								throw new NullPointerException(
 										"The array of images removed from the map on clean up should not be null."); //$NON-NLS-1$
 							}
-							Display display = Display.getCurrent();
-							if (display == null) {
-								display = Display.getDefault();
-							}
-							display.syncExec(new Runnable() {
-								public void run() {
-									// Dispose the images
-									for (int j = 0; j < images.length; j++) {
-										final Image image = images[j];
-										if ((image != null)
-												&& (!image.isDisposed())) {
-											image.dispose();
-										}
-									}
-								}
-							});
 						}
-
 						// break out of for loop since the reference has
 						// been removed
 						break;
 					}
+				}
+			}
+
+			// Images need disposal
+			if (images != null) {
+				staleImages.addImagesToDispose(images);
+				// Run async to avoid deadlock from dispose
+				Display display = Display.getDefault();
+				if (display != null) {
+					display.asyncExec(new Runnable() {
+						public void run() {
+							staleImages.disposeStaleImages();
+						}
+					});
 				}
 			}
 		}
@@ -441,7 +432,6 @@ public final class ImageCache {
 				// Check to see if we've been told to stop.
 				if (reference == endMarker) {
 					// Clean up the image map
-					shutDownCleaning();
 					break;
 				}
 
@@ -462,41 +452,69 @@ public final class ImageCache {
 		}
 
 		/**
-		 * Clean everything in the map.
-		 *  
-		 */
-		private final void shutDownCleaning() {
-			// Clear all the references in the equivalence sets and
-			// dispose the corresponding images
-			for (Iterator imageItr = imageMap.entrySet().iterator(); imageItr
-					.hasNext();) {
-				final Map.Entry entry = (Map.Entry) imageItr.next();
-				final EquivalenceSet key = (EquivalenceSet) entry.getKey();
-				// Dispose the images if they have been created and have
-				// not been disposed yet
-				final Image[] images = ((ImageMapEntry) entry.getValue())
-						.getImages();
-				for (int i = 0; i < images.length; i++) {
-					final Image image = images[i];
-					if ((image != null) && (!image.isDisposed())) {
-						image.dispose();
-					}
-				}
-
-				// Clear all the references in the equivalence set
-				key.clear();
-			}
-			// Clear map
-			imageMap.clear();
-		}
-
-		/**
 		 * Tells this thread to stop trying to clean up. This is usually run
 		 * when the cache is shutting down.
 		 */
 		private final void stopCleaning() {
 			endMarker.enqueue();
 		}
+	}
+
+	/**
+	 * A container class to hold a list of array of images that have been
+	 * identified as requiring disposal. This class was added to ensure that if
+	 * the image cache's dispose method is called while the cleaner thread is in
+	 * the process of cleaning images, stopping the thread will not prevent
+	 * those images from being disposed. They will be disposed by the image
+	 * cache's dispose method.
+	 * 
+	 */
+	private static class StaleImages {
+		/**
+		 * List of array of images the require disposal.
+		 */
+		private final List staleImages;
+
+		/**
+		 * Create the list of stale images.
+		 * 
+		 */
+		public StaleImages() {
+			staleImages = Collections.synchronizedList(new ArrayList());
+		}
+
+		/**
+		 * Add the array of images to the list of images to dispose. This is
+		 * called only from the cleaner thread.
+		 * 
+		 * @param images
+		 *            The array of images.
+		 */
+		public void addImagesToDispose(final Image[] images) {
+			staleImages.add(images);
+		}
+
+		/**
+		 * Dispose images that require disposal.
+		 * 
+		 */
+		public void disposeStaleImages() {
+			Image[] imagesToDispose = null;
+			// Ensure only one thread at a time accesses the stale images list
+			synchronized (staleImages) {
+				for (Iterator i = staleImages.iterator(); i.hasNext();) {
+					imagesToDispose = (Image[]) i.next();
+					for (int j = 0; j < imagesToDispose.length; j++) {
+						final Image image = imagesToDispose[j];
+						if ((image != null) && (!image.isDisposed())) {
+							image.dispose();
+						}
+					}
+				}
+				staleImages.clear();
+			}
+		}
+
 	}
 
 	/**
@@ -538,7 +556,13 @@ public final class ImageCache {
 	 * <code>null</code> until it is first used, and will not get disposed
 	 * until the image cache itself is disposed.
 	 */
-	private volatile Image missingImage = null;
+	private Image missingImage = null;
+
+	/**
+	 * Stale images that the cleaner thread might not have the opportunity to
+	 * dispose. The latter images will be disposed by the image cache's dispose.
+	 */
+	private StaleImages staleImages;
 
 	/**
 	 * Constructs a new instance of <code>ImageCache</code>, and starts a
@@ -547,8 +571,9 @@ public final class ImageCache {
 	public ImageCache() {
 		imageMap = Collections.synchronizedMap(new HashMap());
 
+		staleImages = new StaleImages();
 		imageReferenceQueue = new ReferenceQueue();
-		imageCleaner = new ReferenceCleanerThread(imageReferenceQueue, imageMap);
+		imageCleaner = new ReferenceCleanerThread(this);
 		imageCleaner.start();
 	}
 
@@ -569,8 +594,9 @@ public final class ImageCache {
 					initialLoadCapacity));
 		}
 
+		staleImages = new StaleImages();
 		imageReferenceQueue = new ReferenceQueue();
-		imageCleaner = new ReferenceCleanerThread(imageReferenceQueue, imageMap);
+		imageCleaner = new ReferenceCleanerThread(this);
 		imageCleaner.start();
 	}
 
@@ -594,8 +620,9 @@ public final class ImageCache {
 					initialLoadCapacity, loadFactor));
 		}
 
+		staleImages = new StaleImages();
 		imageReferenceQueue = new ReferenceQueue();
-		imageCleaner = new ReferenceCleanerThread(imageReferenceQueue, imageMap);
+		imageCleaner = new ReferenceCleanerThread(this);
 		imageCleaner.start();
 	}
 
@@ -654,6 +681,37 @@ public final class ImageCache {
 
 		// Stop the image cleaner thread
 		imageCleaner.stopCleaning();
+		try {
+			imageCleaner.join();
+		} catch (InterruptedException e) {
+			// Interrupted
+		}
+
+		// Clear all the references in the equivalence sets and
+		// dispose the corresponding images
+		for (Iterator imageItr = imageMap.entrySet().iterator(); imageItr
+				.hasNext();) {
+			final Map.Entry entry = (Map.Entry) imageItr.next();
+			final EquivalenceSet key = (EquivalenceSet) entry.getKey();
+			// Dispose the images if they have been created and have
+			// not been disposed yet
+			final Image[] images = ((ImageMapEntry) entry.getValue())
+					.getImages();
+			for (int i = 0; i < images.length; i++) {
+				final Image image = images[i];
+				if ((image != null) && (!image.isDisposed())) {
+					image.dispose();
+				}
+			}
+
+			// Clear all the references in the equivalence set
+			key.clear();
+		}
+		// Clear map
+		imageMap.clear();
+
+		// Clean up the stale images that the cleaner thread might have missed
+		staleImages.disposeStaleImages();
 	}
 
 	/**
