@@ -22,6 +22,7 @@ import org.eclipse.jdt.internal.debug.ui.actions.MoveDownAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveUpAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RemoveAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RestoreDefaultEntriesAction;
+import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
 import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.swt.widgets.Composite;
 
@@ -51,8 +52,13 @@ public class AntClasspathTab extends JavaClasspathTab {
 		createButton(pathButtonComp, new AddJarAction(fClasspathViewer));
 		createButton(pathButtonComp, new AddExternalJarAction(fClasspathViewer, DIALOG_SETTINGS_PREFIX));
 		createButton(pathButtonComp, new AddFolderAction(fClasspathViewer));
-		createButton(pathButtonComp, new RestoreDefaultEntriesAction(fClasspathViewer, this));
-		createButton(pathButtonComp, new EditAntHomeEntryAction(fClasspathViewer, this));
+		RuntimeClasspathAction action= new RestoreDefaultEntriesAction(fClasspathViewer, this);
+		createButton(pathButtonComp, action);
+		action.setEnabled(true);
+		
+		action= new EditAntHomeEntryAction(fClasspathViewer, this);
+		createButton(pathButtonComp, action);
+		action.setEnabled(true);
 	}
 	
 	/* (non-Javadoc)
