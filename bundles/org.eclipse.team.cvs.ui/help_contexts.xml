@@ -15,19 +15,19 @@
  	<!-- ********************************** -->
 	
 	<context id="replace_tag_selection_dialog_context">
-   		<description>You have chosen to replace the selected resource(s) with a branch or version tag. This dialog allows you to select the tag which is to be used for this operation. The selected resource(s) will be replaced with those tagged with the selected tag. If the desired tag does not appear in the list of Versions or Branches, perform a "Refresh from Repository" or a "Configure Tags" to automatically or manually find the tags that exist in the repository, respectively. Disabling the "recurse into sub-folders" option will restrict the operation to selected folders and their direct children and selected files only.</description>
+   		<description>You have chosen to replace the selected resources with a branch or version tag. This dialog allows you to select the tag which is to be used for this operation. The selected resources will be replaced with those tagged with the selected tag. If the desired tag does not appear in the list of Versions or Branches, perform a "Refresh from Repository" or a "Configure Tags" to automatically or manually find the tags that exist in the repository. Disabling the "recurse into sub-folders" option will restrict the operation to selected folders and their direct children and selected files only.</description>
    	</context>
    	
    	<context id="compare_tag_selection_dialog_context">
-   		<description>You have chosen to compare the selected resource(s) with a branch or version tag. This dialog allows you to select the tag which is to be used for this operation. The selected resource(s) will be compared with those tagged with the selected tag. If the desired tag does not appear in the list of Versions or Branches, perform a "Refresh from Repository" or a "Configure Tags" to automatically or manually find the tags that exist in the repository, respectively.</description>
+   		<description>You have chosen to compare the selected resources with a branch or version tag. This dialog allows you to select the tag which is to be used for this operation. The selected resources will be compared with those tagged with the selected tag. If the desired tag does not appear in the list of Versions or Branches, perform a "Refresh from Repository" or a "Configure Tags" to automatically or manually find the tags that exist in the repository.</description>
    	</context>
    	
    	<context id="tag_remote_with_existing_dialog_context">
-   		<description>You have chosen to tag the selected resource(s) with an existing branch or version tag. This dialog allows the user to select the tag which is to be used for this operation. If the tag already exists on another revision of any of the selected resources, it will be moved to the revision in the selection. If the desired tag does not appear in the list of Versions or Branches, perform a "Refresh from Repository" or a "Configure Tags" to automatically or manually find the tags that exist in the repository, respectively. Disabling the "recurse into sub-folders" option will restrict the operation to selected folders and their direct children and selected files only.</description>
+   		<description>You have chosen to tag the selected resources with an existing branch or version tag. This dialog allows the user to select the tag which is to be used for this operation. If the tag already exists on another revision of any of the selected resources, it will be moved to the revision in the selection. If the desired tag does not appear in the list of Versions or Branches, perform a "Refresh from Repository" or a "Configure Tags" to automatically or manually find the tags that exist in the repository. Disabling the "recurse into sub-folders" option will restrict the operation to selected folders and their direct children and selected files only.</description>
    	</context>
    	
    	<context id="share_with_existing_tag_selection_dialog_context">
-   		<description>The project being shared already exists remotely. This dialog allows the user to select the branch with which the project is to be shared. If the desired tag is not HEAD and does not appear in the list of Branches, perform a "Refresh from Repository" or a "Configure Tags" to automatically or manually find the tags that exist in the repository, respectively.</description>
+   		<description>The project being shared already exists remotely. This dialog allows the user to select the branch with which the project is to be shared. If the desired tag is not HEAD and does not appear in the list of Branches, perform a "Refresh from Repository" or a "Configure Tags" to automatically or manually find the tags that exist in the repository.</description>
    	</context>
    	
    	<!-- ********************************** -->
@@ -51,15 +51,15 @@
    	</context>
 
  	<context id="sharing_new_repository_page_context">
-   		<description>Enter the information that identifies the repository you would like to chare with and the user and connection information required to access this repository.</description>
+   		<description>Enter the information that identifies the repository you would like to share with and the user and connection information required to access this repository.</description>
    	</context>
 
  	<context id="sharing_module_page_context">
-   		<description>Specify the name of the remote module with which the local project is shared. You can either choose to use the project name as the name that will be given to the remote module or to specify a custom module path. In either case, the name is relative to the repository root directory and if the remote module does not exist, it is created.</description>
+   		<description>Specify the name of the remote module with which the local project is shared. You can either choose to use the project name as the name that will be given to the remote module or to specify a custom module path. In either case, the name is relative to the repository root directory and, if the remote module does not exist, it is created.</description>
    	</context>
 
  	<context id="sharing_finish_page_context">
-   		<description>The sharing wizard has all the information it needs to share the project with the repository. Click the 'Finish' button to share the project.</description>
+   		<description>The sharing wizard has all the information it needs to share the project with the repository. Click "Finish" to share the project.</description>
    	</context>
 
  	<context id="patch_selection_page_context">
@@ -71,7 +71,7 @@
    	</context>
 
  	<context id="keyword_substituton_selection_page_context">
-   		<description>Select the mode to be applied to the selected files. Automatic will choose between binary and the default ASCII mode specified in the CVS preferences depending on a file's type as determined using the Team file type registry.</description>
+   		<description>Select the mode to be applied to the selected files. Automatic will choose between Binary and the default ASCII mode specified in the CVS preferences depending on a file's type as determined using the Team file type registry.</description>
    	</context>
 
  	<context id="keyword_substituton_summary_page_context">
@@ -91,55 +91,55 @@
  	<!-- ********************************** -->
 	
 	<context id="team_synchronize_action_context">
-   		<description>Show any differences between the local and remote state of the selected resource(s) in the Synchronize View.</description>
+   		<description>Shows any differences between the local and remote state of the selected resources in the Synchronize view.</description>
    	</context>
    	
    	<context id="team_synchronize_outgoing_action_context">
-   		<description>Show any differences between the local and remote state of any selected resource(s) that have outgoing changes in the Synchronize View.</description>
+   		<description>Shows any differences between the local and remote state of any selected resources that have outgoing changes in the Synchronize View.</description>
    	</context>
 
  	<context id="team_commit_action_context">
-   		<description>Commit any outgoing changes in the selected resource(s) to the server.</description>
+   		<description>Commits any outgoing changes in the selected resources to the server.</description>
    	</context>
 
  	<context id="team_update_action_context">
-   		<description>Update the selected resource(s) with any remote changes.</description>
+   		<description>Updates the selected resources with any remote changes.</description>
    	</context>
 
  	<context id="team_create_patch_action_context">
-   		<description>Create a patch that, when applied to the same base as the local resource(s), will duplicate the selected resource(s).</description>
+   		<description>Creates a patch that, when applied to the same base as the local resources, will duplicate the selected resources.</description>
    	</context>
 
  	<context id="team_tag_as_version_action_context">
-   		<description>Tag the selected resource(s) in the repository with a version name provided by the user.</description>
+   		<description>Tags the selected resources in the repository with a version name provided by the user.</description>
    	</context>
 
  	<context id="team_branch_action_context">
-   		<description>Create a branch using the selected resource(s) as the base and optionally updates the local resources to be on the new branch.</description>
+   		<description>Creates a branch using the selected resources as the base and optionally updates the local resources to be on the new branch.</description>
    	</context>
 
  	<context id="team_merge_action_context">
-   		<description>Merge the changes from one branch into another.</description>
+   		<description>Merges the changes from one branch into another.</description>
    	</context>
 
  	<context id="team_set_keyword_mode_action_context">
-   		<description>Set the keyword substitution mode of the selected resource(s).</description>
+   		<description>Sets the keyword substitution mode of the selected resources.</description>
    	</context>
 
  	<context id="team_disconnect_action_context">
-   		<description>Disconnect the project from CVS control and optionally deletes the CVS folders.</description>
+   		<description>Disconnects the project from CVS control and optionally deletes the CVS folders.</description>
    	</context>
 
  	<context id="team_add_action_context">
-   		<description>Add the selected resource(s) to CVS control so they can be committed and shared.</description>
+   		<description>Adds the selected resources to CVS control so they can be committed and shared.</description>
    	</context>
 
  	<context id="team_ignore_action_context">
-   		<description>Ignore the selected resource(s) so that they will not be considered during any CVS operations.</description>
+   		<description>Ignores the selected resources so that they will not be considered during any CVS operations.</description>
    	</context>
 
  	<context id="team_nature_to_property_action_context">
-   		<description>Convert a project that has a CVS nature on it to one that has a persitant property. This is only required for migration from pre-F3 to post-F3 workspaces.</description>
+   		<description>Converts a project that has a CVS nature on it to one that has a persitant property. This is only required for migration from pre-F3 to post-F3 workspaces.</description>
    	</context>
    		
    	<!-- ********************************** -->
@@ -147,75 +147,75 @@
  	<!-- ********************************** -->
 	
 	<context id="compare_with_tag_action_context">
-   		<description>Compare the selected resource(s) with the corresponding remote resources tagged with a user specified version or branch tag.</description>
+   		<description>Compares the selected resources with the corresponding remote resources tagged with a user specified version or branch tag.</description>
    	</context>
    	
    	<context id="compare_with_latest_action_context">
-   		<description>Compare the selected resource(s) with the corresponding remote resources with the same tag or on the same branch.</description>
+   		<description>Compares the selected resources with the corresponding remote resources with the same tag or on the same branch.</description>
    	</context>
 
    	<context id="compare_with_revision_action_context">
-   		<description>Compare the selected file with a user specified revision of the file.</description>
+   		<description>Compares the selected file with a user specified revision of the file.</description>
    	</context>
    	
  	<context id="replace_with_tag_action_context">
-   		<description>Replace the selected resource(s) with the corresponding remote resources tagged with a user specified version or branch tag.</description>
+   		<description>Replaces the selected resources with the corresponding remote resources tagged with a user specified version or branch tag.</description>
    	</context>
    	
    	 <context id="replace_with_latest_action_context">
-   		<description>Replace the selected resource(s) with the corresponding remote resources with the same tag or on the same branch.</description>
+   		<description>Replaces the selected resources with the corresponding remote resources with the same tag or on the same branch.</description>
    	</context>
     
    	<context id="replace_with_revision_action_context">
-   		<description>Replace the selected file with a user specified revision of the file.</description>
+   		<description>Replaces the selected file with a user specified revision of the file.</description>
    	</context>
    	
    	<context id="checkout_as_action_context">
-   		<description>Checkout the selected resource into a user configured project.</description>
+   		<description>Checks out the selected resource into a user configured project.</description>
    	</context>
    	
    	<context id="checkout_as_project_action_context">
-   		<description>Checkout the selected resource(s) into project(s) that corresponds to the name of the remote resource.</description>
+   		<description>Checks out the selected resources into projects that corresponds to the name of each remote resource.</description>
    	</context>
 
    	<context id="checkout_module_action_context">
-   		<description>Checkout the selected module(s) into the local workspace.</description>
+   		<description>Checks out the selected modules into the local workspace.</description>
    	</context>
    	   	
    	<context id="open_remote_file_action_context">
-   		<description>Open the contents of the selected remote file into an editor.</description>
+   		<description>Opens the contents of the selected remote file in an editor.</description>
    	</context>
 
  	<context id="show_in_history_action_context">
-   		<description>Display the revision history of the selected local or remote file in the history view.</description>
+   		<description>Displays the revision history of the selected local or remote file in the history view.</description>
    	</context>
 
  	<context id="compare_remote_resources_action_context">
-   		<description>Compare the 2 selected remote resources with each other.</description>
+   		<description>Compares the two selected remote resources with each other.</description>
    	</context>
    	
    	<context id="copy_repository_name_action_context">
-   		<description>Copy the name of the selected repository location to the clipboard.</description>
+   		<description>Copies the name of the selected repository location to the clipboard.</description>
    	</context>
    	
    	<context id="remove_root_action_context">
-   		<description>Remove the selected repository location(s) from the Repositories View.</description>
+   		<description>Removes the selected repository locations from the Repositories View.</description>
    	</context>
    	
    	<context id="define_branch_action_context">
-   		<description>Add a branch to the selected repository location. This operation only adds the branch to the view and does not effect the repository itself.</description>
+   		<description>Adds a branch to the selected repository location. This operation only adds the branch to the view and does not affect the repository itself.</description>
    	</context>
    	
    	<context id="remove_branch_action_context">
-   		<description>Remove a branch from the selected repository location. This operation only removes the branch to the view and does not effect the repository itself.</description>
+   		<description>Removes a branch from the selected repository location. This operation only removes the branch to the view and does not affect the repository itself.</description>
    	</context>
    	
    	<context id="move_remote_tag_action_context">
-   		<description>Tag the selected resource(s) with an existing user specified tag, moving the tag if required.</description>
+   		<description>Tags the selected resources with an existing user specified tag, moving the tag if required.</description>
    	</context>
    	
    	<context id="tag_remote_action_context">
-   		<description>Tags the selected resource(s) with a user specified tag.</description>
+   		<description>Tags the selected resources with a user specified tag.</description>
    	</context>
    	   	  	
  	<!-- ********************************** -->
@@ -223,17 +223,15 @@
  	<!-- ********************************** -->
 	
 	<context  id="tag_configuration_overview" >
-   		<description>Configure the branch and version tags that are shown in the workbench. By browsing remote CVS files for tags you can selectively choose, from the list of tags on each file, which tags should be remembered and which ones shouldn't. You can also select the files that will be automatically examined for tags.
-		</description>
+   		<description>Configure the branch and version tags that are shown in the workbench. By browsing remote CVS files for tags you can selectively choose, from the list of tags on each file, which tags should be remembered and which should not. You can also select the files that will be automatically examined for tags.</description>
    	</context>
    
     <context  id="tag_configuration_refreshlist" >
-      <description>This lists the files that are automatically examined for tags. By default, the .project file	is examined. But in some cases other files may have a more complete tag history and should be examined instead.
-      </description>
+      <description>This lists the files that are automatically examined for tags. By default, the .project file	is examined. But in some cases other files may have a more complete tag history and should be examined instead.</description>
    	</context>
    
    	<context  id="tag_configuration_refreshaction" >
-      <description>This will fetch branch and version tags from the files that have been configured to be automatically searched for tags. If tags that you expected to see don't appear, try changing the list of files to examined via the tag configuration dialog.</description>
+      <description>This will fetch branch and version tags from the files that have been configured to be automatically searched for tags. If tags that you expected to see do not appear, try changing the list of files to examined via the tag configuration dialog.</description>
    	</context>
 
  	<!-- ********************************** -->
@@ -261,8 +259,7 @@
       <description>Enter the name of the branch tag to be applied to the revisions that exist locally.</description>
     </context>
     <context id="add_to_cvsignore_context">
-    	<description>In this dialog choose how to add the selected resources to the .cvsignore files. For each resource to be ignored, a .cvsignore file will created in its parent directory containing the pattern specified in the dialog. This won't affect resources already under version control.
-    	</description>
+    	<description>In this dialog choose how to add the selected resources to the .cvsignore files. For each resource to be ignored, a .cvsignore file will created in its parent directory containing the pattern specified in the dialog. This will not affect resources already under version control.</description>
     </context>
     
  	<!-- ********************************** -->
@@ -274,7 +271,7 @@
    	</context>
    	
    	<context  id="quietness_level_pref" >
-      <description>Sets the amount of status information CVS prints for a command. In "Somewhat quiet" mode the printing of unimportant informational messages is supressed. The consideration of what is important depends on each command. In "Very quiet" mode all output except what is absolutely necessary to complete the command is suppressed. In "Very Quiet" mode, some cvs servers may not communicate important information about errors that have occured. You may want to consider using "Somewhat quiet" mode instead.</description>
+      <description>Sets the amount of status information CVS prints for a command. In "Somewhat quiet" mode the printing of unimportant informational messages is supressed. The consideration of what is important depends on each command. In "Very quiet" mode all output except what is absolutely necessary to complete the command is suppressed. In "Very Quiet" mode, some CVS servers may not communicate important information about errors that have occured. You may want to consider using "Somewhat quiet" mode instead.</description>
    	</context>
    	
   	<context  id="compression_level_pref" >
@@ -312,7 +309,7 @@
       <description>This view allows the browsing of the contents of known CVS repositories and the checkout of modules into the local workspace as projects.</description>
    	</context>
    	<context  id="resource_history_view_context" >
-      <description>This view shows the revision history of a resource under CVS control.</description>
+      <description>This view shows the revision history of a file under CVS control.</description>
    	</context>
    	<context  id="catchup_release_viewer_context" >
       <description>This view shows the incoming, outgoing and conflicting changes.</description>
@@ -326,10 +323,10 @@
  	<!-- ********************************** -->
  	
  	<context  id="get_file_revision_action_context" >
-      <description>Load the revision of the file into the workspace. The file will be "sticky" and the user will be unable to commit changes to the repository.</description>
+      <description>Loads the revision of the file into the workspace. The file will be "sticky" and the user will be unable to commit changes to the repository.</description>
    	</context>
  	<context  id="get_file_contents_action_context" >
-      <description>Load the contents of the file into the workspace. The base revision of the local file will not change and the file will become dirty. Perform this action if you wich to revert to the contents of an older revision of the file.</description>
+      <description>Loads the contents of the file into the workspace. The base revision of the local file will not change and the file will become dirty. Perform this action if you wich to revert to the contents of an older revision of the file.</description>
    	</context>
    		
    	<!-- ********************************** -->
