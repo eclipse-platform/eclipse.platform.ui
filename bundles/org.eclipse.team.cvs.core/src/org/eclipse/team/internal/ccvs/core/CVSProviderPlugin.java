@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.team.ccvs.core.CVSCommandOptions.QuietOption;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
@@ -40,7 +41,7 @@ public class CVSProviderPlugin extends Plugin {
 	public static final boolean DEFAULT_PRUNE = true;
 	private boolean pruneEmptyDirectories = DEFAULT_PRUNE; 
 
-	private String quietness = "";
+	private QuietOption quietness;
 	
 	public static final String ID = "org.eclipse.team.cvs.core";
 	public static final String PT_AUTHENTICATOR = "authenticator";
@@ -126,15 +127,14 @@ public class CVSProviderPlugin extends Plugin {
 	 * Set the quietness option to use with cvs commands.
 	 * Can be "", "-q" or "-Q"
 	 */
-	public void setQuietness(String option) {
-		if ("".equals(option) || "-q".equals(option) || "-Q".equals(option))
+	public void setQuietness(QuietOption option) {
 			this.quietness = option;
 	}
 
 	/**
 	 * Get the quietness option for commands
 	 */
-	public String getQuietness() {
+	public QuietOption getQuietness() {
 		return quietness;
 	}
 	

@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,6 +26,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.team.ccvs.core.CVSCommandOptions.CommandOption;
+import org.eclipse.team.ccvs.core.CVSCommandOptions.DiffOption;
 import org.eclipse.team.core.IFileTypeRegistry;
 import org.eclipse.team.core.ITeamNature;
 import org.eclipse.team.core.ITeamProvider;
@@ -51,7 +52,6 @@ import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
 import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
 import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
 import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
@@ -445,53 +445,18 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	}
 	
 	/** 
-	 * Diff the resources against the repository
-	 */
-	public void diff(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
-		// Build the arguments list
-		String[] arguments = getValidArguments(resources, depth, progress);
-		
-		// Build the local options
-		List localOptions = new ArrayList();
-		// Perform a context diff
-		localOptions.add("-c");
-		// If the depth is not infinite, we want the -l option
-		if (depth != IResource.DEPTH_INFINITE)
-			localOptions.add(Client.LOCAL_OPTION);		
-			
-		try {
-			Client.execute(
-				Client.DIFF,
-				getDefaultGlobalOptions(),
-				(String[])localOptions.toArray(new String[localOptions.size()]),
-				arguments,
-				managedProject,
-				progress,
-				getPrintStream());
-		} catch(CVSDiffException e) {
-			// Ignore this for now
-		}
-	}
-	
-	/** 
 	 * Diff the resources against the repository and write the
 	 * output to the provided PrintStream in a form that is usable
 	 * as a patch
 	 */
-	public void diff(IResource[] resources, int depth, PrintStream stream, IProgressMonitor progress) throws TeamException {
+	public void diff(IResource[] resources, DiffOption[] options, PrintStream stream, IProgressMonitor progress) throws TeamException {
 			
-		// Build the arguments list
-		String[] arguments = getValidArguments(resources, depth, progress);	
-		
 		// Build the local options
-		List localOptions = new ArrayList();
-		// Perform a context diff
-		localOptions.add("-N"); // include diffs for added and removed files
-		localOptions.add("-u"); // use unified output format
-		// If the depth is not infinite, we want the -l option
-		if (depth != IResource.DEPTH_INFINITE)
-			localOptions.add(Client.LOCAL_OPTION);
-			
+		List localOptions = createLocalOptionsFromCommandOptions(options);
+		
+		// Build the arguments list
+		String[] arguments = getValidArguments(resources, localOptions.contains(DiffOption.DONT_RECURSE) ? IResource.DEPTH_ONE : IResource.DEPTH_INFINITE, progress);
+						
 		final List errors = new ArrayList();	
 		try {
 			Client.execute(
@@ -1027,5 +992,16 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	public boolean isDirty(IResource resource) {
 		Assert.isTrue(false);
 		return false;
+	}
+	
+	/**
+	 * Adds CVSCommandOptions to a returned array
+	 */
+	private List createLocalOptionsFromCommandOptions(CommandOption[] options) {
+		List ops = new ArrayList(5);
+		for (int i = 0; i < options.length; i++) {
+			ops.add(options[i].getOption());
+		}
+		return ops;
 	}
 }
