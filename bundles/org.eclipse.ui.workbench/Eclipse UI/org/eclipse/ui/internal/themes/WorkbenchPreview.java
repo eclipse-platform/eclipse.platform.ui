@@ -133,7 +133,7 @@ public class WorkbenchPreview implements IThemePreview {
      */
     protected void setTabStyle() {
         boolean traditionalTab = apiStore.getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
-        folder.setSimpleTab(traditionalTab);
+        folder.setSimple(traditionalTab);
     }
 
     /**

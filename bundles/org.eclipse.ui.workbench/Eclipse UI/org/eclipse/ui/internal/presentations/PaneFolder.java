@@ -565,7 +565,7 @@ public final class PaneFolder {
 	 * @param traditionalTab
 	 */
 	public void setSimpleTab(boolean traditionalTab) {
-		tabFolder.setSimpleTab(traditionalTab);
+		tabFolder.setSimple(traditionalTab);
 	}
 
 	/**
@@ -579,7 +579,7 @@ public final class PaneFolder {
 	 * @param b
 	 */
 	public void setSingleTab(boolean b) {
-		tabFolder.setSingleTab(b);
+		tabFolder.setSingle(b);
 	}
 	
 	public void hideTitle() {
