@@ -240,7 +240,7 @@ public void resetPropertyValue(Object property) {
 	if (P_ID_PROVINCE.equals(property)) {
 		setProvince(PROVINCE_DEFAULT);
 		return;
-	};
+	}
 	if (P_ID_STREET.equals(property)) {
 		setStreet(new StreetAddress());
 		return;

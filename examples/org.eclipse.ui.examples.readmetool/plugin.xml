@@ -237,7 +237,7 @@
    <extension
          point="org.eclipse.help.contexts">
       <contexts
-            name="HelpContexts.xml">
+            file="HelpContexts.xml">
       </contexts>
    </extension>
    <extension
@@ -277,7 +277,7 @@
       </attribute>
    </extension>
    <extension
-         point="org.eclipse.ui.markerHelp">
+         point="org.eclipse.ui.ide.markerHelp">
       <markerHelp
             markerType="org.eclipse.ui.examples.readmetool.readmemarker"
             helpContextId="org.eclipse.ui.examples.readmetool.marker_example1_context">
@@ -352,7 +352,7 @@
       </markerHelp>
    </extension>
    <extension
-         point="org.eclipse.ui.markerResolution">
+         point="org.eclipse.ui.ide.markerResolution">
       <markerResolutionGenerator
             markerType="org.eclipse.ui.examples.readmetool.readmemarker"
             class="org.eclipse.ui.examples.readmetool.ReadmeMarkerResolutionGenerator">

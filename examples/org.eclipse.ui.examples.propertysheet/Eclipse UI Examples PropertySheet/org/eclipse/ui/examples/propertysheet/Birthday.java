@@ -180,7 +180,7 @@ public void resetPropertyValue(Object property) {
 	if (P_ID_YEAR.equals(property)) {
 		setYear(YEAR_DEFAULT);
 		return;
-	};
+	}
 }
 /**
  * Sets the day
