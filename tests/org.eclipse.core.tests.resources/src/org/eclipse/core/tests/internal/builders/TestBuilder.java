@@ -125,9 +125,9 @@ public void reset() {
  */
 public void setInitializationData(IConfigurationElement config, String name, Object data) {
 	logPluginLifecycleEvent(SET_INITIALIZATION_DATA);
-	config = config;
-	name = name;
-	data = data;
+	this.config = config;
+	this.name = name;
+	this.data = data;
 }
 /**
  * Implemented inherited method from <code>BaseBuilder</code>.
