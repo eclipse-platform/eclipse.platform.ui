@@ -23,7 +23,6 @@ import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 public class ChainedPreferenceStoreTest extends TestCase {
@@ -38,7 +37,7 @@ public class ChainedPreferenceStoreTest extends TestCase {
 	private List fEvents= new ArrayList();
 	private PropertyChangeListener fPropertyChangeListener= new PropertyChangeListener();
 	
-	private static final String PROPERTY= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH;
+	private static final String PROPERTY= "some.property";
 	private static final String VALUE= "8";
 	private static final String DEFAULT_VALUE= "4";
 	private static final String DEFAULT_DEFAULT_VALUE= "";
@@ -131,4 +130,24 @@ public class ChainedPreferenceStoreTest extends TestCase {
 		assertEquals(null, event.getOldValue());
 		assertEquals(DEFAULT_VALUE, event.getNewValue());
 	}
+	
+//	/**
+//	 * Case where the old value cannot be determined. (Not handled by the current implementation.)
+//	 */
+//	public void testChainedStore4() {
+//		IPreferenceStore store1= EditorsUI.getPreferenceStore();
+//		IPreferenceStore store2= new PreferenceStore();
+//		IPreferenceStore chainedStore= new ChainedPreferenceStore(new IPreferenceStore[] { store1, store2 });
+//		store2.setDefault(PROPERTY, DEFAULT_VALUE);
+//		
+//		chainedStore.addPropertyChangeListener(fPropertyChangeListener);
+//		store1.setValue(PROPERTY, VALUE);
+//		chainedStore.removePropertyChangeListener(fPropertyChangeListener);
+//		
+//		assertEquals(1, fEvents.size());
+//		PropertyChangeEvent event= (PropertyChangeEvent) fEvents.get(0);
+//		assertEquals(PROPERTY, event.getProperty());
+//		assertNull(event.getOldValue());
+//		assertEquals(VALUE, event.getNewValue());
+//	}
 }
