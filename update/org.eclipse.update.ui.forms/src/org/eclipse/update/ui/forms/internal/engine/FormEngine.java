@@ -365,7 +365,8 @@ public class FormEngine extends Canvas {
 		HyperlinkAction action = link.getAction(objectTable);
 		if (action != null)
 			action.linkActivated(link);
-		setCursor(model.getHyperlinkSettings().getHyperlinkCursor());
+		if (!isDisposed())
+			setCursor(model.getHyperlinkSettings().getHyperlinkCursor());
 	}
 
 	protected void paint(PaintEvent e) {
