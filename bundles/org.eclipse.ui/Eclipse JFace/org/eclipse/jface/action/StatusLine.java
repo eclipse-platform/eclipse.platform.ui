@@ -294,15 +294,15 @@ protected void hideProgress() {
 	public boolean isCancelEnabled() {
 		return fCancelEnabled;
 	}
-/**
+	/**
 	 * Sets the cancel status. This method is usually called with the 
 	 * argument false if a client wants to abort a cancel action.
 	 */
-public void setCanceled(boolean b) {
-	fIsCanceled = b;
-	if (fCancelButton != null)
-		fCancelButton.setEnabled(!b);
-}
+	public void setCanceled(boolean b) {
+		fIsCanceled = b;
+		if (fCancelButton != null)
+			fCancelButton.setEnabled(!b);
+	}
 	/**
 	 * Controls whether the ProgressIndication provides UI for canceling
 	 * a long running operation.
@@ -320,17 +320,21 @@ public void setCanceled(boolean b) {
 	}
 /**
  * Sets the error message text to be displayed on the status line.
- * The icon on the status line is cleared.
- *
+ * The image on the status line is cleared.
+ * 
+ * @param message the error message, or <code>null</code> for no error message
  */
 public void setErrorMessage(String message) {
 	setErrorMessage(null, message);
 }
 /**
  * Sets an image and error message text to be displayed on the status line.
+ * 
+ * @param image the image to use, or <code>null</code> for no image
+ * @param message the error message, or <code>null</code> for no error message
  */
 public void setErrorMessage(Image image, String message) {
-	fErrorText = message;
+	fErrorText = trim(message);
 	fErrorImage = image;
 	updateMessageLabel();
 }
@@ -346,17 +350,21 @@ public void setErrorMessage(Image image, String message) {
 	}
 /**
  * Sets the message text to be displayed on the status line.
- * The icon on the status line is cleared.
- *
+ * The image on the status line is cleared.
+ * 
+ * @param message the error message, or <code>null</code> for no error message
  */
 public void setMessage(String message) {
 	setMessage(null, message);
 }
 /**
  * Sets an image and a message text to be displayed on the status line.
+ * 
+ * @param image the image to use, or <code>null</code> for no image
+ * @param message the message, or <code>null</code> for no message
  */
 public void setMessage(Image image, String message) {
-	fMessageText = message;
+	fMessageText = trim(message);
 	fMessageImage = image;
 	updateMessageLabel();
 }
@@ -423,20 +431,43 @@ public void setMessage(Image image, String message) {
 			text = JFaceResources.format("Set_SubTask", new Object[] {fTaskName, name});//$NON-NLS-1$
 		setMessage(text);		
 	}
+	
+	/**
+	 * Trims the message to be displayable in the status line.
+	 * This just pulls out the first line of the message.
+	 * Allows null.
+	 */
+	String trim(String message) {
+		if (message == null)
+			return null;
+		int cr = message.indexOf('\r');
+		int lf = message.indexOf('\n');
+		if (cr == -1 && lf == -1)
+			return message;
+		int len;
+		if (cr == -1)
+			len = lf;
+		else if (lf == -1)
+			len = cr;
+		else 
+			len = Math.min(cr, lf);
+		return message.substring(0, len);
+	}
+	
 /**
  * Updates the message label widget.
  */
 protected void updateMessageLabel() {
 	if (fMessageLabel != null && !fMessageLabel.isDisposed()) {
 		Display display = fMessageLabel.getDisplay();
-		if (fErrorText != null || fErrorImage != null) {
+		if ((fErrorText != null && fErrorText.length() > 0) || fErrorImage != null) {
 			fMessageLabel.setForeground(display.getSystemColor(SWT.COLOR_RED));
 			fMessageLabel.setText(fErrorText);
 			fMessageLabel.setImage(fErrorImage);
 		}
 		else {
 			fMessageLabel.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
-			fMessageLabel.setText(fMessageText);
+			fMessageLabel.setText(fMessageText == null ? "" : fMessageText);
 			fMessageLabel.setImage(fMessageImage);
 		}
 	}

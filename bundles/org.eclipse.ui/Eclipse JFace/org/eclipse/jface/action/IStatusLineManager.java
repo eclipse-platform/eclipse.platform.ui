@@ -50,7 +50,7 @@ public void setErrorMessage(String message);
  * Sets the image and error message to be displayed on the status line.
  *
  * @param image the image to use, or <code>null</code> for no image
- * @param message the error message, or <code>null</code> for no message
+ * @param message the error message, or <code>null</code> for no error message
  */
 public void setErrorMessage(Image image, String message);
 /**
