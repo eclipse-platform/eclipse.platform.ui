@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IResource;
@@ -29,15 +28,16 @@ import org.eclipse.team.ui.synchronize.subscribers.*;
 public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubscriberListener {
 
 	private SubscriberParticipant participant;
-	private Shell shell;
 	private boolean rememberInSyncView;
 	private String targetId;
 	private SyncInfoTree syncInfoSet;
+	private Shell shell;
 
-	public RefreshUserNotificationPolicyInModalDialog(String targetId, SubscriberParticipant participant, SyncInfoTree syncInfoSet) {
+	public RefreshUserNotificationPolicyInModalDialog(Shell shell, String targetId, SubscriberParticipant participant, SyncInfoTree syncInfoSet) {
 		this.targetId = targetId;
 		this.participant = participant;
 		this.syncInfoSet = syncInfoSet;
+		this.shell = shell;
 	}
 
 	public void refreshStarted(IRefreshEvent event) {
@@ -114,7 +114,7 @@ public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubsc
 		} catch (InvocationTargetException e) {
 			Utils.handle(e);
 		}
-		SynchronizeDialog dialog = new SynchronizeDialog(Display.getCurrent().getActiveShell(), participant.getName(), input);
+		SynchronizeDialog dialog = new SynchronizeDialog(shell, participant.getName(), input);
 		dialog.setSynchronizeParticipant(participant);
 		dialog.setBlockOnOpen(true);
 		dialog.open();

@@ -32,6 +32,7 @@ public final class JobRunnableContext implements ITeamRunnableContext {
 	private String jobName;
 	private ISchedulingRule schedulingRule;
 	private boolean postponeBuild;
+	private boolean isUser;
 
 	public JobRunnableContext(String jobName) {
 		this(jobName, null, null);
@@ -41,6 +42,8 @@ public final class JobRunnableContext implements ITeamRunnableContext {
 		this.jobName = jobName;
 		this.listener = listener;
 		this.site = site;
+		// By default team actions are user initiated. 
+		this.isUser = true;
 	}
 
 	/* (non-Javadoc)
@@ -59,6 +62,7 @@ public final class JobRunnableContext implements ITeamRunnableContext {
 		if (listener != null) {
 			job.addJobChangeListener(listener);
 		}
+		job.setUser(isUser());
 		Utils.schedule(job, site);
 	}
 
@@ -102,6 +106,25 @@ public final class JobRunnableContext implements ITeamRunnableContext {
 	 */
 	public ISchedulingRule getSchedulingRule() {
 		return schedulingRule;
+	}
+	
+	/**
+	 * Return whether this job context is user initiated.
+	 * @param boolean <code>true</code> if the job is a result of a user initiated actions
+	 * and <code>false</code> otherwise.
+	 */
+	public boolean isUser() {
+		return isUser;
+	}
+	
+	/**
+	 * Set wheter the job is user initiated. By default the job created by this runnable context
+	 * is a user job.
+	 * @param isUser <code>true</code> if the job is a result of a user initiated actions
+	 * and <code>false</code> otherwise.
+	 */
+	public void setUser(boolean isUser) {
+		this.isUser = isUser;
 	}
 	
 	/**

@@ -34,6 +34,7 @@ public class CompareWithTagAction extends WorkspaceAction {
 		CompareParticipant participant = new CompareParticipant(s);
 		participant.refresh(resources, 
 				participant.getRefreshListeners().createModalDialogListener(
+						getShell(),
 						CVSCompareSubscriber.ID_MODAL, 
 						participant, 
 						participant.getSubscriberSyncInfoCollector().getSyncInfoTree()), 

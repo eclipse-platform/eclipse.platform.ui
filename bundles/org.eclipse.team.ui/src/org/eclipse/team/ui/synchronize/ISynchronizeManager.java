@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize;
 
-
 /**
  * Manages synchronization view participants. Clients can programatically add 
  * or remove participants from this manager. Managed participants are available to
@@ -27,6 +26,16 @@ package org.eclipse.team.ui.synchronize;
  * @since 3.0 
  */
 public interface ISynchronizeManager {	
+	
+	/**
+	 * Constant identifying the job family identifier for a background job that affects the
+	 * synchronization state of resources. All clients
+	 * that schedule background jobs that affect synchronization state should include this job
+	 * family in their implementation of <code>belongsTo</code>.
+	 * @see Job#belongsTo(Object)
+	 */
+	public static final Object FAMILY_SYNCHRONIZE_OPERATION = new Object();
+	
 	/**
 	 * Registers the given listener for participant notifications. Has
 	 * no effect if an identical listener is already registered.

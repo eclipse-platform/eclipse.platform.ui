@@ -59,7 +59,11 @@ public class MergeWizard extends Wizard {
 		
 		CVSMergeSubscriber s = new CVSMergeSubscriber(resources, startTag, endTag);
 		MergeSynchronizeParticipant participant = new MergeSynchronizeParticipant(s);
-		IRefreshSubscriberListener listener = participant.getRefreshListeners().createModalDialogListener(CVSMergeSubscriber.ID_MODAL, participant, participant.getSubscriberSyncInfoCollector().getSyncInfoTree());
+		IRefreshSubscriberListener listener = participant.getRefreshListeners().createModalDialogListener(
+				getShell(),
+				CVSMergeSubscriber.ID_MODAL, 
+				participant, 
+				participant.getSubscriberSyncInfoCollector().getSyncInfoTree());
 		participant.refresh(s.roots(), listener, Policy.bind("Participant.merging"), null); //$NON-NLS-1$
 		return true;
 	}

@@ -23,6 +23,7 @@ import org.eclipse.team.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.internal.core.*;
 import org.eclipse.team.internal.ui.synchronize.RefreshChangeListener;
 import org.eclipse.team.internal.ui.synchronize.RefreshEvent;
+import org.eclipse.team.ui.synchronize.ISynchronizeManager;
 
 /**
  * Job to refresh a {@link Subscriber} in the background. The job can be configured
@@ -136,11 +137,12 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 			setProgressGroup(group, 80);
 			collector.setProgressGroup(group, 20);
 		}
+		setUser(getCollector() != null);
 		return shouldRun; 
 	}
 
 	public boolean belongsTo(Object family) {		
-		return family == getFamily();
+		return family == getFamily() || family == ISynchronizeManager.FAMILY_SYNCHRONIZE_OPERATION;
 	}
 	
 	public static Object getFamily() {

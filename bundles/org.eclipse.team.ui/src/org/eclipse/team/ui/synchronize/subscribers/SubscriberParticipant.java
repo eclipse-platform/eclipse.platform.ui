@@ -15,6 +15,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.core.synchronize.*;
@@ -95,8 +96,8 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		super();
 		refreshSchedule = new SubscriberRefreshSchedule(this);
 		refreshListenerFactory = new IRefreshSubscriberListenerFactory() {
-			public IRefreshSubscriberListener createModalDialogListener(String targetId, SubscriberParticipant participant, SyncInfoTree syncInfoSet) {
-				return new RefreshUserNotificationPolicyInModalDialog(targetId, participant, syncInfoSet);
+			public IRefreshSubscriberListener createModalDialogListener(Shell shell, String targetId, SubscriberParticipant participant, SyncInfoTree syncInfoSet) {
+				return new RefreshUserNotificationPolicyInModalDialog(shell, targetId, participant, syncInfoSet);
 			}
 			public IRefreshSubscriberListener createSynchronizeViewListener(SubscriberParticipant participant) {
 				return new RefreshUserNotificationPolicy(participant);

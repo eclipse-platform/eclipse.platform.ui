@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IToolBarManager;
@@ -116,13 +115,5 @@ public class CompareParticipant extends SubscriberParticipant {
 	 */
 	protected StructuredViewerAdvisor createSynchronizeViewerAdvisor(ISynchronizeView view) {
 		return new CompareParticipantAdvisor(view, this);
-	}
-	
-	/**
-	 * Refresh this participant and show the results in a model dialog.
-	 * @param resources
-	 */
-	public void refresh(IResource[] resources) {
-		refresh(resources, getRefreshListenerFactory().createModalDialogListener(getId(), this, getSubscriberSyncInfoCollector().getSyncInfoTree()), getName(), null);
 	}
 }

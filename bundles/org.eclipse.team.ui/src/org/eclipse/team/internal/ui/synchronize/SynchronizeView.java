@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -21,13 +20,12 @@ import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.actions.SynchronizePageDropDownAction;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.*;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * Implements a Synchronize View that contains multiple synchronize participants. 
@@ -310,6 +308,11 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		updateForExistingParticipants();
 		getViewSite().getActionBars().updateActionBars();
 		updateTitle();
+		
+		IWorkbenchSiteProgressService progress = (IWorkbenchSiteProgressService)getSite().getAdapter(IWorkbenchSiteProgressService.class);
+		if(progress != null) {
+			progress.showBusyForFamily(ISynchronizeManager.FAMILY_SYNCHRONIZE_OPERATION);
+		}
 	}
 	
 	/**

@@ -11,15 +11,13 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.*;
-
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.ISharedImages;
@@ -32,7 +30,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * 
  * @since 3.0
  */
-public class SynchronizeModelElementLabelProvider extends LabelProvider implements IColorProvider {
+public class SynchronizeModelElementLabelProvider extends LabelProvider implements IColorProvider, IFontProvider {
 
 	// Cache for folder images that have been overlayed with conflict icon
 	private Map fgImageCache;
@@ -43,6 +41,9 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 	// Used as the base label provider for retreiving image and text from
 	// the workbench adapter.
 	private WorkbenchLabelProvider workbenchLabelProvider = new WorkbenchLabelProvider();
+	
+	// Font used to display busy elements
+	private Font busyFont;
 
 	public SynchronizeModelElementLabelProvider() {
 	}
@@ -52,12 +53,6 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
 	public Color getForeground(Object element) {
-		if (element instanceof ISynchronizeModelElement) {
-			ISynchronizeModelElement node = (ISynchronizeModelElement)element;
-			if(node.getProperty(ISynchronizeModelElement.BUSY_PROPERTY)) {
-				return Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
-			}
-		}
 		return null;
 	}
 
@@ -68,6 +63,27 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 	public Color getBackground(Object element) {
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
+	 */
+	public Font getFont(Object element) {
+		if (element instanceof ISynchronizeModelElement) {
+			ISynchronizeModelElement node = (ISynchronizeModelElement)element;
+			if(node.getProperty(ISynchronizeModelElement.BUSY_PROPERTY)) {
+				if (busyFont == null) {
+					Font defaultFont = JFaceResources.getDefaultFont();
+					FontData[] data = defaultFont.getFontData();
+					for (int i = 0; i < data.length; i++) {
+						data[i].setStyle(SWT.ITALIC);
+					}				
+					busyFont = new Font(TeamUIPlugin.getStandardDisplay(), data);
+				}
+				return busyFont;
+			}
+		}
+		return null;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -76,8 +92,8 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 	public Image getImage(Object element) {
 		Image base = workbenchLabelProvider.getImage(element);
 		if (base != null) {
-			if (element instanceof DiffNode) {
-				DiffNode syncNode = (DiffNode) element;
+			if (element instanceof ISynchronizeModelElement) {
+				ISynchronizeModelElement syncNode = (ISynchronizeModelElement) element;
 				int kind = syncNode.getKind();
 				Image decoratedImage;
 				decoratedImage = getCompareImage(base, kind);				
@@ -122,12 +138,18 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 		return compareConfig.getImage(base, kind);
 	}
 
-	private Image propagateConflicts(Image base, DiffNode element) {
+	private Image propagateConflicts(Image base, ISynchronizeModelElement element) {
 		// if the folder is already conflicting then don't bother propagating
 		// the conflict
 		List overlays = new ArrayList();
 		List locations = new ArrayList();
 		
+		// Decorate with the busy indicator
+		if (element.getProperty(ISynchronizeModelElement.BUSY_PROPERTY)) {
+			overlays.add(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_HOURGLASS_OVR));
+			locations.add(new Integer(OverlayIcon.TOP_LEFT));
+		}
+		// Decorate with propagated conflicts and problem markers
 		int kind = element.getKind();
 		if ((kind & SyncInfo.DIRECTION_MASK) != SyncInfo.CONFLICTING) {
 			if (hasDecendantConflicts(element)) {
@@ -135,66 +157,56 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 				locations.add(new Integer(OverlayIcon.BOTTOM_RIGHT));
 			}
 		}
-			if(hasErrorMarker(element)) {
-				overlays.add(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_ERROR_OVR));
-				locations.add(new Integer(OverlayIcon.BOTTOM_LEFT));
-			} else if(hasWarningMarker(element)) {
-				overlays.add(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_WARNING_OVR));
-				locations.add(new Integer(OverlayIcon.BOTTOM_LEFT));
+		if (hasErrorMarker(element)) {
+			overlays.add(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_ERROR_OVR));
+			locations.add(new Integer(OverlayIcon.BOTTOM_LEFT));
+		} else if (hasWarningMarker(element)) {
+			overlays.add(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_WARNING_OVR));
+			locations.add(new Integer(OverlayIcon.BOTTOM_LEFT));
+		}
+		if (!overlays.isEmpty()) {
+			ImageDescriptor[] overlayImages = (ImageDescriptor[]) overlays.toArray(new ImageDescriptor[overlays.size()]);
+			int[] locationInts = new int[locations.size()];
+			for (int i = 0; i < locations.size(); i++) {
+				locationInts[i] = ((Integer) locations.get(i)).intValue();
 			}
-			
-			if(! overlays.isEmpty()) {
-				ImageDescriptor[] overlayImages = (ImageDescriptor[]) overlays.toArray(new ImageDescriptor[overlays.size()]);
-				int[] locationInts = new int[locations.size()];
-				for (int i = 0; i < locations.size(); i++) {
-						locationInts[i] =((Integer) locations.get(i)).intValue();
-				}
-				ImageDescriptor overlay = new OverlayIcon(base, overlayImages, locationInts, new Point(base.getBounds().width, base.getBounds().height));
-				if (fgImageCache == null) {
-					fgImageCache = new HashMap(10);
-				}
-				Image conflictDecoratedImage = (Image) fgImageCache.get(overlay);
-				if (conflictDecoratedImage == null) {
-					conflictDecoratedImage = overlay.createImage();
-					fgImageCache.put(overlay, conflictDecoratedImage);
-				}
-				return conflictDecoratedImage;
+			ImageDescriptor overlay = new OverlayIcon(base, overlayImages, locationInts, new Point(base.getBounds().width, base.getBounds().height));
+			if (fgImageCache == null) {
+				fgImageCache = new HashMap(10);
 			}
-		
+			Image conflictDecoratedImage = (Image) fgImageCache.get(overlay);
+			if (conflictDecoratedImage == null) {
+				conflictDecoratedImage = overlay.createImage();
+				fgImageCache.put(overlay, conflictDecoratedImage);
+			}
+			return conflictDecoratedImage;
+		}
 		return base;
 	}
 	
 	/**
-	 * Return whether this diff node has descendant conflicts in the view in which it appears.
+	 * Return whether this diff node has descendant conflicts in the view in
+	 * which it appears.
 	 * @return whether the node has descendant conflicts
 	 */
-	private boolean hasDecendantConflicts(DiffNode node) {
-		if(node instanceof ISynchronizeModelElement) {
-			return ((ISynchronizeModelElement)node).getProperty(ISynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY);
-		}
-		return false;
+	private boolean hasDecendantConflicts(ISynchronizeModelElement node) {
+		return ((ISynchronizeModelElement)node).getProperty(ISynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY);
 	}
 	
 	/**
 	 * Return whether this diff node has descendant conflicts in the view in which it appears.
 	 * @return whether the node has descendant conflicts
 	 */
-	private boolean hasErrorMarker(DiffNode node) {
-		if(node instanceof ISynchronizeModelElement) {
-			return ((ISynchronizeModelElement)node).getProperty(ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY);
-		}
-		return false;
+	private boolean hasErrorMarker(ISynchronizeModelElement node) {
+		return node.getProperty(ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY);
 	}
 	
 	/**
 	 * Return whether this diff node has descendant conflicts in the view in which it appears.
 	 * @return whether the node has descendant conflicts
 	 */
-	private boolean hasWarningMarker(DiffNode node) {
-		if(node instanceof ISynchronizeModelElement) {
-			return ((ISynchronizeModelElement)node).getProperty(ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY);
-		}
-		return false;
+	private boolean hasWarningMarker(ISynchronizeModelElement node) {
+		return node.getProperty(ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY);
 	}
 
 	/*
@@ -202,6 +214,9 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
+		if(busyFont != null) {
+			busyFont.dispose();
+		}
 		compareConfig.dispose();
 		if (fgImageCache != null) {
 			Iterator it = fgImageCache.values().iterator();

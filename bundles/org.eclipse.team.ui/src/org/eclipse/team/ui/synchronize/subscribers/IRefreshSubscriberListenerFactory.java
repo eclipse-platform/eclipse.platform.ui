@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize.subscribers;
 
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 
@@ -27,7 +28,7 @@ public interface IRefreshSubscriberListenerFactory {
 	 * a {@link SyncInfoSet} that is different than the default one maintained by
 	 * the given participant.
 	 */
-	public IRefreshSubscriberListener createModalDialogListener(String targetId, SubscriberParticipant participant, SyncInfoTree syncInfoSet);
+	public IRefreshSubscriberListener createModalDialogListener(Shell shell, String targetId, SubscriberParticipant participant, SyncInfoTree syncInfoSet);
 	
 	/**
 	 * Returns a listener that will prompt at the end of the refresh indicating if changes are
