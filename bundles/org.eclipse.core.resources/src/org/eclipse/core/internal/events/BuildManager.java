@@ -32,6 +32,7 @@ void basicBuild(IProject project, int trigger, ICommand[] commands, IProgressMon
 			IProgressMonitor sub = Policy.subMonitorFor(monitor, 1);
 			BuildCommand command = (BuildCommand) commands[i];
 			basicBuild(project, trigger, command.getBuilderName(), command.getArguments(false), sub);
+			Policy.checkCanceled(monitor);
 		}
 	} finally {
 		monitor.done();
