@@ -267,12 +267,14 @@ public class RepositoryManager {
 		while (it.hasNext()) {
 			IRepositoryListener listener = (IRepositoryListener)it.next();
 			listener.branchTagsRemoved(branchTags, root);
-			Iterator keyIt = vTags.keySet().iterator();
-			while (keyIt.hasNext()) {
-				String projectName = (String)keyIt.next();
-				Set tagSet = (Set)vTags.get(projectName);
-				CVSTag[] versionTags = (CVSTag[])tagSet.toArray(new CVSTag[0]);
-				listener.versionTagsRemoved(versionTags, root);
+			if (vTags != null) {
+				Iterator keyIt = vTags.keySet().iterator();
+				while (keyIt.hasNext()) {
+					String projectName = (String)keyIt.next();
+					Set tagSet = (Set)vTags.get(projectName);
+					CVSTag[] versionTags = (CVSTag[])tagSet.toArray(new CVSTag[0]);
+					listener.versionTagsRemoved(versionTags, root);
+				}
 			}
 			listener.repositoryRemoved(root);
 		}
