@@ -658,6 +658,7 @@ public class AntClasspathBlock {
 	
 	public void setInput(ClasspathModel model) {
 		treeViewer.setInput(model);
+		validated= 0;
 	}
 	
 	public boolean isAntHomeEnabled() {
