@@ -10,30 +10,22 @@
  ******************************************************************************/
 package org.eclipse.team.internal.core.target;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Properties;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ISynchronizer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.team.core.*;
-import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.core.target.*;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.target.IRemoteTargetResource;
+import org.eclipse.team.core.target.Site;
+import org.eclipse.team.core.target.TargetProvider;
 import org.eclipse.team.internal.core.Policy;
-import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.TeamPlugin;
 
 public abstract class SynchronizedTargetProvider extends TargetProvider {
@@ -42,6 +34,13 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 
 	private final int depth = IResource.DEPTH_INFINITE;
 
+	// The location where the target reads/writes against
+	protected Site site;
+	// The path relative to the site where the target reads/writes against
+	protected IPath intrasitePath;
+	// The URL which combines the site and relative path
+	protected URL targetURL;
+	
 	/**
 	 * These interfaces are to operations that can be performed on the array of resources,
 	 * and on all resources identified by the depth parameter.
@@ -63,6 +62,18 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 		return ResourcesPlugin.getWorkspace().getSynchronizer();
 	}
 
+	public SynchronizedTargetProvider(Site site, IPath intrasitePath)  throws TeamException {
+		this.intrasitePath = intrasitePath;
+		this.site = site;
+		// Create the combined URL here so we know it's good
+		String root = getSite().getURL().toExternalForm();
+		try {
+			targetURL = UrlUtil.concat(root, intrasitePath);
+		} catch (MalformedURLException e) {
+			throw new TeamException(Policy.bind("SynchronizedTargetProvider.invalid_url_combination", root, intrasitePath.toString()), e);
+		}
+	}
+	
 	/**
 	 * Answers a new state based on an existing local resource.
 	 */
@@ -75,9 +86,22 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	abstract public ResourceState newState(IResource resource, IRemoteTargetResource remote);
 	
 	/**
+	 * @see TargetProvider#getSite()
+	 */
+	public Site getSite() {
+		return site;
+	}
+
+	/**
+	 * @see TargetProvider#getURL()
+	 */
+	public URL getURL() {
+		return targetURL;
+	}	
+	/**
 	 * Get the state descriptor for a given resource.
 	 */
-	public ResourceState getState(IResource resource) {
+	public ResourceState getState(IResource resource) throws TeamException {
 		// Create a new resource state with default values.
 		ResourceState state = newState(resource);
 		state.loadState();
@@ -87,7 +111,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	/**
 	 * Get the state descriptor for a given resource.
 	 */
-	public ResourceState getState(IResource resource, IRemoteTargetResource remote) {
+	public ResourceState getState(IResource resource, IRemoteTargetResource remote) throws TeamException {
 		// Create a new resource state with default values.
 		ResourceState state = newState(resource, remote);
 		state.loadState();
@@ -163,8 +187,13 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	 * @see ITeamSynch#isDirty(IResource)
 	 */
 	public boolean isDirty(IResource resource) {
-		ResourceState state = getState(resource);
-		return state.isDirty(resource);
+		try {
+			ResourceState state = getState(resource);
+			return state.isDirty(resource);
+		} catch (TeamException e) {
+			TeamPlugin.log(e.getStatus());
+			return true;
+		}
 	}
 
 	/**
@@ -275,4 +304,23 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 			return new IResource[0];
 		}
 	}	
+	/**
+	 * @see TargetProvider#deregister(IProject)
+	 */
+	public void deregister(IProject project) {
+		try {
+			newState(project).removeState();
+		} catch (TeamException e) {
+			TeamPlugin.log(e.getStatus());
+		}
+	}
+
+	/**
+	 * @see TargetProvider#getIntrasitePath()
+	 */
+	public IPath getIntrasitePath() {
+		return this.intrasitePath;
+	}
+	
+
 }

@@ -24,6 +24,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.target.TargetManager;
+import org.eclipse.team.core.target.TargetProvider;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
@@ -48,14 +50,14 @@ public class Symmetria {
 			
 			// If remote does not exist then simply ensure no local resource exists.
 			if (!resourceState.hasRemote(Policy.subMonitorFor(progress, 10))) {
-				deleteLocal(localResource, Policy.subMonitorFor(progress, 90));
+				deleteLocal(resourceState, Policy.subMonitorFor(progress, 90));
 				return;
 			}
 			
 			// If the remote resource is a file.
 			if (resourceState.getRemoteType() == IResource.FILE) {
 				// Replace any existing local resource with a copy of the remote file.
-				deleteLocal(localResource, Policy.subMonitorFor(progress, 10));
+				deleteLocal(resourceState, Policy.subMonitorFor(progress, 10));
 				resourceState.download(Policy.subMonitorFor(progress, 90));
 				return;
 			}
@@ -64,12 +66,12 @@ public class Symmetria {
 			
 			// If the local resource is a file, we must remove it first.
 			if (localResource.getType() == IResource.FILE)
-				deleteLocal(localResource, Policy.subMonitorFor(progress, 5)); // May not exist.
+				deleteLocal(resourceState, Policy.subMonitorFor(progress, 5)); // May not exist.
 			
 			// If the local resource does not exist then it is created as a container.
 			if (!localResource.exists()) {
 				// Create a corresponding local directory.
-				mkLocalDirs((IFolder)localResource, Policy.subMonitorFor(progress, 5));
+				mkLocalDirs(resourceState, Policy.subMonitorFor(progress, 5));
 			}
 			
 			// Finally, resolve the collection membership based upon the depth parameter.
@@ -161,15 +163,16 @@ public class Symmetria {
 				// If the local child is not a container then it must be deleted.
 				IResource localChild = remoteChildState.getLocal();
 				if (localChild.exists() && (!(localChild instanceof IContainer)))
-					deleteLocal(localChild, progress);
+					deleteLocal(remoteChildState, progress);
 			} // end if
 		} // end for
 
 		// Remove each local child that does not have a corresponding remote resource.
+		TargetProvider provider = TargetManager.getProvider(localContainer.getProject());
 		Iterator childrenItr = surplusLocalChildren.iterator();
 		while (childrenItr.hasNext()) {
 			IResource unseenChild = (IResource) childrenItr.next();
-			deleteLocal(unseenChild, progress);
+			deleteLocal(((SynchronizedTargetProvider)provider).newState(unseenChild), progress);
 		} // end-while
 
 		// Answer the array of children seen on the remote collection that are
@@ -181,27 +184,31 @@ public class Symmetria {
 	/**
 	 * Delete the local resource represented by the resource state.  Do not complain if the resource does not exist.
 	 */
-	protected void deleteLocal(IResource resource, IProgressMonitor progress) throws TeamException {
+	protected void deleteLocal(ResourceState resourceState, IProgressMonitor progress) throws TeamException {
 		try {
-			resource.delete(true, progress);
+			resourceState.getLocal().delete(IResource.KEEP_HISTORY, progress);
+			resourceState.removeState();
 		} catch (CoreException exception) {
 			throw TeamPlugin.wrapException(exception);
 		}
-		// XXX We need to purge any stored state!!!
 	}
 
 	/**
 	 * Make local directories matching the description of the local resource state.
 	 * XXX There has to be a better way.
 	 */
-	protected void mkLocalDirs(IFolder folder, IProgressMonitor progress) throws TeamException {	
+	protected void mkLocalDirs(ResourceState resourceState, IProgressMonitor progress) throws TeamException {	
 		try {
-			folder.create(false, true, progress);	// No force, yes make local.
+			IResource resource = resourceState.getLocal();
+			if (resource.getType() == IResource.FOLDER) {
+				((IFolder)resource).create(false /* force */, true /* make local */, progress);
+				// Mark the folders as having a base
+				resourceState.storeState();
+			}
 		} catch (CoreException exception) {
 			// The creation failed.
 			throw TeamPlugin.wrapException(exception);
 		}
-		// XXX We need to store the base state!!!
 	}
 	
 	/**

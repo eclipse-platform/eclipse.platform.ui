@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.target.TargetManager;
 import org.eclipse.team.core.target.TargetProvider;
+import org.eclipse.team.internal.core.target.UrlUtil;
 
 /**
  * A set of test cases for org.eclipse.team.core.target.TargetProvider
@@ -61,7 +62,7 @@ public class TargetProviderTests extends TeamTest {
 		IProject project = getNamedTestProject("urlretrieval");
 		TargetManager.map(project, getSite(), new Path(properties.getProperty("test_dir")));
 		TargetProvider target = TargetManager.getProvider(project);
-		String goodurl =new URL(new URL(properties.getProperty("location")), properties.getProperty("test_dir")).toString();
+		String goodurl = UrlUtil.concat(properties.getProperty("location"), new Path(properties.getProperty("test_dir"))).toString();
 		assertEquals(goodurl, target.getURL().toString()); 
 	}
 	/**

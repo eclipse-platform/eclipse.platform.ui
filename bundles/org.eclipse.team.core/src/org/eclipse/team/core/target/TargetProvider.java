@@ -104,7 +104,10 @@ public abstract class TargetProvider {
 	
 	/**
 	 * Replies true if its believed possible to get the given resource.
-	 * This intended to be a relatively quick operation, presumably based on local state of the provider.
+	 * This intended to be a relatively quick operation, presumably based on local state of the provider
+	 * or it may be used to indicate that the provider only supports data transfer in one direction.
+	 * It is not intended to indicate the existance of a remote resource. Hence, this method may return true
+	 * even if there is no remote resource.
 	 */
 	public boolean canGet(IResource resource) {
 		return true;
@@ -112,7 +115,8 @@ public abstract class TargetProvider {
 
 	/**
 	 * Replies true if its believed possible to put the given resource.
-	 * This intended to be a relatively quick operation, presumably based on local state of the provider.
+	 * This intended to be a relatively quick operation, presumably based on local state of the provider
+	 * or it may be used to indicate that the provider only supports data transfer in one direction.
 	 */
 	public boolean canPut(IResource resource) {
 		return true;

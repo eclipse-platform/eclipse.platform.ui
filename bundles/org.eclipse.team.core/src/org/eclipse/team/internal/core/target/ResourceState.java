@@ -18,16 +18,16 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.target.Site;
+import org.eclipse.team.core.target.TargetManager;
+import org.eclipse.team.core.target.TargetProvider;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 
@@ -345,16 +345,14 @@ public abstract class ResourceState {
 	 * 
 	 * @param bytes the serialized resource state.
 	 */
-	public final void loadState() {
+	public final void loadState() throws TeamException {
 		try {
 			byte[] storedState =
 				SynchronizedTargetProvider.getSynchronizer().getSyncInfo(stateKey, localResource);
 			if (storedState != null)
 				fromBytes(storedState);
 		} catch (CoreException e) {
-			// Problem loading the stored state.
-			e.printStackTrace();
-			throw new RuntimeException();
+			throw TeamPlugin.wrapException(e);
 		}
 	}
 
@@ -364,7 +362,7 @@ public abstract class ResourceState {
 	 * 
 	 * @param bytes the serialized resource state.
 	 */
-	protected void fromBytes(byte[] bytes) {
+	protected void fromBytes(byte[] bytes) throws TeamException{
 		try {
 			DataInputStream dataStream =
 				new DataInputStream(new ByteArrayInputStream(bytes));
@@ -376,22 +374,26 @@ public abstract class ResourceState {
 			localBaseTimestamp = dataStream.readLong();
 
 		} catch (IOException e) {
-			// Problem parsing the stored state.
-			e.printStackTrace();
-			throw new RuntimeException();
+			throw TeamPlugin.wrapException(e);
 		}
 	};
 
-	public final void storeState() {
+	public final void storeState() throws TeamException {
 		try {
 			SynchronizedTargetProvider.getSynchronizer().setSyncInfo(
 				stateKey,
 				localResource,
 				toBytes());
-			ResourcesPlugin.getWorkspace().save(false, null);
+			// Ensure that the parent has base info recorded (otherwise deleting the parent will cause the lose of sync info)
+			IContainer parent = localResource.getParent();
+			if (parent != null && parent.getType() != IResource.PROJECT &&
+				SynchronizedTargetProvider.getSynchronizer().getSyncInfo(stateKey, parent) == null) {
+				getParent().storeState();
+			} else {
+				ResourcesPlugin.getWorkspace().save(false, null);
+			}
 		} catch (CoreException e) {
-			e.printStackTrace();
-			throw new RuntimeException();
+			throw TeamPlugin.wrapException(e);
 		}
 	}
 
@@ -407,7 +409,7 @@ public abstract class ResourceState {
 	 * @see #storeState(DataOutputStream)
 	 * @see fromBytes(byte[])
 	 */
-	protected byte[] toBytes() {
+	protected byte[] toBytes() throws TeamException {
 		try {
 			// Create a stream to store the byte representation of the receiver's state.
 			ByteArrayOutputStream byteStream = new ByteArrayOutputStream(32);
@@ -422,20 +424,21 @@ public abstract class ResourceState {
 			dataStream.close();
 			return byteStream.toByteArray();
 		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException();
+			throw TeamPlugin.wrapException(e);
 		}
 	}
 
-	final public void removeState() {
+	final public void removeState() throws TeamException {
 		try {
-			SynchronizedTargetProvider.getSynchronizer().flushSyncInfo(
-				stateKey,
-				localResource,
-				IResource.DEPTH_INFINITE);
+			// Check first to avoid an exception if there's no sync info and the resource doesn't exist
+			if (SynchronizedTargetProvider.getSynchronizer().getSyncInfo(stateKey, localResource) != null) {
+				SynchronizedTargetProvider.getSynchronizer().flushSyncInfo(
+					stateKey,
+					localResource,
+					IResource.DEPTH_INFINITE);
+			}
 		} catch (CoreException e) {
-			e.printStackTrace();
-			throw new RuntimeException();
+			throw TeamPlugin.wrapException(e);
 		}
 	}
 
@@ -452,5 +455,10 @@ public abstract class ResourceState {
 	 */
 	public URL getRoot() {
 		return rootUrl;
+	}
+	
+	private ResourceState getParent() throws TeamException {
+		TargetProvider provider = TargetManager.getProvider(localResource.getProject());
+		return ((SynchronizedTargetProvider)provider).newState(localResource.getParent());
 	}
 }
