@@ -192,7 +192,8 @@ public void createControl(Composite parent) {
 	}
 		
 	body = createContents(content);
-	body.setLayoutData(new GridData(GridData.FILL_BOTH));
+	if (body != null) // null is not a valid return value but support graceful failure
+		body.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 	Composite buttonBar= new Composite(content, SWT.NULL);
 	layout= new GridLayout();
@@ -278,7 +279,7 @@ protected Label createDescriptionLabel(Composite parent) {
  *   <code>new Point(width,height)</code>
  */
 protected Point doComputeSize() {
-	if (descriptionLabel != null) {
+	if (descriptionLabel != null && body != null) {
 		Point size = body.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		GridData gd = (GridData) descriptionLabel.getLayoutData();
 		gd.widthHint = size.x;
