@@ -15,7 +15,7 @@ import java.util.Map;
 
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IStreamsProxy;
-import org.eclipse.debug.internal.core.RuntimeProcess;
+import org.eclipse.debug.core.model.RuntimeProcess;
 
 
 public class RemoteAntRuntimeProcess extends RuntimeProcess {
