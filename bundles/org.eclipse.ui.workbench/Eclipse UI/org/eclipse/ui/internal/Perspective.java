@@ -882,7 +882,6 @@ public IStatus restoreState() {
 		// Create and open the view.
 		WorkbenchPartReference ref = (WorkbenchPartReference)viewFactory.getView(viewID);
 		if(ref == null) {
-			WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$ //$NON-NLS-2$
 			result.add(new Status(
 				Status.ERROR,PlatformUI.PLUGIN_ID,0,
 				WorkbenchMessages.format("Perspective.couldNotFind", new String[]{viewID}), //$NON-NLS-1$
