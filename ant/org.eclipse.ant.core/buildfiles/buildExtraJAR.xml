@@ -28,10 +28,10 @@
 			debug="on"
 			includeAntRuntime="no"
 			bootclasspath="${bootclasspath}" 
-			classpath="${basedir}/../org.eclipse.core.runtime/runtime.jar;
-					${basedir}/../org.eclipse.core.runtime/bin;
-					${basedir}/../org.eclipse.core.runtime.compatibility/compatibility.jar;
-					${basedir}/../org.eclipse.core.runtime.compatibility/bin;
+			classpath="${eclipse.home}/plugins/org.eclipse.core.runtime/runtime.jar;
+					${eclipse.home}/plugins/org.eclipse.core.runtime/bin;
+					${eclipse.home}/plugins/org.eclipse.core.runtime.compatibility/compatibility.jar;
+					${eclipse.home}/plugins/org.eclipse.core.runtime.compatibility/bin;
 					${basedir}/../org.apache.ant/lib/ant.jar;
 					${basedir}/bin">
 			<src path="src_ant/"/>
