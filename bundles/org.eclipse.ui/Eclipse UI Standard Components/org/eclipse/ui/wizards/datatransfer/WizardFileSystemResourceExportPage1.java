@@ -183,7 +183,7 @@ protected boolean executeExportOperation(FileSystemExportOperation op) {
 	} catch (InterruptedException e) {
 		return false;
 	} catch (InvocationTargetException e) {
-		displayErrorDialog(e.getTargetException().getMessage());
+		displayErrorDialog(e.getTargetException());
 		return false;
 	}
 
