@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui" id="itorActions" name="Editor Menus, Toolbars and Actions"/>
+         <meta.schema plugin="org.eclipse.ui" id="editorActions" name="Editor Menus, Toolbars and Actions"/>
       </appInfo>
       <documentation>
          This extension point is used to add actions to the menu 
