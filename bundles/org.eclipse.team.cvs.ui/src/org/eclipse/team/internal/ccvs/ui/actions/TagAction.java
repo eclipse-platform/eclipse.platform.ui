@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamProvider;
@@ -39,11 +40,16 @@ public class TagAction extends TeamAction {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					// Prompt for the tag
-					InputDialog dialog = new InputDialog(getShell(), Policy.bind("TagAction.tagResources"), Policy.bind("TagAction.enterTag"), previousTag, null);
-					if (dialog.open() != InputDialog.OK) return;
-					String tag = dialog.getValue();
-					previousTag = tag;
+					final Shell s = getShell();
+					s.getDisplay().syncExec(new Runnable() {
+						public void run() {
+							// Prompt for the tag
+							InputDialog dialog = new InputDialog(s, Policy.bind("TagAction.tagResources"), Policy.bind("TagAction.enterTag"), previousTag, null);
+							if (dialog.open() != InputDialog.OK) return;
+							String tag = dialog.getValue();
+							previousTag = tag;
+						}
+					});
 					Hashtable table = getProviderMapping();
 					Set keySet = table.keySet();
 					monitor.beginTask("", keySet.size() * 1000);
@@ -53,7 +59,7 @@ public class TagAction extends TeamAction {
 						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
 						List list = (List)table.get(provider);
 						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						provider.tag(providerResources, IResource.DEPTH_INFINITE, tag, false, subMonitor);
+						provider.tag(providerResources, IResource.DEPTH_INFINITE, previousTag, false, subMonitor);
 					}								
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
