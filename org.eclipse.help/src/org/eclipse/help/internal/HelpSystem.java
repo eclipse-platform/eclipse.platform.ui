@@ -132,7 +132,6 @@ public final class HelpSystem {
 		Logger.logInfo(Resources.getString("I002"));
 	}
 	public static boolean ensureWebappRunning() {
-		long begin = System.currentTimeMillis();
 		if (!getInstance().webappStarted) {
 			getInstance().webappStarted = true;
 			if (getMode()!=MODE_WORKBENCH) {
@@ -143,8 +142,6 @@ public final class HelpSystem {
 			getInstance().webappRunning =
 				AppServer.add("help", "org.eclipse.help.webapp", "");
 		}
-		long end = System.currentTimeMillis();
-		System.out.println(end-begin);
 		return getInstance().webappRunning;
 	}
 
