@@ -20,7 +20,7 @@ import java.util.jar.JarFile;
  * To use this launcher, the client must accept to give all security permissions. 
  */
 //The bundles are discovered by finding all the jars on the classpath. Then they are added with their full path to the osgi.bundles list.
-public class WebstartMain extends Main {
+public class WebStartMain extends Main {
 	private static final String PROP_WEBSTART_AUTOMATIC_INSTALLATION = "eclipse.webstart.automaticInstallation"; //$NON-NLS-1$
 	private static final String DEFAULT_OSGI_BUNDLES = "org.eclipse.core.runtime@2:start"; //$NON-NLS-1$
 	private static final String PROP_OSGI_BUNDLES = "osgi.bundles"; //$NON-NLS-1$
@@ -32,7 +32,7 @@ public class WebstartMain extends Main {
 
 	public static void main(String[] args) {
 		System.setSecurityManager(null);	 //Hack so that when the classloader loading the fwk is created we don't have funny permissions. This should be revisited. 
-		int result = new WebstartMain().run(args);
+		int result = new WebStartMain().run(args);
 		System.exit(result);
 	}
 
@@ -104,7 +104,7 @@ public class WebstartMain extends Main {
 
 		ArrayList collector = new ArrayList();
 		try {
-			Enumeration resources = WebstartMain.class.getClassLoader().getResources(JarFile.MANIFEST_NAME);
+			Enumeration resources = WebStartMain.class.getClassLoader().getResources(JarFile.MANIFEST_NAME);
 			while (resources.hasMoreElements()) {
 				collector.add(((URL) resources.nextElement()).toExternalForm());
 			}
