@@ -465,6 +465,16 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 							CVSProviderPlugin.log(status);
 						}
 					}
+					if (getServerPlatform() == CVSNT_SERVER) {
+						// check for the use of a repository prefix
+						if (getRootDirectory().startsWith(Session.SERVER_SEPARATOR)) {
+							// A prefix is in use. Log a warning
+							CVSProviderPlugin.log(new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0,
+								Policy.bind("CVSRepositoryLocation.cvsntPrefix", getLocation()), null)); //$NON-NLS-1$
+							throw new CVSAuthenticationException(new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0,
+								Policy.bind("CVSRepositoryLocation.cvsntPrefix", getLocation()), null));
+						}
+					}
 				}
 			}, monitor);
 		} catch (CVSException e) {
