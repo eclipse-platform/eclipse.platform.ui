@@ -24,7 +24,7 @@ public class UIBuildListener implements AntRunnerListener {
 	private Target fTarget;
 	private Task fTask;
 	private IFile fBuildFile;
-	private int msgOutputLevel;
+	private int msgOutputLevel = Project.MSG_INFO;
 	private AntConsole console;
 	
 	public UIBuildListener(AntRunner runner, IProgressMonitor monitor, IFile file, AntConsole console) {
@@ -75,7 +75,7 @@ public class UIBuildListener implements AntRunnerListener {
 		}
 	}
 	private void handleBuildException(Throwable t) {
-		System.out.println("BuildException: "+t);
+		console.append(Policy.bind("exception.buildException", t.toString()) + "\n");
 		if (t instanceof BuildException) {
 			BuildException bex= (BuildException)t;
 			// the build exception has a location that
