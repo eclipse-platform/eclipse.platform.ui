@@ -242,38 +242,40 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		if (pluginsDir.exists()) {
 			File[] files = pluginsDir.listFiles();
 			for (int i = 0; i < files.length; i++) {
-				File pluginFile = null;
+				File pluginFile = new File(files[i], META_MANIFEST_MF);
 				try {
-					if (!(pluginFile = new File(files[i], PLUGIN_XML)).exists()) { //$NON-NLS-1$
-						pluginFile = new File(files[i], FRAGMENT_XML); //$NON-NLS-1$
-					}
-
-					if (pluginFile != null && pluginFile.exists() && !pluginFile.isDirectory()) {
-						
-						// TODO in the future, assume that the timestamps are not reliable,
-						// or that the user manually modified an existing plugin, so
-						// the apparently modifed plugin may actually be configured already.
-						// We will need to double check for this. END to do.
-						
+					// First, check if has valid bundle manifest				
+					BundleManifest bundleManifest = new BundleManifest(pluginFile);
+					if(bundleManifest.exists()){
 						if (pluginFile.lastModified() <= pluginsChangeStamp)
 							continue;
-						PluginEntry entry =	pluginParser.parse(pluginFile);
+						PluginEntry entry=bundleManifest.getPluginEntry();
 						addPluginEntry(entry);
 					}else{
-						pluginFile = new File(files[i], META_MANIFEST_MF);
-						BundleManifest bundleManifest = new BundleManifest(pluginFile);
-						if(!bundleManifest.exists() || pluginFile.lastModified() <= pluginsChangeStamp)
+						// no bundle manifest, check for plugin.xml or fragment.xml
+						pluginFile = new File(files[i], PLUGIN_XML);
+						if (!pluginFile.exists()) { //$NON-NLS-1$
+							pluginFile = new File(files[i], FRAGMENT_XML); //$NON-NLS-1$
+						}
+						
+						if (pluginFile.exists() && !pluginFile.isDirectory()) {
+						
+							// TODO in the future, assume that the timestamps are not reliable,
+							// or that the user manually modified an existing plugin, so
+							// the apparently modifed plugin may actually be configured already.
+							// We will need to double check for this. END to do.
+							
+							if (pluginFile.lastModified() <= pluginsChangeStamp)
 								continue;
-						PluginEntry entry=bundleManifest.getPluginEntry();
-						//if(entry!=null){ // exists so not null
+							PluginEntry entry =	pluginParser.parse(pluginFile);
 							addPluginEntry(entry);
-						//}
+						}
 					}
 				} catch (IOException e) {
-					String pluginFileString = (pluginFile == null) ? null : pluginFile.getAbsolutePath();
+					String pluginFileString = pluginFile.getAbsolutePath();
 					Utils.log(Messages.getString("InstalledSiteParser.ErrorAccessing",pluginFileString)); //$NON-NLS-1$
 				} catch (SAXException e) {
-					String pluginFileString = (pluginFile == null) ? null : pluginFile.getAbsolutePath();
+					String pluginFileString = pluginFile.getAbsolutePath();
 					Utils.log(Messages.getString("InstalledSiteParser.ErrorParsingFile", pluginFileString)); //$NON-NLS-1$
 				}
 			}
