@@ -5,7 +5,10 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  * All Rights Reserved.
  */
  
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -26,9 +29,12 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -38,12 +44,13 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -111,6 +118,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private Button fLaunchButton;
 	
 	/**
+	 * The 'cancel' button
+	 */
+	private Button fCancelButton;
+	
+	/**
 	 * The text widget displaying the name of the
 	 * launch configuration under edit
 	 */
@@ -137,6 +149,17 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	private ILaunchConfigurationTab[] fTabs;
 	
+	private ProgressMonitorPart fProgressMonitorPart;
+	private Cursor waitCursor;
+	private Cursor arrowCursor;
+	private MessageDialog fWindowClosingDialog;
+	
+	private SelectionAdapter fCancelListener = new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent evt) {
+			cancelPressed();
+		}
+	};
+	
 	/**
 	 * Indicates whether callbacks on 'launchConfigurationChanged' should be treated
 	 * as user changes.
@@ -156,6 +179,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private boolean fDoingSave = false;
 	
 	/**
+	 * The number of 'long-running' operations currently taking place in this dialog
+	 */	
+	private long fActiveRunningOperations = 0;
+	
+	/**
 	 * Id for 'Save & Launch' button.
 	 */
 	protected static final int ID_SAVE_AND_LAUNCH_BUTTON = IDialogConstants.CLIENT_ID + 1;
@@ -165,6 +193,16 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected static final int ID_LAUNCH_BUTTON = IDialogConstants.CLIENT_ID + 2;
 	
+	/**
+	 * Constrant String used as key for setting and retrieving current Control with focus
+	 */
+	private static final String FOCUS_CONTROL = "focusControl";//$NON-NLS-1$
+
+	/**
+	 * The height in pixels of this dialog's progress indicator
+	 */
+	private static int PROGRESS_INDICATOR_HEIGHT = 18;
+
 	/**
 	 * Empty array
 	 */
@@ -232,7 +270,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected void createButtonsForButtonBar(Composite parent) {
 		setSaveAndLaunchButton(createButton(parent, ID_SAVE_AND_LAUNCH_BUTTON, "Sa&ve and Launch", false));
 		setLaunchButton(createButton(parent, ID_LAUNCH_BUTTON, "&Launch", true));
-		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		setCancelButton(createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false));
 	}	
 
 	/**
@@ -647,6 +685,27 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}	
 	
 	/**
+	 * @see Dialog#createButtonBar(Composite)
+	 */
+	protected Control createButtonBar(Composite parent) {
+		Composite composite= new Composite(parent, SWT.NULL);
+		GridLayout layout= new GridLayout();
+		layout.numColumns= 2;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		GridLayout pmLayout = new GridLayout();
+		pmLayout.numColumns = 2;
+		setProgressMonitorPart(new ProgressMonitorPart(composite, pmLayout, PROGRESS_INDICATOR_HEIGHT));
+		getProgressMonitorPart().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		getProgressMonitorPart().setVisible(false);
+
+		return super.createButtonBar(composite);
+	}
+	
+	/**
 	 * Sets the title for the dialog and establishes the help context.
 	 * 
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell);
@@ -904,6 +963,22 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	protected Button getLaunchButton() {
  		return fLaunchButton;
  	} 	
+ 	
+ 	protected void setCancelButton(Button button) {
+ 		fCancelButton = button;
+ 	}
+ 	
+ 	protected Button getCancelButton() {
+ 		return fCancelButton;
+ 	}
+ 	
+ 	protected void setProgressMonitorPart(ProgressMonitorPart part) {
+ 		fProgressMonitorPart = part;
+ 	}
+ 	
+ 	protected ProgressMonitorPart getProgressMonitorPart() {
+ 		return fProgressMonitorPart;
+ 	}
  	
  	/**
  	 * Sets the 'new' button.
@@ -1426,6 +1501,241 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		} catch (CoreException ce) {
 		}		
 		close();
+	}
+
+	/***************************************************************************************
+	 * 
+	 * ProgressMonitor & IRunnableContext related method
+	 * 
+	 ***************************************************************************************/
+
+	/**
+	 * @see IRunnableContext#run(boolean, boolean, IRunnableWithProgress)
+	 */
+	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
+		// The operation can only be canceled if it is executed in a separate thread.
+		// Otherwise the UI is blocked anyway.
+		Object state = aboutToStart(fork && cancelable);
+		fActiveRunningOperations++;
+		try {
+			ModalContext.run(runnable, fork, fProgressMonitorPart, getShell().getDisplay());
+		} finally {
+			fActiveRunningOperations--;
+			stopped(state);
+		}
+	}
+	
+	/**
+	 * About to start a long running operation tiggered through
+	 * the dialog. Shows the progress monitor and disables the dialog's
+	 * buttons and controls.
+	 *
+	 * @param enableCancelButton <code>true</code> if the Cancel button should
+	 *   be enabled, and <code>false</code> if it should be disabled
+	 * @return the saved UI state
+	 */
+	private Object aboutToStart(boolean enableCancelButton) {
+		Map savedState = null;
+		if (getShell() != null) {
+			// Save focus control
+			Control focusControl = getShell().getDisplay().getFocusControl();
+			if (focusControl != null && focusControl.getShell() != getShell())
+				focusControl = null;
+				
+			getCancelButton().removeSelectionListener(fCancelListener);
+			
+			// Set the busy cursor to all shells.
+			Display d = getShell().getDisplay();
+			waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
+			setDisplayCursor(waitCursor);
+					
+			// Set the arrow cursor to the cancel component.
+			arrowCursor= new Cursor(d, SWT.CURSOR_ARROW);
+			getCancelButton().setCursor(arrowCursor);
+	
+			// Deactivate shell
+			savedState = saveUIState(enableCancelButton);
+			if (focusControl != null)
+				savedState.put(FOCUS_CONTROL, focusControl);
+				
+			// Attach the progress monitor part to the cancel button
+			getProgressMonitorPart().attachToCancelComponent(getCancelButton());
+			getProgressMonitorPart().setVisible(true);
+		}
+		return savedState;
+	}
+
+	/**
+	 * A long running operation triggered through the dialog
+	 * was stopped either by user input or by normal end.
+	 * Hides the progress monitor and restores the enable state
+	 * dialog's buttons and controls.
+	 *
+	 * @param savedState the saved UI state as returned by <code>aboutToStart</code>
+	 * @see #aboutToStart
+	 */
+	private void stopped(Object savedState) {
+		if (getShell() != null) {
+			getProgressMonitorPart().setVisible(false);	
+			getProgressMonitorPart().removeFromCancelComponent(getCancelButton());
+			Map state = (Map)savedState;
+			restoreUIState(state);
+			getCancelButton().addSelectionListener(fCancelListener);
+	
+			setDisplayCursor(null);	
+			getCancelButton().setCursor(null);
+			waitCursor.dispose();
+			waitCursor = null;
+			arrowCursor.dispose();
+			arrowCursor = null;
+			Control focusControl = (Control)state.get(FOCUS_CONTROL);
+			if (focusControl != null)
+				focusControl.setFocus();
+		}
+	}
+
+	/**
+	 * Captures and returns the enabled/disabled state of the wizard dialog's
+	 * buttons and the tree of controls for the currently showing page. All
+	 * these controls are disabled in the process, with the possible excepton of
+	 * the Cancel button.
+	 *
+	 * @param keepCancelEnabled <code>true</code> if the Cancel button should
+	 *   remain enabled, and <code>false</code> if it should be disabled
+	 * @return a map containing the saved state suitable for restoring later
+	 *   with <code>restoreUIState</code>
+	 * @see #restoreUIState
+	 */
+	private Map saveUIState(boolean keepCancelEnabled) {
+		Map savedState= new HashMap(10);
+		saveEnableStateAndSet(getNewButton(), savedState, "new", false);//$NON-NLS-1$
+		saveEnableStateAndSet(getDeleteButton(), savedState, "delete", false);//$NON-NLS-1$
+		saveEnableStateAndSet(getCopyButton(), savedState, "copy", false);//$NON-NLS-1$
+		saveEnableStateAndSet(getSaveButton(), savedState, "save", false);//$NON-NLS-1$
+		saveEnableStateAndSet(getSaveAndLaunchButton(), savedState, "saveandlaunch", false);//$NON-NLS-1$
+		saveEnableStateAndSet(getCancelButton(), savedState, "cancel", keepCancelEnabled);//$NON-NLS-1$
+		saveEnableStateAndSet(getLaunchButton(), savedState, "launch", false);//$NON-NLS-1$
+		TabItem selectedTab = getTabFolder().getItem(getTabFolder().getSelectionIndex());
+		savedState.put("tab", ControlEnableState.disable(selectedTab.getControl()));//$NON-NLS-1$
+		return savedState;
+	}
+
+	/**
+	 * Saves the enabled/disabled state of the given control in the
+	 * given map, which must be modifiable.
+	 *
+	 * @param w the control, or <code>null</code> if none
+	 * @param h the map (key type: <code>String</code>, element type:
+	 *   <code>Boolean</code>)
+	 * @param key the key
+	 * @param enabled <code>true</code> to enable the control, 
+	 *   and <code>false</code> to disable it
+	 * @see #restoreEnableStateAndSet
+	 */
+	private void saveEnableStateAndSet(Control w, Map h, String key, boolean enabled) {
+		if (w != null) {
+			h.put(key, new Boolean(w.isEnabled()));
+			w.setEnabled(enabled);
+		}
+	}
+
+	/**
+	 * Restores the enabled/disabled state of the wizard dialog's
+	 * buttons and the tree of controls for the currently showing page.
+	 *
+	 * @param state a map containing the saved state as returned by 
+	 *   <code>saveUIState</code>
+	 * @see #saveUIState
+	 */
+	private void restoreUIState(Map state) {
+		restoreEnableState(getNewButton(), state, "new");//$NON-NLS-1$
+		restoreEnableState(getDeleteButton(), state, "delete");//$NON-NLS-1$
+		restoreEnableState(getCopyButton(), state, "copy");//$NON-NLS-1$
+		restoreEnableState(getSaveButton(), state, "save");//$NON-NLS-1$
+		restoreEnableState(getSaveAndLaunchButton(), state, "saveandlaunch");//$NON-NLS-1$
+		restoreEnableState(getCancelButton(), state, "cancel");//$NON-NLS-1$
+		restoreEnableState(getLaunchButton(), state, "launch");//$NON-NLS-1$
+		ControlEnableState tabState = (ControlEnableState) state.get("tab");//$NON-NLS-1$
+		tabState.restore();
+	}
+
+	/**
+	 * Restores the enabled/disabled state of the given control.
+	 *
+	 * @param w the control
+	 * @param h the map (key type: <code>String</code>, element type:
+	 *   <code>Boolean</code>)
+	 * @param key the key
+	 * @see #saveEnableStateAndSet
+	 */
+	private void restoreEnableState(Control w, Map h, String key) {
+		if (w != null) {
+			Boolean b = (Boolean) h.get(key);
+			if (b != null)
+				w.setEnabled(b.booleanValue());
+		}
+	}
+
+	/**
+	 * Sets the given cursor for all shells currently active
+	 * for this window's display.
+	 *
+	 * @param c the cursor
+	 */
+	private void setDisplayCursor(Cursor c) {
+		Shell[] shells = getShell().getDisplay().getShells();
+		for (int i = 0; i < shells.length; i++)
+			shells[i].setCursor(c);
+	}
+	
+	/**
+	 * @see Dialog#cancelPressed()
+	 */
+	protected void cancelPressed() {
+		if (fActiveRunningOperations <= 0) {
+			super.cancelPressed();
+		} else {
+			getCancelButton().setEnabled(false);
+		}
+	}
+
+	/**
+	 * Checks whether it is alright to close this dialog
+	 * and performed standard cancel processing. If there is a
+	 * long running operation in progress, this method posts an
+	 * alert message saying that the dialog cannot be closed.
+	 * 
+	 * @return <code>true</code> if it is alright to close this dialog, and
+	 *  <code>false</code> if it is not
+	 */
+	private boolean okToClose() {
+		if (fActiveRunningOperations > 0) {
+			synchronized (this) {
+				fWindowClosingDialog = createDialogClosingDialog();
+			}	
+			fWindowClosingDialog.open();
+			synchronized (this) {
+				fWindowClosingDialog = null;
+			}
+			return false;
+		}
+		
+		return true;
+	}
+
+	/**
+	 * Creates and return a new wizard closing dialog without opening it.
+	 */ 
+	private MessageDialog createDialogClosingDialog() {
+		MessageDialog result= new MessageDialog(
+			getShell(),
+			JFaceResources.getString("WizardClosingDialog.title"),//$NON-NLS-1$
+			null,
+			JFaceResources.getString("WizardClosingDialog.message"),//$NON-NLS-1$
+			MessageDialog.QUESTION,
+			new String[] {IDialogConstants.OK_LABEL},
+			0 ); 
+		return result;
 	}
 }
 
