@@ -13,8 +13,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -63,10 +66,12 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
 			Object object = structuredSelection.getFirstElement();
-			if (object instanceof IFile) {
-				IFile file = (IFile)object;
-				launch(file, mode);
-				return;
+			if (object instanceof IAdaptable) {
+				IResource resource = (IResource)((IAdaptable)object).getAdapter(IResource.class);
+				if (resource != null) {
+					launch(resource, mode);
+					return;
+				}
 			}
 		}
 		antFileNotFound();
@@ -85,13 +90,16 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 * @param file
 	 * @param mode
 	 */
-	protected void launch(IFile file, String mode) {
-		if ("xml".equalsIgnoreCase(file.getFileExtension())) { //$NON-NLS-1$
+	protected void launch(IResource resource, String mode) {
+		ILaunchConfiguration configuration= null;
+		if (!("xml".equalsIgnoreCase(resource.getFileExtension()))) { //$NON-NLS-1$
+			resource= findBuildFile(resource);
+		} 
+		if (resource != null) {
 			if (verifyMode(mode)) {
-				ILaunchConfiguration configuration= null;
-				List configurations = findExistingLaunchConfigurations(file);
+				List configurations = findExistingLaunchConfigurations((IFile)resource);
 				if (configurations.isEmpty()) {
-					configuration = createDefaultLaunchConfiguration(file);
+					configuration = createDefaultLaunchConfiguration((IFile)resource);
 				} else {
 					if (configurations.size() == 1) {
 						configuration= (ILaunchConfiguration)configurations.get(0);
@@ -102,22 +110,44 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 							return;
 						}
 					}
-					
-				}
-				if (configuration != null) {
-					if (fShowDialog) {
-						DebugUITools.openLaunchConfigurationDialogOnGroup(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), new StructuredSelection(configuration), IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP);
-						
-					} else {
-						DebugUITools.launch(configuration, mode);
-					}
-					return;
 				}
 			}			
 		}
+			
+		if (configuration != null) {
+			if (fShowDialog) {
+				DebugUITools.openLaunchConfigurationDialogOnGroup(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), new StructuredSelection(configuration), IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP);
+
+			} else {
+				DebugUITools.launch(configuration, mode);
+			}
+			return;
+		}
 		
 		antFileNotFound();
-		
+	}
+	
+	/**
+	 * Walks the file hierarchy looking for a build file.
+	 * Returns the first build file found that matches the 
+	 * search criteria.
+	 */
+	private IFile findBuildFile(IResource parent) {
+		if (parent.getType() == IFile.FILE) {
+			parent= parent.getParent();
+		}
+		if (parent == null) {
+			return null;
+		}
+		IResource file= ((IContainer)parent).findMember("build.xml");
+		while (file == null || file.getType() != IFile.FILE) {		
+			parent = parent.getParent();
+			if (parent == null) {
+				return null;
+			}
+			file= ((IContainer)parent).findMember("build.xml");
+		}
+		return (IFile)file;
 	}
 	
 	/**
@@ -255,7 +285,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		} else {
 			status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, message, throwable);
 		}
-		ErrorDialog.openError(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Error_7"), message, status); //$NON-NLS-1$
+		ErrorDialog.openError(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Error_7"), "Build Failed", status); //$NON-NLS-1$
 	}
 
 	/**
