@@ -348,6 +348,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		} else {
 			((AntTargetContentProvider)orderTargetsTable.getContentProvider()).removeTarget(targetInfo);
 		}
+		updateItemColoring(orderTargetsTable);
 		updateLaunchConfigurationDialog();
 	}
 	
