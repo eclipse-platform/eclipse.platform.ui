@@ -40,6 +40,13 @@ public interface IPresentationSite {
 	public void dragStart(IPresentablePart beingDragged, boolean keyboard);
 	
 	/**
+	 * Closes the given part
+	 * 
+	 * @param toClose
+	 */
+	public void close(IPresentablePart toClose);
+	
+	/**
 	 * Begins dragging the entire stack of parts
 	 * 
 	 * @param keyboard true iff the drag was initiated via mouse dragging,
