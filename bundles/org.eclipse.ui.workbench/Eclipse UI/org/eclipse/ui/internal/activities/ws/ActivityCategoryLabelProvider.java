@@ -14,7 +14,6 @@ import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.jface.viewers.LabelProvider;
 
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.NotDefinedException;
