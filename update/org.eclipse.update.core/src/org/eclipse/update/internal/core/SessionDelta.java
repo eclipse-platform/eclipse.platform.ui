@@ -188,5 +188,4 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 		ILocalSite localSite = SiteManager.getLocalSite();
 		localSite.save();
 	}
-
 }
