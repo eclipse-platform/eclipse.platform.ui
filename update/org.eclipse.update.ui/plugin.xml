@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File written by PDE 1.0 -->
+<plugin
+   id="org.eclipse.update.ui"
+   name="Install/Update UI"
+   version="2.0.0"
+   provider-name="Object Technology International"
+   class="org.eclipse.update.ui.UpdateUIPlugin">
+<requires>
+   <import plugin="org.eclipse.core.runtime"/>
+   <import plugin="org.eclipse.core.resources"/>
+   <import plugin="org.eclipse.ui"/>
+   <import plugin="org.eclipse.update.core"/>
+</requires>
+
+<runtime>
+   <library name="updateui.jar">
+      <export name="*"/>
+   </library>
+</runtime>
+</plugin>
