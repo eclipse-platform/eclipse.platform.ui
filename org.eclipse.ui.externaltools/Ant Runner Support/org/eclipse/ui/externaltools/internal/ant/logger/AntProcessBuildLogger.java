@@ -225,6 +225,9 @@ public class AntProcessBuildLogger implements BuildLogger {
 			Location location = task.getLocation();
 			if (location != null) {
 				String path = location.toString().trim();
+				if (path.length() == 0) {
+					return null;
+				}
 				if (path.startsWith("file:")) { //$NON-NLS-1$
 					// remove "file:"
 					path= path.substring(5, path.length());
