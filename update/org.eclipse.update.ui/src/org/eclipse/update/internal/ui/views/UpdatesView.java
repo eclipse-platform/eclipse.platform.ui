@@ -47,7 +47,7 @@ public class UpdatesView
 	private static final String KEY_SHOW_SEARCH_RESULT =
 		"UpdatesView.Popup.showSearchResult";
 	private static final String KEY_DELETE = "UpdatesView.Popup.delete";
-	private static final String KEY_OPEN_WEB = "UpdatesView.Popup.delete";
+	private static final String KEY_OPEN_WEB = "UpdatesView.Popup.openWeb";
 	private static final String KEY_CUT = "UpdatesView.Popup.cut";
 	private static final String KEY_COPY = "UpdatesView.Popup.copy";
 	private static final String KEY_PASTE = "UpdatesView.Popup.paste";
