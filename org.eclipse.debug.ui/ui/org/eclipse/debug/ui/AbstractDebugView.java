@@ -48,7 +48,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
- * Common functionality for views in the debug UI:<ul>
+ * Common function for debug related views:<ul>
  * <li>Debug view adpater implementation - <code>IDebugView</code></li>
  * <li>Action registry - actions can be stored in this view
  * 		with a key. Actions that implement <code>IUpdate</code>
@@ -73,12 +73,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  * <p>
  * This class may be subclassed.
  * </p>
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
+ * @since 2.0
  */
 
 public abstract class AbstractDebugView extends PageBookView implements IDebugView, IDoubleClickListener {

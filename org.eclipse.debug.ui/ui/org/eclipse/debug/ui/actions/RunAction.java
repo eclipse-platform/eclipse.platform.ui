@@ -18,7 +18,8 @@ import org.eclipse.ui.IViewActionDelegate;
  * Otherwise, the launch configuration dialog will be openned.
  * </p>
  * <p>
- * This class is not intended to be subclassed.
+ * This class is not intended to be subclassed. This class may
+ * be instantiated.
  * </p>
  * @since 2.0
  */

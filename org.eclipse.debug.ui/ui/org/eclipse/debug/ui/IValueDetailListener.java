@@ -8,8 +8,7 @@ package org.eclipse.debug.ui;
 import org.eclipse.debug.core.model.IValue;
 
 /**
- * Listener interface for notification of value
- * details.
+ * Notified of detailed value descriptions.
  * 
  * @see IDebugModelPresentation
  * @since 2.0

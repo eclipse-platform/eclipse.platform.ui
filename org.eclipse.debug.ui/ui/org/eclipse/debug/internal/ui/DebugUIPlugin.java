@@ -45,7 +45,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -57,13 +56,11 @@ import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.views.ConsoleDocument;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugUIEventFilter;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -72,8 +69,8 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -109,6 +106,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	 * A utility presentation used to obtain labels
 	 */
 	protected static IDebugModelPresentation fgPresentation = null;
+
+	/**
+	 * Default label provider
+	 */	
+	private static DefaultLabelProvider fgDefaultLabelProvider;
 
 	/**
 	 * The mappings of processes to their console documents.
@@ -151,11 +153,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	 * The most recent run launches
 	 */
 	protected Vector fRunFavorites;	
-	
-	/**
-	 * Event filters for the debug UI
-	 */
-	protected ListenerList fEventFilters = new ListenerList(2);
 	
 	/**
 	 * Flag indicating whether the debug UI is in trace
@@ -241,43 +238,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		super(descriptor);
 		fgDebugUIPlugin= this;
 		setEmptyLaunchHistories();
-	}
-	/**
-	 * Poll the filters to determine if the event should be shown
-	 */
-	public boolean showSuspendEvent(DebugEvent event) {
-		Object s= event.getSource();
-		if (s instanceof ITerminate) {
-			if (((ITerminate)s).isTerminated()) {
-				return false;
-			}
-		}
-		if (!fEventFilters.isEmpty()) {
-			Object[] filters = fEventFilters.getListeners();
-			for (int i = 0; i < filters.length; i++) {
-				if (!((IDebugUIEventFilter)filters[i]).showDebugEvent(event)) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	
-	/**
-	 * Poll the filters to determine if the launch should be shown
-	 */
-	public boolean showLaunch(ILaunch launch) {
-		if (!fEventFilters.isEmpty()) {
-			Object[] filters = fEventFilters.getListeners();
-			for (int i = 0; i < filters.length; i++) {
-				if (!((IDebugUIEventFilter)filters[i]).showLaunch(launch)) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	
+	}		
 	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
@@ -326,7 +287,16 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	public static Shell getShell() {
 		return getActiveWorkbenchWindow().getShell();
 	}
-
+	/**
+	 * Returns the default label provider for the debug UI.
+	 */
+	public static ILabelProvider getDefaultLabelProvider() {
+		if (fgDefaultLabelProvider == null) {
+			fgDefaultLabelProvider = new DefaultLabelProvider();
+		}
+		return fgDefaultLabelProvider;
+	}
+
 	/**
 	 * Creates an extension.  If the extension plugin has not
 	 * been loaded a busy cursor will be activated during the duration of
@@ -1368,24 +1338,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 			history.remove(history.size() - 1);
 		}	
 	}	
-	
-	public void addEventFilter(IDebugUIEventFilter filter) {
-		fEventFilters.add(filter);
-	}
-	
-	/**
-	 * Removes the event filter after the current set
-	 * of events posted to the queue have been processed.
-	 */
-	public void removeEventFilter(final IDebugUIEventFilter filter) {
-		Runnable runnable = new Runnable() {
-			public void run() {
-				fEventFilters.remove(filter);
-			}
-		};
-		getStandardDisplay().asyncExec(runnable);
-	}
-	
+		
 	/**
 	 * Returns whether the given launcher should be visible in the UI.
 	 * If a launcher is not visible, it will not appear

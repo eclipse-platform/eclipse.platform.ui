@@ -90,12 +90,6 @@ package org.eclipse.debug.ui;
  * <p>
  * Constants only; not intended to be implemented or extended.
  * </p>
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  */
 
 public interface IDebugUIConstants {
@@ -111,12 +105,15 @@ public interface IDebugUIConstants {
 	public static final String ID_DEBUG_PERSPECTIVE = PLUGIN_ID + ".DebugPerspective"; //$NON-NLS-1$
 	
 	/**
-	 * Debug model presentation extension point identifier (value <code>"debugModelPresentations"</code>).
+	 * Debug model presentation simple extension point identifier (value <code>"debugModelPresentations"</code>).
 	 */
 	public static final String ID_DEBUG_MODEL_PRESENTATION= "debugModelPresentations"; //$NON-NLS-1$
 	
 	/**
-	 * Launch configuration tab extension point identifier (value <code>"launchConfigurationTabs"</code>).
+	 * Launch configuration tab simple extension point identifier (value <code>"launchConfigurationTabs"</code>).
+	 * 
+	 * @since 2.0
+	 * @deprecated replaced with tab groups - will be removed
 	 */
 	public static final String ID_LAUNCH_CONFIGURATION_TABS= "launchConfigurationTabs"; //$NON-NLS-1$	
 	
@@ -167,6 +164,8 @@ public interface IDebugUIConstants {
 	 * are rendered with their default images.
 	 * 
 	 * @since 2.0
+	 * @deprecated to be removed - the variable view will show changes (i.e.
+	 *   will not be configurable)
 	 */
 	public static final String PREF_SHOW_VARIABLE_VALUE_CHANGES = PLUGIN_ID + ".show_variable_value_changes"; //$NON-NLS-1$	
 		
@@ -212,6 +211,8 @@ public interface IDebugUIConstants {
 	
 	/**
 	 * Extension point for launch configuration type images.
+	 * 
+	 * @since 2.0
 	 */
 	public static final String EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPE_IMAGES = "launchConfigurationTypeImages"; //$NON-NLS-1$
 	
@@ -257,7 +258,7 @@ public interface IDebugUIConstants {
 	/** Clear action image identifier. */
 	public static final String IMG_LCL_CLEAR= "IMG_LCL_CLEAR"; //$NON-NLS-1$
 	
-	/** Remove all action image identifier. */
+	/** Remove all terminated action image identifier. */
 	public static final String IMG_LCL_REMOVE_TERMINATED= "IMG_LCL_REMOVE_TERMINATED"; //$NON-NLS-1$
 	
 	/** Display variable type names action image identifier. */
@@ -268,9 +269,6 @@ public interface IDebugUIConstants {
 	
 	/** Remove all action image identifier. */
 	public static final String IMG_LCL_REMOVE_ALL= "IMG_LCL_REMOVE_ALL"; //$NON-NLS-1$
-
-	/** Inspect action image identifier. */
-	public static final String IMG_LCL_INSPECT= "IMG_LCL_INSPECT"; //$NON-NLS-1$
 	
 	/** Re-launch action image identifier.*/
 	public static final String IMG_LCL_RELAUNCH= "IMG_LCL_RELAUNCH"; //$NON-NLS-1$
@@ -320,24 +318,19 @@ public interface IDebugUIConstants {
 	/** Terminated system process image identifier. */
 	public static final String IMG_OBJS_OS_PROCESS_TERMINATED= "IMG_OBJS_OS_PROCESS_TERMINATED"; //$NON-NLS-1$
 
-	/** Expression image identifier. */
+	/**
+	 * Expression image identifier.
+	 * 
+	 * @since 2.0
+	 */
 	public static final String IMG_OBJS_EXPRESSION= "IMG_OBJS_EXPRESSION"; //$NON-NLS-1$
-	
-	/** Launch configuration image identifier. */
-	public static final String IMG_OBJS_LAUNCH_CONFIGURATION= "IMG_OBJS_LAUNCH_CONFIGURATION"; //$NON-NLS-1$
-	
+		
 	// wizard banners
 	/** Debug wizard banner image identifier. */
 	public static final String IMG_WIZBAN_DEBUG= "IMG_WIZBAN_DEBUG"; //$NON-NLS-1$
 	
 	/** Run wizard banner image identifier. */
 	public static final String IMG_WIZBAN_RUN= "IMG_WIZBAN_RUN"; //$NON-NLS-1$
-	
-	/** OK wizard banner image identifier. */
-	public static final String IMG_WIZBAN_OK= "IMG_WIZBAN_OK"; //$NON-NLS-1$
-	
-	/** FAIL wizard banner image identifier. */
-	public static final String IMG_WIZBAN_FAIL= "IMG_WIZBAN_FAIL"; //$NON-NLS-1$
 	
 	/**
 	 * Debug action set identifier (value <code>"org.eclipse.debug.ui.debugActionSet"</code>).
@@ -446,13 +439,16 @@ public interface IDebugUIConstants {
 	/** 
 	 * Identifier for an empty group preceeding an
 	 * expression group in a menu (value <code>"emptyExpressionGroup"</code>).
+	 * 
+	 * @since 2.0
 	 */
 	public static final String EMPTY_EXPRESSION_GROUP = "emptyExpressionGroup"; //$NON-NLS-1$
 	
 	/**
 	 * Identifier for an expression group in a menu (value <code>"expressionGroup"</code>).
+	 * 
+	 * @since 2.0
 	 */
-
 	public static final String EXPRESSION_GROUP = "expressionGroup"; //$NON-NLS-1$
 	/** 
 	 * Identifier for an empty group preceeding a
@@ -527,7 +523,8 @@ public interface IDebugUIConstants {
 	/**
 	 * Launch configuration attribute - a boolean value that indicates if the launch configuration
 	 * is 'private'.  A private configuration is one that does not appear to the user in the launch
-	 * history or the launch configuration dialog.
+	 * history or the launch configuration dialog. Also, the debug view does not automatically select
+	 * and reveal threads that suspend for private launches.
 	 * 
 	 * @since 2.0
 	 */

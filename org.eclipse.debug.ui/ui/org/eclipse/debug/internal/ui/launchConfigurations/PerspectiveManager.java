@@ -110,7 +110,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	public void launchAdded(ILaunch launch) {
 		String perspectiveId = null;
 		// check event filters
-		if (DebugUIPlugin.getDefault().showLaunch(launch)) {
+		if (!isPrivate(launch)) {
 			try {
 				perspectiveId = getPerspectiveId(launch);
 			} catch (CoreException e) {
@@ -196,15 +196,15 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 			DebugEvent event = events[i];
 			if (event.getKind() == DebugEvent.SUSPEND && event.getDetail() == event.BREAKPOINT) {
 				// apply event filters
-				if (!DebugUIPlugin.getDefault().showSuspendEvent(event)) {
-					continue;
-				}
 				ILaunch launch = null;
 				Object source = event.getSource();
 				if (source instanceof IDebugElement) {
 					launch = ((IDebugElement)source).getLaunch();
 				} else if (source instanceof IProcess) {
 					launch = ((IProcess)source).getLaunch();
+				}
+				if (launch != null && isPrivate(launch)) {
+					continue;
 				}
 				String perspectiveId = null;
 				try {
@@ -295,4 +295,18 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		return perspectiveId;
 	}
 	
+	/**
+	 * Returns whether the given launch is private
+	 */
+	protected boolean isPrivate(ILaunch launch) {
+		ILaunchConfiguration config = launch.getLaunchConfiguration();
+		if (config != null) {
+			try {
+				return config.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false);
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
+			}
+		}
+		return false;
+	}
 }

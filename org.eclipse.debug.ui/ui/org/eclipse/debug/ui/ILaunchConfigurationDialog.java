@@ -10,7 +10,8 @@ import org.eclipse.jface.operation.IRunnableContext;
  */
  
  /**
-  * A launch configuraiton dialog contains a launch configuration
+  * A launch configuraiton dialog is used to edit and launch
+  * launch configurations. It contains a launch configuration
   * tab group.
   * 
   * @see ILaunchConfigurationTabGroup
@@ -21,17 +22,18 @@ import org.eclipse.jface.operation.IRunnableContext;
 public interface ILaunchConfigurationDialog extends IRunnableContext {
 	
 	/**
-	 * Constant used as return value from <code>open()</code> method of a
-	 * launch configuration dialog.
+	 * Return value from <code>open()</code> method of a
+	 * launch configuration dialog when a launch completed
+	 * successfully with a single lick (i.e. without opening a
+	 * launch configuration dialog).
 	 */
 	public static final int SINGLE_CLICK_LAUNCHED = 2;
 			
 	/**
 	 * Adjusts the enable state of the Launch button
-	 * to reflect the state of the currently active 
-	 * pages in this launch configuration dialog.
+	 * to reflect the state of the active tab group.
 	 * <p>
-	 * This may be called by a page to force a button state
+	 * This may be called by to force a button state
 	 * update.
 	 * </p>
 	 */
@@ -39,10 +41,10 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	
 	/**
 	 * Updates the message (or error message) shown in the message line to 
-	 * reflect the state of the currently active page in this launch
+	 * reflect the state of the currently active tab in this launch
 	 * configuration dialog.
 	 * <p>
-	 * This method may be called by a page to force a message 
+	 * This method may be called to force a message 
 	 * update.
 	 * </p>
 	 */

@@ -166,14 +166,14 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	 * Returns a default text label for the debug element
 	 */
 	protected String getDefaultText(Object element) {
-		return DebugUITools.getDefaultLabelProvider().getText(element);
+		return DebugUIPlugin.getDefaultLabelProvider().getText(element);
 	}
 
 	/**
 	 * Returns a default image for the debug element
 	 */
 	protected Image getDefaultImage(Object element) {
-		return DebugUITools.getDefaultLabelProvider().getImage(element);
+		return DebugUIPlugin.getDefaultLabelProvider().getImage(element);
 	}
 	
 	/*

@@ -22,7 +22,6 @@ import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -41,21 +40,15 @@ import org.eclipse.ui.PlatformUI;
  * <p>
  * This class is not intended to be subclassed or instantiated.
  * </p>
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  */
 public class DebugUITools {
-
-	private static DefaultLabelProvider fgDefaultLabelProvider= new DefaultLabelProvider();
 	
 	/**
-	 * Returns the shared image managed under the given key. If there isn't any image
-	 * associated with the given key, <code>null</code> is returned. <p>
-	 * Note that clients <br>MUST NOT</br> dispose the image returned by this method.
+	 * Returns the shared image managed under the given key, or <code>null</code>
+	 * if none.
+	 * <p>
+	 * Note that clients <b>MUST NOT</b> dispose the image returned by this method.
+	 * </p>
 	 * <p>
 	 * See <code>IDebugUIConstants</code> for available images.
 	 * </p>
@@ -69,8 +62,8 @@ public class DebugUITools {
 	}
 	
 	/**
-	 * Returns the shared image descriptor managed under the given key. If there isn't any image
-	 * descriptor associated with the given key, <code>null</code> is returned. <p>
+	 * Returns the shared image descriptor managed under the given key, or
+	 * <code>null</code> if none.
 	 * <p>
 	 * See <code>IDebugUIConstants</code> for available image descriptors.
 	 * </p>
@@ -82,14 +75,7 @@ public class DebugUITools {
 	public static ImageDescriptor getImageDescriptor(String key) {
 		return DebugPluginImages.getImageDescriptor(key);
 	}
-	
-	/**
-	 * Returns the default label provider for the debug UI.
-	 */
-	public static ILabelProvider getDefaultLabelProvider() {
-		return fgDefaultLabelProvider;
-	}
-	
+		
 	/**
 	 * Returns the default image descriptor for the given element
 	 * or <code>null</code> if none is defined.
@@ -103,7 +89,7 @@ public class DebugUITools {
 	}
 	
 	private static String getDefaultImageKey(Object element) {
-		return fgDefaultLabelProvider.getImageKey(element);
+		return ((DefaultLabelProvider)DebugUIPlugin.getDefaultLabelProvider()).getImageKey(element);
 	}
 	
 	/**
@@ -116,27 +102,11 @@ public class DebugUITools {
 	}
 	
 	/**
-	 * Adds the given filter to the list of registered filters. Has
-	 * no effect if an identical filter is already registered.
-	 */
-	public static void addEventFilter(IDebugUIEventFilter filter) {
-		DebugUIPlugin.getDefault().addEventFilter(filter);
-	}
-	
-	/**
-	 * Removes the given filter from the list of registered filters. Has
-	 * no effect if an identical filter is not already registered.
-	 */
-	public static void removeEventFilter(IDebugUIEventFilter filter) {
-		DebugUIPlugin.getDefault().removeEventFilter(filter);
-	}
-	
-	/**
 	 * Returns a new debug model presentation that delegates to
 	 * appropriate debug models.
-	 * 
-	 * It is the client's responsibility to ensure to call the dispose
-	 * method of the returned debug model presentation.
+	 * <p>
+	 * It is the client's responsibility dispose the presentation.
+	 * </p>
 	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 * @return a debug model presentation
@@ -150,9 +120,9 @@ public class DebugUITools {
 	 * Returns a new debug model presentation for specified
 	 * debug model, or <code>null</code> if a presentation does
 	 * not exist.
-	 * 
-	 * It is the client's responsibility to ensure to call the dispose
-	 * method of the returned debug model presentation.
+	 * <p>
+	 * It is the client's responsibility dispose the presentation.
+	 * </p>
 	 * 
 	 * @param identifier debug model identifier
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()

@@ -17,15 +17,7 @@ import org.eclipse.ui.IEditorInput;
  * this interface. Generally, a debug model implementation will also provide a
  * debug model presentation extension to render and display its elements. A debug
  * model presentation is registered for a specific debug model, and is responsible
- * for the presentation of the following kinds of elements defined by that model:
- * <ul>
- * <li>debug targets</li>
- * <li>threads</li>
- * <li>stack frames</li>
- * <li>variables</li>
- * <li>values</li>
- * <li>breakpoint markers</li>
- * </ul>
+ * for the presentation elements defined/implemented by that model.
  * <p>
  * A debug model presentation extension is defined in <code>plugin.xml</code>.
  * Following is an example definition of a debug model presentation extension.
@@ -70,17 +62,11 @@ import org.eclipse.ui.IEditorInput;
  * to define a "hexidecimal" property to display numeric values in hexidecimal. Implementations
  * should honor the presentation attributes defined by this interface where possible,
  * but do not need to honor presentation attributes defined by other clients.
- * To access the debug model presentation for a debug view, clients should use the
- * <code>IDebugView</code>.
+ * To access the debug model presentation for a debug view, clients should use
+ * <code>IDebugView#getPresentation(String)</code>.
  * </p>
  * <p>
  * Clients may implement this interface.
- * </p>
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
  * </p>
  * @see org.eclipse.debug.core.model.IDebugElement
  * @see org.eclipse.jface.viewers.ILabelProvider
@@ -108,9 +94,8 @@ public interface IDebugModelPresentation extends ILabelProvider, ISourcePresenta
 	 */
 	void setAttribute(String attribute, Object value);
 	/**
-	 * Returns the image for the label of the given element. If an implementation
-	 * of <code>IDebugModelPresentation</code> returns <code>null</code>, the debug
-	 * UI will provide a default image for the given element.
+	 * Returns an image for the element, or <code>null</code> if a default
+	 * image should be used.
 	 *
 	 * @param element the debug model element
 	 * @return an image for the element, or <code>null</code> if a default
@@ -119,9 +104,8 @@ public interface IDebugModelPresentation extends ILabelProvider, ISourcePresenta
 	 */
 	public Image getImage(Object element);
 	/**
-	 * Returns the text for the label of the given element. If an implementation
-	 * of <code>IDebugModelPresentation</code> returns <code>null</code>, the debug
-	 * UI will provide a default text for the given element.
+	 * Returns a label for the element, or <code>null</code> if a default
+	 * label should be used.
 	 *
 	 * @param element the debug model element
 	 * @return a label for the element, or <code>null</code> if a default
@@ -134,7 +118,7 @@ public interface IDebugModelPresentation extends ILabelProvider, ISourcePresenta
 	 * Computes a detailed description of the given value, reporting
 	 * the result to the specified listener. This allows a presentation
 	 * to provide extra details about a selected value in the variable detail
-	 * portion of the variable view. Since this can be a long-running operation,
+	 * portion of the variables view. Since this can be a long-running operation,
 	 * the details are reported back to the specified listener asynchronously.
 	 * If <code>null</code> is reported, the value's value string is displayed
 	 * (<code>IValue.getValueString()</code>).

@@ -11,29 +11,18 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewPart;
 
 /**
- * An adapter that debug views implement.
- * Provides access to underlying viewer and debug model presentation being
- * used by a viewer. This allows clients to do such things as add and
- * remove filters to a viewer, and configure a debug model presentation.
- * The following debug views support this adapter:
- * <ul>
- * <li>Debug view</li>
- * <li>Breakpoint view</li>
- * <li>Variable view</li>
- * <li>Expression view</li>
- * <li>Console view</li>
- * </ul>
+ * Common function for debug views. Provides access to underlying viewer and
+ * debug model presentation being used by a viewer. This allows clients to do
+ * such things as add and remove filters to a viewer, and configure a debug
+ * model presentation.
  * <p>
- * Clients are not intended to implement this interface.
- * </p>
- * <p>
- * <b>NOTE:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
+ * Clients may implement this interface. Generally, clients should subclass
+ * <code>AbstractDebugView</code> when creating a new debug view.
  * </p>
  * @see org.eclipse.core.runtime.IAdaptable
- * @see IDebugModelPresentation
+ * @see org.eclipse.debug.ui.IDebugModelPresentation
+ * @see org.eclipse.debug.ui.AbstractDebugView
+ * @since 2.0
  */
 
 public interface IDebugView extends IViewPart {
@@ -42,7 +31,6 @@ public interface IDebugView extends IViewPart {
 	 * Returns the viewer contained in this debug view.
 	 *
 	 * @return viewer
-	 * @since 2.0
 	 */
 	public Viewer getViewer();
 	
@@ -63,7 +51,6 @@ public interface IDebugView extends IViewPart {
 	 * @param actionId the action id
 	 * @param action the action, or <code>null</code> to clear it
 	 * @see #getAction
-	 * @since 2.0
 	 */
 	public void setAction(String actionID, IAction action);
 	
@@ -73,7 +60,6 @@ public interface IDebugView extends IViewPart {
 	 * @param actionId the action id
 	 * @return the action, or <code>null</code> if none
 	 * @see #setAction
-	 * @since 2.0
 	 */
 	public IAction getAction(String actionID);
 	
@@ -81,7 +67,6 @@ public interface IDebugView extends IViewPart {
 	 * Returns the context menu manager for this view.
 	 *
 	 * @return the context menu manager for this view, or <code>null</code> if none
-	 * @since 2.0
 	 */
 	public IMenuManager getContextMenuManager();
 }

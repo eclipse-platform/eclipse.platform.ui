@@ -39,46 +39,7 @@ import org.eclipse.swt.widgets.Control;
  * control does not exist.
  * </p>
  * <p>
- * A launch configuration tab extension is defined in <code>plugin.xml</code>.
- * Following is an example definition of a launch configuration
- * tab extension.
- * <pre>
- * &lt;extension point="org.eclipse.debug.ui.launchConfigurationTab"&gt;
- *   &lt;launchConfigurationType 
- *      id="com.example.ExampleTabIdentifier"
- *      type="com.example.ExampleLaunchConfigurationTypeIdentifier"
- *      class="com.example.ExampleLaunchConfigurationTabClass"
- *      name="Example Tab Page"
- *      mode="debug"
- *   &lt;/launchConfigurationType&gt;
- * &lt;/extension&gt;
- * </pre>
- * The attributes are specified as follows:
- * <ul>
- * <li><code>id</code> specifies a unique identifier for this launch configuration
- *  tab.</li>
- * <li><code>type</code> specifies launch configuration type that this tab
- *  is applicable to (corresponds to the id of a launch configuration type
- *  extension). Or, if unspecified, this tab will appear for all launch
- *  configurations.</li>
- * <li><code>class</code>specifies a fully qualified name of a Java class
- *  that implements <code>ILanuchConfigurationTab</code>.</li>
- * <li><code>name</code> specifies a human readable name for this
- *  launch configuration tab that will appear as the title for this
- *  tab, in the tab page.</li>
- * <li><code>mode</code> optionally specifies the mode for which this tab should
- *  be displayed - one of "run" or "debug". This tab is displayed for
- *  both modes if unspecified.</li>
- * </ul>
- * </p>
- * <p>
  * This interface is intended to be implemented by clients.
- * </p>
- * <p>
- * <b>NOTE:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
  * </p>
  * @see org.eclipse.debug.core.ILaunchConfigurationType
  * @see org.eclipse.debug.core.ILaunchConfiguration
@@ -160,7 +121,7 @@ public interface ILaunchConfigurationTab {
 	
 	/**
 	 * Returns the current error message for this tab.
-	 * May be <code>null</null> to indicate no error message.
+	 * May be <code>null</code> to indicate no error message.
 	 * <p>
 	 * An error message should describe some error state,
 	 * as opposed to a message which may simply provide instruction
