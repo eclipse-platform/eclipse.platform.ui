@@ -420,7 +420,7 @@ private static void handleException(ISafeRunnable code, Throwable e) {
 			status = new MultiStatus(pluginId, Platform.PLUGIN_ERROR, message, e);
 			((MultiStatus)status).merge(((CoreException)e).getStatus());
 		} else {
-			status = new Status(Status.WARNING, pluginId, Platform.PLUGIN_ERROR, message, e);
+			status = new Status(Status.ERROR, pluginId, Platform.PLUGIN_ERROR, message, e);
 		}
 		plugin.getLog().log(status);
 	}
