@@ -5,7 +5,6 @@ package org.eclipse.jface.util;
  */
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.jface.text.internal.html.HoverBrowserControl;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.TableTree;
 import org.eclipse.swt.custom.TableTreeItem;
