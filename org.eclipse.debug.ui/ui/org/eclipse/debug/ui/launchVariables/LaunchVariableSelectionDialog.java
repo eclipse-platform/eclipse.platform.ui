@@ -95,6 +95,7 @@ public class LaunchVariableSelectionDialog extends SelectionDialog {
 	protected void createVariableFormComposite(Composite parent, ILaunchVariable[] variables) {
 		formComposite= new Composite(parent, SWT.NONE);
 		formComposite.setLayout(new GridLayout());
+		formComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		form= new LaunchConfigurationVariableForm(LaunchVariableMessages.getString("VariableSelectionDialog.3"), variables); //$NON-NLS-1$
 		form.createContents(formComposite, new IVariableComponentContainer() {
 			
