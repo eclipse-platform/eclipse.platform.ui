@@ -25,6 +25,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -73,6 +74,66 @@ import org.eclipse.ui.keys.KeySequence;
 public class KeysPreferencePage extends org.eclipse.jface.preference.PreferencePage
 	implements IWorkbenchPreferencePage {
 
+	private final static class CommandAssignment implements Comparable {
+
+		private KeyBindingNode.Assignment assignment;		
+		private String contextId;
+		private KeySequence keySequence;		
+		
+		public int compareTo(Object object) {
+			CommandAssignment commandAssignment = (CommandAssignment) object;
+			int compareTo = Util.compare(contextId, commandAssignment.contextId);
+	
+			if (compareTo == 0) {
+				compareTo = Util.compare(keySequence, commandAssignment.keySequence);	
+			
+				if (compareTo == 0)
+					compareTo = Util.compare(assignment, commandAssignment.assignment);
+			}
+		
+			return compareTo;	
+		}
+		
+		public boolean equals(Object object) {
+			if (!(object instanceof CommandAssignment))
+				return false;
+
+			CommandAssignment commandAssignment = (CommandAssignment) object;	
+			boolean equals = true;
+			equals &= Util.equals(assignment, commandAssignment.assignment);
+			equals &= Util.equals(contextId, commandAssignment.contextId);
+			equals &= Util.equals(keySequence, commandAssignment.keySequence);
+			return equals;
+		}
+	}
+		
+	private final static class KeySequenceAssignment implements Comparable {
+		
+		private KeyBindingNode.Assignment assignment;		
+		private String contextId;
+	
+		public int compareTo(Object object) {
+			KeySequenceAssignment keySequenceAssignment = (KeySequenceAssignment) object;
+			int compareTo = Util.compare(contextId, keySequenceAssignment.contextId);
+	
+			if (compareTo == 0)
+				compareTo = Util.compare(assignment, keySequenceAssignment.assignment);
+		
+			return compareTo;	
+		}
+		
+		public boolean equals(Object object) {
+			if (!(object instanceof CommandAssignment))
+				return false;
+
+			KeySequenceAssignment keySequenceAssignment = (KeySequenceAssignment) object;	
+			boolean equals = true;
+			equals &= Util.equals(assignment, keySequenceAssignment.assignment);
+			equals &= Util.equals(contextId, keySequenceAssignment.contextId);
+			return equals;
+		}	
+	}
+
 	private final static ResourceBundle resourceBundle = ResourceBundle.getBundle(KeysPreferencePage.class.getName());
 
 	private final static String COMMAND_CONFLICT = Util.translateString(resourceBundle, "commandConflict"); //$NON-NLS-1$
@@ -93,68 +154,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private final static RGB RGB_MINUS =	new RGB(160, 160, 160);
 	private final static char SPACE = ' ';
 
-	/*
-	private final class CommandSetPair {
-		
-		Set customSet;
-		Set defaultSet;		
-	}
-
-	private final class CommandRecord {
-
-		String commandId;
-		KeySequence keySequence;
-		String contextId;
-		String keyConfigurationId;
-		Set customSet;
-		Set defaultSet;
-		
-		boolean customConflict = false;
-		String customCommand = null;
-		boolean defaultConflict = false;
-		String defaultCommand = null;	
-
-		void calculate() {
-			if (customSet.size() > 1)
-				customConflict = true;
-			else if (!customSet.isEmpty())				
-				customCommand = (String) customSet.iterator().next();
-	
-			if (defaultSet.size() > 1)
-				defaultConflict = true;
-			else if (!defaultSet.isEmpty())				
-				defaultCommand = (String) defaultSet.iterator().next();
-		}
-	}
-
-	private final class KeySequenceRecord {
-
-		String scope;
-		String configuration;
-		Set customSet;
-		Set defaultSet;
-
-		boolean customConflict = false;
-		String customCommand = null;
-		boolean defaultConflict = false;
-		String defaultCommand = null;	
-
-		void calculate() {
-			if (customSet.size() > 1)
-				customConflict = true;
-			else if (!customSet.isEmpty())				
-				customCommand = (String) customSet.iterator().next();
-	
-			if (defaultSet.size() > 1)
-				defaultConflict = true;
-			else if (!defaultSet.isEmpty())				
-				defaultCommand = (String) defaultSet.iterator().next();
-		}
-	}
-	*/
-
-	// TODO private List assignmentsForCommand = new ArrayList();	
-	// TODO private List assignmentsForKeySequence = new ArrayList();
+	private Map assignmentsByContextIdByKeySequence;
 	private Button buttonAdd;
 	private Button buttonRemove;
 	private Button buttonRestore;
@@ -164,7 +164,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private Combo comboCategory;
 	private Combo comboCommand;	
 	private Combo comboContext;
-	private Combo comboKeyConfiguration;	
+	private Combo comboKeyConfiguration;
+	private Set commandAssignments;	
 	private Map commandDefinitionsById;
 	private Map commandIdsByCategoryId;
 	private Map commandIdsByUniqueName;
@@ -180,6 +181,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private Map keyConfigurationDefinitionsById;
 	private Map keyConfigurationIdsByUniqueName;
 	private Map keyConfigurationUniqueNamesById;
+	private Set keySequenceAssignments;
 	private Label labelAssignmentsForCommand;
 	private Label labelAssignmentsForKeySequence;
 	private Label labelCategory; 	
@@ -199,6 +201,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		this.workbench = workbench;
 		commandManager = CommandManager.getInstance();
 		contextManager = ContextManager.getInstance();
+		commandAssignments = new TreeSet();
+		keySequenceAssignments = new TreeSet();
 	}
 
 	public boolean performOk() {
@@ -839,6 +843,201 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		update();
 	}
 
+	private void buildCommandAssignmentsTable() {		
+		tableAssignmentsForCommand.removeAll();
+		
+		for (Iterator iterator = commandAssignments.iterator(); iterator.hasNext();) {
+			CommandAssignment commandAssignment = (CommandAssignment) iterator.next();
+			KeyBindingNode.Assignment assignment = commandAssignment.assignment;
+			KeySequence keySequence = commandAssignment.keySequence;
+			String commandString = null;
+			int difference = DIFFERENCE_NONE;
+
+			if (assignment.hasPreferenceCommandIdInFirstKeyConfiguration || assignment.hasPreferenceCommandIdInInheritedKeyConfiguration) {
+				String preferenceCommandId;
+						
+				if (assignment.hasPreferenceCommandIdInFirstKeyConfiguration)
+					preferenceCommandId = assignment.preferenceCommandIdInFirstKeyConfiguration;
+				else
+					preferenceCommandId = assignment.preferenceCommandIdInInheritedKeyConfiguration;
+						
+				if (assignment.hasPluginCommandIdInFirstKeyConfiguration || assignment.hasPluginCommandIdInInheritedKeyConfiguration) {
+					String pluginCommandId;
+							
+					if (assignment.hasPluginCommandIdInFirstKeyConfiguration)
+						pluginCommandId = assignment.pluginCommandIdInFirstKeyConfiguration;
+					else
+						pluginCommandId = assignment.pluginCommandIdInInheritedKeyConfiguration;
+		
+					if (preferenceCommandId != null) {
+						difference = DIFFERENCE_CHANGE;						
+						commandString = /*commandUniqueNamesById.get(preferenceCommandId)*/ keySequence.format() + "";
+					} else {
+						difference = DIFFERENCE_MINUS;						
+						commandString = /*"Unassigned"*/ keySequence.format();							
+					}							
+		
+					if (pluginCommandId != null)
+						commandString += " (was: " + commandUniqueNamesById.get(pluginCommandId) + ")";
+					else
+						commandString += " (was: " + "Unassigned" + ");";						
+				} else {
+					if (preferenceCommandId != null) {
+						difference = DIFFERENCE_ADD;						
+						commandString = /*commandUniqueNamesById.get(preferenceCommandId)*/ keySequence.format() + "";
+					} else {
+						difference = DIFFERENCE_MINUS;						
+						commandString = /*"Unassigned"*/ keySequence.format();							
+					}							
+				}
+			} else {
+				String pluginCommandId;
+					
+				if (assignment.hasPluginCommandIdInFirstKeyConfiguration)
+					pluginCommandId = assignment.pluginCommandIdInFirstKeyConfiguration;
+				else
+					pluginCommandId = assignment.pluginCommandIdInInheritedKeyConfiguration;					
+		
+				if (pluginCommandId != null) {
+					difference = DIFFERENCE_NONE;						
+					commandString = /*commandUniqueNamesById.get(preferenceCommandId)*/ keySequence.format() + "";
+				} else {
+					difference = DIFFERENCE_MINUS;						
+					commandString = /*"Unassigned"*/ keySequence.format();							
+				}		
+			}
+
+			TableItem tableItem = new TableItem(tableAssignmentsForCommand, SWT.NULL);
+				
+			switch (difference) {
+				case DIFFERENCE_ADD:
+					tableItem.setImage(0, IMAGE_PLUS);
+					break;
+		
+				case DIFFERENCE_CHANGE:
+					tableItem.setImage(0, IMAGE_CHANGE);
+					break;
+		
+				case DIFFERENCE_MINUS:
+					tableItem.setImage(0, IMAGE_MINUS);
+					break;
+		
+				case DIFFERENCE_NONE:
+					tableItem.setImage(0, IMAGE_BLANK);
+					break;				
+			}
+	
+			String contextId = commandAssignment.contextId;
+	
+			if (contextId == null)
+				tableItem.setText(1, Util.translateString(resourceBundle, "general")); //$NON-NLS-1$
+			else 
+				tableItem.setText(1, (String) contextUniqueNamesById.get(contextId)); //$NON-NLS-1$	
+			
+			tableItem.setText(2, commandString);
+				
+			if (difference == DIFFERENCE_MINUS)
+				tableItem.setForeground(new Color(getShell().getDisplay(), RGB_MINUS));	
+		}	
+	}
+
+	private void buildKeySequenceAssignmentsTable() {	
+		tableAssignmentsForKeySequence.removeAll();
+		
+		for (Iterator iterator = keySequenceAssignments.iterator(); iterator.hasNext();) {
+			KeySequenceAssignment keySequenceAssignment = (KeySequenceAssignment) iterator.next();
+			KeyBindingNode.Assignment assignment = keySequenceAssignment.assignment;
+			String commandString = null;
+			int difference = DIFFERENCE_NONE;
+			
+			if (assignment.hasPreferenceCommandIdInFirstKeyConfiguration || assignment.hasPreferenceCommandIdInInheritedKeyConfiguration) {
+				String preferenceCommandId;
+					
+				if (assignment.hasPreferenceCommandIdInFirstKeyConfiguration)
+					preferenceCommandId = assignment.preferenceCommandIdInFirstKeyConfiguration;
+				else
+					preferenceCommandId = assignment.preferenceCommandIdInInheritedKeyConfiguration;
+					
+				if (assignment.hasPluginCommandIdInFirstKeyConfiguration || assignment.hasPluginCommandIdInInheritedKeyConfiguration) {
+					String pluginCommandId;
+						
+					if (assignment.hasPluginCommandIdInFirstKeyConfiguration)
+						pluginCommandId = assignment.pluginCommandIdInFirstKeyConfiguration;
+					else
+						pluginCommandId = assignment.pluginCommandIdInInheritedKeyConfiguration;
+	
+					if (preferenceCommandId != null) {
+						difference = DIFFERENCE_CHANGE;						
+						commandString = commandUniqueNamesById.get(preferenceCommandId) + "";
+					} else {
+						difference = DIFFERENCE_MINUS;						
+						commandString = "Unassigned";							
+					}							
+	
+					if (pluginCommandId != null)
+						commandString += " (was: " + commandUniqueNamesById.get(pluginCommandId) + ")";
+					else
+						commandString += " (was: " + "Unassigned" + ");";						
+				} else {
+					if (preferenceCommandId != null) {
+						difference = DIFFERENCE_ADD;						
+						commandString = commandUniqueNamesById.get(preferenceCommandId) + "";
+					} else {
+						difference = DIFFERENCE_MINUS;						
+						commandString = "Unassigned";							
+					}							
+				}
+			} else {
+				String pluginCommandId;
+				
+				if (assignment.hasPluginCommandIdInFirstKeyConfiguration)
+					pluginCommandId = assignment.pluginCommandIdInFirstKeyConfiguration;
+				else
+					pluginCommandId = assignment.pluginCommandIdInInheritedKeyConfiguration;					
+	
+				if (pluginCommandId != null) {
+					difference = DIFFERENCE_NONE;						
+					commandString = commandUniqueNamesById.get(pluginCommandId) + "";
+				} else {
+					difference = DIFFERENCE_MINUS;						
+					commandString = "Unassigned";							
+				}		
+			}
+	
+			TableItem tableItem = new TableItem(tableAssignmentsForKeySequence, SWT.NULL);
+				
+			switch (difference) {
+				case DIFFERENCE_ADD:
+					tableItem.setImage(0, IMAGE_PLUS);
+					break;
+		
+				case DIFFERENCE_CHANGE:
+					tableItem.setImage(0, IMAGE_CHANGE);
+					break;
+		
+				case DIFFERENCE_MINUS:
+					tableItem.setImage(0, IMAGE_MINUS);
+					break;
+		
+				case DIFFERENCE_NONE:
+					tableItem.setImage(0, IMAGE_BLANK);
+					break;				
+			}
+	
+			String contextId = keySequenceAssignment.contextId;
+	
+			if (contextId == null)
+				tableItem.setText(1, Util.translateString(resourceBundle, "general")); //$NON-NLS-1$
+			else 
+				tableItem.setText(1, (String) contextUniqueNamesById.get(contextId)); //$NON-NLS-1$	
+			
+			tableItem.setText(2, commandString);
+				
+			if (difference == DIFFERENCE_MINUS)
+				tableItem.setForeground(new Color(getShell().getDisplay(), RGB_MINUS));	
+		}
+	}
+
 	private void doubleClickedTableAssignmentsForKeySequence() {	
 		update();
 	}
@@ -872,16 +1071,20 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	}
 
 	private void selectAssignmentForKeySequence(String contextId) {	
-		int selection = -1;
-
 		if (tableAssignmentsForKeySequence.getSelectionCount() > 1)
 			tableAssignmentsForKeySequence.deselectAll();
+	
+		int i = 0;
+		int selection = -1;
 
-		for (int i = 0; i < contextIdAssignments.size(); i++)
-			if (Util.equals(contextId, contextIdAssignments.get(i))) {
+		for (Iterator iterator = keySequenceAssignments.iterator(); iterator.hasNext(); i++) {
+			KeySequenceAssignment keySequenceAssignment = (KeySequenceAssignment) iterator.next();
+
+			if (Util.equals(contextId, keySequenceAssignment.contextId)) {
 				selection = i;
 				break;
 			}
+		}
 
 		if (selection != tableAssignmentsForKeySequence.getSelectionIndex()) {
 			if (selection == -1 || selection >= tableAssignmentsForKeySequence.getItemCount())
@@ -946,214 +1149,54 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	
 	private void selectedTableAssignmentsForKeySequence() {
 		int selection = tableAssignmentsForKeySequence.getSelectionIndex();
+		List keySequenceAssignmentsAsList = new ArrayList(keySequenceAssignments);
 			
-		if (selection >= 0 && selection < contextIdAssignments.size() && tableAssignmentsForKeySequence.getSelectionCount() == 1)
-			setContextId((String) contextIdAssignments.get(selection));
-			
+		if (selection >= 0 && selection < keySequenceAssignmentsAsList.size() && tableAssignmentsForKeySequence.getSelectionCount() == 1)
+			setContextId(((KeySequenceAssignment) keySequenceAssignmentsAsList.get(selection)).contextId);
+
 		update();		
 	}
 
-	// TODO move these.
-	private Map assignmentsByContextId;
-	private List contextIdAssignments = new ArrayList();
+	private void setAssignmentsForCommand() {		
+		commandAssignments.clear();
+		String commandId = getCommandId();
+		
+		for (Iterator iterator = assignmentsByContextIdByKeySequence.entrySet()	.iterator(); iterator.hasNext();) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			KeySequence keySequence = (KeySequence) entry.getKey();
+			Map assignmentsByContextId = (Map) entry.getValue();
+
+			if (assignmentsByContextId != null)
+				for (Iterator iterator2 = assignmentsByContextId.entrySet().iterator(); iterator2.hasNext();) {
+					Map.Entry entry2 = (Map.Entry) iterator2.next();		
+					CommandAssignment commandAssignment = new CommandAssignment();
+					commandAssignment.assignment = (KeyBindingNode.Assignment) entry2.getValue();
+					commandAssignment.contextId	= (String) entry2.getKey();
+					commandAssignment.keySequence = keySequence;
+
+					if (commandAssignment.assignment.contains(commandId))
+						commandAssignments.add(commandAssignment);
+				}
+		}		
+		
+		buildCommandAssignmentsTable();
+	}	
 
 	private void setAssignmentsForKeySequence() {		
-		String keyConfigurationId = getKeyConfigurationId();
-		KeySequence keySequence = getKeySequence();
-		String[] activeKeyConfigurationIds = CommandManager.extend(CommandManager.getKeyConfigurationIds(keyConfigurationId, keyConfigurationDefinitionsById));
-		String[] activeLocales = CommandManager.extend(CommandManager.getPath(CommandManager.getInstance().getActiveLocale(), CommandManager.SEPARATOR));
-		String[] activePlatforms = CommandManager.extend(CommandManager.getPath(CommandManager.getInstance().getActivePlatform(), CommandManager.SEPARATOR));
-		Map assignmentsByContextId = KeyBindingNode.solve(tree, keySequence, activeKeyConfigurationIds, activePlatforms, activeLocales);
+		keySequenceAssignments.clear();
+		KeySequence keySequence = getKeySequence();			
+		Map assignmentsByContextId = (Map) assignmentsByContextIdByKeySequence.get(keySequence);
 
-		if (!Util.equals(this.assignmentsByContextId, assignmentsByContextId)) {
-			this.assignmentsByContextId = assignmentsByContextId;
-			contextIdAssignments.clear();
-			tableAssignmentsForKeySequence.removeAll();	
-			String contextName = Util.translateString(resourceBundle, "general"); //$NON-NLS-1$
-			String contextId = null;
-			int difference = DIFFERENCE_NONE;
-			String commandString = null;
-			KeyBindingNode.Assignment assignment = (KeyBindingNode.Assignment) assignmentsByContextId.get(null);
-
-			if (assignment != null) {
-				if (assignment.hasPreferenceCommandIdInFirstKeyConfiguration || assignment.hasPreferenceCommandIdInInheritedKeyConfiguration) {
-					String preferenceCommandId;
-					
-					if (assignment.hasPreferenceCommandIdInFirstKeyConfiguration)
-						preferenceCommandId = assignment.preferenceCommandIdInFirstKeyConfiguration;
-					else
-						preferenceCommandId = assignment.preferenceCommandIdInInheritedKeyConfiguration;
-					
-					if (assignment.hasPluginCommandIdInFirstKeyConfiguration || assignment.hasPluginCommandIdInInheritedKeyConfiguration) {
-						String pluginCommandId;
-						
-						if (assignment.hasPluginCommandIdInFirstKeyConfiguration)
-							pluginCommandId = assignment.pluginCommandIdInFirstKeyConfiguration;
-						else
-							pluginCommandId = assignment.pluginCommandIdInInheritedKeyConfiguration;
-
-						if (preferenceCommandId != null) {
-							difference = DIFFERENCE_CHANGE;						
-							commandString = commandUniqueNamesById.get(preferenceCommandId) + "";
-						} else {
-							difference = DIFFERENCE_MINUS;						
-							commandString = "Unassigned";							
-						}							
-
-						if (pluginCommandId != null)
-							commandString += " (was: " + commandUniqueNamesById.get(pluginCommandId) + ")";
-						else
-							commandString += " (was: " + "Unassigned" + ");";						
-					} else {
-						if (preferenceCommandId != null) {
-							difference = DIFFERENCE_ADD;						
-							commandString = commandUniqueNamesById.get(preferenceCommandId) + "";
-						} else {
-							difference = DIFFERENCE_MINUS;						
-							commandString = "Unassigned";							
-						}							
-					}
-				} else {
-					String pluginCommandId;
-				
-					if (assignment.hasPluginCommandIdInFirstKeyConfiguration)
-						pluginCommandId = assignment.pluginCommandIdInFirstKeyConfiguration;
-					else
-						pluginCommandId = assignment.pluginCommandIdInInheritedKeyConfiguration;					
-
-					if (pluginCommandId != null) {
-						difference = DIFFERENCE_NONE;						
-						commandString = commandUniqueNamesById.get(pluginCommandId) + "";
-					} else {
-						difference = DIFFERENCE_MINUS;						
-						commandString = "Unassigned";							
-					}		
-				}
-
-				TableItem tableItem = new TableItem(tableAssignmentsForKeySequence, SWT.NULL);
-				contextIdAssignments.add(contextId);
-				
-				switch (difference) {
-					case DIFFERENCE_ADD:
-						tableItem.setImage(0, IMAGE_PLUS);
-						break;
-		
-					case DIFFERENCE_CHANGE:
-						tableItem.setImage(0, IMAGE_CHANGE);
-						break;
-		
-					case DIFFERENCE_MINUS:
-						tableItem.setImage(0, IMAGE_MINUS);
-						break;
-		
-					case DIFFERENCE_NONE:
-						tableItem.setImage(0, IMAGE_BLANK);
-						break;				
-				}
-	
-				tableItem.setText(1, contextName);
-				tableItem.setText(2, commandString);
-				
-				if (difference == DIFFERENCE_MINUS)
-					tableItem.setForeground(new Color(getShell().getDisplay(), RGB_MINUS));					
-			}			
-	
-			// TODO this keySet should be sorted through Collator first
-			for (Iterator iterator = contextIdsByUniqueName.entrySet().iterator(); iterator.hasNext();) {
+		if (assignmentsByContextId != null)
+			for (Iterator iterator = assignmentsByContextId.entrySet().iterator(); iterator.hasNext();) {
 				Map.Entry entry = (Map.Entry) iterator.next();		
-				contextName = (String) entry.getKey();
-				contextId = (String) entry.getValue();
-				difference = DIFFERENCE_NONE;
-				commandString = null;
-				assignment = (KeyBindingNode.Assignment) assignmentsByContextId.get(contextId);
+				KeySequenceAssignment keySequenceAssignment = new KeySequenceAssignment();
+				keySequenceAssignment.assignment = (KeyBindingNode.Assignment) entry.getValue();
+				keySequenceAssignment.contextId	= (String) entry.getKey();
+				keySequenceAssignments.add(keySequenceAssignment);
+			}
 
-				if (assignment != null) {
-					if (assignment.hasPreferenceCommandIdInFirstKeyConfiguration || assignment.hasPreferenceCommandIdInInheritedKeyConfiguration) {
-						String preferenceCommandId;
-					
-						if (assignment.hasPreferenceCommandIdInFirstKeyConfiguration)
-							preferenceCommandId = assignment.preferenceCommandIdInFirstKeyConfiguration;
-						else
-							preferenceCommandId = assignment.preferenceCommandIdInInheritedKeyConfiguration;
-					
-						if (assignment.hasPluginCommandIdInFirstKeyConfiguration || assignment.hasPluginCommandIdInInheritedKeyConfiguration) {
-							String pluginCommandId;
-						
-							if (assignment.hasPluginCommandIdInFirstKeyConfiguration)
-								pluginCommandId = assignment.pluginCommandIdInFirstKeyConfiguration;
-							else
-								pluginCommandId = assignment.pluginCommandIdInInheritedKeyConfiguration;
-
-							if (preferenceCommandId != null) {
-								difference = DIFFERENCE_CHANGE;						
-								commandString = commandUniqueNamesById.get(preferenceCommandId) + "";
-							} else {
-								difference = DIFFERENCE_MINUS;						
-								commandString = "Unassigned";							
-							}							
-
-							if (pluginCommandId != null)
-								commandString += " (was: " + commandUniqueNamesById.get(pluginCommandId) + ")";
-							else
-								commandString += " (was: " + "Unassigned" + ");";						
-						} else {
-							if (preferenceCommandId != null) {
-								difference = DIFFERENCE_ADD;						
-								commandString = commandUniqueNamesById.get(preferenceCommandId) + "";
-							} else {
-								difference = DIFFERENCE_MINUS;						
-								commandString = "Unassigned";							
-							}							
-						}
-					} else {
-						String pluginCommandId;
-				
-						if (assignment.hasPluginCommandIdInFirstKeyConfiguration)
-							pluginCommandId = assignment.pluginCommandIdInFirstKeyConfiguration;
-						else
-							pluginCommandId = assignment.pluginCommandIdInInheritedKeyConfiguration;					
-
-						if (pluginCommandId != null) {
-							difference = DIFFERENCE_NONE;						
-							commandString = commandUniqueNamesById.get(pluginCommandId) + "";
-						} else {
-							difference = DIFFERENCE_MINUS;						
-							commandString = "Unassigned";							
-						}		
-					}
-
-					TableItem tableItem = new TableItem(tableAssignmentsForKeySequence, SWT.NULL);
-					contextIdAssignments.add(contextId);
-				
-					switch (difference) {
-						case DIFFERENCE_ADD:
-							tableItem.setImage(0, IMAGE_PLUS);
-							break;
-		
-						case DIFFERENCE_CHANGE:
-							tableItem.setImage(0, IMAGE_CHANGE);
-							break;
-		
-						case DIFFERENCE_MINUS:
-							tableItem.setImage(0, IMAGE_MINUS);
-							break;
-		
-						case DIFFERENCE_NONE:
-							tableItem.setImage(0, IMAGE_BLANK);
-							break;				
-					}
-	
-					tableItem.setText(1, contextName);
-					tableItem.setText(2, commandString);
-					
-					if (difference == DIFFERENCE_MINUS)
-						tableItem.setForeground(new Color(getShell().getDisplay(), RGB_MINUS));					
-				}		
-			}					
-		}			
-	}
-	
-	private void setAssignmentsForCommand() {	
+		buildKeySequenceAssignmentsTable();
 	}
 
 	private void setCategoryId(String categoryId) {				
@@ -1268,17 +1311,20 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private void update() {
 		setCommandsForCategory();
 		setContextsForCommand();
+		String keyConfigurationId = getKeyConfigurationId();
+		KeySequence keySequence = getKeySequence();
+		String[] activeKeyConfigurationIds = CommandManager.extend(CommandManager.getKeyConfigurationIds(keyConfigurationId, keyConfigurationDefinitionsById));
+		String[] activeLocales = CommandManager.extend(CommandManager.getPath(CommandManager.getInstance().getActiveLocale(), CommandManager.SEPARATOR));
+		String[] activePlatforms = CommandManager.extend(CommandManager.getPath(CommandManager.getInstance().getActivePlatform(), CommandManager.SEPARATOR));
+		KeyBindingNode.solve(tree, activeKeyConfigurationIds, activePlatforms, activeLocales);		
+		assignmentsByContextIdByKeySequence = KeyBindingNode.getAssignmentsByContextIdKeySequence(tree, KeySequence.getInstance());
 		setAssignmentsForKeySequence();
-		setAssignmentsForCommand();	
-		
+		setAssignmentsForCommand();		
 		String categoryId = getCategoryId();
 		String commandId = getCommandId();
 		String contextId = getContextId();
-		String keyConfigurationId = getKeyConfigurationId();
-		KeySequence keySequence = getKeySequence();		
-
 		selectAssignmentForKeySequence(contextId);
-
+		// TODO selectAssignmentForCommand(contextId);
 		updateLabelKeyConfigurationExtends();		
 		updateLabelContextExtends();
 		labelAssignmentsForKeySequence.setEnabled(keySequence != null && !keySequence.getKeyStrokes().isEmpty());
