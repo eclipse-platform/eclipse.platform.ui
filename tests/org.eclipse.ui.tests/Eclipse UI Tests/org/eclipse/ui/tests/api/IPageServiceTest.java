@@ -18,7 +18,6 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.tests.util.EmptyPerspective;
 import org.eclipse.ui.tests.util.UITestCase;
 
