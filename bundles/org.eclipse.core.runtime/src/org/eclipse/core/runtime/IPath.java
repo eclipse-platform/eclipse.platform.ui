@@ -259,13 +259,15 @@ public boolean isValidSegment(String segment);
 public String lastSegment();
 /**
  * Returns an absolute path with the segments and device id of this path.
- * If this path is absolute, it is simply returned.
+ * Absolute paths start with a path separator. If this path is absolute, 
+ * it is simply returned.
  *
  * @return the new path
  */
 public IPath makeAbsolute();
 /**
  * Returns a relative path with the segments and device id of this path.
+ * Absolute paths start with a path separator and relative paths do not. 
  * If this path is relative, it is simply returned.
  *
  * @return the new path
