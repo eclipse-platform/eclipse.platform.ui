@@ -176,7 +176,7 @@ public class AntCorePreferences {
 	 *	 * @return the default set of URLs defining the Ant classpath	 */
 	public URL[] getDefaultAntURLs() {
 		if (defaultAntURLs == null) {
-			List result = new ArrayList(10);
+			List result = new ArrayList(5);
 			Plugin antPlugin= Platform.getPlugin("org.apache.ant"); //$NON-NLS-1$
 			if (antPlugin != null) {
 				IPluginDescriptor descriptor = antPlugin.getDescriptor(); 
