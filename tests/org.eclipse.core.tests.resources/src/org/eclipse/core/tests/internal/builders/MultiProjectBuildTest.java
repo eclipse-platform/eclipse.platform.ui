@@ -207,6 +207,36 @@ public void testDeltas() {
 	}.performTest(new Object[][] {interestingProjects(), reverse(interestingProjects())});
 }
 /**
+ * Tests a builder that requests deltas for closed and missing projects.
+ */
+public void testRequestMissingProject() {
+	//add builder and do an initial build to get the instance
+	try {
+		addBuilder(project1, DeltaVerifierBuilder.BUILDER_NAME);
+		project1.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
+	} catch (CoreException e) {
+		fail("1.0", e);
+	}
+	final DeltaVerifierBuilder builder = DeltaVerifierBuilder.getInstance();
+	assertTrue("1.1", builder != null);
+	//always check deltas for all projects
+	final IProject[] allProjects = new IProject[] {project1, project2, project3, project4};
+	try {
+		project2.close(getMonitor());
+		project3.delete(IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
+	} catch (CoreException e1) {
+		fail("1.99", e1);
+	}
+	builder.checkDeltas(allProjects);
+
+	//modify a file in project1 to force an autobuild
+	try {
+		file1.setContents(getRandomContents(), IResource.NONE, getMonitor());
+	} catch (CoreException e2) {
+		fail("2.99", e2);
+	}
+}
+/**
  * Test for Bug #5102.  Never reproduced but interesting little test, worth keeping around
  */
 public void testPR() throws Exception {

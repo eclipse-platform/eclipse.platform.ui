@@ -14,6 +14,8 @@ package org.eclipse.core.tests.internal.builders;
 import java.util.ArrayList;
 import java.util.Map;
 
+import junit.framework.Assert;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceDeltaVerifier;
@@ -146,6 +148,9 @@ protected void doCheckDeltas() {
 			if (delta.getKind() == IResourceDelta.NO_CHANGE && delta.getAffectedChildren().length == 0) {
 				emptyDeltas.add(checkDeltas[i]);
 			}
+			//regression test -- ensure delta resource is non null
+			Assert.assertTrue("Non-null delta", delta.getResource() != null);
+			Assert.assertTrue("Delta rooted at project", delta.getResource().getType() == IResource.PROJECT);
 		}
 	}
 }
