@@ -16,7 +16,6 @@ import org.eclipse.ui.activities.IActivityEvent;
 
 final class ActivityEvent implements IActivityEvent {
 
-	private boolean activeChanged;
 	private IActivity activity;
 	private boolean definedChanged;
 	private boolean descriptionChanged;
@@ -25,12 +24,11 @@ final class ActivityEvent implements IActivityEvent {
 	private boolean parentIdChanged;
 	private boolean patternBindingsChanged;
 
-	ActivityEvent(IActivity activity, boolean activeChanged, boolean definedChanged, boolean descriptionChanged, boolean enabledChanged, boolean nameChanged, boolean parentIdChanged, boolean patternBindingsChanged) {
+	ActivityEvent(IActivity activity, boolean definedChanged, boolean descriptionChanged, boolean enabledChanged, boolean nameChanged, boolean parentIdChanged, boolean patternBindingsChanged) {
 		if (activity == null)
 			throw new NullPointerException();
 		
 		this.activity = activity;
-		this.activeChanged = activeChanged;
 		this.definedChanged = definedChanged;
 		this.descriptionChanged = descriptionChanged;
 		this.enabledChanged = enabledChanged;
@@ -43,10 +41,6 @@ final class ActivityEvent implements IActivityEvent {
 		return activity;
 	}
 
-	public boolean hasActiveChanged() {
-		return activeChanged;
-	}
-	
 	public boolean hasDefinedChanged() {
 		return definedChanged;
 	}	

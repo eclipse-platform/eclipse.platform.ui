@@ -16,17 +16,15 @@ import org.eclipse.ui.activities.IActivityManagerEvent;
 
 final class ActivityManagerEvent implements IActivityManagerEvent {
 
-	private boolean activeActivityIdsChanged;
 	private IActivityManager activityManager;
 	private boolean definedActivityIdsChanged;
 	private boolean enabledActivityIdsChanged;
 
-	ActivityManagerEvent(IActivityManager activityManager, boolean activeActivityIdsChanged, boolean definedActivityIdsChanged, boolean enabledActivityIdsChanged) {
+	ActivityManagerEvent(IActivityManager activityManager, boolean definedActivityIdsChanged, boolean enabledActivityIdsChanged) {
 		if (activityManager == null)
 			throw new NullPointerException();
 		
 		this.activityManager = activityManager;
-		this.activeActivityIdsChanged = activeActivityIdsChanged;
 		this.definedActivityIdsChanged = definedActivityIdsChanged;
 		this.enabledActivityIdsChanged = enabledActivityIdsChanged;
 	}
@@ -35,10 +33,6 @@ final class ActivityManagerEvent implements IActivityManagerEvent {
 		return activityManager;
 	}
 
-	public boolean haveActiveActivityIdsChanged() {
-		return activeActivityIdsChanged;
-	}
-	
 	public boolean haveDefinedActivityIdsChanged() {
 		return definedActivityIdsChanged;
 	}

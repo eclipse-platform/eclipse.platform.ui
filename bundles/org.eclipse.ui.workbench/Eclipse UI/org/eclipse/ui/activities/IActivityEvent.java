@@ -40,11 +40,6 @@ public interface IActivityEvent {
 	/**
 	 * TODO javadoc
 	 */	
-	boolean hasActiveChanged();
-	
-	/**
-	 * TODO javadoc
-	 */	
 	boolean hasDefinedChanged();
 	
 	/**

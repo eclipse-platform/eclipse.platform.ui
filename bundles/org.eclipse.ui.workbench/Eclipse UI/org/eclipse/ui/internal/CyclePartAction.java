@@ -312,8 +312,7 @@ public class CyclePartAction extends PageEventAction {
 				
 				boolean acceleratorForward = false;
 				boolean acceleratorBackward = false;
-				// TODO blind casts
-				ICommandManager commandManager = ((Workbench) PlatformUI.getWorkbench()).getCommandManager();
+				ICommandManager commandManager = PlatformUI.getWorkbench().getCommandManager();
 
 				if (commandForward != null) {
 					ICommand command = commandManager.getCommand(commandForward);

@@ -14,7 +14,7 @@ package org.eclipse.ui.roles;
 /**
  * <p>
  * Signals that an attempt was made to access the attributes of an undefined
- * role.
+ * object.
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
@@ -28,15 +28,15 @@ package org.eclipse.ui.roles;
 public final class NotDefinedException extends Exception {
 
 	/**
-	 * Constructs a <code>RoleNotDefinedException</code> with no specified 
-	 * detail message. 
+	 * Constructs a <code>NotDefinedException</code> with no specified detail 
+	 * message. 
 	 */	
 	public NotDefinedException() {
 	}
 
 	/**
-	 * Constructs a <code>RoleNotDefinedException</code> with the specified 
-	 * detail message. 
+	 * Constructs a <code>NotDefinedException</code> with the specified detail 
+	 * message. 
 	 *
 	 * @param s	the detail message.
 	 */	

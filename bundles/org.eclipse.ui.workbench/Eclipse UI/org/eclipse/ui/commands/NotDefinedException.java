@@ -25,18 +25,18 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public class NotDefinedException extends Exception {
+public final class NotDefinedException extends Exception {
 
 	/**
-	 * Constructs a <code>CommandNotDefinedException</code> with no specified 
-	 * detail message. 
+	 * Constructs a <code>NotDefinedException</code> with no specified detail 
+	 * message. 
 	 */	
 	public NotDefinedException() {
 	}
 
 	/**
-	 * Constructs a <code>CommandNotDefinedException</code> with the specified 
-	 * detail message. 
+	 * Constructs a <code>NotDefinedException</code> with the specified detail 
+	 * message. 
 	 *
 	 * @param s	the detail message.
 	 */	

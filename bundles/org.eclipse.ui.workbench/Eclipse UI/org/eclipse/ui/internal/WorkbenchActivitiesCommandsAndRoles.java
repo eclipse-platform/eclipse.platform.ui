@@ -227,18 +227,6 @@ public class WorkbenchActivitiesCommandsAndRoles {
 
 		public final void activityManagerChanged(final IActivityManagerEvent activityManagerEvent) {
 			updateActiveActivityIds();
-
-			Set activeActivityIds = activityManagerEvent.getActivityManager().getActiveActivityIds();
-
-			if (!Util.equals(this.activeActivityIds, activeActivityIds)) {
-				this.activeActivityIds = activeActivityIds;
-				IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
-
-				if (workbenchWindow instanceof WorkbenchWindow) {
-					MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
-					menuManager.updateAll(true);
-				}
-			}
 		}
 	};
 
@@ -502,7 +490,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 				
 		for (Iterator iterator = potentialKeyStrokes.iterator(); iterator.hasNext();) {
 			KeySequence modeAfterKeyStroke = KeySequence.getInstance(modeBeforeKeyStroke, (KeyStroke) iterator.next());		
-
+			
 			if (isPartialMatch(modeAfterKeyStroke)) {
 				setMode(modeAfterKeyStroke);
 				return true;				
@@ -560,8 +548,10 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		}
 	}
 
-	public void updateActiveActivityIds() {
-		workbench.getCommandManager().setActiveActivityIds(workbench.getActivityManager().getActiveActivityIds());
+	Set activeActivityIds = new HashSet();
+	
+	public void updateActiveActivityIds() {		
+		workbench.getCommandManager().setActiveActivityIds(activeActivityIds);
 	}
 
 	void updateActiveCommandIdsAndActiveActivityIds() {
@@ -705,8 +695,21 @@ public class WorkbenchActivitiesCommandsAndRoles {
 
 		if (this.activeWorkbenchPartContextActivationService != null)
 			activeContextIds.addAll(this.activeWorkbenchPartContextActivationService.getActiveContextIds());
+	
+		Set activeActivityIds = new HashSet(activeContextIds);
 
-		workbench.getActivityManager().setActiveActivityIds(new HashSet(activeContextIds));
+		if (!Util.equals(this.activeActivityIds, activeActivityIds)) {
+			this.activeActivityIds = activeActivityIds;
+
+			updateActiveActivityIds();
+			
+			IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
+
+			if (workbenchWindow instanceof WorkbenchWindow) {
+				MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
+				menuManager.updateAll(true);
+			}
+		}
 	}
 
 	public void updateActiveWorkbenchWindowMenuManager() {

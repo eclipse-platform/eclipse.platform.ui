@@ -19,8 +19,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
@@ -83,7 +85,12 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.activities.ActivationServiceFactory;
 import org.eclipse.ui.activities.ActivityManagerFactory;
+import org.eclipse.ui.activities.DisposedException;
+import org.eclipse.ui.activities.IActivationService;
+import org.eclipse.ui.activities.IActivationServiceEvent;
+import org.eclipse.ui.activities.IActivationServiceListener;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.application.IWorkbenchPreferences;
@@ -265,6 +272,41 @@ public final class Workbench implements IWorkbench {
 		return roleManager;
 	}		
 
+	private final HashSet activationServices = new HashSet();
+	private final IActivationService compositeActivationService = ActivationServiceFactory.getActivationService();
+
+	private final IActivationServiceListener activationServiceListener = new IActivationServiceListener() {
+		public void activationServiceChanged(IActivationServiceEvent activationServiceEvent) {
+			Set activeActivityIds = new HashSet();
+			
+			for (Iterator iterator = activationServices.iterator(); iterator.hasNext();) {
+				IActivationService activationService = (IActivationService) iterator.next();
+				
+				try {
+					activeActivityIds.addAll(activationService.getActiveActivityIds());					
+				} catch (DisposedException eDisposed) {
+					iterator.remove();
+				}
+			}
+			
+			try {
+				compositeActivationService.setActiveActivityIds(activeActivityIds);
+			} catch (DisposedException eDisposed) {			
+			}
+		}
+	};
+
+	public IActivationService getActivationService() {
+		IActivationService activationService = ActivationServiceFactory.getActivationService();
+		activationServices.add(activationService);	
+		activationService.addActivationServiceListener(activationServiceListener);
+		return activationService;	
+	}
+
+	public IActivationService getCompositeActivationService() {
+		return compositeActivationService;
+	}
+	
 	public final void disableKeyFilter() {
 		synchronized (keyFilterMutex) {
 			final Display display = Display.getCurrent();

@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.progress.ProgressMessages;
 
 public abstract class UIJob extends Job {
@@ -32,21 +33,25 @@ public abstract class UIJob extends Job {
 
 	/**
 	 * Create a new instance of the receiver with the supplied name.
-	 * @param name
+	 * 
+	 * @param name the job name
+	 * 
+	 * @deprecated use UIJob(Display, String)
 	 */
 	public UIJob(String name) {
-		super(name);
+		this(Display.getDefault(), name);
 	}
 
 	/**
 	 * Create a new instance of the receiver with the supplied
 	 * Display.
-	 * @param jobDisplay
-	 * @param name
+	 * 
+	 * @param jobDisplay the display 
+	 * @param name the job name
 	 */
-	public UIJob(Display jobDisplay,String name) {
-		this(name);
-		display = jobDisplay;
+	public UIJob(Display jobDisplay, String name) {
+		super(name);
+		setDisplay(jobDisplay);
 	}
 
 	/**
@@ -106,28 +111,18 @@ public abstract class UIJob extends Job {
 	public abstract IStatus runInUIThread(IProgressMonitor monitor);
 
 	/**
-	 * Set the display to execute the asyncExec in.
+	 * Sets the display to execute the asyncExec in.
 	 * @param runDisplay
 	 */
 	public void setDisplay(Display runDisplay) {
+		Assert.isNotNull(runDisplay);
 		display = runDisplay;
 	}
 	/**
-	 * Get the display for use by the receiver. If there are no 
-	 * windows yet return the default display.
-	 * @return Display
+	 * Returns the display for use by the receiver. 
 	 */
 	public Display getDisplay() {
-		if (display != null)
-			return display;
-		IWorkbenchWindow windows[] =
-			PlatformUI.getWorkbench().getWorkbenchWindows();
-		if (windows.length == 0)
-			return Display.getDefault();
-		Shell firstShell = windows[0].getShell();
-		if(firstShell == null || firstShell.isDisposed())
-			return Display.getDefault();
-		return windows[0].getShell().getDisplay();
+		return display;
 	}
 
 }
