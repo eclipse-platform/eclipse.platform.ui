@@ -13,10 +13,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
@@ -30,6 +32,83 @@ import org.eclipse.ui.internal.misc.Assert;
  */
 public class DeleteResourceAction extends SelectionListenerAction {
 
+	static class DeleteProjectDialog extends MessageDialog {
+
+		private List projects;
+		private boolean deleteContent = false;
+		private Button radio1;
+		private Button radio2;
+		
+		DeleteProjectDialog(Shell parentShell, List projects) {
+			super(
+				parentShell, 
+				getTitle(projects), 
+				null,	// accept the default window icon
+				getMessage(projects),
+				MessageDialog.QUESTION, 
+				new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL},
+				0); 	// yes is the default
+			this.projects = projects;
+		}
+		
+		static String getTitle(List projects) {
+			if (projects.size() == 1)
+				return WorkbenchMessages.getString("DeleteResourceAction.titleProject1");  //$NON-NLS-1$
+			else
+				return WorkbenchMessages.getString("DeleteResourceAction.titleProjectN");  //$NON-NLS-1$
+		}
+		
+		static String getMessage(List projects) {
+			if (projects.size() == 1) {
+				IProject project = (IProject) projects.get(0);
+				return WorkbenchMessages.format("DeleteResourceAction.confirmProject1", new Object[] { project.getName() });  //$NON-NLS-1$
+			}
+			else {
+				return WorkbenchMessages.format("DeleteResourceAction.confirmProjectN", new Object[] { new Integer(projects.size()) });  //$NON-NLS-1$
+			}
+		}
+		
+		protected Control createCustomArea(Composite parent) {
+			Composite composite = new Composite(parent, SWT.NONE);
+			composite.setLayout(new GridLayout());
+			radio1 = new Button(composite, SWT.RADIO);
+			radio1.addSelectionListener(selectionListener);
+			String text1;
+			if (projects.size() == 1) {
+				IProject project = (IProject) projects.get(0);
+				text1 = WorkbenchMessages.format("DeleteResourceAction.deleteContents1", new Object[] { project.getLocation().toOSString() });  //$NON-NLS-1$
+			}
+			else {
+				text1 = WorkbenchMessages.format("DeleteResourceAction.deleteContentsN", new Object[] { new Integer(projects.size()) });  //$NON-NLS-1$
+			}
+			radio1.setText(text1);
+
+			radio2 = new Button(composite, SWT.RADIO);
+			radio2.addSelectionListener(selectionListener);
+			String text2 = WorkbenchMessages.getString("DeleteResourceAction.doNotDeleteContents");  //$NON-NLS-1$
+			radio2.setText(text2);
+			
+			// set initial state
+			radio1.setSelection(deleteContent);
+			radio2.setSelection(!deleteContent);
+			
+			return composite;
+		}
+		
+		private SelectionListener selectionListener = new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				Button button = (Button) e.widget;
+				if (button.getSelection()) {
+					deleteContent = (button == radio1);
+				}
+			}
+		};
+		
+		public boolean getDeleteContent() {
+			return deleteContent;
+		}
+	}
+	
 	/**
 	 * The id of this action.
 	 */
@@ -117,7 +196,7 @@ boolean containsOnlyNonProjects() {
  *  if the deletion should be abandoned
  */
 boolean confirmDelete() {
-	if ((getSelectedResourceTypes() & IResource.PROJECT) != 0) {
+	if (containsOnlyProjects()) {
 		return confirmDeleteProjects();
 	}
 	else {
@@ -133,13 +212,15 @@ boolean confirmDelete() {
  */
 boolean confirmDeleteNonProjects() {
 	List resources = getSelectedResources();
-	String title = WorkbenchMessages.getString("DeleteResourceAction.title");  //$NON-NLS-1$
+	String title;
 	String msg;
 	if (resources.size() == 1) {
-		IResource resource = (IResource) resources.get(0);
+		title = WorkbenchMessages.getString("DeleteResourceAction.title1");  //$NON-NLS-1$
+ 		IResource resource = (IResource) resources.get(0);
 		msg = WorkbenchMessages.format("DeleteResourceAction.confirm1", new Object[] { resource.getName() });  //$NON-NLS-1$
 	}
 	else {
+		title = WorkbenchMessages.getString("DeleteResourceAction.titleN");  //$NON-NLS-1$
 		msg = WorkbenchMessages.format("DeleteResourceAction.confirmN", new Object[] { new Integer(resources.size()) });  //$NON-NLS-1$
 	}
 	return MessageDialog.openQuestion(shell, title, msg);
@@ -153,35 +234,11 @@ boolean confirmDeleteNonProjects() {
  *  if the deletion should be abandoned
  */
 boolean confirmDeleteProjects() {
-	String title = WorkbenchMessages.getString("DeleteResourceAction.titleProject"); //$NON-NLS-1$
 	List resources = getSelectedResources();
-	String msg;
-	if (resources.size() == 1) {
-		IProject project = (IProject) resources.get(0);
-		msg = WorkbenchMessages.format("DeleteResourceAction.confirmProject1", new Object[] { project.getName(), project.getLocation().toOSString() });  //$NON-NLS-1$
-	}
-	else {
-		msg = WorkbenchMessages.format("DeleteResourceAction.confirmProjectN", new Object[] { new Integer(resources.size()) });  //$NON-NLS-1$
-	}
-	MessageDialog dialog = new MessageDialog(
-		shell,
-		title, 
-		null,	// accept the default window icon
-		msg, 
-		MessageDialog.QUESTION, 
-		new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL},
-		0); 	// yes is the default
+	DeleteProjectDialog dialog = new DeleteProjectDialog(shell, resources);
 	int code = dialog.open();
-	switch (code) {
-		case 0: // YES
-			deleteContent = true;
-			return true;
-		case 1: // NO
-			deleteContent = false;
-			return true;
-		default: // CANCEL and close dialog
-			return false;
-	}
+	deleteContent = dialog.getDeleteContent();
+	return code == 0;  // YES
 }
 /**
  * Deletes the given resources.
