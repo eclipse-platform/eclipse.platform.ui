@@ -109,7 +109,7 @@ function showAll(){
 		window.frames.toc.tocViewFrame.location.replace(window.frames.toc.tocViewFrame.location.href.replace(re, "")+"&showAll=on");
 	}catch(ex) {}
 	try{
-		window.frames.search.searchViewFrame.location.replace(window.frames.search.search.searchViewFrame.location.href.replace(re, "")+"&showAll=on");
+		window.frames.search.searchViewFrame.location.replace(window.frames.search.searchViewFrame.location.href.replace(re, "")+"&showAll=on");
 	}catch(ex) {}
 }
 
