@@ -474,7 +474,7 @@
       </handlerSubmission>
       <handlerSubmission
             commandId="org.eclipse.ui.edit.selectAll"
-            handler="org.eclipse.ui.internal.commands.ws.WidgetMethodHandler:selectAll">
+            handler="org.eclipse.ui.internal.commands.ws.SelectAllHandler">
       </handlerSubmission>
       <keyBinding
             commandId="org.eclipse.ui.newWizard"

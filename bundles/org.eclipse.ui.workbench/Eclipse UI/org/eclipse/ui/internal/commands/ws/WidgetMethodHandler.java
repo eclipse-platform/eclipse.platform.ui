@@ -46,21 +46,20 @@ public class WidgetMethodHandler extends AbstractHandler implements
      * The parameters to pass to the method this handler invokes. This handler
      * always passes no parameters.
      */
-    private static final Class[] METHOD_PARAMETERS = new Class[0];
+    protected static final Class[] NO_PARAMETERS = new Class[0];
 
     /**
      * The name of the method to be invoked by this handler. This value should
      * never be <code>null</code>.
      */
-    private String methodName;
+    protected String methodName;
 
     /*
      * (non-Javadoc)
      * 
      * @see org.eclipse.ui.commands.IHandler#execute(java.lang.Object)
      */
-    public final Object execute(Map parameterValuesByName)
-            throws ExecutionException {
+    public Object execute(Map parameterValuesByName) throws ExecutionException {
         final Method methodToExecute = getMethodToExecute();
         if (methodToExecute != null) {
             try {
@@ -75,7 +74,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
                                 + getMethodToExecute(), e.getTargetException());
             }
         }
-        
+
         return null;
     }
 
@@ -92,11 +91,10 @@ public class WidgetMethodHandler extends AbstractHandler implements
      * 
      * @return The method on the focus control; <code>null</code> if none.
      */
-    private final Method getMethodToExecute() {
+    protected Method getMethodToExecute() {
         final Control focusControl = Display.getCurrent().getFocusControl();
         try {
-            return focusControl.getClass().getMethod(methodName,
-                    METHOD_PARAMETERS);
+            return focusControl.getClass().getMethod(methodName, NO_PARAMETERS);
         } catch (NoSuchMethodException e) {
             return null;
         }
