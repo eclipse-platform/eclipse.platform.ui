@@ -12,7 +12,6 @@ package org.eclipse.core.tests.harness;
 
 import java.io.*;
 import junit.framework.TestCase;
-import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -50,7 +49,7 @@ public class CoreTest extends TestCase {
 	}
 
 	public String getUniqueString() {
-		return new UniversalUniqueIdentifier().toString();
+		return System.currentTimeMillis() + "-" + Math.random();
 	}
 
 	/**
@@ -80,7 +79,7 @@ public class CoreTest extends TestCase {
 
 		indent(output, indent);
 		output.println("Message: " + status.getMessage());
-		
+
 		if (status.getException() != null) {
 			indent(output, indent);
 			output.print("Exception: ");

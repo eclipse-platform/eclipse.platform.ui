@@ -11,7 +11,7 @@
 package org.eclipse.core.tests.runtime.jobs;
 
 import java.util.*;
-import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.runtime.jobs.ILock;
 
 /**
