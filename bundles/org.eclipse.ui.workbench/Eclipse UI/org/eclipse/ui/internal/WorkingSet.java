@@ -167,12 +167,13 @@ public class WorkingSet implements IAdaptable, IWorkingSet {
                 .getWorkingSetRegistry();
         WorkingSetDescriptor descriptor = null;
 
-        if (editPageId != null) {
-            descriptor = registry.getWorkingSetDescriptor(editPageId);
-        }
-        if (descriptor == null) {
-            return null;
-        }
+        if (editPageId == null)
+			editPageId = "org.eclipse.ui.resourceWorkingSetPage"; //$NON-NLS-1$
+
+		descriptor = registry.getWorkingSetDescriptor(editPageId);
+		if (descriptor == null) {
+			return null;
+		}
         return descriptor.getIcon();
     }
 
