@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,13 +20,12 @@ import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-
 import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.core.internal.variables.StringVariableManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -422,7 +421,7 @@ public class AddCustomDialog extends StatusDialog {
 	private ZipFile getSpecifiedSourceFile() {
 		try {
 			String expanded = sourceNameField.getText();
-			expanded= StringVariableManager.getDefault().performStringSubstitution(expanded);
+			expanded= VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(expanded);
 			return new ZipFile(expanded);
 		} catch (ZipException e) {
 			StatusInfo status= new StatusInfo();

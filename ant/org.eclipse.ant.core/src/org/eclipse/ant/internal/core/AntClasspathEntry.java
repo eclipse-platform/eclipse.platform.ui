@@ -14,11 +14,10 @@ package org.eclipse.ant.internal.core;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.IAntClasspathEntry;
-import org.eclipse.core.internal.variables.StringVariableManager;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.variables.VariablesPlugin;
 
 public class AntClasspathEntry implements IAntClasspathEntry {
 
@@ -42,7 +41,7 @@ public class AntClasspathEntry implements IAntClasspathEntry {
 			return url;
 		}
 		try {
-			String expanded = StringVariableManager.getDefault().performStringSubstitution(entryString);
+			String expanded = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(entryString);
 			return new URL("file:" + expanded); //$NON-NLS-1$
 		} catch (CoreException e) {
 			AntCorePlugin.log(e);
