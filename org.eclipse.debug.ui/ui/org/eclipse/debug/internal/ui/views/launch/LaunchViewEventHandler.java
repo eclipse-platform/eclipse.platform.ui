@@ -192,7 +192,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 */
 	protected void doHandleSuspendThreadEvent(IThread thread, DebugEvent event, boolean wasTimedOut) {
 		// if the thread has already resumed, do nothing
-		if (!thread.isSuspended()) {
+		if (!thread.isSuspended() || !isAvailable()) {
 			return;
 		}
 

@@ -11,7 +11,9 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -176,6 +178,22 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	
 	private EditLaunchConfigurationAction fEditConfigAction = null;
 	private AddToFavoritesAction fAddToFavoritesAction = null;
+	
+	/**
+	 * Whether or not this view automatically opens and closes views
+	 * based on debug contexts.
+	 */
+	private boolean fAutoManage= true;
+	/**
+	 * Memento key used to store the views setting for automatically
+	 * managing views.
+	 */
+	private static String ATTR_AUTO_MANAGE_VIEWS= "autoManageViews"; //$NON-NLS-1$
+	/**
+	 * Context manager which automatically opens and closes views
+	 * based on debug contexts.
+	 */
+	private static LaunchViewContextListener contextListener= new LaunchViewContextListener();
 	
 	/**
 	 * Creates a launch view and an instruction pointer marker for the view
@@ -396,14 +414,20 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		site.getPage().addPartListener(this);
 		site.getWorkbenchWindow().addPageListener(this);
 		site.getWorkbenchWindow().addPerspectiveListener(this);
-		if (fReuseEditor && memento != null) {
-			String index = memento.getString(IDebugUIConstants.PREF_REUSE_EDITOR);
-			if (index != null) {
-				try {
-					fEditorIndex = Integer.parseInt(index);
-				} catch (NumberFormatException e) {
-					DebugUIPlugin.log(e);
+		if (memento != null) {
+			if (fReuseEditor) {
+				String index = memento.getString(IDebugUIConstants.PREF_REUSE_EDITOR);
+				if (index != null) {
+					try {
+						fEditorIndex = Integer.parseInt(index);
+					} catch (NumberFormatException e) {
+						DebugUIPlugin.log(e);
+					}
 				}
+			}
+			String autoManage = memento.getString(ATTR_AUTO_MANAGE_VIEWS);
+			if (autoManage != null) {
+				fAutoManage= Boolean.valueOf(autoManage).booleanValue();
 			}
 		}
 	}
@@ -467,6 +491,47 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		clearStatusLine();
 		updateObjects();
 		showEditorForCurrentSelection();
+		showViewsForCurrentSelection();
+	}
+	
+	/**
+	 * Returns whether this view automatically opens and closes
+	 * views based on contexts
+	 * @return whether or not this view automatically manages
+	 * views based on contexts
+	 */
+	public boolean isAutoManageViews() {
+		return fAutoManage;
+	}
+	
+	/**
+	 * Sets whether or not this view will automatically
+	 * open and close views based on contexts.
+	 * @param autoManage whether or not this view should
+	 * automatically manage views based on contexts
+	 */
+	public void setAutoManageViews(boolean autoManage) {
+		fAutoManage= autoManage;
+		showViewsForCurrentSelection();
+	}
+	
+	/**
+	 * Determines the debug context associated with the selected
+	 * stack frame's debug model (if any) and activates that
+	 * context. This triggers this view's context listener
+	 * to automatically open/close/activate views as appropriate.
+	 */
+	private void showViewsForCurrentSelection() {
+		Object selection = ((IStructuredSelection) getViewer().getSelection()).getFirstElement();
+		if (!fAutoManage || !(selection instanceof IStackFrame)) {
+			return;
+		}
+		String contextId = contextListener.getDebugModelContext(((IStackFrame) selection).getModelIdentifier());
+		if (contextId != null) {
+			Set set= new HashSet();
+			set.add(contextId);
+			contextListener.getContextManager().setEnabledContextIds(set);
+		}
 	}
 			
 	/**
@@ -520,6 +585,16 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	public void partClosed(IWorkbenchPart part) {
 		if (part.equals(fEditor)) {
 			fEditor = null;
+		}
+	}
+	
+
+	/**
+	 * @see org.eclipse.ui.IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void partOpened(IWorkbenchPart part) {
+		if (part == this) {
+			showViewsForCurrentSelection();
 		}
 	}
 	
@@ -1195,6 +1270,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				memento.putString(IDebugUIConstants.PREF_REUSE_EDITOR, Integer.toString(index));
 			}
 		}
+		memento.putString(ATTR_AUTO_MANAGE_VIEWS, Boolean.toString(fAutoManage));
 	}
 
 	/**

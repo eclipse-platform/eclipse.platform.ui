@@ -39,6 +39,8 @@
    <extension-point id="launchShortcuts" name="%LaunchShortcutsName" schema="schema/launchShortcuts.exsd"/>
    <extension-point id="stringVariablePresentations" name="%StringVariablePresentationsName"/>
    <extension-point id="sourceContainerPresentations" name="%SourceContainerPresentationsName" schema="schema/sourceContainerPresentations.exsd"/>
+   <extension-point id="debugModelContextBindings" name="Debug Model Context Bindings"/>
+   <extension-point id="contextViewBindings" name="Context View Bindings"/>
 
 <!-- Extensions -->
    <extension
@@ -543,6 +545,18 @@
             <selection
                   class="org.eclipse.debug.core.model.IStep">
             </selection>
+         </action>
+         <action
+               id="org.eclipse.debug.ui.debugview.toolbar.toggleAutoManageViews"
+               toolbarPath="renderGroup"
+               hoverIcon="icons/full/clcl16/synced.gif"
+               class="org.eclipse.debug.internal.ui.actions.ToggleAutoManageViewsActionDelegate"
+               icon="icons/full/clcl16/synced.gif"
+               label="%AutoManageViewsAction.label"
+               helpContextId="auto_manage_views_action"
+               tooltip="%AutoManageViewsAction.tooltip"
+               style="toggle"
+               state="true">
          </action>
       </viewContribution>
 <!-- Contributions to Breakpoints View Toolbar -->
@@ -1527,4 +1541,41 @@
       </objectContribution>
 	</extension>
 <!-- End Contextual Run Menu (Work in Progress) -->
+<!-- Context extensions -->
+  <extension
+        point="org.eclipse.ui.contexts">
+     <context
+           name="Debugging"
+           description="Debugging Programs"
+           id="org.eclipse.debug.ui.debugging">
+     </context>
+  </extension>
+  <extension
+        point="org.eclipse.debug.ui.contextViewBindings">
+     <contextViewBinding
+            viewId="org.eclipse.debug.ui.VariableView"
+            contextId="org.eclipse.debug.ui.debugging"
+            open="true">
+     </contextViewBinding>
+     <contextViewBinding
+            viewId="org.eclipse.debug.ui.DebugView"
+            contextId="org.eclipse.debug.ui.debugging"
+            open="true">
+     </contextViewBinding>
+     <contextViewBinding
+            viewId="org.eclipse.debug.ui.ExpressionView"
+            contextId="org.eclipse.debug.ui.debugging"
+            open="false">
+     </contextViewBinding>
+     <contextViewBinding
+           viewId="org.eclipse.debug.ui.BreakpointView"
+           contextId="org.eclipse.debug.ui.debugging"
+           open="true">
+     </contextViewBinding>
+     <contextViewBinding
+           viewId="org.eclipse.ui.console.ConsoleView"
+           contextId="org.eclipse.debug.ui.debugging"
+           open="true">
+     </contextViewBinding>
+  </extension>
 </plugin>
