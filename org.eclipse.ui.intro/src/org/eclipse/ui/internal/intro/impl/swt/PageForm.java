@@ -113,18 +113,19 @@ public class PageForm implements IIntroConstants, IPropertyListener {
                 SWT.H_SCROLL | SWT.V_SCROLL);
         categoryPageBook.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        // adding navigation UI.
-        Composite navigationComposite = toolkit.createComposite(pageForm
-                .getBody());
-        navigationComposite.setLayoutData(new GridData(
-                GridData.HORIZONTAL_ALIGN_CENTER));
-        int numberOfLinks = model.getHomePage().getLinks().length;
-        layout = new GridLayout();
-        layout.numColumns = numberOfLinks;
-        navigationComposite.setLayout(layout);
-        // add image hyperlinks for all links.
-        createSmallNavigator(navigationComposite, model.getHomePage()
-                .getLinks());
+        // Create Navigation bar if needed.
+        if (sharedStyleManager.getShowRootPageLinks()) {
+            Composite navigationComposite = toolkit.createComposite(pageForm
+                    .getBody());
+            navigationComposite.setLayoutData(new GridData(
+                    GridData.HORIZONTAL_ALIGN_CENTER));
+            int numberOfLinks = model.getHomePage().getLinks().length;
+            layout = new GridLayout();
+            layout.numColumns = numberOfLinks;
+            navigationComposite.setLayout(layout);
+            createSmallNavigator(navigationComposite, model.getHomePage()
+                    .getLinks());
+        }
 
         pageForm.setText(rootPageStyleManager.getPageSubTitle());
 

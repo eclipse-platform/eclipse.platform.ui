@@ -307,6 +307,5 @@ public class PageStyleManager extends SharedStyleManager {
     }
 
 
-
 }
 
