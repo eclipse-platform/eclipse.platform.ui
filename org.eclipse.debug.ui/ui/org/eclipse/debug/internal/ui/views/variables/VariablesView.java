@@ -593,6 +593,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 
 		// register the context menu such that other plugins may contribute to it
 		getSite().registerContextMenu(IDebugUIConstants.VARIABLE_VIEW_DETAIL_ID, menuMgr, getDetailViewer().getSelectionProvider());		
+		addContextMenuManager(menuMgr);
 	}
 	
 	/**

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -238,11 +239,24 @@ public class DebugActionGroupsManager implements IMenuListener {
 		if (fDebugActionGroupActionIds == null || fDebugViews.contains(view)) {
 			return;
 		}
-		final IMenuManager menu= view.getContextMenuManager();
-		if (menu != null) {
-			menu.addMenuListener(this);
+		List menus= null;
+		if (view instanceof AbstractDebugView) {
+			menus= ((AbstractDebugView)view).getContextMenuManagers();
+		}
+		if (menus == null) {
+			menus= new ArrayList(1);
+			menus.add(view.getContextMenuManager());
+		}
+		Iterator itr= menus.iterator();
+		while (itr.hasNext()) {
+			IMenuManager menu = (IMenuManager) itr.next();
+			if (menu != null) {
+				menu.addMenuListener(this);
+			}
+			
 		}
 		
+		final List contextMenus= menus;
 		final Display display= view.getSite().getPage().getWorkbenchWindow().getShell().getDisplay();
 		if (display != null && !display.isDisposed()) {
 			display.asyncExec(new Runnable() {
@@ -250,14 +264,18 @@ public class DebugActionGroupsManager implements IMenuListener {
 					if (!display.isDisposed()) {
 						updateDebugActionGroups(view);
 						fDebugViews.add(view);
-						if (menu != null) {
-							fDebugViewsWithMenu.put(menu, view);
-							//fake a showing of the context menu to get a 
-							//look at all of the items in the menu
-							Menu swtMenu= ((MenuManager)menu).getMenu();
-							if (!swtMenu.isDisposed()) {
-								swtMenu.notifyListeners(SWT.Show, new Event());
-								swtMenu.notifyListeners(SWT.Hide, new Event());
+						Iterator itr= contextMenus.iterator();
+						while (itr.hasNext()) {
+							IMenuManager menu = (IMenuManager)itr.next();
+							if (menu != null) {
+								fDebugViewsWithMenu.put(menu, view);
+								//fake a showing of the context menu to get a 
+								//look at all of the items in the menu
+								Menu swtMenu= ((MenuManager)menu).getMenu();
+								if (!swtMenu.isDisposed()) {
+									swtMenu.notifyListeners(SWT.Show, new Event());
+									swtMenu.notifyListeners(SWT.Hide, new Event());
+								}
 							}
 						}
 					}
@@ -273,10 +291,22 @@ public class DebugActionGroupsManager implements IMenuListener {
 	 */
 	public void deregisterView(IDebugView view) {
 		if (fDebugActionGroupActionIds != null && fDebugViews.remove(view)) {
-			IMenuManager manager= view.getContextMenuManager();
-			if (manager != null) {
-				manager.removeMenuListener(this);
-				fDebugViewsWithMenu.remove(manager);
+			List managers= null;
+			if (view instanceof AbstractDebugView) {
+				managers= ((AbstractDebugView)view).getContextMenuManagers();
+			}
+			if (managers == null) {
+				managers= new ArrayList(1);
+				managers.add(view.getContextMenuManager());
+			}
+			Iterator mitr= managers.iterator();
+			while (mitr.hasNext()) {
+				IMenuManager manager = (IMenuManager)mitr.next();
+				
+				if (manager != null) {
+					manager.removeMenuListener(this);
+					fDebugViewsWithMenu.remove(manager);
+				}
 			}
 			Collection actionCollections= fDebugActionGroupActions.values();
 			List removed= new ArrayList();

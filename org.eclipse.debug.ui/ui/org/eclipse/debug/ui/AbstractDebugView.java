@@ -105,9 +105,10 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	private List fUpdateables = null;
 	
 	/**
-	 * The context menu manager for this view
+	 * The collection of menu managers that are
+	 * relevant for this view.
 	 */
-	private IMenuManager fContextMenuManager;
+	private List fContextMenuManagers;
 	
 	/**
 	 * The memento that was used to persist the state of this view.
@@ -345,14 +346,24 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 
 		// register the context menu such that other plugins may contribute to it
 		getSite().registerContextMenu(menuMgr, getViewer());
-		fContextMenuManager= menuMgr;
+		addContextMenuManager(menuMgr);
 	}
 	
 	/**
 	 * @see IDebugView#getContextMenuManager()
 	 */
 	public IMenuManager getContextMenuManager() {
-		return fContextMenuManager;
+		if (fContextMenuManagers != null) {
+			fContextMenuManagers.get(fContextMenuManagers.size() - 1);
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the context menu managers relevant to this view.
+	 */
+	public List getContextMenuManagers() {
+		return fContextMenuManagers;
 	}
 	
 	/**
@@ -740,6 +751,17 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 */
 	public void remove(IUpdate updatable) {
 		fUpdateables.remove(updatable);
+	}
+	
+	/**
+	 * Adds a context menu manager that is relevant to this view.
+	 * @param contextMenuManager The contextMenuManager to add
+	 */
+	public void addContextMenuManager(IMenuManager contextMenuManager) {
+		if (fContextMenuManagers == null) {
+			fContextMenuManagers= new ArrayList();
+		}
+		fContextMenuManagers.add(contextMenuManager);
 	}
 }	
 
