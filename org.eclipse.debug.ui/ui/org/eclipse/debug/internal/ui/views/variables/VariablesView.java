@@ -716,7 +716,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		IAction action = new ShowTypesAction(this);
 		setAction("ShowTypeNames",action); //$NON-NLS-1$
 				
-		action = new VariablesContentProvidersToggleAction(this);
+		action = new ToggleObjectBrowsersAction(this);
 		setAction("ToggleContentProviders", action); //$NON-NLS-1$
 
 		action = new ChangeVariableValueAction(getViewer());

@@ -20,7 +20,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewContentProvider;
 import org.eclipse.debug.ui.IDebugView;
-import org.eclipse.debug.ui.IVariablesContentProvider;
+import org.eclipse.debug.ui.IObjectBrowser;
  
 /**
  * Provides contents for the expression view
@@ -56,8 +56,8 @@ public class ExpressionViewContentProvider extends VariablesViewContentProvider 
 	}
 	
 	protected IVariable[] getModelSpecificExpressionChildren(IExpression parent) throws DebugException {
-		IVariablesContentProvider contentProvider = getContentProvider(getDebugModelId(parent));
-		return contentProvider.getVariableChildren(getDebugView(), parent.getValue());
+		IObjectBrowser contentProvider = getObjectBrowser(getDebugModelId(parent));
+		return contentProvider.getChildren(getDebugView(), parent.getValue());
 	}
 	
 	/**

@@ -25,7 +25,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.IRootVariablesContentProvider;
-import org.eclipse.debug.ui.IVariablesContentProvider;
+import org.eclipse.debug.ui.IObjectBrowser;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -57,7 +57,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider,
 	/**
 	 * Flag indicating whether contributed content providers should be used or not.
 	 */
-	private boolean fUseContentProviders;
+	private boolean fUseObjectBrowsers;
 	
 	private IStackFrame fStackFrameInput;
 	
@@ -102,8 +102,8 @@ public class VariablesViewContentProvider implements ITreeContentProvider,
 	}
 	
 	protected IVariable[] getModelSpecificVariableChildren(IVariable parent) throws DebugException {
-		IVariablesContentProvider contentProvider = getContentProvider(getDebugModelId(parent));
-		return contentProvider.getVariableChildren(getDebugView(), parent.getValue());
+		IObjectBrowser objectBrowser = getObjectBrowser(getDebugModelId(parent));
+		return objectBrowser.getChildren(getDebugView(), parent.getValue());
 	}
 	
 	/**
@@ -177,8 +177,8 @@ public class VariablesViewContentProvider implements ITreeContentProvider,
 	}
 	
 	protected boolean hasModelSpecificVariableChildren(IVariable parent) throws DebugException {
-		IVariablesContentProvider contentProvider = getContentProvider(getDebugModelId(parent));
-		return contentProvider.hasVariableChildren(getDebugView(), parent.getValue());
+		IObjectBrowser contentProvider = getObjectBrowser(getDebugModelId(parent));
+		return contentProvider.hasChildren(getDebugView(), parent.getValue());
 	}
 	
 	/**
@@ -238,12 +238,12 @@ public class VariablesViewContentProvider implements ITreeContentProvider,
 		return debugElement.getModelIdentifier();
 	}
 		
-	protected IVariablesContentProvider getContentProvider(String debugModelId) {
-		VariablesContentProviderManager mgr = DebugUIPlugin.getDefault().getVariablesContentProviderManager();
-		if (getUseContentProviders()) {
-			return mgr.getContentProvider(debugModelId);		
+	protected IObjectBrowser getObjectBrowser(String debugModelId) {
+		ObjectBrowserManager mgr = DebugUIPlugin.getDefault().getObjectBrowserManager();
+		if (getUseObjectBrowsers()) {
+			return mgr.getObjectBrowser(debugModelId);		
 		} else {
-			return mgr.getDefaultContentProvider();
+			return mgr.getDefaultObjectBrowser();
 		}
 	}
 
@@ -269,11 +269,11 @@ public class VariablesViewContentProvider implements ITreeContentProvider,
 	 * @see org.eclipse.debug.ui.IRootVariablesContentProvider#setUseContentProviders(boolean)
 	 */
 	public void setUseContentProviders(boolean flag) {
-		fUseContentProviders = flag;
+		fUseObjectBrowsers = flag;
 	}
 	
-	public boolean getUseContentProviders() {
-		return fUseContentProviders;
+	public boolean getUseObjectBrowsers() {
+		return fUseObjectBrowsers;
 	}
 	
 	/* (non-Javadoc)

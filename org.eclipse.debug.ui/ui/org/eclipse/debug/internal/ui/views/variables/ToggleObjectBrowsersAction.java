@@ -27,18 +27,18 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * are used.  When off, the default content provider (that shows all children)
  * is used for all debug models.
  */
-public class VariablesContentProvidersToggleAction extends Action {
+public class ToggleObjectBrowsersAction extends Action {
 	
 	private IDebugView fView;
 
-	public VariablesContentProvidersToggleAction(IDebugView view) {
+	public ToggleObjectBrowsersAction(IDebugView view) {
 		super(null, Action.AS_CHECK_BOX);
 		setView(view);
-		setToolTipText(VariablesViewMessages.getString("VariablesContentProvidersToggleAction.1"));  //$NON-NLS-1$
+		setToolTipText(VariablesViewMessages.getString("ToggleObjectBrowsersAction.1"));  //$NON-NLS-1$
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_VARIABLES_CONTENT_PROVIDERS));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_VARIABLES_CONTENT_PROVIDERS));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_VARIABLES_CONTENT_PROVIDERS));
-		setId(DebugUIPlugin.getUniqueIdentifier() + ".ToggleVariablesContentProviders"); //$NON-NLS-1$
+		setId(DebugUIPlugin.getUniqueIdentifier() + ".ToggleObjectBrowsersAction"); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.VARIABLES_CONTENT_PROVIDERS_ACTION);
 	}
 
@@ -72,7 +72,6 @@ public class VariablesContentProvidersToggleAction extends Action {
 	 */
 	public void setChecked(boolean value) {
 		super.setChecked(value);
-		//valueChanged(value);
 	}
 	
 	protected IDebugView getView() {

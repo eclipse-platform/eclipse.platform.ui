@@ -30,7 +30,7 @@
    <extension-point id="launchConfigurationTypeImages" name="%LaunchConfigurationTypeImageExtensionName" schema="schema/launchConfigurationTypeImages.exsd"/>
    <extension-point id="launchGroups" name="%LaunchGroupsExtensionName" schema="schema/launchGroups.exsd"/>
    <extension-point id="launchShortcuts" name="%LaunchShortcutsName" schema="schema/launchShortcuts.exsd"/>
-   <extension-point id="variablesContentProviders" name="%VariablesContentProvidersName"/>
+   <extension-point id="objectBrowsers" name="%ObjectBrowsersName"/>
    <extension-point id="launchVariableComponents" name="%LaunchVariableComponentsName"/>
 
 <!-- Extensions -->

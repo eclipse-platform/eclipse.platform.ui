@@ -47,7 +47,7 @@ import org.eclipse.debug.internal.ui.launchVariables.ContextVariableComponentMan
 import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
-import org.eclipse.debug.internal.ui.views.variables.VariablesContentProviderManager;
+import org.eclipse.debug.internal.ui.views.variables.ObjectBrowserManager;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.launchVariables.ILaunchVariableComponentManager;
@@ -117,7 +117,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 */
 	private LaunchConfigurationManager fLaunchConfigurationManager = null;
 	
-	private VariablesContentProviderManager fVariablesContentProviderManager;
+	/**
+	 * Singleton object browser manager
+	 */
+	private ObjectBrowserManager fObjectBrowserManager;
 	
 	private ContextVariableComponentManager fVariableComponentManager;
 	
@@ -156,11 +159,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
 	
-	public VariablesContentProviderManager getVariablesContentProviderManager() {
-		if (fVariablesContentProviderManager == null) {
-			fVariablesContentProviderManager = new VariablesContentProviderManager();
+	public ObjectBrowserManager getObjectBrowserManager() {
+		if (fObjectBrowserManager == null) {
+			fObjectBrowserManager = new ObjectBrowserManager();
 		}
-		return fVariablesContentProviderManager;
+		return fObjectBrowserManager;
 	}
 	
 	public ILaunchVariableComponentManager getVariableComponentManager() {
