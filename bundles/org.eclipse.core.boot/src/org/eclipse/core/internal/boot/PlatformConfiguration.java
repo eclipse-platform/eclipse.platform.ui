@@ -12,6 +12,7 @@ package org.eclipse.core.internal.boot;
 
 import java.io.*;
 import java.net.*;
+import java.nio.channels.*;
 import java.util.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
@@ -40,6 +41,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private boolean transientConfig = false;
 	private File cfgLockFile;
 	private RandomAccessFile cfgLockFileRAF;
+	private FileLock cfgLock;
 	private BootDescriptor runtimeDescriptor;
 	private BootDescriptor xmlDescriptor;
 
@@ -1003,8 +1005,12 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		String key = url.toExternalForm();
 
 		ISiteEntry result = (ISiteEntry) sites.get(key);
-		if (result == null) // retry with decoded URL string
-			result = (ISiteEntry) sites.get(URLDecoder.decode(key));
+		try {
+			if (result == null) // retry with decoded URL string
+				result = (ISiteEntry) sites.get(URLDecoder.decode(key, "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// this is a safe encoding, so do nothing here
+		}
 		return result;
 	}
 
@@ -1566,7 +1572,12 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private boolean getConfigurationLock(URL url) {
 		if (configurationInWorkspace(url))
 			return false;
-
+		
+		if (cfgLock != null && cfgLock.isValid()) {
+			// we already have the cfg lock
+			return true;
+		}
+		
 		if (!url.getProtocol().equals("file")) //$NON-NLS-1$
 			return false;
 
@@ -1575,43 +1586,55 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		String lockName = cfgName + CONFIG_FILE_LOCK_SUFFIX;
 		cfgLockFile = new File(lockName);
 
-		//if the lock file already exists, try to delete,
-		//assume failure means another eclipse has it open
-		if (cfgLockFile.exists())
-			cfgLockFile.delete();
-		if (cfgLockFile.exists()) {
-			throw new RuntimeException(Policy.bind("cfig.inUse", cfgName, lockName)); //$NON-NLS-1$
-		}
-
-		// OK so far ... open the lock file so other instances will fail
 		try {
-			cfgLockFileRAF = new RandomAccessFile(cfgLockFile, "rw"); //$NON-NLS-1$
-			cfgLockFileRAF.writeByte(0);
-		} catch (IOException e) {
-			throw new RuntimeException(Policy.bind("cfig.failCreateLock", cfgName)); //$NON-NLS-1$
-		}
+			cfgLockFileRAF = new RandomAccessFile(cfgLockFile, "rw");
+			// Get the lock, so other eclipse instances will fail
+			cfgLock = cfgLockFileRAF.getChannel().tryLock();
 
-		return false;
+			if (cfgLock == null) {
+				// Lock in use by another eclipse instance
+				throw new RuntimeException(Policy.bind("cfig.inUse", cfgName, lockName)); //$NON-NLS-1$
+			}
+
+			if (!cfgLockFile.exists()) {
+				// write something to the file to ensure it is actually created
+				cfgLockFileRAF.write(0);
+			}			
+			
+			if (DEBUG) {
+				System.out.println("Config lock obtained: " + lockName);
+			}
+			return true;
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(Policy.bind("cfig.failCreateLock", cfgName)); //$NON-NLS-1$
+		} catch (IOException e) {
+			throw new RuntimeException(Policy.bind("cfig.failCreateLock", cfgName)); //$NON-NLS-1$;
+		}
 	}
 
 	private void clearConfigurationLock() {
-		try {
-			if (cfgLockFileRAF != null) {
+		
+		if (cfgLock != null) {
+			try {
+				cfgLock.channel().close();
+				if (DEBUG) {
+					System.out.println("Config lock released: " + cfgLockFile);
+				}
 				cfgLockFileRAF.close();
+			} catch (IOException e) {
+				// silently ingnore
+			}
+			finally {
+				cfgLock = null;
+				cfgLockFile = null;
 				cfgLockFileRAF = null;
 			}
-		} catch (IOException e) {
-			// ignore ...
-		}
-		if (cfgLockFile != null) {
-			cfgLockFile.delete();
-			cfgLockFile = null;
 		}
 	}
 
 	private boolean configurationInWorkspace(URL url) {
-		// the configuration file is now in the workspace, so return true
-		return true;
+		// the configuration file is not in the workspace, so return false
+		return false;
 	}
 
 	private void computeChangeStamp() {
