@@ -80,12 +80,8 @@ public class EditorManager {
 	 * The IEditorPart.dispose method must be called at a higher level.
 	 */
 	public void closeEditor(IEditorPart part) {
-		// Record the close event.
-		Workbench wb = (Workbench) window.getWorkbench();
-		EditorSite site = (EditorSite) part.getEditorSite();
-		wb.getEditorHistory().add(part.getEditorInput(), site.getEditorDescriptor());
-
 		// Close the pane, action bars, pane, etc.
+		EditorSite site = (EditorSite) part.getEditorSite();
 		editorPresentation.closeEditor(part);
 		disposeEditorActionBars((EditorActionBars) site.getActionBars());
 		site.dispose();
@@ -266,12 +262,16 @@ public class EditorManager {
 		IEditorPart componentEditor = ComponentSupport.getComponentEditor(file);
 		if (componentEditor != null) {
 			openInternalEditor(componentEditor, null, input, setVisible);
+			Workbench wb = (Workbench) window.getWorkbench();
+			wb.getEditorHistory().add(input);
 			return componentEditor;
 		}
 
 		// Try to open a system editor.
 		if (testForSystemEditor(file)) {
 			openSystemEditor(file);
+			Workbench wb = (Workbench) window.getWorkbench();
+			wb.getEditorHistory().add(input);
 			return null;
 		}
 
@@ -308,68 +308,29 @@ public class EditorManager {
 	 * See IWorkbenchPage.
 	 */
 	private IEditorPart openEditor(EditorDescriptor desc, IEditorInput input) throws PartInitException {
+		IEditorPart result;
 		if (desc.isInternal()) {
-			IEditorPart reusableEditor = page.getReusableEditor();
-			if (reusableEditor == null)
-				return openInternalEditor(desc, input, true);
-
-			EditorSite site = (EditorSite) reusableEditor.getEditorSite();
-			if (reusableEditor.isDirty()) {
-				if (!saveReusableEditor(reusableEditor)) {
-					IEditorPart result = openInternalEditor(desc, input, true);
-					page.setReusableEditor(result);
-
-					EditorPane pane = (EditorPane) site.getPane();
-					pane.updateTitles();
-
-					site = (EditorSite) result.getEditorSite();
-					pane = (EditorPane) site.getPane();
-					pane.updateTitles();
-
-					return result;
-				}
-			}
-
-			IEditorInput editorInput = reusableEditor.getEditorInput();
-			EditorDescriptor oldDesc = site.getEditorDescriptor();
-
-			if (oldDesc == null)
-				oldDesc = (EditorDescriptor) getEditorRegistry().getDefaultEditor();
-
-			if ((desc.getId().equals(oldDesc.getId())) && (reusableEditor instanceof IReusableEditor)) {
-				Workbench wb = (Workbench) window.getWorkbench();
-				wb.getEditorHistory().add(reusableEditor.getEditorInput(), site.getEditorDescriptor());
-				((IReusableEditor) reusableEditor).setInput(input);
-				return reusableEditor;
-			} else {
-				//ISSUE: Must open it in the same position.
-				IEditorPart result = openInternalEditor(desc, input, true);
-				page.setReusableEditor(result);
-				reusableEditor.getEditorSite().getPage().closeEditor(reusableEditor, true);
-				site = (EditorSite) result.getEditorSite();
-				EditorPane pane = (EditorPane) site.getPane();
-				pane.updateTitles();
-				return result;
-			}
-
+			result = openInternalEditor(desc, input);
 		} else if (desc.isOpenInPlace()) {
-			IEditorPart editor = ComponentSupport.getComponentEditor();
-			if (editor == null)
+			result = ComponentSupport.getComponentEditor();
+			if (result == null)
 				return null;
 			else {
-				openInternalEditor(editor, desc, input, true);
-				return editor;
+				openInternalEditor(result, desc, input, true);
 			}
 		} else if (desc.getId().equals(IWorkbenchConstants.SYSTEM_EDITOR_ID)) {
 			if (input instanceof IFileEditorInput) {
 				openSystemEditor(((IFileEditorInput) input).getFile());
-				return null;
+				result = null;
 			} else
 				throw new PartInitException(WorkbenchMessages.getString("EditorManager.systemEditorError")); //$NON-NLS-1$
 		} else {
 			openExternalEditor(desc, input);
-			return null;
+			result = null;
 		}
+		Workbench wb = (Workbench) window.getWorkbench();
+		wb.getEditorHistory().add(input);
+		return result;
 	}
 	/**
 	 * Open an external viewer on an file.  Throw up an error dialog if
@@ -434,8 +395,6 @@ public class EditorManager {
 					else
 						site.setActionBars(createEmptyEditorActionBars());
 					editorPresentation.openEditor(part, setVisible);
-					Workbench wb = (Workbench) window.getWorkbench();
-					wb.getEditorHistory().remove(input);
 				} catch (PartInitException e) {
 					ex[0] = e;
 				}
@@ -445,6 +404,51 @@ public class EditorManager {
 		// If the opening failed for any reason throw an exception.
 		if (ex[0] != null)
 			throw ex[0];
+	}
+	/*
+	 * See IWorkbenchPage.
+	 */
+	private IEditorPart openInternalEditor(EditorDescriptor desc, IEditorInput input) throws PartInitException {
+		IEditorPart reusableEditor = page.getReusableEditor();
+		if (reusableEditor == null) {
+			return openInternalEditor(desc, input, true);
+		}
+
+		EditorSite site = (EditorSite) reusableEditor.getEditorSite();
+		if (reusableEditor.isDirty()) {
+			if (!saveReusableEditor(reusableEditor)) {
+				IEditorPart result = openInternalEditor(desc, input, true);
+				page.setReusableEditor(result);
+				EditorPane pane = (EditorPane) site.getPane();
+				pane.updateTitles();
+				site = (EditorSite) result.getEditorSite();
+				pane = (EditorPane) site.getPane();
+				pane.updateTitles();
+				return result;
+			}
+		}
+
+		IEditorInput editorInput = reusableEditor.getEditorInput();
+		EditorDescriptor oldDesc = site.getEditorDescriptor();
+
+		if (oldDesc == null)
+			oldDesc = (EditorDescriptor) getEditorRegistry().getDefaultEditor();
+
+		if ((desc.getId().equals(oldDesc.getId())) && (reusableEditor instanceof IReusableEditor)) {
+			Workbench wb = (Workbench) window.getWorkbench();
+			wb.getEditorHistory().add(reusableEditor.getEditorInput(), site.getEditorDescriptor());
+			((IReusableEditor) reusableEditor).setInput(input);
+			return reusableEditor;
+		} else {
+			//ISSUE: Must open it in the same position.
+			IEditorPart result = openInternalEditor(desc, input, true);
+			page.setReusableEditor(result);
+			reusableEditor.getEditorSite().getPage().closeEditor(reusableEditor, true);
+			site = (EditorSite) result.getEditorSite();
+			EditorPane pane = (EditorPane) site.getPane();
+			pane.updateTitles();
+			return result;
+		}
 	}
 	/**
 	 * Open an internal editor on an file.  Throw up an error dialog if
@@ -706,7 +710,6 @@ public class EditorManager {
 
 		// If confirmation is required ..
 		if (confirm) {
-
 			String message = WorkbenchMessages.format("EditorManager.saveChangesQuestion", new Object[] { part.getTitle()}); //$NON-NLS-1$
 			// Show a dialog.
 			String[] buttons = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };

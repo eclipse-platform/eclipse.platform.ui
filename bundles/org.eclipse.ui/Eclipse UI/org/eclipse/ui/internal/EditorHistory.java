@@ -16,8 +16,8 @@ import org.eclipse.ui.*;
  * list. 
  */
 public class EditorHistory {
-	private int depth;
-	private ArrayList stack;
+	private int size;
+	private ArrayList fifoList;
 	/**
 	 * Constructs a new history.
 	 */
@@ -27,33 +27,34 @@ public class EditorHistory {
 	/**
 	 * Constructs a new history.
 	 */
-	public EditorHistory(int depth) {
-		this.depth = depth;
-		stack = new ArrayList(depth);
+	public EditorHistory(int size) {
+		this.size = size;
+		fifoList = new ArrayList(size);
 	}
 	/**
-	 * Adds an item to the history.
+	 * Adds an item to the history.  Added in fifo fashion.
 	 */
 	public void add(IEditorInput input) {
 		add(input, null);
 	}
 	/**
-	 * Adds an item to the history.
+	 * Adds an item to the history.  Added in fifo fashion.
 	 */
 	public void add(IEditorInput input, IEditorDescriptor desc) {
-		add(new EditorHistoryItem(input, desc));
+		add(new EditorHistoryItem(input, desc), 0);
 	}
 	/**
 	 * Adds an item to the history.
 	 */
-	private void add(EditorHistoryItem item) {
-		// Remove old item.
-		remove(item.getInput());
+	private void add(EditorHistoryItem newItem, int index) {
+		// Remove the item if it already exists so that it will be put 
+		// at the top of the list.
+		remove(newItem.getInput());
 
 		// Add the new item.
-		stack.add(item);
-		if (stack.size() > depth) {
-			stack.remove(0);
+		fifoList.add(index, newItem);
+		if (fifoList.size() > size) {
+			fifoList.remove(size);
 		}
 	}
 	/**
@@ -62,10 +63,10 @@ public class EditorHistory {
 	 */
 	public EditorHistoryItem[] getItems() {
 		refresh();
-		EditorHistoryItem[] array = new EditorHistoryItem[stack.size()];
+		EditorHistoryItem[] array = new EditorHistoryItem[fifoList.size()];
 		int length = array.length;
-		for (int nX = 0; nX < length; nX++) {
-			array[nX] = (EditorHistoryItem) stack.get(length - 1 - nX);
+		for (int i = 0; i < length; i++) {
+			array[i] = (EditorHistoryItem) fifoList.get(i);
 		}
 		return array;
 	}
@@ -73,13 +74,13 @@ public class EditorHistory {
 	 * Returns the stack height.
 	 */
 	public int getSize() {
-		return stack.size();
+		return fifoList.size();
 	}
 	/**
 	 * Refresh the editor list.  Any stale items are removed.
 	 */
 	public void refresh() {
-		Iterator iter = stack.iterator();
+		Iterator iter = fifoList.iterator();
 		while (iter.hasNext()) {
 			EditorHistoryItem item = (EditorHistoryItem) iter.next();
 			if (!item.getInput().exists())
@@ -90,7 +91,7 @@ public class EditorHistory {
 	 * Removes all traces of an editor input from the history.
 	 */
 	public void remove(IEditorInput input) {
-		Iterator iter = stack.iterator();
+		Iterator iter = fifoList.iterator();
 		while (iter.hasNext()) {
 			EditorHistoryItem item = (EditorHistoryItem) iter.next();
 			if (input.equals(item.getInput()))
@@ -101,10 +102,10 @@ public class EditorHistory {
 	 * Reset the editor history to have the specified size.  Trim the list if
 	 * it does not conforms to the new size.
 	 */
-	public void reset(int depth) {
-		this.depth = depth;
-		while (stack.size() > depth) {
-			stack.remove(0);
+	public void reset(int size) {
+		this.size = size;
+		while (fifoList.size() > size) {
+			fifoList.remove(size);
 		}
 	}
 	/**
@@ -118,7 +119,7 @@ public class EditorHistory {
 			EditorHistoryItem item = new EditorHistoryItem();
 			item.restoreState(mementos[i]);
 			if (item.getInput() != null) {
-				add(item);
+				add(item, fifoList.size());
 			}
 		}
 	}
@@ -128,7 +129,7 @@ public class EditorHistory {
 	 * @param memento the memento to save the mru history in
 	 */
 	public void saveState(IMemento memento) {
-		Iterator iterator = stack.iterator();
+		Iterator iterator = fifoList.iterator();
 
 		while (iterator.hasNext()) {
 			EditorHistoryItem historyItem = (EditorHistoryItem) iterator.next();
