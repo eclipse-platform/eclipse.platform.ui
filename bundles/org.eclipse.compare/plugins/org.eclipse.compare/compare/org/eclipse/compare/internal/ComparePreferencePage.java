@@ -19,8 +19,8 @@ public class ComparePreferencePage extends FieldEditorPreferencePage implements 
 	public static final String SYNCHRONIZE_SCROLLING= PREFIX + "SynchronizeScrolling"; //$NON-NLS-1$
 	public static final String SHOW_PSEUDO_CONFLICTS= PREFIX + "ShowPseudoConflicts"; //$NON-NLS-1$
 	public static final String INITIALLY_SHOW_ANCESTOR_PANE= PREFIX + "InitiallyShowAncestorPane"; //$NON-NLS-1$
+	public static final String PREF_SAVE_ALL_EDITORS= PREFIX + "SaveAllEditors"; //$NON-NLS-1$
 	public static final String TEXT_FONT= PREFIX + "TextFont"; //$NON-NLS-1$
-
 
 	public ComparePreferencePage() {
 		super(GRID);
@@ -33,6 +33,16 @@ public class ComparePreferencePage extends FieldEditorPreferencePage implements 
 		
 		WorkbenchChainedTextFontFieldEditor.startPropagate(store, TEXT_FONT);
 	}
+
+	static public boolean getSaveAllEditors() {
+		IPreferenceStore store= CompareUIPlugin.getDefault().getPreferenceStore();
+		return store.getBoolean(PREF_SAVE_ALL_EDITORS);
+	}
+	
+	static public void setSaveAllEditors(boolean value) {
+		IPreferenceStore store= CompareUIPlugin.getDefault().getPreferenceStore();
+		store.setValue(PREF_SAVE_ALL_EDITORS, value);
+	}	
 
 	public void init(IWorkbench workbench) {
 	}	

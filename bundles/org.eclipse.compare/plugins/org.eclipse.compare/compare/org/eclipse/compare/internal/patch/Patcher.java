@@ -1,4 +1,4 @@
-package org.eclipse.compare.patch;
+package org.eclipse.compare.internal.patch;
 
 import java.io.*;
 import java.text.*;
@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.*;
 
 import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.internal.ExceptionHandler;
 
 
 /**
@@ -250,10 +251,12 @@ public class Patcher {
 					}
 					break;
 				default:
-					int a1= c, a2= 0;
-					if (line.length() > 1)
-						a2= line.charAt(1);
-					if (DEBUG) System.out.println("char: " + a1 + " " + a2);
+					if (DEBUG) {
+						int a1= c, a2= 0;
+						if (line.length() > 1)
+							a2= line.charAt(1);
+						System.out.println("char: " + a1 + " " + a2); //$NON-NLS-1$ //$NON-NLS-2$
+					}
 					break;
 				}
 				return line;
@@ -523,7 +526,7 @@ public class Patcher {
 			if (pos >= 0)
 				path= path.substring(0, pos);
 			if (path2 != null && !path2.equals(path)) {
-				if (DEBUG) System.out.println("path mismatch: " + path2);
+				if (DEBUG) System.out.println("path mismatch: " + path2); //$NON-NLS-1$
 				path= path2;
 			}
 			return new Path(path);
@@ -544,13 +547,13 @@ public class Patcher {
 		pair[0]= pair[1]= -1;
 		int startPos= line.indexOf(start);
 		if (startPos < 0) {
-			if (DEBUG) System.out.println("parsing error in extractPair: couldn't find \'" + start + "\'");
+			if (DEBUG) System.out.println("parsing error in extractPair: couldn't find \'" + start + "\'"); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		line= line.substring(startPos+1);
 		int endPos= line.indexOf(' ');
 		if (endPos < 0) {
-			if (DEBUG) System.out.println("parsing error in extractPair: couldn't find end blank");
+			if (DEBUG) System.out.println("parsing error in extractPair: couldn't find end blank"); //$NON-NLS-1$
 			return;
 		}
 		line= line.substring(0, endPos);
@@ -592,11 +595,7 @@ public class Patcher {
 
 		patch(diff, lines, failedHunks);
 		
-		StringBuffer sb= new StringBuffer();
-		Iterator iter= lines.iterator();
-		while (iter.hasNext())
-			sb.append((String)iter.next());
-		return sb.toString();
+		return createString(lines);
 	}
 
 	/**
@@ -631,14 +630,15 @@ public class Patcher {
 			}
 			
 			if (found) {
-				if (DEBUG) System.out.println("patched hunk at offset: " + (shift-oldShift));
+				if (DEBUG) System.out.println("patched hunk at offset: " + (shift-oldShift)); //$NON-NLS-1$
 				shift+= doPatch(hunk, lines, shift);
 			} else {
 				if (failedHunks != null) {
-					if (DEBUG) System.out.println("failed hunk");
+					if (DEBUG) System.out.println("failed hunk"); //$NON-NLS-1$
 					failedHunks.add(hunk);
 				}
 			}
+			oldShift= oldShift;	// prevent compiler warning about unused local variable
 		}
 		return shift;
 	}
@@ -726,76 +726,109 @@ public class Patcher {
 
 	public void applyAll(IResource target, IProgressMonitor pm) {
 		
-		if (DEBUG) System.out.println("applyAll: start");
+		final int WORK_UNIT= 10;
 		
+		if (DEBUG) System.out.println("applyAll: start"); //$NON-NLS-1$
+		
+		IFile file= null;	// file to be patched
 		IContainer container= null;
 		if (target instanceof IContainer)
 			container= (IContainer) target;
-		else {
-			if (DEBUG) System.out.println("applyAll: not yet implemented");
+		else if (target instanceof IFile) {
+			file= (IFile) target;
+			container= file.getParent();
+		} else {
+			System.out.println("applyAll: not yet implemented"); //$NON-NLS-1$
 			return;
 		}
 		
+		if (pm != null)
+			pm.beginTask("Patching", fDiffs.length*WORK_UNIT);
+		
 		for (int i= 0; i < fDiffs.length; i++) {
+			
+			int workTicks= WORK_UNIT;
+			
 			Diff diff= fDiffs[i];
 			if (diff.fIsEnabled) {
 				
 				IPath path= getPath(diff);
-				IFile file= createPath(container, path);
+				if (pm != null)
+					pm.subTask(path.toString());
+			
+				if (container != null)
+					file= createPath(container, path);
+				List failed= new ArrayList();
+				List result= null;
 				
 				int type= diff.getType();
 				switch (type) {
 				case Differencer.ADDITION:
-					if (DEBUG) System.out.println("  add: " + path);
-					updateFile(diff, file, true, pm);
+					// patch it and collect rejected hunks
+					result= apply(diff, file, true, failed);
+					updateFile(createString(result), file, new SubProgressMonitor(pm, workTicks));
+					workTicks-= WORK_UNIT;
 					break;
 				case Differencer.DELETION:
-					if (DEBUG) System.out.println("  del: " + path);
-					deleteFile(file, pm);
+					deleteFile(file, new SubProgressMonitor(pm, workTicks));
+					workTicks-= WORK_UNIT;
 					break;
 				case Differencer.CHANGE:
-					if (DEBUG) System.out.println("  chg: " + path);
-					updateFile(diff, file, false, pm);
+					// patch it and collect rejected hunks
+					result= apply(diff, file, false, failed);
+					updateFile(createString(result), file, new SubProgressMonitor(pm, workTicks));
+					workTicks-= WORK_UNIT;
 					break;
 				}
-								
-				/*				
-				String rej= diff.fRejected;
-				if (rej != null) {
-					IPath pp= path.removeLastSegments(1);
-					pp= pp.append(path.lastSegment() + ".rej");
-					createPath(fRoot, rootFolder, pp, diff, true);
+
+				if (failed.size() > 0) {
+					IPath pp= null;
+					if (path.segmentCount() > 1) {
+						pp= path.removeLastSegments(1);
+						pp= pp.append(path.lastSegment() + ".rej");	//$NON-NLS-1$
+					} else
+						pp= new Path(path.lastSegment() + ".rej");	//$NON-NLS-1$
+					file= createPath(container, pp);
+					updateFile(getRejected(failed), file, pm);
 				}
-				*/
 			}
-			if (pm != null)
-				pm.worked(1);
+			
+			if (pm != null) {
+				if (pm.isCanceled())
+					break;
+				if (workTicks > 0)
+					pm.worked(workTicks);
+			}
 		}
 		
+		/*
+		if (pm != null)
+			pm.subTask("Refreshing");
 		try {
 			target.refreshLocal(IResource.DEPTH_INFINITE, pm);
 		} catch (CoreException ex) {
-			if (DEBUG) System.out.println("refreshLocal: exception " + ex);
+			ExceptionHandler.handle(ex,
+				PatchMessages.getString("Patcher.ErrorDialog.title"),	//$NON-NLS-1$
+				PatchMessages.getString("Patcher.RefreshError.message"));	//$NON-NLS-1$
 		}
-		if (DEBUG) System.out.println("applyAll: end");
+		*/
+		
+		// IWorkspace.validateEdit(IFile[], Object context);
 	}
 	
 	List apply(Diff diff, IFile file, boolean create, List failedHunks) {
 		
-		if (file == null)
-			if (DEBUG) System.out.println("    file == null");
-				
 		List lines= null;
-		if (!create) {
+		if (!create && file != null) {
 			// read current contents
 			InputStream is= null;
 			try {
 				is= file.getContents();
 				BufferedReader reader= new BufferedReader(new InputStreamReader(is));
 				lines= new LineReader(reader).readLines();
-				if (DEBUG) System.out.println("    creating reader successful");
+				if (DEBUG) System.out.println("    creating reader successful"); //$NON-NLS-1$
 			} catch(CoreException ex) {
-				if (DEBUG) System.out.println("    reading contents: " + ex);
+				if (DEBUG) System.out.println("    reading contents: " + ex); //$NON-NLS-1$
 			} finally {
 				if (is != null)
 					try {
@@ -809,48 +842,58 @@ public class Patcher {
 			lines= new ArrayList();
 
 		patch(diff, lines, failedHunks);
-		
+				
 		return lines;
+	}
+	
+	String getRejected(List failedHunks) {
+		if (failedHunks.size() <= 0)
+			return null;
+		
+		StringBuffer sb= new StringBuffer();
+		Iterator iter= failedHunks.iterator();
+		while (iter.hasNext()) {
+			Hunk hunk= (Hunk) iter.next();
+			sb.append(hunk.getRejectedDescription());
+			sb.append('\n');
+			sb.append(hunk.getContent());
+		}
+		return sb.toString();
 	}
 	
 	private void deleteFile(IFile file, IProgressMonitor pm) {
 		try {
 			file.delete(true, true, pm);
 		} catch (CoreException ex) {
-			System.out.println("deleteFile: exception: " + ex);
+			ExceptionHandler.handle(ex,
+				PatchMessages.getString("Patcher.ErrorDialog.title"),	//$NON-NLS-1$
+				PatchMessages.getString("Patcher.DeleteError.message"));	//$NON-NLS-1$
 		}
 	}
-
-	private void updateFile(Diff diff, IFile file, boolean create, IProgressMonitor pm) {
-
-		if (DEBUG) System.out.println("  updateFile: start");
-		
-		// patch it and collect rejected hunks
-		List failed= new ArrayList();
-		
-		if (DEBUG) System.out.println("    patching: start");
-		List lines= apply(diff, file, create, failed);
-		if (DEBUG) System.out.println("    patching: end");
-		
+	
+	private String createString(List lines) {
 		// convert the result into a String
 		StringBuffer sb= new StringBuffer();
 		Iterator iter= lines.iterator();
 		while (iter.hasNext())
 			sb.append((String)iter.next());
-		String contents= sb.toString();
+		return sb.toString();
+	}
+
+	private void updateFile(String contents, IFile file, IProgressMonitor pm) {
 		
 		// and save it
 		InputStream is= new ByteArrayInputStream(contents.getBytes());
 		try {
 			if (file.exists()) {
 				file.setContents(is, false, true, pm);
-				if (DEBUG) System.out.println("    setContents: successfull");
 			} else {
 				file.create(is, false, pm);
-				if (DEBUG) System.out.println("    create: successfull");
 			}
 		} catch (CoreException ex) {
-			if (DEBUG) System.out.println("    exception: " + ex);
+			ExceptionHandler.handle(ex,
+				PatchMessages.getString("Patcher.ErrorDialog.title"),	//$NON-NLS-1$
+				PatchMessages.getString("Patcher.UpdateError.message"));  //$NON-NLS-1$
 		} finally {
 			if (is != null)
 				try {
@@ -858,7 +901,6 @@ public class Patcher {
 				} catch(IOException ex) {
 				}
 		}
-		if (DEBUG) System.out.println("  updateFile: end");
 	}
 
 	private IFile createPath(IContainer folder, IPath path) {

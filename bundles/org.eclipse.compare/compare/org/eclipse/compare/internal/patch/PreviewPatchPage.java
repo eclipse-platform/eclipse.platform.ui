@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.compare.patch;
+package org.eclipse.compare.internal.patch;
 
 import java.io.*;
 import java.util.*;
@@ -46,7 +46,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 			return null;
 		}
 		public String getName() {
-			return "no name";
+			return PatchMessages.getString("PreviewPatchPage.NoName.text"); //$NON-NLS-1$
 		}
 		public String getType() {
 			return fType;
@@ -73,28 +73,25 @@ import org.eclipse.compare.structuremergeviewer.*;
 	
 	
 	/* package */ PreviewPatchPage(PatchWizard pw) {
-		super("PreviewPatchPage", "Verify Patch", null);
+		super("PreviewPatchPage", PatchMessages.getString("PreviewPatchPage.title"), null); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		setMessage(
-			"The tree shows the contents of the patch. " +
-			"A checked item indicates that a patch could be applied succesfully.\n" +
-			"Uncheck an item if you want to exclude it.");
+		setMessage(PatchMessages.getString("PreviewPatchPage.message"));	//$NON-NLS-1$
 		
 		fPatchWizard= pw;
 		//setPageComplete(false);
 		
 		int w= 16;
 		fNullImage= new DiffImage(null, null, w).createImage();
-		fAddImage= new DiffImage(null, CompareUIPlugin.getImageDescriptor("ovr16/add_ov.gif"), w).createImage();
-		fDelImage= new DiffImage(null, CompareUIPlugin.getImageDescriptor("ovr16/del_ov.gif"), w).createImage();
+		fAddImage= new DiffImage(null, CompareUIPlugin.getImageDescriptor("ovr16/add_ov.gif"), w).createImage(); //$NON-NLS-1$
+		fDelImage= new DiffImage(null, CompareUIPlugin.getImageDescriptor("ovr16/del_ov.gif"), w).createImage(); //$NON-NLS-1$
 		
 		fCompareConfiguration= new CompareConfiguration();
 		
 		fCompareConfiguration.setLeftEditable(false);
-		fCompareConfiguration.setLeftLabel("Original");
+		fCompareConfiguration.setLeftLabel(PatchMessages.getString("PreviewPatchPage.Left.title")); //$NON-NLS-1$
 		
 		fCompareConfiguration.setRightEditable(false);
-		fCompareConfiguration.setRightLabel("Result");
+		fCompareConfiguration.setRightLabel(PatchMessages.getString("PreviewPatchPage.Right.title")); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -187,7 +184,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 		final Patcher patcher= fPatchWizard.getPatcher();
 		
 		Group group= new Group(parent, SWT.NONE);
-		group.setText("Patch Options");
+		group.setText(PatchMessages.getString("PreviewPatchPage.PatchOptions.title")); //$NON-NLS-1$
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 5;
 		group.setLayout(layout);
@@ -195,7 +192,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 		//fPatchFileGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	
 		// 1st row
-		new Label(group, SWT.NONE).setText("Ignore leading path name segments:");
+		new Label(group, SWT.NONE).setText(PatchMessages.getString("PreviewPatchPage.IgnoreSegments.text")); //$NON-NLS-1$
 
 		fStripPrefixSegments= new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.SIMPLE);
 		int prefixCnt= patcher.getStripPrefixSegments();
@@ -206,16 +203,16 @@ import org.eclipse.compare.structuremergeviewer.*;
 		addSpacer(group);
 		
 		fReversePatchButton= new Button(group, SWT.CHECK);
-		fReversePatchButton.setText("Reverse Patch");
+		fReversePatchButton.setText(PatchMessages.getString("PreviewPatchPage.ReversePatch.text")); //$NON-NLS-1$
 		
 		addSpacer(group);
 		
 		// 2nd row
 		Label l= new Label(group, SWT.NONE);
-		l.setText("Maximum fuzz factor:");
-		l.setToolTipText("Allow context to shift this number of lines from the original place");
+		l.setText(PatchMessages.getString("PreviewPatchPage.FuzzFactor.text")); //$NON-NLS-1$
+		l.setToolTipText(PatchMessages.getString("PreviewPatchPage.FuzzFactor.tooltip")); //$NON-NLS-1$
 		fFuzzField= new Text(group, SWT.BORDER);
-		fFuzzField.setText("2");
+		fFuzzField.setText("2"); //$NON-NLS-1$
 		GridData gd2= new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
 		gd2.widthHint= 30;
 		fFuzzField.setLayoutData(gd2);
@@ -223,7 +220,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 		addSpacer(group);
 		
 		fIgnoreWhitespaceButton= new Button(group, SWT.CHECK);
-		fIgnoreWhitespaceButton.setText("Ignore Whitespace");
+		fIgnoreWhitespaceButton.setText(PatchMessages.getString("PreviewPatchPage.IgnoreWhitespace.text")); //$NON-NLS-1$
 		
 		addSpacer(group);
 				
@@ -384,7 +381,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 				} else {
 					// file already exists
 					diff.fIsEnabled= false;					
-					error= "(file already exists)";
+					error= PatchMessages.getString("PreviewPatchPage.FileExists.error"); //$NON-NLS-1$
 				}
 				create= true;
 			} else {
@@ -398,27 +395,17 @@ import org.eclipse.compare.structuremergeviewer.*;
 				} else {
 					// file doesn't exist
 					diff.fIsEnabled= false;					
-					error= "(file doesn't exist)";
+					error= PatchMessages.getString("PreviewPatchPage.FileDoesNotExist.error"); //$NON-NLS-1$
 				}
 			}			
 			
 			boolean checked= false;
 				
-			ArrayList failedHunks= new ArrayList();		// collect rejected hunks here
-			
+			ArrayList failedHunks= new ArrayList();
 			fPatchWizard.getPatcher().apply(diff, file, create, failedHunks);
 
-			if (! failedHunks.isEmpty()) {
-				StringBuffer sb= new StringBuffer();
-				Iterator iter= failedHunks.iterator();
-				while (iter.hasNext()) {
-					Hunk hunk= (Hunk) iter.next();
-					sb.append(hunk.getDescription());
-					sb.append('\n');
-					sb.append(hunk.getContent());
-				}
-				diff.fRejected= sb.toString();
-			}
+			if (failedHunks.size() > 0)
+				diff.fRejected= fPatchWizard.getPatcher().getRejected(failedHunks);
 			
 			int checkedSubs= 0;	// counts checked hunk items
 			TreeItem[] hunkItems= item.getItems();
@@ -427,7 +414,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 				boolean failed= failedHunks.contains(hunk);
 				String hunkError= null;
 				if (failed)
-					hunkError= "(no match)";
+					hunkError= PatchMessages.getString("PreviewPatchPage.NoMatch.error"); //$NON-NLS-1$
 				hunk.fIsEnabled= diff.fIsEnabled && !failed;
 				hunkItems[h].setChecked(hunk.fIsEnabled);
 				if (hunk.fIsEnabled) {
@@ -436,13 +423,13 @@ import org.eclipse.compare.structuremergeviewer.*;
 				}
 				String hunkLabel= hunk.getDescription();
 				if (hunkError != null)
-					hunkLabel+= "   " + hunkError;
+					hunkLabel+= "   " + hunkError; //$NON-NLS-1$
 				hunkItems[h].setText(hunkLabel);
 			}
 			
 			String label= diff.getDescription(strip);
 			if (error != null)
-				label+= "    " + error;
+				label+= "    " + error; //$NON-NLS-1$
 			item.setText(label);
 			item.setImage(getImage(diff));
 			item.setChecked(checked);

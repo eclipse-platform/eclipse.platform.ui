@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.compare.patch;
+package org.eclipse.compare.internal.patch;
 
 import java.io.*;
 import java.util.*;
@@ -55,9 +55,9 @@ import org.eclipse.compare.internal.Utilities;
 
 
 	InputPatchPage(PatchWizard pw) {
-		super("InputPatchPage", "Patch Input Specification", null);
+		super("InputPatchPage", PatchMessages.getString("InputPatchPage.title"), null); //$NON-NLS-1$ //$NON-NLS-2$
 		fPatchWizard= pw;
-		setMessage("Define what resource to patch with which patch.");
+		setMessage(PatchMessages.getString("InputPatchPage.message")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -70,7 +70,7 @@ import org.eclipse.compare.internal.Utilities;
 
 	/* package */ String getPatchName() {
 		if (getUseClipboard())
-			return "Clipboard";
+			return PatchMessages.getString("InputPatchPage.Clipboard"); //$NON-NLS-1$
 		return getPatchFilePath();
 	}
 	
@@ -82,7 +82,7 @@ import org.eclipse.compare.internal.Utilities;
 		setControl(composite);
 		
 		Label l= new Label(composite, SWT.NONE);	// a spacer
-		l.setText("Select a single file or folder to patch:");
+		l.setText(PatchMessages.getString("InputPatchPage.SelectInput")); //$NON-NLS-1$
 		buildInputGroup(composite);
 		
 		new Label(composite, SWT.NONE);	// a spacer		
@@ -121,7 +121,9 @@ import org.eclipse.compare.internal.Utilities;
 					try {
 						reader= new FileReader(patchFilePath);
 					} catch (FileNotFoundException ex) {
-						MessageDialog.openError(null, "Error", "Patch file not found: " + patchFilePath);
+						MessageDialog.openError(null,
+							PatchMessages.getString("InputPatchPage.PatchErrorDialog.title"),	//$NON-NLS-1$
+							PatchMessages.getString("InputPatchPage.PatchFileNotFound.message")); //$NON-NLS-1$
 					}
 				}
 			}
@@ -131,7 +133,9 @@ import org.eclipse.compare.internal.Utilities;
 				try {
 					patcher.parse(new BufferedReader(reader));
 				} catch (IOException ex) {
-					MessageDialog.openError(null, "Error", "Error while parsing patch");
+					MessageDialog.openError(null,
+						PatchMessages.getString("InputPatchPage.PatchErrorDialog.title_2"), //$NON-NLS-1$ 
+						PatchMessages.getString("InputPatchPage.ParseError.message")); //$NON-NLS-1$
 				}
 				
 				try {
@@ -142,7 +146,9 @@ import org.eclipse.compare.internal.Utilities;
 			
 			Diff[] diffs= patcher.getDiffs();
 			if (diffs == null || diffs.length == 0) {
-				MessageDialog.openError(null, "Error", "No diffs found in " + getPatchName());
+				MessageDialog.openError(null,
+					PatchMessages.getString("InputPatchPage.PatchErrorDialog.title_4"),	//$NON-NLS-1$
+					PatchMessages.getString("InputPatchPage.NoDiffsFound.message"));  //$NON-NLS-1$
 				return this;
 			}
 			
@@ -243,7 +249,7 @@ import org.eclipse.compare.internal.Utilities;
 	private void buildPatchFileGroup(Composite parent) {
 		
 		fPatchFileGroup= new Group(parent, SWT.NONE);
-		fPatchFileGroup.setText("Select Patch");
+		fPatchFileGroup.setText(PatchMessages.getString("InputPatchPage.SelectPatch.title")); //$NON-NLS-1$
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 3;
 		fPatchFileGroup.setLayout(layout);
@@ -251,7 +257,7 @@ import org.eclipse.compare.internal.Utilities;
 		
 		// 1st row
 		fUsePatchFileButton= new Button(fPatchFileGroup, SWT.RADIO);
-		fUsePatchFileButton.setText("File ");
+		fUsePatchFileButton.setText(PatchMessages.getString("InputPatchPage.FileButton.text")); //$NON-NLS-1$
 		
 		fPatchFileNameField= new Combo(fPatchFileGroup, SWT.BORDER);
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
@@ -260,12 +266,12 @@ import org.eclipse.compare.internal.Utilities;
 		fPatchFileNameField.setLayoutData(gd);
 		
 		fPatchFileBrowseButton= new Button(fPatchFileGroup, SWT.PUSH);
-		fPatchFileBrowseButton.setText("Choose...");
+		fPatchFileBrowseButton.setText(PatchMessages.getString("InputPatchPage.ChooseFileButton.text")); //$NON-NLS-1$
 		fPatchFileBrowseButton.setLayoutData(new GridData());
 		
 		// 2nd row
 		fUseClipboardButton= new Button(fPatchFileGroup, SWT.RADIO);
-		fUseClipboardButton.setText("Clipboard");
+		fUseClipboardButton.setText(PatchMessages.getString("InputPatchPage.UseClipboardButton.text")); //$NON-NLS-1$
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan= 2;
 		fUseClipboardButton.setLayoutData(gd);
@@ -376,7 +382,7 @@ import org.eclipse.compare.internal.Utilities;
 		ISelection selection= fPatchTargets.getSelection();
 		boolean anySelected= selection != null && !selection.isEmpty();
 		if (!anySelected)
-			error= "Nothing selected to apply patch to.";
+			error= PatchMessages.getString("InputPatchPage.NothingSelected.message"); //$NON-NLS-1$
 
 		boolean gotPatch= false;
 		if (getUseClipboard()) {
@@ -389,20 +395,20 @@ import org.eclipse.compare.internal.Utilities;
 					if (s.length() > 0)
 						gotPatch= true;
 					else
-						error= "Clipboard is empty.";
+						error= PatchMessages.getString("InputPatchPage.ClipboardIsEmpty.message"); //$NON-NLS-1$
 				} else
-					error= "Clipboard does not contain text.";					
+					error= PatchMessages.getString("InputPatchPage.NoTextInClipboard.message");					 //$NON-NLS-1$
 			} else
-				error= "Couldn't retrieve clipboard contents.";					
+				error= PatchMessages.getString("InputPatchPage.CouldNotReadClipboard.message");					 //$NON-NLS-1$
 		} else {
 			String path= fPatchFileNameField.getText();
 			if (path != null && path.length() > 0) {
 				File file= new File(path);
 				gotPatch= file.exists() && file.isFile() && file.length() > 0;
 				if (!gotPatch)
-					error= "Can't locate patch file: " + path;
+					error= PatchMessages.getString("InputPatchPage.CannotLocatePatch.message") + path; //$NON-NLS-1$
 			} else {
-				error= "No file name.";
+				error= PatchMessages.getString("InputPatchPage.NoFileName.message"); //$NON-NLS-1$
 			}
 		}
 		
@@ -412,7 +418,7 @@ import org.eclipse.compare.internal.Utilities;
 	
 	protected void handlePatchFileBrowseButtonPressed() {
 		FileDialog dialog= new FileDialog(getShell(), SWT.NONE);
-		dialog.setText("Select Patch File");		
+		dialog.setText(PatchMessages.getString("InputPatchPage.SelectPatchFileDialog.title"));		 //$NON-NLS-1$
 		dialog.setFilterPath(getPatchFilePath());
 		String res= dialog.open();
 		if (res == null)
@@ -515,8 +521,7 @@ import org.eclipse.compare.internal.Utilities;
 			String patchFilePath= settings.get(STORE_PATCH_FILES_ID);
 			if (patchFilePath != null)
 				setSourceName(patchFilePath);
-		} else
-			System.out.println("restoreWidgetValues: no dialog settings");
+		}
 	}
 	
 	/**
@@ -559,7 +564,7 @@ import org.eclipse.compare.internal.Utilities;
 	private String getPatchFilePath() {
 		if (fPatchFileNameField != null)
 			return fPatchFileNameField.getText();
-		return "";
+		return ""; //$NON-NLS-1$
 	} 
 
 	/**

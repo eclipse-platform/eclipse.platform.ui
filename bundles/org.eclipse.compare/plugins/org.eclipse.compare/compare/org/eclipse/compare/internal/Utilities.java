@@ -204,7 +204,7 @@ public class Utilities {
 	}
 	
 	public static String getIconPath(Display display) {
-		return "icons/full/";
+		return "icons/full/";	//$NON-NLS-1$
 	}
 	
 	/**

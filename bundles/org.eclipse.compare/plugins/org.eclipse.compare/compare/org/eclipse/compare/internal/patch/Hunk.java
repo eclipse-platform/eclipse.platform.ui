@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.compare.patch;
+package org.eclipse.compare.internal.patch;
 
 import java.util.List;
 
@@ -101,6 +101,20 @@ import org.eclipse.jface.util.Assert;
 		sb.append(Integer.toString(fNewStart));
 		sb.append(',');
 		sb.append(Integer.toString(fNewLength));
+		return sb.toString();
+	}
+	
+	String getRejectedDescription() {
+		StringBuffer sb= new StringBuffer();
+		sb.append("@@ -"); //$NON-NLS-1$
+		sb.append(Integer.toString(fOldStart));
+		sb.append(',');
+		sb.append(Integer.toString(fOldLength));
+		sb.append(" +"); //$NON-NLS-1$
+		sb.append(Integer.toString(fNewStart));
+		sb.append(',');
+		sb.append(Integer.toString(fNewLength));
+		sb.append(" @@"); //$NON-NLS-1$
 		return sb.toString();
 	}
 }

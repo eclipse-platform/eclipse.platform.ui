@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.compare.patch;
+package org.eclipse.compare.internal.patch;
 
 import java.io.*;
 import java.io.ByteArrayInputStream;
@@ -37,13 +37,13 @@ import org.eclipse.compare.internal.*;
 			fDiff= diff;
 		}
 		public String getName() {
-			return fName + " *";
+			return fName + " *"; //$NON-NLS-1$
 		}
 		public String getType() {
-			return "txt";
+			return "txt"; //$NON-NLS-1$
 		}
 		public Image getImage() {
-			return CompareUI.getImage("file");
+			return CompareUI.getImage("file"); //$NON-NLS-1$
 		}
 		public InputStream getContents() {
 			return new ByteArrayInputStream(fDiff.fRejected.getBytes());
@@ -91,7 +91,7 @@ import org.eclipse.compare.internal.*;
 					String rej= diff.fRejected;
 					if (rej != null) {
 						IPath pp= path.removeLastSegments(1);
-						pp= pp.append(path.lastSegment() + ".rej");
+						pp= pp.append(path.lastSegment() + ".rej"); //$NON-NLS-1$
 						createPath(fRoot, rootFolder, pp, diff, true);
 					}
 				}
@@ -104,7 +104,8 @@ import org.eclipse.compare.internal.*;
 			cc.setLeftLabel(leftLabel);
 			cc.setLeftImage(CompareUIPlugin.getImage(fTarget));
 			
-			String rightLabel= "Patch: " + fPatcher.getName();
+			String rformat= PatchMessages.getString("PatchCompareInput.RightTitle.format");	//$NON-NLS-1$
+			String rightLabel= MessageFormat.format(rformat, new String[] { fPatcher.getName() } );
 			cc.setRightLabel(rightLabel);
 			//cc.setRightImage(CompareUIPlugin.getImage(fRightResource));
 			

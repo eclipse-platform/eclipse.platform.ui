@@ -57,6 +57,9 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	public static final String CTOOL_PREV= "clcl16/prev_nav.gif";	//$NON-NLS-1$
 	public static final String ETOOL_PREV= "elcl16/prev_nav.gif";	//$NON-NLS-1$
 				
+	/** Status code describing an internal error */
+	public static final int INTERNAL_ERROR= 1;
+
 	private static boolean NORMALIZE_CASE= true;
 
 	private final static String CLASS_ATTRIBUTE= "class"; //$NON-NLS-1$
@@ -195,6 +198,20 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		return fgResourceBundle;
 	}
 	
+	public static IWorkbench getActiveWorkbench() {
+		CompareUIPlugin plugin= getDefault();
+		if (plugin == null)
+			return null;
+		return plugin.getWorkbench();
+	}
+	
+	public static IWorkbenchWindow getActiveWorkbenchWindow() {
+		IWorkbench workbench= getActiveWorkbench();
+		if (workbench == null)
+			return null;	
+		return workbench.getActiveWorkbenchWindow();
+	}
+	
 	/**
 	 * Returns the active workkbench page or <code>null</code> if
 	 * no active workkbench page can be determined.
@@ -203,13 +220,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * 	no active workkbench page can be determined
 	 */
 	private static IWorkbenchPage getActivePage() {
-		CompareUIPlugin plugin= getDefault();
-		if (plugin == null)
-			return null;
-		IWorkbench workbench= plugin.getWorkbench();
-		if (workbench == null)
-			return null;	
-		IWorkbenchWindow window= workbench.getActiveWorkbenchWindow();
+		IWorkbenchWindow window= getActiveWorkbenchWindow();
 		if (window == null)
 			return null;
 		return window.getActivePage();
@@ -223,16 +234,10 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * 	no workbench window is active
 	 */
 	public static Shell getShell() {
-		CompareUIPlugin p= getDefault();
-		if (p == null)
+		IWorkbenchWindow window= getActiveWorkbenchWindow();
+		if (window == null)
 			return null;
-		IWorkbench wb= p.getWorkbench();
-		if (wb == null)
-			return null;
-		IWorkbenchWindow ww= wb.getActiveWorkbenchWindow();
-		if (ww == null)
-			return null;
-		return ww.getShell();
+		return window.getShell();
 	}
 
 	/**
@@ -809,5 +814,45 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			if (entry.getValue().equals(t))
 				iter.remove();
 		}
+	}
+	
+	/**
+	 * Returns an array of all editors that have an unsaved content. If the identical content is 
+	 * presented in more than one editor, only one of those editor parts is part of the result.
+	 * 
+	 * @return an array of all dirty editor parts.
+	 */
+	public static IEditorPart[] getDirtyEditors() {
+		Set inputs= new HashSet(7);
+		ArrayList result= new ArrayList(0);
+		IWorkbench workbench= CompareUIPlugin.getDefault().getWorkbench();
+		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
+		for (int i= 0; i < windows.length; i++) {
+			IWorkbenchPage[] pages= windows[i].getPages();
+			for (int x= 0; x < pages.length; x++) {
+				IEditorPart[] editors= pages[x].getEditors();
+				for (int z= 0; z < editors.length; z++) {
+					IEditorPart editor= editors[z];
+					IEditorInput input= editor.getEditorInput();
+					if (editor.isDirty() && !inputs.contains(input)) {
+						inputs.add(input);
+						result.add(editor);
+					}
+				}
+			}
+		}
+		return (IEditorPart[])result.toArray(new IEditorPart[result.size()]);
+	}
+	
+	public static void log(Throwable e) {
+		log(new Status(IStatus.ERROR, getPluginId(), INTERNAL_ERROR, CompareMessages.getString("JavaPlugin.internal_error"), e)); //$NON-NLS-1$
+	}
+	
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
+	}
+	
+	public static String getPluginId() {
+		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
 }

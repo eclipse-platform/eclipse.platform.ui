@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.compare.patch;
+package org.eclipse.compare.internal.patch;
 
 import java.io.*;
 

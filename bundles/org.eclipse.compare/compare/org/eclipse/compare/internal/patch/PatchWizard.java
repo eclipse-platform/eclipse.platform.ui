@@ -2,16 +2,21 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.compare.patch;
+package org.eclipse.compare.internal.patch;
+
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.*;
@@ -41,7 +46,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 
 		fPatcher= new Patcher();
 		
-		setWindowTitle("Resource Patcher");
+		setWindowTitle(PatchMessages.getString("PatchWizard.title")); //$NON-NLS-1$
 		
 		IDialogSettings workbenchSettings= CompareUIPlugin.getDefault().getDialogSettings();
 		IDialogSettings section= workbenchSettings.getSection(DIALOG_SETTINGS_KEY); //$NON-NLS-1$
@@ -111,7 +116,19 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 			CompareUI.openCompareEditor(new PatchCompareInput(cc, fPatcher, new StructuredSelection(fTarget)));
 		} else {
 			fPatcher.setName(fPatchWizardPage.getPatchName());
-			fPatcher.applyAll(getTarget(), new NullProgressMonitor());
+
+			try {
+				IRunnableWithProgress op= new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						fPatcher.applyAll(getTarget(), monitor);
+					}
+				};
+				new ProgressMonitorDialog(CompareUIPlugin.getShell()).run(true, true, op);
+			} catch (InvocationTargetException e) {
+				// handle exception
+			} catch (InterruptedException e) {
+				// handle cancelation
+			}
 		}
 		
 		// Save the dialog settings
