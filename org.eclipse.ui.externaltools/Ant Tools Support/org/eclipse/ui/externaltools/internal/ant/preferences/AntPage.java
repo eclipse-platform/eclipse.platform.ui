@@ -176,7 +176,13 @@ public abstract class AntPage {
 		Object[] elements = contentProvider.getElements(tableViewer.getInput());
 		List contents= new ArrayList(elements.length);
 		for (int i = 0; i < elements.length; i++) {
-			contents.add(elements[i]);
+			Object element= elements[i];
+			if (element instanceof AntObject) {
+				if (((AntObject)element).isDefault()) {
+					continue;
+				}
+			}
+			contents.add(element);
 		}
 		return contents;
 	}
