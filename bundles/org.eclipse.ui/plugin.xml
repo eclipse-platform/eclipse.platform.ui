@@ -1004,11 +1004,11 @@
                id="org.eclipse.ui.edit.text.goto.lineDown">
          </accelerator>
          <accelerator
-               key="HOME"
+               key=""
                id="org.eclipse.ui.edit.text.goto.lineStart">
          </accelerator>
          <accelerator
-               key="END"
+               key=""
                id="org.eclipse.ui.edit.text.goto.lineEnd">
          </accelerator>
          <accelerator
@@ -1072,11 +1072,11 @@
                id="org.eclipse.ui.edit.text.select.lineDown">
          </accelerator>
          <accelerator
-               key="Shift+HOME"
+               key=""
                id="org.eclipse.ui.edit.text.select.lineStart">
          </accelerator>
          <accelerator
-               key="Shift+END"
+               key=""
                id="org.eclipse.ui.edit.text.select.lineEnd">
          </accelerator>
          <accelerator
