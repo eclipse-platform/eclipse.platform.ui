@@ -97,7 +97,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (SearchPreferencePage.POTENTIAL_MATCH_FG_COLOR.equals(event.getProperty()) || SearchPreferencePage.EMPHASIZE_POTENTIAL_MATCHES.equals(event.getProperty()))
 					if (fViewer != null)
-						fViewer.updatedPotentialMatchBgColor();
+						fViewer.updatedPotentialMatchFgColor();
 			}
 		};
 		

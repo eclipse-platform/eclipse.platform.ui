@@ -103,7 +103,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		return store.getBoolean(EMPHASIZE_POTENTIAL_MATCHES);
 	}
 
-	public static RGB getPotentialMatchBackgroundColor() {
+	public static RGB getPotentialMatchForegroundColor() {
 		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
 		return PreferenceConverter.getColor(store, POTENTIAL_MATCH_FG_COLOR);
 	}
