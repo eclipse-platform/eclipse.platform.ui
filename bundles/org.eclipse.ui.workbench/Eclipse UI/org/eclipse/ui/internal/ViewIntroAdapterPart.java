@@ -15,8 +15,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewSite;
@@ -58,18 +60,30 @@ public final class ViewIntroAdapterPart extends ViewPart {
 	 * 
      * @param standby update the standby state
      */
-    public void setStandby(boolean standby) {
-		introPart.standbyStateChanged(standby);					
-		WorkbenchWindow window = ((WorkbenchWindow)((PartSite)getSite()).getPane().getWorkbenchWindow());
-		if (standby) {
-			window.setCoolBarVisible(true);
-			window.setPerspectiveBarVisible(true);
-		}
-		else {
-			window.setCoolBarVisible(false);
-			window.setPerspectiveBarVisible(false);						
-		}
-		window.getShell().layout();
+    public void setStandby(final boolean standby) {
+        final Control control = ((PartSite)getSite()).getPane().getControl();
+        BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
+            public void run() {
+                try {                    
+                    control.setRedraw(false);
+                    introPart.standbyStateChanged(standby);
+                }
+        		finally {
+        		    control.setRedraw(true);
+        		}
+                
+        		WorkbenchWindow window = ((WorkbenchWindow)((PartSite)getSite()).getPane().getWorkbenchWindow());
+        		if (standby) {
+        			window.setCoolBarVisible(true);
+        			window.setPerspectiveBarVisible(true);
+        		}
+        		else {
+        			window.setCoolBarVisible(false);
+        			window.setPerspectiveBarVisible(false);						
+        		}
+        		window.getShell().layout();                
+            }
+        });
     }
 
     /**
