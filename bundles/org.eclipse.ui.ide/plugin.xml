@@ -764,4 +764,25 @@
 		    </description>
 	   </transfer>
    </extension>
+   
+   <!-- Adaptor factory for IWorkingSet to IContributorResourceAdapter, IWorkbenchAdapter, ResourceMapping -->
+      <extension
+         id="org.eclipse.ui.ide.resourceMappingAdapters"
+         point="org.eclipse.core.runtime.adapters">
+       <factory
+            class="org.eclipse.ui.internal.ide.model.WorkingSetAdapterFactory"
+            adaptableType="org.eclipse.ui.IWorkingSet">
+            <adapter type="org.eclipse.ui.IContributorResourceAdapter"/>
+       </factory>
+       <factory
+            class="org.eclipse.ui.internal.ide.model.WorkingSetAdapterFactory"
+            adaptableType="org.eclipse.ui.IWorkingSet">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+       </factory>
+       <factory
+            class="org.eclipse.ui.internal.ide.model.WorkingSetAdapterFactory"
+            adaptableType="org.eclipse.ui.IWorkingSet">
+            <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
+       </factory>
+   </extension>
 </plugin>

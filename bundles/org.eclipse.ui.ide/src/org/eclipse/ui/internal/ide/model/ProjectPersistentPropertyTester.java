@@ -26,6 +26,8 @@ import org.eclipse.ui.IResourceActionFilter;
  */
 public class ProjectPersistentPropertyTester extends PropertyTester {
     
+    private static final String ALLOW_UNSET_PROJECTS = "allowUnsetProjects";  //$NON-NLS-1$
+    
     private static final IActionFilter filter = new WorkbenchResource() {
         
     	/* (non-Javadoc)
@@ -44,14 +46,20 @@ public class ProjectPersistentPropertyTester extends PropertyTester {
             if (property.equals(IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY)) {
                 if(args == null) return false;
                 String persitentPropertyEntry = (String)args[0];
-                IProject[] projects = ((ResourceMapping)receiver).getProjects();
-                for (int i = 0; i < projects.length; i++) {
-                    IProject project = projects[i];
-                    if (!filter.testAttribute(project, property, persitentPropertyEntry))
-                        return false;
-                }
-                // All projects have the persistent property
-                return true;
+	            boolean allowUnsetProjects = false;
+	            if (args.length > 1)
+	                allowUnsetProjects = args[1].equals(ALLOW_UNSET_PROJECTS);
+	            IProject[] projects = ((ResourceMapping)receiver).getProjects();
+	            boolean atLeastOne = false;
+	            for (int i = 0; i < projects.length; i++) {
+	                IProject project = projects[i];
+	                if (filter.testAttribute(project, property, persitentPropertyEntry)) {
+	                    atLeastOne = true;
+	                } else if (!allowUnsetProjects) {
+	                    return false;
+	                }
+	            }
+	            return atLeastOne;
             }
         } else if (receiver instanceof IResource) {
             if (property.equals(IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY)) {
