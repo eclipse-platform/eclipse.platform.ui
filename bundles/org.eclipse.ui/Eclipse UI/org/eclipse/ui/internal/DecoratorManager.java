@@ -97,24 +97,15 @@ public class DecoratorManager
 	}
 
 	/**
-	 * Decorate the text provided for the element type.
-	 * Return null if there are none defined for this type.
+	 * Decorate the image provided for the element type.
+	 * Then look for an IResource that adapts to it an apply
+	 * all of the adaptable decorators.
+	 * @return String or null if there are none defined for this type.
+	 * @param Image
+	 * @param Object
 	 */
 	public String decorateText(String text, Object element) {
-		return decorateText(text, element, true);
-	}
-
-
-	/**
-	 * Decorate the text provided for the element type.
-	 * Check for an adapted resource if checkAdapted is true.
-	 * Return null if there are none defined for this type.
-	 */
-	private String decorateText(
-		String text,
-		Object element,
-		boolean checkAdapted) {
-
+		
 		DecoratorDefinition[] decorators = getDecoratorsFor(element);
 		String result = text;
 		for (int i = 0; i < decorators.length; i++) {
@@ -123,34 +114,32 @@ public class DecoratorManager
 				result = newResult;
 		}
 
-		if (checkAdapted) {
-			//Get any adaptions to IResource
-			Object adapted = getResourceAdapter(element);
-			if (adapted != null)
-				result = decorateText(result, adapted, false);
+		//Get any adaptions to IResource
+		Object adapted = getResourceAdapter(element);
+		if (adapted != null){
+			DecoratorDefinition[] adaptedDecorators = getDecoratorsFor(adapted);
+			for (int i = 0; i < adaptedDecorators.length; i++) {
+				if(adaptedDecorators[i].isAdaptable()){
+					String newResult = adaptedDecorators[i].decorateText(result, element);
+					if (newResult != null)
+						result = newResult;
+				}
+			}
 		}
-
+		
 		return result;
 	}
 
 	/**
 	 * Decorate the image provided for the element type.
-	 * Return null if there are none defined for this type.
+	 * Then look for an IResource that adapts to it an apply
+	 * all of the adaptable decorators.
+	 * @return Image or null if there are none defined for this type.
+	 * @param Image
+	 * @param Object
 	 */
 	public Image decorateImage(Image image, Object element) {
-		return decorateImage(image, element, true);
-	}
-
-	/**
-	 * Decorate the image provided for the element type.
-	 * Check for an adapted resource if checkAdapted is true.
-	 * Return null if there are none defined for this type.
-	 */
-	private Image decorateImage(
-		Image image,
-		Object element,
-		boolean checkAdapted) {
-
+		
 		DecoratorDefinition[] decorators = getDecoratorsFor(element);
 		Image result = image;
 		for (int i = 0; i < decorators.length; i++) {
@@ -159,13 +148,19 @@ public class DecoratorManager
 				result = newResult;
 		}
 
-		if (checkAdapted) {
-			//Get any adaptions to IResource
-			Object adapted = getResourceAdapter(element);
-			if (adapted != null)
-				result = decorateImage(result, adapted, false);
+		//Get any adaptions to IResource
+		Object adapted = getResourceAdapter(element);
+		if (adapted != null){
+			DecoratorDefinition[] adaptedDecorators = getDecoratorsFor(adapted);
+			for (int i = 0; i < adaptedDecorators.length; i++) {
+				if(adaptedDecorators[i].isAdaptable()){
+					Image newResult = adaptedDecorators[i].decorateImage(result, element);
+					if (newResult != null)
+						result = newResult;
+				}
+			}
 		}
-
+		
 		return result;
 	}
 
