@@ -53,6 +53,8 @@ public class WebBrowserEditor extends EditorPart {
 	protected TextAction pasteAction;
 	
 	protected IResourceChangeListener resourceListener;
+	
+	private boolean disposed;
 
 	/**
 	 * WebBrowserEditor constructor comment.
@@ -90,8 +92,14 @@ public class WebBrowserEditor extends EditorPart {
 
 		if (resourceListener != null)
 			ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
-		
+
 		super.dispose();
+		//mark this instance as disposed to avoid stale references
+		disposed=true;
+	}
+	
+	public boolean isDisposed() {
+		return disposed;
 	}
 	
 	/* (non-Javadoc)

@@ -36,7 +36,9 @@ public class InternalBrowserInstance extends AbstractWebBrowser {
 	public void openURL(URL url) throws PartInitException {
 		WebBrowserEditorInput input = new WebBrowserEditorInput(url, style);
 		
-		if (editor != null) {
+		//	Need to check if the instance has been
+		// disposed by the user (DG)
+		if (editor != null && !editor.isDisposed()) {
 			editor.init(editor.getEditorSite(), input);
 		} else {
 			try {
