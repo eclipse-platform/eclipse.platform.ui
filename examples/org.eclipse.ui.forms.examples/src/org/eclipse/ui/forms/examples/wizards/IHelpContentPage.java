@@ -4,12 +4,10 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-package org.eclipse.ui.forms.examples.views;
+package org.eclipse.ui.forms.examples.wizards;
 
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
@@ -18,8 +16,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public interface IHelpViewPage {
-	void init(HelpView view, IMemento memento);
+public interface IHelpContentPage {
+	void init(ContentSectionPart section, IMemento memento);
 	void createControl(Composite parent, FormToolkit toolkit);
 	Control getControl();
 	void setFocus();

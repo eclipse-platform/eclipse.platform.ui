@@ -11,8 +11,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URLEncoder;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.help.*;
-import org.eclipse.help.internal.context.IStyledContext;
 import org.eclipse.help.internal.search.SearchHit;
 import org.eclipse.help.ui.internal.search.*;
 import org.eclipse.jface.operation.*;
@@ -21,6 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
@@ -33,59 +32,58 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
-public class ContextHelpPart {
+public class ReusableHelpPart {
 	private ScrolledForm form;
-
 	private Text phraseText;
-
-	private FormText text;
-
+	private ContentSectionPart contentSectionPart;
 	private FormText searchResults;
-
 	private String defaultText="";
-
 	private IRunnableContext runnableContext;
-
 	private SorterByScore resultSorter;
+	private FormToolkit toolkit;
+	private IMemento memento;
 
-	private static final String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$
-
-	public ContextHelpPart(IRunnableContext runnableContext) {
+	public ReusableHelpPart(IRunnableContext runnableContext) {
 		this.runnableContext = runnableContext;
 		resultSorter = new SorterByScore();
+	}
+	
+	public void init(IMemento memento) {
+		this.memento = memento;
+	}
+	public void saveState(IMemento memento) {
+		contentSectionPart.saveState(memento);
+	}
+	
+	public void reflow() {
+		form.reflow(true);
+	}
+	
+	public FormToolkit getToolkit() {
+		return toolkit;
 	}
 
 	public void createControl(Composite parent, FormToolkit toolkit) {
 		// parent form
+		this.toolkit = toolkit;
 		form = toolkit.createScrolledForm(parent);
 		TableWrapLayout layout = new TableWrapLayout();
+		layout.leftMargin = layout.rightMargin = 0;
 		form.getBody().setLayout(layout);
 		form.setText("");
-		Section section = toolkit.createSection(form.getBody(),
-				Section.TITLE_BAR | Section.TWISTIE | Section.EXPANDED);
-		section.setText("About");
-		text = toolkit.createFormText(section, true);
-		text.setColor(FormColors.TITLE, toolkit.getColors().getColor(
-				FormColors.TITLE));
-		text.setImage(ExamplesPlugin.IMG_HELP_TOPIC, ExamplesPlugin
-				.getDefault().getImage(ExamplesPlugin.IMG_HELP_TOPIC));
-		text.addHyperlinkListener(new HyperlinkAdapter() {
-			public void linkActivated(HyperlinkEvent e) {
-				openLink(e.getHref());
-			}
-		});
-				section.setClient(text);
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL,
+		contentSectionPart = new ContentSectionPart();
+		contentSectionPart.init(this, null);
+		contentSectionPart.createPartControl(form.getBody(), toolkit);
+		Section section = contentSectionPart.getSection();
+		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
 				TableWrapData.FILL));
-		text.setText(defaultText, false, false);
-
 		toolkit.createLabel(form.getBody(), null);
 		section = toolkit.createSection(form.getBody(), Section.TITLE_BAR
 				| Section.TWISTIE | Section.EXPANDED);
 		section.setText("Search");
 		Composite helpContainer = toolkit.createComposite(section);
 		section.setClient(helpContainer);
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL));
+		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		GridLayout glayout = new GridLayout();
 		glayout.numColumns = 3;
 		glayout.marginWidth = glayout.marginHeight = 1;
@@ -140,6 +138,10 @@ public class ContextHelpPart {
 		});
 		searchResults.setText("", false, false);
 	}
+	
+    public boolean isMonitoringContextHelp() {
+    	return contentSectionPart!=null && contentSectionPart.isMonitoringContextHelp();
+    }
 
 	public Control getControl() {
 		return form;
@@ -219,103 +221,14 @@ public class ContextHelpPart {
 			searchResults.setText("", false, false);
 		form.reflow(true);
 	}
-
-	private void handlePageActivation(Control page) {
-		if (text.isDisposed())
-			return;
-		// title.setText("What is" + " \"" + part.getSite().getRegisteredName()
-		// + "\"?"); //$NON-NLS-1$ //$NON-NLS-2$
-		String helpText = createContextHelp(page);
-		text.setText(helpText != null ? helpText : defaultText, helpText != null, //$NON-NLS-1$
-						false);
-		// form.getBody().layout();
-		form.reflow(true);
-	}
-
-	private String createContextHelp(Control page) {
-		String text = null;
-		if (page != null) {
-			if (page != null /* && page.isVisible() */&& !page.isDisposed()) {
-				IContext helpContext = findHelpContext(page);
-				if (helpContext != null) {
-					text = formatHelpContext(helpContext);
-				}
-			}
-		}
-		return text;
-	}
-
-	private IContext findHelpContext(Control c) {
-		String contextId = null;
-		Control node = c;
-		do {
-			contextId = (String) node.getData(HELP_KEY);
-			if (contextId != null)
-				break;
-			node = node.getParent();
-		} while (node != null);
-		if (contextId != null) {
-			return HelpSystem.getContext(contextId);
-		}
-		return null;
-	}
-
-	private String formatHelpContext(IContext context) {
-		StringBuffer sbuf = new StringBuffer();
-		sbuf.append("<form>"); //$NON-NLS-1$
-		sbuf.append("<p>"); //$NON-NLS-1$
-		sbuf.append(decodeContextBoldTags(context));
-		sbuf.append("</p>"); //$NON-NLS-1$
-		IHelpResource[] links = context.getRelatedTopics();
-		if (links != null && links.length > 0) {
-			sbuf.append("<p><span color=\"");
-			sbuf.append(FormColors.TITLE);
-			sbuf.append("\">See also:</span></p>");
-			for (int i = 0; i < links.length; i++) {
-				IHelpResource link = links[i];
-				sbuf.append("<li style=\"text\" indent=\"2\">"); //$NON-NLS-1$
-				sbuf.append("<img href=\""); //$NON-NLS-1$
-				sbuf.append(ExamplesPlugin.IMG_HELP_TOPIC);
-				sbuf.append("\"/> "); //$NON-NLS-1$
-				sbuf.append("<a href=\""); //$NON-NLS-1$
-				sbuf.append(link.getHref());
-				sbuf.append("\">"); //$NON-NLS-1$
-				sbuf.append(link.getLabel());
-				sbuf.append("</a>"); //$NON-NLS-1$
-				sbuf.append("</li>"); //$NON-NLS-1$
-			}
-		}
-		sbuf.append("</form>"); //$NON-NLS-1$
-		return sbuf.toString();
-	}
-
-	/**
-	 * Make sure to support the Help system bold tag. Help systen returns a
-	 * regular string for getText(). Use internal apis for now to get bold.
-	 * 
-	 * @param context
-	 * @return
-	 */
-	private String decodeContextBoldTags(IContext context) {
-		String styledText;
-		if (context instanceof IStyledContext) {
-			styledText = ((IStyledContext) context).getStyledText();
-		} else {
-			styledText = context.getText();
-		}
-		String decodedString = styledText.replaceAll("<@#\\$b>", "<b>"); //$NON-NLS-1$ //$NON-NLS-2$
-		decodedString = decodedString.replaceAll("</@#\\$b>", "</b>"); //$NON-NLS-1$ //$NON-NLS-2$
-		return decodedString;
-	}
-
-	private void openLink(Object href) {
+	
+	public void openLink(Object href) {
 		String url = (String) href;
 		if (url != null)
 			WorkbenchHelp.displayHelpResource(url);
 	}
 
 	public void dispose() {
-
 	}
 
 	/*
@@ -329,7 +242,7 @@ public class ContextHelpPart {
 
 	public void update(Control control) {
 		if (form != null)
-			handlePageActivation(control);
+			contentSectionPart.handleActivation(control);
 	}
 	public void setDefaultText(String text) {
 		this.defaultText = text;

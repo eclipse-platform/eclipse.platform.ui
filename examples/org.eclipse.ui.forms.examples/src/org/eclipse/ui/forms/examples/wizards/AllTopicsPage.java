@@ -4,7 +4,7 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-package org.eclipse.ui.forms.examples.views;
+package org.eclipse.ui.forms.examples.wizards;
 
 import org.eclipse.help.*;
 import org.eclipse.help.HelpSystem;
@@ -23,8 +23,9 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
-public class AllTopicsPage implements IHelpViewPage {
+public class AllTopicsPage implements IHelpContentPage {
 	public static final String ID = "all-topics";
+	private ContentSectionPart part;
 	
 	class TopicsProvider implements ITreeContentProvider {
 		public Object[] getChildren(Object parentElement) {
@@ -117,7 +118,8 @@ public class AllTopicsPage implements IHelpViewPage {
 	 * @see org.eclipse.ui.forms.examples.views.IHelpViewPage#init(org.eclipse.ui.IViewPart,
 	 *      org.eclipse.ui.IMemento)
 	 */
-	public void init(HelpView view, IMemento memento) {
+	public void init(ContentSectionPart part, IMemento memento) {
+		this.part = part;
 	}
 
 	/*
@@ -127,10 +129,27 @@ public class AllTopicsPage implements IHelpViewPage {
 	 *      org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	public void createControl(Composite parent, FormToolkit toolkit) {
-		treeViewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+		treeViewer = new TreeViewer(parent, SWT.NULL);//SWT.H_SCROLL | SWT.V_SCROLL);
 		treeViewer.setContentProvider(new TopicsProvider());
 		treeViewer.setLabelProvider(new TopicsLabelProvider());
+		treeViewer.addTreeListener(new ITreeViewerListener() {
+		    public void treeCollapsed(TreeExpansionEvent event) {
+		    	postReflow();
+		    	
+		    }
+		    public void treeExpanded(TreeExpansionEvent event) {
+		    	postReflow();
+		    }
+		});
 		treeViewer.setInput(this);
+	}
+	
+	private void postReflow() {
+		treeViewer.getTree().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				part.reflow();
+			}
+		});
 	}
 
 	/*

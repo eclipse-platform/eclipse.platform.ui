@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.forms.IFormToolkitProvider;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 public class AssistedWizardDialog extends WizardDialog implements IFormToolkitProvider {
-	private ContextHelpPart contextHelpPart;
+	private ReusableHelpPart contextHelpPart;
 	private FormToolkit toolkit;
 	private SashForm dialogContainer;
 
@@ -39,7 +39,7 @@ public class AssistedWizardDialog extends WizardDialog implements IFormToolkitPr
 	 */
 	public AssistedWizardDialog(Shell parentShell, IWizard newWizard) {
 		super(parentShell, newWizard);
-		contextHelpPart = new ContextHelpPart(this);
+		contextHelpPart = new ReusableHelpPart(this);
 	}
 
     protected void createButtonsForButtonBar(Composite parent) {

@@ -23,11 +23,11 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  */
 public class WizardFormEditorOutline implements IContentOutlinePage {
 	private WizardFormEditor editor;
-	private ContextHelpPart contextHelpPart;
+	private ReusableHelpPart contextHelpPart;
 
 	public WizardFormEditorOutline(WizardFormEditor editor) {
 		this.editor = editor;
-		contextHelpPart = new ContextHelpPart(editor.getEditorSite().getWorkbenchWindow());
+		contextHelpPart = new ReusableHelpPart(editor.getEditorSite().getWorkbenchWindow());
 	}
 
 	public void createControl(Composite parent) {

@@ -6,13 +6,11 @@
  */
 package org.eclipse.ui.forms.examples.views;
 
-import java.util.*;
 import java.util.Hashtable;
 
-import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
+import org.eclipse.ui.forms.examples.wizards.ReusableHelpPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 
@@ -22,30 +20,16 @@ import org.eclipse.ui.part.ViewPart;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class HelpView extends ViewPart {
+public class HelpView extends ViewPart implements IPartListener2 {
 	private FormToolkit toolkit;
-	private Composite container;
 	private IMemento memento;
+	private ReusableHelpPart reusableHelpPart;
 	private Hashtable pageRecs;
 	
-	private class PageRec {
-		IHelpViewPage page;
-		SubActionBars bars;
-		
-		public PageRec(IHelpViewPage page) {
-			this.page = page;
-			this.bars = new SubActionBars(getViewSite().getActionBars());
-		}
-		public void dispose() {
-			page.dispose();
-			bars.dispose();
-		}
-	}
 	/**
 	 * 
 	 */
 	public HelpView() {
-		pageRecs = new Hashtable();
 	}
 
 	/* (non-Javadoc)
@@ -53,103 +37,98 @@ public class HelpView extends ViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
-		container = toolkit.createComposite(parent);
-		container.setLayout(new StackLayout());
-		IHelpViewPage page;
-		//if (memento==null)
-			//page = createPage(ContextHelpPage.ID);
-			page = createPage(AllTopicsPage.ID);
-		//else
-			//page = createPage(memento.getString("page"));
-		showPage(page);
-	}
-	
-	private IHelpViewPage createPage(String id) {
-		IHelpViewPage page=null;
-		if (id!=null) {
-			if (id.equals(ContextHelpPage.ID))
-				page = new ContextHelpPage();
-			else if (id.equals(AllTopicsPage.ID))
-				page = new AllTopicsPage();
-		}
-		if (page==null)
-			return null;
-		page.init(this, memento);
-		page.createControl(container, toolkit);
-		Control c = page.getControl();
-		PageRec rec = new PageRec(page);
-		c.setData(rec);
-		pageRecs.put(id, rec);
-		return page;
+		reusableHelpPart.createControl(parent, toolkit);
 	}
 
 	public void dispose() {
-		for (Enumeration enm = pageRecs.elements(); enm.hasMoreElements();) {
-			PageRec rec = (PageRec)enm.nextElement();
-			rec.dispose();
-		}
-		pageRecs.clear();
-
 		if (toolkit!=null) {
 			toolkit.dispose();
 			toolkit = null;
 		}
+		IWorkbenchWindow window = PlatformUI.getWorkbench()
+        .getActiveWorkbenchWindow();
+        IPartService service = window.getPartService();
+        service.removePartListener(this);		
 		super.dispose();
-	}
-	
-	public void showPage(String pageId) {
-		Control [] children = container.getChildren();
-		for (int i=0; i<children.length; i++) {
-			Control child = children[i];
-			PageRec rec = (PageRec)child.getData();
-			if (rec.page.getId().equals(pageId)) {
-				showPage(rec.page);
-				return;
-			}
-		}
-	}
-
-	public void showPage(IHelpViewPage page) {
-		Control control = page.getControl();
-		StackLayout layout = (StackLayout)container.getLayout();
-		Control prevControl = layout.topControl;
-		if (prevControl!=null) {
-			PageRec prevRec = (PageRec)prevControl.getData();
-			prevRec.bars.deactivate();
-		}
-		layout.topControl = control;
-		container.layout();
-		PageRec rec = (PageRec)control.getData();
-		rec.bars.activate();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
-	 */
-	public void setFocus() {
-		IHelpViewPage page = getCurrentPage();
-		if (page!=null)
-			page.setFocus();
 	}
     public void init(IViewSite site, IMemento memento) throws PartInitException {
     	this.memento = memento;
        	init(site);
+       	reusableHelpPart = new ReusableHelpPart(site.getWorkbenchWindow());
+       	reusableHelpPart.init(memento);
+		IWorkbenchWindow window = PlatformUI.getWorkbench()
+        .getActiveWorkbenchWindow();
+        IPartService service = window.getPartService();
+        service.addPartListener(this);       	
     }
- 
-    public IHelpViewPage getCurrentPage() {
-    	Control c = ((StackLayout)container.getLayout()).topControl;
-    	if (c==null) return null;
-    	PageRec rec = (PageRec)c.getData();
-    	return rec.page;
-    }
-
     /* (non-Javadoc)
      * Method declared on IViewPart.
      */
     public void saveState(IMemento memento) {
-    	IHelpViewPage page = getCurrentPage();
-    	if (page==null) return;
-    	memento.putString("page", page.getId());
-    	page.saveState(memento);
+    	if (reusableHelpPart!=null)
+    		reusableHelpPart.saveState(memento);
     }
+    
+    private void handlePartActivation(IWorkbenchPartReference ref) {
+        if (reusableHelpPart==null)
+            return;
+        if (!reusableHelpPart.isMonitoringContextHelp())
+        	return;
+        IWorkbenchPart part = ref.getPart(false);
+        if (part.equals(this)) return;
+        Display display = part.getSite().getShell().getDisplay();
+        Control c = display.getFocusControl();
+        if (c != null && c.isVisible() && !c.isDisposed()) {
+        	reusableHelpPart.update(c);
+        }
+    }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partActivated(IWorkbenchPartReference partRef) {
+		handlePartActivation(partRef);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partBroughtToTop(IWorkbenchPartReference partRef) {
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partClosed(IWorkbenchPartReference partRef) {
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partDeactivated(IWorkbenchPartReference partRef) {
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partHidden(IWorkbenchPartReference partRef) {
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partInputChanged(IWorkbenchPartReference partRef) {
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partOpened(IWorkbenchPartReference partRef) {
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partVisible(IWorkbenchPartReference partRef) {
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
+	 */
+	public void setFocus() {
+		if (reusableHelpPart!=null)
+			reusableHelpPart.setFocus();
+	}
 }
