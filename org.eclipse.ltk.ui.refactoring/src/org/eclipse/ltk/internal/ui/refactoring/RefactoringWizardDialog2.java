@@ -547,7 +547,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	}
 	
 	protected void createButtonsForButtonBar(Composite parent) {
-		if (! (fCurrentPage instanceof PreviewWizardPage) && fWizard.hasPreviewPage(InternalAPI.INSTANCE)) {
+		if (! (fCurrentPage instanceof PreviewWizardPage) && fWizard.internalHasPreviewPage(InternalAPI.INSTANCE)) {
 			Button preview= createButton(parent, PREVIEW_ID, RefactoringUIMessages.getString("RefactoringWizardDialog2.buttons.preview.label"), false); //$NON-NLS-1$
 			if (fMakeNextButtonDefault) {
 				preview.getShell().setDefaultButton(preview);
@@ -561,7 +561,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		
 		String OK_LABEL= IDialogConstants.OK_LABEL;
 		String CANCEL_LABEL= IDialogConstants.CANCEL_LABEL;
-		if (fWizard.yesNoStyle(InternalAPI.INSTANCE)) {
+		if (fWizard.internalIsYesNoStyle(InternalAPI.INSTANCE)) {
 			OK_LABEL= IDialogConstants.YES_LABEL;
 			CANCEL_LABEL= IDialogConstants.NO_LABEL;
 		}

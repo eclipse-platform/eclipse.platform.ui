@@ -401,13 +401,13 @@ public abstract class RefactoringWizard extends Wizard {
 		
 		// Creating the change has been canceled
 		if (change == null && status == null) {		
-			setChange(InternalAPI.INSTANCE, change);
+			internalSetChange(InternalAPI.INSTANCE, change);
 			return caller;
 		}
 				
 		// Set change if we don't have fatal errors.
 		if (!status.hasFatalError())
-			setChange(InternalAPI.INSTANCE, change);
+			internalSetChange(InternalAPI.INSTANCE, change);
 		
 		if (status.isOK()) {
 			return getPage(IPreviewWizardPage.PAGE_NAME);
@@ -496,7 +496,7 @@ public abstract class RefactoringWizard extends Wizard {
 	//---- Change management -------------------------------------------------------------
 
 	/**
-	 * Note: This method is for internal use only. Clients should not call this method.
+	 * Note: This method is for internal use only. Clients are not allowed to call this method.
 	 * 
 	 * @param api internal instance to avoid access from external clients.
 	 * @param operation the create change operation
@@ -504,20 +504,20 @@ public abstract class RefactoringWizard extends Wizard {
 	 * 
 	 * @return the created change
 	 */
-	public final Change createChange(InternalAPI api, CreateChangeOperation operation, boolean updateStatus) {
+	public final Change internalCreateChange(InternalAPI api, CreateChangeOperation operation, boolean updateStatus) {
 		Assert.isNotNull(api);
 		return createChange(operation, updateStatus, getContainer());
 	}
 
 	/**
-	 * Note: This method is for internal use only. Clients should not call this method.
+	 * Note: This method is for internal use only. Clients are not allowed to call this method.
 	 * 
 	 * @param api internal instance to avoid access from external clients.
 	 * @param op the perform change operation
 	 * 
 	 * @return whether the finish ended ok or not
 	 */
-	public final boolean performFinish(InternalAPI api, PerformChangeOperation op) {
+	public final boolean internalPerformFinish(InternalAPI api, PerformChangeOperation op) {
 		return performRefactoring(op, fRefactoring, getContainer(), getContainer().getShell());
 	}
 	
@@ -570,48 +570,48 @@ public abstract class RefactoringWizard extends Wizard {
 	//---- Internal API, but public due to Java constraints ------------------------------
 	
 	/**
-	 * Note: This method is for internal use only. Clients should not call this method.
+	 * Note: This method is for internal use only. Clients are not allowed to call this method.
 	 * 
 	 * @param api internal instance to avoid access from external clients.
 	 * 
 	 * @return whether the wizard has a preview page or not.
 	 */
-	public final boolean hasPreviewPage(InternalAPI api) {
+	public final boolean internalHasPreviewPage(InternalAPI api) {
 		Assert.isNotNull(api);
 		return (fFlags & NO_PREVIEW_PAGE) == 0;
 	}
 	
 	/**
-	 * Note: This method is for internal use only. Clients should not call this method.
+	 * Note: This method is for internal use only. Clients are not allowed to call this method.
 	 * 
 	 * @param api internal instance to avoid access from external clients.
 	 * 
 	 * @return whether yes no button style is requested
 	 */
-	public final boolean yesNoStyle(InternalAPI api) {
+	public final boolean internalIsYesNoStyle(InternalAPI api) {
 		Assert.isNotNull(api);
 		return (fFlags & YES_NO_BUTTON_STYLE) != 0;
 	}
 	
 	/**
-	 * Note: This method is for internal use only. Clients should not call this method.
+	 * Note: This method is for internal use only. Clients are not allowed to call this method.
 	 * 
 	 * @param api internal instance to avoid access from external clients.
 	 * 
 	 * @return whether the first node of the preview is supposed to be expanded
 	 */
-	public final boolean getExpandFirstNode(InternalAPI api) {
+	public final boolean internalGetExpandFirstNode(InternalAPI api) {
 		Assert.isNotNull(api);
 		return (fFlags & PREVIEW_EXPAND_FIRST_NODE) != 0;
 	}
 	
 	/**
-	 * Note: This method is for internal use only. Clients should not call this method.
+	 * Note: This method is for internal use only. Clients are not allowed to call this method.
 	 * 
 	 * @param api internal instance to avoid access from external clients.
 	 * @param change the change to set
 	 */
-	public final void setChange(InternalAPI api, Change change){
+	public final void internalSetChange(InternalAPI api, Change change){
 		Assert.isNotNull(api);
 		IPreviewWizardPage page= (IPreviewWizardPage)getPage(IPreviewWizardPage.PAGE_NAME);
 		if (page != null)
@@ -619,7 +619,13 @@ public abstract class RefactoringWizard extends Wizard {
 		fChange= change;
 	}
 
-	public final void setPreviewShown(InternalAPI api, boolean shown) {
+	/**
+	 * Note: This method is for internal use only. Clients are not allowed to call this method.
+	 * 
+	 * @param api internal instance to avoid access from external clients.
+	 * @param shown a boolean indicating if the preview page has been shown or not
+	 */
+	public final void internalSetPreviewShown(InternalAPI api, boolean shown) {
 		Assert.isNotNull(api);
 		fPreviewShown= shown;
 		getContainer().updateButtons();

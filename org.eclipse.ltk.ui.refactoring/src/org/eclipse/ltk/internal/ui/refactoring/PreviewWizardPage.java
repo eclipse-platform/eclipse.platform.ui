@@ -162,7 +162,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	 * Method defined in RefactoringWizardPage
 	 */
 	protected boolean performFinish() {
-		return getRefactoringWizard().performFinish(InternalAPI.INSTANCE, new UIPerformChangeOperation(fChange));
+		return getRefactoringWizard().internalPerformFinish(InternalAPI.INSTANCE, new UIPerformChangeOperation(fChange));
 	} 
 	
 	/* (non-JavaDoc)
@@ -251,7 +251,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 					Object[] elements= provider.getElements(treeViewerInput);
 					if (elements != null && elements.length > 0) {
 						Object element= elements[0];
-						if (getRefactoringWizard().getExpandFirstNode(InternalAPI.INSTANCE)) {
+						if (getRefactoringWizard().internalGetExpandFirstNode(InternalAPI.INSTANCE)) {
 							Object[] subElements= provider.getElements(element);
 							if (subElements != null && subElements.length > 0) {
 								fTreeViewer.expandToLevel(element, 999);
@@ -267,7 +267,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			fPageContainer.showPage(fNullPage);
 			super.setVisible(visible);
 		}
-		getRefactoringWizard().setPreviewShown(InternalAPI.INSTANCE, visible);
+		getRefactoringWizard().internalSetPreviewShown(InternalAPI.INSTANCE, visible);
 	}
 	
 	private void setTreeViewerInput() {

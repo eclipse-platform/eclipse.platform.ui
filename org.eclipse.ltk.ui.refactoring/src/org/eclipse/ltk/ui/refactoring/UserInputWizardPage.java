@@ -99,7 +99,7 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 	 */
 	public void setVisible(boolean visible) {
 		if (visible)
-			getRefactoringWizard().setChange(InternalAPI.INSTANCE, null);
+			getRefactoringWizard().internalSetChange(InternalAPI.INSTANCE, null);
 		super.setVisible(visible);
 	}
 	
@@ -147,8 +147,8 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 				threshold);
 			PerformChangeOperation perform= new PerformChangeOperation(create);
 			
-			result= wizard.performFinish(InternalAPI.INSTANCE, perform);
-			wizard.setChange(InternalAPI.INSTANCE, create.getChange());
+			result= wizard.internalPerformFinish(InternalAPI.INSTANCE, perform);
+			wizard.internalSetChange(InternalAPI.INSTANCE, create.getChange());
 			if (!result)
 				return false;
 			inputStatus= new RefactoringStatus();
