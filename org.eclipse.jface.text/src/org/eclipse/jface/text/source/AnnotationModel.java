@@ -462,7 +462,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 */
 	protected Iterator getAnnotationIterator(boolean cleanup) {
 		if (cleanup)
-			cleanup(false);
+			cleanup(true);
 			
 		synchronized (fAnnotations) {
 			return new ArrayList(fAnnotations.keySet()).iterator();
