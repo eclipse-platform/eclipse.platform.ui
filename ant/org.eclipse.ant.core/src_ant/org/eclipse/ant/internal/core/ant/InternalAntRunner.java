@@ -1108,22 +1108,14 @@ public class InternalAntRunner {
 		if (commands == null) {
 			return;
 		}
-		args = (String[]) commands.toArray(new String[commands.size()]);
+		processMinusDProperties(commands);
+	}
+
+	private void processMinusDProperties(List commands) {
+		String[] args = (String[]) commands.toArray(new String[commands.size()]);
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
 			if (arg.startsWith("-D")) { //$NON-NLS-1$
-
-				/* Interestingly enough, we get to here when a user
-				 * uses -Dname=value. However, in some cases, the JDK
-				 * goes ahead and parses this out to args
-				 *   {"-Dname", "value"}
-				 * so instead of parsing on "=", we just make the "-D"
-				 * characters go away and skip one argument forward.
-				 *
-				 * I don't know how to predict when the JDK is going
-				 * to help or not, so we simply look for the equals sign.
-				 */
-
 				String name = arg.substring(2, arg.length());
 				String value = null;
 				int posEq = name.indexOf("="); //$NON-NLS-1$
@@ -1133,10 +1125,11 @@ public class InternalAntRunner {
 				} else if (posEq > 0 && posEq != name.length() - 1) {
 					value = name.substring(posEq + 1).trim();
 					name = name.substring(0, posEq);
-				} else if (i < args.length - 1) {
-					commands.remove(i);
-					name= name.substring(0, posEq);
-					value = args[++i];
+				}
+				
+				if (value == null) {
+					//the user has specified something like "-Debug"
+					continue;
 				}
 				if (userProperties == null) {
 					userProperties= new HashMap();

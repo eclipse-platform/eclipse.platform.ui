@@ -336,6 +336,29 @@ public class OptionTests extends AbstractAntTest {
 		assertNull("my.name was not set and should be null", AntTestChecker.getDefault().getUserProperty("my.name"));
 	}
 	
+	/**
+	 * Tests specifying properties when the user has incorrectly specified "-Debug"
+	 * Bug 40935
+	 */
+	public void testPropertiesWithMinusDebug() throws CoreException {
+		run("echoing.xml", new String[]{"-Debug", "-DAntTests= testing", "-Declipse.is.cool=    true"}, false);
+		assertTrue("\"-Debug\" should be flagged as an unknown argument", "Unknown argument: -Debug".equals(AntTestChecker.getDefault().getMessages().get(0)));
+		assertSuccessful();
+		assertTrue("eclipse.is.cool should have been set as true", "true".equals(AntTestChecker.getDefault().getUserProperty("eclipse.is.cool")));
+		assertTrue("AntTests should have a value of testing", "testing".equals(AntTestChecker.getDefault().getUserProperty("AntTests")));
+		assertNull("my.name was not set and should be null", AntTestChecker.getDefault().getUserProperty("my.name"));
+	}
+	
+	/**
+	 * Tests when the user has incorrectly specified "-Debug"
+	 * Bug 40935
+	 */
+	public void testMinusDebug() throws CoreException {
+		run("echoing.xml", new String[]{"-Debug"});
+		assertTrue("\"-Debug\" should be flagged as an unknown argument", "Unknown argument: -Debug".equals(AntTestChecker.getDefault().getMessages().get(0)));
+		assertSuccessful();
+	}
+	
 	public void testPropertyFileWithNoArg() throws CoreException {
 		try {
 			run("TestForEcho.xml", new String[]{"-propertyfile"});
