@@ -153,8 +153,8 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 			if (fPartTarget == null) {
 				IAdapterManager adapterManager = Platform.getAdapterManager();
 				// TODO: we could restrict loading to cases when the debugging context is on
-				if (adapterManager.hasAdapter(targetEditor, "org.eclipse.debug.internal.ui.actions.IRunToLineTarget")) { //$NON-NLS-1$
-					fPartTarget = (IRunToLineTarget) adapterManager.loadAdapter(targetEditor, "org.eclipse.debug.internal.ui.actions.IRunToLineTarget"); //$NON-NLS-1$
+				if (adapterManager.hasAdapter(targetEditor, "org.eclipse.debug.ui.actions.IRunToLineTarget")) { //$NON-NLS-1$
+					fPartTarget = (IRunToLineTarget) adapterManager.loadAdapter(targetEditor, "org.eclipse.debug.ui.actions.IRunToLineTarget"); //$NON-NLS-1$
 				}
 			}
 		}
