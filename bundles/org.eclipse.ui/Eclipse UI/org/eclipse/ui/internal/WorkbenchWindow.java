@@ -985,7 +985,7 @@ private void updateTitle() {
 		IPerspectiveDescriptor persp = activePage.getPerspective();
 		String label = persp.getLabel();
 		IAdaptable input = activePage.getInput();
-		if((input != null) && (activePage.getInput() != ResourcesPlugin.getWorkspace().getRoot()))
+		if((input != null) && (!input.equals(ResourcesPlugin.getWorkspace().getRoot())))
 			label = activePage.getLabel();
 		title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] {label, title}); //$NON-NLS-1$
 	}
