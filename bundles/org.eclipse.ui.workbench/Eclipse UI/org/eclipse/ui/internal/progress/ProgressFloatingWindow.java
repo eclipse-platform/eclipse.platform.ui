@@ -173,8 +173,8 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		size.x += 5;
 		size.y += 5;
 		int maxSize = getMaximumSize(viewer.getTable().getDisplay());
-		if (size.x > maxSize);
-		size.x = maxSize;
+		if (size.x > maxSize)
+			size.x = maxSize;
 		getShell().setSize(size);
 		moveShell(getShell());
 		setRegion();
