@@ -16,7 +16,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.action.IAction;
 
 /**
- * 
+ * Abstract action which automatically groups all breakpoints in the breakpoint manager
  */
 public abstract class AbstractGroupBreakpointsAction extends AbstractBreakpointsViewAction {
 
@@ -35,6 +35,14 @@ public abstract class AbstractGroupBreakpointsAction extends AbstractBreakpoints
         }
     }
     
+    /**
+     * Returns the group into which the given breakpoint should be placed or
+     * <code>null</code>.
+     * 
+     * @param breakpoint the breakpoint
+     * @return the group into which the given breakpoint should be placed (may
+     *  be <code>null</code>).
+     */
     protected abstract String getGroup(IBreakpoint breakpoint);
 
 }

@@ -71,7 +71,13 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * Attribute name for the <code>"markerType"</code> attribute of
 	 * a breakpoint extension.
 	 */
-	private static final String MARKER_TYPE= "markerType";	 //$NON-NLS-1$	
+	private static final String MARKER_TYPE= "markerType";	 //$NON-NLS-1$
+	
+	/**
+	 * Attribute name for the <code>"name"</code> attribute of a
+	 * breakpoint extension.
+	 */
+	private static final String TYPE_NAME= "name"; //$NON-NLS-1$
 
 	/**
 	 * A collection of breakpoints registered with this manager.
@@ -126,13 +132,23 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * notified when this manager's enablement changes.
 	 */
 	private ListenerList fBreakpointManagerListeners= new ListenerList(2);
+	
+	/**
+	 * Collection of marker that associates marker types to breakpoint types
+	 * (user-presentable label provided via extension).
+	 * 
+	 * key: a marker type (String)
+	 * value: a breakpoint type (String)
+	 */
+    private HashMap fBreakpointTypes;
 
 	/**
 	 * Constructs a new breakpoint manager.
 	 */
 	public BreakpointManager() {
 		fMarkersToBreakpoints= new HashMap(10);	
-		fBreakpointExtensions = new HashMap(15);	
+		fBreakpointExtensions= new HashMap(15);	
+		fBreakpointTypes= new HashMap(15);
 	}
 	
 	/**
@@ -960,5 +976,23 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			return new Status(IStatus.OK, DebugPlugin.getUniqueIdentifier(), IStatus.OK, "", null); //$NON-NLS-1$
 		}
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.IBreakpointManager#getTypeName(org.eclipse.debug.core.model.IBreakpoint)
+     */
+    public String getTypeName(IBreakpoint breakpoint) {
+        String typeName= null;
+        IMarker marker = breakpoint.getMarker();
+        if (marker != null) {
+            try {
+                IConfigurationElement element = (IConfigurationElement) fBreakpointExtensions.get(marker.getType());
+                if (element != null) {
+                    typeName= element.getAttribute(TYPE_NAME);
+                }
+            } catch (CoreException e) {
+            }
+        }
+        return typeName;
+    }
 }
 

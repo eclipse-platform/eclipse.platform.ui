@@ -236,6 +236,17 @@ public interface IBreakpointManager {
 	 * @since 3.0
 	 */
 	public void setEnabled(boolean enabled);
+
+    /**
+     * Returns the name (user presentable String) of the given
+     * breakpoint's type or <code>null</code> if none has been
+     * specified.
+     * 
+     * @param breakpoint the breakpoint
+     * @return the name of the given breakpoint's type or <code>null</code>
+     * @since 3.0
+     */
+    public String getTypeName(IBreakpoint breakpoint);
 	
 }
 

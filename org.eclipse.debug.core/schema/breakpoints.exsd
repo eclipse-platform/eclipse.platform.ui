@@ -65,6 +65,13 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  Specifies a user-presentable name for this breakpoint type. For example, &quot;Java Line Breakpoint&quot;.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

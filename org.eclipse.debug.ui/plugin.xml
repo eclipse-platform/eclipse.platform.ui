@@ -694,16 +694,16 @@
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.SetDefaultBreakpointGroupAction"
                icon="icons/full/obj16/breakpoint_group.gif"
                helpContextId="set_default_breakpoint_group_action_context"
-               label="Set Default Group..."
-               tooltip="Set Default Breakpoint Group">
+               label="%setDefaultGroup.label"
+               tooltip="%setDefaultGroup.tooltip">
          </action>
          <action
                id="org.eclipse.debug.ui.breakpointsView.toolbar.clearDefaultBreakpointGroup"
                menubarPath="defaultBreakpointGroup"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.ClearDefaultBreakpointGroupAction"
                helpContextId="clear_default_breakpoint_group_action_context"
-               label="Clear Default Group"
-               tooltip="Clear Default Breakpoint Group">
+               label="%clearDefaultGroup.label"
+               tooltip="%clearDefaultGroup.tooltip">
          </action>
       </viewContribution>
 <!-- Contributions to Expression View Toolbar -->
@@ -1036,7 +1036,7 @@
             targetID="org.eclipse.debug.ui.BreakpointView"
             id="org.eclipse.debug.ui.breakpointview.popupMenu">
          <menu
-               label="Select"
+               label="%select.label"
                path="additions"
                id="selectMenu">
             <separator
@@ -1051,26 +1051,33 @@
                id="org.eclipse.debug.ui.actions.SelectAllBreakpointsAction">
          </action>
          <menu
-               label="Group All By"
-               path="additions"
+               label="%groupAllBy.label"
+               path="breakpointGroup"
                id="groupAllByMenu">
             <separator
                   name="additions">
             </separator>
          </menu>
          <action
-               label="File"
+               label="%file.label"
                helpContextId="group_all_by_file_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.GroupAllByFileAction"
                menubarPath="groupAllByMenu/additions"
                id="org.eclipse.debug.ui.actions.GroupAllByFileAction">
          </action>
          <action
-               label="Project"
+               label="%project.label"
                helpContextId="group_all_by_project_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.GroupAllByProjectAction"
                menubarPath="groupAllByMenu/additions"
                id="org.eclipse.debug.ui.actions.GroupAllByProjectAction">
+         </action>
+         <action
+               label="%breakpointType.label"
+               helpContextId="group_all_by_type_action_context"
+               class="org.eclipse.debug.internal.ui.actions.breakpointGroups.GroupAllByTypeAction"
+               menubarPath="groupAllByMenu/additions"
+               id="org.eclipse.debug.ui.actions.GroupAllByTypeAction">
          </action>
          <action
                label="%RemoveAllAction.label"
@@ -1091,14 +1098,14 @@
             </objectClass>
          </visibility>
          <action
-               label="Select By Type"
+               label="%selectByType.label"
                helpContextId="select_breakpoints_by_type_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.SelectBreakpointsByTypeAction"
                menubarPath="selectMenu/additions"
                id="org.eclipse.debug.ui.actions.SelectBreakpointsByType">
          </action>
          <action
-               label="Select By File"
+               label="%selectByFile.label"
                helpContextId="select_breakpoints_by_file_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.SelectBreakpointsByResourceAction"
                menubarPath="selectMenu/additions"
@@ -1131,7 +1138,7 @@
                id="org.eclipse.debug.ui.actions.EnableBreakpoint">
          </action>
          <action
-               label="Add To Group"
+               label="%addToGroup.label"
                icon="icons/full/obj16/breakpoint_group.gif"
                helpContextId="add_breakpoint_to_group_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.AddBreakpointToGroupAction"
@@ -1140,7 +1147,7 @@
                id="org.eclipse.debug.ui.actions.AddBreakpointToGroup">
          </action>
          <action
-               label="Remove From Group"
+               label="%removeFromGroup.label"
                icon="icons/full/elcl16/dissolve_group.gif"
                helpContextId="remove_breakpoint_from_group_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.RemoveBreakpointFromGroupAction"
@@ -1159,7 +1166,7 @@
             </objectClass>
          </visibility>
          <action
-               label="Rename Group"
+               label="%renameGroup.label"
                helpContextId="rename_breakpoint_group_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.RenameBreakpointGroupAction"
                menubarPath="breakpointGroupGroup"
@@ -1167,7 +1174,7 @@
                id="org.eclipse.debug.ui.actions.RenameBreakpointGroup">
          </action>
          <action
-               label="Dissolve Group"
+               label="%dissolveGroup.label"
                icon="icons/full/elcl16/dissolve_group.gif"
                helpContextId="dissolve_breakpoint_group_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.DissolveBreakpointGroupAction"
