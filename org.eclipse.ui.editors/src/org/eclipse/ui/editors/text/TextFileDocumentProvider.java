@@ -79,7 +79,28 @@ import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.IElementStateListenerExtension;
 import org.eclipse.ui.texteditor.ISchedulingRuleProvider;
 
+
 /**
+ * Shared document provider specialized for {@link org.eclipse.core.resources.IFile} based domain elements.
+ * A text file document provider can have a parent document provider to which
+ * it may delegate calls i.e. instead of delegating work to a super class it
+ * delegates to a parent document provider. The parent chain acts as chain
+ * of command.
+ * <p>
+ * Text file document providers use {@linkplain org.eclipse.core.filebuffers.ITextFileBuffer text file buffers}
+ * to access he file content this allows to share it between various clients including
+ * headless ones. Text file document providers should be preferred over file document
+ * providers due to this advantage.
+ * </p>
+ * <p>
+ * Use a {@linkplain org.eclipse.ui.editors.text.ForwardingDocumentProvider forwarding document provider}
+ * if you need to ensure that all documents provided to clients are appropriately set up.
+ * </p>
+ * <p>
+ * Clients can directly instantiate and configure this class with a suitable parent
+ * document provider or provide their own subclass.
+ * </p>
+ * 
  * @since 3.0
  */
 public class TextFileDocumentProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IStorageDocumentProvider {
@@ -322,28 +343,38 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		}
 	}
 
-	/** The parent document provider */
+	/** The parent document provider. */
 	private IDocumentProvider fParentProvider;
-	/** Element information of all connected elements */
+	/** Element information of all connected elements. */
 	private final Map fFileInfoMap= new HashMap();
-	/** Map from file buffers to their connected elements */
+	/** Map from file buffers to their connected elements. */
 	private final Map fFileBufferMap= new HashMap();
-	/** The list of element state listeners */
+	/** The list of element state listeners. */
 	private List fElementStateListeners= new ArrayList();
-	/** The file buffer listener */
+	/** The file buffer listener. */
 	private final IFileBufferListener fFileBufferListener= new FileBufferListener();
-	/** The progress monitor */
+	/** The progress monitor. */
 	private IProgressMonitor fProgressMonitor;
-	/** The operation runner */
+	/** The operation runner. */
 	private WorkspaceOperationRunner fOperationRunner;
-	/** The rule factory */
+	/** The rule factory. */
 	private IResourceRuleFactory fResourceRuleFactory;
 	
 	
+	/**
+	 * Creates a new text file document provider
+	 * with no parent.
+	 */
 	public TextFileDocumentProvider()  {
 		this(null);
 	}
 	
+	/**
+	 * Creates a new text file document provider
+	 * which has the given parent provider.
+	 * 
+	 * @param parentProvider the parent document provider
+	 */
 	public TextFileDocumentProvider(IDocumentProvider parentProvider) {
 		IFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		manager.setSynchronizationContext(new UISynchronizationContext());
@@ -353,6 +384,12 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		fResourceRuleFactory= ResourcesPlugin.getWorkspace().getRuleFactory();
 	}
 	
+	/**
+	 * Sets the given parent provider as this document
+	 * provider's parent document provider.
+	 * 
+	 * @param parentProvider the parent document provider
+	 */
 	final public void setParentDocumentProvider(IDocumentProvider parentProvider)  {
 		
 		Assert.isTrue(parentProvider instanceof IDocumentProviderExtension);
@@ -394,7 +431,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 * 
 	 * @param operation the operation to be executes
 	 * @param monitor the progress monitor
-	 * @exception CoreException the operation's core exception
+	 * @throws CoreException the operation's core exception
 	 */
 	protected void executeOperation(DocumentProviderOperation operation, IProgressMonitor monitor) throws CoreException {
 		try {
@@ -440,7 +477,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 * of the given info and the given element.
 	 * 
 	 * @param element the element
-	 * @param info the element info
+	 * @param info the element's file info object
 	 */
 	private void storeFileBufferMapping(Object element, FileInfo info) {
 		Object value= fFileBufferMap.get(info.fTextFileBuffer);
@@ -457,15 +494,38 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			List list= new ArrayList(2);
 			list.add(value);
 			list.add(element);
+
 			value= list;
 		}
 		fFileBufferMap.put(info.fTextFileBuffer, value);
 	}
 
+	/**
+	 * Creates and returns a new and empty file info object.
+	 * <p>
+	 * Subclasses which extend {@link org.eclipse.ui.editors.text.TextFileDocumentProvider.FileInfo}
+	 * should override this method.
+	 * </p>
+	 * 
+	 * @return a new and empty object of type <code>FileInfo</code>
+	 */
 	protected FileInfo createEmptyFileInfo()  {
 		return new FileInfo();
 	}
 	
+	/**
+	 * Creates and returns the file info object
+	 * for the given element.
+	 * <p>
+	 * Subclasses which extend {@link org.eclipse.ui.editors.text.TextFileDocumentProvider.FileInfo}
+	 * will probably have to extend this method as well.
+	 * </p>
+	 * 
+	 * @param element the element
+	 * @return a file info object of type <code>FileInfo</code>
+	 * 			 or <code>null</code> if none can be created
+	 * @throws CoreException if the file info object could not successfully be created
+	 */
 	protected FileInfo createFileInfo(Object element) throws CoreException {
 		
 		IPath location= null;
@@ -494,6 +554,12 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		return null;
 	}
 
+	/**
+	 * Creates and returns the annotation model for the given file.
+	 * 
+	 * @param file the file
+	 * @return the file's annotation model or <code>null</code> if none
+	 */
 	protected IAnnotationModel createAnnotationModel(IFile file) {
 		return null;
 	}
@@ -524,7 +590,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 * given element from the file buffer mapping.
 	 * 
 	 * @param element the element
-	 * @param info the given element info
+	 * @param info the element's file info object
 	 */
 	private void removeFileBufferMapping(Object element, FileInfo info) {
 		Object value= fFileBufferMap.get(info.fTextFileBuffer);
@@ -541,6 +607,16 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		}
 	}
 
+	/**
+	 * Releases all resources described by given element's info object.
+	 * <p>
+	 * Subclasses which extend {@link org.eclipse.ui.editors.text.TextFileDocumentProvider.FileInfo}
+	 * will probably have to extend this method as well.
+	 * </p>
+	 * 
+	 * @param element the element
+	 * @param info the element's file info object
+	 */
 	protected void disposeFileInfo(Object element, FileInfo info) {
 		IFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		try {
@@ -553,7 +629,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	}
 	
 	/**
-	 *Returns an iterator for all the elements that are connected to this file buffer.
+	 * Returns an iterator for all the elements that are connected to this file buffer.
 	 * 
 	 * @param file the file buffer
 	 * @return an iterator for all elements connected with the given file buffer
@@ -675,6 +751,17 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		return null;
 	}
 	
+	/**
+	 * Commits the given file info's file buffer by changing the contents
+	 * of the underlying file to the contents of this file buffer. After that
+	 * call, <code>isDirty</code> returns <code>false</code> and <code>isSynchronized</code>
+	 * returns <code>true</code>.
+	 * 
+	 * @param monitor the progress monitor
+	 * @param info the element's file info object
+	 * @param overwrite indicates whether the underlying file should be overwritten if it is not synchronized with the file system
+	 * @throws CoreException if writing or accessing the underlying file fails
+	 */
 	protected void commitFileBuffer(IProgressMonitor monitor, FileInfo info, boolean overwrite) throws CoreException {
 		Assert.isNotNull(info);
 		info.fTextFileBuffer.commit(monitor, overwrite);
@@ -684,6 +771,14 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		}		
 	}
 	
+	/**
+	 * Creates the given file with the given document content.
+	 * 
+	 * @param monitor the progress monitor
+	 * @param file the file to be created
+	 * @param document the document to be written to the file
+	 * @throws CoreException if the creation of the file fails
+	 */
 	protected void createFileFromDocument(IProgressMonitor monitor, IFile file, IDocument document) throws CoreException {
 		String encoding= getCharsetForNewFile(file, document);
 		try {
@@ -1044,28 +1139,64 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		log.log(status);
 	}
 	
+	/**
+	 * Returns the system file denoted by the given info.
+	 * 
+	 * @param info the element's file info object
+	 * @return the system for the given file info
+	 */
 	protected File getSystemFile(FileInfo info)  {
 		IPath path= info.fTextFileBuffer.getLocation();
 		return FileBuffers.getSystemFileAtLocation(path);
 	}
 	
+	/**
+	 * Returns whether the system file denoted by
+	 * the given info is read-only.
+	 * 
+	 * @param info the element's file info object
+	 * @return <code>true</code> iff read-only
+	 */
 	protected boolean isSystemFileReadOnly(FileInfo info)  {
 		File file= getSystemFile(info);
 		return file == null ? true : !file.canWrite();
 	}
 	
+	/**
+	 * Returns the file info object for the given element.
+	 *
+	 * @param element the element
+	 * @return the file info object, or <code>null</code> if none
+	 */
 	protected FileInfo getFileInfo(Object element)  {
 		return (FileInfo) fFileInfoMap.get(element);
 	}
 	
+	/**
+	 * Returns an iterator over the elements connected via this document provider.	
+	 *
+	 * @return an iterator over the list of elements (element type: {@link java.lang.Object}
+	 */
 	protected Iterator getConnectedElementsIterator()  {
 		return new HashSet(fFileInfoMap.keySet()).iterator();
 	}
 	
+	/**
+	 * Returns an iterator over this document provider's file info objects.	
+	 *
+	 * @return the iterator over list of file info objects (element type: {@link TextFileDocumentProvider.FileInfo}
+	 */
 	protected Iterator getFileInfosIterator()  {
 		return new ArrayList(fFileInfoMap.values()).iterator();
 	}
 	
+	/**
+	 * Informs all registered element state listeners
+	 * about the current state change of the element.
+	 *
+	 * @param element the element
+	 * @see IElementStateListenerExtension#elementStateChanging(Object)
+	 */
 	protected void fireElementStateChanging(Object element) {
 		List list= new ArrayList(fElementStateListeners);
 		Iterator e= list.iterator();
@@ -1078,6 +1209,13 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		}
 	}
 	
+	/**
+	 * Informs all registered element state listeners
+	 * about the failed state change of the element.
+	 *
+	 * @param element the element
+	 * @see IElementStateListenerExtension#elementStateChangeFailed(Object)
+	 */
 	protected void fireElementStateChangeFailed(Object element) {
 		List list= new ArrayList(fElementStateListeners);
 		Iterator e= list.iterator();
