@@ -88,7 +88,16 @@ function switchTab(nav, newTitle)
 
   	if (!newTitle)
   		newTitle = titleArray[nav];
-    NavToolbarFrame.document.navTitle.document.write(newTitle);
+  	
+  	var navTitleLayerDoc = NavToolbarFrame.document.navTitle.document;
+    navTitleLayerDoc.write('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">');
+    navTitleLayerDoc.write('<html><head>');
+    navTitleLayerDoc.write('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">');
+    navTitleLayerDoc.write('</head>');
+    navTitleLayerDoc.write('<body style="background:#D4D0C8; font-weight:bold; margin:3px; text-indent:4px; padding-left:3px;">');
+    navTitleLayerDoc.write(newTitle);
+    navTitleLayerDoc.write('</body></html>');
+    navTitleLayerDoc.close();
     
     if (nav == "toc") {
     	NavFrame.location = tocURL;
