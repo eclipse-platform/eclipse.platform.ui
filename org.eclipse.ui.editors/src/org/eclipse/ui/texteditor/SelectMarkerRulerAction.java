@@ -137,10 +137,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	protected IMarker chooseMarker(List markers) {
 		
 		AbstractMarkerAnnotationModel model= getAnnotationModel();
-		IAnnotationAccessExtension access= null;
-		Object adapter= fTextEditor.getAdapter(IAnnotationAccess.class);
-		if (adapter instanceof IAnnotationAccessExtension)
-			access= (IAnnotationAccessExtension) adapter;
+		IAnnotationAccessExtension access= getAnnotationAccessExtension();
 		
 		IMarker marker= null;
 		int maxLayer= 0;
@@ -166,6 +163,21 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 		}
 		
 		return marker;
+	}
+	
+	/**
+	 * Returns the annotation access extension.
+	 * 
+	 * @return the annotation access extension or <code>null</code> if
+	 * 			this action's editor has no such extension
+	 * @since 3.0
+	 */
+	protected IAnnotationAccessExtension  getAnnotationAccessExtension() {
+		Object adapter= fTextEditor.getAdapter(IAnnotationAccess.class);
+		if (adapter instanceof IAnnotationAccessExtension)
+			return (IAnnotationAccessExtension)adapter;
+		
+		return null;
 	}
 	
 	/** 
@@ -234,7 +246,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 
 	/**
 	 * Handles core exceptions. This implementation logs the exceptions
-	 * with the workbech plug-in and shows an error dialog.
+	 * with the workbench plug-in and shows an error dialog.
 	 *
 	 * @param exception the exception to be handled
 	 * @param message the message to be logged with the given exception
