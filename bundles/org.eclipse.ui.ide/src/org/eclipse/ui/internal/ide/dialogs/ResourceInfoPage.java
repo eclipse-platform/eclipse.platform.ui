@@ -738,13 +738,13 @@ public class ResourceInfoPage extends PropertyPage {
 							.equals(newEncoding))) {
 				try {
 					if (resource instanceof IFile)
-						((IFile) resource).setCharset(newEncoding);
+						((IFile) resource).setCharset(newEncoding,null);
 					else if (resource instanceof IContainer)
-						((IContainer) resource).setDefaultCharset(newEncoding);
+						((IContainer) resource).setDefaultCharset(newEncoding,null);
 				} catch (CoreException e) {
 					ErrorDialog.openError(getShell(), IDEWorkbenchMessages
 							.getString("InternalError"), //$NON-NLS-1$
-							e.getLocalizedMessage(), e.getStatus());
+							IDEWorkbenchMessages.getString("ResourceInfoPage.ResourceInfoMessage"), e.getStatus()); //$NON-NLS-1$
 					return false;
 				}
 			}
