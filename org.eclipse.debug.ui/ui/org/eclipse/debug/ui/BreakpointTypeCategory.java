@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.views.breakpoints;
+package org.eclipse.debug.ui;
 
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -17,11 +17,14 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * Represents a breakpoint type for breakpoint organization.
- * 
+ * Default implementation for a breakpoint type category.
+ * <p>
+ * Clients providing breakpoint type category adapters may instantiate
+ * and subclass this class.
+ * </p>
  * @since 3.1
  */
-public class BreakpointTypeCategory extends PlatformObject implements IWorkbenchAdapter {
+public class BreakpointTypeCategory extends PlatformObject implements IBreakpointTypeCategory, IWorkbenchAdapter {
 
 	private String fName;
 	
@@ -39,7 +42,7 @@ public class BreakpointTypeCategory extends PlatformObject implements IWorkbench
 	 * 
 	 * @return the name of this category's breakpoint type
 	 */
-	public String getName() {
+	protected String getName() {
 		return fName;
 	}
 	

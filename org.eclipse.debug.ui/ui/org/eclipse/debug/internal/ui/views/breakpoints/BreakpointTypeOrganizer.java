@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.AbstractBreakpointOrganizer;
+import org.eclipse.debug.ui.BreakpointTypeCategory;
+import org.eclipse.debug.ui.IBreakpointTypeCategory;
 
 /**
  * Breakpoint organizers for breakpoint types.
@@ -31,14 +33,18 @@ public class BreakpointTypeOrganizer extends AbstractBreakpointOrganizer {
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getCategories(org.eclipse.debug.core.model.IBreakpoint)
      */
     public IAdaptable[] getCategories(IBreakpoint breakpoint) {
+        IBreakpointTypeCategory category = (IBreakpointTypeCategory) breakpoint.getAdapter(IBreakpointTypeCategory.class);
+        if (category != null) {
+            return new IAdaptable[]{category};
+        }
     	String name = DebugPlugin.getDefault().getBreakpointManager().getTypeName(breakpoint);
     	if (name != null) {
-    		IAdaptable[] category = (IAdaptable[]) fTypes.get(name);
+    		IAdaptable[] categories = (IAdaptable[]) fTypes.get(name);
     		if (category == null) {
-    			category = new IAdaptable[]{new BreakpointTypeCategory(name)};
+    			categories = new IAdaptable[]{new BreakpointTypeCategory(name)};
     			fTypes.put(name, category);
     		}
-    		return category;
+    		return categories;
     	}
     	return null;
     }
