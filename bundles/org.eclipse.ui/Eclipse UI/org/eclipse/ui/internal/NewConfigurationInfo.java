@@ -64,11 +64,14 @@ public abstract class NewConfigurationInfo {
 			return;
 		}
 		if (versionId == null)
-			this.desc = reg.getPluginDescriptor(featureId);
+			desc = reg.getPluginDescriptor(featureId);
 		else {
-			this.desc = reg.getPluginDescriptor(featureId, versionId);
+			desc = reg.getPluginDescriptor(featureId, versionId);
+			if (desc == null)
+				// try ignoring the version
+				desc = reg.getPluginDescriptor(featureId);
 		}
-		if (this.desc == null) {
+		if (desc == null) {
 			reportINIFailure(null, "Missing plugin descriptor for " + featureId); //$NON-NLS-1$
 			return;
 		}
