@@ -665,4 +665,13 @@ public class NewConfigurationView
 	protected Object getRootObject() {
 		return UpdateUI.getDefault().getUpdateModel();
 	}
+	
+	protected void handleDoubleClick(DoubleClickEvent e) {
+		if (e.getSelection() instanceof IStructuredSelection) {
+			IStructuredSelection ssel = (IStructuredSelection) e.getSelection();
+			if (ssel.size() == 1 && ssel.getFirstElement() instanceof IFeatureAdapter)
+				propertiesAction.run();
+		}
+	}
+
 }
