@@ -55,6 +55,7 @@ public abstract class Page {
 		layout.numColumns = 1;
 		cheatSheetComposite.setLayout(layout);
 		cheatSheetComposite.setBackground(backgroundColor);
+		cheatSheetComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createTitleArea(cheatSheetComposite);
 		createInfoArea(cheatSheetComposite);
 	}
