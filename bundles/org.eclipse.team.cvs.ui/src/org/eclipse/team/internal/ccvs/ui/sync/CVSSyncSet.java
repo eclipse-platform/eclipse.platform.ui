@@ -65,13 +65,15 @@ public class CVSSyncSet extends SyncSet {
 			try {
 				ITeamNode node = (ITeamNode)it.next();
 				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(node.getResource());
-				if(cvsResource.isFolder()) {
-					if(!((ICVSFolder)cvsResource).isCVSFolder()) {
-						it.remove();
-					}
-				} else {
-					if(!cvsResource.isManaged()) {
-						it.remove();
+				if (cvsResource.exists()) {
+					if(cvsResource.isFolder()) {
+						if(!((ICVSFolder)cvsResource).isCVSFolder()) {
+							it.remove();
+						}
+					} else {
+						if(!cvsResource.isManaged()) {
+							it.remove();
+						}
 					}
 				}
 			} catch (CVSException e) {
