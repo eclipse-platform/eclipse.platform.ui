@@ -2,8 +2,8 @@
 
 <!-- ======================================================================= -->
 <!-- The Readme tool is a sample plugin which demonstrates many available    -->
-<!-- extension points provided by the workbench, as well as providing its own  -->
-<!-- extension point for other plugins to use.                               -->
+<!-- extension points provided by the workbench, as well as providing its    -->
+<!-- own extension point for other plugins to use.                           -->
 <!-- ======================================================================= -->
 <plugin
    name = "%Plugin.name"
@@ -26,7 +26,7 @@
    <!-- Purpose: Provide a custom parser for Readme files which determines -->
    <!--          the file's section and subsection structure               -->
    <!-- Extension Implementation: must implement                           -->
-   <!--         org.eclipse.ui.examples.readmetool.IReadmeFileParser    -->
+   <!--         org.eclipse.ui.examples.readmetool.IReadmeFileParser       -->
    <!-- ================================================================== -->
    <extension-point name="%ExtPoint.sectionParser" id="sectionParser"/>
 
