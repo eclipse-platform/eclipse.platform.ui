@@ -114,7 +114,7 @@ private final void createProjectLocationGroup(Composite parent) {
 	projectGroup.setLayout(layout);
 	projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	projectGroup.setFont(font);
-	projectGroup.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.projectContentsLabel")); //$NON-NLS-1$
+	projectGroup.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.projectContentsGroupLabel")); //$NON-NLS-1$
 
 	final Button useDefaultsButton = new Button(projectGroup, SWT.CHECK | SWT.RIGHT);
 	useDefaultsButton.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.useDefaultLabel")); //$NON-NLS-1$
