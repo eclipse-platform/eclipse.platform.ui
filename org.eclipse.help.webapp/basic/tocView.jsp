@@ -30,8 +30,13 @@
 <table border="0" cellpadding="0" cellspacing="0">
 <%
 	for (int toc=0; toc<data.getTocCount(); toc++) {
-		String icon = (data.getSelectedToc() != -1 &&
-					   data.getTocHref(data.getSelectedToc()).equals(data.getTocHref(toc))) ?
+		boolean isSelected =data.getSelectedToc() != -1 &&
+					   data.getTocHref(data.getSelectedToc()).equals(data.getTocHref(toc));
+		if(!data.isInRole(toc) && !isSelected){
+			// do not show
+			continue;
+		}
+		String icon = isSelected ?
 						prefs.getImagesDirectory()+"/toc_open.gif" :
 						prefs.getImagesDirectory()+"/toc_closed.gif";
 %>
@@ -42,7 +47,7 @@
 	</tr>
 <%
 		// Only generate the selected toc
-		if (data.getSelectedToc() != -1 && data.getTocHref(data.getSelectedToc()).equals(data.getTocHref(toc))) {
+		if (isSelected) {
 %>		
 	<tr>
 		<td align='left' nowrap>

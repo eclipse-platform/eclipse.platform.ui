@@ -123,10 +123,14 @@ if (data.isIE()){
 <body onload="onloadHandler()" onunload="onunloadHandler()">
 	<ul class='expanded' id='root'>
 <%
-	for (int toc=0; toc<data.getTocCount(); toc++) 
-	{
-		String icon = (data.getSelectedToc() != -1 &&
-					   data.getTocHref(data.getSelectedToc()).equals(data.getTocHref(toc))) ?
+	for (int toc=0; toc<data.getTocCount(); toc++) {
+		boolean isSelected =data.getSelectedToc() != -1 &&
+					   data.getTocHref(data.getSelectedToc()).equals(data.getTocHref(toc));
+		if(!data.isInRole(toc) && !isSelected){
+			// do not show
+			continue;
+		}
+		String icon = isSelected ?
 						prefs.getImagesDirectory()+"/toc_open.gif" :
 						prefs.getImagesDirectory()+"/toc_closed.gif";
 %>
@@ -134,8 +138,7 @@ if (data.isIE()){
 		<img src="<%=icon%>"><a id="b<%=toc%>" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick='loadTOC("<%=data.getTocHref(toc)%>")'><%=data.getTocLabel(toc)%></a>
 <%
 		// Only generate the selected toc
-		if (data.getSelectedToc() != -1 && data.getTocHref(data.getSelectedToc()).equals(data.getTocHref(toc)))
-		{
+		if (isSelected) {
 			data.generateToc(toc, out);
 			// keep track of the selected toc id
 %>

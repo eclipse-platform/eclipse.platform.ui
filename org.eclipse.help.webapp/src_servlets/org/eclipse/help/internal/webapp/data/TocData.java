@@ -27,7 +27,8 @@ public class TocData extends RequestData {
 	// suggested number of topic levels for large books
 	private static int dynamicLoadDepths;
 	// maximum number of topics generated when loading levels dynamically
-	// above which dynamicLoadDepths is ignored, the rest of branches will be 1 deep 
+	// above which dynamicLoadDepths is ignored, the rest of branches will be 1
+	// deep
 	private static int honorLevelsLimit;
 
 	// Request parameters
@@ -48,17 +49,21 @@ public class TocData extends RequestData {
 	// List of TOC's, unfiltered
 	private IToc[] tocs;
 	// List of TOC's, filtered by roles
-	IToc[] filteredTocs;
+	private IToc[] filteredTocs;
 
 	// images directory
 	private String imagesDirectory;
 
 	/**
 	 * Constructs the xml data for the contents page.
+	 * 
 	 * @param context
 	 * @param request
 	 */
-	public TocData(ServletContext context, HttpServletRequest request, HttpServletResponse response) {
+	public TocData(
+		ServletContext context,
+		HttpServletRequest request,
+		HttpServletResponse response) {
 		super(context, request, response);
 		if (dynamicLoadDepths < 1) {
 			WebappPreferences pref = new WebappPreferences();
@@ -98,28 +103,29 @@ public class TocData extends RequestData {
 	}
 
 	// Accessor methods to avoid exposing help classes directly to JSP.
-	// Note: this seems ok for now, but maybe we need to reconsider this 
+	// Note: this seems ok for now, but maybe we need to reconsider this
 	//       and allow help classes in JSP's.
 
 	public int getTocCount() {
 		// get filtered tocs
-		return filteredTocs.length;
+		return tocs.length;
 	}
 
 	public String getTocLabel(int i) {
-		return filteredTocs[i].getLabel();
+		return tocs[i].getLabel();
 	}
 
 	public String getTocHref(int i) {
-		return filteredTocs[i].getHref();
+		return tocs[i].getHref();
 	}
 
 	public String getTocDescriptionTopic(int i) {
-		return UrlUtil.getHelpURL(filteredTocs[i].getTopic(null).getHref());
+		return UrlUtil.getHelpURL(tocs[i].getTopic(null).getHref());
 	}
 
 	/**
 	 * Returns the selected TOC
+	 * 
 	 * @return int
 	 */
 	public int getSelectedToc() {
@@ -127,9 +133,10 @@ public class TocData extends RequestData {
 	}
 
 	/**
-	 * Returns the topic to display.
-	 * If there is a TOC, return its topic description.
-	 * Return null if no topic is specified and there is no toc description.
+	 * Returns the topic to display. If there is a TOC, return its topic
+	 * description. Return null if no topic is specified and there is no toc
+	 * description.
+	 * 
 	 * @return String
 	 */
 	public String getSelectedTopic() {
@@ -148,17 +155,27 @@ public class TocData extends RequestData {
 	}
 
 	/**
-	 * Returns a list of all the TOC's as xml elements.
-	 * Individual TOC's are not loaded yet.
+	 * Returns a list of all the TOC's as xml elements. Individual TOC's are
+	 * not loaded yet.
+	 * 
 	 * @return Element[]
 	 */
 	public IToc[] getTocs() {
 		return tocs;
 	}
 
+	/**
+	 * Check if given TOC is visible (belongs to active role)
+	 * 
+	 * @param toc
+	 * @return true if TOC should be visible
+	 */
+	public boolean isInRole(int toc) {
+		return HelpSystem.getTocManager().isTocInRole(toc, getLocale());
+	}
+
 	private void loadTocs() {
 		tocs = HelpSystem.getTocManager().getTocs(getLocale());
-		filteredTocs = HelpSystem.getTocManager().getTocs(getLocale(), true);
 		// Find the requested TOC
 		selectedToc = -1;
 		if (tocHref != null && tocHref.length() > 0) {
@@ -184,7 +201,9 @@ public class TocData extends RequestData {
 
 	/**
 	 * Finds a TOC that contains specified topic
-	 * @param topic the topic href
+	 * 
+	 * @param topic
+	 *           the topic href
 	 */
 	private int findTocContainingTopic(String topic) {
 		if (topic == null || topic.equals(""))
@@ -210,6 +229,7 @@ public class TocData extends RequestData {
 	}
 	/**
 	 * Finds topic in a TOC
+	 * 
 	 * @return ITopic or null
 	 */
 	private ITopic findTopic() {
@@ -237,6 +257,7 @@ public class TocData extends RequestData {
 
 	/**
 	 * Generates the HTML code (a tree) for a TOC.
+	 * 
 	 * @param toc
 	 * @param out
 	 * @throws IOException
@@ -287,11 +308,13 @@ public class TocData extends RequestData {
 	}
 
 	/**
-	 * 
 	 * @param topic
 	 * @param out
-	 * @param maxLevels relative number of topic levels to generate (pass <0 for inifinite), 1 generates this topic as last level topic
-	 * @param currentLevel current level of topic, 0 is first Level under TOC
+	 * @param maxLevels
+	 *           relative number of topic levels to generate (pass
+	 *           <0 for inifinite), 1 generates this topic as last level topic
+	 * @param currentLevel
+	 *           current level of topic, 0 is first Level under TOC
 	 * @throws IOException
 	 */
 	private void generateTopic(
@@ -380,6 +403,7 @@ public class TocData extends RequestData {
 
 	/**
 	 * Generates the HTML code (a tree) for a TOC.
+	 * 
 	 * @param toc
 	 * @param out
 	 * @throws IOException

@@ -44,24 +44,12 @@ public class TocManager {
 	}
 
 	/**
-	 * Returns the list of TOC's available in the help system.
-	 * If roles are enabled and filteredOnly is true, then only
-	 * return tocs available in the active roles.
+	 * Checks if a TOC is available in the active roles.
 	 */
-	public IToc[] getTocs(String locale, boolean filteredOnly) {
+	public boolean isTocInRole(int toc, String locale) {
 		IToc[] tocs = getTocs(locale); // build them all
-		if (!filteredOnly)
-			return tocs;
-		
-		ArrayList filtered = new ArrayList(tocs.length);
 		IHelpRoleManager roleManager = HelpSystem.getRoleManager();
-		for (int i=0; i<tocs.length; i++)
-			if (roleManager.isEnabled(tocs[i].getHref()))
-				filtered.add(tocs[i]);
-			
-		IToc[] filteredTocs = new IToc[filtered.size()];
-		filtered.toArray(filteredTocs);
-		return filteredTocs;
+		return roleManager.isEnabled(tocs[toc].getHref());
 	}
 	
 	/**
