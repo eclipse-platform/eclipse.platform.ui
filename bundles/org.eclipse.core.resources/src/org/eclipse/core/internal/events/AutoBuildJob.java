@@ -111,14 +111,21 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	 * as interrupted so that it will cancel and reschedule itself
 	 */
 	synchronized void interrupt() {
-		int state = getState();
-		//put the job to sleep if it is waiting to run
-		if (state == Job.WAITING) 
-			interrupted = !sleep();
-		else 
-			interrupted = state == Job.RUNNING && InternalPlatform.getDefault().getJobManager().currentJob() != this;
+		switch (getState()) {
+			case NONE:
+				return;
+			case WAITING:
+				//put the job to sleep if it is waiting to run
+				interrupted = !sleep();
+				break;
+			case RUNNING:
+				//make sure autobuild doesn't interrupt itself
+				interrupted = InternalPlatform.getDefault().getJobManager().currentJob() != this;
+				break;
+		}
 		//clear the autobuild avoidance flag if we were interrupted
-		avoidBuild = false;
+		if (interrupted)
+			avoidBuild = false;
 	}
 	private void doBuild(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		monitor = Policy.monitorFor(monitor);
@@ -144,6 +151,11 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		}
 	}
 	synchronized boolean isInterrupted() {
+		if (interrupted)
+			return true;
+		//check if another job is blocked by the build job
+		if (isBlocking())
+			interrupted = true;
 		return interrupted;
 	}
 	public void propertyChange(PropertyChangeEvent event) {

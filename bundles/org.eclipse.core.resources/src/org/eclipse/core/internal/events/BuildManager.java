@@ -163,10 +163,10 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			String message = Policy.bind("events.building.1", project.getFullPath().toString()); //$NON-NLS-1$
 			monitor.beginTask(message, Math.max(1, commands.length));
 			for (int i = 0; i < commands.length; i++) {
+				checkCanceled(trigger, monitor);
 				IProgressMonitor sub = Policy.subMonitorFor(monitor, 1);
 				BuildCommand command = (BuildCommand) commands[i];
 				basicBuild(project, trigger, command.getBuilderName(), command.getArguments(false), status, sub);
-				checkCanceled(trigger, monitor);
 			}
 		} finally {
 			monitor.done();
@@ -341,9 +341,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		//check for auto-cancel only if we are auto-building
 		if (trigger != IncrementalProjectBuilder.AUTO_BUILD)
 			return;
-		//check if another job is blocked by the build job
-		if (autoBuildJob.isBlocking())
-			autoBuildJob.interrupt();
+		//check for request to interrupt the auto-build
 		if (autoBuildJob.isInterrupted())
 			throw new OperationCanceledException();
 	}
