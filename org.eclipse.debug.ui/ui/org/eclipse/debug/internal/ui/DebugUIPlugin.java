@@ -71,9 +71,9 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.w3c.dom.Document;
 
@@ -460,26 +460,16 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	}
 	
 	/**
-	 * Save all dirty editors of all the workbench pages.
+	 * Save all dirty editors in the workbench.
 	 * Returns whether the operation succeeded.
 	 * 
 	 * @return whether all saving was completed
 	 */
-	protected static boolean saveAllPages(boolean confirm) {
+	protected static boolean saveAllEditors(boolean confirm) {
 		if (getActiveWorkbenchWindow() == null) {
 			return false;
 		}
-		IWorkbench wb = getActiveWorkbenchWindow().getWorkbench();
-		IWorkbenchWindow[] windows = wb.getWorkbenchWindows();
-		for (int i = 0; i < windows.length; i++) {
-			IWorkbenchPage[] pages = windows[i].getPages();
-			for (int j = 0; j < pages.length; j++) {
-				if (!pages[j].saveAllEditors(confirm)) {
-					return false;
-				}
-			}
-		}
-		return true;
+		return PlatformUI.getWorkbench().saveAllEditors(confirm);
 	}	
 	
 	/**
@@ -502,7 +492,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			if (saveDirty.equals(IDebugUIConstants.PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH)) {
 				prompt = true;				
 			} 
-			status = saveAllPages(prompt);
+			status = saveAllEditors(prompt);
 			if (status && !autobuilding && buildBeforeLaunch) {
 				status = doBuild();
 			}
@@ -704,7 +694,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		if (saveDirty.equals(IDebugUIConstants.PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH)) {
 			return true;
 		} else {
-			return saveAllPages(saveDirty.equals(IDebugUIConstants.PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH));
+			return saveAllEditors(saveDirty.equals(IDebugUIConstants.PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH));
 		}
 	}
 	
