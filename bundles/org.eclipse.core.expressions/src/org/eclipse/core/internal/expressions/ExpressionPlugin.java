@@ -10,17 +10,19 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
+
+import org.osgi.framework.BundleContext;
 
 public class ExpressionPlugin extends Plugin {
 	
 	private static ExpressionPlugin fgDefault;
 	
-	public ExpressionPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	private BundleContext fBundleContext;
+	
+	public ExpressionPlugin() {
 		fgDefault= this;
-	}
+	}	
 
 	public static ExpressionPlugin getDefault() {
 		return fgDefault;
@@ -28,5 +30,24 @@ public class ExpressionPlugin extends Plugin {
 	
 	public static String getPluginId() {
 		return getDefault().getDescriptor().getUniqueIdentifier();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		fBundleContext= context;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void stop(BundleContext context) throws Exception {
+		super.stop(context);
+	}
+	
+	public BundleContext getBundleContext() {
+		return fBundleContext;
 	}
 }

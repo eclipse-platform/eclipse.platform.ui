@@ -10,21 +10,13 @@
  ******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.expressions.IPropertyTester;
 import org.eclipse.core.expressions.PropertyTester;
 
 public class TypeExtension {
 	
-	private static final String TYPE= "type"; //$NON-NLS-1$
-	private static final IPropertyTester[] EMPTY_TYPE_EXTENDER_ARRAY= new IPropertyTester[0];
 	private static final TypeExtension[] EMPTY_TYPE_EXTENSION_ARRAY= new TypeExtension[0];
 
 	/* a special property tester instance that used to signal that method searching has to continue */
@@ -48,7 +40,7 @@ public class TypeExtension {
 		
 	/* a special type extension instance that marks the end of an evaluation chain */
 	private static final TypeExtension END_POINT= new TypeExtension() {
-		/* package */ IPropertyTester findTypeExtender(TypeExtensionManager manager, String namespace, String name, String extPoint, boolean staticMethod) throws CoreException {
+		/* package */ IPropertyTester findTypeExtender(TypeExtensionManager manager, String namespace, String name, boolean staticMethod) throws CoreException {
 			return CONTINUE;
 		}
 	};
@@ -72,10 +64,11 @@ public class TypeExtension {
 		fType= type;
 	}
 	
-	/* package */ IPropertyTester findTypeExtender(TypeExtensionManager manager, String namespace, String method, String extPoint, boolean staticMethod) throws CoreException {
+	/* package */ IPropertyTester findTypeExtender(TypeExtensionManager manager, String namespace, String method, boolean staticMethod) throws CoreException {
 		synchronized (this) {
-			if (fExtenders == null)
-				initialize(extPoint);
+			if (fExtenders == null) {
+				fExtenders= manager.loadTesters(fType);
+			}
 		}
 		IPropertyTester result;
 		
@@ -131,7 +124,7 @@ public class TypeExtension {
 				}
 			}
 		}
-		result= fExtends.findTypeExtender(manager, namespace, method, extPoint, staticMethod);
+		result= fExtends.findTypeExtender(manager, namespace, method, staticMethod);
 		if (result != CONTINUE)
 			return result;
 		
@@ -150,28 +143,10 @@ public class TypeExtension {
 			}
 		}
 		for (int i= 0; i < fImplements.length; i++) {
-			result= fImplements[i].findTypeExtender(manager, namespace, method, extPoint, staticMethod);
+			result= fImplements[i].findTypeExtender(manager, namespace, method, staticMethod);
 			if (result != CONTINUE)
 				return result;
 		}
 		return CONTINUE;
-	}
-	
-	private void initialize(String extPoint) {
-		IPluginRegistry registry= Platform.getPluginRegistry();
-		IConfigurationElement[] ces= registry.getConfigurationElementsFor(
-			ExpressionPlugin.getPluginId(), 
-			extPoint); 
-		String fTypeName= fType.getName();
-		List result= new ArrayList(2);
-		for (int i= 0; i < ces.length; i++) {
-			IConfigurationElement config= ces[i];
-			if (fTypeName.equals(config.getAttribute(TYPE)))
-				result.add(new PropertyTesterDescriptor(config));
-		}
-		if (result.size() == 0)
-			fExtenders= EMPTY_TYPE_EXTENDER_ARRAY;
-		else
-			fExtenders= (IPropertyTester[])result.toArray(new IPropertyTester[result.size()]);
 	}
 }
