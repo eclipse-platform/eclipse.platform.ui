@@ -1,16 +1,13 @@
-////////////////////////////////////////////////////////////////////////////////
-//
-//		Licensed Materials - Property of IBM
-//  		xxxx-xxx
-//		(C) Copyright IBM Corp. 2004. All rights reserved.
-//		US Government Users Restricted Rights - Use, duplication or disclosure
-//		restricted by GSA ADP Schedule Contract with IBM Corp.
-//
-// The source code for this program is not published or otherwise
-// divested of its trade secrets, irrespective of what has been
-// deposited with the U.S. Copyright Office.
-//
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.io.UnsupportedEncodingException;
@@ -41,7 +38,7 @@ abstract public class AbstractTextRenderer extends AbstractMemoryRenderer implem
 		try {
 			
 			if(fCodePage == null)
-				return "";
+				return ""; //$NON-NLS-1$
 			
 			boolean invalid = false;
 			for (int i=0; i<data.length; i++)
@@ -72,7 +69,7 @@ abstract public class AbstractTextRenderer extends AbstractMemoryRenderer implem
 			return new String(byteArray, fCodePage);
 
 		} catch (UnsupportedEncodingException e) {
-			return "-- error --";
+			return "-- error --"; //$NON-NLS-1$
 		}
 	}
 	/* (non-Javadoc)
@@ -91,6 +88,4 @@ abstract public class AbstractTextRenderer extends AbstractMemoryRenderer implem
 			return new byte[0];
 		}
 	}
-
-	private static final String IBMCopyRight = "(C) Copyright IBM Corp. 2004. All rights reserved.";
 }
