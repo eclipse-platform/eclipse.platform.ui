@@ -126,7 +126,7 @@ public final class KeySupport {
 	 * accelerator value that should be checked.
 	 * 
 	 * @param event
-	 *           The event to be converted; must not be <code>null</code>.
+	 *            The event to be converted; must not be <code>null</code>.
 	 * @return The combination of the state mask and the unmodified character.
 	 */
 	public static int convertEventToModifiedAccelerator(Event event) {
@@ -142,7 +142,7 @@ public final class KeySupport {
 	 * characters are considered as their uppercase equivalents.
 	 * 
 	 * @param event
-	 *           The event to be converted; must not be <code>null</code>.
+	 *            The event to be converted; must not be <code>null</code>.
 	 * @return The combination of the state mask and the unmodified character.
 	 */
 	public static int convertEventToUnmodifiedAccelerator(Event event) {
@@ -154,14 +154,20 @@ public final class KeySupport {
 	/**
 	 * Converts the given event into an SWT accelerator value -- considering
 	 * the modified character without the shift modifier. This is the second
-	 * accelerator value that should be checked.
+	 * accelerator value that should be checked. Key strokes with alphabetic
+	 * natural keys are run through <code>convertEventToUnmodifiedAccelerator</code>
 	 * 
 	 * @param event
-	 *           The event to be converted; must not be <code>null</code>.
+	 *            The event to be converted; must not be <code>null</code>.
 	 * @return The combination of the state mask without shift, and the
 	 *         modified character.
 	 */
 	public static int convertEventToUnshiftedModifiedAccelerator(Event event) {
+		// Disregard alphabetic key strokes.
+		if (Character.isLetter((char) event.keyCode)) {
+			return convertEventToUnmodifiedAccelerator(event); 
+		}
+		
 		int modifiers = event.stateMask & (SWT.MODIFIER_MASK ^ SWT.SHIFT);
 		char character = topKey(event);
 		return modifiers + toUpperCase(character);
@@ -248,14 +254,14 @@ public final class KeySupport {
 	 * to uppercase.
 	 * 
 	 * @param event
-	 *           The event from which the fully-modified character should be
-	 *           pulled.
+	 *            The event from which the fully-modified character should be
+	 *            pulled.
 	 * @return The modified character, uppercase and without control-escaping.
 	 */
 	private static char topKey(Event event) {
 		char character = event.character;
 		boolean ctrlDown = (event.stateMask & SWT.CTRL) != 0;
-		
+
 		if (ctrlDown && event.character != event.keyCode && event.character < 0x20)
 			character += 0x40;
 
@@ -266,7 +272,7 @@ public final class KeySupport {
 	 * Makes the given character uppercase if it is a letter.
 	 * 
 	 * @param keyCode
-	 *           The character to convert.
+	 *            The character to convert.
 	 * @return The uppercase equivalent, if any; otherwise, the character
 	 *         itself.
 	 */
