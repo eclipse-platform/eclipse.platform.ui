@@ -250,21 +250,29 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 	}
 	public void registryChanged(IRegistryChangeEvent event) {
 		//find the set of changed adapter extensions
-		HashSet toRemove = new HashSet();
+		HashSet toRemove = null;
 		IExtensionDelta[] deltas = event.getExtensionDeltas();
 		String adapterId = Platform.PI_RUNTIME + '.' + Platform.PT_ADAPTERS;
+		boolean found = false;
 		for (int i = 0; i < deltas.length; i++) {
-			if (deltas[i].getKind() == IExtensionDelta.ADDED) {
+			//we only care about extensions to the adapters extension point
+			if (!adapterId.equals(deltas[i].getExtensionPoint().getUniqueIdentifier()))
+				continue;
+			found = true;
+			if (deltas[i].getKind() == IExtensionDelta.ADDED) 
 				registerExtension(deltas[i].getExtension());
-			} else {
-				if (adapterId.equals(deltas[i].getExtensionPoint().getUniqueIdentifier()))
-					toRemove.add(deltas[i].getExtension());
+			else {
+				//create the hash set lazily
+				if (toRemove == null)
+					toRemove = new HashSet();
+				toRemove.add(deltas[i].getExtension());
 			}
 		}
-		if (toRemove.isEmpty())
-			return;
 		//need to discard cached state for the changed extensions
-		flushLookup();
+		if (found)
+			flushLookup();
+		if (toRemove == null)
+			return;
 		//remove any factories belonging to extensions that are going away
 		for (Iterator it = factories.values().iterator(); it.hasNext();) {
 			for (Iterator it2 = ((List)it.next()).iterator(); it2.hasNext();) {
