@@ -48,7 +48,11 @@ public class PartTester {
     
     public static void testEditorInput(IEditorInput input) throws Exception {
         input.getAdapter(Object.class);
-        Assert.isNotNull(input.getImageDescriptor());
+        
+        // Don't test input.getImageDescriptor() -- the workbench never uses that
+        // method and most editor inputs would fail the test. It should really be
+        // deprecated.
+        
         Assert.isNotNull(input.getName());
         Assert.isNotNull(input.getToolTipText());
 
