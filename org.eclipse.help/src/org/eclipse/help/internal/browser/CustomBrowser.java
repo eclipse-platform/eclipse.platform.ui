@@ -133,10 +133,10 @@ public class CustomBrowser implements IBrowser {
 		
 		String os = System.getProperty("os.name").toLowerCase();
 		boolean isWindows = os.indexOf("windows") != -1;
-		boolean isWindows98 = isWindows && os.indexOf("98") != -1;
+		boolean isWindows98orME = isWindows && (os.indexOf("98") != -1 || os.indexOf("me") != -1);
 		
 		if (isWindows){
-			if (isWindows98)
+			if (isWindows98orME)
 				tokenList.add(0, "command");
 			else
 				tokenList.add(0, "cmd");
