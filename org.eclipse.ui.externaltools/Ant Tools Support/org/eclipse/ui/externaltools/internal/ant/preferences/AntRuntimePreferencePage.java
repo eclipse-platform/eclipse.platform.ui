@@ -69,8 +69,10 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 
 		classpathPage = new AntClasspathPage(this);
 		classpathPage.createTabItem(folder);
+		
 		tasksPage = new AntTasksPage(this);
 		tasksPage.createTabItem(folder);
+		
 		typesPage = new AntTypesPage(this);
 		typesPage.createTabItem(folder);
 
@@ -104,7 +106,7 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	public boolean performOk() {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 		
-		List contents = classpathPage.getContents();
+		List contents = classpathPage.getAntURLs();
 		if (contents != null && !contents.isEmpty()) {
 			URL[] urls = (URL[]) contents.toArray(new URL[contents.size()]);
 			prefs.setAntURLs(urls);
@@ -131,7 +133,7 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 			prefs.setCustomTypes(types);
 		}
 		
-		contents = propertiesPage.getContents();
+		contents = propertiesPage.getProperties();
 		if (contents != null && !contents.isEmpty()) {
 			Property[] properties = (Property[]) contents.toArray(new Property[contents.size()]);
 			prefs.setCustomProperties(properties);
@@ -153,7 +155,7 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	
 	protected List getLibraryURLs() {
 		List urls= new ArrayList();
-		urls.addAll(classpathPage.getContents());
+		urls.addAll(classpathPage.getAntURLs());
 		urls.addAll(classpathPage.getUserURLs());
 		return urls;
 	}
