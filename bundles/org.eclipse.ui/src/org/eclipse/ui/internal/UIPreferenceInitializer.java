@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.IPreferenceCustomization;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
-
+import org.eclipse.core.runtime.preferences.IPreferenceInitializer;
 
 /**
  * Implementation of the UI plugin's preference extension's customization element.
@@ -23,7 +22,7 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
  * 
  * @since 3.0
  */
-public class UIPreferenceInitializer implements IPreferenceCustomization {
+public class UIPreferenceInitializer implements IPreferenceInitializer {
 
     public void initializeDefaultPreferences() {
         IPreferenceStore store = UIPlugin.getDefault().getPreferenceStore();

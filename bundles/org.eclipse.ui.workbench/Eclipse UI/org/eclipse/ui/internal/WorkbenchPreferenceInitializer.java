@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.IPreferenceCustomization;
+import org.eclipse.core.runtime.preferences.IPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.util.OpenStrategy;
@@ -25,7 +25,7 @@ import org.eclipse.ui.application.IWorkbenchPreferences;
  * 
  * @since 3.0
  */
-public class WorkbenchPreferenceInitializer implements IPreferenceCustomization {
+public class WorkbenchPreferenceInitializer implements IPreferenceInitializer {
 
     public void initializeDefaultPreferences() {
         IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
