@@ -7,14 +7,17 @@ package org.eclipse.ui.actions;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
+
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -28,7 +31,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class RefreshAction extends WorkspaceAction {
+public class RefreshAction extends WorkspaceAction implements KeyListener {
 
 	/**
 	 * The id of this action.
@@ -126,4 +129,27 @@ void invokeOperation(IResource resource, IProgressMonitor monitor) throws CoreEx
 protected boolean updateSelection(IStructuredSelection s) {
 	return (super.updateSelection(s) || s.isEmpty()) && getSelectedNonResources().size() == 0;
 }
+
+/*
+ * @see KeyListener#keyReleased(KeyEvent)
+ */
+public void keyReleased(KeyEvent event) {
+
+	if (event.keyCode == SWT.F5) {
+		IStructuredSelection currentSelection = getStructuredSelection();
+		selectionChanged(StructuredSelection.EMPTY);
+		run();
+		selectionChanged(currentSelection);
+	}
+}
+
+
+/*
+ * @see KeyListener#keyPressed(KeyEvent)
+ */
+public void keyPressed(KeyEvent e) {
+	//Do nothing
+}
+
+
 }
