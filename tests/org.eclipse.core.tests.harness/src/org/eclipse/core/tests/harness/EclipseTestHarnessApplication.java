@@ -15,7 +15,6 @@ import java.lang.reflect.Method;
 import java.util.*;
 import junit.framework.Test;
 import junit.textui.TestRunner;
-import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.*;
 
 public class EclipseTestHarnessApplication implements IPlatformRunnable {
