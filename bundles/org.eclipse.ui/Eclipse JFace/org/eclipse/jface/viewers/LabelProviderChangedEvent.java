@@ -32,7 +32,7 @@ public LabelProviderChangedEvent(IBaseLabelProvider source) {
  * provided by the source for the given elements is no longer valid and should be updated.
  *
  * @param source the label provider
- * @param element the element whose label has changed
+ * @param element the elements whose labels have changed
  */
 public LabelProviderChangedEvent(IBaseLabelProvider source, Object[] newElements) {
 	super(source);
@@ -68,7 +68,7 @@ public Object getElement() {
  * Returns the elements whose labels need to be updated,
  * or <code>null</code> if all labels need to be updated.
  *
- * @return the element whose label needs to be updated or <code>null</code>
+ * @return the elements whose labels need to be updated or <code>null</code>
  */
 public Object[] getElements() {
 	if(this.elements == null)
