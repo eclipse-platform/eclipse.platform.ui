@@ -13,6 +13,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
@@ -636,7 +637,12 @@ public class DetailsForm extends PropertyWebForm {
 		image = (Image) imageCache.get(imageURL);
 		if (image == null) {
 			ImageDescriptor id = ImageDescriptor.createFromURL(imageURL);
-			image = id.createImage();
+			try {
+				image = id.createImage();
+			}
+			catch (SWTException e) {
+				image = null;
+			}
 			if (image != null)
 				imageCache.put(imageURL, image);
 		}
