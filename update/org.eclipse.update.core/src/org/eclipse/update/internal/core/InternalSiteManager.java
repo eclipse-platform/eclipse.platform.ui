@@ -184,7 +184,7 @@ public class InternalSiteManager {
 			// we either have an error in a valid XML file or the user didn't enter the real path
 			// if we have a valid error we should return it.
 			// a parsing error is returned with an enclosing InvalidSiteException
-			if (e.getException() instanceof InvalidSiteTypeException) {
+			//if (e.getException() instanceof InvalidSiteTypeException) {
 				if (url.getRef() != null) {
 					// 4 nothing we can do
 					throw newCoreException(Policy.bind("InternalSiteManager.UnableToParseURL",url.toExternalForm(),e.getMessage()), e);  //$NON-NLS-1$
@@ -223,10 +223,10 @@ public class InternalSiteManager {
 					}
 
 				}
-			} else {
+			//} else {
 				// no need to retry, we actually parsed a valid XML file, we need to rethrow the Parsing Exception
-				throw newCoreException(e.toString(), e);
-			}
+			//	throw newCoreException(e.toString(), e);
+			//}
 		}
 
 		return site;

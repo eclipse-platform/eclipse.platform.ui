@@ -97,7 +97,7 @@ public class JarVerificationService implements IFeatureVerification {
 			throw newCoreException(Policy.bind("JarVerificationService.ErrorDuringVerification"), e); //$NON-NLS-1$
 		}
 
-		switch (getResult().getResultCode()) {
+		switch (getResult().getVerificationCode()) {
 			case JarVerification.UNKNOWN_ERROR :
 				{
 					getResult().setResultCode(JarVerification.ERROR_INSTALL);

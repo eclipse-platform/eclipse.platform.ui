@@ -12,6 +12,7 @@ import java.security.cert.CertificateException;
 import java.util.*;
 import java.util.jar.*;
 
+import org.apache.xerces.utils.regex.REUtil;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
@@ -31,8 +32,7 @@ public class JarVerifier {
 	/**
 	 * List of initialized keystores
 	 */
-	List /* of KeyStore */
-	listOfKeystores;
+	private List /* of KeyStore */	listOfKeystores;
 
 	/**
 	 * Number of files in the JarFile
@@ -81,11 +81,11 @@ public class JarVerifier {
 						keystore = KeyStore.getInstance(handle.getType());
 						keystore.load(in, null); // no password
 					} catch (NoSuchAlgorithmException e) {
-						throw newCoreException(Policy.bind("JarVerifier.UnableToFindEncryption",handle.getLocation().toExternalForm()), e); //$NON-NLS-1$
+						throw newCoreException(Policy.bind("JarVerifier.UnableToFindEncryption", handle.getLocation().toExternalForm()), e); //$NON-NLS-1$
 					} catch (CertificateException e) {
-						throw newCoreException(Policy.bind("JarVerifier.UnableToLoadCertificate",handle.getLocation().toExternalForm()), e); //$NON-NLS-1$
+						throw newCoreException(Policy.bind("JarVerifier.UnableToLoadCertificate", handle.getLocation().toExternalForm()), e); //$NON-NLS-1$
 					} catch (KeyStoreException e) {
-						throw newCoreException(Policy.bind("JarVerifier.UnableToFindProviderForKeystore",handle.getType()), e); //$NON-NLS-1$
+						throw newCoreException(Policy.bind("JarVerifier.UnableToFindProviderForKeystore", handle.getType()), e); //$NON-NLS-1$
 					} finally {
 						if (in != null) {
 							try {
@@ -114,8 +114,8 @@ public class JarVerifier {
 	private void initializeVariables(File jarFile) throws IOException {
 		result = new JarVerificationResult();
 		result.setVerificationCode(JarVerification.UNKNOWN_ERROR);
-		result.setResultCode(JarVerification.ASK_USER);
-		result.setResultException(null);
+		result.setResultCode(JarVerification.ERROR_INSTALL);
+		result.setResultException(new Exception());
 		JarFile jar = new JarFile(jarFile);
 		entries = jar.size();
 		try {
@@ -150,14 +150,13 @@ public class JarVerifier {
 	/**
 	 * Throws exception or set the resultcode to UNKNOWN_ERROR
 	 */
-	private List readJarFile(final JarInputStream jis)
-		throws IOException, InterruptedException, InvocationTargetException {
+	private List readJarFile(final JarInputStream jis) throws IOException, InterruptedException, InvocationTargetException {
 		final List list = new ArrayList(0);
 
 		byte[] buffer = new byte[4096];
 		JarEntry ent;
 		if (monitor != null)
-			monitor.beginTask(Policy.bind("JarVerifier.Verify", jarFileName), entries);//$NON-NLS-1$ //$NON-NLS-2$
+			monitor.beginTask(Policy.bind("JarVerifier.Verify", jarFileName), entries); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			while ((ent = jis.getNextJarEntry()) != null) {
 				list.add(ent);
@@ -169,6 +168,7 @@ public class JarVerifier {
 			}
 		} catch (IOException e) {
 			result.setVerificationCode(JarVerification.UNKNOWN_ERROR);
+			result.setResultCode(JarVerification.ERROR_INSTALL);
 			result.setResultException(e);
 		} finally {
 			if (monitor != null)
@@ -221,6 +221,7 @@ public class JarVerifier {
 
 		} catch (Exception e) {
 			result.setVerificationCode(JarVerification.UNKNOWN_ERROR);
+			result.setResultCode(JarVerification.ERROR_INSTALL);
 			result.setResultException(e);
 		}
 
@@ -264,12 +265,13 @@ public class JarVerifier {
 			// If the JAR is signed and not valid
 			// a security exception will be thrown
 			// while reading it
-			jis = new JarInputStream(new FileInputStream(jarFile), true);
+			FileInputStream fis = new FileInputStream(jarFile);
+			jis = new JarInputStream(fis, true);
 			List filesInJar = readJarFile(jis);
 
 			// you have to read all the files once
 			// before getting the certificates 
-			if (jis.getManifest() != null) {
+			if (validJAR(jis)) {
 				Iterator iter = filesInJar.iterator();
 				boolean certificateFound = false;
 				while (iter.hasNext()) {
@@ -284,6 +286,8 @@ public class JarVerifier {
 					result.setVerificationCode(JarVerification.JAR_INTEGRITY_VERIFIED);
 				else
 					result.setVerificationCode(JarVerification.JAR_NOT_SIGNED);
+			} else {
+				result.setResultException(new Exception("The File is not a valid JAR file. The file does not contain a Manifest." + jarFile.getAbsolutePath()));
 			}
 		} catch (SecurityException e) {
 			// Jar file is signed
@@ -293,6 +297,7 @@ public class JarVerifier {
 			result.setVerificationCode(JarVerification.VERIFICATION_CANCELLED);
 		} catch (Exception e) {
 			result.setVerificationCode(JarVerification.UNKNOWN_ERROR);
+			result.setResultCode(JarVerification.ERROR_INSTALL);
 			result.setResultException(e);
 		} finally {
 			if (jis != null) {
@@ -305,13 +310,21 @@ public class JarVerifier {
 
 	}
 
+	private boolean validJAR(JarInputStream jis) {
+		Manifest result = null;
+		result = jis.getManifest();
+		if (result != null)
+			return true;
+
+		// parse the stream to find the Meta-Inf
+		return false;
+	}
+
 	/**
 	 * 
 	 */
-	private CoreException newCoreException(String s, Throwable e)
-		throws CoreException {
-		String id =
-			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+	private CoreException newCoreException(String s, Throwable e) throws CoreException {
+		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 		return new CoreException(new Status(IStatus.ERROR, id, 0, s, e));
 	}
 

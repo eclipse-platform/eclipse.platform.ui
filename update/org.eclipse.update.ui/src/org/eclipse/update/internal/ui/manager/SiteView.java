@@ -11,12 +11,15 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.internal.ui.security.AuthorizationDatabase;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.VersionedIdentifier;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.graphics.Image;
+
+import java.net.Authenticator;
 import java.util.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.core.runtime.*;
@@ -349,6 +352,9 @@ public class SiteView
 			BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 				public void run() {
 					try {
+						// reinitialize the authenticator 
+						AuthorizationDatabase auth = UpdateUIPlugin.getDefault().getDatabase();
+						if (auth!=null) auth.reset();							
 						if (obj instanceof SiteBookmark)
 							 ((SiteBookmark) obj).connect();
 						viewer.refresh(obj);

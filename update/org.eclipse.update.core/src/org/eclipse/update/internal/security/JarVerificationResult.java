@@ -98,7 +98,7 @@ public class JarVerificationResult {
 
 						for (int i = 0; i < certs.length - 1; i++) {
 							X509Certificate x509certRoot = (X509Certificate) certs[i];
-							X509Certificate x509certIssuer = (X509Certificate) certs[i];
+							X509Certificate x509certIssuer = (X509Certificate) certs[i+1];
 							if (!x509certRoot.getIssuerDN().equals(x509certIssuer.getSubjectDN())) {
 								pair.setRoot(x509certRoot);
 								if (!rootCertificatesList.contains(pair)) {
@@ -122,7 +122,7 @@ public class JarVerificationResult {
 			}
 			
 			if (rootCertificatesList.size() > 0) {
-				rootCertificates = new CertificatePair[certificates.size()];				
+				rootCertificates = new CertificatePair[rootCertificatesList.size()];				
 				rootCertificatesList.toArray(rootCertificates);
 			}
 		}

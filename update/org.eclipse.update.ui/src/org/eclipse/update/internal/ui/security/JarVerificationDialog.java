@@ -4,7 +4,10 @@ package org.eclipse.update.internal.ui.security;
  * All Rights Reserved.
  */
 
+import java.security.Principal;
 import java.security.cert.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -16,6 +19,7 @@ import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.JarContentReference;
 import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.security.*;
+import sun.security.x509.X500Name;
 
 public class JarVerificationDialog extends Dialog {
 	private JarVerificationResult _VerificationResult = null;
@@ -31,7 +35,7 @@ public class JarVerificationDialog extends Dialog {
 	/**
 	 *
 	 */
-	public JarVerificationDialog(Shell shell, JarContentReference jarReference,IFeature feature, JarVerificationResult VerificationResult) {
+	public JarVerificationDialog(Shell shell, JarContentReference jarReference, IFeature feature, JarVerificationResult VerificationResult) {
 		super(shell);
 		_fileName = jarReference.getIdentifier();
 		_VerificationResult = VerificationResult;
@@ -207,18 +211,20 @@ public class JarVerificationDialog extends Dialog {
 		StringBuffer strb = new StringBuffer();
 		strb.append(Policy.bind("JarVerificationDialog.SubjectCA")); //$NON-NLS-1$
 		strb.append("\n"); //$NON-NLS-1$
-		strb.append(Policy.bind("JarVerificationDialog.CAIssuer", certIssuer.getSubjectDN().toString())); //$NON-NLS-1$
+		strb.append(Policy.bind("JarVerificationDialog.CAIssuer", issuerString(certIssuer.getSubjectDN()))); //$NON-NLS-1$
 		strb.append("\n"); //$NON-NLS-1$
-		strb.append(Policy.bind("JarVerificationDialog.ValidBetween", certIssuer.getNotBefore().toString(), certIssuer.getNotAfter().toString())); //$NON-NLS-1$
+		strb.append(Policy.bind("JarVerificationDialog.ValidBetween", dateString(certIssuer.getNotBefore()), dateString(certIssuer.getNotAfter()))); //$NON-NLS-1$
 		strb.append(checkValidity(certIssuer));
-		strb.append("\n\n"); //$NON-NLS-1$			
-		strb.append(Policy.bind("JarVerificationDialog.RootCA")); //$NON-NLS-1$
-		strb.append("\n"); //$NON-NLS-1$
-		strb.append(Policy.bind("JarVerificationDialog.CAIssuer", certRoot.getIssuerDN().toString())); //$NON-NLS-1$
-		strb.append("\n"); //$NON-NLS-1$
-		strb.append(Policy.bind("JarVerificationDialog.ValidBetween", certRoot.getNotBefore().toString(), certRoot.getNotAfter().toString())); //$NON-NLS-1$ 
-		strb.append(checkValidity(certRoot));
-		strb.append("\n\n"); //$NON-NLS-1$	
+		if (certIssuer != null && !certIssuer.equals(certRoot)) {
+			strb.append("\n\n"); //$NON-NLS-1$				
+			strb.append(Policy.bind("JarVerificationDialog.RootCA")); //$NON-NLS-1$
+			strb.append("\n"); //$NON-NLS-1$
+			strb.append(Policy.bind("JarVerificationDialog.CAIssuer", issuerString(certIssuer.getIssuerDN()))); //$NON-NLS-1$
+			strb.append("\n"); //$NON-NLS-1$
+			strb.append(Policy.bind("JarVerificationDialog.ValidBetween", dateString(certRoot.getNotBefore()), dateString(certRoot.getNotAfter()))); //$NON-NLS-1$ 
+			strb.append(checkValidity(certRoot));
+			strb.append("\n\n"); //$NON-NLS-1$	
+		}
 		textInformation.setText(strb.toString());
 
 	}
@@ -243,4 +249,27 @@ public class JarVerificationDialog extends Dialog {
 		return trustedCertificate;
 	}
 
+	private String issuerString(Principal principal) {
+		try {
+			if (principal instanceof X500Name) {
+				String issuerString = "";
+				X500Name name = (X500Name) principal;
+				issuerString += (name.getDNQualifier() != null) ? name.getDNQualifier() + ",1" : "";
+				issuerString += name.getCommonName();
+				issuerString += (name.getOrganizationalUnit() != null) ? "," + name.getOrganizationalUnit() : "";
+				issuerString += (name.getOrganization() != null) ? "," + name.getOrganization() : "";
+				issuerString += (name.getLocality() != null) ? "," + name.getLocality() : "";
+				issuerString += (name.getCountry() != null) ? "," + name.getCountry() : "";
+				return issuerString;
+			}
+		} catch (Exception e) {
+			// FIXME should log
+		}
+		return principal.toString();
+	}
+
+	private String dateString(Date date) {
+		SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM d, yyyyy");
+		return formatter.format(date);
+	}
 }

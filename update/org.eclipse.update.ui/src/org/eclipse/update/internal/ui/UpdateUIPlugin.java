@@ -36,6 +36,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	private ResourceBundle resourceBundle;
 	private UpdateAdapterFactory adapterFactory;
 	private UpdateModel model;
+	private AuthorizationDatabase database;
 	
 	/**
 	 * The constructor.
@@ -122,7 +123,8 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		IAdapterManager manager = Platform.getAdapterManager();
 		adapterFactory = new UpdateAdapterFactory();
 		manager.registerAdapters(adapterFactory, ModelObject.class);
-		Authenticator.setDefault(new AuthorizationDatabase());
+		database = new AuthorizationDatabase();		
+		Authenticator.setDefault(database);
 	}
 	
 	public void shutdown() throws CoreException {
@@ -172,4 +174,13 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		}
 		return (IFeature[])result.toArray(new IFeature[result.size()]);
 	}
+	/**
+	 * Gets the database.
+	 * @return Returns a AuthorizationDatabase
+	 */
+	public AuthorizationDatabase getDatabase() {
+		return database;
+	}
+
+	
 }

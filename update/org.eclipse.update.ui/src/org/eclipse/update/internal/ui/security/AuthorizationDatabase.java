@@ -27,6 +27,7 @@ public class AuthorizationDatabase extends Authenticator {
 	private String requestingProtocol;
 	private String requestingPrompt;
 	private String requestingScheme;
+	private PasswordAuthentication savedPasswordAuthentication;
 
 	// fields needed for caching the password
 	public static final String INFO_PASSWORD = "org.eclipse.update.internal.ui.security.password"; //$NON-NLS-1$ 
@@ -79,6 +80,14 @@ public class AuthorizationDatabase extends Authenticator {
 		return result;
 	}
 
+	public void reset(){
+			requestingPort = 0;
+			requestingPrompt = null;
+			requestingProtocol = null;
+			requestingScheme = null;
+			requestingSite = null;
+	}
+
 	/**
 	 *
 	 */
@@ -123,7 +132,10 @@ public class AuthorizationDatabase extends Authenticator {
 
 		if (equalsPreviousRequest()) {
 			// same request, the userid/password was wrong
-			map = requestAuthenticationInfo(url, requestingPrompt, requestingScheme);
+			// or user cancelled. force a refresh
+			if (savedPasswordAuthentication != null)
+				// only prompt if the user didn't cancel
+				map = requestAuthenticationInfo(url, requestingPrompt, requestingScheme);
 		} else {
 			// save state
 			requestingPort = getRequestingPort();
@@ -143,10 +155,12 @@ public class AuthorizationDatabase extends Authenticator {
 		}
 
 		if (username!=null && password!=null){
-			return new PasswordAuthentication(username, password.toCharArray());
+			savedPasswordAuthentication =  new PasswordAuthentication(username, password.toCharArray());
+		} else {
+			savedPasswordAuthentication = null;
 		}
 
-		return null;
+		return savedPasswordAuthentication;
 
 	}
 
