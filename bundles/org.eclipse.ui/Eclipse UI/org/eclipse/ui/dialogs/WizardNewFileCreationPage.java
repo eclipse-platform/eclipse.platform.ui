@@ -85,7 +85,7 @@ public void createControl(Composite parent) {
 	topLevel.setLayout(new GridLayout());
 	topLevel.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-
+	topLevel.setFont(parent.getFont());
 	WorkbenchHelp.setHelp(topLevel, IHelpContextIds.NEW_FILE_WIZARD_PAGE);
 
 	// resource and container group
