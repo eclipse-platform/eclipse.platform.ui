@@ -180,7 +180,7 @@ function focusHandler(e)
 if (isMozilla) {
   document.addEventListener('click', mouseClickHandler, true);
   document.addEventListener('mousemove', mouseMoveHandler, true);
-  document.addEventListener("focus", focusHandler, true);
+  //document.addEventListener("focus", focusHandler, true);
 }
 else if (isIE){
   document.onclick = mouseClickHandler;
