@@ -63,10 +63,13 @@ protected IResource getResource(Object o) {
  *
  * @param target the target object
  * @param name the attribute name
- * @param value the attriute value
+ * @param value the attribute value
  * @return <code>true</code> if the attribute matches; <code>false</code> otherwise
  */
 public boolean testAttribute(Object target, String name, String value) {
+	if (!(target instanceof IResource)) {
+		return false;
+	}
 	IResource res = (IResource) target;
 	if (name.equals(NAME)) {
 		return SimpleWildcardTester.testWildcardIgnoreCase(value, 
@@ -78,8 +81,7 @@ public boolean testAttribute(Object target, String name, String value) {
 		return SimpleWildcardTester.testWildcardIgnoreCase(value, 
 			res.getFileExtension());
 	} else if (name.equals(READ_ONLY)) {
-		value = value.toLowerCase();
-		return (res.isReadOnly() == value.equals("true"));//$NON-NLS-1$
+		return (res.isReadOnly() == value.equalsIgnoreCase("true"));//$NON-NLS-1$
 	} else if (name.equals(PROJECT_NATURE)) {
 		try {
 			IProject proj = res.getProject();
@@ -88,37 +90,74 @@ public boolean testAttribute(Object target, String name, String value) {
 			return false;		
 		}
 	} else if (name.equals(PERSISTENT_PROPERTY)) {
-		String propertyName;
-		String expectedVal;
-		int i = value.indexOf('=');
-		if (i != -1) {
-			propertyName = value.substring(0, i).trim();
-			expectedVal = value.substring(i+1).trim();
-		}
-		else {
-			propertyName = value.trim();
-			expectedVal = null;
-		}
-		try {
-			QualifiedName key;
-			int dot = propertyName.lastIndexOf('.');
-			if (dot != -1) {
-				key = new QualifiedName(propertyName.substring(0, dot), propertyName.substring(dot+1));
-			}
-			else {
-				key = new QualifiedName(null, propertyName);
-			}
-			String actualVal = res.getPersistentProperty(key);
-			if (expectedVal == null) {
-				return actualVal != null;
-			}
-			else {
-				return expectedVal.equals(actualVal);
-			}
-		} catch (CoreException e) {
-			return false;		
-		}
-	}
+		return testProperty(res, true, false, value);
+	} else if (name.equals(PROJECT_PERSISTENT_PROPERTY)) {
+		return testProperty(res, true, true, value);
+	} else if (name.equals(SESSION_PROPERTY)) {
+		return testProperty(res, false, false, value);
+	} else if (name.equals(PROJECT_SESSION_PROPERTY)) {
+		return testProperty(res, false, true, value);
+	} 
 	return false;
 }
+
+/**
+ * Tests whether a session or persistent property on the resource or its project
+ * matches the given value.
+ * 
+ * @param resource the resource to check
+ * @param persistentFlag <code>true</code> for a persistent property, 
+ *    <code>false</code> for a session property
+ * @param projectFlag <code>true</code> to check the resource's project,
+ *    <code>false</code> to check the resource itself
+ * @param value the attribute value, which has either the form "propertyName"
+ *    or "propertyName=propertyValue"
+ * @return whether there is a match
+ */
+private boolean testProperty(IResource resource, boolean persistentFlag, boolean projectFlag, String value) {
+	String propertyName;
+	String expectedVal;
+	int i = value.indexOf('=');
+	if (i != -1) {
+		propertyName = value.substring(0, i).trim();
+		expectedVal = value.substring(i+1).trim();
+	}
+	else {
+		propertyName = value.trim();
+		expectedVal = null;
+	}
+	try {
+		QualifiedName key;
+		int dot = propertyName.lastIndexOf('.');
+		if (dot != -1) {
+			key = new QualifiedName(propertyName.substring(0, dot), propertyName.substring(dot+1));
+		}
+		else {
+			key = new QualifiedName(null, propertyName);
+		}
+		IResource resToCheck = projectFlag ? resource.getProject() : resource;
+		 // getProject() on workspace root can be null
+		if (resToCheck == null) {
+			return false;
+		}
+		if (persistentFlag) {
+			String actualVal = resToCheck.getPersistentProperty(key);
+			if (actualVal == null) {
+				return false;
+			}
+			return expectedVal == null || expectedVal.equals(actualVal);
+		}
+		else {
+			Object actualVal = resToCheck.getSessionProperty(key);
+			if (actualVal == null) {
+				return false;
+			}
+			return expectedVal == null || expectedVal.equals(actualVal.toString());
+		}
+	} catch (CoreException e) {
+		// ignore
+	}
+	return false;		
+}
+
 }

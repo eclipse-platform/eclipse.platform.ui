@@ -51,10 +51,38 @@ public interface IResourceActionFilter extends IActionFilter {
 	public static final String PROJECT_NATURE = "projectNature";	 //$NON-NLS-1$
 	
 	/**
-	 * An attribute indicating a persistent property value (value <code>"persistentProperty"</code>).
+	 * An attribute indicating a persistent property on the selected resource 
+	 * (value <code>"persistentProperty"</code>).
 	 * If the value is a simple string, then this simply tests for existence of the property on the resource.
 	 * If it has the format <code>"propertyName=propertyValue" this obtains the value of the property
 	 * with the specified name and tests it for equality with the specified value.
 	 */
 	public static final String PERSISTENT_PROPERTY = "persistentProperty";	 //$NON-NLS-1$
+
+	/**
+	 * An attribute indicating a persistent property on the selected resource's project. 
+	 * (value <code>"projectPersistentProperty"</code>).
+	 * If the value is a simple string, then this simply tests for existence of the property on the resource.
+	 * If it has the format <code>"propertyName=propertyValue" this obtains the value of the property
+	 * with the specified name and tests it for equality with the specified value.
+	 */
+	public static final String PROJECT_PERSISTENT_PROPERTY = "projectPersistentProperty";	 //$NON-NLS-1$
+
+	/**
+	 * An attribute indicating a session property on the selected resource 
+	 * (value <code>"sessionProperty"</code>).
+	 * If the value is a simple string, then this simply tests for existence of the property on the resource.
+	 * If it has the format <code>"propertyName=propertyValue" this obtains the value of the property
+	 * with the specified name and tests it for equality with the specified value.
+	 */
+	public static final String SESSION_PROPERTY = "sessionProperty";	 //$NON-NLS-1$
+
+	/**
+	 * An attribute indicating a session property on the selected resource's project. 
+	 * (value <code>"projectSessionProperty"</code>).
+	 * If the value is a simple string, then this simply tests for existence of the property on the resource.
+	 * If it has the format <code>"propertyName=propertyValue" this obtains the value of the property
+	 * with the specified name and tests it for equality with the specified value.
+	 */
+	public static final String PROJECT_SESSION_PROPERTY = "projectSessionProperty";	 //$NON-NLS-1$
 }
