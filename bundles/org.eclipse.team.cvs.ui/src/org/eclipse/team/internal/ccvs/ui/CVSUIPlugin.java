@@ -219,6 +219,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * @see Plugin#shutdown()
 	 */
 	public void shutdown() throws CoreException {
+		CVSDecorator.shutdownAll();
 		super.shutdown();
 		try {
 			repositoryManager.shutdown();

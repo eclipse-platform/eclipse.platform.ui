@@ -48,6 +48,8 @@ import org.eclipse.team.core.TeamPlugin;
  */
 public class CVSDecorator extends LabelProvider implements ILabelDecorator, IResourceStateChangeListener, IDecorationNotifier {
 
+	private static CVSDecorator theDecorator = null;
+	
 	// Resources that need an icon and text computed for display to the user, no order
 	private Set decoratorNeedsUpdating = Collections.synchronizedSet(new HashSet());
 
@@ -63,6 +65,9 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		decoratorUpdateThread = new Thread(new CVSDecorationRunnable(this), "CVS");
 		decoratorUpdateThread.start();
 		TeamPlugin.getManager().addResourceStateChangeListener(this);
+		
+		// temporary until the UI component properly calls dispose on decorators
+		theDecorator = this;
 	}
 
 	public String decorateText(String text, Object o) {
@@ -141,7 +146,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	 */
 	public synchronized void decorated(IResource resource, CVSDecoration decoration) {
 		// ignore resources that aren't in the workbench anymore.
-		if(resource.exists()) {
+		if(resource.exists() && !shutdown) {
 			cache.put(resource, decoration);
 			postLabelEvents(new LabelProviderChangedEvent[] { new LabelProviderChangedEvent(this, resource)});
 		}
@@ -284,6 +289,10 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		}
 	}
 
+	public static void shutdownAll() {
+		theDecorator.dispose();
+	}
+	
 	/*
 	 * @see IBaseLabelProvider#dispose()
 	 */
