@@ -44,6 +44,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.IUserInfo;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ui.DetailsDialogWithProjects;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 public class CVSRepositoryPropertiesPage extends PropertyPage {
@@ -221,6 +222,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 							CVSRepositoryLocation oldLocation = (CVSRepositoryLocation)location;
 							oldLocation.setPassword(password);
 							oldLocation.updateCache();
+							passwordChanged = false;
 							result[0] = true;
 							return;
 						}
@@ -239,14 +241,20 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 								CVSTeamProvider cvsProvider = (CVSTeamProvider)teamProvider;
 								if (cvsProvider.getCVSWorkspaceRoot().getRemoteLocation().equals(location)) {
 									projects.add(allProjects[i]);
-									break;
 								}
 							}
 						}
 						if (projects.size() > 0) {
 							// To do: warn the user
-							boolean r = MessageDialog.openConfirm(getShell(), Policy.bind("CVSRepositoryPropertiesPage.Confirm_Project_Sharing_Changes_1"), Policy.bind("CVSRepositoryPropertiesPage.There_are_projects_in_the_workspace_shared_with_this_repository._The_projects_will_be_updated_with_the_new_information_that_you_have_entered_2")); //$NON-NLS-1$ //$NON-NLS-2$
-							if (!r) {
+							DetailsDialogWithProjects dialog = new DetailsDialogWithProjects(
+								getShell(), 
+								Policy.bind("CVSRepositoryPropertiesPage.Confirm_Project_Sharing_Changes_1"), //$NON-NLS-1$
+								Policy.bind("CVSRepositoryPropertiesPage.There_are_projects_in_the_workspace_shared_with_this_repository_2"), //$NON-NLS-1$
+								Policy.bind("CVSRepositoryPropertiesPage.sharedProject", location.toString()), //$NON-NLS-1$
+								(IProject[]) projects.toArray(new IProject[projects.size()]),
+								true);
+							int r = dialog.open();
+							if (r != dialog.OK) {
 								result[0] = false;
 								return;
 							}
@@ -266,6 +274,11 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 						
 						// Dispose the old repository location
 						CVSProviderPlugin.getProvider().disposeRepository(location);
+						
+						// Set the location of the page to the new location in case Apply was chosen
+						location = newLocation;
+						connectionInfoChanged = false;
+						passwordChanged = false;
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
 					}

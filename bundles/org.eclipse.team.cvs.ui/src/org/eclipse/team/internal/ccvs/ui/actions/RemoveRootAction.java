@@ -27,6 +27,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ui.DetailsDialogWithProjects;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 
 /**
@@ -77,26 +78,32 @@ public class RemoveRootAction extends TeamAction {
 					try {
 						
 						// Check if any projects are shared with the repository
-						boolean shared = false;
 						IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+						final ArrayList shared = new ArrayList();
 						for (int j = 0; j < projects.length; j++) {
 							RepositoryProvider teamProvider = RepositoryProvider.getProvider(projects[j], CVSProviderPlugin.getTypeId());
 							if (teamProvider!=null) {
 								CVSTeamProvider cvsProvider = (CVSTeamProvider)teamProvider;
 								if (cvsProvider.getCVSWorkspaceRoot().getRemoteLocation().equals(roots[i])) {
-									shared = true;
-									break;
+									shared.add(projects[j]);
 								}
 							}
 						}
 			
 						// This will notify the RepositoryManager of the removal
-						if (shared) {
+						if (!shared.isEmpty()) {
 							Shell shell = getShell();
 							final String location = roots[i].getLocation();
 							shell.getDisplay().syncExec(new Runnable() {
 								public void run() {
-									MessageDialog.openInformation(getShell(), Policy.bind("RemoteRootAction.Unable_to_Discard_Location_1"), Policy.bind("RemoteRootAction.Projects_in_the_local_workspace_are_shared_with__2") + location); //$NON-NLS-1$ //$NON-NLS-2$
+									DetailsDialogWithProjects dialog = new DetailsDialogWithProjects(
+										getShell(), 
+										Policy.bind("RemoteRootAction.Unable_to_Discard_Location_1"), //$NON-NLS-1$
+										Policy.bind("RemoteRootAction.Projects_in_the_local_workspace_are_shared_with__2", location), //$NON-NLS-1$
+										Policy.bind("RemoteRootAction.The_projects_that_are_shared_with_the_above_repository_are__4"), //$NON-NLS-1$
+										(IProject[]) shared.toArray(new IProject[shared.size()]),
+										false);
+									dialog.open();
 								}
 							});
 						} else {
@@ -107,7 +114,7 @@ public class RemoveRootAction extends TeamAction {
 					}
 				}
 			}
-		}, Policy.bind(Policy.bind("RemoteRootAction.RemoveRootAction.removeRoot_3")), this.PROGRESS_DIALOG); //$NON-NLS-1$
+		}, Policy.bind(Policy.bind("RemoveRootAction.removeRoot_3")), this.PROGRESS_DIALOG); //$NON-NLS-1$
 
 	}
 	/*

@@ -105,7 +105,9 @@ abstract public class DetailsDialog extends Dialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Details buttons
 		okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		if (includeCancelButton()) {
+			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		}
 		detailsButton = createButton(parent, IDialogConstants.DETAILS_ID, IDialogConstants.SHOW_DETAILS_LABEL, false);
 		updateEnablements();
 	}
@@ -187,4 +189,8 @@ abstract public class DetailsDialog extends Dialog {
 	}
 	
 	abstract protected void updateEnablements();
+	
+	protected boolean includeCancelButton() {
+		return true;
+	}
 }
