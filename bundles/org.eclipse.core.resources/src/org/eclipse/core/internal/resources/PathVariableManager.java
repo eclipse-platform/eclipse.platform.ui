@@ -199,7 +199,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
 		}
-		return ResourceStatus.OK_STATUS;
+		return Status.OK_STATUS;
 	}
 	/**
 	 * @see IPathVariableManager#validateValue
@@ -209,7 +209,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 			String message = Policy.bind("pathvar.invalidValue"); //$NON-NLS-1$
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
-		return ResourceStatus.OK_STATUS;
+		return Status.OK_STATUS;
 	}
 	/**
 	 * Throws a runtime exception if the given name is not valid as a path
