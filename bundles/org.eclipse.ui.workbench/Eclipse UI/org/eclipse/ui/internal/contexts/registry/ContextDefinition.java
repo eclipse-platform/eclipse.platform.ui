@@ -11,10 +11,12 @@
 
 package org.eclipse.ui.internal.contexts.registry;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.ui.internal.util.Util;
 
@@ -23,7 +25,7 @@ public final class ContextDefinition implements Comparable, IContextDefinition {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = ContextDefinition.class.getName().hashCode();
 
-	public static Map contextDefinitionsById(List contextDefinitions, boolean allowNullIds) {
+	public static Map contextDefinitionsById(Collection contextDefinitions, boolean allowNullIds) {
 		if (contextDefinitions == null)
 			throw new NullPointerException();
 
@@ -43,7 +45,7 @@ public final class ContextDefinition implements Comparable, IContextDefinition {
 		return map;
 	}
 
-	public static Map contextDefinitionsByName(List contextDefinitions, boolean allowNullNames) {
+	public static Map contextDefinitionsByName(Collection contextDefinitions, boolean allowNullNames) {
 		if (contextDefinitions == null)
 			throw new NullPointerException();
 
@@ -56,8 +58,16 @@ public final class ContextDefinition implements Comparable, IContextDefinition {
 			IContextDefinition contextDefinition = (IContextDefinition) object;
 			String name = contextDefinition.getName();
 			
-			if (allowNullNames || name != null)
-				map.put(name, contextDefinition);									
+			if (allowNullNames || name != null) {
+				Set contextDefinitions2 = (Set) map.get(name);
+					
+				if (contextDefinitions2 == null) {
+					contextDefinitions2 = new HashSet();
+					map.put(name, contextDefinitions2);					
+				}
+	
+				contextDefinitions2.add(contextDefinition);		
+			}											
 		}				
 	
 		return map;

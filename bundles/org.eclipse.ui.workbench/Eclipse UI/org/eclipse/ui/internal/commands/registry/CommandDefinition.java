@@ -11,10 +11,12 @@
 
 package org.eclipse.ui.internal.commands.registry;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.ui.internal.util.Util;
 
@@ -23,7 +25,7 @@ public final class CommandDefinition implements ICommandDefinition {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = CommandDefinition.class.getName().hashCode();
 
-	public static Map commandDefinitionsById(List commandDefinitions, boolean allowNullIds) {
+	public static Map commandDefinitionsById(Collection commandDefinitions, boolean allowNullIds) {
 		if (commandDefinitions == null)
 			throw new NullPointerException();
 
@@ -43,7 +45,7 @@ public final class CommandDefinition implements ICommandDefinition {
 		return map;
 	}
 
-	public static Map commandDefinitionsByName(List commandDefinitions, boolean allowNullNames) {
+	public static Map commandDefinitionsByName(Collection commandDefinitions, boolean allowNullNames) {
 		if (commandDefinitions == null)
 			throw new NullPointerException();
 
@@ -56,8 +58,16 @@ public final class CommandDefinition implements ICommandDefinition {
 			ICommandDefinition commandDefinition = (ICommandDefinition) object;
 			String name = commandDefinition.getName();
 			
-			if (allowNullNames || name != null)
-				map.put(name, commandDefinition);											
+			if (allowNullNames || name != null) {
+				Set commandDefinitions2 = (Set) map.get(name);
+					
+				if (commandDefinitions2 == null) {
+					commandDefinitions2 = new HashSet();
+					map.put(name, commandDefinitions2);					
+				}
+	
+				commandDefinitions2.add(commandDefinition);		
+			}				
 		}			
 		
 		return map;

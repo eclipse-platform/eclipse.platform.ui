@@ -56,6 +56,7 @@ import org.eclipse.ui.internal.commands.registry.PluginCommandRegistry;
 import org.eclipse.ui.internal.commands.registry.PreferenceCommandRegistry;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
 
 public final class CommandManager implements ICommandManager {
 
@@ -118,8 +119,9 @@ public final class CommandManager implements ICommandManager {
 		
 		while (iterator.hasNext()) {
 			IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();
+			KeySequence keySequence = keyBindingDefinition.getKeySequence();
 			
-			if (keyBindingDefinition.getKeySequence() == null)
+			if (keySequence == null || !validateKeySequence(keySequence))
 				iterator.remove();
 		}
 	}	
@@ -134,6 +136,27 @@ public final class CommandManager implements ICommandManager {
 				iterator.remove();
 		}
 	}	
+
+	public static boolean validateKeySequence(KeySequence keySequence) {
+		List keyStrokes = keySequence.getKeyStrokes();
+		int size = keyStrokes.size();
+			
+		if (size == 0)
+			return false;
+		else 
+			for (int i = 0; i < size; i++) {
+				KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);	
+	
+				if (!validateKeyStroke(keyStroke))
+					return false;
+			}
+			
+		return true;
+	}
+
+	public static boolean validateKeyStroke(KeyStroke keyStroke) {
+		return keyStroke.getNaturalKey().equals("\u0000");
+	}
 
 	private Map actionsById = new HashMap();	
 	private List activeContextIds = Collections.EMPTY_LIST;

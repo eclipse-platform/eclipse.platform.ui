@@ -16,6 +16,7 @@ import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +68,6 @@ import org.eclipse.ui.internal.contexts.registry.IContextDefinition;
 import org.eclipse.ui.internal.contexts.registry.IContextRegistry;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ParseException;
 
 public class KeysPreferencePage extends org.eclipse.jface.preference.PreferencePage
@@ -149,56 +149,37 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		}
 	}
 
-	private static boolean validateKeySequence(KeySequence keySequence) {
-		List keyStrokes = keySequence.getKeyStrokes();
-		int size = keyStrokes.size();
-			
-		if (size == 0)
-			return false;
-		else 
-			for (int i = 0; i < size; i++) {
-				KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);	
-	
-				if (!validateKeyStroke(keyStroke))
-					return false;
-			}
-			
-		return true;
-	}
-
-	private static boolean validateKeyStroke(KeyStroke keyStroke) {
-		return keyStroke.getNaturalKey().equals("\u0000");
-	}
-
 	private Button buttonAdd;
 	private Button buttonRemove;
 	private Button buttonRestore;
-	private List categoryDefinitions;
 	private Map categoryDefinitionsById;
-	private Map categoryDefinitionsByName;
+	private Map categoryIdsByUniqueName;
+	private Map categoryUniqueNamesById;
 	private Combo comboCategory;
 	private Combo comboCommand;	
 	private Combo comboContext;
 	private Combo comboKeyConfiguration;	
 	private Combo comboKeySequence;
-	private List commandDefinitions;
-	private SortedMap commandDefinitionsById;
-	private SortedMap commandDefinitionsByName;
+	private Map commandDefinitionsById;
+	private Map commandIdsByUniqueName;
+	private Map commandUniqueNamesById;
 	private CommandManager commandManager;
-	private List contextDefinitions;
 	private Map contextDefinitionsById;
-	private Map contextDefinitionsByName;
+	private Map contextIdsByUniqueName;
+	private Map contextUniqueNamesById;
 	private ContextManager contextManager;
-	private List keyConfigurationDefinitions;
 	private Map keyConfigurationDefinitionsById;
-	private Map keyConfigurationDefinitionsByName;
+	private Map keyConfigurationIdsByUniqueName;
+	private Map keyConfigurationUniqueNamesById;
 	private Label labelCategory; 	
 	private Label labelCommand;
 	private Label labelCommandGroup; 
 	private Label labelCommandsForKeySequence;
 	private Label labelContext; 
+	private Label labelContextExtends;
 	private Label labelDescription;
 	private Label labelKeyConfiguration;
+	private Label labelKeyConfigurationExtends;
 	private Label labelKeySequence;
 	private Label labelKeySequencesForCommand;			
 	private Table tableCommandsForKeySequence;
@@ -224,10 +205,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		preferenceCommandRegistry.setActiveKeyConfigurationDefinitions(preferenceActiveKeyConfigurationDefinitions);
 		List preferenceKeyBindingDefinitions = new ArrayList();
 		KeyBindingNode.getKeyBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeyBindingDefinitions);		
-
-		// TODO remove
-		//System.out.println("outgoing: " + preferenceKeyBindingDefinitions);
-		
 		preferenceCommandRegistry.setKeyBindingDefinitions(preferenceKeyBindingDefinitions);
 		
 		try {
@@ -248,143 +225,209 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			IContextRegistry pluginContextRegistry = contextManager.getPluginContextRegistry();			
 			ICommandRegistry preferenceCommandRegistry = commandManager.getPreferenceCommandRegistry();
 			IContextRegistry preferenceContextRegistry = contextManager.getPreferenceContextRegistry();	
-			boolean categoryDefinitionsChanged = false;
 			List categoryDefinitions = new ArrayList();
 			categoryDefinitions.addAll(pluginCommandRegistry.getCategoryDefinitions());
 			categoryDefinitions.addAll(preferenceCommandRegistry.getCategoryDefinitions());
 			CommandManager.validateCategoryDefinitions(categoryDefinitions);
-	
-			if (!Util.equals(categoryDefinitions, this.categoryDefinitions)) {
-				this.categoryDefinitions = Collections.unmodifiableList(categoryDefinitions);
-				categoryDefinitionsById = Collections.unmodifiableSortedMap(new TreeMap(CategoryDefinition.categoryDefinitionsById(this.categoryDefinitions, false)));
-				categoryDefinitionsByName = Collections.unmodifiableSortedMap(new TreeMap(CategoryDefinition.categoryDefinitionsByName(this.categoryDefinitions, false)));
-				categoryDefinitionsChanged = true;
-			}
-	
-			if (categoryDefinitionsChanged) {
-				List names = new ArrayList();
-				Iterator iterator = this.categoryDefinitions.iterator();
-				
-				while (iterator.hasNext()) {
-					ICategoryDefinition categoryDefinition = (ICategoryDefinition) iterator.next();
-					
-					if (categoryDefinition != null) {
-						String name = categoryDefinition.getName();
-						names.add(name);
-					}
-				}				
+			categoryDefinitionsById = Collections.unmodifiableMap(CategoryDefinition.categoryDefinitionsById(categoryDefinitions, false));
+			Map categoryDefinitionsByName = Collections.unmodifiableMap(CategoryDefinition.categoryDefinitionsByName(categoryDefinitionsById.values(), false));
+			categoryIdsByUniqueName = new HashMap();
+			Iterator iterator = categoryDefinitionsByName.entrySet().iterator();				
 
-				Collections.sort(names, Collator.getInstance());						
-				comboCategory.setItems((String[]) names.toArray(new String[names.size()]));
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				String name = (String) entry.getKey();
+				Set categoryDefinitions2 = (Set) entry.getValue();
+				Iterator iterator2 = categoryDefinitions2.iterator();
+				
+				if (categoryDefinitions2.size() == 1) {					
+					ICategoryDefinition categoryDefinition = (ICategoryDefinition) iterator2.next(); 
+					categoryIdsByUniqueName.put(name, categoryDefinition.getId());
+				} else while (iterator2.hasNext()) {
+					ICategoryDefinition categoryDefinition = (ICategoryDefinition) iterator2.next(); 
+					String uniqueName = MessageFormat.format(Util.getString(resourceBundle, "uniqueName"), new Object[] { name, categoryDefinition.getId() }); //$NON-NLS-1$
+					categoryIdsByUniqueName.put(uniqueName, categoryDefinition.getId());							
+				}
+			}	
+
+			categoryUniqueNamesById = new HashMap();
+			iterator = categoryIdsByUniqueName.entrySet().iterator();				
+
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				categoryUniqueNamesById.put(entry.getValue(), entry.getKey());
 			}
-	
-			boolean commandDefinitionsChanged = false;
+
 			List commandDefinitions = new ArrayList();
 			commandDefinitions.addAll(pluginCommandRegistry.getCommandDefinitions());
 			commandDefinitions.addAll(preferenceCommandRegistry.getCommandDefinitions());
 			CommandManager.validateCommandDefinitions(commandDefinitions);
-	
-			if (!Util.equals(commandDefinitions, this.commandDefinitions)) {
-				this.commandDefinitions = Collections.unmodifiableList(commandDefinitions);
-				commandDefinitionsById = Collections.unmodifiableSortedMap(new TreeMap(CommandDefinition.commandDefinitionsById(this.commandDefinitions, false)));
-				commandDefinitionsByName = Collections.unmodifiableSortedMap(new TreeMap(CommandDefinition.commandDefinitionsByName(this.commandDefinitions, false)));
-				commandDefinitionsChanged = true;
-			}
+			commandDefinitionsById = Collections.unmodifiableMap(CommandDefinition.commandDefinitionsById(commandDefinitions, false));
+			Map commandDefinitionsByName = Collections.unmodifiableMap(CommandDefinition.commandDefinitionsByName(commandDefinitionsById.values(), false));
+			commandIdsByUniqueName = new HashMap();
+			iterator = commandDefinitionsByName.entrySet().iterator();				
 
-			if (commandDefinitionsChanged) {
-				List names = new ArrayList();
-				Iterator iterator = this.commandDefinitions.iterator();
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				String name = (String) entry.getKey();
+				Set commandDefinitions2 = (Set) entry.getValue();
+				Iterator iterator2 = commandDefinitions2.iterator();
 				
-				while (iterator.hasNext()) {
-					ICommandDefinition commandDefinition = (ICommandDefinition) iterator.next();
-					
-					if (commandDefinition != null) {
-						String name = commandDefinition.getName();
-						names.add(name);
-					}
-				}				
-
-				Collections.sort(names, Collator.getInstance());						
-				comboCommand.setItems((String[]) names.toArray(new String[names.size()]));
+				if (commandDefinitions2.size() == 1) {					
+					ICommandDefinition commandDefinition = (ICommandDefinition) iterator2.next(); 
+					commandIdsByUniqueName.put(name, commandDefinition.getId());
+				} else while (iterator2.hasNext()) {
+					ICommandDefinition commandDefinition = (ICommandDefinition) iterator2.next(); 
+					String uniqueName = MessageFormat.format(Util.getString(resourceBundle, "uniqueName"), new Object[] { name, commandDefinition.getId() }); //$NON-NLS-1$
+					commandIdsByUniqueName.put(uniqueName, commandDefinition.getId());							
+				}
 			}	
 
-			boolean contextDefinitionsChanged = false;
+			commandUniqueNamesById = new HashMap();
+			iterator = commandIdsByUniqueName.entrySet().iterator();				
+
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				commandUniqueNamesById.put(entry.getValue(), entry.getKey());
+			}
+
 			List contextDefinitions = new ArrayList();
 			contextDefinitions.addAll(pluginContextRegistry.getContextDefinitions());
 			contextDefinitions.addAll(preferenceContextRegistry.getContextDefinitions());
 			ContextManager.validateContextDefinitions(contextDefinitions);
-	
-			if (!Util.equals(contextDefinitions, this.contextDefinitions)) {
-				this.contextDefinitions = Collections.unmodifiableList(contextDefinitions);
-				contextDefinitionsById = Collections.unmodifiableSortedMap(new TreeMap(ContextDefinition.contextDefinitionsById(this.contextDefinitions, false)));
-				contextDefinitionsByName = Collections.unmodifiableSortedMap(new TreeMap(ContextDefinition.contextDefinitionsByName(this.contextDefinitions, false)));
-				contextDefinitionsChanged = true;
+			contextDefinitionsById = Collections.unmodifiableMap(ContextDefinition.contextDefinitionsById(contextDefinitions, false));
+			Map contextDefinitionsByName = Collections.unmodifiableMap(ContextDefinition.contextDefinitionsByName(contextDefinitionsById.values(), false));
+			contextIdsByUniqueName = new HashMap();
+			iterator = contextDefinitionsByName.entrySet().iterator();				
+
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				String name = (String) entry.getKey();
+				Set contextDefinitions2 = (Set) entry.getValue();
+				Iterator iterator2 = contextDefinitions2.iterator();
+				
+				if (contextDefinitions2.size() == 1) {					
+					IContextDefinition contextDefinition = (IContextDefinition) iterator2.next(); 
+					contextIdsByUniqueName.put(name, contextDefinition.getId());
+				} else while (iterator2.hasNext()) {
+					IContextDefinition contextDefinition = (IContextDefinition) iterator2.next(); 
+					String uniqueName = MessageFormat.format(Util.getString(resourceBundle, "uniqueName"), new Object[] { name, contextDefinition.getId() }); //$NON-NLS-1$
+					contextIdsByUniqueName.put(uniqueName, contextDefinition.getId());												
+				}
+			}	
+
+			contextUniqueNamesById = new HashMap();
+			iterator = contextIdsByUniqueName.entrySet().iterator();				
+
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				contextUniqueNamesById.put(entry.getValue(), entry.getKey());
 			}
 
-			if (contextDefinitionsChanged) {
-				List names = new ArrayList();
-				Iterator iterator = this.contextDefinitions.iterator();
-				
-				while (iterator.hasNext()) {
-					IContextDefinition contextDefinition = (IContextDefinition) iterator.next();
-					
-					if (contextDefinition != null) {
-						String name = contextDefinition.getName();
-						String parentId = contextDefinition.getParentId();
-					
-						if (parentId != null) {
-							contextDefinition = (IContextDefinition) contextDefinitionsById.get(parentId);
-						
-							if (contextDefinition != null)
-								name = MessageFormat.format(Util.getString(resourceBundle, "extends"), new Object[] { name, contextDefinition.getName() }); //$NON-NLS-1$
-						}
-
-						names.add(name);
-					}
-				}				
-
-				Collections.sort(names, Collator.getInstance());						
-				comboContext.setItems((String[]) names.toArray(new String[names.size()]));
-			}		
-
-			boolean keyConfigurationDefinitionsChanged = false;
 			List keyConfigurationDefinitions = new ArrayList();
 			keyConfigurationDefinitions.addAll(pluginCommandRegistry.getKeyConfigurationDefinitions());
 			keyConfigurationDefinitions.addAll(preferenceCommandRegistry.getKeyConfigurationDefinitions());
 			CommandManager.validateKeyConfigurationDefinitions(keyConfigurationDefinitions);
-	
-			if (!Util.equals(keyConfigurationDefinitions, this.keyConfigurationDefinitions)) {
-				this.keyConfigurationDefinitions = Collections.unmodifiableList(keyConfigurationDefinitions);
-				keyConfigurationDefinitionsById = Collections.unmodifiableSortedMap(new TreeMap(KeyConfigurationDefinition.keyConfigurationDefinitionsById(this.keyConfigurationDefinitions, false)));
-				keyConfigurationDefinitionsByName = Collections.unmodifiableSortedMap(new TreeMap(KeyConfigurationDefinition.keyConfigurationDefinitionsByName(this.keyConfigurationDefinitions, false)));
-				keyConfigurationDefinitionsChanged = true;
-			}
+			keyConfigurationDefinitionsById = Collections.unmodifiableMap(KeyConfigurationDefinition.keyConfigurationDefinitionsById(keyConfigurationDefinitions, false));
+			Map keyConfigurationDefinitionsByName = Collections.unmodifiableMap(KeyConfigurationDefinition.keyConfigurationDefinitionsByName(keyConfigurationDefinitionsById.values(), false));
+			keyConfigurationIdsByUniqueName = new HashMap();
+			iterator = keyConfigurationDefinitionsByName.entrySet().iterator();				
 
-			if (keyConfigurationDefinitionsChanged) {
-				List names = new ArrayList();
-				Iterator iterator = this.keyConfigurationDefinitions.iterator();
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				String name = (String) entry.getKey();
+				Set keyConfigurationDefinitions2 = (Set) entry.getValue();
+				Iterator iterator2 = keyConfigurationDefinitions2.iterator();
 				
-				while (iterator.hasNext()) {
-					IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) iterator.next();
-					
-					if (keyConfigurationDefinition != null) {
-						String name = keyConfigurationDefinition.getName();
-						String parentId = keyConfigurationDefinition.getParentId();
-					
-						if (parentId != null) {
-							keyConfigurationDefinition = (IKeyConfigurationDefinition) keyConfigurationDefinitionsById.get(parentId);
-						
-							if (keyConfigurationDefinition != null)
-								name = MessageFormat.format(Util.getString(resourceBundle, "extends"), new Object[] { name, keyConfigurationDefinition.getName() }); //$NON-NLS-1$
-						}
-
-						names.add(name);
-					}
-				}				
-
-				Collections.sort(names, Collator.getInstance());								
-				comboKeyConfiguration.setItems((String[]) names.toArray(new String[names.size()]));
+				if (keyConfigurationDefinitions2.size() == 1) {					
+					IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) iterator2.next(); 
+					keyConfigurationIdsByUniqueName.put(name, keyConfigurationDefinition.getId());
+				} else while (iterator2.hasNext()) {
+					IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) iterator2.next(); 
+					String uniqueName = MessageFormat.format(Util.getString(resourceBundle, "uniqueName"), new Object[] { name, keyConfigurationDefinition.getId() }); //$NON-NLS-1$
+					keyConfigurationIdsByUniqueName.put(uniqueName, keyConfigurationDefinition.getId());		
+				}
 			}	
+
+			keyConfigurationUniqueNamesById = new HashMap();
+			iterator = keyConfigurationIdsByUniqueName.entrySet().iterator();				
+
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				keyConfigurationUniqueNamesById.put(entry.getValue(), entry.getKey());
+			}
+		
+			List categoryNames = new ArrayList(categoryIdsByUniqueName.keySet());
+			Collections.sort(categoryNames, Collator.getInstance());						
+			comboCategory.setItems((String[]) categoryNames.toArray(new String[categoryNames.size()]));
+
+			List commandNames = new ArrayList(commandIdsByUniqueName.keySet());
+			Collections.sort(commandNames, Collator.getInstance());						
+			comboCommand.setItems((String[]) commandNames.toArray(new String[commandNames.size()]));
+
+			List contextNames = new ArrayList(contextIdsByUniqueName.keySet());
+			Collections.sort(contextNames, Collator.getInstance());						
+			contextNames.add(0, Util.getString(resourceBundle, "general")); //$NON-NLS-1$
+			comboContext.setItems((String[]) contextNames.toArray(new String[contextNames.size()]));
+
+			List keyConfigurationNames = new ArrayList(keyConfigurationIdsByUniqueName.keySet());
+			Collections.sort(keyConfigurationNames, Collator.getInstance());						
+			keyConfigurationNames.add(0, Util.getString(resourceBundle, "standard")); //$NON-NLS-1$
+			comboKeyConfiguration.setItems((String[]) keyConfigurationNames.toArray(new String[keyConfigurationNames.size()]));
+
+			/*
+			while (iterator.hasNext()) {
+				IContextDefinition contextDefinition = (IContextDefinition) iterator.next();
+				
+				if (contextDefinition != null) {
+					String name = contextDefinition.getName();
+					String parentId = contextDefinition.getParentId();
+				
+					if (parentId != null) {
+						contextDefinition = (IContextDefinition) contextDefinitionsById.get(parentId);
+					
+						if (contextDefinition != null)
+							name = MessageFormat.format(Util.getString(resourceBundle, "extends"), new Object[] { name, contextDefinition.getName() }); //$NON-NLS-1$
+						else 
+							name = MessageFormat.format(Util.getString(resourceBundle, "extends"), new Object[] { name, parentId }); //$NON-NLS-1$
+					} else
+						name = MessageFormat.format(Util.getString(resourceBundle, "extendsGeneral"), new Object[] { name }); //$NON-NLS-1$
+
+					contextNames.add(name);
+				}
+			}
+			
+			while (iterator.hasNext()) {
+				IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) iterator.next();
+				
+				if (keyConfigurationDefinition != null) {
+					String name = keyConfigurationDefinition.getName();
+					String parentId = keyConfigurationDefinition.getParentId();
+				
+					if (parentId != null) {
+						keyConfigurationDefinition = (IKeyConfigurationDefinition) keyConfigurationDefinitionsById.get(parentId);
+					
+						if (keyConfigurationDefinition != null)
+							name = MessageFormat.format(Util.getString(resourceBundle, "extends"), new Object[] { name, keyConfigurationDefinition.getName() }); //$NON-NLS-1$
+						else 
+							name = MessageFormat.format(Util.getString(resourceBundle, "extends"), new Object[] { name, parentId }); //$NON-NLS-1$
+					} else
+						name = MessageFormat.format(Util.getString(resourceBundle, "extendsStandard"), new Object[] { name }); //$NON-NLS-1$
+
+					keyConfigurationNames.add(name);
+				}
+			}
+			
+			Collections.sort(contextNames, Collator.getInstance());						
+			comboContext.setItems((String[]) contextNames.toArray(new String[contextNames.size()]));
+			labelContext.setVisible(!contextNames.isEmpty());
+			comboContext.setVisible(!contextNames.isEmpty());								
+			
+			Collections.sort(keyConfigurationNames, Collator.getInstance());								
+			comboKeyConfiguration.setItems((String[]) keyConfigurationNames.toArray(new String[keyConfigurationNames.size()]));
+			labelKeyConfiguration.setVisible(!keyConfigurationNames.isEmpty());
+			comboKeyConfiguration.setVisible(!keyConfigurationNames.isEmpty());
+			*/
 
 			List activeKeyConfigurationDefinitions = new ArrayList();
 			activeKeyConfigurationDefinitions.addAll(pluginCommandRegistry.getActiveKeyConfigurationDefinitions());
@@ -399,17 +442,14 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					activeKeyConfigurationId = null;
 			}
 			
+			setContextId(null);
 			setKeyConfigurationId(activeKeyConfigurationId);
 			List pluginKeyBindingDefinitions = new ArrayList(pluginCommandRegistry.getKeyBindingDefinitions());
 			CommandManager.validateKeyBindingDefinitions(pluginKeyBindingDefinitions);
 			List preferenceKeyBindingDefinitions = new ArrayList(preferenceCommandRegistry.getKeyBindingDefinitions());
-			
-			// TODO remove
-			//System.out.println("incoming: " + preferenceKeyBindingDefinitions);
-			
 			CommandManager.validateKeyBindingDefinitions(preferenceKeyBindingDefinitions);
 			tree.clear();
-			Iterator iterator = preferenceKeyBindingDefinitions.iterator();
+			iterator = preferenceKeyBindingDefinitions.iterator();
 			
 			while (iterator.hasNext()) {
 				IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();
@@ -452,7 +492,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.marginHeight = 0;
 		gridLayout.marginWidth = 0;
-		gridLayout.numColumns = 2;
+		gridLayout.numColumns = 3;
 		composite.setLayout(gridLayout);
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		composite.setLayoutData(gridData);
@@ -464,7 +504,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		comboKeyConfiguration = new Combo(composite, SWT.READ_ONLY);
 		comboKeyConfiguration.setFont(composite.getFont());
 		gridData = new GridData();
-		gridData.widthHint = 250;
+		gridData.widthHint = 200;
 		comboKeyConfiguration.setLayoutData(gridData);
 
 		comboKeyConfiguration.addSelectionListener(new SelectionAdapter() {
@@ -473,15 +513,20 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			}	
 		});
 
+		labelKeyConfigurationExtends = new Label(composite, SWT.LEFT);
+		labelKeyConfigurationExtends.setFont(composite.getFont());
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		labelKeyConfigurationExtends.setLayoutData(gridData);
+
 		Label labelSeparator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 2;
+		gridData.horizontalSpan = 3;
 		labelSeparator.setLayoutData(gridData);	
 
 		labelCommandGroup = new Label(composite, SWT.LEFT);
 		labelCommandGroup.setFont(composite.getFont());
 		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.horizontalSpan = 2;
+		gridData.horizontalSpan = 3;
 		labelCommandGroup.setLayoutData(gridData);
 		labelCommandGroup.setText(Util.getString(resourceBundle, "labelCommandGroup")); //$NON-NLS-1$
 
@@ -495,6 +540,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		comboCategory = new Combo(composite, SWT.READ_ONLY);
 		comboCategory.setFont(composite.getFont());
 		gridData = new GridData();
+		gridData.horizontalSpan = 2;
 		gridData.widthHint = 200;
 		comboCategory.setLayoutData(gridData);
 
@@ -514,6 +560,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		comboCommand = new Combo(composite, SWT.READ_ONLY);
 		comboCommand.setFont(composite.getFont());
 		gridData = new GridData();
+		gridData.horizontalSpan = 2;
 		gridData.widthHint = 300;
 		comboCommand.setLayoutData(gridData);
 
@@ -533,13 +580,14 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		textDescription = new Text(composite, SWT.BORDER | SWT.LEFT | SWT.READ_ONLY);
 		textDescription.setFont(composite.getFont());
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
 		textDescription.setLayoutData(gridData);
 
 		labelKeySequencesForCommand = new Label(composite, SWT.LEFT);
 		labelKeySequencesForCommand.setFont(composite.getFont());
 		gridData = new GridData();
 		gridData.horizontalIndent = 50;
-		gridData.horizontalSpan = 2;
+		gridData.horizontalSpan = 3;
 		labelKeySequencesForCommand.setLayoutData(gridData);
 		labelKeySequencesForCommand.setText(Util.getString(resourceBundle, "labelKeySequencesForCommand")); //$NON-NLS-1$
 
@@ -549,7 +597,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 60;
 		gridData.horizontalIndent = 50;
-		gridData.horizontalSpan = 2;
+		gridData.horizontalSpan = 3;
 		gridData.widthHint = 520;
 		tableKeySequencesForCommand.setLayoutData(gridData);
 
@@ -592,7 +640,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		comboContext = new Combo(composite, SWT.READ_ONLY);
 		comboContext.setFont(composite.getFont());
 		gridData = new GridData();
-		gridData.widthHint = 250;
+		gridData.widthHint = 200;
 		comboContext.setLayoutData(gridData);
 
 		comboContext.addSelectionListener(new SelectionAdapter() {
@@ -601,6 +649,11 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			}	
 		});
 
+		labelContextExtends = new Label(composite, SWT.LEFT);
+		labelContextExtends.setFont(composite.getFont());
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		labelContextExtends.setLayoutData(gridData);
+
 		labelKeySequence = new Label(composite, SWT.LEFT);
 		labelKeySequence.setFont(composite.getFont());
 		labelKeySequence.setText(Util.getString(resourceBundle, "labelKeySequence")); //$NON-NLS-1$
@@ -608,7 +661,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		comboKeySequence = new Combo(composite, SWT.NULL);
 		comboKeySequence.setFont(composite.getFont());
 		gridData = new GridData();
-		gridData.widthHint = 250;
+		gridData.horizontalSpan = 2;
+		gridData.widthHint = 300;
 		comboKeySequence.setLayoutData(gridData);
 
 		comboKeySequence.addModifyListener(new ModifyListener() {			
@@ -627,7 +681,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		labelCommandsForKeySequence.setFont(composite.getFont());
 		gridData = new GridData();
 		gridData.horizontalIndent = 50;
-		gridData.horizontalSpan = 2;
+		gridData.horizontalSpan = 3;
 		labelCommandsForKeySequence.setLayoutData(gridData);
 		labelCommandsForKeySequence.setText(Util.getString(resourceBundle, "labelCommandsForKeySequence")); //$NON-NLS-1$
 
@@ -637,7 +691,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 60;
 		gridData.horizontalIndent = 50;
-		gridData.horizontalSpan = 2;
+		gridData.horizontalSpan = 3;
 		gridData.widthHint = 520;
 		tableCommandsForKeySequence.setLayoutData(gridData);
 
@@ -681,7 +735,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridLayout.numColumns = 3;
 		compositeButton.setLayout(gridLayout);
 		gridData = new GridData();
-		gridData.horizontalSpan = 2;
+		gridData.horizontalSpan = 3;
 		compositeButton.setLayoutData(gridData);
 				
 		buttonAdd = new Button(compositeButton, SWT.CENTER | SWT.PUSH);
@@ -766,51 +820,19 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	}
 
 	private String getCategoryId() {
-		int selection = comboCategory.getSelectionIndex();
-		List categoryDefinitions = new ArrayList(categoryDefinitionsByName.values());			
-			
-		if (selection >= 0 && selection < categoryDefinitions.size()) {
-			ICategoryDefinition categoryDefinition = (ICategoryDefinition) categoryDefinitions.get(selection);
-			return categoryDefinition.getId();				
-		}
-			
-		return null;
+		return (String) categoryIdsByUniqueName.get(comboCategory.getText());
 	}
 	
 	private String getCommandId() {
-		int selection = comboCommand.getSelectionIndex();
-		List commandDefinitions = new ArrayList(commandDefinitionsByName.values());			
-			
-		if (selection >= 0 && selection < commandDefinitions.size()) {
-			ICommandDefinition commandDefinition = (ICommandDefinition) commandDefinitions.get(selection);
-			return commandDefinition.getId();				
-		}
-			
-		return null;
+		return (String) commandIdsByUniqueName.get(comboCommand.getText());
 	}
 	
 	private String getContextId() {
-		int selection = comboContext.getSelectionIndex();
-		List contextDefinitions = new ArrayList(contextDefinitionsByName.values());			
-		
-		if (selection >= 0 && selection < contextDefinitions.size()) {
-			IContextDefinition contextDefinition = (IContextDefinition) contextDefinitions.get(selection);
-			return contextDefinition.getId();				
-		}
-		
-		return null;
+		return comboContext.getSelectionIndex() > 0 ? (String) contextIdsByUniqueName.get(comboContext.getText()) : null;
 	}
 
 	private String getKeyConfigurationId() {
-		int selection = comboKeyConfiguration.getSelectionIndex();
-		List keyConfigurationDefinitions = new ArrayList(keyConfigurationDefinitionsByName.values());
-		
-		if (selection >= 0 && selection < keyConfigurationDefinitions.size()) {
-			IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) keyConfigurationDefinitions.get(selection);
-			return keyConfigurationDefinition.getId();				
-		}
-		
-		return null;
+		return comboKeyConfiguration.getSelectionIndex() > 0 ? (String) keyConfigurationIdsByUniqueName.get(comboKeyConfiguration.getText()) : null;
 	}
 
 	private KeySequence getKeySequence() {
@@ -879,73 +901,67 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private void setCategoryId(String categoryId) {				
 		comboCategory.clearSelection();
 		comboCategory.deselectAll();
+		String categoryUniqueName = (String) categoryUniqueNamesById.get(categoryId);
+		
+		if (categoryUniqueName != null) {
+			String items[] = comboCategory.getItems();
 			
-		if (categoryId != null) {
-			List categoryDefinitions = new ArrayList(categoryDefinitionsByName.values());			
-	
-			for (int i = 0; i < categoryDefinitions.size(); i++) {
-				ICategoryDefinition categoryDefinition = (ICategoryDefinition) categoryDefinitions.get(i);		
-					
-				if (categoryDefinition.getId().equals(categoryId)) {
+			for (int i = 0; i < items.length; i++)
+				if (categoryUniqueName.equals(items[i])) {
 					comboCategory.select(i);
 					break;		
 				}
-			}
 		}
 	}
 	
 	private void setCommandId(String commandId) {				
 		comboCommand.clearSelection();
 		comboCommand.deselectAll();
+		String commandUniqueName = (String) commandUniqueNamesById.get(commandId);
+		
+		if (commandUniqueName != null) {
+			String items[] = comboCommand.getItems();
 			
-		if (commandId != null) {
-			List commandDefinitions = new ArrayList(commandDefinitionsByName.values());			
-	
-			for (int i = 0; i < commandDefinitions.size(); i++) {
-				ICommandDefinition commandDefinition = (ICommandDefinition) commandDefinitions.get(i);		
-					
-				if (commandDefinition.getId().equals(commandId)) {
+			for (int i = 0; i < items.length; i++)
+				if (commandUniqueName.equals(items[i])) {
 					comboCommand.select(i);
 					break;		
 				}
-			}
 		}
 	}
 
 	private void setContextId(String contextId) {				
 		comboContext.clearSelection();
 		comboContext.deselectAll();
+		String contextUniqueName = (String) contextUniqueNamesById.get(contextId);
 		
-		if (contextId != null) {
-			List contextDefinitions = new ArrayList(contextDefinitionsByName.values());			
-
-			for (int i = 0; i < contextDefinitions.size(); i++) {
-				IContextDefinition contextDefinition = (IContextDefinition) contextDefinitions.get(i);		
-				
-				if (contextDefinition.getId().equals(contextId)) {
+		if (contextUniqueName != null) {
+			String items[] = comboContext.getItems();
+			
+			for (int i = 1; i < items.length; i++)
+				if (contextUniqueName.equals(items[i])) {
 					comboContext.select(i);
 					break;		
 				}
-			}
-		}
+		} else 
+			comboContext.select(0);
 	}
 
 	private void setKeyConfigurationId(String keyConfigurationId) {				
 		comboKeyConfiguration.clearSelection();
 		comboKeyConfiguration.deselectAll();
+		String keyConfigurationUniqueName = (String) keyConfigurationUniqueNamesById.get(keyConfigurationId);
 		
-		if (keyConfigurationId != null) {
-			List keyConfigurationDefinitions = new ArrayList(keyConfigurationDefinitionsByName.values());
-				
-			for (int i = 0; i < keyConfigurationDefinitions.size(); i++) {
-				IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) keyConfigurationDefinitions.get(i);		
-				
-				if (keyConfigurationDefinition.getId().equals(keyConfigurationId)) {
+		if (keyConfigurationUniqueName != null) {
+			String items[] = comboKeyConfiguration.getItems();
+			
+			for (int i = 1; i < items.length; i++)
+				if (keyConfigurationUniqueName.equals(items[i])) {
 					comboKeyConfiguration.select(i);
 					break;		
 				}
-			}
-		}
+		} else
+			comboKeyConfiguration.select(0);
 	}
 
 	private void setKeySequence(KeySequence keySequence) {
@@ -954,9 +970,13 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 	/*
 	private String bracket(String string) {
-		return string != null ? '[' + string + ']' : "[]"; //$NON-NLS-1$	
+		StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append('[');
+		stringBuffer.append(string);
+		stringBuffer.append(']');
+		return stringBuffer.toString();
 	}
-	
+
 	private void update() {
 		ICommandDefinition command = null;
 		ISelection selection = treeViewerCommands.getSelection();
@@ -1571,174 +1591,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			return (KeySequenceRecord) keySequenceRecords.get(selection);
 		else
 			return null;
-	}
-
-	private SortedMap build(SortedSet sequenceBindingSet) {
-		SortedMap tree = new TreeMap();
-		Iterator iterator = sequenceBindingSet.iterator();
-		
-		while (iterator.hasNext()) {
-			SequenceBinding sequenceBinding = (SequenceBinding) iterator.next();
-			KeySequence sequence = sequenceBinding.getSequence();
-			String configuration = sequenceBinding.getConfiguration();			
-			String command = sequenceBinding.getCommand();			
-			Path locale = SequenceMachine.getPathForLocale(sequenceBinding.getLocale());
-			Path platform = SequenceMachine.getPathForPlatform(sequenceBinding.getPlatform());
-			List paths = new ArrayList();
-			paths.add(platform);
-			paths.add(locale);
-			State platformLocale = State.create(paths);
-			Integer rank = new Integer(sequenceBinding.getRank());
-			String scope = sequenceBinding.getContext();			
-			SortedMap scopeMap = (SortedMap) tree.get(sequence);
-			
-			if (scopeMap == null) {
-				scopeMap = new TreeMap();
-				tree.put(sequence, scopeMap);
-			}
-
-			SortedMap configurationMap = (SortedMap) scopeMap.get(scope);
-			
-			if (configurationMap == null) {
-				configurationMap = new TreeMap();
-				scopeMap.put(scope, configurationMap);
-			}
-
-			SortedMap rankMap = (SortedMap) configurationMap.get(configuration);
-		
-			if (rankMap == null) {
-				rankMap = new TreeMap();	
-				configurationMap.put(configuration, rankMap);
-			}
-
-			SortedMap platformLocaleMap = (SortedMap) rankMap.get(rank);
-
-			if (platformLocaleMap == null) {
-				platformLocaleMap = new TreeMap();	
-				rankMap.put(rank, platformLocaleMap);
-			}
-
-			Set commandSet = (Set) platformLocaleMap.get(platformLocale);
-
-			if (commandSet == null) {
-				commandSet = new HashSet();	
-				platformLocaleMap.put(platformLocale, commandSet);
-			}
-
-			commandSet.add(command);										
-		}
-
-		List paths = new ArrayList();
-		paths.add(SequenceMachine.getSystemPlatform());
-		paths.add(SequenceMachine.getSystemLocale());
-		State platformLocale = State.create(paths);
-		iterator = tree.values().iterator();
-		
-		while (iterator.hasNext()) {
-			SortedMap scopeMap = (SortedMap) iterator.next();			
-			Iterator iterator2 = scopeMap.values().iterator();
-			
-			while (iterator2.hasNext()) {
-				SortedMap configurationMap = (SortedMap) iterator2.next();			
-				Iterator iterator3 = configurationMap.entrySet().iterator();
-				
-				while (iterator3.hasNext()) {
-					Map.Entry entry = (Map.Entry) iterator3.next();
-					entry.setValue(solveRankMap((SortedMap) entry.getValue(), platformLocale));
-				}
-			}
-		}
-		
-		return tree;
-	}
-
-	private CommandSetPair solveRankMap(SortedMap rankMap, State platformLocale) {
-		CommandSetPair commandSetPair = new CommandSetPair();		
-		Iterator iterator = rankMap.entrySet().iterator();
-		
-		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			Integer rank = (Integer) entry.getKey();
-			SortedMap platformLocaleMap = (SortedMap) entry.getValue();			
-			Set commandSet = solvePlatformLocaleMap(platformLocaleMap, platformLocale);
-
-			if (rank.intValue() == 0)
-				commandSetPair.customSet = commandSet;
-			else if (commandSetPair.defaultSet == null)
-				commandSetPair.defaultSet = commandSet;
-		}
-
-		return commandSetPair;
-	}
-
-	private Set solvePlatformLocaleMap(SortedMap platformLocaleMap, State platformLocale) {
-		int bestDefinedMatch = -1;
-		Set bestDefinedCommandSet = null;		
-		int bestUndefinedMatch = -1;
-		Set bestUndefinedCommandSet = null;		
-		Iterator iterator = platformLocaleMap.entrySet().iterator();
-		
-		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			State testPlatformLocale = (State) entry.getKey();
-			Set testCommandSet = (Set) entry.getValue();
-			int testMatch = testPlatformLocale.match(platformLocale);
-
-			if (testMatch >= 0) {
-				String testCommand = SequenceNode.solveCommandSet(testCommandSet);
-
-				if (testCommand != null) {
-					if (bestDefinedMatch == -1 || testMatch < bestDefinedMatch) {
-						bestDefinedMatch = testMatch;
-						bestDefinedCommandSet = testCommandSet;
-					}	
-				} else {
-					if (bestUndefinedMatch == -1 || testMatch < bestUndefinedMatch) {
-						bestUndefinedMatch = testMatch;
-						bestUndefinedCommandSet = testCommandSet;
-					}					
-				}
-			}	
-		}
-
-		return bestDefinedMatch >= 0 ? bestDefinedCommandSet : bestUndefinedCommandSet; 
-	}
-
-	private SortedSet solve(SortedMap tree) {
-		SortedSet sequenceBindingSet = new TreeSet();		
-		Iterator iterator = tree.entrySet().iterator();
-		
-		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry) iterator.next();	
-			KeySequence sequence = (KeySequence) entry.getKey();
-			SortedMap scopeMap = (SortedMap) entry.getValue();			
-			Iterator iterator2 = scopeMap.entrySet().iterator();
-			
-			while (iterator2.hasNext()) {
-				Map.Entry entry2 = (Map.Entry) iterator2.next();	
-				String scope = (String) entry2.getKey();
-				SortedMap configurationMap = (SortedMap) entry2.getValue();
-				Iterator iterator3 = configurationMap.entrySet().iterator();
-				
-				while (iterator3.hasNext()) {
-					Map.Entry entry3 = (Map.Entry) iterator3.next();					
-					String configuration = (String) entry3.getKey();
-					CommandSetPair commandSetPair = (CommandSetPair) entry3.getValue();
-					Set customSet = commandSetPair.customSet;
-					
-					if (customSet != null) {
-						Iterator iterator4 = customSet.iterator();
-						
-						while (iterator4.hasNext()) {
-							String command = (String) iterator4.next();
-							sequenceBindingSet.add(SequenceBinding.create(command, configuration, scope, Util.ZERO_LENGTH_STRING, Util.ZERO_LENGTH_STRING, null, 0, sequence));									
-						}
-					}
-				}
-			}
-		}
-		
-		return sequenceBindingSet;		
 	}
 	*/
 }

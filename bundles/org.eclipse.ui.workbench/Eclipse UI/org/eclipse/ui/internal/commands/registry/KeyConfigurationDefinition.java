@@ -11,10 +11,12 @@
 
 package org.eclipse.ui.internal.commands.registry;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.ui.internal.util.Util;
 
@@ -23,7 +25,7 @@ public final class KeyConfigurationDefinition implements IKeyConfigurationDefini
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = KeyConfigurationDefinition.class.getName().hashCode();
 
-	public static Map keyConfigurationDefinitionsById(List keyConfigurationDefinitions, boolean allowNullIds) {
+	public static Map keyConfigurationDefinitionsById(Collection keyConfigurationDefinitions, boolean allowNullIds) {
 		if (keyConfigurationDefinitions == null)
 			throw new NullPointerException();
 
@@ -43,7 +45,7 @@ public final class KeyConfigurationDefinition implements IKeyConfigurationDefini
 		return map;
 	}
 
-	public static Map keyConfigurationDefinitionsByName(List keyConfigurationDefinitions, boolean allowNullNames) {
+	public static Map keyConfigurationDefinitionsByName(Collection keyConfigurationDefinitions, boolean allowNullNames) {
 		if (keyConfigurationDefinitions == null)
 			throw new NullPointerException();
 
@@ -56,8 +58,16 @@ public final class KeyConfigurationDefinition implements IKeyConfigurationDefini
 			IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) object;
 			String name = keyConfigurationDefinition.getName();
 			
-			if (allowNullNames || name != null)
-				map.put(name, keyConfigurationDefinition);									
+			if (allowNullNames || name != null) {
+				Set keyConfigurationDefinitions2 = (Set) map.get(name);
+					
+				if (keyConfigurationDefinitions2 == null) {
+					keyConfigurationDefinitions2 = new HashSet();
+					map.put(name, keyConfigurationDefinitions2);					
+				}
+	
+				keyConfigurationDefinitions2.add(keyConfigurationDefinition);		
+			}									
 		}			
 		
 		return map;

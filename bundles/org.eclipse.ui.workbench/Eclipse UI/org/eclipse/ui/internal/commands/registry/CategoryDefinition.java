@@ -11,10 +11,12 @@
 
 package org.eclipse.ui.internal.commands.registry;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.ui.internal.util.Util;
 
@@ -23,7 +25,7 @@ public final class CategoryDefinition implements ICategoryDefinition {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = CategoryDefinition.class.getName().hashCode();
 
-	public static Map categoryDefinitionsById(List categoryDefinitions, boolean allowNullIds) {
+	public static Map categoryDefinitionsById(Collection categoryDefinitions, boolean allowNullIds) {
 		if (categoryDefinitions == null)
 			throw new NullPointerException();
 
@@ -43,7 +45,7 @@ public final class CategoryDefinition implements ICategoryDefinition {
 		return map;
 	}
 
-	public static Map categoryDefinitionsByName(List categoryDefinitions, boolean allowNullNames) {
+	public static Map categoryDefinitionsByName(Collection categoryDefinitions, boolean allowNullNames) {
 		if (categoryDefinitions == null)
 			throw new NullPointerException();
 
@@ -55,9 +57,17 @@ public final class CategoryDefinition implements ICategoryDefinition {
 			Util.assertInstance(object, ICategoryDefinition.class);			
 			ICategoryDefinition categoryDefinition = (ICategoryDefinition) object;
 			String name = categoryDefinition.getName();
-			
-			if (allowNullNames || name != null)
-				map.put(name, categoryDefinition);									
+
+			if (allowNullNames || name != null) {
+				Set categoryDefinitions2 = (Set) map.get(name);
+				
+				if (categoryDefinitions2 == null) {
+					categoryDefinitions2 = new HashSet();
+					map.put(name, categoryDefinitions2);					
+				}
+
+				categoryDefinitions2.add(categoryDefinition);								
+			}				
 		}			
 		
 		return map;
