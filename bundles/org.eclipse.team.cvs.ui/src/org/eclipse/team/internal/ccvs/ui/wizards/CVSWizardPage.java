@@ -5,8 +5,15 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
  * All Rights Reserved.
  */
 
+import java.util.Collection;
+
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -14,17 +21,21 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
  * Common superclass for CVS wizard pages. Provides convenience methods
  * for widget creation.
  */
 public abstract class CVSWizardPage extends WizardPage {
+	protected static final int LABEL_WIDTH_HINT = 400;
+	protected static final int LABEL_INDENT_WIDTH = 32;
+	protected static final int LIST_HEIGHT_HINT = 100;
+	protected static final int SPACER_HEIGHT = 8;
+
 	/**
 	 * CVSWizardPage constructor comment.
 	 * @param pageName  the name of the page
@@ -100,11 +111,46 @@ public abstract class CVSWizardPage extends WizardPage {
 	 * @return the new label
 	 */
 	protected Label createLabel(Composite parent, String text) {
+		return createIndentedLabel(parent, text, 0);
+	}
+	/**
+	 * Utility method that creates a label instance indented by the specified
+	 * number of pixels and sets the default layout data.
+	 *
+	 * @param parent  the parent for the new label
+	 * @param text  the text for the new label
+	 * @param indent  the indent in pixels, or 0 for none
+	 * @return the new label
+	 */
+	protected Label createIndentedLabel(Composite parent, String text, int indent) {
 		Label label = new Label(parent, SWT.LEFT);
 		label.setText(text);
 		GridData data = new GridData();
 		data.horizontalSpan = 1;
 		data.horizontalAlignment = GridData.FILL;
+		data.horizontalIndent = indent;
+		label.setLayoutData(data);
+		return label;
+	}
+	/**
+	 * Utility method that creates a label instance with word wrap and sets
+	 * the default layout data.
+	 *
+	 * @param parent  the parent for the new label
+	 * @param text  the text for the new label
+	 * @param indent  the indent in pixels, or 0 for none
+	 * @param widthHint  the nominal width of the label
+	 * @return the new label
+	 */
+	protected Label createWrappingLabel(Composite parent, String text, int indent, int widthHint) {
+		Label label = new Label(parent, SWT.LEFT | SWT.WRAP);
+		label.setText(text);
+		GridData data = new GridData();
+		data.horizontalSpan = 1;
+		data.horizontalAlignment = GridData.FILL;
+		data.horizontalIndent = indent;
+		data.grabExcessHorizontalSpace = true;
+		data.widthHint = widthHint;
 		label.setLayoutData(data);
 		return label;
 	}
@@ -138,5 +184,57 @@ public abstract class CVSWizardPage extends WizardPage {
 		data.horizontalSpan = span;
 		button.setLayoutData(data);
 		return button;
+	}
+	/**
+	 * Utility method to create a full width separator preceeded by a blank space
+	 * 
+	 * @param parent  the parent of the separator
+	 * @param verticalSpace  the vertical whitespace to insert before the label
+	 */
+	protected void createSeparator(Composite parent, int verticalSpace) {
+		// space
+		Label label = new Label(parent, SWT.NONE);
+		GridData data = new GridData();
+		data.heightHint = verticalSpace;
+		label.setLayoutData(data);
+		// separator
+		label = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		label.setLayoutData(data);
+	}
+	
+	/**
+	 * Creates a ListViewer whose input is a Collection of IFiles.
+	 * 
+	 * @param parent  the parent of the viewer
+	 * @param title  the text for the title label
+	 * @param heightHint  the nominal height of the list
+	 * @return the created list viewer
+	 */
+	public ListViewer createFileListViewer(Composite parent, String title, int heightHint) {
+		createLabel(parent, title);
+		ListViewer listViewer = new ListViewer(parent, SWT.READ_ONLY | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+		listViewer.setContentProvider(new IStructuredContentProvider() {
+			public Object[] getElements(Object inputElement) {
+				Collection collection = (Collection) inputElement;
+				if (collection == null) return new IFile[0];
+				return (IFile[]) collection.toArray(new IFile[collection.size()]);
+			}
+			public void dispose() {
+			}
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			}
+		});
+		listViewer.setLabelProvider(new LabelProvider() {
+			public String getText(Object element) {
+				return ((IFile) element).getFullPath().toString();
+			}
+		});
+		listViewer.setSorter(new WorkbenchViewerSorter());
+
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = heightHint;
+		listViewer.getList().setLayoutData(data);
+		return listViewer;
 	}
 }

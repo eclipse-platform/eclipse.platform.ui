@@ -7,6 +7,8 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -307,8 +309,14 @@ public class CVSProviderTest extends EclipseTest {
 		assertHasKSubstOption(project, "added.xtxt", Command.KSUBST_TEXT_EXPAND);
 		
 		// change keyword substitution
-		IStatus status = getProvider(project).setKeywordSubstitution(new IResource[] { project },
-			IResource.DEPTH_INFINITE, ksubst, null);
+		Map map = new HashMap();
+		map.put(project.getFile("binary.xbin"), ksubst);
+		map.put(project.getFile("added.xbin"), ksubst);
+		map.put(project.getFile("text.xtxt"), ksubst);
+		map.put(project.getFile("folder1/a.xtxt"), ksubst);
+		map.put(project.getFile("added.xtxt"), ksubst);
+		
+		IStatus status = getProvider(project).setKeywordSubstitution(map, null);
 		assertTrue("Status should be ok, was: " + status.toString(), status.isOK());
 		assertHasKSubstOption(project, "binary.xbin", ksubst);
 		assertHasKSubstOption(project, "text.xtxt", ksubst);
