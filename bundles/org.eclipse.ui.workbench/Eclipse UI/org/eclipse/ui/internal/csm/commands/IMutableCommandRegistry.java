@@ -16,13 +16,13 @@ import java.util.List;
 public interface IMutableCommandRegistry extends ICommandRegistry {
 
 	void setActiveKeyConfigurationDefinitions(List activeKeyConfigurationDefinitions);
-	
+
+	void setActivityBindingDefinitions(List activityBindingDefinitions);
+
 	void setCategoryDefinitions(List categoryDefinitions);
 	
 	void setCommandDefinitions(List commandDefinitions);
 	
-	void setContextBindingDefinitions(List contextBindingDefinitions);
-
 	void setImageBindingDefinitions(List imageBindingDefinitions);
 	
 	void setKeyConfigurationDefinitions(List keyConfigurationDefinitions);

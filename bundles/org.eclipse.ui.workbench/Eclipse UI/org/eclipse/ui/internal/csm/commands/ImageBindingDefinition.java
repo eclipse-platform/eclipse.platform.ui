@@ -11,6 +11,12 @@
 
 package org.eclipse.ui.internal.csm.commands;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.ui.internal.util.Util;
 
 public final class ImageBindingDefinition implements IImageBindingDefinition {
@@ -18,6 +24,34 @@ public final class ImageBindingDefinition implements IImageBindingDefinition {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = ImageBindingDefinition.class.getName().hashCode();
 
+	static Map imageBindingDefinitionsByCommandId(Collection imageBindingDefinitions) {
+		if (imageBindingDefinitions == null)
+			throw new NullPointerException();
+
+		Map map = new HashMap();			
+		Iterator iterator = imageBindingDefinitions.iterator();
+		
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			Util.assertInstance(object, IImageBindingDefinition.class);			
+			IImageBindingDefinition imageBindingDefinition = (IImageBindingDefinition) object;
+			String commandId = imageBindingDefinition.getCommandId();
+			
+			if (commandId != null) {
+				Collection imageBindingDefinitions2 = (Collection) map.get(commandId);
+					
+				if (imageBindingDefinitions2 == null) {
+					imageBindingDefinitions2 = new ArrayList();
+					map.put(commandId, imageBindingDefinitions2);					
+				}
+	
+				imageBindingDefinitions2.add(imageBindingDefinition);		
+			}											
+		}				
+	
+		return map;
+	}	
+	
 	private String commandId;
 	private String imageStyle;
 	private String imageUri;

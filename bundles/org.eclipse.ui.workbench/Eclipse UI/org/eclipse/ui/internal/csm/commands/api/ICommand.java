@@ -59,6 +59,24 @@ public interface ICommand extends Comparable {
 
 	/**
 	 * <p>
+	 * Returns the list of activity bindings for this handle. This method will 
+	 * return all activity bindings for this handle's identifier, whether or not 
+	 * the command represented by this handle is defined. 
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute 
+	 * changes.
+	 * </p>
+	 *
+	 * @return the list of activity bindings. This list may be empty, but is 
+	 * 		   guaranteed not to be <code>null</code>. If this list is not 
+	 * 		   empty, it is guaranteed to only contain instances of 
+	 *         <code>IActivityBinding</code>.
+	 */	
+	List getActivityBindings();	
+	
+	/**
+	 * <p>
 	 * Returns the identifier of the category of the command represented by this 
 	 * handle.
 	 * </p>
@@ -100,6 +118,42 @@ public interface ICommand extends Comparable {
 	 *         <code>null</code>.
 	 */	
 	String getId();
+
+	/**
+	 * <p>
+	 * Returns the list of image bindings for this handle. This method will 
+	 * return all image bindings for this handle's identifier, whether or not 
+	 * the command represented by this handle is defined. 
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute 
+	 * changes.
+	 * </p>
+	 *
+	 * @return the list of image bindings. This list may be empty, but is 
+	 * 		   guaranteed not to be <code>null</code>. If this list is not 
+	 * 		   empty, it is guaranteed to only contain instances of 
+	 *         <code>IImageBinding</code>.
+	 */	
+	List getImageBindings();
+
+	/**
+	 * <p>
+	 * Returns the list of key sequence bindings for this handle. This method 
+	 * will return all key sequence bindings for this handle's identifier, 
+	 * whether or not the command represented by this handle is defined. 
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute 
+	 * changes.
+	 * </p>
+	 *
+	 * @return the list of key sequence bindings. This list may be empty, but is 
+	 * 		   guaranteed not to be <code>null</code>. If this list is not 
+	 * 		   empty, it is guaranteed to only contain instances of 
+	 *         <code>IKeySequenceBinding</code>.
+	 */	
+	List getKeySequenceBindings();	
 	
 	/**
 	 * <p>
@@ -117,25 +171,7 @@ public interface ICommand extends Comparable {
 	 *                                    handle is not defined.
 	 */	
 	String getName()
-		throws NotDefinedException;
-	
-	/**
-	 * <p>
-	 * Returns the list of key sequence bindings for this handle. This method 
-	 * will return all key sequence bindings for this handle's identifier, 
-	 * whether or not the command represented by this handle is defined. 
-	 * </p>
-	 * <p>
-	 * Notification is set to all registered listeners if this attribute 
-	 * changes.
-	 * </p>
-	 *
-	 * @return the list of key sequence bindings. This list may be empty, but is 
-	 * 		   guaranteed not to be <code>null</code>. If this list is not 
-	 * 		   empty, it is guaranteed to only contain instances of 
-	 *         <code>IKeySequenceBinding</code>.
-	 */	
-	List getKeySequenceBindings();
+		throws NotDefinedException;	
 	
 	/**
 	 * <p>

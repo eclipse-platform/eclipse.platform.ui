@@ -11,6 +11,12 @@
 
 package org.eclipse.ui.internal.csm.commands;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.ui.internal.util.Util;
 
 public final class ActivityBindingDefinition implements IActivityBindingDefinition {
@@ -18,26 +24,54 @@ public final class ActivityBindingDefinition implements IActivityBindingDefiniti
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = ActivityBindingDefinition.class.getName().hashCode();
 
+	static Map activityBindingDefinitionsByCommandId(Collection activityBindingDefinitions) {
+		if (activityBindingDefinitions == null)
+			throw new NullPointerException();
+
+		Map map = new HashMap();			
+		Iterator iterator = activityBindingDefinitions.iterator();
+		
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			Util.assertInstance(object, IActivityBindingDefinition.class);			
+			IActivityBindingDefinition activityBindingDefinition = (IActivityBindingDefinition) object;
+			String commandId = activityBindingDefinition.getCommandId();
+			
+			if (commandId != null) {
+				Collection activityBindingDefinitions2 = (Collection) map.get(commandId);
+					
+				if (activityBindingDefinitions2 == null) {
+					activityBindingDefinitions2 = new ArrayList();
+					map.put(commandId, activityBindingDefinitions2);					
+				}
+	
+				activityBindingDefinitions2.add(activityBindingDefinition);		
+			}											
+		}				
+	
+		return map;
+	}		
+	
+	private String activityId;
 	private String commandId;
-	private String contextId;
 	private String pluginId;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	public ActivityBindingDefinition(String commandId, String contextId, String pluginId) {
+	public ActivityBindingDefinition(String activityId, String commandId, String pluginId) {
+		this.activityId = activityId;
 		this.commandId = commandId;
-		this.contextId = contextId;
 		this.pluginId = pluginId;
 	}
 	
 	public int compareTo(Object object) {
 		ActivityBindingDefinition castedObject = (ActivityBindingDefinition) object;
-		int compareTo = Util.compare(commandId, castedObject.commandId);
+		int compareTo = Util.compare(activityId, castedObject.activityId);
 		
 		if (compareTo == 0) {		
-			compareTo = Util.compare(contextId, castedObject.contextId);			
+			compareTo = Util.compare(commandId, castedObject.commandId);			
 		
 			if (compareTo == 0)
 				compareTo = Util.compare(pluginId, castedObject.pluginId);								
@@ -52,18 +86,18 @@ public final class ActivityBindingDefinition implements IActivityBindingDefiniti
 
 		ActivityBindingDefinition castedObject = (ActivityBindingDefinition) object;	
 		boolean equals = true;
+		equals &= Util.equals(activityId, castedObject.activityId);
 		equals &= Util.equals(commandId, castedObject.commandId);
-		equals &= Util.equals(contextId, castedObject.contextId);
 		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
 	}
 
-	public String getCommandId() {
-		return commandId;
+	public String getActivityId() {
+		return activityId;
 	}
 
-	public String getActivityId() {
-		return contextId;
+	public String getCommandId() {
+		return commandId;
 	}
 
 	public String getPluginId() {
@@ -73,8 +107,8 @@ public final class ActivityBindingDefinition implements IActivityBindingDefiniti
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(contextId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
 			hashCodeComputed = true;
 		}
@@ -86,9 +120,9 @@ public final class ActivityBindingDefinition implements IActivityBindingDefiniti
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
-			stringBuffer.append(commandId);
+			stringBuffer.append(activityId);
 			stringBuffer.append(',');
-			stringBuffer.append(contextId);
+			stringBuffer.append(commandId);
 			stringBuffer.append(',');
 			stringBuffer.append(pluginId);
 			stringBuffer.append(']');

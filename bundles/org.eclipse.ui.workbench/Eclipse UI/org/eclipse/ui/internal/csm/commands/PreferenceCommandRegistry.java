@@ -66,9 +66,9 @@ public final class PreferenceCommandRegistry extends AbstractMutableCommandRegis
 			try {
 				IMemento memento = XMLMemento.createReadRoot(reader);
 				List activeKeyConfigurationDefinitions = Collections.unmodifiableList(Persistence.readActiveKeyConfigurationDefinitions(memento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, null));
+				List activityBindingDefinitions = Collections.unmodifiableList(Persistence.readActivityBindingDefinitions(memento, Persistence.TAG_ACTIVITY_BINDING, null));
 				List categoryDefinitions = Collections.unmodifiableList(Persistence.readCategoryDefinitions(memento, Persistence.TAG_CATEGORY, null));
 				List commandDefinitions = Collections.unmodifiableList(Persistence.readCommandDefinitions(memento, Persistence.TAG_COMMAND, null));
-				List contextBindingDefinitions = Collections.unmodifiableList(Persistence.readContextBindingDefinitions(memento, Persistence.TAG_CONTEXT_BINDING, null));
 				List imageBindingDefinitions = Collections.unmodifiableList(Persistence.readImageBindingDefinitions(memento, Persistence.TAG_IMAGE_BINDING, null));
 				List keyConfigurationDefinitions = Collections.unmodifiableList(Persistence.readKeyConfigurationDefinitions(memento, Persistence.TAG_KEY_CONFIGURATION, null));			
 				List keySequenceBindingDefinitions = Collections.unmodifiableList(Persistence.readKeySequenceBindingDefinitions(memento, Persistence.TAG_KEY_SEQUENCE_BINDING, null));
@@ -79,6 +79,11 @@ public final class PreferenceCommandRegistry extends AbstractMutableCommandRegis
 					commandRegistryChanged = true;
 				}	
 
+				if (!activityBindingDefinitions.equals(this.activityBindingDefinitions)) {
+					this.activityBindingDefinitions = activityBindingDefinitions;			
+					commandRegistryChanged = true;
+				}					
+				
 				if (!categoryDefinitions.equals(this.categoryDefinitions)) {
 					this.categoryDefinitions = categoryDefinitions;			
 					commandRegistryChanged = true;
@@ -86,11 +91,6 @@ public final class PreferenceCommandRegistry extends AbstractMutableCommandRegis
 				
 				if (!commandDefinitions.equals(this.commandDefinitions)) {
 					this.commandDefinitions = commandDefinitions;			
-					commandRegistryChanged = true;
-				}	
-				
-				if (!contextBindingDefinitions.equals(this.contextBindingDefinitions)) {
-					this.contextBindingDefinitions = contextBindingDefinitions;			
 					commandRegistryChanged = true;
 				}	
 			
@@ -123,9 +123,9 @@ public final class PreferenceCommandRegistry extends AbstractMutableCommandRegis
 		throws IOException {
 		XMLMemento xmlMemento = XMLMemento.createWriteRoot(TAG_ROOT);		
 		Persistence.writeActiveKeyConfigurationDefinitions(xmlMemento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, activeKeyConfigurationDefinitions);		
+		Persistence.writeActivityBindingDefinitions(xmlMemento, Persistence.TAG_ACTIVITY_BINDING, activityBindingDefinitions);
 		Persistence.writeCategoryDefinitions(xmlMemento, Persistence.TAG_CATEGORY, categoryDefinitions);		
 		Persistence.writeCommandDefinitions(xmlMemento, Persistence.TAG_COMMAND, commandDefinitions);
-		Persistence.writeContextBindingDefinitions(xmlMemento, Persistence.TAG_CONTEXT_BINDING, contextBindingDefinitions);
 		Persistence.writeImageBindingDefinitions(xmlMemento, Persistence.TAG_IMAGE_BINDING, imageBindingDefinitions);
 		Persistence.writeKeyConfigurationDefinitions(xmlMemento, Persistence.TAG_KEY_CONFIGURATION, keyConfigurationDefinitions);
 		Persistence.writeKeySequenceBindingDefinitions(xmlMemento, Persistence.TAG_KEY_SEQUENCE_BINDING, keySequenceBindingDefinitions);

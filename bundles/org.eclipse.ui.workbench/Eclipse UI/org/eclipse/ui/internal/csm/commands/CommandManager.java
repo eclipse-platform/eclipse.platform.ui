@@ -55,36 +55,25 @@ public final class CommandManager implements ICommandManager {
 	}		
 	
 	private Set activeCommandIds = new HashSet();
-	private Set activeKeyConfigurationIds = new HashSet();
-	
+	private Set activeKeyConfigurationIds = new HashSet();	
 	private Map activityBindingsByCommandId = new HashMap();		
-
 	private Map categoriesById = new WeakHashMap();
 	private Set categoriesWithListeners = new HashSet();
-	private Map categoryDefinitionsById = new HashMap();
-	
-	private Map commandDefinitionsById = new HashMap();
-	
+	private Map categoryDefinitionsById = new HashMap();	
+	private Map commandDefinitionsById = new HashMap();	
 	private List commandManagerListeners;
 	private ICommandRegistry commandRegistry;		
-
 	private Map commandsById = new WeakHashMap();
 	private Set commandsWithListeners = new HashSet();
-
 	private Set definedCategoryIds = new HashSet();
 	private Set definedCommandIds = new HashSet();
 	private Set definedKeyConfigurationIds = new HashSet();
-
 	private Set enabledCommandIds = new HashSet();	
-
-	private Map imageBindingsByCommandId = new HashMap();	
-	
+	private Map imageBindingsByCommandId = new HashMap();		
 	private Map keyConfigurationsById = new WeakHashMap();
 	private Set keyConfigurationsWithListeners = new HashSet();
-	private Map keyConfigurationDefinitionsById = new HashMap();	
-	
+	private Map keyConfigurationDefinitionsById = new HashMap();		
 	private Map keySequenceBindingsByCommandId = new HashMap();
-
 	private IMutableCommandRegistry mutableCommandRegistry;		
 	
 	public CommandManager() {
@@ -351,6 +340,12 @@ public final class CommandManager implements ICommandManager {
 			
 		// TODO begin - check this.
 			
+		Map activityBindingDefinitionsByCommandId = ActivityBindingDefinition.activityBindingDefinitionsByCommandId(commandRegistry.getActivityBindingDefinitions());
+		Map activityBindingsByCommandId = new HashMap();		
+		
+		Map imageBindingDefinitionsByCommandId = ImageBindingDefinition.imageBindingDefinitionsByCommandId(commandRegistry.getImageBindingDefinitions());
+		Map imageBindingsByCommandId = new HashMap();					
+			
 		Map keySequenceBindingDefinitionsByCommandId = KeySequenceBindingDefinition.keySequenceBindingDefinitionsByCommandId(commandRegistry.getKeySequenceBindingDefinitions());
 		Map keySequenceBindingsByCommandId = new HashMap();		
 
@@ -387,10 +382,9 @@ public final class CommandManager implements ICommandManager {
 		this.categoryDefinitionsById = categoryDefinitionsById;
 		this.commandDefinitionsById = commandDefinitionsById;
 		this.keyConfigurationDefinitionsById = keyConfigurationDefinitionsById;		
-		
-		// TODO begin - check this.
+		this.activityBindingsByCommandId = activityBindingsByCommandId;
+		this.imageBindingsByCommandId = imageBindingsByCommandId;
 		this.keySequenceBindingsByCommandId = keySequenceBindingsByCommandId;
-		// TODO end - check this.
 		
 		boolean definedCategoryIdsChanged = false;			
 		Set definedCategoryIds = new HashSet(categoryDefinitionsById.keySet());		
@@ -465,17 +459,21 @@ public final class CommandManager implements ICommandManager {
 	
 	private ICommandEvent updateCommand(Command command) {
 		boolean activeChanged = command.setActive(activeCommandIds.contains(command.getId()));		
+		List activityBindings = (List) activityBindingsByCommandId.get(command.getId());
+		boolean activityBindingsChanged = command.setActivityBindings(activityBindings != null ? activityBindings : Collections.EMPTY_LIST);		
 		ICommandDefinition commandDefinition = (ICommandDefinition) commandDefinitionsById.get(command.getId());
 		boolean categoryIdChanged = command.setCategoryId(commandDefinition != null ? commandDefinition.getCategoryId() : null);				
 		boolean definedChanged = command.setDefined(commandDefinition != null);
 		boolean descriptionChanged = command.setDescription(commandDefinition != null ? commandDefinition.getDescription() : null);		
 		boolean enabledChanged = command.setEnabled(enabledCommandIds.contains(command.getId()));
+		List imageBindings = (List) imageBindingsByCommandId.get(command.getId());
+		boolean imageBindingsChanged = command.setImageBindings(imageBindings != null ? imageBindings : Collections.EMPTY_LIST);		
 		List keySequenceBindings = (List) keySequenceBindingsByCommandId.get(command.getId());
 		boolean keySequenceBindingsChanged = command.setKeySequenceBindings(keySequenceBindings != null ? keySequenceBindings : Collections.EMPTY_LIST);		
 		boolean nameChanged = command.setName(commandDefinition != null ? commandDefinition.getName() : null);
 
-		if (activeChanged || categoryIdChanged || definedChanged || descriptionChanged || enabledChanged || keySequenceBindingsChanged || nameChanged)
-			return new CommandEvent(command, activeChanged, categoryIdChanged, definedChanged, descriptionChanged, enabledChanged, keySequenceBindingsChanged, nameChanged); 
+		if (activeChanged || activityBindingsChanged || categoryIdChanged || definedChanged || descriptionChanged || enabledChanged || imageBindingsChanged || keySequenceBindingsChanged || nameChanged)
+			return new CommandEvent(command, activeChanged, activityBindingsChanged, categoryIdChanged, definedChanged, descriptionChanged, enabledChanged, imageBindingsChanged, keySequenceBindingsChanged, nameChanged); 
 		else 
 			return null;
 	}

@@ -28,6 +28,15 @@ public abstract class AbstractMutableCommandRegistry extends AbstractCommandRegi
 			fireCommandRegistryChanged();
 		}
 	}
+
+	public void setActivityBindingDefinitions(List activityBindingDefinitions) {
+		activityBindingDefinitions = Util.safeCopy(activityBindingDefinitions, IActivityBindingDefinition.class);	
+		
+		if (!activityBindingDefinitions.equals(this.activityBindingDefinitions)) {
+			this.activityBindingDefinitions = activityBindingDefinitions;			
+			fireCommandRegistryChanged();
+		}
+	}
 	
 	public void setCategoryDefinitions(List categoryDefinitions) {
 		categoryDefinitions = Util.safeCopy(categoryDefinitions, ICategoryDefinition.class);	
@@ -43,15 +52,6 @@ public abstract class AbstractMutableCommandRegistry extends AbstractCommandRegi
 		
 		if (!commandDefinitions.equals(this.commandDefinitions)) {
 			this.commandDefinitions = commandDefinitions;			
-			fireCommandRegistryChanged();
-		}
-	}
-
-	public void setContextBindingDefinitions(List contextBindingDefinitions) {
-		contextBindingDefinitions = Util.safeCopy(contextBindingDefinitions, IActivityBindingDefinition.class);	
-		
-		if (!contextBindingDefinitions.equals(this.contextBindingDefinitions)) {
-			this.contextBindingDefinitions = contextBindingDefinitions;			
 			fireCommandRegistryChanged();
 		}
 	}

@@ -17,24 +17,28 @@ import org.eclipse.ui.internal.csm.commands.api.ICommandEvent;
 final class CommandEvent implements ICommandEvent {
 
 	private boolean activeChanged;
+	private boolean activityBindingsChanged;
 	private boolean categoryIdChanged;
 	private ICommand command;
 	private boolean definedChanged;
 	private boolean descriptionChanged;
 	private boolean enabledChanged;
+	private boolean imageBindingsChanged;
 	private boolean keySequenceBindingsChanged;
 	private boolean nameChanged;
 
-	CommandEvent(ICommand command, boolean activeChanged, boolean categoryIdChanged, boolean definedChanged, boolean descriptionChanged, boolean enabledChanged, boolean keySequenceBindingsChanged, boolean nameChanged) {
+	CommandEvent(ICommand command, boolean activeChanged, boolean activityBindingsChanged, boolean categoryIdChanged, boolean definedChanged, boolean descriptionChanged, boolean enabledChanged, boolean imageBindingsChanged, boolean keySequenceBindingsChanged, boolean nameChanged) {
 		if (command == null)
 			throw new NullPointerException();
 		
 		this.command = command;
 		this.activeChanged = activeChanged;
+		this.activityBindingsChanged = activityBindingsChanged;		
 		this.categoryIdChanged = categoryIdChanged;		
 		this.definedChanged = definedChanged;
 		this.descriptionChanged = descriptionChanged;
 		this.enabledChanged = enabledChanged;
+		this.imageBindingsChanged = imageBindingsChanged;		
 		this.keySequenceBindingsChanged = keySequenceBindingsChanged;		
 		this.nameChanged = nameChanged;
 	}
@@ -66,7 +70,15 @@ final class CommandEvent implements ICommandEvent {
 	public boolean hasCategoryIdChanged() {
 		return categoryIdChanged;
 	}
-	
+
+	public boolean haveActivityBindingsChanged() {
+		return activityBindingsChanged;
+	}
+
+	public boolean haveImageBindingsChanged() {
+		return imageBindingsChanged;
+	}
+
 	public boolean haveKeySequenceBindingsChanged() {
 		return keySequenceBindingsChanged;
 	}

@@ -11,28 +11,28 @@
 
 package org.eclipse.ui.internal.csm.commands;
 
-import org.eclipse.ui.commands.IContextBinding;
+import org.eclipse.ui.internal.csm.commands.api.IActivityBinding;
 
-final class ActivityBinding implements IContextBinding {
+final class ActivityBinding implements IActivityBinding {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = ActivityBinding.class.getName().hashCode();
 
-	private String contextId;
+	private String activityId;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	
-	ActivityBinding(String contextId) {	
-		if (contextId == null)
+	ActivityBinding(String activityId) {	
+		if (activityId == null)
 			throw new NullPointerException();
 
-		this.contextId = contextId;
+		this.activityId = activityId;
 	}
 
 	public int compareTo(Object object) {
 		ActivityBinding castedObject = (ActivityBinding) object;
-		int compareTo = contextId.compareTo(castedObject.contextId);			
+		int compareTo = activityId.compareTo(castedObject.activityId);			
 		return compareTo;	
 	}
 	
@@ -42,18 +42,18 @@ final class ActivityBinding implements IContextBinding {
 
 		ActivityBinding castedObject = (ActivityBinding) object;	
 		boolean equals = true;
-		equals &= contextId.equals(castedObject.contextId);
+		equals &= activityId.equals(castedObject.activityId);
 		return equals;
 	}
 
-	public String getContextId() {
-		return contextId;
+	public String getActivityId() {
+		return activityId;
 	}
 	
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + contextId.hashCode();
+			hashCode = hashCode * HASH_FACTOR + activityId.hashCode();
 			hashCodeComputed = true;
 		}
 			
@@ -61,6 +61,6 @@ final class ActivityBinding implements IContextBinding {
 	}
 
 	public String toString() {
-		return contextId;		
+		return activityId;		
 	}
 }

@@ -768,9 +768,9 @@ public final class CommandManager implements ICommandManager {
 		this.categoryDefinitionsById = categoryDefinitionsById;	
 		this.commandDefinitionsById = commandDefinitionsById;
 		this.keyConfigurationDefinitionsById = keyConfigurationDefinitionsById;
-		extensionContextBindingDefinitions = new TreeSet(extensionCommandRegistry.getContextBindingDefinitions());
+		extensionContextBindingDefinitions = new TreeSet(extensionCommandRegistry.getActivityBindingDefinitions());
 		validateContextBindingDefinitions(extensionContextBindingDefinitions);
-		preferenceContextBindingDefinitions = new TreeSet(preferenceCommandRegistry.getContextBindingDefinitions());
+		preferenceContextBindingDefinitions = new TreeSet(preferenceCommandRegistry.getActivityBindingDefinitions());
 		validateContextBindingDefinitions(preferenceContextBindingDefinitions);
 		pluginImageBindingDefinitions = new TreeSet(extensionCommandRegistry.getImageBindingDefinitions());
 		validateImageBindingDefinitions(pluginImageBindingDefinitions);

@@ -66,6 +66,16 @@ public interface ICommandEvent {
 	 * TODO javadoc
 	 */		
 	boolean hasNameChanged();
+
+	/**
+	 * TODO javadoc
+	 */		
+	boolean haveActivityBindingsChanged();	
+	
+	/**
+	 * TODO javadoc
+	 */		
+	boolean haveImageBindingsChanged();	
 	
 	/**
 	 * TODO javadoc

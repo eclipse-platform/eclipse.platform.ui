@@ -27,9 +27,9 @@ import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 
 	private List activeKeyConfigurationDefinitions;
+	private List activityBindingDefinitions;
 	private List categoryDefinitions; 
 	private List commandDefinitions; 
-	private List contextBindingDefinitions;
 	private IExtensionRegistry extensionRegistry;
 	private List imageBindingDefinitions;
 	private List keyConfigurationDefinitions;	
@@ -65,7 +65,12 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 			activeKeyConfigurationDefinitions = new ArrayList();
 		else 
 			activeKeyConfigurationDefinitions.clear();
-			
+
+		if (activityBindingDefinitions == null)
+			activityBindingDefinitions = new ArrayList();
+		else 
+			activityBindingDefinitions.clear();			
+	
 		if (categoryDefinitions == null)
 			categoryDefinitions = new ArrayList();
 		else 
@@ -74,12 +79,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 		if (commandDefinitions == null)
 			commandDefinitions = new ArrayList();
 		else 
-			commandDefinitions.clear();
-
-		if (contextBindingDefinitions == null)
-			contextBindingDefinitions = new ArrayList();
-		else 
-			contextBindingDefinitions.clear();		
+			commandDefinitions.clear();	
 
 		if (imageBindingDefinitions == null)
 			imageBindingDefinitions = new ArrayList();
@@ -104,12 +104,12 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 
 			if (Persistence.TAG_ACTIVE_KEY_CONFIGURATION.equals(name))
 				readActiveKeyConfigurationDefinition(configurationElement);
+			else if (Persistence.TAG_ACTIVITY_BINDING.equals(name))
+				readActivityBindingDefinition(configurationElement);
 			else if (Persistence.TAG_CATEGORY.equals(name))
 				readCategoryDefinition(configurationElement);
 			else if (Persistence.TAG_COMMAND.equals(name))
 				readCommandDefinition(configurationElement);
-			else if (Persistence.TAG_CONTEXT_BINDING.equals(name))
-				readContextBindingDefinition(configurationElement);
 			else if (Persistence.TAG_IMAGE_BINDING.equals(name))
 				readImageBindingDefinition(configurationElement);
 			else if (Persistence.TAG_KEY_CONFIGURATION.equals(name))
@@ -124,7 +124,12 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 			super.activeKeyConfigurationDefinitions = Collections.unmodifiableList(activeKeyConfigurationDefinitions);		
 			commandRegistryChanged = true;
 		}			
-		
+
+		if (!activityBindingDefinitions.equals(super.activityBindingDefinitions)) {
+			super.activityBindingDefinitions = Collections.unmodifiableList(activityBindingDefinitions);		
+			commandRegistryChanged = true;
+		}
+
 		if (!categoryDefinitions.equals(super.categoryDefinitions)) {
 			super.categoryDefinitions = Collections.unmodifiableList(categoryDefinitions);		
 			commandRegistryChanged = true;
@@ -133,12 +138,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 		if (!commandDefinitions.equals(super.commandDefinitions)) {
 			super.commandDefinitions = Collections.unmodifiableList(commandDefinitions);		
 			commandRegistryChanged = true;
-		}	
-
-		if (!contextBindingDefinitions.equals(super.contextBindingDefinitions)) {
-			super.contextBindingDefinitions = Collections.unmodifiableList(contextBindingDefinitions);		
-			commandRegistryChanged = true;
-		}			
+		}		
 		
 		if (!imageBindingDefinitions.equals(super.imageBindingDefinitions)) {
 			super.imageBindingDefinitions = Collections.unmodifiableList(imageBindingDefinitions);		
@@ -179,6 +179,13 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 			activeKeyConfigurationDefinitions.add(activeKeyConfigurationDefinition);	
 	}
 
+	private void readActivityBindingDefinition(IConfigurationElement configurationElement) {
+		IActivityBindingDefinition activityBindingDefinition = Persistence.readActivityBindingDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
+	
+		if (activityBindingDefinition != null)
+			activityBindingDefinitions.add(activityBindingDefinition);	
+	}	
+	
 	private void readCategoryDefinition(IConfigurationElement configurationElement) {
 		ICategoryDefinition categoryDefinition = Persistence.readCategoryDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
 	
@@ -191,13 +198,6 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 	
 		if (commandDefinition != null)
 			commandDefinitions.add(commandDefinition);	
-	}
-
-	private void readContextBindingDefinition(IConfigurationElement configurationElement) {
-		IActivityBindingDefinition contextBindingDefinition = Persistence.readContextBindingDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
-	
-		if (contextBindingDefinition != null)
-			contextBindingDefinitions.add(contextBindingDefinition);	
 	}
 
 	private void readImageBindingDefinition(IConfigurationElement configurationElement) {

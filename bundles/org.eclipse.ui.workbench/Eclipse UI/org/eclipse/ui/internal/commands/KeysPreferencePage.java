@@ -310,8 +310,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			}
 			
 			List contextBindingDefinitions = new ArrayList();
-			contextBindingDefinitions.addAll(extensionCommandRegistry.getContextBindingDefinitions());
-			contextBindingDefinitions.addAll(preferenceCommandRegistry.getContextBindingDefinitions());
+			contextBindingDefinitions.addAll(extensionCommandRegistry.getActivityBindingDefinitions());
+			contextBindingDefinitions.addAll(preferenceCommandRegistry.getActivityBindingDefinitions());
 			activityIdsByCommandId = new HashMap();
 			
 			for (Iterator iterator = contextBindingDefinitions.iterator(); iterator.hasNext();) {

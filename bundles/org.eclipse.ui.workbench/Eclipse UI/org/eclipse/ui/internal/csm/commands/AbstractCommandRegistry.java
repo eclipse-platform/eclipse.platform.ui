@@ -21,9 +21,9 @@ abstract class AbstractCommandRegistry implements ICommandRegistry {
 	private List commandRegistryListeners;
 	
 	protected List activeKeyConfigurationDefinitions = Collections.EMPTY_LIST;
+	protected List activityBindingDefinitions = Collections.EMPTY_LIST;
 	protected List categoryDefinitions = Collections.EMPTY_LIST; 
 	protected List commandDefinitions = Collections.EMPTY_LIST; 
-	protected List contextBindingDefinitions = Collections.EMPTY_LIST;
 	protected List imageBindingDefinitions = Collections.EMPTY_LIST;
 	protected List keyConfigurationDefinitions = Collections.EMPTY_LIST;	
 	protected List keySequenceBindingDefinitions = Collections.EMPTY_LIST;
@@ -46,16 +46,16 @@ abstract class AbstractCommandRegistry implements ICommandRegistry {
 		return activeKeyConfigurationDefinitions;
 	}
 
+	public List getActivityBindingDefinitions() {
+		return activityBindingDefinitions;
+	}
+
 	public List getCategoryDefinitions() {
 		return categoryDefinitions;
 	}
 	
 	public List getCommandDefinitions() {
 		return commandDefinitions;
-	}
-
-	public List getContextBindingDefinitions() {
-		return contextBindingDefinitions;
 	}
 
 	public List getImageBindingDefinitions() {
