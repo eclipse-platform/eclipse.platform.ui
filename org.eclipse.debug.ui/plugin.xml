@@ -144,7 +144,9 @@
       </menu>
         <action
             label="%StepReturnAction.label"
-            icon="icons/full/clcl16/stepreturn_co.gif"
+            icon="icons/full/elcl16/stepreturn_co.gif"
+            disabledIcon="icons/full/dlcl16/stepreturn_co.gif"
+            hoverIcon="icons/full/clcl16/stepreturn_co.gif"
             helpContextId="step_return_action_context"
             class="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
@@ -152,7 +154,9 @@
       </action>
       <action
             label="%StepOverAction.label"
-            icon="icons/full/clcl16/stepover_co.gif"
+            icon="icons/full/elcl16/stepover_co.gif"
+            disabledIcon="icons/full/dlcl16/stepover_co.gif"
+            hoverIcon="icons/full/clcl16/stepover_co.gif"
             helpContextId="step_over_action_context"
             class="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
@@ -160,7 +164,9 @@
       </action>
       <action
             label="%StepIntoAction.label"
-            icon="icons/full/clcl16/stepinto_co.gif"
+            icon="icons/full/elcl16/stepinto_co.gif"
+            disabledIcon="icons/full/dlcl16/stepinto_co.gif"
+            hoverIcon="icons/full/clcl16/stepinto_co.gif"
             helpContextId="step_into_action_context"
             class="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
@@ -168,7 +174,9 @@
       </action>
       <action
             label="%TerminateAction.label"
-            icon="icons/full/clcl16/terminate_co.gif"
+            icon="icons/full/elcl16/terminate_co.gif"
+            disabledIcon="icons/full/dlcl16/terminate_co.gif"
+            hoverIcon="icons/full/clcl16/terminate_co.gif"
             helpContextId="terminate_action_context"
             class="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
@@ -176,7 +184,9 @@
       </action>
       <action
             label="%SuspendAction.label"
-            icon="icons/full/clcl16/suspend_co.gif"
+            icon="icons/full/elcl16/suspend_co.gif"
+            disabledIcon="icons/full/dlcl16/suspend_co.gif"
+            hoverIcon="icons/full/clcl16/suspend_co.gif"
             helpContextId="suspend_action_context"
             class="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
@@ -184,7 +194,9 @@
       </action>
       <action
             label="%ResumeAction.label"
-            icon="icons/full/clcl16/resume_co.gif"
+            icon="icons/full/elcl16/resume_co.gif"
+            disabledIcon="icons/full/dlcl16/resume_co.gif"
+            hoverIcon="icons/full/clcl16/resume_co.gif"
             helpContextId="resume_action_context"
             class="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
@@ -210,7 +222,9 @@
       </menu>
       <action
             label="%RelaunchLastAction.label"
-            icon="icons/full/clcl16/relaunch_co.gif"
+            icon="icons/full/elcl16/relaunch_co.gif"
+            disabledIcon="icons/full/dlcl16/relaunch_co.gif"
+            hoverIcon="icons/full/clcl16/relaunch_co.gif"
             helpContextId="relaunch_last_action_context"
             tooltip="%RelaunchLastAction.tooltip"
             class="org.eclipse.debug.internal.ui.actions.RelaunchLastAction"
@@ -220,7 +234,9 @@
       <action
             label="%RunAction.label"
             pulldown="true"
-            icon="icons/full/ctool16/run_exc.gif"
+            icon="icons/full/etool16/run_exc.gif"
+            disabledIcon="icons/full/dtool16/run_exc.gif"
+            hoverIcon="icons/full/ctool16/run_exc.gif"
             helpContextId="run_action_context"
             tooltip="%RunAction.tooltip"
             class="org.eclipse.debug.internal.ui.actions.RunDropDownAction"
@@ -231,7 +247,9 @@
       <action
             label="%DebugAction.label"
             pulldown="true"
-            icon="icons/full/ctool16/debug_exc.gif"
+            icon="icons/full/etool16/debug_exc.gif"
+            disabledIcon="icons/full/dtool16/debug_exc.gif"
+            hoverIcon="icons/full/ctool16/debug_exc.gif"
             helpContextId="debug_action_context"
             tooltip="%DebugAction.tooltip"
             class="org.eclipse.debug.internal.ui.actions.DebugDropDownAction"
@@ -275,7 +293,9 @@
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.removeAllTerminated"
 			toolbarPath = "threadGroup"
-			icon = "icons/full/clcl16/rem_all_co.gif"
+			icon = "icons/full/elcl16/rem_all_co.gif"
+			disabledIcon="icons/full/dlcl16/rem_all_co.gif"
+            hoverIcon="icons/full/clcl16/rem_all_co.gif"
 			helpContextId = "remove_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction"
 			tooltip="%RemoveAllTerminatedAction.tooltip"
@@ -284,7 +304,9 @@
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.disconnect"
 			toolbarPath = "threadGroup"
-			icon = "icons/full/clcl16/disconnect_co.gif"
+			icon = "icons/full/elcl16/disconnect_co.gif"
+			disabledIcon="icons/full/dlcl16/disconnect_co.gif"
+            hoverIcon="icons/full/clcl16/disconnect_co.gif"
 			helpContextId = "disconnect_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.DisconnectActionDelegate"
 			tooltip="%DisconnectAction.tooltip"
@@ -293,7 +315,9 @@
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.terminate"
 			toolbarPath = "threadGroup"
-			icon = "icons/full/clcl16/terminate_co.gif"
+			icon = "icons/full/elcl16/terminate_co.gif"
+			disabledIcon= "icons/full/dlcl16/terminate_co.gif"
+            hoverIcon= "icons/full/clcl16/terminate_co.gif"
 			helpContextId = "terminate_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
 			tooltip="%TerminateAction.tooltip"
@@ -302,7 +326,9 @@
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.suspend"
 			toolbarPath = "threadGroup"
-			icon = "icons/full/clcl16/suspend_co.gif"
+			icon = "icons/full/elcl16/suspend_co.gif"
+			disabledIcon= "icons/full/dlcl16/suspend_co.gif"
+            hoverIcon= "icons/full/clcl16/suspend_co.gif"
 			helpContextId = "suspend_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
 			tooltip="%SuspendAction.tooltip"
@@ -311,7 +337,9 @@
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.resume"
 			toolbarPath = "threadGroup"
-			icon = "icons/full/clcl16/resume_co.gif"
+			icon = "icons/full/elcl16/resume_co.gif"
+			disabledIcon= "icons/full/dlcl16/resume_co.gif"
+            hoverIcon= "icons/full/clcl16/resume_co.gif"
 			helpContextId = "resume_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
 			tooltip="%ResumeAction.tooltip"
@@ -321,7 +349,9 @@
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.stepReturn"
 			toolbarPath = "stepReturnGroup"
-			icon = "icons/full/clcl16/stepreturn_co.gif"
+			icon = "icons/full/elcl16/stepreturn_co.gif"
+			disabledIcon= "icons/full/dlcl16/stepreturn_co.gif"
+            hoverIcon= "icons/full/clcl16/stepreturn_co.gif"
 			helpContextId = "step_return_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
 			tooltip="%StepReturnAction.tooltip"
@@ -330,7 +360,9 @@
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.stepOver"
 			toolbarPath = "stepOverGroup"
-			icon = "icons/full/clcl16/stepover_co.gif"
+			icon = "icons/full/elcl16/stepover_co.gif"
+			disabledIcon= "icons/full/dlcl16/stepover_co.gif"
+            hoverIcon= "icons/full/clcl16/stepover_co.gif"
 			helpContextId = "step_over_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
 			tooltip="%StepOverAction.tooltip"
@@ -339,7 +371,9 @@
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.stepInto"
 			toolbarPath = "stepIntoGroup"
-			icon = "icons/full/clcl16/stepinto_co.gif"
+			icon = "icons/full/elcl16/stepinto_co.gif"
+			disabledIcon= "icons/full/dlcl16/stepinto_co.gif"
+            hoverIcon= "icons/full/clcl16/stepinto_co.gif"
 			helpContextId = "step_into_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
 			tooltip="%StepIntoAction.tooltip"
@@ -352,7 +386,9 @@
 		targetID = "org.eclipse.debug.ui.ConsoleView">
 		<action
 			id = "org.eclipse.debug.ui.consoleView.toolbar.terminate"
-			icon = "icons/full/clcl16/terminate_co.gif"
+			icon = "icons/full/elcl16/terminate_co.gif"
+			disabledIcon= "icons/full/dlcl16/terminate_co.gif"
+            hoverIcon= "icons/full/clcl16/terminate_co.gif"
 			helpContextId = "terminate_action_context"
 			toolbarPath = "launchGroup"
 			class = "org.eclipse.debug.internal.ui.actions.ConsoleTerminateActionDelegate"
@@ -366,7 +402,9 @@
 		targetID = "org.eclipse.debug.ui.BreakpointView">
 		<action
 			id = "org.eclipse.debug.ui.breakpointsView.toolbar.removeAll"
-			icon = "icons/full/clcl16/rem_all_co.gif"
+			icon = "icons/full/elcl16/rem_all_co.gif"
+			disabledIcon= "icons/full/dlcl16/rem_all_co.gif"
+            hoverIcon= "icons/full/clcl16/rem_all_co.gif"
 			helpContextId = "remove_action_context"
 			toolbarPath = "breakpointGroup"
 			class = "org.eclipse.debug.internal.ui.actions.RemoveAllBreakpointsAction"
@@ -375,7 +413,9 @@
 		</action>
 		<action
 			id = "org.eclipse.debug.ui.breakpointsView.toolbar.remove"
-			icon = "icons/full/clcl16/rem_co.gif"
+			icon = "icons/full/elcl16/rem_co.gif"
+			disabledIcon= "icons/full/dlcl16/rem_co.gif"
+            hoverIcon=  "icons/full/clcl16/rem_co.gif"
 			helpContextId = "remove_action_context"
 			toolbarPath = "breakpointGroup"
 			class = "org.eclipse.debug.internal.ui.actions.RemoveBreakpointAction"
@@ -389,7 +429,9 @@
 		targetID = "org.eclipse.debug.ui.ExpressionView">
 		<action
 			id = "org.eclipse.debug.ui.expresssionsView.toolbar.removeAll"
-			icon = "icons/full/clcl16/rem_all_co.gif"
+			icon = "icons/full/elcl16/rem_all_co.gif"
+			disabledIcon= "icons/full/dlcl16/rem_all_co.gif"
+            hoverIcon=  "icons/full/clcl16/rem_all_co.gif"
 			helpContextId = "remove_action_context"
 			toolbarPath = "expressionGroup"
 			class = "org.eclipse.debug.internal.ui.actions.RemoveAllExpressionsAction"
@@ -398,7 +440,9 @@
 		</action>
 		<action
 			id = "org.eclipse.debug.ui.expresssionsView.toolbar.remove"
-			icon = "icons/full/clcl16/rem_co.gif"
+			icon = "icons/full/elcl16/rem_co.gif"
+			disabledIcon= "icons/full/dlcl16/rem_co.gif"
+            hoverIcon=  "icons/full/clcl16/rem_co.gif"
 			helpContextId = "remove_action_context"
 			toolbarPath = "expressionGroup"
 			class = "org.eclipse.debug.internal.ui.actions.RemoveExpressionAction"
