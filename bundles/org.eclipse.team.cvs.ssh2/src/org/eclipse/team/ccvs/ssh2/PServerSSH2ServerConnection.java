@@ -117,7 +117,9 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 			}
 			break;
 		}
-
+		// password for location will be over-written in JSchSession ;-<
+		((CVSRepositoryLocation)location).setPassword(password);
+		
 		// CVSROOT=":pserver:localhost:"+lport+""cvs_root
 		try {
 			Properties prop = new Properties();
