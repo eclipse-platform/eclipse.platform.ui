@@ -325,33 +325,33 @@ public interface IWorkbenchActionConstants {
 	 */
 	public static final String BOOKMARK = "bookmark"; 		// Global action. //$NON-NLS-1$
 
-// Standard workbench actions:
+// Standard workspace actions:
 	/**
-	 * Workbench menu: name of group for start of menu
+	 * Workspace menu: name of group for start of menu
 	 * (value <code>"wbstart"</code>).
 	 */
 	public static final String WB_START = "wbStart";		// Group. //$NON-NLS-1$
 	
 	/**
-	 * Workbench menu: name of group for end of menu
+	 * Workspace menu: name of group for end of menu
 	 * (value <code>"wbEnd"</code>).
 	 */
 	public static final String WB_END = "wbEnd";			// Group. //$NON-NLS-1$
 	
 	/**
-	 * Workbench menu: name of group for extra Build-like actions
+	 * Workspace menu: name of group for extra Build-like actions
 	 * (value <code>"build.ext"</code>).
 	 */
 	public static final String BUILD_EXT = "build.ext";		// Group. //$NON-NLS-1$
 	
 	/**
-	 * Workbench menu: name of standard Build action 
+	 * Workspace menu: name of standard Build action 
 	 * (value <code>"build"</code>).
 	 */
 	public static final String BUILD = "build"; //$NON-NLS-1$
 	
 	/**
-	 * Workbench menu: name of standard Rebuild All action 
+	 * Workspace menu: name of standard Rebuild All action 
 	 * (value <code>"rebuildAll"</code>).
 	 */
 	public static final String REBUILD_ALL = "rebuildAll"; //$NON-NLS-1$
