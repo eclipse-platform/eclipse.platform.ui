@@ -3,22 +3,12 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLConnection;
+import java.io.*;
+import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.ICategory;
-import org.eclipse.update.core.IImport;
 import org.xml.sax.SAXException;
 /**
  * Abstract Class that implements most of the behavior of a feature
@@ -122,7 +112,6 @@ public abstract class Feature implements IFeature {
 	 */
 	private boolean isInitialized = false;
 
-
 	/**
 	 * Static block to initialize the possible CANCEL ERROR
 	 * thrown when the USER cancels teh operation
@@ -133,7 +122,6 @@ public abstract class Feature implements IFeature {
 		IStatus cancelStatus = new Status(IStatus.ERROR, pluginId, IStatus.OK, "Install has been Cancelled", null);
 		CANCEL_EXCEPTION = new CoreException(cancelStatus);
 	}
-	
 
 	/**
 	 * Copy constructor
@@ -521,29 +509,26 @@ public abstract class Feature implements IFeature {
 	 * @throws CoreException
 	 */
 	public void install(IFeature targetFeature, IProgressMonitor monitor) throws CoreException {
-	
+
 		IPluginEntry[] sourceFeaturePluginEntries = getPluginEntries();
 		IPluginEntry[] targetSitePluginEntries = targetFeature.getSite().getPluginEntries();
 		Site tempSite = (Site) SiteManager.getTempSite();
 
+		// determine list of plugins to install
+		// find the intersection between the two arrays of IPluginEntry...
+		// The one teh site contains and teh one the feature contains
+		IPluginEntry[] pluginsToInstall = intersection(sourceFeaturePluginEntries, targetSitePluginEntries);
 
-
-			// determine list of plugins to install
-			// find the intersection between the two arrays of IPluginEntry...
-			// The one teh site contains and teh one the feature contains
-			IPluginEntry[] pluginsToInstall = intersection(sourceFeaturePluginEntries, targetSitePluginEntries);
-
-			// private abstract - Determine list of content references id /archives id /bundles id that 
-			// map the list of plugins to install
-			String[] archiveIDToInstall = getContentReferenceToInstall(pluginsToInstall);
-
+		// private abstract - Determine list of content references id /archives id /bundles id that 
+		// map the list of plugins to install
+		String[] archiveIDToInstall = getContentReferenceToInstall(pluginsToInstall);
 
 		try {
 			// optmization, may be private to implementation
 			// copy *blobs/content references/archives/bundles* in TEMP space
 			if (((Site) getSite()).optimize()) {
 				if (archiveIDToInstall != null) {
-					downloadArchivesLocally(tempSite,archiveIDToInstall,monitor);
+					downloadArchivesLocally(tempSite, archiveIDToInstall, monitor);
 				}
 			}
 
@@ -551,7 +536,7 @@ public abstract class Feature implements IFeature {
 			// from the archive
 			if (monitor != null) {
 				int total = pluginsToInstall == null ? 1 : pluginsToInstall.length + 1;
-				monitor.beginTask("Install feature " + getLabel(),total);
+				monitor.beginTask("Install feature " + getLabel(), total);
 			}
 			if (pluginsToInstall != null) {
 				InputStream inStream = null;
@@ -623,75 +608,76 @@ public abstract class Feature implements IFeature {
 	 * initialize teh feature by reading the feature.xml if it exists
 	 */
 	public void initializeFeature() throws CoreException {
-		InputStream featureStream = null;
-		try {
-			isInitialized=true;
-			featureStream = getInputStreamFor(FEATURE_XML);
-			new FeatureParser(featureStream, this);
-		} catch (IOException e) {
-			//FIXME: if we cannot find the feature and or the feature.xml
-			// is it an error or a warning ???
-			// I do not believe we should stop the execution for that...
-			// but we must Log it all the time, not only when debugging...
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error opening feature.xml in the feature archive:" + url.toExternalForm(), e);
-			UpdateManagerPlugin.getPlugin().getLog().log(status);
-		} catch (SAXException e) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error parsing feature.xml in the feature archive:" + url.toExternalForm(), e);
-			throw new CoreException(status);
-		} finally {
+		if (!isInitialized) {
+			isInitialized = true;
+			InputStream featureStream = null;
 			try {
-				featureStream.close();
-			} catch (Exception e) {}
-			try {
-				closeFeature();
-			} catch (Exception e) {}
+				featureStream = getInputStreamFor(FEATURE_XML);
+				new FeatureParser(featureStream, this);
+			} catch (IOException e) {
+				//FIXME: if we cannot find the feature and or the feature.xml
+				// is it an error or a warning ???
+				// I do not believe we should stop the execution for that...
+				// but we must Log it all the time, not only when debugging...
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error opening feature.xml in the feature archive:" + url.toExternalForm(), e);
+				UpdateManagerPlugin.getPlugin().getLog().log(status);
+			} catch (SAXException e) {
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error parsing feature.xml in the feature archive:" + url.toExternalForm(), e);
+				throw new CoreException(status);
+			} finally {
+				try {
+					featureStream.close();
+				} catch (Exception e) {}
+				try {
+					closeFeature();
+				} catch (Exception e) {}
+			}
 		}
 	}
 
 	/**
 	 */
-	private void downloadArchivesLocally(ISite tempSite, String[] archiveIDToInstall,IProgressMonitor monitor) throws CoreException, IOException{
+	private void downloadArchivesLocally(ISite tempSite, String[] archiveIDToInstall, IProgressMonitor monitor) throws CoreException, IOException {
 
-					URL sourceURL;
-					String newFile;
-					URL newURL;
-					if (monitor != null) {
-						monitor.beginTask("Download archives bundles to Temporary Space", archiveIDToInstall.length);
-					}
-					for (int i = 0; i < archiveIDToInstall.length; i++) {
+		URL sourceURL;
+		String newFile;
+		URL newURL;
+		if (monitor != null) {
+			monitor.beginTask("Download archives bundles to Temporary Space", archiveIDToInstall.length);
+		}
+		for (int i = 0; i < archiveIDToInstall.length; i++) {
 
-						// transform the id by asking the site to map them to real URL inside the SITE	
-						sourceURL = ((Site) getSite()).getURL(archiveIDToInstall[i]);
-						if (monitor != null) {
-							monitor.subTask("..." + archiveIDToInstall[i]);
-						}
-						// the name of the file in the temp directory
-						// should be the regular plugins/pluginID_ver as the Temp site is OUR site
-						newFile = Site.DEFAULT_PLUGIN_PATH + archiveIDToInstall[i];
-						newURL = UpdateManagerUtils.resolveAsLocal(sourceURL, newFile);
+			// transform the id by asking the site to map them to real URL inside the SITE	
+			sourceURL = ((Site) getSite()).getURL(archiveIDToInstall[i]);
+			if (monitor != null) {
+				monitor.subTask("..." + archiveIDToInstall[i]);
+			}
+			// the name of the file in the temp directory
+			// should be the regular plugins/pluginID_ver as the Temp site is OUR site
+			newFile = Site.DEFAULT_PLUGIN_PATH + archiveIDToInstall[i];
+			newURL = UpdateManagerUtils.resolveAsLocal(sourceURL, newFile);
 
-						// transfer the possible mapping to the temp site						
-						((Site)tempSite).addArchive(new Info(archiveIDToInstall[i], newURL));
-						if (monitor != null) {
-							monitor.worked(1);
-							if (monitor.isCanceled()) {
-								throw CANCEL_EXCEPTION;
-							}
-						}
-					}
+			// transfer the possible mapping to the temp site						
+			 ((Site) tempSite).addArchive(new Info(archiveIDToInstall[i], newURL));
+			if (monitor != null) {
+				monitor.worked(1);
+				if (monitor.isCanceled()) {
+					throw CANCEL_EXCEPTION;
+				}
+			}
+		}
 
-				// the site of this feature now becomes the TEMP directory
-				// FIXME: make sure there is no other issue
-				// like asking for stuff that hasn't been copied
-				// or reusing this feature
-				// of having an un-manageable temp site
+		// the site of this feature now becomes the TEMP directory
+		// FIXME: make sure there is no other issue
+		// like asking for stuff that hasn't been copied
+		// or reusing this feature
+		// of having an un-manageable temp site
 
-				this.setSite(tempSite);
-		
+		this.setSite(tempSite);
+
 	}
-
 
 	/**
 	 * Logs that an attempt to read a non initialize variable has been made
