@@ -895,6 +895,9 @@ public abstract class Action implements IAction {
         return enabled;
     }
 	
+    /* (non-Javadoc)
+     * Method declared on IAction.
+     */
     public boolean isHandled() {
         return true;
     }
