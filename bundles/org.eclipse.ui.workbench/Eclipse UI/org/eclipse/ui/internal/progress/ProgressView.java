@@ -116,7 +116,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 				JobProgressManager provider = JobProgressManager.getInstance();
 				provider.debug = !provider.debug;
 				setChecked(provider.debug);
-				provider.refreshViewers(null);
+				provider.refreshAll();
 			}
 
 		});
@@ -198,9 +198,9 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 */
 	private void createDeleteAction() {
 			deleteAction = new Action(ProgressMessages.getString("ProgressView.DeleteAction")) {//$NON-NLS-1$
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.action.Action#run()
+			 */
 			public void run() {
 				JobInfo element = getSelectedInfo();
 				JobProgressManager.getInstance().clearJob(element.getJob());
@@ -214,17 +214,17 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 */
 	private void createShowErrorAction() {
 			showErrorAction = new Action(ProgressMessages.getString("ProgressView.ShowErrorAction")) {//$NON-NLS-1$
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
-			public void run() {
-				JobInfo element = getSelectedInfo();
-				ErrorDialog.openError(
-					viewer.getControl().getShell(),
-					element.getDisplayString(),
-					element.getStatus().getMessage(),
-					element.getStatus());
-			}
+				/* (non-Javadoc)
+				 * @see org.eclipse.jface.action.Action#run()
+				 */
+				public void run() {
+					JobInfo element = getSelectedInfo();
+					ErrorDialog.openError(
+						viewer.getControl().getShell(),
+						element.getDisplayString(),
+						element.getStatus().getMessage(),
+						element.getStatus());
+				}
 
 		};
 	}
