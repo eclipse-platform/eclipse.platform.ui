@@ -20,7 +20,7 @@ import org.eclipse.ui.internal.intro.impl.util.*;
 /**
  * Factory to create all UI forms widgets for the Forms intro presentation.
  */
-public class UIFormsFactory {
+public class FormsWidgetFactory {
 
     private HyperlinkAdapter hyperlinkAdapter = new HyperlinkAdapter() {
 
@@ -56,7 +56,7 @@ public class UIFormsFactory {
     /*
      * protect bad creation.
      */
-    protected UIFormsFactory(FormToolkit toolkit, PageStyleManager styleManager) {
+    protected FormsWidgetFactory(FormToolkit toolkit, PageStyleManager styleManager) {
         this.toolkit = toolkit;
         this.styleManager = styleManager;
     }
