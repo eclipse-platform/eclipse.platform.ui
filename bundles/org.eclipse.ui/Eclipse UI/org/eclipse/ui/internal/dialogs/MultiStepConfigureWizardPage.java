@@ -200,7 +200,7 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 		 * Method declared on IWizardContainer.
 		 */
 		public void showPage(IWizardPage page) {
-			showPage(page, false);
+			showPage(page, true);
 		}
 
 		/* (non-Javadoc)
@@ -235,14 +235,14 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 		 * Handles the back button pressed
 		 */
 		public void backPressed() {
-			showPage(currentPage.getPreviousPage(), true);
+			showPage(currentPage.getPreviousPage(), false);
 		}
 		
 		/**
 		 * Handles the next button pressed
 		 */
 		public void nextPressed() {
-			showPage(currentPage.getNextPage(), false);
+			showPage(currentPage.getNextPage(), true);
 		}
 		
 		/**
@@ -419,11 +419,11 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 		/**
 		 * Show the requested page
 		 */
-		public void showPage(IWizardPage page, boolean backingUp) {
+		public void showPage(IWizardPage page, boolean rememberPrevious) {
 			if (page == null || page == currentPage)
 				return;
 			
-			if (!backingUp && currentPage != null)
+			if (rememberPrevious && currentPage != null)
 				page.setPreviousPage(currentPage);
 				
 			if (wizard != page.getWizard())

@@ -184,6 +184,18 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	}
 	
 	/**
+	 * Returns the membership set ids that the specified
+	 * capability belongs to.
+	 */
+	public String[] getMembershipSetIds(Capability capability) {
+		IProjectNatureDescriptor desc = capability.getNatureDescriptor();
+		if (desc == null)
+			return EMPTY_ID_LIST;
+			
+		return desc.getNatureSetIds();
+	}
+
+	/**
 	 * Returns the capability ids that are prerequisites
 	 * of the specified capability.
 	 */
