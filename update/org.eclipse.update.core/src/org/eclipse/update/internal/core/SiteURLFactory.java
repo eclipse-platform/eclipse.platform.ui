@@ -37,7 +37,7 @@ public class SiteURLFactory extends BaseSiteFactory {
 	 * 
 	 * 3 open the stream	 
 	 */
-	public ISite createSite(URL url, boolean forceCreation) throws IOException,  InvalidSiteTypeException, ParsingException {
+	public ISite createSite(URL url) throws IOException,  InvalidSiteTypeException, ParsingException {
 
 		Site site = null;
 		InputStream siteStream = null;

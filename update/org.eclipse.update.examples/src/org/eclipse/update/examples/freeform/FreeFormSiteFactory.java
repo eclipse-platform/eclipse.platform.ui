@@ -13,9 +13,9 @@ import org.eclipse.update.core.model.URLEntryModel;
 public class FreeFormSiteFactory extends BaseSiteFactory {
 
 	/*
-	 * @see ISiteFactory#createSite(URL, boolean)
+	 * @see ISiteFactory#createSite(URL)
 	 */
-	public ISite createSite(URL url, boolean forceCreation) throws IOException, ParsingException, InvalidSiteTypeException {
+	public ISite createSite(URL url) throws IOException, ParsingException, InvalidSiteTypeException {
 		
 		// Create site
 		Site site = null;

@@ -48,7 +48,7 @@ public class InternalSiteManager {
 	 * If the Site has a different Type/Site Handler not known up to now,
 	 * it will be discovered when parsing the site.xml file.
 	 */
-	public static ISite getSite(URL siteURL, boolean forceCreation)
+	public static ISite getSite(URL siteURL)
 		throws CoreException {
 		ISite site = null;
 
@@ -56,10 +56,10 @@ public class InternalSiteManager {
 			return null;
 
 		try {
-			site = attemptCreateSite(DEFAULT_SITE_TYPE, siteURL, forceCreation);
+			site = attemptCreateSite(DEFAULT_SITE_TYPE, siteURL);
 		} catch (CoreException preservedException) {
 			try {
-				site = attemptCreateSite(DEFAULT_EXECUTABLE_SITE_TYPE, siteURL, forceCreation);
+				site = attemptCreateSite(DEFAULT_EXECUTABLE_SITE_TYPE, siteURL);
 			} catch (CoreException retryException) {
 
 				IStatus firstStatus = preservedException.getStatus();
@@ -91,13 +91,12 @@ public class InternalSiteManager {
 	 */
 	private static ISite attemptCreateSite(
 		String guessedTypeSite,
-		URL siteURL,
-		boolean forceCreation)
+		URL siteURL)
 		throws CoreException {
 		ISite site = null;
 
 		try {
-			site = createSite(guessedTypeSite, siteURL, forceCreation);
+			site = createSite(guessedTypeSite, siteURL);
 		} catch (InvalidSiteTypeException e) {
 
 			//DEBUG:
@@ -116,7 +115,7 @@ public class InternalSiteManager {
 				InvalidSiteTypeException exception = (InvalidSiteTypeException) e;
 				if (exception.getNewType() == null)
 					throw e;
-				site = createSite(exception.getNewType(), siteURL, forceCreation);
+				site = createSite(exception.getNewType(), siteURL);
 			} catch (InvalidSiteTypeException e1) {
 				throw Utilities.newCoreException(
 					Policy.bind(
@@ -155,15 +154,14 @@ public class InternalSiteManager {
 	 */
 	private static ISite createSite(
 		String siteType,
-		URL url,
-		boolean forceCreation)
+		URL url)
 		throws CoreException, InvalidSiteTypeException {
 		ISite site = null;
 		ISiteFactory factory = SiteTypeFactory.getInstance().getFactory(siteType);
 
 		try {
 
-			site = factory.createSite(url, forceCreation);
+			site = factory.createSite(url);
 
 		} catch (IOException e) {
 			// if the URL is pointing to either a file 
@@ -190,7 +188,7 @@ public class InternalSiteManager {
 					//$NON-NLS-1$ //$NON-NLS-2$
 				}
 				try {
-					site = factory.createSite(url, forceCreation);
+					site = factory.createSite(url);
 				} catch (ParsingException e1) {
 					throw Utilities.newCoreException(
 						Policy.bind(
@@ -237,7 +235,7 @@ public class InternalSiteManager {
 				}
 
 				try {
-					site = factory.createSite(url, forceCreation);
+					site = factory.createSite(url);
 				} catch (ParsingException e1) {
 					throw Utilities.newCoreException(
 						Policy.bind(
@@ -288,7 +286,7 @@ public class InternalSiteManager {
 					//$NON-NLS-1$ //$NON-NLS-2$
 				}
 				try {
-					site = factory.createSite(url, forceCreation);
+					site = factory.createSite(url);
 				} catch (ParsingException e1) {
 					throw Utilities.newCoreException(
 						Policy.bind(
@@ -336,7 +334,7 @@ public class InternalSiteManager {
 					//$NON-NLS-1$ //$NON-NLS-2$
 				}
 				try {
-					site = factory.createSite(url, forceCreation);
+					site = factory.createSite(url);
 				} catch (ParsingException e1) {
 					throw Utilities.newCoreException(
 						Policy.bind(
@@ -379,7 +377,7 @@ public class InternalSiteManager {
 		if (siteLocation != null) {
 			try {
 				URL siteURL = siteLocation.toURL();
-				site = (Site) getSite(siteURL, true);
+				site = (Site) getSite(siteURL);
 			} catch (MalformedURLException e) {
 				throw Utilities.newCoreException(
 					Policy.bind(

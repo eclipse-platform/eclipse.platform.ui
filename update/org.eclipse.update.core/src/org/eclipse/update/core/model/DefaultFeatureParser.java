@@ -906,7 +906,22 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 * @see DefaultHandler#characters(char[], int, int)
 	 */
 	public void characters(char[] ch, int start, int length) {
-		String text = new String(ch, start, length).trim();
+		
+		String text = "";
+		
+		// remove any \t \r\n and space
+		boolean valid = false;
+		for (int i = 0; i < ch.length; i++) {
+			if (!Character.isWhitespace(ch[i])){
+				valid = true;
+				break;
+			}
+		}
+		
+		if (valid){
+			text = new String(ch, start, length).trim();
+		} 
+		
 		//only push if not unknown state
 		int state = ((Integer) stateStack.peek()).intValue();
 		if (state == STATE_DESCRIPTION || state == STATE_COPYRIGHT || state == STATE_LICENSE)

@@ -32,10 +32,10 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 	 * Create site. Implementation of this method must be provided by 
 	 * subclass
 	 * 
-	 * @see ISiteFactory#createSite(URL, boolean)
+	 * @see ISiteFactory#createSite(URL)
 	 * @since 2.0
 	 */
-	public abstract ISite createSite(URL url, boolean forceCreation) throws IOException, InvalidSiteTypeException, ParsingException;
+	public abstract ISite createSite(URL url) throws IOException, InvalidSiteTypeException, ParsingException;
 
 	/**
 	 * Helper method to access resouce bundle for site. The default 

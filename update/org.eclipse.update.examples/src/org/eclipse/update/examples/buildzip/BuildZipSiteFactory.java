@@ -28,9 +28,9 @@ import org.eclipse.update.core.model.CategoryModel;
 public class BuildZipSiteFactory extends BaseSiteFactory {
 
 	/*
-	 * @see ISiteFactory#createSite(URL, boolean)
+	 * @see ISiteFactory#createSite(URL)
 	 */
-	public ISite createSite(URL url, boolean forceCreation) throws IOException, ParsingException, InvalidSiteTypeException {
+	public ISite createSite(URL url) throws IOException, ParsingException, InvalidSiteTypeException {
 
 		Site site = null;
 

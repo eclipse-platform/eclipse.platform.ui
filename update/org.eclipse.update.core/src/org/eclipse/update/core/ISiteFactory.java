@@ -42,14 +42,13 @@ public interface ISiteFactory {
 	 * not a supported type for this factory 
 	 * @since 2.0 
 	 */
-	// FIXME: does the forceCreation make sense as API ??? What is the semantics?
 
 	// FIXME: why is this call throwing IOException and ParsingException
 	//        when the corresponding feature factory call throws
 	//        CoreException. We need to be consistent (would like to throw
 	//        CoreException. I understand the need for InvalidSiteTypeException.
 
-	ISite createSite(URL url, boolean forceCreation)
+	ISite createSite(URL url)
 		throws IOException, ParsingException, InvalidSiteTypeException;
 
 }

@@ -54,13 +54,8 @@ public class SiteManager {
 	 * @since 2.0 
 	 */
 	
-	public static ISite getSite(URL siteURL,boolean forceCreation) throws CoreException {
-		return InternalSiteManager.getSite(siteURL,forceCreation);
-	}
-	
-	
 	public static ISite getSite(URL siteURL) throws CoreException {
-		return InternalSiteManager.getSite(siteURL,true);
+		return InternalSiteManager.getSite(siteURL);
 	}
 		
 	/**

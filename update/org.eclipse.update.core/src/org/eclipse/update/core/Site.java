@@ -134,17 +134,6 @@ public class Site extends SiteModel implements ISite{
 		return DEFAULT_PACKAGED_FEATURE_TYPE;
 	}
 
-
-	/*
-	 * @see ISite#getInfoURL()
-	 */
-	public URL getInfoURL() {
-		URLEntryModel description = getDescriptionModel();
-		if (description == null)
-			return null;
-		return description.getURL();
-	}
-
 	/*
 	 * @see ISite#getCategories()
 	 */

@@ -55,7 +55,8 @@ public class SiteFileFactory extends BaseSiteFactory {
 	/*
 	 * @see ISiteFactory#createSite(URL,boolean)
 	 */
-	public ISite createSite(URL url, boolean forceCreation) throws IOException, ParsingException, InvalidSiteTypeException {
+	public ISite createSite(URL url)
+		throws IOException, ParsingException, InvalidSiteTypeException {
 
 		Site site = null;
 		InputStream siteStream = null;
@@ -69,19 +70,17 @@ public class SiteFileFactory extends BaseSiteFactory {
 			if (siteLocation.isDirectory()) {
 				// need to add '/' if it is not there
 				if (!(path.endsWith("/") || path.endsWith(File.separator))) { //$NON-NLS-1$
-					url = new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getFile() + "/"); //$NON-NLS-1$
+					url =
+						new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getFile() + "/");
+					//$NON-NLS-1$
 				}
 
 				if (new File(siteLocation, Site.SITE_XML).exists()) {
 					siteStream = new FileInputStream(new File(siteLocation, Site.SITE_XML));
 					site = (Site) factory.parseSite(siteStream);
 				} else {
-					if (forceCreation) {
-						// parse siteLocation
-						site = parseSite(siteLocation);
-					} else {
-						throw new IOException(Policy.bind("SiteFileFactory.UnableToRetriveSite")); //$NON-NLS-1$
-					}
+					// parse siteLocation
+					site = parseSite(siteLocation);
 				}
 			} else {
 				// we are not pointing to a directory
@@ -91,7 +90,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 					siteStream = resolvedURL.openStream();
 					site = (Site) factory.parseSite(siteStream);
 				} catch (IOException e) {
-					if (forceCreation) {
+
 						// attempt to parse parent directory
 						File file = new File(url.getFile());
 						File parentDirectory = file.getParentFile();
@@ -105,8 +104,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 							throw new ParsingException(new Exception(Policy.bind("SiteFileFactory.UnableToObtainParentDirectory") + file)); //$NON-NLS-1$
 
 						site = parseSite(parentDirectory);
-					} else
-						throw e;
+
 				}
 			}
 
@@ -114,7 +112,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 			site.setSiteContentProvider(contentProvider);
 			contentProvider.setSite(site);
 			site.resolve(url, getResourceBundle(url));
-			
+
 			// Do not set read only as may install in it
 			//site.markReadOnly();
 
@@ -135,7 +133,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 		this.site = (SiteFile) createSiteMapModel();
 
 		if (!directory.exists())
-			throw new ParsingException(new Exception(Policy.bind("SiteFileFactory.FileDoesNotExist", directory.getAbsolutePath()))); //$NON-NLS-1$
+			throw new ParsingException(
+				new Exception(
+					Policy.bind("SiteFileFactory.FileDoesNotExist", directory.getAbsolutePath())));
+		//$NON-NLS-1$
 
 		File pluginPath = new File(directory, Site.DEFAULT_PLUGIN_PATH);
 
@@ -178,7 +179,8 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 					SiteFileFactory archiveFactory = new SiteFileFactory();
 					// the URL must ends with '/' for the bundle to be resolved
-					newFilePath = dir[index] + (dir[index].endsWith("/") ? "/" : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					newFilePath = dir[index] + (dir[index].endsWith("/") ? "/" : "");
+					//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					featureURL = new File(featureDir, newFilePath).toURL();
 
 					featureRef = archiveFactory.createFeatureReferenceModel();
@@ -189,7 +191,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 				}
 			} catch (MalformedURLException e) {
-				throw Utilities.newCoreException(Policy.bind("SiteFileFactory.UnableToCreateURLForFile", newFilePath), e); //$NON-NLS-1$
+				throw Utilities.newCoreException(
+					Policy.bind("SiteFileFactory.UnableToCreateURLForFile", newFilePath),
+					e);
+				//$NON-NLS-1$
 			}
 		}
 	}
@@ -224,7 +229,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 				}
 			} catch (MalformedURLException e) {
-				throw Utilities.newCoreException(Policy.bind("SiteFileFactory.UnableToCreateURLForFile", newFilePath), e); //$NON-NLS-1$
+				throw Utilities.newCoreException(
+					Policy.bind("SiteFileFactory.UnableToCreateURLForFile", newFilePath),
+					e);
+				//$NON-NLS-1$
 			}
 		}
 	}
@@ -253,7 +261,8 @@ public class SiteFileFactory extends BaseSiteFactory {
 						}
 
 						if (pluginFile != null && pluginFile.exists()) {
-							IPluginEntry entry = new DefaultPluginParser().parse(new FileInputStream(pluginFile));
+							IPluginEntry entry =
+								new DefaultPluginParser().parse(new FileInputStream(pluginFile));
 							VersionedIdentifier identifier = entry.getVersionedIdentifier();
 							plugin = new PluginIdentifier(identifier, pluginFile);
 
@@ -264,9 +273,15 @@ public class SiteFileFactory extends BaseSiteFactory {
 				}
 			} // path is a directory
 		} catch (IOException e) {
-			throw Utilities.newCoreException(Policy.bind("SiteFileFactory.ErrorAccessing", pluginFile.getAbsolutePath()), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(
+				Policy.bind("SiteFileFactory.ErrorAccessing", pluginFile.getAbsolutePath()),
+				e);
+			//$NON-NLS-1$
 		} catch (SAXException e) {
-			throw Utilities.newCoreException(Policy.bind("SiteFileFactory.ErrorParsingFile", pluginFile.getAbsolutePath()), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(
+				Policy.bind("SiteFileFactory.ErrorParsingFile", pluginFile.getAbsolutePath()),
+				e);
+			//$NON-NLS-1$
 		}
 
 	}
@@ -291,7 +306,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 				SiteFileFactory archiveFactory = new SiteFileFactory();
 				// the id is plugins\<pluginid>_<ver>.jar as per the specs
 				ArchiveReferenceModel archive = archiveFactory.createArchiveReferenceModel();
-				String pluginID = Site.DEFAULT_PLUGIN_PATH + plugin.toString() + FeaturePackagedContentProvider.JAR_EXTENSION;
+				String pluginID =
+					Site.DEFAULT_PLUGIN_PATH
+						+ plugin.toString()
+						+ FeaturePackagedContentProvider.JAR_EXTENSION;
 				archive.setPath(pluginID);
 				location = plugin.getLocation().toURL().toExternalForm();
 				URL url = new URL(location);
@@ -299,7 +317,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 				((Site) site).addArchiveReferenceModel(archive);
 			}
 		} catch (MalformedURLException e) {
-			throw Utilities.newCoreException(Policy.bind("SiteFileFactory.UnableToCreateURLForFile", location), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(
+				Policy.bind("SiteFileFactory.UnableToCreateURLForFile", location),
+				e);
+			//$NON-NLS-1$
 		}
 	}
 
@@ -338,7 +359,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 			}
 
 		} catch (Exception e) {
-			throw Utilities.newCoreException(Policy.bind("SiteFileFactory.ErrorAccessing", refString), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(
+				Policy.bind("SiteFileFactory.ErrorAccessing", refString),
+				e);
+			//$NON-NLS-1$
 		}
 
 	}
@@ -365,7 +389,9 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 * @see SiteModelFactory#canParseSiteType(String)
 	 */
 	public boolean canParseSiteType(String type) {
-		return (super.canParseSiteType(type) || SiteFileContentProvider.SITE_TYPE.equalsIgnoreCase(type));
+		return (
+			super.canParseSiteType(type)
+				|| SiteFileContentProvider.SITE_TYPE.equalsIgnoreCase(type));
 	}
 
 	/**
@@ -373,6 +399,5 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 */
 	public void abort() {
 	}
-
 
 }

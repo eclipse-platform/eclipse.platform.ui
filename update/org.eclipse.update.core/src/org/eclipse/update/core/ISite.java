@@ -85,12 +85,6 @@ public interface ISite {
 
 	String getType() ;
 	
-	
-	/**
-	 * @since 2.0 
-	 * @deprecated use getDescription().getURL()
-	 */
-	URL getInfoURL();
 
 	/**
 	 * Returns an array of categories for this site

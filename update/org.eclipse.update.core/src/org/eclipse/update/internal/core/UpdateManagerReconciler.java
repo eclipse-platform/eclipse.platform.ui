@@ -11,7 +11,10 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.Utilities;
 
 /**
  * Update manager reconciler application.
@@ -89,6 +92,11 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 	private void reconcile(IPlatformConfiguration cfg) {
 			
 		// do the reconciliation
+		try {
+			SiteManager.getLocalSite();
+		} catch (CoreException e){
+			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+		}
 		cfg.refresh(); // for now just force recompute of stamps
 	}
 	
