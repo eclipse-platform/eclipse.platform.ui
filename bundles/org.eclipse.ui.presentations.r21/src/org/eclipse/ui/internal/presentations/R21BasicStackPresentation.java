@@ -43,7 +43,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.presentations.r21.R21Colors;
 import org.eclipse.ui.internal.presentations.r21.R21PresentationMessages;
@@ -73,6 +72,8 @@ public class R21BasicStackPresentation extends StackPresentation {
     private MenuManager systemMenuManager = new MenuManager();
 
     private CLabel titleLabel;
+
+    private boolean shellActive = true;
 
     private final static String TAB_DATA = R21BasicStackPresentation.class
             .getName()
@@ -218,10 +219,12 @@ public class R21BasicStackPresentation extends StackPresentation {
     private ShellAdapter shellListener = new ShellAdapter() {
 
         public void shellActivated(ShellEvent event) {
+            shellActive = true;
             updateGradient();
         }
 
         public void shellDeactivated(ShellEvent event) {
+            shellActive = false;
             updateGradient();
         }
     };
@@ -236,6 +239,9 @@ public class R21BasicStackPresentation extends StackPresentation {
             IStackPresentationSite stackSite) {
         super(stackSite);
         paneFolder = control;
+
+        shellActive = paneFolder.getControl().getShell().equals(
+                control.getControl().getDisplay().getActiveShell());
 
         //		tabFolder.setMinimizeVisible(stackSite.supportsState(IStackPresentationSite.STATE_MINIMIZED));
         //		tabFolder.setMaximizeVisible(stackSite.supportsState(IStackPresentationSite.STATE_MAXIMIZED));
@@ -653,11 +659,7 @@ public class R21BasicStackPresentation extends StackPresentation {
      * Return whether the window's shell is activated
      */
     /* package */boolean getShellActivated() {
-        Window window = getWindow();
-        if (window instanceof WorkbenchWindow)
-            return ((WorkbenchWindow) window).getShellActivated();
-        else
-            return false;
+        return shellActive;
     }
 
     /**
