@@ -150,6 +150,6 @@ public class ConfigurationWizardElement extends WorkbenchAdapter implements IAda
 	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {
-		return configurationElement.getDeclaringExtension().getNamespace();
+		return configurationElement.getNamespace();
 	}
 }

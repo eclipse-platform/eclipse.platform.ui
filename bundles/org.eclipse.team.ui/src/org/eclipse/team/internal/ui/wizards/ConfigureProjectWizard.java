@@ -181,7 +181,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	
 	private boolean filterItem(IConfigurationElement element) {
 		String extensionId = element.getAttribute(ATT_ID);
-		String extensionPluginId = element.getDeclaringExtension().getNamespace();
+		String extensionPluginId = element.getNamespace();
 	    IActivityManager activityMgr = PlatformUI.getWorkbench().getActivitySupport().getActivityManager();
 	    IIdentifier id = activityMgr.getIdentifier(extensionPluginId + "/" +  extensionId); //$NON-NLS-1$
 	    return (!id.isEnabled());
