@@ -8,11 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ccvs.ui.subscriber;
+package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.team.internal.ccvs.core.ILogEntry;
+import org.eclipse.team.core.subscribers.*;
+import org.eclipse.team.core.subscribers.ActiveChangeSet;
+import org.eclipse.team.core.subscribers.ChangeSet;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 
 /**
@@ -20,27 +22,28 @@ import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
  * 
  * @since 3.0
  */
-public class ChangeLogModelSorter extends ViewerSorter {
+public class ChangeSetModelSorter extends ViewerSorter {
 	
 	private int commentCriteria;
-	private ChangeLogModelProvider provider;
+	private ChangeSetModelProvider provider;
 	
 	// Comment sorting options
 	public final static int DATE = 1;
 	public final static int COMMENT = 2;
 	public final static int USER = 3;
 	
-	public ChangeLogModelSorter(ChangeLogModelProvider provider, int commentCriteria) {
+	public ChangeSetModelSorter(ChangeSetModelProvider provider, int commentCriteria) {
 		this.provider = provider;
 		this.commentCriteria = commentCriteria;
 	}
 	
 	protected int classComparison(Object element) {
-		if (element instanceof CommitSetDiffNode) {
-			return 0;
-		}
-		if (element instanceof ChangeLogDiffNode) {
-			return 1;
+		if (element instanceof ChangeSetDiffNode) {
+		    ChangeSet set = ((ChangeSetDiffNode)element).getSet();
+		    if (set instanceof ActiveChangeSet) {
+		        return 0;
+		    }
+		    return 1;
 		}
 		return 2;
 	}
@@ -60,35 +63,35 @@ public class ChangeLogModelSorter extends ViewerSorter {
 		//have to deal with non-resources in navigator
 		//if one or both objects are not resources, returned a comparison 
 		//based on class.
-		if (o1 instanceof  CommitSetDiffNode && o2 instanceof CommitSetDiffNode) {
-		    CommitSet s1 = ((CommitSetDiffNode) o1).getSet();
-		    CommitSet s2 = ((CommitSetDiffNode) o2).getSet();
-			return compareNames(s1.getTitle(), s2.getTitle());
+		if (o1 instanceof  ChangeSetDiffNode && o2 instanceof ChangeSetDiffNode) {
+		    ChangeSet s1 = ((ChangeSetDiffNode) o1).getSet();
+		    ChangeSet s2 = ((ChangeSetDiffNode) o2).getSet();
+		    if (s1 instanceof ActiveChangeSet && s2 instanceof ActiveChangeSet) {
+		        return compareNames(((ActiveChangeSet)s1).getTitle(), ((ActiveChangeSet)s2).getTitle());
+		    }
+		    if (s1 instanceof CheckedInChangeSet && s2 instanceof CheckedInChangeSet) {
+		        CheckedInChangeSet r1 = (CheckedInChangeSet)s1;
+		        CheckedInChangeSet r2 = (CheckedInChangeSet)s2;
+				if (commentCriteria == DATE)
+					return r1.getDate().compareTo(r2.getDate());
+				else if (commentCriteria == COMMENT)
+					return compareNames(r1.getComment(), r2.getComment());
+				else if (commentCriteria == USER)
+					return compareNames(r1.getAuthor(), r2.getAuthor());
+				else
+					return 0;
+		    }
+		    if (s1 instanceof ActiveChangeSet) {
+		        return -1;
+		    } else if (s2 instanceof ActiveChangeSet) {
+		        return 1;
+		    }
+		    if (s1 instanceof CheckedInChangeSet) {
+		        return -1;
+		    } else if (s2 instanceof CheckedInChangeSet) {
+		        return 1;
+		    }
 		}
-		
-		if (o1 instanceof  ChangeLogDiffNode && o2 instanceof ChangeLogDiffNode) {
-			ILogEntry r1 = ((ChangeLogDiffNode) o1).getComment();
-			ILogEntry r2 = ((ChangeLogDiffNode) o2).getComment();
-					
-			if (commentCriteria == DATE)
-				return r1.getDate().compareTo(r2.getDate());
-			else if (commentCriteria == COMMENT)
-				return compareNames(r1.getComment(), r2.getComment());
-			else if (commentCriteria == USER)
-				return compareNames(r1.getAuthor(), r2.getAuthor());
-			else
-				return 0;
-		}
-		
-		if (o1 instanceof CommitSetDiffNode)
-			return 1;
-		else if (o2 instanceof CommitSetDiffNode)
-			return -1;
-		
-		if (o1 instanceof ChangeLogDiffNode)
-			return 1;
-		else if (o2 instanceof ChangeLogDiffNode)
-			return -1;
 
 		if (o1 instanceof ISynchronizeModelElement && o2 instanceof ISynchronizeModelElement) {
 			ViewerSorter embeddedSorter = provider.getEmbeddedSorter();

@@ -11,17 +11,12 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.IFontDecorator;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -33,17 +28,14 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.CVSDecoration;
 import org.eclipse.team.internal.ccvs.ui.CVSLightweightDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 
-class CVSParticipantLabelDecorator extends LabelProvider implements IPropertyChangeListener, ILabelDecorator, IFontDecorator {
+class CVSParticipantLabelDecorator extends LabelProvider implements IPropertyChangeListener, ILabelDecorator {
 	private ISynchronizePageConfiguration configuration;
-	private Font boldFont;
 	
 	public CVSParticipantLabelDecorator(ISynchronizePageConfiguration configuration) {
 		this.configuration = configuration;
@@ -75,12 +67,6 @@ class CVSParticipantLabelDecorator extends LabelProvider implements IPropertyCha
 					return output.toString();
 				}
 			}
-		if (element instanceof CommitSetDiffNode) {
-		    CommitSet set = ((CommitSetDiffNode)element).getSet();
-		    if (CommitSetManager.getInstance().isDefault(set)) {
-		        text = Policy.bind("CommitSetDiffNode.0", text); //$NON-NLS-1$
-		    }
-		}
 			return text;
 		} catch (CVSException e) {
 			return input;
@@ -99,9 +85,6 @@ class CVSParticipantLabelDecorator extends LabelProvider implements IPropertyCha
 		}
 	}
 	public void dispose() {
-		if(boldFont != null) {
-			boldFont.dispose();
-		}
 		CVSUIPlugin.removePropertyChangeListener(this);
 		TeamUI.removePropertyChangeListener(this);
 	}
@@ -142,24 +125,4 @@ class CVSParticipantLabelDecorator extends LabelProvider implements IPropertyCha
 		}
 		return null;
 	}
-
-	public Font decorateFont(Object element) {
-		if (element instanceof CommitSetDiffNode) {
-		    CommitSet set = ((CommitSetDiffNode)element).getSet();
-		    if (CommitSetManager.getInstance().isDefault(set)) {
-		    	if (boldFont == null) {
-					Font defaultFont = JFaceResources.getDefaultFont();
-					FontData[] data = defaultFont.getFontData();
-					for (int i = 0; i < data.length; i++) {
-						data[i].setStyle(SWT.BOLD);
-					}				
-					boldFont = new Font(TeamUIPlugin.getStandardDisplay(), data);
-				}
-				return boldFont;
-		    }
-		}
-		return null;
-	}
-	
-	
 }

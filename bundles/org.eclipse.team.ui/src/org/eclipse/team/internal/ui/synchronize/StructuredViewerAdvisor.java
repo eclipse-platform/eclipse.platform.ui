@@ -148,6 +148,7 @@ public abstract class StructuredViewerAdvisor implements IAdaptable {
 		modelManager = (SynchronizeModelManager)configuration.getProperty(SynchronizePageConfiguration.P_MODEL_MANAGER);
 		if(modelManager == null) {
 			modelManager = createModelManager(configuration);
+			configuration.setProperty(SynchronizePageConfiguration.P_MODEL_MANAGER, modelManager);
 		}
 		Assert.isNotNull(modelManager, "model manager must be set"); //$NON-NLS-1$
 		modelManager.setViewerAdvisor(this);

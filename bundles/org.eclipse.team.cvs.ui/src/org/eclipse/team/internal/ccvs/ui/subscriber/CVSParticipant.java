@@ -29,7 +29,9 @@ import org.eclipse.team.ui.synchronize.*;
  */
 public class CVSParticipant extends SubscriberParticipant {
 	
-	/* (non-Javadoc)
+	private CVSChangeSetCapability capability;
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant#initializeConfiguration(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
 	 */
 	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
@@ -146,5 +148,23 @@ public class CVSParticipant extends SubscriberParticipant {
         pages[pages.length - 1] = new ComparePreferencePage();
         pages[pages.length - 1].setTitle(Policy.bind("CVSParticipant.2")); //$NON-NLS-1$
         return pages;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#getChangeSetCapability()
+     */
+    public ChangeSetCapability getChangeSetCapability() {
+        if (capability == null) {
+            capability = createChangeSetCapability();
+        }
+        return capability;
+    }
+
+    /**
+     * Create the change set capability for this particpant.
+     * @return the created capability
+     */
+    protected CVSChangeSetCapability createChangeSetCapability() {
+        return new CVSChangeSetCapability();
     }
 }

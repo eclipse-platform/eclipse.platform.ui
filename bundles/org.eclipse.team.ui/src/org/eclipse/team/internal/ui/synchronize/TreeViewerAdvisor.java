@@ -34,6 +34,7 @@ import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.ExpandAllAction;
 import org.eclipse.team.internal.ui.synchronize.actions.NavigateAction;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
@@ -194,6 +195,12 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 	 * @param configuration
 	 */
 	protected SynchronizeModelManager createModelManager(ISynchronizePageConfiguration configuration) {
+	    ChangeSetCapability changeSetCapability = configuration.getParticipant().getChangeSetCapability();
+        if (changeSetCapability != null) {
+	        if (changeSetCapability.supportsActiveChangeSets() || changeSetCapability.supportsCheckedInChangeSets()) {
+	            return new ChangeSetModelManager(configuration);
+	        }
+	    }
 		return new HierarchicalModelManager(configuration);
 	}
 	

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.subscribers.SubscriberChangeSetCollector;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -160,7 +161,6 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				NON_MODAL_CONTEXT_MENU_CONTRIBUTION_GROUP);
 		configuration.addActionContribution(new CompareParticipantActionContribution());
-		new ChangeLogModelManager(configuration);
 	}
 	
 	/* (non-Javadoc)
@@ -197,4 +197,22 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 	protected String getShortTaskName() {
 		return Policy.bind("Participant.comparing"); //$NON-NLS-1$
 	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSParticipant#createChangeSetCapability()
+     */
+    protected CVSChangeSetCapability createChangeSetCapability() {
+        return new CVSChangeSetCapability() {
+            public SubscriberChangeSetCollector getActiveChangeSetManager() {
+                return CVSUIPlugin.getPlugin().getChangeSetManager();
+            }
+            /* (non-Javadoc)
+             * @see org.eclipse.team.ui.synchronize.ChangeSetCapability#enableActiveChangeSetsFor(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
+             */
+            public boolean enableActiveChangeSetsFor(ISynchronizePageConfiguration configuration) {
+                return super.enableActiveChangeSetsFor(configuration) ||
+                	configuration.getComparisonType() == ISynchronizePageConfiguration.TWO_WAY;
+            }
+        };
+    }
 }

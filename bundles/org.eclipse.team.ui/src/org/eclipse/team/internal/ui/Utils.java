@@ -683,4 +683,11 @@ public class Utils {
 			});
 		}
     }
+
+    public static SyncInfo getSyncInfo(ISynchronizeModelElement node) {
+        if (node instanceof IAdaptable) {
+            return (SyncInfo)((IAdaptable)node).getAdapter(SyncInfo.class);
+        }
+        return null;
+    }
 }

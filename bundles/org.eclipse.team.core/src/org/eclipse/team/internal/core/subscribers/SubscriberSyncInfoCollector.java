@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.subscribers;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.team.core.subscribers.*;
+import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.Policy;
 
 /**
@@ -29,12 +28,11 @@ import org.eclipse.team.internal.core.Policy;
  * </p>
  * @since 3.0
  */
-public final class SubscriberSyncInfoCollector implements IResourceChangeListener, ISubscriberChangeListener {
+public final class SubscriberSyncInfoCollector extends SubscriberResourceCollector {
 
 	private SyncSetInputFromSubscriber subscriberInput;
 	private SyncSetInputFromSyncSet filteredInput;
 	private SubscriberEventHandler eventHandler;
-	private Subscriber subscriber;
 	private IResource[] roots;
 	
 	/**
@@ -47,9 +45,8 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 	 * @param roots the roots of the out-of-sync resources to be collected
 	 */
 	public SubscriberSyncInfoCollector(Subscriber subscriber, IResource[] roots) {
+	    super(subscriber);
 		this.roots = roots;
-		this.subscriber = subscriber;
-		Assert.isNotNull(subscriber);
 		this.eventHandler = new SubscriberEventHandler(subscriber, roots);
 		this.subscriberInput = eventHandler.getSyncSetInput();
 		filteredInput = new SyncSetInputFromSyncSet(subscriberInput.getSyncSet(), getEventHandler());
@@ -58,8 +55,7 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 				return true;
 			}
 		});
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
-		subscriber.addListener(this);
+
 	}
 	
 	public void setProgressGroup(IProgressMonitor monitor, int ticks) {
@@ -103,15 +99,6 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 	}
 
 	/**
-	 * Returns the <code>Subscriber</code> associated with this collector.
-	 * 
-	 * @return the <code>Subscriber</code> associated with this collector.
-	 */
-	public Subscriber getSubscriber() {
-		return subscriber;
-	}
-
-	/**
 	 * Disposes of the background job associated with this collector and deregisters
 	 * all it's listeners. This method must be called when the collector is no longer
 	 * referenced and could be garbage collected.
@@ -122,93 +109,7 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 		if(filteredInput != null) {
 			filteredInput.disconnect();
 		}
-		getSubscriber().removeListener(this);		
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-	}
-
-	/**
-	 * Process the resource delta and posts all necessary events to the background
-	 * event handler.
-	 * 
-	 * @param delta the resource delta to analyse
-	 */
-	private void processDelta(IResourceDelta delta, IResource[] roots) {
-		IResource resource = delta.getResource();
-		int kind = delta.getKind();
-
-		if (resource.getType() == IResource.PROJECT) {
-			// Handle a deleted project
-			if (((kind & IResourceDelta.REMOVED) != 0)) {
-				eventHandler.remove(resource);
-				return;
-			}
-			// Handle a closed project
-			if ((delta.getFlags() & IResourceDelta.OPEN) != 0 && !((IProject) resource).isOpen()) {
-				eventHandler.remove(resource);
-				return;
-			}
-			// Only interested in projects mapped to the provider
-			if (!isAncestorOfRoot(resource, roots)) {
-				// If the project has any entries in the sync set, remove them
-				if (getSubscriberSyncInfoSet().hasMembers(resource)) {
-					eventHandler.remove(resource);
-				}
-				return;
-			}
-		}
-
-		boolean visitChildren = false;
-		if (isDescendantOfRoot(resource, roots)) {
-			visitChildren = true;
-			// If the resource has changed type, remove the old resource handle
-			// and add the new one
-			if ((delta.getFlags() & IResourceDelta.TYPE) != 0) {
-				eventHandler.remove(resource);
-				eventHandler.change(resource, IResource.DEPTH_INFINITE);
-			}
-	
-			// Check the flags for changes the SyncSet cares about.
-			// Notice we don't care about MARKERS currently.
-			int changeFlags = delta.getFlags();
-			if ((changeFlags & (IResourceDelta.OPEN | IResourceDelta.CONTENT)) != 0) {
-				eventHandler.change(resource, IResource.DEPTH_ZERO);
-			}
-	
-			// Check the kind and deal with those we care about
-			if ((delta.getKind() & (IResourceDelta.REMOVED | IResourceDelta.ADDED)) != 0) {
-				eventHandler.change(resource, IResource.DEPTH_ZERO);
-			}
-		}
-
-		// Handle changed children
-		if (visitChildren || isAncestorOfRoot(resource, roots)) {
-			IResourceDelta[] affectedChildren = delta.getAffectedChildren(IResourceDelta.CHANGED | IResourceDelta.REMOVED | IResourceDelta.ADDED);
-			for (int i = 0; i < affectedChildren.length; i++) {
-				processDelta(affectedChildren[i], roots);
-			}
-		}
-	}
-
-	private boolean isAncestorOfRoot(IResource parent, IResource[] roots) {
-		// Always traverse into projects in case a root was removed
-		if (parent.getType() == IResource.ROOT) return true;
-		for (int i = 0; i < roots.length; i++) {
-			IResource resource = roots[i];
-			if (parent.getFullPath().isPrefixOf(resource.getFullPath())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean isDescendantOfRoot(IResource resource, IResource[] roots) {
-		for (int i = 0; i < roots.length; i++) {
-			IResource root = roots[i];
-			if (root.getFullPath().isPrefixOf(resource.getFullPath())) {
-				return true;
-			}
-		}
-		return false;
+		super.dispose();
 	}
 	
 	/**
@@ -219,7 +120,7 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 	 */
 	public IResource[] getRoots() {
 		if (roots == null) {
-			return getSubscriber().roots();
+			return super.getRoots();
 		} else {
 			return roots;
 		}
@@ -233,41 +134,6 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 	 */
 	public boolean isAllRootsIncluded() {
 		return roots == null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-		processDelta(event.getDelta(), getRoots());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.team.core.sync.ITeamResourceChangeListener#teamResourceChanged(org.eclipse.team.core.sync.TeamDelta[])
-	 */
-	public void subscriberResourceChanged(ISubscriberChangeEvent[] deltas) {
-		IResource[] roots = getRoots();
-		for (int i = 0; i < deltas.length; i++) {
-			switch (deltas[i].getFlags()) {
-				case ISubscriberChangeEvent.SYNC_CHANGED :
-					if (isAllRootsIncluded() || isDescendantOfRoot(deltas[i].getResource(), roots)) {
-						eventHandler.change(deltas[i].getResource(), IResource.DEPTH_ZERO);
-					}
-					break;
-				case ISubscriberChangeEvent.ROOT_REMOVED :
-					eventHandler.remove(deltas[i].getResource());
-					break;
-				case ISubscriberChangeEvent.ROOT_ADDED :
-					if (isAllRootsIncluded() || isDescendantOfRoot(deltas[i].getResource(), roots)) {
-						eventHandler.change(deltas[i].getResource(), IResource.DEPTH_INFINITE);
-					}
-					break;
-			}
-		}
 	}
 	
 	/**
@@ -325,4 +191,25 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 		this.roots = roots;
 		reset();
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.core.subscribers.SubscriberResourceCollector#hasMembers(org.eclipse.core.resources.IResource)
+     */
+    protected boolean hasMembers(IResource resource) {
+        return getSubscriberSyncInfoSet().hasMembers(resource);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.core.subscribers.SubscriberResourceCollector#remove(org.eclipse.core.resources.IResource)
+     */
+    protected void remove(IResource resource) {
+        eventHandler.remove(resource);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.core.subscribers.SubscriberResourceCollector#change(org.eclipse.core.resources.IResource, int)
+     */
+    protected void change(IResource resource, int depth) {
+        eventHandler.change(resource, depth);
+    }
 }

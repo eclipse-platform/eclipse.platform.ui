@@ -173,6 +173,7 @@ public interface ITeamUIImages {
 	public final String IMG_HIERARCHICAL = "elcl16/hierarchicalLayout.gif"; //$NON-NLS-1$
 	public final String IMG_FLAT = "elcl16/flatLayout.gif"; //$NON-NLS-1$
 	public final String IMG_SYNC_VIEW = "eview16/synch_synch.gif"; //$NON-NLS-1$
+	public final String IMG_CHANGE_SET = "obj/changeset_obj.gif"; //$NON-NLS-1$
 
 
 }

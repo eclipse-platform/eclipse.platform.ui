@@ -381,25 +381,25 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	/*
 	 * Create a test project using the currently running test case as the project name prefix
 	 */
-	protected IProject createProject(String[] strings) throws TeamException, CoreException {
+	protected IProject createProject(String[] strings) throws CoreException {
 		return createProject(getName(), strings);
 	}
 	
 	/*
 	 * Compare two projects by comparing thier providers
 	 */
-	protected void assertEquals(IProject project1, IProject project2) throws CoreException, TeamException, IOException {
+	protected void assertEquals(IProject project1, IProject project2) throws CoreException, IOException {
 		assertEquals(project1, project2, false, false);
 	}
 	
-	protected void assertEquals(IProject project1, IProject project2, boolean includeTimestamps, boolean includeTags) throws CoreException, TeamException, IOException {
+	protected void assertEquals(IProject project1, IProject project2, boolean includeTimestamps, boolean includeTags) throws CoreException, IOException {
 		assertEquals(getProvider(project1), getProvider(project2), includeTimestamps, includeTags);
 	}
 	
 	/*
 	 * Compare CVS team providers by comparing the cvs resource corresponding to the provider's project
 	 */
-	protected void assertEquals(CVSTeamProvider provider1, CVSTeamProvider provider2, boolean includeTimestamps, boolean includeTags) throws CoreException, TeamException, IOException {
+	protected void assertEquals(CVSTeamProvider provider1, CVSTeamProvider provider2, boolean includeTimestamps, boolean includeTags) throws CoreException, IOException {
 		assertEquals(Path.EMPTY, CVSWorkspaceRoot.getCVSFolderFor(provider1.getProject()), 
 			CVSWorkspaceRoot.getCVSFolderFor(provider2.getProject()), 
 			includeTimestamps, includeTags);

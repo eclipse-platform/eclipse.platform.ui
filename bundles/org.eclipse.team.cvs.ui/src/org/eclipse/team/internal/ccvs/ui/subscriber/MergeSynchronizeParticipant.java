@@ -262,9 +262,6 @@ public class MergeSynchronizeParticipant extends CVSParticipant {
 		configuration.setSupportedModes(ISynchronizePageConfiguration.INCOMING_MODE | ISynchronizePageConfiguration.CONFLICTING_MODE);
 		configuration.setMode(ISynchronizePageConfiguration.INCOMING_MODE);
 		configuration.addActionContribution(new MergeParticipantActionContribution());
-		
-		// The manager adds itself to the configuration in it's constructor
-		new ChangeLogModelManager(configuration);
 	}
 	
 	/* (non-Javadoc)

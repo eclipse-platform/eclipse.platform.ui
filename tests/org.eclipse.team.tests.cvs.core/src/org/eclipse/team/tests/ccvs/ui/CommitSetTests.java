@@ -11,21 +11,18 @@
 package org.eclipse.team.tests.ccvs.ui;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.ui.subscriber.*;
-import org.eclipse.team.internal.ccvs.ui.subscriber.CommitSet;
-import org.eclipse.team.internal.ccvs.ui.subscriber.CommitSetManager;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
 /**
@@ -35,22 +32,22 @@ public class CommitSetTests extends EclipseTest {
 
 	private List addedSets = new ArrayList();
 	private List removedSets = new ArrayList();
-	private ICommitSetChangeListener listener = new ICommitSetChangeListener() {
-        public void setAdded(CommitSet set) {
+	private IChangeSetChangeListener listener = new IChangeSetChangeListener() {
+        public void setAdded(ChangeSet set) {
             addedSets.add(set);
         }
-        public void setRemoved(CommitSet set) {
+        public void setRemoved(ChangeSet set) {
             removedSets.add(set);
         }
-        public void titleChanged(CommitSet set) {
+        public void nameChanged(ChangeSet set) {
             // TODO Auto-generated method stub
 
         }
-        public void filesChanged(CommitSet set, IFile[] files) {
+        public void defaultSetChanged(ChangeSet oldDefault, ChangeSet set) {
             // TODO Auto-generated method stub
-
+            
         }
-        public void propertyChange(PropertyChangeEvent event) {
+        public void resourcesChanged(ChangeSet set, IResource[] resources) {
             // TODO Auto-generated method stub
             
         }
@@ -75,11 +72,11 @@ public class CommitSetTests extends EclipseTest {
      * @return the newly create commit set
      * @throws TeamException
      */
-    protected CommitSet createCommitSet(String title, IFile[] files, boolean manageSet) throws TeamException {
+    protected ActiveChangeSet createCommitSet(String title, IFile[] files, boolean manageSet) throws TeamException {
         assertIsModified(getName(), files);
-        CommitSetManager manager = CommitSetManager.getInstance();
-        CommitSet set = manager.createCommitSet(title, files);
-        assertEquals("Not all files were asdded to the set", files.length, set.getFiles().length);
+        SubscriberChangeSetCollector manager = CVSUIPlugin.getPlugin().getChangeSetManager();
+        ActiveChangeSet set = manager.createSet(title, files);
+        assertEquals("Not all files were asdded to the set", files.length, set.getResources().length);
         if (manageSet) {
 	        manager.add(set);
 	        waitForSetAddedEvent(set);
@@ -94,26 +91,20 @@ public class CommitSetTests extends EclipseTest {
      * @param set the commit set
      * @throws CVSException
      */
-    protected void commit(CommitSet set) throws CVSException {
+    protected void commit(ActiveChangeSet set) throws CoreException {
         boolean isManaged = setIsManaged(set);
-        try {
-            set.commit(null /* no workbench part */, DEFAULT_MONITOR);
-        } catch (InvocationTargetException e) {
-            throw CVSException.wrapException(e);
-        } catch (InterruptedException e) {
-            fail("The commit was interupted");
-        }
+        commitResources(set.getResources(), IResource.DEPTH_ZERO);
         if (isManaged) {
 	        // Committing the set should remove it from the manager
             waitForSetRemovedEvent(set);
         }
     }
     
-    private boolean setIsManaged(CommitSet set) {
-        return CommitSetManager.getInstance().contains(set);
+    private boolean setIsManaged(ActiveChangeSet set) {
+        return CVSUIPlugin.getPlugin().getChangeSetManager().contains(set);
     }
 
-    private void waitForSetAddedEvent(CommitSet set) {
+    private void waitForSetAddedEvent(ActiveChangeSet set) {
         int count = 0;
         while (count < 5) {
 	        if (addedSets.contains(set)) {
@@ -130,7 +121,7 @@ public class CommitSetTests extends EclipseTest {
         fail("Did not receive expected set added event");
     }
 
-    private void waitForSetRemovedEvent(CommitSet set) {
+    private void waitForSetRemovedEvent(ActiveChangeSet set) {
         int count = 0;
         while (count < 5) {
 	        if (removedSets.contains(set)) {
@@ -138,6 +129,7 @@ public class CommitSetTests extends EclipseTest {
 	            return;
 	        }
 	        try {
+                while (Display.getCurrent().readAndDispatch()) {}
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 // keep going
@@ -152,7 +144,7 @@ public class CommitSetTests extends EclipseTest {
      */
     protected void setUp() throws Exception {
         super.setUp();
-        CommitSetManager.getInstance().addListener(listener);
+        CVSUIPlugin.getPlugin().getChangeSetManager().addListener(listener);
     }
     
     /* (non-Javadoc)
@@ -160,7 +152,7 @@ public class CommitSetTests extends EclipseTest {
      */
     protected void tearDown() throws Exception {
         super.tearDown();
-        CommitSetManager.getInstance().removeListener(listener);
+        CVSUIPlugin.getPlugin().getChangeSetManager().removeListener(listener);
     }
     
     /**
@@ -179,7 +171,7 @@ public class CommitSetTests extends EclipseTest {
                 project.getFile("changed.txt"), 
                 project.getFile("deleted.txt"),
                 project.getFile("added.txt")};
-        CommitSet set = createCommitSet("testSimpleCommit", files, false /* do not manage the set */);
+        ActiveChangeSet set = createCommitSet("testSimpleCommit", files, false /* do not manage the set */);
         commit(set);
         assertLocalStateEqualsRemote(project);
     }
@@ -201,7 +193,7 @@ public class CommitSetTests extends EclipseTest {
                 project.getFile("changed.txt"), 
                 project.getFile("deleted.txt"),
                 project.getFile("added.txt")};
-        CommitSet set = createCommitSet("testSimpleCommit", files, true /* manage the set */);
+        ActiveChangeSet set = createCommitSet("testSimpleCommit", files, true /* manage the set */);
         commit(set);
         assertLocalStateEqualsRemote(project);
     }

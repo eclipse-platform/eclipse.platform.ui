@@ -12,13 +12,15 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.*;
 
-import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.events.TreeEvent;
+import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.core.Assert;
@@ -32,7 +34,7 @@ import org.eclipse.team.ui.synchronize.*;
  * {@link SynchronizeModelElement} elements that can be shown in a viewer. The model
  * is based on the synchronization information contained in the provided {@link SyncInfoSet}.
  */
-public abstract class AbstractSynchronizeModelProvider implements ISynchronizeModelProvider, ISyncInfoSetChangeListener {
+public abstract class AbstractSynchronizeModelProvider implements ISynchronizeModelProvider, ISyncInfoSetChangeListener, TreeListener {
 	
 	/**
 	 * Property constant for the expansion state for the elements displayed by the page. The
@@ -77,6 +79,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 		    // The update handler will register for sync change events 
 		    // with the sync set when the handler is activated
 		    updateHandler = new SynchronizeModelUpdateHandler(this);
+		    getTree().addTreeListener(this);
 		} else {
 		    // We will use the parent's update handler and register for changes with the given set
 		    updateHandler = parentProvider.updateHandler;
@@ -84,7 +87,11 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 		}
 	}
 	
-	/**
+	private Tree getTree() {
+        return ((Tree)((AbstractTreeViewer)getViewer()).getControl());
+    }
+
+    /**
 	 * Cosntructor for creating a root model provider.
 	 * @param configuration the sync page configuration
 	 * @param set the sync info set from which the model is built
@@ -273,7 +280,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
      */
 	protected void reset() {
 		// save expansion state
-		if(hasViewerState()) {
+		if(isRootProvider() && hasViewerState()) {
 			saveViewerState();
 		}
 		
@@ -292,9 +299,15 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 			public void run() {
 				StructuredViewer viewer = getViewer();
 				if (viewer != null && !viewer.getControl().isDisposed()) {
-					viewer.refresh();
-					//	restore expansion state
-					restoreViewerState();
+					try {
+						viewer.getControl().setRedraw(false);
+						viewer.refresh();
+						//	restore expansion state
+						if (isRootProvider())
+						    restoreViewerState();
+					} finally {
+						viewer.getControl().setRedraw(true);
+					}
 				}
 			}
 		}, getViewer());
@@ -313,6 +326,94 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
      */
     protected abstract boolean hasViewerState();
 
+    /*
+     * Return all the resources that are expanded in the page.
+     * This method should only be called in the UI thread
+     * after validating that the viewer is still valid.
+     */
+    protected IResource[] getExpandedResources() {
+        IResource[] resourcesToExpand = getCachedResources(P_VIEWER_EXPANSION_STATE);
+        if (resourcesToExpand.length > 0) {
+            // There is still saved state for the expanded resources so use it
+            return resourcesToExpand;
+        }
+        final StructuredViewer viewer = getViewer();
+        Object[] objects = ((AbstractTreeViewer) viewer).getVisibleExpandedElements();
+        return getResources(objects);
+    }
+    
+    /*
+     * Expand the resources if they appear in the page.
+     * This method should only be called in the UI thread
+     * after validating that the viewer is still valid.
+     */
+    protected void expandResources(IResource[] resources) {
+        Set expandedElements = new HashSet();
+        StructuredViewer viewer = getViewer();
+        for (int j = 0; j < resources.length; j++) {
+            IResource resource = resources[j];
+			ISynchronizeModelElement[] elements = getModelObjects(resource);
+			for (int i = 0; i < elements.length; i++) {
+                ISynchronizeModelElement element = elements[i];
+                // Add all parents of the element to the expansion set
+                while (element != null) {
+                    expandedElements.add(element);
+                    element = (ISynchronizeModelElement)element.getParent();
+                }
+            }
+		}
+        if (!expandedElements.isEmpty())
+            ((AbstractTreeViewer) viewer).setExpandedElements(expandedElements.toArray());
+    }
+    
+    protected IResource[] getResources(Object[] objects) {
+        Set result = new HashSet();
+		if (objects.length > 0) {
+			for (int i = 0; i < objects.length; i++) {
+				if (objects[i] instanceof ISynchronizeModelElement) {
+					IResource resource = ((ISynchronizeModelElement)objects[i]).getResource();
+					if(resource != null)
+						result.add(resource);
+				}
+			}
+		}
+		return (IResource[]) result.toArray(new IResource[result.size()]);
+    }
+    
+    private void clearResourceCache(String configProperty) {
+        getConfiguration().setProperty(configProperty, null);
+    }
+    
+    private void cacheResources(IResource[] resources, String configProperty) {
+		if (resources.length > 0) {
+			ISynchronizePageConfiguration config = getConfiguration();
+			ArrayList paths = new ArrayList();
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				paths.add(resource.getFullPath().toString());
+			}
+			config.setProperty(configProperty, paths);
+		} else {
+		    clearResourceCache(configProperty);
+		}
+    }
+    
+    private IResource[] getCachedResources(String configProperty) {
+        List paths = (List)getConfiguration().getProperty(configProperty);
+        if (paths == null) 
+            return new IResource[0];
+		IContainer container = ResourcesPlugin.getWorkspace().getRoot();
+		ArrayList resources = new ArrayList();
+		for (Iterator it = paths.iterator(); it.hasNext();) {
+			String path = (String) it.next();
+			IResource resource = getResourceForPath(container, path);
+			if (resource != null) {
+			    resources.add(resource);
+			}
+		}
+		return (IResource[]) resources.toArray(new IResource[resources.size()]);
+    }
+    
     /**
      * Save the viewer state (expansion and selection)
      */
@@ -320,46 +421,20 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 		//	save visible expanded elements and selection
 	    final StructuredViewer viewer = getViewer();
 		if (viewer != null && !viewer.getControl().isDisposed() && viewer instanceof AbstractTreeViewer) {
-			final Object[][] expandedElements = new Object[1][1];
-			final Object[][] selectedElements = new Object[1][1];
+			final IResource[][] expandedResources = new IResource[1][1];
+			final IResource[][] selectedResources = new IResource[1][1];
 			viewer.getControl().getDisplay().syncExec(new Runnable() {
 				public void run() {
 					if (viewer != null && !viewer.getControl().isDisposed()) {
-						expandedElements[0] = ((AbstractTreeViewer) viewer).getVisibleExpandedElements();
-						selectedElements[0] = ((IStructuredSelection) viewer.getSelection()).toArray();
+					    expandedResources[0] = getExpandedResources();
+					    selectedResources[0] = getResources(((IStructuredSelection) viewer.getSelection()).toArray());
 					}
 				}
 			});
-			//
-			// Save expansion
-			//
-			if (expandedElements[0].length > 0) {
-				ISynchronizePageConfiguration config = getConfiguration();
-				ArrayList savedExpansionState = new ArrayList();
-				for (int i = 0; i < expandedElements[0].length; i++) {
-					if (expandedElements[0][i] instanceof ISynchronizeModelElement) {
-						IResource resource = ((ISynchronizeModelElement) expandedElements[0][i]).getResource();
-						if(resource != null)
-							savedExpansionState.add(resource.getFullPath().toString());
-					}
-				}
-				config.setProperty(P_VIEWER_EXPANSION_STATE, savedExpansionState);
-			}
-			//
-			// Save selection
-			//
-			if (selectedElements[0].length > 0) {
-				ISynchronizePageConfiguration config = getConfiguration();
-				ArrayList savedSelectedState = new ArrayList();
-				for (int i = 0; i < selectedElements[0].length; i++) {
-					if (selectedElements[0][i] instanceof ISynchronizeModelElement) {
-						IResource resource = ((ISynchronizeModelElement) selectedElements[0][i]).getResource();
-						if(resource != null)
-							savedSelectedState.add(resource.getFullPath().toString());
-					}
-				}
-				config.setProperty(P_VIEWER_SELECTION_STATE, savedSelectedState);
-			}
+			
+			// Save expansion and selection
+			cacheResources(expandedResources[0], P_VIEWER_EXPANSION_STATE);
+			cacheResources(selectedResources[0], P_VIEWER_SELECTION_STATE);
 		}
 	}
 
@@ -371,43 +446,29 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 		// restore expansion state and selection state
 	    final StructuredViewer viewer = getViewer();
 		if (viewer != null && !viewer.getControl().isDisposed() && viewer instanceof AbstractTreeViewer) {
-			List savedExpansionState = (List)getConfiguration().getProperty(P_VIEWER_EXPANSION_STATE);
-			List savedSelectionState = (List)getConfiguration().getProperty(P_VIEWER_SELECTION_STATE);
-			IContainer container = ResourcesPlugin.getWorkspace().getRoot();
-			final ArrayList expandedElements = new ArrayList();
-			if (savedExpansionState != null) {
-				for (Iterator it = savedExpansionState.iterator(); it.hasNext();) {
-					String path = (String) it.next();
-					IResource resource = getResourceForPath(container, path);
-					ISynchronizeModelElement[] elements = getModelObjects(resource);
-					for (int i = 0; i < elements.length; i++) {
-                        ISynchronizeModelElement element = elements[i];
-                        // Add all parents of the element to the expansion set
-                        while (element != null) {
-                            expandedElements.add(element);
-                            element = (ISynchronizeModelElement)element.getParent();
-                        }
-                    }
-				}
-			}
-			final ArrayList selectedElements = new ArrayList();
-			if (savedSelectionState != null) {
-				for (Iterator it = savedSelectionState.iterator(); it.hasNext();) {
-					String path = (String) it.next();
-					IResource resource = getResourceForPath(container, path);
-					ISynchronizeModelElement[] elements = getModelObjects(resource);
-					// Only preserve the selection if there is one element for the resource
-					if (elements.length == 1) {
-					    selectedElements.add(elements[0]);
-					}
-				}
-			}
-			((AbstractTreeViewer) viewer).setExpandedElements(expandedElements.toArray());
-			viewer.setSelection(new StructuredSelection(selectedElements));
+		    IResource[] resourcesToExpand = getCachedResources(P_VIEWER_EXPANSION_STATE);
+		    IResource[] resourcesToSelect = getCachedResources(P_VIEWER_SELECTION_STATE);
+		    expandResources(resourcesToExpand);
+			selectResources(resourcesToSelect);
 		}
 	}
 
-	/*
+    private void selectResources(IResource[] resourcesToSelect) {
+        StructuredViewer viewer = getViewer();
+        final ArrayList selectedElements = new ArrayList();
+        for (int i = 0; i < resourcesToSelect.length; i++) {
+            IResource resource = resourcesToSelect[i];
+    		ISynchronizeModelElement[] elements = getModelObjects(resource);
+    		// Only preserve the selection if there is one element for the resource
+    		if (elements.length == 1) {
+    		    selectedElements.add(elements[0]);
+    		}
+    	}
+        if (!selectedElements.isEmpty())
+            viewer.setSelection(new StructuredSelection(selectedElements));
+    }
+
+    /*
      * Convert a path to a resource by first looking in the resource
      * tree and, if that fails, by using the path format to create
      * a handle.
@@ -427,6 +488,20 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
         return resource;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.events.TreeListener#treeCollapsed(org.eclipse.swt.events.TreeEvent)
+     */
+    public void treeCollapsed(TreeEvent e) {
+        clearResourceCache(P_VIEWER_EXPANSION_STATE);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.events.TreeListener#treeExpanded(org.eclipse.swt.events.TreeEvent)
+     */
+    public void treeExpanded(TreeEvent e) {
+        clearResourceCache(P_VIEWER_EXPANSION_STATE);
+    }
+    
     /**
 	 * Return all the model objects in this provider that represent the given resource
      * @param resource the resource
@@ -475,6 +550,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	    // directly associated with this provider
 	    if (isRootProvider()) {
 	        updateHandler.dispose();
+	        getTree().removeTreeListener(this);
 	    } else {
 	        set.removeSyncSetChangedListener(this);
 	    }
@@ -551,11 +627,15 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener#syncInfoChanged(org.eclipse.team.core.synchronize.ISyncInfoSetChangeEvent, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-    public void syncInfoChanged(ISyncInfoSetChangeEvent event, IProgressMonitor monitor) {
+    public void syncInfoChanged(final ISyncInfoSetChangeEvent event, final IProgressMonitor monitor) {
 		if (! (event instanceof ISyncInfoTreeChangeEvent)) {
 			reset();
 		} else {
-		    handleChanges((ISyncInfoTreeChangeEvent)event, monitor);
+		    updateHandler.runViewUpdate(new Runnable() {
+                public void run() {
+                    handleChanges((ISyncInfoTreeChangeEvent)event, monitor);
+                }
+            });
 		}
     }
     
@@ -596,12 +676,13 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	 * @param node the model element to remove
 	 */
 	protected void removeFromViewer(ISynchronizeModelElement node) {
-		propogateConflictState(node, true /* clear the conflict */);
-		clearModelObjects(node);
+		ISynchronizeModelElement rootToClear = getRootToClear(node);
+		propogateConflictState(rootToClear, true /* clear the conflict */);
+		clearModelObjects(rootToClear);
 		if (Utils.canUpdateViewer(getViewer())) {
-			doRemove(node);
+			doRemove(rootToClear);
 		}
-		updateHandler.nodeRemoved(node, this);
+		updateHandler.nodeRemoved(rootToClear, this);
 	}
 	
 	/**
@@ -611,8 +692,31 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	 * well.
 	 * @param node the root node
 	 */
-	protected void clearModelObjects(ISynchronizeModelElement node) {
-	    // Clear all the children of the node
+	protected final void clearModelObjects(ISynchronizeModelElement node) {
+	    // When clearing model objects, any parents of the node
+	    // That are not out-of-sync, not the model root and that would
+	    // be empty as a result of this clear, should also be cleared.
+	    ISynchronizeModelElement rootToClear = getRootToClear(node);
+	    // Recursively clear the nodes from the root
+	    recursiveClearModelObjects(rootToClear);
+	    if (node == getModelRoot()) {
+	        IDiffElement[] children = node.getChildren();
+	        for (int i = 0; i < children.length; i++) {
+                IDiffElement element = children[i];
+                ((SynchronizeModelElement)node).remove(element);
+            }
+	    } else {
+		    SynchronizeModelElement parent = ((SynchronizeModelElement)node.getParent());
+		    if (parent != null) parent.remove(node);
+	    }
+	}
+	
+	/**
+	 * Method that sublcasses can oiverride when clearing model objects.
+     * @param node the node to be cleared recursively
+     */
+    protected void recursiveClearModelObjects(ISynchronizeModelElement node) {
+        // Clear all the children of the node
 		IDiffElement[] children = node.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			IDiffElement element = children[i];
@@ -620,22 +724,43 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 			    ISynchronizeModelElement sme = (ISynchronizeModelElement) element;
                 ISynchronizeModelProvider provider = getProvider(sme);
                 if (provider != null && provider instanceof AbstractSynchronizeModelProvider) {
-                    ((AbstractSynchronizeModelProvider)provider).clearModelObjects(sme);
+                    ((AbstractSynchronizeModelProvider)provider).recursiveClearModelObjects(sme);
                 } else {
-                    clearModelObjects(sme);
+                    recursiveClearModelObjects(sme);
                 }
 			}
 		}
-		// Remove the node from the tree
-		IDiffContainer parent = node.getParent();
-		if (parent != null) {
-			parent.removeToRoot(node);
-		}
 		// Notify the update handler that the node has been cleared
 		updateHandler.modelObjectCleared(node);
-	}
-	
-	/**
+    }
+
+    /*
+     * Remove to root should only remove to the root of the provider and not the
+     * diff tree.
+     */
+    private ISynchronizeModelElement getRootToClear(ISynchronizeModelElement node) {
+        if (node == getModelRoot()) return node;
+        ISynchronizeModelElement parent = (ISynchronizeModelElement)node.getParent();
+		if (parent != null && parent != getModelRoot() && !isOutOfSync(parent) && parent.getChildren().length == 1) {
+		    return getRootToClear(parent);
+		}
+		return node;
+    }
+
+    /*
+     * Return whether the node represents an out-of-sync resource.
+     */
+    protected boolean isOutOfSync(ISynchronizeModelElement node) {
+        SyncInfo info = Utils.getSyncInfo(node);
+        return (info != null && info.getKind() != SyncInfo.IN_SYNC);
+    }
+
+    protected boolean isOutOfSync(IResource resource) {
+        SyncInfo info = getSyncInfoSet().getSyncInfo(resource);
+        return (info != null && info.getKind() != SyncInfo.IN_SYNC);
+    }
+    
+    /**
 	 * Return the provider that created and manages the given
 	 * model element. The default is to return the receiver.
 	 * Subclasses may override.
@@ -680,7 +805,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	 * This is a callback from the model update handler that gets invoked 
 	 * when a node is removed from the viewer. It is only invoked for the
 	 * root level model provider. A removed node may have children for
-	 * which a <code>nodeRemoved</code> callback is not recieved (see
+	 * which a <code>nodeRemoved</code> callback is not received (see
 	 * <code>modelObjectCleared</code>).
 	 * @param node
 	 */
@@ -691,9 +816,9 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
     /**
 	 * This is a callback from the model update handler that gets invoked 
 	 * when a node is cleared from the model. It is only invoked for the
-	 * root level model provider. This calbakc is deep in the sense that 
-	 * a callbakc is sent for each node that is cleared.
-     * @param node the node that was removed.
+	 * root level model provider. This callback is deep in the sense that 
+	 * a callback is sent for each node that is cleared.
+     * @param node the node that was cleared.
      */
     public void modelObjectCleared(ISynchronizeModelElement node) {
         // Default is to do nothing
@@ -739,10 +864,11 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	}
 	
     /**
-     * Wait until the update handler is not processing any events.
+     * Wait until the provider is done processing any events and
+     * the page conent are up-to-date.
      * This method is for testing purposes only.
      */
-    public void waitForUpdateHandler(IProgressMonitor monitor) {
+    public void waitUntilDone(IProgressMonitor monitor) {
 		monitor.worked(1);
 		// wait for the event handler to process changes.
 		while(updateHandler.getEventHandlerJob().getState() != Job.NONE) {

@@ -189,7 +189,7 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 	 */
 	public ISelection getSelection(Object[] objects) {
 		if (modelProvider != null && modelProvider instanceof SynchronizeModelProvider) {
-		    ((SynchronizeModelProvider)modelProvider).waitForUpdateHandler(new IProgressMonitor() {
+		    ((SynchronizeModelProvider)modelProvider).waitUntilDone(new IProgressMonitor() {
 				public void beginTask(String name, int totalWork) {
 				}
 				public void done() {

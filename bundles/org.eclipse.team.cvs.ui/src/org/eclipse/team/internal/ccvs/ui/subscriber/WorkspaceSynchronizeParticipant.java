@@ -11,11 +11,17 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.ActiveChangeSet;
+import org.eclipse.team.core.subscribers.SubscriberChangeSetCollector;
+import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.internal.ui.synchronize.ScopableSubscriberParticipant;
@@ -38,6 +44,8 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP_2 = "context_group_2"; //$NON-NLS-1$
 	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP_3 = "context_group_3"; //$NON-NLS-1$
 	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP_4 = "context_group_4"; //$NON-NLS-1$
+
+    private WorkspaceChangeSetCapability capability;
 
 	/**
 	 * CVS workspace action contribution
@@ -117,6 +125,47 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 		}
 	}
 	
+	public class WorkspaceChangeSetCapability extends CVSChangeSetCapability {
+        /* (non-Javadoc)
+         * @see org.eclipse.team.ui.synchronize.ChangeSetCapability#createChangeSet(org.eclipse.team.core.synchronize.SyncInfo[])
+         */
+        public ActiveChangeSet createChangeSet(ISynchronizePageConfiguration configuration, SyncInfo[] infos) {
+	        ActiveChangeSet set = getActiveChangeSetManager().createSet(Policy.bind("WorkspaceChangeSetCapability.1"), new SyncInfo[0]); //$NON-NLS-1$
+			CommitSetDialog dialog = new CommitSetDialog(configuration.getSite().getShell(), set, getResources(infos),
+			        Policy.bind("WorkspaceChangeSetCapability.2"), Policy.bind("WorkspaceChangeSetCapability.3")); //$NON-NLS-1$ //$NON-NLS-2$
+			dialog.open();
+			if (dialog.getReturnCode() != InputDialog.OK) return null;
+			set.add(infos);
+			return set;
+        }
+
+        private IResource[] getResources(SyncInfo[] infos) {
+            IResource[] resources = new IResource[infos.length];
+            for (int i = 0; i < resources.length; i++) {
+                resources[i] = infos[i].getLocal();
+            }
+            return resources;
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.team.ui.synchronize.ChangeSetCapability#editChangeSet(org.eclipse.team.core.subscribers.ActiveChangeSet)
+         */
+        public void editChangeSet(ISynchronizePageConfiguration configuration, ActiveChangeSet set) {
+	        CommitSetDialog dialog = new CommitSetDialog(configuration.getSite().getShell(), set, set.getResources(),
+			        Policy.bind("WorkspaceChangeSetCapability.7"), Policy.bind("WorkspaceChangeSetCapability.8")); //$NON-NLS-1$ //$NON-NLS-2$
+			dialog.open();
+			if (dialog.getReturnCode() != InputDialog.OK) return;
+			// Nothing to do here as the set was updated by the dialog 
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.team.ui.synchronize.ChangeSetCapability#getActiveChangeSetManager()
+         */
+        public SubscriberChangeSetCollector getActiveChangeSetManager() {
+            return CVSUIPlugin.getPlugin().getChangeSetManager();
+        }
+	}
+	
 	/**
 	 * No arg contructor used for
 	 * creation of persisted participant after startup
@@ -148,9 +197,6 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 		configuration.addActionContribution(new WorkspaceActionContribution());
 		configuration.setSupportedModes(ISynchronizePageConfiguration.ALL_MODES);
 		configuration.setMode(ISynchronizePageConfiguration.BOTH_MODE);
-		
-		// The manager adds itself to the configuration in it's constructor
-		new ChangeLogModelManager(configuration);
 		
 		// Add context menu groups here to give the client displaying the
 		// page a chance to remove the context menu
@@ -188,5 +234,15 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
      */
     public PreferencePage[] getPreferencePages() {
         return CVSParticipant.addCVSPreferencePages(super.getPreferencePages());
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#getChangeSetCapability()
+     */
+    public ChangeSetCapability getChangeSetCapability() {
+        if (capability == null) {
+            capability = new WorkspaceChangeSetCapability();
+        }
+        return capability;
     }
 }

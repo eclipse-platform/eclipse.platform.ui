@@ -375,4 +375,11 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
     public PreferencePage[] getPreferencePages() {
         return new PreferencePage[] { new SyncViewerPreferencePage() };
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#getChangeSetCapability()
+     */
+    public ChangeSetCapability getChangeSetCapability() {
+        return null;
+    }
 }

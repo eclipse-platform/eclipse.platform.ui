@@ -8,30 +8,33 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ccvs.ui.subscriber;
+package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ui.synchronize.*;
+import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 
 /**
  * Manager for hierarchical models
  */
-public class ChangeLogModelManager extends HierarchicalModelManager implements IPropertyChangeListener {
+public class ChangeSetModelManager extends HierarchicalModelManager implements IPropertyChangeListener {
     
-    private static final String P_COMMIT_SET_ENABLED = CVSUIPlugin.ID + ".P_COMMIT_SET_ENABLED"; //$NON-NLS-1$
+    private static final String P_COMMIT_SET_ENABLED = TeamUIPlugin.ID + ".P_COMMIT_SET_ENABLED"; //$NON-NLS-1$
     
-    public static final String COMMIT_SET_GROUP = "CommitSet"; //$NON-NLS-1$
+    public static final String CHANGE_SET_GROUP = "ChangeSet"; //$NON-NLS-1$
 	
 	boolean enabled = false;
 	
 	private class ToggleCommitSetAction extends Action {
         public ToggleCommitSetAction() {
-            super(Policy.bind("ChangeLogModelManager.0"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_CHANGELOG)); //$NON-NLS-1$
+            super(Policy.bind("ChangeLogModelManager.0"), TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_CHANGE_SET)); //$NON-NLS-1$
             setToolTipText(Policy.bind("ChangeLogModelManager.0")); //$NON-NLS-1$
             update();
         }
@@ -44,24 +47,50 @@ public class ChangeLogModelManager extends HierarchicalModelManager implements I
         }
 	}
 	
+	private ToggleCommitSetAction toggleCommitSetAction;
+	
 	private class CommitSetActionContribution extends SynchronizePageActionGroup {
-		public void initialize(ISynchronizePageConfiguration configuration) {
+
+        public void initialize(ISynchronizePageConfiguration configuration) {
 			super.initialize(configuration);
 			
-			appendToGroup(
+			toggleCommitSetAction = new ToggleCommitSetAction();
+            appendToGroup(
 					ISynchronizePageConfiguration.P_TOOLBAR_MENU, 
-					COMMIT_SET_GROUP,
-					new ToggleCommitSetAction());
+					CHANGE_SET_GROUP,
+					toggleCommitSetAction);
+            updateEnablement();
 		}
 	}
 	
-	public ChangeLogModelManager(ISynchronizePageConfiguration configuration) {
+	public ChangeSetModelManager(ISynchronizePageConfiguration configuration) {
 	    super(configuration);
 		configuration.addPropertyChangeListener(this);
-		configuration.setProperty(SynchronizePageConfiguration.P_MODEL_MANAGER, this);
-		configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, COMMIT_SET_GROUP);
+		configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, CHANGE_SET_GROUP);
 		configuration.addActionContribution(new CommitSetActionContribution());
+		if (configuration.getParticipant().getChangeSetCapability().supportsActiveChangeSets()) {
+		    configuration.addLabelDecorator(new ChangeSetLabelDecorator(configuration));
+		}
+		configuration.addPropertyChangeListener(new IPropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent event) {
+                if (event.getProperty().equals(ISynchronizePageConfiguration.P_MODE)) {
+                    updateEnablement();
+                }
+            }
+
+        });
 	}
+	
+    private void updateEnablement() {
+        if (toggleCommitSetAction != null) {
+            ISynchronizePageConfiguration configuration = getConfiguration();
+            ChangeSetCapability changeSetCapability = configuration.getParticipant().getChangeSetCapability();
+            boolean enabled = changeSetCapability.enableActiveChangeSetsFor(configuration)
+            	|| changeSetCapability.enableCheckedInChangeSetsFor(configuration);
+            toggleCommitSetAction.setEnabled(enabled);
+        }
+        
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.synchronize.SynchronizeModelManager#dispose()
@@ -76,7 +105,7 @@ public class ChangeLogModelManager extends HierarchicalModelManager implements I
 	 */
 	protected ISynchronizeModelProvider createModelProvider(String id) {
 	    if (enabled) {
-	        return new ChangeLogModelProvider(getConfiguration(), getSyncInfoSet(), id);
+	        return new ChangeSetModelProvider(getConfiguration(), getSyncInfoSet(), id);
 	    } else {
 	        return super.createModelProvider(id);
 	    }
@@ -87,8 +116,8 @@ public class ChangeLogModelManager extends HierarchicalModelManager implements I
      */
     protected String getSelectedProviderId() {
         String id = super.getSelectedProviderId();
-        if (id.equals(ChangeLogModelProvider.ChangeLogModelProviderDescriptor.ID)) {
-            return ((ChangeLogModelProvider)getActiveModelProvider()).getSubproviderId();
+        if (id.equals(ChangeSetModelProvider.ChangeSetModelProviderDescriptor.ID)) {
+            return ((ChangeSetModelProvider)getActiveModelProvider()).getSubproviderId();
         } else {
             return id;
         }
@@ -118,7 +147,7 @@ public class ChangeLogModelManager extends HierarchicalModelManager implements I
         // Load our setting before invoking super since the inherited
         // initialize will create the provider
         IDialogSettings pageSettings = getConfiguration().getSite().getPageSettings();
-        enabled = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_COMMIT_SET_DEFAULT_ENABLEMENT);
+        enabled = getConfiguration().getParticipant().getChangeSetCapability().enableChangeSetsByDefault();
 		if(pageSettings != null && pageSettings.get(P_COMMIT_SET_ENABLED) != null) {
 		    enabled = pageSettings.getBoolean(P_COMMIT_SET_ENABLED);
 		}

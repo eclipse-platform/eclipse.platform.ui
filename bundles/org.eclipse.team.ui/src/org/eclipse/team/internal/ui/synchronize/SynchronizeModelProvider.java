@@ -131,8 +131,8 @@ public abstract class SynchronizeModelProvider extends AbstractSynchronizeModelP
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.synchronize.AbstractSynchronizeModelProvider#clearModelObjects(org.eclipse.team.ui.synchronize.ISynchronizeModelElement)
 	 */
-	protected void clearModelObjects(ISynchronizeModelElement node) {
-		super.clearModelObjects(node);
+	protected void recursiveClearModelObjects(ISynchronizeModelElement node) {
+		super.recursiveClearModelObjects(node);
 		if (node == getModelRoot()) {
 	        // If we are clearing everything under the root
 	        // than just purge the resource map
@@ -214,30 +214,33 @@ public abstract class SynchronizeModelProvider extends AbstractSynchronizeModelP
 			queueForLabelUpdate(diffNode);
 		} else {
 			removeFromViewer(local);
-			addResources(new SyncInfo[] {info});
+			addResource(info);
+			ISynchronizeModelElement node = getModelObject(info.getLocal());
+			buildModelObjects(node);
+			
 		}
 	}
 
     /**
-     * Add the give sync infos to the provider
+     * Add the give sync infos to the provider, creating
+     * any intermediate nodes a required.
      * @param infos the added infos
      */
 	protected void addResources(SyncInfo[] added) {
 		for (int i = 0; i < added.length; i++) {
 			SyncInfo info = added[i];
-			ISynchronizeModelElement node = getModelObject(info.getLocal());
-			if (node != null) {
-				// Somehow the node exists. Remove it and read it to ensure
-				// what is shown matches the contents of the sync set
-				removeFromViewer(info.getLocal());
-			}
-			// Add the node to the root
-			node = createModelObject(getModelRoot(), info);
-			buildModelObjects(node);
+            addResource(info);
 		}
 	}
 
 	/**
+     * Add the give sync info to the provider, creating
+     * any intermediate nodes a required and adding any children as well
+     * @param info the added infos
+     */
+    protected abstract void addResource(SyncInfo info);
+
+    /**
 	 * Create the model object for the given sync info as a child of the given parent node.
 	 * @param parent the parent
 	 * @param info the info to be used for the new node

@@ -272,18 +272,15 @@ public class FlatModelProvider extends SynchronizeModelProvider {
         return flatDescriptor;
     }
 
-	protected void addResources(SyncInfo[] added) {
-		for (int i = 0; i < added.length; i++) {
-			SyncInfo info = added[i];
-			ISynchronizeModelElement node = getModelObject(info.getLocal());
-			if (node != null) {
-				// Somehow the node exists. Remove it and read it to ensure
-				// what is shown matches the contents of the sync set
-				removeFromViewer(info.getLocal());
-			}
-			// Add the node to the root
-			node = createModelObject(getModelRoot(), info);
-		}
+	protected void addResource(SyncInfo info) {
+		// Add the node to the root
+        ISynchronizeModelElement node = getModelObject(info.getLocal());
+        if (node != null) {
+        	// Somehow the node exists. Remove it and read it to ensure
+        	// what is shown matches the contents of the sync set
+        	removeFromViewer(info.getLocal());
+        }
+		createModelObject(getModelRoot(), info);
 	}
 	
 	protected ISynchronizeModelElement createModelObject(ISynchronizeModelElement parent, SyncInfo info) {

@@ -213,7 +213,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 		}
 	}
 	
-	private void addResource(SyncInfo info) {
+	protected void addResource(SyncInfo info) {
 		IResource local = info.getLocal();
 		ISynchronizeModelElement existingNode = getModelObject(local);
 		if (existingNode == null) {
@@ -266,7 +266,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 			IResource resource = resources[i];
 			if (!removedProjects.contains(resource.getProject())) {
 				if (resource.getType() == IResource.FILE) {
-					if (isCompressedParentEmpty(resource)) {
+					if (isCompressedParentEmpty(resource) && !isOutOfSync(resource.getParent())) {
 						// The parent compressed folder is also empty so remove it
 						removeFromViewer(resource.getParent());
 					} else {
@@ -284,8 +284,8 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 			}
 		}
 	}
-	
-	protected int getLogicalModelDepth(IResource resource) {
+
+    protected int getLogicalModelDepth(IResource resource) {
 		if(resource.getType() == IResource.PROJECT) {
 			return IResource.DEPTH_INFINITE;
 		} else {

@@ -246,4 +246,12 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
      * @since 3.1
      */
     public PreferencePage[] getPreferencePages();
+
+    /**
+     * Return the change set capability for this participant or <code>null</code>
+     * if change sets are not supported.
+     * @return the change set capability for this participant
+     * @since 3.1
+     */
+    public ChangeSetCapability getChangeSetCapability();
 }

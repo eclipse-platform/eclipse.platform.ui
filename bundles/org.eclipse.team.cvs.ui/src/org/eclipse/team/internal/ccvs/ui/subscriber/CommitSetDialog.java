@@ -17,14 +17,11 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.CommitCommentArea;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -33,7 +30,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class CommitSetDialog extends Dialog {
 
-    private final CommitSet set;
+    private final ActiveChangeSet set;
     private CommitCommentArea commitCommentArea;
     private Text nameText;
     private Button useTitleButton;
@@ -42,13 +39,13 @@ public class CommitSetDialog extends Dialog {
     private final String description;
     private String comment;
 
-    public CommitSetDialog(Shell parentShell, CommitSet set, IResource[] files, String title, String description) {
+    public CommitSetDialog(Shell parentShell, ActiveChangeSet set, IResource[] files, String title, String description) {
         super(parentShell);
         this.set = set;
         this.title = title;
         this.description = description;
         if (files == null) {
-            files = set.getFiles();
+            files = set.getResources();
         }
         
 		int shellStyle = getShellStyle();

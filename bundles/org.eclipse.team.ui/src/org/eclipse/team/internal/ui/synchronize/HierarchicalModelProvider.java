@@ -211,4 +211,11 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
     protected ISynchronizeModelElement createModelObject(ISynchronizeModelElement parent, SyncInfo info) {
         return createModelObject(parent, info.getLocal());
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ui.synchronize.SynchronizeModelProvider#addResource(org.eclipse.team.core.synchronize.SyncInfo)
+     */
+    protected void addResource(SyncInfo info) {
+        addResource(info.getLocal());
+    }
 }

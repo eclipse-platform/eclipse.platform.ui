@@ -208,15 +208,6 @@ public abstract class CompositeModelProvider extends AbstractSynchronizeModelPro
 		elementToProvider.put(node, provider);
 		super.nodeAdded(node, provider);
 	}
-	
-	/* (non-Javadoc)
-     * @see org.eclipse.team.internal.ui.synchronize.AbstractSynchronizeModelProvider#nodeRemoved(org.eclipse.team.ui.synchronize.ISynchronizeModelElement)
-     */
-    protected void nodeRemoved(ISynchronizeModelElement node, AbstractSynchronizeModelProvider provider) {
-        // Update the resource-to-element map and the element-to-provider map
-        modelObjectCleared(node);
-        super.nodeRemoved(node, provider);
-    }
     
     /* (non-Javadoc)
      * @see org.eclipse.team.internal.ui.synchronize.AbstractSynchronizeModelProvider#modelObjectCleared(org.eclipse.team.ui.synchronize.ISynchronizeModelElement)
@@ -239,8 +230,8 @@ public abstract class CompositeModelProvider extends AbstractSynchronizeModelPro
     /* (non-Javadoc)
      * @see org.eclipse.team.internal.ui.synchronize.AbstractSynchronizeModelProvider#clearModelObjects(org.eclipse.team.ui.synchronize.ISynchronizeModelElement)
      */
-    protected void clearModelObjects(ISynchronizeModelElement node) {
-        super.clearModelObjects(node);
+    protected void recursiveClearModelObjects(ISynchronizeModelElement node) {
+        super.recursiveClearModelObjects(node);
         if (node == getModelRoot()) {
             clearProviders();
         }
@@ -262,13 +253,13 @@ public abstract class CompositeModelProvider extends AbstractSynchronizeModelPro
      * @param id the id of the providers descriptor
      * @return the new provider
      */
-	protected ISynchronizeModelProvider createModelProvider(ISynchronizeModelElement parent, String id) {
-		if (id.endsWith(FlatModelProvider.FlatModelProviderDescriptor.ID)) {
-		    return new FlatModelProvider(this, parent, getConfiguration(), new SyncInfoTree());
+	protected ISynchronizeModelProvider createModelProvider(ISynchronizeModelElement parent, String id, SyncInfoTree syncInfoTree) {
+        if (id.endsWith(FlatModelProvider.FlatModelProviderDescriptor.ID)) {
+		    return new FlatModelProvider(this, parent, getConfiguration(), syncInfoTree);
 		} else if(id.endsWith(CompressedFoldersModelProvider.CompressedFolderModelProviderDescriptor.ID)) {
-			return new CompressedFoldersModelProvider(this, parent, getConfiguration(), new SyncInfoTree());
+			return new CompressedFoldersModelProvider(this, parent, getConfiguration(), syncInfoTree);
 		} else {
-			return new HierarchicalModelProvider(this, parent, getConfiguration(), new SyncInfoTree());
+			return new HierarchicalModelProvider(this, parent, getConfiguration(), syncInfoTree);
 		}
 	}
 	
