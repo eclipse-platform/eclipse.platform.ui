@@ -79,6 +79,8 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 
 		Policy.checkCanceled(monitor);
 		
+		if ( ! mFolder.exists()) return;
+		
 		// Do not send the same folder twice
 		if (isLastSent(mFolder)) return;
 
