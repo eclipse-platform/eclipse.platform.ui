@@ -39,6 +39,8 @@ public class AntCorePreferences {
 	protected List pluginClassLoaders;
 	
 	private String antHome;
+	
+	private boolean runningHeadless= false;
 
 	protected AntCorePreferences(List defaultTasks, List defaultExtraClasspath, List defaultTypes) {
 		initializePluginClassLoaders();
@@ -204,7 +206,17 @@ public class AntCorePreferences {
 		List result = new ArrayList(tasks.size());
 		for (Iterator iterator = tasks.iterator(); iterator.hasNext();) {
 			IConfigurationElement element = (IConfigurationElement) iterator.next();
+			if (runningHeadless) {
+				String headless = element.getAttribute(AntCorePlugin.HEADLESS);
+				if (headless != null) {
+					boolean headlessType= Boolean.valueOf(headless).booleanValue();
+					if (!headlessType) {
+						continue;
+					}
+				}
+			}
 			Task task = new Task();
+			task.setIsDefault(true);
 			task.setTaskName(element.getAttribute(AntCorePlugin.NAME));
 			task.setClassName(element.getAttribute(AntCorePlugin.CLASS));
 			String library = element.getAttribute(AntCorePlugin.LIBRARY);
@@ -213,6 +225,7 @@ public class AntCorePreferences {
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			}
+			
 			IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
 			try {
 				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
@@ -236,7 +249,17 @@ public class AntCorePreferences {
 		List result = new ArrayList(types.size());
 		for (Iterator iterator = types.iterator(); iterator.hasNext();) {
 			IConfigurationElement element = (IConfigurationElement) iterator.next();
+			if (runningHeadless) {
+				String headless = element.getAttribute(AntCorePlugin.HEADLESS);
+				if (headless != null) {
+					boolean headlessTask= Boolean.valueOf(headless).booleanValue();
+					if (!headlessTask) {
+						continue;
+					}
+				}
+			}
 			Type type = new Type();
+			type.setIsDefault(true);
 			type.setTypeName(element.getAttribute(AntCorePlugin.NAME));
 			type.setClassName(element.getAttribute(AntCorePlugin.CLASS));
 			String library = element.getAttribute(AntCorePlugin.LIBRARY);
@@ -270,6 +293,15 @@ public class AntCorePreferences {
 	protected void computeDefaultExtraClasspathEntries(List entries) {
 		for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
 			IConfigurationElement element = (IConfigurationElement) iterator.next();
+			if (runningHeadless) {
+				String headless = element.getAttribute(AntCorePlugin.HEADLESS);
+				if (headless != null) {
+					boolean headlessEntry= Boolean.valueOf(headless).booleanValue();
+					if (!headlessEntry) {
+						continue;
+					}
+				}
+			}
 			String library = (String) element.getAttribute(AntCorePlugin.LIBRARY);
 			IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
 			try {
@@ -621,5 +653,9 @@ public class AntCorePreferences {
 	
 	public String getAntHome() {
 		return antHome;
+	}
+	
+	public void setRunningHeadless(boolean runningHeadless) {
+		this.runningHeadless = runningHeadless;
 	}
 }
