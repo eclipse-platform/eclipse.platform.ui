@@ -533,14 +533,17 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 			
 			TypedPosition previous= null, current= null;
 			int start, end, gapOffset;
-			Position gap= null;
+			Position gap= new Position(0);
 			
-			for (int i= 0; i < category.length; i++) {
+			int startIndex= getFirstIndexEndingAfterOffset(category, offset);
+			int endIndex= getFirstIndexStartingAfterOffset(category, endOffset);
+			for (int i= startIndex; i < endIndex; i++) {
 				
 				current= (TypedPosition) category[i];
 				
 				gapOffset= (previous != null) ? previous.getOffset() + previous.getLength() : 0;
-				gap= new Position(gapOffset, current.getOffset() - gapOffset);
+				gap.setOffset(gapOffset);
+				gap.setLength(current.getOffset() - gapOffset);
 				if ((includeZeroLengthPartitions && overlapsOrTouches(gap, offset, length)) || 
 						(gap.getLength() > 0 && gap.overlapsWith(offset, length))) {
 					start= Math.max(offset, gapOffset);
@@ -559,7 +562,8 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 			
 			if (previous != null) {
 				gapOffset= previous.getOffset() + previous.getLength();
-				gap= new Position(gapOffset, fDocument.getLength() - gapOffset);
+				gap.setOffset(gapOffset);
+				gap.setLength(fDocument.getLength() - gapOffset);
 				if ((includeZeroLengthPartitions && overlapsOrTouches(gap, offset, length)) ||
 						(gap.getLength() > 0 && gap.overlapsWith(offset, length))) {
 					start= Math.max(offset, gapOffset);
@@ -581,5 +585,49 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 
 	private boolean overlapsOrTouches(Position gap, int offset, int length) {
 		return gap.getOffset() <= offset + length && offset <= gap.getOffset() + gap.getLength();
+	}
+	
+	/**
+	 * Returns the index of the first position which ends after the given offset.
+	 *
+	 * @param positions the positions in linear order
+	 * @param offset the offset
+	 * @return the index of the first position which ends after the offset
+	 * 
+	 * @since 3.0
+	 */
+	private int getFirstIndexEndingAfterOffset(Position[] positions, int offset) {
+		int i= -1, j= positions.length;
+		while (j - i > 1) {
+			int k= (i + j) >> 1;
+			Position p= positions[k];
+			if (p.getOffset() + p.getLength() > offset)
+				j= k;
+			else
+				i= k;
+		}
+		return j;
+	}
+	
+	/**
+	 * Returns the index of the first position which starts at or after the given offset.
+	 *
+	 * @param positions the positions in linear order
+	 * @param offset the offset
+	 * @return the index of the first position which starts after the offset
+	 * 
+	 * @since 3.0
+	 */
+	private int getFirstIndexStartingAfterOffset(Position[] positions, int offset) {
+		int i= -1, j= positions.length;
+		while (j - i > 1) {
+			int k= (i + j) >> 1;
+			Position p= positions[k];
+			if (p.getOffset() >= offset)
+				j= k;
+			else
+				i= k;
+		}
+		return j;
 	}
 }
