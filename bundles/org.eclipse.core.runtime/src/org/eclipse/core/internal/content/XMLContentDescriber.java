@@ -68,10 +68,10 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 
 	private String readFullXMLDecl(InputStream input, String unicodeEncoding) throws IOException {
 		byte[] xmlDecl = new byte[100];
-		int c;
+		int c = 0;
 		// looks for XMLDecl ending char (?)
 		int read = 0;
-		while ((c = input.read()) != -1 && c != '?')
+		while (read < xmlDecl.length && (c = input.read()) != -1 && c != '?')
 			xmlDecl[read++] = (byte) c;
 		return c == '?' ? new String(xmlDecl, 0, read, unicodeEncoding) : null;
 	}
