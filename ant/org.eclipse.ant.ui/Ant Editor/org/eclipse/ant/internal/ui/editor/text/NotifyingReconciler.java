@@ -55,4 +55,11 @@ public class NotifyingReconciler extends MonoReconciler {
 			((IReconcilingParticipant) i.next()).reconciled();
 		}
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.reconciler.AbstractReconciler#initialProcess()
+	 */
+	protected void initialProcess() {
+		super.initialProcess();
+		notifyReconcilingParticipants();
+	}
 }

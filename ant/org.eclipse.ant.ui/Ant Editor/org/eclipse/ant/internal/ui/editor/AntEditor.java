@@ -312,6 +312,8 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
     /** The editor's tab to spaces converter */
 	private TabConverter fTabConverter;
 	
+	private boolean fInitialReconcile= true;
+	
 	/**
 	 * The editor selection changed listener.
 	 * 
@@ -715,6 +717,12 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 		}
 	}
 	
+	private void updateForInitialReconcile() {
+		fInitialReconcile= false;
+		updateEditorImage();
+		getAntModel().updateForInitialReconcile();
+	}
+	
 	private void postImageChange(final Image newImage) {
 		Shell shell= getEditorSite().getShell();
 		if (shell != null && !shell.isDisposed()) {
@@ -770,6 +778,9 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 	 * @see org.eclipse.ant.internal.ui.editor.text.IReconcilingParticipant#reconciled()
 	 */
 	public void reconciled() {
+		if (fInitialReconcile) {
+			updateForInitialReconcile();
+		}
 		IAutoIndentStrategy strategy= getSourceViewerConfiguration().getAutoIndentStrategy(null, null);
 		if (strategy instanceof AntAutoIndentStrategy) {
 			((AntAutoIndentStrategy)strategy).reconciled();
