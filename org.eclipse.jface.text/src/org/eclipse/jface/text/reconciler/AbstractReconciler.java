@@ -420,10 +420,12 @@ abstract public class AbstractReconciler implements IReconciler {
 			if (fDocument != null) fDocument.removeDocumentListener(fListener);
 			fListener= null;
 			
-			// http://dev.eclipse.org/bugs/show_bug.cgi?id=19135
-			BackgroundThread bt= fThread;
-			fThread= null;
-			bt.cancel();
+            synchronized (this) {
+                // http://dev.eclipse.org/bugs/show_bug.cgi?id=19135
+    			BackgroundThread bt= fThread;
+    			fThread= null;
+    			bt.cancel();
+            }
 		}
 	}
 		
@@ -479,12 +481,14 @@ abstract public class AbstractReconciler implements IReconciler {
 	 */
 	protected void startReconciling() {
 
-		// http://dev.eclipse.org/bugs/show_bug.cgi?id=19135
-		if (fThread == null)
-			return;
-			
-		if (!fThread.isAlive())
-			fThread.start();
+        synchronized (this) {
+            // http://dev.eclipse.org/bugs/show_bug.cgi?id=19135
+    		if (fThread == null)
+    			return;
+    			
+    		if (!fThread.isAlive())
+    			fThread.start();
+        }
 		fThread.reset();
 	}
     
