@@ -80,8 +80,8 @@ import org.eclipse.swt.widgets.Control;
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
  * </p>
- * @see ILaunchConfigurationType
- * @see ILaunchConfiguration
+ * @see org.eclipse.debug.core.ILaunchConfigurationType
+ * @see org.eclipse.debug.core.ILaunchConfiguration
  * @since 2.0
  */
 public interface ILaunchConfigurationTab {

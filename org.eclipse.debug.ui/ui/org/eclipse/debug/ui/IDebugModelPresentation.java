@@ -71,7 +71,7 @@ import org.eclipse.ui.IEditorInput;
  * should honor the presentation attributes defined by this interface where possible,
  * but do not need to honor presentation attributes defined by other clients.
  * To access the debug model presentation for a debug view, clients should use the
- * <code>IDebugViewAdapter</code>.
+ * <code>IDebugView</code>.
  * </p>
  * <p>
  * Clients may implement this interface.
@@ -83,8 +83,8 @@ import org.eclipse.ui.IEditorInput;
  * (repeatedly) as the API evolves.
  * </p>
  * @see org.eclipse.debug.core.model.IDebugElement
- * @see ILabelProvider
- * @see IDebugViewAdapter
+ * @see org.eclipse.jface.viewers.ILabelProvider
+ * @see org.eclipse.debug.ui.IDebugView
  */
 
 public interface IDebugModelPresentation extends ILabelProvider, ISourcePresentation {

@@ -163,8 +163,8 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * provides access to a view's underlying viewer and
 	 * debug model presentation for a specific debug model.
 	 * 
-	 * @see IAdaptable#getAdapter(java.lang.Class)
-	 * @see IDebugViewAdapter
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 * @see IDebugView
 	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter == IDebugView.class) {
@@ -223,11 +223,11 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * <li><code>getHelpContextId()</code></li>
 	 * </ul>
 	 * @see IWorkbenchPart#createPartControl(Composite)
-	 * @see #createViewer(Composite)
-	 * @see #createActions()
-	 * @see #configureToolbar(IToolBarManager)
-	 * @see #getHelpContextId()
-	 * @see #fillContextMenu(IMenuManager)
+	 * @see AbstractDebugView#createPartControl(Composite)
+	 * @see AbstractDebugView#createActions()
+	 * @see AbstractDebugView#configureToolBar(IToolBarManager)
+	 * @see AbstractDebugView#getHelpContextId()
+	 * @see AbstractDebugView#fillContextMenu(IMenuManager)
 	 */
 	public final void createPartControl(Composite parent) {
 		super.createPartControl(parent);
@@ -301,7 +301,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	}
 	
 	/**
-	 * @see IDebugViewAdapter#getViewer()
+	 * @see IDebugView#getViewer()
 	 */
 	public Viewer getViewer() {
 		return fViewer;
@@ -336,7 +336,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	}	
 	
 	/**
-	 * @see IDebugViewAdapter#getPresentation(String)
+	 * @see IDebugView#getPresentation(String)
 	 */
 	public IDebugModelPresentation getPresentation(String id) {
 		if (getViewer() instanceof StructuredViewer) {
@@ -383,7 +383,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	}
 	
 	/**
-	 * @see IDebugViewAdapter#getContextMenuManager()
+	 * @see IDebugView#getContextMenuManager()
 	 */
 	public IMenuManager getContextMenuManager() {
 		return fContextMenuManager;
@@ -541,7 +541,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * Registers the given runnable with the display
 	 * associated with this view's control, if any.
 	 * 
-	 * @see Display.asyncExec(Runnable)
+	 * @see org.eclipse.swt.widgets.Display#asyncExec(java.lang.Runnable)
 	 */
 	public void asyncExec(Runnable r) {
 		if (isAvailable()) {
@@ -553,7 +553,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * Registers the given runnable with the display
 	 * associated with this view's control, if any.
  	 *
-	 * @see Display.syncExec(Runnable)
+	 * @see org.eclipse.swt.widgets.Display#syncExec(java.lang.Runnable)
 	 */
 	public void syncExec(Runnable r) {
 		if (isAvailable()) {

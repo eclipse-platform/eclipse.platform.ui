@@ -76,9 +76,9 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
  * </p>
- * @see ILaunchConfigurationType
- * @see ILaunchConfiguration
- * @see ILaunchConfigurationTab
+ * @see org.eclipse.debug.core.ILaunchConfigurationType
+ * @see org.eclipse.debug.core.ILaunchConfiguration
+ * @see org.eclipse.debug.ui.ILaunchConfigurationTab
  * @since 2.0
  */
 public interface ILaunchConfigurationTabGroup {

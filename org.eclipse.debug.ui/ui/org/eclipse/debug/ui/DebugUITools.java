@@ -138,7 +138,7 @@ public class DebugUITools {
 	 * It is the client's responsibility to ensure to call the dispose
 	 * method of the returned debug model presentation.
 	 * 
-	 * @see IBaseLabelProvider#dispose()
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 * @return a debug model presentation
 	 * @since 2.0
 	 */
@@ -155,7 +155,7 @@ public class DebugUITools {
 	 * method of the returned debug model presentation.
 	 * 
 	 * @param identifier debug model identifier
-	 * @see IBaseLabelProvider#dispose()
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 * @return a debug model presentation, or <code>null</code>
 	 * @since 2.0
 	 */

@@ -588,7 +588,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	/**
-	 * @see ILaunchConfigurationTab#isPageComplete()
+	 * @see ILaunchConfigurationTab#isValid()
 	 */
 	public boolean isValid() {
 		setMessage(null);
