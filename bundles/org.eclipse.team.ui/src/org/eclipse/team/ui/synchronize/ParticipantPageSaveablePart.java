@@ -236,7 +236,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 				feedInput2(e.getSelection());
 			}
 		});
-		fEditionPane.setText("Changes");
+		fEditionPane.setText(participant.getName());
 		
 		IPageBookViewPage page = participant.createPage(pageConfiguration);
 		((SynchronizePageConfiguration)pageConfiguration).setSite(new CompareViewerPaneSite());
