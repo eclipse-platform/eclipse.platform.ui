@@ -99,6 +99,7 @@ public boolean isEnabledForSelection(ISelection selection) {
 	// use Java reflection to avoid dependence of org.eclipse.jface.text
 	// which is in an optional part of the generic workbench
 	try {
+		// @issue generic wb plug-in class loader will NEVER see org.eclipse.jface.text (not on prereq chain)
 		Class tselClass = Class.forName("org.eclipse.jface.text.ITextSelection"); //$NON-NLS-1$
 		if (tselClass.isInstance(selection)) {
 			Method m = tselClass.getDeclaredMethod("getLength", new Class[0]); //$NON-NLS-1$
