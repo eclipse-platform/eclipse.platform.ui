@@ -23,6 +23,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -101,6 +103,9 @@ public class IDEEncoding {
 	 * @param value
 	 *            String or <code>null</code> if the preference is to be reset
 	 *            to the default.
+	 * @deprecated Use IWorkspaceRoot#setDefaultCharset and 
+	 * add the encoding using #addEncoding.
+	 * This API will be deleted before 3.1 M3.
 	 */
 	public static void setResourceEncoding(String value) {
 
@@ -120,6 +125,14 @@ public class IDEEncoding {
 				}
 				return Status.OK_STATUS;
 				
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
+			 */
+			public boolean shouldRun() {
+				//Do not run after shutdown
+				return PlatformUI.isWorkbenchRunning();
 			}
 		};
 		charsetJob.schedule();
