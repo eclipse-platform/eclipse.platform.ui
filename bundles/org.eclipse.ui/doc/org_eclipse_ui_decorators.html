@@ -1,0 +1,82 @@
+
+
+<center>
+<h1>
+Decorators</h1></center>
+<b><i>Identifier: </i></b>org.eclipse.ui.decorators
+<p><b><i>Description: </i></b>This extension point is used to add decorators to
+views that subscribe to a decorator manager.
+<p><b><i>Configuration Markup:</i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT decorator &gt;</tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST actionSet</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA
+#REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; state&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(true | false)
+#IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA
+#REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; objectClass&nbsp;&nbsp; CDATA
+#REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; ></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT description (#PCDATA)></tt>
+<ul>
+<li>
+<b>id</b> - a unique name that will be used to identify this action set.</li>
+
+<li>
+<b>label</b> - a translatable name that will be used in the workbench window
+menu to represent this decorator.</li>
+
+<li>
+<b>state</b> - an optional attribute indicating whether the decorator should be
+initially enabled. The enabled state can be toggled using the
+Window-&gt;Decorators meny.</li>
+
+<li>
+<b>class</b> - a fully qualified name of a class which implements <tt>org.eclipse.jface.viewers.ILabelDecorator</tt></li>
+
+<li>
+<tt><b>objectClass</b> - </tt> a fully qualified name of a class which this
+decorator will be applied to</li>
+
+<li>
+<b>description</b> - an optional subelement whose body should contain text
+providing short description of the decorator</li>
+</ul>
+<tt>&nbsp;</tt><b><i>Example:</i></b>
+<p>The following is an example of an action set (note the subelements and
+the way attributes are used):
+<p><tt>&lt;extension</tt> <tt>point=&quot;org.eclipse.ui.decorators&quot;&gt;</tt>
+<br>&nbsp;&nbsp;&nbsp;<tt>&nbsp;&nbsp;&nbsp;&nbsp; &lt;decorator</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;</tt>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>&nbsp;&nbsp;&nbsp;</tt>
+ <tt>id=&quot;com.xyz.decorator&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;</tt>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>&nbsp;&nbsp;&nbsp;</tt>
+ <tt>label=&quot;XYZ Decorator&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;</tt>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>state=&quot;true&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class=&quot;com.xyz.DecoratorContributor&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;</tt>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>&nbsp;&nbsp;&nbsp;</tt>
+ <tt>objectClass=&quot;org.eclipse.core.resources.IResource&quot;&gt;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;</tt>
+&nbsp;&nbsp;&nbsp;&nbsp; <tt>&lt;/decorator &gt;</tt>
+<br><tt>&lt;/extension&gt;</tt>
+<p><b><i>API Information: </i></b>The value of the <tt>class</tt> attribute
+must be the fully qualified name of a class that implements <tt>org.eclipse.jface.viewers.ILabelDecorator.</tt>&nbsp;
+This class is loaded as late as possible to avoid loading the entire plug-in
+before it is really needed.<p><b><i>Supplied Implementation:</i></b> Plug-ins may use this extension
+point to add new decorators to be applied to views that use the decorator
+manager as thier label decorator. To use the decorator manager use the result of
+IViewPart.getDecoratorManager() as the decorator for an instance of
+DecoratingLabelProvider. This is currently in use by the ResourceNavigator.
+<p>The Decorators can be toggled on or off by selecting them in the
+Window-&gt;Decorators menu.
+<br>&nbsp;
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
