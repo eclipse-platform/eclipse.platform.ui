@@ -561,9 +561,23 @@ private void setupSelectionsBasedOnSelectedTypes() {
 	Runnable runnable  = new Runnable() {
 		public void run(){
 			Map selectionMap = new Hashtable();
-			IProject[] resources = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-			for (int i = 0; i < resources.length; i++) {
-				setupSelectionsBasedOnSelectedTypes(selectionMap, resources[i]);
+			//Only get the white selected ones
+			Iterator resourceIterator = resourceGroup.getAllWhiteCheckedItems().iterator();
+			while(resourceIterator.hasNext()) {
+				//handle the files here - white checked containers require recursion
+				IResource resource = (IResource) resourceIterator.next();
+				if (resource.getType() == IResource.FILE){
+					if(hasExportableExtension(resource.getName())) {
+						List resourceList = new ArrayList();
+						IContainer parent = resource.getParent();
+						if(selectionMap.containsKey(parent))
+							resourceList = (List) selectionMap.get(parent);
+						resourceList.add(resource);
+						selectionMap.put(parent,resourceList);
+					}
+				}
+				else		
+					setupSelectionsBasedOnSelectedTypes(selectionMap, (IContainer) resource);
 			}
 			resourceGroup.updateSelections(selectionMap);
 		}
