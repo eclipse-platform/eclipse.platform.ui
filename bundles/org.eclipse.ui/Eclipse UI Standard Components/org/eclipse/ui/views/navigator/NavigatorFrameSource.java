@@ -31,6 +31,7 @@ public NavigatorFrameSource(ResourceNavigator navigator) {
  */
 protected TreeFrame createFrame(Object input) {
 	TreeFrame frame = super.createFrame(input);
+	frame.setName(navigator.getName(input));
 	frame.setToolTipText(navigator.getToolTipText(input));
 	return frame;
 }

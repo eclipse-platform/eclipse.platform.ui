@@ -409,6 +409,19 @@ public class ResourceNavigator
 		}
 		return ""; //$NON-NLS-1$
 	}
+	
+	/**
+	 * Returns the name for the given element.
+	 */
+	String getName(Object element) {
+		if (element instanceof IResource) {
+			return ((IResource) element).getName();
+		} else {
+			return ((ILabelProvider) getTreeViewer().getLabelProvider()).getText(
+				element);
+		}
+	}
+	
 	/**
 	 * Returns the tool tip text for the given element.
 	 */
