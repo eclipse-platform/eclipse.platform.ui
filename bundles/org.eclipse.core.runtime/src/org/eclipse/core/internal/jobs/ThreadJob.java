@@ -227,6 +227,7 @@ class ThreadJob extends Job {
 	public IStatus run(IProgressMonitor monitor) {
 		synchronized (this) {
 			running = true;
+			notify();
 		}
 		return ASYNC_FINISH;
 	}
