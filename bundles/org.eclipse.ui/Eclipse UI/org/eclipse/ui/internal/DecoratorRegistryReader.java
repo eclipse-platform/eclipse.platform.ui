@@ -50,9 +50,13 @@ class DecoratorRegistryReader extends RegistryReader {
 
 		String id = element.getAttribute(ATT_ID);
 		
-		String description = element.getAttribute(ATT_DESCRIPTION);
-		if(description == null)
-			description = ""; //$NON-NLS-1$
+		String description =  ""; //$NON-NLS-1$
+		
+		IConfigurationElement[] descriptions = 
+			element.getChildren(ATT_DESCRIPTION);
+			
+		if(descriptions.length > 0)
+			description = descriptions[0].getValue();
 
 		boolean adaptable = P_TRUE.equals(element.getAttribute(ATT_ADAPTABLE));
 
