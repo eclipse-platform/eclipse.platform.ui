@@ -646,6 +646,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		removeLaunchConfigurationFromHistoryList(fDebugHistory, config);
 		removeLaunchConfigurationFromHistoryList(fDebugFavorites, config);
 		removeLaunchConfigurationFromHistoryList(fRunFavorites, config);
+		if (getLastLaunch().getLaunchConfiguration().equals(config)) {
+			fRecentLaunch = null;
+		}
 	}
 	
 	/**

@@ -47,8 +47,9 @@ public abstract class ExecutionAction implements IActionDelegateWithEvent {
 	private void runLaunchConfiguration() {
 		IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
 		IStructuredSelection selection= resolveSelection(dwindow);
-		LaunchConfigurationDialog lcd = new LaunchConfigurationDialog(DebugUIPlugin.getShell(), selection, getMode());		
-		lcd.open();
+		LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(DebugUIPlugin.getShell(), selection, getMode());		
+		dialog.setOpenMode(LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_LAUNCH_LAST);
+		dialog.open();
 	}
 	
 	/**
@@ -61,13 +62,6 @@ public abstract class ExecutionAction implements IActionDelegateWithEvent {
 	 */
 	protected static ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
-	}
-
-	/**
-	 * Relaunches the launch in the specified mode.
-	 */
-	public void relaunch(ILaunch launch, String mode) {
-		RelaunchActionDelegate.relaunch(launch, mode);
 	}
 
 	/**
@@ -101,91 +95,7 @@ public abstract class ExecutionAction implements IActionDelegateWithEvent {
 		}
 		return (IStructuredSelection)selection;
 	}
-
-	/**
-	 * Resolves and returns the applicable project(s) associated with the
-	 * elements in the specified selection.
-	 */
-	protected static IProject[] resolveProjects(IStructuredSelection selection) {
 		
-		if (selection == null || selection.isEmpty()) {
-			return new IProject[0];
-		} else {
-			Vector projects = new Vector(1);
-			Iterator elements= selection.iterator();
-			while (elements.hasNext()) {
-				Object element= elements.next();
-				IResource resource= null;
-				if (element instanceof IAdaptable) {
-					IAdaptable el= (IAdaptable)element;
-					resource= (IResource)el.getAdapter(IResource.class);
-					if (resource == null) {
-						resource= (IProject)el.getAdapter(IProject.class);
-					}
-				}
-				IProject project= null;
-				if (resource != null) {
-					project= resource.getProject();
-				}
-				if (project != null && !projects.contains(project)) {
-					projects.add(project);
-				}
-			}
-			IProject[] list= new IProject[projects.size()];
-			projects.copyInto(list);
-			return list;
-		}
-		
-	}
-
-	/**
-	 * If the selection contains re-launchables, a relaunch is performed
-	 * for each launch and true is returned, otherwise, false is returned.
-	 */
-	protected boolean attemptRelaunch(IStructuredSelection selection) {
-		// if the selection is a debug element, system process, or launch, do a relaunch
-		Iterator objects= selection.iterator();
-		List relaunchables= null;
-		while (objects.hasNext()) {
-			Object object= objects.next();
-			ILaunch launch= null;
-			if (object instanceof IDebugElement) {
-				launch= ((IDebugElement)object).getLaunch();
-			} else if (object instanceof ILaunch) {
-				launch= (ILaunch)object;
-			} else if (object instanceof IProcess) {
-				launch= ((IProcess)object).getLaunch();
-			}
-			if (launch != null) {
-				if (relaunchables == null) {
-					relaunchables= new ArrayList(1);
-					relaunchables.add(launch);
-				} else if (!relaunchables.contains(launch)) {
-					relaunchables.add(launch);
-				}
-			}
-		}
-		if (relaunchables == null) {
-			return false;
-		} else {
-			Iterator itr= relaunchables.iterator();
-			while (itr.hasNext()) {
-				relaunch((ILaunch)itr.next(), getMode());
-			}
-			return true;
-		}
-	}
-
-	/**
-	 * Ring the bell
-	 */
-	protected void beep() {
-		Display display= Display.getCurrent();
-		if (display != null) {
-			display.beep();
-		}
-	}
-	
 	/**
 	 * @see runWithEvent(IAction, Event)
 	 * @see IActionDelegate#run(IAction)

@@ -266,13 +266,12 @@ public interface ILaunchManager {
 	 * or <code>null</code> if none.
 	 * 
 	 * @param resource the <code>IResource</code> on which to look for a default launch configuration
-	 * @param configTypeID the identifying String of the launch configuration type to look for on resource
-	 * @return launch configuration
+	 * @return a launch configuration
 	 * @exception CoreException if an exception occurrs retrieving the default
 	 *  configuration
 	 * @since 2.0
 	 */
-	public ILaunchConfiguration getDefaultLaunchConfiguration(IResource resource, String configTypeID) throws CoreException;
+	public ILaunchConfiguration getDefaultLaunchConfiguration(IResource resource) throws CoreException;
 	
 	/**
 	 * Creates and returns a new source locator of the specified

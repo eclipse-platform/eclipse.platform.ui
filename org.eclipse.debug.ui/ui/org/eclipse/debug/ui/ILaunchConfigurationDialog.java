@@ -10,7 +10,7 @@ import org.eclipse.jface.operation.IRunnableContext;
  */
  
  /**
-  * A launch configuraiton dialog is used to edit and launch
+  * A launch configuration dialog is used to edit and launch
   * launch configurations. It contains a launch configuration
   * tab group.
   * 
@@ -24,10 +24,10 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	/**
 	 * Return value from <code>open()</code> method of a
 	 * launch configuration dialog when a launch completed
-	 * successfully with a single lick (i.e. without opening a
+	 * successfully with a single click (i.e. without opening a
 	 * launch configuration dialog).
 	 */
-	public static final int SINGLE_CLICK_LAUNCHED = 2;
+	public static final int LAUNCHED_BEFORE_OPENING = 2;
 			
 	/**
 	 * Adjusts the enable state of the Launch button

@@ -22,10 +22,13 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
- * Abstract action for opening the launch configuration
- * dialog in run or debug mode.
+ * Abstract action for opening the launch configuration dialog in run or debug mode.
+ * This class is used in two ways: to simply open the dialog, and to open the dialog and 
+ * create a new configuration of a specified type.
  */
 public abstract class OpenLaunchConfigurationsAction extends Action implements IWorkbenchWindowActionDelegate {
+	
+	private boolean fCreateNewConfigMode;
 	
 	/**
 	 * The launch configuration type this action will cause to be created in the launch 
@@ -40,6 +43,7 @@ public abstract class OpenLaunchConfigurationsAction extends Action implements I
 
 	public OpenLaunchConfigurationsAction() {
 		super();
+		fCreateNewConfigMode = false;
 		setConfigType(null);
 		ImageDescriptor imageDescriptor = null;
 		if (getMode() == ILaunchManager.DEBUG_MODE) {
@@ -51,6 +55,28 @@ public abstract class OpenLaunchConfigurationsAction extends Action implements I
 		setImageDescriptor(imageDescriptor);	
 	}
 	
+	/**
+	 * Initialize this action from the specified <code>ILaunchConfigurationType</code>.
+	 */
+	protected OpenLaunchConfigurationsAction(ILaunchConfigurationType configType) {
+		fCreateNewConfigMode = true;
+		setConfigType(configType);
+		setText(configType.getName());
+
+		ImageDescriptor descriptor = DebugPluginImages.getImageDescriptor(configType.getIdentifier());
+		if (descriptor == null) {
+			if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
+				descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_DEBUG);
+			} else {
+				descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN);
+			}
+		}
+
+		if (descriptor != null) {
+			setImageDescriptor(descriptor);
+		}
+	}
+
 	/**
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
@@ -76,27 +102,6 @@ public abstract class OpenLaunchConfigurationsAction extends Action implements I
 		run();
 	}
 
-	/**
-	 * Initialize this action from the specified <code>ILaunchConfigurationType</code>.
-	 */
-	protected OpenLaunchConfigurationsAction(ILaunchConfigurationType configType) {
-		setConfigType(configType);
-		setText(configType.getName());
-
-		ImageDescriptor descriptor = DebugPluginImages.getImageDescriptor(configType.getIdentifier());
-		if (descriptor == null) {
-			if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
-				descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_DEBUG);
-			} else {
-				descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN);
-			}
-		}
-
-		if (descriptor != null) {
-			setImageDescriptor(descriptor);
-		}
-	}
-
 	protected void setConfigType(ILaunchConfigurationType configType) {
 		fConfigType = configType;
 	}
@@ -119,8 +124,12 @@ public abstract class OpenLaunchConfigurationsAction extends Action implements I
 				ss = new StructuredSelection();
 			}
 			LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(window.getShell(), ss, getMode());
-			dialog.setSingleClickLaunch(false);
-			dialog.setInitialConfigType(getConfigType());
+			if (fCreateNewConfigMode) {
+				dialog.setOpenMode(LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_NEW_CONFIG_OF_TYPE);
+				dialog.setInitialConfigType(getConfigType());
+			} else {
+				dialog.setOpenMode(LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED);				
+			}
 			dialog.open();
 		}		
 	}

@@ -417,15 +417,15 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 */
 	public void setDefaultLaunchConfiguration(IResource resource, ILaunchConfiguration config) throws CoreException {
 		String memento = config.getMemento();
-		resource.setPersistentProperty(new QualifiedName(DEFAULT_LAUNCH_CONFIGURATION, config.getType().getIdentifier()), memento);
+		resource.setPersistentProperty(new QualifiedName(DEFAULT_LAUNCH_CONFIGURATION, DEFAULT_LAUNCH_CONFIGURATION), memento);
 		setDefaultLaunchConfigurationType(resource, config.getType().getIdentifier());
 	}
 	
 	/**
-	 * @see ILaunchManager#getDefaultLaunchConfiguration(IResource, String)
+	 * @see ILaunchManager#getDefaultLaunchConfiguration(IResource)
 	 */
-	public ILaunchConfiguration getDefaultLaunchConfiguration(IResource resource, String configTypeID) throws CoreException {
-		String memento = resource.getPersistentProperty(new QualifiedName(DEFAULT_LAUNCH_CONFIGURATION, configTypeID));
+	public ILaunchConfiguration getDefaultLaunchConfiguration(IResource resource) throws CoreException {
+		String memento = resource.getPersistentProperty(new QualifiedName(DEFAULT_LAUNCH_CONFIGURATION, DEFAULT_LAUNCH_CONFIGURATION));
 		if (memento != null) {
 			ILaunchConfiguration config = getLaunchConfiguration(memento);
 			if (config.exists()) {

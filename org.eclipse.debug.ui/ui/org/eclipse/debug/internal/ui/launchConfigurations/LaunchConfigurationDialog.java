@@ -95,18 +95,30 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	private TreeViewer fConfigTree;
 	
+	/**
+	 * The workbench context present when this dialog is opened.
+	 */
 	private Object fContext;
 	
+	/**
+	 * The IResource corresponding to <code>fContext</code>.
+	 */
+	private IResource fResourceContext;
+	
+	/**
+	 * The launch config to be selected when the dialog is realized.
+	 */
 	private ILaunchConfiguration fFirstConfig;
 	
 	/**
-	 * Whether to perform single-click launching when
-	 * opened (if the pref is on).
+	 * Single click launching is controlled by the single-click launching preference value
+	 * and this value, which can be set via <code>setSingleClickLaunchable()</code>, which
+	 * provides a way to ignore single-click launching when the preference is set.
 	 */
-	private boolean fTrySingleClick = true;
+	private boolean fSingleClickLaunchable = true;
 	
 	/**
-	 * The starting mode, as specified by the caller
+	 * The starting mode (run or debug), as specified by the caller
 	 */
 	private String fMode;
 	
@@ -243,6 +255,37 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 										= LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Select_a_configuration_to_launch_or_a_config_type_to_create_a_new_configuration_3"); //$NON-NLS-1$
 
 	private String fCantSaveErrorMessage;
+
+	/**
+	 * Constant specifying that the launch configuration dialog should not actually open,
+	 * but instead should attempt to re-launch the last configuration that was sucessfully
+	 * launched in the workspace.  If there is no last launched configuration, just open the dialog.
+	 */
+	public static final int LAUNCH_CONFIGURATION_DIALOG_LAUNCH_LAST = 0;
+	
+	/**
+	 * Constant specifying that this dialog should be opened with a new configuration of a type
+	 * specified via <code>setInitialConfigType()</code> selected.
+	 */
+	public static final int LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_NEW_CONFIG_OF_TYPE = 1;
+	
+	/**
+	 * Constant specifying that this dialog should be opened with the last configuration launched
+	 * in the workspace selected.
+	 */
+	public static final int LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED = 2;
+
+	/**
+	 * Constant specifying that this dialog should be opened with the value specified via 
+	 * <code>setInitialSelection()</code> selected.
+	 */
+	public static final int LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION = 3;
+	
+	/**
+	 * Specifies how this dialog behaves when opened.  Value is one of the 
+	 * 'LAUNCH_CONFIGURATION_DIALOG' constants defined in this class.
+	 */
+	private int fOpenMode = LAUNCH_CONFIGURATION_DIALOG_LAUNCH_LAST;
 	
 	/**
 	 * Constructs a new launch configuration dialog on the given
@@ -258,6 +301,18 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		super(shell);
 		setContext(resolveContext(selection));
 		setMode(mode);
+	}
+	
+	/**
+	 * Set the flag indicating how this dialog behaves when the <code>open()</code> method is called.
+	 * Valid constants are the "
+	 */
+	public void setOpenMode(int mode) {
+		fOpenMode = mode;
+	}
+	
+	protected int getOpenMode() {
+		return fOpenMode;
 	}
 	
 	/**
@@ -359,60 +414,87 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Determine the first configuration for this dialog.  If this configuration verifies
-	 * and the 'single-click launching' preference is turned on, launch the configuration
-	 * WITHOUT realizing the dialog.  Otherwise, call super.open(), which will realize the
-	 * dialog and display the first configuration.  If single-click launching was successful,
-	 * this method returns <code>ILaunchConfigurationDialog.SINGLE_CLICK_LAUNCHED</code>.
-	 * 
-	 * @see Window#open()
-	 */
-	public int open() {		
-		try {
-			if (isAttemptSingleClickLaunch()) {
-				// single click
-				fFirstConfig = determineConfigFromContext();
-				if (fFirstConfig != null) {
-					if (fFirstConfig instanceof ILaunchConfigurationWorkingCopy) {
-						setWorkingCopy((ILaunchConfigurationWorkingCopy) fFirstConfig);
-					} else {
-						fUnderlyingConfig = fFirstConfig;
-					}
-					doLaunch(fFirstConfig);
-					return ILaunchConfigurationDialog.SINGLE_CLICK_LAUNCHED;					
-				}
-			} else if (getInitialConfigType() != null) {
-				fFirstConfig = createConfigOfType(getInitialConfigType());
-			} else {
-				String memento = getPreferenceStore().getString(IDebugPreferenceConstants.PREF_LAST_LAUNCH_CONFIGURATION_SELECTION);
-				if (memento.length() < 1) {
-					// last launch
-					LaunchConfigurationHistoryElement history = DebugUIPlugin.getDefault().getLastLaunch();
-					if (history != null) {
-						fFirstConfig = history.getLaunchConfiguration();
-					}
-				} else {
-					// last selection
-					try {
-						fFirstConfig = getLaunchManager().getLaunchConfiguration(memento);
-					} catch (CoreException e) {
-						// do not warn when restoring selection
-						DebugUIPlugin.log(e);
-					}
-				}
-			}	
-		} catch (CoreException e) {
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configuration_Error_6"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_processing_launch_configuration._See_log_for_more_information_7"), e); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		return super.open();
-	}
-	
-	/**
 	 * @see Window#close()
 	 */
 	public boolean close() {
 		getLaunchManager().removeLaunchConfigurationListener(this);
 		return super.close();
+	}
+	
+	/**
+	 * Determine the first configuration for this dialog.  If single-click launching is 
+	 * enabled, launch the configuration WITHOUT realizing the dialog.  If single-click 
+	 * launching was successful, this method returns 
+	 * <code>ILaunchConfigurationDialog.SINGLE_CLICK_LAUNCHED</code>.  Otherwise, open the
+	 * dialog in the specified mode.
+	 * 
+	 * @see Window#open()
+	 */
+	public int open() {		
+		int mode = getOpenMode();	
+		if (mode == LAUNCH_CONFIGURATION_DIALOG_LAUNCH_LAST) {
+			return doLastLaunchedConfig(true);
+		} else if (mode == LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED) {
+			return doLastLaunchedConfig(false);
+		} else if (mode == LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_NEW_CONFIG_OF_TYPE) {
+			return openDialogOnNewConfigOfSpecifiedType();
+		} else if (mode == LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION) {
+			return openDialogOnSelection();
+		}		
+		return super.open();
+	}
+	
+	/**
+	 * Retrieve the last launched configuration in the workspace.  If <code>launch</code>
+	 * is <code>true</code>, launch this configuration without showing the dialog, otherwise 
+	 * just set the initial selection in the dialog to the last launched configuration.
+	 */
+	protected int doLastLaunchedConfig(boolean launch) {
+		fFirstConfig = getLastLaunchedWorkbenchConfiguration();
+		if (launch) {
+			try {
+				if (fFirstConfig != null) {
+					fUnderlyingConfig = fFirstConfig;
+					doLaunch(fFirstConfig);
+					return ILaunchConfigurationDialog.LAUNCHED_BEFORE_OPENING;					
+				}
+			} catch(CoreException e) {
+				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configuration_Error_6"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_processing_launch_configuration._See_log_for_more_information_7"), e); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+		return super.open();
+	}
+	
+	/**
+	 * Realize this dialog so that a new configuration of the type that was specified via
+	 * <code>setInitialConfigType()</code> is selected.
+	 */
+	protected int openDialogOnNewConfigOfSpecifiedType() {
+		ILaunchConfigurationType configType = getInitialConfigType();
+		if (configType != null) {
+			fFirstConfig = createConfigOfType(getInitialConfigType());			
+		}		
+		return super.open();
+	}
+	
+	/**
+	 * Open this dialog with the selection set to the value specified by 
+	 * <code>setInitialSelection()</code>.
+	 */
+	protected int openDialogOnSelection() {
+		
+		return super.open();
+	}
+	
+	/**
+	 * Return the last launched configuration in the workspace.
+	 */
+	protected ILaunchConfiguration getLastLaunchedWorkbenchConfiguration() {
+		LaunchConfigurationHistoryElement history = DebugUIPlugin.getDefault().getLastLaunch();
+		if (history != null) {
+			return history.getLaunchConfiguration();
+		}
+		return null;			
 	}
 	
 	/**
@@ -460,7 +542,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * an <code>ILaunchConfigurationWorkingCopy</code> is created and initialized from 
 	 * the context if possible.
 	 */
-	protected ILaunchConfiguration determineConfigFromContext() throws CoreException {
+	protected ILaunchConfiguration getSingleClickConfigFromContext() throws CoreException {
 		Object workbenchSelection = getContext();
 		if (workbenchSelection == null) {
 			return null;
@@ -470,24 +552,22 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			return (ILaunchConfiguration) workbenchSelection;
 		}
 		
-		IResource res = getResourceContext();
-		if (res == null) {
+		IResource resource = getResourceContext();
+		if (resource == null) {
 			IEditorInput activeEditorInput= WorkbenchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor().getEditorInput();
 			if (activeEditorInput != null) {
 				setContext(activeEditorInput);
-				res= getResourceContext();
+				resource = getResourceContext();
 			}
 		}
+		
 		ILaunchConfiguration def = null;
-		if (res != null) {
-			ILaunchConfigurationType type = determineConfigTypeFromContext();
-			if (type != null) {
-				try {
-					def = getLaunchManager().getDefaultLaunchConfiguration(res, type.getIdentifier());
-				} catch (CoreException e) {
-					// hide the exception and return no default
-					DebugUIPlugin.log(e);
-				}
+		if (resource != null) {
+			try {
+				def = getLaunchManager().getDefaultLaunchConfiguration(resource);
+			} catch (CoreException e) {
+				// hide the exception and return no default
+				DebugUIPlugin.log(e);
 			}
 		}
 		if (def != null) {
@@ -495,8 +575,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}
 		
 		def = createConfigFromContext();
-		if (res != null && def != null) {
-			getLaunchManager().setDefaultLaunchConfiguration(res, def);
+		if (resource != null && def != null) {
+			getLaunchManager().setDefaultLaunchConfiguration(resource, def);
 		}
 		return def;
 	}
@@ -588,18 +668,19 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Returns the selected resoruce context from the workbench,
-	 * or <code>null</code>
+	 * Returns the selected IResource context from the workbench,
+	 * or <code>null</code> if there was no context in the workbench.
 	 */
 	protected IResource getResourceContext() {
-		IResource resource = null;
-		Object workbenchSelection = getContext();
-		if (workbenchSelection instanceof IResource) {
-			resource = (IResource)workbenchSelection;
-		} else if (workbenchSelection instanceof IAdaptable) {
-			resource = (IResource) ((IAdaptable)workbenchSelection).getAdapter(IResource.class);
+		if (fResourceContext == null) {
+			Object workbenchSelection = getContext();
+			if (workbenchSelection instanceof IResource) {
+				fResourceContext = (IResource)workbenchSelection;
+			} else if (workbenchSelection instanceof IAdaptable) {
+				fResourceContext = (IResource) ((IAdaptable)workbenchSelection).getAdapter(IResource.class);
+			}
 		}
-		return resource;		
+		return fResourceContext;		
 	}
 
 	
@@ -679,7 +760,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		IStatus status = ResourcesPlugin.getWorkspace().validateName(currentName, IResource.FILE);
 		if (status.getCode() != IStatus.OK) {
 			throw new CoreException(new Status(IStatus.ERROR,
-												 DebugUIPlugin.getUniqueIdentifier(),
+												 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 												 0,
 												 status.getMessage(),
 												 null));									
@@ -688,7 +769,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		// Otherwise, if there's already a config with the same name, complain
 		if (getLaunchManager().isExistingLaunchConfigurationName(currentName)) {
 			throw new CoreException(new Status(IStatus.ERROR,
-												 DebugUIPlugin.getUniqueIdentifier(),
+												 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 												 0,
 												 LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_configuration_already_exists_with_this_name_12"), //$NON-NLS-1$
 												 null));						
@@ -754,7 +835,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				handleKeyPressed(e);
 			}
 		});
-		
 		Button newButton = SWTUtil.createPushButton(c, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ne&w_13"), null); //$NON-NLS-1$
 		setNewButton(newButton);
 		newButton.addSelectionListener(
@@ -786,18 +866,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		);			
 		
 		return c;
-	}	
-	
-	/**
-	 * Handles key events in tree viewer. Specifically
-	 * when the delete key is pressed.
-	 */
-	protected void handleKeyPressed(KeyEvent event) {
-		if (event.character == SWT.DEL && event.stateMask == 0) {
-			if (getDeleteButton().isEnabled()) {
-				handleDeletePressed();
-			}
-		}
 	}	
 	
 	/**
@@ -2396,21 +2464,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected boolean isInitializingTabs() {
 		return fInitializingTabs;
 	}	
-
-	/**
-	 * Returns whether the dialog should attempt single
-	 * click launching when opened.
-	 */
-	protected boolean isAttemptSingleClickLaunch() {
-		return fTrySingleClick && getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING);
-	}
-	
-	/**
-	 * Enables/disabled single click launching when opened.
-	 */
-	public void setSingleClickLaunch(boolean enabled) {
-		fTrySingleClick = enabled;
-	}
 	
 	/**
 	 * Returns the initial launch configuration type, or <code>null</code> if none has been set.
@@ -2425,4 +2478,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	public void setInitialConfigType(ILaunchConfigurationType configType) {
 		fInitialConfigType = configType;
 	}
-}
+	/**
+	 * Handles key events in tree viewer. Specifically
+	 * when the delete key is pressed.
+	 */
+	protected void handleKeyPressed(KeyEvent event) {
+		if (event.character == SWT.DEL && event.stateMask == 0) {
+			if (getDeleteButton().isEnabled()) {
+				handleDeletePressed();
+			}
+		}
+	}}
