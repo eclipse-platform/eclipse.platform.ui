@@ -27,7 +27,7 @@ public class ConfigureProjectAction extends TeamAction {
 	 */
 	public void run(IAction action) {
 		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
 					IProject project = getSelectedProjects()[0];
 					ConfigureProjectWizard wizard = new ConfigureProjectWizard();

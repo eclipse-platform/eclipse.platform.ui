@@ -9,18 +9,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-
 import java.util.Set;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * CheckOutAction checks the selected resources out from the provider.
@@ -30,8 +30,8 @@ public class CheckOutAction extends TeamAction {
 	 * Method declared on IActionDelegate.
 	 */
 	public void run(IAction action) {
-		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+		run(new WorkspaceModifyOperation() {
+			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
 					Hashtable table = getProviderMapping();
 					Set keySet = table.keySet();

@@ -184,7 +184,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 			default :
 			case PROGRESS_DIALOG :
 				try {
-					new ProgressMonitorDialog(getShell()).run(false, false, runnable);
+					new ProgressMonitorDialog(getShell()).run(true, true, runnable);
 				} catch (InvocationTargetException e) {
 					errors[0] = getStatusFromException(e, problemMessage);
 				} catch (InterruptedException e) {

@@ -9,8 +9,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * Action for moving the selected resources on the provider
@@ -20,8 +20,8 @@ public class MoveAction extends TeamAction {
 	 * Method declared on IActionDelegate.
 	 */
 	public void run(IAction action) {
-		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+		run(new WorkspaceModifyOperation() {
+			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 //				try {
 //					IResource resource = getSelectedResources()[0];
 //					ITeamProvider provider = TeamPlugin.getPlugin().getProvider(resource.getProject());

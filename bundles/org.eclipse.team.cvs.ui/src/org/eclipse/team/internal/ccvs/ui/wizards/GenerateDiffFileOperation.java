@@ -43,14 +43,8 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
 	/**
 	 * @see IRunnableWithProgress#run(IProgressMonitor)
 	 */
-	public void run(IProgressMonitor monitor)
-		throws InvocationTargetException, InterruptedException {
-		MultiStatus result =
-			new MultiStatus(
-				CVSUIPlugin.ID,
-				1,
-				Policy.bind("GenerateCVSDiff.error"),
-				null);
+	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+		MultiStatus result = new MultiStatus(CVSUIPlugin.ID, 1, Policy.bind("GenerateCVSDiff.error"), null);
 		try {
 			if (resources == null || outputFile == null)
 				return;
