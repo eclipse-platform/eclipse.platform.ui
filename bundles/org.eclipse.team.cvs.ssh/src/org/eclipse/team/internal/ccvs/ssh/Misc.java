@@ -367,6 +367,19 @@ public static int readInt(InputStream is) throws IOException {
 
 	return (a << 24) + (b << 16) + (c << 8) + d;
 }
+public static String readString(InputStream is) throws IOException {
+	int size = Misc.readInt(is);
+	byte[] buffer = new byte[size];
+	for (int i = 0; i < buffer.length; i++) {
+		int next = is.read();
+		if (next == -1) {
+			throw new IOException(Policy.bind("stream"));
+		} else {
+			buffer[i] = (byte)next;
+		}
+	}
+	return new String(buffer);
+}
 public static void skipFully(InputStream is, long n) throws IOException {
 	while (n != 0) {
 		int b = is.read();

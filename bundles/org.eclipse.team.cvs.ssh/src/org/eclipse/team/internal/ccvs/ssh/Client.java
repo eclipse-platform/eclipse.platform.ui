@@ -10,7 +10,6 @@ package org.eclipse.team.internal.ccvs.ssh;
  */
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
@@ -18,6 +17,9 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException;
 import org.eclipse.team.internal.ccvs.core.streams.PollingInputStream;
 import org.eclipse.team.internal.ccvs.core.streams.PollingOutputStream;
@@ -185,9 +187,30 @@ public class Client {
 					pis.close();
 					send(SSH_CMSG_EXIT_CONFIRMATION, null);
 					break;
+				case SSH_MSG_DISCONNECT :
+					atEnd = true;
+					handleDisconnect(packet.getInputStream());
 				default :
 					throw new IOException(Policy.bind("Client.packetType", new Object[] {new Integer(packetType)} ));//$NON-NLS-1$
 			}
+		}
+		
+		private void handleDisconnect(InputStream in) throws IOException {
+			String description = null;
+			try {
+				description = Misc.readString(in);
+			} catch (IOException e) {
+			} finally {
+				in.close();
+			}
+			
+			// Log the description provided by the server
+			if (description == null) {
+				description = Policy.bind("Client.noDisconnectDescription");
+			}
+			
+			// Throw an IOException with the proper text
+			throw new IOException(Policy.bind("Client.disconnectDescription", new Object[] {description}));
 		}
 	}
 
