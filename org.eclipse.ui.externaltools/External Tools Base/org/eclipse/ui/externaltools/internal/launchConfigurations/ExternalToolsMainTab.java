@@ -30,7 +30,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -61,11 +60,33 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 
 	protected SelectionAdapter selectionAdapter;
 	
-	protected ModifyListener modifyListener = new ModifyListener() {
+	/**
+	 * A listener to update for text modification and widget selection.
+	 */
+	protected class WidgetListener extends SelectionAdapter implements ModifyListener {
 		public void modifyText(ModifyEvent e) {
 			updateLaunchConfigurationDialog();
 		}
-	};
+		public void widgetSelected(SelectionEvent e) {
+			Object source= e.getSource();
+			if (source == variableButton) {
+				StringVariableSelectionDialog dialog= new StringVariableSelectionDialog(getShell());
+				if (dialog.open() == Window.OK) {
+					argumentField.insert(dialog.getVariableExpression());
+				}
+			} else if (source == workspaceLocationButton) {
+				handleWorkspaceLocationButtonSelected();
+			} else if (source == fileLocationButton) {
+				handleLocationButtonSelected();
+			} else if (source == workspaceWorkingDirectoryButton) {
+				handleWorkspaceWorkingDirectoryButtonSelected();
+			} else if (source == fileWorkingDirectoryButton) {
+				handleFileWorkingDirectoryButtonSelected();
+			}
+		}
+	}
+	
+	protected WidgetListener fListener= new WidgetListener();
 	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -127,17 +148,9 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		createVerticalSpacer(buttonComposite, 1);
 		
 		workspaceLocationButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Browse_Workspace..._3"), null); //$NON-NLS-1$
-		workspaceLocationButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleWorkspaceLocationButtonSelected();
-			}
-		});
+		workspaceLocationButton.addSelectionListener(fListener);
 		fileLocationButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Brows&e_File_System..._4"), null); //$NON-NLS-1$
-		fileLocationButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleLocationButtonSelected();
-			}
-		});
+		fileLocationButton.addSelectionListener(fListener);
 	}
 	
 	/**
@@ -180,17 +193,9 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		
 		createVerticalSpacer(buttonComposite, 1);
 		workspaceWorkingDirectoryButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Browse_Wor&kspace..._6"), null); //$NON-NLS-1$
-		workspaceWorkingDirectoryButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleWorkspaceWorkingDirectoryButtonSelected();
-			}
-		});
+		workspaceWorkingDirectoryButton.addSelectionListener(fListener);
 		fileWorkingDirectoryButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Browse_F&ile_System..._7"), null); //$NON-NLS-1$
-		fileWorkingDirectoryButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleFileWorkingDirectoryButtonSelected();
-			}
-		});
+		fileWorkingDirectoryButton.addSelectionListener(fListener);
 	}
 	/**
 	 * Return the String to use as the label for the working directory field.
@@ -222,19 +227,12 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		data.heightHint= 40;
 		argumentField.setLayoutData(data);
 		argumentField.setFont(font);
-		argumentField.addModifyListener(modifyListener);
+		argumentField.addModifyListener(fListener);
 
 		variableButton= createPushButton(parent, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Varia&bles..._2"), null); //$NON-NLS-1$
 		GridData gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		variableButton.setLayoutData(gridData);
-		variableButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				StringVariableSelectionDialog dialog= new StringVariableSelectionDialog(getShell());
-				if (dialog.open() == Window.OK) {
-					argumentField.insert(dialog.getVariableExpression());
-				}
-			}
-		});
+		variableButton.addSelectionListener(fListener);
 
 		Label instruction = new Label(parent, SWT.NONE);
 		instruction.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Note__Enclose_an_argument_containing_spaces_using_double-quotes_(__)._Not_applicable_for_variables._3")); //$NON-NLS-1$
@@ -267,7 +265,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Error_reading_configuration_10"), ce); //$NON-NLS-1$
 		}
 		workDirectoryField.setText(workingDir);
-		workDirectoryField.addModifyListener(modifyListener);
+		workDirectoryField.addModifyListener(fListener);
 		
 	}
 	
@@ -279,7 +277,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Error_reading_configuration_10"), ce); //$NON-NLS-1$
 		}
 		locationField.setText(location);
-		locationField.addModifyListener(modifyListener);
+		locationField.addModifyListener(fListener);
 	}
 
 	protected void updateArgument(ILaunchConfiguration configuration) {
@@ -476,21 +474,6 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 */
 	public Image getImage() {
 		return ExternalToolsImages.getImage(IExternalToolConstants.IMG_TAB_MAIN);
-	}
-	
-	/**
-	 * Method getSelectionAdapter.
-	 * @return SelectionListener
-	 */
-	protected SelectionListener getSelectionAdapter() {
-		if (selectionAdapter == null) {
-			selectionAdapter= new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					updateLaunchConfigurationDialog();
-				}
-			};
-		}
-		return selectionAdapter;
 	}
 	
 }
