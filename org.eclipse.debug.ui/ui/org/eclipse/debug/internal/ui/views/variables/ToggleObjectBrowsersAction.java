@@ -15,8 +15,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugView;
-import org.eclipse.debug.ui.IRootVariablesContentProvider;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -30,9 +28,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class ToggleObjectBrowsersAction extends Action {
 	
-	private IDebugView fView;
+	private VariablesView fView;
 
-	public ToggleObjectBrowsersAction(IDebugView view) {
+	public ToggleObjectBrowsersAction(VariablesView view) {
 		super(null, IAction.AS_CHECK_BOX);
 		setView(view);
 		setToolTipText(VariablesViewMessages.getString("ToggleObjectBrowsersAction.1"));  //$NON-NLS-1$
@@ -51,21 +49,15 @@ public class ToggleObjectBrowsersAction extends Action {
 	}
 
 	private void valueChanged(boolean on) {
-		if (getView().getViewer().getControl().isDisposed()) {
+		if (!getView().isAvailable()) {
 			return;
 		}
-		
-		// Retrieve the owning view's content provider and set the flag on it if it's
-		// of the appropriate type
-		IRootVariablesContentProvider contentProvider = (IRootVariablesContentProvider) getView().getAdapter(IRootVariablesContentProvider.class);
-		if (contentProvider != null) {
-			contentProvider.setUseContentProviders(on);	
-			BusyIndicator.showWhile(getView().getViewer().getControl().getDisplay(), new Runnable() {
-				public void run() {
-					getView().getViewer().refresh();					
-				}
-			});			
-		}
+		getView().setUseContentProviders(on);	
+		BusyIndicator.showWhile(getView().getViewer().getControl().getDisplay(), new Runnable() {
+			public void run() {
+				getView().getViewer().refresh();					
+			}
+		});			
 	}
 
 	/**
@@ -75,11 +67,11 @@ public class ToggleObjectBrowsersAction extends Action {
 		super.setChecked(value);
 	}
 	
-	protected IDebugView getView() {
+	protected VariablesView getView() {
 		return fView;
 	}
 
-	protected void setView(IDebugView view) {
+	protected void setView(VariablesView view) {
 		fView = view;
 	}
 

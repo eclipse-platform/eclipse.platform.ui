@@ -70,7 +70,7 @@ public class ExpressionViewContentProvider extends VariablesViewContentProvider 
 		if (value == null) {
 			return new IVariable[0];	
 		}
-		return contentProvider.getChildren(getDebugView(), value);
+		return contentProvider.getChildren(value);
 	}
 	
 	/**

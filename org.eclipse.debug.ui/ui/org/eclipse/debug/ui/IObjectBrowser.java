@@ -21,8 +21,8 @@ import org.eclipse.debug.core.model.IVariable;
  */
 public interface IObjectBrowser {
 
-	public IVariable[] getChildren(IDebugView view, IValue value) throws DebugException;
+	public IVariable[] getChildren(IValue value) throws DebugException;
 	
-	public boolean hasChildren(IDebugView view, IValue value) throws DebugException;
+	public boolean hasChildren(IValue value) throws DebugException;
 	
 }

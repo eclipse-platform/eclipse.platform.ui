@@ -18,13 +18,11 @@ import java.util.List;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.debug.ui.IDebugView;
-import org.eclipse.debug.ui.IRootVariablesContentProvider;
 import org.eclipse.debug.ui.IObjectBrowser;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -32,8 +30,7 @@ import org.eclipse.jface.viewers.Viewer;
 /**
  * Provide the contents for a variables viewer.
  */
-public class VariablesViewContentProvider implements ITreeContentProvider,
-														IRootVariablesContentProvider {
+public class VariablesViewContentProvider implements ITreeContentProvider {
 	
 	/**
 	 * The view that owns this content provider.
@@ -58,8 +55,6 @@ public class VariablesViewContentProvider implements ITreeContentProvider,
 	 * Flag indicating whether contributed content providers should be used or not.
 	 */
 	private boolean fUseObjectBrowsers;
-	
-	private IStackFrame fStackFrameInput;
 	
 	/**
 	 * Constructs a new provider
@@ -107,7 +102,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider,
 		if (value== null) {
 			return new IVariable[0];
 		}
-		return objectBrowser.getChildren(getDebugView(), value);
+		return objectBrowser.getChildren(value);
 	}
 	
 	/**
@@ -182,7 +177,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider,
 	
 	protected boolean hasModelSpecificVariableChildren(IVariable parent) throws DebugException {
 		IObjectBrowser contentProvider = getObjectBrowser(getDebugModelId(parent));
-		return contentProvider.hasChildren(getDebugView(), parent.getValue());
+		return contentProvider.hasChildren(parent.getValue());
 	}
 	
 	/**
@@ -190,11 +185,6 @@ public class VariablesViewContentProvider implements ITreeContentProvider,
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		clearCache();
-		if (newInput instanceof IStackFrame) {
-			fStackFrameInput = (IStackFrame) newInput;
-		} else {
-			fStackFrameInput = null;
-		}
 	}
 	
 	/**
@@ -269,8 +259,8 @@ public class VariablesViewContentProvider implements ITreeContentProvider,
 		return fExceptionHandler;
 	}	
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IRootVariablesContentProvider#setUseContentProviders(boolean)
+	/** 
+	 * Use model supplied content providers. 
 	 */
 	public void setUseContentProviders(boolean flag) {
 		fUseObjectBrowsers = flag;
@@ -280,16 +270,6 @@ public class VariablesViewContentProvider implements ITreeContentProvider,
 		return fUseObjectBrowsers;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IRootVariablesContentProvider#getThread()
-	 */
-	public IThread getThread() {
-		if (fStackFrameInput == null) {
-			return null;
-		}
-		return fStackFrameInput.getThread();
-	}
-
 	private void setDebugView(IDebugView view) {
 		fDebugView = view;
 	}

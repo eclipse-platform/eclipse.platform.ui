@@ -43,7 +43,6 @@ import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IRootVariablesContentProvider;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -1094,9 +1093,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 				return ((VariablesViewLabelProvider)labelProvider).getPresentation();
 			}
 		}
-		if (IRootVariablesContentProvider.class.equals(required)) {
-			return (IRootVariablesContentProvider)getStructuredViewer().getContentProvider();
-		}
 		return super.getAdapter(required);
 	}
 
@@ -1288,5 +1284,12 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	public boolean isMainViewerAvailable() {
 		return isAvailable();
 	}
+	
+	/** 
+	 * Use model supplied content providers. 
+	 */
+	public void setUseContentProviders(boolean flag) {
+		((VariablesViewContentProvider)getStructuredViewer().getContentProvider()).setUseContentProviders(flag);
+	}	
 
 }
