@@ -64,19 +64,25 @@ public class BranchOperation extends RepositoryProviderOperation {
 	protected boolean shouldRun() {
 		IResource[] resources = getResources();
 		boolean allSticky = areAllResourcesSticky(resources);
+		String initialVersionName = calculateInitialVersionName(resources,allSticky);
 		final BranchPromptDialog dialog = new BranchPromptDialog(getShell(),
 											Policy.bind("BranchWizard.title"), //$NON-NLS-1$
 											getResources(), 
 											allSticky, 
-											calculateInitialVersionName(resources,allSticky));
+											initialVersionName);
 		if (dialog.open() != InputDialog.OK) return false;		
 		
 		// Capture the dialog info in local variables
 		final String tagString = dialog.getBranchTagName();
 		update = dialog.getUpdate();
-		final String versionString = dialog.getVersionTagName();
-		rootVersionTag = (versionString == null) ? null : new CVSTag(versionString, CVSTag.VERSION);
 		branchTag = new CVSTag(tagString, CVSTag.BRANCH);
+		
+		// Only set the root version tag if the name from the dialog differs from the initial name
+		String versionString = dialog.getVersionTagName();
+		if (versionString != null 
+				&& (initialVersionName == null || !versionString.equals(initialVersionName))) {
+			rootVersionTag = new CVSTag(versionString, CVSTag.VERSION);
+		}
 								
 		// For non-projects determine if the tag being loaded is the same as the resource's parent
 		// If it's not, warn the user that they will be mixing tags
