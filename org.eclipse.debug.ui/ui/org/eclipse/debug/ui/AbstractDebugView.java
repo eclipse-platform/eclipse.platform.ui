@@ -392,9 +392,9 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 							IAction action = ((ActionContributionItem)items[i]).getAction();
 							if (action.getStyle() == IAction.AS_CHECK_BOX && getMemento() != null) {
 								initActionState(getMemento(), action);	
-							}
-							if (action.isChecked()) {
-								action.run();
+								if (action.isChecked()) {
+									action.run();
+								}
 							}
 						}
 					}
